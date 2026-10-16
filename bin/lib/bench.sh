@@ -2,9 +2,13 @@ root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 eval "$(mise -C "$root" env -s bash)"
 
 stop_session() {
-  local session=$1 data=$2
+  local session=$1 data=$2 pids
+  pids=$(pgrep -f -- "--dataPath $data --tracelog" || true)
   tmux kill-session -t "$session" 2>/dev/null || true
-  while pgrep -f -- "--dataPath $data --tracelog" >/dev/null; do sleep 0.5; done
+  # A dying game outlives its command line: pgrep -f stops matching while threads still hold its ports.
+  for pid in $pids; do
+    while kill -0 "$pid" 2>/dev/null; do sleep 0.5; done
+  done
 }
 
 require_free_port() {
