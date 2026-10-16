@@ -13,6 +13,7 @@ public class StormsConfig
 public class WavesConfig
 {
     public double MinHeight;
+    public double PeriodSecondsPerRootMetre;
     public double WhitecapCoefficient;
     public double WhitecapExponent;
     public double BreakingDepthRatio;

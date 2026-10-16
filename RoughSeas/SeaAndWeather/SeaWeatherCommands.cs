@@ -43,12 +43,7 @@ public static class SeaWeatherCommands
     {
         capi.ChatCommands.Create("seas")
             .WithDescription("Rough Seas: the sea and weather state as this client computes it")
-            .HandleWith(_ => TextCommandResult.Success(Here(sea, capi, capi.World.Player.Entity.Pos.XYZ)))
-            .BeginSubCommand("swell")
-                .WithDescription("Draw the sea's swell in the water shader, or vanilla's ripple alone; recompiles the shaders")
-                .WithArgs(capi.ChatCommands.Parsers.Bool("drawn"))
-                .HandleWith(args => TextCommandResult.Success(SwellShader.Draw((bool)args[0]) ? "Shaders recompiled" : "Shaders failed to compile; see the client log"))
-            .EndSubCommand();
+            .HandleWith(_ => TextCommandResult.Success(Here(sea, capi, capi.World.Player.Entity.Pos.XYZ)));
     }
 
     private static string Here(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos)

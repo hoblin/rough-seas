@@ -1,13 +1,12 @@
 using System;
-using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Storms;
 
-public class Waves(WavesConfig config, SeaSurface surface)
+public class Waves(WavesConfig config)
 {
     private const double Gravity = 9.81;
 
-    public double Period(double height) => surface.Period(height);
+    public double Period(double height) => config.PeriodSecondsPerRootMetre * Math.Sqrt(height);
 
     public double BreakingChance(double windMps) =>
         Math.Min(1, config.WhitecapCoefficient * Math.Pow(windMps, config.WhitecapExponent));

@@ -28,7 +28,7 @@ public class StormsModSystem : ModSystem
     public override void AssetsLoaded(ICoreAPI api)
     {
         Config = api.Assets.Get<StormsConfig>(ConfigAsset);
-        Waves = new Waves(Config.Waves, api.ModLoader.GetModSystem<SeaWeatherSystem>().Surface);
+        Waves = new Waves(Config.Waves);
     }
 
     public override void StartServerSide(ICoreServerAPI sapi) =>

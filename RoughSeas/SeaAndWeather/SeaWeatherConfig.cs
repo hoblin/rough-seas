@@ -10,25 +10,6 @@ public class SeaWeatherConfig
     public StormShapeConfig Storm = new();
     public VanillaConfig Vanilla = new();
     public CurrentsConfig Currents = new();
-    public SwellConfig Swell = new();
-}
-
-public class SwellConfig
-{
-    public double PeriodSecondsPerRootMetre;
-    public double Steepness;
-    public double SettleSeconds;
-    public double TurnDegreesBeforeNewWaves;
-    public double StretchBeforeNewWaves;
-    public double AnchorReachBlocks;
-    public SwellComponent[] Components = [];
-}
-
-public class SwellComponent
-{
-    public double AngleDegrees;
-    public double LengthFactor;
-    public double Share;
 }
 
 public class CurrentsConfig

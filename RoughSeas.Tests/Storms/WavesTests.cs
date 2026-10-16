@@ -1,7 +1,5 @@
 using Newtonsoft.Json;
-using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
-using RoughSeas.Tests.SeaAndWeather;
 
 namespace RoughSeas.Tests.Storms;
 
@@ -10,7 +8,7 @@ public class WavesTests
     public static readonly StormsConfig Config =
         JsonConvert.DeserializeObject<StormsConfig>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "storms.json")))!;
 
-    private readonly Waves waves = new(Config.Waves, new SeaSurface(Fixtures.Config().Swell));
+    private readonly Waves waves = new(Config.Waves);
 
     [Fact]
     public void AGaleSeaRunsLongerWavesThanABreeze()
