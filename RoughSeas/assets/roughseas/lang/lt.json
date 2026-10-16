@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Audringa jūra",
+    "game:playstyle-desc-preset-roughseas": "Standartinis išgyvenimas pasaulyje su atvirais vandenynais, kur vėjas, audros ir jūra yra pavojingi.",
+    "game:worldconfig-category-roughseas": "Audringa jūra",
+    "game:worldattribute-dangerousOceans": "Pavojingi vandenynai",
+    "game:worldattribute-dangerousOceans-desc": "Audros, mūša ir šaltas vanduo laužo laivus ir žudo plaukikus. Išjungus jūroje lieka orai, bet ji nekenkia.",
+    "vessel-condition-sound": "Korpusas: sveikas",
+    "vessel-condition-scarred": "Korpusas: apdaužytas",
+    "vessel-condition-damaged": "Korpusas: pažeistas, įtemptas",
+    "vessel-condition-breaking": "Korpusas: byra",
+    "bilge-water": "Lijalo vanduo: {0} iš {1} l",
+    "item-anchorwarp": "Inkaro lynas",
+    "itemdesc-anchorwarp": "Devynios virvės, supintos į 90 metrų lyną. Laikomas prie burlaivio stiebo, jis leidžia inkarui pasiekti gilesnį vandenį."
+}

@@ -10,6 +10,21 @@ public class SeaWeatherConfig
     public StormShapeConfig Storm = new();
     public VanillaConfig Vanilla = new();
     public CurrentsConfig Currents = new();
+    public SwellConfig Swell = new();
+}
+
+public class SwellConfig
+{
+    public double PeriodSecondsPerRootMetre;
+    public double Steepness;
+    public SwellComponent[] Components = [];
+}
+
+public class SwellComponent
+{
+    public double AngleDegrees;
+    public double LengthFactor;
+    public double Share;
 }
 
 public class CurrentsConfig
@@ -23,6 +38,7 @@ public class CurrentsConfig
     public double SeawaterFreezingCelsius;
     public int BasinReachBlocks;
     public double LandBelowOceanity;
+    public double StokesDriftPerMps;
 }
 
 public class BeaufortForce

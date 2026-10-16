@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Ŝtorma maro",
+    "game:playstyle-desc-preset-roughseas": "Kutima travivado en mondo kun malfermaj oceanoj, kie vento, ŝtormoj kaj la maro estas danĝeraj.",
+    "game:worldconfig-category-roughseas": "Ŝtorma maro",
+    "game:worldattribute-dangerousOceans": "Danĝeraj oceanoj",
+    "game:worldattribute-dangerousOceans-desc": "Ŝtormoj, rompiĝantaj ondoj kaj malvarma akvo rompas ŝipojn kaj mortigas naĝantojn. Malŝaltite, la maro konservas sian veteron sed ne damaĝas.",
+    "vessel-condition-sound": "Kareno: sana",
+    "vessel-condition-scarred": "Kareno: batita",
+    "vessel-condition-damaged": "Kareno: damaĝita, streĉata",
+    "vessel-condition-breaking": "Kareno: disfalas",
+    "bilge-water": "Sentinakvo: {0} el {1} litroj",
+    "item-anchorwarp": "Ankroŝnuro",
+    "itemdesc-anchorwarp": "Naŭ ŝnuroj splisitaj en 90 metrojn da ŝnuro. Stokita ĉe la masto de velboato, ĝi lasas la ankron atingi pli profundan akvon."
+}

@@ -29,7 +29,6 @@ public static class VanillaWeatherPatches
             Postfix(AccessTools.Method(typeof(CloudRenderer), nameof(CloudRenderer.CloudTick)), nameof(CloudDrift));
             Postfix(AccessTools.Method(typeof(FluffyClouds.CloudRendererMap), nameof(FluffyClouds.CloudRendererMap.CloudTick)), nameof(CloudDrift));
             WindAsStrength(AccessTools.Method(typeof(DefaultShaderUniforms), nameof(DefaultShaderUniforms.Update)), nameof(SurfaceWindStrength), nameof(SurfaceWindRestore));
-            WindAsStrength(AccessTools.Method(typeof(EntityBoat), nameof(EntityBoat.OnRenderFrame)), nameof(WindStrength), nameof(WindRestore));
         }
     }
 
@@ -64,14 +63,10 @@ public static class VanillaWeatherPatches
         __result = VanillaWeather.Strength(wind.Speed, posY, ___ws.api.World.SeaLevel, sea.Config.Vanilla);
     }
 
-    // These vanilla readers take the wind's X alone as its strength; our wind may blow along Z.
+    // This vanilla reader takes the wind's X alone as its strength; our wind may blow along Z.
     private static void SurfaceWindStrength(out float __state) => __state = Magnitude(GlobalConstants.CurrentSurfaceWindSpeedClient);
 
     private static void SurfaceWindRestore(float __state) => GlobalConstants.CurrentSurfaceWindSpeedClient.X = __state;
-
-    private static void WindStrength(out float __state) => __state = Magnitude(GlobalConstants.CurrentWindSpeedClient);
-
-    private static void WindRestore(float __state) => GlobalConstants.CurrentWindSpeedClient.X = __state;
 
     private static float Magnitude(Vec3f wind)
     {

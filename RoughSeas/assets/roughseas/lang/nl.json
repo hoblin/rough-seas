@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Ruwe zee",
+    "game:playstyle-desc-preset-roughseas": "Standaard overleven in een wereld met open oceanen, waar wind, stormen en de zee gevaarlijk zijn.",
+    "game:worldconfig-category-roughseas": "Ruwe zee",
+    "game:worldattribute-dangerousOceans": "Gevaarlijke oceanen",
+    "game:worldattribute-dangerousOceans-desc": "Stormen, branding en koud water breken schepen en doden zwemmers. Uitgeschakeld houdt de zee haar weer, maar doet ze geen kwaad.",
+    "vessel-condition-sound": "Romp: gaaf",
+    "vessel-condition-scarred": "Romp: gehavend",
+    "vessel-condition-damaged": "Romp: beschadigd, werkt",
+    "vessel-condition-breaking": "Romp: breekt op",
+    "bilge-water": "Bilgewater: {0} van {1} liter",
+    "item-anchorwarp": "Ankerlijn",
+    "itemdesc-anchorwarp": "Negen touwen gesplitst tot 90 meter lijn. Opgeborgen bij de mast van een zeilboot laat ze het anker dieper water bereiken."
+}

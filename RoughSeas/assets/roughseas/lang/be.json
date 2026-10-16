@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Бурнае мора",
+    "game:playstyle-desc-preset-roughseas": "Звычайнае выжыванне ў свеце з адкрытым акіянам, дзе вецер, штормы і мора небяспечныя.",
+    "game:worldconfig-category-roughseas": "Бурнае мора",
+    "game:worldattribute-dangerousOceans": "Небяспечны акіян",
+    "game:worldattribute-dangerousOceans-desc": "Штормы, прыбой і халодная вада ламаюць судны і забіваюць плыўцоў. Калі выключана, надвор'е на моры застаецца, але шкоды яно не робіць.",
+    "vessel-condition-sound": "Корпус: цэлы",
+    "vessel-condition-scarred": "Корпус: пашарпаны",
+    "vessel-condition-damaged": "Корпус: пашкоджаны, цячэ па швах",
+    "vessel-condition-breaking": "Корпус: развальваецца",
+    "bilge-water": "Вада ў труме: {0} з {1} л",
+    "item-anchorwarp": "Якарны канат",
+    "itemdesc-anchorwarp": "Дзевяць вяровак, зрошчаных у 90 метраў каната. Пакладзены каля мачты парусніка, ён дае якару дастаць дно на большай глыбіні."
+}

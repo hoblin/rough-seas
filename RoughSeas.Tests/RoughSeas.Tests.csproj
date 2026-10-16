@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <None Include="..\RoughSeas\assets\roughseas\config\seaweather.json" Link="seaweather.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\storms.json" Link="storms.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

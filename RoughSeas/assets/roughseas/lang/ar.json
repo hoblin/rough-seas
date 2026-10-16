@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "البحر الهائج",
+    "game:playstyle-desc-preset-roughseas": "بقاء قياسي في عالم ذي محيطات مفتوحة، حيث الرياح والعواصف والبحر خطرة.",
+    "game:worldconfig-category-roughseas": "البحر الهائج",
+    "game:worldattribute-dangerousOceans": "محيطات خطرة",
+    "game:worldattribute-dangerousOceans-desc": "العواصف والأمواج المتكسرة والماء البارد تحطم السفن وتقتل السبّاحين. عند الإيقاف، يحتفظ البحر بطقسه لكنه لا يؤذي.",
+    "vessel-condition-sound": "البدن: سليم",
+    "vessel-condition-scarred": "البدن: مخدوش",
+    "vessel-condition-damaged": "البدن: متضرر، تحت الإجهاد",
+    "vessel-condition-breaking": "البدن: يتفكك",
+    "bilge-water": "ماء قاع السفينة: {0} من {1} لتر",
+    "item-anchorwarp": "حبل المرساة",
+    "itemdesc-anchorwarp": "تسعة حبال مجدولة في حبل طوله 90 مترًا. يُخزَّن عند صاري القارب الشراعي، فيتيح للمرساة بلوغ مياه أعمق."
+}

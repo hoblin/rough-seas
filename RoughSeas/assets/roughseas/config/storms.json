@@ -1,0 +1,67 @@
+{
+    "tickSeconds": 0.5,
+    "waves": {
+        "minHeight": 0.3,
+        "whitecapCoefficient": 3.84e-6,
+        "whitecapExponent": 3.41,
+        "breakingDepthRatio": 1.28,
+        "waterDensity": 1025,
+        "breakerTransfer": 0.01,
+        "shippedWaterFraction": 0.05,
+        "airDensity": 1.225,
+        "windageDragCoefficient": 1.0,
+        "waveDriftCoefficient": 0.00625,
+        "maxDepthBlocks": 32,
+        "sources": {
+            "whitecapCoefficient": "Whitecap coverage W = 3.84e-6 U^3.41 (Monahan & O'Muircheartaigh 1980), taken as the share of waves that break",
+            "breakingDepthRatio": "A wave breaks in water shallower than 1.28 times its height (McCowan 1894)",
+            "waterDensity": "Seawater, kg/m3",
+            "breakerTransfer": "Balance: the share of a breaking crest's kinetic energy that lands on the hull",
+            "shippedWaterFraction": "Balance: the share of a breaking crest's water that stays aboard",
+            "airDensity": "Air at sea level, kg/m3",
+            "windageDragCoefficient": "Bluff body drag, about 1",
+            "waveDriftCoefficient": "Mean wave drift force is rho g H^2 / 16 per metre of beam on a body that reflects every wave; a small craft, short against the wavelength, reflects about a tenth"
+        }
+    },
+    "bilge": {
+        "rainMillimetresPerHour": 10,
+        "sources": {
+            "rainMillimetresPerHour": "Heavy rain is about 10 mm an hour; it falls at full rainfall, per game hour"
+        }
+    },
+    "mooring": {
+        "anchoredExposure": 0.3,
+        "stakeRope": "rope-flax",
+        "stakeReachMetres": 10,
+        "anchorFullScope": 5,
+        "anchorDragMetres": 1,
+        "sources": {
+            "anchoredExposure": "Balance: a vessel at anchor lies bow to the sea and takes a third of what strikes it broadside",
+            "stakeReachMetres": "Vanilla's longest rope",
+            "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth holds fully"
+        }
+    },
+    "ashore": {
+        "minHours": 1,
+        "maxSamples": 240,
+        "hazardPerSquareMetreHour": 0.05,
+        "surfReachPerMetre": 5,
+        "shoreSearchBlocks": 48,
+        "impactFactor": 3
+    },
+    "lightning": {
+        "checkSeconds": 2,
+        "strikesPerMinute": 2,
+        "minPresence": 0.5,
+        "minCelsius": 12,
+        "rangeBlocks": 200,
+        "attractBlocksPerMastMetre": 1,
+        "tallestMastMetres": 12,
+        "strikeRadiusBlocks": 3,
+        "strikeJoules": 20000,
+        "sources": {
+            "minCelsius": "Vanilla's LightningMinTemp for its thunderstorms",
+            "attractBlocksPerMastMetre": "A mast protects, and draws strikes from, a cone of about its own height in radius"
+        }
+    }
+}

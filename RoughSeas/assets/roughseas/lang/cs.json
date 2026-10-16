@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Rozbouřené moře",
+    "game:playstyle-desc-preset-roughseas": "Standardní přežití ve světě s otevřenými oceány, kde jsou vítr, bouře a moře nebezpečné.",
+    "game:worldconfig-category-roughseas": "Rozbouřené moře",
+    "game:worldattribute-dangerousOceans": "Nebezpečné oceány",
+    "game:worldattribute-dangerousOceans-desc": "Bouře, příboj a studená voda lámou plavidla a zabíjejí plavce. Vypnuto: moře si ponechá počasí, ale neublíží.",
+    "vessel-condition-sound": "Trup: neporušený",
+    "vessel-condition-scarred": "Trup: otlučený",
+    "vessel-condition-damaged": "Trup: poškozený, pracuje",
+    "vessel-condition-breaking": "Trup: rozpadá se",
+    "bilge-water": "Voda v podpalubí: {0} z {1} litrů",
+    "item-anchorwarp": "Kotevní lano",
+    "itemdesc-anchorwarp": "Devět lan spletených do 90 metrů kotevního lana. Uložené u stěžně plachetnice umožní kotvě dosáhnout hlubší vody."
+}

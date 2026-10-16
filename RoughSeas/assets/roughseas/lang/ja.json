@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "荒海",
+    "game:playstyle-desc-preset-roughseas": "風、嵐、そして海そのものが危険な、開けた大洋のある世界での標準的なサバイバル。",
+    "game:worldconfig-category-roughseas": "荒海",
+    "game:worldattribute-dangerousOceans": "危険な大洋",
+    "game:worldattribute-dangerousOceans-desc": "嵐、砕け波、冷たい海は船を壊し、泳ぐ者の命を奪う。オフにすると、海の天候はそのままだが害はない。",
+    "vessel-condition-sound": "船体：健全",
+    "vessel-condition-scarred": "船体：傷あり",
+    "vessel-condition-damaged": "船体：損傷、負荷がかかっている",
+    "vessel-condition-breaking": "船体：崩壊中",
+    "bilge-water": "ビルジ：{0} / {1} リットル",
+    "item-anchorwarp": "いかり綱",
+    "itemdesc-anchorwarp": "9本のロープを継ぎ合わせた90メートルの綱。帆船のマストに収めておくと、いかりがより深い海に届く。"
+}

@@ -10,6 +10,8 @@ No reinvented wheels: what the game already does first, then what Vintage Story'
 
 Treat the mod as a game we own, not a pile of patches. Each system (wind, boat damage, swimming stamina, wrecks…) is its own module behind a clear boundary. Each class has one responsibility, a small public interface and private internals; SOLID holds for a small mod as much as for a web backend, and it is what keeps later changes cheap. A system built this way can later leave as a mod of its own by moving its module, not by rewriting it. Swimming stamina is the first candidate.
 
+Every new text a player sees ships in every locale the game officially supports (the codes in the install's `assets/game/lang/languages.json`), in that language's nautical terms.
+
 ## Tools first
 
 When a task has no tool that fits, stop and build one: a little time spent now makes this task and every one after it simpler and faster. Keep it in proportion, though. We are building a mod, not a mod-building toolkit, so build the tool a task in front of you needs, not one for a task you imagine.
@@ -38,10 +40,17 @@ Stepped on already; don't step again.
 - The patch loader reads every file in `patches/`, whatever its extension. To switch a patch off, move it out of the folder.
 - An entity's variant is `entity.Properties.Variant["material"]`; `entity.Variant` is not set for entities.
 - Server physics runs on worker threads. `PhysicsUpdateWatcher` fires from them for a drifting entity and from the main thread for a steered one, so never touch the world from it: queue the event and act in `OnGameTick`.
-- A steered boat's `Pos.Motion` on the server is its intended speed (`EntityBoat` rewrites it from `ForwardSpeed`, which ignores collisions). The real speed comes from the rider's position packets.
+- A steered boat's `Pos.Motion` on the server is its intended speed (`EntityBoat` rewrites it from `ForwardSpeed`, which ignores collisions). The real speed comes from the rider's position packets. The server cannot hold a steered boat back either: an anchor or a leash can only follow it.
+- Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[storms\]' "$BENCH_DATA/Logs/server-debug.log"`). A new mechanic logs its decisions as it is written.
+
+**Vanilla at sea** (what 1.22.7 already has, and what we cannot change)
+- The sailboat carries a stone anchor (`anchor-stone`) in its prow slot. Right-click lowers and raises it (the `lowered` stack attribute); in vanilla that is only a shape. Our mooring gives it hold.
+- Boat accessories go on with Ctrl+right-click on the slot's own selection box (`bin/game hover ID LProwAP`). A slot holds one item, never a stack. The sailboat's `Lower Mast Storage` takes category `rope`, which no vanilla item has; our anchor warp fills it.
+- Vanilla rope ties to fences and grown logs (`RopeTieable`) and to `ropetieable` entities, which boats are only through our patch. It is a cloth spring of at most 10 m that pulls, not a hard leash, and it saves with its map region. Holding rope, a click on a rope-tieable entity ties it before any accessory slot sees the click.
+- A held liquid container passes its right-click to collectible behaviours only when empty and with no block selected; with drinkable content it drinks.
+- Vanilla's own lightning strikes only within ±200 blocks of a map region's centre. `OnLightningImpactBegin` can move the impact; vanilla damages creatures, boats among them, within 8 blocks of it.
 
 **Bench** (`bin/scene` handles most of these)
-- An idle player in water sinks to the seabed, and `state` then lists nothing near the surface. Stand on a post: `bin/scene dock`.
 - After a teleport, `~` commands use the server's position, which the client's stale one overwrites for a few seconds. Wait until `state` shows the arrival.
 - `/bridge sea` fails in a world with no open sea in its generated regions; open another world.
 - Spectators don't pick: hover text and entity selection need creative or survival.
@@ -49,6 +58,9 @@ Stepped on already; don't step again.
 - Water tints everything under its surface; judge textures on dry land (`bin/scene slab`).
 - Clean up after each test with `bin/scene clear` instead of opening new worlds. Reopening some worlds crashes the client (#24).
 - `pkill -f "bin/game …"` matches, and kills, your own shell.
+- `bin/client` kills the client without saving: run `/autosavenow` first, or `/worldconfig` changes and the player's place are lost.
+- Writing a vanilla watched attribute with a value of another type (`/bridge set ID clothIds x`) crashes every client that receives it.
+- An unridden vessel drifts out of reach within seconds. Board it (`/bridge mount ID`) to work on it; tie it with `/bridge tie`, read its ropes with `/bridge ropes`.
 - When something fails twice by hand, build the tool before the third try.
 
 ## Tickets

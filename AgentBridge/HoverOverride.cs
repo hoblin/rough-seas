@@ -12,6 +12,7 @@ namespace AgentBridge;
 public sealed class HoverOverride : IDisposable
 {
     private static Entity? target;
+    private static int boxIndex;
     private static object? clientWorld;
     private readonly Harmony harmony = new("agentbridge.hover");
 
@@ -32,6 +33,12 @@ public sealed class HoverOverride : IDisposable
         set => target = value;
     }
 
+    public int SelectionBoxIndex
+    {
+        get => boxIndex;
+        set => boxIndex = value;
+    }
+
     public void Dispose()
     {
         harmony.UnpatchAll(harmony.Id);
@@ -45,6 +52,7 @@ public sealed class HoverOverride : IDisposable
         entitySelection = new EntitySelection
         {
             Entity = target,
+            SelectionBoxIndex = boxIndex,
             Position = target.Pos.XYZ,
             HitPosition = new Vec3d(0, target.SelectionBox.Y2 / 2, 0),
             Face = BlockFacing.UP

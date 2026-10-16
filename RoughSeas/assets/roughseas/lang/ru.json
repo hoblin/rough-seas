@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Бурное море",
+    "game:playstyle-desc-preset-roughseas": "Обычное выживание в мире с открытым океаном, где ветер, шторма и море опасны.",
+    "game:worldconfig-category-roughseas": "Бурное море",
+    "game:worldattribute-dangerousOceans": "Опасный океан",
+    "game:worldattribute-dangerousOceans-desc": "Шторма, прибой и холодная вода ломают суда и убивают пловцов. Если выключено, погода на море остаётся, но вреда оно не причиняет.",
+    "vessel-condition-sound": "Корпус: цел",
+    "vessel-condition-scarred": "Корпус: потрёпан",
+    "vessel-condition-damaged": "Корпус: повреждён, течёт по швам",
+    "vessel-condition-breaking": "Корпус: разваливается",
+    "bilge-water": "Вода в трюме: {0} из {1} л",
+    "item-anchorwarp": "Якорный канат",
+    "itemdesc-anchorwarp": "Девять верёвок, сращённых в 90 метров каната. Уложенный у мачты парусника, он даёт якорю достать дно на большей глубине."
+}

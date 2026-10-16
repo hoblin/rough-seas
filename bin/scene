@@ -30,9 +30,6 @@ dock() {
   [ -n "${x:-}" ] || { echo "$sea" >&2; exit 1; }
   until "$game" state | jq -e --argjson x $((512000 + x)) --argjson z $((512000 + z)) \
     '(.pos.X - $x - 0.5 | fabs) < 1 and (.pos.Z - $z - 0.5 | fabs) < 1' >/dev/null; do sleep 1; done
-  "$game" do '/giveblock rock-granite 16' >/dev/null
-  "$game" slot 0 >/dev/null
-  "$game" do '/we mark ~ 100 ~ ~ 109 ~' '/we fill' '/tp ~ 110 ~' >/dev/null
   until "$game" state | jq -e '.pos.Y >= 109.9' >/dev/null; do sleep 1; done
   local x=-4
   for code in "${codes[@]}"; do

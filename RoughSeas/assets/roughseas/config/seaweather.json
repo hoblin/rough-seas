@@ -90,6 +90,20 @@
         "unitsPerMps": 0.04,
         "cloudSpeedPerMps": 0.2
     },
+    "swell": {
+        "periodSecondsPerRootMetre": 3.5,
+        "steepness": 0.8,
+        "components": [
+            { "angleDegrees": -18, "lengthFactor": 1.0, "share": 0.4 },
+            { "angleDegrees": 14, "lengthFactor": 0.7, "share": 0.3 },
+            { "angleDegrees": -6, "lengthFactor": 0.42, "share": 0.2 },
+            { "angleDegrees": 32, "lengthFactor": 0.25, "share": 0.1 }
+        ],
+        "sources": {
+            "periodSecondsPerRootMetre": "Pierson-Moskowitz fully developed sea: H = 0.21 U^2 / g, T = 0.81 * 2 pi U / g, so T = 3.5 s * sqrt(H / 1 m)",
+            "components": "Shares of the crest height, H / 2, by the waves that make it: the peak and shorter waves around it, spread about the wind"
+        }
+    },
     "currents": {
         "gyreDegrees": 30,
         "boundaryFraction": 0.1,
@@ -99,6 +113,7 @@
         "easternBoundaryCelsius": 6,
         "seawaterFreezingCelsius": -1.8,
         "basinReachBlocks": 8192,
-        "landBelowOceanity": 0.5
+        "landBelowOceanity": 0.5,
+        "stokesDriftPerMps": 0.015
     }
 }

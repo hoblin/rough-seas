@@ -12,7 +12,9 @@
                 "gameMode": "creative",
                 "worldClimate": "realistic",
                 "landcover": "0.3",
-                "temporalStorms": "off"
+                "temporalStorms": "off",
+                "temporalStability": "false",
+                "temporalRifts": "off"
             }
         }
     ]
