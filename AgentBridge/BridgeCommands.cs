@@ -404,6 +404,7 @@ public class BridgeCommands : ModSystem
         controls.CtrlKey = modifier == "ctrl";
         controls.ShiftKey = modifier == "shift";
         var interactMode = mode == "attack" ? EnumInteractMode.Attack : EnumInteractMode.Interact;
+        player.Entity.EntitySelection = new EntitySelection { Entity = entity, Position = entity.Pos.XYZ };
         if (interactMode == EnumInteractMode.Attack || entity.GetBehavior<EntityBehaviorVesselIntegrity>()?.TryPickUp(player.Entity) != true)
         {
             entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);

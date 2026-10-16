@@ -16,9 +16,9 @@
                 { "material": "wood-{material}", "reference": "wood-oak" },
                 { "material": "rope-flax", "reference": "rope-flax" }
             ],
-            "repairByType": {
-                "boat-raft-bamboo": { "material": { "type": "item", "code": "bamboostakes", "stacksize": 3 }, "restores": 0.34, "saturation": 60 },
-                "boat-raft-*": { "material": { "type": "block", "code": "log-placed-{material}-ud", "stacksize": 1 }, "restores": 0.17, "saturation": 60 }
+            "repairsByType": {
+                "boat-raft-bamboo": [{ "material": { "type": "item", "code": "bamboostakes", "stacksize": 3 }, "restores": 0.34, "saturation": 60 }],
+                "boat-raft-*": [{ "material": { "type": "block", "code": "log-placed-{material}-ud", "stacksize": 1 }, "restores": 0.17, "saturation": 60 }]
             },
             "wreckageByType": {
                 "boat-raft-bamboo": [
@@ -48,7 +48,7 @@
             "parts": [
                 { "material": "wood-{material}", "reference": "wood-oak" }
             ],
-            "repair": { "material": { "type": "item", "code": "plank-{material}", "stacksize": 10 }, "restores": 0.067, "saturation": 80 },
+            "repairs": [{ "material": { "type": "item", "code": "plank-{material}", "stacksize": 10 }, "restores": 0.067, "saturation": 80 }],
             "wreckage": [
                 { "type": "item", "code": "plank-{material}", "quantity": { "avg": 40, "var": 15 } },
                 { "type": "block", "code": "supportbeam-{material}", "quantity": { "avg": 6, "var": 3 } },

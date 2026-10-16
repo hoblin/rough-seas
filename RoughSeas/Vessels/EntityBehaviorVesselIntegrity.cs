@@ -26,6 +26,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const double WearStepHours = 1;
     private const string WornAtKey = "wornAt";
     private const string AfloatKey = "afloatHours";
+    private const string WornKey = "worn";
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
     private static readonly AssetLocation MendSound = new("game:sounds/player/build");
     private static readonly string[] Conditions = ["sound", "scarred", "damaged", "breaking"];
@@ -37,7 +38,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private DamageConversion damageConversion = null!;
     private VesselsModSystem vessels = null!;
     private ISeaWeather seaWeather = null!;
-    private HullRepair? repair;
+    private HullRepair[] repairs = [];
     private BlockDropItemStack[] wreckage = [];
     private HullCracks? cracks;
     private int shownStage;
@@ -59,6 +60,16 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         }
     }
 
+    private float Worn
+    {
+        get => Tree?.GetFloat(WornKey) ?? 0;
+        set
+        {
+            Tree.SetFloat(WornKey, Math.Clamp(value, 0, 1 - Integrity));
+            entity.WatchedAttributes.MarkPathDirty(TreeKey);
+        }
+    }
+
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
     public override string PropertyName() => Code;
@@ -66,8 +77,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         base.Initialize(properties, attributes);
-        repair = attributes["repair"].AsObject<HullRepair?>(null);
-        if (repair?.Material.Resolve(entity.World, "vessel repair") != true) repair = null;
+        repairs = attributes["repairs"].AsObject<HullRepair[]>([])
+            .Where(repair => repair.Material.Resolve(entity.World, "vessel repair"))
+            .ToArray();
 
         if (entity.Api is ICoreClientAPI capi)
         {
@@ -207,15 +219,16 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             if (server) Swing(byEntity, itemslot, hitPosition);
             return;
         }
-        if (!CanMendWith(itemslot)) return;
+        if (RepairWith(itemslot) is not { } repair) return;
 
         handled = EnumHandling.PreventSubsequent;
-        if (server) Mend(byEntity, itemslot);
+        if (server) Mend(byEntity, itemslot, repair);
     }
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
     {
-        if (repair == null || Integrity >= 1) return null;
+        var mending = repairs.Where(Helps).ToArray();
+        if (mending.Length == 0) return null;
 
         return
         [
@@ -223,7 +236,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             {
                 ActionLangCode = "roughseas:vessel-mend",
                 MouseButton = EnumMouseButton.Right,
-                Itemstacks = [repair.Material.ResolvedItemstack]
+                Itemstacks = mending.Select(repair => repair.Material.ResolvedItemstack).ToArray()
             }
         ];
     }
@@ -287,7 +300,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         Tree.SetDouble(AfloatKey, 0);
         float before = Integrity;
         Integrity = Math.Max(0, Integrity - (float)(wearPerDay * hours / calendar.HoursPerDay));
-        vessels.Log(entity, "wore {0:F1} h afloat: {1:F2} -> {2:F2}", hours, before, Integrity);
+        Worn += before - Integrity;
+        vessels.Log(entity, "wore {0:F1} h afloat: {1:F2} -> {2:F2}, {3:F2} worn ungreased", hours, before, Integrity, Worn);
         if (Integrity == 0) Break();
     }
 
@@ -317,21 +331,26 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         entity.ReceiveDamage(source, damage);
     }
 
-    private bool CanMendWith(ItemSlot slot)
+    private HullRepair? RepairWith(ItemSlot slot) => repairs.FirstOrDefault(repair =>
     {
-        var material = repair?.Material.ResolvedItemstack;
-        return material != null && Integrity < 1 &&
-               slot.Itemstack?.Collectible.Code == material.Collectible.Code && slot.StackSize >= material.StackSize;
-    }
+        var material = repair.Material.ResolvedItemstack;
+        return Helps(repair) && slot.Itemstack?.Collectible.Code == material.Collectible.Code && slot.StackSize >= material.StackSize;
+    });
 
-    private void Mend(EntityAgent byEntity, ItemSlot slot)
+    private bool Helps(HullRepair repair) => repair.Greases ? Worn > 0 : Integrity < 1;
+
+    private void Mend(EntityAgent byEntity, ItemSlot slot, HullRepair repair)
     {
-        slot.TakeOut(repair!.Material.StackSize);
+        slot.TakeOut(repair.Material.StackSize);
         slot.MarkDirty();
         byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(repair.Saturation);
         float before = Integrity;
-        Integrity = Math.Min(1, Integrity + repair.Restores);
-        vessels.Log(entity, "mended by {0}: {1:F2} -> {2:F2}", byEntity.GetName(), before, Integrity);
+        float worn = Worn;
+        float restores = repair.Greases ? Math.Min(repair.Restores, worn) : repair.Restores;
+        Integrity = Math.Min(1, Integrity + restores);
+        Worn = repair.Greases ? worn - restores : worn;
+        vessels.Log(entity, "{0} by {1}: {2:F2} -> {3:F2}, {4:F2} worn ungreased",
+            repair.Greases ? "greased" : "mended", byEntity.GetName(), before, Integrity, Worn);
         entity.World.PlaySoundAt(MendSound, entity, null, true, 16);
     }
 

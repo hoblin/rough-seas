@@ -22,11 +22,19 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
             "wearPerDay": 0.1,
-            "repair": {
-                "material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1},
-                "restores": 0.25,
-                "saturation": 40
-            },
+            "repairs": [
+                {
+                    "material": {"type": "item", "code": "game:hide-prepared-large", "stacksize": 1},
+                    "restores": 0.67,
+                    "saturation": 80
+                },
+                {
+                    "material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1},
+                    "restores": 0.25,
+                    "saturation": 40,
+                    "greases": true
+                }
+            ],
             "wreckage": [
                 {"type": "item", "code": "game:stick", "quantity": {"avg": 4, "var": 2}},
                 {"type": "item", "code": "game:leather-normal-plain", "quantity": {"avg": 2, "var": 1}}

@@ -17,11 +17,11 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 15000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
-            "repair": {
+            "repairs": [{
                 "material": {"type": "item", "code": "game:plank-{wood}", "stacksize": 2},
-                "restores": 0.2,
+                "restores": 0.09,
                 "saturation": 80
-            },
+            }],
             "wreckage": [
                 {"type": "item", "code": "game:plank-{wood}", "quantity": {"avg": 8, "var": 4}},
                 {"type": "item", "code": "game:rope", "quantity": {"avg": 1, "var": 1}},
