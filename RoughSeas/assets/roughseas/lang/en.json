@@ -7,5 +7,6 @@
     "vessel-condition-sound": "Hull: sound",
     "vessel-condition-scarred": "Hull: scarred",
     "vessel-condition-damaged": "Hull: damaged, taking strain",
-    "vessel-condition-breaking": "Hull: breaking up"
+    "vessel-condition-breaking": "Hull: breaking up",
+    "vessel-mend": "Mend the hull"
 }

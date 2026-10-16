@@ -1,0 +1,7 @@
+{
+    "joulesPerDamage": {
+        "Explosion": 1000,
+        "Weather": 1000
+    },
+    "defaultJoulesPerDamage": 200
+}
