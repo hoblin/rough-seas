@@ -19,6 +19,12 @@ public class Waves(WavesConfig config)
         return config.BreakerTransfer * 0.5 * CrestMass(height, beam) * crestSpeed * crestSpeed;
     }
 
+    /// <summary>The height of one wave in a sea of <paramref name="significantHeight"/>: the Rayleigh distribution at <paramref name="chance"/>.</summary>
+    public static double OneWave(double significantHeight, double chance) =>
+        significantHeight * Math.Sqrt(-Math.Log(1 - chance) / 2);
+
+    public double Crest(double height, bool breaking) => height * (breaking ? config.BreakingCrestRatio : config.CrestRatio);
+
     public double ShippedLitres(double height, double beam) =>
         config.ShippedWaterFraction * CrestMass(height, beam) / config.WaterDensity * 1000;
 

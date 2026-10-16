@@ -1,4 +1,5 @@
 using System.Globalization;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
@@ -32,6 +33,10 @@ public class StormsModSystem : ModSystem
         Config = api.Assets.Get<StormsConfig>(ConfigAsset);
         Waves = new Waves(Config.Waves);
     }
+
+    public override void StartClientSide(ICoreClientAPI capi) => VesselMotion.Attach();
+
+    public override void Dispose() => VesselMotion.Detach();
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {

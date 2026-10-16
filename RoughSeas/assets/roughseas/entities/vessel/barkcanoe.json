@@ -77,7 +77,28 @@
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
         },
-        "roughseas:seaforces": {"beamMetres": 0.75, "mastMetres": 0, "windageSquareMetres": 0.5}
+        "roughseas:seaforces": {
+            "beamMetres": 0.75,
+            "mastMetres": 0,
+            "windageSquareMetres": 0.5,
+            "freeboardMetres": 0.25,
+            "heave": 0.85,
+            "capsizeBreakerMetres": 0.75,
+            "rollResponse": 1.8,
+            "pitchResponse": 1.2,
+            "sources": {
+                "freeboardMetres": "A loaded birch-bark canoe shows about a quarter metre of side amidships",
+                "heave": "A 30 kg bark hull rises with the crest",
+                "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
+                "rollResponse": "Narrow and round in section: quick to roll"
+            }
+        },
+        "roughseas:bilge": {
+            "capacityLitres": 600,
+            "deckSquareMetres": 3.5,
+            "drainLitresPerHour": 0,
+            "sources": {"capacityLitres": "A 5 m hull, about 0.75 m wide and 0.35 m deep inside, half of its box"}
+        }
     },
     "client": {
         "size": 1,
@@ -92,7 +113,9 @@
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
-            {"code": "ropetieable"}
+            {"code": "ropetieable"},
+            {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"}
         ]
     },
     "server": {
@@ -105,6 +128,7 @@
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},
             {"code": "ropetieable"}
         ]

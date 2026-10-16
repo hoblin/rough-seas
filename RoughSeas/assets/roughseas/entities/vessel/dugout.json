@@ -80,7 +80,28 @@
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
         },
-        "roughseas:seaforces": {"beamMetres": 0.75, "mastMetres": 0, "windageSquareMetres": 0.6}
+        "roughseas:seaforces": {
+            "beamMetres": 0.75,
+            "mastMetres": 0,
+            "windageSquareMetres": 0.6,
+            "freeboardMetres": 0.2,
+            "heave": 0.5,
+            "capsizeBreakerMetres": 0.75,
+            "rollResponse": 2.5,
+            "pitchResponse": 1.2,
+            "sources": {
+                "freeboardMetres": "A loaded log dugout floats with a hand's breadth or two of side above water",
+                "heave": "Balance: 400 kg of log rises slowly to a crest; a light hull rises with it, a heavy one lets it climb the side",
+                "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
+                "rollResponse": "A round-bottomed log has little form stability: tippy in a sea"
+            }
+        },
+        "roughseas:bilge": {
+            "capacityLitres": 450,
+            "deckSquareMetres": 3,
+            "drainLitresPerHour": 0,
+            "sources": {"capacityLitres": "The hollow of a 5 m log, about 0.5 m wide and 0.35 m deep, half of its box"}
+        }
     },
     "client": {
         "size": 1,
@@ -95,7 +116,9 @@
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
-            {"code": "ropetieable"}
+            {"code": "ropetieable"},
+            {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"}
         ]
     },
     "server": {
@@ -108,6 +131,7 @@
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},
             {"code": "ropetieable"}
         ]

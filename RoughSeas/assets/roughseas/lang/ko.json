@@ -77,13 +77,13 @@
     "item-handbooktitle-reedboat": "사용 방법",
     "item-handbooktext-reedboat": "편도 여행용 배입니다. 칼로 갈대를 엮어 금방 만들 수 있고 들고 다니기 가볍지만, 물을 머금어 물에 띄운 지 사흘쯤 지나면 가라앉습니다. 수리할 수 없습니다.<br>- <hk>rightmouse</hk> 버튼으로 배치하고 <a href=\"handbooksearch://oar\">노</a>로 젓습니다.<br>- <hk>shift</hk> + <hk>rightmouse</hk> 버튼으로 집어듭니다.",
     "item-handbooktitle-dugout-*": "사용 방법",
-    "item-handbooktext-dugout-*": "통나무 하나를 파낸 배입니다. 판자 배 이전에 가장 튼튼한 선체로, 바위에도 거의 긁히지 않고 손질도 필요 없습니다. 너무 무거워 들고 다닐 수 없으며, 강과 호수의 일꾼입니다.<br>- 머물 자리에서 <hk>rightmouse</hk> 버튼으로 배치하고 <a href=\"handbooksearch://oar\">노</a>로 젓습니다.<br>- 같은 나무의 통나무로 수리합니다.",
+    "item-handbooktext-dugout-*": "통나무 하나를 파낸 배입니다. 판자 배 이전에 가장 튼튼한 선체로, 바위에도 거의 긁히지 않고 손질도 필요 없습니다. 너무 무거워 들고 다닐 수 없으며, 강과 호수의 일꾼입니다. 바다에서는 불안정합니다. 심하게 옆으로 흔들리고 낮은 뱃전 너머로 물이 듭니다. 물이 차오르기 전에 그릇, 주전자, 양동이로 물을 퍼내십시오.<br>- 머물 자리에서 <hk>rightmouse</hk> 버튼으로 배치하고 <a href=\"handbooksearch://oar\">노</a>로 젓습니다.<br>- 같은 나무의 통나무로 수리합니다.",
     "item-handbooktitle-coracle": "사용 방법",
     "item-handbooktext-coracle": "한 사람이 타는 둥근 가죽 그릇입니다. 제자리에서 돌고 직진은 서툽니다. 낚시와 짧은 건너기에 알맞습니다. 등에 멜 수 있을 만큼 가볍습니다.<br>- <a href=\"handbooksearch://oar\">노</a>로 젓습니다.<br>- <hk>shift</hk> + <hk>rightmouse</hk> 버튼으로 집어들고 배낭 칸에 넣으면 등에 메고 다닐 수 있습니다.<br>- 가죽으로 수리합니다.",
     "item-handbooktitle-barkcanoe": "사용 방법",
     "item-handbooktext-barkcanoe": "가벼운 뼈대에 자작나무 껍질을 씌운 배입니다. 빠르고 흘수가 아주 얕아서 다른 선체는 모두 부서지는 여울도 내려갈 수 있습니다. 약해서 물길 사이 육로에서는 들고 옮깁니다.<br>- <a href=\"handbooksearch://oar\">노</a>로 젓습니다.<br>- <hk>shift</hk> + <hk>rightmouse</hk> 버튼으로 집어듭니다.<br>- 가는 길에 자작나무 껍질로 수리합니다.",
     "item-handbooktitle-currach": "사용 방법",
-    "item-handbooktext-currach": "나무 뼈대에 기름 먹인 가죽을 씌운 배입니다. 가볍고, 노를 저어 해안을 따라 짐을 나릅니다. 바위에 가죽이 뚫리고, 물 위에서 며칠마다 정제 지방을 바르지 않으면 닳습니다.<br>- <a href=\"handbooksearch://oar\">노</a>로 젓습니다.<br>- <hk>shift</hk> + <hk>rightmouse</hk> 버튼으로 집어듭니다.<br>- 정제 지방을 발라 손질하고 수리합니다.",
+    "item-handbooktext-currach": "나무 뼈대에 기름 먹인 가죽을 씌운 배입니다. 가볍고, 노를 저어 해안을 따라 짐을 나릅니다. 바위에 가죽이 뚫리고, 물 위에서 며칠마다 정제 지방을 바르지 않으면 닳습니다. 가벼운 선체는 바다를 따라 휘어지며, 더 무거운 배라면 물을 뒤집어쓸 너울도 타고 넘습니다.<br>- <a href=\"handbooksearch://oar\">노</a>로 젓습니다.<br>- <hk>shift</hk> + <hk>rightmouse</hk> 버튼으로 집어듭니다.<br>- 정제 지방을 발라 손질하고 수리합니다.",
     "item-handbooktitle-outrigger-*": "사용 방법",
-    "item-handbooktext-outrigger-*": "통나무로 만든 좁은 선체를 부력재로 안정시킨 배입니다. 금속 이전 바다에서 가장 빠른 탈것입니다. 짐은 조금밖에 못 싣고, 좁은 물에서는 다루기 어려우며, 너무 무거워 들고 다니거나 뭍에 올릴 수 없습니다.<br>- 돛대의 이어줄 고정구를 <hk>rightmouse</hk> 버튼으로 클릭하면 돛을 올리거나 내립니다.<br>- 같은 나무의 판자로 수리합니다."
+    "item-handbooktext-outrigger-*": "통나무로 만든 좁은 선체를 부력재로 안정시킨 배입니다. 금속 이전 바다에서 가장 빠른 탈것입니다. 짐은 조금밖에 못 싣고, 좁은 물에서는 다루기 어려우며, 너무 무거워 들고 다니거나 뭍에 올릴 수 없습니다. 부력재 덕분에 바다에서도 매우 안정적이며, 높인 뱃전으로 물이 드는 일은 드뭅니다.<br>- 돛대의 이어줄 고정구를 <hk>rightmouse</hk> 버튼으로 클릭하면 돛을 올리거나 내립니다.<br>- 같은 나무의 판자로 수리합니다."
 }

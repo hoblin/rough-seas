@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
+using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Tests.Storms;
 
@@ -19,6 +20,12 @@ public static class Fixtures
     public static Vessel Raft => Vessel("boat-raft");
 
     public static Vessel Sailboat => Vessel("boat-sailed");
+
+    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)));
+
+    private static JToken SeaForces(string vessel) => vessel.StartsWith("boat-")
+        ? BehaviorConfig("storms-vessels.json", vessel, "roughseas:seaforces")
+        : JToken.Parse(Shipped(Path.Combine("vessel", vessel + ".json")))["behaviorConfigs"]!["roughseas:seaforces"]!;
 
     private static Vessel Vessel(string entity)
     {

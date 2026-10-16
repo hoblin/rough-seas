@@ -65,7 +65,8 @@ START
 LOOK
   bin/game state             player pos, camera, swimming, flying, vitals (health, oxygen, bodyTemp,
                              wetness), hotbar, mount, what the camera points at, entities within
-                             16 blocks, open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
+                             16 blocks (a shape's rendered roll and pitch in degrees: how a vessel
+                             rocks), open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
                              what a swing is measured by: the picked selection box, the eye's
                              distance to the entity's default box (vanilla's measure) and to
                              the point hit (a vessel's), and the held item's range
@@ -116,9 +117,11 @@ ACT
 
 SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge sea                fly to the nearest open sea, hovering just above the surface
-  /bridge storm [RANGE]      fly to where the storms within RANGE blocks (default 60000) raise the
-                             highest waves over open sea, hovering just above the surface; replies
-                             with the wave height. Set the time of day first: storms move.
+  /bridge storm [RANGE] [WAVES]
+                             fly to where the storms within RANGE blocks (default 60000) raise the
+                             highest waves over open sea, or those nearest WAVES metres, hovering
+                             just above the surface; replies with the wave height. Set the time of
+                             day first: storms move.
   /bridge drift [on|off]     whether unridden vessels drift with the current and the wind. Off on
                              every start, so a vessel stays where it was put; a drift test turns it on
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the

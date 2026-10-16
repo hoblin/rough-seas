@@ -54,7 +54,21 @@
             ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
-        "roughseas:seaforces": {"beamMetres": 0.9, "mastMetres": 0, "windageSquareMetres": 0.6}
+        "roughseas:seaforces": {
+            "beamMetres": 0.9,
+            "mastMetres": 0,
+            "windageSquareMetres": 0.6,
+            "freeboardMetres": 0.2,
+            "heave": 0.8,
+            "capsizeBreakerMetres": 0.9,
+            "rollResponse": 1.2,
+            "pitchResponse": 1.2,
+            "sources": {
+                "freeboardMetres": "Bundled reed floats high but sinks lower as it soaks; water that comes over runs out between the bundles",
+                "heave": "Reed is light and rises with the crest",
+                "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over"
+            }
+        }
     },
     "client": {
         "size": 1,
@@ -68,7 +82,8 @@
             {"code": "interpolateposition"},
             {"code": "selectionboxes"},
             {"code": "creaturecarrier"},
-            {"code": "ropetieable"}
+            {"code": "ropetieable"},
+            {"code": "roughseas:seaforces"}
         ]
     },
     "server": {
