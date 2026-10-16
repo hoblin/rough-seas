@@ -22,6 +22,7 @@ public class AgentBridgeModSystem : ModSystem
 
     private ICoreClientAPI capi = null!;
     private ScreenshotCapture screenshots = null!;
+    private HoverOverride hover = null!;
     private readonly HttpListener listener = new();
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Client;
@@ -30,6 +31,7 @@ public class AgentBridgeModSystem : ModSystem
     {
         capi = api;
         screenshots = new ScreenshotCapture(api);
+        hover = new HoverOverride(api);
         listener.Prefixes.Add(Prefix);
         listener.Start();
         _ = Task.Run(Serve);
@@ -40,6 +42,7 @@ public class AgentBridgeModSystem : ModSystem
     {
         listener.Close();
         screenshots?.Dispose();
+        hover?.Dispose();
     }
 
     private async Task Serve()
@@ -74,7 +77,8 @@ public class AgentBridgeModSystem : ModSystem
                 "/close-dialogs" => (Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),
                 "/input" => (Encoding.UTF8.GetBytes(await Input(context.Request)), "application/json"),
-                "/hotkey" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hotkey(context.Request.QueryString["code"]))), "text/plain"),
+                "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"]))), "application/json"),
+                "/hotkey" =>(Encoding.UTF8.GetBytes(await OnMainThread(() => Hotkey(context.Request.QueryString["code"]))), "text/plain"),
                 _ => throw new FileNotFoundException("Unknown endpoint; bin/game help lists what the bridge does")
             };
             response.ContentType = contentType;
@@ -162,6 +166,19 @@ public class AgentBridgeModSystem : ModSystem
             player.CameraPitch = (float)(Math.PI - Math.Atan2(dy, Math.Sqrt(dx * dx + dz * dz)));
         }
         return State();
+    }
+
+    private string Hover(string? entity)
+    {
+        if (!long.TryParse(entity, out var id))
+        {
+            hover.Target = null;
+            return "null\n";
+        }
+
+        var target = capi.World.GetEntityById(id) ?? throw new FileNotFoundException($"No entity {id} near the player");
+        hover.Target = target;
+        return JsonSerializer.Serialize(new { name = target.GetName(), info = target.GetInfoText() }) + "\n";
     }
 
     private async Task<string> Input(HttpListenerRequest request)

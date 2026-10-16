@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
@@ -20,12 +21,15 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const double PhysicsTicksPerSecond = 60;
     private const double WreckageScatterSpeed = 0.3;
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
+    private static readonly string[] Conditions = ["sound", "scarred", "damaged", "breaking"];
 
     private readonly object impactLock = new();
     private readonly List<double> pendingImpacts = new();
     private ImpactSensor sensor = null!;
     private double impactCapacity;
     private BlockDropItemStack[] wreckage = [];
+    private HullCracks? cracks;
+    private int shownStage;
 
     public EntityBehaviorVesselIntegrity(Entity entity) : base(entity) { }
 
@@ -47,7 +51,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         base.Initialize(properties, attributes);
-        if (entity.World.Side != EnumAppSide.Server) return;
+        if (entity.Api is ICoreClientAPI capi)
+        {
+            InitializeClient(capi, attributes);
+            return;
+        }
 
         if (Tree == null)
         {
@@ -58,12 +66,21 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         }
 
         var materials = entity.Api.ModLoader.GetModSystem<VesselsModSystem>().Materials;
-        impactCapacity = attributes["impactCapacity"].AsDouble() * materials.WeakestRatio(attributes["parts"].AsObject<VesselPart[]>([]));
+        impactCapacity = attributes["impactCapacity"].AsDouble() * materials.StrengthFactor(attributes["parts"].AsObject<VesselPart[]>([]));
         sensor = new ImpactSensor(attributes["minImpactSpeed"].AsDouble(1));
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])
             .Where(drop => drop.Resolve(entity.World, "vessel wreckage", entity.Code))
             .ToArray();
         entity.PhysicsUpdateWatcher += OnPhysicsUpdate;
+    }
+
+    public override ITexPositionSource? GetTextureSource(ref EnumHandling handling)
+    {
+        if (cracks?.Visible != true) return null;
+
+        handling = EnumHandling.PreventSubsequent;
+        var capi = (ICoreClientAPI)entity.Api;
+        return cracks.Over(capi.Tesselator.GetTextureSource(entity, null, entity.WatchedAttributes.GetInt("textureIndex")));
     }
 
     public override void OnEntityDespawn(EntityDespawnData despawn)
@@ -110,8 +127,28 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
     public override void GetInfoText(StringBuilder infotext)
     {
-        infotext.AppendLine(Lang.Get($"roughseas:vessel-condition-{Condition()}"));
+        infotext.AppendLine(Lang.Get($"roughseas:vessel-condition-{Conditions[Stage()]}"));
         base.GetInfoText(infotext);
+    }
+
+    private void InitializeClient(ICoreClientAPI capi, JsonObject attributes)
+    {
+        if (attributes["cracks"].AsObject<CrackConfig?>(null) is not { } config) return;
+
+        cracks = new HullCracks(capi, entity, config);
+        shownStage = Stage();
+        cracks.Show(shownStage);
+        entity.WatchedAttributes.RegisterModifiedListener(TreeKey, OnIntegrityChanged);
+    }
+
+    private void OnIntegrityChanged()
+    {
+        int stage = Stage();
+        if (stage == shownStage) return;
+
+        shownStage = stage;
+        cracks!.Show(stage);
+        entity.MarkShapeModified();
     }
 
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
@@ -163,11 +200,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         entity.Die(EnumDespawnReason.Death, new DamageSource { Source = EnumDamageSource.Block, Type = EnumDamageType.BluntAttack });
     }
 
-    private string Condition() => Integrity switch
+    private int Stage() => Integrity switch
     {
-        > 0.75f => "sound",
-        > 0.5f => "scarred",
-        > 0.25f => "damaged",
-        _ => "breaking"
+        > 0.75f => 0,
+        > 0.5f => 1,
+        > 0.25f => 2,
+        _ => 3
     };
 }

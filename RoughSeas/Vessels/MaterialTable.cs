@@ -15,8 +15,8 @@ public class MaterialTable
         this.logger = logger;
     }
 
-    public double WeakestRatio(IEnumerable<VesselPart> parts) =>
-        parts.Select(part => StrengthRatio(part.Material, part.Reference)).DefaultIfEmpty(1).Min();
+    public double StrengthFactor(IEnumerable<VesselPart> parts) =>
+        parts.Aggregate(1.0, (factor, part) => factor * StrengthRatio(part.Material, part.Reference));
 
     private double StrengthRatio(string material, string reference)
     {

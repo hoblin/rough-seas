@@ -6,6 +6,10 @@
         "side": "Server",
         "value": {
             "impactCapacity": 1200,
+            "cracks": {
+                "textures": ["material", "oak", "oak1", "birch1", "plainoak"],
+                "overlays": [["game:block/overlay/cracked/cracked5"], ["game:block/overlay/cracked/cracked15"], ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]]
+            },
             "parts": [
                 { "material": "wood-{material}", "reference": "wood-oak" },
                 { "material": "rope-flax", "reference": "rope-flax" }
@@ -31,6 +35,10 @@
         "side": "Server",
         "value": {
             "impactCapacity": 40000,
+            "cracks": {
+                "textures": ["material", "oak", "oak1", "birch1", "plainoak"],
+                "overlays": [["game:block/overlay/cracked/cracked5"], ["game:block/overlay/cracked/cracked15"], ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]]
+            },
             "parts": [
                 { "material": "wood-{material}", "reference": "wood-oak" }
             ],

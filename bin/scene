@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+bin/scene dock [CODE...]   calm noon at open sea, the player in creative standing on a granite post
+                           at the surface; each CODE (default boat-raft-oak boat-sailed-oak) is
+                           spawned unmanned beside it, 4 blocks apart. Prints the spawned entity ids.
+bin/scene slab CODE        a dry look at a vessel: CODE spawned on a granite slab above the sea, north
+                           of the player, who stands 3 blocks higher and looks down at it. Run after
+                           dock. Prints the entity id. `bin/game hotkey togglehud` hides the HUD.
+bin/scene clear [RANGE] [TYPE...]
+                           remove entities of each TYPE (default boat-* item; wildcards allowed,
+                           e.g. drifter-*) within RANGE blocks (default 64) of the player. Run it
+                           after each test, so one world serves the next.
+Run them after bin/client and bin/game wait.
+EOF
+}
+
+game="$(dirname "$0")/game"
+
+dock() {
+  local codes=("$@")
+  [ ${#codes[@]} -eq 0 ] && codes=(boat-raft-oak boat-sailed-oak)
+  "$game" do '/gamemode creative' '/time set 12:00' '/weather setprecip 0' '/weather set clearsky' \
+    '/weather setw still' '/weather acp false' >/dev/null
+  local sea x z
+  sea=$("$game" do '/bridge sea')
+  read -r x z < <(sed -n 's/.*open sea at \(-\?[0-9]*\) [0-9]* \(-\?[0-9]*\).*/\1 \2/p' <<<"$sea")
+  [ -n "${x:-}" ] || { echo "$sea" >&2; exit 1; }
+  until "$game" state | jq -e --argjson x $((512000 + x)) --argjson z $((512000 + z)) \
+    '(.pos.X - $x - 0.5 | fabs) < 1 and (.pos.Z - $z - 0.5 | fabs) < 1' >/dev/null; do sleep 1; done
+  "$game" do '/giveblock rock-granite 16' >/dev/null
+  "$game" slot 0 >/dev/null
+  "$game" do '/we mark ~ 100 ~ ~ 109 ~' '/we fill' '/tp ~ 110 ~' >/dev/null
+  until "$game" state | jq -e '.pos.Y >= 109.9' >/dev/null; do sleep 1; done
+  local x=-4
+  for code in "${codes[@]}"; do
+    "$game" do "/entity spawnat $code 1 ~$x ~-1 ~-5 0" >/dev/null
+    x=$((x + 4))
+  done
+  sleep 3
+  "$game" state | jq -c --argjson codes "$(printf '%s\n' "${codes[@]}" | jq -R . | jq -s 'map("game:" + .)')" \
+    '{player: .pos, vessels: [.nearby[] | select(.code as $c | $codes | index($c)) | {EntityId, code}]}'
+}
+
+slab() {
+  local code=$1
+  "$game" slot 0 >/dev/null
+  "$game" do '/giveblock rock-granite 64' '/we mark ~-3 110 ~-8 ~3 110 ~-2' '/we fill' \
+    '/we mark ~ 110 ~ ~ 112 ~' '/we fill' '/we clear' '/tp ~ 113 ~' >/dev/null
+  until "$game" state | jq -e '.pos.Y >= 112.9' >/dev/null; do sleep 1; done
+  "$game" do "/entity spawnat $code 1 ~ 111 ~-5 0" >/dev/null
+  sleep 2
+  "$game" look 3.1416 4.2 >/dev/null
+  "$game" state | jq -r --arg code "game:$code" '[.nearby[] | select(.code == $code)][0].EntityId'
+}
+
+clear() {
+  local range=${1:-64}
+  shift || true
+  local types=("$@")
+  [ ${#types[@]} -eq 0 ] && types=(boat-* item)
+  for type in "${types[@]}"; do
+    "$game" do "/entity remove e[type=$type,range=$range]"
+  done
+}
+
+case "${1:-}" in
+  dock) shift; dock "$@" ;;
+  slab) shift; slab "$@" ;;
+  clear) shift; clear "$@" ;;
+  *) usage ;;
+esac

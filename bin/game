@@ -28,6 +28,9 @@ START
   bin/client [WORLD]   build both mods, (re)start this clone's client in tmux.
                        Opens singleplayer world WORLD (default "sea"); a new world is made with the
                        AgentBridge preset: creative, standard worldgen, 70% ocean. Takes ~30 s.
+                       BENCH_MODS picks the mods loaded (default "roughseas agentbridge"):
+                       BENCH_MODS=agentbridge, or BENCH_MODS= for vanilla, to tell our crash from
+                       the game's. Without agentbridge, bin/game cannot drive it; read the log.
   bin/client server    connect the client to this clone's dedicated server instead (multiplayer).
                        Start bin/server first and wait for "Dedicated Server now running" in a
                        log newer than the start. The player needs admin there, once per server
@@ -57,6 +60,11 @@ ACT
   bin/game look YAW PITCH    aim the camera, radians. Yaw 0 faces +Z, pi/2 +X, pi -Z;
                              pitch pi is level, above pi looks down (range 1.59-4.70)
   bin/game aim ID            aim the camera at an entity
+  bin/game hover [ID]        make the game treat entity ID as looked at, whatever the camera points
+                             at: the HUD shows its name and info text, interactions target it, and
+                             the reply is that name and text as JSON. Without ID, stop.
+                             Use it instead of aiming by coordinates at small selection boxes.
+                             The HUD part needs creative or survival: spectators do not pick.
   bin/game slot N            select hotbar slot N (0-9)
   bin/game press KEYS [MS]   hold keys for MS ms (default 100). GlKeys names, comma-separated:
                              W,A,S,D, Space, ShiftLeft, ControlLeft, Q, E, R, F, Number1 ...
@@ -135,6 +143,7 @@ case "${1:-}" in
     ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
   aim) post "/look?entity=$2" ;;
+  hover) post "/hover?entity=${2:-}" ;;
   slot) post "/look?slot=$2" ;;
   press) post "/input?keys=$2&ms=${3:-100}" ;;
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
