@@ -4,6 +4,7 @@ using System.Text.Json;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
@@ -50,6 +51,17 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Seat the caller in an entity, a steering seat first")
                 .WithArgs(parsers.Long("id"))
                 .HandleWith(args => Mount(args.Caller.Player, sapi.World.GetEntityById((long)args[0])))
+            .EndSubCommand()
+            .BeginSubCommand("dismount")
+                .WithDescription("Take the caller off whatever they ride, as Shift does")
+                .HandleWith(args => args.Caller.Player.Entity.MountedOn != null && args.Caller.Player.Entity.TryUnmount()
+                    ? TextCommandResult.Success("Dismounted")
+                    : TextCommandResult.Error("Not mounted, or the seat would not let go"))
+            .EndSubCommand()
+            .BeginSubCommand("wear")
+                .WithDescription("Put an item into the caller's first empty backpack slot, where it is worn on the back")
+                .WithArgs(parsers.Word("item code"))
+                .HandleWith(args => Wear(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
             .BeginSubCommand("strike")
                 .WithDescription("Strike a vessel's hull with an impact of this many joules; the hull rolls against it as it does for any impact")
@@ -126,6 +138,22 @@ public class BridgeCommands : ModSystem
         if (seat == null || !player.Entity.TryMount(seat)) return TextCommandResult.Error("No free seat");
 
         return TextCommandResult.Success($"Seated in {target!.Code} {target.EntityId}, seat {seat.SeatId}");
+    }
+
+    private TextCommandResult Wear(IPlayer player, string code)
+    {
+        var item = sapi.World.GetItem(new AssetLocation(code));
+        if (item == null) return TextCommandResult.Error($"No item {code}");
+
+        var slot = player.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName).FirstOrDefault(slot => slot is ItemSlotBackpack && slot.Empty);
+        if (slot == null) return TextCommandResult.Error("No empty backpack slot");
+
+        var stack = new ItemStack(item);
+        if (!slot.CanHold(new DummySlot(stack))) return TextCommandResult.Error($"{code} does not go in a backpack slot");
+
+        slot.Itemstack = stack;
+        slot.MarkDirty();
+        return TextCommandResult.Success($"Wearing {code}");
     }
 
     private static TextCommandResult Strike(Entity? entity, double joules)

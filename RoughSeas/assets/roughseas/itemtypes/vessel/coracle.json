@@ -1,6 +1,11 @@
 {
     "code": "coracle",
     "class": "roughseas:ItemVessel",
+    "storageFlags": 3,
+    "attributes": {
+        "attachableToEntity": {"categoryCode": "backpack", "attachedShape": {"base": "roughseas:entity/vessel/coracle-back"}},
+        "wearableAttachment": true
+    },
     "durability": 100,
     "maxstacksize": 1,
     "materialDensity": 1,

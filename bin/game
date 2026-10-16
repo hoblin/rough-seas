@@ -87,6 +87,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood
   /bridge mount ID           seat the player in an existing seatable entity
+  /bridge dismount           get off it again: the unfocused client drops Shift
+  /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
   /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
                              e.g. the sailboat's sailPosition 0, 1, 2
   /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with
