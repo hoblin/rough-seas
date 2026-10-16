@@ -93,7 +93,8 @@ public class AgentBridgeModSystem : ModSystem
                 "/state" => (Encoding.UTF8.GetBytes(await OnMainThread(State)), "application/json"),
                 "/screenshot" => (await screenshots.Next(context.Request.QueryString["gui"] != null), "image/png"),
                 "/link" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Link(context.Request.QueryString["href"]))), "text/plain"),
-                "/close-dialogs" => (Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
+                "/scroll" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Scroll(context.Request.QueryString["steps"]))), "text/plain"),
+                "/close-dialogs" =>(Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),
                 "/input" => (Encoding.UTF8.GetBytes(await Input(context.Request)), "application/json"),
                 "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"], context.Request.QueryString["box"], context.Request.QueryString["block"]))), "application/json"),
@@ -313,6 +314,18 @@ public class AgentBridgeModSystem : ModSystem
         _ = Task.Delay(LeaveDelayMs).ContinueWith(_ => capi.Event.EnqueueMainThreadTask(
             () => ((ClientMain)capi.World).DestroyGameSession(gotDisconnected: false, EnumExitMode.SoftExit), "agentbridge"));
         return capi.IsSinglePlayer ? "Saving the world and leaving it\n" : "Leaving the server\n";
+    }
+
+    private string Scroll(string? steps)
+    {
+        var wheel = -int.Parse(steps ?? "1", CultureInfo.InvariantCulture);
+        var scrolled = Dialogs().Where(dialog =>
+        {
+            var args = new MouseWheelEventArgs { delta = wheel, deltaPrecise = wheel };
+            dialog.OnMouseWheel(args);
+            return args.IsHandled;
+        }).Select(dialog => dialog.DebugName).ToList();
+        return string.Join("\n", scrolled) + "\n";
     }
 
     private string CloseDialogs()

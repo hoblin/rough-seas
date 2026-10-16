@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Wzburzone morze",
+    "playstyle-desc-preset-roughseas": "Zwykłe przetrwanie w świecie otwartych oceanów, gdzie wiatr, sztormy i morze są groźne.",
+    "worldconfig-category-roughseas": "Wzburzone morze",
+    "worldattribute-dangerousOceans": "Groźne oceany",
+    "worldattribute-dangerousOceans-desc": "Sztormy, przybój i pioruny mogą zalać, wywrócić i rozbić łodzie oraz zerwać je z cum i kotwic. Wyłączone: morze zachowuje pogodę, ale nie szkodzi."
+}

@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Mar gruesa",
+    "playstyle-desc-preset-roughseas": "Supervivencia estándar en un mundo de océanos abiertos, donde el viento, las tormentas y el mar son peligrosos.",
+    "worldconfig-category-roughseas": "Mar gruesa",
+    "worldattribute-dangerousOceans": "Océanos peligrosos",
+    "worldattribute-dangerousOceans-desc": "Las tormentas, la rompiente y los rayos pueden anegar, hacer zozobrar y romper embarcaciones, y arrancarlas de sus amarras y de su fondeo. Desactivado, el mar conserva su clima pero no hace daño."
+}

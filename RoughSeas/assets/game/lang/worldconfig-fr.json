@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Mer agitée",
+    "playstyle-desc-preset-roughseas": "Survie classique dans un monde aux océans ouverts, où le vent, les tempêtes et la mer sont dangereux.",
+    "worldconfig-category-roughseas": "Mer agitée",
+    "worldattribute-dangerousOceans": "Océans dangereux",
+    "worldattribute-dangerousOceans-desc": "Tempêtes, déferlantes et foudre peuvent submerger, faire chavirer et briser les embarcations, et les arracher à leurs amarres. Désactivé, la mer garde sa météo mais ne fait aucun mal."
+}

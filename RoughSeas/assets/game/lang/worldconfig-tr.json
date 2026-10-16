@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Hırçın deniz",
+    "playstyle-desc-preset-roughseas": "Açık okyanusları olan, rüzgârın, fırtınaların ve denizin tehlikeli olduğu bir dünyada standart hayatta kalma.",
+    "worldconfig-category-roughseas": "Hırçın deniz",
+    "worldattribute-dangerousOceans": "Tehlikeli okyanuslar",
+    "worldattribute-dangerousOceans-desc": "Fırtınalar, kıyı dalgaları ve yıldırımlar teknelere su aldırabilir, onları alabora edip parçalayabilir, bağlarından ve demirlerinden koparabilir. Kapalıyken deniz havasını korur ama zarar vermez."
+}

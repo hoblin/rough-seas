@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "البحر الهائج",
+    "playstyle-desc-preset-roughseas": "بقاء قياسي في عالم ذي محيطات مفتوحة، حيث الرياح والعواصف والبحر خطرة.",
+    "worldconfig-category-roughseas": "البحر الهائج",
+    "worldattribute-dangerousOceans": "محيطات خطرة",
+    "worldattribute-dangerousOceans-desc": "العواصف والأمواج المتكسرة والصواعق قد تُغرق المراكب بالماء وتقلبها وتحطمها، وتنتزعها من مرابطها ومراسيها. عند الإيقاف، يحتفظ البحر بطقسه لكنه لا يؤذي."
+}

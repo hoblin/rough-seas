@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Бурнае мора",
+    "playstyle-desc-preset-roughseas": "Звычайнае выжыванне ў свеце з адкрытым акіянам, дзе вецер, штормы і мора небяспечныя.",
+    "worldconfig-category-roughseas": "Бурнае мора",
+    "worldattribute-dangerousOceans": "Небяспечны акіян",
+    "worldattribute-dangerousOceans-desc": "Штормы, прыбой і маланкі могуць затапіць, перакуліць і разбіць судны, а таксама сарваць іх са швартовых і з якара. Калі выключана, надвор'е на моры застаецца, але шкоды яно не робіць."
+}

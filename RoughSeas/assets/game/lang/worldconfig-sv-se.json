@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Grov sjö",
+    "playstyle-desc-preset-roughseas": "Standardöverlevnad i en värld med öppna hav, där vind, stormar och havet är farliga.",
+    "worldconfig-category-roughseas": "Grov sjö",
+    "worldattribute-dangerousOceans": "Farliga hav",
+    "worldattribute-dangerousOceans-desc": "Stormar, bränningar och blixtar kan vattenfylla, kantra och slå sönder farkoster och slita dem loss från förtöjningar och ankare. Avstängt behåller havet sitt väder men gör ingen skada."
+}

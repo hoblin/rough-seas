@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Rough Seas",
+    "playstyle-desc-preset-roughseas": "Standard survival on a world with open oceans, where wind, storms and the sea are dangerous.",
+    "worldconfig-category-roughseas": "Rough Seas",
+    "worldattribute-dangerousOceans": "Dangerous oceans",
+    "worldattribute-dangerousOceans-desc": "Storms, surf and lightning can swamp, capsize and break vessels, and tear them from their moorings. Off, the sea keeps its weather but does no harm."
+}

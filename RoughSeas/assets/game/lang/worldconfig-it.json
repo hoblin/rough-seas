@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Mare grosso",
+    "playstyle-desc-preset-roughseas": "Sopravvivenza normale in un mondo dagli oceani aperti, dove vento, tempeste e mare sono pericolosi.",
+    "worldconfig-category-roughseas": "Mare grosso",
+    "worldattribute-dangerousOceans": "Oceani pericolosi",
+    "worldattribute-dangerousOceans-desc": "Tempeste, frangenti e fulmini possono allagare, far scuffiare e spezzare le imbarcazioni, e strapparle dagli ormeggi. Disattivato, il mare mantiene il suo meteo ma non fa danni."
+}

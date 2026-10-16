@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Viharos tenger",
+    "playstyle-desc-preset-roughseas": "Normál túlélés nyílt óceánokkal rendelkező világban, ahol a szél, a viharok és a tenger veszélyesek.",
+    "worldconfig-category-roughseas": "Viharos tenger",
+    "worldattribute-dangerousOceans": "Veszélyes óceánok",
+    "worldattribute-dangerousOceans-desc": "A viharok, a törőhullámok és a villámok eláraszthatják, felboríthatják és összetörhetik a vízi járműveket, és letéphetik őket a kikötésükről. Kikapcsolva a tenger megtartja időjárását, de nem okoz kárt."
+}
