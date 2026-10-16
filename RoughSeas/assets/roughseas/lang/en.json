@@ -1,3 +1,7 @@
 {
-    "hello": "hello world!"
+    "hello": "hello world!",
+    "vessel-condition-sound": "Hull: sound",
+    "vessel-condition-scarred": "Hull: scarred",
+    "vessel-condition-damaged": "Hull: damaged, taking strain",
+    "vessel-condition-breaking": "Hull: breaking up"
 }

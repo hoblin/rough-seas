@@ -71,6 +71,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge mount ID           seat the player in an existing seatable entity
   /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
                              e.g. the sailboat's sailPosition 0, 1, 2
+  /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with
+                             its integrity (watched "roughseas:vessel"), 0 breaks it into wreckage
   /bridge here, /bridge entity ID   what `here` and `entity` call
 
 RECIPES

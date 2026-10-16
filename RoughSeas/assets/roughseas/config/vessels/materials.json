@@ -1,0 +1,17 @@
+{
+    "wood-oak": { "strength": 97.1, "source": "English oak (Quercus robur), modulus of rupture in MPa at 12% moisture; wood-database.com/english-oak" },
+    "wood-birch": { "strength": 114.3, "source": "Silver birch (Betula pendula), modulus of rupture in MPa; wood-database.com/silver-birch" },
+    "wood-maple": { "strength": 109.0, "source": "Hard maple (Acer saccharum), modulus of rupture in MPa; wood-database.com/hard-maple" },
+    "wood-pine": { "strength": 83.3, "source": "Scots pine (Pinus sylvestris), modulus of rupture in MPa; wood-database.com/scots-pine" },
+    "wood-acacia": { "strength": 87.0, "source": "Koa (Acacia koa), modulus of rupture in MPa; wood-database.com/koa" },
+    "wood-kapok": { "strength": 36.0, "source": "Kapok (Ceiba pentandra), modulus of rupture in MPa; CIRAD Tropix, Ceiba" },
+    "wood-baldcypress": { "strength": 73.1, "source": "Bald cypress (Taxodium distichum), modulus of rupture in MPa; wood-database.com/bald-cypress" },
+    "wood-larch": { "strength": 90.0, "source": "European larch (Larix decidua), modulus of rupture in MPa; wood-database.com/european-larch" },
+    "wood-redwood": { "strength": 61.7, "source": "Coast redwood (Sequoia sempervirens), modulus of rupture in MPa; wood-database.com/redwood" },
+    "wood-ebony": { "strength": 158.1, "source": "Gaboon ebony (Diospyros crassiflora), modulus of rupture in MPa; wood-database.com/gaboon-ebony" },
+    "wood-walnut": { "strength": 100.7, "source": "Black walnut (Juglans nigra), modulus of rupture in MPa; wood-database.com/black-walnut" },
+    "wood-purpleheart": { "strength": 151.7, "source": "Purpleheart (Peltogyne spp.), modulus of rupture in MPa; wood-database.com/purpleheart" },
+    "wood-bamboo": { "strength": 130.0, "source": "Moso bamboo culm (Phyllostachys edulis), bending strength in MPa; pmc.ncbi.nlm.nih.gov/articles/PMC4233722" },
+    "wood-aged": { "strength": 48.6, "source": "Weathered timber, no real species: half of English oak" },
+    "rope-flax": { "strength": 11.0, "source": "Flax rope, 12 mm, breaking strength in kN (BS EN ISO 1181); flints.co.uk ROP304" }
+}

@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
@@ -49,6 +50,11 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Seat the caller in an entity, a steering seat first")
                 .WithArgs(parsers.Long("id"))
                 .HandleWith(args => Mount(args.Caller.Player, sapi.World.GetEntityById((long)args[0])))
+            .EndSubCommand()
+            .BeginSubCommand("strike")
+                .WithDescription("Strike a vessel's hull with an impact of this many joules; the hull rolls against it as it does for any impact")
+                .WithArgs(parsers.Long("id"), parsers.Double("joules"))
+                .HandleWith(args => Strike(sapi.World.GetEntityById((long)args[0]), (double)args[1]))
             .EndSubCommand();
     }
 
@@ -110,6 +116,15 @@ public class BridgeCommands : ModSystem
         if (seat == null || !player.Entity.TryMount(seat)) return TextCommandResult.Error("No free seat");
 
         return TextCommandResult.Success($"Seated in {target!.Code} {target.EntityId}, seat {seat.SeatId}");
+    }
+
+    private static TextCommandResult Strike(Entity? entity, double joules)
+    {
+        var hull = entity?.GetBehavior<EntityBehaviorVesselIntegrity>();
+        if (hull == null) return TextCommandResult.Error("Not a vessel");
+
+        hull.Strike(joules);
+        return TextCommandResult.Success($"{entity!.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity}");
     }
 
     private static TextCommandResult Reply(object value) => TextCommandResult.Success(JsonSerializer.Serialize(value));
