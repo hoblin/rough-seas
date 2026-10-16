@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Бурное море",
+    "playstyle-desc-preset-roughseas": "Обычное выживание в мире с открытым океаном, где ветер, шторма и море опасны.",
+    "worldconfig-category-roughseas": "Бурное море",
+    "worldattribute-dangerousOceans": "Опасный океан",
+    "worldattribute-dangerousOceans-desc": "Бури, прибой и молнии могут залить, опрокинуть и разбить суда и сорвать их со швартовов и якорей. Если выключено, погода на море остаётся, но вреда оно не причиняет."
+}

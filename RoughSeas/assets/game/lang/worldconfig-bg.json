@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Бурно море",
+    "playstyle-desc-preset-roughseas": "Стандартно оцеляване в свят с открити океани, където вятърът, бурите и морето са опасни.",
+    "worldconfig-category-roughseas": "Бурно море",
+    "worldattribute-dangerousOceans": "Опасни океани",
+    "worldattribute-dangerousOceans-desc": "Бури, прибой и мълнии могат да наводнят, преобърнат и разбият плавателни съдове и да ги откъснат от швартовите и котвата им. Ако е изключено, морето запазва времето си, но не вреди."
+}

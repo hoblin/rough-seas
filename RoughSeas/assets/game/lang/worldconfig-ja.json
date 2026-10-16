@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "荒海",
+    "playstyle-desc-preset-roughseas": "風、嵐、そして海そのものが危険な、開けた大洋のある世界での標準的なサバイバル。",
+    "worldconfig-category-roughseas": "荒海",
+    "worldattribute-dangerousOceans": "危険な大洋",
+    "worldattribute-dangerousOceans-desc": "嵐、砕け波、落雷は舟を水船にし、転覆させ、壊し、舫いや錨から引きはがすことがある。オフにすると、海の天候はそのままだが害はない。"
+}

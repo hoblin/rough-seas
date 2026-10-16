@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "驚濤駭浪",
+    "playstyle-desc-preset-roughseas": "在擁有開闊海洋的世界中進行標準生存，風、暴風雨與大海都很危險。",
+    "worldconfig-category-roughseas": "驚濤駭浪",
+    "worldattribute-dangerousOceans": "危險海洋",
+    "worldattribute-dangerousOceans-desc": "暴風雨、拍岸浪與閃電會讓船隻進水、翻覆、毀壞，並使其掙脫繫泊與錨泊。關閉後，海上仍有天氣變化，但不會造成傷害。"
+}

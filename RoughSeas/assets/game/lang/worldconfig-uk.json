@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Буремне море",
+    "playstyle-desc-preset-roughseas": "Звичайне виживання у світі з відкритим океаном, де вітер, шторми й море небезпечні.",
+    "worldconfig-category-roughseas": "Буремне море",
+    "worldattribute-dangerousOceans": "Небезпечний океан",
+    "worldattribute-dangerousOceans-desc": "Шторми, прибій і блискавки можуть затопити, перекинути й розбити судна, а також зірвати їх зі швартовів і якоря. Якщо вимкнено, погода на морі лишається, але шкоди воно не завдає."
+}

@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "ทะเลคลั่ง",
+    "playstyle-desc-preset-roughseas": "การเอาชีวิตรอดแบบมาตรฐานในโลกที่มีมหาสมุทรเปิดกว้าง ซึ่งลม พายุ และทะเลล้วนเป็นอันตราย",
+    "worldconfig-category-roughseas": "ทะเลคลั่ง",
+    "worldattribute-dangerousOceans": "มหาสมุทรอันตราย",
+    "worldattribute-dangerousOceans-desc": "พายุ คลื่นหัวแตก และฟ้าผ่าอาจทำให้น้ำท่วมเรือ เรือล่ม และเรือแตกพัง รวมถึงกระชากเรือหลุดจากที่ผูกและสมอ หากปิด ทะเลยังคงมีสภาพอากาศเช่นเดิมแต่ไม่ก่ออันตราย"
+}

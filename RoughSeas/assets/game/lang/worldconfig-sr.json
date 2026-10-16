@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Узбуркано море",
+    "playstyle-desc-preset-roughseas": "Нормално преживљавање у свету отворених океана, где су ветар, олује и море опасни.",
+    "worldconfig-category-roughseas": "Узбуркано море",
+    "worldattribute-dangerousOceans": "Опасни океани",
+    "worldattribute-dangerousOceans-desc": "Олује, бибавица и муње могу да потопе, преврну и разбију пловила, и да их откину са веза и сидра. Искључено, море задржава своје време, али не наноси штету."
+}

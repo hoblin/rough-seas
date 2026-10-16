@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "거친 바다",
+    "playstyle-desc-preset-roughseas": "바람, 폭풍, 바다가 위험한 열린 대양의 세계에서 하는 기본 생존.",
+    "worldconfig-category-roughseas": "거친 바다",
+    "worldattribute-dangerousOceans": "위험한 대양",
+    "worldattribute-dangerousOceans-desc": "폭풍, 쇄파, 번개는 배를 침수시키고, 뒤집고, 부수고, 묶어 둔 자리에서 떼어 낼 수 있습니다. 끄면 바다의 날씨는 그대로지만 해를 끼치지 않습니다."
+}

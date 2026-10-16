@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Biển động",
+    "playstyle-desc-preset-roughseas": "Sinh tồn chuẩn trong một thế giới có đại dương rộng mở, nơi gió, bão và biển cả đều nguy hiểm.",
+    "worldconfig-category-roughseas": "Biển động",
+    "worldattribute-dangerousOceans": "Đại dương nguy hiểm",
+    "worldattribute-dangerousOceans-desc": "Bão, sóng vỗ bờ và sét có thể làm ngập, lật và vỡ tàu thuyền, và giật chúng khỏi chỗ buộc và neo. Khi tắt, biển vẫn giữ thời tiết nhưng không gây hại."
+}

@@ -1,0 +1,7 @@
+{
+    "playstyle-preset-roughseas": "Mar bravo",
+    "playstyle-desc-preset-roughseas": "Sobrevivência normal num mundo de oceanos abertos, onde o vento, as tempestades e o mar são perigosos.",
+    "worldconfig-category-roughseas": "Mar bravo",
+    "worldattribute-dangerousOceans": "Oceanos perigosos",
+    "worldattribute-dangerousOceans-desc": "Tempestades, arrebentação e raios podem alagar, emborcar e quebrar embarcações, e arrancá-las da amarração ou do fundeio. Desligado, o mar mantém seu clima, mas não causa dano."
+}
