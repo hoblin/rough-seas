@@ -47,7 +47,8 @@ Stepped on already; don't step again.
 - Spectators don't pick: hover text and entity selection need creative or survival.
 - A raft's selection boxes are its seats only, so aiming at it by coordinates misses. Use `bin/game hover ID`.
 - Water tints everything under its surface; judge textures on dry land (`bin/scene slab`).
-- Clean up after each test with `bin/scene clear` instead of opening new worlds. Reopening some worlds crashes the client (#24).
+- Clean up after each test with `bin/scene clear` instead of opening new worlds.
+- Launching an existing world with `--playStyle` crashed the client on reopen (#24); `bin/client` passes the preset only to new worlds. A crash on a stable build is ours until a vanilla run (`BENCH_MODS=`) reproduces it, and the log names the failing entity.
 - `pkill -f "bin/game …"` matches, and kills, your own shell.
 - When something fails twice by hand, build the tool before the third try.
 

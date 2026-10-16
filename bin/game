@@ -11,7 +11,8 @@ Rough Seas test bench: run the mod in Vintage Story 1.22.7 and drive it from the
 THIS CLONE ($root)
   Bench name $BENCH: tmux sessions $BENCH-client and $BENCH-server
   Game data  $BENCH_DATA (dedicated server: .../server)
-  Logs       Logs/client-main.log and server/Logs/server-main.log in the game data
+  Logs       Logs/client-main.log and server/Logs/server-main.log in the game data. When loading
+             an entity throws, AgentBridge logs which one first: grep "Entity failed to load".
   Ports      agent bridge $BENCH_BRIDGE_PORT, dedicated server $BENCH_SERVER_PORT
   Each clone of the repository runs its own bench. Name, data folder and temp folder follow the
   clone's directory name; the ports do not, so every clone but one needs its own, set in its
@@ -28,6 +29,8 @@ START
   bin/client [WORLD]   build both mods, (re)start this clone's client in tmux.
                        Opens singleplayer world WORLD (default "sea"); a new world is made with the
                        AgentBridge preset: creative, standard worldgen, 70% ocean. Takes ~30 s.
+                       An existing world is reopened without the preset: re-applying it crashes
+                       the client on some worlds (#24).
                        BENCH_MODS picks the mods loaded (default "roughseas agentbridge"):
                        BENCH_MODS=agentbridge, or BENCH_MODS= for vanilla, to tell our crash from
                        the game's. Without agentbridge, bin/game cannot drive it; read the log.
