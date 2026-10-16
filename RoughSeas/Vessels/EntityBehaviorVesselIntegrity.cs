@@ -167,10 +167,16 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
-        if (entity.World.Side != EnumAppSide.Server) return;
+        bool server = entity.World.Side == EnumAppSide.Server;
+        if (mode == EnumInteractMode.Attack)
+        {
+            if (server) Swing(byEntity, itemslot, hitPosition);
+            return;
+        }
+        if (!CanMendWith(itemslot)) return;
 
-        if (mode == EnumInteractMode.Attack) Swing(byEntity, itemslot, hitPosition);
-        else if (TryMend(byEntity, itemslot)) handled = EnumHandling.PreventSubsequent;
+        handled = EnumHandling.PreventSubsequent;
+        if (server) Mend(byEntity, itemslot);
     }
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
@@ -182,8 +188,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             new WorldInteraction
             {
                 ActionLangCode = "roughseas:vessel-mend",
-                // A plain right-click seats the player; vanilla's seats let a ctrl-click through to here.
-                HotKeyCode = "ctrl",
                 MouseButton = EnumMouseButton.Right,
                 Itemstacks = [repair.Material.ResolvedItemstack]
             }
@@ -255,19 +259,20 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         entity.ReceiveDamage(source, damage);
     }
 
-    private bool TryMend(EntityAgent byEntity, ItemSlot slot)
+    private bool CanMendWith(ItemSlot slot)
     {
-        if (repair == null || Integrity >= 1) return false;
+        var material = repair?.Material.ResolvedItemstack;
+        return material != null && Integrity < 1 &&
+               slot.Itemstack?.Collectible.Code == material.Collectible.Code && slot.StackSize >= material.StackSize;
+    }
 
-        var material = repair.Material.ResolvedItemstack!;
-        if (slot.Itemstack?.Collectible.Code != material.Collectible.Code || slot.StackSize < material.StackSize) return false;
-
-        slot.TakeOut(material.StackSize);
+    private void Mend(EntityAgent byEntity, ItemSlot slot)
+    {
+        slot.TakeOut(repair!.Material.StackSize);
         slot.MarkDirty();
         byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(repair.Saturation);
         Integrity = Math.Min(1, Integrity + repair.Restores);
         entity.World.PlaySoundAt(MendSound, entity, null, true, 16);
-        return true;
     }
 
     private bool Occupied() =>
