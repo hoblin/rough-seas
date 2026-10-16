@@ -56,6 +56,8 @@ Stepped on already; don't step again.
 
 Tickets are GitHub issues in this repository. A bug or a follow-up found while working a ticket becomes its own issue, not an out-of-scope fix, labelled `agent-filed`. Tickets hoblin and the manager settled together carry `decided`. The two are not equal: a finding from a review subagent sees a slice of the code and imagines what could go wrong; it is filed so it is not lost, and it is read with suspicion before anyone works on it. State the evidence in such an issue (what you saw, where) rather than the fear.
 
+One ticket ships as one pull request. A big PR is fine here, since Copilot reviews it. When a ticket turns out to hold too much, the extra part becomes its own ticket, through the manager; it doesn't become a second PR.
+
 ## Done means played
 
 A player meets your work at sea, not in the diff. Before the PR leaves draft, load the mod into the game and see the change happen: the storm rises, the raft breaks, the shark comes. A test that passes is not a mechanic that plays well.
