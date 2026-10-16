@@ -31,44 +31,14 @@ All of it is scoped to this repository.
 - The `fal` MCP generates images, 3D models and sound. Every generation is paid from hoblin's fal balance: generate what a ticket needs, and settle a prompt on a cheap model before running an expensive one.
 - The ArtCraft applications (`artcraft` skill: photocraft, vectorcraft and the rest) draw and edit textures and other images by hand. Editing an existing texture is often cheaper and simpler than generating one from scratch.
 
-## Known rakes
+## References
 
-Stepped on already; don't step again.
+Each holds what one kind of work needs; read it in full before that work. They are the rakes stepped on already.
 
-**Modding**
-- A patch targets vanilla as `game:entities/...`, not `survival:`. Entity files are server-side assets, so an entity patch needs `"side": "Server"`.
-- The patch loader reads every file in `patches/`, whatever its extension. To switch a patch off, move it out of the folder.
-- An entity's variant is `entity.Properties.Variant["material"]`; `entity.Variant` is not set for entities.
-- Server physics runs on worker threads. `PhysicsUpdateWatcher` fires from them for a drifting entity and from the main thread for a steered one, so never touch the world from it: queue the event and act in `OnGameTick`.
-- A steered boat's `Pos.Motion` on the server is its intended speed (`EntityBoat` rewrites it from `ForwardSpeed`, which ignores collisions). The real speed comes from the rider's position packets. The server cannot hold a steered boat back either: an anchor or a leash can only follow it.
-- Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[storms\]\|\[vessels\]' "$BENCH_DATA/Logs/server-debug.log"`; every hit on a hull logs its cause and outcome). A new mechanic logs its decisions as it is written.
-- Vanilla's attachable behaviour finds an entity's wearable slot by its selection box's index, and a box past the last slot crashes the hover help. A box that holds nothing, such as a hull box, gets an empty slot (`"forCategoryCodes": []`) at its index.
-- `interactMountAnySeat` mounts a player who clicks any box that is not a seat with an empty hand: a sail cleat, a storage slot. To mount from a hull box, name it as the steering seat's `selectionBox`.
-
-**Vanilla at sea** (what 1.22.7 already has, and what we cannot change)
-- The sailboat carries a stone anchor (`anchor-stone`) in its prow slot. Right-click lowers and raises it (the `lowered` stack attribute); in vanilla that is only a shape. Our mooring gives it hold.
-- Boat accessories go on with Ctrl+right-click on the slot's own selection box (`bin/game hover ID LProwAP`). A slot holds one item, never a stack. The sailboat's `Lower Mast Storage` takes category `rope`, which no vanilla item has; our anchor warp fills it.
-- Vanilla rope ties to fences and grown logs (`RopeTieable`) and to `ropetieable` entities, which boats are only through our patch. It is a cloth spring of at most 10 m that pulls, not a hard leash, and it saves with its map region. Its pull is tuned for animals on land: on a floating vessel it loses to a current, so our mooring holds the vessel and the rope only shows the tie (its tension maths once crashed the client on a NaN). Holding rope, a click on a rope-tieable entity ties it before any accessory slot sees the click.
-- A held liquid container passes its right-click to collectible behaviours only when empty and with no block selected; with drinkable content it drinks.
-- Vanilla's own lightning strikes only within ±200 blocks of a map region's centre. `OnLightningImpactBegin` can move the impact; vanilla damages creatures, boats among them, within 8 blocks of it.
-
-**Bench** (its defaults carry most of the old rakes: the player arrives flying, restarts save the world, vessels hold still, temporal effects are off, every wait has a timeout)
-- To look at anything, fly there: `bin/scene look ID` from any side (`0 6 0.01` looks down from above the water's tint), `/bridge fly` anywhere. Never stand in water or build posts and slabs.
-- Verify every change in the game yourself, through the bench. Never hand an in-game check to hoblin; ask him for decisions only. When the bench can't drive a check, build the tool.
-- Leave the desktop alone: no real keys, no window moves, no new outputs (`hyprmoncfg` writes any monitor it sees into hoblin's config). The bench places its own window.
-- Modifier clicks don't reach an unfocused client: use `/bridge interact` and `/bridge dismount`.
-- `/we` takes coordinates relative to the map centre, fills with the held block and needs creative. `/time set` and `/time add` move storms. `/debug lntest spawn` strikes along the body's yaw, not the camera's.
-- After a `/tp`, `~` commands use the client's stale position: `bin/game arrive` first (the bridge's own flights wait by themselves).
-- `/bridge sea` fails in a world with no open sea in its generated regions; open another world.
-- Spectators don't pick: hover text and entity selection need creative or survival.
-- Clean up after each test with `bin/scene clear` instead of opening new worlds; it removes entities only.
-- Launching an existing world with `--playStyle` crashed the client on reopen (#24); `bin/client` passes the preset only to new worlds. A crash on a stable build is ours until a vanilla run (`BENCH_MODS=`) reproduces it, and the log names the failing entity.
-- `pkill -f "bin/game …"` matches, and kills, your own shell.
-- The desktop runs Hyprland with a Lua config: `hyprctl keyword` and the old `dispatch` syntax fail; use `hyprctl eval 'hl.dispatch(hl.dsp.window.move({ ... }))'`. bin/client puts the game on this clone's workspace (`BENCH_WORKSPACE` on `BENCH_MONITOR`), hands focus back, and turns vsync off: a hidden window with vsync gets one frame a second.
-- Writing a vanilla watched attribute with a value of another type (`/bridge set ID clothIds x`) crashes every client that receives it.
-- A rope survives a restart when pinned to a rope-tieable block, such as a fence; one `/bridge tie` pinned to a water block was gone after the restart, and loose ropes come back as rope items.
-- Board a vessel (`/bridge mount ID`) to work on it and leave with `/bridge dismount` (a `/tp` while seated takes the vessel along); tie it with `/bridge tie`, read its ropes with `/bridge ropes`.
-- When something fails twice by hand, build the tool before the third try.
+- `docs/modding.md`: before writing mod code (patches, entities, behaviours, physics).
+- `docs/vanilla-at-sea.md`: before working on boats, anchors, ropes, accessories or lightning.
+- `docs/bench.md`: before testing in the game, with `bin/game help`.
+- `docs/shipping.md`: when a pull request leaves draft (review, self-review, merging).
 
 ## Tickets
 
@@ -80,25 +50,4 @@ One ticket ships as one pull request. A big PR is fine here, since Copilot revie
 
 A player meets your work at sea, not in the diff. Before the PR leaves draft, load the mod into the game and see the change happen: the storm rises, the raft breaks, the shark comes. A test that passes is not a mechanic that plays well.
 
-## Review feedback
-
-Copilot reviews our pull requests when asked; outside contributors' pull requests get no automatic review. Copilot's review, like any automated review, is advice, not a gate. You know this code better than the reviewer does, so judge each finding on its merits. Fix it if it is a real defect or a real risk. If it is a nitpick, a minor style point or a speculative edge case, reply in one line saying why the code stays as it is, and resolve the thread. A minor finding worth doing later becomes an issue, not another round.
-
-**Why:** every round of fixes triggers a new review, and that review finds new minor points. Five or six rounds cost hours and tokens and buy nothing.
-
-## Self-review
-
-The `/rpi:feature` flow ends with a multi-agent self-review. A pull request under 1000 lines of diff skips it: Copilot's review is enough for a small change, and five reviewing subagents cost more than they find. Over 1000 lines, run it.
-
-## Merging
-
-hoblin does not review this repository's pull requests. The loop is yours:
-
-1. Mark the PR ready for review and request Copilot's review: `gh pr edit <number> --add-reviewer copilot-pull-request-reviewer`.
-2. Wait for the review to land (watch the PR's review comments; a few minutes), then triage every finding as above: fix, or answer and resolve.
-3. Push the fixes and request Copilot's review again, the same way.
-4. When Copilot's review recommends merging, merge it yourself: squash, with the PR's title and body. The ruleset asks outside contributors for the code owner's approval and lets us past it, but only with `--admin`: `gh pr merge <number> --admin --squash --subject "<title> (#<number>)" --body-file <body file>`.
-
-A PR that conflicts with main gets no CI run and no Copilot review; GitHub queues neither. So before you start waiting for a check or a review, every time, ask GitHub whether the PR still merges: `gh pr view <number> --json mergeable --jq .mergeable` answers `MERGEABLE`, `CONFLICTING` or `UNKNOWN` (still computing; ask again in a few seconds). On `CONFLICTING`, merge main in first (a merge commit, never a rebase or force-push), push, and only then wait.
-
-If Copilot keeps raising new minor points round after round, you and the manager decide together when the PR is done. Copilot helps, but it does not have the last word.
+Verify it yourself, through the bench. Never hand an in-game check to hoblin; ask him for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[storms\]\|\[vessels\]' "$BENCH_DATA/Logs/server-debug.log"`).
