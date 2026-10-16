@@ -52,19 +52,22 @@ Stepped on already; don't step again.
 - A held liquid container passes its right-click to collectible behaviours only when empty and with no block selected; with drinkable content it drinks.
 - Vanilla's own lightning strikes only within ±200 blocks of a map region's centre. `OnLightningImpactBegin` can move the impact; vanilla damages creatures, boats among them, within 8 blocks of it.
 
-**Bench** (`bin/scene` handles most of these)
-- After a teleport, `~` commands use the server's position, which the client's stale one overwrites for a few seconds. Wait until `state` shows the arrival.
+**Bench** (its defaults carry most of the old rakes: the player arrives flying, restarts save the world, vessels hold still, temporal effects are off, every wait has a timeout)
+- To look at anything, fly there: `bin/scene look ID` from any side (`0 6 0.01` looks down from above the water's tint), `/bridge fly` anywhere. Never stand in water or build posts and slabs.
+- Verify every change in the game yourself, through the bench. Never hand an in-game check to hoblin; ask him for decisions only. When the bench can't drive a check, build the tool.
+- Leave the desktop alone: no real keys, no window moves, no new outputs (`hyprmoncfg` writes any monitor it sees into hoblin's config). The bench places its own window.
+- Modifier clicks don't reach an unfocused client: use `/bridge interact` and `/bridge dismount`.
+- `/we` takes coordinates relative to the map centre, fills with the held block and needs creative. `/time set` and `/time add` move storms. `/debug lntest spawn` strikes along the body's yaw, not the camera's.
+- After a `/tp`, `~` commands use the client's stale position: `bin/game arrive` first (the bridge's own flights wait by themselves).
 - `/bridge sea` fails in a world with no open sea in its generated regions; open another world.
 - Spectators don't pick: hover text and entity selection need creative or survival.
-- Water tints everything under its surface; judge textures on dry land (`bin/scene slab`).
-- Clean up after each test with `bin/scene clear` instead of opening new worlds.
+- Clean up after each test with `bin/scene clear` instead of opening new worlds; it removes entities only.
 - Launching an existing world with `--playStyle` crashed the client on reopen (#24); `bin/client` passes the preset only to new worlds. A crash on a stable build is ours until a vanilla run (`BENCH_MODS=`) reproduces it, and the log names the failing entity.
 - `pkill -f "bin/game …"` matches, and kills, your own shell.
-- `bin/client` kills the client without saving: run `/autosavenow` first, or `/worldconfig` changes and the player's place are lost. Even then the latest entities and ropes have twice been missing after a restart (#39 gives each test a fresh copy of a template world).
-- To look at something, hover: `/bridge fly X Y Z` (creative free flight, no post, no sinking), then `bin/game aim ID`.
-- The desktop runs Hyprland with a Lua config: `hyprctl keyword` and the old `dispatch` syntax fail; use `hyprctl eval 'hl.dispatch(hl.dsp.window.move({ ... }))'`. bin/client puts the game on this clone's workspace (`BENCH_WORKSPACE` on `BENCH_MONITOR`) and hands focus back.
+- The desktop runs Hyprland with a Lua config: `hyprctl keyword` and the old `dispatch` syntax fail; use `hyprctl eval 'hl.dispatch(hl.dsp.window.move({ ... }))'`. bin/client puts the game on this clone's workspace (`BENCH_WORKSPACE` on `BENCH_MONITOR`), hands focus back, and turns vsync off: a hidden window with vsync gets one frame a second.
 - Writing a vanilla watched attribute with a value of another type (`/bridge set ID clothIds x`) crashes every client that receives it.
-- An unridden vessel drifts out of reach within seconds. Board it (`/bridge mount ID`) to work on it and leave with `/bridge dismount` (a `/tp` while seated takes the vessel along); tie it with `/bridge tie`, read its ropes with `/bridge ropes`.
+- A rope survives a restart when pinned to a rope-tieable block, such as a fence; one `/bridge tie` pinned to a water block was gone after the restart, and loose ropes come back as rope items.
+- Board a vessel (`/bridge mount ID`) to work on it and leave with `/bridge dismount` (a `/tp` while seated takes the vessel along); tie it with `/bridge tie`, read its ropes with `/bridge ropes`.
 - When something fails twice by hand, build the tool before the third try.
 
 ## Tickets
