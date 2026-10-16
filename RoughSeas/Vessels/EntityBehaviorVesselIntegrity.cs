@@ -27,6 +27,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const double WearStepHours = 1;
     private const double HoursPerDay = 24;
     private const string WornAtKey = "wornAt";
+    private const string AfloatKey = "afloatHours";
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
     private static readonly AssetLocation MendSound = new("game:sounds/player/build");
     private static readonly string[] Conditions = ["sound", "scarred", "damaged", "breaking"];
@@ -268,19 +269,21 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         if (wearPerDay == 0) return;
 
         double now = entity.World.Calendar.TotalHours;
-        if (!afloat || !Tree.HasAttribute(WornAtKey))
+        double last = Tree.GetDouble(WornAtKey, now);
+        Tree.SetDouble(WornAtKey, now);
+        if (!afloat) return;
+
+        double hours = Tree.GetDouble(AfloatKey) + now - last;
+        if (hours < WearStepHours)
         {
-            Tree.SetDouble(WornAtKey, now);
+            Tree.SetDouble(AfloatKey, hours);
             return;
         }
 
-        double since = Tree.GetDouble(WornAtKey);
-        if (now - since < WearStepHours) return;
-
-        Tree.SetDouble(WornAtKey, now);
+        Tree.SetDouble(AfloatKey, 0);
         float before = Integrity;
-        Integrity = Math.Max(0, Integrity - (float)(wearPerDay * (now - since) / HoursPerDay));
-        Log("wore {0:F1} h afloat: {1:F2} -> {2:F2}", now - since, before, Integrity);
+        Integrity = Math.Max(0, Integrity - (float)(wearPerDay * hours / HoursPerDay));
+        Log("wore {0:F1} h afloat: {1:F2} -> {2:F2}", hours, before, Integrity);
         if (Integrity == 0) Break();
     }
 
