@@ -4,3 +4,8 @@ node = "24.22.0"
 
 [env]
 VINTAGE_STORY = "{{env.HOME}}/.local/share/vintagestory-1.22.7"
+BENCH = "{{config_root | basename}}"
+BENCH_DATA = "{{env.HOME}}/.config/VintagestoryData-{{config_root | basename}}"
+BENCH_TMP = "/tmp/{{config_root | basename}}"
+BENCH_BRIDGE_PORT = "42425"
+BENCH_SERVER_PORT = "42420"

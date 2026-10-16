@@ -1,29 +1,38 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/lib/bench.sh"
 
-root=$(cd "$(dirname "$0")/.." && pwd)
 world=${1:-sea}
-data=$HOME/.config/VintagestoryData-1.22.7
+session=$BENCH-client
+login_from=$HOME/.config/VintagestoryData/clientsettings.json
 
 if [ "$world" = server ]; then
-  target="--connect 127.0.0.1"
+  target="--connect 127.0.0.1:$BENCH_SERVER_PORT"
 else
   target="--openWorld $world --playStyle roughseas-test"
 fi
 
-cd "$root"
-mise exec -- dotnet build RoughSeas -v quiet -nologo
-mise exec -- dotnet build AgentBridge -v quiet -nologo
-vs=$(mise exec -- printenv VINTAGE_STORY)
-dotnet=$(mise where dotnet)
+seed_settings() {
+  local settings=$BENCH_DATA/clientsettings.json
+  [ -f "$settings" ] && return
+  mkdir -p "$BENCH_DATA"
+  jq '{
+    stringSettings: (.stringSettings | with_entries(select(.key | IN("sessionkey", "sessionsignature", "useremail", "playername", "playeruid", "mptoken", "entitlements")))),
+    intSettings: {gameWindowMode: 0, screenWidth: 1280, screenHeight: 800}
+  }' "$login_from" > "$settings"
+}
 
-tmux kill-session -t rough-seas-client 2>/dev/null || true
-# A client started while another still runs hands its --connect to that one over a pipe and exits.
-while pgrep -f "Vintagestory --.*--dataPath $data --tracelog" >/dev/null; do sleep 0.5; done
+cd "$root"
+dotnet build RoughSeas -v quiet -nologo
+dotnet build AgentBridge -v quiet -nologo
+seed_settings
+
+stop_session "$session" "$BENCH_DATA"
+require_free_port "$BENCH_BRIDGE_PORT" "agent bridge"
 # $target goes first: the embedded server re-parses these arguments, does not know --openWorld,
 # and would take the world name as one more value of a preceding --addOrigin or --addModPath.
-tmux new-session -d -s rough-seas-client -c "$vs" \
-  "PATH=$dotnet:\$PATH DOTNET_ROOT=$dotnet ./run.sh $target --dataPath $data --tracelog \
+tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
+  "$(game_env) ./run.sh $target --dataPath $BENCH_DATA --tracelog \
    --addOrigin $root/RoughSeas/assets \
    --addModPath $root/RoughSeas/bin/Debug/Mods $root/AgentBridge/bin/Debug/Mods"
-echo "Client starting in tmux session rough-seas-client ($target); logs in $data/Logs"
+echo "Client starting in tmux session $session ($target); logs in $BENCH_DATA/Logs"

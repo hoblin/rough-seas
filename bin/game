@@ -1,25 +1,41 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-bridge=http://127.0.0.1:42425
+source "$(dirname "$0")/lib/bench.sh"
+bridge=http://127.0.0.1:$BENCH_BRIDGE_PORT
 
 usage() {
-  cat <<'EOF'
+  cat <<EOF
 Rough Seas test bench: run the mod in Vintage Story 1.22.7 and drive it from the shell.
 
+THIS CLONE ($root)
+  Bench name $BENCH: tmux sessions $BENCH-client and $BENCH-server
+  Game data  $BENCH_DATA (dedicated server: .../server)
+  Logs       Logs/client-main.log and server/Logs/server-main.log in the game data
+  Ports      agent bridge $BENCH_BRIDGE_PORT, dedicated server $BENCH_SERVER_PORT
+  Each clone of the repository runs its own bench. Name, data folder and temp folder follow the
+  clone's directory name; the ports do not, so every clone but one needs its own, set in its
+  gitignored mise.local.toml (bin/client and bin/server refuse a taken port and say so):
+    [env]
+    BENCH_BRIDGE_PORT = "42426"
+    BENCH_SERVER_PORT = "42421"
+  A clone's first bin/client seeds the account login into its data folder from
+  ~/.config/VintagestoryData/clientsettings.json (only read, never written).
+EOF
+  cat <<'EOF'
+
 START
-  bin/client [WORLD]   build both mods, (re)start the client in tmux session rough-seas-client.
+  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux.
                        Opens singleplayer world WORLD (default "sea"); a new world is made with the
                        AgentBridge preset: creative, standard worldgen, 70% ocean. Takes ~30 s.
-  bin/client server    connect the client to the dedicated server instead (multiplayer checks).
+  bin/client server    connect the client to this clone's dedicated server instead (multiplayer).
                        Start bin/server first and wait for "Dedicated Server now running" in a
                        log newer than the start. The player needs admin there, once per server
-                       data folder: tmux send-keys -t rough-seas-server '/op hoblin' Enter
-  bin/server           build both mods, (re)start the dedicated server in tmux session
-                       rough-seas-server; its console takes commands the same way
+                       data folder: tmux send-keys -t <bench>-server '/op hoblin' Enter
+  bin/server           build both mods, (re)start this clone's dedicated server in tmux; its
+                       console takes commands the same way
   bin/ref              fetch Anego's sources and decompile the engine into ref/ (gitignored)
   bin/game wait        block until the world is loaded, then close the character-creation dialog
-  Logs: ~/.config/VintagestoryData-1.22.7/Logs/{client,server}-main.log (server: .../server/Logs).
   The client runs unfocused and needs no input from the desktop; never send it real keys.
 
 LOOK
@@ -30,8 +46,8 @@ LOOK
                              fluid at feet and head, seabed height, season, temperature, rainfall,
                              wind vector, precipitation, wind/weather pattern, weather event
   bin/game entity ID         server side: code, alive, pos, behaviours, all watched attributes
-  bin/game shot [FILE]       in-engine screenshot (default /tmp/agentbridge/shot.png); prints the
-                             path of a half-size copy, cheaper to look at
+  bin/game shot [FILE]       in-engine screenshot (default shot.png in the clone's temp folder,
+                             /tmp/<bench>); prints the path of a half-size copy, cheaper to look at
   bin/game hotkey togglehud  hide the HUD for clean shots; cyclecamera for third person;
                              bin/game hotkey alone lists every hotkey code
 
@@ -86,7 +102,7 @@ GOTCHAS
   A new player gets a character-creation dialog that pauses the game: `wait` closes it.
   bin/client kills the old client, which does not save the player; the next start is a fresh join.
   New worlds get a random seed, so do not hard-code sea coordinates: use /bridge sea.
-  The bridge listens on 127.0.0.1:42425 only ("localhost" may resolve to ::1 and miss it), and
+  The bridge listens on 127.0.0.1 only ("localhost" may resolve to ::1 and miss it), and
     refuses requests without the X-Agent-Bridge header, so web pages cannot drive it.
 EOF
 }
@@ -109,7 +125,7 @@ case "${1:-}" in
   here) post /chat "/bridge here" ;;
   entity) post /chat "/bridge entity $2" ;;
   shot)
-    file=${2:-/tmp/agentbridge/shot.png}
+    file=${2:-$BENCH_TMP/shot.png}
     mkdir -p "$(dirname "$file")"
     get -o "$file" "$bridge/screenshot"
     magick "$file" -resize 50% "${file%.png}-small.png"
