@@ -1,0 +1,80 @@
+{
+    "code": "coracle",
+    "class": "roughseas:EntityVessel",
+    "tags": ["inanimate", "vehicle"],
+    "weight": 15,
+    "attributes": {
+        "forwardSpeed": 0.5,
+        "turnSpeed": 3,
+        "swimmingOffsetY": 0.35,
+        "shouldSwivelFromMotion": false,
+        "mountAnimations": {
+            "idle": "sitflooridle",
+            "ready": "crudeOarReady",
+            "forwards": "crudeOarForward",
+            "backwards": "crudeOarBackward"
+        },
+        "requiresPaddlingTool": true,
+        "rightClickPickup": true
+    },
+    "hitboxSize": {"x": 1.375, "y": 0.5},
+    "behaviorConfigs": {
+        "vesselintegrity": {
+            "impactCapacity": 400,
+            "repair": {"material": {"type": "item", "code": "game:leather", "stacksize": 1}, "restores": 0.5, "saturation": 40},
+            "wreckage": [{"type": "item", "code": "game:stick", "quantity": {"avg": 3, "var": 2}}],
+            "cracks": {
+                "textures": ["hide"],
+                "overlays": [
+                    ["game:block/overlay/cracked/cracked5"],
+                    ["game:block/overlay/cracked/cracked15"],
+                    ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]
+                ]
+            }
+        },
+        "passivephysicsmultibox": {
+            "collisionBoxes": [{"x1": -0.688, "y1": 0, "z1": -0.688, "x2": 0.688, "y2": 0.5, "z2": 0.688}],
+            "groundDragFactor": 1,
+            "airDragFallingFactor": 0.5,
+            "gravityFactor": 1.0
+        },
+        "creaturecarrier": {
+            "seats": [
+                {
+                    "apName": "FrontSeatAP",
+                    "controllable": true,
+                    "bodyYawLimit": null,
+                    "eyeHeight": 1,
+                    "selectionBox": "HullAP"
+                }
+            ],
+            "interactMountAnySeat": true
+        },
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP"]}
+    },
+    "client": {
+        "size": 1,
+        "renderer": "Shape",
+        "shape": {"base": "roughseas:entity/vessel/coracle"},
+        "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}},
+        "behaviors": [
+            {"code": "vesselintegrity"},
+            {"code": "repulseagents"},
+            {"code": "passivephysicsmultibox"},
+            {"code": "interpolateposition"},
+            {"code": "selectionboxes"},
+            {"code": "creaturecarrier"}
+        ]
+    },
+    "server": {
+        "behaviors": [
+            {"code": "vesselintegrity"},
+            {"code": "repulseagents"},
+            {"code": "passivephysicsmultibox"},
+            {"code": "selectionboxes"},
+            {"code": "creaturecarrier"},
+            {"code": "roughseas:currentdrift"}
+        ]
+    },
+    "sounds": {}
+}

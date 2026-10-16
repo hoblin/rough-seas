@@ -37,6 +37,10 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private BlockDropItemStack[] wreckage = [];
     private HullCracks? cracks;
     private int shownStage;
+    private double wearPerDay;
+    private bool runsRapids;
+    private Rapids rapids = null!;
+    private float sinceHazards;
 
     public EntityBehaviorVesselIntegrity(Entity entity) : base(entity) { }
 
@@ -80,6 +84,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         damageConversion = vessels.DamageConversion;
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         sensor = new ImpactSensor(attributes["minImpactSpeed"].AsDouble(1));
+        wearPerDay = attributes["wearPerDay"].AsDouble(0);
+        runsRapids = attributes["runsRapids"].AsBool(false);
+        rapids = vessels.Rapids;
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])
             .Where(drop => drop.Resolve(entity.World, "vessel wreckage", entity.Code))
             .ToArray();
@@ -108,7 +115,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         double[] impacts;
         lock (impactLock)
         {
-            if (pendingImpacts.Count == 0) return;
             impacts = pendingImpacts.ToArray();
             pendingImpacts.Clear();
         }
@@ -118,6 +124,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         {
             Strike(0.5 * mass * speed * speed);
         }
+
+        if ((sinceHazards += deltaTime) < 1 || !entity.Alive) return;
+
+        var fluid = entity.World.BlockAccessor.GetBlock(entity.Pos.AsBlockPos, BlockLayersAccess.Fluid);
+        Soak(fluid.IsLiquid());
+        if (!runsRapids && rapids.Holds(fluid)) Strike(rapids.JoulesPerSecond * sinceHazards);
+        sinceHazards = 0;
     }
 
     /// <summary>
@@ -235,6 +248,25 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
                 pendingImpacts.Add(speed);
             }
         }
+    }
+
+    private void Soak(bool afloat)
+    {
+        if (wearPerDay == 0) return;
+
+        double now = entity.World.Calendar.TotalHours;
+        if (!afloat || !Tree.HasAttribute("wornAt"))
+        {
+            Tree.SetDouble("wornAt", now);
+            return;
+        }
+
+        double since = Tree.GetDouble("wornAt");
+        if (now - since < 1) return;
+
+        Tree.SetDouble("wornAt", now);
+        Integrity = Math.Max(0, Integrity - (float)(wearPerDay * (now - since) / 24));
+        if (Integrity == 0) Break();
     }
 
     private void Swing(EntityAgent byEntity, ItemSlot slot, Vec3d hitPosition)

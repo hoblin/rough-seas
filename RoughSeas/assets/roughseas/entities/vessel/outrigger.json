@@ -1,0 +1,109 @@
+{
+    "code": "outrigger",
+    "class": "roughseas:EntityVessel",
+    "tags": ["inanimate", "vehicle"],
+    "weight": 250,
+    "variantgroups": [{"code": "wood", "loadFromProperties": "block/wood"}],
+    "attributes": {
+        "forwardSpeed": 1.3,
+        "turnSpeed": 0.5,
+        "swimmingOffsetY": 0.32,
+        "shouldSwivelFromMotion": false,
+        "mountAnimations": {"idle": "sitboatidle", "ready": "", "forwards": "", "backwards": ""},
+        "unfurlSails": true
+    },
+    "hitboxSize": {"x": 1.2, "y": 0.5},
+    "behaviorConfigs": {
+        "vesselintegrity": {
+            "impactCapacity": 15000,
+            "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
+            "repair": {
+                "material": {"type": "item", "code": "game:plank-{wood}", "stacksize": 4},
+                "restores": 0.2,
+                "saturation": 80
+            },
+            "wreckage": [
+                {"type": "item", "code": "game:plank-{wood}", "quantity": {"avg": 8, "var": 4}},
+                {"type": "item", "code": "game:rope", "quantity": {"avg": 1, "var": 1}},
+                {"type": "block", "code": "game:linen-normal-down", "quantity": {"avg": 1, "var": 1}}
+            ],
+            "cracks": {
+                "textures": ["bark", "inside"],
+                "overlays": [
+                    ["game:block/overlay/cracked/cracked5"],
+                    ["game:block/overlay/cracked/cracked15"],
+                    ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]
+                ]
+            }
+        },
+        "passivephysicsmultibox": {
+            "collisionBoxes": [
+                {"x1": -0.312, "y1": 0, "z1": -2.5, "x2": 0.312, "y2": 0.5, "z2": -1.25},
+                {"x1": -0.312, "y1": 0, "z1": -1.25, "x2": 0.312, "y2": 0.5, "z2": 0.0},
+                {"x1": -0.312, "y1": 0, "z1": 0.0, "x2": 0.312, "y2": 0.5, "z2": 1.25},
+                {"x1": -0.312, "y1": 0, "z1": 1.25, "x2": 0.312, "y2": 0.5, "z2": 2.5},
+                {"x1": -1.748, "y1": 0, "z1": -1.5, "x2": -1.373, "y2": 0.35, "z2": 1.5}
+            ],
+            "groundDragFactor": 1,
+            "airDragFallingFactor": 0.5,
+            "gravityFactor": 1.0
+        },
+        "creaturecarrier": {
+            "seats": [
+                {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": null, "eyeHeight": 1},
+                {
+                    "apName": "BackSeatAP",
+                    "controllable": true,
+                    "bodyYawLimit": null,
+                    "eyeHeight": 1,
+                    "selectionBox": "HullAP"
+                }
+            ],
+            "interactMountAnySeat": true
+        },
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "LowerMastAP", "HullAP"]},
+        "rideableaccessories": {
+            "dropContentsOnDeath": true,
+            "wearableSlots": [
+                {
+                    "code": "Front Seat",
+                    "forCategoryCodes": ["basket"],
+                    "attachmentPointCode": "FrontSeatAP",
+                    "stepParentTo": {"": {"elementName": "FrontSeat"}},
+                    "emptyInteractPassThrough": true
+                }
+            ]
+        }
+    },
+    "client": {
+        "size": 1,
+        "renderer": "Shape",
+        "shape": {"base": "roughseas:entity/vessel/outrigger"},
+        "textures": {
+            "bark": {"base": "game:block/wood/bark/{wood}-h"},
+            "inside": {"base": "game:block/wood/debarked/{wood}"},
+            "sail": {"base": "game:block/cloth/linen/plain"}
+        },
+        "behaviors": [
+            {"code": "vesselintegrity"},
+            {"code": "repulseagents"},
+            {"code": "passivephysicsmultibox"},
+            {"code": "interpolateposition"},
+            {"code": "selectionboxes"},
+            {"code": "rideableaccessories"},
+            {"code": "creaturecarrier"}
+        ]
+    },
+    "server": {
+        "behaviors": [
+            {"code": "vesselintegrity"},
+            {"code": "repulseagents"},
+            {"code": "passivephysicsmultibox"},
+            {"code": "selectionboxes"},
+            {"code": "rideableaccessories"},
+            {"code": "creaturecarrier"},
+            {"code": "roughseas:currentdrift"}
+        ]
+    },
+    "sounds": {}
+}

@@ -1,0 +1,36 @@
+{
+    "code": "outrigger",
+    "class": "roughseas:ItemVessel",
+    "variantgroups": [{"code": "wood", "loadFromProperties": "block/wood"}],
+    "attributes": {"handbook": {"groupBy": ["outrigger-*"]}},
+    "durability": 100,
+    "maxstacksize": 1,
+    "materialDensity": 1,
+    "liquidSelectable": 1,
+    "heldTpIdleAnimation": "holdunderarm",
+    "shape": {"base": "roughseas:entity/vessel/outrigger"},
+    "textures": {
+        "bark": {"base": "game:block/wood/bark/{wood}-h"},
+        "inside": {"base": "game:block/wood/debarked/{wood}"},
+        "sail": {"base": "game:block/cloth/linen/plain"}
+    },
+    "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
+    "guiTransform": {
+        "translation": {"x": 4, "y": 7, "z": 0},
+        "rotation": {"x": -32, "y": -35, "z": -180},
+        "origin": {"x": 0.5, "y": 0, "z": 0.5},
+        "scale": 0.6
+    },
+    "groundTransform": {
+        "translation": {"x": 0, "y": 0, "z": 0},
+        "rotation": {"x": 0, "y": 0, "z": 0},
+        "origin": {"x": 0.5, "y": 0, "z": 0.5},
+        "scale": 3.5
+    },
+    "tpHandTransform": {
+        "translation": {"x": -0.73, "y": 0.54, "z": -0.5},
+        "rotation": {"x": -85, "y": -34, "z": 0},
+        "origin": {"x": 0.5, "y": 0, "z": 0.5},
+        "scale": 0.53
+    }
+}
