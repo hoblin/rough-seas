@@ -19,7 +19,7 @@
     },
     "hitboxSize": {"x": 1.375, "y": 0.5},
     "behaviorConfigs": {
-        "vesselintegrity": {
+        "roughseas:vesselintegrity": {
             "impactCapacity": 400,
             "repair": {
                 "material": {"type": "item", "code": "game:leather-normal-plain", "stacksize": 1},
@@ -88,7 +88,7 @@
         "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater"]},
         "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}},
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -102,7 +102,7 @@
     },
     "server": {
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

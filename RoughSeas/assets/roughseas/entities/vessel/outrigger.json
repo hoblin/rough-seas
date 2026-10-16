@@ -14,7 +14,7 @@
     },
     "hitboxSize": {"x": 1.2, "y": 0.5},
     "behaviorConfigs": {
-        "vesselintegrity": {
+        "roughseas:vesselintegrity": {
             "impactCapacity": 15000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "repair": {
@@ -115,7 +115,7 @@
             "lashing": {"base": "game:item/resource/rope"}
         },
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -130,7 +130,7 @@
     },
     "server": {
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

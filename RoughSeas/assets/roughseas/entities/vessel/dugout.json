@@ -19,7 +19,7 @@
     },
     "hitboxSize": {"x": 1, "y": 0.56},
     "behaviorConfigs": {
-        "vesselintegrity": {
+        "roughseas:vesselintegrity": {
             "impactCapacity": 30000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "repair": {
@@ -114,7 +114,7 @@
         "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater"]},
         "textures": {"bark": {"base": "game:block/wood/bark/{wood}-h"}, "inside": {"base": "game:block/wood/debarked/{wood}"}},
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -129,7 +129,7 @@
     },
     "server": {
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

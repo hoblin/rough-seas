@@ -19,7 +19,7 @@
     },
     "hitboxSize": {"x": 1.2, "y": 0.6},
     "behaviorConfigs": {
-        "vesselintegrity": {
+        "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
             "wearPerDay": 0.1,
             "repair": {
@@ -117,7 +117,7 @@
         "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater"]},
         "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}},
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -132,7 +132,7 @@
     },
     "server": {
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

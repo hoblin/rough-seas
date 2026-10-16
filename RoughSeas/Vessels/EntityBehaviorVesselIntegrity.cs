@@ -15,7 +15,7 @@ namespace RoughSeas.Vessels;
 
 public class EntityBehaviorVesselIntegrity : EntityBehavior
 {
-    public const string Code = "vesselintegrity";
+    public const string Code = "roughseas:vesselintegrity";
 
     private const string TreeKey = "roughseas:vessel";
     private const int DataVersion = 1;
@@ -24,7 +24,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const float BareHandDamage = 0.5f;
     private const float HazardSeconds = 1;
     private const double WearStepHours = 1;
-    private const double HoursPerDay = 24;
     private const string WornAtKey = "wornAt";
     private const string AfloatKey = "afloatHours";
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
@@ -116,6 +115,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     public override void OnGameTick(float deltaTime)
     {
         if (entity.World.Side != EnumAppSide.Server) return;
+        using var _ = vessels.Budget.Measure();
 
         double[] impacts;
         lock (impactLock)
@@ -271,7 +271,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     {
         if (wearPerDay == 0) return;
 
-        double now = entity.World.Calendar.TotalHours;
+        var calendar = entity.World.Calendar;
+        double now = calendar.TotalHours;
         double last = Tree.GetDouble(WornAtKey, now);
         Tree.SetDouble(WornAtKey, now);
         if (!afloat) return;
@@ -285,7 +286,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
         Tree.SetDouble(AfloatKey, 0);
         float before = Integrity;
-        Integrity = Math.Max(0, Integrity - (float)(wearPerDay * hours / HoursPerDay));
+        Integrity = Math.Max(0, Integrity - (float)(wearPerDay * hours / calendar.HoursPerDay));
         vessels.Log(entity, "wore {0:F1} h afloat: {1:F2} -> {2:F2}", hours, before, Integrity);
         if (Integrity == 0) Break();
     }

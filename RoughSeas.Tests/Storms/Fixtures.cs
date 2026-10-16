@@ -29,7 +29,7 @@ public static class Fixtures
 
     private static Vessel Vessel(string entity)
     {
-        var integrity = BehaviorConfig("vessels-vanilla-boats.json", entity, "vesselintegrity");
+        var integrity = BehaviorConfig("vessels-vanilla-boats.json", entity, EntityBehaviorVesselIntegrity.Code);
         var forces = BehaviorConfig("storms-vessels.json", entity, "roughseas:seaforces");
         return new Vessel((double)integrity["impactCapacity"]!, (double)forces["beamMetres"]!, (double)forces["windageSquareMetres"]!);
     }
