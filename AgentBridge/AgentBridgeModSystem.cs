@@ -91,7 +91,8 @@ public class AgentBridgeModSystem : ModSystem
             {
                 "/chat" => (Encoding.UTF8.GetBytes(await Chat(context.Request)), "text/plain"),
                 "/state" => (Encoding.UTF8.GetBytes(await OnMainThread(State)), "application/json"),
-                "/screenshot" => (await screenshots.Next(), "image/png"),
+                "/screenshot" => (await screenshots.Next(context.Request.QueryString["gui"] != null), "image/png"),
+                "/link" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Link(context.Request.QueryString["href"]))), "text/plain"),
                 "/close-dialogs" => (Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),
                 "/input" => (Encoding.UTF8.GetBytes(await Input(context.Request)), "application/json"),
@@ -293,6 +294,17 @@ public class AgentBridgeModSystem : ModSystem
             return "Hotkey codes:\n" + string.Join("\n", capi.Input.HotKeys.Values.Select(key => $"{key.Code}  {key.Name}")) + "\n";
         }
         return hotkey.Handler(hotkey.CurrentMapping) + "\n";
+    }
+
+    private string Link(string? href)
+    {
+        var protocol = href?.Split("://")[0];
+        if (protocol == null || !capi.LinkProtocols.TryGetValue(protocol, out var follow))
+        {
+            return "Link protocols: " + string.Join(", ", capi.LinkProtocols.Keys) + "\n";
+        }
+        follow(new LinkTextComponent(href));
+        return $"Followed {href}\n";
     }
 
     private string Leave()

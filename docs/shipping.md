@@ -14,7 +14,7 @@ The `/rpi:feature` flow ends with a multi-agent self-review. A pull request unde
 
 ## Merging
 
-hoblin does not review this repository's pull requests. The loop is yours:
+The maintainers' agents run this loop themselves; an outside contributor's pull request waits for the code owner's review instead.
 
 1. Mark the PR ready for review and request Copilot's review: `gh pr edit <number> --add-reviewer copilot-pull-request-reviewer`.
 2. Wait for the review to land (watch the PR's review comments; a few minutes), then triage every finding as above: fix, or answer and resolve.
@@ -23,4 +23,4 @@ hoblin does not review this repository's pull requests. The loop is yours:
 
 A PR that conflicts with main gets no CI run and no Copilot review; GitHub queues neither. So before you start waiting for a check or a review, every time, ask GitHub whether the PR still merges: `gh pr view <number> --json mergeable --jq .mergeable` answers `MERGEABLE`, `CONFLICTING` or `UNKNOWN` (still computing; ask again in a few seconds). On `CONFLICTING`, merge main in first (a merge commit, never a rebase or force-push), push, and only then wait.
 
-If Copilot keeps raising new minor points round after round, you and the manager decide together when the PR is done. Copilot helps, but it does not have the last word.
+If Copilot keeps raising new minor points round after round, the maintainers decide when the PR is done. Copilot helps, but it does not have the last word.
