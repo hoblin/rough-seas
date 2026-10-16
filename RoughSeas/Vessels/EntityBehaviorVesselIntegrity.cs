@@ -27,6 +27,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const string WornAtKey = "wornAt";
     private const string AfloatKey = "afloatHours";
     private const string WornKey = "worn";
+    private const string CarriedWornKey = "roughseas:worn";
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
     private static readonly AssetLocation MendSound = new("game:sounds/player/build");
     private static readonly string[] Conditions = ["sound", "scarred", "damaged", "breaking"];
@@ -182,6 +183,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     {
         var item = stack.Collectible;
         Integrity = CarriedCondition.Integrity(item.GetRemainingDurability(stack), item.GetMaxDurability(stack));
+        Worn = stack.Attributes.GetFloat(CarriedWornKey);
     }
 
     /// <summary>Vanilla's shift pickup, server only, with the hull's condition carried on the item as its durability.</summary>
@@ -194,6 +196,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         {
             stack.Collectible.SetDurability(stack, CarriedCondition.Durability(Integrity, stack.Collectible.GetMaxDurability(stack)));
         }
+        if (Worn > 0) stack.Attributes.SetFloat(CarriedWornKey, Worn);
         if (!byEntity.TryGiveItemStack(stack)) entity.World.SpawnItemEntity(stack, entity.Pos.XYZ);
 
         entity.World.Logger.Audit("{0} Picked up 1x{1} at {2}.", byEntity.GetName(), stack.Collectible.Code, entity.Pos);
