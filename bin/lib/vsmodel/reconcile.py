@@ -1,11 +1,8 @@
-import math
-
-from pose import same_pose
+from pose import ROTATION, game_rotation, same_pose
 
 EPSILON = 1e-3
 DECIMALS = 4
 GEOMETRY = ("from", "to", "rotationOrigin")
-ROTATION = ("rotationX", "rotationY", "rotationZ")
 PLACEHOLDER = "#0"
 DISABLED = "vs_disabled"
 CORNERS = ((1, 0), (1, 1), (0, 1), (0, 0))
@@ -16,10 +13,8 @@ def reconcile(original, exported):
     exported = tidy(exported)
     result = {key: original[key] for key in original if key not in ("textures", "elements")}
     result["textures"] = {**original.get("textures", {}), **new_textures(original, exported)}
-    if "textureSizes" in exported and "textureSizes" not in original:
-        result.pop("textureSizes", None)
     result["elements"] = elements(original.get("elements", []), exported.get("elements", []))
-    if exported.get("animations"):
+    if "animations" in exported:
         before = {animation["code"]: animation for animation in original.get("animations", [])}
         order = {code: index for index, code in enumerate(before)}
         merged = [
@@ -29,6 +24,8 @@ def reconcile(original, exported):
         result["animations"] = sorted(merged, key=lambda each: order.get(each["code"], len(order)))
     if "animations" in result:
         result["animations"] = without_lost(result["animations"], {element["name"] for element in walk(result["elements"])})
+        if not result["animations"] and original.get("animations"):
+            del result["animations"]
     return {key: result[key] for key in [*original, *exported] if key in result}
 
 
@@ -104,6 +101,9 @@ def faces(originals, exported, drawn):
     for side, original in originals.items():
         face = exported.get(side)
         result[side] = original if face is None or face.get("texture") == PLACEHOLDER else merged_face(original, face, drawn[side])
+    for side, face in exported.items():
+        if side not in originals and face.get("texture") not in (PLACEHOLDER, "#" + DISABLED):
+            result[side] = new_face(face)
     return result
 
 
@@ -142,10 +142,13 @@ def same_point(a, b):
 
 
 def without_lost(animations, names):
-    return [
-        {**animation, "keyframes": [{**frame, "elements": {name: pose for name, pose in frame["elements"].items() if name in names}} for frame in animation["keyframes"]]}
-        for animation in animations
-    ]
+    result = []
+    for animation in animations:
+        keyframes = [{**frame, "elements": {name: pose for name, pose in frame["elements"].items() if name in names}} for frame in animation["keyframes"]]
+        keyframes = [frame for frame in keyframes if frame["elements"]]
+        if keyframes:
+            result.append({**animation, "keyframes": keyframes})
+    return result
 
 
 def walk(elements):
@@ -184,17 +187,5 @@ def close_angle(a, b):
 
 
 def same_rotation(a, b):
-    ma, mb = rotation_matrix(a), rotation_matrix(b)
-    return all(abs(x - y) < EPSILON for row_a, row_b in zip(ma, mb) for x, y in zip(row_a, row_b))
-
-
-def rotation_matrix(element):
-    x, y, z = (math.radians(float(element.get(key, 0))) for key in ROTATION)
-    rx = [[1, 0, 0], [0, math.cos(x), -math.sin(x)], [0, math.sin(x), math.cos(x)]]
-    ry = [[math.cos(y), 0, math.sin(y)], [0, 1, 0], [-math.sin(y), 0, math.cos(y)]]
-    rz = [[math.cos(z), -math.sin(z), 0], [math.sin(z), math.cos(z), 0], [0, 0, 1]]
-    return multiply(multiply(rx, ry), rz)
-
-
-def multiply(a, b):
-    return [[sum(a[i][k] * b[k][j] for k in range(3)) for j in range(3)] for i in range(3)]
+    ma, mb = game_rotation(a), game_rotation(b)
+    return all(abs(ma[row][column] - mb[row][column]) < EPSILON for row in range(3) for column in range(3))

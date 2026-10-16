@@ -1,13 +1,20 @@
 import math
 
+from mathutils import Matrix, Vector
+
 AXES = "XYZ"
-FLAGS = (("offsetX", "offsetY", "offsetZ"), ("rotationX", "rotationY", "rotationZ"), ("stretchX", "stretchY", "stretchZ"))
+OFFSET = ("offsetX", "offsetY", "offsetZ")
+ROTATION = ("rotationX", "rotationY", "rotationZ")
+STRETCH = ("stretchX", "stretchY", "stretchZ")
 TOLERANCE = (0.1, 0.02)  # degrees, 1/16 block
 
 
 def same_pose(shape, animation, other_shape, other):
-    degrees, units, _ = animation_error(shape, animation, other_shape, other)
-    return degrees < TOLERANCE[0] and units < TOLERANCE[1]
+    return within_tolerance(animation_error(shape, animation, other_shape, other))
+
+
+def within_tolerance(measured):
+    return measured[0] < TOLERANCE[0] and measured[1] < TOLERANCE[1]
 
 
 def animation_error(shape, animation, other_shape, other):
@@ -30,12 +37,12 @@ def joints(shape, animation, frame):
 
     def descend(elements, rest_parent, posed_parent):
         for element in elements:
-            rest[element["name"]] = multiply(rest_parent, local(element, {}, 0))
-            posed[element["name"]] = multiply(posed_parent, local(element, element_pose(animation, element["name"], frame), version))
+            rest[element["name"]] = rest_parent @ local(element, {}, 0)
+            posed[element["name"]] = posed_parent @ local(element, element_pose(animation, element["name"], frame), version)
             descend(element.get("children", []), rest[element["name"]], posed[element["name"]])
 
-    descend(shape["elements"], identity(), identity())
-    return {name: multiply(posed[name], invert(rest[name])) for name in rest}
+    descend(shape["elements"], Matrix.Identity(4), Matrix.Identity(4))
+    return {name: posed[name] @ rest[name].inverted() for name in rest}
 
 
 def element_pose(animation, name, frame):
@@ -45,15 +52,13 @@ def element_pose(animation, name, frame):
     left = max((each for each in resolved if each < frame), default=resolved[-1])
     right = min((each for each in resolved if each > frame), default=resolved[0])
     length = animation["quantityframes"]
-    span = (right - left) % length or length
-    t = ((frame - left) % length) / span
+    t = ((frame - left) % length) / ((right - left) % length or length)
     start, end = keyed_pose(animation, name, left), keyed_pose(animation, name, right)
     shortest = shortest_flags(animation, name, left)
     pose = {}
     for key in start:
         a, b = start[key], end.get(key, start[key])
-        step = ((b - a + 180) % 360) - 180 if key in shortest else b - a
-        pose[key] = a + step * t
+        pose[key] = a + (((b - a + 180) % 360) - 180 if key in shortest else b - a) * t
     return pose
 
 
@@ -68,7 +73,7 @@ def shortest_flags(animation, name, frame):
 def keyed_pose(animation, name, frame):
     keyframes = animation["keyframes"]
     pose = {}
-    for flag, keys in enumerate(FLAGS):
+    for keys in (OFFSET, ROTATION, STRETCH):
         setting = [index for index, keyframe in enumerate(keyframes) if any(key in keyframe["elements"].get(name, {}) for key in keys)]
         if not setting:
             continue
@@ -77,10 +82,8 @@ def keyed_pose(animation, name, frame):
         before, after = keyframes[left], keyframes[right]
         if left == right:
             t = 0
-        elif after["frame"] < before["frame"]:
-            t = ((frame - before["frame"]) % animation["quantityframes"]) / (after["frame"] + animation["quantityframes"] - before["frame"])
         else:
-            t = (frame - before["frame"]) / (after["frame"] - before["frame"])
+            t = ((frame - before["frame"]) % animation["quantityframes"]) / ((after["frame"] - before["frame"]) % animation["quantityframes"])
         for key in keys:
             start = float(before["elements"][name].get(key, 0))
             end = float(after["elements"][name].get(key, 0))
@@ -89,17 +92,26 @@ def keyed_pose(animation, name, frame):
 
 
 def local(element, pose, version):
-    origin = [float(value) / 16 for value in element.get("rotationOrigin", [0, 0, 0])]
-    corner = [float(value) / 16 for value in element["from"]]
-    offset = [pose.get("offset" + axis, 0) / 16 for axis in AXES]
-    scale = [float(element.get("scale" + axis, 1)) for axis in AXES]
-    stretch = [pose.get("stretch" + axis, 1) for axis in AXES]
-    rotation = [float(element.get("rotation" + axis, 0)) for axis in AXES]
-    turn = [pose.get("rotation" + axis, 0) for axis in AXES]
-    shift = [c + o - r for c, o, r in zip(corner, offset, origin)]
+    origin = Vector([float(value) for value in element.get("rotationOrigin", (0, 0, 0))]) / 16
+    shift = Vector([float(value) for value in element["from"]]) / 16 + Vector([pose.get(key, 0) for key in OFFSET]) / 16 - origin
+    scale = Vector([float(element.get("scale" + axis, 1)) for axis in AXES])
+    stretch = Vector([pose.get(key, 1) for key in STRETCH])
     if version == 1:
-        return chain(translation(origin), scaling(scale), rotating(rotation), translation(shift), scaling(stretch), rotating(turn))
-    return chain(translation(origin), rotating([r + t for r, t in zip(rotation, turn)]), scaling([s * t for s, t in zip(scale, stretch)]), translation(shift))
+        return (
+            Matrix.Translation(origin) @ scaling(scale) @ game_rotation(element).to_4x4()
+            @ Matrix.Translation(shift) @ scaling(stretch) @ game_rotation(pose).to_4x4()
+        )
+    summed = {key: float(element.get(key, 0)) + pose.get(key, 0) for key in ROTATION}
+    return Matrix.Translation(origin) @ game_rotation(summed).to_4x4() @ scaling(scale * stretch) @ Matrix.Translation(shift)
+
+
+def game_rotation(values):
+    x, y, z = (math.radians(float(values.get(key, 0))) for key in ROTATION)
+    return Matrix.Rotation(x, 3, "X") @ Matrix.Rotation(y, 3, "Y") @ Matrix.Rotation(z, 3, "Z")
+
+
+def scaling(vector):
+    return Matrix.Diagonal((*vector, 1))
 
 
 def difference(a, b):
@@ -107,61 +119,3 @@ def difference(a, b):
     degrees = math.degrees(2 * math.asin(min(1.0, chord / (2 * math.sqrt(2)))))
     units = 16 * max(abs(a[row][3] - b[row][3]) for row in range(3))
     return degrees, units
-
-
-def chain(*matrices):
-    result = identity()
-    for matrix in matrices:
-        result = multiply(result, matrix)
-    return result
-
-
-def identity():
-    return [[float(row == column) for column in range(4)] for row in range(4)]
-
-
-def translation(vector):
-    matrix = identity()
-    for row in range(3):
-        matrix[row][3] = vector[row]
-    return matrix
-
-
-def scaling(vector):
-    matrix = identity()
-    for row in range(3):
-        matrix[row][row] = vector[row]
-    return matrix
-
-
-def rotating(degrees):
-    x, y, z = (math.radians(value) for value in degrees)
-    rx = [[1, 0, 0, 0], [0, math.cos(x), -math.sin(x), 0], [0, math.sin(x), math.cos(x), 0], [0, 0, 0, 1]]
-    ry = [[math.cos(y), 0, math.sin(y), 0], [0, 1, 0, 0], [-math.sin(y), 0, math.cos(y), 0], [0, 0, 0, 1]]
-    rz = [[math.cos(z), -math.sin(z), 0, 0], [math.sin(z), math.cos(z), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
-    return chain(rx, ry, rz)
-
-
-def multiply(a, b):
-    return [[sum(a[i][k] * b[k][j] for k in range(4)) for j in range(4)] for i in range(4)]
-
-
-def invert(matrix):
-    linear = [row[:3] for row in matrix[:3]]
-    inverse = inverse3(linear)
-    move = [-sum(inverse[row][k] * matrix[k][3] for k in range(3)) for row in range(3)]
-    return [inverse[row] + [move[row]] for row in range(3)] + [[0.0, 0.0, 0.0, 1.0]]
-
-
-def inverse3(m):
-    determinant = (
-        m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
-        - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
-        + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0])
-    )
-    cofactors = [
-        [m[1][1] * m[2][2] - m[1][2] * m[2][1], m[0][2] * m[2][1] - m[0][1] * m[2][2], m[0][1] * m[1][2] - m[0][2] * m[1][1]],
-        [m[1][2] * m[2][0] - m[1][0] * m[2][2], m[0][0] * m[2][2] - m[0][2] * m[2][0], m[0][2] * m[1][0] - m[0][0] * m[1][2]],
-        [m[1][0] * m[2][1] - m[1][1] * m[2][0], m[0][1] * m[2][0] - m[0][0] * m[2][1], m[0][0] * m[1][1] - m[0][1] * m[1][0]],
-    ]
-    return [[value / determinant for value in row] for row in cofactors]

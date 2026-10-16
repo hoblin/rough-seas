@@ -23,10 +23,13 @@ for frame, angle in ((0, 0), (8, 50), (16, -30), (24, 0)):
 spin = bpy.data.actions.new("spin")
 spin.use_fake_user = True
 armature.animation_data.action = spin
-bones["Hand"].rotation_mode = "XZY"
+bones["Fin"].rotation_mode = "XZY"
 for frame, angle in ((0, 0), (10, 180), (20, 360), (24, 360)):
-    bones["Hand"].rotation_euler = Euler((0, 0, math.radians(angle)), "XZY")
-    bones["Hand"].keyframe_insert("rotation_euler", frame=frame)
+    bones["Fin"].rotation_euler = Euler((0, 0, math.radians(angle)), "XZY")
+    bones["Fin"].keyframe_insert("rotation_euler", frame=frame)
+for frame, lift in ((0, 0), (22, 2), (24, 0)):
+    bones["Forearm"].location = (0, 0, lift)
+    bones["Forearm"].keyframe_insert("location", frame=frame)
 
 swing = bpy.data.actions["swing"]
 for curve in swing.fcurves:

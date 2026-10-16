@@ -4,14 +4,12 @@ import math
 import bpy
 from mathutils import Euler, Matrix, Vector
 
-from pose import element_pose
+from pose import OFFSET, ROTATION, STRETCH, element_pose, game_rotation
 from reconcile import walk
 
 TO_BLENDER = Matrix(((0, 0, 1), (1, 0, 0), (0, 1, 0)))
 TO_GAME = TO_BLENDER.transposed()
-OFFSET = ("offsetX", "offsetY", "offsetZ")
-ROTATION = ("rotationX", "rotationY", "rotationZ")
-STRETCH = ("stretchX", "stretchY", "stretchZ")
+KEYS = (*OFFSET, *ROTATION, *STRETCH)
 SHORTEST = ("rotShortestDistanceX", "rotShortestDistanceY", "rotShortestDistanceZ")
 FIT = (0.005, 0.001)  # degrees, 1/16 block
 
@@ -36,7 +34,7 @@ def load_animations(data, armature):
                 location, rotation, stretch = to_blender(elements[name], element_pose(animation, name, frame % length), version)
                 previous = rotation.to_euler("XZY", previous) if previous else rotation.to_euler("XZY")
                 track.append([*location, *previous, *stretch])
-            for frame in fit(track, anchors, lambda frame, values: miss(basis(values), basis(track[frame]))):
+            for frame in fit(track, anchors, lambda frame, values: excess_over_fit(basis(values), basis(track[frame]))):
                 key(action, name, frame, track[frame])
         for curve in action.fcurves:
             curve.update()
@@ -66,9 +64,14 @@ def save_animations(elements, version, armature):
             bpy.context.scene.frame_set(frame)
             for bone in keyed:
                 shown[bone].append(armature.pose.bones[bone].matrix_basis.copy())
+        poses = {bone: game_keyframes(by_name[bone], shown[bone], anchors, version) for bone, anchors in keyed.items()}
+        resolved = {frame for keyframes in poses.values() for frame in keyframes}
+        for bone, keyframes in poses.items():
+            if any(pose.get(SHORTEST[0]) for pose in keyframes.values()):
+                poses[bone] = game_keyframes(by_name[bone], shown[bone], keyed[bone] | resolved, version)
         frames = {}
-        for bone, anchors in keyed.items():
-            for frame, pose in game_keyframes(by_name[bone], shown[bone], anchors, version).items():
+        for bone, keyframes in poses.items():
+            for frame, pose in keyframes.items():
                 frames.setdefault(frame, {})[bone] = pose
         animations.append({
             "name": meta.get("name", action.name),
@@ -95,11 +98,11 @@ def game_keyframes(element, shown, anchors, version):
     shortest = any(abs(track[length][key] - track[0][key]) >= 180 for key in ROTATION)
     track[length] = track[0]
 
-    def guess_miss(frame, values):
-        return miss(blender_matrix(element, dict(zip(KEYS, values)), version), shown[frame])
+    def excess(frame, values):
+        return excess_over_fit(blender_matrix(element, dict(zip(KEYS, values)), version), shown[frame])
 
     values = [[pose[key] for key in KEYS] for pose in track]
-    chosen = fit(values, anchors, guess_miss, shortest_lerp if shortest else linear)
+    chosen = fit(values, anchors, excess, shortest_lerp if shortest else linear)
     stretched = any(abs(pose[key] - 1) > 1e-6 for pose in track for key in STRETCH)
     result = {}
     for frame in chosen:
@@ -107,9 +110,6 @@ def game_keyframes(element, shown, anchors, version):
             pose = {key: track[frame][key] for key in KEYS if stretched or key not in STRETCH}
             result[frame] = {**pose, **(dict.fromkeys(SHORTEST, True) if shortest else {})}
     return result
-
-
-KEYS = (*OFFSET, *ROTATION, *STRETCH)
 
 
 def linear(start, end, t):
@@ -120,16 +120,16 @@ def shortest_lerp(start, end, t):
     return [a + ((((b - a + 180) % 360) - 180) if KEYS[index] in ROTATION else b - a) * t for index, (a, b) in enumerate(zip(start, end))]
 
 
-def fit(track, anchors, missing, lerp=linear):
+def fit(track, anchors, excess, lerp=linear):
     keys = sorted(anchors)
     while True:
         added = []
         for start, end in zip(keys, keys[1:]):
             worst, frame = 0.0, None
             for between in range(start + 1, end):
-                excess = missing(between, lerp(track[start], track[end], (between - start) / (end - start)))
-                if excess > worst:
-                    worst, frame = excess, between
+                over = excess(between, lerp(track[start], track[end], (between - start) / (end - start)))
+                if over > worst:
+                    worst, frame = over, between
             if frame is not None:
                 added.append(frame)
         if not added:
@@ -137,7 +137,7 @@ def fit(track, anchors, missing, lerp=linear):
         keys = sorted(keys + added)
 
 
-def miss(a, b):
+def excess_over_fit(a, b):
     degrees = math.degrees(a.to_quaternion().rotation_difference(b.to_quaternion()).angle)
     units = max((a.translation - b.translation).length, 16 * max(abs(x - y) for x, y in zip(a.to_scale(), b.to_scale())))
     return max(degrees / FIT[0], units / FIT[1]) - 1
@@ -165,10 +165,10 @@ def to_blender(element, pose, version):
     offset = Vector([pose.get(key, 0) for key in OFFSET])
     stretch = Vector([pose.get(key, 1) for key in STRETCH])
     if version == 1:
-        rotation = euler_matrix(pose)
+        rotation = game_rotation(pose)
         location = scale * (corner + offset) - scale * stretch * (rotation @ corner)
     else:
-        rotation = euler_matrix(element).transposed() @ euler_matrix({axis: float(element.get(axis, 0)) + pose.get(axis, 0) for axis in ROTATION})
+        rotation = game_rotation(element).transposed() @ game_rotation({axis: float(element.get(axis, 0)) + pose.get(axis, 0) for axis in ROTATION})
         location = rotation @ (scale * stretch * offset)
     return TO_BLENDER @ location, TO_BLENDER @ rotation @ TO_GAME, TO_BLENDER @ stretch
 
@@ -185,7 +185,7 @@ def to_game(element, location, turned, stretch, version, previous):
         turn = degrees(angles)
     else:
         offset = divide(rotation.transposed() @ location, scale * stretch)
-        total = TO_BLENDER @ euler_matrix(element) @ rotation @ TO_GAME
+        total = TO_BLENDER @ game_rotation(element) @ rotation @ TO_GAME
         angles = total.to_euler("XZY", previous) if previous else total.to_euler("XZY")
         turn = [value - float(element.get(axis, 0)) for value, axis in zip(degrees(angles), ROTATION)]
     pose = {**dict(zip(OFFSET, offset)), **dict(zip(ROTATION, turn)), **dict(zip(STRETCH, stretch))}
@@ -204,11 +204,6 @@ def key(action, bone, frame, values):
         for index in range(3):
             curve = action.fcurves.find(f"{path}.{channel}", index=index) or action.fcurves.new(f"{path}.{channel}", index=index, action_group=bone)
             curve.keyframe_points.insert(frame, values[start + index], options={"FAST"}).interpolation = "LINEAR"
-
-
-def euler_matrix(values):
-    x, y, z = (math.radians(float(values.get(axis, 0))) for axis in ROTATION)
-    return Matrix.Rotation(x, 3, "X") @ Matrix.Rotation(y, 3, "Y") @ Matrix.Rotation(z, 3, "Z")
 
 
 def degrees(euler):

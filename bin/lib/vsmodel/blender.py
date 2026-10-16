@@ -8,8 +8,8 @@ from mathutils import Matrix, Vector
 
 sys.path[:0] = [os.path.dirname(__file__), os.path.join(os.environ["BLENDER_USER_SCRIPTS"], "modules")]
 import json5  # noqa: E402
-from animation import load_animations, play, save_animations  # noqa: E402
-from pose import TOLERANCE, animation_error, difference, joints  # noqa: E402
+from animation import TO_GAME, load_animations, play, save_animations  # noqa: E402
+from pose import animation_error, difference, joints, within_tolerance  # noqa: E402
 from preview import render_views  # noqa: E402
 from reconcile import DISABLED, reconcile, walk, with_engine_uvs  # noqa: E402
 from report import diff, report  # noqa: E402
@@ -17,13 +17,19 @@ from textures import link_textures, located  # noqa: E402
 
 SIDES = {(-1, 0, 0): "north", (0, 1, 0): "east", (0, -1, 0): "west", (1, 0, 0): "south", (0, 0, 1): "up", (0, 0, -1): "down"}
 # Undoes the add-on's default import offset (translate_origin -8, -8, 0).
-TO_GAME_SPACE = Matrix.Diagonal((1 / 16, 1 / 16, 1 / 16, 1)) @ Matrix(((0, 1, 0, 0), (0, 0, 1, 0), (1, 0, 0, 0), (0, 0, 0, 1))) @ Matrix.Translation((8, 8, 0))
+TO_GAME_SPACE = Matrix.Diagonal((1 / 16, 1 / 16, 1 / 16, 1)) @ TO_GAME.to_4x4() @ Matrix.Translation((8, 8, 0))
 
 
 def main():
+    bpy.context.preferences.filepaths.save_version = 0
     addon_utils.enable("vintagestory_json", default_set=False)
     command, *args = sys.argv[sys.argv.index("--") + 1:]
     globals()["cmd_" + command](*args)
+
+
+def fail(message):
+    print(message)
+    sys.exit(1)
 
 
 def cmd_import(shape, blend):
@@ -43,6 +49,7 @@ def cmd_export(blend, shape=""):
 
 
 def cmd_edit(shape, script):
+    writable(shape)
     load(shape)
     run(script)
     save(shape)
@@ -51,6 +58,8 @@ def cmd_edit(shape, script):
 def cmd_preview(source, out, code="", frame="0"):
     open_or_load(source)
     if code:
+        if code not in bpy.data.actions:
+            fail(f"No animation {code}; this shape has: {', '.join(action.name for action in bpy.data.actions) or 'none'}")
         play(armature(), bpy.data.actions[code])
         bpy.context.scene.frame_set(int(frame))
     render_views(out)
@@ -68,16 +77,19 @@ def cmd_check(source, out):
     before = {animation["code"]: animation for animation in original.get("animations", [])}
     for animation in result.get("animations", []):
         shown = shown_error(result, animation)
-        failed |= not close_enough(shown)
+        failed |= not within_tolerance(shown)
         line = f"{animation['code']}: Blender plays the game's motion {error(shown)}"
         if animation["code"] in before and not edited:
             kept = animation_error(original, before[animation["code"]], result, animation)
-            failed |= not close_enough(kept)
+            failed |= not within_tolerance(kept)
             line += f"; the export keeps the original's motion {error(kept)}"
         print(line)
-    print("FAILED" if failed else "PASSED")
+    hidden = [element["name"] for element in walk(result["elements"]) if element["name"] not in {each["name"] for each in comparable(result["elements"])}]
+    if result.get("animations") and hidden:
+        print(f"Not compared, under a scaled element Blender cannot show: {', '.join(hidden)}")
     if failed:
-        sys.exit(1)
+        fail("FAILED")
+    print("PASSED")
 
 
 def open_or_load(source):
@@ -104,12 +116,24 @@ def load(shape):
     hide_disabled_faces(data.get("elements", []))
 
 
+def writable(shape):
+    if os.path.realpath(shape).startswith(os.path.realpath(os.environ["VINTAGE_STORY"]) + os.sep):
+        fail(f"Not exported: {shape} is in the game install; export it into RoughSeas/assets (docs/modeling.md)")
+
+
 def save(shape):
+    writable(shape)
     raw = shape + ".raw"
     original, exported = round_trip(raw)
     os.remove(raw)
+    result = reconcile(original, located(original, exported))
+    for animation in result.get("animations", []):
+        if animation not in original.get("animations", []):
+            shown = shown_error(result, animation)
+            if not within_tolerance(shown):
+                fail(f"Not exported: {animation['code']} would play in the game {error(shown)} away from Blender")
     with open(shape, "w") as file:
-        json.dump(reconcile(original, located(original, exported)), file, indent=1, ensure_ascii=False)
+        json.dump(result, file, indent=1, ensure_ascii=False)
         file.write("\n")
     print("Exported", shape)
 
@@ -173,7 +197,7 @@ def side_of(polygon):
 
 def shown_error(shape, animation):
     rig = armature()
-    names = {element["name"] for element in unscaled(shape["elements"])}
+    names = {element["name"] for element in comparable(shape["elements"])}
     meshes = [obj for obj in bpy.data.objects if obj.type == "MESH" and obj.name in names]
     rig.data.pose_position = "REST"
     bpy.context.view_layer.update()
@@ -186,21 +210,17 @@ def shown_error(shape, animation):
         expected = joints(shape, animation, frame)
         for obj in meshes:
             shown = TO_GAME_SPACE @ obj.matrix_world @ rest[obj.name].inverted() @ TO_GAME_SPACE.inverted()
-            degrees, units = difference(expected[obj.name], [list(row) for row in shown])
+            degrees, units = difference(expected[obj.name], shown)
             if degrees > worst[0] or units > worst[1]:
                 worst = (max(degrees, worst[0]), max(units, worst[1]), f"frame {frame} {obj.name}")
     return worst
 
 
-def unscaled(elements):
+def comparable(elements):
     for element in elements:
+        yield element
         if all(float(element.get("scale" + axis, 1)) == 1 for axis in "XYZ"):
-            yield element
-            yield from unscaled(element.get("children", []))
-
-
-def close_enough(measured):
-    return measured[0] < TOLERANCE[0] and measured[1] < TOLERANCE[1]
+            yield from comparable(element.get("children", []))
 
 
 def error(measured):
