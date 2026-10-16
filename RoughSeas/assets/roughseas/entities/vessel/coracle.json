@@ -67,14 +67,19 @@
                 "freeboardMetres": "A coracle with its paddler aboard floats with about 0.2 m of rim above water",
                 "heave": "A 15 kg basket sits on the water and rises with the crest",
                 "capsizeBreakerMetres": "A crest that catches the low rim tips the bowl and its paddler out: coracles keep to rivers and sheltered water",
-                "rollResponse": "A round, flat bowl tilts with every slope of the water"
+                "rollResponse": "A round, flat bowl tilts with every slope of the water",
+                "pitchResponse": "Round, it tilts the same every way"
             }
         },
         "roughseas:bilge": {
             "capacityLitres": 250,
             "deckSquareMetres": 1.5,
             "drainLitresPerHour": 0,
-            "sources": {"capacityLitres": "A bowl 1.4 m across and 0.35 m deep, about half of its cylinder"}
+            "sources": {
+                "capacityLitres": "A bowl 1.4 m across and 0.35 m deep, about half of its cylinder",
+                "deckSquareMetres": "The bowl's mouth, 1.4 m across",
+                "drainLitresPerHour": "Tarred hide is watertight"
+            }
         }
     },
     "client": {

@@ -1,21 +1,12 @@
+using Newtonsoft.Json.Linq;
 using RoughSeas.Storms;
+using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Tests.Storms;
 
 public class SeaworthinessTests
 {
     private readonly Waves waves = new(Fixtures.Config().Waves);
-
-    [Fact]
-    public void OneWaveInSevenOverTopsTheSignificantHeight()
-    {
-        Assert.Equal(2, Waves.OneWave(2, 1 - Math.Exp(-2)), 6);
-        Assert.Equal(0, Waves.OneWave(2, 0));
-    }
-
-    [Fact]
-    public void ABreakingCrestStandsHigherThanASwellOfTheSameHeight() =>
-        Assert.True(waves.Crest(2, breaking: true) > waves.Crest(2, breaking: false));
 
     [Fact]
     public void AMetreAndAHalfSwellComesOverTheDugoutButNotTheCurrachOrTheOutrigger()
@@ -61,7 +52,7 @@ public class SeaworthinessTests
     [Fact]
     public void ACraftWithNoSeaworthinessDataNeverCapsizesAndRollsAsVanillaDoes()
     {
-        var unknown = Seaworthiness.From(new Vintagestory.API.Datastructures.JsonObject(new Newtonsoft.Json.Linq.JObject()));
+        var unknown = Seaworthiness.From(new JsonObject(new JObject()));
         Assert.False(unknown.Capsizes(100));
         Assert.Equal(1, unknown.RollResponse);
         Assert.Equal(1, unknown.PitchResponse);

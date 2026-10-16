@@ -93,14 +93,19 @@
                 "freeboardMetres": "A loaded log dugout floats with a hand's breadth or two of side above water",
                 "heave": "Balance: 400 kg of log rises slowly to a crest; a light hull rises with it, a heavy one lets it climb the side",
                 "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
-                "rollResponse": "A round-bottomed log has little form stability: tippy in a sea"
+                "rollResponse": "A round-bottomed log has little form stability: tippy in a sea",
+                "pitchResponse": "A long, heavy log rides through the swell with little pitch"
             }
         },
         "roughseas:bilge": {
             "capacityLitres": 450,
             "deckSquareMetres": 3,
             "drainLitresPerHour": 0,
-            "sources": {"capacityLitres": "The hollow of a 5 m log, about 0.5 m wide and 0.35 m deep, half of its box"}
+            "sources": {
+                "capacityLitres": "The hollow of a 5 m log, about 0.5 m wide and 0.35 m deep, half of its box",
+                "deckSquareMetres": "Its open hollow, 5 m by 0.6 m, catches the rain",
+                "drainLitresPerHour": "One log, no seams: nothing leaks"
+            }
         }
     },
     "client": {

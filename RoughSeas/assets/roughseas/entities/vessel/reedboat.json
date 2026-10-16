@@ -64,9 +64,11 @@
             "rollResponse": 1.2,
             "pitchResponse": 1.2,
             "sources": {
-                "freeboardMetres": "Bundled reed floats high but sinks lower as it soaks; water that comes over runs out between the bundles",
+                "freeboardMetres": "Bundled reed floats a hand's breadth or two proud; water that comes over runs out between the bundles, so it has no bilge",
                 "heave": "Reed is light and rises with the crest",
-                "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over"
+                "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
+                "rollResponse": "Bundles bound into a flat-bottomed hull: a little livelier than vanilla's boats",
+                "pitchResponse": "Light and short, it lifts to each swell"
             }
         }
     },

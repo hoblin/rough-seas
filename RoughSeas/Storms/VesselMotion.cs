@@ -26,6 +26,7 @@ public static class VesselMotion
 
     private static void Respond(EntityBoat __instance)
     {
+        if (__instance.Api is ICoreClientAPI { IsGamePaused: true }) return;
         var forces = __instance.GetBehavior<EntityBehaviorSeaForces>();
         if (forces == null || __instance.Properties.Client.Renderer is not EntityShapeRenderer renderer) return;
 

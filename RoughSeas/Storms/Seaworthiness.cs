@@ -29,5 +29,5 @@ public readonly record struct Seaworthiness(
         return overtopping > 0 ? overtopping / (crest * (1 - Heave)) : 0;
     }
 
-    public bool Capsizes(double breaker) => breaker >= CapsizeBreakerMetres;
+    public bool Capsizes(double breakerMetres) => breakerMetres >= CapsizeBreakerMetres;
 }

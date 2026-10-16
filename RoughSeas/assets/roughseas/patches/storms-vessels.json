@@ -6,7 +6,8 @@
             "freeboardMetres": "Logs float about two thirds under: a raft's deck sits a hand's breadth above water, and every crest washes over it",
             "heave": "A raft lies flat on the water and rises with the crest",
             "capsizeBreakerMetres": "Seamanship: a breaking wave as high as the craft's beam can roll it over",
-            "rollResponse": "A wide, flat raft lies steady on calm water"
+            "rollResponse": "Logs lashed side by side, 2 m wide, have great form stability: little roll, though every crest washes over",
+            "pitchResponse": "A flat raft lies on the water and tilts little with the swell"
         }
     } },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:seaforces" } },
@@ -22,7 +23,8 @@
             "freeboardMetres": "A small open sailing boat shows about half a metre of side",
             "heave": "Balance: a planked hull of some weight rises with part of the crest",
             "capsizeBreakerMetres": "Wolfson Unit capsize trials after the 1979 Fastnet: a breaker of about 55% of a keelboat's length rolls it; the sailboat is about 6 m",
-            "rollResponse": "Vanilla's own roll"
+            "rollResponse": "Vanilla's own roll",
+            "pitchResponse": "Vanilla's own pitch"
         }
     } },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:seaforces" } },

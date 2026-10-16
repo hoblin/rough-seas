@@ -36,7 +36,10 @@ public class StormsModSystem : ModSystem
 
     public override void StartClientSide(ICoreClientAPI capi) => VesselMotion.Attach();
 
-    public override void Dispose() => VesselMotion.Detach();
+    public override void Dispose()
+    {
+        if (api?.Side == EnumAppSide.Client) VesselMotion.Detach();
+    }
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {

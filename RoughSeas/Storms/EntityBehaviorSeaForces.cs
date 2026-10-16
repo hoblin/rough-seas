@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
@@ -85,17 +84,17 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
         sinceWave = 0;
         Wave?.Invoke(state);
-        Meet(state);
+        TakeWave(state);
     }
 
-    private void Meet(SeaState state)
+    private void TakeWave(SeaState state)
     {
         var waves = storms.Waves;
         var rand = entity.World.Rand;
         var swamped = bilge?.Swamped == true;
         var surf = waves.BreaksAt(WaterDepth(storms.Config.Waves.MaxDepthBlocks), state.WaveHeight);
         var breaking = swamped || surf || rand.NextDouble() < waves.BreakingChance(state.WindSpeed);
-        var height = Waves.OneWave(state.WaveHeight, rand.NextDouble());
+        var height = Waves.WaveHeight(state.WaveHeight, rand.NextDouble());
         var crest = waves.Crest(height, breaking);
         var shipped = waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure;
         var capsizes = breaking && Seaworthiness.Capsizes(height);
@@ -106,24 +105,27 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         storms.Log(entity, "{0} wave {1:F1} m in a {2:F1} m sea, {3:F2} m over a {4:F2} m freeboard: shipped {5:F0} L, {6}",
             cause, height, state.WaveHeight, Seaworthiness.Overtopping(crest), Seaworthiness.FreeboardMetres, shipped,
             bilge == null ? "washed off" : $"bilge {bilge.Litres:F0} of {bilge.CapacityLitres:F0} L");
-        if (breaking && hull != null) Strike(state, hull);
+        if (breaking && hull != null) Strike(height, hull);
         if (capsizes) Capsize(height, swamped);
     }
 
-    private void Strike(SeaState state, EntityBehaviorVesselIntegrity hull)
+    private void Strike(double breakerMetres, EntityBehaviorVesselIntegrity hull)
     {
-        var energy = BreakerEnergy(state.WaveHeight) * (1 + (bilge?.Fill ?? 0)) * Exposure;
+        var energy = BreakerEnergy(breakerMetres) * (1 + (bilge?.Fill ?? 0)) * Exposure;
         hull.Strike(energy);
-        storms.Log(entity, "breaker struck with {0:F0} J, hull now {1:F2}", energy, hull.Integrity);
+        storms.Log(entity, "{0:F1} m breaker struck with {1:F0} J, hull now {2:F2}", breakerMetres, energy, hull.Integrity);
     }
 
-    private void Capsize(double breaker, bool swamped)
+    private void Capsize(double breakerMetres, bool swamped)
     {
-        var seats = entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
-        var thrown = seats.Select(seat => seat.Passenger).OfType<EntityAgent>().Count(passenger => passenger.TryUnmount());
-        if (swamped && thrown == 0) return;
+        var thrown = 0;
+        foreach (var seat in entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [])
+        {
+            if (seat.Passenger is EntityAgent passenger && passenger.TryUnmount()) thrown++;
+        }
+        if (thrown == 0 && (swamped || bilge == null)) return;
 
-        storms.Log(entity, "capsized by a {0:F1} m breaker against {1:F2} m: {2} thrown in the water", breaker, Seaworthiness.CapsizeBreakerMetres, thrown);
+        storms.Log(entity, "capsized by a {0:F1} m breaker against {1:F2} m: {2} thrown in the water", breakerMetres, Seaworthiness.CapsizeBreakerMetres, thrown);
         bilge?.Ship(bilge.CapacityLitres);
     }
 

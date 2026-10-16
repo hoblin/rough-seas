@@ -29,6 +29,17 @@ public class WavesTests
     }
 
     [Fact]
+    public void OneWaveInSevenOverTopsTheSignificantHeight()
+    {
+        Assert.Equal(2, Waves.WaveHeight(2, 1 - Math.Exp(-2)), 6);
+        Assert.Equal(0, Waves.WaveHeight(2, 0));
+    }
+
+    [Fact]
+    public void ABreakingCrestStandsHigherThanASwellOfTheSameHeight() =>
+        Assert.True(waves.Crest(2, breaking: true) > waves.Crest(2, breaking: false));
+
+    [Fact]
     public void ABreakerHitsHarderAsTheWavesGrowAndOnAWiderHull()
     {
         Assert.True(waves.BreakerEnergy(4, 2) > 4 * waves.BreakerEnergy(2, 2));
