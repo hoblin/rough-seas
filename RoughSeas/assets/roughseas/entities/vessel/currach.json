@@ -83,7 +83,33 @@
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
         },
-        "roughseas:seaforces": {"beamMetres": 1.1, "mastMetres": 0, "windageSquareMetres": 0.9}
+        "roughseas:seaforces": {
+            "beamMetres": 1.1,
+            "mastMetres": 0,
+            "windageSquareMetres": 0.9,
+            "freeboardMetres": 0.4,
+            "heave": 0.85,
+            "capsizeBreakerMetres": 2,
+            "rollResponse": 1.2,
+            "pitchResponse": 1.5,
+            "sources": {
+                "freeboardMetres": "An Aran currach shows about 0.4 m of side, more at its sheered bow",
+                "heave": "A hide hull of 100 kg sits on the water and rises with the crest: it rides over seas that board heavier boats",
+                "capsizeBreakerMetres": "Aran currachs are launched and landed through breaking surf: the light, flared hull lifts to a breaker that rolls a heavier boat of its beam",
+                "rollResponse": "A beamy, light hull rolls with the sea about as much as vanilla's boats",
+                "pitchResponse": "The light, flexing hull follows the swell bow and stern"
+            }
+        },
+        "roughseas:bilge": {
+            "capacityLitres": 1500,
+            "deckSquareMetres": 5.5,
+            "drainLitresPerHour": 0,
+            "sources": {
+                "capacityLitres": "A 6 m hull, about 1 m wide and 0.5 m deep inside, half of its box",
+                "deckSquareMetres": "The open hull, 6 m by 1 m less its taper, catches the rain",
+                "drainLitresPerHour": "Greased hide is watertight; the wear of an ungreased hull is upkeep, not a leak"
+            }
+        }
     },
     "client": {
         "size": 1,
@@ -98,7 +124,9 @@
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
-            {"code": "ropetieable"}
+            {"code": "ropetieable"},
+            {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"}
         ]
     },
     "server": {
@@ -111,6 +139,7 @@
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},
             {"code": "ropetieable"}
         ]

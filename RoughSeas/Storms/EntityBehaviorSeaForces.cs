@@ -3,6 +3,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
 
@@ -28,6 +29,8 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public double MastMetres { get; private set; }
 
+    public Seaworthiness Seaworthiness { get; private set; }
+
     public override string PropertyName() => Code;
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
@@ -37,6 +40,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         BeamMetres = attributes["beamMetres"].AsDouble();
         MastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();
+        Seaworthiness = Seaworthiness.From(attributes);
     }
 
     public override void AfterInitialized(bool onFirstSpawn)
@@ -80,23 +84,49 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
         sinceWave = 0;
         Wave?.Invoke(state);
-        if (hull != null) Break(state, hull);
+        TakeWave(state);
     }
 
-    private void Break(SeaState state, EntityBehaviorVesselIntegrity hull)
+    private void TakeWave(SeaState state)
     {
         var waves = storms.Waves;
+        var rand = entity.World.Rand;
+        var height = Waves.WaveHeight(state.WaveHeight, rand.NextDouble());
         var swamped = bilge?.Swamped == true;
-        var surf = waves.BreaksAt(WaterDepth(storms.Config.Waves.MaxDepthBlocks), state.WaveHeight);
-        var breaks = swamped || surf ? 1 : waves.BreakingChance(state.WindSpeed);
-        if (entity.World.Rand.NextDouble() >= breaks) return;
+        var surf = waves.BreaksAt(WaterDepth(storms.Config.Waves.MaxDepthBlocks), height);
+        var breaking = swamped || surf || rand.NextDouble() < waves.BreakingChance(state.WindSpeed);
+        var crest = waves.Crest(height, breaking);
+        var shipped = waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure;
+        var capsizes = breaking && Seaworthiness.Capsizes(height);
+        if (!breaking && shipped <= 0) return;
 
-        var energy = BreakerEnergy(state.WaveHeight) * (1 + (bilge?.Fill ?? 0)) * Exposure;
-        var shipped = waves.ShippedLitres(state.WaveHeight, BeamMetres) * Exposure;
-        hull.Strike(energy);
         bilge?.Ship(shipped);
-        storms.Log(entity, "breaker {0:F1} m ({1}), {2:F0} J, shipped {3:F0} L, hull now {4:F2}",
-            state.WaveHeight, swamped ? "swamped" : surf ? "surf" : "whitecap", energy, shipped, hull.Integrity);
+        var cause = swamped ? "swamped" : surf ? "surf" : breaking ? "whitecap" : "swell";
+        storms.Log(entity, "{0} wave {1:F1} m in a {2:F1} m sea, {3:F2} m over a {4:F2} m freeboard: shipped {5:F0} L, {6}",
+            cause, height, state.WaveHeight, Seaworthiness.Overtopping(crest), Seaworthiness.FreeboardMetres, shipped,
+            bilge == null ? "washed off" : $"bilge {bilge.Litres:F0} of {bilge.CapacityLitres:F0} L");
+        if (breaking && hull != null) Strike(height, hull);
+        if (capsizes) Capsize(height, swamped);
+    }
+
+    private void Strike(double breakerMetres, EntityBehaviorVesselIntegrity hull)
+    {
+        var energy = BreakerEnergy(breakerMetres) * (1 + (bilge?.Fill ?? 0)) * Exposure;
+        hull.Strike(energy);
+        storms.Log(entity, "{0:F1} m breaker struck with {1:F0} J, hull now {2:F2}", breakerMetres, energy, hull.Integrity);
+    }
+
+    private void Capsize(double breakerMetres, bool swamped)
+    {
+        var thrown = 0;
+        foreach (var seat in entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [])
+        {
+            if (seat.Passenger is EntityAgent passenger && passenger.TryUnmount()) thrown++;
+        }
+        if (thrown == 0 && (swamped || bilge == null)) return;
+
+        storms.Log(entity, "capsized by a {0:F1} m breaker against {1:F2} m: {2} thrown in the water", breakerMetres, Seaworthiness.CapsizeBreakerMetres, thrown);
+        bilge?.Ship(bilge.CapacityLitres);
     }
 
     private double Exposure => mooring?.Exposure ?? 1;

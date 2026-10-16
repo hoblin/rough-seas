@@ -18,7 +18,7 @@ namespace AgentBridge;
 public class BridgeCommands : ModSystem
 {
     private static readonly (double Angle, double Reach)[] StormProbes =
-        Enumerable.Range(0, 12).SelectMany(i => new[] { 0.25, 0.45, 0.65 }, (i, reach) => (i * Math.PI / 6, reach)).ToArray();
+        Enumerable.Range(0, 12).SelectMany(i => new[] { 0.25, 0.45, 0.65, 0.85, 1.0 }, (i, reach) => (i * Math.PI / 6, reach)).ToArray();
 
     private const int HoverAboveSea = 1;
 
@@ -50,9 +50,9 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Sea((IServerPlayer)args.Caller.Player))
             .EndSubCommand()
             .BeginSubCommand("storm")
-                .WithDescription("Fly the caller to where the storms within range raise the highest waves over open sea, hovering just above the surface")
-                .WithArgs(parsers.OptionalDouble("range", 60000))
-                .HandleWith(args => Storm((IServerPlayer)args.Caller.Player, (double)args[0]))
+                .WithDescription("Fly the caller to where the storms within range raise the highest waves over open sea, or the waves nearest a height, hovering just above the surface")
+                .WithArgs(parsers.OptionalDouble("range", 60000), parsers.OptionalDouble("waves", 0))
+                .HandleWith(args => Storm((IServerPlayer)args.Caller.Player, (double)args[0], (double)args[1]))
             .EndSubCommand()
             .BeginSubCommand("drift")
                 .WithDescription("Whether unridden vessels drift with the current and the wind; off on every start, so they hold still")
@@ -136,11 +136,11 @@ public class BridgeCommands : ModSystem
             : "Unridden vessels hold still; /bridge drift on lets them drift");
     }
 
-    private TextCommandResult Storm(IServerPlayer player, double range)
+    private TextCommandResult Storm(IServerPlayer player, double range, double waves)
     {
         var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var pos = player.Entity.Pos;
-        var stormiest = sea.StormsWithin(pos.X, pos.Z, range)
+        var probed = sea.StormsWithin(pos.X, pos.Z, range)
             .SelectMany(storm =>
             {
                 var (x, z) = storm.CentreAt(sea.NowHours);
@@ -148,12 +148,14 @@ public class BridgeCommands : ModSystem
             })
             .Where(point => sea.IsSea(point.x, point.z))
             .Select(point => (point.x, point.z, waves: sea.At(point.x, point.z).WaveHeight))
-            .OrderByDescending(point => point.waves)
-            .FirstOrDefault();
-        if (stormiest.waves <= 0) return TextCommandResult.Error($"No storm over open sea within {range} blocks; /seas storms lists them");
+            .Where(point => point.waves > 0);
+        var chosen = waves > 0
+            ? probed.OrderBy(point => Math.Abs(point.waves - waves)).FirstOrDefault()
+            : probed.OrderByDescending(point => point.waves).FirstOrDefault();
+        if (chosen.waves <= 0) return TextCommandResult.Error($"No storm over open sea within {range} blocks; /seas storms lists them");
 
-        var flown = Fly(player, new Vec3d((int)stormiest.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)stormiest.z + 0.5));
-        return TextCommandResult.Success($"{flown.StatusMessage}, over the storm's highest waves, {stormiest.waves:F1} m");
+        var flown = Fly(player, new Vec3d((int)chosen.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)chosen.z + 0.5));
+        return TextCommandResult.Success($"{flown.StatusMessage}, over the storm's {(waves > 0 ? "waves nearest " + waves.ToString("F1", CultureInfo.InvariantCulture) + " m" : "highest waves")}, {chosen.waves:F1} m");
     }
 
     private bool OpenSea(int x, int z)

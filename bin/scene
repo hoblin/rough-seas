@@ -12,10 +12,13 @@ bin/scene look ID [DX DY DZ]
                            (default 3 1 0: east of it and a block up), hover there and aim at it.
                            A shot from any side, over land or sea; 0 6 0.01 looks straight down,
                            above the water's tint. `bin/game hotkey togglehud` hides the HUD.
-bin/scene storm [RANGE]    noon, then the highest storm waves over open sea within RANGE blocks
-                           (default 60000): the player hovering 12 blocks above the surface,
-                           a sailboat and a raft riding below, dangerous oceans off so they last.
-                           Turn it back on with /worldconfig dangerousOceans true.
+bin/scene storm [RANGE [WAVES]] [CODE...]
+                           noon, then the highest storm waves over open sea within RANGE blocks
+                           (default 60000), or those nearest WAVES metres:
+                           the player hovering 12 blocks above the surface, each CODE
+                           (default boat-sailed-oak boat-raft-oak) riding below, 6 blocks apart, in one
+                           sea state. Dangerous oceans on: the waves board, swamp, capsize and break them.
+                           /worldconfig dangerousOceans false keeps them whole.
 bin/scene clear [RANGE] [TYPE...]
                            remove entities of each TYPE (default every vessel and item; wildcards allowed,
                            e.g. drifter-*) within RANGE blocks (default 64) of the player. Blocks,
@@ -55,13 +58,21 @@ look() {
 }
 
 storm() {
-  "$game" do '/gamemode creative' '/time set 12:00' '/worldconfig dangerousOceans false' >/dev/null
+  local numbers=()
+  while [[ ${1:-} =~ ^[0-9.]+$ ]]; do numbers+=("$1"); shift; done
+  local codes=("$@")
+  [ ${#codes[@]} -eq 0 ] && codes=(boat-sailed-oak boat-raft-oak)
+  "$game" do '/gamemode creative' '/time set 12:00' '/worldconfig dangerousOceans true' >/dev/null
   local storm
-  storm=$("$game" do "/bridge storm ${1:-}")
+  storm=$("$game" do "/bridge storm ${numbers[*]}")
   echo "$storm"
   [[ $storm == *Hovering* ]] || exit 1
-  "$game" do '/bridge fly ~ ~11 ~' \
-    '/entity spawnat boat-sailed-oak 1 ~-6 109 ~-8 0' '/entity spawnat boat-raft-oak 1 ~6 109 ~-8 0' >/dev/null
+  "$game" do '/bridge fly ~ ~11 ~' >/dev/null
+  local x=$(( -3 * (${#codes[@]} - 1) ))
+  for code in "${codes[@]}"; do
+    "$game" do "/entity spawnat $code 1 ~$x 109 ~-8 0" >/dev/null
+    x=$((x + 6))
+  done
   "$game" do '/seas here'
 }
 

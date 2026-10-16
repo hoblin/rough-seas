@@ -77,13 +77,13 @@
     "item-handbooktitle-reedboat": "使い方",
     "item-handbooktext-reedboat": "片道きりの舟です。ナイフで葦を束ねてすぐに作れ、軽くて運びやすいものの、水を吸って、浮かべてから三日ほどで沈みます。修理はできません。<br>- <hk>rightmouse</hk> で設置し、<a href=\"handbooksearch://oar\">オール</a>で漕ぎます。<br>- <hk>shift</hk> + <hk>rightmouse</hk> で拾います。",
     "item-handbooktitle-dugout-*": "使い方",
-    "item-handbooktext-dugout-*": "一本の丸太をくり抜いた舟です。板張りの船が現れる前では最も頑丈な船体で、岩にもほとんど傷つかず、手入れも要りません。重すぎて持ち運べません。川と湖の働き者です。<br>- 留め置く場所で <hk>rightmouse</hk> を押して設置し、<a href=\"handbooksearch://oar\">オール</a>で漕ぎます。<br>- 同じ木の丸太で修理します。",
+    "item-handbooktext-dugout-*": "一本の丸太をくり抜いた舟です。板張りの船が現れる前では最も頑丈な船体で、岩にもほとんど傷つかず、手入れも要りません。重すぎて持ち運べません。川と湖の働き者です。海では不安定で、大きく横揺れし、低い舷から水をかぶります。浸水しきる前に、椀か水差しか桶でかい出してください。<br>- 留め置く場所で <hk>rightmouse</hk> を押して設置し、<a href=\"handbooksearch://oar\">オール</a>で漕ぎます。<br>- 同じ木の丸太で修理します。",
     "item-handbooktitle-coracle": "使い方",
     "item-handbooktext-coracle": "一人乗りの丸い革の椀です。その場で回転し、まっすぐ進むのは苦手です。釣りや短い渡しに向いています。背負って運べるほど軽量です。<br>- <a href=\"handbooksearch://oar\">オール</a>で漕ぎます。<br>- <hk>shift</hk> + <hk>rightmouse</hk> で拾い、バックパックのスロットに入れると背負って運べます。<br>- 革で修理します。",
     "item-handbooktitle-barkcanoe": "使い方",
     "item-handbooktext-barkcanoe": "軽い骨組みにシラカバの樹皮を張った舟です。速く、喫水がとても浅いので、ほかの船体なら壊れてしまう急流も下れます。壊れやすく、陸路では担いで運びます。<br>- <a href=\"handbooksearch://oar\">オール</a>で漕ぎます。<br>- <hk>shift</hk> + <hk>rightmouse</hk> で拾います。<br>- 道中、シラカバの樹皮で修理します。",
     "item-handbooktitle-currach": "使い方",
-    "item-handbooktext-currach": "木の骨組みに脂を塗った獣皮を張った舟です。軽く、オールで沿岸沿いに積み荷を運びます。岩に当たると皮に穴が開き、水上で数日ごとに溶かした脂を塗らないと傷んでいきます。<br>- <a href=\"handbooksearch://oar\">オール</a>で漕ぎます。<br>- <hk>shift</hk> + <hk>rightmouse</hk> で拾います。<br>- 溶かした脂を塗って修理します。",
+    "item-handbooktext-currach": "木の骨組みに脂を塗った獣皮を張った舟です。軽く、オールで沿岸沿いに積み荷を運びます。岩に当たると皮に穴が開き、水上で数日ごとに溶かした脂を塗らないと傷んでいきます。軽い船体は海に合わせてしなり、重い舟なら波をかぶるようなうねりも乗り越えます。<br>- <a href=\"handbooksearch://oar\">オール</a>で漕ぎます。<br>- <hk>shift</hk> + <hk>rightmouse</hk> で拾います。<br>- 溶かした脂を塗って修理します。",
     "item-handbooktitle-outrigger-*": "使い方",
-    "item-handbooktext-outrigger-*": "丸太の細い船体を浮き材で安定させた舟です。金属以前の海で最も速い乗り物です。積載量は少なく、狭い水域では扱いにくく、重すぎて運ぶことも浜に引き上げることもできません。<br>- マストの帆の留め具を <hk>rightmouse</hk> でクリックすると、帆を上げ下げできます。<br>- 同じ木の板で修理します。"
+    "item-handbooktext-outrigger-*": "丸太の細い船体を浮き材で安定させた舟です。金属以前の海で最も速い乗り物です。積載量は少なく、狭い水域では扱いにくく、重すぎて運ぶことも浜に引き上げることもできません。アウトリガーの浮きのおかげで海でもとても安定し、高くした舷が水をかぶることはまれです。<br>- マストの帆の留め具を <hk>rightmouse</hk> でクリックすると、帆を上げ下げできます。<br>- 同じ木の板で修理します。"
 }

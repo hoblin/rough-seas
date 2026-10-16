@@ -54,7 +54,33 @@
             ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP"]},
-        "roughseas:seaforces": {"beamMetres": 1.4, "mastMetres": 0, "windageSquareMetres": 0.5}
+        "roughseas:seaforces": {
+            "beamMetres": 1.4,
+            "mastMetres": 0,
+            "windageSquareMetres": 0.5,
+            "freeboardMetres": 0.2,
+            "heave": 0.8,
+            "capsizeBreakerMetres": 0.6,
+            "rollResponse": 1.6,
+            "pitchResponse": 1.6,
+            "sources": {
+                "freeboardMetres": "A coracle with its paddler aboard floats with about 0.2 m of rim above water",
+                "heave": "A 15 kg basket sits on the water and rises with the crest",
+                "capsizeBreakerMetres": "A crest that catches the low rim tips the bowl and its paddler out: coracles keep to rivers and sheltered water",
+                "rollResponse": "A round, flat bowl tilts with every slope of the water",
+                "pitchResponse": "Round, it tilts the same every way"
+            }
+        },
+        "roughseas:bilge": {
+            "capacityLitres": 250,
+            "deckSquareMetres": 1.5,
+            "drainLitresPerHour": 0,
+            "sources": {
+                "capacityLitres": "A bowl 1.4 m across and 0.35 m deep, about half of its cylinder",
+                "deckSquareMetres": "The bowl's mouth, 1.4 m across",
+                "drainLitresPerHour": "Tarred hide is watertight"
+            }
+        }
     },
     "client": {
         "size": 1,
@@ -68,7 +94,9 @@
             {"code": "interpolateposition"},
             {"code": "selectionboxes"},
             {"code": "creaturecarrier"},
-            {"code": "ropetieable"}
+            {"code": "ropetieable"},
+            {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"}
         ]
     },
     "server": {
@@ -80,6 +108,7 @@
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},
             {"code": "ropetieable"}
         ]
