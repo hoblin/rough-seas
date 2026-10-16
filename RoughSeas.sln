@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeBuild", "CakeBuild\Cake
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentBridge", "AgentBridge\AgentBridge.csproj", "{F257734F-96B1-46F7-A79C-14A79CD433A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoughSeas.Tests", "RoughSeas.Tests\RoughSeas.Tests.csproj", "{94501879-FE6B-4C5D-94C6-459A10C1B9B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{F257734F-96B1-46F7-A79C-14A79CD433A1}.Release|x64.Build.0 = Release|Any CPU
 		{F257734F-96B1-46F7-A79C-14A79CD433A1}.Release|x86.ActiveCfg = Release|Any CPU
 		{F257734F-96B1-46F7-A79C-14A79CD433A1}.Release|x86.Build.0 = Release|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Debug|x64.Build.0 = Debug|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Debug|x86.Build.0 = Debug|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Release|x64.ActiveCfg = Release|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Release|x64.Build.0 = Release|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Release|x86.ActiveCfg = Release|Any CPU
+		{94501879-FE6B-4C5D-94C6-459A10C1B9B8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

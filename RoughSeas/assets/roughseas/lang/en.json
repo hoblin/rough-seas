@@ -1,3 +1,7 @@
 {
-    "hello": "hello world!"
+    "game:playstyle-preset-roughseas": "Rough Seas",
+    "game:playstyle-desc-preset-roughseas": "Standard survival on a world with open oceans, where wind, storms and the sea are dangerous.",
+    "game:worldconfig-category-roughseas": "Rough Seas",
+    "game:worldattribute-dangerousOceans": "Dangerous oceans",
+    "game:worldattribute-dangerousOceans-desc": "Storms, surf and the cold sea can break vessels and kill swimmers. Off, the sea keeps its weather but does no harm."
 }
