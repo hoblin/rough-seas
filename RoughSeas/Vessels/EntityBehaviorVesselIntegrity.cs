@@ -122,14 +122,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         double mass = Mass();
         foreach (double speed in impacts)
         {
-            Strike(0.5 * mass * speed * speed);
+            Strike(0.5 * mass * speed * speed, $"impact at {speed:F1} m/s");
         }
 
         if ((sinceHazards += deltaTime) < 1 || !entity.Alive) return;
 
         var fluid = entity.World.BlockAccessor.GetBlock(entity.Pos.AsBlockPos, BlockLayersAccess.Fluid);
         Soak(fluid.IsLiquid());
-        if (!runsRapids && rapids.Holds(fluid)) Strike(rapids.JoulesPerSecond * sinceHazards);
+        if (!runsRapids && rapids.Holds(fluid)) Strike(rapids.JoulesPerSecond * sinceHazards, "rapids");
         sinceHazards = 0;
     }
 
@@ -137,15 +137,21 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     /// Strikes the hull with an impact of this energy. Server only. Whether it harms the hull, and how much, is
     /// rolled against the vessel's impact capacity; at zero integrity the vessel breaks into wreckage.
     /// </summary>
-    public void Strike(double joules)
+    public void Strike(double joules, string cause = "strike")
     {
         if (!entity.Alive) return;
 
         double severity = joules / impactCapacity;
         var rand = entity.World.Rand;
-        if (rand.NextDouble() >= 1 - Math.Exp(-severity)) return;
+        if (rand.NextDouble() >= 1 - Math.Exp(-severity))
+        {
+            Log("{0} of {1:F0} J glanced off at {2:F2}", cause, joules, Integrity);
+            return;
+        }
 
+        float before = Integrity;
         Integrity = Math.Max(0, Integrity - (float)(severity * (0.5 + rand.NextDouble())));
+        Log("{0} of {1:F0} J: {2:F2} -> {3:F2}", cause, joules, before, Integrity);
         if (Integrity > 0) Creak();
         else Break();
     }
@@ -179,7 +185,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         if (damageSource.Source == EnumDamageSource.Weather && !seaWeather.DangerousOceans) return;
 
         entity.SetActivityRunning("invulnerable", InvulnerableMs);
-        Strike(damageConversion.Joules(damageSource, damage));
+        Strike(damageConversion.Joules(damageSource, damage), $"{damageSource.Source} damage {damage:F1}");
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
@@ -265,9 +271,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         if (now - since < 1) return;
 
         Tree.SetDouble("wornAt", now);
+        float before = Integrity;
         Integrity = Math.Max(0, Integrity - (float)(wearPerDay * (now - since) / 24));
+        Log("soaked {0:F1} h afloat: {1:F2} -> {2:F2}", now - since, before, Integrity);
         if (Integrity == 0) Break();
     }
+
+    private void Log(string format, params object[] args) =>
+        entity.World.Logger.Debug($"[vessels] {entity.Code} {entity.EntityId}: {format}", args);
 
     private void Swing(EntityAgent byEntity, ItemSlot slot, Vec3d hitPosition)
     {
@@ -307,7 +318,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         slot.TakeOut(repair!.Material.StackSize);
         slot.MarkDirty();
         byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(repair.Saturation);
+        float before = Integrity;
         Integrity = Math.Min(1, Integrity + repair.Restores);
+        Log("mended by {0}: {1:F2} -> {2:F2}", byEntity.GetName(), before, Integrity);
         entity.World.PlaySoundAt(MendSound, entity, null, true, 16);
     }
 
@@ -329,6 +342,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
     private void Break()
     {
+        Log("broke up at {0}", entity.Pos.AsBlockPos);
         var world = entity.World;
         var box = entity.SelectionBox;
         foreach (var drop in wreckage)

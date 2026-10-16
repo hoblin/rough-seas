@@ -20,7 +20,7 @@
     "hitboxSize": {"x": 1.2, "y": 0.45},
     "behaviorConfigs": {
         "vesselintegrity": {
-            "impactCapacity": 800,
+            "impactCapacity": 1200,
             "wearPerDay": 0.33,
             "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
             "cracks": {

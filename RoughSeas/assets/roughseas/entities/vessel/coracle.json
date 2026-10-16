@@ -21,7 +21,11 @@
     "behaviorConfigs": {
         "vesselintegrity": {
             "impactCapacity": 400,
-            "repair": {"material": {"type": "item", "code": "game:leather", "stacksize": 1}, "restores": 0.5, "saturation": 40},
+            "repair": {
+                "material": {"type": "item", "code": "game:leather-normal-plain", "stacksize": 1},
+                "restores": 0.5,
+                "saturation": 40
+            },
             "wreckage": [{"type": "item", "code": "game:stick", "quantity": {"avg": 3, "var": 2}}],
             "cracks": {
                 "textures": ["hide"],

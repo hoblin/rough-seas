@@ -139,6 +139,7 @@ public class AgentBridgeModSystem : ModSystem
             pos = new { entity.Pos.X, entity.Pos.Y, entity.Pos.Z },
             camera = new { yaw = capi.World.Player.CameraYaw, pitch = capi.World.Player.CameraPitch },
             swimming = entity.Swimming,
+            flying = capi.World.Player.WorldData.FreeMove,
             vitals = Vitals.ToDictionary(key => key, key => JsonNode.Parse(entity.WatchedAttributes[key]?.ToJsonToken() ?? "null")),
             hotbar = new
             {

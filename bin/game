@@ -47,7 +47,7 @@ START
   focus back to the window that had it once the game's window opens.
 
 LOOK
-  bin/game state             player pos, camera, swimming, vitals (health, oxygen, bodyTemp,
+  bin/game state             player pos, camera, swimming, flying, vitals (health, oxygen, bodyTemp,
                              wetness), hotbar, mount, what the camera points at, entities within
                              16 blocks, open dialogs, paused. Pointing at an entity, `reach` is
                              what a swing is measured by: the picked selection box, the eye's

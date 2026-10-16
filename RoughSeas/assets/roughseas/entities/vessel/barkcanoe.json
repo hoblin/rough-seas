@@ -20,7 +20,7 @@
     "hitboxSize": {"x": 1, "y": 0.44},
     "behaviorConfigs": {
         "vesselintegrity": {
-            "impactCapacity": 1500,
+            "impactCapacity": 2400,
             "runsRapids": true,
             "repair": {
                 "material": {"type": "item", "code": "roughseas:bark-birch", "stacksize": 2},
