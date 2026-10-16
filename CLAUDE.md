@@ -20,9 +20,9 @@ When a task has no tool that fits, stop and build one: a little time spent now m
 
 All of it is scoped to this repository.
 
-- **The test bench.** `bin/client` and `bin/server` start the game with the mod. `bin/game` drives the running client from the shell, through the dev-only `AgentBridge` mod: it can run commands, read state, aim, press keys and take screenshots, with no window focus. **`bin/game help` explains all of it**; read it before you first test in the game.
+- **The test bench.** `bin/client` and `bin/server` start the game with the mod; each clone of the repository runs its own, side by side. `bin/game` drives the running client from the shell, through the dev-only `AgentBridge` mod: it can run commands, read state, aim, press keys and take screenshots, with no window focus. **`bin/game help` explains all of it**; read it before you first test in the game.
 - `RoughSeas/` is the mod; `./build.sh` packages a release into `Releases/`.
-- `mise.toml` pins the .NET SDK and Node, and sets `VINTAGE_STORY` to the 1.22.7 install; mise puts them on PATH here.
+- `mise.toml` pins the .NET SDK and Node, and sets the bench's environment: the 1.22.7 install, and this clone's name, data folder and ports. A clone's own values go in its gitignored `mise.local.toml`. mise puts all of it on PATH and in the environment here.
 - `ilspycmd` is a local .NET tool (`dotnet-tools.json`): `dotnet ilspycmd <assembly>`.
 - The `rea` MCP (Reverse Engineer Anything) inspects .NET assemblies; its skill is `reverse-engineer-anything`.
 - The `universal-modder` plugin carries skills for recon, reverse engineering, asset generation and testing in the running game.

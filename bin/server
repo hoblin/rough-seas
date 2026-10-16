@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$(dirname "$0")/lib/bench.sh"
 
-root=$(cd "$(dirname "$0")/.." && pwd)
-data=$HOME/.config/VintagestoryData-1.22.7/server
+session=$BENCH-server
+data=$BENCH_DATA/server
 
 cd "$root"
-mise exec -- dotnet build RoughSeas -v quiet -nologo
-mise exec -- dotnet build AgentBridge -v quiet -nologo
-vs=$(mise exec -- printenv VINTAGE_STORY)
-dotnet=$(mise where dotnet)
+dotnet build RoughSeas -v quiet -nologo
+dotnet build AgentBridge -v quiet -nologo
 
+stop_session "$session" "$data"
+require_free_port "$BENCH_SERVER_PORT" "dedicated server"
 mkdir -p "$data"
-tmux kill-session -t rough-seas-server 2>/dev/null || true
-tmux new-session -d -s rough-seas-server -c "$vs" \
-  "$dotnet/dotnet VintagestoryServer.dll --dataPath $data --tracelog \
+tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
+  "$(game_env) dotnet VintagestoryServer.dll --dataPath $data --tracelog --port $BENCH_SERVER_PORT \
    --addOrigin $root/RoughSeas/assets \
    --addModPath $root/RoughSeas/bin/Debug/Mods $root/AgentBridge/bin/Debug/Mods"
-echo "Server starting in tmux session rough-seas-server; logs in $data/Logs"
+echo "Server starting in tmux session $session on port $BENCH_SERVER_PORT; logs in $data/Logs"

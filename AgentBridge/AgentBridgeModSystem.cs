@@ -15,7 +15,7 @@ namespace AgentBridge;
 
 public class AgentBridgeModSystem : ModSystem
 {
-    private const string Prefix = "http://127.0.0.1:42425/";
+    private static readonly string Prefix = $"http://127.0.0.1:{Environment.GetEnvironmentVariable("AGENT_BRIDGE_PORT") ?? "42425"}/";
     // A browser cannot add a custom header to a cross-origin request without a preflight, which the bridge never answers.
     private const string Header = "X-Agent-Bridge";
     private static readonly string[] Vitals = ["health", "oxygen", "bodyTemp", "wetness"];
