@@ -53,7 +53,8 @@
                 {"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": null, "eyeHeight": 1, "reverse": true}
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]}
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
+        "roughseas:seaforces": {"beamMetres": 0.9, "mastMetres": 0, "windageSquareMetres": 0.6}
     },
     "client": {
         "size": 1,
@@ -66,7 +67,8 @@
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
             {"code": "selectionboxes"},
-            {"code": "creaturecarrier"}
+            {"code": "creaturecarrier"},
+            {"code": "ropetieable"}
         ]
     },
     "server": {
@@ -76,7 +78,10 @@
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},
             {"code": "creaturecarrier"},
-            {"code": "roughseas:currentdrift"}
+            {"code": "roughseas:currentdrift"},
+            {"code": "roughseas:seaforces"},
+            {"code": "roughseas:mooring"},
+            {"code": "ropetieable"}
         ]
     },
     "sounds": {}

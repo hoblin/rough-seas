@@ -82,7 +82,8 @@
                 },
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
-        }
+        },
+        "roughseas:seaforces": {"beamMetres": 1.1, "mastMetres": 0, "windageSquareMetres": 0.9}
     },
     "client": {
         "size": 1,
@@ -96,7 +97,8 @@
             {"code": "interpolateposition"},
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
-            {"code": "creaturecarrier"}
+            {"code": "creaturecarrier"},
+            {"code": "ropetieable"}
         ]
     },
     "server": {
@@ -107,7 +109,10 @@
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
-            {"code": "roughseas:currentdrift"}
+            {"code": "roughseas:currentdrift"},
+            {"code": "roughseas:seaforces"},
+            {"code": "roughseas:mooring"},
+            {"code": "ropetieable"}
         ]
     },
     "sounds": {}
