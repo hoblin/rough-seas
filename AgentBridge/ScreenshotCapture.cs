@@ -20,12 +20,12 @@ public class ScreenshotCapture : IRenderer
     public double RenderOrder => 1;
     public int RenderRange => 0;
 
-    public Task<byte[]> Next()
+    public Task<byte[]> Next(bool withGuis)
     {
         var shot = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
         capi.Event.EnqueueMainThreadTask(() =>
         {
-            if (!capi.HideGuis)
+            if (!withGuis && !capi.HideGuis)
             {
                 capi.TriggerChatMessage(".gui off");
                 showGuisAfter = true;

@@ -76,7 +76,33 @@
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
         },
-        "roughseas:seaforces": {"beamMetres": 2.1, "mastMetres": 3.4, "windageSquareMetres": 4}
+        "roughseas:seaforces": {
+            "beamMetres": 2.1,
+            "mastMetres": 3.4,
+            "windageSquareMetres": 4,
+            "freeboardMetres": 0.4,
+            "heave": 0.7,
+            "capsizeBreakerMetres": 2.1,
+            "rollResponse": 0.3,
+            "pitchResponse": 0.8,
+            "sources": {
+                "freeboardMetres": "Pacific outrigger hulls carry lashed washstrakes that raise the side to about 0.4 m",
+                "heave": "Balance: a narrow, light hull rises with most of a crest",
+                "capsizeBreakerMetres": "The float spreads the craft to its whole beam: a breaker must be as high as hull and float apart to roll it",
+                "rollResponse": "The float's buoyancy and weight hold the hull upright: very steady in a sea",
+                "pitchResponse": "A long, narrow hull cuts through the swell rather than riding it"
+            }
+        },
+        "roughseas:bilge": {
+            "capacityLitres": 600,
+            "deckSquareMetres": 3,
+            "drainLitresPerHour": 0,
+            "sources": {
+                "capacityLitres": "A 7 m hull, about 0.45 m wide and 0.4 m deep inside, half of its box",
+                "deckSquareMetres": "The open hull, 7 m by 0.45 m, catches the rain",
+                "drainLitresPerHour": "Balance: lashed washstrakes weep, but too little to count against a sea"
+            }
+        }
     },
     "client": {
         "size": 1,
@@ -95,7 +121,9 @@
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
-            {"code": "ropetieable"}
+            {"code": "ropetieable"},
+            {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"}
         ]
     },
     "server": {
@@ -108,6 +136,7 @@
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
+            {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},
             {"code": "ropetieable"}
         ]

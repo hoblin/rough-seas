@@ -20,6 +20,8 @@ public class WavesConfig
     public double WaterDensity;
     public double BreakerTransfer;
     public double ShippedWaterFraction;
+    public double CrestRatio;
+    public double BreakingCrestRatio;
     public double AirDensity;
     public double WindageDragCoefficient;
     public double WaveDriftCoefficient;

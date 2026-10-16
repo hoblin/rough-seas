@@ -24,7 +24,7 @@ public class AgentBridgeModSystem : ModSystem
     // A browser cannot add a custom header to a cross-origin request without a preflight, which the bridge never answers.
     private const string Header = "X-Agent-Bridge";
     private static readonly string[] Vitals = ["health", "oxygen", "bodyTemp", "wetness"];
-    private const int ServerReplyWaitMs = 5000;
+    private const int ServerReplyWaitMs = 15000;
     private const int ClientReplyWaitMs = 1000;
     private const int ReplyQuietMs = 300;
     private const int LeaveDelayMs = 500;
@@ -91,7 +91,8 @@ public class AgentBridgeModSystem : ModSystem
             {
                 "/chat" => (Encoding.UTF8.GetBytes(await Chat(context.Request)), "text/plain"),
                 "/state" => (Encoding.UTF8.GetBytes(await OnMainThread(State)), "application/json"),
-                "/screenshot" => (await screenshots.Next(), "image/png"),
+                "/screenshot" => (await screenshots.Next(context.Request.QueryString["gui"] != null), "image/png"),
+                "/link" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Link(context.Request.QueryString["href"]))), "text/plain"),
                 "/close-dialogs" => (Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),
                 "/input" => (Encoding.UTF8.GetBytes(await Input(context.Request)), "application/json"),
@@ -176,7 +177,12 @@ public class AgentBridgeModSystem : ModSystem
             pickingRange = capi.World.Player.WorldData.PickingRange,
             reach = Reach(),
             nearby = capi.World.GetEntitiesAround(entity.Pos.XYZ, 16, 16, other => other != entity)
-                .Select(other => new { other.EntityId, code = other.Code.ToString(), other.Pos.X, other.Pos.Y, other.Pos.Z }),
+                .Select(other => new
+                {
+                    other.EntityId, code = other.Code.ToString(), other.Pos.X, other.Pos.Y, other.Pos.Z,
+                    roll = (other.Properties.Client.Renderer as EntityShapeRenderer)?.xangle * GameMath.RAD2DEG,
+                    pitch = (other.Properties.Client.Renderer as EntityShapeRenderer)?.zangle * GameMath.RAD2DEG
+                }),
             calendar = capi.World.Calendar.PrettyDate(),
             paused = capi.IsGamePaused,
             dialogs = Dialogs().Select(dialog => dialog.DebugName)
@@ -288,6 +294,17 @@ public class AgentBridgeModSystem : ModSystem
             return "Hotkey codes:\n" + string.Join("\n", capi.Input.HotKeys.Values.Select(key => $"{key.Code}  {key.Name}")) + "\n";
         }
         return hotkey.Handler(hotkey.CurrentMapping) + "\n";
+    }
+
+    private string Link(string? href)
+    {
+        var protocol = href?.Split("://")[0];
+        if (protocol == null || !capi.LinkProtocols.TryGetValue(protocol, out var follow))
+        {
+            return "Link protocols: " + string.Join(", ", capi.LinkProtocols.Keys) + "\n";
+        }
+        follow(new LinkTextComponent(href));
+        return $"Followed {href}\n";
     }
 
     private string Leave()

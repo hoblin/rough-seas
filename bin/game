@@ -49,7 +49,7 @@ START
                        the game's. Without agentbridge, bin/game cannot drive it; read the log.
   bin/client server    connect the client to this clone's dedicated server instead (multiplayer).
                        The player needs admin there, once per server data folder:
-                       tmux send-keys -t <bench>-server '/op hoblin' Enter
+                       tmux send-keys -t <bench>-server '/op <your player name>' Enter
   bin/server           build both mods, (re)start this clone's dedicated server in tmux (saved and
                        stopped first) and return once it runs; its console takes commands the
                        same way
@@ -66,7 +66,8 @@ START
 LOOK
   bin/game state             player pos, camera, swimming, flying, vitals (health, oxygen, bodyTemp,
                              wetness), hotbar, mount, what the camera points at, entities within
-                             16 blocks, open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
+                             16 blocks (a shape's rendered roll and pitch in degrees: how a vessel
+                             rocks), open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
                              what a swing is measured by: the picked selection box, the eye's
                              distance to the entity's default box (vanilla's measure) and to
                              the point hit (a vessel's), and the held item's range
@@ -82,9 +83,10 @@ LOOK
   bin/game fps [SECONDS]     frames rendered over SECONDS (default 5): fps, mean and 95th-percentile
                              frame time in ms. Compare a change against BENCH_MODS=agentbridge from
                              the same place and camera.
-  bin/game shot [FILE]       in-engine screenshot of the world alone: no HUD, hand or held item
+  bin/game shot [FILE] [gui] in-engine screenshot of the world alone: no HUD, hand or held item
                              (default shot.png; a relative FILE lands in the clone's temp folder,
-                             /tmp/<bench>); prints the path of a half-size copy, cheaper to look at
+                             /tmp/<bench>); prints the path of a half-size copy, cheaper to look at.
+                             With gui, the HUD and open dialogs stay in the picture
   bin/game hotkey CODE       cyclecamera for third person; bin/game hotkey alone lists every code
   To look at anything, fly: `bin/scene look ID` from any side, `/bridge fly` anywhere. To only
   look, '/gamemode spectator' draws no player at all, but spectators pick nothing.
@@ -114,12 +116,17 @@ ACT
                              Mounted, W/S row or sail and A/D steer.
   bin/game click [BUTTON] [MS]  hold left, right (default) or middle on what the camera points at
   bin/game close             close open dialogs
+  bin/game link HREF         follow a link as a click in the game's text does: handbook://PAGECODE
+                             opens a handbook page (handbook://tab-guide a tab), handbooksearch://TEXT
+                             searches it. A wrong protocol lists the known ones
 
 SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge sea                fly to the nearest open sea, hovering just above the surface
-  /bridge storm [RANGE]      fly to where the storms within RANGE blocks (default 60000) raise the
-                             highest waves over open sea, hovering just above the surface; replies
-                             with the wave height. Set the time of day first: storms move.
+  /bridge storm [RANGE] [WAVES]
+                             fly to where the storms within RANGE blocks (default 60000) raise the
+                             highest waves over open sea, or those nearest WAVES metres, hovering
+                             just above the surface; replies with the wave height. Set the time of
+                             day first: storms move.
   /bridge drift [on|off]     whether unridden vessels drift with the current and the wind. Off on
                              every start, so a vessel stays where it was put; a drift test turns it on
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
@@ -244,7 +251,7 @@ case "${1:-}" in
     file=${2:-shot.png}
     [[ $file == /* ]] || file=$BENCH_TMP/$file
     mkdir -p "$(dirname "$file")"
-    get -o "$file" "$bridge/screenshot"
+    get -o "$file" "$bridge/screenshot${3:+?gui=1}"
     magick "$file" -resize 50% "${file%.png}-small.png"
     echo "${file%.png}-small.png"
     ;;
@@ -259,6 +266,7 @@ case "${1:-}" in
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
   hotkey) post "/hotkey?code=${2:-}" ;;
   close) post /close-dialogs ;;
+  link) post "/link?href=$(jq -rn --arg href "$2" '$href | @uri')" ;;
   leave) post /leave ;;
   *) usage ;;
 esac

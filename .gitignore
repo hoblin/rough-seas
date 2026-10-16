@@ -2,6 +2,7 @@
 /ref/
 /.blender/
 /mise.local.toml
+/CLAUDE.local.md
 */bin/
 */obj/
 /Releases/
