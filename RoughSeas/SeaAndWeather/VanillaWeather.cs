@@ -57,30 +57,26 @@ public class VanillaWeather
 
     private void OnGetWindSpeed(Vec3d pos, ref Vec3d windSpeed)
     {
-        var began = sea.Budget.Begin();
+        using var _ = sea.Budget.Measure();
         var wind = sea.Wind(pos.X, pos.Z);
         var scale = wind.Speed > 0 ? Strength(wind.Speed, pos.Y, api.World.SeaLevel, sea.Config.Vanilla) / wind.Speed : 0;
         windSpeed.Set(wind.X * scale, 0, wind.Z * scale);
-        sea.Budget.End(began);
     }
 
     private void OnGetClimate(ref ClimateCondition climate, BlockPos pos, EnumGetClimateMode mode, double totalDays)
     {
         if (mode is EnumGetClimateMode.WorldGenValues or EnumGetClimateMode.ForSuppliedDate_TemperatureOnly) return;
-        var began = sea.Budget.Begin();
+        using var _ = sea.Budget.Measure();
         var hours = mode == EnumGetClimateMode.NowValues ? sea.NowHours : totalDays * api.World.Calendar.HoursPerDay;
         var storms = sea.StormsAt(pos.X, pos.Z, hours);
-        if (storms.Presence > 0)
-        {
-            climate.Rainfall = Math.Max(climate.Rainfall, (float)storms.Rain);
-            climate.RainCloudOverlay = Math.Max(climate.RainCloudOverlay, (float)storms.Presence);
-        }
-        sea.Budget.End(began);
+        if (storms.Presence <= 0) return;
+        climate.Rainfall = Math.Max(climate.Rainfall, (float)storms.Rain);
+        climate.RainCloudOverlay = Math.Max(climate.RainCloudOverlay, (float)storms.Presence);
     }
 
     private void RaiseStormEvents(WeatherSystemServer weather)
     {
-        var began = sea.Budget.Begin();
+        using var _ = sea.Budget.Measure();
         var regionSize = api.World.BlockAccessor.RegionSize;
         var threshold = sea.Config.Storm.WeatherEventThreshold;
         foreach (var (index, sim) in weather.weatherSimByMapRegion.ToArray())
@@ -102,7 +98,6 @@ public class VanillaWeather
                 sim.SetWeatherEvent(CalmEvent, true);
             }
         }
-        sea.Budget.End(began);
     }
 
     private bool Allows(WeatherSimulationRegion sim, string stormEvent, BlockPos centre)

@@ -58,11 +58,10 @@ public static class VanillaWeatherPatches
     {
         var sea = On(___ws.api.Side);
         if (sea == null) return;
-        var began = sea.Budget.Begin();
+        using var _ = sea.Budget.Measure();
         var regionSize = ___ws.api.World.BlockAccessor.RegionSize;
         var wind = sea.Wind((___regionX + 0.5) * regionSize, (___regionZ + 0.5) * regionSize);
         __result = VanillaWeather.Strength(wind.Speed, posY, ___ws.api.World.SeaLevel, sea.Config.Vanilla);
-        sea.Budget.End(began);
     }
 
     // These vanilla readers take the wind's X alone as its strength; our wind may blow along Z.

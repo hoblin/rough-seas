@@ -7,6 +7,8 @@ namespace RoughSeas.SeaAndWeather;
 
 public class TickBudget
 {
+    [ThreadStatic] private static int depth;
+
     private long spent;
     private long calls;
     private long spentAtTick;
@@ -15,23 +17,16 @@ public class TickBudget
     private long spentAtReport;
     private long callsAtReport;
     private long reportedAt = Stopwatch.GetTimestamp();
-
-    public bool Enabled { get; private set; }
+    private bool enabled;
 
     public void CountTicks(ICoreServerAPI sapi)
     {
-        Enabled = true;
+        enabled = true;
         sapi.Event.RegisterGameTickListener(_ => Tick(), 0);
     }
 
-    public long Begin() => Enabled ? Stopwatch.GetTimestamp() : 0;
-
-    public void End(long began)
-    {
-        if (!Enabled) return;
-        Interlocked.Add(ref spent, Stopwatch.GetTimestamp() - began);
-        Interlocked.Increment(ref calls);
-    }
+    /// <summary>Times the code until disposed; scopes nested on one thread count once, as the outermost.</summary>
+    public Scope Measure() => new(enabled ? this : null);
 
     public string Report()
     {
@@ -54,5 +49,33 @@ public class TickBudget
         ticks++;
     }
 
+    private void Add(long elapsed)
+    {
+        Interlocked.Add(ref spent, elapsed);
+        Interlocked.Increment(ref calls);
+    }
+
     private static double Milliseconds(long timestamps) => timestamps * 1000.0 / Stopwatch.Frequency;
+
+    public readonly struct Scope : IDisposable
+    {
+        private readonly TickBudget? budget;
+        private readonly bool outermost;
+        private readonly long began;
+
+        internal Scope(TickBudget? budget)
+        {
+            this.budget = budget;
+            if (budget == null) return;
+            outermost = depth++ == 0;
+            if (outermost) began = Stopwatch.GetTimestamp();
+        }
+
+        public void Dispose()
+        {
+            if (budget == null) return;
+            depth--;
+            if (outermost) budget.Add(Stopwatch.GetTimestamp() - began);
+        }
+    }
 }
