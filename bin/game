@@ -86,20 +86,22 @@ GOTCHAS
   A new player gets a character-creation dialog that pauses the game: `wait` closes it.
   bin/client kills the old client, which does not save the player; the next start is a fresh join.
   New worlds get a random seed, so do not hard-code sea coordinates: use /bridge sea.
-  The bridge listens on 127.0.0.1:42425 only; "localhost" may resolve to ::1 and miss it.
+  The bridge listens on 127.0.0.1:42425 only ("localhost" may resolve to ::1 and miss it), and
+    refuses requests without the X-Agent-Bridge header, so web pages cannot drive it.
 EOF
 }
 
-post() { curl -sf -X POST --data-binary "${2:-}" "$bridge$1"; }
+get() { curl -sf -H 'X-Agent-Bridge: 1' "$@"; }
+post() { get -X POST --data-binary "${2:-}" "$bridge$1"; }
 
 case "${1:-}" in
   wait)
-    until curl -sf "$bridge/state" >/dev/null 2>&1; do sleep 2; done
+    until get "$bridge/state" >/dev/null 2>&1; do sleep 2; done
     sleep 2
     post /close-dialogs >/dev/null
-    curl -sf "$bridge/state"
+    get "$bridge/state"
     ;;
-  state) curl -sf "$bridge/state" ;;
+  state) get "$bridge/state" ;;
   do)
     shift
     for line in "$@"; do post /chat "$line"; done
@@ -109,7 +111,7 @@ case "${1:-}" in
   shot)
     file=${2:-/tmp/agentbridge/shot.png}
     mkdir -p "$(dirname "$file")"
-    curl -sf -o "$file" "$bridge/screenshot"
+    get -o "$file" "$bridge/screenshot"
     magick "$file" -resize 50% "${file%.png}-small.png"
     echo "${file%.png}-small.png"
     ;;

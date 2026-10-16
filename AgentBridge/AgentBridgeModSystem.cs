@@ -16,6 +16,8 @@ namespace AgentBridge;
 public class AgentBridgeModSystem : ModSystem
 {
     private const string Prefix = "http://127.0.0.1:42425/";
+    // A browser cannot add a custom header to a cross-origin request without a preflight, which the bridge never answers.
+    private const string Header = "X-Agent-Bridge";
     private static readonly string[] Vitals = ["health", "oxygen", "bodyTemp", "wetness"];
 
     private ICoreClientAPI capi = null!;
@@ -62,6 +64,8 @@ public class AgentBridgeModSystem : ModSystem
         var response = context.Response;
         try
         {
+            if (context.Request.Headers[Header] == null) throw new UnauthorizedAccessException($"Send the {Header} header, as bin/game does");
+
             var (body, contentType) = context.Request.Url!.AbsolutePath switch
             {
                 "/chat" => (Encoding.UTF8.GetBytes(await Chat(context.Request)), "text/plain"),
@@ -78,7 +82,12 @@ public class AgentBridgeModSystem : ModSystem
         }
         catch (Exception e)
         {
-            response.StatusCode = e is FileNotFoundException ? 404 : 500;
+            response.StatusCode = e switch
+            {
+                UnauthorizedAccessException => 403,
+                FileNotFoundException => 404,
+                _ => 500
+            };
             await response.OutputStream.WriteAsync(Encoding.UTF8.GetBytes(e.Message + "\n"));
         }
         finally
