@@ -8,11 +8,12 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/outrigger"},
+    "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater", "SailUnfurled", "SailHalf"]},
     "textures": {
         "bark": {"base": "game:block/wood/bark/{wood}-h"},
         "inside": {"base": "game:block/wood/debarked/{wood}"},
-        "sail": {"base": "game:block/cloth/linen/plain"}
+        "sail": {"base": "game:block/cloth/linen/plain"},
+        "lashing": {"base": "game:item/resource/rope"}
     },
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {

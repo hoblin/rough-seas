@@ -7,7 +7,7 @@
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
     "shape": {"base": "roughseas:entity/vessel/reedboat"},
-    "textures": {"reed": {"base": "game:block/reed/beehive/hive-reed"}, "rope": {"base": "game:block/cloth/reedrope"}},
+    "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "pole": {"base": "game:block/wood/debarked/birch"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},

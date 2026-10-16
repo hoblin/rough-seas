@@ -6,8 +6,12 @@ usage() {
 Rough Seas modeling: Vintage Story shapes in Blender 4.5, headless, through the
 phonon/blender-vintagestory-json add-on. No window opens.
 
+BUILD
+  bin/model build [VESSEL...]      regenerate our vessels' shapes from their builders in
+                                   bin/lib/hulls (all of them by default). The builders are the
+                                   source of those shapes: change a vessel there, not in its JSON.
 EDIT
-  bin/model edit SHAPE SCRIPT      import SHAPE, run SCRIPT (Python, bpy) on the scene, export
+  bin/model edit SHAPE SCRIPT     import SHAPE, run SCRIPT (Python, bpy) on the scene, export
                                    back over SHAPE. The usual way to change a model.
   bin/model import SHAPE [BLEND]   SHAPE into a .blend (default <temp>/model/NAME.blend) for
                                    work in several steps
@@ -124,6 +128,14 @@ work=$BENCH_TMP/model
 mkdir -p "$work"
 
 case "$1" in
+  build)
+    hulls=$root/bin/lib/hulls
+    vessels=("${@:2}")
+    [ ${#vessels[@]} -gt 0 ] || vessels=($(cd "$hulls" && ls *.py | grep -v '^shape.py$' | sed 's/\.py$//'))
+    for vessel in "${vessels[@]}"; do
+      python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json"
+    done
+    ;;
   edit) need 3 "$@"; blender_do edit "$(realpath "$2")" "$(realpath "$3")" ;;
   import)
     need 2 "$@"

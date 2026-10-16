@@ -11,14 +11,14 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/coracle"},
-    "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}},
+    "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater"]},
+    "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},
         "rotation": {"x": -32, "y": -35, "z": -180},
         "origin": {"x": 0.5, "y": 0, "z": 0.5},
-        "scale": 0.6
+        "scale": 1
     },
     "groundTransform": {
         "translation": {"x": 0, "y": 0, "z": 0},

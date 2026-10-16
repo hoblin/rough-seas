@@ -49,6 +49,10 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Fly the caller to the nearest open sea within 1500 blocks, hovering just above the surface")
                 .HandleWith(args => Sea((IServerPlayer)args.Caller.Player))
             .EndSubCommand()
+            .BeginSubCommand("shore")
+                .WithDescription("Fly the caller to the nearest dry, open ground beside the sea within 256 blocks, hovering just above it")
+                .HandleWith(args => Shore((IServerPlayer)args.Caller.Player))
+            .EndSubCommand()
             .BeginSubCommand("storm")
                 .WithDescription("Fly the caller to where the storms within range raise the highest waves over open sea, or the waves nearest a height, hovering just above the surface")
                 .WithArgs(parsers.OptionalDouble("range", 60000), parsers.OptionalDouble("waves", 0))
@@ -78,6 +82,16 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Put an item into the caller's first empty backpack slot, where it is worn on the back")
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Wear(args.Caller.Player, (string)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("hold")
+                .WithDescription("Put an item into the caller's active hotbar slot, held in the hand")
+                .WithArgs(parsers.Word("item code"))
+                .HandleWith(args => Hold(args.Caller.Player, (string)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("drop")
+                .WithDescription("Drop an item on the ground at a position, at rest, as a dropped stack lies")
+                .WithArgs(parsers.Word("item code"), parsers.WorldPosition("position"))
+                .HandleWith(args => Drop((string)args[0], (Vec3d)args[1]))
             .EndSubCommand()
             .BeginSubCommand("tie")
                 .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute")
@@ -184,6 +198,64 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"{flown.StatusMessage}, over open sea");
     }
 
+    private TextCommandResult Shore(IServerPlayer player)
+    {
+        const int range = 256;
+        const int step = 2;
+        const int clearing = 3;
+        var accessor = sapi.World.BlockAccessor;
+        var seaLevel = sapi.World.SeaLevel;
+        var origin = player.Entity.Pos.AsBlockPos;
+
+        int Ground(int x, int z) => accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
+        bool Dry(int x, int z)
+        {
+            var ground = Ground(x, z);
+            return ground >= seaLevel && ground <= seaLevel + 2
+                && accessor.GetBlock(new BlockPos(x, ground + 1, z, 0)).CollisionBoxes is null or { Length: 0 }
+                && accessor.GetBlock(new BlockPos(x, ground, z, 0), BlockLayersAccess.Fluid).Id == 0;
+        }
+        bool Open(int x, int z) => Enumerable.Range(-clearing, 2 * clearing + 1)
+            .All(i => Enumerable.Range(-clearing, 2 * clearing + 1).All(j => Dry(x + i, z + j) && Math.Abs(Ground(x + i, z + j) - Ground(x, z)) <= 1));
+        bool BesideWater(int x, int z) => Enumerable.Range(-12, 25)
+            .Any(i => Ground(x + i, z) < seaLevel - 1 || Ground(x, z + i) < seaLevel - 1);
+
+        var shore = Enumerable.Range(-range / step, 2 * range / step + 1)
+            .SelectMany(i => Enumerable.Range(-range / step, 2 * range / step + 1), (i, j) => (x: origin.X + i * step, z: origin.Z + j * step))
+            .OrderBy(point => (point.x - origin.X) * (long)(point.x - origin.X) + (point.z - origin.Z) * (long)(point.z - origin.Z))
+            .Where(point => Dry(point.x, point.z) && BesideWater(point.x, point.z) && Open(point.x, point.z))
+            .Select(point => ((int x, int z)?)point)
+            .FirstOrDefault();
+        if (shore == null) return Coast(player);
+
+        var flown = Fly(player, new Vec3d(shore.Value.x + 0.5, Ground(shore.Value.x, shore.Value.z) + 1 + HoverAboveSea, shore.Value.z + 0.5));
+        return TextCommandResult.Success($"{flown.StatusMessage}, over the shore");
+    }
+
+    private TextCommandResult Coast(IServerPlayer player)
+    {
+        const int range = 3000;
+        const int step = 32;
+        var accessor = sapi.World.BlockAccessor;
+        var regionSize = accessor.RegionSize;
+        var origin = player.Entity.Pos.AsBlockPos;
+
+        int? Oceanity(int x, int z) => accessor.GetMapRegion(x / regionSize, z / regionSize)?.OceanMap is { Data.Length: > 0 } map
+            ? map.GetUnpaddedIntLerpedForBlockPos(x, z, regionSize)
+            : null;
+
+        var coast = Enumerable.Range(-range / step, 2 * range / step + 1)
+            .SelectMany(i => Enumerable.Range(-range / step, 2 * range / step + 1), (i, j) => (x: origin.X + i * step, z: origin.Z + j * step))
+            .Where(point => Oceanity(point.x, point.z) is > 0 and < 60)
+            .OrderBy(point => (point.x - origin.X) * (long)(point.x - origin.X) + (point.z - origin.Z) * (long)(point.z - origin.Z))
+            .Select(point => ((int x, int z)?)point)
+            .FirstOrDefault();
+        if (coast == null) return TextCommandResult.Error($"No coast in the generated regions within {range} blocks");
+
+        var flown = Fly(player, new Vec3d(coast.Value.x + 0.5, sapi.World.SeaLevel + 20, coast.Value.z + 0.5));
+        return TextCommandResult.Success($"{flown.StatusMessage}, near the coast: no open beach is loaded yet, run /bridge shore again once the land has loaded");
+    }
+
     private TextCommandResult Fly(IServerPlayer player, Vec3d position)
     {
         player.Entity.TryUnmount();
@@ -251,6 +323,33 @@ public class BridgeCommands : ModSystem
         slot.Itemstack = stack;
         slot.MarkDirty();
         return TextCommandResult.Success($"Wearing {code}");
+    }
+
+    private TextCommandResult Hold(IPlayer player, string code)
+    {
+        var stack = Stack(code);
+        if (stack == null) return TextCommandResult.Error($"No item or block {code}");
+
+        var slot = player.InventoryManager.ActiveHotbarSlot;
+        slot.Itemstack = stack;
+        slot.MarkDirty();
+        return TextCommandResult.Success($"Holding {code}");
+    }
+
+    private TextCommandResult Drop(string code, Vec3d position)
+    {
+        var stack = Stack(code);
+        if (stack == null) return TextCommandResult.Error($"No item or block {code}");
+
+        var dropped = sapi.World.SpawnItemEntity(stack, position, new Vec3d());
+        return TextCommandResult.Success($"Dropped {code}: entity {dropped.EntityId}");
+    }
+
+    private ItemStack? Stack(string code)
+    {
+        var location = new AssetLocation(code);
+        CollectibleObject? collectible = sapi.World.GetItem(location) ?? (CollectibleObject?)sapi.World.GetBlock(location);
+        return collectible == null ? null : new ItemStack(collectible);
     }
 
     private static TextCommandResult Strike(Entity? entity, double joules)
