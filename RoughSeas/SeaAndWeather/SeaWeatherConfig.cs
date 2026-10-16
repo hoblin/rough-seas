@@ -9,6 +9,20 @@ public class SeaWeatherConfig
     public StormTypeConfig[] Storms = [];
     public StormShapeConfig Storm = new();
     public VanillaConfig Vanilla = new();
+    public CurrentsConfig Currents = new();
+}
+
+public class CurrentsConfig
+{
+    public double GyreDegrees;
+    public double BoundaryFraction;
+    public double WesternBoundaryMps;
+    public double InteriorMps;
+    public double WarmBoundaryCelsius;
+    public double ColdBoundaryCelsius;
+    public double SeawaterFreezingCelsius;
+    public int BasinReachBlocks;
+    public double LandBelowOceanity;
 }
 
 public class BeaufortForce

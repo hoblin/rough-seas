@@ -26,6 +26,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         vanilla = new VanillaWeather(this, api);
         vanilla.FollowWind();
         VanillaWeatherPatches.Attach(this, api.Side);
+        api.RegisterEntityBehaviorClass(CurrentDrift.Code, typeof(CurrentDrift));
     }
 
     public override void StartServerSide(ICoreServerAPI sapi)
@@ -54,6 +55,8 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public SeaState At(double x, double z, double totalHours) => model.Value.At(x, z, totalHours, Oceanity(x, z));
 
+    public SeaCurrent CurrentAt(double x, double z) => model.Value.Current(x, z);
+
     public IEnumerable<Storm> StormsWithin(double x, double z, double range) => model.Value.Storms.Active(x, z, NowHours, range);
 
     public WindSample Wind(double x, double z) => model.Value.Wind(x, z, NowHours);
@@ -78,6 +81,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
             world.Seed,
             Config,
             new WorldClimate(world.Seed, world.Config, world.BlockAccessor.MapSizeZ),
+            new OceanBasins(world.Seed, world.Config, world.BlockAccessor.MapSizeX, world.BlockAccessor.MapSizeZ, Config.Currents),
             z => calendar.OnGetLatitude?.Invoke(z) ?? 0.5,
             calendar.DaysPerYear * calendar.HoursPerDay);
     }

@@ -1,0 +1,4 @@
+[
+    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-raft.json" },
+    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-sailed.json" }
+]

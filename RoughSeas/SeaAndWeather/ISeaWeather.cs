@@ -3,8 +3,8 @@ using System.Collections.Generic;
 namespace RoughSeas.SeaAndWeather;
 
 /// <summary>
-/// The sea and weather state: wind and storms from the world seed, worldgen climate, position and game time, alike on
-/// server and client; waves also from the ocean map each side has loaded.
+/// The sea and weather state: wind, storms and currents from the world seed, worldgen climate, position and game time,
+/// alike on server and client; waves also from the ocean map each side has loaded.
 /// Reach it with <c>api.ModLoader.GetModSystem&lt;SeaWeatherSystem&gt;()</c>.
 /// </summary>
 public interface ISeaWeather
@@ -17,6 +17,9 @@ public interface ISeaWeather
 
     /// <summary>The state at a block position at a game time, in total game hours.</summary>
     SeaState At(double x, double z, double totalHours);
+
+    /// <summary>The ocean current and the water's temperature at a block position: steady, from seed and position alone.</summary>
+    SeaCurrent CurrentAt(double x, double z);
 
     /// <summary>Storms whose reach overlaps a circle of <paramref name="range"/> blocks around a position, now.</summary>
     IEnumerable<Storm> StormsWithin(double x, double z, double range);

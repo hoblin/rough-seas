@@ -8,14 +8,20 @@ public class SeaWeatherModel
     private readonly SeaWeatherConfig config;
     private readonly PrevailingWinds prevailing;
     private readonly BeaufortScale beaufort;
+    private readonly WorldClimate climate;
+    private readonly OceanBasins basins;
+    private readonly OceanCurrents currents;
     private readonly NormalizedSimplexNoise strengthNoise;
     private readonly NormalizedSimplexNoise veerNoise;
 
-    public SeaWeatherModel(long seed, SeaWeatherConfig config, WorldClimate climate, Func<double, double> latitude, double hoursPerYear)
+    public SeaWeatherModel(long seed, SeaWeatherConfig config, WorldClimate climate, OceanBasins basins, Func<double, double> latitude, double hoursPerYear)
     {
         this.config = config;
+        this.climate = climate;
+        this.basins = basins;
         prevailing = new PrevailingWinds(config.PrevailingWinds, latitude);
         beaufort = new BeaufortScale(config.Beaufort);
+        currents = new OceanCurrents(config.Currents);
         Storms = new StormField(seed, config, climate, prevailing, hoursPerYear);
         strengthNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 41017);
         veerNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 90121);
@@ -42,6 +48,9 @@ public class SeaWeatherModel
             wind.Rain,
             wind.Storm?.Code);
     }
+
+    public SeaCurrent Current(double x, double z) =>
+        currents.At(prevailing.LatitudeDegrees(z), prevailing.PolewardZ(z), basins.At(x, z), climate.At(x, z).Celsius);
 
     public WindSample Wind(double x, double z, double hours)
     {
