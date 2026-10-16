@@ -18,8 +18,8 @@ public class CurrentsConfig
     public double BoundaryFraction;
     public double WesternBoundaryMps;
     public double InteriorMps;
-    public double WarmBoundaryCelsius;
-    public double ColdBoundaryCelsius;
+    public double WesternBoundaryCelsius;
+    public double EasternBoundaryCelsius;
     public double SeawaterFreezingCelsius;
     public int BasinReachBlocks;
     public double LandBelowOceanity;

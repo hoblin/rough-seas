@@ -11,6 +11,7 @@ public static class SeaWeatherCommands
 {
     private const double DefaultStormRange = 10000;
     private const double DefaultCurrentRange = 4000;
+    private const double MaxCurrentRange = 8000;
     private const double CurrentScanStep = 64;
 
     public static void Register(SeaWeatherSystem sea, ICoreServerAPI sapi)
@@ -28,7 +29,7 @@ public static class SeaWeatherCommands
                 .HandleWith(args => TextCommandResult.Success(Storms(sea, sapi, args.Caller.Pos, (double)args[0])))
             .EndSubCommand()
             .BeginSubCommand("currents")
-                .WithDescription("The warmest and the coldest current within a range of you")
+                .WithDescription("The warmest and the coldest current within a range of you, up to 8000 blocks")
                 .WithArgs(sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultCurrentRange))
                 .HandleWith(args => TextCommandResult.Success(Currents(sea, sapi, args.Caller.Pos, (double)args[0])))
             .EndSubCommand()
@@ -85,9 +86,11 @@ public static class SeaWeatherCommands
 
     private static string Currents(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, double range)
     {
+        range = Math.Clamp(range, 0, MaxCurrentRange);
         var steps = (int)(2 * range / CurrentScanStep) + 1;
         var samples = Enumerable.Range(0, steps)
             .SelectMany(i => Enumerable.Range(0, steps).Select(j => (X: pos.X - range + i * CurrentScanStep, Z: pos.Z - range + j * CurrentScanStep)))
+            .Where(at => Distance(at, pos) <= range)
             .Select(at => (at.X, at.Z, Current: sea.CurrentAt(at.X, at.Z)))
             .ToArray();
         var warm = samples.MaxBy(sample => sample.Current.WarmthCelsius);

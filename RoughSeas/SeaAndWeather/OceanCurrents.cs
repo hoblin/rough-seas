@@ -36,7 +36,7 @@ public class OceanCurrents
         var poleward = strength * config.WesternBoundaryMps * delta * slope * meridional;
 
         var gradient = Math.Sin(2 * Math.Abs(latitudeDegrees) * GameMath.DEG2RAD_DOUBLE);
-        var warmth = strength * meridional * gradient * (config.WarmBoundaryCelsius * fromWestCoast - config.ColdBoundaryCelsius * fromEastCoast);
+        var warmth = strength * meridional * gradient * (config.WesternBoundaryCelsius * fromWestCoast - config.EasternBoundaryCelsius * fromEastCoast);
         return new SeaCurrent(east, poleward * polewardZ, Math.Max(config.SeawaterFreezingCelsius, airCelsius + warmth), warmth);
     }
 }
