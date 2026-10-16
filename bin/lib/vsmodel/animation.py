@@ -76,7 +76,7 @@ def save_animations(elements, version, armature):
                 frames.setdefault(frame, {})[bone] = pose
         animations.append({
             "name": meta.get("name", action.name),
-            "code": meta.get("code", action.name),
+            "code": action.name,
             "quantityframes": length,
             **{key: value for key, value in meta.items() if key not in ("name", "code", "quantityframes", "version")},
             **({"version": version} if version else {}),

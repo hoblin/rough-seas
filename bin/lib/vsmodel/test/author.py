@@ -40,6 +40,8 @@ for frame, size in ((0, 1), (6, 0), (12, 1)):
     bones["Arm"].keyframe_insert("scale", frame=frame)
     bones["Arm"].keyframe_insert("location", frame=frame)
 
+bpy.data.actions["nod"].name = "bow"
+
 swing = bpy.data.actions["swing"]
 for curve in swing.fcurves:
     if curve.data_path == 'pose.bones["Arm"].rotation_euler' and curve.array_index == 0:
