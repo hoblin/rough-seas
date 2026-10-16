@@ -24,6 +24,7 @@ fi
 seed_settings() {
   local settings=$BENCH_DATA/clientsettings.json
   [ -f "$settings" ] && return
+  [ -f "$login_from" ] || { echo "No game login at $login_from: log in once with the game's launcher, then run bin/client again." >&2; exit 1; }
   mkdir -p "$BENCH_DATA"
   jq '{
     stringSettings: (.stringSettings | with_entries(select(.key | IN("sessionkey", "sessionsignature", "useremail", "playername", "playeruid", "mptoken", "entitlements")))),
@@ -33,10 +34,10 @@ seed_settings() {
 }
 
 place_window() {
-  command -v hyprctl >/dev/null || return 0
+  [ -n "${BENCH_WORKSPACE:-}" ] && command -v hyprctl >/dev/null || return 0
   local previous
   previous=$(hyprctl activewindow -j | jq -r 'select(.class != "Vintage Story") | .address // empty')
-  hyprctl eval "hl.workspace_rule({ workspace = \"$BENCH_WORKSPACE\", monitor = \"$BENCH_MONITOR\" })" >/dev/null
+  [ -z "${BENCH_MONITOR:-}" ] || hyprctl eval "hl.workspace_rule({ workspace = \"$BENCH_WORKSPACE\", monitor = \"$BENCH_MONITOR\" })" >/dev/null
   (
     for _ in $(seq 120); do
       sleep 0.5
