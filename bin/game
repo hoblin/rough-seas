@@ -199,12 +199,12 @@ source "$(dirname "$0")/lib/bench.sh"
 bridge=http://127.0.0.1:$BENCH_BRIDGE_PORT
 centre=512000
 
-get() { curl -sf -H 'X-Agent-Bridge: 1' "$@"; }
+get() { curl -sf -m "${request_limit:-600}" -H 'X-Agent-Bridge: 1' "$@"; }
 post() { get -X POST --data-binary "${2:-}" "$bridge$1"; }
 fail() { echo "$1" >&2; exit 1; }
 
 arrive() {
-  local x=$1 y=$2 z=$3 deadline=$((SECONDS + ${4:-30}))
+  local x=$1 y=$2 z=$3 deadline=$((SECONDS + ${4:-30})) request_limit=10
   until get "$bridge/state" | jq -e --argjson c "$centre" --argjson x "$x" --argjson y "$y" --argjson z "$z" \
     '[.pos.X - $c - $x, .pos.Y - $y, .pos.Z - $c - $z] | all(fabs < 1)' >/dev/null; do
     [ $SECONDS -lt $deadline ] || fail "The client never arrived at $x $y $z; bin/game state shows where it is"
@@ -214,7 +214,7 @@ arrive() {
 
 case "${1:-}" in
   wait)
-    deadline=$((SECONDS + ${2:-180}))
+    deadline=$((SECONDS + ${2:-180})) request_limit=10
     until get "$bridge/state" >/dev/null 2>&1; do
       [ $SECONDS -lt $deadline ] || fail "No world within ${2:-180} s; read $BENCH_DATA/Logs/client-main.log"
       sleep 1
