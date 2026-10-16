@@ -11,10 +11,13 @@ bin/scene slab CODE        a dry look at a vessel: CODE spawned on a granite sla
                            of the player, who stands 3 blocks higher and looks down at it. Run after
                            dock. Prints the entity id. `bin/game hotkey togglehud` hides the HUD.
 bin/scene look ID [DX DY DZ]
-                           fly the player to entity ID's position plus DX DY DZ (default 3 1 0:
-                           east of it and a block up), hover there and aim at it: a shot from any
-                           side, over land or sea. Creative flight stays on; `bin/game hotkey fly`
-                           lands.
+                           fly the player (/bridge fly) to entity ID's position plus DX DY DZ
+                           (default 3 1 0: east of it and a block up), hover there and aim at it:
+                           a shot from any side, over land or sea.
+bin/scene storm [RANGE]    noon, then the highest storm waves over open sea within RANGE blocks
+                           (default 60000): the player hovering 12 blocks above the surface,
+                           a sailboat and a raft riding below, dangerous oceans off so they last.
+                           Turn it back on with /worldconfig dangerousOceans true.
 bin/scene clear [RANGE] [TYPE...]
                            remove entities of each TYPE (default every vessel and item; wildcards allowed,
                            e.g. drifter-*) within RANGE blocks (default 64) of the player. Run it
@@ -36,9 +39,6 @@ dock() {
   [ -n "${x:-}" ] || { echo "$sea" >&2; exit 1; }
   until "$game" state | jq -e --argjson x $((512000 + x)) --argjson z $((512000 + z)) \
     '(.pos.X - $x - 0.5 | fabs) < 1 and (.pos.Z - $z - 0.5 | fabs) < 1' >/dev/null; do sleep 1; done
-  "$game" do '/giveblock rock-granite 16' >/dev/null
-  "$game" slot 0 >/dev/null
-  "$game" do '/we mark ~ 100 ~ ~ 109 ~' '/we fill' '/tp ~ 110 ~' >/dev/null
   until "$game" state | jq -e '.pos.Y >= 109.9' >/dev/null; do sleep 1; done
   local x=-4
   for code in "${codes[@]}"; do
@@ -68,11 +68,27 @@ look() {
   at=$("$game" entity "$id" | jq -r --argjson dx "$dx" --argjson dy "$dy" --argjson dz "$dz" \
     '.pos | "\(.X - 512000 + $dx) \(.Y + $dy) \(.Z - 512000 + $dz)"')
   read -r x y z <<<"$at"
-  "$game" state | jq -e .flying >/dev/null || "$game" hotkey fly >/dev/null
-  "$game" do "/tp $at" >/dev/null
+  "$game" do "/bridge fly $at" >/dev/null
   until "$game" state | jq -e --argjson x "$x" --argjson z "$z" \
     '(.pos.X - 512000 - $x | fabs) < 1 and (.pos.Z - 512000 - $z | fabs) < 1' >/dev/null; do sleep 1; done
   "$game" aim "$id" >/dev/null
+}
+
+storm() {
+  "$game" do '/gamemode creative' '/time set 12:00' '/worldconfig dangerousOceans false' >/dev/null
+  local from
+  from=$("$game" state | jq -c '.pos')
+  "$game" do "/bridge storm ${1:-}"
+  local tries=60
+  until "$game" state | jq -e --argjson from "$from" \
+    '(.pos.Y - 110 | fabs) < 0.5 and ((.pos.X - $from.X) * (.pos.X - $from.X) + (.pos.Z - $from.Z) * (.pos.Z - $from.Z)) > 4096' >/dev/null; do
+    tries=$((tries - 1))
+    [ "$tries" -gt 0 ] || { echo "No post went up at the storm within a minute; see the chat" >&2; exit 1; }
+    sleep 1
+  done
+  "$game" do '/bridge fly ~ ~12 ~' \
+    '/entity spawnat boat-sailed-oak 1 ~-6 109 ~-8 0' '/entity spawnat boat-raft-oak 1 ~6 109 ~-8 0' >/dev/null
+  "$game" do '/seas here'
 }
 
 clear() {
@@ -89,6 +105,7 @@ case "${1:-}" in
   dock) shift; dock "$@" ;;
   slab) shift; slab "$@" ;;
   look) shift; look "$@" ;;
+  storm) shift; storm "$@" ;;
   clear) shift; clear "$@" ;;
   *) usage ;;
 esac

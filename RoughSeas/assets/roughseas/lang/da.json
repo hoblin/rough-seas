@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Oprørt hav",
+    "game:playstyle-desc-preset-roughseas": "Standardoverlevelse i en verden med åbne oceaner, hvor vind, storme og havet er farlige.",
+    "game:worldconfig-category-roughseas": "Oprørt hav",
+    "game:worldattribute-dangerousOceans": "Farlige oceaner",
+    "game:worldattribute-dangerousOceans-desc": "Storme, brænding og koldt vand knuser fartøjer og dræber svømmere. Slået fra beholder havet sit vejr, men gør ingen skade.",
+    "vessel-condition-sound": "Skrog: intakt",
+    "vessel-condition-scarred": "Skrog: medtaget",
+    "vessel-condition-damaged": "Skrog: beskadiget, arbejder",
+    "vessel-condition-breaking": "Skrog: går i stykker",
+    "bilge-water": "Bundvand: {0} af {1} liter",
+    "item-anchorwarp": "Ankertrosse",
+    "itemdesc-anchorwarp": "Ni reb splejset til 90 meter trosse. Stuvet ved masten på en sejlbåd lader den ankeret nå dybere vand."
+}

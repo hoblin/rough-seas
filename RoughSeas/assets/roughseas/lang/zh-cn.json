@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "惊涛骇浪",
+    "game:playstyle-desc-preset-roughseas": "在拥有开阔海洋的世界中进行标准生存，风、风暴和大海都很危险。",
+    "game:worldconfig-category-roughseas": "惊涛骇浪",
+    "game:worldattribute-dangerousOceans": "危险海洋",
+    "game:worldattribute-dangerousOceans-desc": "风暴、拍岸浪和冰冷的海水会毁坏船只、夺走游泳者的生命。关闭后，海上仍有天气变化，但不会造成伤害。",
+    "vessel-condition-sound": "船体：完好",
+    "vessel-condition-scarred": "船体：伤痕累累",
+    "vessel-condition-damaged": "船体：受损，承受应力",
+    "vessel-condition-breaking": "船体：正在解体",
+    "bilge-water": "舱底水：{0} / {1} 升",
+    "item-anchorwarp": "锚缆",
+    "itemdesc-anchorwarp": "九捆绳索插接成 90 米长的锚缆。存放在帆船的桅杆旁，可让锚触及更深的水域。"
+}

@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "거친 바다",
+    "game:playstyle-desc-preset-roughseas": "바람, 폭풍, 바다가 위험한 열린 대양의 세계에서 하는 기본 생존.",
+    "game:worldconfig-category-roughseas": "거친 바다",
+    "game:worldattribute-dangerousOceans": "위험한 대양",
+    "game:worldattribute-dangerousOceans-desc": "폭풍, 쇄파, 차가운 바다가 배를 부수고 헤엄치는 사람을 죽입니다. 끄면 바다의 날씨는 그대로지만 해를 끼치지 않습니다.",
+    "vessel-condition-sound": "선체: 온전함",
+    "vessel-condition-scarred": "선체: 상처 있음",
+    "vessel-condition-damaged": "선체: 손상됨, 무리가 감",
+    "vessel-condition-breaking": "선체: 부서지는 중",
+    "bilge-water": "빌지: {0} / {1}리터",
+    "item-anchorwarp": "닻줄",
+    "itemdesc-anchorwarp": "밧줄 아홉 개를 이어 만든 90미터 닻줄입니다. 돛단배의 돛대에 실어 두면 닻이 더 깊은 물에 닿습니다."
+}

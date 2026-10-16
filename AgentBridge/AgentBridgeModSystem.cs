@@ -12,6 +12,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace AgentBridge;
 
@@ -26,6 +27,7 @@ public class AgentBridgeModSystem : ModSystem
     private ScreenshotCapture screenshots = null!;
     private HoverOverride hover = null!;
     private CrosshairPicking crosshair = null!;
+    private FrameTimer frameTimer = null!;
     private EntityLoadBlackBox blackBox = null!;
     private readonly HttpListener listener = new();
 
@@ -37,6 +39,7 @@ public class AgentBridgeModSystem : ModSystem
         screenshots = new ScreenshotCapture(api);
         hover = new HoverOverride(api);
         crosshair = new CrosshairPicking();
+        frameTimer = new FrameTimer(api);
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         listener.Prefixes.Add(Prefix);
         listener.Start();
@@ -50,6 +53,7 @@ public class AgentBridgeModSystem : ModSystem
         screenshots?.Dispose();
         hover?.Dispose();
         crosshair?.Dispose();
+        frameTimer?.Dispose();
         blackBox?.Dispose();
     }
 
@@ -85,7 +89,8 @@ public class AgentBridgeModSystem : ModSystem
                 "/close-dialogs" => (Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),
                 "/input" => (Encoding.UTF8.GetBytes(await Input(context.Request)), "application/json"),
-                "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"], context.Request.QueryString["block"]))), "application/json"),
+                "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"], context.Request.QueryString["box"], context.Request.QueryString["block"]))), "application/json"),
+                "/fps" => (Encoding.UTF8.GetBytes(await frameTimer.Measure(double.Parse(context.Request.QueryString["seconds"] ?? "5", CultureInfo.InvariantCulture))), "application/json"),
                 "/hotkey" =>(Encoding.UTF8.GetBytes(await OnMainThread(() => Hotkey(context.Request.QueryString["code"]))), "text/plain"),
                 _ => throw new FileNotFoundException("Unknown endpoint; bin/game help lists what the bridge does")
             };
@@ -195,7 +200,7 @@ public class AgentBridgeModSystem : ModSystem
         return State();
     }
 
-    private string Hover(string? entity, string? block)
+    private string Hover(string? entity, string? box, string? block)
     {
         hover.Block = null;
         if (block?.Split(',').Select(int.Parse).ToArray() is [var x, var y, var z])
@@ -211,6 +216,13 @@ public class AgentBridgeModSystem : ModSystem
         }
 
         var target = capi.World.GetEntityById(id) ?? throw new FileNotFoundException($"No entity {id} near the player");
+        var boxes = target.GetBehavior<EntityBehaviorSelectionBoxes>()?.selectionBoxes ?? [];
+        var index = string.IsNullOrEmpty(box) ? -1 : Array.FindIndex(boxes, apap => apap.AttachPoint.Code == box);
+        if (!string.IsNullOrEmpty(box) && index < 0)
+        {
+            throw new FileNotFoundException($"No selection box {box}; {target.Code} has {string.Join(", ", boxes.Select(apap => apap.AttachPoint.Code))}");
+        }
+        hover.SelectionBoxIndex = index + 1;
         hover.Target = target;
         return JsonSerializer.Serialize(new { name = target.GetName(), info = target.GetInfoText() }) + "\n";
     }

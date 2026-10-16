@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Mare grosso",
+    "game:playstyle-desc-preset-roughseas": "Sopravvivenza normale in un mondo dagli oceani aperti, dove vento, tempeste e mare sono pericolosi.",
+    "game:worldconfig-category-roughseas": "Mare grosso",
+    "game:worldattribute-dangerousOceans": "Oceani pericolosi",
+    "game:worldattribute-dangerousOceans-desc": "Tempeste, frangenti e acqua fredda spezzano le imbarcazioni e uccidono i nuotatori. Disattivato, il mare mantiene il suo meteo ma non fa danni.",
+    "vessel-condition-sound": "Scafo: integro",
+    "vessel-condition-scarred": "Scafo: segnato",
+    "vessel-condition-damaged": "Scafo: danneggiato, sotto sforzo",
+    "vessel-condition-breaking": "Scafo: si sfascia",
+    "bilge-water": "Sentina: {0} su {1} litri",
+    "item-anchorwarp": "Gomena",
+    "itemdesc-anchorwarp": "Nove corde impiombate in 90 metri di gomena. Stivata all'albero di una barca a vela, permette all'ancora di raggiungere acque più profonde."
+}

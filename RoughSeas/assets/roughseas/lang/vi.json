@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Biển động",
+    "game:playstyle-desc-preset-roughseas": "Sinh tồn chuẩn trong một thế giới có đại dương rộng mở, nơi gió, bão và biển cả đều nguy hiểm.",
+    "game:worldconfig-category-roughseas": "Biển động",
+    "game:worldattribute-dangerousOceans": "Đại dương nguy hiểm",
+    "game:worldattribute-dangerousOceans-desc": "Bão, sóng vỗ bờ và nước lạnh làm vỡ tàu thuyền và giết người bơi. Khi tắt, biển vẫn giữ thời tiết nhưng không gây hại.",
+    "vessel-condition-sound": "Thân tàu: nguyên vẹn",
+    "vessel-condition-scarred": "Thân tàu: trầy xước",
+    "vessel-condition-damaged": "Thân tàu: hư hại, đang chịu lực",
+    "vessel-condition-breaking": "Thân tàu: đang vỡ ra",
+    "bilge-water": "Nước đáy tàu: {0} / {1} lít",
+    "item-anchorwarp": "Dây neo",
+    "itemdesc-anchorwarp": "Chín cuộn dây thừng nối bện thành 90 mét dây neo. Cất ở cột buồm của thuyền buồm, nó giúp mỏ neo chạm tới vùng nước sâu hơn."
+}

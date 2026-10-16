@@ -99,6 +99,7 @@
         "easternBoundaryCelsius": 6,
         "seawaterFreezingCelsius": -1.8,
         "basinReachBlocks": 8192,
-        "landBelowOceanity": 0.5
+        "landBelowOceanity": 0.5,
+        "stokesDriftPerMps": 0.015
     }
 }

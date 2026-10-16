@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Буремне море",
+    "game:playstyle-desc-preset-roughseas": "Звичайне виживання у світі з відкритим океаном, де вітер, шторми й море небезпечні.",
+    "game:worldconfig-category-roughseas": "Буремне море",
+    "game:worldattribute-dangerousOceans": "Небезпечний океан",
+    "game:worldattribute-dangerousOceans-desc": "Шторми, прибій і холодна вода ламають судна й убивають плавців. Якщо вимкнено, погода на морі лишається, але шкоди воно не завдає.",
+    "vessel-condition-sound": "Корпус: цілий",
+    "vessel-condition-scarred": "Корпус: пошарпаний",
+    "vessel-condition-damaged": "Корпус: пошкоджений, тече по швах",
+    "vessel-condition-breaking": "Корпус: розвалюється",
+    "bilge-water": "Вода в трюмі: {0} з {1} л",
+    "item-anchorwarp": "Якірний канат",
+    "itemdesc-anchorwarp": "Дев'ять мотузок, зрощених у 90 метрів каната. Покладений біля щогли вітрильника, він дає якорю дістати дно на більшій глибині."
+}

@@ -49,6 +49,8 @@ public class SeaWeatherModel
             wind.Storm?.Code);
     }
 
+    public bool IsSea(double x, double z) => basins.At(x, z).IsSea;
+
     public SeaCurrent Current(double x, double z) =>
         currents.At(prevailing.LatitudeDegrees(z), prevailing.PolewardZ(z), basins.At(x, z), climate.At(x, z).Celsius);
 

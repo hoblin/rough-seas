@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Mar gruesa",
+    "game:playstyle-desc-preset-roughseas": "Supervivencia estándar en un mundo de océanos abiertos, donde el viento, las tormentas y el mar son peligrosos.",
+    "game:worldconfig-category-roughseas": "Mar gruesa",
+    "game:worldattribute-dangerousOceans": "Océanos peligrosos",
+    "game:worldattribute-dangerousOceans-desc": "Las tormentas, la rompiente y el agua fría rompen embarcaciones y matan a los nadadores. Desactivado, el mar conserva su clima pero no hace daño.",
+    "vessel-condition-sound": "Casco: sano",
+    "vessel-condition-scarred": "Casco: castigado",
+    "vessel-condition-damaged": "Casco: dañado, trabajando",
+    "vessel-condition-breaking": "Casco: desarmándose",
+    "bilge-water": "Sentina: {0} de {1} litros",
+    "item-anchorwarp": "Cabo de fondeo",
+    "itemdesc-anchorwarp": "Nueve sogas ayustadas en 90 metros de cabo. Adujado junto al mástil de un velero, permite que el ancla alcance aguas más profundas."
+}

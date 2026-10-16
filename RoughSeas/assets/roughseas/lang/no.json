@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Grov sjø",
+    "game:playstyle-desc-preset-roughseas": "Vanlig overlevelse i en verden med åpne hav, der vind, stormer og sjøen er farlige.",
+    "game:worldconfig-category-roughseas": "Grov sjø",
+    "game:worldattribute-dangerousOceans": "Farlige hav",
+    "game:worldattribute-dangerousOceans-desc": "Stormer, brenninger og kaldt vann knuser fartøy og dreper svømmere. Slått av beholder sjøen været sitt, men gjør ingen skade.",
+    "vessel-condition-sound": "Skrog: helt",
+    "vessel-condition-scarred": "Skrog: medtatt",
+    "vessel-condition-damaged": "Skrog: skadet, arbeider",
+    "vessel-condition-breaking": "Skrog: går i stykker",
+    "bilge-water": "Lensevann: {0} av {1} liter",
+    "item-anchorwarp": "Ankertau",
+    "itemdesc-anchorwarp": "Ni tau spleiset til 90 meter ankertau. Stuet ved masten på en seilbåt lar det ankeret nå dypere vann."
+}

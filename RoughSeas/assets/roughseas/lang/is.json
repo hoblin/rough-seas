@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Úfinn sjór",
+    "game:playstyle-desc-preset-roughseas": "Hefðbundin lifun í heimi með opnum úthöfum, þar sem vindur, stormar og hafið eru hættuleg.",
+    "game:worldconfig-category-roughseas": "Úfinn sjór",
+    "game:worldattribute-dangerousOceans": "Hættuleg úthöf",
+    "game:worldattribute-dangerousOceans-desc": "Stormar, brim og kaldur sjór brjóta skip og drepa sundfólk. Slökkt heldur hafið veðri sínu en veldur engum skaða.",
+    "vessel-condition-sound": "Skrokkur: heill",
+    "vessel-condition-scarred": "Skrokkur: rispaður",
+    "vessel-condition-damaged": "Skrokkur: laskaður, undir álagi",
+    "vessel-condition-breaking": "Skrokkur: að liðast í sundur",
+    "bilge-water": "Austur: {0} af {1} lítrum",
+    "item-anchorwarp": "Akkerisfesti",
+    "itemdesc-anchorwarp": "Níu reipi splæst saman í 90 metra festi. Geymd við mastur seglbáts lætur hún akkerið ná á dýpra vatn."
+}

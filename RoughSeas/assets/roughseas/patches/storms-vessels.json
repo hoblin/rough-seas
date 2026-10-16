@@ -1,0 +1,24 @@
+[
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/behaviorConfigs/roughseas:seaforces", "side": "Server", "value": { "beamMetres": 2, "mastMetres": 0, "windageSquareMetres": 1 } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:seaforces" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:mooring" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "ropetieable" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "ropetieable" } },
+
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/roughseas:seaforces", "side": "Server", "value": { "beamMetres": 2.5, "mastMetres": 6, "windageSquareMetres": 6 } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/roughseas:bilge", "side": "Server", "value": { "capacityLitres": 1500, "deckSquareMetres": 8, "drainLitresPerHour": 0 } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:seaforces" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:bilge" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:bilge" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:mooring" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "ropetieable" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "ropetieable" } },
+
+    { "op": "add", "file": "game:itemtypes/wearable/anchor.json", "path": "/attributes/rodeMetres", "value": 120 },
+    { "op": "add", "file": "game:itemtypes/wearable/anchor.json", "path": "/attributes/rope", "value": "rope-flax" },
+    { "op": "add", "file": "game:itemtypes/wearable/anchor.json", "path": "/attributes/holdingNewtons", "value": 3000 },
+
+    { "op": "add", "file": "game:blocktypes/clay/fired/bowl.json", "path": "/behaviors/-", "value": { "name": "roughseas:bailer", "properties": { "secondsPerScoop": 0.8 } } },
+    { "op": "add", "file": "game:blocktypes/clay/fired/jug.json", "path": "/behaviors/-", "value": { "name": "roughseas:bailer", "properties": { "secondsPerScoop": 1.5 } } },
+    { "op": "add", "file": "game:blocktypes/wood/bucket.json", "path": "/behaviors/-", "value": { "name": "roughseas:bailer", "properties": { "secondsPerScoop": 2.5 } } }
+]

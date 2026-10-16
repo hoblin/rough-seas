@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Бурно море",
+    "game:playstyle-desc-preset-roughseas": "Стандартно оцеляване в свят с открити океани, където вятърът, бурите и морето са опасни.",
+    "game:worldconfig-category-roughseas": "Бурно море",
+    "game:worldattribute-dangerousOceans": "Опасни океани",
+    "game:worldattribute-dangerousOceans-desc": "Бури, прибой и студена вода разбиват плавателни съдове и убиват плувци. Ако е изключено, морето запазва времето си, но не вреди.",
+    "vessel-condition-sound": "Корпус: здрав",
+    "vessel-condition-scarred": "Корпус: очукан",
+    "vessel-condition-damaged": "Корпус: повреден, пропуска по шевовете",
+    "vessel-condition-breaking": "Корпус: разпада се",
+    "bilge-water": "Вода в трюма: {0} от {1} л",
+    "item-anchorwarp": "Котвено въже",
+    "itemdesc-anchorwarp": "Девет въжета, снадени в 90 метра котвено въже. Прибрано до мачтата на платноходка, то позволява на котвата да стигне по-дълбоки води."
+}

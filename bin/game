@@ -26,7 +26,7 @@ EOF
   cat <<'EOF'
 
 START
-  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux.
+  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux, muted.
                        Opens singleplayer world WORLD (default "sea"); a new world is made with the
                        AgentBridge preset: creative, standard worldgen, 70% ocean. Takes ~30 s.
                        An existing world is reopened without the preset: re-applying it crashes
@@ -57,6 +57,14 @@ LOOK
                              fluid at feet and head, seabed height, season, temperature, rainfall,
                              wind vector, precipitation, wind/weather pattern, weather event
   bin/game entity ID         server side: code, alive, pos, behaviours, all watched attributes
+  (log)                      storms log every event to the server's debug log, tagged [storms]:
+                             breakers with their energy, water shipped, anchors down, dragged and
+                             lost, ropes snapped, lightning, the ashore roll when a moored vessel
+                             loads. Read it before guessing:
+                             grep -a '\[storms\]' "$BENCH_DATA/Logs/server-debug.log"
+  bin/game fps [SECONDS]     frames rendered over SECONDS (default 5): fps, mean and 95th-percentile
+                             frame time in ms. Compare a change against BENCH_MODS=agentbridge from
+                             the same place and camera.
   bin/game shot [FILE]       in-engine screenshot (default shot.png in the clone's temp folder,
                              /tmp/<bench>); prints the path of a half-size copy, cheaper to look at
   bin/game hotkey togglehud  hide the HUD for clean shots; cyclecamera for third person;
@@ -68,9 +76,12 @@ ACT
   bin/game look YAW PITCH    aim the camera, radians. Yaw 0 faces +Z, pi/2 +X, pi -Z;
                              pitch pi is level, above pi looks down (range 1.59-4.70)
   bin/game aim ID            aim the camera at an entity
-  bin/game hover [ID]        make the game treat entity ID as looked at, whatever the camera points
+  bin/game hover [ID [BOX]]  make the game treat entity ID as looked at, whatever the camera points
                              at: the HUD shows its name and info text, interactions target it, and
                              the reply is that name and text as JSON. Without ID, stop.
+                             BOX aims at one selection box by its attachment point, e.g. the
+                             sailboat's LProwAP (anchor) or LowerMastAP, as an accessory needs;
+                             a wrong BOX lists the entity's boxes.
                              Use it instead of aiming by coordinates at small selection boxes.
                              The HUD part needs creative or survival: spectators do not pick.
   bin/game hover X Y Z       the same for the top face of the block at absolute X Y Z (as `state`
@@ -83,14 +94,25 @@ ACT
   bin/game close             close open dialogs
 
 SERVER COMMANDS (via bin/game do; /help bridge lists them)
-  /bridge sea                teleport into the nearest open sea, in the water at sea level
+  /bridge sea                teleport to the nearest open sea, onto a granite post at the surface
+                             (an idle player in water sinks; the post keeps the player up)
+  /bridge storm [RANGE]      teleport onto a granite post where the storms within RANGE blocks
+                             (default 60000) raise the highest waves over generated open sea;
+                             replies with the wave height. Set the time of day first: storms move.
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood
   /bridge mount ID           seat the player in an existing seatable entity
-  /bridge dismount           get off it again: the unfocused client drops Shift
   /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
   /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
                              e.g. the sailboat's sailPosition 0, 1, 2
+  /bridge fly X Y Z          hover there in creative free flight, out of any seat: no post, no
+                             sinking. X Y Z as /tp takes them (~ relative). Then `aim ID` or `look`
+                             frames the shot, e.g. /bridge fly ~6 ~4 ~ and bin/game aim 4300.
+  /bridge dismount         get out of the seat, leaving the vessel where it is (a /tp while seated
+                             takes the vessel along)
+  /bridge tie ID X Y Z      tie entity ID to the block at absolute X Y Z with a vanilla rope, as a
+                             player would (a vessel to a fence post: its stake)
+  /bridge ropes ID           where each rope tied to entity ID is pinned: a block, an entity, or loose
   /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with
                              its integrity (watched "roughseas:vessel"), 0 breaks it into wreckage
   /bridge interact ID attack|interact [ctrl|shift]
@@ -162,10 +184,11 @@ case "${1:-}" in
     magick "$file" -resize 50% "${file%.png}-small.png"
     echo "${file%.png}-small.png"
     ;;
+  fps) post "/fps?seconds=${2:-5}" ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
   aim) post "/look?entity=$2" ;;
   hover)
-    if [ $# -ge 4 ]; then post "/hover?block=$2,$3,$4"; else post "/hover?entity=${2:-}"; fi
+    if [ $# -ge 4 ]; then post "/hover?block=$2,$3,$4"; else post "/hover?entity=${2:-}&box=${3:-}"; fi
     ;;
   slot) post "/look?slot=$2" ;;
   press) post "/input?keys=$2&ms=${3:-100}" ;;

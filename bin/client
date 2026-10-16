@@ -32,16 +32,29 @@ seed_settings() {
   mv "$settings.seed" "$settings"
 }
 
-give_back_focus() {
-  local window=$1 pid
-  for _ in $(seq 120); do
-    sleep 1
-    pid=$(hyprctl activewindow -j | jq -r .pid)
-    if grep -qzF -- "$BENCH_DATA" "/proc/$pid/cmdline" 2>/dev/null; then
-      hyprctl eval "hl.dispatch(hl.dsp.focus({ window = \"address:$window\" }))" >/dev/null
-      return
-    fi
-  done
+place_window() {
+  command -v hyprctl >/dev/null || return 0
+  local previous
+  previous=$(hyprctl activewindow -j | jq -r 'select(.class != "Vintage Story") | .address // empty')
+  hyprctl eval "hl.workspace_rule({ workspace = \"$BENCH_WORKSPACE\", monitor = \"$BENCH_MONITOR\" })" >/dev/null
+  (
+    for _ in $(seq 120); do
+      sleep 0.5
+      local pids address
+      pids=$(pgrep -f -- "--dataPath $BENCH_DATA " | jq -s .)
+      address=$(hyprctl clients -j | jq -r --argjson pids "$pids" 'first(.[] | select(.pid as $pid | $pids | index($pid)) | .address) // empty')
+      [ -n "$address" ] || continue
+      hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = \"$BENCH_WORKSPACE\", follow = false, window = \"address:$address\" }))" >/dev/null
+      [ -n "$previous" ] && hyprctl eval "hl.dispatch(hl.dsp.focus({ window = \"address:$previous\" }))" >/dev/null
+      exit
+    done
+  ) &
+}
+
+mute() {
+  local settings=$BENCH_DATA/clientsettings.json
+  jq '.intSettings.masterSoundLevel = 0' "$settings" > "$settings.muted"
+  mv -f "$settings.muted" "$settings"
 }
 
 cd "$root"
@@ -50,12 +63,11 @@ dotnet build AgentBridge -v quiet -nologo
 seed_settings
 
 stop_session "$session" "$BENCH_DATA"
+mute
 require_free_port "$BENCH_BRIDGE_PORT" "agent bridge"
+place_window
 # $target goes first: the embedded server re-parses these arguments, does not know --openWorld,
 # and would take the world name as one more value of a preceding --addOrigin or --addModPath.
 tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
   "$(game_env) ./run.sh $target --dataPath $BENCH_DATA --tracelog $mod_args"
-if command -v hyprctl >/dev/null && focused=$(hyprctl activewindow -j | jq -r '.address // empty') && [ -n "$focused" ]; then
-  give_back_focus "$focused" &>/dev/null &
-fi
 echo "Client starting in tmux session $session ($target; mods: ${mods:-none}); logs in $BENCH_DATA/Logs"

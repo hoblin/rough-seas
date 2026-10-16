@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Raue See",
+    "game:playstyle-desc-preset-roughseas": "Normales Überleben in einer Welt mit offenen Ozeanen, in der Wind, Stürme und die See gefährlich sind.",
+    "game:worldconfig-category-roughseas": "Raue See",
+    "game:worldattribute-dangerousOceans": "Gefährliche Ozeane",
+    "game:worldattribute-dangerousOceans-desc": "Stürme, Brandung und kaltes Wasser zerbrechen Schiffe und töten Schwimmer. Aus, behält die See ihr Wetter, richtet aber keinen Schaden an.",
+    "vessel-condition-sound": "Rumpf: intakt",
+    "vessel-condition-scarred": "Rumpf: mitgenommen",
+    "vessel-condition-damaged": "Rumpf: beschädigt, arbeitet",
+    "vessel-condition-breaking": "Rumpf: bricht auseinander",
+    "bilge-water": "Bilge: {0} von {1} Litern",
+    "item-anchorwarp": "Ankertrosse",
+    "itemdesc-anchorwarp": "Neun gespleißte Seile, 90 Meter Trosse. Am Mast eines Segelboots verstaut, erreicht der Anker tieferes Wasser."
+}

@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Mar bravo",
+    "game:playstyle-desc-preset-roughseas": "Sobrevivência normal num mundo de oceanos abertos, onde o vento, as tempestades e o mar são perigosos.",
+    "game:worldconfig-category-roughseas": "Mar bravo",
+    "game:worldattribute-dangerousOceans": "Oceanos perigosos",
+    "game:worldattribute-dangerousOceans-desc": "Tempestades, rebentação e água fria partem embarcações e matam nadadores. Desligado, o mar mantém o seu estado do tempo, mas não causa dano.",
+    "vessel-condition-sound": "Casco: íntegro",
+    "vessel-condition-scarred": "Casco: castigado",
+    "vessel-condition-damaged": "Casco: danificado, a trabalhar",
+    "vessel-condition-breaking": "Casco: a desfazer-se",
+    "bilge-water": "Porão: {0} de {1} litros",
+    "item-anchorwarp": "Cabo de fundear",
+    "itemdesc-anchorwarp": "Nove cordas emendadas em 90 metros de cabo. Aduchado junto ao mastro de um veleiro, permite à âncora alcançar águas mais fundas."
+}

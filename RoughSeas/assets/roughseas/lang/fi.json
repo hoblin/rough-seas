@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Myrskyisä meri",
+    "game:playstyle-desc-preset-roughseas": "Tavallinen selviytyminen maailmassa, jossa on avoimia valtameriä ja jossa tuuli, myrskyt ja meri ovat vaarallisia.",
+    "game:worldconfig-category-roughseas": "Myrskyisä meri",
+    "game:worldattribute-dangerousOceans": "Vaaralliset valtameret",
+    "game:worldattribute-dangerousOceans-desc": "Myrskyt, tyrskyt ja kylmä vesi rikkovat aluksia ja tappavat uimareita. Pois päältä meren sää säilyy, mutta meri ei tee vahinkoa.",
+    "vessel-condition-sound": "Runko: ehjä",
+    "vessel-condition-scarred": "Runko: kolhiintunut",
+    "vessel-condition-damaged": "Runko: vaurioitunut, rasittuu",
+    "vessel-condition-breaking": "Runko: hajoaa",
+    "bilge-water": "Pilssivesi: {0} / {1} litraa",
+    "item-anchorwarp": "Ankkuriköysi",
+    "itemdesc-anchorwarp": "Yhdeksän köyttä pujosjatkettu 90 metrin ankkuriköydeksi. Purjeveneen maston juurelle säilöttynä se päästää ankkurin syvempään veteen."
+}
