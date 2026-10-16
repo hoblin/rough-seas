@@ -1,5 +1,6 @@
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
-eval "$(mise -C "$root" env -s bash)"
+bench_env=$(mise -C "$root" env -s bash) || return 1
+eval "$bench_env"
 
 stop_session() {
   local session=$1 data=$2 pids
@@ -8,6 +9,16 @@ stop_session() {
   # A dying game outlives its command line: pgrep -f stops matching while threads still hold its ports.
   for pid in $pids; do
     while kill -0 "$pid" 2>/dev/null; do sleep 0.5; done
+  done
+}
+
+log_lines() { { wc -l < "$1"; } 2>/dev/null || echo 0; }
+
+wait_for_log() {
+  local log=$1 after=$2 line=$3 deadline=$((SECONDS + $4))
+  until tail -n +"$((after + 1))" "$log" 2>/dev/null | grep -qF -- "$line"; do
+    [ $SECONDS -lt $deadline ] || return 1
+    sleep 0.5
   done
 }
 

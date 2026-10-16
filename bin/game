@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source "$(dirname "$0")/lib/bench.sh"
-bridge=http://127.0.0.1:$BENCH_BRIDGE_PORT
-
 usage() {
+  echo "Rough Seas test bench: run the mod in Vintage Story 1.22.7 and drive it from the shell."
+  if [ -n "${BENCH:-}" ]; then clone; else
+    echo
+    echo "THIS CLONE: mise did not load $root/mise.toml, so the bench cannot run; see its error above."
+  fi
+  guide
+}
+
+clone() {
   cat <<EOF
-Rough Seas test bench: run the mod in Vintage Story 1.22.7 and drive it from the shell.
 
 THIS CLONE ($root)
   Bench name $BENCH: tmux sessions $BENCH-client and $BENCH-server
@@ -23,25 +28,36 @@ THIS CLONE ($root)
   A clone's first bin/client seeds the account login into its data folder from
   ~/.config/VintagestoryData/clientsettings.json (only read, never written).
 EOF
+}
+
+guide() {
   cat <<'EOF'
 
 START
-  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux, muted.
+  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux, muted, and return
+                       once the world is loaded and the server answers (~35 s). A running world
+                       is saved and left first, as Save & Quit does: vessels, ropes, the
+                       player's place and /worldconfig changes are there after the restart.
                        Opens singleplayer world WORLD (default "sea"); a new world is made with the
-                       AgentBridge preset: creative, standard worldgen, 70% ocean. Takes ~30 s.
+                       AgentBridge preset: creative, standard worldgen, 70% ocean.
                        An existing world is reopened without the preset: re-applying it crashes
                        the client on some worlds (#24).
+                       Every start turns temporal storms, stability and rifts off, and unridden
+                       vessels hold still until /bridge drift on.
                        BENCH_MODS picks the mods loaded (default "roughseas agentbridge"):
                        BENCH_MODS=agentbridge, or BENCH_MODS= for vanilla, to tell our crash from
                        the game's. Without agentbridge, bin/game cannot drive it; read the log.
   bin/client server    connect the client to this clone's dedicated server instead (multiplayer).
-                       Start bin/server first and wait for "Dedicated Server now running" in a
-                       log newer than the start. The player needs admin there, once per server
-                       data folder: tmux send-keys -t <bench>-server '/op hoblin' Enter
-  bin/server           build both mods, (re)start this clone's dedicated server in tmux; its
-                       console takes commands the same way
+                       The player needs admin there, once per server data folder:
+                       tmux send-keys -t <bench>-server '/op hoblin' Enter
+  bin/server           build both mods, (re)start this clone's dedicated server in tmux (saved and
+                       stopped first) and return once it runs; its console takes commands the
+                       same way
   bin/ref              fetch Anego's sources and decompile the engine into ref/ (gitignored)
-  bin/game wait        block until the world is loaded, then close the character-creation dialog
+  bin/game wait [S]    block until the world is loaded and the server answers, closing the
+                       character-creation dialog; fails after S seconds (default 180).
+                       bin/client already does it.
+  The rules no tool carries are in docs/bench.md; read them with this help.
   The client runs unfocused and needs no input from the desktop; never send it real keys.
   It picks what lies under the crosshair, as a focused one does, and bin/client hands the desktop
   focus back to the window that had it once the game's window opens.
@@ -65,14 +81,19 @@ LOOK
   bin/game fps [SECONDS]     frames rendered over SECONDS (default 5): fps, mean and 95th-percentile
                              frame time in ms. Compare a change against BENCH_MODS=agentbridge from
                              the same place and camera.
-  bin/game shot [FILE]       in-engine screenshot (default shot.png in the clone's temp folder,
+  bin/game shot [FILE]       in-engine screenshot of the world alone: no HUD, hand or held item
+                             (default shot.png; a relative FILE lands in the clone's temp folder,
                              /tmp/<bench>); prints the path of a half-size copy, cheaper to look at
-  bin/game hotkey togglehud  hide the HUD for clean shots; cyclecamera for third person;
-                             bin/game hotkey alone lists every hotkey code
+  bin/game hotkey CODE       cyclecamera for third person; bin/game hotkey alone lists every code
+  To look at anything, fly: `bin/scene look ID` from any side, `/bridge fly` anywhere. To only
+  look, '/gamemode spectator' draws no player at all, but spectators pick nothing.
 
 ACT
   bin/game do CMD...         run commands as the player, in order, printing each reply:
-                             /server commands and .client commands
+                             /server commands and .client commands. A reply that says
+                             "Hovering at X Y Z" (/bridge fly, sea, storm) waits for `arrive`.
+  bin/game arrive X Y Z [S]  block until the client stands within a block of X Y Z (as commands take
+                             them); fails after S seconds (default 30). Use it after a /tp.
   bin/game look YAW PITCH    aim the camera, radians. Yaw 0 faces +Z, pi/2 +X, pi -Z;
                              pitch pi is level, above pi looks down (range 1.59-4.70)
   bin/game aim ID            aim the camera at an entity
@@ -94,19 +115,20 @@ ACT
   bin/game close             close open dialogs
 
 SERVER COMMANDS (via bin/game do; /help bridge lists them)
-  /bridge sea                teleport to the nearest open sea, onto a granite post at the surface
-                             (an idle player in water sinks; the post keeps the player up)
-  /bridge storm [RANGE]      teleport onto a granite post where the storms within RANGE blocks
-                             (default 60000) raise the highest waves over generated open sea;
-                             replies with the wave height. Set the time of day first: storms move.
+  /bridge sea                fly to the nearest open sea, hovering just above the surface
+  /bridge storm [RANGE]      fly to where the storms within RANGE blocks (default 60000) raise the
+                             highest waves over open sea, hovering just above the surface; replies
+                             with the wave height. Set the time of day first: storms move.
+  /bridge drift [on|off]     whether unridden vessels drift with the current and the wind. Off on
+                             every start, so a vessel stays where it was put; a drift test turns it on
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood
   /bridge mount ID           seat the player in an existing seatable entity
   /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
   /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
                              e.g. the sailboat's sailPosition 0, 1, 2
-  /bridge fly X Y Z          hover there in creative free flight, out of any seat: no post, no
-                             sinking. X Y Z as /tp takes them (~ relative). Then `aim ID` or `look`
+  /bridge fly X Y Z          hover there in creative free flight, out of any seat: no sinking.
+                             X Y Z as /tp takes them (~ relative). Then `aim ID` or `look`
                              frames the shot, e.g. /bridge fly ~6 ~4 ~ and bin/game aim 4300.
   /bridge dismount         get out of the seat, leaving the vessel where it is (a /tp while seated
                              takes the vessel along)
@@ -127,6 +149,11 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge here, /bridge entity ID   what `here` and `entity` call
 
 RECIPES
+  A vessel at sea, seen from three sides, kept over a restart:
+    bin/client; bin/scene dock roughseas:dugout-oak     (prints the vessel's id)
+    bin/scene look ID 4 1 0; bin/game shot east.png; bin/scene look ID 0 1 -5; bin/game shot north.png
+    bin/scene look ID 0 6 0.01; bin/game shot above.png
+    bin/client; bin/game state                          (the vessel is still in `nearby`)
   Calm noon at sea on a raft, oar in hand:
     bin/game do '/time set 12:00' '/weather setprecip 0' '/weather set clearsky' \
       '/weather setw still' '/giveitem oar-crude-oak 1' '/bridge sea' '/bridge ride boat-raft-oak'
@@ -150,35 +177,71 @@ RECIPES
 GOTCHAS
   Coordinates in commands are relative to the map centre (512000), as the game shows them;
     `state` and `entity` print absolute ones. Use ~ for relative to the player.
-  After a teleport the client's position catches up 2-5 s later; wait before aiming or clicking.
+  After a teleport, ~ commands use the client's stale position until it catches up: `do` waits for
+    the bridge's own flights; after a /tp, `arrive` first.
   A camera change shows in `state`.lookingAt on the next frame; wait ~0.5 s.
   A new player gets a character-creation dialog that pauses the game: `wait` closes it.
-  bin/client kills the old client, which does not save the player; the next start is a fresh join.
   New worlds get a random seed, so do not hard-code sea coordinates: use /bridge sea.
+  `bin/scene clear` removes entities only; blocks you placed and /worldconfig changes stay.
+  Never `pkill -f "bin/game ..."`: the pattern matches, and kills, your own shell. Every wait has a
+    timeout instead.
   The bridge listens on 127.0.0.1 only ("localhost" may resolve to ::1 and miss it), and
     refuses requests without the X-Agent-Bridge header, so web pages cannot drive it.
 EOF
 }
 
-get() { curl -sf -H 'X-Agent-Bridge: 1' "$@"; }
+if [[ ${1:-help} == help ]]; then
+  source "$(dirname "$0")/lib/bench.sh" || true
+  usage
+  exit
+fi
+source "$(dirname "$0")/lib/bench.sh"
+bridge=http://127.0.0.1:$BENCH_BRIDGE_PORT
+centre=512000
+
+get() { curl -sf -m "${request_limit:-600}" -H 'X-Agent-Bridge: 1' "$@"; }
 post() { get -X POST --data-binary "${2:-}" "$bridge$1"; }
+fail() { echo "$1" >&2; exit 1; }
+
+arrive() {
+  local x=$1 y=$2 z=$3 deadline=$((SECONDS + ${4:-30})) request_limit=10
+  until get "$bridge/state" | jq -e --argjson c "$centre" --argjson x "$x" --argjson y "$y" --argjson z "$z" \
+    '[.pos.X - $c - $x, .pos.Y - $y, .pos.Z - $c - $z] | all(fabs < 1)' >/dev/null; do
+    [ $SECONDS -lt $deadline ] || fail "The client never arrived at $x $y $z; bin/game state shows where it is"
+    sleep 0.5
+  done
+}
 
 case "${1:-}" in
   wait)
-    until get "$bridge/state" >/dev/null 2>&1; do sleep 2; done
-    sleep 2
-    post /close-dialogs >/dev/null
+    deadline=$((SECONDS + ${2:-180})) request_limit=10
+    until get "$bridge/state" >/dev/null 2>&1; do
+      [ $SECONDS -lt $deadline ] || fail "No world within ${2:-180} s; read $BENCH_DATA/Logs/client-main.log"
+      sleep 1
+    done
+    until post /close-dialogs >/dev/null && post /chat '/bridge drift' | grep -q .; do
+      [ $SECONDS -lt $deadline ] || fail "The server did not answer within ${2:-180} s; read $BENCH_DATA/Logs/server-main.log"
+      sleep 1
+    done
     get "$bridge/state"
     ;;
   state) get "$bridge/state" ;;
   do)
     shift
-    for line in "$@"; do post /chat "$line"; done
+    for line in "$@"; do
+      reply=$(post /chat "$line")
+      echo "$reply"
+      x=
+      read -r x y z < <(sed -n 's/.*Hovering at \(-\?[0-9.]*\) \(-\?[0-9.]*\) \(-\?[0-9.]*\).*/\1 \2 \3/p' <<<"$reply") || true
+      [ -z "$x" ] || arrive "$x" "$y" "$z"
+    done
     ;;
+  arrive) arrive "$2" "$3" "$4" "${5:-30}" ;;
   here) post /chat "/bridge here" ;;
   entity) post /chat "/bridge entity $2" ;;
   shot)
-    file=${2:-$BENCH_TMP/shot.png}
+    file=${2:-shot.png}
+    [[ $file == /* ]] || file=$BENCH_TMP/$file
     mkdir -p "$(dirname "$file")"
     get -o "$file" "$bridge/screenshot"
     magick "$file" -resize 50% "${file%.png}-small.png"
@@ -195,5 +258,6 @@ case "${1:-}" in
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
   hotkey) post "/hotkey?code=${2:-}" ;;
   close) post /close-dialogs ;;
+  leave) post /leave ;;
   *) usage ;;
 esac

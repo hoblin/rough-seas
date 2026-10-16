@@ -9,6 +9,7 @@ public class ScreenshotCapture : IRenderer
 {
     private readonly ICoreClientAPI capi;
     private readonly Queue<TaskCompletionSource<byte[]>> pending = new();
+    private bool showGuisAfter;
 
     public ScreenshotCapture(ICoreClientAPI capi)
     {
@@ -22,7 +23,15 @@ public class ScreenshotCapture : IRenderer
     public Task<byte[]> Next()
     {
         var shot = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
-        capi.Event.EnqueueMainThreadTask(() => pending.Enqueue(shot), "agentbridge-screenshot");
+        capi.Event.EnqueueMainThreadTask(() =>
+        {
+            if (!capi.HideGuis)
+            {
+                capi.TriggerChatMessage(".gui off");
+                showGuisAfter = true;
+            }
+            pending.Enqueue(shot);
+        }, "agentbridge-screenshot");
         return shot.Task;
     }
 
@@ -37,6 +46,10 @@ public class ScreenshotCapture : IRenderer
         }
         var png = File.ReadAllBytes(path);
         while (pending.TryDequeue(out var shot)) shot.SetResult(png);
+        if (!showGuisAfter) return;
+
+        capi.TriggerChatMessage(".gui on");
+        showGuisAfter = false;
     }
 
     public void Dispose()

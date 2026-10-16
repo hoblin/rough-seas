@@ -7,7 +7,9 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
+using Vintagestory.Client.NoObf;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -22,6 +24,10 @@ public class AgentBridgeModSystem : ModSystem
     // A browser cannot add a custom header to a cross-origin request without a preflight, which the bridge never answers.
     private const string Header = "X-Agent-Bridge";
     private static readonly string[] Vitals = ["health", "oxygen", "bodyTemp", "wetness"];
+    private const int ServerReplyWaitMs = 5000;
+    private const int ClientReplyWaitMs = 1000;
+    private const int ReplyQuietMs = 300;
+    private const int LeaveDelayMs = 500;
 
     private ICoreClientAPI capi = null!;
     private ScreenshotCapture screenshots = null!;
@@ -92,6 +98,7 @@ public class AgentBridgeModSystem : ModSystem
                 "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"], context.Request.QueryString["box"], context.Request.QueryString["block"]))), "application/json"),
                 "/fps" => (Encoding.UTF8.GetBytes(await frameTimer.Measure(double.Parse(context.Request.QueryString["seconds"] ?? "5", CultureInfo.InvariantCulture))), "application/json"),
                 "/hotkey" =>(Encoding.UTF8.GetBytes(await OnMainThread(() => Hotkey(context.Request.QueryString["code"]))), "text/plain"),
+                "/leave" => (Encoding.UTF8.GetBytes(Leave()), "text/plain"),
                 _ => throw new FileNotFoundException("Unknown endpoint; bin/game help lists what the bridge does")
             };
             response.ContentType = contentType;
@@ -116,18 +123,30 @@ public class AgentBridgeModSystem : ModSystem
     private async Task<string> Chat(HttpListenerRequest request)
     {
         var line = (await new StreamReader(request.InputStream).ReadToEndAsync()).Trim();
-        var wait = int.TryParse(request.QueryString["wait"], out var ms) ? ms : 1000;
+        var clientCommand = line.StartsWith('.');
+        var wait = int.TryParse(request.QueryString["wait"], out var ms) ? ms : clientCommand ? ClientReplyWaitMs : ServerReplyWaitMs;
         var replies = new List<string>();
-        ChatLineDelegate collect = (_, message, _, _) => replies.Add(message);
+        long lastReply = 0;
+        ChatLineDelegate collect = (_, message, _, _) =>
+        {
+            replies.Add(message);
+            Volatile.Write(ref lastReply, Environment.TickCount64);
+        };
 
         await OnMainThread(() =>
         {
             capi.Event.ChatMessage += collect;
-            if (line.StartsWith('.')) capi.TriggerChatMessage(line);
+            if (clientCommand) capi.TriggerChatMessage(line);
             else capi.SendChatMessage(line);
             return true;
         });
-        await Task.Delay(wait);
+        var deadline = Environment.TickCount64 + wait;
+        while (Environment.TickCount64 < deadline)
+        {
+            var last = Volatile.Read(ref lastReply);
+            if (last > 0 && Environment.TickCount64 - last >= ReplyQuietMs) break;
+            await Task.Delay(50);
+        }
         return await OnMainThread(() =>
         {
             capi.Event.ChatMessage -= collect;
@@ -269,6 +288,14 @@ public class AgentBridgeModSystem : ModSystem
             return "Hotkey codes:\n" + string.Join("\n", capi.Input.HotKeys.Values.Select(key => $"{key.Code}  {key.Name}")) + "\n";
         }
         return hotkey.Handler(hotkey.CurrentMapping) + "\n";
+    }
+
+    private string Leave()
+    {
+        // Leaving disposes this mod and its listener; the delay lets the reply go out first.
+        _ = Task.Delay(LeaveDelayMs).ContinueWith(_ => capi.Event.EnqueueMainThreadTask(
+            () => ((ClientMain)capi.World).DestroyGameSession(gotDisconnected: false, EnumExitMode.SoftExit), "agentbridge"));
+        return capi.IsSinglePlayer ? "Saving the world and leaving it\n" : "Leaving the server\n";
     }
 
     private string CloseDialogs()
