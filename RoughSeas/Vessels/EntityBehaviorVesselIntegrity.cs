@@ -19,7 +19,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
     private const string TreeKey = "roughseas:vessel";
     private const int DataVersion = 1;
-    private const double PhysicsTicksPerSecond = 60;
     private const double WreckageScatterSpeed = 0.3;
     private const int InvulnerableMs = 500;
     private const float BareHandDamage = 0.5f;
@@ -257,11 +256,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
     {
-        var motion = entity.Pos.Motion;
+        var pos = entity.Pos;
         // Called from the physics threads for a drifting vessel and from the main thread for a steered one.
         lock (impactLock)
         {
-            if (sensor.Sample(motion.X * PhysicsTicksPerSecond, motion.Z * PhysicsTicksPerSecond) is double speed)
+            if (sensor.Sample(pos.X, pos.Z, entity.World.ElapsedMilliseconds) is double speed)
             {
                 pendingImpacts.Add(speed);
             }
