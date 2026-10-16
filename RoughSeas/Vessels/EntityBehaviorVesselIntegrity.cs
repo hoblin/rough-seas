@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -20,13 +21,19 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const int DataVersion = 1;
     private const double PhysicsTicksPerSecond = 60;
     private const double WreckageScatterSpeed = 0.3;
+    private const int InvulnerableMs = 500;
+    private const float BareHandDamage = 0.5f;
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
+    private static readonly AssetLocation MendSound = new("game:sounds/player/build");
     private static readonly string[] Conditions = ["sound", "scarred", "damaged", "breaking"];
 
     private readonly object impactLock = new();
     private readonly List<double> pendingImpacts = new();
     private ImpactSensor sensor = null!;
     private double impactCapacity;
+    private DamageConversion damageConversion = null!;
+    private ISeaWeather seaWeather = null!;
+    private HullRepair? repair;
     private BlockDropItemStack[] wreckage = [];
     private HullCracks? cracks;
     private int shownStage;
@@ -51,6 +58,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         base.Initialize(properties, attributes);
+        repair = attributes["repair"].AsObject<HullRepair?>(null);
+        if (repair?.Material.Resolve(entity.World, "vessel repair") != true) repair = null;
+
         if (entity.Api is ICoreClientAPI capi)
         {
             InitializeClient(capi, attributes);
@@ -65,8 +75,10 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             entity.WatchedAttributes.SetAttribute(TreeKey, tree);
         }
 
-        var materials = entity.Api.ModLoader.GetModSystem<VesselsModSystem>().Materials;
-        impactCapacity = attributes["impactCapacity"].AsDouble() * materials.StrengthFactor(attributes["parts"].AsObject<VesselPart[]>([]));
+        var vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
+        impactCapacity = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(attributes["parts"].AsObject<VesselPart[]>([]));
+        damageConversion = vessels.DamageConversion;
+        seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         sensor = new ImpactSensor(attributes["minImpactSpeed"].AsDouble(1));
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])
             .Where(drop => drop.Resolve(entity.World, "vessel wreckage", entity.Code))
@@ -125,6 +137,67 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         else Break();
     }
 
+    public void TakeConditionFrom(ItemStack stack)
+    {
+        var item = stack.Collectible;
+        Integrity = CarriedCondition.Integrity(item.GetRemainingDurability(stack), item.GetMaxDurability(stack));
+    }
+
+    /// <summary>Vanilla's shift pickup, server only, with the hull's condition carried on the item as its durability.</summary>
+    public bool TryPickUp(EntityAgent byEntity)
+    {
+        if (!byEntity.Controls.ShiftKey || entity.Properties.Attributes?["rightClickPickup"].AsBool() != true || Occupied()) return false;
+
+        var stack = new ItemStack(entity.World.GetItem(entity.Code));
+        if (Integrity < 1)
+        {
+            stack.Collectible.SetDurability(stack, CarriedCondition.Durability(Integrity, stack.Collectible.GetMaxDurability(stack)));
+        }
+        if (!byEntity.TryGiveItemStack(stack)) entity.World.SpawnItemEntity(stack, entity.Pos.XYZ);
+
+        entity.World.Logger.Audit("{0} Picked up 1x{1} at {2}.", byEntity.GetName(), stack.Collectible.Code, entity.Pos);
+        entity.Die();
+        return true;
+    }
+
+    public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
+    {
+        if (entity.World.Side != EnumAppSide.Server || damageSource.Type == EnumDamageType.Heal) return;
+        if (damageSource.Source == EnumDamageSource.Weather && !seaWeather.DangerousOceans) return;
+
+        entity.SetActivityRunning("invulnerable", InvulnerableMs);
+        Strike(damageConversion.Joules(damageSource, damage));
+    }
+
+    public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
+    {
+        bool server = entity.World.Side == EnumAppSide.Server;
+        if (mode == EnumInteractMode.Attack)
+        {
+            if (server) Swing(byEntity, itemslot, hitPosition);
+            return;
+        }
+        if (!CanMendWith(itemslot)) return;
+
+        handled = EnumHandling.PreventSubsequent;
+        if (server) Mend(byEntity, itemslot);
+    }
+
+    public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
+    {
+        if (repair == null || Integrity >= 1) return null;
+
+        return
+        [
+            new WorldInteraction
+            {
+                ActionLangCode = "roughseas:vessel-mend",
+                MouseButton = EnumMouseButton.Right,
+                Itemstacks = [repair.Material.ResolvedItemstack]
+            }
+        ];
+    }
+
     public override void GetInfoText(StringBuilder infotext)
     {
         infotext.AppendLine(Lang.Get($"roughseas:vessel-condition-{Conditions[Stage()]}"));
@@ -163,6 +236,52 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             }
         }
     }
+
+    private void Swing(EntityAgent byEntity, ItemSlot slot, Vec3d hitPosition)
+    {
+        if (entity.GetInterface<IMountable>()?.Controller == byEntity) return;
+
+        var stack = slot.Itemstack;
+        float damage = (stack?.Collectible.GetAttackPower(stack) ?? BareHandDamage) * byEntity.Stats.GetBlended("meleeWeaponsDamage");
+        bool critical = false;
+        damage = stack?.Collectible.GetDamageToEntity(damage, entity, stack, ref critical) ?? damage;
+
+        if (!entity.IsActivityRunning("invulnerable"))
+        {
+            entity.World.PlaySoundAt(new AssetLocation($"game:sounds/block/chop{1 + entity.World.Rand.Next(3)}"), entity, null, true, 16);
+            stack?.Collectible.OnAttackingWith(entity.World, byEntity, entity, slot);
+        }
+
+        var source = new DamageSource
+        {
+            Source = byEntity is EntityPlayer ? EnumDamageSource.Player : EnumDamageSource.Entity,
+            SourceEntity = byEntity,
+            Type = EnumDamageType.BluntAttack,
+            HitPosition = hitPosition,
+            DamageTier = stack?.Collectible.GetToolTier(slot) ?? 0
+        };
+        entity.ReceiveDamage(source, damage);
+    }
+
+    private bool CanMendWith(ItemSlot slot)
+    {
+        var material = repair?.Material.ResolvedItemstack;
+        return material != null && Integrity < 1 &&
+               slot.Itemstack?.Collectible.Code == material.Collectible.Code && slot.StackSize >= material.StackSize;
+    }
+
+    private void Mend(EntityAgent byEntity, ItemSlot slot)
+    {
+        slot.TakeOut(repair!.Material.StackSize);
+        slot.MarkDirty();
+        byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(repair.Saturation);
+        Integrity = Math.Min(1, Integrity + repair.Restores);
+        entity.World.PlaySoundAt(MendSound, entity, null, true, 16);
+    }
+
+    private bool Occupied() =>
+        entity.GetBehavior<EntityBehaviorSeatable>()?.AnyMounted() == true ||
+        entity.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory.Empty == false;
 
     private double Mass()
     {

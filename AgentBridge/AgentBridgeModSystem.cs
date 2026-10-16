@@ -10,6 +10,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 namespace AgentBridge;
 
@@ -80,7 +81,7 @@ public class AgentBridgeModSystem : ModSystem
                 "/close-dialogs" => (Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),
                 "/input" => (Encoding.UTF8.GetBytes(await Input(context.Request)), "application/json"),
-                "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"]))), "application/json"),
+                "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"], context.Request.QueryString["block"]))), "application/json"),
                 "/hotkey" =>(Encoding.UTF8.GetBytes(await OnMainThread(() => Hotkey(context.Request.QueryString["code"]))), "text/plain"),
                 _ => throw new FileNotFoundException("Unknown endpoint; bin/game help lists what the bridge does")
             };
@@ -171,8 +172,15 @@ public class AgentBridgeModSystem : ModSystem
         return State();
     }
 
-    private string Hover(string? entity)
+    private string Hover(string? entity, string? block)
     {
+        hover.Block = null;
+        if (block?.Split(',').Select(int.Parse).ToArray() is [var x, var y, var z])
+        {
+            hover.Target = null;
+            hover.Block = new BlockPos(x, y, z);
+            return JsonSerializer.Serialize(new { block = capi.World.BlockAccessor.GetBlock(hover.Block).Code.ToString() }) + "\n";
+        }
         if (!long.TryParse(entity, out var id))
         {
             hover.Target = null;

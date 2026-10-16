@@ -68,6 +68,8 @@ ACT
                              the reply is that name and text as JSON. Without ID, stop.
                              Use it instead of aiming by coordinates at small selection boxes.
                              The HUD part needs creative or survival: spectators do not pick.
+  bin/game hover X Y Z       the same for the top face of the block at absolute X Y Z (as `state`
+                             prints them), water included: a held raft or block is placed on it.
   bin/game slot N            select hotbar slot N (0-9)
   bin/game press KEYS [MS]   hold keys for MS ms (default 100). GlKeys names, comma-separated:
                              W,A,S,D, Space, ShiftLeft, ControlLeft, Q, E, R, F, Number1 ...
@@ -84,6 +86,15 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              e.g. the sailboat's sailPosition 0, 1, 2
   /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with
                              its integrity (watched "roughseas:vessel"), 0 breaks it into wreckage
+  /bridge interact ID attack|interact [ctrl|shift]
+                             what the server does when the player left- or right-clicks entity
+                             ID with the held item, wherever the player stands, with ctrl or shift
+                             held; replies with its integrity if it is a vessel. The client sends
+                             no click, so use it where `click` cannot reach the entity. Shift
+                             pickup goes through the server's interact event, which this skips
+  /bridge blast ID RADIUS [DISTANCE]
+                             an explosion that injures entities within RADIUS and breaks no blocks,
+                             DISTANCE blocks east of entity ID (default 0) and one above it
   /bridge here, /bridge entity ID   what `here` and `entity` call
 
 RECIPES
@@ -146,7 +157,9 @@ case "${1:-}" in
     ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
   aim) post "/look?entity=$2" ;;
-  hover) post "/hover?entity=${2:-}" ;;
+  hover)
+    if [ $# -ge 4 ]; then post "/hover?block=$2,$3,$4"; else post "/hover?entity=${2:-}"; fi
+    ;;
   slot) post "/look?slot=$2" ;;
   press) post "/input?keys=$2&ms=${3:-100}" ;;
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
