@@ -18,11 +18,11 @@ public class MaterialTable
     public double StrengthFactor(IEnumerable<VesselPart> parts) =>
         parts.Aggregate(1.0, (factor, part) => factor * StrengthRatio(part.Material, part.Reference));
 
-    public double Strength(string material)
+    public double BreakingKilonewtons(string rope)
     {
-        if (materials.TryGetValue(material, out var known)) return known.Strength;
+        if (materials.TryGetValue(rope, out var known)) return known.Strength;
 
-        logger.Warning("Rough Seas has no strength for {0}; it counts as unbreakable", material);
+        logger.Warning("Rough Seas has no breaking load for {0}; it counts as unbreakable", rope);
         return double.PositiveInfinity;
     }
 

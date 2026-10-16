@@ -59,6 +59,4 @@ public class LightningConfig
     public double RangeBlocks;
     public double AttractBlocksPerMastMetre;
     public double TallestMastMetres;
-    public double StrikeRadiusBlocks;
-    public double StrikeJoules;
 }

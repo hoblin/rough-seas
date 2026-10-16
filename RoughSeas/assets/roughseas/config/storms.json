@@ -49,7 +49,12 @@
         "hazardPerSquareMetreHour": 0.05,
         "surfReachPerMetre": 5,
         "shoreSearchBlocks": 48,
-        "impactFactor": 3
+        "impactFactor": 3,
+        "sources": {
+            "hazardPerSquareMetreHour": "Balance: how likely each game hour of waves this high is to throw a moored vessel on the shore it swings against",
+            "surfReachPerMetre": "Balance: how far beyond its swing, per metre of wave height, the surf still reaches a moored vessel",
+            "impactFactor": "Balance: how much harder than the season's highest breaker the shore strikes a vessel thrown on it"
+        }
     },
     "lightning": {
         "checkSeconds": 2,
@@ -59,9 +64,8 @@
         "rangeBlocks": 200,
         "attractBlocksPerMastMetre": 1,
         "tallestMastMetres": 12,
-        "strikeRadiusBlocks": 3,
-        "strikeJoules": 20000,
         "sources": {
+            "tallestMastMetres": "The farthest a strike is searched for a mast to draw it: as tall as the tallest vessel's mast",
             "minCelsius": "Vanilla's LightningMinTemp for its thunderstorms",
             "attractBlocksPerMastMetre": "A mast protects, and draws strikes from, a cone of about its own height in radius"
         }

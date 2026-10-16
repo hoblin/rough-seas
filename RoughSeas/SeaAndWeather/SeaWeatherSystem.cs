@@ -13,7 +13,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     private Lazy<SeaWeatherConfig> config = null!;
     private VanillaWeather vanilla = null!;
 
-    public TickBudget Budget { get; } = new();
+    public TickBudget Budget { get; } = new("sea and weather");
 
     /// <summary>After vanilla's weather systems (0.1), before the Devastation's effects (2).</summary>
     public override double ExecuteOrder() => 1;

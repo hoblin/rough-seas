@@ -59,10 +59,11 @@ slab() {
 
 storm() {
   "$game" do '/gamemode creative' '/time set 12:00' '/worldconfig dangerousOceans false' >/dev/null
+  local from
+  from=$("$game" state | jq -c '.pos')
   "$game" do "/bridge storm ${1:-}"
-  local before
-  before=$("$game" state | jq '.pos.Y')
-  until "$game" state | jq -e --argjson before "$before" '(.pos.Y - 110 | fabs) < 0.5 and .pos.Y != $before' >/dev/null; do sleep 1; done
+  until "$game" state | jq -e --argjson from "$from" \
+    '(.pos.Y - 110 | fabs) < 0.5 and ((.pos.X - $from.X) * (.pos.X - $from.X) + (.pos.Z - $from.Z) * (.pos.Z - $from.Z)) > 4096' >/dev/null; do sleep 1; done
   "$game" slot 0 >/dev/null
   "$game" do '/giveblock rock-granite 16' '/we mark ~ ~ ~ ~ ~11 ~' '/we fill' '/we clear' '/tp ~ ~12 ~' \
     '/entity spawnat boat-sailed-oak 1 ~-6 109 ~-8 0' '/entity spawnat boat-raft-oak 1 ~6 109 ~-8 0' >/dev/null

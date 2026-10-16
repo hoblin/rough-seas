@@ -29,6 +29,9 @@
   <ItemGroup>
     <None Include="..\RoughSeas\assets\roughseas\config\seaweather.json" Link="seaweather.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\storms.json" Link="storms.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\vessels\materials.json" Link="materials.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\patches\vessels-vanilla-boats.json" Link="vessels-vanilla-boats.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\patches\storms-vessels.json" Link="storms-vessels.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

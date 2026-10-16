@@ -1,3 +1,4 @@
+using System;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
@@ -12,13 +13,16 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     public const string Code = "roughseas:seaforces";
 
     private StormsModSystem storms = null!;
-    private SeaWeatherSystem sea = null!;
+    private ISeaWeather sea = null!;
     private EntityBehaviorVesselIntegrity? hull;
     private EntityBehaviorBilge? bilge;
     private EntityBehaviorMooring? mooring;
     private double windageSquareMetres;
     private float sinceUpdate;
     private double sinceWave;
+
+    /// <summary>Once a wave period, server side, while the vessel floats and the oceans are dangerous: the sea state of that wave.</summary>
+    public event Action<SeaState>? Wave;
 
     public double BeamMetres { get; private set; }
 
@@ -62,7 +66,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public override void OnGameTick(float deltaTime)
     {
-        if (entity.World.Side != EnumAppSide.Server || hull == null) return;
+        if (entity.World.Side != EnumAppSide.Server) return;
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
@@ -70,12 +74,18 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         sinceUpdate = 0;
         if (!entity.FeetInLiquid || !sea.DangerousOceans) return;
 
-        using var _ = sea.Budget.Measure();
+        using var _ = storms.Budget.Measure();
         var state = sea.At(entity.Pos.X, entity.Pos.Z);
-        var waves = storms.Waves;
-        if (state.WaveHeight < storms.Config.Waves.MinHeight || sinceWave < waves.Period(state.WaveHeight)) return;
+        if (state.WaveHeight < storms.Config.Waves.MinHeight || sinceWave < storms.Waves.Period(state.WaveHeight)) return;
 
         sinceWave = 0;
+        Wave?.Invoke(state);
+        if (hull != null) Break(state, hull);
+    }
+
+    private void Break(SeaState state, EntityBehaviorVesselIntegrity hull)
+    {
+        var waves = storms.Waves;
         var swamped = bilge?.Swamped == true;
         var surf = waves.BreaksAt(WaterDepth(storms.Config.Waves.MaxDepthBlocks), state.WaveHeight);
         var breaks = swamped || surf ? 1 : waves.BreakingChance(state.WindSpeed);

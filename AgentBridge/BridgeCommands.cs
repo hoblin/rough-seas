@@ -7,6 +7,7 @@ using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
@@ -113,7 +114,7 @@ public class BridgeCommands : ModSystem
         player.Entity.TeleportTo(target.ToVec3d().Add(0.5, 0, 0.5));
         SeaOnceGenerated(player, target, PostWaitTries);
         var accessor = sapi.World.BlockAccessor;
-        return TextCommandResult.Success($"Going to the storm at {target.X - accessor.MapSizeX / 2} {target.Z - accessor.MapSizeZ / 2}, waves there {stormiest.waves:F1} m; a post follows once the sea there is generated");
+        return TextCommandResult.Success($"Going to the storm at {target.X - accessor.MapSizeX / 2} {target.Z - accessor.MapSizeZ / 2}, waves there {stormiest.waves:F1} m; once that sea is generated, a post goes up at the nearest open sea, within 1500 blocks");
     }
 
     private void SeaOnceGenerated(IPlayer player, BlockPos target, int triesLeft)
@@ -121,6 +122,7 @@ public class BridgeCommands : ModSystem
         if (sapi.World.BlockAccessor.GetChunkAtBlockPos(target.X, sapi.World.SeaLevel, target.Z) == null)
         {
             if (triesLeft > 0) sapi.Event.RegisterCallback(_ => SeaOnceGenerated(player, target, triesLeft - 1), PostWaitMs);
+            else Tell(player, "The storm's sea never loaded; no post went up");
             return;
         }
         Sea(player, target);
@@ -155,12 +157,16 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"Teleported to open sea at {sea.Value.x - accessor.MapSizeX / 2} {sapi.World.SeaLevel} {sea.Value.z - accessor.MapSizeZ / 2}, onto a granite post at the surface");
     }
 
+    private void Tell(IPlayer player, string message) =>
+        sapi.SendMessage(player, GlobalConstants.GeneralChatGroup, message, EnumChatType.CommandError);
+
     private void StandOnPost(IPlayer player, BlockPos top, int triesLeft)
     {
         var accessor = sapi.World.BlockAccessor;
         if (accessor.GetChunkAtBlockPos(top) == null)
         {
             if (triesLeft > 0) sapi.Event.RegisterCallback(_ => StandOnPost(player, top, triesLeft - 1), PostWaitMs);
+            else Tell(player, "The sea there never loaded; no post went up");
             return;
         }
 

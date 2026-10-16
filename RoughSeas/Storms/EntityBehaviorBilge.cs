@@ -17,7 +17,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
     private const int DataVersion = 1;
 
     private StormsModSystem storms = null!;
-    private SeaWeatherSystem sea = null!;
+    private ISeaWeather sea = null!;
     private double deckSquareMetres;
     private double drainLitresPerHour;
     private float sinceUpdate;
@@ -29,7 +29,10 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
         get => Tree?.GetDouble("litres") ?? 0;
         private set
         {
-            Tree.SetDouble("litres", Math.Clamp(value, 0, CapacityLitres));
+            var litres = Math.Clamp(value, 0, CapacityLitres);
+            if (litres == Litres) return;
+
+            Tree.SetDouble("litres", litres);
             entity.WatchedAttributes.MarkPathDirty(TreeKey);
         }
     }
@@ -78,12 +81,11 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
-        using var _ = sea.Budget.Measure();
+        using var _ = storms.Budget.Measure();
         var hours = storms.GameHours(sinceUpdate);
         sinceUpdate = 0;
         var inflow = sea.DangerousOceans ? Rainfall() * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
-        var change = inflow - drainLitresPerHour * hours;
-        if (change != 0 && (change > 0 || Litres > 0)) Litres += change;
+        Litres += inflow - drainLitresPerHour * hours;
     }
 
     public override void GetInfoText(StringBuilder infotext)
@@ -93,6 +95,12 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
         base.GetInfoText(infotext);
     }
 
-    private double Rainfall() =>
-        entity.World.BlockAccessor.GetClimateAt(entity.Pos.AsBlockPos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0;
+    private double Rainfall()
+    {
+        var accessor = entity.World.BlockAccessor;
+        var pos = entity.Pos.AsBlockPos;
+        if (accessor.GetRainMapHeightAt(pos) > pos.Y) return 0;
+
+        return accessor.GetClimateAt(pos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0;
+    }
 }

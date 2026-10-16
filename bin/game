@@ -52,9 +52,10 @@ LOOK
                              fluid at feet and head, seabed height, season, temperature, rainfall,
                              wind vector, precipitation, wind/weather pattern, weather event
   bin/game entity ID         server side: code, alive, pos, behaviours, all watched attributes
-  Storms log every event to the server's debug log, tagged [storms]: breakers with their energy,
-                             water shipped, anchors down, dragged and lost, ropes snapped, lightning,
-                             the ashore roll when a moored vessel loads. Read it before guessing:
+  (log)                      storms log every event to the server's debug log, tagged [storms]:
+                             breakers with their energy, water shipped, anchors down, dragged and
+                             lost, ropes snapped, lightning, the ashore roll when a moored vessel
+                             loads. Read it before guessing:
                              grep -a '\[storms\]' "$BENCH_DATA/Logs/server-debug.log"
   bin/game fps [SECONDS]     frames rendered over SECONDS (default 5): fps, mean and 95th-percentile
                              frame time in ms. Compare a change against BENCH_MODS=agentbridge from

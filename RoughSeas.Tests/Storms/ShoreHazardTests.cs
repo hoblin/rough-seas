@@ -4,7 +4,7 @@ namespace RoughSeas.Tests.Storms;
 
 public class ShoreHazardTests
 {
-    private readonly ShoreHazard hazard = new(WavesTests.Config.Ashore);
+    private readonly ShoreHazard hazard = new(Fixtures.Config().Ashore);
 
     [Fact]
     public void AVesselMooredAgainstTheShoreThroughAGaleIsAlmostSurelyThrownOnIt()
@@ -25,6 +25,14 @@ public class ShoreHazardTests
 
         Assert.True(hazard.Chance(gale, 1, openWaterToShore: 200) < 0.01);
         Assert.True(hazard.Chance(gale, 1, openWaterToShore: 10) < hazard.Chance(gale, 1, openWaterToShore: 0));
+    }
+
+    [Fact]
+    public void AVesselSwingingOverTheShoreTakesTheFullSurf()
+    {
+        var gale = Enumerable.Repeat(2.0, 6).ToArray();
+
+        Assert.Equal(hazard.Chance(gale, 1, openWaterToShore: 0), hazard.Chance(gale, 1, openWaterToShore: -5), 9);
     }
 
     [Fact]

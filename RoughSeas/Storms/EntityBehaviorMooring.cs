@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -18,15 +16,20 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private const string TreeKey = "roughseas:mooring";
     private const string LoweredKey = "lowered";
     private const int DataVersion = 1;
+    private const double Unmoored = -1;
+    private const double NewtonsPerKilonewton = 1000;
     private static readonly AssetLocation RopeRipSound = new("game:sounds/effect/roperip");
 
     private StormsModSystem storms = null!;
-    private SeaWeatherSystem sea = null!;
+    private ISeaWeather sea = null!;
+    private MaterialTable materials = null!;
+    private ClothManager cloths = null!;
     private EntityBehaviorSeaForces? forces;
     private EntityBehaviorAttachable? accessories;
+    private EntityBehaviorRopeTieable? tieable;
     private IMountable? mountable;
+    private AshoreRoll? ashore;
     private float sinceUpdate;
-    private double sinceWave;
     private bool hanging;
 
     public Anchor? Anchor
@@ -63,8 +66,11 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
-        storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
-        sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        var mods = entity.Api.ModLoader;
+        storms = mods.GetModSystem<StormsModSystem>();
+        sea = mods.GetModSystem<SeaWeatherSystem>();
+        materials = mods.GetModSystem<VesselsModSystem>().Materials;
+        cloths = mods.GetModSystem<ClothManager>();
         mountable = entity.GetInterface<IMountable>();
         if (Tree == null)
         {
@@ -78,58 +84,56 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     {
         forces = entity.GetBehavior<EntityBehaviorSeaForces>();
         accessories = entity.GetBehavior<EntityBehaviorAttachable>();
+        tieable = entity.GetBehavior<EntityBehaviorRopeTieable>();
+        if (forces != null && entity.World.Side == EnumAppSide.Server) forces.Wave += Strain;
+    }
+
+    public override void OnEntityDespawn(EntityDespawnData despawn)
+    {
+        if (forces != null) forces.Wave -= Strain;
+        base.OnEntityDespawn(despawn);
+    }
+
+    public override void OnEntityLoaded()
+    {
+        if (entity.World.Side != EnumAppSide.Server || !sea.DangerousOceans) return;
+
+        var lastSeen = Tree.GetDouble("lastSeenHours", Unmoored);
+        var reach = Tree.GetDouble("reach", Unmoored);
+        if (lastSeen >= 0 && reach >= 0 && sea.NowHours - lastSeen >= storms.Config.Ashore.MinHours)
+        {
+            ashore = new AshoreRoll(storms, sea, entity, lastSeen, reach);
+        }
     }
 
     public override void OnGameTick(float deltaTime)
     {
         if (entity.World.Side != EnumAppSide.Server || forces == null) return;
 
+        using var _ = storms.Budget.Measure();
         if (Anchor is { } leashed) Leash(leashed);
 
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
-        sinceWave += sinceUpdate;
         sinceUpdate = 0;
         FollowAnchor();
-        var stake = Stake();
-        var anchor = Anchor;
+        if (ashore != null)
+        {
+            if (!ashore.AreaLoaded()) return;
+
+            ashore.Roll(forces, entity.GetBehavior<EntityBehaviorVesselIntegrity>());
+            ashore = null;
+        }
         Tree.SetDouble("lastSeenHours", sea.NowHours);
-        Tree.SetDouble("reach", anchor is { } held ? held.Reach(Depth(held)) : stake != null ? storms.Config.Mooring.StakeReachMetres : -1);
-        if (!entity.FeetInLiquid || !sea.DangerousOceans || (anchor == null && stake == null)) return;
-
-        using var _ = sea.Budget.Measure();
-        var state = sea.At(entity.Pos.X, entity.Pos.Z);
-        if (state.WaveHeight < storms.Config.Waves.MinHeight || sinceWave < storms.Waves.Period(state.WaveHeight)) return;
-
-        sinceWave = 0;
-        var force = forces.Force(state);
-        if (anchor is { } anchored) Strain(anchored, force, state);
-        else Strain(stake!, force);
+        Tree.SetDouble("reach", Anchor is { } anchor ? anchor.Reach(Depth(anchor)) : StakeRope() != null ? storms.Config.Mooring.StakeReachMetres : Unmoored);
     }
 
-    public override void OnEntityLoaded()
+    private void Strain(SeaState state)
     {
-        if (entity.World.Side != EnumAppSide.Server || forces == null || !sea.DangerousOceans) return;
-
-        var lastSeen = Tree.GetDouble("lastSeenHours", -1);
-        var config = storms.Config.Ashore;
-        if (lastSeen < 0 || sea.NowHours - lastSeen < config.MinHours) return;
-
-        var reach = Tree.GetDouble("reach", -1);
-        if (reach < 0) return;
-
-        var hoursPerSample = Math.Max(1, (sea.NowHours - lastSeen) / config.MaxSamples);
-        var heights = Heights(lastSeen, hoursPerSample);
-        if (heights.Count == 0) return;
-
-        var gap = ShoreDistance(config.ShoreSearchBlocks) - reach;
-        var chance = new ShoreHazard(config).Chance(heights, hoursPerSample, gap);
-        var thrown = entity.World.Rand.NextDouble() < chance;
-        var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
-        if (thrown) hull?.Strike(forces.BreakerEnergy(heights.Max()) * config.ImpactFactor);
-        storms.Log(entity, "slept {0:F0} h moored, reach {1:F0} m, shore gap {2:F0}, highest waves {3:F1} m: ashore chance {4:F3}, thrown {5}, hull now {6:F2}",
-            sea.NowHours - lastSeen, reach, gap, heights.Max(), chance, thrown, hull?.Integrity ?? 1);
+        var force = forces!.Force(state);
+        if (Anchor is { } anchor) Strain(anchor, force, state);
+        else if (StakeRope() is { } rope) Strain(rope, force);
     }
 
     private void FollowAnchor()
@@ -149,7 +153,11 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var attributes = stack.Collectible.Attributes;
         var aboard = attributes["rodeMetres"].AsDouble() + SpareRodeMetres();
         var depth = forces!.WaterDepth((int)Math.Ceiling(aboard) + 1);
-        if (depth > aboard)
+        var pos = entity.Pos;
+        var fullScope = storms.Config.Mooring.AnchorFullScope;
+        var anchor = Storms.Anchor.LetGo(pos.X, Math.Floor(pos.Y) - depth, pos.Z, depth, aboard, fullScope,
+            attributes["rope"].AsString(""), attributes["holdingNewtons"].AsDouble());
+        if (anchor == null)
         {
             if (!hanging) storms.Log(entity, "anchor hangs: {0:F0} m of rode aboard, deeper water below", aboard);
             hanging = true;
@@ -157,12 +165,9 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         }
 
         hanging = false;
-        var pos = entity.Pos;
-        var anchor = new Anchor(pos.X, Math.Floor(pos.Y) - depth, pos.Z,
-            Math.Min(aboard, depth * storms.Config.Mooring.AnchorFullScope), attributes["rope"].AsString(""), attributes["holdingNewtons"].AsDouble());
         Anchor = anchor;
         storms.Log(entity, "anchor down in {0:F0} m, paid out {1:F0} of {2:F0} m, holds {3:F0} N",
-            depth, anchor.RodeMetres, aboard, anchor.Holding(depth, storms.Config.Mooring.AnchorFullScope));
+            depth, anchor.Value.RodeMetres, aboard, anchor.Value.Holding(depth, fullScope));
     }
 
     private ItemSlot? AnchorSlot() =>
@@ -174,6 +179,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private double SpareRodeMetres() =>
         SpareRodeSlot()?.Itemstack is { } coil ? coil.StackSize * coil.Collectible.Attributes["rodeMetres"].AsDouble() : 0;
 
+    /// <summary>A steered vessel drags its anchor along: the rider's client moves it, and the server cannot hold it back.</summary>
     private void Leash(Anchor anchor)
     {
         var pos = entity.Pos;
@@ -185,7 +191,6 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
         if (mountable?.IsBeingControlled() == true)
         {
-            // The rider's client moves a steered vessel and the server cannot hold it back, so the anchor comes along.
             var over = (distance - reach) / distance;
             Anchor = anchor.DraggedBy(dx * over, dz * over);
             return;
@@ -217,13 +222,13 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         storms.Log(entity, "anchor dragged: the sea pulls {0:F0} N, it holds {1:F0} N at scope {2:F1}", force, holding, anchor.RodeMetres / Math.Max(1, Depth(anchor)));
     }
 
-    private void Strain(ClothSystem stake, double force)
+    private void Strain(ClothSystem stakeRope, double force)
     {
         var rope = RopeNewtons(storms.Config.Mooring.StakeRope);
         if (entity.World.Rand.NextDouble() >= Waves.ChanceToExceed(force, rope)) return;
 
-        entity.GetBehavior<EntityBehaviorRopeTieable>()?.Detach(stake);
-        entity.Api.ModLoader.GetModSystem<ClothManager>().UnregisterCloth(stake.ClothId);
+        tieable?.Detach(stakeRope);
+        cloths.UnregisterCloth(stakeRope.ClothId);
         Snapped();
         storms.Log(entity, "stake rope snapped: the sea pulls {0:F0} N, the rope holds {1:F0} N", force, rope);
     }
@@ -236,10 +241,9 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             if (spareOut > 0 && SpareRodeSlot() is { Itemstack: { } coil } spare)
             {
                 spare.TakeOut((int)Math.Ceiling(spareOut / coil.Collectible.Attributes["rodeMetres"].AsDouble(1)));
-                spare.MarkDirty();
             }
             slot.Itemstack = null;
-            slot.MarkDirty();
+            accessories!.storeInv();
             entity.MarkShapeModified();
         }
         Anchor = null;
@@ -248,49 +252,12 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
     private void Snapped() => entity.World.PlaySoundAt(RopeRipSound, entity, null, true, 32);
 
-    private ClothSystem? Stake()
-    {
-        var ids = entity.GetBehavior<EntityBehaviorRopeTieable>()?.ClothIds?.value;
-        if (ids == null) return null;
+    private ClothSystem? StakeRope() =>
+        tieable?.ClothIds?.value
+            .Select(cloths.GetClothSystem)
+            .FirstOrDefault(rope => rope != null && (rope.FirstPoint.PinnedToBlockPos != null || rope.LastPoint.PinnedToBlockPos != null));
 
-        var cloths = entity.Api.ModLoader.GetModSystem<ClothManager>();
-        return ids.Select(cloths.GetClothSystem)
-            .FirstOrDefault(cloth => cloth != null && (cloth.FirstPoint.PinnedToBlockPos != null || cloth.LastPoint.PinnedToBlockPos != null));
-    }
-
-    private double RopeNewtons(string rope) =>
-        entity.Api.ModLoader.GetModSystem<VesselsModSystem>().Materials.Strength(rope) * 1000;
+    private double RopeNewtons(string rope) => materials.BreakingKilonewtons(rope) * NewtonsPerKilonewton;
 
     private double Depth(Anchor anchor) => Math.Max(0, entity.Pos.Y - anchor.Y);
-
-    private List<double> Heights(double since, double hoursPerSample)
-    {
-        var heights = new List<double>();
-        for (var hours = since; hours < sea.NowHours; hours += hoursPerSample)
-        {
-            heights.Add(sea.At(entity.Pos.X, entity.Pos.Z, hours).WaveHeight);
-        }
-        return heights;
-    }
-
-    private double ShoreDistance(int searchBlocks)
-    {
-        var accessor = entity.World.BlockAccessor;
-        var centre = entity.Pos.AsBlockPos;
-        var probe = new BlockPos(centre.dimension);
-        for (var radius = 0; radius <= searchBlocks; radius++)
-        {
-            for (var dx = -radius; dx <= radius; dx++)
-            {
-                for (var dz = -radius; dz <= radius; dz++)
-                {
-                    if (Math.Max(Math.Abs(dx), Math.Abs(dz)) != radius) continue;
-
-                    probe.Set(centre.X + dx, centre.Y, centre.Z + dz);
-                    if (!accessor.GetBlock(probe, BlockLayersAccess.Fluid).IsLiquid() && accessor.GetBlock(probe).SideSolid.Any) return radius;
-                }
-            }
-        }
-        return double.PositiveInfinity;
-    }
 }
