@@ -16,7 +16,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 
 | | |
 | --- | --- |
-| ![Afloat, from the side](images/coracle/afloat-side.webp) | ![Afloat, from the stern quarter](images/coracle/afloat-stern.webp) |
+| ![Afloat, from the side](images/coracle/afloat-side.webp) | ![Afloat, from another quarter](images/coracle/afloat-stern.webp) |
 | Afloat, from the side | From another quarter |
 | ![Afloat, from above](images/coracle/afloat-above.webp) | ![Beside the vanilla sailboat](images/coracle/beside-sailboat.webp) |
 | From above | Beside the sailboat |

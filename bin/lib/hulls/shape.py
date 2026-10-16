@@ -70,16 +70,35 @@ def run(name, frm, to, tex, *, axis="x", step=16, **options):
     return pieces
 
 
+def mirror(element, centre=0):
+    flipped = dict(element)
+    flipped["from"] = [num(2 * centre - element["to"][0])] + element["from"][1:]
+    flipped["to"] = [num(2 * centre - element["from"][0])] + element["to"][1:]
+    if "rotationOrigin" in element:
+        flipped["rotationOrigin"] = [num(2 * centre - element["rotationOrigin"][0])] + element["rotationOrigin"][1:]
+    for axis in ("rotationY", "rotationZ"):
+        if axis in element:
+            flipped[axis] = num(-element[axis])
+    faces = element["faces"]
+    flipped["faces"] = {{"east": "west", "west": "east"}.get(face, face): value for face, value in faces.items()}
+    if "children" in element:
+        assert element["from"] == element["to"], f"{element['name']} has children and a size"
+        flipped["children"] = [mirror(child) for child in element["children"]]
+    return flipped
+
+
 def group(name, at, rot, children):
     return box(name, at, at, {}, origin=at, rot=rot, children=children)
 
 
-def plank(name, start, end, height, thickness, flare, side, outer, inner, *, edge=None, overlap=0.25):
+def heading(start, end):
     dx, dy, dz = (e - s for s, e in zip(start, end))
-    run = math.hypot(dx, dz)
-    yaw = math.degrees(math.atan2(-dz, dx))
-    pitch = math.degrees(math.atan2(dy, run))
-    length = math.hypot(run, dy)
+    level = math.hypot(dx, dz)
+    return math.degrees(math.atan2(-dz, dx)), math.degrees(math.atan2(dy, level)), math.hypot(level, dy)
+
+
+def plank(name, start, end, height, thickness, flare, side, outer, inner, *, edge=None, overlap=0.25):
+    yaw, pitch, length = heading(start, end)
     z0, z1 = (0, thickness) if side < 0 else (-thickness, 0)
     out_face, in_face = ("north", "south") if side < 0 else ("south", "north")
     edge = edge or inner
@@ -91,11 +110,7 @@ def plank(name, start, end, height, thickness, flare, side, outer, inner, *, edg
 
 def beam(name, start, end, width, height, tex, *, ties=(), tie=None, tie_tex=None, overlap=0.25, grain="x",
          rounded=False):
-    dx, dy, dz = (e - s for s, e in zip(start, end))
-    run = math.hypot(dx, dz)
-    yaw = math.degrees(math.atan2(-dz, dx))
-    pitch = math.degrees(math.atan2(dy, run))
-    length = math.hypot(run, dy)
+    yaw, pitch, length = heading(start, end)
     w, h = width / 2, height / 2
     if rounded:
         parts = [
@@ -112,6 +127,14 @@ def beam(name, start, end, width, height, tex, *, ties=(), tie=None, tie_tex=Non
     return group(name + "Frame", start, (0, yaw, pitch), parts)
 
 
+def paddle(at, rot, shaft, blade, tex):
+    return group("Paddle", at, rot, [
+        box("PaddleShaft", (0, 0, 0), (shaft, 0.7, 0.7), tex),
+        box("PaddleBlade", (shaft, -0.1, -1.3), (shaft + blade, 0.5, 2), tex),
+        box("PaddleGrip", (-1.2, -0.2, -0.5), (0, 0.9, 1.2), tex),
+    ])
+
+
 def path(name, points, width, height, tex, **options):
     return [beam(f"{name}{i}", a, b, width(i) if callable(width) else width, height(i) if callable(height) else height,
                  tex, **options) for i, (a, b) in enumerate(zip(points, points[1:]), 1)]
@@ -120,6 +143,16 @@ def path(name, points, width, height, tex, **options):
 def water_plane(name, x0, x1, z0, z1, height):
     return {"name": name, "from": [num(x0), num(height), num(z0)], "to": [num(x1), num(height), num(z1)],
             "faces": {"up": {"texture": "#null", "uv": [0, 0, 16, 16]}}}
+
+
+def across(start, end, up):
+    yaw, pitch = (math.radians(angle) for angle in heading(start, end)[:2])
+    along = [math.cos(pitch) * math.cos(yaw), math.sin(pitch), -math.cos(pitch) * math.sin(yaw)]
+    rising = [-math.sin(pitch) * math.cos(yaw), math.cos(pitch), math.sin(pitch) * math.sin(yaw)]
+    outward = [math.sin(yaw), 0, math.cos(yaw)]
+    dot = lambda u, v: sum(p * q for p, q in zip(u, v))
+    square = [p - dot(up, along) * q for p, q in zip(up, along)]
+    return math.sqrt(dot(square, square)), math.degrees(math.atan2(dot(square, outward), dot(square, rising)))
 
 
 def breadth(edges, y):
@@ -152,23 +185,19 @@ class Hull:
                 return tuple(p + f * (q - p) for p, q in zip(a, b))
         raise ValueError(f"x {x} lies outside the hull")
 
-    def strakes(self, skip=()):
+    def strakes(self):
         elements = []
         count = len(self.stations[0][1]) - 1
         for side, label in ((-1, "Port"), (1, "Starboard")):
             for k in range(count):
-                if k in skip:
-                    continue
                 for i in range(len(self.stations) - 1):
                     a, b = self.point(i, k, side), self.point(i + 1, k, side)
                     c, d = self.point(i + 1, k + 1, side), self.point(i, k + 1, side)
-                    rise = ((d[1] - a[1]) + (c[1] - b[1])) / 2
-                    spread = (abs(d[2] - a[2]) + abs(c[2] - b[2])) / 2
-                    if abs(rise) < 1e-6 and spread < 1e-6:
+                    up = [((p - q) + (r - t)) / 2 for p, q, r, t in zip(d, a, c, b)]
+                    height, flare = across(a, b, up)
+                    if height < 1e-6:
                         continue
-                    height = math.hypot(rise, spread)
-                    flare = math.degrees(math.atan2(spread, rise))
-                    elements.append(plank(f"{self.prefix}{label}{k + 1}x{i + 1}", a, b, height, self.t, flare,
+                    elements.append(plank(f"{self.prefix}{label}{k + 1}x{i + 1}", a, b, height, self.t, side * flare,
                                           side, self.outer, self.inner, edge=self.edge))
         return elements
 
@@ -241,6 +270,9 @@ class Shape:
                 self.elements.extend(element)
             else:
                 self.elements.append(element)
+
+    def turn_about(self, centre):
+        self.elements = [mirror(element, centre) for element in self.elements]
 
     def keep(self, *names):
         current = {e["name"]: e for e in json.loads(self.path.read_text())["elements"]}

@@ -26,7 +26,7 @@ def oar(name, at, yaw, pitch):
     return group(name, at, (0, yaw, pitch), [
         box(f"{name}Loom", (0, 0, 0), (16, 0.8, 0.8), "frame"),
         box(f"{name}Shaft", (16, 0.1, 0.1), (28, 0.7, 0.7), "frame"),
-        box(f"{name}Blade", (28, 0.15, -0.5), (34, 0.65, 1.3), "frame"),
+        box(f"{name}Blade", (28, 0.15, 0.05), (34, 0.65, 0.75), "frame"),
         box(f"{name}Bull", (5, -0.4, -0.4), (8, 1.2, 1.2), "frame"),
     ])
 
@@ -35,7 +35,6 @@ def build(path):
     shape = Shape(path, {
         "hide": "game:block/leather/poor",
         "frame": "game:block/wood/debarked/oak",
-        "lashing": "game:item/resource/rope",
     })
     hull = Hull("Skin", STATIONS, 8, 0.5, "hide", "hide", edge="hide")
     shape.add(hull.strakes())
@@ -58,6 +57,7 @@ def build(path):
     shape.add(box("StemPost", (38.4, 5, 7.3), (40.6, 11.2, 8.7), "frame", grain="y"))
     shape.add(oar("OarPort", (-14, 7.6, 3.6), 1.5, -1), oar("OarStarboard", (-12, 7.4, 12.4), -1.5, -1))
     shape.add(hull.hide_water(9.2))
+    shape.turn_about(8.3)
     shape.keep("Hull", "FrontSeat", "BackSeat")
     shape.write()
 

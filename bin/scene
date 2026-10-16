@@ -24,12 +24,16 @@ bin/scene clear [RANGE] [TYPE...]
                            e.g. drifter-*) within RANGE blocks (default 64) of the player. Blocks,
                            ropes tied to blocks and /worldconfig changes stay.
 bin/scene views CODE DIR [SCALE]
-                           every form a vessel takes, one PNG each in DIR: afloat from the side, both
-                           quarters and above; beside the vanilla sailboat; ashore from the side and a
-                           quarter; dropped on the ground; held in the hand; worn on the back (a vessel
-                           with a backpack slot); its hotbar icon; the wreckage it leaves. SCALE
-                           (default 1) moves the camera out for a bigger vessel. Clears the vessels
-                           and items around the player first.
+                           every form a vessel takes, as wiki-ready images in DIR: afloat from the
+                           side, the bow and stern quarters and above; beside the vanilla sailboat;
+                           ashore from the side and a quarter; dropped on the ground; held in the
+                           hand; worn on the back (a vessel with a backpack slot); the wreckage it
+                           leaves (16:9 .webp, 960 wide), and its hotbar slot (icon.png). SCALE
+                           (default 1) moves the camera out for a bigger vessel.
+                           It changes the world as it goes: clears vessels and items around the
+                           player, breaks the vessel, flies to the nearest shore and deletes the
+                           plants (and anything else) in a 13x6x13 box there, and empties the
+                           player's inventory.
 Run them after bin/client.
 EOF
 }
@@ -93,11 +97,13 @@ clear() {
   done
 }
 
+first_hotbar_slot=52x52-290+11
+
 shot() {
   local full=$BENCH_TMP/views.png
   "$game" shot "$full" ${2:-} >/dev/null
   if [ "$1" = icon ]; then
-    magick "$full" -gravity south -crop 52x52-290+11 +repage -filter point -resize 400% "$dir/icon.png"
+    magick "$full" -gravity south -crop "$first_hotbar_slot" +repage -filter point -resize 400% "$dir/icon.png"
   else
     local width
     width=$(identify -format %w "$full")
@@ -128,9 +134,13 @@ views() {
   around "$id" 0 7 0.01; shot afloat-above
   at=$("$game" entity "$id" | jq -r '.pos | "\(.X - 512000) \(.Y) \(.Z - 512000)"')
   read -r x y z <<<"$at"
-  "$game" do "/entity spawnat boat-sailed-oak 1 $(awk -v x="$x" -v s="$s" 'BEGIN { print x + 3 + 2 * s }') $y $z 0" >/dev/null
+  local apart
+  apart=$(awk -v s="$s" 'BEGIN { print 3 + 2 * s }')
+  "$game" do "/entity spawnat boat-sailed-oak 1 $(awk -v x="$x" -v d="$apart" 'BEGIN { print x + d }') $y $z 0" >/dev/null
   sleep 2
-  around "$id" -9 3.5 7; shot beside-sailboat
+  "$game" do "/bridge fly $(awk -v x="$x" -v d="$apart" -v y="$y" -v z="$z" 'BEGIN { print x + d / 2, y + 6, z + 14 }')" >/dev/null
+  "$game" look 3.1416 3.55 >/dev/null
+  sleep 1; shot beside-sailboat
   clear 64 boat-* >/dev/null
 
   "$game" do "/bridge strike $id 1000000000" >/dev/null
@@ -142,7 +152,9 @@ views() {
 
   "$game" do '/bridge shore' >/dev/null
   sleep 5
-  "$game" do '/bridge shore' >/dev/null
+  local shore
+  shore=$("$game" do '/bridge shore')
+  [[ $shore == *"over the shore"* ]] || { echo "$shore" >&2; exit 1; }
   "$game" do '/we mark ~-6 ~-1 ~-6 ~6 ~4 ~6' '/we delete' '/we clear' >/dev/null
   "$game" do "/entity spawnat $code 1 ~ ~-1 ~ 0" >/dev/null
   sleep 2

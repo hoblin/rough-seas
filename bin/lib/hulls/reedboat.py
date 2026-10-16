@@ -17,8 +17,8 @@ def side(name, direction):
     ]
 
 
-def build(path_):
-    shape = Shape(path_, {
+def build(target):
+    shape = Shape(target, {
         "reed": "roughseas:entity/vessel/reed",
         "rope": "game:block/cloth/reedrope",
         "pole": "game:block/wood/debarked/birch",

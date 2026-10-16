@@ -1,4 +1,4 @@
-from shape import Hull, Shape, box, group
+from shape import Hull, Shape, box, paddle
 
 PROFILE = [(0, 0), (3.5, 0.4), (5.4, 2.4), (6, 5.4), (5.8, 8)]
 CUT = "inside"
@@ -54,11 +54,7 @@ def build(path):
         rib("RibFore", 19),
         box("KnotPort", (6, 3, 1.4), (7.5, 4.5, 2.4), "bark"),
         box("KnotStarboard", (24, 5, 13.6), (25, 6, 14.6), "bark"),
-        group("Paddle", (-2, 1.4, 9.8), (0, -4, 2.5), [
-            box("PaddleShaft", (0, 0, 0), (17, 0.8, 0.8), CUT),
-            box("PaddleBlade", (17, -0.1, -1.4), (23, 0.5, 1.4), CUT),
-            box("PaddleGrip", (-1.5, -0.2, -0.6), (0, 1, 1.4), CUT),
-        ]),
+        paddle((-2, 1.4, 9.8), (0, -4, 2.5), 17, 6, CUT),
     )
     shape.add(hull.hide_water(7.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")

@@ -218,7 +218,8 @@ public class BridgeCommands : ModSystem
         bool Open(int x, int z) => Enumerable.Range(-clearing, 2 * clearing + 1)
             .All(i => Enumerable.Range(-clearing, 2 * clearing + 1).All(j => Dry(x + i, z + j) && Math.Abs(Ground(x + i, z + j) - Ground(x, z)) <= 1));
         bool BesideWater(int x, int z) => Enumerable.Range(-12, 25)
-            .Any(i => Ground(x + i, z) < seaLevel - 1 || Ground(x, z + i) < seaLevel - 1);
+            .Any(i => Sea(Ground(x + i, z)) || Sea(Ground(x, z + i)));
+        bool Sea(int ground) => ground is > 0 && ground < seaLevel - 1;
 
         var shore = Enumerable.Range(-range / step, 2 * range / step + 1)
             .SelectMany(i => Enumerable.Range(-range / step, 2 * range / step + 1), (i, j) => (x: origin.X + i * step, z: origin.Z + j * step))
@@ -311,13 +312,12 @@ public class BridgeCommands : ModSystem
 
     private TextCommandResult Wear(IPlayer player, string code)
     {
-        var item = sapi.World.GetItem(new AssetLocation(code));
-        if (item == null) return TextCommandResult.Error($"No item {code}");
+        var stack = Stack(code);
+        if (stack == null) return TextCommandResult.Error($"No item or block {code}");
 
         var slot = player.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName).FirstOrDefault(slot => slot is ItemSlotBackpack && slot.Empty);
         if (slot == null) return TextCommandResult.Error("No empty backpack slot");
 
-        var stack = new ItemStack(item);
         if (!slot.CanHold(new DummySlot(stack))) return TextCommandResult.Error($"{code} does not go in a backpack slot");
 
         slot.Itemstack = stack;

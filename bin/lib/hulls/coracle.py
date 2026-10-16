@@ -2,7 +2,7 @@ import json
 import math
 from pathlib import Path
 
-from shape import Shape, box, group, plank, water_plane, write
+from shape import Shape, box, group, paddle, plank, water_plane, write
 
 CENTRE = 8
 STAVES = 16
@@ -57,11 +57,7 @@ def bowl():
         ]))
     seat = 9.6
     elements.append(box("Seat", (CENTRE - seat, 4.6, CENTRE - 2.6), (CENTRE + seat, 5.4, CENTRE + 2.6), "rim"))
-    elements.append(group("Paddle", (3, 1.4, 6), (0, -30, 0), [
-        box("PaddleShaft", (0, 0, 0), (7, 0.7, 0.7), "rim"),
-        box("PaddleBlade", (7, -0.1, -1.3), (11.5, 0.5, 2), "rim"),
-        box("PaddleGrip", (-1, -0.2, -0.6), (0, 0.9, 1.3), "rim"),
-    ]))
+    elements.append(paddle((3, 1.4, 6), (0, -30, 0), 7, 4.5, "rim"))
     return elements
 
 

@@ -18,7 +18,7 @@
         "translation": {"x": 4, "y": 7, "z": 0},
         "rotation": {"x": -32, "y": -35, "z": -180},
         "origin": {"x": 0.5, "y": 0, "z": 0.5},
-        "scale": 1
+        "scale": 0.85
     },
     "groundTransform": {
         "translation": {"x": 0, "y": 0, "z": 0},

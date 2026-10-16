@@ -42,7 +42,11 @@ public class ScreenshotCapture : IRenderer
     {
         if (pending.Count == 0) return;
         // The frame that turns the GUI off has drawn the hand and the held item already.
-        if (settling-- > 0) return;
+        if (settling > 0)
+        {
+            settling--;
+            return;
+        }
 
         var path = Path.Combine(Path.GetTempPath(), "agentbridge-screenshot.png");
         using (var bitmap = capi.Render.GrabScreenshot(capi.Render.FrameWidth, capi.Render.FrameHeight, false, true))

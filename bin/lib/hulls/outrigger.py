@@ -1,4 +1,6 @@
-from shape import Hull, Shape, beam, box, group, path, run
+import math
+
+from shape import Hull, Shape, beam, box, group, paddle, path, run
 
 PROFILE = [(0, 0), (2.6, 0.4), (3.8, 2.2), (4.1, 5), (4.2, 7.6)]
 
@@ -50,17 +52,19 @@ def boom(name, x):
 
 def sail(name, low, high):
     strips = []
-    for n, (x0, x1) in enumerate([(-6, 6), (6, 18), (18, 30)]):
+    for n, (x0, x1) in enumerate([(-6, 6), (6, 18), (18, 30)], 1):
         strips.append(box(f"{name}{n}", (x0, low, 7.6), (x1, high, 8.4), "sail", grain="y"))
     return strips
 
 
 def rope(name, start, end):
-    return beam(name, start, end, 0.3, 0.3, "lashing", overlap=0)
+    pieces = math.ceil(math.dist(start, end) / 16)
+    points = [tuple(s + (e - s) * n / pieces for s, e in zip(start, end)) for n in range(pieces + 1)]
+    return path(name, points, 0.3, 0.3, "lashing", overlap=0)
 
 
-def build(path_):
-    shape = Shape(path_, {
+def build(target):
+    shape = Shape(target, {
         "bark": "game:block/wood/bark/oak-h",
         "inside": "game:block/wood/debarked/oak",
         "sail": "game:block/cloth/linen/plain",
@@ -88,9 +92,9 @@ def build(path_):
     )
     shape.add(
         group("SailUnfurled", (0, 0, 0), (0, 0, 0), sail("SailUnfurled", 16, 52) + [
-            box("SailUnfurledBoom", (-8, 15, 7.4), (32, 16, 8.6), "inside")]),
+            *run("SailUnfurledBoom", (-8, 15, 7.4), (32, 16, 8.6), "inside")]),
         group("SailHalf", (0, 0, 0), (0, 0, 0), sail("SailHalf", 34, 52) + [
-            box("SailHalfBoom", (-8, 33, 7.4), (32, 34, 8.6), "inside")]),
+            *run("SailHalfBoom", (-8, 33, 7.4), (32, 34, 8.6), "inside")]),
         group("SailFurled", (0, 0, 0), (0, 0, 0), [
             box("SailRoll1", (-6, 49.5, 7), (10, 52, 9), "sail"),
             box("SailRoll2", (10, 49.5, 7), (26, 52, 9), "sail"),
@@ -98,11 +102,7 @@ def build(path_):
         ] + [box(f"SailGasket{n}", (gx, 49.2, 6.7), (gx + 0.6, 52.3, 9.3), "lashing") for n, gx in
              enumerate((-3, 5, 13, 21, 28), 1)]),
     )
-    shape.add(group("Paddle", (-22, 2.6, 9.4), (0, -2, 3), [
-        box("PaddleShaft", (0, 0, 0), (14, 0.7, 0.7), "inside"),
-        box("PaddleBlade", (14, -0.1, -1.3), (21, 0.5, 2), "inside"),
-        box("PaddleGrip", (-1.2, -0.2, -0.6), (0, 0.9, 1.3), "inside"),
-    ]))
+    shape.add(paddle((-22, 2.6, 9.4), (0, -2, 3), 14, 7, "inside"))
     shape.add(hull.hide_water(7.3))
     shape.keep("LowerMastStorage", "Hull", "FrontSeat", "BackSeat")
     shape.write()

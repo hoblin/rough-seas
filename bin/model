@@ -9,10 +9,11 @@ phonon/blender-vintagestory-json add-on. No window opens.
 BUILD
   bin/model build [VESSEL...]      regenerate our vessels' shapes from their builders in
                                    bin/lib/hulls (all of them by default). The builders are the
-                                   source of those shapes: change a vessel there, not in its JSON.
+                                   source of those shapes: change a vessel there, and its hull box
+                                   and seats in its JSON (docs/modeling.md).
 EDIT
-  bin/model edit SHAPE SCRIPT     import SHAPE, run SCRIPT (Python, bpy) on the scene, export
-                                   back over SHAPE. The usual way to change a model.
+  bin/model edit SHAPE SCRIPT      import SHAPE, run SCRIPT (Python, bpy) on the scene, export
+                                   back over SHAPE. The usual way to change any other model.
   bin/model import SHAPE [BLEND]   SHAPE into a .blend (default <temp>/model/NAME.blend) for
                                    work in several steps
   bin/model run BLEND SCRIPT       run SCRIPT on BLEND and save it
@@ -131,9 +132,13 @@ case "$1" in
   build)
     hulls=$root/bin/lib/hulls
     vessels=("${@:2}")
-    [ ${#vessels[@]} -gt 0 ] || vessels=($(cd "$hulls" && ls *.py | grep -v '^shape.py$' | sed 's/\.py$//'))
+    if [ ${#vessels[@]} -eq 0 ]; then
+      vessels=("$hulls"/*.py)
+      vessels=("${vessels[@]##*/}")
+      vessels=("${vessels[@]%.py}")
+    fi
     for vessel in "${vessels[@]}"; do
-      python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json"
+      [ "$vessel" = shape ] || python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json"
     done
     ;;
   edit) need 3 "$@"; blender_do edit "$(realpath "$2")" "$(realpath "$3")" ;;
