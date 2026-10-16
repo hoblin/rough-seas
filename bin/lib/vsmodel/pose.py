@@ -84,9 +84,10 @@ def keyed_pose(animation, name, frame):
             t = 0
         else:
             t = ((frame - before["frame"]) % animation["quantityframes"]) / ((after["frame"] - before["frame"]) % animation["quantityframes"])
+        neutral = 1 if keys is STRETCH else 0
         for key in keys:
-            start = float(before["elements"][name].get(key, 0))
-            end = float(after["elements"][name].get(key, 0))
+            start = float(before["elements"][name].get(key, neutral))
+            end = float(after["elements"][name].get(key, neutral))
             pose[key] = start + (end - start) * t
     return pose
 
