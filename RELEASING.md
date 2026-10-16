@@ -20,6 +20,8 @@ The game version the mod supports lives in one place, `dependencies.game` in `Ro
    3. Drop the zip. The site reads the mod id and version from its `modinfo.json`.
    4. Check the compatible game versions it ticked, paste the GitHub Release notes as the changelog, save.
 
+A release zip without a release: run the CI workflow by hand (**Actions** → **CI** → **Run workflow**, or `gh workflow run ci.yml`) and download the `release` artifact.
+
 ## First release only
 
 The mod page does not exist until someone creates it by hand:
