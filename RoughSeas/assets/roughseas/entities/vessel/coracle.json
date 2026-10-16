@@ -4,7 +4,7 @@
     "tags": ["inanimate", "vehicle"],
     "weight": 15,
     "attributes": {
-        "forwardSpeed": 0.5,
+        "speedMultiplier": 0.5,
         "turnSpeed": 3,
         "swimmingOffsetY": 0.35,
         "shouldSwivelFromMotion": false,

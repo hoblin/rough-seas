@@ -6,7 +6,7 @@ usage() {
 bin/scene dock [CODE...]   calm noon at open sea, the player in creative standing on a granite post
                            at the surface; each CODE (default boat-raft-oak boat-sailed-oak) is
                            spawned unmanned beside it, 4 blocks apart. Prints the spawned entity ids.
-                           A CODE without a domain is the game's; ours read roughseas:dugout-oak.
+                           A CODE without a domain is the game's; ours carry theirs: roughseas:dugout-oak.
 bin/scene slab CODE        a dry look at a vessel: CODE spawned on a granite slab above the sea, north
                            of the player, who stands 3 blocks higher and looks down at it. Run after
                            dock. Prints the entity id. `bin/game hotkey togglehud` hides the HUD.

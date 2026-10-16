@@ -34,6 +34,17 @@
         "output": { "type": "item", "code": "roughseas:dugout-{wood}" }
     },
     {
+        "name": "Dugout from redwood log sections",
+        "ingredientPattern": "LAL,LLL",
+        "ingredients": {
+            "L": { "type": "block", "code": "game:logsection-placed-redwood-ne-ud" },
+            "A": { "type": "item", "tags": ["tool-axe"], "isTool": true }
+        },
+        "width": 3,
+        "height": 2,
+        "output": { "type": "item", "code": "roughseas:dugout-redwood" }
+    },
+    {
         "name": "Coracle",
         "ingredientPattern": "SHS,SFS",
         "ingredients": {
@@ -81,5 +92,18 @@
         "width": 3,
         "height": 3,
         "output": { "type": "item", "code": "roughseas:outrigger-{wood}" }
+    },
+    {
+        "name": "Outrigger canoe from redwood log sections",
+        "ingredientPattern": "RSR,LLL,PLP",
+        "ingredients": {
+            "R": { "type": "item", "code": "game:rope" },
+            "S": { "type": "item", "code": "game:sail" },
+            "L": { "type": "block", "code": "game:logsection-placed-redwood-ne-ud" },
+            "P": { "type": "item", "code": "game:plank-redwood", "quantity": 4 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "roughseas:outrigger-redwood" }
     }
 ]

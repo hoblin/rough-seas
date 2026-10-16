@@ -5,7 +5,7 @@
     "weight": 400,
     "variantgroups": [{"code": "wood", "loadFromProperties": "block/wood"}],
     "attributes": {
-        "forwardSpeed": 1.4,
+        "speedMultiplier": 1.4,
         "turnSpeed": 0.7,
         "swimmingOffsetY": 0.3,
         "shouldSwivelFromMotion": false,

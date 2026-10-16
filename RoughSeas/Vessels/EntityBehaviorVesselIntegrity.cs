@@ -23,6 +23,10 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const double WreckageScatterSpeed = 0.3;
     private const int InvulnerableMs = 500;
     private const float BareHandDamage = 0.5f;
+    private const float HazardSeconds = 1;
+    private const double WearStepHours = 1;
+    private const double HoursPerDay = 24;
+    private const string WornAtKey = "wornAt";
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
     private static readonly AssetLocation MendSound = new("game:sounds/player/build");
     private static readonly string[] Conditions = ["sound", "scarred", "damaged", "breaking"];
@@ -119,16 +123,19 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             pendingImpacts.Clear();
         }
 
-        double mass = Mass();
-        foreach (double speed in impacts)
+        if (impacts.Length > 0)
         {
-            Strike(0.5 * mass * speed * speed, $"impact at {speed:F1} m/s");
+            double mass = Mass();
+            foreach (double speed in impacts)
+            {
+                Strike(0.5 * mass * speed * speed, $"impact at {speed:F1} m/s");
+            }
         }
 
-        if ((sinceHazards += deltaTime) < 1 || !entity.Alive) return;
+        if ((sinceHazards += deltaTime) < HazardSeconds || !entity.Alive) return;
 
         var fluid = entity.World.BlockAccessor.GetBlock(entity.Pos.AsBlockPos, BlockLayersAccess.Fluid);
-        Soak(fluid.IsLiquid());
+        Wear(fluid.IsLiquid());
         if (!runsRapids && rapids.Holds(fluid)) Strike(rapids.JoulesPerSecond * sinceHazards, "rapids");
         sinceHazards = 0;
     }
@@ -256,24 +263,24 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         }
     }
 
-    private void Soak(bool afloat)
+    private void Wear(bool afloat)
     {
         if (wearPerDay == 0) return;
 
         double now = entity.World.Calendar.TotalHours;
-        if (!afloat || !Tree.HasAttribute("wornAt"))
+        if (!afloat || !Tree.HasAttribute(WornAtKey))
         {
-            Tree.SetDouble("wornAt", now);
+            Tree.SetDouble(WornAtKey, now);
             return;
         }
 
-        double since = Tree.GetDouble("wornAt");
-        if (now - since < 1) return;
+        double since = Tree.GetDouble(WornAtKey);
+        if (now - since < WearStepHours) return;
 
-        Tree.SetDouble("wornAt", now);
+        Tree.SetDouble(WornAtKey, now);
         float before = Integrity;
-        Integrity = Math.Max(0, Integrity - (float)(wearPerDay * (now - since) / 24));
-        Log("soaked {0:F1} h afloat: {1:F2} -> {2:F2}", now - since, before, Integrity);
+        Integrity = Math.Max(0, Integrity - (float)(wearPerDay * (now - since) / HoursPerDay));
+        Log("wore {0:F1} h afloat: {1:F2} -> {2:F2}", now - since, before, Integrity);
         if (Integrity == 0) Break();
     }
 

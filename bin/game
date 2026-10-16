@@ -49,7 +49,7 @@ START
 LOOK
   bin/game state             player pos, camera, swimming, flying, vitals (health, oxygen, bodyTemp,
                              wetness), hotbar, mount, what the camera points at, entities within
-                             16 blocks, open dialogs, paused. Pointing at an entity, `reach` is
+                             16 blocks, open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
                              what a swing is measured by: the picked selection box, the eye's
                              distance to the entity's default box (vanilla's measure) and to
                              the point hit (a vessel's), and the held item's range

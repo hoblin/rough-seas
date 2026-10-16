@@ -22,6 +22,8 @@ public sealed class CrosshairPicking : IDisposable
     private static void Centre(object game)
     {
         var client = Traverse.Create(game);
+        if (client.Field("Platform").Property("IsFocused").GetValue<bool>()) return;
+
         client.Field("MouseCurrentX").SetValue(client.Property("Width").GetValue<int>() / 2);
         client.Field("MouseCurrentY").SetValue(client.Property("Height").GetValue<int>() / 2);
     }

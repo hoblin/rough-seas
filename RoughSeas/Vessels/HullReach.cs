@@ -13,7 +13,7 @@ using Vintagestory.GameContent;
 namespace RoughSeas.Vessels;
 
 /// <summary>
-/// Vanilla measures a swing's reach to an entity's one default box. For vessels, the three vanilla range checks
+/// Vanilla measures a player's reach to an entity's one default box. For vessels, the three vanilla range checks
 /// named below measure instead to the point on the hull the player hit (client) and to the hull's bounds (server).
 /// </summary>
 public static class HullReach

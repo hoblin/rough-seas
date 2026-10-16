@@ -5,7 +5,7 @@
     "weight": 250,
     "variantgroups": [{"code": "wood", "loadFromProperties": "block/wood"}],
     "attributes": {
-        "forwardSpeed": 1.3,
+        "speedMultiplier": 1.3,
         "turnSpeed": 0.5,
         "swimmingOffsetY": 0.32,
         "shouldSwivelFromMotion": false,
@@ -18,7 +18,7 @@
             "impactCapacity": 15000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "repair": {
-                "material": {"type": "item", "code": "game:plank-{wood}", "stacksize": 4},
+                "material": {"type": "item", "code": "game:plank-{wood}", "stacksize": 2},
                 "restores": 0.2,
                 "saturation": 80
             },

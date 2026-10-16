@@ -39,13 +39,14 @@ Stepped on already; don't step again.
 - An entity's variant is `entity.Properties.Variant["material"]`; `entity.Variant` is not set for entities.
 - Server physics runs on worker threads. `PhysicsUpdateWatcher` fires from them for a drifting entity and from the main thread for a steered one, so never touch the world from it: queue the event and act in `OnGameTick`.
 - A steered boat's `Pos.Motion` on the server is its intended speed (`EntityBoat` rewrites it from `ForwardSpeed`, which ignores collisions). The real speed comes from the rider's position packets.
+- Vanilla's attachable behaviour finds an entity's wearable slot by its selection box's index, and a box past the last slot crashes the hover help. A box that holds nothing, such as a hull box, gets an empty slot (`"forCategoryCodes": []`) at its index.
+- `interactMountAnySeat` mounts a player who clicks any box that is not a seat with an empty hand: a sail cleat, a storage slot. To mount from a hull box, name it as the steering seat's `selectionBox`.
 
 **Bench** (`bin/scene` handles most of these)
 - An idle player in water sinks to the seabed, and `state` then lists nothing near the surface. Stand on a post: `bin/scene dock`.
 - After a teleport, `~` commands use the server's position, which the client's stale one overwrites for a few seconds. Wait until `state` shows the arrival.
 - `/bridge sea` fails in a world with no open sea in its generated regions; open another world.
 - Spectators don't pick: hover text and entity selection need creative or survival.
-- A raft's selection boxes are its seats only, so aiming at it by coordinates misses. Use `bin/game hover ID`.
 - Water tints everything under its surface; judge textures on dry land (`bin/scene slab`).
 - Clean up after each test with `bin/scene clear` instead of opening new worlds.
 - Launching an existing world with `--playStyle` crashed the client on reopen (#24); `bin/client` passes the preset only to new worlds. A crash on a stable build is ours until a vanilla run (`BENCH_MODS=`) reproduces it, and the log names the failing entity.
