@@ -31,7 +31,7 @@
   </ItemGroup>
 
 <ItemGroup>
-  <Content Include="modinfo.json">
+  <Content Include="modinfo.json;worldconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
 </ItemGroup>

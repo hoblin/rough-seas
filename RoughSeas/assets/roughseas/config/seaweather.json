@@ -1,0 +1,93 @@
+{
+    "beaufort": [
+        { "force": 0, "name": "Calm", "minMps": 0.0, "waveHeight": 0.0 },
+        { "force": 1, "name": "Light air", "minMps": 0.3, "waveHeight": 0.1 },
+        { "force": 2, "name": "Light breeze", "minMps": 1.6, "waveHeight": 0.2 },
+        { "force": 3, "name": "Gentle breeze", "minMps": 3.4, "waveHeight": 0.6 },
+        { "force": 4, "name": "Moderate breeze", "minMps": 5.5, "waveHeight": 1.0 },
+        { "force": 5, "name": "Fresh breeze", "minMps": 8.0, "waveHeight": 2.0 },
+        { "force": 6, "name": "Strong breeze", "minMps": 10.8, "waveHeight": 3.0 },
+        { "force": 7, "name": "Near gale", "minMps": 13.9, "waveHeight": 4.0 },
+        { "force": 8, "name": "Gale", "minMps": 17.2, "waveHeight": 5.5 },
+        { "force": 9, "name": "Strong gale", "minMps": 20.8, "waveHeight": 7.0 },
+        { "force": 10, "name": "Storm", "minMps": 24.5, "waveHeight": 9.0 },
+        { "force": 11, "name": "Violent storm", "minMps": 28.5, "waveHeight": 11.5 },
+        { "force": 12, "name": "Hurricane", "minMps": 32.7, "waveHeight": 14.0 }
+    ],
+    "seaBuildHours": [0, 1, 2, 4],
+    "prevailingWinds": [
+        { "maxLatitude": 30, "northFromDegrees": 45, "southFromDegrees": 135 },
+        { "maxLatitude": 60, "northFromDegrees": 225, "southFromDegrees": 315 },
+        { "maxLatitude": 90, "northFromDegrees": 45, "southFromDegrees": 135 }
+    ],
+    "background": {
+        "meanMps": 7.0,
+        "spreadMps": 5.0,
+        "spatialScale": 6000,
+        "timeScaleHours": 30,
+        "veerDegrees": 60
+    },
+    "storms": [
+        {
+            "code": "squall",
+            "cellSize": 1536,
+            "slotHours": 12,
+            "chance": 0.35,
+            "temperature": { "min": 5, "optimum": 26, "max": 40 },
+            "rainfallExponent": 1.5,
+            "monthlyWeight": [0.3, 0.3, 0.5, 0.7, 0.9, 1.0, 1.0, 1.0, 0.9, 0.7, 0.4, 0.3],
+            "radius": { "min": 250, "max": 500 },
+            "peakMps": { "min": 17, "max": 26 },
+            "lifetimeHours": { "min": 2, "max": 6 },
+            "speedBlocksPerHour": { "min": 150, "max": 400 },
+            "cyclonic": false,
+            "rain": 1.0,
+            "weatherEvent": "heavythunder"
+        },
+        {
+            "code": "gale",
+            "cellSize": 6144,
+            "slotHours": 24,
+            "chance": 0.3,
+            "temperature": { "min": -15, "optimum": 8, "max": 22 },
+            "rainfallExponent": 0.5,
+            "monthlyWeight": [1.0, 1.0, 0.8, 0.6, 0.4, 0.3, 0.3, 0.4, 0.6, 0.8, 1.0, 1.0],
+            "radius": { "min": 1500, "max": 3000 },
+            "peakMps": { "min": 20, "max": 28 },
+            "lifetimeHours": { "min": 24, "max": 60 },
+            "speedBlocksPerHour": { "min": 200, "max": 500 },
+            "cyclonic": true,
+            "eyeFraction": 0.25,
+            "rain": 0.7,
+            "weatherEvent": "lightthunder"
+        },
+        {
+            "code": "hurricane",
+            "cellSize": 8192,
+            "slotHours": 48,
+            "chance": 0.15,
+            "temperature": { "min": 24, "optimum": 29, "max": 40 },
+            "rainfallExponent": 1.0,
+            "monthlyWeight": [0.0, 0.0, 0.0, 0.0, 0.1, 0.3, 0.6, 1.0, 1.0, 0.7, 0.2, 0.0],
+            "radius": { "min": 1200, "max": 2500 },
+            "peakMps": { "min": 33, "max": 55 },
+            "lifetimeHours": { "min": 48, "max": 120 },
+            "speedBlocksPerHour": { "min": 150, "max": 350 },
+            "cyclonic": true,
+            "eyeFraction": 0.08,
+            "rain": 1.0,
+            "weatherEvent": "heavythunder"
+        }
+    ],
+    "storm": {
+        "riseFraction": 0.3,
+        "fallFraction": 0.3,
+        "trackSpreadDegrees": 30,
+        "inflowDegrees": 20,
+        "weatherEventThreshold": 0.35
+    },
+    "vanilla": {
+        "unitsPerMps": 0.04,
+        "cloudSpeedPerMps": 0.2
+    }
+}

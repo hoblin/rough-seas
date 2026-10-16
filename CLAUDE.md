@@ -27,6 +27,7 @@ All of it is scoped to this repository.
 - The `rea` MCP (Reverse Engineer Anything) inspects .NET assemblies; its skill is `reverse-engineer-anything`.
 - The `universal-modder` plugin carries skills for recon, reverse engineering, asset generation and testing in the running game.
 - The `fal` MCP generates images, 3D models and sound. Every generation is paid from hoblin's fal balance: generate what a ticket needs, and settle a prompt on a cheap model before running an expensive one.
+- The ArtCraft applications (`artcraft` skill: photocraft, vectorcraft and the rest) draw and edit textures and other images by hand. Editing an existing texture is often cheaper and simpler than generating one from scratch.
 
 ## Known rakes
 

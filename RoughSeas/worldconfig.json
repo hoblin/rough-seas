@@ -1,0 +1,37 @@
+{
+    "worldConfigAttributes": [
+        { "category": "roughseas", "code": "dangerousOceans", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false }
+    ],
+    "playStyles": [
+        {
+            "code": "roughseas",
+            "playListCode": "survival",
+            "langCode": "preset-roughseas",
+            "mods": ["game", "survival", "roughseas"],
+            "listOrder": 4,
+            "worldType": "standard",
+            "worldConfig": {
+                "worldClimate": "realistic",
+                "gameMode": "survival",
+                "temporalStability": "true",
+                "temporalStorms": "sometimes",
+                "graceTimer": "0",
+                "microblockChiseling": "stonewood",
+                "polarEquatorDistance": "100000",
+                "lungCapacity": "40000",
+                "harshWinters": "true",
+                "daysPerMonth": "9",
+                "saplingGrowthRate": "1",
+                "propickNodeSearchRadius": "6",
+                "allowUndergroundFarming": "false",
+                "allowFallingBlocks": "true",
+                "allowFireSpread": "true",
+                "temporalGearRespawnUses": "20",
+                "temporalStormSleeping": "0",
+                "clutterObtainable": "ifrepaired",
+                "landcover": "0.6",
+                "dangerousOceans": "true"
+            }
+        }
+    ]
+}
