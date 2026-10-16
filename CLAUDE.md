@@ -41,7 +41,7 @@ hoblin does not review this repository's pull requests. The loop is yours:
 1. Mark the PR ready for review and request Copilot's review: `gh pr edit <number> --add-reviewer copilot-pull-request-reviewer`.
 2. Wait for the review to land (watch the PR's review comments; a few minutes), then triage every finding as above: fix, or answer and resolve.
 3. Push the fixes and request Copilot's review again, the same way.
-4. When Copilot's review recommends merging, merge it yourself: squash, with the PR's title and body.
+4. When Copilot's review recommends merging, merge it yourself: squash, with the PR's title and body. The ruleset asks outside contributors for the code owner's approval and lets us past it, but only with `--admin`: `gh pr merge <number> --admin --squash --subject "<title> (#<number>)" --body-file <body file>`.
 
 A PR that conflicts with main gets no CI run and no Copilot review; GitHub queues neither. So before you start waiting for a check or a review, every time, ask GitHub whether the PR still merges: `gh pr view <number> --json mergeable --jq .mergeable` answers `MERGEABLE`, `CONFLICTING` or `UNKNOWN` (still computing; ask again in a few seconds). On `CONFLICTING`, merge main in first (a merge commit, never a rebase or force-push), push, and only then wait.
 
