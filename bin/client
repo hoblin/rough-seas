@@ -51,10 +51,19 @@ place_window() {
   ) &
 }
 
-mute() {
+leave_world() {
+  local log=$BENCH_DATA/Logs/server-main.log after
+  [[ $(pgrep -af -- "--dataPath $BENCH_DATA --tracelog") == *--openWorld* ]] || return 0
+  after=$(log_lines "$log")
+  "$root/bin/game" leave >/dev/null || return 0
+  wait_for_log "$log" "$after" "Stopped the server!" 60 ||
+    echo "The world did not finish saving within a minute; stopping the client anyway" >&2
+}
+
+bench_settings() {
   local settings=$BENCH_DATA/clientsettings.json
-  jq '.intSettings.masterSoundLevel = 0' "$settings" > "$settings.muted"
-  mv -f "$settings.muted" "$settings"
+  jq '.intSettings += {masterSoundLevel: 0, vsyncMode: 0, maxFps: 60}' "$settings" > "$settings.bench"
+  mv -f "$settings.bench" "$settings"
 }
 
 cd "$root"
@@ -62,8 +71,9 @@ dotnet build RoughSeas -v quiet -nologo
 dotnet build AgentBridge -v quiet -nologo
 seed_settings
 
+leave_world
 stop_session "$session" "$BENCH_DATA"
-mute
+bench_settings
 require_free_port "$BENCH_BRIDGE_PORT" "agent bridge"
 place_window
 # $target goes first: the embedded server re-parses these arguments, does not know --openWorld,
@@ -71,3 +81,7 @@ place_window
 tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
   "$(game_env) ./run.sh $target --dataPath $BENCH_DATA --tracelog $mod_args"
 echo "Client starting in tmux session $session ($target; mods: ${mods:-none}); logs in $BENCH_DATA/Logs"
+if [[ " $mods " == *" agentbridge "* ]]; then
+  "$root/bin/game" wait >/dev/null
+  echo "World loaded and the server answers"
+fi

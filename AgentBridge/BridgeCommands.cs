@@ -8,6 +8,7 @@ using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
@@ -19,17 +20,18 @@ public class BridgeCommands : ModSystem
     private static readonly (double Angle, double Reach)[] StormProbes =
         Enumerable.Range(0, 12).SelectMany(i => new[] { 0.25, 0.45, 0.65 }, (i, reach) => (i * Math.PI / 6, reach)).ToArray();
 
-    private const int StormArrivalHeight = 60;
-    private const int PostWaitTries = 50;
-    private const int PostWaitMs = 200;
+    private const int HoverAboveSea = 1;
 
     private ICoreServerAPI sapi = null!;
+    private DriftSwitch? drift;
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Server;
 
     public override void StartServerSide(ICoreServerAPI api)
     {
         sapi = api;
+        if (api.ModLoader.IsModEnabled("roughseas")) drift = new DriftSwitch();
+        TurnOffTemporalEffects(api.World.Config);
         var parsers = api.ChatCommands.Parsers;
         api.ChatCommands.Create("bridge")
             .WithDescription("Agent bridge: server-side state as JSON")
@@ -44,13 +46,18 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Entity((long)args[0]))
             .EndSubCommand()
             .BeginSubCommand("sea")
-                .WithDescription("Teleport the caller to the nearest open sea within 1500 blocks, onto a granite post at the surface, so they do not sink")
-                .HandleWith(args => Sea(args.Caller.Player))
+                .WithDescription("Fly the caller to the nearest open sea within 1500 blocks, hovering just above the surface")
+                .HandleWith(args => Sea((IServerPlayer)args.Caller.Player))
             .EndSubCommand()
             .BeginSubCommand("storm")
-                .WithDescription("Teleport the caller onto a granite post where the storms within range raise the highest waves over generated open sea")
+                .WithDescription("Fly the caller to where the storms within range raise the highest waves over open sea, hovering just above the surface")
                 .WithArgs(parsers.OptionalDouble("range", 60000))
-                .HandleWith(args => Storm(args.Caller.Player, (double)args[0]))
+                .HandleWith(args => Storm((IServerPlayer)args.Caller.Player, (double)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("drift")
+                .WithDescription("Whether unridden vessels drift with the current and the wind; off on every start, so they hold still")
+                .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
+                .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
             .BeginSubCommand("set")
                 .WithDescription("Set an entity's watched attribute: int, float, bool or string by the value's form")
@@ -110,7 +117,26 @@ public class BridgeCommands : ModSystem
             .EndSubCommand();
     }
 
-    private TextCommandResult Storm(IPlayer player, double range)
+    public override void Dispose() => drift?.Dispose();
+
+    private void TurnOffTemporalEffects(ITreeAttribute config)
+    {
+        config.SetString("temporalStorms", "off");
+        config.SetBool("temporalStability", false);
+        config.SetString("temporalRifts", "off");
+        Mod.Logger.Notification("Temporal storms, stability and rifts are off for this world");
+    }
+
+    private TextCommandResult Drift(string? state)
+    {
+        if (drift == null) return TextCommandResult.Error("Rough Seas is not loaded; nothing drifts by our current");
+        if (state != null) drift.Drifting = state == "on";
+        return TextCommandResult.Success(drift.Drifting
+            ? "Unridden vessels drift with the current and the wind"
+            : "Unridden vessels hold still; /bridge drift on lets them drift");
+    }
+
+    private TextCommandResult Storm(IServerPlayer player, double range)
     {
         var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var pos = player.Entity.Pos;
@@ -126,22 +152,8 @@ public class BridgeCommands : ModSystem
             .FirstOrDefault();
         if (stormiest.waves <= 0) return TextCommandResult.Error($"No storm over open sea within {range} blocks; /seas storms lists them");
 
-        var target = new BlockPos((int)stormiest.x, sapi.World.SeaLevel + StormArrivalHeight, (int)stormiest.z);
-        player.Entity.TeleportTo(target.ToVec3d().Add(0.5, 0, 0.5));
-        SeaOnceGenerated(player, target, PostWaitTries);
-        var accessor = sapi.World.BlockAccessor;
-        return TextCommandResult.Success($"Going to the storm at {target.X - accessor.MapSizeX / 2} {target.Z - accessor.MapSizeZ / 2}, waves there {stormiest.waves:F1} m; once that sea is generated, a post goes up at the nearest open sea, within 1500 blocks");
-    }
-
-    private void SeaOnceGenerated(IPlayer player, BlockPos target, int triesLeft)
-    {
-        if (sapi.World.BlockAccessor.GetChunkAtBlockPos(target.X, sapi.World.SeaLevel, target.Z) == null)
-        {
-            if (triesLeft > 0) sapi.Event.RegisterCallback(_ => SeaOnceGenerated(player, target, triesLeft - 1), PostWaitMs);
-            else Tell(player, "The storm's sea never loaded; no post went up");
-            return;
-        }
-        Sea(player, target);
+        var flown = Fly(player, new Vec3d((int)stormiest.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)stormiest.z + 0.5));
+        return TextCommandResult.Success($"{flown.StatusMessage}, over the storm's highest waves, {stormiest.waves:F1} m");
     }
 
     private bool OpenSea(int x, int z)
@@ -152,12 +164,11 @@ public class BridgeCommands : ModSystem
             && map.GetUnpaddedIntLerpedForBlockPos(x, z, regionSize) >= 250;
     }
 
-    private TextCommandResult Sea(IPlayer player, BlockPos? from = null)
+    private TextCommandResult Sea(IServerPlayer player)
     {
         const int range = 1500;
         const int step = 16;
-        var accessor = sapi.World.BlockAccessor;
-        var origin = from ?? player.Entity.Pos.AsBlockPos;
+        var origin = player.Entity.Pos.AsBlockPos;
 
         var sea = Enumerable.Range(-range / step, 2 * range / step + 1)
             .SelectMany(i => Enumerable.Range(-range / step, 2 * range / step + 1), (i, j) => (x: origin.X + i * step, z: origin.Z + j * step))
@@ -167,10 +178,8 @@ public class BridgeCommands : ModSystem
             .FirstOrDefault();
         if (sea == null) return TextCommandResult.Error($"No open sea in the generated regions within {range} blocks");
 
-        var top = new Vec3d(sea.Value.x + 0.5, sapi.World.SeaLevel, sea.Value.z + 0.5);
-        player.Entity.TeleportTo(top);
-        StandOnPost(player, top.AsBlockPos, PostWaitTries);
-        return TextCommandResult.Success($"Teleported to open sea at {sea.Value.x - accessor.MapSizeX / 2} {sapi.World.SeaLevel} {sea.Value.z - accessor.MapSizeZ / 2}, onto a granite post at the surface");
+        var flown = Fly(player, new Vec3d(sea.Value.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, sea.Value.z + 0.5));
+        return TextCommandResult.Success($"{flown.StatusMessage}, over open sea");
     }
 
     private TextCommandResult Fly(IServerPlayer player, Vec3d position)
@@ -182,28 +191,6 @@ public class BridgeCommands : ModSystem
         player.Entity.TeleportTo(position);
         var accessor = sapi.World.BlockAccessor;
         return TextCommandResult.Success($"Hovering at {position.X - accessor.MapSizeX / 2:0.#} {position.Y:0.#} {position.Z - accessor.MapSizeZ / 2:0.#}");
-    }
-
-    private void Tell(IPlayer player, string message) =>
-        sapi.SendMessage(player, GlobalConstants.GeneralChatGroup, message, EnumChatType.CommandError);
-
-    private void StandOnPost(IPlayer player, BlockPos top, int triesLeft)
-    {
-        var accessor = sapi.World.BlockAccessor;
-        if (accessor.GetChunkAtBlockPos(top) == null)
-        {
-            if (triesLeft > 0) sapi.Event.RegisterCallback(_ => StandOnPost(player, top, triesLeft - 1), PostWaitMs);
-            else Tell(player, "The sea there never loaded; no post went up");
-            return;
-        }
-
-        var granite = sapi.World.GetBlock(new AssetLocation("rock-granite"))!.BlockId;
-        var post = top.Copy();
-        for (post.Y = accessor.GetTerrainMapheightAt(top); post.Y < top.Y; post.Y++)
-        {
-            accessor.SetBlock(granite, post);
-        }
-        player.Entity.TeleportTo(top.ToVec3d().Add(0.5, 0, 0.5));
     }
 
     private static TextCommandResult Set(Entity? entity, string key, string value)
@@ -225,7 +212,10 @@ public class BridgeCommands : ModSystem
 
         var boat = sapi.World.ClassRegistry.CreateEntity(type);
         var pos = player.Entity.Pos;
-        var surface = sapi.World.BlockAccessor.GetBlock(pos.AsBlockPos, BlockLayersAccess.Fluid).IsLiquid()
+        var accessor = sapi.World.BlockAccessor;
+        var below = pos.AsBlockPos;
+        while (below.Y > 0 && accessor.GetBlock(below, BlockLayersAccess.FluidOrSolid).Id == 0) below.Y--;
+        var surface = accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid()
             ? sapi.World.SeaLevel - 1
             : pos.Y;
         boat.Pos.SetPos(pos.X, surface, pos.Z);

@@ -4,16 +4,39 @@ source "$(dirname "$0")/lib/bench.sh"
 
 session=$BENCH-server
 data=$BENCH_DATA/server
+log=$data/Logs/server-main.log
+
+stop_server() {
+  local after
+  tmux has-session -t "=$session" 2>/dev/null || return 0
+  after=$(log_lines "$log")
+  tmux send-keys -t "=$session:" '/stop' Enter
+  wait_for_log "$log" "$after" "Stopped the server!" 60 ||
+    echo "The world did not finish saving within a minute; stopping the server anyway" >&2
+}
+
+wait_until_running() {
+  local started=$1 deadline=$((SECONDS + 180))
+  until [ "$log" -nt "$started" ] && grep -qF "Dedicated Server now running" "$log"; do
+    tmux has-session -t "=$session" 2>/dev/null || { echo "The server exited; read $log" >&2; exit 1; }
+    [ $SECONDS -lt $deadline ] || { echo "The server did not start within 180 s; read $log" >&2; exit 1; }
+    sleep 1
+  done
+}
 
 cd "$root"
 dotnet build RoughSeas -v quiet -nologo
 dotnet build AgentBridge -v quiet -nologo
 
+stop_server
 stop_session "$session" "$data"
 require_free_port "$BENCH_SERVER_PORT" "dedicated server"
-mkdir -p "$data"
+mkdir -p "$data" "$BENCH_TMP"
+touch "$BENCH_TMP/server-started"
 tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
   "$(game_env) dotnet VintagestoryServer.dll --dataPath $data --tracelog --port $BENCH_SERVER_PORT \
    --addOrigin $root/RoughSeas/assets \
    --addModPath $root/RoughSeas/bin/Debug/Mods $root/AgentBridge/bin/Debug/Mods"
 echo "Server starting in tmux session $session on port $BENCH_SERVER_PORT; logs in $data/Logs"
+wait_until_running "$BENCH_TMP/server-started"
+echo "Server running"
