@@ -7,13 +7,12 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Vessels;
 
-public sealed class HullCracks : ITexPositionSource
+public sealed class HullCracks
 {
     private readonly ICoreClientAPI capi;
     private readonly Entity entity;
     private readonly CrackConfig config;
-    private readonly Dictionary<string, TextureAtlasPosition> cracked = new();
-    private ITexPositionSource inner = null!;
+    private IReadOnlyDictionary<string, TextureAtlasPosition> cracked = new Dictionary<string, TextureAtlasPosition>();
 
     public HullCracks(ICoreClientAPI capi, Entity entity, CrackConfig config)
     {
@@ -24,32 +23,35 @@ public sealed class HullCracks : ITexPositionSource
 
     public bool Visible => cracked.Count > 0;
 
-    public Size2i? AtlasSize => inner.AtlasSize;
-
-    public TextureAtlasPosition? this[string textureCode] =>
-        cracked.TryGetValue(textureCode, out var position) ? position : inner[textureCode];
-
     public void Show(int stage)
     {
-        // Inserting may grow the entity atlas, which only the main thread may do; tesselation can run elsewhere.
-        cracked.Clear();
-        if (stage == 0) return;
-
-        var overlays = config.Overlays[stage - 1].Select(overlay => new BlendedOverlayTexture { Base = overlay });
-        foreach (var code in config.Textures)
+        // Inserting may grow the entity atlas, which only the main thread may do; tesselation can run elsewhere,
+        // so it gets a finished map, never one being filled.
+        var map = new Dictionary<string, TextureAtlasPosition>();
+        if (stage > 0)
         {
-            if (!entity.Properties.Client.Textures.TryGetValue(code, out var texture)) continue;
+            var overlays = config.Overlays[stage - 1].Select(overlay => new BlendedOverlayTexture { Base = overlay });
+            foreach (var code in config.Textures)
+            {
+                if (!entity.Properties.Client.Textures.TryGetValue(code, out var texture)) continue;
 
-            var crackedTexture = texture.Clone();
-            crackedTexture.BlendedOverlays = [.. crackedTexture.BlendedOverlays ?? [], .. overlays];
-            capi.EntityTextureAtlas.GetOrInsertTexture(crackedTexture, out _, out var position);
-            cracked[code] = position;
+                var crackedTexture = texture.Clone();
+                crackedTexture.BlendedOverlays = [.. crackedTexture.BlendedOverlays ?? [], .. overlays];
+                capi.EntityTextureAtlas.GetOrInsertTexture(crackedTexture, out _, out var position);
+                map[code] = position;
+            }
         }
+        cracked = map;
     }
 
-    public ITexPositionSource Over(ITexPositionSource defaultSource)
+    public ITexPositionSource Over(ITexPositionSource defaultSource) => new CrackedSource(cracked, defaultSource);
+
+    private sealed class CrackedSource(IReadOnlyDictionary<string, TextureAtlasPosition> cracked, ITexPositionSource defaultSource)
+        : ITexPositionSource
     {
-        inner = defaultSource;
-        return this;
+        public Size2i? AtlasSize => defaultSource.AtlasSize;
+
+        public TextureAtlasPosition? this[string textureCode] =>
+            cracked.TryGetValue(textureCode, out var position) ? position : defaultSource[textureCode];
     }
 }
