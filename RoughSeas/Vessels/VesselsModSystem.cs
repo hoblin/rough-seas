@@ -18,7 +18,10 @@ public class VesselsModSystem : ModSystem
     {
         api.RegisterEntityBehaviorClass(EntityBehaviorVesselIntegrity.Code, typeof(EntityBehaviorVesselIntegrity));
         api.RegisterItemClass(ItemVessel.ClassName, typeof(ItemVessel));
+        HullReach.Attach();
     }
+
+    public override void Dispose() => HullReach.Detach();
 
     public override void StartServerSide(ICoreServerAPI api)
     {

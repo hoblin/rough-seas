@@ -47,7 +47,10 @@ START
 LOOK
   bin/game state             player pos, camera, swimming, vitals (health, oxygen, bodyTemp,
                              wetness), hotbar, mount, what the camera points at, entities within
-                             16 blocks, open dialogs, paused
+                             16 blocks, open dialogs, paused. Pointing at an entity, `reach` is
+                             the client's own test of a swing: the picked selection box, the
+                             distance from the eye to the entity's reach box, the held item's
+                             range, and whether a left click there would land
   bin/game here              server side, at the player: sea level, oceanity (0 land, 255 sea),
                              fluid at feet and head, seabed height, season, temperature, rainfall,
                              wind vector, precipitation, wind/weather pattern, weather event

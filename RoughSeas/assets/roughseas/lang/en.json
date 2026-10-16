@@ -4,6 +4,7 @@
     "game:worldconfig-category-roughseas": "Rough Seas",
     "game:worldattribute-dangerousOceans": "Dangerous oceans",
     "game:worldattribute-dangerousOceans-desc": "Storms, surf and the cold sea can break vessels and kill swimmers. Off, the sea keeps its weather but does no harm.",
+    "game:*-selectionbox-HullAP": "Hull",
     "vessel-condition-sound": "Hull: sound",
     "vessel-condition-scarred": "Hull: scarred",
     "vessel-condition-damaged": "Hull: damaged, taking strain",

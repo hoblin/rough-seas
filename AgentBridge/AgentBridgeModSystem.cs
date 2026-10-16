@@ -10,6 +10,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
 namespace AgentBridge;
@@ -144,12 +145,28 @@ public class AgentBridgeModSystem : ModSystem
             mountedOn = mount == null ? null : new { mount.EntityId, code = mount.Code.ToString() },
             lookingAt = capi.World.Player.CurrentEntitySelection?.Entity.Code.ToString()
                 ?? capi.World.Player.CurrentBlockSelection?.Block?.Code.ToString(),
+            reach = Reach(),
             nearby = capi.World.GetEntitiesAround(entity.Pos.XYZ, 16, 16, other => other != entity)
                 .Select(other => new { other.EntityId, code = other.Code.ToString(), other.Pos.X, other.Pos.Y, other.Pos.Z }),
             calendar = capi.World.Calendar.PrettyDate(),
             paused = capi.IsGamePaused,
             dialogs = Dialogs().Select(dialog => dialog.DebugName)
         }) + "\n";
+    }
+
+    private object? Reach()
+    {
+        var player = capi.World.Player;
+        if (player.CurrentEntitySelection is not { } selection) return null;
+
+        var entity = player.Entity;
+        var target = selection.Entity;
+        var stack = player.InventoryManager.ActiveHotbarSlot?.Itemstack;
+        var eye = entity.Pos.XYZ.Add(entity.LocalEyePos);
+        double distance = target.SelectionBox.ToDouble().Translate(target.Pos.X, target.Pos.Y, target.Pos.Z)
+            .ShortestDistanceFrom(eye.X, eye.Y, eye.Z);
+        float range = stack?.Collectible.GetAttackRange(stack) ?? GlobalConstants.DefaultAttackRange;
+        return new { selection.SelectionBoxIndex, distance = Math.Round(distance, 2), range, hits = distance <= range };
     }
 
     private string Look(HttpListenerRequest request)
