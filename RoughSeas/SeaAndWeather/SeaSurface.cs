@@ -27,28 +27,7 @@ public class SeaSurface(SwellConfig config)
 
     public double Steepness => config.Steepness;
 
-    public static double Height(SwellWave[] waves, double seconds, double x, double z)
-    {
-        double height = 0;
-        foreach (var wave in waves)
-        {
-            height += wave.Amplitude * Math.Sin(wave.NumberX * x + wave.NumberZ * z - wave.AngularFrequency * seconds);
-        }
-        return height;
-    }
-
-    public static void ShaderWaves(SwellWave[] waves, double seconds, double originX, double originZ, float[] into)
-    {
-        Array.Clear(into);
-        for (var i = 0; i < waves.Length && i * 4 < into.Length; i++)
-        {
-            var wave = waves[i];
-            into[i * 4] = (float)wave.NumberX;
-            into[i * 4 + 1] = (float)wave.NumberZ;
-            into[i * 4 + 2] = (float)wave.Amplitude;
-            into[i * 4 + 3] = (float)((wave.AngularFrequency * seconds - wave.NumberX * originX - wave.NumberZ * originZ) % (2 * Math.PI));
-        }
-    }
+    public SwellField Field() => new(this, config);
 }
 
 public readonly record struct SwellWave(double NumberX, double NumberZ, double Amplitude, double AngularFrequency);

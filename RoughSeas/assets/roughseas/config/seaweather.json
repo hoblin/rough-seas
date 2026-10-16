@@ -93,6 +93,10 @@
     "swell": {
         "periodSecondsPerRootMetre": 3.5,
         "steepness": 0.8,
+        "settleSeconds": 10,
+        "turnDegreesBeforeNewWaves": 20,
+        "stretchBeforeNewWaves": 0.25,
+        "anchorReachBlocks": 128,
         "components": [
             { "angleDegrees": -18, "lengthFactor": 1.0, "share": 0.4 },
             { "angleDegrees": 14, "lengthFactor": 0.7, "share": 0.3 },

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -18,6 +19,8 @@ public static class SwellRide
     private static SeaWeatherSystem? sea;
     private static ICoreClientAPI? capi;
     private static long loggedAt;
+    private static double largestStep;
+    private static readonly Dictionary<long, double> lastLift = [];
 
     public static void Attach(SeaWeatherSystem system, ICoreClientAPI api)
     {
@@ -47,10 +50,13 @@ public static class SwellRide
         rocking.X = pose.AboutX;
         rocking.Z = pose.AboutZ;
 
+        if (lastLift.TryGetValue(__instance.EntityId, out var previous)) largestStep = Math.Max(largestStep, Math.Abs(pose.Lift - previous));
+        lastLift[__instance.EntityId] = pose.Lift;
         if (capi!.ElapsedMilliseconds - loggedAt < LogEveryMs) return;
         loggedAt = capi.ElapsedMilliseconds;
-        sea!.Mod.Logger.Debug("[swell] {0} {1} rides at {2:F0} {3:F0}: lifted {4:F2} m, tilted {5:F1}° about its X, {6:F1}° about its Z",
-            __instance.Code, __instance.EntityId, __instance.Pos.X, __instance.Pos.Z, pose.Lift, pose.AboutX * GameMath.RAD2DEG, pose.AboutZ * GameMath.RAD2DEG);
+        sea!.Mod.Logger.Debug("[swell] {0} {1} rides at {2:F0} {3:F0}: lifted {4:F2} m, tilted {5:F1}° about its X, {6:F1}° about its Z; largest lift step between frames {7:F3} m",
+            __instance.Code, __instance.EntityId, __instance.Pos.X, __instance.Pos.Z, pose.Lift, pose.AboutX * GameMath.RAD2DEG, pose.AboutZ * GameMath.RAD2DEG, largestStep);
+        largestStep = 0;
     }
 
     private static void LiftModel(EntityShapeRenderer __instance, Entity entity)
@@ -67,19 +73,21 @@ public static class SwellRide
     {
         if (sea == null || capi == null || !boat.Swimming) return null;
 
-        var waves = sea.Swell;
+        var swell = sea.Swell;
+        swell.Advance(capi.InWorldEllapsedMilliseconds / 1000.0);
         var pos = boat.Pos;
-        var openSea = waves.Length == 0 ? 0 : sea.OpenSea(pos.X, pos.Z);
+        var openSea = swell.Calm ? 0 : sea.OpenSea(pos.X, pos.Z);
         if (openSea <= 0) return null;
 
-        var seconds = capi.InWorldEllapsedMilliseconds / 1000.0;
+        var steepness = sea.Surface.Steepness;
         var box = boat.CollisionBox;
         var half = Math.Max(box.XSize, box.ZSize) / 2;
         var yaw = pos.Yaw + ((boat.Properties.Client.Shape?.rotateY ?? 0) + 90) * GameMath.DEG2RAD;
         double At(double alongX, double alongZ) =>
-            openSea * SeaSurface.Height(waves, seconds,
+            openSea * swell.Height(
                 pos.X + (Math.Cos(yaw) * alongX + Math.Sin(yaw) * alongZ) * half,
-                pos.Z + (-Math.Sin(yaw) * alongX + Math.Cos(yaw) * alongZ) * half);
+                pos.Z + (-Math.Sin(yaw) * alongX + Math.Cos(yaw) * alongZ) * half,
+                steepness);
 
         var (plusX, minusX, plusZ, minusZ) = (At(1, 0), At(-1, 0), At(0, 1), At(0, -1));
         return new BoatPose(

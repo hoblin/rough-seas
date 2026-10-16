@@ -1,12 +1,12 @@
-uniform vec4 seaSwell[4];
+uniform vec4 seaSwell[8];
 uniform float seaSwellSteepness;
 
 vec3 seaSwellAt(vec2 relativeXZ) {
 	vec3 offset = vec3(0.0);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 8; i++) {
 		vec4 wave = seaSwell[i];
 		float number = length(wave.xy);
-		if (number == 0.0) continue;
+		if (number == 0.0 || wave.z == 0.0) continue;
 		float theta = dot(wave.xy, relativeXZ) - wave.w;
 		offset.y += wave.z * sin(theta);
 		offset.xz += seaSwellSteepness * wave.z * cos(theta) * wave.xy / number;

@@ -15,6 +15,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     private Lazy<SeaWeatherModel> model = null!;
     private Lazy<SeaWeatherConfig> config = null!;
     private Lazy<SeaSurface> surface = null!;
+    private Lazy<SwellField> swell = null!;
     private VanillaWeather vanilla = null!;
 
     public TickBudget Budget { get; } = new();
@@ -28,6 +29,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         config = new Lazy<SeaWeatherConfig>(() => api.Assets.Get<SeaWeatherConfig>(new AssetLocation("roughseas", "config/seaweather.json")));
         model = new Lazy<SeaWeatherModel>(CreateModel);
         surface = new Lazy<SeaSurface>(() => new SeaSurface(Config.Swell));
+        swell = new Lazy<SwellField>(() => Surface.Field());
         vanilla = new VanillaWeather(this, api);
         vanilla.FollowWind();
         VanillaWeatherPatches.Attach(this, api.Side);
@@ -72,7 +74,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     /// <summary>The wave height at the client's player as it would be on open sea; the water shader scales it down near shore itself.</summary>
     public double SwellMetres { get; private set; }
 
-    public SwellWave[] Swell { get; private set; } = [];
+    public SwellField Swell => swell.Value;
 
     public SeaState At(double x, double z) => At(x, z, NowHours);
 
@@ -95,14 +97,15 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     {
         if (capi.World.Player?.Entity?.Pos is not { } pos) return;
         var state = At(pos.X, pos.Z);
-        var swell = state.Oceanity > 0 ? state.WaveHeight / state.Oceanity : 0;
-        if (Math.Abs(swell - SwellMetres) >= SwellLogStepMetres)
+        var height = state.Oceanity > 0 ? state.WaveHeight / state.Oceanity : 0;
+        if (Math.Abs(height - SwellMetres) >= SwellLogStepMetres)
         {
             Mod.Logger.Debug("[swell] {0:F1} m, period {1:F1} s, wind toward {2:F0}°, at {3:F0} {4:F0}",
-                swell, Surface.Period(swell), (Math.Atan2(state.WindZ, state.WindX) * 180 / Math.PI + 360) % 360, pos.X, pos.Z);
+                height, Surface.Period(height), (Math.Atan2(state.WindZ, state.WindX) * 180 / Math.PI + 360) % 360, pos.X, pos.Z);
         }
-        SwellMetres = swell;
-        Swell = Surface.Waves(swell, state.WindX, state.WindZ);
+        SwellMetres = height;
+        Swell.Aim(height, state.WindX, state.WindZ);
+        if (Swell.DistanceFromAnchor(pos.X, pos.Z) > Config.Swell.AnchorReachBlocks) Swell.Anchor(pos.X, pos.Z);
     }
 
     private double Oceanity(double x, double z)

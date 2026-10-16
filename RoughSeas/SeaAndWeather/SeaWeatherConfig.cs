@@ -17,6 +17,10 @@ public class SwellConfig
 {
     public double PeriodSecondsPerRootMetre;
     public double Steepness;
+    public double SettleSeconds;
+    public double TurnDegreesBeforeNewWaves;
+    public double StretchBeforeNewWaves;
+    public double AnchorReachBlocks;
     public SwellComponent[] Components = [];
 }
 
