@@ -4,7 +4,7 @@ eval "$(mise -C "$root" env -s bash)"
 stop_session() {
   local session=$1 data=$2 pids
   pids=$(pgrep -f -- "--dataPath $data --tracelog" || true)
-  tmux kill-session -t "$session" 2>/dev/null || true
+  tmux kill-session -t "=$session" 2>/dev/null || true
   # A dying game outlives its command line: pgrep -f stops matching while threads still hold its ports.
   for pid in $pids; do
     while kill -0 "$pid" 2>/dev/null; do sleep 0.5; done

@@ -19,7 +19,8 @@ seed_settings() {
   jq '{
     stringSettings: (.stringSettings | with_entries(select(.key | IN("sessionkey", "sessionsignature", "useremail", "playername", "playeruid", "mptoken", "entitlements")))),
     intSettings: {gameWindowMode: 0, screenWidth: 1280, screenHeight: 800}
-  }' "$login_from" > "$settings"
+  }' "$login_from" > "$settings.seed"
+  mv "$settings.seed" "$settings"
 }
 
 cd "$root"
