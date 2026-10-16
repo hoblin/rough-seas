@@ -1,0 +1,14 @@
+{
+    "$schema": "https://moddbcdn.vintagestory.at/schema/modinfo.latest.json",
+    "type": "Code",
+    "modid": "roughseas",
+    "name": "Rough Seas",
+    "authors": [
+        "hoblin"
+    ],
+    "description": "Makes the ocean dangerous and worth going out on.",
+    "version": "0.1.0",
+    "dependencies": {
+        "game": "1.22.7"
+    }
+}

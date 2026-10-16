@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+world=${1:-sea}
+data=$HOME/.config/VintagestoryData-1.22.7
+
+if [ "$world" = server ]; then
+  target="--connect 127.0.0.1"
+else
+  target="--openWorld $world --playStyle roughseas-test"
+fi
+
+cd "$root"
+mise exec -- dotnet build RoughSeas -v quiet -nologo
+mise exec -- dotnet build AgentBridge -v quiet -nologo
+vs=$(mise exec -- printenv VINTAGE_STORY)
+dotnet=$(mise where dotnet)
+
+tmux kill-session -t rough-seas-client 2>/dev/null || true
+# A client started while another still runs hands its --connect to that one over a pipe and exits.
+while pgrep -f "Vintagestory --.*--dataPath $data --tracelog" >/dev/null; do sleep 0.5; done
+# $target goes first: the embedded server re-parses these arguments, does not know --openWorld,
+# and would take the world name as one more value of a preceding --addOrigin or --addModPath.
+tmux new-session -d -s rough-seas-client -c "$vs" \
+  "PATH=$dotnet:\$PATH DOTNET_ROOT=$dotnet ./run.sh $target --dataPath $data --tracelog \
+   --addOrigin $root/RoughSeas/assets \
+   --addModPath $root/RoughSeas/bin/Debug/Mods $root/AgentBridge/bin/Debug/Mods"
+echo "Client starting in tmux session rough-seas-client ($target); logs in $data/Logs"

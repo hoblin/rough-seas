@@ -2,15 +2,27 @@
 
 Rough Seas: a Vintage Story mod that makes the ocean dangerous and worth going out on. Today the sea is flat, safe and empty, and crossing it means holding W on a raft; this mod gives it storms, surf, predators, boats that break, and things to find below.
 
-The brainstorm is `thoughts/shared/notes/2026-10-16/rough-seas-brainstorm.md`: the origin video, every idea so far, the survey of existing mods, the tooling. Read it in full before planning. A design note will follow it, and once it exists it is normative.
+The brainstorm is `thoughts/shared/notes/2026-10-16/rough-seas-brainstorm.md`: the origin video, every idea so far, the survey of existing mods, the tooling. Read it in full before planning. `thoughts/shared/research/2026-10-16-vanilla-seafaring-and-test-bench.md` maps what vanilla 1.22.7 does at sea and what each idea can build on, with file and symbol references. A design note will follow them, and once it exists it is normative.
 
-No reinvented wheels: what the game already does first, then what Vintage Story's API and asset system offer (JSON assets and patches, behaviours, the mod system), then Harmony patches, then our own code. Anego publishes the source of the API and the vanilla mods (`anegostudios/vsapi`, `vssurvivalmod`, `vsessentialsmod`); read how vanilla does a thing before building beside it. The engine, `VintagestoryLib.dll`, is closed; decompile it with `dotnet ilspycmd` when you need to see what you patch. Read the current API docs (apidocs.vintagestory.at) and the modding wiki before planning; the game changes between versions.
+No reinvented wheels: what the game already does first, then what Vintage Story's API and asset system offer (JSON assets and patches, behaviours, the mod system), then Harmony patches, then our own code. Anego publishes the source of the API and the vanilla mods (`anegostudios/vsapi`, `vssurvivalmod`, `vsessentialsmod`); read how vanilla does a thing before building beside it. The engine, `VintagestoryLib.dll`, is closed; decompile it with `dotnet ilspycmd` when you need to see what you patch. `bin/ref` fetches all four into the gitignored `ref/`. Read the current API docs (apidocs.vintagestory.at) and the modding wiki before planning; the game changes between versions.
+
+## Write it like our own game
+
+Treat the mod as a game we own, not a pile of patches. Each system (wind, boat damage, swimming stamina, wrecks…) is its own module behind a clear boundary. Each class has one responsibility, a small public interface and private internals; SOLID holds for a small mod as much as for a web backend, and it is what keeps later changes cheap. A system built this way can later leave as a mod of its own by moving its module, not by rewriting it. Swimming stamina is the first candidate.
+
+## Tools first
+
+When a task has no tool that fits, stop and build one: a little time spent now makes this task and every one after it simpler and faster. Keep it in proportion, though. We are building a mod, not a mod-building toolkit, so build the tool a task in front of you needs, not one for a task you imagine.
+
+> A man comes across a woodcutter who has been sawing at a tree for hours and getting nowhere. "Your saw is blunt. Why don't you stop and sharpen it?" "No time. I've got sawing to do."
 
 ## Toolchain
 
 All of it is scoped to this repository.
 
-- `mise.toml` pins the .NET SDK and Node; mise puts them on PATH here.
+- **The test bench.** `bin/client` and `bin/server` start the game with the mod. `bin/game` drives the running client from the shell, through the dev-only `AgentBridge` mod: it can run commands, read state, aim, press keys and take screenshots, with no window focus. **`bin/game help` explains all of it**; read it before you first test in the game.
+- `RoughSeas/` is the mod; `./build.sh` packages a release into `Releases/`.
+- `mise.toml` pins the .NET SDK and Node, and sets `VINTAGE_STORY` to the 1.22.7 install; mise puts them on PATH here.
 - `ilspycmd` is a local .NET tool (`dotnet-tools.json`): `dotnet ilspycmd <assembly>`.
 - The `rea` MCP (Reverse Engineer Anything) inspects .NET assemblies; its skill is `reverse-engineer-anything`.
 - The `universal-modder` plugin carries skills for recon, reverse engineering, asset generation and testing in the running game.

@@ -1,3 +1,6 @@
 [tools]
 dotnet = "10"
 node = "24.22.0"
+
+[env]
+VINTAGE_STORY = "{{env.HOME}}/.local/share/vintagestory-1.22.7"

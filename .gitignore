@@ -1,1 +1,8 @@
 /thoughts/
+/ref/
+*/bin/
+*/obj/
+/Releases/
+.vs/
+.idea/
+*.user

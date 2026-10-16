@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+bridge=http://127.0.0.1:42425
+
+usage() {
+  cat <<'EOF'
+Rough Seas test bench: run the mod in Vintage Story 1.22.7 and drive it from the shell.
+
+START
+  bin/client [WORLD]   build both mods, (re)start the client in tmux session rough-seas-client.
+                       Opens singleplayer world WORLD (default "sea"); a new world is made with the
+                       AgentBridge preset: creative, standard worldgen, 70% ocean. Takes ~30 s.
+  bin/client server    connect the client to the dedicated server instead (multiplayer checks).
+                       Start bin/server first and wait for "Dedicated Server now running" in a
+                       log newer than the start. The player needs admin there, once per server
+                       data folder: tmux send-keys -t rough-seas-server '/op hoblin' Enter
+  bin/server           build both mods, (re)start the dedicated server in tmux session
+                       rough-seas-server; its console takes commands the same way
+  bin/ref              fetch Anego's sources and decompile the engine into ref/ (gitignored)
+  bin/game wait        block until the world is loaded, then close the character-creation dialog
+  Logs: ~/.config/VintagestoryData-1.22.7/Logs/{client,server}-main.log (server: .../server/Logs).
+  The client runs unfocused and needs no input from the desktop; never send it real keys.
+
+LOOK
+  bin/game state             player pos, camera, swimming, vitals (health, oxygen, bodyTemp,
+                             wetness), hotbar, mount, what the camera points at, entities within
+                             16 blocks, open dialogs, paused
+  bin/game here              server side, at the player: sea level, oceanity (0 land, 255 sea),
+                             fluid at feet and head, seabed height, season, temperature, rainfall,
+                             wind vector, precipitation, wind/weather pattern, weather event
+  bin/game entity ID         server side: code, alive, pos, behaviours, all watched attributes
+  bin/game shot [FILE]       in-engine screenshot (default /tmp/agentbridge/shot.png); prints the
+                             path of a half-size copy, cheaper to look at
+  bin/game hotkey togglehud  hide the HUD for clean shots; cyclecamera for third person;
+                             bin/game hotkey alone lists every hotkey code
+
+ACT
+  bin/game do CMD...         run commands as the player, in order, printing each reply:
+                             /server commands and .client commands
+  bin/game look YAW PITCH    aim the camera, radians. Yaw 0 faces +Z, pi/2 +X, pi -Z;
+                             pitch pi is level, above pi looks down (range 1.59-4.70)
+  bin/game aim ID            aim the camera at an entity
+  bin/game slot N            select hotbar slot N (0-9)
+  bin/game press KEYS [MS]   hold keys for MS ms (default 100). GlKeys names, comma-separated:
+                             W,A,S,D, Space, ShiftLeft, ControlLeft, Q, E, R, F, Number1 ...
+                             Mounted, W/S row or sail and A/D steer.
+  bin/game click [BUTTON] [MS]  hold left, right (default) or middle on what the camera points at
+  bin/game close             close open dialogs
+
+SERVER COMMANDS (via bin/game do; /help bridge lists them)
+  /bridge sea                teleport into the nearest open sea, in the water at sea level
+  /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
+                             player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood
+  /bridge mount ID           seat the player in an existing seatable entity
+  /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
+                             e.g. the sailboat's sailPosition 0, 1, 2
+  /bridge here, /bridge entity ID   what `here` and `entity` call
+
+RECIPES
+  Calm noon at sea on a raft, oar in hand:
+    bin/game do '/time set 12:00' '/weather setprecip 0' '/weather set clearsky' \
+      '/weather setw still' '/giveitem oar-crude-oak 1' '/bridge sea' '/bridge ride boat-raft-oak'
+    bin/game press W 4000
+  Sailing: '/bridge ride boat-sailed-oak', then '/bridge set <boat id> sailPosition 2'
+    (the boat id is in `state`.mountedOn). Full sail moves ~7 blocks/s with no input.
+  Storm: '/weather setw storm' '/weather set cumulonimbus' '/weather setev heavythunder';
+    '/debug lntest spawn' strikes lightning 10 blocks ahead. '/weather acp false' stops
+    patterns changing.
+    `/weather setw` acts on the player's region; wind readers blend four regions, so `here`
+    shows less than the pattern's strength.
+  Obstacles: '/giveblock rock-granite 64', `slot` to it, then
+    '/we mark ~-2 ~-3 ~-8 ~2 ~3 ~-6' '/we fill' '/we clear'; '/we delete' removes a marked area.
+    /help we lists WorldEdit, including /we import of schematics.
+  Creatures: '/entity spawnat fish-saltwater-bream-sea-adult 1 ~2 ~ ~ 0',
+    '/entity remove e[type=fish-saltwater-bream-sea-adult]'. Codes: /entity list.
+  Diving, cold: '/gamemode survival' and watch `state`.vitals (oxygen drains 1000/s);
+    '/time speed 600' (default 60) or '/time add 3 hours' to fast-forward.
+    An idle swimmer sinks to the seabed.
+
+GOTCHAS
+  Coordinates in commands are relative to the map centre (512000), as the game shows them;
+    `state` and `entity` print absolute ones. Use ~ for relative to the player.
+  After a teleport the client's position catches up 2-5 s later; wait before aiming or clicking.
+  A camera change shows in `state`.lookingAt on the next frame; wait ~0.5 s.
+  A new player gets a character-creation dialog that pauses the game: `wait` closes it.
+  bin/client kills the old client, which does not save the player; the next start is a fresh join.
+  New worlds get a random seed, so do not hard-code sea coordinates: use /bridge sea.
+  The bridge listens on 127.0.0.1:42425 only ("localhost" may resolve to ::1 and miss it), and
+    refuses requests without the X-Agent-Bridge header, so web pages cannot drive it.
+EOF
+}
+
+get() { curl -sf -H 'X-Agent-Bridge: 1' "$@"; }
+post() { get -X POST --data-binary "${2:-}" "$bridge$1"; }
+
+case "${1:-}" in
+  wait)
+    until get "$bridge/state" >/dev/null 2>&1; do sleep 2; done
+    sleep 2
+    post /close-dialogs >/dev/null
+    get "$bridge/state"
+    ;;
+  state) get "$bridge/state" ;;
+  do)
+    shift
+    for line in "$@"; do post /chat "$line"; done
+    ;;
+  here) post /chat "/bridge here" ;;
+  entity) post /chat "/bridge entity $2" ;;
+  shot)
+    file=${2:-/tmp/agentbridge/shot.png}
+    mkdir -p "$(dirname "$file")"
+    get -o "$file" "$bridge/screenshot"
+    magick "$file" -resize 50% "${file%.png}-small.png"
+    echo "${file%.png}-small.png"
+    ;;
+  look) post "/look?yaw=$2&pitch=$3" ;;
+  aim) post "/look?entity=$2" ;;
+  slot) post "/look?slot=$2" ;;
+  press) post "/input?keys=$2&ms=${3:-100}" ;;
+  click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
+  hotkey) post "/hotkey?code=${2:-}" ;;
+  close) post /close-dialogs ;;
+  *) usage ;;
+esac

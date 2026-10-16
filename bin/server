@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+data=$HOME/.config/VintagestoryData-1.22.7/server
+
+cd "$root"
+mise exec -- dotnet build RoughSeas -v quiet -nologo
+mise exec -- dotnet build AgentBridge -v quiet -nologo
+vs=$(mise exec -- printenv VINTAGE_STORY)
+dotnet=$(mise where dotnet)
+
+mkdir -p "$data"
+tmux kill-session -t rough-seas-server 2>/dev/null || true
+tmux new-session -d -s rough-seas-server -c "$vs" \
+  "$dotnet/dotnet VintagestoryServer.dll --dataPath $data --tracelog \
+   --addOrigin $root/RoughSeas/assets \
+   --addModPath $root/RoughSeas/bin/Debug/Mods $root/AgentBridge/bin/Debug/Mods"
+echo "Server starting in tmux session rough-seas-server; logs in $data/Logs"

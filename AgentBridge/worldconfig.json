@@ -1,0 +1,19 @@
+{
+    "worldConfigAttributes": [],
+    "playStyles": [
+        {
+            "code": "roughseastest",
+            "playListCode": "creative",
+            "langCode": "roughseas-test",
+            "mods": ["game", "survival"],
+            "listOrder": 100,
+            "worldType": "standard",
+            "worldConfig": {
+                "gameMode": "creative",
+                "worldClimate": "realistic",
+                "landcover": "0.3",
+                "temporalStorms": "off"
+            }
+        }
+    ]
+}
