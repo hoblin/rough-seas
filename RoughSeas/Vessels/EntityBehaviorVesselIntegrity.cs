@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -31,6 +32,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private ImpactSensor sensor = null!;
     private double impactCapacity;
     private DamageConversion damageConversion = null!;
+    private ISeaWeather seaWeather = null!;
     private HullRepair? repair;
     private BlockDropItemStack[] wreckage = [];
     private HullCracks? cracks;
@@ -76,6 +78,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         var vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
         impactCapacity = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(attributes["parts"].AsObject<VesselPart[]>([]));
         damageConversion = vessels.DamageConversion;
+        seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         sensor = new ImpactSensor(attributes["minImpactSpeed"].AsDouble(1));
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])
             .Where(drop => drop.Resolve(entity.World, "vessel wreckage", entity.Code))
@@ -160,6 +163,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
     {
         if (entity.World.Side != EnumAppSide.Server || damageSource.Type == EnumDamageType.Heal) return;
+        if (damageSource.Source == EnumDamageSource.Weather && !seaWeather.DangerousOceans) return;
 
         entity.SetActivityRunning("invulnerable", InvulnerableMs);
         Strike(damageConversion.Joules(damageSource, damage));
