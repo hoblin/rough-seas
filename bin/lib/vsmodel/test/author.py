@@ -31,6 +31,15 @@ for frame, lift in ((0, 0), (22, 2), (24, 0)):
     bones["Forearm"].location = (0, 0, lift)
     bones["Forearm"].keyframe_insert("location", frame=frame)
 
+vanish = bpy.data.actions.new("vanish")
+vanish.use_fake_user = True
+armature.animation_data.action = vanish
+for frame, size in ((0, 1), (6, 0), (12, 1)):
+    bones["Arm"].scale = (size,) * 3
+    bones["Arm"].location = (0, 0, frame / 6)
+    bones["Arm"].keyframe_insert("scale", frame=frame)
+    bones["Arm"].keyframe_insert("location", frame=frame)
+
 swing = bpy.data.actions["swing"]
 for curve in swing.fcurves:
     if curve.data_path == 'pose.bones["Arm"].rotation_euler' and curve.array_index == 0:

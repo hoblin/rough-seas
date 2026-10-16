@@ -12,6 +12,7 @@ TO_GAME = TO_BLENDER.transposed()
 KEYS = (*OFFSET, *ROTATION, *STRETCH)
 SHORTEST = ("rotShortestDistanceX", "rotShortestDistanceY", "rotShortestDistanceZ")
 FIT = (0.005, 0.001)  # degrees, 1/16 block
+VANISHED = 1e-4
 
 
 def load_animations(data, armature):
@@ -177,7 +178,7 @@ def to_game(element, location, turned, stretch, version, previous):
     scale, corner = shape_of(element)
     location = TO_GAME @ location
     rotation = TO_GAME @ turned @ TO_BLENDER
-    stretch = TO_GAME @ stretch
+    stretch = Vector([value if abs(value) > VANISHED else VANISHED for value in TO_GAME @ stretch])
     if version == 1:
         offset = divide(location + scale * stretch * (rotation @ corner), scale) - corner
         total = TO_BLENDER @ rotation @ TO_GAME
