@@ -23,6 +23,7 @@ public class AgentBridgeModSystem : ModSystem
     private ICoreClientAPI capi = null!;
     private ScreenshotCapture screenshots = null!;
     private HoverOverride hover = null!;
+    private EntityLoadBlackBox blackBox = null!;
     private readonly HttpListener listener = new();
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Client;
@@ -32,6 +33,7 @@ public class AgentBridgeModSystem : ModSystem
         capi = api;
         screenshots = new ScreenshotCapture(api);
         hover = new HoverOverride(api);
+        blackBox = new EntityLoadBlackBox(Mod.Logger);
         listener.Prefixes.Add(Prefix);
         listener.Start();
         _ = Task.Run(Serve);
@@ -43,6 +45,7 @@ public class AgentBridgeModSystem : ModSystem
         listener.Close();
         screenshots?.Dispose();
         hover?.Dispose();
+        blackBox?.Dispose();
     }
 
     private async Task Serve()
