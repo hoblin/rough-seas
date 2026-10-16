@@ -3,7 +3,8 @@ using System.Collections.Generic;
 namespace RoughSeas.SeaAndWeather;
 
 /// <summary>
-/// The sea and weather state, computed from the world seed, position and game time alike on server and client.
+/// The sea and weather state: wind and storms from the world seed, worldgen climate, position and game time, alike on
+/// server and client; waves also from the ocean map each side has loaded.
 /// Reach it with <c>api.ModLoader.GetModSystem&lt;SeaWeatherSystem&gt;()</c>.
 /// </summary>
 public interface ISeaWeather

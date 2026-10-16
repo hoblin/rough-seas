@@ -3,7 +3,11 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.SeaAndWeather;
 
-public class Storm
+/// <summary>
+/// A storm's whole life, fixed when it brews. Positions and radius in blocks, velocity in blocks per game hour,
+/// times in total game hours. Equal storms are the same storm: compare them by value.
+/// </summary>
+public record Storm
 {
     public required StormTypeConfig Type { get; init; }
     public required StormShapeConfig Shape { get; init; }

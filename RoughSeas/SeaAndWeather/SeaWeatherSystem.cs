@@ -11,9 +11,11 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     private ICoreAPI api = null!;
     private Lazy<SeaWeatherModel> model = null!;
     private Lazy<SeaWeatherConfig> config = null!;
+    private VanillaWeather vanilla = null!;
 
     public TickBudget Budget { get; } = new();
 
+    /// <summary>After vanilla's weather systems (0.1), before the Devastation's effects (2).</summary>
     public override double ExecuteOrder() => 1;
 
     public override void Start(ICoreAPI api)
@@ -21,19 +23,22 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         this.api = api;
         config = new Lazy<SeaWeatherConfig>(() => api.Assets.Get<SeaWeatherConfig>(new AssetLocation("roughseas", "config/seaweather.json")));
         model = new Lazy<SeaWeatherModel>(CreateModel);
+        vanilla = new VanillaWeather(this, api);
+        vanilla.FollowWind();
         VanillaWeatherPatches.Attach(this, api.Side);
     }
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {
-        new VanillaWeather(this, sapi).FollowOnServer(sapi);
+        vanilla.FollowRain();
+        vanilla.FollowStormEvents(sapi);
         Budget.CountTicks(sapi);
         SeaWeatherCommands.Register(this, sapi);
     }
 
     public override void StartClientSide(ICoreClientAPI capi)
     {
-        new VanillaWeather(this, capi);
+        vanilla.FollowRain();
         SeaWeatherCommands.Register(this, capi);
     }
 
@@ -53,7 +58,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public WindSample Wind(double x, double z) => model.Value.Wind(x, z, NowHours);
 
-    public WindSample Wind(double x, double z, double totalHours) => model.Value.Wind(x, z, totalHours);
+    public WindSample StormsAt(double x, double z, double totalHours) => model.Value.StormsAt(x, z, totalHours);
 
     private double Oceanity(double x, double z)
     {

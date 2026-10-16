@@ -8,20 +8,20 @@ using Vintagestory.ServerMods;
 namespace RoughSeas.SeaAndWeather;
 
 /// <summary>
-/// Worldgen climate at any position, loaded or not: GenMaps' climate generator rebuilt from the world config,
-/// so its settings must follow GenMaps.initWorldGen.
+/// Worldgen climate at any position, loaded or not: GenMaps' climate noise, without its wobble, rebuilt from the
+/// world config, so its settings must follow GenMaps.initWorldGen.
 /// </summary>
 public class WorldClimate
 {
-    private const int CellSize = 512;
+    private const int CellSize = 2048;
+    private static readonly double BlocksPerNoiseUnit = TerraGenConfig.climateMapScale * TerraGenConfig.climateMapSubScale;
 
-    private readonly MapLayerBase climateMap;
-    private readonly object generatorLock = new();
+    private readonly NoiseClimate noise;
     private readonly ConcurrentDictionary<(int CellX, int CellZ), (double Celsius, double Rainfall)> cells = new();
 
     public WorldClimate(long seed, ITreeAttribute worldConfig, int mapSizeZ)
     {
-        climateMap = GenMaps.GetClimateMapGen(seed + 1, Noise(seed, worldConfig, mapSizeZ));
+        noise = Noise(seed, worldConfig, mapSizeZ);
     }
 
     public (double Celsius, double Rainfall) At(double x, double z) =>
@@ -29,12 +29,10 @@ public class WorldClimate
 
     private (double Celsius, double Rainfall) Sample((int CellX, int CellZ) cell)
     {
-        var x = (cell.CellX + 0.5) * CellSize / TerraGenConfig.climateMapScale;
-        var z = (cell.CellZ + 0.5) * CellSize / TerraGenConfig.climateMapScale;
         int packed;
-        lock (generatorLock)
+        lock (noise)
         {
-            packed = climateMap.GenLayer((int)x, (int)z, 1, 1)[0];
+            packed = noise.GetLerpedClimateAt((cell.CellX + 0.5) * CellSize / BlocksPerNoiseUnit, (cell.CellZ + 0.5) * CellSize / BlocksPerNoiseUnit);
         }
         return (
             Climate.GetScaledAdjustedTemperatureFloat((packed >> 16) & 0xff, 0),

@@ -9,6 +9,8 @@ namespace RoughSeas.SeaAndWeather;
 public class StormField
 {
     private const int TileSize = 512;
+    private const int AreaSize = 8192;
+    private const int WindowHours = 12;
     private const int CacheLimit = 20000;
 
     private readonly long seed;
@@ -18,6 +20,8 @@ public class StormField
     private readonly double hoursPerYear;
     private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ, long Slot), Storm?> born = new();
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Hour), Storm[]> nearTile = new();
+    private readonly ConcurrentDictionary<(int TileX, int TileZ, long Window), Storm[]> windowTile = new();
+    private readonly ConcurrentDictionary<(int AreaX, int AreaZ, long Window), Storm[]> windowArea = new();
 
     public StormField(long seed, SeaWeatherConfig config, WorldClimate climate, PrevailingWinds prevailing, double hoursPerYear)
     {
@@ -33,7 +37,8 @@ public class StormField
         var key = ((int)Math.Floor(x / TileSize), (int)Math.Floor(z / TileSize), (long)Math.Floor(hours));
         if (nearTile.TryGetValue(key, out var storms)) return storms;
         if (nearTile.Count > CacheLimit) nearTile.Clear();
-        return nearTile.GetOrAdd(key, static (tile, field) => field.StormsReaching(tile.TileX, tile.TileZ, tile.Hour), this);
+        return nearTile.GetOrAdd(key, static (tile, field) =>
+            Reaching(tile.TileX, tile.TileZ, TileSize, tile.Hour, tile.Hour + 1, field.InWindow(tile.TileX, tile.TileZ, tile.Hour)), this);
     }
 
     public IEnumerable<Storm> Active(double x, double z, double hours, double range) =>
@@ -41,21 +46,53 @@ public class StormField
             .Where(storm => storm.IsActive(hours))
             .Where(storm => Distance(storm.CentreAt(hours), x, z) <= range + storm.Radius);
 
-    private Storm[] StormsReaching(int tileX, int tileZ, long hour)
+    private Storm[] InWindow(int tileX, int tileZ, long hour)
     {
-        var centreX = (tileX + 0.5) * TileSize;
-        var centreZ = (tileZ + 0.5) * TileSize;
-        var tileReach = TileSize * Math.Sqrt(0.5);
-        return Candidates(centreX, centreZ, hour, hour + 1, tileReach)
-            .Where(storm => storm.BornHours <= hour + 1 && storm.DiesHours >= hour)
-            .Where(storm =>
-            {
-                var midHour = Math.Clamp(hour + 0.5, storm.BornHours, storm.DiesHours);
-                var travelPerHour = Math.Sqrt(storm.VelocityX * storm.VelocityX + storm.VelocityZ * storm.VelocityZ);
-                return Distance(storm.CentreAt(midHour), centreX, centreZ) <= storm.Radius + tileReach + travelPerHour;
-            })
-            .ToArray();
+        var key = (tileX, tileZ, (long)Math.Floor((double)hour / WindowHours));
+        if (windowTile.TryGetValue(key, out var storms)) return storms;
+        if (windowTile.Count > CacheLimit) windowTile.Clear();
+        return windowTile.GetOrAdd(key, static (tile, field) =>
+        {
+            var areaX = (int)Math.Floor((double)tile.TileX * TileSize / AreaSize);
+            var areaZ = (int)Math.Floor((double)tile.TileZ * TileSize / AreaSize);
+            var from = tile.Window * WindowHours;
+            return Reaching(tile.TileX, tile.TileZ, TileSize, from, from + WindowHours, field.InArea(areaX, areaZ, tile.Window));
+        }, this);
     }
+
+    private Storm[] InArea(int areaX, int areaZ, long window)
+    {
+        var key = (areaX, areaZ, window);
+        if (windowArea.TryGetValue(key, out var storms)) return storms;
+        if (windowArea.Count > CacheLimit) windowArea.Clear();
+        return windowArea.GetOrAdd(key, static (area, field) =>
+        {
+            var from = area.Window * WindowHours;
+            var candidates = field.Candidates(Centre(area.AreaX, AreaSize), Centre(area.AreaZ, AreaSize), from, from + WindowHours, Reach(AreaSize));
+            return Reaching(area.AreaX, area.AreaZ, AreaSize, from, from + WindowHours, candidates);
+        }, this);
+    }
+
+    private static Storm[] Reaching(int tileX, int tileZ, int size, double fromHours, double toHours, IEnumerable<Storm> candidates) =>
+        candidates
+            .Where(storm => storm.BornHours <= toHours && storm.DiesHours >= fromHours)
+            .Where(storm => TrackDistance(storm, Centre(tileX, size), Centre(tileZ, size), Math.Max(fromHours, storm.BornHours), Math.Min(toHours, storm.DiesHours)) <= storm.Radius + Reach(size))
+            .ToArray();
+
+    private static double Reach(int size) => size * Math.Sqrt(0.5);
+
+    private static double TrackDistance(Storm storm, double x, double z, double fromHours, double toHours)
+    {
+        var (startX, startZ) = storm.CentreAt(fromHours);
+        var (endX, endZ) = storm.CentreAt(toHours);
+        var trackX = endX - startX;
+        var trackZ = endZ - startZ;
+        var length = trackX * trackX + trackZ * trackZ;
+        var along = length > 0 ? Math.Clamp(((x - startX) * trackX + (z - startZ) * trackZ) / length, 0, 1) : 0;
+        return Distance((startX + trackX * along, startZ + trackZ * along), x, z);
+    }
+
+    private static double Centre(int tile, int size) => (tile + 0.5) * size;
 
     private IEnumerable<Storm> Candidates(double x, double z, double fromHours, double toHours, double range)
     {
@@ -90,7 +127,7 @@ public class StormField
         if (rand.NextDouble() >= Likelihood(stormType, originX, originZ, bornHours, northern)) return null;
 
         var track = prevailing.TowardRadians(originZ) + (rand.NextDouble() * 2 - 1) * config.Storm.TrackSpreadDegrees * GameMath.DEG2RAD_DOUBLE;
-        var (towardX, towardZ) = PrevailingWinds.Toward(track);
+        var (towardX, towardZ) = Compass.Toward(track);
         var speed = stormType.SpeedBlocksPerHour.Lerp(rand.NextDouble());
         return new Storm
         {

@@ -23,18 +23,28 @@ public class VanillaWeather
     {
         this.sea = sea;
         this.api = api;
-        api.Event.OnGetWindSpeed -= VanillaWindHandler(api.ModLoader.GetModSystem<WeatherSystemBase>());
-        api.Event.OnGetWindSpeed += OnGetWindSpeed;
-        api.Event.OnGetClimate += OnGetClimate;
     }
 
-    public void FollowOnServer(ICoreServerAPI sapi)
+    /// <summary>Takes the place of vanilla's wind handler; handlers added after it, like the Devastation's, still shape our wind.</summary>
+    public void FollowWind()
+    {
+        api.Event.OnGetWindSpeed -= VanillaWindHandler(api.ModLoader.GetModSystem<WeatherSystemBase>());
+        api.Event.OnGetWindSpeed += OnGetWindSpeed;
+    }
+
+    /// <summary>Must follow vanilla's climate handler, which sets the rain outright.</summary>
+    public void FollowRain() => api.Event.OnGetClimate += OnGetClimate;
+
+    public void FollowStormEvents(ICoreServerAPI sapi)
     {
         var weather = sapi.ModLoader.GetModSystem<WeatherSystemServer>();
         sapi.Event.RegisterGameTickListener(_ => RaiseStormEvents(weather), 2000);
     }
 
-    /// <summary>Wind in vanilla's units at a height, scaled by height as WeatherSimulationRegion.GetWindSpeed does.</summary>
+    /// <summary>
+    /// Wind in vanilla's units at a height, scaled by height as WeatherSimulationRegion.GetWindSpeed does,
+    /// except that its 1.5 cap holds only for winds below it: storms blow harder.
+    /// </summary>
     public static double Strength(double mps, double y, int seaLevel, VanillaConfig vanilla)
     {
         var strength = mps * vanilla.UnitsPerMps;
@@ -49,8 +59,7 @@ public class VanillaWeather
     {
         var began = sea.Budget.Begin();
         var wind = sea.Wind(pos.X, pos.Z);
-        var mps = Math.Sqrt(wind.X * wind.X + wind.Z * wind.Z);
-        var scale = mps > 0 ? Strength(mps, pos.Y, api.World.SeaLevel, sea.Config.Vanilla) / mps : 0;
+        var scale = wind.Speed > 0 ? Strength(wind.Speed, pos.Y, api.World.SeaLevel, sea.Config.Vanilla) / wind.Speed : 0;
         windSpeed.Set(wind.X * scale, 0, wind.Z * scale);
         sea.Budget.End(began);
     }
@@ -60,11 +69,11 @@ public class VanillaWeather
         if (mode is EnumGetClimateMode.WorldGenValues or EnumGetClimateMode.ForSuppliedDate_TemperatureOnly) return;
         var began = sea.Budget.Begin();
         var hours = mode == EnumGetClimateMode.NowValues ? sea.NowHours : totalDays * api.World.Calendar.HoursPerDay;
-        var wind = sea.Wind(pos.X, pos.Z, hours);
-        if (wind.Presence > 0)
+        var storms = sea.StormsAt(pos.X, pos.Z, hours);
+        if (storms.Presence > 0)
         {
-            climate.Rainfall = Math.Max(climate.Rainfall, (float)wind.Rain);
-            climate.RainCloudOverlay = Math.Max(climate.RainCloudOverlay, (float)wind.Presence);
+            climate.Rainfall = Math.Max(climate.Rainfall, (float)storms.Rain);
+            climate.RainCloudOverlay = Math.Max(climate.RainCloudOverlay, (float)storms.Presence);
         }
         sea.Budget.End(began);
     }
@@ -78,18 +87,18 @@ public class VanillaWeather
         {
             var stormiest = RegionSamples
                 .Select(sample => new BlockPos((int)((sim.regionX + sample.X) * regionSize), api.World.SeaLevel, (int)((sim.regionZ + sample.Z) * regionSize)))
-                .Select(pos => (pos, wind: sea.Wind(pos.X, pos.Z)))
-                .MaxBy(sample => sample.wind.Presence);
-            var stormEvent = stormiest.wind.Presence >= threshold ? stormiest.wind.Storm?.Type.WeatherEvent : null;
+                .Select(pos => (pos, storms: sea.StormsAt(pos.X, pos.Z, sea.NowHours)))
+                .MaxBy(sample => sample.storms.Presence);
+            var stormEvent = stormiest.storms.Presence >= threshold ? stormiest.storms.Storm?.Type.WeatherEvent : null;
             if (stormEvent != null && Allows(sim, stormEvent, stormiest.pos))
             {
                 if (sim.CurWeatherEvent?.config.Code != stormEvent) sim.SetWeatherEvent(stormEvent, true);
-                sim.CurWeatherEvent!.AllowStop = false;
+                foreach (var weatherEvent in sim.WeatherEvents) weatherEvent.AllowStop = weatherEvent != sim.CurWeatherEvent;
                 stormRegions.Add(index);
             }
             else if (stormRegions.Remove(index))
             {
-                sim.CurWeatherEvent.AllowStop = true;
+                foreach (var weatherEvent in sim.WeatherEvents) weatherEvent.AllowStop = true;
                 sim.SetWeatherEvent(CalmEvent, true);
             }
         }

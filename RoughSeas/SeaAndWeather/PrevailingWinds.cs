@@ -24,12 +24,4 @@ public class PrevailingWinds
         var fromDegrees = degrees >= 0 ? band.NorthFromDegrees : band.SouthFromDegrees;
         return (fromDegrees + 180) * GameMath.DEG2RAD_DOUBLE;
     }
-
-    public static (double X, double Z) Toward(double radians) => (Math.Sin(radians), -Math.Cos(radians));
-
-    public static double FromDegrees(double windX, double windZ)
-    {
-        var toward = Math.Atan2(windX, -windZ) / GameMath.DEG2RAD_DOUBLE;
-        return ((toward + 180) % 360 + 360) % 360;
-    }
 }

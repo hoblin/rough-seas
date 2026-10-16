@@ -65,8 +65,8 @@ public static class SeaWeatherCommands
 
     private static string Describe(ICoreAPI api, Storm storm, (double X, double Z) centre, Vec3d pos, double now)
     {
-        var bearing = PrevailingWinds.FromDegrees(pos.X - centre.X, pos.Z - centre.Z);
-        var heading = (PrevailingWinds.FromDegrees(storm.VelocityX, storm.VelocityZ) + 180) % 360;
+        var bearing = Compass.FromDegrees(pos.X - centre.X, pos.Z - centre.Z);
+        var heading = (Compass.FromDegrees(storm.VelocityX, storm.VelocityZ) + 180) % 360;
         var speed = Math.Sqrt(storm.VelocityX * storm.VelocityX + storm.VelocityZ * storm.VelocityZ);
         return $"{storm.Code}: {Distance(centre, pos):0} blocks away bearing {bearing:0}°, centre {Coordinates(api, centre.X, centre.Z)}, "
             + $"radius {storm.Radius:0}, strength {storm.Strength(now):P0} of {storm.PeakMps:0} m/s, "

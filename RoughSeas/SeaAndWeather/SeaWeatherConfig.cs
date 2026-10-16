@@ -17,7 +17,6 @@ public class BeaufortForce
     public string Name = "";
     public double MinMps;
     public double WaveHeight;
-    public double MaxWaveHeight;
 }
 
 public class PrevailingWind
@@ -45,10 +44,10 @@ public class StormTypeConfig
     public TemperatureWindow Temperature = new();
     public double RainfallExponent;
     public double[] MonthlyWeight = [];
-    public Range Radius = new();
-    public Range PeakMps = new();
-    public Range LifetimeHours = new();
-    public Range SpeedBlocksPerHour = new();
+    public ValueRange Radius = new();
+    public ValueRange PeakMps = new();
+    public ValueRange LifetimeHours = new();
+    public ValueRange SpeedBlocksPerHour = new();
     public bool Cyclonic;
     public double EyeFraction;
     public double Rain;
@@ -70,7 +69,7 @@ public class VanillaConfig
     public double CloudSpeedPerMps;
 }
 
-public class Range
+public class ValueRange
 {
     public double Min;
     public double Max;
