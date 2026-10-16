@@ -29,6 +29,14 @@ public class SeaWeatherModelTests
     }
 
     [Fact]
+    public void ComputesTheSameCurrentsFromTheSameSeed()
+    {
+        var other = Fixtures.Model(seed: 42);
+
+        Assert.All(Samples, sample => Assert.Equal(Model.Current(sample.X, sample.Z), other.Current(sample.X, sample.Z)));
+    }
+
+    [Fact]
     public void ComputesAnotherSeaFromAnotherSeed()
     {
         var other = Fixtures.Model(seed: 43);

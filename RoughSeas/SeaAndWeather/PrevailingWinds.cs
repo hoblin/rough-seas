@@ -17,6 +17,8 @@ public class PrevailingWinds
 
     public double LatitudeDegrees(double z) => latitude(z) * 90;
 
+    public int PolewardZ(double z) => Math.Abs(latitude(z + 1)) >= Math.Abs(latitude(z - 1)) ? 1 : -1;
+
     public double TowardRadians(double z)
     {
         var degrees = LatitudeDegrees(z);

@@ -89,5 +89,16 @@
     "vanilla": {
         "unitsPerMps": 0.04,
         "cloudSpeedPerMps": 0.2
+    },
+    "currents": {
+        "gyreDegrees": 30,
+        "boundaryFraction": 0.1,
+        "westernBoundaryMps": 2.0,
+        "interiorMps": 0.3,
+        "westernBoundaryCelsius": 8,
+        "easternBoundaryCelsius": 6,
+        "seawaterFreezingCelsius": -1.8,
+        "basinReachBlocks": 8192,
+        "landBelowOceanity": 0.5
     }
 }

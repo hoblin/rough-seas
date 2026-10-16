@@ -14,8 +14,19 @@ public static class Fixtures
 
     public static SeaWeatherConfig Config() => config.Value;
 
-    public static SeaWeatherModel Model(long seed, double latitude = NorthernLatitude) =>
-        new(seed, Config(), new WorldClimate(seed, new TreeAttribute(), 1024000), _ => latitude, HoursPerYear);
+    public const int MapSize = 1024000;
+
+    public static SeaWeatherModel Model(long seed, double latitude = NorthernLatitude) => Model(seed, _ => latitude);
+
+    public static SeaWeatherModel Model(long seed, Func<double, double> latitude) =>
+        new(seed, Config(), new WorldClimate(seed, new TreeAttribute(), MapSize), Basins(seed), latitude, HoursPerYear);
+
+    public static OceanBasins Basins(long seed, string landcover = "0.3")
+    {
+        var worldConfig = new TreeAttribute();
+        worldConfig.SetString("landcover", landcover);
+        return new(seed, worldConfig, MapSize, MapSize, Config().Currents);
+    }
 
     public static Storm[] YearOfStorms(SeaWeatherModel model) =>
         Enumerable.Range(0, 24)

@@ -10,6 +10,9 @@ namespace RoughSeas.SeaAndWeather;
 public static class SeaWeatherCommands
 {
     private const double DefaultStormRange = 10000;
+    private const double DefaultCurrentRange = 4000;
+    private const double MaxCurrentRange = 8000;
+    private const double CurrentScanStep = 64;
 
     public static void Register(SeaWeatherSystem sea, ICoreServerAPI sapi)
     {
@@ -24,6 +27,11 @@ public static class SeaWeatherCommands
                 .WithDescription("Active storms within a range of you, nearest first")
                 .WithArgs(sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultStormRange))
                 .HandleWith(args => TextCommandResult.Success(Storms(sea, sapi, args.Caller.Pos, (double)args[0])))
+            .EndSubCommand()
+            .BeginSubCommand("currents")
+                .WithDescription("The warmest and the coldest current within a range of you, up to 8000 blocks")
+                .WithArgs(sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultCurrentRange))
+                .HandleWith(args => TextCommandResult.Success(Currents(sea, sapi, args.Caller.Pos, (double)args[0])))
             .EndSubCommand()
             .BeginSubCommand("budget")
                 .WithDescription("Server time spent in sea and weather since the last call")
@@ -44,9 +52,12 @@ public static class SeaWeatherCommands
         var force = sea.Config.Beaufort.First(row => row.Force == state.Beaufort);
         var vanilla = api.World.BlockAccessor.GetWindSpeedAt(pos);
         var storm = state.StormCode == null ? "no storm" : $"{state.StormCode} at {state.StormPresence:P0}";
-        return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, hour {sea.NowHours:0.00}: "
+        var current = sea.CurrentAt(pos.X, pos.Z);
+        var latitude = (api.World.Calendar.OnGetLatitude?.Invoke(pos.Z) ?? 0.5) * 90;
+        return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, latitude {latitude:0.0}°, hour {sea.NowHours:0.00}: "
             + $"wind from {state.WindFromDegrees:0}° at {state.WindSpeed:0.0} m/s, Beaufort {state.Beaufort} ({force.Name}); "
             + $"waves {state.WaveHeight:0.0} m; oceanity {state.Oceanity:P0}; {storm}, rain {state.StormRain:P0}; "
+            + $"current toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C ({Signed(current.WarmthCelsius)} from the current); "
             + $"vanilla wind ({vanilla.X:0.00}, {vanilla.Z:0.00})";
     }
 
@@ -72,6 +83,28 @@ public static class SeaWeatherCommands
             + $"radius {storm.Radius:0}, strength {storm.Strength(now):P0} of {storm.PeakMps:0} m/s, "
             + $"heading {heading:0}° at {speed:0} blocks/h, {storm.DiesHours - now:0.0} h left";
     }
+
+    private static string Currents(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, double range)
+    {
+        range = Math.Clamp(range, 0, MaxCurrentRange);
+        var reach = (int)(range / CurrentScanStep);
+        var offsets = Enumerable.Range(-reach, 2 * reach + 1).Select(i => i * CurrentScanStep).ToArray();
+        var samples = offsets
+            .SelectMany(dx => offsets.Select(dz => (X: pos.X + dx, Z: pos.Z + dz)))
+            .Where(at => Distance(at, pos) <= range)
+            .Select(at => (at.X, at.Z, Current: sea.CurrentAt(at.X, at.Z)))
+            .ToArray();
+        var warm = samples.MaxBy(sample => sample.Current.WarmthCelsius);
+        var cold = samples.MinBy(sample => sample.Current.WarmthCelsius);
+        return $"Warmest: {Describe(api, warm.Current, warm.X, warm.Z, pos)}\n"
+            + $"Coldest: {Describe(api, cold.Current, cold.X, cold.Z, pos)}";
+    }
+
+    private static string Describe(ICoreAPI api, SeaCurrent current, double x, double z, Vec3d pos) =>
+        $"toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C ({Signed(current.WarmthCelsius)}), "
+        + $"at {Coordinates(api, x, z)}, {Distance((x, z), pos):0} blocks away bearing {Compass.FromDegrees(pos.X - x, pos.Z - z):0}°";
+
+    private static string Signed(double celsius) => $"{Math.Round(celsius, 1) + 0.0:+0.0;-0.0}";
 
     private static double Distance((double X, double Z) centre, Vec3d pos) =>
         Math.Sqrt((centre.X - pos.X) * (centre.X - pos.X) + (centre.Z - pos.Z) * (centre.Z - pos.Z));
