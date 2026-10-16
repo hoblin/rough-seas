@@ -48,6 +48,8 @@ public class AshoreConfig
     public double HazardPerSquareMetreHour;
     public double SurfReachPerMetre;
     public int ShoreSearchBlocks;
+    public int FineSearchBlocks;
+    public int CoarseSearchStride;
     public double ImpactFactor;
 }
 

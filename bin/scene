@@ -10,7 +10,7 @@ bin/scene slab CODE        a dry look at a vessel: CODE spawned on a granite sla
                            of the player, who stands 3 blocks higher and looks down at it. Run after
                            dock. Prints the entity id. `bin/game hotkey togglehud` hides the HUD.
 bin/scene storm [RANGE]    noon, then the highest storm waves over open sea within RANGE blocks
-                           (default 60000): the player on a post 12 blocks above the surface,
+                           (default 60000): the player hovering 12 blocks above the surface,
                            a sailboat and a raft riding below, dangerous oceans off so they last.
                            Turn it back on with /worldconfig dangerousOceans true.
 bin/scene clear [RANGE] [TYPE...]
@@ -62,10 +62,14 @@ storm() {
   local from
   from=$("$game" state | jq -c '.pos')
   "$game" do "/bridge storm ${1:-}"
+  local tries=60
   until "$game" state | jq -e --argjson from "$from" \
-    '(.pos.Y - 110 | fabs) < 0.5 and ((.pos.X - $from.X) * (.pos.X - $from.X) + (.pos.Z - $from.Z) * (.pos.Z - $from.Z)) > 4096' >/dev/null; do sleep 1; done
-  "$game" slot 0 >/dev/null
-  "$game" do '/giveblock rock-granite 16' '/we mark ~ ~ ~ ~ ~11 ~' '/we fill' '/we clear' '/tp ~ ~12 ~' \
+    '(.pos.Y - 110 | fabs) < 0.5 and ((.pos.X - $from.X) * (.pos.X - $from.X) + (.pos.Z - $from.Z) * (.pos.Z - $from.Z)) > 4096' >/dev/null; do
+    tries=$((tries - 1))
+    [ "$tries" -gt 0 ] || { echo "No post went up at the storm within a minute; see the chat" >&2; exit 1; }
+    sleep 1
+  done
+  "$game" do '/bridge fly ~ ~12 ~' \
     '/entity spawnat boat-sailed-oak 1 ~-6 109 ~-8 0' '/entity spawnat boat-raft-oak 1 ~6 109 ~-8 0' >/dev/null
   "$game" do '/seas here'
 }

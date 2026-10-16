@@ -66,15 +66,19 @@ public sealed class AshoreRoll
         var surface = vessel.Pos.AsBlockPos;
         var probe = new BlockPos(surface.dimension);
         var (centreX, centreZ) = ((int)Math.Floor(mooredX), (int)Math.Floor(mooredZ));
-        for (var radius = 0; radius <= searchBlocks; radius++)
+        var nearest = double.PositiveInfinity;
+        for (var radius = 0; radius <= searchBlocks && radius <= nearest; radius++)
         {
-            foreach (var (dx, dz) in Ring(radius))
+            var stride = radius <= Config.FineSearchBlocks ? 1 : Config.CoarseSearchStride;
+            if (radius % stride != 0) continue;
+
+            foreach (var (dx, dz) in Ring(radius, stride))
             {
                 probe.Set(centreX + dx, surface.Y, centreZ + dz);
-                if (Land(probe)) return radius;
+                if (Land(probe)) nearest = Math.Min(nearest, Math.Sqrt(dx * dx + dz * dz));
             }
         }
-        return double.PositiveInfinity;
+        return nearest;
     }
 
     private bool Land(BlockPos probe)
@@ -85,19 +89,19 @@ public sealed class AshoreRoll
         return !accessor.GetBlock(probe, BlockLayersAccess.Fluid).IsLiquid() && accessor.GetBlock(probe).SideSolid.Any;
     }
 
-    private static IEnumerable<(int X, int Z)> Ring(int radius)
+    private static IEnumerable<(int X, int Z)> Ring(int radius, int stride)
     {
         if (radius == 0)
         {
             yield return (0, 0);
             yield break;
         }
-        for (var along = -radius; along <= radius; along++)
+        for (var along = -radius; along <= radius; along += stride)
         {
             yield return (along, -radius);
             yield return (along, radius);
         }
-        for (var along = 1 - radius; along < radius; along++)
+        for (var along = stride - radius; along < radius; along += stride)
         {
             yield return (-radius, along);
             yield return (radius, along);
