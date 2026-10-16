@@ -77,6 +77,17 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Long("id"))
                 .HandleWith(args => Ropes((long)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("fly")
+                .WithDescription("Hover the caller at a position in creative free flight: no post, no sinking; X Y Z absolute or ~ relative")
+                .WithArgs(parsers.WorldPosition("position"))
+                .HandleWith(args => Fly((IServerPlayer)args.Caller.Player, (Vec3d)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("dismount")
+                .WithDescription("Get the caller out of whatever they are seated in, leaving it where it is")
+                .HandleWith(args => args.Caller.Player.Entity.TryUnmount()
+                    ? TextCommandResult.Success("Dismounted")
+                    : TextCommandResult.Error("Not seated, or the seat would not let go"))
+            .EndSubCommand()
             .BeginSubCommand("strike")
                 .WithDescription("Strike a vessel's hull with an impact of this many joules; the hull rolls against it as it does for any impact")
                 .WithArgs(parsers.Long("id"), parsers.Double("joules"))
@@ -155,6 +166,17 @@ public class BridgeCommands : ModSystem
         player.Entity.TeleportTo(top);
         StandOnPost(player, top.AsBlockPos, PostWaitTries);
         return TextCommandResult.Success($"Teleported to open sea at {sea.Value.x - accessor.MapSizeX / 2} {sapi.World.SeaLevel} {sea.Value.z - accessor.MapSizeZ / 2}, onto a granite post at the surface");
+    }
+
+    private TextCommandResult Fly(IServerPlayer player, Vec3d position)
+    {
+        player.Entity.TryUnmount();
+        player.WorldData.CurrentGameMode = EnumGameMode.Creative;
+        player.WorldData.FreeMove = true;
+        player.BroadcastPlayerData();
+        player.Entity.TeleportTo(position);
+        var accessor = sapi.World.BlockAccessor;
+        return TextCommandResult.Success($"Hovering at {position.X - accessor.MapSizeX / 2:0.#} {position.Y:0.#} {position.Z - accessor.MapSizeZ / 2:0.#}");
     }
 
     private void Tell(IPlayer player, string message) =>

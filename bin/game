@@ -26,7 +26,7 @@ EOF
   cat <<'EOF'
 
 START
-  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux.
+  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux, muted.
                        Opens singleplayer world WORLD (default "sea"); a new world is made with the
                        AgentBridge preset: creative, standard worldgen, 70% ocean. Takes ~30 s.
                        An existing world is reopened without the preset: re-applying it crashes
@@ -99,7 +99,12 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge mount ID           seat the player in an existing seatable entity
   /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
                              e.g. the sailboat's sailPosition 0, 1, 2
-  /bridge tie ID X Y Z       tie entity ID to the block at absolute X Y Z with a vanilla rope, as a
+  /bridge fly X Y Z          hover there in creative free flight, out of any seat: no post, no
+                             sinking. X Y Z as /tp takes them (~ relative). Then `aim ID` or `look`
+                             frames the shot, e.g. /bridge fly ~6 ~4 ~ and bin/game aim 4300.
+  /bridge dismount         get out of the seat, leaving the vessel where it is (a /tp while seated
+                             takes the vessel along)
+  /bridge tie ID X Y Z      tie entity ID to the block at absolute X Y Z with a vanilla rope, as a
                              player would (a vessel to a fence post: its stake)
   /bridge ropes ID           where each rope tied to entity ID is pinned: a block, an entity, or loose
   /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with

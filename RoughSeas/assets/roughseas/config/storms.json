@@ -45,14 +45,16 @@
     },
     "ashore": {
         "minHours": 1,
+        "rollDelaySeconds": 5,
         "maxSamples": 240,
         "hazardPerSquareMetreHour": 0.05,
         "surfReachPerMetre": 5,
-        "shoreSearchBlocks": 48,
+        "shoreSearchBlocks": 128,
         "impactFactor": 3,
         "sources": {
             "hazardPerSquareMetreHour": "Balance: how likely each game hour of waves this high is to throw a moored vessel on the shore it swings against",
             "surfReachPerMetre": "Balance: how far beyond its swing, per metre of wave height, the surf still reaches a moored vessel",
+            "shoreSearchBlocks": "The farthest the shore is looked for, past the swing and the surf; a vessel farther from land rides out any storm",
             "impactFactor": "Balance: how much harder than the season's highest breaker the shore strikes a vessel thrown on it"
         }
     },

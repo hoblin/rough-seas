@@ -43,6 +43,7 @@ public class MooringConfig
 public class AshoreConfig
 {
     public double MinHours;
+    public double RollDelaySeconds;
     public int MaxSamples;
     public double HazardPerSquareMetreHour;
     public double SurfReachPerMetre;

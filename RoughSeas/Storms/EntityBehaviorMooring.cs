@@ -3,6 +3,7 @@ using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -18,6 +19,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private const int DataVersion = 1;
     private const double Unmoored = -1;
     private const double NewtonsPerKilonewton = 1000;
+    private const double ReelInBlocksPerTick = 0.01;
     private static readonly AssetLocation RopeRipSound = new("game:sounds/effect/roperip");
 
     private StormsModSystem storms = null!;
@@ -29,6 +31,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private EntityBehaviorRopeTieable? tieable;
     private IMountable? mountable;
     private AshoreRoll? ashore;
+    private float ashoreIn;
     private float sinceUpdate;
     private bool hanging;
 
@@ -103,28 +106,32 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         if (lastSeen >= 0 && reach >= 0 && sea.NowHours - lastSeen >= storms.Config.Ashore.MinHours)
         {
             ashore = new AshoreRoll(storms, sea, entity, lastSeen, reach);
+            ashoreIn = (float)storms.Config.Ashore.RollDelaySeconds;
         }
     }
 
     public override void OnGameTick(float deltaTime)
     {
-        if (entity.World.Side != EnumAppSide.Server || forces == null) return;
+        if (entity.World.Side != EnumAppSide.Server || forces == null || !entity.Alive) return;
 
         using var _ = storms.Budget.Measure();
         if (Anchor is { } leashed) Leash(leashed);
+        else if (StakeRope() is { } rope && Stake(rope) is { } stake) Hold(stake.X + 0.5, stake.Z + 0.5, storms.Config.Mooring.StakeReachMetres);
 
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
-        sinceUpdate = 0;
         FollowAnchor();
         if (ashore != null)
         {
-            if (!ashore.AreaLoaded()) return;
+            ashoreIn -= sinceUpdate;
+            sinceUpdate = 0;
+            if (ashoreIn > 0) return;
 
             ashore.Roll(forces, entity.GetBehavior<EntityBehaviorVesselIntegrity>());
             ashore = null;
         }
+        sinceUpdate = 0;
         Tree.SetDouble("lastSeenHours", sea.NowHours);
         Tree.SetDouble("reach", Anchor is { } anchor ? anchor.Reach(Depth(anchor)) : StakeRope() != null ? storms.Config.Mooring.StakeReachMetres : Unmoored);
     }
@@ -182,26 +189,36 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     /// <summary>A steered vessel drags its anchor along: the rider's client moves it, and the server cannot hold it back.</summary>
     private void Leash(Anchor anchor)
     {
-        var pos = entity.Pos;
-        var dx = pos.X - anchor.X;
-        var dz = pos.Z - anchor.Z;
-        var distance = Math.Sqrt(dx * dx + dz * dz);
         var reach = anchor.Reach(Depth(anchor));
-        if (distance <= reach) return;
-
-        if (mountable?.IsBeingControlled() == true)
+        if (mountable?.IsBeingControlled() != true)
         {
-            var over = (distance - reach) / distance;
-            Anchor = anchor.DraggedBy(dx * over, dz * over);
+            Hold(anchor.X, anchor.Z, reach);
             return;
         }
 
-        var outward = (pos.Motion.X * dx + pos.Motion.Z * dz) / distance;
-        if (outward <= 0) return;
+        var pos = entity.Pos;
+        var (dx, dz) = (pos.X - anchor.X, pos.Z - anchor.Z);
+        var distance = Math.Sqrt(dx * dx + dz * dz);
+        if (distance <= reach) return;
 
-        pos.Motion.X -= outward * dx / distance;
-        pos.Motion.Z -= outward * dz / distance;
+        var over = (distance - reach) / distance;
+        Anchor = anchor.DraggedBy(dx * over, dz * over);
     }
+
+    private void Hold(double x, double z, double reach)
+    {
+        var pos = entity.Pos;
+        var (dx, dz) = (pos.X - x, pos.Z - z);
+        var distance = Math.Sqrt(dx * dx + dz * dz);
+        if (distance <= reach) return;
+
+        var outward = (pos.Motion.X * dx + pos.Motion.Z * dz) / distance;
+        var pull = Math.Max(0, outward) + Math.Min(distance - reach, ReelInBlocksPerTick);
+        pos.Motion.X -= pull * dx / distance;
+        pos.Motion.Z -= pull * dz / distance;
+    }
+
+    private static BlockPos? Stake(ClothSystem rope) => rope.FirstPoint.PinnedToBlockPos ?? rope.LastPoint.PinnedToBlockPos;
 
     private void Strain(Anchor anchor, double force, SeaState state)
     {

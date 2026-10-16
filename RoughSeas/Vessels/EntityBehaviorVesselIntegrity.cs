@@ -32,6 +32,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private ImpactSensor sensor = null!;
     private double impactCapacity;
     private DamageConversion damageConversion = null!;
+    private VesselsModSystem vessels = null!;
     private ISeaWeather seaWeather = null!;
     private HullRepair? repair;
     private BlockDropItemStack[] wreckage = [];
@@ -75,7 +76,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             entity.WatchedAttributes.SetAttribute(TreeKey, tree);
         }
 
-        var vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
+        vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
         impactCapacity = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(attributes["parts"].AsObject<VesselPart[]>([]));
         damageConversion = vessels.DamageConversion;
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
@@ -116,6 +117,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         double mass = Mass();
         foreach (double speed in impacts)
         {
+            vessels.Log(entity, "impact at {0:F1} m/s", speed);
             Strike(0.5 * mass * speed * speed);
         }
     }
@@ -130,9 +132,12 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
         double severity = joules / impactCapacity;
         var rand = entity.World.Rand;
-        if (rand.NextDouble() >= 1 - Math.Exp(-severity)) return;
+        var harmed = rand.NextDouble() < 1 - Math.Exp(-severity);
+        if (harmed) Integrity = Math.Max(0, Integrity - (float)(severity * (0.5 + rand.NextDouble())));
+        vessels.Log(entity, "struck with {0:F0} J against a capacity of {1:F0}: {2}, hull now {3:F2}",
+            joules, impactCapacity, harmed ? "harmed" : "unharmed", Integrity);
+        if (!harmed) return;
 
-        Integrity = Math.Max(0, Integrity - (float)(severity * (0.5 + rand.NextDouble())));
         if (Integrity > 0) Creak();
         else Break();
     }
@@ -166,6 +171,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         if (damageSource.Source == EnumDamageSource.Weather && !seaWeather.DangerousOceans) return;
 
         entity.SetActivityRunning("invulnerable", InvulnerableMs);
+        vessels.Log(entity, "takes {0:F1} {1} damage from {2}", damage, damageSource.Type, damageSource.Source);
         Strike(damageConversion.Joules(damageSource, damage));
     }
 

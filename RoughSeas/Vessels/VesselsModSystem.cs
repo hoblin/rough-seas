@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
@@ -30,6 +31,10 @@ public class VesselsModSystem : ModSystem
         Materials = new MaterialTable(api.Assets.Get<Dictionary<string, Material>>(MaterialsAsset), Mod.Logger);
         DamageConversion = api.Assets.Get<DamageConversion>(DamageAsset);
     }
+
+    public void Log(Entity entity, string format, params object[] args) =>
+        Mod.Logger.Debug("[vessels] " + string.Format(CultureInfo.InvariantCulture,
+            $"{entity.Code} {entity.EntityId} at {(int)entity.Pos.X} {(int)entity.Pos.Z}: {format}", args));
 
     private static void OnPlayerInteractEntity(Entity entity, IPlayer byPlayer, ItemSlot slot, Vec3d hitPosition, int mode, ref EnumHandling handling)
     {

@@ -41,12 +41,12 @@ Stepped on already; don't step again.
 - An entity's variant is `entity.Properties.Variant["material"]`; `entity.Variant` is not set for entities.
 - Server physics runs on worker threads. `PhysicsUpdateWatcher` fires from them for a drifting entity and from the main thread for a steered one, so never touch the world from it: queue the event and act in `OnGameTick`.
 - A steered boat's `Pos.Motion` on the server is its intended speed (`EntityBoat` rewrites it from `ForwardSpeed`, which ignores collisions). The real speed comes from the rider's position packets. The server cannot hold a steered boat back either: an anchor or a leash can only follow it.
-- Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[storms\]' "$BENCH_DATA/Logs/server-debug.log"`). A new mechanic logs its decisions as it is written.
+- Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[storms\]\|\[vessels\]' "$BENCH_DATA/Logs/server-debug.log"`; every hit on a hull logs its cause and outcome). A new mechanic logs its decisions as it is written.
 
 **Vanilla at sea** (what 1.22.7 already has, and what we cannot change)
 - The sailboat carries a stone anchor (`anchor-stone`) in its prow slot. Right-click lowers and raises it (the `lowered` stack attribute); in vanilla that is only a shape. Our mooring gives it hold.
 - Boat accessories go on with Ctrl+right-click on the slot's own selection box (`bin/game hover ID LProwAP`). A slot holds one item, never a stack. The sailboat's `Lower Mast Storage` takes category `rope`, which no vanilla item has; our anchor warp fills it.
-- Vanilla rope ties to fences and grown logs (`RopeTieable`) and to `ropetieable` entities, which boats are only through our patch. It is a cloth spring of at most 10 m that pulls, not a hard leash, and it saves with its map region. Holding rope, a click on a rope-tieable entity ties it before any accessory slot sees the click.
+- Vanilla rope ties to fences and grown logs (`RopeTieable`) and to `ropetieable` entities, which boats are only through our patch. It is a cloth spring of at most 10 m that pulls, not a hard leash, and it saves with its map region. Its pull is tuned for animals on land: on a floating vessel it loses to a current, so our mooring holds the vessel and the rope only shows the tie (its tension maths once crashed the client on a NaN). Holding rope, a click on a rope-tieable entity ties it before any accessory slot sees the click.
 - A held liquid container passes its right-click to collectible behaviours only when empty and with no block selected; with drinkable content it drinks.
 - Vanilla's own lightning strikes only within ±200 blocks of a map region's centre. `OnLightningImpactBegin` can move the impact; vanilla damages creatures, boats among them, within 8 blocks of it.
 
@@ -59,9 +59,11 @@ Stepped on already; don't step again.
 - Clean up after each test with `bin/scene clear` instead of opening new worlds.
 - Launching an existing world with `--playStyle` crashed the client on reopen (#24); `bin/client` passes the preset only to new worlds. A crash on a stable build is ours until a vanilla run (`BENCH_MODS=`) reproduces it, and the log names the failing entity.
 - `pkill -f "bin/game …"` matches, and kills, your own shell.
-- `bin/client` kills the client without saving: run `/autosavenow` first, or `/worldconfig` changes and the player's place are lost.
+- `bin/client` kills the client without saving: run `/autosavenow` first, or `/worldconfig` changes and the player's place are lost. Even then the latest entities and ropes have twice been missing after a restart (#39 gives each test a fresh copy of a template world).
+- To look at something, hover: `/bridge fly X Y Z` (creative free flight, no post, no sinking), then `bin/game aim ID`.
+- The desktop runs Hyprland with a Lua config: `hyprctl keyword` and the old `dispatch` syntax fail; use `hyprctl eval 'hl.dispatch(hl.dsp.window.move({ ... }))'`. bin/client puts the game on this clone's workspace (`BENCH_WORKSPACE` on `BENCH_MONITOR`) and hands focus back.
 - Writing a vanilla watched attribute with a value of another type (`/bridge set ID clothIds x`) crashes every client that receives it.
-- An unridden vessel drifts out of reach within seconds. Board it (`/bridge mount ID`) to work on it; tie it with `/bridge tie`, read its ropes with `/bridge ropes`.
+- An unridden vessel drifts out of reach within seconds. Board it (`/bridge mount ID`) to work on it and leave with `/bridge dismount` (a `/tp` while seated takes the vessel along); tie it with `/bridge tie`, read its ropes with `/bridge ropes`.
 - When something fails twice by hand, build the tool before the third try.
 
 ## Tickets

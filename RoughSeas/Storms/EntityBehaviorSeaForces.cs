@@ -66,7 +66,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public override void OnGameTick(float deltaTime)
     {
-        if (entity.World.Side != EnumAppSide.Server) return;
+        if (entity.World.Side != EnumAppSide.Server || !entity.Alive) return;
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 

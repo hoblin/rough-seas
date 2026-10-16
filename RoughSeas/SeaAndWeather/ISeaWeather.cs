@@ -27,6 +27,9 @@ public interface ISeaWeather
     /// <summary>Storms whose reach overlaps a circle of <paramref name="range"/> blocks around a position, now.</summary>
     IEnumerable<Storm> StormsWithin(double x, double z, double range);
 
+    /// <summary>Whether worldgen puts open sea at a position, loaded or not; coarse, a few dozen blocks to a cell.</summary>
+    bool IsSea(double x, double z);
+
     /// <summary>The storms alone at a position and game time: their wind, combined presence, rain and the strongest of them.</summary>
     WindSample StormsAt(double x, double z, double totalHours);
 }

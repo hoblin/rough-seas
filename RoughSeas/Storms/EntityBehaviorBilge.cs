@@ -77,7 +77,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
 
     public override void OnGameTick(float deltaTime)
     {
-        if (entity.World.Side != EnumAppSide.Server || CapacityLitres <= 0) return;
+        if (entity.World.Side != EnumAppSide.Server || CapacityLitres <= 0 || !entity.Alive) return;
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
