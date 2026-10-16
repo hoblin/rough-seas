@@ -87,9 +87,10 @@ public static class SeaWeatherCommands
     private static string Currents(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, double range)
     {
         range = Math.Clamp(range, 0, MaxCurrentRange);
-        var steps = (int)(2 * range / CurrentScanStep) + 1;
-        var samples = Enumerable.Range(0, steps)
-            .SelectMany(i => Enumerable.Range(0, steps).Select(j => (X: pos.X - range + i * CurrentScanStep, Z: pos.Z - range + j * CurrentScanStep)))
+        var reach = (int)(range / CurrentScanStep);
+        var offsets = Enumerable.Range(-reach, 2 * reach + 1).Select(i => i * CurrentScanStep).ToArray();
+        var samples = offsets
+            .SelectMany(dx => offsets.Select(dz => (X: pos.X + dx, Z: pos.Z + dz)))
             .Where(at => Distance(at, pos) <= range)
             .Select(at => (at.X, at.Z, Current: sea.CurrentAt(at.X, at.Z)))
             .ToArray();
