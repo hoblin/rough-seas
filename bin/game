@@ -97,8 +97,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              what the server does when the player left- or right-clicks entity
                              ID with the held item, wherever the player stands, with ctrl or shift
                              held; replies with its integrity if it is a vessel. The client sends
-                             no click, so use it where `click` cannot reach the entity. Shift
-                             pickup goes through the server's interact event, which this skips
+                             no click, so use it where `click` cannot reach the entity. With
+                             shift, a vessel that can be carried is picked up, as Shift + click does
   /bridge blast ID RADIUS [DISTANCE]
                              an explosion that injures entities within RADIUS and breaks no blocks,
                              DISTANCE blocks east of entity ID (default 0) and one above it

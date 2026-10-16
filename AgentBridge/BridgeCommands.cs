@@ -182,7 +182,10 @@ public class BridgeCommands : ModSystem
         controls.CtrlKey = modifier == "ctrl";
         controls.ShiftKey = modifier == "shift";
         var interactMode = mode == "attack" ? EnumInteractMode.Attack : EnumInteractMode.Interact;
-        entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);
+        if (interactMode == EnumInteractMode.Attack || entity.GetBehavior<EntityBehaviorVesselIntegrity>()?.TryPickUp(player.Entity) != true)
+        {
+            entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);
+        }
         controls.CtrlKey = controls.ShiftKey = false;
         var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
         return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: alive {entity.Alive}" + (hull == null ? "" : $", integrity {hull.Integrity}"));
