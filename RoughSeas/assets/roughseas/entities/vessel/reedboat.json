@@ -51,8 +51,7 @@
                     "selectionBox": "HullAP"
                 },
                 {"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": null, "eyeHeight": 1, "reverse": true}
-            ],
-            "interactMountAnySeat": true
+            ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]}
     },

@@ -58,8 +58,7 @@
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
                 }
-            ],
-            "interactMountAnySeat": true
+            ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "LowerMastAP", "HullAP"]},
         "rideableaccessories": {
