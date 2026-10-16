@@ -29,6 +29,28 @@ All of it is scoped to this repository.
 - The `fal` MCP generates images, 3D models and sound. Every generation is paid from hoblin's fal balance: generate what a ticket needs, and settle a prompt on a cheap model before running an expensive one.
 - The ArtCraft applications (`artcraft` skill: photocraft, vectorcraft and the rest) draw and edit textures and other images by hand. Editing an existing texture is often cheaper and simpler than generating one from scratch.
 
+## Known rakes
+
+Stepped on already; don't step again.
+
+**Modding**
+- A patch targets vanilla as `game:entities/...`, not `survival:`. Entity files are server-side assets, so an entity patch needs `"side": "Server"`.
+- The patch loader reads every file in `patches/`, whatever its extension. To switch a patch off, move it out of the folder.
+- An entity's variant is `entity.Properties.Variant["material"]`; `entity.Variant` is not set for entities.
+- Server physics runs on worker threads. `PhysicsUpdateWatcher` fires from them for a drifting entity and from the main thread for a steered one, so never touch the world from it: queue the event and act in `OnGameTick`.
+- A steered boat's `Pos.Motion` on the server is its intended speed (`EntityBoat` rewrites it from `ForwardSpeed`, which ignores collisions). The real speed comes from the rider's position packets.
+
+**Bench** (`bin/scene` handles most of these)
+- An idle player in water sinks to the seabed, and `state` then lists nothing near the surface. Stand on a post: `bin/scene dock`.
+- After a teleport, `~` commands use the server's position, which the client's stale one overwrites for a few seconds. Wait until `state` shows the arrival.
+- `/bridge sea` fails in a world with no open sea in its generated regions; open another world.
+- Spectators don't pick: hover text and entity selection need creative or survival.
+- A raft's selection boxes are its seats only, so aiming at it by coordinates misses. Use `bin/game hover ID`.
+- Water tints everything under its surface; judge textures on dry land (`bin/scene slab`).
+- Clean up after each test with `bin/scene clear` instead of opening new worlds. Reopening some worlds crashes the client (#24).
+- `pkill -f "bin/game …"` matches, and kills, your own shell.
+- When something fails twice by hand, build the tool before the third try.
+
 ## Tickets
 
 Tickets are GitHub issues in this repository. A bug or a follow-up found while working a ticket becomes its own issue, not an out-of-scope fix, labelled `agent-filed`. Tickets hoblin and the manager settled together carry `decided`. The two are not equal: a finding from a review subagent sees a slice of the code and imagines what could go wrong; it is filed so it is not lost, and it is read with suspicion before anyone works on it. State the evidence in such an issue (what you saw, where) rather than the fear.
