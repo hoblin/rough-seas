@@ -55,6 +55,16 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Strike a vessel's hull with an impact of this many joules; the hull rolls against it as it does for any impact")
                 .WithArgs(parsers.Long("id"), parsers.Double("joules"))
                 .HandleWith(args => Strike(sapi.World.GetEntityById((long)args[0]), (double)args[1]))
+            .EndSubCommand()
+            .BeginSubCommand("blast")
+                .WithDescription("Set off an explosion that harms entities but no blocks, this many blocks from an entity")
+                .WithArgs(parsers.Long("id"), parsers.Int("injureRadius"), parsers.OptionalDouble("distance"))
+                .HandleWith(args => Blast(sapi.World.GetEntityById((long)args[0]), (int)args[1], (double)args[2]))
+            .EndSubCommand()
+            .BeginSubCommand("interact")
+                .WithDescription("Attack or interact with an entity using the held item, as the server does when the player clicks it")
+                .WithArgs(parsers.Long("id"), parsers.WordRange("mode", "attack", "interact"), parsers.OptionalWordRange("modifier", "ctrl", "shift"))
+                .HandleWith(args => Interact(args.Caller.Player, sapi.World.GetEntityById((long)args[0]), (string)args[1], args[2] as string))
             .EndSubCommand();
     }
 
@@ -125,6 +135,29 @@ public class BridgeCommands : ModSystem
 
         hull.Strike(joules);
         return TextCommandResult.Success($"{entity!.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity}");
+    }
+
+    private TextCommandResult Blast(Entity? entity, int injureRadius, double distance)
+    {
+        if (entity == null) return TextCommandResult.Error("No such entity");
+
+        sapi.World.CreateExplosion(entity.Pos.XYZ.Add(distance, 1, 0).AsBlockPos, EnumBlastType.EntityBlast, 0, injureRadius);
+        var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
+        return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: alive {entity.Alive}" + (hull == null ? "" : $", integrity {hull.Integrity}"));
+    }
+
+    private static TextCommandResult Interact(IPlayer player, Entity? entity, string mode, string? modifier)
+    {
+        if (entity == null) return TextCommandResult.Error("No such entity");
+
+        var controls = player.Entity.Controls;
+        controls.CtrlKey = modifier == "ctrl";
+        controls.ShiftKey = modifier == "shift";
+        var interactMode = mode == "attack" ? EnumInteractMode.Attack : EnumInteractMode.Interact;
+        entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);
+        controls.CtrlKey = controls.ShiftKey = false;
+        var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
+        return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: alive {entity.Alive}" + (hull == null ? "" : $", integrity {hull.Integrity}"));
     }
 
     private static TextCommandResult Reply(object value) => TextCommandResult.Success(JsonSerializer.Serialize(value));
