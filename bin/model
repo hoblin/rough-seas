@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Rough Seas modeling: Vintage Story shapes in Blender 4.5, headless, through the
+phonon/blender-vintagestory-json add-on. No window opens.
+
+EDIT
+  bin/model edit SHAPE SCRIPT      import SHAPE, run SCRIPT (Python, bpy) on the scene, export
+                                   back over SHAPE. The usual way to change a model.
+  bin/model import SHAPE [BLEND]   SHAPE into a .blend (default <temp>/model/NAME.blend) for
+                                   work in several steps
+  bin/model run BLEND SCRIPT       run SCRIPT on BLEND and save it
+  bin/model export BLEND [SHAPE]   BLEND to shape JSON, by default over the shape it came from
+LOOK
+  bin/model preview SHAPE|BLEND [PNG]
+                                   render four views (iso, side, top, end) into one image
+                                   (default <temp>/model/preview.png); prints its path
+  bin/model pose SHAPE|BLEND CODE FRAME [PNG]
+                                   the same, posed at FRAME of animation CODE
+                                   (default <temp>/model/pose.png)
+CHECK
+  bin/model check SHAPE|BLEND      round-trip it and say what changed, once through the add-on
+                                   alone and once through bin/model, and how closely Blender plays
+                                   each animation as the game will, on every frame. Ends PASSED or
+                                   FAILED (exit 1). A SHAPE must come back identical; a BLEND you
+                                   edited only has to play as the game will.
+  bin/model test                   check the probe shape, our vessels, the vanilla boats, a fish
+                                   and an animation made in Blender (bin/lib/vsmodel/test). Run it
+                                   after changing bin/model.
+
+SHAPE is a shape JSON file: ours under RoughSeas/assets/roughseas/shapes, vanilla under
+$VINTAGE_STORY/assets/survival/shapes. Vanilla shapes are read-only: export them into
+RoughSeas/assets. <temp> is this clone's temp folder, /tmp/<bench>.
+
+IN BLENDER
+  Every element is a cube object named as the element; its faces carry materials named by
+  texture code. Attachment points are empties named attach_<code>, parented to their element.
+  Faces the shape disables, and every face of a faceless element (Hull, seats), carry the
+  material vs_disabled; give a face that material to disable it.
+  Vintage Story's X, Y, Z are Blender's Y, Z, X; 1 unit is 1/16 block.
+  A shape with animations comes in on an armature: one bone per element, one action per
+  animation, named by its code. Blender plays each one as the game will, on every frame, within
+  0.1° and 1/800 block, except below an element with a scale, which Blender does not show.
+  Animate the bones in any rotation mode; on export each animation becomes
+  game keyframes at your keys plus wherever the game's interpolation would stray from Blender's.
+  An action's last key closes the loop: it sits at the animation's length (quantityframes) and
+  is not exported. An animation you did not touch comes back exactly as it was; one that would
+  play differently from Blender is refused on export.
+
+SCRIPTS
+  A script gets bpy and the scene as import left it, for example:
+    hull = bpy.data.objects["Hull"]
+    bpy.data.objects["Plank1"].location.z += 1
+  New elements: duplicate a cube (obj.copy(), obj.data.copy(), link to the collection, parent
+  as needed); it keeps its materials. Rotate in object mode only, never in edit mode.
+
+WHAT THE ROUND TRIP KEEPS
+  bin/model keeps every value the model did not change exactly as it was, and restores what
+  the add-on drops: faceless elements and disabled faces, windMode/windData, autoUv,
+  renderInEditor, scale, the editor block, texture paths and sizes, animations, element
+  and attachment point order. What it cannot keep is in docs/modeling.md; read it before
+  modeling.
+
+Then load the change in the game: bin/client restarts with the edited shape; look at it with
+bin/scene look (bin/game help).
+EOF
+}
+
+if [[ ${1:-help} == help ]]; then
+  usage
+  exit
+fi
+source "$(dirname "$0")/lib/bench.sh"
+
+addon_repo=https://github.com/phonon/blender-vintagestory-json
+addon_commit=632393eb46e77f1640705d12e3348742ec1c4307
+json5=0.12.1
+scripts=$root/.blender
+addon=$scripts/addons/vintagestory_json
+
+need() {
+  [ $(($# - 1)) -ge "$1" ] || { usage >&2; exit 1; }
+}
+
+install_addon() {
+  if [ ! -d "$addon/.git" ]; then
+    mkdir -p "$(dirname "$addon")"
+    git clone -q "$addon_repo" "$addon"
+  fi
+  if [ "$(git -C "$addon" rev-parse HEAD)" != "$addon_commit" ]; then
+    git -C "$addon" checkout -q -- .
+    git -C "$addon" fetch -q origin
+    git -C "$addon" checkout -q "$addon_commit"
+  fi
+  if ! git -C "$addon" apply --reverse --check "$root/bin/lib/vsmodel/addon.patch" 2>/dev/null; then
+    git -C "$addon" checkout -q -- .
+    git -C "$addon" apply "$root/bin/lib/vsmodel/addon.patch"
+  fi
+  if [ ! -d "$scripts/modules/json5-$json5.dist-info" ]; then
+    blender -b --factory-startup --python-exit-code 1 --python-expr "import subprocess, sys
+subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', '--disable-pip-version-check', '--upgrade', '--target', '$scripts/modules', 'json5==$json5'], check=True)" >/dev/null
+  fi
+}
+
+blender_do() {
+  install_addon
+  BLENDER_USER_SCRIPTS=$scripts blender -b --factory-startup -noaudio --python-exit-code 1 \
+    --python "$root/bin/lib/vsmodel/blender.py" -- "$@" 2>&1 \
+    | { grep -v '^Failed to open dir\|^Error: Cannot read\|^FAILED TO LOAD IMAGE\|^Blender \|^Read blend\|^Saved\|^Fra:\|^Info: \|^WARNING: cannot find .* step parent bone None\|^ *Time: \|^$\|^Blender quit\|^Imported .json\|^- \(Cubes\|Attach Points\|Textures\|Animations\)' || true; }
+}
+
+render_views() {
+  local views=$work/views
+  rm -rf "$views"
+  mkdir -p "$views"
+  blender_do preview "$(realpath "$1")" "$views" "${@:3}"
+  magick montage -label '%t' -pointsize 28 "$views"/{iso,side,top,end}.png -tile 2x2 -geometry +2+2 -background '#333' "$2"
+  echo "$2"
+}
+
+work=$BENCH_TMP/model
+mkdir -p "$work"
+
+case "$1" in
+  edit) need 3 "$@"; blender_do edit "$(realpath "$2")" "$(realpath "$3")" ;;
+  import)
+    need 2 "$@"
+    blend=${3:-$work/$(basename "${2%.json}").blend}
+    blender_do import "$(realpath "$2")" "$(realpath -m "$blend")"
+    echo "$blend"
+    ;;
+  run) need 3 "$@"; blender_do run "$(realpath "$2")" "$(realpath "$3")" ;;
+  export) need 2 "$@"; blender_do export "$(realpath "$2")" "${3:+$(realpath -m "$3")}" ;;
+  preview) need 2 "$@"; render_views "$2" "${3:-$work/preview.png}" ;;
+  pose) need 4 "$@"; render_views "$2" "${5:-$work/pose.png}" "$3" "$4" ;;
+  check)
+    need 2 "$@"
+    out=$work/check/$(basename "${2%.*}")
+    mkdir -p "$out"
+    blender_do check "$(realpath "$2")" "$out"
+    ;;
+  test)
+    tests=$root/bin/lib/vsmodel/test
+    boats=$VINTAGE_STORY/assets/survival/shapes/entity/nonliving/boat
+    failed=0
+    for shape in "$tests/probe.json" "$root"/RoughSeas/assets/roughseas/shapes/entity/vessel/*.json \
+      "$boats"/{raft,raft-bamboo,sailed,sailed-anchorstone}.json \
+      "$VINTAGE_STORY/assets/survival/shapes/entity/animal/fish/saltwater/amberjack-adult.json"; do
+      if "$0" check "$shape" >"$work/test.log"; then echo "PASSED $shape"; else failed=1; echo "FAILED $shape"; cat "$work/test.log"; fi
+    done
+    authored=$("$0" import "$tests/probe.json" "$work/authored.blend")
+    "$0" run "$authored" "$tests/author.py"
+    if "$0" check "$authored" >"$work/test.log"; then echo "PASSED animations made in Blender"; else failed=1; echo "FAILED animations made in Blender"; cat "$work/test.log"; fi
+    exit $failed
+    ;;
+  *) usage >&2; exit 1 ;;
+esac

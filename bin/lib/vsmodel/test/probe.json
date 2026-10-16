@@ -1,0 +1,170 @@
+{
+ "textureWidth": 16,
+ "textureHeight": 16,
+ "textures": {
+  "wood": "game:block/wood/planks/oak1",
+  "cloth": "game:block/cloth/linen/plain"
+ },
+ "elements": [
+  {
+   "name": "Base",
+   "from": [0, 0, 0],
+   "to": [8, 2, 4],
+   "rotationOrigin": [4, 1, 2],
+   "faces": {
+    "north": { "texture": "#wood", "uv": [0, 0, 8, 2] },
+    "east": { "texture": "#null", "uv": [0, 0, 4, 2], "enabled": false },
+    "south": { "texture": "#wood", "uv": [8, 0, 0, 2], "rotation": 180 },
+    "west": { "texture": "#wood", "uv": [0, 2, 4, 4], "windMode": [0, 0, 5, 5], "windData": [0, 0, 1, 1] },
+    "up": { "texture": "#cloth", "uv": [0, 0, 8, 4], "rotation": 90 },
+    "down": { "texture": "#wood" }
+   },
+   "attachmentpoints": [{ "code": "BaseAP", "posX": "4.0", "posY": "2.0", "posZ": "2.0", "rotationX": "0.0", "rotationY": "0.0", "rotationZ": "0.0" }],
+   "children": [
+    {
+     "name": "Arm",
+     "from": [8, 0, 1],
+     "to": [16, 2, 3],
+     "rotationOrigin": [8, 1, 2],
+     "rotationX": 30,
+     "rotationY": 45,
+     "rotationZ": -20,
+     "faces": {
+      "north": { "texture": "#wood", "uv": [0, 2, 8, 4] },
+      "east": { "texture": "#wood", "uv": [0, 4, 2, 6] },
+      "south": { "texture": "#wood", "uv": [8, 2, 16, 4] },
+      "west": { "texture": "#wood", "uv": [2, 4, 4, 6] },
+      "up": { "texture": "#cloth", "uv": [0, 6, 8, 8], "rotation": 270 },
+      "down": { "texture": "#wood", "uv": [8, 6, 16, 8] }
+     },
+     "children": [
+      {
+       "name": "Forearm",
+       "from": [16, 0.5, 1.5],
+       "to": [22, 1.5, 2.5],
+       "rotationOrigin": [16, 1, 2],
+       "rotationX": -15,
+       "rotationY": 20,
+       "rotationZ": 35,
+       "faces": {
+        "north": { "texture": "#cloth", "uv": [0, 0, 6, 1] },
+        "east": { "texture": "#cloth", "uv": [0, 1, 1, 2] },
+        "south": { "texture": "#cloth", "uv": [6, 0, 12, 1] },
+        "west": { "texture": "#cloth", "uv": [1, 1, 2, 2] },
+        "up": { "texture": "#cloth", "uv": [0, 2, 6, 3] },
+        "down": { "texture": "#cloth", "uv": [6, 2, 12, 3] }
+       },
+       "attachmentpoints": [{ "code": "TipAP", "posX": "6.0", "posY": "0.5", "posZ": "0.5", "rotationX": "0.0", "rotationY": "90.0", "rotationZ": "0.0" }],
+       "children": [
+        {
+         "name": "Hand",
+         "from": [22, 0, 1],
+         "to": [26, 2, 3],
+         "rotationOrigin": [22, 1, 2],
+         "rotationY": -30,
+         "scaleX": 0.5,
+         "scaleY": 0.5,
+         "scaleZ": 0.5,
+         "faces": {
+          "north": { "texture": "#wood", "uv": [0, 8, 4, 10] },
+          "east": { "texture": "#wood", "uv": [4, 8, 6, 10] },
+          "south": { "texture": "#wood", "uv": [6, 8, 10, 10] },
+          "west": { "texture": "#wood", "uv": [10, 8, 12, 10] },
+          "up": { "texture": "#wood", "uv": [0, 10, 4, 12] },
+          "down": { "texture": "#wood", "uv": [4, 10, 8, 12] }
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Sail",
+     "from": [0, 2, 0],
+     "to": [8, 2, 4],
+     "renderInEditor": false,
+     "faces": {
+      "up": { "texture": "#cloth", "uv": [0, 0, 8, 4], "windMode": [5, 5, 5, 5] },
+      "down": { "texture": "#cloth", "uv": [0, 0, 8, 4], "windMode": [5, 5, 5, 5] }
+     }
+    },
+    {
+     "name": "Pivot",
+     "from": [0, 0, 0],
+     "to": [0, 0, 0],
+     "rotationOrigin": [0, 0, 4],
+     "rotationZ": 25,
+     "faces": {},
+     "children": [
+      {
+       "name": "Fin",
+       "from": [-6, 0, 3],
+       "to": [0, 1, 5],
+       "rotationOrigin": [-6, 0.5, 4],
+       "rotationX": 10,
+       "faces": {
+        "north": { "texture": "#wood", "uv": [0, 12, 6, 13] },
+        "east": { "texture": "#wood", "uv": [6, 12, 8, 13] },
+        "south": { "texture": "#wood", "uv": [8, 12, 14, 13] },
+        "west": { "texture": "#wood", "uv": [14, 12, 16, 13] },
+        "up": { "texture": "#wood", "uv": [0, 13, 6, 15] },
+        "down": { "texture": "#wood", "uv": [6, 13, 12, 15] }
+       }
+      }
+     ]
+    },
+    {
+     "name": "Hull",
+     "from": [-2, 0, -1],
+     "to": [10, 4, 5],
+     "faces": {},
+     "attachmentpoints": [{ "code": "HullAP", "posX": "6.0", "posY": "0.0", "posZ": "3.0", "rotationX": "0.0", "rotationY": "0.0", "rotationZ": "0.0" }]
+    }
+   ]
+  }
+ ],
+ "animations": [
+  {
+   "name": "Swing",
+   "code": "swing",
+   "quantityframes": 30,
+   "onActivityStopped": "EaseOut",
+   "onAnimationEnd": "Repeat",
+   "keyframes": [
+    {
+     "frame": 0,
+     "elements": {
+      "Arm": { "rotationX": 0, "rotationY": 0, "rotationZ": 0 },
+      "Forearm": { "offsetX": 0, "offsetY": 0, "offsetZ": 0, "rotationX": 0, "rotationY": 0, "rotationZ": 0 }
+     }
+    },
+    {
+     "frame": 10,
+     "elements": {
+      "Arm": { "rotationX": 15, "rotationY": 40, "rotationZ": -10 },
+      "Forearm": { "offsetX": 1, "offsetY": 2, "offsetZ": -1, "rotationX": 30, "rotationY": -20, "rotationZ": -25 },
+      "Fin": { "rotationY": 35 }
+     }
+    },
+    {
+     "frame": 20,
+     "elements": {
+      "Arm": { "rotationX": -20, "rotationY": 10, "rotationZ": 30 },
+      "Forearm": { "offsetX": 0, "offsetY": 0, "offsetZ": 0, "rotationX": 0, "rotationY": 0, "rotationZ": 0, "stretchX": 1.5, "stretchY": 1, "stretchZ": 1 },
+      "Fin": { "rotationY": -35 }
+     }
+    }
+   ]
+  },
+  {
+   "name": "Nod",
+   "code": "nod",
+   "quantityframes": 4,
+   "onActivityStopped": "Rewind",
+   "onAnimationEnd": "Hold",
+   "keyframes": [
+    { "frame": 0, "elements": { "Hand": { "rotationZ": 45 } } }
+   ]
+  }
+ ]
+}

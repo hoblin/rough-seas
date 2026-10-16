@@ -24,7 +24,8 @@ All of it is scoped to this repository. [CONTRIBUTING.md](CONTRIBUTING.md) cover
 
 - **The test bench.** `bin/client` and `bin/server` start the game with the mod; each clone of the repository runs its own, side by side. `bin/game` drives the running client from the shell, through the dev-only `AgentBridge` mod: it can run commands, read state, aim, press keys, follow handbook links and take screenshots, with no window focus. **`bin/game help` explains all of it**; read it before you first test in the game.
 - `RoughSeas/` is the mod; `./build.sh` packages a release into `Releases/`.
-- `mise.toml` pins the .NET SDK and Node, and sets the bench's environment: the 1.22.7 install, and this clone's name, data folder and ports. A clone's own values (another install path, ports, a desktop workspace) go in its gitignored `mise.local.toml`. mise puts all of it on PATH and in the environment here; in a shell that doesn't load mise, run tools through `mise exec --`.
+- **Modeling.** `bin/model` edits, previews and checks shape JSON in Blender, headless; **`bin/model help`** explains it.
+- `mise.toml` pins the .NET SDK, Node and Blender, and sets the bench's environment: the 1.22.7 install, and this clone's name, data folder and ports. A clone's own values (another install path, ports, a desktop workspace) go in its gitignored `mise.local.toml`. mise puts all of it on PATH and in the environment here; in a shell that doesn't load mise, run tools through `mise exec --`.
 - `ilspycmd` is a local .NET tool (`dotnet-tools.json`): `dotnet ilspycmd <assembly>`.
 
 ## References
@@ -34,6 +35,7 @@ Each holds what one kind of work needs; read it in full before that work. They a
 - `docs/modding.md`: before writing mod code (patches, entities, behaviours, physics).
 - `docs/vanilla-at-sea.md`: before working on boats, anchors, ropes, accessories or lightning.
 - `docs/bench.md`: before testing in the game, with `bin/game help`.
+- `docs/modeling.md`: before changing a shape, with `bin/model help`.
 - `docs/shipping.md`: when a pull request leaves draft (review, self-review, merging).
 
 ## Tickets

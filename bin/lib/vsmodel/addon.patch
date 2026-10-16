@@ -1,0 +1,35 @@
+diff --git a/io_scene_vintagestory_json/export_vintagestory_json.py b/io_scene_vintagestory_json/export_vintagestory_json.py
+index 02b7410..b1c43d9 100644
+--- a/io_scene_vintagestory_json/export_vintagestory_json.py
++++ b/io_scene_vintagestory_json/export_vintagestory_json.py
+@@ -93,7 +93,7 @@ def matrix_roughly_equal(m1, m2, eps=1e-5):
+     """
+     for i in range(0, 4):
+         for j in range(0, 4):
+-            if abs(m1[i][j] - m2[i][j]) > eps:
++            if abs(m1[i][j] - m2[i][j]) > (1e-3 if j == 3 else eps):
+                 return False
+     return True
+ 
+diff --git a/io_scene_vintagestory_json/import_vintagestory_json.py b/io_scene_vintagestory_json/import_vintagestory_json.py
+index adda270..53810b2 100644
+--- a/io_scene_vintagestory_json/import_vintagestory_json.py
++++ b/io_scene_vintagestory_json/import_vintagestory_json.py
+@@ -109,7 +109,7 @@ def create_textured_principled_bsdf(mat_name, tex_path, resolution, tex_width, t
+                 img = bpy.data.images.load(tex_path, check_existing=True)
+             except:
+                 print("FAILED TO LOAD IMAGE:", tex_path)
+-                img = bpy.data.images.new(os.path.split(tex_path)[-1], width=resolution * tex_width, height=resolution * tex_height)
++                img = bpy.data.images.new(os.path.split(tex_path)[-1], width=int(resolution * tex_width), height=int(resolution * tex_height))
+                 img.filepath = tex_path
+         
+             tex_input.image = img
+@@ -427,7 +427,7 @@ def set_bone_pose_from_object(
+         obj.location.z,
+     )
+     pose_bone.rotation_mode = "XYZ"
+-    pose_bone.rotation_euler = obj.rotation_euler
++    pose_bone.rotation_euler = obj.rotation_euler.to_matrix().to_euler("XYZ")
+     
+     # now parent obj to bone
+     obj.parent = armature
