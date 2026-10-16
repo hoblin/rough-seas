@@ -10,6 +10,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
@@ -25,6 +26,7 @@ public class AgentBridgeModSystem : ModSystem
     private ICoreClientAPI capi = null!;
     private ScreenshotCapture screenshots = null!;
     private HoverOverride hover = null!;
+    private CrosshairPicking crosshair = null!;
     private FrameTimer frameTimer = null!;
     private EntityLoadBlackBox blackBox = null!;
     private readonly HttpListener listener = new();
@@ -36,6 +38,7 @@ public class AgentBridgeModSystem : ModSystem
         capi = api;
         screenshots = new ScreenshotCapture(api);
         hover = new HoverOverride(api);
+        crosshair = new CrosshairPicking();
         frameTimer = new FrameTimer(api);
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         listener.Prefixes.Add(Prefix);
@@ -49,6 +52,7 @@ public class AgentBridgeModSystem : ModSystem
         listener.Close();
         screenshots?.Dispose();
         hover?.Dispose();
+        crosshair?.Dispose();
         frameTimer?.Dispose();
         blackBox?.Dispose();
     }
@@ -140,6 +144,7 @@ public class AgentBridgeModSystem : ModSystem
             pos = new { entity.Pos.X, entity.Pos.Y, entity.Pos.Z },
             camera = new { yaw = capi.World.Player.CameraYaw, pitch = capi.World.Player.CameraPitch },
             swimming = entity.Swimming,
+            flying = capi.World.Player.WorldData.FreeMove,
             vitals = Vitals.ToDictionary(key => key, key => JsonNode.Parse(entity.WatchedAttributes[key]?.ToJsonToken() ?? "null")),
             hotbar = new
             {
@@ -149,12 +154,30 @@ public class AgentBridgeModSystem : ModSystem
             mountedOn = mount == null ? null : new { mount.EntityId, code = mount.Code.ToString() },
             lookingAt = capi.World.Player.CurrentEntitySelection?.Entity.Code.ToString()
                 ?? capi.World.Player.CurrentBlockSelection?.Block?.Code.ToString(),
+            pickingRange = capi.World.Player.WorldData.PickingRange,
+            reach = Reach(),
             nearby = capi.World.GetEntitiesAround(entity.Pos.XYZ, 16, 16, other => other != entity)
                 .Select(other => new { other.EntityId, code = other.Code.ToString(), other.Pos.X, other.Pos.Y, other.Pos.Z }),
             calendar = capi.World.Calendar.PrettyDate(),
             paused = capi.IsGamePaused,
             dialogs = Dialogs().Select(dialog => dialog.DebugName)
         }) + "\n";
+    }
+
+    private object? Reach()
+    {
+        var player = capi.World.Player;
+        if (player.CurrentEntitySelection is not { } selection) return null;
+
+        var entity = player.Entity;
+        var target = selection.Entity;
+        var stack = player.InventoryManager.ActiveHotbarSlot?.Itemstack;
+        var eye = entity.Pos.XYZ.Add(entity.LocalEyePos);
+        double toBox = target.SelectionBox.ToDouble().Translate(target.Pos.X, target.Pos.Y, target.Pos.Z)
+            .ShortestDistanceFrom(eye.X, eye.Y, eye.Z);
+        double toHit = target.Pos.XYZ.Add(selection.HitPosition).DistanceTo(eye);
+        float range = stack?.Collectible.GetAttackRange(stack) ?? GlobalConstants.DefaultAttackRange;
+        return new { selection.SelectionBoxIndex, toBox = Math.Round(toBox, 2), toHit = Math.Round(toHit, 2), range };
     }
 
     private string Look(HttpListenerRequest request)

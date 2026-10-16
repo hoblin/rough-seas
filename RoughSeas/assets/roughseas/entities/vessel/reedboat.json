@@ -1,0 +1,88 @@
+{
+    "code": "reedboat",
+    "class": "roughseas:EntityVessel",
+    "tags": ["inanimate", "vehicle"],
+    "weight": 60,
+    "attributes": {
+        "speedMultiplier": 1.3,
+        "turnSpeed": 1.2,
+        "swimmingOffsetY": 0.3,
+        "shouldSwivelFromMotion": false,
+        "mountAnimations": {
+            "idle": "sitflooridle",
+            "ready": "crudeOarReady",
+            "forwards": "crudeOarForward",
+            "backwards": "crudeOarBackward"
+        },
+        "requiresPaddlingTool": true,
+        "rightClickPickup": true
+    },
+    "hitboxSize": {"x": 1.2, "y": 0.45},
+    "behaviorConfigs": {
+        "vesselintegrity": {
+            "impactCapacity": 1200,
+            "wearPerDay": 0.33,
+            "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
+            "cracks": {
+                "textures": ["reed"],
+                "overlays": [
+                    ["game:block/overlay/cracked/cracked5"],
+                    ["game:block/overlay/cracked/cracked15"],
+                    ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]
+                ]
+            }
+        },
+        "passivephysicsmultibox": {
+            "collisionBoxes": [
+                {"x1": -0.438, "y1": 0, "z1": -1.5, "x2": 0.438, "y2": 0.45, "z2": 0.0},
+                {"x1": -0.438, "y1": 0, "z1": 0.0, "x2": 0.438, "y2": 0.45, "z2": 1.5}
+            ],
+            "groundDragFactor": 1,
+            "airDragFallingFactor": 0.5,
+            "gravityFactor": 1.0
+        },
+        "creaturecarrier": {
+            "seats": [
+                {
+                    "apName": "FrontSeatAP",
+                    "controllable": true,
+                    "bodyYawLimit": null,
+                    "eyeHeight": 1,
+                    "selectionBox": "HullAP"
+                },
+                {"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": null, "eyeHeight": 1, "reverse": true}
+            ]
+        },
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
+        "roughseas:seaforces": {"beamMetres": 0.9, "mastMetres": 0, "windageSquareMetres": 0.6}
+    },
+    "client": {
+        "size": 1,
+        "renderer": "Shape",
+        "shape": {"base": "roughseas:entity/vessel/reedboat"},
+        "textures": {"reed": {"base": "game:block/reed/beehive/hive-reed"}, "rope": {"base": "game:block/cloth/reedrope"}},
+        "behaviors": [
+            {"code": "vesselintegrity"},
+            {"code": "repulseagents"},
+            {"code": "passivephysicsmultibox"},
+            {"code": "interpolateposition"},
+            {"code": "selectionboxes"},
+            {"code": "creaturecarrier"},
+            {"code": "ropetieable"}
+        ]
+    },
+    "server": {
+        "behaviors": [
+            {"code": "vesselintegrity"},
+            {"code": "repulseagents"},
+            {"code": "passivephysicsmultibox"},
+            {"code": "selectionboxes"},
+            {"code": "creaturecarrier"},
+            {"code": "roughseas:currentdrift"},
+            {"code": "roughseas:seaforces"},
+            {"code": "roughseas:mooring"},
+            {"code": "ropetieable"}
+        ]
+    },
+    "sounds": {}
+}

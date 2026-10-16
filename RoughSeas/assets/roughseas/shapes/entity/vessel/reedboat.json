@@ -1,0 +1,1099 @@
+{
+ "editor": {
+  "allAngles": false,
+  "entityTextureMode": false
+ },
+ "textureWidth": 16,
+ "textureHeight": 16,
+ "textures": {
+  "reed": "game:block/reed/beehive/hive-reed",
+  "rope": "game:block/cloth/reedrope"
+ },
+ "elements": [
+  {
+   "name": "BundleLMid",
+   "from": [
+    0,
+    0,
+    1
+   ],
+   "to": [
+    16,
+    6,
+    6
+   ],
+   "faces": {
+    "north": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      6
+     ]
+    },
+    "east": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      5,
+      6
+     ]
+    },
+    "south": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      6
+     ]
+    },
+    "west": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      5,
+      6
+     ]
+    },
+    "up": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      5
+     ]
+    },
+    "down": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      5
+     ]
+    }
+   }
+  },
+  {
+   "name": "BundleMMid",
+   "from": [
+    0,
+    0,
+    5
+   ],
+   "to": [
+    16,
+    5,
+    11
+   ],
+   "faces": {
+    "north": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      5
+     ]
+    },
+    "east": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      6,
+      5
+     ]
+    },
+    "south": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      5
+     ]
+    },
+    "west": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      6,
+      5
+     ]
+    },
+    "up": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      6
+     ]
+    },
+    "down": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      6
+     ]
+    }
+   }
+  },
+  {
+   "name": "BundleRMid",
+   "from": [
+    0,
+    0,
+    10
+   ],
+   "to": [
+    16,
+    6,
+    15
+   ],
+   "faces": {
+    "north": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      6
+     ]
+    },
+    "east": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      5,
+      6
+     ]
+    },
+    "south": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      6
+     ]
+    },
+    "west": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      5,
+      6
+     ]
+    },
+    "up": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      5
+     ]
+    },
+    "down": {
+     "texture": "#reed",
+     "uv": [
+      0,
+      0,
+      16,
+      5
+     ]
+    }
+   }
+  },
+  {
+   "name": "Tie0",
+   "from": [
+    1,
+    -0.5,
+    0.5
+   ],
+   "to": [
+    3,
+    6.5,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      7.0
+     ]
+    },
+    "east": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      15.0,
+      7.0
+     ]
+    },
+    "south": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      7.0
+     ]
+    },
+    "west": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      15.0,
+      7.0
+     ]
+    },
+    "up": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      15.0
+     ]
+    },
+    "down": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      15.0
+     ]
+    }
+   }
+  },
+  {
+   "name": "Tie1",
+   "from": [
+    7,
+    -0.5,
+    0.5
+   ],
+   "to": [
+    9,
+    6.5,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      7.0
+     ]
+    },
+    "east": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      15.0,
+      7.0
+     ]
+    },
+    "south": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      7.0
+     ]
+    },
+    "west": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      15.0,
+      7.0
+     ]
+    },
+    "up": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      15.0
+     ]
+    },
+    "down": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      15.0
+     ]
+    }
+   }
+  },
+  {
+   "name": "Tie2",
+   "from": [
+    13,
+    -0.5,
+    0.5
+   ],
+   "to": [
+    15,
+    6.5,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      7.0
+     ]
+    },
+    "east": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      15.0,
+      7.0
+     ]
+    },
+    "south": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      7.0
+     ]
+    },
+    "west": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      15.0,
+      7.0
+     ]
+    },
+    "up": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      15.0
+     ]
+    },
+    "down": {
+     "texture": "#rope",
+     "uv": [
+      0,
+      0,
+      2,
+      15.0
+     ]
+    }
+   }
+  },
+  {
+   "name": "Bow",
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    0,
+    0,
+    0
+   ],
+   "faces": {},
+   "children": [
+    {
+     "name": "BundleLBow",
+     "from": [
+      16,
+      0,
+      1
+     ],
+     "to": [
+      32,
+      6,
+      6
+     ],
+     "faces": {
+      "north": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "east": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        5,
+        6
+       ]
+      },
+      "south": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "west": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        5,
+        6
+       ]
+      },
+      "up": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      },
+      "down": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      }
+     }
+    },
+    {
+     "name": "BundleMBow",
+     "from": [
+      16,
+      0,
+      5
+     ],
+     "to": [
+      32,
+      5,
+      11
+     ],
+     "faces": {
+      "north": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      },
+      "east": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        6,
+        5
+       ]
+      },
+      "south": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      },
+      "west": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        6,
+        5
+       ]
+      },
+      "up": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "down": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      }
+     }
+    },
+    {
+     "name": "BundleRBow",
+     "from": [
+      16,
+      0,
+      10
+     ],
+     "to": [
+      32,
+      6,
+      15
+     ],
+     "faces": {
+      "north": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "east": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        5,
+        6
+       ]
+      },
+      "south": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "west": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        5,
+        6
+       ]
+      },
+      "up": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      },
+      "down": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      }
+     }
+    },
+    {
+     "name": "TieBow",
+     "from": [
+      22,
+      -0.5,
+      0.5
+     ],
+     "to": [
+      24,
+      6.5,
+      15.5
+     ],
+     "faces": {
+      "north": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        2,
+        7.0
+       ]
+      },
+      "east": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        15.0,
+        7.0
+       ]
+      },
+      "south": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        2,
+        7.0
+       ]
+      },
+      "west": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        15.0,
+        7.0
+       ]
+      },
+      "up": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        2,
+        15.0
+       ]
+      },
+      "down": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        2,
+        15.0
+       ]
+      }
+     }
+    }
+   ],
+   "rotationOrigin": [
+    16,
+    0,
+    8
+   ],
+   "rotationZ": 18
+  },
+  {
+   "name": "Stern",
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    0,
+    0,
+    0
+   ],
+   "faces": {},
+   "children": [
+    {
+     "name": "BundleLStern",
+     "from": [
+      -16,
+      0,
+      1
+     ],
+     "to": [
+      0,
+      6,
+      6
+     ],
+     "faces": {
+      "north": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "east": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        5,
+        6
+       ]
+      },
+      "south": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "west": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        5,
+        6
+       ]
+      },
+      "up": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      },
+      "down": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      }
+     }
+    },
+    {
+     "name": "BundleMStern",
+     "from": [
+      -16,
+      0,
+      5
+     ],
+     "to": [
+      0,
+      5,
+      11
+     ],
+     "faces": {
+      "north": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      },
+      "east": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        6,
+        5
+       ]
+      },
+      "south": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      },
+      "west": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        6,
+        5
+       ]
+      },
+      "up": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "down": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      }
+     }
+    },
+    {
+     "name": "BundleRStern",
+     "from": [
+      -16,
+      0,
+      10
+     ],
+     "to": [
+      0,
+      6,
+      15
+     ],
+     "faces": {
+      "north": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "east": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        5,
+        6
+       ]
+      },
+      "south": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        6
+       ]
+      },
+      "west": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        5,
+        6
+       ]
+      },
+      "up": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      },
+      "down": {
+       "texture": "#reed",
+       "uv": [
+        0,
+        0,
+        16,
+        5
+       ]
+      }
+     }
+    },
+    {
+     "name": "TieStern",
+     "from": [
+      -8,
+      -0.5,
+      0.5
+     ],
+     "to": [
+      -6,
+      6.5,
+      15.5
+     ],
+     "faces": {
+      "north": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        2,
+        7.0
+       ]
+      },
+      "east": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        15.0,
+        7.0
+       ]
+      },
+      "south": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        2,
+        7.0
+       ]
+      },
+      "west": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        15.0,
+        7.0
+       ]
+      },
+      "up": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        2,
+        15.0
+       ]
+      },
+      "down": {
+       "texture": "#rope",
+       "uv": [
+        0,
+        0,
+        2,
+        15.0
+       ]
+      }
+     }
+    }
+   ],
+   "rotationOrigin": [
+    0,
+    0,
+    8
+   ],
+   "rotationZ": -18
+  },
+  {
+   "name": "Hull",
+   "from": [
+    -16,
+    0,
+    0
+   ],
+   "to": [
+    32,
+    10,
+    16
+   ],
+   "faces": {},
+   "attachmentpoints": [
+    {
+     "code": "HullAP",
+     "posX": "24.0",
+     "posY": "0",
+     "posZ": "8.0",
+     "rotationX": "0",
+     "rotationY": "0",
+     "rotationZ": "0"
+    }
+   ]
+  },
+  {
+   "name": "FrontSeat",
+   "from": [
+    -7,
+    5,
+    1
+   ],
+   "to": [
+    7,
+    12,
+    15
+   ],
+   "faces": {},
+   "attachmentpoints": [
+    {
+     "code": "FrontSeatAP",
+     "posX": "7",
+     "posY": "0",
+     "posZ": "7.0",
+     "rotationX": "0",
+     "rotationY": "0",
+     "rotationZ": "0"
+    }
+   ]
+  },
+  {
+   "name": "BackSeat",
+   "from": [
+    9,
+    5,
+    1
+   ],
+   "to": [
+    23,
+    12,
+    15
+   ],
+   "faces": {},
+   "attachmentpoints": [
+    {
+     "code": "BackSeatAP",
+     "posX": "7",
+     "posY": "0",
+     "posZ": "7.0",
+     "rotationX": "0",
+     "rotationY": "180",
+     "rotationZ": "0"
+    }
+   ]
+  }
+ ]
+}

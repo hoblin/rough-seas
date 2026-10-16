@@ -42,6 +42,8 @@ Stepped on already; don't step again.
 - Server physics runs on worker threads. `PhysicsUpdateWatcher` fires from them for a drifting entity and from the main thread for a steered one, so never touch the world from it: queue the event and act in `OnGameTick`.
 - A steered boat's `Pos.Motion` on the server is its intended speed (`EntityBoat` rewrites it from `ForwardSpeed`, which ignores collisions). The real speed comes from the rider's position packets. The server cannot hold a steered boat back either: an anchor or a leash can only follow it.
 - Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[storms\]\|\[vessels\]' "$BENCH_DATA/Logs/server-debug.log"`; every hit on a hull logs its cause and outcome). A new mechanic logs its decisions as it is written.
+- Vanilla's attachable behaviour finds an entity's wearable slot by its selection box's index, and a box past the last slot crashes the hover help. A box that holds nothing, such as a hull box, gets an empty slot (`"forCategoryCodes": []`) at its index.
+- `interactMountAnySeat` mounts a player who clicks any box that is not a seat with an empty hand: a sail cleat, a storage slot. To mount from a hull box, name it as the steering seat's `selectionBox`.
 
 **Vanilla at sea** (what 1.22.7 already has, and what we cannot change)
 - The sailboat carries a stone anchor (`anchor-stone`) in its prow slot. Right-click lowers and raises it (the `lowered` stack attribute); in vanilla that is only a shape. Our mooring gives it hold.
@@ -54,7 +56,6 @@ Stepped on already; don't step again.
 - After a teleport, `~` commands use the server's position, which the client's stale one overwrites for a few seconds. Wait until `state` shows the arrival.
 - `/bridge sea` fails in a world with no open sea in its generated regions; open another world.
 - Spectators don't pick: hover text and entity selection need creative or survival.
-- A raft's selection boxes are its seats only, so aiming at it by coordinates misses. Use `bin/game hover ID`.
 - Water tints everything under its surface; judge textures on dry land (`bin/scene slab`).
 - Clean up after each test with `bin/scene clear` instead of opening new worlds.
 - Launching an existing world with `--playStyle` crashed the client on reopen (#24); `bin/client` passes the preset only to new worlds. A crash on a stable build is ours until a vanilla run (`BENCH_MODS=`) reproduces it, and the log names the failing entity.

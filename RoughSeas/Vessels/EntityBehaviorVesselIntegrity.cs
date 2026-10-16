@@ -23,6 +23,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const double WreckageScatterSpeed = 0.3;
     private const int InvulnerableMs = 500;
     private const float BareHandDamage = 0.5f;
+    private const float HazardSeconds = 1;
+    private const double WearStepHours = 1;
+    private const double HoursPerDay = 24;
+    private const string WornAtKey = "wornAt";
+    private const string AfloatKey = "afloatHours";
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
     private static readonly AssetLocation MendSound = new("game:sounds/player/build");
     private static readonly string[] Conditions = ["sound", "scarred", "damaged", "breaking"];
@@ -38,6 +43,10 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private BlockDropItemStack[] wreckage = [];
     private HullCracks? cracks;
     private int shownStage;
+    private double wearPerDay;
+    private bool runsRapids;
+    private Rapids rapids = null!;
+    private float sinceHazards;
 
     public EntityBehaviorVesselIntegrity(Entity entity) : base(entity) { }
 
@@ -81,6 +90,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         damageConversion = vessels.DamageConversion;
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         sensor = new ImpactSensor(attributes["minImpactSpeed"].AsDouble(1));
+        wearPerDay = attributes["wearPerDay"].AsDouble(0);
+        runsRapids = attributes["runsRapids"].AsBool(false);
+        rapids = vessels.Rapids;
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])
             .Where(drop => drop.Resolve(entity.World, "vessel wreckage", entity.Code))
             .ToArray();
@@ -109,17 +121,30 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         double[] impacts;
         lock (impactLock)
         {
-            if (pendingImpacts.Count == 0) return;
             impacts = pendingImpacts.ToArray();
             pendingImpacts.Clear();
         }
 
-        double mass = Mass();
-        foreach (double speed in impacts)
+        if (impacts.Length > 0)
         {
-            vessels.Log(entity, "impact at {0:F1} m/s", speed);
-            Strike(0.5 * mass * speed * speed);
+            double mass = Mass();
+            foreach (double speed in impacts)
+            {
+                vessels.Log(entity, "impact at {0:F1} m/s", speed);
+                Strike(0.5 * mass * speed * speed);
+            }
         }
+
+        if ((sinceHazards += deltaTime) < HazardSeconds || !entity.Alive) return;
+
+        var fluid = entity.World.BlockAccessor.GetBlock(entity.Pos.AsBlockPos, BlockLayersAccess.Fluid);
+        Wear(fluid.IsLiquid());
+        if (!runsRapids && rapids.Holds(fluid))
+        {
+            vessels.Log(entity, "in rapids");
+            Strike(rapids.JoulesPerSecond * sinceHazards);
+        }
+        sinceHazards = 0;
     }
 
     /// <summary>
@@ -243,6 +268,29 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         }
     }
 
+    private void Wear(bool afloat)
+    {
+        if (wearPerDay == 0) return;
+
+        double now = entity.World.Calendar.TotalHours;
+        double last = Tree.GetDouble(WornAtKey, now);
+        Tree.SetDouble(WornAtKey, now);
+        if (!afloat) return;
+
+        double hours = Tree.GetDouble(AfloatKey) + now - last;
+        if (hours < WearStepHours)
+        {
+            Tree.SetDouble(AfloatKey, hours);
+            return;
+        }
+
+        Tree.SetDouble(AfloatKey, 0);
+        float before = Integrity;
+        Integrity = Math.Max(0, Integrity - (float)(wearPerDay * hours / HoursPerDay));
+        vessels.Log(entity, "wore {0:F1} h afloat: {1:F2} -> {2:F2}", hours, before, Integrity);
+        if (Integrity == 0) Break();
+    }
+
     private void Swing(EntityAgent byEntity, ItemSlot slot, Vec3d hitPosition)
     {
         if (entity.GetInterface<IMountable>()?.Controller == byEntity) return;
@@ -281,7 +329,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         slot.TakeOut(repair!.Material.StackSize);
         slot.MarkDirty();
         byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(repair.Saturation);
+        float before = Integrity;
         Integrity = Math.Min(1, Integrity + repair.Restores);
+        vessels.Log(entity, "mended by {0}: {1:F2} -> {2:F2}", byEntity.GetName(), before, Integrity);
         entity.World.PlaySoundAt(MendSound, entity, null, true, 16);
     }
 
@@ -303,6 +353,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
     private void Break()
     {
+        vessels.Log(entity, "broke up");
         var world = entity.World;
         var box = entity.SelectionBox;
         foreach (var drop in wreckage)

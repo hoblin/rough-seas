@@ -1,0 +1,109 @@
+[
+    {
+        "name": "Birch bark",
+        "ingredientPattern": "KL",
+        "ingredients": {
+            "K": { "type": "item", "tags": ["tool-knife"], "isTool": true },
+            "L": { "type": "block", "code": "game:log-placed-birch-ud", "returnedStack": { "type": "block", "code": "game:debarkedlog-birch-ud" } }
+        },
+        "width": 2,
+        "height": 1,
+        "shapeless": true,
+        "output": { "type": "item", "code": "roughseas:bark-birch", "quantity": 4 }
+    },
+    {
+        "name": "Reed boat",
+        "ingredientPattern": "RRR,RKR,RRR",
+        "ingredients": {
+            "R": { "type": "item", "code": "game:*", "allowedVariants": ["papyrustops", "cattailtops"], "quantity": 3 },
+            "K": { "type": "item", "tags": ["tool-knife"], "isTool": true }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "roughseas:reedboat" }
+    },
+    {
+        "name": "Dugout",
+        "ingredientPattern": "LAL,LLL",
+        "ingredients": {
+            "L": { "type": "block", "code": "game:log-placed-*-ud", "name": "wood", "skipVariants": ["aged", "veryaged", "rotten", "veryrotten"] },
+            "A": { "type": "item", "tags": ["tool-axe"], "isTool": true }
+        },
+        "width": 3,
+        "height": 2,
+        "output": { "type": "item", "code": "roughseas:dugout-{wood}" }
+    },
+    {
+        "name": "Dugout from redwood log sections",
+        "ingredientPattern": "LAL,LLL",
+        "ingredients": {
+            "L": { "type": "block", "code": "game:logsection-placed-redwood-ne-ud" },
+            "A": { "type": "item", "tags": ["tool-axe"], "isTool": true }
+        },
+        "width": 3,
+        "height": 2,
+        "output": { "type": "item", "code": "roughseas:dugout-redwood" }
+    },
+    {
+        "name": "Coracle",
+        "ingredientPattern": "SHS,SFS",
+        "ingredients": {
+            "S": { "type": "item", "code": "game:stick", "quantity": 2 },
+            "H": { "type": "item", "code": "game:hide-prepared-large" },
+            "F": { "type": "item", "code": "game:fat-rendered" }
+        },
+        "width": 3,
+        "height": 2,
+        "output": { "type": "item", "code": "roughseas:coracle" }
+    },
+    {
+        "name": "Birch-bark canoe",
+        "ingredientPattern": "BBB,SRS,BBB",
+        "ingredients": {
+            "B": { "type": "item", "code": "roughseas:bark-birch", "quantity": 2 },
+            "S": { "type": "item", "code": "game:stick" },
+            "R": { "type": "item", "code": "game:resin" }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "roughseas:barkcanoe" }
+    },
+    {
+        "name": "Hide currach",
+        "ingredientPattern": "PHP,HFH,PPP",
+        "ingredients": {
+            "P": { "type": "item", "code": "game:plank-*", "quantity": 2 },
+            "H": { "type": "item", "code": "game:hide-prepared-large" },
+            "F": { "type": "item", "code": "game:fat-rendered", "quantity": 2 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "roughseas:currach" }
+    },
+    {
+        "name": "Outrigger canoe",
+        "ingredientPattern": "RSR,LLL,PLP",
+        "ingredients": {
+            "R": { "type": "item", "code": "game:rope" },
+            "S": { "type": "item", "code": "game:sail" },
+            "L": { "type": "block", "code": "game:log-placed-*-ud", "name": "wood", "skipVariants": ["aged", "veryaged", "rotten", "veryrotten"] },
+            "P": { "type": "item", "code": "game:plank-*", "name": "wood", "quantity": 4, "skipVariants": ["aged", "veryaged", "rotten", "veryrotten"] }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "roughseas:outrigger-{wood}" }
+    },
+    {
+        "name": "Outrigger canoe from redwood log sections",
+        "ingredientPattern": "RSR,LLL,PLP",
+        "ingredients": {
+            "R": { "type": "item", "code": "game:rope" },
+            "S": { "type": "item", "code": "game:sail" },
+            "L": { "type": "block", "code": "game:logsection-placed-redwood-ne-ud" },
+            "P": { "type": "item", "code": "game:plank-redwood", "quantity": 4 }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "roughseas:outrigger-redwood" }
+    }
+]

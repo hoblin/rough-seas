@@ -43,11 +43,16 @@ START
   bin/ref              fetch Anego's sources and decompile the engine into ref/ (gitignored)
   bin/game wait        block until the world is loaded, then close the character-creation dialog
   The client runs unfocused and needs no input from the desktop; never send it real keys.
+  It picks what lies under the crosshair, as a focused one does, and bin/client hands the desktop
+  focus back to the window that had it once the game's window opens.
 
 LOOK
-  bin/game state             player pos, camera, swimming, vitals (health, oxygen, bodyTemp,
+  bin/game state             player pos, camera, swimming, flying, vitals (health, oxygen, bodyTemp,
                              wetness), hotbar, mount, what the camera points at, entities within
-                             16 blocks, open dialogs, paused
+                             16 blocks, open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
+                             what a swing is measured by: the picked selection box, the eye's
+                             distance to the entity's default box (vanilla's measure) and to
+                             the point hit (a vessel's), and the held item's range
   bin/game here              server side, at the player: sea level, oceanity (0 land, 255 sea),
                              fluid at feet and head, seabed height, season, temperature, rainfall,
                              wind vector, precipitation, wind/weather pattern, weather event
@@ -97,6 +102,7 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood
   /bridge mount ID           seat the player in an existing seatable entity
+  /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
   /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
                              e.g. the sailboat's sailPosition 0, 1, 2
   /bridge fly X Y Z          hover there in creative free flight, out of any seat: no post, no
@@ -113,8 +119,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              what the server does when the player left- or right-clicks entity
                              ID with the held item, wherever the player stands, with ctrl or shift
                              held; replies with its integrity if it is a vessel. The client sends
-                             no click, so use it where `click` cannot reach the entity. Shift
-                             pickup goes through the server's interact event, which this skips
+                             no click, so use it where `click` cannot reach the entity. With
+                             shift, a vessel that can be carried is picked up, as Shift + click does
   /bridge blast ID RADIUS [DISTANCE]
                              an explosion that injures entities within RADIUS and breaks no blocks,
                              DISTANCE blocks east of entity ID (default 0) and one above it

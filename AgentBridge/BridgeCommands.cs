@@ -67,6 +67,11 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Long("id"))
                 .HandleWith(args => Mount(args.Caller.Player, sapi.World.GetEntityById((long)args[0])))
             .EndSubCommand()
+            .BeginSubCommand("wear")
+                .WithDescription("Put an item into the caller's first empty backpack slot, where it is worn on the back")
+                .WithArgs(parsers.Word("item code"))
+                .HandleWith(args => Wear(args.Caller.Player, (string)args[0]))
+            .EndSubCommand()
             .BeginSubCommand("tie")
                 .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute")
                 .WithArgs(parsers.Long("id"), parsers.Int("x"), parsers.Int("y"), parsers.Int("z"))
@@ -240,6 +245,22 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"Seated in {target!.Code} {target.EntityId}, seat {seat.SeatId}");
     }
 
+    private TextCommandResult Wear(IPlayer player, string code)
+    {
+        var item = sapi.World.GetItem(new AssetLocation(code));
+        if (item == null) return TextCommandResult.Error($"No item {code}");
+
+        var slot = player.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName).FirstOrDefault(slot => slot is ItemSlotBackpack && slot.Empty);
+        if (slot == null) return TextCommandResult.Error("No empty backpack slot");
+
+        var stack = new ItemStack(item);
+        if (!slot.CanHold(new DummySlot(stack))) return TextCommandResult.Error($"{code} does not go in a backpack slot");
+
+        slot.Itemstack = stack;
+        slot.MarkDirty();
+        return TextCommandResult.Success($"Wearing {code}");
+    }
+
     private static TextCommandResult Strike(Entity? entity, double joules)
     {
         var hull = entity?.GetBehavior<EntityBehaviorVesselIntegrity>();
@@ -292,7 +313,10 @@ public class BridgeCommands : ModSystem
         controls.CtrlKey = modifier == "ctrl";
         controls.ShiftKey = modifier == "shift";
         var interactMode = mode == "attack" ? EnumInteractMode.Attack : EnumInteractMode.Interact;
-        entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);
+        if (interactMode == EnumInteractMode.Attack || entity.GetBehavior<EntityBehaviorVesselIntegrity>()?.TryPickUp(player.Entity) != true)
+        {
+            entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);
+        }
         controls.CtrlKey = controls.ShiftKey = false;
         var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
         return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: alive {entity.Alive}" + (hull == null ? "" : $", integrity {hull.Integrity}"));
