@@ -8,5 +8,8 @@
     "vessel-condition-scarred": "Hull: scarred",
     "vessel-condition-damaged": "Hull: damaged, taking strain",
     "vessel-condition-breaking": "Hull: breaking up",
-    "vessel-mend": "Mend the hull"
+    "vessel-mend": "Mend the hull",
+    "bilge-water": "Bilge: {0} of {1} litres",
+    "item-anchorwarp": "Anchor warp",
+    "itemdesc-anchorwarp": "Nine ropes spliced into 90 metres of warp. Stowed at a sailboat's mast, it lets the anchor reach deeper water."
 }

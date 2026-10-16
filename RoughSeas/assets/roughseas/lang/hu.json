@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Viharos tenger",
+    "game:playstyle-desc-preset-roughseas": "Normál túlélés nyílt óceánokkal rendelkező világban, ahol a szél, a viharok és a tenger veszélyesek.",
+    "game:worldconfig-category-roughseas": "Viharos tenger",
+    "game:worldattribute-dangerousOceans": "Veszélyes óceánok",
+    "game:worldattribute-dangerousOceans-desc": "A viharok, a parti hullámtörés és a hideg víz összetörik a hajókat és megölik az úszókat. Kikapcsolva a tenger megtartja időjárását, de nem okoz kárt.",
+    "vessel-condition-sound": "Hajótest: ép",
+    "vessel-condition-scarred": "Hajótest: viharvert",
+    "vessel-condition-damaged": "Hajótest: sérült, megterhelés alatt",
+    "vessel-condition-breaking": "Hajótest: széthullik",
+    "bilge-water": "Fenékvíz: {0} / {1} liter",
+    "item-anchorwarp": "Horgonykötél",
+    "itemdesc-anchorwarp": "Kilenc kötél 90 méteres horgonykötéllé fonva. A vitorláshajó árbocánál tárolva a horgony mélyebb vizet is elér."
+}

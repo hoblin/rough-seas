@@ -32,13 +32,40 @@ seed_settings() {
   mv "$settings.seed" "$settings"
 }
 
+place_window() {
+  command -v hyprctl >/dev/null || return 0
+  local previous
+  previous=$(hyprctl activewindow -j | jq -r 'select(.class != "Vintage Story") | .address // empty')
+  hyprctl eval "hl.workspace_rule({ workspace = \"$BENCH_WORKSPACE\", monitor = \"$BENCH_MONITOR\" })" >/dev/null
+  (
+    for _ in $(seq 120); do
+      sleep 0.5
+      local pids address
+      pids=$(pgrep -f -- "--dataPath $BENCH_DATA " | jq -s .)
+      address=$(hyprctl clients -j | jq -r --argjson pids "$pids" 'first(.[] | select(.pid as $pid | $pids | index($pid)) | .address) // empty')
+      [ -n "$address" ] || continue
+      hyprctl eval "hl.dispatch(hl.dsp.window.move({ workspace = \"$BENCH_WORKSPACE\", follow = false, window = \"address:$address\" }))" >/dev/null
+      [ -n "$previous" ] && hyprctl eval "hl.dispatch(hl.dsp.focus({ window = \"address:$previous\" }))" >/dev/null
+      exit
+    done
+  ) &
+}
+
+mute() {
+  local settings=$BENCH_DATA/clientsettings.json
+  jq '.intSettings.masterSoundLevel = 0' "$settings" > "$settings.muted"
+  mv -f "$settings.muted" "$settings"
+}
+
 cd "$root"
 dotnet build RoughSeas -v quiet -nologo
 dotnet build AgentBridge -v quiet -nologo
 seed_settings
 
 stop_session "$session" "$BENCH_DATA"
+mute
 require_free_port "$BENCH_BRIDGE_PORT" "agent bridge"
+place_window
 # $target goes first: the embedded server re-parses these arguments, does not know --openWorld,
 # and would take the world name as one more value of a preceding --addOrigin or --addModPath.
 tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \

@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Mer agitée",
+    "game:playstyle-desc-preset-roughseas": "Survie classique dans un monde aux océans ouverts, où le vent, les tempêtes et la mer sont dangereux.",
+    "game:worldconfig-category-roughseas": "Mer agitée",
+    "game:worldattribute-dangerousOceans": "Océans dangereux",
+    "game:worldattribute-dangerousOceans-desc": "Tempêtes, ressac et eau froide brisent les navires et tuent les nageurs. Désactivé, la mer garde sa météo mais ne fait aucun mal.",
+    "vessel-condition-sound": "Coque : saine",
+    "vessel-condition-scarred": "Coque : éprouvée",
+    "vessel-condition-damaged": "Coque : endommagée, elle fatigue",
+    "vessel-condition-breaking": "Coque : se disloque",
+    "bilge-water": "Cale : {0} sur {1} litres",
+    "item-anchorwarp": "Câblot d'ancre",
+    "itemdesc-anchorwarp": "Neuf cordes épissées en 90 mètres de câblot. Lové au mât d'un voilier, il permet à l'ancre d'atteindre des eaux plus profondes."
+}

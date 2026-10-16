@@ -1,0 +1,30 @@
+{
+    "code": "anchorwarp",
+    "attributes": {
+        "rodeMetres": 90,
+        "attachableToEntity": {
+            "categoryCode": "rope",
+            "attachedShape": { "base": "game:item/resource/rope" }
+        }
+    },
+    "shape": { "base": "game:item/resource/rope" },
+    "textures": { "rope": { "base": "game:item/resource/rope" } },
+    "creativeinventory": { "general": ["*"], "items": ["*"] },
+    "maxstacksize": 1,
+    "materialDensity": 510,
+    "guiTransform": {
+        "rotation": { "x": -32, "y": 36, "z": -180 },
+        "origin": { "x": 0.53, "y": 0.125, "z": 0.5 },
+        "scale": 2.6
+    },
+    "groundTransform": {
+        "origin": { "x": 0.5, "y": 0, "z": 0.5 },
+        "scale": 3.6
+    },
+    "tpHandTransform": {
+        "translation": { "x": -0.7, "y": -0.28, "z": -0.8 },
+        "rotation": { "x": -78, "y": 7, "z": 8 },
+        "origin": { "x": 0.5, "y": 0.125, "z": 0.5 },
+        "scale": 0.9
+    }
+}

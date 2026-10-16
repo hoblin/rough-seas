@@ -23,6 +23,7 @@ public class CurrentsConfig
     public double SeawaterFreezingCelsius;
     public int BasinReachBlocks;
     public double LandBelowOceanity;
+    public double StokesDriftPerMps;
 }
 
 public class BeaufortForce

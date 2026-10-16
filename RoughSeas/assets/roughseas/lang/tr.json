@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Hırçın deniz",
+    "game:playstyle-desc-preset-roughseas": "Açık okyanusları olan, rüzgârın, fırtınaların ve denizin tehlikeli olduğu bir dünyada standart hayatta kalma.",
+    "game:worldconfig-category-roughseas": "Hırçın deniz",
+    "game:worldattribute-dangerousOceans": "Tehlikeli okyanuslar",
+    "game:worldattribute-dangerousOceans-desc": "Fırtınalar, kıyı dalgaları ve soğuk su tekneleri parçalar ve yüzücüleri öldürür. Kapalıyken deniz havasını korur ama zarar vermez.",
+    "vessel-condition-sound": "Gövde: sağlam",
+    "vessel-condition-scarred": "Gövde: hırpalanmış",
+    "vessel-condition-damaged": "Gövde: hasarlı, zorlanıyor",
+    "vessel-condition-breaking": "Gövde: parçalanıyor",
+    "bilge-water": "Sintine: {0} / {1} litre",
+    "item-anchorwarp": "Çapa halatı",
+    "itemdesc-anchorwarp": "Dokuz halat birbirine eklenerek 90 metrelik çapa halatı yapılmış. Bir yelkenlinin direğine istiflendiğinde çapanın daha derin sulara ulaşmasını sağlar."
+}

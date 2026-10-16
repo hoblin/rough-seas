@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "驚濤駭浪",
+    "game:playstyle-desc-preset-roughseas": "在擁有開闊海洋的世界中進行標準生存，風、暴風雨與大海都很危險。",
+    "game:worldconfig-category-roughseas": "驚濤駭浪",
+    "game:worldattribute-dangerousOceans": "危險海洋",
+    "game:worldattribute-dangerousOceans-desc": "暴風雨、拍岸浪與冰冷的海水會毀壞船隻、奪走泳者的性命。關閉後，海上仍有天氣變化，但不會造成傷害。",
+    "vessel-condition-sound": "船體：完好",
+    "vessel-condition-scarred": "船體：傷痕累累",
+    "vessel-condition-damaged": "船體：受損，承受應力",
+    "vessel-condition-breaking": "船體：正在解體",
+    "bilge-water": "艙底水：{0} / {1} 公升",
+    "item-anchorwarp": "錨纜",
+    "itemdesc-anchorwarp": "九捆繩索編接成 90 公尺長的錨纜。存放在帆船的桅杆旁，可讓船錨觸及更深的水域。"
+}

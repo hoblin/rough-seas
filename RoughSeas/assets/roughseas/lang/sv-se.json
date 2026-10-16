@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Grov sjö",
+    "game:playstyle-desc-preset-roughseas": "Standardöverlevnad i en värld med öppna hav, där vind, stormar och havet är farliga.",
+    "game:worldconfig-category-roughseas": "Grov sjö",
+    "game:worldattribute-dangerousOceans": "Farliga hav",
+    "game:worldattribute-dangerousOceans-desc": "Stormar, bränningar och kallt vatten krossar fartyg och dödar simmare. Avstängt behåller havet sitt väder men gör ingen skada.",
+    "vessel-condition-sound": "Skrov: helt",
+    "vessel-condition-scarred": "Skrov: medfaret",
+    "vessel-condition-damaged": "Skrov: skadat, arbetar",
+    "vessel-condition-breaking": "Skrov: bryts sönder",
+    "bilge-water": "Länsvatten: {0} av {1} liter",
+    "item-anchorwarp": "Ankarlina",
+    "itemdesc-anchorwarp": "Nio rep splitsade till 90 meter lina. Stuvad vid masten på en segelbåt låter den ankaret nå djupare vatten."
+}

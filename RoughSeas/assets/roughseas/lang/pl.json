@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Wzburzone morze",
+    "game:playstyle-desc-preset-roughseas": "Zwykłe przetrwanie w świecie otwartych oceanów, gdzie wiatr, sztormy i morze są groźne.",
+    "game:worldconfig-category-roughseas": "Wzburzone morze",
+    "game:worldattribute-dangerousOceans": "Groźne oceany",
+    "game:worldattribute-dangerousOceans-desc": "Sztormy, przybój i zimna woda niszczą jednostki i zabijają pływaków. Wyłączone: morze zachowuje pogodę, ale nie szkodzi.",
+    "vessel-condition-sound": "Kadłub: cały",
+    "vessel-condition-scarred": "Kadłub: sfatygowany",
+    "vessel-condition-damaged": "Kadłub: uszkodzony, pracuje",
+    "vessel-condition-breaking": "Kadłub: rozpada się",
+    "bilge-water": "Zęza: {0} z {1} litrów",
+    "item-anchorwarp": "Lina kotwiczna",
+    "itemdesc-anchorwarp": "Dziewięć lin splecionych w 90 metrów. Złożona przy maszcie żaglówki pozwala kotwicy sięgnąć głębszej wody."
+}

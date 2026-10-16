@@ -5,7 +5,7 @@ using Vintagestory.API.Server;
 
 namespace RoughSeas.SeaAndWeather;
 
-public class TickBudget
+public class TickBudget(string system)
 {
     [ThreadStatic] private static int depth;
 
@@ -35,7 +35,7 @@ public class TickBudget
         var totalCalls = Interlocked.Read(ref calls);
         var spentMs = Milliseconds(total - spentAtReport);
         var seconds = (now - reportedAt) / (double)Stopwatch.Frequency;
-        var report = $"Over {seconds:0.0} s: {ticks} server ticks, {totalCalls - callsAtReport} calls, {spentMs:0.00} ms in sea and weather, "
+        var report = $"Over {seconds:0.0} s: {ticks} server ticks, {totalCalls - callsAtReport} calls, {spentMs:0.00} ms in {system}, "
             + $"{(ticks > 0 ? spentMs / ticks : 0):0.000} ms per tick, worst tick {Milliseconds(worstTick):0.000} ms";
         (spentAtReport, callsAtReport, reportedAt, ticks, worstTick) = (total, totalCalls, now, 0, 0);
         return report;

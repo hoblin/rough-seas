@@ -13,7 +13,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     private Lazy<SeaWeatherConfig> config = null!;
     private VanillaWeather vanilla = null!;
 
-    public TickBudget Budget { get; } = new();
+    public TickBudget Budget { get; } = new("sea and weather");
 
     /// <summary>After vanilla's weather systems (0.1), before the Devastation's effects (2).</summary>
     public override double ExecuteOrder() => 1;
@@ -56,6 +56,8 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     public SeaState At(double x, double z, double totalHours) => model.Value.At(x, z, totalHours, Oceanity(x, z));
 
     public SeaCurrent CurrentAt(double x, double z) => model.Value.Current(x, z);
+
+    public bool IsSea(double x, double z) => model.Value.IsSea(x, z);
 
     public IEnumerable<Storm> StormsWithin(double x, double z, double range) => model.Value.Storms.Active(x, z, NowHours, range);
 

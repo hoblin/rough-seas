@@ -1,0 +1,14 @@
+{
+    "game:playstyle-preset-roughseas": "Узбуркано море",
+    "game:playstyle-desc-preset-roughseas": "Нормално преживљавање у свету отворених океана, где су ветар, олује и море опасни.",
+    "game:worldconfig-category-roughseas": "Узбуркано море",
+    "game:worldattribute-dangerousOceans": "Опасни океани",
+    "game:worldattribute-dangerousOceans-desc": "Олује, бибавица и хладна вода ломе пловила и убијају пливаче. Искључено, море задржава своје време, али не наноси штету.",
+    "vessel-condition-sound": "Труп: читав",
+    "vessel-condition-scarred": "Труп: изгребан",
+    "vessel-condition-damaged": "Труп: оштећен, под напрезањем",
+    "vessel-condition-breaking": "Труп: распада се",
+    "bilge-water": "Каљужа: {0} од {1} литара",
+    "item-anchorwarp": "Сидрено уже",
+    "itemdesc-anchorwarp": "Девет ужади спојених у 90 метара ужета. Спремљено уз јарбол једрилице, омогућава сидру да досегне дубљу воду."
+}

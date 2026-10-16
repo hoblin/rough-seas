@@ -27,6 +27,18 @@ public class MaterialTableTests
         Assert.Equal(1, table.StrengthFactor([Part("wood-modded", "wood-oak")]));
     }
 
+    [Fact]
+    public void GivesARopesBreakingLoad()
+    {
+        Assert.Equal(11, table.BreakingKilonewtons("rope-flax"));
+    }
+
+    [Fact]
+    public void CountsARopeItDoesNotKnowAsUnbreakable()
+    {
+        Assert.Equal(double.PositiveInfinity, table.BreakingKilonewtons("rope-modded"));
+    }
+
     private static VesselPart Part(string material, string reference) => new() { Material = material, Reference = reference };
 
     private class SilentLogger : LoggerBase

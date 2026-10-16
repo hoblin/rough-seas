@@ -1,0 +1,20 @@
+[
+    {
+        "ingredientPattern": "RRR,RRR,RRR",
+        "ingredients": {
+            "R": { "type": "item", "code": "game:rope" }
+        },
+        "width": 3,
+        "height": 3,
+        "output": { "type": "item", "code": "roughseas:anchorwarp" }
+    },
+    {
+        "ingredientPattern": "W",
+        "ingredients": {
+            "W": { "type": "item", "code": "roughseas:anchorwarp" }
+        },
+        "width": 1,
+        "height": 1,
+        "output": { "type": "item", "code": "game:rope", "quantity": 9 }
+    }
+]
