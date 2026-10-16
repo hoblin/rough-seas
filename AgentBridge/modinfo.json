@@ -1,0 +1,17 @@
+{
+    "$schema": "https://moddbcdn.vintagestory.at/schema/modinfo.latest.json",
+    "type": "Code",
+    "modid": "agentbridge",
+    "name": "Agent Bridge",
+    "authors": [
+        "hoblin"
+    ],
+    "description": "Development only: lets an agent drive the running client over HTTP on localhost.",
+    "version": "0.1.0",
+    "side": "Universal",
+    "requiredOnClient": false,
+    "requiredOnServer": false,
+    "dependencies": {
+        "game": "1.22.7"
+    }
+}

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root=$(cd "$(dirname "$0")/.." && pwd)
+mkdir -p "$root/ref"
+cd "$root/ref"
+
+for repo in vsapi vssurvivalmod vsessentialsmod; do
+  if [ -d "$repo" ]; then
+    git -C "$repo" pull -q
+  else
+    git clone -q "https://github.com/anegostudios/$repo"
+  fi
+  git -C "$repo" log -1 --format="$repo: %s"
+done
+
+vs=$(mise exec -- printenv VINTAGE_STORY)
+if [ ! -d decompiled/VintagestoryLib ]; then
+  mise exec -- dotnet ilspycmd -p -o decompiled/VintagestoryLib "$vs/VintagestoryLib.dll"
+fi
+echo "Sources in $root/ref"
