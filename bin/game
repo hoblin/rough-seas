@@ -114,6 +114,8 @@ ACT
                              W,A,S,D, Space, ShiftLeft, ControlLeft, Q, E, R, F, Number1 ...
                              Mounted, W/S row or sail and A/D steer.
   bin/game click [BUTTON] [MS]  hold left, right (default) or middle on what the camera points at
+  bin/game scroll [STEPS]    turn the mouse wheel STEPS notches (default 1) over the open dialogs,
+                             down; negative scrolls up. A long handbook page shows its end this way
   bin/game close             close open dialogs
   bin/game link HREF         follow a link as a click in the game's text does: handbook://PAGECODE
                              opens a handbook page (handbook://tab-guide a tab), handbooksearch://TEXT
@@ -264,6 +266,7 @@ case "${1:-}" in
   press) post "/input?keys=$2&ms=${3:-100}" ;;
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
   hotkey) post "/hotkey?code=${2:-}" ;;
+  scroll) post "/scroll?steps=${2:-1}" ;;
   close) post /close-dialogs ;;
   link) post "/link?href=$(jq -rn --arg href "$2" '$href | @uri')" ;;
   leave) post /leave ;;
