@@ -105,7 +105,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var reach = Tree.GetDouble("reach", Unmoored);
         if (lastSeen >= 0 && reach >= 0 && sea.NowHours - lastSeen >= storms.Config.Ashore.MinHours)
         {
-            ashore = new AshoreRoll(storms, sea, entity, lastSeen, reach);
+            ashore = new AshoreRoll(storms, sea, entity, Tree.GetDouble("pointX"), Tree.GetDouble("pointZ"), lastSeen, reach);
             ashoreIn = (float)storms.Config.Ashore.RollDelaySeconds;
         }
     }
@@ -128,12 +128,24 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             sinceUpdate = 0;
             if (ashoreIn > 0) return;
 
-            ashore.Roll(forces, entity.GetBehavior<EntityBehaviorVesselIntegrity>());
+            if (sea.DangerousOceans) ashore.Roll(forces, entity.GetBehavior<EntityBehaviorVesselIntegrity>());
             ashore = null;
         }
         sinceUpdate = 0;
         Tree.SetDouble("lastSeenHours", sea.NowHours);
-        Tree.SetDouble("reach", Anchor is { } anchor ? anchor.Reach(Depth(anchor)) : StakeRope() != null ? storms.Config.Mooring.StakeReachMetres : Unmoored);
+        RecordMooring();
+    }
+
+    private void RecordMooring()
+    {
+        var (x, z, reach) = Anchor is { } anchor
+            ? (anchor.X, anchor.Z, anchor.Reach(Depth(anchor)))
+            : StakeRope() is { } rope && Stake(rope) is { } stake
+                ? (stake.X + 0.5, stake.Z + 0.5, storms.Config.Mooring.StakeReachMetres)
+                : (0, 0, Unmoored);
+        Tree.SetDouble("pointX", x);
+        Tree.SetDouble("pointZ", z);
+        Tree.SetDouble("reach", reach);
     }
 
     private void Strain(SeaState state)
@@ -155,10 +167,15 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             storms.Log(entity, "anchor weighed");
             return;
         }
-        if (Anchor != null || !entity.FeetInLiquid) return;
-
         var attributes = stack.Collectible.Attributes;
         var aboard = attributes["rodeMetres"].AsDouble() + SpareRodeMetres();
+        if (Anchor is { } down)
+        {
+            if (aboard < down.RodeMetres) Shorten(down, aboard);
+            return;
+        }
+        if (!entity.FeetInLiquid) return;
+
         var depth = forces!.WaterDepth((int)Math.Ceiling(aboard) + 1);
         var pos = entity.Pos;
         var fullScope = storms.Config.Mooring.AnchorFullScope;
@@ -175,6 +192,21 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         Anchor = anchor;
         storms.Log(entity, "anchor down in {0:F0} m, paid out {1:F0} of {2:F0} m, holds {3:F0} N",
             depth, anchor.Value.RodeMetres, aboard, anchor.Value.Holding(depth, fullScope));
+    }
+
+    private void Shorten(Anchor anchor, double aboard)
+    {
+        var depth = Depth(anchor);
+        if (depth > aboard)
+        {
+            Anchor = null;
+            hanging = true;
+            storms.Log(entity, "rode taken in to {0:F0} m: the anchor no longer reaches the bottom {1:F0} m down", aboard, depth);
+            return;
+        }
+
+        Anchor = anchor with { RodeMetres = aboard };
+        storms.Log(entity, "rode taken in to {0:F0} m, holds {1:F0} N", aboard, Anchor.Value.Holding(depth, storms.Config.Mooring.AnchorFullScope));
     }
 
     private ItemSlot? AnchorSlot() =>

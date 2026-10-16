@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Vintagestory.API.Client;
 
@@ -11,6 +12,7 @@ public sealed class FrameTimer : IRenderer
 {
     private readonly ICoreClientAPI capi;
     private readonly object framesLock = new();
+    private readonly SemaphoreSlim oneAtATime = new(1, 1);
     private List<float>? frames;
 
     public FrameTimer(ICoreClientAPI capi)
@@ -25,13 +27,21 @@ public sealed class FrameTimer : IRenderer
 
     public async Task<string> Measure(double seconds)
     {
-        lock (framesLock) frames = [];
-        await Task.Delay(TimeSpan.FromSeconds(seconds));
         float[] measured;
-        lock (framesLock)
+        await oneAtATime.WaitAsync();
+        try
         {
-            measured = frames!.ToArray();
-            frames = null;
+            lock (framesLock) frames = [];
+            await Task.Delay(TimeSpan.FromSeconds(seconds));
+            lock (framesLock)
+            {
+                measured = frames!.ToArray();
+                frames = null;
+            }
+        }
+        finally
+        {
+            oneAtATime.Release();
         }
         if (measured.Length == 0) return "{\"frames\":0}\n";
 

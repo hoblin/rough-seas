@@ -14,18 +14,21 @@ public sealed class AshoreRoll
     private readonly StormsModSystem storms;
     private readonly ISeaWeather sea;
     private readonly Entity vessel;
+    private readonly double mooredX, mooredZ;
     private readonly double reach;
     private readonly double slept;
     private readonly double hoursPerSample;
     private readonly List<double> heights = [];
     private readonly int searchBlocks;
 
-    public AshoreRoll(StormsModSystem storms, ISeaWeather sea, Entity vessel, double sleptSince, double reach)
+    public AshoreRoll(StormsModSystem storms, ISeaWeather sea, Entity vessel, double mooredX, double mooredZ, double sleptSince, double reach)
     {
         using var _ = storms.Budget.Measure();
         this.storms = storms;
         this.sea = sea;
         this.vessel = vessel;
+        this.mooredX = mooredX;
+        this.mooredZ = mooredZ;
         this.reach = reach;
         slept = sea.NowHours - sleptSince;
         hoursPerSample = Math.Max(1, slept / Config.MaxSamples);
@@ -60,13 +63,14 @@ public sealed class AshoreRoll
 
     private double ShoreDistance()
     {
-        var centre = vessel.Pos.AsBlockPos;
-        var probe = new BlockPos(centre.dimension);
+        var surface = vessel.Pos.AsBlockPos;
+        var probe = new BlockPos(surface.dimension);
+        var (centreX, centreZ) = ((int)Math.Floor(mooredX), (int)Math.Floor(mooredZ));
         for (var radius = 0; radius <= searchBlocks; radius++)
         {
             foreach (var (dx, dz) in Ring(radius))
             {
-                probe.Set(centre.X + dx, centre.Y, centre.Z + dz);
+                probe.Set(centreX + dx, surface.Y, centreZ + dz);
                 if (Land(probe)) return radius;
             }
         }
