@@ -1,0 +1,15 @@
+name: Setup
+description: .NET SDK and the Vintage Story server the mod builds against, at the game version modinfo.json depends on.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      with:
+        dotnet-version: 10.0.x
+    - shell: bash
+      run: |
+        game=$(jq -r .dependencies.game RoughSeas/modinfo.json)
+        mkdir -p "$RUNNER_TEMP/vintagestory"
+        curl -fsSL "https://cdn.vintagestory.at/gamefiles/stable/vs_server_linux-x64_$game.tar.gz" | tar xz -C "$RUNNER_TEMP/vintagestory"
+        echo "VINTAGE_STORY=$RUNNER_TEMP/vintagestory" >> "$GITHUB_ENV"

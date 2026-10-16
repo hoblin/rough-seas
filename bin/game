@@ -11,7 +11,8 @@ Rough Seas test bench: run the mod in Vintage Story 1.22.7 and drive it from the
 THIS CLONE ($root)
   Bench name $BENCH: tmux sessions $BENCH-client and $BENCH-server
   Game data  $BENCH_DATA (dedicated server: .../server)
-  Logs       Logs/client-main.log and server/Logs/server-main.log in the game data
+  Logs       Logs/client-main.log and server/Logs/server-main.log in the game data. When loading
+             an entity throws, AgentBridge logs which one first: grep "Entity failed to load".
   Ports      agent bridge $BENCH_BRIDGE_PORT, dedicated server $BENCH_SERVER_PORT
   Each clone of the repository runs its own bench. Name, data folder and temp folder follow the
   clone's directory name; the ports do not, so every clone but one needs its own, set in its
@@ -28,6 +29,8 @@ START
   bin/client [WORLD]   build both mods, (re)start this clone's client in tmux.
                        Opens singleplayer world WORLD (default "sea"); a new world is made with the
                        AgentBridge preset: creative, standard worldgen, 70% ocean. Takes ~30 s.
+                       An existing world is reopened without the preset: re-applying it crashes
+                       the client on some worlds (#24).
                        BENCH_MODS picks the mods loaded (default "roughseas agentbridge"):
                        BENCH_MODS=agentbridge, or BENCH_MODS= for vanilla, to tell our crash from
                        the game's. Without agentbridge, bin/game cannot drive it; read the log.
@@ -75,6 +78,8 @@ ACT
                              a wrong BOX lists the entity's boxes.
                              Use it instead of aiming by coordinates at small selection boxes.
                              The HUD part needs creative or survival: spectators do not pick.
+  bin/game hover X Y Z       the same for the top face of the block at absolute X Y Z (as `state`
+                             prints them), water included: a held raft or block is placed on it.
   bin/game slot N            select hotbar slot N (0-9)
   bin/game press KEYS [MS]   hold keys for MS ms (default 100). GlKeys names, comma-separated:
                              W,A,S,D, Space, ShiftLeft, ControlLeft, Q, E, R, F, Number1 ...
@@ -98,6 +103,15 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge ropes ID           where each rope tied to entity ID is pinned: a block, an entity, or loose
   /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with
                              its integrity (watched "roughseas:vessel"), 0 breaks it into wreckage
+  /bridge interact ID attack|interact [ctrl|shift]
+                             what the server does when the player left- or right-clicks entity
+                             ID with the held item, wherever the player stands, with ctrl or shift
+                             held; replies with its integrity if it is a vessel. The client sends
+                             no click, so use it where `click` cannot reach the entity. Shift
+                             pickup goes through the server's interact event, which this skips
+  /bridge blast ID RADIUS [DISTANCE]
+                             an explosion that injures entities within RADIUS and breaks no blocks,
+                             DISTANCE blocks east of entity ID (default 0) and one above it
   /bridge here, /bridge entity ID   what `here` and `entity` call
 
 RECIPES
@@ -161,7 +175,9 @@ case "${1:-}" in
   fps) post "/fps?seconds=${2:-5}" ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
   aim) post "/look?entity=$2" ;;
-  hover) post "/hover?entity=${2:-}&box=${3:-}" ;;
+  hover)
+    if [ $# -ge 4 ]; then post "/hover?block=$2,$3,$4"; else post "/hover?entity=${2:-}&box=${3:-}"; fi
+    ;;
   slot) post "/look?slot=$2" ;;
   press) post "/input?keys=$2&ms=${3:-100}" ;;
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;

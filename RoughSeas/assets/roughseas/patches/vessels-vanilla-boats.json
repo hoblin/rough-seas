@@ -1,4 +1,6 @@
 [
+    { "op": "replace", "file": "game:itemtypes/utility/boat.json", "path": "/class", "side": "Server", "value": "roughseas:ItemVessel" },
+    { "op": "add", "file": "game:itemtypes/utility/boat.json", "path": "/durability", "side": "Server", "value": 100 },
     {
         "op": "add",
         "file": "game:entities/nonliving/boat-raft.json",
@@ -14,6 +16,10 @@
                 { "material": "wood-{material}", "reference": "wood-oak" },
                 { "material": "rope-flax", "reference": "rope-flax" }
             ],
+            "repairByType": {
+                "boat-raft-bamboo": { "material": { "type": "item", "code": "bamboostakes", "stacksize": 3 }, "restores": 0.34, "saturation": 60 },
+                "boat-raft-*": { "material": { "type": "block", "code": "log-placed-{material}-ud", "stacksize": 1 }, "restores": 0.17, "saturation": 60 }
+            },
             "wreckageByType": {
                 "boat-raft-bamboo": [
                     { "type": "item", "code": "bamboostakes", "quantity": { "avg": 4, "var": 2 } },
@@ -26,8 +32,8 @@
             }
         }
     },
-    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "vesselintegrity" } },
-    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "vesselintegrity" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/0", "side": "Server", "value": { "code": "vesselintegrity" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/0", "side": "Server", "value": { "code": "vesselintegrity" } },
     {
         "op": "add",
         "file": "game:entities/nonliving/boat-sailed.json",
@@ -42,6 +48,7 @@
             "parts": [
                 { "material": "wood-{material}", "reference": "wood-oak" }
             ],
+            "repair": { "material": { "type": "item", "code": "plank-{material}", "stacksize": 10 }, "restores": 0.067, "saturation": 80 },
             "wreckage": [
                 { "type": "item", "code": "plank-{material}", "quantity": { "avg": 40, "var": 15 } },
                 { "type": "block", "code": "supportbeam-{material}", "quantity": { "avg": 6, "var": 3 } },
@@ -50,6 +57,6 @@
             ]
         }
     },
-    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "vesselintegrity" } },
-    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "vesselintegrity" } }
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/0", "side": "Server", "value": { "code": "vesselintegrity" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/0", "side": "Server", "value": { "code": "vesselintegrity" } }
 ]
