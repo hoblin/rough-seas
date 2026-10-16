@@ -174,8 +174,14 @@ public class AgentBridgeModSystem : ModSystem
         var hold = int.TryParse(request.QueryString["ms"], out var ms) ? ms : 100;
 
         await OnMainThread(() => Press(keys, mouse, true));
-        await Task.Delay(hold);
-        await OnMainThread(() => Press(keys, mouse, false));
+        try
+        {
+            await Task.Delay(hold);
+        }
+        finally
+        {
+            await OnMainThread(() => Press(keys, mouse, false));
+        }
         return await OnMainThread(State);
     }
 
