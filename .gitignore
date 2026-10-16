@@ -1,5 +1,6 @@
 /thoughts/
 /ref/
+/.blender/
 /mise.local.toml
 */bin/
 */obj/
@@ -9,3 +10,4 @@
 *.user
 /.claude/
 /skills-lock.json
+__pycache__/

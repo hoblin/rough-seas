@@ -54,6 +54,7 @@ START
                        stopped first) and return once it runs; its console takes commands the
                        same way
   bin/ref              fetch Anego's sources and decompile the engine into ref/ (gitignored)
+  bin/model            edit, preview and check shapes in Blender, headless; bin/model help
   bin/game wait [S]    block until the world is loaded and the server answers, closing the
                        character-creation dialog; fails after S seconds (default 180).
                        bin/client already does it.

@@ -1,4 +1,5 @@
 [tools]
+blender = "4.5.14"
 dotnet = "10"
 node = "24.22.0"
 
