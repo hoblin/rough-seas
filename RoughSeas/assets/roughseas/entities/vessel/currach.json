@@ -80,7 +80,8 @@
                     "attachmentPointCode": "BackSeatAP",
                     "stepParentTo": {"": {"elementName": "BackSeat"}},
                     "emptyInteractPassThrough": true
-                }
+                },
+                {"code": "HullAP", "forCategoryCodes": []}
             ]
         }
     },

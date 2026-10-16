@@ -12,6 +12,7 @@
         "value": { "name": "Hull", "from": [-24, 0, -5], "to": [43, 9, 21], "faces": {}, "attachmentpoints": [{ "code": "HullAP", "posX": "33.5", "posY": "0", "posZ": "13", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }] }
     },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/behaviorConfigs/selectionboxes/selectionBoxes/-", "side": "Server", "value": "HullAP" },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/-", "side": "Server", "value": { "code": "Hull", "forCategoryCodes": [] } },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/behaviorConfigs/creaturecarrier/interactMountAnySeat", "side": "Server", "value": true },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/behaviorConfigs/creaturecarrier/seats/0/selectionBox", "side": "Server", "value": "HullAP" },
     {
@@ -21,6 +22,7 @@
         "value": { "name": "Hull", "from": [-85, -13, -19], "to": [51, 29, 32], "faces": {}, "attachmentpoints": [{ "code": "HullAP", "posX": "68", "posY": "0", "posZ": "25.5", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }] }
     },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/selectionboxes/selectionBoxes/-", "side": "Server", "value": "HullAP" },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/-", "side": "Server", "value": { "code": "Hull", "forCategoryCodes": [] } },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/creaturecarrier/interactMountAnySeat", "side": "Server", "value": true },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/creaturecarrier/seats/1/selectionBox", "side": "Server", "value": "HullAP" }
 ]

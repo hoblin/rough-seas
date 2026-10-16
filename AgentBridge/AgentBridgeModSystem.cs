@@ -25,6 +25,7 @@ public class AgentBridgeModSystem : ModSystem
     private ICoreClientAPI capi = null!;
     private ScreenshotCapture screenshots = null!;
     private HoverOverride hover = null!;
+    private CrosshairPicking crosshair = null!;
     private EntityLoadBlackBox blackBox = null!;
     private readonly HttpListener listener = new();
 
@@ -35,6 +36,7 @@ public class AgentBridgeModSystem : ModSystem
         capi = api;
         screenshots = new ScreenshotCapture(api);
         hover = new HoverOverride(api);
+        crosshair = new CrosshairPicking();
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         listener.Prefixes.Add(Prefix);
         listener.Start();
@@ -47,6 +49,7 @@ public class AgentBridgeModSystem : ModSystem
         listener.Close();
         screenshots?.Dispose();
         hover?.Dispose();
+        crosshair?.Dispose();
         blackBox?.Dispose();
     }
 
@@ -145,6 +148,7 @@ public class AgentBridgeModSystem : ModSystem
             mountedOn = mount == null ? null : new { mount.EntityId, code = mount.Code.ToString() },
             lookingAt = capi.World.Player.CurrentEntitySelection?.Entity.Code.ToString()
                 ?? capi.World.Player.CurrentBlockSelection?.Block?.Code.ToString(),
+            pickingRange = capi.World.Player.WorldData.PickingRange,
             reach = Reach(),
             nearby = capi.World.GetEntitiesAround(entity.Pos.XYZ, 16, 16, other => other != entity)
                 .Select(other => new { other.EntityId, code = other.Code.ToString(), other.Pos.X, other.Pos.Y, other.Pos.Z }),
@@ -163,10 +167,11 @@ public class AgentBridgeModSystem : ModSystem
         var target = selection.Entity;
         var stack = player.InventoryManager.ActiveHotbarSlot?.Itemstack;
         var eye = entity.Pos.XYZ.Add(entity.LocalEyePos);
-        double distance = target.SelectionBox.ToDouble().Translate(target.Pos.X, target.Pos.Y, target.Pos.Z)
+        double toBox = target.SelectionBox.ToDouble().Translate(target.Pos.X, target.Pos.Y, target.Pos.Z)
             .ShortestDistanceFrom(eye.X, eye.Y, eye.Z);
+        double toHit = target.Pos.XYZ.Add(selection.HitPosition).DistanceTo(eye);
         float range = stack?.Collectible.GetAttackRange(stack) ?? GlobalConstants.DefaultAttackRange;
-        return new { selection.SelectionBoxIndex, distance = Math.Round(distance, 2), range, hits = distance <= range };
+        return new { selection.SelectionBoxIndex, toBox = Math.Round(toBox, 2), toHit = Math.Round(toHit, 2), range };
     }
 
     private string Look(HttpListenerRequest request)

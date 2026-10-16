@@ -39,9 +39,9 @@ public static class HullReach
         {
             if (attached++ > 0) return;
             harmony = new Harmony(HarmonyId);
-            foreach (var check in RangeChecks)
+            foreach (var check in RangeChecks.SelectMany(Overloads))
             {
-                harmony.Patch(AccessTools.Method(check), transpiler: new HarmonyMethod(typeof(HullReach), nameof(MeasureToHull)));
+                harmony.Patch(check, transpiler: new HarmonyMethod(typeof(HullReach), nameof(MeasureToHull)));
             }
         }
     }
@@ -74,6 +74,12 @@ public static class HullReach
         }
 
         return Bounds(entity, hull.selectionBoxes);
+    }
+
+    private static IEnumerable<MethodInfo> Overloads(string check)
+    {
+        var typeAndName = check.Split(':');
+        return AccessTools.GetDeclaredMethods(AccessTools.TypeByName(typeAndName[0])).Where(method => method.Name == typeAndName[1]);
     }
 
     private static IEnumerable<CodeInstruction> MeasureToHull(IEnumerable<CodeInstruction> instructions) =>

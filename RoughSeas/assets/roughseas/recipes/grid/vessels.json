@@ -26,7 +26,7 @@
         "name": "Dugout",
         "ingredientPattern": "LAL,LLL",
         "ingredients": {
-            "L": { "type": "block", "code": "game:log-placed-*-ud", "name": "wood" },
+            "L": { "type": "block", "code": "game:log-placed-*-ud", "name": "wood", "skipVariants": ["aged", "veryaged", "rotten", "veryrotten"] },
             "A": { "type": "item", "tags": ["tool-axe"], "isTool": true }
         },
         "width": 3,
@@ -75,8 +75,8 @@
         "ingredients": {
             "R": { "type": "item", "code": "game:rope" },
             "S": { "type": "item", "code": "game:sail" },
-            "L": { "type": "block", "code": "game:log-placed-*-ud", "name": "wood" },
-            "P": { "type": "item", "code": "game:plank-*", "name": "wood", "quantity": 4 }
+            "L": { "type": "block", "code": "game:log-placed-*-ud", "name": "wood", "skipVariants": ["aged", "veryaged", "rotten", "veryrotten"] },
+            "P": { "type": "item", "code": "game:plank-*", "name": "wood", "quantity": 4, "skipVariants": ["aged", "veryaged", "rotten", "veryrotten"] }
         },
         "width": 3,
         "height": 3,

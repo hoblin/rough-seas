@@ -73,7 +73,9 @@
                     "attachmentPointCode": "FrontSeatAP",
                     "stepParentTo": {"": {"elementName": "FrontSeat"}},
                     "emptyInteractPassThrough": true
-                }
+                },
+                {"code": "BackSeatAP", "forCategoryCodes": []},
+                {"code": "HullAP", "forCategoryCodes": []}
             ]
         }
     },
