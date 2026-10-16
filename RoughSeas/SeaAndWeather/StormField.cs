@@ -18,10 +18,11 @@ public class StormField
     private readonly WorldClimate climate;
     private readonly PrevailingWinds prevailing;
     private readonly double hoursPerYear;
-    private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ, long Slot), Storm?> born = new();
-    private readonly ConcurrentDictionary<(int TileX, int TileZ, long Hour), Storm[]> nearTile = new();
-    private readonly ConcurrentDictionary<(int TileX, int TileZ, long Window), Storm[]> windowTile = new();
-    private readonly ConcurrentDictionary<(int AreaX, int AreaZ, long Window), Storm[]> windowArea = new();
+    // A fixed lock count keeps Count, checked on every miss, cheap: by default the locks grow with the table and Count takes them all.
+    private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ, long Slot), Storm?> born = new(Environment.ProcessorCount, 0);
+    private readonly ConcurrentDictionary<(int TileX, int TileZ, long Hour), Storm[]> nearTile = new(Environment.ProcessorCount, 0);
+    private readonly ConcurrentDictionary<(int TileX, int TileZ, long Window), Storm[]> windowTile = new(Environment.ProcessorCount, 0);
+    private readonly ConcurrentDictionary<(int AreaX, int AreaZ, long Window), Storm[]> windowArea = new(Environment.ProcessorCount, 0);
 
     public StormField(long seed, SeaWeatherConfig config, WorldClimate climate, PrevailingWinds prevailing, double hoursPerYear)
     {
