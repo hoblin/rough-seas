@@ -107,17 +107,19 @@
     "client": {
         "size": 1,
         "renderer": "Shape",
-        "shape": {"base": "roughseas:entity/vessel/outrigger"},
+        "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater"]},
         "textures": {
             "bark": {"base": "game:block/wood/bark/{wood}-h"},
             "inside": {"base": "game:block/wood/debarked/{wood}"},
-            "sail": {"base": "game:block/cloth/linen/plain"}
+            "sail": {"base": "game:block/cloth/linen/plain"},
+            "lashing": {"base": "game:item/resource/rope"}
         },
         "behaviors": [
             {"code": "vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
+            {"code": "hidewatersurface", "hideWaterElement": "hideWater/*"},
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},

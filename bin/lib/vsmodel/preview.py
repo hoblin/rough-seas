@@ -19,6 +19,8 @@ def render_views(out):
 def stage():
     shape = json.loads(bpy.context.scene["vs_shape"])
     hidden = {each["name"] for element in walk(shape["elements"]) if element.get("renderInEditor") is False for each in walk([element])}
+    hidden |= {element["name"] for element in walk(shape["elements"])
+               if element.get("faces") and all(face.get("texture") == "#null" for face in element["faces"].values())}
     for obj in bpy.data.objects:
         if obj.type == "MESH":
             obj.hide_render = obj.name in hidden

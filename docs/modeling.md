@@ -2,6 +2,16 @@
 
 Read before changing a shape, with `bin/model help`. Shapes are edited in Blender 4.5, headless, through the `phonon/blender-vintagestory-json` add-on. `bin/model` installs the add-on at a pinned commit into the gitignored `.blender/`, applies `bin/lib/vsmodel/addon.patch`, and runs Blender with no window. After changing anything under `bin/lib/vsmodel`, run `bin/model test`.
 
+## Our vessels are built by code
+
+A hull of a few hundred tilted boards is no shape to place by hand, so each vessel of ours has a builder in `bin/lib/hulls/` (Python, no Blender), and `bin/model build [VESSEL...]` writes its shape JSON from it. The builder is the source: change the vessel there and rebuild; an edit made to the JSON alone is lost on the next build. Look at the result with `bin/model preview` and in the game.
+
+- `shape.py` holds the parts, the way vanilla builds its boats: a `Hull` lofted through stations, each station a half-section from keel to sheer, whose strakes are boards nested yaw → pitch → flare like the sailboat's prow chains, with ribs, rails, a transom and the water mask; `beam` and `path` for anything along a line (bundles, logs, booms, oars, stays); `box`, `run` and `group` for the rest. Every face gets an explicit UV at a spot of the texture picked from its element's name, so boards rarely repeat one grain.
+- A vessel's bow is at −x: at yaw 0 it moves toward +z, which is model −x, and its front seat sits there. A builder drawn the other way round turns its elements about the hull's middle with `Shape.turn_about` (the currach does).
+- The elements the mechanics own (`Hull`, the seats, the outrigger's `LowerMastStorage`) are carried over unchanged from the current file by `Shape.keep`: their bounds are what reach and seats measure. The outrigger keeps vanilla's `SailUnfurled`, `SailHalf` and `SailFurled` names, which `unfurlSails` switches between.
+- A hollow hull carries `hideWater`, flat faces just under the rim that the `hidewatersurface` behaviour draws into depth before the sea, as vanilla's sailboat does, so the sea doesn't show inside the boat. The entity and item shapes leave it out with `ignoreElements`. The mask is tessellated a few seconds after the vessel appears; a shot taken sooner still shows water inside.
+- `coracle.py` also writes `coracle-back.json`: the same bowl under the backpack step-parent transform the worn shape keeps.
+
 ## What bin/model guarantees
 
 - A shape that goes through Blender untouched comes back identical: every value, every animation. `bin/model check` proves it for a shape; `bin/model test` for the probe (`bin/lib/vsmodel/test/probe.json`), our vessels, the vanilla boats and a fish.

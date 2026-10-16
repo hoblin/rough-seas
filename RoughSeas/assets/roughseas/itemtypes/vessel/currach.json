@@ -6,14 +6,14 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/currach"},
+    "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater"]},
     "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},
         "rotation": {"x": -32, "y": -35, "z": -180},
         "origin": {"x": 0.5, "y": 0, "z": 0.5},
-        "scale": 0.6
+        "scale": 0.42
     },
     "groundTransform": {
         "translation": {"x": 0, "y": 0, "z": 0},

@@ -8,14 +8,14 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/dugout"},
+    "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater"]},
     "textures": {"bark": {"base": "game:block/wood/bark/{wood}-h"}, "inside": {"base": "game:block/wood/debarked/{wood}"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},
         "rotation": {"x": -32, "y": -35, "z": -180},
         "origin": {"x": 0.5, "y": 0, "z": 0.5},
-        "scale": 0.6
+        "scale": 0.42
     },
     "groundTransform": {
         "translation": {"x": 0, "y": 0, "z": 0},

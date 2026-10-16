@@ -85,13 +85,14 @@
     "client": {
         "size": 1,
         "renderer": "Shape",
-        "shape": {"base": "roughseas:entity/vessel/coracle"},
-        "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}},
+        "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater"]},
+        "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}},
         "behaviors": [
             {"code": "vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
+            {"code": "hidewatersurface", "hideWaterElement": "hideWater/*"},
             {"code": "selectionboxes"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},

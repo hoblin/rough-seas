@@ -124,6 +124,9 @@ ACT
 
 SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge sea                fly to the nearest open sea, hovering just above the surface
+  /bridge shore              fly to the nearest flat, dry ground beside the sea, hovering just above
+                             it. Far out at sea no shore is loaded: it flies toward the coast and
+                             says to run it again once the land has loaded
   /bridge storm [RANGE] [WAVES]
                              fly to where the storms within RANGE blocks (default 60000) raise the
                              highest waves over open sea, or those nearest WAVES metres, hovering
@@ -135,6 +138,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood
   /bridge mount ID           seat the player in an existing seatable entity
   /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
+  /bridge hold CODE          put item or block CODE in the active hotbar slot, held in the hand
+  /bridge drop CODE X Y Z    an item or block CODE lying on the ground there, at rest (~ relative)
   /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
                              e.g. the sailboat's sailPosition 0, 1, 2
   /bridge fly X Y Z          hover there in creative free flight, out of any seat: no sinking.

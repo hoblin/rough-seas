@@ -76,7 +76,7 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/reedboat"},
-        "textures": {"reed": {"base": "game:block/reed/beehive/hive-reed"}, "rope": {"base": "game:block/cloth/reedrope"}},
+        "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "pole": {"base": "game:block/wood/debarked/birch"}},
         "behaviors": [
             {"code": "vesselintegrity"},
             {"code": "repulseagents"},

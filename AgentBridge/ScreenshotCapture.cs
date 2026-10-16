@@ -9,7 +9,9 @@ public class ScreenshotCapture : IRenderer
 {
     private readonly ICoreClientAPI capi;
     private readonly Queue<TaskCompletionSource<byte[]>> pending = new();
+    private const int SettleFrames = 2;
     private bool showGuisAfter;
+    private int settling;
 
     public ScreenshotCapture(ICoreClientAPI capi)
     {
@@ -29,6 +31,7 @@ public class ScreenshotCapture : IRenderer
             {
                 capi.TriggerChatMessage(".gui off");
                 showGuisAfter = true;
+                settling = SettleFrames;
             }
             pending.Enqueue(shot);
         }, "agentbridge-screenshot");
@@ -38,6 +41,12 @@ public class ScreenshotCapture : IRenderer
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
     {
         if (pending.Count == 0) return;
+        // The frame that turns the GUI off has drawn the hand and the held item already.
+        if (settling > 0)
+        {
+            settling--;
+            return;
+        }
 
         var path = Path.Combine(Path.GetTempPath(), "agentbridge-screenshot.png");
         using (var bitmap = capi.Render.GrabScreenshot(capi.Render.FrameWidth, capi.Render.FrameHeight, false, true))
