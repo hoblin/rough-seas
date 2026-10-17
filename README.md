@@ -1,5 +1,7 @@
 # Rough Seas
 
+![Rough Seas](docs/logo/rough-seas-logo-card.png)
+
 A [Vintage Story](https://www.vintagestory.at) mod that makes the ocean dangerous and worth going out on.
 
 In the vanilla game the sea is flat, safe and empty, and crossing it means holding W on a raft. Rough Seas gives it weather, currents and surf, and vessels that wear, swamp and break by what they are made of.

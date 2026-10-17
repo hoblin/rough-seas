@@ -1,5 +1,7 @@
 # Rough Seas
 
+![Rough Seas](images/logo.webp)
+
 *The sea lets you cross. It never promises to.*
 
 Rough Seas is a [Vintage Story](https://www.vintagestory.at/) mod that makes the ocean dangerous and worth going out on. The sea gets weather of its own: wind that rises and falls, storms that cross the world, waves that break on the shore and currents that turn the oceans. Every vessel can be worn, swamped or broken, each by what it is made of, and six new ones fill the gap between the raft and the sailboat.
