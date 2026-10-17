@@ -48,7 +48,7 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | [Outrigger canoe](Outrigger-Canoe) | 2 | aft | a basket in place of the passenger |
 | [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
 
-A basket holds 8 slots, a chest 16, a storage vessel 12, a crate 20 of one kind (16 aged, 25 in ebony or purpleheart). The raft and the sailboat take more besides: an oar rest on the raft; a lantern, anchor, figurehead, ratlines, shields and a fence post for a tied animal on the sailboat. Each vessel's page lists them.
+A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a crate 20 of one kind (16 aged, 25 in ebony or purpleheart). The raft and the sailboat take more besides: an oar rest on the raft; a lantern, anchor, figurehead, ratlines, shields and a fence post for a tied animal on the sailboat. Each vessel's page lists them.
 
 ## Cost follows use
 
