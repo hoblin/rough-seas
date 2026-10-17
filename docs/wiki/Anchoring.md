@@ -13,6 +13,11 @@ The anchor comes on its own rope, 120 metres of flax. For deeper water, an **anc
 - craft it from 9 ropes in a 3 × 3 grid, and break it back into the ropes when you need them;
 - stow it at the foot of the mast, the sailboat's lower mast slot, with ctrl + right-click on the mast.
 
+| | |
+| --- | --- |
+| ![The anchor warp from 9 ropes](images/recipes/anchor-warp.png) | ![The anchor warp broken back into 9 ropes](images/recipes/anchor-warp-ropes.png) |
+| Splicing it | Breaking it up |
+
 Anchor and warp together reach 210 metres.
 
 ## Scope

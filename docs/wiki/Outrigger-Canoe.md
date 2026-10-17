@@ -31,6 +31,15 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 
 Its sail drives it the same whatever the wind does; sailing by the wind comes in [1.1](Roadmap#11-seamanship).
 
+## How it is built
+
+Logs and planks of one wood; redwood takes log sections.
+
+| | |
+| --- | --- |
+| ![The outrigger canoe from 4 logs, 8 planks, 2 ropes and a sail](images/recipes/outrigger.png) | ![The redwood outrigger canoe from redwood log sections](images/recipes/outrigger-redwood.png) |
+| From logs | From redwood log sections |
+
 ## Its neighbours
 
 - The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it carries cargo and can be carried.

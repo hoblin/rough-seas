@@ -3,6 +3,7 @@
 **Getting started**
 - [World settings](World-Settings)
 - [Vessels](Vessels)
+- [Recipes](Recipes)
 
 **The sea**
 - [Wind and waves](Wind-and-Waves)

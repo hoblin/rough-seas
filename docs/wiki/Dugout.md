@@ -29,6 +29,15 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Built from | 5 logs of one wood, with an axe |
 | Wreckage | firewood |
 
+## How it is built
+
+Any wood. Redwood's logs come as sections, and it takes those.
+
+| | |
+| --- | --- |
+| ![The dugout from 5 logs and an axe](images/recipes/dugout.png) | ![The redwood dugout from 5 redwood log sections and an axe](images/recipes/dugout-redwood.png) |
+| From logs | From redwood log sections |
+
 ## Its neighbours
 
 - The [birch-bark canoe](Birch-Bark-Canoe) is the other river boat: faster, carried around the falls and through the [rapids](Rapids), but holed by a landing the dugout never notices.

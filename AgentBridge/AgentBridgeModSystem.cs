@@ -35,6 +35,7 @@ public class AgentBridgeModSystem : ModSystem
     private CrosshairPicking crosshair = null!;
     private FrameTimer frameTimer = null!;
     private EntityLoadBlackBox blackBox = null!;
+    private HandbookRecipe recipes = null!;
     private readonly HttpListener listener = new();
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Client;
@@ -47,6 +48,7 @@ public class AgentBridgeModSystem : ModSystem
         crosshair = new CrosshairPicking();
         frameTimer = new FrameTimer(api);
         blackBox = new EntityLoadBlackBox(Mod.Logger);
+        recipes = new HandbookRecipe(api);
         listener.Prefixes.Add(Prefix);
         listener.Start();
         _ = Task.Run(Serve);
@@ -93,6 +95,7 @@ public class AgentBridgeModSystem : ModSystem
                 "/state" => (Encoding.UTF8.GetBytes(await OnMainThread(State)), "application/json"),
                 "/screenshot" => (await screenshots.Next(context.Request.QueryString["gui"] != null), "image/png"),
                 "/link" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Link(context.Request.QueryString["href"]))), "text/plain"),
+                "/recipe" => (Encoding.UTF8.GetBytes(await OnMainThread(() => recipes.Frame(context.Request.QueryString["output"], context.Request.QueryString["from"]))), "application/json"),
                 "/scroll" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Scroll(context.Request.QueryString["steps"]))), "text/plain"),
                 "/close-dialogs" =>(Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),

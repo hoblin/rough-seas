@@ -10,6 +10,7 @@ Read before testing in the game, together with `bin/game help`. The bench's defa
 - `/bridge sea` fails in a world with no open sea in its generated regions; open another world.
 - Spectators don't pick: hover text and entity selection need creative or survival.
 - To see a handbook page: `bin/game hotkey handbook` opens the handbook, then `bin/game link handbook://PAGECODE` and `bin/game shot FILE gui`; `bin/game scroll N` brings the end of a long page into view. The list stays empty while the handbook builds its pages, for half a minute after the world loads, and when a link opens a closed handbook: wait, open it by hotkey, and search again.
+- The wiki's recipe images come from the handbook: `bin/scene recipes docs/wiki/images/recipes` retakes them all. A changed recipe is retaken this way, and a new one gets its line in that command's list first.
 - Clean up after each test with `bin/scene clear` instead of opening new worlds; it removes entities only.
 - Launching an existing world with `--playStyle` crashed the client on reopen (#24); `bin/client` passes the preset only to new worlds. A crash on a stable build is ours until a vanilla run (`BENCH_MODS=`) reproduces it, and the log names the failing entity.
 - `pkill -f "bin/game …"` matches, and kills, your own shell.

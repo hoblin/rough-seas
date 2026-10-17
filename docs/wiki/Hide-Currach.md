@@ -29,6 +29,10 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | Built from | 10 planks, 3 large prepared hides and 2 rendered fat |
 | Wreckage | sticks and leather |
 
+## How it is built
+
+![The hide currach from 10 planks, 3 large prepared hides and 2 rendered fat](images/recipes/currach.png)
+
 ## Its neighbours
 
 - The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but it carries little and can't be picked up.
