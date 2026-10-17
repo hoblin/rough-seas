@@ -30,36 +30,47 @@ public class BridgeCommands : ModSystem
     public override void StartServerSide(ICoreServerAPI api)
     {
         sapi = api;
-        if (api.ModLoader.IsModEnabled("roughseas")) drift = new DriftSwitch();
-        TurnOffTemporalEffects(api.World.Config);
+        var benchDefaults = Environment.GetEnvironmentVariable("AGENT_BRIDGE_BENCH_DEFAULTS") != "off";
+        if (api.ModLoader.IsModEnabled("roughseas")) drift = new DriftSwitch { Drifting = !benchDefaults };
+        if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
         var parsers = api.ChatCommands.Parsers;
         api.ChatCommands.Create("bridge")
             .WithDescription("Agent bridge: server-side state as JSON")
             .RequiresPrivilege(Privilege.controlserver)
             .BeginSubCommand("here")
                 .WithDescription("Sea, weather and climate at the caller's position")
-                .HandleWith(args => Reply(Here(args.Caller.Pos)))
+                .RequiresPlayer()
+                .HandleWith(args => Reply(args.Caller, JsonSerializer.Serialize(Here(args.Caller.Pos, args.Caller.Entity?.Teleporting == true))))
             .EndSubCommand()
             .BeginSubCommand("entity")
                 .WithDescription("An entity's server-side attributes")
                 .WithArgs(parsers.Long("id"))
-                .HandleWith(args => Entity((long)args[0]))
+                .HandleWith(args => Entity(args.Caller, (long)args[0]))
             .EndSubCommand()
             .BeginSubCommand("sea")
                 .WithDescription("Fly the caller to the nearest open sea within 1500 blocks, hovering just above the surface")
+                .RequiresPlayer()
                 .HandleWith(args => Sea((IServerPlayer)args.Caller.Player))
             .EndSubCommand()
             .BeginSubCommand("shore")
                 .WithDescription("Fly the caller to the nearest dry, open ground beside the sea within 256 blocks, hovering just above it")
+                .RequiresPlayer()
                 .HandleWith(args => Shore((IServerPlayer)args.Caller.Player))
             .EndSubCommand()
             .BeginSubCommand("storm")
                 .WithDescription("Fly the caller to where the storms within range raise the highest waves over open sea, or the waves nearest a height, hovering just above the surface")
+                .RequiresPlayer()
                 .WithArgs(parsers.OptionalDouble("range", 60000), parsers.OptionalDouble("waves", 0))
                 .HandleWith(args => Storm((IServerPlayer)args.Caller.Player, (double)args[0], (double)args[1]))
             .EndSubCommand()
+            .BeginSubCommand("find")
+                .WithDescription("Fly the caller over the nearest block at the surface whose code matches a wildcard, within range, in the loaded world")
+                .RequiresPlayer()
+                .WithArgs(parsers.Word("code wildcard"), parsers.OptionalIntRange("range", 1, 512, 256))
+                .HandleWith(args => Find((IServerPlayer)args.Caller.Player, (string)args[0], (int)args[1]))
+            .EndSubCommand()
             .BeginSubCommand("drift")
-                .WithDescription("Whether unridden vessels drift with the current and the wind; off on every start, so they hold still")
+                .WithDescription("Whether unridden vessels drift with the current and the wind; off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
@@ -70,21 +81,25 @@ public class BridgeCommands : ModSystem
             .EndSubCommand()
             .BeginSubCommand("ride")
                 .WithDescription("Spawn a boat (or any seatable entity) at the caller, at the surface over water, and seat the caller in it")
+                .RequiresPlayer()
                 .WithArgs(parsers.Word("entity code"))
                 .HandleWith(args => Ride(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
             .BeginSubCommand("mount")
                 .WithDescription("Seat the caller in an entity, a steering seat first")
+                .RequiresPlayer()
                 .WithArgs(parsers.Long("id"))
                 .HandleWith(args => Mount(args.Caller.Player, sapi.World.GetEntityById((long)args[0])))
             .EndSubCommand()
             .BeginSubCommand("wear")
                 .WithDescription("Put an item into the caller's first empty backpack slot, where it is worn on the back")
+                .RequiresPlayer()
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Wear(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
             .BeginSubCommand("hold")
                 .WithDescription("Put an item into the caller's active hotbar slot, held in the hand")
+                .RequiresPlayer()
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Hold(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
@@ -96,20 +111,22 @@ public class BridgeCommands : ModSystem
             .BeginSubCommand("tie")
                 .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute")
                 .WithArgs(parsers.Long("id"), parsers.Int("x"), parsers.Int("y"), parsers.Int("z"))
-                .HandleWith(args => Tie(sapi.World.GetEntityById((long)args[0]), new BlockPos((int)args[1], (int)args[2], (int)args[3])))
+                .HandleWith(args => Tie(args.Caller, sapi.World.GetEntityById((long)args[0]), new BlockPos((int)args[1], (int)args[2], (int)args[3])))
             .EndSubCommand()
             .BeginSubCommand("ropes")
                 .WithDescription("Where each rope tied to an entity is pinned at both ends: a block position, an entity id, or loose")
                 .WithArgs(parsers.Long("id"))
-                .HandleWith(args => Ropes((long)args[0]))
+                .HandleWith(args => Ropes(args.Caller, (long)args[0]))
             .EndSubCommand()
             .BeginSubCommand("fly")
                 .WithDescription("Hover the caller at a position in creative free flight: no post, no sinking; X Y Z absolute or ~ relative")
+                .RequiresPlayer()
                 .WithArgs(parsers.WorldPosition("position"))
                 .HandleWith(args => Fly((IServerPlayer)args.Caller.Player, (Vec3d)args[0]))
             .EndSubCommand()
             .BeginSubCommand("dismount")
                 .WithDescription("Get the caller out of whatever they are seated in, leaving it where it is")
+                .RequiresPlayer()
                 .HandleWith(args => args.Caller.Player.Entity.TryUnmount()
                     ? TextCommandResult.Success("Dismounted")
                     : TextCommandResult.Error("Not seated, or the seat would not let go"))
@@ -126,6 +143,7 @@ public class BridgeCommands : ModSystem
             .EndSubCommand()
             .BeginSubCommand("interact")
                 .WithDescription("Attack or interact with an entity using the held item, as the server does when the player clicks it")
+                .RequiresPlayer()
                 .WithArgs(parsers.Long("id"), parsers.WordRange("mode", "attack", "interact"), parsers.OptionalWordRange("modifier", "ctrl", "shift"))
                 .HandleWith(args => Interact(args.Caller.Player, sapi.World.GetEntityById((long)args[0]), (string)args[1], args[2] as string))
             .EndSubCommand();
@@ -233,6 +251,31 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"{flown.StatusMessage}, over the shore");
     }
 
+    private TextCommandResult Find(IServerPlayer player, string wildcard, int range)
+    {
+        var pattern = new AssetLocation(wildcard);
+        var accessor = sapi.World.BlockAccessor;
+        var origin = player.Entity.Pos.AsBlockPos;
+
+        BlockPos? Match(int x, int z)
+        {
+            var ground = accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
+            return Enumerable.Range(ground, 3)
+                .Select(y => new BlockPos(x, y, z, 0))
+                .FirstOrDefault(pos => accessor.GetBlock(pos).WildCardMatch(pattern));
+        }
+
+        var found = Enumerable.Range(-range, 2 * range + 1)
+            .SelectMany(i => Enumerable.Range(-range, 2 * range + 1), (i, j) => (x: origin.X + i, z: origin.Z + j))
+            .OrderBy(point => (point.x - origin.X) * (long)(point.x - origin.X) + (point.z - origin.Z) * (long)(point.z - origin.Z))
+            .Select(point => Match(point.x, point.z))
+            .FirstOrDefault(pos => pos != null);
+        if (found == null) return TextCommandResult.Error($"No {wildcard} at the surface within {range} blocks of loaded world");
+
+        var flown = Fly(player, new Vec3d(found.X + 0.5, found.Y + 3, found.Z + 0.5));
+        return TextCommandResult.Success($"{flown.StatusMessage}, 3 blocks over {accessor.GetBlock(found).Code}");
+    }
+
     private TextCommandResult Coast(IServerPlayer player)
     {
         const int range = 3000;
@@ -284,6 +327,8 @@ public class BridgeCommands : ModSystem
     {
         var type = sapi.World.GetEntityType(new AssetLocation(code));
         if (type == null) return TextCommandResult.Error($"No entity type {code}");
+
+        if (player.Entity.Teleporting) return TextCommandResult.Error("Still flying there; ride again in a second");
 
         var boat = sapi.World.ClassRegistry.CreateEntity(type);
         var pos = player.Entity.Pos;
@@ -361,7 +406,7 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"{entity!.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity}");
     }
 
-    private TextCommandResult Tie(Entity? entity, BlockPos block)
+    private TextCommandResult Tie(Caller caller, Entity? entity, BlockPos block)
     {
         var tieable = entity?.GetBehavior<EntityBehaviorRopeTieable>();
         if (tieable == null) return TextCommandResult.Error("Not a rope-tieable entity");
@@ -371,20 +416,20 @@ public class BridgeCommands : ModSystem
         rope.LastPoint.PinTo(block, new Vec3f(0.5f, 0.5f, 0.5f));
         cloths.RegisterCloth(rope);
         tieable.Attach(rope, rope.FirstPoint);
-        return Ropes(entity.EntityId);
+        return Ropes(caller, entity.EntityId);
     }
 
-    private TextCommandResult Ropes(long id)
+    private TextCommandResult Ropes(Caller caller, long id)
     {
         var cloths = sapi.ModLoader.GetModSystem<ClothManager>();
         var ropes = sapi.World.GetEntityById(id)?.GetBehavior<EntityBehaviorRopeTieable>()?.ClothIds?.value ?? [];
-        return Reply(ropes.Select(cloths.GetClothSystem).Where(rope => rope != null).Select(rope => new
+        return Reply(caller, JsonSerializer.Serialize(ropes.Select(cloths.GetClothSystem).Where(rope => rope != null).Select(rope => new
         {
             rope!.ClothId,
             ends = rope.Ends.Select(end => end.PinnedToBlockPos is { } block
                 ? $"block {block.X} {block.Y} {block.Z}"
                 : end.PinnedToEntity is { } entity ? $"entity {entity.EntityId} {entity.Code}" : "loose")
-        }));
+        })));
     }
 
     private TextCommandResult Blast(Entity? entity, int injureRadius, double distance)
@@ -404,6 +449,7 @@ public class BridgeCommands : ModSystem
         controls.CtrlKey = modifier == "ctrl";
         controls.ShiftKey = modifier == "shift";
         var interactMode = mode == "attack" ? EnumInteractMode.Attack : EnumInteractMode.Interact;
+        player.Entity.EntitySelection = new EntitySelection { Entity = entity, Position = entity.Pos.XYZ };
         if (interactMode == EnumInteractMode.Attack || entity.GetBehavior<EntityBehaviorVesselIntegrity>()?.TryPickUp(player.Entity) != true)
         {
             entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);
@@ -413,9 +459,11 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: alive {entity.Alive}" + (hull == null ? "" : $", integrity {hull.Integrity}"));
     }
 
-    private static TextCommandResult Reply(object value) => TextCommandResult.Success(JsonSerializer.Serialize(value));
+    // A command run with the console's privileges, /executeas included, replies into the server log, which reads it as a format string.
+    private static TextCommandResult Reply(Caller caller, string json) =>
+        TextCommandResult.Success(caller.CallerPrivileges?.Contains("*") == true ? json.Replace("{", "{{").Replace("}", "}}") : json);
 
-    private object Here(Vec3d pos)
+    private object Here(Vec3d pos, bool teleporting)
     {
         var accessor = sapi.World.BlockAccessor;
         var blockPos = pos.AsBlockPos;
@@ -428,6 +476,7 @@ public class BridgeCommands : ModSystem
 
         return new
         {
+            teleporting,
             seaLevel = sapi.World.SeaLevel,
             oceanity = region?.OceanMap?.GetUnpaddedIntLerpedForBlockPos(blockPos.X, blockPos.Z, regionSize),
             feet = accessor.GetBlock(blockPos, BlockLayersAccess.Fluid)?.Code?.ToString(),
@@ -445,12 +494,12 @@ public class BridgeCommands : ModSystem
         };
     }
 
-    private TextCommandResult Entity(long id)
+    private TextCommandResult Entity(Caller caller, long id)
     {
         var entity = sapi.World.GetEntityById(id);
         if (entity == null) return TextCommandResult.Error($"No entity {id}");
 
-        return TextCommandResult.Success(
+        return Reply(caller,
             $"{{\"code\":\"{entity.Code}\",\"alive\":{entity.Alive.ToString().ToLower()}," +
             $"\"pos\":{JsonSerializer.Serialize(new { entity.Pos.X, entity.Pos.Y, entity.Pos.Z, entity.Pos.Yaw })}," +
             $"\"behaviors\":{JsonSerializer.Serialize(entity.SidedProperties.Behaviors.Select(behavior => behavior.PropertyName()))}," +

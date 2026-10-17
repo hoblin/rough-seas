@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using RoughSeas.Vessels;
 
 namespace RoughSeas.Tests.Vessels;
 
@@ -26,7 +27,7 @@ public class VesselShapeTests
     public void DrawsEveryTextureItsCracksOverlay(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
-        var cracked = entity["behaviorConfigs"]!["vesselintegrity"]!["cracks"]!["textures"]!.Values<string>();
+        var cracked = entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!["cracks"]!["textures"]!.Values<string>();
 
         Assert.Empty(cracked.Except(FaceTextures(shape)));
     }

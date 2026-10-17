@@ -19,7 +19,7 @@
     },
     "hitboxSize": {"x": 1.2, "y": 0.45},
     "behaviorConfigs": {
-        "vesselintegrity": {
+        "roughseas:vesselintegrity": {
             "impactCapacity": 1200,
             "wearPerDay": 0.33,
             "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
@@ -78,7 +78,7 @@
         "shape": {"base": "roughseas:entity/vessel/reedboat"},
         "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "pole": {"base": "game:block/wood/debarked/birch"}},
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -90,7 +90,7 @@
     },
     "server": {
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

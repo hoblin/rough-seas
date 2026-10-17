@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
@@ -16,6 +17,7 @@ public class VesselsModSystem : ModSystem
     public MaterialTable Materials { get; private set; } = null!;
     public DamageConversion DamageConversion { get; private set; } = null!;
     public Rapids Rapids { get; private set; } = null!;
+    public TickBudget Budget { get; } = new("vessels");
 
     public override void Start(ICoreAPI api)
     {
@@ -30,6 +32,14 @@ public class VesselsModSystem : ModSystem
     public override void StartServerSide(ICoreServerAPI api)
     {
         api.Event.OnPlayerInteractEntity += OnPlayerInteractEntity;
+        Budget.CountTicks(api);
+        api.ChatCommands.Create("vessels")
+            .WithDescription("Rough Seas: vessel hulls")
+            .RequiresPrivilege(Privilege.controlserver)
+            .BeginSubCommand("budget")
+                .WithDescription("Server time the vessel hulls spent since the last report")
+                .HandleWith(_ => TextCommandResult.Success(Budget.Report()))
+            .EndSubCommand();
     }
 
     public override void AssetsLoaded(ICoreAPI api)

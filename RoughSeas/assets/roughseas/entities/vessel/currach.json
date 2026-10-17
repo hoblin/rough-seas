@@ -19,14 +19,22 @@
     },
     "hitboxSize": {"x": 1.2, "y": 0.6},
     "behaviorConfigs": {
-        "vesselintegrity": {
+        "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
             "wearPerDay": 0.1,
-            "repair": {
-                "material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1},
-                "restores": 0.25,
-                "saturation": 40
-            },
+            "repairs": [
+                {
+                    "material": {"type": "item", "code": "game:hide-prepared-large", "stacksize": 1},
+                    "restores": 0.67,
+                    "saturation": 80
+                },
+                {
+                    "material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1},
+                    "restores": 0.25,
+                    "saturation": 40,
+                    "greases": true
+                }
+            ],
             "wreckage": [
                 {"type": "item", "code": "game:stick", "quantity": {"avg": 4, "var": 2}},
                 {"type": "item", "code": "game:leather-normal-plain", "quantity": {"avg": 2, "var": 1}}
@@ -117,7 +125,7 @@
         "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater"]},
         "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}},
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -132,7 +140,7 @@
     },
     "server": {
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

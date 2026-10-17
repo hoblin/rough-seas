@@ -37,6 +37,7 @@ Each holds what one kind of work needs; read it in full before that work. They a
 - `docs/bench.md`: before testing in the game, with `bin/game help`.
 - `docs/modeling.md`: before changing a shape, with `bin/model help`.
 - `docs/shipping.md`: when a pull request leaves draft (review, self-review, merging).
+- `docs/qa.md`: before a release's QA session, with `bin/qa help`.
 
 ## Tickets
 
@@ -48,4 +49,4 @@ One ticket ships as one pull request. A big PR is fine here, since Copilot revie
 
 A player meets your work at sea, not in the diff. Before the PR leaves draft, load the mod into the game and see the change happen: the storm rises, the raft breaks, the shark comes. A test that passes is not a mechanic that plays well.
 
-Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[storms\]\|\[vessels\]' "$BENCH_DATA/Logs/server-debug.log"`).
+Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]' "$BENCH_DATA/Logs/server-debug.log"`).

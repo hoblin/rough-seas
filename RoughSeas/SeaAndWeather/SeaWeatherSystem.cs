@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
@@ -64,6 +65,9 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     public WindSample Wind(double x, double z) => model.Value.Wind(x, z, NowHours);
 
     public WindSample StormsAt(double x, double z, double totalHours) => model.Value.StormsAt(x, z, totalHours);
+
+    public void Log(string format, params object[] args) =>
+        Mod.Logger.Debug("[seas] " + string.Format(CultureInfo.InvariantCulture, format, args));
 
     private double Oceanity(double x, double z)
     {
