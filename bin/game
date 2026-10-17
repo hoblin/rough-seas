@@ -53,10 +53,10 @@ START
   bin/server           build both mods, (re)start this clone's dedicated server in tmux (saved and
                        stopped first) and return once it runs; its console takes commands the
                        same way
-  bin/client qa        connect the client to the machine's QA server (bin/qa help), as the player
-                       would, to try a scene there. The same login as the player's: not while
-                       they play.
-  bin/ref             fetch Anego's sources and decompile the engine into ref/ (gitignored)
+  bin/client qa        connect the client, with this clone's build, to the machine's QA server
+                       (bin/qa help) to try a scene there. The same login as the player's: not
+                       while they play.
+  bin/ref              fetch Anego's sources and decompile the engine into ref/ (gitignored)
   bin/model            edit, preview and check shapes in Blender, headless; bin/model help
   bin/game wait [S]    block until the world is loaded and the server answers, closing the
                        character-creation dialog; fails after S seconds (default 180).
@@ -135,10 +135,13 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              highest waves over open sea, or those nearest WAVES metres, hovering
                              just above the surface; replies with the wave height. Set the time of
                              day first: storms move.
+  /bridge find CODE [RANGE]  fly over the nearest block at the surface whose code matches CODE
+                             (wildcards: tallplant-*), within RANGE blocks (default 256, at most 512)
   /bridge drift [on|off]     whether unridden vessels drift with the current and the wind. Off on
                              every start, so a vessel stays where it was put; a drift test turns it on
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
-                             player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood
+                             player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood.
+                             Until a flight has landed it refuses: "Still flying there"
   /bridge mount ID           seat the player in an existing seatable entity
   /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
   /bridge hold CODE          put item or block CODE in the active hotbar slot, held in the hand

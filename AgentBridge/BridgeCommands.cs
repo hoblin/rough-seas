@@ -39,7 +39,7 @@ public class BridgeCommands : ModSystem
             .RequiresPrivilege(Privilege.controlserver)
             .BeginSubCommand("here")
                 .WithDescription("Sea, weather and climate at the caller's position")
-                .HandleWith(args => Reply(args.Caller, JsonSerializer.Serialize(Here(args.Caller.Pos))))
+                .HandleWith(args => Reply(args.Caller, JsonSerializer.Serialize(Here(args.Caller.Pos, args.Caller.Entity?.Teleporting == true))))
             .EndSubCommand()
             .BeginSubCommand("entity")
                 .WithDescription("An entity's server-side attributes")
@@ -61,11 +61,11 @@ public class BridgeCommands : ModSystem
             .EndSubCommand()
             .BeginSubCommand("find")
                 .WithDescription("Fly the caller over the nearest block at the surface whose code matches a wildcard, within range, in the loaded world")
-                .WithArgs(parsers.Word("code wildcard"), parsers.OptionalInt("range", 256))
+                .WithArgs(parsers.Word("code wildcard"), parsers.OptionalIntRange("range", 1, 512, 256))
                 .HandleWith(args => Find((IServerPlayer)args.Caller.Player, (string)args[0], (int)args[1]))
             .EndSubCommand()
             .BeginSubCommand("drift")
-                .WithDescription("Whether unridden vessels drift with the current and the wind; off on every start, so they hold still")
+                .WithDescription("Whether unridden vessels drift with the current and the wind; off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
@@ -102,7 +102,7 @@ public class BridgeCommands : ModSystem
             .BeginSubCommand("tie")
                 .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute")
                 .WithArgs(parsers.Long("id"), parsers.Int("x"), parsers.Int("y"), parsers.Int("z"))
-                .HandleWith(args => Tie(args.Caller, sapi.World.GetEntityById((long)args[0]),new BlockPos((int)args[1], (int)args[2], (int)args[3])))
+                .HandleWith(args => Tie(args.Caller, sapi.World.GetEntityById((long)args[0]), new BlockPos((int)args[1], (int)args[2], (int)args[3])))
             .EndSubCommand()
             .BeginSubCommand("ropes")
                 .WithDescription("Where each rope tied to an entity is pinned at both ends: a block position, an entity id, or loose")
@@ -451,7 +451,7 @@ public class BridgeCommands : ModSystem
     private static TextCommandResult Reply(Caller caller, string json) =>
         TextCommandResult.Success(caller.CallerPrivileges?.Contains("*") == true ? json.Replace("{", "{{").Replace("}", "}}") : json);
 
-    private object Here(Vec3d pos)
+    private object Here(Vec3d pos, bool teleporting)
     {
         var accessor = sapi.World.BlockAccessor;
         var blockPos = pos.AsBlockPos;
@@ -464,6 +464,7 @@ public class BridgeCommands : ModSystem
 
         return new
         {
+            teleporting,
             seaLevel = sapi.World.SeaLevel,
             oceanity = region?.OceanMap?.GetUnpaddedIntLerpedForBlockPos(blockPos.X, blockPos.Z, regionSize),
             feet = accessor.GetBlock(blockPos, BlockLayersAccess.Fluid)?.Code?.ToString(),

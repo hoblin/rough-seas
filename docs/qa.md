@@ -4,15 +4,15 @@ Read before a QA session, with `bin/qa help`. Before each release a person plays
 
 ## Running it
 
-- `bin/qa up` starts the server with the release zip of the last green CI run on `main` (or `bin/qa up ZIP`) and this clone's AgentBridge. The player joins with their own client: Multiplayer, `localhost:42430`, with the same zip from `$QA_DATA/Mods` in that client's own Mods folder.
+- `bin/qa up` starts the server with this clone's AgentBridge and the release zip it ran last: the first start takes the one from the last green CI run on `main`, `bin/qa up latest` takes the newest, `bin/qa up ZIP` any other. A restart never changes the build under the player. The player joins with their own client: Multiplayer, `localhost:42430`, with the same zip from `$QA_DATA/Mods` in that client's own Mods folder.
 - The first start makes the world: the Rough Seas playstyle, survival, a fixed seed, the spawn on the shore beside cooper's reeds within sight of the sea. After the player's first join, `bin/qa kit` makes them an admin and gives a flint axe, knife, shovel, hoe and spear. To start over, `bin/qa down` and delete `$QA_DATA`.
 - `bin/qa down` saves and stops. A kill loses the last minutes of the world.
-- `bin/qa as CMD...` runs each command as the player, at their position: the scenes below are written for it. `bin/qa do CMD...` runs them as the console, for commands that name their target. Both print the reply from the log.
+- `bin/qa as CMD...` runs each command as the player, at their position, and after a flight waits for them to land: the scenes below are written for it. `bin/qa do CMD...` runs them as the console, for commands that name their target. Both print the reply from the log.
 - `bin/qa mark TEXT` writes a timestamped line to `$QA_DATA/markers.log`: one per moment worth a shot in the promo video, as it happens. The timestamps match the game's logs.
 - `bin/qa log` prints the mod's decision lines from this run: every storm, wave, strike, capsize and break, with its time. Read it before guessing what happened.
 - `/bridge sea`, `shore`, `storm`, `fly` and `find` fly the player in creative. Each scene ends with `/gamemode survival` so it plays as the game does; an idle swimmer in survival sinks, so put the player in a vessel first.
 - Coordinates are relative to the map centre, as `/seas` and `/bridge` print them; `/tp 465 111 51` takes the player home.
-- `/bridge ride CODE` spawns a vessel under the player, seats them and prints its id; straight after a flight it answers "Still flying there" until the player lands: run it again. `/bridge dismount` leaves it. `/bridge entity ID` shows its `integrity` and bilge.
+- `/bridge ride CODE` spawns a vessel under the player, seats them and prints its id. `/bridge dismount` leaves it. `/bridge entity ID` shows its `integrity` and bilge.
 - `/giveitem` fills the first free slot, and the player carries ten without a bag: give a scene's items, not every scene's.
 - Clean up a scene: `/entity remove e[type=boat-*,range=64]` and the same for `roughseas:*`.
 - Storms and currents follow the seed and the hour: `/time add 1 hours` moves both.
