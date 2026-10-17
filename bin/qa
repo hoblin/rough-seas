@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+set -euo pipefail
+shopt -s inherit_errexit
+
+usage() {
+  cat <<EOF
+The QA server: the release build of Rough Seas on a real survival world, for a person to play
+on this machine while an agent sets up each scene from the console. One per machine, not per
+clone. Scenes to set up: docs/qa.md.
+
+bin/qa up [ZIP|latest]     start it in tmux session qa, saving and stopping a running one first.
+                           Loads the release zip it ran last; on the first start, or with latest,
+                           the release zip of the last green CI run on main; or ZIP. Plus this
+                           clone's AgentBridge, with its bench defaults off: temporal storms and
+                           drift stay as the playstyle has them. The first start makes the world:
+                           the Rough Seas playstyle, survival, a fixed seed, the spawn in reeds by
+                           the sea. Joining: Multiplayer, localhost:$QA_PORT, with the same zip in
+                           the client's Mods folder.
+bin/qa down                save the world and stop the server.
+bin/qa kit                 make the player an admin and give a full set of stone tools; once,
+                           after the player's first join.
+bin/qa do CMD...           run each server command in the console and print its reply.
+bin/qa as CMD...           the same, run as the player (/executeas): /bridge, /seas here and
+                           other commands that act at the player's position. After a /bridge
+                           flight it waits for the player to land before the next command.
+bin/qa mark TEXT...        a timestamped line in the markers file, for cutting the video.
+bin/qa log                 the mod's decision lines, timestamped, from this run's debug log.
+
+Data $QA_DATA, port $QA_PORT, player $player.
+Markers $QA_DATA/markers.log; logs $QA_DATA/Logs.
+EOF
+}
+
+seed=roughseas-qa-1
+spawn="465 111 51"
+tools=(axe-flint knife-generic-flint shovel-flint hoe-flint spear-generic-flint)
+
+source "$(dirname "$0")/lib/bench.sh"
+session=qa
+log=$QA_DATA/Logs/server-main.log
+player=$(jq -r .stringSettings.playername "$HOME/.config/VintagestoryData/clientsettings.json")
+
+running() { tmux has-session -t "=$session" 2>/dev/null; }
+
+console() {
+  local after
+  running || { echo "The QA server is not running; bin/qa up starts it" >&2; exit 1; }
+  for cmd in "$@"; do
+    after=$(log_lines "$log")
+    tmux send-keys -t "=$session:" -l "$cmd"
+    tmux send-keys -t "=$session:" Enter
+    local lines=$after settled
+    for _ in $(seq 60); do
+      sleep 0.5
+      settled=$lines
+      lines=$(log_lines "$log")
+      [ "$lines" -gt "$((after + 1))" ] && [ "$lines" -eq "$settled" ] && break
+    done
+    tail -n +"$((after + 1))" "$log"
+  done
+}
+
+as_player() {
+  local reply
+  running || { echo "The QA server is not running; bin/qa up starts it" >&2; exit 1; }
+  for cmd in "$@"; do
+    reply=$(console "/executeas p[name=$player] $cmd")
+    echo "$reply"
+    [[ $reply == *"Hovering at"* ]] && land
+  done
+  return 0
+}
+
+land() {
+  for _ in $(seq 30); do
+    console "/executeas p[name=$player] /bridge here" | grep -q '"teleporting":false' && return
+    sleep 0.5
+  done
+  echo "$player has not landed within 15 s; the rest of the commands are not run" >&2
+  exit 1
+}
+
+release_zip() {
+  local dir=$QA_DATA/Mods zip=$1 fetched=$QA_DATA/fetched run
+  mkdir -p "$dir"
+  if [ -z "$zip" ] && compgen -G "$dir/*.zip" >/dev/null; then
+    ls "$dir"/*.zip
+    return
+  fi
+  if [ -z "$zip" ] || [ "$zip" = latest ]; then
+    run=$(gh run list -R hoblin/rough-seas -w ci.yml -b main -e push -s success -L 1 --json databaseId -q '.[0].databaseId')
+    [ -n "$run" ] || { echo "No green CI run on main to take the release zip from" >&2; exit 1; }
+    rm -rf "$fetched"
+    gh run download "$run" -R hoblin/rough-seas -n release -D "$fetched"
+    zip=$(ls "$fetched"/roughseas_*.zip)
+  fi
+  [ -f "$zip" ] || { echo "No zip at $zip" >&2; exit 1; }
+  cp -f "$zip" "$dir/incoming"
+  rm -f "$dir"/*.zip
+  mv -f "$dir/incoming" "$dir/$(basename "$zip")"
+  rm -rf "$fetched"
+  echo "$dir/$(basename "$zip")"
+}
+
+up() {
+  local zip=${1:-} new=false started=$QA_DATA/started
+  [ -z "$zip" ] || [ "$zip" = latest ] || zip=$(realpath "$zip")
+  cd "$root"
+  dotnet build AgentBridge -v quiet -nologo
+  zip=$(release_zip "$zip")
+  stop_server "$session" "$QA_DATA"
+  require_free_port "$QA_PORT" "QA server"
+  [ -f "$QA_DATA/Saves/default.vcdbs" ] || new=true
+  local world='{"WorldConfig": {"Seed": "'$seed'", "WorldName": "Rough Seas QA", "PlayStyle": "roughseas",
+    "PlayStyleLangCode": "preset-roughseas", "WorldType": "standard", "WorldConfiguration": {"spawnRadius": "0"}}}'
+  touch "$started"
+  tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
+    "PATH=$(dirname "$(command -v dotnet)"):\$PATH AGENT_BRIDGE_BENCH_DEFAULTS=off \
+     dotnet VintagestoryServer.dll --dataPath $QA_DATA --tracelog --port $QA_PORT \
+     --withconfig='$(tr -d '\n' <<<"$world")' --addModPath $root/AgentBridge/bin/Debug/Mods"
+  wait_until_running "$session" "$QA_DATA" "$started" 600
+  $new && console "/role suplayer spawnpoint set $spawn" "/role admin spawnpoint set $spawn" >/dev/null
+  echo "QA server running with $(basename "$zip"): join localhost:$QA_PORT with that zip in the client's Mods folder"
+  $new && echo "A new world: after $player's first join, bin/qa kit"
+  return 0
+}
+
+kit() {
+  local cmds=("/op $player")
+  for tool in "${tools[@]}"; do cmds+=("/giveitem $tool 1 p[name=$player]"); done
+  console "${cmds[@]}"
+}
+
+case "${1:-help}" in
+  up) shift; up "$@" ;;
+  down) stop_server "$session" "$QA_DATA" ;;
+  kit) kit ;;
+  do) shift; console "$@" ;;
+  as) shift; as_player "$@" ;;
+  mark) shift; echo "$(date '+%-d.%-m.%Y %H:%M:%S') $*" | tee -a "$QA_DATA/markers.log" ;;
+  log) grep -a '\[seas\]\|\[storms\]\|\[vessels\]' "$QA_DATA/Logs/server-debug.log" ;;
+  *) usage ;;
+esac

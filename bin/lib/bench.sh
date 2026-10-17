@@ -22,6 +22,26 @@ wait_for_log() {
   done
 }
 
+stop_server() {
+  local session=$1 data=$2 log=$2/Logs/server-main.log after
+  if tmux has-session -t "=$session" 2>/dev/null; then
+    after=$(log_lines "$log")
+    tmux send-keys -t "=$session:" '/stop' Enter
+    wait_for_log "$log" "$after" "Stopped the server!" 60 ||
+      echo "The world did not finish saving within a minute; stopping the server anyway" >&2
+  fi
+  stop_session "$session" "$data"
+}
+
+wait_until_running() {
+  local session=$1 log=$2/Logs/server-main.log started=$3 seconds=$4 deadline=$((SECONDS + $4))
+  until [ "$log" -nt "$started" ] && grep -qF "Dedicated Server now running" "$log"; do
+    tmux has-session -t "=$session" 2>/dev/null || { echo "The server exited; read $log" >&2; exit 1; }
+    [ $SECONDS -lt $deadline ] || { echo "The server did not start within $seconds s; read $log" >&2; exit 1; }
+    sleep 1
+  done
+}
+
 require_free_port() {
   local port=$1 what=$2
   if ss -ltnH "sport = :$port" | grep -q .; then
