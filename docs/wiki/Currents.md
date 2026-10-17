@@ -1,5 +1,3 @@
-# Currents
-
 The oceans turn. Every basin carries great slow circles of water, the gyres, and a vessel left alone drifts with them.
 
 ## How the oceans turn
@@ -14,7 +12,7 @@ The gyres repeat in bands of latitude, so which way a current runs depends on wh
 
 ## Warm and cold water
 
-The water takes its temperature from the climate above it, plus the warmth a current carries: up to 8 °C more along a warm western current, up to 6 °C less along a cold eastern one. Sea water never falls below −1.8 °C, the point where it freezes.
+The water takes its temperature from the climate above it, plus the warmth a current carries: up to about 7 °C more along a warm current, up to about 5 °C less along a cold one. Sea water never falls below −1.8 °C, the point where it freezes.
 
 The temperature of the water has no effect in 1.0. Cold water that saps a swimmer's strength is planned for [1.2](Roadmap#12-the-living-sea).
 

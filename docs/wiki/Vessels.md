@@ -1,5 +1,3 @@
-# Vessels
-
 Vanilla gives you two ways onto the water, the raft and the sailboat, and nothing between them. Rough Seas adds six vessels to fill the gap, each from a real tradition of boatbuilding and each with a niche of its own. Every one of them [wears and breaks](Hull-Condition) by what it is made of; none is best at everything.
 
 ## On rivers and lakes
@@ -16,7 +14,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
-| [Hide currach](Currach) | the first venture along the coast, cargo included | 1.7 × | needs greasing, one hard knock holes it |
+| [Hide currach](Hide-Currach) | the first venture along the coast, cargo included | 1.7 × | needs greasing, one hard knock holes it |
 | [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | 2.7 ×, sailing | carries little, stays where launched |
 | [Sailboat](Sailboat) | long voyages and heavy cargo | 2.5 ×, sailing | dear to build, ships water fast in a gale |
 
@@ -31,7 +29,7 @@ Speeds are against the raft, measured on a calm sea.
 | [Dugout](Dugout) | 30 000 J | 450 l | 0.75 m | none | a log | no |
 | [Coracle](Coracle) | 400 J | 250 l | 0.6 m | none | leather | worn on the back |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2400 J | 600 l | 0.75 m | none | birch bark | picked up |
-| [Hide currach](Currach) | 3000 J | 1500 l | 2 m | a tenth a day | rendered fat | picked up |
+| [Hide currach](Hide-Currach) | 3000 J | 1500 l | 2 m | a tenth a day | rendered fat | picked up |
 | [Outrigger canoe](Outrigger-Canoe) | 15 000 J | 600 l | 2.1 m | none | planks | no |
 | [Sailboat](Sailboat) | 40 000 J | 1500 l | 3.3 m | none | planks | no |
 

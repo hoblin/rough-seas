@@ -1,12 +1,10 @@
-# World settings
-
 Rough Seas works in every world it is added to: the wind, [storms](Storms), [currents](Currents) and the [condition of every hull](Hull-Condition) come with the mod, whatever the world was made with. Two things on the new world screen decide how much sea there is and whether it can hurt you.
 
 ## The Rough Seas playstyle
 
 Since Vintage Story 1.21 a new world is mostly land, with only a few percent of ocean. The *Rough Seas* playstyle on the new world screen makes a world with far more open water: it starts from the survival playstyle and lowers the land cover to 60%. The rest is a plain survival world with harsh winters and realistic climate, so the latitude decides the [wind](Wind-and-Waves) and the [storms](Storms).
 
-A world made with any other playstyle still gets every mechanic of the mod; it simply has less sea to cross.
+A world made with any other playstyle still gets every mechanic of the mod and every [vessel](Vessels); it simply has less sea to cross.
 
 ## Dangerous oceans
 

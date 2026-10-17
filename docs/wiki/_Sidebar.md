@@ -29,7 +29,7 @@
 - [Birch-bark canoe](Birch-Bark-Canoe)
 
 **At sea**
-- [Hide currach](Currach)
+- [Hide currach](Hide-Currach)
 - [Outrigger canoe](Outrigger-Canoe)
 - [Sailboat](Sailboat)
 

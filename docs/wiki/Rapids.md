@@ -1,12 +1,10 @@
-# Rapids
-
 The mountain streams of Vintage Story 1.22 run down in white water. Every second a hull spends in it, the rocks strike it with 300 joules, a hard knock, again and again.
 
 | Vessel | Chance of harm each second |
 | --- | --- |
 | [Coracle](Coracle) | 53% |
 | [Raft](Raft), [reed boat](Reed-Boat) | 22% |
-| [Hide currach](Currach) | 10% |
+| [Hide currach](Hide-Currach) | 10% |
 | [Outrigger canoe](Outrigger-Canoe) | 2% |
 | [Dugout](Dugout) | 1% |
 | [Sailboat](Sailboat) | under 1% |

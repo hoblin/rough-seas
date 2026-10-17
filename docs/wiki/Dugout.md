@@ -1,5 +1,3 @@
-# Dugout
-
 ![The dugout afloat](images/dugout/afloat-bow.webp)
 
 A single log, hollowed out with an axe. The bark stays on outside, the ends are left solid and blunt, and two ridges of uncut wood cross the floor to stiffen the hull. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
@@ -25,6 +23,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | [Capsized by](Surf-and-Swamping#capsizing) | a 0.75 m breaker, with only 0.2 m of freeboard |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
 | [Lightning](Lightning) | a 6000 J strike harms it about one time in five |
+| [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
 | Built from | 5 logs of one wood, with an axe |

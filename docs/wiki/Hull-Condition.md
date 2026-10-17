@@ -1,5 +1,3 @@
-# Hull condition
-
 Every vessel has a hull, and the hull wears and breaks. How much it takes depends on what it is made of, and every source of harm, from a rock to a lightning bolt, is weighed the same way.
 
 ## Reading it
@@ -46,7 +44,7 @@ A hull's capacity comes from its build, and for a wooden hull also from its wood
 | aged wood (raft) | 49 | 0.5 × |
 | kapok | 36 | 0.37 × |
 
-An ebony sailboat takes more than four times the knocks of a kapok one. The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood; the [reed boat](Reed-Boat), [coracle](Coracle), [birch-bark canoe](Birch-Bark-Canoe) and [hide currach](Currach) have a single build each. Their capacities, in oak, are compared on [Vessels](Vessels).
+An ebony sailboat takes more than four times the knocks of a kapok one. The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood; the [reed boat](Reed-Boat), [coracle](Coracle), [birch-bark canoe](Birch-Bark-Canoe) and [hide currach](Hide-Currach) have a single build each. Their capacities, in oak, are compared on [Vessels](Vessels).
 
 ## What harms a hull
 
@@ -62,12 +60,12 @@ What one rider's knock does, losing 2 or 4 m/s at once:
 | [Outrigger canoe](Outrigger-Canoe) | 4% | 15% |
 | [Sailboat](Sailboat) | 9% | 32% |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 8% | 27% |
-| [Hide currach](Currach) | 10% | 36% |
+| [Hide currach](Hide-Currach) | 10% | 36% |
 | [Reed boat](Reed-Boat) | 19% | 57% |
 | [Raft](Raft) | 27% | 71% |
 | [Coracle](Coracle) | 33% | 80% |
 
-A full-speed ram takes about six to break an oak raft, and three to five to break a sailboat under full sail.
+An oak raft paddled flat out into a rock breaks in four or five rams; a sailboat under full sail, in about two.
 
 ### Waves
 
@@ -79,14 +77,14 @@ White water batters every hull but one, every second it is in it. See [Rapids](R
 
 ### Weapons, explosions and lightning
 
-A swing at a hull counts 200 joules for each point of damage the weapon does; an iron axe breaks an oak raft in about five swings, and a bare fist harms one now and then. Explosions and [lightning](Lightning) count 1000 joules a point, so a bomb or a bolt does far more.
+A swing at a hull counts 200 joules for each point of damage the weapon does; an iron axe breaks an oak raft in about six swings, and a bare fist harms one now and then. Explosions and [lightning](Lightning) count 1000 joules a point, so a bomb or a bolt does far more.
 
 ### Wear
 
 Two hulls wear just by floating, counted in game hours afloat. Time on land pauses the wear, and a vessel left afloat far away wears on all the same.
 
 - The [reed boat](Reed-Boat) soaks through: it loses a third of its condition a day and is gone in about three days.
-- The [hide currach](Currach) loses a tenth a day as its hides dry out and its seams open; greasing it with rendered fat keeps it afloat.
+- The [hide currach](Hide-Currach) loses a tenth a day as its hides dry out and its seams open; greasing it with rendered fat keeps it afloat.
 
 The other vessels don't wear.
 
@@ -106,7 +104,7 @@ A broken vessel is gone. What it was built from scatters on the water as wreckag
 | [Dugout](Dugout) | firewood |
 | [Coracle](Coracle) | a few sticks |
 | [Birch-bark canoe](Birch-Bark-Canoe) | some bark and a stick |
-| [Hide currach](Currach) | sticks and a couple of leathers |
+| [Hide currach](Hide-Currach) | sticks and a couple of leathers |
 | [Outrigger canoe](Outrigger-Canoe) | a few planks, a rope and some linen |
 
 Whatever it carried goes with it. Raising a sunk vessel and what it held is planned for [1.3](Roadmap#13-the-deep).

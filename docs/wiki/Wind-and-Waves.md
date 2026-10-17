@@ -1,10 +1,8 @@
-# Wind and waves
-
 The sea has weather of its own. Wind has a direction and a strength, it changes over hours, and the waves follow it. Every vessel feels the waves; trees, clouds, rain and the roll of a boat all follow the wind, so a look around tells you what the sea is doing.
 
 ## Wind
 
-On a quiet day the wind averages about 7 m/s (a moderate breeze) and wanders between calm and about 12 m/s. It changes slowly: a spell of wind lasts the better part of a day and stretches for thousands of blocks, so the wind where you stand is the wind for the whole crossing, unless a [storm](Storms) comes.
+On a quiet day the wind averages about 7 m/s (a moderate breeze) and wanders between a light breeze of 2 m/s and about 12 m/s; only the eye of a storm is calm. It changes slowly: a spell of wind lasts the better part of a day and stretches for thousands of blocks, so the wind where you stand is the wind for the whole crossing, unless a [storm](Storms) comes.
 
 Its direction follows the prevailing winds of the real world, set by latitude, and veers up to 60° either side of them:
 
@@ -42,7 +40,7 @@ Three things shape the sea beyond the table:
 
 - **Waves take time to build.** The sea answers to the wind of the last four hours, not of the moment: a rising wind is ahead of its waves, and after a storm passes the swell keeps running for hours.
 - **Waves need open water.** The height scales with how much ocean lies around: full on the open ocean, lower in narrow seas and bays, nothing on lakes and rivers. Rivers have their own danger, [rapids](Rapids).
-- **Small seas don't count.** Below 0.3 m a vessel feels nothing, which is roughly anything under force 2.
+- **Small seas don't count.** Below 0.3 m a vessel feels nothing, which is force 2 and below.
 
 ## Every wave is different
 
@@ -52,6 +50,6 @@ A wave comes every few seconds: 3.5 × √(height) seconds apart, so about 5 s i
 
 ## What a wave does
 
-What happens when a wave reaches a vessel is on its own page, [Surf and swamping](Surf-and-Swamping): the water it ships, the breaker that strikes the hull and the one that overturns it. Waves also strain a [mooring](Mooring) and drag an [anchor](Anchoring).
+Each [vessel](Vessels) meets them in its own way: a low [dugout](Dugout) ships water in a 2 m sea that a [currach](Hide-Currach) rides over. What happens when a wave reaches a vessel is on its own page, [Surf and swamping](Surf-and-Swamping): the water it ships, the breaker that strikes the hull and the one that overturns it. Waves also strain a [mooring](Mooring) and drag an [anchor](Anchoring).
 
 The surface of the sea is still drawn flat in 1.0: boats roll and pitch with the waves, more or less by their shape, but the swell itself is not yet visible. A visible sea is [in the works](Roadmap#in-the-works).

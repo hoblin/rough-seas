@@ -1,5 +1,3 @@
-# Sailboat
-
 ![The sailboat afloat](images/sailboat/afloat-bow.webp)
 
 The game's own sailing boat: an open hull of planks on a keel, with a mast stepped amidships carrying one square sail on a yard, a steering oar aft and room for cargo. It is built in place on the shore, plank by plank, and launched from there.
@@ -26,6 +24,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | [Lightning](Lightning) | its 6 m mast draws strikes |
 | [Rapids](Rapids) | barely harmed |
 | [Anchoring](Anchoring) | stone anchor on 120 m of rope, 210 m with an anchor warp |
+| [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post, or anchored |
 | Carried | too big to pick up |
 | Built from | about 300 planks, with support beams, rope and a linen sail |
@@ -36,7 +35,7 @@ Its sail drives it the same whatever the wind does; sailing by the wind comes in
 ## Its neighbours
 
 - The [outrigger canoe](Outrigger-Canoe) is faster and steadier, and carries little.
-- The [hide currach](Currach) is the small, cheap boat for the coast, and it rides out surf the sailboat should keep away from.
+- The [hide currach](Hide-Currach) is the small, cheap boat for the coast, and it rides out surf the sailboat should keep away from.
 
 ## Every form it takes
 

@@ -1,5 +1,3 @@
-# Outrigger canoe
-
 ![The outrigger canoe afloat](images/outrigger-canoe/afloat-bow.webp)
 
 A dugout hull raised with a plank washstrake, with a float log held out to one side on two curved booms, a small platform between them, and a mast stayed fore, aft and out to the float. Its sail is set, reefed or furled to the yard.
@@ -25,6 +23,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Capsized by](Surf-and-Swamping#capsizing) | a 2.1 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3.4 m mast draws strikes |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
+| [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
 | Built from | 4 logs and 8 planks of one wood, 2 ropes and a sail |
@@ -34,7 +33,7 @@ Its sail drives it the same whatever the wind does; sailing by the wind comes in
 
 ## Its neighbours
 
-- The [hide currach](Currach) is the other small boat for the sea: slower, but it carries cargo and can be carried.
+- The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it carries cargo and can be carried.
 - The [sailboat](Sailboat) is slower and carries far more.
 - The [dugout](Dugout) is the same hull without the float: tougher, and tippy at sea.
 

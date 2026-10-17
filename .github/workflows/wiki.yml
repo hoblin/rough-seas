@@ -20,7 +20,7 @@ jobs:
       - run: bin/wiki-links
   publish:
     needs: links
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write

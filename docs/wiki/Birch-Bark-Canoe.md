@@ -1,5 +1,3 @@
-# Birch-bark canoe
-
 ![The birch-bark canoe afloat](images/birch-bark-canoe/afloat-bow.webp)
 
 Sheets of birch bark sewn over a frame of close-set ribs, with gunwales lashed on at intervals, three thwarts and high, upswept ends. Two people paddle it, one in the bow and one in the stern.
@@ -24,6 +22,8 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Bilge](Bailing) | 600 litres |
 | [Capsized by](Surf-and-Swamping#capsizing) | a 0.75 m breaker |
 | [Rapids](Rapids) | runs them unharmed, the only vessel that does |
+| [Lightning](Lightning) | a strike nearby almost always breaks it |
+| [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Built from | 12 birch bark, 2 sticks and resin |
@@ -33,7 +33,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 
 - The [dugout](Dugout) is the other river boat: slower and stuck where it was launched, but it shrugs off the knocks that hole a canoe.
 - The [coracle](Coracle) is the other boat you carry, worn on your back.
-- At sea it is out of its depth: the [hide currach](Currach) is the first boat for the coast.
+- At sea it is out of its depth: the [hide currach](Hide-Currach) is the first boat for the coast.
 
 ## Every form it takes
 

@@ -1,5 +1,3 @@
-# Bailing
-
 Boats with a hull hold the water that comes aboard in their bilge, and nothing takes it out again but you. Look at a vessel to see how many litres it carries.
 
 ## The bilge
@@ -7,7 +5,7 @@ Boats with a hull hold the water that comes aboard in their bilge, and nothing t
 | Vessel | Bilge | Deck open to the rain |
 | --- | --- | --- |
 | [Sailboat](Sailboat) | 1500 litres | 8 m² |
-| [Hide currach](Currach) | 1500 litres | 5.5 m² |
+| [Hide currach](Hide-Currach) | 1500 litres | 5.5 m² |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 600 litres | 3.5 m² |
 | [Outrigger canoe](Outrigger-Canoe) | 600 litres | 3 m² |
 | [Dugout](Dugout) | 450 litres | 3 m² |
@@ -43,7 +41,7 @@ A bucket clears about 240 litres a minute. Against a calm sea and rain that is p
 | [Dugout](Dugout), [outrigger](Outrigger-Canoe) | half a minute |
 | [Sailboat](Sailboat) | a minute |
 | [Birch-bark canoe](Birch-Bark-Canoe) | two minutes |
-| [Hide currach](Currach) | ten minutes |
+| [Hide currach](Hide-Currach) | ten minutes |
 
 The currach, shipping some 150 litres a minute, can be kept dry by one bailer with a bucket. The others can't. An open sailboat left at [anchor](Anchoring) with nobody bailing in a strong gale (force 9) swamps in about two and a half minutes.
 

@@ -1,5 +1,3 @@
-# Hide currach
-
 ![The currach afloat](images/currach/afloat-bow.webp)
 
 A light wooden frame, laths bent over a flat floor and flaring out to the gunwale, with cured hides stretched over it and sealed with rendered fat. The bow rises to a point, the stern is cut square, and the oars ride on thole pins.
@@ -24,6 +22,8 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Bilge](Bailing) | 1500 litres |
 | [Capsized by](Surf-and-Swamping#capsizing) | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | takes them badly |
+| [Lightning](Lightning) | a strike nearby almost always breaks it |
+| [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Built from | 10 planks, 3 large prepared hides and 2 rendered fat |

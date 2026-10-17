@@ -1,5 +1,3 @@
-# Reed boat
-
 ![The reed boat afloat](images/reed-boat/afloat-bow.webp)
 
 Three bundles of reeds, lashed tight with reed rope and drawn up into a point at either end. It is built in minutes with a knife from a few armfuls of cattail or papyrus tops, and it takes one rower and a passenger.
@@ -24,6 +22,8 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing) | a 0.9 m breaker |
 | [Rapids](Rapids) | broken within seconds |
+| [Lightning](Lightning) | a strike nearby breaks it |
+| [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Built from | 24 cattail or papyrus tops, with a knife |

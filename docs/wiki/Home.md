@@ -35,7 +35,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 
 | On rivers and lakes | At sea |
 | --- | --- |
-| [Raft](Raft) | [Hide currach](Currach) |
+| [Raft](Raft) | [Hide currach](Hide-Currach) |
 | [Reed boat](Reed-Boat) | [Outrigger canoe](Outrigger-Canoe) |
 | [Dugout](Dugout) | [Sailboat](Sailboat) |
 | [Coracle](Coracle) | |

@@ -1,5 +1,3 @@
-# Storms
-
 Storms are born, cross the world and die out. Each one is a real thing in the world, with a place, a size and a path: the same storm reaches a ship at sea and the coast it is heading for, hours apart. They raise the [wind and the waves](Wind-and-Waves), bring rain, and some bring [lightning](Lightning).
 
 ## Three kinds
@@ -7,7 +5,7 @@ Storms are born, cross the world and die out. Each one is a real thing in the wo
 | | Squall | Gale | Hurricane |
 | --- | --- | --- | --- |
 | Size across | 500 to 1000 blocks | 3000 to 6000 blocks | 2400 to 5000 blocks |
-| Peak wind | 17 to 26 m/s (force 8 to 10) | 20 to 28 m/s (force 8 to 10) | 33 to 55 m/s (force 12) |
+| Peak wind | 17 to 26 m/s (force 7 to 10) | 20 to 28 m/s (force 8 to 10) | 33 to 55 m/s (force 12) |
 | Lasts | 2 to 6 hours | 1 to 2½ days | 2 to 5 days |
 | Travels | 150 to 400 blocks an hour | 200 to 500 blocks an hour | 150 to 350 blocks an hour |
 | Wind | blows along its path | turns around a calm centre | turns around a calm eye |
@@ -34,7 +32,7 @@ So rainforest coasts see squall after squall, a cold sea in winter is gale count
 
 A storm sets off on the [prevailing wind](Wind-and-Waves#wind) of the place it was born, within 30° of it, and keeps a straight course at a steady speed until it dies. It grows over the first third of its life and fades over the last third, so a storm that reaches you at its peak was gathering strength upwind for hours.
 
-Where two storms overlap, their winds and rain add up.
+Where two storms overlap, their winds add up and the heavier rain falls.
 
 ## Reading the sky
 
@@ -50,6 +48,8 @@ That is your time to make for shore, or to [anchor](Anchoring) far out where the
 
 - It raises the waves that [swamp and capsize](Surf-and-Swamping) boats and fill a [bilge](Bailing), with rain on top.
 - It strains every [anchor](Anchoring) and [mooring rope](Mooring).
-- In warm air it brings [lightning](Lightning), drawn to masts.
+- In warm air it brings [lightning](Lightning), drawn to the masts of the [sailboat](Sailboat) and the [outrigger canoe](Outrigger-Canoe).
+
+Which [vessel](Vessels) to trust in a storm: the [hide currach](Hide-Currach) rides out surf, the [outrigger](Outrigger-Canoe) barely rolls, and the [sailboat](Sailboat) takes the hardest blows; the river boats belong ashore.
 
 The walking player isn't blown about by a hurricane; the danger is all on the water. With [Dangerous oceans](World-Settings#dangerous-oceans) off, storms still come and go, but do no harm.

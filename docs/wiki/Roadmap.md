@@ -1,5 +1,3 @@
-# Roadmap
-
 Where Rough Seas is heading. These are plans, not promises: the next release is planned in detail, the ones after it in outline, and the ideas further out are just that. Each release is named for what it adds to life at sea.
 
 ## 1.0 "Rough Seas"
@@ -36,7 +34,6 @@ The sea becomes dangerous to you, not only to your boat.
 
 - **Body in water.** Swimming wears you out, faster in cold water and on an empty stomach; exhausted, you sink. Cold water kills at the rate measured for real people in real seas, and a warm [current](Currents) off a cold coast can save your life.
 - **Creatures.** Sharks that hunt swimmers and small boats and dodge your blows; whales; and, deep down, rust creatures.
-- **The sea's own warnings.** Fog over cold currents, and fish, and what hunts them, where cold water wells up.
 
 ## 1.3 "The deep"
 
@@ -51,7 +48,9 @@ What lies below.
 
 ## Further out
 
-Ideas for the late game, not yet planned:
+Ideas not yet planned:
+
+- **The sea's own warnings.** Fog over cold [currents](Currents), and life gathering where cold water wells up.
 
 - **Crewed ships.** A big ship for several players: one at the helm, one on the sails, one bailing, one on the anchor, one on lookout. A single player can still sail it, slower and at more risk, and if nobody holds the helm, wind and current turn it.
 - **The clockmaker's vessel.** The fastest boat of all, driven by a paddle wheel or a clockwork screw, which only a clockmaker can build and anyone can sail, the way only a hunter makes the best bows.
