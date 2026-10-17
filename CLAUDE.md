@@ -36,7 +36,6 @@ Each holds what one kind of work needs; read it in full before that work. They a
 - `docs/vanilla-at-sea.md`: before working on boats, anchors, ropes, accessories or lightning.
 - `docs/bench.md`: before testing in the game, with `bin/game help`.
 - `docs/modeling.md`: before changing a shape, with `bin/model help`.
-- `docs/shipping.md`: when a pull request leaves draft (review, self-review, merging).
 - `docs/qa.md`: before a release's QA session, with `bin/qa help`.
 
 ## Tickets
@@ -50,3 +49,18 @@ One ticket ships as one pull request. A big PR is fine here, since Copilot revie
 A player meets your work at sea, not in the diff. Before the PR leaves draft, load the mod into the game and see the change happen: the storm rises, the raft breaks, the shark comes. A test that passes is not a mechanic that plays well.
 
 Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]' "$BENCH_DATA/Logs/server-debug.log"`).
+
+## Shipping
+
+A pull request under 1000 lines of diff skips the `/rpi:feature` flow's multi-agent self-review: Copilot's review is enough for a small change, and five reviewing subagents cost more than they find. Over 1000 lines, run it.
+
+Copilot's review, like any automated review, is advice, not a gate. Judge each finding on its merits: fix a real defect or a real risk; answer a nitpick, a style point or a speculative edge case in one line saying why the code stays, and resolve the thread. A minor finding worth doing later becomes an issue, not another round: every round of fixes brings a new review with new minor points, and five rounds cost hours and buy nothing. When Copilot keeps raising them round after round, the maintainers decide when the PR is done.
+
+The maintainers' agents merge their own pull requests; an outside contributor's waits for the code owner's review.
+
+1. Mark the PR ready and request Copilot: `gh pr edit <number> --add-reviewer copilot-pull-request-reviewer`.
+2. Wait for the review (a few minutes), then triage every finding as above.
+3. Push the fixes and request Copilot again, the same way.
+4. When Copilot recommends merging, squash with the PR's title and body. The ruleset lets us past the code owner's approval only with `--admin`: `gh pr merge <number> --admin --squash --subject "<title> (#<number>)" --body-file <body file>`.
+
+A PR that conflicts with main gets no CI run and no Copilot review. Before every wait for a check or a review, ask `gh pr view <number> --json mergeable --jq .mergeable`: `MERGEABLE`, `CONFLICTING`, or `UNKNOWN` (ask again in a few seconds). On `CONFLICTING`, merge main in (a merge commit, never a rebase or force-push), push, and only then wait.
