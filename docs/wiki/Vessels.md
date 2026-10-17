@@ -27,9 +27,9 @@ Speeds are against the raft, measured on a calm sea.
 | [Raft](Raft) | 1200 J | none | 2 m | none | a log | picked up |
 | [Reed boat](Reed-Boat) | 1200 J | none | 0.9 m | a third a day | cannot be | picked up |
 | [Dugout](Dugout) | 30 000 J | 450 l | 0.75 m | none | a log | no |
-| [Coracle](Coracle) | 400 J | 250 l | 0.6 m | none | leather | worn on the back |
+| [Coracle](Coracle) | 400 J | 250 l | 0.6 m | none | a small hide | worn on the back |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2400 J | 600 l | 0.75 m | none | birch bark | picked up |
-| [Hide currach](Hide-Currach) | 3000 J | 1500 l | 2 m | a tenth a day | rendered fat | picked up |
+| [Hide currach](Hide-Currach) | 3000 J | 1500 l | 2 m | a tenth a day | a large hide; fat for wear | picked up |
 | [Outrigger canoe](Outrigger-Canoe) | 15 000 J | 600 l | 2.1 m | none | planks | no |
 | [Sailboat](Sailboat) | 40 000 J | 1500 l | 3.3 m | none | planks | no |
 

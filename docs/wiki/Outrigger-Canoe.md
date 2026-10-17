@@ -18,7 +18,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Turning | clumsy |
 | [Hull](Hull-Condition) | 15 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 2 planks of its wood restore a fifth |
+| [Mending](Mending) | 2 planks of its wood restore a fourteenth |
 | [Bilge](Bailing) | 600 litres |
 | [Capsized by](Surf-and-Swamping#capsizing) | a 2.1 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3.4 m mast draws strikes |

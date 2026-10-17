@@ -18,7 +18,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | Turning | steady |
 | [Hull](Hull-Condition) | 3000 J: it rides the sea, but one hard knock holes it |
 | [Wear](Hull-Condition#wear) | a tenth a day afloat |
-| [Mending](Mending) | 1 rendered fat restores a quarter |
+| [Mending](Mending) | 1 large prepared hide restores two thirds; rendered fat gives back wear, up to a quarter |
 | [Bilge](Bailing) | 1500 litres |
 | [Capsized by](Surf-and-Swamping#capsizing) | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | takes them badly |

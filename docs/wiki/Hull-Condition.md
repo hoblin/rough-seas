@@ -11,6 +11,8 @@ Look at a vessel to read its condition:
 | *damaged, taking strain* | more than a quarter |
 | *breaking up* | a quarter or less |
 
+![A damaged hide currach: cracks across the hide, and "Hull: damaged, taking strain" in its hover text](images/mechanics/damaged-currach.webp)
+
 Cracks show on the hull as it weakens (on a bamboo raft only the words do). A vessel you pick up keeps its condition as durability on the item, and a damaged boat set back on the water is just as damaged.
 
 ## How a hull takes a blow
@@ -84,7 +86,7 @@ A swing at a hull counts 200 joules for each point of damage the weapon does; an
 Two hulls wear just by floating, counted in game hours afloat. Time on land pauses the wear, and a vessel left afloat far away wears on all the same.
 
 - The [reed boat](Reed-Boat) soaks through: it loses a third of its condition a day and is gone in about three days.
-- The [hide currach](Hide-Currach) loses a tenth a day as its hides dry out and its seams open; greasing it with rendered fat keeps it afloat.
+- The [hide currach](Hide-Currach) loses a tenth a day as its hides dry out and its seams open; greasing it with rendered fat gives back what it wore, never what a knock took.
 
 The other vessels don't wear.
 

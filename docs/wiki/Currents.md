@@ -8,6 +8,8 @@ Rough Seas builds its currents the way oceanographers first explained them: Henr
 - **The open ocean** creeps along at up to 0.2 m/s.
 - **Size matters.** A current's strength scales with the width of its basin: a wide ocean has full-strength currents, a small sea weak ones, and a lake none.
 
+![A northern ocean between 15° and 45°, from above: a warm, fast current runs north along the western shore, and the rest of the basin turns back slowly](images/diagrams/ocean-gyre.svg)
+
 The gyres repeat in bands of latitude, so which way a current runs depends on where you are. Between about 15° and 45° the western current carries warm water towards the pole, as the Gulf Stream does, and the eastern side is cool; nearer the equator, and between about 45° and 75°, the pattern turns over.
 
 ## Warm and cold water

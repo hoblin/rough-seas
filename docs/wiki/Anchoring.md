@@ -19,6 +19,8 @@ Anchor and warp together reach 210 metres.
 
 How well an anchor holds depends on how much rope lies out against the depth, the *scope*. Sailors let out five to seven times the depth: the long rope lies along the seabed and pulls the anchor flat instead of lifting it out. Rough Seas lets out five times the depth, or all the rope aboard if that is less.
 
+![Rope out five times the depth lies along the bottom and holds the anchor flat; two times the depth lifts it off the bottom](images/diagrams/anchor-scope.svg)
+
 | Rope out, against the depth | Holds |
 | --- | --- |
 | 5 × or more | fully, 3000 newtons |

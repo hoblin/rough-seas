@@ -46,6 +46,8 @@ Three things shape the sea beyond the table:
 
 The height in the table is the *significant height*: what an observer reports, the average of the highest third of the waves. Real waves scatter around it, and Rough Seas draws each one from the same distribution oceanographers use, the [Rayleigh distribution](https://en.wikipedia.org/wiki/Significant_wave_height). Most waves are lower than the significant height. About one in a hundred is half again as high, and one in three thousand twice as high. That one is what [capsizes](Surf-and-Swamping#capsizing) a boat that rode out a hundred smaller ones.
 
+![How many waves reach each height: most are lower than the sea's height, one in a hundred half again as high, one in three thousand twice as high](images/diagrams/wave-heights.svg)
+
 A wave comes every few seconds: 3.5 × √(height) seconds apart, so about 5 s in a 2 m sea and 8 s in a 5.5 m gale.
 
 ## What a wave does

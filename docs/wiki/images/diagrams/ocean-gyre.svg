@@ -1,0 +1,25 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 560' width='960' height='560' font-family='Georgia, "Times New Roman", serif'>
+<defs><marker id='a' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0,0 L10,5 L0,10 z' fill='#2b2722'/></marker><marker id='w' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='5' markerHeight='5' orient='auto'><path d='M0,0 L10,5 L0,10 z' fill='#b0472f'/></marker><marker id='c' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto'><path d='M0,0 L10,5 L0,10 z' fill='#2f6a9a'/></marker></defs>
+<rect width='960' height='560' fill='#f4ecdc'/>
+<rect x='0' y='0' width='960' height='560' fill='#8fbfbe'/>
+<path d='M0,0 L150,0 L170,80 L140,170 L175,260 L150,350 L185,450 L160,560 L0,560 z' fill='#dcc48e' stroke='#2b2722'/>
+<path d='M960,0 L830,0 L800,110 L835,200 L805,300 L840,400 L815,560 L960,560 z' fill='#dcc48e' stroke='#2b2722'/>
+<line x1='0' y1='60' x2='960' y2='60' stroke='#f4ecdc' stroke-dasharray='6 6'/>
+<text x='14' y='54' font-size='15' text-anchor='start' fill='#2b2722' >45°</text>
+<line x1='0' y1='280' x2='960' y2='280' stroke='#f4ecdc' stroke-dasharray='6 6'/>
+<text x='14' y='274' font-size='15' text-anchor='start' fill='#2b2722' >30°</text>
+<line x1='0' y1='500' x2='960' y2='500' stroke='#f4ecdc' stroke-dasharray='6 6'/>
+<text x='14' y='494' font-size='15' text-anchor='start' fill='#2b2722' >15°</text>
+<path d='M215,470 C205,360 205,200 225,110' fill='none' stroke='#b0472f' stroke-width='16' marker-end='url(#w)'/>
+<path d='M260,90 C420,70 600,80 750,110' fill='none' stroke='#2b2722' stroke-width='3' marker-end='url(#a)'/>
+<path d='M775,140 C780,250 775,360 760,450' fill='none' stroke='#2f6a9a' stroke-width='4' marker-end='url(#c)'/>
+<path d='M735,480 C580,500 420,500 250,485' fill='none' stroke='#2b2722' stroke-width='3' marker-end='url(#a)'/>
+<text x='240' y='300' font-size='18' text-anchor='start' fill='#b0472f' font-weight='bold'>warm and fast</text>
+<text x='240' y='322' font-size='16' text-anchor='start' fill='#b0472f' >up to 2 m/s</text>
+<text x='480' y='380' font-size='16' text-anchor='middle' fill='#2b2722' >the open ocean creeps along</text>
+<text x='480' y='400' font-size='16' text-anchor='middle' fill='#2b2722' >at up to 0.2 m/s</text>
+<text x='745' y='300' font-size='18' text-anchor='end' fill='#2f6a9a' font-weight='bold'>cool and slow</text>
+<text x='80' y='30' font-size='16' text-anchor='middle' fill='#2b2722' >west</text>
+<text x='880' y='30' font-size='16' text-anchor='middle' fill='#2b2722' >east</text>
+<text x='480' y='545' font-size='15' text-anchor='middle' fill='#2b2722' >A northern ocean between 15° and 45°, seen from above; south of the equator it turns the other way.</text>
+</svg>

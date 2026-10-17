@@ -2,6 +2,8 @@ Boats with a hull hold the water that comes aboard in their bilge, and nothing t
 
 ## The bilge
 
+![An oak dugout after a few minutes in a 2 m sea, its bilge at 427 of 450 litres](images/mechanics/dugout-bilge.webp)
+
 | Vessel | Bilge | Deck open to the rain |
 | --- | --- | --- |
 | [Sailboat](Sailboat) | 1500 litres | 8 m² |

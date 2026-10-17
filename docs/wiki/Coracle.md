@@ -18,7 +18,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | Turning | spins on the spot |
 | [Hull](Hull-Condition) | 400 J, the weakest of all |
 | [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 1 leather restores a half |
+| [Mending](Mending) | 1 small prepared hide restores two thirds |
 | [Bilge](Bailing) | 250 litres |
 | [Capsized by](Surf-and-Swamping#capsizing) | a 0.6 m breaker |
 | [Rapids](Rapids) | broken within seconds |

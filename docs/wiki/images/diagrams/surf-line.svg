@@ -1,0 +1,20 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 480' width='960' height='480' font-family='Georgia, "Times New Roman", serif'>
+<defs><marker id='a' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0,0 L10,5 L0,10 z' fill='#2b2722'/></marker><marker id='w' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='5' markerHeight='5' orient='auto'><path d='M0,0 L10,5 L0,10 z' fill='#b0472f'/></marker><marker id='c' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto'><path d='M0,0 L10,5 L0,10 z' fill='#2f6a9a'/></marker></defs>
+<rect width='960' height='480' fill='#f4ecdc'/>
+<rect x='0' y='220' width='960' height='260' fill='#8fbfbe'/>
+<path d='M60,410 L900,220 L960,190 L960,480 L60,480 z' fill='#dcc48e' stroke='#2b2722'/>
+<line x1='0' y1='220' x2='900' y2='220' stroke='#5d9a9c' stroke-width='2'/>
+<path d='M597.5957894736841,220 C647.5957894736841,220 677.5957894736841,186 707.5957894736841,186 C733.5957894736841,186 741.5957894736841,201.3 723.5957894736841,204.7 C737.5957894736841,213.2 767.5957894736841,220 797.5957894736841,220' fill='#8fbfbe' stroke='#2b2722' stroke-width='2'/>
+<path d='M713.5957894736841,190 q12,-6 18,6' fill='none' stroke='white' stroke-width='3'/>
+<line x1='707.6' y1='224' x2='707.6' y2='259.5' stroke='#2b2722' stroke-dasharray='4 4' marker-start='url(#a)' marker-end='url(#a)'/>
+<text x='707.6' y='170' font-size='16' text-anchor='middle' fill='#2b2722' font-weight='bold'>a small wave</text>
+<text x='699.6' y='271.8' font-size='14' text-anchor='end' fill='#7a6f62' >breaks here</text>
+<path d='M337.2842105263158,220 C387.2842105263158,220 417.2842105263158,140 447.2842105263158,140 C473.2842105263158,140 481.2842105263158,176.0 463.2842105263158,184.0 C477.2842105263158,204.0 507.2842105263158,220 537.2842105263157,220' fill='#8fbfbe' stroke='#2b2722' stroke-width='2'/>
+<path d='M453.2842105263158,144 q12,-6 18,6' fill='none' stroke='white' stroke-width='3'/>
+<line x1='447.3' y1='224' x2='447.3' y2='318.4' stroke='#2b2722' stroke-dasharray='4 4' marker-start='url(#a)' marker-end='url(#a)'/>
+<text x='447.3' y='124' font-size='16' text-anchor='middle' fill='#2b2722' font-weight='bold'>a big wave</text>
+<text x='439.3' y='301.2' font-size='14' text-anchor='end' fill='#7a6f62' >breaks here</text>
+<text x='24' y='40' font-size='20' text-anchor='start' fill='#2b2722' font-weight='bold'>Where waves break</text>
+<text x='24' y='66' font-size='16' text-anchor='start' fill='#7a6f62' >A wave breaks once the water is less than about 1.3 times its height deep,</text>
+<text x='24' y='88' font-size='16' text-anchor='start' fill='#7a6f62' >so the bigger the sea, the further out the surf begins.</text>
+</svg>

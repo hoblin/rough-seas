@@ -11,6 +11,9 @@ Boats with a hull hold that water in their [bilge](Bailing). A full bilge swamps
 A wave breaks when it grows too steep, and a breaking wave is the dangerous one: its crest stands higher, it throws far more water aboard and it strikes the hull like a falling wall.
 
 - **Surf.** Where the water is shallower than about 1.3 times a wave's height, the wave breaks, every time. Real waves do the same: a wave breaks once it is about four fifths as high as the water is deep, which is why the surf line runs further out the higher the sea. In rough weather the last stretch to a beach is all surf.
+
+  ![Where waves break: a big wave breaks further out than a small one, where the water is about 1.3 times its height deep](images/diagrams/surf-line.svg)
+
 - **Whitecaps.** Out in deep water, now and then a wave breaks on its own, more often as the wind rises: about one wave in 50 in a strong breeze (force 6), one in 11 in a gale (force 8), one in 4 in a storm (force 10) and three in four in a hurricane.
 - **A swamped vessel.** Once a bilge is full, every wave breaks over it.
 

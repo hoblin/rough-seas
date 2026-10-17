@@ -1,5 +1,9 @@
 Storms are born, cross the world and die out. Each one is a real thing in the world, with a place, a size and a path: the same storm reaches a ship at sea and the coast it is heading for, hours apart. They raise the [wind and the waves](Wind-and-Waves), bring rain, and some bring [lightning](Lightning).
 
+![A sailboat in a gale](images/mechanics/gale.webp)
+
+*A sailboat in a gale: the sky closes in, the sea darkens, and the boat heels to the wind.*
+
 ## Three kinds
 
 | | Squall | Gale | Hurricane |
@@ -17,6 +21,8 @@ Times are game hours; a game day is about 48 real minutes.
 - **Squalls** are the storms of warm, wet summers: small, short and violent, a wall of wind and rain that passes within hours.
 - **Gales** are the storms of the cold half of the year and of cool climates, like the depressions that cross the North Atlantic every winter. They cover a great area and blow for a day or two. Their wind circles a wide, quiet centre: counter-clockwise north of the equator, clockwise south of it, as real lows do.
 - **Hurricanes** form only in hot climates, in the subtropics and the tropics, from late spring to autumn. They last for days and bring the strongest wind of all, which is strongest at the wall of the small calm eye in the middle.
+
+![The wind of a gale or a hurricane, from above: it spirals in around a calm eye and is strongest at the eye wall](images/diagrams/cyclone.svg)
 
 ## Where and when they form
 
