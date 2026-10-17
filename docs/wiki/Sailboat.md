@@ -27,6 +27,9 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post, or anchored |
 | Carried | too big to pick up |
+| Seats | two aft: the starboard one steers, the port one takes a passenger |
+| Cargo | 8 spots, 4 a side; each takes a chest (16 slots), a crate (20 slots of one kind; 16 aged, 25 in ebony or purpleheart), a storage vessel (12), a basket (8), or a boat seat for one more aboard |
+| Fittings | a lantern on the mast, the stone anchor in the port prow, an [anchor warp](Anchoring#rope) on the mast, a figurehead or a chiseled block of your own, ratlines either side, seven shields a side, and a fence post in a cargo spot with the one aft of it free, to tie an animal aboard |
 | Built from | about 300 planks, with support beams, rope and a linen sail |
 | Wreckage | about 40 planks, a few beams, rope and linen |
 
@@ -34,7 +37,7 @@ Its sail drives it the same whatever the wind does; sailing by the wind comes in
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is faster and steadier, and carries little.
+- The [outrigger canoe](Outrigger-Canoe) is faster and steadier, and carries one basket.
 - The [hide currach](Hide-Currach) is the small, cheap boat for the coast, and it rides out surf the sailboat should keep away from.
 
 ## Every form it takes
