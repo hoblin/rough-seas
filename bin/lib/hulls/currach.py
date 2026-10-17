@@ -26,9 +26,10 @@ STATIONS = [
 
 
 TURN = 8.3
-STATION = 3.5
+THWART = -15
+STATION = 30.5
 BULL = 2.4
-SHIPPED = (7.45, 5)
+SHIPPED = (9.3, 6.6)
 FRAMES = 30
 OARS = {"OarStarboard": -1, "OarPort": 1}
 
@@ -94,9 +95,8 @@ def build(path):
     for n, x in enumerate(range(-20, 24, 2), 1):
         (_, y), (half, _) = hull.section(x + 0.7)[:2]
         shape.add(box(f"Floor{n}", (x, y + 0.4, 8 - half + 0.6), (x + 1.4, y + 0.8, 8 + half - 0.6), "frame", grain="z"))
-    for n, (x, y) in enumerate([(-15, 6.2), (-2, 6.2), (12, 6.2), (26, 6.6)], 1):
-        half = hull.section(x + 0.8)[-1][0] - 1
-        shape.add(box(f"Thwart{n}", (x, y, 8 - half), (x + 1.6, y + 0.8, 8 + half), "frame", grain="z"))
+    half = hull.section(THWART + 0.8)[-1][0] - 1
+    shape.add(box("Thwart", (THWART, 6.2, 8 - half), (THWART + 1.6, 7, 8 + half), "frame", grain="z"))
     shape.add(box("StemPost", (38.4, 5, 7.3), (40.6, 11.2, 8.7), "frame", grain="y"))
     shape.add(hull.hide_water(9.2), hull.bilge(9.2))
     shape.turn_about(TURN)
@@ -104,8 +104,8 @@ def build(path):
     for name, side in OARS.items():
         pin, tholes[name] = rowlock(hull, side)
         shape.add(pin, oar(name, side))
-    shape.keep("Hull", "FrontSeat", "BackSeat", "ForeCargo", "AftCargo")
-    crew(shape, "currach", "BackSeat", "sitboatidle", rowing(tholes), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
+    shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo")
+    crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(tholes), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
          {"rotationZ": 12})
 
 

@@ -9,7 +9,7 @@
         "swimmingOffsetY": 0.42,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
-            "idle": "sitboatidle",
+            "idle": "roughseas-sitthwart",
             "ready": "roughseas-currach-ready",
             "forwards": "roughseas-currach-forward",
             "backwards": "roughseas-currach-backward"
@@ -58,25 +58,29 @@
                     "bodyYawLimit": 0.4,
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
-                },
-                {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1}
+                }
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "ForeCargoAP", "AftCargoAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["BackSeatAP", "ForeCargoAP", "MidCargoAP", "AftCargoAP", "HullAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
-                {"code": "FrontSeatAP", "forCategoryCodes": []},
                 {"code": "BackSeatAP", "forCategoryCodes": []},
                 {
                     "code": "Fore Cargo",
-                    "forCategoryCodes": ["basket", "crate", "storagevessel"],
+                    "forCategoryCodes": ["basket", "chest"],
                     "attachmentPointCode": "ForeCargoAP",
                     "stepParentTo": {"": {"elementName": "ForeCargo"}}
                 },
                 {
+                    "code": "Mid Cargo",
+                    "forCategoryCodes": ["basket", "chest"],
+                    "attachmentPointCode": "MidCargoAP",
+                    "stepParentTo": {"": {"elementName": "MidCargo"}}
+                },
+                {
                     "code": "Aft Cargo",
-                    "forCategoryCodes": ["basket", "crate", "storagevessel"],
+                    "forCategoryCodes": ["basket", "chest"],
                     "attachmentPointCode": "AftCargoAP",
                     "stepParentTo": {"": {"elementName": "AftCargo"}}
                 },

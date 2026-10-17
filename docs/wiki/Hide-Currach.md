@@ -8,7 +8,7 @@ The first venture to sea under oars. A hide hull flexes with the waves instead o
 
 ## Where it comes from
 
-Currachs have worked the Atlantic coast of Ireland for as long as there are records. The early Irish ones were covered with ox hides, and the monks who sailed to the Hebrides, Iceland and, by legend, beyond, sailed in them; in 1976–77 Tim Severin crossed from Ireland to Newfoundland in the *Brendan*, a leather boat built in this way. The currachs of Aran and Connemara are rowed with narrow, bladeless oars that pivot on a single thole pin through a wooden block. The model is one of these: a flat-floored, flaring hull of close laths, a square stern, and two oars stowed on the thwarts.
+Currachs have worked the Atlantic coast of Ireland for as long as there are records. The early Irish ones were covered with ox hides, and the monks who sailed to the Hebrides, Iceland and, by legend, beyond, sailed in them; in 1976–77 Tim Severin crossed from Ireland to Newfoundland in the *Brendan*, a leather boat built in this way. The currachs of Aran and Connemara are rowed with narrow, bladeless oars that pivot on a single thole pin through a wooden block. The model is one of these: a flat-floored, flaring hull of close laths, a square stern, one thwart for the rower, and two oars stowed along the gunwales.
 
 ## By the numbers
 
@@ -26,8 +26,8 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | two: the rower on the middle thwart, with its own two oars, and a passenger in the bow |
-| Cargo | two spots on the bottom, aft of the rower; each takes a crate (20 slots of one kind; 16 aged, 25 in ebony or purpleheart), a storage vessel (12) or a basket (8) |
+| Seats | one: the rower on the stern thwart, with its own two oars |
+| Cargo | three spots on the bottom, forward of the rower; each takes a basket (8 slots), a storage vessel (12) or a chest (16; a treasure chest 4) |
 | Built from | 10 planks, 3 large prepared hides and 2 rendered fat |
 | Wreckage | sticks and leather |
 
