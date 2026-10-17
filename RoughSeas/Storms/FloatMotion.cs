@@ -38,6 +38,6 @@ public static class FloatMotion
 
         var pos = ___entityitem.Pos;
         var openSea = SeaSurface.OpenSea(sea.Oceanity(pos.X, pos.Z));
-        if (openSea > 0) __instance.ModelMat[ModelMatrixY] += (float)(openSea * surface.HeightAt(pos.X, pos.Z));
+        if (openSea > 0) __instance.ModelMat[ModelMatrixY] += (float)surface.HeightAt(pos.X, pos.Z, openSea);
     }
 }

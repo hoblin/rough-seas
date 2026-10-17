@@ -114,15 +114,16 @@ public sealed class SeaSurface
         Foam = Foam.Lerp(Foam, foamTarget, blend);
     }
 
-    public double HeightAt(double x, double z)
+    /// <summary>The drawn surface's height here, with the shader's shore fade (<see cref="OpenSea"/>) applied as it does.</summary>
+    public double HeightAt(double x, double z, double openSea = 1)
     {
         var (restX, restZ) = (x, z);
         for (var i = 0; i < SurfaceSearchSteps; i++)
         {
             var (shiftX, _, shiftZ) = DisplacementAt(restX, restZ);
-            (restX, restZ) = (x - shiftX, z - shiftZ);
+            (restX, restZ) = (x - openSea * shiftX, z - openSea * shiftZ);
         }
-        return DisplacementAt(restX, restZ).Y;
+        return openSea * DisplacementAt(restX, restZ).Y;
     }
 
     public (double X, double Y, double Z) DisplacementAt(double x, double z)

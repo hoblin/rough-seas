@@ -133,9 +133,10 @@ public static class VesselMotion
         var half = Math.Max(box.XSize, box.ZSize) / 2;
         var yaw = pos.Yaw + ((boat.Properties.Client.Shape?.rotateY ?? 0) + 90) * GameMath.DEG2RAD;
         double At(double alongX, double alongZ) =>
-            openSea * surface.HeightAt(
+            surface.HeightAt(
                 pos.X + (Math.Cos(yaw) * alongX + Math.Sin(yaw) * alongZ) * half,
-                pos.Z + (-Math.Sin(yaw) * alongX + Math.Cos(yaw) * alongZ) * half);
+                pos.Z + (-Math.Sin(yaw) * alongX + Math.Cos(yaw) * alongZ) * half,
+                openSea);
 
         var (plusX, minusX, plusZ, minusZ) = (At(1, 0), At(-1, 0), At(0, 1), At(0, -1));
         return new Pose(

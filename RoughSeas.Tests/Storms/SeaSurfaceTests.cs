@@ -106,6 +106,17 @@ public class SeaSurfaceTests
     }
 
     [Fact]
+    public void FindsTheHeightTheShaderDrawsNearTheShore()
+    {
+        var surface = Surface();
+        Settle(surface, 4, 0.3);
+        const double openSea = 0.4;
+        var (shiftX, rise, shiftZ) = surface.DisplacementAt(FarX, FarZ);
+
+        Assert.Equal(openSea * rise, surface.HeightAt(FarX + openSea * shiftX, FarZ + openSea * shiftZ, openSea), 2);
+    }
+
+    [Fact]
     public void ShowsTheShaderTheSamePhaseTheBoatsRideOn()
     {
         var surface = Surface();

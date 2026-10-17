@@ -103,7 +103,7 @@ public static class SurfaceShader
         if (__result <= 0 || surface == null || sea == null || surface.Calm || __result > surface.SeaHeight + 1) return;
         var eye = __instance.MainCamera.CameraEyePos;
         var openSea = SeaSurface.OpenSea(sea.Oceanity(eye.X, eye.Z));
-        __result = (float)Math.Max(0, __result + openSea * surface.HeightAt(eye.X, eye.Z));
+        __result = (float)Math.Max(0, __result + surface.HeightAt(eye.X, eye.Z, openSea));
     }
 
     private static void Inject(ShaderProgram program, ref string __result)
