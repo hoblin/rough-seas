@@ -4,7 +4,7 @@ A dugout hull raised with a plank washstrake, with a float log held out to one s
 
 ## In Rough Seas
 
-For a long crossing of open sea. The outrigger is the fastest vessel before metal, and it sails, leaving every rowed boat far astern. The float keeps the narrow hull upright where a dugout would roll over. It is clumsy to turn and carries little, and it can't be picked up, so where you launch it is where it lives.
+For a long crossing of open sea. The outrigger is the fastest vessel before metal, and it sails, leaving every rowed boat far astern. The float keeps the narrow hull upright where a dugout would roll over. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
 
 ## Where it comes from
 
@@ -26,7 +26,8 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
-| Aboard | the helmsman aft, who paddles when the sail is furled, and a passenger forward |
+| Seats | two: the helmsman aft, who paddles when the sail is furled, and a passenger forward |
+| Cargo | a basket (8 slots) forward, in place of the passenger |
 | Built from | 4 logs and 8 planks of one wood, 2 ropes and a sail |
 | Wreckage | planks, a rope and some linen |
 
@@ -43,7 +44,7 @@ Logs and planks of one wood; redwood takes log sections.
 
 ## Its neighbours
 
-- The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it carries cargo and can be carried.
+- The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it can be carried.
 - The [sailboat](Sailboat) is slower and carries far more.
 - The [dugout](Dugout) is the same hull without the float: tougher, and tippy at sea.
 

@@ -26,6 +26,9 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
+| Seats | two, fore and aft; either one paddles, with an oar in hand |
+| Cargo | a basket (8 slots) in place of either rider |
+| Fittings | a rest for a spare oar |
 | Built from | 12 logs and 3 ropes, or 18 bamboo stakes and 3 ropes |
 | Wreckage | a few logs and a rope |
 

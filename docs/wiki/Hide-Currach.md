@@ -4,7 +4,7 @@ A light wooden frame, laths bent over a flat floor and flaring out to the gunwal
 
 ## In Rough Seas
 
-The first venture to sea under oars. A hide hull flexes with the waves instead of fighting them, and the currach carries cargo, so it is the first boat in which a coast becomes a road. It wears slowly while afloat and needs greasing with rendered fat to keep it watertight.
+The first venture to sea under oars. A hide hull flexes with the waves instead of fighting them. It wears slowly while afloat and needs greasing with rendered fat to keep it watertight.
 
 ## Where it comes from
 
@@ -26,7 +26,8 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Aboard | the rower on the middle thwart, with its own two oars, and a passenger in the bow |
+| Seats | two: the rower on the middle thwart, with its own two oars, and a passenger in the bow |
+| Cargo | a basket (8 slots) in the bow, in place of the passenger |
 | Built from | 10 planks, 3 large prepared hides and 2 rendered fat |
 | Wreckage | sticks and leather |
 
@@ -36,7 +37,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but it carries little and can't be picked up.
+- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but it can't be picked up.
 - The [sailboat](Sailboat) carries far more and takes far harder blows, and it costs a shipyard's worth of planks.
 - The [dugout](Dugout) and the [bark canoe](Birch-Bark-Canoe) are what to leave on the river.
 
