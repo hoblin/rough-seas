@@ -29,6 +29,10 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | Built from | 24 cattail or papyrus tops, with a knife |
 | Wreckage | reed tops |
 
+## How it is built
+
+![The reed boat from 24 cattail or papyrus tops and a knife](images/recipes/reed-boat.png)
+
 ## Its neighbours
 
 - The [raft](Raft) is the other cheap way across: it costs an axe and timber instead of a knife and reeds, but it lasts, and it can be mended.

@@ -38,6 +38,14 @@ bin/scene views CODE DIR [SCALE]
                            player, breaks the vessel, flies to the nearest shore and deletes the
                            plants (and anything else) in a 13x6x13 box there, and empties the
                            player's inventory.
+bin/scene recipe PAGE OUTPUT FILE [FROM]
+                           the handbook's crafting grid that makes OUTPUT (out of FROM, when given) on
+                           handbook page PAGE, held on that recipe, "=" and output included, as a .png
+                           FILE at twice the game's size:
+                           bin/scene recipe item-roughseas:dugout-oak roughseas:dugout-oak dugout.png.
+                           Opens the handbook and waits for it to build its pages.
+bin/scene recipes DIR      every recipe the mod adds, by `recipe`, into DIR: docs/wiki/images/recipes
+                           for the wiki. A new recipe gets its line in this script's list.
 Run them after bin/client.
 EOF
 }
@@ -221,7 +229,43 @@ views() {
   ls "$dir"
 }
 
+recipe() {
+  local page=$1 output=$2 out=$3 from=${4:-} box deadline=$((SECONDS + 60))
+  "$game" state | jq -e '.dialogs | index("GuiDialogSurvivalHandbook")' >/dev/null || "$game" hotkey handbook >/dev/null
+  until "$game" link "handbook://$page" >/dev/null && box=$("$game" recipe "$output" "$from" 2>/dev/null); do
+    [ $SECONDS -lt $deadline ] || { echo "No recipe makes $output${from:+ from $from} on handbook page $page" >&2; exit 1; }
+    sleep 2
+  done
+  local full=$BENCH_TMP/recipe.png
+  "$game" shot "$full" gui >/dev/null
+  magick "$full" -crop "$(jq -r '"\(.width)x\(.height)+\(.x)+\(.y)"' <<<"$box")" +repage -filter point -resize 200% "$out"
+}
+
+recipes() {
+  local dir=$1 name page output from
+  mkdir -p "$dir"
+  while read -r name page output from; do
+    recipe "item-$page" "$output" "$dir/$name.png" "$from"
+  done <<'EOF'
+birch-bark         roughseas:bark-birch         roughseas:bark-birch
+reed-boat          roughseas:reedboat           roughseas:reedboat
+dugout             roughseas:dugout-oak         roughseas:dugout-oak
+dugout-redwood     roughseas:dugout-redwood     roughseas:dugout-redwood
+coracle            roughseas:coracle            roughseas:coracle
+birch-bark-canoe   roughseas:barkcanoe          roughseas:barkcanoe
+currach            roughseas:currach            roughseas:currach
+outrigger          roughseas:outrigger-oak      roughseas:outrigger-oak
+outrigger-redwood  roughseas:outrigger-redwood  roughseas:outrigger-redwood
+anchor-warp        roughseas:anchorwarp         roughseas:anchorwarp
+anchor-warp-ropes  rope                         game:rope                    roughseas:anchorwarp
+EOF
+  "$game" close >/dev/null
+  ls "$dir"
+}
+
 case "${1:-}" in
+  recipe) shift; recipe "$@" ;;
+  recipes) shift; recipes "$@" ;;
   views) shift; views "$@" ;;
   photo) shift; photo "$@" ;;
   dock) shift; dock "$@" ;;

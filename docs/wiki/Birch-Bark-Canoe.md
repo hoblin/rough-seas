@@ -29,6 +29,15 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | Built from | 12 birch bark, 2 sticks and resin |
 | Wreckage | bark and a stick |
 
+## How it is built
+
+Birch bark comes off a birch log with a knife.
+
+| | |
+| --- | --- |
+| ![Birch bark from a birch log and a knife](images/recipes/birch-bark.png) | ![The birch-bark canoe from 12 birch bark, 2 sticks and resin](images/recipes/birch-bark-canoe.png) |
+| The bark | The canoe |
+
 ## Its neighbours
 
 - The [dugout](Dugout) is the other river boat: slower and stuck where it was launched, but it shrugs off the knocks that hole a canoe.

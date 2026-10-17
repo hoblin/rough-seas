@@ -39,4 +39,4 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 
 A better vessel costs more than a worse one for the same job: the reed boat costs a knife and an armful of reeds, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
 
-All six new vessels are built in the crafting grid, and each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).
+All six new vessels are built in the crafting grid ([recipes](Recipes)), and each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).

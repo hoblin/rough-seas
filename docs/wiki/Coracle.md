@@ -30,6 +30,10 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | Built from | 8 sticks, a large prepared hide and rendered fat |
 | Wreckage | a few sticks |
 
+## How it is built
+
+![The coracle from 8 sticks, a large prepared hide and rendered fat](images/recipes/coracle.png)
+
 ## Its neighbours
 
 - The [birch-bark canoe](Birch-Bark-Canoe) is the other boat you carry: faster and roomier, but carried in the hands, not on the back.

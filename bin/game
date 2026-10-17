@@ -124,6 +124,13 @@ ACT
   bin/game link HREF         follow a link as a click in the game's text does: handbook://PAGECODE
                              opens a handbook page (handbook://tab-guide a tab), handbooksearch://TEXT
                              searches it. A wrong protocol lists the known ones
+  bin/game recipe OUTPUT [FROM]
+                             on the open handbook page, hold the crafting grid that makes OUTPUT
+                             (roughseas:dugout-oak) still on that recipe, out of FROM when given
+                             (game:rope from roughseas:anchorwarp), scroll it into view and print
+                             its box on screen, "=" and output included, as JSON x y width height
+                             in the pixels of `shot`. Fails while no grid on the page makes it:
+                             the handbook still building, or the wrong page
 
 SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge sea                fly to the nearest open sea, hovering just above the surface
@@ -281,6 +288,7 @@ case "${1:-}" in
   scroll) post "/scroll?steps=${2:-1}" ;;
   close) post /close-dialogs ;;
   link) post "/link?href=$(jq -rn --arg href "$2" '$href | @uri')" ;;
+  recipe) post "/recipe?output=$(jq -rn --arg output "$2" '$output | @uri')&from=$(jq -rn --arg from "${3:-}" '$from | @uri')" ;;
   leave) post /leave ;;
   *) usage ;;
 esac
