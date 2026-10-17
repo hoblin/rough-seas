@@ -14,14 +14,14 @@
     },
     "hitboxSize": {"x": 1.2, "y": 0.5},
     "behaviorConfigs": {
-        "vesselintegrity": {
+        "roughseas:vesselintegrity": {
             "impactCapacity": 15000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
-            "repair": {
+            "repairs": [{
                 "material": {"type": "item", "code": "game:plank-{wood}", "stacksize": 2},
-                "restores": 0.2,
+                "restores": 0.071,
                 "saturation": 80
-            },
+            }],
             "wreckage": [
                 {"type": "item", "code": "game:plank-{wood}", "quantity": {"avg": 8, "var": 4}},
                 {"type": "item", "code": "game:rope", "quantity": {"avg": 1, "var": 1}},
@@ -115,7 +115,7 @@
             "lashing": {"base": "game:item/resource/rope"}
         },
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -130,7 +130,7 @@
     },
     "server": {
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

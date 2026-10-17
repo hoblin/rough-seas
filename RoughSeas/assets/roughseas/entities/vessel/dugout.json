@@ -19,14 +19,14 @@
     },
     "hitboxSize": {"x": 1, "y": 0.56},
     "behaviorConfigs": {
-        "vesselintegrity": {
+        "roughseas:vesselintegrity": {
             "impactCapacity": 30000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
-            "repair": {
+            "repairs": [{
                 "material": {"type": "block", "code": "game:log-placed-{wood}-ud", "stacksize": 1},
                 "restores": 0.4,
                 "saturation": 80
-            },
+            }],
             "wreckage": [{"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}}],
             "cracks": {
                 "textures": ["bark", "inside"],
@@ -114,7 +114,7 @@
         "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater"]},
         "textures": {"bark": {"base": "game:block/wood/bark/{wood}-h"}, "inside": {"base": "game:block/wood/debarked/{wood}"}},
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -129,7 +129,7 @@
     },
     "server": {
         "behaviors": [
-            {"code": "vesselintegrity"},
+            {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

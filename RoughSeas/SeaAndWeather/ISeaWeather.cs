@@ -9,7 +9,7 @@ namespace RoughSeas.SeaAndWeather;
 /// </summary>
 public interface ISeaWeather
 {
-    /// <summary>The world's "dangerous oceans" setting: whether the sea may harm vessels and swimmers.</summary>
+    /// <summary>The world's "dangerous oceans" setting: whether the sea may do harm.</summary>
     bool DangerousOceans { get; }
 
     /// <summary>The game time the state is read at, in total game hours.</summary>

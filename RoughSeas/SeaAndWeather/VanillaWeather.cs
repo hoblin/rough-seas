@@ -88,12 +88,18 @@ public class VanillaWeather
             var stormEvent = stormiest.storms.Presence >= threshold ? stormiest.storms.Storm?.Type.WeatherEvent : null;
             if (stormEvent != null && Allows(sim, stormEvent, stormiest.pos))
             {
-                if (sim.CurWeatherEvent?.config.Code != stormEvent) sim.SetWeatherEvent(stormEvent, true);
+                if (sim.CurWeatherEvent?.config.Code != stormEvent)
+                {
+                    sea.Log("region {0} {1}: {2} for a {3} at {4:F0}% presence", sim.regionX, sim.regionZ, stormEvent,
+                        stormiest.storms.Storm!.Code, stormiest.storms.Presence * 100);
+                    sim.SetWeatherEvent(stormEvent, true);
+                }
                 foreach (var weatherEvent in sim.WeatherEvents) weatherEvent.AllowStop = weatherEvent != sim.CurWeatherEvent;
                 stormRegions.Add(index);
             }
             else if (stormRegions.Remove(index))
             {
+                sea.Log("region {0} {1}: the storm has passed", sim.regionX, sim.regionZ);
                 foreach (var weatherEvent in sim.WeatherEvents) weatherEvent.AllowStop = true;
                 sim.SetWeatherEvent(CalmEvent, true);
             }

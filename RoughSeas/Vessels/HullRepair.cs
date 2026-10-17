@@ -12,4 +12,7 @@ public class HullRepair
 
     /// <summary>Satiety the mender spends on one patch: the work.</summary>
     public float Saturation;
+
+    /// <summary>Upkeep rather than a mend: gives back only integrity lost to wear, never to a hit.</summary>
+    public bool Greases;
 }
