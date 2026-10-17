@@ -45,6 +45,7 @@ public static class SurfaceShader
     private static float[] uniforms = [];
     private static string vertexCode = "";
     private static string fragmentCode = "";
+    private static bool normalTilted;
 
     public static bool DrawWaves { get; set; } = true;
 
@@ -83,8 +84,9 @@ public static class SurfaceShader
 
     private static bool Compile(ICoreClientAPI api)
     {
+        normalTilted = false;
         api.Shader.ReloadShaders();
-        return Active(ShaderPrograms.Chunkliquid, WavesUniform) && Active(ShaderPrograms.Chunkliquid, FoamUniform);
+        return normalTilted && Active(ShaderPrograms.Chunkliquid, WavesUniform) && Active(ShaderPrograms.Chunkliquid, FoamUniform);
     }
 
     private static bool Active(ShaderProgramBase program, string uniform) =>
@@ -113,7 +115,11 @@ public static class SurfaceShader
             __result = __result.Replace(VanillaWarp, RenamedWarp).Replace(AfterWarp, vertexCode + AfterWarp);
         }
         if (program.PassName != LiquidPass) return;
-        if (__result.Contains(FaceNormal)) __result = __result.Replace(FaceNormal, TiltedNormal);
+        if (__result.Contains(FaceNormal))
+        {
+            __result = __result.Replace(FaceNormal, TiltedNormal);
+            normalTilted = true;
+        }
         if (__result.Contains(BeforeFog) && !__result.Contains(fragmentCode))
         {
             __result = __result.Replace(FragmentMain, fragmentCode + FragmentMain).Replace(BeforeFog, Foamed + BeforeFog);
