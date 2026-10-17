@@ -73,8 +73,10 @@ look() {
 }
 
 photo() {
-  local id=$1 out=$2 hover=${6:-}
-  look "$id" "${3:-3}" "${4:-1}" "${5:-0}"
+  local id=$1 out=$2 hover=
+  shift 2
+  [ "${!#:-}" = hover ] && { hover=hover; set -- "${@:1:$#-1}"; }
+  look "$id" "${1:-3}" "${2:-1}" "${3:-0}"
   sleep 2
   local clean=$BENCH_TMP/photo.png gui=$BENCH_TMP/photo-gui.png width height
   "$game" shot "$clean" >/dev/null
