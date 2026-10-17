@@ -75,7 +75,7 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
             .BeginSubCommand("set")
-                .WithDescription("Set an entity's watched attribute, tree/key for one inside a tree: int, float, bool or string by the value's form, or the type it already has")
+                .WithDescription("Set an entity's watched attribute, tree/key for one inside a tree: int, float, bool or string by the value's form, while a double or float stays what it is")
                 .WithArgs(parsers.Long("id"), parsers.Word("key"), parsers.Word("value"))
                 .HandleWith(args => Set(sapi.World.GetEntityById((long)args[0]), (string)args[1], (string)args[2]))
             .EndSubCommand()

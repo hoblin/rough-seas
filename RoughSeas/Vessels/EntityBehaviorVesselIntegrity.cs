@@ -28,6 +28,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private const string AfloatKey = "afloatHours";
     private const string WornKey = "worn";
     private const string CarriedWornKey = "roughseas:worn";
+    private const string HullBox = "HullAP";
     private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
     private static readonly AssetLocation MendSound = new("game:sounds/player/build");
     private static readonly string[] Conditions = ["sound", "scratched", "scarred", "damaged", "breaking"];
@@ -223,9 +224,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             return;
         }
         if (RepairWith(itemslot) is not { } repair) return;
+        var refusal = Refusal(repair, itemslot);
+        if (refusal != null && !OnHull(byEntity)) return;
 
         handled = EnumHandling.PreventSubsequent;
-        if (Refusal(repair, itemslot) is { } refusal)
+        if (refusal != null)
         {
             if (entity.Api is ICoreClientAPI capi) capi.TriggerIngameError(this, "roughseas-vessel-mend", refusal);
             return;
@@ -258,7 +261,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         if (Greasing is { } grease)
         {
             double days = (grease.Restores - Worn) / wearPerDay;
-            infotext.AppendLine(days > 0 ? Lang.Get("roughseas:vessel-grease-in", (int)Math.Ceiling(days)) : Lang.Get("roughseas:vessel-grease-due"));
+            infotext.AppendLine(days > 0 ? Lang.Get("roughseas:vessel-grease-in", (int)Math.Round(days)) : Lang.Get("roughseas:vessel-grease-due"));
         }
         base.GetInfoText(infotext);
     }
@@ -358,6 +361,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         return slot.StackSize < repair.Material.StackSize
             ? Lang.Get("roughseas:vessel-mend-takes", repair.Material.StackSize, slot.GetStackName())
             : null;
+    }
+
+    private bool OnHull(EntityAgent byEntity)
+    {
+        var index = (byEntity as EntityPlayer)?.EntitySelection?.SelectionBoxIndex ?? 0;
+        var boxes = entity.GetBehavior<EntityBehaviorSelectionBoxes>()?.selectionBoxes ?? [];
+        return index <= 0 || index > boxes.Length || boxes[index - 1].AttachPoint.Code == HullBox;
     }
 
     private bool Helps(HullRepair repair) => repair.Greases ? Worn > 0 : Integrity < 1;

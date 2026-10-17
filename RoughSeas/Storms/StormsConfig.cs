@@ -1,3 +1,5 @@
+using System;
+
 namespace RoughSeas.Storms;
 
 public class StormsConfig
@@ -39,6 +41,9 @@ public class SwampingConfig
     public double SpeedExponent;
     public double FreeSurfaceRoll;
     public double FreeSurfaceCapsize;
+
+    /// <summary>The share of her speed a vessel of this dry mass, in kilograms, keeps with this much water aboard.</summary>
+    public double SpeedFactor(double dryMass, double litres) => Math.Pow(dryMass / (dryMass + litres), SpeedExponent);
 }
 
 public class MooringConfig

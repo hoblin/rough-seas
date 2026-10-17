@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Korpusas",
     "vessel-condition-sound": "Korpusas: sveikas, {0} %",
     "vessel-condition-scratched": "Korpusas: subraižytas, {0} %",
     "vessel-condition-scarred": "Korpusas: apdaužytas, {0} %",
@@ -14,7 +13,6 @@
     "bilge-water": "Lijalo vanduo: {0} iš {1} l",
     "item-anchorwarp": "Inkaro lynas",
     "itemdesc-anchorwarp": "Devynios virvės, supintos į 90 metrų lyną. Laikomas prie burlaivio stiebo, jis leidžia inkarui pasiekti gilesnį vandenį.",
-    "creature-roughseas:*-selectionbox-HullAP": "Korpusas",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Priekinė sėdynė",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Galinė sėdynė",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Falo knaga",

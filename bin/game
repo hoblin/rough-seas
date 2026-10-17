@@ -154,8 +154,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
   /bridge hold CODE          put item or block CODE in the active hotbar slot, held in the hand
   /bridge drop CODE X Y Z    an item or block CODE lying on the ground there, at rest (~ relative)
-  /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form, or the
-                             type it already has), e.g. the sailboat's sailPosition 0, 1, 2;
+  /bridge set ID KEY VALUE   set a watched attribute: int, float, bool or string by its form, while a
+                             double or float stays what it is; e.g. the sailboat's sailPosition 0, 1, 2;
                              TREE/KEY reaches into a tree: roughseas:vessel/integrity 0.6 for a hull,
                              roughseas:bilge/litres 200 for the water aboard
   /bridge fly X Y Z          hover there in creative free flight, out of any seat: no sinking.
@@ -170,7 +170,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              its integrity (watched "roughseas:vessel"), 0 breaks it into wreckage
   /bridge interact ID attack|interact [none|ctrl|shift] [BOX]
                              (BOX: the selection box clicked, by its attachment point, e.g.
-                             CargoAP to put a held basket there with ctrl; the first box by default)
+                             CargoAP to put a held basket there with ctrl; by default the click lands
+                             on the entity itself, no box)
                              what the server does when the player left- or right-clicks entity
                              ID with the held item, wherever the player stands, with ctrl or shift
                              held; replies with its integrity if it is a vessel. The client sends

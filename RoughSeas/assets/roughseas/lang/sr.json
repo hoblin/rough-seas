@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Труп",
     "vessel-condition-sound": "Труп: читав, {0}%",
     "vessel-condition-scratched": "Труп: изгребан, {0}%",
     "vessel-condition-scarred": "Труп: изубијан, {0}%",
@@ -14,7 +13,6 @@
     "bilge-water": "Каљужа: {0} од {1} литара",
     "item-anchorwarp": "Сидрено уже",
     "itemdesc-anchorwarp": "Девет ужади спојених у 90 метара ужета. Спремљено уз јарбол једрилице, омогућава сидру да досегне дубљу воду.",
-    "creature-roughseas:*-selectionbox-HullAP": "Труп",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Предње седиште",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Задње седиште",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Бита за подизач",

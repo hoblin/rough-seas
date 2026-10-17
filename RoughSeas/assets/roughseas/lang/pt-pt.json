@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Casco",
     "vessel-condition-sound": "Casco: íntegro, {0}%",
     "vessel-condition-scratched": "Casco: riscado, {0}%",
     "vessel-condition-scarred": "Casco: castigado, {0}%",
@@ -14,7 +13,6 @@
     "bilge-water": "Porão: {0} de {1} litros",
     "item-anchorwarp": "Cabo de fundear",
     "itemdesc-anchorwarp": "Nove cordas emendadas em 90 metros de cabo. Aduchado junto ao mastro de um veleiro, permite à âncora alcançar águas mais fundas.",
-    "creature-roughseas:*-selectionbox-HullAP": "Casco",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Assento dianteiro",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Assento traseiro",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Cunho da adriça",

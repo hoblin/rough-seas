@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "船體",
     "game:item-handbooktext-boat-sailed-*": "帆船皆是在岸邊就地組裝建造，完工後直接推入水中。你無法撿起整艘帆船，只能用<a href=\"handbooksearch://saw\">鋸子</a>按住右鍵將其拆解。更多資訊請參見<a href=\"handbook://gamemechanicinfo-shipbuilding\">建造帆船</a>條目。<br><br><strong>航行</strong><br>帆船成功下水後，即可點擊 <hk>rightmouse</hk> 座入右舷最後方的座椅 (位於船尾舵柄旁): 只有這個位子能夠操控船隻。當帆處於捲起的狀態時，你可以使用一般控制玩家的按鍵緩慢地移動帆船。<hk>rightmouse</hk> 點擊桅杆腰部的栓鉤 (用於固定控制帆的繩索) 以張開船帆加速前進。目前風向並不會影響船的操作性能，它只聽從你的按鍵輸入。<br><br>如果帆船不小心擱淺了或被困在淺水區，你仍可以用方向鍵將其挪動回深水中，但記得要先將帆收起。<br><br><strong>裝配</strong><br>大部分的船隻配件皆可透過 <hk>ctrl</hk> + <hk>rightmouse</hk> 安裝於船上。<br>每艘帆船可以乘載數名乘客 - 左舷後側附有一個現成的空位 (在作為舵手控制船隻的玩家旁邊)。此外，船身供儲放貨物八個欄位也可用於安裝外加<a href=\"handbooksearch://boat seat\">座椅</a>。<br><br>你可以在甲板上擺放各式容器 (包含箱子、籃子及陶罐)，無論船上船下皆可開啟使用。<br><br>你也可以用帆船載運坐騎 (如馬鹿)，首先在貨物欄位放置一根<a href=\"handbooksearch://wooden fence\">木柵欄</a> - 確保後方留有 2 個空的貨物欄位 - 然後使用繫著坐騎的<a href=\"handbook://item-rope\">繩子</a>點擊柵欄，牠將會坐入其後空出的位置。再次 <hk>rightmouse</hk> 點擊該柵欄以把動物牽下船。<br><br>你可以將一盞<a href=\"handbooksearch://lantern\">提燈</a>懸掛於桅杆後側 (約 3 尺高處) 提供照明。<br><br>在桅杆兩側到舷緣綁上<a href=\"handbook://item-ratlines\">梯線</a>方可攀爬至桅杆頂以便眺望四周。<br><br>甲板左前處有一個儲放<a href=\"handbook://item-anchor-stone\">錨</a>的空間。空手<hk>rightmouse</hk>點擊它即可下錨或起錨；參見<a href=\"handbook://roughseas-mooring\">繫泊與下錨</a>。<br><br>船頭也有安裝雕刻艏像的位置 ，還可以在左舷外側寫下船名 (手持染料按下 <hk>shift</hk> + <hk>rightmouse</hk>)。",
     "game:item-handbooktext-anchor-stone": "石製錨可放置於<a href=\"handbooksearch://sailboat\">帆船</a>頭前左側甲板上 (僅此位置)。空手<hk>rightmouse</hk>點擊它即可下錨或起錨。放出約為水深五倍的錨繩時，錨才能抓牢；參見<a href=\"handbook://roughseas-mooring\">繫泊與下錨</a>。",
     "vessel-condition-sound": "船體：完好，{0}%",
@@ -16,7 +15,6 @@
     "bilge-water": "艙底水：{0} / {1} 公升",
     "item-anchorwarp": "錨纜",
     "itemdesc-anchorwarp": "九捆繩索編接成 90 公尺長的錨纜。存放在帆船的桅杆旁，可讓船錨觸及更深的水域。",
-    "creature-roughseas:*-selectionbox-HullAP": "船體",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "前座",
     "creature-roughseas:*-selectionbox-BackSeatAP": "後座",
     "creature-roughseas:*-selectionbox-LowerMastAP": "升降索固定鉤",

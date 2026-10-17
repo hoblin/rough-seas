@@ -6,6 +6,7 @@ textures they lie on. Stage 1 is the first after sound; each stage keeps the mar
 and adds its own. Seeded, so a run redraws the same marks. With PREVIEW, also writes every overlay
 laid over its base texture, eight times larger, one material a row.
 """
+import os
 import random
 import struct
 import subprocess
@@ -166,7 +167,6 @@ def texture(code):
     domain, path = code.split(":")
     if domain == "roughseas":
         return ROOT / "RoughSeas/assets/roughseas/textures" / f"{path}.png"
-    import os
     return Path(os.environ["VINTAGE_STORY"]) / "assets/survival/textures" / f"{path}.png"
 
 

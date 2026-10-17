@@ -19,8 +19,10 @@ public sealed class BilgeRenderer : IRenderer
     private readonly ICoreClientAPI capi;
     private readonly Entity entity;
     private readonly Matrixf model = new();
+    private readonly Vec4f middle = new();
     private readonly Vec4f pivot = new();
     private MultiTextureMeshRef? mesh;
+    private int? levels;
 
     public BilgeRenderer(ICoreClientAPI capi, Entity entity)
     {
@@ -33,7 +35,7 @@ public sealed class BilgeRenderer : IRenderer
 
     public int RenderRange => 99;
 
-    public int Levels => entity.Properties.Client.LoadedShapeForEntity?.GetElementByName(LevelsElement)?.Children?.Length ?? 0;
+    public int Levels => (levels ??= entity.Properties.Client.LoadedShapeForEntity?.GetElementByName(LevelsElement)?.Children?.Length) ?? 0;
 
     public int Level { get; private set; }
 
@@ -58,10 +60,11 @@ public sealed class BilgeRenderer : IRenderer
 
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
     {
-        if (mesh == null || entity.Properties.Client.Renderer is not EntityShapeRenderer hull) return;
+        if (mesh == null || !entity.IsRendered || entity.Properties.Client.Renderer is not EntityShapeRenderer hull) return;
 
         float half = entity.SelectionBox.Y2 / 2;
-        Mat4f.MulWithVec4(hull.ModelMat, new Vec4f(0.5f, half, 0.5f, 1), pivot);
+        middle.Set(0.5f, half, 0.5f, 1);
+        Mat4f.MulWithVec4(hull.ModelMat, middle, pivot);
         float yaw = entity.Pos.Yaw + ((entity.Properties.Client.Shape?.rotateY ?? 0) + 90) * GameMath.DEG2RAD + hull.yangle;
         model.Identity().Translate(pivot.X, pivot.Y, pivot.Z).RotateY(yaw).Translate(-0.5f, -half, -0.5f);
 

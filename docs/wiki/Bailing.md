@@ -35,7 +35,7 @@ Bailing is one held click, nothing more: no filling and pouring, no place to emp
 
 ## Keeping up
 
-A bucket clears about 200 litres a minute. Against a calm sea and rain that is plenty; against a gale it is not. In a force 8 sea, unanchored, an empty bilge fills in about:
+A bucket clears about 200 litres a minute. Against a calm sea and rain that is plenty; against a gale it is not. In a force 8 sea, unanchored, an empty bilge fills in no more than this, and sooner as the water aboard [settles the boat](Surf-and-Swamping#water-aboard):
 
 | Vessel | Time to swamp |
 | --- | --- |

@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Skrov",
     "vessel-condition-sound": "Skrov: helt, {0} %",
     "vessel-condition-scratched": "Skrov: repat, {0} %",
     "vessel-condition-scarred": "Skrov: medfaret, {0} %",
@@ -14,7 +13,6 @@
     "bilge-water": "Länsvatten: {0} av {1} liter",
     "item-anchorwarp": "Ankarlina",
     "itemdesc-anchorwarp": "Nio rep splitsade till 90 meter lina. Stuvad vid masten på en segelbåt låter den ankaret nå djupare vatten.",
-    "creature-roughseas:*-selectionbox-HullAP": "Skrov",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Främre plats",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Bakre plats",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Fallknap",

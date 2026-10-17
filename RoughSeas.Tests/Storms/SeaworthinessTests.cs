@@ -85,5 +85,13 @@ public class SeaworthinessTests
         Assert.True(Of("currach").Laden(1, swamping).Capsizes(1.5));
     }
 
+    [Fact]
+    public void WaterAboardSlowsALightHullMoreThanAHeavyOne()
+    {
+        Assert.Equal(1, swamping.SpeedFactor(470, 0));
+        Assert.InRange(swamping.SpeedFactor(470, 225), 0.9, 0.95);
+        Assert.InRange(swamping.SpeedFactor(85, 125), 0.8, 0.85);
+    }
+
     private static Seaworthiness Of(string vessel) => Fixtures.Seaworthiness(vessel);
 }

@@ -3,7 +3,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Storms;
 
-/// <summary>Vanilla floats a boat at a fixed line; here the water aboard settles her lower, on both sides.</summary>
+/// <summary>Vanilla floats a boat at a fixed line; here the water aboard settles her lower, on client and server alike.</summary>
 public static class VesselDraught
 {
     private const string HarmonyId = "roughseas.storms.draught";

@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Kareno",
     "vessel-condition-sound": "Kareno: sana, {0}%",
     "vessel-condition-scratched": "Kareno: gratita, {0}%",
     "vessel-condition-scarred": "Kareno: batita, {0}%",
@@ -14,7 +13,6 @@
     "bilge-water": "Sentinakvo: {0} el {1} litroj",
     "item-anchorwarp": "Ankroŝnuro",
     "itemdesc-anchorwarp": "Naŭ ŝnuroj splisitaj en 90 metrojn da ŝnuro. Stokita ĉe la masto de velboato, ĝi lasas la ankron atingi pli profundan akvon.",
-    "creature-roughseas:*-selectionbox-HullAP": "Kareno",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Antaŭa sidloko",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Malantaŭa sidloko",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Haltilo de la drizo",

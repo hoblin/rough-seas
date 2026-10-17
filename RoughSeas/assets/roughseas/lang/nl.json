@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Romp",
     "vessel-condition-sound": "Romp: gaaf, {0}%",
     "vessel-condition-scratched": "Romp: bekrast, {0}%",
     "vessel-condition-scarred": "Romp: gehavend, {0}%",
@@ -14,7 +13,6 @@
     "bilge-water": "Bilgewater: {0} van {1} liter",
     "item-anchorwarp": "Ankerlijn",
     "itemdesc-anchorwarp": "Negen touwen gesplitst tot 90 meter lijn. Opgeborgen bij de mast van een zeilboot laat ze het anker dieper water bereiken.",
-    "creature-roughseas:*-selectionbox-HullAP": "Romp",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Voorste zitplaats",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Achterste zitplaats",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Valkikker",

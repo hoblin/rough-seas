@@ -17,8 +17,8 @@ public class BlockBehaviorBailer(Block block) : BlockBehavior(block)
     private double secondsPerScoop;
 
     /// <summary>
-    /// Plays one cycle a scoop only while its <c>animationSpeed</c> in <c>patches/player-poses.json</c> stays
-    /// 1 / <see cref="secondsPerScoop"/>.
+    /// Plays one cycle a scoop only while, in <c>patches/player-poses.json</c>, its <c>animationSpeed</c> stays
+    /// 1 / <see cref="secondsPerScoop"/> and <c>roughseas-bail</c> stays 30 frames, one second at speed 1.
     /// </summary>
     private string? animation;
 
@@ -64,7 +64,7 @@ public class BlockBehaviorBailer(Block block) : BlockBehavior(block)
     public override string? GetHeldTpUseAnimation(ItemSlot activeHotbarSlot, Entity forEntity, ref EnumHandling bhHandling)
     {
         if (forEntity is not EntityAgent agent || !Empty(activeHotbarSlot)) return null;
-        if (Bilge(agent, (agent as EntityPlayer)?.Player?.CurrentEntitySelection) == null) return null;
+        if (Bilge(agent, (agent as EntityPlayer)?.Player?.CurrentEntitySelection) is not { Litres: > 0 }) return null;
 
         bhHandling = EnumHandling.PreventDefault;
         return animation;

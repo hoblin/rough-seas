@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -27,7 +28,8 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private double windageSquareMetres;
     private Seaworthiness dry;
     private float speedMultiplier;
-    private Vec3f?[]? dryOffsets;
+    private readonly Dictionary<string, SeatPose> seated = new();
+    private EntityBehaviorSeatable? seatable;
     private float sinceUpdate;
     private double sinceWave;
 
@@ -70,6 +72,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
         bilge = entity.GetBehavior<EntityBehaviorBilge>();
         mooring = entity.GetBehavior<EntityBehaviorMooring>();
+        seatable = entity.GetBehavior<EntityBehaviorSeatable>();
     }
 
     public double Force(SeaState state) =>
@@ -158,14 +161,24 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         var swamped = bilge!.Swamped;
         if (entity is EntityBoat boat)
         {
-            var dryMass = Mass();
-            boat.SpeedMultiplier = swamped ? 0 : speedMultiplier * (float)Math.Pow(dryMass / (dryMass + bilge.Litres), storms.Config.Swamping.SpeedExponent);
+            boat.SpeedMultiplier = swamped ? 0 : speedMultiplier * (float)storms.Config.Swamping.SpeedFactor(Mass(), bilge.Litres);
             var seats = Seats;
-            dryOffsets ??= seats.Select(seat => seat.Config?.RiderOffset).ToArray();
-            for (var i = 0; i < seats.Length; i++) Hold(boat, seats[i], swamped ? Alongside(i) : dryOffsets[i], swamped);
+            for (var i = 0; i < seats.Length; i++)
+            {
+                var seat = seats[i];
+                if (seat.Config == null) continue;
+                if (!seated.TryGetValue(seat.SeatId, out var dry))
+                {
+                    seated[seat.SeatId] = dry = new SeatPose(seat.Config.RiderOffset, seat.Config.Animation ?? boat.MountAnimations["idle"]);
+                }
+                Hold(seat, swamped ? new SeatPose(Alongside(i), HoldAnimation) : dry);
+            }
         }
-        if (!swamped || !bilge.Sinks || entity.World.Side != EnumAppSide.Server) return;
+        if (swamped && bilge.Sinks && entity.World.Side == EnumAppSide.Server) Founder();
+    }
 
+    private void Founder()
+    {
         var thrown = 0;
         foreach (var seat in Seats)
         {
@@ -176,20 +189,32 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     private Vec3f Alongside(int seat) => new(0, HoldDepthMetres, (float)(BeamMetres / 2 + HoldReachMetres) * (seat % 2 == 0 ? 1 : -1));
 
-    private static void Hold(EntityBoat boat, IMountableSeat seat, Vec3f? offset, bool swamped)
+    /// <summary>
+    /// Puts the seat in this pose. The pose is the seat's own animation, which vanilla stops when its rider leaves, so a
+    /// rider who lets go of a swamped hull does not keep holding on.
+    /// </summary>
+    private static void Hold(IMountableSeat seat, SeatPose pose)
     {
-        if (seat.Config != null) seat.Config.RiderOffset = offset;
-        var animations = seat.Passenger?.AnimManager;
-        if (animations == null || animations.IsAnimationActive(HoldAnimation) == swamped) return;
+        var config = seat.Config;
+        var shown = config.Animation;
+        config.RiderOffset = pose.Offset;
+        config.Animation = pose.Animation;
+        if (shown == pose.Animation || seat.Passenger?.AnimManager is not { } animations) return;
 
-        var seated = seat.Config?.Animation ?? boat.MountAnimations["idle"];
-        animations.StopAnimation(swamped ? seated : HoldAnimation);
-        animations.StartAnimation(swamped ? HoldAnimation : seated);
+        if (shown != null) animations.StopAnimation(shown);
+        animations.StartAnimation(pose.Animation);
     }
 
-    private double Mass() => entity.Properties.Weight + Seats.Sum(seat => seat.Passenger?.Properties.Weight ?? 0);
+    private double Mass()
+    {
+        var mass = entity.Properties.Weight;
+        foreach (var seat in Seats) mass += seat.Passenger?.Properties.Weight ?? 0;
+        return mass;
+    }
 
-    private IMountableSeat[] Seats => entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
+    private readonly record struct SeatPose(Vec3f? Offset, string Animation);
+
+    private IMountableSeat[] Seats => seatable?.Seats ?? [];
 
     private double Exposure => mooring?.Exposure ?? 1;
 }

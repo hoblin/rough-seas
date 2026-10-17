@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Runko",
     "vessel-condition-sound": "Runko: ehjä, {0} %",
     "vessel-condition-scratched": "Runko: naarmuuntunut, {0} %",
     "vessel-condition-scarred": "Runko: kolhiintunut, {0} %",
@@ -14,7 +13,6 @@
     "bilge-water": "Pilssivesi: {0} / {1} litraa",
     "item-anchorwarp": "Ankkuriköysi",
     "itemdesc-anchorwarp": "Yhdeksän köyttä pujosjatkettu 90 metrin ankkuriköydeksi. Purjeveneen maston juurelle säilöttynä se päästää ankkurin syvempään veteen.",
-    "creature-roughseas:*-selectionbox-HullAP": "Runko",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Etuistuin",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Takaistuin",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Nostimen knaapi",

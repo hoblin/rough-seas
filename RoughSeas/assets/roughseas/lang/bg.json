@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Корпус",
     "vessel-condition-sound": "Корпус: здрав, {0}%",
     "vessel-condition-scratched": "Корпус: одраскан, {0}%",
     "vessel-condition-scarred": "Корпус: очукан, {0}%",
@@ -14,7 +13,6 @@
     "bilge-water": "Вода в трюма: {0} от {1} л",
     "item-anchorwarp": "Котвено въже",
     "itemdesc-anchorwarp": "Девет въжета, снадени в 90 метра котвено въже. Прибрано до мачтата на платноходка, то позволява на котвата да стигне по-дълбоки води.",
-    "creature-roughseas:*-selectionbox-HullAP": "Корпус",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Предна седалка",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Задна седалка",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Кнехт за фала",

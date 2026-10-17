@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Skrog",
     "game:item-handbooktext-anchor-stone": "Steinankeret kan plasseres i lagringsplassen som ligger fremst i venstre baug av <a href=\"handbooksearch://sailboat\">seilbåten</a> (og den kan kun legges på denne plassen). Klikk <hk>rightmouse</hk> på det med tom hånd for å slippe det eller hale det inn. Det holder når du stikker ut tau omtrent fem ganger vanndybden; se <a href=\"handbook://roughseas-mooring\">Fortøyning og ankring</a>.",
     "vessel-condition-sound": "Skrog: helt, {0} %",
     "vessel-condition-scratched": "Skrog: oppskrapet, {0} %",
@@ -15,7 +14,6 @@
     "bilge-water": "Lensevann: {0} av {1} liter",
     "item-anchorwarp": "Ankertau",
     "itemdesc-anchorwarp": "Ni tau spleiset til 90 meter ankertau. Stuet ved masten på en seilbåt lar det ankeret nå dypere vann.",
-    "creature-roughseas:*-selectionbox-HullAP": "Skrog",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Forsete",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Baksete",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Kryssholt-fall",

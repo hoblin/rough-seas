@@ -1,5 +1,4 @@
 {
-    "game:*-selectionbox-HullAP": "Skrog",
     "game:item-handbooktext-anchor-stone": "Stenankeret kan placeres til bagbord forude i boven på <a href=\"handbooksearch://sejlskib\">sejlskibet</a>. Klik på det med <hk>rightmouse</hk> og tom hånd for at kaste det eller hive det op. Det holder, når du stikker line ud, omkring fem gange vanddybden; se <a href=\"handbook://roughseas-mooring\">Fortøjning og ankring</a>.",
     "vessel-condition-sound": "Skrog: intakt, {0} %",
     "vessel-condition-scratched": "Skrog: ridset, {0} %",
@@ -15,7 +14,6 @@
     "bilge-water": "Bundvand: {0} af {1} liter",
     "item-anchorwarp": "Ankertrosse",
     "itemdesc-anchorwarp": "Ni reb splejset til 90 meter trosse. Stuvet ved masten på en sejlbåd lader den ankeret nå dybere vand.",
-    "creature-roughseas:*-selectionbox-HullAP": "Skrog",
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Forreste plads",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Bagerste plads",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Klampe til fald",
