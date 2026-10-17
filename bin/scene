@@ -138,10 +138,12 @@ views() {
   apart=$(awk -v s="$s" 'BEGIN { print 3 + 2 * s }')
   "$game" do "/entity spawnat boat-sailed-oak 1 $(awk -v x="$x" -v d="$apart" 'BEGIN { print x + d }') $y $z 0" >/dev/null
   sleep 2
+  local companion
+  companion=$("$game" state | jq -r '[.nearby[] | select(.code == "game:boat-sailed-oak") | .EntityId] | max')
   "$game" do "/bridge fly $(awk -v x="$x" -v d="$apart" -v y="$y" -v z="$z" 'BEGIN { print x + d / 2, y + 6, z + 14 }')" >/dev/null
   "$game" look 3.1416 3.55 >/dev/null
   sleep 1; shot beside-sailboat
-  clear 64 boat-* >/dev/null
+  "$game" do "/entity remove e[id=$companion]" >/dev/null
 
   "$game" do "/bridge strike $id 1000000000" >/dev/null
   sleep 2

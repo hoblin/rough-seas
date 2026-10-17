@@ -15,7 +15,7 @@ In the vanilla game the sea is flat, safe and empty, and crossing it means holdi
 - **Surf, swamping and capsizing.** Waves break in the shallows, boats ship water over their sides, and a big enough breaker turns a small boat over. You bail it out with a bowl, jug or bucket.
 - **Mooring and anchoring.** Tie up to a post ashore, or anchor the sailboat with enough rope for the depth. With too little rope the anchor drags. A storm can throw a badly moored vessel up on the beach.
 
-The game's handbook explains all of this from a player's point of view. Search it for "Rough Seas" or open its **Guides** tab.
+The game's handbook explains all of this from a player's point of view. Search it for "Rough Seas" or open its **Guides** tab. The [wiki](https://github.com/hoblin/rough-seas/wiki) goes deeper: how each mechanic works, the numbers behind it, and where each vessel comes from.
 
 ## Install
 

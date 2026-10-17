@@ -1,0 +1,43 @@
+name: Wiki
+on:
+  push:
+    branches: [main]
+    paths: [docs/wiki/**, bin/wiki-links, .github/workflows/wiki.yml]
+  pull_request:
+    branches: [main]
+    paths: [docs/wiki/**, bin/wiki-links, .github/workflows/wiki.yml]
+  workflow_dispatch:
+permissions: {}
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: bin/wiki-links
+  publish:
+    needs: links
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency: wiki
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+      - run: rsync -a --delete --exclude .git docs/wiki/ wiki/
+      - working-directory: wiki
+        run: |
+          git add -A
+          git diff --cached --quiet && exit
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Publish docs/wiki at ${GITHUB_SHA::7}"
+          git push

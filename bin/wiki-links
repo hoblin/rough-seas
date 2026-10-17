@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+import re
+import sys
+from pathlib import Path
+
+root = Path(__file__).resolve().parent.parent / "docs" / "wiki"
+pages = {page.stem: page for page in root.glob("*.md")}
+
+
+def anchors(page):
+    headings = re.findall(r"^#+\s+(.+)$", page.read_text(), re.MULTILINE)
+    return {re.sub(r"[^\w\- ]", "", heading.lower()).replace(" ", "-") for heading in headings}
+
+
+broken = []
+for page in sorted(pages.values()):
+    for target in re.findall(r"\]\(([^)\s]+)", page.read_text()):
+        if re.match(r"[a-z]+:", target):
+            continue
+        path, _, anchor = target.partition("#")
+        linked = pages.get(path or page.stem)
+        if linked is None and (root / path).is_file() and not anchor:
+            continue
+        if linked is None or (anchor and anchor not in anchors(linked)):
+            broken.append(f"{page.name}: {target}")
+
+print("\n".join(broken) or f"{len(pages)} pages, every link resolves")
+sys.exit(1 if broken else 0)

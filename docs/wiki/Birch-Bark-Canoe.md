@@ -12,6 +12,29 @@ For long river journeys. The canoe is fast and draws almost no water, and it is 
 
 The birch-bark canoe belongs to the peoples of the northern woodlands of North America, the Anishinaabe, Mi'kmaq, Cree and their neighbours, who built it from what the forest gave: birch bark for the skin, cedar for the ribs and sheathing, spruce root for the lashings and spruce gum for the seams. It was light enough to carry between lakes, and later French and British fur traders crossed half a continent in larger copies of it. The model follows a two-person river canoe of that tradition, with its ribs, wrapped gunwales and curled stems.
 
+## By the numbers
+
+| | |
+| --- | --- |
+| Speed | 2.1 × the raft, the fastest paddled boat |
+| Turning | nimble |
+| [Hull](Hull-Condition) | 2400 J |
+| [Wear](Hull-Condition#wear) | none |
+| [Mending](Mending) | 2 birch bark restore a third |
+| [Bilge](Bailing) | 600 litres |
+| [Capsized by](Surf-and-Swamping#capsizing) | a 0.75 m breaker |
+| [Rapids](Rapids) | runs them unharmed, the only vessel that does |
+| [Mooring](Mooring) | tied to a post |
+| Carried | picked up |
+| Built from | 12 birch bark, 2 sticks and resin |
+| Wreckage | bark and a stick |
+
+## Its neighbours
+
+- The [dugout](Dugout) is the other river boat: slower and stuck where it was launched, but it shrugs off the knocks that hole a canoe.
+- The [coracle](Coracle) is the other boat you carry, worn on your back.
+- At sea it is out of its depth: the [hide currach](Currach) is the first boat for the coast.
+
 ## Every form it takes
 
 | | |

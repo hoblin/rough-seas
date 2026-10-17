@@ -10,7 +10,7 @@ Treat the mod as a game we own, not a pile of patches. Each system (wind, boat d
 
 Every new text a player sees ships in every locale the game officially supports (the codes in the install's `assets/game/lang/languages.json`), in that language's nautical terms.
 
-The handbook's guide pages (`RoughSeas/assets/roughseas/config/handbook/`) explain the mod to a player, short and in vanilla's style. A mechanic's own pull request leaves them alone; they are checked against what ships once before each release.
+The handbook's guide pages (`RoughSeas/assets/roughseas/config/handbook/`) explain the mod to a player, short and in vanilla's style. A mechanic's own pull request leaves them alone; they are checked against what ships once before each release. The wiki (`docs/wiki/`, published by CI on merge; `bin/wiki-links` checks it) holds the depth the guide leaves out, and gets the same check before each release, its roadmap included.
 
 ## Tools first
 

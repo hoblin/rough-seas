@@ -12,6 +12,29 @@ The first venture to sea under oars. A hide hull flexes with the waves instead o
 
 Currachs have worked the Atlantic coast of Ireland for as long as there are records. The early Irish ones were covered with ox hides, and the monks who sailed to the Hebrides, Iceland and, by legend, beyond, sailed in them; in 1976–77 Tim Severin crossed from Ireland to Newfoundland in the *Brendan*, a leather boat built in this way. The currachs of Aran and Connemara are rowed with narrow, bladeless oars that pivot on a single thole pin through a wooden block. The model is one of these: a flat-floored, flaring hull of close laths, a square stern, and two oars stowed on the thwarts.
 
+## By the numbers
+
+| | |
+| --- | --- |
+| Speed | 1.7 × the raft, rowed |
+| Turning | steady |
+| [Hull](Hull-Condition) | 3000 J: it rides the sea, but one hard knock holes it |
+| [Wear](Hull-Condition#wear) | a tenth a day afloat |
+| [Mending](Mending) | 1 rendered fat restores a quarter |
+| [Bilge](Bailing) | 1500 litres |
+| [Capsized by](Surf-and-Swamping#capsizing) | a 2 m breaker, the best of the small boats in surf |
+| [Rapids](Rapids) | takes them badly |
+| [Mooring](Mooring) | tied to a post |
+| Carried | picked up |
+| Built from | 10 planks, 3 large prepared hides and 2 rendered fat |
+| Wreckage | sticks and leather |
+
+## Its neighbours
+
+- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but it carries little and can't be picked up.
+- The [sailboat](Sailboat) carries far more and takes far harder blows, and it costs a shipyard's worth of planks.
+- The [dugout](Dugout) and the [bark canoe](Birch-Bark-Canoe) are what to leave on the river.
+
 ## Every form it takes
 
 | | |
