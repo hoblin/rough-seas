@@ -11,11 +11,10 @@
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
             "idle": "roughseas-sitlegsforward",
-            "ready": "crudeOarReady",
-            "forwards": "crudeOarForward",
-            "backwards": "crudeOarBackward"
-        },
-        "requiresPaddlingTool": true
+            "ready": "roughseas-dugout-ready",
+            "forwards": "roughseas-dugout-forward",
+            "backwards": "roughseas-dugout-backward"
+        }
     },
     "hitboxSize": {"x": 1, "y": 0.56},
     "behaviorConfigs": {
@@ -49,7 +48,7 @@
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
                 },
-                {"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "reverse": true}
+                {"apName": "BackSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1, "reverse": true}
             ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
@@ -105,6 +104,11 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater", "Bilge"]},
+        "animations": [
+            {"code": "roughseas-dugout-ready", "animation": "roughseas-dugout-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-dugout-forward", "animation": "roughseas-dugout-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-dugout-backward", "animation": "roughseas-dugout-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
+        ],
         "textures": {"bark": {"base": "game:block/wood/bark/{wood}-h"}, "inside": {"base": "game:block/wood/debarked/{wood}"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},

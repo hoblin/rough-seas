@@ -10,9 +10,9 @@
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
             "idle": "sitboatidle",
-            "ready": "roughseas-oars-ready",
-            "forwards": "roughseas-oars-forward",
-            "backwards": "roughseas-oars-backward"
+            "ready": "roughseas-currach-ready",
+            "forwards": "roughseas-currach-forward",
+            "backwards": "roughseas-currach-backward"
         },
         "rightClickPickup": true
     },
@@ -116,9 +116,9 @@
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater", "Bilge"]},
         "animations": [
-            {"code": "roughseas-oars-ready", "animation": "roughseas-oars-ready", "animationSpeed": 0, "easeInSpeed": 4, "easeOutSpeed": 4},
-            {"code": "roughseas-oars-forward", "animation": "roughseas-oars-forward", "animationSpeed": 0, "easeInSpeed": 4, "easeOutSpeed": 4},
-            {"code": "roughseas-oars-backward", "animation": "roughseas-oars-backward", "animationSpeed": 0, "easeInSpeed": 4, "easeOutSpeed": 4}
+            {"code": "roughseas-currach-ready", "animation": "roughseas-currach-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-currach-forward", "animation": "roughseas-currach-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-currach-backward", "animation": "roughseas-currach-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
         ],
         "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [

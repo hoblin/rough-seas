@@ -6044,8 +6044,8 @@
  ],
  "animations": [
   {
-   "name": "roughseas-oars-ready",
-   "code": "roughseas-oars-ready",
+   "name": "roughseas-currach-ready",
+   "code": "roughseas-currach-ready",
    "quantityframes": 30,
    "onActivityStopped": "EaseOut",
    "onAnimationEnd": "Repeat",
@@ -6053,22 +6053,15 @@
     {
      "frame": 0,
      "elements": {
-      "OarStarboard": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": 3.5, "rotationX": 90, "rotationY": 90.0, "rotationZ": -13 },
-      "OarPort": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": -3.5, "rotationX": -90, "rotationY": -90.0, "rotationZ": -13 }
-     }
-    },
-    {
-     "frame": 15,
-     "elements": {
-      "OarStarboard": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": 3.5, "rotationX": 90, "rotationY": 90.0, "rotationZ": -13 },
-      "OarPort": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": -3.5, "rotationX": -90, "rotationY": -90.0, "rotationZ": -13 }
+      "OarStarboard": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": 3.5, "rotationX": 90, "rotationY": 90, "rotationZ": -13 },
+      "OarPort": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": -3.5, "rotationX": -90, "rotationY": -90, "rotationZ": -13 }
      }
     }
    ]
   },
   {
-   "name": "roughseas-oars-forward",
-   "code": "roughseas-oars-forward",
+   "name": "roughseas-currach-forward",
+   "code": "roughseas-currach-forward",
    "quantityframes": 30,
    "onActivityStopped": "EaseOut",
    "onAnimationEnd": "Repeat",
@@ -6181,8 +6174,8 @@
    ]
   },
   {
-   "name": "roughseas-oars-backward",
-   "code": "roughseas-oars-backward",
+   "name": "roughseas-currach-backward",
+   "code": "roughseas-currach-backward",
    "quantityframes": 30,
    "onActivityStopped": "EaseOut",
    "onAnimationEnd": "Repeat",

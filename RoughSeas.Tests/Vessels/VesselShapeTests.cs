@@ -6,9 +6,12 @@ namespace RoughSeas.Tests.Vessels;
 public class VesselShapeTests
 {
     private static readonly string[] SailStates = ["SailUnfurled", "SailHalf", "SailFurled"];
+    private static readonly string[] Strokes = ["ready", "forwards", "backwards"];
 
-    public static TheoryData<string> Vessels() =>
-        new(Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "vessel"), "*.json").Select(Path.GetFileNameWithoutExtension)!);
+    public static TheoryData<string> Vessels() => new(VesselNames());
+
+    private static IEnumerable<string> VesselNames() =>
+        Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "vessel"), "*.json").Select(Path.GetFileNameWithoutExtension)!;
 
     [Theory]
     [MemberData(nameof(Vessels))]
@@ -80,26 +83,41 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void MovesItsOwnOarsWithEveryStrokeOfItsRower(string vessel)
+    public void MovesItsOwnOarsOrPaddleWithEveryStrokeOfItsRower(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
-        var own = entity["client"]!["animations"]?.Select(animation => animation.Value<string>("code")!).ToList() ?? [];
-        if (own.Count == 0) return;
         var attributes = entity["attributes"]!;
-        var strokes = attributes["mountAnimations"]!.Children<JProperty>().Select(stroke => stroke.Value.Value<string>());
-        var animated = shape["animations"]!.Select(animation => animation.Value<string>("code"));
+        var own = entity["client"]!["animations"]!.ToDictionary(animation => animation.Value<string>("code")!);
+        var animated = shape["animations"]!.ToDictionary(animation => animation.Value<string>("code")!);
+        var rower = PlayerPatches().ToList();
 
-        Assert.NotEqual(true, attributes.Value<bool?>("requiresPaddlingTool"));
-        Assert.Empty(own.Except(strokes));
-        Assert.Empty(own.Except(animated));
-        Assert.Empty(own.Except(RowerAnimations()));
+        Assert.Null(attributes["requiresPaddlingTool"]);
+        Assert.All(Strokes.Select(stroke => attributes["mountAnimations"]!.Value<string>(stroke)!), code =>
+        {
+            var registered = rower.Single(op => op.Value<string>("path") == "/client/animations/-" && op["value"]!.Value<string>("code") == code)["value"]!;
+            var played = rower.Single(op => op.Value<string>("path") == "/animations/-" && op["value"]!.Value<string>("code") == code)["value"]!;
+            Assert.Equal(registered.Value<float>("animationSpeed"), own[code].Value<float>("animationSpeed"));
+            Assert.Equal(played.Value<int>("quantityframes"), animated[code].Value<int>("quantityframes"));
+        });
     }
 
-    private static IEnumerable<string> RowerAnimations() =>
+    [Fact]
+    public void KeysEveryAxisOfWhatEachStrokeMoves()
+    {
+        var animations = VesselNames().SelectMany(vessel => Load(vessel).Shape["animations"]!)
+            .Concat(PlayerPatches().Where(op => op.Value<string>("path") == "/animations/-").Select(op => op["value"]!));
+
+        Assert.All(animations.SelectMany(animation => animation["keyframes"]!).SelectMany(keyframe => keyframe["elements"]!.Children<JProperty>()),
+            element => Assert.All(new[] { "offset", "rotation" }, channel =>
+            {
+                var keyed = new[] { "X", "Y", "Z" }.Count(axis => element.Value[channel + axis] != null);
+                Assert.True(keyed is 0 or 3, $"{element.Name} keys {keyed} of the three {channel} axes");
+            }));
+    }
+
+    private static IEnumerable<JToken> PlayerPatches() =>
         Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "patches"), "player-*.json")
-            .SelectMany(file => JArray.Parse(File.ReadAllText(file)))
-            .Where(op => op.Value<string>("path") == "/client/animations/-")
-            .Select(op => op["value"]!.Value<string>("code")!);
+            .SelectMany(file => JArray.Parse(File.ReadAllText(file)));
 
     private static (JToken Entity, JToken Item, JToken Shape) Load(string vessel)
     {

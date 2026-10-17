@@ -140,7 +140,7 @@ case "$1" in
       vessels=("${vessels[@]%.py}")
     fi
     for vessel in "${vessels[@]}"; do
-      [ "$vessel" = shape ] || python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json"
+      [[ $vessel == shape || $vessel == stroke ]] || python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json"
     done
     ;;
   edit) need 3 "$@"; blender_do edit "$(realpath "$2")" "$(realpath "$3")" ;;

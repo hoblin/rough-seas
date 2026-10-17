@@ -2,11 +2,15 @@ import json
 import math
 from pathlib import Path
 
-from shape import BILGE, Shape, bilge, box, group, paddle, plank, water_plane, write
+from shape import BILGE, Shape, bilge, box, group, paddle, plank, throat, water_plane, write
+from stroke import crew, gripped, strokes
 
 CENTRE = 8
 STAVES = 16
 PROFILE = [(6.4, 0.6), (9.2, 2.8), (10.2, 7.4)]
+STOWED = ((3, 1.4, 6), (0, -30, 0))
+SHAFT = 7
+FRAMES = 40
 
 
 def ring(radius, y, offset=0.5):
@@ -57,7 +61,7 @@ def bowl():
         ]))
     seat = 9.6
     elements.append(box("Seat", (CENTRE - seat, 4.6, CENTRE - 2.6), (CENTRE + seat, 5.4, CENTRE + 2.6), "rim"))
-    elements.append(paddle((3, 1.4, 6), (0, -30, 0), 7, 4.5, "rim"))
+    elements.append(paddle(*STOWED, SHAFT, 4.5, "rim"))
     return elements
 
 
@@ -66,6 +70,18 @@ TEXTURES = {
     "rim": "game:block/wood/debarked/oak",
     "lashing": "game:item/resource/rope",
 }
+
+
+def sculling():
+    def scull(frame):
+        phase = 2 * math.pi * frame / FRAMES
+        hand = (1.5 + 0.8 * math.sin(2 * phase), 9, CENTRE + 2.5 * math.sin(phase))
+        return gripped(STOWED, throat(SHAFT), hand, {"rotationX": -25 * math.sin(phase), "rotationZ": -135})
+
+    def ready(frame):
+        return gripped(STOWED, throat(SHAFT), (2, 9.5, 5), {"rotationX": 70, "rotationZ": -100})
+
+    return strokes("coracle", FRAMES, ready, scull, lambda frame: scull(FRAMES - frame))
 
 
 def surface(prefix, height, texture="null"):
@@ -86,7 +102,8 @@ def build(path):
     shape.add(bowl(), group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", 7.1)),
               bilge(1.3, 7.1, lambda prefix, height: surface(prefix, height, "bilge")))
     shape.keep("Hull", "FrontSeat")
-    shape.write()
+    crew(shape, "coracle", "FrontSeat", "sitflooridle", sculling(), {"R": "PaddleThroat", "L": "PaddleGrip"},
+         {"rotationZ": 14})
 
     back = Path(path).with_name("coracle-back.json")
     worn = json.loads(back.read_text())

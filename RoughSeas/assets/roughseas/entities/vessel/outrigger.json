@@ -9,7 +9,7 @@
         "turnSpeed": 0.5,
         "swimmingOffsetY": 0.32,
         "shouldSwivelFromMotion": false,
-        "mountAnimations": {"idle": "roughseas-sitlegsforward", "ready": "", "forwards": "", "backwards": ""},
+        "mountAnimations": {"idle": "roughseas-sitlegsforward", "ready": "roughseas-outrigger-ready", "forwards": "roughseas-outrigger-forward", "backwards": "roughseas-outrigger-backward"},
         "unfurlSails": true
     },
     "hitboxSize": {"x": 1.2, "y": 0.5},
@@ -101,6 +101,11 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater", "Bilge"]},
+        "animations": [
+            {"code": "roughseas-outrigger-ready", "animation": "roughseas-outrigger-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-outrigger-forward", "animation": "roughseas-outrigger-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-outrigger-backward", "animation": "roughseas-outrigger-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
+        ],
         "textures": {
             "bark": {"base": "game:block/wood/bark/{wood}-h"},
             "inside": {"base": "game:block/wood/debarked/{wood}"},

@@ -1,7 +1,10 @@
-from shape import BILGE, Hull, Shape, box, paddle
+from shape import BILGE, Hull, Shape, box, paddle, throat
+from stroke import crew, paddling
 
 PROFILE = [(0, 0), (3.5, 0.4), (5.4, 2.4), (6, 5.4), (5.8, 8)]
 CUT = "inside"
+STOWED = ((-2, 1.4, 9.8), (0, -4, 2.5))
+SHAFT = 17
 
 
 def section(x, breadth, lift):
@@ -54,11 +57,13 @@ def build(path):
         rib("RibFore", 19),
         box("KnotPort", (6, 3, 1.4), (7.5, 4.5, 2.4), "bark"),
         box("KnotStarboard", (24, 5, 13.6), (25, 6, 14.6), "bark"),
-        paddle((-2, 1.4, 9.8), (0, -4, 2.5), 17, 6, CUT),
+        paddle(*STOWED, SHAFT, 6, CUT),
     )
     shape.add(hull.hide_water(7.7), hull.bilge(7.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
-    shape.write()
+    crew(shape, "dugout", "FrontSeat", "roughseas-sitlegsforward",
+         paddling("dugout", STOWED, throat(SHAFT), -12, 0, 10.5, 1),
+         {"R": "PaddleThroat", "L": "PaddleGrip"}, {"rotationZ": 6})
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import math
 
 from shape import BILGE, Hull, Shape, box, group
-from stroke import Rower, fit, moved, player_patch, rowed, seat
+from stroke import crew, moved, strokes
 
 PROFILE = [(0, 0), (5.6, 0), (7.3, 2.8), (8.4, 6.6), (8.8, 9.6)]
 SHEER = 9.6
@@ -63,7 +63,7 @@ def depth(u):
     return max(0.0, min(1.0, 0.5 + 1.6 * math.sin(2 * math.pi * u)))
 
 
-def strokes(tholes):
+def rowing(tholes):
     def pose(sweep_at, depth_at):
         def at(frame):
             u = frame / FRAMES
@@ -74,14 +74,8 @@ def strokes(tholes):
                     for name, side in OARS.items()}
         return at
 
-    keys = list(range(0, FRAMES, 2))
-    return [
-        {"code": "roughseas-oars-ready", "frames": FRAMES, "keys": [0, FRAMES // 2],
-         "pose": pose(lambda u: 0.15 * math.sin(2 * math.pi * u), lambda u: 0)},
-        {"code": "roughseas-oars-forward", "frames": FRAMES, "keys": keys, "pose": pose(sweep, depth)},
-        {"code": "roughseas-oars-backward", "frames": FRAMES, "keys": keys,
-         "pose": pose(lambda u: sweep(1 - u), lambda u: depth(1 - u))},
-    ]
+    return strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
+                   pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)))
 
 
 def build(path):
@@ -111,13 +105,8 @@ def build(path):
         pin, tholes[name] = rowlock(hull, side)
         shape.add(pin, oar(name, side))
     shape.keep("Hull", "FrontSeat", "BackSeat")
-    rower = Rower(seat(shape, "BackSeat"), "sitboatidle")
-    vessel, player = fit(rower, shape.elements, strokes(tholes), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
-                         {"rotationZ": 12})
-    shape.animations = vessel
-    shape.write()
-    player_patch("player-oars", player)
-    rowed(shape, rower, vessel, player)
+    crew(shape, "currach", "BackSeat", "sitboatidle", rowing(tholes), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
+         {"rotationZ": 12})
 
 
 if __name__ == "__main__":
