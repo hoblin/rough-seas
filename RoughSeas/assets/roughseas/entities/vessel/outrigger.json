@@ -19,7 +19,7 @@
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "repairs": [{
                 "material": {"type": "item", "code": "game:plank-{wood}", "stacksize": 2},
-                "restores": 0.09,
+                "restores": 0.071,
                 "saturation": 80
             }],
             "wreckage": [
