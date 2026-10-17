@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Rücksitz",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Fallklemme",
     "creature-roughseas:*-selectionbox-CargoAP": "Laderaum",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Vorderer Laderaum",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Achterer Laderaum",
     "item-bark-birch": "Birkenrinde",
     "itemdesc-bark-birch": "Mit einem Messer von einem Birkenstamm geschält. Daraus baut man ein Birkenrindenkanu und bessert es unterwegs aus.",
     "item-reedboat": "Schilfboot",

@@ -1,0 +1,12 @@
+[
+    { "op": "add", "file": "game:blocktypes/clay/fired/storagevessel.json", "path": "/attributes/attachableCategoryCode", "side": "Server", "value": { "normal": "storagevessel" } },
+    { "op": "add", "file": "game:blocktypes/clay/storagevessel-fancy.json", "path": "/attributes/attachableCategoryCode", "side": "Server", "value": { "normal": "storagevessel" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/5/forCategoryCodes/-", "side": "Server", "value": "storagevessel" },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/6/forCategoryCodes/-", "side": "Server", "value": "storagevessel" },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/7/forCategoryCodes/-", "side": "Server", "value": "storagevessel" },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/8/forCategoryCodes/-", "side": "Server", "value": "storagevessel" },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/9/forCategoryCodes/-", "side": "Server", "value": "storagevessel" },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/10/forCategoryCodes/-", "side": "Server", "value": "storagevessel" },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/11/forCategoryCodes/-", "side": "Server", "value": "storagevessel" },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/rideableaccessories/wearableSlots/12/forCategoryCodes/-", "side": "Server", "value": "storagevessel" }
+]

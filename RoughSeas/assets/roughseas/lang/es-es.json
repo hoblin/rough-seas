@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Posición Trasera",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Cornamusa de Driza",
     "creature-roughseas:*-selectionbox-CargoAP": "Carga",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Carga de proa",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Carga de popa",
     "item-bark-birch": "Corteza de abedul",
     "itemdesc-bark-birch": "Se pela de un tronco de abedul con un cuchillo. Sirve para construir una canoa de corteza de abedul y para repararla por el camino.",
     "item-reedboat": "Barca de juncos",

@@ -17,6 +17,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Achterste zitplaats",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Valkikker",
     "creature-roughseas:*-selectionbox-CargoAP": "Lading",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Voorlading",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Achterlading",
     "item-bark-birch": "Berkenbast",
     "itemdesc-bark-birch": "Met een mes van een berkenstam geschild. Je bouwt er een berkenbastkano van en herstelt hem er onderweg mee.",
     "item-reedboat": "Rietboot",

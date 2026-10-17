@@ -17,6 +17,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Malantaŭa sidloko",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Haltilo de la drizo",
     "creature-roughseas:*-selectionbox-CargoAP": "Kargo",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Antaŭa kargo",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Malantaŭa kargo",
     "item-bark-birch": "Betula ŝelo",
     "itemdesc-bark-birch": "Senŝeligita per tranĉilo de betula ŝtipo. El ĝi oni konstruas betulŝelan kanuon kaj flikas ĝin survoje.",
     "item-reedboat": "Kanboato",

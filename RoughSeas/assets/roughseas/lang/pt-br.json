@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Assento traseiro",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Presilha de adriça",
     "creature-roughseas:*-selectionbox-CargoAP": "Carga",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Carga de proa",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Carga de popa",
     "item-bark-birch": "Casca de bétula",
     "itemdesc-bark-birch": "Tirada de uma tora de bétula com uma faca. Com ela se faz uma canoa de casca de bétula, e também se remenda uma no caminho.",
     "item-reedboat": "Barco de junco",

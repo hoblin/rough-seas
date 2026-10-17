@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Sedile Posteriore",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Galloccia della drizza",
     "creature-roughseas:*-selectionbox-CargoAP": "Carico",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Carico di prua",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Carico di poppa",
     "item-bark-birch": "Corteccia di betulla",
     "itemdesc-bark-birch": "Staccata con un coltello da un tronco di betulla. Serve a costruire una canoa di corteccia di betulla e a ripararla strada facendo.",
     "item-reedboat": "Barca di giunchi",

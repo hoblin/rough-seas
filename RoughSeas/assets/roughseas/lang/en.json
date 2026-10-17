@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Back seat",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Halyard cleat",
     "creature-roughseas:*-selectionbox-CargoAP": "Cargo",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Fore cargo",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Aft cargo",
     "item-bark-birch": "Birch bark",
     "itemdesc-bark-birch": "Peeled from a birch log with a knife. It builds a birch-bark canoe, and mends one on the way.",
     "item-reedboat": "Reed boat",

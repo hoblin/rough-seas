@@ -17,6 +17,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "ที่นั่งหลัง",
     "creature-roughseas:*-selectionbox-LowerMastAP": "พุกผูกเชือกชักใบ",
     "creature-roughseas:*-selectionbox-CargoAP": "สินค้า",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "สินค้าหัวเรือ",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "สินค้าท้ายเรือ",
     "item-bark-birch": "เปลือกไม้เบิร์ช",
     "itemdesc-bark-birch": "ลอกจากซุงไม้เบิร์ชด้วยมีด ใช้สร้างเรือแคนูเปลือกเบิร์ช และใช้ซ่อมเรือลำนั้นระหว่างทาง",
     "item-reedboat": "เรือกก",

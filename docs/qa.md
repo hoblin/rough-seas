@@ -31,7 +31,7 @@ Each scene: what the player should see, then its setup.
    - `roughseas:dugout-oak`: the toughest hull.
    - `roughseas:coracle`: slow and turns on the spot, sculled over the bow; shift-right-click picks it up, and it is carried on the back (`'/bridge wear roughseas:coracle'`).
    - `roughseas:barkcanoe`: the fastest paddled, and the only one that runs rapids.
-   - `roughseas:currach`: loses condition every day; grease it with `'/giveitem fat-rendered 2'`. Rowed from the middle thwart; the bow seat carries a passenger.
+   - `roughseas:currach`: loses condition every day; grease it with `'/giveitem fat-rendered 2'`. Rowed from the middle thwart; the bow seat carries a passenger, and two crates, storage vessels or baskets go on the bottom aft of the rower with ctrl-right-click.
    - `roughseas:outrigger-oak`: sails, the fastest of all; its sail stands at a reach, and the helm sees past it. With the sail lowered it is paddled.
    - `boat-sailed-oak`: the vanilla sailboat, now with a bilge and a hull that can break.
 7. **Damage and repair.** `bin/qa as '/bridge shore' '/bridge ride roughseas:barkcanoe' '/bridge dismount' '/giveitem roughseas:bark-birch 4' '/gamemode survival'`: a canoe on the beach, its id printed. Hit it with the axe and watch the cracks; right-click it holding bark to mend; shift-right-click picks it up, and the item keeps the damage. The reed boat, coracle and currach pick up the same way. Other materials: `'/giveblock log-placed-oak-ud 2'` for the dugout, `'/giveitem plank-oak 4'` the outrigger, `'/giveitem hide-prepared-large'` the currach, `'/giveitem hide-prepared-small'` the coracle. To break one at once: `'/bridge strike ID 1000000'`; it leaves floating wreckage.

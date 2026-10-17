@@ -18,6 +18,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Baksete",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Kryssholt-fall",
     "creature-roughseas:*-selectionbox-CargoAP": "Last",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Forlast",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Akterlast",
     "item-bark-birch": "Bjørkenever",
     "itemdesc-bark-birch": "Skrelt av en bjørkestokk med kniv. Av den bygger du en neverkano, og med den reparerer du den underveis.",
     "item-reedboat": "Sivbåt",

@@ -17,6 +17,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Задна седалка",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Кнехт за фала",
     "creature-roughseas:*-selectionbox-CargoAP": "Товар",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Носов товар",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Кърмов товар",
     "item-bark-birch": "Брезова кора",
     "itemdesc-bark-birch": "Обелена с нож от брезов труп. От нея се прави кану от брезова кора, а по пътя с нея то се поправя.",
     "item-reedboat": "Тръстикова лодка",

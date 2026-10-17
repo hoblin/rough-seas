@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Zadní sedadlo",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Halyardova příchytka",
     "creature-roughseas:*-selectionbox-CargoAP": "Náklad",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Příďový náklad",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Záďový náklad",
     "item-bark-birch": "Březová kůra",
     "itemdesc-bark-birch": "Sloupnutá nožem z březového kmene. Postavíte z ní kánoi z březové kůry a cestou ji jí i opravíte.",
     "item-reedboat": "Rákosový člun",

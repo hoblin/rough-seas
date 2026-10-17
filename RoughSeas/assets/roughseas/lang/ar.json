@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "المقعد الخلفي",
     "creature-roughseas:*-selectionbox-LowerMastAP": "مربط حبال الشراع",
     "creature-roughseas:*-selectionbox-CargoAP": "الحمولة",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "الحمولة الأمامية",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "الحمولة الخلفية",
     "item-bark-birch": "لحاء البتولا",
     "itemdesc-bark-birch": "يُقشَّر من جذع بتولا بسكين. يُصنع منه زورق من لحاء البتولا، ويُرقَّع به في الطريق.",
     "item-reedboat": "قارب قصب",

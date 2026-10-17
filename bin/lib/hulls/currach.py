@@ -104,7 +104,7 @@ def build(path):
     for name, side in OARS.items():
         pin, tholes[name] = rowlock(hull, side)
         shape.add(pin, oar(name, side))
-    shape.keep("Hull", "FrontSeat", "BackSeat")
+    shape.keep("Hull", "FrontSeat", "BackSeat", "ForeCargo", "AftCargo")
     crew(shape, "currach", "BackSeat", "sitboatidle", rowing(tholes), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
          {"rotationZ": 12})
 

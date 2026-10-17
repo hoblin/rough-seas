@@ -55,13 +55,7 @@
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
-                {
-                    "code": "Front Seat",
-                    "forCategoryCodes": ["basket"],
-                    "attachmentPointCode": "FrontSeatAP",
-                    "stepParentTo": {"": {"elementName": "FrontSeat"}},
-                    "emptyInteractPassThrough": true
-                },
+                {"code": "FrontSeatAP", "forCategoryCodes": []},
                 {
                     "code": "Back Seat",
                     "forCategoryCodes": ["basket"],

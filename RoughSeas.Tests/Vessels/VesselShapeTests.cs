@@ -27,6 +27,31 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
+    public void GivesEverySelectionBoxTheSlotAtItsIndex(string vessel)
+    {
+        var behaviors = Load(vessel).Entity["behaviorConfigs"]!;
+        var boxes = behaviors["selectionboxes"]!["selectionBoxes"]!.Values<string>().ToList();
+        var slots = behaviors["rideableaccessories"]?["wearableSlots"]?.Select(slot => slot.Value<string>("attachmentPointCode") ?? slot.Value<string>("code")).ToList();
+        if (slots == null) return;
+
+        Assert.Equal(boxes, slots);
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void KeepsASeatThatSteersFreeOfCargo(string vessel)
+    {
+        var behaviors = Load(vessel).Entity["behaviorConfigs"]!;
+        var loadable = behaviors["rideableaccessories"]?["wearableSlots"]?
+            .Where(slot => slot["forCategoryCodes"]!.Any())
+            .Select(slot => slot.Value<string>("attachmentPointCode")) ?? [];
+
+        Assert.Contains(behaviors["creaturecarrier"]!["seats"]!, seat =>
+            seat.Value<bool>("controllable") && !loadable.Contains(seat.Value<string>("apName")));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
     public void DrawsEveryTextureItsDamageMarks(string vessel)
     {
         var (entity, _, shape) = Load(vessel);

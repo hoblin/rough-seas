@@ -17,6 +17,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Takaistuin",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Nostimen knaapi",
     "creature-roughseas:*-selectionbox-CargoAP": "Lasti",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Keulalasti",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Perälasti",
     "item-bark-birch": "Koivuntuohi",
     "itemdesc-bark-birch": "Kuorittu koivuntukista veitsellä. Siitä rakennetaan tuohikanootti, ja sillä korjataan sitä matkan varrella.",
     "item-reedboat": "Ruokovene",

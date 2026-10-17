@@ -17,6 +17,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Задње седиште",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Бита за подизач",
     "creature-roughseas:*-selectionbox-CargoAP": "Терет",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Прамчани терет",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Крмени терет",
     "item-bark-birch": "Брезова кора",
     "itemdesc-bark-birch": "Ножем огуљена са брезовог балвана. Од ње се прави кану од брезове коре, а њоме се и крпи успут.",
     "item-reedboat": "Чамац од трске",

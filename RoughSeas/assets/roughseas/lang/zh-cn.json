@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "后座",
     "creature-roughseas:*-selectionbox-LowerMastAP": "帆缆夹板",
     "creature-roughseas:*-selectionbox-CargoAP": "货物",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "船首货物",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "船尾货物",
     "item-bark-birch": "桦树皮",
     "itemdesc-bark-birch": "用小刀从桦木原木上剥下。可用来造桦皮舟，也能在途中修补它。",
     "item-reedboat": "芦苇船",

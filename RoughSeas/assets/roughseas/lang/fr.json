@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Siège arrière",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Taquet de drisse",
     "creature-roughseas:*-selectionbox-CargoAP": "Chargement",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Chargement avant",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Chargement arrière",
     "item-bark-birch": "Écorce de bouleau",
     "itemdesc-bark-birch": "Prélevée au couteau sur une bûche de bouleau. Elle sert à construire un canot d'écorce de bouleau, et à le réparer en route.",
     "item-reedboat": "Bateau de roseaux",

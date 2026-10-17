@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "後ろの座席",
     "creature-roughseas:*-selectionbox-LowerMastAP": "帆の留め具",
     "creature-roughseas:*-selectionbox-CargoAP": "積み荷",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "船首の積み荷",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "船尾の積み荷",
     "item-bark-birch": "シラカバの樹皮",
     "itemdesc-bark-birch": "ナイフでシラカバの丸太から剥いだもの。樺皮のカヌーを作り、旅の途中でその修理にも使う。",
     "item-reedboat": "葦舟",

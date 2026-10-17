@@ -17,6 +17,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Bakre plats",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Fallknap",
     "creature-roughseas:*-selectionbox-CargoAP": "Last",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Förlast",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Akterlast",
     "item-bark-birch": "Björknäver",
     "itemdesc-bark-birch": "Skalad från en björkstock med en kniv. Av den bygger man en näverkanot och lagar den under färden.",
     "item-reedboat": "Vassbåt",

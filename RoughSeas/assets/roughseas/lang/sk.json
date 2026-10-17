@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Zadné sedadlo",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Úchyt na výťažné lano",
     "creature-roughseas:*-selectionbox-CargoAP": "Náklad",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Predný náklad",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Zadný náklad",
     "item-bark-birch": "Brezová kôra",
     "itemdesc-bark-birch": "Zlúpaná nožom z brezového kmeňa. Postavíš z nej kanoe z brezovej kôry a cestou ho ňou aj opravíš.",
     "item-reedboat": "Trstinový čln",

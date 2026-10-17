@@ -18,6 +18,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Bagerste plads",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Klampe til fald",
     "creature-roughseas:*-selectionbox-CargoAP": "Last",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Forlast",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Agterlast",
     "item-bark-birch": "Birkebark",
     "itemdesc-bark-birch": "Skrællet af en birkestamme med en kniv. Den bygger en birkebarkskano og reparerer den undervejs.",
     "item-reedboat": "Sivbåd",

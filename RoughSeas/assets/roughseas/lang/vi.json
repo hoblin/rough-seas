@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Ghế sau",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Chốt buộc dây kéo buồm",
     "creature-roughseas:*-selectionbox-CargoAP": "Hàng hóa",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Hàng mũi",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Hàng lái",
     "item-bark-birch": "Vỏ cây bạch dương",
     "itemdesc-bark-birch": "Lột từ khúc gỗ bạch dương bằng dao. Dùng để đóng xuồng vỏ bạch dương, và để vá xuồng dọc đường.",
     "item-reedboat": "Thuyền sậy",

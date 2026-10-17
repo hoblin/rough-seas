@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Заднє сидіння",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Кнага для фала",
     "creature-roughseas:*-selectionbox-CargoAP": "Вантаж",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Носовий вантаж",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Кормовий вантаж",
     "item-bark-birch": "Береста",
     "itemdesc-bark-birch": "Знята ножем із березової колоди. З неї будують берестяне каное і нею ж латають його в дорозі.",
     "item-reedboat": "Очеретяний човен",

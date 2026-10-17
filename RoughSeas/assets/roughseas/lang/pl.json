@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Tylne siedzenie",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Zaczepienie fału",
     "creature-roughseas:*-selectionbox-CargoAP": "Ładunek",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Ładunek dziobowy",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Ładunek rufowy",
     "item-bark-birch": "Kora brzozowa",
     "itemdesc-bark-birch": "Zdarta nożem z brzozowej kłody. Zbudujesz z niej kanu z kory brzozowej i połatasz je w drodze.",
     "item-reedboat": "Łódź z trzciny",

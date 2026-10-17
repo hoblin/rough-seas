@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Hátsó ülés",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Kötélhúzó stopli",
     "creature-roughseas:*-selectionbox-CargoAP": "Rakomány",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Orrbeli rakomány",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Farbeli rakomány",
     "item-bark-birch": "Nyírfakéreg",
     "itemdesc-bark-birch": "Késsel hántható le egy nyírfarönkről. Nyírfakéreg kenut építhetsz belőle, és útközben azt is ezzel javíthatod.",
     "item-reedboat": "Nádcsónak",

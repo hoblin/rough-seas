@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Aftursæti",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Festing fyrir dragreipi",
     "creature-roughseas:*-selectionbox-CargoAP": "Farmur",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Framfarmur",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Afturfarmur",
     "item-bark-birch": "Birkibörkur",
     "itemdesc-bark-birch": "Flettur af birkibol með hníf. Úr honum smíðarðu birkibarkarkanó og gerir við hann á leiðinni.",
     "item-reedboat": "Reyrbátur",

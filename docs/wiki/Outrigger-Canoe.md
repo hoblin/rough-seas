@@ -44,7 +44,7 @@ Logs and planks of one wood; redwood takes log sections.
 
 ## Its neighbours
 
-- The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it can be carried.
+- The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it carries cargo and can be carried.
 - The [sailboat](Sailboat) is slower and carries far more.
 - The [dugout](Dugout) is the same hull without the float: tougher, and tippy at sea.
 

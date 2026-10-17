@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Arka koltuk",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Halat bağlama yeri",
     "creature-roughseas:*-selectionbox-CargoAP": "Yük",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Pruva yükü",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Kıç yükü",
     "item-bark-birch": "Huş kabuğu",
     "itemdesc-bark-birch": "Bir huş kütüğünden bıçakla soyulur. Huş kabuğu kanonun yapımında ve yolda onarımında kullanılır.",
     "item-reedboat": "Saz kayığı",

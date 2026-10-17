@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Задняе сядзенне",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Фалавы заціск",
     "creature-roughseas:*-selectionbox-CargoAP": "Груз",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Насавы груз",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Кармавы груз",
     "item-bark-birch": "Бяроста",
     "itemdesc-bark-birch": "Садраная нажом з бярозавага бервяна. З яе робяць берасцяное каноэ і латаюць яго ў дарозе.",
     "item-reedboat": "Чаротавая лодка",

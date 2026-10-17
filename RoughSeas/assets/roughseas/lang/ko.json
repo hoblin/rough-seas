@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "뒷좌석",
     "creature-roughseas:*-selectionbox-LowerMastAP": "이어줄 고정구",
     "creature-roughseas:*-selectionbox-CargoAP": "화물",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "선수 화물",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "선미 화물",
     "item-bark-birch": "자작나무 껍질",
     "itemdesc-bark-birch": "칼로 자작나무 통나무에서 벗겨 냅니다. 자작나무 껍질 카누를 만들고, 가는 길에 그 카누를 수리하는 데 씁니다.",
     "item-reedboat": "갈대배",

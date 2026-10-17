@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Заднее сиденье",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Фаловый зажим",
     "creature-roughseas:*-selectionbox-CargoAP": "Груз",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Носовой груз",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Кормовой груз",
     "item-bark-birch": "Береста",
     "itemdesc-bark-birch": "Снята ножом с берёзового бревна. Из неё строят берестяное каноэ и латают его в пути.",
     "item-reedboat": "Тростниковая лодка",

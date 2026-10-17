@@ -19,6 +19,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "後座",
     "creature-roughseas:*-selectionbox-LowerMastAP": "升降索固定鉤",
     "creature-roughseas:*-selectionbox-CargoAP": "貨物",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "船首貨物",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "船尾貨物",
     "item-bark-birch": "樺樹皮",
     "itemdesc-bark-birch": "用小刀從樺木原木上剝下。可用來造樺皮舟，也能在途中修補它。",
     "item-reedboat": "蘆葦船",

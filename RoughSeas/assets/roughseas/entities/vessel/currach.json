@@ -62,23 +62,23 @@
                 {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1}
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "ForeCargoAP", "AftCargoAP", "HullAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
+                {"code": "FrontSeatAP", "forCategoryCodes": []},
+                {"code": "BackSeatAP", "forCategoryCodes": []},
                 {
-                    "code": "Front Seat",
-                    "forCategoryCodes": ["basket"],
-                    "attachmentPointCode": "FrontSeatAP",
-                    "stepParentTo": {"": {"elementName": "FrontSeat"}},
-                    "emptyInteractPassThrough": true
+                    "code": "Fore Cargo",
+                    "forCategoryCodes": ["basket", "crate", "storagevessel"],
+                    "attachmentPointCode": "ForeCargoAP",
+                    "stepParentTo": {"": {"elementName": "ForeCargo"}}
                 },
                 {
-                    "code": "Back Seat",
-                    "forCategoryCodes": ["basket"],
-                    "attachmentPointCode": "BackSeatAP",
-                    "stepParentTo": {"": {"elementName": "BackSeat"}},
-                    "emptyInteractPassThrough": true
+                    "code": "Aft Cargo",
+                    "forCategoryCodes": ["basket", "crate", "storagevessel"],
+                    "attachmentPointCode": "AftCargoAP",
+                    "stepParentTo": {"": {"elementName": "AftCargo"}}
                 },
                 {"code": "HullAP", "forCategoryCodes": []}
             ]

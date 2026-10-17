@@ -17,6 +17,8 @@
     "creature-roughseas:*-selectionbox-BackSeatAP": "Galinė sėdynė",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Falo knaga",
     "creature-roughseas:*-selectionbox-CargoAP": "Krovinys",
+    "creature-roughseas:*-selectionbox-ForeCargoAP": "Priekinis krovinys",
+    "creature-roughseas:*-selectionbox-AftCargoAP": "Galinis krovinys",
     "item-bark-birch": "Beržo tošis",
     "itemdesc-bark-birch": "Peiliu nulupta nuo beržo rąsto. Iš jos pastatysi tošinę kanoją, o kelyje ja kanoją ir sulopysi.",
     "item-reedboat": "Nendrių valtis",
