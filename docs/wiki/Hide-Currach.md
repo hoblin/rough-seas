@@ -26,6 +26,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
+| Aboard | the rower on the middle thwart, with its own two oars, and a passenger in the bow |
 | Built from | 10 planks, 3 large prepared hides and 2 rendered fat |
 | Wreckage | sticks and leather |
 

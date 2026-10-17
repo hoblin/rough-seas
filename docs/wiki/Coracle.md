@@ -26,7 +26,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post, or worn home |
 | Carried | worn on the back, in the backpack slot |
-| Seats | one |
+| Aboard | one, sculling over the bow with its own paddle |
 | Built from | 8 sticks, a large prepared hide and rendered fat |
 | Wreckage | a few sticks |
 

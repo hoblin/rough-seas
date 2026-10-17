@@ -1,6 +1,6 @@
 ![The reed boat afloat](images/reed-boat/afloat-bow.webp)
 
-Three bundles of reeds, lashed tight with reed rope and drawn up into a point at either end. It is built in minutes with a knife from a few armfuls of cattail or papyrus tops, or of the thatch that tule gives, and it takes one paddler and a basket.
+Three bundles of reeds, lashed tight with reed rope and drawn up into a point at either end. It is built in minutes with a knife from a few armfuls of cattail or papyrus tops, or of the thatch that tule gives, and it takes one paddler, with the paddle that lies on its deck, and a basket.
 
 ## In Rough Seas
 
@@ -26,7 +26,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Aboard | one paddler, with an oar, and a basket |
+| Aboard | one paddler, with its own paddle, and a basket |
 | Built from | 24 cattail tops, papyrus tops or thatch, with a knife |
 | Wreckage | reed tops |
 
