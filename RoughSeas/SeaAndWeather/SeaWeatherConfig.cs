@@ -93,6 +93,7 @@ public class VanillaConfig
 {
     public double UnitsPerMps;
     public double CloudSpeedPerMps;
+    public double StormCloudBrightness;
 }
 
 public class ValueRange

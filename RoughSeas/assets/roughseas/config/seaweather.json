@@ -96,7 +96,8 @@
     },
     "vanilla": {
         "unitsPerMps": 0.04,
-        "cloudSpeedPerMps": 0.2
+        "cloudSpeedPerMps": 0.2,
+        "stormCloudBrightness": 0.05
     },
     "currents": {
         "gyreDegrees": 30,

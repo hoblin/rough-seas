@@ -49,6 +49,9 @@ public class VanillaWeather
         return Math.Min(strength * Math.Max(1, 0.9 + (y - seaLevel) / 100), Math.Max(strength, 1.5));
     }
 
+    public static double CloudBrightness(double brightness, double stormPresence, VanillaConfig vanilla) =>
+        GameMath.Lerp(brightness, vanilla.StormCloudBrightness, Math.Sqrt(stormPresence));
+
     private static OnGetWindSpeedDelegate VanillaWindHandler(WeatherSystemBase weather) =>
         AccessTools.MethodDelegate<OnGetWindSpeedDelegate>(AccessTools.Method(typeof(WeatherSystemBase), "Event_OnGetWindSpeed"), weather);
 
