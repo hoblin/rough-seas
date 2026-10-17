@@ -9,7 +9,7 @@
         "swimmingOffsetY": 0.42,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
-            "idle": "sitboatidle",
+            "idle": "roughseas-sitthwart",
             "ready": "roughseas-currach-ready",
             "forwards": "roughseas-currach-forward",
             "backwards": "roughseas-currach-backward"
@@ -58,27 +58,31 @@
                     "bodyYawLimit": 0.4,
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
-                },
-                {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1}
+                }
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["BackSeatAP", "ForeCargoAP", "MidCargoAP", "AftCargoAP", "HullAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
+                {"code": "BackSeatAP", "forCategoryCodes": []},
                 {
-                    "code": "Front Seat",
-                    "forCategoryCodes": ["basket"],
-                    "attachmentPointCode": "FrontSeatAP",
-                    "stepParentTo": {"": {"elementName": "FrontSeat"}},
-                    "emptyInteractPassThrough": true
+                    "code": "Fore Cargo",
+                    "forCategoryCodes": ["basket", "chest"],
+                    "attachmentPointCode": "ForeCargoAP",
+                    "stepParentTo": {"": {"elementName": "ForeCargo"}}
                 },
                 {
-                    "code": "Back Seat",
-                    "forCategoryCodes": ["basket"],
-                    "attachmentPointCode": "BackSeatAP",
-                    "stepParentTo": {"": {"elementName": "BackSeat"}},
-                    "emptyInteractPassThrough": true
+                    "code": "Mid Cargo",
+                    "forCategoryCodes": ["basket", "chest"],
+                    "attachmentPointCode": "MidCargoAP",
+                    "stepParentTo": {"": {"elementName": "MidCargo"}}
+                },
+                {
+                    "code": "Aft Cargo",
+                    "forCategoryCodes": ["basket", "chest"],
+                    "attachmentPointCode": "AftCargoAP",
+                    "stepParentTo": {"": {"elementName": "AftCargo"}}
                 },
                 {"code": "HullAP", "forCategoryCodes": []}
             ]

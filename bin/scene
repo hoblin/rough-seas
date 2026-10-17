@@ -13,7 +13,7 @@ bin/scene look ID [DX DY DZ]
                            A shot from any side, over land or sea; 0 6 0.01 looks straight down,
                            above the water's tint. `bin/game hotkey togglehud` hides the HUD.
 bin/scene photo ID FILE [DX DY DZ] [hover]
-                           a wiki-ready image (16:9 .webp, 960 wide) of entity ID from where `look`
+                           a wiki-ready image (16:9 .webp, 960 wide) at noon of entity ID from where `look`
                            puts the camera, without the HUD; with `hover`, the panel the game shows
                            for what the crosshair is on (name, hull, bilge) is laid over its top.
 bin/scene storm [RANGE [WAVES]] [CODE...]
@@ -28,7 +28,7 @@ bin/scene clear [RANGE] [TYPE...]
                            e.g. drifter-*) within RANGE blocks (default 64) of the player. Blocks,
                            ropes tied to blocks and /worldconfig changes stay.
 bin/scene views CODE DIR [SCALE]
-                           every form a vessel takes, as wiki-ready images in DIR: afloat from the
+                           every form a vessel takes at noon, as wiki-ready images in DIR: afloat from the
                            side, the bow and stern quarters and above; beside the vanilla sailboat;
                            ashore from the side and a quarter; dropped on the ground; held in the
                            hand; worn on the back (a vessel with a backpack slot); the wreckage it
@@ -39,7 +39,7 @@ bin/scene views CODE DIR [SCALE]
                            plants (and anything else) in a 13x6x13 box there, and empties the
                            player's inventory.
 bin/scene seats [CODE...]  the player in every seat of each vessel (default: ours and the vanilla raft
-                           and sailboat), seen in third person from the left: CODE-SEAT.png per seat in
+                           and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
 bin/scene recipe PAGE OUTPUT FILE [FROM]
                            the handbook's crafting grid that makes OUTPUT (out of FROM, when given) on
@@ -55,10 +55,15 @@ EOF
 
 game="$(dirname "$0")/game"
 
+noon() {
+  "$game" do '/time set 12:00' >/dev/null
+}
+
 dock() {
   local codes=("$@")
   [ ${#codes[@]} -eq 0 ] && codes=(boat-raft-oak boat-sailed-oak)
-  "$game" do '/gamemode creative' '/time set 12:00' '/weather setprecip 0' '/weather set clearsky' \
+  noon
+  "$game" do '/gamemode creative' '/weather setprecip 0' '/weather set clearsky' \
     '/weather setw still' '/weather acp false' >/dev/null
   local sea
   sea=$("$game" do '/bridge sea')
@@ -87,6 +92,7 @@ photo() {
   local id=$1 out=$2 hover=
   shift 2
   [ "${!#:-}" = hover ] && { hover=hover; set -- "${@:1:$#-1}"; }
+  noon
   look "$id" "${1:-3}" "${2:-1}" "${3:-0}"
   sleep 2
   local clean=$BENCH_TMP/photo.png gui=$BENCH_TMP/photo-gui.png width height
@@ -200,6 +206,7 @@ views() {
   local shore
   shore=$("$game" do '/bridge shore')
   [[ $shore == *"over the shore"* ]] || { echo "$shore" >&2; exit 1; }
+  noon
   "$game" do '/we mark ~-6 ~-1 ~-6 ~6 ~4 ~6' '/we delete' '/we clear' >/dev/null
   "$game" do "/entity spawnat $code 1 ~ ~-1 ~ 0" >/dev/null
   sleep 2
@@ -243,6 +250,7 @@ seats() {
     id=$(dock "$code" | jq -r '.vessels[0].EntityId')
     seat=0
     while "$game" do "/bridge mount $id $seat" | grep -q Seated; do
+      noon
       "$game" hotkey cyclecamera >/dev/null
       "$game" look 1.5708 3.35 >/dev/null
       sleep 3

@@ -14,7 +14,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
-| [Hide currach](Hide-Currach) | the first venture along the coast | 1.7 × | needs greasing, one hard knock holes it |
+| [Hide currach](Hide-Currach) | the first venture along the coast, cargo included | 1.7 × | needs greasing, one hard knock holes it |
 | [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | 2.7 ×, sailing | stays where launched |
 | [Sailboat](Sailboat) | long voyages and heavy cargo | 2.5 ×, sailing | dear to build, ships water fast in a gale |
 
@@ -44,7 +44,7 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | [Dugout](Dugout) | 2 | the front seat | a basket in place of the passenger |
 | [Coracle](Coracle) | 1 | its seat | none |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships | a basket in place of the passenger |
-| [Hide currach](Hide-Currach) | 2 | the middle thwart | a basket in place of the passenger |
+| [Hide currach](Hide-Currach) | 1 | the stern thwart | 3 spots on its bottom, each a basket, storage vessel or chest |
 | [Outrigger canoe](Outrigger-Canoe) | 2 | aft | a basket in place of the passenger |
 | [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
 
