@@ -29,8 +29,9 @@ public sealed class SeaSurface
     private readonly Waves waves;
     private readonly int generation;
     private readonly double[] amplitudeShare;
-    private readonly double[] numberX, numberZ, frequency, amplitude, target;
+    private readonly double[] numberX, numberZ, frequency, amplitude;
     private int active = -1;
+    private double level, handover = 1;
     private double activeToward, activeLength;
     private Foam foamTarget;
 
@@ -46,7 +47,6 @@ public sealed class SeaSurface
         numberZ = new double[slots];
         frequency = new double[slots];
         amplitude = new double[slots];
-        target = new double[slots];
     }
 
     public int Slots => amplitude.Length;
@@ -85,11 +85,7 @@ public sealed class SeaSurface
         if (length > 0 && (active < 0 || !Alike(towardRadians, length)))
         {
             var next = active == 0 ? generation : 0;
-            if (active < 0 || HasFaded(next)) Begin(next, towardRadians, length);
-        }
-        for (var slot = 0; slot < Slots; slot++)
-        {
-            target[slot] = active >= 0 && slot >= active && slot < active + generation ? amplitudeShare[slot - active] * height : 0;
+            if (active < 0 || handover >= 1 - Faded) Begin(next, towardRadians, length);
         }
         CapsFold = FoldCovering(Math.Min(1, Foam.Caps / BreakingCrestShare));
     }
@@ -101,11 +97,15 @@ public sealed class SeaSurface
         var blend = double.IsNaN(Seconds) ? 1 : 1 - Math.Exp(-(seconds - Seconds) / config.SettleSeconds);
         Seconds = seconds;
         Frame++;
+        level += (SeaHeight - level) * blend;
+        handover += (1 - handover) * blend;
+        var (rising, fading) = (Math.Sin(handover * Math.PI / 2), Math.Cos(handover * Math.PI / 2));
+
         var slopes = 0.0;
         var calm = true;
         for (var slot = 0; slot < Slots; slot++)
         {
-            amplitude[slot] += (target[slot] - amplitude[slot]) * blend;
+            amplitude[slot] = Wavenumber(slot) > 0 ? amplitudeShare[slot % generation] * level * (Rising(slot) ? rising : fading) : 0;
             slopes += amplitude[slot] * Wavenumber(slot);
             calm &= amplitude[slot] <= Faded;
         }
@@ -211,6 +211,7 @@ public sealed class SeaSurface
 
     private void Begin(int bank, double towardRadians, double length)
     {
+        handover = active < 0 ? 1 : 0;
         active = bank;
         (activeToward, activeLength) = (towardRadians, length);
         for (var i = 0; i < generation; i++)
@@ -226,14 +227,7 @@ public sealed class SeaSurface
             "new waves toward {0:F0}°, {1:F0} m long", (towardRadians * 180 / Math.PI + 360) % 360, length));
     }
 
-    private bool HasFaded(int bank)
-    {
-        for (var slot = bank; slot < bank + generation; slot++)
-        {
-            if (amplitude[slot] > Faded) return false;
-        }
-        return true;
-    }
+    private bool Rising(int slot) => active >= 0 && slot >= active && slot < active + generation;
 
     private Foam FoamAt(double beaufort)
     {

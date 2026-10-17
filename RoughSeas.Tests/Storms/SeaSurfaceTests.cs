@@ -61,6 +61,19 @@ public class SeaSurfaceTests
     }
 
     [Fact]
+    public void KeepsItsHeightWhileNewWavesTakeOverFromOld()
+    {
+        var surface = Surface();
+        Settle(surface, 5.5, 0);
+        for (var frame = 0; frame * Frame < 60; frame++)
+        {
+            if (frame % FramesPerAim == 0) surface.Aim(5.5, Math.PI / 2, 8);
+            surface.Advance(120 + frame * Frame);
+            Assert.True(surface.DrawnHeight > 0.9 * 5.5, $"at {frame * Frame:F1} s the sea drew {surface.DrawnHeight:F2} m");
+        }
+    }
+
+    [Fact]
     public void FallsCalmWhenTheSeaDoes()
     {
         var surface = Surface();

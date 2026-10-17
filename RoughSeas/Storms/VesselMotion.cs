@@ -50,6 +50,7 @@ public static class VesselMotion
         harmony = null;
         (storms, sea, surface) = (null, null, null);
         poses.Clear();
+        (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
     }
 
     private static void Respond(EntityBoat __instance)
