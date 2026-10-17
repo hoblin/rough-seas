@@ -6,6 +6,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
+using Vintagestory.Client.NoObf;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Storms;
@@ -25,11 +26,14 @@ public static class VesselMotion
     private static double loggedAt = double.NegativeInfinity;
     private static double tracedUntil = double.NegativeInfinity;
 
-    public static void Attach(StormsModSystem system, SeaWeatherSystem weather, SeaSurface sea)
+    public static void Attach(StormsModSystem system, SeaWeatherSystem weather, SeaSurface waves)
     {
         if (harmony != null) return;
-        (storms, VesselMotion.sea, surface) = (system, weather, sea);
+        (storms, sea, surface) = (system, weather, waves);
         harmony = new Harmony(HarmonyId);
+        harmony.Patch(AccessTools.Method(typeof(NetworkAPI), nameof(NetworkAPI.SendPlayerPositionPacket)),
+            prefix: new HarmonyMethod(typeof(VesselMotion), nameof(SendUnlifted)),
+            postfix: new HarmonyMethod(typeof(VesselMotion), nameof(RestoreLift)));
         harmony.Patch(AccessTools.Method(typeof(EntityBoat), nameof(EntityBoat.OnRenderFrame)),
             postfix: new HarmonyMethod(typeof(VesselMotion), nameof(Respond)));
         harmony.Patch(AccessTools.Method(typeof(EntityShapeRenderer), nameof(EntityShapeRenderer.loadModelMatrix)),
@@ -89,7 +93,21 @@ public static class VesselMotion
 
     private static void LiftSelectionBox(EntityBehaviorSelectionBoxes __instance, Matrixf mvmat)
     {
-        if (__instance.entity is EntityBoat boat && PoseOf(boat).Lift is var lift and not 0) mvmat.Translate(0, (float)lift, 0);
+        if (__instance.entity is EntityBoat { Api.Side: EnumAppSide.Client } boat && PoseOf(boat).Lift is var lift and not 0)
+        {
+            mvmat.Translate(0, (float)lift, 0);
+        }
+    }
+
+    private static void SendUnlifted(ClientMain ___game, out double __state)
+    {
+        __state = ___game.EntityPlayer?.MountedOn?.Entity is EntityBoat boat ? PoseOf(boat).Lift : 0;
+        if (__state != 0) ___game.EntityPlayer!.Pos.Y -= __state;
+    }
+
+    private static void RestoreLift(ClientMain ___game, double __state)
+    {
+        if (__state != 0) ___game.EntityPlayer.Pos.Y += __state;
     }
 
     private static Pose PoseOf(EntityBoat boat)

@@ -89,10 +89,16 @@ public static class VanillaWeatherPatches
         return false;
     }
 
-    private static void UnloadedRainCloudness(Vec3d pos, bool useArgValues, WeatherDataReaderBase __instance, WeatherSystemBase ___ws, IMapRegion ___hereMapRegion)
+    private static void UnloadedRainCloudness(Vec3d pos, bool useArgValues, float lerpRainCloudOverlay, float lerpRainOverlay,
+        WeatherDataReaderBase __instance, WeatherSystemBase ___ws, IMapRegion ___hereMapRegion)
     {
         var sea = On(___ws.api.Side);
-        if (sea == null || useArgValues || ___hereMapRegion?.ClimateMap != null || ___ws.OverridePrecipitation != null) return;
+        if (sea == null || ___hereMapRegion?.ClimateMap != null || ___ws.OverridePrecipitation != null) return;
+        if (useArgValues)
+        {
+            (__instance.lerpRainCloudOverlay, __instance.lerpRainOverlay) = (lerpRainCloudOverlay, lerpRainOverlay);
+            return;
+        }
         var cloudness = sea.RainCloudness(pos.X, pos.Z, ___ws.api.World.Calendar.TotalDays);
         __instance.lerpRainCloudOverlay = GameMath.Clamp(cloudness, 0, 1);
         __instance.lerpRainOverlay = GameMath.Clamp(cloudness - 0.5f, 0, 1);

@@ -65,7 +65,7 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Storm((IServerPlayer)args.Caller.Player, (double)args[0], (double)args[1]))
             .EndSubCommand()
             .BeginSubCommand("force")
-                .WithDescription("Fly the caller, with the vessel they ride, to the nearest open sea where the wind blows at a Beaufort force and the waves stand as the scale has them for it")
+                .WithDescription("Fly the caller to the nearest open sea where the wind blows at a Beaufort force and the waves stand as the scale has them for it; seated, reply with the /tp that takes the vessel along")
                 .RequiresPlayer()
                 .WithArgs(parsers.IntRange("force", 0, 12), parsers.OptionalDouble("range", 30000))
                 .HandleWith(args => Force((IServerPlayer)args.Caller.Player, (int)args[0], (double)args[1]))
@@ -225,7 +225,7 @@ public class BridgeCommands : ModSystem
             .OrderBy(point => Math.Abs(point.x - pos.X) + Math.Abs(point.z - pos.Z))
             .Select(point => ((double x, double z, SeaState state)?)point)
             .FirstOrDefault();
-        if (chosen == null) return TextCommandResult.Error($"No open sea at Beaufort {force} with {scaleHeight} m waves within {range} blocks");
+        if (chosen == null) return TextCommandResult.Error($"No open sea at Beaufort {force} with {scaleHeight} m waves within {NearbyGridBlocks} blocks, nor in a storm within {range}");
 
         var target = new Vec3d((int)chosen.Value.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)chosen.Value.z + 0.5);
         if (player.Entity.MountedOn != null)
@@ -553,6 +553,7 @@ public class BridgeCommands : ModSystem
         return new
         {
             teleporting,
+            y = Math.Round(pos.Y, 2),
             seaLevel = sapi.World.SeaLevel,
             oceanity = region?.OceanMap?.GetUnpaddedIntLerpedForBlockPos(blockPos.X, blockPos.Z, regionSize),
             feet = accessor.GetBlock(blockPos, BlockLayersAccess.Fluid)?.Code?.ToString(),

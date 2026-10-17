@@ -17,8 +17,10 @@ public sealed class SeaSurface
     private const int SurfaceSearchSteps = 3;
     private const int FoldSamplesAcross = 24;
 
-    /// <summary>The shader's foam trail looks back this far and twice as far.</summary>
-    private const double TrailSeconds = 0.7;
+    private const double SurfOnAnyShoreMetres = 0.6;
+
+    /// <summary>The foam trail looks back this far and twice as far, here and in the shader.</summary>
+    public const double TrailSeconds = 0.7;
 
     /// <summary>The share of crests that <c>seafoam.fsh</c>'s breaking-crest mask lets break.</summary>
     private const double BreakingCrestShare = 0.3;
@@ -57,7 +59,10 @@ public sealed class SeaSurface
 
     public Foam Foam { get; private set; }
 
-    public double SurfHeight { get; private set; }
+    /// <summary>The open sea's significant height the surface is aimed at.</summary>
+    public double SeaHeight { get; private set; }
+
+    public double SurfDepth => waves.BreakingDepth(Math.Max(SeaHeight, SurfOnAnyShoreMetres));
 
     /// <summary>The fold above which a crest whitens, set so the whitecaps cover the Beaufort force's share of the sea.</summary>
     public double CapsFold { get; private set; } = double.PositiveInfinity;
@@ -66,7 +71,7 @@ public sealed class SeaSurface
 
     public double DrawnHeight => 4 * Math.Sqrt(amplitude.Sum(value => value * value) / 2);
 
-    public bool Calm => amplitude.All(value => value <= Faded);
+    public bool Calm { get; private set; } = true;
 
     public event Action<string>? Changed;
 
@@ -75,12 +80,12 @@ public sealed class SeaSurface
     public void Aim(double height, double towardRadians, double beaufort)
     {
         foamTarget = FoamAt(beaufort);
-        (SurfHeight, TowardRadians) = (height, towardRadians);
+        (SeaHeight, TowardRadians) = (height, towardRadians);
         var length = PeakLength(height);
         if (length > 0 && (active < 0 || !Alike(towardRadians, length)))
         {
             var next = active == 0 ? generation : 0;
-            if (active < 0 || Bank(next).All(slot => amplitude[slot] <= Faded)) Begin(next, towardRadians, length);
+            if (active < 0 || HasFaded(next)) Begin(next, towardRadians, length);
         }
         for (var slot = 0; slot < Slots; slot++)
         {
@@ -97,11 +102,14 @@ public sealed class SeaSurface
         Seconds = seconds;
         Frame++;
         var slopes = 0.0;
+        var calm = true;
         for (var slot = 0; slot < Slots; slot++)
         {
             amplitude[slot] += (target[slot] - amplitude[slot]) * blend;
-            slopes += amplitude[slot] * Number(slot);
+            slopes += amplitude[slot] * Wavenumber(slot);
+            calm &= amplitude[slot] <= Faded;
         }
+        Calm = calm;
         Steepness = slopes > 0 ? Math.Min(config.Steepness, 1 / slopes) : config.Steepness;
         Foam = Foam.Lerp(Foam, foamTarget, blend);
     }
@@ -125,7 +133,7 @@ public sealed class SeaSurface
             if (amplitude[slot] <= 0) continue;
             var theta = Phase(slot, x, z);
             rise += amplitude[slot] * Math.Sin(theta);
-            var sway = Steepness * amplitude[slot] * Math.Cos(theta) / Number(slot);
+            var sway = Steepness * amplitude[slot] * Math.Cos(theta) / Wavenumber(slot);
             shiftX += sway * numberX[slot];
             shiftZ += sway * numberZ[slot];
         }
@@ -139,7 +147,7 @@ public sealed class SeaSurface
         for (var slot = 0; slot < Slots; slot++)
         {
             if (amplitude[slot] <= 0) continue;
-            var number = Number(slot);
+            var number = Wavenumber(slot);
             var (alongX, alongZ) = (numberX[slot] / number, numberZ[slot] / number);
             var pinch = Steepness * amplitude[slot] * number;
             var theta = Phase(slot, x, z);
@@ -184,7 +192,7 @@ public sealed class SeaSurface
     private double Phase(int slot, double x, double z) =>
         (numberX[slot] * x + numberZ[slot] * z - frequency[slot] * Seconds) % FullTurn;
 
-    private double Number(int slot) => Math.Sqrt(numberX[slot] * numberX[slot] + numberZ[slot] * numberZ[slot]);
+    private double Wavenumber(int slot) => Math.Sqrt(numberX[slot] * numberX[slot] + numberZ[slot] * numberZ[slot]);
 
     private double PeakLength(double height)
     {
@@ -217,7 +225,14 @@ public sealed class SeaSurface
             "new waves toward {0:F0}°, {1:F0} m long", (towardRadians * 180 / Math.PI + 360) % 360, length));
     }
 
-    private int[] Bank(int bank) => Enumerable.Range(bank, generation).ToArray();
+    private bool HasFaded(int bank)
+    {
+        for (var slot = bank; slot < bank + generation; slot++)
+        {
+            if (amplitude[slot] > Faded) return false;
+        }
+        return true;
+    }
 
     private Foam FoamAt(double beaufort)
     {

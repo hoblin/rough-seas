@@ -40,22 +40,27 @@ public class StormsModSystem : ModSystem
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var surface = new SeaSurface(Config.Surface, Waves);
         surface.Changed += change => Log("surface: " + change);
-        clock = new SurfaceClock(this, sea, surface, capi);
-        if (!SurfaceShader.Attach(surface, sea, capi)) Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
+        if (SurfaceShader.Attach(surface, sea, capi)) clock = new SurfaceClock(this, sea, surface, capi);
+        else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         VesselMotion.Attach(this, sea, surface);
         FloatMotion.Attach(sea, surface);
+        RegisterSurfaceCommands(capi);
+    }
+
+    private static void RegisterSurfaceCommands(ICoreClientAPI capi)
+    {
         var parsers = capi.ChatCommands.Parsers;
         capi.ChatCommands.Create("surface")
             .WithDescription("Rough Seas: the sea's surface as this client draws it")
             .BeginSubCommand("waves")
                 .WithDescription("Draw the waves, or leave them out to compare")
                 .WithArgs(parsers.Bool("draw"))
-                .HandleWith(args => Drawn("waves", SurfaceShader.Waves = (bool)args[0]))
+                .HandleWith(args => Drawn("waves", SurfaceShader.DrawWaves = (bool)args[0]))
             .EndSubCommand()
             .BeginSubCommand("foam")
                 .WithDescription("Draw the foam, or leave it out to compare")
                 .WithArgs(parsers.Bool("draw"))
-                .HandleWith(args => Drawn("foam", SurfaceShader.Foam = (bool)args[0]))
+                .HandleWith(args => Drawn("foam", SurfaceShader.DrawFoam = (bool)args[0]))
             .EndSubCommand()
             .BeginSubCommand("trace")
                 .WithDescription("Log every vessel's pose on the waves every frame, for a number of seconds")

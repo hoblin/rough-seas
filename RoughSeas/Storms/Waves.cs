@@ -11,7 +11,9 @@ public class Waves(WavesConfig config)
     public double BreakingChance(double windMps) =>
         Math.Min(1, config.WhitecapCoefficient * Math.Pow(windMps, config.WhitecapExponent));
 
-    public bool BreaksAt(double depth, double height) => depth < config.BreakingDepthRatio * height;
+    public bool BreaksAt(double depth, double height) => depth < BreakingDepth(height);
+
+    public double BreakingDepth(double height) => config.BreakingDepthRatio * height;
 
     public double BreakerEnergy(double height, double beam)
     {

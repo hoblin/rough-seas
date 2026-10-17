@@ -1,9 +1,11 @@
-uniform vec4 seaWaves[8];
+// The other end of RoughSeas/Storms/SeaSurface.cs: DisplacementAt, FoldAt and OpenSea compute the same surface.
+uniform vec4 seaWaves[SEA_SLOTS];
 uniform float seaSteepness;
 
 out float seaFoamCrest;
 out float seaFoamFold;
 out float seaFoamOcean;
+out vec2 seaFoamWorld;
 
 vec3 seaNormal = vec3(0.0, 1.0, 0.0);
 float seaCrest = 0.0;
@@ -25,7 +27,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec3 squeezeFarBehind = vec3(0.0);
 	float energy = 0.0;
 	float steepest = 0.0;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < SEA_SLOTS; i++) {
 		vec4 wave = seaWaves[i];
 		if (wave.z <= 0.0) continue;
 		float number = length(wave.xy);
@@ -43,8 +45,8 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 		float frequency = sqrt(9.81 * number);
 		vec3 shape = vec3(direction.x * direction.x, direction.x * direction.y, direction.y * direction.y) * pinch;
 		squeeze += shape * rise;
-		squeezeBehind += shape * sin(theta + frequency * 0.7);
-		squeezeFarBehind += shape * sin(theta + frequency * 1.4);
+		squeezeBehind += shape * sin(theta + frequency * SEA_TRAIL_SECONDS);
+		squeezeFarBehind += shape * sin(theta + frequency * 2.0 * SEA_TRAIL_SECONDS);
 		steepest += pinch;
 	}
 	warped.xyz += openSea * offset;

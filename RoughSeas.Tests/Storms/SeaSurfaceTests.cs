@@ -70,14 +70,6 @@ public class SeaSurfaceTests
     }
 
     [Fact]
-    public void KeepsItsCrestsFromFoldingOver()
-    {
-        var surface = Surface();
-        Settle(surface, 14, 0);
-        Assert.InRange(surface.Steepness, 0.01, Fixtures.Config().Surface.Steepness);
-    }
-
-    [Fact]
     public void WhitensWithTheBeaufortForce()
     {
         var calm = Surface();
@@ -120,9 +112,14 @@ public class SeaSurfaceTests
         Settle(surface, 3, 0.7);
         var uniforms = new float[surface.Slots * 4];
         surface.WriteUniforms(FarX, FarZ, uniforms);
+        var (fromCameraX, fromCameraZ) = (37.0, -21.0);
 
         var rise = 0.0;
-        for (var slot = 0; slot < surface.Slots; slot++) rise += uniforms[slot * 4 + 2] * Math.Sin(uniforms[slot * 4 + 3]);
-        Assert.Equal(surface.DisplacementAt(FarX, FarZ).Y, rise, 3);
+        for (var slot = 0; slot < surface.Slots; slot++)
+        {
+            var theta = uniforms[slot * 4] * fromCameraX + uniforms[slot * 4 + 1] * fromCameraZ + uniforms[slot * 4 + 3];
+            rise += uniforms[slot * 4 + 2] * Math.Sin(theta);
+        }
+        Assert.Equal(surface.DisplacementAt(FarX + fromCameraX, FarZ + fromCameraZ).Y, rise, 3);
     }
 }

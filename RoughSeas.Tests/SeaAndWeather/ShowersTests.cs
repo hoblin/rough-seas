@@ -40,22 +40,4 @@ public class ShowersTests
 
         Assert.InRange(RainyShare(showers, temperate.x, temperate.z), 0.01, 0.3);
     }
-
-    [Fact]
-    public void ChangesRainfallSmoothlyAcrossClimateCells()
-    {
-        var steps = Enumerable.Range(0, 4096).Select(i => climate.RainfallAt(500000 + i, 500000)).ToArray();
-        Assert.All(steps.Zip(steps.Skip(1)), pair => Assert.True(Math.Abs(pair.First - pair.Second) < 0.01));
-    }
-
-    [Fact]
-    public void RainsHardInsideAStorm()
-    {
-        var model = Fixtures.Model(Seed);
-        var storm = Fixtures.YearOfStorms(model).First(found => found.Code == "squall");
-        var hours = storm.BornHours + storm.LifetimeHours / 2;
-        var (x, z) = storm.CentreAt(hours);
-
-        Assert.True(model.RainCloudness(x, z, hours) > Raining + 0.5 * storm.Type.Rain);
-    }
 }

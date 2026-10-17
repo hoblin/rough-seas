@@ -74,7 +74,7 @@ LOOK
                              what a swing is measured by: the picked selection box, the eye's
                              distance to the entity's default box (vanilla's measure) and to
                              the point hit (a vessel's), and the held item's range
-  bin/game here              server side, at the player: sea level, oceanity (0 land, 255 sea),
+  bin/game here              server side, at the player: its height, sea level, oceanity (0 land, 255 sea),
                              fluid at feet and head, seabed height, season, temperature, rainfall,
                              wind vector, precipitation, wind/weather pattern, weather event
   bin/game entity ID         server side: code, alive, pos, behaviours, all watched attributes

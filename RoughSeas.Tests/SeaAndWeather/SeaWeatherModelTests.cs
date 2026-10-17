@@ -101,4 +101,14 @@ public class SeaWeatherModelTests
     {
         Assert.Equal(0, Model.At(512000, 512000, 2000, oceanity: 0).WaveHeight);
     }
+
+    [Fact]
+    public void RainsHardInsideASquall()
+    {
+        var squall = Storms.First(storm => storm.Code == "squall");
+        var hours = squall.BornHours + squall.LifetimeHours / 2;
+        var (x, z) = squall.CentreAt(hours);
+
+        Assert.True(Model.RainCloudness(x, z, hours) - 0.5 > 0.5 * squall.Type.Rain);
+    }
 }

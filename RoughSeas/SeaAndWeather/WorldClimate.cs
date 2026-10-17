@@ -34,7 +34,7 @@ public class WorldClimate
         var cellZ = z / CellSize - 0.5;
         var westX = (int)Math.Floor(cellX);
         var northZ = (int)Math.Floor(cellZ);
-        double Rainfall(int dx, int dz) => cells.GetOrAdd((westX + dx, northZ + dz), Sample).Rainfall;
+        double Rainfall(int dx, int dz) => cells.GetOrAdd((westX + dx, northZ + dz), static (cell, climate) => climate.Sample(cell), this).Rainfall;
         return GameMath.BiLerp(Rainfall(0, 0), Rainfall(1, 0), Rainfall(0, 1), Rainfall(1, 1), cellX - westX, cellZ - northZ);
     }
 

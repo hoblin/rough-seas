@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Client;
@@ -11,7 +12,7 @@ namespace RoughSeas.Storms;
 /// <summary>
 /// Draws the <see cref="SeaSurface"/> in vanilla's water shaders, patched as text at anchors in 1.22.7's
 /// <c>vertexwarp.vsh</c>, <c>chunkliquid.vsh</c> and <c>chunkliquid.fsh</c>. When a game update moves an anchor,
-/// <see cref="Attach"/> returns false and the sea is drawn as vanilla's.
+/// <see cref="Attach"/> takes the patches out again, returns false, and the sea is drawn as vanilla's.
 /// </summary>
 public static class SurfaceShader
 {
@@ -22,11 +23,12 @@ public static class SurfaceShader
     private const string AfterWarp = "vec4 applyVertexWarping(";
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
-        "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; seaFoamOcean = ((waterFlagsIn >> 2) & 0xff) * OneOver255;";
+        "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; "
+        + "seaFoamOcean = ((waterFlagsIn >> 2) & 0xff) * OneOver255; seaFoamWorld = worldPos.xz + playerpos.xz;";
     private const string FragmentMain = "void main()";
     private const string BeforeFog = "texColor = applyFog(texColor, fogAmount);";
     private const string Foamed =
-        "if (!isLava) { float seaFoamAmount = seaFoamAt(fragWorldPos.xz); "
+        "if (!isLava && fragNormal.y > 0.5) { float seaFoamAmount = seaFoamAt(); "
         + "vec3 seaFoamColor = mix(texColor.rgb, vec3(0.88, 0.92, 0.92) * clamp(bright * 1.3, 0.0, 1.0) * mix(1.0, shadowBright, 0.5), 0.75); "
         + "texColor.rgb = mix(texColor.rgb, seaFoamColor, seaFoamAmount); "
         + "texColor.a = mix(texColor.a, 0.95, seaFoamAmount * 0.8); }\n";
@@ -38,28 +40,30 @@ public static class SurfaceShader
 
     private static Harmony? harmony;
     private static SeaSurface? surface;
-    private static SeaWeatherSystem? weather;
+    private static SeaWeatherSystem? sea;
     private static ICoreClientAPI? capi;
-    private static float[] waves = [];
+    private static float[] uniforms = [];
     private static string vertexCode = "";
     private static string fragmentCode = "";
 
-    public static bool Waves { get; set; } = true;
+    public static bool DrawWaves { get; set; } = true;
 
-    public static bool Foam { get; set; } = true;
+    public static bool DrawFoam { get; set; } = true;
 
-    public static bool Attach(SeaSurface sea, SeaWeatherSystem weather, ICoreClientAPI api)
+    public static bool Attach(SeaSurface waves, SeaWeatherSystem weather, ICoreClientAPI api)
     {
-        surface = sea;
-        SurfaceShader.weather = weather;
-        capi = api;
-        waves = new float[sea.Slots * 4];
+        (surface, sea, capi) = (waves, weather, api);
+        uniforms = new float[waves.Slots * 4];
         ReadSources(api);
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(ShaderRegistry), "HandleIncludes"), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Inject)));
         harmony.Patch(AccessTools.Method(typeof(ShaderProgramBase), nameof(ShaderProgramBase.Use)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Bind)));
         harmony.Patch(AccessTools.Method(typeof(ClientMain), nameof(ClientMain.EyesInWaterDepth)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(EyesUnderSurface)));
-        return Compile(api);
+        if (Compile(api)) return true;
+
+        Detach();
+        api.Shader.ReloadShaders();
+        return false;
     }
 
     public static bool Reload()
@@ -70,31 +74,35 @@ public static class SurfaceShader
         return Compile(capi);
     }
 
-    private static bool Compile(ICoreClientAPI api) =>
-        api.Shader.ReloadShaders()
-        && ShaderPrograms.Chunkliquid.uniformLocations.ContainsKey(WavesUniform)
-        && ShaderPrograms.Chunkliquid.uniformLocations.ContainsKey(FoamUniform);
-
     public static void Detach()
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        surface = null;
-        weather = null;
-        capi = null;
+        (surface, sea, capi) = (null, null, null);
     }
+
+    private static bool Compile(ICoreClientAPI api)
+    {
+        api.Shader.ReloadShaders();
+        return Active(ShaderPrograms.Chunkliquid, WavesUniform) && Active(ShaderPrograms.Chunkliquid, FoamUniform);
+    }
+
+    private static bool Active(ShaderProgramBase program, string uniform) =>
+        program.uniformLocations.TryGetValue(uniform, out var location) && location >= 0;
 
     private static void ReadSources(ICoreClientAPI api)
     {
-        vertexCode = api.Assets.Get(VertexSource).ToText();
+        vertexCode = api.Assets.Get(VertexSource).ToText()
+            .Replace("SEA_SLOTS", surface!.Slots.ToString(CultureInfo.InvariantCulture))
+            .Replace("SEA_TRAIL_SECONDS", SeaSurface.TrailSeconds.ToString("0.0###", CultureInfo.InvariantCulture));
         fragmentCode = api.Assets.Get(FragmentSource).ToText();
     }
 
     private static void EyesUnderSurface(ClientMain __instance, ref float __result)
     {
-        if (__result <= 0 || surface == null || weather == null || surface.Calm || __result > surface.SurfHeight + 1) return;
+        if (__result <= 0 || surface == null || sea == null || surface.Calm || __result > surface.SeaHeight + 1) return;
         var eye = __instance.MainCamera.CameraEyePos;
-        var openSea = SeaSurface.OpenSea(weather.Oceanity(eye.X, eye.Z));
+        var openSea = SeaSurface.OpenSea(sea.Oceanity(eye.X, eye.Z));
         __result = (float)Math.Max(0, __result + openSea * surface.HeightAt(eye.X, eye.Z));
     }
 
@@ -114,15 +122,14 @@ public static class SurfaceShader
 
     private static void Bind(ShaderProgramBase __instance)
     {
-        if (surface == null || capi == null || !__instance.uniformLocations.ContainsKey(WavesUniform)) return;
-        var camera = capi.World.Player.Entity.CameraPos;
-        if (Waves) surface.WriteUniforms(camera.X, camera.Z, waves);
-        else Array.Clear(waves);
-        __instance.Uniforms4(WavesUniform, surface.Slots, waves);
+        if (surface == null || !Active(__instance, WavesUniform) || capi?.World.Player?.Entity is not { } player) return;
+        if (DrawWaves) surface.WriteUniforms(player.CameraPos.X, player.CameraPos.Z, uniforms);
+        else Array.Clear(uniforms);
+        __instance.Uniforms4(WavesUniform, surface.Slots, uniforms);
         __instance.Uniform("seaSteepness", (float)surface.Steepness);
-        if (!__instance.uniformLocations.ContainsKey(FoamUniform)) return;
-        __instance.Uniform(FoamUniform, Foam
-            ? new Vec4f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray, (float)surface.SurfHeight)
+        if (!Active(__instance, FoamUniform)) return;
+        __instance.Uniform(FoamUniform, DrawFoam
+            ? new Vec4f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray, (float)surface.SurfDepth)
             : new Vec4f((float)NoCaps, 0, 0, 0));
         __instance.Uniform("seaWind", new Vec2f((float)Math.Cos(surface.TowardRadians), (float)Math.Sin(surface.TowardRadians)));
     }

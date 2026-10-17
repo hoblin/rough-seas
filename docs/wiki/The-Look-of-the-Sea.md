@@ -5,9 +5,9 @@ A sailor reads the weather off the sea before any instrument: the height of the 
 - **Waves as high as the sea is.** The swell runs before the wind, long and slow in a gale, short in a breeze. Its height is the sea's significant height, the same number the waves strike your hull with: a 5.5 m gale looks like one.
 - **Whitecaps by the Beaufort scale.** Crests break white where they grow too steep, and how many break follows the wind, as the scale describes it: a few scattered whitecaps at force 3, many at 4 to 5, foam blown off the crests in streaks along the wind at 6 and 7, and from 8 up a sea whitening with spray.
 - **Surf on the shore.** Where the water grows shallow enough for the waves to break, a band of foam runs onto the beach, thick and bright even in a moderate sea.
-- **Boats ride the swell.** A vessel climbs each crest and slides down its back, rolling and pitching with the slope of the water under it, and you with it, each hull by its shape: a round coracle tilts with every slope, a raft lies flat on the water. A big sea can bury you to the eyes.
+- **Boats ride the swell.** A vessel climbs each crest and slides down its back, rolling and pitching with the slope of the water under it, and you with it, each hull by its shape: a round coracle tilts more than the slope under it, a broad raft less. A big sea can bury you to the eyes.
 - **Wreckage floats on it.** Planks and anything else that floats rise and fall with the waves.
-- **Rain and clouds follow the weather.** All rain comes from Rough Seas' weather: ordinary showers, more often and heavier where the climate is wet, and [storms](Storms), whose clouds darken from their edge and whose rain falls toward their heart. Where the weather is fair, the sky is too.
+- **Rain and clouds follow the weather.** All rain comes from Rough Seas' weather: ordinary showers, more often and heavier where the climate is wet, and [storms](Storms), whose clouds darken from their edge and whose rain falls toward their heart. Where the weather is fair, no rain falls and no thunder rolls; white clouds may still drift by.
 
 The sea is drawn this way even with *Waving foliage* off in the game's graphics settings: a storm should never come unseen.
 

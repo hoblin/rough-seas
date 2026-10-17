@@ -83,9 +83,9 @@ public class VanillaWeather
                 foreach (var weatherEvent in sim.WeatherEvents) weatherEvent.AllowStop = weatherEvent != sim.CurWeatherEvent;
                 stormRegions.Add(index);
             }
-            else if (stormRegions.Remove(index))
+            else if (stormRegions.Remove(index) || sim.CurWeatherEvent?.config.Code is { } current && current != CalmEvent)
             {
-                sea.Log("region {0} {1}: the storm has passed", sim.regionX, sim.regionZ);
+                sea.Log("region {0} {1}: calm, no storm of ours here", sim.regionX, sim.regionZ);
                 foreach (var weatherEvent in sim.WeatherEvents) weatherEvent.AllowStop = true;
                 sim.SetWeatherEvent(CalmEvent, true);
             }
