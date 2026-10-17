@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -15,6 +16,7 @@ public static class VanillaWeatherPatches
     private const string HarmonyId = "roughseas.seaandweather";
 
     private static readonly ConcurrentDictionary<EnumAppSide, SeaWeatherSystem> systems = [];
+    private static readonly ConditionalWeakTable<WeatherDataReaderBase, StrongBox<double>> stormPresence = [];
     private static readonly object patchLock = new();
     private static Harmony? harmony;
 
@@ -30,6 +32,9 @@ public static class VanillaWeatherPatches
             Prefix(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.RandomWeatherEvent)), nameof(NoWeatherEvent));
             Postfix(AccessTools.Method(typeof(WeatherDataReaderBase), nameof(WeatherDataReaderBase.LoadLerp),
                 [typeof(Vec3d), typeof(bool), typeof(float), typeof(float), typeof(float)]), nameof(UnloadedRainCloudness));
+            Postfix(AccessTools.Method(typeof(WeatherDataReaderBase), nameof(WeatherDataReaderBase.LoadLerp),
+                [typeof(Vec3d), typeof(bool), typeof(float), typeof(float), typeof(float)]), nameof(StormUnderCloud));
+            Postfix(AccessTools.Method(typeof(WeatherDataReaderBase), "pgetBlendedCloudBrightness"), nameof(StormCloudBrightness));
             Postfix(AccessTools.Method(typeof(CloudRenderer), nameof(CloudRenderer.CloudTick)), nameof(CloudDrift));
             Postfix(AccessTools.Method(typeof(FluffyClouds.CloudRendererMap), nameof(FluffyClouds.CloudRendererMap.CloudTick)), nameof(CloudDrift));
             WindAsStrength(AccessTools.Method(typeof(DefaultShaderUniforms), nameof(DefaultShaderUniforms.Update)), nameof(SurfaceWindStrength), nameof(SurfaceWindRestore));
@@ -102,6 +107,22 @@ public static class VanillaWeatherPatches
         var cloudness = sea.RainCloudness(pos.X, pos.Z, ___ws.api.World.Calendar.TotalDays);
         __instance.lerpRainCloudOverlay = GameMath.Clamp(cloudness, 0, 1);
         __instance.lerpRainOverlay = GameMath.Clamp(cloudness - 0.5f, 0, 1);
+    }
+
+    private static void StormUnderCloud(Vec3d pos, WeatherDataReaderBase __instance, WeatherSystemBase ___ws)
+    {
+        if (__instance is not WeatherDataReaderPreLoad) return;
+        var sea = On(___ws.api.Side);
+        var presence = sea != null && ___ws.OverridePrecipitation == null && __instance.lerpRainCloudOverlay > 0 ? sea.StormsAt(pos.X, pos.Z, sea.NowHours).Presence : 0;
+        stormPresence.GetOrCreateValue(__instance).Value = presence;
+    }
+
+    // Patched on the protected getter: the renderers' calls to its public one-line wrapper are inlined past any patch.
+    private static void StormCloudBrightness(ref double __result, WeatherDataReaderBase __instance)
+    {
+        var sea = On(EnumAppSide.Client);
+        if (sea == null || !stormPresence.TryGetValue(__instance, out var presence)) return;
+        __result = VanillaWeather.CloudBrightness(__result, presence.Value, sea.Config.Vanilla);
     }
 
     // These vanilla readers take the wind's X alone as its strength; our wind may blow along Z.
