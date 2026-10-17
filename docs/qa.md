@@ -23,7 +23,7 @@ Each scene: what the player should see, then its setup.
 
 1. **The new-world screen.** Nothing to set up. On the player's client: Singleplayer, Create new world. Rough Seas is the first playstyle, with Dangerous oceans and their descriptions. Then Settings, Language, Русский, and the same screen again. Cancel without creating.
 2. **The guide.** Nothing to set up. The handbook (H), search "Rough Seas": five pages, from Going to sea to Mooring. The vanilla Sailboat and Stone anchor pages carry our text too.
-3. **The reed boat from spawn.** `bin/qa as '/tp 465 111 51' '/gamemode survival'`. Harvest cooper's reeds with the knife, craft the reed boat (reed tops around a knife), place it on the water and paddle. `'/giveitem cattailtops 24'` skips the harvest.
+3. **The reed boat from spawn.** `bin/qa as '/tp 465 111 51' '/giveitem oar-crude-oak' '/gamemode survival'`. Harvest cooper's reeds with the knife, craft the reed boat (reed tops around a knife), place it on the water and paddle. `'/giveitem cattailtops 24'` skips the harvest.
 4. **A calm sea on a raft.** `bin/qa as '/time set 12:00' '/bridge sea' '/bridge ride boat-raft-oak' '/giveitem oar-crude-oak' '/gamemode survival'`. `/seas here` reads wind, waves, current and water temperature where the player is.
 5. **Currents.** `bin/qa as '/seas currents 4000'` names the warmest and coldest current near the player and where. `'/bridge fly X 111 Z' '/bridge ride boat-raft-oak' '/entity spawnat boat-raft-oak 1 ~4 ~ ~ 0' '/gamemode survival'` with that current's X and Z: the empty raft drifts off with it.
 6. **The vessels and their niches.** At a calm sea (scene 4's first two commands), one at a time: `'/bridge ride CODE' '/giveitem oar-crude-oak' '/gamemode survival'`, and race it against the raft.

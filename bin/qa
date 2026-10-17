@@ -82,8 +82,8 @@ land() {
 release_zip() {
   local dir=$QA_DATA/Mods zip=$1 fetched=$QA_DATA/fetched run
   mkdir -p "$dir"
-  if [ -z "$zip" ] && compgen -G "$dir/roughseas_*.zip" >/dev/null; then
-    ls "$dir"/roughseas_*.zip
+  if [ -z "$zip" ] && compgen -G "$dir/*.zip" >/dev/null; then
+    ls "$dir"/*.zip
     return
   fi
   if [ -z "$zip" ] || [ "$zip" = latest ]; then
@@ -95,10 +95,10 @@ release_zip() {
   fi
   [ -f "$zip" ] || { echo "No zip at $zip" >&2; exit 1; }
   cp -f "$zip" "$dir/incoming"
-  rm -f "$dir"/roughseas_*.zip
+  rm -f "$dir"/*.zip
   mv -f "$dir/incoming" "$dir/$(basename "$zip")"
   rm -rf "$fetched"
-  ls "$dir"/roughseas_*.zip
+  echo "$dir/$(basename "$zip")"
 }
 
 up() {
