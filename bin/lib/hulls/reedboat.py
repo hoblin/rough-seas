@@ -34,7 +34,7 @@ def build(target):
         box("PoleShaft", (0, 0, 0), (30, 0.7, 0.7), "pole"),
         box("PoleFoot", (30, -0.1, -0.1), (31.2, 0.8, 0.8), "pole"),
     ]))
-    shape.keep("Hull", "FrontSeat", "BackSeat")
+    shape.keep("Hull", "FrontSeat", "Cargo")
     shape.write()
 
 

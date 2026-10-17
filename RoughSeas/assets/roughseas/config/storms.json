@@ -35,6 +35,16 @@
             "rainMillimetresPerHour": "Heavy rain is about 10 mm an hour; it falls at full rainfall, per game hour"
         }
     },
+    "swamping": {
+        "speedExponent": 0.222,
+        "freeSurfaceRoll": 1,
+        "freeSurfaceCapsize": 0.5,
+        "sources": {
+            "speedExponent": "At the same paddling power P = D v, with drag D growing with wetted area, which grows as displacement to the 2/3, and with v squared: v goes as displacement to the -2/9",
+            "freeSurfaceRoll": "Balance: water sloshing across the bilge leans with every roll and adds to it; a full bilge doubles it",
+            "freeSurfaceCapsize": "Balance: the free surface takes away stability, so a full bilge goes over to a breaker half as high"
+        }
+    },
     "mooring": {
         "anchoredExposure": 0.3,
         "stakeRope": "rope-flax",

@@ -15,7 +15,7 @@
         "name": "Reed boat",
         "ingredientPattern": "RRR,RKR,RRR",
         "ingredients": {
-            "R": { "type": "item", "code": "game:*", "allowedVariants": ["papyrustops", "cattailtops"], "quantity": 3 },
+            "R": { "type": "item", "code": "game:*", "allowedVariants": ["papyrustops", "cattailtops", "thatch"], "quantity": 3 },
             "K": { "type": "item", "tags": ["tool-knife"], "isTool": true }
         },
         "width": 3,

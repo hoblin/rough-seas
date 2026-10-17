@@ -1,6 +1,8 @@
+using System;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Storms;
@@ -14,10 +16,17 @@ public class BlockBehaviorBailer(Block block) : BlockBehavior(block)
 
     private double secondsPerScoop;
 
+    /// <summary>
+    /// Plays one cycle a scoop only while its <c>animationSpeed</c> in <c>patches/player-poses.json</c> stays
+    /// 1 / <see cref="secondsPerScoop"/>.
+    /// </summary>
+    private string? animation;
+
     public override void Initialize(JsonObject properties)
     {
         base.Initialize(properties);
         secondsPerScoop = properties["secondsPerScoop"].AsDouble(1);
+        animation = properties["animation"].AsString();
     }
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
@@ -43,12 +52,37 @@ public class BlockBehaviorBailer(Block block) : BlockBehavior(block)
         byEntity.Attributes.SetInt(ScoopsKey, scoops);
         bilge.Bail(((BlockLiquidContainerBase)block).CapacityLitres * (scoops - done));
         byEntity.World.PlaySoundAt(PourSound, byEntity, null, true, 16);
+        Throw(byEntity);
         return bilge.Litres > 0;
     }
 
     public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, ref EnumHandling handling)
     {
         if (Bilge(byEntity, entitySel) != null) handling = EnumHandling.PreventDefault;
+    }
+
+    public override string? GetHeldTpUseAnimation(ItemSlot activeHotbarSlot, Entity forEntity, ref EnumHandling bhHandling)
+    {
+        if (forEntity is not EntityAgent agent || !Empty(activeHotbarSlot)) return null;
+        if (Bilge(agent, (agent as EntityPlayer)?.Player?.CurrentEntitySelection) == null) return null;
+
+        bhHandling = EnumHandling.PreventDefault;
+        return animation;
+    }
+
+    private static void Throw(EntityAgent byEntity)
+    {
+        var pos = byEntity.Pos;
+        var side = new Vec3d(Math.Cos(pos.Yaw), 0, -Math.Sin(pos.Yaw));
+        var at = pos.XYZ.Add(side.X * 0.8, 1, side.Z * 0.8);
+        var water = new SimpleParticleProperties(12, 20, ColorUtil.ToRgba(180, 140, 170, 190),
+            at, at.AddCopy(0.2, 0.2, 0.2),
+            new Vec3f((float)side.X * 1.5f, 1.2f, (float)side.Z * 1.5f), new Vec3f((float)side.X * 3f, 2.4f, (float)side.Z * 3f),
+            1f, 1f, 0.3f, 0.6f, EnumParticleModel.Quad)
+        {
+            WindAffected = true
+        };
+        byEntity.World.SpawnParticles(water);
     }
 
     private bool Empty(ItemSlot slot) =>

@@ -1,4 +1,4 @@
-from shape import Hull, Shape, box, group
+from shape import BILGE, Hull, Shape, box, group
 
 PROFILE = [(0, 0), (5.6, 0), (7.3, 2.8), (8.4, 6.6), (8.8, 9.6)]
 SHEER = 9.6
@@ -35,6 +35,7 @@ def build(path):
     shape = Shape(path, {
         "hide": "game:block/leather/poor",
         "frame": "game:block/wood/debarked/oak",
+        "bilge": BILGE,
     })
     hull = Hull("Skin", STATIONS, 8, 0.5, "hide", "hide", edge="hide")
     shape.add(hull.strakes())
@@ -56,7 +57,7 @@ def build(path):
             shape.add(box(f"Thole{label}{n}", (x, y - 0.2, z - 0.35), (x + 0.6, y + 2.2, z + 0.35), "frame", grain="y"))
     shape.add(box("StemPost", (38.4, 5, 7.3), (40.6, 11.2, 8.7), "frame", grain="y"))
     shape.add(oar("OarPort", (-14, 7.6, 3.6), 1.5, -1), oar("OarStarboard", (-12, 7.4, 12.4), -1.5, -1))
-    shape.add(hull.hide_water(9.2))
+    shape.add(hull.hide_water(9.2), hull.bilge(9.2))
     shape.turn_about(8.3)
     shape.keep("Hull", "FrontSeat", "BackSeat")
     shape.write()

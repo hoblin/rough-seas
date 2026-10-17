@@ -2,7 +2,7 @@ import json
 import math
 from pathlib import Path
 
-from shape import Shape, box, group, paddle, plank, water_plane, write
+from shape import BILGE, Shape, bilge, box, group, paddle, plank, water_plane, write
 
 CENTRE = 8
 STAVES = 16
@@ -68,20 +68,23 @@ TEXTURES = {
 }
 
 
-def hide_water(height):
-    (r0, y0), (r1, y1) = PROFILE[1], PROFILE[2]
+def surface(prefix, height, texture="null"):
+    (r0, y0), (r1, y1) = next(pair for pair in zip(PROFILE, PROFILE[1:]) if height <= pair[1][1])
     radius = r0 + (height - y0) / (y1 - y0) * (r1 - r0) - 0.8
     planes = []
     for n, offset in enumerate(range(-9, 9, 2), 1):
         middle = max(0, offset, -offset - 2)
         reach = math.sqrt(max(radius ** 2 - middle ** 2, 0))
-        planes.append(water_plane(f"hideWater{n}", CENTRE - reach, CENTRE + reach, CENTRE + offset, CENTRE + offset + 2, height))
-    return group("hideWater", (0, 0, 0), (0, 0, 0), planes)
+        if reach > 0:
+            planes.append(water_plane(f"{prefix}{n}", CENTRE - reach, CENTRE + reach, CENTRE + offset, CENTRE + offset + 2,
+                                      height, texture))
+    return planes
 
 
 def build(path):
-    shape = Shape(path, TEXTURES)
-    shape.add(bowl(), hide_water(7.1))
+    shape = Shape(path, {**TEXTURES, "bilge": BILGE})
+    shape.add(bowl(), group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", 7.1)),
+              bilge(1.3, 7.1, lambda prefix, height: surface(prefix, height, "bilge")))
     shape.keep("Hull", "FrontSeat")
     shape.write()
 

@@ -1,6 +1,6 @@
 import math
 
-from shape import Hull, Shape, beam, box, group, paddle, path, run
+from shape import BILGE, Hull, Shape, beam, box, group, paddle, path, run
 
 PROFILE = [(0, 0), (2.6, 0.4), (3.8, 2.2), (4.1, 5), (4.2, 7.6)]
 
@@ -69,6 +69,7 @@ def build(target):
         "inside": "game:block/wood/debarked/oak",
         "sail": "game:block/cloth/linen/plain",
         "lashing": "game:item/resource/rope",
+        "bilge": BILGE,
     })
     hull = Hull("Log", STATIONS, 8, 1.2, "bark", "inside", edge="inside")
     shape.add(hull.strakes())
@@ -103,7 +104,7 @@ def build(target):
              enumerate((-3, 5, 13, 21, 28), 1)]),
     )
     shape.add(paddle((-22, 2.6, 9.4), (0, -2, 3), 14, 7, "inside"))
-    shape.add(hull.hide_water(7.3))
+    shape.add(hull.hide_water(7.3), hull.bilge(7.3))
     shape.keep("LowerMastStorage", "Hull", "FrontSeat", "BackSeat")
     shape.write()
 

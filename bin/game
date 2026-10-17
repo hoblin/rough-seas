@@ -149,12 +149,15 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood.
                              Until a flight has landed it refuses: "Still flying there"
-  /bridge mount ID           seat the player in an existing seatable entity
+  /bridge mount ID [SEAT]    seat the player in an existing seatable entity: a steering seat first,
+                             or the seat of index SEAT (0 is the first in its entity's seats)
   /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
   /bridge hold CODE          put item or block CODE in the active hotbar slot, held in the hand
   /bridge drop CODE X Y Z    an item or block CODE lying on the ground there, at rest (~ relative)
-  /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form),
-                             e.g. the sailboat's sailPosition 0, 1, 2
+  /bridge set ID KEY VALUE   set a watched attribute (int, float, bool, string by its form, or the
+                             type it already has), e.g. the sailboat's sailPosition 0, 1, 2;
+                             TREE/KEY reaches into a tree: roughseas:vessel/integrity 0.6 for a hull,
+                             roughseas:bilge/litres 200 for the water aboard
   /bridge fly X Y Z          hover there in creative free flight, out of any seat: no sinking.
                              X Y Z as /tp takes them (~ relative). Then `aim ID` or `look`
                              frames the shot, e.g. /bridge fly ~6 ~4 ~ and bin/game aim 4300.
@@ -165,7 +168,9 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge ropes ID           where each rope tied to entity ID is pinned: a block, an entity, or loose
   /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with
                              its integrity (watched "roughseas:vessel"), 0 breaks it into wreckage
-  /bridge interact ID attack|interact [ctrl|shift]
+  /bridge interact ID attack|interact [none|ctrl|shift] [BOX]
+                             (BOX: the selection box clicked, by its attachment point, e.g.
+                             CargoAP to put a held basket there with ctrl; the first box by default)
                              what the server does when the player left- or right-clicks entity
                              ID with the held item, wherever the player stands, with ctrl or shift
                              held; replies with its integrity if it is a vessel. The client sends

@@ -24,12 +24,22 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void DrawsEveryTextureItsCracksOverlay(string vessel)
+    public void DrawsEveryTextureItsDamageMarks(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
-        var cracked = entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!["cracks"]!["textures"]!.Values<string>();
+        var marked = Damage(entity).Textures;
 
-        Assert.Empty(cracked.Except(FaceTextures(shape)));
+        Assert.Empty(marked.Except(FaceTextures(shape)));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void HasAnOverlayOfItsMaterialForEveryStageOfDamage(string vessel)
+    {
+        var damage = Damage(Load(vessel).Entity);
+
+        Assert.All(Enumerable.Range(1, 4), stage =>
+            Assert.True(File.Exists(Path.Combine(AppContext.BaseDirectory, "damage", Path.GetFileName(damage.Overlay(stage).Path) + ".png"))));
     }
 
     [Theory]
@@ -74,6 +84,9 @@ public class VesselShapeTests
         var name = entity["client"]!["shape"]!.Value<string>("base")!.Split('/').Last();
         return (entity, Read("items", vessel), Read("shapes", name));
     }
+
+    private static HullDamageConfig Damage(JToken entity) =>
+        entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!["damage"]!.ToObject<HullDamageConfig>()!;
 
     private static JToken Read(string folder, string name) =>
         JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, folder, name + ".json")));

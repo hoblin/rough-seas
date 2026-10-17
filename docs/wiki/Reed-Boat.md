@@ -1,6 +1,6 @@
 ![The reed boat afloat](images/reed-boat/afloat-bow.webp)
 
-Three bundles of reeds, lashed tight with reed rope and drawn up into a point at either end. It is built in minutes with a knife from a few armfuls of cattail or papyrus tops, and it takes one rower and a passenger.
+Three bundles of reeds, lashed tight with reed rope and drawn up into a point at either end. It is built in minutes with a knife from a few armfuls of cattail or papyrus tops, or of the thatch that tule gives, and it takes one paddler and a basket.
 
 ## In Rough Seas
 
@@ -8,7 +8,7 @@ A one-way crossing. The reed boat is the cheapest thing that floats, and it does
 
 ## Where it comes from
 
-People have tied reeds into boats wherever reeds grow by water: Egyptians built papyrus skiffs on the Nile, and the Sumerians reed boats sealed with bitumen in the marshes of Mesopotamia. The model follows the *balsas* of Lake Titicaca, still built by the Uru and Aymara from totora reed: two thick side bundles over a thinner core, bound at intervals and swept up at bow and stern. Aymara builders from the lake made Thor Heyerdahl's *Ra II*, the papyrus boat that crossed the Atlantic from Morocco to Barbados in 1970.
+People have tied reeds into boats wherever reeds grow by water: Egyptians built papyrus skiffs on the Nile, and the Sumerians reed boats sealed with bitumen in the marshes of Mesopotamia. The model follows the *balsas* of Lake Titicaca, still built by the Uru and Aymara from totora reed: two thick side bundles over a thinner core, bound at intervals and swept up at bow and stern. Aymara builders from the lake made Thor Heyerdahl's *Ra II*, the papyrus boat that crossed the Atlantic from Morocco to Barbados in 1970. In California the Chumash and the Ohlone bound the same kind of boat from tule, paddling it across the bays and out to the islands.
 
 ## By the numbers
 
@@ -26,12 +26,13 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Built from | 24 cattail or papyrus tops, with a knife |
+| Aboard | one paddler, with an oar, and a basket |
+| Built from | 24 cattail tops, papyrus tops or thatch, with a knife |
 | Wreckage | reed tops |
 
 ## How it is built
 
-![The reed boat from 24 cattail or papyrus tops and a knife](images/recipes/reed-boat.png)
+![The reed boat from 24 cattail tops, papyrus tops or thatch and a knife](images/recipes/reed-boat.png)
 
 ## Its neighbours
 

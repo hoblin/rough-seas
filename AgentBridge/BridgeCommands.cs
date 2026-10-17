@@ -75,7 +75,7 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
             .BeginSubCommand("set")
-                .WithDescription("Set an entity's watched attribute: int, float, bool or string by the value's form")
+                .WithDescription("Set an entity's watched attribute, tree/key for one inside a tree: int, float, bool or string by the value's form, or the type it already has")
                 .WithArgs(parsers.Long("id"), parsers.Word("key"), parsers.Word("value"))
                 .HandleWith(args => Set(sapi.World.GetEntityById((long)args[0]), (string)args[1], (string)args[2]))
             .EndSubCommand()
@@ -86,10 +86,10 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Ride(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
             .BeginSubCommand("mount")
-                .WithDescription("Seat the caller in an entity, a steering seat first")
+                .WithDescription("Seat the caller in an entity, a steering seat first, or in its seat of this index")
                 .RequiresPlayer()
-                .WithArgs(parsers.Long("id"))
-                .HandleWith(args => Mount(args.Caller.Player, sapi.World.GetEntityById((long)args[0])))
+                .WithArgs(parsers.Long("id"), parsers.OptionalInt("seat", -1))
+                .HandleWith(args => Mount(args.Caller.Player, sapi.World.GetEntityById((long)args[0]), (int)args[1]))
             .EndSubCommand()
             .BeginSubCommand("wear")
                 .WithDescription("Put an item into the caller's first empty backpack slot, where it is worn on the back")
@@ -144,8 +144,8 @@ public class BridgeCommands : ModSystem
             .BeginSubCommand("interact")
                 .WithDescription("Attack or interact with an entity using the held item, as the server does when the player clicks it")
                 .RequiresPlayer()
-                .WithArgs(parsers.Long("id"), parsers.WordRange("mode", "attack", "interact"), parsers.OptionalWordRange("modifier", "ctrl", "shift"))
-                .HandleWith(args => Interact(args.Caller.Player, sapi.World.GetEntityById((long)args[0]), (string)args[1], args[2] as string))
+                .WithArgs(parsers.Long("id"), parsers.WordRange("mode", "attack", "interact"), parsers.OptionalWordRange("modifier", "none", "ctrl", "shift"), parsers.OptionalWord("box"))
+                .HandleWith(args => Interact(args.Caller.Player, sapi.World.GetEntityById((long)args[0]), (string)args[1], args[2] as string, args[3] as string))
             .EndSubCommand();
     }
 
@@ -315,12 +315,29 @@ public class BridgeCommands : ModSystem
     {
         if (entity == null) return TextCommandResult.Error("No such entity");
 
-        var attributes = entity.WatchedAttributes;
-        if (int.TryParse(value, CultureInfo.InvariantCulture, out var number)) attributes.SetInt(key, number);
-        else if (float.TryParse(value, CultureInfo.InvariantCulture, out var fraction)) attributes.SetFloat(key, fraction);
-        else if (bool.TryParse(value, out var flag)) attributes.SetBool(key, flag);
-        else attributes.SetString(key, value);
-        return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: {key} = {attributes[key].ToJsonToken()}");
+        var path = key.Split('/');
+        ITreeAttribute attributes = entity.WatchedAttributes;
+        foreach (var tree in path[..^1])
+        {
+            if (attributes.GetTreeAttribute(tree) is not { } inner) return TextCommandResult.Error($"No tree {tree} in {key}");
+            attributes = inner;
+        }
+
+        var leaf = path[^1];
+        var number = double.TryParse(value, CultureInfo.InvariantCulture, out var parsed) ? parsed : (double?)null;
+        switch (attributes[leaf])
+        {
+            case DoubleAttribute when number is { } d: attributes.SetDouble(leaf, d); break;
+            case FloatAttribute when number is { } f: attributes.SetFloat(leaf, (float)f); break;
+            default:
+                if (int.TryParse(value, CultureInfo.InvariantCulture, out var whole)) attributes.SetInt(leaf, whole);
+                else if (number is { } fraction) attributes.SetFloat(leaf, (float)fraction);
+                else if (bool.TryParse(value, out var flag)) attributes.SetBool(leaf, flag);
+                else attributes.SetString(leaf, value);
+                break;
+        }
+        entity.WatchedAttributes.MarkPathDirty(path[0]);
+        return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: {key} = {attributes[leaf].ToJsonToken()}");
     }
 
     private TextCommandResult Ride(IPlayer player, string code)
@@ -344,12 +361,14 @@ public class BridgeCommands : ModSystem
         return Mount(player, boat);
     }
 
-    private static TextCommandResult Mount(IPlayer player, Entity? target)
+    private static TextCommandResult Mount(IPlayer player, Entity? target, int index = -1)
     {
         var seats = target?.GetInterface<IMountable>()?.Seats;
         if (seats == null) return TextCommandResult.Error("Not a seatable entity");
 
-        var seat = seats.Where(seat => seat.Passenger == null).OrderByDescending(seat => seat.CanControl).FirstOrDefault();
+        var seat = index >= 0
+            ? seats.ElementAtOrDefault(index)
+            : seats.Where(seat => seat.Passenger == null).OrderByDescending(seat => seat.CanControl).FirstOrDefault();
         if (seat == null || !player.Entity.TryMount(seat)) return TextCommandResult.Error("No free seat");
 
         return TextCommandResult.Success($"Seated in {target!.Code} {target.EntityId}, seat {seat.SeatId}");
@@ -441,15 +460,19 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: alive {entity.Alive}" + (hull == null ? "" : $", integrity {hull.Integrity}"));
     }
 
-    private static TextCommandResult Interact(IPlayer player, Entity? entity, string mode, string? modifier)
+    private static TextCommandResult Interact(IPlayer player, Entity? entity, string mode, string? modifier, string? box)
     {
         if (entity == null) return TextCommandResult.Error("No such entity");
+
+        var boxes = entity.GetBehavior<EntityBehaviorSelectionBoxes>()?.selectionBoxes ?? [];
+        var boxIndex = box == null ? 0 : Array.FindIndex(boxes, candidate => candidate.AttachPoint.Code == box) + 1;
+        if (box != null && boxIndex == 0) return TextCommandResult.Error($"No box {box}; boxes: {string.Join(", ", boxes.Select(candidate => candidate.AttachPoint.Code))}");
 
         var controls = player.Entity.Controls;
         controls.CtrlKey = modifier == "ctrl";
         controls.ShiftKey = modifier == "shift";
         var interactMode = mode == "attack" ? EnumInteractMode.Attack : EnumInteractMode.Interact;
-        player.Entity.EntitySelection = new EntitySelection { Entity = entity, Position = entity.Pos.XYZ };
+        player.Entity.EntitySelection = new EntitySelection { Entity = entity, Position = entity.Pos.XYZ, SelectionBoxIndex = boxIndex };
         if (interactMode == EnumInteractMode.Attack || entity.GetBehavior<EntityBehaviorVesselIntegrity>()?.TryPickUp(player.Entity) != true)
         {
             entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);

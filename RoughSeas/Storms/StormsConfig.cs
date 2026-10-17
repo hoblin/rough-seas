@@ -5,6 +5,7 @@ public class StormsConfig
     public double TickSeconds = 0.5;
     public WavesConfig Waves = new();
     public BilgeConfig Bilge = new();
+    public SwampingConfig Swamping = new();
     public MooringConfig Mooring = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
@@ -31,6 +32,13 @@ public class WavesConfig
 public class BilgeConfig
 {
     public double RainMillimetresPerHour;
+}
+
+public class SwampingConfig
+{
+    public double SpeedExponent;
+    public double FreeSurfaceRoll;
+    public double FreeSurfaceCapsize;
 }
 
 public class MooringConfig

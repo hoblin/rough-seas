@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -7,21 +6,21 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Vessels;
 
-public sealed class HullCracks
+public sealed class HullDamage
 {
     private readonly ICoreClientAPI capi;
     private readonly Entity entity;
-    private readonly CrackConfig config;
-    private IReadOnlyDictionary<string, TextureAtlasPosition> cracked = new Dictionary<string, TextureAtlasPosition>();
+    private readonly HullDamageConfig config;
+    private IReadOnlyDictionary<string, TextureAtlasPosition> damaged = new Dictionary<string, TextureAtlasPosition>();
 
-    public HullCracks(ICoreClientAPI capi, Entity entity, CrackConfig config)
+    public HullDamage(ICoreClientAPI capi, Entity entity, HullDamageConfig config)
     {
         this.capi = capi;
         this.entity = entity;
         this.config = config;
     }
 
-    public bool Visible => cracked.Count > 0;
+    public bool Visible => damaged.Count > 0;
 
     public void Show(int stage)
     {
@@ -30,28 +29,28 @@ public sealed class HullCracks
         var map = new Dictionary<string, TextureAtlasPosition>();
         if (stage > 0)
         {
-            var overlays = config.Overlays[stage - 1].Select(overlay => new BlendedOverlayTexture { Base = overlay });
+            var overlay = new BlendedOverlayTexture { Base = config.Overlay(stage) };
             foreach (var code in config.Textures)
             {
                 if (!entity.Properties.Client.Textures.TryGetValue(code, out var texture)) continue;
 
-                var crackedTexture = texture.Clone();
-                crackedTexture.BlendedOverlays = [.. crackedTexture.BlendedOverlays ?? [], .. overlays];
-                capi.EntityTextureAtlas.GetOrInsertTexture(crackedTexture, out _, out var position);
+                var damagedTexture = texture.Clone();
+                damagedTexture.BlendedOverlays = [.. damagedTexture.BlendedOverlays ?? [], overlay];
+                capi.EntityTextureAtlas.GetOrInsertTexture(damagedTexture, out _, out var position);
                 map[code] = position;
             }
         }
-        cracked = map;
+        damaged = map;
     }
 
-    public ITexPositionSource Over(ITexPositionSource defaultSource) => new CrackedSource(cracked, defaultSource);
+    public ITexPositionSource Over(ITexPositionSource defaultSource) => new DamagedSource(damaged, defaultSource);
 
-    private sealed class CrackedSource(IReadOnlyDictionary<string, TextureAtlasPosition> cracked, ITexPositionSource defaultSource)
+    private sealed class DamagedSource(IReadOnlyDictionary<string, TextureAtlasPosition> damaged, ITexPositionSource defaultSource)
         : ITexPositionSource
     {
         public Size2i? AtlasSize => defaultSource.AtlasSize;
 
         public TextureAtlasPosition? this[string textureCode] =>
-            cracked.TryGetValue(textureCode, out var position) ? position : defaultSource[textureCode];
+            damaged.TryGetValue(textureCode, out var position) ? position : defaultSource[textureCode];
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using RoughSeas.SeaAndWeather;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
@@ -19,15 +20,25 @@ public class VesselsModSystem : ModSystem
     public Rapids Rapids { get; private set; } = null!;
     public TickBudget Budget { get; } = new("vessels");
 
+    private ICoreAPI api = null!;
+
     public override void Start(ICoreAPI api)
     {
+        this.api = api;
         api.RegisterEntityBehaviorClass(EntityBehaviorVesselIntegrity.Code, typeof(EntityBehaviorVesselIntegrity));
         api.RegisterEntity(EntityVessel.ClassName, typeof(EntityVessel));
         api.RegisterItemClass(ItemVessel.ClassName, typeof(ItemVessel));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHullMaterial.Code, typeof(CollectibleBehaviorHullMaterial));
         HullReach.Attach();
     }
 
-    public override void Dispose() => HullReach.Detach();
+    public override void StartClientSide(ICoreClientAPI capi) => HullLabel.Attach();
+
+    public override void Dispose()
+    {
+        HullReach.Detach();
+        if (api?.Side == EnumAppSide.Client) HullLabel.Detach();
+    }
 
     public override void StartServerSide(ICoreServerAPI api)
     {

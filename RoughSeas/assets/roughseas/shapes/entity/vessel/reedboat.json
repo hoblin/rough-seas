@@ -1088,20 +1088,20 @@
   },
   {
    "name": "FrontSeat",
-   "from": [ -7, 5, 1 ],
-   "to": [ 7, 12, 15 ],
+   "from": [ 1, 5, 1 ],
+   "to": [ 15, 12, 15 ],
    "faces": {},
    "attachmentpoints": [
     { "code": "FrontSeatAP", "posX": "7", "posY": "0", "posZ": "7.0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
   },
   {
-   "name": "BackSeat",
-   "from": [ 9, 5, 1 ],
-   "to": [ 23, 12, 15 ],
+   "name": "Cargo",
+   "from": [ 16, 5, 3 ],
+   "to": [ 26, 12, 13 ],
    "faces": {},
    "attachmentpoints": [
-    { "code": "BackSeatAP", "posX": "7", "posY": "0", "posZ": "7.0", "rotationX": "0", "rotationY": "180", "rotationZ": "0" }
+    { "code": "CargoAP", "posX": "5", "posY": "0", "posZ": "5", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
   }
  ]

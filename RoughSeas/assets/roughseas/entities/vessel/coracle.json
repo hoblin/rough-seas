@@ -27,14 +27,7 @@
                 "saturation": 40
             }],
             "wreckage": [{"type": "item", "code": "game:stick", "quantity": {"avg": 3, "var": 2}}],
-            "cracks": {
-                "textures": ["hide"],
-                "overlays": [
-                    ["game:block/overlay/cracked/cracked5"],
-                    ["game:block/overlay/cracked/cracked15"],
-                    ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]
-                ]
-            }
+            "damage": {"textures": ["hide"], "material": "hide"}
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [{"x1": -0.688, "y1": 0, "z1": -0.688, "x2": 0.688, "y2": 0.5, "z2": 0.688}],
@@ -47,7 +40,7 @@
                 {
                     "apName": "FrontSeatAP",
                     "controllable": true,
-                    "bodyYawLimit": null,
+                    "bodyYawLimit": 0.4,
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
                 }
@@ -85,8 +78,8 @@
     "client": {
         "size": 1,
         "renderer": "Shape",
-        "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater"]},
-        "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}},
+        "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater", "Bilge"]},
+        "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},
