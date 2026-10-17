@@ -35,6 +35,12 @@ public class EntityVessel : EntityBoat
         if (api.Side == EnumAppSide.Client) oars = OwnOars.Of(this, strokes);
     }
 
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        base.AfterInitialized(onFirstSpawn);
+        if (Api.Side == EnumAppSide.Server) StrayCargo.Restow(this);
+    }
+
     public override void OnRenderFrame(float dt, EnumRenderStage stage)
     {
         base.OnRenderFrame(dt, stage);
