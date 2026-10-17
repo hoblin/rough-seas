@@ -9,6 +9,8 @@ login_from=$HOME/.config/VintagestoryData/clientsettings.json
 
 if [ "$world" = server ]; then
   target="--connect 127.0.0.1:$BENCH_SERVER_PORT"
+elif [ "$world" = qa ]; then
+  target="--connect 127.0.0.1:$QA_PORT"
 elif [[ " $mods " == *" agentbridge "* && ! -f $BENCH_DATA/Saves/$world.vcdbs ]]; then
   target="--openWorld $world --playStyle roughseas-test"
 else

@@ -37,6 +37,7 @@ Each holds what one kind of work needs; read it in full before that work. They a
 - `docs/bench.md`: before testing in the game, with `bin/game help`.
 - `docs/modeling.md`: before changing a shape, with `bin/model help`.
 - `docs/shipping.md`: when a pull request leaves draft (review, self-review, merging).
+- `docs/qa.md`: before a release's QA session, with `bin/qa help`.
 
 ## Tickets
 
