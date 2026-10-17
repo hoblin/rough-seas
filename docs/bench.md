@@ -16,4 +16,9 @@ Read before testing in the game, together with `bin/game help`. The bench's defa
 - `pkill -f "bin/game …"` matches, and kills, your own shell.
 - bin/client turns vsync off: a hidden window with vsync gets one frame a second. On Hyprland (Lua config) with `BENCH_WORKSPACE` set in `mise.local.toml`, it also puts the game on that workspace (on `BENCH_MONITOR`, when set) and hands focus back.
 - Board a vessel (`/bridge mount ID`) to work on it and leave with `/bridge dismount` (a `/tp` while seated takes the vessel along); tie it with `/bridge tie`, read its ropes with `/bridge ropes`.
+- `/bridge set ID tree/key VALUE` reaches into a tree, and a double or float it finds stays one: `roughseas:vessel/integrity 0.4` for a hull at a stage, `roughseas:bilge/litres 450` for a swamped one.
+- `bin/scene seats` seats the player in every seat of every vessel and shoots each from the side, in third person; `/bridge mount ID SEAT` takes one seat. The camera mode outlives a shot and a restart: after third-person work, `cyclecamera` back to first person before `look` or `photo`.
+- An accessory goes on with `/bridge interact ID interact ctrl BOX`, BOX being its selection box. A basket attaches only with its type: `/giveblock stationarybasket-east 1 <player> {type:"reed"}`.
+- A bowl held over the sea fills from it, and a full bowl bails nothing: `/clearinv` and a fresh bowl before a bailing test, aimed into the boat.
+- An open handbook pauses the game, and a paused client answers no `entity` request: `bin/game close`.
 - When something fails twice by hand, build the tool before the third try.

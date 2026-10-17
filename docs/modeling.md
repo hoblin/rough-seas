@@ -11,6 +11,9 @@ A hull of a few hundred tilted boards is no shape to place by hand, so each vess
 - The elements the mechanics own (`Hull`, the seats, the outrigger's `LowerMastStorage`) are carried over unchanged from the current file by `Shape.keep`: their bounds are what reach and seats measure. The outrigger keeps vanilla's `SailUnfurled`, `SailHalf` and `SailFurled` names, which `unfurlSails` switches between.
 - A hollow hull carries `hideWater`, flat faces just under the rim that the `hidewatersurface` behaviour draws into depth before the sea, as vanilla's sailboat does, so the sea doesn't show inside the boat. The entity and item shapes leave it out with `ignoreElements`. The mask is tessellated a few seconds after the vessel appears; a shot taken sooner still shows water inside.
 - `coracle.py` also writes `coracle-back.json`: the same bowl under the backpack step-parent transform the worn shape keeps.
+- A hull that holds water carries `Bilge`: eight levels, `Bilge1` to `Bilge8`, from the floor to just under `hideWater`, each sized to the hull at its height. The entity and item leave the group out of their mesh; the bilge draws the one level as full as it is, level with the sea while the hull rolls (`BilgeRenderer`).
+- The seats (`FrontSeat`, `BackSeat`, the reed boat's `Cargo`) live only in the JSON, kept by `Shape.keep`: move them there, with room for the pose's legs, and check with `bin/scene seats`.
+- `bin/damage` draws the hull damage overlays, four stages a material, from a seed; `bin/damage PREVIEW.png` lays them over their textures to look at.
 
 ## What bin/model guarantees
 

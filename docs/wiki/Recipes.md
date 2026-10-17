@@ -8,7 +8,9 @@ Comes off a birch log with a knife, leaving the log debarked. It builds the [bir
 
 ## Reed boat
 
-![The reed boat from 24 cattail or papyrus tops and a knife](images/recipes/reed-boat.png)
+Cattail tops, papyrus tops or thatch, the reed that tule gives.
+
+![The reed boat from 24 cattail tops, papyrus tops or thatch and a knife](images/recipes/reed-boat.png)
 
 ## Dugout
 

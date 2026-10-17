@@ -38,6 +38,9 @@ bin/scene views CODE DIR [SCALE]
                            player, breaks the vessel, flies to the nearest shore and deletes the
                            plants (and anything else) in a 13x6x13 box there, and empties the
                            player's inventory.
+bin/scene seats [CODE...]  the player in every seat of each vessel (default: ours and the vanilla raft
+                           and sailboat), seen in third person from the left: CODE-SEAT.png per seat in
+                           <temp>/seats, and all.png with them side by side. Checks the seats and poses.
 bin/scene recipe PAGE OUTPUT FILE [FROM]
                            the handbook's crafting grid that makes OUTPUT (out of FROM, when given) on
                            handbook page PAGE, held on that recipe, "=" and output included, as a .png
@@ -229,6 +232,32 @@ views() {
   ls "$dir"
 }
 
+seats() {
+  local codes=("$@") dir=$BENCH_TMP/seats id
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:coracle roughseas:barkcanoe roughseas:currach \
+    roughseas:dugout-oak roughseas:outrigger-oak boat-raft-oak boat-sailed-oak)
+  mkdir -p "$dir"
+  local shots=() seat
+  for code in "${codes[@]}"; do
+    clear >/dev/null
+    id=$(dock "$code" | jq -r '.vessels[0].EntityId')
+    seat=0
+    while "$game" do "/bridge mount $id $seat" | grep -q Seated; do
+      "$game" hotkey cyclecamera >/dev/null
+      "$game" look 1.5708 3.35 >/dev/null
+      sleep 3
+      shots+=("$dir/${code##*:}-$seat.png")
+      "$game" shot "${shots[-1]}" >/dev/null
+      "$game" hotkey cyclecamera >/dev/null
+      "$game" hotkey cyclecamera >/dev/null
+      "$game" do '/bridge dismount' >/dev/null
+      seat=$((seat + 1))
+    done
+  done
+  magick "${shots[@]}" -resize 25% +append "$dir/all.png"
+  echo "$dir/all.png"
+}
+
 recipe() {
   local page=$1 output=$2 out=$3 from=${4:-} box deadline=$((SECONDS + 60))
   "$game" state | jq -e '.dialogs | index("GuiDialogSurvivalHandbook")' >/dev/null || "$game" hotkey handbook >/dev/null
@@ -267,6 +296,7 @@ case "${1:-}" in
   recipe) shift; recipe "$@" ;;
   recipes) shift; recipes "$@" ;;
   views) shift; views "$@" ;;
+  seats) shift; seats "$@" ;;
   photo) shift; photo "$@" ;;
   dock) shift; dock "$@" ;;
   look) shift; look "$@" ;;

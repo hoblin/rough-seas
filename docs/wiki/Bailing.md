@@ -1,4 +1,4 @@
-Boats with a hull hold the water that comes aboard in their bilge, and nothing takes it out again but you. Look at a vessel to see how many litres it carries.
+Boats with a hull hold the water that comes aboard in their bilge, and nothing takes it out again but you. Look at a vessel to see how many litres it carries; you see the water in the boat, too, rising as the bilge fills and staying level as the hull rolls.
 
 ## The bilge
 
@@ -19,23 +19,23 @@ Water comes in two ways:
 - **Over the side**, when [waves](Surf-and-Swamping#shipping-water) run higher than the hull's sides.
 - **From the sky.** Rain falls into an open boat: up to 10 litres per square metre of deck each game hour in a downpour, less in lighter rain. A sailboat in heavy rain takes in about 80 litres a game hour, some 40 litres a real minute. A boat under a roof stays dry.
 
-A full bilge swamps the vessel. Every wave then breaks over it and strikes it twice as hard, and a swamped vessel in a sea soon [breaks](Hull-Condition#when-it-breaks).
+Water aboard weighs a boat down, and a full bilge [swamps](Surf-and-Swamping#swamping) it.
 
 ## Bailing
 
-Hold an empty bowl, jug or bucket and keep right-click pressed on the vessel, or, seated in it, looking away from any block. Each scoop throws water over the side.
+Hold an empty bowl, jug or bucket and keep right-click pressed looking into the boat, from beside it or seated in it. Looking at the sea instead, you fill the bowl from the sea. You lean in, scoop and throw the water over the side, once a scoop.
 
-| Container | Each scoop | Litres a second |
-| --- | --- | --- |
-| Bowl | 1 litre | about 1 |
-| Jug | 3 litres | 2 |
-| Wooden bucket | 10 litres | 4 |
+| Container | Each scoop | Every | Litres a second |
+| --- | --- | --- | --- |
+| Bowl | 1 litre | 1.2 seconds | about 0.8 |
+| Jug | 3 litres | 2 seconds | 1.5 |
+| Wooden bucket | 10 litres | 3 seconds | about 3.3 |
 
 Bailing is one held click, nothing more: no filling and pouring, no place to empty it.
 
 ## Keeping up
 
-A bucket clears about 240 litres a minute. Against a calm sea and rain that is plenty; against a gale it is not. In a force 8 sea, unanchored, an empty bilge fills in about:
+A bucket clears about 200 litres a minute. Against a calm sea and rain that is plenty; against a gale it is not. In a force 8 sea, unanchored, an empty bilge fills in no more than this, and sooner as the water aboard [settles the boat](Surf-and-Swamping#water-aboard):
 
 | Vessel | Time to swamp |
 | --- | --- |

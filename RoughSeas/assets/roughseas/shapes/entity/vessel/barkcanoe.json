@@ -2,7 +2,7 @@
  "editor": { "allAngles": false, "entityTextureMode": false },
  "textureWidth": 16,
  "textureHeight": 16,
- "textures": { "bark": "game:block/wood/bark/birch-h", "frame": "game:block/wood/debarked/birch", "lashing": "game:item/resource/rope" },
+ "textures": { "bark": "game:block/wood/bark/birch-h", "frame": "game:block/wood/debarked/birch", "lashing": "game:item/resource/rope", "bilge": "game:block/liquid/waterportion" },
  "elements": [
   {
    "name": "SkinPort1x1Frame",
@@ -4787,6 +4787,551 @@
    ]
   },
   {
+   "name": "Bilge",
+   "from": [ 0, 0, 0 ],
+   "to": [ 0, 0, 0 ],
+   "rotationOrigin": [ 0, 0, 0 ],
+   "faces": {},
+   "children": [
+    {
+     "name": "Bilge1",
+     "from": [ 0, 0, 0 ],
+     "to": [ 0, 0, 0 ],
+     "rotationOrigin": [ 0, 0, 0 ],
+     "faces": {},
+     "children": [
+      {
+       "name": "Bilge1x3",
+       "from": [ -16, 1.188, 6.416 ],
+       "to": [ -8, 1.188, 9.584 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 3.169 ] }
+       }
+      },
+      {
+       "name": "Bilge1x4",
+       "from": [ -8, 1.188, 4.989 ],
+       "to": [ 0, 1.188, 11.011 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 6.022 ] }
+       }
+      },
+      {
+       "name": "Bilge1x5",
+       "from": [ 0, 1.188, 4.521 ],
+       "to": [ 8, 1.188, 11.479 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 6.958 ] }
+       }
+      },
+      {
+       "name": "Bilge1x6",
+       "from": [ 8, 1.188, 4.521 ],
+       "to": [ 16, 1.188, 11.479 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 6.958 ] }
+       }
+      },
+      {
+       "name": "Bilge1x7",
+       "from": [ 16, 1.188, 4.989 ],
+       "to": [ 24, 1.188, 11.011 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 6.022 ] }
+       }
+      },
+      {
+       "name": "Bilge1x8",
+       "from": [ 24, 1.188, 6.416 ],
+       "to": [ 32, 1.188, 9.584 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 3.169 ] }
+       }
+      }
+     ]
+    },
+    {
+     "name": "Bilge2",
+     "from": [ 0, 0, 0 ],
+     "to": [ 0, 0, 0 ],
+     "rotationOrigin": [ 0, 0, 0 ],
+     "faces": {},
+     "children": [
+      {
+       "name": "Bilge2x3",
+       "from": [ -16, 1.775, 5.681 ],
+       "to": [ -8, 1.775, 10.319 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 4.637 ] }
+       }
+      },
+      {
+       "name": "Bilge2x4",
+       "from": [ -8, 1.775, 4.243 ],
+       "to": [ 0, 1.775, 11.757 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 7.515 ] }
+       }
+      },
+      {
+       "name": "Bilge2x5",
+       "from": [ 0, 1.775, 3.841 ],
+       "to": [ 8, 1.775, 12.159 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 8.318 ] }
+       }
+      },
+      {
+       "name": "Bilge2x6",
+       "from": [ 8, 1.775, 3.841 ],
+       "to": [ 16, 1.775, 12.159 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 8.318 ] }
+       }
+      },
+      {
+       "name": "Bilge2x7",
+       "from": [ 16, 1.775, 4.243 ],
+       "to": [ 24, 1.775, 11.757 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 7.515 ] }
+       }
+      },
+      {
+       "name": "Bilge2x8",
+       "from": [ 24, 1.775, 5.681 ],
+       "to": [ 32, 1.775, 10.319 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 4.637 ] }
+       }
+      }
+     ]
+    },
+    {
+     "name": "Bilge3",
+     "from": [ 0, 0, 0 ],
+     "to": [ 0, 0, 0 ],
+     "rotationOrigin": [ 0, 0, 0 ],
+     "faces": {},
+     "children": [
+      {
+       "name": "Bilge3x3",
+       "from": [ -16, 2.363, 5.079 ],
+       "to": [ -8, 2.363, 10.921 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 5.841 ] }
+       }
+      },
+      {
+       "name": "Bilge3x4",
+       "from": [ -8, 2.363, 3.931 ],
+       "to": [ 0, 2.363, 12.069 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 8.137 ] }
+       }
+      },
+      {
+       "name": "Bilge3x5",
+       "from": [ 0, 2.363, 3.501 ],
+       "to": [ 8, 2.363, 12.499 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 8.999 ] }
+       }
+      },
+      {
+       "name": "Bilge3x6",
+       "from": [ 8, 2.363, 3.501 ],
+       "to": [ 16, 2.363, 12.499 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 8.999 ] }
+       }
+      },
+      {
+       "name": "Bilge3x7",
+       "from": [ 16, 2.363, 3.931 ],
+       "to": [ 24, 2.363, 12.069 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 8.137 ] }
+       }
+      },
+      {
+       "name": "Bilge3x8",
+       "from": [ 24, 2.363, 5.079 ],
+       "to": [ 32, 2.363, 10.921 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 5.841 ] }
+       }
+      }
+     ]
+    },
+    {
+     "name": "Bilge4",
+     "from": [ 0, 0, 0 ],
+     "to": [ 0, 0, 0 ],
+     "rotationOrigin": [ 0, 0, 0 ],
+     "faces": {},
+     "children": [
+      {
+       "name": "Bilge4x2",
+       "from": [ -23, 2.95, 7.234 ],
+       "to": [ -16, 2.95, 8.766 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 1.533 ] }
+       }
+      },
+      {
+       "name": "Bilge4x3",
+       "from": [ -16, 2.95, 4.824 ],
+       "to": [ -8, 2.95, 11.176 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 6.351 ] }
+       }
+      },
+      {
+       "name": "Bilge4x4",
+       "from": [ -8, 2.95, 3.62 ],
+       "to": [ 0, 2.95, 12.38 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 8.759 ] }
+       }
+      },
+      {
+       "name": "Bilge4x5",
+       "from": [ 0, 2.95, 3.161 ],
+       "to": [ 8, 2.95, 12.839 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.679 ] }
+       }
+      },
+      {
+       "name": "Bilge4x6",
+       "from": [ 8, 2.95, 3.161 ],
+       "to": [ 16, 2.95, 12.839 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.679 ] }
+       }
+      },
+      {
+       "name": "Bilge4x7",
+       "from": [ 16, 2.95, 3.62 ],
+       "to": [ 24, 2.95, 12.38 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 8.759 ] }
+       }
+      },
+      {
+       "name": "Bilge4x8",
+       "from": [ 24, 2.95, 4.824 ],
+       "to": [ 32, 2.95, 11.176 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 6.351 ] }
+       }
+      },
+      {
+       "name": "Bilge4x9",
+       "from": [ 32, 2.95, 7.234 ],
+       "to": [ 39, 2.95, 8.766 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 1.533 ] }
+       }
+      }
+     ]
+    },
+    {
+     "name": "Bilge5",
+     "from": [ 0, 0, 0 ],
+     "to": [ 0, 0, 0 ],
+     "rotationOrigin": [ 0, 0, 0 ],
+     "faces": {},
+     "children": [
+      {
+       "name": "Bilge5x2",
+       "from": [ -23, 3.538, 6.821 ],
+       "to": [ -16, 3.538, 9.179 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 2.357 ] }
+       }
+      },
+      {
+       "name": "Bilge5x3",
+       "from": [ -16, 3.538, 4.569 ],
+       "to": [ -8, 3.538, 11.431 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 6.862 ] }
+       }
+      },
+      {
+       "name": "Bilge5x4",
+       "from": [ -8, 3.538, 3.309 ],
+       "to": [ 0, 3.538, 12.691 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.382 ] }
+       }
+      },
+      {
+       "name": "Bilge5x5",
+       "from": [ 0, 3.538, 2.884 ],
+       "to": [ 8, 3.538, 13.116 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 10.232 ] }
+       }
+      },
+      {
+       "name": "Bilge5x6",
+       "from": [ 8, 3.538, 2.884 ],
+       "to": [ 16, 3.538, 13.116 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 10.232 ] }
+       }
+      },
+      {
+       "name": "Bilge5x7",
+       "from": [ 16, 3.538, 3.309 ],
+       "to": [ 24, 3.538, 12.691 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.382 ] }
+       }
+      },
+      {
+       "name": "Bilge5x8",
+       "from": [ 24, 3.538, 4.569 ],
+       "to": [ 32, 3.538, 11.431 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 6.862 ] }
+       }
+      },
+      {
+       "name": "Bilge5x9",
+       "from": [ 32, 3.538, 6.821 ],
+       "to": [ 39, 3.538, 9.179 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 2.357 ] }
+       }
+      }
+     ]
+    },
+    {
+     "name": "Bilge6",
+     "from": [ 0, 0, 0 ],
+     "to": [ 0, 0, 0 ],
+     "rotationOrigin": [ 0, 0, 0 ],
+     "faces": {},
+     "children": [
+      {
+       "name": "Bilge6x2",
+       "from": [ -23, 4.125, 6.638 ],
+       "to": [ -16, 4.125, 9.362 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 2.724 ] }
+       }
+      },
+      {
+       "name": "Bilge6x3",
+       "from": [ -16, 4.125, 4.323 ],
+       "to": [ -8, 4.125, 11.677 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 7.354 ] }
+       }
+      },
+      {
+       "name": "Bilge6x4",
+       "from": [ -8, 4.125, 3.239 ],
+       "to": [ 0, 4.125, 12.761 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.522 ] }
+       }
+      },
+      {
+       "name": "Bilge6x5",
+       "from": [ 0, 4.125, 2.816 ],
+       "to": [ 8, 4.125, 13.184 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 10.367 ] }
+       }
+      },
+      {
+       "name": "Bilge6x6",
+       "from": [ 8, 4.125, 2.816 ],
+       "to": [ 16, 4.125, 13.184 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 10.367 ] }
+       }
+      },
+      {
+       "name": "Bilge6x7",
+       "from": [ 16, 4.125, 3.239 ],
+       "to": [ 24, 4.125, 12.761 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.522 ] }
+       }
+      },
+      {
+       "name": "Bilge6x8",
+       "from": [ 24, 4.125, 4.323 ],
+       "to": [ 32, 4.125, 11.677 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 7.354 ] }
+       }
+      },
+      {
+       "name": "Bilge6x9",
+       "from": [ 32, 4.125, 6.638 ],
+       "to": [ 39, 4.125, 9.362 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 2.724 ] }
+       }
+      }
+     ]
+    },
+    {
+     "name": "Bilge7",
+     "from": [ 0, 0, 0 ],
+     "to": [ 0, 0, 0 ],
+     "rotationOrigin": [ 0, 0, 0 ],
+     "faces": {},
+     "children": [
+      {
+       "name": "Bilge7x2",
+       "from": [ -23, 4.712, 6.495 ],
+       "to": [ -16, 4.712, 9.505 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 3.01 ] }
+       }
+      },
+      {
+       "name": "Bilge7x3",
+       "from": [ -16, 4.712, 4.272 ],
+       "to": [ -8, 4.712, 11.728 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 7.456 ] }
+       }
+      },
+      {
+       "name": "Bilge7x4",
+       "from": [ -8, 4.712, 3.177 ],
+       "to": [ 0, 4.712, 12.823 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.646 ] }
+       }
+      },
+      {
+       "name": "Bilge7x5",
+       "from": [ 0, 4.712, 2.749 ],
+       "to": [ 8, 4.712, 13.251 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 10.503 ] }
+       }
+      },
+      {
+       "name": "Bilge7x6",
+       "from": [ 8, 4.712, 2.749 ],
+       "to": [ 16, 4.712, 13.251 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 10.503 ] }
+       }
+      },
+      {
+       "name": "Bilge7x7",
+       "from": [ 16, 4.712, 3.177 ],
+       "to": [ 24, 4.712, 12.823 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.646 ] }
+       }
+      },
+      {
+       "name": "Bilge7x8",
+       "from": [ 24, 4.712, 4.272 ],
+       "to": [ 32, 4.712, 11.728 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 7.456 ] }
+       }
+      },
+      {
+       "name": "Bilge7x9",
+       "from": [ 32, 4.712, 6.495 ],
+       "to": [ 39, 4.712, 9.505 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 3.01 ] }
+       }
+      }
+     ]
+    },
+    {
+     "name": "Bilge8",
+     "from": [ 0, 0, 0 ],
+     "to": [ 0, 0, 0 ],
+     "rotationOrigin": [ 0, 0, 0 ],
+     "faces": {},
+     "children": [
+      {
+       "name": "Bilge8x2",
+       "from": [ -23, 5.3, 6.352 ],
+       "to": [ -16, 5.3, 9.648 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 3.297 ] }
+       }
+      },
+      {
+       "name": "Bilge8x3",
+       "from": [ -16, 5.3, 4.221 ],
+       "to": [ -8, 5.3, 11.779 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 7.558 ] }
+       }
+      },
+      {
+       "name": "Bilge8x4",
+       "from": [ -8, 5.3, 3.115 ],
+       "to": [ 0, 5.3, 12.885 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.77 ] }
+       }
+      },
+      {
+       "name": "Bilge8x5",
+       "from": [ 0, 5.3, 2.681 ],
+       "to": [ 8, 5.3, 13.319 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 10.638 ] }
+       }
+      },
+      {
+       "name": "Bilge8x6",
+       "from": [ 8, 5.3, 2.681 ],
+       "to": [ 16, 5.3, 13.319 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 10.638 ] }
+       }
+      },
+      {
+       "name": "Bilge8x7",
+       "from": [ 16, 5.3, 3.115 ],
+       "to": [ 24, 5.3, 12.885 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 9.77 ] }
+       }
+      },
+      {
+       "name": "Bilge8x8",
+       "from": [ 24, 5.3, 4.221 ],
+       "to": [ 32, 5.3, 11.779 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 8, 7.558 ] }
+       }
+      },
+      {
+       "name": "Bilge8x9",
+       "from": [ 32, 5.3, 6.352 ],
+       "to": [ 39, 5.3, 9.648 ],
+       "faces": {
+        "up": { "texture": "#bilge", "uv": [ 0, 0, 7, 3.297 ] }
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
    "name": "Hull",
    "from": [ -28, 0, 2 ],
    "to": [ 44, 9, 14 ],
@@ -4797,20 +5342,20 @@
   },
   {
    "name": "FrontSeat",
-   "from": [ -10, 1, 3 ],
-   "to": [ 4, 8, 13 ],
+   "from": [ -14.5, 1, 3 ],
+   "to": [ -6.5, 8, 13 ],
    "faces": {},
    "attachmentpoints": [
-    { "code": "FrontSeatAP", "posX": "7", "posY": "0", "posZ": "5.0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+    { "code": "FrontSeatAP", "posX": "4", "posY": "0", "posZ": "5.0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
   },
   {
    "name": "BackSeat",
-   "from": [ 12, 1, 3 ],
-   "to": [ 26, 8, 13 ],
+   "from": [ 1.5, 1, 3 ],
+   "to": [ 9.5, 8, 13 ],
    "faces": {},
    "attachmentpoints": [
-    { "code": "BackSeatAP", "posX": "7", "posY": "0", "posZ": "5.0", "rotationX": "0", "rotationY": "180", "rotationZ": "0" }
+    { "code": "BackSeatAP", "posX": "4", "posY": "0", "posZ": "5.0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
   }
  ]

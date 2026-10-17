@@ -6,8 +6,8 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/barkcanoe", "ignoreElements": ["hideWater"]},
-    "textures": {"bark": {"base": "game:block/wood/bark/birch-h"}, "frame": {"base": "game:block/wood/debarked/birch"}, "lashing": {"base": "game:item/resource/rope"}},
+    "shape": {"base": "roughseas:entity/vessel/barkcanoe", "ignoreElements": ["hideWater", "Bilge"]},
+    "textures": {"bark": {"base": "game:block/wood/bark/birch-h"}, "frame": {"base": "game:block/wood/debarked/birch"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},

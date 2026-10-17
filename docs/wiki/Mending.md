@@ -15,9 +15,10 @@ A damaged hull is mended with the stuff it was built from. Hold the material, ri
 
 - The wood must be the hull's own: an oak sailboat takes oak planks.
 - A sailboat built from about 300 planks takes some 150 to bring back from nothing.
-- A hull at full condition takes no more.
+- A hull at full condition takes no more, and says so: the material stays in your hand.
+- Too few in hand for a patch, and the hull says how many it takes.
 - Birch bark comes off a birch log with a knife ([recipe](Recipes#birch-bark)).
 
-The [hide currach](Hide-Currach) takes two kinds of care. It [wears](Hull-Condition#wear) a tenth a day afloat as its hides dry out, and rendered fat gives that back, up to a quarter a greasing: one covers about two and a half days. Fat does nothing for a knock or a breaker; a hole wants a new hide. The [reed boat](Reed-Boat) can't be mended at all: build another.
+The [hide currach](Hide-Currach) takes two kinds of care. It [wears](Hull-Condition#wear) a tenth a day afloat as its hides dry out, and rendered fat gives that back, up to a quarter a greasing: one covers about two and a half days. Look at the currach to see when the next greasing is due. Fat on a hull with nothing to grease is never eaten; the hull says it needs none yet. Fat does nothing for a knock or a breaker; a hole wants a new hide. The [reed boat](Reed-Boat) can't be mended at all: build another.
 
 Mend in calm water. A patch can't keep up with a [breaking sea](Surf-and-Swamping), and a hull that [breaks](Hull-Condition#when-it-breaks) can't be mended back.

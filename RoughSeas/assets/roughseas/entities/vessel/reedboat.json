@@ -9,7 +9,7 @@
         "swimmingOffsetY": 0.3,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
-            "idle": "sitflooridle",
+            "idle": "roughseas-sitlegsforward",
             "ready": "crudeOarReady",
             "forwards": "crudeOarForward",
             "backwards": "crudeOarBackward"
@@ -23,14 +23,7 @@
             "impactCapacity": 1200,
             "wearPerDay": 0.33,
             "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
-            "cracks": {
-                "textures": ["reed"],
-                "overlays": [
-                    ["game:block/overlay/cracked/cracked5"],
-                    ["game:block/overlay/cracked/cracked15"],
-                    ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]
-                ]
-            }
+            "damage": {"textures": ["reed"], "material": "reed"}
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
@@ -46,14 +39,26 @@
                 {
                     "apName": "FrontSeatAP",
                     "controllable": true,
-                    "bodyYawLimit": null,
+                    "bodyYawLimit": 0.4,
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
-                },
-                {"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": null, "eyeHeight": 1, "reverse": true}
+                }
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "CargoAP", "HullAP"]},
+        "rideableaccessories": {
+            "dropContentsOnDeath": true,
+            "wearableSlots": [
+                {"code": "FrontSeatAP", "forCategoryCodes": []},
+                {
+                    "code": "Cargo",
+                    "forCategoryCodes": ["basket"],
+                    "attachmentPointCode": "CargoAP",
+                    "stepParentTo": {"": {"elementName": "Cargo"}}
+                },
+                {"code": "HullAP", "forCategoryCodes": []}
+            ]
+        },
         "roughseas:seaforces": {
             "beamMetres": 0.9,
             "mastMetres": 0,
@@ -83,6 +88,7 @@
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
             {"code": "selectionboxes"},
+            {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
             {"code": "roughseas:seaforces"}
@@ -94,6 +100,7 @@
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},
+            {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
