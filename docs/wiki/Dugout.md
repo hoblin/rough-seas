@@ -26,7 +26,8 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
-| Aboard | a paddler in the front seat, with its own paddle, and a passenger |
+| Seats | two: the front one paddles, with its own paddle; the back one takes a passenger |
+| Cargo | a basket (8 slots) in the back seat, in place of the passenger |
 | Built from | 5 logs of one wood, with an axe |
 | Wreckage | firewood |
 

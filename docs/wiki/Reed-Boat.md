@@ -26,7 +26,8 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Aboard | one paddler, with its own paddle, and a basket |
+| Seats | one paddler, with its own paddle |
+| Cargo | a basket (8 slots) |
 | Built from | 24 cattail tops, papyrus tops or thatch, with a knife |
 | Wreckage | reed tops |
 

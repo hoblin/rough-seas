@@ -26,7 +26,8 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Aboard | a paddler amidships, with its own paddle, and a passenger in the bow |
+| Seats | two: a paddler amidships, with its own paddle, and a passenger in the bow |
+| Cargo | a basket (8 slots) in the bow, in place of the passenger |
 | Built from | 12 birch bark, 2 sticks and resin |
 | Wreckage | bark and a stick |
 

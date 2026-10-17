@@ -14,8 +14,8 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
-| [Hide currach](Hide-Currach) | the first venture along the coast, cargo included | 1.7 × | needs greasing, one hard knock holes it |
-| [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | 2.7 ×, sailing | carries little, stays where launched |
+| [Hide currach](Hide-Currach) | the first venture along the coast | 1.7 × | needs greasing, one hard knock holes it |
+| [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | 2.7 ×, sailing | stays where launched |
 | [Sailboat](Sailboat) | long voyages and heavy cargo | 2.5 ×, sailing | dear to build, ships water fast in a gale |
 
 Speeds are against the raft, measured on a calm sea.
@@ -34,6 +34,21 @@ Speeds are against the raft, measured on a calm sea.
 | [Sailboat](Sailboat) | 40 000 J | 1500 l | 3.3 m | none | planks | no |
 
 Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more.
+
+## What each carries
+
+| | Seats | Steered from | Cargo |
+| --- | --- | --- | --- |
+| [Raft](Raft) | 2 | either seat, oar in hand | a basket in place of either rider |
+| [Reed boat](Reed-Boat) | 1 | its seat | a basket |
+| [Dugout](Dugout) | 2 | the front seat | a basket in place of the passenger |
+| [Coracle](Coracle) | 1 | its seat | none |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships | a basket in place of the passenger |
+| [Hide currach](Hide-Currach) | 2 | the middle thwart | a basket in place of the passenger |
+| [Outrigger canoe](Outrigger-Canoe) | 2 | aft | a basket in place of the passenger |
+| [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
+
+A basket holds 8 slots, a chest 16, a storage vessel 12, a crate 20 of one kind (16 aged, 25 in ebony or purpleheart). The raft and the sailboat take more besides: an oar rest on the raft; a lantern, anchor, figurehead, ratlines, shields and a fence post for a tied animal on the sailboat. Each vessel's page lists them.
 
 ## Cost follows use
 
