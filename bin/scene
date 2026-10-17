@@ -12,6 +12,10 @@ bin/scene look ID [DX DY DZ]
                            (default 3 1 0: east of it and a block up), hover there and aim at it.
                            A shot from any side, over land or sea; 0 6 0.01 looks straight down,
                            above the water's tint. `bin/game hotkey togglehud` hides the HUD.
+bin/scene photo ID FILE [DX DY DZ] [hover]
+                           a wiki-ready image (16:9 .webp, 960 wide) of entity ID from where `look`
+                           puts the camera, without the HUD; with `hover`, the panel the game shows
+                           for what the crosshair is on (name, hull, bilge) is laid over its top.
 bin/scene storm [RANGE [WAVES]] [CODE...]
                            noon, then the highest storm waves over open sea within RANGE blocks
                            (default 60000), or those nearest WAVES metres:
@@ -66,6 +70,34 @@ look() {
     '.pos | "\(.X - 512000 + $dx) \(.Y + $dy) \(.Z - 512000 + $dz)"')
   "$game" do "/bridge fly $at" >/dev/null
   "$game" aim "$id" >/dev/null
+}
+
+photo() {
+  local id=$1 out=$2 hover=
+  shift 2
+  [ "${!#:-}" = hover ] && { hover=hover; set -- "${@:1:$#-1}"; }
+  look "$id" "${1:-3}" "${2:-1}" "${3:-0}"
+  sleep 2
+  local clean=$BENCH_TMP/photo.png gui=$BENCH_TMP/photo-gui.png width height
+  "$game" shot "$clean" >/dev/null
+  read -r width height <<<"$(identify -format '%w %h' "$clean")"
+  local layers=("$clean" -gravity center -crop "${width}x$((width * 9 / 16))+0+0" +repage)
+  if [ "$hover" = hover ]; then
+    "$game" hover "$id" >/dev/null
+    sleep 1
+    "$game" shot "$gui" gui >/dev/null
+    "$game" hover >/dev/null
+    local quarter=$((width / 4)) w h x y
+    IFS='x+' read -r w h x y <<<"$(magick "$gui" -crop "$((quarter * 2))x$((height / 8))+${quarter}+0" +repage \
+      -colorspace HSL -channel G -separate +channel -threshold 15% -negate \
+      -morphology Close Square:3 -morphology Open Square:6 \
+      -define connected-components:verbose=true -define connected-components:area-threshold=2000 \
+      -connected-components 8 null: |
+      awk -v mid="$quarter" 'NR > 1 && $NF == "gray(255)" { split($2, b, /[x+]/); if (b[3] <= mid && b[3] + b[1] >= mid) { print $2; exit } }')"
+    magick "$gui" -crop "${w}x${h}+$((x + quarter))+${y}" +repage "$BENCH_TMP/panel.png"
+    layers+=("$BENCH_TMP/panel.png" -gravity north -geometry +0+12 -composite)
+  fi
+  magick "${layers[@]}" -resize 960x -quality 82 "$out"
 }
 
 storm() {
@@ -138,10 +170,12 @@ views() {
   apart=$(awk -v s="$s" 'BEGIN { print 3 + 2 * s }')
   "$game" do "/entity spawnat boat-sailed-oak 1 $(awk -v x="$x" -v d="$apart" 'BEGIN { print x + d }') $y $z 0" >/dev/null
   sleep 2
+  local companion
+  companion=$("$game" state | jq -r '[.nearby[] | select(.code == "game:boat-sailed-oak") | .EntityId] | max')
   "$game" do "/bridge fly $(awk -v x="$x" -v d="$apart" -v y="$y" -v z="$z" 'BEGIN { print x + d / 2, y + 6, z + 14 }')" >/dev/null
   "$game" look 3.1416 3.55 >/dev/null
   sleep 1; shot beside-sailboat
-  clear 64 boat-* >/dev/null
+  "$game" do "/entity remove e[id=$companion]" >/dev/null
 
   "$game" do "/bridge strike $id 1000000000" >/dev/null
   sleep 2
@@ -189,6 +223,7 @@ views() {
 
 case "${1:-}" in
   views) shift; views "$@" ;;
+  photo) shift; photo "$@" ;;
   dock) shift; dock "$@" ;;
   look) shift; look "$@" ;;
   storm) shift; storm "$@" ;;

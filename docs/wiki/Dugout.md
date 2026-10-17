@@ -1,5 +1,3 @@
-# Dugout
-
 ![The dugout afloat](images/dugout/afloat-bow.webp)
 
 A single log, hollowed out with an axe. The bark stays on outside, the ends are left solid and blunt, and two ridges of uncut wood cross the floor to stiffen the hull. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
@@ -11,6 +9,31 @@ The workhorse of rivers and lakes. Nothing on the roster takes a knock like a du
 ## Where it comes from
 
 The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat bog, was hollowed from a Scots pine some ten thousand years ago, and logboats turn up in the mud of almost every river and lake in Europe, Africa, Asia and the Americas. They were worked with fire and stone tools, later with metal ones, and many left solid ridges across the floor to keep the log from splitting. The model is a plain European logboat of that kind.
+
+## By the numbers
+
+| | |
+| --- | --- |
+| Speed | 1.5 × the raft, paddled |
+| Turning | slow |
+| [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
+| [Wear](Hull-Condition#wear) | none |
+| [Mending](Mending) | 1 log of its wood restores two fifths |
+| [Bilge](Bailing) | 450 litres |
+| [Capsized by](Surf-and-Swamping#capsizing) | a 0.75 m breaker, with only 0.2 m of freeboard |
+| [Rapids](Rapids) | takes a few seconds, not a long run |
+| [Lightning](Lightning) | a 6000 J strike harms it about one time in five |
+| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [Mooring](Mooring) | tied to a post |
+| Carried | too heavy to pick up |
+| Built from | 5 logs of one wood, with an axe |
+| Wreckage | firewood |
+
+## Its neighbours
+
+- The [birch-bark canoe](Birch-Bark-Canoe) is the other river boat: faster, carried around the falls and through the [rapids](Rapids), but holed by a landing the dugout never notices.
+- The [reed boat](Reed-Boat) and the [raft](Raft) are cheaper and don't last.
+- For the sea, the [outrigger canoe](Outrigger-Canoe) is a dugout made steady with a float.
 
 ## Every form it takes
 

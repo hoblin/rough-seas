@@ -1,0 +1,23 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 960 440' width='960' height='440' font-family='Georgia, "Times New Roman", serif'>
+<defs><marker id='a' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0,0 L10,5 L0,10 z' fill='#2b2722'/></marker><marker id='w' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='5' markerHeight='5' orient='auto'><path d='M0,0 L10,5 L0,10 z' fill='#b0472f'/></marker><marker id='c' viewBox='0 0 10 10' refX='8' refY='5' markerWidth='6' markerHeight='6' orient='auto'><path d='M0,0 L10,5 L0,10 z' fill='#2f6a9a'/></marker></defs>
+<rect width='960' height='440' fill='#f4ecdc'/>
+<rect x='0' y='0' width='960' height='440' fill='#8fbfbe'/>
+<path d='M0,0 L960,0 L960,100 C800,120 640,104 480,114 C320,122 160,106 0,116 z' fill='#dcc48e' stroke='#2b2722'/>
+<rect x='200' y='118' width='560' height='34' fill='white' opacity='0.35'/>
+<text x='480' y='141' font-size='15' text-anchor='middle' fill='#7a6f62' >surf</text>
+<circle cx='200' cy='158' r='46' fill='none' stroke='#2b2722' stroke-dasharray='5 4'/>
+<rect x='196' y='104' width='8' height='12' fill='#6b4a2e'/>
+<line x1='200' y1='112' x2='218' y2='164' stroke='#6b4a2e' stroke-width='2'/>
+<ellipse cx='220' cy='172' rx='22' ry='9' fill='#8a5a35' stroke='#2b2722'/>
+<text x='200' y='242' font-size='15' text-anchor='middle' fill='#2b2722' >Tied to a post: its swing reaches</text>
+<text x='200' y='262' font-size='15' text-anchor='middle' fill='#b0472f' >the surf. Likely thrown ashore.</text>
+<circle cx='660' cy='270' r='70' fill='none' stroke='#2b2722' stroke-dasharray='5 4'/>
+<ellipse cx='660' cy='270' rx='16' ry='9' fill='#8d8780' stroke='#2b2722'/><line x1='638' y1='263' x2='682' y2='263' stroke='#6b4a2e' stroke-width='4'/>
+<line x1='660' y1='266' x2='710' y2='218' stroke='#6b4a2e' stroke-width='2'/>
+<ellipse cx='716' cy='212' rx='28' ry='11' fill='#8a5a35' stroke='#2b2722'/>
+<line x1='660' y1='196' x2='660' y2='124' stroke='#2b2722' marker-start='url(#a)' marker-end='url(#a)'/>
+<text x='670' y='167.0' font-size='15' text-anchor='start' fill='#2b2722' >open water to the shore</text>
+<text x='660' y='370' font-size='15' text-anchor='middle' fill='#2b2722' >Anchored well out: the waves spend</text>
+<text x='660' y='390' font-size='15' text-anchor='middle' fill='#2f6a9a' >themselves before they reach it.</text>
+<text x='24' y='40' font-size='20' text-anchor='start' fill='#2b2722' font-weight='bold'>Left alone through a storm</text>
+</svg>

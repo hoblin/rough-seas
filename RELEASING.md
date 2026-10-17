@@ -7,7 +7,7 @@ The game version the mod supports lives in one place, `dependencies.game` in `Ro
 ## Steps
 
 1. Play the release build first, in a QA session: `docs/qa.md`.
-2. In a pull request, set `version` (and `dependencies.game`, when the game moved) in `RoughSeas/modinfo.json`. Merge it.
+2. In a pull request, set `version` (and `dependencies.game`, when the game moved) in `RoughSeas/modinfo.json`. In the same pull request, check the handbook guide and the wiki (`docs/wiki/`) against what ships, and move what this release brings from the wiki's roadmap into its own section there. Merge it.
 3. Tag the merge commit and push the tag:
    ```sh
    git switch main && git pull

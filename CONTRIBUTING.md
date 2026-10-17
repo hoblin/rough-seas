@@ -61,6 +61,8 @@ Without the bench, run `./build.sh` and drop the zip from `Releases/` into your 
 
 The full set of conventions is in [CLAUDE.md](CLAUDE.md), and the `docs/` folder holds the lessons learned the hard way. Both are written for AI coding agents and people alike. If you work with an agent, point it at them.
 
+The player's [wiki](https://github.com/hoblin/rough-seas/wiki) is written in `docs/wiki/` and published there on every merge to `main`, so change it by pull request, not on the wiki. Pages link each other by name (`[Storms](Storms)`); `bin/wiki-links` checks that every link and image resolves.
+
 ## Licence
 
 By contributing, you agree that your work is released under the [MIT licence](LICENSE).

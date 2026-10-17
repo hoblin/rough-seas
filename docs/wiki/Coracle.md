@@ -1,5 +1,3 @@
-# Coracle
-
 ![The coracle afloat](images/coracle/afloat-bow.webp)
 
 A round bowl of hide stretched over a woven frame of sticks, sealed with rendered fat, with a single seat across the middle. It carries one person and a paddle, and it is light enough to wear on your back.
@@ -11,6 +9,31 @@ For fishing and short crossings. The coracle is the only vessel that rides in th
 ## Where it comes from
 
 Coracles have been paddled on the rivers of Wales, Ireland and Scotland since before the Romans arrived, and round hide or basket boats of the same kind were built on the Tigris (the *quffa*), in southern India and in Vietnam. A Welsh coracle is a lattice of split willow laths with a hide or, later, tarred calico over it, and a coracle-man walked home from the river with the boat on his back, held by a strap across the seat. The model is that boat: laths on the floor and up the sides, a woven rim, one seat.
+
+## By the numbers
+
+| | |
+| --- | --- |
+| Speed | half the raft, paddled |
+| Turning | spins on the spot |
+| [Hull](Hull-Condition) | 400 J, the weakest of all |
+| [Wear](Hull-Condition#wear) | none |
+| [Mending](Mending) | 1 small prepared hide restores two thirds |
+| [Bilge](Bailing) | 250 litres |
+| [Capsized by](Surf-and-Swamping#capsizing) | a 0.6 m breaker |
+| [Rapids](Rapids) | broken within seconds |
+| [Lightning](Lightning) | a strike nearby breaks it |
+| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [Mooring](Mooring) | tied to a post, or worn home |
+| Carried | worn on the back, in the backpack slot |
+| Seats | one |
+| Built from | 8 sticks, a large prepared hide and rendered fat |
+| Wreckage | a few sticks |
+
+## Its neighbours
+
+- The [birch-bark canoe](Birch-Bark-Canoe) is the other boat you carry: faster and roomier, but carried in the hands, not on the back.
+- The [reed boat](Reed-Boat) crosses a lake once; the coracle crosses it every day.
 
 ## Every form it takes
 
