@@ -1,7 +1,7 @@
 name: Wiki
 on:
   push:
-    branches: [main, feature/50-github-wiki]
+    branches: [main]
     paths: [docs/wiki/**, bin/wiki-links, .github/workflows/wiki.yml]
   pull_request:
     branches: [main]
@@ -20,7 +20,7 @@ jobs:
       - run: bin/wiki-links
   publish:
     needs: links
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feature/50-github-wiki'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
