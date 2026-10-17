@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.ServerMods;
 
@@ -26,6 +27,16 @@ public class WorldClimate
 
     public (double Celsius, double Rainfall) At(double x, double z) =>
         cells.GetOrAdd(((int)Math.Floor(x / CellSize), (int)Math.Floor(z / CellSize)), Sample);
+
+    public double RainfallAt(double x, double z)
+    {
+        var cellX = x / CellSize - 0.5;
+        var cellZ = z / CellSize - 0.5;
+        var westX = (int)Math.Floor(cellX);
+        var northZ = (int)Math.Floor(cellZ);
+        double Rainfall(int dx, int dz) => cells.GetOrAdd((westX + dx, northZ + dz), Sample).Rainfall;
+        return GameMath.BiLerp(Rainfall(0, 0), Rainfall(1, 0), Rainfall(0, 1), Rainfall(1, 1), cellX - westX, cellZ - northZ);
+    }
 
     private (double Celsius, double Rainfall) Sample((int CellX, int CellZ) cell)
     {

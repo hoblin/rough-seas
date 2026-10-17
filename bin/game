@@ -142,6 +142,16 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              highest waves over open sea, or those nearest WAVES metres, hovering
                              just above the surface; replies with the wave height. Set the time of
                              day first: storms move.
+  /bridge force FORCE [RANGE]
+                             find the nearest open sea where the wind blows at Beaufort FORCE and
+                             the waves stand as the scale has them (a grid within 5000 blocks, storms
+                             within RANGE, default 30000) and fly there; seated, it replies with the
+                             /tp that takes the vessel along, since the rider's client steers it
+  /bridge approach [DISTANCE] [TYPE]
+                             fly over open sea DISTANCE blocks (default 500) outside the rim of the
+                             strongest storm within 60000, of TYPE (squall, gale, hurricane) when
+                             given; replies with the yaw for `look` that faces its centre. '/time
+                             stop' first holds the storm where it is while you look.
   /bridge find CODE [RANGE]  fly over the nearest block at the surface whose code matches CODE
                              (wildcards: tallplant-*), within RANGE blocks (default 256, at most 512)
   /bridge drift [on|off]     whether unridden vessels drift with the current and the wind. Off on

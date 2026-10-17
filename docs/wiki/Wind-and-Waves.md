@@ -54,4 +54,4 @@ A wave comes every few seconds: 3.5 × √(height) seconds apart, so about 5 s i
 
 Each [vessel](Vessels) meets them in its own way: a low [dugout](Dugout) ships water in a 2 m sea that a [currach](Hide-Currach) rides over. What happens when a wave reaches a vessel is on its own page, [Surf and swamping](Surf-and-Swamping): the water it ships, the breaker that strikes the hull and the one that overturns it. Waves also strain a [mooring](Mooring) and drag an [anchor](Anchoring).
 
-The surface of the sea is still drawn flat in 1.0: boats roll and pitch with the waves, more or less by their shape, but the swell itself is not yet visible. A visible sea is [in the works](Roadmap#in-the-works).
+You see the waves as high as they are: the swell, its whitecaps and the surf are drawn from this same sea, and boats ride it. How it looks, and how it was tuned against photographs of the real sea, is on [The look of the sea](The-Look-of-the-Sea).

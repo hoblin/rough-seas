@@ -26,6 +26,10 @@ public static class VanillaWeatherPatches
             if (harmony != null) return;
             harmony = new Harmony(HarmonyId);
             Postfix(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.GetWindSpeed)), nameof(RegionWindSpeed));
+            Prefix(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetRainCloudness)), nameof(RainCloudness));
+            Prefix(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.RandomWeatherEvent)), nameof(NoWeatherEvent));
+            Postfix(AccessTools.Method(typeof(WeatherDataReaderBase), nameof(WeatherDataReaderBase.LoadLerp),
+                [typeof(Vec3d), typeof(bool), typeof(float), typeof(float), typeof(float)]), nameof(UnloadedRainCloudness));
             Postfix(AccessTools.Method(typeof(CloudRenderer), nameof(CloudRenderer.CloudTick)), nameof(CloudDrift));
             Postfix(AccessTools.Method(typeof(FluffyClouds.CloudRendererMap), nameof(FluffyClouds.CloudRendererMap.CloudTick)), nameof(CloudDrift));
             WindAsStrength(AccessTools.Method(typeof(DefaultShaderUniforms), nameof(DefaultShaderUniforms.Update)), nameof(SurfaceWindStrength), nameof(SurfaceWindRestore));
@@ -47,6 +51,9 @@ public static class VanillaWeatherPatches
     private static void Postfix(System.Reflection.MethodBase target, string patch) =>
         harmony!.Patch(target, postfix: new HarmonyMethod(typeof(VanillaWeatherPatches), patch));
 
+    private static void Prefix(System.Reflection.MethodBase target, string patch) =>
+        harmony!.Patch(target, prefix: new HarmonyMethod(typeof(VanillaWeatherPatches), patch));
+
     private static void WindAsStrength(System.Reflection.MethodBase target, string prefix, string postfix) =>
         harmony!.Patch(target,
             prefix: new HarmonyMethod(typeof(VanillaWeatherPatches), prefix),
@@ -60,8 +67,35 @@ public static class VanillaWeatherPatches
         if (sea == null) return;
         using var _ = sea.Budget.Measure();
         var regionSize = ___ws.api.World.BlockAccessor.RegionSize;
-        var wind = sea.Wind((___regionX + 0.5) * regionSize, (___regionZ + 0.5) * regionSize);
-        __result = VanillaWeather.Strength(wind.Speed, posY, ___ws.api.World.SeaLevel, sea.Config.Vanilla);
+        var (x, z) = ___ws.api is ICoreClientAPI { World.Player.Entity: { } player }
+            ? (player.Pos.X, player.Pos.Z)
+            : ((___regionX + 0.5) * regionSize, (___regionZ + 0.5) * regionSize);
+        __result = VanillaWeather.Strength(sea.Wind(x, z).Speed, posY, ___ws.api.World.SeaLevel, sea.Config.Vanilla);
+    }
+
+    private static bool RainCloudness(double posX, double posZ, double totalDays, ref float __result, WeatherSystemBase __instance)
+    {
+        var sea = On(__instance.api.Side);
+        if (sea == null || __instance.OverridePrecipitation != null) return true;
+        __result = sea.RainCloudness(posX, posZ, totalDays);
+        return false;
+    }
+
+    private static bool NoWeatherEvent(WeatherSimulationRegion __instance, ref WeatherEvent __result)
+    {
+        var calm = Array.Find(__instance.WeatherEvents, weatherEvent => weatherEvent.config.Code == VanillaWeather.CalmEvent);
+        if (calm == null) return true;
+        __result = calm;
+        return false;
+    }
+
+    private static void UnloadedRainCloudness(Vec3d pos, bool useArgValues, WeatherDataReaderBase __instance, WeatherSystemBase ___ws, IMapRegion ___hereMapRegion)
+    {
+        var sea = On(___ws.api.Side);
+        if (sea == null || useArgValues || ___hereMapRegion?.ClimateMap != null || ___ws.OverridePrecipitation != null) return;
+        var cloudness = sea.RainCloudness(pos.X, pos.Z, ___ws.api.World.Calendar.TotalDays);
+        __instance.lerpRainCloudOverlay = GameMath.Clamp(cloudness, 0, 1);
+        __instance.lerpRainOverlay = GameMath.Clamp(cloudness - 0.5f, 0, 1);
     }
 
     // These vanilla readers take the wind's X alone as its strength; our wind may blow along Z.

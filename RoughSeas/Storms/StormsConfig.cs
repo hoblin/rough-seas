@@ -8,6 +8,34 @@ public class StormsConfig
     public MooringConfig Mooring = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
+    public SurfaceConfig Surface = new();
+}
+
+public class SurfaceConfig
+{
+    public SurfaceTrainConfig[] Trains = [];
+    public double Steepness;
+    public double MinLengthBlocks;
+    public double SettleSeconds;
+    public double TurnDegrees;
+    public double Stretch;
+    public double AimSeconds;
+    public WhitecapsConfig[] Whitecaps = [];
+}
+
+public class SurfaceTrainConfig
+{
+    public double AngleDegrees;
+    public double LengthFactor;
+    public double Energy;
+}
+
+public class WhitecapsConfig
+{
+    public int Force;
+    public double Caps;
+    public double Streaks;
+    public double Spray;
 }
 
 public class WavesConfig

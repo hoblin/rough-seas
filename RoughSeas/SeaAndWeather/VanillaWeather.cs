@@ -11,7 +11,7 @@ namespace RoughSeas.SeaAndWeather;
 
 public class VanillaWeather
 {
-    private const string CalmEvent = "noevent";
+    public const string CalmEvent = "noevent";
 
     private static readonly (double X, double Z)[] RegionSamples = [(0.5, 0.5), (0.25, 0.25), (0.75, 0.25), (0.25, 0.75), (0.75, 0.75)];
 
@@ -31,9 +31,6 @@ public class VanillaWeather
         api.Event.OnGetWindSpeed -= VanillaWindHandler(api.ModLoader.GetModSystem<WeatherSystemBase>());
         api.Event.OnGetWindSpeed += OnGetWindSpeed;
     }
-
-    /// <summary>Must follow vanilla's climate handler, which sets the rain outright.</summary>
-    public void FollowRain() => api.Event.OnGetClimate += OnGetClimate;
 
     public void FollowStormEvents(ICoreServerAPI sapi)
     {
@@ -61,17 +58,6 @@ public class VanillaWeather
         var wind = sea.Wind(pos.X, pos.Z);
         var scale = wind.Speed > 0 ? Strength(wind.Speed, pos.Y, api.World.SeaLevel, sea.Config.Vanilla) / wind.Speed : 0;
         windSpeed.Set(wind.X * scale, 0, wind.Z * scale);
-    }
-
-    private void OnGetClimate(ref ClimateCondition climate, BlockPos pos, EnumGetClimateMode mode, double totalDays)
-    {
-        if (mode is EnumGetClimateMode.WorldGenValues or EnumGetClimateMode.ForSuppliedDate_TemperatureOnly) return;
-        using var _ = sea.Budget.Measure();
-        var hours = mode == EnumGetClimateMode.NowValues ? sea.NowHours : totalDays * api.World.Calendar.HoursPerDay;
-        var storms = sea.StormsAt(pos.X, pos.Z, hours);
-        if (storms.Presence <= 0) return;
-        climate.Rainfall = Math.Max(climate.Rainfall, (float)storms.Rain);
-        climate.RainCloudOverlay = Math.Max(climate.RainCloudOverlay, (float)storms.Presence);
     }
 
     private void RaiseStormEvents(WeatherSystemServer weather)

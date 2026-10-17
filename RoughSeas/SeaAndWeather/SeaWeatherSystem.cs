@@ -32,17 +32,12 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {
-        vanilla.FollowRain();
         vanilla.FollowStormEvents(sapi);
         Budget.CountTicks(sapi);
         SeaWeatherCommands.Register(this, sapi);
     }
 
-    public override void StartClientSide(ICoreClientAPI capi)
-    {
-        vanilla.FollowRain();
-        SeaWeatherCommands.Register(this, capi);
-    }
+    public override void StartClientSide(ICoreClientAPI capi) => SeaWeatherCommands.Register(this, capi);
 
     public override void Dispose() => VanillaWeatherPatches.Detach(api.Side);
 
@@ -66,10 +61,16 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public WindSample StormsAt(double x, double z, double totalHours) => model.Value.StormsAt(x, z, totalHours);
 
+    public float RainCloudness(double x, double z, double totalDays)
+    {
+        using var _ = Budget.Measure();
+        return (float)model.Value.RainCloudness(x, z, totalDays * api.World.Calendar.HoursPerDay);
+    }
+
     public void Log(string format, params object[] args) =>
         Mod.Logger.Debug("[seas] " + string.Format(CultureInfo.InvariantCulture, format, args));
 
-    private double Oceanity(double x, double z)
+    public double Oceanity(double x, double z)
     {
         var accessor = api.World.BlockAccessor;
         var regionSize = accessor.RegionSize;

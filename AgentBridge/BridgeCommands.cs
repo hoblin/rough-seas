@@ -21,6 +21,7 @@ public class BridgeCommands : ModSystem
         Enumerable.Range(0, 12).SelectMany(i => new[] { 0.25, 0.45, 0.65, 0.85, 1.0 }, (i, reach) => (i * Math.PI / 6, reach)).ToArray();
 
     private const int HoverAboveSea = 1;
+    private const double NearbyGridBlocks = 5000;
 
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
@@ -62,6 +63,18 @@ public class BridgeCommands : ModSystem
                 .RequiresPlayer()
                 .WithArgs(parsers.OptionalDouble("range", 60000), parsers.OptionalDouble("waves", 0))
                 .HandleWith(args => Storm((IServerPlayer)args.Caller.Player, (double)args[0], (double)args[1]))
+            .EndSubCommand()
+            .BeginSubCommand("force")
+                .WithDescription("Fly the caller, with the vessel they ride, to the nearest open sea where the wind blows at a Beaufort force and the waves stand as the scale has them for it")
+                .RequiresPlayer()
+                .WithArgs(parsers.IntRange("force", 0, 12), parsers.OptionalDouble("range", 30000))
+                .HandleWith(args => Force((IServerPlayer)args.Caller.Player, (int)args[0], (double)args[1]))
+            .EndSubCommand()
+            .BeginSubCommand("approach")
+                .WithDescription("Fly the caller over open sea a distance outside the rim of the strongest storm in range, of a type when given, and say the yaw that faces its centre")
+                .RequiresPlayer()
+                .WithArgs(parsers.OptionalDouble("distance", 500), parsers.OptionalWord("type"))
+                .HandleWith(args => Approach((IServerPlayer)args.Caller.Player, (double)args[0], (string?)args[1]))
             .EndSubCommand()
             .BeginSubCommand("find")
                 .WithDescription("Fly the caller over the nearest block at the surface whose code matches a wildcard, within range, in the loaded world")
@@ -188,6 +201,69 @@ public class BridgeCommands : ModSystem
 
         var flown = Fly(player, new Vec3d((int)chosen.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)chosen.z + 0.5));
         return TextCommandResult.Success($"{flown.StatusMessage}, over the storm's {(waves > 0 ? "waves nearest " + waves.ToString("F1", CultureInfo.InvariantCulture) + " m" : "highest waves")}, {chosen.waves:F1} m");
+    }
+
+    private TextCommandResult Force(IServerPlayer player, int force, double range)
+    {
+        const double step = 500;
+        const double heightTolerance = 0.2;
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        var pos = player.Entity.Pos;
+        var scaleHeight = sea.Config.Beaufort.First(row => row.Force == force).WaveHeight;
+        var steps = (int)(Math.Min(range, NearbyGridBlocks) / step);
+        var chosen = Enumerable.Range(-steps, 2 * steps + 1)
+            .SelectMany(_ => Enumerable.Range(-steps, 2 * steps + 1), (i, j) => (x: pos.X + i * step, z: pos.Z + j * step))
+            .Concat(sea.StormsWithin(pos.X, pos.Z, range).SelectMany(storm =>
+            {
+                var (x, z) = storm.CentreAt(sea.NowHours);
+                return StormProbes.Select(probe => (x: x + Math.Cos(probe.Angle) * probe.Reach * storm.Radius, z: z + Math.Sin(probe.Angle) * probe.Reach * storm.Radius));
+            }))
+            .Where(point => sea.IsSea(point.x, point.z))
+            .Select(point => (point.x, point.z, state: sea.At(point.x, point.z)))
+            .Where(point => point.state.Beaufort == force && point.state.Oceanity >= 1
+                && Math.Abs(point.state.WaveHeight - scaleHeight) <= heightTolerance * Math.Max(scaleHeight, 1))
+            .OrderBy(point => Math.Abs(point.x - pos.X) + Math.Abs(point.z - pos.Z))
+            .Select(point => ((double x, double z, SeaState state)?)point)
+            .FirstOrDefault();
+        if (chosen == null) return TextCommandResult.Error($"No open sea at Beaufort {force} with {scaleHeight} m waves within {range} blocks");
+
+        var target = new Vec3d((int)chosen.Value.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)chosen.Value.z + 0.5);
+        if (player.Entity.MountedOn != null)
+        {
+            var accessor = sapi.World.BlockAccessor;
+            return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture, "Beaufort {0}, waves {1:F1} m at {2:F0} {3:F0}; '/tp {2:F0} {4} {3:F0}' sails there with the vessel",
+                force, chosen.Value.state.WaveHeight, target.X - accessor.MapSizeX / 2, target.Z - accessor.MapSizeZ / 2, target.Y));
+        }
+        var flown = Fly(player, target);
+        return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture, "{0}: Beaufort {1}, waves {2:F1} m", flown.StatusMessage, force, chosen.Value.state.WaveHeight));
+    }
+
+    private TextCommandResult Approach(IServerPlayer player, double distance, string? type)
+    {
+        const double range = 60000;
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        var pos = player.Entity.Pos;
+        var now = sea.NowHours;
+        var chosen = sea.StormsWithin(pos.X, pos.Z, range)
+            .Where(storm => type == null || storm.Code == type)
+            .Select(storm => (storm, centre: storm.CentreAt(now)))
+            .Where(entry => sea.IsSea(entry.centre.X, entry.centre.Z))
+            .SelectMany(_ => Enumerable.Range(0, 12), (entry, i) =>
+            {
+                var reach = entry.storm.Radius + distance;
+                return (entry.storm, entry.centre, x: entry.centre.X + Math.Cos(i * Math.PI / 6) * reach, z: entry.centre.Z + Math.Sin(i * Math.PI / 6) * reach);
+            })
+            .Where(point => sea.IsSea(point.x, point.z))
+            .OrderByDescending(point => point.storm.Strength(now))
+            .ThenBy(point => Math.Abs(point.x - pos.X) + Math.Abs(point.z - pos.Z))
+            .FirstOrDefault();
+        if (chosen.storm == null) return TextCommandResult.Error($"No {type ?? "storm"} over open sea within {range} blocks; /seas storms lists them");
+
+        var flown = Fly(player, new Vec3d((int)chosen.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)chosen.z + 0.5));
+        var yaw = Math.Atan2(chosen.centre.X - chosen.x, chosen.centre.Z - chosen.z);
+        return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture,
+            "{0}, {1:F0} blocks outside the rim of a {2} at {3:P0} strength; yaw {4:F2} faces its centre",
+            flown.StatusMessage, distance, chosen.storm.Code, chosen.storm.Strength(now), yaw));
     }
 
     private bool OpenSea(int x, int z)

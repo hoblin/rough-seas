@@ -78,5 +78,37 @@
             "minCelsius": "Vanilla's LightningMinTemp for its thunderstorms",
             "attractBlocksPerMastMetre": "A mast protects, and draws strikes from, a cone of about its own height in radius"
         }
+    },
+    "surface": {
+        "trains": [
+            { "angleDegrees": -18, "lengthFactor": 1.0, "energy": 0.4 },
+            { "angleDegrees": 14, "lengthFactor": 0.7, "energy": 0.3 },
+            { "angleDegrees": -6, "lengthFactor": 0.42, "energy": 0.2 },
+            { "angleDegrees": 32, "lengthFactor": 0.25, "energy": 0.1 }
+        ],
+        "steepness": 1.2,
+        "minLengthBlocks": 8,
+        "settleSeconds": 10,
+        "turnDegrees": 20,
+        "stretch": 0.25,
+        "aimSeconds": 0.5,
+        "whitecaps": [
+            { "force": 2, "caps": 0, "streaks": 0, "spray": 0 },
+            { "force": 3, "caps": 0.01, "streaks": 0, "spray": 0 },
+            { "force": 4, "caps": 0.03, "streaks": 0, "spray": 0 },
+            { "force": 5, "caps": 0.06, "streaks": 0, "spray": 0 },
+            { "force": 6, "caps": 0.1, "streaks": 0.2, "spray": 0 },
+            { "force": 7, "caps": 0.14, "streaks": 0.45, "spray": 0.05 },
+            { "force": 8, "caps": 0.18, "streaks": 0.7, "spray": 0.2 },
+            { "force": 10, "caps": 0.28, "streaks": 1, "spray": 0.5 },
+            { "force": 12, "caps": 0.4, "streaks": 1, "spray": 0.85 }
+        ],
+        "sources": {
+            "trains": "Wave trains spread around the wind, longest first; their energies sum to the sea's, so the significant height drawn is the sea state's",
+            "lengthFactor": "The peak wave's length follows its period by deep-water dispersion, L = g T^2 / 2 pi",
+            "minLengthBlocks": "The water mesh has one vertex a block: shorter waves alias",
+            "caps": "The share of the sea's area under whitecaps: above Monahan's measured coverage (3.84e-6 U^3.41), so the caps read from afar as the descriptions have them",
+            "whitecaps": "The Beaufort scale's sea descriptions: scattered whitecaps at 3, frequent at 4 and many at 5, foam blown in streaks along the wind from 6 and well marked at 7 to 8, spray and a sea turning white from 8 up"
+        }
     }
 }

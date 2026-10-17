@@ -7,6 +7,7 @@
 
 **The sea**
 - [Wind and waves](Wind-and-Waves)
+- [The look of the sea](The-Look-of-the-Sea)
 - [Storms](Storms)
 - [Lightning](Lightning)
 - [Currents](Currents)

@@ -6,6 +6,7 @@ public class SeaWeatherConfig
     public double[] SeaBuildHours = [0];
     public PrevailingWind[] PrevailingWinds = [];
     public BackgroundWindConfig Background = new();
+    public ShowersConfig Showers = new();
     public StormTypeConfig[] Storms = [];
     public StormShapeConfig Storm = new();
     public VanillaConfig Vanilla = new();
@@ -48,6 +49,16 @@ public class BackgroundWindConfig
     public double SpatialScale;
     public double TimeScaleHours;
     public double VeerDegrees;
+}
+
+public class ShowersConfig
+{
+    public double SpatialScale;
+    public double TimeScaleHours;
+    public double DryThreshold;
+    public double WetThreshold;
+    public double Span;
+    public double WettestRain;
 }
 
 public class StormTypeConfig

@@ -5,6 +5,7 @@ Where Rough Seas is heading. These are plans, not promises: the next release is 
 The first release: the sea stops being flat, safe and empty.
 
 - [Wind and waves](Wind-and-Waves) from the real Beaufort scale, and [storms](Storms) that cross the world: squalls, gales and hurricanes.
+- [A sea you can see](The-Look-of-the-Sea): a swell as high as the waves, whitecaps by the Beaufort scale, surf on the shore, boats that ride it, and rain and clouds that follow the weather.
 - [Lightning](Lightning) in warm storms, drawn to masts.
 - [Currents](Currents) that turn the oceans and carry off a boat left alone.
 - [Hulls](Hull-Condition) that wear and break by what they are made of, and are [mended](Mending) with it.
@@ -12,10 +13,6 @@ The first release: the sea stops being flat, safe and empty.
 - [Anchors](Anchoring) that hold and [moorings](Mooring) that snap.
 - Six new [vessels](Vessels) between the raft and the sailboat.
 - The [Rough Seas playstyle and the Dangerous oceans setting](World-Settings).
-
-## In the works
-
-- **A sea you can see.** The waves already toss your vessel; the surface of the sea is still drawn flat. A visible swell that rises with the [wind](Wind-and-Waves) is being worked on.
 
 ## 1.1 "Seamanship"
 

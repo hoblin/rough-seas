@@ -27,6 +27,14 @@
         "timeScaleHours": 30,
         "veerDegrees": 60
     },
+    "showers": {
+        "spatialScale": 1200,
+        "timeScaleHours": 6,
+        "dryThreshold": 0.82,
+        "wetThreshold": 0.565,
+        "span": 0.27,
+        "wettestRain": 0.8
+    },
     "storms": [
         {
             "code": "squall",
