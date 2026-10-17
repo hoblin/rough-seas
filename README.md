@@ -8,8 +8,8 @@ In the vanilla game the sea is flat, safe and empty, and crossing it means holdi
 
 ## At sea
 
-- **Wind and storms.** Wind has a direction and a strength, and waves grow with it over open water. Squalls, gales and hurricanes drift across the world: squalls in warm, wet summers, gales in cool winters, hurricanes in the subtropics. Each one warns you first: the trees sway, the sky darkens and the swell rises. Lightning strikes inside warm storms and is drawn to masts.
-- **Currents.** The oceans turn in slow gyres, with the strongest current along the western side of a basin. In the middle latitudes it runs warm and the eastern side cold; nearer the equator and the poles the pattern turns over. A vessel left alone drifts with them.
+- **Wind and storms.** Wind has a direction and a strength, and waves grow with it over open water. Squalls, gales and hurricanes drift across the world: squalls in warm, wet summers, gales in cool winters, hurricanes over the warmest seas. Each one warns you first: the trees sway, the sky darkens and the swell rises. Lightning strikes inside warm storms and is drawn to masts.
+- **Currents.** The oceans turn in slow gyres, with the strongest current along the western side of a basin. In the middle latitudes it runs warm and the eastern side cool; nearer the equator and the poles the pattern turns over. A vessel left alone drifts with them.
 - **Vessels that break.** Every hull has a condition, shown on the vessel and kept on its item. Rocks, rapids, surf, lightning, blasts and axes wear it down, and how much it takes depends on its wood, rope or hide. You mend it by hand with its own material.
 - **Six new vessels.** The reed boat, dugout, coracle, birch-bark canoe, hide currach and outrigger canoe join the vanilla raft and sailboat. Each one has a job it is best at.
 - **Surf, swamping and capsizing.** Waves break in the shallows, boats ship water over their sides, and a big enough breaker turns a small boat over. You bail it out with a bowl, jug or bucket.
