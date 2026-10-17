@@ -5256,58 +5256,6 @@
    }
   },
   {
-   "name": "TholePort1",
-   "from": [ 26, 9.4, -0.996 ],
-   "to": [ 26.6, 11.8, -0.296 ],
-   "faces": {
-    "north": { "texture": "#frame", "uv": [ 5.5, 1, 7.9, 1.6 ], "rotation": 90 },
-    "west": { "texture": "#frame", "uv": [ 6.5, 11.5, 8.9, 12.2 ], "rotation": 90 },
-    "south": { "texture": "#frame", "uv": [ 5, 8.5, 7.4, 9.1 ], "rotation": 90 },
-    "east": { "texture": "#frame", "uv": [ 1.5, 5.5, 3.9, 6.2 ], "rotation": 90 },
-    "up": { "texture": "#frame", "uv": [ 6, 7, 6.6, 7.7 ] },
-    "down": { "texture": "#frame", "uv": [ 3.5, 1, 4.1, 1.7 ] }
-   }
-  },
-  {
-   "name": "TholePort2",
-   "from": [ 10, 9.417, -1.091 ],
-   "to": [ 10.6, 11.817, -0.391 ],
-   "faces": {
-    "north": { "texture": "#frame", "uv": [ 11, 7, 13.4, 7.6 ], "rotation": 90 },
-    "west": { "texture": "#frame", "uv": [ 6.5, 3.5, 8.9, 4.2 ], "rotation": 90 },
-    "south": { "texture": "#frame", "uv": [ 8, 0, 10.4, 0.6 ], "rotation": 90 },
-    "east": { "texture": "#frame", "uv": [ 11, 14, 13.4, 14.7 ], "rotation": 90 },
-    "up": { "texture": "#frame", "uv": [ 11.5, 9.5, 12.1, 10.2 ] },
-    "down": { "texture": "#frame", "uv": [ 9.5, 2, 10.1, 2.7 ] }
-   }
-  },
-  {
-   "name": "TholeStarboard1",
-   "from": [ 26, 9.4, 16.296 ],
-   "to": [ 26.6, 11.8, 16.996 ],
-   "faces": {
-    "north": { "texture": "#frame", "uv": [ 8.5, 8.5, 10.9, 9.1 ], "rotation": 90 },
-    "west": { "texture": "#frame", "uv": [ 2, 3.5, 4.4, 4.2 ], "rotation": 90 },
-    "south": { "texture": "#frame", "uv": [ 12, 4, 14.4, 4.6 ], "rotation": 90 },
-    "east": { "texture": "#frame", "uv": [ 13, 12, 15.4, 12.7 ], "rotation": 90 },
-    "up": { "texture": "#frame", "uv": [ 13, 1, 13.6, 1.7 ] },
-    "down": { "texture": "#frame", "uv": [ 13, 5.5, 13.6, 6.2 ] }
-   }
-  },
-  {
-   "name": "TholeStarboard2",
-   "from": [ 10, 9.417, 16.391 ],
-   "to": [ 10.6, 11.817, 17.091 ],
-   "faces": {
-    "north": { "texture": "#frame", "uv": [ 10.5, 8.5, 12.9, 9.1 ], "rotation": 90 },
-    "west": { "texture": "#frame", "uv": [ 7, 6, 9.4, 6.7 ], "rotation": 90 },
-    "south": { "texture": "#frame", "uv": [ 5, 13.5, 7.4, 14.1 ], "rotation": 90 },
-    "east": { "texture": "#frame", "uv": [ 9, 4, 11.4, 4.7 ], "rotation": 90 },
-    "up": { "texture": "#frame", "uv": [ 14.5, 11.5, 15.1, 12.2 ] },
-    "down": { "texture": "#frame", "uv": [ 4, 10, 4.6, 10.7 ] }
-   }
-  },
-  {
    "name": "StemPost",
    "from": [ -24, 5, 7.3 ],
    "to": [ -21.8, 11.2, 8.7 ],
@@ -5319,132 +5267,6 @@
     "up": { "texture": "#frame", "uv": [ 11.5, 11.5, 13.7, 12.9 ] },
     "down": { "texture": "#frame", "uv": [ 7.5, 5.5, 9.7, 6.9 ] }
    }
-  },
-  {
-   "name": "OarPort",
-   "from": [ 30.6, 7.6, 3.6 ],
-   "to": [ 30.6, 7.6, 3.6 ],
-   "rotationOrigin": [ 30.6, 7.6, 3.6 ],
-   "rotationY": -1.5,
-   "rotationZ": 1,
-   "faces": {},
-   "children": [
-    {
-     "name": "OarPortLoom",
-     "from": [ -16, 0, 0 ],
-     "to": [ 0, 0.8, 0.8 ],
-     "faces": {
-      "north": { "texture": "#frame", "uv": [ 0, 4.5, 16, 5.3 ] },
-      "west": { "texture": "#frame", "uv": [ 10, 0.5, 10.8, 1.3 ] },
-      "south": { "texture": "#frame", "uv": [ 0, 14.5, 16, 15.3 ] },
-      "east": { "texture": "#frame", "uv": [ 11.5, 10.5, 12.3, 11.3 ] },
-      "up": { "texture": "#frame", "uv": [ 0, 0, 16, 0.8 ] },
-      "down": { "texture": "#frame", "uv": [ 0, 11.5, 16, 12.3 ] }
-     }
-    },
-    {
-     "name": "OarPortShaft",
-     "from": [ -28, 0.1, 0.1 ],
-     "to": [ -16, 0.7, 0.7 ],
-     "faces": {
-      "north": { "texture": "#frame", "uv": [ 1.5, 13, 13.5, 13.6 ] },
-      "west": { "texture": "#frame", "uv": [ 10, 3.5, 10.6, 4.1 ] },
-      "south": { "texture": "#frame", "uv": [ 2.5, 6.5, 14.5, 7.1 ] },
-      "east": { "texture": "#frame", "uv": [ 1.5, 12, 2.1, 12.6 ] },
-      "up": { "texture": "#frame", "uv": [ 0, 10.5, 12, 11.1 ] },
-      "down": { "texture": "#frame", "uv": [ 2.5, 14, 14.5, 14.6 ] }
-     }
-    },
-    {
-     "name": "OarPortBlade",
-     "from": [ -34, 0.15, 0.05 ],
-     "to": [ -28, 0.65, 0.75 ],
-     "faces": {
-      "north": { "texture": "#frame", "uv": [ 5.5, 12, 11.5, 12.5 ] },
-      "west": { "texture": "#frame", "uv": [ 9.5, 5, 10.2, 5.5 ] },
-      "south": { "texture": "#frame", "uv": [ 8, 8.5, 14, 9 ] },
-      "east": { "texture": "#frame", "uv": [ 13.5, 12.5, 14.2, 13 ] },
-      "up": { "texture": "#frame", "uv": [ 7, 14.5, 13, 15.2 ] },
-      "down": { "texture": "#frame", "uv": [ 7.5, 9, 13.5, 9.7 ] }
-     }
-    },
-    {
-     "name": "OarPortBull",
-     "from": [ -8, -0.4, -0.4 ],
-     "to": [ -5, 1.2, 1.2 ],
-     "faces": {
-      "north": { "texture": "#frame", "uv": [ 10, 4, 13, 5.6 ] },
-      "west": { "texture": "#frame", "uv": [ 0.5, 9, 2.1, 10.6 ] },
-      "south": { "texture": "#frame", "uv": [ 0, 1, 3, 2.6 ] },
-      "east": { "texture": "#frame", "uv": [ 5, 7.5, 6.6, 9.1 ] },
-      "up": { "texture": "#frame", "uv": [ 1.5, 4, 4.5, 5.6 ] },
-      "down": { "texture": "#frame", "uv": [ 9.5, 10.5, 12.5, 12.1 ] }
-     }
-    }
-   ]
-  },
-  {
-   "name": "OarStarboard",
-   "from": [ 28.6, 7.4, 12.4 ],
-   "to": [ 28.6, 7.4, 12.4 ],
-   "rotationOrigin": [ 28.6, 7.4, 12.4 ],
-   "rotationY": 1.5,
-   "rotationZ": 1,
-   "faces": {},
-   "children": [
-    {
-     "name": "OarStarboardLoom",
-     "from": [ -16, 0, 0 ],
-     "to": [ 0, 0.8, 0.8 ],
-     "faces": {
-      "north": { "texture": "#frame", "uv": [ 0, 12.5, 16, 13.3 ] },
-      "west": { "texture": "#frame", "uv": [ 12.5, 14, 13.3, 14.8 ] },
-      "south": { "texture": "#frame", "uv": [ 0, 3, 16, 3.8 ] },
-      "east": { "texture": "#frame", "uv": [ 11.5, 6.5, 12.3, 7.3 ] },
-      "up": { "texture": "#frame", "uv": [ 0, 9.5, 16, 10.3 ] },
-      "down": { "texture": "#frame", "uv": [ 0, 10, 16, 10.8 ] }
-     }
-    },
-    {
-     "name": "OarStarboardShaft",
-     "from": [ -28, 0.1, 0.1 ],
-     "to": [ -16, 0.7, 0.7 ],
-     "faces": {
-      "north": { "texture": "#frame", "uv": [ 2, 13, 14, 13.6 ] },
-      "west": { "texture": "#frame", "uv": [ 4, 1, 4.6, 1.6 ] },
-      "south": { "texture": "#frame", "uv": [ 2, 3.5, 14, 4.1 ] },
-      "east": { "texture": "#frame", "uv": [ 4.5, 11, 5.1, 11.6 ] },
-      "up": { "texture": "#frame", "uv": [ 1, 4, 13, 4.6 ] },
-      "down": { "texture": "#frame", "uv": [ 1.5, 1, 13.5, 1.6 ] }
-     }
-    },
-    {
-     "name": "OarStarboardBlade",
-     "from": [ -34, 0.15, 0.05 ],
-     "to": [ -28, 0.65, 0.75 ],
-     "faces": {
-      "north": { "texture": "#frame", "uv": [ 9.5, 9, 15.5, 9.5 ] },
-      "west": { "texture": "#frame", "uv": [ 2, 13.5, 2.7, 14 ] },
-      "south": { "texture": "#frame", "uv": [ 0, 3.5, 6, 4 ] },
-      "east": { "texture": "#frame", "uv": [ 7.5, 1.5, 8.2, 2 ] },
-      "up": { "texture": "#frame", "uv": [ 1.5, 9, 7.5, 9.7 ] },
-      "down": { "texture": "#frame", "uv": [ 5.5, 5, 11.5, 5.7 ] }
-     }
-    },
-    {
-     "name": "OarStarboardBull",
-     "from": [ -8, -0.4, -0.4 ],
-     "to": [ -5, 1.2, 1.2 ],
-     "faces": {
-      "north": { "texture": "#frame", "uv": [ 9, 5.5, 12, 7.1 ] },
-      "west": { "texture": "#frame", "uv": [ 9.5, 4.5, 11.1, 6.1 ] },
-      "south": { "texture": "#frame", "uv": [ 4.5, 5, 7.5, 6.6 ] },
-      "east": { "texture": "#frame", "uv": [ 6.5, 13.5, 8.1, 15.1 ] },
-      "up": { "texture": "#frame", "uv": [ 3, 5, 6, 6.6 ] },
-      "down": { "texture": "#frame", "uv": [ 9.5, 1, 12.5, 2.6 ] }
-     }
-    }
-   ]
   },
   {
    "name": "hideWater",
@@ -6017,6 +5839,182 @@
    ]
   },
   {
+   "name": "TholeStarboard",
+   "from": [ 3.2, 9.076, -0.833 ],
+   "to": [ 3.8, 13.276, -0.233 ],
+   "faces": {
+    "north": { "texture": "#frame", "uv": [ 8, 13, 12.2, 13.6 ], "rotation": 90 },
+    "east": { "texture": "#frame", "uv": [ 1, 1, 5.2, 1.6 ], "rotation": 90 },
+    "south": { "texture": "#frame", "uv": [ 9, 10.5, 13.2, 11.1 ], "rotation": 90 },
+    "west": { "texture": "#frame", "uv": [ 6.5, 13.5, 10.7, 14.1 ], "rotation": 90 },
+    "up": { "texture": "#frame", "uv": [ 12.5, 0, 13.1, 0.6 ] },
+    "down": { "texture": "#frame", "uv": [ 14, 11, 14.6, 11.6 ] }
+   }
+  },
+  {
+   "name": "OarStarboard",
+   "from": [ 0, 7.45, 3 ],
+   "to": [ 0, 7.45, 3 ],
+   "rotationOrigin": [ 0, 7.45, 3 ],
+   "rotationX": -90,
+   "faces": {},
+   "children": [
+    {
+     "name": "OarStarboardGrip",
+     "from": [ -8, -0.35, -0.35 ],
+     "to": [ -5, 0.35, 0.35 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 1, 8.5, 4, 9.2 ] },
+      "east": { "texture": "#frame", "uv": [ 8, 11.5, 8.7, 12.2 ] },
+      "south": { "texture": "#frame", "uv": [ 7.5, 12, 10.5, 12.7 ] },
+      "west": { "texture": "#frame", "uv": [ 2, 13.5, 2.7, 14.2 ] },
+      "up": { "texture": "#frame", "uv": [ 6, 2.5, 9, 3.2 ] },
+      "down": { "texture": "#frame", "uv": [ 5.5, 6, 8.5, 6.7 ] }
+     }
+    },
+    {
+     "name": "OarStarboardLoom",
+     "from": [ -5, -0.45, -0.45 ],
+     "to": [ 11, 0.45, 0.45 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 0, 12.5, 16, 13.4 ] },
+      "east": { "texture": "#frame", "uv": [ 12.5, 14, 13.4, 14.9 ] },
+      "south": { "texture": "#frame", "uv": [ 0, 3, 16, 3.9 ] },
+      "west": { "texture": "#frame", "uv": [ 11.5, 6.5, 12.4, 7.4 ] },
+      "up": { "texture": "#frame", "uv": [ 0, 9.5, 16, 10.4 ] },
+      "down": { "texture": "#frame", "uv": [ 0, 10, 16, 10.9 ] }
+     }
+    },
+    {
+     "name": "OarStarboardBull",
+     "from": [ -1.6, -2.4, -0.7 ],
+     "to": [ 1.6, -0.45, 0.7 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 8.5, 5.5, 11.7, 7.45 ] },
+      "east": { "texture": "#frame", "uv": [ 9.5, 4.5, 10.9, 6.45 ] },
+      "south": { "texture": "#frame", "uv": [ 4.5, 5, 7.7, 6.95 ] },
+      "west": { "texture": "#frame", "uv": [ 6.5, 13.5, 7.9, 15.45 ] },
+      "up": { "texture": "#frame", "uv": [ 3, 5, 6.2, 6.4 ] },
+      "down": { "texture": "#frame", "uv": [ 9.5, 1, 12.7, 2.4 ] }
+     }
+    },
+    {
+     "name": "OarStarboardShaft",
+     "from": [ 11, -0.3, -0.3 ],
+     "to": [ 21, 0.3, 0.3 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 3, 13, 13, 13.6 ] },
+      "east": { "texture": "#frame", "uv": [ 4, 1, 4.6, 1.6 ] },
+      "south": { "texture": "#frame", "uv": [ 3.5, 3.5, 13.5, 4.1 ] },
+      "west": { "texture": "#frame", "uv": [ 4.5, 11, 5.1, 11.6 ] },
+      "up": { "texture": "#frame", "uv": [ 2, 4, 12, 4.6 ] },
+      "down": { "texture": "#frame", "uv": [ 2, 1, 12, 1.6 ] }
+     }
+    },
+    {
+     "name": "OarStarboardBlade",
+     "from": [ 21, -0.6, -0.2 ],
+     "to": [ 27, 0.6, 0.2 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 9.5, 8.5, 15.5, 9.7 ] },
+      "east": { "texture": "#frame", "uv": [ 2, 13, 2.4, 14.2 ] },
+      "south": { "texture": "#frame", "uv": [ 0, 3.5, 6, 4.7 ] },
+      "west": { "texture": "#frame", "uv": [ 7.5, 1, 7.9, 2.2 ] },
+      "up": { "texture": "#frame", "uv": [ 1.5, 9, 7.5, 9.4 ] },
+      "down": { "texture": "#frame", "uv": [ 5.5, 5, 11.5, 5.4 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "TholePort",
+   "from": [ 3.2, 9.076, 16.233 ],
+   "to": [ 3.8, 13.276, 16.833 ],
+   "faces": {
+    "north": { "texture": "#frame", "uv": [ 6.5, 12.5, 10.7, 13.1 ], "rotation": 90 },
+    "east": { "texture": "#frame", "uv": [ 1, 6.5, 5.2, 7.1 ], "rotation": 90 },
+    "south": { "texture": "#frame", "uv": [ 8, 11.5, 12.2, 12.1 ], "rotation": 90 },
+    "west": { "texture": "#frame", "uv": [ 9.5, 7.5, 13.7, 8.1 ], "rotation": 90 },
+    "up": { "texture": "#frame", "uv": [ 11, 3, 11.6, 3.6 ] },
+    "down": { "texture": "#frame", "uv": [ 11.5, 1.5, 12.1, 2.1 ] }
+   }
+  },
+  {
+   "name": "OarPort",
+   "from": [ 0, 7.45, 13 ],
+   "to": [ 0, 7.45, 13 ],
+   "rotationOrigin": [ 0, 7.45, 13 ],
+   "rotationX": 90,
+   "faces": {},
+   "children": [
+    {
+     "name": "OarPortGrip",
+     "from": [ -8, -0.35, -0.35 ],
+     "to": [ -5, 0.35, 0.35 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 9, 12, 12, 12.7 ] },
+      "east": { "texture": "#frame", "uv": [ 4.5, 5, 5.2, 5.7 ] },
+      "south": { "texture": "#frame", "uv": [ 1, 2.5, 4, 3.2 ] },
+      "west": { "texture": "#frame", "uv": [ 1.5, 2, 2.2, 2.7 ] },
+      "up": { "texture": "#frame", "uv": [ 3, 2.5, 6, 3.2 ] },
+      "down": { "texture": "#frame", "uv": [ 8.5, 14.5, 11.5, 15.2 ] }
+     }
+    },
+    {
+     "name": "OarPortLoom",
+     "from": [ -5, -0.45, -0.45 ],
+     "to": [ 11, 0.45, 0.45 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 0, 4.5, 16, 5.4 ] },
+      "east": { "texture": "#frame", "uv": [ 10, 0.5, 10.9, 1.4 ] },
+      "south": { "texture": "#frame", "uv": [ 0, 14.5, 16, 15.4 ] },
+      "west": { "texture": "#frame", "uv": [ 11, 10.5, 11.9, 11.4 ] },
+      "up": { "texture": "#frame", "uv": [ 0, 0, 16, 0.9 ] },
+      "down": { "texture": "#frame", "uv": [ 0, 11.5, 16, 12.4 ] }
+     }
+    },
+    {
+     "name": "OarPortBull",
+     "from": [ -1.6, -2.4, -0.7 ],
+     "to": [ 1.6, -0.45, 0.7 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 10, 4, 13.2, 5.95 ] },
+      "east": { "texture": "#frame", "uv": [ 0.5, 9, 1.9, 10.95 ] },
+      "south": { "texture": "#frame", "uv": [ 0, 1, 3.2, 2.95 ] },
+      "west": { "texture": "#frame", "uv": [ 5, 7, 6.4, 8.95 ] },
+      "up": { "texture": "#frame", "uv": [ 1.5, 4, 4.7, 5.4 ] },
+      "down": { "texture": "#frame", "uv": [ 9.5, 10.5, 12.7, 11.9 ] }
+     }
+    },
+    {
+     "name": "OarPortShaft",
+     "from": [ 11, -0.3, -0.3 ],
+     "to": [ 21, 0.3, 0.3 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 2, 13, 12, 13.6 ] },
+      "east": { "texture": "#frame", "uv": [ 10, 3.5, 10.6, 4.1 ] },
+      "south": { "texture": "#frame", "uv": [ 3.5, 6.5, 13.5, 7.1 ] },
+      "west": { "texture": "#frame", "uv": [ 1.5, 12, 2.1, 12.6 ] },
+      "up": { "texture": "#frame", "uv": [ 0, 10.5, 10, 11.1 ] },
+      "down": { "texture": "#frame", "uv": [ 3.5, 14, 13.5, 14.6 ] }
+     }
+    },
+    {
+     "name": "OarPortBlade",
+     "from": [ 21, -0.6, -0.2 ],
+     "to": [ 27, 0.6, 0.2 ],
+     "faces": {
+      "north": { "texture": "#frame", "uv": [ 5.5, 11.5, 11.5, 12.7 ] },
+      "east": { "texture": "#frame", "uv": [ 9.5, 4.5, 9.9, 5.7 ] },
+      "south": { "texture": "#frame", "uv": [ 8, 8, 14, 9.2 ] },
+      "west": { "texture": "#frame", "uv": [ 14, 12, 14.4, 13.2 ] },
+      "up": { "texture": "#frame", "uv": [ 7, 15, 13, 15.4 ] },
+      "down": { "texture": "#frame", "uv": [ 7.5, 9.5, 13.5, 9.9 ] }
+     }
+    }
+   ]
+  },
+  {
    "name": "Hull",
    "from": [ -24, 0, -1 ],
    "to": [ 40, 11, 17 ],
@@ -6041,6 +6039,259 @@
    "faces": {},
    "attachmentpoints": [
     { "code": "BackSeatAP", "posX": "4", "posY": "2", "posZ": "6", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ]
+  }
+ ],
+ "animations": [
+  {
+   "name": "roughseas-oars-ready",
+   "code": "roughseas-oars-ready",
+   "quantityframes": 30,
+   "onActivityStopped": "EaseOut",
+   "onAnimationEnd": "Repeat",
+   "keyframes": [
+    {
+     "frame": 0,
+     "elements": {
+      "OarStarboard": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": 3.5, "rotationX": 90, "rotationY": 90.0, "rotationZ": -13 },
+      "OarPort": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": -3.5, "rotationX": -90, "rotationY": -90.0, "rotationZ": -13 }
+     }
+    },
+    {
+     "frame": 15,
+     "elements": {
+      "OarStarboard": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": 3.5, "rotationX": 90, "rotationY": 90.0, "rotationZ": -13 },
+      "OarPort": { "offsetX": 2.31, "offsetY": 5.69, "offsetZ": -3.5, "rotationX": -90, "rotationY": -90.0, "rotationZ": -13 }
+     }
+    }
+   ]
+  },
+  {
+   "name": "roughseas-oars-forward",
+   "code": "roughseas-oars-forward",
+   "quantityframes": 30,
+   "onActivityStopped": "EaseOut",
+   "onAnimationEnd": "Repeat",
+   "keyframes": [
+    {
+     "frame": 0,
+     "elements": {
+      "OarStarboard": { "offsetX": -0.19, "offsetY": 5.23, "offsetZ": 4.75, "rotationX": 90, "rotationY": 118.0, "rotationZ": -18.5 },
+      "OarPort": { "offsetX": -0.19, "offsetY": 5.23, "offsetZ": -4.75, "rotationX": -90, "rotationY": -118.0, "rotationZ": -18.5 }
+     }
+    },
+    {
+     "frame": 2,
+     "elements": {
+      "OarStarboard": { "offsetX": -0.51, "offsetY": 5.27, "offsetZ": 4.68, "rotationX": 90, "rotationY": 115.58, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": -0.51, "offsetY": 5.27, "offsetZ": -4.68, "rotationX": -90, "rotationY": -115.58, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 4,
+     "elements": {
+      "OarStarboard": { "offsetX": -0.01, "offsetY": 5.49, "offsetZ": 4.45, "rotationX": 90, "rotationY": 108.74, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": -0.01, "offsetY": 5.49, "offsetZ": -4.45, "rotationX": -90, "rotationY": -108.74, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 6,
+     "elements": {
+      "OarStarboard": { "offsetX": 0.67, "offsetY": 5.8, "offsetZ": 3.99, "rotationX": 90, "rotationY": 98.65, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": 0.67, "offsetY": 5.8, "offsetZ": -3.99, "rotationX": -90, "rotationY": -98.65, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 8,
+     "elements": {
+      "OarStarboard": { "offsetX": 1.34, "offsetY": 6.1, "offsetZ": 3.32, "rotationX": 90, "rotationY": 87.07, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": 1.34, "offsetY": 6.1, "offsetZ": -3.32, "rotationX": -90, "rotationY": -87.07, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 10,
+     "elements": {
+      "OarStarboard": { "offsetX": 1.86, "offsetY": 6.33, "offsetZ": 2.54, "rotationX": 90, "rotationY": 76.0, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": 1.86, "offsetY": 6.33, "offsetZ": -2.54, "rotationX": -90, "rotationY": -76.0, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 12,
+     "elements": {
+      "OarStarboard": { "offsetX": 2.17, "offsetY": 6.47, "offsetZ": 1.87, "rotationX": 90, "rotationY": 67.35, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": 2.17, "offsetY": 6.47, "offsetZ": -1.87, "rotationX": -90, "rotationY": -67.35, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 14,
+     "elements": {
+      "OarStarboard": { "offsetX": 2.5, "offsetY": 6.45, "offsetZ": 1.48, "rotationX": 90, "rotationY": 62.61, "rotationZ": -22.16 },
+      "OarPort": { "offsetX": 2.5, "offsetY": 6.45, "offsetZ": -1.48, "rotationX": -90, "rotationY": -62.61, "rotationZ": -22.16 }
+     }
+    },
+    {
+     "frame": 16,
+     "elements": {
+      "OarStarboard": { "offsetX": 3.3, "offsetY": 6.07, "offsetZ": 1.48, "rotationX": 90, "rotationY": 62.61, "rotationZ": -14.84 },
+      "OarPort": { "offsetX": 3.3, "offsetY": 6.07, "offsetZ": -1.48, "rotationX": -90, "rotationY": -62.61, "rotationZ": -14.84 }
+     }
+    },
+    {
+     "frame": 18,
+     "elements": {
+      "OarStarboard": { "offsetX": 3.36, "offsetY": 5.93, "offsetZ": 1.87, "rotationX": 90, "rotationY": 67.35, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 3.36, "offsetY": 5.93, "offsetZ": -1.87, "rotationX": -90, "rotationY": -67.35, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 20,
+     "elements": {
+      "OarStarboard": { "offsetX": 3.03, "offsetY": 5.86, "offsetZ": 2.54, "rotationX": 90, "rotationY": 76.0, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 3.03, "offsetY": 5.86, "offsetZ": -2.54, "rotationX": -90, "rotationY": -76.0, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 22,
+     "elements": {
+      "OarStarboard": { "offsetX": 2.48, "offsetY": 5.73, "offsetZ": 3.32, "rotationX": 90, "rotationY": 87.07, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 2.48, "offsetY": 5.73, "offsetZ": -3.32, "rotationX": -90, "rotationY": -87.07, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 24,
+     "elements": {
+      "OarStarboard": { "offsetX": 1.76, "offsetY": 5.56, "offsetZ": 3.99, "rotationX": 90, "rotationY": 98.65, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 1.76, "offsetY": 5.56, "offsetZ": -3.99, "rotationX": -90, "rotationY": -98.65, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 26,
+     "elements": {
+      "OarStarboard": { "offsetX": 1.03, "offsetY": 5.4, "offsetZ": 4.45, "rotationX": 90, "rotationY": 108.74, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 1.03, "offsetY": 5.4, "offsetZ": -4.45, "rotationX": -90, "rotationY": -108.74, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 28,
+     "elements": {
+      "OarStarboard": { "offsetX": 0.5, "offsetY": 5.27, "offsetZ": 4.68, "rotationX": 90, "rotationY": 115.58, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 0.5, "offsetY": 5.27, "offsetZ": -4.68, "rotationX": -90, "rotationY": -115.58, "rotationZ": -13.0 }
+     }
+    }
+   ]
+  },
+  {
+   "name": "roughseas-oars-backward",
+   "code": "roughseas-oars-backward",
+   "quantityframes": 30,
+   "onActivityStopped": "EaseOut",
+   "onAnimationEnd": "Repeat",
+   "keyframes": [
+    {
+     "frame": 0,
+     "elements": {
+      "OarStarboard": { "offsetX": -0.19, "offsetY": 5.23, "offsetZ": 4.75, "rotationX": 90, "rotationY": 118.0, "rotationZ": -18.5 },
+      "OarPort": { "offsetX": -0.19, "offsetY": 5.23, "offsetZ": -4.75, "rotationX": -90, "rotationY": -118.0, "rotationZ": -18.5 }
+     }
+    },
+    {
+     "frame": 2,
+     "elements": {
+      "OarStarboard": { "offsetX": 0.5, "offsetY": 5.27, "offsetZ": 4.68, "rotationX": 90, "rotationY": 115.58, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 0.5, "offsetY": 5.27, "offsetZ": -4.68, "rotationX": -90, "rotationY": -115.58, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 4,
+     "elements": {
+      "OarStarboard": { "offsetX": 1.03, "offsetY": 5.4, "offsetZ": 4.45, "rotationX": 90, "rotationY": 108.74, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 1.03, "offsetY": 5.4, "offsetZ": -4.45, "rotationX": -90, "rotationY": -108.74, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 6,
+     "elements": {
+      "OarStarboard": { "offsetX": 1.76, "offsetY": 5.56, "offsetZ": 3.99, "rotationX": 90, "rotationY": 98.65, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 1.76, "offsetY": 5.56, "offsetZ": -3.99, "rotationX": -90, "rotationY": -98.65, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 8,
+     "elements": {
+      "OarStarboard": { "offsetX": 2.48, "offsetY": 5.73, "offsetZ": 3.32, "rotationX": 90, "rotationY": 87.07, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 2.48, "offsetY": 5.73, "offsetZ": -3.32, "rotationX": -90, "rotationY": -87.07, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 10,
+     "elements": {
+      "OarStarboard": { "offsetX": 3.03, "offsetY": 5.86, "offsetZ": 2.54, "rotationX": 90, "rotationY": 76.0, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 3.03, "offsetY": 5.86, "offsetZ": -2.54, "rotationX": -90, "rotationY": -76.0, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 12,
+     "elements": {
+      "OarStarboard": { "offsetX": 3.36, "offsetY": 5.93, "offsetZ": 1.87, "rotationX": 90, "rotationY": 67.35, "rotationZ": -13.0 },
+      "OarPort": { "offsetX": 3.36, "offsetY": 5.93, "offsetZ": -1.87, "rotationX": -90, "rotationY": -67.35, "rotationZ": -13.0 }
+     }
+    },
+    {
+     "frame": 14,
+     "elements": {
+      "OarStarboard": { "offsetX": 3.3, "offsetY": 6.07, "offsetZ": 1.48, "rotationX": 90, "rotationY": 62.61, "rotationZ": -14.84 },
+      "OarPort": { "offsetX": 3.3, "offsetY": 6.07, "offsetZ": -1.48, "rotationX": -90, "rotationY": -62.61, "rotationZ": -14.84 }
+     }
+    },
+    {
+     "frame": 16,
+     "elements": {
+      "OarStarboard": { "offsetX": 2.5, "offsetY": 6.45, "offsetZ": 1.48, "rotationX": 90, "rotationY": 62.61, "rotationZ": -22.16 },
+      "OarPort": { "offsetX": 2.5, "offsetY": 6.45, "offsetZ": -1.48, "rotationX": -90, "rotationY": -62.61, "rotationZ": -22.16 }
+     }
+    },
+    {
+     "frame": 18,
+     "elements": {
+      "OarStarboard": { "offsetX": 2.17, "offsetY": 6.47, "offsetZ": 1.87, "rotationX": 90, "rotationY": 67.35, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": 2.17, "offsetY": 6.47, "offsetZ": -1.87, "rotationX": -90, "rotationY": -67.35, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 20,
+     "elements": {
+      "OarStarboard": { "offsetX": 1.86, "offsetY": 6.33, "offsetZ": 2.54, "rotationX": 90, "rotationY": 76.0, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": 1.86, "offsetY": 6.33, "offsetZ": -2.54, "rotationX": -90, "rotationY": -76.0, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 22,
+     "elements": {
+      "OarStarboard": { "offsetX": 1.34, "offsetY": 6.1, "offsetZ": 3.32, "rotationX": 90, "rotationY": 87.07, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": 1.34, "offsetY": 6.1, "offsetZ": -3.32, "rotationX": -90, "rotationY": -87.07, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 24,
+     "elements": {
+      "OarStarboard": { "offsetX": 0.67, "offsetY": 5.8, "offsetZ": 3.99, "rotationX": 90, "rotationY": 98.65, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": 0.67, "offsetY": 5.8, "offsetZ": -3.99, "rotationX": -90, "rotationY": -98.65, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 26,
+     "elements": {
+      "OarStarboard": { "offsetX": -0.01, "offsetY": 5.49, "offsetZ": 4.45, "rotationX": 90, "rotationY": 108.74, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": -0.01, "offsetY": 5.49, "offsetZ": -4.45, "rotationX": -90, "rotationY": -108.74, "rotationZ": -24.0 }
+     }
+    },
+    {
+     "frame": 28,
+     "elements": {
+      "OarStarboard": { "offsetX": -0.51, "offsetY": 5.27, "offsetZ": 4.68, "rotationX": 90, "rotationY": 115.58, "rotationZ": -24.0 },
+      "OarPort": { "offsetX": -0.51, "offsetY": 5.27, "offsetZ": -4.68, "rotationX": -90, "rotationY": -115.58, "rotationZ": -24.0 }
+     }
+    }
    ]
   }
  ]

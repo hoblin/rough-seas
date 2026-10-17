@@ -78,6 +78,29 @@ public class VesselShapeTests
         Assert.Empty(SailStates.Except(Elements(shape["elements"]!).Select(element => element.Value<string>("name"))));
     }
 
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void MovesItsOwnOarsWithEveryStrokeOfItsRower(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        var own = entity["client"]!["animations"]?.Select(animation => animation.Value<string>("code")!).ToList() ?? [];
+        if (own.Count == 0) return;
+        var attributes = entity["attributes"]!;
+        var strokes = attributes["mountAnimations"]!.Children<JProperty>().Select(stroke => stroke.Value.Value<string>());
+        var animated = shape["animations"]!.Select(animation => animation.Value<string>("code"));
+
+        Assert.NotEqual(true, attributes.Value<bool?>("requiresPaddlingTool"));
+        Assert.Empty(own.Except(strokes));
+        Assert.Empty(own.Except(animated));
+        Assert.Empty(own.Except(RowerAnimations()));
+    }
+
+    private static IEnumerable<string> RowerAnimations() =>
+        Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "patches"), "player-*.json")
+            .SelectMany(file => JArray.Parse(File.ReadAllText(file)))
+            .Where(op => op.Value<string>("path") == "/client/animations/-")
+            .Select(op => op["value"]!.Value<string>("code")!);
+
     private static (JToken Entity, JToken Item, JToken Shape) Load(string vessel)
     {
         var entity = Read("vessel", vessel);

@@ -10,7 +10,9 @@ BUILD
   bin/model build [VESSEL...]      regenerate our vessels' shapes from their builders in
                                    bin/lib/hulls (all of them by default). The builders are the
                                    source of those shapes: change a vessel there, and its hull box
-                                   and seats in its JSON (docs/modeling.md).
+                                   and seats in its JSON (docs/modeling.md). A vessel with its own
+                                   oars or paddle also gets the rower's arms fitted to them, and
+                                   <temp>/model/VESSEL-rowed.json shows both for bin/model pose.
 EDIT
   bin/model edit SHAPE SCRIPT      import SHAPE, run SCRIPT (Python, bpy) on the scene, export
                                    back over SHAPE. The usual way to change any other model.

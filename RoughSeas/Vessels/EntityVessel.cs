@@ -1,3 +1,4 @@
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
@@ -14,11 +15,19 @@ public class EntityVessel : EntityBoat
     public const string ClassName = "roughseas:EntityVessel";
 
     private double turnSpeed = 1;
+    private OwnOars? oars;
 
     public override void Initialize(EntityProperties properties, ICoreAPI api, long InChunkIndex3d)
     {
         base.Initialize(properties, api, InChunkIndex3d);
         turnSpeed = properties.Attributes["turnSpeed"].AsDouble(1);
+        if (api.Side == EnumAppSide.Client) oars = new OwnOars(this);
+    }
+
+    public override void OnRenderFrame(float dt, EnumRenderStage stage)
+    {
+        base.OnRenderFrame(dt, stage);
+        oars?.Follow();
     }
 
     public override Vec2d SeatsToMotion(float dt)

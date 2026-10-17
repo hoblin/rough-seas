@@ -10,11 +10,10 @@
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
             "idle": "sitboatidle",
-            "ready": "crudeOarReady",
-            "forwards": "crudeOarForward",
-            "backwards": "crudeOarBackward"
+            "ready": "roughseas-oars-ready",
+            "forwards": "roughseas-oars-forward",
+            "backwards": "roughseas-oars-backward"
         },
-        "requiresPaddlingTool": true,
         "rightClickPickup": true
     },
     "hitboxSize": {"x": 1.2, "y": 0.6},
@@ -60,7 +59,7 @@
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
                 },
-                {"apName": "FrontSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1}
+                {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1}
             ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
@@ -116,6 +115,11 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater", "Bilge"]},
+        "animations": [
+            {"code": "roughseas-oars-ready", "animation": "roughseas-oars-ready", "animationSpeed": 0, "easeInSpeed": 4, "easeOutSpeed": 4},
+            {"code": "roughseas-oars-forward", "animation": "roughseas-oars-forward", "animationSpeed": 0, "easeInSpeed": 4, "easeOutSpeed": 4},
+            {"code": "roughseas-oars-backward", "animation": "roughseas-oars-backward", "animationSpeed": 0, "easeInSpeed": 4, "easeOutSpeed": 4}
+        ],
         "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},

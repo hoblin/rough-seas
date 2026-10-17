@@ -285,6 +285,7 @@ class Shape:
         self.path = Path(path)
         self.textures = textures
         self.elements = []
+        self.animations = []
 
     def add(self, *elements):
         for element in elements:
@@ -309,6 +310,8 @@ class Shape:
             "textures": self.textures,
             "elements": self.elements,
         }
+        if self.animations:
+            shape["animations"] = self.animations
         write(self.path, shape)
         print(f"{self.path}: {count(self.elements)} elements")
 
