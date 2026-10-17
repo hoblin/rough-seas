@@ -11,6 +11,7 @@ public class SeaWeatherModel
     private readonly WorldClimate climate;
     private readonly OceanBasins basins;
     private readonly OceanCurrents currents;
+    private readonly Showers showers;
     private readonly NormalizedSimplexNoise strengthNoise;
     private readonly NormalizedSimplexNoise veerNoise;
 
@@ -23,6 +24,7 @@ public class SeaWeatherModel
         beaufort = new BeaufortScale(config.Beaufort);
         currents = new OceanCurrents(config.Currents);
         Storms = new StormField(seed, config, climate, prevailing, hoursPerYear);
+        showers = new Showers(seed, config.Showers, climate);
         strengthNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 41017);
         veerNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 90121);
     }
@@ -45,8 +47,18 @@ public class SeaWeatherModel
             beaufort.WaveHeightAt(seaWind) * oceanity,
             oceanity,
             wind.Presence,
-            wind.Rain,
             wind.Storm?.Code);
+    }
+
+    /// <summary>
+    /// The rain here, on vanilla's scale for <c>WeatherSystemBase.GetRainCloudness</c>: clouds gather from 0 and rain
+    /// falls above 0.5, its rainfall the excess.
+    /// </summary>
+    public double RainCloudness(double x, double z, double hours)
+    {
+        var storms = StormsAt(x, z, hours);
+        var stormCloudness = storms.Presence > 0 ? 0.5 * storms.Presence + storms.Rain : 0;
+        return Math.Max(showers.CloudnessAt(x, z, hours), stormCloudness);
     }
 
     public bool IsSea(double x, double z) => basins.At(x, z).IsSea;

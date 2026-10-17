@@ -5,8 +5,8 @@ namespace RoughSeas.Storms;
 
 /// <summary>How a vessel takes the sea, from its <c>roughseas:seaforces</c> config.</summary>
 /// <param name="Heave">The share of a crest's height the hull rises with: what is left climbs its side.</param>
-/// <param name="RollResponse">How many times vanilla's roll it rolls, as drawn.</param>
-/// <param name="PitchResponse">How many times vanilla's pitch it pitches, as drawn.</param>
+/// <param name="RollResponse">How many times the water's slope across it it rolls, as drawn; vanilla's roll where no swell is drawn.</param>
+/// <param name="PitchResponse">How many times the water's slope along it it pitches, as drawn; vanilla's pitch where no swell is drawn.</param>
 public readonly record struct Seaworthiness(
     double FreeboardMetres,
     double Heave,

@@ -23,8 +23,8 @@
             "freeboardMetres": "A small open sailing boat shows about half a metre of side",
             "heave": "Balance: a planked hull of some weight rises with part of the crest",
             "capsizeBreakerMetres": "Wolfson Unit capsize trials after the 1979 Fastnet: a breaker of about 55% of a keelboat's length rolls it; the sailboat is about 6 m",
-            "rollResponse": "Vanilla's own roll",
-            "pitchResponse": "Vanilla's own pitch"
+            "rollResponse": "Follows the water's slope as it is, vanilla's own roll where no swell is drawn",
+            "pitchResponse": "Follows the water's slope as it is, vanilla's own pitch where no swell is drawn"
         }
     } },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:seaforces" } },

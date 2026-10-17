@@ -59,7 +59,7 @@ public static class SeaWeatherCommands
         var latitude = (api.World.Calendar.OnGetLatitude?.Invoke(pos.Z) ?? 0.5) * 90;
         return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, latitude {latitude:0.0}°, hour {sea.NowHours:0.00}: "
             + $"wind from {state.WindFromDegrees:0}° at {state.WindSpeed:0.0} m/s, Beaufort {state.Beaufort} ({force.Name}); "
-            + $"waves {state.WaveHeight:0.0} m; oceanity {state.Oceanity:P0}; {storm}, rain {state.StormRain:P0}; "
+            + $"waves {state.WaveHeight:0.0} m; oceanity {state.Oceanity:P0}; {storm}, rain {Rainfall(api, pos):P0}; "
             + $"current toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C ({Signed(current.WarmthCelsius)} from the current); "
             + $"vanilla wind ({vanilla.X:0.00}, {vanilla.Z:0.00})";
     }
@@ -106,6 +106,9 @@ public static class SeaWeatherCommands
     private static string Describe(ICoreAPI api, SeaCurrent current, double x, double z, Vec3d pos) =>
         $"toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C ({Signed(current.WarmthCelsius)}), "
         + $"at {Coordinates(api, x, z)}, {Distance((x, z), pos):0} blocks away bearing {Compass.FromDegrees(pos.X - x, pos.Z - z):0}°";
+
+    private static float Rainfall(ICoreAPI api, Vec3d pos) =>
+        api.World.BlockAccessor.GetClimateAt(pos.AsBlockPos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0;
 
     private static string Signed(double celsius) => $"{Math.Round(celsius, 1) + 0.0:+0.0;-0.0}";
 

@@ -8,7 +8,6 @@ namespace RoughSeas.SeaAndWeather;
 /// <param name="WaveHeight">Probable wave height from the WMO Beaufort table, m. It builds and falls behind the wind.</param>
 /// <param name="Oceanity">0 on land to 1 on open sea; 1 where the map region is not loaded on this side.</param>
 /// <param name="StormPresence">0 to 1, the combined presence of the storms here.</param>
-/// <param name="StormRain">0 to 1, the rain the storms bring.</param>
 /// <param name="StormCode">The strongest storm's type, or null.</param>
 public readonly record struct SeaState(
     double WindX,
@@ -17,7 +16,6 @@ public readonly record struct SeaState(
     double WaveHeight,
     double Oceanity,
     double StormPresence,
-    double StormRain,
     string? StormCode)
 {
     public double WindSpeed => Math.Sqrt(WindX * WindX + WindZ * WindZ);
