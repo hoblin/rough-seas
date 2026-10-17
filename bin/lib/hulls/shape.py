@@ -128,11 +128,17 @@ def beam(name, start, end, width, height, tex, *, ties=(), tie=None, tie_tex=Non
 
 
 def paddle(at, rot, shaft, blade, tex):
+    x = throat(shaft)[0]
     return group("Paddle", at, rot, [
         box("PaddleShaft", (0, 0, 0), (shaft, 0.7, 0.7), tex),
+        box("PaddleThroat", (x - 1, -0.1, -0.1), (x + 1, 0.8, 0.8), tex),
         box("PaddleBlade", (shaft, -0.1, -1.3), (shaft + blade, 0.5, 2), tex),
         box("PaddleGrip", (-1.2, -0.2, -0.5), (0, 0.9, 1.2), tex),
     ])
+
+
+def throat(shaft):
+    return (0.6 * shaft, 0.35, 0.35)
 
 
 def path(name, points, width, height, tex, **options):
@@ -285,6 +291,7 @@ class Shape:
         self.path = Path(path)
         self.textures = textures
         self.elements = []
+        self.animations = []
 
     def add(self, *elements):
         for element in elements:
@@ -309,6 +316,8 @@ class Shape:
             "textures": self.textures,
             "elements": self.elements,
         }
+        if self.animations:
+            shape["animations"] = self.animations
         write(self.path, shape)
         print(f"{self.path}: {count(self.elements)} elements")
 

@@ -10,11 +10,10 @@
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
             "idle": "sitflooridle",
-            "ready": "crudeOarReady",
-            "forwards": "crudeOarForward",
-            "backwards": "crudeOarBackward"
+            "ready": "roughseas-coracle-ready",
+            "forwards": "roughseas-coracle-forward",
+            "backwards": "roughseas-coracle-backward"
         },
-        "requiresPaddlingTool": true,
         "rightClickPickup": true
     },
     "hitboxSize": {"x": 1.375, "y": 0.5},
@@ -79,6 +78,11 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater", "Bilge"]},
+        "animations": [
+            {"code": "roughseas-coracle-ready", "animation": "roughseas-coracle-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-coracle-forward", "animation": "roughseas-coracle-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-coracle-backward", "animation": "roughseas-coracle-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
+        ],
         "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},

@@ -10,11 +10,10 @@
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
             "idle": "roughseas-sitlegsforward",
-            "ready": "crudeOarReady",
-            "forwards": "crudeOarForward",
-            "backwards": "crudeOarBackward"
+            "ready": "roughseas-reedboat-ready",
+            "forwards": "roughseas-reedboat-forward",
+            "backwards": "roughseas-reedboat-backward"
         },
-        "requiresPaddlingTool": true,
         "rightClickPickup": true
     },
     "hitboxSize": {"x": 1.2, "y": 0.45},
@@ -81,7 +80,12 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/reedboat"},
-        "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "pole": {"base": "game:block/wood/debarked/birch"}},
+        "animations": [
+            {"code": "roughseas-reedboat-ready", "animation": "roughseas-reedboat-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-reedboat-forward", "animation": "roughseas-reedboat-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-reedboat-backward", "animation": "roughseas-reedboat-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
+        ],
+        "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "paddle": {"base": "game:block/wood/debarked/birch"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},

@@ -10,11 +10,10 @@
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
             "idle": "sitboatidle",
-            "ready": "crudeOarReady",
-            "forwards": "crudeOarForward",
-            "backwards": "crudeOarBackward"
+            "ready": "roughseas-currach-ready",
+            "forwards": "roughseas-currach-forward",
+            "backwards": "roughseas-currach-backward"
         },
-        "requiresPaddlingTool": true,
         "rightClickPickup": true
     },
     "hitboxSize": {"x": 1.2, "y": 0.6},
@@ -60,7 +59,7 @@
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
                 },
-                {"apName": "FrontSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1}
+                {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1}
             ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
@@ -116,6 +115,11 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater", "Bilge"]},
+        "animations": [
+            {"code": "roughseas-currach-ready", "animation": "roughseas-currach-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-currach-forward", "animation": "roughseas-currach-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
+            {"code": "roughseas-currach-backward", "animation": "roughseas-currach-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
+        ],
         "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},

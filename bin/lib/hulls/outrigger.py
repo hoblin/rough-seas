@@ -1,6 +1,7 @@
 import math
 
-from shape import BILGE, Hull, Shape, beam, box, group, paddle, path, run
+from shape import BILGE, Hull, Shape, beam, box, paddle, path, run, throat
+from stroke import crew, paddling
 
 PROFILE = [(0, 0), (2.6, 0.4), (3.8, 2.2), (4.1, 5), (4.2, 7.6)]
 
@@ -24,6 +25,9 @@ STATIONS = [
 FLOAT = 32.5
 MAST = (12, 8)
 MASTHEAD = 55
+REACH = 40
+STOWED = ((-22, 2.6, 9.4), (0, -2, 3))
+SHAFT = 14
 
 
 def prow(name, x, direction):
@@ -57,6 +61,18 @@ def sail(name, low, high):
     return strips
 
 
+def rig(name, children):
+    x, z = MAST
+    return box(name, (0, 0, 0), (0, 0, 0), {}, origin=(x, 0, z), rot=(0, REACH, 0), children=children)
+
+
+def reached(point):
+    x, z = MAST
+    angle = math.radians(REACH)
+    dx, dz = point[0] - x, point[2] - z
+    return (x + dx * math.cos(angle) + dz * math.sin(angle), point[1], z - dx * math.sin(angle) + dz * math.cos(angle))
+
+
 def rope(name, start, end):
     pieces = math.ceil(math.dist(start, end) / 16)
     points = [tuple(s + (e - s) * n / pieces for s, e in zip(start, end)) for n in range(pieces + 1)]
@@ -84,29 +100,31 @@ def build(target):
     shape.add(run("Mast", (x - 1, 1.4, z - 1), (x + 1, MASTHEAD, z + 1), "inside", axis="y"))
     shape.add(box("MastStep", (x - 2, 1, z - 2), (x + 2, 2.4, z + 2), "inside"))
     shape.add(box("MastPartner", (x - 2.4, 7.4, z - 3.6), (x + 2.4, 8.4, z + 3.6), "inside", grain="z"))
-    shape.add(run("Yard", (-8, 52, 7.5), (32, 53, 8.5), "inside"))
+    shape.add(rig("Yard", run("Yard", (-8, 52, 7.5), (32, 53, 8.5), "inside")))
     shape.add(
         rope("Forestay", (x, MASTHEAD - 1, z), (44.5, 9, 8)),
         rope("Backstay", (x, MASTHEAD - 1, z), (-29.5, 9, 8)),
         rope("Shroud", (x, MASTHEAD - 1, z), (x, 10, FLOAT - 1)),
-        rope("Sheet", (-7, 15.5, 8), (-22, 9.4, 8)),
+        rope("Sheet", reached((-7, 15.5, 8)), (-22, 9.4, 8)),
     )
     shape.add(
-        group("SailUnfurled", (0, 0, 0), (0, 0, 0), sail("SailUnfurled", 16, 52) + [
+        rig("SailUnfurled", sail("SailUnfurled", 16, 52) + [
             *run("SailUnfurledBoom", (-8, 15, 7.4), (32, 16, 8.6), "inside")]),
-        group("SailHalf", (0, 0, 0), (0, 0, 0), sail("SailHalf", 34, 52) + [
+        rig("SailHalf", sail("SailHalf", 34, 52) + [
             *run("SailHalfBoom", (-8, 33, 7.4), (32, 34, 8.6), "inside")]),
-        group("SailFurled", (0, 0, 0), (0, 0, 0), [
+        rig("SailFurled", [
             box("SailRoll1", (-6, 49.5, 7), (10, 52, 9), "sail"),
             box("SailRoll2", (10, 49.5, 7), (26, 52, 9), "sail"),
             box("SailRoll3", (26, 49.5, 7), (30, 52, 9), "sail"),
         ] + [box(f"SailGasket{n}", (gx, 49.2, 6.7), (gx + 0.6, 52.3, 9.3), "lashing") for n, gx in
              enumerate((-3, 5, 13, 21, 28), 1)]),
     )
-    shape.add(paddle((-22, 2.6, 9.4), (0, -2, 3), 14, 7, "inside"))
+    shape.add(paddle(*STOWED, SHAFT, 7, "inside"))
     shape.add(hull.hide_water(7.3), hull.bilge(7.3))
     shape.keep("LowerMastStorage", "Hull", "FrontSeat", "BackSeat")
-    shape.write()
+    crew(shape, "outrigger", "BackSeat", "roughseas-sitlegsforward",
+         paddling("outrigger", STOWED, throat(SHAFT), 23, 35, 10.5, 2.5),
+         {"R": "PaddleThroat", "L": "PaddleGrip"}, {"rotationZ": 6})
 
 
 if __name__ == "__main__":

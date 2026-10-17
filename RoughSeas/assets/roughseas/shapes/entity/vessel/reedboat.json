@@ -2,7 +2,7 @@
  "editor": { "allAngles": false, "entityTextureMode": false },
  "textureWidth": 16,
  "textureHeight": 16,
- "textures": { "reed": "roughseas:entity/vessel/reed", "rope": "game:block/cloth/reedrope", "pole": "game:block/wood/debarked/birch" },
+ "textures": { "reed": "roughseas:entity/vessel/reed", "rope": "game:block/cloth/reedrope", "paddle": "game:block/wood/debarked/birch" },
  "elements": [
   {
    "name": "Port1x1Frame",
@@ -1041,38 +1041,77 @@
    }
   },
   {
-   "name": "Pole",
-   "from": [ -6, 5.6, 6.2 ],
-   "to": [ -6, 5.6, 6.2 ],
-   "rotationOrigin": [ -6, 5.6, 6.2 ],
+   "name": "Paddle",
+   "from": [ -6, 5.6, 2.2 ],
+   "to": [ -6, 5.6, 2.2 ],
+   "rotationOrigin": [ -6, 5.6, 2.2 ],
    "rotationY": -3,
    "rotationZ": 1.5,
    "faces": {},
    "children": [
     {
-     "name": "PoleShaft",
-     "from": [ 0, 0, 0 ],
-     "to": [ 30, 0.7, 0.7 ],
+     "name": "PaddleHandle",
+     "from": [ -10.5, -0.5, -1 ],
+     "to": [ -9, 0.9, 1 ],
      "faces": {
-      "north": { "texture": "#pole", "uv": [ 0, 12, 16, 12.7 ] },
-      "east": { "texture": "#pole", "uv": [ 12, 12.5, 12.7, 13.2 ] },
-      "south": { "texture": "#pole", "uv": [ 0, 6, 16, 6.7 ] },
-      "west": { "texture": "#pole", "uv": [ 0.5, 11.5, 1.2, 12.2 ] },
-      "up": { "texture": "#pole", "uv": [ 0, 14.5, 16, 15.2 ] },
-      "down": { "texture": "#pole", "uv": [ 0, 12, 16, 12.7 ] }
+      "north": { "texture": "#paddle", "uv": [ 13, 13.5, 14.5, 14.9 ] },
+      "east": { "texture": "#paddle", "uv": [ 8, 5, 10, 6.4 ] },
+      "south": { "texture": "#paddle", "uv": [ 13, 0, 14.5, 1.4 ] },
+      "west": { "texture": "#paddle", "uv": [ 9, 11.5, 11, 12.9 ] },
+      "up": { "texture": "#paddle", "uv": [ 4.5, 11, 6.5, 12.5 ], "rotation": 90 },
+      "down": { "texture": "#paddle", "uv": [ 13, 3.5, 15, 5 ], "rotation": 90 }
      }
     },
     {
-     "name": "PoleFoot",
-     "from": [ 30, -0.1, -0.1 ],
-     "to": [ 31.2, 0.8, 0.8 ],
+     "name": "PaddleTop",
+     "from": [ -9, -0.2, -0.2 ],
+     "to": [ -6, 0.6, 0.6 ],
      "faces": {
-      "north": { "texture": "#pole", "uv": [ 5, 1.5, 6.2, 2.4 ] },
-      "east": { "texture": "#pole", "uv": [ 11.5, 8.5, 12.4, 9.4 ] },
-      "south": { "texture": "#pole", "uv": [ 7, 8, 8.2, 8.9 ] },
-      "west": { "texture": "#pole", "uv": [ 7.5, 8.5, 8.4, 9.4 ] },
-      "up": { "texture": "#pole", "uv": [ 11, 8.5, 12.2, 9.4 ] },
-      "down": { "texture": "#pole", "uv": [ 9.5, 0, 10.7, 0.9 ] }
+      "north": { "texture": "#paddle", "uv": [ 5.5, 5.5, 8.5, 6.3 ] },
+      "east": { "texture": "#paddle", "uv": [ 14.5, 12.5, 15.3, 13.3 ] },
+      "south": { "texture": "#paddle", "uv": [ 5.5, 11, 8.5, 11.8 ] },
+      "west": { "texture": "#paddle", "uv": [ 13, 12, 13.8, 12.8 ] },
+      "up": { "texture": "#paddle", "uv": [ 5.5, 5, 8.5, 5.8 ] },
+      "down": { "texture": "#paddle", "uv": [ 3.5, 7, 6.5, 7.8 ] }
+     }
+    },
+    {
+     "name": "PaddleShaft",
+     "from": [ -6, -0.15, -0.15 ],
+     "to": [ 10, 0.55, 0.55 ],
+     "faces": {
+      "north": { "texture": "#paddle", "uv": [ 0, 13, 16, 13.7 ] },
+      "east": { "texture": "#paddle", "uv": [ 7.5, 0, 8.2, 0.7 ] },
+      "south": { "texture": "#paddle", "uv": [ 0, 10.5, 16, 11.2 ] },
+      "west": { "texture": "#paddle", "uv": [ 2.5, 4, 3.2, 4.7 ] },
+      "up": { "texture": "#paddle", "uv": [ 0, 13, 16, 13.7 ] },
+      "down": { "texture": "#paddle", "uv": [ 0, 5, 16, 5.7 ] }
+     }
+    },
+    {
+     "name": "PaddleThroat",
+     "from": [ -1, -0.2, -0.2 ],
+     "to": [ 1, 0.6, 0.6 ],
+     "faces": {
+      "north": { "texture": "#paddle", "uv": [ 1.5, 11.5, 3.5, 12.3 ] },
+      "east": { "texture": "#paddle", "uv": [ 9, 2, 9.8, 2.8 ] },
+      "south": { "texture": "#paddle", "uv": [ 5.5, 4.5, 7.5, 5.3 ] },
+      "west": { "texture": "#paddle", "uv": [ 5, 3, 5.8, 3.8 ] },
+      "up": { "texture": "#paddle", "uv": [ 11.5, 6, 13.5, 6.8 ] },
+      "down": { "texture": "#paddle", "uv": [ 13, 8, 15, 8.8 ] }
+     }
+    },
+    {
+     "name": "PaddleBlade",
+     "from": [ 10, -0.05, -1.2 ],
+     "to": [ 18.5, 0.45, 1.9 ],
+     "faces": {
+      "north": { "texture": "#paddle", "uv": [ 3, 5, 11.5, 5.5 ] },
+      "east": { "texture": "#paddle", "uv": [ 1, 5, 4.1, 5.5 ] },
+      "south": { "texture": "#paddle", "uv": [ 0, 10, 8.5, 10.5 ] },
+      "west": { "texture": "#paddle", "uv": [ 11.5, 12.5, 14.6, 13 ] },
+      "up": { "texture": "#paddle", "uv": [ 5.5, 0, 14, 3.1 ] },
+      "down": { "texture": "#paddle", "uv": [ 2.5, 1.5, 11, 4.6 ] }
      }
     }
    ]
@@ -1102,6 +1141,221 @@
    "faces": {},
    "attachmentpoints": [
     { "code": "CargoAP", "posX": "5", "posY": "0", "posZ": "5", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ]
+  }
+ ],
+ "animations": [
+  {
+   "name": "roughseas-reedboat-ready",
+   "code": "roughseas-reedboat-ready",
+   "quantityframes": 30,
+   "onActivityStopped": "EaseOut",
+   "onAnimationEnd": "Repeat",
+   "keyframes": [
+    {
+     "frame": 0,
+     "elements": {
+      "Paddle": { "offsetX": -4.04, "offsetY": 10.49, "offsetZ": -7.5, "rotationX": 62, "rotationY": 3, "rotationZ": -96.5 }
+     }
+    }
+   ]
+  },
+  {
+   "name": "roughseas-reedboat-forward",
+   "code": "roughseas-reedboat-forward",
+   "quantityframes": 30,
+   "onActivityStopped": "EaseOut",
+   "onAnimationEnd": "Repeat",
+   "keyframes": [
+    {
+     "frame": 0,
+     "elements": {
+      "Paddle": { "offsetX": -5.88, "offsetY": 3.84, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -101.5 }
+     }
+    },
+    {
+     "frame": 2,
+     "elements": {
+      "Paddle": { "offsetX": -5.84, "offsetY": 4.4, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -100.14 }
+     }
+    },
+    {
+     "frame": 4,
+     "elements": {
+      "Paddle": { "offsetX": -5.62, "offsetY": 6.01, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -96.25 }
+     }
+    },
+    {
+     "frame": 6,
+     "elements": {
+      "Paddle": { "offsetX": -4.92, "offsetY": 8.4, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -90.39 }
+     }
+    },
+    {
+     "frame": 8,
+     "elements": {
+      "Paddle": { "offsetX": -3.53, "offsetY": 11.12, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -83.4 }
+     }
+    },
+    {
+     "frame": 10,
+     "elements": {
+      "Paddle": { "offsetX": -1.51, "offsetY": 13.64, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -76.29 }
+     }
+    },
+    {
+     "frame": 12,
+     "elements": {
+      "Paddle": { "offsetX": 0.72, "offsetY": 15.56, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -70.06 }
+     }
+    },
+    {
+     "frame": 14,
+     "elements": {
+      "Paddle": { "offsetX": 2.56, "offsetY": 16.71, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -65.61 }
+     }
+    },
+    {
+     "frame": 16,
+     "elements": {
+      "Paddle": { "offsetX": 3.45, "offsetY": 17.18, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -63.59 }
+     }
+    },
+    {
+     "frame": 18,
+     "elements": {
+      "Paddle": { "offsetX": 3.34, "offsetY": 16.76, "offsetZ": -5.04, "rotationX": 28.26, "rotationY": 3, "rotationZ": -64.65 }
+     }
+    },
+    {
+     "frame": 20,
+     "elements": {
+      "Paddle": { "offsetX": 2.14, "offsetY": 15.24, "offsetZ": -6.54, "rotationX": 39.82, "rotationY": 3, "rotationZ": -69.46 }
+     }
+    },
+    {
+     "frame": 22,
+     "elements": {
+      "Paddle": { "offsetX": 0.18, "offsetY": 12.89, "offsetZ": -7.36, "rotationX": 46.74, "rotationY": 3, "rotationZ": -77.05 }
+     }
+    },
+    {
+     "frame": 24,
+     "elements": {
+      "Paddle": { "offsetX": -1.99, "offsetY": 10.01, "offsetZ": -7.46, "rotationX": 47.54, "rotationY": 3, "rotationZ": -85.8 }
+     }
+    },
+    {
+     "frame": 26,
+     "elements": {
+      "Paddle": { "offsetX": -3.9, "offsetY": 7.06, "offsetZ": -6.82, "rotationX": 42.06, "rotationY": 3, "rotationZ": -93.85 }
+     }
+    },
+    {
+     "frame": 28,
+     "elements": {
+      "Paddle": { "offsetX": -5.22, "offsetY": 4.76, "offsetZ": -5.46, "rotationX": 31.46, "rotationY": 3, "rotationZ": -99.48 }
+     }
+    }
+   ]
+  },
+  {
+   "name": "roughseas-reedboat-backward",
+   "code": "roughseas-reedboat-backward",
+   "quantityframes": 30,
+   "onActivityStopped": "EaseOut",
+   "onAnimationEnd": "Repeat",
+   "keyframes": [
+    {
+     "frame": 0,
+     "elements": {
+      "Paddle": { "offsetX": -5.88, "offsetY": 3.84, "offsetZ": -3.64, "rotationX": 18.0, "rotationY": 3, "rotationZ": -101.5 }
+     }
+    },
+    {
+     "frame": 2,
+     "elements": {
+      "Paddle": { "offsetX": -5.22, "offsetY": 4.76, "offsetZ": -5.46, "rotationX": 31.46, "rotationY": 3, "rotationZ": -99.48 }
+     }
+    },
+    {
+     "frame": 4,
+     "elements": {
+      "Paddle": { "offsetX": -3.9, "offsetY": 7.06, "offsetZ": -6.82, "rotationX": 42.06, "rotationY": 3, "rotationZ": -93.85 }
+     }
+    },
+    {
+     "frame": 6,
+     "elements": {
+      "Paddle": { "offsetX": -1.99, "offsetY": 10.01, "offsetZ": -7.46, "rotationX": 47.54, "rotationY": 3, "rotationZ": -85.8 }
+     }
+    },
+    {
+     "frame": 8,
+     "elements": {
+      "Paddle": { "offsetX": 0.18, "offsetY": 12.89, "offsetZ": -7.36, "rotationX": 46.74, "rotationY": 3, "rotationZ": -77.05 }
+     }
+    },
+    {
+     "frame": 10,
+     "elements": {
+      "Paddle": { "offsetX": 2.14, "offsetY": 15.24, "offsetZ": -6.54, "rotationX": 39.82, "rotationY": 3, "rotationZ": -69.46 }
+     }
+    },
+    {
+     "frame": 12,
+     "elements": {
+      "Paddle": { "offsetX": 3.34, "offsetY": 16.76, "offsetZ": -5.04, "rotationX": 28.26, "rotationY": 3, "rotationZ": -64.65 }
+     }
+    },
+    {
+     "frame": 14,
+     "elements": {
+      "Paddle": { "offsetX": 3.45, "offsetY": 17.18, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -63.59 }
+     }
+    },
+    {
+     "frame": 16,
+     "elements": {
+      "Paddle": { "offsetX": 2.56, "offsetY": 16.71, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -65.61 }
+     }
+    },
+    {
+     "frame": 18,
+     "elements": {
+      "Paddle": { "offsetX": 0.72, "offsetY": 15.56, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -70.06 }
+     }
+    },
+    {
+     "frame": 20,
+     "elements": {
+      "Paddle": { "offsetX": -1.51, "offsetY": 13.64, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -76.29 }
+     }
+    },
+    {
+     "frame": 22,
+     "elements": {
+      "Paddle": { "offsetX": -3.53, "offsetY": 11.12, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -83.4 }
+     }
+    },
+    {
+     "frame": 24,
+     "elements": {
+      "Paddle": { "offsetX": -4.92, "offsetY": 8.4, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -90.39 }
+     }
+    },
+    {
+     "frame": 26,
+     "elements": {
+      "Paddle": { "offsetX": -5.62, "offsetY": 6.01, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -96.25 }
+     }
+    },
+    {
+     "frame": 28,
+     "elements": {
+      "Paddle": { "offsetX": -5.84, "offsetY": 4.4, "offsetZ": -3.64, "rotationX": 18, "rotationY": 3, "rotationZ": -100.14 }
+     }
+    }
    ]
   }
  ]

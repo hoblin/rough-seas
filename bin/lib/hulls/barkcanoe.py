@@ -1,7 +1,10 @@
-from shape import BILGE, Hull, Shape, box, paddle
+from shape import BILGE, Hull, Shape, box, paddle, throat
+from stroke import crew, paddling
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
+STOWED = ((-2, 1, 6.5), (0, 5, 3))
+SHAFT = 15
 
 
 def section(x, breadth, rocker, rise):
@@ -56,10 +59,12 @@ def build(path):
         for n, x in enumerate(range(-18, 36, 5), 1):
             _, y, z = hull.at(x, top, side)
             shape.add(box(f"Lashing{label}{n}", (x, y - 1.1, z - 0.8), (x + 0.5, y + 0.45, z + 0.8), "lashing", grain="y"))
-    shape.add(paddle((-2, 1, 6.5), (0, 5, 3), 15, 7, "frame"))
+    shape.add(paddle(*STOWED, SHAFT, 7, "frame"))
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
-    shape.write()
+    crew(shape, "barkcanoe", "BackSeat", "roughseas-kneel",
+         paddling("barkcanoe", STOWED, throat(SHAFT), -3.5, 8.5, 11.5, 1),
+         {"R": "PaddleThroat", "L": "PaddleGrip"}, {"rotationZ": 10})
 
 
 if __name__ == "__main__":

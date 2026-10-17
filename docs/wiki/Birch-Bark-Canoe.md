@@ -1,6 +1,6 @@
 ![The birch-bark canoe afloat](images/birch-bark-canoe/afloat-bow.webp)
 
-Sheets of birch bark sewn over a frame of close-set ribs, with gunwales lashed on at intervals, three thwarts and high, upswept ends. Two people paddle it, one in the bow and one in the stern.
+Sheets of birch bark sewn over a frame of close-set ribs, with gunwales lashed on at intervals, three thwarts and high, upswept ends. One person kneels amidships and paddles it with the paddle it carries; a second rides in the bow.
 
 ## In Rough Seas
 
@@ -26,6 +26,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
+| Aboard | a paddler amidships, with its own paddle, and a passenger in the bow |
 | Built from | 12 birch bark, 2 sticks and resin |
 | Wreckage | bark and a stick |
 

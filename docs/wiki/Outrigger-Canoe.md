@@ -1,6 +1,6 @@
 ![The outrigger canoe afloat](images/outrigger-canoe/afloat-bow.webp)
 
-A dugout hull raised with a plank washstrake, with a float log held out to one side on two curved booms, a small platform between them, and a mast stayed fore, aft and out to the float. Its sail is set, reefed or furled to the yard.
+A dugout hull raised with a plank washstrake, with a float log held out to one side on two curved booms, a small platform between them, and a mast stayed fore, aft and out to the float. Its sail is set, reefed or furled to the yard, and stands at a reach, 40° to the hull.
 
 ## In Rough Seas
 
@@ -26,6 +26,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
+| Aboard | the helmsman aft, who paddles when the sail is furled, and a passenger forward |
 | Built from | 4 logs and 8 planks of one wood, 2 ropes and a sail |
 | Wreckage | planks, a rope and some linen |
 
