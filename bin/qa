@@ -75,7 +75,8 @@ land() {
     console "/executeas p[name=$player] /bridge here" | grep -q '"teleporting":false' && return
     sleep 0.5
   done
-  echo "$player has not landed within 15 s" >&2
+  echo "$player has not landed within 15 s; the rest of the commands are not run" >&2
+  exit 1
 }
 
 release_zip() {
@@ -86,15 +87,16 @@ release_zip() {
     return
   fi
   if [ -z "$zip" ] || [ "$zip" = latest ]; then
-    run=$(gh run list -R hoblin/rough-seas -w ci.yml -b main -s success -L 1 --json databaseId -q '.[0].databaseId')
+    run=$(gh run list -R hoblin/rough-seas -w ci.yml -b main -e push -s success -L 1 --json databaseId -q '.[0].databaseId')
     [ -n "$run" ] || { echo "No green CI run on main to take the release zip from" >&2; exit 1; }
     rm -rf "$fetched"
     gh run download "$run" -R hoblin/rough-seas -n release -D "$fetched"
     zip=$(ls "$fetched"/roughseas_*.zip)
   fi
   [ -f "$zip" ] || { echo "No zip at $zip" >&2; exit 1; }
+  cp -f "$zip" "$dir/incoming"
   rm -f "$dir"/roughseas_*.zip
-  cp -f "$zip" "$dir/"
+  mv -f "$dir/incoming" "$dir/$(basename "$zip")"
   rm -rf "$fetched"
   ls "$dir"/roughseas_*.zip
 }
