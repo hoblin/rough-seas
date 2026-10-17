@@ -21,6 +21,17 @@ public readonly record struct Seaworthiness(
         attributes["rollResponse"].AsDouble(1),
         attributes["pitchResponse"].AsDouble(1));
 
+    /// <summary>
+    /// How she takes the sea with her bilge this full, from 0 to 1: water aboard settles her until, full, her sides
+    /// are awash, and its free surface makes her roll more and go over sooner.
+    /// </summary>
+    public Seaworthiness Laden(double fill, SwampingConfig swamping) => this with
+    {
+        FreeboardMetres = FreeboardMetres * (1 - fill),
+        CapsizeBreakerMetres = CapsizeBreakerMetres * (1 - swamping.FreeSurfaceCapsize * fill),
+        RollResponse = RollResponse * (1 + swamping.FreeSurfaceRoll * fill)
+    };
+
     public double Overtopping(double crest) => Math.Max(0, crest * (1 - Heave) - FreeboardMetres);
 
     public double ShippedShare(double crest)

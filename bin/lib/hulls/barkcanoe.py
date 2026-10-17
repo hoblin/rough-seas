@@ -1,4 +1,4 @@
-from shape import Hull, Shape, box, paddle
+from shape import BILGE, Hull, Shape, box, paddle
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -41,6 +41,7 @@ def build(path):
         "bark": "game:block/wood/bark/birch-h",
         "frame": "game:block/wood/debarked/birch",
         "lashing": "game:item/resource/rope",
+        "bilge": BILGE,
     })
     hull = Hull("Skin", STATIONS, 8, 0.6, "bark", "frame", edge="bark")
     shape.add(hull.strakes())
@@ -56,7 +57,7 @@ def build(path):
             _, y, z = hull.at(x, top, side)
             shape.add(box(f"Lashing{label}{n}", (x, y - 1.1, z - 0.8), (x + 0.5, y + 0.45, z + 0.8), "lashing", grain="y"))
     shape.add(paddle((-2, 1, 6.5), (0, 5, 3), 15, 7, "frame"))
-    shape.add(hull.hide_water(5.7))
+    shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
     shape.write()
 

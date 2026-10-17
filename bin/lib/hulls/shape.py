@@ -140,9 +140,24 @@ def path(name, points, width, height, tex, **options):
                  tex, **options) for i, (a, b) in enumerate(zip(points, points[1:]), 1)]
 
 
-def water_plane(name, x0, x1, z0, z1, height):
+def water_plane(name, x0, x1, z0, z1, height, texture="null"):
+    uv = [0, 0, 16, 16] if texture == "null" else [0, 0, num(min(x1 - x0, 16)), num(min(z1 - z0, 16))]
     return {"name": name, "from": [num(x0), num(height), num(z0)], "to": [num(x1), num(height), num(z1)],
-            "faces": {"up": {"texture": "#null", "uv": [0, 0, 16, 16]}}}
+            "faces": {"up": {"texture": "#" + texture, "uv": uv}}}
+
+
+BILGE = "game:block/liquid/waterportion"
+BILGE_LEVELS = 8
+BILGE_BELOW_MASK = 0.4
+
+
+def bilge(floor, mask, planes):
+    """The water aboard: BILGE_LEVELS stacked groups, Bilge1 to BilgeN, from just above the floor to just under
+    the mask; the bilge shows one of them, by how full it is. planes(prefix, height) lays one level's surface."""
+    top = mask - BILGE_BELOW_MASK
+    levels = [group(f"Bilge{n}", (0, 0, 0), (0, 0, 0), planes(f"Bilge{n}x", floor + (top - floor) * n / BILGE_LEVELS))
+              for n in range(1, BILGE_LEVELS + 1)]
+    return group("Bilge", (0, 0, 0), (0, 0, 0), levels)
 
 
 def across(start, end, up):
@@ -215,6 +230,13 @@ class Hull:
         return elements
 
     def hide_water(self, height):
+        return group("hideWater", (0, 0, 0), (0, 0, 0), self.surface("hideWater", height))
+
+    def bilge(self, mask):
+        floor = min(edges[0][1] for _, edges in self.stations) + self.t
+        return bilge(floor, mask, lambda prefix, height: self.surface(prefix, height, "bilge"))
+
+    def surface(self, prefix, height, texture="null"):
         planes = []
         for i in range(len(self.stations) - 1):
             (x0, edges0), (x1, edges1) = self.stations[i], self.stations[i + 1]
@@ -222,8 +244,8 @@ class Hull:
                 continue
             half = min(breadth(edges0, height), breadth(edges1, height)) - self.t
             if half > 0:
-                planes.append(water_plane(f"hideWater{i + 1}", x0, x1, self.cz - half, self.cz + half, height))
-        return group("hideWater", (0, 0, 0), (0, 0, 0), planes)
+                planes.append(water_plane(f"{prefix}{i + 1}", x0, x1, self.cz - half, self.cz + half, height, texture))
+        return planes
 
     def section(self, x):
         edges = range(len(self.stations[0][1]))

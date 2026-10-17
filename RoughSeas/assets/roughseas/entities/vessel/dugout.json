@@ -10,7 +10,7 @@
         "swimmingOffsetY": 0.3,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
-            "idle": "sitflooridle",
+            "idle": "roughseas-sitlegsforward",
             "ready": "crudeOarReady",
             "forwards": "crudeOarForward",
             "backwards": "crudeOarBackward"
@@ -28,14 +28,7 @@
                 "saturation": 80
             }],
             "wreckage": [{"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}}],
-            "cracks": {
-                "textures": ["bark", "inside"],
-                "overlays": [
-                    ["game:block/overlay/cracked/cracked5"],
-                    ["game:block/overlay/cracked/cracked15"],
-                    ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]
-                ]
-            }
+            "damage": {"textures": ["bark", "inside"], "material": "wood"}
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
@@ -52,11 +45,11 @@
                 {
                     "apName": "FrontSeatAP",
                     "controllable": true,
-                    "bodyYawLimit": null,
+                    "bodyYawLimit": 0.4,
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
                 },
-                {"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": null, "eyeHeight": 1, "reverse": true}
+                {"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "reverse": true}
             ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
@@ -111,8 +104,8 @@
     "client": {
         "size": 1,
         "renderer": "Shape",
-        "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater"]},
-        "textures": {"bark": {"base": "game:block/wood/bark/{wood}-h"}, "inside": {"base": "game:block/wood/debarked/{wood}"}},
+        "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater", "Bilge"]},
+        "textures": {"bark": {"base": "game:block/wood/bark/{wood}-h"}, "inside": {"base": "game:block/wood/debarked/{wood}"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},

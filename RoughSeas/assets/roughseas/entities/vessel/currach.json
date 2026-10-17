@@ -9,7 +9,7 @@
         "swimmingOffsetY": 0.42,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {
-            "idle": "sitflooridle",
+            "idle": "sitboatidle",
             "ready": "crudeOarReady",
             "forwards": "crudeOarForward",
             "backwards": "crudeOarBackward"
@@ -39,14 +39,7 @@
                 {"type": "item", "code": "game:stick", "quantity": {"avg": 4, "var": 2}},
                 {"type": "item", "code": "game:leather-normal-plain", "quantity": {"avg": 2, "var": 1}}
             ],
-            "cracks": {
-                "textures": ["hide"],
-                "overlays": [
-                    ["game:block/overlay/cracked/cracked5"],
-                    ["game:block/overlay/cracked/cracked15"],
-                    ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]
-                ]
-            }
+            "damage": {"textures": ["hide"], "material": "hide"}
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
@@ -61,13 +54,13 @@
         "creaturecarrier": {
             "seats": [
                 {
-                    "apName": "FrontSeatAP",
+                    "apName": "BackSeatAP",
                     "controllable": true,
-                    "bodyYawLimit": null,
+                    "bodyYawLimit": 0.4,
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
                 },
-                {"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": null, "eyeHeight": 1, "reverse": true}
+                {"apName": "FrontSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1}
             ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
@@ -122,8 +115,8 @@
     "client": {
         "size": 1,
         "renderer": "Shape",
-        "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater"]},
-        "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}},
+        "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater", "Bilge"]},
+        "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},

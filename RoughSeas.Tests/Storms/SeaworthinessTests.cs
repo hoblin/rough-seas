@@ -7,6 +7,7 @@ namespace RoughSeas.Tests.Storms;
 public class SeaworthinessTests
 {
     private readonly Waves waves = new(Fixtures.Config().Waves);
+    private readonly SwampingConfig swamping = Fixtures.Config().Swamping;
 
     [Fact]
     public void AMetreAndAHalfSwellComesOverTheDugoutButNotTheCurrachOrTheOutrigger()
@@ -56,6 +57,40 @@ public class SeaworthinessTests
         Assert.False(unknown.Capsizes(100));
         Assert.Equal(1, unknown.RollResponse);
         Assert.Equal(1, unknown.PitchResponse);
+    }
+
+    [Fact]
+    public void AnEmptyBilgeLeavesHerAsSheIs()
+    {
+        var dugout = Of("dugout");
+        Assert.Equal(dugout, dugout.Laden(0, swamping));
+    }
+
+    [Fact]
+    public void AFullBilgeLeavesHerAwashSoEveryCrestComesAboard()
+    {
+        var full = Of("currach").Laden(1, swamping);
+        Assert.Equal(0, full.FreeboardMetres);
+        Assert.Equal(1, full.ShippedShare(waves.Crest(0.5, breaking: false)));
+    }
+
+    [Fact]
+    public void WaterAboardMakesHerRollMoreAndGoOverToASmallerBreaker()
+    {
+        var dry = Of("dugout");
+        var half = dry.Laden(0.5, swamping);
+        Assert.True(half.RollResponse > dry.RollResponse);
+        Assert.True(half.CapsizeBreakerMetres < dry.CapsizeBreakerMetres);
+        Assert.False(Of("currach").Capsizes(1.5));
+        Assert.True(Of("currach").Laden(1, swamping).Capsizes(1.5));
+    }
+
+    [Fact]
+    public void WaterAboardSlowsALightHullMoreThanAHeavyOne()
+    {
+        Assert.Equal(1, swamping.SpeedFactor(470, 0));
+        Assert.InRange(swamping.SpeedFactor(470, 225), 0.9, 0.95);
+        Assert.InRange(swamping.SpeedFactor(85, 125), 0.8, 0.85);
     }
 
     private static Seaworthiness Of(string vessel) => Fixtures.Seaworthiness(vessel);

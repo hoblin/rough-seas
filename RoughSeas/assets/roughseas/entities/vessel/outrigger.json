@@ -9,7 +9,7 @@
         "turnSpeed": 0.5,
         "swimmingOffsetY": 0.32,
         "shouldSwivelFromMotion": false,
-        "mountAnimations": {"idle": "sitboatidle", "ready": "", "forwards": "", "backwards": ""},
+        "mountAnimations": {"idle": "roughseas-sitlegsforward", "ready": "", "forwards": "", "backwards": ""},
         "unfurlSails": true
     },
     "hitboxSize": {"x": 1.2, "y": 0.5},
@@ -27,14 +27,7 @@
                 {"type": "item", "code": "game:rope", "quantity": {"avg": 1, "var": 1}},
                 {"type": "block", "code": "game:linen-normal-down", "quantity": {"avg": 1, "var": 1}}
             ],
-            "cracks": {
-                "textures": ["bark", "inside"],
-                "overlays": [
-                    ["game:block/overlay/cracked/cracked5"],
-                    ["game:block/overlay/cracked/cracked15"],
-                    ["game:block/overlay/cracked/cracked15", "game:block/overlay/cracked1"]
-                ]
-            }
+            "damage": {"textures": ["bark", "inside"], "material": "wood"}
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
@@ -50,11 +43,11 @@
         },
         "creaturecarrier": {
             "seats": [
-                {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": null, "eyeHeight": 1},
+                {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1},
                 {
                     "apName": "BackSeatAP",
                     "controllable": true,
-                    "bodyYawLimit": null,
+                    "bodyYawLimit": 0.4,
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
                 }
@@ -107,12 +100,13 @@
     "client": {
         "size": 1,
         "renderer": "Shape",
-        "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater"]},
+        "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater", "Bilge"]},
         "textures": {
             "bark": {"base": "game:block/wood/bark/{wood}-h"},
             "inside": {"base": "game:block/wood/debarked/{wood}"},
             "sail": {"base": "game:block/cloth/linen/plain"},
-            "lashing": {"base": "game:item/resource/rope"}
+            "lashing": {"base": "game:item/resource/rope"},
+            "bilge": {"base": "game:block/liquid/waterportion"}
         },
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},

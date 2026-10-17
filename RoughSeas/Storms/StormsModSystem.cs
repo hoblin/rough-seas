@@ -27,6 +27,7 @@ public class StormsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorBilge.Code, typeof(EntityBehaviorBilge));
         api.RegisterEntityBehaviorClass(EntityBehaviorMooring.Code, typeof(EntityBehaviorMooring));
         api.RegisterBlockBehaviorClass(BlockBehaviorBailer.Code, typeof(BlockBehaviorBailer));
+        VesselDraught.Attach();
     }
 
     public override void AssetsLoaded(ICoreAPI api)
@@ -81,6 +82,7 @@ public class StormsModSystem : ModSystem
 
     public override void Dispose()
     {
+        VesselDraught.Detach();
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();
         FloatMotion.Detach();

@@ -1,0 +1,138 @@
+[
+    { "op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-", "value": {
+        "name": "SitLegsForward", "code": "roughseas-sitlegsforward", "quantityframes": 60,
+        "onActivityStopped": "EaseOut", "onAnimationEnd": "Repeat",
+        "keyframes": [
+            { "frame": 0, "elements": {
+                "LowerTorso": { "offsetX": 0.0, "offsetY": -13.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 6.0 },
+                "Head": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -6.0 },
+                "UpperFootR": { "rotationX": -4.0, "rotationY": 0.0, "rotationZ": -90.0 },
+                "LowerFootR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 6.0 },
+                "UpperFootL": { "rotationX": 4.0, "rotationY": 0.0, "rotationZ": -90.0 },
+                "LowerFootL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 6.0 },
+                "UpperArmR": { "rotationX": 8.0, "rotationY": 0.0, "rotationZ": -40.0 },
+                "LowerArmR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -55.0 },
+                "UpperArmL": { "rotationX": -8.0, "rotationY": 0.0, "rotationZ": -40.0 },
+                "LowerArmL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -55.0 }
+            } },
+            { "frame": 30, "elements": {
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 5.0 }
+            } }
+        ]
+    } },
+    { "op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-", "value": {
+        "name": "Kneel", "code": "roughseas-kneel", "quantityframes": 60,
+        "onActivityStopped": "EaseOut", "onAnimationEnd": "Repeat",
+        "keyframes": [
+            { "frame": 0, "elements": {
+                "LowerTorso": { "offsetX": 0.0, "offsetY": -8.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 8.0 },
+                "Head": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -8.0 },
+                "UpperFootR": { "rotationX": -6.0, "rotationY": 0.0, "rotationZ": -35.0 },
+                "LowerFootR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 120.0 },
+                "UpperFootL": { "rotationX": 6.0, "rotationY": 0.0, "rotationZ": -35.0 },
+                "LowerFootL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 120.0 },
+                "UpperArmR": { "rotationX": 8.0, "rotationY": 0.0, "rotationZ": -30.0 },
+                "LowerArmR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -50.0 },
+                "UpperArmL": { "rotationX": -8.0, "rotationY": 0.0, "rotationZ": -30.0 },
+                "LowerArmL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -50.0 }
+            } },
+            { "frame": 30, "elements": {
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 7.0 }
+            } }
+        ]
+    } },
+    { "op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-", "value": {
+        "name": "SitKneesUp", "code": "roughseas-sitkneesup", "quantityframes": 60,
+        "onActivityStopped": "EaseOut", "onAnimationEnd": "Repeat",
+        "keyframes": [
+            { "frame": 0, "elements": {
+                "LowerTorso": { "offsetX": 0.0, "offsetY": -13.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 10.0 },
+                "Head": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -10.0 },
+                "UpperFootR": { "rotationX": -4.0, "rotationY": 0.0, "rotationZ": -140.0 },
+                "LowerFootR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 125.0 },
+                "UpperFootL": { "rotationX": 4.0, "rotationY": 0.0, "rotationZ": -140.0 },
+                "LowerFootL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 125.0 },
+                "UpperArmR": { "rotationX": 10.0, "rotationY": 0.0, "rotationZ": -45.0 },
+                "LowerArmR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -30.0 },
+                "UpperArmL": { "rotationX": -10.0, "rotationY": 0.0, "rotationZ": -45.0 },
+                "LowerArmL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -30.0 }
+            } },
+            { "frame": 30, "elements": {
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 9.0 }
+            } }
+        ]
+    } },
+    { "op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-", "value": {
+        "name": "Bail", "code": "roughseas-bail", "quantityframes": 30,
+        "onActivityStopped": "EaseOut", "onAnimationEnd": "Repeat",
+        "keyframes": [
+            { "frame": 0, "elements": {
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 50.0 },
+                "Head": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -20.0 },
+                "UpperArmR": { "rotationX": 10.0, "rotationY": 0.0, "rotationZ": -25.0 },
+                "LowerArmR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -20.0 },
+                "UpperArmL": { "rotationX": -10.0, "rotationY": 0.0, "rotationZ": -25.0 },
+                "LowerArmL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -20.0 },
+                "ItemAnchor": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
+            } },
+            { "frame": 10, "elements": {
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 40.0, "rotationZ": 10.0 },
+                "Head": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 },
+                "UpperArmR": { "rotationX": 40.0, "rotationY": 0.0, "rotationZ": -100.0 },
+                "LowerArmR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -30.0 },
+                "UpperArmL": { "rotationX": 10.0, "rotationY": 0.0, "rotationZ": -90.0 },
+                "LowerArmL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -40.0 },
+                "ItemAnchor": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 0.0 }
+            } },
+            { "frame": 16, "elements": {
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 75.0, "rotationZ": 15.0 },
+                "Head": { "rotationX": 0.0, "rotationY": 20.0, "rotationZ": 0.0 },
+                "UpperArmR": { "rotationX": 70.0, "rotationY": 0.0, "rotationZ": -130.0 },
+                "LowerArmR": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -5.0 },
+                "UpperArmL": { "rotationX": 30.0, "rotationY": 0.0, "rotationZ": -120.0 },
+                "LowerArmL": { "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -10.0 },
+                "ItemAnchor": { "rotationX": 120.0, "rotationY": 0.0, "rotationZ": 0.0 }
+            } },
+            { "frame": 22, "elements": {
+                "UpperTorso": { "rotationX": 0.0, "rotationY": 60.0, "rotationZ": 20.0 },
+                "Head": { "rotationX": 0.0, "rotationY": 10.0, "rotationZ": 0.0 },
+                "UpperArmR": { "rotationX": 50.0, "rotationY": 0.0, "rotationZ": -100.0 },
+                "UpperArmL": { "rotationX": 20.0, "rotationY": 0.0, "rotationZ": -90.0 },
+                "ItemAnchor": { "rotationX": 60.0, "rotationY": 0.0, "rotationZ": 0.0 }
+            } }
+        ]
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-sitlegsforward", "animation": "roughseas-sitlegsforward", "clientSide": true, "blendMode": "Average", "easeInSpeed": 2,
+        "elementWeight": { "LowerTorso": 80, "UpperTorso": 80, "UpperFootR": 80, "UpperFootL": 80, "LowerFootR": 80, "LowerFootL": 80, "UpperArmR": 80, "LowerArmR": 80, "UpperArmL": 80, "LowerArmL": 80 },
+        "elementBlendMode": { "LowerTorso": "Average", "UpperTorso": "Average", "UpperFootR": "Average", "UpperFootL": "Average", "LowerFootR": "Average", "LowerFootL": "Average", "UpperArmR": "Average", "LowerArmR": "Average", "UpperArmL": "Average", "LowerArmL": "Average" }
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-sitkneesup", "animation": "roughseas-sitkneesup", "clientSide": true, "blendMode": "Average", "easeInSpeed": 2,
+        "elementWeight": { "LowerTorso": 80, "UpperTorso": 80, "UpperFootR": 80, "UpperFootL": 80, "LowerFootR": 80, "LowerFootL": 80, "UpperArmR": 80, "LowerArmR": 80, "UpperArmL": 80, "LowerArmL": 80 },
+        "elementBlendMode": { "LowerTorso": "Average", "UpperTorso": "Average", "UpperFootR": "Average", "UpperFootL": "Average", "LowerFootR": "Average", "LowerFootL": "Average", "UpperArmR": "Average", "LowerArmR": "Average", "UpperArmL": "Average", "LowerArmL": "Average" }
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-kneel", "animation": "roughseas-kneel", "clientSide": true, "blendMode": "Average", "easeInSpeed": 2,
+        "elementWeight": { "LowerTorso": 80, "UpperTorso": 80, "UpperFootR": 80, "UpperFootL": 80, "LowerFootR": 80, "LowerFootL": 80, "UpperArmR": 80, "LowerArmR": 80, "UpperArmL": 80, "LowerArmL": 80 },
+        "elementBlendMode": { "LowerTorso": "Average", "UpperTorso": "Average", "UpperFootR": "Average", "UpperFootL": "Average", "LowerFootR": "Average", "LowerFootL": "Average", "UpperArmR": "Average", "LowerArmR": "Average", "UpperArmL": "Average", "LowerArmL": "Average" }
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-bail-bowl", "animation": "roughseas-bail", "animationSpeed": 0.83, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4,
+        "elementWeight": { "UpperTorso": 800, "Head": 200, "UpperArmR": 800, "LowerArmR": 800, "UpperArmL": 800, "LowerArmL": 800, "ItemAnchor": 800 },
+        "elementBlendMode": { "UpperTorso": "Average", "Head": "Average", "UpperArmR": "Average", "LowerArmR": "Average", "UpperArmL": "Average", "LowerArmL": "Average", "ItemAnchor": "Average" }
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-bail-jug", "animation": "roughseas-bail", "animationSpeed": 0.5, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4,
+        "elementWeight": { "UpperTorso": 800, "Head": 200, "UpperArmR": 800, "LowerArmR": 800, "UpperArmL": 800, "LowerArmL": 800, "ItemAnchor": 800 },
+        "elementBlendMode": { "UpperTorso": "Average", "Head": "Average", "UpperArmR": "Average", "LowerArmR": "Average", "UpperArmL": "Average", "LowerArmL": "Average", "ItemAnchor": "Average" }
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-bail-bucket", "animation": "roughseas-bail", "animationSpeed": 0.33, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4,
+        "elementWeight": { "UpperTorso": 800, "Head": 200, "UpperArmR": 800, "LowerArmR": 800, "UpperArmL": 800, "LowerArmL": 800, "ItemAnchor": 800 },
+        "elementBlendMode": { "UpperTorso": "Average", "Head": "Average", "UpperArmR": "Average", "LowerArmR": "Average", "UpperArmL": "Average", "LowerArmL": "Average", "ItemAnchor": "Average" }
+    } }
+]

@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
@@ -18,11 +19,16 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
 
     private StormsModSystem storms = null!;
     private ISeaWeather sea = null!;
+    private BilgeRenderer? water;
     private double deckSquareMetres;
     private double drainLitresPerHour;
+    private double rained;
     private float sinceUpdate;
 
     public double CapacityLitres { get; private set; }
+
+    /// <summary>Heavier than water once swamped, as a ballasted hull is: she goes to the bottom rather than lie awash.</summary>
+    public bool Sinks { get; private set; }
 
     public double Litres
     {
@@ -52,7 +58,15 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
         CapacityLitres = attributes["capacityLitres"].AsDouble();
         deckSquareMetres = attributes["deckSquareMetres"].AsDouble();
         drainLitresPerHour = attributes["drainLitresPerHour"].AsDouble();
-        if (entity.World.Side == EnumAppSide.Server && Tree == null)
+        Sinks = attributes["sinks"].AsBool();
+        if (entity.Api is ICoreClientAPI capi)
+        {
+            water = new BilgeRenderer(capi, entity);
+            entity.WatchedAttributes.RegisterModifiedListener(TreeKey, ShowWater);
+            return;
+        }
+
+        if (Tree == null)
         {
             var tree = new TreeAttribute();
             tree.SetInt("version", DataVersion);
@@ -72,6 +86,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
     {
         var bailed = Math.Min(litres, Litres);
         Litres -= bailed;
+        storms.Log(entity, "bailed {0:F1} L: bilge {1:F0} of {2:F0} L", bailed, Litres, CapacityLitres);
         return bailed;
     }
 
@@ -85,7 +100,20 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
         var hours = storms.GameHours(sinceUpdate);
         sinceUpdate = 0;
         var inflow = sea.DangerousOceans ? Rainfall() * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
-        Litres += inflow - drainLitresPerHour * hours;
+        Ship(inflow);
+        Litres -= drainLitresPerHour * hours;
+        if ((rained += inflow) < 1) return;
+
+        storms.Log(entity, "rain shipped {0:F1} L: bilge {1:F0} of {2:F0} L", rained, Litres, CapacityLitres);
+        rained = 0;
+    }
+
+    public override void OnTesselated() => ShowWater();
+
+    public override void OnEntityDespawn(EntityDespawnData despawn)
+    {
+        water?.Dispose();
+        base.OnEntityDespawn(despawn);
     }
 
     public override void GetInfoText(StringBuilder infotext)
@@ -94,6 +122,8 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
         if (litres >= 1) infotext.AppendLine(Lang.Get("roughseas:bilge-water", Math.Round(litres), Math.Round(CapacityLitres)));
         base.GetInfoText(infotext);
     }
+
+    private void ShowWater() => water?.Show((int)Math.Ceiling(Fill * water.Levels));
 
     private double Rainfall()
     {

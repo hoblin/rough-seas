@@ -1,4 +1,4 @@
-from shape import Hull, Shape, box, paddle
+from shape import BILGE, Hull, Shape, box, paddle
 
 PROFILE = [(0, 0), (3.5, 0.4), (5.4, 2.4), (6, 5.4), (5.8, 8)]
 CUT = "inside"
@@ -35,7 +35,7 @@ def rib(name, x):
 
 
 def build(path):
-    shape = Shape(path, {"bark": "game:block/wood/bark/oak-h", "inside": "game:block/wood/debarked/oak"})
+    shape = Shape(path, {"bark": "game:block/wood/bark/oak-h", "inside": "game:block/wood/debarked/oak", "bilge": BILGE})
     stations = [
         section(-19, 0.5, 2.0),
         section(-14, 0.78, 0.8),
@@ -56,7 +56,7 @@ def build(path):
         box("KnotStarboard", (24, 5, 13.6), (25, 6, 14.6), "bark"),
         paddle((-2, 1.4, 9.8), (0, -4, 2.5), 17, 6, CUT),
     )
-    shape.add(hull.hide_water(7.7))
+    shape.add(hull.hide_water(7.7), hull.bilge(7.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
     shape.write()
 
