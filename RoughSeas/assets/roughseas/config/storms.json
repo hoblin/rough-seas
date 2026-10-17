@@ -42,7 +42,7 @@
         "anchorFullScope": 5,
         "anchorDragMetres": 1,
         "sources": {
-            "anchoredExposure": "Balance: a vessel at anchor lies bow to the sea and takes a third of what strikes it broadside",
+            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves, the shipped water and the breaker strikes an unanchored one does; it lies across the sea, so it capsizes as if beam-on",
             "stakeReachMetres": "Vanilla's longest rope",
             "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth holds fully"
         }
