@@ -1,0 +1,15 @@
+[
+	{ code: "roughseas-force0", name: "Calm", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.006, var: 0.006 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force1", name: "Light air", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.038, var: 0.026 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force2", name: "Light breeze", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.1, var: 0.036 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force3", name: "Gentle breeze", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.178, var: 0.042 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force4", name: "Moderate breeze", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.27, var: 0.05 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force5", name: "Fresh breeze", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.376, var: 0.056 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force6", name: "Strong breeze", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.494, var: 0.062 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force7", name: "Near gale", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.622, var: 0.066 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force8", name: "Gale", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.76, var: 0.072 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force9", name: "Strong gale", durationHours: { avg: 4, var: 2 }, strength: { avg: 0.906, var: 0.074 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force10", name: "Storm", durationHours: { avg: 4, var: 2 }, strength: { avg: 1.06, var: 0.08 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force11", name: "Violent storm", durationHours: { avg: 4, var: 2 }, strength: { avg: 1.224, var: 0.084 }, strengthNoise: { amplitudes: [0], frequencies: [1] } },
+	{ code: "roughseas-force12", name: "Hurricane", durationHours: { avg: 4, var: 2 }, strength: { avg: 1.6, var: 0.29 }, strengthNoise: { amplitudes: [0], frequencies: [1] } }
+]

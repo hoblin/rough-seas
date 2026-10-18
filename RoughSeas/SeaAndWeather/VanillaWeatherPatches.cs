@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using Vintagestory.API.Client;
@@ -15,6 +16,8 @@ public static class VanillaWeatherPatches
 {
     private const string HarmonyId = "roughseas.seaandweather";
 
+    private static readonly FieldInfo WorldgenRainfall = AccessTools.Field(typeof(ClimateCondition), nameof(ClimateCondition.WorldgenRainfall));
+    private static readonly FieldInfo Rainfall = AccessTools.Field(typeof(ClimateCondition), nameof(ClimateCondition.Rainfall));
     private static readonly ConcurrentDictionary<EnumAppSide, SeaWeatherSystem> systems = [];
     private static readonly ConditionalWeakTable<WeatherDataReaderBase, StrongBox<double>> stormPresence = [];
     private static readonly object patchLock = new();
@@ -27,13 +30,15 @@ public static class VanillaWeatherPatches
         {
             if (harmony != null) return;
             harmony = new Harmony(HarmonyId);
-            Postfix(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.GetWindSpeed)), nameof(RegionWindSpeed));
-            Prefix(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetRainCloudness)), nameof(RainCloudness));
-            Prefix(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.RandomWeatherEvent)), nameof(NoWeatherEvent));
-            Postfix(AccessTools.Method(typeof(WeatherDataReaderBase), nameof(WeatherDataReaderBase.LoadLerp),
-                [typeof(Vec3d), typeof(bool), typeof(float), typeof(float), typeof(float)]), nameof(UnloadedRainCloudness));
-            Postfix(AccessTools.Method(typeof(WeatherDataReaderBase), nameof(WeatherDataReaderBase.LoadLerp),
-                [typeof(Vec3d), typeof(bool), typeof(float), typeof(float), typeof(float)]), nameof(StormUnderCloud));
+            Transpiler(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.RandomWeatherEvent)), nameof(CurrentRainfall));
+            Postfix(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetPrecipitation),
+                [typeof(double), typeof(double), typeof(double), typeof(double)]), nameof(Precipitation));
+            Postfix(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetPrecipitation),
+                [typeof(BlockPos), typeof(double), typeof(ClimateCondition)]), nameof(PrecipitationAt));
+            var loadLerp = AccessTools.Method(typeof(WeatherDataReaderBase), nameof(WeatherDataReaderBase.LoadLerp),
+                [typeof(Vec3d), typeof(bool), typeof(float), typeof(float), typeof(float)]);
+            Postfix(loadLerp, nameof(UnloadedRainCloudness));
+            Postfix(loadLerp, nameof(StormUnderCloud));
             Postfix(AccessTools.Method(typeof(WeatherDataReaderBase), "pgetBlendedCloudBrightness"), nameof(StormCloudBrightness));
             Postfix(AccessTools.Method(typeof(CloudRenderer), nameof(CloudRenderer.CloudTick)), nameof(CloudDrift));
             Postfix(AccessTools.Method(typeof(FluffyClouds.CloudRendererMap), nameof(FluffyClouds.CloudRendererMap.CloudTick)), nameof(CloudDrift));
@@ -53,45 +58,39 @@ public static class VanillaWeatherPatches
         }
     }
 
-    private static void Postfix(System.Reflection.MethodBase target, string patch) =>
-        harmony!.Patch(target, postfix: new HarmonyMethod(typeof(VanillaWeatherPatches), patch));
+    public static double CloudBrightness(double brightness, double stormPresence, VanillaConfig vanilla) =>
+        GameMath.Lerp(brightness, vanilla.StormCloudBrightness, Math.Sqrt(stormPresence));
 
-    private static void Prefix(System.Reflection.MethodBase target, string patch) =>
-        harmony!.Patch(target, prefix: new HarmonyMethod(typeof(VanillaWeatherPatches), patch));
+    private static HarmonyMethod Yielding(string patch) => new(typeof(VanillaWeatherPatches), patch) { priority = Priority.Low };
 
-    private static void WindAsStrength(System.Reflection.MethodBase target, string prefix, string postfix) =>
-        harmony!.Patch(target,
-            prefix: new HarmonyMethod(typeof(VanillaWeatherPatches), prefix),
-            postfix: new HarmonyMethod(typeof(VanillaWeatherPatches), postfix));
+    private static void Postfix(MethodBase target, string patch) => harmony!.Patch(target, postfix: Yielding(patch));
+
+    private static void Transpiler(MethodBase target, string patch) => harmony!.Patch(target, transpiler: Yielding(patch));
+
+    private static void WindAsStrength(MethodBase target, string prefix, string postfix) =>
+        harmony!.Patch(target, prefix: Yielding(prefix), postfix: Yielding(postfix));
 
     private static SeaWeatherSystem? On(EnumAppSide side) => systems.GetValueOrDefault(side);
 
-    private static void RegionWindSpeed(double posY, ref double __result, WeatherSystemBase ___ws, int ___regionX, int ___regionZ)
+    private static IEnumerable<CodeInstruction> CurrentRainfall(IEnumerable<CodeInstruction> instructions)
     {
-        var sea = On(___ws.api.Side);
-        if (sea == null) return;
-        using var _ = sea.Budget.Measure();
-        var regionSize = ___ws.api.World.BlockAccessor.RegionSize;
-        var (x, z) = ___ws.api is ICoreClientAPI { World.Player.Entity: { } player }
-            ? (player.Pos.X, player.Pos.Z)
-            : ((___regionX + 0.5) * regionSize, (___regionZ + 0.5) * regionSize);
-        __result = VanillaWeather.Strength(sea.Wind(x, z).Speed, posY, ___ws.api.World.SeaLevel, sea.Config.Vanilla);
+        foreach (var instruction in instructions)
+        {
+            if (instruction.LoadsField(WorldgenRainfall)) instruction.operand = Rainfall;
+            yield return instruction;
+        }
     }
 
-    private static bool RainCloudness(double posX, double posZ, double totalDays, ref float __result, WeatherSystemBase __instance)
-    {
-        var sea = On(__instance.api.Side);
-        if (sea == null || __instance.OverridePrecipitation != null) return true;
-        __result = sea.RainCloudness(posX, posZ, totalDays);
-        return false;
-    }
+    private static void Precipitation(double posX, double posZ, double totalDays, ref float __result, WeatherSystemBase __instance) =>
+        Rain(posX, posZ, totalDays, ref __result, __instance);
 
-    private static bool NoWeatherEvent(WeatherSimulationRegion __instance, ref WeatherEvent __result)
+    private static void PrecipitationAt(BlockPos pos, double totalDays, ref float __result, WeatherSystemBase __instance) =>
+        Rain(pos.X + 0.5, pos.Z + 0.5, totalDays, ref __result, __instance);
+
+    private static void Rain(double x, double z, double totalDays, ref float result, WeatherSystemBase weather)
     {
-        var calm = Array.Find(__instance.WeatherEvents, weatherEvent => weatherEvent.config.Code == VanillaWeather.CalmEvent);
-        if (calm == null) return true;
-        __result = calm;
-        return false;
+        if (weather.OverridePrecipitation != null || On(weather.api.Side)?.Source.RainCloudness(x, z, totalDays) is not { } cloudness) return;
+        result = Math.Max(0, cloudness - 0.5f);
     }
 
     private static void UnloadedRainCloudness(Vec3d pos, bool useArgValues, float lerpRainCloudOverlay, float lerpRainOverlay,
@@ -104,7 +103,7 @@ public static class VanillaWeatherPatches
             (__instance.lerpRainCloudOverlay, __instance.lerpRainOverlay) = (lerpRainCloudOverlay, lerpRainOverlay);
             return;
         }
-        var cloudness = sea.RainCloudness(pos.X, pos.Z, ___ws.api.World.Calendar.TotalDays);
+        if (sea.Source.RainCloudness(pos.X, pos.Z, ___ws.api.World.Calendar.TotalDays) is not { } cloudness) return;
         __instance.lerpRainCloudOverlay = GameMath.Clamp(cloudness, 0, 1);
         __instance.lerpRainOverlay = GameMath.Clamp(cloudness - 0.5f, 0, 1);
     }
@@ -113,7 +112,7 @@ public static class VanillaWeatherPatches
     {
         if (__instance is not WeatherDataReaderPreLoad) return;
         var sea = On(___ws.api.Side);
-        var presence = sea != null && ___ws.OverridePrecipitation == null && __instance.lerpRainCloudOverlay > 0 ? sea.StormsAt(pos.X, pos.Z, sea.NowHours).Presence : 0;
+        var presence = sea != null && ___ws.OverridePrecipitation == null && __instance.lerpRainCloudOverlay > 0 ? sea.Source.StormPresence(pos.X, pos.Z) : 0;
         stormPresence.GetOrCreateValue(__instance).Value = presence;
     }
 
@@ -122,7 +121,7 @@ public static class VanillaWeatherPatches
     {
         var sea = On(EnumAppSide.Client);
         if (sea == null || !stormPresence.TryGetValue(__instance, out var presence)) return;
-        __result = VanillaWeather.CloudBrightness(__result, presence.Value, sea.Config.Vanilla);
+        __result = CloudBrightness(__result, presence.Value, sea.Config.Vanilla);
     }
 
     // These vanilla readers take the wind's X alone as its strength; our wind may blow along Z.
@@ -146,7 +145,7 @@ public static class VanillaWeatherPatches
         var sea = On(EnumAppSide.Client);
         var player = ___capi.World.Player?.Entity;
         if (sea == null || player == null) return;
-        var wind = sea.Wind(player.Pos.X, player.Pos.Z);
+        var wind = sea.Source.Wind(player.Pos.X, player.Pos.Z);
         var perMps = (float)sea.Config.Vanilla.CloudSpeedPerMps;
         ___cloudSpeedX = (float)wind.X * perMps;
         ___cloudSpeedZ = (float)wind.Z * perMps;

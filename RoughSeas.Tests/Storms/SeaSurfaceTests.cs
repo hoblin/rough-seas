@@ -9,13 +9,18 @@ public class SeaSurfaceTests
     private const double Frame = 1 / 60.0;
     private const int FramesPerAim = 30;
 
-    private static SeaSurface Surface() => new(Fixtures.Config().Surface, new Waves(Fixtures.Config().Waves));
+    private static readonly Waves Waves = new(Fixtures.Config().Waves);
+
+    private static SeaSurface Surface() => new(Fixtures.Config().Surface, Waves);
+
+    private static void Aim(SeaSurface surface, double height, double toward, double beaufort) =>
+        surface.Aim(height, Waves.Period(height), toward, beaufort);
 
     private static void Settle(SeaSurface surface, double height, double toward, double from = 0, double seconds = 120, double beaufort = 6)
     {
         for (var frame = 0; frame * Frame < seconds; frame++)
         {
-            if (frame % FramesPerAim == 0) surface.Aim(height, toward, beaufort);
+            if (frame % FramesPerAim == 0) Aim(surface, height, toward, beaufort);
             surface.Advance(from + frame * Frame);
         }
     }
@@ -32,12 +37,12 @@ public class SeaSurfaceTests
     public void RisesAndFallsSmoothlyFarFromTheOrigin()
     {
         var surface = Surface();
-        surface.Aim(5, 0, 8);
+        Aim(surface, 5, 0, 8);
         surface.Advance(0);
         var previous = surface.HeightAt(FarX, FarZ);
         for (var frame = 1; frame < 1200; frame++)
         {
-            if (frame % FramesPerAim == 0) surface.Aim(5, frame * 0.0005, 8);
+            if (frame % FramesPerAim == 0) Aim(surface, 5, frame * 0.0005, 8);
             surface.Advance(frame * Frame);
             var height = surface.HeightAt(FarX, FarZ);
             Assert.True(Math.Abs(height - previous) < 0.1, $"frame {frame} jumped from {previous:F3} to {height:F3}");
@@ -67,7 +72,7 @@ public class SeaSurfaceTests
         Settle(surface, 5.5, 0);
         for (var frame = 0; frame * Frame < 60; frame++)
         {
-            if (frame % FramesPerAim == 0) surface.Aim(5.5, Math.PI / 2, 8);
+            if (frame % FramesPerAim == 0) Aim(surface, 5.5, Math.PI / 2, 8);
             surface.Advance(120 + frame * Frame);
             Assert.True(surface.DrawnHeight > 0.9 * 5.5, $"at {frame * Frame:F1} s the sea drew {surface.DrawnHeight:F2} m");
         }
@@ -119,7 +124,7 @@ public class SeaSurfaceTests
     }
 
     [Fact]
-    public void FindsTheHeightTheShaderDrawsNearTheShore()
+    public void FindsTheHeightTheShaderDrawsWhereTheWavesAreLower()
     {
         var surface = Surface();
         Settle(surface, 4, 0.3);

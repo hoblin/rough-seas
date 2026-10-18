@@ -1,6 +1,8 @@
-// The other end of RoughSeas/Storms/SeaSurface.cs: DisplacementAt, FoldAt and OpenSea compute the same surface.
+// The other end of RoughSeas/Storms/SeaSurface.cs and SurfaceField.cs: DisplacementAt, FoldAt and Factor compute the same surface.
 uniform vec4 seaWaves[SEA_SLOTS];
 uniform float seaSteepness;
+uniform sampler2D seaHeightMap;
+uniform vec4 seaHeightArea;
 
 out float seaFoamCrest;
 out float seaFoamFold;
@@ -10,6 +12,7 @@ out vec2 seaFoamWorld;
 vec3 seaNormal = vec3(0.0, 1.0, 0.0);
 float seaCrest = 0.0;
 float seaFold = 0.0;
+float seaOpen = 0.0;
 
 float seaFolding(vec3 squeeze) {
 	return 1.0 - (1.0 - squeeze.x) * (1.0 - squeeze.z) + squeeze.y * squeeze.y;
@@ -17,7 +20,8 @@ float seaFolding(vec3 squeeze) {
 
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 warped = applyVanillaLiquidWarping(windAffected, worldPos, div);
-	float openSea = windAffected ? clamp((5.0 / div - 1.0) / 4.0, 0.0, 1.0) : 0.0;
+	float openSea = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r : 0.0;
+	seaOpen = openSea;
 	if (openSea <= 0.0) return warped;
 
 	vec3 offset = vec3(0.0);

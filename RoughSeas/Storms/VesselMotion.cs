@@ -20,16 +20,16 @@ public static class VesselMotion
     private static readonly Dictionary<long, (long Frame, Pose Pose)> poses = [];
     private static Harmony? harmony;
     private static StormsModSystem? storms;
-    private static SeaWeatherSystem? sea;
+    private static SurfaceField? field;
     private static SeaSurface? surface;
     private static double largestStep;
     private static double loggedAt = double.NegativeInfinity;
     private static double tracedUntil = double.NegativeInfinity;
 
-    public static void Attach(StormsModSystem system, SeaWeatherSystem weather, SeaSurface waves)
+    public static void Attach(StormsModSystem system, SurfaceField heights, SeaSurface waves)
     {
         if (harmony != null) return;
-        (storms, sea, surface) = (system, weather, waves);
+        (storms, field, surface) = (system, heights, waves);
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(NetworkAPI), nameof(NetworkAPI.SendPlayerPositionPacket)),
             prefix: new HarmonyMethod(typeof(VesselMotion), nameof(SendUnlifted)),
@@ -48,7 +48,7 @@ public static class VesselMotion
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (storms, sea, surface) = (null, null, null);
+        (storms, field, surface) = (null, null, null);
         poses.Clear();
         (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
     }
@@ -113,20 +113,20 @@ public static class VesselMotion
 
     private static Pose PoseOf(EntityBoat boat)
     {
-        if (surface == null || sea == null) return default;
+        if (surface == null || field == null) return default;
         if (poses.TryGetValue(boat.EntityId, out var cached) && cached.Frame == surface.Frame) return cached.Pose;
 
-        var pose = Ride(boat, surface, sea);
+        var pose = Ride(boat, surface, field);
         if (cached.Frame == surface.Frame - 1) largestStep = Math.Max(largestStep, Math.Abs(pose.Lift - cached.Pose.Lift));
         poses[boat.EntityId] = (surface.Frame, pose);
         return pose;
     }
 
-    private static Pose Ride(EntityBoat boat, SeaSurface surface, SeaWeatherSystem sea)
+    private static Pose Ride(EntityBoat boat, SeaSurface surface, SurfaceField field)
     {
         var forces = boat.GetBehavior<EntityBehaviorSeaForces>();
         var pos = boat.Pos;
-        var openSea = surface.Calm || forces == null || !boat.Swimming ? 0 : SeaSurface.OpenSea(sea.Oceanity(pos.X, pos.Z));
+        var openSea = surface.Calm || forces == null || !boat.Swimming ? 0 : field.Factor(pos.X, pos.Z);
         if (forces == null || openSea <= 0) return default;
 
         var seaworthiness = forces.Seaworthiness;

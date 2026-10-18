@@ -24,7 +24,7 @@ public static class SurfaceShader
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
         "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; "
-        + "seaFoamOcean = ((waterFlagsIn >> 2) & 0xff) * OneOver255; seaFoamWorld = worldPos.xz + playerpos.xz;";
+        + "seaFoamOcean = seaOpen; seaFoamWorld = worldPos.xz + playerpos.xz;";
     private const string FragmentMain = "void main()";
     private const string BeforeFog = "texColor = applyFog(texColor, fogAmount);";
     private const string Foamed =
@@ -34,13 +34,16 @@ public static class SurfaceShader
         + "texColor.a = mix(texColor.a, 0.95, seaFoamAmount * 0.8); }\n";
     private const string WavesUniform = "seaWaves";
     private const string FoamUniform = "seaFoam";
+    private const string HeightMapSampler = "seaHeightMap";
+    private const int HeightMapUnit = 7;
     private const double NoCaps = 10;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
 
     private static Harmony? harmony;
     private static SeaSurface? surface;
-    private static SeaWeatherSystem? sea;
+    private static SurfaceField? field;
+    private static LoadedTexture? heightMap;
     private static ICoreClientAPI? capi;
     private static float[] uniforms = [];
     private static string vertexCode = "";
@@ -51,9 +54,10 @@ public static class SurfaceShader
 
     public static bool DrawFoam { get; set; } = true;
 
-    public static bool Attach(SeaSurface waves, SeaWeatherSystem weather, ICoreClientAPI api)
+    public static bool Attach(SeaSurface waves, SurfaceField heights, ICoreClientAPI api)
     {
-        (surface, sea, capi) = (waves, weather, api);
+        (surface, field, capi) = (waves, heights, api);
+        heightMap = new LoadedTexture(api);
         uniforms = new float[waves.Slots * 4];
         ReadSources(api);
         harmony = new Harmony(HarmonyId);
@@ -79,7 +83,15 @@ public static class SurfaceShader
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (surface, sea, capi) = (null, null, null);
+        heightMap?.Dispose();
+        (surface, field, heightMap, capi) = (null, null, null, null);
+    }
+
+    public static void Upload()
+    {
+        if (capi == null || field == null || heightMap == null || field.Across == 0) return;
+        heightMap.Width = heightMap.Height = field.Across;
+        capi.Render.LoadOrUpdateTextureFromRgba(field.Pixels(), true, 1, ref heightMap);
     }
 
     private static bool Compile(ICoreClientAPI api)
@@ -102,9 +114,9 @@ public static class SurfaceShader
 
     private static void EyesUnderSurface(ClientMain __instance, ref float __result)
     {
-        if (__result <= 0 || surface == null || sea == null || surface.Calm || __result > surface.SeaHeight + 1) return;
+        if (__result <= 0 || surface == null || field == null || surface.Calm || __result > surface.SeaHeight + 1) return;
         var eye = __instance.MainCamera.CameraEyePos;
-        var openSea = SeaSurface.OpenSea(sea.Oceanity(eye.X, eye.Z));
+        var openSea = field.Factor(eye.X, eye.Z);
         __result = (float)Math.Max(0, __result + surface.HeightAt(eye.X, eye.Z, openSea));
     }
 
@@ -133,6 +145,12 @@ public static class SurfaceShader
         else Array.Clear(uniforms);
         __instance.Uniforms4(WavesUniform, surface.Slots, uniforms);
         __instance.Uniform("seaSteepness", (float)surface.Steepness);
+        if (field != null && heightMap is { TextureId: > 0 })
+        {
+            __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, HeightMapUnit);
+            __instance.Uniform("seaHeightArea", new Vec4f((float)(field.OriginX - player.CameraPos.X), (float)(field.OriginZ - player.CameraPos.Z),
+                (float)field.SizeBlocks, (float)field.SizeBlocks));
+        }
         if (!Active(__instance, FoamUniform)) return;
         __instance.Uniform(FoamUniform, DrawFoam
             ? new Vec4f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray, (float)surface.SurfDepth)

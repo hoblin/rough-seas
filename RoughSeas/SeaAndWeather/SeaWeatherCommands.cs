@@ -45,7 +45,7 @@ public static class SeaWeatherCommands
     public static void Register(SeaWeatherSystem sea, ICoreClientAPI capi)
     {
         capi.ChatCommands.Create("seas")
-            .WithDescription("Rough Seas: the sea and weather state as this client computes it")
+            .WithDescription("Rough Seas: the sea and weather state as this client reads it from the server's map")
             .HandleWith(_ => TextCommandResult.Success(Here(sea, capi, capi.World.Player.Entity.Pos.XYZ)));
     }
 
@@ -54,12 +54,12 @@ public static class SeaWeatherCommands
         var state = sea.At(pos.X, pos.Z);
         var force = sea.Config.Beaufort.First(row => row.Force == state.Beaufort);
         var vanilla = api.World.BlockAccessor.GetWindSpeedAt(pos);
-        var storm = state.StormCode == null ? "no storm" : $"{state.StormCode} at {state.StormPresence:P0}";
+        var storm = state.StormPresence <= 0 ? "no storm" : $"{state.StormCode ?? "storm"} at {state.StormPresence:P0}";
         var current = sea.CurrentAt(pos.X, pos.Z);
         var latitude = (api.World.Calendar.OnGetLatitude?.Invoke(pos.Z) ?? 0.5) * 90;
         return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, latitude {latitude:0.0}°, hour {sea.NowHours:0.00}: "
             + $"wind from {state.WindFromDegrees:0}° at {state.WindSpeed:0.0} m/s, Beaufort {state.Beaufort} ({force.Name}); "
-            + $"waves {state.WaveHeight:0.0} m; oceanity {state.Oceanity:P0}; {storm}, rain {Rainfall(api, pos):P0}; "
+            + $"waves {state.WaveHeight:0.0} m every {state.WavePeriod:0.0} s; {storm}, rain {Rainfall(api, pos):P0}; "
             + $"current toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C ({Signed(current.WarmthCelsius)} from the current); "
             + $"vanilla wind ({vanilla.X:0.00}, {vanilla.Z:0.00})";
     }
@@ -67,7 +67,7 @@ public static class SeaWeatherCommands
     private static string Storms(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, double range)
     {
         var now = sea.NowHours;
-        var storms = sea.StormsWithin(pos.X, pos.Z, range)
+        var storms = sea.Model.StormsWithin(pos.X, pos.Z, range)
             .Select(storm => (storm, centre: storm.CentreAt(now)))
             .OrderBy(entry => Distance(entry.centre, pos))
             .Select(entry => Describe(api, entry.storm, entry.centre, pos, now))

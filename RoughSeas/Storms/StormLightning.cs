@@ -10,7 +10,7 @@ using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Storms;
 
-public class StormLightning(StormsModSystem storms, ISeaWeather sea, ICoreServerAPI sapi)
+public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreServerAPI sapi)
 {
     private const int SpotTries = 8;
 
@@ -38,7 +38,7 @@ public class StormLightning(StormsModSystem storms, ISeaWeather sea, ICoreServer
             if (pos == null || rolledNear.Any(rolled => rolled.HorizontalSquareDistanceTo(pos) < Config.RangeBlocks * Config.RangeBlocks)) continue;
 
             rolledNear.Add(pos);
-            var presence = sea.StormsAt(pos.X, pos.Z, sea.NowHours).Presence;
+            var presence = sea.Model.StormsAt(pos.X, pos.Z, sea.NowHours).Presence;
             var chance = Config.StrikesPerMinute * Config.CheckSeconds / 60 * presence;
             if (presence < Config.MinPresence || rand.NextDouble() >= chance || !WarmEnough(pos.AsBlockPos)) continue;
 
@@ -58,7 +58,7 @@ public class StormLightning(StormsModSystem storms, ISeaWeather sea, ICoreServer
             var distance = Math.Sqrt(rand.NextDouble()) * Config.RangeBlocks;
             var spotX = x + Math.Cos(angle) * distance;
             var spotZ = z + Math.Sin(angle) * distance;
-            if (sea.StormsAt(spotX, spotZ, sea.NowHours).Presence < Config.MinPresence) continue;
+            if (sea.Model.StormsAt(spotX, spotZ, sea.NowHours).Presence < Config.MinPresence) continue;
 
             var ground = Math.Max(sapi.World.SeaLevel, sapi.World.BlockAccessor.GetRainMapHeightAt((int)spotX, (int)spotZ));
             return new Vec3d(spotX, ground, spotZ);

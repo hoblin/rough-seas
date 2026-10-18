@@ -1,6 +1,9 @@
+using System.Globalization;
 using Newtonsoft.Json;
 using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
+using Vintagestory.ServerMods;
 
 namespace RoughSeas.Tests.SeaAndWeather;
 
@@ -21,12 +24,12 @@ public static class Fixtures
     public static SeaWeatherModel Model(long seed, Func<double, double> latitude) =>
         new(seed, Config(), new WorldClimate(seed, new TreeAttribute(), MapSize), Basins(seed), latitude, HoursPerYear);
 
-    public static OceanBasins Basins(long seed, string landcover = "0.3")
-    {
-        var worldConfig = new TreeAttribute();
-        worldConfig.SetString("landcover", landcover);
-        return new(seed, worldConfig, MapSize, MapSize, Config().Currents);
-    }
+    public static OceanBasins Basins(long seed, string landcover = "0.3") =>
+        new(Ocean(seed, landcover), new OceanCalibration(Config().Ocean), Config().Currents);
+
+    public static GeneratedOcean Ocean(long seed, string landcover = "0.3") =>
+        new(() => GenMaps.GetOceanMapGen(seed + 1873, float.Parse(landcover, CultureInfo.InvariantCulture), TerraGenConfig.oceanMapScale, 1,
+            [new XZ(MapSize / 2 / TerraGenConfig.oceanMapScale, MapSize / 2 / TerraGenConfig.oceanMapScale)], false));
 
     public static Storm[] YearOfStorms(SeaWeatherModel model) =>
         Enumerable.Range(0, 24)

@@ -75,13 +75,11 @@ public sealed class SeaSurface
 
     public event Action<string>? Changed;
 
-    public static double OpenSea(double oceanity) => Math.Clamp((1 / Math.Max(0.2, 1 - oceanity) - 1) / 4, 0, 1);
-
-    public void Aim(double height, double towardRadians, double beaufort)
+    public void Aim(double height, double period, double towardRadians, double beaufort)
     {
         foamTarget = FoamAt(beaufort);
         (SeaHeight, TowardRadians) = (height, towardRadians);
-        var length = PeakLength(height);
+        var length = height > 0 ? Gravity * period * period / FullTurn : 0;
         if (length > 0 && (active < 0 || !Alike(towardRadians, length)))
         {
             var next = active == 0 ? generation : 0;
@@ -114,7 +112,7 @@ public sealed class SeaSurface
         Foam = Foam.Lerp(Foam, foamTarget, blend);
     }
 
-    /// <summary>The drawn surface's height here, with the shader's shore fade (<see cref="OpenSea"/>) applied as it does.</summary>
+    /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
     public double HeightAt(double x, double z, double openSea = 1)
     {
         var (restX, restZ) = (x, z);
@@ -194,13 +192,6 @@ public sealed class SeaSurface
         (numberX[slot] * x + numberZ[slot] * z - frequency[slot] * Seconds) % FullTurn;
 
     private double Wavenumber(int slot) => Math.Sqrt(numberX[slot] * numberX[slot] + numberZ[slot] * numberZ[slot]);
-
-    private double PeakLength(double height)
-    {
-        if (height <= 0) return 0;
-        var period = waves.Period(height);
-        return Gravity * period * period / FullTurn;
-    }
 
     private bool Alike(double towardRadians, double length)
     {

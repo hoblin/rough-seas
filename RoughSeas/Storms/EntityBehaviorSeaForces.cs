@@ -107,7 +107,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
         using var _ = storms.Budget.Measure();
         var state = sea.At(entity.Pos.X, entity.Pos.Z);
-        if (state.WaveHeight < storms.Config.Waves.MinHeight || sinceWave < storms.Waves.Period(state.WaveHeight)) return;
+        if (state.WaveHeight < storms.Config.Waves.MinHeight || sinceWave < state.WavePeriod) return;
 
         sinceWave = 0;
         Wave?.Invoke(state);

@@ -17,20 +17,32 @@ public class StormField
     private readonly SeaWeatherConfig config;
     private readonly WorldClimate climate;
     private readonly PrevailingWinds prevailing;
+    private readonly Func<double, double, bool> isSea;
     private readonly double hoursPerYear;
     // A fixed lock count keeps Count, checked on every miss, cheap: by default the locks grow with the table and Count takes them all.
     private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ, long Slot), Storm?> born = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Hour), Storm[]> nearTile = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Window), Storm[]> windowTile = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int AreaX, int AreaZ, long Window), Storm[]> windowArea = new(Environment.ProcessorCount, 0);
+    private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ), bool> seaCells = new(Environment.ProcessorCount, 0);
 
-    public StormField(long seed, SeaWeatherConfig config, WorldClimate climate, PrevailingWinds prevailing, double hoursPerYear)
+    public StormField(long seed, SeaWeatherConfig config, WorldClimate climate, PrevailingWinds prevailing, Func<double, double, bool> isSea, double hoursPerYear)
     {
         this.seed = seed;
         this.config = config;
         this.climate = climate;
         this.prevailing = prevailing;
+        this.isSea = isSea;
         this.hoursPerYear = hoursPerYear;
+    }
+
+    public void Forget()
+    {
+        born.Clear();
+        nearTile.Clear();
+        windowTile.Clear();
+        windowArea.Clear();
+        seaCells.Clear();
     }
 
     public Storm[] Near(double x, double z, double hours)
@@ -125,7 +137,9 @@ public class StormField
         var originZ = (cellZ + rand.NextDouble()) * stormType.CellSize;
         var bornHours = (slot + rand.NextDouble()) * stormType.SlotHours;
         var northern = prevailing.LatitudeDegrees(originZ) >= 0;
-        if (rand.NextDouble() >= Likelihood(stormType, originX, originZ, bornHours, northern)) return null;
+        var likelihood = Likelihood(stormType, originX, originZ, bornHours, northern);
+        var roll = rand.NextDouble();
+        if (roll >= likelihood || roll >= likelihood * BirthOver(type, cellX, cellZ)) return null;
 
         var track = prevailing.TowardRadians(originZ) + (rand.NextDouble() * 2 - 1) * config.Storm.TrackSpreadDegrees * GameMath.DEG2RAD_DOUBLE;
         var (towardX, towardZ) = Compass.Toward(track);
@@ -154,6 +168,15 @@ public class StormField
         return stormType.Temperature.Weight(celsius)
             * Math.Pow(rainfall, stormType.RainfallExponent)
             * stormType.MonthlyWeight[month];
+    }
+
+    private double BirthOver(int type, int cellX, int cellZ)
+    {
+        if (seaCells.Count > CacheLimit) seaCells.Clear();
+        var stormType = config.Storms[type];
+        var sea = seaCells.GetOrAdd((type, cellX, cellZ), static (cell, field) =>
+            field.isSea(Centre(cell.CellX, field.config.Storms[cell.Type].CellSize), Centre(cell.CellZ, field.config.Storms[cell.Type].CellSize)), this);
+        return sea ? 1 : stormType.OverLand;
     }
 
     private static int Cell(double coordinate, StormTypeConfig stormType) => (int)Math.Floor(coordinate / stormType.CellSize);

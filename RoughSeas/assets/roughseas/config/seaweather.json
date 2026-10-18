@@ -21,8 +21,10 @@
         { "maxLatitude": 90, "northFromDegrees": 45, "southFromDegrees": 135 }
     ],
     "background": {
-        "meanMps": 7.0,
-        "spreadMps": 5.0,
+        "landMeanMps": 4.0,
+        "seaMeanMps": 7.0,
+        "seaRampBlocks": 1000,
+        "spreadFraction": 0.7,
         "spatialScale": 6000,
         "timeScaleHours": 30,
         "veerDegrees": 60
@@ -50,6 +52,7 @@
             "speedBlocksPerHour": { "min": 150, "max": 400 },
             "cyclonic": false,
             "rain": 1.0,
+            "overLand": 0.5,
             "weatherEvent": "heavythunder"
         },
         {
@@ -67,6 +70,7 @@
             "cyclonic": true,
             "eyeFraction": 0.25,
             "rain": 0.7,
+            "overLand": 0.3,
             "weatherEvent": "lightthunder"
         },
         {
@@ -84,6 +88,7 @@
             "cyclonic": true,
             "eyeFraction": 0.08,
             "rain": 1.0,
+            "overLand": 0.0,
             "weatherEvent": "heavythunder"
         }
     ],
@@ -96,6 +101,9 @@
     },
     "vanilla": {
         "unitsPerMps": 0.04,
+        "regionRefreshHours": 0.02,
+        "windLeaseHours": 1,
+        "windResendStrength": 0.01,
         "cloudSpeedPerMps": 0.2,
         "stormCloudBrightness": 0.05
     },
@@ -108,7 +116,25 @@
         "easternBoundaryCelsius": 6,
         "seawaterFreezingCelsius": -1.8,
         "basinReachBlocks": 8192,
-        "landBelowOceanity": 0.5,
         "stokesDriftPerMps": 0.015
+    },
+    "ocean": {
+        "defaultSeaFrom": 128,
+        "calibrationSamples": 200
+    },
+    "waves": {
+        "realPolarEquatorMetres": 10000000,
+        "kneeMetres": 9,
+        "ceilingMetres": 16,
+        "fetchStepBlocks": 16,
+        "maxFetchBlocks": 32768,
+        "fetchDirections": 16,
+        "fetchCacheHours": 6,
+        "openSeaDepthMetres": 200
+    },
+    "map": {
+        "cellBlocks": 32,
+        "updateSeconds": 5,
+        "tickBudgetMilliseconds": 8
     }
 }

@@ -183,7 +183,7 @@ public class BridgeCommands : ModSystem
 
     private TextCommandResult Storm(IServerPlayer player, double range, double waves)
     {
-        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
         var pos = player.Entity.Pos;
         var probed = sea.StormsWithin(pos.X, pos.Z, range)
             .SelectMany(storm =>
@@ -206,10 +206,8 @@ public class BridgeCommands : ModSystem
     private TextCommandResult Force(IServerPlayer player, int force, double range)
     {
         const double step = 500;
-        const double heightTolerance = 0.2;
-        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
         var pos = player.Entity.Pos;
-        var scaleHeight = sea.Config.Beaufort.First(row => row.Force == force).WaveHeight;
         var steps = (int)(Math.Min(range, NearbyGridBlocks) / step);
         var chosen = Enumerable.Range(-steps, 2 * steps + 1)
             .SelectMany(_ => Enumerable.Range(-steps, 2 * steps + 1), (i, j) => (x: pos.X + i * step, z: pos.Z + j * step))
@@ -220,12 +218,11 @@ public class BridgeCommands : ModSystem
             }))
             .Where(point => sea.IsSea(point.x, point.z))
             .Select(point => (point.x, point.z, state: sea.At(point.x, point.z)))
-            .Where(point => point.state.Beaufort == force && point.state.Oceanity >= 1
-                && Math.Abs(point.state.WaveHeight - scaleHeight) <= heightTolerance * Math.Max(scaleHeight, 1))
-            .OrderBy(point => Math.Abs(point.x - pos.X) + Math.Abs(point.z - pos.Z))
+            .Where(point => point.state.Beaufort == force && point.state.WaveHeight > 0)
+            .OrderByDescending(point => point.state.WaveHeight)
             .Select(point => ((double x, double z, SeaState state)?)point)
             .FirstOrDefault();
-        if (chosen == null) return TextCommandResult.Error($"No open sea at Beaufort {force} with {scaleHeight} m waves within {NearbyGridBlocks} blocks, nor in a storm within {range}");
+        if (chosen == null) return TextCommandResult.Error($"No open sea at Beaufort {force} within {NearbyGridBlocks} blocks, nor in a storm within {range}");
 
         var target = new Vec3d((int)chosen.Value.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)chosen.Value.z + 0.5);
         if (player.Entity.MountedOn != null)
@@ -241,7 +238,7 @@ public class BridgeCommands : ModSystem
     private TextCommandResult Approach(IServerPlayer player, double distance, string? type)
     {
         const double range = 60000;
-        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
         var pos = player.Entity.Pos;
         var now = sea.NowHours;
         var chosen = sea.StormsWithin(pos.X, pos.Z, range)
