@@ -61,7 +61,6 @@ public class BeaufortForce
     public int Force;
     public string Name = "";
     public double MinMps;
-    public double WaveHeight;
 }
 
 public class PrevailingWind

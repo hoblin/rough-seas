@@ -9,12 +9,12 @@ public class SeaSurfaceTests
     private const double Frame = 1 / 60.0;
     private const int FramesPerAim = 30;
 
-    private static readonly Waves Waves = new(Fixtures.Config().Waves);
-
-    private static SeaSurface Surface() => new(Fixtures.Config().Surface, Waves);
+    private static SeaSurface Surface() => new(Fixtures.Config().Surface, new Waves(Fixtures.Config().Waves));
 
     private static void Aim(SeaSurface surface, double height, double toward, double beaufort) =>
-        surface.Aim(height, Waves.Period(height), toward, beaufort);
+        surface.Aim(height, FullyDevelopedPeriod(height), toward, beaufort);
+
+    private static double FullyDevelopedPeriod(double height) => 3.5 * Math.Sqrt(height);
 
     private static void Settle(SeaSurface surface, double height, double toward, double from = 0, double seconds = 120, double beaufort = 6)
     {

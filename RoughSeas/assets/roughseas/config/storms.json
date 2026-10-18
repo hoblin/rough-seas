@@ -16,7 +16,7 @@
         "waveDriftCoefficient": 0.00625,
         "maxDepthBlocks": 32,
         "sources": {
-            "periodSecondsPerRootMetre": "Pierson-Moskowitz fully developed sea: H = 0.21 U^2 / g, T = 0.81 * 2 pi U / g, so T = 3.5 s * sqrt(H / 1 m)",
+            "periodSecondsPerRootMetre": "A breaker's crest speed, from a fully developed sea (Pierson-Moskowitz): H = 0.21 U^2 / g, T = 0.81 * 2 pi U / g, so T = 3.5 s * sqrt(H / 1 m)",
             "whitecapCoefficient": "Whitecap coverage W = 3.84e-6 U^3.41 (Monahan & O'Muircheartaigh 1980), taken as the share of waves that break",
             "breakingDepthRatio": "A wave breaks in water shallower than 1.28 times its height (McCowan 1894)",
             "waterDensity": "Seawater, kg/m3",
