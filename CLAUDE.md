@@ -34,6 +34,7 @@ Each holds what one kind of work needs; read it in full before that work. They a
 
 - `docs/modding.md`: before writing mod code (patches, entities, behaviours, physics).
 - `docs/vanilla-at-sea.md`: before working on boats, anchors, ropes, accessories or lightning.
+- `docs/sea-and-weather.md`: before working on wind, rain, waves, storms, currents or the sea map.
 - `docs/bench.md`: before testing in the game, with `bin/game help`.
 - `docs/modeling.md`: before changing a shape, with `bin/model help`.
 - `docs/qa.md`: before a release's QA session, with `bin/qa help`.
