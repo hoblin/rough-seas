@@ -79,6 +79,18 @@ public class SeaWeatherModelTests
     }
 
     [Fact]
+    public void HoldsAShortStormAfterSteadyWindBriefInTheLongestMean()
+    {
+        const double steady = 7;
+        const double storm = 25;
+        var lags = Fixtures.Config().SeaBuildHours;
+
+        var means = SeaWeatherModel.TimeWeightedMeans(storm, lags.Select(lag => (lag, lag <= 2 ? storm : steady)));
+
+        Assert.InRange(means.Last().Mps, steady, steady + 1);
+    }
+
+    [Fact]
     public void BlowsLongWhereOnlyTheBackgroundWindBlows()
     {
         var calm = Samples.Where(sample => Model.Wind(sample.X, sample.Z, sample.Hours).Presence == 0).ToArray();

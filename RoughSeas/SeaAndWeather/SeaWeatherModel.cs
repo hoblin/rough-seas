@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.MathTools;
 
@@ -33,12 +34,18 @@ public class SeaWeatherModel
 
     public WorldClimate Climate => climate;
 
-    public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps)
+    public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps) =>
+        TimeWeightedMeans(windMps, config.SeaBuildHours.Select(lag => (lag, Wind(x, z, hours - lag).Speed)));
+
+    public static (double Hours, double Mps)[] TimeWeightedMeans(double nowMps, IEnumerable<(double Lag, double Mps)> past)
     {
-        var (sum, count) = (windMps, 1);
-        return config.SeaBuildHours
-            .Select(lag => (lag, (sum += Wind(x, z, hours - lag).Speed) / ++count))
-            .ToArray();
+        var (area, lastLag, lastMps) = (0.0, 0.0, nowMps);
+        return past.Select(sample =>
+        {
+            area += (sample.Lag - lastLag) * (lastMps + sample.Mps) / 2;
+            (lastLag, lastMps) = (sample.Lag, sample.Mps);
+            return (sample.Lag, area / sample.Lag);
+        }).ToArray();
     }
 
     /// <summary>
