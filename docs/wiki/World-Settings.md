@@ -2,7 +2,7 @@ Rough Seas works in every world it is added to: the wind, [storms](Storms), [cur
 
 ## The Rough Seas playstyle
 
-Since Vintage Story 1.21 a new world is mostly land, with only a few percent of ocean. The *Rough Seas* playstyle on the new world screen makes a world with far more open water: it starts from the survival playstyle and lowers the land cover to 60%. The rest is a plain survival world with harsh winters and realistic climate, so the latitude decides the [wind](Wind-and-Waves) and the [storms](Storms).
+Since Vintage Story 1.21 a new world is mostly land, with only a few percent of ocean. The *Rough Seas* playstyle on the new world screen makes a world with far more open water: it starts from the survival playstyle and lowers the land cover to 60%. It also sets 100,000 blocks from pole to equator, twice the default, so the climate zones are twice as wide and a block of open water counts as 100 m of real fetch instead of 200 ([the world's scale](Wind-and-Waves#the-worlds-scale)). The rest is a plain survival world with harsh winters and realistic climate, so the latitude decides the [wind](Wind-and-Waves) and the [storms](Storms).
 
 A world made with any other playstyle still gets every mechanic of the mod and every [vessel](Vessels); it simply has less sea to cross.
 
@@ -24,4 +24,4 @@ What stays either way:
 - [impacts](Hull-Condition#knocks-and-landings) on rock and shore, [rapids](Rapids), [wear](Hull-Condition#wear), weapons and explosions;
 - [mending](Mending), [bailing](Bailing), anchoring and tying up.
 
-Nothing in Rough Seas 1.0 harms a swimmer: cold water and swimming stamina are planned for [1.2](Roadmap#12-the-living-sea).
+Nothing in Rough Seas harms a swimmer yet: cold water and swimming stamina are planned for [2.2](Roadmap#22-the-living-sea).

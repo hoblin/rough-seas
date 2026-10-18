@@ -14,7 +14,20 @@ The first release: the sea stops being flat, safe and empty.
 - Six new [vessels](Vessels) between the raft and the sailboat.
 - The [Rough Seas playstyle and the Dangerous oceans setting](World-Settings).
 
-## 1.1 "Seamanship"
+## 2.0 "Undercurrent"
+
+Rough Seas moves beneath vanilla, so other mods build on its sea as if it were the game's own.
+
+- **Under vanilla's weather.** The mod's weather drives the game's own: its wind patterns, its rain and its weather events, which fire by their own conditions against the mod's rain and the live temperature. A mod written for plain Vintage Story reads the storm as vanilla weather; [For modders](For-Modders) says how.
+- **One sea, computed on the server.** The server works out the wind, storms, currents and waves and sends each player the map around them, so a client and its server never disagree.
+- **The world's own ocean.** The sea is read from the world's own map, whatever built it, never a copy of our own.
+- **Waves from the water.** [Waves](Wind-and-Waves#waves) grow from the wind, the fetch, the depth and the time it has blown, as coastal engineers predict them, so a big lake raises a sea of its own.
+- **Storms on real climatology.** Gales, hurricanes and squalls are born as often and where real ones are, from measurements ([The science behind it](The-Science-Behind-It)).
+- **Tested beside other mods**, with recommendations for mod sets ([Beside other mods](Other-Mods)).
+- **Vessels from any wood**, other mods' timber included.
+- **Switched off for now:** [capsizing](Surf-and-Swamping#capsizing) and the [surf's foam](The-Look-of-the-Sea#what-you-see), both unfinished. Capsizing comes back with heel in 2.1.
+
+## 2.1 "Seamanship"
 
 Sailing becomes sailing.
 
@@ -24,15 +37,16 @@ Sailing becomes sailing.
 - **Rowing on one side** turns a boat.
 - **A windsock** to read the wind.
 - **Masts that break** in strong wind, by the strength of their wood.
+- **Heel, and capsizing back.** A vessel heels as wind on its sail or a breaking wave on its beam leans it over, against its own stability. It ships water as the gunwale goes under, and past the angle it can't come back from it goes over. Sail and sea become two forces on one mechanic.
 
-## 1.2 "The living sea"
+## 2.2 "The living sea"
 
 The sea becomes dangerous to you, not only to your boat.
 
 - **Body in water.** Swimming wears you out, faster in cold water and on an empty stomach; exhausted, you sink. Cold water kills at the rate measured for real people in real seas, and a warm [current](Currents) off a cold coast can save your life.
 - **Creatures.** Sharks that hunt swimmers and small boats and dodge your blows; whales; and, deep down, rust creatures.
 
-## 1.3 "The deep"
+## 2.3 "The deep"
 
 What lies below.
 

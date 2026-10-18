@@ -20,7 +20,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | [Wear](Hull-Condition#wear) | none |
 | [Mending](Mending) | 1 log of its wood restores a sixth; 3 bamboo stakes a third |
 | [Bilge](Bailing) | none: the sea washes through |
-| [Capsized by](Surf-and-Swamping#capsizing) | a 2 m breaker |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker |
 | [Rapids](Rapids) | broken in about a quarter of a minute |
 | [Lightning](Lightning) | a strike nearby breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |

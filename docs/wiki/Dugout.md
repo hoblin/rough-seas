@@ -20,7 +20,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | [Wear](Hull-Condition#wear) | none |
 | [Mending](Mending) | 1 log of its wood restores two fifths |
 | [Bilge](Bailing) | 450 litres |
-| [Capsized by](Surf-and-Swamping#capsizing) | a 0.75 m breaker, with only 0.2 m of freeboard |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker, with only 0.2 m of freeboard |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
 | [Lightning](Lightning) | a 6000 J strike harms it about one time in five |
 | [Left alone](Currents#drift) | drifts with the current and the wind |

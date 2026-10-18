@@ -18,7 +18,7 @@ A litre of water weighs a kilogram, and a bilge holds hundreds. As it fills, a b
 
 A full bilge swamps the vessel. It lies awash, its sides level with the sea: nobody can paddle it or sit in it, but everyone aboard can hold on to it, in the water at its side. Then bail it out, wait for a lull, or leave it and swim. Every wave breaks over a swamped hull and strikes it harder, so in a breaking sea it won't last long.
 
-Wood floats, and so do reed, bark and hide on a wooden frame: a swamped boat stays afloat. Only the [sailboat](Sailboat), heavy with ballast to stand up to its sail, goes to the bottom, throwing everyone off as it founders. Raising a sunk vessel is planned for [1.3](Roadmap#13-the-deep).
+Wood floats, and so do reed, bark and hide on a wooden frame: a swamped boat stays afloat. Only the [sailboat](Sailboat), heavy with ballast to stand up to its sail, goes to the bottom, throwing everyone off as it founders. Raising a sunk vessel is planned for [2.3](Roadmap#23-the-deep).
 
 ## Breakers
 
@@ -35,7 +35,7 @@ A breaker strikes the hull with the energy of the water it throws, which grows v
 
 ## Capsizing
 
-> **Switched off for now.** A capsized boat stayed upright on screen while its crew went into the water, with nothing to show what had happened. Capsizing comes back once a vessel is seen to roll over. Until then breakers still ship water and strike the hull, and a full bilge still swamps it.
+> **Switched off for now.** A capsized boat stayed upright on screen while its crew went into the water, with nothing to show what had happened. Capsizing comes back in [2.1](Roadmap#21-seamanship), with heel: wind on a sail and a breaker on the beam will lean a vessel over against its stability, and you will see it roll. Until then breakers still ship water and strike the hull, and a full bilge still swamps it. The heights below are what capsized a vessel in 1.0.
 
 A breaker as high as a vessel's capsizing height overturns it. Everyone aboard is thrown into the sea, and the bilge fills to the brim. The cargo stays aboard, and the vessel stays afloat, swamped, if it isn't broken. The heights below are for an empty bilge; water aboard [lowers them](#water-aboard), down to half when full.
 
@@ -66,6 +66,6 @@ These were measured before capsizing was switched off, in seas set to each heigh
 
 ## At anchor
 
-A vessel at [anchor](Anchoring) ships less water and takes milder blows: three tenths of each. It still capsizes as easily, because it lies across the waves; turning its bow into the wind comes with sailing in [1.1](Roadmap#11-seamanship).
+A vessel at [anchor](Anchoring) ships less water and takes milder blows: three tenths of each. It still capsizes as easily, because it lies across the waves; turning its bow into the wind comes with sailing in [2.1](Roadmap#21-seamanship).
 
 With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves don't come aboard, strike or capsize anything.

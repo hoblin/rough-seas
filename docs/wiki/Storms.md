@@ -26,7 +26,7 @@ The thunder is the game's own weather, played where it can play: thunder needs w
 - **Gales** are the depressions that cross the North Atlantic every winter. They cover a great area and blow for days, strongest in a broad band well out from their centre. Their wind circles that centre counter-clockwise north of the equator and clockwise south of it, as real lows do.
 - **Hurricanes** form only over warm tropical seas, from late spring to autumn. They last for days and bring the strongest wind of all, at the wall of the small calm eye in the middle.
 
-![The wind of a gale or a hurricane, from above: it spirals in around a calm eye and is strongest at the eye wall](images/diagrams/cyclone.svg)
+![The wind of a gale or a hurricane, from above: it spirals in around its centre; a hurricane's is strongest at the wall of its small calm eye, a gale's in a broad band well out from a wide, quiet centre](images/diagrams/cyclone.svg)
 
 ## Where and when they form
 
@@ -60,7 +60,7 @@ That is your time to make for shore, or to [anchor](Anchoring) far out where the
 
 ## What a storm does at sea
 
-- It raises the waves that [swamp and capsize](Surf-and-Swamping) boats and fill a [bilge](Bailing), with rain on top.
+- It raises the waves that [swamp](Surf-and-Swamping) boats and fill a [bilge](Bailing), with rain on top.
 - It strains every [anchor](Anchoring) and [mooring rope](Mooring).
 - In warm air it brings [lightning](Lightning), drawn to the masts of the [sailboat](Sailboat) and the [outrigger canoe](Outrigger-Canoe).
 

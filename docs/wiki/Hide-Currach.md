@@ -20,7 +20,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Wear](Hull-Condition#wear) | a tenth a day afloat |
 | [Mending](Mending) | 1 large prepared hide restores two thirds; rendered fat gives back wear, up to a quarter |
 | [Bilge](Bailing) | 1500 litres |
-| [Capsized by](Surf-and-Swamping#capsizing) | a 2 m breaker, the best of the small boats in surf |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | takes them badly |
 | [Lightning](Lightning) | a strike nearby almost always breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |

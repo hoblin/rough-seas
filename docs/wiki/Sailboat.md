@@ -20,7 +20,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | [Wear](Hull-Condition#wear) | none |
 | [Mending](Mending) | 10 planks of its wood restore a fifteenth |
 | [Bilge](Bailing) | 1500 litres, 8 m² of open deck |
-| [Capsized by](Surf-and-Swamping#capsizing) | a 3.3 m breaker |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 3.3 m breaker |
 | [Lightning](Lightning) | its 6 m mast draws strikes |
 | [Rapids](Rapids) | barely harmed |
 | [Anchoring](Anchoring) | stone anchor on 120 m of rope, 210 m with an anchor warp |
@@ -33,7 +33,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | Built from | about 300 planks, with support beams, rope and a linen sail |
 | Wreckage | about 40 planks, a few beams, rope and linen |
 
-Its sail drives it the same whatever the wind does; sailing by the wind comes in [1.1](Roadmap#11-seamanship).
+Its sail drives it the same whatever the wind does; sailing by the wind comes in [2.1](Roadmap#21-seamanship).
 
 ## Its neighbours
 

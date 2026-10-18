@@ -1,5 +1,7 @@
 Rough Seas gives the world weather of its own, but it doesn't replace the game's weather. It drives it. Wind, rain and weather events still come out of vanilla's own machinery, so a mod written for plain Vintage Story works next to Rough Seas without a line about it. This page is for that mod's author: what reaches you through vanilla, what we change there, and what to leave alone.
 
+![Rough Seas lies under vanilla: the world's ocean map and climate at the bottom, Rough Seas' map on the server above them, vanilla's weather machinery driven by it, and other mods reading vanilla as usual at the top; clients read the map the server sends](images/diagrams/under-vanilla.svg)
+
 ## Read the weather as you would in vanilla
 
 - **Wind.** `BlockAccessor.GetWindSpeedAt(pos)` returns the wind there, as vanilla does, through the same `OnGetWindSpeed` event. With Rough Seas it is a full horizontal vector: X toward east, Z toward south. Vanilla fills X alone. If your mod reads X as the strength, read the vector's length instead.
@@ -50,7 +52,7 @@ SeaState state = sea.At(x, z);       // wind (m/s, toward east and south), Beauf
 SeaCurrent current = sea.CurrentAt(x, z);
 ```
 
-It answers on both sides. The server computes the state. A client reads the map the server sends of the regions around its player, so far from players a client knows nothing. Wave height is the significant height of the sea there, from its wind, fetch and depth. This interface is young and may change before 2.0; tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues) if you build on it.
+It answers on both sides. The server computes the state. A client reads the map the server sends of the regions around its player, so far from players a client knows nothing. Wave height is the significant height of the sea there, from its wind, fetch and depth. This interface is young and may still change; tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues) if you build on it.
 
 ## What not to touch
 

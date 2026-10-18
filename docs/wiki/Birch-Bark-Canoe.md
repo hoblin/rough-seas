@@ -20,7 +20,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Wear](Hull-Condition#wear) | none |
 | [Mending](Mending) | 2 birch bark restore a third |
 | [Bilge](Bailing) | 600 litres |
-| [Capsized by](Surf-and-Swamping#capsizing) | a 0.75 m breaker |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
 | [Rapids](Rapids) | runs them unharmed, the only vessel that does |
 | [Lightning](Lightning) | a strike nearby almost always breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |

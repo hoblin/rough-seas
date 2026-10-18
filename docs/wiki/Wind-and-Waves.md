@@ -12,6 +12,8 @@ Its direction follows the prevailing winds of the real world, set by latitude, a
 | 30° to 60° | from the south-west | from the north-west | the westerlies |
 | 60° to 90° | from the north-east | from the south-east | the polar easterlies |
 
+![The prevailing winds north of the equator: the trade winds from the north-east up to 30°, the westerlies from the south-west to 60°, the polar easterlies from the north-east to the pole](images/diagrams/prevailing-winds.svg)
+
 Storms travel with the prevailing wind, so the sky upwind is where weather comes from.
 
 Trees sway with the wind's strength. Their sway does not show its direction, because the game's foliage only bends one way; read the direction from the clouds.
@@ -43,6 +45,8 @@ A wind raises waves by blowing across water, and how high they grow depends on t
 - **The fetch.** The fetch is the stretch of open water the wind has blown across before it reaches you, measured straight upwind to the shore. A pond barely ripples in a gale that raises a heavy sea in open water.
 - **The depth.** Shallow water holds the waves down and shortens them, so the same wind raises less in a shallow bay than offshore.
 - **The time.** Waves take hours to build, and days to build fully. The sea answers to the wind of the last half hour to three days, whichever raises it highest. A squall that has just arrived raises a short, choppy sea, and a gale that has blown all day a long, high one.
+
+![The fetch is the open water upwind of you, measured straight to the shore; over the shallows the waves stay low, over deep water they grow with the fetch](images/diagrams/fetch.svg)
 
 ### The world's scale
 
