@@ -33,7 +33,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 
 ## How it is built
 
-Any wood. Redwood's logs come as sections, and it takes those.
+Any wood, a modded tree's too. Redwood's logs come as sections, and it takes those, as it does any wood that comes in sections.
 
 | | |
 | --- | --- |

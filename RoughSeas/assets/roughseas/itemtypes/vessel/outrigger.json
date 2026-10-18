@@ -1,8 +1,8 @@
 {
     "code": "outrigger",
     "class": "roughseas:ItemVessel",
-    "variantgroups": [{"code": "wood", "loadFromProperties": "block/wood"}],
-    "attributes": {"handbook": {"groupBy": ["outrigger-*"]}},
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
+    "attributes": {"handbook": {"groupBy": ["outrigger-*"]}, "logTextures": {"bark": "all", "inside": "inside-north"}},
     "durability": 100,
     "maxstacksize": 1,
     "materialDensity": 1,
@@ -10,8 +10,6 @@
     "heldTpIdleAnimation": "holdunderarm",
     "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater", "Bilge", "SailUnfurled", "SailHalf"]},
     "textures": {
-        "bark": {"base": "game:block/wood/bark/{wood}-h"},
-        "inside": {"base": "game:block/wood/debarked/{wood}"},
         "sail": {"base": "game:block/cloth/linen/plain"},
         "lashing": {"base": "game:item/resource/rope"},
         "bilge": {"base": "game:block/liquid/waterportion"}

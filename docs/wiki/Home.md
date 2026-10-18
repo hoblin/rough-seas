@@ -48,6 +48,9 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 **The science behind it**
 - [The science behind it](The-Science-Behind-It): the measurements and models the sea and weather stand on, and where we bent them.
 
+**Beside other mods**
+- [Beside other mods](Other-Mods): the mods we tested Rough Seas with, what changes in one mod set, and what we recommend.
+
 **For modders**
 - [For modders](For-Modders): how Rough Seas drives vanilla's weather, and what that means for your mod.
 

@@ -28,14 +28,14 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Carried | too heavy to pick up |
 | Seats | two: the helmsman aft, who paddles when the sail is furled, and a passenger forward |
 | Cargo | a basket (8 slots) forward, in place of the passenger |
-| Built from | 4 logs and 8 planks of one wood, 2 ropes and a sail |
+| Built from | 4 logs and 8 planks of one wood (or 4 log sections and 8 planks of that mod's woods), 2 ropes and a sail |
 | Wreckage | planks, a rope and some linen |
 
 Its sail drives it the same whatever the wind does; sailing by the wind comes in [2.1](Roadmap#21-seamanship).
 
 ## How it is built
 
-Logs and planks of one wood; redwood takes log sections.
+Logs and planks of one wood, a modded tree's too. Redwood, and any wood that comes in sections, builds from its log sections, with planks of any wood from the same mod.
 
 | | |
 | --- | --- |

@@ -6,6 +6,8 @@ Sheets of birch bark sewn over a frame of close-set ribs, with gunwales lashed o
 
 For long river journeys. The canoe is fast and draws almost no water, and it is the one vessel that runs rapids without taking a rock strike every second. It is also fragile: a landing that a dugout would never notice can hole it. Carry spare birch bark and patch it on the way, and pick it up to carry it past whatever the river won't let you through.
 
+Birch is the one canoe bark in vanilla. Beside a mod that adds elm or spruce, such as [Wildcraft](Other-Mods#wildcraft-trees-and-shrubs), their bark builds canoes too: the Iroquois built theirs of elm bark, and northern and Pacific peoples of spruce bark. An elm-bark canoe is mended with elm bark. No other bark is flexible and tough enough to make one.
+
 ## Where it comes from
 
 The birch-bark canoe belongs to the peoples of the northern woodlands of North America, the Anishinaabe, Mi'kmaq, Cree and their neighbours, who built it from what the forest gave: birch bark for the skin, cedar for the ribs and sheathing, spruce root for the lashings and spruce gum for the seams. It was light enough to carry between lakes, and later French and British fur traders crossed half a continent in larger copies of it. The model follows a two-person river canoe of that tradition, with its ribs, wrapped gunwales and curled stems.
@@ -18,7 +20,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | Turning | nimble |
 | [Hull](Hull-Condition) | 2400 J |
 | [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 2 birch bark restore a third |
+| [Mending](Mending) | 2 bark of its tree restore a third |
 | [Bilge](Bailing) | 600 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
 | [Rapids](Rapids) | runs them unharmed, the only vessel that does |

@@ -7,13 +7,13 @@ A damaged hull is mended with the stuff it was built from. Hold the material, ri
 | [Sailboat](Sailboat) | 10 planks of its wood | a fifteenth | 80 |
 | [Dugout](Dugout) | 1 log of its wood | two fifths | 80 |
 | [Coracle](Coracle) | 1 small prepared hide | two thirds | 40 |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 2 birch bark | a third | 40 |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 2 bark of its tree | a third | 40 |
 | [Hide currach](Hide-Currach) | 1 large prepared hide | two thirds | 80 |
 | [Hide currach](Hide-Currach), greasing | 1 rendered fat | up to a quarter, of wear only | 40 |
 | [Outrigger canoe](Outrigger-Canoe) | 2 planks of its wood | a fourteenth | 80 |
 | [Reed boat](Reed-Boat) | cannot be mended | | |
 
-- The wood must be the hull's own: an oak sailboat takes oak planks.
+- The wood must be the hull's own: an oak sailboat takes oak planks, and a canoe the bark of the tree it was built from.
 - A sailboat built from about 300 planks takes some 150 to bring back from nothing.
 - A hull at full condition takes no more, and says so: the material stays in your hand.
 - Too few in hand for a patch, and the hull says how many it takes.

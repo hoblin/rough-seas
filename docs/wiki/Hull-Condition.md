@@ -47,6 +47,8 @@ A hull's capacity comes from its build, and for a wooden hull also from its wood
 | aged wood (raft) | 49 | 0.5 × |
 | kapok | 36 | 0.37 × |
 
+A wood from another mod counts by its species when the table knows it: Wildcraft's elm by elm's 65 MPa, its mahogany by mahogany's 81 (the full list is in [Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)). A species the table doesn't know counts as 93.5 MPa, the middle of the vanilla woods, and the server log names it once.
+
 An ebony sailboat takes more than four times the knocks of a kapok one. The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood; the [reed boat](Reed-Boat), [coracle](Coracle), [birch-bark canoe](Birch-Bark-Canoe) and [hide currach](Hide-Currach) have a single build each. Their capacities, in oak, are compared on [Vessels](Vessels).
 
 ## What harms a hull

@@ -74,13 +74,26 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
+    private static JsonItemStack OfWood(JsonItemStack stack, Wood? wood)
+    {
+        if (wood != null) stack.Code = wood.Locate(stack.Code);
+        return stack;
+    }
+
+    private static BlockDropItemStack OfWood(BlockDropItemStack drop, Wood? wood)
+    {
+        if (wood != null && drop.Code != null) drop.Code = wood.Locate(drop.Code);
+        return drop;
+    }
+
     public override string PropertyName() => Code;
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         base.Initialize(properties, attributes);
+        var wood = Wood.Of(properties.Variant);
         repairs = attributes["repairs"].AsObject<HullRepair[]>([])
-            .Where(repair => repair.Material.Resolve(entity.World, "vessel repair"))
+            .Where(repair => OfWood(repair.Material, wood).Resolve(entity.World, "vessel repair"))
             .ToArray();
         wearPerDay = attributes["wearPerDay"].AsDouble(0);
 
@@ -106,7 +119,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         runsRapids = attributes["runsRapids"].AsBool(false);
         rapids = vessels.Rapids;
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])
-            .Where(drop => drop.Resolve(entity.World, "vessel wreckage", entity.Code))
+            .Where(drop => OfWood(drop, wood).Resolve(entity.World, "vessel wreckage", entity.Code))
             .ToArray();
         entity.PhysicsUpdateWatcher += OnPhysicsUpdate;
     }
