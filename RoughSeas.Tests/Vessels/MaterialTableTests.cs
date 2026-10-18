@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 
@@ -5,6 +6,9 @@ namespace RoughSeas.Tests.Vessels;
 
 public class MaterialTableTests
 {
+    private static readonly string[] VanillaWoods =
+        ["birch", "oak", "maple", "pine", "acacia", "kapok", "baldcypress", "larch", "redwood", "ebony", "walnut", "purpleheart"];
+
     private readonly CountingLogger logger = new();
     private readonly MaterialTable table;
 
@@ -58,6 +62,15 @@ public class MaterialTableTests
         table.StrengthFactor([Part("wood-wildcrafttree-ginkgo", "wood-oak")]);
 
         Assert.Equal(2, logger.Warnings);
+    }
+
+    [Fact]
+    public void ShipsTheMedianOfTheVanillaWoodsAsTheStrengthOfAnUnknownWood()
+    {
+        var shipped = JsonConvert.DeserializeObject<Dictionary<string, Material>>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "materials.json")))!;
+        var vanilla = VanillaWoods.Select(wood => shipped["wood-" + wood].Strength).Order().ToArray();
+
+        Assert.Equal((vanilla[5] + vanilla[6]) / 2, shipped["wood"].Strength, tolerance: 0.1);
     }
 
     [Fact]

@@ -56,7 +56,7 @@
             "R": { "type": "item", "code": "game:rope" },
             "S": { "type": "item", "code": "game:sail" },
             "L": { "type": "block", "code": "{domain}:logsection-placed-*-ne-ud", "name": "wood", "allowedVariants": "{woods}" },
-            "P": { "type": "item", "code": "{domain}:plank-*", "name": "wood", "quantity": 4, "allowedVariants": "{woods}" }
+            "P": { "type": "item", "code": "{domain}:plank-*", "quantity": 4, "allowedVariants": "{woods}" }
         },
         "width": 3,
         "height": 3,

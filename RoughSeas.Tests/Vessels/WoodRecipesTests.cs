@@ -27,6 +27,14 @@ public class WoodRecipesTests
     }
 
     [Fact]
+    public void NamesTheWoodOfAnOutriggerBuiltFromSectionsByItsSectionsAlone()
+    {
+        var outrigger = Recipe(Expand(new Wood("game", "redwood"), ["oak", "redwood"], []), "Outrigger canoe from log sections");
+
+        Assert.Equal(["L"], outrigger["ingredients"]!.Children<JProperty>().Where(ingredient => ingredient.Value["name"] != null).Select(ingredient => ingredient.Name));
+    }
+
+    [Fact]
     public void PeelsBarkOnlyOffTheTreesOnTheCanoeList()
     {
         var bark = Recipe(Expand(new Wood("wildcrafttree", "elm"), ["elm", "ash"], ["elm"]), "Bark");

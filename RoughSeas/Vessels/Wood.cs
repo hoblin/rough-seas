@@ -6,7 +6,7 @@ namespace RoughSeas.Vessels;
 
 /// <summary>
 /// A tree species, in the domain whose <c>block/wood</c> list names it. Its <see cref="Code"/> is the vessel variant:
-/// a vanilla wood's is the bare species, so vessel codes saved before other mods' woods (<c>dugout-oak</c>) still load.
+/// a vanilla wood's is the bare species and never carries its domain, which keeps vanilla vessel codes (<c>dugout-oak</c>) stable in saves.
 /// </summary>
 public record Wood(string Domain, string Species)
 {

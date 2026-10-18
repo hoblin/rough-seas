@@ -124,7 +124,7 @@ Extreme Weathers' whiteout needs precipitation above 0.95 at −2 °C or colder.
 | tuja | northern white cedar | 45 |
 | empresstree | paulownia | 38 |
 
-The rest (cedar, which is Siberian pine, ginkgo, banyan, bearnut, tamanu, spurgetree, ghostgum, satinash, sal, bluemahoe, saxaul, charred and chlorociboria) have no published bending strength we could source, and count as an unknown wood: 93.5 MPa, the middle of the vanilla woods. The server log names each of them once.
+The rest (cedar, which is Siberian pine, ginkgo, banyan, bearnut, tamanu, spurgetree, ghostgum, satinash, sal, bluemahoe, saxaul, charred, chlorociboria and petrified) have no published bending strength we could source, and count as an unknown wood: 93.5 MPa, the middle of the vanilla woods. The server log names each of them once.
 
 ### Canoes of elm and spruce bark
 
@@ -138,4 +138,4 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 
 - Vessels of Wildcraft's woods carry its name in their codes, `roughseas:dugout-wildcrafttree-elm`, so two mods with a wood of the same name never meet. Vanilla's woods keep their codes, `roughseas:dugout-oak`.
 - Take Wildcraft out of a world and the vessels built of its woods go with it, as its own blocks do.
-- Any other mod's trees work the same way, with nothing to write for it. Rough Seas reads every mod's `worldproperties/block/wood.json`, and builds from the blocks a wood has in vanilla's shapes: `log-placed-{wood}-ud` and `-we`, `plank-{wood}`, `debarkedlog-{wood}-ud` and `logsection-placed-{wood}-ne-ud`, in that mod's own domain. A mod's elm or spruce gives canoe bark.
+- Any other mod's trees work the same way, with nothing to write for it. Rough Seas reads every mod's `worldproperties/block/wood.json`, and builds from the blocks a wood has in vanilla's shapes: `log-placed-{wood}-ud` and `-we`, `plank-{wood}`, `debarkedlog-{wood}-ud` and `logsection-placed-{wood}-ne-ud`, in that mod's own domain. A mod's birch, elm or spruce gives canoe bark.
