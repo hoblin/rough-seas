@@ -2,7 +2,7 @@ Rough Seas builds its sea and weather from real measurements and the models scie
 
 ## The world's scale
 
-- **Space.** Vintage Story draws the world small: 50,000 blocks from pole to equator, about 200 times less than the Earth's 10,000 km, and its climate zones are squeezed to fit (the world setting `polarEquatorDistance`). Rough Seas reads the same squeeze: a block across the world is 200 m of real distance. Heights and depths are not squeezed: a block is a metre.
+- **Space.** Vintage Story draws the world small: 50,000 blocks from pole to equator, about 200 times less than the Earth's 10,000 km, and its climate zones are squeezed to fit (the world setting `polarEquatorDistance`). Rough Seas reads the same squeeze: a block across the world is 200 m of real distance in a default world, and 100 m in the *Rough Seas* playstyle, which sets 100,000 blocks from pole to equator. Storm sizes, speeds and birth rates are real distances and areas, turned into blocks by the world's own scale. Heights and depths are not squeezed: a block is a metre.
 - **Time.** A day in the game is a day: storms live, travel and blow for as many days as real ones. Only the calendar is short, 12 months of 9 days. So the seasons follow the game's calendar, about 3.4 times faster than the real year, while each day's weather is a real day's.
 
 ## Wind
@@ -43,5 +43,5 @@ Squall lines move at 30 to 80 km/h; the Amazon's coastal lines run at 50 to 60 k
 
 - **The world's scale** (×200 across, a block a metre high) and **the short calendar** are the game's own; we follow them.
 - **The wave ceiling** of 16 m keeps a hurricane's sea on the world's scale.
-- **Winter gales come too seldom.** At 47° north our open sea sees gale-force wind about 2 percent of a winter; the North Sea, among the stormiest seas, sees 7 to 14 percent. The births, seasons and strengths above come from measurements; how wide a depression's gale-force band is, and how long it blows at one place, are not yet measured for the mod.
+- **Winter gales come too seldom.** At 47° north our open sea sees gale-force wind under 2 percent of a winter; the North Sea, among the stormiest seas, sees 7 to 14 percent. The births, seasons and strengths above come from measurements; how wide a depression's gale-force band is, and how long it blows at one place, are not yet measured for the mod.
 - **Squalls' frequency** is the mod's own, not yet from data.

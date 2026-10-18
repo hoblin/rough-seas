@@ -123,7 +123,7 @@ public class StormField
         for (var type = 0; type < config.Storms.Length; type++)
         {
             var stormType = config.Storms[type];
-            var reach = stormType.LifetimeHours.Max * stormType.SpeedBlocksPerHour.Max + stormType.Radius.Max + range;
+            var reach = Blocks(stormType.LifetimeHours.Max * stormType.SpeedKmPerHour.Max + stormType.RadiusKm.Max) + range;
             var firstSlot = (long)Math.Floor((fromHours - stormType.LifetimeHours.Max) / stormType.SlotHours);
             var lastSlot = (long)Math.Floor(toHours / stormType.SlotHours);
             for (var cellX = Cell(x - reach, stormType); cellX <= Cell(x + reach, stormType); cellX++)
@@ -143,8 +143,8 @@ public class StormField
         rand.InitPositionSeed(cellX, (int)slot, cellZ);
         if (rand.NextDouble() >= BirthChance(stormType)) return null;
 
-        var originX = (cellX + rand.NextDouble()) * stormType.CellSize;
-        var originZ = (cellZ + rand.NextDouble()) * stormType.CellSize;
+        var originX = (cellX + rand.NextDouble()) * Blocks(stormType.CellKm);
+        var originZ = (cellZ + rand.NextDouble()) * Blocks(stormType.CellKm);
         var bornHours = (slot + rand.NextDouble()) * stormType.SlotHours;
         var northern = prevailing.LatitudeDegrees(originZ) >= 0;
         var likelihood = Likelihood(stormType, originX, originZ, bornHours, northern);
@@ -153,7 +153,7 @@ public class StormField
 
         var track = prevailing.TowardRadians(originZ) + (rand.NextDouble() * 2 - 1) * config.Storm.TrackSpreadDegrees * GameMath.DEG2RAD_DOUBLE;
         var (towardX, towardZ) = Compass.Toward(track);
-        var speed = stormType.SpeedBlocksPerHour.Lerp(rand.NextDouble());
+        var speed = Blocks(stormType.SpeedKmPerHour.Lerp(rand.NextDouble()));
         return new Storm
         {
             Type = stormType,
@@ -164,7 +164,7 @@ public class StormField
             OriginZ = originZ,
             VelocityX = towardX * speed,
             VelocityZ = towardZ * speed,
-            Radius = stormType.Radius.Lerp(rand.NextDouble()),
+            Radius = Blocks(stormType.RadiusKm.Lerp(rand.NextDouble())),
             PeakMps = Peak(stormType, stormType.PeakMps.Draw(rand.NextDouble(), rand.NextDouble()), originX, originZ, bornHours),
             Northern = northern
         };
@@ -190,13 +190,14 @@ public class StormField
 
     private double BirthChance(StormTypeConfig stormType)
     {
-        var cellKm = stormType.CellSize * blockMetres / 1000;
-        return stormType.BirthsPerMillionKm2PerDay * cellKm * cellKm / 1e6 * stormType.SlotHours / 24;
+        return stormType.BirthsPerMillionKm2PerDay * stormType.CellKm * stormType.CellKm / 1e6 * stormType.SlotHours / 24;
     }
 
     private double BirthShare(StormTypeConfig stormType, double x, double z) => isSea(x, z) ? 1 : stormType.OverLand;
 
-    private static int Cell(double coordinate, StormTypeConfig stormType) => (int)Math.Floor(coordinate / stormType.CellSize);
+    private int Cell(double coordinate, StormTypeConfig stormType) => (int)Math.Floor(coordinate / Blocks(stormType.CellKm));
+
+    private double Blocks(double km) => km * 1000 / blockMetres;
 
     private static double Distance((double X, double Z) centre, double x, double z) =>
         Math.Sqrt((centre.X - x) * (centre.X - x) + (centre.Z - z) * (centre.Z - z));

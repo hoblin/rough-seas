@@ -8,13 +8,15 @@ Storms are born, cross the world and die out. Each one is a real thing in the wo
 
 | | Squall | Gale | Hurricane |
 | --- | --- | --- | --- |
-| Size across | 500 to 1000 blocks | 4000 to 8000 blocks | 2400 to 5000 blocks |
+| Size across | 100 to 200 km | 800 to 1600 km | 480 to 1000 km |
 | Peak wind | 17 to 26 m/s (force 7 to 10) | mostly 16 to 28 m/s (force 7 to 10); a few reach hurricane force | 33 to 55 m/s (force 12) |
 | Lasts | 2 to 6 hours | 2 to 5 days | 3 to 7 days |
-| Travels | 150 to 400 blocks an hour | 75 to 275 blocks an hour | 85 to 250 blocks an hour |
+| Travels | 30 to 80 km an hour | 15 to 55 km an hour | 17 to 50 km an hour |
 | Wind | blows along its path | a broad band around a wide centre | turns around a calm eye |
 | Rain | heavy | steady | heavy |
 | Thunder | heavy | light, and none when cold | heavy |
+
+Sizes and speeds are real distances. In blocks they follow the world's scale: a block across is 200 m in a default world and 100 m in the *Rough Seas* playstyle, so a gale spans 4000 to 8000 blocks in the first and twice that in the second.
 
 A day in the game is a day: a gale blows for days as a real one does. Only the calendar is shorter, so a game winter of 27 days holds fewer gales than a real winter of 90, but each of its days is as stormy as a real winter day.
 

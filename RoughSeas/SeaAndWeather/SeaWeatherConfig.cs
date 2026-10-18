@@ -97,18 +97,18 @@ public class ShowersConfig
 public class StormTypeConfig
 {
     public string Code = "";
-    public int CellSize;
+    public double CellKm;
     public double SlotHours;
     public double BirthsPerMillionKm2PerDay;
     public Window? Latitude;
     public Window? Temperature;
     public double RainfallExponent;
     public double[] MonthlyWeight = [];
-    public ValueRange Radius = new();
+    public ValueRange RadiusKm = new();
     public Spread PeakMps = new();
     public GradientStrength? StrengthByGradient;
     public ValueRange LifetimeHours = new();
-    public ValueRange SpeedBlocksPerHour = new();
+    public ValueRange SpeedKmPerHour = new();
     public bool Cyclonic;
     public double EyeFraction;
     public double RimFraction;

@@ -241,13 +241,15 @@ public class BridgeCommands : ModSystem
         var (x, z, now) = (pos.X, pos.Z, sea.NowHours);
         Task.Run(() =>
         {
-            var reply = Count(sea, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Config.Storms, type, x, z, now, year, years, reach, step, presence);
+            var reply = Count(sea, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Config.Storms, type, x, z, now, year, years, reach, step, presence,
+                pointZ => calendar.OnGetLatitude?.Invoke(pointZ) >= 0);
             sapi.Event.EnqueueMainThreadTask(() => player.SendMessage(GlobalConstants.GeneralChatGroup, reply, EnumChatType.CommandSuccess), "bridge climate");
         });
         return TextCommandResult.Success($"Counting {type ?? "storm"} hours over the next {years} years on {(2 * reach + 1) * (2 * reach + 1)} points; the answer comes in chat");
     }
 
-    private static string Count(SeaModel sea, StormTypeConfig[] types, string? type, double x, double z, double now, double year, double years, int reach, double step, double presence)
+    private static string Count(SeaModel sea, StormTypeConfig[] types, string? type, double x, double z, double now, double year, double years, int reach, double step, double presence,
+        System.Func<double, bool> northern)
     {
         const int shown = 8;
         const double gale = 17.2;
@@ -260,16 +262,21 @@ public class BridgeCommands : ModSystem
                 var galeMonths = new int[12];
                 var strongest = 0.0;
                 var passed = new System.Collections.Generic.HashSet<Storm>();
+                var shift = northern(point.Z) ? 0 : 6;
                 for (var hour = 0.0; hour < year * years; hour++)
                 {
                     var when = now + hour;
-                    var storms = sea.StormsAt(point.X, point.Z, when);
-                    if (storms.Storm == null || type != null && storms.Storm.Code != type) continue;
-                    passed.Add(storms.Storm);
-                    strongest = Math.Max(strongest, storms.Speed);
-                    var month = (int)(when / year % 1 * 12);
-                    if (storms.Speed >= gale) galeMonths[month]++;
-                    if (storms.Presence >= presence) months[month]++;
+                    var month = ((int)(when / year % 1 * 12) + shift) % 12;
+                    var wind = sea.Weather.Wind(point.X, point.Z, when);
+                    strongest = Math.Max(strongest, wind.Speed);
+                    if (wind.Speed >= gale) galeMonths[month]++;
+                    var here = sea.Weather.Storms.Near(point.X, point.Z, when)
+                        .Where(storm => type == null || storm.Code == type)
+                        .Select(storm => (Storm: storm, storm.InfluenceAt(point.X, point.Z, when).Presence))
+                        .Where(storm => storm.Presence > 0)
+                        .ToArray();
+                    foreach (var storm in here) passed.Add(storm.Storm);
+                    if (here.Length > 0 && here.Max(storm => storm.Presence) >= presence) months[month]++;
                 }
                 return (point.X, point.Z, Hours: months.Sum(), Month: Array.IndexOf(months, months.Max()) + 1, Peak: months.Max(),
                     GaleHours: galeMonths.Sum() / years, Winter: (galeMonths[11] + galeMonths[0] + galeMonths[1]) / (years * year / 4), Summer: (galeMonths[5] + galeMonths[6] + galeMonths[7]) / (years * year / 4), Strongest: strongest, Passed: passed.Count / years, PeakMps: passed.Count > 0 ? passed.Max(storm => storm.PeakMps) : 0);
@@ -277,7 +284,7 @@ public class BridgeCommands : ModSystem
             .OrderByDescending(point => point.Hours)
             .ToArray();
         if (points.Length == 0) return "No open sea on the grid";
-        var mean = string.Format(CultureInfo.InvariantCulture, "Mean over {0} points: force 8+ {1:P1} of the year, {2:P1} of winter, {3:P1} of summer; {4:F1} storms passed",
+        var mean = string.Format(CultureInfo.InvariantCulture, "Mean over {0} points: wind at force 8+ {1:P1} of the year, {2:P1} of winter, {3:P1} of summer; {4:F1} storms passed a year",
             points.Length, points.Average(point => point.GaleHours) / year, points.Average(point => point.Winter), points.Average(point => point.Summer), points.Average(point => point.Passed));
         return mean + "\n" + string.Join("\n", points.Take(shown).Select(point =>
         {

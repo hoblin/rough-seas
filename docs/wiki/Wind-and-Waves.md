@@ -46,7 +46,7 @@ A wind raises waves by blowing across water, and how high they grow depends on t
 
 ### The world's scale
 
-The world is drawn about 200 times smaller across than the Earth, so a block of fetch counts as 200 metres of real water: a lake 500 blocks across raises the sea of a real 100 km lake. Heights and depths are not squeezed: a block is a metre.
+The world is drawn smaller across than the Earth, so a block of fetch counts as more than a metre of real water: 200 m in a default world, 100 m in the *Rough Seas* playstyle, which spreads the climate zones twice as wide. In a default world a lake 500 blocks across raises the sea of a real 100 km lake. Heights and depths are not squeezed: a block is a metre.
 
 ### How high
 
