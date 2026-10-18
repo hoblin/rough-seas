@@ -20,7 +20,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Wear](Hull-Condition#wear) | none |
 | [Mending](Mending) | 2 planks of its wood restore a fourteenth |
 | [Bilge](Bailing) | 600 litres |
-| [Capsized by](Surf-and-Swamping#capsizing) | a 2.1 m breaker; it barely rolls in a sea |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.1 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3.4 m mast draws strikes |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
@@ -31,7 +31,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Built from | 4 logs and 8 planks of one wood, 2 ropes and a sail |
 | Wreckage | planks, a rope and some linen |
 
-Its sail drives it the same whatever the wind does; sailing by the wind comes in [1.1](Roadmap#11-seamanship).
+Its sail drives it the same whatever the wind does; sailing by the wind comes in [2.1](Roadmap#21-seamanship).
 
 ## How it is built
 

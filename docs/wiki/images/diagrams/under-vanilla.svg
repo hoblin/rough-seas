@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="960" height="540" viewBox="0 0 960 540">
+  <title>under-vanilla</title>
+  <g id="Layer_1" data-name="Layer 1">
+    <path d="M0 0 L960 0 L960 540 L0 540 Z" fill="#f4ecdc"/>
+    <text transform="matrix(1 0 0 1 24 40)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="20" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">Rough Seas lies under vanilla</tspan></text>
+    <text transform="matrix(1 0 0 1 24 66)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" fill="#7a6f62"><tspan x="0" y="0">Other mods read vanilla as usual and get our weather.</tspan></text>
+    <path d="M24 110 L704 110 L704 186 L24 186 Z" fill="none" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 42 141)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">Other mods</tspan></text>
+    <text transform="matrix(1 0 0 1 42 166)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#2b2722"><tspan x="0" y="0">read vanilla as usual: GetWindSpeedAt, GetPrecipitation, GetClimateAt</tspan></text>
+    <path d="M24 220 L704 220 L704 296 L24 296 Z" fill="#e3dccb" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 42 251)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">Vanilla&apos;s weather machinery, driven by Rough Seas</tspan></text>
+    <text transform="matrix(1 0 0 1 42 276)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#2b2722"><tspan x="0" y="0">region wind patterns, rain through OnGetClimate, weather events by their own conditions</tspan></text>
+    <path d="M24 330 L704 330 L704 406 L24 406 Z" fill="#8fbfbe" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 42 361)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">Rough Seas&apos; sea and weather map, computed on the server</tspan></text>
+    <text transform="matrix(1 0 0 1 42 386)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#2b2722"><tspan x="0" y="0">wind with its direction, rain, storms, currents, waves</tspan></text>
+    <path d="M24 440 L704 440 L704 516 L24 516 Z" fill="#dcc48e" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 42 471)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">The world&apos;s foundations</tspan></text>
+    <text transform="matrix(1 0 0 1 42 496)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#2b2722"><tspan x="0" y="0">worldgen: the ocean map; climate: the temperature</tspan></text>
+    <g>
+      <g>
+        <path d="M199.25 216 L199.25 193 C199.25 192.586 199.586 192.25 200 192.25 C200.414 192.25 200.75 192.586 200.75 193 L200.75 216 C200.75 216.414 200.414 216.75 200 216.75 C199.586 216.75 199.25 216.414 199.25 216" fill="#2b2722"/>
+        <path d="M200 190 L203 196 L197 196 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M363.25 216 L363.25 193 C363.25 192.586 363.586 192.25 364 192.25 C364.414 192.25 364.75 192.586 364.75 193 L364.75 216 C364.75 216.414 364.414 216.75 364 216.75 C363.586 216.75 363.25 216.414 363.25 216" fill="#2b2722"/>
+        <path d="M364 190 L367 196 L361 196 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M527.25 216 L527.25 193 C527.25 192.586 527.586 192.25 528 192.25 C528.414 192.25 528.75 192.586 528.75 193 L528.75 216 C528.75 216.414 528.414 216.75 528 216.75 C527.586 216.75 527.25 216.414 527.25 216" fill="#2b2722"/>
+        <path d="M528 190 L531 196 L525 196 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <text transform="matrix(1 0 0 1 380 208)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="13" fill="#7a6f62"><tspan x="0" y="0">reads</tspan></text>
+    <g>
+      <g>
+        <path d="M199.25 326 L199.25 303 C199.25 302.586 199.586 302.25 200 302.25 C200.414 302.25 200.75 302.586 200.75 303 L200.75 326 C200.75 326.414 200.414 326.75 200 326.75 C199.586 326.75 199.25 326.414 199.25 326" fill="#2b2722"/>
+        <path d="M200 300 L203 306 L197 306 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M363.25 326 L363.25 303 C363.25 302.586 363.586 302.25 364 302.25 C364.414 302.25 364.75 302.586 364.75 303 L364.75 326 C364.75 326.414 364.414 326.75 364 326.75 C363.586 326.75 363.25 326.414 363.25 326" fill="#2b2722"/>
+        <path d="M364 300 L367 306 L361 306 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M527.25 326 L527.25 303 C527.25 302.586 527.586 302.25 528 302.25 C528.414 302.25 528.75 302.586 528.75 303 L528.75 326 C528.75 326.414 528.414 326.75 528 326.75 C527.586 326.75 527.25 326.414 527.25 326" fill="#2b2722"/>
+        <path d="M528 300 L531 306 L525 306 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <text transform="matrix(1 0 0 1 380 318)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="13" fill="#7a6f62"><tspan x="0" y="0">reads</tspan></text>
+    <g>
+      <g>
+        <path d="M199.25 436 L199.25 413 C199.25 412.586 199.586 412.25 200 412.25 C200.414 412.25 200.75 412.586 200.75 413 L200.75 436 C200.75 436.414 200.414 436.75 200 436.75 C199.586 436.75 199.25 436.414 199.25 436" fill="#2b2722"/>
+        <path d="M200 410 L203 416 L197 416 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M363.25 436 L363.25 413 C363.25 412.586 363.586 412.25 364 412.25 C364.414 412.25 364.75 412.586 364.75 413 L364.75 436 C364.75 436.414 364.414 436.75 364 436.75 C363.586 436.75 363.25 436.414 363.25 436" fill="#2b2722"/>
+        <path d="M364 410 L367 416 L361 416 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M527.25 436 L527.25 413 C527.25 412.586 527.586 412.25 528 412.25 C528.414 412.25 528.75 412.586 528.75 413 L528.75 436 C528.75 436.414 528.414 436.75 528 436.75 C527.586 436.75 527.25 436.414 527.25 436" fill="#2b2722"/>
+        <path d="M528 410 L531 416 L525 416 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <text transform="matrix(1 0 0 1 380 428)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="13" fill="#7a6f62"><tspan x="0" y="0">reads</tspan></text>
+    <path d="M770 330 L936 330 L936 406 L770 406 Z" fill="none" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+    <text transform="matrix(1 0 0 1 788 358)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">Clients</tspan></text>
+    <text transform="matrix(1 0 0 1 788 379)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#7a6f62"><tspan x="0" y="0">read the map</tspan></text>
+    <text transform="matrix(1 0 0 1 788 396)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#7a6f62"><tspan x="0" y="0">the server sends</tspan></text>
+    <g>
+      <g>
+        <path d="M708 367.25 L763 367.25 C763.414 367.25 763.75 367.586 763.75 368 C763.75 368.414 763.414 368.75 763 368.75 L708 368.75 C707.586 368.75 707.25 368.414 707.25 368 C707.25 367.586 707.586 367.25 708 367.25" fill="#2b2722"/>
+        <path d="M766 368 L760 371 L760 365 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <text transform="matrix(1 0 0 1 737 360)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="13" fill="#7a6f62" text-anchor="middle"><tspan x="0" y="0">sends</tspan></text>
+  </g>
+</svg>

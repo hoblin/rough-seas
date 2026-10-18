@@ -20,7 +20,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Wear](Hull-Condition#wear) | none |
 | [Mending](Mending) | 1 small prepared hide restores two thirds |
 | [Bilge](Bailing) | 250 litres |
-| [Capsized by](Surf-and-Swamping#capsizing) | a 0.6 m breaker |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
 | [Rapids](Rapids) | broken within seconds |
 | [Lightning](Lightning) | a strike nearby breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |

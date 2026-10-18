@@ -20,7 +20,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Wear](Hull-Condition#wear) | a third a day afloat: gone in about three days |
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |
-| [Capsized by](Surf-and-Swamping#capsizing) | a 0.9 m breaker |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
 | [Rapids](Rapids) | broken within seconds |
 | [Lightning](Lightning) | a strike nearby breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |

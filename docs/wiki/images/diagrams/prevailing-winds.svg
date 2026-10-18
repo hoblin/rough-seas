@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="960" height="540" viewBox="0 0 960 540">
+  <title>prevailing-winds</title>
+  <g id="Layer_1" data-name="Layer 1">
+    <path d="M0 0 L960 0 L960 540 L0 540 Z" fill="#f4ecdc"/>
+    <text transform="matrix(1 0 0 1 24 40)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="20" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">The prevailing winds</tspan></text>
+    <text transform="matrix(1 0 0 1 24 66)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" fill="#7a6f62"><tspan x="0" y="0">Storms travel with them, so the weather comes from upwind.</tspan></text>
+    <path d="M280 110 L680 110 L680 230 L280 230 Z" fill="#d7dcd8"/>
+    <g>
+      <g>
+        <path d="M362.707 148.707 L321.536 189.879 C321.145 190.269 320.512 190.269 320.121 189.879 C319.731 189.488 319.731 188.855 320.121 188.464 L361.293 147.293 C361.683 146.902 362.317 146.902 362.707 147.293 C363.098 147.683 363.098 148.317 362.707 148.707" fill="#2b2722"/>
+        <path d="M318 192 L320.828 183.515 L326.485 189.172 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M455.707 148.707 L414.536 189.879 C414.145 190.269 413.512 190.269 413.121 189.879 C412.731 189.488 412.731 188.855 413.121 188.464 L454.293 147.293 C454.683 146.902 455.317 146.902 455.707 147.293 C456.098 147.683 456.098 148.317 455.707 148.707" fill="#2b2722"/>
+        <path d="M411 192 L413.828 183.515 L419.485 189.172 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M548.707 148.707 L507.536 189.879 C507.145 190.269 506.512 190.269 506.121 189.879 C505.731 189.488 505.731 188.855 506.121 188.464 L547.293 147.293 C547.683 146.902 548.317 146.902 548.707 147.293 C549.098 147.683 549.098 148.317 548.707 148.707" fill="#2b2722"/>
+        <path d="M504 192 L506.828 183.515 L512.485 189.172 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M641.707 148.707 L600.536 189.879 C600.145 190.269 599.512 190.269 599.121 189.879 C598.731 189.488 598.731 188.855 599.121 188.464 L640.293 147.293 C640.683 146.902 641.317 146.902 641.707 147.293 C642.098 147.683 642.098 148.317 641.707 148.707" fill="#2b2722"/>
+        <path d="M597 192 L599.828 183.515 L605.485 189.172 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <text transform="matrix(1 0 0 1 700 166)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">the polar easterlies</tspan></text>
+    <text transform="matrix(1 0 0 1 700 188)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#7a6f62"><tspan x="0" y="0">from the north-east</tspan></text>
+    <path d="M280 230 L680 230 L680 350 L280 350 Z" fill="#b9c2c2"/>
+    <g>
+      <g>
+        <path d="M317.293 311.293 L358.464 270.121 C358.855 269.731 359.488 269.731 359.879 270.121 C360.269 270.512 360.269 271.145 359.879 271.536 L318.707 312.707 C318.317 313.098 317.683 313.098 317.293 312.707 C316.902 312.317 316.902 311.683 317.293 311.293" fill="#2b2722"/>
+        <path d="M362 268 L359.172 276.485 L353.515 270.828 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M410.293 311.293 L451.464 270.121 C451.855 269.731 452.488 269.731 452.879 270.121 C453.269 270.512 453.269 271.145 452.879 271.536 L411.707 312.707 C411.317 313.098 410.683 313.098 410.293 312.707 C409.902 312.317 409.902 311.683 410.293 311.293" fill="#2b2722"/>
+        <path d="M455 268 L452.172 276.485 L446.515 270.828 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M503.293 311.293 L544.464 270.121 C544.855 269.731 545.488 269.731 545.879 270.121 C546.269 270.512 546.269 271.145 545.879 271.536 L504.707 312.707 C504.317 313.098 503.683 313.098 503.293 312.707 C502.902 312.317 502.902 311.683 503.293 311.293" fill="#2b2722"/>
+        <path d="M548 268 L545.172 276.485 L539.515 270.828 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M596.293 311.293 L637.464 270.121 C637.855 269.731 638.488 269.731 638.879 270.121 C639.269 270.512 639.269 271.145 638.879 271.536 L597.707 312.707 C597.317 313.098 596.683 313.098 596.293 312.707 C595.902 312.317 595.902 311.683 596.293 311.293" fill="#2b2722"/>
+        <path d="M641 268 L638.172 276.485 L632.515 270.828 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <text transform="matrix(1 0 0 1 700 286)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">the westerlies</tspan></text>
+    <text transform="matrix(1 0 0 1 700 308)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#7a6f62"><tspan x="0" y="0">from the south-west</tspan></text>
+    <path d="M280 350 L680 350 L680 470 L280 470 Z" fill="#8fbfbe"/>
+    <g>
+      <g>
+        <path d="M362.707 388.707 L321.536 429.879 C321.145 430.269 320.512 430.269 320.121 429.879 C319.731 429.488 319.731 428.855 320.121 428.464 L361.293 387.293 C361.683 386.902 362.317 386.902 362.707 387.293 C363.098 387.683 363.098 388.317 362.707 388.707" fill="#2b2722"/>
+        <path d="M318 432 L320.828 423.515 L326.485 429.172 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M455.707 388.707 L414.536 429.879 C414.145 430.269 413.512 430.269 413.121 429.879 C412.731 429.488 412.731 428.855 413.121 428.464 L454.293 387.293 C454.683 386.902 455.317 386.902 455.707 387.293 C456.098 387.683 456.098 388.317 455.707 388.707" fill="#2b2722"/>
+        <path d="M411 432 L413.828 423.515 L419.485 429.172 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M548.707 388.707 L507.536 429.879 C507.145 430.269 506.512 430.269 506.121 429.879 C505.731 429.488 505.731 428.855 506.121 428.464 L547.293 387.293 C547.683 386.902 548.317 386.902 548.707 387.293 C549.098 387.683 549.098 388.317 548.707 388.707" fill="#2b2722"/>
+        <path d="M504 432 L506.828 423.515 L512.485 429.172 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <g>
+      <g>
+        <path d="M641.707 388.707 L600.536 429.879 C600.145 430.269 599.512 430.269 599.121 429.879 C598.731 429.488 598.731 428.855 599.121 428.464 L640.293 387.293 C640.683 386.902 641.317 386.902 641.707 387.293 C642.098 387.683 642.098 388.317 641.707 388.707" fill="#2b2722"/>
+        <path d="M597 432 L599.828 423.515 L605.485 429.172 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <text transform="matrix(1 0 0 1 700 406)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="16" font-weight="bold" fill="#2b2722"><tspan x="0" y="0">the trade winds</tspan></text>
+    <text transform="matrix(1 0 0 1 700 428)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#7a6f62"><tspan x="0" y="0">from the north-east</tspan></text>
+    <path d="M280 110 L680 110 L680 470 L280 470 Z" fill="none" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M272 110 L280 110" fill="none" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 266 115)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#2b2722" text-anchor="end"><tspan x="0" y="0">90° N, the pole</tspan></text>
+    <path d="M272 230 L280 230" fill="none" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 266 235)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#2b2722" text-anchor="end"><tspan x="0" y="0">60°</tspan></text>
+    <path d="M272 350 L280 350" fill="none" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 266 355)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#2b2722" text-anchor="end"><tspan x="0" y="0">30°</tspan></text>
+    <path d="M272 470 L280 470" fill="none" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 266 475)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#2b2722" text-anchor="end"><tspan x="0" y="0">0°, the equator</tspan></text>
+    <g>
+      <g>
+        <path d="M109.25 270 L109.25 193 C109.25 192.586 109.586 192.25 110 192.25 C110.414 192.25 110.75 192.586 110.75 193 L110.75 270 C110.75 270.414 110.414 270.75 110 270.75 C109.586 270.75 109.25 270.414 109.25 270" fill="#2b2722"/>
+        <path d="M110 190 L113 196 L107 196 Z" fill="#2b2722"/>
+      </g>
+    </g>
+    <path d="M76 230 L144 230" fill="none" stroke="#2b2722" stroke-linecap="round" stroke-linejoin="round"/>
+    <text transform="matrix(1 0 0 1 110 180)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" font-weight="bold" fill="#2b2722" text-anchor="middle"><tspan x="0" y="0">N</tspan></text>
+    <text transform="matrix(1 0 0 1 66 235)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="13" fill="#7a6f62" text-anchor="middle"><tspan x="0" y="0">W</tspan></text>
+    <text transform="matrix(1 0 0 1 154 235)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="13" fill="#7a6f62" text-anchor="middle"><tspan x="0" y="0">E</tspan></text>
+    <text transform="matrix(1 0 0 1 110 288)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="13" fill="#7a6f62" text-anchor="middle"><tspan x="0" y="0">S</tspan></text>
+    <text transform="matrix(1 0 0 1 24 508)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#7a6f62"><tspan x="0" y="0">North of the equator, as drawn. South of it the picture mirrors: the trade winds and the polar easterlies</tspan></text>
+    <text transform="matrix(1 0 0 1 24 528)" x="0" y="0" xml:space="preserve" font-family="Georgia" font-size="14" fill="#7a6f62"><tspan x="0" y="0">blow from the south-east, the westerlies from the north-west.</tspan></text>
+  </g>
+</svg>
