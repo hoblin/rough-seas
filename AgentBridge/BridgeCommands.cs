@@ -22,15 +22,18 @@ public class BridgeCommands : ModSystem
 
     private const int HoverAboveSea = 1;
     private const double NearbyGridBlocks = 5000;
+    private const int WaveProbes = 12;
 
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
+    private ChunkSettle settle = null!;
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Server;
 
     public override void StartServerSide(ICoreServerAPI api)
     {
         sapi = api;
+        settle = new ChunkSettle(api, Mod.Logger);
         var benchDefaults = Environment.GetEnvironmentVariable("AGENT_BRIDGE_BENCH_DEFAULTS") != "off";
         if (api.ModLoader.IsModEnabled("roughseas")) drift = new DriftSwitch { Drifting = !benchDefaults };
         if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
@@ -57,6 +60,12 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Fly the caller to the nearest dry, open ground beside the sea within 256 blocks, hovering just above it")
                 .RequiresPlayer()
                 .HandleWith(args => Shore((IServerPlayer)args.Caller.Player))
+            .EndSubCommand()
+            .BeginSubCommand("await")
+                .WithDescription("Move time on until a storm of the model, of a type and warmth when given, covers the caller where they stand: no flight, no new chunks")
+                .RequiresPlayer()
+                .WithArgs(parsers.OptionalWord("type"), parsers.OptionalWord("warmth"), parsers.OptionalDouble("presence", 0.7), parsers.OptionalDouble("hours", 0))
+                .HandleWith(args => Await((IServerPlayer)args.Caller.Player, (string?)args[0], (string?)args[1], (double)args[2], (double)args[3]))
             .EndSubCommand()
             .BeginSubCommand("storm")
                 .WithDescription("Fly the caller to where the storms within range raise the highest waves over open sea, or the waves nearest a height, hovering just above the surface")
@@ -181,6 +190,39 @@ public class BridgeCommands : ModSystem
             : "Unridden vessels hold still; /bridge drift on lets them drift");
     }
 
+    private TextCommandResult Await(IServerPlayer player, string? type, string? warmth, double presence, double hours)
+    {
+        const double step = 0.25;
+        const double warm = 12;
+        const double cold = 0;
+        if (type is "any") type = null;
+        if (warmth is not (null or "any" or "warm" or "cold")) return TextCommandResult.Error("Warmth is warm (thunder from 12 °C), cold (snow, below 0 °C) or any");
+
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
+        var calendar = sapi.World.Calendar;
+        if (hours <= 0) hours = calendar.DaysPerYear * calendar.HoursPerDay;
+        var pos = player.Entity.Pos;
+        var at = pos.AsBlockPos;
+        var (strongest, strongestAhead, strongestCode) = (0.0, 0.0, "storm");
+        for (var ahead = step; ahead <= hours; ahead += step)
+        {
+            var when = sea.NowHours + ahead;
+            var storms = sea.StormsAt(pos.X, pos.Z, when);
+            if (storms.Storm == null || type != null && storms.Storm.Code != type) continue;
+            if (storms.Presence > strongest) (strongest, strongestAhead, strongestCode) = (storms.Presence, ahead, storms.Storm.Code);
+            if (storms.Presence < presence) continue;
+            var celsius = sapi.World.BlockAccessor.GetClimateAt(at, EnumGetClimateMode.ForSuppliedDateValues, when / calendar.HoursPerDay)?.Temperature ?? double.NaN;
+            if (warmth == "warm" && !(celsius >= warm) || warmth == "cold" && !(celsius <= cold)) continue;
+
+            calendar.Add((float)ahead);
+            return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture,
+                "A {0} covers you at {1:P0} presence: time moved on {2:F2} h to hour {3:F2}, {4:F1} °C", storms.Storm.Code, storms.Presence, ahead, when, celsius));
+        }
+        return TextCommandResult.Error(string.Format(CultureInfo.InvariantCulture,
+            "No {0}{1} reaches {2:P0} presence here within {3} h; the strongest is a {4} at {5:P0}, {6:F2} h ahead",
+            type ?? "storm", warmth is null or "any" ? "" : ", " + warmth + ",", presence, hours, strongestCode, strongest, strongestAhead));
+    }
+
     private TextCommandResult Storm(IServerPlayer player, double range, double waves)
     {
         var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
@@ -192,8 +234,11 @@ public class BridgeCommands : ModSystem
                 return StormProbes.Select(probe => (x: x + Math.Cos(probe.Angle) * probe.Reach * storm.Radius, z: z + Math.Sin(probe.Angle) * probe.Reach * storm.Radius));
             })
             .Where(point => sea.IsSea(point.x, point.z))
+            .OrderByDescending(point => sea.StormsAt(point.x, point.z, sea.NowHours).Speed)
+            .Take(WaveProbes)
             .Select(point => (point.x, point.z, waves: sea.At(point.x, point.z).WaveHeight))
-            .Where(point => point.waves > 0);
+            .Where(point => point.waves > 0)
+            .ToArray();
         var chosen = waves > 0
             ? probed.OrderBy(point => Math.Abs(point.waves - waves)).FirstOrDefault()
             : probed.OrderByDescending(point => point.waves).FirstOrDefault();
@@ -206,7 +251,9 @@ public class BridgeCommands : ModSystem
     private TextCommandResult Force(IServerPlayer player, int force, double range)
     {
         const double step = 500;
-        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
+        var weather = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        var sea = weather.Model;
+        var beaufort = new BeaufortScale(weather.Config.Beaufort);
         var pos = player.Entity.Pos;
         var steps = (int)(Math.Min(range, NearbyGridBlocks) / step);
         var chosen = Enumerable.Range(-steps, 2 * steps + 1)
@@ -217,8 +264,11 @@ public class BridgeCommands : ModSystem
                 return StormProbes.Select(probe => (x: x + Math.Cos(probe.Angle) * probe.Reach * storm.Radius, z: z + Math.Sin(probe.Angle) * probe.Reach * storm.Radius));
             }))
             .Where(point => sea.IsSea(point.x, point.z))
+            .Where(point => beaufort.ForceAt(Speed(sea.Wind(point.x, point.z))).Force == force)
+            .OrderBy(point => Math.Abs(point.x - pos.X) + Math.Abs(point.z - pos.Z))
+            .Take(WaveProbes)
             .Select(point => (point.x, point.z, state: sea.At(point.x, point.z)))
-            .Where(point => point.state.Beaufort == force && point.state.WaveHeight > 0)
+            .Where(point => point.state.WaveHeight > 0)
             .OrderByDescending(point => point.state.WaveHeight)
             .Select(point => ((double x, double z, SeaState state)?)point)
             .FirstOrDefault();
@@ -234,6 +284,8 @@ public class BridgeCommands : ModSystem
         var flown = Fly(player, target);
         return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture, "{0}: Beaufort {1}, waves {2:F1} m", flown.StatusMessage, force, chosen.Value.state.WaveHeight));
     }
+
+    private static double Speed((double X, double Z) wind) => Math.Sqrt(wind.X * wind.X + wind.Z * wind.Z);
 
     private TextCommandResult Approach(IServerPlayer player, double distance, string? type)
     {
@@ -381,7 +433,8 @@ public class BridgeCommands : ModSystem
         player.BroadcastPlayerData();
         player.Entity.TeleportTo(position);
         var accessor = sapi.World.BlockAccessor;
-        return TextCommandResult.Success($"Hovering at {position.X - accessor.MapSizeX / 2:0.#} {position.Y:0.#} {position.Z - accessor.MapSizeZ / 2:0.#}");
+        var flight = settle.Watch(position);
+        return TextCommandResult.Success($"Hovering at {position.X - accessor.MapSizeX / 2:0.#} {position.Y:0.#} {position.Z - accessor.MapSizeZ / 2:0.#} (flight {flight})");
     }
 
     private static TextCommandResult Set(Entity? entity, string key, string value)

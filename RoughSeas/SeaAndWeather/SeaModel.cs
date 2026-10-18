@@ -59,6 +59,8 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
 
     public double StormPresence(double x, double z) => model.StormsAt(x, z, NowHours).Presence;
 
+    public Reach Upwind(double x, double z, double towardRadians) => water.Upwind(x, z, towardRadians);
+
     public float? RainCloudness(double x, double z, double totalDays)
     {
         using var _ = sea.Budget.Measure();
@@ -79,6 +81,6 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
     {
         if (wind.Speed <= 0) return (0, 0);
         var reach = water.Upwind(x, z, Compass.Radians(wind.X, wind.Z));
-        return windSea.Grow(model.SeaWindMps(x, z, hours), reach.FetchMetres, reach.MeanDepthMetres);
+        return windSea.Grow(wind.Speed, reach.FetchMetres, reach.MeanDepthMetres, model.BlowingHours(x, z, hours, wind.Speed));
     }
 }

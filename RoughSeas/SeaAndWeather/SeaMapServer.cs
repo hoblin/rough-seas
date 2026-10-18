@@ -41,6 +41,7 @@ public class SeaMapServer(SeaWeatherSystem sea, ICoreServerAPI sapi)
 
     private SeaSample Cell(double x, double z)
     {
+        sea.Calibrate(sapi, (int)(x + 0.5 * Config.CellBlocks), (int)(z + 0.5 * Config.CellBlocks));
         var centre = Model.Sample(x + 0.5 * Config.CellBlocks, z + 0.5 * Config.CellBlocks);
         if (centre.WaveHeight > 0) return centre;
         var water = CellSamples.Skip(1)

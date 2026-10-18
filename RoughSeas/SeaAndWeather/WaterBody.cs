@@ -34,18 +34,20 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
         var (towardX, towardZ) = Compass.Toward(towardRadians);
         var probe = new BlockPos(Dimensions.NormalWorld);
         var surface = Surface((int)x, (int)z, probe);
-        var startDepth = surface is { } level ? Depth((int)x, (int)z, level, probe) : OpenSea(x, z);
+        var startDepth = surface is { } level ? Depth((int)x, (int)z, level, probe) ?? 0 : OpenSea(x, z);
         if (startDepth <= 0) return default;
 
         double fetch = 0, depthSum = startDepth;
         var samples = 1;
+        var built = surface != null;
         while (fetch < config.MaxFetchBlocks)
         {
-            var built = surface != null && sapi.WorldManager.GetMapChunk((int)(x - towardX * fetch) / ChunkSize, (int)(z - towardZ * fetch) / ChunkSize) != null;
-            var step = built ? config.FetchStepBlocks : WorldOceanMap.PixelSize;
+            var step = built ? config.FetchStepBlocks : config.OpenSeaStepBlocks;
             var atX = x - towardX * (fetch + step);
             var atZ = z - towardZ * (fetch + step);
-            var depth = built ? Depth((int)atX, (int)atZ, surface!.Value, probe) : OpenSea(atX, atZ);
+            var measured = built ? Depth((int)atX, (int)atZ, surface!.Value, probe) : null;
+            built = measured != null;
+            var depth = measured ?? OpenSea(atX, atZ);
             if (depth <= 0) break;
             fetch += step;
             depthSum += depth;
@@ -59,16 +61,19 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
         var chunk = sapi.WorldManager.GetMapChunk(x / ChunkSize, z / ChunkSize);
         if (chunk == null) return null;
         var y = chunk.RainHeightMap[z % ChunkSize * ChunkSize + x % ChunkSize];
-        return sapi.World.BlockAccessor.GetBlock(probe.Set(x, y, z), BlockLayersAccess.Fluid).IsLiquid() ? y : null;
+        probe.Set(x, y, z);
+        if (sapi.World.BlockAccessor.GetChunkAtBlockPos(probe) == null) return null;
+        return sapi.World.BlockAccessor.GetBlock(probe, BlockLayersAccess.Fluid).IsLiquid() ? y : null;
     }
 
-    private double Depth(int x, int z, int surface, BlockPos probe)
+    private double? Depth(int x, int z, int surface, BlockPos probe)
     {
         var chunk = sapi.WorldManager.GetMapChunk(x / ChunkSize, z / ChunkSize);
-        if (chunk == null) return OpenSea(x, z);
+        probe.Set(x, surface, z);
+        if (chunk == null || sapi.World.BlockAccessor.GetChunkAtBlockPos(probe) == null) return null;
         var index = z % ChunkSize * ChunkSize + x % ChunkSize;
         if (chunk.RainHeightMap[index] != surface) return 0;
-        if (!sapi.World.BlockAccessor.GetBlock(probe.Set(x, surface, z), BlockLayersAccess.Fluid).IsLiquid()) return 0;
+        if (!sapi.World.BlockAccessor.GetBlock(probe, BlockLayersAccess.Fluid).IsLiquid()) return 0;
         var seabed = chunk.WorldGenTerrainHeightMap[index];
         return seabed < surface ? surface - seabed : 1;
     }

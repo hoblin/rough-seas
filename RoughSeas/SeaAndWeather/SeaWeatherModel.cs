@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Vintagestory.API.MathTools;
 
 namespace RoughSeas.SeaAndWeather;
@@ -29,11 +30,15 @@ public class SeaWeatherModel
 
     public StormField Storms { get; }
 
-    public double SeaWindMps(double x, double z, double hours)
+    public double BlowingHours(double x, double z, double hours, double windMps)
     {
-        var sum = 0.0;
-        foreach (var lag in config.SeaBuildHours) sum += Wind(x, z, hours - lag).Speed;
-        return sum / config.SeaBuildHours.Length;
+        var steady = 0.0;
+        foreach (var lag in config.SeaBuildHours.Where(lag => lag > 0))
+        {
+            if (Wind(x, z, hours - lag).Speed < config.SeaBuildShare * windMps) return (steady + lag) / 2;
+            steady = lag;
+        }
+        return steady;
     }
 
     /// <summary>

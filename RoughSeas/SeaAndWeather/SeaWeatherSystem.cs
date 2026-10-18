@@ -16,7 +16,6 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     public const string Channel = "roughseas:seamap";
 
     private const string CalibrationKey = "roughseas:oceancalibration";
-    private static readonly (int X, int Z)[] CalibrationColumns = [(8, 8), (24, 8), (8, 24), (24, 24)];
 
     private ICoreAPI api = null!;
     private Lazy<SeaWeatherConfig> config = null!;
@@ -46,7 +45,6 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         model = new Lazy<SeaModel>(() => CreateModel(sapi));
         sapi.Event.SaveGameLoaded += () => calibration.Load(sapi.WorldManager.SaveGame.GetData(CalibrationKey));
         sapi.Event.GameWorldSave += () => sapi.WorldManager.SaveGame.StoreData(CalibrationKey, calibration.ToBytes());
-        sapi.Event.ChunkColumnLoaded += (coord, _) => Calibrate(sapi, coord);
         new VanillaRain(this, sapi).Follow();
         new VanillaRegions(this, sapi).Drive();
         new SeaMapServer(this, sapi).Start();
@@ -78,6 +76,17 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     public SeaModel Model => model?.Value ?? throw new InvalidOperationException("The sea model runs on the server alone");
 
     public ISeaSource Source => map ?? (ISeaSource)Model;
+
+    public string OceanReport(ICoreServerAPI sapi, double x, double z)
+    {
+        var (water, land) = calibration!.Seen;
+        var value = Ocean(sapi).At((int)Math.Floor(x / WorldOceanMap.PixelSize), (int)Math.Floor(z / WorldOceanMap.PixelSize));
+        var wind = Model.Wind(x, z);
+        var reach = Model.Upwind(x, z, Compass.Radians(wind.X, wind.Z));
+        var reading = calibration.Settled ? "calibrated against the built world" : "the default until the built world shows enough of both";
+        return $"ocean map {value} of 255 here, {(Model.IsSea(x, z) ? "open sea" : "not open sea")}; open sea from {calibration.SeaFrom} "
+            + $"({reading}: {water} sea and {land} land columns seen); upwind: {reach.FetchMetres / 1000:0.0} km of fetch over {reach.MeanDepthMetres:0} m of water";
+    }
 
     public SeaState At(double x, double z) => Source.At(x, z);
 
@@ -112,21 +121,14 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         return generator;
     }
 
-    private void Calibrate(ICoreServerAPI sapi, Vec2i chunk)
+    public void Calibrate(ICoreServerAPI sapi, int x, int z)
     {
         if (calibration is not { Settled: false }) return;
-        var accessor = sapi.World.BlockAccessor;
-        var seaLevel = sapi.World.SeaLevel - 1;
-        var pos = new BlockPos(Dimensions.NormalWorld);
-        foreach (var (dx, dz) in CalibrationColumns)
-        {
-            var x = chunk.X * GlobalConstants.ChunkSize + dx;
-            var z = chunk.Y * GlobalConstants.ChunkSize + dz;
-            var water = accessor.GetBlock(pos.Set(x, seaLevel, z), BlockLayersAccess.Fluid).LiquidCode == "saltwater";
-            if (!calibration.Add(Ocean(sapi).At(x / WorldOceanMap.PixelSize, z / WorldOceanMap.PixelSize), water)) continue;
-            Log("ocean map calibrated against the built world: open sea from {0} of 255", calibration.SeaFrom);
-            if (model is { IsValueCreated: true }) model.Value.Weather.Storms.Forget();
-            return;
-        }
+        var surface = new BlockPos(x, sapi.World.SeaLevel - 1, z, Dimensions.NormalWorld);
+        if (sapi.World.BlockAccessor.GetChunkAtBlockPos(surface) == null) return;
+        var water = sapi.World.BlockAccessor.GetBlock(surface, BlockLayersAccess.Fluid).LiquidCode == "saltwater";
+        if (!calibration.Add(Ocean(sapi).At(x / WorldOceanMap.PixelSize, z / WorldOceanMap.PixelSize), water)) return;
+        Log("ocean map calibrated against the built world: open sea from {0} of 255", calibration.SeaFrom);
+        if (model is { IsValueCreated: true }) model.Value.Weather.Storms.Forget();
     }
 }

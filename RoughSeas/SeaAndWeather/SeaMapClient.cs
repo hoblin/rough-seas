@@ -79,7 +79,7 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         if (snapshot.Version != SeaMapSnapshot.CurrentVersion) return;
         var key = (snapshot.RegionX, snapshot.RegionZ);
         var samples = snapshot.Samples();
-        var now = capi.World.Calendar.TotalHours;
+        var now = Now;
         regions.AddOrUpdate(key,
             _ => new Region(samples, samples, snapshot.TotalHours, now, 0, snapshot.CellsPerSide, snapshot.RegionMps),
             (_, old) => snapshot.TotalHours <= old.SnapshotHours
@@ -88,8 +88,10 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
                     Span(snapshot.TotalHours - old.SnapshotHours), snapshot.CellsPerSide, snapshot.RegionMps));
     }
 
+    private double Now => capi.World.Calendar?.TotalHours ?? 0;
+
     private double Span(double hours) =>
-        hours * 3600 / capi.World.Calendar.SpeedOfTime > 3 * sea.Config.Map.UpdateSeconds ? 0 : hours;
+        capi.World.Calendar is not { } calendar || hours * 3600 / calendar.SpeedOfTime > 3 * sea.Config.Map.UpdateSeconds ? 0 : hours;
 
     private void Load(IMapRegion region)
     {
@@ -111,7 +113,7 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         var regionX = (int)Math.Floor((double)cellX / side);
         var regionZ = (int)Math.Floor((double)cellZ / side);
         if (!regions.TryGetValue((regionX, regionZ), out var region) || region.Side != side) return null;
-        return region.At(cellX - regionX * side, cellZ - regionZ * side, capi.World.Calendar.TotalHours);
+        return region.At(cellX - regionX * side, cellZ - regionZ * side, Now);
     }
 
     private static void Accumulate(double[] sum, SeaSample cell, double w)

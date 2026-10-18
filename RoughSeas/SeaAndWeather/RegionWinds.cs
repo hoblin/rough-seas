@@ -24,7 +24,8 @@ public class RegionWinds(SeaWeatherSystem sea)
         }
 
         var current = sim.CurWindPattern;
-        if (current == lease.Pattern || lease.Yielded != null && sea.NowHours > lease.YieldUntil)
+        var now = sea.NowHours;
+        if (current == lease.Pattern || now > (lease.Yielded == null ? lease.Until : lease.YieldUntil))
         {
             Take(sim, lease);
         }
@@ -52,7 +53,7 @@ public class RegionWinds(SeaWeatherSystem sea)
         var turned = pattern != sim.CurWindPattern;
         sim.CurWindPattern = pattern;
         pattern.Strength = pattern.State.BaseStrength = strength;
-        pattern.State.ActiveUntilTotalHours = sea.NowHours + Config.WindLeaseHours;
+        pattern.State.ActiveUntilTotalHours = lease.Until = sea.NowHours + Config.WindLeaseHours;
         if (lease.Yielded != null) sea.Log("region {0} {1}: wind back to the map", sim.regionX, sim.regionZ);
         (lease.Pattern, lease.Yielded) = (pattern, null);
 
@@ -65,6 +66,7 @@ public class RegionWinds(SeaWeatherSystem sea)
     private sealed class Lease
     {
         public WindPattern? Pattern;
+        public double Until;
         public WindPattern? Yielded;
         public double YieldUntil;
         public float SentStrength;

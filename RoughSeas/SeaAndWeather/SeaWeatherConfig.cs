@@ -4,6 +4,7 @@ public class SeaWeatherConfig
 {
     public BeaufortForce[] Beaufort = [];
     public double[] SeaBuildHours = [0];
+    public double SeaBuildShare;
     public PrevailingWind[] PrevailingWinds = [];
     public BackgroundWindConfig Background = new();
     public ShowersConfig Showers = new();
@@ -28,6 +29,7 @@ public class WavesConfig
     public double KneeMetres;
     public double CeilingMetres;
     public int FetchStepBlocks;
+    public int OpenSeaStepBlocks;
     public int MaxFetchBlocks;
     public int FetchDirections;
     public double FetchCacheHours;

@@ -16,6 +16,8 @@ public class OceanCalibration(OceanConfig config)
 
     public bool Settled => counts.SeaFrom != null;
 
+    public (long Water, long Land) Seen => (counts.Water.Sum(), counts.Land.Sum());
+
     public bool IsSea(int oceanValue) => oceanValue >= SeaFrom;
 
     public bool Add(int oceanValue, bool water)
@@ -32,7 +34,7 @@ public class OceanCalibration(OceanConfig config)
 
     public void Load(byte[]? data)
     {
-        if (data != null) counts = SerializerUtil.Deserialize<Counts>(data);
+        if (data != null && SerializerUtil.Deserialize<Counts>(data) is { Version: Counts.CurrentVersion } saved) counts = saved;
     }
 
     private long Misread(int seaBin) => counts.Land.Skip(seaBin).Sum() + counts.Water.Take(seaBin).Sum();
@@ -40,7 +42,9 @@ public class OceanCalibration(OceanConfig config)
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
     public class Counts
     {
-        public int Version = 1;
+        public const int CurrentVersion = 1;
+
+        public int Version = CurrentVersion;
         public long[] Water = new long[Bins];
         public long[] Land = new long[Bins];
         public int? SeaFrom;

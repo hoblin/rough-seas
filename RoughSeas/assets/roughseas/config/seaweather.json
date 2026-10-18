@@ -14,7 +14,8 @@
         { "force": 11, "name": "Violent storm", "minMps": 28.5, "waveHeight": 11.5 },
         { "force": 12, "name": "Hurricane", "minMps": 32.7, "waveHeight": 14.0 }
     ],
-    "seaBuildHours": [0, 1, 2, 4],
+    "seaBuildHours": [0.5, 1, 2, 4, 8, 16],
+    "seaBuildShare": 0.8,
     "prevailingWinds": [
         { "maxLatitude": 30, "northFromDegrees": 45, "southFromDegrees": 135 },
         { "maxLatitude": 60, "northFromDegrees": 225, "southFromDegrees": 315 },
@@ -127,7 +128,8 @@
         "kneeMetres": 9,
         "ceilingMetres": 16,
         "fetchStepBlocks": 16,
-        "maxFetchBlocks": 32768,
+        "openSeaStepBlocks": 128,
+        "maxFetchBlocks": 8192,
         "fetchDirections": 16,
         "fetchCacheHours": 6,
         "openSeaDepthMetres": 200

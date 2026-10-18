@@ -32,6 +32,22 @@ public class WindSeaTests
     }
 
     [Fact]
+    public void RaisesAYoungShortSeaUnderAWindThatJustArrived()
+    {
+        var young = Sea.Grow(20, 1000000, Deep, blowingHours: 0.5);
+        var old = Sea.Grow(20, 1000000, Deep, blowingHours: 16);
+
+        Assert.True(young.Height < 0.3 * old.Height, $"{young.Height:F1} m young, {old.Height:F1} m old");
+        Assert.True(young.Period < 0.5 * old.Period, $"{young.Period:F1} s young, {old.Period:F1} s old");
+    }
+
+    [Fact]
+    public void LetsTheShoreLimitTheSeaBeforeTimeDoes()
+    {
+        Assert.Equal(Sea.Grow(20, 5000, Deep), Sea.Grow(20, 5000, Deep, blowingHours: 16));
+    }
+
+    [Fact]
     public void LetsShallowWaterHoldTheWavesDown()
     {
         Assert.True(Sea.Grow(20, 500000, 2).Height < 0.5 * Sea.Grow(20, 500000, Deep).Height);

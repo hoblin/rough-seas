@@ -54,11 +54,31 @@ public class SeaWeatherModelTests
         var (x, z) = gale.CentreAt(hours);
 
         var inside = Model.Wind(x + gale.Radius * 0.3, z, hours);
-        var beyond = Model.SeaWindMps(x + gale.Radius * 3, z, hours);
+        var beyond = Model.Wind(x + gale.Radius * 3, z, hours);
 
         Assert.Equal("gale", inside.Storm?.Code);
         Assert.InRange(new BeaufortScale(Fixtures.Config().Beaufort).ForceAt(inside.Speed).Force, 8, 12);
-        Assert.True(Model.SeaWindMps(x + gale.Radius * 0.3, z, hours) > beyond, "the sea feels more wind inside the gale");
+        Assert.True(inside.Speed > beyond.Speed, $"{inside.Speed:F1} m/s inside, {beyond.Speed:F1} m/s beyond");
+    }
+
+    [Fact]
+    public void BlowsBrieflyWhereASquallHasJustArrived()
+    {
+        var squall = Storms.First(storm => storm.Code == "squall");
+        var hours = squall.BornHours + squall.LifetimeHours / 2;
+        var (x, z) = squall.CentreAt(hours);
+        var speed = Math.Sqrt(squall.VelocityX * squall.VelocityX + squall.VelocityZ * squall.VelocityZ);
+        var (aheadX, aheadZ) = (x + squall.VelocityX / speed * squall.Radius * 0.3, z + squall.VelocityZ / speed * squall.Radius * 0.3);
+
+        Assert.True(Model.BlowingHours(aheadX, aheadZ, hours, Model.Wind(aheadX, aheadZ, hours).Speed) < 2);
+    }
+
+    [Fact]
+    public void BlowsLongWhereOnlyTheBackgroundWindBlows()
+    {
+        var calm = Samples.Where(sample => Model.Wind(sample.X, sample.Z, sample.Hours).Presence == 0).ToArray();
+
+        Assert.True(calm.Average(sample => Model.BlowingHours(sample.X, sample.Z, sample.Hours, Model.Wind(sample.X, sample.Z, sample.Hours).Speed)) > 4);
     }
 
     [Fact]
