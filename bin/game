@@ -98,7 +98,7 @@ ACT
   bin/game do CMD...         run commands as the player, in order, printing each reply:
                              /server commands and .client commands. A reply that says
                              "Hovering at X Y Z" (/bridge fly, sea, storm) waits for `arrive`,
-                             then for the server to load the chunks within 6 of the player, by
+                             then for the server to load the chunks around the player, by
                              its debug log ("[bridge] flight N: chunks loaded ... after S s")
   bin/game arrive X Y Z [S]  block until the client stands within a block of X Y Z (as commands take
                              them); fails after S seconds (default 30). Use it after a /tp.

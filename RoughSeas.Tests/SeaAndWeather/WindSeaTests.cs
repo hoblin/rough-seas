@@ -16,7 +16,7 @@ public class WindSeaTests
     [InlineData(20, 200000, Deep, 4.2)]
     public void GrowsTheHeightsOfYoungAndVerhagensCurves(double windMps, double fetchMetres, double depthMetres, double height)
     {
-        Assert.Equal(height, Sea.Grow(windMps, fetchMetres, depthMetres).Height, 1);
+        Assert.Equal(height, Sea.Grow(windMps, fetchMetres, depthMetres).Height, tolerance: 0.05);
     }
 
     [Fact]
@@ -69,13 +69,23 @@ public class WindSeaTests
         var hurricane = Sea.Grow(55, 5000000, Deep).Height;
 
         Assert.True(unbent > Waves.CeilingMetres, $"{unbent} m unbent");
-        Assert.InRange(hurricane, Waves.KneeMetres, Waves.CeilingMetres);
+        Assert.True(hurricane > Waves.KneeMetres && hurricane < Waves.CeilingMetres, $"{hurricane} m");
     }
 
     [Fact]
-    public void ShortensThePeriodInShallowWater()
+    public void BendsSeasJustAboveTheKneeBelowWhatTheyWouldBe()
     {
-        Assert.True(Sea.Grow(20, 50000, 2).Period <= 9.78 * Math.Sqrt(2 / 9.81) + 1e-9);
+        var unbent = Unbent.Grow(22, 2000000, Deep).Height;
+        var bent = Sea.Grow(22, 2000000, Deep).Height;
+
+        Assert.True(unbent > Waves.KneeMetres && unbent < Waves.CeilingMetres, $"{unbent} m unbent");
+        Assert.True(bent > Waves.KneeMetres && bent < unbent, $"{bent} m bent from {unbent} m");
+    }
+
+    [Fact]
+    public void StopsThePeriodAtTheDepthsLimit()
+    {
+        Assert.Equal(9.78 * Math.Sqrt(1 / 9.81), Sea.Grow(50, 1000000, 1).Period, 6);
     }
 
     [Fact]

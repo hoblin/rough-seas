@@ -62,9 +62,9 @@ public static class VesselMotion
         var seaworthiness = forces.Seaworthiness;
         var rocking = __instance.mountAngle;
         var pose = PoseOf(__instance);
-        renderer.xangle += (float)(GameMath.Lerp(rocking.X * seaworthiness.RollResponse, pose.Roll, pose.OpenSea) - rocking.X);
-        renderer.zangle += (float)(GameMath.Lerp(rocking.Z * seaworthiness.PitchResponse, pose.Pitch, pose.OpenSea) - rocking.Z);
-        if (pose.OpenSea > 0) Report(__instance, pose);
+        renderer.xangle += (float)(GameMath.Lerp(rocking.X * seaworthiness.RollResponse, pose.Roll, pose.Share) - rocking.X);
+        renderer.zangle += (float)(GameMath.Lerp(rocking.Z * seaworthiness.PitchResponse, pose.Pitch, pose.Share) - rocking.Z);
+        if (pose.Share > 0) Report(__instance, pose);
         if (surface!.Seconds < tracedUntil)
         {
             storms!.Log(__instance, "surface trace: frame {0} at {1:F3} s, swimming {2}, at {3:F2} {4:F2}; lifted {5:F3} m, rolled {6:F2}°, pitched {7:F2}°",
@@ -126,8 +126,8 @@ public static class VesselMotion
     {
         var forces = boat.GetBehavior<EntityBehaviorSeaForces>();
         var pos = boat.Pos;
-        var openSea = surface.Calm || forces == null || !boat.Swimming ? 0 : field.Factor(pos.X, pos.Z);
-        if (forces == null || openSea <= 0) return default;
+        var share = surface.Calm || forces == null || !boat.Swimming ? 0 : field.Factor(pos.X, pos.Z);
+        if (forces == null || share <= 0) return default;
 
         var seaworthiness = forces.Seaworthiness;
         var box = boat.CollisionBox;
@@ -137,11 +137,11 @@ public static class VesselMotion
             surface.HeightAt(
                 pos.X + (Math.Cos(yaw) * alongX + Math.Sin(yaw) * alongZ) * half,
                 pos.Z + (-Math.Sin(yaw) * alongX + Math.Cos(yaw) * alongZ) * half,
-                openSea);
+                share);
 
         var (plusX, minusX, plusZ, minusZ) = (At(1, 0), At(-1, 0), At(0, 1), At(0, -1));
         return new Pose(
-            openSea,
+            share,
             (plusX + minusX + plusZ + minusZ) / 4,
             -Math.Atan((plusZ - minusZ) / (2 * half)) * seaworthiness.RollResponse,
             Math.Atan((plusX - minusX) / (2 * half)) * seaworthiness.PitchResponse);
@@ -156,5 +156,5 @@ public static class VesselMotion
         largestStep = 0;
     }
 
-    private readonly record struct Pose(double OpenSea, double Lift, double Roll, double Pitch);
+    private readonly record struct Pose(double Share, double Lift, double Roll, double Pitch);
 }

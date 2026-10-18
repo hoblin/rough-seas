@@ -132,6 +132,6 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         var water = sapi.World.BlockAccessor.GetBlock(surface, BlockLayersAccess.Fluid).LiquidCode == "saltwater";
         if (!calibration.Add(Ocean(sapi).At(x / WorldOceanMap.PixelSize, z / WorldOceanMap.PixelSize), water)) return;
         Log("ocean map calibrated against the built world: open sea from {0} of 255", calibration.SeaFrom);
-        if (model is { IsValueCreated: true }) model.Value.Weather.Storms.Forget();
+        if (model is { IsValueCreated: true }) model.Value.Forget();
     }
 }

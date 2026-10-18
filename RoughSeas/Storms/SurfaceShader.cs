@@ -24,7 +24,7 @@ public static class SurfaceShader
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
         "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; "
-        + "seaFoamOcean = seaOpen; seaFoamWorld = worldPos.xz + playerpos.xz;";
+        + "seaFoamShare = seaShare; seaFoamWorld = worldPos.xz + playerpos.xz;";
     private const string FragmentMain = "void main()";
     private const string BeforeFog = "texColor = applyFog(texColor, fogAmount);";
     private const string Foamed =
@@ -116,8 +116,8 @@ public static class SurfaceShader
     {
         if (__result <= 0 || surface == null || field == null || surface.Calm || __result > surface.SeaHeight + 1) return;
         var eye = __instance.MainCamera.CameraEyePos;
-        var openSea = field.Factor(eye.X, eye.Z);
-        __result = (float)Math.Max(0, __result + surface.HeightAt(eye.X, eye.Z, openSea));
+        var share = field.Factor(eye.X, eye.Z);
+        __result = (float)Math.Max(0, __result + surface.HeightAt(eye.X, eye.Z, share));
     }
 
     private static void Inject(ShaderProgram program, ref string __result)

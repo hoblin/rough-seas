@@ -66,12 +66,12 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
 
     public float? RainCloudness(double x, double z, double totalDays) => Covers(x, z) ? (float)Sample(x, z).RainCloudness : null;
 
-    public double RegionMps(int regionX, int regionZ) => regions.TryGetValue((regionX, regionZ), out var region) ? region.Mps : 0;
+    public double RegionMps(int regionX, int regionZ) => Fresh((regionX, regionZ))?.Mps ?? 0;
 
     public bool Covers(double x, double z)
     {
         var regionSize = capi.World.BlockAccessor.RegionSize;
-        return regions.ContainsKey(((int)Math.Floor(x / regionSize), (int)Math.Floor(z / regionSize)));
+        return Fresh(((int)Math.Floor(x / regionSize), (int)Math.Floor(z / regionSize))) != null;
     }
 
     private void Receive(SeaMapSnapshot snapshot)
@@ -79,7 +79,7 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         if (snapshot.Version != SeaMapSnapshot.CurrentVersion) return;
         var key = (snapshot.RegionX, snapshot.RegionZ);
         var samples = snapshot.Samples();
-        // A new snapshot is reached from what is shown now, over the time between snapshots, so the sea never jumps.
+        // A new snapshot is reached from what is shown now, over the time between regular snapshots.
         var now = Now;
         regions.AddOrUpdate(key,
             _ => new Region(samples, samples, snapshot.TotalHours, now, 0, snapshot.CellsPerSide, snapshot.RegionMps),
@@ -91,8 +91,15 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
 
     private double Now => capi.World.Calendar?.TotalHours ?? 0;
 
-    private double Span(double hours) =>
-        capi.World.Calendar is not { } calendar || hours * 3600 / calendar.SpeedOfTime > 3 * sea.Config.Map.UpdateSeconds ? 0 : hours;
+    private double Span(double hours) => hours > sea.Config.Map.StaleHours ? 0 : hours;
+
+    private Region? Fresh((int X, int Z) key)
+    {
+        if (!regions.TryGetValue(key, out var region)) return null;
+        if (Now - region.SnapshotHours <= sea.Config.Map.StaleHours) return region;
+        regions.TryRemove(key, out _);
+        return null;
+    }
 
     private void Load(IMapRegion region)
     {
@@ -113,7 +120,7 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         var side = capi.World.BlockAccessor.RegionSize / sea.Config.Map.CellBlocks;
         var regionX = (int)Math.Floor((double)cellX / side);
         var regionZ = (int)Math.Floor((double)cellZ / side);
-        if (!regions.TryGetValue((regionX, regionZ), out var region) || region.Side != side) return null;
+        if (Fresh((regionX, regionZ)) is not { } region || region.Side != side) return null;
         return region.At(cellX - regionX * side, cellZ - regionZ * side, Now);
     }
 

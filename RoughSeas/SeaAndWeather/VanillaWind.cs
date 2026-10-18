@@ -43,6 +43,7 @@ public class VanillaWind(SeaWeatherSystem sea, ICoreAPI api)
         return vanilla.Set(towardX * strength, vanilla.Y, towardZ * strength);
     }
 
+    // WeatherSimulationRegion.GetWindSpeed's height scaling; Express needs RegionStrength to stay its exact copy.
     private static double AtHeight(double strength, double y, int seaLevel, double cap) =>
         y <= seaLevel
             ? strength / (1 + (seaLevel - y) / 4)

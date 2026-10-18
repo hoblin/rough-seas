@@ -59,7 +59,7 @@ public sealed class SeaSurface
 
     public Foam Foam { get; private set; }
 
-    /// <summary>The open sea's significant height the surface is aimed at.</summary>
+    /// <summary>The highest significant height around the player, which the surface is aimed at.</summary>
     public double SeaHeight { get; private set; }
 
     public double SurfDepth => waves.BreakingDepth(Math.Max(SeaHeight, SurfOnAnyShoreMetres));
@@ -113,15 +113,15 @@ public sealed class SeaSurface
     }
 
     /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
-    public double HeightAt(double x, double z, double openSea = 1)
+    public double HeightAt(double x, double z, double share = 1)
     {
         var (restX, restZ) = (x, z);
         for (var i = 0; i < SurfaceSearchSteps; i++)
         {
             var (shiftX, _, shiftZ) = DisplacementAt(restX, restZ);
-            (restX, restZ) = (x - openSea * shiftX, z - openSea * shiftZ);
+            (restX, restZ) = (x - share * shiftX, z - share * shiftZ);
         }
-        return openSea * DisplacementAt(restX, restZ).Y;
+        return share * DisplacementAt(restX, restZ).Y;
     }
 
     public (double X, double Y, double Z) DisplacementAt(double x, double z)

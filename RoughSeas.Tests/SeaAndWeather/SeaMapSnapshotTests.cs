@@ -21,7 +21,7 @@ public class SeaMapSnapshotTests
     }
 
     [Fact]
-    public void KeepsEachValueToItsUse()
+    public void KeepsEachValueToThePrecisionItNeeds()
     {
         var received = SeaMapSnapshot.Of(0, 0, 0, 0, 1, [Gale]).Samples()[0];
 

@@ -40,6 +40,7 @@ public class SeaMapConfig
 {
     public int CellBlocks;
     public double UpdateSeconds;
+    public double StaleHours;
     public double TickBudgetMilliseconds;
 }
 

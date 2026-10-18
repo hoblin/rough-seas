@@ -86,6 +86,7 @@ public class SeaWeatherModelTests
             return Model.SustainedWinds(at.X, at.Z, at.Hours, now).First(sustained => sustained.Hours == 4).Mps / now;
         }
 
+        Assert.NotEmpty(calm);
         Assert.True(calm.Average(HeldShare) > 0.7);
     }
 
@@ -105,6 +106,7 @@ public class SeaWeatherModelTests
         Assert.NotEmpty(openSea);
         Assert.InRange(land.Average(), 2, 6);
         Assert.InRange(openSea.Average(), 5, 9);
+        Assert.True(openSea.Average() > land.Average(), $"{openSea.Average():F1} m/s at sea, {land.Average():F1} m/s on land");
     }
 
     [Fact]

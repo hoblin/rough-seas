@@ -44,10 +44,10 @@ public class SeaMapServer(SeaWeatherSystem sea, ICoreServerAPI sapi)
         sea.Calibrate(sapi, (int)(x + 0.5 * Config.CellBlocks), (int)(z + 0.5 * Config.CellBlocks));
         var centre = Model.Sample(x + 0.5 * Config.CellBlocks, z + 0.5 * Config.CellBlocks);
         if (centre.WaveHeight > 0) return centre;
-        var water = CellSamples.Skip(1)
-            .Select(at => Model.Sample(x + at.X * Config.CellBlocks, z + at.Z * Config.CellBlocks))
-            .FirstOrDefault(sample => sample.WaveHeight > 0);
-        return water.WaveHeight > 0 ? centre with { WaveHeight = water.WaveHeight, WavePeriod = water.WavePeriod } : centre;
+        var (height, period) = CellSamples.Skip(1)
+            .Select(at => Model.WavesAt(x + at.X * Config.CellBlocks, z + at.Z * Config.CellBlocks))
+            .FirstOrDefault(waves => waves.Height > 0);
+        return height > 0 ? centre with { WaveHeight = height, WavePeriod = period } : centre;
     }
 
     private void Send()

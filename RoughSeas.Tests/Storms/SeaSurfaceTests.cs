@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text.RegularExpressions;
 using RoughSeas.Storms;
 
 namespace RoughSeas.Tests.Storms;
@@ -79,6 +81,40 @@ public class SeaSurfaceTests
     }
 
     [Fact]
+    public void RunsAYoungSeasWavesShorterThanAnOldOnesOfTheSameHeight()
+    {
+        static double LengthOf(double period)
+        {
+            var surface = Surface();
+            var length = 0.0;
+            surface.Changed += change => length = double.Parse(Regex.Match(change, @"(\d+) m long").Groups[1].Value, CultureInfo.InvariantCulture);
+            surface.Aim(2, period, 0, 6);
+            return length;
+        }
+
+        Assert.True(LengthOf(3) < LengthOf(8), $"{LengthOf(3)} m young, {LengthOf(8)} m old");
+    }
+
+    [Fact]
+    public void WhitensLittleWhereTheWavesStandLow()
+    {
+        var shallows = Surface();
+        var sea = Surface();
+        for (var frame = 0; frame * Frame < 120; frame++)
+        {
+            if (frame % FramesPerAim == 0)
+            {
+                shallows.Aim(0.1, 1.1, 0, 8, foamShare: 0.2);
+                sea.Aim(2, 5, 0, 8);
+            }
+            shallows.Advance(frame * Frame);
+            sea.Advance(frame * Frame);
+        }
+
+        Assert.True(shallows.Foam.Caps < 0.3 * sea.Foam.Caps, $"caps {shallows.Foam.Caps:F2} in the shallows, {sea.Foam.Caps:F2} at sea");
+    }
+
+    [Fact]
     public void FallsCalmWhenTheSeaDoes()
     {
         var surface = Surface();
@@ -128,10 +164,10 @@ public class SeaSurfaceTests
     {
         var surface = Surface();
         Settle(surface, 4, 0.3);
-        const double openSea = 0.4;
+        const double share = 0.4;
         var (shiftX, rise, shiftZ) = surface.DisplacementAt(FarX, FarZ);
 
-        Assert.Equal(openSea * rise, surface.HeightAt(FarX + openSea * shiftX, FarZ + openSea * shiftZ, openSea), 2);
+        Assert.Equal(share * rise, surface.HeightAt(FarX + share * shiftX, FarZ + share * shiftZ, share), 2);
     }
 
     [Fact]

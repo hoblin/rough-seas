@@ -139,7 +139,7 @@ public class StormField
         var northern = prevailing.LatitudeDegrees(originZ) >= 0;
         var likelihood = Likelihood(stormType, originX, originZ, bornHours, northern);
         var roll = rand.NextDouble();
-        if (roll >= likelihood || roll >= likelihood * BirthOver(type, cellX, cellZ)) return null;
+        if (roll >= likelihood || roll >= likelihood * BirthShare(type, cellX, cellZ)) return null;
 
         var track = prevailing.TowardRadians(originZ) + (rand.NextDouble() * 2 - 1) * config.Storm.TrackSpreadDegrees * GameMath.DEG2RAD_DOUBLE;
         var (towardX, towardZ) = Compass.Toward(track);
@@ -170,7 +170,7 @@ public class StormField
             * stormType.MonthlyWeight[month];
     }
 
-    private double BirthOver(int type, int cellX, int cellZ)
+    private double BirthShare(int type, int cellX, int cellZ)
     {
         if (seaCells.Count > CacheLimit) seaCells.Clear();
         var stormType = config.Storms[type];

@@ -212,7 +212,7 @@ public class BridgeCommands : ModSystem
             if (storms.Presence > strongest) (strongest, strongestAhead, strongestCode) = (storms.Presence, ahead, storms.Storm.Code);
             if (storms.Presence < presence) continue;
             var celsius = sapi.World.BlockAccessor.GetClimateAt(at, EnumGetClimateMode.ForSuppliedDateValues, when / calendar.HoursPerDay)?.Temperature ?? double.NaN;
-            if (warmth == "warm" && !(celsius >= warm) || warmth == "cold" && !(celsius <= cold)) continue;
+            if (warmth == "warm" && !(celsius >= warm) || warmth == "cold" && !(celsius < cold)) continue;
 
             calendar.Add((float)ahead);
             return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture,

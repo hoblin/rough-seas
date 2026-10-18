@@ -63,6 +63,26 @@ public class OceanCalibrationTests
     }
 
     [Fact]
+    public void StartsAfreshFromAWorldWithNoReadingSaved()
+    {
+        var loaded = new OceanCalibration(Ocean);
+        loaded.Load(null);
+
+        Assert.False(loaded.Settled);
+        Assert.Equal(Ocean.DefaultSeaFrom, loaded.SeaFrom);
+    }
+
+    [Fact]
+    public void LeavesAReadingOfAnotherVersionBehind()
+    {
+        var other = new OceanCalibration.Counts { Version = OceanCalibration.Counts.CurrentVersion + 1, SeaFrom = 32 };
+        var loaded = new OceanCalibration(Ocean);
+        loaded.Load(Vintagestory.API.Util.SerializerUtil.Serialize(other));
+
+        Assert.False(loaded.Settled);
+    }
+
+    [Fact]
     public void KeepsItsReadingInTheSave()
     {
         var saved = Built(25);

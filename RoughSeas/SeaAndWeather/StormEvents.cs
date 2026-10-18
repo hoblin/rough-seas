@@ -9,8 +9,8 @@ using Vintagestory.GameContent;
 namespace RoughSeas.SeaAndWeather;
 
 /// <summary>
-/// A region a storm covers carries the storm type's own event while that event's conditions hold there; vanilla's roll,
-/// where no event of a mod outweighs its calm one, would leave most storms silent. Elsewhere vanilla's roll decides.
+/// A region a storm covers carries the storm type's own event while that event's conditions hold there; elsewhere
+/// vanilla's roll decides.
 /// </summary>
 public class StormEvents(SeaWeatherSystem sea, ICoreServerAPI sapi)
 {

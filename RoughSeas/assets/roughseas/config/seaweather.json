@@ -137,6 +137,7 @@
     "map": {
         "cellBlocks": 32,
         "updateSeconds": 5,
+        "staleHours": 0.5,
         "tickBudgetMilliseconds": 8
     }
 }

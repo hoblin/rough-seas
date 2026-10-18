@@ -35,17 +35,17 @@ public static class VanillaWeatherPatches
             if (harmony != null) return;
             harmony = new Harmony(HarmonyId);
             Transpiler(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.RandomWeatherEvent)), nameof(CurrentConditions));
-            Postfix(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetPrecipitation),
+            Setting(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetPrecipitation),
                 [typeof(double), typeof(double), typeof(double), typeof(double)]), nameof(Precipitation));
-            Postfix(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetPrecipitation),
+            Setting(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetPrecipitation),
                 [typeof(BlockPos), typeof(double), typeof(ClimateCondition)]), nameof(PrecipitationAt));
             var loadLerp = AccessTools.Method(typeof(WeatherDataReaderBase), nameof(WeatherDataReaderBase.LoadLerp),
                 [typeof(Vec3d), typeof(bool), typeof(float), typeof(float), typeof(float)]);
-            Postfix(loadLerp, nameof(UnloadedRainCloudness));
+            Setting(loadLerp, nameof(UnloadedRainCloudness));
             Postfix(loadLerp, nameof(StormUnderCloud));
             Postfix(AccessTools.Method(typeof(WeatherDataReaderBase), "pgetBlendedCloudBrightness"), nameof(StormCloudBrightness));
-            Postfix(AccessTools.Method(typeof(CloudRenderer), nameof(CloudRenderer.CloudTick)), nameof(CloudDrift));
-            Postfix(AccessTools.Method(typeof(FluffyClouds.CloudRendererMap), nameof(FluffyClouds.CloudRendererMap.CloudTick)), nameof(CloudDrift));
+            Setting(AccessTools.Method(typeof(CloudRenderer), nameof(CloudRenderer.CloudTick)), nameof(CloudDrift));
+            Setting(AccessTools.Method(typeof(FluffyClouds.CloudRendererMap), nameof(FluffyClouds.CloudRendererMap.CloudTick)), nameof(CloudDrift));
             WindAsStrength(AccessTools.Method(typeof(DefaultShaderUniforms), nameof(DefaultShaderUniforms.Update)), nameof(SurfaceWindStrength), nameof(SurfaceWindRestore));
             WindAsStrength(AccessTools.Method(typeof(EntityBoat), nameof(EntityBoat.OnRenderFrame)), nameof(WindStrength), nameof(WindRestore));
         }
@@ -68,6 +68,10 @@ public static class VanillaWeatherPatches
     private static HarmonyMethod Yielding(string patch) => new(typeof(VanillaWeatherPatches), patch) { priority = Priority.Low };
 
     private static void Postfix(MethodBase target, string patch) => harmony!.Patch(target, postfix: Yielding(patch));
+
+    // A postfix that sets the value runs first, so that other mods' postfixes adjust ours rather than ours replacing theirs.
+    private static void Setting(MethodBase target, string patch) =>
+        harmony!.Patch(target, postfix: new HarmonyMethod(typeof(VanillaWeatherPatches), patch) { priority = Priority.High });
 
     private static void Transpiler(MethodBase target, string patch) => harmony!.Patch(target, transpiler: Yielding(patch));
 

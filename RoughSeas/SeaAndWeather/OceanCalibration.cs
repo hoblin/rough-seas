@@ -8,8 +8,8 @@ namespace RoughSeas.SeaAndWeather;
 /// <summary>
 /// Where the world's ocean map turns to sea, learned once from the columns of the built world that do and don't hold salt
 /// water at sea level: each worldgen mod gives the map's numbers its own meaning. Until both are seen often enough it
-/// reads vanilla's midpoint; once settled it is saved with the world and never moves, since the storms brewed far away
-/// depend on it.
+/// reads the configured default; once settled it is saved with the world and never moves, since the storms brewed far
+/// away depend on it.
 /// </summary>
 public class OceanCalibration(OceanConfig config)
 {
@@ -46,14 +46,14 @@ public class OceanCalibration(OceanConfig config)
     private double Misread(int seaBin) =>
         (double)counts.Land.Skip(seaBin).Sum() / counts.Land.Sum() + (double)counts.Water.Take(seaBin).Sum() / counts.Water.Sum();
 
-    [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
+    [ProtoContract(SkipConstructor = true)]
     public class Counts
     {
         public const int CurrentVersion = 1;
 
-        public int Version = CurrentVersion;
-        public long[] Water = new long[Bins];
-        public long[] Land = new long[Bins];
-        public int? SeaFrom;
+        [ProtoMember(1)] public int Version = CurrentVersion;
+        [ProtoMember(2)] public long[] Water = new long[Bins];
+        [ProtoMember(3)] public long[] Land = new long[Bins];
+        [ProtoMember(4)] public int? SeaFrom;
     }
 }

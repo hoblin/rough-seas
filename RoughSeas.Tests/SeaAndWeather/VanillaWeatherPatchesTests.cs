@@ -2,7 +2,7 @@ using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Tests.SeaAndWeather;
 
-public class VanillaWeatherTests
+public class VanillaWeatherPatchesTests
 {
     private const double RainCloudBrightness = 0.55;
 

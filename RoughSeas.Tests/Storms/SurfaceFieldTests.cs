@@ -53,8 +53,8 @@ public class SurfaceFieldTests
         var pixels = field.Pixels();
 
         Assert.Equal(field.Across * field.Across, pixels.Length);
-        Assert.Contains(pixels, pixel => (pixel & 0xff) == 255);
-        Assert.Contains(pixels, pixel => (pixel & 0xff) == 0);
+        Assert.Equal((0, 255, 64), (pixels[15] & 0xff, pixels[16] & 0xff, pixels[17] & 0xff));
+        Assert.Equal(255, pixels[field.Across + 16] & 0xff);
     }
 
     private sealed class Lake : ISeaSource

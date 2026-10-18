@@ -8,7 +8,8 @@ namespace RoughSeas.SeaAndWeather;
 /// <summary>
 /// Vanilla's chunk thread asks the world's ocean layer unlocked, and the layer's noise keeps shared state; this makes
 /// every call on that one instance take the lock <see cref="GeneratedOcean"/> takes, so asking it from our threads
-/// can't corrupt the world's generation.
+/// can't corrupt the world's generation. The patch sits on the layer's type and locks only the world's instance; it is
+/// the outermost patch, so the lock holds around whatever else runs.
 /// </summary>
 public static class OceanGenLock
 {
@@ -26,8 +27,8 @@ public static class OceanGenLock
             if (harmony != null) return;
             harmony = new Harmony(HarmonyId);
             harmony.Patch(AccessTools.Method(layer.GetType(), nameof(MapLayerBase.GenLayer)),
-                prefix: new HarmonyMethod(typeof(OceanGenLock), nameof(Enter)) { priority = Priority.Low },
-                finalizer: new HarmonyMethod(typeof(OceanGenLock), nameof(Exit)) { priority = Priority.Low });
+                prefix: new HarmonyMethod(typeof(OceanGenLock), nameof(Enter)) { priority = Priority.First },
+                finalizer: new HarmonyMethod(typeof(OceanGenLock), nameof(Exit)) { priority = Priority.Last });
         }
     }
 

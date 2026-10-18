@@ -4,7 +4,7 @@ uniform vec2 seaWind;
 
 in float seaFoamCrest;
 in float seaFoamFold;
-in float seaFoamOcean;
+in float seaFoamShare;
 in vec2 seaFoamWorld;
 
 float seaWaterDepth() {
@@ -27,7 +27,7 @@ float seaVeins(float along, float side, float scale, float width, float t) {
 }
 
 float seaFoamAt() {
-	if (seaFoamOcean <= 0.0) return 0.0;
+	if (seaFoamShare <= 0.0) return 0.0;
 
 	vec2 at = seaFoamWorld;
 	float t = waterWaveCounter;
@@ -35,10 +35,10 @@ float seaFoamAt() {
 	float along = dot(at, seaWind);
 	float side = dot(at, across);
 	float lace = seaLace(at, t);
-	float openSea = smoothstep(0.5, 0.9, seaFoamOcean);
+	float offshore = smoothstep(0.5, 0.9, seaFoamShare);
 	float foam = 0.0;
 
-	if (openSea > 0.0) {
+	if (offshore > 0.0) {
 		if (seaFoamFold > seaFoam.x) {
 			float breakingCrests = smoothstep(0.52, 0.62, gnoise(vec3(along / 3.0 - t * 0.4, side / 2.5, t * 0.2)) * 0.5 + 0.5);
 			float breaking = smoothstep(seaFoam.x, seaFoam.x + 0.2, seaFoamFold) * breakingCrests;
@@ -54,7 +54,7 @@ float seaFoamAt() {
 		if (seaFoam.z > 0.0) {
 			foam = max(foam, 0.85 * seaFlecked(seaFoam.z * (0.6 + 0.6 * smoothstep(-0.2, 0.8, seaFoamCrest)), lace));
 		}
-		foam *= openSea;
+		foam *= offshore;
 	}
 
 	float breakDepth = seaFoam.w;
@@ -66,7 +66,7 @@ float seaFoamAt() {
 			float band = smoothstep(0.0, 0.12, bands) * (1.0 - smoothstep(0.3, 0.75, bands));
 			float swash = smoothstep(0.75, 0.95, shore);
 			float density = max(band * (0.6 + shore), swash * 1.4);
-			foam = max(foam, seaFlecked(density, lace * 0.8) * smoothstep(0.02, 0.15, seaFoamOcean));
+			foam = max(foam, seaFlecked(density, lace * 0.8) * smoothstep(0.02, 0.15, seaFoamShare));
 		}
 	}
 

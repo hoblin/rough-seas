@@ -45,6 +45,8 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
 
     public SeaCurrent CurrentAt(double x, double z) => model.Current(x, z);
 
+    public (double Height, double Period) WavesAt(double x, double z) => Waves(x, z, NowHours, model.Wind(x, z, NowHours));
+
     public IEnumerable<Storm> StormsWithin(double x, double z, double range) => model.Storms.Active(x, z, NowHours, range);
 
     public bool IsSea(double x, double z) => model.IsSea(x, z);
@@ -60,6 +62,13 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
     public double StormPresence(double x, double z) => model.StormsAt(x, z, NowHours).Presence;
 
     public Reach Upwind(double x, double z, double towardRadians) => water.Upwind(x, z, towardRadians);
+
+    public void Forget()
+    {
+        model.Storms.Forget();
+        water.Forget();
+        regions.Clear();
+    }
 
     public string WaterHere(double x, double z) => water.Describe(x, z);
 

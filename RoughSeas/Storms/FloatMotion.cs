@@ -37,7 +37,7 @@ public static class FloatMotion
         if (___entityitem.Itemstack?.Collectible.MaterialDensity > WaterDensity) return;
 
         var pos = ___entityitem.Pos;
-        var openSea = field.Factor(pos.X, pos.Z);
-        if (openSea > 0) __instance.ModelMat[ModelMatrixY] += (float)surface.HeightAt(pos.X, pos.Z, openSea);
+        var share = field.Factor(pos.X, pos.Z);
+        if (share > 0) __instance.ModelMat[ModelMatrixY] += (float)surface.HeightAt(pos.X, pos.Z, share);
     }
 }
