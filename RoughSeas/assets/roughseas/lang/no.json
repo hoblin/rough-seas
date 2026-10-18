@@ -56,5 +56,22 @@
     "guide-surf-title": "Grov sjø: Brenninger, vannfylling og øsing",
     "guide-surf-text": "<strong>Brenninger</strong><br>Der grunt vann møter store bølger, bryter de. Ute på havet bryter en høy dønning bare nå og da, men nær land i dårlig vær blir hver bølge til brenninger. En brytende bølge slår hardt mot skroget, så gå i land i stille vær eller i en lun bukt.<br><br><strong>Å ta inn vann</strong><br>Når bølgene går høyere enn ripa på et fartøy, kommer det vann om bord. Båter med skrog, fra coracle til seilbåt, holder det i kjølsvinet: se på fartøyet for å se hvor mange liter det har, og du ser vannet i selve båten. Vann om bord tynger den ned: den ligger dypere, tar inn mer, ruller hardere og går saktere.<br><br><strong>Vannfylling</strong><br>Fullt kjølsvin fyller fartøyet med vann. Det flyter med ripa i vannskorpa: det kan ikke padles eller sittes i, men du kan holde deg fast i det, øse det tomt, vente på en stille stund eller forlate det. Tre flyter, så en vannfylt båt holder seg flytende; bare seilbåten, tung av ballast, synker. Flåter og sivbåter holder ikke på vann, det skyller rett gjennom dem.<br><br><strong>Øsing</strong><br>Hold en tom <a href=\"handbooksearch://bowl\">bolle</a>, <a href=\"handbooksearch://jug\">kanne</a> eller <a href=\"handbook://block-woodbucket\">bøtte</a> og hold <hk>rightmouse</hk> inne mens du ser ned i båten: ser du på sjøen, fyller du bollen fra den i stedet. Hvert øsetak kaster vann over ripa. I storm, fortsett å øse: en åpen seilbåt som blir latt alene i full storm, fylles med vann på få minutter.",
     "guide-mooring-title": "Grov sjø: Fortøyning og ankring",
-    "guide-mooring-text": "Et fartøy som blir latt alene, driver med strømmen, og en storm kan kaste det på land.<br><br><strong>Fortøyning</strong><br>Fortøy et fartøy til en <a href=\"handbooksearch://fence\">gjerdestolpe</a> på land med et <a href=\"handbook://item-rope\">tau</a>, slik du binder et dyr. Stolpen holder det, men et hardt nok rykk sliter tauet.<br><br><strong>Ankring</strong><br>En seilbåt har et <a href=\"handbook://item-anchor-stone\">steinanker</a> i baugen. Klikk <hk>rightmouse</hk> på det med tom hånd for å slippe det eller hale det inn. Ankeret holder best når du stikker ut rikelig med tau, omtrent fem ganger vanndybden. Dets eget tau rekker omtrent 120 meter. For dypere vann, legg et <a href=\"handbook://item-roughseas:anchorwarp\">ankertau</a> ved mastefoten med <hk>ctrl</hk> + <hk>rightmouse</hk>.<br>- For lite tau, og ankeret drar i storm.<br>- Vann dypere enn tauet, og ankeret henger og holder ingenting.<br>- Et tau som ryker, tar ankeret med seg.<br>Mens noen styrer fartøyet, holder ikke ankeret det, men slepes etter.<br><br><strong>Å forlate et fartøy</strong><br>Et fartøy til ankers tar bølgene mykere, men det tar fortsatt inn vann. Fortøyd nær land uten noen i nærheten kan det bli kastet opp på stranden når en storm kommer. Langt fra land og godt ankret rir det av natten."
+    "guide-mooring-text": "Et fartøy som blir latt alene, driver med strømmen, og en storm kan kaste det på land.<br><br><strong>Fortøyning</strong><br>Fortøy et fartøy til en <a href=\"handbooksearch://fence\">gjerdestolpe</a> på land med et <a href=\"handbook://item-rope\">tau</a>, slik du binder et dyr. Stolpen holder det, men et hardt nok rykk sliter tauet.<br><br><strong>Ankring</strong><br>En seilbåt har et <a href=\"handbook://item-anchor-stone\">steinanker</a> i baugen. Klikk <hk>rightmouse</hk> på det med tom hånd for å slippe det eller hale det inn. Ankeret holder best når du stikker ut rikelig med tau, omtrent fem ganger vanndybden. Dets eget tau rekker omtrent 120 meter. For dypere vann, legg et <a href=\"handbook://item-roughseas:anchorwarp\">ankertau</a> ved mastefoten med <hk>ctrl</hk> + <hk>rightmouse</hk>.<br>- For lite tau, og ankeret drar i storm.<br>- Vann dypere enn tauet, og ankeret henger og holder ingenting.<br>- Et tau som ryker, tar ankeret med seg.<br>Mens noen styrer fartøyet, holder ikke ankeret det, men slepes etter.<br><br><strong>Å forlate et fartøy</strong><br>Et fartøy til ankers tar bølgene mykere, men det tar fortsatt inn vann. Fortøyd nær land uten noen i nærheten kan det bli kastet opp på stranden når en storm kommer. Langt fra land og godt ankret rir det av natten.",
+    "wind-line": "{0} {1} Bft · {2} m/s",
+    "wind-from-n": "N",
+    "wind-from-nne": "NNØ",
+    "wind-from-ne": "NØ",
+    "wind-from-ene": "ØNØ",
+    "wind-from-e": "Ø",
+    "wind-from-ese": "ØSØ",
+    "wind-from-se": "SØ",
+    "wind-from-sse": "SSØ",
+    "wind-from-s": "S",
+    "wind-from-ssw": "SSV",
+    "wind-from-sw": "SV",
+    "wind-from-wsw": "VSV",
+    "wind-from-w": "V",
+    "wind-from-wnw": "VNV",
+    "wind-from-nw": "NV",
+    "wind-from-nnw": "NNV"
 }

@@ -57,5 +57,22 @@
     "guide-surf-title": "驚濤駭浪: 拍岸浪、進水與舀水",
     "guide-surf-text": "<strong>拍岸浪</strong><br>淺水遇上大浪，浪就會碎開。在遠海，高高的湧浪只是偶爾碎開，但惡劣天氣下靠近岸邊時，每一道浪都會變成拍岸浪。碎浪會重重拍擊船體，所以要在風平浪靜時或在避風的海灣裡靠岸。<br><br><strong>船上進水</strong><br>當浪高過船舷，海水就會湧上船。有船體的船，從圓皮舟到帆船，都會把水積在艙底：看向船隻就能看到它積了多少公升水，船裡的積水也看得見。船上有水會變重：吃水更深、更容易進水、搖晃得更厲害，也會變慢。<br><br><strong>淹沒</strong><br>艙底積滿，船就會被淹沒。被淹沒的船與水面齊平：無法划行，也無法乘坐，但你可以抓住它、把水舀乾、等風浪稍歇，或者棄船。木頭會浮，所以被淹沒的船仍會漂在水上；只有壓著壓艙物的帆船會沉。木筏和蘆葦船不積水，水會直接從中流過。<br><br><strong>舀水</strong><br>手持空的<a href=\"handbooksearch://bowl\">碗</a>、<a href=\"handbooksearch://jug\">陶壺</a>或<a href=\"handbook://block-woodbucket\">提桶</a>，看向船內並按住<hk>rightmouse</hk>：若看向海面，就會改從海裡把容器裝滿水。每舀一下都會把水潑出舷外。暴風雨中要不停地舀水：在猛烈強風中無人看管的敞篷帆船幾分鐘內就會被淹沒。",
     "guide-mooring-title": "驚濤駭浪: 繫泊與下錨",
-    "guide-mooring-text": "無人看管的船會隨洋流漂走，暴風雨還可能把它掀上岸。<br><br><strong>繫泊</strong><br>用<a href=\"handbook://item-rope\">繩子</a>把船繫在岸上的<a href=\"handbooksearch://fence\">柵欄柱</a>上，就像拴動物一樣。柵欄柱能拴住船，但拉力夠大時繩子會斷。<br><br><strong>下錨</strong><br>帆船的船首載著一只<a href=\"handbook://item-anchor-stone\">石製錨</a>。空手<hk>rightmouse</hk>點擊它即可下錨或起錨。放出夠長的錨繩時錨抓得最牢，大約是水深的五倍。它自帶的錨繩約長120公尺。若水更深，可用<hk>ctrl</hk> + <hk>rightmouse</hk>在桅杆腳下存放一捆<a href=\"handbook://item-roughseas:anchorwarp\">錨纜</a>。<br>- 錨繩放得太少，暴風雨中錨就會走錨。<br>- 水深超過錨繩長度，錨就會懸在半空，什麼也抓不住。<br>- 錨繩一斷，錨也隨之而去。<br>有人掌舵時，錨不會固定住船，而是被拖在船後。<br><br><strong>離船</strong><br>下錨的船受浪更平緩，但仍會進水。如果繫泊在岸邊而附近無人，暴風雨來時它可能被拋上海灘。遠離海岸並穩穩下錨的船，則能安然度過一夜。"
+    "guide-mooring-text": "無人看管的船會隨洋流漂走，暴風雨還可能把它掀上岸。<br><br><strong>繫泊</strong><br>用<a href=\"handbook://item-rope\">繩子</a>把船繫在岸上的<a href=\"handbooksearch://fence\">柵欄柱</a>上，就像拴動物一樣。柵欄柱能拴住船，但拉力夠大時繩子會斷。<br><br><strong>下錨</strong><br>帆船的船首載著一只<a href=\"handbook://item-anchor-stone\">石製錨</a>。空手<hk>rightmouse</hk>點擊它即可下錨或起錨。放出夠長的錨繩時錨抓得最牢，大約是水深的五倍。它自帶的錨繩約長120公尺。若水更深，可用<hk>ctrl</hk> + <hk>rightmouse</hk>在桅杆腳下存放一捆<a href=\"handbook://item-roughseas:anchorwarp\">錨纜</a>。<br>- 錨繩放得太少，暴風雨中錨就會走錨。<br>- 水深超過錨繩長度，錨就會懸在半空，什麼也抓不住。<br>- 錨繩一斷，錨也隨之而去。<br>有人掌舵時，錨不會固定住船，而是被拖在船後。<br><br><strong>離船</strong><br>下錨的船受浪更平緩，但仍會進水。如果繫泊在岸邊而附近無人，暴風雨來時它可能被拋上海灘。遠離海岸並穩穩下錨的船，則能安然度過一夜。",
+    "wind-line": "{0}風 {1}級 · {2} 公尺/秒",
+    "wind-from-n": "北",
+    "wind-from-nne": "北北東",
+    "wind-from-ne": "東北",
+    "wind-from-ene": "東北東",
+    "wind-from-e": "東",
+    "wind-from-ese": "東南東",
+    "wind-from-se": "東南",
+    "wind-from-sse": "南南東",
+    "wind-from-s": "南",
+    "wind-from-ssw": "南南西",
+    "wind-from-sw": "西南",
+    "wind-from-wsw": "西南西",
+    "wind-from-w": "西",
+    "wind-from-wnw": "西北西",
+    "wind-from-nw": "西北",
+    "wind-from-nnw": "北北西"
 }

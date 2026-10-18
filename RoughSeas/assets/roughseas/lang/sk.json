@@ -57,5 +57,22 @@
     "guide-surf-title": "Rozbúrené more: Príboj, zaplavenie a vylievanie vody",
     "guide-surf-text": "<strong>Príboj</strong><br>Kde sa plytčina stretne s veľkými vlnami, vlny sa lámu. Na šírom mori sa vysoké vlnobitie zlomí len občas, ale blízko brehu sa v zlom počasí každá vlna zmení na príboj. Lámajúca sa vlna tvrdo udrie do trupu, tak pristávaj za pokojného počasia alebo v chránenej zátoke.<br><br><strong>Naberanie vody</strong><br>Keď sú vlny vyššie ako boky plavidla, voda sa dostane dnu. Člny s trupom, od korakla po plachetnicu, ju zadržia v podpalubí: pozri sa na plavidlo a uvidíš, koľko litrov v ňom je, a vodu uvidíš aj v samotnom člne. Voda na palube čln zaťažuje: sedí nižšie, naberá viac vody, viac sa kolíše a spomalí.<br><br><strong>Zaplavenie</strong><br>Plné podpalubie plavidlo zaplaví. Leží potom zaliate vodou po okraj: nedá sa na ňom pádlovať ani v ňom sedieť, ale môžeš sa ho držať, vyliať z neho vodu, počkať, kým sa more utíši, alebo ho opustiť. Drevo pláva, takže zaplavený čln zostane na hladine; potopí sa len plachetnica, ťažká od záťaže. Plte a trstinové člny vodu nezadržia, pretečie nimi.<br><br><strong>Vylievanie vody</strong><br>Drž prázdnu <a href=\"handbooksearch://bowl\">misku</a>, <a href=\"handbooksearch://jug\">džbán</a> alebo <a href=\"handbook://block-woodbucket\">vedro</a> a drž stlačené <hk>rightmouse</hk>, pričom sa pozeráš do člna: keď sa pozeráš na more, naplníš nádobu z neho. Každé nabratie vyleje vodu cez palubu. V búrke neprestávaj vylievať: otvorená plachetnica ponechaná sama v silnej víchrici sa zaplaví za pár minút.",
     "guide-mooring-title": "Rozbúrené more: Uväzovanie a kotvenie",
-    "guide-mooring-text": "Plavidlo ponechané samo sebe sa unáša s prúdom a búrka ho môže vyhodiť na breh.<br><br><strong>Uväzovanie</strong><br>Priviaž plavidlo <a href=\"handbook://item-rope\">lanom</a> k <a href=\"handbooksearch://fence\">stĺpiku plotu</a> na brehu, tak ako priväzuješ zviera. Stĺpik ho udrží, ale dosť silné trhnutie lano pretrhne.<br><br><strong>Kotvenie</strong><br>Plachetnica vezie na prove <a href=\"handbook://item-anchor-stone\">kamennú kotvu</a>. Klikni na ňu <hk>rightmouse</hk> prázdnou rukou, aby si ju spustil alebo vytiahol. Kotva drží najlepšie, keď popustíš veľa lana, zhruba päťnásobok hĺbky vody. Jej vlastné lano siaha asi 120 metrov. Na hlbšiu vodu ulož <a href=\"handbook://item-roughseas:anchorwarp\">kotevné lano</a> k pätke sťažňa pomocou <hk>ctrl</hk> + <hk>rightmouse</hk>.<br>- Príliš málo lana a kotva v búrke klzne po dne.<br>- Voda hlbšia ako lano a kotva visí a nič nedrží.<br>- Lano, ktoré sa pretrhne, vezme kotvu so sebou.<br>Kým niekto plavidlo kormidluje, kotva ho nedrží, ale vlečie sa za ním.<br><br><strong>Keď plavidlo opúšťaš</strong><br>Zakotvené plavidlo znáša vlny jemnejšie, ale stále naberá vodu. Uviazané blízko brehu, bez nikoho nablízku, ho búrka môže vyhodiť na pláž. Ďaleko od brehu a dobre zakotvené prečká noc."
+    "guide-mooring-text": "Plavidlo ponechané samo sebe sa unáša s prúdom a búrka ho môže vyhodiť na breh.<br><br><strong>Uväzovanie</strong><br>Priviaž plavidlo <a href=\"handbook://item-rope\">lanom</a> k <a href=\"handbooksearch://fence\">stĺpiku plotu</a> na brehu, tak ako priväzuješ zviera. Stĺpik ho udrží, ale dosť silné trhnutie lano pretrhne.<br><br><strong>Kotvenie</strong><br>Plachetnica vezie na prove <a href=\"handbook://item-anchor-stone\">kamennú kotvu</a>. Klikni na ňu <hk>rightmouse</hk> prázdnou rukou, aby si ju spustil alebo vytiahol. Kotva drží najlepšie, keď popustíš veľa lana, zhruba päťnásobok hĺbky vody. Jej vlastné lano siaha asi 120 metrov. Na hlbšiu vodu ulož <a href=\"handbook://item-roughseas:anchorwarp\">kotevné lano</a> k pätke sťažňa pomocou <hk>ctrl</hk> + <hk>rightmouse</hk>.<br>- Príliš málo lana a kotva v búrke klzne po dne.<br>- Voda hlbšia ako lano a kotva visí a nič nedrží.<br>- Lano, ktoré sa pretrhne, vezme kotvu so sebou.<br>Kým niekto plavidlo kormidluje, kotva ho nedrží, ale vlečie sa za ním.<br><br><strong>Keď plavidlo opúšťaš</strong><br>Zakotvené plavidlo znáša vlny jemnejšie, ale stále naberá vodu. Uviazané blízko brehu, bez nikoho nablízku, ho búrka môže vyhodiť na pláž. Ďaleko od brehu a dobre zakotvené prečká noc.",
+    "wind-line": "{0} {1} Bf · {2} m/s",
+    "wind-from-n": "S",
+    "wind-from-nne": "SSV",
+    "wind-from-ne": "SV",
+    "wind-from-ene": "VSV",
+    "wind-from-e": "V",
+    "wind-from-ese": "VJV",
+    "wind-from-se": "JV",
+    "wind-from-sse": "JJV",
+    "wind-from-s": "J",
+    "wind-from-ssw": "JJZ",
+    "wind-from-sw": "JZ",
+    "wind-from-wsw": "ZJZ",
+    "wind-from-w": "Z",
+    "wind-from-wnw": "ZSZ",
+    "wind-from-nw": "SZ",
+    "wind-from-nnw": "SSZ"
 }

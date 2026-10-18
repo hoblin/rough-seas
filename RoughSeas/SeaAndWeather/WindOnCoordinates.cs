@@ -1,7 +1,7 @@
 using System;
-using System.Globalization;
 using HarmonyLib;
 using Vintagestory.API.Client;
+using Vintagestory.API.Config;
 using Vintagestory.Client.NoObf;
 
 namespace RoughSeas.SeaAndWeather;
@@ -13,7 +13,7 @@ public static class WindOnCoordinates
     private const double LineHeight = 24;
     private const double ExtraWidth = 40;
 
-    private static readonly string[] Points = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+    private static readonly string[] Points = ["n", "nne", "ne", "ene", "e", "ese", "se", "sse", "s", "ssw", "sw", "wsw", "w", "wnw", "nw", "nnw"];
 
     private static Harmony? harmony;
     private static SeaWeatherSystem? sea;
@@ -38,9 +38,9 @@ public static class WindOnCoordinates
     }
 
     public static string Describe(SeaState state) =>
-        string.Format(CultureInfo.InvariantCulture, "{0} {1} Bft · {2:0} m/s", Point(state.WindFromDegrees), state.Beaufort, state.WindSpeed);
+        Lang.Get("roughseas:wind-line", Lang.Get("roughseas:wind-from-" + Point(state.WindFromDegrees)), state.Beaufort, (int)Math.Round(state.WindSpeed));
 
-    private static string Point(double fromDegrees) => Points[(int)Math.Round(fromDegrees / (360.0 / Points.Length)) % Points.Length];
+    public static string Point(double fromDegrees) => Points[(int)Math.Round(fromDegrees / (360.0 / Points.Length)) % Points.Length];
 
     private static void Grow(HudElementCoordinates __instance)
     {

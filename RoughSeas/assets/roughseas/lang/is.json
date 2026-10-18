@@ -57,5 +57,22 @@
     "guide-surf-title": "Úfinn sjór: Brim, sjór í bát og austur",
     "guide-surf-text": "<strong>Brim</strong><br>Þar sem grunnsævi mætir stórum öldum brotna þær. Úti á hafi brotnar há undiralda aðeins öðru hverju, en nærri landi í slæmu veðri verður hver alda að brimi. Brotsjór skellur fast á skrokknum, svo lentu í góðu veðri eða í skjólgóðri vík.<br><br><strong>Að taka inn sjó</strong><br>Þegar öldurnar rísa hærra en borðstokkur fleysins kemur sjór inn. Bátar með skrokk, frá skinnbátnum til seglbátsins, halda honum í kjalsoginu: horfðu á fleyið til að sjá hve marga lítra það ber, og þú sérð sjóinn í bátnum sjálfum. Sjór um borð þyngir hann: hann liggur dýpra, tekur inn meiri sjó, veltur meira og hægir á sér.<br><br><strong>Að fyllast</strong><br>Fullt kjalsog fyllir fleyið. Það marar í kafi: ekki er hægt að róa því eða sitja í því, en þú getur haldið þér í það, ausið það, beðið eftir hléi eða yfirgefið það. Viður flýtur, svo fullur bátur helst á floti; aðeins seglbátur, þungur af kjölfestu, sekkur. Flekar og reyrbátar halda engum sjó, því hann flæðir beint í gegnum þá.<br><br><strong>Austur</strong><br>Haltu á tómri <a href=\"handbooksearch://bowl\">skál</a>, <a href=\"handbooksearch://jug\">krús</a> eða <a href=\"handbook://block-woodbucket\">fötu</a> og haltu <hk>rightmouse</hk> niðri á meðan þú horfir ofan í bátinn: ef þú horfir á sjóinn fyllirðu skálina úr honum í staðinn. Hver ausa kastar sjó út fyrir borðstokkinn. Í stormi skaltu ausa án afláts: opinn seglbátur sem skilinn er eftir í hörðu roki fyllist á fáeinum mínútum.",
     "guide-mooring-title": "Úfinn sjór: Landfestar og akkeri",
-    "guide-mooring-text": "Fley sem skilið er eftir rekur með straumnum, og stormur getur kastað því á land.<br><br><strong>Að binda</strong><br>Bittu fley við <a href=\"handbooksearch://fence\">girðingarstaur</a> á landi með <a href=\"handbook://item-rope\">reipi</a>, eins og þú bindur dýr. Staurinn heldur því, en nógu sterkt tog slítur reipið.<br><br><strong>Að leggjast við akkeri</strong><br>Seglbátur ber <a href=\"handbook://item-anchor-stone\">steinakkeri</a> í stafninum. Smelltu á það með <hk>rightmouse</hk> og tóma hönd til að varpa því eða draga það upp. Akkerið heldur best þegar þú gefur vel út af festi, um fimmfalt dýpi sjávarins. Eigin festi þess nær um 120 metra. Fyrir dýpri sjó skaltu geyma <a href=\"handbook://item-roughseas:anchorwarp\">akkerisfesti</a> við rót mastursins með <hk>ctrl</hk> + <hk>rightmouse</hk>.<br>- Of lítil festi, og akkerið dregst í stormi.<br>- Sjór dýpri en festin, og akkerið hangir og heldur engu.<br>- Festi sem slitnar tekur akkerið með sér.<br>Á meðan einhver stýrir fleyinu heldur akkerið því ekki heldur dregst á eftir.<br><br><strong>Að skilja fley eftir</strong><br>Fley við akkeri tekur öldunum mýkra, en tekur samt inn sjó. Bundið nærri landi með engan nálægt getur það kastast upp á fjöru þegar stormur kemur. Langt frá landi og vel við akkeri ríður það af nóttina."
+    "guide-mooring-text": "Fley sem skilið er eftir rekur með straumnum, og stormur getur kastað því á land.<br><br><strong>Að binda</strong><br>Bittu fley við <a href=\"handbooksearch://fence\">girðingarstaur</a> á landi með <a href=\"handbook://item-rope\">reipi</a>, eins og þú bindur dýr. Staurinn heldur því, en nógu sterkt tog slítur reipið.<br><br><strong>Að leggjast við akkeri</strong><br>Seglbátur ber <a href=\"handbook://item-anchor-stone\">steinakkeri</a> í stafninum. Smelltu á það með <hk>rightmouse</hk> og tóma hönd til að varpa því eða draga það upp. Akkerið heldur best þegar þú gefur vel út af festi, um fimmfalt dýpi sjávarins. Eigin festi þess nær um 120 metra. Fyrir dýpri sjó skaltu geyma <a href=\"handbook://item-roughseas:anchorwarp\">akkerisfesti</a> við rót mastursins með <hk>ctrl</hk> + <hk>rightmouse</hk>.<br>- Of lítil festi, og akkerið dregst í stormi.<br>- Sjór dýpri en festin, og akkerið hangir og heldur engu.<br>- Festi sem slitnar tekur akkerið með sér.<br>Á meðan einhver stýrir fleyinu heldur akkerið því ekki heldur dregst á eftir.<br><br><strong>Að skilja fley eftir</strong><br>Fley við akkeri tekur öldunum mýkra, en tekur samt inn sjó. Bundið nærri landi með engan nálægt getur það kastast upp á fjöru þegar stormur kemur. Langt frá landi og vel við akkeri ríður það af nóttina.",
+    "wind-line": "{0} {1} vindstig · {2} m/s",
+    "wind-from-n": "N",
+    "wind-from-nne": "NNA",
+    "wind-from-ne": "NA",
+    "wind-from-ene": "ANA",
+    "wind-from-e": "A",
+    "wind-from-ese": "ASA",
+    "wind-from-se": "SA",
+    "wind-from-sse": "SSA",
+    "wind-from-s": "S",
+    "wind-from-ssw": "SSV",
+    "wind-from-sw": "SV",
+    "wind-from-wsw": "VSV",
+    "wind-from-w": "V",
+    "wind-from-wnw": "VNV",
+    "wind-from-nw": "NV",
+    "wind-from-nnw": "NNV"
 }
