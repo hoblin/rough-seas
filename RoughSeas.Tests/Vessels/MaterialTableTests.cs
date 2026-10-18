@@ -22,6 +22,8 @@ public class MaterialTableTests
             ["wood-elm"] = new() { Strength = 65 },
             ["wood-wildcrafttree:cedar"] = new() { Strength = 50 },
             ["wood-cedar"] = new() { Strength = 80 },
+            ["wood-walnut"] = new() { Strength = 110 },
+            ["wood-game:walnut"] = new() { Strength = 120 },
             ["rope-flax"] = new() { Strength = 11 },
             ["rope-bast"] = new() { Strength = 5.5 }
         }, logger);
@@ -46,6 +48,12 @@ public class MaterialTableTests
     {
         Assert.Equal(0.5, table.StrengthFactor([Part("wood-wildcrafttree-cedar", "wood-oak")]), 6);
         Assert.Equal(0.8, table.StrengthFactor([Part("wood-othermod-cedar", "wood-oak")]), 6);
+    }
+
+    [Fact]
+    public void KnowsAVanillaWoodByItsDomainBeforeItsSpecies()
+    {
+        Assert.Equal(1.2, table.StrengthFactor([Part("wood-walnut", "wood-oak")]), 6);
     }
 
     [Fact]

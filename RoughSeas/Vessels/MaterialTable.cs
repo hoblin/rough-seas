@@ -35,10 +35,10 @@ public class MaterialTable
 
     private double? Strength(string material)
     {
-        if (materials.TryGetValue(material, out var exact)) return exact.Strength;
-
         if (!material.StartsWith(WoodPrefix))
         {
+            if (materials.TryGetValue(material, out var known)) return known.Strength;
+
             WarnOnce(material, "Rough Seas has no strength for {0}; vessels of it count as their reference build");
             return null;
         }

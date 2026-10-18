@@ -14,6 +14,7 @@ public class WoodsModSystem : ModSystem
     private const string WoodLists = "worldproperties/block/wood.json";
     private const string LogTextures = "logTextures";
 
+    private static readonly AssetLocation NotWoodAsset = new("roughseas:config/vessels/notwood.json");
     private static readonly AssetLocation BarksAsset = new("roughseas:config/vessels/canoebarks.json");
     private static readonly AssetLocation RecipesAsset = new("roughseas:config/vessels/woodrecipes.json");
 
@@ -24,8 +25,10 @@ public class WoodsModSystem : ModSystem
 
     public override void AssetsLoaded(ICoreAPI api)
     {
+        var notWood = api.Assets.Get<Dictionary<string, string>>(NotWoodAsset);
         var woods = api.Assets.GetMany<StandardWorldProperty>(api.Logger, WoodLists)
             .SelectMany(list => list.Value.Variants.Select(variant => new Wood(list.Key.Domain, variant.Code.Path)))
+            .Where(wood => !wood.Keys.Any(notWood.ContainsKey))
             .ToArray();
         var barkList = api.Assets.Get<Dictionary<string, string>>(BarksAsset);
         var barks = woods.Where(wood => wood.Keys.Any(barkList.ContainsKey)).ToArray();

@@ -35,7 +35,7 @@ Any wood, a modded tree's too. Redwood's logs come as sections, and it takes tho
 
 ## Outrigger canoe
 
-Logs and planks of one wood, a modded tree's too; redwood, and any wood that comes in sections, takes log sections.
+Logs and planks of one wood, a modded tree's too. Redwood, and any wood that comes in sections, builds from its log sections, with planks of any wood from the same mod.
 
 | | |
 | --- | --- |

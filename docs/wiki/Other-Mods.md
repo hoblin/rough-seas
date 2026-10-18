@@ -81,7 +81,7 @@ Extreme Weathers' whiteout needs precipitation above 0.95 at −2 °C or colder.
 
 ## Wildcraft: Trees and Shrubs
 
-[Wildcraft: Trees and Shrubs](https://mods.vintagestory.at/wildcrafttree) 1.3.4 (it needs Herbarium) adds 44 woods. Beside Rough Seas, every one of them builds a [dugout](Dugout) and an [outrigger canoe](Outrigger-Canoe), the same way vanilla's woods do.
+[Wildcraft: Trees and Shrubs](https://mods.vintagestory.at/wildcrafttree) 1.3.4 (it needs Herbarium) adds 44 woods. Beside Rough Seas, 43 of them build a [dugout](Dugout) and an [outrigger canoe](Outrigger-Canoe), the same way vanilla's woods do. Petrified wood builds none: it is stone in a tree's shape and doesn't float, and Wildcraft keeps it out of its own boats too.
 
 ### What its woods do in our vessels
 
@@ -124,7 +124,7 @@ Extreme Weathers' whiteout needs precipitation above 0.95 at −2 °C or colder.
 | tuja | northern white cedar | 45 |
 | empresstree | paulownia | 38 |
 
-The rest (cedar, which is Siberian pine, ginkgo, banyan, bearnut, tamanu, spurgetree, ghostgum, satinash, sal, bluemahoe, saxaul, charred, chlorociboria and petrified) have no published bending strength we could source, and count as an unknown wood: 93.5 MPa, the middle of the vanilla woods. The server log names each of them once.
+The rest (cedar, which is Siberian pine, ginkgo, banyan, bearnut, tamanu, spurgetree, ghostgum, satinash, sal, bluemahoe, saxaul, charred and chlorociboria) have no published bending strength we could source, and count as an unknown wood: 93.5 MPa, the middle of the vanilla woods. The server log names each of them once.
 
 ### Canoes of elm and spruce bark
 
