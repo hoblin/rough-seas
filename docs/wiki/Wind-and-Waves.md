@@ -16,11 +16,11 @@ Its direction follows the prevailing winds of the real world, set by latitude, a
 
 Storms travel with the prevailing wind, so the sky upwind is where weather comes from.
 
-Trees sway with the wind's strength. Their sway does not show its direction, because the game's foliage only bends one way; read the direction from the clouds.
+Trees sway with the wind's strength. Their sway does not show its direction, because the game's foliage only bends one way; read the direction from the clouds, or from the coordinates readout: with the game's coordinates shown, a second line gives the wind where you stand, such as `WSW 6 Bft · 11 m/s`, where it blows from, its [force](#the-beaufort-scale) and its speed, in your own language.
 
 ## The Beaufort scale
 
-The [Beaufort scale](https://en.wikipedia.org/wiki/Beaufort_scale) is how sailors have named a wind's strength since 1805. Rough Seas speaks it everywhere: the debug readout, the storms, the whitecaps.
+The [Beaufort scale](https://en.wikipedia.org/wiki/Beaufort_scale) is how sailors have named a wind's strength since 1805. Rough Seas speaks it everywhere: the coordinates readout, the storms, the whitecaps.
 
 | Force | Wind, m/s | Name |
 | --- | --- | --- |
