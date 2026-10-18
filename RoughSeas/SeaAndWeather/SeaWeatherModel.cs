@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.MathTools;
 
@@ -15,14 +16,15 @@ public class SeaWeatherModel
     private readonly NormalizedSimplexNoise strengthNoise;
     private readonly NormalizedSimplexNoise veerNoise;
 
-    public SeaWeatherModel(long seed, SeaWeatherConfig config, WorldClimate climate, OceanBasins basins, Func<double, double> latitude, double hoursPerYear)
+    public SeaWeatherModel(long seed, SeaWeatherConfig config, WorldClimate climate, OceanBasins basins, Func<double, double> latitude, double hoursPerYear, double blockMetres,
+        Func<double, double, double, double>? seasonalCelsius = null)
     {
         this.config = config;
         this.climate = climate;
         this.basins = basins;
         prevailing = new PrevailingWinds(config.PrevailingWinds, latitude);
         currents = new OceanCurrents(config.Currents);
-        Storms = new StormField(seed, config, climate, prevailing, basins.IsSea, hoursPerYear);
+        Storms = new StormField(seed, config, climate, prevailing, basins.IsSea, hoursPerYear, blockMetres, seasonalCelsius);
         showers = new Showers(seed, config.Showers, climate);
         strengthNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 41017);
         veerNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 90121);
@@ -30,12 +32,30 @@ public class SeaWeatherModel
 
     public StormField Storms { get; }
 
+    public WorldClimate Climate => climate;
+
     public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps)
     {
-        var (sum, count) = (windMps, 1);
-        return config.SeaBuildHours
-            .Select(lag => (lag, (sum += Wind(x, z, hours - lag).Speed) / ++count))
-            .ToArray();
+        var longest = config.SeaBuildHours.Max();
+        var lags = config.SeaBuildHours
+            .Concat(Enumerable.Range(1, (int)(longest / config.SeaSampleHours)).Select(step => step * config.SeaSampleHours))
+            .Where(lag => lag <= longest)
+            .Distinct()
+            .Order();
+        return TimeWeightedMeans(windMps, lags.Select(lag => (lag, Wind(x, z, hours - lag).Speed)), config.SeaBuildHours);
+    }
+
+    public static (double Hours, double Mps)[] TimeWeightedMeans(double nowMps, IEnumerable<(double Lag, double Mps)> past, IReadOnlyCollection<double> windows)
+    {
+        var (area, lastLag, lastMps) = (0.0, 0.0, nowMps);
+        var means = new List<(double Hours, double Mps)>();
+        foreach (var sample in past)
+        {
+            area += (sample.Lag - lastLag) * (lastMps + sample.Mps) / 2;
+            (lastLag, lastMps) = (sample.Lag, sample.Mps);
+            if (windows.Contains(sample.Lag)) means.Add((sample.Lag, area / sample.Lag));
+        }
+        return means.ToArray();
     }
 
     /// <summary>

@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -66,6 +67,12 @@ public class BridgeCommands : ModSystem
                 .RequiresPlayer()
                 .WithArgs(parsers.OptionalWord("type"), parsers.OptionalWord("warmth"), parsers.OptionalDouble("presence", 0.7), parsers.OptionalDouble("hours", 0))
                 .HandleWith(args => Await((IServerPlayer)args.Caller.Player, (string?)args[0], (string?)args[1], (double)args[2], (double)args[3]))
+            .EndSubCommand()
+            .BeginSubCommand("climate")
+                .WithDescription("Over the next year, how many hours a storm of a type covers each open-sea point of a grid around the caller, and in which month most: the points it visits most, first")
+                .RequiresPlayer()
+                .WithArgs(parsers.OptionalWord("type"), parsers.OptionalDouble("range", 20000), parsers.OptionalDouble("step", 5000), parsers.OptionalDouble("presence", 0.7), parsers.OptionalDouble("years", 1))
+                .HandleWith(args => Climate((IServerPlayer)args.Caller.Player, (string?)args[0], (double)args[1], (double)args[2], (double)args[3], (double)args[4]))
             .EndSubCommand()
             .BeginSubCommand("storm")
                 .WithDescription("Fly the caller to where the storms within range raise the highest waves over open sea, or the waves nearest a height, hovering just above the surface")
@@ -221,6 +228,78 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Error(string.Format(CultureInfo.InvariantCulture,
             "No {0}{1} reaches {2:P0} presence here within {3} h; the strongest is a {4} at {5:P0}, {6:F2} h ahead",
             type ?? "storm", warmth is null or "any" ? "" : ", " + warmth + ",", presence, hours, strongestCode, strongest, strongestAhead));
+    }
+
+    private TextCommandResult Climate(IServerPlayer player, string? type, double range, double step, double presence, double years)
+    {
+        if (type is "any") type = null;
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
+        var calendar = sapi.World.Calendar;
+        var year = calendar.DaysPerYear * calendar.HoursPerDay;
+        var pos = player.Entity.Pos;
+        var reach = (int)(range / step);
+        var (x, z, now) = (pos.X, pos.Z, sea.NowHours);
+        Task.Run(() =>
+        {
+            var reply = Count(sea, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Config.Storms, type, x, z, now, year, years, reach, step, presence,
+                pointZ => calendar.OnGetLatitude?.Invoke(pointZ) >= 0);
+            sapi.Event.EnqueueMainThreadTask(() => player.SendMessage(GlobalConstants.GeneralChatGroup, reply, EnumChatType.CommandSuccess), "bridge climate");
+        });
+        return TextCommandResult.Success($"Counting {type ?? "storm"} hours over the next {years} years on {(2 * reach + 1) * (2 * reach + 1)} points; the answer comes in chat");
+    }
+
+    private static string Count(SeaModel sea, StormTypeConfig[] types, string? type, double x, double z, double now, double year, double years, int reach, double step, double presence,
+        System.Func<double, bool> northern)
+    {
+        const int shown = 8;
+        const double gale = 17.2;
+        var points = Enumerable.Range(-reach, 2 * reach + 1)
+            .SelectMany(dx => Enumerable.Range(-reach, 2 * reach + 1).Select(dz => (X: x + dx * step, Z: z + dz * step)))
+            .Where(point => sea.IsSea(point.X, point.Z))
+            .Select(point =>
+            {
+                var months = new int[12];
+                var galeMonths = new int[12];
+                var strongest = 0.0;
+                var passed = new System.Collections.Generic.HashSet<Storm>();
+                var shift = northern(point.Z) ? 0 : 6;
+                for (var hour = 0.0; hour < year * years; hour++)
+                {
+                    var when = now + hour;
+                    var month = (int)(when / year % 1 * 12);
+                    var season = (month + shift) % 12;
+                    var wind = sea.Weather.Wind(point.X, point.Z, when);
+                    strongest = Math.Max(strongest, wind.Speed);
+                    if (wind.Speed >= gale) galeMonths[season]++;
+                    var here = sea.Weather.Storms.Near(point.X, point.Z, when)
+                        .Where(storm => type == null || storm.Code == type)
+                        .Select(storm => (Storm: storm, storm.InfluenceAt(point.X, point.Z, when).Presence))
+                        .Where(storm => storm.Presence > 0)
+                        .ToArray();
+                    foreach (var storm in here) passed.Add(storm.Storm);
+                    if (here.Length > 0 && here.Max(storm => storm.Presence) >= presence) months[month]++;
+                }
+                return (point.X, point.Z, Hours: months.Sum(), Month: Array.IndexOf(months, months.Max()) + 1, Peak: months.Max(),
+                    GaleHours: galeMonths.Sum() / years, Winter: (galeMonths[11] + galeMonths[0] + galeMonths[1]) / (years * year / 4), Summer: (galeMonths[5] + galeMonths[6] + galeMonths[7]) / (years * year / 4), Strongest: strongest, Passed: passed.Count / years, PeakMps: passed.Count > 0 ? passed.Max(storm => storm.PeakMps) : 0);
+            })
+            .OrderByDescending(point => point.Hours)
+            .ToArray();
+        if (points.Length == 0) return "No open sea on the grid";
+        var mean = string.Format(CultureInfo.InvariantCulture, "Mean over {0} points: wind at force 8+ {1:P1} of the year, {2:P1} of winter, {3:P1} of summer; {4:F1} storms passed a year",
+            points.Length, points.Average(point => point.GaleHours) / year, points.Average(point => point.Winter), points.Average(point => point.Summer), points.Average(point => point.Passed));
+        return mean + "\n" + string.Join("\n", points.Take(shown).Select(point =>
+        {
+            var (celsius, rainfall) = sea.Weather.Climate.At(point.X, point.Z);
+            var yearStart = Math.Floor(now / year) * year;
+            var winterGradient = sea.Weather.Storms.Gradient(point.X, point.Z, yearStart + year * 0.5 / 12) ?? double.NaN;
+            var summerGradient = sea.Weather.Storms.Gradient(point.X, point.Z, yearStart + year * 6.5 / 12) ?? double.NaN;
+            var odds = string.Join("; ", types.Where(kind => type == null || kind.Code == type).Select(kind => string.Format(CultureInfo.InvariantCulture,
+                "{0}: temperature {1:F2} x rain {2:F2} x months {3:F2} avg",
+                kind.Code, kind.Temperature?.Weight(celsius) ?? 1, Math.Pow(rainfall, kind.RainfallExponent), kind.MonthlyWeight.Average())));
+            return string.Format(CultureInfo.InvariantCulture,
+                "{0:F0} {1:F0}, {2:F1} °C, rain {3:F2}, gradient {15:F1} °C/1000 km in January and {16:F1} in July ({4}): {5} passed, peaks to {6:F0} m/s, here at most {7:F1} m/s; {8} h at force 8+ ({9:P1} of the year, {10:P1} of winter, {11:P1} of summer); {12} h at {13:P0} presence, most in month {14}",
+                point.X, point.Z, celsius, rainfall, odds, point.Passed, point.PeakMps, point.Strongest, point.GaleHours, point.GaleHours / year, point.Winter, point.Summer, point.Hours, presence, point.Month, winterGradient, summerGradient);
+        }));
     }
 
     private TextCommandResult Storm(IServerPlayer player, double range, double waves)

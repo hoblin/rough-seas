@@ -2,9 +2,9 @@ using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Tests.SeaAndWeather;
 
-public class TemperatureWindowTests
+public class WindowTests
 {
-    private readonly TemperatureWindow hurricaneWater = new() { Min = 24, Optimum = 29, Max = 40 };
+    private readonly Window hurricaneWater = new() { Min = 24, Optimum = 29, Max = 40 };
 
     [Theory]
     [InlineData(20, 0)]
@@ -13,7 +13,7 @@ public class TemperatureWindowTests
     [InlineData(29, 1)]
     [InlineData(34.5, 0.5)]
     [InlineData(40, 0)]
-    public void WeighsATemperatureByHowCloseItIsToTheOptimum(double celsius, double weight)
+    public void WeighsAValueByHowCloseItIsToTheOptimum(double celsius, double weight)
     {
         Assert.Equal(weight, hurricaneWater.Weight(celsius), 3);
     }

@@ -6,7 +6,7 @@ Tie a vessel to a fence post ashore with a rope, the way you tie an animal. Ever
 
 A strong enough pull snaps the rope. Every wave pulls on it, with the wind on the vessel's sides and rigging and the sea on its hull, so the bigger the vessel, the sooner it goes. Chance the rope snaps, each wave:
 
-| Vessel | Gale (force 8) | Strong gale (force 9) | Storm (force 10) |
+| Vessel | Force 8 wind, 5.5 m sea | Force 9, 7 m | Force 10, 9 m |
 | --- | --- | --- | --- |
 | [Sailboat](Sailboat) | 1 in 40 | 1 in 10 | 1 in 4 |
 | [Outrigger canoe](Outrigger-Canoe) | 1 in 100 | 1 in 20 | 1 in 6 |
@@ -33,7 +33,7 @@ Only the distance to the shore and the sea count, not how well it was tied. A lo
 
 ## Leaving a vessel
 
-- On a river or lake: tie it up. There are no waves, only the current.
+- On a river or a pond: tie it up. The waves there stay small, and the current is what pulls. A big lake in a storm raises a sea of its own: treat its shore as a coast.
 - On the coast in fair weather: tie it up, or [anchor](Anchoring) the sailboat.
 - On the coast with a storm coming: carry it home, or anchor well out, and leave nothing that matters aboard.
 

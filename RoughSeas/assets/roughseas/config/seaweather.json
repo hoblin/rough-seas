@@ -14,7 +14,8 @@
         { "force": 11, "name": "Violent storm", "minMps": 28.5 },
         { "force": 12, "name": "Hurricane", "minMps": 32.7 }
     ],
-    "seaBuildHours": [0.5, 1, 2, 4, 8, 16],
+    "seaBuildHours": [0.5, 1, 2, 4, 8, 16, 24, 36, 48, 72],
+    "seaSampleHours": 3,
     "prevailingWinds": [
         { "maxLatitude": 30, "northFromDegrees": 45, "southFromDegrees": 135 },
         { "maxLatitude": 60, "northFromDegrees": 225, "southFromDegrees": 315 },
@@ -40,64 +41,98 @@
     "storms": [
         {
             "code": "squall",
-            "cellSize": 1536,
+            "cellKm": 300,
             "slotHours": 12,
-            "chance": 0.35,
+            "birthsPerMillionKm2PerDay": 7.4,
             "temperature": { "min": 5, "optimum": 26, "max": 40 },
             "rainfallExponent": 1.5,
             "monthlyWeight": [0.3, 0.3, 0.5, 0.7, 0.9, 1.0, 1.0, 1.0, 0.9, 0.7, 0.4, 0.3],
-            "radius": { "min": 250, "max": 500 },
-            "peakMps": { "min": 17, "max": 26 },
+            "radiusKm": { "min": 50, "max": 100 },
+            "peakMps": { "mean": 21.5, "deviation": 2.5, "min": 17, "max": 26 },
             "lifetimeHours": { "min": 2, "max": 6 },
-            "speedBlocksPerHour": { "min": 150, "max": 400 },
+            "speedKmPerHour": { "min": 30, "max": 80 },
             "cyclonic": false,
             "rain": 1.0,
             "overLand": 0.5,
-            "weatherEvent": "heavythunder"
+            "weatherEvent": "heavythunder",
+            "sources": {
+                "birthsPerMillionKm2PerDay": "Not yet from data: what the earlier chance of 0.35 a 12-hour slot gave, kept while marine squall statistics are missing",
+                "speedKmPerHour": "Squall lines move at 30 to 80 km/h (Amazon coastal lines 50 to 60 km/h, Alcântara et al.)"
+            }
         },
         {
             "code": "gale",
-            "cellSize": 6144,
+            "cellKm": 1200,
             "slotHours": 24,
-            "chance": 0.3,
-            "temperature": { "min": -15, "optimum": 8, "max": 22 },
-            "rainfallExponent": 0.5,
-            "monthlyWeight": [1.0, 1.0, 0.8, 0.6, 0.4, 0.3, 0.3, 0.4, 0.6, 0.8, 1.0, 1.0],
-            "radius": { "min": 1500, "max": 3000 },
-            "peakMps": { "min": 20, "max": 28 },
-            "lifetimeHours": { "min": 24, "max": 60 },
-            "speedBlocksPerHour": { "min": 200, "max": 500 },
+            "birthsPerMillionKm2PerDay": 0.1,
+            "latitude": { "min": 30, "optimum": 50, "max": 70 },
+            "rainfallExponent": 0,
+            "monthlyWeight": [1.0, 1.0, 0.87, 0.87, 0.87, 0.65, 0.65, 0.65, 0.88, 0.88, 0.88, 1.0],
+            "radiusKm": { "min": 400, "max": 800 },
+            "peakMps": { "mean": 22, "deviation": 6, "min": 10, "max": 45 },
+            "strengthByGradient": { "referenceCelsiusPer1000Km": 10, "exponent": 1 },
+            "lifetimeHours": { "min": 48, "max": 120 },
+            "speedKmPerHour": { "min": 15, "max": 55 },
             "cyclonic": true,
-            "eyeFraction": 0.25,
+            "eyeFraction": 0.4,
+            "rimFraction": 0.3,
             "rain": 0.7,
             "overLand": 0.3,
-            "weatherEvent": "lightthunder"
+            "weatherEvent": "lightthunder",
+            "sources": {
+                "birthsPerMillionKm2PerDay": "ERA5 1979-2020: 129.7 North Atlantic cyclones each winter over 36.6 million km2 (Lodise et al. 2022, Table 1), 0.039 per million km2 a day, at the belt's peak over its mean weight of 0.39",
+                "latitude": "The storm tracks run between 30 and 70 degrees, densest near 50 (Hoskins and Hodges 2002)",
+                "monthlyWeight": "ERA5 seasons against winter: spring 0.87, summer 0.65, autumn 0.88 (Lodise et al. 2022, Table 1)",
+                "strengthByGradient": "A depression grows on the north-south temperature difference (baroclinity): its peak scales with the season's gradient, as the game's own climate chain gives it, over a reference of about the year's mean; with exponent 1, winter's force 8 comes about eight times as often as summer's, within the real five to ten",
+                "peakMps": "Most depressions peak near 21 m/s (Lodise et al. 2022, Fig. 3); 3 to 5 percent reach hurricane force (QuikSCAT, von Ahn et al. 2006, Table 2)",
+                "lifetimeHours": "A depression lives 2 to 5 days (3.5 on average in the Southern Hemisphere, ERA5)",
+                "speedKmPerHour": "Depressions move at 15 to 55 km/h (Lodise et al. 2022, Fig. 5)",
+                "radiusKm": "400 to 800 km: most cyclones span 300 to 500 km in the Mediterranean (Schneidereit et al. 2010) and over 900 km over the oceans (Rudeva and Gulev), and the strongest winds 110 to 330 km out put the edge there",
+                "eyeFraction": "A depression's strongest winds blow 110 to 330 km from its centre (NOAA OPC composites, Mariners Weather Log 2005), about 0.4 of its radius",
+                "rimFraction": "Its wind fades only over the outer third, not across the whole system as a hurricane's does"
+            }
         },
         {
             "code": "hurricane",
-            "cellSize": 8192,
+            "cellKm": 1600,
             "slotHours": 48,
-            "chance": 0.15,
-            "temperature": { "min": 24, "optimum": 29, "max": 40 },
+            "birthsPerMillionKm2PerDay": 0.0055,
+            "latitude": { "min": 5, "optimum": 15, "max": 30 },
+            "temperature": { "min": 25, "optimum": 29, "max": 40 },
             "rainfallExponent": 1.0,
             "monthlyWeight": [0.0, 0.0, 0.0, 0.0, 0.1, 0.3, 0.6, 1.0, 1.0, 0.7, 0.2, 0.0],
-            "radius": { "min": 1200, "max": 2500 },
-            "peakMps": { "min": 33, "max": 55 },
-            "lifetimeHours": { "min": 48, "max": 120 },
-            "speedBlocksPerHour": { "min": 150, "max": 350 },
+            "radiusKm": { "min": 240, "max": 500 },
+            "peakMps": { "mean": 44, "deviation": 6, "min": 33, "max": 55 },
+            "lifetimeHours": { "min": 72, "max": 168 },
+            "speedKmPerHour": { "min": 17, "max": 50 },
             "cyclonic": true,
             "eyeFraction": 0.08,
             "rain": 1.0,
             "overLand": 0.0,
-            "weatherEvent": "heavythunder"
+            "weatherEvent": "heavythunder",
+            "sources": {
+                "birthsPerMillionKm2PerDay": "6.4 Atlantic hurricanes a year (NOAA AOML, 1981-2016) over the 12.3 million km2 between 10 and 25 degrees, in a season of these monthly weights",
+                "latitude": "Hurricanes form at least 5 degrees from the equator, mostly between 10 and 20 (NOAA AOML; Gray 1968)",
+                "temperature": "They form over water of at least 26.5 degrees (NOAA AOML)",
+                "monthlyWeight": "The North Atlantic season, June to November, peaking in September (NHC)",
+                "lifetimeHours": "A hurricane lives 4 to 7 days, a week or more for the long-lived ones",
+                "speedKmPerHour": "Hurricanes move at 17 to 50 km/h by latitude (NOAA AOML, HURDAT)",
+                "eyeFraction": "Its strongest winds ring a small eye, and gales reach 3 to 6 times further (Chavas and Emanuel 2010)"
+            }
         }
     ],
     "storm": {
-        "riseFraction": 0.3,
-        "fallFraction": 0.3,
+        "gradientSpanKm": 500,
+        "riseFraction": 0.45,
+        "fallFraction": 0.45,
         "trackSpreadDegrees": 30,
         "inflowDegrees": 20,
-        "weatherEventThreshold": 0.35
+        "weatherEventThreshold": 0.35,
+        "sources": {
+            "gradientSpanKm": "The north-south temperature difference is taken 500 km either side of a storm's birthplace: the width of a frontal zone",
+            "riseFraction": "A depression peaks near the middle of its life: 2.1 days from genesis on a median life of 3.4 to 4.5 (ERA5, WCD 7, 873, 2026; WCD 2, 1111, 2021), deepening fastest in the last day",
+            "fallFraction": "After the peak it fills gradually into a barotropic low; hurricane-force wind lasts under a day around the lowest pressure (NOAA OPC, von Ahn et al.)"
+        }
     },
     "vanilla": {
         "unitsPerMps": 0.04,
