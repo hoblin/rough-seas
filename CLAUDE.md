@@ -12,6 +12,8 @@ Every new text a player sees ships in every locale the game officially supports 
 
 The handbook's guide pages (`RoughSeas/assets/roughseas/config/handbook/`) explain the mod to a player, short and in vanilla's style. A mechanic's own pull request leaves them alone; they are checked against what ships once before each release. The wiki (`docs/wiki/`, published by CI on merge; `bin/wiki-links` checks it) holds the depth the guide leaves out, and gets the same check before each release, its roadmap included.
 
+A pull request that makes Rough Seas work beside another mod adds that mod's page to the wiki, in its section for other mods, in the same pull request. The page says how the two play together in one mod set: what the other mod does beside ours, what we changed in how it behaves, and what someone building a server or another mod should know. It is written for server owners and modders, and it doesn't cover our own bugs fixed on the way. Otherwise this knowledge lives only in a closed pull request.
+
 ## Tools first
 
 When a task has no tool that fits, stop and build one: a little time spent now makes this task and every one after it simpler and faster. Keep it in proportion, though. We are building a mod, not a mod-building toolkit, so build the tool a task in front of you needs, not one for a task you imagine.
