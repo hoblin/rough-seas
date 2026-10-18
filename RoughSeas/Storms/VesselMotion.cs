@@ -62,8 +62,9 @@ public static class VesselMotion
         var seaworthiness = forces.Seaworthiness;
         var rocking = __instance.mountAngle;
         var pose = PoseOf(__instance);
-        renderer.xangle += (float)(GameMath.Lerp(rocking.X * seaworthiness.RollResponse, pose.Roll, pose.Share) - rocking.X);
-        renderer.zangle += (float)(GameMath.Lerp(rocking.Z * seaworthiness.PitchResponse, pose.Pitch, pose.Share) - rocking.Z);
+        var weight = Math.Min(pose.Share, 1);
+        renderer.xangle += (float)(GameMath.Lerp(rocking.X * seaworthiness.RollResponse, pose.Roll, weight) - rocking.X);
+        renderer.zangle += (float)(GameMath.Lerp(rocking.Z * seaworthiness.PitchResponse, pose.Pitch, weight) - rocking.Z);
         if (pose.Share > 0) Report(__instance, pose);
         if (surface!.Seconds < tracedUntil)
         {

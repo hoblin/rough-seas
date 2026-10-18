@@ -64,7 +64,7 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
             var atZ = z - towardZ * (fetch + step);
             var measured = Depth((int)atX, (int)atZ, water, probe);
             built = measured != null;
-            var depth = measured ?? OpenSea(atX, atZ, builtFetch > 0 ? builtArea / builtFetch : config.OpenSeaDepthMetres);
+            var depth = measured ?? OpenSea(atX, atZ, builtFetch > 0 ? builtArea / builtFetch : startDepth);
             if (depth <= 0) break;
             fetch += step;
             waterArea += depth * step;

@@ -61,7 +61,7 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
     public SeaCurrent CurrentAt(double x, double z)
     {
         var sample = Sample(x, z);
-        return new SeaCurrent(sample.CurrentX, sample.CurrentZ, sample.WaterCelsius, 0);
+        return new SeaCurrent(sample.CurrentX, sample.CurrentZ, sample.WaterCelsius, null);
     }
 
     public float? RainCloudness(double x, double z, double totalDays) => Covers(x, z) ? (float)Sample(x, z).RainCloudness : null;
@@ -87,6 +87,7 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
                 ? old
                 : new Region(old.Side == snapshot.CellsPerSide ? old.Shown(now) : samples, samples, snapshot.TotalHours, now,
                     Span(snapshot.TotalHours - old.SnapshotHours), snapshot.CellsPerSide, snapshot.RegionMps));
+        foreach (var stale in regions.Keys) Fresh(stale);
     }
 
     private double Now => capi.World.Calendar?.TotalHours ?? 0;

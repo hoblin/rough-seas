@@ -65,7 +65,7 @@ public static class SeaWeatherCommands
         return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, latitude {latitude:0.0}°, hour {sea.NowHours:0.00}: "
             + $"wind from {state.WindFromDegrees:0}° at {state.WindSpeed:0.0} m/s, Beaufort {state.Beaufort} ({force.Name}); "
             + $"waves {state.WaveHeight:0.0} m every {state.WavePeriod:0.0} s; {storm}, rain {Rainfall(api, pos):P0}; "
-            + $"current toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C ({Signed(current.WarmthCelsius)} from the current); "
+            + $"current toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C{FromCurrent(current)}; "
             + $"vanilla wind ({vanilla.X:0.00}, {vanilla.Z:0.00})";
     }
 
@@ -109,13 +109,14 @@ public static class SeaWeatherCommands
     }
 
     private static string Describe(ICoreAPI api, SeaCurrent current, double x, double z, Vec3d pos) =>
-        $"toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C ({Signed(current.WarmthCelsius)}), "
+        $"toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C{FromCurrent(current)}, "
         + $"at {Coordinates(api, x, z)}, {Distance((x, z), pos):0} blocks away bearing {Compass.FromDegrees(pos.X - x, pos.Z - z):0}°";
 
     private static float Rainfall(ICoreAPI api, Vec3d pos) =>
         api.World.BlockAccessor.GetClimateAt(pos.AsBlockPos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0;
 
-    private static string Signed(double celsius) => $"{Math.Round(celsius, 1) + 0.0:+0.0;-0.0}";
+    private static string FromCurrent(SeaCurrent current) =>
+        current.WarmthCelsius is { } warmth ? $" ({Math.Round(warmth, 1) + 0.0:+0.0;-0.0} from the current)" : "";
 
     private static double Distance((double X, double Z) centre, Vec3d pos) =>
         Math.Sqrt((centre.X - pos.X) * (centre.X - pos.X) + (centre.Z - pos.Z) * (centre.Z - pos.Z));
