@@ -42,7 +42,7 @@ A wind raises waves by blowing across water, and how high they grow depends on t
 
 - **The fetch.** The fetch is the stretch of open water the wind has blown across before it reaches you, measured straight upwind to the shore. A pond barely ripples in a gale that raises a heavy sea in open water.
 - **The depth.** Shallow water holds the waves down and shortens them, so the same wind raises less in a shallow bay than offshore.
-- **The time.** Waves take hours to build. The sea answers to the wind of the last half hour to sixteen hours, whichever raises it highest. A squall that has just arrived raises a short, choppy sea, and a gale that has blown all day a long, high one.
+- **The time.** Waves take hours to build, and days to build fully. The sea answers to the wind of the last half hour to three days, whichever raises it highest. A squall that has just arrived raises a short, choppy sea, and a gale that has blown all day a long, high one.
 
 ### The world's scale
 
@@ -52,18 +52,20 @@ Vintage Story's world is drawn small: its pole-to-equator distance is 50,000 blo
 
 The sea in a steady wind, from the formula, by force (height, then the time between waves):
 
-| Force | Pond, 100 blocks across, 3 m deep | Lake, 500 blocks, 10 m deep | Bay, 5000 blocks, 30 m deep | Open sea, after 16 hours of wind |
-| --- | --- | --- | --- | --- |
-| 3 | 0.2 m, 2 s | 0.4 m, 3 s | 0.5 m, 3 s | 0.4 m, 3 s |
-| 4 | 0.4 m, 3 s | 0.7 m, 4 s | 1.1 m, 5 s | 0.9 m, 5 s |
-| 5 | 0.5 m, 3 s | 1 m, 5 s | 1.9 m, 7 s | 1.5 m, 6 s |
-| 6 | 0.6 m, 3 s | 1.3 m, 5 s | 2.6 m, 8 s | 2.2 m, 7 s |
-| 7 | 0.7 m, 4 s | 1.6 m, 6 s | 3.3 m, 8 s | 3 m, 8 s |
-| 8 | 0.9 m, 4 s | 1.9 m, 6 s | 4 m, 9 s | 4 m, 9 s |
-| 10 | 1.1 m, 4 s | 2.4 m, 6 s | 5.2 m, 10 s | 6.2 m, 11 s |
-| 12 | 1.4 m, 4 s | 3 m, 7 s | 6.3 m, 10 s | 8.9 m, 13 s |
+| Force | Pond, 100 blocks across, 3 m deep | Lake, 500 blocks, 10 m deep | Bay, 5000 blocks, 30 m deep | Open sea, a day of wind | Open sea, three days |
+| --- | --- | --- | --- | --- | --- |
+| 3 | 0.2 m, 2 s | 0.4 m, 3 s | 0.5 m, 3 s | 0.5 m, 3 s | 0.5 m, 3 s |
+| 4 | 0.4 m, 3 s | 0.7 m, 4 s | 1.1 m, 5 s | 1 m, 5 s | 1.1 m, 5 s |
+| 5 | 0.5 m, 3 s | 1 m, 5 s | 1.9 m, 7 s | 1.8 m, 6 s | 2.2 m, 7 s |
+| 6 | 0.6 m, 3 s | 1.3 m, 5 s | 2.6 m, 8 s | 2.7 m, 8 s | 3.6 m, 9 s |
+| 7 | 0.7 m, 4 s | 1.6 m, 6 s | 3.3 m, 8 s | 3.8 m, 9 s | 5.6 m, 12 s |
+| 8 | 0.9 m, 4 s | 1.9 m, 6 s | 4 m, 9 s | 5.1 m, 10 s | 7.9 m, 14 s |
+| 10 | 1.1 m, 4 s | 2.4 m, 6 s | 5.2 m, 10 s | 8 m, 13 s | 12.5 m, 17 s |
+| 12 | 1.4 m, 4 s | 3 m, 7 s | 6.3 m, 10 s | 11.4 m, 15 s | 15 m, 20 s |
 
-And how a sea builds in a 20 m/s wind over open water: 0.6 m after an hour, 1.6 m after four, 4.3 m after sixteen. When the wind drops the sea does not: the waves the last hours built keep running.
+A day of wind over open water raises the sea the Beaufort scale describes for each force, the sea sailors see on an ordinary crossing. Three days of the same wind raise a fully developed sea, higher still, as in the longest real storms. It rarely comes to that: the wind seldom holds that long.
+
+And how a sea builds in a 20 m/s wind over open water: 0.6 m after an hour, 1.6 m after four, 4.3 m after sixteen, 5.5 m after a day and 8.6 m after three. When the wind drops the sea does not: the waves the last hours built keep running.
 
 The highest seas bend down softly above 9 m and never pass 16 m. The formula alone would give a hurricane waves of 30 m and more, half the height of the world, which no real sea reaches and no ship would survive.
 
