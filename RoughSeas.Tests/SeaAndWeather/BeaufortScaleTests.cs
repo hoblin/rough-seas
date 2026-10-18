@@ -19,18 +19,4 @@ public class BeaufortScaleTests
         Assert.Equal(force, row.Force);
         Assert.Equal(name, row.Name);
     }
-
-    [Fact]
-    public void GivesTheTablesProbableWaveHeightMidBand()
-    {
-        Assert.Equal(5.5, scale.WaveHeightAt((17.2 + 20.8) / 2), 3);
-    }
-
-    [Fact]
-    public void RaisesWavesSteadilyWithTheWind()
-    {
-        var heights = Enumerable.Range(0, 80).Select(step => scale.WaveHeightAt(step * 0.5)).ToArray();
-
-        Assert.True(heights.Zip(heights.Skip(1)).All(pair => pair.Second >= pair.First));
-    }
 }

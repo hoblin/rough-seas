@@ -35,7 +35,7 @@ public class CurrentDrift(Entity entity) : EntityBehavior(entity)
         using var _ = sea.Budget.Measure();
         var pos = entity.Pos;
         var current = sea.CurrentAt(pos.X, pos.Z);
-        var wind = sea.Wind(pos.X, pos.Z);
+        var wind = sea.Source.Wind(pos.X, pos.Z);
         var stokes = sea.Config.Currents.StokesDriftPerMps;
         // Added after each stretch of vanilla's water drag, so the drag pulls the motion towards the current, not to rest.
         var carried = (1 - Math.Pow(physics.WaterDragValue, deltaTime * DragTicksPerSecond)) / TicksPerSecond;

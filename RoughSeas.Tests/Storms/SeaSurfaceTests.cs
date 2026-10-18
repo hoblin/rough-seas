@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text.RegularExpressions;
 using RoughSeas.Storms;
 
 namespace RoughSeas.Tests.Storms;
@@ -11,11 +13,16 @@ public class SeaSurfaceTests
 
     private static SeaSurface Surface() => new(Fixtures.Config().Surface, new Waves(Fixtures.Config().Waves));
 
+    private static void Aim(SeaSurface surface, double height, double toward, double beaufort) =>
+        surface.Aim(height, FullyDevelopedPeriod(height), toward, beaufort);
+
+    private static double FullyDevelopedPeriod(double height) => 3.5 * Math.Sqrt(height);
+
     private static void Settle(SeaSurface surface, double height, double toward, double from = 0, double seconds = 120, double beaufort = 6)
     {
         for (var frame = 0; frame * Frame < seconds; frame++)
         {
-            if (frame % FramesPerAim == 0) surface.Aim(height, toward, beaufort);
+            if (frame % FramesPerAim == 0) Aim(surface, height, toward, beaufort);
             surface.Advance(from + frame * Frame);
         }
     }
@@ -32,12 +39,12 @@ public class SeaSurfaceTests
     public void RisesAndFallsSmoothlyFarFromTheOrigin()
     {
         var surface = Surface();
-        surface.Aim(5, 0, 8);
+        Aim(surface, 5, 0, 8);
         surface.Advance(0);
         var previous = surface.HeightAt(FarX, FarZ);
         for (var frame = 1; frame < 1200; frame++)
         {
-            if (frame % FramesPerAim == 0) surface.Aim(5, frame * 0.0005, 8);
+            if (frame % FramesPerAim == 0) Aim(surface, 5, frame * 0.0005, 8);
             surface.Advance(frame * Frame);
             var height = surface.HeightAt(FarX, FarZ);
             Assert.True(Math.Abs(height - previous) < 0.1, $"frame {frame} jumped from {previous:F3} to {height:F3}");
@@ -67,10 +74,44 @@ public class SeaSurfaceTests
         Settle(surface, 5.5, 0);
         for (var frame = 0; frame * Frame < 60; frame++)
         {
-            if (frame % FramesPerAim == 0) surface.Aim(5.5, Math.PI / 2, 8);
+            if (frame % FramesPerAim == 0) Aim(surface, 5.5, Math.PI / 2, 8);
             surface.Advance(120 + frame * Frame);
             Assert.True(surface.DrawnHeight > 0.9 * 5.5, $"at {frame * Frame:F1} s the sea drew {surface.DrawnHeight:F2} m");
         }
+    }
+
+    [Fact]
+    public void RunsAYoungSeasWavesShorterThanAnOldOnesOfTheSameHeight()
+    {
+        static double LengthOf(double period)
+        {
+            var surface = Surface();
+            var length = 0.0;
+            surface.Changed += change => length = double.Parse(Regex.Match(change, @"(\d+) m long").Groups[1].Value, CultureInfo.InvariantCulture);
+            surface.Aim(2, period, 0, 6);
+            return length;
+        }
+
+        Assert.True(LengthOf(3) < LengthOf(8), $"{LengthOf(3)} m young, {LengthOf(8)} m old");
+    }
+
+    [Fact]
+    public void WhitensLittleWhereTheWavesStandLow()
+    {
+        var shallows = Surface();
+        var sea = Surface();
+        for (var frame = 0; frame * Frame < 120; frame++)
+        {
+            if (frame % FramesPerAim == 0)
+            {
+                shallows.Aim(0.1, 1.1, 0, 8, foamShare: 0.2);
+                sea.Aim(2, 5, 0, 8);
+            }
+            shallows.Advance(frame * Frame);
+            sea.Advance(frame * Frame);
+        }
+
+        Assert.True(shallows.Foam.Caps < 0.3 * sea.Foam.Caps, $"caps {shallows.Foam.Caps:F2} in the shallows, {sea.Foam.Caps:F2} at sea");
     }
 
     [Fact]
@@ -119,14 +160,14 @@ public class SeaSurfaceTests
     }
 
     [Fact]
-    public void FindsTheHeightTheShaderDrawsNearTheShore()
+    public void FindsTheHeightTheShaderDrawsWhereTheWavesAreLower()
     {
         var surface = Surface();
         Settle(surface, 4, 0.3);
-        const double openSea = 0.4;
+        const double share = 0.4;
         var (shiftX, rise, shiftZ) = surface.DisplacementAt(FarX, FarZ);
 
-        Assert.Equal(openSea * rise, surface.HeightAt(FarX + openSea * shiftX, FarZ + openSea * shiftZ, openSea), 2);
+        Assert.Equal(share * rise, surface.HeightAt(FarX + share * shiftX, FarZ + share * shiftZ, share), 2);
     }
 
     [Fact]

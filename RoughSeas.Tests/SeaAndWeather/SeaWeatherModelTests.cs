@@ -23,9 +23,11 @@ public class SeaWeatherModelTests
     {
         var other = Fixtures.Model(seed: 42);
 
-        Assert.All(Samples.Concat(InsideStorms()), sample => Assert.Equal(
-            Model.At(sample.X, sample.Z, sample.Hours, oceanity: 1),
-            other.At(sample.X, sample.Z, sample.Hours, oceanity: 1)));
+        Assert.All(Samples.Concat(InsideStorms()), sample =>
+        {
+            Assert.Equal(Model.Wind(sample.X, sample.Z, sample.Hours), other.Wind(sample.X, sample.Z, sample.Hours));
+            Assert.Equal(Model.RainCloudness(sample.X, sample.Z, sample.Hours), other.RainCloudness(sample.X, sample.Z, sample.Hours));
+        });
     }
 
     [Fact]
@@ -45,18 +47,66 @@ public class SeaWeatherModelTests
     }
 
     [Fact]
-    public void RaisesTheSeaInsideAStorm()
+    public void BlowsAGaleInsideAGale()
     {
         var gale = Storms.First(storm => storm.Code == "gale" && storm.PeakMps >= 22);
         var hours = gale.BornHours + gale.LifetimeHours / 2;
         var (x, z) = gale.CentreAt(hours);
 
-        var inside = Model.At(x + gale.Radius * 0.3, z, hours, oceanity: 1);
-        var beyond = Model.At(x + gale.Radius * 3, z, hours, oceanity: 1);
+        var inside = Model.Wind(x + gale.Radius * 0.3, z, hours);
+        var beyond = Model.Wind(x + gale.Radius * 3, z, hours);
 
-        Assert.Equal("gale", inside.StormCode);
-        Assert.InRange(inside.Beaufort, 8, 12);
-        Assert.True(inside.WaveHeight > beyond.WaveHeight, $"waves {inside.WaveHeight} m inside, {beyond.WaveHeight} m beyond");
+        Assert.Equal("gale", inside.Storm?.Code);
+        Assert.InRange(new BeaufortScale(Fixtures.Config().Beaufort).ForceAt(inside.Speed).Force, 8, 12);
+        Assert.True(inside.Speed > beyond.Speed, $"{inside.Speed:F1} m/s inside, {beyond.Speed:F1} m/s beyond");
+    }
+
+    [Fact]
+    public void BlowsBrieflyWhereASquallHasJustArrived()
+    {
+        var squall = Storms.First(storm => storm.Code == "squall");
+        var hours = squall.BornHours + squall.LifetimeHours / 2;
+        var (x, z) = squall.CentreAt(hours);
+        var speed = Math.Sqrt(squall.VelocityX * squall.VelocityX + squall.VelocityZ * squall.VelocityZ);
+        var (aheadX, aheadZ) = (x + squall.VelocityX / speed * squall.Radius * 0.3, z + squall.VelocityZ / speed * squall.Radius * 0.3);
+
+        var now = Model.Wind(aheadX, aheadZ, hours).Speed;
+        var overTwoHours = Model.SustainedWinds(aheadX, aheadZ, hours, now).First(sustained => sustained.Hours == 2).Mps;
+
+        Assert.True(overTwoHours < 0.6 * now, $"{now:F1} m/s now, {overTwoHours:F1} m/s held over two hours");
+    }
+
+    [Fact]
+    public void BlowsLongWhereOnlyTheBackgroundWindBlows()
+    {
+        var calm = Samples.Where(sample => Model.Wind(sample.X, sample.Z, sample.Hours).Presence == 0).ToArray();
+        double HeldShare((double X, double Z, double Hours) at)
+        {
+            var now = Model.Wind(at.X, at.Z, at.Hours).Speed;
+            return Model.SustainedWinds(at.X, at.Z, at.Hours, now).First(sustained => sustained.Hours == 4).Mps / now;
+        }
+
+        Assert.NotEmpty(calm);
+        Assert.True(calm.Average(HeldShare) > 0.7);
+    }
+
+    [Fact]
+    public void BlowsHarderOverTheOpenSeaThanOverLand()
+    {
+        var basins = Fixtures.Basins(seed: 42);
+        var calm = Samples
+            .SelectMany(sample => Enumerable.Range(0, 30).Select(i => (X: sample.X + i * 211, sample.Z, sample.Hours)))
+            .Select(at => (basin: basins.At(at.X, at.Z), wind: Model.Wind(at.X, at.Z, at.Hours)))
+            .Where(at => at.wind.Presence == 0)
+            .ToArray();
+        var land = calm.Where(at => !at.basin.IsSea).Select(at => at.wind.Speed).ToArray();
+        var openSea = calm.Where(at => at.basin.ShoreBlocks >= Fixtures.Config().Background.SeaRampBlocks).Select(at => at.wind.Speed).ToArray();
+
+        Assert.NotEmpty(land);
+        Assert.NotEmpty(openSea);
+        Assert.InRange(land.Average(), 2, 6);
+        Assert.InRange(openSea.Average(), 5, 9);
+        Assert.True(openSea.Average() > land.Average(), $"{openSea.Average():F1} m/s at sea, {land.Average():F1} m/s on land");
     }
 
     [Fact]
@@ -97,9 +147,13 @@ public class SeaWeatherModelTests
     }
 
     [Fact]
-    public void RaisesNoWavesOnLand()
+    public void BrewsHurricanesOnlyOverTheSea()
     {
-        Assert.Equal(0, Model.At(512000, 512000, 2000, oceanity: 0).WaveHeight);
+        var basins = Fixtures.Basins(seed: 42);
+        var hurricanes = Storms.Where(storm => storm.Code == "hurricane").ToArray();
+
+        Assert.NotEmpty(hurricanes);
+        Assert.All(hurricanes, hurricane => Assert.True(basins.IsSea(hurricane.OriginX, hurricane.OriginZ)));
     }
 
     [Fact]

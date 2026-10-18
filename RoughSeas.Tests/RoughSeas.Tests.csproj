@@ -24,11 +24,15 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(VINTAGE_STORY)/Lib/Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\RoughSeas\assets\roughseas\config\seaweather.json" Link="seaweather.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\storms.json" Link="storms.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\windpatterns\*.json" LinkBase="windpatterns" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\materials.json" Link="materials.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\vessels-vanilla-boats.json" Link="vessels-vanilla-boats.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\storms-vessels.json" Link="storms-vessels.json" CopyToOutputDirectory="PreserveNewest" />

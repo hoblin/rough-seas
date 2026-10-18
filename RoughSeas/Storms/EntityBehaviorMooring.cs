@@ -23,7 +23,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private static readonly AssetLocation RopeRipSound = new("game:sounds/effect/roperip");
 
     private StormsModSystem storms = null!;
-    private ISeaWeather sea = null!;
+    private SeaWeatherSystem sea = null!;
     private MaterialTable materials = null!;
     private ClothManager cloths = null!;
     private EntityBehaviorSeaForces? forces;
@@ -105,7 +105,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var reach = Tree.GetDouble("reach", Unmoored);
         if (lastSeen >= 0 && reach >= 0 && sea.NowHours - lastSeen >= storms.Config.Ashore.MinHours)
         {
-            ashore = new AshoreRoll(storms, sea, entity, Tree.GetDouble("pointX"), Tree.GetDouble("pointZ"), lastSeen, reach);
+            ashore = new AshoreRoll(storms, sea.Model, entity, Tree.GetDouble("pointX"), Tree.GetDouble("pointZ"), lastSeen, reach);
             ashoreIn = (float)storms.Config.Ashore.RollDelaySeconds;
         }
     }

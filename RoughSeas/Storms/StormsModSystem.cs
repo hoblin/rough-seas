@@ -40,11 +40,12 @@ public class StormsModSystem : ModSystem
     {
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var surface = new SeaSurface(Config.Surface, Waves);
+        var field = new SurfaceField();
         surface.Changed += change => Log("surface: " + change);
-        if (SurfaceShader.Attach(surface, sea, capi)) clock = new SurfaceClock(this, sea, surface, capi);
+        if (SurfaceShader.Attach(surface, field, capi)) clock = new SurfaceClock(this, sea, surface, field, capi);
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
-        VesselMotion.Attach(this, sea, surface);
-        FloatMotion.Attach(sea, surface);
+        VesselMotion.Attach(this, field, surface);
+        FloatMotion.Attach(field, surface);
         RegisterSurfaceCommands(capi);
     }
 

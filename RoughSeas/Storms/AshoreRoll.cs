@@ -12,7 +12,7 @@ namespace RoughSeas.Storms;
 public sealed class AshoreRoll
 {
     private readonly StormsModSystem storms;
-    private readonly ISeaWeather sea;
+    private readonly ISeaModel sea;
     private readonly Entity vessel;
     private readonly double mooredX, mooredZ;
     private readonly double reach;
@@ -21,7 +21,7 @@ public sealed class AshoreRoll
     private readonly List<double> heights = [];
     private readonly int searchBlocks;
 
-    public AshoreRoll(StormsModSystem storms, ISeaWeather sea, Entity vessel, double mooredX, double mooredZ, double sleptSince, double reach)
+    public AshoreRoll(StormsModSystem storms, ISeaModel sea, Entity vessel, double mooredX, double mooredZ, double sleptSince, double reach)
     {
         using var _ = storms.Budget.Measure();
         this.storms = storms;

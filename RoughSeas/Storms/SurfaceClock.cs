@@ -11,17 +11,19 @@ public sealed class SurfaceClock : IRenderer
     private readonly StormsModSystem storms;
     private readonly SeaWeatherSystem sea;
     private readonly SeaSurface surface;
+    private readonly SurfaceField field;
     private readonly ICoreClientAPI capi;
     private double aimedAt = double.NegativeInfinity;
     private double loggedAt = double.NegativeInfinity;
     private double seaHeight;
     private double elapsed;
 
-    public SurfaceClock(StormsModSystem storms, SeaWeatherSystem sea, SeaSurface surface, ICoreClientAPI capi)
+    public SurfaceClock(StormsModSystem storms, SeaWeatherSystem sea, SeaSurface surface, SurfaceField field, ICoreClientAPI capi)
     {
         this.storms = storms;
         this.sea = sea;
         this.surface = surface;
+        this.field = field;
         this.capi = capi;
         capi.Event.RegisterRenderer(this, EnumRenderStage.Before, "roughseas-surface");
     }
@@ -49,8 +51,10 @@ public sealed class SurfaceClock : IRenderer
         aimedAt = seconds;
         var pos = capi.World.Player?.Entity?.Pos;
         if (pos == null) return;
+        field.Update(sea.Source, pos.X, pos.Z, capi.World.BlockAccessor.RegionSize, sea.Config.Map.CellBlocks, surface.Level);
+        SurfaceShader.Upload();
         var state = sea.At(pos.X, pos.Z);
-        seaHeight = state.Oceanity > 0 ? state.WaveHeight / state.Oceanity : 0;
-        surface.Aim(seaHeight, Math.Atan2(state.WindZ, state.WindX), state.Beaufort);
+        seaHeight = field.Height;
+        surface.Aim(seaHeight, field.Period, Math.Atan2(state.WindZ, state.WindX), state.Beaufort, seaHeight / storms.Config.Surface.FullFoamMetres);
     }
 }

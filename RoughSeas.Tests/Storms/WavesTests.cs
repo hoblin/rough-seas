@@ -7,13 +7,6 @@ public class WavesTests
     private readonly Waves waves = new(Fixtures.Config().Waves);
 
     [Fact]
-    public void AGaleSeaRunsLongerWavesThanABreeze()
-    {
-        Assert.InRange(waves.Period(1), 3, 4);
-        Assert.InRange(waves.Period(5.5), 7.5, 9);
-    }
-
-    [Fact]
     public void FewWavesBreakInABreezeAndManyInAStorm()
     {
         Assert.InRange(waves.BreakingChance(10), 0.005, 0.02);

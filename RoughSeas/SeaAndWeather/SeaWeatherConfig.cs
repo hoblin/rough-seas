@@ -11,6 +11,37 @@ public class SeaWeatherConfig
     public StormShapeConfig Storm = new();
     public VanillaConfig Vanilla = new();
     public CurrentsConfig Currents = new();
+    public OceanConfig Ocean = new();
+    public WavesConfig Waves = new();
+    public SeaMapConfig Map = new();
+}
+
+public class OceanConfig
+{
+    public int DefaultSeaFrom;
+    public int CalibrationSamples;
+}
+
+public class WavesConfig
+{
+    public double RealPolarEquatorMetres;
+    public double KneeMetres;
+    public double CeilingMetres;
+    public int FetchStepBlocks;
+    public int OpenSeaStepBlocks;
+    public int MaxFetchBlocks;
+    public int FetchDirections;
+    public double FetchCacheHours;
+    public double OpenSeaDepthMetres;
+    public int SoundingBlocks;
+}
+
+public class SeaMapConfig
+{
+    public int CellBlocks;
+    public double UpdateSeconds;
+    public double StaleHours;
+    public double TickBudgetMilliseconds;
 }
 
 public class CurrentsConfig
@@ -23,7 +54,6 @@ public class CurrentsConfig
     public double EasternBoundaryCelsius;
     public double SeawaterFreezingCelsius;
     public int BasinReachBlocks;
-    public double LandBelowOceanity;
     public double StokesDriftPerMps;
 }
 
@@ -32,7 +62,6 @@ public class BeaufortForce
     public int Force;
     public string Name = "";
     public double MinMps;
-    public double WaveHeight;
 }
 
 public class PrevailingWind
@@ -44,8 +73,10 @@ public class PrevailingWind
 
 public class BackgroundWindConfig
 {
-    public double MeanMps;
-    public double SpreadMps;
+    public double LandMeanMps;
+    public double SeaMeanMps;
+    public double SeaRampBlocks;
+    public double SpreadFraction;
     public double SpatialScale;
     public double TimeScaleHours;
     public double VeerDegrees;
@@ -77,6 +108,7 @@ public class StormTypeConfig
     public bool Cyclonic;
     public double EyeFraction;
     public double Rain;
+    public double OverLand;
     public string? WeatherEvent;
 }
 
@@ -92,6 +124,9 @@ public class StormShapeConfig
 public class VanillaConfig
 {
     public double UnitsPerMps;
+    public double RegionRefreshHours;
+    public double WindLeaseHours;
+    public double WindResendStrength;
     public double CloudSpeedPerMps;
     public double StormCloudBrightness;
 }

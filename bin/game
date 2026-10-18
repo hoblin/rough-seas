@@ -97,7 +97,9 @@ LOOK
 ACT
   bin/game do CMD...         run commands as the player, in order, printing each reply:
                              /server commands and .client commands. A reply that says
-                             "Hovering at X Y Z" (/bridge fly, sea, storm) waits for `arrive`.
+                             "Hovering at X Y Z" (/bridge fly, sea, storm) waits for `arrive`,
+                             then for the server to load the chunks around the player, by
+                             its debug log ("[bridge] flight N: chunks loaded ... after S s")
   bin/game arrive X Y Z [S]  block until the client stands within a block of X Y Z (as commands take
                              them); fails after S seconds (default 30). Use it after a /tp.
   bin/game look YAW PITCH    aim the camera, radians. Yaw 0 faces +Z, pi/2 +X, pi -Z;
@@ -137,15 +139,23 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge shore              fly to the nearest flat, dry ground beside the sea, hovering just above
                              it. Far out at sea no shore is loaded: it flies toward the coast and
                              says to run it again once the land has loaded
+  /bridge await [TYPE] [WARMTH] [PRESENCE] [HOURS]
+                             bring a storm to the player instead of flying to it: move time on
+                             until a storm of the model covers the player where they stand, at
+                             PRESENCE (default 0.7) or more, within HOURS (default a year). TYPE is
+                             squall, gale, hurricane or any; WARMTH warm (from 12 °C, thunder),
+                             cold (below 0 °C, snow) or any. No flight and no new chunks: the way
+                             to test a storm
   /bridge storm [RANGE] [WAVES]
                              fly to where the storms within RANGE blocks (default 60000) raise the
                              highest waves over open sea, or those nearest WAVES metres, hovering
                              just above the surface; replies with the wave height. Set the time of
-                             day first: storms move.
+                             day first: storms move. A far flight generates new chunks for a minute:
+                             `/bridge await` brings a storm without one.
   /bridge force FORCE [RANGE]
-                             find the nearest open sea where the wind blows at Beaufort FORCE and
-                             the waves stand as the scale has them (a grid within 5000 blocks, storms
-                             within RANGE, default 30000) and fly there; seated, it replies with the
+                             find the roughest of the nearest open seas where the wind blows at
+                             Beaufort FORCE (a grid within 5000 blocks, storms within RANGE, default
+                             30000) and fly there; seated, it replies with the
                              /tp that takes the vessel along, since the rider's client steers it
   /bridge approach [DISTANCE] [TYPE]
                              fly over open sea DISTANCE blocks (default 500) outside the rim of the
@@ -256,6 +266,17 @@ arrive() {
   done
 }
 
+settle() {
+  local flight=$1 deadline=$((SECONDS + ${2:-180})) log=$BENCH_DATA/Logs/server-debug.log line
+  [ "$BENCH_DATA/server/Logs/server-debug.log" -nt "$log" ] && log=$BENCH_DATA/server/Logs/server-debug.log
+  until line=$(grep -a "\[bridge\] flight $flight: chunks" "$log"); do
+    [ $SECONDS -lt $deadline ] || fail "The server's chunks around flight $flight never settled; read $log"
+    sleep 1
+  done
+  [[ $line != *"still loading"* ]] || fail "${line##*\[bridge\] }; read $log"
+  echo "${line##*\[bridge\] }"
+}
+
 case "${1:-}" in
   wait)
     deadline=$((SECONDS + ${2:-180})) request_limit=10
@@ -278,6 +299,8 @@ case "${1:-}" in
       x=
       read -r x y z < <(sed -n 's/.*Hovering at \(-\?[0-9.]*\) \(-\?[0-9.]*\) \(-\?[0-9.]*\).*/\1 \2 \3/p' <<<"$reply") || true
       [ -z "$x" ] || arrive "$x" "$y" "$z"
+      flight=$(sed -n 's/.*(flight \([0-9]*\)).*/\1/p' <<<"$reply")
+      [ -z "$flight" ] || settle "$flight"
     done
     ;;
   arrive) arrive "$2" "$3" "$4" "${5:-30}" ;;

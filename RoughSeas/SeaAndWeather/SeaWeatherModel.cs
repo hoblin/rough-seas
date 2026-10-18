@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Vintagestory.API.MathTools;
 
 namespace RoughSeas.SeaAndWeather;
@@ -7,7 +8,6 @@ public class SeaWeatherModel
 {
     private readonly SeaWeatherConfig config;
     private readonly PrevailingWinds prevailing;
-    private readonly BeaufortScale beaufort;
     private readonly WorldClimate climate;
     private readonly OceanBasins basins;
     private readonly OceanCurrents currents;
@@ -21,9 +21,8 @@ public class SeaWeatherModel
         this.climate = climate;
         this.basins = basins;
         prevailing = new PrevailingWinds(config.PrevailingWinds, latitude);
-        beaufort = new BeaufortScale(config.Beaufort);
         currents = new OceanCurrents(config.Currents);
-        Storms = new StormField(seed, config, climate, prevailing, hoursPerYear);
+        Storms = new StormField(seed, config, climate, prevailing, basins.IsSea, hoursPerYear);
         showers = new Showers(seed, config.Showers, climate);
         strengthNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 41017);
         veerNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 90121);
@@ -31,23 +30,12 @@ public class SeaWeatherModel
 
     public StormField Storms { get; }
 
-    public SeaState At(double x, double z, double hours, double oceanity)
+    public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps)
     {
-        var wind = Wind(x, z, hours);
-        var seaWind = 0.0;
-        foreach (var lag in config.SeaBuildHours)
-        {
-            seaWind += lag == 0 ? wind.Speed : Wind(x, z, hours - lag).Speed;
-        }
-        seaWind /= config.SeaBuildHours.Length;
-        return new SeaState(
-            wind.X,
-            wind.Z,
-            beaufort.ForceAt(wind.Speed).Force,
-            beaufort.WaveHeightAt(seaWind) * oceanity,
-            oceanity,
-            wind.Presence,
-            wind.Storm?.Code);
+        var (sum, count) = (windMps, 1);
+        return config.SeaBuildHours
+            .Select(lag => (lag, (sum += Wind(x, z, hours - lag).Speed) / ++count))
+            .ToArray();
     }
 
     /// <summary>
@@ -61,7 +49,7 @@ public class SeaWeatherModel
         return Math.Max(showers.CloudnessAt(x, z, hours), stormCloudness);
     }
 
-    public bool IsSea(double x, double z) => basins.At(x, z).IsSea;
+    public bool IsSea(double x, double z) => basins.IsSea(x, z);
 
     public SeaCurrent Current(double x, double z) =>
         currents.At(prevailing.LatitudeDegrees(z), prevailing.PolewardZ(z), basins.At(x, z), climate.At(x, z).Celsius);
@@ -101,7 +89,9 @@ public class SeaWeatherModel
         var nx = x / background.SpatialScale;
         var nz = z / background.SpatialScale;
         var nt = hours / background.TimeScaleHours;
-        var speed = Math.Max(0, background.MeanMps + background.SpreadMps * (2 * strengthNoise.Noise(nx, nz, nt) - 1));
+        var seaness = Math.Clamp(basins.At(x, z).ShoreBlocks / background.SeaRampBlocks, 0, 1);
+        var mean = background.LandMeanMps + (background.SeaMeanMps - background.LandMeanMps) * seaness;
+        var speed = Math.Max(0, mean * (1 + background.SpreadFraction * (2 * strengthNoise.Noise(nx, nz, nt) - 1)));
         var veer = (2 * veerNoise.Noise(nx, nz, nt) - 1) * background.VeerDegrees * GameMath.DEG2RAD_DOUBLE;
         var (towardX, towardZ) = Compass.Toward(prevailing.TowardRadians(z) + veer);
         return (towardX * speed, towardZ * speed);

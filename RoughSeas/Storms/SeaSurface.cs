@@ -51,6 +51,8 @@ public sealed class SeaSurface
 
     public int Slots => amplitude.Length;
 
+    public double Level => level;
+
     public double Seconds { get; private set; } = double.NaN;
 
     public long Frame { get; private set; }
@@ -59,10 +61,10 @@ public sealed class SeaSurface
 
     public Foam Foam { get; private set; }
 
-    /// <summary>The open sea's significant height the surface is aimed at.</summary>
+    /// <summary>The highest significant height around the player, which the surface is aimed at.</summary>
     public double SeaHeight { get; private set; }
 
-    public double SurfDepth => waves.BreakingDepth(Math.Max(SeaHeight, SurfOnAnyShoreMetres));
+    public double SurfDepth => config.SurfFoam ? waves.BreakingDepth(Math.Max(SeaHeight, SurfOnAnyShoreMetres)) : 0;
 
     /// <summary>The fold above which a crest whitens, set so the whitecaps cover the Beaufort force's share of the sea.</summary>
     public double CapsFold { get; private set; } = double.PositiveInfinity;
@@ -75,13 +77,11 @@ public sealed class SeaSurface
 
     public event Action<string>? Changed;
 
-    public static double OpenSea(double oceanity) => Math.Clamp((1 / Math.Max(0.2, 1 - oceanity) - 1) / 4, 0, 1);
-
-    public void Aim(double height, double towardRadians, double beaufort)
+    public void Aim(double height, double period, double towardRadians, double beaufort, double foamShare = 1)
     {
-        foamTarget = FoamAt(beaufort);
+        foamTarget = Foam.Lerp(default, FoamAt(beaufort), Math.Clamp(foamShare, 0, 1));
         (SeaHeight, TowardRadians) = (height, towardRadians);
-        var length = PeakLength(height);
+        var length = height > 0 ? Gravity * period * period / FullTurn : 0;
         if (length > 0 && (active < 0 || !Alike(towardRadians, length)))
         {
             var next = active == 0 ? generation : 0;
@@ -114,16 +114,16 @@ public sealed class SeaSurface
         Foam = Foam.Lerp(Foam, foamTarget, blend);
     }
 
-    /// <summary>The drawn surface's height here, with the shader's shore fade (<see cref="OpenSea"/>) applied as it does.</summary>
-    public double HeightAt(double x, double z, double openSea = 1)
+    /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
+    public double HeightAt(double x, double z, double share = 1)
     {
         var (restX, restZ) = (x, z);
         for (var i = 0; i < SurfaceSearchSteps; i++)
         {
             var (shiftX, _, shiftZ) = DisplacementAt(restX, restZ);
-            (restX, restZ) = (x - openSea * shiftX, z - openSea * shiftZ);
+            (restX, restZ) = (x - share * shiftX, z - share * shiftZ);
         }
-        return openSea * DisplacementAt(restX, restZ).Y;
+        return share * DisplacementAt(restX, restZ).Y;
     }
 
     public (double X, double Y, double Z) DisplacementAt(double x, double z)
@@ -194,13 +194,6 @@ public sealed class SeaSurface
         (numberX[slot] * x + numberZ[slot] * z - frequency[slot] * Seconds) % FullTurn;
 
     private double Wavenumber(int slot) => Math.Sqrt(numberX[slot] * numberX[slot] + numberZ[slot] * numberZ[slot]);
-
-    private double PeakLength(double height)
-    {
-        if (height <= 0) return 0;
-        var period = waves.Period(height);
-        return Gravity * period * period / FullTurn;
-    }
 
     private bool Alike(double towardRadians, double length)
     {

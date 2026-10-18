@@ -12,13 +12,13 @@ public static class FloatMotion
     private const float WaterDensity = 1000;
 
     private static Harmony? harmony;
-    private static SeaWeatherSystem? sea;
+    private static SurfaceField? field;
     private static SeaSurface? surface;
 
-    public static void Attach(SeaWeatherSystem weather, SeaSurface waves)
+    public static void Attach(SurfaceField heights, SeaSurface waves)
     {
         if (harmony != null) return;
-        (sea, surface) = (weather, waves);
+        (field, surface) = (heights, waves);
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(EntityItemRenderer), "LoadModelMatrix"),
             postfix: new HarmonyMethod(typeof(FloatMotion), nameof(Lift)));
@@ -28,16 +28,16 @@ public static class FloatMotion
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (sea, surface) = (null, null);
+        (field, surface) = (null, null);
     }
 
     private static void Lift(EntityItemRenderer __instance, EntityItem ___entityitem)
     {
-        if (surface == null || sea == null || surface.Calm || !___entityitem.Swimming) return;
+        if (surface == null || field == null || surface.Calm || !___entityitem.Swimming) return;
         if (___entityitem.Itemstack?.Collectible.MaterialDensity > WaterDensity) return;
 
         var pos = ___entityitem.Pos;
-        var openSea = SeaSurface.OpenSea(sea.Oceanity(pos.X, pos.Z));
-        if (openSea > 0) __instance.ModelMat[ModelMatrixY] += (float)surface.HeightAt(pos.X, pos.Z, openSea);
+        var share = field.Factor(pos.X, pos.Z);
+        if (share > 0) __instance.ModelMat[ModelMatrixY] += (float)surface.HeightAt(pos.X, pos.Z, share);
     }
 }

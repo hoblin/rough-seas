@@ -16,7 +16,7 @@
         "waveDriftCoefficient": 0.00625,
         "maxDepthBlocks": 32,
         "sources": {
-            "periodSecondsPerRootMetre": "Pierson-Moskowitz fully developed sea: H = 0.21 U^2 / g, T = 0.81 * 2 pi U / g, so T = 3.5 s * sqrt(H / 1 m)",
+            "periodSecondsPerRootMetre": "A breaker's crest speed, from a fully developed sea (Pierson-Moskowitz): H = 0.21 U^2 / g, T = 0.81 * 2 pi U / g, so T = 3.5 s * sqrt(H / 1 m)",
             "whitecapCoefficient": "Whitecap coverage W = 3.84e-6 U^3.41 (Monahan & O'Muircheartaigh 1980), taken as the share of waves that break",
             "breakingDepthRatio": "A wave breaks in water shallower than 1.28 times its height (McCowan 1894)",
             "waterDensity": "Seawater, kg/m3",
@@ -39,7 +39,9 @@
         "speedExponent": 0.222,
         "freeSurfaceRoll": 1,
         "freeSurfaceCapsize": 0.5,
+        "capsizes": false,
         "sources": {
+            "capsizes": "Off until a capsized vessel is seen to roll over (#100); swamping and breaker strikes stay on",
             "speedExponent": "At the same paddling power P = D v, with drag D growing with wetted area, which grows as displacement to the 2/3, and with v squared: v goes as displacement to the -2/9",
             "freeSurfaceRoll": "Balance: water sloshing across the bilge leans with every roll and adds to it; a full bilge doubles it",
             "freeSurfaceCapsize": "Balance: the free surface takes away stability, so a full bilge goes over to a breaker half as high"
@@ -102,6 +104,8 @@
         "turnDegrees": 20,
         "stretch": 0.25,
         "aimSeconds": 0.5,
+        "fullFoamMetres": 0.5,
+        "surfFoam": false,
         "whitecaps": [
             { "force": 2, "caps": 0, "streaks": 0, "spray": 0 },
             { "force": 3, "caps": 0.01, "streaks": 0, "spray": 0 },
@@ -117,6 +121,7 @@
             "trains": "Wave trains spread around the wind, longest first; their energies sum to the sea's, so the significant height drawn is the sea state's",
             "lengthFactor": "The peak wave's length follows its period by deep-water dispersion, L = g T^2 / 2 pi",
             "minLengthBlocks": "The water mesh has one vertex a block: shorter waves alias",
+            "surfFoam": "Off until the surf foam reads white over any seabed (#70); the foam offshore stays on",
             "caps": "The share of the sea's area under whitecaps: above Monahan's measured coverage (3.84e-6 U^3.41), so the caps read from afar as the descriptions have them",
             "whitecaps": "The Beaufort scale's sea descriptions: scattered whitecaps at 3, frequent at 4 and many at 5, foam blown in streaks along the wind from 6 and well marked at 7 to 8, spray and a sea turning white from 8 up"
         }

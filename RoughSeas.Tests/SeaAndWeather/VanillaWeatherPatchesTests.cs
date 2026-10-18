@@ -2,7 +2,7 @@ using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Tests.SeaAndWeather;
 
-public class VanillaWeatherTests
+public class VanillaWeatherPatchesTests
 {
     private const double RainCloudBrightness = 0.55;
 
@@ -15,13 +15,13 @@ public class VanillaWeatherTests
         var hours = Squall.BornHours + Squall.LifetimeHours / 2;
         var (x, z) = Squall.CentreAt(hours);
         var presence = Model.StormsAt(x + Squall.Radius * radii, z, hours).Presence;
-        return VanillaWeather.CloudBrightness(RainCloudBrightness, presence, Vanilla);
+        return VanillaWeatherPatches.CloudBrightness(RainCloudBrightness, presence, Vanilla);
     }
 
     [Fact]
     public void LeavesAShowersCloudAsVanillaDrawsIt()
     {
-        Assert.Equal(RainCloudBrightness, VanillaWeather.CloudBrightness(RainCloudBrightness, stormPresence: 0, Vanilla));
+        Assert.Equal(RainCloudBrightness, VanillaWeatherPatches.CloudBrightness(RainCloudBrightness, stormPresence: 0, Vanilla));
     }
 
     [Fact]

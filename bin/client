@@ -12,9 +12,9 @@ if [ "$world" = server ]; then
 elif [ "$world" = qa ]; then
   target="--connect 127.0.0.1:$QA_PORT"
 elif [[ " $mods " == *" agentbridge "* && ! -f $BENCH_DATA/Saves/$world.vcdbs ]]; then
-  target="--openWorld $world --playStyle roughseas-test"
+  target="--openWorld $(printf %q "$world") --playStyle roughseas-test"
 else
-  target="--openWorld $world"
+  target="--openWorld $(printf %q "$world")"
 fi
 
 mod_args=""
@@ -65,7 +65,8 @@ leave_world() {
 
 bench_settings() {
   local settings=$BENCH_DATA/clientsettings.json
-  jq '.intSettings += {masterSoundLevel: 0, vsyncMode: 0, maxFps: 60}' "$settings" > "$settings.bench"
+  jq '.intSettings += {masterSoundLevel: 0, vsyncMode: 0, maxFps: 60}
+    | .stringListSettings.disabledMods |= ((. // []) | map(select(test("^(roughseas|agentbridge)@") | not)))' "$settings" > "$settings.bench"
   mv -f "$settings.bench" "$settings"
 }
 
