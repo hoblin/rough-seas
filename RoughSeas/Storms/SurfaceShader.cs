@@ -35,7 +35,6 @@ public static class SurfaceShader
     private const string WavesUniform = "seaWaves";
     private const string FoamUniform = "seaFoam";
     private const string HeightMapSampler = "seaHeightMap";
-    private const int HeightMapUnit = 7;
     private const double NoCaps = 10;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
@@ -147,7 +146,7 @@ public static class SurfaceShader
         __instance.Uniform("seaSteepness", (float)surface.Steepness);
         if (field != null && heightMap is { TextureId: > 0 })
         {
-            __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, HeightMapUnit);
+            __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, __instance.textureLocations.Count);
             __instance.Uniform("seaHeightArea", new Vec4f((float)(field.OriginX - player.CameraPos.X), (float)(field.OriginZ - player.CameraPos.Z),
                 (float)field.SizeBlocks, (float)field.SizeBlocks));
         }
