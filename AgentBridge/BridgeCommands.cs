@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -66,6 +67,12 @@ public class BridgeCommands : ModSystem
                 .RequiresPlayer()
                 .WithArgs(parsers.OptionalWord("type"), parsers.OptionalWord("warmth"), parsers.OptionalDouble("presence", 0.7), parsers.OptionalDouble("hours", 0))
                 .HandleWith(args => Await((IServerPlayer)args.Caller.Player, (string?)args[0], (string?)args[1], (double)args[2], (double)args[3]))
+            .EndSubCommand()
+            .BeginSubCommand("climate")
+                .WithDescription("Over the next year, how many hours a storm of a type covers each open-sea point of a grid around the caller, and in which month most: the points it visits most, first")
+                .RequiresPlayer()
+                .WithArgs(parsers.OptionalWord("type"), parsers.OptionalDouble("range", 20000), parsers.OptionalDouble("step", 5000), parsers.OptionalDouble("presence", 0.7))
+                .HandleWith(args => Climate((IServerPlayer)args.Caller.Player, (string?)args[0], (double)args[1], (double)args[2], (double)args[3]))
             .EndSubCommand()
             .BeginSubCommand("storm")
                 .WithDescription("Fly the caller to where the storms within range raise the highest waves over open sea, or the waves nearest a height, hovering just above the surface")
@@ -221,6 +228,50 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Error(string.Format(CultureInfo.InvariantCulture,
             "No {0}{1} reaches {2:P0} presence here within {3} h; the strongest is a {4} at {5:P0}, {6:F2} h ahead",
             type ?? "storm", warmth is null or "any" ? "" : ", " + warmth + ",", presence, hours, strongestCode, strongest, strongestAhead));
+    }
+
+    private TextCommandResult Climate(IServerPlayer player, string? type, double range, double step, double presence)
+    {
+        if (type is "any") type = null;
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
+        var calendar = sapi.World.Calendar;
+        var year = calendar.DaysPerYear * calendar.HoursPerDay;
+        var pos = player.Entity.Pos;
+        var reach = (int)(range / step);
+        var (x, z, now) = (pos.X, pos.Z, sea.NowHours);
+        Task.Run(() =>
+        {
+            var reply = Count(sea, type, x, z, now, year, reach, step, presence);
+            sapi.Event.EnqueueMainThreadTask(() => player.SendMessage(GlobalConstants.GeneralChatGroup, reply, EnumChatType.CommandSuccess), "bridge climate");
+        });
+        return TextCommandResult.Success($"Counting {type ?? "storm"} hours over the next year on {(2 * reach + 1) * (2 * reach + 1)} points; the answer comes in chat");
+    }
+
+    private static string Count(ISeaModel sea, string? type, double x, double z, double now, double year, int reach, double step, double presence)
+    {
+        const int shown = 8;
+        const int HoursApart = 3;
+        var points = Enumerable.Range(-reach, 2 * reach + 1)
+            .SelectMany(dx => Enumerable.Range(-reach, 2 * reach + 1).Select(dz => (X: x + dx * step, Z: z + dz * step)))
+            .Where(point => sea.IsSea(point.X, point.Z))
+            .Select(point =>
+            {
+                var months = new int[12];
+                for (var hour = 0.0; hour < year; hour += HoursApart)
+                {
+                    var when = now + hour;
+                    var storms = sea.StormsAt(point.X, point.Z, when);
+                    if (storms.Storm == null || storms.Presence < presence || type != null && storms.Storm.Code != type) continue;
+                    months[(int)(when / year % 1 * 12)] += HoursApart;
+                }
+                return (point.X, point.Z, Hours: months.Sum(), Month: Array.IndexOf(months, months.Max()) + 1, Peak: months.Max());
+            })
+            .OrderByDescending(point => point.Hours)
+            .ToArray();
+        if (points.Length == 0) return "No open sea on the grid";
+        return string.Join("\n", points.Take(shown).Select(point => string.Format(CultureInfo.InvariantCulture,
+            "{0:F0} {1:F0}: {2} h a year under a {3} at {4:P0}, most in month {5} ({6} h)",
+            point.X, point.Z, point.Hours, type ?? "storm", presence, point.Month, point.Peak)));
     }
 
     private TextCommandResult Storm(IServerPlayer player, double range, double waves)
