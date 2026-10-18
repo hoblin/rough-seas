@@ -9,10 +9,13 @@ POSES = ROOT / "RoughSeas/assets/roughseas/patches/player-poses.json"
 PATCHES = ROOT / "RoughSeas/assets/roughseas/patches"
 
 ARMS = {"R": ("UpperArmR", "LowerArmR"), "L": ("UpperArmL", "LowerArmL")}
+OUTBOARD = {"R": -1, "L": 1}
 # Outweighs the seat pose (80) so far that the fit can leave it out of the arms and torso.
 WEIGHT = 10000
 SPEED = 0.75
 ELBOW = 0.3
+# How far outboard of its shoulder an elbow stays, so a drawn-back arm passes beside the torso, not through it.
+CLEAR = 1
 GRIP = (1.25, 0.6, 1)
 CENTRE = (8, 0, 8)
 
@@ -178,23 +181,23 @@ class Rower:
 
     def joints(self, pose, side):
         m = identity()
+        points = []
         for element in self.chains[side]:
             m = mul(m, local(element, pose.get(element["name"]) or self.idle.get(element["name"]) or {}))
-        forearm = self.chains[side][-1]
-        elbow = [(o - f) / 16 for o, f in zip(forearm["rotationOrigin"], forearm["from"])]
-        return [tuple(s + 16 * c - h for s, c, h in zip(self.seat, apply(m, p), CENTRE))
-                for p in (elbow, [c / 16 for c in GRIP])]
+            if element["name"] in ARMS[side]:
+                points.append(apply(m, [(o - f) / 16 for o, f in zip(element["rotationOrigin"], element["from"])]))
+        points.append(apply(m, [c / 16 for c in GRIP]))
+        return [tuple(s + 16 * c - h for s, c, h in zip(self.seat, p, CENTRE)) for p in points]
 
     def hand(self, pose, side):
-        return self.joints(pose, side)[1]
+        return self.joints(pose, side)[-1]
 
     def reach(self, torso, targets, start):
         pose = {"UpperTorso": torso}
         error = 0
         for side, target in targets.items():
             upper, lower = ARMS[side]
-            names = [(upper, "rotationX"), (upper, "rotationY"), (upper, "rotationZ"), (lower, "rotationX"),
-                     (lower, "rotationZ")]
+            names = [(upper, "rotationX"), (upper, "rotationY"), (upper, "rotationZ"), (lower, "rotationZ")]
             initial = [start.get(element, {}).get(channel, 0) for element, channel in names]
 
             def arms(values):
@@ -204,9 +207,11 @@ class Rower:
                 return solved
 
             def cost(values):
-                elbow, hand = self.joints(pose | arms(values), side)
+                shoulder, elbow, hand = self.joints(pose | arms(values), side)
                 miss = math.dist(hand, target)
-                return miss * miss + ELBOW * elbow[1] + 1e-4 * sum((v - s) ** 2 for v, s in zip(values, initial))
+                inboard = OUTBOARD[side] * (shoulder[2] - elbow[2]) + CLEAR
+                return (miss * miss + ELBOW * elbow[1] + max(0, values[-1]) ** 2 + max(0, inboard) ** 2
+                        + 1e-4 * sum((v - s) ** 2 for v, s in zip(values, initial)))
 
             solved, _ = minimise(cost, initial)
             pose |= arms([round(value, 2) for value in solved])

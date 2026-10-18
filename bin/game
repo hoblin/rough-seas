@@ -90,6 +90,14 @@ LOOK
                              (default shot.png; a relative FILE lands in the clone's temp folder,
                              /tmp/<bench>); prints the path of a half-size copy, cheaper to look at.
                              With gui, the HUD and open dialogs stay in the picture
+  bin/game burst FOLDER [COUNT] [SECONDS]
+                             COUNT shots (default 16) evenly spread over SECONDS of the game's
+                             frames (default 1.5), as `shot` takes them, into FOLDER/01.png...
+                             (relative to the temp folder), each line with the seconds it was
+                             taken at, and FOLDER/sheet.png of them all. A motion shorter than
+                             a few shots (a stroke, a swing) is seen only this way: separate
+                             shots land seconds apart on a lagging bench. Hold a key through it:
+                             bin/game press W 4000 & sleep 1; bin/game burst row; wait
   bin/game hotkey CODE       cyclecamera for third person; bin/game hotkey alone lists every code
   To look at anything, fly: `bin/scene look ID` from any side, `/bridge fly` anywhere. To only
   look, '/gamemode spectator' draws no player at all, but spectators pick nothing.
@@ -313,6 +321,14 @@ case "${1:-}" in
     get -o "$file" "$bridge/screenshot${3:+?gui=1}"
     magick "$file" -resize 50% "${file%.png}-small.png"
     echo "${file%.png}-small.png"
+    ;;
+  burst)
+    folder=${2:?Name the folder}
+    [[ $folder == /* ]] || folder=$BENCH_TMP/$folder
+    rm -f "$folder"/[0-9]*.png
+    get "$bridge/burst?folder=$(jq -rn --arg f "$folder" '$f | @uri')&count=${3:-16}&seconds=${4:-1.5}"
+    magick montage -label '%t' -pointsize 20 "$folder"/[0-9]*.png -tile 4x -geometry 480x270+2+2 -background '#333' "$folder/sheet.png"
+    echo "$folder/sheet.png"
     ;;
   fps) post "/fps?seconds=${2:-5}" ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
