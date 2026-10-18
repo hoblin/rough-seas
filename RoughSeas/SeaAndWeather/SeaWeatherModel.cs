@@ -30,6 +30,8 @@ public class SeaWeatherModel
 
     public StormField Storms { get; }
 
+    public WorldClimate Climate => climate;
+
     public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps)
     {
         var (sum, count) = (windMps, 1);

@@ -241,37 +241,50 @@ public class BridgeCommands : ModSystem
         var (x, z, now) = (pos.X, pos.Z, sea.NowHours);
         Task.Run(() =>
         {
-            var reply = Count(sea, type, x, z, now, year, reach, step, presence);
+            var reply = Count(sea, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Config.Storms, type, x, z, now, year, reach, step, presence);
             sapi.Event.EnqueueMainThreadTask(() => player.SendMessage(GlobalConstants.GeneralChatGroup, reply, EnumChatType.CommandSuccess), "bridge climate");
         });
         return TextCommandResult.Success($"Counting {type ?? "storm"} hours over the next year on {(2 * reach + 1) * (2 * reach + 1)} points; the answer comes in chat");
     }
 
-    private static string Count(ISeaModel sea, string? type, double x, double z, double now, double year, int reach, double step, double presence)
+    private static string Count(SeaModel sea, StormTypeConfig[] types, string? type, double x, double z, double now, double year, int reach, double step, double presence)
     {
         const int shown = 8;
-        const int HoursApart = 3;
+        const double gale = 17.2;
         var points = Enumerable.Range(-reach, 2 * reach + 1)
             .SelectMany(dx => Enumerable.Range(-reach, 2 * reach + 1).Select(dz => (X: x + dx * step, Z: z + dz * step)))
             .Where(point => sea.IsSea(point.X, point.Z))
             .Select(point =>
             {
                 var months = new int[12];
-                for (var hour = 0.0; hour < year; hour += HoursApart)
+                var (galeHours, strongest) = (0, 0.0);
+                var passed = new System.Collections.Generic.HashSet<Storm>();
+                for (var hour = 0.0; hour < year; hour++)
                 {
                     var when = now + hour;
                     var storms = sea.StormsAt(point.X, point.Z, when);
-                    if (storms.Storm == null || storms.Presence < presence || type != null && storms.Storm.Code != type) continue;
-                    months[(int)(when / year % 1 * 12)] += HoursApart;
+                    if (storms.Storm == null || type != null && storms.Storm.Code != type) continue;
+                    passed.Add(storms.Storm);
+                    strongest = Math.Max(strongest, storms.Speed);
+                    if (storms.Speed >= gale) galeHours++;
+                    if (storms.Presence >= presence) months[(int)(when / year % 1 * 12)]++;
                 }
-                return (point.X, point.Z, Hours: months.Sum(), Month: Array.IndexOf(months, months.Max()) + 1, Peak: months.Max());
+                return (point.X, point.Z, Hours: months.Sum(), Month: Array.IndexOf(months, months.Max()) + 1, Peak: months.Max(),
+                    GaleHours: galeHours, Strongest: strongest, Passed: passed.Count, PeakMps: passed.Count > 0 ? passed.Max(storm => storm.PeakMps) : 0);
             })
             .OrderByDescending(point => point.Hours)
             .ToArray();
         if (points.Length == 0) return "No open sea on the grid";
-        return string.Join("\n", points.Take(shown).Select(point => string.Format(CultureInfo.InvariantCulture,
-            "{0:F0} {1:F0}: {2} h a year under a {3} at {4:P0}, most in month {5} ({6} h)",
-            point.X, point.Z, point.Hours, type ?? "storm", presence, point.Month, point.Peak)));
+        return string.Join("\n", points.Take(shown).Select(point =>
+        {
+            var (celsius, rainfall) = sea.Weather.Climate.At(point.X, point.Z);
+            var odds = string.Join("; ", types.Where(kind => type == null || kind.Code == type).Select(kind => string.Format(CultureInfo.InvariantCulture,
+                "{0}: temperature {1:F2} x rain {2:F2} x months {3:F2} avg",
+                kind.Code, kind.Temperature.Weight(celsius), Math.Pow(rainfall, kind.RainfallExponent), kind.MonthlyWeight.Average())));
+            return string.Format(CultureInfo.InvariantCulture,
+                "{0:F0} {1:F0}, {2:F1} °C, rain {3:F2} ({4}): {5} passed, peaks to {6:F0} m/s, here at most {7:F1} m/s; {8} h at force 8+; {9} h at {10:P0} presence, most in month {11}",
+                point.X, point.Z, celsius, rainfall, odds, point.Passed, point.PeakMps, point.Strongest, point.GaleHours, point.Hours, presence, point.Month);
+        }));
     }
 
     private TextCommandResult Storm(IServerPlayer player, double range, double waves)
