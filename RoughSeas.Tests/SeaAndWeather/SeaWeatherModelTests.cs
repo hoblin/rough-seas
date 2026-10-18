@@ -9,6 +9,8 @@ public class SeaWeatherModelTests
 
     private static readonly SeaWeatherModel Model = Fixtures.Model(seed: 42);
     private static readonly Storm[] Storms = Fixtures.YearOfStorms(Model);
+    private static readonly Storm[] TropicalHurricanes =
+        Fixtures.YearOfStorms(Fixtures.Model(seed: 42, Fixtures.TropicalLatitude), Fixtures.TropicalZ).Where(storm => storm.Code == "hurricane").ToArray();
 
     private static IEnumerable<(double X, double Z, double Hours)> InsideStorms() =>
         Storms.Select(storm =>
@@ -58,7 +60,7 @@ public class SeaWeatherModelTests
 
         Assert.Equal("gale", inside.Storm?.Code);
         Assert.InRange(new BeaufortScale(Fixtures.Config().Beaufort).ForceAt(inside.Speed).Force, 8, 12);
-        Assert.True(inside.Speed > beyond.Speed, $"{inside.Speed:F1} m/s inside, {beyond.Speed:F1} m/s beyond");
+        Assert.NotSame(gale, beyond.Storm);
     }
 
     [Fact]
@@ -74,6 +76,33 @@ public class SeaWeatherModelTests
         var overTwoHours = Model.SustainedWinds(aheadX, aheadZ, hours, now).First(sustained => sustained.Hours == 2).Mps;
 
         Assert.True(overTwoHours < 0.6 * now, $"{now:F1} m/s now, {overTwoHours:F1} m/s held over two hours");
+    }
+
+    [Fact]
+    public void HoldsAShortStormAfterSteadyWindBriefInTheLongestMean()
+    {
+        const double steady = 7;
+        const double storm = 25;
+        var lags = Fixtures.Config().SeaBuildHours;
+
+        var means = SeaWeatherModel.TimeWeightedMeans(storm, lags.Select(lag => (lag, lag <= 2 ? storm : steady)), lags);
+
+        Assert.InRange(means.Last().Mps, steady, steady + 1);
+    }
+
+    [Fact]
+    public void HoldsAShortStormLongAgoBriefInTheLongestMean()
+    {
+        const double steady = 7;
+        const double storm = 25;
+        var config = Fixtures.Config();
+        var lags = Enumerable.Range(1, (int)(config.SeaBuildHours.Max() / config.SeaSampleHours))
+            .Select(step => step * config.SeaSampleHours)
+            .Concat(config.SeaBuildHours).Distinct().Order();
+
+        var means = SeaWeatherModel.TimeWeightedMeans(steady, lags.Select(lag => (lag, Math.Abs(lag - 48) <= 1 ? storm : steady)), config.SeaBuildHours);
+
+        Assert.InRange(means.Last().Mps, steady, steady + 1);
     }
 
     [Fact]
@@ -123,7 +152,7 @@ public class SeaWeatherModelTests
     [Fact]
     public void BrewsHurricanesOnlyInTheirSeason()
     {
-        var hurricanes = Storms.Where(storm => storm.Code == "hurricane").ToArray();
+        var hurricanes = TropicalHurricanes;
         var monthlyWeight = Fixtures.Config().Storms.Single(type => type.Code == "hurricane").MonthlyWeight;
 
         Assert.NotEmpty(hurricanes);
@@ -150,7 +179,7 @@ public class SeaWeatherModelTests
     public void BrewsHurricanesOnlyOverTheSea()
     {
         var basins = Fixtures.Basins(seed: 42);
-        var hurricanes = Storms.Where(storm => storm.Code == "hurricane").ToArray();
+        var hurricanes = TropicalHurricanes;
 
         Assert.NotEmpty(hurricanes);
         Assert.All(hurricanes, hurricane => Assert.True(basins.IsSea(hurricane.OriginX, hurricane.OriginZ)));

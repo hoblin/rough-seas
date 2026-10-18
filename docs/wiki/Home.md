@@ -45,6 +45,9 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Outrigger canoe](Outrigger-Canoe)
 - [Sailboat](Sailboat)
 
+**The science behind it**
+- [The science behind it](The-Science-Behind-It): the measurements and models the sea and weather stand on, and where we bent them.
+
 **For modders**
 - [For modders](For-Modders): how Rough Seas drives vanilla's weather, and what that means for your mod.
 

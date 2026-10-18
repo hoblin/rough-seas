@@ -49,11 +49,11 @@ What the sea does to an anchored sailboat, each wave:
 
 | Sea | Drags, rope at 5 × | Drags, rope at 3 × | Rope snaps |
 | --- | --- | --- | --- |
-| near gale (force 7) | almost never | 1 in 20 | never |
-| gale (force 8) | 1 in 30 | 1 in 6 | never |
-| strong gale (force 9) | 1 in 8 | 1 in 3 | almost never |
-| storm (force 10) | 1 in 4 | every other wave | 1 in 120 |
-| hurricane (force 12) | every other wave | 3 in 4 | 1 in 8 |
+| force 7 wind, 4 m sea | almost never | 1 in 20 | never |
+| force 8, 5.5 m | 1 in 30 | 1 in 6 | never |
+| force 9, 7 m | 1 in 8 | 1 in 3 | almost never |
+| force 10, 9 m | 1 in 4 | every other wave | 1 in 120 |
+| force 12, 14 m | every other wave | 3 in 4 | 1 in 8 |
 
 An anchored vessel takes the waves more gently: it [ships less water and takes milder blows](Surf-and-Swamping#at-anchor), three tenths of each. It still lies across the sea, so it [capsizes](Surf-and-Swamping#capsizing) as easily, and it still needs [bailing](Bailing). Turning bow to the wind comes with sailing, in [1.1](Roadmap#11-seamanship).
 

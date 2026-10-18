@@ -56,7 +56,7 @@ public record Storm
             return new StormInfluence(presence, VelocityX * gust, VelocityZ * gust, Type.Rain * presence);
         }
 
-        var vortex = PeakMps * strength * Vortex(distance) * Bell(distance / Radius);
+        var vortex = PeakMps * strength * Vortex(distance) * Falloff(distance / Radius);
         var (wx, wz) = CycloneDirection(dx, dz, distance);
         return new StormInfluence(presence, wx * vortex, wz * vortex, Type.Rain * presence);
     }
@@ -81,6 +81,9 @@ public record Storm
             tangentZ * Math.Cos(inflow) - radialZ * Math.Sin(inflow)
         );
     }
+
+    private double Falloff(double relativeDistance) =>
+        Type.RimFraction > 0 ? GameMath.SmoothStep(Math.Min(1, (1 - relativeDistance) / Type.RimFraction)) : Bell(relativeDistance);
 
     private static double Bell(double relativeDistance)
     {

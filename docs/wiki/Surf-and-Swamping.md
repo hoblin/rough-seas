@@ -35,6 +35,8 @@ A breaker strikes the hull with the energy of the water it throws, which grows v
 
 ## Capsizing
 
+> **Switched off for now.** A capsized boat stayed upright on screen while its crew went into the water, with nothing to show what had happened. Capsizing comes back once a vessel is seen to roll over. Until then breakers still ship water and strike the hull, and a full bilge still swamps it.
+
 A breaker as high as a vessel's capsizing height overturns it. Everyone aboard is thrown into the sea, and the bilge fills to the brim. The cargo stays aboard, and the vessel stays afloat, swamped, if it isn't broken. The heights below are for an empty bilge; water aboard [lowers them](#water-aboard), down to half when full.
 
 | Vessel | Freeboard | Rides the swell | Capsized by a breaker of |
@@ -60,7 +62,7 @@ Measured in the game, unanchored in open water, a few minutes in each sea:
 | 3 m | The dugout swamped and capsized, and the [bark canoe](Birch-Bark-Canoe) swamped. The [coracle](Coracle) and the raft broke. The outrigger shipped 129 litres; the currach stayed upright. |
 | 4 m | The dugout rolled twice as far as the currach and ten times as far as the outrigger. The outrigger swamped and broke on a 5.4 m breaker. |
 
-Rivers and lakes have no waves, which is where the river boats belong. The currach, the outrigger and the [sailboat](Sailboat) are the vessels for the sea.
+These were measured before capsizing was switched off, in seas set to each height. A lake raises waves by its size and depth, a [pond barely ripples](Wind-and-Waves#how-high), and rivers have their own danger, [rapids](Rapids): that is where the river boats belong. The currach, the outrigger and the [sailboat](Sailboat) are the vessels for the sea.
 
 ## At anchor
 

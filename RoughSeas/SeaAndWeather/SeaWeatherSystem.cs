@@ -7,13 +7,16 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using Vintagestory.Server;
 using Vintagestory.ServerMods;
 
 namespace RoughSeas.SeaAndWeather;
 
 public class SeaWeatherSystem : ModSystem, ISeaWeather
 {
+    private const double DiurnalMeanHour = 10;
     public const string Channel = "roughseas:seamap";
 
     private const string CalibrationKey = "roughseas:oceancalibration";
@@ -105,14 +108,28 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         var world = sapi.World;
         var calendar = world.Calendar;
         var basins = new OceanBasins(Ocean(sapi), calibration!, Config.Currents);
+        var blockMetres = Config.Waves.RealPolarEquatorMetres / world.Config.GetString("polarEquatorDistance", "50000").ToInt(50000);
+        var climate = new WorldClimate(world.Seed, world.Config, world.BlockAccessor.MapSizeZ);
         var weather = new SeaWeatherModel(
             world.Seed,
             Config,
-            new WorldClimate(world.Seed, world.Config, world.BlockAccessor.MapSizeZ),
+            climate,
             basins,
             z => calendar.OnGetLatitude?.Invoke(z) ?? 0.5,
-            calendar.DaysPerYear * calendar.HoursPerDay);
-        return new SeaModel(this, sapi, weather, new WaterBody(sapi, basins, Config.Waves, () => NowHours));
+            calendar.DaysPerYear * calendar.HoursPerDay,
+            blockMetres,
+            (x, z, hours) => SeasonalCelsius(sapi, climate, x, z, hours));
+        return new SeaModel(this, sapi, weather, new WaterBody(sapi, basins, Config.Waves, blockMetres, () => NowHours));
+    }
+
+    private static double SeasonalCelsius(ICoreServerAPI sapi, WorldClimate climate, double x, double z, double hours)
+    {
+        var (celsius, rainfall) = climate.At(x, z);
+        var condition = new ClimateCondition { WorldGenTemperature = (float)celsius, Temperature = (float)celsius, Rainfall = (float)rainfall, WorldgenRainfall = (float)rainfall };
+        var days = Math.Floor(hours / sapi.World.Calendar.HoursPerDay) + DiurnalMeanHour / 24;
+        ((ServerMain)sapi.World).EventManager.TriggerOnGetClimate(ref condition, new BlockPos((int)x, sapi.World.SeaLevel, (int)z, Dimensions.NormalWorld),
+            EnumGetClimateMode.ForSuppliedDate_TemperatureOnly, days);
+        return condition.Temperature;
     }
 
     private WorldOceanMap Ocean(ICoreServerAPI sapi) => ocean ??= new WorldOceanMap(sapi, new GeneratedOcean(() => Generator(sapi)));
