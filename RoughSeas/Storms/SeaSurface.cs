@@ -64,7 +64,7 @@ public sealed class SeaSurface
     /// <summary>The highest significant height around the player, which the surface is aimed at.</summary>
     public double SeaHeight { get; private set; }
 
-    public double SurfDepth => waves.BreakingDepth(Math.Max(SeaHeight, SurfOnAnyShoreMetres));
+    public double SurfDepth => config.SurfFoam ? waves.BreakingDepth(Math.Max(SeaHeight, SurfOnAnyShoreMetres)) : 0;
 
     /// <summary>The fold above which a crest whitens, set so the whitecaps cover the Beaufort force's share of the sea.</summary>
     public double CapsFold { get; private set; } = double.PositiveInfinity;

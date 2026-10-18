@@ -24,6 +24,7 @@ public class SurfaceConfig
     public double Stretch;
     public double AimSeconds;
     public double FullFoamMetres;
+    public bool SurfFoam;
     public WhitecapsConfig[] Whitecaps = [];
 }
 
