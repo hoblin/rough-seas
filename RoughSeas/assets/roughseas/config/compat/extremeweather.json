@@ -1,0 +1,19 @@
+{
+    "tested": { "from": "1.8.5", "to": "1.8.5" },
+    "settings": {
+        "HurricaneEventChance": 0,
+        "MonsoonEventChance": 0,
+        "BlizzardEventChance": 0,
+        "TornadoStormCloudsEnabled": false
+    },
+    "tornadoes": {
+        "stormCode": "hurricane",
+        "minPresence": 0.9,
+        "checkSeconds": 300
+    },
+    "sources": {
+        "settings": "Our storms bring the hurricane, the downpour and the snow, so EW's own rolls of them are off. A tornado's storm clouds force EW's hurricane sky on every loaded region; our hurricane keeps its own sky",
+        "minPresence": "Balance: the hurricane's core, within about a fifth of its radius of the eye, where its wind blows at storm force and beyond",
+        "checkSeconds": "EW's own cadence: TornadoSystem rolls TornadoChance every 300 s while its hurricane blows"
+    }
+}

@@ -48,7 +48,7 @@ One ticket ships as one pull request. A big PR is fine here, since Copilot revie
 
 A player meets your work at sea, not in the diff. Before the PR leaves draft, load the mod into the game and see the change happen: the storm rises, the raft breaks, the shark comes. A test that passes is not a mechanic that plays well.
 
-Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]' "$BENCH_DATA/Logs/server-debug.log"`).
+Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[ew\]' "$BENCH_DATA/Logs/server-debug.log"`).
 
 ## Shipping
 
