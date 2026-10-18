@@ -35,9 +35,6 @@
 - [Outrigger canoe](Outrigger-Canoe)
 - [Sailboat](Sailboat)
 
-**Beside other mods**
-- [Extreme Weathers](Extreme-Weathers)
-
 **[For modders](For-Modders)**
 
 **[Roadmap](Roadmap)**

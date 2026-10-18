@@ -24,6 +24,6 @@ public class HurricaneTornadoes(ExtremeWeatherCompat compat, SeaWeatherSystem se
     }
 
     private bool InHurricane(Vec3d pos) =>
-        sea.Model.StormsAt(pos.X, pos.Z, sea.NowHours) is { Storm: { } storm, Presence: var presence }
-        && storm.Code == Config.StormCode && presence >= Config.MinPresence;
+        sea.Model.StormsWithin(pos.X, pos.Z, 0).Any(storm =>
+            storm.Code == Config.StormCode && storm.InfluenceAt(pos.X, pos.Z, sea.NowHours).Presence >= Config.MinPresence);
 }
