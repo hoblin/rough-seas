@@ -69,6 +69,10 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
         return (float)model.RainCloudness(x, z, totalDays * sapi.World.Calendar.HoursPerDay);
     }
 
+    /// <summary>
+    /// A region's wind for vanilla's region state: the strongest of five samples, so that readers of the region alone
+    /// (wind sound, windmills, clouds) feel a squall anywhere in it.
+    /// </summary>
     public double RegionMps(int regionX, int regionZ)
     {
         var now = NowHours;

@@ -30,6 +30,11 @@ public class VanillaWind(SeaWeatherSystem sea, ICoreAPI api)
             GameMath.Smootherstep(regionX - Math.Round(regionX) + 0.5));
     }
 
+    /// <summary>
+    /// The map's detail finer than a region, on top of what vanilla answered from its regions: our wind here less our
+    /// regions' winds as vanilla blends them, so whatever another mod set on a region still shows. The wind blows along
+    /// the map's direction; vanilla only ever writes X.
+    /// </summary>
     public static Vec3d Express(Vec3d vanilla, (double X, double Z) local, double localStrength, double regionsStrength)
     {
         var strength = Math.Max(0, Math.Sqrt(vanilla.X * vanilla.X + vanilla.Z * vanilla.Z) + localStrength - regionsStrength);

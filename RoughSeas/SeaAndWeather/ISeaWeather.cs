@@ -37,6 +37,7 @@ public interface ISeaModel : ISeaWeather
     WindSample StormsAt(double x, double z, double totalHours);
 }
 
+/// <summary>What vanilla's channels and our renderers read, on either side: the model on the server, the received map on a client.</summary>
 public interface ISeaSource
 {
     SeaSample Sample(double x, double z);

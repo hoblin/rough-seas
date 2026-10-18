@@ -3,6 +3,10 @@ using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Storms;
 
+/// <summary>
+/// The waves around the player, each cell a share of the highest, read as the shader reads <c>seaHeightMap</c> (linear,
+/// clamped at the edge); the other end is <c>assets/roughseas/shaderincludes/seasurface.vsh</c>.
+/// </summary>
 public sealed class SurfaceField
 {
     private const int RegionsAcross = 3;

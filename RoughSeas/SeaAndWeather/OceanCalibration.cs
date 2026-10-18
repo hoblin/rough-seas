@@ -5,6 +5,12 @@ using Vintagestory.API.Util;
 
 namespace RoughSeas.SeaAndWeather;
 
+/// <summary>
+/// Where the world's ocean map turns to sea, learned once from the columns of the built world that do and don't hold salt
+/// water at sea level: each worldgen mod gives the map's numbers its own meaning. Until both are seen often enough it
+/// reads vanilla's midpoint; once settled it is saved with the world and never moves, since the storms brewed far away
+/// depend on it.
+/// </summary>
 public class OceanCalibration(OceanConfig config)
 {
     public const int Bins = 16;

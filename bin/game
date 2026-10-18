@@ -150,11 +150,12 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              fly to where the storms within RANGE blocks (default 60000) raise the
                              highest waves over open sea, or those nearest WAVES metres, hovering
                              just above the surface; replies with the wave height. Set the time of
-                             day first: storms move.
+                             day first: storms move. A far flight generates new chunks for a minute:
+                             `/bridge await` brings a storm without one.
   /bridge force FORCE [RANGE]
-                             find the nearest open sea where the wind blows at Beaufort FORCE and
-                             the waves stand as the scale has them (a grid within 5000 blocks, storms
-                             within RANGE, default 30000) and fly there; seated, it replies with the
+                             find the roughest of the nearest open seas where the wind blows at
+                             Beaufort FORCE (a grid within 5000 blocks, storms within RANGE, default
+                             30000) and fly there; seated, it replies with the
                              /tp that takes the vessel along, since the rider's client steers it
   /bridge approach [DISTANCE] [TYPE]
                              fly over open sea DISTANCE blocks (default 500) outside the rim of the

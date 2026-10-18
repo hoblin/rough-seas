@@ -8,6 +8,7 @@ using Vintagestory.API.Server;
 
 namespace AgentBridge;
 
+/// <summary>Logs when the server has loaded the chunks around a flight's end, for <c>bin/game</c> to wait on. The server loads a circle.</summary>
 public class ChunkSettle(ICoreServerAPI sapi, ILogger logger)
 {
     private const int RadiusChunks = 6;

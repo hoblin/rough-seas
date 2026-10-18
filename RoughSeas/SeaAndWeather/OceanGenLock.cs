@@ -5,6 +5,11 @@ using Vintagestory.ServerMods;
 
 namespace RoughSeas.SeaAndWeather;
 
+/// <summary>
+/// Vanilla's chunk thread asks the world's ocean layer unlocked, and the layer's noise keeps shared state; this makes
+/// every call on that one instance take the lock <see cref="GeneratedOcean"/> takes, so asking it from our threads
+/// can't corrupt the world's generation.
+/// </summary>
 public static class OceanGenLock
 {
     private const string HarmonyId = "roughseas.seaandweather.oceangen";

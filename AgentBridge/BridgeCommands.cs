@@ -74,7 +74,7 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Storm((IServerPlayer)args.Caller.Player, (double)args[0], (double)args[1]))
             .EndSubCommand()
             .BeginSubCommand("force")
-                .WithDescription("Fly the caller to the nearest open sea where the wind blows at a Beaufort force and the waves stand as the scale has them for it; seated, reply with the /tp that takes the vessel along")
+                .WithDescription("Fly the caller to the roughest of the nearest open seas where the wind blows at a Beaufort force; seated, reply with the /tp that takes the vessel along")
                 .RequiresPlayer()
                 .WithArgs(parsers.IntRange("force", 0, 12), parsers.OptionalDouble("range", 30000))
                 .HandleWith(args => Force((IServerPlayer)args.Caller.Player, (int)args[0], (double)args[1]))

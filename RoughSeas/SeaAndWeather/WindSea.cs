@@ -2,6 +2,11 @@ using System;
 
 namespace RoughSeas.SeaAndWeather;
 
+/// <summary>
+/// The wind sea at any depth by Young and Verhagen (1996), as the Coastal Engineering Manual (EM 1110-2-1100, II-2)
+/// gives it: the fetch is the shorter of the water upwind and what the wind has had time to cross (II-2-38), the period
+/// stops at the depth's limit (II-2-39), and heights above the knee bend toward a ceiling they never reach.
+/// </summary>
 public class WindSea(WavesConfig config)
 {
     private const double Gravity = 9.81;

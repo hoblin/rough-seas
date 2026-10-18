@@ -8,6 +8,11 @@ using Vintagestory.API.Util;
 
 namespace RoughSeas.SeaAndWeather;
 
+/// <summary>
+/// The water a wind blows over: a straight line upwind to the shore, over the built world while it is built and over the
+/// calibrated ocean map beyond it. Its length is in real metres, by the world's own horizontal compression (the real
+/// pole-to-equator distance over the world's <c>polarEquatorDistance</c>); depths stay one block to the metre.
+/// </summary>
 public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig config, Func<double> nowHours)
 {
     private const int ChunkSize = GlobalConstants.ChunkSize;

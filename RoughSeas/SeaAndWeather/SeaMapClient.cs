@@ -79,6 +79,7 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         if (snapshot.Version != SeaMapSnapshot.CurrentVersion) return;
         var key = (snapshot.RegionX, snapshot.RegionZ);
         var samples = snapshot.Samples();
+        // A new snapshot is reached from what is shown now, over the time between snapshots, so the sea never jumps.
         var now = Now;
         regions.AddOrUpdate(key,
             _ => new Region(samples, samples, snapshot.TotalHours, now, 0, snapshot.CellsPerSide, snapshot.RegionMps),

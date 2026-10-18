@@ -5,6 +5,10 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.SeaAndWeather;
 
+/// <summary>
+/// Leases each region's wind to the map: the Beaufort pattern of the strongest wind in the region, at its exact
+/// strength, for an hour at a time. A pattern set from outside (a command, another mod) keeps the region until it ends.
+/// </summary>
 public class RegionWinds(SeaWeatherSystem sea)
 {
     public const string PatternPrefix = "roughseas-force";

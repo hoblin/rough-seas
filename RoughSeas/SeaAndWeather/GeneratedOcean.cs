@@ -4,9 +4,11 @@ using Vintagestory.ServerMods;
 
 namespace RoughSeas.SeaAndWeather;
 
+/// <summary>The world's ocean map where nothing is built yet, from the world's own layer, the way GenMaps builds a region's.</summary>
 public class GeneratedOcean(Func<MapLayerBase?> generator) : IOceanMap
 {
     private const int TilePixels = 16;
+    // GenMaps pads a region's ocean map by as much; the blur at a tile's edge then matches the built regions' maps.
     private const int Padding = 5;
     private const int CacheLimit = 2048;
 
