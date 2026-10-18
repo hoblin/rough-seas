@@ -24,7 +24,6 @@ public class StormField
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Hour), Storm[]> nearTile = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Window), Storm[]> windowTile = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int AreaX, int AreaZ, long Window), Storm[]> windowArea = new(Environment.ProcessorCount, 0);
-    private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ), bool> seaCells = new(Environment.ProcessorCount, 0);
 
     public StormField(long seed, SeaWeatherConfig config, WorldClimate climate, PrevailingWinds prevailing, Func<double, double, bool> isSea, double hoursPerYear)
     {
@@ -42,7 +41,6 @@ public class StormField
         nearTile.Clear();
         windowTile.Clear();
         windowArea.Clear();
-        seaCells.Clear();
     }
 
     public Storm[] Near(double x, double z, double hours)
@@ -139,7 +137,7 @@ public class StormField
         var northern = prevailing.LatitudeDegrees(originZ) >= 0;
         var likelihood = Likelihood(stormType, originX, originZ, bornHours, northern);
         var roll = rand.NextDouble();
-        if (roll >= likelihood || roll >= likelihood * BirthShare(type, cellX, cellZ)) return null;
+        if (roll >= likelihood || roll >= likelihood * BirthShare(stormType, originX, originZ)) return null;
 
         var track = prevailing.TowardRadians(originZ) + (rand.NextDouble() * 2 - 1) * config.Storm.TrackSpreadDegrees * GameMath.DEG2RAD_DOUBLE;
         var (towardX, towardZ) = Compass.Toward(track);
@@ -170,14 +168,7 @@ public class StormField
             * stormType.MonthlyWeight[month];
     }
 
-    private double BirthShare(int type, int cellX, int cellZ)
-    {
-        if (seaCells.Count > CacheLimit) seaCells.Clear();
-        var stormType = config.Storms[type];
-        var sea = seaCells.GetOrAdd((type, cellX, cellZ), static (cell, field) =>
-            field.isSea(Centre(cell.CellX, field.config.Storms[cell.Type].CellSize), Centre(cell.CellZ, field.config.Storms[cell.Type].CellSize)), this);
-        return sea ? 1 : stormType.OverLand;
-    }
+    private double BirthShare(StormTypeConfig stormType, double x, double z) => isSea(x, z) ? 1 : stormType.OverLand;
 
     private static int Cell(double coordinate, StormTypeConfig stormType) => (int)Math.Floor(coordinate / stormType.CellSize);
 

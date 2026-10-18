@@ -20,7 +20,7 @@ float seaFolding(vec3 squeeze) {
 
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 warped = applyVanillaLiquidWarping(windAffected, worldPos, div);
-	float share = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r : 0.0;
+	float share = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r * 2.0 : 0.0;
 	seaShare = share;
 	if (share <= 0.0) return warped;
 

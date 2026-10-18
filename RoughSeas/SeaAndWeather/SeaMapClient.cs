@@ -83,7 +83,7 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         var now = Now;
         regions.AddOrUpdate(key,
             _ => new Region(samples, samples, snapshot.TotalHours, now, 0, snapshot.CellsPerSide, snapshot.RegionMps),
-            (_, old) => snapshot.TotalHours <= old.SnapshotHours
+            (_, old) => snapshot.TotalHours < old.SnapshotHours
                 ? old
                 : new Region(old.Side == snapshot.CellsPerSide ? old.Shown(now) : samples, samples, snapshot.TotalHours, now,
                     Span(snapshot.TotalHours - old.SnapshotHours), snapshot.CellsPerSide, snapshot.RegionMps));

@@ -4,11 +4,14 @@ using RoughSeas.SeaAndWeather;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The waves around the player, each cell a share of the highest, read as the shader reads <c>seaHeightMap</c> (linear,
-/// clamped at the edge); the other end is <c>assets/roughseas/shaderincludes/seasurface.vsh</c>.
+/// The waves around the player, each cell a share of the height the surface draws when the field is taken, so a cell's
+/// drawn height doesn't jump while the surface eases toward the highest waves around. Read as the shader reads
+/// <c>seaHeightMap</c> (linear, clamped at the edge); the other end is <c>assets/roughseas/shaderincludes/seasurface.vsh</c>.
 /// </summary>
 public sealed class SurfaceField
 {
+    public const double MaxShare = 2;
+
     private const int RegionsAcross = 3;
     private const int Levels = 255;
 
@@ -28,7 +31,7 @@ public sealed class SurfaceField
 
     public int Across => across;
 
-    public void Update(ISeaSource source, double x, double z, int regionSize, int cellBlocks)
+    public void Update(ISeaSource source, double x, double z, int regionSize, int cellBlocks, double drawnHeight)
     {
         this.cellBlocks = cellBlocks;
         across = RegionsAcross * regionSize / cellBlocks;
@@ -45,7 +48,11 @@ public sealed class SurfaceField
             if (sample.WaveHeight > highest) (highest, period) = (sample.WaveHeight, sample.WavePeriod);
         }
         (Height, Period) = (highest, period);
-        for (var i = 0; i < heights.Length; i++) factors[i] = (byte)Math.Round(highest > 0 ? heights[i] / highest * Levels : 0);
+        var reference = drawnHeight > 0 ? drawnHeight : highest;
+        for (var i = 0; i < heights.Length; i++)
+        {
+            factors[i] = (byte)Math.Round(reference > 0 ? Math.Min(heights[i] / reference, MaxShare) / MaxShare * Levels : 0);
+        }
     }
 
     public double Factor(double x, double z)
@@ -68,5 +75,5 @@ public sealed class SurfaceField
         return pixels;
     }
 
-    private double At(int column, int row) => factors[row * across + column] / (double)Levels;
+    private double At(int column, int row) => factors[row * across + column] * MaxShare / Levels;
 }

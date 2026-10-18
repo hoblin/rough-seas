@@ -151,11 +151,9 @@ public class SeaWeatherModelTests
     {
         var basins = Fixtures.Basins(seed: 42);
         var hurricanes = Storms.Where(storm => storm.Code == "hurricane").ToArray();
-        double CellCentre(double origin, int cellSize) => (Math.Floor(origin / cellSize) + 0.5) * cellSize;
 
         Assert.NotEmpty(hurricanes);
-        Assert.All(hurricanes, hurricane => Assert.True(basins.IsSea(
-            CellCentre(hurricane.OriginX, hurricane.Type.CellSize), CellCentre(hurricane.OriginZ, hurricane.Type.CellSize))));
+        Assert.All(hurricanes, hurricane => Assert.True(basins.IsSea(hurricane.OriginX, hurricane.OriginZ)));
     }
 
     [Fact]

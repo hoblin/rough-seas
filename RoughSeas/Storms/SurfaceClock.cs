@@ -51,7 +51,7 @@ public sealed class SurfaceClock : IRenderer
         aimedAt = seconds;
         var pos = capi.World.Player?.Entity?.Pos;
         if (pos == null) return;
-        field.Update(sea.Source, pos.X, pos.Z, capi.World.BlockAccessor.RegionSize, sea.Config.Map.CellBlocks);
+        field.Update(sea.Source, pos.X, pos.Z, capi.World.BlockAccessor.RegionSize, sea.Config.Map.CellBlocks, surface.Level);
         SurfaceShader.Upload();
         var state = sea.At(pos.X, pos.Z);
         seaHeight = field.Height;

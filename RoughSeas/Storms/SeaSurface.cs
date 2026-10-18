@@ -51,6 +51,8 @@ public sealed class SeaSurface
 
     public int Slots => amplitude.Length;
 
+    public double Level => level;
+
     public double Seconds { get; private set; } = double.NaN;
 
     public long Frame { get; private set; }
