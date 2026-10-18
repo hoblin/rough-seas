@@ -8,39 +8,41 @@ Storms are born, cross the world and die out. Each one is a real thing in the wo
 
 | | Squall | Gale | Hurricane |
 | --- | --- | --- | --- |
-| Size across | 500 to 1000 blocks | 3000 to 6000 blocks | 2400 to 5000 blocks |
-| Peak wind | 17 to 26 m/s (force 7 to 10) | 20 to 28 m/s (force 8 to 10) | 33 to 55 m/s (force 12) |
-| Lasts | 2 to 6 hours | 1 to 2½ days | 2 to 5 days |
-| Travels | 150 to 400 blocks an hour | 200 to 500 blocks an hour | 150 to 350 blocks an hour |
-| Wind | blows along its path | turns around a calm centre | turns around a calm eye |
+| Size across | 500 to 1000 blocks | 4000 to 8000 blocks | 2400 to 5000 blocks |
+| Peak wind | 17 to 26 m/s (force 7 to 10) | mostly 16 to 28 m/s (force 7 to 10); a few reach hurricane force | 33 to 55 m/s (force 12) |
+| Lasts | 2 to 6 hours | 2 to 5 days | 3 to 7 days |
+| Travels | 150 to 400 blocks an hour | 75 to 275 blocks an hour | 85 to 250 blocks an hour |
+| Wind | blows along its path | a broad band around a wide centre | turns around a calm eye |
 | Rain | heavy | steady | heavy |
 | Thunder | heavy | light, and none when cold | heavy |
 
-Times are game hours; a game day is about 48 real minutes.
+A day in the game is a day: a gale blows for days as a real one does. Only the calendar is shorter, so a game winter of 27 days holds fewer gales than a real winter of 90, but each of its days is as stormy as a real winter day.
 
 The thunder is the game's own weather, played where it can play: thunder needs warm, wet air, so a storm thunders only where its rain is heavy enough and the air at least 12 °C, and a cold gale brings snow instead. Away from storms the game's other weather keeps its own rules: a warm shower may rumble, a cold downpour may hail, and a dry, calm sea brings nothing. Weather from other mods plays by the same rules.
 
 - **Squalls** are the storms of warm, wet summers: small, short and violent, a wall of wind and rain that passes within hours.
-- **Gales** are the storms of the cold half of the year and of cool climates, like the depressions that cross the North Atlantic every winter. They cover a great area and blow for a day or two. Their wind circles a wide, quiet centre: counter-clockwise north of the equator, clockwise south of it, as real lows do.
-- **Hurricanes** form only in hot climates, in the subtropics and the tropics, from late spring to autumn. They last for days and bring the strongest wind of all, which is strongest at the wall of the small calm eye in the middle.
+- **Gales** are the depressions that cross the North Atlantic every winter. They cover a great area and blow for days, strongest in a broad band well out from their centre. Their wind circles that centre counter-clockwise north of the equator and clockwise south of it, as real lows do.
+- **Hurricanes** form only over warm tropical seas, from late spring to autumn. They last for days and bring the strongest wind of all, at the wall of the small calm eye in the middle.
 
 ![The wind of a gale or a hurricane, from above: it spirals in around a calm eye and is strongest at the eye wall](images/diagrams/cyclone.svg)
 
 ## Where and when they form
 
-Every region of the world gets a chance at a squall every half day, at a gale every day and at a hurricane every two days. Whether one forms depends on the climate where it would be born:
+Storms are born as often as real ones, per day and per area of sea:
 
-- **temperature**: squalls like it between 5 °C and 40 °C, best at 26 °C; gales between −15 °C and 22 °C, best at 8 °C; hurricanes only between 24 °C and 40 °C;
-- **rainfall**: the wetter the climate, the more storms, and squalls most of all;
-- **season**: squalls peak in summer, gales in winter, and hurricanes from late summer into autumn, with none from December to April. South of the equator the seasons are turned around.
+- **Gales** follow the storm tracks: between 30° and 70° of latitude, most of all near 50°, and half as often again in winter as in summer. They grow where cold air meets warm, so the steeper the temperature falls toward the pole, the stronger they come. Winter, when the poles grow cold, brings the strongest; a summer gale is mild. A mod that changes the world's temperatures moves them with it.
+- **Hurricanes** form between 5° and 30° from the equator, over water of at least about 26 °C, from June to November in the north, peaking in September. South of the equator their season is turned around.
+- **Squalls** follow warm, wet climates and summer.
 
-So rainforest coasts see squall after squall, a cold sea in winter is gale country, and the subtropics are where hurricanes come from.
+So a cold sea in winter is gale country, the tropics in late summer are where hurricanes come from, and warm coasts see squall after squall.
 
 Storms draw their strength from the sea, so most are born over it. Over land a squall forms half as often as over the sea, a gale three times less often, and a hurricane never. Once born, a storm crosses sea and land alike.
 
+How each of these was taken from real measurements is on [The science behind it](The-Science-Behind-It).
+
 ## How a storm moves
 
-A storm sets off on the [prevailing wind](Wind-and-Waves#wind) of the place it was born, within 30° of it, and keeps a straight course at a steady speed until it dies. It grows over the first third of its life and fades over the last third, so a storm that reaches you at its peak was gathering strength upwind for hours.
+A storm sets off on the [prevailing wind](Wind-and-Waves#wind) of the place it was born, within 30° of it, and keeps a straight course at a steady speed until it dies. It deepens over nearly half its life, fastest toward the end, peaks near the middle and slowly fills out after. A gale that reaches you at its peak was gathering strength upwind for a day or two.
 
 Where two storms overlap, their winds add up and the heavier rain falls.
 

@@ -30,7 +30,8 @@ SeaMapServer ── snapshot per region ─────────→  the wate
 
 - **The ocean map is the world's own.** A built region's `OceanMap`; where nothing is built yet, `GenMaps.oceanGen` read through `GeneratedOcean` (small tiles, cached). That layer is not thread-safe, so `OceanGenLock` locks its every call, vanilla's chunk thread included. Never build a second layer.
 - **The map's numbers mean what the worldgen makes them mean.** `OceanCalibration` learns from the built world where sea starts on it: salt water at sea level, column by column, only in loaded chunks, each column once, by balanced error. It settles at `ocean.calibrationSamples`, is saved with the world (`roughseas:oceancalibration`, versioned), and the model forgets what it brewed from the default.
-- **Climate is vanilla's.** Storm state comes from seed, worldgen climate and time; its expression (rain, snow, thunder) reads the live temperature.
+- **Climate is vanilla's.** A storm's birth comes from seed, worldgen climate, latitude, season and time. Its strength follows the season's north-south temperature gradient, which `SeaWeatherSystem.SeasonalCelsius` takes from the game's own climate chain (`TriggerOnGetClimate`, as `GetClimateAt` runs it), so a mod that moves temperatures moves the storms. Its expression (rain, snow, thunder) reads the live temperature.
+- **Storms follow measurements, per day and area.** Each type is born at `birthsPerMillionKm2PerDay`, turned into a chance per cell and slot through the horizontal scale; a day is a real day and only the calendar is the game's. Every storm number in `seaweather.json` carries its source; the wiki's *The science behind it* gathers them. `/bridge climate` checks the result over years of storms at a grid of points.
 
 ## Waves
 

@@ -38,7 +38,7 @@ The [Beaufort scale](https://en.wikipedia.org/wiki/Beaufort_scale) is how sailor
 
 ## Waves
 
-A wind raises waves by blowing across water, and how high they grow depends on three things: how hard it blows, how far it blows over open water, and for how long. Coastal engineers predict waves from exactly these, and Rough Seas uses their formula, Young and Verhagen's (1996), as the US Army Corps of Engineers' *Coastal Engineering Manual* gives it. The water decides as much as the wind.
+A wind raises waves by blowing across water, and how high they grow depends on three things: how hard it blows, how far it blows over open water, and for how long. Rough Seas grows them the way coastal engineers predict waves, from exactly these; the models are on [The science behind it](The-Science-Behind-It). The water decides as much as the wind.
 
 - **The fetch.** The fetch is the stretch of open water the wind has blown across before it reaches you, measured straight upwind to the shore. A pond barely ripples in a gale that raises a heavy sea in open water.
 - **The depth.** Shallow water holds the waves down and shortens them, so the same wind raises less in a shallow bay than offshore.
@@ -46,7 +46,7 @@ A wind raises waves by blowing across water, and how high they grow depends on t
 
 ### The world's scale
 
-Vintage Story's world is drawn small: its pole-to-equator distance is 50,000 blocks, about 200 times less than the Earth's 10,000 km, and the climate zones are squeezed to fit. Rough Seas reads the same squeeze, so a block of fetch counts as 200 metres of real water. A lake 500 blocks across raises the sea of a real 100 km lake. Our storms already sit on this scale: a squall 500 to 1000 blocks across is the 100 to 200 km of a real one. Heights and depths are not squeezed: a block is a metre.
+The world is drawn about 200 times smaller across than the Earth, so a block of fetch counts as 200 metres of real water: a lake 500 blocks across raises the sea of a real 100 km lake. Heights and depths are not squeezed: a block is a metre.
 
 ### How high
 
@@ -71,7 +71,7 @@ The highest seas bend down softly above 9 m and never pass 16 m. The formula alo
 
 ## Every wave is different
 
-The height in these tables is the *significant height*: what an observer reports, the average of the highest third of the waves. Real waves scatter around it, and Rough Seas draws each one from the same distribution oceanographers use, the [Rayleigh distribution](https://en.wikipedia.org/wiki/Significant_wave_height). Most waves are lower than the significant height. About one in a hundred is half again as high, and one in three thousand twice as high. That one is what breaks over a boat that rode out a hundred smaller ones.
+The height in these tables is the *significant height*: what an observer reports, the average of the highest third of the waves. Real waves scatter around it, and Rough Seas draws each one from the same distribution oceanographers use. Most waves are lower than the significant height. About one in a hundred is half again as high, and one in three thousand twice as high. That one is what breaks over a boat that rode out a hundred smaller ones.
 
 ![How many waves reach each height: most are lower than the sea's height, one in a hundred half again as high, one in three thousand twice as high](images/diagrams/wave-heights.svg)
 
