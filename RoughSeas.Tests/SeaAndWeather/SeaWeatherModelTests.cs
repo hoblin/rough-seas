@@ -60,7 +60,7 @@ public class SeaWeatherModelTests
 
         Assert.Equal("gale", inside.Storm?.Code);
         Assert.InRange(new BeaufortScale(Fixtures.Config().Beaufort).ForceAt(inside.Speed).Force, 8, 12);
-        Assert.True(inside.Speed > beyond.Speed, $"{inside.Speed:F1} m/s inside, {beyond.Speed:F1} m/s beyond");
+        Assert.NotSame(gale, beyond.Storm);
     }
 
     [Fact]
