@@ -124,7 +124,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         var breaking = swamped || surf || rand.NextDouble() < waves.BreakingChance(state.WindSpeed);
         var crest = waves.Crest(height, breaking);
         var shipped = waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure;
-        var capsizes = breaking && Seaworthiness.Capsizes(height);
+        var capsizes = storms.Config.Swamping.Capsizes && breaking && Seaworthiness.Capsizes(height);
         if (!breaking && shipped <= 0) return;
 
         bilge?.Ship(shipped);

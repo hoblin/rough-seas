@@ -59,12 +59,14 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         map = new SeaMapClient(this, capi);
         map.Start();
         new VanillaRain(this, capi).Follow();
+        WindOnCoordinates.Attach(this, capi);
         SeaWeatherCommands.Register(this, capi);
     }
 
     public override void Dispose()
     {
         VanillaWeatherPatches.Detach(api.Side);
+        if (api.Side == EnumAppSide.Client) WindOnCoordinates.Detach();
         if (api.Side == EnumAppSide.Server) OceanGenLock.Detach();
     }
 

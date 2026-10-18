@@ -631,6 +631,11 @@ public class BridgeCommands : ModSystem
             oceanity = region?.OceanMap?.GetUnpaddedIntLerpedForBlockPos(blockPos.X, blockPos.Z, regionSize),
             feet = accessor.GetBlock(blockPos, BlockLayersAccess.Fluid)?.Code?.ToString(),
             head = accessor.GetBlock(blockPos.UpCopy(2), BlockLayersAccess.Fluid)?.Code?.ToString(),
+            ground = new
+            {
+                solid = accessor.GetBlock(blockPos.DownCopy(), BlockLayersAccess.Solid)?.Code?.ToString(),
+                fluid = accessor.GetBlock(blockPos.DownCopy(), BlockLayersAccess.Fluid)?.Code?.ToString()
+            },
             seabed = accessor.GetTerrainMapheightAt(blockPos),
             season = sapi.World.Calendar.GetSeason(blockPos).ToString(),
             temperature = climate?.Temperature,

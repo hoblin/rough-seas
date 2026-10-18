@@ -70,6 +70,7 @@ public class SwampingConfig
     public double SpeedExponent;
     public double FreeSurfaceRoll;
     public double FreeSurfaceCapsize;
+    public bool Capsizes;
 
     /// <summary>The share of her speed a vessel of this dry mass, in kilograms, keeps with this much water aboard.</summary>
     public double SpeedFactor(double dryMass, double litres) => Math.Pow(dryMass / (dryMass + litres), SpeedExponent);
