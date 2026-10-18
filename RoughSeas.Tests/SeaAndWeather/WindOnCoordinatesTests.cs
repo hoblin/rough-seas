@@ -1,21 +1,30 @@
+using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Tests.SeaAndWeather;
 
 public class WindOnCoordinatesTests
 {
-    private static SeaState WindFrom(double degrees, double mps, int beaufort)
-    {
-        var (towardX, towardZ) = Compass.Toward((degrees + 180) * Math.PI / 180);
-        return new SeaState(towardX * mps, towardZ * mps, beaufort, 0, 0, 0, null);
-    }
+    private static readonly string[] Points = ["n", "nne", "ne", "ene", "e", "ese", "se", "sse", "s", "ssw", "sw", "wsw", "w", "wnw", "nw", "nnw"];
 
     [Theory]
-    [InlineData(255, 11.2, 6, "WSW 6 Bft · 11 m/s")]
-    [InlineData(358, 3.4, 2, "N 2 Bft · 3 m/s")]
-    [InlineData(90, 25, 10, "E 10 Bft · 25 m/s")]
-    public void NamesTheWindByItsPointForceAndSpeed(double fromDegrees, double mps, int beaufort, string line)
+    [InlineData(255, "wsw")]
+    [InlineData(358, "n")]
+    [InlineData(90, "e")]
+    [InlineData(180, "s")]
+    public void NamesThePointTheWindBlowsFrom(double fromDegrees, string point)
     {
-        Assert.Equal(line, WindOnCoordinates.Describe(WindFrom(fromDegrees, mps, beaufort)));
+        var (towardX, towardZ) = Compass.Toward((fromDegrees + 180) * Math.PI / 180);
+        Assert.Equal(point, WindOnCoordinates.Point(new SeaState(towardX, towardZ, 0, 0, 0, 0, null).WindFromDegrees));
+    }
+
+    public static TheoryData<string> Locales() => new(Directory.GetFiles("lang", "*.json").Select(Path.GetFileNameWithoutExtension)!);
+
+    [Theory]
+    [MemberData(nameof(Locales))]
+    public void SpeaksTheWindLineInEveryLocale(string locale)
+    {
+        var lang = JObject.Parse(File.ReadAllText(Path.Combine("lang", locale + ".json")));
+        Assert.All(Points.Select(point => "wind-from-" + point).Append("wind-line"), key => Assert.False(string.IsNullOrEmpty((string?)lang[key]), key));
     }
 }
