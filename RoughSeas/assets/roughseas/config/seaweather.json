@@ -122,11 +122,16 @@
     ],
     "storm": {
         "gradientSpanKm": 500,
-        "riseFraction": 0.3,
-        "fallFraction": 0.3,
+        "riseFraction": 0.45,
+        "fallFraction": 0.45,
         "trackSpreadDegrees": 30,
         "inflowDegrees": 20,
-        "weatherEventThreshold": 0.35
+        "weatherEventThreshold": 0.35,
+        "sources": {
+            "gradientSpanKm": "The north-south temperature difference is taken 500 km either side of a storm's birthplace: the width of a frontal zone",
+            "riseFraction": "A depression peaks near the middle of its life: 2.1 days from genesis on a median life of 3.4 to 4.5 (ERA5, WCD 7, 873, 2026; WCD 2, 1111, 2021), deepening fastest in the last day",
+            "fallFraction": "After the peak it fills gradually into a barotropic low; hurricane-force wind lasts under a day around the lowest pressure (NOAA OPC, von Ahn et al.)"
+        }
     },
     "vanilla": {
         "unitsPerMps": 0.04,
