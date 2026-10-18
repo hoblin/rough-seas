@@ -24,7 +24,8 @@ Rough Seas moves beneath vanilla, so other mods build on its sea as if it were t
 - **Waves from the water.** [Waves](Wind-and-Waves#waves) grow from the wind, the fetch, the depth and the time it has blown, as coastal engineers predict them, so a big lake raises a sea of its own.
 - **Storms on real climatology.** Gales and hurricanes are born as often and where real ones are, from measurements; squalls keep the mod's own rate until marine statistics are found ([The science behind it](The-Science-Behind-It)).
 - **Tested beside other mods**, with recommendations for mod sets ([Beside other mods](Other-Mods)).
-- **Vessels from any wood**, other mods' timber included.
+- **The wind on the coordinates readout**: where it blows from, its force and its speed, in every language the game speaks ([Wind and waves](Wind-and-Waves#wind)).
+- **Vessels from any wood**, other mods' timber included: the [dugout](Dugout) and the [outrigger canoe](Outrigger-Canoe) from any tree, the [bark canoe](Birch-Bark-Canoe) from birch, elm or spruce bark.
 - **Switched off for now:** [capsizing](Surf-and-Swamping#capsizing) and the [surf's foam](The-Look-of-the-Sea#what-you-see), both unfinished. Capsizing comes back with heel in 2.1.
 
 ## 2.1 "Seamanship"
