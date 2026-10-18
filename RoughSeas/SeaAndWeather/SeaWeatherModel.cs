@@ -15,14 +15,15 @@ public class SeaWeatherModel
     private readonly NormalizedSimplexNoise strengthNoise;
     private readonly NormalizedSimplexNoise veerNoise;
 
-    public SeaWeatherModel(long seed, SeaWeatherConfig config, WorldClimate climate, OceanBasins basins, Func<double, double> latitude, double hoursPerYear)
+    public SeaWeatherModel(long seed, SeaWeatherConfig config, WorldClimate climate, OceanBasins basins, Func<double, double> latitude, double hoursPerYear, double blockMetres,
+        Func<double, double, double, double>? seasonalCelsius = null)
     {
         this.config = config;
         this.climate = climate;
         this.basins = basins;
         prevailing = new PrevailingWinds(config.PrevailingWinds, latitude);
         currents = new OceanCurrents(config.Currents);
-        Storms = new StormField(seed, config, climate, prevailing, basins.IsSea, hoursPerYear);
+        Storms = new StormField(seed, config, climate, prevailing, basins.IsSea, hoursPerYear, blockMetres, seasonalCelsius);
         showers = new Showers(seed, config.Showers, climate);
         strengthNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 41017);
         veerNoise = NormalizedSimplexNoise.FromDefaultOctaves(2, 1, 0.5, seed + 90121);

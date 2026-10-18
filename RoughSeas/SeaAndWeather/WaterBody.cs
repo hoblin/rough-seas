@@ -13,13 +13,12 @@ namespace RoughSeas.SeaAndWeather;
 /// calibrated ocean map beyond it. Its length is in real metres, by the world's own horizontal compression (the real
 /// pole-to-equator distance over the world's <c>polarEquatorDistance</c>); depths stay one block to the metre.
 /// </summary>
-public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig config, Func<double> nowHours)
+public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig config, double scale, Func<double> nowHours)
 {
     private const int ChunkSize = GlobalConstants.ChunkSize;
     private const int CacheLimit = 65536;
 
     private readonly ConcurrentDictionary<(int X, int Z, int Direction), (double Hours, (bool, int?) Start, Reach Reach)> reaches = new(Environment.ProcessorCount, 0);
-    private readonly double scale = config.RealPolarEquatorMetres / sapi.World.Config.GetString("polarEquatorDistance", "50000").ToInt(50000);
 
     public Reach Upwind(double x, double z, double towardRadians)
     {

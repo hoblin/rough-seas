@@ -1,3 +1,5 @@
+using System;
+
 namespace RoughSeas.SeaAndWeather;
 
 public class SeaWeatherConfig
@@ -97,16 +99,19 @@ public class StormTypeConfig
     public string Code = "";
     public int CellSize;
     public double SlotHours;
-    public double Chance;
-    public TemperatureWindow Temperature = new();
+    public double BirthsPerMillionKm2PerDay;
+    public Window? Latitude;
+    public Window? Temperature;
     public double RainfallExponent;
     public double[] MonthlyWeight = [];
     public ValueRange Radius = new();
-    public ValueRange PeakMps = new();
+    public Spread PeakMps = new();
+    public GradientStrength? StrengthByGradient;
     public ValueRange LifetimeHours = new();
     public ValueRange SpeedBlocksPerHour = new();
     public bool Cyclonic;
     public double EyeFraction;
+    public double RimFraction;
     public double Rain;
     public double OverLand;
     public string? WeatherEvent;
@@ -114,6 +119,7 @@ public class StormTypeConfig
 
 public class StormShapeConfig
 {
+    public double GradientSpanKm;
     public double RiseFraction;
     public double FallFraction;
     public double TrackSpreadDegrees;
@@ -139,17 +145,34 @@ public class ValueRange
     public double Lerp(double t) => Min + (Max - Min) * t;
 }
 
-public class TemperatureWindow
+public class GradientStrength
+{
+    public double ReferenceCelsiusPer1000Km;
+    public double Exponent;
+}
+
+public class Spread
+{
+    public double Mean;
+    public double Deviation;
+    public double Min;
+    public double Max;
+
+    public double Draw(double first, double second) =>
+        Math.Clamp(Mean + Deviation * Math.Sqrt(-2 * Math.Log(1 - first)) * Math.Cos(2 * Math.PI * second), Min, Max);
+}
+
+public class Window
 {
     public double Min;
     public double Optimum;
     public double Max;
 
-    public double Weight(double celsius)
+    public double Weight(double value)
     {
-        if (celsius <= Min || celsius >= Max) return 0;
-        return celsius < Optimum
-            ? (celsius - Min) / (Optimum - Min)
-            : (Max - celsius) / (Max - Optimum);
+        if (value <= Min || value >= Max) return 0;
+        return value < Optimum
+            ? (value - Min) / (Optimum - Min)
+            : (Max - value) / (Max - Optimum);
     }
 }

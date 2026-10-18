@@ -19,13 +19,16 @@ public class StormField
     private readonly PrevailingWinds prevailing;
     private readonly Func<double, double, bool> isSea;
     private readonly double hoursPerYear;
+    private readonly double blockMetres;
+    private readonly Func<double, double, double, double>? seasonalCelsius;
     // A fixed lock count keeps Count, checked on every miss, cheap: by default the locks grow with the table and Count takes them all.
     private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ, long Slot), Storm?> born = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Hour), Storm[]> nearTile = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Window), Storm[]> windowTile = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int AreaX, int AreaZ, long Window), Storm[]> windowArea = new(Environment.ProcessorCount, 0);
 
-    public StormField(long seed, SeaWeatherConfig config, WorldClimate climate, PrevailingWinds prevailing, Func<double, double, bool> isSea, double hoursPerYear)
+    public StormField(long seed, SeaWeatherConfig config, WorldClimate climate, PrevailingWinds prevailing, Func<double, double, bool> isSea, double hoursPerYear, double blockMetres,
+        Func<double, double, double, double>? seasonalCelsius = null)
     {
         this.seed = seed;
         this.config = config;
@@ -33,6 +36,15 @@ public class StormField
         this.prevailing = prevailing;
         this.isSea = isSea;
         this.hoursPerYear = hoursPerYear;
+        this.blockMetres = blockMetres;
+        this.seasonalCelsius = seasonalCelsius;
+    }
+
+    public double? Gradient(double x, double z, double hours)
+    {
+        if (seasonalCelsius == null) return null;
+        var span = config.Storm.GradientSpanKm * 1000 / blockMetres;
+        return Math.Abs(seasonalCelsius(x, z - span, hours) - seasonalCelsius(x, z + span, hours)) / (2 * config.Storm.GradientSpanKm) * 1000;
     }
 
     public void Forget()
@@ -129,7 +141,7 @@ public class StormField
         var stormType = config.Storms[type];
         var rand = new LCGRandom(seed + 7919L * (type + 1));
         rand.InitPositionSeed(cellX, (int)slot, cellZ);
-        if (rand.NextDouble() >= stormType.Chance) return null;
+        if (rand.NextDouble() >= BirthChance(stormType)) return null;
 
         var originX = (cellX + rand.NextDouble()) * stormType.CellSize;
         var originZ = (cellZ + rand.NextDouble()) * stormType.CellSize;
@@ -153,7 +165,7 @@ public class StormField
             VelocityX = towardX * speed,
             VelocityZ = towardZ * speed,
             Radius = stormType.Radius.Lerp(rand.NextDouble()),
-            PeakMps = stormType.PeakMps.Lerp(rand.NextDouble()),
+            PeakMps = Peak(stormType, stormType.PeakMps.Draw(rand.NextDouble(), rand.NextDouble()), originX, originZ, bornHours),
             Northern = northern
         };
     }
@@ -163,9 +175,23 @@ public class StormField
         var (celsius, rainfall) = climate.At(x, z);
         var yearFraction = (hours / hoursPerYear % 1 + 1) % 1;
         var month = ((int)(yearFraction * 12) + (northern ? 0 : 6)) % 12;
-        return stormType.Temperature.Weight(celsius)
+        return (stormType.Latitude?.Weight(Math.Abs(prevailing.LatitudeDegrees(z))) ?? 1)
+            * (stormType.Temperature?.Weight(celsius) ?? 1)
             * Math.Pow(rainfall, stormType.RainfallExponent)
             * stormType.MonthlyWeight[month];
+    }
+
+    private double Peak(StormTypeConfig stormType, double drawn, double x, double z, double hours)
+    {
+        if (stormType.StrengthByGradient is not { } byGradient || Gradient(x, z, hours) is not { } gradient) return drawn;
+        var scaled = drawn * Math.Pow(gradient / byGradient.ReferenceCelsiusPer1000Km, byGradient.Exponent);
+        return Math.Clamp(scaled, stormType.PeakMps.Min, stormType.PeakMps.Max);
+    }
+
+    private double BirthChance(StormTypeConfig stormType)
+    {
+        var cellKm = stormType.CellSize * blockMetres / 1000;
+        return stormType.BirthsPerMillionKm2PerDay * cellKm * cellKm / 1e6 * stormType.SlotHours / 24;
     }
 
     private double BirthShare(StormTypeConfig stormType, double x, double z) => isSea(x, z) ? 1 : stormType.OverLand;

@@ -9,6 +9,8 @@ public class SeaWeatherModelTests
 
     private static readonly SeaWeatherModel Model = Fixtures.Model(seed: 42);
     private static readonly Storm[] Storms = Fixtures.YearOfStorms(Model);
+    private static readonly Storm[] TropicalHurricanes =
+        Fixtures.YearOfStorms(Fixtures.Model(seed: 42, Fixtures.TropicalLatitude), Fixtures.TropicalZ).Where(storm => storm.Code == "hurricane").ToArray();
 
     private static IEnumerable<(double X, double Z, double Hours)> InsideStorms() =>
         Storms.Select(storm =>
@@ -123,7 +125,7 @@ public class SeaWeatherModelTests
     [Fact]
     public void BrewsHurricanesOnlyInTheirSeason()
     {
-        var hurricanes = Storms.Where(storm => storm.Code == "hurricane").ToArray();
+        var hurricanes = TropicalHurricanes;
         var monthlyWeight = Fixtures.Config().Storms.Single(type => type.Code == "hurricane").MonthlyWeight;
 
         Assert.NotEmpty(hurricanes);
@@ -150,7 +152,7 @@ public class SeaWeatherModelTests
     public void BrewsHurricanesOnlyOverTheSea()
     {
         var basins = Fixtures.Basins(seed: 42);
-        var hurricanes = Storms.Where(storm => storm.Code == "hurricane").ToArray();
+        var hurricanes = TropicalHurricanes;
 
         Assert.NotEmpty(hurricanes);
         Assert.All(hurricanes, hurricane => Assert.True(basins.IsSea(hurricane.OriginX, hurricane.OriginZ)));
