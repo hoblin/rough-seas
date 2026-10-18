@@ -2,7 +2,7 @@ The sea has weather of its own. Wind has a direction and a strength, it changes 
 
 ## Wind
 
-On a quiet day the wind averages about 7 m/s (a moderate breeze) and wanders between a light breeze of 2 m/s and about 12 m/s; only the eye of a storm is calm. It changes slowly: a spell of wind lasts the better part of a day and stretches for thousands of blocks, so the wind where you stand is the wind for the whole crossing, unless a [storm](Storms) comes.
+Out of a storm, the wind follows what weather stations measure on Earth: about 4 m/s over land, a gentle breeze, and about 7 m/s over the open sea, a moderate one. Off a coast it freshens over the first thousand blocks of water. Around those averages it wanders from about a third of them to nearly twice. Only the eye of a storm is calm. It changes slowly: a spell of wind lasts the better part of a day and stretches for thousands of blocks, so the wind where you stand is the wind for the whole crossing, unless a [storm](Storms) comes.
 
 Its direction follows the prevailing winds of the real world, set by latitude, and veers up to 60° either side of them:
 
@@ -16,42 +16,65 @@ Storms travel with the prevailing wind, so the sky upwind is where weather comes
 
 Trees sway with the wind's strength. Their sway does not show its direction, because the game's foliage only bends one way; read the direction from the clouds.
 
+## The Beaufort scale
+
+The [Beaufort scale](https://en.wikipedia.org/wiki/Beaufort_scale) is how sailors have named a wind's strength since 1805. Rough Seas speaks it everywhere: the debug readout, the storms, the whitecaps.
+
+| Force | Wind, m/s | Name |
+| --- | --- | --- |
+| 0 | under 0.3 | calm |
+| 1 | 0.3 | light air |
+| 2 | 1.6 | light breeze |
+| 3 | 3.4 | gentle breeze |
+| 4 | 5.5 | moderate breeze |
+| 5 | 8.0 | fresh breeze |
+| 6 | 10.8 | strong breeze |
+| 7 | 13.9 | near gale |
+| 8 | 17.2 | gale |
+| 9 | 20.8 | strong gale |
+| 10 | 24.5 | storm |
+| 11 | 28.5 | violent storm |
+| 12 | 32.7 | hurricane |
+
 ## Waves
 
-The height of the waves comes from the [Beaufort scale](https://en.wikipedia.org/wiki/Beaufort_scale), the table sailors have used since 1805 to tie a wind's strength to the sea it raises. Rough Seas takes the wave height for each force and slides smoothly between them:
+A wind raises waves by blowing across water, and how high they grow depends on three things: how hard it blows, how far it blows over open water, and for how long. Coastal engineers predict waves from exactly these, and Rough Seas uses their formula, Young and Verhagen's (1996), as the US Army Corps of Engineers' *Coastal Engineering Manual* gives it. The water decides as much as the wind.
 
-| Force | Wind, m/s | Name | Waves, m |
-| --- | --- | --- | --- |
-| 0 | under 0.3 | calm | 0 |
-| 1 | 0.3 | light air | 0.1 |
-| 2 | 1.6 | light breeze | 0.2 |
-| 3 | 3.4 | gentle breeze | 0.6 |
-| 4 | 5.5 | moderate breeze | 1 |
-| 5 | 8.0 | fresh breeze | 2 |
-| 6 | 10.8 | strong breeze | 3 |
-| 7 | 13.9 | near gale | 4 |
-| 8 | 17.2 | gale | 5.5 |
-| 9 | 20.8 | strong gale | 7 |
-| 10 | 24.5 | storm | 9 |
-| 11 | 28.5 | violent storm | 11.5 |
-| 12 | 32.7 | hurricane | 14 |
+- **The fetch.** The fetch is the stretch of open water the wind has blown across before it reaches you, measured straight upwind to the shore. A pond barely ripples in a gale that raises a heavy sea in open water.
+- **The depth.** Shallow water holds the waves down and shortens them, so the same wind raises less in a shallow bay than offshore.
+- **The time.** Waves take hours to build. The sea answers to the wind of the last half hour to sixteen hours, whichever raises it highest. A squall that has just arrived raises a short, choppy sea, and a gale that has blown all day a long, high one.
 
-Three things shape the sea beyond the table:
+### The world's scale
 
-- **Waves take time to build.** The sea answers to the wind of the last four hours, not of the moment: a rising wind is ahead of its waves, and after a storm passes the swell keeps running for hours.
-- **Waves need open water.** The height scales with how much ocean lies around: full on the open ocean, lower in narrow seas and bays, nothing on lakes and rivers. Rivers have their own danger, [rapids](Rapids).
-- **Small seas don't count.** Below 0.3 m a vessel feels nothing, which is force 2 and below.
+Vintage Story's world is drawn small: its pole-to-equator distance is 50,000 blocks, about 200 times less than the Earth's 10,000 km, and the climate zones are squeezed to fit. Rough Seas reads the same squeeze, so a block of fetch counts as 200 metres of real water. A lake 500 blocks across raises the sea of a real 100 km lake. Our storms already sit on this scale: a squall 500 to 1000 blocks across is the 100 to 200 km of a real one. Heights and depths are not squeezed: a block is a metre.
+
+### How high
+
+The sea in a steady wind, from the formula, by force (height, then the time between waves):
+
+| Force | Pond, 100 blocks across, 3 m deep | Lake, 500 blocks, 10 m deep | Bay, 5000 blocks, 30 m deep | Open sea, after 16 hours of wind |
+| --- | --- | --- | --- | --- |
+| 3 | 0.2 m, 2 s | 0.4 m, 3 s | 0.5 m, 3 s | 0.4 m, 3 s |
+| 4 | 0.4 m, 3 s | 0.7 m, 4 s | 1.1 m, 5 s | 0.9 m, 5 s |
+| 5 | 0.5 m, 3 s | 1 m, 5 s | 1.9 m, 7 s | 1.5 m, 6 s |
+| 6 | 0.6 m, 3 s | 1.3 m, 5 s | 2.6 m, 8 s | 2.2 m, 7 s |
+| 7 | 0.7 m, 4 s | 1.6 m, 6 s | 3.3 m, 8 s | 3 m, 8 s |
+| 8 | 0.9 m, 4 s | 1.9 m, 6 s | 4 m, 9 s | 4 m, 9 s |
+| 10 | 1.1 m, 4 s | 2.4 m, 6 s | 5.2 m, 10 s | 6.2 m, 11 s |
+| 12 | 1.4 m, 4 s | 3 m, 7 s | 6.3 m, 10 s | 8.9 m, 13 s |
+
+And how a sea builds in a 20 m/s wind over open water: 0.6 m after an hour, 1.6 m after four, 4.3 m after sixteen. When the wind drops the sea does not: the waves the last hours built keep running.
+
+The highest seas bend down softly above 9 m and never pass 16 m. The formula alone would give a hurricane waves of 30 m and more, half the height of the world, which no real sea reaches and no ship would survive.
 
 ## Every wave is different
 
-The height in the table is the *significant height*: what an observer reports, the average of the highest third of the waves. Real waves scatter around it, and Rough Seas draws each one from the same distribution oceanographers use, the [Rayleigh distribution](https://en.wikipedia.org/wiki/Significant_wave_height). Most waves are lower than the significant height. About one in a hundred is half again as high, and one in three thousand twice as high. That one is what [capsizes](Surf-and-Swamping#capsizing) a boat that rode out a hundred smaller ones.
+The height in these tables is the *significant height*: what an observer reports, the average of the highest third of the waves. Real waves scatter around it, and Rough Seas draws each one from the same distribution oceanographers use, the [Rayleigh distribution](https://en.wikipedia.org/wiki/Significant_wave_height). Most waves are lower than the significant height. About one in a hundred is half again as high, and one in three thousand twice as high. That one is what breaks over a boat that rode out a hundred smaller ones.
 
 ![How many waves reach each height: most are lower than the sea's height, one in a hundred half again as high, one in three thousand twice as high](images/diagrams/wave-heights.svg)
 
-A wave comes every few seconds: 3.5 × √(height) seconds apart, so about 5 s in a 2 m sea and 8 s in a 5.5 m gale.
-
 ## What a wave does
 
-Each [vessel](Vessels) meets them in its own way: a low [dugout](Dugout) ships water in a 2 m sea that a [currach](Hide-Currach) rides over. What happens when a wave reaches a vessel is on its own page, [Surf and swamping](Surf-and-Swamping): the water it ships, the breaker that strikes the hull and the one that overturns it. Waves also strain a [mooring](Mooring) and drag an [anchor](Anchoring).
+Each [vessel](Vessels) meets them in its own way: a low [dugout](Dugout) ships water in a 2 m sea that a [currach](Hide-Currach) rides over. What happens when a wave reaches a vessel is on its own page, [Surf and swamping](Surf-and-Swamping): the water it ships, and the breaker that strikes the hull. Waves also strain a [mooring](Mooring) and drag an [anchor](Anchoring).
 
-You see the waves as high as they are: the swell, its whitecaps and the surf are drawn from this same sea, and boats ride it. How it looks, and how it was tuned against photographs of the real sea, is on [The look of the sea](The-Look-of-the-Sea).
+You see the waves as high as they are: the swell and its whitecaps are drawn from this same sea, cell by cell around you, and boats ride it. How it looks, and how it was tuned against photographs of the real sea, is on [The look of the sea](The-Look-of-the-Sea).

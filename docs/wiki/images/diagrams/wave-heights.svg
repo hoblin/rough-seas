@@ -8,7 +8,7 @@
 <text x='80' y='40' font-size='20' text-anchor='start' fill='#2b2722' font-weight='bold'>How many waves reach each height</text>
 <line x1='421.7' y1='300' x2='421.7' y2='79.2' stroke='#2b2722' stroke-dasharray='5 4'/>
 <text x='427.7' y='96.0' font-size='16' text-anchor='start' fill='#2b2722' font-weight='bold'>the sea's height</text>
-<text x='427.7' y='116.0' font-size='14' text-anchor='start' fill='#7a6f62' >as the Beaufort table gives it</text>
+<text x='427.7' y='116.0' font-size='14' text-anchor='start' fill='#7a6f62' >its significant height</text>
 <line x1='592.5' y1='300' x2='592.5' y2='79.2' stroke='#b0472f' stroke-dasharray='5 4'/>
 <text x='598.5' y='168.0' font-size='16' text-anchor='start' fill='#b0472f' font-weight='bold'>half again</text>
 <text x='598.5' y='188.0' font-size='14' text-anchor='start' fill='#7a6f62' >1 wave in 100</text>

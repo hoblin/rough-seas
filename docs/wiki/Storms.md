@@ -18,6 +18,8 @@ Storms are born, cross the world and die out. Each one is a real thing in the wo
 
 Times are game hours; a game day is about 48 real minutes.
 
+The thunder is the game's own weather, played where it can play: thunder needs warm, wet air, so a storm thunders only where its rain is heavy enough and the air at least 12 °C, and a cold gale brings snow instead. Away from storms the game's other weather keeps its own rules: a warm shower may rumble, a cold downpour may hail, and a dry, calm sea brings nothing. Weather from other mods plays by the same rules.
+
 - **Squalls** are the storms of warm, wet summers: small, short and violent, a wall of wind and rain that passes within hours.
 - **Gales** are the storms of the cold half of the year and of cool climates, like the depressions that cross the North Atlantic every winter. They cover a great area and blow for a day or two. Their wind circles a wide, quiet centre: counter-clockwise north of the equator, clockwise south of it, as real lows do.
 - **Hurricanes** form only in hot climates, in the subtropics and the tropics, from late spring to autumn. They last for days and bring the strongest wind of all, which is strongest at the wall of the small calm eye in the middle.
@@ -32,7 +34,9 @@ Every region of the world gets a chance at a squall every half day, at a gale ev
 - **rainfall**: the wetter the climate, the more storms, and squalls most of all;
 - **season**: squalls peak in summer, gales in winter, and hurricanes from late summer into autumn, with none from December to April. South of the equator the seasons are turned around.
 
-So rainforest coasts see squall after squall, a cold sea in winter is gale country, and the subtropics are where hurricanes come from. Storms are born over land as well as sea, and cross both.
+So rainforest coasts see squall after squall, a cold sea in winter is gale country, and the subtropics are where hurricanes come from.
+
+Storms draw their strength from the sea, so most are born over it. Over land a squall forms half as often as over the sea, a gale three times less often, and a hurricane never. Once born, a storm crosses sea and land alike.
 
 ## How a storm moves
 

@@ -35,7 +35,7 @@ Bailing is one held click, nothing more: no filling and pouring, no place to emp
 
 ## Keeping up
 
-A bucket clears about 200 litres a minute. Against a calm sea and rain that is plenty; against a gale it is not. In a force 8 sea, unanchored, an empty bilge fills in no more than this, and sooner as the water aboard [settles the boat](Surf-and-Swamping#water-aboard):
+A bucket clears about 200 litres a minute. Against a calm sea and rain that is plenty; against a gale it is not. In a 5.5 m sea, unanchored, an empty bilge fills in no more than this, and sooner as the water aboard [settles the boat](Surf-and-Swamping#water-aboard):
 
 | Vessel | Time to swamp |
 | --- | --- |
@@ -45,7 +45,7 @@ A bucket clears about 200 litres a minute. Against a calm sea and rain that is p
 | [Birch-bark canoe](Birch-Bark-Canoe) | two minutes |
 | [Hide currach](Hide-Currach) | ten minutes |
 
-The currach, shipping some 150 litres a minute, can be kept dry by one bailer with a bucket. The others can't. An open sailboat left at [anchor](Anchoring) with nobody bailing in a strong gale (force 9) swamps in about two and a half minutes.
+The currach, shipping some 150 litres a minute, can be kept dry by one bailer with a bucket. The others can't. An open sailboat left at [anchor](Anchoring) with nobody bailing in a 7 m sea swamps in about two and a half minutes.
 
 So at sea in a storm, keep bailing, and don't leave a boat out in one. The bilge never drains by itself: a boat swamped in the night is still full in the morning.
 
