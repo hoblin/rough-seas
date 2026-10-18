@@ -13,7 +13,7 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
     private const int ChunkSize = GlobalConstants.ChunkSize;
     private const int CacheLimit = 65536;
 
-    private readonly ConcurrentDictionary<(int X, int Z, int Direction), (double Hours, Reach Reach)> reaches = new(Environment.ProcessorCount, 0);
+    private readonly ConcurrentDictionary<(int X, int Z, int Direction), (double Hours, (bool, int?) Start, Reach Reach)> reaches = new(Environment.ProcessorCount, 0);
     private readonly double scale = config.RealPolarEquatorMetres / sapi.World.Config.GetString("polarEquatorDistance", "50000").ToInt(50000);
 
     public Reach Upwind(double x, double z, double towardRadians)
@@ -22,24 +22,34 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
         if (direction < 0) direction += config.FetchDirections;
         var key = ((int)Math.Floor(x / config.FetchStepBlocks), (int)Math.Floor(z / config.FetchStepBlocks), direction);
         var now = nowHours();
-        if (reaches.TryGetValue(key, out var cached) && now - cached.Hours < config.FetchCacheHours) return cached.Reach;
+        var start = Surface((int)x, (int)z, new BlockPos(Dimensions.NormalWorld));
+        if (reaches.TryGetValue(key, out var cached) && cached.Start == start && now - cached.Hours < config.FetchCacheHours) return cached.Reach;
         if (reaches.Count > CacheLimit) reaches.Clear();
         var reach = Walk(x, z, direction * GameMath.TWOPI / config.FetchDirections);
-        reaches[key] = (now, reach);
+        reaches[key] = (now, start, reach);
         return reach;
+    }
+
+    public string Describe(double x, double z)
+    {
+        var probe = new BlockPos(Dimensions.NormalWorld);
+        var (built, surface) = Surface((int)x, (int)z, probe);
+        if (!built) return "not built here, so the ocean map answers";
+        return surface is { } level
+            ? $"water here at {level}, {Depth((int)x, (int)z, level, probe):0} m deep"
+            : "built here, and no water at its surface";
     }
 
     private Reach Walk(double x, double z, double towardRadians)
     {
         var (towardX, towardZ) = Compass.Toward(towardRadians);
         var probe = new BlockPos(Dimensions.NormalWorld);
-        var surface = Surface((int)x, (int)z, probe);
-        var startDepth = surface is { } level ? Depth((int)x, (int)z, level, probe) ?? 0 : OpenSea(x, z);
+        var (built, surface) = Surface((int)x, (int)z, probe);
+        var startDepth = built ? surface is { } level ? Depth((int)x, (int)z, level, probe) ?? 0 : 0 : OpenSea(x, z);
         if (startDepth <= 0) return default;
 
         double fetch = 0, depthSum = startDepth;
         var samples = 1;
-        var built = surface != null;
         while (fetch < config.MaxFetchBlocks)
         {
             var step = built ? config.FetchStepBlocks : config.OpenSeaStepBlocks;
@@ -56,14 +66,14 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
         return new Reach(fetch * scale, depthSum / samples);
     }
 
-    private int? Surface(int x, int z, BlockPos probe)
+    private (bool Built, int? Level) Surface(int x, int z, BlockPos probe)
     {
         var chunk = sapi.WorldManager.GetMapChunk(x / ChunkSize, z / ChunkSize);
-        if (chunk == null) return null;
+        if (chunk == null) return (false, null);
         var y = chunk.RainHeightMap[z % ChunkSize * ChunkSize + x % ChunkSize];
         probe.Set(x, y, z);
-        if (sapi.World.BlockAccessor.GetChunkAtBlockPos(probe) == null) return null;
-        return sapi.World.BlockAccessor.GetBlock(probe, BlockLayersAccess.Fluid).IsLiquid() ? y : null;
+        if (sapi.World.BlockAccessor.GetChunkAtBlockPos(probe) == null) return (false, null);
+        return (true, sapi.World.BlockAccessor.GetBlock(probe, BlockLayersAccess.Fluid).IsLiquid() ? y : null);
     }
 
     private double? Depth(int x, int z, int surface, BlockPos probe)
@@ -75,7 +85,14 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
         if (chunk.RainHeightMap[index] != surface) return 0;
         if (!sapi.World.BlockAccessor.GetBlock(probe, BlockLayersAccess.Fluid).IsLiquid()) return 0;
         var seabed = chunk.WorldGenTerrainHeightMap[index];
-        return seabed < surface ? surface - seabed : 1;
+        return seabed < surface ? surface - seabed : Sounded(probe);
+    }
+
+    private int Sounded(BlockPos surface)
+    {
+        var depth = 1;
+        while (depth < config.SoundingBlocks && sapi.World.BlockAccessor.GetBlock(surface.Down(), BlockLayersAccess.Fluid).IsLiquid()) depth++;
+        return depth;
     }
 
     private double OpenSea(double x, double z) => basins.IsSea(x, z) ? config.OpenSeaDepthMetres : 0;

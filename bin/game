@@ -266,8 +266,8 @@ arrive() {
 }
 
 settle() {
-  local flight=$1 deadline=$((SECONDS + ${2:-180})) log line
-  log=$(ls -t "$BENCH_DATA/Logs/server-debug.log" "$BENCH_DATA/server/Logs/server-debug.log" 2>/dev/null | head -1)
+  local flight=$1 deadline=$((SECONDS + ${2:-180})) log=$BENCH_DATA/Logs/server-debug.log line
+  [ "$BENCH_DATA/server/Logs/server-debug.log" -nt "$log" ] && log=$BENCH_DATA/server/Logs/server-debug.log
   until line=$(grep -a "\[bridge\] flight $flight: chunks" "$log"); do
     [ $SECONDS -lt $deadline ] || fail "The server's chunks around flight $flight never settled; read $log"
     sleep 1

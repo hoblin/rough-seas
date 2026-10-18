@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Vintagestory.API.Client;
@@ -22,6 +23,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     private Lazy<SeaModel>? model;
     private SeaMapClient? map;
     private OceanCalibration? calibration;
+    private readonly HashSet<(int X, int Z)> calibrated = [];
     private WorldOceanMap? ocean;
 
     public TickBudget Budget { get; } = new("sea and weather");
@@ -85,7 +87,8 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         var reach = Model.Upwind(x, z, Compass.Radians(wind.X, wind.Z));
         var reading = calibration.Settled ? "calibrated against the built world" : "the default until the built world shows enough of both";
         return $"ocean map {value} of 255 here, {(Model.IsSea(x, z) ? "open sea" : "not open sea")}; open sea from {calibration.SeaFrom} "
-            + $"({reading}: {water} sea and {land} land columns seen); upwind: {reach.FetchMetres / 1000:0.0} km of fetch over {reach.MeanDepthMetres:0} m of water";
+            + $"({reading}: {water} sea and {land} land columns seen); {Model.WaterHere(x, z)}; "
+            + $"upwind: {reach.FetchMetres / 1000:0.0} km of fetch over {reach.MeanDepthMetres:0} m of water";
     }
 
     public SeaState At(double x, double z) => Source.At(x, z);
@@ -125,7 +128,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     {
         if (calibration is not { Settled: false }) return;
         var surface = new BlockPos(x, sapi.World.SeaLevel - 1, z, Dimensions.NormalWorld);
-        if (sapi.World.BlockAccessor.GetChunkAtBlockPos(surface) == null) return;
+        if (sapi.World.BlockAccessor.GetChunkAtBlockPos(surface) == null || !calibrated.Add((x, z))) return;
         var water = sapi.World.BlockAccessor.GetBlock(surface, BlockLayersAccess.Fluid).LiquidCode == "saltwater";
         if (!calibration.Add(Ocean(sapi).At(x / WorldOceanMap.PixelSize, z / WorldOceanMap.PixelSize), water)) return;
         Log("ocean map calibrated against the built world: open sea from {0} of 255", calibration.SeaFrom);

@@ -15,7 +15,6 @@
         { "force": 12, "name": "Hurricane", "minMps": 32.7, "waveHeight": 14.0 }
     ],
     "seaBuildHours": [0.5, 1, 2, 4, 8, 16],
-    "seaBuildShare": 0.8,
     "prevailingWinds": [
         { "maxLatitude": 30, "northFromDegrees": 45, "southFromDegrees": 135 },
         { "maxLatitude": 60, "northFromDegrees": 225, "southFromDegrees": 315 },
@@ -132,7 +131,8 @@
         "maxFetchBlocks": 8192,
         "fetchDirections": 16,
         "fetchCacheHours": 6,
-        "openSeaDepthMetres": 200
+        "openSeaDepthMetres": 200,
+        "soundingBlocks": 32
     },
     "map": {
         "cellBlocks": 32,

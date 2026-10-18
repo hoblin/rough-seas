@@ -37,7 +37,8 @@ public class OceanCalibration(OceanConfig config)
         if (data != null && SerializerUtil.Deserialize<Counts>(data) is { Version: Counts.CurrentVersion } saved) counts = saved;
     }
 
-    private long Misread(int seaBin) => counts.Land.Skip(seaBin).Sum() + counts.Water.Take(seaBin).Sum();
+    private double Misread(int seaBin) =>
+        (double)counts.Land.Skip(seaBin).Sum() / counts.Land.Sum() + (double)counts.Water.Take(seaBin).Sum() / counts.Water.Sum();
 
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic, SkipConstructor = true)]
     public class Counts

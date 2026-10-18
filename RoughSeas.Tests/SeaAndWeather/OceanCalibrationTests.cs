@@ -39,6 +39,20 @@ public class OceanCalibrationTests
     }
 
     [Fact]
+    public void FindsTheSeaWhereTheBuiltWorldIsMostlyLand()
+    {
+        var calibration = new OceanCalibration(Ocean);
+        for (var i = 0; i < Ocean.CalibrationSamples * 60 && !calibration.Settled; i++)
+        {
+            var value = i * 37 % 256;
+            calibration.Add(value, value >= 200 && i % 10 == 0 || value >= 240);
+        }
+
+        Assert.True(calibration.Settled);
+        Assert.InRange(calibration.SeaFrom, 192, 240);
+    }
+
+    [Fact]
     public void HoldsItsReadingOnceSettled()
     {
         var calibration = Built(25);

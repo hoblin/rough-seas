@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
@@ -18,6 +19,9 @@ public static class VanillaWeatherPatches
 
     private static readonly FieldInfo WorldgenRainfall = AccessTools.Field(typeof(ClimateCondition), nameof(ClimateCondition.WorldgenRainfall));
     private static readonly FieldInfo Rainfall = AccessTools.Field(typeof(ClimateCondition), nameof(ClimateCondition.Rainfall));
+    private static readonly FieldInfo EventConfig = AccessTools.Field(typeof(WeatherEvent), nameof(WeatherEvent.config));
+    private static readonly FieldInfo PatternWeight = AccessTools.Field(typeof(ConditionalPatternConfig), nameof(ConditionalPatternConfig.Weight));
+    private static readonly FieldInfo HereChance = AccessTools.Field(typeof(WeatherEvent), "hereChance");
     private static readonly ConcurrentDictionary<EnumAppSide, SeaWeatherSystem> systems = [];
     private static readonly ConditionalWeakTable<WeatherDataReaderBase, StrongBox<double>> stormPresence = [];
     private static readonly object patchLock = new();
@@ -30,7 +34,7 @@ public static class VanillaWeatherPatches
         {
             if (harmony != null) return;
             harmony = new Harmony(HarmonyId);
-            Transpiler(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.RandomWeatherEvent)), nameof(CurrentRainfall));
+            Transpiler(AccessTools.Method(typeof(WeatherSimulationRegion), nameof(WeatherSimulationRegion.RandomWeatherEvent)), nameof(CurrentConditions));
             Postfix(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetPrecipitation),
                 [typeof(double), typeof(double), typeof(double), typeof(double)]), nameof(Precipitation));
             Postfix(AccessTools.Method(typeof(WeatherSystemBase), nameof(WeatherSystemBase.GetPrecipitation),
@@ -72,13 +76,24 @@ public static class VanillaWeatherPatches
 
     private static SeaWeatherSystem? On(EnumAppSide side) => systems.GetValueOrDefault(side);
 
-    private static IEnumerable<CodeInstruction> CurrentRainfall(IEnumerable<CodeInstruction> instructions)
+    private static IEnumerable<CodeInstruction> CurrentConditions(IEnumerable<CodeInstruction> instructions)
     {
-        foreach (var instruction in instructions)
+        var original = instructions.ToList();
+        var matcher = new CodeMatcher(original)
+            .MatchStartForward(new CodeMatch(instruction => instruction.LoadsField(WorldgenRainfall)));
+        if (matcher.IsValid)
         {
-            if (instruction.LoadsField(WorldgenRainfall)) instruction.operand = Rainfall;
-            yield return instruction;
+            matcher.SetOperandAndAdvance(Rainfall)
+                .MatchStartForward(new CodeMatch(instruction => instruction.LoadsField(EventConfig)), new CodeMatch(instruction => instruction.LoadsField(PatternWeight)));
         }
+        var log = systems.Values.FirstOrDefault();
+        if (matcher.IsInvalid)
+        {
+            log?.Mod.Logger.Error("Vanilla's weather event roll changed; it is left as it is, reading worldgen rainfall and picking by bare weights");
+            return original;
+        }
+        log?.Log("vanilla's weather event roll reads the current rain and picks by each event's conditions");
+        return matcher.RemoveInstruction().SetOperandAndAdvance(HereChance).InstructionEnumeration();
     }
 
     private static void Precipitation(double posX, double posZ, double totalDays, ref float __result, WeatherSystemBase __instance) =>

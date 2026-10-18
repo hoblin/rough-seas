@@ -70,15 +70,23 @@ public class SeaWeatherModelTests
         var speed = Math.Sqrt(squall.VelocityX * squall.VelocityX + squall.VelocityZ * squall.VelocityZ);
         var (aheadX, aheadZ) = (x + squall.VelocityX / speed * squall.Radius * 0.3, z + squall.VelocityZ / speed * squall.Radius * 0.3);
 
-        Assert.True(Model.BlowingHours(aheadX, aheadZ, hours, Model.Wind(aheadX, aheadZ, hours).Speed) < 2);
+        var now = Model.Wind(aheadX, aheadZ, hours).Speed;
+        var overTwoHours = Model.SustainedWinds(aheadX, aheadZ, hours, now).First(sustained => sustained.Hours == 2).Mps;
+
+        Assert.True(overTwoHours < 0.6 * now, $"{now:F1} m/s now, {overTwoHours:F1} m/s held over two hours");
     }
 
     [Fact]
     public void BlowsLongWhereOnlyTheBackgroundWindBlows()
     {
         var calm = Samples.Where(sample => Model.Wind(sample.X, sample.Z, sample.Hours).Presence == 0).ToArray();
+        double HeldShare((double X, double Z, double Hours) at)
+        {
+            var now = Model.Wind(at.X, at.Z, at.Hours).Speed;
+            return Model.SustainedWinds(at.X, at.Z, at.Hours, now).First(sustained => sustained.Hours == 4).Mps / now;
+        }
 
-        Assert.True(calm.Average(sample => Model.BlowingHours(sample.X, sample.Z, sample.Hours, Model.Wind(sample.X, sample.Z, sample.Hours).Speed)) > 4);
+        Assert.True(calm.Average(HeldShare) > 0.7);
     }
 
     [Fact]

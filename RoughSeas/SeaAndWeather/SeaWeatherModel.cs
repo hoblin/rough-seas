@@ -30,15 +30,12 @@ public class SeaWeatherModel
 
     public StormField Storms { get; }
 
-    public double BlowingHours(double x, double z, double hours, double windMps)
+    public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps)
     {
-        var steady = 0.0;
-        foreach (var lag in config.SeaBuildHours.Where(lag => lag > 0))
-        {
-            if (Wind(x, z, hours - lag).Speed < config.SeaBuildShare * windMps) return (steady + lag) / 2;
-            steady = lag;
-        }
-        return steady;
+        var (sum, count) = (windMps, 1);
+        return config.SeaBuildHours
+            .Select(lag => (lag, (sum += Wind(x, z, hours - lag).Speed) / ++count))
+            .ToArray();
     }
 
     /// <summary>
