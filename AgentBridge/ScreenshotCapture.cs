@@ -114,14 +114,25 @@ public class ScreenshotCapture : IRenderer
             frames.Add((elapsed, grab()));
             if (frames.Count < count) return false;
 
-            Directory.CreateDirectory(folder);
-            var lines = frames.Select((frame, index) =>
+            try
             {
-                var path = Path.Combine(folder, $"{index + 1:D2}.png");
-                using (frame.Frame) frame.Frame.Save(path);
-                return $"{path} {frame.At.ToString("0.000", CultureInfo.InvariantCulture)}";
-            }).ToList();
-            Done.SetResult(string.Join("\n", lines) + "\n");
+                Directory.CreateDirectory(folder);
+                var lines = frames.Select((frame, index) =>
+                {
+                    var path = Path.Combine(folder, $"{index + 1:D2}.png");
+                    frame.Frame.Save(path);
+                    return $"{path} {frame.At.ToString("0.000", CultureInfo.InvariantCulture)}";
+                }).ToList();
+                Done.SetResult(string.Join("\n", lines) + "\n");
+            }
+            catch (Exception e)
+            {
+                Done.SetException(e);
+            }
+            finally
+            {
+                foreach (var frame in frames) frame.Frame.Dispose();
+            }
             return true;
         }
     }
