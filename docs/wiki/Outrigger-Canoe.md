@@ -35,7 +35,7 @@ Its sail drives it the same whatever the wind does; sailing by the wind comes in
 
 ## How it is built
 
-Logs and planks of one wood; redwood takes log sections.
+Logs and planks of one wood, a modded tree's too; redwood, and any wood that comes in sections, takes log sections.
 
 | | |
 | --- | --- |

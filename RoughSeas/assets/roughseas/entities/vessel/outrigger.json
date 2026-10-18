@@ -3,8 +3,9 @@
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
     "weight": 250,
-    "variantgroups": [{"code": "wood", "loadFromProperties": "block/wood"}],
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
+        "logTextures": {"bark": "all", "inside": "inside-north"},
         "speedMultiplier": 1.3,
         "turnSpeed": 0.5,
         "swimmingOffsetY": 0.32,
@@ -18,12 +19,12 @@
             "impactCapacity": 15000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "repairs": [{
-                "material": {"type": "item", "code": "game:plank-{wood}", "stacksize": 2},
+                "material": {"type": "item", "code": "{plank}", "stacksize": 2},
                 "restores": 0.071,
                 "saturation": 80
             }],
             "wreckage": [
-                {"type": "item", "code": "game:plank-{wood}", "quantity": {"avg": 8, "var": 4}},
+                {"type": "item", "code": "{plank}", "quantity": {"avg": 8, "var": 4}},
                 {"type": "item", "code": "game:rope", "quantity": {"avg": 1, "var": 1}},
                 {"type": "block", "code": "game:linen-normal-down", "quantity": {"avg": 1, "var": 1}}
             ],
@@ -107,8 +108,6 @@
             {"code": "roughseas-outrigger-backward", "animation": "roughseas-outrigger-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
         ],
         "textures": {
-            "bark": {"base": "game:block/wood/bark/{wood}-h"},
-            "inside": {"base": "game:block/wood/debarked/{wood}"},
             "sail": {"base": "game:block/cloth/linen/plain"},
             "lashing": {"base": "game:item/resource/rope"},
             "bilge": {"base": "game:block/liquid/waterportion"}

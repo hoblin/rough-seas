@@ -1,9 +1,10 @@
 {
     "code": "bark",
-    "variantgroups": [{ "code": "wood", "states": ["birch"] }],
+    "class": "roughseas:ItemBark",
+    "variantgroups": [{ "code": "wood", "loadFromProperties": "roughseas:vessel/bark" }],
+    "attributes": { "handbook": { "groupBy": ["bark-*"] }, "logTextures": { "bark": "all", "oak": "inside-north" } },
     "maxstacksize": 32,
     "shape": { "base": "game:item/oakbark" },
-    "textures": { "bark": { "base": "game:block/wood/bark/birch" }, "oak": { "base": "game:block/wood/debarked/birch" } },
     "creativeinventory": { "general": ["*"], "items": ["*"] },
     "materialDensity": 600,
     "combustibleProps": { "burnTemperature": 600, "burnDuration": 10 },

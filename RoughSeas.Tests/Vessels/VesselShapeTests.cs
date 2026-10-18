@@ -77,8 +77,17 @@ public class VesselShapeTests
         var (entity, item, shape) = Load(vessel);
         var drawn = FaceTextures(shape).Where(code => code != "null").Distinct().ToList();
 
-        Assert.Empty(drawn.Except(TextureCodes(entity["client"]!["textures"]!)));
-        Assert.Empty(drawn.Except(TextureCodes(item["textures"]!)));
+        Assert.Empty(drawn.Except(TextureCodes(entity["client"]!["textures"]!).Concat(LogTextureCodes(entity))));
+        Assert.Empty(drawn.Except(TextureCodes(item["textures"]!).Concat(LogTextureCodes(item))));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void TakesTheSameTexturesFromItsWoodOnTheEntityAndTheItem(string vessel)
+    {
+        var (entity, item, _) = Load(vessel);
+
+        Assert.Equal(entity["attributes"]?["logTextures"]?.ToString(), item["attributes"]?["logTextures"]?.ToString());
     }
 
     [Theory]
@@ -168,4 +177,6 @@ public class VesselShapeTests
             .Select(face => face.Value["texture"]!.Value<string>()!.TrimStart('#'));
 
     private static IEnumerable<string> TextureCodes(JToken textures) => textures.Children<JProperty>().Select(texture => texture.Name);
+
+    private static IEnumerable<string> LogTextureCodes(JToken type) => type["attributes"]?["logTextures"] is { } faces ? TextureCodes(faces) : [];
 }

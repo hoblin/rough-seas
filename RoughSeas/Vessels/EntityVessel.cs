@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
@@ -46,6 +47,9 @@ public class EntityVessel : EntityBoat
         base.OnRenderFrame(dt, stage);
         oars?.Follow();
     }
+
+    public override string GetName() =>
+        Wood.Of(Properties.Variant) is { } wood ? Lang.GetMatching($"{Code.Domain}:item-creature-{Code.Path}", wood.Name) : base.GetName();
 
     public override Vec2d SeatsToMotion(float dt)
     {

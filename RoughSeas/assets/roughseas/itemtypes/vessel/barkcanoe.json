@@ -1,13 +1,15 @@
 {
     "code": "barkcanoe",
     "class": "roughseas:ItemVessel",
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/bark"}],
+    "attributes": {"handbook": {"groupBy": ["barkcanoe-*"]}, "logTextures": {"bark": "all", "frame": "inside-north"}},
     "durability": 100,
     "maxstacksize": 1,
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
     "shape": {"base": "roughseas:entity/vessel/barkcanoe", "ignoreElements": ["hideWater", "Bilge"]},
-    "textures": {"bark": {"base": "game:block/wood/bark/birch-h"}, "frame": {"base": "game:block/wood/debarked/birch"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+    "textures": {"lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},

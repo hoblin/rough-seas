@@ -6,8 +6,12 @@ namespace RoughSeas.Vessels;
 
 public class MaterialTable
 {
+    private const string WoodPrefix = "wood-";
+    private const string UnknownWood = "wood";
+
     private readonly Dictionary<string, Material> materials;
     private readonly ILogger logger;
+    private readonly HashSet<string> warned = [];
 
     public MaterialTable(Dictionary<string, Material> materials, ILogger logger)
     {
@@ -26,14 +30,31 @@ public class MaterialTable
         return double.PositiveInfinity;
     }
 
-    private double StrengthRatio(string material, string reference)
+    private double StrengthRatio(string material, string reference) =>
+        Strength(material) is { } built && Strength(reference) is { } baseline ? built / baseline : 1;
+
+    private double? Strength(string material)
     {
-        if (materials.TryGetValue(material, out var built) && materials.TryGetValue(reference, out var baseline))
+        if (materials.TryGetValue(material, out var exact)) return exact.Strength;
+
+        if (!material.StartsWith(WoodPrefix))
         {
-            return built.Strength / baseline.Strength;
+            WarnOnce(material, "Rough Seas has no strength for {0}; vessels of it count as their reference build");
+            return null;
         }
 
-        logger.Warning("Rough Seas has no strength for {0} against {1}; the vessel counts as its reference build", material, reference);
-        return 1;
+        var wood = Wood.Parse(material[WoodPrefix.Length..]);
+        foreach (var key in wood.Keys)
+        {
+            if (materials.TryGetValue(WoodPrefix + key, out var species)) return species.Strength;
+        }
+
+        WarnOnce(material, "Rough Seas has no strength for {0}; it takes that of an unknown wood");
+        return materials[UnknownWood].Strength;
+    }
+
+    private void WarnOnce(string material, string message)
+    {
+        if (warned.Add(material)) logger.Warning(message, material);
     }
 }

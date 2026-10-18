@@ -3,8 +3,9 @@
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
     "weight": 400,
-    "variantgroups": [{"code": "wood", "loadFromProperties": "block/wood"}],
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
+        "logTextures": {"bark": "all", "inside": "inside-north"},
         "speedMultiplier": 1.4,
         "turnSpeed": 0.7,
         "swimmingOffsetY": 0.3,
@@ -22,7 +23,7 @@
             "impactCapacity": 30000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "repairs": [{
-                "material": {"type": "block", "code": "game:log-placed-{wood}-ud", "stacksize": 1},
+                "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
                 "saturation": 80
             }],
@@ -103,7 +104,7 @@
             {"code": "roughseas-dugout-forward", "animation": "roughseas-dugout-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
             {"code": "roughseas-dugout-backward", "animation": "roughseas-dugout-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
         ],
-        "textures": {"bark": {"base": "game:block/wood/bark/{wood}-h"}, "inside": {"base": "game:block/wood/debarked/{wood}"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+        "textures": {"bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "repulseagents"},

@@ -28,6 +28,7 @@ public class VesselsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorVesselIntegrity.Code, typeof(EntityBehaviorVesselIntegrity));
         api.RegisterEntity(EntityVessel.ClassName, typeof(EntityVessel));
         api.RegisterItemClass(ItemVessel.ClassName, typeof(ItemVessel));
+        api.RegisterItemClass(ItemBark.ClassName, typeof(ItemBark));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHullMaterial.Code, typeof(CollectibleBehaviorHullMaterial));
         HullReach.Attach();
     }

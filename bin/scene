@@ -140,7 +140,7 @@ clear() {
   local range=${1:-64}
   shift || true
   local types=("$@")
-  [ ${#types[@]} -eq 0 ] && types=(boat-* roughseas:reedboat roughseas:dugout-* roughseas:coracle roughseas:barkcanoe roughseas:currach roughseas:outrigger-* item)
+  [ ${#types[@]} -eq 0 ] && types=(boat-* roughseas:reedboat roughseas:dugout-* roughseas:coracle roughseas:barkcanoe-* roughseas:currach roughseas:outrigger-* item)
   for type in "${types[@]}"; do
     "$game" do "/entity remove e[type=$type,range=$range]"
   done
@@ -241,7 +241,7 @@ views() {
 
 seats() {
   local codes=("$@") dir=$BENCH_TMP/seats id
-  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:coracle roughseas:barkcanoe roughseas:currach \
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:coracle roughseas:barkcanoe-birch roughseas:currach \
     roughseas:dugout-oak roughseas:outrigger-oak boat-raft-oak boat-sailed-oak)
   mkdir -p "$dir"
   local shots=() seat
@@ -289,7 +289,7 @@ reed-boat          roughseas:reedboat           roughseas:reedboat
 dugout             roughseas:dugout-oak         roughseas:dugout-oak
 dugout-redwood     roughseas:dugout-redwood     roughseas:dugout-redwood
 coracle            roughseas:coracle            roughseas:coracle
-birch-bark-canoe   roughseas:barkcanoe          roughseas:barkcanoe
+birch-bark-canoe   roughseas:barkcanoe-birch    roughseas:barkcanoe-birch
 currach            roughseas:currach            roughseas:currach
 outrigger          roughseas:outrigger-oak      roughseas:outrigger-oak
 outrigger-redwood  roughseas:outrigger-redwood  roughseas:outrigger-redwood

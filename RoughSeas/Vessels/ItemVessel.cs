@@ -17,6 +17,8 @@ public class ItemVessel : ItemBoat
         if (api is ICoreServerAPI sapi) sapi.Event.OnEntitySpawn += OnEntitySpawn;
     }
 
+    public override string GetHeldItemName(ItemStack itemStack) => Wood.NameOf(this) ?? base.GetHeldItemName(itemStack);
+
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling)
     {
         placing = slot.Itemstack?.Clone();

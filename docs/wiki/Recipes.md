@@ -2,7 +2,7 @@ Everything Rough Seas adds to the crafting grid, as the game's handbook shows it
 
 ## Birch bark
 
-Comes off a birch log with a knife, leaving the log debarked. It builds the [birch-bark canoe](Birch-Bark-Canoe) and [mends](Mending) it.
+Comes off a birch log with a knife, leaving the log debarked. It builds the [birch-bark canoe](Birch-Bark-Canoe) and [mends](Mending) it. Beside a mod that adds elm or spruce, their logs give bark the same way, and it builds an elm-bark or spruce-bark canoe.
 
 ![Birch bark from a birch log and a knife](images/recipes/birch-bark.png)
 
@@ -14,7 +14,7 @@ Cattail tops, papyrus tops or thatch, the reed that tule gives.
 
 ## Dugout
 
-Any wood. Redwood's logs come as sections, and it takes those.
+Any wood, a modded tree's too. Redwood's logs come as sections, and it takes those, as it does any wood that comes in sections.
 
 | | |
 | --- | --- |
@@ -35,7 +35,7 @@ Any wood. Redwood's logs come as sections, and it takes those.
 
 ## Outrigger canoe
 
-Logs and planks of one wood; redwood takes log sections.
+Logs and planks of one wood, a modded tree's too; redwood, and any wood that comes in sections, takes log sections.
 
 | | |
 | --- | --- |

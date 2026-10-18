@@ -38,7 +38,6 @@
 **[The science behind it](The-Science-Behind-It)**
 
 **[Beside other mods](Other-Mods)**
-- [Extreme Weathers](Extreme-Weathers)
 
 **[For modders](For-Modders)**
 
