@@ -273,6 +273,7 @@ settle() {
     [ $SECONDS -lt $deadline ] || fail "The server's chunks around flight $flight never settled; read $log"
     sleep 1
   done
+  [[ $line != *"still loading"* ]] || fail "${line##*\[bridge\] }; read $log"
   echo "${line##*\[bridge\] }"
 }
 
