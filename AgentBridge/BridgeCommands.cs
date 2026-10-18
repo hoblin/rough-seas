@@ -266,10 +266,11 @@ public class BridgeCommands : ModSystem
                 for (var hour = 0.0; hour < year * years; hour++)
                 {
                     var when = now + hour;
-                    var month = ((int)(when / year % 1 * 12) + shift) % 12;
+                    var month = (int)(when / year % 1 * 12);
+                    var season = (month + shift) % 12;
                     var wind = sea.Weather.Wind(point.X, point.Z, when);
                     strongest = Math.Max(strongest, wind.Speed);
-                    if (wind.Speed >= gale) galeMonths[month]++;
+                    if (wind.Speed >= gale) galeMonths[season]++;
                     var here = sea.Weather.Storms.Near(point.X, point.Z, when)
                         .Where(storm => type == null || storm.Code == type)
                         .Select(storm => (Storm: storm, storm.InfluenceAt(point.X, point.Z, when).Presence))
