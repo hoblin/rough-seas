@@ -23,6 +23,7 @@ public class SurfaceConfig
     public double TurnDegrees;
     public double Stretch;
     public double AimSeconds;
+    public double FullFoamMetres;
     public WhitecapsConfig[] Whitecaps = [];
 }
 

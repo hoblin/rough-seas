@@ -75,9 +75,9 @@ public sealed class SeaSurface
 
     public event Action<string>? Changed;
 
-    public void Aim(double height, double period, double towardRadians, double beaufort, double development = 1)
+    public void Aim(double height, double period, double towardRadians, double beaufort, double foamShare = 1)
     {
-        foamTarget = Foam.Lerp(default, FoamAt(beaufort), Math.Clamp(development, 0, 1));
+        foamTarget = Foam.Lerp(default, FoamAt(beaufort), Math.Clamp(foamShare, 0, 1));
         (SeaHeight, TowardRadians) = (height, towardRadians);
         var length = height > 0 ? Gravity * period * period / FullTurn : 0;
         if (length > 0 && (active < 0 || !Alike(towardRadians, length)))

@@ -12,7 +12,6 @@ public sealed class SurfaceClock : IRenderer
     private readonly SeaWeatherSystem sea;
     private readonly SeaSurface surface;
     private readonly SurfaceField field;
-    private readonly BeaufortScale beaufort;
     private readonly ICoreClientAPI capi;
     private double aimedAt = double.NegativeInfinity;
     private double loggedAt = double.NegativeInfinity;
@@ -25,7 +24,6 @@ public sealed class SurfaceClock : IRenderer
         this.sea = sea;
         this.surface = surface;
         this.field = field;
-        beaufort = new BeaufortScale(sea.Config.Beaufort);
         this.capi = capi;
         capi.Event.RegisterRenderer(this, EnumRenderStage.Before, "roughseas-surface");
     }
@@ -57,7 +55,6 @@ public sealed class SurfaceClock : IRenderer
         SurfaceShader.Upload();
         var state = sea.At(pos.X, pos.Z);
         seaHeight = field.Height;
-        var openSea = beaufort.WaveHeightAt(state.WindSpeed);
-        surface.Aim(seaHeight, field.Period, Math.Atan2(state.WindZ, state.WindX), state.Beaufort, openSea > 0 ? seaHeight / openSea : 0);
+        surface.Aim(seaHeight, field.Period, Math.Atan2(state.WindZ, state.WindX), state.Beaufort, seaHeight / storms.Config.Surface.FullFoamMetres);
     }
 }

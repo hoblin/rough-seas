@@ -102,6 +102,7 @@
         "turnDegrees": 20,
         "stretch": 0.25,
         "aimSeconds": 0.5,
+        "fullFoamMetres": 0.5,
         "whitecaps": [
             { "force": 2, "caps": 0, "streaks": 0, "spray": 0 },
             { "force": 3, "caps": 0.01, "streaks": 0, "spray": 0 },
