@@ -85,7 +85,22 @@ public class SeaWeatherModelTests
         const double storm = 25;
         var lags = Fixtures.Config().SeaBuildHours;
 
-        var means = SeaWeatherModel.TimeWeightedMeans(storm, lags.Select(lag => (lag, lag <= 2 ? storm : steady)));
+        var means = SeaWeatherModel.TimeWeightedMeans(storm, lags.Select(lag => (lag, lag <= 2 ? storm : steady)), lags);
+
+        Assert.InRange(means.Last().Mps, steady, steady + 1);
+    }
+
+    [Fact]
+    public void HoldsAShortStormLongAgoBriefInTheLongestMean()
+    {
+        const double steady = 7;
+        const double storm = 25;
+        var config = Fixtures.Config();
+        var lags = Enumerable.Range(1, (int)(config.SeaBuildHours.Max() / config.SeaSampleHours))
+            .Select(step => step * config.SeaSampleHours)
+            .Concat(config.SeaBuildHours).Distinct().Order();
+
+        var means = SeaWeatherModel.TimeWeightedMeans(steady, lags.Select(lag => (lag, Math.Abs(lag - 48) <= 1 ? storm : steady)), config.SeaBuildHours);
 
         Assert.InRange(means.Last().Mps, steady, steady + 1);
     }

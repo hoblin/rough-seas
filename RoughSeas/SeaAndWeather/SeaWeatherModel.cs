@@ -34,18 +34,28 @@ public class SeaWeatherModel
 
     public WorldClimate Climate => climate;
 
-    public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps) =>
-        TimeWeightedMeans(windMps, config.SeaBuildHours.Select(lag => (lag, Wind(x, z, hours - lag).Speed)));
+    public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps)
+    {
+        var longest = config.SeaBuildHours.Max();
+        var lags = config.SeaBuildHours
+            .Concat(Enumerable.Range(1, (int)(longest / config.SeaSampleHours)).Select(step => step * config.SeaSampleHours))
+            .Where(lag => lag <= longest)
+            .Distinct()
+            .Order();
+        return TimeWeightedMeans(windMps, lags.Select(lag => (lag, Wind(x, z, hours - lag).Speed)), config.SeaBuildHours);
+    }
 
-    public static (double Hours, double Mps)[] TimeWeightedMeans(double nowMps, IEnumerable<(double Lag, double Mps)> past)
+    public static (double Hours, double Mps)[] TimeWeightedMeans(double nowMps, IEnumerable<(double Lag, double Mps)> past, IReadOnlyCollection<double> windows)
     {
         var (area, lastLag, lastMps) = (0.0, 0.0, nowMps);
-        return past.Select(sample =>
+        var means = new List<(double Hours, double Mps)>();
+        foreach (var sample in past)
         {
             area += (sample.Lag - lastLag) * (lastMps + sample.Mps) / 2;
             (lastLag, lastMps) = (sample.Lag, sample.Mps);
-            return (sample.Lag, area / sample.Lag);
-        }).ToArray();
+            if (windows.Contains(sample.Lag)) means.Add((sample.Lag, area / sample.Lag));
+        }
+        return means.ToArray();
     }
 
     /// <summary>

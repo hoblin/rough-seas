@@ -38,7 +38,7 @@ SeaMapServer ── snapshot per region ─────────→  the wate
 - Young & Verhagen (1996), as CEM II-2 gives it, for every depth, with the depth's period cap Tp ≤ 9.78√(d/g).
 - Fetch is the straight line upwind: over the built world in `waves.fetchStepBlocks` steps while it is built, over the ocean map in `waves.openSeaStepBlocks` beyond, up to `waves.maxFetchBlocks`. It is scaled by the world's horizontal compression, `waves.realPolarEquatorMetres` over the world's `polarEquatorDistance` (×200 by default). Depth is not scaled.
 - Depth is worldgen's seabed where water still reaches it, and sounded block by block where the world changed. Beyond the built world it is the built depth measured so far.
-- Duration: the wind's mean over each of `seaBuildHours` becomes an equivalent fetch (CEM II-2-38), and the highest sea of those windows stands. A squall raises a young short sea; a storm builds one over hours.
+- Duration: the wind's mean over each of `seaBuildHours` becomes an equivalent fetch (CEM II-2-38), and the highest sea of those windows stands. The means are weighted by time over samples every `seaSampleHours`, so a brief storm long ago stays brief. A squall raises a young short sea; a storm builds one over hours.
 - Above `waves.kneeMetres` a soft knee bends the height toward `waves.ceilingMetres`.
 
 ## How it meets vanilla

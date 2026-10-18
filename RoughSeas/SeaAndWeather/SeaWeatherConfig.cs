@@ -6,6 +6,7 @@ public class SeaWeatherConfig
 {
     public BeaufortForce[] Beaufort = [];
     public double[] SeaBuildHours = [0];
+    public double SeaSampleHours;
     public PrevailingWind[] PrevailingWinds = [];
     public BackgroundWindConfig Background = new();
     public ShowersConfig Showers = new();
