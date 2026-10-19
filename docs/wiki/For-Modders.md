@@ -28,6 +28,7 @@ What these pages document is what we keep: vanilla's channels as they describe t
 | --- | --- |
 | `roughseas:seamap` | the map region moddata, and the network channel that carries the map to clients |
 | `roughseas:oceancalibration` | save data: what the world's ocean map means |
+| `roughseas:vessels` | the network channel a rider's client reports its vessel's knocks over |
 | `roughseas-force*` | our wind patterns; setting one by hand works, but the next lease renews it |
 
 ## Adding and removing Rough Seas

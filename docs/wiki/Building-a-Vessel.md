@@ -104,6 +104,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 | Key | What it is |
 | --- | --- |
 | `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required |
+| `minImpactSpeed` | the speed in m/s a hull takes in its stride when it runs into something: a knock below it is no knock, and only the energy above it counts. Default 1 |
 | `parts` | what it is built from: `{ "material": "wood-{material}", "reference": "wood-oak" }` scales the capacity by the material's strength against the reference's, from `config/vessels/materials.json` |
 | `wearPerDay` | integrity lost per game day afloat, 0 for none |
 | `runsRapids` | true if rapids don't strike it |
@@ -113,7 +114,16 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 
 `repairsByType` and `wreckageByType` work as vanilla's `ByType` keys do.
 
-How a collision at speed strikes the hull is being rebuilt ([#122](https://github.com/hoblin/rough-seas/issues/122)). Until it ships, give `impactCapacity` the energy of a knock the hull should shrug off most of the time, and read our vessels of the same build for a scale.
+**Knocks.** A knock is vanilla's own collision: when the physics stops the hull against a block, the speed it loses into that block strikes it, so a glancing blow counts only the part pointing into the wall. It takes vanilla's passive physics on the entity (`passivephysicsmultibox`, or `passivephysics`). A drifting vessel is measured on the server and a steered one on its rider's client, which reports to the server; a stalled server fakes no knock either way. Entities don't knock a hull: two vessels, or a vessel and a creature, only push each other apart.
+
+A knock strikes with ½ · mass · (speed² − `minImpactSpeed`²), where the mass is everything aboard:
+
+- the entity's own `weight`;
+- each seated passenger by its entity's `weight`, a player with 10 kg of everyday gear and its armour, weighed from how much the armour slows its wearer (a worn item's `statModifiers.walkSpeed`, 60 kg for each 1 of slowdown);
+- each accessory by the category it attaches as, at its empty weight (`basket` 2 kg, `crate` 12, `chest` 20); what they hold doesn't count;
+- the water in its `roughseas:bilge`, by how full it is: a full bilge counts all its weight, a half-full one half.
+
+The gear, armour and container weights are in `config/vessels/impact.json`, which a patch can change. Give `impactCapacity` by the knocks the hull should take: our coracle's 400 J and dugout's 30,000 bracket the roster, and [Hull condition](Hull-Condition#knocks-and-landings) turns a capacity into the chance a knock does harm.
 
 **Carried as an item.** A vessel picked up keeps its condition as the item's durability, as a tool keeps its wear. That takes our item class `roughseas:ItemVessel` with a `durability`, and the item's code the same as the entity's. Shift and right-click picks it up when the entity's attributes carry `rightClickPickup: true`. A selection box `HullAP` gives the hull a box of its own for mending, apart from the seats.
 
