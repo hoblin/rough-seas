@@ -1,4 +1,4 @@
-Rough Seas needs to know where the sea is far beyond what is built: a wave grows over all the open water upwind, and a current turns over a whole ocean. It asks the world. This page is for a mod that shapes the world's oceans, or calls vanilla's ocean layer.
+Rough Seas needs to know where the sea is far beyond what is built: a wave grows over all the open water upwind, a current turns over a whole ocean, storms are born over the sea (a hurricane never over land), and the wind blows harder over the sea than over land. It asks the world. This page is for a mod that shapes the world's oceans, or calls vanilla's ocean layer.
 
 ## The world's own layer
 

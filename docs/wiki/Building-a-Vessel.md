@@ -8,7 +8,7 @@ On the server, once a wave period, every vessel in a sea of 0.3 m or more meets 
 
 On both sides, a vessel with a hull of ours floats by its full mass: hull, riders, their gear and armour, containers and the water aboard settle it lower, and it floods when its side goes under. On a client, it rides the drawn sea: lifted with the surface under it, rolled and pitched with its slope, on periods of its own mass. Water aboard rolls it harder and slows it, and a full bilge swamps it.
 
-Waves come aboard and strike only with [Dangerous oceans](World-Settings#dangerous-oceans) on. With it off the sea still runs, the swell is still drawn, currents still carry vessels, and cracks still leak.
+The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oceans) on. With it off, no wave comes aboard or strikes, no rain falls into a bilge, storms neither pull at a mooring nor throw a vessel ashore, and lightning leaves the hull alone. The sea still runs, the swell is still drawn, currents still carry vessels, knocks against rock still crack a hull, and cracks still leak.
 
 ## The behaviours
 
@@ -85,7 +85,7 @@ Every vessel of ours is a whole example, each number with its source: `assets/ro
 
 A crest stands half a wave's height above still water, seven tenths when it breaks; the hull rises with `heave` of that. Water aboard adds to the roll, twice as much when full. A vessel that floats by its mass ships water over the freeboard it floats at; one with a fixed `freeboardMetres` loses it in proportion to its bilge, all of it when full.
 
-**Capsizing is switched off** for now ([Capsizing](Surf-and-Swamping#capsizing)). Give `capsizeBreakerMetres` anyway: it comes back in [Seamanship](Roadmap#seamanship).
+**Capsizing is switched off** ([Capsizing](Surf-and-Swamping#capsizing)), so `capsizeBreakerMetres` does nothing today. It waits for heel and sailing by the wind in [Seamanship](Roadmap#seamanship): a hull will heel by its stability under any push from the side, the wind in a sail or a breaker on the beam, and overturn past the angle it can't come back from. What a vessel gives for that is not settled yet.
 
 **Riding the drawn swell.** On a client, the vessel is posed on the surface under it, sampled at the ends and sides of a square as wide as its collision box's longer side. A vessel that floats by its mass follows that pose on its own heave and roll periods, from its draft, depth and beam ([How a hull answers](Reading-the-Sea#how-a-hull-answers)); one that doesn't takes the water's pose as it lies. This rides on vanilla's boat: the entity must be an `EntityBoat` or derive from it, and a class of yours that overrides `OnRenderFrame` calls the base, or it isn't posed. A vessel that can't, poses itself on the same surface through [the drawn sea](Reading-the-Sea#the-drawn-sea). Where no swell is drawn it rolls and pitches as vanilla rocks it, times `rollResponse` and `pitchResponse`.
 
@@ -109,12 +109,12 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 
 ## The hull
 
-`roughseas:vesselintegrity`: the hull ([Hull condition](Hull-Condition)). Every blow is weighed against the hull's capacity, by chance, harder blows harming more often and more, and lands on one of seven places. Breakers, rapids, and any damage the entity receives through vanilla (weapons, explosions, lightning, falling) all strike it. A mod's cannonball needs no code of ours: the damage it deals becomes a blow, where it hits.
+`roughseas:vesselintegrity`: the hull ([Hull condition](Hull-Condition)). Every blow is weighed against the hull's capacity, by chance, harder blows harming more often and more, and lands on one of seven places. Breakers, rapids, and any damage the entity receives through vanilla (weapons, explosions, lightning, falling) all strike it. A mod's cannonball needs no code of ours: the damage it deals becomes a blow, where it hits. A `reed` hull gives under every blow and takes no harm from any of them; only soaking sinks it.
 
 | Key | What it is |
 | --- | --- |
-| `model` | how the hull is made: `cracking` (the default), cracked place by place and leaking, as our wooden, bark and hide hulls; `lashed`, one lashing that knocks work loose, which never floods, as our raft; `reed`, which knocks don't harm and which soaks, can't be mended, as our reed boat |
-| `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required for a `cracking` or `lashed` hull; on a `reed` hull, which knocks don't harm, it sets how hard a knock sounds |
+| `model` | how the hull is made: `cracking` (the default), cracked place by place and leaking, as our wooden, bark and hide hulls; `lashed`, one lashing that knocks work loose, which never floods, as our raft; `reed`, which no blow harms and which soaks, can't be mended, as our reed boat |
+| `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required for a `cracking` or `lashed` hull; on a `reed` hull, which no blow harms, it sets how hard a knock sounds |
 | `minImpactSpeed` | the speed in m/s a hull takes in its stride when it runs into something: a knock below it is no knock, and only the energy above it counts. Default 1 |
 | `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1). Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
 | `depthMetres` | keel to gunwale amidships. With it the vessel floats by its mass; without it, at its `freeboardMetres` |

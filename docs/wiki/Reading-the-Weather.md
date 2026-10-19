@@ -4,10 +4,20 @@ Rough Seas doesn't replace the game's weather; it drives it. Vanilla's weather s
 
 - **Wind.** `BlockAccessor.GetWindSpeedAt(pos)` returns the wind there, through the same `OnGetWindSpeed` event as in vanilla. Vanilla's wind has a strength and no direction, so it fills X alone. Ours has a direction, so we fill X toward east and Z toward south. If your mod reads X as the strength, read the vector's length instead; it is the same strength vanilla would give.
 - **Units.** 1.0 is 25 m/s, a storm on the Beaufort scale; vanilla's own `storm` pattern blows at 1.0 and its `mediumbreeze` at 0.3, so ours land on the scale you already know. Above sea level vanilla caps the wind at 1.5; ours isn't capped there, so a hurricane goes past it.
-- **Rain.** Our rain falls from our model's clouds, storms' included, and we write it into the same values vanilla writes its own: `GetClimateAt(pos)` gives the rain falling there as `Rainfall` and the cloud as `RainCloudOverlay`, and `WeatherSystemBase.GetPrecipitation(pos)` the rain alone.
+- **Rain.** Our rain falls from our model's clouds: ordinary showers, oftener and heavier where the world's climate is wetter, and our storms' rain. We write it into the same values vanilla writes its own: `GetClimateAt(pos)` gives the rain falling there as `Rainfall` and the cloud as `RainCloudOverlay`, and `WeatherSystemBase.GetPrecipitation(pos)` the rain alone.
 - **Temperature.** Untouched: we read it. A mod that shifts the temperature shifts where our storms snow and where they thunder, and how strong our gales grow.
 
 Wind direction, waves and currents have no place in vanilla; read them from our own code, on [Reading the sea](Reading-the-Sea).
+
+## What moves our sea
+
+Our model of the wind, the storms and the waves stands on two things it never changes: the world as worldgen built it, and its climate as the game computes it. A mod that changes those changes our sea:
+
+- **Temperature**, moved by any mod, through the game's own climate: how strong our gales grow, which follows the season's temperature gradient, and whether a storm snows or thunders.
+- **The climate's rainfall**: how often ordinary showers come.
+- **The ocean map**: where the sea is ([The ocean map](The-Ocean-Map)).
+
+A mod that sets the weather in vanilla's place doesn't reach our model. A wind pattern you set, or another mod's storm, changes what vanilla reports where it blows; our own wind, our storms and the waves they raise go on as our model has them, and so does what `ISeaWeather` answers. A precipitation override dries our rain, as it dries vanilla's, but leaves the wind and the sea as they were.
 
 ## Changing it
 
