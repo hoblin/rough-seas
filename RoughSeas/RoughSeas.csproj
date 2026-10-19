@@ -28,10 +28,6 @@
       <HintPath>$(VINTAGE_STORY)/Lib/0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="OpenTK.Graphics">
-      <HintPath>$(VINTAGE_STORY)/Lib/OpenTK.Graphics.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
       <Private>False</Private>
@@ -41,6 +37,10 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+
+<ItemGroup>
+  <PackageReference Include="OpenTK.Graphics" Version="4.9.4" ExcludeAssets="runtime" PrivateAssets="all" />
+</ItemGroup>
 
 <ItemGroup>
   <Content Include="modinfo.json;worldconfig.json">
