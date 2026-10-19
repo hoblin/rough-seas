@@ -120,18 +120,18 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 
 | Vessel | Bilge | Stove-in bottom | Stove-in side | The bottom fills her in |
 | --- | --- | --- | --- | --- |
-| [Coracle](Coracle) | 250 litres | 107 litres a minute | 21 | under two minutes |
-| [Dugout](Dugout) | 450 litres | 184 | 130 | two minutes |
-| [Outrigger canoe](Outrigger-Canoe) | 600 litres | 186 | 98 | two and a half minutes |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 600 litres | 84 | none | four minutes |
-| [Sailboat](Sailboat) | 1500 litres | 325 | 242 | four minutes |
-| [Hide currach](Hide-Currach) | 1500 litres | 86 | none | eight minutes |
+| [Coracle](Coracle) | 250 litres | 107 litres a minute | 21 | two and a half minutes |
+| [Dugout](Dugout) | 450 litres | 184 | 130 | two and a half minutes |
+| [Outrigger canoe](Outrigger-Canoe) | 600 litres | 186 | 98 | three minutes |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 600 litres | 84 | none | seven minutes |
+| [Sailboat](Sailboat) | 1500 litres | 325 | 242 | four and a half minutes |
+| [Hide currach](Hide-Currach) | 1500 litres | 86 | none | seventeen minutes |
 
-Each leak quickens as the water aboard settles her, and a bottom only cracked by a hard knock lets in about a third as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) she is done.
+A bottom leak keeps its pace as she fills, for the water inside rises with her; a side leak slows once the water inside stands above it. A bottom only cracked by a hard knock lets in about a third as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) she is done.
 
 ## Seeping and soaking
 
-A wooden hull barely wears: the dugout, the outrigger, the bark canoe and the sailboat need no upkeep. Two hulls change just by floating, counted in game hours afloat, wherever they are:
+A wooden hull barely wears: the dugout, the outrigger, the bark canoe and the sailboat need no upkeep. Two hulls change just by floating, counted in game hours afloat:
 
 - The [hide currach](Hide-Currach)'s seams seep 30 litres a game hour into her bilge once the grease is gone. Rendered fat keeps them tight for two and a half days afloat; look at her to see when the next greasing is due.
 - The [reed boat](Reed-Boat) soaks up 80 kg of water a day afloat, sitting deeper as it does, and lies on the bottom after about three days. Ashore under the open sky, in daylight and no rain, it dries out, but each drying leaves a third of what it drove out behind as rot that never dries. Soaked through and dried about five times, it sinks the moment it is launched.
