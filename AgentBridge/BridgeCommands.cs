@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
@@ -28,6 +29,7 @@ public class BridgeCommands : ModSystem
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
     private ChunkSettle settle = null!;
+    private int suspendMs;
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Server;
 
@@ -38,6 +40,7 @@ public class BridgeCommands : ModSystem
         var benchDefaults = Environment.GetEnvironmentVariable("AGENT_BRIDGE_BENCH_DEFAULTS") != "off";
         if (api.ModLoader.IsModEnabled("roughseas")) drift = new DriftSwitch { Drifting = !benchDefaults };
         if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
+        api.Event.ServerSuspend += HoldSuspension;
         var parsers = api.ChatCommands.Parsers;
         api.ChatCommands.Create("bridge")
             .WithDescription("Agent bridge: server-side state as JSON")
@@ -165,6 +168,16 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Long("id"), parsers.Double("joules"))
                 .HandleWith(args => Strike(sapi.World.GetEntityById((long)args[0]), (double)args[1]))
             .EndSubCommand()
+            .BeginSubCommand("lag")
+                .WithDescription("Stall the server's main thread for this many milliseconds on each of its next ticks, as a lag spike or a heavy mod does, world time running on")
+                .WithArgs(parsers.IntRange("ms", 1, 60000), parsers.OptionalIntRange("ticks", 1, 1000, 1))
+                .HandleWith(args => Lag((int)args[0], (int)args[1]))
+            .EndSubCommand()
+            .BeginSubCommand("suspend")
+                .WithDescription("Autosave and stay suspended this many milliseconds longer, world time paused, as a heavy autosave does")
+                .WithArgs(parsers.IntRange("ms", 1, 60000))
+                .HandleWith(args => Suspend((int)args[0], args.Caller))
+            .EndSubCommand()
             .BeginSubCommand("blast")
                 .WithDescription("Set off an explosion that harms entities but no blocks, this many blocks from an entity")
                 .WithArgs(parsers.Long("id"), parsers.Int("injureRadius"), parsers.OptionalDouble("distance"))
@@ -195,6 +208,36 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success(drift.Drifting
             ? "Unridden vessels drift with the current and the wind"
             : "Unridden vessels hold still; /bridge drift on lets them drift");
+    }
+
+    private TextCommandResult Lag(int ms, int ticks)
+    {
+        long listener = 0;
+        int left = ticks;
+        listener = sapi.Event.RegisterGameTickListener(_ =>
+        {
+            Thread.Sleep(ms);
+            if (--left > 0) return;
+            sapi.Event.UnregisterGameTickListener(listener);
+            Mod.Logger.Debug("[bridge] lagged the server {0} ms on each of {1} ticks", ms, ticks);
+        }, 0);
+        return TextCommandResult.Success($"The server stalls for {ms} ms on each of its next {ticks} ticks");
+    }
+
+    private TextCommandResult Suspend(int ms, Caller caller)
+    {
+        suspendMs = ms;
+        sapi.ChatCommands.ExecuteUnparsed("/autosavenow", new TextCommandCallingArgs { Caller = caller });
+        return TextCommandResult.Success($"The server autosaves and stays suspended {ms} ms longer");
+    }
+
+    private EnumSuspendState HoldSuspension()
+    {
+        if (suspendMs == 0) return EnumSuspendState.Ready;
+        Thread.Sleep(suspendMs);
+        Mod.Logger.Debug("[bridge] held the suspension for {0} ms", suspendMs);
+        suspendMs = 0;
+        return EnumSuspendState.Ready;
     }
 
     private TextCommandResult Await(IServerPlayer player, string? type, string? warmth, double presence, double hours)

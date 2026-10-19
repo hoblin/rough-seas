@@ -1,0 +1,9 @@
+{
+    "playerGearKg": 10,
+    "armorKgPerWalkSpeed": 60,
+    "containerKg": {
+        "basket": 2,
+        "crate": 12,
+        "chest": 20
+    }
+}

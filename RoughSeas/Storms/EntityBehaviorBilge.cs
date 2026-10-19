@@ -7,15 +7,17 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Vessels;
 
 namespace RoughSeas.Storms;
 
-public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
+public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesselLoad
 {
     public const string Code = "roughseas:bilge";
 
     private const string TreeKey = "roughseas:bilge";
     private const int DataVersion = 1;
+    private const double SeawaterKgPerLitre = 1.025;
 
     private StormsModSystem storms = null!;
     private ISeaWeather sea = null!;
@@ -46,6 +48,8 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity)
     public double Fill => CapacityLitres > 0 ? Litres / CapacityLitres : 0;
 
     public bool Swamped => CapacityLitres > 0 && Litres >= CapacityLitres;
+
+    public double ImpactKilograms => Litres * SeawaterKgPerLitre * Fill;
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 

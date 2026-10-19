@@ -196,6 +196,11 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge ropes ID           where each rope tied to entity ID is pinned: a block, an entity, or loose
   /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with
                              its integrity (watched "roughseas:vessel"), 0 breaks it into wreckage
+  /bridge lag MS [TICKS]     stall the server's main thread MS ms on each of its next TICKS ticks
+                             (default 1), world time running on, as a lag spike or a heavy mod does;
+                             the client goes on and its packets queue
+  /bridge suspend MS         autosave and stay suspended MS ms longer, world time paused, as a heavy
+                             autosave does
   /bridge interact ID attack|interact [none|ctrl|shift] [BOX]
                              (BOX: the selection box clicked, by its attachment point, e.g.
                              CargoAP to put a held basket there with ctrl; by default the click lands
