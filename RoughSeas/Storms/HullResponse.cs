@@ -2,6 +2,14 @@ using System;
 
 namespace RoughSeas.Storms;
 
+/// <summary>
+/// How a hull of its own mass answers the drawn sea: one per hull, fed each frame with what
+/// <see cref="IDrawnSea.PoseOf"/> gives it. A hull with periods of 0 follows the water as it lies.
+/// </summary>
+/// <example><code>
+/// var response = HullResponse.Of(length, beam, draft, depth, storms.Config.Response);
+/// var pose = response.Follow(storms.DrawnSea.PoseOf(x, z, yaw, length, beam), frameSeconds);
+/// </code></example>
 public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSeconds, ResponseConfig config)
 {
     private const double Gravity = 9.81;
@@ -15,12 +23,17 @@ public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSec
 
     public double RollPeriodSeconds { get; set; } = rollPeriodSeconds;
 
+    /// <summary>The response of a hull of these dimensions in metres, floating at this draft.</summary>
     public static HullResponse Of(double lengthMetres, double beamMetres, double draftMetres, double depthMetres, ResponseConfig config) =>
         new(HeavePeriod(draftMetres, config), RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres), config);
 
+    /// <summary>Seconds: 2π √((M + A₃₃) / (ρ g A_w)), which for a prismatic hull is a function of its draft alone.</summary>
     public static double HeavePeriod(double draftMetres, ResponseConfig config) =>
         2 * Math.PI * Math.Sqrt((1 + config.HeaveAddedMass) * Math.Max(draftMetres, 0) / Gravity);
 
+    /// <summary>
+    /// Seconds, by 46 CFR 28.575: 2·C·B / √GM, with GM of a box hull whose centre of gravity sits at half its depth.
+    /// </summary>
     public static double RollPeriod(double lengthMetres, double beamMetres, double draftMetres, double depthMetres)
     {
         double draft = Math.Max(draftMetres, 0.01);
@@ -29,6 +42,10 @@ public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSec
         return 2 * coefficient * beamMetres / Math.Sqrt(metacentricHeight);
     }
 
+    /// <summary>
+    /// The pose the hull takes this frame, <paramref name="seconds"/> after the last, chasing the water's pose as a
+    /// damped oscillator of its own periods. Where no swell is drawn it comes to rest at once.
+    /// </summary>
     public SeaPose Follow(SeaPose pose, double seconds)
     {
         if (pose.Hold <= 0 || seconds <= 0)

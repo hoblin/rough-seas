@@ -186,7 +186,7 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge drop CODE X Y Z    an item or block CODE lying on the ground there, at rest (~ relative)
   /bridge set ID KEY VALUE   set a watched attribute: int, float, bool or string by its form, while a
                              double or float stays what it is; e.g. the sailboat's sailPosition 0, 1, 2;
-                             TREE/KEY reaches into a tree: roughseas:vessel/integrity 0.6 for a hull,
+                             TREE/KEY reaches into a tree: roughseas:vessel/cracks/portside 0.6 for a crack (once the hull has one), roughseas:vessel/lashing 0.6 for a raft,
                              roughseas:bilge/litres 200 for the water aboard
   /bridge fly X Y Z          hover there in creative free flight, out of any seat: no sinking.
                              X Y Z as /tp takes them (~ relative). Then `aim ID` or `look`
@@ -196,20 +196,25 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge tie ID X Y Z      tie entity ID to the block at absolute X Y Z with a vanilla rope, as a
                              player would (a vessel to a fence post: its stake)
   /bridge ropes ID           where each rope tied to entity ID is pinned: a block, an entity, or loose
-  /bridge strike ID JOULES   strike a vessel's hull as an impact of that energy would; replies with
-                             its integrity (watched "roughseas:vessel"), 0 breaks it into wreckage
+  /bridge strike ID JOULES [PLACE]
+                             strike a vessel's hull at PLACE (portbow, starboardbow, portside (default),
+                             starboardside, portquarter, starboardquarter, bottom) as an impact of that
+                             energy would; replies with its hull: each place's crack (watched
+                             "roughseas:vessel/cracks"), the mass aboard, draft, freeboard, sunk.
+                             0 J changes nothing: a way to read the hull
   /bridge lag MS [TICKS]     stall the server's main thread MS ms on each of its next TICKS ticks
                              (default 1), world time running on, as a lag spike or a heavy mod does;
                              the client goes on and its packets queue
   /bridge suspend MS         autosave and stay suspended MS ms longer, world time paused, as a heavy
                              autosave does
-  /bridge interact ID attack|interact [none|ctrl|shift] [BOX]
+  /bridge interact ID attack|interact [none|ctrl|shift] [BOX] [PLACE]
                              (BOX: the selection box clicked, by its attachment point, e.g.
                              CargoAP to put a held basket there with ctrl; by default the click lands
-                             on the entity itself, no box)
+                             on the entity itself, no box. PLACE: where on a vessel's hull it lands,
+                             as for strike: a mend patches that place)
                              what the server does when the player left- or right-clicks entity
                              ID with the held item, wherever the player stands, with ctrl or shift
-                             held; replies with its integrity if it is a vessel. The client sends
+                             held; replies with its hull if it is a vessel. The client sends
                              no click, so use it where `click` cannot reach the entity. With
                              shift, a vessel that can be carried is picked up, as Shift + click does
   /bridge blast ID RADIUS [DISTANCE]

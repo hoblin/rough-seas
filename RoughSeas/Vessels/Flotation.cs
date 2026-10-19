@@ -2,6 +2,11 @@ using System;
 
 namespace RoughSeas.Vessels;
 
+/// <summary>
+/// Draft and freeboard by Archimedes. A hull with a hold floats on its waterplane until its side is under; a solid
+/// one (a raft, a reed boat), given no waterplane, is pressed down through its own depth and holds its load awash.
+/// Flooded or solid, it sinks when what the water does not hold up outweighs what its material keeps afloat.
+/// </summary>
 public sealed class Flotation(double depthMetres, double waterplaneSquareMetres, double materialLitres)
 {
     private const double LitresPerCubicMetre = 1000;

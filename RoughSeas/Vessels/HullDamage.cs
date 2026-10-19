@@ -29,6 +29,8 @@ public sealed class HullDamage
 
     public void Show(System.Func<HullPlace, int> stage)
     {
+        // Inserting may grow the entity atlas, which only the main thread may do; tesselation can run elsewhere,
+        // so it gets a finished snapshot, never one being filled.
         var stages = HullShape.Places.Where(place => stage(place) > 0).ToDictionary(place => place, stage);
         var positions = new Dictionary<string, TextureAtlasPosition>();
         foreach (var (place, placeStage) in stages)

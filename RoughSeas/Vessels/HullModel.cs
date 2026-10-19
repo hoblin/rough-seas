@@ -5,6 +5,11 @@ using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Vessels;
 
+/// <summary>
+/// What a vessel's hull is made like, picked by the <c>model</c> key of its <c>roughseas:vesselintegrity</c>: how it
+/// takes a knock, time afloat and mending, through the interfaces it implements. Its state lives in the vessel's
+/// watched <c>roughseas:vessel</c> tree.
+/// </summary>
 public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
 {
     private static readonly Dictionary<string, Func<Func<ITreeAttribute>, Action, JsonObject, HullConfig, HullModel>> Models = new()
@@ -51,16 +56,19 @@ public enum Knock
     BrokenUp
 }
 
+/// <summary>A hull a knock harms: <paramref name="loss"/> is the harm the roll against its capacity dealt, out of a whole hull.</summary>
 public interface IKnockable
 {
     Knock Take(HullPlace place, double loss);
 }
 
+/// <summary>A hull that changes with time: <paramref name="sun"/> is the daylight it dries in ashore, 0 in shade, rain or water.</summary>
 public interface IAfloat
 {
     void Pass(double days, bool afloat, double sun);
 }
 
+/// <summary>A hull mended by hand; the patch goes on the place looked at.</summary>
 public interface IMendable
 {
     bool Needs(HullRepair repair, HullPlace place);
@@ -68,6 +76,7 @@ public interface IMendable
     string Mend(HullRepair repair, HullPlace place);
 }
 
+/// <summary>How a vessel floats now, from its full mass by Archimedes; refreshed twice a second on both sides.</summary>
 public interface IBuoyant
 {
     Afloat Afloat { get; }

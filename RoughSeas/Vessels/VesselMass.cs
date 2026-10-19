@@ -56,5 +56,6 @@ public readonly record struct Aboard(double Hull, double Bodies, double Kit, dou
 
     public double Impact => Hull + Bodies + Kit + Containers + CoupledWater;
 
+    /// <summary>What the water does not hold up once she is awash: a rider's body is about as dense as seawater.</summary>
     public double Sinking => Hull + Kit + Containers;
 }

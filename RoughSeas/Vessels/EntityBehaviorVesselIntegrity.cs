@@ -72,6 +72,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
 
     public Afloat Afloat { get; private set; }
 
+    /// <summary>How much lower than the line vanilla draws her at she floats: that line is her reference build with one rider aboard.</summary>
     public double SettlingMetres { get; private set; }
 
     public Aboard Aboard { get; private set; }

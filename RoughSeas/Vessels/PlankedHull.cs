@@ -98,6 +98,7 @@ public sealed class PlankedHull : HullModel, IKnockable, IAfloat, IMendable
         return config.DischargeCoefficient * area * Math.Sqrt(2 * Gravity * head) * LitresPerCubicMetre;
     }
 
+    // Level for now: heel raises it on the lee side, where a breach above the waterline starts to leak.
     private static double Waterline(HullPlace place, Afloat afloat) => afloat.DraftMetres;
 
     private double CrackHeight(HullPlace place, double depthMetres) => place == HullPlace.Bottom ? 0 : config.SideCrackShare * depthMetres;
