@@ -31,7 +31,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Built from | 4 logs and 8 planks of one wood (or 4 log sections and 8 planks of that mod's woods), 2 ropes and a sail |
 | Wreckage | planks, a rope and some linen |
 
-Its sail drives it the same whatever the wind does; sailing by the wind comes in [2.1](Roadmap#21-seamanship).
+Its sail drives it the same whatever the wind does; sailing by the wind comes in [Seamanship](Roadmap#seamanship).
 
 ## How it is built
 

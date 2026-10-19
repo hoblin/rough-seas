@@ -24,4 +24,4 @@ What stays either way:
 - [impacts](Hull-Condition#knocks-and-landings) on rock and shore, [rapids](Rapids), [wear](Hull-Condition#wear), weapons and explosions;
 - [mending](Mending), [bailing](Bailing), anchoring and tying up.
 
-Nothing in Rough Seas harms a swimmer yet: cold water and swimming stamina are planned for [2.2](Roadmap#22-the-living-sea).
+Nothing in Rough Seas harms a swimmer yet: cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).

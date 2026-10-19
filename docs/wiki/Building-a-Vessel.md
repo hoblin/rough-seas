@@ -76,7 +76,7 @@ Every vessel of ours is a whole example, each number with its source: `assets/ro
 
 A wave lifts a hull a crest of about half its height, seven tenths when it breaks. Water aboard takes off freeboard in proportion, up to all of it when the bilge is full, and adds to the roll, twice as much when full.
 
-**Capsizing is switched off** in 2.0 ([Capsizing](Surf-and-Swamping#capsizing)). Give `capsizeBreakerMetres` anyway: it comes back in [2.1](Roadmap#21-seamanship).
+**Capsizing is switched off** in 2.0 ([Capsizing](Surf-and-Swamping#capsizing)). Give `capsizeBreakerMetres` anyway: it comes back in [Seamanship](Roadmap#seamanship).
 
 **Riding the drawn swell.** On a client, the vessel is posed on the surface under it, sampled at the ends and sides of its collision box. This rides on vanilla's boat: the entity must be an `EntityBoat` or derive from it, and a class of yours that overrides `OnRenderFrame` calls the base, or it isn't posed. Where no swell is drawn it rolls and pitches as vanilla rocks it, times `rollResponse` and `pitchResponse`.
 
