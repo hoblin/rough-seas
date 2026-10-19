@@ -17,8 +17,10 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Speed | 2.7 × the raft under full sail, faster than the sailboat |
 | Turning | clumsy |
 | [Hull](Hull-Condition) | 15 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
-| [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 2 planks of its wood restore a fourteenth |
+| Upkeep | none |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 45 cm empty, 40 cm with its helmsman, in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 130 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Mending](Mending) | 2 planks of its wood close a fourteenth of a stove-in place |
 | [Bilge](Bailing) | 600 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.1 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3.4 m mast draws strikes |

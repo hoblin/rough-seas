@@ -14,7 +14,7 @@ public class Impact(double give, long guardMs)
     private double keptX, keptZ;
     private long? struckAt;
 
-    public double? Step(double motionX, double motionZ, long milliseconds)
+    public Knocked? Step(double motionX, double motionZ, long milliseconds)
     {
         double lostX = motionX == 0 ? keptX : 0;
         double lostZ = motionZ == 0 ? keptZ : 0;
@@ -24,10 +24,12 @@ public class Impact(double give, long guardMs)
         if (speedLost <= give || milliseconds - struckAt < guardMs) return null;
 
         struckAt = milliseconds;
-        return speedLost;
+        return new Knocked(speedLost, lostX * TicksPerSecond, lostZ * TicksPerSecond);
     }
 
     public void Forget() => (keptX, keptZ) = (0, 0);
 
     public double Joules(double kilograms, double speedLost) => 0.5 * kilograms * (speedLost * speedLost - give * give);
 }
+
+public readonly record struct Knocked(double SpeedLost, double TowardX, double TowardZ);

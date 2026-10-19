@@ -86,3 +86,24 @@ SeaPose pose = drawn.PoseOf(x, z, yaw, length, width);
 - **Blend by `Hold`.** Our vessels rock as vanilla rocks them where no swell is drawn and take the pose where it holds them fully, blending between by `Hold`. A shallow bay draws a lower swell than the open sea, so it holds less.
 - **The pose is only the picture.** The server knows nothing of it: breakers, shipped water and impacts come from the sea state. Read it every frame, in your render path; it changes as the waves move.
 - **A pose is the water's slope.** Ours multiply roll and pitch by a vessel's `rollResponse` and `pitchResponse`; yours scales them as its hull would.
+
+### How a hull answers
+
+A hull of some mass doesn't take the water's pose at once: it lifts, rolls and pitches toward it on periods of its own, so a light canoe follows a long swell as the water lies and a heavy, deep hull lets a short chop pass under her. `HullResponse`, in `RoughSeas.Storms`, is how ours do it, and yours can do the same: one instance per hull, fed every frame with what `PoseOf` gives.
+
+```csharp
+var config = api.ModLoader.GetModSystem<StormsModSystem>().Config.Response;
+var response = HullResponse.Of(length, beam, draft, depth, config);
+SeaPose answered = response.Follow(drawn.PoseOf(x, z, yaw, length, beam), frameSeconds);
+```
+
+| Member | What it is |
+| --- | --- |
+| `HullResponse.Of(lengthMetres, beamMetres, draftMetres, depthMetres, config)` | the response of a hull of these dimensions, floating at this draft |
+| `new HullResponse(heavePeriodSeconds, rollPeriodSeconds, config)` | one on periods you give; a period of 0 follows the water as it lies |
+| `Follow(pose, seconds)` | the pose it takes `seconds` after the last call, chasing `pose` as a damped oscillator; where no swell is drawn it comes to rest at once |
+| `HeavePeriodSeconds`, `RollPeriodSeconds` | its periods; set them as its draft changes |
+| `HullResponse.HeavePeriod(draftMetres, config)` | heave and pitch: 2π √((1 + added mass) × draft / g), in seconds |
+| `HullResponse.RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres)` | roll by 46 CFR 28.575, 2 C B / √GM, for a box hull with its centre of gravity at half its depth, in seconds |
+
+`Follow` returns the pose with its `Lift`, `Roll` and `Pitch` answered, its `Hold` as it was: blend by it as before. Ours refresh the periods from the hull's draft every frame, so a laden hull answers slower than an empty one. `config` is the `response` block of our `config/storms.json`: `heaveAddedMass` (the water a hull drags with it, in its own masses: 1), and `heaveDamping` (0.3) and `rollDamping` (0.1), both shares of critical damping. A gap between calls longer than the hull's shortest period is caught up as that period alone, so a hull returning to the water does not leap.

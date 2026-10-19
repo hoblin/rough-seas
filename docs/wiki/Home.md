@@ -4,7 +4,7 @@
 
 *The sea lets you cross. It never promises to.*
 
-Rough Seas is a [Vintage Story](https://www.vintagestory.at/) mod that makes the ocean dangerous and worth going out on. The sea gets weather of its own: wind that rises and falls, storms that cross the world, waves that break on the shore and currents that turn the oceans. Every vessel can be worn, swamped or broken, each by what it is made of, and six new ones fill the gap between the raft and the sailboat.
+Rough Seas is a [Vintage Story](https://www.vintagestory.at/) mod that makes the ocean dangerous and worth going out on. The sea gets weather of its own: wind that rises and falls, storms that cross the world, waves that break on the shore and currents that turn the oceans. Every vessel can crack, flood or sink, each by what it is made of, and six new ones fill the gap between the raft and the sailboat.
 
 The game's handbook carries a short guide, *Going to Sea*, with what keeps you alive. This wiki holds the depth: how each mechanic works, the numbers and the real-world data behind it, and where each vessel comes from.
 
@@ -23,10 +23,10 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Currents](Currents): the gyres, warm and cold water, and the drift of a boat left alone.
 
 **Your vessel**
-- [Hull condition](Hull-Condition): how a hull takes a blow, what it is made of, and what breaks it.
+- [Hull condition](Hull-Condition): where a blow cracks a hull, how the crack leaks, and what it is made of.
 - [Mending](Mending): patching a hull with its own material.
 - [Rapids](Rapids): white water, and the one boat that runs it.
-- [Surf and swamping](Surf-and-Swamping): shipping water, breakers and capsizing.
+- [Surf and swamping](Surf-and-Swamping): how a hull floats, shipping water, sinking, breakers and capsizing.
 - [Bailing](Bailing): the bilge, the rain, and keeping up.
 
 **Leaving it**
@@ -57,8 +57,8 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Weather events](Weather-Events): how every mod's events fire under our weather.
 - [Wind patterns](Wind-Patterns): our pattern in every region, and setting one yourself.
 - [The ocean map](The-Ocean-Map): the world's ocean layer, and mods that reshape it.
-- [Reading the sea](Reading-the-Sea): wind direction, waves, storms and currents from code.
-- [Building a vessel](Building-a-Vessel): making a vessel ride, ship water, wear, moor and drift in our sea.
+- [Reading the sea](Reading-the-Sea): wind direction, waves, storms and currents from code, and the swell a client draws.
+- [Building a vessel](Building-a-Vessel): making a vessel float, ride, ship water, crack, moor and drift in our sea.
 
 **What's next**
 - [Roadmap](Roadmap): sailing by the wind, cold water and sharks, diving and wrecks.

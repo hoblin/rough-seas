@@ -8,6 +8,7 @@ public class StormsConfig
     public WavesConfig Waves = new();
     public BilgeConfig Bilge = new();
     public SwampingConfig Swamping = new();
+    public ResponseConfig Response = new();
     public MooringConfig Mooring = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
@@ -73,8 +74,8 @@ public class SwampingConfig
     public double FreeSurfaceCapsize;
     public bool Capsizes;
 
-    /// <summary>The share of her speed a vessel of this dry mass, in kilograms, keeps with this much water aboard.</summary>
-    public double SpeedFactor(double dryMass, double litres) => Math.Pow(dryMass / (dryMass + litres), SpeedExponent);
+    /// <summary>The factor on the speed she makes at this reference mass that she makes at this mass, both in kilograms.</summary>
+    public double SpeedFactor(double referenceKg, double kg) => Math.Pow(referenceKg / kg, SpeedExponent);
 }
 
 public class MooringConfig

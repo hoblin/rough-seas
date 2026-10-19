@@ -20,7 +20,10 @@
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
-            "wearPerDay": 0.1,
+            "parts": [{"material": "hide", "share": 0.4}, {"material": "wood-ash", "share": 0.6}],
+            "depthMetres": 0.45,
+            "waterplaneSquareMetres": 3.75,
+            "seep": {"litresPerHour": 30, "greaseDays": 2.5},
             "repairs": [
                 {
                     "material": {"type": "item", "code": "game:hide-prepared-large", "stacksize": 1},
@@ -29,7 +32,7 @@
                 },
                 {
                     "material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1},
-                    "restores": 0.25,
+                    "restores": 0.5,
                     "saturation": 40,
                     "greases": true
                 }
@@ -38,7 +41,13 @@
                 {"type": "item", "code": "game:stick", "quantity": {"avg": 4, "var": 2}},
                 {"type": "item", "code": "game:leather-normal-plain", "quantity": {"avg": 2, "var": 1}}
             ],
-            "damage": {"textures": ["hide"], "material": "hide"}
+            "damage": {"textures": ["hide"], "material": "hide"},
+            "sources": {
+                "parts": "Hides stretched over a frame of ash laths and gunwales, about two fifths hide by weight",
+                "depthMetres": "Keel to gunwale amidships: a 5 cm draft with its rower in a 100 kg hull and about 0.4 m of side above it",
+                "waterplaneSquareMetres": "A 4 m hull 1.1 m wide, full amidships, so that 1500 L aboard settles her by her 0.4 m of side",
+                "seep": "Hide seams and stitch holes weep once the tallow has washed out of them, a little at every seam; Aran crews dressed their currachs every few days"
+            }
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
@@ -91,13 +100,11 @@
             "beamMetres": 1.1,
             "mastMetres": 0,
             "windageSquareMetres": 0.9,
-            "freeboardMetres": 0.4,
             "heave": 0.85,
             "capsizeBreakerMetres": 2,
             "rollResponse": 1.2,
             "pitchResponse": 1.5,
             "sources": {
-                "freeboardMetres": "An Aran currach shows about 0.4 m of side, more at its sheered bow",
                 "heave": "A hide hull of 100 kg sits on the water and rises with the crest: it rides over seas that board heavier boats",
                 "capsizeBreakerMetres": "Aran currachs are launched and landed through breaking surf: the light, flared hull lifts to a breaker that rolls a heavier boat of its beam",
                 "rollResponse": "A beamy, light hull rolls with the sea about as much as vanilla's boats",

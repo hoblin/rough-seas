@@ -4,7 +4,7 @@ The game's own sailing boat: an open hull of planks on a keel, with a mast stepp
 
 ## In Rough Seas
 
-The vessel for long voyages and heavy cargo. Its hull takes knocks that would break anything else, its 1500-litre bilge gives you time in a sea, and it is the one vessel that [anchors](Anchoring). Its mast draws [lightning](Lightning), its sides catch the wind that strains a [mooring](Mooring), and its 300 planks make it the dearest thing afloat to lose. In a gale it ships water faster than one person can [bail](Bailing): run for shelter, or anchor well out and ride it out.
+The vessel for long voyages and heavy cargo. Its hull takes knocks that would break anything else, its 1500-litre bilge gives you time in a sea, and it is the one vessel that [anchors](Anchoring). Its mast draws [lightning](Lightning), its sides catch the wind that strains a [mooring](Mooring), and its 300 planks make it the dearest thing afloat to lose. In a gale it ships water faster than one person can [bail](Bailing): run for shelter, or anchor well out and ride it out. Two fifths of its weight is ballast, so flooded it goes to the bottom with its cargo, unless it is built of a light wood: of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash.
 
 ## Where it comes from
 
@@ -17,8 +17,10 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | Speed | 2.5 × the raft under full sail |
 | Turning | steady |
 | [Hull](Hull-Condition) | 40 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
-| [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 10 planks of its wood restore a fifteenth |
+| Upkeep | none |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 52 cm empty, 50 cm with one aboard, in oak |
+| [Flooded](Surf-and-Swamping#swamping) | sinks; floats awash in the lighter woods |
+| [Mending](Mending) | 10 planks of its wood close a fifteenth of a stove-in place |
 | [Bilge](Bailing) | 1500 litres, 8 m² of open deck |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 3.3 m breaker |
 | [Lightning](Lightning) | its 6 m mast draws strikes |

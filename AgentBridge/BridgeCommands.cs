@@ -19,6 +19,8 @@ namespace AgentBridge;
 
 public class BridgeCommands : ModSystem
 {
+    private static readonly string[] Places = HullShape.Places.Select(place => place.Code()).ToArray();
+
     private static readonly (double Angle, double Reach)[] StormProbes =
         Enumerable.Range(0, 12).SelectMany(i => new[] { 0.25, 0.45, 0.65, 0.85, 1.0 }, (i, reach) => (i * Math.PI / 6, reach)).ToArray();
 
@@ -164,9 +166,9 @@ public class BridgeCommands : ModSystem
                     : TextCommandResult.Error("Not seated, or the seat would not let go"))
             .EndSubCommand()
             .BeginSubCommand("strike")
-                .WithDescription("Strike a vessel's hull with an impact of this many joules; the hull rolls against it as it does for any impact")
-                .WithArgs(parsers.Long("id"), parsers.Double("joules"))
-                .HandleWith(args => Strike(sapi.World.GetEntityById((long)args[0]), (double)args[1]))
+                .WithDescription("Strike a vessel's hull at a place (its port side by default) with an impact of this many joules; the hull rolls against it as it does for any impact")
+                .WithArgs(parsers.Long("id"), parsers.Double("joules"), parsers.OptionalWordRange("place", Places))
+                .HandleWith(args => Strike(sapi.World.GetEntityById((long)args[0]), (double)args[1], args[2] as string ?? "portside"))
             .EndSubCommand()
             .BeginSubCommand("lag")
                 .WithDescription("Stall the server's main thread for this many milliseconds on each of its next ticks, as a lag spike or a heavy mod does, world time running on")
@@ -184,10 +186,10 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Blast(sapi.World.GetEntityById((long)args[0]), (int)args[1], (double)args[2]))
             .EndSubCommand()
             .BeginSubCommand("interact")
-                .WithDescription("Attack or interact with an entity using the held item, as the server does when the player clicks it")
+                .WithDescription("Attack or interact with an entity using the held item, as the server does when the player clicks it; on a vessel, at a place of its hull when one is given")
                 .RequiresPlayer()
-                .WithArgs(parsers.Long("id"), parsers.WordRange("mode", "attack", "interact"), parsers.OptionalWordRange("modifier", "none", "ctrl", "shift"), parsers.OptionalWord("box"))
-                .HandleWith(args => Interact(args.Caller.Player, sapi.World.GetEntityById((long)args[0]), (string)args[1], args[2] as string, args[3] as string))
+                .WithArgs(parsers.Long("id"), parsers.WordRange("mode", "attack", "interact"), parsers.OptionalWordRange("modifier", "none", "ctrl", "shift"), parsers.OptionalWord("box"), parsers.OptionalWordRange("place", Places))
+                .HandleWith(args => Interact(args.Caller.Player, sapi.World.GetEntityById((long)args[0]), (string)args[1], args[2] as string, args[3] as string, args[4] as string))
             .EndSubCommand();
     }
 
@@ -664,13 +666,26 @@ public class BridgeCommands : ModSystem
         return collectible == null ? null : new ItemStack(collectible);
     }
 
-    private static TextCommandResult Strike(Entity? entity, double joules)
+    private static TextCommandResult Strike(Entity? entity, double joules, string place)
     {
         var hull = entity?.GetBehavior<EntityBehaviorVesselIntegrity>();
         if (hull == null) return TextCommandResult.Error("Not a vessel");
 
-        hull.Strike(joules);
-        return TextCommandResult.Success($"{entity!.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity}");
+        hull.Strike(joules, Enum.Parse<HullPlace>(place, ignoreCase: true));
+        return TextCommandResult.Success(HullState(entity!));
+    }
+
+    private static string HullState(Entity entity)
+    {
+        var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
+        if (hull == null) return $"{entity.Code} {entity.EntityId}: alive {entity.Alive}";
+
+        var afloat = hull.Afloat;
+        var cracks = hull.Model is CrackingHull cracking
+            ? ", cracks " + string.Join(" ", HullShape.Places.Select(place => $"{place.Code()} {cracking.Crack(place):F2}"))
+            : "";
+        return $"{entity.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity:F2}{cracks}, " +
+            $"{hull.Aboard.Total:F0} kg aboard, draft {afloat.DraftMetres:F3} m, freeboard {afloat.FreeboardMetres:F3} m, sunk {afloat.Sunk}";
     }
 
     private TextCommandResult Tie(Caller caller, Entity? entity, BlockPos block)
@@ -704,11 +719,10 @@ public class BridgeCommands : ModSystem
         if (entity == null) return TextCommandResult.Error("No such entity");
 
         sapi.World.CreateExplosion(entity.Pos.XYZ.Add(distance, 1, 0).AsBlockPos, EnumBlastType.EntityBlast, 0, injureRadius);
-        var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
-        return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: alive {entity.Alive}" + (hull == null ? "" : $", integrity {hull.Integrity}"));
+        return TextCommandResult.Success(HullState(entity));
     }
 
-    private static TextCommandResult Interact(IPlayer player, Entity? entity, string mode, string? modifier, string? box)
+    private static TextCommandResult Interact(IPlayer player, Entity? entity, string mode, string? modifier, string? box, string? place)
     {
         if (entity == null) return TextCommandResult.Error("No such entity");
 
@@ -720,14 +734,17 @@ public class BridgeCommands : ModSystem
         controls.CtrlKey = modifier == "ctrl";
         controls.ShiftKey = modifier == "shift";
         var interactMode = mode == "attack" ? EnumInteractMode.Attack : EnumInteractMode.Interact;
-        player.Entity.EntitySelection = new EntitySelection { Entity = entity, Position = entity.Pos.XYZ, SelectionBoxIndex = boxIndex };
-        if (interactMode == EnumInteractMode.Attack || entity.GetBehavior<EntityBehaviorVesselIntegrity>()?.TryPickUp(player.Entity) != true)
+        var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
+        var hit = place != null && hull != null
+            ? hull.PointAt(Enum.Parse<HullPlace>(place, ignoreCase: true))
+            : new Vec3d(0, entity.SelectionBox.Y2 / 2, 0);
+        player.Entity.EntitySelection = new EntitySelection { Entity = entity, Position = entity.Pos.XYZ, SelectionBoxIndex = boxIndex, HitPosition = hit };
+        if (interactMode == EnumInteractMode.Attack || hull?.TryPickUp(player.Entity) != true)
         {
-            entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, new Vec3d(0, entity.SelectionBox.Y2 / 2, 0), interactMode);
+            entity.OnInteract(player.Entity, player.InventoryManager.ActiveHotbarSlot, hit, interactMode);
         }
         controls.CtrlKey = controls.ShiftKey = false;
-        var hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
-        return TextCommandResult.Success($"{entity.Code} {entity.EntityId}: alive {entity.Alive}" + (hull == null ? "" : $", integrity {hull.Integrity}"));
+        return TextCommandResult.Success(HullState(entity));
     }
 
     // A command run with the console's privileges, /executeas included, replies into the server log, which reads it as a format string.

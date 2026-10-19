@@ -19,10 +19,16 @@
     "hitboxSize": {"x": 1.2, "y": 0.45},
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
-            "impactCapacity": 1200,
-            "wearPerDay": 0.33,
+            "model": "reed",
+            "parts": [{"material": "reed"}],
+            "depthMetres": 0.45,
+            "soak": {"kgPerDay": 80, "dryKgPerDay": 240, "rotShare": 0.35, "saturationKg": 300},
             "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
-            "damage": {"textures": ["reed"], "material": "reed"}
+            "damage": {"textures": ["reed"], "material": "reed"},
+            "sources": {
+                "depthMetres": "The bundles stand about 0.45 m from bottom to top",
+                "soak": "Balance on history: unridden, the reed takes up its own weight in water every 18 hours and lies on the bottom after about three days afloat (Heyerdahl's Ra II settled about 10 cm a day); a sunny day ashore drives most of it out again, but each drying leaves a third of what it drove out as rot, so a boat soaked through and dried five times is past saving where Titicaca's totora boats last months"
+            }
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
@@ -62,13 +68,11 @@
             "beamMetres": 0.9,
             "mastMetres": 0,
             "windageSquareMetres": 0.6,
-            "freeboardMetres": 0.2,
             "heave": 0.8,
             "capsizeBreakerMetres": 0.9,
             "rollResponse": 1.2,
             "pitchResponse": 1.2,
             "sources": {
-                "freeboardMetres": "Bundled reed floats a hand's breadth or two proud; water that comes over runs out between the bundles, so it has no bilge",
                 "heave": "Reed is light and rises with the crest",
                 "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
                 "rollResponse": "Bundles bound into a flat-bottomed hull: a little livelier than vanilla's boats",

@@ -7,15 +7,19 @@
         "path": "/behaviorConfigs/roughseas:vesselintegrity",
         "side": "Server",
         "value": {
+            "model": "lashed",
             "impactCapacity": 1200,
             "damage": { "textures": ["material", "oak", "oak1", "birch1", "plainoak", "stem-brown"], "material": "wood" },
             "parts": [
-                { "material": "wood-{material}", "reference": "wood-oak" },
-                { "material": "rope-flax", "reference": "rope-flax" }
+                { "material": "wood-{material}", "reference": "wood-oak", "share": 0.98 },
+                { "material": "rope-flax", "reference": "rope-flax", "share": 0.02 }
             ],
-            "repairsByType": {
-                "boat-raft-bamboo": [{ "material": { "type": "item", "code": "bamboostakes", "stacksize": 3 }, "restores": 0.34, "saturation": 60 }],
-                "boat-raft-*": [{ "material": { "type": "block", "code": "log-placed-{material}-ud", "stacksize": 1 }, "restores": 0.17, "saturation": 60 }]
+            "depthMetres": 0.25,
+            "repairs": [{ "material": { "type": "item", "code": "flaxtwine", "stacksize": 1 }, "restores": 0.22, "saturation": 30 }],
+            "sources": {
+                "parts": "Logs lashed with three ropes, a few kilograms of rope on a raft of logs",
+                "depthMetres": "Its logs are a quarter metre thick: pressed down that far, the raft is awash and the water holds up its rider",
+                "repairs": "A knock works the lashings loose, not the logs, and they are bound up again with twine: half of the nine twines in its three ropes mends it whole. Rope in hand ties the raft up instead"
             },
             "wreckageByType": {
                 "boat-raft-bamboo": [
@@ -40,8 +44,16 @@
             "impactCapacity": 40000,
             "damage": { "textures": ["material", "oak", "oak1", "birch1", "plainoak"], "material": "wood" },
             "parts": [
-                { "material": "wood-{material}", "reference": "wood-oak" }
+                { "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 },
+                { "material": "iron", "share": 0.4 }
             ],
+            "depthMetres": 1.14,
+            "waterplaneSquareMetres": 3,
+            "sources": {
+                "parts": "A keelboat carries about two fifths of her weight as ballast to stand up to her sail; iron here",
+                "depthMetres": "Keel to gunwale over the hull's body: a 0.64 m draft with one sailor and about half a metre of side above it",
+                "waterplaneSquareMetres": "Set so that the 1500 L her bilge holds settles her by her half metre of side"
+            },
             "repairs": [{ "material": { "type": "item", "code": "plank-{material}", "stacksize": 10 }, "restores": 0.067, "saturation": 80 }],
             "wreckage": [
                 { "type": "item", "code": "plank-{material}", "quantity": { "avg": 40, "var": 15 } },

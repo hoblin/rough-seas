@@ -22,13 +22,19 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 30000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
+            "depthMetres": 0.41,
+            "waterplaneSquareMetres": 2.25,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
                 "saturation": 80
             }],
             "wreckage": [{"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}}],
-            "damage": {"textures": ["bark", "inside"], "material": "wood"}
+            "damage": {"textures": ["bark", "inside"], "material": "wood"},
+            "sources": {
+                "depthMetres": "Keel to gunwale: a 0.21 m draft with one paddler and a hand's breadth or two of side above it, which a full bilge brings down to the water",
+                "waterplaneSquareMetres": "A 4.5 m log, 0.75 m wide, with rounded ends: about two thirds of its box, so that 450 L aboard settles her by her 0.2 m of side"
+            }
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
@@ -71,13 +77,11 @@
             "beamMetres": 0.75,
             "mastMetres": 0,
             "windageSquareMetres": 0.6,
-            "freeboardMetres": 0.2,
             "heave": 0.5,
             "capsizeBreakerMetres": 0.75,
             "rollResponse": 2.5,
             "pitchResponse": 1.2,
             "sources": {
-                "freeboardMetres": "A loaded log dugout floats with a hand's breadth or two of side above water",
                 "heave": "Balance: 400 kg of log rises slowly to a crest; a light hull rises with it, a heavy one lets it climb the side",
                 "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
                 "rollResponse": "A round-bottomed log has little form stability: tippy in a sea",

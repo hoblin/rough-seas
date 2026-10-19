@@ -17,8 +17,10 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | Speed | half the raft, paddled |
 | Turning | spins on the spot |
 | [Hull](Hull-Condition) | 400 J, the weakest of all |
-| [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 1 small prepared hide restores two thirds |
+| Upkeep | none |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 26 cm empty, 20 cm with its paddler |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's gear; armour takes it down |
+| [Mending](Mending) | 1 small prepared hide closes two thirds of a stove-in place |
 | [Bilge](Bailing) | 250 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
 | [Rapids](Rapids) | broken within seconds |

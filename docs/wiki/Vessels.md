@@ -1,11 +1,11 @@
-Vanilla gives you two ways onto the water, the raft and the sailboat, and nothing between them. Rough Seas adds six vessels to fill the gap, each from a real tradition of boatbuilding and each with a niche of its own. Every one of them [wears and breaks](Hull-Condition) by what it is made of; none is best at everything.
+Vanilla gives you two ways onto the water, the raft and the sailboat, and nothing between them. Rough Seas adds six vessels to fill the gap, each from a real tradition of boatbuilding and each with a niche of its own. Every one of them [cracks, floods and breaks](Hull-Condition) by what it is made of; none is best at everything.
 
 ## On rivers and lakes
 
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
 | [Raft](Raft) | floating cargo downriver | 1 × | breaks on a few hard knocks |
-| [Reed boat](Reed-Boat) | a one-way crossing, built in minutes | 1.3 × | soaks through in three days, can't be mended |
+| [Reed boat](Reed-Boat) | a few days afloat, built in minutes | 1.3 × | sinks after three days afloat unless dried, can't be mended |
 | [Dugout](Dugout) | the tough workhorse | 1.5 × | heavy, and tippy in a sea |
 | [Coracle](Coracle) | fishing and short hops, worn on your back | 0.5 × | slow, swamps in a chop |
 | [Birch-bark canoe](Birch-Bark-Canoe) | long river journeys, through [rapids](Rapids) | 2.1 × | fragile |
@@ -22,18 +22,18 @@ Speeds are against the raft, measured on a calm sea.
 
 ## Side by side
 
-| | [Hull](Hull-Condition) | [Bilge](Bailing) | [Capsized by](Surf-and-Swamping#capsizing) | [Wear](Hull-Condition#wear) | [Mended with](Mending) | Carried |
-| --- | --- | --- | --- | --- | --- | --- |
-| [Raft](Raft) | 1200 J | none | 2 m | none | a log | picked up |
-| [Reed boat](Reed-Boat) | 1200 J | none | 0.9 m | a third a day | cannot be | picked up |
-| [Dugout](Dugout) | 30 000 J | 450 l | 0.75 m | none | a log | no |
-| [Coracle](Coracle) | 400 J | 250 l | 0.6 m | none | a small hide | worn on the back |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 2400 J | 600 l | 0.75 m | none | bark of its tree | picked up |
-| [Hide currach](Hide-Currach) | 3000 J | 1500 l | 2 m | a tenth a day | a large hide; fat for wear | picked up |
-| [Outrigger canoe](Outrigger-Canoe) | 15 000 J | 600 l | 2.1 m | none | planks | no |
-| [Sailboat](Sailboat) | 40 000 J | 1500 l | 3.3 m | none | planks | no |
+| | [Hull](Hull-Condition) | [Bilge](Bailing) | [Flooded](Surf-and-Swamping#swamping) | [Capsized by](Surf-and-Swamping#capsizing) | [Upkeep](Hull-Condition#seeping-and-soaking) | [Mended with](Mending) | Carried |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| [Raft](Raft) | 1200 J | none | never floods | 2 m | none | a rope | picked up |
+| [Reed boat](Reed-Boat) | no knock harms it | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
+| [Dugout](Dugout) | 30 000 J | 450 l | awash | 0.75 m | none | a log | no |
+| [Coracle](Coracle) | 400 J | 250 l | awash | 0.6 m | none | a small hide | worn on the back |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 2400 J | 600 l | awash | 0.75 m | none | bark of its tree | picked up |
+| [Hide currach](Hide-Currach) | 3000 J | 1500 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
+| [Outrigger canoe](Outrigger-Canoe) | 15 000 J | 600 l | awash | 2.1 m | none | planks | no |
+| [Sailboat](Sailboat) | 40 000 J | 1500 l | sinks | 3.3 m | none | planks | no |
 
-Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more. Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [Seamanship](Roadmap#seamanship); its column is what overturned each vessel in 1.0.
+Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more, and what floods awash in oak may sink [in a heavy wood or loaded hard](Surf-and-Swamping#swamping). Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [Seamanship](Roadmap#seamanship); its column is what overturned each vessel in 1.0.
 
 ## What each carries
 

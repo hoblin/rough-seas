@@ -17,14 +17,15 @@ A mast is a lightning rod with you at its foot. Unmasted boats are struck only b
 
 The game's lightning harms every creature within 8 blocks of where it lands, and a vessel counts. Rough Seas turns that harm into a [strike on the hull](Hull-Condition#how-a-hull-takes-a-blow) worth 6000 joules. What happens next depends on what the hull is made of:
 
-| Vessel (oak where it matters) | Chance it is harmed | What it loses if harmed |
+| Vessel (oak where it matters) | Chance it is harmed | What it does if it harms |
 | --- | --- | --- |
-| [Sailboat](Sailboat) | 14% | about a sixth of its condition |
-| [Dugout](Dugout) | 18% | about a fifth |
-| [Outrigger canoe](Outrigger-Canoe) | 33% | about two fifths |
-| [Hide currach](Hide-Currach) | 86% | all of it: broken |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 92% | all of it: broken |
-| [Raft](Raft), [reed boat](Reed-Boat), [coracle](Coracle) | over 99% | all of it: broken |
+| [Sailboat](Sailboat) | 14% | scratches a place |
+| [Dugout](Dugout) | 18% | scratches a place |
+| [Outrigger canoe](Outrigger-Canoe) | 33% | cracks a place, two fifths of the way to stove in |
+| [Hide currach](Hide-Currach) | 86% | breaks it up |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 92% | breaks it up |
+| [Raft](Raft), [coracle](Coracle) | over 99% | breaks it up |
+| [Reed boat](Reed-Boat) | none | |
 
 The players aboard take the game's own lightning damage as well.
 

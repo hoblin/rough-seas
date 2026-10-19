@@ -19,8 +19,10 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | Speed | 2.1 × the raft, the fastest paddled boat |
 | Turning | nimble |
 | [Hull](Hull-Condition) | 2400 J |
-| [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 2 bark of its tree restore a third |
+| Upkeep | none |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 28 cm empty, 25 cm with its paddler |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 41 kg of gear, armour and containers |
+| [Mending](Mending) | 2 bark of its tree close a third of a stove-in place |
 | [Bilge](Bailing) | 600 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
 | [Rapids](Rapids) | runs them unharmed, the only vessel that does |

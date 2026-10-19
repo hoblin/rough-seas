@@ -27,6 +27,16 @@ public class ImpactTests
     }
 
     [Fact]
+    public void PointsTheKnockTowardTheObstacleAlongTheAxisItBlocked()
+    {
+        impact.Step(-3 * PerTick, 4 * PerTick, now += StepMs);
+        var knocked = impact.Step(0, 4 * PerTick, now += StepMs)!.Value;
+
+        Assert.Equal(-3, knocked.TowardX, 6);
+        Assert.Equal(0, knocked.TowardZ, 6);
+    }
+
+    [Fact]
     public void IgnoresAStopUnderTheHullsGive()
     {
         Assert.Empty(Sail((0.8, 0), (0, 0)));
@@ -76,7 +86,7 @@ public class ImpactTests
         var impacts = new List<double>();
         foreach (var (x, z) in metresPerSecond)
         {
-            if (impact.Step(x * PerTick, z * PerTick, now += StepMs) is double lost) impacts.Add(lost);
+            if (impact.Step(x * PerTick, z * PerTick, now += StepMs) is { } knocked) impacts.Add(knocked.SpeedLost);
         }
         return impacts;
     }
