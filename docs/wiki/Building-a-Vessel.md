@@ -114,7 +114,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 
 `repairsByType` and `wreckageByType` work as vanilla's `ByType` keys do.
 
-**Knocks.** A knock is vanilla's own collision: when the physics stops the hull against a block, the speed it loses into that block strikes it, so a glancing blow counts only the part pointing into the wall. It takes vanilla's passive physics on the entity (`passivephysicsmultibox`, or `passivephysics`). A drifting vessel is measured on the server and a steered one on its rider's client, which reports to the server; a stalled server fakes no knock either way. Entities don't knock a hull: two vessels, or a vessel and a creature, only push each other apart.
+**Knocks.** A knock is vanilla's own collision: when the physics stops the hull against a block, the speed it loses into that block strikes it, so a glancing blow counts only the part pointing into the wall. It takes vanilla's passive physics on the entity (`passivephysicsmultibox`, or `passivephysics`). A drifting vessel is measured on the server and a steered one on its rider's client, which reports to the server. Entities don't knock a hull: two vessels, or a vessel and a creature, only push each other apart.
 
 A knock strikes with ½ · mass · (speed² − `minImpactSpeed`²), where the mass is everything aboard:
 
