@@ -229,7 +229,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     public void Strike(double joules, HullPlace place)
     {
         if (!entity.Alive) return;
-        double severity = joules / impactCapacity;
+        double severity = impactCapacity > 0 ? joules / impactCapacity : 0;
         if (model is not IKnockable knockable)
         {
             vessels.Log(entity, "struck at the {0} with {1:F0} J: the hull gives, unharmed", place.Code(), joules);

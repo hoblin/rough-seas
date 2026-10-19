@@ -64,7 +64,8 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
             var room = bilge is { CapacityLitres: > 0 } ? 1 - bilge.Fill : 1;
 
             slosh.Play(fill, centre);
-            lapping.Play(waves, centre);
+            if (afloat) lapping.Play(waves, centre);
+            else lapping.Silence();
             var leaking = 0.0;
             foreach (var (place, loop) in leaks)
             {
@@ -100,10 +101,7 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
             var volume = (float)Curve.At(cue.Volume, amount);
             if (volume < Silent || string.IsNullOrEmpty(cue.Sound))
             {
-                if (!Playing) return;
-                fading = true;
-                sound!.FadeOut(FadeSeconds, faded => { faded.Stop(); fading = false; });
-                log("fades out", volume);
+                Silence();
                 return;
             }
             if (fading) return;
@@ -127,6 +125,14 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
             sound.Start();
             sound.PlaybackPosition = sound.SoundLengthSeconds * (float)capi.World.Rand.NextDouble();
             log("starts", volume);
+        }
+
+        public void Silence()
+        {
+            if (!Playing) return;
+            fading = true;
+            sound!.FadeOut(FadeSeconds, faded => { faded.Stop(); fading = false; });
+            log("fades out", 0);
         }
 
         public override string ToString() => sound?.IsPlaying == true ? $"playing at {sound.Params.Volume:F2}" : "silent";

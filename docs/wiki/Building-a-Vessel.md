@@ -108,7 +108,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 | Key | What it is |
 | --- | --- |
 | `model` | how the hull is made: `cracking` (the default), cracked place by place and leaking, as our wooden, bark and hide hulls; `lashed`, one lashing that knocks work loose, which never floods, as our raft; `reed`, which knocks don't harm and which soaks, can't be mended, as our reed boat |
-| `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required for a `cracking` or `lashed` hull |
+| `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required for a `cracking` or `lashed` hull; on a `reed` hull, which knocks don't harm, it sets how hard a knock sounds |
 | `minImpactSpeed` | the speed in m/s a hull takes in its stride when it runs into something: a knock below it is no knock, and only the energy above it counts. Default 1 |
 | `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1). Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
 | `depthMetres` | keel to gunwale amidships. With it the vessel floats by its mass; without it, at its `freeboardMetres` |
