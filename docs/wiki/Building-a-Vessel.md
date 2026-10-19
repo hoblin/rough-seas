@@ -18,7 +18,7 @@ Waves come aboard and strike only with [Dangerous oceans](World-Settings#dangero
 | `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
 | `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current and the wind |
 
-Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says. `vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`, so that a right-click with mending material mends the hull rather than seating the player. Each one works without the others, except `mooring`, which holds against what `seaforces` measures: take `seaforces` first.
+Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says. `vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`, so that a right-click with mending material mends the hull rather than seating the player. `seaforces` is what the others act through: `mooring` holds against what it measures, and a bilge's water slows, settles and swamps a vessel only through it. Take it first; `vesselintegrity` and `currentdrift` also work alone.
 
 Every key may carry a `sources` entry beside it, text about where each number came from. Our code doesn't read it; we keep a real-world source for every number there, and so can you.
 
@@ -124,7 +124,7 @@ How a collision at speed strikes the hull is being rebuilt ([#122](https://githu
 - **A stake.** Vanilla's `ropetieable` on both sides: a rope from the vessel to a fence post.
 - **An anchor.** An accessory slot (`rideableaccessories`) that takes vanilla's anchor, as vanilla's sailboat has. Spare rode is any item with a `rodeMetres` attribute in the same accessories, such as our anchor warp.
 
-Moored, a vessel ships less water and takes milder blows. In a storm the sea's pull on it grows with its beam and its windage, and a rope can snap. With no player near, a storm can throw it ashore.
+At anchor, a vessel ships less water and takes milder blows; tied to a stake, it takes the sea in full. In a storm the sea's pull on it grows with its beam and its windage, and a rope can snap. With no player near, a storm can throw it ashore.
 
 A rider's client steers a vessel, and the server can't hold one it doesn't move: a steered vessel drags its anchor along.
 
