@@ -109,7 +109,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 
 ## The hull
 
-`roughseas:vesselintegrity`: the hull ([Hull condition](Hull-Condition)). Every blow is weighed against the hull's capacity, by chance, harder blows harming more often and more, and lands on one of seven places. Breakers, rapids, and any damage the entity receives through vanilla (weapons, explosions, lightning, falling) all strike it. A mod's cannonball needs no code of ours: the damage it deals becomes a blow, where it hits. A `reed` hull gives under every blow and takes no harm from any of them; only soaking sinks it.
+`roughseas:vesselintegrity`: the hull ([Hull condition](Hull-Condition)). Every blow is weighed against the hull's capacity, by chance, harder blows harming more often and more, and lands on one of seven places. Breakers, rapids, and any damage the entity receives through vanilla (weapons, explosions, lightning, falling) all strike it. A mod's cannonball needs no code of ours: the damage it deals becomes a blow, where it hits. A `reed` hull gives under every blow and takes no harm from any of them; it sinks by soaking, or under more than it can carry.
 
 | Key | What it is |
 | --- | --- |
