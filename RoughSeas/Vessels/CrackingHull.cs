@@ -48,7 +48,7 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
     public override double Inflow(double seconds, double hours, Afloat afloat, double depthMetres) =>
         base.Inflow(seconds, hours, afloat, depthMetres) + (seep != null && GreaseDays <= 0 ? seep.LitresPerHour * hours : 0);
 
-    public override double LitresPerSecond(Afloat afloat, double depthMetres) => HullShape.Places.Sum(place => Leak(place, afloat, depthMetres));
+    public override double LitresPerSecond(Afloat afloat, double depthMetres) => HullShape.Places.Sum(place => LitresPerSecond(place, afloat, depthMetres));
 
     public bool Needs(HullRepair repair, HullPlace place) =>
         repair.Greases ? seep != null && GreaseDays < seep.GreaseDays : Worst() is not null;
@@ -86,7 +86,7 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public override void Adopt(float integrity) { }
 
-    private double Leak(HullPlace place, Afloat afloat, double depthMetres)
+    public override double LitresPerSecond(HullPlace place, Afloat afloat, double depthMetres)
     {
         double head = Waterline(place, afloat) - Math.Max(CrackHeight(place, depthMetres), afloat.InsideMetres);
         if (head <= 0) return 0;

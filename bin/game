@@ -34,7 +34,8 @@ guide() {
   cat <<'EOF'
 
 START
-  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux, muted, and return
+  bin/client [WORLD]   build both mods, (re)start this clone's client in tmux, muted (BENCH_SOUND=100
+                       to hear it, for someone listening), and return
                        once the world is loaded and the server answers (~35 s). A running world
                        is saved and left first, as Save & Quit does: vessels, ropes, the
                        player's place and /worldconfig changes are there after the restart.

@@ -23,6 +23,9 @@ public class StormsModSystem : ModSystem
     /// <summary>The sea surface this client draws; null on the server.</summary>
     public IDrawnSea? DrawnSea { get; private set; }
 
+    /// <summary>The surface behind <see cref="DrawnSea"/>, foam included; null on the server.</summary>
+    internal SeaSurface? Surface { get; private set; }
+
     public override void Start(ICoreAPI api)
     {
         this.api = api;
@@ -42,7 +45,7 @@ public class StormsModSystem : ModSystem
     public override void StartClientSide(ICoreClientAPI capi)
     {
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
-        var surface = new SeaSurface(Config.Surface, Waves);
+        var surface = Surface = new SeaSurface(Config.Surface, Waves);
         var field = new SurfaceField();
         surface.Changed += change => Log("surface: " + change);
         if (SurfaceShader.Attach(surface, field, capi)) clock = new SurfaceClock(this, sea, surface, field, capi);

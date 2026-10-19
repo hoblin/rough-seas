@@ -108,7 +108,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 | Key | What it is |
 | --- | --- |
 | `model` | how the hull is made: `cracking` (the default), cracked place by place and leaking, as our wooden, bark and hide hulls; `lashed`, one lashing that knocks work loose, which never floods, as our raft; `reed`, which knocks don't harm and which soaks, can't be mended, as our reed boat |
-| `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required for a `cracking` or `lashed` hull |
+| `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required for a `cracking` or `lashed` hull; on a `reed` hull, which knocks don't harm, it sets how hard a knock sounds |
 | `minImpactSpeed` | the speed in m/s a hull takes in its stride when it runs into something: a knock below it is no knock, and only the energy above it counts. Default 1 |
 | `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1). Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
 | `depthMetres` | keel to gunwale amidships. With it the vessel floats by its mass; without it, at its `freeboardMetres` |
@@ -119,7 +119,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 | `runsRapids` | true if rapids don't strike it |
 | `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives) |
 | `wreckage` | what it leaves when it breaks up, as a block's drops |
-| `damage` | how the cracks show: `textures` (the shape's textures that crack) and `material` (`wood`, `bark`, `reed` or `hide`) |
+| `damage` | how the cracks show: `textures` (the shape's textures that crack) and `material` (`wood`, `bark`, `reed` or `hide`), which also picks the hull's [sounds](#sounds) |
 
 `repairsByType` and `wreckageByType` work as vanilla's `ByType` keys do.
 
@@ -151,6 +151,15 @@ A vessel with `depthMetres` floats by Archimedes, on both sides, twice a second.
 - **The line it is drawn at.** Vanilla's `swimmingOffsetY` places your shape in the water. We take that as the line it floats at with its reference build and one rider aboard, and settle it from there by the difference in draft. Set it so the shape looks right with one aboard.
 
 To give a vessel of yours draft and buoyancy: list its `parts` with materials the table knows (or add rows by patch), set `depthMetres` from keel to gunwale, and set `waterplaneSquareMetres` so that what its bilge holds settles it by its freeboard. Ours are set that way: a full bilge with one aboard brings the gunwale to the water. Leave `freeboardMetres` off its `seaforces`.
+
+## Sounds
+
+A vessel with our behaviours sounds without a key of its own. Its hull speaks by its `model` and its `damage.material`, from the voices in `config/soundscape.json` under `hull.models`: a `cracking` hull as wood, bark or hide, a `lashed` one by its lashings, a `reed` one with a crunch. A material without a voice sounds as wood. A blow it shrugs off knocks and a blow that harms it cracks or strains, played where the blow landed and louder the harder it was; a break-up breaks from the middle of the hull. With `roughseas:seaforces`, each wave slaps, a breaker slams and water shipped into a hull with a `roughseas:bilge` splashes in, from the windward side. Its bilge sloshes, each crack trickles from where it is, as loud as it leaks, and the sea laps at it, played by each client from what the bilge and the hull already sync. Every sound, and how loud it plays for its cause, is in `config/soundscape.json`, which a patch can change.
+
+For sounds of your own, the server raises events on the behaviours:
+- `EntityBehaviorVesselIntegrity.Struck`: the place struck, the blow over the hull's capacity, and what it did (`Harmed`, `BrokenUp`, or null when shrugged off). `PointAt(place)` gives the place's point to play at.
+- `EntityBehaviorVesselIntegrity.BrokeUp`: as the hull breaks into wreckage.
+- `EntityBehaviorSeaForces.Took`: each wave she takes, with its height, whether it broke on her, the water she shipped and the direction it came from.
 
 ## Mooring
 

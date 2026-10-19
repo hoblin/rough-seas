@@ -12,3 +12,4 @@
 /.claude/
 /skills-lock.json
 __pycache__/
+/library/

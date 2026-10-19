@@ -20,6 +20,7 @@
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
             "model": "reed",
+            "impactCapacity": 3000,
             "parts": [{"material": "reed"}],
             "depthMetres": 0.45,
             "soak": {"kgPerDay": 80, "dryKgPerDay": 240, "rotShare": 0.35, "saturationKg": 300},

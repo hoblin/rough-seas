@@ -39,6 +39,8 @@
 
 **[Beside other mods](Other-Mods)**
 
+**[Sound credits](Sound-Credits)**
+
 **[For modders](For-Modders)**
 - [Reading the weather](Reading-the-Weather)
 - [Weather events](Weather-Events)

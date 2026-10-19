@@ -19,10 +19,19 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
         ["reed"] = (tree, changed, attributes, _) => new ReedHull(tree, changed, attributes)
     };
 
-    public static HullModel For(string code, Func<ITreeAttribute> tree, Action changed, JsonObject attributes, HullConfig config) =>
-        Models.TryGetValue(code, out var model)
-            ? model(tree, changed, attributes, config)
-            : throw new ArgumentException($"Rough Seas knows no hull model {code}; it knows {string.Join(", ", Models.Keys)}");
+    public static HullModel For(string code, Func<ITreeAttribute> tree, Action changed, JsonObject attributes, HullConfig config)
+    {
+        if (!Models.TryGetValue(code, out var model))
+        {
+            throw new ArgumentException($"Rough Seas knows no hull model {code}; it knows {string.Join(", ", Models.Keys)}");
+        }
+        var hull = model(tree, changed, attributes, config);
+        hull.Code = code;
+        return hull;
+    }
+
+    /// <summary>The <c>model</c> key it was picked by.</summary>
+    public string Code { get; private set; } = "";
 
     public abstract float Condition { get; }
 
@@ -31,6 +40,8 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
     public virtual int Stage(HullPlace place) => StageOf(1 - Condition);
 
     public virtual double LitresPerSecond(Afloat afloat, double depthMetres) => 0;
+
+    public virtual double LitresPerSecond(HullPlace place, Afloat afloat, double depthMetres) => 0;
 
     public virtual double Inflow(double seconds, double hours, Afloat afloat, double depthMetres) =>
         LitresPerSecond(afloat, depthMetres) * seconds;

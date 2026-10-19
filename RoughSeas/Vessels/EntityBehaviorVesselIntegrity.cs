@@ -35,7 +35,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     private const float MinSunlight = 0.5f;
     private const float MaxDryingRain = 0.05f;
     private const string HullBox = "HullAP";
-    private static readonly AssetLocation BreakSound = new("game:sounds/block/planks");
     private static readonly AssetLocation MendSound = new("game:sounds/player/build");
 
     private readonly object impactLock = new();
@@ -65,9 +64,21 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
 
     public EntityBehaviorVesselIntegrity(Entity entity) : base(entity) { }
 
+    /// <summary>
+    /// Server side, after every strike: the place struck, the strike's energy over the hull's impact capacity, and what
+    /// it did, null when the hull shrugged it off.
+    /// </summary>
+    public event Action<HullPlace, double, Knock?>? Struck;
+
+    /// <summary>Server side, as the hull breaks up into wreckage, before the vessel dies.</summary>
+    public event Action? BrokeUp;
+
     public float Integrity => model.Condition;
 
     public HullModel Model => model;
+
+    /// <summary>What the hull's surface is made of, as its JSON's <c>damage.material</c> names it: wood unless set.</summary>
+    public string Material { get; private set; } = "wood";
 
     public bool HasDraft => flotation.DepthMetres > 0;
 
@@ -111,6 +122,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
             .Where(repair => OfWood(repair.Material, wood).Resolve(entity.World, "vessel repair"))
             .ToArray();
         model = HullModel.For(attributes["model"].AsString("cracking"), () => Tree, MarkDirty, attributes, vessels.HullConfig);
+        Material = attributes["damage"]["material"].AsString(Material);
         hullBox = attributes["hullBox"].AsArray<double>(null);
         var parts = attributes["parts"].AsObject<VesselPart[]>([]);
         build = vessels.Materials.Build(parts, properties.Weight);
@@ -217,20 +229,21 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     public void Strike(double joules, HullPlace place)
     {
         if (!entity.Alive) return;
+        double severity = impactCapacity > 0 ? joules / impactCapacity : 0;
         if (model is not IKnockable knockable)
         {
             vessels.Log(entity, "struck at the {0} with {1:F0} J: the hull gives, unharmed", place.Code(), joules);
+            Struck?.Invoke(place, severity, null);
             return;
         }
 
-        double severity = joules / impactCapacity;
         var rand = entity.World.Rand;
         var harmed = rand.NextDouble() < 1 - Math.Exp(-severity);
         var knock = harmed ? knockable.Take(place, severity * (0.5 + rand.NextDouble())) : (Knock?)null;
         vessels.Log(entity, "struck at the {0} with {1:F0} J against a capacity of {2:F0}: {3}, hull now {4:F2}",
             place.Code(), joules, impactCapacity, knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
-        if (knock == Knock.Harmed) Creak();
-        else if (knock == Knock.BrokenUp) Break();
+        Struck?.Invoke(place, severity, knock);
+        if (knock == Knock.BrokenUp) Break();
     }
 
     public HullPlace Toward(double worldX, double worldZ)
@@ -562,12 +575,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
         entity.GetBehavior<EntityBehaviorSeatable>()?.AnyMounted() == true ||
         entity.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory.Empty == false;
 
-    private void Creak()
-    {
-        var sound = new AssetLocation($"game:sounds/block/woodcreak_{1 + entity.World.Rand.Next(4)}");
-        entity.World.PlaySoundAt(sound, entity, null, true, 24);
-    }
-
     private void Break()
     {
         vessels.Log(entity, "broke up");
@@ -589,7 +596,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
             world.SpawnCubeParticles(entity.Pos.XYZ.Add(0, 0.5, 0), stack, 1.5f, 24, 0.8f);
         }
 
-        world.PlaySoundAt(BreakSound, entity, null, true, 32);
+        BrokeUp?.Invoke();
         entity.Die(EnumDespawnReason.Death, new DamageSource { Source = EnumDamageSource.Block, Type = EnumDamageType.BluntAttack });
     }
 

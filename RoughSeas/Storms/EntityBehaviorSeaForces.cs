@@ -37,6 +37,9 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     /// <summary>Once a wave period, server side, while the vessel floats and the oceans are dangerous: the sea state of that wave.</summary>
     public event Action<SeaState>? Wave;
 
+    /// <summary>Server side, each wave as she takes it, whether or not it broke on her or shipped water.</summary>
+    public event Action<TakenWave>? Took;
+
     public double BeamMetres { get; private set; }
 
     public double MastMetres { get; private set; }
@@ -128,6 +131,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         var crest = waves.Crest(height, breaking);
         var shipped = waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure;
         var capsizes = storms.Config.Swamping.Capsizes && breaking && Seaworthiness.Capsizes(height);
+        Took?.Invoke(new TakenWave(height, breaking, shipped, -state.WindX, -state.WindZ));
         if (!breaking && shipped <= 0) return;
 
         bilge?.Ship(shipped, "by the sea");
@@ -217,6 +221,10 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     }
 
     private readonly record struct SeatPose(Vec3f? Offset, string Animation);
+
+    /// <param name="Height">This one wave's height, sampled from the sea's significant height; not a crest the client renders.</param>
+    /// <param name="FromX">With <paramref name="FromZ"/>, the world direction the wave came from, not normalised.</param>
+    public readonly record struct TakenWave(double Height, bool Breaking, double ShippedLitres, double FromX, double FromZ);
 
     private IMountableSeat[] Seats => seatable?.Seats ?? [];
 
