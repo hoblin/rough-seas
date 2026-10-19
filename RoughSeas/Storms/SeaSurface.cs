@@ -71,6 +71,9 @@ public sealed class SeaSurface
 
     public double TowardRadians { get; private set; }
 
+    /// <summary>Where the rising trains run, fixed for their life, unlike <see cref="TowardRadians"/>, the wind at the last aim; <c>seafoam.fsh</c> lays its streaks along it.</summary>
+    public double WavesTowardRadians => activeToward;
+
     public double DrawnHeight => 4 * Math.Sqrt(amplitude.Sum(value => value * value) / 2);
 
     public bool Calm { get; private set; } = true;

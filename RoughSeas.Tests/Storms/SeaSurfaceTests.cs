@@ -53,6 +53,17 @@ public class SeaSurfaceTests
     }
 
     [Fact]
+    public void HoldsTheWavesDirectionWhileTheWindWobbles()
+    {
+        var surface = Surface();
+        Settle(surface, 3.7, 0);
+        Settle(surface, 3.7, 0.05, from: 120);
+
+        Assert.Equal(0.05, surface.TowardRadians);
+        Assert.Equal(0, surface.WavesTowardRadians);
+    }
+
+    [Fact]
     public void RaisesNewWavesWhenTheWindVeersAndLetsTheOldOnesFade()
     {
         var surface = Surface();

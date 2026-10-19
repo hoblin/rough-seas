@@ -1,6 +1,6 @@
 // The other end of RoughSeas/Storms/SeaSurface.cs and SurfaceShader.cs, which set these uniforms.
 uniform vec4 seaFoam;
-uniform vec2 seaWind;
+uniform vec2 seaWavesToward;
 
 in float seaFoamCrest;
 in float seaFoamFold;
@@ -31,8 +31,8 @@ float seaFoamAt() {
 
 	vec2 at = seaFoamWorld;
 	float t = waterWaveCounter;
-	vec2 across = vec2(-seaWind.y, seaWind.x);
-	float along = dot(at, seaWind);
+	vec2 across = vec2(-seaWavesToward.y, seaWavesToward.x);
+	float along = dot(at, seaWavesToward);
 	float side = dot(at, across);
 	float lace = seaLace(at, t);
 	float offshore = smoothstep(0.5, 0.9, seaFoamShare);
