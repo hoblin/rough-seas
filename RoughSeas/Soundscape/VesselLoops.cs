@@ -47,8 +47,9 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
     private sealed class Voices(ICoreClientAPI capi, WaterConfig config, Entity vessel, SoundscapeModSystem sounds) : IDisposable
     {
         private readonly Loop slosh = new(capi, config.Slosh, config.Range, (state, volume) => sounds.Log(vessel, "bilge slosh {0} at {1:F2}", state, volume));
-        private readonly Loop leak = new(capi, config.Leak, config.Range, (state, volume) => sounds.Log(vessel, "leak trickle {0} at {1:F2}", state, volume));
         private readonly Loop lapping = new(capi, config.Lapping, config.Range, (state, volume) => sounds.Log(vessel, "lapping {0} at {1:F2}", state, volume));
+        private readonly Dictionary<HullPlace, Loop> leaks = HullShape.Places.ToDictionary(place => place,
+            place => new Loop(capi, config.Leak, config.Range, (state, volume) => sounds.Log(vessel, "leak trickle at the {0} {1} at {2:F2}", place.Code(), state, volume)));
 
         private string reading = "";
 
@@ -59,14 +60,20 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
             var afloat = vessel.Alive && vessel.Swimming && hull?.Afloat.Sunk != true;
             var centre = vessel.Pos.XYZ;
             var fill = afloat ? bilge?.Fill ?? 0 : 0;
-            var leaking = afloat && hull != null ? hull.Model.LitresPerSecond(hull.Afloat, hull.DepthMetres) : 0;
             var waves = afloat ? sea.At(centre.X, centre.Z).WaveHeight : 0;
+            var room = bilge is { CapacityLitres: > 0 } ? 1 - bilge.Fill : 1;
 
             slosh.Play(fill, centre);
-            leak.Play(leaking, Worst(hull, centre));
             lapping.Play(waves, centre);
+            var leaking = 0.0;
+            foreach (var (place, loop) in leaks)
+            {
+                var litres = afloat && hull is { Model: CrackingHull cracking } ? cracking.Leak(place, hull.Afloat, hull.DepthMetres) * room : 0;
+                leaking += litres;
+                loop.Play(litres, hull == null ? centre : centre.AddCopy(hull.PointAt(place)));
+            }
             reading = $"{vessel.Code} {vessel.EntityId}: {(afloat ? "afloat" : "not afloat")}, bilge {fill:F2} full ({slosh}), " +
-                $"leaking {leaking:F2} L/s ({leak}), waves {waves:F1} m ({lapping})";
+                $"leaking {leaking:F2} L/s heard ({leaks.Values.Count(loop => loop.Playing)} cracks), waves {waves:F1} m ({lapping})";
         }
 
         public string Describe() => reading;
@@ -74,33 +81,32 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
         public void Dispose()
         {
             slosh.Dispose();
-            leak.Dispose();
             lapping.Dispose();
-        }
-
-        private static Vec3d Worst(EntityBehaviorVesselIntegrity? hull, Vec3d centre)
-        {
-            if (hull?.Model is not CrackingHull cracking) return centre;
-
-            var place = HullShape.Places.MaxBy(cracking.Crack);
-            return centre.AddCopy(hull.PointAt(place));
+            foreach (var loop in leaks.Values) loop.Dispose();
         }
     }
 
     private sealed class Loop(ICoreClientAPI capi, Cue cue, float range, Action<string, float> log) : IDisposable
     {
+        private const float FadeSeconds = 1.5f;
+
         private ILoadedSound? sound;
+        private bool fading;
+
+        public bool Playing => sound?.IsPlaying == true && !fading;
 
         public void Play(double amount, Vec3d at)
         {
             var volume = (float)Curve.At(cue.Volume, amount);
             if (volume < Silent || string.IsNullOrEmpty(cue.Sound))
             {
-                if (sound?.IsPlaying != true) return;
-                sound.Stop();
-                log("stops", volume);
+                if (!Playing) return;
+                fading = true;
+                sound!.FadeOut(FadeSeconds, faded => { faded.Stop(); fading = false; });
+                log("fades out", volume);
                 return;
             }
+            if (fading) return;
 
             sound ??= capi.World.LoadSound(new SoundParams
             {

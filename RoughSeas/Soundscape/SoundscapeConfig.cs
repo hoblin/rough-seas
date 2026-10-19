@@ -6,6 +6,7 @@ public class SoundscapeConfig
 {
     public double UpdateSeconds = 0.25;
     public int SeaProbeBlocks = 3;
+    public float VanillaRowing = 1;
     public BedsConfig Beds = new();
     public CrestsConfig Crests = new();
     public ShoreConfig Shore = new();
@@ -22,13 +23,14 @@ public class Cue
 public class BedsConfig
 {
     public double EaseSeconds = 4;
-    public double[][] Volume = [];
+    public double[][] Lufs = [];
     public BedConfig[] Loops = [];
 }
 
 public class BedConfig
 {
     public string Sound = "";
+    public double Lufs;
     public double[][] Share = [];
 }
 

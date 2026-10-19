@@ -86,7 +86,7 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public override void Adopt(float integrity) { }
 
-    private double Leak(HullPlace place, Afloat afloat, double depthMetres)
+    public double Leak(HullPlace place, Afloat afloat, double depthMetres)
     {
         double head = Waterline(place, afloat) - Math.Max(CrackHeight(place, depthMetres), afloat.InsideMetres);
         if (head <= 0) return 0;

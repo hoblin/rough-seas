@@ -31,6 +31,7 @@ public class SoundscapeModSystem : ModSystem
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
         ShoreSound.Attach(Config.Shore, sea, storms.Waves);
+        VanillaRowing.Attach(Config.VanillaRowing);
         var crests = new Crests(capi, Config.Crests, this);
         loops = new VesselLoops(capi, Config.Water, sea, this);
         bed = new SeaBed(capi, Config.Beds);
@@ -56,8 +57,8 @@ public class SoundscapeModSystem : ModSystem
                 loops.Update(listener);
                 if ((sinceLog += dt) < LogEverySeconds) return;
                 sinceLog = 0;
-                Log("bed {0} at {1:F1} m, {2}; whitecaps {3:F2}, spray {4:F2}", listener.AtSea ? "at sea" : "ashore",
-                    listener.WaveHeight, bed.Describe(), listener.Foam.Caps, listener.Foam.Spray);
+                Log("bed {0} in a {1:F1} m/s wind, waves {2:F1} m: {3}; whitecaps {4:F2}, spray {5:F2}", listener.AtSea ? "at sea" : "ashore",
+                    listener.Sea.WindSpeed, listener.WaveHeight, bed.Describe(), listener.Foam.Caps, listener.Foam.Spray);
             }, (int)(Config.UpdateSeconds * 1000));
         };
     }
@@ -66,6 +67,7 @@ public class SoundscapeModSystem : ModSystem
     {
         if (api?.Side != EnumAppSide.Client) return;
         ShoreSound.Detach();
+        VanillaRowing.Detach();
         bed?.Dispose();
         loops?.Dispose();
     }

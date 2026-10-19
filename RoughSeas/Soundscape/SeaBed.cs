@@ -34,7 +34,7 @@ public sealed class SeaBed(ICoreClientAPI capi, BedsConfig config) : IDisposable
 
     public void Update(double seconds, Listener listener)
     {
-        var targets = listener.AtSea ? Curve.Mix(config, listener.WaveHeight) : new double[loops.Length];
+        var targets = listener.AtSea ? Curve.Mix(config, listener.Sea.WindSpeed) : new double[loops.Length];
         var ease = Math.Min(1, seconds / config.EaseSeconds);
         for (var i = 0; i < loops.Length; i++)
         {

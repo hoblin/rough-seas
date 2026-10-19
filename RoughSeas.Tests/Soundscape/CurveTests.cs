@@ -29,22 +29,22 @@ public class CurveTests
 
     [Theory]
     [InlineData(0)]
-    [InlineData(1.2)]
-    [InlineData(2)]
-    [InlineData(3.5)]
+    [InlineData(4)]
     [InlineData(8)]
-    public void KeepsTheBedsAtTheirLoudnessThroughEveryCrossfade(double waveHeight)
+    [InlineData(13)]
+    [InlineData(30)]
+    public void KeepsTheSeaAtItsLevelThroughEveryCrossfade(double windMps)
     {
-        var volumes = Curve.Mix(Shipped.Beds, waveHeight);
-        var power = Math.Sqrt(volumes.Sum(volume => volume * volume));
-        Assert.Equal(Curve.At(Shipped.Beds.Volume, waveHeight), power, 6);
+        var volumes = Curve.Mix(Shipped.Beds, windMps);
+        var power = Math.Sqrt(volumes.Select((volume, i) => Math.Pow(volume * Math.Pow(10, Shipped.Beds.Loops[i].Lufs / 20), 2)).Sum());
+        Assert.Equal(Curve.At(Shipped.Beds.Lufs, windMps), 20 * Math.Log10(power), 6);
     }
 
     [Fact]
-    public void FadesFromTheCalmBedToTheStormBedAsTheSeaRises()
+    public void FadesFromTheCalmBedToTheStormBedAsTheWindRises()
     {
         var calm = Curve.Mix(Shipped.Beds, 0);
-        var storm = Curve.Mix(Shipped.Beds, 6);
+        var storm = Curve.Mix(Shipped.Beds, 20);
         Assert.True(calm[0] > calm[^1]);
         Assert.True(storm[^1] > storm[0]);
     }
@@ -52,7 +52,7 @@ public class CurveTests
     [Fact]
     public void LeavesTheBedsSilentWhenNoLoopIsMeantToPlay()
     {
-        var beds = new BedsConfig { Volume = [[0, 1]], Loops = [new BedConfig { Share = [[0, 0]] }] };
+        var beds = new BedsConfig { Lufs = [[0, -20]], Loops = [new BedConfig { Share = [[0, 0]] }] };
         Assert.Equal([0.0], Curve.Mix(beds, 2));
     }
 

@@ -8,10 +8,10 @@ Every sound Rough Seas plays from its own files is cut, layered and levelled fro
 | [Loopable Stream of Water on Rocks 2](https://freesound.org/people/Geoff-Bremner-Audio/sounds/798673/) | Geoff-Bremner-Audio | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | water/leak |
 | [Pirita Storm waves06.12.2015.flac](https://freesound.org/people/jrosin/sounds/330408/) | jrosin | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | shore/surf-storm |
 | [Sloshing Waterbottle.wav](https://freesound.org/people/Razzvio/sounds/79145/) | Razzvio | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | water/slosh |
-| [Soutuvene, liplatus venettä vasten / Rowing boat, wooden, small waves lapping against the boat, holding still on a lake when fishing, autumn](https://freesound.org/people/YleArkisto/sounds/361112/) | YleArkisto | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | water/slap/soft, water/slap/strong |
-| [Splash 1.wav](https://freesound.org/people/FreqMan/sounds/25819/) | FreqMan | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | water/pour |
+| [Soutuvene, liplatus venettä vasten / Rowing boat, wooden, small waves lapping against the boat, holding still on a lake when fishing, autumn](https://freesound.org/people/YleArkisto/sounds/361112/) | YleArkisto | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | water/slap/soft, water/slap/strong, water/pour |
 | [Stretch Cable Rope 5](https://freesound.org/people/Geoff-Bremner-Audio/sounds/836197/) | Geoff-Bremner-Audio | CC-BY | hull/lashing/harm, hull/lashing/snap |
-| [Water splashes: splash2.wav](https://opengameart.org/content/water-splashes) | Michel Baradari | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | water/slam |
+| [Water splashes: splash1.wav](https://opengameart.org/content/water-splashes) | Michel Baradari | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | water/pour |
+| [Water splashes: splash2.wav](https://opengameart.org/content/water-splashes) | Michel Baradari | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | water/slam, water/pour |
 | [Water Swirl, Small, 3.wav](https://freesound.org/people/InspectorJ/sounds/398723/) | InspectorJ | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | water/slap/soft |
 | [Wooden log falling](https://freesound.org/people/jorickhoofd/sounds/161592/) | jorickhoofd | CC-BY | hull/lashing/logs |
 | [04_Sillón_rechinando.wav](https://freesound.org/people/JoseAgudelo/sounds/472373/) | JoseAgudelo | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/hide/harm |
@@ -36,7 +36,6 @@ Every sound Rough Seas plays from its own files is cut, layered and levelled fro
 | [owl-plonk-200ms-via-209010](https://freesound.org/people/Jerimee/sounds/725407/) | Jerimee | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/hide/knock |
 | [Sailing boat, bow wave (close perspective)](https://freesound.org/people/Pfannkuchn/sounds/360631/) | Pfannkuchn | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | sea/moderate |
 | [Thằn Lằn Khổng Lộ Nước](https://freesound.org/people/SieuAmThanh/sounds/484197/) | SieuAmThanh | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | crest/plunge |
-| [water pour dump from bucket onto street and into drain.flac](https://freesound.org/people/kyles/sounds/451939/) | kyles | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | water/pour |
 | [Water Slapping (fast)](https://freesound.org/people/adviseme333/sounds/679390/) | adviseme333 | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | water/slap/strong |
 | [Water_Lapping_River.wav](https://freesound.org/people/ceich93/sounds/318064/) | ceich93 | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | water/lapping |
 | [Waves crash surf bright detail beach cu loop BAHAMAS 180521.wav](https://freesound.org/people/TRP/sounds/573187/) | TRP | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | shore/surf-strong |
