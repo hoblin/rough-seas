@@ -19,6 +19,7 @@ public sealed class Flotation(double depthMetres, double waterplaneSquareMetres,
 
     public Afloat Float(Aboard aboard, bool flooded)
     {
+        if (depthMetres <= 0) return default;
         if ((flooded || !HasHold) && aboard.Sinking > BuoyantKg) return new Afloat(depthMetres, 0, true);
 
         double draft = HasHold

@@ -76,6 +76,14 @@ public class FlotationTests
     }
 
     [Fact]
+    public void AHullWithNoDepthGivenNeverSinks()
+    {
+        var unmeasured = new Flotation(0, 0, 10);
+
+        Assert.False(unmeasured.Float(new Aboard(100, 75, 200, 60, 500, 0), flooded: true).Sunk);
+    }
+
+    [Fact]
     public void ARaftPressedUnderByItsRiderStillHoldsThemUp()
     {
         var raft = Fixtures.Hull("boat-raft");

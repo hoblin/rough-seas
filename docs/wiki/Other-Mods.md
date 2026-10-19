@@ -91,6 +91,7 @@ Extreme Weathers' whiteout needs precipitation above 0.95 at −2 °C or colder.
 - **Look.** A vessel wears its wood's own bark and timber, taken from Wildcraft's log of that tree.
 - **Named** after the wood, by the name Wildcraft gives it: an elm dugout, a mahogany outrigger canoe.
 - **Mended** with that wood's own logs or planks, as for a vanilla wood; a broken outrigger leaves that wood's planks.
+- **Weight** comes from the real tree's density, as for vanilla's woods. Six are heavier than seawater: azobe (ekki), guajacum (lignum vitae), leadwood, mangrove, umnini (pink ivory) and dalbergia (African blackwood). A dugout or outrigger of them floats while its side is above the water, but goes to the bottom when it floods ([Swamping](Surf-and-Swamping#swamping)). A wood without a sourced density weighs as an unknown wood, 610 kg/m³.
 - **Strength** comes from the real tree each wood stands for, by the same table as vanilla's woods ([Hull condition](Hull-Condition#what-it-is-made-of)):
 
 | Wood | Real tree | MPa |
@@ -163,9 +164,9 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 
 ### Its small boats
 
-The dinghy, the canoe and the kayak carry our [sea forces](Building-a-Vessel#taking-the-sea), [bilge](Building-a-Vessel#the-bilge), [mooring](Building-a-Vessel#mooring) and [drift](Building-a-Vessel#currents). They ride our swell, ship water and are bailed like ours, drift with the current when left alone, and tie to a stake. They carry no hull condition of ours, so our sea doesn't wear or break them, and they take no anchor.
+The dinghy, the canoe and the kayak carry our [sea forces](Building-a-Vessel#taking-the-sea), [bilge](Building-a-Vessel#the-bilge), [mooring](Building-a-Vessel#mooring) and [drift](Building-a-Vessel#currents). They ride our swell, ship water and are bailed like ours, drift with the current when left alone, and tie to a stake. They carry no hull of ours, so our sea doesn't crack or break them, and they take no anchor. Nor do they float by our mass: each keeps the fixed freeboard Shipworks+ gives it, settles by its bilge's fill, and lies awash when swamped but never sinks. Their speed follows everything aboard as ours does, from their own weight with one rider: a second rider, armour, containers and water aboard each slow them.
 
-The boats a ship carries on its davits are vanilla's sailboat, ours in every way: they ship water, wear, break and anchor like any sailboat, and keep their condition while hoisted aboard.
+The boats a ship carries on its davits are vanilla's sailboat, ours in every way: they float by their mass, ship water, crack, flood, sink and anchor like any sailboat, and keep their hull while hoisted aboard.
 
 ### For server owners and modders
 

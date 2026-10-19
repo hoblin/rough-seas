@@ -4,11 +4,11 @@ Three bundles of reeds, lashed tight with reed rope and drawn up into a point at
 
 ## In Rough Seas
 
-A one-way crossing. The reed boat is the cheapest thing that floats, and it doesn't last: the bundles soak up water, and the hull wears through in about three days afloat. It can't be mended, and the sea washes straight through it, so there is nothing to bail. Take it across the lake or out to the island, and don't plan on rowing it home. When it breaks it leaves only floating reeds.
+A few days afloat at a time. The reed boat is the cheapest thing that floats, and nothing breaks it: rocks, rapids and breakers only bend the bundles. Water is what ends it. The reed soaks up its own weight in water every 18 hours, sitting lower and lower, and after about three days afloat it lies on the bottom. Haul it out under the open sky and it dries in the sun, but each drying leaves it a little more rotten, and soaked through and dried about five times, it sinks the moment it is launched. It can't be mended, and the sea washes straight through it, so there is nothing to bail. Take it across the lake or out to the island, and dry it before the trip home.
 
 ## Where it comes from
 
-People have tied reeds into boats wherever reeds grow by water: Egyptians built papyrus skiffs on the Nile, and the Sumerians reed boats sealed with bitumen in the marshes of Mesopotamia. The model follows the *balsas* of Lake Titicaca, still built by the Uru and Aymara from totora reed: two thick side bundles over a thinner core, bound at intervals and swept up at bow and stern. Aymara builders from the lake made Thor Heyerdahl's *Ra II*, the papyrus boat that crossed the Atlantic from Morocco to Barbados in 1970. In California the Chumash and the Ohlone bound the same kind of boat from tule, paddling it across the bays and out to the islands.
+People have tied reeds into boats wherever reeds grow by water: Egyptians built papyrus skiffs on the Nile, and the Sumerians reed boats sealed with bitumen in the marshes of Mesopotamia. The model follows the *balsas* of Lake Titicaca, still built by the Uru and Aymara from totora reed: two thick side bundles over a thinner core, bound at intervals and swept up at bow and stern. Their owners haul them out to dry between trips, and a balsa kept so lasts months. Aymara builders from the lake made Thor Heyerdahl's *Ra II*, the papyrus boat that crossed the Atlantic from Morocco to Barbados in 1970; with nowhere to dry her, she settled about 10 cm deeper every day of the crossing. In California the Chumash and the Ohlone bound the same kind of boat from tule, paddling it across the bays and out to the islands.
 
 ## By the numbers
 
@@ -16,20 +16,21 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | --- | --- |
 | Speed | 1.3 × the raft, paddled |
 | Turning | nimble |
-| [Hull](Hull-Condition) | 1200 J, as an oak raft |
-| [Wear](Hull-Condition#wear) | a third a day afloat: gone in about three days |
+| [Hull](Hull-Condition) | shrugs off every knock |
+| [Soaking](Hull-Condition#seeping-and-soaking) | 80 kg of water a day afloat: on the bottom in about three days; dries ashore in the sun, a third of it left behind as rot |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 36 cm empty, 25 cm with its paddler, when dry |
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
-| [Rapids](Rapids) | broken within seconds |
-| [Lightning](Lightning) | a strike nearby breaks it |
+| [Rapids](Rapids) | unharmed |
+| [Lightning](Lightning) | unharmed |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | one paddler, with its own paddle |
 | Cargo | a basket (8 slots) |
 | Built from | 24 cattail tops, papyrus tops or thatch, with a knife |
-| Wreckage | reed tops |
+| Wreckage | reed tops, broken up with an axe once it has sunk |
 
 ## How it is built
 
@@ -37,7 +38,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 
 ## Its neighbours
 
-- The [raft](Raft) is the other cheap way across: it costs an axe and timber instead of a knife and reeds, but it lasts, and it can be mended.
+- The [raft](Raft) is the other cheap way across: it costs an axe and timber instead of a knife and reeds, but it doesn't soak, and it can be mended.
 - The [dugout](Dugout) is what you build once you mean to stay on the water.
 
 ## Every form it takes

@@ -4,7 +4,7 @@ A light wooden frame, laths bent over a flat floor and flaring out to the gunwal
 
 ## In Rough Seas
 
-The first venture to sea under oars. A hide hull flexes with the waves instead of fighting them, and the currach carries cargo, so it is the first boat in which a coast becomes a road. It wears slowly while afloat and needs greasing with rendered fat to keep it watertight.
+The first venture to sea under oars. A hide hull flexes with the waves instead of fighting them, and the currach carries cargo, so it is the first boat in which a coast becomes a road. Its seams seep once the grease washes out of them, so it needs greasing with rendered fat every few days afloat to keep it tight.
 
 ## Where it comes from
 
@@ -17,8 +17,10 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | Speed | 1.7 × the raft, rowed |
 | Turning | steady |
 | [Hull](Hull-Condition) | 3000 J: it rides the sea, but one hard knock holes it |
-| [Wear](Hull-Condition#wear) | a tenth a day afloat |
-| [Mending](Mending) | 1 large prepared hide restores two thirds; rendered fat gives back wear, up to a quarter |
+| [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 30 litres a game hour into the bilge; a full greasing lasts 2.5 days afloat |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 42 cm empty, 40 cm with its rower |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash with three baskets aboard; three chests take it down |
+| [Mending](Mending) | 1 large prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
 | [Bilge](Bailing) | 1500 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | takes them badly |

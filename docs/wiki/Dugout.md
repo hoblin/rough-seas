@@ -17,8 +17,10 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Speed | 1.5 × the raft, paddled |
 | Turning | slow |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
-| [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 1 log of its wood restores two fifths |
+| Upkeep | none |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 24 cm empty, 20 cm with its paddler, in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 207 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Mending](Mending) | 1 log of its wood closes two fifths of a stove-in place |
 | [Bilge](Bailing) | 450 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker, with only 0.2 m of freeboard |
 | [Rapids](Rapids) | takes a few seconds, not a long run |

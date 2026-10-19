@@ -4,7 +4,7 @@ Logs laid side by side and lashed with rope to three cross-logs. It is the game'
 
 ## In Rough Seas
 
-A barge for floating cargo down a river or across a calm lake. A raft never swamps, because the water washes straight through it, but that is all it does well: a few hard knocks break it, [rapids](Rapids) tear it apart in seconds, and a [breaking sea](Surf-and-Swamping) does the same. The wood counts: an oak raft takes more than a pine one, and a bamboo one more than either. Mend it with a log of its own wood.
+A barge for floating cargo down a river or across a calm lake. A raft never swamps, because the water washes straight through it, and it holds its rider up even pressed under: an oak raft with one aboard lies awash, its logs at the water, and still paddles, while a pine or bamboo one carries its rider above the water. Only a heavy load goes down with it: two riders in plate sink an oak raft. That is all it does well. Knocks don't break its logs, they work its lashings loose: a few hard knocks shake it apart, [rapids](Rapids) do it in seconds, and a [breaking sea](Surf-and-Swamping) the same. The wood counts: an oak raft takes more than a pine one, and a bamboo one more than either. Tie it back together with rope.
 
 ## Where it comes from
 
@@ -17,8 +17,9 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | Speed | the measure for the others: about 2.8 blocks a second, paddled |
 | Turning | steady |
 | [Hull](Hull-Condition) | 1200 J in oak; bamboo a third more, aged wood half |
-| [Wear](Hull-Condition#wear) | none |
-| [Mending](Mending) | 1 log of its wood restores a sixth; 3 bamboo stakes a third |
+| Upkeep | none |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | in oak 8 cm empty, awash with a rider; in bamboo 9 cm with a rider |
+| [Mending](Mending) | 1 rope ties back two thirds of its lashings |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker |
 | [Rapids](Rapids) | broken in about a quarter of a minute |
@@ -34,7 +35,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 
 ## Its neighbours
 
-- The [reed boat](Reed-Boat) is cheaper still and lasts three days.
+- The [reed boat](Reed-Boat) is cheaper still, and lies on the bottom after three days afloat.
 - The [dugout](Dugout) costs five logs and an axe's work, and takes knocks no raft survives.
 
 ## Every form it takes
