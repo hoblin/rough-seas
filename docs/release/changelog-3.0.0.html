@@ -1,0 +1,18 @@
+<p>3.0 "Creak and Leak" changes how a boat is lost. A hull no longer bursts at a hidden zero. A knock cracks it where it lands, the crack leaks, and she goes down when the water aboard outweighs what keeps her afloat. You hear the knock, and a look at her tells you what it did: each cracked place, the leak in litres a minute, and how much side she still shows above the water.</p>
+
+<p>Every vessel floats by its own mass now: its wood, its load and the water in it. A loaded boat is slower and sits lower. Flooded, a light hull lies awash and a heavy one sinks to the seabed. The raft's logs don't break any more, its lashings work loose, and flax twine binds them up again. The reed boat shrugs off knocks but soaks up water, so dry it ashore before the trip home. The currach's seams seep once the grease is gone. A mend patches the place you look at.</p>
+
+<p>And the sea has a voice. Open water sounds as rough as it is, whitecaps hiss on the windward side as the wind rises, surf roars only on the shore, and the hull creaks, cracks and trickles as she takes water. The recordings and the people who made them: <a href="https://github.com/hoblin/rough-seas/wiki/Sound-Credits">Sound credits</a>.</p>
+
+<p>Fixed: in a storm, the whitecaps no longer jump sideways once a second.</p>
+
+<p>For modders: other mods' vessels can ride our drawn swell now, through <code>IDrawnSea</code> (<a href="https://github.com/hoblin/rough-seas/wiki/Reading-the-Sea#the-drawn-sea">Reading the sea</a>). The new hulls broke a few keys the modder pages document, hence the major version:</p>
+<ul>
+<li><code>vesselintegrity</code>'s <code>wearPerDay</code> is gone: <code>soak</code> for a reed hull, <code>seep</code> for a cracking one.</li>
+<li><code>restores</code> now closes one place's crack, or a raft's lashing.</li>
+<li><code>bilge</code>'s <code>sinks</code> is gone: a swamped vessel sinks by its buoyancy.</li>
+<li><code>seaforces</code>' <code>freeboardMetres</code> counts only for a vessel with no <code>depthMetres</code>.</li>
+<li><code>config/vessels/impact.json</code> is now <code>mass.json</code>.</li>
+<li>A carried vessel keeps its hull in <code>roughseas:vessel</code>; <code>roughseas:worn</code> is gone.</li>
+</ul>
+<p>What to change: <a href="https://github.com/hoblin/rough-seas/wiki/For-Modders#hulls-that-crack-leak-and-flood">For modders</a>. Old worlds keep their vessels: a raft takes its old condition as its lashing, a reed boat as water soaked up, and every other hull starts sound.</p>

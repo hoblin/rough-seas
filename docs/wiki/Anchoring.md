@@ -55,7 +55,7 @@ What the sea does to an anchored sailboat, each wave:
 | force 10, 9 m | 1 in 4 | every other wave | 1 in 120 |
 | force 12, 14 m | every other wave | 3 in 4 | 1 in 8 |
 
-An anchored vessel takes the waves more gently: it [ships less water and takes milder blows](Surf-and-Swamping#at-anchor), three tenths of each. It still lies across the sea, so it [capsizes](Surf-and-Swamping#capsizing) as easily, and it still needs [bailing](Bailing). Turning bow to the wind comes with sailing, in [Seamanship](Roadmap#seamanship).
+An anchored vessel takes the waves more gently: it [ships less water and takes milder blows](Surf-and-Swamping#at-anchor), three tenths of each. It still lies across the sea, and it still needs [bailing](Bailing). Turning bow to the wind comes with sailing, in [Seamanship](Roadmap#seamanship).
 
 ## Leaving it
 
