@@ -1,7 +1,8 @@
 // The other end of RoughSeas/Storms/SeaSurface.cs and SurfaceField.cs: DisplacementAt, FoldAt and Factor compute the same surface.
 uniform vec4 seaWaves[SEA_SLOTS];
 uniform float seaSteepness;
-uniform sampler2D seaHeightMap;
+// highp hides this sampler from the engine's numbering, which must stay vanilla's: see docs/sea-and-weather.md.
+uniform highp sampler2D seaHeightMap;
 uniform vec4 seaHeightArea;
 
 out float seaFoamCrest;

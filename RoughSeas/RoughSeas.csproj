@@ -39,6 +39,10 @@
   </ItemGroup>
 
 <ItemGroup>
+  <PackageReference Include="OpenTK.Graphics" Version="4.9.4" ExcludeAssets="runtime" PrivateAssets="all" />
+</ItemGroup>
+
+<ItemGroup>
   <Content Include="modinfo.json;worldconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>

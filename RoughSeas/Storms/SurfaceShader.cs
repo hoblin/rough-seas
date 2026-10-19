@@ -1,7 +1,10 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using HarmonyLib;
+using OpenTK.Graphics.OpenGL;
 using RoughSeas.SeaAndWeather;
+using Vintagestory.Client;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -44,6 +47,7 @@ public static class SurfaceShader
     private static SurfaceField? field;
     private static LoadedTexture? heightMap;
     private static ICoreClientAPI? capi;
+    private static int heightMapUnit;
     private static float[] uniforms = [];
     private static string vertexCode = "";
     private static string fragmentCode = "";
@@ -57,10 +61,12 @@ public static class SurfaceShader
     {
         (surface, field, capi) = (waves, heights, api);
         heightMap = new LoadedTexture(api);
+        heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
         uniforms = new float[waves.Slots * 4];
         ReadSources(api);
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(ShaderRegistry), "HandleIncludes"), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Inject)));
+        harmony.Patch(AccessTools.Method(typeof(ShaderProgram), nameof(ShaderProgram.Compile)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(LocateHeightMap)));
         harmony.Patch(AccessTools.Method(typeof(ShaderProgramBase), nameof(ShaderProgramBase.Use)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Bind)));
         harmony.Patch(AccessTools.Method(typeof(ClientMain), nameof(ClientMain.EyesInWaterDepth)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(EyesUnderSurface)));
         if (Compile(api)) return true;
@@ -92,6 +98,12 @@ public static class SurfaceShader
         heightMap.Width = heightMap.Height = field.Across;
         capi.Render.LoadOrUpdateTextureFromRgba(field.Pixels(), true, 1, ref heightMap);
     }
+
+    public static string Samplers() => string.Join("\n", AccessTools.StaticFieldRefAccess<ShaderProgram[]>(typeof(ShaderRegistry), "shaderPrograms")
+        .Where(program => program?.textureLocations.Count > 0)
+        .Select(program => program.PassName + ": "
+            + string.Join(", ", program.textureLocations.OrderBy(sampler => sampler.Value).Select(sampler => $"{sampler.Key} {sampler.Value}"))
+            + (Active(program, HeightMapSampler) ? $"; {HeightMapSampler} {heightMapUnit}" : "")));
 
     private static bool Compile(ICoreClientAPI api)
     {
@@ -137,6 +149,12 @@ public static class SurfaceShader
         }
     }
 
+    private static void LocateHeightMap(ShaderProgram __instance)
+    {
+        var location = ScreenManager.Platform.GetUniformLocation(__instance, HeightMapSampler);
+        if (location >= 0) __instance.uniformLocations[HeightMapSampler] = location;
+    }
+
     private static void Bind(ShaderProgramBase __instance)
     {
         if (surface == null || !Active(__instance, WavesUniform) || capi?.World.Player?.Entity is not { } player) return;
@@ -144,9 +162,9 @@ public static class SurfaceShader
         else Array.Clear(uniforms);
         __instance.Uniforms4(WavesUniform, surface.Slots, uniforms);
         __instance.Uniform("seaSteepness", (float)surface.Steepness);
-        if (field != null && heightMap is { TextureId: > 0 })
+        if (field != null && heightMap is { TextureId: > 0 } && Active(__instance, HeightMapSampler))
         {
-            __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, __instance.textureLocations.Count);
+            __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, heightMapUnit);
             __instance.Uniform("seaHeightArea", new Vec4f((float)(field.OriginX - player.CameraPos.X), (float)(field.OriginZ - player.CameraPos.Z),
                 (float)field.SizeBlocks, (float)field.SizeBlocks));
         }

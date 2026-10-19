@@ -54,7 +54,8 @@ SeaMapServer ── snapshot per region ─────────→  the wate
 
 - `SurfaceClock` aims every `surface.aimSeconds`: `SurfaceField` samples the waves around the player into a 48 × 48 texture, `seaHeightMap`, and `SeaSurface` sets the wave trains from the highest of them.
 - A cell holds its waves as a share of the height the surface draws, up to twice it. The shader, vessels and floating items read the same share (`SurfaceField.Factor`), so a boat rides the wave drawn under it.
-- Our sampler sits in vanilla's shared `vertexwarp.vsh`, so it is in every chunk program. Vanilla numbers each program's samplers by declaration, so ours binds one past them (`textureLocations.Count`). A fixed unit overwrote a vanilla texture in the leaf pass and drew distant trees black.
+- **Vanilla's samplers stay on vanilla's units, in every program.** The engine numbers a program's samplers by a regex over its source, vertex shader first (`ShaderProgram.collectUniformNames`). `Use()` binds `liquidDepth`, `sky` and the shadow maps by that number; the generated setters, the cloud pass (`liquidDepth` on 4) and mods like SheyderMod (specular on 7) assume vanilla's. A sampler we declare in a shared include moves every one of them, and one we bind inside the range overwrites someone's texture: 2.0.0's `seaHeightMap` drew leaves black beside SheyderMod and wiped clouds over the sea.
+- So `seaHeightMap` is declared `uniform highp sampler2D`, which the regex doesn't match; `SurfaceShader` looks up its location itself after each compile and binds it on the GPU's last texture unit (`GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1`), which no one hard-codes. A new sampler of ours follows the same rule. `.surface samplers` shows each program's numbering and where the height map is read.
 
 ## Rules that keep it whole
 
