@@ -154,7 +154,7 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 
 ## Shipworks+
 
-[Shipworks+](https://mods.vintagestory.at/show/mod/12650) 1.1.0 builds walkable ships of seven hulls, from a sloop to a man o' war, and three small boats: a dinghy, a canoe and a kayak. It needs [Walkable Entities](https://mods.vintagestory.at/walkableentities) (we tested 1.0.33). It made itself compatible with Rough Seas: with both in a mod set, its ships sail in our wind and feel our sea. Beside Rough Seas 2.0.1 it works with one issue: its ships don't rise and roll with our drawn swell.
+[Shipworks+](https://mods.vintagestory.at/show/mod/74534) 1.1.0 builds walkable ships of seven hulls, from a sloop to a man o' war, and three small boats: a dinghy, a canoe and a kayak. It needs [Walkable Entities](https://mods.vintagestory.at/walkableentities) (we tested 1.0.33). It made itself compatible with Rough Seas: with both in a mod set, its ships sail in our wind and feel our sea. Beside Rough Seas 2.0.1 it works with one issue: its ships don't rise and roll with our drawn swell.
 
 ### Its ships
 
