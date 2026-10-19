@@ -56,6 +56,16 @@ public class ImpactTests
     }
 
     [Fact]
+    public void ForgetsTheSpeedOfAVesselItStoppedMeasuring()
+    {
+        Sail((3, 0));
+        impact.Forget();
+        now += 1000;
+
+        Assert.Empty(Sail((0, 0)));
+    }
+
+    [Fact]
     public void StrikesWithTheEnergyAboveTheHullsGive()
     {
         Assert.Equal(0.5 * 100 * (9 - 1), impact.Joules(kilograms: 100, speedLost: 3), 6);

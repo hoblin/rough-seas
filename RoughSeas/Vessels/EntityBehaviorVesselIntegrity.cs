@@ -320,7 +320,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         if (accum != 0) return;
         var mount = entity.GetInterface<IMountable>();
         var client = entity.Api as ICoreClientAPI;
-        if (client != null ?mount?.Controller != client.World.Player.Entity : mount?.IsBeingControlled() == true) return;
+        if (client != null ? mount?.Controller != client.World.Player.Entity : mount?.IsBeingControlled() == true)
+        {
+            lock (impactLock) impact.Forget();
+            return;
+        }
 
         var motion = entity.Pos.Motion;
         double? speedLost;

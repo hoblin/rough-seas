@@ -27,5 +27,7 @@ public class Impact(double give, long guardMs)
         return speedLost;
     }
 
+    public void Forget() => (keptX, keptZ) = (0, 0);
+
     public double Joules(double kilograms, double speedLost) => 0.5 * kilograms * (speedLost * speedLost - give * give);
 }
