@@ -9,6 +9,7 @@ Rough Seas drives the game's own weather rather than replacing it, so most mods 
 | [Extreme Weathers](#extreme-weathers) | 1.8.5 | Compatible, with changes on both sides. |
 | [Terra Prety](#terra-prety) | 7.11.2-pre.1 | Compatible at world height 448. |
 | [Wildcraft: Trees and Shrubs](#wildcraft-trees-and-shrubs) | 1.3.4 | Compatible: its woods build our vessels. |
+| [SheyderMod](#sheydermod) | 2.0.0 | Compatible from Rough Seas 2.0.1. |
 
 Running Rough Seas with a mod not listed here? Tell us how it went on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
@@ -139,3 +140,12 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 - Vessels of Wildcraft's woods carry its name in their codes, `roughseas:dugout-wildcrafttree-elm`, so two mods with a wood of the same name never meet. Vanilla's woods keep their codes, `roughseas:dugout-oak`.
 - Take Wildcraft out of a world and the vessels built of its woods go with it, as its own blocks do.
 - Any other mod's trees work the same way, with nothing to write for it. Rough Seas reads every mod's `worldproperties/block/wood.json`, and builds from the blocks a wood has in vanilla's shapes: `log-placed-{wood}-ud` and `-we`, `plank-{wood}`, `debarkedlog-{wood}-ud` and `logsection-placed-{wood}-ne-ud`, in that mod's own domain. A mod's birch, elm or spruce gives canoe bark.
+
+## SheyderMod
+
+[SheyderMod](https://mods.vintagestory.at/sheydermod) 2.0.0 is a client-side shader pack: specular highlights, deferred lighting, bloom, fog, its own water. Beside Rough Seas 2.0.1 or later, each mod works as it does alone: our waves and foam ride under SheyderMod's water and lighting.
+
+### For modders
+
+- Rough Seas draws its waves from a texture of the sea around the player, read in vanilla's shared `vertexwarp.vsh`. That texture sits on the highest texture unit the graphics card offers and is kept out of the engine's numbering of samplers, so every vanilla sampler stays on the unit vanilla gives it, in every shader program. A mod that binds its own texture to a fixed unit, as SheyderMod binds its specular map to unit 7, can count on vanilla's numbering.
+- The client command `.surface samplers` lists each shader program's samplers by unit as the engine numbers them, and where our wave texture is read.

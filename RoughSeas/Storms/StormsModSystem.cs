@@ -73,6 +73,10 @@ public class StormsModSystem : ModSystem
                     return TextCommandResult.Success($"Tracing vessels' poses for {args[0]} s, tagged 'surface trace' in the client's debug log");
                 })
             .EndSubCommand()
+            .BeginSubCommand("samplers")
+                .WithDescription("List the texture units the engine numbers each shader program's samplers on")
+                .HandleWith(_ => TextCommandResult.Success(SurfaceShader.Samplers()))
+            .EndSubCommand()
             .BeginSubCommand("reload")
                 .WithDescription("Read the surface's shader includes again from the mod's assets and recompile")
                 .HandleWith(_ => SurfaceShader.Reload()
