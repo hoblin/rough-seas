@@ -1,22 +1,26 @@
-Rough Seas gives the world weather of its own, but it doesn't replace the game's weather. It drives it. Wind, rain and weather events still come out of vanilla's own machinery, so a mod written for plain Vintage Story works next to Rough Seas without a line about it. What vanilla has no place for, the wind's direction, waves and currents, we publish from our own code, and a vessel takes our sea through behaviours set in JSON. These pages are for a mod's author: each one covers one part, so read the ones your mod touches.
+Rough Seas keeps one model of the world's wind, waves, storms and currents, computed on the server from the world's own climate and ocean map. The rest of the game meets that model in three ways, and a mod meets it in the same three.
 
 ![Rough Seas lies under vanilla: the world's ocean map and climate at the bottom, Rough Seas' map on the server above them, vanilla's weather machinery driven by it, and other mods reading vanilla as usual at the top; clients read the map the server sends](images/diagrams/under-vanilla.svg)
 
+- **Through vanilla.** We don't replace the game's weather; we drive it. Each region's wind pattern, the rain and the weather events still come out of vanilla's machinery, set from our model. So a mod written for plain Vintage Story reads our weather without a line about us, and a mod that changes the weather through vanilla's levers changes ours.
+- **Through our own code.** Vanilla has no place for the wind's direction, for waves or for currents. We publish them from our own types, on both sides: the sea state, and on a client the drawn sea, its picture of the waves.
+- **Through behaviours.** A vessel takes our sea by carrying our entity behaviours, configured in JSON: it floats by its mass, ships water, cracks, floods, moors and drifts. No code.
+
 ## The pages
 
-**Weather and climate**
-- [Reading the weather](Reading-the-Weather): wind, rain and temperature through vanilla's own calls, and the levers, handlers and patches we follow.
-- [Weather events](Weather-Events): how vanilla's events, and yours, fire under our weather.
-- [Wind patterns](Wind-Patterns): our pattern in every region, and setting one yourself.
+Each page covers one part, for the mod that touches it; read the ones yours does.
 
-**Worldgen**
-- [The ocean map](The-Ocean-Map): the world's own ocean layer, and a mod that reshapes the oceans.
+| Your mod | Read |
+| --- | --- |
+| reads the wind, rain or temperature, or changes them | [Reading the weather](Reading-the-Weather) |
+| adds weather events | [Weather events](Weather-Events) |
+| sets a region's wind pattern | [Wind patterns](Wind-Patterns) |
+| reshapes the oceans, or calls vanilla's ocean layer | [The ocean map](The-Ocean-Map) |
+| reads the wind's direction, waves, storms or currents: a helm, a sail, a fish | [Reading the sea](Reading-the-Sea) |
+| poses a vessel of its own on the swell a client draws | [Reading the sea](Reading-the-Sea#the-drawn-sea) |
+| adds a vessel, or gives ours its behaviours | [Building a vessel](Building-a-Vessel) |
 
-**The sea from code**
-- [Reading the sea](Reading-the-Sea): the wind's direction, waves, storms and currents at any point, and the swell a client draws.
-
-**Vessels**
-- [Building a vessel](Building-a-Vessel): making a vessel float by its mass, take our waves, ship water, crack, flood, moor and drift.
+Where a page touches physics, it says what the mod does and links [The science behind it](The-Science-Behind-It) for why.
 
 ## What we keep
 
@@ -41,8 +45,8 @@ New: the hull `model`, `parts[].share`, `depthMetres`, `waterplaneSquareMetres`,
 | `roughseas:seamap` | the map region moddata, and the network channel that carries the map to clients |
 | `roughseas:oceancalibration` | save data: what the world's ocean map means |
 | `roughseas:vessels` | the network channel a rider's client reports its vessel's knocks over |
-| `roughseas-force*` | our wind patterns; setting one by hand works, but the next lease renews it |
+| `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |
 
 ## Adding and removing Rough Seas
 
-The mod can join an existing world, and leave one. Without it the world opens cleanly: regions keep our last wind pattern until it runs out, then vanilla rolls its own.
+The mod can join an existing world, and leave one. Without it the world opens cleanly: each region keeps the strength of the wind we last set for up to a game hour, then vanilla rolls its own pattern.
