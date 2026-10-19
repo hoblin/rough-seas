@@ -62,14 +62,14 @@ public class SeaworthinessTests
     [Fact]
     public void AnEmptyBilgeLeavesHerAsSheIs()
     {
-        var dugout = Of("dugout");
+        var dugout = Fixtures.Seaworthiness("dugout");
         Assert.Equal(dugout, dugout.Laden(0, swamping));
     }
 
     [Fact]
     public void AFullBilgeLeavesHerAwashSoEveryCrestComesAboard()
     {
-        var full = Of("currach").Laden(1, swamping);
+        var full = Fixtures.Afloat("currach", litres: 1500);
         Assert.Equal(0, full.FreeboardMetres);
         Assert.Equal(1, full.ShippedShare(waves.Crest(0.5, breaking: false)));
     }
@@ -88,10 +88,26 @@ public class SeaworthinessTests
     [Fact]
     public void WaterAboardSlowsALightHullMoreThanAHeavyOne()
     {
-        Assert.Equal(1, swamping.SpeedFactor(470, 0));
-        Assert.InRange(swamping.SpeedFactor(470, 225), 0.9, 0.95);
-        Assert.InRange(swamping.SpeedFactor(85, 125), 0.8, 0.85);
+        Assert.Equal(1, swamping.SpeedFactor(470, 470));
+        Assert.InRange(swamping.SpeedFactor(470, 695), 0.9, 0.95);
+        Assert.InRange(swamping.SpeedFactor(85, 210), 0.8, 0.85);
     }
 
-    private static Seaworthiness Of(string vessel) => Fixtures.Seaworthiness(vessel);
+    [Fact]
+    public void ALoadedBoatIsSlowerWithADryBilge()
+    {
+        var dugout = Fixtures.Hull("dugout");
+        var loaded = dugout.Crewed(bodies: 130, kit: 70).Total;
+
+        Assert.True(swamping.SpeedFactor(dugout.ReferenceKg, loaded) < 0.95);
+    }
+
+    [Fact]
+    public void WaterAboardLowersHerSideUntilAFullBilgeBringsItToTheWater()
+    {
+        Assert.True(Fixtures.Afloat("dugout", litres: 225).FreeboardMetres < Of("dugout").FreeboardMetres);
+        Assert.InRange(Fixtures.Afloat("dugout", litres: 449).FreeboardMetres, 0, 0.01);
+    }
+
+    private static Seaworthiness Of(string vessel) => Fixtures.Afloat(vessel);
 }

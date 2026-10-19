@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -18,6 +19,7 @@ public static class VesselMotion
     private const double LogEverySeconds = 5;
 
     private static readonly Dictionary<long, (long Frame, SeaPose Pose)> poses = [];
+    private static readonly Dictionary<long, (HullResponse Response, double Seconds)> responses = [];
     private static Harmony? harmony;
     private static StormsModSystem? storms;
     private static IDrawnSea? drawn;
@@ -50,6 +52,7 @@ public static class VesselMotion
         harmony = null;
         (storms, drawn, surface) = (null, null, null);
         poses.Clear();
+        responses.Clear();
         (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
     }
 
@@ -131,9 +134,26 @@ public static class VesselMotion
         var box = boat.CollisionBox;
         var side = Math.Max(box.XSize, box.ZSize);
         var yaw = pos.Yaw + (boat.Properties.Client.Shape?.rotateY ?? 0) * GameMath.DEG2RAD;
-        var pose = sea.PoseOf(pos.X, pos.Z, yaw, side, side);
+        var pose = Answer(boat, forces, sea.PoseOf(pos.X, pos.Z, yaw, side, side), side);
         var seaworthiness = forces.Seaworthiness;
         return pose with { Roll = pose.Roll * seaworthiness.RollResponse, Pitch = pose.Pitch * seaworthiness.PitchResponse };
+    }
+
+    private static SeaPose Answer(EntityBoat boat, EntityBehaviorSeaForces forces, SeaPose pose, double length)
+    {
+        if (!responses.TryGetValue(boat.EntityId, out var answered))
+        {
+            answered = (new HullResponse(0, 0, storms!.Config.Response), surface!.Seconds);
+        }
+        var response = answered.Response;
+        if (boat.GetBehavior<EntityBehaviorVesselIntegrity>() is { Floats: true } hull)
+        {
+            double draft = hull.Afloat.DraftMetres;
+            response.HeavePeriodSeconds = HullResponse.HeavePeriod(draft, storms!.Config.Response);
+            response.RollPeriodSeconds = HullResponse.RollPeriod(length, forces.BeamMetres, draft, hull.DepthMetres);
+        }
+        responses[boat.EntityId] = (response, surface!.Seconds);
+        return response.Follow(pose, surface.Seconds - answered.Seconds);
     }
 
     private static void Report(EntityBoat boat, SeaPose pose)

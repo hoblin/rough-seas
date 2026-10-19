@@ -32,6 +32,8 @@ public readonly record struct Seaworthiness(
         RollResponse = RollResponse * (1 + swamping.FreeSurfaceRoll * fill)
     };
 
+    public Seaworthiness Floating(double freeboardMetres) => this with { FreeboardMetres = Math.Max(0, freeboardMetres) };
+
     public double Overtopping(double crest) => Math.Max(0, crest * (1 - Heave) - FreeboardMetres);
 
     public double ShippedShare(double crest)

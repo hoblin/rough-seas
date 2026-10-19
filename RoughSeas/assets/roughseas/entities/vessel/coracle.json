@@ -20,13 +20,21 @@
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
             "impactCapacity": 400,
+            "parts": [{"material": "hide", "share": 0.5}, {"material": "wood-willow", "share": 0.5}],
+            "depthMetres": 0.27,
+            "waterplaneSquareMetres": 1.25,
             "repairs": [{
                 "material": {"type": "item", "code": "game:hide-prepared-small", "stacksize": 1},
                 "restores": 0.67,
                 "saturation": 40
             }],
             "wreckage": [{"type": "item", "code": "game:stick", "quantity": {"avg": 3, "var": 2}}],
-            "damage": {"textures": ["hide"], "material": "hide"}
+            "damage": {"textures": ["hide"], "material": "hide"},
+            "sources": {
+                "parts": "A hide stretched over a woven frame of willow laths, about half of each by weight",
+                "depthMetres": "Bottom to rim: a 7 cm draft with its paddler and about 0.2 m of rim above it",
+                "waterplaneSquareMetres": "A round bowl 1.4 m across, nearly flat-bottomed, so that 250 L aboard settles it by its 0.2 m of rim"
+            }
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [{"x1": -0.688, "y1": 0, "z1": -0.688, "x2": 0.688, "y2": 0.5, "z2": 0.688}],
@@ -50,13 +58,11 @@
             "beamMetres": 1.4,
             "mastMetres": 0,
             "windageSquareMetres": 0.5,
-            "freeboardMetres": 0.2,
             "heave": 0.8,
             "capsizeBreakerMetres": 0.6,
             "rollResponse": 1.6,
             "pitchResponse": 1.6,
             "sources": {
-                "freeboardMetres": "A coracle with its paddler aboard floats with about 0.2 m of rim above water",
                 "heave": "A 15 kg basket sits on the water and rises with the crest",
                 "capsizeBreakerMetres": "A crest that catches the low rim tips the bowl and its paddler out: coracles keep to rivers and sheltered water",
                 "rollResponse": "A round, flat bowl tilts with every slope of the water",

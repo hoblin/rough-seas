@@ -16,9 +16,10 @@ public class MaterialTableTests
     {
         table = new MaterialTable(new Dictionary<string, Material>
         {
-            ["wood"] = new() { Strength = 90 },
-            ["wood-oak"] = new() { Strength = 100 },
-            ["wood-ebony"] = new() { Strength = 160 },
+            ["wood"] = new() { Strength = 90, Density = 610 },
+            ["wood-oak"] = new() { Strength = 100, Density = 600 },
+            ["wood-ebony"] = new() { Strength = 160, Density = 1200 },
+            ["hide"] = new() { Density = 1000 },
             ["wood-elm"] = new() { Strength = 65 },
             ["wood-wildcrafttree:cedar"] = new() { Strength = 50 },
             ["wood-cedar"] = new() { Strength = 80 },
@@ -76,9 +77,69 @@ public class MaterialTableTests
     public void ShipsTheMedianOfTheVanillaWoodsAsTheStrengthOfAnUnknownWood()
     {
         var shipped = JsonConvert.DeserializeObject<Dictionary<string, Material>>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "materials.json")))!;
-        var vanilla = VanillaWoods.Select(wood => shipped["wood-" + wood].Strength).Order().ToArray();
+        var vanilla = VanillaWoods.Select(wood => shipped["wood-" + wood].Strength!.Value).Order().ToArray();
 
-        Assert.Equal((vanilla[5] + vanilla[6]) / 2, shipped["wood"].Strength, tolerance: 0.1);
+        Assert.Equal((vanilla[5] + vanilla[6]) / 2, shipped["wood"].Strength!.Value, tolerance: 0.1);
+    }
+
+    [Fact]
+    public void ShipsTheMedianOfTheVanillaWoodsAsTheDensityOfAnUnknownWood()
+    {
+        var shipped = JsonConvert.DeserializeObject<Dictionary<string, Material>>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "materials.json")))!;
+        var vanilla = VanillaWoods.Select(wood => shipped["wood-" + wood].Density!.Value).Order().ToArray();
+
+        Assert.Equal((vanilla[5] + vanilla[6]) / 2, shipped["wood"].Density!.Value, tolerance: 0.1);
+    }
+
+    [Fact]
+    public void GivesEveryShippedWoodADensityWithItsSource()
+    {
+        var shipped = JsonConvert.DeserializeObject<Dictionary<string, Material>>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "materials.json")))!;
+
+        Assert.All(shipped, row =>
+        {
+            Assert.True(row.Value.Density > 0, row.Key);
+            Assert.False(string.IsNullOrEmpty(row.Value.DensitySource), row.Key);
+        });
+    }
+
+    [Fact]
+    public void WeighsAHullOfAnotherWoodByItsDensityInTheSameShape()
+    {
+        var ebony = table.Build([Part("wood-ebony", "wood-oak")], 400);
+        var oak = table.Build([Part("wood-oak", "wood-oak")], 400);
+
+        Assert.Equal(400 * 1200.0 / 600, ebony.Kilograms, 6);
+        Assert.Equal(oak.Litres, ebony.Litres, 6);
+        Assert.Equal(400 / 600.0 * 1000, oak.Litres, 6);
+    }
+
+    [Fact]
+    public void BuildsAHullOfSeveralMaterialsByTheirShares()
+    {
+        var build = table.Build([Part("hide", "hide", 2), Part("wood-oak", "wood-oak", 3)], 100);
+
+        Assert.Equal(100, build.Kilograms, 6);
+        Assert.Equal((40 / 1000.0 + 60 / 600.0) * 1000, build.Litres, 6);
+    }
+
+    [Fact]
+    public void WeighsAHullWithNoPartsAsAnUnknownWood()
+    {
+        var build = table.Build([], 61);
+
+        Assert.Equal(61, build.Kilograms, 6);
+        Assert.Equal(100, build.Litres, 6);
+    }
+
+    [Fact]
+    public void WeighsAMaterialItDoesNotKnowAsAnUnknownWoodAndWarnsOnce()
+    {
+        table.Build([Part("hide-modded", "hide-modded")], 61);
+        table.Build([Part("hide-modded", "hide-modded")], 61);
+
+        Assert.Equal(100, table.Build([Part("hide-modded", "hide-modded")], 61).Litres, 6);
+        Assert.Equal(1, logger.Warnings);
     }
 
     [Fact]
@@ -99,7 +160,7 @@ public class MaterialTableTests
         Assert.Equal(double.PositiveInfinity, table.BreakingKilonewtons("rope-modded"));
     }
 
-    private static VesselPart Part(string material, string reference) => new() { Material = material, Reference = reference };
+    private static VesselPart Part(string material, string reference, double share = 1) => new() { Material = material, Reference = reference, Share = share };
 
     private class CountingLogger : LoggerBase
     {

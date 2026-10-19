@@ -8,4 +8,5 @@ public class VesselPart
 {
     public string Material = "";
     public string Reference = "";
+    public double Share = 1;
 }

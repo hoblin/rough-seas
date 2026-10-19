@@ -23,6 +23,9 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 2400,
             "runsRapids": true,
+            "parts": [{"material": "bark", "share": 0.5}, {"material": "wood-tuja", "share": 0.5}],
+            "depthMetres": 0.29,
+            "waterplaneSquareMetres": 2.4,
             "repairs": [{
                 "material": {"type": "item", "code": "roughseas:bark-{wood}", "stacksize": 2},
                 "restores": 0.33,
@@ -32,7 +35,12 @@
                 {"type": "item", "code": "roughseas:bark-{wood}", "quantity": {"avg": 4, "var": 2}},
                 {"type": "item", "code": "game:stick", "quantity": {"avg": 1, "var": 1}}
             ],
-            "damage": {"textures": ["bark"], "material": "bark"}
+            "damage": {"textures": ["bark"], "material": "bark"},
+            "sources": {
+                "parts": "Bark sewn over a frame of white cedar ribs, sheathing and gunwales, about half of each by weight",
+                "depthMetres": "Keel to gunwale amidships: a 4 cm draft with one paddler in a 30 kg hull and about a quarter metre of side above it",
+                "waterplaneSquareMetres": "A 4.5 m canoe 0.75 m wide, fine at both ends, so that 600 L aboard settles her by her quarter metre of side"
+            }
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
@@ -75,13 +83,11 @@
             "beamMetres": 0.75,
             "mastMetres": 0,
             "windageSquareMetres": 0.5,
-            "freeboardMetres": 0.25,
             "heave": 0.85,
             "capsizeBreakerMetres": 0.75,
             "rollResponse": 1.8,
             "pitchResponse": 1.2,
             "sources": {
-                "freeboardMetres": "A loaded birch-bark canoe shows about a quarter metre of side amidships",
                 "heave": "A 30 kg bark hull rises with the crest",
                 "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
                 "rollResponse": "Narrow and round in section: quick to roll",

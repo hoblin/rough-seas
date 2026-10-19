@@ -47,6 +47,16 @@
             "freeSurfaceCapsize": "Balance: the free surface takes away stability, so a full bilge goes over to a breaker half as high"
         }
     },
+    "response": {
+        "heaveAddedMass": 1,
+        "heaveDamping": 0.3,
+        "rollDamping": 0.1,
+        "sources": {
+            "heaveAddedMass": "A hull heaving drags about its own mass of water with it: heave period 2π √((M + A₃₃) / (ρ g A_w)), with A₃₃ about M for a small open boat (Aalto seakeeping notes, SD06)",
+            "heaveDamping": "Balance: a boat that rises to a crest settles in a bob or two, radiating waves as it goes",
+            "rollDamping": "A small hull without bilge keels rolls on for several swings: damping ratio about 0.06 to 0.1 (boatdesign.net, a 25 m patrol boat)"
+        }
+    },
     "mooring": {
         "anchoredExposure": 0.3,
         "stakeRope": "rope-flax",

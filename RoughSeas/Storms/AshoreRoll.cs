@@ -56,7 +56,7 @@ public sealed class AshoreRoll
         var openWaterToShore = shore - reach;
         var chance = new ShoreHazard(Config).Chance(heights, hoursPerSample, openWaterToShore);
         var thrown = vessel.World.Rand.NextDouble() < chance;
-        if (thrown) hull?.Strike(forces.BreakerEnergy(Highest) * Config.ImpactFactor);
+        if (thrown) hull?.Strike(forces.BreakerEnergy(Highest) * Config.ImpactFactor, HullPlace.Bottom);
         storms.Log(vessel, "slept {0:F0} h moored, {1:F0} blocks of open water to the shore, highest waves {2:F1} m: ashore chance {3:F3}, thrown {4}, hull now {5:F2}",
             slept, openWaterToShore, Highest, chance, thrown, hull?.Integrity ?? 1);
     }

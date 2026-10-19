@@ -11,13 +11,12 @@ using RoughSeas.Vessels;
 
 namespace RoughSeas.Storms;
 
-public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesselLoad
+public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesselHold
 {
     public const string Code = "roughseas:bilge";
 
     private const string TreeKey = "roughseas:bilge";
     private const int DataVersion = 1;
-    private const double SeawaterKgPerLitre = 1.025;
 
     private StormsModSystem storms = null!;
     private ISeaWeather sea = null!;
@@ -28,9 +27,6 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     private float sinceUpdate;
 
     public double CapacityLitres { get; private set; }
-
-    /// <summary>Heavier than water once swamped, as a ballasted hull is: she goes to the bottom rather than lie awash.</summary>
-    public bool Sinks { get; private set; }
 
     public double Litres
     {
@@ -49,8 +45,6 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
 
     public bool Swamped => CapacityLitres > 0 && Litres >= CapacityLitres;
 
-    public double ImpactKilograms => Litres * SeawaterKgPerLitre * Fill;
-
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
     public override string PropertyName() => Code;
@@ -62,7 +56,6 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         CapacityLitres = attributes["capacityLitres"].AsDouble();
         deckSquareMetres = attributes["deckSquareMetres"].AsDouble();
         drainLitresPerHour = attributes["drainLitresPerHour"].AsDouble();
-        Sinks = attributes["sinks"].AsBool();
         if (entity.Api is ICoreClientAPI capi)
         {
             water = new BilgeRenderer(capi, entity);
@@ -79,11 +72,11 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         }
     }
 
-    public void Ship(double litres)
+    public void Ship(double litres, string cause)
     {
         var wasSwamped = Swamped;
         Litres += litres;
-        if (Swamped && !wasSwamped) storms.Log(entity, "swamped: {0:F0} L aboard", Litres);
+        if (Swamped && !wasSwamped) storms.Log(entity, "swamped {0}: {1:F0} L aboard", cause, Litres);
     }
 
     public double Bail(double litres)
@@ -104,7 +97,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         var hours = storms.GameHours(sinceUpdate);
         sinceUpdate = 0;
         var inflow = sea.DangerousOceans ? Rainfall() * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
-        Ship(inflow);
+        Ship(inflow, "by rain");
         Litres -= drainLitresPerHour * hours;
         if ((rained += inflow) < 1) return;
 

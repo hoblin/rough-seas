@@ -38,6 +38,8 @@
     <None Include="..\RoughSeas\assets\roughseas\config\compat\extremeweather.json" Link="extremeweather.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\windpatterns\*.json" LinkBase="windpatterns" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\materials.json" Link="materials.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\vessels\mass.json" Link="mass.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\vessels\hull.json" Link="hull.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\woodrecipes.json" Link="woodrecipes.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\vessels-vanilla-boats.json" Link="vessels-vanilla-boats.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\storms-vessels.json" Link="storms-vessels.json" CopyToOutputDirectory="PreserveNewest" />

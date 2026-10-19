@@ -15,12 +15,12 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 {
     public const string Code = "roughseas:seaforces";
 
-    private const double FounderedMetres = 100;
     private const string HoldAnimation = "swimidle";
     private const float HoldDepthMetres = -0.85f;
     private const float HoldReachMetres = 0.15f;
 
     private StormsModSystem storms = null!;
+    private VesselsModSystem vessels = null!;
     private ISeaWeather sea = null!;
     private EntityBehaviorVesselIntegrity? hull;
     private EntityBehaviorBilge? bilge;
@@ -41,25 +41,24 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     public double MastMetres { get; private set; }
 
     /// <summary>How she takes the sea now, with the water in her bilge.</summary>
-    public Seaworthiness Seaworthiness => dry.Laden(bilge?.Fill ?? 0, storms.Config.Swamping);
-
-    /// <summary>
-    /// How much lower than empty the water aboard makes her float: down to her gunwale when full, or, heavier than
-    /// water when swamped, to the bottom.
-    /// </summary>
-    public double SettlingMetres => bilge switch
+    public Seaworthiness Seaworthiness
     {
-        null => 0,
-        { Swamped: true, Sinks: true } => FounderedMetres,
-        _ => dry.FreeboardMetres - Seaworthiness.FreeboardMetres
-    };
+        get
+        {
+            var laden = dry.Laden(bilge?.Fill ?? 0, storms.Config.Swamping);
+            return hull is { Floats: true } ? laden.Floating(hull.Afloat.FreeboardMetres) : laden;
+        }
+    }
+
+    public double SettlingMetres => hull is { Floats: true } ? hull.SettlingMetres : dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
 
     public override string PropertyName() => Code;
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
-        sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
+        sea =entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         BeamMetres = attributes["beamMetres"].AsDouble();
         MastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();
@@ -96,14 +95,14 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     public override void OnGameTick(float deltaTime)
     {
         if (!entity.Alive) return;
-        if (bilge != null) Lade();
+        if (bilge != null || hull != null) Lade();
         if (entity.World.Side != EnumAppSide.Server) return;
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
         sinceWave += sinceUpdate;
         sinceUpdate = 0;
-        if (!entity.FeetInLiquid || !sea.DangerousOceans) return;
+        if (!entity.Swimming || !sea.DangerousOceans) return;
 
         using var _ = storms.Budget.Measure();
         var state = sea.At(entity.Pos.X, entity.Pos.Z);
@@ -127,19 +126,19 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         var capsizes = storms.Config.Swamping.Capsizes && breaking && Seaworthiness.Capsizes(height);
         if (!breaking && shipped <= 0) return;
 
-        bilge?.Ship(shipped);
+        bilge?.Ship(shipped, "by the sea");
         var cause = swamped ? "swamped" : surf ? "surf" : breaking ? "whitecap" : "swell";
         storms.Log(entity, "{0} wave {1:F1} m in a {2:F1} m sea, {3:F2} m over a {4:F2} m freeboard: shipped {5:F0} L, {6}",
             cause, height, state.WaveHeight, Seaworthiness.Overtopping(crest), Seaworthiness.FreeboardMetres, shipped,
             bilge == null ? "washed off" : $"bilge {bilge.Litres:F0} of {bilge.CapacityLitres:F0} L");
-        if (breaking && hull != null) Strike(height, hull);
+        if (breaking && hull != null) Strike(height, state, hull);
         if (capsizes) Capsize(height, swamped);
     }
 
-    private void Strike(double breakerMetres, EntityBehaviorVesselIntegrity hull)
+    private void Strike(double breakerMetres, SeaState state, EntityBehaviorVesselIntegrity hull)
     {
         var energy = BreakerEnergy(breakerMetres) * (1 + (bilge?.Fill ?? 0)) * Exposure;
-        hull.Strike(energy);
+        hull.Strike(energy, hull.Toward(-state.WindX, -state.WindZ));
         storms.Log(entity, "{0:F1} m breaker struck with {1:F0} J, hull now {2:F2}", breakerMetres, energy, hull.Integrity);
     }
 
@@ -153,15 +152,15 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         if (thrown == 0 && (swamped || bilge == null)) return;
 
         storms.Log(entity, "capsized by a {0:F1} m breaker against {1:F2} m: {2} thrown in the water", breakerMetres, Seaworthiness.CapsizeBreakerMetres, thrown);
-        bilge?.Ship(bilge.CapacityLitres);
+        bilge?.Ship(bilge.CapacityLitres, "capsized");
     }
 
     private void Lade()
     {
-        var swamped = bilge!.Swamped;
+        var swamped = bilge?.Swamped == true;
         if (entity is EntityBoat boat)
         {
-            boat.SpeedMultiplier = swamped ? 0 : speedMultiplier * (float)storms.Config.Swamping.SpeedFactor(Mass(), bilge.Litres);
+            boat.SpeedMultiplier = swamped ? 0 : speedMultiplier * (float)SpeedFactor();
             var seats = Seats;
             for (var i = 0; i < seats.Length; i++)
             {
@@ -174,7 +173,15 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
                 Hold(seat, swamped ? new SeatPose(Alongside(i), HoldAnimation) : dry);
             }
         }
-        if (swamped && bilge.Sinks && entity.World.Side == EnumAppSide.Server) Founder();
+        if (hull?.Afloat.Sunk == true && entity.World.Side == EnumAppSide.Server) Founder();
+    }
+
+    private double SpeedFactor()
+    {
+        if (hull != null) return storms.Config.Swamping.SpeedFactor(hull.ReferenceKg, hull.Aboard.Total);
+
+        var mass = vessels.Mass;
+        return storms.Config.Swamping.SpeedFactor(entity.Properties.Weight + mass.CrewKg, mass.Of(entity, entity.Properties.Weight).Total);
     }
 
     private void Founder()
@@ -203,13 +210,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
         if (shown != null) animations.StopAnimation(shown);
         animations.StartAnimation(pose.Animation);
-    }
-
-    private double Mass()
-    {
-        var mass = entity.Properties.Weight;
-        foreach (var seat in Seats) mass += seat.Passenger?.Properties.Weight ?? 0;
-        return mass;
     }
 
     private readonly record struct SeatPose(Vec3f? Offset, string Animation);

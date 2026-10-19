@@ -2,20 +2,31 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
+using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Tests.Storms;
 
 public static class Fixtures
 {
+    private static readonly Dictionary<string, double> VanillaWeights = new() { ["boat-raft"] = 120, ["boat-sailed"] = 1900 };
+
     private static readonly Lazy<StormsConfig> config = new(() => JsonConvert.DeserializeObject<StormsConfig>(Shipped("storms.json"))!);
 
     private static readonly Lazy<Dictionary<string, Material>> materials =
         new(() => JsonConvert.DeserializeObject<Dictionary<string, Material>>(Shipped("materials.json"))!);
 
+    private static readonly Lazy<VesselMass> mass = new(() => JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!);
+
+    private static readonly Lazy<HullConfig> hullConfig = new(() => JsonConvert.DeserializeObject<HullConfig>(Shipped("hull.json"))!);
+
     public static StormsConfig Config() => config.Value;
 
-    public static double FlaxNewtons => materials.Value["rope-flax"].Strength * 1000;
+    public static VesselMass Mass => mass.Value;
+
+    public static HullConfig HullConfig => hullConfig.Value;
+
+    public static double FlaxNewtons => materials.Value["rope-flax"].Strength!.Value * 1000;
 
     public static Vessel Raft => Vessel("boat-raft");
 
@@ -23,9 +34,36 @@ public static class Fixtures
 
     public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)));
 
+    public static Seaworthiness Afloat(string vessel, double litres = 0)
+    {
+        var hull = Hull(vessel);
+        var fill = hull.CapacityLitres > 0 ? litres / hull.CapacityLitres : 0;
+        return Seaworthiness(vessel).Laden(fill, Config().Swamping).Floating(hull.Float(hull.Crewed(litres: litres), litres).FreeboardMetres);
+    }
+
+    public static Hull Hull(string vessel, string wood = "oak")
+    {
+        var integrity = IntegrityConfig(vessel);
+        var parts = integrity["parts"]?.ToObject<VesselPart[]>() ?? [];
+        foreach (var part in parts) part.Material = part.Material.Replace("{wood}", wood).Replace("{material}", wood);
+        double weight = VanillaWeights.TryGetValue(vessel, out var vanilla) ? vanilla : (double)Entity(vessel)["weight"]!;
+        var build = new MaterialTable(materials.Value, new NullLogger()).Build(parts, weight);
+        var flotation = new Flotation((double)integrity["depthMetres"]!, (double?)integrity["waterplaneSquareMetres"] ?? 0, build.Litres);
+        double capacity = vessel.StartsWith("boat-")
+            ? (double?)OptionalBehaviorConfig("storms-vessels.json", vessel, "roughseas:bilge")?["capacityLitres"] ?? 0
+            : (double?)Entity(vessel)["behaviorConfigs"]!["roughseas:bilge"]?["capacityLitres"] ?? 0;
+        return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity));
+    }
+
+    public static JToken IntegrityConfig(string vessel) => vessel.StartsWith("boat-")
+        ? BehaviorConfig("vessels-vanilla-boats.json", vessel, EntityBehaviorVesselIntegrity.Code)
+        : Entity(vessel)["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!;
+
     private static JToken SeaForces(string vessel) => vessel.StartsWith("boat-")
         ? BehaviorConfig("storms-vessels.json", vessel, "roughseas:seaforces")
-        : JToken.Parse(Shipped(Path.Combine("vessel", vessel + ".json")))["behaviorConfigs"]!["roughseas:seaforces"]!;
+        : Entity(vessel)["behaviorConfigs"]!["roughseas:seaforces"]!;
+
+    private static JToken Entity(string vessel) => JToken.Parse(Shipped(Path.Combine("vessel", vessel + ".json")));
 
     private static Vessel Vessel(string entity)
     {
@@ -35,11 +73,27 @@ public static class Fixtures
     }
 
     private static JToken BehaviorConfig(string patches, string entity, string behavior) =>
+        OptionalBehaviorConfig(patches, entity, behavior)!;
+
+    private static JToken? OptionalBehaviorConfig(string patches, string entity, string behavior) =>
         JArray.Parse(Shipped(patches))
-            .Single(patch => (string?)patch["file"] == $"game:entities/nonliving/{entity}.json" && (string?)patch["path"] == $"/behaviorConfigs/{behavior}")
-            ["value"]!;
+            .SingleOrDefault(patch => (string?)patch["file"] == $"game:entities/nonliving/{entity}.json" && (string?)patch["path"] == $"/behaviorConfigs/{behavior}")
+            ?["value"];
 
     private static string Shipped(string file) => File.ReadAllText(Path.Combine(AppContext.BaseDirectory, file));
 }
 
+public class NullLogger : LoggerBase
+{
+    protected override void LogImpl(EnumLogType logType, string format, params object[] args) { }
+}
+
 public readonly record struct Vessel(double ImpactCapacity, double BeamMetres, double WindageSquareMetres);
+
+public sealed record Hull(Flotation Flotation, double Kilograms, double ReferenceKg, double CapacityLitres, JsonObject Config)
+{
+    public Aboard Crewed(double bodies = 65, double kit = 10, double containers = 0, double litres = 0, double soaked = 0) =>
+        new(Kilograms + soaked, bodies, kit, containers, litres * VesselMass.SeawaterKgPerLitre, 0);
+
+    public Afloat Float(Aboard aboard, double litres = 0) => Flotation.Float(aboard, CapacityLitres > 0 && litres >= CapacityLitres);
+}
