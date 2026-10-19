@@ -2,7 +2,9 @@ A vessel becomes one of ours by data, not code: a few behaviours on its entity, 
 
 ## A vessel in our sea
 
-On the server, once a wave period, every vessel in a sea of 0.3 m or more meets a wave. The wave is drawn from the [sea state](Reading-the-Sea) there, most lower than the significant height and a few much higher ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A hull rises with part of the crest. What is left above its side comes aboard, into its bilge, or washes through a hull that has none. A wave that breaks strikes the hull too, on its windward side, harder the higher it is and the wider the hull. The player's view of all of it is [Surf and swamping](Surf-and-Swamping).
+A vessel meets [both of our seas](Reading-the-Sea#two-seas): the sea state on the server, which decides what happens to her, and the drawn sea on a client, which shows her riding it.
+
+On the server, once a wave period, every vessel in a sea of 0.3 m or more meets a wave. The wave is drawn from the sea state there, most lower than the significant height and a few much higher ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A hull rises with part of the crest. What is left above its side comes aboard, into its bilge, or washes through a hull that has none. A wave that breaks strikes the hull too, on its windward side, harder the higher it is and the wider the hull. The player's view of all of it is [Surf and swamping](Surf-and-Swamping).
 
 On both sides, a vessel with a hull of ours floats by its full mass: hull, riders, their gear and armour, containers and the water aboard settle it lower, and it floods when its side goes under. On a client, it rides the drawn sea: lifted with the surface under it, rolled and pitched with its slope, on periods of its own mass. Water aboard rolls it harder and slows it, and a full bilge swamps it.
 
@@ -18,7 +20,11 @@ Waves come aboard and strike only with [Dangerous oceans](World-Settings#dangero
 | `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
 | `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current and the wind |
 
-Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says. `vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`, so that a right-click with mending material mends the hull rather than seating the player. `seaforces` is what the others act through: `mooring` holds against what it measures, and a vessel settles, slows and swamps only through it. Take it first; `vesselintegrity` and `currentdrift` also work alone.
+Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
+
+They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, and `mooring` and `currentdrift` on the server. `vesselintegrity` and `currentdrift` also work alone.
+
+`vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`, so that a right-click with mending material mends the hull rather than seating the player.
 
 Every key may carry a `sources` entry beside it, text about where each number came from. Our code doesn't read it; we keep a real-world source for every number there, and so can you.
 
@@ -60,7 +66,7 @@ Our [coracle](Coracle), its sources left out, carries all five:
 }
 ```
 
-Every vessel of ours is a whole example, each number with its source: `assets/roughseas/entities/vessel/` in the mod. A vessel that must also work without Rough Seas gets the same behaviours by patch, with `"dependsOn": [{ "modid": "roughseas" }]` on each operation, as `patches/storms-vessels.json` and `patches/vessels-vanilla-boats.json` give them to vanilla's raft and sailboat.
+Every vessel of ours is a whole example, each number with its source: `assets/roughseas/entities/vessel/` in the mod. A vessel that must also work without Rough Seas keeps its entity file free of our codes and gets the behaviours by patch, with `"dependsOn": [{ "modid": "roughseas" }]` on each operation, so the game skips the patch when we are absent. Our `patches/storms-vessels.json` and `patches/vessels-vanilla-boats.json` give them to vanilla's raft and sailboat the same way; being ours, they need no `dependsOn`.
 
 ## Taking the sea
 
@@ -77,13 +83,13 @@ Every vessel of ours is a whole example, each number with its source: `assets/ro
 | `pitchResponse` | × | 1 | the same along it |
 | `capsizeBreakerMetres` | m | none | the breaker that overturns it, empty |
 
-A wave lifts a hull a crest of about half its height, seven tenths when it breaks. Water aboard adds to the roll, twice as much when full. A vessel that floats by its mass ships water over the freeboard it floats at; one with a fixed `freeboardMetres` loses it in proportion to its bilge, all of it when full.
+A crest stands half a wave's height above still water, seven tenths when it breaks; the hull rises with `heave` of that. Water aboard adds to the roll, twice as much when full. A vessel that floats by its mass ships water over the freeboard it floats at; one with a fixed `freeboardMetres` loses it in proportion to its bilge, all of it when full.
 
-**Capsizing is switched off** in 2.0 ([Capsizing](Surf-and-Swamping#capsizing)). Give `capsizeBreakerMetres` anyway: it comes back in [Seamanship](Roadmap#seamanship).
+**Capsizing is switched off** for now ([Capsizing](Surf-and-Swamping#capsizing)). Give `capsizeBreakerMetres` anyway: it comes back in [Seamanship](Roadmap#seamanship).
 
-**Riding the drawn swell.** On a client, the vessel is posed on the surface under it, sampled at the ends and sides of its collision box. A vessel that floats by its mass follows that pose on its own heave and roll periods, from its draft, depth and beam ([How a hull answers](Reading-the-Sea#how-a-hull-answers)); one that doesn't takes the water's pose as it lies. This rides on vanilla's boat: the entity must be an `EntityBoat` or derive from it, and a class of yours that overrides `OnRenderFrame` calls the base, or it isn't posed. A vessel that can't, poses itself on the same surface through [the drawn sea](Reading-the-Sea#the-drawn-sea). Where no swell is drawn it rolls and pitches as vanilla rocks it, times `rollResponse` and `pitchResponse`.
+**Riding the drawn swell.** On a client, the vessel is posed on the surface under it, sampled at the ends and sides of a square as wide as its collision box's longer side. A vessel that floats by its mass follows that pose on its own heave and roll periods, from its draft, depth and beam ([How a hull answers](Reading-the-Sea#how-a-hull-answers)); one that doesn't takes the water's pose as it lies. This rides on vanilla's boat: the entity must be an `EntityBoat` or derive from it, and a class of yours that overrides `OnRenderFrame` calls the base, or it isn't posed. A vessel that can't, poses itself on the same surface through [the drawn sea](Reading-the-Sea#the-drawn-sea). Where no swell is drawn it rolls and pitches as vanilla rocks it, times `rollResponse` and `pitchResponse`.
 
-**Its mass slows it.** An `EntityBoat` makes its entity attribute `speedMultiplier` at its reference mass: its own `weight` and one 75 kg rider. Heavier, it is slower, and lighter a little faster, as speed goes with mass to the −2/9: the hull in its own material, riders, gear, armour, containers and the water aboard all count. A swamped one makes no speed, and its riders are moved into the water beside it, holding on.
+**Its mass slows it.** An `EntityBoat` makes its entity attribute `speedMultiplier` at its reference mass: its own `weight` and one 75 kg rider. Heavier, it is slower, and lighter a little faster ([why](The-Science-Behind-It#floating)): the hull in its own material, riders, gear, armour, containers and the water aboard all count. A swamped one makes no speed, and its riders are moved into the water beside it, holding on.
 
 ## The bilge
 
@@ -136,7 +142,7 @@ A knock strikes with ½ · mass · (speed² − `minImpactSpeed`²), where the m
 
 Give `impactCapacity` by the knocks the hull should take: our coracle's 400 J and dugout's 30,000 bracket the roster, and [Hull condition](Hull-Condition#knocks-and-landings) turns a capacity into the chance a knock does harm. A blow whose harm alone would stove in its place breaks the hull up; cracks that add up to it only leak.
 
-**Leaks.** A cracking hull's cracks leak by Torricelli's law: 0.61 of a crack's hole, up to 25 cm² when stove in, times √(2 g h), h how far the sea outside stands above the crack or the water already inside, whichever is higher. A bottom crack lies at the keel; any other a quarter of the way up the side. These three numbers are in `config/vessels/hull.json` (`dischargeCoefficient`, `crackSquareCentimetres`, `sideCrackShare`).
+**Leaks.** A cracking hull's cracks leak as a hole does, faster the bigger the crack and the deeper it lies under the sea outside, and slower as the water inside rises to meet it ([Leaks](The-Science-Behind-It#leaks)). A bottom crack lies at the keel, any other a quarter of the way up the side, so a light hull's side cracks may ride above the water until she is laden. The numbers are in `config/vessels/hull.json`: `dischargeCoefficient`, the share of a hole's area that flows (0.61); `crackSquareCentimetres`, a stove-in crack's hole (25); and `sideCrackShare`, how far up the side a side crack lies (0.25).
 
 **Carried as an item.** A vessel picked up carries its whole hull on the item, in the stack attribute `roughseas:vessel`, every crack and soaking in place, and shows its condition as the item's durability. That takes our item class `roughseas:ItemVessel` with a `durability`, and the item's code the same as the entity's. Shift and right-click picks it up when the entity's attributes carry `rightClickPickup: true`; a sunk one can't be lifted. A selection box `HullAP` gives the hull a box of its own for mending, apart from the seats.
 
