@@ -10,7 +10,7 @@ Within a region, the wind still differs from place to place: `GetWindSpeedAt` ad
 
 ## Setting a pattern yourself
 
-**Set any other pattern** with `SetWindPattern` or `/weather setw`, and we leave the region to it until its `ActiveUntilTotalHours`; then we take it back. Another of our own patterns counts as yours, too; only the one already blowing is renewed.
+**Set any other pattern** with `SetWindPattern` or `/weather setw`, and we leave the region to it until its `ActiveUntilTotalHours`; then we take it back. Another of our own patterns counts as yours, too; only the one already blowing is renewed. Your pattern sets the wind vanilla reports in the region; our model's wind, its storms and waves, and what `ISeaWeather` answers go on as before ([What moves our sea](Reading-the-Weather#what-moves-our-sea)).
 
 One limit: a lease lasts while vanilla keeps the region in memory, until the region unloads or the server restarts. When a region loads again, we can't tell your pattern from vanilla's random pick, and our first pass over it, within two seconds of its load, takes it whatever it carries. A pattern you mean to keep, set again after that first pass, not in the region's load event.
 
