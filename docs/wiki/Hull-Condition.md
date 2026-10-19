@@ -121,6 +121,6 @@ A broken vessel is gone. What it was built from scatters on the water as wreckag
 | [Hide currach](Hide-Currach) | sticks and a couple of leathers |
 | [Outrigger canoe](Outrigger-Canoe) | a few planks, a rope and some linen |
 
-Whatever it carried goes with it. Raising a sunk vessel and what it held is planned for [2.3](Roadmap#23-the-deep).
+Whatever it carried goes with it. Raising a sunk vessel and what it held is planned for [The deep](Roadmap#the-deep).
 
 With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves and lightning do no harm; knocks, rapids, weapons, explosions and wear still do.

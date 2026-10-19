@@ -40,5 +40,11 @@
 **[Beside other mods](Other-Mods)**
 
 **[For modders](For-Modders)**
+- [Reading the weather](Reading-the-Weather)
+- [Weather events](Weather-Events)
+- [Wind patterns](Wind-Patterns)
+- [The ocean map](The-Ocean-Map)
+- [Reading the sea](Reading-the-Sea)
+- [Building a vessel](Building-a-Vessel)
 
 **[Roadmap](Roadmap)**

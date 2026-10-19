@@ -33,7 +33,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | Built from | about 300 planks, with support beams, rope and a linen sail |
 | Wreckage | about 40 planks, a few beams, rope and linen |
 
-Its sail drives it the same whatever the wind does; sailing by the wind comes in [2.1](Roadmap#21-seamanship).
+Its sail drives it the same whatever the wind does; sailing by the wind comes in [Seamanship](Roadmap#seamanship).
 
 ## Its neighbours
 

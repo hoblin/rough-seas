@@ -33,7 +33,7 @@ Speeds are against the raft, measured on a calm sea.
 | [Outrigger canoe](Outrigger-Canoe) | 15 000 J | 600 l | 2.1 m | none | planks | no |
 | [Sailboat](Sailboat) | 40 000 J | 1500 l | 3.3 m | none | planks | no |
 
-Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more. Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [2.1](Roadmap#21-seamanship); its column is what overturned each vessel in 1.0.
+Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more. Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [Seamanship](Roadmap#seamanship); its column is what overturned each vessel in 1.0.
 
 ## What each carries
 
