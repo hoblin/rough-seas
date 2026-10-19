@@ -39,9 +39,15 @@ Rough Seas builds its sea and weather from real measurements and the models scie
 
 Squall lines move at 30 to 80 km/h; the Amazon's coastal lines run at 50 to 60 km/h and come every two days. How often squalls form at sea is not yet taken from measurements: there are few marine statistics of them, so their rate stays the one the mod started with.
 
+## Knocks
+
+- **Water in the bilge sloshes.** Water with a free surface doesn't stop with the hull: it runs on, piles against the bow a moment later and spends part of its energy in the splash. A hull brimful moves almost as one body, so the mod counts the water's weight by how full the bilge is. The part left free to slosh then peaks at half full, which is the [free surface effect](https://en.wikipedia.org/wiki/Free_surface_effect) naval architects guard against.
+- **Armour's weight comes from its stride.** The game gives armour no weight, only a slower walk. The mod reads the weight back from that penalty, calibrated on plate: a complete field harness of the fifteenth century weighed 15 to 25 kg (Alan Williams, *The Knight and the Blast Furnace*, 2003), and the game's plate slows its wearer by 0.14 a piece. Another mod's armour weighs by its own penalty.
+
 ## Where we bent reality, and what is not yet real
 
 - **The world's scale** (×200 across, a block a metre high) and **the short calendar** are the game's own; we follow them.
 - **The wave ceiling** of 16 m keeps a hurricane's sea on the world's scale.
 - **Winter gales come too seldom.** At 47° north our open sea sees gale-force wind under 2 percent of a winter; the North Sea, among the stormiest seas, sees 7 to 14 percent. The births, seasons and strengths above come from measurements; how wide a depression's gale-force band is, and how long it blows at one place, are not yet measured for the mod.
 - **Squalls' frequency** is the mod's own, not yet from data.
+- **Cargo weighs only its containers.** A player carries loads no real crew could lift, so what is in a basket or chest adds nothing to a knock; the containers count at their own empty weight. Mail, which the game slows less than its real 10 to 14 kg would, comes out light.

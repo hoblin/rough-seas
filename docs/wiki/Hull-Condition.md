@@ -55,20 +55,29 @@ An ebony sailboat takes more than four times the knocks of a kapok one. The [raf
 
 ### Knocks and landings
 
-Running into rock, the shore or another vessel strikes the hull with the energy of the speed lost: half the mass, the vessel's own and everyone aboard, times the square of the speed. A change of speed under 1 m/s never counts, so easing in to a landing is always safe.
+Running into rock or the shore strikes the hull with the energy of the speed it loses into the obstacle: a head-on ram loses all of it, while a hull glancing along a shore loses only the part that pointed into it. The first 1 m/s the hull takes in its stride, so easing in to a landing is always safe, and only the energy above it counts.
+
+The energy grows with everything aboard:
+
+- the vessel itself;
+- each rider, with about 10 kg of everyday gear, and armour by how much it slows its wearer: full plate adds about 25 kg;
+- each basket, crate or chest at its own empty weight; what is in them doesn't count;
+- water in the bilge, by how full it is. A half-full bilge sloshes and brings only half its weight to bear, while a swamped one hits with all of it. Bail before you land.
+
+Vessels nudging each other do the hull no harm.
 
 What one rider's knock does, losing 2 or 4 m/s at once:
 
 | Vessel | Chance of harm at 2 m/s | at 4 m/s |
 | --- | --- | --- |
-| [Dugout](Dugout) | 3% | 12% |
-| [Outrigger canoe](Outrigger-Canoe) | 4% | 15% |
-| [Sailboat](Sailboat) | 9% | 32% |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 8% | 27% |
-| [Hide currach](Hide-Currach) | 10% | 36% |
-| [Reed boat](Reed-Boat) | 19% | 57% |
-| [Raft](Raft) | 27% | 71% |
-| [Coracle](Coracle) | 33% | 80% |
+| [Dugout](Dugout) | 2% | 11% |
+| [Outrigger canoe](Outrigger-Canoe) | 3% | 15% |
+| [Sailboat](Sailboat) | 7% | 31% |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 6% | 28% |
+| [Hide currach](Hide-Currach) | 8% | 35% |
+| [Reed boat](Reed-Boat) | 16% | 57% |
+| [Raft](Raft) | 22% | 70% |
+| [Coracle](Coracle) | 29% | 82% |
 
 An oak raft paddled flat out into a rock breaks in four or five rams; a sailboat under full sail, in about two.
 

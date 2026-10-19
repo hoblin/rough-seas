@@ -9,6 +9,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
@@ -35,7 +36,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
     private readonly object impactLock = new();
     private readonly List<double> pendingImpacts = new();
-    private ImpactSensor sensor = null!;
+    private Impact impact = null!;
     private double impactCapacity;
     private DamageConversion damageConversion = null!;
     private VesselsModSystem vessels = null!;
@@ -96,6 +97,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             .Where(repair => OfWood(repair.Material, wood).Resolve(entity.World, "vessel repair"))
             .ToArray();
         wearPerDay = attributes["wearPerDay"].AsDouble(0);
+        vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
+        impact = new Impact(attributes["minImpactSpeed"].AsDouble(1), InvulnerableMs);
+        entity.PhysicsUpdateWatcher += OnPhysicsUpdate;
 
         if (entity.Api is ICoreClientAPI capi)
         {
@@ -111,17 +115,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
             entity.WatchedAttributes.SetAttribute(TreeKey, tree);
         }
 
-        vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
         impactCapacity = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(attributes["parts"].AsObject<VesselPart[]>([]));
         damageConversion = vessels.DamageConversion;
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
-        sensor = new ImpactSensor(attributes["minImpactSpeed"].AsDouble(1));
         runsRapids = attributes["runsRapids"].AsBool(false);
         rapids = vessels.Rapids;
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])
             .Where(drop => OfWood(drop, wood).Resolve(entity.World, "vessel wreckage", entity.Code))
             .ToArray();
-        entity.PhysicsUpdateWatcher += OnPhysicsUpdate;
     }
 
     public override ITexPositionSource? GetTextureSource(ref EnumHandling handling)
@@ -153,11 +154,12 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
 
         if (impacts.Length > 0)
         {
-            double mass = Mass();
+            double mass = vessels.ImpactMass.Of(entity);
             foreach (double speed in impacts)
             {
-                vessels.Log(entity, "impact at {0:F1} m/s", speed);
-                Strike(0.5 * mass * speed * speed);
+                double joules = impact.Joules(mass, speed);
+                vessels.Log(entity, "impact at {0:F1} m/s into the hull with {1:F0} kg aboard: {2:F0} J", speed, mass, joules);
+                Strike(joules);
             }
         }
 
@@ -301,17 +303,33 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
         entity.MarkShapeModified();
     }
 
+    /// <summary>Server only: an impact the controller's client measured on the vessel it steers.</summary>
+    public void Reported(IServerPlayer player, double speedLost)
+    {
+        if (entity.GetInterface<IMountable>()?.Controller != player.Entity)
+        {
+            vessels.Log(entity, "ignored an impact reported by {0}, who does not steer it", player.PlayerName);
+            return;
+        }
+        lock (impactLock) pendingImpacts.Add(speedLost);
+    }
+
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
     {
-        var pos = entity.Pos;
-        // Called from the physics threads for a drifting vessel and from the main thread for a steered one.
+        // Physics steps pass 0; the rider's frame-end call carries motion EntityBoat rewrote, never a collision. See docs/modding.md.
+        if (accum != 0) return;
+        var mount = entity.GetInterface<IMountable>();
+        var client = entity.Api as ICoreClientAPI;
+        if (client != null ?mount?.Controller != client.World.Player.Entity : mount?.IsBeingControlled() == true) return;
+
+        var motion = entity.Pos.Motion;
+        double? speedLost;
         lock (impactLock)
         {
-            if (sensor.Sample(pos.X, pos.Z, entity.World.ElapsedMilliseconds) is double speed)
-            {
-                pendingImpacts.Add(speed);
-            }
+            speedLost = impact.Step(motion.X, motion.Z, entity.World.ElapsedMilliseconds);
+            if (speedLost is double lost && client == null) pendingImpacts.Add(lost);
         }
+        if (speedLost is double reported && client != null) vessels.Report(entity, reported);
     }
 
     private void Wear(bool afloat)
@@ -405,12 +423,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior
     private bool Occupied() =>
         entity.GetBehavior<EntityBehaviorSeatable>()?.AnyMounted() == true ||
         entity.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory.Empty == false;
-
-    private double Mass()
-    {
-        var seats = entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
-        return entity.Properties.Weight + seats.Sum(seat => seat.Passenger?.Properties.Weight ?? 0);
-    }
 
     private void Creak()
     {
