@@ -9,11 +9,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using RoughSeas.Storms;
 using Vintagestory.Client.NoObf;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -38,6 +36,7 @@ public class AgentBridgeModSystem : ModSystem
     private FrameTimer frameTimer = null!;
     private EntityLoadBlackBox blackBox = null!;
     private HandbookRecipe recipes = null!;
+    private SwellReading? swell;
     private readonly HttpListener listener = new();
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Client;
@@ -51,6 +50,7 @@ public class AgentBridgeModSystem : ModSystem
         frameTimer = new FrameTimer(api);
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         recipes = new HandbookRecipe(api);
+        if (api.ModLoader.IsModEnabled("roughseas")) swell = new SwellReading(api);
         listener.Prefixes.Add(Prefix);
         listener.Start();
         _ = Task.Run(Serve);
@@ -191,24 +191,13 @@ public class AgentBridgeModSystem : ModSystem
                     other.EntityId, code = other.Code.ToString(), other.Pos.X, other.Pos.Y, other.Pos.Z,
                     roll = (other.Properties.Client.Renderer as EntityShapeRenderer)?.xangle * GameMath.RAD2DEG,
                     pitch = (other.Properties.Client.Renderer as EntityShapeRenderer)?.zangle * GameMath.RAD2DEG,
-                    swell = Swell(other)
+                    swell = swell?.Of(other)
                 }),
-            sea = DrawnSea is { } sea ? new { sea.Swell, height = sea.HeightAt(entity.Pos.X, entity.Pos.Z) } : null,
+            sea = swell?.At(entity),
             calendar = capi.World.Calendar.PrettyDate(),
             paused = capi.IsGamePaused,
             dialogs = Dialogs().Select(dialog => dialog.DebugName)
         }) + "\n";
-    }
-
-    private IDrawnSea? DrawnSea => capi.ModLoader.GetModSystem<StormsModSystem>()?.DrawnSea;
-
-    private object? Swell(Entity other)
-    {
-        if (DrawnSea is not { Swell: true } sea) return null;
-        var side = Math.Max(other.CollisionBox.XSize, other.CollisionBox.ZSize);
-        var yaw = other.Pos.Yaw + (other.Properties.Client.Shape?.rotateY ?? 0) * GameMath.DEG2RAD;
-        var pose = sea.PoseOf(other.Pos.X, other.Pos.Z, yaw, side, side);
-        return new { pose.Hold, pose.Lift, roll = pose.Roll * GameMath.RAD2DEG, pitch = pose.Pitch * GameMath.RAD2DEG };
     }
 
     private object? Reach()
