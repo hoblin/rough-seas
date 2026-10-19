@@ -152,6 +152,15 @@ A vessel with `depthMetres` floats by Archimedes, on both sides, twice a second.
 
 To give a vessel of yours draft and buoyancy: list its `parts` with materials the table knows (or add rows by patch), set `depthMetres` from keel to gunwale, and set `waterplaneSquareMetres` so that what its bilge holds settles it by its freeboard. Ours are set that way: a full bilge with one aboard brings the gunwale to the water. Leave `freeboardMetres` off its `seaforces`.
 
+## Sounds
+
+A vessel with our behaviours sounds without a key of its own. Its hull speaks by its `model` and its `damage.material`, from the voices in `config/soundscape.json` under `hull.models`: a `cracking` hull as wood, bark or hide, a `lashed` one by its lashings, a `reed` one with a crunch. A material without a voice sounds as wood. A blow it shrugs off knocks, a blow that harms it cracks or strains, and a break-up breaks, each played where the blow landed and louder the harder it was. With `roughseas:seaforces`, each wave slaps, a breaker slams and shipped water pours, from the windward side. Its bilge sloshes, its worst crack trickles and the sea laps at it, played by each client from what the bilge and the hull already sync. Every sound, and how loud it plays for its cause, is in `config/soundscape.json`, which a patch can change.
+
+For sounds of your own, the server raises events on the behaviours:
+- `EntityBehaviorVesselIntegrity.Struck`: the place struck, the blow over the hull's capacity, and what it did (`Harmed`, `BrokenUp`, or null when shrugged off). `PointAt(place)` gives the place's point to play at.
+- `EntityBehaviorVesselIntegrity.BrokeUp`: as the hull breaks into wreckage.
+- `EntityBehaviorSeaForces.Took`: each wave she takes, with its height, whether it broke on her, the water she shipped and the direction it came from.
+
 ## Mooring
 
 `roughseas:mooring`, on the server, with `roughseas:seaforces`; it has no keys. It holds a vessel tied to a stake, and one at anchor ([Mooring](Mooring), [Anchoring](Anchoring)).
