@@ -2,7 +2,7 @@ A cracked hull is mended with the stuff it was built from. Hold the material, ri
 
 | Vessel | Patch with | Each patch closes | Satiety per patch |
 | --- | --- | --- | --- |
-| [Raft](Raft), wood or bamboo | 1 rope | two thirds of its lashings | 60 |
+| [Raft](Raft), wood or bamboo | 1 flax twine | a fifth of its lashings | 30 |
 | [Sailboat](Sailboat) | 10 planks of its wood | a fifteenth of a stove-in place | 80 |
 | [Dugout](Dugout) | 1 log of its wood | two fifths of a stove-in place | 80 |
 | [Coracle](Coracle) | 1 small prepared hide | two thirds of a stove-in place | 40 |
@@ -14,7 +14,7 @@ A cracked hull is mended with the stuff it was built from. Hold the material, ri
 
 - The wood must be the hull's own: an oak sailboat takes oak planks, and a canoe the bark of the tree it was built from.
 - A patch mends one place. A sailboat stove in at the bow takes 150 planks to close it, and as many again for each other place stove in.
-- A raft's logs don't break, its lashings work loose: one rope ties back two thirds of them, half of the three ropes it was built with.
+- A raft's logs don't break, its lashings work loose: they are bound up again with flax twine, a fifth of them a twine, so half the nine twines in the three ropes it was built with mend it whole. Rope in hand ties the raft up instead.
 - A hull with nothing cracked takes no more, and says so: the material stays in your hand.
 - Too few in hand for a patch, and the hull says how many it takes.
 - Birch bark comes off a birch log with a knife ([recipe](Recipes#birch-bark)).

@@ -15,11 +15,11 @@
                 { "material": "rope-flax", "reference": "rope-flax", "share": 0.02 }
             ],
             "depthMetres": 0.25,
-            "repairs": [{ "material": { "type": "item", "code": "rope", "stacksize": 1 }, "restores": 0.67, "saturation": 60 }],
+            "repairs": [{ "material": { "type": "item", "code": "flaxtwine", "stacksize": 1 }, "restores": 0.22, "saturation": 30 }],
             "sources": {
                 "parts": "Logs lashed with three ropes, a few kilograms of rope on a raft of logs",
                 "depthMetres": "Its logs are a quarter metre thick: pressed down that far, the raft is awash and the water holds up its rider",
-                "repairs": "A knock works the lashings loose, not the logs: half of the three ropes that tie it mends it whole"
+                "repairs": "A knock works the lashings loose, not the logs, and they are bound up again with twine: half of the nine twines in its three ropes mends it whole. Rope in hand ties the raft up instead"
             },
             "wreckageByType": {
                 "boat-raft-bamboo": [

@@ -86,7 +86,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     public double WaterDepth(int maxBlocks)
     {
         var accessor = entity.World.BlockAccessor;
-        var pos = entity.Pos.AsBlockPos;
+        var pos = entity.Pos.XYZ.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
         var depth = 0;
         while (depth < maxBlocks && accessor.GetBlock(pos, BlockLayersAccess.Fluid).IsLiquid())
         {

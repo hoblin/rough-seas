@@ -29,7 +29,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     private const float HazardSeconds = 1;
     private const float UpdateSeconds = 0.5f;
     private const double AfloatStepHours = 1;
-    private const double WaterlineProbeMetres = 0.25;
+    /// <summary>How far below a vessel's origin to look for the water she floats in: a light hull floats with its origin above the water's block.</summary>
+    public const double WaterlineProbeMetres = 0.25;
     private const double FounderedMetres = 100;
     private const float MinSunlight = 0.5f;
     private const float MaxDryingRain = 0.05f;
@@ -413,7 +414,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
         var hold = Hold;
         inWater = entity.Swimming || FluidBelow().IsLiquid();
         Aboard = vessels.Mass.Of(entity, build.Kilograms + model.SoakedKg);
-        var afloat = flotation.Float(Aboard, hold != null && hold.Litres >= hold.CapacityLitres);
+        var afloat = flotation.Float(Aboard, hold != null && (hold.Litres >= hold.CapacityLitres || Afloat.Sunk && inWater));
         Afloat = inWater ? afloat : afloat with { Sunk = false };
         SettlingMetres = Afloat.Sunk ? FounderedMetres : Afloat.DraftMetres - referenceDraft;
         if (entity.World.Side != EnumAppSide.Server || !HasDraft || !inWater) return;
