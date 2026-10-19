@@ -13,14 +13,14 @@ Rough Seas gives the world weather of its own, but it doesn't replace the game's
 - [The ocean map](The-Ocean-Map): the world's own ocean layer, and a mod that reshapes the oceans.
 
 **The sea from code**
-- [Reading the sea](Reading-the-Sea): the wind's direction, waves, storms and currents at any point.
+- [Reading the sea](Reading-the-Sea): the wind's direction, waves, storms and currents at any point, and the swell a client draws.
 
 **Vessels**
 - [Building a vessel](Building-a-Vessel): making a vessel take our waves, ship water, wear, break, moor and drift.
 
 ## What we keep
 
-What these pages document is what we keep: vanilla's channels as they describe them, `ISeaWeather` with `SeaState` and `SeaCurrent`, and our vessel behaviours with their keys. It follows semantic versioning: a change that breaks any of it comes with a new major version and a line in the release notes, and what we add comes in a minor version. If you build on it, or need something it doesn't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
+What these pages document is what we keep: vanilla's channels as they describe them, `ISeaWeather` with `SeaState` and `SeaCurrent`, `IDrawnSea` with `SeaPose`, and our vessel behaviours with their keys. It follows semantic versioning: a change that breaks any of it comes with a new major version and a line in the release notes, and what we add comes in a minor version. If you build on it, or need something it doesn't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
 ## What not to touch
 

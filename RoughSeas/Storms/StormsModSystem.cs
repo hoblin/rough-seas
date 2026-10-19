@@ -20,6 +20,9 @@ public class StormsModSystem : ModSystem
 
     public TickBudget Budget { get; } = new("storms");
 
+    /// <summary>The sea surface this client draws; null on the server.</summary>
+    public IDrawnSea? DrawnSea { get; private set; }
+
     public override void Start(ICoreAPI api)
     {
         this.api = api;
@@ -44,8 +47,9 @@ public class StormsModSystem : ModSystem
         surface.Changed += change => Log("surface: " + change);
         if (SurfaceShader.Attach(surface, field, capi)) clock = new SurfaceClock(this, sea, surface, field, capi);
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
-        VesselMotion.Attach(this, field, surface);
-        FloatMotion.Attach(field, surface);
+        DrawnSea = new DrawnSea(surface, field);
+        VesselMotion.Attach(this, DrawnSea, surface);
+        FloatMotion.Attach(DrawnSea);
         RegisterSurfaceCommands(capi);
     }
 

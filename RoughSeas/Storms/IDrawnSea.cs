@@ -1,0 +1,18 @@
+namespace RoughSeas.Storms;
+
+/// <summary>
+/// The sea surface a client draws now, the one our own vessels ride; on a client alone.
+/// Reach it with <c>api.ModLoader.GetModSystem&lt;StormsModSystem&gt;().DrawnSea</c>. Positions are absolute block coordinates.
+/// </summary>
+public interface IDrawnSea
+{
+    /// <summary>Whether any swell is drawn now.</summary>
+    bool Swell { get; }
+
+    /// <summary>The surface's height above still water at a position now, in metres.</summary>
+    double HeightAt(double x, double z);
+
+    /// <summary>The pose of a hull of <paramref name="length"/> by <paramref name="width"/> blocks centred at a position, sampled at its ends and sides.</summary>
+    /// <param name="yaw">Its heading in radians as its renderer turns it: the entity's <c>Pos.Yaw</c> plus its shape's <c>rotateY</c>; its length runs along the shape's X axis.</param>
+    SeaPose PoseOf(double x, double z, double yaw, double length, double width);
+}
