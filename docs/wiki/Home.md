@@ -52,7 +52,13 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Beside other mods](Other-Mods): the mods we tested Rough Seas with, what changes in one mod set, and what we recommend.
 
 **For modders**
-- [For modders](For-Modders): how Rough Seas drives vanilla's weather, and what that means for your mod.
+- [For modders](For-Modders): what Rough Seas is to your mod, and what we keep stable.
+- [Reading the weather](Reading-the-Weather): wind, rain and temperature through vanilla's own calls.
+- [Weather events](Weather-Events): how every mod's events fire under our weather.
+- [Wind patterns](Wind-Patterns): our pattern in every region, and setting one yourself.
+- [The ocean map](The-Ocean-Map): the world's ocean layer, and mods that reshape it.
+- [Reading the sea](Reading-the-Sea): wind direction, waves, storms and currents from code.
+- [Building a vessel](Building-a-Vessel): making a vessel ride, ship water, wear, moor and drift in our sea.
 
 **What's next**
 - [Roadmap](Roadmap): sailing by the wind, cold water and sharks, diving and wrecks.

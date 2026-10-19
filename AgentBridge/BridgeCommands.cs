@@ -737,8 +737,21 @@ public class BridgeCommands : ModSystem
             $"{{\"code\":\"{entity.Code}\",\"alive\":{entity.Alive.ToString().ToLower()}," +
             $"\"pos\":{JsonSerializer.Serialize(new { entity.Pos.X, entity.Pos.Y, entity.Pos.Z, entity.Pos.Yaw })}," +
             $"\"behaviors\":{JsonSerializer.Serialize(entity.SidedProperties.Behaviors.Select(behavior => behavior.PropertyName()))}," +
-            $"\"watched\":{Strict(entity.WatchedAttributes.ToJsonToken())},\"attributes\":{Strict(entity.Attributes.ToJsonToken())}}}");
+            $"\"watched\":{Strict(entity.WatchedAttributes)},\"attributes\":{Strict(entity.Attributes)}}}");
     }
 
-    private static string Strict(string relaxedJson) => JToken.Parse(relaxedJson).ToString(Newtonsoft.Json.Formatting.None);
+    private static string Strict(ITreeAttribute tree) =>
+        new JObject(tree.Select(pair => new JProperty(pair.Key, Strict(pair.Value.ToJsonToken())))).ToString(Newtonsoft.Json.Formatting.None);
+
+    private static JToken Strict(string relaxedJson)
+    {
+        try
+        {
+            return JToken.Parse(relaxedJson);
+        }
+        catch (Newtonsoft.Json.JsonReaderException)
+        {
+            return relaxedJson;
+        }
+    }
 }

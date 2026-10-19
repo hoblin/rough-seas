@@ -10,6 +10,7 @@ Rough Seas drives the game's own weather rather than replacing it, so most mods 
 | [Terra Prety](#terra-prety) | 7.11.2-pre.1 | Compatible at world height 448. |
 | [Wildcraft: Trees and Shrubs](#wildcraft-trees-and-shrubs) | 1.3.4 | Compatible: its woods build our vessels. |
 | [SheyderMod](#sheydermod) | 2.0.0 | Compatible from Rough Seas 2.0.1. |
+| [Shipworks+](#shipworks) | 1.1.0 | Works with issues: its ships don't ride our drawn swell. |
 
 Running Rough Seas with a mod not listed here? Tell us how it went on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
@@ -65,7 +66,7 @@ Sandstorms, heat waves and cold snaps still roll as Extreme Weathers decides. Th
 - A sandstorm dries the world, our storms included: no rain falls under one.
 - A heat wave or a cold snap shifts the temperature our storms read. A cold snap can silence a storm's thunder and [lightning](Lightning), since both need warm air.
 
-Extreme Weathers' own weather patterns and events (`supercell`, `torrential`, `zephyr` and the rest) join the game's rotation as usual and play [by their own conditions](For-Modders#weather-events-fire-by-their-own-conditions).
+Extreme Weathers' own weather patterns and events (`supercell`, `torrential`, `zephyr` and the rest) join the game's rotation as usual and play [by their own conditions](Weather-Events#they-fire-by-their-own-conditions).
 
 ### No whiteout
 
@@ -149,3 +150,25 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 
 - Rough Seas draws its waves from a texture of the sea around the player, read in vanilla's shared `vertexwarp.vsh`. That texture sits on the highest texture unit the graphics card offers and is kept out of the engine's numbering of samplers, so every vanilla sampler stays on the unit vanilla gives it, in every shader program. A mod that binds its own texture to a fixed unit, as SheyderMod binds its specular map to unit 7, can count on vanilla's numbering.
 - The client command `.surface samplers` lists each shader program's samplers by unit as the engine numbers them, and where our wave texture is read.
+
+## Shipworks+
+
+[Shipworks+](https://mods.vintagestory.at/show/mod/12650) 1.1.0 builds walkable ships of seven hulls, from a sloop to a man o' war, and three small boats: a dinghy, a canoe and a kayak. It needs [Walkable Entities](https://mods.vintagestory.at/walkableentities) (we tested 1.0.33). It made itself compatible with Rough Seas: with both in a mod set, its ships sail in our wind and feel our sea. Beside Rough Seas 2.0.1 it works with one issue: its ships don't rise and roll with our drawn swell.
+
+### Its ships
+
+- **Wind and sea.** They sail by our wind's direction and strength, and the helm shows our Beaufort force, wave height and current.
+- **Their own rules.** Shipworks+ takes our wave height and current and applies them by its own model: head seas slow a ship, waves come aboard over a low freeboard and through open gun ports, a flooded ship founders, and the current sets her off course. Our [surf and swamping](Surf-and-Swamping), [bailing](Bailing), [hull condition](Hull-Condition) and [mooring](Mooring) don't reach them; its own wear, pumps and anchors do that work.
+- **Level on the swell.** Beside Rough Seas 2.0, its ships lie level on the swell we draw and don't lift, roll or pitch with it; the client log says `[shipworks+] Rough Seas is installed but its drawn waves could not be read`. In a 2.4 m sea a sloop held level while its dinghy beside it rolled 15°. A way for other mods to read our drawn sea is [#125](https://github.com/hoblin/rough-seas/issues/125).
+
+### Its small boats
+
+The dinghy, the canoe and the kayak carry our [sea forces](Building-a-Vessel#taking-the-sea), [bilge](Building-a-Vessel#the-bilge), [mooring](Building-a-Vessel#mooring) and [drift](Building-a-Vessel#currents). They ride our swell, ship water and are bailed like ours, drift with the current when left alone, and tie to a stake. They carry no hull condition of ours, so our sea doesn't wear or break them, and they take no anchor.
+
+The boats a ship carries on its davits are vanilla's sailboat, ours in every way: they ship water, wear, break and anchor like any sailboat, and keep their condition while hoisted aboard.
+
+### For server owners and modders
+
+- With Rough Seas in the set, Shipworks+ leaves damage to vanilla's raft and sailboat to our [hull condition](Hull-Condition#weapons-explosions-and-lightning): its cannonballs strike their hulls through ours.
+- Shipworks+ floods its ships by our wave height whether or not [Dangerous oceans](World-Settings#dangerous-oceans) is on. Its own `Sinking` setting, in `shipworksplus.json` in the `ModConfig` folder, decides whether a flooded ship founders.
+- `RoughSeas: false` in that file stops its ships reading our sea. The small boats keep our behaviours: they get them by patch whenever Rough Seas is installed.
