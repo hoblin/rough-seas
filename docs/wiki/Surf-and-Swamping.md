@@ -105,6 +105,6 @@ These were measured before capsizing was switched off and before hulls cracked w
 
 ## At anchor
 
-A vessel at [anchor](Anchoring) ships less water and takes milder blows: three tenths of each. It still capsizes as easily, because it lies across the waves; turning its bow into the wind comes with sailing in [Seamanship](Roadmap#seamanship).
+A vessel at [anchor](Anchoring) ships less water and takes milder blows: three tenths of each. It still lies across the waves; turning its bow into the wind comes with sailing in [Seamanship](Roadmap#seamanship).
 
 With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves don't come aboard, strike or capsize anything.
