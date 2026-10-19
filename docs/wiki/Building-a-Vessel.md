@@ -78,7 +78,7 @@ A wave lifts a hull a crest of about half its height, seven tenths when it break
 
 **Capsizing is switched off** in 2.0 ([Capsizing](Surf-and-Swamping#capsizing)). Give `capsizeBreakerMetres` anyway: it comes back in [Seamanship](Roadmap#seamanship).
 
-**Riding the drawn swell.** On a client, the vessel is posed on the surface under it, sampled at the ends and sides of its collision box. This rides on vanilla's boat: the entity must be an `EntityBoat` or derive from it, and a class of yours that overrides `OnRenderFrame` calls the base, or it isn't posed. Where no swell is drawn it rolls and pitches as vanilla rocks it, times `rollResponse` and `pitchResponse`.
+**Riding the drawn swell.** On a client, the vessel is posed on the surface under it, sampled at the ends and sides of its collision box. This rides on vanilla's boat: the entity must be an `EntityBoat` or derive from it, and a class of yours that overrides `OnRenderFrame` calls the base, or it isn't posed. A vessel that can't, poses itself on the same surface through [the drawn sea](Reading-the-Sea#the-drawn-sea). Where no swell is drawn it rolls and pitches as vanilla rocks it, times `rollResponse` and `pitchResponse`.
 
 **Water aboard slows it.** An `EntityBoat` with a bilge loses speed as water adds to its weight, from its entity attribute `speedMultiplier` down to none when swamped. Its riders are moved into the water beside a swamped hull, holding on.
 

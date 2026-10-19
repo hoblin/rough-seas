@@ -36,6 +36,7 @@ public class AgentBridgeModSystem : ModSystem
     private FrameTimer frameTimer = null!;
     private EntityLoadBlackBox blackBox = null!;
     private HandbookRecipe recipes = null!;
+    private SwellReading? swell;
     private readonly HttpListener listener = new();
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Client;
@@ -49,6 +50,7 @@ public class AgentBridgeModSystem : ModSystem
         frameTimer = new FrameTimer(api);
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         recipes = new HandbookRecipe(api);
+        if (api.ModLoader.IsModEnabled("roughseas")) swell = new SwellReading(api);
         listener.Prefixes.Add(Prefix);
         listener.Start();
         _ = Task.Run(Serve);
@@ -188,8 +190,10 @@ public class AgentBridgeModSystem : ModSystem
                 {
                     other.EntityId, code = other.Code.ToString(), other.Pos.X, other.Pos.Y, other.Pos.Z,
                     roll = (other.Properties.Client.Renderer as EntityShapeRenderer)?.xangle * GameMath.RAD2DEG,
-                    pitch = (other.Properties.Client.Renderer as EntityShapeRenderer)?.zangle * GameMath.RAD2DEG
+                    pitch = (other.Properties.Client.Renderer as EntityShapeRenderer)?.zangle * GameMath.RAD2DEG,
+                    swell = swell?.Of(other)
                 }),
+            sea = swell?.At(entity),
             calendar = capi.World.Calendar.PrettyDate(),
             paused = capi.IsGamePaused,
             dialogs = Dialogs().Select(dialog => dialog.DebugName)

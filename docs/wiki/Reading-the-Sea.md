@@ -54,3 +54,35 @@ Positions are absolute block coordinates. The answer is for now, on either side.
 - **Server and client.** The server computes the state. A client reads the map the server sends of the regions around its player, so far from players a client knows nothing and answers zeros.
 
 A vessel rides the waves drawn on a client's screen through our behaviours, on [Building a vessel](Building-a-Vessel).
+
+## The drawn sea
+
+The waves a client draws are a picture of the sea state, not the state itself. On a client, they are published for a vessel that poses itself on them: one whose class doesn't take our pose (see [Riding the drawn swell](Building-a-Vessel#taking-the-sea)).
+
+```csharp
+IDrawnSea? drawn = api.ModLoader.GetModSystem<StormsModSystem>().DrawnSea;
+SeaPose pose = drawn.PoseOf(x, z, yaw, length, width);
+```
+
+`StormsModSystem` and `IDrawnSea` live in `RoughSeas.Storms`. `DrawnSea` is null on the server. Our own vessels are posed by the same call.
+
+| Member | What it is |
+| --- | --- |
+| `Swell` | whether any swell is drawn now |
+| `HeightAt(x, z)` | the surface's height above still water there now, in metres |
+| `PoseOf(x, z, yaw, length, width)` | the pose of a hull there, a `SeaPose` |
+
+`PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees: `Pos.Yaw + rotateY * GameMath.DEG2RAD`. Its length runs along the shape's X axis.
+
+`SeaPose`:
+
+| Field | Unit | What it is |
+| --- | --- | --- |
+| `Hold` | 0–1 | how much the drawn swell holds the hull: 0 where none is drawn |
+| `Lift` | m | how far the surface lifts it, added to its model's height |
+| `Roll` | rad | its roll, about its length, as the renderer's `xangle` |
+| `Pitch` | rad | its pitch, about its width, as the renderer's `zangle` |
+
+- **Blend by `Hold`.** Our vessels rock as vanilla rocks them where no swell is drawn and take the pose where it holds them fully, blending between by `Hold`. A shallow bay draws a lower swell than the open sea, so it holds less.
+- **The pose is only the picture.** The server knows nothing of it: breakers, shipped water and impacts come from the sea state. Read it every frame, in your render path; it changes as the waves move.
+- **A pose is the water's slope.** Ours multiply roll and pitch by a vessel's `rollResponse` and `pitchResponse`; yours scales them as its hull would.

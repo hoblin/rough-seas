@@ -159,7 +159,7 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 
 - **Wind and sea.** They sail by our wind's direction and strength, and the helm shows our Beaufort force, wave height and current.
 - **Their own rules.** Shipworks+ takes our wave height and current and applies them by its own model: head seas slow a ship, waves come aboard over a low freeboard and through open gun ports, a flooded ship founders, and the current sets her off course. Our [surf and swamping](Surf-and-Swamping), [bailing](Bailing), [hull condition](Hull-Condition) and [mooring](Mooring) don't reach them; its own wear, pumps and anchors do that work.
-- **Level on the swell.** Beside Rough Seas 2.0, its ships lie level on the swell we draw and don't lift, roll or pitch with it; the client log says `[shipworks+] Rough Seas is installed but its drawn waves could not be read`. In a 2.4 m sea a sloop held level while its dinghy beside it rolled 15°. A way for other mods to read our drawn sea is [#125](https://github.com/hoblin/rough-seas/issues/125).
+- **Level on the swell.** Beside Rough Seas 2.0, its ships lie level on the swell we draw and don't lift, roll or pitch with it; the client log says `[shipworks+] Rough Seas is installed but its drawn waves could not be read`. In a 2.4 m sea a sloop held level while its dinghy beside it rolled 15°. Its hulls don't take our pose: they override vanilla's boat rendering. We now publish [the drawn sea](Reading-the-Sea#the-drawn-sea), the pose our own vessels take, for its ships to ride once Shipworks+ reads it there.
 
 ### Its small boats
 
