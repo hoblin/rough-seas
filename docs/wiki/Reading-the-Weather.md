@@ -14,7 +14,7 @@ Wind direction, waves and currents have no place in vanilla; read them from our 
 The weather a player meets is whatever the last hand to touch it left. Where we set the weather, we take our turn early, so a mod that adjusts the weather after us adjusts ours. Where we only add to vanilla, we go last, so we never stand between vanilla and a mod that adjusts vanilla.
 
 - **`OverridePrecipitation`** (`/weather setprecip`) dries or soaks our weather as it does vanilla's. A mod that dries the world gets a dry world.
-- **Event handlers.** Our `OnGetWindSpeed` and `OnGetClimate` handlers run after vanilla's and before those of vanilla's Devastation: our ModSystem's `ExecuteOrder` is 1. Handlers run in the order their ModSystems start, so a handler of yours registered from a ModSystem with a higher `ExecuteOrder` adjusts our answer.
+- **Event handlers.** Our `OnGetWindSpeed` and `OnGetClimate` handlers run after vanilla's and before those of vanilla's Devastation: our ModSystem's `ExecuteOrder` is 1. Handlers run in the order they are registered. We register the wind's in `Start` and the climate's in `StartServerSide` and `StartClientSide`; so a handler of yours adjusts our answer when it is registered in the same phase or a later one, from a ModSystem with a higher `ExecuteOrder`. An `OnGetClimate` handler registered in `Start` runs before ours, and we overwrite its rain.
 - **Harmony.** A postfix of ours that sets a value runs first (`Priority.High`), so a postfix of yours at the default priority adjusts our value instead of being overwritten by it. These set the rain and the clouds:
   - `WeatherSystemBase.GetPrecipitation`, both overloads;
   - `WeatherDataReaderBase.LoadLerp`, the rain where no climate is loaded;

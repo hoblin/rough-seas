@@ -12,6 +12,6 @@ Within a region, the wind still differs from place to place: `GetWindSpeedAt` ad
 
 **Set any other pattern** with `SetWindPattern` or `/weather setw`, and we leave the region to it until its `ActiveUntilTotalHours`; then we take it back. Another of our own patterns counts as yours, too; only the one already blowing is renewed.
 
-One limit: a lease lasts while vanilla keeps the region in memory, until the region unloads or the server restarts. When a region loads again, we can't tell your pattern from vanilla's random pick, and we take the region at once. A pattern you mean to keep, set again when its region loads.
+One limit: a lease lasts while vanilla keeps the region in memory, until the region unloads or the server restarts. When a region loads again, we can't tell your pattern from vanilla's random pick, and our first pass over it, within two seconds of its load, takes it whatever it carries. A pattern you mean to keep, set again after that first pass, not in the region's load event.
 
 **To freeze the regions**, turn off `autoChangePatterns` (`/weather acp`). As it stops vanilla's own rolls, it stops our leases and our storms' thunder ([Weather events](Weather-Events)): each region keeps the pattern it has. Our local wind and its direction still come through `GetWindSpeedAt` on top of it.

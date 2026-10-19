@@ -165,7 +165,9 @@ A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls
 
 ### A ship that rides our swell
 
-A vessel that is an `EntityBoat`, or derives from one, and is drawn by vanilla's `EntityShapeRenderer`, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). The calls above are for a vessel that poses itself: a class of its own, or a renderer of its own. Each frame, in its render path:
+A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
+
+The calls above are for a vessel that isn't an `EntityBoat` and poses itself. Each frame, in its render path:
 
 ```csharp
 var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
