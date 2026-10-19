@@ -31,7 +31,7 @@ public class SoundscapeModSystem : ModSystem
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
         ShoreSound.Attach(Config.Shore, sea, storms.Waves);
-        VanillaRowing.Attach(Config.VanillaRowing);
+        VanillaRowing.Attach(Config.VanillaRowingVolume, this);
         var crests = new Crests(capi, Config.Crests, this);
         loops = new VesselLoops(capi, Config.Water, sea, this);
         bed = new SeaBed(capi, Config.Beds);
@@ -51,7 +51,7 @@ public class SoundscapeModSystem : ModSystem
             bed.Load();
             capi.Event.RegisterGameTickListener(dt =>
             {
-                if (Listener.Of(capi, sea, storms, Config.SeaProbeBlocks) is not { } listener) return;
+                if (Listener.Of(capi, sea, storms, Config) is not { } listener) return;
                 bed.Update(dt, listener);
                 crests.Update(dt, listener);
                 loops.Update(listener);

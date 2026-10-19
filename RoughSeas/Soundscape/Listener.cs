@@ -8,14 +8,14 @@ namespace RoughSeas.Soundscape;
 
 public readonly record struct Listener(Vec3d Pos, bool AtSea, SeaState Sea, double WaveHeight, Foam Foam)
 {
-    public static Listener? Of(ICoreClientAPI capi, SeaWeatherSystem sea, StormsModSystem storms, int probeBlocks)
+    public static Listener? Of(ICoreClientAPI capi, SeaWeatherSystem sea, StormsModSystem storms, SoundscapeConfig config)
     {
         if (capi.World.Player?.Entity?.Pos is not { } pos) return null;
 
         var state = sea.At(pos.X, pos.Z);
         var surface = storms.Surface;
-        return new Listener(pos.XYZ, OverWater(capi.World.BlockAccessor, pos.AsBlockPos, probeBlocks), state,
-            surface?.Level ?? state.WaveHeight, surface?.Foam ?? default);
+        var atSea = state.WaveHeight >= config.SeaFromMetres && OverWater(capi.World.BlockAccessor, pos.AsBlockPos, config.SeaProbeBlocks);
+        return new Listener(pos.XYZ, atSea, state, surface?.Level ?? state.WaveHeight, surface?.Foam ?? default);
     }
 
     private static bool OverWater(IBlockAccessor accessor, BlockPos pos, int probeBlocks)

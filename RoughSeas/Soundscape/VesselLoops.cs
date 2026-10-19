@@ -68,9 +68,9 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
             var leaking = 0.0;
             foreach (var (place, loop) in leaks)
             {
-                var litres = afloat && hull is { Model: CrackingHull cracking } ? cracking.Leak(place, hull.Afloat, hull.DepthMetres) * room : 0;
-                leaking += litres;
-                loop.Play(litres, hull == null ? centre : centre.AddCopy(hull.PointAt(place)));
+                var litresPerSecond = afloat && hull != null ? hull.Model.LitresPerSecond(place, hull.Afloat, hull.DepthMetres) * room : 0;
+                leaking += litresPerSecond;
+                loop.Play(litresPerSecond, hull == null ? centre : centre.AddCopy(hull.PointAt(place)));
             }
             reading = $"{vessel.Code} {vessel.EntityId}: {(afloat ? "afloat" : "not afloat")}, bilge {fill:F2} full ({slosh}), " +
                 $"leaking {leaking:F2} L/s heard ({leaks.Values.Count(loop => loop.Playing)} cracks), waves {waves:F1} m ({lapping})";

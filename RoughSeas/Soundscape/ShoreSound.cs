@@ -16,8 +16,10 @@ public static class ShoreSound
     private const string HarmonyId = "roughseas.soundscape.shore";
 
     private static readonly ConditionalWeakTable<BlockSounds, ConcurrentDictionary<string, BlockSounds>> Swaps = new();
-    // The engine's ambient scan calls both postfixes on its own thread: whatever they read must be safe off the main thread.
+    // The engine's ambient scan runs the patched methods off the main thread: whatever these postfixes read must be safe there.
     [ThreadStatic] private static BlockPos? probe;
+    [ThreadStatic] private static BlockPos? lastRead;
+    [ThreadStatic] private static Shore? lastShore;
     private static Harmony? harmony;
     private static ShoreConfig config = new();
     private static SeaWeatherSystem? sea;
@@ -28,7 +30,7 @@ public static class ShoreSound
         if (harmony != null) return;
         (config, sea, waves) = (shore, seaWeather, seaWaves);
         harmony = new Harmony(HarmonyId);
-        harmony.Patch(AccessTools.Method(typeof(BlockWater), nameof(BlockWater.GetAmbientSoundStrength)),
+        harmony.Patch(AccessTools.DeclaredMethod(typeof(BlockWater), nameof(BlockWater.GetAmbientSoundStrength)),
             postfix: new HarmonyMethod(typeof(ShoreSound), nameof(Strength)));
         harmony.Patch(AccessTools.Method(typeof(Block), nameof(Block.GetSounds), [typeof(IBlockAccessor), typeof(BlockSelection), typeof(ItemStack)]),
             postfix: new HarmonyMethod(typeof(ShoreSound), nameof(Sounds)));
@@ -44,8 +46,8 @@ public static class ShoreSound
     {
         if (Read(world.BlockAccessor, pos) is not { } shore) return;
 
-        if (shore.Breaking) __result = (float)(Curve.At(config.Breaking, shore.WaveHeight) * (SurfOf(shore.WaveHeight)?.Gain ?? 1));
-        else if (__result > 0) __result = (float)Curve.At(config.Lapping, shore.WaveHeight);
+        if (shore.Breaking) __result = (float)(Curve.At(config.BreakingStrength, shore.WaveHeight) * (SurfOf(shore.WaveHeight)?.Gain ?? 1));
+        else if (__result > 0) __result = (float)Curve.At(config.LappingStrength, shore.WaveHeight);
     }
 
     private static void Sounds(Block __instance, IBlockAccessor blockAccessor, BlockSelection blockSel, ref BlockSounds __result)
@@ -94,22 +96,39 @@ public static class ShoreSound
 
     private static Shore? Read(IBlockAccessor accessor, BlockPos pos)
     {
-        if (sea == null || waves == null) return null;
+        if (lastRead != null && lastRead.Equals(pos))
+        {
+            lastRead = null;
+            return lastShore;
+        }
+        lastShore = Measure(accessor, pos);
+        (lastRead ??= new BlockPos(pos.dimension)).Set(pos);
+        lastRead.dimension = pos.dimension;
+        return lastShore;
+    }
+
+    private static Shore? Measure(IBlockAccessor accessor, BlockPos pos)
+    {
+        var (seaWeather, seaWaves, shore) = (sea, waves, config);
+        if (seaWeather == null || seaWaves == null) return null;
 
         var at = probe ??= new BlockPos(pos.dimension);
         at.Set(pos.X, pos.Y + 1, pos.Z);
         at.dimension = pos.dimension;
         if (accessor.GetBlock(at, BlockLayersAccess.Fluid).IsLiquid() || accessor.GetBlock(at, BlockLayersAccess.Solid).Id != 0) return null;
 
-        var height = sea.At(pos.X + 0.5, pos.Z + 0.5).WaveHeight;
+        var height = seaWeather.At(pos.X + 0.5, pos.Z + 0.5).WaveHeight;
+        if (height <= 0) return new Shore(0, false);
+
+        var deepest = Math.Min(shore.MaxDepthBlocks, (int)Math.Ceiling(seaWaves.BreakingDepth(height)));
         var depth = 0;
         at.Set(pos);
-        while (depth < config.MaxDepthBlocks && accessor.GetBlock(at, BlockLayersAccess.Fluid).IsLiquid())
+        while (depth < deepest && accessor.GetBlock(at, BlockLayersAccess.Fluid).IsLiquid())
         {
             depth++;
             at.Down();
         }
-        return new Shore(height, height > 0 && depth < config.MaxDepthBlocks && waves.BreaksAt(depth, height));
+        return new Shore(height, depth < deepest && seaWaves.BreaksAt(depth, height));
     }
 
     private readonly record struct Shore(double WaveHeight, bool Breaking);

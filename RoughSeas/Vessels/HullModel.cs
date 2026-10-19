@@ -30,7 +30,7 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
         return hull;
     }
 
-    /// <summary>The <c>model</c> key it was picked by: cracking, lashed or reed.</summary>
+    /// <summary>The <c>model</c> key it was picked by.</summary>
     public string Code { get; private set; } = "";
 
     public abstract float Condition { get; }
@@ -40,6 +40,8 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
     public virtual int Stage(HullPlace place) => StageOf(1 - Condition);
 
     public virtual double LitresPerSecond(Afloat afloat, double depthMetres) => 0;
+
+    public virtual double LitresPerSecond(HullPlace place, Afloat afloat, double depthMetres) => 0;
 
     public virtual double Inflow(double seconds, double hours, Afloat afloat, double depthMetres) =>
         LitresPerSecond(afloat, depthMetres) * seconds;

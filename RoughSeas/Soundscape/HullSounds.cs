@@ -53,6 +53,9 @@ public sealed class HullSounds(SoundscapeModSystem sounds, ICoreServerAPI sapi)
     private void Took(Entity vessel, EntityBehaviorVesselIntegrity? hull, EntityBehaviorSeaForces forces, EntityBehaviorSeaForces.TakenWave wave)
     {
         var water = Config.Water;
+        var pos = vessel.Pos;
+        if (sapi.World.NearestPlayer(pos.X, pos.Y, pos.Z)?.Entity?.Pos.DistanceTo(pos) is not { } nearest || nearest > water.Range) return;
+
         var side = Windward(vessel, hull, forces, wave);
         var (hit, what) = wave.Breaking ? (water.Slam, "slam")
             : wave.Height >= water.StrongSlapFromMetres ? (water.StrongSlap, "strong slap")

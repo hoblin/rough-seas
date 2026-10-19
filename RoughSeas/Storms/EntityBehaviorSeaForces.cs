@@ -222,7 +222,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     private readonly record struct SeatPose(Vec3f? Offset, string Animation);
 
-    /// <param name="Height">This one wave's drawn height, not the sea's significant height.</param>
+    /// <param name="Height">This one wave's height, sampled from the sea's significant height; not a crest the client renders.</param>
     /// <param name="FromX">With <paramref name="FromZ"/>, the world direction the wave came from, not normalised.</param>
     public readonly record struct TakenWave(double Height, bool Breaking, double ShippedLitres, double FromX, double FromZ);
 

@@ -6,7 +6,8 @@ public class SoundscapeConfig
 {
     public double UpdateSeconds = 0.25;
     public int SeaProbeBlocks = 3;
-    public float VanillaRowing = 1;
+    public double SeaFromMetres = 0.1;
+    public float VanillaRowingVolume = 1;
     public BedsConfig Beds = new();
     public CrestsConfig Crests = new();
     public ShoreConfig Shore = new();
@@ -54,8 +55,8 @@ public class ShoreConfig
     public SurfBand[] Surf = [];
     public int SurfBlockCount = 50;
     public int MaxDepthBlocks = 8;
-    public double[][] Lapping = [];
-    public double[][] Breaking = [];
+    public double[][] LappingStrength = [];
+    public double[][] BreakingStrength = [];
 }
 
 public class SurfBand

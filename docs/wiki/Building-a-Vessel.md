@@ -119,7 +119,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 | `runsRapids` | true if rapids don't strike it |
 | `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives) |
 | `wreckage` | what it leaves when it breaks up, as a block's drops |
-| `damage` | how the cracks show: `textures` (the shape's textures that crack) and `material` (`wood`, `bark`, `reed` or `hide`) |
+| `damage` | how the cracks show: `textures` (the shape's textures that crack) and `material` (`wood`, `bark`, `reed` or `hide`), which also picks the hull's [sounds](#sounds) |
 
 `repairsByType` and `wreckageByType` work as vanilla's `ByType` keys do.
 
@@ -154,7 +154,7 @@ To give a vessel of yours draft and buoyancy: list its `parts` with materials th
 
 ## Sounds
 
-A vessel with our behaviours sounds without a key of its own. Its hull speaks by its `model` and its `damage.material`, from the voices in `config/soundscape.json` under `hull.models`: a `cracking` hull as wood, bark or hide, a `lashed` one by its lashings, a `reed` one with a crunch. A material without a voice sounds as wood. A blow it shrugs off knocks, a blow that harms it cracks or strains, and a break-up breaks, each played where the blow landed and louder the harder it was. With `roughseas:seaforces`, each wave slaps, a breaker slams and shipped water pours, from the windward side. Its bilge sloshes, its worst crack trickles and the sea laps at it, played by each client from what the bilge and the hull already sync. Every sound, and how loud it plays for its cause, is in `config/soundscape.json`, which a patch can change.
+A vessel with our behaviours sounds without a key of its own. Its hull speaks by its `model` and its `damage.material`, from the voices in `config/soundscape.json` under `hull.models`: a `cracking` hull as wood, bark or hide, a `lashed` one by its lashings, a `reed` one with a crunch. A material without a voice sounds as wood. A blow it shrugs off knocks and a blow that harms it cracks or strains, played where the blow landed and louder the harder it was; a break-up breaks from the middle of the hull. With `roughseas:seaforces`, each wave slaps, a breaker slams and water shipped into a hull with a `roughseas:bilge` splashes in, from the windward side. Its bilge sloshes, each crack trickles from where it is, as loud as it leaks, and the sea laps at it, played by each client from what the bilge and the hull already sync. Every sound, and how loud it plays for its cause, is in `config/soundscape.json`, which a patch can change.
 
 For sounds of your own, the server raises events on the behaviours:
 - `EntityBehaviorVesselIntegrity.Struck`: the place struck, the blow over the hull's capacity, and what it did (`Harmed`, `BrokenUp`, or null when shrugged off). `PointAt(place)` gives the place's point to play at.

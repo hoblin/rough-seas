@@ -56,15 +56,12 @@ public class CurveTests
         Assert.Equal([0.0], Curve.Mix(beds, 2));
     }
 
-    [Theory]
-    [InlineData("cracking", "wood")]
-    [InlineData("cracking", "hide")]
-    [InlineData("cracking", "bark")]
-    [InlineData("lashed", "wood")]
-    [InlineData("reed", "reed")]
-    public void GivesEveryHullModelAndItsMaterialsAVoice(string model, string material)
+    [Fact]
+    public void NeverAsksALoopForMoreThanItsFileCanPlay()
     {
-        var voice = Shipped.Hull.Models[model][material];
-        Assert.False(string.IsNullOrEmpty(voice.Knock));
+        for (var wind = 0.0; wind <= 55; wind += 0.5)
+        {
+            Assert.All(Curve.Mix(Shipped.Beds, wind), volume => Assert.True(volume <= 1 + 1e-9, $"a bed loop asks for {volume:F2} in a {wind} m/s wind"));
+        }
     }
 }
