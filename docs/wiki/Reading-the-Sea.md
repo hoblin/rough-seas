@@ -72,7 +72,7 @@ SeaPose pose = drawn.PoseOf(x, z, yaw, length, width);
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there, a `SeaPose` |
 
-`PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`. Its length runs along the shape's X axis.
+`PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees: `Pos.Yaw + rotateY * GameMath.DEG2RAD`. Its length runs along the shape's X axis.
 
 `SeaPose`:
 

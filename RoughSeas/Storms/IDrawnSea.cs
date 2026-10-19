@@ -13,6 +13,6 @@ public interface IDrawnSea
     double HeightAt(double x, double z);
 
     /// <summary>The pose of a hull of <paramref name="length"/> by <paramref name="width"/> blocks centred at a position, sampled at its ends and sides.</summary>
-    /// <param name="yaw">Its heading in radians as its renderer turns it: the entity's <c>Pos.Yaw</c> plus its shape's <c>rotateY</c>; its length runs along the shape's X axis.</param>
+    /// <param name="yaw">Its heading in radians as its renderer turns it: the entity's <c>Pos.Yaw</c> plus its shape's <c>rotateY * GameMath.DEG2RAD</c>; its length runs along the shape's X axis.</param>
     SeaPose PoseOf(double x, double z, double yaw, double length, double width);
 }
