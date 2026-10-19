@@ -172,6 +172,6 @@ public static class SurfaceShader
         __instance.Uniform(FoamUniform, DrawFoam
             ? new Vec4f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray, (float)surface.SurfDepth)
             : new Vec4f((float)NoCaps, 0, 0, 0));
-        __instance.Uniform("seaWind", new Vec2f((float)Math.Cos(surface.TowardRadians), (float)Math.Sin(surface.TowardRadians)));
+        __instance.Uniform("seaWavesToward", new Vec2f((float)Math.Cos(surface.WavesTowardRadians), (float)Math.Sin(surface.WavesTowardRadians)));
     }
 }
