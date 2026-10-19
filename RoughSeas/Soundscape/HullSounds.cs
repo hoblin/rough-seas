@@ -37,22 +37,27 @@ public sealed class HullSounds(SoundscapeModSystem sounds, ICoreServerAPI sapi)
 
     private void Struck(Entity vessel, EntityBehaviorVesselIntegrity hull, HullPlace place, double severity, Knock? knock)
     {
-        var sound = knock == null ? VoiceOf(hull)?.Knock : VoiceOf(hull)?.Harm;
+        var voice = VoiceOf(hull);
+        var sound = knock != null ? voice?.Harm
+            : severity >= Config.Hull.HardFromSeverity && voice?.Hard != null ? voice.Hard
+            : voice?.Knock;
         Play(vessel, sound, vessel.Pos.XYZ.Add(hull.PointAt(place)), Config.Hull.Range, Curve.At(Config.Hull.Volume, severity),
             $"{knock?.ToString().ToLowerInvariant() ?? "knock"} at the {place.Code()}");
     }
 
     private void BrokeUp(Entity vessel, EntityBehaviorVesselIntegrity hull)
     {
-        foreach (var sound in VoiceOf(hull)?.Break ?? []) Play(vessel, sound, vessel.Pos.XYZ, Config.Hull.Range, 1, "broke up");
+        foreach (var sound in VoiceOf(hull)?.Break ?? []) Play(vessel, sound, vessel.Pos.XYZ, Config.Hull.Range, Config.Hull.BreakVolume, "broke up");
     }
 
     private void Took(Entity vessel, EntityBehaviorVesselIntegrity? hull, EntityBehaviorSeaForces forces, EntityBehaviorSeaForces.TakenWave wave)
     {
         var water = Config.Water;
         var side = Windward(vessel, hull, forces, wave);
-        var hit = wave.Breaking ? water.Slam : water.Slap;
-        Play(vessel, hit.Sound, side, water.Range, Curve.At(hit.Volume, wave.Height), $"{(wave.Breaking ? "slam" : "slap")} of a {wave.Height:F1} m wave");
+        var (hit, what) = wave.Breaking ? (water.Slam, "slam")
+            : wave.Height >= water.StrongSlapFromMetres ? (water.StrongSlap, "strong slap")
+            : (water.Slap, "slap");
+        Play(vessel, hit.Sound, side, water.Range, Curve.At(hit.Volume, wave.Height), $"{what} of a {wave.Height:F1} m wave");
         if (wave.ShippedLitres > 0) Play(vessel, water.Pour.Sound, side, water.Range, Curve.At(water.Pour.Volume, wave.ShippedLitres), $"{wave.ShippedLitres:F0} L over the gunwale");
     }
 

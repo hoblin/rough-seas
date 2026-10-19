@@ -48,23 +48,33 @@ public class ScatteredCue : Cue
 
 public class ShoreConfig
 {
-    public string Surf = "";
+    public string? LappingSound;
+    public SurfBand[] Surf = [];
     public int SurfBlockCount = 50;
     public int MaxDepthBlocks = 8;
     public double[][] Lapping = [];
     public double[][] Breaking = [];
 }
 
+public class SurfBand
+{
+    public string Sound = "";
+    public double FromMetres;
+}
+
 public class HullVoicesConfig
 {
     public float Range = 24;
     public double[][] Volume = [];
+    public double HardFromSeverity = 1;
+    public float BreakVolume = 1;
     public Dictionary<string, Dictionary<string, HullVoice>> Models = new();
 }
 
 public class HullVoice
 {
     public string? Knock;
+    public string? Hard;
     public string? Harm;
     public string[] Break = [];
 }
@@ -73,7 +83,9 @@ public class WaterConfig
 {
     public float Range = 24;
     public double ListenMetres = 32;
+    public double StrongSlapFromMetres = double.PositiveInfinity;
     public Cue Slap = new();
+    public Cue StrongSlap = new();
     public Cue Slam = new();
     public Cue Pour = new();
     public Cue Slosh = new();

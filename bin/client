@@ -65,7 +65,7 @@ leave_world() {
 
 bench_settings() {
   local settings=$BENCH_DATA/clientsettings.json
-  jq '.intSettings += {masterSoundLevel: 0, vsyncMode: 0, maxFps: 60}
+  jq --argjson sound "${BENCH_SOUND:-0}" '.intSettings += {masterSoundLevel: $sound, vsyncMode: 0, maxFps: 60}
     | .stringListSettings.disabledMods |= ((. // []) | map(select(test("^(roughseas|agentbridge)@") | not)))' "$settings" > "$settings.bench"
   mv -f "$settings.bench" "$settings"
 }

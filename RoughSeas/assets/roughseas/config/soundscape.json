@@ -3,52 +3,69 @@
     "seaProbeBlocks": 3,
     "beds": {
         "easeSeconds": 4,
-        "volume": [[0, 0.25], [1, 0.5], [3, 0.8], [6, 1]],
+        "volume": [[0, 0.08], [0.3, 0.08], [1.5, 0.32], [5, 0.71], [8, 0.8]],
         "loops": [
-            {"sound": "game:sounds/environment/waterwaves", "share": [[0, 1], [0.8, 1], [1.6, 0]]},
-            {"sound": "game:sounds/environment/creek", "share": [[0.5, 0], [1.5, 1], [3, 1], [4, 0]]},
-            {"sound": "game:sounds/environment/rapids", "share": [[2.5, 0], [4, 1]]}
+            {"sound": "roughseas:sounds/sea/calm", "share": [[0, 1], [0.6, 1], [1.4, 0]]},
+            {"sound": "roughseas:sounds/sea/moderate", "share": [[0.6, 0], [1.4, 1], [3, 1], [4.5, 0]]},
+            {"sound": "roughseas:sounds/sea/storm", "share": [[3, 0], [4.5, 1]]}
         ]
     },
     "crests": {
         "range": 48,
         "metres": [12, 28],
         "spreadDegrees": 70,
-        "hiss": {"sound": "game:sounds/environment/smallsplash", "perSecond": 4, "volume": [[0, 0.3], [0.3, 1]]},
-        "plunge": {"sound": "game:sounds/environment/largesplash*", "perSecond": 2, "volume": [[0, 0.5], [0.3, 1]]}
+        "hiss": {"sound": "roughseas:sounds/crest/hiss/*", "perSecond": 4, "volume": [[0, 0.3], [0.3, 0.55]]},
+        "plunge": {"sound": "roughseas:sounds/crest/plunge", "perSecond": 2, "volume": [[0, 0.5], [0.3, 0.9]]}
     },
     "shore": {
-        "surf": "game:sounds/environment/rapids",
-        "surfBlockCount": 30,
+        "lappingSound": "roughseas:sounds/shore/lapping",
+        "surf": [
+            {"sound": "roughseas:sounds/shore/surf-light", "fromMetres": 0},
+            {"sound": "roughseas:sounds/shore/surf-moderate", "fromMetres": 1},
+            {"sound": "roughseas:sounds/shore/surf-strong", "fromMetres": 2.5},
+            {"sound": "roughseas:sounds/shore/surf-storm", "fromMetres": 4}
+        ],
+        "surfBlockCount": 45,
         "maxDepthBlocks": 8,
-        "lapping": [[0, 0.3], [0.5, 0.7], [1, 0.4]],
-        "breaking": [[0.3, 0.3], [1, 0.7], [3, 1]]
+        "lapping": [[0, 0.09], [0.5, 0.2], [1, 0.12]],
+        "breaking": [[0.3, 0.4], [0.5, 0.6], [1.5, 0.8], [5, 1]]
     },
     "hull": {
         "range": 24,
-        "volume": [[0, 0.35], [1, 1]],
+        "volume": [[0, 0.2], [1, 0.63]],
+        "hardFromSeverity": 1,
+        "breakVolume": 0.8,
         "models": {
             "cracking": {
-                "wood": {"knock": "game:sounds/walk/wood*", "harm": "game:sounds/block/woodcreak_*", "break": ["game:sounds/block/planks"]},
-                "hide": {"knock": "game:sounds/block/leather", "harm": "game:sounds/block/woodcreak_*", "break": ["game:sounds/block/planks"]},
-                "bark": {"knock": "game:sounds/block/chop*", "harm": "game:sounds/block/woodcreak_*", "break": ["game:sounds/block/planks"]}
+                "wood": {"knock": "roughseas:sounds/hull/wood/knock/*", "harm": "roughseas:sounds/hull/wood/harm/*", "break": ["roughseas:sounds/hull/wood/break/*"]},
+                "bark": {"knock": "roughseas:sounds/hull/bark/knock", "harm": "roughseas:sounds/hull/bark/harm/*", "break": ["roughseas:sounds/hull/bark/break"]},
+                "hide": {"knock": "roughseas:sounds/hull/hide/knock/*", "harm": "roughseas:sounds/hull/hide/harm", "break": ["roughseas:sounds/hull/hide/break"]}
             },
             "lashed": {
-                "wood": {"knock": "game:sounds/walk/wood*", "harm": "game:sounds/effect/ropestretch", "break": ["game:sounds/effect/roperip", "game:sounds/effect/treefell"]}
+                "wood": {"knock": "roughseas:sounds/hull/wood/knock/*", "harm": "roughseas:sounds/hull/lashing/harm", "break": ["roughseas:sounds/hull/lashing/snap", "roughseas:sounds/hull/lashing/logs"]}
             },
             "reed": {
-                "reed": {"knock": "game:sounds/block/reedtrapshake*"}
+                "reed": {"knock": "roughseas:sounds/hull/reed/knock/*", "hard": "roughseas:sounds/hull/reed/hard/*"}
             }
         }
     },
     "water": {
         "range": 24,
         "listenMetres": 32,
-        "slap": {"sound": "game:sounds/environment/smallsplash", "volume": [[0.3, 0.3], [1.5, 0.8]]},
-        "slam": {"sound": "game:sounds/environment/largesplash*", "volume": [[0.5, 0.6], [3, 1]]},
-        "pour": {"sound": "game:sounds/effect/water-pour", "volume": [[0, 0.3], [20, 0.7], [100, 1]]},
-        "slosh": {"sound": "game:sounds/block/water", "volume": [[0.02, 0], [0.05, 0.3], [1, 0.9]]},
-        "leak": {"sound": "game:sounds/effect/watering-loop", "volume": [[0.005, 0], [0.02, 0.3], [1, 0.9]]},
-        "lapping": {"sound": "game:sounds/environment/waterwaves", "volume": [[0, 0.15], [1, 0.4], [2, 0.2], [3, 0]]}
+        "strongSlapFromMetres": 0.8,
+        "slap": {"sound": "roughseas:sounds/water/slap/soft/*", "volume": [[0.3, 0.2], [0.8, 0.3]]},
+        "strongSlap": {"sound": "roughseas:sounds/water/slap/strong/*", "volume": [[0.8, 0.35], [1.5, 0.5], [3, 0.6]]},
+        "slam": {"sound": "roughseas:sounds/water/slam", "volume": [[0.5, 0.6], [3, 0.9]]},
+        "pour": {"sound": "roughseas:sounds/water/pour/*", "volume": [[0, 0.2], [20, 0.4], [100, 0.7]]},
+        "slosh": {"sound": "roughseas:sounds/water/slosh", "volume": [[0.02, 0], [0.05, 0.1], [1, 0.4]]},
+        "leak": {"sound": "roughseas:sounds/water/leak", "volume": [[0.005, 0], [0.02, 0.08], [1, 0.3]]},
+        "lapping": {"sound": "roughseas:sounds/water/lapping", "volume": [[0, 0.06], [1, 0.12], [2, 0.06], [3, 0]]}
+    },
+    "sources": {
+        "files": "Every sound file is mastered to -26 LUFS integrated, mono, true peak at most -1 dBTP; credits in the wiki's Sound-Credits page.",
+        "levels": "Volumes set against vanilla by calculation from its code: in the game a sound plays at its file's loudness + 20 log10(volume x the player's setting for its type x distance attenuation). Distance attenuation is OpenAL exponent-clamped with reference max(3, sqrt(range) - 2) and rolloff ln 100 / ln range; weather and our beds play relative to the listener, unattenuated. Vanilla at sea: wind -39 LUFS just audible, -31 at wind speed 0.7, -24 in a full gale; rain -33 moderate, -27 heavy; raft idle -50; shore lapping -51 beside 100 edge blocks.",
+        "beds": "Calm -48 LUFS, level with the raft idle and vanilla's shore lapping; moderate -36 and storm -29, 5 dB under vanilla's wind at the same sea.",
+        "shore": "Block ambient, volume clamp(sqrt(blocks) / surfBlockCount) x strength. Surf -44 LUFS beside a gentle shore, -35 beside 400 breaking blocks in a 1.5 m sea, -28 on a storm coast. Lapping replaces vanilla's waterwaves (-36.75 LUFS) with a -26 LUFS file at 0.29 x the strength vanilla's would need.",
+        "hull": "At a rider 1.5 m away: knock -40 light to -30 hard, break-up -28; slap -40 to -32, breaker slam -27, full bilge slosh -34, hull lapping -44. The whitecap hiss -37 LUFS at 12 m, under a force-6 wind."
     }
 }

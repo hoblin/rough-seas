@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
@@ -13,7 +15,7 @@ public static class ShoreSound
 {
     private const string HarmonyId = "roughseas.soundscape.shore";
 
-    private static readonly ConditionalWeakTable<BlockSounds, BlockSounds> SurfSounds = new();
+    private static readonly ConditionalWeakTable<BlockSounds, ConcurrentDictionary<string, BlockSounds>> Swaps = new();
     // The engine's ambient scan calls both postfixes on its own thread: whatever they read must be safe off the main thread.
     [ThreadStatic] private static BlockPos? probe;
     private static Harmony? harmony;
@@ -49,17 +51,22 @@ public static class ShoreSound
     private static void Sounds(Block __instance, IBlockAccessor blockAccessor, BlockSelection blockSel, ref BlockSounds __result)
     {
         if (__instance is not BlockWater || __result == null || blockSel?.Position is not { } pos) return;
-        if (Read(blockAccessor, pos) is not { Breaking: true }) return;
+        if (Read(blockAccessor, pos) is not { } shore) return;
 
-        var still = __result;
-        __result = SurfSounds.GetValue(still, _ =>
-        {
-            var surf = still.Clone();
-            surf.Ambient = new AssetLocation(config.Surf);
-            surf.AmbientBlockCount = config.SurfBlockCount;
-            return surf;
-        });
+        if (shore.Breaking && SurfOf(shore.WaveHeight) is { } surf) __result = Swapped(__result, surf, config.SurfBlockCount);
+        else if (!shore.Breaking && config.LappingSound is { } lapping) __result = Swapped(__result, lapping, __result.AmbientBlockCount);
     }
+
+    private static string? SurfOf(double waveHeight) => config.Surf.LastOrDefault(band => band.FromMetres <= waveHeight)?.Sound;
+
+    private static BlockSounds Swapped(BlockSounds still, string ambient, float blockCount) =>
+        Swaps.GetOrCreateValue(still).GetOrAdd(ambient, _ =>
+        {
+            var swapped = still.Clone();
+            swapped.Ambient = new AssetLocation(ambient);
+            swapped.AmbientBlockCount = blockCount;
+            return swapped;
+        });
 
     public static string Survey(IWorldAccessor world, BlockPos centre, int radius)
     {
@@ -77,8 +84,8 @@ public static class ShoreSound
 
             highest = Math.Max(highest, shore.WaveHeight);
             var strength = water.GetAmbientSoundStrength(world, pos);
-            var surf = water.GetSounds(accessor, new BlockSelection { Position = pos })?.Ambient?.Equals(new AssetLocation(config.Surf)) == true;
-            if (surf) (breaking, breakingStrength) = (breaking + 1, breakingStrength + strength);
+            var ambient = water.GetSounds(accessor, new BlockSelection { Position = pos })?.Ambient?.ToString();
+            if (config.Surf.Any(band => new AssetLocation(band.Sound).ToString() == ambient)) (breaking, breakingStrength) = (breaking + 1, breakingStrength + strength);
             else if (strength > 0) (lapping, lappingStrength) = (lapping + 1, lappingStrength + strength);
         }
         return $"within {radius} blocks: {lapping} lapping at mean strength {(lapping > 0 ? lappingStrength / lapping : 0):F2}, " +
