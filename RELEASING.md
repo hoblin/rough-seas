@@ -1,6 +1,6 @@
 # Releasing
 
-Versions are our own: 1.0, 1.1, 1.2 for features, a third part only for a bug fix (1.0.1). The mod DB accepts only three parts, so `modinfo.json` and the tag carry them: 1.0 is `1.0.0`, tagged `v1.0.0`.
+Versions are our own: 1.0, 1.1, 1.2 for features, a third part only for a bug fix (1.0.1). Planned releases are GitHub milestones with a name and no number ("Seamanship"); a release gets its version when it ships, by what it brings. A breaking change to what the wiki's pages for modders document takes a new major version. The mod DB accepts only three parts, so `modinfo.json` and the tag carry them: 1.0 is `1.0.0`, tagged `v1.0.0`.
 
 The game version the mod supports lives in one place, `dependencies.game` in `RoughSeas/modinfo.json`. CI builds and tests against that server build, and the mod DB ticks the compatible game versions from it.
 
