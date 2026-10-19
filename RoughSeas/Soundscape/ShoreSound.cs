@@ -44,7 +44,7 @@ public static class ShoreSound
     {
         if (Read(world.BlockAccessor, pos) is not { } shore) return;
 
-        if (shore.Breaking) __result = (float)Curve.At(config.Breaking, shore.WaveHeight);
+        if (shore.Breaking) __result = (float)(Curve.At(config.Breaking, shore.WaveHeight) * (SurfOf(shore.WaveHeight)?.Gain ?? 1));
         else if (__result > 0) __result = (float)Curve.At(config.Lapping, shore.WaveHeight);
     }
 
@@ -53,11 +53,11 @@ public static class ShoreSound
         if (__instance is not BlockWater || __result == null || blockSel?.Position is not { } pos) return;
         if (Read(blockAccessor, pos) is not { } shore) return;
 
-        if (shore.Breaking && SurfOf(shore.WaveHeight) is { } surf) __result = Swapped(__result, surf, config.SurfBlockCount);
+        if (shore.Breaking && SurfOf(shore.WaveHeight) is { } surf) __result = Swapped(__result, surf.Sound, config.SurfBlockCount);
         else if (!shore.Breaking && config.LappingSound is { } lapping) __result = Swapped(__result, lapping, __result.AmbientBlockCount);
     }
 
-    private static string? SurfOf(double waveHeight) => config.Surf.LastOrDefault(band => band.FromMetres <= waveHeight)?.Sound;
+    private static SurfBand? SurfOf(double waveHeight) => config.Surf.LastOrDefault(band => band.FromMetres <= waveHeight);
 
     private static BlockSounds Swapped(BlockSounds still, string ambient, float blockCount) =>
         Swaps.GetOrCreateValue(still).GetOrAdd(ambient, _ =>

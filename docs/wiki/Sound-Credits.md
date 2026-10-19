@@ -6,7 +6,7 @@ Every sound Rough Seas plays from its own files is cut, layered and levelled fro
 | [alotf_shot_kick.wav](https://freesound.org/people/sdotlyre/sounds/462388/) | sdotlyre | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | hull/wood/knock, hull/hide/knock, water/slam |
 | [Large piece of wood being dropped 03 - 1](https://freesound.org/people/Jagadamba/sounds/258065/) | Jagadamba | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | hull/wood/harm, hull/wood/break |
 | [Loopable Stream of Water on Rocks 2](https://freesound.org/people/Geoff-Bremner-Audio/sounds/798673/) | Geoff-Bremner-Audio | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | water/leak |
-| [Pirita Storm waves06.12.2015.flac](https://freesound.org/people/jrosin/sounds/330408/) | jrosin | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | shore/surf-storm |
+| [Pirita Storm waves06.12.2015.flac](https://freesound.org/people/jrosin/sounds/330408/) | jrosin | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | shore/surf-strong |
 | [Sloshing Waterbottle.wav](https://freesound.org/people/Razzvio/sounds/79145/) | Razzvio | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) | water/slosh |
 | [Soutuvene, liplatus venettä vasten / Rowing boat, wooden, small waves lapping against the boat, holding still on a lake when fishing, autumn](https://freesound.org/people/YleArkisto/sounds/361112/) | YleArkisto | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | water/slap/soft, water/slap/strong, water/pour |
 | [Stretch Cable Rope 5](https://freesound.org/people/Geoff-Bremner-Audio/sounds/836197/) | Geoff-Bremner-Audio | CC-BY | hull/lashing/harm, hull/lashing/snap |
@@ -38,7 +38,7 @@ Every sound Rough Seas plays from its own files is cut, layered and levelled fro
 | [Thằn Lằn Khổng Lộ Nước](https://freesound.org/people/SieuAmThanh/sounds/484197/) | SieuAmThanh | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | crest/plunge |
 | [Water Slapping (fast)](https://freesound.org/people/adviseme333/sounds/679390/) | adviseme333 | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | water/slap/strong |
 | [Water_Lapping_River.wav](https://freesound.org/people/ceich93/sounds/318064/) | ceich93 | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | water/lapping |
-| [Waves crash surf bright detail beach cu loop BAHAMAS 180521.wav](https://freesound.org/people/TRP/sounds/573187/) | TRP | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | shore/surf-strong |
+| [Waves crash surf bright detail beach cu loop BAHAMAS 180521.wav](https://freesound.org/people/TRP/sounds/573187/) | TRP | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | shore/surf-storm |
 | [Waves on shale beech. Distant low boat engine in background.](https://freesound.org/people/carthny/sounds/592430/) | carthny | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | shore/surf-light |
 | [Wood Crack 2](https://freesound.org/people/utsuru/sounds/183452/) | utsuru | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/wood/harm |
 | [wood_tear](https://freesound.org/people/loganzsound/sounds/774268/) | loganzsound | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/reed/knock |

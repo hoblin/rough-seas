@@ -62,6 +62,7 @@ public class SurfBand
 {
     public string Sound = "";
     public double FromMetres;
+    public double Gain = 1;
 }
 
 public class HullVoicesConfig
