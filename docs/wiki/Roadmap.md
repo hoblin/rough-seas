@@ -28,6 +28,14 @@ Rough Seas moves beneath vanilla, so other mods build on its sea as if it were t
 - **Vessels from any wood**, other mods' timber included: the [dugout](Dugout) and the [outrigger canoe](Outrigger-Canoe) from any tree, the [bark canoe](Birch-Bark-Canoe) from birch, elm or spruce bark.
 - **Switched off for now:** [capsizing](Surf-and-Swamping#capsizing) and the [surf's foam](The-Look-of-the-Sea#what-you-see), both unfinished. Capsizing comes back with heel in [Seamanship](#seamanship).
 
+## 2.1
+
+Hulls that take knocks as real ones do, and a guide for modders.
+
+- **[Knocks](Hull-Condition) worked out as they really are.** A hull is struck only when it truly hits something solid, by the speed it loses into it, the way the game works out a fall. A hull counts its own weight, the people aboard with their gear and armor, the empty baskets, crates and chests it carries, and its water, which sloshes. A lagging server no longer breaks a boat on open water.
+- **[For modders](For-Modders)**, one page per mechanic, with [Building a vessel](Building-a-Vessel) for vessels that ride our sea. What those pages document is kept stable under semantic versioning.
+- **[Shipworks+](Other-Mods#shipworks)** tested beside us.
+
 ## Seamanship
 
 Sailing becomes sailing.
