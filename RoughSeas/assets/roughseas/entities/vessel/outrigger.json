@@ -18,6 +18,7 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 15000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
+            "hullBox": [-32, 0, 3, 48, 9, 13],
             "depthMetres": 0.61,
             "waterplaneSquareMetres": 1.5,
             "repairs": [{
@@ -32,6 +33,7 @@
             ],
             "damage": {"textures": ["bark", "inside"], "material": "wood"},
             "sources": {
+                "hullBox": "The main hull alone, in the shape's voxels: its Hull box reaches over the outrigger float, which is not where a knock cracks her",
                 "depthMetres": "Keel to the top of the washstrakes: a 0.21 m draft with one paddler and the 0.4 m of side Pacific outrigger hulls carry above it",
                 "waterplaneSquareMetres": "A slender 5 m hull about 0.5 m wide at the water, fine at both ends, so that 600 L aboard settles her by her 0.4 m of side"
             }

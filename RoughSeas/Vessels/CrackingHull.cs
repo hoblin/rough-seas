@@ -6,7 +6,7 @@ using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Vessels;
 
-public sealed class PlankedHull : HullModel, IKnockable, IAfloat, IMendable
+public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 {
     private const string CracksKey = "cracks";
     private const string GreaseKey = "greaseDays";
@@ -17,7 +17,7 @@ public sealed class PlankedHull : HullModel, IKnockable, IAfloat, IMendable
     private readonly HullConfig config;
     private readonly SeepConfig? seep;
 
-    public PlankedHull(Func<ITreeAttribute> tree, Action changed, JsonObject attributes, HullConfig config) : base(tree, changed)
+    public CrackingHull(Func<ITreeAttribute> tree, Action changed, JsonObject attributes, HullConfig config) : base(tree, changed)
     {
         this.config = config;
         seep = attributes["seep"].AsObject<SeepConfig?>(null);
@@ -27,7 +27,7 @@ public sealed class PlankedHull : HullModel, IKnockable, IAfloat, IMendable
 
     public double GreaseDays => seep == null ? 0 : Tree.GetDouble(GreaseKey, seep.GreaseDays);
 
-    public override int Stage(HullPlace place) => StageOf(Crack(place));
+    public override int Stage(HullPlace place) => Crack(place) is var crack and > 0 ? Math.Max(1, StageOf(crack)) : 0;
 
     public double Crack(HullPlace place) => Cracks?.GetFloat(place.Code()) ?? 0;
 
@@ -45,13 +45,10 @@ public sealed class PlankedHull : HullModel, IKnockable, IAfloat, IMendable
         Changed();
     }
 
-    public override double Inflow(double seconds, double hours, Afloat afloat, double depthMetres)
-    {
-        double cracks = HullShape.Places.Sum(place => Leak(place, afloat, depthMetres)) * seconds;
-        return cracks + (seep != null && GreaseDays <= 0 ? seep.LitresPerHour * hours : 0);
-    }
+    public override double Inflow(double seconds, double hours, Afloat afloat, double depthMetres) =>
+        base.Inflow(seconds, hours, afloat, depthMetres) + (seep != null && GreaseDays <= 0 ? seep.LitresPerHour * hours : 0);
 
-    public double LitresPerSecond(Afloat afloat, double depthMetres) => HullShape.Places.Sum(place => Leak(place, afloat, depthMetres));
+    public override double LitresPerSecond(Afloat afloat, double depthMetres) => HullShape.Places.Sum(place => Leak(place, afloat, depthMetres));
 
     public bool Needs(HullRepair repair, HullPlace place) =>
         repair.Greases ? seep != null && GreaseDays < seep.GreaseDays : Worst() is not null;
@@ -87,18 +84,18 @@ public sealed class PlankedHull : HullModel, IKnockable, IAfloat, IMendable
         info.AppendLine(days > 0 ? Lang.Get("roughseas:vessel-grease-in", days) : Lang.Get("roughseas:vessel-grease-due"));
     }
 
-    public override void Adopt(float legacyIntegrity) { }
+    public override void Adopt(float integrity) { }
 
     private double Leak(HullPlace place, Afloat afloat, double depthMetres)
     {
-        double head = Waterline(place, afloat) - CrackHeight(place, depthMetres);
+        double head = Waterline(place, afloat) - Math.Max(CrackHeight(place, depthMetres), afloat.InsideMetres);
         if (head <= 0) return 0;
 
         double area = Crack(place) * config.CrackSquareCentimetres / SquareCentimetresPerSquareMetre;
         return config.DischargeCoefficient * area * Math.Sqrt(2 * Gravity * head) * LitresPerCubicMetre;
     }
 
-    // Level for now: heel raises it on the lee side, where a breach above the waterline starts to leak.
+    // Level: heel will raise it on the lee side, where a breach above the waterline then starts to leak.
     private static double Waterline(HullPlace place, Afloat afloat) => afloat.DraftMetres;
 
     private double CrackHeight(HullPlace place, double depthMetres) => place == HullPlace.Bottom ? 0 : config.SideCrackShare * depthMetres;

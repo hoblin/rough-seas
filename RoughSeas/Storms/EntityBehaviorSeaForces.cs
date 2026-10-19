@@ -23,6 +23,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private VesselsModSystem vessels = null!;
     private ISeaWeather sea = null!;
     private EntityBehaviorVesselIntegrity? hull;
+    private IBuoyant? buoyant;
     private EntityBehaviorBilge? bilge;
     private EntityBehaviorMooring? mooring;
     private double windageSquareMetres;
@@ -40,17 +41,19 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public double MastMetres { get; private set; }
 
+    public IBuoyant? Buoyant => buoyant;
+
     /// <summary>How she takes the sea now, with the water in her bilge.</summary>
     public Seaworthiness Seaworthiness
     {
         get
         {
             var laden = dry.Laden(bilge?.Fill ?? 0, storms.Config.Swamping);
-            return hull is { Floats: true } ? laden.Floating(hull.Afloat.FreeboardMetres) : laden;
+            return buoyant is { HasDraft: true } ? laden.Floating(buoyant.Afloat.FreeboardMetres) : laden;
         }
     }
 
-    public double SettlingMetres => hull is { Floats: true } ? hull.SettlingMetres : dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
+    public double SettlingMetres => buoyant is { HasDraft: true } ? buoyant.SettlingMetres : dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
 
     public override string PropertyName() => Code;
 
@@ -58,7 +61,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     {
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
         vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
-        sea =entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         BeamMetres = attributes["beamMetres"].AsDouble();
         MastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();
@@ -69,6 +72,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     public override void AfterInitialized(bool onFirstSpawn)
     {
         hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
+        buoyant = entity.SidedProperties.Behaviors.OfType<IBuoyant>().FirstOrDefault();
         bilge = entity.GetBehavior<EntityBehaviorBilge>();
         mooring = entity.GetBehavior<EntityBehaviorMooring>();
         seatable = entity.GetBehavior<EntityBehaviorSeatable>();
@@ -95,7 +99,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     public override void OnGameTick(float deltaTime)
     {
         if (!entity.Alive) return;
-        if (bilge != null || hull != null) Lade();
+        if (bilge != null || buoyant != null) Lade();
         if (entity.World.Side != EnumAppSide.Server) return;
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
@@ -173,12 +177,12 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
                 Hold(seat, swamped ? new SeatPose(Alongside(i), HoldAnimation) : dry);
             }
         }
-        if (hull?.Afloat.Sunk == true && entity.World.Side == EnumAppSide.Server) Founder();
+        if (buoyant?.Afloat.Sunk == true && entity.World.Side == EnumAppSide.Server) Founder();
     }
 
     private double SpeedFactor()
     {
-        if (hull != null) return storms.Config.Swamping.SpeedFactor(hull.ReferenceKg, hull.Aboard.Total);
+        if (buoyant != null) return storms.Config.Swamping.SpeedFactor(buoyant.ReferenceKg, buoyant.Aboard.Total);
 
         var mass = vessels.Mass;
         return storms.Config.Swamping.SpeedFactor(entity.Properties.Weight + mass.CrewKg, mass.Of(entity, entity.Properties.Weight).Total);

@@ -128,7 +128,11 @@ public static class VesselMotion
     private static SeaPose Ride(EntityBoat boat, IDrawnSea sea)
     {
         var forces = boat.GetBehavior<EntityBehaviorSeaForces>();
-        if (forces == null || !boat.Swimming) return default;
+        if (forces == null || !boat.Swimming)
+        {
+            responses.Remove(boat.EntityId);
+            return default;
+        }
 
         var pos = boat.Pos;
         var box = boat.CollisionBox;
@@ -146,11 +150,11 @@ public static class VesselMotion
             answered = (new HullResponse(0, 0, storms!.Config.Response), surface!.Seconds);
         }
         var response = answered.Response;
-        if (boat.GetBehavior<EntityBehaviorVesselIntegrity>() is { Floats: true } hull)
+        if (forces.Buoyant is { HasDraft: true } buoyant)
         {
-            double draft = hull.Afloat.DraftMetres;
+            double draft = buoyant.Afloat.DraftMetres;
             response.HeavePeriodSeconds = HullResponse.HeavePeriod(draft, storms!.Config.Response);
-            response.RollPeriodSeconds = HullResponse.RollPeriod(length, forces.BeamMetres, draft, hull.DepthMetres);
+            response.RollPeriodSeconds = HullResponse.RollPeriod(length, forces.BeamMetres, draft, buoyant.DepthMetres);
         }
         responses[boat.EntityId] = (response, surface!.Seconds);
         return response.Follow(pose, surface.Seconds - answered.Seconds);

@@ -74,7 +74,7 @@ public class SwampingConfig
     public double FreeSurfaceCapsize;
     public bool Capsizes;
 
-    /// <summary>The share of the speed she makes at this reference mass a vessel keeps at this mass, both in kilograms.</summary>
+    /// <summary>The factor on the speed she makes at this reference mass that she makes at this mass, both in kilograms.</summary>
     public double SpeedFactor(double referenceKg, double kg) => Math.Pow(referenceKg / kg, SpeedExponent);
 }
 

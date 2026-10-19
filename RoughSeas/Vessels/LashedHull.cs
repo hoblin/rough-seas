@@ -29,7 +29,7 @@ public sealed class LashedHull(Func<ITreeAttribute> tree, Action changed) : Hull
     public override void Describe(StringBuilder info) =>
         info.AppendLine(Lang.Get("roughseas:vessel-lashing", (int)Math.Round(Condition * 100)));
 
-    public override void Adopt(float legacyIntegrity) => SetLashing(legacyIntegrity);
+    public override void Adopt(float integrity) => SetLashing(integrity);
 
     private void SetLashing(double lashing)
     {

@@ -55,7 +55,7 @@ Squall lines move at 30 to 80 km/h; the Amazon's coastal lines run at 50 to 60 k
 ## Leaks
 
 - **Torricelli's law.** Water runs in through a hole at √(2 g h), h the depth of the hole under the waterline. Through a sharp-edged hole the jet narrows, and the flow is 0.61 of the hole's area times that speed: a contraction of 0.62 by a velocity coefficient of 0.98 (US Bureau of Reclamation, *Water Measurement Manual*, chapter 2).
-- **Against a real table.** A hull stove in at one place leaks like a 5.6 cm hole: three litres a second a hand's breadth down. A hard knock's crack, a quarter of that, lets in about what [Landfall Navigation](https://landfallnavigation.com/)'s flooding table gives for a 2.5 cm hole a foot down: 45 litres a minute.
+- **Against a real table.** A hull stove in at one place leaks like a 5.6 cm hole: three litres a second 20 cm down. A hard knock's crack, a quarter of that, lets in 56 litres a minute a foot down, a little over what [Landfall Navigation](https://landfallnavigation.com/)'s flooding table gives a 2.5 cm hole there: 45 litres a minute. A crack under the water already inside her leaks by the difference between the sea outside and the water in her, so a bottom crack lets in as much while she fills as when she was dry.
 - **Where a side cracks.** Rocks and quays meet a side at the turn of the bilge, a quarter of the way up from the keel: above the water in a light boat, below it once she is laden.
 - **Reed.** A bundle of reed soaks: on Lake Titicaca the totora *balsas* are dried ashore between trips and last months, and Heyerdahl's papyrus *Ra II*, with nowhere to dry, settled about 10 cm a day crossing the Atlantic.
 

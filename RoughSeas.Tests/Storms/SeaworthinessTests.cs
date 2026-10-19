@@ -105,8 +105,9 @@ public class SeaworthinessTests
     [Fact]
     public void WaterAboardLowersHerSideUntilAFullBilgeBringsItToTheWater()
     {
+        var dugout = Fixtures.Hull("dugout");
         Assert.True(Fixtures.Afloat("dugout", litres: 225).FreeboardMetres < Of("dugout").FreeboardMetres);
-        Assert.InRange(Fixtures.Afloat("dugout", litres: 449).FreeboardMetres, 0, 0.01);
+        Assert.InRange(dugout.Float(dugout.Crewed(litres: 449), litres: 449).FreeboardMetres, -0.01, 0.01);
     }
 
     private static Seaworthiness Of(string vessel) => Fixtures.Afloat(vessel);

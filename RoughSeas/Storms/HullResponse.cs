@@ -8,7 +8,7 @@ namespace RoughSeas.Storms;
 /// </summary>
 /// <example><code>
 /// var response = HullResponse.Of(length, beam, draft, depth, storms.Config.Response);
-/// var pose = response.Follow(storms.DrawnSea.PoseOf(x, z, yaw, length, beam), frameSeconds);
+/// var pose = response.Follow(storms.DrawnSea!.PoseOf(x, z, yaw, length, beam), frameSeconds);
 /// </code></example>
 public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSeconds, ResponseConfig config)
 {
@@ -44,19 +44,22 @@ public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSec
 
     /// <summary>
     /// The pose the hull takes this frame, <paramref name="seconds"/> after the last, chasing the water's pose as a
-    /// damped oscillator of its own periods. Where no swell is drawn it comes to rest at once.
+    /// damped oscillator of its own periods. Where no swell is drawn it comes to rest at once; a gap of more than
+    /// about its shortest period is caught up as that period only.
     /// </summary>
     public SeaPose Follow(SeaPose pose, double seconds)
     {
-        if (pose.Hold <= 0 || seconds <= 0)
+        if (pose.Hold <= 0 || !(seconds > 0))
         {
             if (pose.Hold <= 0) (lift, roll, pitch) = (default, default, default);
             return pose with { Lift = lift.At, Roll = roll.At, Pitch = pitch.At };
         }
 
-        double shortest = Math.Min(HeavePeriodSeconds, RollPeriodSeconds);
+        double shortest = HeavePeriodSeconds > 0 && RollPeriodSeconds > 0
+            ? Math.Min(HeavePeriodSeconds, RollPeriodSeconds)
+            : Math.Max(HeavePeriodSeconds, RollPeriodSeconds);
         int steps = shortest > 0 ? Math.Clamp((int)Math.Ceiling(seconds / (shortest * MaxStepShare)), 1, MaxSteps) : 1;
-        double step = seconds / steps;
+        double step = shortest > 0 ? Math.Min(seconds / steps, shortest * MaxStepShare) : seconds;
         for (int i = 0; i < steps; i++)
         {
             lift = lift.Toward(pose.Lift, HeavePeriodSeconds, config.HeaveDamping, step);

@@ -59,7 +59,10 @@ public sealed class HullDamage
             shape = shape.Clone();
             shapeIsCloned = true;
         }
-        Retexture(shape.Elements, Mat4f.Create(), hull, snapshot.Stages);
+        foreach (var (element, place) in Places(shape.Elements, hull, config.Textures))
+        {
+            if (snapshot.Stages.ContainsKey(place)) Mark(element, place);
+        }
         foreach (var code in config.Textures)
         {
             if (!shape.TextureSizes.TryGetValue(code, out var size)) continue;
@@ -69,21 +72,21 @@ public sealed class HullDamage
 
     public ITexPositionSource Over(ITexPositionSource defaultSource) => new DamagedSource(shown.Positions, defaultSource);
 
-    private void Retexture(ShapeElement[]? elements, float[] parent, HullShape hull, IReadOnlyDictionary<HullPlace, int> stages)
-    {
-        if (elements == null) return;
+    public static IEnumerable<(ShapeElement Element, HullPlace Place)> Places(ShapeElement[]? elements, HullShape hull, string[] textures) =>
+        Places(elements, Mat4f.Create(), hull, textures);
 
-        foreach (var element in elements)
+    private static IEnumerable<(ShapeElement Element, HullPlace Place)> Places(ShapeElement[]? elements, float[] parent, HullShape hull, string[] textures)
+    {
+        foreach (var element in elements ?? [])
         {
             var transform = Mat4f.Mul(Mat4f.Create(), parent, element.GetLocalTransformMatrix(0));
-            if (element.FacesResolved?.Any(face => face != null && config.Textures.Contains(face.Texture)) == true)
+            if (element.FacesResolved?.Any(face => face != null && textures.Contains(face.Texture)) == true)
             {
-                var size = element.To!.Zip(element.From!, (to, from) => (float)(to - from) / 32).ToArray();
+                var size = element.To!.Zip(element.From!, (to, from) => (float)((to - from) / HullShape.VoxelsPerBlock / 2)).ToArray();
                 var centre = Mat4f.MulWithVec4(transform, size[0], size[1], size[2], 1);
-                var place = hull.At(centre[0] - 0.5, centre[1], centre[2] - 0.5);
-                if (stages.ContainsKey(place)) Mark(element, place);
+                yield return (element, hull.At(centre[0] - 0.5, centre[1], centre[2] - 0.5));
             }
-            Retexture(element.Children, transform, hull, stages);
+            foreach (var child in Places(element.Children, transform, hull, textures)) yield return child;
         }
     }
 

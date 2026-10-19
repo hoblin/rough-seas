@@ -186,7 +186,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge drop CODE X Y Z    an item or block CODE lying on the ground there, at rest (~ relative)
   /bridge set ID KEY VALUE   set a watched attribute: int, float, bool or string by its form, while a
                              double or float stays what it is; e.g. the sailboat's sailPosition 0, 1, 2;
-                             TREE/KEY reaches into a tree: roughseas:vessel/cracks/portside 0.6 for a crack (once the hull has one), roughseas:vessel/lashing 0.6 for a raft,
+                             TREE/KEY reaches into a tree: roughseas:vessel/cracks/portside 0.6 for a
+                             crack (once the hull has one), roughseas:vessel/lashing 0.6 for a raft,
                              roughseas:bilge/litres 200 for the water aboard
   /bridge fly X Y Z          hover there in creative free flight, out of any seat: no sinking.
                              X Y Z as /tp takes them (~ relative). Then `aim ID` or `look`
@@ -199,8 +200,9 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge strike ID JOULES [PLACE]
                              strike a vessel's hull at PLACE (portbow, starboardbow, portside (default),
                              starboardside, portquarter, starboardquarter, bottom) as an impact of that
-                             energy would; replies with its hull: each place's crack (watched
-                             "roughseas:vessel/cracks"), the mass aboard, draft, freeboard, sunk.
+                             energy would; replies with its hull: a cracking hull's crack at each
+                             place (watched "roughseas:vessel/cracks"), the mass aboard, draft,
+                             freeboard, sunk.
                              0 J changes nothing: a way to read the hull
   /bridge lag MS [TICKS]     stall the server's main thread MS ms on each of its next TICKS ticks
                              (default 1), world time running on, as a lag spike or a heavy mod does;

@@ -16,7 +16,7 @@ public class HullModelTests
     [Fact]
     public void AKnockCracksOnlyThePlaceItLands()
     {
-        var hull = Planked("dugout");
+        var hull = Cracking("dugout");
 
         hull.Take(HullPlace.PortSide, 0.3);
 
@@ -28,7 +28,7 @@ public class HullModelTests
     [Fact]
     public void ACrackLeaksAndACrackedPlaceIsShownApartFromTheRest()
     {
-        var hull = Planked("dugout");
+        var hull = Cracking("dugout");
         hull.Take(HullPlace.Bottom, 0.3);
 
         Assert.True(hull.LitresPerSecond(Draft(0.2), 0.41) > 0);
@@ -37,9 +37,49 @@ public class HullModelTests
     }
 
     [Fact]
+    public void ABottomCrackLeaksAsHardWhileSheFillsForTheWaterInsideRisesWithHer()
+    {
+        var dugout = Fixtures.Hull("dugout");
+        var hull = Cracking("dugout");
+        hull.Take(HullPlace.Bottom, 0.5);
+
+        double dry = hull.LitresPerSecond(dugout.Float(dugout.Crewed()), 0.41);
+        double filling = hull.LitresPerSecond(dugout.Float(dugout.Crewed(litres: 300), litres: 300), 0.41);
+
+        Assert.Equal(dry, filling, 0.01);
+    }
+
+    [Fact]
+    public void ACrackTooSmallToNameStillShowsWhileItLeaks()
+    {
+        var hull = Cracking("dugout");
+        hull.Take(HullPlace.Bottom, 0.05);
+
+        Assert.Equal(1, hull.Stage(HullPlace.Bottom));
+    }
+
+    [Theory]
+    [InlineData("cracking", typeof(CrackingHull))]
+    [InlineData("lashed", typeof(LashedHull))]
+    [InlineData("reed", typeof(ReedHull))]
+    public void PicksTheHullModelByItsKey(string key, Type model)
+    {
+        Assert.IsType(model, HullModel.For(key, () => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig("reedboat")), Fixtures.HullConfig));
+    }
+
+    [Fact]
+    public void ReedCanNeitherBeKnockedNorMended()
+    {
+        var reed = Reed();
+
+        Assert.False(reed is IKnockable);
+        Assert.False(reed is IMendable);
+    }
+
+    [Fact]
     public void ACrackHighOnTheSideLeaksOnlyOnceSheSitsLowEnough()
     {
-        var hull = Planked("dugout");
+        var hull = Cracking("dugout");
         hull.Take(HullPlace.StarboardSide, 0.3);
 
         Assert.Equal(0, hull.LitresPerSecond(Draft(0.05), 0.41));
@@ -49,7 +89,7 @@ public class HullModelTests
     [Fact]
     public void OneHardKnockLeaksLessThanABucketBailsButEnoughCracksOutpaceIt()
     {
-        var hull = Planked("dugout");
+        var hull = Cracking("dugout");
         hull.Take(HullPlace.Bottom, 0.3);
         Assert.True(hull.LitresPerSecond(Draft(0.21), 0.41) < BucketLitresPerSecond);
 
@@ -60,7 +100,7 @@ public class HullModelTests
     [Fact]
     public void OnlyAReallySevereBlowBreaksAHullUp()
     {
-        var hull = Planked("dugout");
+        var hull = Cracking("dugout");
 
         Assert.Equal(Knock.Harmed, hull.Take(HullPlace.PortBow, 0.9));
         Assert.Equal(Knock.Harmed, hull.Take(HullPlace.PortBow, 0.9));
@@ -70,7 +110,7 @@ public class HullModelTests
     [Fact]
     public void AMendPatchesThePlaceLookedAtOrElseTheWorstCrack()
     {
-        var hull = Planked("dugout");
+        var hull = Cracking("dugout");
         var patch = new HullRepair { Restores = 0.4f };
         hull.Take(HullPlace.PortSide, 0.5);
         hull.Take(HullPlace.PortBow, 0.8);
@@ -85,7 +125,7 @@ public class HullModelTests
     [Fact]
     public void AnUngreasedHideSeepsAndGreaseStopsIt()
     {
-        var hull = Planked("currach");
+        var hull = Cracking("currach");
         Assert.Equal(0, hull.Inflow(1, 1, Draft(0.05), 0.45));
 
         hull.Pass(3, afloat: true, sun: 0);
@@ -98,7 +138,7 @@ public class HullModelTests
     [Fact]
     public void AWoodenHullDoesNotWearAfloat()
     {
-        var hull = Planked("dugout");
+        var hull = Cracking("dugout");
 
         hull.Pass(30, afloat: true, sun: 0);
 
@@ -147,16 +187,24 @@ public class HullModelTests
     {
         var reed = Reed();
         var hull = Fixtures.Hull("reedboat");
-        for (int cycle = 0; cycle < 5; cycle++)
+        bool SinksDry() => hull.Float(hull.Crewed(bodies: 0, kit: 0, soaked: reed.SoakedKg)).Sunk;
+        void Cycle()
         {
             reed.Pass(3, afloat: true, sun: 0);
             reed.Pass(10, afloat: false, sun: 1);
         }
 
-        Assert.True(hull.Float(hull.Crewed(bodies: 0, kit: 0, soaked: reed.SoakedKg)).Sunk);
+        Cycle();
+        Cycle();
+        Assert.False(SinksDry());
+
+        Cycle();
+        Cycle();
+        Cycle();
+        Assert.True(SinksDry());
     }
 
-    private PlankedHull Planked(string vessel) =>
+    private CrackingHull Cracking(string vessel) =>
         new(() => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig(vessel)), Fixtures.HullConfig);
 
     private ReedHull Reed() => new(() => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig("reedboat")));

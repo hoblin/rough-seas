@@ -32,6 +32,27 @@ public class HullResponseTests
     }
 
     [Fact]
+    public void AHullBackOnTheWaterAfterALongGapStaysNearTheWater()
+    {
+        var canoe = HullResponse.Of(4.5, 0.75, 0.04, 0.29, config);
+        var swell = new SeaPose(1, 0.3, 0.1, 0.05);
+
+        var pose = canoe.Follow(swell, 60);
+        for (int frame = 0; frame < 180; frame++) pose = canoe.Follow(swell, FrameSeconds);
+
+        Assert.InRange(pose.Lift, 0, 0.6);
+        Assert.InRange(pose.Roll, 0, 0.2);
+    }
+
+    [Fact]
+    public void AnUnknownGapLeavesHerWhereSheWas()
+    {
+        var response = new HullResponse(2, 2, config);
+
+        Assert.Equal(0, response.Follow(new SeaPose(1, 1, 1, 1), double.NaN).Lift);
+    }
+
+    [Fact]
     public void AHullWithNoPeriodsFollowsTheWaterExactly()
     {
         var pose = new SeaPose(1, 0.3, 0.1, -0.05);

@@ -681,8 +681,8 @@ public class BridgeCommands : ModSystem
         if (hull == null) return $"{entity.Code} {entity.EntityId}: alive {entity.Alive}";
 
         var afloat = hull.Afloat;
-        var cracks = hull.Model is PlankedHull planked
-            ? ", cracks " + string.Join(" ", HullShape.Places.Select(place => $"{place.Code()} {planked.Crack(place):F2}"))
+        var cracks = hull.Model is CrackingHull cracking
+            ? ", cracks " + string.Join(" ", HullShape.Places.Select(place => $"{place.Code()} {cracking.Crack(place):F2}"))
             : "";
         return $"{entity.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity:F2}{cracks}, " +
             $"{hull.Aboard.Total:F0} kg aboard, draft {afloat.DraftMetres:F3} m, freeboard {afloat.FreeboardMetres:F3} m, sunk {afloat.Sunk}";

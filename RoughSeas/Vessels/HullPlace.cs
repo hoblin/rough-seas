@@ -23,11 +23,17 @@ public readonly record struct HullShape(double HalfLength, double HalfBeam, doub
 {
     public const double EndShare = 0.4;
     public const double BottomShare = 0.25;
+    public const double VoxelsPerBlock = 16;
+    private const double MarkReach = 0.8;
+    private const double SideReach = 0.9;
 
     public static readonly HullPlace[] Places = Enum.GetValues<HullPlace>();
 
     public static HullShape FromBox(double fromX, double fromY, double fromZ, double toX, double toY, double toZ) => new(
         (toX - fromX) / 2, (toZ - fromZ) / 2, toY - fromY, (fromX + toX) / 2 - 0.5, (fromZ + toZ) / 2 - 0.5, fromY);
+
+    public static HullShape FromVoxels(double[] from, double[] to) =>
+        FromBox(from[0] / VoxelsPerBlock, from[1] / VoxelsPerBlock, from[2] / VoxelsPerBlock, to[0] / VoxelsPerBlock, to[1] / VoxelsPerBlock, to[2] / VoxelsPerBlock);
 
     public HullPlace At(double along, double height, double across)
     {
@@ -58,11 +64,11 @@ public readonly record struct HullShape(double HalfLength, double HalfBeam, doub
 
         double along = place switch
         {
-            HullPlace.PortBow or HullPlace.StarboardBow => -0.8,
-            HullPlace.PortQuarter or HullPlace.StarboardQuarter => 0.8,
+            HullPlace.PortBow or HullPlace.StarboardBow => -MarkReach,
+            HullPlace.PortQuarter or HullPlace.StarboardQuarter => MarkReach,
             _ => 0
         };
-        double across = place is HullPlace.PortBow or HullPlace.PortSide or HullPlace.PortQuarter ? -0.9 : 0.9;
+        double across = place is HullPlace.PortBow or HullPlace.PortSide or HullPlace.PortQuarter ? -SideReach : SideReach;
         return (CentreAlong + along * HalfLength, Keel + Depth / 2, CentreAcross + across * HalfBeam);
     }
 

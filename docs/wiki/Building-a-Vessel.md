@@ -107,13 +107,14 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 
 | Key | What it is |
 | --- | --- |
-| `model` | how the hull is made: `planked` (the default), cracked place by place and leaking; `lashed`, one lashing that knocks work loose, which never floods, as our raft; `reed`, which knocks don't harm and which soaks, can't be mended, as our reed boat |
-| `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required for a `planked` or `lashed` hull |
+| `model` | how the hull is made: `cracking` (the default), cracked place by place and leaking, as our wooden, bark and hide hulls; `lashed`, one lashing that knocks work loose, which never floods, as our raft; `reed`, which knocks don't harm and which soaks, can't be mended, as our reed boat |
+| `impactCapacity` | the energy in joules one blow must reach to be likely to harm a hull of its reference material. Required for a `cracking` or `lashed` hull |
 | `minImpactSpeed` | the speed in m/s a hull takes in its stride when it runs into something: a knock below it is no knock, and only the energy above it counts. Default 1 |
 | `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1). Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
 | `depthMetres` | keel to gunwale amidships. With it the vessel floats by its mass; without it, at its `freeboardMetres` |
 | `waterplaneSquareMetres` | the area it cuts at the water, for a hull with a hold. Leave it out for a solid one, a raft or a bundle, which presses down through its own depth |
-| `seep` | `{ "litresPerHour", "greaseDays" }` on a planked hull: what its seams let in once ungreased, and how many days afloat a full greasing lasts |
+| `hullBox` | `[fromX, fromY, fromZ, toX, toY, toZ]` in the shape's voxels: the hull its places are measured on, when its `Hull` element reaches over more than the hull (our outrigger's covers its float). By default, the `Hull` element |
+| `seep` | `{ "litresPerHour", "greaseDays" }` on a cracking hull: what its seams let in once ungreased, and how many days afloat a full greasing lasts |
 | `soak` | `{ "kgPerDay", "dryKgPerDay", "rotShare", "saturationKg" }` on a reed hull: the water it takes up a day afloat, what it dries a day in full sun, the share of what dries that stays as rot, and the most it holds |
 | `runsRapids` | true if rapids don't strike it |
 | `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives) |
@@ -135,7 +136,7 @@ A knock strikes with ½ · mass · (speed² − `minImpactSpeed`²), where the m
 
 Give `impactCapacity` by the knocks the hull should take: our coracle's 400 J and dugout's 30,000 bracket the roster, and [Hull condition](Hull-Condition#knocks-and-landings) turns a capacity into the chance a knock does harm. A blow whose harm alone would stove in its place breaks the hull up; cracks that add up to it only leak.
 
-**Leaks.** A planked hull's cracks leak by Torricelli's law: 0.61 of a crack's hole, up to 25 cm² when stove in, times √(2 g h), h its depth under the waterline. A bottom crack lies at the keel; any other a quarter of the way up the side. These three numbers are in `config/vessels/hull.json` (`dischargeCoefficient`, `crackSquareCentimetres`, `sideCrackShare`).
+**Leaks.** A cracking hull's cracks leak by Torricelli's law: 0.61 of a crack's hole, up to 25 cm² when stove in, times √(2 g h), h how far the sea outside stands above the crack or the water already inside, whichever is higher. A bottom crack lies at the keel; any other a quarter of the way up the side. These three numbers are in `config/vessels/hull.json` (`dischargeCoefficient`, `crackSquareCentimetres`, `sideCrackShare`).
 
 **Carried as an item.** A vessel picked up carries its whole hull on the item, in the stack attribute `roughseas:vessel`, every crack and soaking in place, and shows its condition as the item's durability. That takes our item class `roughseas:ItemVessel` with a `durability`, and the item's code the same as the entity's. Shift and right-click picks it up when the entity's attributes carry `rightClickPickup: true`; a sunk one can't be lifted. A selection box `HullAP` gives the hull a box of its own for mending, apart from the seats.
 

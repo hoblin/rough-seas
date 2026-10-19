@@ -58,7 +58,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     private float sinceUpdate = UpdateSeconds;
     private bool wasSunk;
     private bool wasAwash;
+    private bool inWater;
     private double leaked;
+    private double[]? hullBox;
 
     public EntityBehaviorVesselIntegrity(Entity entity) : base(entity) { }
 
@@ -66,20 +68,20 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
 
     public HullModel Model => model;
 
-    public bool Floats => flotation.DepthMetres > 0;
+    public bool HasDraft => flotation.DepthMetres > 0;
 
     public double DepthMetres => flotation.DepthMetres;
 
     public Afloat Afloat { get; private set; }
 
-    /// <summary>How much lower than the line vanilla draws her at she floats: that line is her reference build with one rider aboard.</summary>
+    /// <summary>How far below vanilla's drawn waterline she floats, that line being her reference build with one rider aboard.</summary>
     public double SettlingMetres { get; private set; }
 
     public Aboard Aboard { get; private set; }
 
     public double ReferenceKg { get; private set; }
 
-    public HullShape Shape => shape ??= ShapeOf(entity);
+    public HullShape Shape => shape ??= ShapeOf(entity, hullBox);
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
@@ -107,7 +109,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
         repairs = attributes["repairs"].AsObject<HullRepair[]>([])
             .Where(repair => OfWood(repair.Material, wood).Resolve(entity.World, "vessel repair"))
             .ToArray();
-        model = HullModel.For(attributes["model"].AsString("planked"), () => Tree, MarkDirty, attributes, vessels.HullConfig);
+        model = HullModel.For(attributes["model"].AsString("cracking"), () => Tree, MarkDirty, attributes, vessels.HullConfig);
+        hullBox = attributes["hullBox"].AsArray<double>(null);
         var parts = attributes["parts"].AsObject<VesselPart[]>([]);
         build = vessels.Materials.Build(parts, properties.Weight);
         flotation = new Flotation(attributes["depthMetres"].AsDouble(), attributes["waterplaneSquareMetres"].AsDouble(), build.Litres);
@@ -196,7 +199,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
 
         if ((sinceHazards += deltaTime) < HazardSeconds || !entity.Alive) return;
 
-        var fluid = entity.World.BlockAccessor.GetBlock(entity.Pos.XYZ.Add(0, -WaterlineProbeMetres, 0).AsBlockPos, BlockLayersAccess.Fluid);
+        var fluid = FluidBelow();
         PassTime(entity.Swimming || fluid.IsLiquid());
         if (!runsRapids && rapids.Holds(fluid))
         {
@@ -253,6 +256,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
         if (stack.Attributes.GetTreeAttribute(CarriedKey) is { } carried)
         {
             entity.WatchedAttributes.SetAttribute(TreeKey, carried.Clone());
+            if (Tree.GetInt(VersionKey) < DataVersion) Migrate(Tree);
             MarkDirty();
             return;
         }
@@ -341,11 +345,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     {
         if (Afloat.Sunk) infotext.AppendLine(Lang.Get("roughseas:vessel-sunk"));
         model.Describe(infotext);
-        if (model is PlankedHull planked && planked.LitresPerSecond(Afloat, flotation.DepthMetres) is var leaking and >= 0.01)
+        if (inWater && model.LitresPerSecond(Afloat, flotation.DepthMetres) is var leaking and >= 0.01)
         {
             infotext.AppendLine(Lang.Get("roughseas:vessel-leaking", Math.Round(leaking * 60)));
         }
-        if (!Afloat.Sunk && flotation.DepthMetres > 0)
+        if (!Afloat.Sunk && inWater && HasDraft)
         {
             infotext.AppendLine(Afloat.FreeboardMetres > 0.01
                 ? Lang.Get("roughseas:vessel-freeboard", Math.Round(Afloat.FreeboardMetres * 100))
@@ -407,10 +411,12 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     private void Float()
     {
         var hold = Hold;
+        inWater = entity.Swimming || FluidBelow().IsLiquid();
         Aboard = vessels.Mass.Of(entity, build.Kilograms + model.SoakedKg);
-        Afloat = flotation.Float(Aboard, hold != null && hold.Litres >= hold.CapacityLitres);
+        var afloat = flotation.Float(Aboard, hold != null && hold.Litres >= hold.CapacityLitres);
+        Afloat = inWater ? afloat : afloat with { Sunk = false };
         SettlingMetres = Afloat.Sunk ? FounderedMetres : Afloat.DraftMetres - referenceDraft;
-        if (entity.World.Side != EnumAppSide.Server) return;
+        if (entity.World.Side != EnumAppSide.Server || !HasDraft || !inWater) return;
 
         if (Afloat.Sunk != wasSunk)
         {
@@ -426,7 +432,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
 
     private void Flood(double seconds)
     {
-        if (Hold is not { } hold || hold.Litres >= hold.CapacityLitres) return;
+        if (!HasDraft || !inWater || Hold is not { } hold || hold.Litres >= hold.CapacityLitres) return;
 
         if (Afloat.Sunk || Afloat.FreeboardMetres <= 0)
         {
@@ -588,12 +594,17 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
 
     private void MarkDirty() => entity.WatchedAttributes.MarkPathDirty(TreeKey);
 
-    private static HullShape ShapeOf(Entity entity)
+    private Block FluidBelow() =>
+        entity.World.BlockAccessor.GetBlock(entity.Pos.XYZ.Add(0, -WaterlineProbeMetres, 0).AsBlockPos, BlockLayersAccess.Fluid);
+
+    private static HullShape ShapeOf(Entity entity, double[]? hullBox)
     {
+        if (hullBox is { Length: 6 } box) return HullShape.FromVoxels(box[..3], box[3..]);
+
         var boxes = entity.GetBehavior<EntityBehaviorSelectionBoxes>()?.selectionBoxes ?? [];
         if (boxes.FirstOrDefault(box => box.AttachPoint.Code == HullBox)?.AttachPoint.ParentElement is { From: { } from, To: { } to })
         {
-            return HullShape.FromBox(from[0] / 16, from[1] / 16, from[2] / 16, to[0] / 16, to[1] / 16, to[2] / 16);
+            return HullShape.FromVoxels(from, to);
         }
 
         var hitbox = entity.SelectionBox;

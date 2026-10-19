@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using RoughSeas.Vessels;
+using Vintagestory.API.Common;
 
 namespace RoughSeas.Tests.Vessels;
 
@@ -152,6 +153,24 @@ public class VesselShapeTests
     private static IEnumerable<JToken> PlayerPatches() =>
         Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "patches"), "player-*.json")
             .SelectMany(file => JArray.Parse(File.ReadAllText(file)));
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void MarksEveryPlaceOfItsHullOnTheModel(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        var elements = shape.ToObject<Shape>()!.Elements;
+        foreach (var element in elements) element.TrimTextureNamesAndResolveFaces();
+        var integrity = entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!;
+        var hull = Elements(shape["elements"]!).Single(element => element.Value<string>("name") == "Hull");
+        var box = integrity["hullBox"]?.ToObject<double[]>()
+            ?? hull["from"]!.ToObject<double[]>()!.Concat(hull["to"]!.ToObject<double[]>()!).ToArray();
+
+        var marked = HullDamage.Places(elements, HullShape.FromVoxels(box[..3], box[3..]), Damage(entity).Textures)
+            .Select(placed => placed.Place).Distinct();
+
+        Assert.Equal(HullShape.Places.Order(), marked.Order());
+    }
 
     private static (JToken Entity, JToken Item, JToken Shape) Load(string vessel)
     {

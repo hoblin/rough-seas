@@ -44,9 +44,9 @@ public sealed class ReedHull : HullModel, IAfloat
     public override void Describe(StringBuilder info) =>
         info.AppendLine(Lang.Get("roughseas:vessel-soaked", (int)Math.Round((1 - Condition) * 100)));
 
-    public override void Adopt(float legacyIntegrity)
+    public override void Adopt(float integrity)
     {
-        Tree.SetDouble(WaterKey, (1 - legacyIntegrity) * soak.SaturationKg);
+        Tree.SetDouble(WaterKey, (1 - integrity) * soak.SaturationKg);
         Changed();
     }
 }

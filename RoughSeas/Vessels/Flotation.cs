@@ -25,8 +25,10 @@ public sealed class Flotation(double depthMetres, double waterplaneSquareMetres,
         double draft = HasHold
             ? flooded ? depthMetres : aboard.Total / (VesselMass.SeawaterKgPerLitre * LitresPerCubicMetre * waterplaneSquareMetres)
             : Math.Min(depthMetres, depthMetres * aboard.Total / BuoyantKg);
-        return new Afloat(draft, depthMetres - draft, false);
+        double inside = HasHold ? aboard.Water / (VesselMass.SeawaterKgPerLitre * LitresPerCubicMetre * waterplaneSquareMetres) : 0;
+        return new Afloat(draft, depthMetres - draft, false, Math.Min(inside, depthMetres));
     }
 }
 
-public readonly record struct Afloat(double DraftMetres, double FreeboardMetres, bool Sunk);
+/// <param name="InsideMetres">How high the water in her hold stands above her keel.</param>
+public readonly record struct Afloat(double DraftMetres, double FreeboardMetres, bool Sunk, double InsideMetres = 0);
