@@ -418,7 +418,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         var knocked = new Knocked(report.SpeedLost, report.TowardX, report.TowardZ, report.Against, report.TheirKg);
         var other = knocked.Against != 0 ? entity.World.GetEntityById(knocked.Against) : null;
         var hull = other == null ? null : IHull.Of(other);
-        if (knocked.Against != 0 && (hull == null || other!.Pos.Dimension != entity.Pos.Dimension ||
+        if (hull != null && (other!.Pos.Dimension != entity.Pos.Dimension ||
             !HullContacts.Within(entity.Pos.X, entity.Pos.Z, Shape, other.Pos.X, other.Pos.Z, hull.Shape, ReportSlackMetres)))
         {
             vessels.Log(entity, "ignored a ram {0} reported against vessel {1}, which is not beside her", player.PlayerName, knocked.Against);
