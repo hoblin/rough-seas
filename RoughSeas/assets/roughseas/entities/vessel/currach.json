@@ -21,7 +21,7 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
             "parts": [{"material": "hide", "share": 0.4}, {"material": "wood-ash", "share": 0.6}],
-            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.025}, "backedShare": 0.27, "bottomBackedShare": 0.7},
+            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.025}, "backedShare": 0.27, "bottomBackedShare": 0.7, "spanMetres": 0.64},
             "depthMetres": 0.45,
             "waterplaneSquareMetres": 3.75,
             "seep": {"litresPerHour": 30, "greaseDays": 2.5},
@@ -45,7 +45,7 @@
             "damage": {"textures": ["hide"], "material": "hide"},
             "sources": {
                 "parts": "Hides stretched over a frame of ash laths and gunwales, about two fifths hide by weight",
-                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, laths 2.5 cm deep and 0.8 voxel wide every 3 voxels back 27% of the sides, and floor battens 1.4 every 2 back 70% of the bottom",
+                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, laths 2.5 cm deep and 0.8 voxel wide every 3 voxels back 27% of the sides, and floor battens 1.4 every 2 back 70% of the bottom. A breaker presses the hide onto the laths, each bending under its share of the side over the 10.3 voxels from the floor to the inwale",
                 "depthMetres": "Keel to gunwale amidships: a 5 cm draft with its rower in a 100 kg hull and about 0.4 m of side above it",
                 "waterplaneSquareMetres": "A 4 m hull 1.1 m wide, full amidships, so that 1500 L aboard settles her by her 0.4 m of side",
                 "seep": "Hide seams and stitch holes weep once the tallow has washed out of them, a little at every seam; Aran crews dressed their currachs every few days"

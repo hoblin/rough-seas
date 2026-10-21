@@ -1,4 +1,5 @@
 using RoughSeas.Storms;
+using RoughSeas.Vessels;
 
 namespace RoughSeas.Tests.Storms;
 
@@ -33,19 +34,56 @@ public class WavesTests
         Assert.True(waves.Crest(2, breaking: true) > waves.Crest(2, breaking: false));
 
     [Fact]
-    public void ABreakerHitsHarderAsTheWavesGrowAndOnAWiderHull()
+    public void AWaveRunsAtItsDeepWaterSpeedInDeepWater() =>
+        Assert.Equal(9.81 * 8 / (2 * Math.PI), Waves.Celerity(8, double.PositiveInfinity), 6);
+
+    [Fact]
+    public void AWaveSlowsToTheShallowWaterSpeedOverAShallowBed() =>
+        Assert.Equal(Math.Sqrt(9.81 * 1), Waves.Celerity(12, 1), 1);
+
+    [Fact]
+    public void AWavePlungesOnASteepBedAndSpillsOnAGentleOne()
     {
-        Assert.True(waves.BreakerEnergy(4, 2) > 4 * waves.BreakerEnergy(2, 2));
-        Assert.Equal(2 * waves.BreakerEnergy(2, 1), waves.BreakerEnergy(2, 2), 6);
+        Assert.True(waves.Plunges(height: 1, period: 6, bedSlope: 0.1, depth: 1.2));
+        Assert.False(waves.Plunges(height: 1, period: 6, bedSlope: 0.02, depth: 1.2));
+        Assert.False(waves.Plunges(height: 1, period: 6, bedSlope: 1, depth: 1.2));
     }
 
     [Fact]
-    public void ABreakerInAGaleCanSmashTheRaftButNotTheSailboat()
+    public void AHullFarInsideWhereAWavePlungedMeetsOnlyItsBore()
     {
-        var (raft, sailboat) = (Fixtures.Raft, Fixtures.Sailboat);
+        Assert.True(waves.Plunges(height: 2, period: 8, bedSlope: 0.1, depth: 2.3));
+        Assert.False(waves.Plunges(height: 2, period: 8, bedSlope: 0.1, depth: 1));
+    }
 
-        Assert.True(waves.BreakerEnergy(5.5, raft.BeamMetres) > raft.ImpactCapacity);
-        Assert.True(waves.BreakerEnergy(5.5, sailboat.BeamMetres) < sailboat.ImpactCapacity);
+    [Fact]
+    public void FewBreakersPlungeAtSea()
+    {
+        Assert.True(waves.PlungesAtSea(0.01));
+        Assert.False(waves.PlungesAtSea(0.5));
+    }
+
+    [Fact]
+    public void APlungingCrestSlamsAtItsImpactSpeedWhereASpillingOnePressesItsStagnationPressure()
+    {
+        Assert.Equal(0.5 * 1025 * 6.283 * 12 * 12, waves.SlamPressure(10, plunging: true), 6);
+        Assert.Equal(0.5 * 1025 * 10 * 10, waves.SlamPressure(10, plunging: false), 6);
+    }
+
+    [Fact]
+    public void ABreakerIsAsLongAsItsHeightMakesItAndNoFasterThanTheSea()
+    {
+        Assert.Equal(Math.Sqrt(9.81 / 0.142 / (2 * Math.PI)), waves.BreakerCelerity(1, 9, double.PositiveInfinity), 6);
+        Assert.Equal(Waves.Celerity(4, double.PositiveInfinity), waves.BreakerCelerity(8, 4, double.PositiveInfinity), 6);
+    }
+
+    [Fact]
+    public void AGaleBreakerBreaksACoraclesRibsWhileTheSailboatsPlanksHoldEvenAPlunger()
+    {
+        var celerity = waves.BreakerCelerity(5.5, 9, double.PositiveInfinity);
+
+        Assert.True(waves.SlamPressure(celerity, plunging: false) > Fixtures.Resistance("coracle").Against(Blow.Slam, backed: false));
+        Assert.True(waves.SlamPressure(celerity, plunging: true) < Fixtures.Resistance("boat-sailed").Against(Blow.Slam, backed: false));
     }
 
     [Fact]

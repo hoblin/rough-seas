@@ -19,7 +19,7 @@
             "impactCapacity": 15000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "hullBox": [-32, 0, 3, 48, 9, 13],
-            "shell": {"material": "wood-{wood}", "metres": 0.05},
+            "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.47},
             "depthMetres": 0.61,
             "waterplaneSquareMetres": 1.5,
             "repairs": [{
@@ -34,7 +34,7 @@
             ],
             "damage": {"textures": ["bark", "inside"], "material": "wood"},
             "sources": {
-                "shell": "A main hull hollowed from one log, its walls about 5 cm thick as a dugout's (en.wikipedia.org/wiki/Dufuna_canoe)",
+                "shell": "A main hull hollowed from one log, its walls about 5 cm thick as a dugout's (en.wikipedia.org/wiki/Dufuna_canoe). A side stands from the bottom with its gunwale free, and a breaker bends it as a cantilever: by the model, 7.6 voxels from the bottom's edge to the gunwale",
                 "hullBox": "The main hull alone, in the shape's voxels: its Hull box reaches over the outrigger float, which is not where a knock cracks her",
                 "depthMetres": "Keel to the top of the washstrakes: a 0.21 m draft with one paddler and the 0.4 m of side Pacific outrigger hulls carry above it",
                 "waterplaneSquareMetres": "A slender 5 m hull about 0.5 m wide at the water, fine at both ends, so that 600 L aboard settles her by her 0.4 m of side"

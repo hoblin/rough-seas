@@ -8,19 +8,23 @@ public class ShellTests
 {
     private const double Hole = 0.0025;
     private const double CutShare = 0.25;
+    private const double Soaked = 0.5;
+
+    private static readonly HullConfig Hull = new() { CrackSquareCentimetres = 25, SoakedStrengthShare = Soaked };
 
     private static readonly SkinShell Skin = new()
     {
-        Material = "hide", Metres = 0.005, Backing = new RigidShell { Material = "wood-ash", Metres = 0.02 }, BackedShare = 0.3, BottomBackedShare = 0.7
+        Material = "hide", Metres = 0.005, SpanMetres = 0.6, Backing = new RigidShell { Material = "wood-ash", Metres = 0.02 }, BackedShare = 0.3,
+        BottomBackedShare = 0.7
     };
 
     private readonly MaterialTable materials = new(new Dictionary<string, Material>
     {
-        ["wood"] = new() { Toughness = 60000 },
-        ["wood-oak"] = new() { Toughness = 75000 },
-        ["wood-ash"] = new() { Toughness = 68000 },
+        ["wood"] = new() { Strength = 90, Toughness = 60000 },
+        ["wood-oak"] = new() { Strength = 100, Toughness = 75000 },
+        ["wood-ash"] = new() { Strength = 104, Toughness = 68000 },
         ["hide"] = new() { CutToughness = 17000 },
-        ["bark"] = new() { Toughness = 700, CutToughness = 700 },
+        ["bark"] = new() { Strength = 114, Toughness = 700, CutToughness = 700 },
         ["rope-flax"] = new() { CutToughness = 5700 }
     }, new CountingLogger());
 
@@ -45,7 +49,7 @@ public class ShellTests
     [Fact]
     public void APlankIsHoledByItsImpactToughnessAndCutByAShareOfIt()
     {
-        var resists = new RigidShell { Material = "wood-oak", Metres = 0.02 }.Resists(30000, materials, Hole, CutShare);
+        var resists = new RigidShell { Material = "wood-oak", Metres = 0.02 }.Resists(30000, materials, Hull, CutShare);
 
         Assert.Equal(Resistance.Holing(75000, 0.02, Hole), resists.Against(Blow.Point, backed: false), 6);
         Assert.Equal(Resistance.Holing(75000, 0.02, Hole) * CutShare, resists.Against(Blow.Cut, backed: false), 6);
@@ -54,19 +58,19 @@ public class ShellTests
     [Fact]
     public void ASkinSpringsBackFromABlowWhereNoLathBacksIt()
     {
-        Assert.Equal(double.PositiveInfinity, Skin.Resists(3000, materials, Hole, CutShare).Against(Blow.Point, backed: false));
+        Assert.Equal(double.PositiveInfinity, Skin.Resists(3000, materials, Hull, CutShare).Against(Blow.Point, backed: false));
     }
 
     [Fact]
     public void ABlowOnASkinOverALathBreaksTheLath()
     {
-        Assert.Equal(Resistance.Holing(68000, 0.02, Hole), Skin.Resists(3000, materials, Hole, CutShare).Against(Blow.Point, backed: true), 6);
+        Assert.Equal(Resistance.Holing(68000, 0.02, Hole), Skin.Resists(3000, materials, Hull, CutShare).Against(Blow.Point, backed: true), 6);
     }
 
     [Fact]
     public void AnEdgeCutsASkinByItsTearingAndTheLathUnderItToo()
     {
-        var resists = Skin.Resists(3000, materials, Hole, CutShare);
+        var resists = Skin.Resists(3000, materials, Hull, CutShare);
 
         Assert.Equal(Resistance.Holing(17000, 0.005, Hole), resists.Against(Blow.Cut, backed: false), 6);
         Assert.Equal(Resistance.Holing(17000, 0.005, Hole) + Resistance.Holing(68000, 0.02, Hole) * CutShare, resists.Against(Blow.Cut, backed: true), 6);
@@ -75,7 +79,7 @@ public class ShellTests
     [Fact]
     public void LathsBackTheSidesAndTheBottomEachByTheirOwnShare()
     {
-        var resists = Skin.Resists(3000, materials, Hole, CutShare);
+        var resists = Skin.Resists(3000, materials, Hull, CutShare);
 
         Assert.True(resists.Backed(HullPlace.PortSide, 0.29));
         Assert.False(resists.Backed(HullPlace.PortSide, 0.31));
@@ -88,13 +92,13 @@ public class ShellTests
         var canoe = new RigidShell { Material = "bark", Metres = 0.005, Backing = new RigidShell { Material = "wood-oak", Metres = 0.003 }, BackedShare = 1 };
 
         Assert.Equal(Resistance.Holing(700, 0.005, Hole) + Resistance.Holing(75000, 0.003, Hole),
-            canoe.Resists(2400, materials, Hole, CutShare).Against(Blow.Point, backed: true), 6);
+            canoe.Resists(2400, materials, Hull, CutShare).Against(Blow.Point, backed: true), 6);
     }
 
     [Fact]
     public void ABundleOfStemsSpringsOffEveryBlowLashingsAndAll()
     {
-        var resists = Reeds.Resists(3000, materials, Hole, CutShare);
+        var resists = Reeds.Resists(3000, materials, Hull, CutShare);
 
         Assert.Equal(double.PositiveInfinity, resists.Against(Blow.Point, backed: false));
         Assert.Equal(double.PositiveInfinity, resists.Against(Blow.Point, backed: true));
@@ -103,13 +107,13 @@ public class ShellTests
     [Fact]
     public void AnEdgePartsTheStemsItMeetsWithoutHarm()
     {
-        Assert.Equal(double.PositiveInfinity, Reeds.Resists(3000, materials, Hole, CutShare).Against(Blow.Cut, backed: false));
+        Assert.Equal(double.PositiveInfinity, Reeds.Resists(3000, materials, Hull, CutShare).Against(Blow.Cut, backed: false));
     }
 
     [Fact]
     public void ABundleComesApartWhereAnEdgeCutsItsLashing()
     {
-        Assert.Equal(Resistance.Holing(5700, 0.022, Hole), Reeds.Resists(3000, materials, Hole, CutShare).Against(Blow.Cut, backed: true), 6);
+        Assert.Equal(Resistance.Holing(5700, 0.022, Hole), Reeds.Resists(3000, materials, Hull, CutShare).Against(Blow.Cut, backed: true), 6);
     }
 
     [Fact]
@@ -117,6 +121,47 @@ public class ShellTests
     {
         var whole = Resistance.Whole(3000);
 
-        Assert.All(Enum.GetValues<Blow>(), blow => Assert.Equal(3000, whole.Against(blow, backed: false)));
+        Assert.All([Blow.Broad, Blow.Point, Blow.Cut], blow => Assert.Equal(3000, whole.Against(blow, backed: false)));
     }
+
+    [Fact]
+    public void AHullWithNoShellHasNoPlankingForABreakerToBend() =>
+        Assert.Equal(double.PositiveInfinity, Resistance.Whole(3000).Against(Blow.Slam, backed: false));
+
+    [Fact]
+    public void ABreakerBendsAPlankBetweenTheFramesItIsFastenedTo()
+    {
+        var plank = new RigidShell { Material = "wood-oak", Metres = 0.02, SpanMetres = 0.25 };
+
+        Assert.Equal(2 * 100e6 * 0.02 * 0.02 / (0.25 * 0.25) * Soaked, plank.Resists(30000, materials, Hull, CutShare).Against(Blow.Slam, backed: false), 3);
+    }
+
+    [Fact]
+    public void ABreakerBendsACarvedSideFromTheBottomItStandsOn()
+    {
+        var side = new CarvedShell { Material = "wood-oak", Metres = 0.05, SpanMetres = 0.5 };
+
+        Assert.Equal(100e6 * 0.05 * 0.05 / (3 * 0.5 * 0.5) * Soaked, side.Resists(30000, materials, Hull, CutShare).Against(Blow.Slam, backed: false), 3);
+    }
+
+    [Fact]
+    public void BarkAndTheSheathingThatLinesItBendTogetherBetweenTheRibs()
+    {
+        var canoe = new RigidShell
+        {
+            Material = "bark", Metres = 0.005, SpanMetres = 0.25, Backing = new RigidShell { Material = "wood-oak", Metres = 0.003 }, BackedShare = 1
+        };
+
+        Assert.Equal(2 * (114e6 * 0.005 * 0.005 + 100e6 * 0.003 * 0.003) / (0.25 * 0.25) * Soaked,
+            canoe.Resists(2400, materials, Hull, CutShare).Against(Blow.Slam, backed: false), 3);
+    }
+
+    [Fact]
+    public void ABreakerPressesASkinOntoItsLathsEachBendingUnderItsShareOfTheSide() =>
+        Assert.Equal(104e6 * 0.02 * 0.02 * 8 / (6 * 0.6 * 0.6) * 0.3 * Soaked,
+            Skin.Resists(3000, materials, Hull, CutShare).Against(Blow.Slam, backed: false), 3);
+
+    [Fact]
+    public void ABreakerBendsABundleOfStemsWhichSpringBack() =>
+        Assert.Equal(double.PositiveInfinity, Reeds.Resists(3000, materials, Hull, CutShare).Against(Blow.Slam, backed: false));
 }

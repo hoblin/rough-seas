@@ -39,6 +39,25 @@ public class ResistanceTests
     }
 
     [Fact]
+    public void ABreakerBelowThePlankingsStrengthLeavesItWhole() =>
+        Assert.Equal(0, Resistance.Loss(0.9, Blow.Slam, byPlace: true));
+
+    [Fact]
+    public void ABreakerBeyondThePlankingsStrengthStovesInThePlaceItSlams()
+    {
+        Assert.Equal(1, Resistance.Loss(1.3, Blow.Slam, byPlace: true));
+        Assert.Equal(1.0 / HullShape.Places.Length, Resistance.Loss(1.3, Blow.Slam, byPlace: false), 9);
+        Assert.False(Resistance.BreaksFrame(Blow.Slam, Resistance.Loss(5, Blow.Slam, byPlace: true)));
+    }
+
+    [Fact]
+    public void AStripBendsUntilItsMomentReachesWhatItsSectionHolds()
+    {
+        Assert.Equal(2 * 60e6 * 0.02 * 0.02 / (0.3 * 0.3), Resistance.Bending(60e6, 0.02, 0.3, 1.0 / 12), 3);
+        Assert.Equal(60e6 * 0.02 * 0.02 / (3 * 0.3 * 0.3), Resistance.Bending(60e6, 0.02, 0.3, 1.0 / 2), 3);
+    }
+
+    [Fact]
     public void HolingTakesTheWorkOfFractureAroundTheHoleThroughTheShell()
     {
         double radius = 0.03;

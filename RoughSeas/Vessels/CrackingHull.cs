@@ -129,4 +129,5 @@ public class HullConfig
 
     public double CrackSquareMetres => CrackSquareCentimetres / SquareCentimetresPerSquareMetre;
     public double SideCrackShare;
+    public double SoakedStrengthShare;
 }
