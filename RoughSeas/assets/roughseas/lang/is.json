@@ -20,6 +20,7 @@
     "vessel-sunk": "Sokkinn: liggur á botninum",
     "vessel-lashing": "Bönd: {0}%",
     "vessel-soaked": "Sef vatnssósa: {0}%",
+    "vessel-torn": "Sef rifið: {0}%",
     "vessel-mend": "Gera við skrokkinn",
     "vessel-grease-in": "Þarf að smyrja {p0:innan dags|eftir # dag|eftir # daga}",
     "vessel-grease-due": "Þarf að smyrja núna",

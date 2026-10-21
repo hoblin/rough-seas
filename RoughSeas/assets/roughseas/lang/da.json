@@ -19,6 +19,7 @@
     "vessel-sunk": "Sunket: hun ligger på bunden",
     "vessel-lashing": "Surringer: {0} %",
     "vessel-soaked": "Siv vandmættet: {0} %",
+    "vessel-torn": "Siv flænset: {0} %",
     "vessel-mend": "Reparér skroget",
     "vessel-grease-in": "Skal smøres om {p0:under en dag|én dag|# dage}",
     "vessel-grease-due": "Skal smøres nu",

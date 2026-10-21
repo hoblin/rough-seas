@@ -5,10 +5,11 @@ using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Vessels;
 
-public sealed class ReedHull : HullModel, IAfloat
+public sealed class ReedHull : HullModel, IAfloat, IKnockable
 {
     private const string WaterKey = "waterKg";
     private const string RotKey = "rotKg";
+    private const string TornKey = "torn";
 
     private readonly SoakConfig soak;
 
@@ -17,11 +18,24 @@ public sealed class ReedHull : HullModel, IAfloat
         soak = attributes["soak"].AsObject<SoakConfig>(new SoakConfig());
     }
 
-    public override float Condition => soak.SaturationKg > 0 ? (float)Math.Max(0, 1 - SoakedKg / soak.SaturationKg) : 1;
+    public override float Condition => (float)Math.Min(Dryness, 1 - Torn);
 
     public override double SoakedKg => Tree?.GetDouble(WaterKey) ?? 0;
 
     public double RotKg => Tree?.GetDouble(RotKey) ?? 0;
+
+    public double Torn => Tree?.GetDouble(TornKey) ?? 0;
+
+    public int Places => 1;
+
+    private double Dryness => soak.SaturationKg > 0 ? Math.Max(0, 1 - SoakedKg / soak.SaturationKg) : 1;
+
+    public Knock Take(HullPlace place, double loss)
+    {
+        Tree.SetDouble(TornKey, Math.Min(1, Torn + loss));
+        Changed();
+        return Torn >= 1 ? Knock.BrokenUp : Knock.Harmed;
+    }
 
     public void Pass(double days, bool afloat, double sun)
     {
@@ -41,8 +55,11 @@ public sealed class ReedHull : HullModel, IAfloat
         Changed();
     }
 
-    public override void Describe(StringBuilder info) =>
-        info.AppendLine(Lang.Get("roughseas:vessel-soaked", (int)Math.Round((1 - Condition) * 100)));
+    public override void Describe(StringBuilder info)
+    {
+        info.AppendLine(Lang.Get("roughseas:vessel-soaked", (int)Math.Round((1 - Dryness) * 100)));
+        if (Torn > 0) info.AppendLine(Lang.Get("roughseas:vessel-torn", (int)Math.Round(Torn * 100)));
+    }
 
     public override void Adopt(float integrity)
     {

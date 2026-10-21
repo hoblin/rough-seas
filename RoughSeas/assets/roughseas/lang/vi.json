@@ -20,6 +20,7 @@
     "vessel-sunk": "Đã chìm: nằm dưới đáy",
     "vessel-lashing": "Dây chằng: {0}%",
     "vessel-soaked": "Sậy ngấm nước: {0}%",
+    "vessel-torn": "Sậy rách: {0}%",
     "vessel-mend": "Sửa thân tàu",
     "vessel-grease-in": "Cần bôi mỡ sau {p0:chưa đầy một ngày|# ngày|# ngày}",
     "vessel-grease-due": "Cần bôi mỡ ngay",

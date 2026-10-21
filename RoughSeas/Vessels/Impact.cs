@@ -32,4 +32,5 @@ public class Impact(double give, long guardMs)
     public double Joules(double kilograms, double speedLost) => 0.5 * kilograms * (speedLost * speedLost - give * give);
 }
 
-public readonly record struct Knocked(double SpeedLost, double TowardX, double TowardZ);
+/// <param name="Against">The vessel rammed; 0 for the ground.</param>
+public readonly record struct Knocked(double SpeedLost, double TowardX, double TowardZ, long Against = 0);

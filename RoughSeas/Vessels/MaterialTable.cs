@@ -44,6 +44,10 @@ public class MaterialTable
         return double.PositiveInfinity;
     }
 
+    public double Toughness(string material) =>
+        Row(material, row => row.Toughness, "toughness", "it takes that of an unknown wood")
+        ?? materials[UnknownWood].Toughness!.Value;
+
     private static string ReferenceOf(VesselPart part) => part.Reference == "" ? part.Material : part.Reference;
 
     private double Litres(double kilograms, string material) => kilograms / Density(material) * 1000;

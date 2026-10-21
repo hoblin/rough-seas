@@ -20,6 +20,7 @@
     "vessel-sunk": "Potopená: leží na dne",
     "vessel-lashing": "Väzby: {0} %",
     "vessel-soaked": "Trstina nasiaknutá: {0} %",
+    "vessel-torn": "Trstina roztrhnutá: {0} %",
     "vessel-mend": "Opraviť trup",
     "vessel-grease-in": "Natrieť tukom treba o {p0:menej ako deň|# deň|# dni|# dni|# dni|# dní}",
     "vessel-grease-due": "Natrieť tukom treba teraz",

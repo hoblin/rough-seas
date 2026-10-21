@@ -68,12 +68,33 @@ public class HullModelTests
     }
 
     [Fact]
-    public void ReedCanNeitherBeKnockedNorMended()
+    public void ReedCannotBeMended()
+    {
+        Assert.False(Reed() is IMendable);
+    }
+
+    [Fact]
+    public void AKnockTearsTheReedUntilItComesApart()
     {
         var reed = Reed();
 
-        Assert.False(reed is IKnockable);
-        Assert.False(reed is IMendable);
+        Assert.Equal(Knock.Harmed, reed.Take(HullPlace.PortSide, 0.6));
+        Assert.Equal(0.4f, reed.Condition, 6);
+        Assert.Equal(Knock.BrokenUp, reed.Take(HullPlace.PortBow, 0.6));
+    }
+
+    [Fact]
+    public void ReedIsAsWornAsTheWorseOfItsSoakAndItsTears()
+    {
+        var reed = Reed();
+        reed.Pass(2, afloat: true, sun: 0);
+        float soaked = reed.Condition;
+
+        reed.Take(HullPlace.Bottom, 0.1);
+        Assert.Equal(soaked, reed.Condition, 6);
+
+        reed.Take(HullPlace.Bottom, 0.8);
+        Assert.Equal(0.1f, reed.Condition, 6);
     }
 
     [Fact]
@@ -98,13 +119,13 @@ public class HullModelTests
     }
 
     [Fact]
-    public void OnlyAReallySevereBlowBreaksAHullUp()
+    public void AHullBreaksUpOnceEveryPlaceIsStoveIn()
     {
         var hull = Cracking("dugout");
 
-        Assert.Equal(Knock.Harmed, hull.Take(HullPlace.PortBow, 0.9));
-        Assert.Equal(Knock.Harmed, hull.Take(HullPlace.PortBow, 0.9));
-        Assert.Equal(Knock.BrokenUp, hull.Take(HullPlace.StarboardQuarter, 1.2));
+        foreach (var place in HullShape.Places.SkipLast(1)) Assert.Equal(Knock.Harmed, hull.Take(place, 1));
+        Assert.Equal(Knock.Harmed, hull.Take(HullShape.Places[0], 1));
+        Assert.Equal(Knock.BrokenUp, hull.Take(HullShape.Places[^1], 1));
     }
 
     [Fact]

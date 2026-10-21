@@ -18,6 +18,7 @@
     "vessel-sunk": "Sinkinta: ŝi kuŝas sur la fundo",
     "vessel-lashing": "Ligaĵoj: {0}%",
     "vessel-soaked": "Kano akvosatita: {0}%",
+    "vessel-torn": "Kano disŝirita: {0}%",
     "vessel-mend": "Ripari la karenon",
     "vessel-grease-in": "Grasado post {p0:malpli ol tago|# tago|# tagoj}",
     "vessel-grease-due": "Grasu nun",

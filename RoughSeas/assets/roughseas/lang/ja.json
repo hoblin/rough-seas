@@ -20,6 +20,7 @@
     "vessel-sunk": "沈没：海底に沈んでいる",
     "vessel-lashing": "固縛：{0}%",
     "vessel-soaked": "葦の浸水：{0}%",
+    "vessel-torn": "葦の裂け：{0}%",
     "vessel-mend": "船体を修理する",
     "vessel-grease-in": "次の油塗りまで{p0:1日未満|#日|#日}",
     "vessel-grease-due": "今すぐ油塗りが必要",

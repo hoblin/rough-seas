@@ -6,4 +6,6 @@ public class Material
     public string Source = "";
     public double? Density;
     public string DensitySource = "";
+    public double? Toughness;
+    public string ToughnessSource = "";
 }

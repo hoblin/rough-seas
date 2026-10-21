@@ -20,6 +20,7 @@
     "vessel-sunk": "Sunk: she lies on the bottom",
     "vessel-lashing": "Lashings: {0}%",
     "vessel-soaked": "Reed waterlogged: {0}%",
+    "vessel-torn": "Reed torn: {0}%",
     "vessel-mend": "Mend the hull",
     "vessel-grease-in": "Grease due in {p0:less than a day|# day|# days}",
     "vessel-grease-due": "Grease due now",

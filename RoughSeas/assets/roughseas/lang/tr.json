@@ -20,6 +20,7 @@
     "vessel-sunk": "Batık: dipte yatıyor",
     "vessel-lashing": "Bağlar: %{0}",
     "vessel-soaked": "Saz suya doymuş: %{0}",
+    "vessel-torn": "Saz yırtılmış: %{0}",
     "vessel-mend": "Gövdeyi onar",
     "vessel-grease-in": "Yağlamaya {p0:bir günden az|# gün|# gün} kaldı",
     "vessel-grease-due": "Yağlama zamanı geldi",

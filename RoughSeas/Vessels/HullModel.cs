@@ -72,7 +72,9 @@ public enum Knock
 
 public interface IKnockable
 {
-    /// <param name="loss">The harm the roll against its capacity dealt: out of a whole place, or of the whole hull for one without places.</param>
+    int Places { get; }
+
+    /// <param name="loss">The harm the blow dealt: out of a whole place, or of the whole hull for one without places.</param>
     Knock Take(HullPlace place, double loss);
 }
 

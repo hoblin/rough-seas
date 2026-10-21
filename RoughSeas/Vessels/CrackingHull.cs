@@ -31,10 +31,12 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public double Crack(HullPlace place) => Cracks?.GetFloat(place.Code()) ?? 0;
 
+    public int Places => HullShape.Places.Length;
+
     public Knock Take(HullPlace place, double loss)
     {
         SetCrack(place, Crack(place) + loss);
-        return loss >= 1 ? Knock.BrokenUp : Knock.Harmed;
+        return Condition <= 0 ? Knock.BrokenUp : Knock.Harmed;
     }
 
     public void Pass(double days, bool afloat, double sun)

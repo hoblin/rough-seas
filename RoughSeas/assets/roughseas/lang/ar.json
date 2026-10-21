@@ -20,6 +20,7 @@
     "vessel-sunk": "غارق: يرقد في القاع",
     "vessel-lashing": "الأربطة: {0}٪",
     "vessel-soaked": "تشبّع القصب بالماء: {0}٪",
+    "vessel-torn": "تمزّق القصب: {0}٪",
     "vessel-mend": "إصلاح البدن",
     "vessel-grease-in": "موعد الدهن بعد {p0:أقل من يوم|يوم واحد|# أيام}",
     "vessel-grease-due": "حان موعد الدهن",

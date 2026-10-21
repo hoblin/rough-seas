@@ -18,6 +18,7 @@
     "vessel-sunk": "Sjunken: hon ligger på botten",
     "vessel-lashing": "Surrningar: {0} %",
     "vessel-soaked": "Vass vattensjuk: {0} %",
+    "vessel-torn": "Vass sönderriven: {0} %",
     "vessel-mend": "Laga skrovet",
     "vessel-grease-in": "Smörjning om {p0:mindre än en dag|# dag|# dagar}",
     "vessel-grease-due": "Smörj nu",
