@@ -14,6 +14,14 @@ The handbook's guide pages (`RoughSeas/assets/roughseas/config/handbook/`) expla
 
 A pull request that makes Rough Seas work beside another mod adds or updates that mod's section on the wiki's page of tested mods (`docs/wiki/Other-Mods.md`), not a page of its own, in the same pull request. The section gives the mod's tested version and verdict, and says how the two play together in one mod set: what the other mod does beside ours, what we changed in how it behaves, and what someone building a server or another mod should know. It is written for server owners and modders, and it doesn't cover our own bugs fixed on the way. Otherwise this knowledge lives only in a closed pull request.
 
+## Physics decides
+
+Every mechanic is derived from physics, and that is why the sea feels real. A model starts from what physically happens: where a blow's energy goes, what resists it, which property of which material decides. Its inputs are measured quantities with their sources (a wood's toughness, a plank's thickness, a wave's speed), written beside them in the JSON. What the player gets, how many swings or storms a hull takes, is whatever the data gives. Never pick a result first and tune a number to reach it.
+
+Chance is a real mechanism too: the scatter of a material's measured strength, or where on a hull a blow lands. Not a die rolled for the sake of variety.
+
+When the game feels wrong, look for the wrong input or the missing mechanism, and fix that. Where no measured value exists, say so in the source note ("Balance: …") and file the gap.
+
 ## Tools first
 
 When a task has no tool that fits, stop and build one: a little time spent now makes this task and every one after it simpler and faster. Keep it in proportion, though. We are building a mod, not a mod-building toolkit, so build the tool a task in front of you needs, not one for a task you imagine.
