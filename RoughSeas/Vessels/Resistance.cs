@@ -9,7 +9,7 @@ public enum Blow
     Cut
 }
 
-/// <param name="ShellPoint">The shell's own holing work; infinite for a skin, which springs back from a blow.</param>
+/// <param name="ShellPoint">The shell's own holing work; infinite where it yields to a blow, as a skin or a bundle does, and then only what backs it can break.</param>
 /// <param name="BackedShare">Of the side's area, the share a lath or sheathing backs; <paramref name="BottomBackedShare"/> the bottom's.</param>
 public readonly record struct Resistance(
     double FrameJoules,
@@ -29,11 +29,14 @@ public readonly record struct Resistance(
 
     public double Against(Blow blow, bool backed) => blow switch
     {
-        Blow.Point when backed => (double.IsPositiveInfinity(ShellPoint) ? 0 : ShellPoint) + BackingPoint,
+        Blow.Point when backed => Yielding(ShellPoint) + BackingPoint,
         Blow.Point => ShellPoint,
-        Blow.Cut => ShellCut + (backed ? BackingCut : 0),
+        Blow.Cut when backed => Yielding(ShellCut) + BackingCut,
+        Blow.Cut => ShellCut,
         _ => FrameJoules
     };
+
+    private static double Yielding(double shell) => double.IsPositiveInfinity(shell) ? 0 : shell;
 
     public static double Loss(double severity, Blow blow, bool byPlace) =>
         blow == Blow.Broad ? severity : Math.Min(1, severity) / (byPlace ? 1 : HullShape.Places.Length);

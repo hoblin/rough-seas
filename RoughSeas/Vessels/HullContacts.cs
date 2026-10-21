@@ -7,7 +7,7 @@ namespace RoughSeas.Vessels;
 
 public class HullContacts(EntityPartitioning partitioning)
 {
-    public List<Contact> Around(Entity vessel, HullShape shape)
+    public List<Contact> Around(Entity vessel, HullShape shape, bool withSteered)
     {
         var pos = vessel.Pos;
         var own = Footprint.Of(shape, pos.X, pos.Z, pos.Yaw);
@@ -15,6 +15,7 @@ public class HullContacts(EntityPartitioning partitioning)
         partitioning.WalkEntities(pos.XYZ, shape.HalfLength + Math.Abs(shape.CentreAlong) + partitioning.LargestTouchDistance, other =>
         {
             if (other != vessel && other.Alive && other.Pos.Dimension == pos.Dimension && IHull.Of(other) is { } hull &&
+                (withSteered || !hull.Steered) &&
                 Level(pos.Y, shape, other.Pos.Y, hull.Shape) &&
                 Footprint.Of(hull.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw) is var theirs && own.Touches(theirs))
             {

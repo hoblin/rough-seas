@@ -13,7 +13,8 @@ public abstract class Shell
     private static readonly Dictionary<string, Type> Kinds = new()
     {
         ["rigid"] = typeof(RigidShell),
-        ["skin"] = typeof(SkinShell)
+        ["skin"] = typeof(SkinShell),
+        ["bundle"] = typeof(BundleShell)
     };
 
     public string Material = "wood";
@@ -36,12 +37,14 @@ public abstract class Shell
 
     public Resistance Resists(double frameJoules, MaterialTable materials, double holeSquareMetres, double cutShare) =>
         new(frameJoules, Holed(materials, holeSquareMetres), Cut(materials, holeSquareMetres, cutShare),
-            Backing?.Holed(materials, holeSquareMetres) ?? 0, Backing?.Cut(materials, holeSquareMetres, cutShare) ?? 0,
+            BackingHoled(materials, holeSquareMetres), Backing?.Cut(materials, holeSquareMetres, cutShare) ?? 0,
             BackedShare, BottomBackedShare ?? BackedShare);
 
     public abstract double Holed(MaterialTable materials, double holeSquareMetres);
 
-    public double Cut(MaterialTable materials, double holeSquareMetres, double cutShare) =>
+    protected virtual double BackingHoled(MaterialTable materials, double holeSquareMetres) => Backing?.Holed(materials, holeSquareMetres) ?? 0;
+
+    public virtual double Cut(MaterialTable materials, double holeSquareMetres, double cutShare) =>
         Resistance.Holing(materials.CutToughness(Material) ?? materials.Toughness(Material) * cutShare, Metres, holeSquareMetres);
 }
 
@@ -56,4 +59,17 @@ public class RigidShell : Shell
 public class SkinShell : Shell
 {
     public override double Holed(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
+}
+
+/// <summary>
+/// Bundled stems, as a broom is: each stem bends alone and no crack runs from one to the next, so a blow springs off
+/// it and an edge parts only the stems it meets. It comes apart where an edge cuts a lashing that binds it.
+/// </summary>
+public class BundleShell : Shell
+{
+    public override double Holed(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
+
+    public override double Cut(MaterialTable materials, double holeSquareMetres, double cutShare) => double.PositiveInfinity;
+
+    protected override double BackingHoled(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
 }

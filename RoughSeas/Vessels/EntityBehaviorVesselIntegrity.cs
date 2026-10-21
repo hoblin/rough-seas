@@ -414,7 +414,19 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
             vessels.Log(entity, "ignored an impact reported by {0}, who does not steer it", player.PlayerName);
             return;
         }
-        lock (impactLock) pendingImpacts.Add(new Knocked(report.SpeedLost, report.TowardX, report.TowardZ, report.Against, report.TheirKg));
+        var knocked = new Knocked(report.SpeedLost, report.TowardX, report.TowardZ, report.Against, report.TheirKg);
+        lock (impactLock) pendingImpacts.Add(knocked);
+        if (knocked.Against != 0 && entity.World.GetEntityById(knocked.Against) is { } other && IHull.Of(other) is { Steered: false } hull)
+        {
+            hull.Rammed(knocked with { TowardX = -knocked.TowardX, TowardZ = -knocked.TowardZ, Against = entity.EntityId, TheirKg = Aboard.Impact });
+        }
+    }
+
+    public bool Steered => entity.GetInterface<IMountable>()?.IsBeingControlled() == true;
+
+    public void Rammed(Knocked by)
+    {
+        lock (impactLock) pendingImpacts.Add(by);
     }
 
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
@@ -435,7 +447,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
         using var _ = vessels.Budget.Measure();
         var motion = entity.Pos.Motion;
-        var contacts = hullContacts.Around(entity, Shape);
+        var contacts = hullContacts.Around(entity, Shape, withSteered: client != null);
         var knocks = new List<Knocked>();
         lock (impactLock)
         {

@@ -20,7 +20,7 @@ Every mechanic is derived from physics; that is why the game feels real. Model w
 
 Randomness is part of the physics too: the real spread of the world the model describes, never a die rolled for variety.
 
-When the game feels wrong, find the wrong input or the missing mechanism. Where no measurement exists, say so beside the number and file the gap.
+When the game feels wrong, find the wrong input or the missing mechanism. Where nothing was measured for the thing itself, take the closest real analogue that was, and name it beside the number; never stand in an unrealistic model for missing data.
 
 ## Tools first
 

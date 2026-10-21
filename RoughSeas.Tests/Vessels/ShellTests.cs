@@ -20,8 +20,14 @@ public class ShellTests
         ["wood-oak"] = new() { Toughness = 75000 },
         ["wood-ash"] = new() { Toughness = 68000 },
         ["hide"] = new() { CutToughness = 17000 },
-        ["bark"] = new() { Toughness = 700, CutToughness = 700 }
+        ["bark"] = new() { Toughness = 700, CutToughness = 700 },
+        ["rope-flax"] = new() { CutToughness = 5700 }
     }, new CountingLogger());
+
+    private static readonly BundleShell Reeds = new()
+    {
+        Material = "reed", Metres = 0.45, Backing = new RigidShell { Material = "rope-flax", Metres = 0.022 }, BackedShare = 0.17
+    };
 
     [Fact]
     public void PicksTheShellByItsKind()
@@ -83,6 +89,27 @@ public class ShellTests
 
         Assert.Equal(Resistance.Holing(700, 0.005, Hole) + Resistance.Holing(75000, 0.003, Hole),
             canoe.Resists(2400, materials, Hole, CutShare).Against(Blow.Point, backed: true), 6);
+    }
+
+    [Fact]
+    public void ABundleOfStemsSpringsOffEveryBlowLashingsAndAll()
+    {
+        var resists = Reeds.Resists(3000, materials, Hole, CutShare);
+
+        Assert.Equal(double.PositiveInfinity, resists.Against(Blow.Point, backed: false));
+        Assert.Equal(double.PositiveInfinity, resists.Against(Blow.Point, backed: true));
+    }
+
+    [Fact]
+    public void AnEdgePartsTheStemsItMeetsWithoutHarm()
+    {
+        Assert.Equal(double.PositiveInfinity, Reeds.Resists(3000, materials, Hole, CutShare).Against(Blow.Cut, backed: false));
+    }
+
+    [Fact]
+    public void ABundleComesApartWhereAnEdgeCutsItsLashing()
+    {
+        Assert.Equal(Resistance.Holing(5700, 0.022, Hole), Reeds.Resists(3000, materials, Hole, CutShare).Against(Blow.Cut, backed: true), 6);
     }
 
     [Fact]

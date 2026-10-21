@@ -120,5 +120,11 @@ public interface IHull : IBuoyant
 {
     HullShape Shape { get; }
 
+    /// <summary>Server only: whether her rider's client measures her contacts, as it steers her.</summary>
+    bool Steered { get; }
+
+    /// <summary>Server only: a ram the other vessel's rider measured, which this hull takes its share of.</summary>
+    void Rammed(Knocked by);
+
     static IHull? Of(Entity entity) => entity is EntityBoat ? entity.SidedProperties.Behaviors.OfType<IHull>().FirstOrDefault() : null;
 }
