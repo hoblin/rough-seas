@@ -13,7 +13,7 @@
     },
     "sources": {
         "broadSources": "A blast's pressure and a bolt's current reach the whole hull, as a ram's load does; any other blow lands on the shell where it hits",
-        "cutShare": "An edge spends a blow on parting the fibres alone: softwood's work of fracture across the grain, 9.2 kJ/m² (Nature 252, 116, 1974), against its impact bending work, 40 kJ/m² for Scots pine and Norway spruce (see materials.json)",
+        "cutShare": "An edge spends a blow on parting the fibres alone: softwood's work of fracture across the grain, 9.2 kJ/m² (Nature 252, 116, 1974), against its impact bending work, 40 kJ/m² for Scots pine and Norway spruce (materials.json holds toughness in J/m²)",
         "variation": "Coefficients of variation of clear wood: modulus of rupture for the frame, impact bending for a blow, toughness for a cut (Wood Handbook, FPL-GTR-282, table 5-6)"
     }
 }

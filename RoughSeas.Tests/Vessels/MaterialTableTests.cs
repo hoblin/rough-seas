@@ -16,8 +16,8 @@ public class MaterialTableTests
     {
         table = new MaterialTable(new Dictionary<string, Material>
         {
-            ["wood"] = new() { Strength = 90, Density = 610 },
-            ["wood-oak"] = new() { Strength = 100, Density = 600 },
+            ["wood"] = new() { Strength = 90, Density = 610, Toughness = 60000 },
+            ["wood-oak"] = new() { Strength = 100, Density = 600, Toughness = 75000 },
             ["wood-ebony"] = new() { Strength = 160, Density = 1200 },
             ["hide"] = new() { Density = 1000 },
             ["wood-elm"] = new() { Strength = 65 },
@@ -89,6 +89,27 @@ public class MaterialTableTests
         var vanilla = VanillaWoods.Select(wood => shipped["wood-" + wood].Density!.Value).Order().ToArray();
 
         Assert.Equal((vanilla[5] + vanilla[6]) / 2, shipped["wood"].Density!.Value, tolerance: 0.1);
+    }
+
+    [Fact]
+    public void KnowsAWoodsToughness()
+    {
+        Assert.Equal(75000, table.Toughness("wood-oak"));
+    }
+
+    [Fact]
+    public void GivesAWoodNotMeasuredForToughnessThatOfAnUnknownWood()
+    {
+        Assert.Equal(60000, table.Toughness("wood-ebony"));
+    }
+
+    [Fact]
+    public void SourcesEveryShippedToughness()
+    {
+        var shipped = JsonConvert.DeserializeObject<Dictionary<string, Material>>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "materials.json")))!;
+
+        Assert.All(shipped.Where(row => row.Value.Toughness != null), row => Assert.False(string.IsNullOrEmpty(row.Value.ToughnessSource), row.Key));
+        Assert.NotNull(shipped["wood"].Toughness);
     }
 
     [Fact]

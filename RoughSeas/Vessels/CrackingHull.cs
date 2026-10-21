@@ -11,7 +11,6 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
     private const string CracksKey = "cracks";
     private const string GreaseKey = "greaseDays";
     private const double Gravity = 9.81;
-    private const double SquareCentimetresPerSquareMetre = 10000;
     private const double LitresPerCubicMetre = 1000;
 
     private readonly HullConfig config;
@@ -31,7 +30,7 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public double Crack(HullPlace place) => Cracks?.GetFloat(place.Code()) ?? 0;
 
-    public int Places => HullShape.Places.Length;
+    public bool ByPlace => true;
 
     public Knock Take(HullPlace place, double loss)
     {
@@ -93,7 +92,7 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
         double head = Waterline(place, afloat) - Math.Max(CrackHeight(place, depthMetres), afloat.InsideMetres);
         if (head <= 0) return 0;
 
-        double area = Crack(place) * config.CrackSquareCentimetres / SquareCentimetresPerSquareMetre;
+        double area = Crack(place) * config.CrackSquareMetres;
         return config.DischargeCoefficient * area * Math.Sqrt(2 * Gravity * head) * LitresPerCubicMetre;
     }
 
@@ -123,7 +122,11 @@ public class SeepConfig
 
 public class HullConfig
 {
+    private const double SquareCentimetresPerSquareMetre = 10000;
+
     public double DischargeCoefficient;
     public double CrackSquareCentimetres;
+
+    public double CrackSquareMetres => CrackSquareCentimetres / SquareCentimetresPerSquareMetre;
     public double SideCrackShare;
 }

@@ -25,6 +25,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     private const int DataVersion = 2;
     private const double WreckageScatterSpeed = 0.3;
     private const int InvulnerableMs = 500;
+    private const int HullsInARam = 2;
     private const float BareHandDamage = 0.5f;
     private const float HazardSeconds = 1;
     private const float UpdateSeconds = 0.5f;
@@ -35,14 +36,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     private const float MinSunlight = 0.5f;
     private const float MaxDryingRain = 0.05f;
     private const string HullBox = "HullAP";
-    private const double SquareCentimetresPerSquareMetre = 10000;
     private static readonly AssetLocation MendSound = new("game:sounds/player/build");
 
     private readonly object impactLock = new();
     private readonly List<Knocked> pendingImpacts = new();
     private Impact impact = null!;
     private Rams rams = null!;
-    private EntityPartitioning partitioning = null!;
+    private HullContacts hullContacts = null!;
     private Resistance resistance;
     private DamageConversion damageConversion = null!;
     private VesselsModSystem vessels = null!;
@@ -68,8 +68,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
     public EntityBehaviorVesselIntegrity(Entity entity) : base(entity) { }
 
     /// <summary>
-    /// Server side, after every strike: the place struck, the strike's energy over the hull's impact capacity, and what
-    /// it did, null when the hull shrugged it off.
+    /// Server side, after every strike: the place struck, the blow's energy over what resisted it, and what it did,
+    /// null unless it brought the place to a worse stage of damage.
     /// </summary>
     public event Action<HullPlace, double, Knock?>? Struck;
 
@@ -134,7 +134,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
         referenceDraft = flotation.Float(new Aboard(ReferenceKg, 0, 0, 0, 0, 0), false).DraftMetres;
         impact = new Impact(attributes["minImpactSpeed"].AsDouble(1), InvulnerableMs);
         rams = new Rams(attributes["minImpactSpeed"].AsDouble(1));
-        partitioning = entity.Api.ModLoader.GetModSystem<EntityPartitioning>();
+        hullContacts = new HullContacts(entity.Api.ModLoader.GetModSystem<EntityPartitioning>());
         entity.PhysicsUpdateWatcher += OnPhysicsUpdate;
 
         if (entity.Api is ICoreClientAPI capi)
@@ -155,8 +155,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
         double frame = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(parts);
         var shell = attributes["shell"];
         double place = shell.Exists
-            ? Resistance.Holing(vessels.Materials.Toughness(shell["material"].AsString()), shell["metres"].AsDouble(),
-                vessels.HullConfig.CrackSquareCentimetres / SquareCentimetresPerSquareMetre)
+            ? Resistance.Holing(vessels.Materials.Toughness(shell["material"].AsString("wood")), shell["metres"].AsDouble(),
+                vessels.HullConfig.CrackSquareMetres)
             : frame;
         resistance = new Resistance(frame, place, damageConversion.CutShare);
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
@@ -225,8 +225,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
 
     /// <summary>
     /// Strikes the hull with a blow of this energy at this place. Server only. The harm is the energy over what
-    /// resists that kind of blow, as strong as this piece of material happens to be; what the harm does is the hull
-    /// model's.
+    /// resists that kind of blow, as strong as this piece of material happens to be. A blow on the shell opens at most
+    /// its place; a broad load beyond the frame breaks it up at once; the rest of what the harm does is the hull model's.
     /// </summary>
     public void Strike(double joules, HullPlace place, Blow blow = Blow.Broad)
     {
@@ -240,12 +240,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
             return;
         }
 
-        double loss = blow == Blow.Broad ? severity : Math.Min(1, severity);
+        double loss = Resistance.Loss(severity, blow, knockable.ByPlace);
+        int stage = model.Stage(place);
         var knock = loss > 0 ? knockable.Take(place, loss) : (Knock?)null;
         vessels.Log(entity, "{0} at the {1} with {2:F0} J against {3:F0}: {4}, hull now {5:F2}", blow.ToString().ToLowerInvariant(),
             place.Code(), joules, resists, knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
-        Struck?.Invoke(place, severity, knock);
-        if (knock == Knock.BrokenUp || blow == Blow.Broad && loss >= 1) Break();
+        Struck?.Invoke(place, severity, knock == Knock.BrokenUp || model.Stage(place) > stage ? knock : null);
+        if (knock == Knock.BrokenUp || Resistance.BreaksFrame(blow, loss)) Break();
     }
 
     private void Strike(Knocked knocked)
@@ -267,7 +268,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
 
         double theirs = other.Aboard.Impact;
         double between = Rams.ReducedKg(mass, theirs);
-        double rammedJoules = impact.Joules(between, knocked.SpeedLost);
+        double rammedJoules = impact.Joules(between, knocked.SpeedLost) / HullsInARam;
         vessels.Log(entity, "rammed {0} {1} at {2:F1} m/s into the {3}, {4:F0} kg against {5:F0}: {6:F0} J",
             rammed.Code, rammed.EntityId, knocked.SpeedLost, place.Code(), mass, theirs, rammedJoules);
         Strike(rammedJoules, place);
@@ -443,8 +444,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
             return;
         }
 
+        using var _ = vessels.Budget.Measure();
         var motion = entity.Pos.Motion;
-        var contacts = Contacts();
+        var contacts = hullContacts.Around(entity, Shape);
         var knocks = new List<Knocked>();
         lock (impactLock)
         {
@@ -453,25 +455,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IBuoyant
             if (client == null) pendingImpacts.AddRange(knocks);
         }
         if (client != null) knocks.ForEach(knocked => vessels.Report(entity, knocked));
-    }
-
-    private List<Contact> Contacts()
-    {
-        var pos = entity.Pos;
-        var own = Footprint.Of(Shape, pos.X, pos.Z, pos.Yaw);
-        var contacts = new List<Contact>();
-        partitioning.WalkEntities(pos.XYZ, Shape.HalfLength + Math.Abs(Shape.CentreAlong) + partitioning.LargestTouchDistance, other =>
-        {
-            if (other != entity && other.Alive && other.Pos.Dimension == pos.Dimension &&
-                other.GetBehavior<EntityBehaviorVesselIntegrity>() is { } vessel &&
-                Footprint.Of(vessel.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw) is var theirs && own.Touches(theirs))
-            {
-                var closing = pos.Motion - other.Pos.Motion;
-                contacts.Add(new Contact(other.EntityId, theirs.X - own.X, theirs.Z - own.Z, closing.X, closing.Z));
-            }
-            return true;
-        }, EnumEntitySearchType.Creatures);
-        return contacts;
     }
 
     private void Float()

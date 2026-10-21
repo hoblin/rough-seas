@@ -11,7 +11,7 @@ public sealed class LashedHull(Func<ITreeAttribute> tree, Action changed) : Hull
 
     public override float Condition => Tree?.GetFloat(LashingKey, 1) ?? 1;
 
-    public int Places => 1;
+    public bool ByPlace => false;
 
     public Knock Take(HullPlace place, double loss)
     {

@@ -26,7 +26,7 @@ public sealed class ReedHull : HullModel, IAfloat, IKnockable
 
     public double Torn => Tree?.GetDouble(TornKey) ?? 0;
 
-    public int Places => 1;
+    public bool ByPlace => false;
 
     private double Dryness => soak.SaturationKg > 0 ? Math.Max(0, 1 - SoakedKg / soak.SaturationKg) : 1;
 

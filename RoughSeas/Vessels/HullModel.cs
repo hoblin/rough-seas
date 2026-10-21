@@ -72,7 +72,8 @@ public enum Knock
 
 public interface IKnockable
 {
-    int Places { get; }
+    /// <summary>Whether it keeps each place's harm apart, or counts the whole hull as one.</summary>
+    bool ByPlace { get; }
 
     /// <param name="loss">The harm the blow dealt: out of a whole place, or of the whole hull for one without places.</param>
     Knock Take(HullPlace place, double loss);

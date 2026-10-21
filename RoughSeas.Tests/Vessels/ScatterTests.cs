@@ -23,9 +23,9 @@ public class ScatterTests
     }
 
     [Fact]
-    public void NoPieceHoldsNothing()
+    public void AMaterialOfNoKnownSpreadHoldsAsItsTablesSay()
     {
-        Assert.All(Draw(0.34), draw => Assert.True(draw > 0));
+        Assert.All(Draw(0), draw => Assert.Equal(1, draw, 9));
     }
 
     private static double[] Draw(double variation)

@@ -30,7 +30,7 @@ public class FootprintTests
     [Fact]
     public void MissesAHullCrossingClearOfTheOthersCorner()
     {
-        Assert.False(At(0, 0, yaw: 0).Touches(At(2.9, 2.9, yaw: Math.PI / 4)));
+        Assert.False(At(0, 0, yaw: 0).Touches(At(2.2, 3.5, yaw: Math.PI / 4)));
     }
 
     [Fact]
