@@ -1,20 +1,20 @@
 The mountain streams of Vintage Story 1.22 run down in white water. Every second a hull spends in it, the rocks strike its bottom with 300 joules, a hard knock, again and again.
 
-| Vessel | Chance of harm each second |
-| --- | --- |
-| [Coracle](Coracle) | 53% |
-| [Raft](Raft) | 22% |
-| [Hide currach](Hide-Currach) | 10% |
-| [Outrigger canoe](Outrigger-Canoe) | 2% |
-| [Dugout](Dugout) | 1% |
-| [Sailboat](Sailboat) | under 1% |
-| [Birch-bark canoe](Birch-Bark-Canoe), [reed boat](Reed-Boat) | none |
+| Vessel, in oak | Each second | Until |
+| --- | --- | --- |
+| [Coracle](Coracle) | three quarters of a stove-in bottom | its bottom is stove in in a second or two |
+| [Raft](Raft) | a quarter of its lashings | it comes apart in about four seconds |
+| [Hide currach](Hide-Currach), [reed boat](Reed-Boat) | a tenth | the currach's bottom is stove in in about eight seconds, the reed boat torn through in ten |
+| [Outrigger canoe](Outrigger-Canoe) | a fiftieth | its bottom is stove in in about forty seconds |
+| [Dugout](Dugout) | a hundredth | about a minute and a quarter |
+| [Sailboat](Sailboat) | less | nearly two minutes |
+| [Birch-bark canoe](Birch-Bark-Canoe) | nothing | |
 
-An oak raft that runs a stretch of rapids comes apart in about a quarter of a minute. Every harming strike cracks a boat's bottom further, and a cracked bottom [leaks](Hull-Condition#leaks).
+Every strike cracks a boat's bottom further, and a cracked bottom [leaks](Hull-Condition#leaks).
 
 ## The canoe that runs them
 
-The [birch-bark canoe](Birch-Bark-Canoe) is the only boat that runs rapids unharmed; the [reed boat](Reed-Boat)'s bundles only bend on the rocks. It draws almost no water and rides over the rocks that batter everything else, as the canoes of the northern woodlands did on the rivers they were built for. Where a river runs too wild even so, pick the canoe up and carry it around.
+The [birch-bark canoe](Birch-Bark-Canoe) is the only boat that runs rapids unharmed. It draws almost no water and rides over the rocks that batter everything else, as the canoes of the northern woodlands did on the rivers they were built for. Where a river runs too wild even so, pick the canoe up and carry it around.
 
 Heavy hulls, the [dugout](Dugout) and the [outrigger](Outrigger-Canoe), shrug off a few seconds of white water but not a long run. Light ones, the [coracle](Coracle) and the [raft](Raft), break within seconds.
 

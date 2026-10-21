@@ -18,7 +18,9 @@ Rough Seas builds its sea, its weather and its hulls from real measurements and 
 - **Depth.** Shallow water holds a wave's period down (manual, II-2-39).
 - **Bent: the ceiling.** The formula gives a hurricane waves of 30 m and more, which no real sea reaches. Above 9 m the height bends softly toward 16 m and never passes it.
 - **Every wave is different.** Single waves scatter around the significant height by the Rayleigh distribution. ([Significant wave height](https://en.wikipedia.org/wiki/Significant_wave_height))
-- **Breaking.** A wave breaks where the water is shallower than 1.28 times its height (McCowan's limit).
+- **Breaking.** A wave breaks where the water is shallower than 1.28 times its height (McCowan's limit), or out at sea once it is a seventh as high as it is long, as steep as a wave can stand (Michell 1893). A breaker is as long as that steepness makes it, and runs at the speed of a wave that long, no faster than the sea's own waves, slowed over a shallow bed by Eckart's dispersion (1952).
+- **Spilling and plunging.** In deep water about 2% of breakers plunge, the rest spill (Gemmrich and Farmer 1999). On a sloping bed the surf similarity parameter decides: a wave plunges when the bed's slope over the root of its steepness lies between 0.5 and 3.3 (Battjes 1974), and its crest lands 4.0 − 9.25 times the slope of its height shoreward of where it broke (Galvin 1969); further in, what is left is its bore.
+- **A breaker's pressure.** A spilling roller presses as a stream does, ½ρc². A plunging crest slams a flat panel at 1.2 times its speed with a coefficient of 2π: ½ρ·2π·(1.2c)² (DNV-RP-C205, 2010, §8.7.2.5 and §8.8.1.2).
 - **Whitecaps.** How much of the sea is white at each force starts from Monahan's measured whitecap coverage and is raised a little, so whitecaps read from afar as they do on a real horizon. The look was matched against [NOAA's photographs](https://photolib.noaa.gov/) of each force.
 
 ## Gales: mid-latitude depressions
@@ -43,6 +45,15 @@ Squall lines move at 30 to 80 km/h; the Amazon's coastal lines run at 50 to 60 k
 
 - **Water in the bilge sloshes.** Water with a free surface doesn't stop with the hull: it runs on, piles against the bow a moment later and spends part of its energy in the splash. A hull brimful moves almost as one body, so the mod counts the water's weight by how full the bilge is. The part left free to slosh then peaks at half full, which is the [free surface effect](https://en.wikipedia.org/wiki/Free_surface_effect) naval architects guard against.
 - **Armour's weight comes from its stride.** The game gives armour no weight, only a slower walk. The mod reads the weight back from that penalty, calibrated on plate: a complete field harness of the fifteenth century weighed 15 to 25 kg (Alan Williams, *The Knight and the Blast Furnace*, 2003), and the game's plate slows its wearer by 0.14 a piece. Another mod's armour weighs by its own penalty.
+
+- **Rams.** Two hulls that meet lose the energy of their closing speed held by their reduced mass, ½ μ v², μ = m₁m₂ / (m₁ + m₂), as in any inelastic collision; each hull takes half.
+
+## Hulls
+
+- **A blow on the shell** breaks it around a hole: its toughness times the hole's rim times the shell's thickness. Woods' toughness is their impact bending work at 12% moisture (Kollmann et al., in the Norwegian handbook *Wood – nature's most beautiful raw materials*, 1999): oak 75 kJ/m², pine and spruce 40. Willow takes aspen's, of its own family and weight, and thuja spruce's and pine's.
+- **A cut** spends its work on parting the fibres alone: softwood's work of fracture across the grain is 9.2 kJ/m² (*Nature* 252, 116, 1974) against 40 kJ/m² of impact bending work, 0.23 of it. Hide tears at 17 kJ/m² (pig skin by trouser tear, Comley and Fleck 2010); a lashing, unmeasured as rope, as flax in epoxy, 5.7 kJ/m². Bark splits along its grain as a thick birch veneer, at birch's work of fracture, 656 J/m² (*Wood Science and Technology*, 2024).
+- **A breaker bends the planking.** A strip under an even pressure breaks at its modulus of rupture times thickness² over 6 k span², k being 1/12 for a plank fastened at both ends, 1/8 for a lath propped at its ends and 1/2 for a dugout's side standing free from the bottom. The sailboat's planks are 19 mm on frames 24 cm apart, as Herreshoff's rules (1927) give a yacht her size. Wet wood bends to 0.57 of its dry strength, the mean over eleven woods (Wood Handbook).
+- **No two pieces of wood are alike.** Clear wood scatters around its table value with a coefficient of variation of 16% in bending strength, 25% in impact bending and 34% in toughness (Wood Handbook, FPL-GTR-282, table 5-6), lognormally; every blow meets its own piece.
 
 ## Floating
 
@@ -71,7 +82,9 @@ Squall lines move at 30 to 80 km/h; the Amazon's coastal lines run at 50 to 60 k
 - **The wave ceiling** of 16 m keeps a hurricane's sea on the world's scale.
 - **Winter gales come too seldom.** At 47° north our open sea sees gale-force wind under 2 percent of a winter; the North Sea, among the stormiest seas, sees 7 to 14 percent. The births, seasons and strengths above come from measurements; how wide a depression's gale-force band is, and how long it blows at one place, are not yet measured for the mod.
 - **Squalls' frequency** is the mod's own, not yet from data.
-- **A stove-in crack is 25 cm²**, a hole 5.6 cm across, set for play rather than measured.
+- **A stove-in crack is 25 cm²**, a hole 5.6 cm across, set for play rather than measured; a blow must break the shell around it.
+- **A point of weapon damage is 200 J**, not yet measured: an iron axe's swing comes to 600 J, more than the 67 to 312 J measured for real strikes.
+- **What backs a hide or binds a reed boat** is read off the models: how much of a side the laths cover, how far apart the lashings lie. The bark canoe's bark is 5 mm, for play.
 - **Reed weighs 200 kg/m³**, for play: a bundle of dry totora is spongy pith with air between the stems, and totora pressed into boards weighs 316. How fast it soaks (its own weight in water every 18 hours), dries (240 kg a sunny day) and rots (a third of what each drying drives out) is set so a reed boat lies on the bottom after about three days afloat and is past saving after about five soakings: history's pace, not a measurement.
 - **A whole bamboo culm weighs 230 kg/m³**, for play: its wall of 630 kg/m³ taken a tenth of its diameter thick, hollow between the nodes.
 - **A currach's seams** seep 30 litres a game hour once ungreased, and a greasing lasts two and a half days afloat: Aran crews dressed their currachs every few days, and the litres are ours.

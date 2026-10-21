@@ -1,4 +1,4 @@
-Every vessel has a hull, and a knock cracks it where it lands. A crack leaks, the leaks fill the bilge, and a hull is lost by flooding far more often than by breaking: only a really severe blow breaks one up at once. How much a hull takes depends on what it is made of, and every source of harm, from a rock to a lightning bolt, is weighed the same way.
+Every vessel has a hull, and a knock cracks it where it lands. A crack leaks, the leaks fill the bilge, and a hull is lost by flooding far more often than by breaking: only a really severe blow breaks one up at once. What a blow does depends on what it is and what it meets: a ram tests the whole frame, a club only the plank where it lands, a breaking wave how far the planking bends.
 
 ## Reading it
 
@@ -17,7 +17,7 @@ Below it: how many litres a minute she leaks, and her [freeboard](Surf-and-Swamp
 
 The hull shows each crack where it is, marked in its own material: first light scratches, then wood splitting along the grain, bark tearing or hide holed. A vessel you pick up carries its hull with it, every crack in place, and its durability on the item shows how much is left.
 
-The [raft](Raft) and the [reed boat](Reed-Boat) are not cracked: the raft reads *Lashings* in percent, the reed boat *Reed waterlogged*, and their marks spread over the whole of them.
+The [raft](Raft) and the [reed boat](Reed-Boat) are not cracked: the raft reads *Lashings* in percent, the reed boat *Reed waterlogged* and, once something has torn it, *Reed torn*, and their marks spread over the whole of them.
 
 ## Where a blow lands
 
@@ -32,19 +32,28 @@ Each harming blow cracks its own place further, and a second knock elsewhere cra
 
 ## How a hull takes a blow
 
-Every blow is turned into energy, in joules, and weighed against what the hull can take, its *capacity*:
+Every blow meets the part of the hull that really takes it:
 
-- the bigger the blow against the capacity, the likelier it does harm at all, and the deeper the crack it leaves;
-- a blow as big as the capacity harms the hull about two times in three, and then cracks its place by half to one and a half times a whole stove-in crack: about one time in three it breaks the hull up outright;
-- a blow far below the capacity mostly glances off, or scratches; one far above it breaks the vessel up.
+- **A broad load** reaches the whole frame: a knock, a ram, rapids, a throw ashore, an explosion, lightning. It is counted in joules against what the frame can take, its *capacity*, and cracks its place by that share: a knock of a third of the capacity cracks its place a third of the way to stove in. One as big as the capacity breaks the hull up at once.
+- **A point blow** lands on the shell: a club, a fist, a spear, a stone. Only the shell where it hits resists, by its toughness and thickness, so a thin plank gives where a heavy frame wouldn't notice. It can stove in its place, never more.
+- **A cut**, from an axe or a saw, works the same way against the work it takes to part the fibres, about a quarter of what a point blow needs.
+- **A slam**, from a breaking wave, is a pressure on the side, not an energy ([Breakers](Surf-and-Swamping#breakers)): it stoves in the place if the planking bends past breaking, and does nothing if not.
 
-A hull breaks up only when one blow alone would stove in its place. Cracks that add up to stove in, however many, don't break it: they let in the sea.
+A hull breaks up by one broad load past its capacity, or once all seven of its places are stove in. Cracks short of that don't break it: they let in the sea.
 
-So a small knock on a big hull is nothing, while the same knock may hole a light one, and no hull is ever quite safe or quite doomed: there is always some luck in it.
+There are no dice. Each blow meets a piece of wood as strong as real timber happens to be: clear wood scatters around its table value by about a sixth for a frame or a plank under a breaker, a quarter for a blow and a third for a cut ([The science behind it](The-Science-Behind-It#hulls)). So a broad load as big as the capacity breaks a hull up about half the time, and one far below it never does.
+
+### What the outside is
+
+What a point blow, a cut or a breaker meets is the vessel's shell:
+
+- **Planks, logs and bark** are holed where a blow lands. In oak, a sailboat's 19 mm planks give to about 250 J, the dugout's and the outrigger's 5 cm walls to about 670 J; the bark canoe's bark, lined with cedar, splits at about 23 J.
+- **Hide** springs back from a blow unless a lath backs it there, and then the lath breaks: a quarter of the currach's sides and two thirds of her bottom, a sixth of the coracle's sides and half her bottom. An edge cuts hide anywhere.
+- **Reed bundles** spring back from every blow and every breaker, as a broom does. A blade harms them only where it cuts a lashing, a seventh of the hull a cut, and the boat comes apart once the reed is torn through. Knocks, rams, rapids and lightning still tear it.
 
 ## What it is made of
 
-A hull's capacity comes from its build, and for a wooden hull also from its wood. Each wood counts by its *modulus of rupture*, the bending strength measured for that timber in the [Wood Database](https://www.wood-database.com/), against oak:
+A hull's capacity comes from its build, and for a wooden hull also from its wood. Its frame, and the planking a breaker bends, count by the wood's *modulus of rupture*, the bending strength measured for that timber in the [Wood Database](https://www.wood-database.com/), against oak:
 
 | Wood | Strength, MPa | Against oak |
 | --- | --- | --- |
@@ -65,7 +74,9 @@ A hull's capacity comes from its build, and for a wooden hull also from its wood
 
 A wood from another mod counts by its species when the table knows it: Wildcraft's elm by elm's 65 MPa, its mahogany by mahogany's 81 (the full list is in [Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)). A species the table doesn't know counts as 93.5 MPa, the middle of the vanilla woods, and the server log names it once.
 
-An ebony sailboat takes more than four times the knocks of a kapok one. The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood; the [coracle](Coracle) and [hide currach](Hide-Currach) have a single build each, and the [bark canoe](Birch-Bark-Canoe) is as strong whichever bark it is built of. Their capacities, in oak, are compared on [Vessels](Vessels).
+What a point blow or a cut meets counts by the wood's *toughness* instead, the work it takes to break a bar of it at one blow (Kollmann): birch 94 kJ/m², beech 83, oak 75, ash 68, maple 65, elm 60, linden 50, pine, spruce, willow and thuja 40. A wood without a measurement counts as 60, the middle of them. Soaked through, as a hull's planking is, wood bends to breaking under 0.57 of its dry strength.
+
+An ebony sailboat takes more than four times the knocks of a kapok one, and its planks hold breakers four times as hard. The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood; the [coracle](Coracle) and [hide currach](Hide-Currach) have a single build each, and the [bark canoe](Birch-Bark-Canoe) is as strong whichever bark it is built of. Their capacities, in oak, are compared on [Vessels](Vessels).
 
 The wood weighs too: a hull of a light wood floats higher and paddles a little faster than oak, one of a heavy wood lower and slower, and one heavier than seawater goes down when she floods ([Surf and swamping](Surf-and-Swamping#how-she-floats)).
 
@@ -82,27 +93,30 @@ The energy grows with everything aboard:
 - each basket, crate or chest at its own empty weight; what is in them doesn't count;
 - water in the bilge, by how full it is. A half-full bilge sloshes and brings only half its weight to bear, while a swamped one hits with all of it. Bail before you land.
 
-Vessels nudging each other do the hull no harm.
+What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 
-What one rider's knock does, losing 2 or 4 m/s at once:
+| Vessel | At 2 m/s | At 4 m/s |
+| --- | --- | --- |
+| [Dugout](Dugout) | nothing to see | scratches |
+| [Outrigger canoe](Outrigger-Canoe) | nothing to see | scratches |
+| [Sailboat](Sailboat) | nothing to see | cracks |
+| [Birch-bark canoe](Birch-Bark-Canoe) | nothing to see | cracks |
+| [Reed boat](Reed-Boat) | nothing to see | tears a third of it |
+| [Hide currach](Hide-Currach) | nothing to see | cracks |
+| [Raft](Raft) | shakes a quarter of its lashings loose | mostly breaks it up |
+| [Coracle](Coracle) | cracks | breaks it up |
 
-| Vessel | Chance of harm at 2 m/s | at 4 m/s | A harming knock at 4 m/s |
-| --- | --- | --- | --- |
-| [Dugout](Dugout) | 2% | 11% | scratches |
-| [Outrigger canoe](Outrigger-Canoe) | 3% | 15% | scratches |
-| [Sailboat](Sailboat) | 7% | 31% | cracks |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 6% | 28% | cracks |
-| [Hide currach](Hide-Currach) | 8% | 35% | cracks |
-| [Raft](Raft) | 22% | 70% | mostly shakes it apart |
-| [Coracle](Coracle) | 29% | 82% | mostly breaks it up |
+Even a knock too small to see adds to its place's crack.
 
-An oak raft paddled flat out into a rock comes apart in four or five rams. A sailboat under full sail breaks up on about every other ram, and a harming ram she survives leaves her bow split or stove in.
+### Rams
 
-The [reed boat](Reed-Boat) shrugs off every knock: reed bundles give and spring back.
+A vessel that runs into another strikes both. The two hulls share equally the energy the collision takes out of them, which grows with how fast they closed and is set mostly by the lighter one: a coracle rammed by a sailboat takes about half what a rock would give it, and the sailboat the same, which against her frame is nothing. As with a rock, the first 1 m/s is taken in the stride, so coming alongside gently does no harm. A steered dugout running into a moored one at 5 m/s left each hull about 1250 J.
+
+Only hull against hull rams. A creature or a player swimming into a vessel only pushes it: flesh takes up the blow.
 
 ### Waves
 
-Breaking waves strike the windward side, harder the higher they run and harder still on a flooded hull. That is on [Surf and swamping](Surf-and-Swamping#breakers); waves that reach a vessel left [moored by the shore](Mooring#thrown-ashore) can throw it on its bottom while you are away.
+Breaking waves slam the windward side, and a plunging crest far harder than a spilling one. That is on [Surf and swamping](Surf-and-Swamping#breakers); waves that reach a vessel left [moored by the shore](Mooring#thrown-ashore) can throw it on its bottom while you are away.
 
 ### Rapids
 
@@ -110,7 +124,7 @@ White water batters the bottom of every hull but one, every second it is in it. 
 
 ### Weapons, explosions and lightning
 
-A swing at a hull counts 200 joules for each point of damage the weapon does; an iron axe takes an oak raft apart in about six swings, and a bare fist harms one now and then. Explosions and [lightning](Lightning) count 1000 joules a point, so a bomb or a bolt does far more.
+A swing at a hull counts 200 joules for each point of damage the weapon does. An axe or a saw cuts; anything else is a point blow. An iron axe opens a place of a sailboat or a dugout at every swing, and takes an oak raft apart in about nine. A club springs off a currach's hide until it finds a lath. Explosions and [lightning](Lightning) count 1000 joules a point and reach the whole frame, so a bomb or a bolt does far more.
 
 ## Leaks
 
@@ -146,7 +160,7 @@ A hull is [mended](Mending) one patch at a time, with the vessel's own material,
 
 A flooded hull lies awash or goes to the bottom, by what she is built of and what she carries ([Swamping](Surf-and-Swamping#swamping)). A sunk vessel lies on the bottom whole, her cargo still aboard: dive down to it, or break her up there with an axe for her wreckage. Raising her is planned for [The deep](Roadmap#the-deep).
 
-A vessel broken up, by one severe blow, by its lashings coming loose or by an axe on the bottom, is gone. What it was built from scatters on the water as wreckage, and like any dropped item it lasts about ten minutes:
+A vessel broken up, by one severe blow, by every place stove in, by its lashings coming loose, its reed torn through or an axe on the bottom, is gone. What it was built from scatters on the water as wreckage, and like any dropped item it lasts about ten minutes:
 
 | Vessel | Wreckage |
 | --- | --- |
@@ -161,4 +175,4 @@ A vessel broken up, by one severe blow, by its lashings coming loose or by an ax
 
 Whatever it carried goes with it.
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves and lightning do no harm; knocks, rapids, weapons and explosions still crack a hull, reed still soaks and hide still seeps.
+With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves and lightning do no harm; knocks, rams, rapids, weapons and explosions still crack a hull, reed still soaks and hide still seeps.

@@ -64,6 +64,6 @@ That is your time to make for shore, or to [anchor](Anchoring) far out where the
 - It strains every [anchor](Anchoring) and [mooring rope](Mooring).
 - In warm air it brings [lightning](Lightning), drawn to the masts of the [sailboat](Sailboat) and the [outrigger canoe](Outrigger-Canoe).
 
-Which [vessel](Vessels) to trust in a storm: the [hide currach](Hide-Currach) rides out surf, the [outrigger](Outrigger-Canoe) barely rolls, and the [sailboat](Sailboat) takes the hardest blows; the river boats belong ashore.
+Which [vessel](Vessels) to trust in a storm: the [hide currach](Hide-Currach) rides over surf, though a storm's breakers can stave in her hide, the [outrigger](Outrigger-Canoe) barely rolls, and the [sailboat](Sailboat)'s planks stand the hardest breakers; the river boats belong ashore.
 
 The walking player isn't blown about by a hurricane; the danger is all on the water. With [Dangerous oceans](World-Settings#dangerous-oceans) off, storms still come and go, but do no harm.

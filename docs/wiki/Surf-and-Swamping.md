@@ -40,7 +40,7 @@ A litre of seawater weighs a kilogram, and a bilge holds hundreds. As it fills, 
 
 ## Swamping
 
-A full bilge swamps the vessel. Nobody can paddle it or sit in it, but everyone aboard can hold on to it, in the water at its side. Then bail it out, wait for a lull, or leave it and swim. Every wave breaks over a swamped hull and strikes it harder, so in a breaking sea it won't last long.
+A full bilge swamps the vessel. Nobody can paddle it or sit in it, but everyone aboard can hold on to it, in the water at its side. Then bail it out, wait for a lull, or leave it and swim. Every wave comes over a swamped hull, so it stays swamped while the sea runs.
 
 A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold up outweighs what her own material keeps afloat. The water holds up the riders themselves, as a body is about as dense as seawater; it doesn't hold up the hull, the riders' gear and armour, or the containers. What each vessel holds up awash besides its own hull:
 
@@ -68,9 +68,28 @@ A wave breaks when it grows too steep, and a breaking wave is the dangerous one:
   ![Where waves break: a big wave breaks further out than a small one, where the water is about 1.3 times its height deep](images/diagrams/surf-line.svg)
 
 - **Whitecaps.** Out in deep water, now and then a wave breaks on its own, more often as the wind rises: about one wave in 50 in a strong breeze (force 6), one in 11 in a gale (force 8), one in 4 in a storm (force 10) and three in four in a hurricane.
-- **A swamped vessel.** Once a bilge is full, every wave breaks over it.
+- **A swamped vessel.** Once a bilge is full, every wave comes over it as a breaker would, though only a wave that truly breaks slams it.
 
-A breaker strikes the side the wind comes from, with the energy of the water it throws, which grows very steeply with its height: a 4 m breaker hits about eight times as hard as a 2 m one. A hull full of water takes it harder, up to twice as hard. Each strike is weighed against the hull's [capacity](Hull-Condition#how-a-hull-takes-a-blow) and cracks the windward bow, side or quarter, so a boat beam-on to a breaking sea opens up along one side and floods.
+A breaker slams the side the wind comes from, as a pressure on the planking. How hard depends on how it breaks:
+
+- **Spilling.** Most breakers out at sea spill: the crest tumbles down its own face. The rolling water presses on the side as a stream of that speed would, and a breaker runs faster the higher it is: about 6 kPa from a 1 m breaker, 23 kPa from a 4 m one, 56 kPa from a 10 m one, in deep water.
+- **Plunging.** The crest curls over and falls on the hull, about nine times as hard as a spilling breaker of the same height. At sea only about one breaker in fifty plunges. In the surf the beach decides: on a steep shore most waves plunge, on a gentle one they spill, and a hull further in than where a wave curls over meets only its foaming bore.
+
+A breaker in shallow water runs slower, and presses less, than one of the same height out at sea.
+
+What fails is the planking, bending between what holds it: the frames of a planked hull, the laths behind a hide, the bottom a dugout's side stands from. A slam past its strength stoves in the windward bow, side or quarter it hits; a slam below it does nothing. What stoves in each vessel's windward side, in oak:
+
+| Vessel | Planking holds | A spilling breaker of | A plunging breaker of |
+| --- | --- | --- | --- |
+| [Coracle](Coracle) | 21 kPa | 3.8 m | 0.5 m |
+| [Hide currach](Hide-Currach) | 32 kPa | 5.8 m | 0.7 m |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 60 kPa | 11 m | 1.2 m |
+| [Dugout](Dugout) | 164 kPa | none | 3.3 m |
+| [Outrigger canoe](Outrigger-Canoe) | 209 kPa | none | 4.1 m |
+| [Sailboat](Sailboat) | 705 kPa | none | 14 m |
+| [Raft](Raft), [reed boat](Reed-Boat) | any sea | none | none |
+
+The raft's logs are fifty times stronger than any breaker, and the reed boat's bundles bend and spring back. Out at sea in a gale (force 9) only the rare plunging crest stoves in a skin boat; in a storm (force 10) its spilling breakers do it too, and on a steep beach even modest surf does. A boat beam-on to a breaking sea opens up along one side and floods.
 
 ## Capsizing
 
@@ -101,10 +120,10 @@ Measured in the game, unanchored in open water, a few minutes in each sea:
 | 3 m | The dugout swamped and capsized, and the [bark canoe](Birch-Bark-Canoe) swamped. The [coracle](Coracle) and the raft broke. The outrigger shipped 129 litres; the currach stayed upright. |
 | 4 m | The dugout rolled twice as far as the currach and ten times as far as the outrigger. The outrigger swamped and broke on a 5.4 m breaker. |
 
-These were measured before capsizing was switched off and before hulls cracked where hit, in seas set to each height. A lake raises waves by its size and depth, a [pond barely ripples](Wind-and-Waves#how-high), and rivers have their own danger, [rapids](Rapids): that is where the river boats belong. The currach, the outrigger and the [sailboat](Sailboat) are the vessels for the sea.
+These were measured in 2.0, in seas set to each height, before capsizing was switched off and before breakers slammed as they do now: today no breaker breaks the raft. A lake raises waves by its size and depth, a [pond barely ripples](Wind-and-Waves#how-high), and rivers have their own danger, [rapids](Rapids): that is where the river boats belong. The currach, the outrigger and the [sailboat](Sailboat) are the vessels for the sea.
 
 ## At anchor
 
-A vessel at [anchor](Anchoring) ships less water and takes milder blows: three tenths of each. It still lies across the waves; turning its bow into the wind comes with sailing in [Seamanship](Roadmap#seamanship).
+A vessel at [anchor](Anchoring) ships less water, three tenths of it, but a breaker slams it as hard as any other. It still lies across the waves; turning its bow into the wind comes with sailing in [Seamanship](Roadmap#seamanship).
 
 With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves don't come aboard, strike or capsize anything.

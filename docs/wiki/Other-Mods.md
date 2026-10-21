@@ -127,7 +127,7 @@ Extreme Weathers' whiteout needs precipitation above 0.95 at −2 °C or colder.
 | tuja | northern white cedar | 45 |
 | empresstree | paulownia | 38 |
 
-The rest (cedar, which is Siberian pine, ginkgo, banyan, bearnut, tamanu, spurgetree, ghostgum, satinash, sal, bluemahoe, saxaul, charred and chlorociboria) have no published bending strength we could source, and count as an unknown wood: 93.5 MPa, the middle of the vanilla woods. The server log names each of them once.
+The rest (cedar, which is Siberian pine, ginkgo, banyan, bearnut, tamanu, spurgetree, ghostgum, satinash, sal, bluemahoe, saxaul, charred and chlorociboria) have no published bending strength we could source, and count as an unknown wood: 93.5 MPa, the middle of the vanilla woods. Against a point blow or a cut, only beech, ash, linden, elm, spruce, willow and tuja of Wildcraft's woods have a measured toughness; the rest count as 60 kJ/m² ([What it is made of](Hull-Condition#what-it-is-made-of)). The server log names each unknown once.
 
 ### Canoes of elm and spruce bark
 

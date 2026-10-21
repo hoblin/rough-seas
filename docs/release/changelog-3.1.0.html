@@ -1,0 +1,29 @@
+<p>3.1 makes every blow harm a hull by its physics. What hits it, and what it hits, decides now, from measured material data, not a roll of the dice.</p>
+
+<p>What harms a boat now:</p>
+<ul>
+<li><strong>Other boats.</strong> Run into another vessel and both hulls take the knock, shared by their masses. A light boat rammed by a heavy one suffers; the heavy one hardly notices.</li>
+<li><strong>Clubs, spears and fists</strong> break only the plank they land on, by the wood's toughness and thickness. A sailboat's thin planks give where a dugout's thick walls hold.</li>
+<li><strong>Axes and saws cut.</strong> A planked hull breaks up once every place is stove in, so an axe takes a boat apart on the beach too.</li>
+<li><strong>Breakers</strong> press on the windward side, and what fails is the planking bending between its frames. A spilling whitecap presses gently. A plunging crest slams about nine times harder, and on a steep beach most waves plunge. A storm's sea stoves in the coracle and the currach.</li>
+<li><strong>Thrown ashore</strong>, a moored vessel hits the bottom at the speed of the breakers that threw it.</li>
+</ul>
+
+<p>What doesn't:</p>
+<ul>
+<li>Creatures and swimmers. They only push a boat.</li>
+<li>A breaker on the raft or the sailboat. Their logs and planks stand any sea.</li>
+<li>A club or a breaker on the reed boat: the bundles spring back. A blade still parts its lashings, and a hard knock on rock tears it, shown now as <em>Reed torn</em>.</li>
+<li>A hide hull springs back from a blow, unless a lath backs it right there.</li>
+<li>Bad luck. Each blow meets a piece of wood as strong as real timber happens to be, no stronger and no weaker.</li>
+</ul>
+
+<p>The handbook and the wiki say what each vessel stands: <a href="https://github.com/hoblin/rough-seas/wiki/Hull-Condition">Hull condition</a>, <a href="https://github.com/hoblin/rough-seas/wiki/Surf-and-Swamping#breakers">Breakers</a>.</p>
+
+<p>For modders: a vessel gets a <code>shell</code>, what a blow, a cut and a breaker meet. No documented key was removed, but a vessel of yours fares differently: two hulls ram, a <code>reed</code> hull tears, and one without a <code>shell</code> takes no harm from breakers. These <code>config/storms.json</code> keys are gone:</p>
+<ul>
+<li><code>waves.breakerTransfer</code>: a breaker's slam pressure, set against the planking's bending strength.</li>
+<li><code>waves.periodSecondsPerRootMetre</code>: a breaker's speed follows from its height at the steepest a wave can stand, capped by the sea's own period.</li>
+<li><code>ashore.impactFactor</code>: a thrown vessel strikes as running aground at the breaker's speed.</li>
+</ul>
+<p>What changed for a vessel of yours: <a href="https://github.com/hoblin/rough-seas/wiki/For-Modders#blows-by-their-physics">For modders</a>.</p>

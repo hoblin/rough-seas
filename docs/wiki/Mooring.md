@@ -20,7 +20,7 @@ A snapped vessel drifts, and in a storm the drift is downwind. Pull small boats 
 
 ## Thrown ashore
 
-A vessel moored near the shore with nobody around may be thrown onto the beach while you are away. When you come back after a game hour or more, Rough Seas works out what the waves did while you were gone: how high they ran, for how long, and how much open water lay between the vessel and the shore. The higher and longer the sea, and the nearer the shore, the likelier it is that the vessel was thrown ashore. A thrown vessel takes three times the blow of a breaker as high as the highest sea of that time; it isn't moved, its anchor and bilge are as they were, and the hull [takes the strike](Hull-Condition#how-a-hull-takes-a-blow).
+A vessel moored near the shore with nobody around may be thrown onto the beach while you are away. When you come back after a game hour or more, Rough Seas works out what the waves did while you were gone: how high they ran, for how long, and how much open water lay between the vessel and the shore. The higher and longer the sea, and the nearer the shore, the likelier it is that the vessel was thrown ashore. A thrown vessel hits the bottom as if run aground at the speed the breakers of the highest sea of that time ran: in a gale's 5.5 m sea, about 7 m/s. That breaks up a raft, and the heavy sailboat more often than not, and cracks or stoves in the bottom of the rest. It isn't moved, its anchor and bilge are as they were, and the hull [takes the strike](Hull-Condition#how-a-hull-takes-a-blow).
 
 ![A raft tied to a post swings into the surf; a boat anchored well out has open water between its swing and the shore](images/diagrams/thrown-ashore.svg)
 
