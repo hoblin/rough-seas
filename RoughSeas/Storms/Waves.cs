@@ -14,8 +14,11 @@ public class Waves(WavesConfig config)
     }
 
     /// <summary>The speed of a breaker this high: as long as its breaking steepness makes it, and no faster than the sea's own waves.</summary>
-    public double BreakerCelerity(double height, double period, double depth) =>
-        Math.Min(Celerity(period, depth), Math.Sqrt(Gravity * height / config.BreakingSteepness / (2 * Math.PI)));
+    public double BreakerCelerity(double height, double period, double depth)
+    {
+        var ownPeriod = Math.Sqrt(2 * Math.PI * height / config.BreakingSteepness / Gravity);
+        return Celerity(Math.Min(period, ownPeriod), depth);
+    }
 
     public double BreakingChance(double windMps) =>
         Math.Min(1, config.WhitecapCoefficient * Math.Pow(windMps, config.WhitecapExponent));

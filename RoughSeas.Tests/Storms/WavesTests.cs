@@ -78,6 +78,14 @@ public class WavesTests
     }
 
     [Fact]
+    public void AShortBreakerSlowsOverAShallowBedAsAnyWaveOfItsPeriodDoes()
+    {
+        var ownPeriod = Math.Sqrt(2 * Math.PI / 0.142 / 9.81);
+
+        Assert.Equal(Waves.Celerity(ownPeriod, 1.28), waves.BreakerCelerity(1, 9, 1.28), 6);
+    }
+
+    [Fact]
     public void AGaleBreakerBreaksACoraclesRibsWhileTheSailboatsPlanksHoldEvenAPlunger()
     {
         var celerity = waves.BreakerCelerity(5.5, 9, double.PositiveInfinity);
