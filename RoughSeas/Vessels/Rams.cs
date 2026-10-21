@@ -11,10 +11,13 @@ namespace RoughSeas.Vessels;
 public class Rams(double give)
 {
     private const double TicksPerSecond = 60;
+    private const int HullsInARam = 2;
 
     private HashSet<long> touching = [];
 
-    public static double ReducedKg(double kilograms, double theirKilograms) => kilograms * theirKilograms / (kilograms + theirKilograms);
+    /// <summary>This hull's share of the energy the contact takes out of the pair; the other hull takes the rest.</summary>
+    public double Joules(double kilograms, double theirKilograms, double closingSpeed) =>
+        0.5 * kilograms * theirKilograms / (kilograms + theirKilograms) * (closingSpeed * closingSpeed - give * give) / HullsInARam;
 
     public List<Knocked> Step(IReadOnlyCollection<Contact> contacts)
     {
@@ -34,10 +37,10 @@ public class Rams(double give)
         double apart = Math.Max(1e-9, Math.Sqrt(contact.TowardX * contact.TowardX + contact.TowardZ * contact.TowardZ));
         double towardX = contact.TowardX / apart, towardZ = contact.TowardZ / apart;
         double speed = (contact.ClosingX * towardX + contact.ClosingZ * towardZ) * TicksPerSecond;
-        return new Knocked(speed, towardX * speed, towardZ * speed, contact.Against);
+        return new Knocked(speed, towardX * speed, towardZ * speed, contact.Against, contact.TheirKg);
     }
 }
 
 /// <param name="TowardX">From this hull's centre to the other's.</param>
 /// <param name="ClosingX">This hull's motion less the other's.</param>
-public readonly record struct Contact(long Against, double TowardX, double TowardZ, double ClosingX, double ClosingZ);
+public readonly record struct Contact(long Against, double TowardX, double TowardZ, double ClosingX, double ClosingZ, double TheirKg = 0);

@@ -33,4 +33,5 @@ public class Impact(double give, long guardMs)
 }
 
 /// <param name="Against">The vessel rammed; 0 for the ground.</param>
-public readonly record struct Knocked(double SpeedLost, double TowardX, double TowardZ, long Against = 0);
+/// <param name="TheirKg">What the vessel rammed weighed with all aboard her.</param>
+public readonly record struct Knocked(double SpeedLost, double TowardX, double TowardZ, long Against = 0, double TheirKg = 0);

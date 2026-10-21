@@ -4,24 +4,10 @@ namespace RoughSeas.Tests.Vessels;
 
 public class ResistanceTests
 {
-    private readonly Resistance resistance = new(FrameJoules: 30000, PlaceJoules: 400, CutShare: 0.25);
-
     [Fact]
-    public void TheWholeFrameTakesABroadLoad()
+    public void TheWholeFrameTakesABroadLoadWhateverTheShell()
     {
-        Assert.Equal(30000, resistance.Against(Blow.Broad));
-    }
-
-    [Fact]
-    public void OnlyTheShellWhereItLandsTakesAPointBlow()
-    {
-        Assert.Equal(400, resistance.Against(Blow.Point));
-    }
-
-    [Fact]
-    public void AnEdgeSpendsItsEnergyOnTheCutAlone()
-    {
-        Assert.Equal(100, resistance.Against(Blow.Cut));
+        Assert.Equal(30000, new Resistance(FrameJoules: 30000, ShellPoint: 400, ShellCut: 100).Against(Blow.Broad, backed: true));
     }
 
     [Fact]

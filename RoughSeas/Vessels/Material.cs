@@ -8,4 +8,6 @@ public class Material
     public string DensitySource = "";
     public double? Toughness;
     public string ToughnessSource = "";
+    public double? CutToughness;
+    public string CutToughnessSource = "";
 }

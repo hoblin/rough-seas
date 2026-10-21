@@ -36,6 +36,14 @@ public class RamsTests
     }
 
     [Fact]
+    public void CarriesTheWeightOfTheHullRammedWithTheRam()
+    {
+        var knocked = Assert.Single(rams.Step([new Contact(Other, 2, 0, 3 * PerTick, 0, TheirKg: 400)]));
+
+        Assert.Equal(400, knocked.TheirKg);
+    }
+
+    [Fact]
     public void IgnoresABodyDriftingAgainstTheHullUnderItsGive()
     {
         Assert.Empty(rams.Step([Touching(towardX: 2, closingX: 0.8)]));
@@ -74,10 +82,15 @@ public class RamsTests
     }
 
     [Fact]
-    public void SharesTheBlowByTheReducedMassOfThePair()
+    public void TwoEqualHullsShareTheEnergyTheirContactTakesOut()
     {
-        Assert.Equal(100, Rams.ReducedKg(200, 200), 6);
-        Assert.Equal(200, Rams.ReducedKg(200, 1e9), 3);
+        Assert.Equal(0.5 * 100 * (9 - 1) / 2, rams.Joules(kilograms: 200, theirKilograms: 200, closingSpeed: 3), 6);
+    }
+
+    [Fact]
+    public void AgainstAFarHeavierHullTheContactTakesThisHullsOwnEnergy()
+    {
+        Assert.Equal(0.5 * 200 * (9 - 1) / 2, rams.Joules(kilograms: 200, theirKilograms: 1e9, closingSpeed: 3), 3);
     }
 
     private static Contact Touching(double towardX, double closingX) => new(Other, towardX, 0, closingX * PerTick, 0);

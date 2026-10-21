@@ -48,6 +48,8 @@ public class MaterialTable
         Row(material, row => row.Toughness, "toughness", "it takes that of an unknown wood")
         ?? materials[UnknownWood].Toughness!.Value;
 
+    public double? CutToughness(string material) => materials.GetValueOrDefault(material)?.CutToughness;
+
     private static string ReferenceOf(VesselPart part) => part.Reference == "" ? part.Material : part.Reference;
 
     private double Litres(double kilograms, string material) => kilograms / Density(material) * 1000;

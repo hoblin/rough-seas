@@ -46,7 +46,7 @@
     "wood-empresstree": { "strength": 37.8, "source": "Paulownia (Paulownia tomentosa), modulus of rupture in MPa; wood-database.com/paulownia", "density": 280, "densitySource": "Paulownia, average dried weight in kg/m³; wood-database.com/paulownia" },
     "rope-flax": { "strength": 11.0, "source": "Flax rope, 12 mm, breaking strength in kN (BS EN ISO 1181); flints.co.uk ROP304", "density": 1480, "densitySource": "Bast fibre rope, 1430 to 1520 kg/m³ for the fibre (pmc.ncbi.nlm.nih.gov/articles/PMC8911747); its share of a hull is too small to need the air in its lay" },
     "reed": { "density": 200, "densitySource": "Balance: a bundle of dry totora stems, spongy pith with air between them; totora pressed into building boards weighs 316 kg/m³ (dspace.ucuenca.edu.ec)" },
-    "hide": { "density": 860, "densitySource": "Leather, dry, kg/m³; engineeringtoolbox.com/density-solids-d_1265.html" },
-    "bark": { "density": 560, "densitySource": "Mountain birch bark, basic density in kg/m³; Silva Fennica, article 5113" },
+    "hide": { "density": 860, "densitySource": "Leather, dry, kg/m³; engineeringtoolbox.com/density-solids-d_1265.html", "cutToughness": 17000, "cutToughnessSource": "Skin torn apart, in J/m²: pig skin's toughness by trouser tear, 17 ± 4 kJ/m² (Comley & Fleck 2010)" },
+    "bark": { "density": 560, "densitySource": "Mountain birch bark, basic density in kg/m³; Silva Fennica, article 5113", "toughness": 656, "toughnessSource": "Bark as a thick birch veneer, which a blow splits along its grain: silver birch's work of fracture, 656 J/m² (Wood Science and Technology, 2024, doi.org/10.1007/s00226-024-01595-6)", "cutToughness": 656, "cutToughnessSource": "An edge splits it along the grain as a blow does" },
     "iron": { "density": 7200, "densitySource": "Cast iron ballast, kg/m³; engineeringtoolbox.com/density-solids-d_1265.html" }
 }

@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
+using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
@@ -110,4 +113,12 @@ public interface IBuoyant
     Aboard Aboard { get; }
 
     double ReferenceKg { get; }
+}
+
+/// <summary>What another vessel meets of this one: the shape of her hull and what she carries.</summary>
+public interface IHull : IBuoyant
+{
+    HullShape Shape { get; }
+
+    static IHull? Of(Entity entity) => entity is EntityBoat ? entity.SidedProperties.Behaviors.OfType<IHull>().FirstOrDefault() : null;
 }

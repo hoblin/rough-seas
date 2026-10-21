@@ -9,15 +9,29 @@ public enum Blow
     Cut
 }
 
-public readonly record struct Resistance(double FrameJoules, double PlaceJoules, double CutShare)
+/// <param name="ShellPoint">The shell's own holing work; infinite for a skin, which springs back from a blow.</param>
+/// <param name="BackedShare">Of the side's area, the share a lath or sheathing backs; <paramref name="BottomBackedShare"/> the bottom's.</param>
+public readonly record struct Resistance(
+    double FrameJoules,
+    double ShellPoint,
+    double ShellCut,
+    double BackingPoint = 0,
+    double BackingCut = 0,
+    double BackedShare = 0,
+    double BottomBackedShare = 0)
 {
+    public static Resistance Whole(double frameJoules) => new(frameJoules, frameJoules, frameJoules);
+
     public static double Holing(double toughness, double shellMetres, double holeSquareMetres) =>
         toughness * 2 * Math.Sqrt(Math.PI * holeSquareMetres) * shellMetres;
 
-    public double Against(Blow blow) => blow switch
+    public bool Backed(HullPlace place, double draw) => draw < (place == HullPlace.Bottom ? BottomBackedShare : BackedShare);
+
+    public double Against(Blow blow, bool backed) => blow switch
     {
-        Blow.Point => PlaceJoules,
-        Blow.Cut => PlaceJoules * CutShare,
+        Blow.Point when backed => (double.IsPositiveInfinity(ShellPoint) ? 0 : ShellPoint) + BackingPoint,
+        Blow.Point => ShellPoint,
+        Blow.Cut => ShellCut + (backed ? BackingCut : 0),
         _ => FrameJoules
     };
 

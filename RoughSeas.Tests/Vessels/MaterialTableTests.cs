@@ -182,14 +182,4 @@ public class MaterialTableTests
     }
 
     private static VesselPart Part(string material, string reference, double share = 1) => new() { Material = material, Reference = reference, Share = share };
-
-    private class CountingLogger : LoggerBase
-    {
-        public int Warnings { get; private set; }
-
-        protected override void LogImpl(EnumLogType logType, string format, params object[] args)
-        {
-            if (logType == EnumLogType.Warning) Warnings++;
-        }
-    }
 }
