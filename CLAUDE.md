@@ -16,11 +16,11 @@ A pull request that makes Rough Seas work beside another mod adds or updates tha
 
 ## Physics decides
 
-Every mechanic is derived from physics, and that is why the sea feels real. A model starts from what physically happens: where a blow's energy goes, what resists it, which property of which material decides. Its inputs are measured quantities with their sources (a wood's toughness, a plank's thickness, a wave's speed), written beside them in the JSON. What the player gets, how many swings or storms a hull takes, is whatever the data gives. Never pick a result first and tune a number to reach it.
+Every mechanic is derived from physics; that is why the game feels real. Model what physically happens, feed the model measured quantities with their sources, and let the outcome be whatever it gives. Never choose the outcome first and tune a number to reach it.
 
-Chance is a real mechanism too: the scatter of a material's measured strength, or where on a hull a blow lands. Not a die rolled for the sake of variety.
+Randomness is part of the physics too: the real spread of the world the model describes, never a die rolled for variety.
 
-When the game feels wrong, look for the wrong input or the missing mechanism, and fix that. Where no measured value exists, say so in the source note ("Balance: …") and file the gap.
+When the game feels wrong, find the wrong input or the missing mechanism. Where no measurement exists, say so beside the number and file the gap.
 
 ## Tools first
 
