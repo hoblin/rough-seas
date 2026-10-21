@@ -46,7 +46,8 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Sailboat](Sailboat)
 
 **The science behind it**
-- [The science behind it](The-Science-Behind-It): the measurements and models the sea and weather stand on, and where we bent them.
+- [The science of the sea](The-Science-of-the-Sea): the measurements and models the wind, waves and storms stand on, and where we bent them.
+- [The science of the hull](The-Science-of-the-Hull): the same for how a hull takes a blow, floats, leaks and rides the swell.
 
 **Beside other mods**
 - [Beside other mods](Other-Mods): the mods we tested Rough Seas with, what changes in one mod set, and what we recommend.

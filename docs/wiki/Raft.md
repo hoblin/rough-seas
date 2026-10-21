@@ -4,7 +4,7 @@ Logs laid side by side and lashed with rope to three cross-logs. It is the game'
 
 ## In Rough Seas
 
-A barge for floating cargo down a river or across a calm lake. A raft never swamps, because the water washes straight through it, and it holds its rider up even pressed under: an oak raft with one aboard lies awash, its logs at the water, and still paddles, while a pine or bamboo one carries its rider above the water. Only a heavy load goes down with it: two riders in plate sink an oak raft. That is all it does well. Knocks don't break its logs, they work its lashings loose: a few hard knocks shake it apart, [rapids](Rapids) do it in seconds, and a [breaking sea](Surf-and-Swamping) the same. The wood counts: an oak raft takes more than a pine one, and a bamboo one more than either. Bind its lashings up again with flax twine.
+A barge for floating cargo down a river or across a calm lake. A raft never swamps, because the water washes straight through it, and it holds its rider up even pressed under: an oak raft with one aboard lies awash, its logs at the water, and still paddles, while a pine or bamboo one carries its rider above the water. Only a heavy load goes down with it: two riders in plate sink an oak raft. That is all it does well. Knocks don't break its logs, they work its lashings loose: a few hard knocks shake it apart, and [rapids](Rapids) do it in seconds. A [breaking sea](Surf-and-Swamping#breakers) can't: its logs are far stronger than any breaker. The wood counts: an oak raft takes more than a pine one, and a bamboo one more than either. Bind its lashings up again with flax twine.
 
 ## Where it comes from
 
@@ -22,7 +22,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | [Mending](Mending) | 1 flax twine binds up a fifth of its lashings |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker |
-| [Rapids](Rapids) | broken in about a quarter of a minute |
+| [Rapids](Rapids) | broken in about four seconds |
 | [Lightning](Lightning) | a strike nearby breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |

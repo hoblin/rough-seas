@@ -40,7 +40,7 @@ The [Beaufort scale](https://en.wikipedia.org/wiki/Beaufort_scale) is how sailor
 
 ## Waves
 
-A wind raises waves by blowing across water, and how high they grow depends on three things: how hard it blows, how far it blows over open water, and for how long. Rough Seas grows them the way coastal engineers predict waves, from exactly these; the models are on [The science behind it](The-Science-Behind-It). The water decides as much as the wind.
+A wind raises waves by blowing across water, and how high they grow depends on three things: how hard it blows, how far it blows over open water, and for how long. Rough Seas grows them the way coastal engineers predict waves, from exactly these; the models are on [The science of the sea](The-Science-of-the-Sea). The water decides as much as the wind.
 
 - **The fetch.** The fetch is the stretch of open water the wind has blown across before it reaches you, measured straight upwind to the shore. A pond barely ripples in a gale that raises a heavy sea in open water.
 - **The depth.** Shallow water holds the waves down and shortens them, so the same wind raises less in a shallow bay than offshore.

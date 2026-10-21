@@ -4,7 +4,7 @@ Three bundles of reeds, lashed tight with reed rope and drawn up into a point at
 
 ## In Rough Seas
 
-A few days afloat at a time. The reed boat is the cheapest thing that floats, and nothing breaks it: rocks, rapids and breakers only bend the bundles. Water is what ends it. The reed soaks up its own weight in water every 18 hours, sitting lower and lower, and after about three days afloat it lies on the bottom. Haul it out under the open sky and it dries in the sun, but each drying leaves it a little more rotten, and soaked through and dried about five times, it sinks the moment it is launched. It can't be mended, and the sea washes straight through it, so there is nothing to bail. Take it across the lake or out to the island, and dry it before the trip home.
+A few days afloat at a time. The reed boat is the cheapest thing that floats, and hard to break: a club or a breaker only bends the bundles, and a blade harms it only where it cuts a lashing. A hard knock on a rock, a ram or a run of rapids tears it, though, and lightning tears it apart. Mostly, water is what ends it. The reed soaks up its own weight in water every 18 hours, sitting lower and lower, and after about three days afloat it lies on the bottom. Haul it out under the open sky and it dries in the sun, but each drying leaves it a little more rotten, and soaked through and dried about five times, it sinks the moment it is launched. It can't be mended, and the sea washes straight through it, so there is nothing to bail. Take it across the lake or out to the island, and dry it before the trip home.
 
 ## Where it comes from
 
@@ -16,14 +16,14 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | --- | --- |
 | Speed | 1.3 × the raft, paddled |
 | Turning | nimble |
-| [Hull](Hull-Condition) | shrugs off every knock |
+| [Hull](Hull-Condition) | 3000 J; tears, shown as *Reed torn* |
 | [Soaking](Hull-Condition#seeping-and-soaking) | 80 kg of water a day afloat: on the bottom in about three days; dries ashore in the sun, a third of it left behind as rot |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 36 cm empty, 25 cm with its paddler, when dry |
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
-| [Rapids](Rapids) | unharmed |
-| [Lightning](Lightning) | unharmed |
+| [Rapids](Rapids) | torn through in about ten seconds |
+| [Lightning](Lightning) | torn apart |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |

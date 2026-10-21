@@ -25,7 +25,7 @@ Speeds are against the raft, measured on a calm sea.
 | | [Hull](Hull-Condition) | [Bilge](Bailing) | [Flooded](Surf-and-Swamping#swamping) | [Capsized by](Surf-and-Swamping#capsizing) | [Upkeep](Hull-Condition#seeping-and-soaking) | [Mended with](Mending) | Carried |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Raft](Raft) | 1200 J | none | never floods | 2 m | none | a rope | picked up |
-| [Reed boat](Reed-Boat) | no knock harms it | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
+| [Reed boat](Reed-Boat) | 3000 J, and tears | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
 | [Dugout](Dugout) | 30 000 J | 450 l | awash | 0.75 m | none | a log | no |
 | [Coracle](Coracle) | 400 J | 250 l | awash | 0.6 m | none | a small hide | worn on the back |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2400 J | 600 l | awash | 0.75 m | none | bark of its tree | picked up |

@@ -21,7 +21,7 @@ What stays either way:
 
 - wind, [storms](Storms), rain and their warnings;
 - [currents](Currents) and the drift of a vessel left alone;
-- [impacts](Hull-Condition#knocks-and-landings) on rock and shore, [rapids](Rapids), weapons and explosions, a [currach's seams and a reed boat's soaking](Hull-Condition#seeping-and-soaking);
+- [impacts](Hull-Condition#knocks-and-landings) on rock and shore, [rams](Hull-Condition#rams) between vessels, [rapids](Rapids), weapons and explosions, a [currach's seams and a reed boat's soaking](Hull-Condition#seeping-and-soaking);
 - [mending](Mending), [bailing](Bailing), anchoring and tying up.
 
 Nothing in Rough Seas harms a swimmer yet: cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).
