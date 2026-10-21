@@ -35,13 +35,13 @@ Each harming blow cracks its own place further, and a second knock elsewhere cra
 What a blow does depends on what it is:
 
 - **A knock, a ram, rapids, an explosion or lightning** shakes the whole boat. A heavy, stout hull takes it in its stride; a light one cracks where it was hit, and a hard enough one breaks it up at once.
-- **A club, a spear, a stone or a fist** hits one plank. A thin plank gives where a thick one holds: a club that bounces off a dugout's walls can stave in a sailboat's planks.
+- **A club, a spear, a stone or a fist** hits one plank. A thin plank gives sooner than a thick one: a club that only cracks a dugout's wall can stave in a sailboat's plank at one blow.
 - **An axe or a saw** cuts through far more easily: an iron axe opens a place of most boats at every swing.
 - **A breaking wave** presses on the windward side, and either the planks hold or they are stove in ([Breakers](Surf-and-Swamping#breakers)).
 
 A hull breaks up from one really severe blow, or once every place is stove in. Cracks short of that don't break it: they let in the sea.
 
-No two boats are quite alike, as no two pieces of wood are, so the same knock may crack one hull a little more than another. There are no dice: a small knock on a stout hull is always nothing, and a big one on a light hull is always trouble.
+No two boats are quite alike, as no two pieces of wood are, so the same knock may crack one hull a little more than another. There are no dice: a small knock on a stout hull always leaves a small scratch, and a big one on a light hull is always trouble. Small knocks add up.
 
 ### Hide and reed
 
@@ -92,16 +92,16 @@ What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 
 | Vessel | At 2 m/s | At 4 m/s |
 | --- | --- | --- |
-| [Dugout](Dugout) | nothing to see | scratches |
-| [Outrigger canoe](Outrigger-Canoe) | nothing to see | scratches |
-| [Sailboat](Sailboat) | nothing to see | cracks |
-| [Birch-bark canoe](Birch-Bark-Canoe) | nothing to see | cracks |
-| [Reed boat](Reed-Boat) | nothing to see | tears a third of it |
-| [Hide currach](Hide-Currach) | nothing to see | cracks |
+| [Dugout](Dugout) | scratches | scratches |
+| [Outrigger canoe](Outrigger-Canoe) | scratches | scratches |
+| [Sailboat](Sailboat) | scratches | cracks |
+| [Birch-bark canoe](Birch-Bark-Canoe) | scratches | cracks |
+| [Reed boat](Reed-Boat) | tears a little | tears a third of it |
+| [Hide currach](Hide-Currach) | scratches | cracks |
 | [Raft](Raft) | shakes a quarter of its lashings loose | mostly breaks it up |
 | [Coracle](Coracle) | cracks | breaks it up |
 
-Even a knock too small to see adds to its place's crack.
+Every knock adds to its place's crack, so a scratch from a bump becomes a crack after a few more.
 
 ### Rams
 

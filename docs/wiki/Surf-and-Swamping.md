@@ -89,7 +89,7 @@ Either the planks hold, or the windward bow, side or quarter it hits is stove in
 | [Sailboat](Sailboat) | none | 14 m |
 | [Raft](Raft), [reed boat](Reed-Boat) | none | none |
 
-No breaker breaks the raft's logs, and the reed boat's bundles bend and spring back. Out at sea in a gale (force 9) only the rare plunging crest stoves in a skin boat; in a storm (force 10) its spilling breakers do it too, and on a steep beach even modest surf does. A boat beam-on to a breaking sea opens up along one side and floods.
+No breaker breaks the raft's logs, and the reed boat's bundles bend and spring back. A weaker wood gives sooner: a kapok sailboat is stove in by a 5 m plunging crest. Out at sea in a gale (force 9) only the rare plunging crest stoves in a skin boat; in a storm (force 10) its spilling breakers do it too, and on a steep beach even modest surf does. A boat beam-on to a breaking sea opens up along one side and floods.
 
 ## Capsizing
 

@@ -55,7 +55,7 @@ Every blow harms a hull by what it is and what it meets.
 - **[Blows, cuts and loads](Hull-Condition#how-a-hull-takes-a-blow).** A knock, a ram, rapids or lightning loads the whole frame; a club only the shell where it lands, by the wood's toughness and thickness; an axe cuts. Hide springs back unless a lath backs it. A planked hull breaks up once every place is stove in, so an axe can take a boat apart ashore.
 - **No dice.** Each blow meets a piece of wood as strong as real timber scatters.
 - **The reed boat tears.** Knocks, rapids and lightning tear it, a blade only at its lashings; *Reed torn* shows how far.
-- **[Breakers slam](Surf-and-Swamping#breakers)** the windward side as a pressure on the planking: a spilling one gently, a plunging one nine times as hard, and on a steep beach most of them plunge. The skin boats are stove in by a storm's breakers, the sailboat and the raft stand any sea.
+- **[Breakers slam](Surf-and-Swamping#breakers)** the windward side as a pressure on the planking: a spilling one gently, a plunging one nine times as hard, and on a steep beach most of them plunge. The skin boats are stove in by a storm's breakers; the raft stands any sea, and the sailboat all but a huge plunging crest.
 - **[Thrown ashore](Mooring#thrown-ashore)**, a moored vessel hits the bottom at the speed of the breakers that threw it.
 - **For modders:** a vessel's [`shell`](Building-a-Vessel#the-hull), and [what changed](For-Modders#blows-by-their-physics) for a vessel of yours.
 
