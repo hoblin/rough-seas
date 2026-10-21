@@ -128,7 +128,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             sinceUpdate = 0;
             if (ashoreIn > 0) return;
 
-            if (sea.DangerousOceans) ashore.Roll(forces, entity.GetBehavior<EntityBehaviorVesselIntegrity>());
+            if (sea.DangerousOceans) ashore.Roll(entity.GetBehavior<EntityBehaviorVesselIntegrity>());
             ashore = null;
         }
         sinceUpdate = 0;

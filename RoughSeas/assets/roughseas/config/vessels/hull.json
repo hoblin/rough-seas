@@ -2,7 +2,9 @@
     "dischargeCoefficient": 0.61,
     "crackSquareCentimetres": 25,
     "sideCrackShare": 0.25,
+    "soakedStrengthShare": 0.57,
     "sources": {
+        "soakedStrengthShare": "A hull's wood is soaked past its fibre saturation, and bends as green wood does: green against 12% modulus of rupture averages 0.57 over white ash, aspen, basswood, beech, paper and yellow birch, elm, white pine, Sitka, red and white spruce (Wood Handbook, Forest Products Laboratory, via engineersedge.com/civil_engineering/wood_engineering_properties_13743.htm and _3_13745.htm)",
         "dischargeCoefficient": "Torricelli's law through a sharp-edged opening: contraction 0.62 by velocity 0.98 (USBR Water Measurement Manual, ch. 2)",
         "crackSquareCentimetres": "Balance: a hull stove in at one place leaks like a 5.6 cm hole, and a blow must break its shell around that hole to stove it in; three litres a second 20 cm down; a hard knock's quarter of it lets in 56 L a minute a foot down, a little over the 45 L a minute Landfall Navigation's flooding table gives a 2.5 cm hole there at a discharge of 0.6",
         "sideCrackShare": "Rocks and quays meet a side at the turn of the bilge, a quarter of the way up from the keel: below the waterline once she is laden"

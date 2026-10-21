@@ -24,7 +24,7 @@
             "impactCapacity": 2400,
             "runsRapids": true,
             "parts": [{"material": "bark", "share": 0.5}, {"material": "wood-tuja", "share": 0.5}],
-            "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 1},
+            "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 1, "spanMetres": 0.25},
             "depthMetres": 0.29,
             "waterplaneSquareMetres": 2.4,
             "repairs": [{
@@ -39,7 +39,7 @@
             "damage": {"textures": ["bark"], "material": "bark"},
             "sources": {
                 "parts": "Bark sewn over a frame of white cedar ribs, sheathing and gunwales, about half of each by weight",
-                "shell": "Balance: bark half a centimetre thick, lined all over by the cedar sheathing, 1/8 in thick (native-art-in-canada.com/birchbarkcanoes.html), so a blow splits both",
+                "shell": "Balance: bark half a centimetre thick, lined all over by the cedar sheathing, 1/8 in thick (native-art-in-canada.com/birchbarkcanoes.html), so a blow splits both. A breaker bends bark and sheathing together between the ribs, by the model every 4 voxels",
                 "depthMetres": "Keel to gunwale amidships: a 4 cm draft with one paddler in a 30 kg hull and about a quarter metre of side above it",
                 "waterplaneSquareMetres": "A 4.5 m canoe 0.75 m wide, fine at both ends, so that 600 L aboard settles her by her quarter metre of side"
             }

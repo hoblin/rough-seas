@@ -29,7 +29,7 @@
             "damage": {"textures": ["reed"], "material": "reed"},
             "sources": {
                 "depthMetres": "The bundles stand about 0.45 m from bottom to top",
-                "shell": "Bundles of stems, which a blow bends and an edge parts without harm; she comes apart where an edge cuts a lashing. Reed rope, as flax rope, wrapped 2.2 cm thick; by the model, ten ties 0.8 voxel wide along each side bundle's 46 voxels cover 17% of her sides, and four bindings across her 7% of her bottom",
+                "shell": "Bundles of stems, which a blow bends and an edge parts without harm; she comes apart where an edge cuts a lashing. Reed rope, as flax rope, wrapped 2.2 cm thick; by the model, ten ties 0.8 voxel wide along each side bundle's 46 voxels cover 17% of her sides, and four bindings across her 7% of her bottom. A breaker's pressure bends the stems, which spring back",
                 "soak": "Balance on history: unridden, the reed takes up its own weight in water every 18 hours and lies on the bottom after about three days afloat (Heyerdahl's Ra II settled about 10 cm a day); a sunny day ashore drives most of it out again, but each drying leaves a third of what it drove out as rot, so a boat soaked through and dried five times is past saving where Titicaca's totora boats last months"
             }
         },

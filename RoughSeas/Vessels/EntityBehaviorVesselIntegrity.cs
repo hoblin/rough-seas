@@ -153,7 +153,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
         damageConversion = vessels.DamageConversion;
         double frame = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(parts);
-        resistance = Shell.Of(attributes["shell"])?.Resists(frame, vessels.Materials, vessels.HullConfig.CrackSquareMetres, damageConversion.CutShare)
+        resistance = Shell.Of(attributes["shell"])?.Resists(frame, vessels.Materials, vessels.HullConfig, damageConversion.CutShare)
             ?? Resistance.Whole(frame);
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         runsRapids = attributes["runsRapids"].AsBool(false);
@@ -220,20 +220,22 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     }
 
     /// <summary>
-    /// Strikes the hull with a blow of this energy at this place. Server only. The harm is the energy over what
-    /// resists that kind of blow, as strong as this piece of material happens to be. A blow on the shell opens at most
-    /// its place; a broad load beyond the frame breaks it up at once; the rest of what the harm does is the hull model's.
+    /// Strikes the hull at this place. Server only. The harm is the load over what resists that kind of blow, as
+    /// strong as this piece of material happens to be. A blow on the shell opens at most its place, and a slam stoves
+    /// it in only past the planking's strength; a broad load beyond the frame breaks it up at once; the rest of what
+    /// the harm does is the hull model's.
     /// </summary>
-    public void Strike(double joules, HullPlace place, Blow blow = Blow.Broad)
+    /// <param name="load">In joules; a slam's in pascals.</param>
+    public void Strike(double load, HullPlace place, Blow blow = Blow.Broad)
     {
         if (!entity.Alive) return;
         var rand = entity.World.Rand;
         bool backed = resistance.Backed(place, rand.NextDouble());
         double resists = resistance.Against(blow, backed) * Scatter.Of(damageConversion.Variation.GetValueOrDefault(blow), rand);
-        double severity = resists > 0 ? joules / resists : 0;
+        double severity = resists > 0 ? load / resists : 0;
         if (model is not IKnockable knockable)
         {
-            vessels.Log(entity, "struck at the {0} with {1:F0} J: the hull gives, unharmed", place.Code(), joules);
+            vessels.Log(entity, "struck at the {0} with {1}: the hull gives, unharmed", place.Code(), Load(blow, load));
             Struck?.Invoke(place, severity, null);
             return;
         }
@@ -241,11 +243,16 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         double loss = Resistance.Loss(severity, blow, knockable.ByPlace);
         int stage = model.Stage(place);
         var knock = loss > 0 ? knockable.Take(place, loss) : (Knock?)null;
-        vessels.Log(entity, "{0} at the {1}{2} with {3:F0} J against {4:F0}: {5}, hull now {6:F2}", blow.ToString().ToLowerInvariant(),
-            place.Code(), backed ? ", backed" : "", joules, resists, knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
+        vessels.Log(entity, "{0} at the {1}{2} with {3} against {4}: {5}, hull now {6:F2}", blow.ToString().ToLowerInvariant(),
+            place.Code(), backed ? ", backed" : "", Load(blow, load), Load(blow, resists), knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
         Struck?.Invoke(place, severity, knock == Knock.BrokenUp || model.Stage(place) > stage ? knock : null);
         if (knock == Knock.BrokenUp || Resistance.BreaksFrame(blow, loss)) Break();
     }
+
+    public double JoulesAt(double metresPerSecond) => impact.Joules(Aboard.Impact, metresPerSecond);
+
+    private static string Load(Blow blow, double load) =>
+        blow == Blow.Slam ? $"{load / 1000:F0} kPa" : $"{load:F0} J";
 
     private void Strike(Knocked knocked)
     {

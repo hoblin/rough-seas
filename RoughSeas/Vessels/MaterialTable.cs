@@ -9,6 +9,7 @@ public class MaterialTable
 {
     private const string WoodPrefix = "wood-";
     private const string UnknownWood = "wood";
+    private const double PascalsPerMegapascal = 1e6;
 
     private readonly Dictionary<string, Material> materials;
     private readonly ILogger logger;
@@ -49,6 +50,9 @@ public class MaterialTable
         ?? materials[UnknownWood].Toughness!.Value;
 
     public double? CutToughness(string material) => materials.GetValueOrDefault(material)?.CutToughness;
+
+    public double ModulusOfRupture(string material) =>
+        (Strength(material) ?? materials[UnknownWood].Strength!.Value) * PascalsPerMegapascal;
 
     private static string ReferenceOf(VesselPart part) => part.Reference == "" ? part.Material : part.Reference;
 

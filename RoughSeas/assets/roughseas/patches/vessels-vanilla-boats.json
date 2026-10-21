@@ -15,12 +15,12 @@
                 { "material": "rope-flax", "reference": "rope-flax", "share": 0.02 }
             ],
             "depthMetres": 0.25,
-            "shell": { "material": "wood-{material}", "metres": 0.25 },
+            "shell": { "material": "wood-{material}", "metres": 0.25, "spanMetres": 1.5 },
             "repairs": [{ "material": { "type": "item", "code": "flaxtwine", "stacksize": 1 }, "restores": 0.22, "saturation": 30 }],
             "sources": {
                 "parts": "Logs lashed with three ropes, a few kilograms of rope on a raft of logs",
                 "depthMetres": "Its logs are a quarter metre thick: pressed down that far, the raft is awash and the water holds up its rider",
-                "shell": "A blow lands on one of its logs, a quarter metre of wood",
+                "shell": "A blow lands on one of its logs, a quarter metre of wood. A breaker bends a log between its lashings: three ropes across a raft three metres long leave at most 1.5 m between two",
                 "repairs": "A knock works the lashings loose, not the logs, and they are bound up again with twine: half of the nine twines in its three ropes mends it whole. Rope in hand ties the raft up instead"
             },
             "wreckageByType": {
@@ -50,11 +50,11 @@
                 { "material": "iron", "share": 0.4 }
             ],
             "depthMetres": 1.14,
-            "shell": { "material": "wood-{material}", "metres": 0.019 },
+            "shell": { "material": "wood-{material}", "metres": 0.019, "spanMetres": 0.238 },
             "waterplaneSquareMetres": 3,
             "sources": {
                 "parts": "A keelboat carries about two fifths of her weight as ballast to stand up to her sail; iron here",
-                "shell": "Carvel planking, about 3/4 in thick, the least that holds a caulked seam (boatdesign.net/posts/271664)",
+                "shell": "Carvel planking, about 3/4 in thick, the least that holds a caulked seam (boatdesign.net/posts/271664). A breaker bends a plank between frames 9.36 in apart: Herreshoff's rules give 3/4 in planking at 0.105 (II) with (III) 5.87 and a 1.22, and the same yacht frames at (I) (Rules for the Construction of Wooden Yachts, 1927; herreshoff.info/Docs/AuxDocs/1927_Herreshoff_Rules_for_Wooden_Yachts.pdf)",
                 "depthMetres": "Keel to gunwale over the hull's body: a 0.64 m draft with one sailor and about half a metre of side above it",
                 "waterplaneSquareMetres": "Set so that the 1500 L her bilge holds settles her by her half metre of side"
             },

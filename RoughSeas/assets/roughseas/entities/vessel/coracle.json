@@ -21,7 +21,7 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 400,
             "parts": [{"material": "hide", "share": 0.5}, {"material": "wood-willow", "share": 0.5}],
-            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-willow", "metres": 0.03}, "backedShare": 0.15, "bottomBackedShare": 0.44},
+            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-willow", "metres": 0.03}, "backedShare": 0.15, "bottomBackedShare": 0.44, "spanMetres": 0.52},
             "depthMetres": 0.27,
             "waterplaneSquareMetres": 1.25,
             "repairs": [{
@@ -33,7 +33,7 @@
             "damage": {"textures": ["hide"], "material": "hide"},
             "sources": {
                 "parts": "A hide stretched over a woven frame of willow laths, about half of each by weight",
-                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, sixteen ribs 3 cm deep and half a voxel wide round the bowl back 15% of its sides, and the lattice of laths 0.8 voxel wide, four each way, 44% of its bottom",
+                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, sixteen ribs 3 cm deep and half a voxel wide round the bowl back 15% of its sides, and the lattice of laths 0.8 voxel wide, four each way, 44% of its bottom. A breaker presses the hide onto the ribs, each bending under its share of the side over the 8.3 voxels from the bottom's lattice to the rim",
                 "depthMetres": "Bottom to rim: a 7 cm draft with its paddler and about 0.2 m of rim above it",
                 "waterplaneSquareMetres": "A round bowl 1.4 m across, nearly flat-bottomed, so that 250 L aboard settles it by its 0.2 m of rim"
             }

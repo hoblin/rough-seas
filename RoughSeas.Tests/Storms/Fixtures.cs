@@ -55,6 +55,12 @@ public static class Fixtures
         return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity));
     }
 
+    public static Resistance Resistance(string vessel, string wood = "oak")
+    {
+        var shell = IntegrityConfig(vessel)["shell"]!.ToString().Replace("{wood}", wood).Replace("{material}", wood);
+        return Shell.Of(new JsonObject(JToken.Parse(shell)))!.Resists(0, new MaterialTable(materials.Value, new NullLogger()), HullConfig, 0);
+    }
+
     public static JToken IntegrityConfig(string vessel) => vessel.StartsWith("boat-")
         ? BehaviorConfig("vessels-vanilla-boats.json", vessel, EntityBehaviorVesselIntegrity.Code)
         : Entity(vessel)["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!;

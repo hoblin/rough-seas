@@ -2,12 +2,17 @@
     "tickSeconds": 0.5,
     "waves": {
         "minHeight": 0.3,
-        "periodSecondsPerRootMetre": 3.5,
         "whitecapCoefficient": 3.84e-6,
         "whitecapExponent": 3.41,
         "breakingDepthRatio": 1.28,
         "waterDensity": 1025,
-        "breakerTransfer": 0.01,
+        "breakingSteepness": 0.142,
+        "plungingShareAtSea": 0.02,
+        "plungingIribarren": [0.5, 3.3],
+        "plungeDistance": [4.0, 9.25],
+        "bedSlopeBlocks": 16,
+        "slamCoefficient": 6.283,
+        "plungingSpeedRatio": 1.2,
         "shippedWaterFraction": 0.05,
         "crestRatio": 0.5,
         "breakingCrestRatio": 0.7,
@@ -16,11 +21,16 @@
         "waveDriftCoefficient": 0.00625,
         "maxDepthBlocks": 32,
         "sources": {
-            "periodSecondsPerRootMetre": "A breaker's crest speed, from a fully developed sea (Pierson-Moskowitz): H = 0.21 U^2 / g, T = 0.81 * 2 pi U / g, so T = 3.5 s * sqrt(H / 1 m)",
             "whitecapCoefficient": "Whitecap coverage W = 3.84e-6 U^3.41 (Monahan & O'Muircheartaigh 1980), taken as the share of waves that break",
             "breakingDepthRatio": "A wave breaks in water shallower than 1.28 times its height (McCowan 1894)",
             "waterDensity": "Seawater, kg/m3",
-            "breakerTransfer": "Balance: the share of a breaking crest's kinetic energy that lands on the hull",
+            "breakingSteepness": "A wave breaks once it is as steep as a wave can stand, a seventh as high as it is long (Michell 1893): a breaker is as long as its height makes it, and runs at that length's speed, no faster than the sea's own waves",
+            "plungingShareAtSea": "In deep water about 2% of breaking waves plunge, entraining air deep; the rest spill (Gemmrich & Farmer 1999, Journal of Physical Oceanography 29(10), 'Observations of the scale and occurrence of breaking surface waves')",
+            "plungingIribarren": "On a sloping bed a wave plunges when tan(slope) / sqrt(H / L0) lies between 0.5 and 3.3; below it spills, above it surges (Battjes 1974)",
+            "plungeDistance": "A plunging crest lands H (4.0 - 9.25 m) shoreward of where it breaks, on a bed of slope m (Galvin 1969, 'Breaker travel and choice of design wave height'); shoreward of that, what reaches a hull is the broken wave's bore",
+            "bedSlopeBlocks": "The bed's slope is read over this many blocks to seaward, across the surf zone, where whole blocks of depth still give it to a sixteenth",
+            "slamCoefficient": "A plunging crest strikes a flat panel with a space-averaged pressure 1/2 rho C v^2, C not less than 2 pi with cushioning and three-dimensional effects (DNV-RP-C205, 2010, 8.7.2.5); a spilling crest's roller presses only its stagnation pressure, 1/2 rho c^2",
+            "plungingSpeedRatio": "A plunging breaker strikes at 1.2 times its phase velocity (DNV-RP-C205, 2010, 8.8.1.2); its phase velocity follows the period and the depth (Eckart 1952)",
             "shippedWaterFraction": "Balance: the share of a crest's water that stays aboard once it comes over the gunwale",
             "crestRatio": "A linear wave's crest stands half its height above still water",
             "breakingCrestRatio": "A breaking crest is peaked: Stokes' highest wave stands about 0.6 of its height above still water, a plunging breaker 0.7 to 0.8",
@@ -64,7 +74,7 @@
         "anchorFullScope": 5,
         "anchorDragMetres": 1,
         "sources": {
-            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves, the shipped water and the breaker strikes an unanchored one does; it lies across the sea, so it capsizes as if beam-on",
+            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves and the shipped water an unanchored one does; it lies across the sea, so it capsizes as if beam-on",
             "stakeReachMetres": "Vanilla's longest rope",
             "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth holds fully"
         }
@@ -78,13 +88,11 @@
         "shoreSearchBlocks": 256,
         "fineSearchBlocks": 64,
         "coarseSearchStride": 4,
-        "impactFactor": 3,
         "sources": {
             "hazardPerSquareMetreHour": "Balance: how likely each game hour of waves this high is to throw a moored vessel on the shore it swings against",
             "surfReachPerMetre": "Balance: how far beyond its swing, per metre of wave height, the surf still reaches a moored vessel",
             "shoreSearchBlocks": "The farthest the shore is looked for, past the swing and the surf: more than the longest swing, an anchor's 210 m of rode",
-            "coarseSearchStride": "Past fineSearchBlocks the shore is looked for every few blocks: land that far is coastline, and unloaded ground is read from the ocean map, which is coarser still",
-            "impactFactor": "Balance: how much harder than the season's highest breaker the shore strikes a vessel thrown on it"
+            "coarseSearchStride": "Past fineSearchBlocks the shore is looked for every few blocks: land that far is coastline, and unloaded ground is read from the ocean map, which is coarser still"
         }
     },
     "lightning": {

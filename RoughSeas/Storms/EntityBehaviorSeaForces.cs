@@ -84,12 +84,12 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     public double Force(SeaState state) =>
         storms.Waves.Force(state.WindSpeed, state.WaveHeight, BeamMetres, windageSquareMetres) * Exposure;
 
-    public double BreakerEnergy(double waveHeight) => storms.Waves.BreakerEnergy(waveHeight, BeamMetres);
+    public double WaterDepth(int maxBlocks) => WaterDepth(entity.Pos.XYZ, maxBlocks);
 
-    public double WaterDepth(int maxBlocks)
+    private double WaterDepth(Vec3d at, int maxBlocks)
     {
         var accessor = entity.World.BlockAccessor;
-        var pos = entity.Pos.XYZ.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
+        var pos = at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
         var depth = 0;
         while (depth < maxBlocks && accessor.GetBlock(pos, BlockLayersAccess.Fluid).IsLiquid())
         {
@@ -126,8 +126,10 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         var rand = entity.World.Rand;
         var height = Waves.WaveHeight(state.WaveHeight, rand.NextDouble());
         var swamped = bilge?.Swamped == true;
-        var surf = waves.BreaksAt(WaterDepth(storms.Config.Waves.MaxDepthBlocks), height);
-        var breaking = swamped || surf || rand.NextDouble() < waves.BreakingChance(state.WindSpeed);
+        var depth = WaterDepth(storms.Config.Waves.MaxDepthBlocks);
+        var surf = waves.BreaksAt(depth, height);
+        var breaks = surf || rand.NextDouble() < waves.BreakingChance(state.WindSpeed);
+        var breaking = swamped || breaks;
         var crest = waves.Crest(height, breaking);
         var shipped = waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure;
         var capsizes = storms.Config.Swamping.Capsizes && breaking && Seaworthiness.Capsizes(height);
@@ -139,15 +141,33 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         storms.Log(entity, "{0} wave {1:F1} m in a {2:F1} m sea, {3:F2} m over a {4:F2} m freeboard: shipped {5:F0} L, {6}",
             cause, height, state.WaveHeight, Seaworthiness.Overtopping(crest), Seaworthiness.FreeboardMetres, shipped,
             bilge == null ? "washed off" : $"bilge {bilge.Litres:F0} of {bilge.CapacityLitres:F0} L");
-        if (breaking && hull != null) Strike(height, state, hull);
+        if (breaks && hull != null) Slam(height, state, depth, surf, hull);
         if (capsizes) Capsize(height, swamped);
     }
 
-    private void Strike(double breakerMetres, SeaState state, EntityBehaviorVesselIntegrity hull)
+    private void Slam(double breakerMetres, SeaState state, double depth, bool surf, EntityBehaviorVesselIntegrity hull)
     {
-        var energy = BreakerEnergy(breakerMetres) * (1 + (bilge?.Fill ?? 0)) * Exposure;
-        hull.Strike(energy, hull.Toward(-state.WindX, -state.WindZ));
-        storms.Log(entity, "{0:F1} m breaker struck with {1:F0} J, hull now {2:F2}", breakerMetres, energy, hull.Integrity);
+        var waves = storms.Waves;
+        var plunging = surf
+            ? waves.Plunges(breakerMetres, state.WavePeriod, BedSlope(state, depth), depth)
+            : waves.PlungesAtSea(entity.World.Rand.NextDouble());
+        var celerity = waves.BreakerCelerity(breakerMetres, state.WavePeriod,
+            depth < storms.Config.Waves.MaxDepthBlocks ? depth : double.PositiveInfinity);
+        var pressure = waves.SlamPressure(celerity, plunging);
+        var place = hull.Toward(-state.WindX, -state.WindZ);
+        storms.Log(entity, "{0:F1} m {1} breaker at {2:F1} m/s slams the {3} with {4:F0} kPa", breakerMetres,
+            plunging ? "plunging" : surf ? "broken" : "spilling", celerity, place.Code(), pressure / 1000);
+        hull.Strike(pressure, place, Blow.Slam);
+    }
+
+    private double BedSlope(SeaState state, double depth)
+    {
+        var wind = Math.Sqrt(state.WindX * state.WindX + state.WindZ * state.WindZ);
+        if (wind == 0) return 0;
+
+        var blocks = storms.Config.Waves.BedSlopeBlocks;
+        var seaward = entity.Pos.XYZ.Add(-state.WindX / wind * blocks, 0, -state.WindZ / wind * blocks);
+        return Math.Max(0, WaterDepth(seaward, storms.Config.Waves.MaxDepthBlocks) - depth) / blocks;
     }
 
     private void Capsize(double breakerMetres, bool swamped)

@@ -47,12 +47,17 @@ public class WhitecapsConfig
 public class WavesConfig
 {
     public double MinHeight;
-    public double PeriodSecondsPerRootMetre;
     public double WhitecapCoefficient;
     public double WhitecapExponent;
     public double BreakingDepthRatio;
     public double WaterDensity;
-    public double BreakerTransfer;
+    public double BreakingSteepness;
+    public double PlungingShareAtSea;
+    public double[] PlungingIribarren = [];
+    public double[] PlungeDistance = [];
+    public int BedSlopeBlocks;
+    public double SlamCoefficient;
+    public double PlungingSpeedRatio;
     public double ShippedWaterFraction;
     public double CrestRatio;
     public double BreakingCrestRatio;
@@ -97,7 +102,6 @@ public class AshoreConfig
     public int ShoreSearchBlocks;
     public int FineSearchBlocks;
     public int CoarseSearchStride;
-    public double ImpactFactor;
 }
 
 public class LightningConfig

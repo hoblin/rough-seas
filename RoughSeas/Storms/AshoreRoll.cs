@@ -18,7 +18,7 @@ public sealed class AshoreRoll
     private readonly double reach;
     private readonly double slept;
     private readonly double hoursPerSample;
-    private readonly List<double> heights = [];
+    private readonly List<SeaState> states = [];
     private readonly int searchBlocks;
 
     public AshoreRoll(StormsModSystem storms, ISeaModel sea, Entity vessel, double mooredX, double mooredZ, double sleptSince, double reach)
@@ -34,16 +34,18 @@ public sealed class AshoreRoll
         hoursPerSample = Math.Max(1, slept / Config.MaxSamples);
         for (var hours = sleptSince; hours < sea.NowHours; hours += hoursPerSample)
         {
-            heights.Add(sea.At(vessel.Pos.X, vessel.Pos.Z, hours).WaveHeight);
+            states.Add(sea.At(vessel.Pos.X, vessel.Pos.Z, hours));
         }
         searchBlocks = (int)Math.Min(Config.ShoreSearchBlocks, Math.Ceiling(reach + Config.SurfReachPerMetre * Highest));
     }
 
     private AshoreConfig Config => storms.Config.Ashore;
 
-    private double Highest => heights.DefaultIfEmpty(0).Max();
+    private SeaState HighestSea => states.MaxBy(state => state.WaveHeight);
 
-    public void Roll(EntityBehaviorSeaForces forces, EntityBehaviorVesselIntegrity? hull)
+    private double Highest => HighestSea.WaveHeight;
+
+    public void Roll(EntityBehaviorVesselIntegrity? hull)
     {
         using var _ = storms.Budget.Measure();
         var shore = ShoreDistance();
@@ -54,11 +56,12 @@ public sealed class AshoreRoll
         }
 
         var openWaterToShore = shore - reach;
-        var chance = new ShoreHazard(Config).Chance(heights, hoursPerSample, openWaterToShore);
+        var chance = new ShoreHazard(Config).Chance(states.Select(state => state.WaveHeight), hoursPerSample, openWaterToShore);
         var thrown = vessel.World.Rand.NextDouble() < chance;
-        if (thrown) hull?.Strike(forces.BreakerEnergy(Highest) * Config.ImpactFactor, HullPlace.Bottom);
-        storms.Log(vessel, "slept {0:F0} h moored, {1:F0} blocks of open water to the shore, highest waves {2:F1} m: ashore chance {3:F3}, thrown {4}, hull now {5:F2}",
-            slept, openWaterToShore, Highest, chance, thrown, hull?.Integrity ?? 1);
+        var surge = thrown ? storms.Waves.BreakerCelerity(Highest, HighestSea.WavePeriod, storms.Waves.BreakingDepth(Highest)) : 0;
+        storms.Log(vessel, "slept {0:F0} h moored, {1:F0} blocks of open water to the shore, highest waves {2:F1} m: ashore chance {3:F3}, thrown {4} at {5:F1} m/s",
+            slept, openWaterToShore, Highest, chance, thrown, surge);
+        if (thrown && hull != null) hull.Strike(hull.JoulesAt(surge), HullPlace.Bottom);
     }
 
     private double ShoreDistance()
