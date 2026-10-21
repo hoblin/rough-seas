@@ -70,26 +70,26 @@ A wave breaks when it grows too steep, and a breaking wave is the dangerous one:
 - **Whitecaps.** Out in deep water, now and then a wave breaks on its own, more often as the wind rises: about one wave in 50 in a strong breeze (force 6), one in 11 in a gale (force 8), one in 4 in a storm (force 10) and three in four in a hurricane.
 - **A swamped vessel.** Once a bilge is full, every wave comes over it as a breaker would, though only a wave that truly breaks slams it.
 
-A breaker slams the side the wind comes from, as a pressure on the planking. How hard depends on how it breaks:
+A breaker slams the side the wind comes from. How hard depends on how it breaks:
 
-- **Spilling.** Most breakers out at sea spill: the crest tumbles down its own face. The rolling water presses on the side as a stream of that speed would, and a breaker runs faster the higher it is: about 6 kPa from a 1 m breaker, 23 kPa from a 4 m one, 56 kPa from a 10 m one, in deep water.
-- **Plunging.** The crest curls over and falls on the hull, about nine times as hard as a spilling breaker of the same height. At sea only about one breaker in fifty plunges. In the surf the beach decides: on a steep shore most waves plunge, on a gentle one they spill, and a hull further in than where a wave curls over meets only its foaming bore.
+- **Spilling.** Most breakers out at sea spill: the crest tumbles down its own face and rolls against the side. The higher the breaker, the harder it hits.
+- **Plunging.** The crest curls over and falls on the hull, about nine times as hard as a spilling breaker of the same height. At sea only about one breaker in fifty plunges. In the surf the beach decides: on a steep shore most waves plunge, on a gentle one they spill, and a hull further in than where a wave curls over meets only its foam.
 
-A breaker in shallow water runs slower, and presses less, than one of the same height out at sea.
+A breaker in shallow water hits softer than one of the same height out at sea.
 
-What fails is the planking, bending between what holds it: the frames of a planked hull, the laths behind a hide, the bottom a dugout's side stands from. A slam past its strength stoves in the windward bow, side or quarter it hits; a slam below it does nothing. What stoves in each vessel's windward side, in oak:
+Either the planks hold, or the windward bow, side or quarter it hits is stove in. What stoves in each vessel's side, in oak:
 
-| Vessel | Planking holds | A spilling breaker of | A plunging breaker of |
-| --- | --- | --- | --- |
-| [Coracle](Coracle) | 21 kPa | 3.8 m | 0.5 m |
-| [Hide currach](Hide-Currach) | 32 kPa | 5.8 m | 0.7 m |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 60 kPa | 11 m | 1.2 m |
-| [Dugout](Dugout) | 164 kPa | none | 3.3 m |
-| [Outrigger canoe](Outrigger-Canoe) | 209 kPa | none | 4.1 m |
-| [Sailboat](Sailboat) | 705 kPa | none | 14 m |
-| [Raft](Raft), [reed boat](Reed-Boat) | any sea | none | none |
+| Vessel | A spilling breaker of | A plunging breaker of |
+| --- | --- | --- |
+| [Coracle](Coracle) | 3.8 m | 0.5 m |
+| [Hide currach](Hide-Currach) | 5.8 m | 0.7 m |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 11 m | 1.2 m |
+| [Dugout](Dugout) | none | 3.3 m |
+| [Outrigger canoe](Outrigger-Canoe) | none | 4.1 m |
+| [Sailboat](Sailboat) | none | 14 m |
+| [Raft](Raft), [reed boat](Reed-Boat) | none | none |
 
-The raft's logs are fifty times stronger than any breaker, and the reed boat's bundles bend and spring back. Out at sea in a gale (force 9) only the rare plunging crest stoves in a skin boat; in a storm (force 10) its spilling breakers do it too, and on a steep beach even modest surf does. A boat beam-on to a breaking sea opens up along one side and floods.
+No breaker breaks the raft's logs, and the reed boat's bundles bend and spring back. Out at sea in a gale (force 9) only the rare plunging crest stoves in a skin boat; in a storm (force 10) its spilling breakers do it too, and on a steep beach even modest surf does. A boat beam-on to a breaking sea opens up along one side and floods.
 
 ## Capsizing
 

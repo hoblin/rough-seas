@@ -121,7 +121,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 - **cut**, against the shell's fibres: slashing damage, and a swing with any tool that cuts wood faster than a hand;
 - **slam**, a breaker's pressure, against the planking's bending strength.
 
-Damage turns into joules by `damage.json`'s `joulesPerDamage` for its source, `defaultJoulesPerDamage` (200) for any other. Each blow meets the material as strong as it happens to be: its resistance scatters lognormally by `damage.json`'s `variation` for that kind of blow. A broad load cracks its place by its share of the capacity and breaks the hull up at a share of 1; a point blow or a cut opens at most its place; a slam past the planking's strength stoves its place in. A `cracking` hull also breaks up once all seven places are stove in.
+A broad load cracks its place by its share of the capacity and breaks the hull up when it reaches all of it; a point blow or a cut opens at most its place; a breaker that beats the planking stoves its place in. A `cracking` hull also breaks up once all seven places are stove in. How much damage counts as how hard a blow, and how much the material's strength varies from one blow to the next, are in `config/vessels/damage.json`, which a patch can change.
 
 | Key | What it is |
 | --- | --- |
@@ -144,20 +144,20 @@ Damage turns into joules by `damage.json`'s `joulesPerDamage` for its source, `d
 
 **The shell.** `shell` says what a blow meets where it lands, with its `kind`:
 
-| `kind` | What it is | A point blow and a cut | A breaker bends |
+| `kind` | What it is | A point blow and a cut | A breaker |
 | --- | --- | --- | --- |
-| `rigid` (the default) | planks, logs, bark | hole it where they land | the shell and its backing together, fastened at both ends between frames |
-| `carved` | a hull hollowed from one log | as `rigid` | each side standing from the bottom, its gunwale free |
-| `skin` | hide over laths | spring off it unless the backing is there, then break the backing; a cut tears the skin | each lath, propped at its ends, under its share of the side |
-| `bundle` | bundled stems | spring off; a cut parts only the backing, its lashings | nothing |
+| `rigid` (the default) | planks, logs, bark | hole it where they land | bends the shell and its backing between the frames |
+| `carved` | a hull hollowed from one log | as `rigid` | bends each side over, from the bottom up |
+| `skin` | hide over laths | spring off it unless the backing is there, then break the backing; a cut tears the skin | bends the laths |
+| `bundle` | bundled stems | spring off; a cut parts only the backing, its lashings | does nothing |
 
-Its keys: `material`, a row of `materials.json`; `metres`, its thickness; `spanMetres`, how far what a breaker bends reaches between what holds it (frames apart, a lath's length, a carved side's height); `backing`, `{ "material", "metres" }`, what lines or holds it; and `backedShare` and `bottomBackedShare`, the share of the sides and of the bottom the backing covers (1 for a lining, the laths' share of the area for a skin). A blow is resisted by the material's `toughness` (J/m², or `cutToughness` for a cut, otherwise `cutShare` of the toughness) times the rim of a stove-in hole times the thickness; a breaker by the pressure that bends the strip to its `strength`, wet (`hull.json`'s `soakedStrengthShare`). Our vessels each carry one with its sources; the coracle's is above.
+Its keys: `material`, a row of `materials.json`; `metres`, its thickness; `spanMetres`, how far what a breaker bends reaches between what holds it (frames apart, a lath's length, a carved side's height); `backing`, `{ "material", "metres" }`, what lines or holds it; and `backedShare` and `bottomBackedShare`, the share of the sides and of the bottom the backing covers (1 for a lining, the laths' share of the area for a skin). A thicker shell of a tougher material holds more blows; a thicker one on closer frames holds bigger breakers. The material's `toughness` (and `cutToughness`, where an edge parts it differently) and `strength` come from its row in `config/vessels/materials.json`: add a row by patch for a material of your own. Our vessels each carry a `shell` with its sources; the coracle's is above. How the numbers combine: [The science behind it](The-Science-Behind-It#hulls).
 
 **Places.** The seven places, bow, side and quarter each side and the bottom, are taken from the hull's selection box `HullAP`, or the entity's selection box without one. A blow lands by where it comes from: a knock and an explosion by their direction, a weapon by where it hits, a breaker on the windward side, rapids and a throw ashore on the bottom. The damage marks go on the shape's elements whose centre lies in a cracked place, worked out from the model: there is nothing to configure.
 
 **Knocks.** A knock is vanilla's own collision: when the physics stops the hull against a block, the speed it loses into that block strikes it, so a glancing blow counts only the part pointing into the wall. It takes vanilla's passive physics on the entity (`passivephysicsmultibox`, or `passivephysics`). A drifting vessel is measured on the server and a steered one on its rider's client, which reports to the server.
 
-**Rams.** Two hulls of ours ram when their footprints first touch at a closing speed above `minImpactSpeed`, and only if they overlap in height. Each takes half of ½ · μ · (speed² − `minImpactSpeed`²), μ being their reduced mass, m₁m₂ / (m₁ + m₂), with everything aboard each. A ram with a steered vessel is measured on its rider's client, one between two drifting vessels on the server. A vessel needs `vesselintegrity` to ram or be rammed; a creature or a player only pushes a hull.
+**Rams.** Two vessels with `vesselintegrity` ram when their hulls first touch at a closing speed above `minImpactSpeed`, and only if they lie at the same height. Both take the same broad load, the lighter vessel's weight and the closing speed deciding how big ([why](The-Science-Behind-It#knocks)). A ram with a steered vessel is measured on its rider's client, one between two drifting vessels on the server. A vessel without `vesselintegrity` neither rams nor is rammed; a creature or a player only pushes a hull.
 
 A knock strikes with ½ · mass · (speed² − `minImpactSpeed`²), where the mass is everything aboard:
 
