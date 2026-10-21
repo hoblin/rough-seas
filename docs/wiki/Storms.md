@@ -40,7 +40,7 @@ So a cold sea in winter is gale country, the tropics in late summer are where hu
 
 Storms draw their strength from the sea, so most are born over it. Over land a squall forms half as often as over the sea, a gale three times less often, and a hurricane never. Once born, a storm crosses sea and land alike.
 
-How each of these was taken from real measurements is on [The science behind it](The-Science-Behind-It).
+How each of these was taken from real measurements is on [The science of the sea](The-Science-of-the-Sea).
 
 ## How a storm moves
 

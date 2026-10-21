@@ -28,7 +28,7 @@ SeaCurrent current = sea.CurrentAt(x, z);
 
 ### Where it comes from
 
-The wind is the background wind of the region and season, plus every storm that covers the point. The waves grow from that wind as a real sea grows: higher the longer the open water upwind, the longer the wind has blown (up to three days of it), and the deeper the water. So a sea doesn't follow a gust: it builds behind a storm and dies down slowly after it. The current is the ocean's circulation, as on [Currents](Currents). How each is built, and from which measurements, is on [The science behind it](The-Science-Behind-It).
+The wind is the background wind of the region and season, plus every storm that covers the point. The waves grow from that wind as a real sea grows: higher the longer the open water upwind, the longer the wind has blown (up to three days of it), and the deeper the water. So a sea doesn't follow a gust: it builds behind a storm and dies down slowly after it. The current is the ocean's circulation, as on [Currents](Currents). How each is built, and from which measurements, is on [The science of the sea](The-Science-of-the-Sea).
 
 **On the server** the state is computed where you ask. It isn't free: growing the waves walks back through the wind's last three days. Ours read it twice a second for each vessel, which is as often as the sea changes. Read it on a timer of your own, not every frame.
 
@@ -159,7 +159,7 @@ A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls
 | `HullResponse.HeavePeriod(draftMetres, config)` | the heave and pitch period of a hull floating this deep, in seconds |
 | `HullResponse.RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres)` | its roll period, in seconds |
 
-`Follow` returns the pose with its `Lift`, `Roll` and `Pitch` answered and its `Hold` as it was, so blend by it as before. Ours refresh the periods from the hull's draft every frame, so a laden hull answers slower than an empty one. A long gap between calls, as when a hull returns to the water, is caught up as one period at most, so the hull doesn't leap. Where the periods come from is on [The science behind it](The-Science-Behind-It#riding-the-swell).
+`Follow` returns the pose with its `Lift`, `Roll` and `Pitch` answered and its `Hold` as it was, so blend by it as before. Ours refresh the periods from the hull's draft every frame, so a laden hull answers slower than an empty one. A long gap between calls, as when a hull returns to the water, is caught up as one period at most, so the hull doesn't leap. Where the periods come from is on [The science of the hull](The-Science-of-the-Hull#riding-the-swell).
 
 `config` is the `response` block of our `config/storms.json`, reached as `StormsModSystem.Config.Response`: `heaveAddedMass`, the water a hull drags with it as it heaves, in its own masses (1); and `heaveDamping` (0.3) and `rollDamping` (0.1), how fast a swing dies, as shares of critical damping.
 

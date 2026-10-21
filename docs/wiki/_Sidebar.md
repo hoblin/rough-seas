@@ -36,6 +36,8 @@
 - [Sailboat](Sailboat)
 
 **[The science behind it](The-Science-Behind-It)**
+- [The sea](The-Science-of-the-Sea)
+- [The hull](The-Science-of-the-Hull)
 
 **[Beside other mods](Other-Mods)**
 
