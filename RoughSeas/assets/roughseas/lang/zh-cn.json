@@ -20,6 +20,7 @@
     "vessel-sunk": "沉没：沉在海底",
     "vessel-lashing": "绑扎：{0}%",
     "vessel-soaked": "芦苇浸水：{0}%",
+    "vessel-torn": "芦苇撕裂：{0}%",
     "vessel-mend": "修补船体",
     "vessel-grease-in": "距下次涂油：{p0:不到一天|#天|#天}",
     "vessel-grease-due": "现在该涂油了",

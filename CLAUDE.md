@@ -6,13 +6,29 @@ No reinvented wheels: what the game already does first, then what Vintage Story'
 
 ## Write it like our own game
 
-Treat the mod as a game we own, not a pile of patches. Each system (wind, boat damage, swimming stamina, wrecks…) is its own module behind a clear boundary. Each class has one responsibility, a small public interface and private internals; SOLID holds for a small mod as much as for a web backend, and it is what keeps later changes cheap. A system built this way can later leave as a mod of its own by moving its module, not by rewriting it. Swimming stamina is the first candidate.
+Treat the mod as a game we own, not a pile of patches. Each system (wind, boat damage, swimming stamina, wrecks…) is its own module behind a clear boundary. A system built this way can later leave as a mod of its own by moving its module, not by rewriting it. Swimming stamina is the first candidate.
 
 Every new text a player sees ships in every locale the game officially supports (the codes in the install's `assets/game/lang/languages.json`), in that language's nautical terms.
 
 The handbook's guide pages (`RoughSeas/assets/roughseas/config/handbook/`) explain the mod to a player, short and in vanilla's style. A mechanic's own pull request leaves them alone; they are checked against what ships once before each release. The wiki (`docs/wiki/`, published by CI on merge; `bin/wiki-links` checks it) holds the depth the guide leaves out, and gets the same check before each release, its roadmap included.
 
 A pull request that makes Rough Seas work beside another mod adds or updates that mod's section on the wiki's page of tested mods (`docs/wiki/Other-Mods.md`), not a page of its own, in the same pull request. The section gives the mod's tested version and verdict, and says how the two play together in one mod set: what the other mod does beside ours, what we changed in how it behaves, and what someone building a server or another mod should know. It is written for server owners and modders, and it doesn't cover our own bugs fixed on the way. Otherwise this knowledge lives only in a closed pull request.
+
+## Classes and their interfaces
+
+Each class answers for one thing, and what it knows stays inside it, behind a small public interface. SOLID holds for a small mod as much as for a web backend, and it is what keeps later changes cheap.
+
+A class asks another for what it needs through an interface made for that question, never by reaching into the other's internals. When one class starts knowing another's insides, its logic sits in the wrong place: move it to the class that owns it.
+
+A kind of thing is a type. Its variants are subclasses, with what they share written once in their base, not flags that another class checks. What is general is written apart from the particular things it acts on, so that it can leave as a library of its own; each particular thing brings only its data and what makes it different.
+
+## Physics decides
+
+Every mechanic is derived from physics; that is why the game feels real. Model what physically happens, feed the model measured quantities with their sources, and let the outcome be whatever it gives. Never choose the outcome first and tune a number to reach it.
+
+Randomness is part of the physics too: the real spread of the world the model describes, never a die rolled for variety.
+
+When the game feels wrong, find the wrong input or the missing mechanism. Where nothing was measured for the thing itself, take the closest real analogue that was, and name it beside the number; never stand in an unrealistic model for missing data.
 
 ## Tools first
 

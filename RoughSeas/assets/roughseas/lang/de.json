@@ -20,6 +20,7 @@
     "vessel-sunk": "Gesunken: sie liegt auf dem Grund",
     "vessel-lashing": "Laschings: {0} %",
     "vessel-soaked": "Schilf vollgesogen: {0} %",
+    "vessel-torn": "Schilf zerrissen: {0} %",
     "vessel-mend": "Rumpf ausbessern",
     "vessel-grease-in": "Fetten fällig in {p0:weniger als einem Tag|# Tag|# Tagen}",
     "vessel-grease-due": "Fetten jetzt fällig",

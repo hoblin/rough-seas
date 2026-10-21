@@ -15,10 +15,12 @@
                 { "material": "rope-flax", "reference": "rope-flax", "share": 0.02 }
             ],
             "depthMetres": 0.25,
+            "shell": { "material": "wood-{material}", "metres": 0.25 },
             "repairs": [{ "material": { "type": "item", "code": "flaxtwine", "stacksize": 1 }, "restores": 0.22, "saturation": 30 }],
             "sources": {
                 "parts": "Logs lashed with three ropes, a few kilograms of rope on a raft of logs",
                 "depthMetres": "Its logs are a quarter metre thick: pressed down that far, the raft is awash and the water holds up its rider",
+                "shell": "A blow lands on one of its logs, a quarter metre of wood",
                 "repairs": "A knock works the lashings loose, not the logs, and they are bound up again with twine: half of the nine twines in its three ropes mends it whole. Rope in hand ties the raft up instead"
             },
             "wreckageByType": {
@@ -48,9 +50,11 @@
                 { "material": "iron", "share": 0.4 }
             ],
             "depthMetres": 1.14,
+            "shell": { "material": "wood-{material}", "metres": 0.019 },
             "waterplaneSquareMetres": 3,
             "sources": {
                 "parts": "A keelboat carries about two fifths of her weight as ballast to stand up to her sail; iron here",
+                "shell": "Carvel planking, about 3/4 in thick, the least that holds a caulked seam (boatdesign.net/posts/271664)",
                 "depthMetres": "Keel to gunwale over the hull's body: a 0.64 m draft with one sailor and about half a metre of side above it",
                 "waterplaneSquareMetres": "Set so that the 1500 L her bilge holds settles her by her half metre of side"
             },

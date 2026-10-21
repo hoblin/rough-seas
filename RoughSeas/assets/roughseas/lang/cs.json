@@ -20,6 +20,7 @@
     "vessel-sunk": "Potopená: leží na dně",
     "vessel-lashing": "Vazby: {0} %",
     "vessel-soaked": "Rákos nasáklý: {0} %",
+    "vessel-torn": "Rákos roztržený: {0} %",
     "vessel-mend": "Opravit trup",
     "vessel-grease-in": "Namazat {p0:za méně než den|do # dne|do # dnů}",
     "vessel-grease-due": "Je čas namazat",

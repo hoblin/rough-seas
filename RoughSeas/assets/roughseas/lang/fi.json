@@ -18,6 +18,7 @@
     "vessel-sunk": "Uponnut: makaa pohjassa",
     "vessel-lashing": "Sidokset: {0} %",
     "vessel-soaked": "Kaisla vettynyt: {0} %",
+    "vessel-torn": "Kaisla revennyt: {0} %",
     "vessel-mend": "Korjaa runko",
     "vessel-grease-in": "Rasvattava {p0:alle päivän kuluttua|# päivän kuluttua|# päivän kuluttua}",
     "vessel-grease-due": "Rasvattava nyt",

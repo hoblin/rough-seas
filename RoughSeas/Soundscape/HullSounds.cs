@@ -38,7 +38,7 @@ public sealed class HullSounds(SoundscapeModSystem sounds, ICoreServerAPI sapi)
     private void Struck(Entity vessel, EntityBehaviorVesselIntegrity hull, HullPlace place, double severity, Knock? knock)
     {
         var voice = VoiceOf(hull);
-        var sound = knock != null ? voice?.Harm
+        var sound = knock != null && voice?.Harm != null ? voice.Harm
             : severity >= Config.Hull.HardFromSeverity && voice?.Hard != null ? voice.Hard
             : voice?.Knock;
         Play(vessel, sound, vessel.Pos.XYZ.Add(hull.PointAt(place)), Config.Hull.Range, Curve.At(Config.Hull.Volume, severity),

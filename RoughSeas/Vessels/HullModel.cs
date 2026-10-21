@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
+using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
@@ -54,6 +57,11 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
 
     protected void Changed() => changed();
 
+    private const double ShareTolerance = 1e-6;
+
+    /// <summary>A share within rounding of none or of the whole, as seven sevenths summed come to, is exactly that.</summary>
+    protected static double Snapped(double share) => share < ShareTolerance ? 0 : share > 1 - ShareTolerance ? 1 : share;
+
     protected static int StageOf(double damage) => damage switch
     {
         < 0.1 => 0,
@@ -72,7 +80,10 @@ public enum Knock
 
 public interface IKnockable
 {
-    /// <param name="loss">The harm the roll against its capacity dealt: out of a whole place, or of the whole hull for one without places.</param>
+    /// <summary>Whether it keeps each place's harm apart, or counts the whole hull as one.</summary>
+    bool ByPlace { get; }
+
+    /// <param name="loss">The harm the blow dealt: out of a whole place, or of the whole hull for one without places.</param>
     Knock Take(HullPlace place, double loss);
 }
 
@@ -107,4 +118,18 @@ public interface IBuoyant
     Aboard Aboard { get; }
 
     double ReferenceKg { get; }
+}
+
+/// <summary>What another vessel meets of this one: the shape of her hull and what she carries.</summary>
+public interface IHull : IBuoyant
+{
+    HullShape Shape { get; }
+
+    /// <summary>Server only: whether her rider's client measures her contacts, as it steers her.</summary>
+    bool Steered { get; }
+
+    /// <summary>Server only: a ram the other vessel's rider measured, which this hull takes its share of.</summary>
+    void Rammed(Knocked by);
+
+    static IHull? Of(Entity entity) => entity is EntityBoat ? entity.SidedProperties.Behaviors.OfType<IHull>().FirstOrDefault() : null;
 }

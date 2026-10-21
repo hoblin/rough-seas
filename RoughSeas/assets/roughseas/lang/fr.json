@@ -20,6 +20,7 @@
     "vessel-sunk": "Coulée : elle repose sur le fond",
     "vessel-lashing": "Brêlages : {0} %",
     "vessel-soaked": "Roseau gorgé d'eau : {0} %",
+    "vessel-torn": "Roseau déchiré : {0} %",
     "vessel-mend": "Réparer la coque",
     "vessel-grease-in": "Graissage dans {p0:moins d'un jour|# jour|# jours}",
     "vessel-grease-due": "Graissage à faire maintenant",

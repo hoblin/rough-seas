@@ -9,4 +9,6 @@ public class ImpactReport
     [ProtoMember(2)] public double SpeedLost;
     [ProtoMember(3)] public double TowardX;
     [ProtoMember(4)] public double TowardZ;
+    [ProtoMember(5)] public long Against;
+    [ProtoMember(6)] public double TheirKg;
 }

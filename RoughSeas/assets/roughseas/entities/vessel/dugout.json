@@ -22,6 +22,7 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 30000,
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
+            "shell": {"material": "wood-{wood}", "metres": 0.05},
             "depthMetres": 0.41,
             "waterplaneSquareMetres": 2.25,
             "repairs": [{
@@ -32,6 +33,7 @@
             "wreckage": [{"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}}],
             "damage": {"textures": ["bark", "inside"], "material": "wood"},
             "sources": {
+                "shell": "Walls about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe)",
                 "depthMetres": "Keel to gunwale: a 0.21 m draft with one paddler and a hand's breadth or two of side above it, which a full bilge brings down to the water",
                 "waterplaneSquareMetres": "A 4.5 m log, 0.75 m wide, with rounded ends: about two thirds of its box, so that 450 L aboard settles her by her 0.2 m of side"
             }

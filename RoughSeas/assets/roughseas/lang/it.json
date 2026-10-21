@@ -20,6 +20,7 @@
     "vessel-sunk": "Affondata: giace sul fondo",
     "vessel-lashing": "Rizze: {0}%",
     "vessel-soaked": "Giunco zuppo d'acqua: {0}%",
+    "vessel-torn": "Giunco squarciato: {0}%",
     "vessel-mend": "Ripara lo scafo",
     "vessel-grease-in": "Da ingrassare tra {p0:meno di un giorno|# giorno|# giorni}",
     "vessel-grease-due": "Da ingrassare ora",

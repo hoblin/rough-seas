@@ -104,7 +104,10 @@
       "reed": {
         "reed": {
           "knock": "roughseas:sounds/hull/reed/knock/*",
-          "hard": "roughseas:sounds/hull/reed/hard/*"
+          "hard": "roughseas:sounds/hull/reed/hard/*",
+          "break": [
+            "roughseas:sounds/hull/reed/hard/*"
+         ]
         }
       }
     }

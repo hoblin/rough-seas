@@ -16,8 +16,8 @@ public class MaterialTableTests
     {
         table = new MaterialTable(new Dictionary<string, Material>
         {
-            ["wood"] = new() { Strength = 90, Density = 610 },
-            ["wood-oak"] = new() { Strength = 100, Density = 600 },
+            ["wood"] = new() { Strength = 90, Density = 610, Toughness = 60000 },
+            ["wood-oak"] = new() { Strength = 100, Density = 600, Toughness = 75000 },
             ["wood-ebony"] = new() { Strength = 160, Density = 1200 },
             ["hide"] = new() { Density = 1000 },
             ["wood-elm"] = new() { Strength = 65 },
@@ -92,6 +92,27 @@ public class MaterialTableTests
     }
 
     [Fact]
+    public void KnowsAWoodsToughness()
+    {
+        Assert.Equal(75000, table.Toughness("wood-oak"));
+    }
+
+    [Fact]
+    public void GivesAWoodNotMeasuredForToughnessThatOfAnUnknownWood()
+    {
+        Assert.Equal(60000, table.Toughness("wood-ebony"));
+    }
+
+    [Fact]
+    public void SourcesEveryShippedToughness()
+    {
+        var shipped = JsonConvert.DeserializeObject<Dictionary<string, Material>>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "materials.json")))!;
+
+        Assert.All(shipped.Where(row => row.Value.Toughness != null), row => Assert.False(string.IsNullOrEmpty(row.Value.ToughnessSource), row.Key));
+        Assert.NotNull(shipped["wood"].Toughness);
+    }
+
+    [Fact]
     public void GivesEveryShippedWoodADensityWithItsSource()
     {
         var shipped = JsonConvert.DeserializeObject<Dictionary<string, Material>>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "materials.json")))!;
@@ -161,14 +182,4 @@ public class MaterialTableTests
     }
 
     private static VesselPart Part(string material, string reference, double share = 1) => new() { Material = material, Reference = reference, Share = share };
-
-    private class CountingLogger : LoggerBase
-    {
-        public int Warnings { get; private set; }
-
-        protected override void LogImpl(EnumLogType logType, string format, params object[] args)
-        {
-            if (logType == EnumLogType.Warning) Warnings++;
-        }
-    }
 }

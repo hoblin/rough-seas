@@ -18,6 +18,7 @@
     "vessel-sunk": "Gezonken: ze ligt op de bodem",
     "vessel-lashing": "Sjorringen: {0}%",
     "vessel-soaked": "Riet doorweekt: {0}%",
+    "vessel-torn": "Riet gescheurd: {0}%",
     "vessel-mend": "Romp herstellen",
     "vessel-grease-in": "Invetten over {p0:minder dan een dag|# dag|# dagen}",
     "vessel-grease-due": "Nu invetten",

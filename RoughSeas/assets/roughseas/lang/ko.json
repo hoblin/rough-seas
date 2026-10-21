@@ -20,6 +20,7 @@
     "vessel-sunk": "침몰: 바닥에 가라앉아 있다",
     "vessel-lashing": "결박: {0}%",
     "vessel-soaked": "갈대 침수: {0}%",
+    "vessel-torn": "갈대 찢김: {0}%",
     "vessel-mend": "선체 수리",
     "vessel-grease-in": "기름칠까지 {p0:하루 미만|#일}",
     "vessel-grease-due": "지금 기름칠할 때입니다",

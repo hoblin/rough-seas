@@ -20,6 +20,7 @@
     "vessel-sunk": "Elsüllyedt: a fenéken fekszik",
     "vessel-lashing": "Kötözések: {0}%",
     "vessel-soaked": "Nád átázott: {0}%",
+    "vessel-torn": "Nád szakadt: {0}%",
     "vessel-mend": "Hajótest javítása",
     "vessel-grease-in": "Zsírozás {p0:egy napon belül|# nap múlva|# nap múlva}",
     "vessel-grease-due": "Most kell zsírozni",

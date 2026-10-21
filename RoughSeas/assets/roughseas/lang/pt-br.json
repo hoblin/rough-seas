@@ -20,6 +20,7 @@
     "vessel-sunk": "Afundada: jaz no fundo",
     "vessel-lashing": "Amarrações: {0}%",
     "vessel-soaked": "Junco encharcado: {0}%",
+    "vessel-torn": "Junco rasgado: {0}%",
     "vessel-mend": "Reparar o casco",
     "vessel-grease-in": "Untar em {p0:menos de um dia|# dia|# dias}",
     "vessel-grease-due": "Hora de untar",

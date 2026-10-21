@@ -18,6 +18,7 @@
     "vessel-sunk": "Nuskendusi: guli dugne",
     "vessel-lashing": "Raiščiai: {0} %",
     "vessel-soaked": "Nendrės permirkusios: {0} %",
+    "vessel-torn": "Nendrės suplėšytos: {0} %",
     "vessel-mend": "Taisyti korpusą",
     "vessel-grease-in": "Tepti riebalais reikės {p0:greičiau nei po dienos|po # dienos|po # dienų}",
     "vessel-grease-due": "Laikas tepti riebalais",

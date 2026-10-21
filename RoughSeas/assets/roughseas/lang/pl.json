@@ -20,6 +20,7 @@
     "vessel-sunk": "Zatonęła: leży na dnie",
     "vessel-lashing": "Wiązania: {0}%",
     "vessel-soaked": "Trzcina nasiąknięta: {0}%",
+    "vessel-torn": "Trzcina rozdarta: {0}%",
     "vessel-mend": "Napraw kadłub",
     "vessel-grease-in": "Natłuścić za {p0:mniej niż dzień|# dzień|# dni}",
     "vessel-grease-due": "Natłuścić teraz",
