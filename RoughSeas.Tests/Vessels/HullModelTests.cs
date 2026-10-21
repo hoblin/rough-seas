@@ -84,6 +84,24 @@ public class HullModelTests
     }
 
     [Fact]
+    public void SevenCutLashingsBreakAReedBoatUp()
+    {
+        var reed = Reed();
+
+        foreach (var _ in Enumerable.Range(0, 6)) Assert.Equal(Knock.Harmed, reed.Take(HullPlace.PortSide, 1.0 / 7));
+        Assert.Equal(Knock.BrokenUp, reed.Take(HullPlace.PortSide, 1.0 / 7));
+    }
+
+    [Fact]
+    public void SevenCutLashingsBreakARaftUp()
+    {
+        var raft = new LashedHull(() => tree, () => changes++);
+
+        foreach (var _ in Enumerable.Range(0, 6)) Assert.Equal(Knock.Harmed, raft.Take(HullPlace.PortSide, 1.0 / 7));
+        Assert.Equal(Knock.BrokenUp, raft.Take(HullPlace.PortSide, 1.0 / 7));
+    }
+
+    [Fact]
     public void ReedIsAsWornAsTheWorseOfItsSoakAndItsTears()
     {
         var reed = Reed();

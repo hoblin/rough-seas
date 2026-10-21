@@ -17,4 +17,16 @@ public class HullContactsTests
     {
         Assert.False(HullContacts.Level(110, Hull, 105, Hull));
     }
+
+    [Fact]
+    public void HullsSideBySideLieCloseEnoughToHaveMet()
+    {
+        Assert.True(HullContacts.Within(0, 0, Hull, 4, 0, Hull, slack: 0));
+    }
+
+    [Fact]
+    public void AHullFarOffCannotHaveBeenRammed()
+    {
+        Assert.False(HullContacts.Within(0, 0, Hull, 30, 0, Hull, slack: 2));
+    }
 }

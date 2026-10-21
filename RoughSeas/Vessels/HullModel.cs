@@ -57,6 +57,11 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
 
     protected void Changed() => changed();
 
+    private const double ShareTolerance = 1e-6;
+
+    /// <summary>A share within rounding of none or of the whole, as seven sevenths summed come to, is exactly that.</summary>
+    protected static double Snapped(double share) => share < ShareTolerance ? 0 : share > 1 - ShareTolerance ? 1 : share;
+
     protected static int StageOf(double damage) => damage switch
     {
         < 0.1 => 0,

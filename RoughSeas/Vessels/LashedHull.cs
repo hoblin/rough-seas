@@ -15,7 +15,7 @@ public sealed class LashedHull(Func<ITreeAttribute> tree, Action changed) : Hull
 
     public Knock Take(HullPlace place, double loss)
     {
-        SetLashing(Condition - loss);
+        SetLashing(Snapped(Condition - loss));
         return Condition > 0 ? Knock.Harmed : Knock.BrokenUp;
     }
 

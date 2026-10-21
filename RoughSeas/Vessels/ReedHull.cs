@@ -32,7 +32,7 @@ public sealed class ReedHull : HullModel, IAfloat, IKnockable
 
     public Knock Take(HullPlace place, double loss)
     {
-        Tree.SetDouble(TornKey, Math.Min(1, Torn + loss));
+        Tree.SetDouble(TornKey, Math.Min(1, Snapped(Torn + loss)));
         Changed();
         return Torn >= 1 ? Knock.BrokenUp : Knock.Harmed;
     }
