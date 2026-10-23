@@ -142,6 +142,21 @@ public class SeaSurfaceTests
     }
 
     [Fact]
+    public void CrossesWithoutAJumpIntoARegionWhoseNewWavesAlreadyTookOver()
+    {
+        var (drawn, theirs) = (Generation(3, 0), Generation(3, 2));
+        var crossing = Surface();
+        Settle(crossing, 3, 0);
+        var previous = crossing.HeightAt(FarX, FarZ);
+        Run(crossing, 3, drawn, theirs, 60, 120, seconds: 30, eachFrame: () =>
+        {
+            var height = crossing.HeightAt(FarX, FarZ);
+            Assert.True(Math.Abs(height - previous) < 0.1, $"jumped from {previous:F3} to {height:F3}");
+            previous = height;
+        });
+    }
+
+    [Fact]
     public void RunsAYoungSeasWavesShorterThanAnOldOnesOfTheSameHeight()
     {
         static double LengthOf(double period)

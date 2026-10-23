@@ -101,7 +101,7 @@ public sealed class SeaSurface
             }
             else Rise(0, next, double.NegativeInfinity);
         }
-        else if (Rising == from) Rise(1 - active, next, bornSeconds);
+        else if (Rising == from && Seconds - bornSeconds <= config.AimSeconds) Rise(1 - active, next, bornSeconds);
         else
         {
             // The kept bank's weight carries on unbroken, and the new trains take the dropped bank's, so the drawn energy doesn't jump.

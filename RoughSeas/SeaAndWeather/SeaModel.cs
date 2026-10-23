@@ -80,7 +80,7 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
     }
 
     /// <summary>The waves a slot of <c>seaSampleHours</c> raises over a region: the highest sea of the region and its eight neighbours as the slot began.</summary>
-    public WaveGeneration GenerationOf(int regionX, int regionZ, long slot)
+    public WaveGeneration GenerationOf(int regionX, int regionZ, long slot, IEnumerable<(double X, double Z)>? water = null)
     {
         if (generations.TryGetValue((regionX, regionZ, slot), out var cached)) return cached;
         if (generations.Count > CacheLimit) generations.Clear();
@@ -89,6 +89,7 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
         var regionSize = sapi.WorldManager.RegionSize;
         var highest = Enumerable.Range(-1, 3)
             .SelectMany(dx => Enumerable.Range(-1, 3).SelectMany(dz => SamplesOf(regionX + dx, regionZ + dz, regionSize)))
+            .Concat(water ?? [])
             .Select(at => At(at.X, at.Z, hours))
             .MaxBy(state => state.WaveHeight);
         var generation = highest.WaveHeight > 0 ? new WaveGeneration(Math.Atan2(highest.WindZ, highest.WindX), highest.WavePeriod) : default;
