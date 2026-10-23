@@ -1,18 +1,22 @@
 using System;
+using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Soundscape;
 
-public sealed class Crests(ICoreClientAPI capi, CrestsConfig config, SoundscapeModSystem sounds)
+public sealed class Crests(ICoreClientAPI capi, CrestsConfig config, SeaClock clock, SoundscapeModSystem sounds)
 {
-    public void Update(double seconds, Listener listener)
-    {
-        if (!listener.AtSea) return;
+    private readonly SeaClock.Watch watch = clock.StartWatch();
 
-        Scatter(config.Hiss, listener.Foam.Caps, seconds, listener);
-        Scatter(config.Plunge, listener.Foam.Spray, seconds, listener);
+    public void Update(Listener listener)
+    {
+        var lap = watch.Lap();
+        if (!listener.AtSea || lap.Leapt) return;
+
+        Scatter(config.Hiss, listener.Foam.Caps, lap.Seconds, listener);
+        Scatter(config.Plunge, listener.Foam.Spray, lap.Seconds, listener);
     }
 
     private void Scatter(ScatteredCue cue, double share, double seconds, Listener listener)
