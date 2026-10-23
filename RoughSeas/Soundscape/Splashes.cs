@@ -22,7 +22,9 @@ public sealed class Splashes
     {
         (this.capi, this.cue, this.range, this.storms, this.sounds) = (capi, cue, range, storms, sounds);
         var pattern = new AssetLocation(cue.Sound);
-        var files = capi.Assets.GetLocations(pattern.Path.TrimEnd('*'), pattern.Domain).OrderBy(file => file.Path, StringComparer.Ordinal).ToList();
+        var files = string.IsNullOrEmpty(cue.Sound)
+            ? []
+            : capi.Assets.GetLocations(pattern.Path.TrimEnd('*'), pattern.Domain).OrderBy(file => file.Path, StringComparer.Ordinal).ToList();
         pool = new SplashPool(files, cue.FullFromMetres);
         sounds.Log("{0} splashes in {1}", pool.Count, cue.Sound);
     }
