@@ -57,11 +57,11 @@ public sealed class HullSounds(SoundscapeModSystem sounds, ICoreServerAPI sapi)
         if (sapi.World.NearestPlayer(pos.X, pos.Y, pos.Z)?.Entity?.Pos.DistanceTo(pos) is not { } nearest || nearest > water.Range) return;
 
         var side = Windward(vessel, hull, forces, wave);
-        var (hit, what) = wave.Breaking ? (water.Slam, "slam")
+        var (hit, what) = wave.Breaking ? ((Cue)water.Slam, "slam")
             : wave.Height >= water.StrongSlapFromMetres ? (water.StrongSlap, "strong slap")
             : (water.Slap, "slap");
-        Play(vessel, hit.Sound, side, water.Range, Curve.At(hit.Volume, wave.Height), $"{what} of a {wave.Height:F1} m wave");
-        if (wave.ShippedLitres > 0 && vessel.GetBehavior<EntityBehaviorBilge>() is { CapacityLitres: > 0 }) Play(vessel, water.Pour.Sound, side, water.Range, Curve.At(water.Pour.Volume, wave.ShippedLitres), $"{wave.ShippedLitres:F0} L over the gunwale");
+        Play(vessel, hit.Sound, side, water.Range, hit.VolumeAt(wave.Height), $"{what} of a {wave.Height:F1} m wave");
+        if (wave.ShippedLitres > 0 && vessel.GetBehavior<EntityBehaviorBilge>() is { CapacityLitres: > 0 }) Play(vessel, water.Pour.Sound, side, water.Range, water.Pour.VolumeAt(wave.ShippedLitres), $"{wave.ShippedLitres:F0} L over the gunwale");
     }
 
     private static Vec3d Windward(Entity vessel, EntityBehaviorVesselIntegrity? hull, EntityBehaviorSeaForces forces, EntityBehaviorSeaForces.TakenWave wave)
