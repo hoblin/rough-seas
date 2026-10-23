@@ -21,6 +21,16 @@ public class SeaMapSnapshotTests
     }
 
     [Fact]
+    public void CarriesTheWavesOfEachSlotAroundTheSnapshot()
+    {
+        WaveGeneration[] generations = [new(0.3, 6.5), default, new(-2.1, 9.25)];
+        var sent = SerializerUtil.Deserialize<SeaMapSnapshot>(SerializerUtil.Serialize(SeaMapSnapshot.Of(0, 0, 0, 0, 1, [Gale], 386, generations)));
+
+        Assert.Equal(386, sent.FirstWaveSlot);
+        Assert.Equal(generations, sent.Generations());
+    }
+
+    [Fact]
     public void KeepsEachValueToThePrecisionItNeeds()
     {
         var received = SeaMapSnapshot.Of(0, 0, 0, 0, 1, [Gale]).Samples()[0];

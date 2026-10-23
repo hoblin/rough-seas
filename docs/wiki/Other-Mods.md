@@ -172,4 +172,5 @@ The boats a ship carries on its davits are vanilla's sailboat, ours in every way
 
 - With Rough Seas in the set, Shipworks+ leaves damage to vanilla's raft and sailboat to our [hull condition](Hull-Condition#weapons-explosions-and-lightning): its cannonballs strike their hulls through ours.
 - Shipworks+ floods its ships by our wave height whether or not [Dangerous oceans](World-Settings#dangerous-oceans) is on. Its own `Sinking` setting, in `shipworksplus.json` in the `ModConfig` folder, decides whether a flooded ship founders.
+- Shipworks+ carries its own fix for players who see the swell's crests in different places: it sets our wave clock to the world's. It never starts beside Rough Seas 2.0 and later, because it stops at the same failed read of our drawn waves, and it is no longer needed: our waves run on the world's clock, the same on every client, which a mod reads as `IDrawnSea.Seconds` ([the drawn sea](Reading-the-Sea#the-drawn-sea)).
 - `RoughSeas: false` in that file stops its ships reading our sea. The small boats keep our behaviours: they get them by patch whenever Rough Seas is installed.

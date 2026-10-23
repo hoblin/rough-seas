@@ -9,6 +9,9 @@ public interface IDrawnSea
     /// <summary>Whether any swell is drawn now.</summary>
     bool Swell { get; }
 
+    /// <summary>The time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client, still while the world's clock stands.</summary>
+    double Seconds { get; }
+
     /// <summary>The surface's height above still water at a position now, in metres.</summary>
     double HeightAt(double x, double z);
 

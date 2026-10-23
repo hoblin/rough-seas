@@ -118,7 +118,7 @@
         ],
         "steepness": 1.2,
         "minLengthBlocks": 8,
-        "settleSeconds": 10,
+        "settleSeconds": 30,
         "turnDegrees": 20,
         "stretch": 0.25,
         "aimSeconds": 0.5,

@@ -4,14 +4,11 @@ using RoughSeas.SeaAndWeather;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The waves around the player, each cell a share of the height the surface draws when the field is taken, so a cell's
-/// drawn height doesn't jump while the surface eases toward the highest waves around. Read as the shader reads
+/// The waves of the player's region and its eight neighbours, each cell a share of the highest. Read as the shader reads
 /// <c>seaHeightMap</c> (linear, clamped at the edge); the other end is <c>assets/roughseas/shaderincludes/seasurface.vsh</c>.
 /// </summary>
 public sealed class SurfaceField
 {
-    public const double MaxShare = 2;
-
     private const int RegionsAcross = 3;
     private const int Levels = 255;
 
@@ -27,11 +24,13 @@ public sealed class SurfaceField
 
     public double Height { get; private set; }
 
-    public double Period { get; private set; }
+    public double HighestX { get; private set; }
+
+    public double HighestZ { get; private set; }
 
     public int Across => across;
 
-    public void Update(ISeaSource source, double x, double z, int regionSize, int cellBlocks, double drawnHeight)
+    public void Update(ISeaSource source, double x, double z, int regionSize, int cellBlocks)
     {
         this.cellBlocks = cellBlocks;
         across = RegionsAcross * regionSize / cellBlocks;
@@ -40,18 +39,16 @@ public sealed class SurfaceField
         OriginZ = (Math.Floor(z / regionSize) - 1) * regionSize;
 
         var heights = new double[across * across];
-        var (highest, period) = (0.0, 0.0);
+        var highest = 0;
         for (var i = 0; i < heights.Length; i++)
         {
-            var sample = source.Sample(OriginX + (i % across + 0.5) * cellBlocks, OriginZ + (i / across + 0.5) * cellBlocks);
-            heights[i] = sample.WaveHeight;
-            if (sample.WaveHeight > highest) (highest, period) = (sample.WaveHeight, sample.WavePeriod);
+            heights[i] = source.Sample(CentreX(i), CentreZ(i)).WaveHeight;
+            if (heights[i] > heights[highest]) highest = i;
         }
-        (Height, Period) = (highest, period);
-        var reference = drawnHeight > 0 ? drawnHeight : highest;
+        (Height, HighestX, HighestZ) = (heights[highest], CentreX(highest), CentreZ(highest));
         for (var i = 0; i < heights.Length; i++)
         {
-            factors[i] = (byte)Math.Round(reference > 0 ? Math.Min(heights[i] / reference, MaxShare) / MaxShare * Levels : 0);
+            factors[i] = (byte)Math.Round(Height > 0 ? heights[i] / Height * Levels : 0);
         }
     }
 
@@ -75,5 +72,9 @@ public sealed class SurfaceField
         return pixels;
     }
 
-    private double At(int column, int row) => factors[row * across + column] * MaxShare / Levels;
+    private double At(int column, int row) => (double)factors[row * across + column] / Levels;
+
+    private double CentreX(int cell) => OriginX + (cell % across + 0.5) * cellBlocks;
+
+    private double CentreZ(int cell) => OriginZ + (cell / across + 0.5) * cellBlocks;
 }

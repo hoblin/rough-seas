@@ -6,7 +6,7 @@ Rough Seas keeps the sea twice, for two different jobs.
 
 **The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike her, the current that carries her. It knows no single wave. A wave that reaches a vessel is drawn by chance from the state, once a wave period, and two vessels side by side meet different waves.
 
-**The drawn sea** is the sea as a picture: the moving surface a client draws, built from the sea state around its player. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. But each client draws its own, on a clock of its own, so two players see crests in different places, and neither picture is the wave the server struck with.
+**The drawn sea** is the sea as a picture: the moving surface a client draws, built from the sea state around its player. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same picture: two players in one region see the same crests. But it is a picture, and not the wave the server struck with.
 
 So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms or moves on the server: the sea state. A hull's pose on the screen: the drawn sea. Nothing on the server should wait for a crest a client draws.
 
@@ -116,7 +116,11 @@ IDrawnSea? drawn = capi.ModLoader.GetModSystem<StormsModSystem>().DrawnSea;
 
 ### How it is drawn
 
-Every half second a client reads the sea state around its player: the highest sea in the nine regions sets the waves' height and period, the wind at the player their direction. From those it draws a few trains of waves crossing near the wind's line, and eases toward a new sea over some seconds rather than jumping. Each place then draws its own share of that height, from the state there: a sheltered bay draws a lower swell than the open sea beside it, and a calm lake draws none.
+The server raises the waves. Every three game hours it takes, for each region a player is in, the highest sea around it (the region and its eight neighbours) as it stood when those hours began, and sends that sea's direction and period with the sea map. A client draws a few trains of waves crossing near that direction, of that length, and the new trains take over from the last hours' over half a minute. Trains less than a heading (20°) or a quarter of their length apart are the same trains, and nothing changes.
+
+Their height is the highest sea around the player now, and each place draws its own share of it, from the state there: a sheltered bay draws a lower swell than the open sea beside it, and a calm lake draws none.
+
+All of it follows from the world's clock and the state the server sends, so every client in a region draws the same waves, and a player who joins sees what the others already see. A player who sails into another region sees its waves take over the same way, without a jump. The waves keep the world's time as vanilla's swaying plants do: real time at the normal pace, still while time stands still or the game is paused, fast while everyone sleeps.
 
 Our own vessels are posed by the same calls this page describes, so a ship of yours that uses them rides exactly as ours do.
 
@@ -125,6 +129,7 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | Member | What it is |
 | --- | --- |
 | `Swell` | whether any swell is drawn now |
+| `Seconds` | the time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client |
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |
 

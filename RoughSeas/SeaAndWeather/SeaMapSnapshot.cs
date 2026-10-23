@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Linq;
 using ProtoBuf;
 
 namespace RoughSeas.SeaAndWeather;
@@ -8,7 +9,7 @@ namespace RoughSeas.SeaAndWeather;
 public class SeaMapSnapshot
 {
     public const string ModdataKey = "roughseas:seamap";
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
 
     private static readonly (Func<SeaSample, double> Read, double Scale)[] Fields =
     [
@@ -30,9 +31,14 @@ public class SeaMapSnapshot
     [ProtoMember(5)] public int CellsPerSide;
     [ProtoMember(6)] public float RegionMps;
     [ProtoMember(7)] public byte[] Cells = [];
+    [ProtoMember(8)] public long FirstWaveSlot;
+    [ProtoMember(9)] public double[] WaveTowards = [];
+    [ProtoMember(10)] public double[] WavePeriods = [];
 
-    public static SeaMapSnapshot Of(int regionX, int regionZ, double totalHours, double regionMps, int cellsPerSide, SeaSample[] samples)
+    public static SeaMapSnapshot Of(int regionX, int regionZ, double totalHours, double regionMps, int cellsPerSide, SeaSample[] samples,
+        long firstWaveSlot = 0, WaveGeneration[]? generations = null)
     {
+        generations ??= [];
         var cells = new byte[samples.Length * Fields.Length * sizeof(short)];
         for (var i = 0; i < samples.Length; i++)
         for (var field = 0; field < Fields.Length; field++)
@@ -47,7 +53,10 @@ public class SeaMapSnapshot
             TotalHours = totalHours,
             CellsPerSide = cellsPerSide,
             RegionMps = (float)regionMps,
-            Cells = cells
+            Cells = cells,
+            FirstWaveSlot = firstWaveSlot,
+            WaveTowards = generations.Select(generation => generation.TowardRadians).ToArray(),
+            WavePeriods = generations.Select(generation => generation.Period).ToArray()
         };
     }
 
@@ -65,4 +74,7 @@ public class SeaMapSnapshot
         }
         return samples;
     }
+
+    public WaveGeneration[] Generations() =>
+        WaveTowards.Zip(WavePeriods, (toward, period) => new WaveGeneration(toward, period)).ToArray();
 }

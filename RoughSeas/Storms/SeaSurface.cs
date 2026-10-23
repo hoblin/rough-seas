@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Storms;
 
@@ -28,21 +29,22 @@ public sealed class SeaSurface
     private readonly SurfaceConfig config;
     private readonly Waves waves;
     private readonly int generation;
+    private readonly int headings;
     private readonly double[] amplitudeShare;
     private readonly double[] numberX, numberZ, frequency, amplitude;
+    private readonly Trains?[] banks = new Trains?[2];
     private int active = -1;
-    private double level, handover = 1;
-    private double activeToward, activeLength;
-    private Foam foamTarget;
+    private double risingFrom = double.NegativeInfinity;
 
     public SeaSurface(SurfaceConfig config, Waves waves)
     {
         this.config = config;
         this.waves = waves;
         generation = config.Trains.Length;
+        headings = (int)Math.Round(360 / config.TurnDegrees);
         var energy = config.Trains.Sum(train => train.Energy);
         amplitudeShare = config.Trains.Select(train => Math.Sqrt(train.Energy / energy) / (2 * Math.Sqrt(2))).ToArray();
-        var slots = 2 * generation;
+        var slots = banks.Length * generation;
         numberX = new double[slots];
         numberZ = new double[slots];
         frequency = new double[slots];
@@ -50,8 +52,6 @@ public sealed class SeaSurface
     }
 
     public int Slots => amplitude.Length;
-
-    public double Level => level;
 
     public double Seconds { get; private set; } = double.NaN;
 
@@ -72,7 +72,7 @@ public sealed class SeaSurface
     public double TowardRadians { get; private set; }
 
     /// <summary>Where the rising trains run, fixed for their life, unlike <see cref="TowardRadians"/>, the wind at the last aim; <c>seafoam.fsh</c> lays its streaks along it.</summary>
-    public double WavesTowardRadians => activeToward;
+    public double WavesTowardRadians => Rising is { } trains ? Toward(trains) : 0;
 
     public double DrawnHeight => 4 * Math.Sqrt(amplitude.Sum(value => value * value) / 2);
 
@@ -80,41 +80,53 @@ public sealed class SeaSurface
 
     public event Action<string>? Changed;
 
-    public void Aim(double height, double period, double towardRadians, double beaufort, double foamShare = 1)
+    public void Aim(double height, double towardRadians, double beaufort, double foamShare = 1)
     {
-        foamTarget = Foam.Lerp(default, FoamAt(beaufort), Math.Clamp(foamShare, 0, 1));
+        Foam = Foam.Lerp(default, FoamAt(beaufort), Math.Clamp(foamShare, 0, 1));
         (SeaHeight, TowardRadians) = (height, towardRadians);
-        var length = height > 0 ? Gravity * period * period / FullTurn : 0;
-        if (length > 0 && (active < 0 || !Alike(towardRadians, length)))
-        {
-            var next = active == 0 ? generation : 0;
-            if (active < 0 || handover >= 1 - Faded) Begin(next, towardRadians, length);
-        }
         CapsFold = FoldCovering(Math.Min(1, Foam.Caps / BreakingCrestShare));
+    }
+
+    public void Raise(WaveGeneration earlier, WaveGeneration latest, double bornSeconds, bool crossed = false)
+    {
+        var from = TrainsOf(earlier);
+        if ((TrainsOf(latest) ?? from) is not { } next || Rising == next) return;
+
+        if (Rising is { } drawn && drawn == from && !crossed) Rise(1 - active, next, bornSeconds);
+        else if (active < 0 || !crossed)
+        {
+            if (from is { } first && first != next)
+            {
+                Load(0, first);
+                Rise(1, next, bornSeconds);
+            }
+            else Rise(0, next, double.NegativeInfinity);
+        }
+        else
+        {
+            // The kept bank's weight carries on unbroken, and the new trains take the dropped bank's, so the drawn energy doesn't jump.
+            var kept = banks[1 - active] == next || Handover >= 0.5 ? active : 1 - active;
+            Rise(1 - kept, next, Seconds - Math.Acos(Weight(kept)) / (Math.PI / 2) * config.SettleSeconds);
+        }
     }
 
     public void Advance(double seconds)
     {
-        if (seconds == Seconds) return;
-
-        var blend = double.IsNaN(Seconds) ? 1 : 1 - Math.Exp(-(seconds - Seconds) / config.SettleSeconds);
         Seconds = seconds;
         Frame++;
-        level += (SeaHeight - level) * blend;
-        handover += (1 - handover) * blend;
+        var handover = Handover;
         var (rising, fading) = (Math.Sin(handover * Math.PI / 2), Math.Cos(handover * Math.PI / 2));
 
         var slopes = 0.0;
         var calm = true;
         for (var slot = 0; slot < Slots; slot++)
         {
-            amplitude[slot] = Wavenumber(slot) > 0 ? amplitudeShare[slot % generation] * level * (Rising(slot) ? rising : fading) : 0;
+            amplitude[slot] = Wavenumber(slot) > 0 ? amplitudeShare[slot % generation] * SeaHeight * (slot / generation == active ? rising : fading) : 0;
             slopes += amplitude[slot] * Wavenumber(slot);
             calm &= amplitude[slot] <= Faded;
         }
         Calm = calm;
         Steepness = slopes > 0 ? Math.Min(config.Steepness, 1 / slopes) : config.Steepness;
-        Foam = Foam.Lerp(Foam, foamTarget, blend);
     }
 
     /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
@@ -174,6 +186,12 @@ public sealed class SeaSurface
         }
     }
 
+    private Trains? Rising => active >= 0 ? banks[active] : null;
+
+    private double Handover =>Math.Clamp((Seconds - risingFrom) / config.SettleSeconds, 0, 1);
+
+    private double Weight(int bank) => bank == active ? Math.Sin(Handover * Math.PI / 2) : Math.Cos(Handover * Math.PI / 2);
+
     private static void Squeeze(Span<double> into, double alongX, double alongZ, double pinch)
     {
         into[0] += alongX * alongX * pinch;
@@ -185,8 +203,8 @@ public sealed class SeaSurface
 
     private double FoldCovering(double coverage)
     {
-        if (coverage <= 0 || Calm) return double.PositiveInfinity;
-        var spacing = activeLength / FoldSamplesAcross;
+        if (coverage <= 0 || Calm || Rising is not { } trains) return double.PositiveInfinity;
+        var spacing = Length(trains) / FoldSamplesAcross;
         var folds = new double[FoldSamplesAcross * FoldSamplesAcross];
         for (var i = 0; i < folds.Length; i++) folds[i] = FoldAt(i % FoldSamplesAcross * spacing * 3.1, i / FoldSamplesAcross * spacing * 2.7);
         Array.Sort(folds);
@@ -198,32 +216,40 @@ public sealed class SeaSurface
 
     private double Wavenumber(int slot) => Math.Sqrt(numberX[slot] * numberX[slot] + numberZ[slot] * numberZ[slot]);
 
-    private bool Alike(double towardRadians, double length)
+    private Trains? TrainsOf(WaveGeneration raised)
     {
-        var turn = Math.Abs(Math.IEEERemainder(towardRadians - activeToward, FullTurn));
-        return turn <= config.TurnDegrees * Math.PI / 180
-            && Math.Abs(Math.Log(length / activeLength)) <= Math.Log(1 + config.Stretch);
+        if (!raised.Raised) return null;
+        var length = Gravity * raised.Period * raised.Period / FullTurn;
+        var heading = (int)Math.Round(raised.TowardRadians / FullTurn * headings);
+        return new Trains((heading % headings + headings) % headings, (int)Math.Round(Math.Log(length) / Math.Log(1 + config.Stretch)));
     }
 
-    private void Begin(int bank, double towardRadians, double length)
+    private double Toward(Trains trains) => trains.Heading * FullTurn / headings;
+
+    private double Length(Trains trains) => Math.Pow(1 + config.Stretch, trains.Stretch);
+
+    private void Rise(int bank, Trains trains, double from)
     {
-        handover = active < 0 ? 1 : 0;
-        active = bank;
-        (activeToward, activeLength) = (towardRadians, length);
+        if (banks[bank] != trains) Load(bank, trains);
+        (active, risingFrom) = (bank, from);
+    }
+
+    private void Load(int bank, Trains trains)
+    {
+        banks[bank] = trains;
+        var (towardRadians, length) = (Toward(trains), Length(trains));
         for (var i = 0; i < generation; i++)
         {
             var train = config.Trains[i];
             var angle = towardRadians + train.AngleDegrees * Math.PI / 180;
             var number = FullTurn / Math.Max(config.MinLengthBlocks, length * train.LengthFactor);
-            var slot = bank + i;
+            var slot = bank * generation + i;
             (numberX[slot], numberZ[slot], frequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, Math.Sqrt(Gravity * number));
             amplitude[slot] = 0;
         }
         Changed?.Invoke(string.Format(System.Globalization.CultureInfo.InvariantCulture,
             "new waves toward {0:F0}°, {1:F0} m long", (towardRadians * 180 / Math.PI + 360) % 360, length));
     }
-
-    private bool Rising(int slot) => active >= 0 && slot >= active && slot < active + generation;
 
     private Foam FoamAt(double beaufort)
     {
@@ -235,6 +261,8 @@ public sealed class SeaSurface
         var (low, high) = (rows[above - 1], rows[above]);
         return Foam.Lerp(Foam.Of(low), Foam.Of(high), (beaufort - low.Force) / (high.Force - low.Force));
     }
+
+    private readonly record struct Trains(int Heading, int Stretch);
 }
 
 public readonly record struct Foam(double Caps, double Streaks, double Spray)

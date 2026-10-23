@@ -36,7 +36,13 @@ public class SeaMapServer(SeaWeatherSystem sea, ICoreServerAPI sapi)
         {
             samples[cellZ * side + cellX] = Cell(regionX * regionSize + cellX * Config.CellBlocks, regionZ * regionSize + cellZ * Config.CellBlocks);
         }
-        return SeaMapSnapshot.Of(regionX, regionZ, sea.NowHours, Model.RegionMps(regionX, regionZ), side, samples);
+        var now = sea.NowHours;
+        var firstSlot = (long)Math.Floor(now / sea.Config.SeaSampleHours) - 1;
+        var wettest = Enumerable.Range(0, samples.Length).MaxBy(i => samples[i].WaveHeight);
+        var (wetX, wetZ) = (regionX * regionSize + wettest % side * Config.CellBlocks, regionZ * regionSize + wettest / side * Config.CellBlocks);
+        var water = samples[wettest].WaveHeight > 0 ? CellSamples.Select(at => (wetX + at.X * Config.CellBlocks, wetZ + at.Z * Config.CellBlocks)).ToArray() : [];
+        var generations = Enumerable.Range(0, 3).Select(i => Model.GenerationOf(regionX, regionZ, firstSlot + i, water)).ToArray();
+        return SeaMapSnapshot.Of(regionX, regionZ, now, Model.RegionMps(regionX, regionZ), side, samples, firstSlot, generations);
     }
 
     private SeaSample Cell(double x, double z)

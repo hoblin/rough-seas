@@ -8,6 +8,8 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
 
     public bool Swell => !surface.Calm;
 
+    public double Seconds => surface.Seconds;
+
     public double HeightAt(double x, double z) => ShareAt(x, z) is var share and > 0 ? surface.HeightAt(x, z, share) : 0;
 
     public SeaPose PoseOf(double x, double z, double yaw, double length, double width)
@@ -21,7 +23,7 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
 
         var (plusX, minusX, plusZ, minusZ) = (At(length / 2, 0), At(-length / 2, 0), At(0, width / 2), At(0, -width / 2));
         return new SeaPose(
-            Math.Min(share, 1),
+            share,
             (plusX + minusX + plusZ + minusZ) / 4,
             -Math.Atan((plusZ - minusZ) / width),
             Math.Atan((plusX - minusX) / length));
