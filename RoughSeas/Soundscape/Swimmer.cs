@@ -1,10 +1,12 @@
 using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 
 namespace RoughSeas.Soundscape;
 
 public sealed class Swimmer(ICoreClientAPI capi, Splashes splashes)
 {
     private readonly CrestWatch crests = new();
+    private AssetLocation? lastSplash;
 
     public void Update()
     {
@@ -14,6 +16,6 @@ public sealed class Swimmer(ICoreClientAPI capi, Splashes splashes)
             return;
         }
         var at = player.Pos.XYZ;
-        if (crests.Watch(splashes.HeightAt(at)) is { } wave) splashes.Play(at, wave, "splash on the player");
+        if (crests.Watch(splashes.HeightAt(at)) is { } wave) lastSplash = splashes.Play(at, wave, "splash on the player", lastSplash);
     }
 }

@@ -32,12 +32,13 @@ public sealed class Splashes
     public (double X, double Z) From =>
         storms.Surface is { } surface ? (-Math.Cos(surface.WavesTowardRadians), -Math.Sin(surface.WavesTowardRadians)) : (0, 0);
 
-    public void Play(Vec3d at, double waveHeight, string what)
+    public AssetLocation? Play(Vec3d at, double waveHeight, string what, AssetLocation? previous)
     {
         var volume = cue.VolumeAt(waveHeight);
-        if (volume < Silent || pool.Pick(waveHeight, capi.World.Rand) is not { } file) return;
+        if (volume < Silent || pool.Pick(waveHeight, capi.World.Rand, previous) is not { } file) return previous;
 
         capi.World.PlaySoundAt(file, at.X, at.Y, at.Z, null, true, range, (float)volume);
         sounds.Log("{0}: {1} of a {2:F2} m wave at volume {3:F2}", what, file.Path, waveHeight, volume);
+        return file;
     }
 }

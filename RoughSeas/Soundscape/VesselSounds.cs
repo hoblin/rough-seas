@@ -49,6 +49,7 @@ public sealed class VesselSounds(ICoreClientAPI capi, WaterConfig config, Splash
         private readonly Dictionary<HullPlace, Loop> leaks = HullShape.Places.ToDictionary(place => place,
             place => new Loop(capi, config.Leak, config.Range, (state, volume) => sounds.Log(vessel, "leak trickle at the {0} {1} at {2:F2}", place.Code(), state, volume)));
         private readonly CrestWatch crests = new();
+        private AssetLocation? lastSplash;
 
         private string reading = "";
         private double lastWave;
@@ -68,7 +69,7 @@ public sealed class VesselSounds(ICoreClientAPI capi, WaterConfig config, Splash
             {
                 lastWave = wave;
                 var (fromX, fromZ) = splashes.From;
-                splashes.Play(hull == null ? centre : centre.AddCopy(hull.PointAt(hull.Toward(fromX, fromZ))), wave, $"{vessel.Code} {vessel.EntityId} splash");
+                lastSplash = splashes.Play(hull == null ? centre : centre.AddCopy(hull.PointAt(hull.Toward(fromX, fromZ))), wave, $"{vessel.Code} {vessel.EntityId} splash", lastSplash);
             }
             var leaking = 0.0;
             foreach (var (place, loop) in leaks)

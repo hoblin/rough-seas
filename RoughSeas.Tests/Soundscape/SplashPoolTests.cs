@@ -13,8 +13,21 @@ public class SplashPoolTests
     [Fact]
     public void NeverPlaysTheSameSplashTwiceInARow()
     {
-        var picked = Enumerable.Range(0, 200).Select(_ => pool.Pick(0.5, rand)).ToList();
+        var picked = new List<AssetLocation?>();
+        for (var i = 0; i < 200; i++) picked.Add(pool.Pick(0.5, rand, picked.LastOrDefault()));
         Assert.All(picked.Zip(picked.Skip(1)), pair => Assert.NotEqual(pair.First, pair.Second));
+    }
+
+    [Fact]
+    public void KeepsEachHullFromRepeatingWhileHullsTakeTurns()
+    {
+        var (first, second) = (new List<AssetLocation?>(), new List<AssetLocation?>());
+        for (var i = 0; i < 100; i++)
+        {
+            first.Add(pool.Pick(3, rand, first.LastOrDefault()));
+            second.Add(pool.Pick(3, rand, second.LastOrDefault()));
+        }
+        Assert.All(first.Zip(first.Skip(1)).Concat(second.Zip(second.Skip(1))), pair => Assert.NotEqual(pair.First, pair.Second));
     }
 
     [Fact]
@@ -36,7 +49,7 @@ public class SplashPoolTests
     {
         var single = new SplashPool([Files[0]], fullFromMetres: 1);
         Assert.Equal(Files[0], single.Pick(0.5, rand));
-        Assert.Equal(Files[0], single.Pick(0.5, rand));
+        Assert.Equal(Files[0], single.Pick(0.5, rand, Files[0]));
     }
 
     [Fact]
