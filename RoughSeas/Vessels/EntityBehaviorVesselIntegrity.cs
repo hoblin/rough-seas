@@ -47,6 +47,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     private DamageConversion damageConversion = null!;
     private VesselsModSystem vessels = null!;
     private ISeaWeather seaWeather = null!;
+    private SeaClock.Watch watch = null!;
     private HullModel model = null!;
     private Flotation flotation = null!;
     private HullBuild build;
@@ -156,6 +157,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         resistance = Shell.Of(attributes["shell"])?.Resists(frame, vessels.Materials, vessels.HullConfig, damageConversion.CutShare)
             ?? Resistance.Whole(frame);
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        watch = seaWeather.Clock.StartWatch();
         runsRapids = attributes["runsRapids"].AsBool(false);
         rapids = vessels.Rapids;
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])
@@ -191,7 +193,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
             if (entity.World.Side == EnumAppSide.Server && entity.Alive)
             {
                 using var _ = vessels.Budget.Measure();
-                Flood(sinceUpdate);
+                Flood(watch.Lap());
             }
             sinceUpdate = 0;
         }
@@ -497,7 +499,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         (wasSunk, wasAwash) = (Afloat.Sunk, awash);
     }
 
-    private void Flood(double seconds)
+    private void Flood(Lap lap)
     {
         if (!HasDraft || !inWater || Hold is not { } hold || hold.Litres >= hold.CapacityLitres) return;
 
@@ -506,7 +508,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
             hold.Ship(hold.CapacityLitres - hold.Litres, Afloat.Sunk ? "on the bottom" : "over the gunwale");
             return;
         }
-        double litres = model.Inflow(seconds, vessels.GameHours(seconds), Afloat, flotation.DepthMetres);
+        double litres = model.Inflow(lap.Seconds, lap.Hours, Afloat, flotation.DepthMetres);
         if (litres <= 0) return;
 
         hold.Ship(litres, "through her leaks");
@@ -519,15 +521,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     {
         if (model is not IAfloat timed) return;
 
-        var calendar = entity.World.Calendar;
-        double now = calendar.TotalHours;
+        double now = seaWeather.Clock.Hours;
         double last = Tree.GetDouble(CheckedAtKey, now);
         if (now - last < AfloatStepHours && now != last) return;
 
         Tree.SetDouble(CheckedAtKey, now);
         if (now == last) return;
         double sun = afloat ? 0 : Sunlight();
-        timed.Pass((now - last) / calendar.HoursPerDay, afloat, sun);
+        timed.Pass((now - last) / entity.World.Calendar.HoursPerDay, afloat, sun);
         vessels.Log(entity, "{0:F1} h {1}: hull {2:F2}, {3:F0} kg soaked", now - last,
             afloat ? "afloat" : sun > 0 ? "drying in the sun" : "ashore", Integrity, model.SoakedKg);
     }

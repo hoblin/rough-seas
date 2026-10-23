@@ -258,7 +258,7 @@ public class BridgeCommands : ModSystem
         var (strongest, strongestAhead, strongestCode) = (0.0, 0.0, "storm");
         for (var ahead = step; ahead <= hours; ahead += step)
         {
-            var when = sea.NowHours + ahead;
+            var when = sea.Clock.Hours + ahead;
             var storms = sea.StormsAt(pos.X, pos.Z, when);
             if (storms.Storm == null || type != null && storms.Storm.Code != type) continue;
             if (storms.Presence > strongest) (strongest, strongestAhead, strongestCode) = (storms.Presence, ahead, storms.Storm.Code);
@@ -283,7 +283,7 @@ public class BridgeCommands : ModSystem
         var year = calendar.DaysPerYear * calendar.HoursPerDay;
         var pos = player.Entity.Pos;
         var reach = (int)(range / step);
-        var (x, z, now) = (pos.X, pos.Z, sea.NowHours);
+        var (x, z, now) = (pos.X, pos.Z, sea.Clock.Hours);
         Task.Run(() =>
         {
             var reply = Count(sea, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Config.Storms, type, x, z, now, year, years, reach, step, presence,
@@ -354,11 +354,11 @@ public class BridgeCommands : ModSystem
         var probed = sea.StormsWithin(pos.X, pos.Z, range)
             .SelectMany(storm =>
             {
-                var (x, z) = storm.CentreAt(sea.NowHours);
+                var (x, z) = storm.CentreAt(sea.Clock.Hours);
                 return StormProbes.Select(probe => (x: x + Math.Cos(probe.Angle) * probe.Reach * storm.Radius, z: z + Math.Sin(probe.Angle) * probe.Reach * storm.Radius));
             })
             .Where(point => sea.IsSea(point.x, point.z))
-            .OrderByDescending(point => sea.StormsAt(point.x, point.z, sea.NowHours).Speed)
+            .OrderByDescending(point => sea.StormsAt(point.x, point.z, sea.Clock.Hours).Speed)
             .Take(WaveProbes)
             .Select(point => (point.x, point.z, waves: sea.At(point.x, point.z).WaveHeight))
             .Where(point => point.waves > 0)
@@ -384,7 +384,7 @@ public class BridgeCommands : ModSystem
             .SelectMany(_ => Enumerable.Range(-steps, 2 * steps + 1), (i, j) => (x: pos.X + i * step, z: pos.Z + j * step))
             .Concat(sea.StormsWithin(pos.X, pos.Z, range).SelectMany(storm =>
             {
-                var (x, z) = storm.CentreAt(sea.NowHours);
+                var (x, z) = storm.CentreAt(sea.Clock.Hours);
                 return StormProbes.Select(probe => (x: x + Math.Cos(probe.Angle) * probe.Reach * storm.Radius, z: z + Math.Sin(probe.Angle) * probe.Reach * storm.Radius));
             }))
             .Where(point => sea.IsSea(point.x, point.z))
@@ -416,7 +416,7 @@ public class BridgeCommands : ModSystem
         const double range = 60000;
         var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Model;
         var pos = player.Entity.Pos;
-        var now = sea.NowHours;
+        var now = sea.Clock.Hours;
         var chosen = sea.StormsWithin(pos.X, pos.Z, range)
             .Where(storm => type == null || storm.Code == type)
             .Select(storm => (storm, centre: storm.CentreAt(now)))

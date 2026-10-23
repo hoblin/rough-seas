@@ -122,10 +122,4 @@ public class StormsModSystem : ModSystem
 
     public void Log(string format, params object[] args) =>
         Mod.Logger.Debug("[storms] " + string.Format(CultureInfo.InvariantCulture, format, args));
-
-    public double GameHours(double realSeconds)
-    {
-        var calendar = api.World.Calendar;
-        return realSeconds * calendar.SpeedOfTime * calendar.CalendarSpeedMul / 3600;
-    }
 }

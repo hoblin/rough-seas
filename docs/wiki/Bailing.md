@@ -51,6 +51,6 @@ The currach, shipping some 150 litres a minute, can be kept dry by one bailer wi
 
 A leak is the same race. A bucket keeps up with a stove-in bottom on most boats: the dugout's lets in about 180 litres a minute, the currach's under 90. Not the sailboat's, which lets in over 300; and two or three bad cracks outpace any bailer. Bail to stay afloat, and [mend](Mending) to stop it.
 
-So at sea in a storm, keep bailing, and don't leave a boat out in one. The bilge never drains by itself: a boat swamped in the night is still full in the morning.
+So at sea in a storm, keep bailing, and don't leave a boat out in one. The night you sleep through passes for a boat afloat near you too: she takes its waves, its rain and her leaks while you sleep. The bilge never drains by itself: a boat swamped in the night is still full in the morning.
 
 With [Dangerous oceans](World-Settings#dangerous-oceans) off, no waves come aboard and no rain falls in.

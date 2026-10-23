@@ -36,7 +36,7 @@ public class SeaMapServer(SeaWeatherSystem sea, ICoreServerAPI sapi)
         {
             samples[cellZ * side + cellX] = Cell(regionX * regionSize + cellX * Config.CellBlocks, regionZ * regionSize + cellZ * Config.CellBlocks);
         }
-        var now = sea.NowHours;
+        var now = sea.Clock.Hours;
         var firstSlot = (long)Math.Floor(now / sea.Config.SeaSampleHours) - 1;
         var wettest = Enumerable.Range(0, samples.Length).MaxBy(i => samples[i].WaveHeight);
         var (wetX, wetZ) = (regionX * regionSize + wettest % side * Config.CellBlocks, regionZ * regionSize + wettest / side * Config.CellBlocks);

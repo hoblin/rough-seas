@@ -31,6 +31,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private float speedMultiplier;
     private readonly Dictionary<string, SeatPose> seated = new();
     private EntityBehaviorSeatable? seatable;
+    private SeaClock.Watch watch = null!;
     private float sinceUpdate;
     private double sinceWave;
 
@@ -65,6 +66,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
         vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        watch = sea.Clock.StartWatch();
         BeamMetres = attributes["beamMetres"].AsDouble();
         MastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();
@@ -107,17 +109,27 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
-        sinceWave += sinceUpdate;
         sinceUpdate = 0;
-        if (!entity.Swimming || !sea.DangerousOceans) return;
+        sinceWave += watch.Lap().LivedSeconds;
+        if (!entity.Swimming || !sea.DangerousOceans)
+        {
+            sinceWave = 0;
+            return;
+        }
 
         using var _ = storms.Budget.Measure();
         var state = sea.At(entity.Pos.X, entity.Pos.Z);
-        if (state.WaveHeight < storms.Config.Waves.MinHeight || sinceWave < state.WavePeriod) return;
+        if (state.WaveHeight < storms.Config.Waves.MinHeight)
+        {
+            sinceWave = 0;
+            return;
+        }
 
-        sinceWave = 0;
-        Wave?.Invoke(state);
-        TakeWave(state);
+        for (; sinceWave >= state.WavePeriod && entity.Alive; sinceWave -= state.WavePeriod)
+        {
+            Wave?.Invoke(state);
+            TakeWave(state);
+        }
     }
 
     private void TakeWave(SeaState state)
