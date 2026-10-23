@@ -23,7 +23,7 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
     {
         weather = sapi.ModLoader.GetModSystem<WeatherSystemServer>();
         weather.OnLightningImpactBegin += DrawToMast;
-        watch = sea.Clock.Start();
+        watch = sea.Clock.StartWatch();
         sapi.Event.RegisterGameTickListener(_ => Strike(), (int)(storms.Config.TickSeconds * 1000));
     }
 

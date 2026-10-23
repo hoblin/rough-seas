@@ -66,7 +66,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
         vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
-        watch = sea.Clock.Start();
+        watch = sea.Clock.StartWatch();
         BeamMetres = attributes["beamMetres"].AsDouble();
         MastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();

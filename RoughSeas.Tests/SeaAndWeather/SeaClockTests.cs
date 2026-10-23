@@ -22,7 +22,7 @@ public class SeaClockTests
 
     private SeaClock.Watch Started()
     {
-        var watch = Clock().Start();
+        var watch = Clock().StartWatch();
         watch.Lap();
         return watch;
     }
@@ -39,7 +39,7 @@ public class SeaClockTests
     [Fact]
     public void LapsNothingAtItsFirstReading()
     {
-        var watch = Clock().Start();
+        var watch = Clock().StartWatch();
         Run(60);
 
         Assert.Equal(default, watch.Lap());

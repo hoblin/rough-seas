@@ -54,7 +54,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     {
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
-        watch = sea.Clock.Start();
+        watch = sea.Clock.StartWatch();
         CapacityLitres = attributes["capacityLitres"].AsDouble();
         deckSquareMetres = attributes["deckSquareMetres"].AsDouble();
         drainLitresPerHour = attributes["drainLitresPerHour"].AsDouble();

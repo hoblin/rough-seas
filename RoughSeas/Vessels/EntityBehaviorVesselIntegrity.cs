@@ -157,7 +157,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         resistance = Shell.Of(attributes["shell"])?.Resists(frame, vessels.Materials, vessels.HullConfig, damageConversion.CutShare)
             ?? Resistance.Whole(frame);
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
-        watch = seaWeather.Clock.Start();
+        watch = seaWeather.Clock.StartWatch();
         runsRapids = attributes["runsRapids"].AsBool(false);
         rapids = vessels.Rapids;
         wreckage = attributes["wreckage"].AsObject<BlockDropItemStack[]>([])

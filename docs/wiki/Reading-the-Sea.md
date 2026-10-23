@@ -43,18 +43,7 @@ The wind is the background wind of the region and season, plus every storm that 
 | `At(x, z)` | the sea state there, a `SeaState` |
 | `CurrentAt(x, z)` | the current and the water's temperature there, a `SeaCurrent` |
 | `DangerousOceans` | the world's [Dangerous oceans](World-Settings#dangerous-oceans) setting |
-| `Clock` | the time the sea keeps, a `SeaClock` |
-
-`SeaClock`:
-
-| Member | What it is |
-| --- | --- |
-| `Hours` | the game time, in total game hours |
-| `Seconds` | the same time in seconds at vanilla's pace: real seconds at the normal speed, 120 to a game hour in a default world |
-| `SecondsAt(hours)`, `HoursAt(seconds)` | one turned into the other |
-| `Start()` | a watch, whose `Lap()` gives the `Hours` and `Seconds` since its last lap, and whether they `Leapt`: the calendar was moved on, as by `/time add`, rather than ran |
-
-Everything of ours at sea keeps this clock: the waves that come aboard, rain into a bilge, leaks, lightning, the drawn waves. It is the world's calendar, so it stands still under `/time stop` and while the game is paused, races while everyone sleeps, and leaps with `/time add`. Motion keeps vanilla's tick, as vanilla's boats do: a current carries a vessel even while time stands still. A mechanic of yours at sea that keeps the same clock happens in step with ours.
+| `Clock` | the time the sea keeps, a `SeaClock`: [The sea's time](#the-seas-time) |
 
 `SeaState`:
 
@@ -114,6 +103,43 @@ pos.Motion.Z += current.Z * carried;
 `physics` is the entity's `EntityBehaviorPassivePhysics`, whose drag is applied 33 times a second; 60 turns m/s into blocks per tick. An entity of yours that moves by other physics adds the current to its own motion its own way.
 
 Our behaviour carries vessels nobody steers ([Building a vessel](Building-a-Vessel#currents)). A vessel a player steers is moved by that player's client, which the server's drift doesn't reach, so a mod that sails its own vessels adds `CurrentAt` to its own motion.
+
+### The sea's time
+
+Everything of ours at sea keeps one clock, `sea.Clock`, on either side: the waves that come aboard, rain into a bilge, leaks and seeping, lightning, a hull soaking or losing its grease, and the drawn waves. It is the world's calendar, so it stands still under `/time stop` and while the game is paused, races while everyone sleeps, and leaps when the calendar is moved on with `/time add`. Motion keeps vanilla's tick, as vanilla's boats do: rowing, sailing, a current's push and a mooring's hold go on while time stands still. A mechanic of yours at sea that keeps the same clock happens in step with ours.
+
+It tells time in two units. Game hours suit what the calendar counts: days afloat, rain by the hour. Seconds at vanilla's pace suit what the real world times in seconds, a wave's period or a leak's litres a second: they are real seconds at the normal speed of time, 120 to a game hour in a default world, and they stand and race with the calendar.
+
+`SeaClock`:
+
+| Member | What it is |
+| --- | --- |
+| `Hours` | the game time, in total game hours; 0 before the calendar exists |
+| `Seconds` | the same time in seconds at vanilla's pace |
+| `SecondsAt(hours)`, `HoursAt(seconds)` | one turned into the other |
+| `StartWatch()` | a new `SeaClock.Watch`, for one mechanic of one thing |
+
+A watch's `Lap()` gives the time since its last lap, a `Lap`:
+
+| Field | What it is |
+| --- | --- |
+| `Hours` | the game hours since the last lap: none at the first lap, nor when the calendar was set back |
+| `Seconds` | the same time in seconds at vanilla's pace |
+| `Leapt` | the calendar was moved on, as by `/time add`, faster than its speed of time runs it |
+
+A mechanic keeps a watch of its own and laps it each time it acts, on its tick or a timer. What builds up takes the whole lap, as vanilla's food rots through a `/time add`. What happens now and then takes the events of the lap, and none of a lap that leapt: no tick lived through those hours. A net that fills while it soaks, and is washed by every wave that reaches it:
+
+```csharp
+watch ??= sea.Clock.StartWatch();
+var lap = watch.Lap();
+fish += FishPerHour * lap.Hours;
+
+var state = sea.At(pos.X, pos.Z);
+sinceWave = lap.Leapt ? 0 : sinceWave + lap.Seconds;
+for (; state.WavePeriod > 0 && sinceWave >= state.WavePeriod; sinceWave -= state.WavePeriod) Wash(net, state);
+```
+
+Lap at least twice a second, as ours do. While everyone sleeps that is an hour of game time a lap, and what a mechanic reads at the end of a longer one, a storm or the waves, may have passed within it.
 
 ## The drawn sea
 
