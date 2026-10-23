@@ -15,7 +15,7 @@ public class SoundscapeModSystem : ModSystem
 
     private ICoreAPI api = null!;
     private SeaBed? bed;
-    private VesselLoops? loops;
+    private VesselSounds? vessels;
     private double sinceLog;
 
     public SoundscapeConfig Config { get; private set; } = null!;
@@ -33,7 +33,9 @@ public class SoundscapeModSystem : ModSystem
         ShoreSound.Attach(Config.Shore, sea, storms.Waves);
         VanillaRowing.Attach(Config.VanillaRowingVolume, this);
         var crests = new Crests(capi, Config.Crests, this);
-        loops = new VesselLoops(capi, Config.Water, sea, this);
+        var splashes = new Splashes(capi, Config.Water.Splash, Config.Water.Range, storms, this);
+        var swimmer = new Swimmer(capi, splashes);
+        vessels = new VesselSounds(capi, Config.Water, splashes, this);
         bed = new SeaBed(capi, Config.Beds);
         capi.ChatCommands.Create("sounds")
             .WithDescription("Rough Seas: what the sea sounds like here")
@@ -43,8 +45,8 @@ public class SoundscapeModSystem : ModSystem
                 .HandleWith(args => TextCommandResult.Success(ShoreSound.Survey(capi.World, capi.World.Player.Entity.Pos.AsBlockPos, (int)args[0])))
             .EndSubCommand()
             .BeginSubCommand("vessels")
-                .WithDescription("What each vessel within hearing plays: bilge slosh, leak trickle, lapping")
-                .HandleWith(_ => TextCommandResult.Success(loops.Describe()))
+                .WithDescription("What each vessel within hearing plays: bilge slosh, leak trickle, the waves splashing at her")
+                .HandleWith(_ => TextCommandResult.Success(vessels.Describe()))
             .EndSubCommand();
         capi.Event.LevelFinalize += () =>
         {
@@ -54,7 +56,8 @@ public class SoundscapeModSystem : ModSystem
                 if (Listener.Of(capi, sea, storms, Config) is not { } listener) return;
                 bed.Update(dt, listener);
                 crests.Update(dt, listener);
-                loops.Update(listener);
+                vessels.Update(listener);
+                swimmer.Update();
                 if ((sinceLog += dt) < LogEverySeconds) return;
                 sinceLog = 0;
                 Log("bed {0} in a {1:F1} m/s wind, waves {2:F1} m: {3}; whitecaps {4:F2}, spray {5:F2}", listener.AtSea ? "at sea" : "ashore",
@@ -69,7 +72,7 @@ public class SoundscapeModSystem : ModSystem
         ShoreSound.Detach();
         VanillaRowing.Detach();
         bed?.Dispose();
-        loops?.Dispose();
+        vessels?.Dispose();
     }
 
     public void Log(Entity entity, string format, params object[] args) =>

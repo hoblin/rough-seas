@@ -1,16 +1,11 @@
 {
-  "updateSeconds": 0.25,
+  "updateSeconds": 0.1,
   "seaProbeBlocks": 3,
   "seaFromMetres": 0.1,
   "beds": {
     "easeSeconds": 4,
     "lufs": [[0, -48.0], [2, -46.0], [5, -34.1], [10, -25.0], [15, -19.7], [20, -16.0], [25, -13.1], [30, -10.7], [35, -9.3]],
     "loops": [
-      {
-        "sound": "roughseas:sounds/sea/calm",
-        "share": [[0, 1], [3, 1], [6, 0]],
-        "lufs": -13.6
-      },
       {
         "sound": "roughseas:sounds/sea/moderate",
         "share": [[3, 0], [6, 1], [11, 1], [15, 0]],
@@ -39,7 +34,6 @@
     }
   },
   "shore": {
-    "lappingSound": "roughseas:sounds/shore/lapping",
     "surf": [
       {
         "sound": "roughseas:sounds/shore/surf-light",
@@ -59,7 +53,6 @@
    ],
     "surfBlockCount": 30,
     "maxDepthBlocks": 12,
-    "lappingStrength": [[0, 0.09], [0.5, 0.2], [1, 0.12]],
     "breakingStrength": [[0.3, 0.029], [1, 0.115], [2, 0.288], [3.5, 0.72], [5, 1]]
   },
   "hull": {
@@ -140,18 +133,20 @@
       "sound": "roughseas:sounds/water/leak",
       "volume": [[0.005, 0], [0.05, 0.04], [0.5, 0.1], [3, 0.2]]
     },
-    "lapping": {
-      "sound": "roughseas:sounds/water/lapping",
-      "volume": [[0, 0.06], [1, 0.12], [2, 0.06], [3, 0]]
+    "splash": {
+      "sound": "roughseas:sounds/water/splash/*",
+      "volume": [[0, 0], [8, 0.96]],
+      "fullFromMetres": 1
     }
   },
   "sources": {
-    "files": "Every sound file is mono, true peak at most -1 dBTP; credits in the wiki's Sound-Credits page. The open-sea beds and the surf are mastered toward -8 LUFS (each records what it reached), events (knocks, cracks, break-ups, snapping lashings, a breaker's slam, water over the gunwale, slaps) to -18 LUFS with a limiter, and the rest of the ambience (lapping, slosh, leak, whitecaps) to -26 LUFS. A volume can't exceed 1, so a file's master is the loudest it can play.",
-    "levels": "Volumes set against vanilla by calculation from its code: in the game a sound plays at its file's loudness + 20 log10(volume x the player's setting for its type x distance attenuation). Distance attenuation is OpenAL exponent-clamped with reference max(3, sqrt(range) - 2) and rolloff ln 100 / ln range; weather and our beds play relative to the listener, unattenuated. Vanilla at sea: wind -39 LUFS just audible, -31 at wind speed 0.7, -24 in a full gale; rain -33 moderate, -27 heavy; raft idle -50; shore lapping -51 beside 100 edge blocks.",
-    "beds": "Over sea water with waves of at least seaFromMetres (a pond or a creek in a gale stays quiet), by the wind speed at the listener in m/s, not the wave height: a young sea in a gale already roars. lufs is the sea's level in the game, -46 + 30 log10(wind / 2 m/s): -46 at 2 m/s, -34 at 5, -20 at 15 (past vanilla's full wind at -24), -12 at force 10, -9.3 from 35 m/s, the loudest the storm's file can play; each loop's lufs is its file's measured loudness, mastered toward -8. A storm deafens: events stay at their own level (a hard knock -18) and drown in it from about force 8.",
-    "shore": "Block ambient, volume clamp(sqrt(blocks) / surfBlockCount) x strength x the band's gain. Surf files are mastered toward -8 LUFS and reached -10.6 to -15.5; each band's gain brings its file to the loudest (-10.6), so the level runs smoothly across bands. Strength grows with the wave height at the shore as the sea's bed grows with the wind: beside 500 breaking blocks -44 LUFS in 0.3 m waves, -32 at 1 m, -24 at 2 m, -16 at 3.5 m, -13 from 5 m, so a storm coast roars as loud as the storm at sea. Lapping replaces vanilla's waterwaves (-36.75 LUFS) with a -26 LUFS file at 0.29 x the strength vanilla's would need.",
-    "hull": "At a rider 1.5 m away: slap -40 to -32, full bilge slosh -34, leak trickle at most -40, hull lapping -44. The whitecap hiss -37 LUFS at 12 m, under a force-6 wind.",
+    "files": "Every sound file is mono, true peak at most -1 dBTP; credits in the wiki's Sound-Credits page. The open-sea beds and the surf are mastered toward -8 LUFS (each records what it reached), events (knocks, cracks, break-ups, snapping lashings, a breaker's slam, water over the gunwale, slaps) to -18 LUFS with a limiter, and the rest of the ambience (splashes, slosh, leak, whitecaps) to -26 LUFS. A volume can't exceed 1, so a file's master is the loudest it can play.",
+    "levels": "Volumes set against vanilla by calculation from its code: in the game a sound plays at its file's loudness + 20 log10(volume x the player's setting for its type x distance attenuation). Distance attenuation is OpenAL exponent-clamped with reference max(3, sqrt(range) - 2) and rolloff ln 100 / ln range; weather and our beds play relative to the listener, unattenuated. Vanilla at sea: wind -39 LUFS just audible, -31 at wind speed 0.7, -24 in a full gale; rain -33 moderate, -27 heavy; raft idle -50; shore lapping (waterwaves) -51 beside 100 edge blocks.",
+    "beds": "Over sea water with waves of at least seaFromMetres (a pond or a creek in a gale stays quiet), by the wind speed at the listener in m/s, not the wave height: a young sea in a gale already roars. lufs is the sea's level in the game, -46 + 30 log10(wind / 2 m/s): -46 at 2 m/s, -34 at 5, -20 at 15 (past vanilla's full wind at -24), -12 at force 10, -9.3 from 35 m/s, the loudest the storm's file can play; each loop's lufs is its file's measured loudness, mastered toward -8. A storm deafens: events stay at their own level (a hard knock -18) and drown in it from about force 8. No bed plays below 3 m/s: in a calm there is no wind or surf to make one, and the sea is heard only as its waves splash.",
+    "shore": "Block ambient, volume clamp(sqrt(blocks) / surfBlockCount) x strength x the band's gain. Surf files are mastered toward -8 LUFS and reached -10.6 to -15.5; each band's gain brings its file to the loudest (-10.6), so the level runs smoothly across bands. Strength grows with the wave height at the shore as the sea's bed grows with the wind: beside 500 breaking blocks -44 LUFS in 0.3 m waves, -32 at 1 m, -24 at 2 m, -16 at 3.5 m, -13 from 5 m, so a storm coast roars as loud as the storm at sea. Where the waves don't break, vanilla's own waterwaves laps at the 1-deep edge, unchanged.",
+    "hull": "At a rider 1.5 m away: slap -40 to -32, full bilge slosh -34, leak trickle at most -40, a 1 m wave's splash -44. The whitecap hiss -37 LUFS at 12 m, under a force-6 wind.",
     "events": "An event plays at least 6 dB over the loudest background of the moment, the full gale's wind at -24 LUFS: a hard knock, a crack, a break-up and a slam at -18, a light knock at -24, water over the gunwale -26 to -19. The reed boat's soft crunches only reach -24 under the limiter.",
+    "splash": "One splash for each crest of the drawn sea passing a vessel afloat or the player in the water, its wave being that crest's height over the trough before it. Volume grows as the wave's height: a wave's energy grows as its height squared, and a splash's sound pressure as the root of the energy it spends: 0.12 for a 1 m wave, the level hull lapping was set to (-44 LUFS at a rider 1.5 m), and silent under 4 cm. The files run from the smallest splash to the fullest of a lake's lapping; fullFromMetres (Balance) is the wave that gets the fullest, and a splash is drawn from the three nearest its wave, never the one played last.",
     "vanillaRowingVolume": "Scales vanilla's own rowing sound (raft-moving, -26 LUFS at full speed, unpositioned) to -40, under our beds, keeping it as the sound of the oars."
   },
   "vanillaRowingVolume": 0.2

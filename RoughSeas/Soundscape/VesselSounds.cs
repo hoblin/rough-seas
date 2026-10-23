@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
@@ -11,7 +10,7 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Soundscape;
 
-public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeatherSystem sea, SoundscapeModSystem sounds) : IDisposable
+public sealed class VesselSounds(ICoreClientAPI capi, WaterConfig config, Splashes splashes, SoundscapeModSystem sounds) : IDisposable
 {
     private const float Silent = 0.005f;
 
@@ -30,7 +29,7 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
         foreach (var vessel in near)
         {
             if (!heard.TryGetValue(vessel.EntityId, out var voices)) heard[vessel.EntityId] = voices = new Voices(capi, config, vessel, sounds);
-            voices.Update(vessel, sea);
+            voices.Update(vessel, splashes);
         }
     }
 
@@ -47,25 +46,30 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
     private sealed class Voices(ICoreClientAPI capi, WaterConfig config, Entity vessel, SoundscapeModSystem sounds) : IDisposable
     {
         private readonly Loop slosh = new(capi, config.Slosh, config.Range, (state, volume) => sounds.Log(vessel, "bilge slosh {0} at {1:F2}", state, volume));
-        private readonly Loop lapping = new(capi, config.Lapping, config.Range, (state, volume) => sounds.Log(vessel, "lapping {0} at {1:F2}", state, volume));
         private readonly Dictionary<HullPlace, Loop> leaks = HullShape.Places.ToDictionary(place => place,
             place => new Loop(capi, config.Leak, config.Range, (state, volume) => sounds.Log(vessel, "leak trickle at the {0} {1} at {2:F2}", place.Code(), state, volume)));
+        private readonly CrestWatch crests = new();
 
         private string reading = "";
+        private double lastWave;
 
-        public void Update(Entity vessel, SeaWeatherSystem sea)
+        public void Update(Entity vessel, Splashes splashes)
         {
             var hull = vessel.GetBehavior<EntityBehaviorVesselIntegrity>();
             var bilge = vessel.GetBehavior<EntityBehaviorBilge>();
             var afloat = vessel.Alive && vessel.Swimming && hull?.Afloat.Sunk != true;
             var centre = vessel.Pos.XYZ;
             var fill = afloat ? bilge?.Fill ?? 0 : 0;
-            var waves = afloat ? sea.At(centre.X, centre.Z).WaveHeight : 0;
             var room = bilge is { CapacityLitres: > 0 } ? 1 - bilge.Fill : 1;
 
             slosh.Play(fill, centre);
-            if (afloat) lapping.Play(waves, centre);
-            else lapping.Silence();
+            if (!afloat) crests.Forget();
+            else if (crests.Watch(splashes.HeightAt(centre)) is { } wave)
+            {
+                lastWave = wave;
+                var (fromX, fromZ) = splashes.From;
+                splashes.Play(hull == null ? centre : centre.AddCopy(hull.PointAt(hull.Toward(fromX, fromZ))), wave, $"{vessel.Code} {vessel.EntityId} splash");
+            }
             var leaking = 0.0;
             foreach (var (place, loop) in leaks)
             {
@@ -74,7 +78,7 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
                 loop.Play(litresPerSecond, hull == null ? centre : centre.AddCopy(hull.PointAt(place)));
             }
             reading = $"{vessel.Code} {vessel.EntityId}: {(afloat ? "afloat" : "not afloat")}, bilge {fill:F2} full ({slosh}), " +
-                $"leaking {leaking:F2} L/s heard ({leaks.Values.Count(loop => loop.Playing)} cracks), waves {waves:F1} m ({lapping})";
+                $"leaking {leaking:F2} L/s heard ({leaks.Values.Count(loop => loop.Playing)} cracks), last splash of a {lastWave:F2} m wave";
         }
 
         public string Describe() => reading;
@@ -82,7 +86,6 @@ public sealed class VesselLoops(ICoreClientAPI capi, WaterConfig config, SeaWeat
         public void Dispose()
         {
             slosh.Dispose();
-            lapping.Dispose();
             foreach (var loop in leaks.Values) loop.Dispose();
         }
     }

@@ -73,7 +73,9 @@ LOOK
                              16 blocks (a shape's rendered roll and pitch in degrees: how a vessel
                              rocks; `swell`, the pose the public drawn sea gives a hull of its
                              collision box), `sea`: the swell drawn at the player, its height and
-                             the waves' time in seconds (the same on every client), open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
+                             the waves' time in seconds (the same on every client), `sounds`: each
+                             sound playing now with its file, volume, type and distance, open
+                             dialogs, paused, pickingRange. Pointing at an entity, `reach` is
                              what a swing is measured by: the picked selection box, the eye's
                              distance to the entity's default box (vanilla's measure) and to
                              the point hit (a vessel's), and the held item's range
@@ -86,6 +88,9 @@ LOOK
                              lost, ropes snapped, lightning, the ashore roll when a moored vessel
                              loads. Read it before guessing:
                              grep -a '\[storms\]' "$BENCH_DATA/Logs/server-debug.log"
+  (sound log)                every sound the client starts, fades or stops, ours and vanilla's, with
+                             its file, type, distance and volume, tagged [sound]:
+                             grep -a '\[sound\]' "$BENCH_DATA/Logs/client-debug.log"
   bin/game fps [SECONDS]     frames rendered over SECONDS (default 5): fps, mean and 95th-percentile
                              frame time in ms. Compare a change against BENCH_MODS=agentbridge from
                              the same place and camera.

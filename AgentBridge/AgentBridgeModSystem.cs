@@ -33,6 +33,8 @@ public class AgentBridgeModSystem : ModSystem
     private ScreenshotCapture screenshots = null!;
     private HoverOverride hover = null!;
     private CrosshairPicking crosshair = null!;
+    private SoundsPlaying sounds = null!;
+    private SoundLog soundLog = null!;
     private FrameTimer frameTimer = null!;
     private EntityLoadBlackBox blackBox = null!;
     private HandbookRecipe recipes = null!;
@@ -47,6 +49,8 @@ public class AgentBridgeModSystem : ModSystem
         screenshots = new ScreenshotCapture(api);
         hover = new HoverOverride(api);
         crosshair = new CrosshairPicking();
+        sounds = new SoundsPlaying(api);
+        soundLog = new SoundLog(api, Mod.Logger);
         frameTimer = new FrameTimer(api);
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         recipes = new HandbookRecipe(api);
@@ -65,6 +69,7 @@ public class AgentBridgeModSystem : ModSystem
         crosshair?.Dispose();
         frameTimer?.Dispose();
         blackBox?.Dispose();
+        soundLog?.Dispose();
     }
 
     private async Task Serve()
@@ -194,6 +199,7 @@ public class AgentBridgeModSystem : ModSystem
                     swell = swell?.Of(other)
                 }),
             sea = swell?.At(entity),
+            sounds = sounds.Now(),
             calendar = capi.World.Calendar.PrettyDate(),
             paused = capi.IsGamePaused,
             dialogs = Dialogs().Select(dialog => dialog.DebugName)

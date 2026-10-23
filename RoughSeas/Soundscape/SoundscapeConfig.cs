@@ -4,7 +4,7 @@ namespace RoughSeas.Soundscape;
 
 public class SoundscapeConfig
 {
-    public double UpdateSeconds = 0.25;
+    public double UpdateSeconds = 0.1;
     public int SeaProbeBlocks = 3;
     public double SeaFromMetres = 0.1;
     public float VanillaRowingVolume = 1;
@@ -49,13 +49,16 @@ public class ScatteredCue : Cue
     public double PerSecond;
 }
 
+public class SplashCue : Cue
+{
+    public double FullFromMetres = 1;
+}
+
 public class ShoreConfig
 {
-    public string? LappingSound;
     public SurfBand[] Surf = [];
     public int SurfBlockCount = 50;
     public int MaxDepthBlocks = 8;
-    public double[][] LappingStrength = [];
     public double[][] BreakingStrength = [];
 }
 
@@ -94,5 +97,5 @@ public class WaterConfig
     public Cue Pour = new();
     public Cue Slosh = new();
     public Cue Leak = new();
-    public Cue Lapping = new();
+    public SplashCue Splash = new();
 }

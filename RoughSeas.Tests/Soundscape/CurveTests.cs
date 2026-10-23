@@ -28,7 +28,6 @@ public class CurveTests
     public void IsSilentWithoutPoints() => Assert.Equal(0, Curve.At([], 1));
 
     [Theory]
-    [InlineData(0)]
     [InlineData(4)]
     [InlineData(8)]
     [InlineData(13)]
@@ -41,13 +40,19 @@ public class CurveTests
     }
 
     [Fact]
-    public void FadesFromTheCalmBedToTheStormBedAsTheWindRises()
+    public void FadesFromTheModerateBedToTheStormBedAsTheWindRises()
     {
-        var calm = Curve.Mix(Shipped.Beds, 0);
+        var moderate = Curve.Mix(Shipped.Beds, 8);
         var storm = Curve.Mix(Shipped.Beds, 20);
-        Assert.True(calm[0] > calm[^1]);
+        Assert.True(moderate[0] > moderate[^1]);
         Assert.True(storm[^1] > storm[0]);
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void PlaysNoBedInACalm(double windMps) => Assert.All(Curve.Mix(Shipped.Beds, windMps), volume => Assert.Equal(0, volume));
 
     [Fact]
     public void LeavesTheBedsSilentWhenNoLoopIsMeantToPlay()

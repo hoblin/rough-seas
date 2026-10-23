@@ -23,11 +23,9 @@ Every sound Rough Seas plays from its own files is cut, layered and levelled fro
 | [5 break, crunch impacts: impactcrunch01.mp3.flac](https://opengameart.org/content/5-break-crunch-impacts) | Independent.nu | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/wood/break |
 | [5 break, crunch impacts: impactcrunch03.mp3.flac](https://opengameart.org/content/5-break-crunch-impacts) | Independent.nu | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/bark/break, hull/hide/break |
 | [5 break, crunch impacts: impactcrunch04.mp3.flac](https://opengameart.org/content/5-break-crunch-impacts) | Independent.nu | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/wood/break |
-| [Anchored boat rolling_Below deck recording.wav](https://freesound.org/people/KaleidacousticsAudio/sounds/627067/) | KaleidacousticsAudio | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | sea/calm |
 | [bass rumble - deepwhoosh 1](https://freesound.org/people/Logicogonist/sounds/807976/) | Logicogonist | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | crest/plunge |
 | [Breaking Plastic Hollow Crunching Crackling Break Snap - Slow & Soft](https://freesound.org/people/ChristopherJngs/sounds/868278/) | ChristopherJngs | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/reed/hard |
 | [Double splash white wave.wav](https://freesound.org/people/hear-no-elvis/sounds/120898/) | hear-no-elvis | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | crest/hiss |
-| [Gentle Ocean Waves – Calm Shore Ambience](https://freesound.org/people/bassimat/sounds/867642/) | bassimat | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | shore/lapping |
 | [Knife thrust into wall](https://freesound.org/people/NeoSpica/sounds/504618/) | NeoSpica | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/bark/knock |
 | [Necksnap_build.wav](https://freesound.org/people/danielrutterfilms/sounds/134025/) | danielrutterfilms | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/bark/harm |
 | [ocean waves between rocks 2](https://freesound.org/people/Yoyodaman234/sounds/331225/) | Yoyodaman234 | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | shore/surf-moderate |
@@ -35,7 +33,7 @@ Every sound Rough Seas plays from its own files is cut, layered and levelled fro
 | [Sailing boat, bow wave (close perspective)](https://freesound.org/people/Pfannkuchn/sounds/360631/) | Pfannkuchn | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | sea/moderate |
 | [Thằn Lằn Khổng Lộ Nước](https://freesound.org/people/SieuAmThanh/sounds/484197/) | SieuAmThanh | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | crest/plunge |
 | [Water Slapping (fast)](https://freesound.org/people/adviseme333/sounds/679390/) | adviseme333 | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | water/slap/strong |
-| [Water_Lapping_River.wav](https://freesound.org/people/ceich93/sounds/318064/) | ceich93 | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | water/lapping |
+| [Water_Lapping_River.wav](https://freesound.org/people/ceich93/sounds/318064/) | ceich93 | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | water/splash |
 | [Waves crash surf bright detail beach cu loop BAHAMAS 180521.wav](https://freesound.org/people/TRP/sounds/573187/) | TRP | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | shore/surf-storm |
 | [Waves on shale beech. Distant low boat engine in background.](https://freesound.org/people/carthny/sounds/592430/) | carthny | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | shore/surf-light |
 | [Wood Crack 2](https://freesound.org/people/utsuru/sounds/183452/) | utsuru | [CC0](https://creativecommons.org/publicdomain/zero/1.0/) | hull/wood/harm |

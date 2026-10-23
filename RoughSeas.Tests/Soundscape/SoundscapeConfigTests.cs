@@ -32,12 +32,11 @@ public class SoundscapeConfigTests
     public void ReadsEverySoundItNamesWithItsLoudness()
     {
         var water = Shipped.Water;
-        Cue[] cues = [Shipped.Crests.Hiss, Shipped.Crests.Plunge, water.Slap, water.StrongSlap, water.Slam, water.Pour, water.Slosh, water.Leak, water.Lapping];
+        Cue[] cues = [Shipped.Crests.Hiss, Shipped.Crests.Plunge, water.Slap, water.StrongSlap, water.Slam, water.Pour, water.Slosh, water.Leak, water.Splash];
         Assert.All(cues, cue => Assert.False(string.IsNullOrEmpty(cue.Sound) || cue.Volume.Length == 0, $"a cue reads as {cue.Sound}, {cue.Volume.Length} points"));
         Assert.All(Shipped.Beds.Loops, loop => Assert.False(string.IsNullOrEmpty(loop.Sound) || loop.Share.Length == 0 || loop.Lufs >= 0));
         Assert.NotEmpty(Shipped.Shore.Surf);
         Assert.NotEmpty(Shipped.Shore.BreakingStrength);
-        Assert.NotEmpty(Shipped.Shore.LappingStrength);
     }
 
     [Theory]
