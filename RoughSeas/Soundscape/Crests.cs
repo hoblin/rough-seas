@@ -20,7 +20,7 @@ public sealed class Crests(ICoreClientAPI capi, CrestsConfig config, SoundscapeM
         var rand = capi.World.Rand;
         if (share <= 0 || rand.NextDouble() >= cue.PerSecond * share * seconds) return;
 
-        var volume = (float)Curve.At(cue.Volume, share);
+        var volume = (float)cue.VolumeAt(share);
         if (volume <= 0) return;
 
         var from = Math.Atan2(-listener.Sea.WindZ, -listener.Sea.WindX);

@@ -23,6 +23,7 @@ public static class Curve
         var shares = beds.Loops.Select(loop => Math.Max(0, At(loop.Share, windMps))).ToArray();
         var power = Math.Sqrt(shares.Sum(share => share * share));
         var level = At(beds.Lufs, windMps);
-        return beds.Loops.Select((loop, i) => power > 0 ? shares[i] / power * Math.Pow(10, (level - loop.Lufs) / 20) : 0).ToArray();
+        var presence = Math.Min(1, shares.Sum());
+        return beds.Loops.Select((loop, i) => power > 0 ? presence * shares[i] / power * Math.Pow(10, (level - loop.Lufs) / 20) : 0).ToArray();
     }
 }

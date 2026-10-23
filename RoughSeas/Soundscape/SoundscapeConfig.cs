@@ -19,6 +19,15 @@ public class Cue
 {
     public string Sound = "";
     public double[][] Volume = [];
+
+    public virtual double VolumeAt(double amount) => Curve.At(Volume, amount);
+}
+
+public class WaveCue : Cue
+{
+    public double VolumePerMetre;
+
+    public override double VolumeAt(double waveHeight) => System.Math.Min(1, VolumePerMetre * waveHeight);
 }
 
 public class BedsConfig
@@ -49,7 +58,7 @@ public class ScatteredCue : Cue
     public double PerSecond;
 }
 
-public class SplashCue : Cue
+public class SplashCue : WaveCue
 {
     public double FullFromMetres = 1;
 }
@@ -91,8 +100,8 @@ public class WaterConfig
     public float Range = 24;
     public double ListenMetres = 32;
     public double StrongSlapFromMetres = double.PositiveInfinity;
-    public Cue Slap = new();
-    public Cue StrongSlap = new();
+    public WaveCue Slap = new();
+    public WaveCue StrongSlap = new();
     public Cue Slam = new();
     public Cue Pour = new();
     public Cue Slosh = new();

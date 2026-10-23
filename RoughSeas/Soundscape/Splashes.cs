@@ -34,7 +34,7 @@ public sealed class Splashes
 
     public void Play(Vec3d at, double waveHeight, string what)
     {
-        var volume = Curve.At(cue.Volume, waveHeight);
+        var volume = cue.VolumeAt(waveHeight);
         if (volume < Silent || pool.Pick(waveHeight, capi.World.Rand) is not { } file) return;
 
         capi.World.PlaySoundAt(file, at.X, at.Y, at.Z, null, true, range, (float)volume);

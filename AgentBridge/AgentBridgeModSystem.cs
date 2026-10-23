@@ -108,6 +108,7 @@ public class AgentBridgeModSystem : ModSystem
                 "/recipe" => (Encoding.UTF8.GetBytes(await OnMainThread(() => recipes.Frame(context.Request.QueryString["output"], context.Request.QueryString["from"]))), "application/json"),
                 "/scroll" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Scroll(context.Request.QueryString["steps"]))), "text/plain"),
                 "/close-dialogs" =>(Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
+                "/respawn" => (Encoding.UTF8.GetBytes(await OnMainThread(Respawn)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),
                 "/input" => (Encoding.UTF8.GetBytes(await Input(context.Request)), "application/json"),
                 "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"], context.Request.QueryString["box"], context.Request.QueryString["block"]))), "application/json"),
@@ -342,6 +343,13 @@ public class AgentBridgeModSystem : ModSystem
             return args.IsHandled;
         }).Select(dialog => dialog.DebugName).ToList();
         return string.Join("\n", scrolled) + "\n";
+    }
+
+    private string Respawn()
+    {
+        if (capi.World.Player.Entity.Alive) return "The player is alive\n";
+        ((ClientMain)capi.World).Respawn();
+        return "Respawning\n";
     }
 
     private string CloseDialogs()

@@ -28,7 +28,7 @@ public class CurveTests
     public void IsSilentWithoutPoints() => Assert.Equal(0, Curve.At([], 1));
 
     [Theory]
-    [InlineData(4)]
+    [InlineData(6)]
     [InlineData(8)]
     [InlineData(13)]
     [InlineData(30)]
@@ -46,6 +46,14 @@ public class CurveTests
         var storm = Curve.Mix(Shipped.Beds, 20);
         Assert.True(moderate[0] > moderate[^1]);
         Assert.True(storm[^1] > storm[0]);
+    }
+
+    [Fact]
+    public void RisesOutOfTheCalmWithTheWindInsteadOfStartingAtFullLevel()
+    {
+        var levels = new[] { 3.2, 4, 5, 6 }.Select(wind => Curve.Mix(Shipped.Beds, wind)[0]).ToArray();
+        Assert.True(levels[0] < 0.1 * levels[^1], $"the bed starts at {levels[0]:F3} against {levels[^1]:F3} once the sea is moderate");
+        Assert.Equal(levels.Order(), levels);
     }
 
     [Theory]

@@ -6,6 +6,9 @@ namespace RoughSeas.Tests.Soundscape;
 
 public class SoundscapeConfigTests
 {
+    private const double AmbienceMasterLufs = -26;
+    private const double EventMasterLufs = -18;
+
     private static readonly string Assets = Path.Combine(Repository(), "RoughSeas", "assets", "roughseas");
     private static readonly SoundscapeConfig Shipped =
         JsonConvert.DeserializeObject<SoundscapeConfig>(File.ReadAllText(Path.Combine(Assets, "config", "soundscape.json")))!;
@@ -33,7 +36,7 @@ public class SoundscapeConfigTests
     {
         var water = Shipped.Water;
         Cue[] cues = [Shipped.Crests.Hiss, Shipped.Crests.Plunge, water.Slap, water.StrongSlap, water.Slam, water.Pour, water.Slosh, water.Leak, water.Splash];
-        Assert.All(cues, cue => Assert.False(string.IsNullOrEmpty(cue.Sound) || cue.Volume.Length == 0, $"a cue reads as {cue.Sound}, {cue.Volume.Length} points"));
+        Assert.All(cues, cue => Assert.False(string.IsNullOrEmpty(cue.Sound) || cue.VolumeAt(1) <= 0, $"a cue reads as {cue.Sound}, {cue.VolumeAt(1):F2} at 1"));
         Assert.All(Shipped.Beds.Loops, loop => Assert.False(string.IsNullOrEmpty(loop.Sound) || loop.Share.Length == 0 || loop.Lufs >= 0));
         Assert.NotEmpty(Shipped.Shore.Surf);
         Assert.NotEmpty(Shipped.Shore.BreakingStrength);
@@ -76,6 +79,25 @@ public class SoundscapeConfigTests
             var strength = Curve.At(Shipped.Shore.BreakingStrength, height) * (band?.Gain ?? 1);
             Assert.True(strength <= 1 + 1e-9, $"surf in {height:F2} m waves asks for {strength:F2}");
         }
+    }
+
+    [Theory]
+    [InlineData(0.3)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void SlapsAHullJustOverTheSplashOfTheSameWave(double waveHeight)
+    {
+        var splash = AmbienceMasterLufs + 20 * Math.Log10(Shipped.Water.Splash.VolumeAt(waveHeight));
+        var slap = EventMasterLufs + 20 * Math.Log10(Shipped.Water.Slap.VolumeAt(waveHeight));
+        Assert.InRange(slap - splash, 2, 4);
+    }
+
+    [Fact]
+    public void GrowsAWavesSoundAsItsHeightUpToWhatTheFileCanPlay()
+    {
+        var cue = new WaveCue { VolumePerMetre = 0.1 };
+        Assert.Equal(0.2, cue.VolumeAt(2), 6);
+        Assert.Equal(1, cue.VolumeAt(30));
     }
 
     private static string Repository()

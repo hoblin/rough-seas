@@ -101,7 +101,7 @@ public sealed class VesselSounds(ICoreClientAPI capi, WaterConfig config, Splash
 
         public void Play(double amount, Vec3d at)
         {
-            var volume = (float)Curve.At(cue.Volume, amount);
+            var volume = (float)cue.VolumeAt(amount);
             if (volume < Silent || string.IsNullOrEmpty(cue.Sound))
             {
                 Silence();
