@@ -68,6 +68,12 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
 
     public double RegionMps(int regionX, int regionZ) => Fresh((regionX, regionZ))?.Mps ?? 0;
 
+    public WaveGeneration Generation(double x, double z, long slot)
+    {
+        var regionSize = capi.World.BlockAccessor.RegionSize;
+        return Fresh(((int)Math.Floor(x / regionSize), (int)Math.Floor(z / regionSize)))?.Generation(slot) ?? default;
+    }
+
     public bool Covers(double x, double z)
     {
         var regionSize = capi.World.BlockAccessor.RegionSize;
@@ -79,14 +85,13 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         if (snapshot.Version != SeaMapSnapshot.CurrentVersion) return;
         var key = (snapshot.RegionX, snapshot.RegionZ);
         var samples = snapshot.Samples();
-        // A new snapshot is reached from what is shown now, over the time between regular snapshots.
-        var now = Now;
+        var generations = snapshot.Generations();
         regions.AddOrUpdate(key,
-            _ => new Region(samples, samples, snapshot.TotalHours, now, 0, snapshot.CellsPerSide, snapshot.RegionMps),
+            _ => new Region(samples, samples, snapshot.TotalHours, 0, snapshot.CellsPerSide, snapshot.RegionMps, snapshot.FirstWaveSlot, generations),
             (_, old) => snapshot.TotalHours < old.SnapshotHours
                 ? old
-                : new Region(old.Side == snapshot.CellsPerSide ? old.Shown(now) : samples, samples, snapshot.TotalHours, now,
-                    Span(snapshot.TotalHours - old.SnapshotHours), snapshot.CellsPerSide, snapshot.RegionMps));
+                : new Region(old.Side == snapshot.CellsPerSide ? old.To : samples, samples, snapshot.TotalHours,
+                    Span(snapshot.TotalHours - old.SnapshotHours), snapshot.CellsPerSide, snapshot.RegionMps, snapshot.FirstWaveSlot, generations));
         foreach (var stale in regions.Keys) Fresh(stale);
     }
 
@@ -138,21 +143,18 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         sum[8] += cell.WaterCelsius * w;
     }
 
-    private sealed record Region(SeaSample[] From, SeaSample[] To, double SnapshotHours, double ArrivedHours, double SpanHours, int Side, double Mps)
+    private sealed record Region(SeaSample[] From, SeaSample[] To, double SnapshotHours, double SpanHours, int Side, double Mps,
+        long FirstWaveSlot, WaveGeneration[] Generations)
     {
         public SeaSample At(int cellX, int cellZ, double now)
         {
             var index = cellZ * Side + cellX;
-            var t = SpanHours > 0 ? GameMath.Clamp((now - ArrivedHours) / SpanHours, 0, 1) : 1;
+            var t = SpanHours > 0 ? GameMath.Clamp((now - SnapshotHours) / SpanHours, 0, 1) : 1;
             return Lerp(From[index], To[index], t);
         }
 
-        public SeaSample[] Shown(double now)
-        {
-            var shown = new SeaSample[To.Length];
-            for (var i = 0; i < shown.Length; i++) shown[i] = At(i % Side, i / Side, now);
-            return shown;
-        }
+        public WaveGeneration Generation(long slot) =>
+            slot >= FirstWaveSlot && slot - FirstWaveSlot < Generations.Length ? Generations[slot - FirstWaveSlot] : default;
 
         private static SeaSample Lerp(SeaSample a, SeaSample b, double t) => new(
             a.WindX + (b.WindX - a.WindX) * t,

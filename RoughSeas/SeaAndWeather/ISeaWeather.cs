@@ -53,4 +53,6 @@ public interface ISeaSource
     float? RainCloudness(double x, double z, double totalDays);
 
     double RegionMps(int regionX, int regionZ);
+
+    WaveGeneration Generation(double x, double z, long slot);
 }

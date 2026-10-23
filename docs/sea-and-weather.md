@@ -24,7 +24,8 @@ SeaMapServer ── snapshot per region ─────────→  the wate
 - `SeaMapServer` ticks every 250 ms. It refreshes the map regions within one of each player's, each every `map.updateSeconds`, and stops for the tick once `map.tickBudgetMilliseconds` are spent.
 - A snapshot (`SeaMapSnapshot`) holds a grid of `map.cellBlocks` cells: wind, storm presence, rain, wave height and period, current, water temperature. Each field is an Int16 at its own scale, with explicit protobuf tags and a version.
 - It goes into the map region's moddata (`roughseas:seamap`), so a client that loads the region has it at once, and over the channel to the players near it.
-- `SeaMapClient` blends a cell with its neighbours bilinearly, and eases from the shown values to a new snapshot over the time between two. A region older than `map.staleHours` counts as no data.
+- `SeaMapClient` blends a cell with its neighbours bilinearly, and from the last snapshot to the new one over the time between them, by the server's stamps, so clients holding the same two snapshots show the same values at the same world time. A region older than `map.staleHours` counts as no data.
+- A snapshot also carries the region's wave generations for the slot before its time, its own and the next (`SeaModel.GenerationOf`): the direction and period of the highest sea among the region and its eight neighbours when each `seaSampleHours` slot began. They are cached per region and slot; the first of a place costs what the snapshot's own cells cost on cold caches.
 
 ## What the model stands on
 
@@ -52,8 +53,11 @@ SeaMapServer ── snapshot per region ─────────→  the wate
 
 ## Drawing it
 
-- `SurfaceClock` aims every `surface.aimSeconds`: `SurfaceField` samples the waves around the player into a 48 × 48 texture, `seaHeightMap`, and `SeaSurface` sets the wave trains from the highest of them.
-- A cell holds its waves as a share of the height the surface draws, up to twice it. The shader, vessels and floating items read the same share (`SurfaceField.Factor`), so a boat rides the wave drawn under it.
+- **The drawn sea is a function of the shared input and the world's clock**, never of a client's own history: two clients in one region draw the same crests. Nothing in it may ease from a client's last value or count its frames.
+- `WaveTime` is the waves' clock: the calendar's game seconds over vanilla's 60 × `CalendarSpeedMul`, so it runs, stops and races as vanilla's foliage counters do (`DefaultShaderUniforms.Update`). It only smooths the calendar's whole-millisecond ticks and the server's corrections.
+- `SurfaceClock` aims every `surface.aimSeconds`: `SurfaceField` samples the waves of the player's region and its neighbours into a 48 × 48 texture, `seaHeightMap`, each cell a share of the highest; `SeaSurface` takes that height and the foam of the highest cell's Beaufort force, and raises the trains of the region's generations.
+- `SeaSurface` quantises a generation to a heading (`surface.turnDegrees`) and a length step (`surface.stretch`), so a slot that brings the same sea brings the same trains. New trains take over in the other bank over `surface.settleSeconds` from their slot's start, the same moment on every client. Entering another region hands over from what is drawn, keeping the stronger bank's weight and the total energy continuous.
+- The shader, vessels and floating items read the same share (`SurfaceField.Factor`), so a boat rides the wave drawn under it.
 - **Vanilla's samplers stay on vanilla's units, in every program.** The engine numbers a program's samplers by a regex over its source, vertex shader first (`ShaderProgram.collectUniformNames`). `Use()` binds `liquidDepth`, `sky` and the shadow maps by that number; the generated setters, the cloud pass (`liquidDepth` on 4) and mods like SheyderMod (specular on 7) assume vanilla's. A sampler we declare in a shared include moves every one of them, and one we bind inside the range overwrites someone's texture: 2.0.0's `seaHeightMap` drew leaves black beside SheyderMod and wiped clouds over the sea.
 - So `seaHeightMap` is declared `uniform highp sampler2D`, which the regex doesn't match; `SurfaceShader` looks up its location itself after each compile and binds it on the GPU's last texture unit (`GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1`), which no one hard-codes. A new sampler of ours follows the same rule. `.surface samplers` shows each program's numbering and where the height map is read.
 

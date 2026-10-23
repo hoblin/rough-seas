@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Vintagestory.API.Server;
 
@@ -15,6 +16,7 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
     private readonly WindSea windSea = new(sea.Config.Waves);
     private readonly BeaufortScale beaufort = new(sea.Config.Beaufort);
     private readonly ConcurrentDictionary<(int X, int Z), (double Hours, double Mps)> regions = new(Environment.ProcessorCount, 0);
+    private readonly ConcurrentDictionary<(int X, int Z, long Slot), WaveGeneration> generations = new(Environment.ProcessorCount, 0);
 
     public bool DangerousOceans => sea.DangerousOceans;
 
@@ -68,6 +70,31 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
         model.Storms.Forget();
         water.Forget();
         regions.Clear();
+        generations.Clear();
+    }
+
+    public WaveGeneration Generation(double x, double z, long slot)
+    {
+        var regionSize = sapi.WorldManager.RegionSize;
+        return GenerationOf((int)Math.Floor(x / regionSize), (int)Math.Floor(z / regionSize), slot);
+    }
+
+    /// <summary>The waves a slot of <c>seaSampleHours</c> raises over a region: the highest sea of the region and its eight neighbours as the slot began.</summary>
+    public WaveGeneration GenerationOf(int regionX, int regionZ, long slot)
+    {
+        if (generations.TryGetValue((regionX, regionZ, slot), out var cached)) return cached;
+        if (generations.Count > CacheLimit) generations.Clear();
+        var started = Stopwatch.StartNew();
+        var hours = slot * sea.Config.SeaSampleHours;
+        var regionSize = sapi.WorldManager.RegionSize;
+        var highest = Enumerable.Range(-1, 3)
+            .SelectMany(dx => Enumerable.Range(-1, 3).SelectMany(dz => SamplesOf(regionX + dx, regionZ + dz, regionSize)))
+            .Select(at => At(at.X, at.Z, hours))
+            .MaxBy(state => state.WaveHeight);
+        var generation = highest.WaveHeight > 0 ? new WaveGeneration(Math.Atan2(highest.WindZ, highest.WindX), highest.WavePeriod) : default;
+        sea.Log("waves of region {0} {1} at slot {2}: toward {3:F0}°, every {4:F1} s, under {5:F1} m; {6} ms",
+            regionX, regionZ, slot, (generation.TowardRadians * 180 / Math.PI + 360) % 360, generation.Period, highest.WaveHeight, started.ElapsedMilliseconds);
+        return generations[(regionX, regionZ, slot)] = generation;
     }
 
     public string WaterHere(double x, double z) => water.Describe(x, z);

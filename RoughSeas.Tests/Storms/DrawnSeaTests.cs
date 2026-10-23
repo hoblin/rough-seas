@@ -18,12 +18,17 @@ public class DrawnSeaTests
     private readonly SeaSurface surface = new(Fixtures.Config().Surface, new Waves(Fixtures.Config().Waves));
     private readonly SurfaceField field = new();
 
-    private DrawnSea Sea(double drawnHeight = 0)
+    private DrawnSea Sea()
     {
-        field.Update(new Coast(), X, Z, RegionSize, CellBlocks, drawnHeight);
+        var raised = new WaveGeneration(0.4, 3.5 * Math.Sqrt(Height));
+        field.Update(new Coast(), X, Z, RegionSize, CellBlocks);
         for (var frame = 0; frame * Frame < 120; frame++)
         {
-            if (frame % 30 == 0) surface.Aim(Height, 3.5 * Math.Sqrt(Height), 0.4, 7);
+            if (frame % 30 == 0)
+            {
+                surface.Aim(Height, 0.4, 7);
+                surface.Raise(raised, raised, 0);
+            }
             surface.Advance(frame * Frame);
         }
         return new DrawnSea(surface, field);
@@ -84,11 +89,17 @@ public class DrawnSeaTests
     }
 
     [Fact]
-    public void HoldsAHullFullyWhereItsSeaRunsHigherThanTheSurfaceDraws()
+    public void HoldsAHullFullyWhereTheSeaRunsHighest()
     {
-        var sea = Sea(drawnHeight: Height / 2);
+        Assert.Equal(1, Sea().PoseOf(X, Z, 0, Length, Width).Hold);
+    }
 
-        Assert.Equal(1, sea.PoseOf(X, Z, 0, Length, Width).Hold);
+    [Fact]
+    public void TellsTheTimeTheWavesRunOn()
+    {
+        var sea = Sea();
+
+        Assert.Equal(surface.Seconds, sea.Seconds);
     }
 
     private sealed class Coast : ISeaSource
@@ -107,5 +118,7 @@ public class DrawnSeaTests
         public float? RainCloudness(double x, double z, double totalDays) => 0;
 
         public double RegionMps(int regionX, int regionZ) => 12;
+
+        public WaveGeneration Generation(double x, double z, long slot) => default;
     }
 }

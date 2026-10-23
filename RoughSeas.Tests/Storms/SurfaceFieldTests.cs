@@ -11,10 +11,10 @@ public class SurfaceFieldTests
     private const double PlayerZ = 512300;
     private const double OpenSeaX = 512000 + 16;
 
-    private static SurfaceField Field(double drawnHeight = 0)
+    private static SurfaceField Field(double x = PlayerX, double z = PlayerZ)
     {
         var field = new SurfaceField();
-        field.Update(new Lake(), PlayerX, PlayerZ, RegionSize, CellBlocks, drawnHeight);
+        field.Update(new Lake(), x, z, RegionSize, CellBlocks);
         return field;
     }
 
@@ -24,7 +24,17 @@ public class SurfaceFieldTests
         var field = Field();
 
         Assert.Equal(Lake.OpenSea, field.Height);
-        Assert.Equal(Lake.OpenSeaPeriod, field.Period);
+        Assert.Equal(OpenSeaX, field.HighestX);
+    }
+
+    [Fact]
+    public void TakesTheSameFieldAnywhereInARegion()
+    {
+        var here = Field();
+        var there = Field(PlayerX + 300, PlayerZ - 250);
+
+        Assert.Equal((here.OriginX, here.OriginZ, here.HighestX, here.HighestZ), (there.OriginX, there.OriginZ, there.HighestX, there.HighestZ));
+        Assert.Equal(here.Pixels(), there.Pixels());
     }
 
     [Fact]
@@ -38,28 +48,12 @@ public class SurfaceFieldTests
     }
 
     [Fact]
-    public void KeepsEachCellsDrawnHeightWhileTheSurfaceEasesTowardTheHighest()
-    {
-        const double easing = 3;
-        var field = Field(drawnHeight: easing);
-
-        Assert.Equal(Lake.OpenSea, easing * field.Factor(OpenSeaX, PlayerZ), 1);
-        Assert.Equal(Lake.Bay, easing * field.Factor(OpenSeaX + CellBlocks, PlayerZ), 1);
-    }
-
-    [Fact]
-    public void RaisesNoCellAboveTwiceWhatTheSurfaceDraws()
-    {
-        Assert.Equal(SurfaceField.MaxShare, Field(drawnHeight: 1).Factor(OpenSeaX, PlayerZ));
-    }
-
-    [Fact]
     public void BlendsBetweenCellsAsTheShaderDoes()
     {
         var field = Field();
         var between = field.Factor(OpenSeaX + CellBlocks / 2.0, PlayerZ);
 
-        Assert.Equal((1 + Lake.Bay / Lake.OpenSea) / 2, between, tolerance: SurfaceField.MaxShare / 255);
+        Assert.Equal((1 + Lake.Bay / Lake.OpenSea) / 2, between, tolerance: 1.0 / 255);
     }
 
     [Fact]
@@ -69,14 +63,13 @@ public class SurfaceFieldTests
         var pixels = field.Pixels();
 
         Assert.Equal(field.Across * field.Across, pixels.Length);
-        Assert.Equal((0, 128, 32), (pixels[15] & 0xff, pixels[16] & 0xff, pixels[17] & 0xff));
-        Assert.Equal(128, pixels[field.Across + 16] & 0xff);
+        Assert.Equal((0, 255, 64), (pixels[15] & 0xff, pixels[16] & 0xff, pixels[17] & 0xff));
+        Assert.Equal(255, pixels[field.Across + 16] & 0xff);
     }
 
     private sealed class Lake : ISeaSource
     {
         public const double OpenSea = 4;
-        public const double OpenSeaPeriod = 8;
         public const double Bay = 1;
 
         public SeaSample Sample(double x, double z)
@@ -84,7 +77,7 @@ public class SurfaceFieldTests
             var column = (int)Math.Floor((x - 512000) / CellBlocks);
             var (height, period) = column switch
             {
-                0 => (OpenSea, OpenSeaPeriod),
+                0 => (OpenSea, 8.0),
                 1 => (Bay, 3.0),
                 _ => (0.0, 0.0)
             };
@@ -102,5 +95,7 @@ public class SurfaceFieldTests
         public float? RainCloudness(double x, double z, double totalDays) => 0;
 
         public double RegionMps(int regionX, int regionZ) => 5;
+
+        public WaveGeneration Generation(double x, double z, long slot) => default;
     }
 }

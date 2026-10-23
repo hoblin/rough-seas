@@ -11,7 +11,7 @@ public sealed class SwellReading(ICoreClientAPI capi)
     private IDrawnSea? Sea => capi.ModLoader.GetModSystem<StormsModSystem>()?.DrawnSea;
 
     public object? At(Entity entity) =>
-        Sea is { } sea ? new { sea.Swell, height = sea.HeightAt(entity.Pos.X, entity.Pos.Z) } : null;
+        Sea is { } sea ? new { sea.Swell, sea.Seconds, height = sea.HeightAt(entity.Pos.X, entity.Pos.Z) } : null;
 
     public object? Of(Entity entity)
     {

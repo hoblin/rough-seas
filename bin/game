@@ -72,8 +72,8 @@ LOOK
                              wetness), hotbar, mount, what the camera points at, entities within
                              16 blocks (a shape's rendered roll and pitch in degrees: how a vessel
                              rocks; `swell`, the pose the public drawn sea gives a hull of its
-                             collision box), `sea`: the swell drawn at the player and its height,
-                             open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
+                             collision box), `sea`: the swell drawn at the player, its height and
+                             the waves' time in seconds (the same on every client), open dialogs, paused, pickingRange. Pointing at an entity, `reach` is
                              what a swing is measured by: the picked selection box, the eye's
                              distance to the entity's default box (vanilla's measure) and to
                              the point hit (a vessel's), and the held item's range
