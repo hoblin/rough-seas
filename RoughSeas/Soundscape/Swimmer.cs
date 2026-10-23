@@ -10,7 +10,7 @@ public sealed class Swimmer(ICoreClientAPI capi, Splashes splashes)
 
     public void Update()
     {
-        if (capi.World.Player?.Entity is not { MountedOn: null } player || !(player.Swimming || player.FeetInLiquid))
+        if (capi.World.Player?.Entity is not { MountedOn: null } player || !(player.Swimming || player.FeetInLiquid) || player.IsEyesSubmerged())
         {
             crests.Forget();
             return;
