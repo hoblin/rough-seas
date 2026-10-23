@@ -15,6 +15,7 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
     private const int SpotTries = 8;
 
     private WeatherSystemServer weather = null!;
+    private SeaClock.Watch watch = null!;
 
     private LightningConfig Config => storms.Config.Lightning;
 
@@ -22,12 +23,14 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
     {
         weather = sapi.ModLoader.GetModSystem<WeatherSystemServer>();
         weather.OnLightningImpactBegin += DrawToMast;
-        sapi.Event.RegisterGameTickListener(_ => Strike(), (int)(Config.CheckSeconds * 1000));
+        watch = sea.Clock.Start();
+        sapi.Event.RegisterGameTickListener(_ => Strike(), (int)(storms.Config.TickSeconds * 1000));
     }
 
     private void Strike()
     {
-        if (!sea.DangerousOceans) return;
+        var lap = watch.Lap();
+        if (!sea.DangerousOceans || lap.Leapt) return;
 
         using var _ = storms.Budget.Measure();
         var rand = sapi.World.Rand;
@@ -38,15 +41,24 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
             if (pos == null || rolledNear.Any(rolled => rolled.HorizontalSquareDistanceTo(pos) < Config.RangeBlocks * Config.RangeBlocks)) continue;
 
             rolledNear.Add(pos);
-            var presence = sea.Model.StormsAt(pos.X, pos.Z, sea.NowHours).Presence;
-            var chance = Config.StrikesPerMinute * Config.CheckSeconds / 60 * presence;
-            if (presence < Config.MinPresence || rand.NextDouble() >= chance || !WarmEnough(pos.AsBlockPos)) continue;
+            var presence = sea.Model.StormsAt(pos.X, pos.Z, sea.Clock.Hours).Presence;
+            if (presence < Config.MinPresence || !WarmEnough(pos.AsBlockPos)) continue;
 
-            if (Spot(pos.X, pos.Z) is not { } spot) continue;
+            for (var strikes = Poisson(Config.StrikesPerMinute * lap.Seconds / 60 * presence, rand); strikes > 0; strikes--)
+            {
+                if (Spot(pos.X, pos.Z) is not { } spot) continue;
 
-            storms.Log("lightning in a storm at {0:F0}% presence, near {1}, at {2:F0} {3:F0} {4:F0}", presence * 100, player.PlayerName, spot.X, spot.Y, spot.Z);
-            weather.SpawnLightningFlash(spot);
+                storms.Log("lightning in a storm at {0:F0}% presence, near {1}, at {2:F0} {3:F0} {4:F0}", presence * 100, player.PlayerName, spot.X, spot.Y, spot.Z);
+                weather.SpawnLightningFlash(spot);
+            }
         }
+    }
+
+    private static int Poisson(double mean, Random rand)
+    {
+        var strikes = 0;
+        for (var waited = -Math.Log(1 - rand.NextDouble()); waited < mean; waited -= Math.Log(1 - rand.NextDouble())) strikes++;
+        return strikes;
     }
 
     private Vec3d? Spot(double x, double z)
@@ -58,7 +70,7 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
             var distance = Math.Sqrt(rand.NextDouble()) * Config.RangeBlocks;
             var spotX = x + Math.Cos(angle) * distance;
             var spotZ = z + Math.Sin(angle) * distance;
-            if (sea.Model.StormsAt(spotX, spotZ, sea.NowHours).Presence < Config.MinPresence) continue;
+            if (sea.Model.StormsAt(spotX, spotZ, sea.Clock.Hours).Presence < Config.MinPresence) continue;
 
             var ground = Math.Max(sapi.World.SeaLevel, sapi.World.BlockAccessor.GetRainMapHeightAt((int)spotX, (int)spotZ));
             return new Vec3d(spotX, ground, spotZ);

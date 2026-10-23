@@ -9,8 +9,6 @@ namespace RoughSeas.SeaAndWeather;
 
 public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSource
 {
-    private const double VanillaSpeedOfTime = 60;
-
     private readonly ConcurrentDictionary<(int X, int Z), Region> regions = new(Environment.ProcessorCount, 0);
     private readonly BeaufortScale beaufort = new(sea.Config.Beaufort);
 
@@ -97,11 +95,9 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
         foreach (var stale in regions.Keys) Fresh(stale);
     }
 
-    private double Now => capi.World.Calendar?.TotalHours ?? 0;
+    private double Now => sea.Clock.Hours;
 
-    private double Span(double hours) => hours <= sea.Config.Map.StaleHours && capi.World.Calendar is { } calendar
-        ? sea.Config.Map.UpdateSeconds * VanillaSpeedOfTime * calendar.CalendarSpeedMul / 3600
-        : 0;
+    private double Span(double hours) => hours <= sea.Config.Map.StaleHours ? sea.Clock.HoursAt(sea.Config.Map.UpdateSeconds) : 0;
 
     private Region? Fresh((int X, int Z) key)
     {

@@ -20,6 +20,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
 
     private StormsModSystem storms = null!;
     private ISeaWeather sea = null!;
+    private SeaClock.Watch watch = null!;
     private BilgeRenderer? water;
     private double deckSquareMetres;
     private double drainLitresPerHour;
@@ -53,6 +54,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     {
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        watch = sea.Clock.Start();
         CapacityLitres = attributes["capacityLitres"].AsDouble();
         deckSquareMetres = attributes["deckSquareMetres"].AsDouble();
         drainLitresPerHour = attributes["drainLitresPerHour"].AsDouble();
@@ -94,7 +96,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
         using var _ = storms.Budget.Measure();
-        var hours = storms.GameHours(sinceUpdate);
+        var hours = watch.Lap().Hours;
         sinceUpdate = 0;
         var inflow = sea.DangerousOceans ? Rainfall() * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
         Ship(inflow, "by rain");

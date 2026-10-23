@@ -49,12 +49,6 @@ public class VesselsModSystem : ModSystem
     public void Report(Entity vessel, Knocked knocked) =>
         reports?.SendPacket(new ImpactReport { EntityId = vessel.EntityId, SpeedLost = knocked.SpeedLost, TowardX = knocked.TowardX, TowardZ = knocked.TowardZ, Against = knocked.Against, TheirKg = knocked.TheirKg });
 
-    public double GameHours(double realSeconds)
-    {
-        var calendar = api.World.Calendar;
-        return realSeconds * calendar.SpeedOfTime * calendar.CalendarSpeedMul / 3600;
-    }
-
     public override void Dispose()
     {
         HullReach.Detach();

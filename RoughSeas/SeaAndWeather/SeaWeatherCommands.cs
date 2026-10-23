@@ -62,7 +62,7 @@ public static class SeaWeatherCommands
         var storm = state.StormPresence <= 0 ? "no storm" : $"{state.StormCode ?? "storm"} at {state.StormPresence:P0}";
         var current = sea.CurrentAt(pos.X, pos.Z);
         var latitude = (api.World.Calendar.OnGetLatitude?.Invoke(pos.Z) ?? 0.5) * 90;
-        return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, latitude {latitude:0.0}°, hour {sea.NowHours:0.00}: "
+        return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, latitude {latitude:0.0}°, hour {sea.Clock.Hours:0.00}: "
             + $"wind from {state.WindFromDegrees:0}° at {state.WindSpeed:0.0} m/s, Beaufort {state.Beaufort} ({force.Name}); "
             + $"waves {state.WaveHeight:0.0} m every {state.WavePeriod:0.0} s; {storm}, rain {Rainfall(api, pos):P0}; "
             + $"current toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C{FromCurrent(current)}; "
@@ -71,7 +71,7 @@ public static class SeaWeatherCommands
 
     private static string Storms(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, double range)
     {
-        var now = sea.NowHours;
+        var now = sea.Clock.Hours;
         var storms = sea.Model.StormsWithin(pos.X, pos.Z, range)
             .Select(storm => (storm, centre: storm.CentreAt(now)))
             .OrderBy(entry => Distance(entry.centre, pos))

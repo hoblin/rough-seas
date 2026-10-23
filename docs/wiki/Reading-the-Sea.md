@@ -43,7 +43,19 @@ The wind is the background wind of the region and season, plus every storm that 
 | `At(x, z)` | the sea state there, a `SeaState` |
 | `CurrentAt(x, z)` | the current and the water's temperature there, a `SeaCurrent` |
 | `DangerousOceans` | the world's [Dangerous oceans](World-Settings#dangerous-oceans) setting |
-| `NowHours` | the game time, in total game hours |
+| `Clock` | the time the sea keeps, a `SeaClock` |
+| `NowHours` | the game time, in total game hours; it goes in the next major version, for `Clock.Hours` |
+
+`SeaClock`:
+
+| Member | What it is |
+| --- | --- |
+| `Hours` | the game time, in total game hours |
+| `Seconds` | the same time in seconds at vanilla's pace: real seconds at the normal speed, 120 to a game hour in a default world |
+| `SecondsAt(hours)`, `HoursAt(seconds)` | one turned into the other |
+| `Start()` | a watch, whose `Lap()` gives the `Hours` and `Seconds` since its last lap, and whether they `Leapt`: the calendar was moved on, as by `/time add`, rather than ran |
+
+Everything of ours at sea keeps this clock: the waves that come aboard, rain into a bilge, leaks, lightning, the drawn waves. It is the world's calendar, so it stands still under `/time stop` and while the game is paused, races while everyone sleeps, and leaps with `/time add`. Motion keeps vanilla's tick, as vanilla's boats do: a current carries a vessel even while time stands still. A mechanic of yours at sea that keeps the same clock happens in step with ours.
 
 `SeaState`:
 

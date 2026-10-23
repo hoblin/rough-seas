@@ -30,9 +30,9 @@ public sealed class AshoreRoll
         this.mooredX = mooredX;
         this.mooredZ = mooredZ;
         this.reach = reach;
-        slept = sea.NowHours - sleptSince;
+        slept = sea.Clock.Hours - sleptSince;
         hoursPerSample = Math.Max(1, slept / Config.MaxSamples);
-        for (var hours = sleptSince; hours < sea.NowHours; hours += hoursPerSample)
+        for (var hours = sleptSince; hours < sea.Clock.Hours; hours += hoursPerSample)
         {
             states.Add(sea.At(vessel.Pos.X, vessel.Pos.Z, hours));
         }

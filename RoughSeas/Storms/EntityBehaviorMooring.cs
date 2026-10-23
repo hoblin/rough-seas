@@ -103,7 +103,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
         var lastSeen = Tree.GetDouble("lastSeenHours", Unmoored);
         var reach = Tree.GetDouble("reach", Unmoored);
-        if (lastSeen >= 0 && reach >= 0 && sea.NowHours - lastSeen >= storms.Config.Ashore.MinHours)
+        if (lastSeen >= 0 && reach >= 0 && sea.Clock.Hours - lastSeen >= storms.Config.Ashore.MinHours)
         {
             ashore = new AshoreRoll(storms, sea.Model, entity, Tree.GetDouble("pointX"), Tree.GetDouble("pointZ"), lastSeen, reach);
             ashoreIn = (float)storms.Config.Ashore.RollDelaySeconds;
@@ -132,7 +132,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             ashore = null;
         }
         sinceUpdate = 0;
-        Tree.SetDouble("lastSeenHours", sea.NowHours);
+        Tree.SetDouble("lastSeenHours", sea.Clock.Hours);
         RecordMooring();
     }
 

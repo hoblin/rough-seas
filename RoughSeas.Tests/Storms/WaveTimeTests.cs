@@ -1,3 +1,4 @@
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 
 namespace RoughSeas.Tests.Storms;
@@ -10,22 +11,32 @@ public class WaveTimeTests
     private const double GameHoursPerSecond = Normal * CalendarSpeedMul / 3600;
     private const double StartHours = 1160.25;
 
+    private double hours = StartHours;
+
+    private SeaClock Clock => new(() => hours, () => CalendarSpeedMul, () => Normal, () => 0);
+
     private static double CalendarHours(double realSeconds) =>
         StartHours + Math.Floor(realSeconds / 0.033) * 0.033 * GameHoursPerSecond;
 
-    private static WaveTime Run(double fromSeconds, double seconds, double speed = Normal)
+    private WaveTime Run(double fromSeconds, double seconds, double speed = Normal)
     {
-        var time = new WaveTime();
-        for (var t = fromSeconds; t < fromSeconds + seconds; t += Frame) time.Advance(Frame, speed, CalendarHours(t), CalendarSpeedMul);
+        var time = new WaveTime(Clock);
+        for (var t = fromSeconds; t < fromSeconds + seconds; t += Frame) Advance(time, CalendarHours(t), speed);
         return time;
+    }
+
+    private double Advance(WaveTime time, double calendarHours, double speed = Normal)
+    {
+        hours = calendarHours;
+        return time.Advance(Frame, speed);
     }
 
     [Fact]
     public void RunsInRealSecondsAtTheWorldsNormalPace()
     {
-        var time = new WaveTime();
-        var start = time.Advance(Frame, Normal, StartHours, CalendarSpeedMul);
-        var later = time.Advance(Frame, Normal, StartHours + 10 * GameHoursPerSecond, CalendarSpeedMul);
+        var time = new WaveTime(Clock);
+        var start = Advance(time, StartHours);
+        var later = Advance(time, StartHours + 10 * GameHoursPerSecond);
 
         Assert.Equal(10, later - start, 2);
     }
@@ -42,11 +53,11 @@ public class WaveTimeTests
     [Fact]
     public void RunsSmoothlyOverTheCalendarsSteps()
     {
-        var time = new WaveTime();
+        var time = new WaveTime(Clock);
         var previous = double.NaN;
         for (var t = 0.0; t < 30; t += Frame)
         {
-            var seconds = time.Advance(Frame, Normal, CalendarHours(t), CalendarSpeedMul);
+            var seconds = Advance(time, CalendarHours(t));
             Assert.True(double.IsNaN(previous) || seconds - previous is >= 0 and < 2 * Frame, $"stepped {seconds - previous:F4} s in a frame");
             previous = seconds;
         }
@@ -55,9 +66,9 @@ public class WaveTimeTests
     [Fact]
     public void StandsStillWhileTheWorldsClockDoes()
     {
-        var time = new WaveTime();
-        var stopped = time.Advance(Frame, 0, StartHours, CalendarSpeedMul);
-        for (var frame = 0; frame < 600; frame++) time.Advance(Frame, 0, StartHours, CalendarSpeedMul);
+        var time = new WaveTime(Clock);
+        var stopped = Advance(time, StartHours, 0);
+        for (var frame = 0; frame < 600; frame++) Advance(time, StartHours, 0);
 
         Assert.Equal(stopped, time.Seconds);
     }
@@ -67,25 +78,17 @@ public class WaveTimeTests
     {
         var time = Run(0, 5);
         var stoppedAt = StartHours + 4.9 * GameHoursPerSecond;
-        for (var frame = 0; frame < 600; frame++) time.Advance(Frame, 0, stoppedAt, CalendarSpeedMul);
+        for (var frame = 0; frame < 600; frame++) Advance(time, stoppedAt, 0);
 
-        Assert.Equal(time.SecondsAt(stoppedAt), time.Seconds, 3);
+        Assert.Equal(Clock.SecondsAt(stoppedAt), time.Seconds, 3);
     }
 
     [Fact]
     public void FollowsTheWorldsClockWhenItLeaps()
     {
         var time = Run(0, 5);
-        var leapt = time.Advance(Frame, Normal, StartHours + 8, CalendarSpeedMul);
+        var leapt = Advance(time, StartHours + 8);
 
-        Assert.Equal(time.SecondsAt(StartHours + 8), leapt);
-    }
-
-    [Fact]
-    public void TurnsGameHoursIntoItsSecondsAndBack()
-    {
-        var time = Run(0, 1);
-
-        Assert.Equal(StartHours, time.HoursAt(time.SecondsAt(StartHours)), 9);
+        Assert.Equal(Clock.SecondsAt(StartHours + 8), leapt);
     }
 }
