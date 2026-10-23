@@ -34,7 +34,7 @@ public sealed class SoundLog : IDisposable
 
     private static void Stopping(ILoadedSound __instance)
     {
-        if (__instance.IsPlaying) Log(__instance, "stops");
+        if (__instance.IsPlaying) Log(__instance, Invariant($"stops at {__instance.Params.Volume:F3}"));
     }
 
     private static void Fading(ILoadedSound __instance, double newVolume, float duration) =>
