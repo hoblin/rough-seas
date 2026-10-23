@@ -128,7 +128,7 @@ public class SeaSurfaceTests
         var crossing = Surface();
         Settle(crossing, 3, 0);
         var previous = crossing.HeightAt(FarX, FarZ);
-        Run(crossing, 3, there, there, -Slot, 120, eachFrame: () =>
+        Run(crossing, 3, there, there, -Slot, 120, crossed: true, eachFrame: () =>
         {
             var height = crossing.HeightAt(FarX, FarZ);
             Assert.True(Math.Abs(height - previous) < 0.1, $"jumped from {previous:F3} to {height:F3}");
@@ -154,6 +154,19 @@ public class SeaSurfaceTests
             Assert.True(Math.Abs(height - previous) < 0.1, $"jumped from {previous:F3} to {height:F3}");
             previous = height;
         });
+    }
+
+    [Fact]
+    public void DrawsTheSameWavesAsAClientThatJoinedAfterTimeLeptOverASlot()
+    {
+        var (first, skipped, latest) = (Generation(3, 0), Generation(3, 2), Generation(3, 4));
+        var early = Surface();
+        Run(early, 3, first, first, -Slot, 0, seconds: 30);
+        Run(early, 3, skipped, latest, 2 * Slot, 2 * Slot + 10, seconds: 1);
+
+        var late = Surface();
+        Run(late, 3, skipped, latest, 2 * Slot, 2 * Slot + 10, seconds: 1);
+        AssertSameSea(late, early);
     }
 
     [Fact]

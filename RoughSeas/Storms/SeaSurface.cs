@@ -92,7 +92,8 @@ public sealed class SeaSurface
         var from = TrainsOf(earlier);
         if ((TrainsOf(latest) ?? from) is not { } next || Rising == next) return;
 
-        if (active < 0)
+        if (Rising is { } drawn && drawn == from && !crossed) Rise(1 - active, next, bornSeconds);
+        else if (active < 0 || !crossed)
         {
             if (from is { } first && first != next)
             {
@@ -101,7 +102,6 @@ public sealed class SeaSurface
             }
             else Rise(0, next, double.NegativeInfinity);
         }
-        else if (Rising == from && !crossed) Rise(1 - active, next, bornSeconds);
         else
         {
             // The kept bank's weight carries on unbroken, and the new trains take the dropped bank's, so the drawn energy doesn't jump.
