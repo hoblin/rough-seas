@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace RoughSeas.SeaAndWeather;
@@ -14,9 +13,6 @@ public interface ISeaWeather
 
     /// <summary>The time the sea keeps, and every mechanic of ours at sea with it.</summary>
     SeaClock Clock { get; }
-
-    [Obsolete("Read Clock.Hours; NowHours goes in the next major version")]
-    double NowHours { get; }
 
     /// <summary>The state at a block position now. Positions are absolute block coordinates.</summary>
     SeaState At(double x, double z);

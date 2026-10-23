@@ -22,9 +22,6 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
 
     public SeaClock Clock => sea.Clock;
 
-    [Obsolete("Read Clock.Hours; NowHours goes in the next major version")]
-    public double NowHours => Clock.Hours;
-
     public SeaWeatherModel Weather => model;
 
     private double Now => Clock.Hours;

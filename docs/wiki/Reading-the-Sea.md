@@ -44,7 +44,6 @@ The wind is the background wind of the region and season, plus every storm that 
 | `CurrentAt(x, z)` | the current and the water's temperature there, a `SeaCurrent` |
 | `DangerousOceans` | the world's [Dangerous oceans](World-Settings#dangerous-oceans) setting |
 | `Clock` | the time the sea keeps, a `SeaClock` |
-| `NowHours` | the game time, in total game hours; it goes in the next major version, for `Clock.Hours` |
 
 `SeaClock`:
 

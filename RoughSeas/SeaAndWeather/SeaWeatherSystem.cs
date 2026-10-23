@@ -79,10 +79,6 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     public SeaWeatherConfig Config => config.Value;
 
     public SeaClock Clock { get; private set; } = null!;
-
-    [Obsolete("Read Clock.Hours; NowHours goes in the next major version")]
-    public double NowHours => Clock.Hours;
-
     /// <summary>The model, on the server; a client reads the map the server sends instead.</summary>
     public SeaModel Model => model?.Value ?? throw new InvalidOperationException("The sea model runs on the server alone");
 
