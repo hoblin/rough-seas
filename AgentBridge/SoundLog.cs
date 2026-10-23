@@ -43,10 +43,9 @@ public sealed class SoundLog : IDisposable
     private static void Log(ILoadedSound loaded, string what)
     {
         var sound = loaded.Params;
-        var listener = capi?.World?.Player?.Entity?.Pos;
-        var where = sound.RelativePosition || sound.Position == null || listener == null
-            ? "on the listener"
-            : Invariant($"{Math.Sqrt(listener.SquareDistanceTo(sound.Position.X, sound.Position.Y, sound.Position.Z)):F1} m away");
+        var where = SoundsPlaying.Distance(sound, capi?.World?.Player?.Entity?.Pos) is { } metres
+            ? Invariant($"{metres:F1} m away")
+            : "on the listener";
         logger?.Debug(Invariant($"[sound] {sound.Location} ({sound.SoundType}, {where}) {what}"));
     }
 }
