@@ -54,7 +54,7 @@ SeaMapServer ── snapshot per region ─────────→  the wate
 ## Drawing it
 
 - **The drawn sea is a function of the shared input and the world's clock**, never of a client's own history: two clients in one region draw the same crests. Nothing in it may ease from a client's last value or count its frames.
-- `WaveTime` is the waves' clock: the calendar's game seconds over vanilla's 60 × `CalendarSpeedMul`, so it runs, stops and races as vanilla's foliage counters do (`DefaultShaderUniforms.Update`). It only smooths the calendar's whole-millisecond ticks and the server's corrections.
+- `WaveTime` is the waves' clock: `SeaClock.Seconds`, the calendar's game seconds over vanilla's 60 × `CalendarSpeedMul`, so it runs, stops and races as vanilla's foliage counters do (`DefaultShaderUniforms.Update`). It only smooths the calendar's whole-millisecond ticks and the server's corrections.
 - `SurfaceClock` aims every `surface.aimSeconds`: `SurfaceField` samples the waves of the player's region and its neighbours into a 48 × 48 texture, `seaHeightMap`, each cell a share of the highest; `SeaSurface` takes that height and the foam of the highest cell's Beaufort force, and raises the trains of the region's generations.
 - `SeaSurface` quantises a generation to a heading (`surface.turnDegrees`) and a length step (`surface.stretch`), so a slot that brings the same sea brings the same trains. New trains take over in the other bank over `surface.settleSeconds` from their slot's start, the same moment on every client. Entering another region hands over from what is drawn, keeping the stronger bank's weight and the total energy continuous.
 - The shader, vessels and floating items read the same share (`SurfaceField.Factor`), so a boat rides the wave drawn under it.

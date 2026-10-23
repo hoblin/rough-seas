@@ -96,7 +96,6 @@
         }
     },
     "lightning": {
-        "checkSeconds": 2,
         "strikesPerMinute": 2,
         "minPresence": 0.5,
         "minCelsius": 12,

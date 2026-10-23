@@ -37,6 +37,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     public override void Start(ICoreAPI api)
     {
         this.api = api;
+        Clock = new SeaClock(() => api.World?.Calendar);
         config = new Lazy<SeaWeatherConfig>(() => api.Assets.Get<SeaWeatherConfig>(new AssetLocation("roughseas", "config/seaweather.json")));
         api.Network.RegisterChannel(Channel).RegisterMessageType<SeaMapSnapshot>();
         new VanillaWind(this, api).Follow();
@@ -54,6 +55,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         new VanillaRegions(this, sapi).Drive();
         new SeaMapServer(this, sapi).Start();
         Budget.CountTicks(sapi);
+        sapi.Event.RegisterGameTickListener(dt => Clock.Track(dt), 0);
         SeaWeatherCommands.Register(this, sapi);
     }
 
@@ -61,6 +63,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     {
         map = new SeaMapClient(this, capi);
         map.Start();
+        capi.Event.RegisterGameTickListener(dt => Clock.Track(dt), 0);
         new VanillaRain(this, capi).Follow();
         WindOnCoordinates.Attach(this, capi);
         SeaWeatherCommands.Register(this, capi);
@@ -77,8 +80,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public SeaWeatherConfig Config => config.Value;
 
-    public double NowHours => api.World.Calendar.TotalHours;
-
+    public SeaClock Clock { get; private set; } = null!;
     /// <summary>The model, on the server; a client reads the map the server sends instead.</summary>
     public SeaModel Model => model?.Value ?? throw new InvalidOperationException("The sea model runs on the server alone");
 
@@ -119,7 +121,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
             calendar.DaysPerYear * calendar.HoursPerDay,
             blockMetres,
             (x, z, hours) => SeasonalCelsius(sapi, climate, x, z, hours));
-        return new SeaModel(this, sapi, weather, new WaterBody(sapi, basins, Config.Waves, blockMetres, () => NowHours));
+        return new SeaModel(this, sapi, weather, new WaterBody(sapi, basins, Config.Waves, blockMetres, () => Clock.Hours));
     }
 
     private static double SeasonalCelsius(ICoreServerAPI sapi, WorldClimate climate, double x, double z, double hours)

@@ -106,7 +106,6 @@ public class AshoreConfig
 
 public class LightningConfig
 {
-    public double CheckSeconds;
     public double StrikesPerMinute;
     public double MinPresence;
     public double MinCelsius;

@@ -20,7 +20,7 @@ public class StormEvents(SeaWeatherSystem sea, ICoreServerAPI sapi)
     {
         var model = sea.Model;
         var stormiest = SeaModel.SamplesOf(sim.regionX, sim.regionZ, sapi.WorldManager.RegionSize)
-            .Select(at => (at, storms: model.StormsAt(at.X, at.Z, sea.NowHours)))
+            .Select(at => (at, storms: model.StormsAt(at.X, at.Z, sea.Clock.Hours)))
             .MaxBy(sample => sample.storms.Presence);
         var stormEvent = stormiest.storms.Presence >= sea.Config.Storm.WeatherEventThreshold ? stormiest.storms.Storm?.Type.WeatherEvent : null;
         if (stormEvent != null && Allows(sim, stormEvent, stormiest.at))

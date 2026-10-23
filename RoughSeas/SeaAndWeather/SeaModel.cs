@@ -20,14 +20,16 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
 
     public bool DangerousOceans => sea.DangerousOceans;
 
-    public double NowHours => sea.NowHours;
+    public SeaClock Clock => sea.Clock;
 
     public SeaWeatherModel Weather => model;
+
+    private double Now => Clock.Hours;
 
     public static IEnumerable<(double X, double Z)> SamplesOf(int regionX, int regionZ, int regionSize) =>
         RegionSamples.Select(sample => ((regionX + sample.X) * regionSize, (regionZ + sample.Z) * regionSize));
 
-    public SeaState At(double x, double z) => At(x, z, NowHours);
+    public SeaState At(double x, double z) => At(x, z, Now);
 
     public SeaState At(double x, double z, double totalHours)
     {
@@ -38,7 +40,7 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
 
     public SeaSample Sample(double x, double z)
     {
-        var hours = NowHours;
+        var hours = Now;
         var wind = model.Wind(x, z, hours);
         var (height, period) = Waves(x, z, hours, wind);
         var current = model.Current(x, z);
@@ -47,9 +49,9 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
 
     public SeaCurrent CurrentAt(double x, double z) => model.Current(x, z);
 
-    public (double Height, double Period) WavesAt(double x, double z) => Waves(x, z, NowHours, model.Wind(x, z, NowHours));
+    public (double Height, double Period) WavesAt(double x, double z) => Waves(x, z, Now, model.Wind(x, z, Now));
 
-    public IEnumerable<Storm> StormsWithin(double x, double z, double range) => model.Storms.Active(x, z, NowHours, range);
+    public IEnumerable<Storm> StormsWithin(double x, double z, double range) => model.Storms.Active(x, z, Now, range);
 
     public bool IsSea(double x, double z) => model.IsSea(x, z);
 
@@ -57,11 +59,11 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
 
     public (double X, double Z) Wind(double x, double z)
     {
-        var wind = model.Wind(x, z, NowHours);
+        var wind = model.Wind(x, z, Now);
         return (wind.X, wind.Z);
     }
 
-    public double StormPresence(double x, double z) => model.StormsAt(x, z, NowHours).Presence;
+    public double StormPresence(double x, double z) => model.StormsAt(x, z, Now).Presence;
 
     public Reach Upwind(double x, double z, double towardRadians) => water.Upwind(x, z, towardRadians);
 
@@ -112,7 +114,7 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
     /// </summary>
     public double RegionMps(int regionX, int regionZ)
     {
-        var now = NowHours;
+        var now = Now;
         if (regions.TryGetValue((regionX, regionZ), out var cached) && Math.Abs(now - cached.Hours) < sea.Config.Vanilla.RegionRefreshHours) return cached.Mps;
         if (regions.Count > CacheLimit) regions.Clear();
         var mps = SamplesOf(regionX, regionZ, sapi.WorldManager.RegionSize).Max(at => model.Wind(at.X, at.Z, now).Speed);

@@ -122,7 +122,7 @@ public static class VanillaWeatherPatches
             (__instance.lerpRainCloudOverlay, __instance.lerpRainOverlay) = (lerpRainCloudOverlay, lerpRainOverlay);
             return;
         }
-        if (sea.Source.RainCloudness(pos.X, pos.Z, ___ws.api.World.Calendar.TotalDays) is not { } cloudness) return;
+        if (sea.Source.RainCloudness(pos.X, pos.Z, sea.Clock.Hours / ___ws.api.World.Calendar.HoursPerDay) is not { } cloudness) return;
         __instance.lerpRainCloudOverlay = GameMath.Clamp(cloudness, 0, 1);
         __instance.lerpRainOverlay = GameMath.Clamp(cloudness - 0.5f, 0, 1);
     }

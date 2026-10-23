@@ -11,8 +11,8 @@ public interface ISeaWeather
     /// <summary>The world's "dangerous oceans" setting: whether the sea may do harm.</summary>
     bool DangerousOceans { get; }
 
-    /// <summary>The game time the state is read at, in total game hours.</summary>
-    double NowHours { get; }
+    /// <summary>The time the sea keeps, and every mechanic of ours at sea with it.</summary>
+    SeaClock Clock { get; }
 
     /// <summary>The state at a block position now. Positions are absolute block coordinates.</summary>
     SeaState At(double x, double z);

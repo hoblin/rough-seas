@@ -32,7 +32,7 @@ public class SoundscapeModSystem : ModSystem
         var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
         ShoreSound.Attach(Config.Shore, sea, storms.Waves);
         VanillaRowing.Attach(Config.VanillaRowingVolume, this);
-        var crests = new Crests(capi, Config.Crests, this);
+        var crests = new Crests(capi, Config.Crests, sea.Clock, this);
         var splashes = new Splashes(capi, Config.Water.Splash, Config.Water.Range, storms, this);
         var swimmer = new Swimmer(capi, splashes);
         vessels = new VesselSounds(capi, Config.Water, splashes, this);
@@ -55,7 +55,7 @@ public class SoundscapeModSystem : ModSystem
             {
                 if (Listener.Of(capi, sea, storms, Config) is not { } listener) return;
                 bed.Update(dt, listener);
-                crests.Update(dt, listener);
+                crests.Update(listener);
                 vessels.Update(listener);
                 swimmer.Update();
                 if ((sinceLog += dt) < LogEverySeconds) return;
