@@ -99,8 +99,9 @@ public class SeaMapClient(SeaWeatherSystem sea, ICoreClientAPI capi) : ISeaSourc
 
     private double Now => capi.World.Calendar?.TotalHours ?? 0;
 
-    private double Span(double hours) =>
-        hours > sea.Config.Map.StaleHours ? 0 : sea.Config.Map.UpdateSeconds * VanillaSpeedOfTime * capi.World.Calendar.CalendarSpeedMul / 3600;
+    private double Span(double hours) => hours <= sea.Config.Map.StaleHours && capi.World.Calendar is { } calendar
+        ? sea.Config.Map.UpdateSeconds * VanillaSpeedOfTime * calendar.CalendarSpeedMul / 3600
+        : 0;
 
     private Region? Fresh((int X, int Z) key)
     {

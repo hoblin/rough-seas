@@ -16,6 +16,7 @@ public sealed class SurfaceClock : IRenderer
     private readonly WaveTime time = new();
     private double sinceAim = double.PositiveInfinity;
     private double sinceLog = double.PositiveInfinity;
+    private (int X, int Z)? region;
 
     public SurfaceClock(StormsModSystem storms, SeaWeatherSystem sea, SeaSurface surface, SurfaceField field, ICoreClientAPI capi)
     {
@@ -56,9 +57,13 @@ public sealed class SurfaceClock : IRenderer
         var state = sea.At(field.HighestX, field.HighestZ);
         surface.Aim(field.Height, Math.Atan2(state.WindZ, state.WindX), state.Beaufort, field.Height / storms.Config.Surface.FullFoamMetres);
 
+        var regionSize = capi.World.BlockAccessor.RegionSize;
+        var here = ((int)Math.Floor(pos.X / regionSize), (int)Math.Floor(pos.Z / regionSize));
+        var crossed = here != region;
+        region = here;
         var slotHours = sea.Config.SeaSampleHours;
         var slot = (long)Math.Floor(time.HoursAt(time.Seconds) / slotHours);
-        surface.Raise(sea.Source.Generation(pos.X, pos.Z, slot - 1), sea.Source.Generation(pos.X, pos.Z, slot), time.SecondsAt(slot * slotHours));
+        surface.Raise(sea.Source.Generation(pos.X, pos.Z, slot - 1), sea.Source.Generation(pos.X, pos.Z, slot), time.SecondsAt(slot * slotHours), crossed);
     }
 
     private static double Degrees(double radians) => (radians * 180 / Math.PI + 360) % 360;

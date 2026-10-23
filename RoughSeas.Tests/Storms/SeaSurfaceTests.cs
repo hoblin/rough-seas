@@ -18,14 +18,14 @@ public class SeaSurfaceTests
     private static WaveGeneration Generation(double height, double toward) => new(toward, 3.5 * Math.Sqrt(height));
 
     private static void Run(SeaSurface surface, double height, WaveGeneration earlier, WaveGeneration latest, double born,
-        double from, double seconds = 120, double beaufort = 6, Action? eachFrame = null)
+        double from, double seconds = 120, double beaufort = 6, Action? eachFrame = null, bool crossed = false)
     {
         for (var frame = 0; frame * Frame < seconds; frame++)
         {
             if (frame % FramesPerAim == 0)
             {
                 surface.Aim(height, latest.TowardRadians, beaufort);
-                surface.Raise(earlier, latest, born);
+                surface.Raise(earlier, latest, born, crossed);
             }
             surface.Advance(from + frame * Frame);
             eachFrame?.Invoke();
@@ -148,12 +148,25 @@ public class SeaSurfaceTests
         var crossing = Surface();
         Settle(crossing, 3, 0);
         var previous = crossing.HeightAt(FarX, FarZ);
-        Run(crossing, 3, drawn, theirs, 60, 120, seconds: 30, eachFrame: () =>
+        Run(crossing, 3, drawn, theirs, 60, 120, seconds: 30, crossed: true, eachFrame: () =>
         {
             var height = crossing.HeightAt(FarX, FarZ);
             Assert.True(Math.Abs(height - previous) < 0.1, $"jumped from {previous:F3} to {height:F3}");
             previous = height;
         });
+    }
+
+    [Fact]
+    public void HandsOverFromTheSlotsStartHoweverLateItIsSeen()
+    {
+        var (calm, gale) = (Generation(3, 0), Generation(3, 2));
+        var early = Surface();
+        Run(early, 3, calm, calm, -Slot, 0, seconds: Slot);
+        Run(early, 3, calm, gale, Slot, Slot + 5, seconds: 1);
+
+        var late = Surface();
+        Run(late, 3, calm, gale, Slot, Slot + 5, seconds: 1);
+        AssertSameSea(late, early);
     }
 
     [Fact]

@@ -51,7 +51,7 @@ public class StormsModSystem : ModSystem
         if (SurfaceShader.Attach(surface, field, capi)) clock = new SurfaceClock(this, sea, surface, field, capi);
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         DrawnSea = new DrawnSea(surface, field);
-        VesselMotion.Attach(this, DrawnSea, surface);
+        VesselMotion.Attach(this, capi, DrawnSea, surface);
         FloatMotion.Attach(DrawnSea);
         RegisterSurfaceCommands(capi);
     }

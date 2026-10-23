@@ -87,7 +87,7 @@ public sealed class SeaSurface
         CapsFold = FoldCovering(Math.Min(1, Foam.Caps / BreakingCrestShare));
     }
 
-    public void Raise(WaveGeneration earlier, WaveGeneration latest, double bornSeconds)
+    public void Raise(WaveGeneration earlier, WaveGeneration latest, double bornSeconds, bool crossed = false)
     {
         var from = TrainsOf(earlier);
         if ((TrainsOf(latest) ?? from) is not { } next || Rising == next) return;
@@ -101,7 +101,7 @@ public sealed class SeaSurface
             }
             else Rise(0, next, double.NegativeInfinity);
         }
-        else if (Rising == from && Seconds - bornSeconds <= config.AimSeconds) Rise(1 - active, next, bornSeconds);
+        else if (Rising == from && !crossed) Rise(1 - active, next, bornSeconds);
         else
         {
             // The kept bank's weight carries on unbroken, and the new trains take the dropped bank's, so the drawn energy doesn't jump.

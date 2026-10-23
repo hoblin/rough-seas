@@ -24,14 +24,15 @@ public static class VesselMotion
     private static StormsModSystem? storms;
     private static IDrawnSea? drawn;
     private static SeaSurface? surface;
+    private static ICoreClientAPI? capi;
     private static double largestStep;
     private static double loggedAt = double.NegativeInfinity;
     private static double tracedUntil = double.NegativeInfinity;
 
-    public static void Attach(StormsModSystem system, IDrawnSea sea, SeaSurface waves)
+    public static void Attach(StormsModSystem system, ICoreClientAPI client, IDrawnSea sea, SeaSurface waves)
     {
         if (harmony != null) return;
-        (storms, drawn, surface) = (system, sea, waves);
+        (storms, capi, drawn, surface) = (system, client, sea, waves);
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(NetworkAPI), nameof(NetworkAPI.SendPlayerPositionPacket)),
             prefix: new HarmonyMethod(typeof(VesselMotion), nameof(SendUnlifted)),
@@ -50,7 +51,7 @@ public static class VesselMotion
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (storms, drawn, surface) = (null, null, null);
+        (storms, capi, drawn, surface) = (null, null, null, null);
         poses.Clear();
         responses.Clear();
         (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
@@ -68,25 +69,25 @@ public static class VesselMotion
         renderer.xangle += (float)(GameMath.Lerp(rocking.X * seaworthiness.RollResponse, pose.Roll, pose.Hold) - rocking.X);
         renderer.zangle += (float)(GameMath.Lerp(rocking.Z * seaworthiness.PitchResponse, pose.Pitch, pose.Hold) - rocking.Z);
         if (pose.Hold > 0) Report(__instance, pose);
-        if (surface!.Seconds < tracedUntil)
+        if (Seconds < tracedUntil)
         {
             storms!.Log(__instance, "surface trace: frame {0} at {1:F3} s, swimming {2}, at {3:F2} {4:F2}; lifted {5:F3} m, rolled {6:F2}°, pitched {7:F2}°",
-                surface.Frame, surface.Seconds, __instance.Swimming, __instance.Pos.X, __instance.Pos.Z, pose.Lift, pose.Roll * GameMath.RAD2DEG, pose.Pitch * GameMath.RAD2DEG);
+                surface!.Frame, surface.Seconds, __instance.Swimming, __instance.Pos.X, __instance.Pos.Z, pose.Lift, pose.Roll * GameMath.RAD2DEG, pose.Pitch * GameMath.RAD2DEG);
         }
     }
 
     public static void Trace(double seconds)
     {
-        if (surface != null) tracedUntil = surface.Seconds + seconds;
+        if (capi != null) tracedUntil = Seconds + seconds;
     }
 
     private static void LiftModel(EntityShapeRenderer __instance, Entity entity, bool isShadowPass)
     {
         if (entity is EntityBoat boat && PoseOf(boat).Lift is var lift and not 0) __instance.ModelMat[ModelMatrixY] += (float)lift;
-        if (entity is EntityBoat traced && surface!.Seconds < tracedUntil && !isShadowPass)
+        if (entity is EntityBoat traced && Seconds < tracedUntil && !isShadowPass)
         {
             storms!.Log(traced, "surface trace: frame {0}, model at {1:F3} {2:F3} {3:F3} from the camera",
-                surface.Frame, __instance.ModelMat[12], __instance.ModelMat[13], __instance.ModelMat[14]);
+                surface!.Frame, __instance.ModelMat[12], __instance.ModelMat[13], __instance.ModelMat[14]);
         }
     }
 
@@ -147,7 +148,7 @@ public static class VesselMotion
     {
         if (!responses.TryGetValue(boat.EntityId, out var answered))
         {
-            answered = (new HullResponse(0, 0, storms!.Config.Response), surface!.Seconds);
+            answered = (new HullResponse(0, 0, storms!.Config.Response), Seconds);
         }
         var response = answered.Response;
         if (forces.Buoyant is { HasDraft: true } buoyant)
@@ -156,14 +157,16 @@ public static class VesselMotion
             response.HeavePeriodSeconds = HullResponse.HeavePeriod(draft, storms!.Config.Response);
             response.RollPeriodSeconds = HullResponse.RollPeriod(length, forces.BeamMetres, draft, buoyant.DepthMetres);
         }
-        responses[boat.EntityId] = (response, surface!.Seconds);
-        return response.Follow(pose, surface.Seconds - answered.Seconds);
+        responses[boat.EntityId] = (response, Seconds);
+        return response.Follow(pose, Seconds - answered.Seconds);
     }
+
+    private static double Seconds => capi!.InWorldEllapsedMilliseconds / 1000.0;
 
     private static void Report(EntityBoat boat, SeaPose pose)
     {
-        if (surface!.Seconds - loggedAt < LogEverySeconds) return;
-        loggedAt = surface.Seconds;
+        if (Seconds - loggedAt < LogEverySeconds) return;
+        loggedAt = Seconds;
         storms!.Log(boat, "surface: rides lifted {0:F2} m, rolled {1:F1}°, pitched {2:F1}°; largest lift step between frames {3:F3} m",
             pose.Lift, pose.Roll * GameMath.RAD2DEG, pose.Pitch * GameMath.RAD2DEG, largestStep);
         largestStep = 0;
