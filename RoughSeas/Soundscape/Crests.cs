@@ -12,11 +12,11 @@ public sealed class Crests(ICoreClientAPI capi, CrestsConfig config, SeaClock cl
 
     public void Update(Listener listener)
     {
-        var lap = watch.Lap();
-        if (!listener.AtSea || lap.Leapt) return;
+        var lived = watch.Lap().LivedSeconds;
+        if (!listener.AtSea) return;
 
-        Scatter(config.Hiss, listener.Foam.Caps, lap.Seconds, listener);
-        Scatter(config.Plunge, listener.Foam.Spray, lap.Seconds, listener);
+        Scatter(config.Hiss, listener.Foam.Caps, lived, listener);
+        Scatter(config.Plunge, listener.Foam.Spray, lived, listener);
     }
 
     private void Scatter(ScatteredCue cue, double share, double seconds, Listener listener)

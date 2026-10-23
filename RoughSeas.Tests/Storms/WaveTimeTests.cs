@@ -13,7 +13,7 @@ public class WaveTimeTests
 
     private double hours = StartHours;
 
-    private SeaClock Clock => new(() => hours, () => CalendarSpeedMul, () => Normal, () => 0);
+    private SeaClock Clock => new(() => hours, () => CalendarSpeedMul, () => Normal);
 
     private static double CalendarHours(double realSeconds) =>
         StartHours + Math.Floor(realSeconds / 0.033) * 0.033 * GameHoursPerSecond;

@@ -55,6 +55,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         new VanillaRegions(this, sapi).Drive();
         new SeaMapServer(this, sapi).Start();
         Budget.CountTicks(sapi);
+        sapi.Event.RegisterGameTickListener(dt => Clock.Track(dt), 0);
         SeaWeatherCommands.Register(this, sapi);
     }
 
@@ -62,6 +63,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     {
         map = new SeaMapClient(this, capi);
         map.Start();
+        capi.Event.RegisterGameTickListener(dt => Clock.Track(dt), 0);
         new VanillaRain(this, capi).Follow();
         WindOnCoordinates.Attach(this, capi);
         SeaWeatherCommands.Register(this, capi);

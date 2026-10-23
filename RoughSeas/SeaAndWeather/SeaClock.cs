@@ -13,16 +13,17 @@ public sealed class SeaClock
 
     private const double SecondsPerGameHour = 3600;
     private const double VanillaCalendarSpeedMul = 0.5;
-    private const double SlackSeconds = 1;
+    private const double RunSlack = 2;
 
-    private readonly Func<double> hours, calendarSpeedMul, speedOfTime, realSeconds;
+    private readonly Func<double> hours, calendarSpeedMul, speedOfTime;
+    private double tracked = double.NaN, trackedSpeed, lived;
 
-    internal SeaClock(Func<double> hours, Func<double> calendarSpeedMul, Func<double> speedOfTime, Func<double> realSeconds) =>
-        (this.hours, this.calendarSpeedMul, this.speedOfTime, this.realSeconds) = (hours, calendarSpeedMul, speedOfTime, realSeconds);
+    internal SeaClock(Func<double> hours, Func<double> calendarSpeedMul, Func<double> speedOfTime) =>
+        (this.hours, this.calendarSpeedMul, this.speedOfTime) = (hours, calendarSpeedMul, speedOfTime);
 
     internal SeaClock(Func<IGameCalendar?> calendar)
         : this(() => calendar()?.TotalHours ?? 0, () => calendar()?.CalendarSpeedMul ?? VanillaCalendarSpeedMul,
-            () => calendar()?.SpeedOfTime ?? 0, () => Environment.TickCount64 / 1000.0) { }
+            () => calendar()?.SpeedOfTime ?? 0) { }
 
     /// <summary>The game time, in total game hours; 0 before the calendar exists.</summary>
     public double Hours => hours();
@@ -40,32 +41,39 @@ public sealed class SeaClock
     /// <summary>A watch for one mechanic, which keeps its own last lap.</summary>
     public Watch StartWatch() => new(this);
 
-    private (double Hours, double Real, double Speed) Read() => (hours(), realSeconds(), speedOfTime());
-
-    private double HoursRun(double realSeconds, double speed) => realSeconds * speed * calendarSpeedMul() / SecondsPerGameHour;
+    internal void Track(double realSeconds)
+    {
+        var (now, speed) = (Hours, speedOfTime());
+        var ran = now - tracked;
+        var runs = realSeconds * Math.Max(speed, trackedSpeed) * calendarSpeedMul() / SecondsPerGameHour * RunSlack;
+        if (ran > 0) lived += Math.Min(ran, runs);
+        (tracked, trackedSpeed) = (now, speed);
+    }
 
     public sealed class Watch
     {
         private readonly SeaClock clock;
         private double from = double.NaN;
-        private double fromReal;
-        private double fromSpeed;
+        private double fromLived;
 
         internal Watch(SeaClock clock) => this.clock = clock;
 
         /// <summary>The time since the last lap; nothing at the first, nor when the calendar was set back.</summary>
         public Lap Lap()
         {
-            var (now, real, speed) = clock.Read();
+            var (now, lived) = (clock.Hours, clock.lived);
             var hours = double.IsNaN(from) ? 0 : Math.Max(0, now - from);
-            var run = clock.HoursRun(real - fromReal + SlackSeconds, Math.Max(speed, fromSpeed));
-            (from, fromReal, fromSpeed) = (now, real, speed);
-            return new Lap(hours, clock.SecondsAt(hours), hours > run);
+            var livedHours = double.IsNaN(from) ? 0 : lived - fromLived;
+            (from, fromLived) = (now, lived);
+            return new Lap(hours, clock.SecondsAt(hours), clock.SecondsAt(livedHours));
         }
     }
 }
 
 /// <param name="Hours">In game hours.</param>
 /// <param name="Seconds">The same time in seconds at vanilla's pace.</param>
-/// <param name="Leapt">The calendar was moved on, as by <c>/time add</c>, faster than its speed of time runs it, so no tick lived through these hours.</param>
-public readonly record struct Lap(double Hours, double Seconds, bool Leapt);
+/// <param name="LivedSeconds">
+/// The part of it the world's ticks ran through, in seconds at vanilla's pace; the rest the calendar was moved on, as by
+/// <c>/time add</c>, and nothing happened in it to be seen.
+/// </param>
+public readonly record struct Lap(double Hours, double Seconds, double LivedSeconds);

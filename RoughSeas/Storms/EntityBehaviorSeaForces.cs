@@ -110,8 +110,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
         sinceUpdate = 0;
-        var lap = watch.Lap();
-        sinceWave = lap.Leapt ? 0 : sinceWave + lap.Seconds;
+        sinceWave += watch.Lap().LivedSeconds;
         if (!entity.Swimming || !sea.DangerousOceans)
         {
             sinceWave = 0;

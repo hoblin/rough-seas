@@ -7,22 +7,27 @@ public class SeaClockTests
     private const double CalendarSpeedMul = 0.5;
     private const double Normal = 60;
     private const double Sleeping = 17060;
+    private const double Tick = 1 / 30.0;
 
     private double hours = 1160.25;
     private double speed = Normal;
-    private double real = 5000;
+    private readonly SeaClock clock;
 
-    private SeaClock Clock() => new(() => hours, () => CalendarSpeedMul, () => speed, () => real);
+    public SeaClockTests() => clock = new SeaClock(() => hours, () => CalendarSpeedMul, () => speed);
 
     private void Run(double realSeconds)
     {
-        real += realSeconds;
-        hours += realSeconds * speed * CalendarSpeedMul / 3600;
+        for (var ran = 0.0; ran < realSeconds; ran += Tick)
+        {
+            hours += Tick * speed * CalendarSpeedMul / 3600;
+            clock.Track(Tick);
+        }
     }
 
     private SeaClock.Watch Started()
     {
-        var watch = Clock().StartWatch();
+        Run(Tick);
+        var watch = clock.StartWatch();
         watch.Lap();
         return watch;
     }
@@ -30,8 +35,6 @@ public class SeaClockTests
     [Fact]
     public void RunsAGameHourInTwoMinutesOfTheSeasSecondsAtVanillasPace()
     {
-        var clock = Clock();
-
         Assert.Equal(120, clock.SecondsAt(1));
         Assert.Equal(hours, clock.HoursAt(clock.SecondsAt(hours)), 9);
     }
@@ -39,7 +42,7 @@ public class SeaClockTests
     [Fact]
     public void LapsNothingAtItsFirstReading()
     {
-        var watch = Clock().StartWatch();
+        var watch = clock.StartWatch();
         Run(60);
 
         Assert.Equal(default, watch.Lap());
@@ -50,8 +53,11 @@ public class SeaClockTests
     {
         var watch = Started();
         Run(60);
+        var lap = watch.Lap();
 
-        Assert.Equal(new Lap(0.5, 60, false), watch.Lap());
+        Assert.Equal(0.5, lap.Hours, 3);
+        Assert.Equal(60, lap.Seconds, 1);
+        Assert.Equal(60, lap.LivedSeconds, 1);
     }
 
     [Fact]
@@ -69,6 +75,7 @@ public class SeaClockTests
     {
         var watch = Started();
         hours -= 10;
+        Run(1);
 
         Assert.Equal(0, watch.Lap().Hours);
     }
@@ -78,32 +85,39 @@ public class SeaClockTests
     {
         var watch = Started();
         speed = Sleeping;
-        Run(2);
-        var asleep = watch.Lap();
+        Run(0.3);
         speed = Normal;
-        Run(2);
+        Run(0.2);
+        var lap = watch.Lap();
 
-        Assert.False(asleep.Leapt, $"{asleep.Hours:F1} h asleep counted as a leap");
-        Assert.False(watch.Lap().Leapt);
+        Assert.Equal(lap.Seconds, lap.LivedSeconds, 1);
     }
 
     [Fact]
-    public void LeapsOverTheHoursTheCalendarIsMovedOn()
+    public void LivesNoneOfTheHoursTheCalendarIsMovedOn()
     {
         var watch = Started();
-        Run(0.5);
+        speed = Sleeping;
+        Run(0.25);
         hours += 2;
+        Run(0.25);
+        var lap = watch.Lap();
 
-        Assert.True(watch.Lap().Leapt);
+        Assert.InRange(lap.Seconds - lap.LivedSeconds, clock.SecondsAt(2) - TwoTicksAt(Sleeping), clock.SecondsAt(2));
     }
 
+    private double TwoTicksAt(double speedOfTime) => clock.SecondsAt(2 * Tick * speedOfTime * CalendarSpeedMul / 3600);
+
     [Fact]
-    public void LeapsOverTheHoursAddedWhileTheWorldsClockStands()
+    public void LivesNoneOfTheHoursAddedWhileTheWorldsClockStands()
     {
         var watch = Started();
         speed = 0;
         hours += 0.1;
+        Run(1);
+        var lap = watch.Lap();
 
-        Assert.True(watch.Lap().Leapt);
+        Assert.Equal(12, lap.Seconds, 6);
+        Assert.InRange(lap.LivedSeconds, 0, TwoTicksAt(Normal));
     }
 }

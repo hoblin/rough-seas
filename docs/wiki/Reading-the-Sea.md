@@ -125,9 +125,9 @@ A watch's `Lap()` gives the time since its last lap, a `Lap`:
 | --- | --- |
 | `Hours` | the game hours since the last lap: none at the first lap, nor when the calendar was set back |
 | `Seconds` | the same time in seconds at vanilla's pace |
-| `Leapt` | the calendar was moved on, as by `/time add`, faster than its speed of time runs it |
+| `LivedSeconds` | the part of it the world's ticks ran through, in seconds at vanilla's pace; the rest the calendar was moved on, as by `/time add` |
 
-A mechanic keeps a watch of its own and laps it each time it acts, on its tick or a timer. What builds up takes the whole lap, as vanilla's food rots through a `/time add`. What happens now and then takes the events of the lap, and none of a lap that leapt: no tick lived through those hours. A net that fills while it soaks, and is washed by every wave that reaches it:
+A mechanic keeps a watch of its own and laps it each time it acts, on its tick or a timer. What builds up takes the whole lap, as vanilla's food rots through a `/time add`. What happens now and then takes the events of the lived seconds alone: nothing happened in the hours the calendar skipped. A net that fills while it soaks, and is washed by every wave that reaches it:
 
 ```csharp
 watch ??= sea.Clock.StartWatch();
@@ -135,7 +135,7 @@ var lap = watch.Lap();
 fish += FishPerHour * lap.Hours;
 
 var state = sea.At(pos.X, pos.Z);
-sinceWave = lap.Leapt ? 0 : sinceWave + lap.Seconds;
+sinceWave += lap.LivedSeconds;
 for (; state.WavePeriod > 0 && sinceWave >= state.WavePeriod; sinceWave -= state.WavePeriod) Wash(net, state);
 ```
 

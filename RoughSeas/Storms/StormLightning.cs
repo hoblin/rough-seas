@@ -29,8 +29,8 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
 
     private void Strike()
     {
-        var lap = watch.Lap();
-        if (!sea.DangerousOceans || lap.Leapt) return;
+        var lived = watch.Lap().LivedSeconds;
+        if (!sea.DangerousOceans) return;
 
         using var _ = storms.Budget.Measure();
         var rand = sapi.World.Rand;
@@ -44,7 +44,7 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
             var presence = sea.Model.StormsAt(pos.X, pos.Z, sea.Clock.Hours).Presence;
             if (presence < Config.MinPresence || !WarmEnough(pos.AsBlockPos)) continue;
 
-            for (var strikes = Poisson(Config.StrikesPerMinute * lap.Seconds / 60 * presence, rand); strikes > 0; strikes--)
+            for (var strikes = Poisson(Config.StrikesPerMinute * lived / 60 * presence, rand); strikes > 0; strikes--)
             {
                 if (Spot(pos.X, pos.Z) is not { } spot) continue;
 
