@@ -1,0 +1,11 @@
+<p>3.2 gives everyone on a server one sea, and makes calm water sound like calm water.</p>
+
+<ul>
+<li><strong>No more creaking in the shallows.</strong> Standing or swimming in shallow water played a loud creak and knock, recorded inside a boat at anchor, and it lingered after you left the water. It's gone. A calm sea is quiet now but for the splash of each passing wave, at your feet or at your hull, as loud as the wave is high.</li>
+<li><strong>The shore laps with the game's own sound</strong> again, by how much shallow water lies around you.</li>
+<li><strong>The sea's roar rises from silence</strong> as the wind picks up, instead of starting at full strength. The slap of a wave on your hull sits just over its splash, so a calm no longer rings with loud slaps.</li>
+<li><strong>The same waves for every player.</strong> Every client draws the same crests at the same moment, so a crewmate sees the wave your boat rides.</li>
+<li><strong>One clock at sea.</strong> Waves coming aboard, rain into a bilge, leaks, lightning, a reed boat soaking and a currach's grease all keep the world's time. They stand still while time stands, and race while you sleep: a boat afloat near you lives through the night with you, so a leaky one left by the shore may be full of water in the morning.</li>
+</ul>
+
+<p>For modders: <code>ISeaWeather.NowHours</code> gave way to <code>ISeaWeather.Clock</code>, whose <code>Hours</code> is the old value, and <code>IDrawnSea.Seconds</code> gives the waves' time, the same on every client. In <code>config/soundscape.json</code> a hull's splash is <code>water.splash</code>, the slaps take a <code>volumePerMetre</code>, and the lapping loop and the shore's lapping keys are gone. What changed: <a href="https://github.com/hoblin/rough-seas/wiki/For-Modders#one-sea-one-clock">For modders</a>.</p>
