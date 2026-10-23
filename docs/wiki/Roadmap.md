@@ -59,6 +59,15 @@ Every blow harms a hull by what it is and what it meets.
 - **[Thrown ashore](Mooring#thrown-ashore)**, a moored vessel hits the bottom at the speed of the breakers that threw it.
 - **For modders:** a vessel's [`shell`](Building-a-Vessel#the-hull), and [what changed](For-Modders#blows-by-their-physics) for a vessel of yours.
 
+## 3.2
+
+One sea for everyone on a server, and calm water that sounds like calm water.
+
+- **The same waves for every player.** Every client draws the same crests at the same moment, so a crewmate sees the wave your boat rides.
+- **[One clock at sea](Reading-the-Sea#the-seas-time).** Waves, rain into a bilge, leaks, lightning and a hull soaking all keep the world's time: they stand still when time stands and race while you sleep, so a boat near you lives through the night with you.
+- **Calm water that splashes.** No more creaking and knocking when you stand or swim in the shallows. A calm sea is quiet but for the splash of each passing wave, at your feet or at your hull, as loud as the wave is high. The shore laps with the game's own sound again, and the sea's roar rises from silence as the wind picks up.
+- **For modders:** [what changed](For-Modders#one-sea-one-clock) for code that reads the time.
+
 ## Seamanship
 
 Sailing becomes sailing.
