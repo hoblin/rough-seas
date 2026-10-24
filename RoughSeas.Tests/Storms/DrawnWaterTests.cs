@@ -114,6 +114,10 @@ public class DrawnWaterTests
 
         public double HeightAt(double x, double z) => swell ? height : 0;
 
+        public (double X, double Z) OrbitalVelocityAt(double x, double z, double depth = 0, double side = 0) => default;
+
+        public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) => default;
+
         public SeaPose PoseOf(double x, double z, double yaw, double length, double width) => default;
     }
 

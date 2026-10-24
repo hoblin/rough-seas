@@ -31,17 +31,19 @@ public class DrawnSeaTests
             }
             surface.Advance(frame * Frame);
         }
-        return new DrawnSea(surface, field);
+        return new DrawnSea(surface, field.Factor);
     }
 
     [Fact]
     public void LiesFlatBeforeAnySwellIsDrawn()
     {
-        var sea = new DrawnSea(surface, field);
+        var sea = new DrawnSea(surface, field.Factor);
 
         Assert.False(sea.Swell);
         Assert.Equal(0, sea.HeightAt(X, Z));
         Assert.Equal(default, sea.PoseOf(X, Z, 0, Length, Width));
+        Assert.Equal(default, sea.OrbitalVelocityAt(X, Z));
+        Assert.Equal(default, sea.HullVelocityAt(X, Z, 0, 0.2, 0, Length, Width));
     }
 
     [Fact]

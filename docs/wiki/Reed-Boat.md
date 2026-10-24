@@ -24,7 +24,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
 | [Rapids](Rapids) | torn through in about ten seconds |
 | [Lightning](Lightning) | torn apart |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [Left alone](Currents#drift) | drifts with the current and the waves |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | one paddler, with its own paddle |

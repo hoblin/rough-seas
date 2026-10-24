@@ -104,7 +104,7 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Find((IServerPlayer)args.Caller.Player, (string)args[0], (int)args[1]))
             .EndSubCommand()
             .BeginSubCommand("drift")
-                .WithDescription("Whether unridden vessels drift with the current and the wind; off on every bench start, so they hold still")
+                .WithDescription("Whether unridden vessels drift with the current; off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
@@ -208,7 +208,7 @@ public class BridgeCommands : ModSystem
         if (drift == null) return TextCommandResult.Error("Rough Seas is not loaded; nothing drifts by our current");
         if (state != null) drift.Drifting = state == "on";
         return TextCommandResult.Success(drift.Drifting
-            ? "Unridden vessels drift with the current and the wind"
+            ? "Unridden vessels drift with the current"
             : "Unridden vessels hold still; /bridge drift on lets them drift");
     }
 
