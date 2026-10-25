@@ -67,7 +67,7 @@ Tickets are GitHub issues in this repository. A bug or a follow-up found while w
 
 A `decided` ticket is ready for anyone, an outside contributor included: say on the issue that you take it. The rest wait for the maintainers: `agent-filed` until they confirm it, `draft` and `parked` until they settle.
 
-A feature an outside contributor proposes, with no ticket behind it yet, starts as an issue, before any code, written with the repository's `gh-issue` skill. It gets `community`; the maintainers bring it in line with the design and label it `decided`, and only then does work on it start.
+An outside contributor with a wholly new feature, one neither the design nor a ticket holds, does well to propose it first as an issue, written with the repository's `gh-issue` skill, and to start once the maintainers label it `decided`. A pull request without one is welcome, but a feature that runs against the mod's direction or the maintainers' view of it may be closed.
 
 One ticket ships as one pull request. A big PR is fine here, since Copilot reviews it. When a ticket turns out to hold too much, the extra part becomes its own ticket, agreed with the maintainers; it doesn't become a second PR.
 
