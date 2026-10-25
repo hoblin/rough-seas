@@ -166,6 +166,7 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | Member | What it is |
 | --- | --- |
 | `Swell` | whether any swell is drawn now |
+| `SwellAt(x, z)` | whether swell is drawn there now: none outside the waves' field or where the sea is calm |
 | `Seconds` | the time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client |
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |

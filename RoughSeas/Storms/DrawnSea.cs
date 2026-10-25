@@ -8,6 +8,8 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
 
     public bool Swell => !surface.Calm;
 
+    public bool SwellAt(double x, double z) => ShareAt(x, z) > 0;
+
     public double Seconds => surface.Seconds;
 
     public double HeightAt(double x, double z) => ShareAt(x, z) is var share and > 0 ? surface.HeightAt(x, z, share) : 0;

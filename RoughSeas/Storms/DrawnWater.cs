@@ -14,7 +14,7 @@ public sealed class DrawnWater(IDrawnSea sea)
 {
     /// <summary>
     /// The height of the drawn surface over the water column at a point, or null where the point stays as the blocks
-    /// have it: no swell is drawn, no water lies under the point within the swell's reach there, or a solid block
+    /// have it: no swell is drawn there, no water lies under the point within the swell's reach there, or a solid block
     /// stands between the point and the water. The point may lie above the surface returned: between crests, or in the
     /// top water block above the level its water is drawn at.
     /// </summary>
@@ -23,7 +23,7 @@ public sealed class DrawnWater(IDrawnSea sea)
 
     internal double? SurfaceAt<TColumn>(TColumn column, double x, double y, double z) where TColumn : IWaterColumn
     {
-        if (!sea.Swell) return null;
+        if (!sea.SwellAt(x, z)) return null;
 
         var swell = sea.HeightAt(x, z);
         var at = (int)Math.Floor(y);
@@ -38,8 +38,9 @@ public sealed class DrawnWater(IDrawnSea sea)
         var lowest = (int)Math.Floor(y - 1 - Math.Max(swell, 0));
         for (var below = at; below >= lowest; below--)
         {
-            if (column.Water(below)) return below + column.Level(below) + swell;
+            // a solid block first: a waterlogged deck keeps the sea out as a dry one does
             if (column.Solid(below)) return null;
+            if (column.Water(below)) return below + column.Level(below) + swell;
         }
         return null;
     }

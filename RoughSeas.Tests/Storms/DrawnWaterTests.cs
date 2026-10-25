@@ -18,6 +18,12 @@ public class DrawnWaterTests
     }
 
     [Fact]
+    public void LeavesThePointToTheBlocksWhereNoSwellIsDrawnThere()
+    {
+        Assert.Null(new DrawnWater(new Sea(0, local: false)).SurfaceAt(new Column(), X, StillSurface + 0.135, Z));
+    }
+
+    [Fact]
     public void RaisesACrestOverAnEyeAboveTheBlockWater()
     {
         var surface = new DrawnWater(new Sea(3)).SurfaceAt(new Column(), X, StillSurface + 1.7, Z);
@@ -83,6 +89,14 @@ public class DrawnWaterTests
     }
 
     [Fact]
+    public void KeepsAPointOverAWaterloggedDeckDry()
+    {
+        var deck = new Column(top: WaterTop + 1, solid: [WaterTop + 1]);
+
+        Assert.Null(new DrawnWater(new Sea(3)).SurfaceAt(deck, X, WaterTop + 2.7, Z));
+    }
+
+    [Fact]
     public void KeepsDryGroundDry()
     {
         var ground = new Column(top: SeaFloor - 1, solid: Enumerable.Range(0, WaterTop + 1).ToArray());
@@ -90,9 +104,11 @@ public class DrawnWaterTests
         Assert.Null(new DrawnWater(new Sea(3)).SurfaceAt(ground, X, StillSurface + 1.7, Z));
     }
 
-    private sealed class Sea(double height, bool swell = true) : IDrawnSea
+    private sealed class Sea(double height, bool swell = true, bool local = true) : IDrawnSea
     {
         public bool Swell => swell;
+
+        public bool SwellAt(double x, double z) => swell && local;
 
         public double Seconds => 0;
 
