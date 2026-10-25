@@ -63,8 +63,8 @@ def build(path):
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
     crew(shape, "barkcanoe", "BackSeat", "roughseas-kneel",
-         paddling("barkcanoe", STOWED, throat(SHAFT), -3.5, 8.5, 11.5, 1),
-         {"R": "PaddleThroat", "L": "PaddleGrip"}, {"rotationZ": 10})
+         paddling("barkcanoe", STOWED, throat(SHAFT), -0.5, 3.5, 5.2, 2.5),
+         {"R": "PaddleThroat", "L": "PaddleGrip"}, {"rotationX": -15, "rotationZ": 20})
 
 
 if __name__ == "__main__":

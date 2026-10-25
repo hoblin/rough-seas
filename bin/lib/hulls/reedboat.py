@@ -45,7 +45,7 @@ def build(target):
     shape.add(paddle(*STOWED))
     shape.keep("Hull", "FrontSeat", "Cargo")
     crew(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward",
-         paddling("reedboat", STOWED, (0, 0.2, 0.2), -1, 11, 11.5, 0.5), {"R": "PaddleThroat", "L": "PaddleHandle"},
+         paddling("reedboat", STOWED, (0, 0.2, 0.2), -1, 6, 11.5, 0), {"R": "PaddleThroat", "L": "PaddleHandle"},
          {"rotationZ": 6})
 
 

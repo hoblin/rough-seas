@@ -62,7 +62,7 @@ def build(path):
     shape.add(hull.hide_water(7.7), hull.bilge(7.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
     crew(shape, "dugout", "FrontSeat", "roughseas-sitlegsforward",
-         paddling("dugout", STOWED, throat(SHAFT), -12, 0, 10.5, 1),
+         paddling("dugout", STOWED, throat(SHAFT), -12, -5, 8.7, 0.5),
          {"R": "PaddleThroat", "L": "PaddleGrip"}, {"rotationZ": 6})
 
 
