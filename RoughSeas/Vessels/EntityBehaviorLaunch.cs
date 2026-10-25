@@ -42,7 +42,7 @@ public class EntityBehaviorLaunch(Entity entity) : EntityBehavior(entity)
             : null;
 
     private bool Ashore() =>
-        !entity.Swimming && !entity.FeetInLiquid && entity.GetBehavior<EntityBehaviorSeatable>()?.AnyMounted() != true;
+        !entity.Swimming && entity.GetBehavior<EntityBehaviorSeatable>()?.AnyMounted() != true;
 
     private void Shove(EntityAgent byEntity)
     {
@@ -50,7 +50,7 @@ public class EntityBehaviorLaunch(Entity entity) : EntityBehavior(entity)
         double metres = pushJoules / (friction * kg * Gravity);
         double dx = entity.Pos.X - byEntity.Pos.X, dz = entity.Pos.Z - byEntity.Pos.Z;
         double reach = Math.Sqrt(dx * dx + dz * dz);
-        if (reach <= 0 || entity.GetBehavior<EntityBehaviorPassivePhysics>() is not { } physics) return;
+        if (reach <= 0 || !double.IsFinite(metres) || metres <= 0 || entity.GetBehavior<EntityBehaviorPassivePhysics>() is not { } physics) return;
 
         double speed = metres * physics.GroundDragValue / reach;
         entity.Pos.Motion.Add(dx * speed, 0, dz * speed);
