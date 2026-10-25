@@ -85,9 +85,9 @@ Copilot's review, like any automated review, is advice, not a gate. Judge each f
 
 The maintainers' agents merge their own pull requests; an outside contributor's waits for the code owner's review.
 
-1. Mark the PR ready and request Copilot: `gh pr edit <number> --add-reviewer copilot-pull-request-reviewer`.
+1. Mark the PR ready: `gh pr ready <number>`. Copilot reviews it on its own, a contributor's too, and again after every push.
 2. Wait for the review (a few minutes), then triage every finding as above.
-3. Push the fixes and request Copilot again, the same way.
+3. Push the fixes.
 4. When Copilot recommends merging, squash with the PR's title and body. The ruleset lets us past the code owner's approval only with `--admin`: `gh pr merge <number> --admin --squash --subject "<title> (#<number>)" --body-file <body file>`.
 
 A PR that conflicts with main gets no CI run and no Copilot review. Before every wait for a check or a review, ask `gh pr view <number> --json mergeable --jq .mergeable`: `MERGEABLE`, `CONFLICTING`, or `UNKNOWN` (ask again in a few seconds). On `CONFLICTING`, merge main in (a merge commit, never a rebase or force-push), push, and only then wait.
