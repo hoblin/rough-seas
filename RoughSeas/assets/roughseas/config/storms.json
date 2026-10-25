@@ -74,9 +74,21 @@
         "anchorFullScope": 5,
         "anchorDragMetres": 1,
         "sources": {
-            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves and the shipped water an unanchored one does; it lies across the sea, so it capsizes as if beam-on",
+            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves and the shipped water an unanchored one does; it lies across the sea, so it capsizes as if beam-on. The current's pull is its drag on her and takes no such share",
             "stakeReachMetres": "Vanilla's longest rope",
             "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth holds fully"
+        }
+    },
+    "drift": {
+        "waterDensity": 1025,
+        "kinematicViscosity": 1.19e-6,
+        "formFactor": 1.2,
+        "logSeconds": 2,
+        "sources": {
+            "waterDensity": "Seawater, kg/m3",
+            "kinematicViscosity": "Seawater at 15 C, m2/s (ITTC 7.5-02-01-03, Fresh Water and Seawater Properties, 2011)",
+            "formFactor": "A hull's viscous drag runs above a flat plate's of her wetted surface by her form factor 1 + k, about 1.1 to 1.4 (Holtrop & Mennen 1982, An approximate power prediction method); a small open boat taken near the middle",
+            "logSeconds": "How often a hull moving through the water logs its drift and swing"
         }
     },
     "ashore": {

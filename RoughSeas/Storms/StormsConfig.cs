@@ -10,6 +10,7 @@ public class StormsConfig
     public SwampingConfig Swamping = new();
     public ResponseConfig Response = new();
     public MooringConfig Mooring = new();
+    public DriftConfig Drift = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
     public SurfaceConfig Surface = new();

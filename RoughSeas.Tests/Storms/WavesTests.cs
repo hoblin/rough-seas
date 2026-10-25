@@ -8,6 +8,16 @@ public class WavesTests
     private readonly Waves waves = new(Fixtures.Config().Waves);
 
     [Fact]
+    public void ASteadyPullLeavesTheWavesLessToMakeUp()
+    {
+        Assert.Equal(Waves.ChanceToExceed(1000, 2000), Waves.ChanceToExceed(1000, 2000, 0));
+        Assert.Equal(Waves.ChanceToExceed(1000, 1500), Waves.ChanceToExceed(1000, 2000, 500), 12);
+        Assert.Equal(1, Waves.ChanceToExceed(1000, 2000, 2000));
+        Assert.Equal(1, Waves.ChanceToExceed(0, 2000, 2500));
+        Assert.Equal(0, Waves.ChanceToExceed(0, 2000, 1500));
+    }
+
+    [Fact]
     public void FewWavesBreakInABreezeAndManyInAStorm()
     {
         Assert.InRange(waves.BreakingChance(10), 0.005, 0.02);

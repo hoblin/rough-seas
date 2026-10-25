@@ -18,13 +18,13 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:bilge` | client and server | the water aboard: from waves, leaks and rain, bailed out, swamping the hull when full |
 | `roughseas:vesselintegrity` | client and server, first in both lists | the hull: how it floats and sinks, what cracks or breaks it, its leaks, mending, wreckage |
 | `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
-| `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current and the wind |
+| `roughseas:currentdrift` | client and server | the hull's motion through the water: the current and the wind's drift, and the paddle's or sail's drive, against its underwater body |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:launch` | client and server | a push from the shore that slides a heavy vessel into the water ([Built in place](#built-in-place)) |
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
-They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, and `mooring` and `currentdrift` on the server. `vesselintegrity` and `currentdrift` also work alone.
+They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, `mooring` on the server and `currentdrift` on both sides. `vesselintegrity` and `currentdrift` also work alone.
 
 `vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`, so that a right-click with mending material mends the hull rather than seating the player.
 
@@ -226,7 +226,7 @@ For sounds of your own, the server raises events on the behaviours:
 
 `roughseas:mooring`, on the server, with `roughseas:seaforces`; it has no keys. It holds a vessel tied to a stake, and one at anchor ([Mooring](Mooring), [Anchoring](Anchoring)).
 
-- **A stake.** Vanilla's `ropetieable` on both sides: a rope from the vessel to a fence post.
+- **A stake.** Vanilla's `ropetieable` on both sides: a rope from the vessel to a fence post. It holds the vessel at the rope's own length, up to vanilla's longest rope.
 - **An anchor.** An accessory slot (`rideableaccessories`) that takes vanilla's anchor, as vanilla's sailboat has. Spare rode is any item with a `rodeMetres` attribute in the same accessories, such as our anchor warp.
 
 At anchor, a vessel ships less water, though a breaker slams it in full; tied to a stake, it takes the sea in full. In a storm the sea's pull on it grows with its beam and its windage, and a rope can snap. With no player near, a storm can throw it ashore.
@@ -235,4 +235,14 @@ A rider's client steers a vessel, and the server can't hold one it doesn't move:
 
 ## Currents
 
-`roughseas:currentdrift`, on the server; it has no keys. An unsteered vessel in the water drifts with the [current](Currents) and a little with the wind; a sunk one stays put. It needs vanilla's passive physics on the entity (`passivephysics`, or `passivephysicsmultibox`). A rider's client moves a steered vessel, so the current doesn't reach it: a mod that sails its own vessels adds the current to its own motion, read from `CurrentAt` ([Reading the sea](Reading-the-Sea)).
+`roughseas:currentdrift`, on both sides; it has no keys. It moves a vessel afloat through the water where its physics runs: on the server while nobody steers it, on the rider's client while someone does. The water moves with the [current](Currents); vanilla's stroke or sail drives the hull at the speed it makes in still water, and the hull answers both by its mass and the drag of its underwater body. It needs vanilla's passive physics on the entity (`passivephysics`, or `passivephysicsmultibox`), and takes vanilla's own water drag off the hull while it floats.
+
+The underwater body comes from `vesselintegrity` (the live draft and the mass aboard, the hull's length and beam) and from `underwater` in `seaforces`:
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `bowOnDrag` | | 0 | pressure drag of the ends on beam × draft; the friction on the wetted surface comes on top |
+| `broadsideDrag` | | 1 | pressure drag of the side on length × draft |
+| `appendage` | | none | a keel or an outrigger's float: `frontalSquareMetres`, `lateralSquareMetres`, `bowOnDrag`, `broadsideDrag` |
+
+A vessel without `vesselintegrity` drifts as vanilla's water drag takes it toward the water's speed. Held by `mooring`, a vessel swings about its bow to lie along the stream, and the current's drag on it pulls on the rope and the anchor.

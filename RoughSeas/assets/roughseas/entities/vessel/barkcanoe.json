@@ -89,6 +89,14 @@
             "capsizeBreakerMetres": 0.75,
             "rollResponse": 1.8,
             "pitchResponse": 1.2,
+            "underwater": {
+                "bowOnDrag": 0,
+                "broadsideDrag": 1.0,
+                "sources": {
+                    "bowOnDrag": "A fine bow parts the water with next to no pressure drag at a paddler's speeds: her drag ahead is the friction on her wetted surface",
+                    "broadsideDrag": "A hull's side across the flow: a round bottom and its mirror in the surface make a cylinder of her length to twice her draft, which takes about 1.0 (Hoerner 1965, Fluid-Dynamic Drag, ch. 3: 1.2 across a subcritical flow, 0.82 of it for a cylinder ten times as long as it is thick)"
+                }
+            },
             "sources": {
                 "heave": "A 30 kg bark hull rises with the crest",
                 "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
@@ -127,6 +135,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]
