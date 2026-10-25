@@ -71,3 +71,13 @@ Gone, never documented here: `config/storms.json`'s `lightning.checkSeconds`, an
 ## Adding and removing Rough Seas
 
 The mod can join an existing world, and leave one. Without it the world opens cleanly: each region keeps the strength of the wind we last set for up to a game hour, then vanilla rolls its own pattern.
+
+### Dugouts built in place
+
+The dugout is burnt and hewn out of five logs on the shore ([Built in place](Building-a-Vessel#built-in-place)), and its grid recipes are gone. No key was removed, so a vessel of yours loads as it did.
+
+- The dugout's rower holds an oar, as on vanilla's raft: it sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes. A mod that patched its own paddle or strokes patches a vessel that no longer has them.
+- `roughseas:bilge`'s `capacityLitres` is what the finished hull holds; while she is built, she holds what is cut out of it.
+
+New: the behaviours `roughseas:burnout` and `roughseas:launch` with their keys, and the watched tree `roughseas:build` on a vessel being built.
+

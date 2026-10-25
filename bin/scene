@@ -45,7 +45,7 @@ bin/scene recipe PAGE OUTPUT FILE [FROM]
                            the handbook's crafting grid that makes OUTPUT (out of FROM, when given) on
                            handbook page PAGE, held on that recipe, "=" and output included, as a .png
                            FILE at twice the game's size:
-                           bin/scene recipe item-roughseas:dugout-oak roughseas:dugout-oak dugout.png.
+                           bin/scene recipe item-roughseas:coracle roughseas:coracle coracle.png.
                            Opens the handbook and waits for it to build its pages.
 bin/scene recipes DIR      every recipe the mod adds, by `recipe`, into DIR: docs/wiki/images/recipes
                            for the wiki. A new recipe gets its line in this script's list.
@@ -286,8 +286,6 @@ recipes() {
   done <<'EOF'
 birch-bark         roughseas:bark-birch         roughseas:bark-birch
 reed-boat          roughseas:reedboat           roughseas:reedboat
-dugout             roughseas:dugout-oak         roughseas:dugout-oak
-dugout-redwood     roughseas:dugout-redwood     roughseas:dugout-redwood
 coracle            roughseas:coracle            roughseas:coracle
 birch-bark-canoe   roughseas:barkcanoe-birch    roughseas:barkcanoe-birch
 currach            roughseas:currach            roughseas:currach

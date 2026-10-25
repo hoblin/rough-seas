@@ -182,4 +182,13 @@ public class MaterialTableTests
     }
 
     private static VesselPart Part(string material, string reference, double share = 1) => new() { Material = material, Reference = reference, Share = share };
+
+    [Fact]
+    public void WoodNotYetCutOutWeighsAsTheHullItBelongsTo()
+    {
+        var blank = new HullBuild(400, 500).WithUncut(450);
+
+        Assert.Equal(950, blank.Litres);
+        Assert.Equal(400.0 / 500, blank.Kilograms / blank.Litres, 9);
+    }
 }

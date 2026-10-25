@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -22,12 +23,18 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     private ISeaWeather sea = null!;
     private SeaClock.Watch watch = null!;
     private BilgeRenderer? water;
+    private Lazy<IHullForm?> form = null!;
+    private double holdLitres;
     private double deckSquareMetres;
     private double drainLitresPerHour;
     private double rained;
     private float sinceUpdate;
 
-    public double CapacityLitres { get; private set; }
+    public double CapacityLitres => holdLitres * Hollowed;
+
+    public double UncutLitres => holdLitres - CapacityLitres;
+
+    private double Hollowed => form.Value?.Hollowed ?? 1;
 
     public double Litres
     {
@@ -55,7 +62,8 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         watch = sea.Clock.StartWatch();
-        CapacityLitres = attributes["capacityLitres"].AsDouble();
+        holdLitres = attributes["capacityLitres"].AsDouble();
+        form = new(() => entity.SidedProperties.Behaviors.OfType<IHullForm>().FirstOrDefault());
         deckSquareMetres = attributes["deckSquareMetres"].AsDouble();
         drainLitresPerHour = attributes["drainLitresPerHour"].AsDouble();
         if (entity.Api is ICoreClientAPI capi)
@@ -72,6 +80,11 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
             tree.SetDouble("litres", 0);
             entity.WatchedAttributes.SetAttribute(TreeKey, tree);
         }
+    }
+
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        if (form.Value != null) form.Value.Reformed += ShowWater;
     }
 
     public void Ship(double litres, string cause)
@@ -112,6 +125,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     public override void OnEntityDespawn(EntityDespawnData despawn)
     {
         water?.Dispose();
+        if (form.Value != null) form.Value.Reformed -= ShowWater;
         base.OnEntityDespawn(despawn);
     }
 
@@ -122,7 +136,19 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         base.GetInfoText(infotext);
     }
 
-    private void ShowWater() => water?.Show((int)Math.Ceiling(Fill * water.Levels));
+    private void ShowWater()
+    {
+        if (water == null) return;
+        if (Litres <= 0 || form.Value is not { } built)
+        {
+            water.Show((int)Math.Ceiling(Fill * water.Levels));
+            return;
+        }
+
+        double top = water.HeightOf(water.Levels);
+        double surface = built.FloorMetres + Fill * (top - built.FloorMetres);
+        water.Show(Enumerable.Range(1, water.Levels).FirstOrDefault(level => water.HeightOf(level) >= surface, water.Levels));
+    }
 
     private double Rainfall()
     {

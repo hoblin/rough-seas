@@ -94,4 +94,7 @@ public class MaterialTable
     }
 }
 
-public readonly record struct HullBuild(double Kilograms, double Litres);
+public readonly record struct HullBuild(double Kilograms, double Litres)
+{
+    public HullBuild WithUncut(double litres) => new(Kilograms * (1 + litres / Litres), Litres + litres);
+}
