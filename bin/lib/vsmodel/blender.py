@@ -55,14 +55,14 @@ def cmd_edit(shape, script):
     save(shape)
 
 
-def cmd_preview(source, out, code="", frame="0"):
+def cmd_preview(source, out, code="", frame="0", focus=""):
     open_or_load(source)
     if code:
         if code not in bpy.data.actions:
             fail(f"No animation {code}; this shape has: {', '.join(action.name for action in bpy.data.actions) or 'none'}")
         play(armature(), bpy.data.actions[code])
         bpy.context.scene.frame_set(int(frame))
-    render_views(out)
+    render_views(out, focus)
 
 
 def cmd_check(source, out):

@@ -123,7 +123,7 @@ def build(target):
     shape.add(hull.hide_water(7.3), hull.bilge(7.3))
     shape.keep("LowerMastStorage", "Hull", "FrontSeat", "BackSeat")
     crew(shape, "outrigger", "BackSeat", "roughseas-sitlegsforward",
-         paddling("outrigger", STOWED, throat(SHAFT), 23, 35, 10.5, 2.5),
+         paddling("outrigger", STOWED, throat(SHAFT), 23, 30, 7.7, 2),
          {"R": "PaddleThroat", "L": "PaddleGrip"}, {"rotationZ": 6})
 
 

@@ -3,6 +3,9 @@ import math
 import os
 from pathlib import Path
 
+from arm import Arm
+from transform import apply, direct, euler, identity, local, mul, undirect
+
 ROOT = Path(__file__).resolve().parents[3]
 SERAPH = Path(os.environ.get("VINTAGE_STORY", "")) / "assets/game/shapes/entity/humanoid/seraph-faceless.json"
 POSES = ROOT / "RoughSeas/assets/roughseas/patches/player-poses.json"
@@ -13,48 +16,15 @@ OUTBOARD = {"R": -1, "L": 1}
 # Outweighs the seat pose (80) so far that the fit can leave it out of the arms and torso.
 WEIGHT = 10000
 SPEED = 0.75
-ELBOW = 0.3
-# How far outboard of its shoulder an elbow stays, so a drawn-back arm passes beside the torso, not through it.
-CLEAR = 1
-GRIP = (1.25, 0.6, 1)
 CENTRE = (8, 0, 8)
 
 
-def identity():
-    return [[float(i == j) for j in range(4)] for i in range(4)]
-
-
-def mul(a, b):
-    return [[sum(a[i][k] * b[k][j] for k in range(4)) for j in range(4)] for i in range(4)]
-
-
-def translation(v):
-    m = identity()
-    for i in range(3):
-        m[i][3] = v[i]
-    return m
-
-
-def rotation(axis, degrees):
-    c, s = math.cos(math.radians(degrees)), math.sin(math.radians(degrees))
-    i, j = [(1, 2), (2, 0), (0, 1)]["XYZ".index(axis)]
-    m = identity()
-    m[i][i], m[i][j], m[j][i], m[j][j] = c, -s, s, c
-    return m
+def turn(rotations, v):
+    return apply(euler([rotations.get("rotation" + axis, 0) for axis in "XYZ"]), v)
 
 
 def unturn(rotations, v):
-    m = identity()
-    for axis in "XYZ":
-        m = mul(m, rotation(axis, rotations.get("rotation" + axis, 0)))
-    return tuple(sum(m[k][i] * c for k, c in enumerate(v)) for i in range(3))
-
-
-def turn(rotations, v):
-    m = identity()
-    for axis in "XYZ":
-        m = mul(m, rotation(axis, rotations.get("rotation" + axis, 0)))
-    return apply(m, v)
+    return undirect(euler([rotations.get("rotation" + axis, 0) for axis in "XYZ"]), v)
 
 
 def gripped(rest, throat, hand, turned):
@@ -74,8 +44,8 @@ def paddling(vessel, rest, throat, catch, finish, height, out, side=-1, frames=3
         ease = 0.5 - 0.5 * math.cos(math.pi * f)
         reach = ease if drive else 1 - ease
         lift = 0 if drive else math.sin(math.pi * f)
-        hand = (catch + (finish - catch) * reach, height + 1.5 * lift, out + side * lift)
-        return placed(hand, 18 + 30 * lift, -100 + 38 * reach)
+        hand = (catch + (finish - catch) * reach, height + 2 * (1 - reach) ** 2 + 4.5 * lift, out + side * lift)
+        return placed(hand, 30 + 20 * lift, -95 + 40 * reach)
 
     return strokes(vessel, frames, lambda frame: placed(((catch + finish) / 2, height + 2, out - side), 62, -95),
                    stroke, lambda frame: stroke(frames - frame))
@@ -91,20 +61,6 @@ def moved(origin, rest, target, turned):
     shift = unturn(turned, [t - o for t, o in zip(target, origin)])
     pose = {"offset" + axis: value for axis, value in zip("XYZ", shift)}
     return pose | {"rotation" + axis: turned.get("rotation" + axis, 0) - r for axis, r in zip("XYZ", rest)}
-
-
-def apply(m, p):
-    return tuple(sum(m[i][k] * c for k, c in enumerate((*p, 1))) for i in range(3))
-
-
-# The engine's element transform for animations of version 0, as bin/lib/vsmodel/pose.py has it for Blender.
-def local(element, pose):
-    origin = [c / 16 for c in element.get("rotationOrigin", (0, 0, 0))]
-    shift = [(f + pose.get("offset" + a, 0)) / 16 - o for f, a, o in zip(element["from"], "XYZ", origin)]
-    m = translation(origin)
-    for axis in "XYZ":
-        m = mul(m, rotation(axis, element.get("rotation" + axis, 0) + pose.get("rotation" + axis, 0)))
-    return mul(m, translation(shift))
 
 
 def posed(elements, pose_of):
@@ -141,20 +97,9 @@ def seat(shape, name):
     return tuple(f + float(point["pos" + axis]) for f, axis in zip(element["from"], "XYZ"))
 
 
-def minimise(cost, start, step=8.0, tolerance=0.05):
-    best, value = list(start), cost(start)
-    while step > tolerance:
-        improved = False
-        for i in range(len(best)):
-            for delta in (step, -step):
-                trial = list(best)
-                trial[i] += delta
-                trial_value = cost(trial)
-                if trial_value < value:
-                    best, value, improved = trial, trial_value, True
-        if not improved:
-            step /= 2
-    return best, value
+# Every grip lies along its gear's x: a paddle's shaft, which a T-grip's palm caps, or an oar's loom.
+def held(matrices, name):
+    return direct(matrices[name], (1, 0, 0))
 
 
 class Rower:
@@ -166,7 +111,7 @@ class Rower:
                                                   if op["path"] == "/animations/-"]
         sitting = next(a for a in animations if a["code"] == idle)
         self.idle = next(k["elements"] for k in sitting["keyframes"] if k["frame"] == 0)
-        self.chains = {side: self.chain(lower) for side, (_, lower) in ARMS.items()}
+        self.arms = {side: Arm(self.chain(lower), self.idle, OUTBOARD[side]) for side, (_, lower) in ARMS.items()}
 
     def chain(self, name):
         def descend(elements, path):
@@ -179,44 +124,11 @@ class Rower:
 
         return descend(self.seraph["elements"], [])
 
-    def joints(self, pose, side):
-        m = identity()
-        points = []
-        for element in self.chains[side]:
-            m = mul(m, local(element, pose.get(element["name"]) or self.idle.get(element["name"]) or {}))
-            if element["name"] in ARMS[side]:
-                points.append(apply(m, [(o - f) / 16 for o, f in zip(element["rotationOrigin"], element["from"])]))
-        points.append(apply(m, [c / 16 for c in GRIP]))
-        return [tuple(s + 16 * c - h for s, c, h in zip(self.seat, p, CENTRE)) for p in points]
+    def body(self, point):
+        return tuple((p - s + h) / 16 for p, s, h in zip(point, self.seat, CENTRE))
 
     def hand(self, pose, side):
-        return self.joints(pose, side)[-1]
-
-    def reach(self, torso, targets, start):
-        pose = {"UpperTorso": torso}
-        error = 0
-        for side, target in targets.items():
-            upper, lower = ARMS[side]
-            names = [(upper, "rotationX"), (upper, "rotationY"), (upper, "rotationZ"), (lower, "rotationZ")]
-            initial = [start.get(element, {}).get(channel, 0) for element, channel in names]
-
-            def arms(values):
-                solved = {upper: {}, lower: {}}
-                for (element, channel), value in zip(names, values):
-                    solved[element][channel] = value
-                return solved
-
-            def cost(values):
-                shoulder, elbow, hand = self.joints(pose | arms(values), side)
-                miss = math.dist(hand, target)
-                inboard = OUTBOARD[side] * (shoulder[2] - elbow[2]) + CLEAR
-                return (miss * miss + ELBOW * elbow[1] + max(0, values[-1]) ** 2 + max(0, inboard) ** 2
-                        + 1e-4 * sum((v - s) ** 2 for v, s in zip(values, initial)))
-
-            solved, _ = minimise(cost, initial)
-            pose |= arms([round(value, 2) for value in solved])
-            error = max(error, math.dist(self.hand(pose, side), target))
-        return pose, error
+        return tuple(s + 16 * c - h for s, c, h in zip(self.seat, self.arms[side].joints(pose)[-1], CENTRE))
 
 
 def crew(shape, vessel, seated, idle, strokes, grips, lean):
@@ -276,19 +188,32 @@ def every_axis(pose):
 def fit(rower, elements, strokes, grips, lean):
     vessel, player = [], []
     for stroke in strokes:
-        start = {element: {"rotationZ": angle} for arm in ARMS.values() for element, angle in zip(arm, (-60, -30))}
-        own, arms = [], []
-        worst = 0
-        for frame in stroke["keys"]:
-            pose = stroke["pose"](frame)
-            matrices = posed(elements, lambda name: pose.get(name, {}))
-            targets = {side: centre(elements, matrices, grip) for side, grip in grips.items()}
-            body, error = rower.reach(lean, targets, start)
-            start = body
-            worst = max(worst, error)
-            own.append({"frame": frame, "elements": every_axis(pose)})
-            arms.append({"frame": frame, "elements": every_axis(body)})
+        poses = [stroke["pose"](frame) for frame in stroke["keys"]]
+        placed = [posed(elements, lambda name, pose=pose: pose.get(name, {})) for pose in poses]
+        bodies = [{"UpperTorso": lean} for _ in poses]
+        faults = {}
+        for side, grip in grips.items():
+            arm = rower.arms[side]
+            hands = [rower.body(centre(elements, m, grip)) for m in placed]
+            axes = [held(m, grip) for m in placed]
+            thumbs = [[tuple(thumb * c for c in axis) for axis in axes] for thumb in (1, -1)]
+            holds = [arm.stroke(bodies, hands, held_as) for held_as in thumbs]
+            chosen = min(range(2), key=lambda i: holds[i][1])
+            arms = holds[chosen][0]
+            for i in range(1, len(arms)):
+                arms[i] = arm.follow(arms[i], arms[i - 1])
+            for frame, body, pose, hand, axis in zip(stroke["keys"], bodies, arms, hands, thumbs[chosen]):
+                body |= pose
+                for name, (excess, _) in arm.faults(body, hand, axis).items():
+                    faults[f"{side} {name}"] = max(faults.get(f"{side} {name}", (0, 0)), (excess, frame))
+        worst = max(math.dist(rower.hand(body, side), centre(elements, m, grip))
+                    for body, m in zip(bodies, placed) for side, grip in grips.items())
+        own = [{"frame": frame, "elements": every_axis(pose)} for frame, pose in zip(stroke["keys"], poses)]
+        arms = [{"frame": frame, "elements": every_axis(body)} for frame, body in zip(stroke["keys"], bodies)]
         print(f"{stroke['code']}: hands within {worst:.2f} of the grips")
+        for name, (excess, frame) in faults.items():
+            if round(excess, 1):
+                print(f"  {name} by {excess:.1f} at frame {frame}")
         common = {"code": stroke["code"], "quantityframes": stroke["frames"], "onActivityStopped": "EaseOut",
                   "onAnimationEnd": "Repeat"}
         vessel.append({"name": stroke["code"], **common, "keyframes": own})

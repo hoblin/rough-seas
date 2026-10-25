@@ -10,14 +10,22 @@ from reconcile import DISABLED, walk
 VIEWS = {"iso": (1, 1, 0.8), "side": (1, 0, 0), "top": (0, 0, 1), "end": (0, 1, 0)}
 
 
-def render_views(out):
-    stage()
-    for view, direction in VIEWS.items():
-        render(Vector(direction), os.path.join(out, view + ".png"))
-
-
-def stage():
+def render_views(out, focus=""):
     shape = json.loads(bpy.context.scene["vs_shape"])
+    stage(shape)
+    framed = {element["name"] for element in walk([find(shape, focus)])} if focus else None
+    for view, direction in VIEWS.items():
+        render(Vector(direction), os.path.join(out, view + ".png"), framed)
+
+
+def find(shape, name):
+    found = next((element for element in walk(shape["elements"]) if element["name"] == name), None)
+    if not found:
+        raise SystemExit(f"No element {name} to frame")
+    return found
+
+
+def stage(shape):
     hidden = {each["name"] for element in walk(shape["elements"]) if element.get("renderInEditor") is False for each in walk([element])}
     hidden |= {element["name"] for element in walk(shape["elements"])
                if element.get("faces") and all(face.get("texture") == "#null" for face in element["faces"].values())}
@@ -47,8 +55,9 @@ def strip_disabled(obj):
     mesh.free()
 
 
-def render(direction, path):
-    shown = [obj for obj in bpy.data.objects if obj.type == "MESH" and obj.data.polygons and not obj.hide_render]
+def render(direction, path, framed):
+    shown = [obj for obj in bpy.data.objects if obj.type == "MESH" and obj.data.polygons and not obj.hide_render
+             and (framed is None or obj.name in framed)]
     corners = [obj.matrix_world @ Vector(corner) for obj in shown for corner in obj.bound_box]
     low = Vector(min(corner[axis] for corner in corners) for axis in range(3))
     high = Vector(max(corner[axis] for corner in corners) for axis in range(3))

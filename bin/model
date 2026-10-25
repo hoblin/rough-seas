@@ -24,9 +24,10 @@ LOOK
   bin/model preview SHAPE|BLEND [PNG]
                                    render four views (iso, side, top, end) into one image
                                    (default <temp>/model/preview.png); prints its path
-  bin/model pose SHAPE|BLEND CODE FRAME [PNG]
+  bin/model pose SHAPE|BLEND CODE FRAME [PNG] [ELEMENT]
                                    the same, posed at FRAME of animation CODE
-                                   (default <temp>/model/pose.png)
+                                   (default <temp>/model/pose.png), framed on ELEMENT and what
+                                   it carries when given (the seated Rower of a VESSEL-rowed.json)
 CHECK
   bin/model check SHAPE|BLEND      round-trip it and say what changed, once through the add-on
                                    alone and once through bin/model, and how closely Blender plays
@@ -153,7 +154,7 @@ case "$1" in
   run) need 3 "$@"; blender_do run "$(realpath "$2")" "$(realpath "$3")" ;;
   export) need 2 "$@"; blender_do export "$(realpath "$2")" "${3:+$(realpath -m "$3")}" ;;
   preview) need 2 "$@"; render_views "$2" "${3:-$work/preview.png}" ;;
-  pose) need 4 "$@"; render_views "$2" "${5:-$work/pose.png}" "$3" "$4" ;;
+  pose) need 4 "$@"; render_views "$2" "${5:-$work/pose.png}" "$3" "$4" "${6:-}" ;;
   check)
     need 2 "$@"
     out=$work/check/$(basename "${2%.*}")
