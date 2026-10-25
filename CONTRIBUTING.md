@@ -46,9 +46,9 @@ Without the bench, run `./build.sh` and drop the zip from `Releases/` into your 
 
 ## Propose a change
 
-1. Open an issue first, or comment on an existing one. Say what you want to change and why, so we can agree on it before you spend time on code. An issue labelled `decided` is settled and ready to take; say on it that you're taking it. The others (`agent-filed`, `draft`, `parked`) aren't ready yet: ask on the issue first. Proposing a wholly new feature, one that's neither in [the design](docs/design.md) nor in an issue? Consider opening an issue first, and start once we label it `decided`. If you start without one, be ready for the feature to be closed if it goes against the mod's direction.
+1. Comment on the issue you take, or open one. Say what you want to change and why, so we can agree on it before you spend time on code. An issue labelled `decided` is settled and ready to take; say on it that you're taking it. The others (`agent-filed`, `draft`, `parked`) aren't ready yet: ask on the issue first. Proposing a wholly new feature, one that's neither in [the design](docs/design.md) nor in an issue? Consider opening an issue first, and start once we label it `decided`. If you start without one, be ready for the feature to be closed if it goes against the mod's direction.
 2. Branch from `main`. Keep one issue to one pull request.
-3. Open a pull request against `main`. Title it like `30 feat: in-game guide`: the issue number, then a [Conventional Commits](https://www.conventionalcommits.org) type. Link the issue in the description.
+3. Open a pull request against `main`. Title it like `30 feat: in-game guide`: the issue number, if there is one, then a [Conventional Commits](https://www.conventionalcommits.org) type. Link the issue in the description.
 
 ## What a pull request needs
 
