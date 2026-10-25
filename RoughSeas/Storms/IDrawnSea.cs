@@ -9,6 +9,9 @@ public interface IDrawnSea
     /// <summary>Whether any swell is drawn now.</summary>
     bool Swell { get; }
 
+    /// <summary>Whether swell is drawn at a position now: none outside the waves' field or where the sea is calm, even while <see cref="Swell"/> holds elsewhere.</summary>
+    bool SwellAt(double x, double z);
+
     /// <summary>The time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client, still while the world's clock stands.</summary>
     double Seconds { get; }
 

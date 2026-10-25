@@ -13,6 +13,13 @@ public class StormsConfig
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
     public SurfaceConfig Surface = new();
+    public EyeConfig Eye = new();
+}
+
+public class EyeConfig
+{
+    public double ShiftPerBlock;
+    public double ShiftAboveBlocks;
 }
 
 public class SurfaceConfig

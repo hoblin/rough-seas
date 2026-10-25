@@ -68,7 +68,6 @@ public static class SurfaceShader
         harmony.Patch(AccessTools.Method(typeof(ShaderRegistry), "HandleIncludes"), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Inject)));
         harmony.Patch(AccessTools.Method(typeof(ShaderProgram), nameof(ShaderProgram.Compile)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(LocateHeightMap)));
         harmony.Patch(AccessTools.Method(typeof(ShaderProgramBase), nameof(ShaderProgramBase.Use)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Bind)));
-        harmony.Patch(AccessTools.Method(typeof(ClientMain), nameof(ClientMain.EyesInWaterDepth)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(EyesUnderSurface)));
         if (Compile(api)) return true;
 
         Detach();
@@ -121,14 +120,6 @@ public static class SurfaceShader
             .Replace("SEA_SLOTS", surface!.Slots.ToString(CultureInfo.InvariantCulture))
             .Replace("SEA_TRAIL_SECONDS", SeaSurface.TrailSeconds.ToString("0.0###", CultureInfo.InvariantCulture));
         fragmentCode = api.Assets.Get(FragmentSource).ToText();
-    }
-
-    private static void EyesUnderSurface(ClientMain __instance, ref float __result)
-    {
-        if (__result <= 0 || surface == null || field == null || surface.Calm || __result > surface.SeaHeight + 1) return;
-        var eye = __instance.MainCamera.CameraEyePos;
-        var share = field.Factor(eye.X, eye.Z);
-        __result = (float)Math.Max(0, __result + surface.HeightAt(eye.X, eye.Z, share));
     }
 
     private static void Inject(ShaderProgram program, ref string __result)
