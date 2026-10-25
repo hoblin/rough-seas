@@ -41,6 +41,11 @@ bin/scene views CODE DIR [SCALE]
 bin/scene seats [CODE...]  the player in every seat of each vessel (default: ours and the vanilla raft
                            and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
+bin/scene strokes [CODE...]
+                           the player rowing or paddling each vessel (default: ours), forward and
+                           backward, from the front, the side and behind, in third person: a burst
+                           over one stroke per view, <temp>/strokes/CODE-STROKE-VIEW/sheet.png.
+                           Checks the rower's arms frame by frame.
 bin/scene recipe PAGE OUTPUT FILE [FROM]
                            the handbook's crafting grid that makes OUTPUT (out of FROM, when given) on
                            handbook page PAGE, held on that recipe, "=" and output included, as a .png
@@ -266,6 +271,40 @@ seats() {
   echo "$dir/all.png"
 }
 
+strokes() {
+  local codes=("$@") dir=strokes id
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:dugout-oak roughseas:reedboat roughseas:barkcanoe-birch roughseas:outrigger-oak \
+    roughseas:coracle roughseas:currach)
+  for code in "${codes[@]}"; do
+    clear >/dev/null
+    id=$(dock "$code" | jq -r '.vessels[0].EntityId')
+    "$game" do '/clearinv' "/bridge mount $id" >/dev/null
+    noon
+    "$game" hotkey cyclecamera >/dev/null
+    for _ in {1..30}; do "$game" hotkey zoomin >/dev/null; done
+    for _ in {1..8}; do "$game" hotkey zoomout >/dev/null; done
+    local stroke key view yaw
+    for stroke in forward:W backward:S; do
+      key=${stroke#*:}
+      for view in front:3.1416 side:1.5708 behind:0; do
+        yaw=${view#*:}
+        "$game" look "$yaw" 3.35 >/dev/null
+        "$game" press "$key" 3500 >/dev/null &
+        sleep 1.2
+        local frames=$BENCH_TMP/$dir/${code##*:}-${stroke%:*}-${view%:*}
+        "$game" burst "${frames#"$BENCH_TMP"/}" 16 1.5 >/dev/null
+        wait
+        magick montage -label '%t' "$frames"/[0-9]*.png -gravity center -crop 400x340+0+30 +repage \
+          -tile 4x -geometry 400x340+2+2 "$frames/sheet.png"
+        echo "$frames/sheet.png"
+      done
+    done
+    "$game" hotkey cyclecamera >/dev/null
+    "$game" hotkey cyclecamera >/dev/null
+    "$game" do '/bridge dismount' >/dev/null
+  done
+}
+
 recipe() {
   local page=$1 output=$2 out=$3 from=${4:-} box deadline=$((SECONDS + 60))
   "$game" state | jq -e '.dialogs | index("GuiDialogSurvivalHandbook")' >/dev/null || "$game" hotkey handbook >/dev/null
@@ -305,6 +344,7 @@ case "${1:-}" in
   recipes) shift; recipes "$@" ;;
   views) shift; views "$@" ;;
   seats) shift; seats "$@" ;;
+  strokes) shift; strokes "$@" ;;
   photo) shift; photo "$@" ;;
   dock) shift; dock "$@" ;;
   look) shift; look "$@" ;;
