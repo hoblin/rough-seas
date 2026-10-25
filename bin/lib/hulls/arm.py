@@ -1,6 +1,6 @@
 import math
 
-from transform import angles, apply, direct, euler, identity, local, mul, unapply, undirect
+from transform import angles, apply, direct, euler, identity, local, mul, nearest, unapply, undirect
 
 GRIP = (1.25, 0.6, 1)
 # Joint ranges in degrees, AAOS normal values. SWING is the shoulder's highest elevation in each plane of
@@ -15,6 +15,8 @@ COMFORT = ("shoulder rotation", "wrist deviation")
 # A passed limit outweighs any discomfort, so the arm passes one only when no pose keeps them all.
 LIMIT = 100
 SWIVEL_STEP = 5
+# How far the elbow swings round the shoulder-hand line from one key to the next, 0.09 s later: about 340°/s.
+SWING_PER_KEY = 30
 BODY = 75
 GRAVITY = 9.81
 # Share of the body's mass and the centre of mass from the proximal joint: de Leva 1996, J Biomech 29(9).
@@ -98,16 +100,41 @@ class Arm:
         *body, upper, lower = self.frames(pose)
         return apply(body[-1], self.shoulder), apply(upper, self.elbow), apply(lower, [c / 16 for c in GRIP])
 
-    def hold(self, pose, hand, grip):
-        def strain_at(swivel):
-            return self.strain(pose | self.place(pose, hand, swivel), hand, grip)
+    def stroke(self, poses, hands, grips):
+        swivels = range(0, 360, SWIVEL_STEP)
+        swing = SWING_PER_KEY // SWIVEL_STEP
+        strains = [[self.strain(pose | self.place(pose, hand, math.radians(s)), hand, grip) for s in swivels]
+                   for pose, hand, grip in zip(poses, hands, grips)]
+        count = len(swivels)
+        best = None
+        for first in range(count):
+            cost, back = [math.inf] * count, []
+            cost[first] = strains[0][first]
+            for row in strains[1:]:
+                steps = [min(((cost[(s + d) % count], (s + d) % count) for d in range(-swing, swing + 1))) for s in
+                         range(count)]
+                back.append([came for _, came in steps])
+                cost = [total + strain for (total, _), strain in zip(steps, row)]
+            closing = min(range(count), key=lambda s: cost[s] if min(abs(s - first), count - abs(s - first)) <= swing
+                          else math.inf)
+            if best is None or cost[closing] < best[0]:
+                path = [closing]
+                for came in reversed(back):
+                    path.append(came[path[-1]])
+                best = (cost[closing], path[::-1])
+        held = [self.refine(pose, hand, grip, math.radians(swivels[s]))
+                for pose, hand, grip, s in zip(poses, hands, grips, best[1])]
+        return held, best[0]
 
-        swivel = min((math.radians(d) for d in range(0, 360, SWIVEL_STEP)), key=strain_at)
+    def refine(self, pose, hand, grip, swivel):
+        def strain_at(at):
+            return self.strain(pose | self.place(pose, hand, at), hand, grip)
+
         step = math.radians(SWIVEL_STEP / 2)
         while step > math.radians(0.1):
             swivel = min((swivel - step, swivel, swivel + step), key=strain_at)
             step /= 2
-        return self.place(pose, hand, swivel), strain_at(swivel)
+        return self.place(pose, hand, swivel)
 
     def place(self, pose, hand, swivel):
         torso = self.frames(pose)[len(self.body) - 1]
@@ -130,6 +157,13 @@ class Arm:
         total = angles(turned + [[0, 0, 0, 1]])
         return {self.upper["name"]: {"rotation" + a: round(t - r, 2) for a, t, r in zip("XYZ", total, self.rest)},
                 self.lower["name"]: {"rotationZ": round(bend, 2)}}
+
+    def follow(self, arm, previous):
+        name = self.upper["name"]
+        turned = [arm[name]["rotation" + axis] + rest for axis, rest in zip("XYZ", self.rest)]
+        before = [previous[name]["rotation" + axis] + rest for axis, rest in zip("XYZ", self.rest)]
+        return arm | {name: {"rotation" + axis: round(value - rest, 2)
+                             for axis, value, rest in zip("XYZ", nearest(turned, before), self.rest)}}
 
     def flexion(self, reach):
         tilt = undirect(euler(self.bend[:2]), self.humerus)

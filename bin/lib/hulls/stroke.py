@@ -197,10 +197,12 @@ def fit(rower, elements, strokes, grips, lean):
             hands = [rower.body(centre(elements, m, grip)) for m in placed]
             axes = [held(m, grip) for m in placed]
             thumbs = [[tuple(thumb * c for c in axis) for axis in axes] for thumb in (1, -1)]
-            holds = [[arm.hold(body, hand, axis) for body, hand, axis in zip(bodies, hands, held_as)]
-                     for held_as in thumbs]
-            chosen = min(range(2), key=lambda i: sum(strain for _, strain in holds[i]))
-            for frame, body, (pose, _), hand, axis in zip(stroke["keys"], bodies, holds[chosen], hands, thumbs[chosen]):
+            holds = [arm.stroke(bodies, hands, held_as) for held_as in thumbs]
+            chosen = min(range(2), key=lambda i: holds[i][1])
+            arms = holds[chosen][0]
+            for i in range(1, len(arms)):
+                arms[i] = arm.follow(arms[i], arms[i - 1])
+            for frame, body, pose, hand, axis in zip(stroke["keys"], bodies, arms, hands, thumbs[chosen]):
                 body |= pose
                 for name, (excess, _) in arm.faults(body, hand, axis).items():
                     faults[f"{side} {name}"] = max(faults.get(f"{side} {name}", (0, 0)), (excess, frame))

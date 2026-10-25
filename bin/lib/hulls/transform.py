@@ -36,6 +36,13 @@ def angles(m):
                                       math.atan2(-m[0][1], m[0][0]))]
 
 
+def nearest(turn, previous):
+    x, y, z = turn
+    options = ([x, y, z], [x + 180, 180 - y, z + 180])
+    unwound = ([v + 360 * round((p - v) / 360) for v, p in zip(option, previous)] for option in options)
+    return min(unwound, key=lambda option: sum(abs(v - p) for v, p in zip(option, previous)))
+
+
 def apply(m, p):
     return tuple(sum(m[i][k] * c for k, c in enumerate((*p, 1))) for i in range(3))
 

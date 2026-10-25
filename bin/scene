@@ -282,7 +282,7 @@ strokes() {
     noon
     "$game" hotkey cyclecamera >/dev/null
     for _ in {1..30}; do "$game" hotkey zoomin >/dev/null; done
-    for _ in {1..8}; do "$game" hotkey zoomout >/dev/null; done
+    for _ in {1..6}; do "$game" hotkey zoomout >/dev/null; done
     local stroke key view yaw
     for stroke in forward:W backward:S; do
       key=${stroke#*:}
