@@ -51,6 +51,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     private HullModel model = null!;
     private Flotation flotation = null!;
     private HullBuild build;
+    private double depthMetres;
+    private double waterplaneSquareMetres;
+    private double uncutLitres;
     private double referenceDraft;
     private HullRepair[] repairs = [];
     private BlockDropItemStack[] wreckage = [];
@@ -130,7 +133,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         hullBox = attributes["hullBox"].AsArray<double>(null);
         var parts = attributes["parts"].AsObject<VesselPart[]>([]);
         build = vessels.Materials.Build(parts, properties.Weight);
-        flotation = new Flotation(attributes["depthMetres"].AsDouble(), attributes["waterplaneSquareMetres"].AsDouble(), build.Litres);
+        depthMetres = attributes["depthMetres"].AsDouble();
+        waterplaneSquareMetres = attributes["waterplaneSquareMetres"].AsDouble();
+        flotation = new Flotation(depthMetres, waterplaneSquareMetres, build.Litres);
         ReferenceKg = properties.Weight + vessels.Mass.CrewKg;
         referenceDraft = flotation.Float(new Aboard(ReferenceKg, 0, 0, 0, 0, 0), false).DraftMetres;
         impact = new Impact(attributes["minImpactSpeed"].AsDouble(1), InvulnerableMs);
@@ -480,8 +485,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     private void Float()
     {
         var hold = Hold;
+        if (hold != null) Reform(hold);
         inWater = entity.Swimming || FluidBelow().IsLiquid();
-        Aboard = vessels.Mass.Of(entity, build.Kilograms + model.SoakedKg);
+        Aboard = vessels.Mass.Of(entity, build.Kilograms * (1 + uncutLitres / build.Litres) + model.SoakedKg);
         var afloat = flotation.Float(Aboard, hold != null && (hold.Litres >= hold.CapacityLitres || Afloat.Sunk && inWater));
         Afloat = inWater ? afloat : afloat with { Sunk = false };
         SettlingMetres = Afloat.Sunk ? FounderedMetres : Afloat.DraftMetres - referenceDraft;
@@ -497,6 +503,18 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         bool awash = !Afloat.Sunk && Afloat.FreeboardMetres <= 0;
         if (awash && !wasAwash) vessels.Log(entity, "awash at {0:F2} m draft with {1:F0} kg aboard", Afloat.DraftMetres, Aboard.Total);
         (wasSunk, wasAwash) = (Afloat.Sunk, awash);
+    }
+
+    private void Reform(IVesselHold hold)
+    {
+        if (hold.UncutLitres == uncutLitres) return;
+
+        uncutLitres = hold.UncutLitres;
+        flotation = new Flotation(depthMetres, hold.CapacityLitres > 0 ? waterplaneSquareMetres : 0, build.Litres + uncutLitres);
+        if (entity.World.Side == EnumAppSide.Server)
+        {
+            vessels.Log(entity, "hull of {0:F0} L of wood with a hold of {1:F0} L", build.Litres + uncutLitres, hold.CapacityLitres);
+        }
     }
 
     private void Flood(Lap lap)

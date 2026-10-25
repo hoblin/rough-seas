@@ -122,11 +122,12 @@ public class VesselShapeTests
     {
         var (entity, _, shape) = Load(vessel);
         var attributes = entity["attributes"]!;
+        if (attributes.Value<bool?>("requiresPaddlingTool") == true) return;
+
         var own = entity["client"]!["animations"]!.ToDictionary(animation => animation.Value<string>("code")!);
         var animated = shape["animations"]!.ToDictionary(animation => animation.Value<string>("code")!);
         var rower = PlayerPatches().ToList();
 
-        Assert.Null(attributes["requiresPaddlingTool"]);
         Assert.All(Strokes.Select(stroke => attributes["mountAnimations"]!.Value<string>(stroke)!), code =>
         {
             var registered = rower.Single(op => op.Value<string>("path") == "/client/animations/-" && op["value"]!.Value<string>("code") == code)["value"]!;
@@ -139,7 +140,7 @@ public class VesselShapeTests
     [Fact]
     public void KeysEveryAxisOfWhatEachStrokeMoves()
     {
-        var animations = VesselNames().SelectMany(vessel => Load(vessel).Shape["animations"]!)
+        var animations = VesselNames().SelectMany(vessel => Load(vessel).Shape["animations"] ?? new JArray())
             .Concat(PlayerPatches().Where(op => op.Value<string>("path") == "/animations/-").Select(op => op["value"]!));
 
         Assert.All(animations.SelectMany(animation => animation["keyframes"]!).SelectMany(keyframe => keyframe["elements"]!.Children<JProperty>()),

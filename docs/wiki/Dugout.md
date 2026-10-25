@@ -1,14 +1,14 @@
 ![The dugout afloat](images/dugout/afloat-bow.webp)
 
-A single log, hollowed out with an axe. The bark stays on outside, the ends are left solid and blunt, and two ridges of uncut wood cross the floor to stiffen the hull. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
+A single log, burnt and hewn hollow beside the water it floats on. The bark comes off, the sides stand steep over a round bottom, and the ends are left solid and blunt. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
 
 ## In Rough Seas
 
-The workhorse of rivers and lakes. Nothing on the roster takes a knock like a dugout: it shrugs off rocks and bad landings that would break a bark canoe, and it needs no upkeep at all. The price is weight. It can't be picked up, so it stays where it was launched, and its narrow, round bottom makes it tippy once the sea gets up. Keep it to sheltered water and it will outlast everything else you build.
+The workhorse of rivers and lakes. Nothing on the roster takes a knock like a dugout: it shrugs off rocks and bad landings that would break a bark canoe, and it needs no upkeep at all. The price is weight. It can't be picked up: it is built on the shore and pushed in, and it stays where it was launched, and its narrow, round bottom makes it tippy once the sea gets up. Keep it to sheltered water and it will outlast everything else you build.
 
 ## Where it comes from
 
-The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat bog, was hollowed from a Scots pine some ten thousand years ago, and logboats turn up in the mud of almost every river and lake in Europe, Africa, Asia and the Americas. They were worked with fire and stone tools, later with metal ones, and many left solid ridges across the floor to keep the log from splitting. The model is a plain European logboat of that kind.
+The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat bog, was hollowed from a Scots pine some ten thousand years ago, and logboats turn up in the mud of almost every river and lake in Europe, Africa, Asia and the Americas. Where people had no metal they hollowed the log by fire, burning it a little at a time and scraping out the char with stone and shell, as John White drew the Algonquians of Roanoke doing in 1585; wet clay along the edges kept the fire in the hollow. The model follows the fire-hollowed dugouts of eastern North America and the plain logboats of Europe.
 
 ## By the numbers
 
@@ -28,19 +28,29 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
-| Seats | two: the front one paddles, with its own paddle; the back one takes a passenger |
+| Seats | two: the front one paddles, with an [oar](https://wiki.vintagestory.at/Oar) in hand; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | 5 logs of one wood, with an axe |
+| Built from | 5 logs of one wood beside the water: six fires, six clay, an axe and about six days |
 | Wreckage | firewood |
 
 ## How it is built
 
-Any wood, a modded tree's too. Redwood's logs come as sections, and it takes those, as it does any wood that comes in sections.
+Not in the crafting grid: in the world, on the shore, the way dugouts really were made.
+
+1. **Lay the log.** Five logs of one wood on their sides, end to end along the shore, with water in the very next blocks, level with them or a block lower. Any wood, a modded tree's too, and redwood's log sections. Five logs of mixed woods stay a wall of logs.
+2. **Light it.** Light a fire on the middle log with a torch or a firestarter. The logs become a blank, and the fire chars its top for about a day.
+3. **Hew out the char** with an axe, right-click.
+4. **Clay, fire, hew, a day at a time.** Smear wet clay along the rim with a right-click, so that the fire eats only the hollow; light the fire again; once it burns out, hew out the char. Six fires hollow her out. Rain puts the fire out, and no fire burns in a hollow with water in it: bail it and light it again.
+5. **Push her in** with Shift and a right-click, an empty hand, standing on the shore side. A heavy blank takes many pushes; a few friends push her in sooner.
+
+She floats, and an axe breaks her up, at every stage, so a half-built dugout can be launched, or broken up for firewood. Her seats are there only once she is finished.
 
 | | |
 | --- | --- |
-| ![The dugout from 5 logs and an axe](images/recipes/dugout.png) | ![The redwood dugout from 5 redwood log sections and an axe](images/recipes/dugout-redwood.png) |
-| From logs | From redwood log sections |
+| ![A fire burning along the blank](images/dugout/build-fire.webp) | ![Wet clay along the rim, the hollow begun](images/dugout/build-clay.webp) |
+| The first fire, on the blank | Clay on the rim before the next fire |
+| ![The hollow charred deep](images/dugout/build-charred.webp) | ![Finished, on the shore](images/dugout/ashore-quarter.webp) |
+| Charred, four fires in, ready to hew | Finished, ready to push in |
 
 ## Its neighbours
 
@@ -59,6 +69,6 @@ Any wood, a modded tree's too. Redwood's logs come as sections, and it takes tho
 | ![Ashore, from the side](images/dugout/ashore-side.webp) | ![Ashore, from the quarter](images/dugout/ashore-quarter.webp) |
 | Ashore | Ashore, from the quarter |
 | ![Dropped on the ground](images/dugout/dropped.webp) | ![Held](images/dugout/held.webp) |
-| Dropped on the ground | Fresh from the crafting grid, before launching |
+| Dropped on the ground | Held, as a dugout from before the build was kept |
 | ![The hotbar icon](images/dugout/icon.png) | ![The wreckage it leaves](images/dugout/wreckage.webp) |
 | In the hotbar | Its wreckage |
