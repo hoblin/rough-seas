@@ -292,7 +292,7 @@ strokes() {
         "$game" press "$key" 3500 >/dev/null &
         sleep 1.2
         local frames=$BENCH_TMP/$dir/${code##*:}-${stroke%:*}-${view%:*}
-        "$game" burst "${frames#"$BENCH_TMP"/}" 16 1.5 >/dev/null
+        "$game" burst "${frames#"$BENCH_TMP"/}" 16 2 >/dev/null
         wait
         magick montage -label '%t' "$frames"/[0-9]*.png -gravity center -crop 400x340+0+30 +repage \
           -tile 4x -geometry 400x340+2+2 "$frames/sheet.png"
