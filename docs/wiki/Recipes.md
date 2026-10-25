@@ -14,12 +14,7 @@ Cattail tops, papyrus tops or thatch, the reed that tule gives.
 
 ## Dugout
 
-Any wood, a modded tree's too. Redwood's logs come as sections, and it takes those, as it does any wood that comes in sections.
-
-| | |
-| --- | --- |
-| ![The dugout from 5 logs and an axe](images/recipes/dugout.png) | ![The redwood dugout from 5 redwood log sections and an axe](images/recipes/dugout-redwood.png) |
-| From logs | From redwood log sections |
+Not in the grid any more: a dugout is burnt and hewn out of five logs on the shore. See [how it is built](Dugout#how-it-is-built).
 
 ## Coracle
 

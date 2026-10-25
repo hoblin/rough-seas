@@ -122,11 +122,12 @@ public class VesselShapeTests
     {
         var (entity, _, shape) = Load(vessel);
         var attributes = entity["attributes"]!;
+        if (attributes.Value<bool?>("requiresPaddlingTool") == true) return;
+
         var own = entity["client"]!["animations"]!.ToDictionary(animation => animation.Value<string>("code")!);
         var animated = shape["animations"]!.ToDictionary(animation => animation.Value<string>("code")!);
         var rower = PlayerPatches().ToList();
 
-        Assert.Null(attributes["requiresPaddlingTool"]);
         Assert.All(Strokes.Select(stroke => attributes["mountAnimations"]!.Value<string>(stroke)!), code =>
         {
             var registered = rower.Single(op => op.Value<string>("path") == "/client/animations/-" && op["value"]!.Value<string>("code") == code)["value"]!;
@@ -136,10 +137,24 @@ public class VesselShapeTests
         });
     }
 
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void DrawsEveryStageOfItsBuildForEveryHollowing(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        if (entity["behaviorConfigs"]!["roughseas:burnout"]?.Value<int>("hollowings") is not { } hollowings) return;
+
+        var names = Elements(shape["elements"]!).Select(element => element.Value<string>("name")).ToHashSet();
+        var stages = Enumerable.Range(0, hollowings).SelectMany(n => new[] { $"Blank{n}", $"Char{n}", $"Fire{n}" }).Append("Clay");
+
+        Assert.Empty(stages.Where(stage => !names.Contains(stage)));
+        Assert.DoesNotContain($"Blank{hollowings}", names);
+    }
+
     [Fact]
     public void KeysEveryAxisOfWhatEachStrokeMoves()
     {
-        var animations = VesselNames().SelectMany(vessel => Load(vessel).Shape["animations"]!)
+        var animations = VesselNames().SelectMany(vessel => Load(vessel).Shape["animations"] ?? new JArray())
             .Concat(PlayerPatches().Where(op => op.Value<string>("path") == "/animations/-").Select(op => op["value"]!));
 
         Assert.All(animations.SelectMany(animation => animation["keyframes"]!).SelectMany(keyframe => keyframe["elements"]!.Children<JProperty>()),

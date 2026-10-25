@@ -15,28 +15,6 @@
         "output": { "type": "item", "code": "roughseas:bark-{prefix}{wood}", "quantity": 4 }
     },
     {
-        "name": "Dugout",
-        "ingredientPattern": "LAL,LLL",
-        "ingredients": {
-            "L": { "type": "block", "code": "{domain}:log-placed-*-ud", "name": "wood", "allowedVariants": "{woods}" },
-            "A": { "type": "item", "tags": ["tool-axe"], "isTool": true }
-        },
-        "width": 3,
-        "height": 2,
-        "output": { "type": "item", "code": "roughseas:dugout-{prefix}{wood}" }
-    },
-    {
-        "name": "Dugout from log sections",
-        "ingredientPattern": "LAL,LLL",
-        "ingredients": {
-            "L": { "type": "block", "code": "{domain}:logsection-placed-*-ne-ud", "name": "wood", "allowedVariants": "{woods}" },
-            "A": { "type": "item", "tags": ["tool-axe"], "isTool": true }
-        },
-        "width": 3,
-        "height": 2,
-        "output": { "type": "item", "code": "roughseas:dugout-{prefix}{wood}" }
-    },
-    {
         "name": "Outrigger canoe",
         "ingredientPattern": "RSR,LLL,PLP",
         "ingredients": {

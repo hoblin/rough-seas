@@ -10,11 +10,11 @@ public class WoodRecipesTests
     [Fact]
     public void BuildsVanillaVesselsUnderTheirBareSpecies()
     {
-        var dugout = Recipe(Expand(new Wood("game", "oak"), ["oak", "birch"], ["birch"]), "Dugout");
+        var outrigger = Recipe(Expand(new Wood("game", "oak"), ["oak", "birch"], ["birch"]), "Outrigger canoe");
 
-        Assert.Equal("roughseas:dugout-{wood}", (string?)dugout["output"]!["code"]);
-        Assert.Equal("game:log-placed-*-ud", (string?)dugout["ingredients"]!["L"]!["code"]);
-        Assert.Equal(["oak", "birch"], dugout["ingredients"]!["L"]!["allowedVariants"]!.Values<string>());
+        Assert.Equal("roughseas:outrigger-{wood}", (string?)outrigger["output"]!["code"]);
+        Assert.Equal("game:log-placed-*-ud", (string?)outrigger["ingredients"]!["L"]!["code"]);
+        Assert.Equal(["oak", "birch"], outrigger["ingredients"]!["L"]!["allowedVariants"]!.Values<string>());
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class WoodRecipesTests
         var recipes = Expand(new Wood("othermod", "teak"), ["teak"], []);
 
         Assert.DoesNotContain(recipes, recipe => (string?)recipe["name"] == "Bark");
-        Assert.Contains(recipes, recipe => (string?)recipe["name"] == "Dugout");
+        Assert.Contains(recipes, recipe => (string?)recipe["name"] == "Outrigger canoe");
     }
 
     private static List<JToken> Expand(Wood wood, string[] woods, string[] barks) =>
