@@ -46,7 +46,7 @@ Without the bench, run `./build.sh` and drop the zip from `Releases/` into your 
 
 ## Propose a change
 
-1. Open an issue first, or comment on an existing one. Say what you want to change and why, so we can agree on it before you spend time on code. An issue labelled `decided` is settled and ready to take; say on it that you're taking it. The others (`agent-filed`, `draft`, `parked`) aren't ready yet: ask on the issue first.
+1. Open an issue first, or comment on an existing one. Say what you want to change and why, so we can agree on it before you spend time on code. An issue labelled `decided` is settled and ready to take into work. One labelled `agent-filed` waits for a maintainer to approve it first.
 2. Branch from `main`. Keep one issue to one pull request.
 3. Open a pull request against `main`. Title it like `30 feat: in-game guide`: the issue number, then a [Conventional Commits](https://www.conventionalcommits.org) type. Link the issue in the description.
 
