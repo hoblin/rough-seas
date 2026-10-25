@@ -48,6 +48,10 @@ All of it is scoped to this repository. [CONTRIBUTING.md](CONTRIBUTING.md) cover
 
 ## References
 
+**The design.** `docs/design.md` is the project's architecture, and new work conforms to it. Read it in full before any work in this repository.
+
+Only a maintainer changes it. An agent edits it only after a maintainer has explicitly approved that specific change, whatever its size, including a typo or a link. When work shows the design wrong or incomplete, say so to the maintainers. Don't edit it yourself. A pull request from anyone else that touches it fails CI.
+
 Each holds what one kind of work needs; read it in full before that work. They are the rakes stepped on already.
 
 - `docs/modding.md`: before writing mod code (patches, entities, behaviours, physics).
@@ -60,6 +64,8 @@ Each holds what one kind of work needs; read it in full before that work. They a
 ## Tickets
 
 Tickets are GitHub issues in this repository. A bug or a follow-up found while working a ticket becomes its own issue, not an out-of-scope fix, labelled `agent-filed`. Tickets the maintainers settled carry `decided`. The two are not equal: a finding from a review subagent sees a slice of the code and imagines what could go wrong; it is filed so it is not lost, and it is read with suspicion before anyone works on it. State the evidence in such an issue (what you saw, where) rather than the fear.
+
+A `decided` ticket is ready for anyone, an outside contributor included: say on the issue that you take it. The rest wait for the maintainers: `agent-filed` until they confirm it, `draft` and `parked` until they settle.
 
 One ticket ships as one pull request. A big PR is fine here, since Copilot reviews it. When a ticket turns out to hold too much, the extra part becomes its own ticket, agreed with the maintainers; it doesn't become a second PR.
 
