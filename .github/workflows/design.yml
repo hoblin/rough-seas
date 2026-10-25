@@ -1,0 +1,17 @@
+name: Design
+
+on:
+  pull_request_target:
+    branches: [main]
+    paths: [docs/design.md]
+
+permissions: {}
+
+jobs:
+  maintainer:
+    if: github.event.pull_request.user.login != 'hoblin'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::error file=docs/design.md::Only a maintainer changes the design. Tell the maintainers what the work showed instead."
+          exit 1
