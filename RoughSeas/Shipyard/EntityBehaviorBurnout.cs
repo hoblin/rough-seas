@@ -52,6 +52,8 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
 
     public double Hollowed => burnout.Hollowed;
 
+    public double FloorMetres => config.RimMetres - config.HollowDepthMetres * burnout.Hollowed;
+
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
     public override string PropertyName() => Code;
@@ -95,6 +97,12 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         if ((sinceTick += deltaTime) < TickSeconds || !burnout.Lit) return;
 
         sinceTick = 0;
+        if (Wet())
+        {
+            burnout.Douse();
+            shipyard.Log(entity, "water in the hollow puts the fire out at {0:F1} of {1:F0} h", burnout.HoursBurnt, burnout.HoursPerFire);
+            return;
+        }
         double now = sea.Clock.Hours;
         double hours = now - Tree.GetDouble(CheckedAtKey, now);
         Tree.SetDouble(CheckedAtKey, now);
@@ -249,7 +257,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
             return;
         }
 
-        var at = entity.Pos.XYZ.Add(0, config.RimMetres - config.HollowDepthMetres * burnout.Hollowed, 0);
+        var at = entity.Pos.XYZ.Add(0, FloorMetres, 0);
         fire ??= capi.World.LoadSound(new SoundParams { Location = FireSound, ShouldLoop = true, DisposeOnFinish = false, Position = at.ToVec3f(), Range = 16 });
         fire.SetPosition(at.ToVec3f());
         if (!fire.IsPlaying) fire.Start();

@@ -136,8 +136,19 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         base.GetInfoText(infotext);
     }
 
-    // A hold still being cut is the top of the finished one, so its water stands among the upper levels.
-    private void ShowWater() => water?.Show(Litres > 0 ? (int)Math.Ceiling((1 - (1 - Fill) * Hollowed) * water.Levels) : 0);
+    private void ShowWater()
+    {
+        if (water == null) return;
+        if (Litres <= 0 || form.Value is not { } built)
+        {
+            water.Show((int)Math.Ceiling(Fill * water.Levels));
+            return;
+        }
+
+        double top = water.HeightOf(water.Levels);
+        double surface = built.FloorMetres + Fill * (top - built.FloorMetres);
+        water.Show(Enumerable.Range(1, water.Levels).FirstOrDefault(level => water.HeightOf(level) >= surface, water.Levels));
+    }
 
     private double Rainfall()
     {
