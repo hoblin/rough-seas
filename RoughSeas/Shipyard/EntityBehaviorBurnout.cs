@@ -287,7 +287,9 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         return entity.Api.ModLoader.GetModSystem<WeatherSystemBase>()?.GetPrecipitation(pos.XYZ) ?? 0;
     }
 
-    private bool Wet() => entity.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault()?.Litres >= 1;
+    private bool Wet() =>
+        entity.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault()?.Litres >= 1 ||
+        IHull.Of(entity)?.Afloat.Sunk == true;
 
     private void MarkDirty() => entity.WatchedAttributes.MarkPathDirty(TreeKey);
 }
