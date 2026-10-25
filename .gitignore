@@ -9,7 +9,10 @@
 .vs/
 .idea/
 *.user
-/.claude/
+/.claude/*
+!/.claude/skills/
+/.claude/skills/*
+!/.claude/skills/gh-issue/
 /skills-lock.json
 __pycache__/
 /library/
