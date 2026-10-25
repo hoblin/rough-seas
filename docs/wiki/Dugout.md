@@ -30,7 +30,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Carried | too heavy to pick up |
 | Seats | two: the front one paddles, with an [oar](https://wiki.vintagestory.at/Oar) in hand; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | 5 logs of one wood beside the water: six fires, six clay, an axe and about six days |
+| Built from | 5 logs of one wood beside the water: six fires, five clay, an axe and about a week |
 | Wreckage | firewood |
 
 ## How it is built
@@ -69,6 +69,6 @@ She floats, and an axe breaks her up, at every stage, so a half-built dugout can
 | ![Ashore, from the side](images/dugout/ashore-side.webp) | ![Ashore, from the quarter](images/dugout/ashore-quarter.webp) |
 | Ashore | Ashore, from the quarter |
 | ![Dropped on the ground](images/dugout/dropped.webp) | ![Held](images/dugout/held.webp) |
-| Dropped on the ground | Held, as a dugout from before the build was kept |
+| Dropped on the ground | Held: a dugout from before the build, still an item |
 | ![The hotbar icon](images/dugout/icon.png) | ![The wreckage it leaves](images/dugout/wreckage.webp) |
 | In the hotbar | Its wreckage |

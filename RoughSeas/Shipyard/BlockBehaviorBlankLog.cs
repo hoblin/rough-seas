@@ -1,3 +1,4 @@
+using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -23,14 +24,14 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block), IIgnitab
 
     public EnumIgniteState OnTryIgniteBlock(EntityAgent byEntity, BlockPos pos, float secondsIgniting)
     {
-        if (Row(byEntity.World, pos) == null) return EnumIgniteState.NotIgnitable;
+        if (Row(byEntity, pos) == null) return EnumIgniteState.NotIgnitable;
 
         return secondsIgniting > IgniteSeconds ? EnumIgniteState.IgniteNow : EnumIgniteState.Ignitable;
     }
 
     public void OnTryIgniteBlockOver(EntityAgent byEntity, BlockPos pos, float secondsIgniting, ref EnumHandling handling)
     {
-        if (Row(byEntity.World, pos) is not { } row) return;
+        if (Row(byEntity, pos) is not { } row) return;
 
         handling = EnumHandling.PreventDefault;
         if (byEntity.World.Side == EnumAppSide.Server) Lay(byEntity, row);
@@ -48,12 +49,15 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block), IIgnitab
             }
             : null;
 
-    private LogRow? Row(IWorldAccessor world, BlockPos pos)
+    private static LogRow? Row(EntityAgent byEntity, BlockPos pos)
     {
+        var world = byEntity.World;
         var accessor = world.BlockAccessor;
-        return LogRow.Find(pos,
+        var row = LogRow.Find(pos,
             at => accessor.GetBlock(at) is var log && log.HasBehavior<BlockBehaviorBlankLog>() ? LogOf(log) : null,
             at => accessor.GetBlock(at, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid() && fluid.LiquidCode?.Contains("water") == true);
+        var player = (byEntity as EntityPlayer)?.Player;
+        return row?.Blocks.All(at => world.Claims.TestAccess(player, at, EnumBlockAccessFlags.BuildOrBreak) == EnumWorldAccessResponse.Granted) == true ? row : null;
     }
 
     private void Lay(EntityAgent byEntity, LogRow row)
@@ -73,6 +77,6 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block), IIgnitab
         blank.Pos.Yaw = row.Along == EnumAxis.X ? GameMath.PIHALF : 0;
         EntityBehaviorBurnout.Begin(blank, world.Api.ModLoader.GetModSystem<SeaWeatherSystem>().Clock.Hours);
         world.SpawnEntity(blank);
-        shipyard.Log(blank, "laid by {0} from five {1} logs, water to the {2}: the fire is lit", byEntity.GetName(), row.Wood.Code, row.Water.Code);
+        shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: the fire is lit", byEntity.GetName(), LogRow.Length, row.Wood.Code, row.Water.Code);
     }
 }

@@ -33,9 +33,9 @@ public sealed class Burnout(Func<ITreeAttribute> tree, Action changed, BurnoutCo
 
     public bool Charred => Tree?.GetBool(CharredKey) == true;
 
-    public double BurntHours => Tree?.GetDouble(BurntKey) ?? 0;
+    public double HoursBurnt => Tree?.GetDouble(BurntKey) ?? 0;
 
-    public double BurnHours => config.HollowDepthMetres / Hollowings * MillimetresPerMetre / config.CharMillimetresPerHour;
+    public double HoursPerFire => config.HollowDepthMetres / Hollowings * MillimetresPerMetre / config.CharMillimetresPerHour;
 
     public bool NeedsClay => Level > 0;
 
@@ -85,11 +85,12 @@ public sealed class Burnout(Func<ITreeAttribute> tree, Action changed, BurnoutCo
     {
         if (!Lit || hours <= 0) return false;
 
-        double burnt = BurntHours + hours;
-        if (burnt < BurnHours)
+        double burnt = HoursBurnt + hours;
+        if (burnt < HoursPerFire)
         {
+            bool newHour = Math.Floor(burnt) > Math.Floor(HoursBurnt);
             Tree.SetDouble(BurntKey, burnt);
-            changed();
+            if (newHour) changed();
             return false;
         }
 

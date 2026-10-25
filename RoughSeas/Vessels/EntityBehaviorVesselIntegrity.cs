@@ -487,7 +487,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         var hold = Hold;
         if (hold != null) Reform(hold);
         inWater = entity.Swimming || FluidBelow().IsLiquid();
-        Aboard = vessels.Mass.Of(entity, build.Kilograms * (1 + uncutLitres / build.Litres) + model.SoakedKg);
+        Aboard = vessels.Mass.Of(entity, build.WithUncut(uncutLitres).Kilograms + model.SoakedKg);
         var afloat = flotation.Float(Aboard, hold != null && (hold.Litres >= hold.CapacityLitres || Afloat.Sunk && inWater));
         Afloat = inWater ? afloat : afloat with { Sunk = false };
         SettlingMetres = Afloat.Sunk ? FounderedMetres : Afloat.DraftMetres - referenceDraft;
@@ -510,10 +510,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         if (hold.UncutLitres == uncutLitres) return;
 
         uncutLitres = hold.UncutLitres;
-        flotation = new Flotation(depthMetres, hold.CapacityLitres > 0 ? waterplaneSquareMetres : 0, build.Litres + uncutLitres);
+        var hull = build.WithUncut(uncutLitres);
+        flotation = new Flotation(depthMetres, hold.CapacityLitres > 0 ? waterplaneSquareMetres : 0, hull.Litres);
         if (entity.World.Side == EnumAppSide.Server)
         {
-            vessels.Log(entity, "hull of {0:F0} L of wood with a hold of {1:F0} L", build.Litres + uncutLitres, hold.CapacityLitres);
+            vessels.Log(entity, "hull of {0:F0} L of wood with a hold of {1:F0} L", hull.Litres, hold.CapacityLitres);
         }
     }
 

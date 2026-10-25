@@ -23,7 +23,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     private ISeaWeather sea = null!;
     private SeaClock.Watch watch = null!;
     private BilgeRenderer? water;
-    private IHullForm? form;
+    private Lazy<IHullForm?> form = null!;
     private double holdLitres;
     private double deckSquareMetres;
     private double drainLitresPerHour;
@@ -34,7 +34,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
 
     public double UncutLitres => holdLitres - CapacityLitres;
 
-    private double Hollowed => form?.Hollowed ?? 1;
+    private double Hollowed => form.Value?.Hollowed ?? 1;
 
     public double Litres
     {
@@ -63,6 +63,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         watch = sea.Clock.StartWatch();
         holdLitres = attributes["capacityLitres"].AsDouble();
+        form = new(() => entity.SidedProperties.Behaviors.OfType<IHullForm>().FirstOrDefault());
         deckSquareMetres = attributes["deckSquareMetres"].AsDouble();
         drainLitresPerHour = attributes["drainLitresPerHour"].AsDouble();
         if (entity.Api is ICoreClientAPI capi)
@@ -83,8 +84,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
 
     public override void AfterInitialized(bool onFirstSpawn)
     {
-        form = entity.SidedProperties.Behaviors.OfType<IHullForm>().FirstOrDefault();
-        if (form != null) form.Reformed += ShowWater;
+        if (form.Value != null) form.Value.Reformed += ShowWater;
     }
 
     public void Ship(double litres, string cause)
@@ -125,7 +125,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     public override void OnEntityDespawn(EntityDespawnData despawn)
     {
         water?.Dispose();
-        if (form != null) form.Reformed -= ShowWater;
+        if (form.Value != null) form.Value.Reformed -= ShowWater;
         base.OnEntityDespawn(despawn);
     }
 

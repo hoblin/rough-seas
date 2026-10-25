@@ -137,6 +137,20 @@ public class VesselShapeTests
         });
     }
 
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void DrawsEveryStageOfItsBuildForEveryHollowing(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        if (entity["behaviorConfigs"]!["roughseas:burnout"]?.Value<int>("hollowings") is not { } hollowings) return;
+
+        var names = Elements(shape["elements"]!).Select(element => element.Value<string>("name")).ToHashSet();
+        var stages = Enumerable.Range(0, hollowings).SelectMany(n => new[] { $"Blank{n}", $"Char{n}", $"Fire{n}" }).Append("Clay");
+
+        Assert.Empty(stages.Where(stage => !names.Contains(stage)));
+        Assert.DoesNotContain($"Blank{hollowings}", names);
+    }
+
     [Fact]
     public void KeysEveryAxisOfWhatEachStrokeMoves()
     {

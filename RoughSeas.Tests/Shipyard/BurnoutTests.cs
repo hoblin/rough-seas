@@ -40,8 +40,8 @@ public class BurnoutTests
 
         Assert.True(blank.Lit);
         Assert.False(blank.NeedsClay);
-        Assert.False(blank.Burn(blank.BurnHours / 2));
-        Assert.True(blank.Burn(blank.BurnHours / 2));
+        Assert.False(blank.Burn(blank.HoursPerFire / 2));
+        Assert.True(blank.Burn(blank.HoursPerFire / 2));
         Assert.True(blank.Charred);
         Assert.False(blank.Lit);
     }
@@ -52,7 +52,7 @@ public class BurnoutTests
         var blank = Blank();
 
         Assert.Equal("shipyard-burning", blank.HewRefusal());
-        blank.Burn(blank.BurnHours);
+        blank.Burn(blank.HoursPerFire);
         Assert.Null(blank.HewRefusal());
     }
 
@@ -60,7 +60,7 @@ public class BurnoutTests
     public void BelowTheRimTheFireWaitsForClay()
     {
         var blank = Blank();
-        blank.Burn(blank.BurnHours);
+        blank.Burn(blank.HoursPerFire);
         blank.Hew();
 
         Assert.Equal("shipyard-clay-first", blank.LightRefusal());
@@ -72,11 +72,11 @@ public class BurnoutTests
     public void TheFireSpendsTheClay()
     {
         var blank = Blank();
-        blank.Burn(blank.BurnHours);
+        blank.Burn(blank.HoursPerFire);
         blank.Hew();
         blank.Clay();
         blank.Light();
-        blank.Burn(blank.BurnHours);
+        blank.Burn(blank.HoursPerFire);
 
         Assert.False(blank.Clayed);
     }
@@ -85,12 +85,12 @@ public class BurnoutTests
     public void RainPutsTheFireOutAndTheRestBurnsWhenRelit()
     {
         var blank = Blank();
-        blank.Burn(blank.BurnHours / 2);
+        blank.Burn(blank.HoursPerFire / 2);
         blank.Douse();
 
-        Assert.False(blank.Burn(blank.BurnHours));
+        Assert.False(blank.Burn(blank.HoursPerFire));
         blank.Light();
-        Assert.True(blank.Burn(blank.BurnHours / 2));
+        Assert.True(blank.Burn(blank.HoursPerFire / 2));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class BurnoutTests
         {
             if (blank.NeedsClay) blank.Clay();
             if (!blank.Lit) blank.Light();
-            blank.Burn(blank.BurnHours);
+            blank.Burn(blank.HoursPerFire);
             blank.Hew();
             hollowed.Add(blank.Hollowed);
         }
@@ -115,7 +115,7 @@ public class BurnoutTests
     [Fact]
     public void TheHollowBurnsOutInTheDaysAMishoonTakes()
     {
-        double days = Config.Hollowings * Dugout().BurnHours / 24;
+        double days = Config.Hollowings * Dugout().HoursPerFire / 24;
 
         Assert.InRange(days, 6, 10);
     }
@@ -126,11 +126,9 @@ public class BurnoutTests
     public void AnUncutBlankFloatsOnItsOwnWoodUnlessItIsHeavierThanWater(string wood, bool sinks)
     {
         var dugout = Fixtures.Hull("dugout", wood);
-        double hullLitres = dugout.Flotation.BuoyantKg / VesselMass.SeawaterKgPerLitre;
-        double uncut = dugout.CapacityLitres;
-        var blank = new Flotation(dugout.Flotation.DepthMetres, 0, hullLitres + uncut);
-        double kg = dugout.Kilograms * (1 + uncut / hullLitres);
+        var blank = new HullBuild(dugout.Kilograms, dugout.Flotation.BuoyantKg / VesselMass.SeawaterKgPerLitre).WithUncut(dugout.CapacityLitres);
+        var solid = new Flotation(dugout.Flotation.DepthMetres, 0, blank.Litres);
 
-        Assert.Equal(sinks, blank.Float(new Aboard(kg, 0, 0, 0, 0, 0), true).Sunk);
+        Assert.Equal(sinks, solid.Float(new Aboard(blank.Kilograms, 0, 0, 0, 0, 0), true).Sunk);
     }
 }

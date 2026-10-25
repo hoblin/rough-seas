@@ -27,6 +27,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
     private const float ParticleSeconds = 0.1f;
     private const int FlamesPerPuff = 3;
     private const double MinDousingRain = 0.05;
+    private const double DousingPerRain = 0.5;
     private const double FlameReach = 0.8;
     private const string Unfinished = "roughseas-unfinished";
     private static readonly string[] Stages = ["Blank", "Char", "Fire"];
@@ -43,15 +44,13 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
     private AssetLocation clay = null!;
     private float sinceTick;
     private float sinceFlames;
-    private string? shown;
+    private string? shownKey;
     private int shownLevel;
     private ILoadedSound? fire;
 
     public event Action? Reformed;
 
     public double Hollowed => burnout.Hollowed;
-
-    public Burnout Burnout => burnout;
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
@@ -71,7 +70,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
     {
         var seatable = entity.GetBehavior<EntityBehaviorSeatable>();
         if (seatable != null) seatable.CanSit += CanSit;
-        (shown, shownLevel) = (Visible(), burnout.Level);
+        (shownKey, shownLevel) = (ShapeKey(), burnout.Level);
     }
 
     public static void Begin(Entity vessel, double hours)
@@ -102,13 +101,13 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         bool clayed = burnout.Clayed;
         if (burnout.Burn(hours))
         {
-            shipyard.Log(entity, "the fire burns out after {0:F0} h: hollow {1} of {2} charred{3}", burnout.BurnHours, burnout.Level + 1, burnout.Hollowings, clayed ? ", the clay spent" : "");
+            shipyard.Log(entity, "the fire burns out after {0:F0} h: hollow {1} of {2} charred{3}", burnout.HoursPerFire, burnout.Level + 1, burnout.Hollowings, clayed ? ", the clay spent" : "");
             return;
         }
-        if (Rain() is var rain and > MinDousingRain && entity.World.Rand.NextDouble() < rain / 2)
+        if (Rain() is var rain and > MinDousingRain && entity.World.Rand.NextDouble() < rain * DousingPerRain)
         {
             burnout.Douse();
-            shipyard.Log(entity, "rain puts the fire out at {0:F1} of {1:F0} h", burnout.BurntHours, burnout.BurnHours);
+            shipyard.Log(entity, "rain puts the fire out at {0:F1} of {1:F0} h", burnout.HoursBurnt, burnout.HoursPerFire);
         }
     }
 
@@ -133,8 +132,11 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         switch (step)
         {
             case Step.Clay:
-                itemslot.TakeOut(1);
-                itemslot.MarkDirty();
+                if ((byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode != EnumGameMode.Creative)
+                {
+                    itemslot.TakeOut(1);
+                    itemslot.MarkDirty();
+                }
                 burnout.Clay();
                 entity.World.PlaySoundAt(ClaySound, entity, null, true, 16);
                 shipyard.Log(entity, "{0} smears clay along the rim", byEntity.GetName());
@@ -144,7 +146,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
                 Tree.SetDouble(CheckedAtKey, sea.Clock.Hours);
                 burnout.Light();
                 entity.World.PlaySoundAt(IgniteSound, entity, null, true, 16);
-                shipyard.Log(entity, "{0} lights a fire in hollow {1} of {2}: {3:F0} h to burn", byEntity.GetName(), burnout.Level + 1, burnout.Hollowings, burnout.BurnHours - burnout.BurntHours);
+                shipyard.Log(entity, "{0} lights a fire in hollow {1} of {2}: {3:F0} h to burn", byEntity.GetName(), burnout.Level + 1, burnout.Hollowings, burnout.HoursPerFire - burnout.HoursBurnt);
                 break;
             default:
                 itemslot.Itemstack!.Collectible.DamageItem(entity.World, byEntity, itemslot);
@@ -160,9 +162,9 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
     {
         if (burnout.Finished || burnout.Lit) return null;
-        if (burnout.Charred) return [Help("roughseas:shipyard-hew", Axes(world))];
-        if (burnout.NeedsClay && !burnout.Clayed) return [Help("roughseas:shipyard-clay", world.SearchItems(clay).Select(item => new ItemStack(item)).ToArray())];
-        return [Help("roughseas:shipyard-light", BlockBehaviorCanIgnite.CanIgniteStacks(world.Api, true).ToArray())];
+        if (burnout.Charred) return Help(world, "roughseas:shipyard-hew", () => world.Items.Where(item => item.Tool == EnumTool.Axe && item.Code != null));
+        if (burnout.NeedsClay && !burnout.Clayed) return Help(world, "roughseas:shipyard-clay", () => world.SearchItems(clay));
+        return Help(world, "roughseas:shipyard-light", () => BlockBehaviorCanIgnite.CanIgniteStacks(world.Api, true).Select(stack => stack.Collectible));
     }
 
     public override void GetInfoText(StringBuilder infotext)
@@ -170,7 +172,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         if (!burnout.Finished)
         {
             infotext.AppendLine(Lang.Get("roughseas:shipyard-hollowed", burnout.Level, burnout.Hollowings));
-            if (burnout.Lit) infotext.AppendLine(Lang.Get("roughseas:shipyard-burns", Math.Ceiling(burnout.BurnHours - burnout.BurntHours)));
+            if (burnout.Lit) infotext.AppendLine(Lang.Get("roughseas:shipyard-burns", Math.Ceiling(burnout.HoursPerFire - burnout.HoursBurnt)));
             else if (burnout.Charred) infotext.AppendLine(Lang.Get("roughseas:shipyard-charred"));
             else if (burnout.Clayed) infotext.AppendLine(Lang.Get("roughseas:shipyard-clayed"));
         }
@@ -198,11 +200,11 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         _ => null
     };
 
-    private static WorldInteraction Help(string action, ItemStack[] stacks) =>
-        new() { ActionLangCode = action, MouseButton = EnumMouseButton.Right, Itemstacks = stacks };
-
-    private static ItemStack[] Axes(IWorldAccessor world) =>
-        world.Items.Where(item => item.Tool == EnumTool.Axe && item.Code != null).Select(item => new ItemStack(item)).ToArray();
+    private WorldInteraction[] Help(IWorldAccessor world, string action, Func<IEnumerable<CollectibleObject>> with) =>
+        ObjectCacheUtil.GetOrCreate(world.Api, $"{action}/{clay}", () => new[]
+        {
+            new WorldInteraction { ActionLangCode = action, MouseButton = EnumMouseButton.Right, Itemstacks = with().Select(collectible => new ItemStack(collectible)).ToArray() }
+        });
 
     private bool CanSit(EntityAgent byEntity, out string? errorMessage)
     {
@@ -215,16 +217,16 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         if (burnout.Finished) return [.. Stages, "Clay"];
 
         var level = burnout.Level;
-        var shown = new List<string> { $"Blank{level}" };
-        if (burnout.Lit || burnout.Charred) shown.Add($"Char{level}");
-        if (burnout.Lit) shown.Add($"Fire{level}");
+        var showing = new List<string> { $"Blank{level}" };
+        if (burnout.Lit || burnout.Charred) showing.Add($"Char{level}");
+        if (burnout.Lit) showing.Add($"Fire{level}");
         return Enumerable.Range(0, burnout.Hollowings)
             .SelectMany(n => Stages.Select(stage => $"{stage}{n}"))
-            .Except(shown)
+            .Except(showing)
             .Concat(burnout.Clayed ? [] : ["Clay"]);
     }
 
-    private string Visible() => $"{burnout.Level}/{burnout.Clayed}/{burnout.Lit}/{burnout.Charred}";
+    private string ShapeKey() => $"{burnout.Level}/{burnout.Clayed}/{burnout.Lit}/{burnout.Charred}";
 
     private void OnBuildChanged()
     {
@@ -233,9 +235,9 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
             shownLevel = burnout.Level;
             Reformed?.Invoke();
         }
-        if (Visible() == shown) return;
+        if (ShapeKey() == shownKey) return;
 
-        shown = Visible();
+        shownKey = ShapeKey();
         entity.MarkShapeModified();
     }
 
