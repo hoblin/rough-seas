@@ -21,17 +21,31 @@ public sealed class DrawnWater(IDrawnSea sea)
     public double? SurfaceAt(IBlockAccessor blocks, double x, double y, double z) =>
         SurfaceAt(new BlockColumn(blocks, (int)Math.Floor(x), (int)Math.Floor(z)), x, y, z);
 
-    internal double? SurfaceAt<TColumn>(TColumn column, double x, double y, double z) where TColumn : IWaterColumn
-    {
-        if (!sea.SwellAt(x, z)) return null;
+    internal double? SurfaceAt<TColumn>(TColumn column, double x, double y, double z) where TColumn : IWaterColumn =>
+        sea.SwellAt(x, z) ? WaterAt(column, x, y, z)?.Height : null;
 
-        var swell = sea.HeightAt(x, z);
+    /// <summary>
+    /// The water a body at a point is in: the drawn surface over its column as <see cref="SurfaceAt(IBlockAccessor, double, double, double)"/>
+    /// finds it, or the still water's surface where no swell is drawn. Null where no water lies under the point within
+    /// the swell's reach there, or a solid block stands between.
+    /// </summary>
+    public WaterSurface? WaterAt(IBlockAccessor blocks, double x, double y, double z) =>
+        WaterAt(new BlockColumn(blocks, (int)Math.Floor(x), (int)Math.Floor(z)), x, y, z);
+
+    internal WaterSurface? WaterAt<TColumn>(TColumn column, double x, double y, double z) where TColumn : IWaterColumn
+    {
+        var swell = sea.SwellAt(x, z) ? sea.HeightAt(x, z) : 0;
+        return TopOf(column, y, swell) is { } top ? new WaterSurface(top + column.Level(top) + swell, swell, column.Salt(top)) : null;
+    }
+
+    private static int? TopOf<TColumn>(TColumn column, double y, double swell) where TColumn : IWaterColumn
+    {
         var at = (int)Math.Floor(y);
         if (column.Water(at))
         {
             // in the block water: up to its top block, as vanilla counts the eye's depth
             while (column.Water(at + 1)) at++;
-            return at + column.Level(at) + swell;
+            return at;
         }
 
         // above it: down as far as a crest here could reach the point, and a block more
@@ -40,11 +54,14 @@ public sealed class DrawnWater(IDrawnSea sea)
         {
             // a solid block first: a waterlogged deck keeps the sea out as a dry one does
             if (column.Solid(below)) return null;
-            if (column.Water(below)) return below + column.Level(below) + swell;
+            if (column.Water(below)) return below;
         }
         return null;
     }
 }
+
+/// <summary>The surface over a water column: its height, the swell drawn in it, and whether the water is the sea's.</summary>
+public readonly record struct WaterSurface(double Height, double Swell, bool Salt);
 
 /// <summary>One column of blocks, read for the water in it.</summary>
 internal interface IWaterColumn
@@ -57,6 +74,9 @@ internal interface IWaterColumn
 
     /// <summary>Whether a block at <paramref name="y"/> keeps the sea out: a floor, a deck or a dock between a point and the water.</summary>
     bool Solid(int y);
+
+    /// <summary>Whether the water in the block at <paramref name="y"/> is the sea's, denser than a lake's or a river's.</summary>
+    bool Salt(int y);
 }
 
 internal readonly struct BlockColumn(IBlockAccessor blocks, int x, int z) : IWaterColumn
@@ -68,6 +88,8 @@ internal readonly struct BlockColumn(IBlockAccessor blocks, int x, int z) : IWat
     public bool Water(int y) => Fluid(y).LiquidCode is "water" or "seawater" or "saltwater";
 
     public double Level(int y) => Fluid(y).LiquidLevel / LevelsPerBlock;
+
+    public bool Salt(int y) => Fluid(y).LiquidCode is "seawater" or "saltwater";
 
     public bool Solid(int y) => blocks.GetBlockRaw(x, y, z, BlockLayersAccess.Solid).CollisionBoxes is { Length: > 0 };
 

@@ -104,6 +104,28 @@ public class DrawnWaterTests
         Assert.Null(new DrawnWater(new Sea(3)).SurfaceAt(ground, X, StillSurface + 1.7, Z));
     }
 
+    [Fact]
+    public void GivesABodyTheStillWaterWhereNoSwellIsDrawn()
+    {
+        var water = new DrawnWater(new Sea(0, swell: false)).WaterAt(new Column(), X, StillSurface - 0.5, Z);
+
+        Assert.Equal(new WaterSurface(StillSurface, 0, Salt: true), water);
+    }
+
+    [Fact]
+    public void GivesABodyTheDrawnSurfaceAndItsSwell()
+    {
+        var water = new DrawnWater(new Sea(1.5)).WaterAt(new Column(salt: false), X, StillSurface + 1, Z);
+
+        Assert.Equal(new WaterSurface(StillSurface + 1.5, 1.5, Salt: false), water);
+    }
+
+    [Fact]
+    public void KeepsABodyOverADeckOutOfTheWater()
+    {
+        Assert.Null(new DrawnWater(new Sea(0, swell: false)).WaterAt(new Column(solid: [WaterTop + 1]), X, WaterTop + 2.2, Z));
+    }
+
     private sealed class Sea(double height, bool swell = true, bool local = true) : IDrawnSea
     {
         public bool Swell => swell;
@@ -121,8 +143,10 @@ public class DrawnWaterTests
         public SeaPose PoseOf(double x, double z, double yaw, double length, double width) => default;
     }
 
-    private sealed class Column(int top = WaterTop, int[]? solid = null, double level = StillLevel) : IWaterColumn
+    private sealed class Column(int top = WaterTop, int[]? solid = null, double level = StillLevel, bool salt = true) : IWaterColumn
     {
+        public bool Salt(int y) => salt;
+
         public bool Water(int y) => y > SeaFloor && y <= top;
 
         public double Level(int y) => y == top ? level : 1;

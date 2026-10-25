@@ -205,6 +205,34 @@ public sealed class SeaSurface
         return (velocityX, velocityZ);
     }
 
+    /// <summary>
+    /// The water's vertical velocity, in metres a second, at a body <paramref name="depth"/> metres under the drawn
+    /// surface here, with the waves scaled by <paramref name="share"/>. By linear deep-water theory each train moves its
+    /// water up at -ω a cos θ e^(k z), the rate its rise a sin θ changes, a quarter turn ahead of the to and fro of
+    /// <see cref="OrbitalVelocityAt"/> (Dean and Dalrymple 1991): rising ahead of a crest, sinking behind it.
+    /// </summary>
+    public double RiseVelocityAt(double x, double z, double depth = 0, double share = 1) => Vertical(x, z, depth, share, acceleration: false);
+
+    /// <summary>
+    /// The water's vertical acceleration, in metres a second squared, where <see cref="RiseVelocityAt"/> reads its
+    /// velocity: -ω² a sin θ e^(k z) a train, slowing as it rises under a crest and gathering in a trough.
+    /// </summary>
+    public double RiseAccelerationAt(double x, double z, double depth = 0, double share = 1) => Vertical(x, z, depth, share, acceleration: true);
+
+    private double Vertical(double x, double z, double depth, double share, bool acceleration)
+    {
+        var height = share * DisplacementAt(x, z).Y - Math.Max(depth, 0);
+        var sum = 0.0;
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            if (amplitude[slot] <= 0) continue;
+            var theta = Phase(slot, x, z);
+            var reach = share * amplitude[slot] * Math.Exp(Wavenumber(slot) * height);
+            sum -= acceleration ? reach * frequency[slot] * frequency[slot] * Math.Sin(theta) : reach * frequency[slot] * Math.Cos(theta);
+        }
+        return sum;
+    }
+
     private static double Sinc(double x) => Math.Abs(x) < 1e-9 ? 1 : Math.Sin(x) / x;
 
     public double FoldAt(double x, double z)

@@ -166,5 +166,91 @@
             "shiftPerBlock": "Vanilla's underwater view (ClientMain.GetEyesInWaterColorShift) is 600 x (1.04 - the eye's height in its water block) percent, clamped to 0..100: 600 percent per block of the eye's depth",
             "shiftAboveBlocks": "Still water is drawn at 7/8 of its block, so vanilla's ramp in the eye's depth under that surface is 600 x (depth + 1.04 - 0.875): full at the surface, gone 0.165 blocks above it; the drawn surface takes the same ramp"
         }
+        },
+    "swim": {
+        "leastShare": 0.075,
+        "strokeLift": 0.03,
+        "jumpLiftPerTick": 0.005,
+        "jumpLiftAboveShare": 0.1,
+        "sources": {
+            "leastShare": "Vanilla's swim stroke (PModulePlayerInLiquid.HandleSwimming) counts the body's share under water as the chest's depth under the surface up to a block, plus 0.075; the drawn surface takes the same share",
+            "strokeLift": "Vanilla's stroke adds the controls' upward fly vector x (1 + push) x 0.03 x the share under water a tick",
+            "jumpLiftPerTick": "Vanilla's held jump adds 0.005 x the share under water every 1/60 s",
+            "jumpLiftAboveShare": "Vanilla's held jump lifts a swimmer who is also moving only while more than 0.1 of the body is under"
+        }
+    },
+    "body": {
+        "build": "male",
+        "builds": {
+            "male": {
+                "heightMetres": 1.75,
+                "massKg": 75,
+                "ageYears": 40,
+                "fatShare": 0.18,
+                "frc": [2.34, 0.009, -1.09],
+                "segments": [
+                { "name": "feet", "from": 0, "to": 0.039, "massShare": 0.0274, "density": 1.1 },
+                { "name": "shanks", "from": 0.039, "to": 0.285, "massShare": 0.0866, "density": 1.09 },
+                { "name": "thighs", "from": 0.285, "to": 0.53, "massShare": 0.2832, "density": 1.05 },
+                { "name": "abdomen and pelvis", "from": 0.53, "to": 0.72, "massShare": 0.275, "density": 1.01 },
+                { "name": "chest", "from": 0.72, "to": 0.818, "massShare": 0.1596, "density": 1.03, "lungs": true },
+                { "name": "arms", "from": 0.72, "to": 0.818, "massShare": 0.0988, "density": 1.11 },
+                { "name": "neck", "from": 0.818, "to": 0.87, "massShare": 0.0111, "density": 1.11 },
+                { "name": "head", "from": 0.87, "to": 1.0, "massShare": 0.0583, "density": 1.11 }
+                ]
+            },
+            "female": {
+                "heightMetres": 1.65,
+                "massKg": 60,
+                "ageYears": 40,
+                "fatShare": 0.28,
+                "frc": [2.24, 0.001, -1.00],
+                "segments": [
+                { "name": "feet", "from": 0, "to": 0.039, "massShare": 0.0258, "density": 1.1 },
+                { "name": "shanks", "from": 0.039, "to": 0.285, "massShare": 0.0962, "density": 1.09 },
+                { "name": "thighs", "from": 0.285, "to": 0.53, "massShare": 0.2956, "density": 1.05 },
+                { "name": "abdomen and pelvis", "from": 0.53, "to": 0.72, "massShare": 0.2712, "density": 1.01 },
+                { "name": "chest", "from": 0.72, "to": 0.818, "massShare": 0.1545, "density": 1.03, "lungs": true },
+                { "name": "arms", "from": 0.72, "to": 0.818, "massShare": 0.0898, "density": 1.11 },
+                { "name": "neck", "from": 0.818, "to": 0.87, "massShare": 0.0107, "density": 1.11 },
+                { "name": "head", "from": 0.87, "to": 1.0, "massShare": 0.0561, "density": 1.11 }
+                ]
+            }
+        },
+        "fatDensity": 0.900,
+        "leanDensity": 1.100,
+        "tidalLitres": 0.5,
+        "breathSeconds": 2,
+        "addedMass": 0.1,
+        "dragArea": 0.25,
+        "seawaterDensity": 1025,
+        "freshwaterDensity": 1000,
+        "armourDensity": 7.85,
+        "breaking": {
+            "aeration": 0.24,
+            "aerationAfterPeriod": 0.01,
+            "plumeDepthPerHeight": 0.8,
+            "rollerSpeedRatio": 0.75,
+            "rollerSeconds": 1
+        },
+        "sources": {
+            "build": "Which body a player has; the vessels' crew weighs 75 kg (vessels/mass.json)",
+            "heightMetres": "An adult man of 1.75 m and 75 kg, a woman of 1.65 m and 60 kg",
+            "fatShare": "Healthy body fat at a normal BMI is about 8-19% for men and 21-33% for women aged 20-39 (Gallagher et al. 2000, Am J Clin Nutr 72(3):694-701); hydrostatic weighing of 50 men and 50 women found 17.7% and 33.4% (Timson & Coffman 1984, Med Sci Sports Exerc 16(4):411-414)",
+            "frc": "Functional residual capacity, the air left at the end of a quiet breath out, in litres: a x height (m) + b x age (years) + c (Quanjer et al. 1993, Eur Respir J 6 Suppl 16:5-40, as tabulated in Stocks & Quanjer 1995, Eur Respir J 8:492-506, Table 8)",
+            "segments": "Segment mass shares (de Leva 1996, J Biomech 29(9):1223-1230, Table 4); segment densities in kg/L (Dempster 1955, WADC TR 55-159, Tables 16-17, with the trunk's 1.03 for the chest's tissue since its air is counted apart); landmarks as shares of stature (Drillis & Contini 1966, NYU TR 1166.03; Contini 1972, Artificial Limbs 16(1), Fig. 7): ankle 0.039, knee 0.285, hip 0.530, chest 0.720, shoulder 0.818, chin 0.870. The arms, held at the chest while treading, stand in the chest's slab; the neck takes 0.16 of the head and neck by volume, measured in 46 women (737 of 4631 cm3; Young et al. 1983, FAA-AM-83-16, Tables 1-2)",
+            "fatDensity": "Fat tissue at 0.900 and lean tissue at 1.100 kg/L, the two-compartment model behind hydrostatic weighing (Siri 1961, in Brozek & Henschel (eds.), Techniques for Measuring Body Composition, pp. 223-244)",
+            "tidalLitres": "A quiet breath moves about 0.5 L",
+            "breathSeconds": "Quiet breathing runs 12 to 20 breaths a minute, 3 to 5 s a breath; the lungs settle to their mean within about half a breath",
+            "addedMass": "Potential flow: a disc of radius a at a free surface carries (4/3) rho a^3 of water at high frequency and (8/3) rho a^3 at the low frequencies of swell (Brennen 1982, NCEL CR 82.010, Table IV; Storti & D'Elia 2001), 0.01 to 0.1 of a floating body's displacement for its 0.012-0.06 m2 waterplane",
+            "dragArea": "A body moving along its length unstreamlined: head-down skydivers fall at 240-290 km/h (FAI), so at 80 kg Cd A = 2 m g / (rho_air v^2) is about 0.2-0.3 m2; towed in a streamlined glide it drags only 0.041 m2 (Cortesi et al. 2020, Int J Environ Res Public Health 17(6):2002)",
+            "seawaterDensity": "Seawater and fresh water, kg/m3",
+            "armourDensity": "Steel, kg/L: armour keeps 87% of its weight in seawater",
+            "aeration": "Void fractions to 24% measured at 0.2-0.8 m under open-ocean breakers (Lamarre & Melville 1992, IEEE J Oceanic Eng 17(2):204-215)",
+            "aerationAfterPeriod": "A breaker's bubble plume keeps a mean void fraction above 1% for one wave period, and loses most of its air within it (Lamarre & Melville 1991, Nature 351:469-472; 1992)",
+            "plumeDepthPerHeight": "Breaking waves' bubble plumes reach a mean depth of about 0.6 of their significant depth, itself about the significant height in a developed sea and up to twice that in young seas (Derakhti et al. 2024, JGR Oceans 129(5), section 3 and Eq. 14)",
+            "rollerSpeedRatio": "A deep-water breaker's turbulent front advances at 0.7-0.8 of the phase speed (Rapp & Melville 1990, Phil Trans R Soc A 331:735-808)",
+            "rollerSeconds": "Active breaking is about a fifth of a whitecap's 5.3 s mean lifetime, about 1 s (Callaghan 2013, J Geophys Res Atmos 118:9997-10010)"
+        }
     }
 }
