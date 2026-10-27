@@ -25,7 +25,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.1 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3.4 m mast draws strikes |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [Left alone](Currents#drift) | drifts with the current and the waves |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
 | Seats | two: the helmsman aft, who paddles when the sail is furled, and a passenger forward |

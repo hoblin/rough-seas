@@ -20,7 +20,9 @@ The temperature of the water has no effect yet. Cold water that saps a swimmer's
 
 ## Drift
 
-A vessel nobody is steering drifts with the current, and the wind pushes it a little too: 1.5% of the wind's speed, the way a real hull is set downwind. A passenger who isn't at the helm drifts along with it. A vessel you are steering isn't pushed at all: the course is yours.
+A vessel nobody is steering drifts with the current. A passenger who isn't at the helm drifts along with it. A vessel you are steering isn't pushed by the current: the course is yours.
+
+The waves move every vessel afloat, steered or not, to and fro with the water under them, and each wave carries her a little further forward than back: a slow drift the way the waves run, a few centimetres a second in a moderate sea and more in a gale ([Reading the sea](Reading-the-Sea#a-ship-that-rides-our-swell)).
 
 So a boat left at the water's edge is not where you left it when you come back. [Tie it up or anchor it](Mooring) before you step ashore.
 

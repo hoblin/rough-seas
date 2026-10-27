@@ -170,8 +170,14 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | `Seconds` | the time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client |
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |
+| `OrbitalVelocityAt(x, z, depth, side)` | the water's horizontal velocity there now, in m/s, as the waves move it |
+| `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the same, averaged over a hull's underwater body |
 
 `PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`, and turns those four heights into how the hull would lie on them. So the hull's size does part of the work: a long hull on short waves has its bow and stern on different crests and barely rocks, while a small one takes every wave. Its length runs along the shape's X axis. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees, so `Pos.Yaw + rotateY * GameMath.DEG2RAD`.
+
+`OrbitalVelocityAt` is the to and fro of the water under the waves: forward, along each wave's travel, under its crest, back in its trough, by linear wave theory. `depth` is how far under the drawn surface, in metres (the motion fades with depth, faster under short waves), and `side` the width of a square it is averaged over: a body as long as a wave feels it cancel out. Read where a body is each step, the to and fro carries it a little further forward than back, the drift that waves give whatever floats.
+
+`HullVelocityAt` is what a hull feels of it: the water's pressure on a hull sums over its underwater body, so the velocity is averaged over its `length` along its heading `yaw` and its `beam` across, as `PoseOf` takes them, and over its `draft` under the height `lift` it floats at, in metres over still water. A hull short against the waves takes the water's velocity; one as long as a wave, or lying along short waves, feels much less of it.
 
 `SeaPose`:
 
@@ -208,7 +214,7 @@ A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls
 
 ### A ship that rides our swell
 
-A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
+A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). It is also carried to and fro with the water under the waves, by the client that steers it or by the server while nobody does: `HullVelocityAt` over its hull, answered through its mass, added mass and drag. A floating hull displaces its own mass, so the water's pressure on it grows with its mass as its inertia does: a small hull takes the water's velocity whatever it weighs, and what smooths the sway is its size against the waves and its draft. The drift that comes of it is the waves' drift for that hull; the current's is apart ([Currents](Currents#drift)). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
 
 The calls above are for a vessel that isn't an `EntityBoat` and poses itself. Each frame, in its render path:
 

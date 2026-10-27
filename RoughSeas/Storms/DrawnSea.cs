@@ -2,7 +2,8 @@ using System;
 
 namespace RoughSeas.Storms;
 
-public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
+/// <param name="shareAt">The share of <paramref name="surface"/>'s waves drawn at a position: the client's <see cref="SurfaceField.Factor"/>.</param>
+public class DrawnSea(SeaSurface surface, Func<double, double, double> shareAt) : IDrawnSea
 {
     private const double ModelTurn = Math.PI / 2;
 
@@ -13,6 +14,23 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
     public double Seconds => surface.Seconds;
 
     public double HeightAt(double x, double z) => ShareAt(x, z) is var share and > 0 ? surface.HeightAt(x, z, share) : 0;
+
+    public (double X, double Z) OrbitalVelocityAt(double x, double z, double depth = 0, double side = 0) =>
+        ShareAt(x, z) is var share and > 0 ? surface.OrbitalVelocityAt(x, z, depth, side, share) : default;
+
+    public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) =>
+        ShareAt(x, z) is var share and > 0 ? surface.HullVelocityAt(x, z, lift, draft, yaw, length, beam, share) : default;
+
+    /// <summary>The water's vertical velocity at a position now, in metres a second, <paramref name="depth"/> metres under the drawn surface.</summary>
+    internal double RiseVelocityAt(double x, double z, double depth = 0) =>
+        ShareAt(x, z) is var share and > 0 ? surface.RiseVelocityAt(x, z, depth, share) : 0;
+
+    /// <summary>The water's vertical acceleration at a position now, in metres a second squared, <paramref name="depth"/> metres under the drawn surface.</summary>
+    internal double RiseAccelerationAt(double x, double z, double depth = 0) =>
+        ShareAt(x, z) is var share and > 0 ? surface.RiseAccelerationAt(x, z, depth, share) : 0;
+
+    /// <summary>Where the drawn waves run, in radians from +X toward +Z.</summary>
+    internal double WavesTowardRadians => surface.WavesTowardRadians;
 
     public SeaPose PoseOf(double x, double z, double yaw, double length, double width)
     {
@@ -31,5 +49,5 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
             Math.Atan((plusX - minusX) / length));
     }
 
-    private double ShareAt(double x, double z) => surface.Calm ? 0 : field.Factor(x, z);
+    private double ShareAt(double x, double z) => surface.Calm ? 0 : shareAt(x, z);
 }

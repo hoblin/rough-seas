@@ -33,7 +33,11 @@ public class VesselMass
             water * fill);
     }
 
-    private double Kit(Entity passenger)
+    /// <summary>What a player carries and wears, in kilograms: their gear and their armour.</summary>
+    public double Kit(Entity passenger) => passenger is EntityPlayer { Player: not null } ? PlayerGearKg + ArmorKg(passenger) : 0;
+
+    /// <summary>The armour a player wears, in kilograms, by how much it slows them.</summary>
+    public double ArmorKg(Entity passenger)
     {
         if (passenger is not EntityPlayer { Player: { } player }) return 0;
 
@@ -41,7 +45,7 @@ public class VesselMass
         double slowedBy = worn
             .Select(slot => slot.Itemstack?.ItemAttributes?["statModifiers"]["walkSpeed"].AsFloat() ?? 0)
             .Sum(walkSpeed => Math.Max(0, -walkSpeed));
-        return PlayerGearKg + slowedBy * ArmorKgPerWalkSpeed;
+        return slowedBy * ArmorKgPerWalkSpeed;
     }
 
     private double Container(ItemStack stack) =>

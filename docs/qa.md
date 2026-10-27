@@ -10,7 +10,7 @@ Read before a QA session, with `bin/qa help`. Before each release a person plays
 - `bin/qa as CMD...` runs each command as the player, at their position, and after a flight waits for them to land: the scenes below are written for it. `bin/qa do CMD...` runs them as the console, for commands that name their target. Both print the reply from the log.
 - `bin/qa mark TEXT` writes a timestamped line to `$QA_DATA/markers.log`: one per moment worth a shot in the promo video, as it happens. The timestamps match the game's logs.
 - `bin/qa log` prints the mod's decision lines from this run: every storm, wave, strike, capsize and break, with its time. Read it before guessing what happened.
-- `/bridge sea`, `shore`, `storm`, `fly` and `find` fly the player in creative. Each scene ends with `/gamemode survival` so it plays as the game does; an idle swimmer in survival sinks, so put the player in a vessel first.
+- `/bridge sea`, `shore`, `storm`, `fly` and `find` fly the player in creative. Each scene ends with `/gamemode survival` so it plays as the game does; an idle swimmer floats with the water at the face (a man sinks slowly in fresh water), so put the player in a vessel first.
 - Coordinates are relative to the map centre, as `/seas` and `/bridge` print them; `/tp 465 111 51` takes the player home.
 - `/bridge ride CODE` spawns a vessel under the player, seats them and prints its id. `/bridge dismount` leaves it. `/bridge entity ID` shows its `integrity` and bilge.
 - `/giveitem` fills the first free slot, and the player carries ten without a bag: give a scene's items, not every scene's.

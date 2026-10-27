@@ -150,8 +150,7 @@
         "westernBoundaryCelsius": 8,
         "easternBoundaryCelsius": 6,
         "seawaterFreezingCelsius": -1.8,
-        "basinReachBlocks": 8192,
-        "stokesDriftPerMps": 0.015
+        "basinReachBlocks": 8192
     },
     "ocean": {
         "defaultSeaFrom": 128,
