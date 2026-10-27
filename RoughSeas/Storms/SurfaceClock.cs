@@ -14,9 +14,9 @@ public sealed class SurfaceClock : IRenderer
     private readonly SurfaceField field;
     private readonly ICoreClientAPI capi;
     private readonly WaveTime time;
+    private readonly SurfaceAim aim;
     private double sinceAim = double.PositiveInfinity;
     private double sinceLog = double.PositiveInfinity;
-    private (int X, int Z)? region;
 
     public SurfaceClock(StormsModSystem storms, SeaWeatherSystem sea, SeaSurface surface, SurfaceField field, ICoreClientAPI capi)
     {
@@ -26,6 +26,7 @@ public sealed class SurfaceClock : IRenderer
         this.field = field;
         this.capi = capi;
         time = new WaveTime(sea.Clock);
+        aim = new SurfaceAim(surface, field, storms.Config.Surface, sea.Config, sea.Clock);
         capi.Event.RegisterRenderer(this, EnumRenderStage.Before, "roughseas-surface");
     }
 
@@ -36,7 +37,7 @@ public sealed class SurfaceClock : IRenderer
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
     {
         var seconds = time.Advance(deltaTime, capi.IsGamePaused ? 0 : capi.World.Calendar.SpeedOfTime);
-        if ((sinceAim += deltaTime) >= storms.Config.Surface.AimSeconds) Aim();
+        if ((sinceAim += deltaTime) >= storms.Config.Surface.AimSeconds) Aim(seconds);
         surface.Advance(seconds);
         if ((sinceLog += deltaTime) < LogEverySeconds) return;
         sinceLog = 0;
@@ -47,23 +48,13 @@ public sealed class SurfaceClock : IRenderer
 
     public void Dispose() => capi.Event.UnregisterRenderer(this, EnumRenderStage.Before);
 
-    private void Aim()
+    private void Aim(double seconds)
     {
         sinceAim = 0;
         var pos = capi.World.Player?.Entity?.Pos;
         if (pos == null) return;
-        field.Update(sea.Source, pos.X, pos.Z, capi.World.BlockAccessor.RegionSize, sea.Config.Map.CellBlocks);
+        aim.Aim(sea.Map, pos.X, pos.Z, seconds, capi.World.BlockAccessor.RegionSize, foam: true);
         SurfaceShader.Upload();
-        var state = sea.At(field.HighestX, field.HighestZ);
-        surface.Aim(field.Height, Math.Atan2(state.WindZ, state.WindX), state.Beaufort, field.Height / storms.Config.Surface.FullFoamMetres);
-
-        var regionSize = capi.World.BlockAccessor.RegionSize;
-        var here = ((int)Math.Floor(pos.X / regionSize), (int)Math.Floor(pos.Z / regionSize));
-        var crossed = here != region;
-        region = here;
-        var slotHours = sea.Config.SeaSampleHours;
-        var slot = (long)Math.Floor(sea.Clock.HoursAt(time.Seconds) / slotHours);
-        surface.Raise(sea.Source.Generation(pos.X, pos.Z, slot - 1), sea.Source.Generation(pos.X, pos.Z, slot), sea.Clock.SecondsAt(slot * slotHours), crossed);
     }
 
     private static double Degrees(double radians) => (radians * 180 / Math.PI + 360) % 360;
