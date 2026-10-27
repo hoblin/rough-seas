@@ -47,6 +47,9 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public IBuoyant? Buoyant => buoyant;
 
+    /// <summary>How the drawn waves carry her on this side, while this side moves her.</summary>
+    public WaveRide Ride { get; private set; } = null!;
+
     /// <summary>How she takes the sea now, with the water in her bilge.</summary>
     public Seaworthiness Seaworthiness
     {
@@ -65,8 +68,10 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     {
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
         vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
-        sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        var weather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        sea = weather;
         watch = sea.Clock.StartWatch();
+        Ride = new WaveRide(storms, weather, this);
         BeamMetres = attributes["beamMetres"].AsDouble();
         MastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();

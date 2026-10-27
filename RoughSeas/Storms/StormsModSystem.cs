@@ -37,6 +37,7 @@ public class StormsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorMooring.Code, typeof(EntityBehaviorMooring));
         api.RegisterBlockBehaviorClass(BlockBehaviorBailer.Code, typeof(BlockBehaviorBailer));
         VesselDraught.Attach();
+        WaveCarry.Attach();
     }
 
     public override void AssetsLoaded(ICoreAPI api)
@@ -51,7 +52,7 @@ public class StormsModSystem : ModSystem
         var surface = Surface = new SeaSurface(Config.Surface, Waves);
         var field = new SurfaceField();
         surface.Changed += change => Log("surface: " + change);
-        DrawnSea = new DrawnSea(surface, field);
+        DrawnSea = new DrawnSea(surface, field.Factor);
         DrawnWater = new DrawnWater(DrawnSea);
         if (SurfaceShader.Attach(surface, field, capi))
         {
@@ -103,6 +104,7 @@ public class StormsModSystem : ModSystem
     public override void Dispose()
     {
         VesselDraught.Detach();
+        WaveCarry.Detach();
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();
         FloatMotion.Detach();
