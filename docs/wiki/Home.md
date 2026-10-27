@@ -66,4 +66,6 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 
 ---
 
-Rough Seas is open source under the MIT license: [source, issues and releases](https://github.com/hoblin/rough-seas). These pages are written in the repository's `docs/wiki/` and published here on every change; to fix one, open a pull request there. To support the work, [buy me a coffee on Ko-fi](https://ko-fi.com/hoblin).
+Rough Seas is open source under the MIT license: [source, issues and releases](https://github.com/hoblin/rough-seas). These pages are written in the repository's `docs/wiki/` and published here on every change; to fix one, open a pull request there.
+
+[![Support Rough Seas on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/hoblin)
