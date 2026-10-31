@@ -31,7 +31,11 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
         if (strokes <= done) return true;
 
         byEntity.Attributes.SetInt(StrokesKey, strokes);
-        return blank.Hew(byEntity, slot);
+        while (done++ < strokes)
+        {
+            if (!blank.Hew(byEntity, slot)) return false;
+        }
+        return true;
     }
 
     public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, ref EnumHandling handling)

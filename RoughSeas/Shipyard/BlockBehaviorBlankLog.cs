@@ -22,7 +22,7 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
 
     public bool TryLay(EntityAgent byEntity, BlockPos pos, IReadOnlyCollection<BlockPos> fire)
     {
-        if (Row(byEntity, pos) is not { } row) return false;
+        if (Row(byEntity, pos, fire) is not { } row) return false;
 
         if (byEntity.World.Side == EnumAppSide.Server) Lay(byEntity, row, fire);
         return true;
@@ -38,7 +38,7 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
             }
             : null;
 
-    private static LogRow? Row(EntityAgent byEntity, BlockPos pos)
+    private static LogRow? Row(EntityAgent byEntity, BlockPos pos, IReadOnlyCollection<BlockPos> fire)
     {
         var world = byEntity.World;
         var accessor = world.BlockAccessor;
@@ -46,7 +46,7 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
             at => accessor.GetBlock(at) is var log && log.HasBehavior<BlockBehaviorBlankLog>() ? LogOf(log) : null,
             at => accessor.GetBlock(at, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid() && fluid.LiquidCode?.Contains("water") == true);
         var player = (byEntity as EntityPlayer)?.Player;
-        return row?.Blocks.All(at => world.Claims.TestAccess(player, at, EnumBlockAccessFlags.BuildOrBreak) == EnumWorldAccessResponse.Granted) == true ? row : null;
+        return row?.Blocks.Concat(fire).All(at => world.Claims.TestAccess(player, at, EnumBlockAccessFlags.BuildOrBreak) == EnumWorldAccessResponse.Granted) == true ? row : null;
     }
 
     private void Lay(EntityAgent byEntity, LogRow row, IReadOnlyCollection<BlockPos> fire)
