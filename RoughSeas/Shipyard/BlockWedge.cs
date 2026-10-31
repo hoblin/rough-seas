@@ -116,7 +116,7 @@ public class BlockWedge : Block
         var at = row.Centre.ToVec3d().Add(0.5, 0.5, 0.5);
         world.SpawnItemEntity(new ItemStack(piece, split.Count), at);
         world.SpawnCubeParticles(at, new ItemStack(piece), 2, 32, 0.8f);
-        world.PlaySoundAt(SplitSound, at.X, at.Y, at.Z, byPlayer);
+        world.PlaySoundAt(SplitSound, at.X, at.Y, at.Z);
         byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack?.Collectible.DamageItem(world, byPlayer.Entity, byPlayer.InventoryManager.ActiveHotbarSlot);
         shipyard.Log("{0} splits a row of {1} {2} at {3} {4} into {5} {6}", byPlayer.PlayerName, row.Length, row.Wood.Code, row.Centre.X, row.Centre.Z,
             split.Count, piece.Code);

@@ -16,7 +16,8 @@ namespace RoughSeas.Shipyard;
 
 /// <summary>
 /// A vessel built up where she lies, stage by stage in the order her <see cref="FramingConfig.Stages"/> give, each
-/// piece drawn where it lies: a bark canoe from the sheet stripped off a standing tree, and the builds begun otherwise.
+/// piece drawn where it is laid: from a bark sheet stripped off a standing tree, from bundles bound where they lay, or
+/// from laths laid out on the ground.
 /// </summary>
 public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity), IWorkedHull
 {
@@ -56,7 +57,10 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
     }
 
-    public static void Begin(Entity vessel) => Begin(vessel, DataVersion, _ => { });
+    public static void Begin(Entity vessel, string? firstLaid = null) => Begin(vessel, DataVersion, tree =>
+    {
+        if (firstLaid != null) tree.SetInt(firstLaid, 1);
+    });
 
     public override VesselPart[] Built(VesselPart[] designed) =>
         designed.Select(part => part.Name == config.FramePart

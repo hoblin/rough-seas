@@ -283,7 +283,6 @@ seats() {
 
 strokes() {
   local codes=("$@") dir=strokes id
-  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat)
   for code in "${codes[@]}"; do
     clear >/dev/null
     id=$(dock "$code" | jq -r '.vessels[0].EntityId')
@@ -334,7 +333,7 @@ recipes() {
   done <<'EOF'
 birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
 splitting-wedge    block-roughseas:wedge-we          roughseas:wedge-we
-reed-boat          item-roughseas:reedboat           roughseas:reedboat
+reed-bundle        block-roughseas:reedbundle-one-we roughseas:reedbundle-one-we
 laths              item-roughseas:lath-oak-5-dry     roughseas:lath-oak-5-dry
 anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
 anchor-warp-ropes  item-rope                         game:rope                    roughseas:anchorwarp

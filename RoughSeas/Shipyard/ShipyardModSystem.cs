@@ -32,6 +32,7 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockEntityClass(BlockEntityLathBed.ClassName, typeof(BlockEntityLathBed));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLathBed.Code, typeof(CollectibleBehaviorLathBed));
         api.RegisterEntityBehaviorClass(EntityBehaviorCovering.Code, typeof(EntityBehaviorCovering));
+        api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
         FireOnLogs.Attach();
         LashingRope.Attach();
     }
@@ -69,7 +70,7 @@ public class ShipyardModSystem : ModSystem
         {
             var framing = FramingConfig.Of(type);
             var covering = CoveringConfig.Of(type);
-            if (framing != null && Wood.Of(type.Variant) is { } wood) Strippable(api.World, type, wood, framing);
+            if (framing is { BarkSeconds: > 0 } && Wood.Of(type.Variant) is { } wood) Strippable(api.World, type, wood, framing);
             if ((framing ?? (FramingConfig?)covering) != null && api.World.GetItem(type.Code) is { } item)
             {
                 item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));

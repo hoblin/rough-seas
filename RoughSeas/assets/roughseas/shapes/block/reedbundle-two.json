@@ -1,0 +1,723 @@
+{
+ "textureWidth": 16,
+ "textureHeight": 16,
+ "textures": { "reed": "roughseas:entity/vessel/reed", "rope": "game:block/cloth/reedrope" },
+ "elements": [
+  {
+   "name": "PortBodyFrame",
+   "from": [ -8, 1.6, 6.4 ],
+   "to": [ -8, 1.6, 6.4 ],
+   "rotationOrigin": [ -8, 1.6, 6.4 ],
+   "faces": {},
+   "children": [
+    {
+     "name": "PortBody",
+     "from": [ 0, -1.088, -1.6 ],
+     "to": [ 32, 1.088, 1.6 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 0, 8, 16, 10.176 ] },
+      "east": { "texture": "#reed", "uv": [ 2, 11.5, 5.2, 13.676 ] },
+      "south": { "texture": "#reed", "uv": [ 0, 1, 16, 3.176 ] },
+      "west": { "texture": "#reed", "uv": [ 7, 4.5, 10.2, 6.676 ] },
+      "up": { "texture": "#reed", "uv": [ 0, 7, 16, 10.2 ] },
+      "down": { "texture": "#reed", "uv": [ 0, 10, 16, 13.2 ] }
+     }
+    },
+    {
+     "name": "PortBodyRound",
+     "from": [ -0.01, -1.6, -1.088 ],
+     "to": [ 31.99, 1.6, 1.088 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 0, 1.5, 16, 4.7 ] },
+      "east": { "texture": "#reed", "uv": [ 9, 5, 11.176, 8.2 ] },
+      "south": { "texture": "#reed", "uv": [ 0, 4.5, 16, 7.7 ] },
+      "west": { "texture": "#reed", "uv": [ 9, 0.5, 11.176, 3.7 ] },
+      "up": { "texture": "#reed", "uv": [ 0, 3.5, 16, 5.676 ] },
+      "down": { "texture": "#reed", "uv": [ 0, 5, 16, 7.176 ] }
+     }
+    },
+    {
+     "name": "PortBodyTie1",
+     "from": [ 1.75, -1.75, -1.75 ],
+     "to": [ 2.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 10, 10.5, 10.5, 14 ] },
+      "east": { "texture": "#rope", "uv": [ 7.5, 2.5, 11, 6 ] },
+      "south": { "texture": "#rope", "uv": [ 0, 10.5, 0.5, 14 ] },
+      "west": { "texture": "#rope", "uv": [ 10.5, 5.5, 14, 9 ] },
+      "up": { "texture": "#rope", "uv": [ 2.5, 13.5, 6, 14 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 7, 11, 10.5, 11.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "PortBodyTie2",
+     "from": [ 5.75, -1.75, -1.75 ],
+     "to": [ 6.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 9.5, 6.5, 10, 10 ] },
+      "east": { "texture": "#rope", "uv": [ 2.5, 6, 6, 9.5 ] },
+      "south": { "texture": "#rope", "uv": [ 9, 10, 9.5, 13.5 ] },
+      "west": { "texture": "#rope", "uv": [ 5.5, 5, 9, 8.5 ] },
+      "up": { "texture": "#rope", "uv": [ 9.5, 0.5, 13, 1 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 3, 9.5, 6.5, 10 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "PortBodyTie3",
+     "from": [ 9.75, -1.75, -1.75 ],
+     "to": [ 10.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 7.5, 10, 8, 13.5 ] },
+      "east": { "texture": "#rope", "uv": [ 8.5, 11, 12, 14.5 ] },
+      "south": { "texture": "#rope", "uv": [ 7.5, 8, 8, 11.5 ] },
+      "west": { "texture": "#rope", "uv": [ 2.5, 8, 6, 11.5 ] },
+      "up": { "texture": "#rope", "uv": [ 6.5, 12.5, 10, 13 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 5.5, 8.5, 9, 9 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "PortBodyTie4",
+     "from": [ 13.75, -1.75, -1.75 ],
+     "to": [ 14.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 13, 8, 13.5, 11.5 ] },
+      "east": { "texture": "#rope", "uv": [ 9, 9, 12.5, 12.5 ] },
+      "south": { "texture": "#rope", "uv": [ 2.5, 3.5, 3, 7 ] },
+      "west": { "texture": "#rope", "uv": [ 11.5, 7.5, 15, 11 ] },
+      "up": { "texture": "#rope", "uv": [ 5, 13.5, 8.5, 14 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 9.5, 5, 13, 5.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "PortBodyTie5",
+     "from": [ 17.75, -1.75, -1.75 ],
+     "to": [ 18.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 3.5, 9, 4, 12.5 ] },
+      "east": { "texture": "#rope", "uv": [ 1.5, 7.5, 5, 11 ] },
+      "south": { "texture": "#rope", "uv": [ 10, 9, 10.5, 12.5 ] },
+      "west": { "texture": "#rope", "uv": [ 5, 3.5, 8.5, 7 ] },
+      "up": { "texture": "#rope", "uv": [ 3, 7, 6.5, 7.5 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 9, 2, 12.5, 2.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "PortBodyTie6",
+     "from": [ 21.75, -1.75, -1.75 ],
+     "to": [ 22.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 15, 9, 15.5, 12.5 ] },
+      "east": { "texture": "#rope", "uv": [ 11, 12, 14.5, 15.5 ] },
+      "south": { "texture": "#rope", "uv": [ 2.5, 10.5, 3, 14 ] },
+      "west": { "texture": "#rope", "uv": [ 1.5, 11.5, 5, 15 ] },
+      "up": { "texture": "#rope", "uv": [ 7, 9, 10.5, 9.5 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 7, 7, 10.5, 7.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "PortBodyTie7",
+     "from": [ 25.75, -1.75, -1.75 ],
+     "to": [ 26.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 1.5, 2.5, 2, 6 ] },
+      "east": { "texture": "#rope", "uv": [ 1, 9.5, 4.5, 13 ] },
+      "south": { "texture": "#rope", "uv": [ 7, 11, 7.5, 14.5 ] },
+      "west": { "texture": "#rope", "uv": [ 2.5, 1.5, 6, 5 ] },
+      "up": { "texture": "#rope", "uv": [ 9, 10, 12.5, 10.5 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 5.5, 6, 9, 6.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "PortBodyTie8",
+     "from": [ 29.75, -1.75, -1.75 ],
+     "to": [ 30.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 9.5, 5, 10, 8.5 ] },
+      "east": { "texture": "#rope", "uv": [ 7, 7.5, 10.5, 11 ] },
+      "south": { "texture": "#rope", "uv": [ 11, 5.5, 11.5, 9 ] },
+      "west": { "texture": "#rope", "uv": [ 6, 1, 9.5, 4.5 ] },
+      "up": { "texture": "#rope", "uv": [ 8, 6.5, 11.5, 7 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 3.5, 6, 7, 6.5 ], "rotation": 90 }
+     }
+    }
+   ]
+  },
+  {
+   "name": "StarboardBodyFrame",
+   "from": [ -8, 1.6, 9.6 ],
+   "to": [ -8, 1.6, 9.6 ],
+   "rotationOrigin": [ -8, 1.6, 9.6 ],
+   "faces": {},
+   "children": [
+    {
+     "name": "StarboardBody",
+     "from": [ 0, -1.088, -1.6 ],
+     "to": [ 32, 1.088, 1.6 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 0, 5.5, 16, 7.676 ] },
+      "east": { "texture": "#reed", "uv": [ 9.5, 8, 12.7, 10.176 ] },
+      "south": { "texture": "#reed", "uv": [ 0, 0, 16, 2.176 ] },
+      "west": { "texture": "#reed", "uv": [ 3, 13, 6.2, 15.176 ] },
+      "up": { "texture": "#reed", "uv": [ 0, 2, 16, 5.2 ] },
+      "down": { "texture": "#reed", "uv": [ 0, 7, 16, 10.2 ] }
+     }
+    },
+    {
+     "name": "StarboardBodyRound",
+     "from": [ -0.01, -1.6, -1.088 ],
+     "to": [ 31.99, 1.6, 1.088 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 0, 2, 16, 5.2 ] },
+      "east": { "texture": "#reed", "uv": [ 0.5, 6.5, 2.676, 9.7 ] },
+      "south": { "texture": "#reed", "uv": [ 0, 12, 16, 15.2 ] },
+      "west": { "texture": "#reed", "uv": [ 5, 2.5, 7.176, 5.7 ] },
+      "up": { "texture": "#reed", "uv": [ 0, 12.5, 16, 14.676 ] },
+      "down": { "texture": "#reed", "uv": [ 0, 10, 16, 12.176 ] }
+     }
+    },
+    {
+     "name": "StarboardBodyTie1",
+     "from": [ 1.75, -1.75, -1.75 ],
+     "to": [ 2.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 3, 7, 3.5, 10.5 ] },
+      "east": { "texture": "#rope", "uv": [ 4, 9.5, 7.5, 13 ] },
+      "south": { "texture": "#rope", "uv": [ 4, 1.5, 4.5, 5 ] },
+      "west": { "texture": "#rope", "uv": [ 7, 5, 10.5, 8.5 ] },
+      "up": { "texture": "#rope", "uv": [ 6, 4, 9.5, 4.5 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 10, 13, 13.5, 13.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "StarboardBodyTie2",
+     "from": [ 5.75, -1.75, -1.75 ],
+     "to": [ 6.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 8.5, 0.5, 9, 4 ] },
+      "east": { "texture": "#rope", "uv": [ 0, 6.5, 3.5, 10 ] },
+      "south": { "texture": "#rope", "uv": [ 6, 0, 6.5, 3.5 ] },
+      "west": { "texture": "#rope", "uv": [ 5.5, 3.5, 9, 7 ] },
+      "up": { "texture": "#rope", "uv": [ 4.5, 9.5, 8, 10 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 3, 5, 6.5, 5.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "StarboardBodyTie3",
+     "from": [ 9.75, -1.75, -1.75 ],
+     "to": [ 10.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 9.5, 11, 10, 14.5 ] },
+      "east": { "texture": "#rope", "uv": [ 2.5, 1, 6, 4.5 ] },
+      "south": { "texture": "#rope", "uv": [ 9, 10.5, 9.5, 14 ] },
+      "west": { "texture": "#rope", "uv": [ 7, 0.5, 10.5, 4 ] },
+      "up": { "texture": "#rope", "uv": [ 1, 9, 4.5, 9.5 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 2.5, 2, 6, 2.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "StarboardBodyTie4",
+     "from": [ 13.75, -1.75, -1.75 ],
+     "to": [ 14.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 9, 7, 9.5, 10.5 ] },
+      "east": { "texture": "#rope", "uv": [ 8, 0, 11.5, 3.5 ] },
+      "south": { "texture": "#rope", "uv": [ 7.5, 8.5, 8, 12 ] },
+      "west": { "texture": "#rope", "uv": [ 6.5, 4, 10, 7.5 ] },
+      "up": { "texture": "#rope", "uv": [ 0, 9, 3.5, 9.5 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 0, 2.5, 3.5, 3 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "StarboardBodyTie5",
+     "from": [ 17.75, -1.75, -1.75 ],
+     "to": [ 18.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 3.5, 7, 4, 10.5 ] },
+      "east": { "texture": "#rope", "uv": [ 8.5, 8, 12, 11.5 ] },
+      "south": { "texture": "#rope", "uv": [ 4, 6, 4.5, 9.5 ] },
+      "west": { "texture": "#rope", "uv": [ 0.5, 6, 4, 9.5 ] },
+      "up": { "texture": "#rope", "uv": [ 3, 1, 6.5, 1.5 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 12, 5, 15.5, 5.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "StarboardBodyTie6",
+     "from": [ 21.75, -1.75, -1.75 ],
+     "to": [ 22.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 2.5, 0, 3, 3.5 ] },
+      "east": { "texture": "#rope", "uv": [ 5, 5.5, 8.5, 9 ] },
+      "south": { "texture": "#rope", "uv": [ 13.5, 8.5, 14, 12 ] },
+      "west": { "texture": "#rope", "uv": [ 4.5, 8, 8, 11.5 ] },
+      "up": { "texture": "#rope", "uv": [ 6, 3.5, 9.5, 4 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 2.5, 3, 6, 3.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "StarboardBodyTie7",
+     "from": [ 25.75, -1.75, -1.75 ],
+     "to": [ 26.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 15, 11, 15.5, 14.5 ] },
+      "east": { "texture": "#rope", "uv": [ 6.5, 0.5, 10, 4 ] },
+      "south": { "texture": "#rope", "uv": [ 5, 3.5, 5.5, 7 ] },
+      "west": { "texture": "#rope", "uv": [ 5, 11.5, 8.5, 15 ] },
+      "up": { "texture": "#rope", "uv": [ 0.5, 11.5, 4, 12 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 9.5, 13, 13, 13.5 ], "rotation": 90 }
+     }
+    },
+    {
+     "name": "StarboardBodyTie8",
+     "from": [ 29.75, -1.75, -1.75 ],
+     "to": [ 30.25, 1.75, 1.75 ],
+     "faces": {
+      "north": { "texture": "#rope", "uv": [ 9.5, 7, 10, 10.5 ] },
+      "east": { "texture": "#rope", "uv": [ 0.5, 12, 4, 15.5 ] },
+      "south": { "texture": "#rope", "uv": [ 11, 6.5, 11.5, 10 ] },
+      "west": { "texture": "#rope", "uv": [ 2.5, 3, 6, 6.5 ] },
+      "up": { "texture": "#rope", "uv": [ 12, 14, 15.5, 14.5 ], "rotation": 90 },
+      "down": { "texture": "#rope", "uv": [ 5.5, 4.5, 9, 5 ], "rotation": 90 }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatPort1x1Frame",
+   "from": [ -8, 1.6, 6.4 ],
+   "to": [ -8, 1.6, 6.4 ],
+   "rotationOrigin": [ -8, 1.6, 6.4 ],
+   "rotationY": -180,
+   "rotationZ": -5.711,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatPort1x1",
+     "from": [ 0, -1.088, -1.6 ],
+     "to": [ 3.015, 1.088, 1.6 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 2, 10.5, 5.015, 12.676 ] },
+      "east": { "texture": "#reed", "uv": [ 7, 7, 10.2, 9.176 ] },
+      "south": { "texture": "#reed", "uv": [ 7, 9, 10.015, 11.176 ] },
+      "west": { "texture": "#reed", "uv": [ 11, 11.5, 14.2, 13.676 ] },
+      "up": { "texture": "#reed", "uv": [ 11.5, 1.5, 14.515, 4.7 ] },
+      "down": { "texture": "#reed", "uv": [ 1, 11.5, 4.015, 14.7 ] }
+     }
+    },
+    {
+     "name": "FlatPort1x1Round",
+     "from": [ -0.01, -1.6, -1.088 ],
+     "to": [ 3.005, 1.6, 1.088 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 1.5, 10.5, 4.515, 13.7 ] },
+      "east": { "texture": "#reed", "uv": [ 7.5, 7, 9.676, 10.2 ] },
+      "south": { "texture": "#reed", "uv": [ 8, 6, 11.015, 9.2 ] },
+      "west": { "texture": "#reed", "uv": [ 9, 7.5, 11.176, 10.7 ] },
+      "up": { "texture": "#reed", "uv": [ 12.5, 5, 15.515, 7.176 ] },
+      "down": { "texture": "#reed", "uv": [ 1, 2.5, 4.015, 4.676 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatPort1x2Frame",
+   "from": [ -11, 1.3, 6.4 ],
+   "to": [ -11, 1.3, 6.4 ],
+   "rotationOrigin": [ -11, 1.3, 6.4 ],
+   "rotationY": -180,
+   "rotationZ": -7.595,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatPort1x2",
+     "from": [ 0, -0.884, -1.3 ],
+     "to": [ 3.027, 0.884, 1.3 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 7.5, 2.5, 10.527, 4.268 ] },
+      "east": { "texture": "#reed", "uv": [ 0, 9.5, 2.6, 11.268 ] },
+      "south": { "texture": "#reed", "uv": [ 0.5, 9.5, 3.527, 11.268 ] },
+      "west": { "texture": "#reed", "uv": [ 5.5, 11.5, 8.1, 13.268 ] },
+      "up": { "texture": "#reed", "uv": [ 5.5, 2, 8.527, 4.6 ] },
+      "down": { "texture": "#reed", "uv": [ 5, 9.5, 8.027, 12.1 ] }
+     }
+    },
+    {
+     "name": "FlatPort1x2Round",
+     "from": [ -0.01, -1.3, -0.884 ],
+     "to": [ 3.017, 1.3, 0.884 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 6.5, 2.5, 9.527, 5.1 ] },
+      "east": { "texture": "#reed", "uv": [ 6, 10, 7.768, 12.6 ] },
+      "south": { "texture": "#reed", "uv": [ 2, 8.5, 5.027, 11.1 ] },
+      "west": { "texture": "#reed", "uv": [ 11.5, 1.5, 13.268, 4.1 ] },
+      "up": { "texture": "#reed", "uv": [ 3.5, 11.5, 6.527, 13.268 ] },
+      "down": { "texture": "#reed", "uv": [ 6.5, 11.5, 9.527, 13.268 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatPort1x3Frame",
+   "from": [ -14, 0.9, 6.4 ],
+   "to": [ -14, 0.9, 6.4 ],
+   "rotationOrigin": [ -14, 0.9, 6.4 ],
+   "rotationY": -180,
+   "rotationZ": -9.926,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatPort1x3",
+     "from": [ 0, -0.612, -0.9 ],
+     "to": [ 2.03, 0.612, 0.9 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 5.5, 1, 7.53, 2.224 ] },
+      "east": { "texture": "#reed", "uv": [ 13.5, 3.5, 15.3, 4.724 ] },
+      "south": { "texture": "#reed", "uv": [ 7.5, 3.5, 9.53, 4.724 ] },
+      "west": { "texture": "#reed", "uv": [ 11, 2, 12.8, 3.224 ] },
+      "up": { "texture": "#reed", "uv": [ 8.5, 8, 10.53, 9.8 ] },
+      "down": { "texture": "#reed", "uv": [ 8.5, 9.5, 10.53, 11.3 ] }
+     }
+    },
+    {
+     "name": "FlatPort1x3Round",
+     "from": [ -0.01, -0.9, -0.612 ],
+     "to": [ 2.02, 0.9, 0.612 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 0, 0.5, 2.03, 2.3 ] },
+      "east": { "texture": "#reed", "uv": [ 4.5, 11.5, 5.724, 13.3 ] },
+      "south": { "texture": "#reed", "uv": [ 12.5, 12.5, 14.53, 14.3 ] },
+      "west": { "texture": "#reed", "uv": [ 1, 10.5, 2.224, 12.3 ] },
+      "up": { "texture": "#reed", "uv": [ 10, 1, 12.03, 2.224 ] },
+      "down": { "texture": "#reed", "uv": [ 11, 9, 13.03, 10.224 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatStarboard1x1Frame",
+   "from": [ -8, 1.6, 9.6 ],
+   "to": [ -8, 1.6, 9.6 ],
+   "rotationOrigin": [ -8, 1.6, 9.6 ],
+   "rotationY": -180,
+   "rotationZ": -5.711,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatStarboard1x1",
+     "from": [ 0, -1.088, -1.6 ],
+     "to": [ 3.015, 1.088, 1.6 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 9.5, 2, 12.515, 4.176 ] },
+      "east": { "texture": "#reed", "uv": [ 11.5, 8, 14.7, 10.176 ] },
+      "south": { "texture": "#reed", "uv": [ 3.5, 13, 6.515, 15.176 ] },
+      "west": { "texture": "#reed", "uv": [ 3.5, 2.5, 6.7, 4.676 ] },
+      "up": { "texture": "#reed", "uv": [ 5, 5.5, 8.015, 8.7 ] },
+      "down": { "texture": "#reed", "uv": [ 5, 6.5, 8.015, 9.7 ] }
+     }
+    },
+    {
+     "name": "FlatStarboard1x1Round",
+     "from": [ -0.01, -1.6, -1.088 ],
+     "to": [ 3.005, 1.6, 1.088 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 2.5, 3, 5.515, 6.2 ] },
+      "east": { "texture": "#reed", "uv": [ 0.5, 8, 2.676, 11.2 ] },
+      "south": { "texture": "#reed", "uv": [ 1.5, 0.5, 4.515, 3.7 ] },
+      "west": { "texture": "#reed", "uv": [ 4.5, 5.5, 6.676, 8.7 ] },
+      "up": { "texture": "#reed", "uv": [ 4.5, 3, 7.515, 5.176 ] },
+      "down": { "texture": "#reed", "uv": [ 10, 0.5, 13.015, 2.676 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatStarboard1x2Frame",
+   "from": [ -11, 1.3, 9.6 ],
+   "to": [ -11, 1.3, 9.6 ],
+   "rotationOrigin": [ -11, 1.3, 9.6 ],
+   "rotationY": -180,
+   "rotationZ": -7.595,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatStarboard1x2",
+     "from": [ 0, -0.884, -1.3 ],
+     "to": [ 3.027, 0.884, 1.3 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 0.5, 9.5, 3.527, 11.268 ] },
+      "east": { "texture": "#reed", "uv": [ 13, 1, 15.6, 2.768 ] },
+      "south": { "texture": "#reed", "uv": [ 7.5, 0, 10.527, 1.768 ] },
+      "west": { "texture": "#reed", "uv": [ 0.5, 2, 3.1, 3.768 ] },
+      "up": { "texture": "#reed", "uv": [ 2.5, 7, 5.527, 9.6 ] },
+      "down": { "texture": "#reed", "uv": [ 10.5, 6.5, 13.527, 9.1 ] }
+     }
+    },
+    {
+     "name": "FlatStarboard1x2Round",
+     "from": [ -0.01, -1.3, -0.884 ],
+     "to": [ 3.017, 1.3, 0.884 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 10.5, 13, 13.527, 15.6 ] },
+      "east": { "texture": "#reed", "uv": [ 1.5, 6.5, 3.268, 9.1 ] },
+      "south": { "texture": "#reed", "uv": [ 6.5, 8.5, 9.527, 11.1 ] },
+      "west": { "texture": "#reed", "uv": [ 1, 4.5, 2.768, 7.1 ] },
+      "up": { "texture": "#reed", "uv": [ 7.5, 10.5, 10.527, 12.268 ] },
+      "down": { "texture": "#reed", "uv": [ 3.5, 9.5, 6.527, 11.268 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatStarboard1x3Frame",
+   "from": [ -14, 0.9, 9.6 ],
+   "to": [ -14, 0.9, 9.6 ],
+   "rotationOrigin": [ -14, 0.9, 9.6 ],
+   "rotationY": -180,
+   "rotationZ": -9.926,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatStarboard1x3",
+     "from": [ 0, -0.612, -0.9 ],
+     "to": [ 2.03, 0.612, 0.9 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 5.5, 13.5, 7.53, 14.724 ] },
+      "east": { "texture": "#reed", "uv": [ 8.5, 3, 10.3, 4.224 ] },
+      "south": { "texture": "#reed", "uv": [ 2, 10.5, 4.03, 11.724 ] },
+      "west": { "texture": "#reed", "uv": [ 12, 3, 13.8, 4.224 ] },
+      "up": { "texture": "#reed", "uv": [ 4.5, 12, 6.53, 13.8 ] },
+      "down": { "texture": "#reed", "uv": [ 13, 0.5, 15.03, 2.3 ] }
+     }
+    },
+    {
+     "name": "FlatStarboard1x3Round",
+     "from": [ -0.01, -0.9, -0.612 ],
+     "to": [ 2.02, 0.9, 0.612 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 10, 3, 12.03, 4.8 ] },
+      "east": { "texture": "#reed", "uv": [ 2.5, 1.5, 3.724, 3.3 ] },
+      "south": { "texture": "#reed", "uv": [ 8, 11, 10.03, 12.8 ] },
+      "west": { "texture": "#reed", "uv": [ 10, 11.5, 11.224, 13.3 ] },
+      "up": { "texture": "#reed", "uv": [ 3, 2, 5.03, 3.224 ] },
+      "down": { "texture": "#reed", "uv": [ 1, 1, 3.03, 2.224 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatPort2x1Frame",
+   "from": [ 24, 1.6, 6.4 ],
+   "to": [ 24, 1.6, 6.4 ],
+   "rotationOrigin": [ 24, 1.6, 6.4 ],
+   "rotationZ": -5.711,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatPort2x1",
+     "from": [ 0, -1.088, -1.6 ],
+     "to": [ 3.015, 1.088, 1.6 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 4, 12.5, 7.015, 14.676 ] },
+      "east": { "texture": "#reed", "uv": [ 9, 8.5, 12.2, 10.676 ] },
+      "south": { "texture": "#reed", "uv": [ 12, 6.5, 15.015, 8.676 ] },
+      "west": { "texture": "#reed", "uv": [ 6, 9, 9.2, 11.176 ] },
+      "up": { "texture": "#reed", "uv": [ 4.5, 2, 7.515, 5.2 ] },
+      "down": { "texture": "#reed", "uv": [ 3, 0.5, 6.015, 3.7 ] }
+     }
+    },
+    {
+     "name": "FlatPort2x1Round",
+     "from": [ -0.01, -1.6, -1.088 ],
+     "to": [ 3.005, 1.6, 1.088 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 4, 12, 7.015, 15.2 ] },
+      "east": { "texture": "#reed", "uv": [ 12.5, 1, 14.676, 4.2 ] },
+      "south": { "texture": "#reed", "uv": [ 10, 8, 13.015, 11.2 ] },
+      "west": { "texture": "#reed", "uv": [ 12.5, 7, 14.676, 10.2 ] },
+      "up": { "texture": "#reed", "uv": [ 3, 1, 6.015, 3.176 ] },
+      "down": { "texture": "#reed", "uv": [ 2, 10, 5.015, 12.176 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatPort2x2Frame",
+   "from": [ 27, 1.3, 6.4 ],
+   "to": [ 27, 1.3, 6.4 ],
+   "rotationOrigin": [ 27, 1.3, 6.4 ],
+   "rotationZ": -7.595,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatPort2x2",
+     "from": [ 0, -0.884, -1.3 ],
+     "to": [ 3.027, 0.884, 1.3 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 4.5, 4.5, 7.527, 6.268 ] },
+      "east": { "texture": "#reed", "uv": [ 6.5, 7.5, 9.1, 9.268 ] },
+      "south": { "texture": "#reed", "uv": [ 6.5, 10.5, 9.527, 12.268 ] },
+      "west": { "texture": "#reed", "uv": [ 8, 0.5, 10.6, 2.268 ] },
+      "up": { "texture": "#reed", "uv": [ 3, 3.5, 6.027, 6.1 ] },
+      "down": { "texture": "#reed", "uv": [ 1.5, 10.5, 4.527, 13.1 ] }
+     }
+    },
+    {
+     "name": "FlatPort2x2Round",
+     "from": [ -0.01, -1.3, -0.884 ],
+     "to": [ 3.017, 1.3, 0.884 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 12, 3.5, 15.027, 6.1 ] },
+      "east": { "texture": "#reed", "uv": [ 10, 4, 11.768, 6.6 ] },
+      "south": { "texture": "#reed", "uv": [ 4.5, 12.5, 7.527, 15.1 ] },
+      "west": { "texture": "#reed", "uv": [ 10.5, 8, 12.268, 10.6 ] },
+      "up": { "texture": "#reed", "uv": [ 6, 5, 9.027, 6.768 ] },
+      "down": { "texture": "#reed", "uv": [ 0, 8.5, 3.027, 10.268 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatPort2x3Frame",
+   "from": [ 30, 0.9, 6.4 ],
+   "to": [ 30, 0.9, 6.4 ],
+   "rotationOrigin": [ 30, 0.9, 6.4 ],
+   "rotationZ": -9.926,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatPort2x3",
+     "from": [ 0, -0.612, -0.9 ],
+     "to": [ 2.03, 0.612, 0.9 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 0, 8.5, 2.03, 9.724 ] },
+      "east": { "texture": "#reed", "uv": [ 11, 12.5, 12.8, 13.724 ] },
+      "south": { "texture": "#reed", "uv": [ 11.5, 12, 13.53, 13.224 ] },
+      "west": { "texture": "#reed", "uv": [ 3.5, 6, 5.3, 7.224 ] },
+      "up": { "texture": "#reed", "uv": [ 13, 13.5, 15.03, 15.3 ] },
+      "down": { "texture": "#reed", "uv": [ 9.5, 3.5, 11.53, 5.3 ] }
+     }
+    },
+    {
+     "name": "FlatPort2x3Round",
+     "from": [ -0.01, -0.9, -0.612 ],
+     "to": [ 2.02, 0.9, 0.612 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 13, 2, 15.03, 3.8 ] },
+      "east": { "texture": "#reed", "uv": [ 14.5, 4.5, 15.724, 6.3 ] },
+      "south": { "texture": "#reed", "uv": [ 4.5, 2, 6.53, 3.8 ] },
+      "west": { "texture": "#reed", "uv": [ 12.5, 3, 13.724, 4.8 ] },
+      "up": { "texture": "#reed", "uv": [ 3, 1.5, 5.03, 2.724 ] },
+      "down": { "texture": "#reed", "uv": [ 4.5, 3, 6.53, 4.224 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatStarboard2x1Frame",
+   "from": [ 24, 1.6, 9.6 ],
+   "to": [ 24, 1.6, 9.6 ],
+   "rotationOrigin": [ 24, 1.6, 9.6 ],
+   "rotationZ": -5.711,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatStarboard2x1",
+     "from": [ 0, -1.088, -1.6 ],
+     "to": [ 3.015, 1.088, 1.6 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 11.5, 3, 14.515, 5.176 ] },
+      "east": { "texture": "#reed", "uv": [ 0.5, 7, 3.7, 9.176 ] },
+      "south": { "texture": "#reed", "uv": [ 3, 4.5, 6.015, 6.676 ] },
+      "west": { "texture": "#reed", "uv": [ 7.5, 10.5, 10.7, 12.676 ] },
+      "up": { "texture": "#reed", "uv": [ 10, 6, 13.015, 9.2 ] },
+      "down": { "texture": "#reed", "uv": [ 7, 10.5, 10.015, 13.7 ] }
+     }
+    },
+    {
+     "name": "FlatStarboard2x1Round",
+     "from": [ -0.01, -1.6, -1.088 ],
+     "to": [ 3.005, 1.6, 1.088 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 9, 4.5, 12.015, 7.7 ] },
+      "east": { "texture": "#reed", "uv": [ 2.5, 12.5, 4.676, 15.7 ] },
+      "south": { "texture": "#reed", "uv": [ 2, 4.5, 5.015, 7.7 ] },
+      "west": { "texture": "#reed", "uv": [ 9.5, 1, 11.676, 4.2 ] },
+      "up": { "texture": "#reed", "uv": [ 9.5, 10.5, 12.515, 12.676 ] },
+      "down": { "texture": "#reed", "uv": [ 5, 9.5, 8.015, 11.676 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatStarboard2x2Frame",
+   "from": [ 27, 1.3, 9.6 ],
+   "to": [ 27, 1.3, 9.6 ],
+   "rotationOrigin": [ 27, 1.3, 9.6 ],
+   "rotationZ": -7.595,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatStarboard2x2",
+     "from": [ 0, -0.884, -1.3 ],
+     "to": [ 3.027, 0.884, 1.3 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 2, 7.5, 5.027, 9.268 ] },
+      "east": { "texture": "#reed", "uv": [ 5.5, 4.5, 8.1, 6.268 ] },
+      "south": { "texture": "#reed", "uv": [ 2, 6, 5.027, 7.768 ] },
+      "west": { "texture": "#reed", "uv": [ 1.5, 9.5, 4.1, 11.268 ] },
+      "up": { "texture": "#reed", "uv": [ 2.5, 8, 5.527, 10.6 ] },
+      "down": { "texture": "#reed", "uv": [ 2.5, 7.5, 5.527, 10.1 ] }
+     }
+    },
+    {
+     "name": "FlatStarboard2x2Round",
+     "from": [ -0.01, -1.3, -0.884 ],
+     "to": [ 3.017, 1.3, 0.884 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 6, 1, 9.027, 3.6 ] },
+      "east": { "texture": "#reed", "uv": [ 10, 10.5, 11.768, 13.1 ] },
+      "south": { "texture": "#reed", "uv": [ 11.5, 10, 14.527, 12.6 ] },
+      "west": { "texture": "#reed", "uv": [ 13, 6.5, 14.768, 9.1 ] },
+      "up": { "texture": "#reed", "uv": [ 5.5, 9, 8.527, 10.768 ] },
+      "down": { "texture": "#reed", "uv": [ 0.5, 9.5, 3.527, 11.268 ] }
+     }
+    }
+   ]
+  },
+  {
+   "name": "FlatStarboard2x3Frame",
+   "from": [ 30, 0.9, 9.6 ],
+   "to": [ 30, 0.9, 9.6 ],
+   "rotationOrigin": [ 30, 0.9, 9.6 ],
+   "rotationZ": -9.926,
+   "faces": {},
+   "children": [
+    {
+     "name": "FlatStarboard2x3",
+     "from": [ 0, -0.612, -0.9 ],
+     "to": [ 2.03, 0.612, 0.9 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 1, 14.5, 3.03, 15.724 ] },
+      "east": { "texture": "#reed", "uv": [ 13, 11, 14.8, 12.224 ] },
+      "south": { "texture": "#reed", "uv": [ 5.5, 10.5, 7.53, 11.724 ] },
+      "west": { "texture": "#reed", "uv": [ 7, 1, 8.8, 2.224 ] },
+      "up": { "texture": "#reed", "uv": [ 6, 2, 8.03, 3.8 ] },
+      "down": { "texture": "#reed", "uv": [ 1, 12, 3.03, 13.8 ] }
+     }
+    },
+    {
+     "name": "FlatStarboard2x3Round",
+     "from": [ -0.01, -0.9, -0.612 ],
+     "to": [ 2.02, 0.9, 0.612 ],
+     "faces": {
+      "north": { "texture": "#reed", "uv": [ 10, 12, 12.03, 13.8 ] },
+      "east": { "texture": "#reed", "uv": [ 10, 1, 11.224, 2.8 ] },
+      "south": { "texture": "#reed", "uv": [ 8, 4.5, 10.03, 6.3 ] },
+      "west": { "texture": "#reed", "uv": [ 13, 4, 14.224, 5.8 ] },
+      "up": { "texture": "#reed", "uv": [ 12, 5.5, 14.03, 6.724 ] },
+      "down": { "texture": "#reed", "uv": [ 1, 2.5, 3.03, 3.724 ] }
+     }
+    }
+   ]
+  }
+ ]
+}

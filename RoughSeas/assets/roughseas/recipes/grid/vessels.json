@@ -1,14 +1,15 @@
 [
     {
-        "name": "Reed boat",
-        "ingredientPattern": "RRR,RKR,RRR",
+        "name": "Reed bundle",
+        "ingredientPattern": "RRR,LKL",
         "ingredients": {
-            "R": { "type": "item", "code": "game:*", "allowedVariants": ["papyrustops", "cattailtops", "thatch"], "quantity": 3 },
+            "R": { "type": "item", "code": "game:*", "allowedVariants": ["papyrustops", "cattailtops", "thatch"], "quantity": 48 },
+            "L": { "type": "item", "code": "game:rope" },
             "K": { "type": "item", "tags": ["tool-knife"], "isTool": true }
         },
         "width": 3,
-        "height": 3,
-        "output": { "type": "item", "code": "roughseas:reedboat" }
+        "height": 2,
+        "output": { "type": "block", "code": "roughseas:reedbundle-one-we" }
     },
     {
         "name": "Splitting wedge",

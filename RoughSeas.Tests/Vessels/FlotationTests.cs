@@ -102,13 +102,34 @@ public class FlotationTests
     }
 
     [Fact]
-    public void AReedBoatSoakedForThreeDaysLiesOnTheBottom()
+    public void AReedBoatLeftAfloatLiesOnTheBottomWithinFourDays()
     {
         var reed = Fixtures.Hull("reedboat");
         var soak = Fixtures.IntegrityConfig("reedboat")["soak"]!;
         double perDay = (double)soak["kgPerDay"]!;
 
-        Assert.False(reed.Float(reed.Crewed(soaked: perDay * 2.5)).Sunk);
-        Assert.True(reed.Float(reed.Crewed(bodies: 0, kit: 0, soaked: perDay * 3.5)).Sunk);
+        Assert.False(reed.Float(reed.Crewed(bodies: 0, kit: 0, soaked: perDay * 3)).Sunk);
+        Assert.True(reed.Float(reed.Crewed(bodies: 0, kit: 0, soaked: perDay * 4)).Sunk);
+    }
+
+    [Fact]
+    public void HerRiderSitsAwashAfterABitMoreThanADayAfloat()
+    {
+        var reed = Fixtures.Hull("reedboat");
+        double perDay = (double)Fixtures.IntegrityConfig("reedboat")["soak"]!["kgPerDay"]!;
+
+        Assert.True(reed.Float(reed.Crewed(soaked: perDay)).FreeboardMetres > 0);
+        Assert.Equal(0, reed.Float(reed.Crewed(soaked: perDay * 1.5)).FreeboardMetres, 6);
+    }
+
+    [Fact]
+    public void AReedBoatCarriesHerRiderLowWithAFewCentimetresOfFreeboard()
+    {
+        var reed = Fixtures.Hull("reedboat");
+
+        var afloat = reed.Float(reed.Crewed());
+
+        Assert.False(afloat.Sunk);
+        Assert.InRange(afloat.FreeboardMetres, 0.02, 0.08);
     }
 }

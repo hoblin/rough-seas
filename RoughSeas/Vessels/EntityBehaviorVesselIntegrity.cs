@@ -18,7 +18,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 {
     public const string Code = "roughseas:vesselintegrity";
 
-    private const string TreeKey = "roughseas:vessel";
+    public const string TreeKey = "roughseas:vessel";
     private const string CarriedKey = "roughseas:vessel";
     private const string VersionKey = "version";
     private const string CheckedAtKey = "checkedAt";

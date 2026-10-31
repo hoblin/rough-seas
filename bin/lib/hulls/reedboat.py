@@ -1,52 +1,140 @@
-from shape import Shape, box, group, path
-from stroke import crew, paddling
+import math
+from pathlib import Path
 
-XS = [-15.2, -12.6, -8, -1, 8, 17, 24, 28.6, 31.2]
-RISE = [8.4, 6.6, 4.6, 3.6, 3.4, 3.6, 4.6, 6.6, 8.4]
-SPREAD = [0.3, 2.2, 4, 4.6, 4.6, 4.6, 4, 2.2, 0.3]
-GIRTH = [2.4, 3.6, 4.8, 5.2, 5.2, 4.8, 3.6, 2.4]
-TIES = {1: (0.3, 0.7), 2: (0.5,), 7: (0.5,), 8: (0.3, 0.7)}
-STOWED = ((-6, 5.6, 2.2), (0, -3, 1.5))
+from shape import Shape, beam, box, group, path, stages, write
+
+VOXEL_METRES = 1 / 16
+ROPE_METRES = 10
+KNOT_METRES = 0.3
+
+BODY = (-8, 24)
+GIRTH = 3.2
+CENTRE = 8
+SIDES = (("Port", -1), ("Starboard", 1))
+
+TIE_PITCH = 4
+TIE_TURNS = 2
+LASHINGS = (-6, 1, 8, 15, 22)
+LASHING_TURNS = 2
+TIP_GIRTHS = (3.2, 2.6, 1.8, 1.1)
+TIP_REACH = (0, 3, 6, 8)
+TIP_RISE = (0, 1.2, 3.4, 6.4)
+TIP_TURN_PITCH = 1
+DROOPS = 4
 
 
-def side(name, direction):
-    points = [(x, y, 8 + direction * s) for x, y, s in zip(XS, RISE, SPREAD)]
-    return [
-        segment
-        for i, (a, b) in enumerate(zip(points, points[1:]), 1)
-        for segment in path(f"{name}{i}x", [a, b], GIRTH[i - 1], GIRTH[i - 1], "reed",
-                            ties=TIES.get(i, (0.5,)), tie_tex="rope", rounded=True)
-    ]
+def bundle_z(side):
+    return CENTRE + side * GIRTH / 2
 
 
-def paddle(at, rot):
-    return group("Paddle", at, rot, [
-        box("PaddleHandle", (-10.5, -0.5, -1), (-9, 0.9, 1), "paddle", grain="z"),
-        box("PaddleTop", (-9, -0.2, -0.2), (-6, 0.6, 0.6), "paddle"),
-        box("PaddleShaft", (-6, -0.15, -0.15), (10, 0.55, 0.55), "paddle"),
-        box("PaddleThroat", (-1, -0.2, -0.2), (1, 0.6, 0.6), "paddle"),
-        box("PaddleBlade", (10, -0.05, -1.2), (18.5, 0.45, 1.9), "paddle"),
-    ])
+def bundle(name, side):
+    z = bundle_z(side)
+    ties = [f / (BODY[1] - BODY[0]) for f in range(TIE_PITCH // 2, BODY[1] - BODY[0], TIE_PITCH)]
+    return [beam(f"{name}Body", (BODY[0], GIRTH / 2, z), (BODY[1], GIRTH / 2, z), GIRTH, GIRTH, "reed",
+                 ties=ties, tie=(0.5, 0.15), tie_tex="rope", rounded=True, overlap=0)]
+
+
+def flat_end(name, side, start, direction):
+    z = bundle_z(side)
+    points = [(start + direction * reach, girth / 2, z) for reach, girth in zip(TIP_REACH, TIP_GIRTHS)]
+    return path(name, points, lambda i: TIP_GIRTHS[i - 1], lambda i: TIP_GIRTHS[i - 1], "reed", rounded=True, overlap=0)
+
+
+def raised_end(name, start, direction, droop):
+    lift = 1 - droop / (DROOPS - 1)
+    points = [(start + direction * reach, TIP_GIRTHS[0] / 2 + rise * lift, CENTRE) for reach, rise in zip(TIP_REACH, TIP_RISE)]
+    segments = []
+    for i, (a, b) in enumerate(zip(points, points[1:]), 1):
+        turns = math.dist(a, b) / TIP_TURN_PITCH
+        ties = [(t + 0.5) / turns for t in range(math.floor(turns))]
+        segments.append(beam(f"{name}{i}", a, b, 2 * TIP_GIRTHS[i - 1], TIP_GIRTHS[i - 1], "reed",
+                             ties=ties, tie=(0.3, 0.15), tie_tex="lashing", rounded=True, overlap=0.1))
+    return segments
+
+
+def lashing(name, x):
+    return [box(name, (x - 0.5, -0.2, CENTRE - GIRTH - 0.2), (x + 0.5, GIRTH + 0.2, CENTRE + GIRTH + 0.2), "lashing", grain="z")]
+
+
+def ropes_of(metres):
+    return math.ceil(metres / ROPE_METRES)
+
+
+def bundle_ropes():
+    ties = len(range(TIE_PITCH // 2, BODY[1] - BODY[0], TIE_PITCH))
+    metres = ties * (TIE_TURNS * math.pi * GIRTH * VOXEL_METRES + KNOT_METRES)
+    print(f"bundle: {ties} ties {TIE_PITCH * VOXEL_METRES * 100:.0f} cm apart, {metres:.1f} m of cord, {ropes_of(metres)} ropes")
+    return ropes_of(metres)
+
+
+def lashings():
+    around = (2 * GIRTH + math.pi * GIRTH) * VOXEL_METRES
+    each = LASHING_TURNS * around + KNOT_METRES
+    total = each * len(LASHINGS)
+    ropes = ropes_of(total)
+    order = sorted(LASHINGS, key=lambda x: abs(x - CENTRE))
+    per_rope = [[] for _ in range(ropes)]
+    for n, x in enumerate(order):
+        per_rope[n * ropes // len(order)] += lashing(f"Lash{n + 1}", x)
+    print(f"lashing: {len(LASHINGS)} lashings of {LASHING_TURNS} turns, {total:.1f} m of cord, {ropes} ropes")
+    return per_rope
+
+
+def tips():
+    points = list(zip(TIP_REACH, TIP_RISE))
+    turns = [math.dist(a, b) / TIP_TURN_PITCH for a, b in zip(points, points[1:])]
+    metres = sum(n * (2 * g + math.pi * g) for n, g in zip(turns, TIP_GIRTHS)) * VOXEL_METRES + KNOT_METRES
+    turns = sum(turns)
+    assert ropes_of(metres) == 1, "an end takes more than one rope"
+    print(f"ends: {turns:.0f} turns bind each end up, {metres:.1f} m of cord, one rope an end")
+    ends = []
+    for n, (start, direction) in enumerate(((BODY[0], -1), (BODY[1], 1)), 1):
+        ends.append([group(f"Tips{n}Droop{k}", (0, 0, 0), (0, 0, 0), raised_end(f"Tip{n}Droop{k}x", start, direction, k))
+                     for k in range(DROOPS)])
+    return ends
+
+
+def flats(sides):
+    return [[element for name, side in sides for element in flat_end(f"Flat{name}{n}x", side, start, direction)]
+            for n, (start, direction) in enumerate(((BODY[0], -1), (BODY[1], 1)), 1)]
+
+
+def laid(sides):
+    return [element for name, side in sides for element in bundle(name, side)] + [e for end in flats(sides) for e in end]
+
+
+def envelope():
+    body = math.pi * (GIRTH / 2) ** 2 * (BODY[1] - BODY[0])
+    ends = sum(math.pi / 12 * (b - a) * (ga ** 2 + ga * gb + gb ** 2)
+               for a, b, ga, gb in zip(TIP_REACH, TIP_REACH[1:], TIP_GIRTHS, TIP_GIRTHS[1:]))
+    litres = (body + 2 * ends) * VOXEL_METRES ** 3 * 1000
+    print(f"a bundle: {(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]) * VOXEL_METRES:.1f} m long, "
+          f"{GIRTH * VOXEL_METRES * 100:.0f} cm across, {litres:.1f} L; two: {2 * litres:.1f} L")
+
+
+def block(target, sides):
+    write(target, {"textureWidth": 16, "textureHeight": 16,
+                   "textures": {"reed": "roughseas:entity/vessel/reed", "rope": "game:block/cloth/reedrope"},
+                   "elements": laid(sides)})
 
 
 def build(target):
     shape = Shape(target, {
         "reed": "roughseas:entity/vessel/reed",
         "rope": "game:block/cloth/reedrope",
-        "paddle": "game:block/wood/debarked/birch",
+        "lashing": "game:item/resource/rope",
     })
-    shape.add(side("Port", -1), side("Starboard", 1))
-    core = [(-9, 4.2, 8), (-3, 2.6, 8), (8, 2.4, 8), (19, 2.6, 8), (25, 4.2, 8)]
-    shape.add(path("Core", core, lambda i: (4.2, 6, 6, 4.2)[i - 1], lambda i: (3.6, 4.8, 4.8, 3.6)[i - 1], "reed",
-                   rounded=True))
-    for n, x in enumerate((-3.5, 4.5, 12.5, 19.5), 1):
-        shape.add(box(f"Binding{n}", (x, 0.2, 2.9), (x + 0.8, 6.3, 13.1),
-                      {"north": "rope", "south": "rope", "up": "rope", "down": "rope"}, grain="z"))
-    shape.add(paddle(*STOWED))
+    envelope()
+    bundle_ropes()
+    shape.add(group("Blank", (0, 0, 0), (0, 0, 0), [e for name, side in SIDES for e in bundle(name, side)]))
+    shape.add(stages("Flat", flats(SIDES)))
+    shape.add(stages("Lashing", lashings()))
+    shape.add(stages("Tips", tips()))
     shape.keep("Hull", "FrontSeat", "Cargo")
-    crew(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward",
-         paddling("reedboat", STOWED, (0, 0.2, 0.2), -1, 6, 11.5, 0), {"R": "PaddleThroat", "L": "PaddleHandle"},
-         {"rotationZ": 6})
+    shape.write()
+    blocks = Path(target).parents[2] / "block"
+    block(blocks / "reedbundle-one.json", SIDES[:1])
+    block(blocks / "reedbundle-two.json", SIDES)
 
 
 if __name__ == "__main__":
