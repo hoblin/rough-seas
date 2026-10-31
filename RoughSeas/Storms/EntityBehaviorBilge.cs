@@ -111,7 +111,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         using var _ = storms.Budget.Measure();
         var hours = watch.Lap().Hours;
         sinceUpdate = 0;
-        var inflow = sea.DangerousOceans ? Rainfall() * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
+        var inflow = sea.DangerousOceans ? VanillaRain.FallingOn(entity) * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
         Ship(inflow, "by rain");
         Litres -= drainLitresPerHour * hours;
         if ((rained += inflow) < 1) return;
@@ -148,14 +148,5 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         double top = water.HeightOf(water.Levels);
         double surface = built.FloorMetres + Fill * (top - built.FloorMetres);
         water.Show(Enumerable.Range(1, water.Levels).FirstOrDefault(level => water.HeightOf(level) >= surface, water.Levels));
-    }
-
-    private double Rainfall()
-    {
-        var accessor = entity.World.BlockAccessor;
-        var pos = entity.Pos.AsBlockPos;
-        if (accessor.GetRainMapHeightAt(pos) > pos.Y) return 0;
-
-        return accessor.GetClimateAt(pos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0;
     }
 }

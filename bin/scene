@@ -10,6 +10,8 @@ bin/scene dock [CODE...]   calm noon at open sea, the player in creative flying 
 bin/scene look ID [DX DY DZ]
                            the one way to look at anything: fly to entity ID's position plus DX DY DZ
                            (default 3 1 0: east of it and a block up), hover there and aim at it.
+                           ID may be a point instead, X,Y,Z as commands take them (relative to the
+                           map centre): blocks with no entity yet, such as logs laid out to build on.
                            A shot from any side, over land or sea; 0 6 0.01 looks straight down,
                            above the water's tint. `bin/game hotkey togglehud` hides the HUD.
 bin/scene photo ID FILE [DX DY DZ] [hover]
@@ -85,6 +87,14 @@ dock() {
 
 look() {
   local id=$1 dx=${2:-3} dy=${3:-1} dz=${4:-0} entity at
+  if [[ $id == *,*,* ]]; then
+    local x y z
+    IFS=, read -r x y z <<<"$id"
+    "$game" do "/bridge fly $(awk -v x="$x" -v y="$y" -v z="$z" -v dx="$dx" -v dy="$dy" -v dz="$dz" 'BEGIN { print x + dx, y + dy, z + dz }')" >/dev/null
+    "$game" look $(awk -v dx="$dx" -v dy="$dy" -v dz="$dz" \
+      'BEGIN { pi = atan2(0, -1); print atan2(-dx, -dz), pi + atan2(dy + 1.6, sqrt(dx * dx + dz * dz)) }') >/dev/null
+    return
+  fi
   entity=$("$game" entity "$id")
   [[ $entity == {* ]] || { echo "$entity" >&2; exit 1; }
   at=$(jq -r --argjson dx "$dx" --argjson dy "$dy" --argjson dz "$dz" <<<"$entity" \

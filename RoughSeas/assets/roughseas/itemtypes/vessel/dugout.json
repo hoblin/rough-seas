@@ -8,7 +8,7 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater", "Bilge", "Blank", "Char", "Clay", "Fire"]},
+    "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater", "Bilge", "Blank", "Char", "Clay", "Wood", "Fire"]},
     "textures": {
         "bilge": {"base": "game:block/liquid/waterportion"},
         "char": {"base": "game:block/coal/charcoal"},

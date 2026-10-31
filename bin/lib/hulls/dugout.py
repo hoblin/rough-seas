@@ -35,7 +35,7 @@ def level(floor, n):
 
 
 def blank(hull, floor):
-    levels, chars, fires = [], [], []
+    levels, chars, woods, fires = [], [], [], []
     for n in range(HOLLOWINGS):
         height = level(floor, n)
         slabs, planes, embers = [], [], []
@@ -52,8 +52,10 @@ def blank(hull, floor):
                 for k, (x, across, yaw) in enumerate([(-10, -1.2, 8), (-2, 1, -6), (6, -0.8, 5), (14, 1.3, -9), (21, 0, 4)], 1)]
         levels.append(group(f"Blank{n}", (0, 0, 0), (0, 0, 0), slabs))
         chars.append(group(f"Char{n}", (0, 0, 0), (0, 0, 0), planes))
-        fires.append(group(f"Fire{n}", (0, 0, 0), (0, 0, 0), embers + logs))
-    return [group(name, (0, 0, 0), (0, 0, 0), children) for name, children in (("Blank", levels), ("Char", chars), ("Fire", fires))]
+        woods.append(group(f"Wood{n}", (0, 0, 0), (0, 0, 0), logs))
+        fires.append(group(f"Fire{n}", (0, 0, 0), (0, 0, 0), embers))
+    return [group(name, (0, 0, 0), (0, 0, 0), children)
+            for name, children in (("Blank", levels), ("Char", chars), ("Wood", woods), ("Fire", fires))]
 
 
 def glowing(element):

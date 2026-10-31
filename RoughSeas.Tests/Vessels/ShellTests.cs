@@ -96,6 +96,29 @@ public class ShellTests
     }
 
     [Fact]
+    public void TheUncutWoodOfABlankBacksItsSideByItsThickness()
+    {
+        var side = new CarvedShell { Material = "wood-oak", Metres = 0.05, SpanMetres = 0.5 };
+        var blank = side.Uncut(0.4, 0).Resists(30000, materials, Hull, CutShare);
+
+        Assert.True(blank.Backed(HullPlace.StarboardSide, 0.99));
+        Assert.True(blank.Backed(HullPlace.Bottom, 0.99));
+        Assert.Equal(Resistance.Holing(75000, 0.05, Hole) + Resistance.Holing(75000, 0.4, Hole), blank.Against(Blow.Point, backed: true), 6);
+    }
+
+    [Fact]
+    public void AsTheHollowIsCutOnlyTheSideBelowItStaysBackedAndTheBottomUntilTheLast()
+    {
+        var side = new CarvedShell { Material = "wood-oak", Metres = 0.05, SpanMetres = 0.5 };
+        var cut = side.Uncut(0.07, 5.0 / 6).Resists(30000, materials, Hull, CutShare);
+
+        Assert.True(cut.Backed(HullPlace.PortSide, 0.16));
+        Assert.False(cut.Backed(HullPlace.PortSide, 0.17));
+        Assert.True(cut.Backed(HullPlace.Bottom, 0.99));
+        Assert.Same(side, side.Uncut(0, 1));
+    }
+
+    [Fact]
     public void ABundleOfStemsSpringsOffEveryBlowLashingsAndAll()
     {
         var resists = Reeds.Resists(3000, materials, Hull, CutShare);

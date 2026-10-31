@@ -79,5 +79,9 @@ The dugout is burnt and hewn out of five logs on the shore ([Built in place](Bui
 - The dugout's rower holds an oar, as on vanilla's raft: it sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes. A mod that patched its own paddle or strokes patches a vessel that no longer has them.
 - `roughseas:bilge`'s `capacityLitres` is what the finished hull holds; while she is built, she holds what is cut out of it.
 
-New: the behaviours `roughseas:burnout` and `roughseas:launch` with their keys, and the watched tree `roughseas:build` on a vessel being built.
+- A vanilla campfire starts it: dry grass laid with Shift on the middle log of a row lays the blank instead of vanilla's firepit (a Harmony prefix on `ItemDryGrass.OnHeldInteractStart`). Anywhere else dry grass does what vanilla does.
+- Every axe in the game, a modded one too, carries our collectible behaviour `roughseas:hew`, so that holding it on a charred blank hews.
+- Rain on a vessel, in her bilge and drying her ashore, is what `WeatherSystemBase.GetPrecipitation` reads, as vanilla's fires do, and nothing under a roof.
+
+New: the behaviours `roughseas:burnout` and `roughseas:launch` with their keys, the collectible behaviour `roughseas:hew`, and the watched tree `roughseas:build` on a vessel being built.
 

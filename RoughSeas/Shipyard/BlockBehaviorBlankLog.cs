@@ -1,18 +1,16 @@
+using System.Collections.Generic;
 using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
-using Vintagestory.GameContent;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
 
 namespace RoughSeas.Shipyard;
 
-public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block), IIgnitable
+public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
 {
     public const string Code = "roughseas:blanklog";
-
-    private const float IgniteSeconds = 3;
 
     private string vessel = "";
 
@@ -22,22 +20,13 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block), IIgnitab
         vessel = properties["vessel"].AsString("");
     }
 
-    public EnumIgniteState OnTryIgniteBlock(EntityAgent byEntity, BlockPos pos, float secondsIgniting)
+    public bool TryLay(EntityAgent byEntity, BlockPos pos)
     {
-        if (Row(byEntity, pos) == null) return EnumIgniteState.NotIgnitable;
+        if (Row(byEntity, pos) is not { } row) return false;
 
-        return secondsIgniting > IgniteSeconds ? EnumIgniteState.IgniteNow : EnumIgniteState.Ignitable;
-    }
-
-    public void OnTryIgniteBlockOver(EntityAgent byEntity, BlockPos pos, float secondsIgniting, ref EnumHandling handling)
-    {
-        if (Row(byEntity, pos) is not { } row) return;
-
-        handling = EnumHandling.PreventDefault;
         if (byEntity.World.Side == EnumAppSide.Server) Lay(byEntity, row);
+        return true;
     }
-
-    public EnumIgniteState OnTryIgniteStack(EntityAgent byEntity, BlockPos pos, ItemSlot slot, float secondsIgniting) => EnumIgniteState.NotIgnitable;
 
     public static LyingLog? LogOf(Block block) =>
         block.Variant["wood"] is { } species
@@ -77,6 +66,7 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block), IIgnitab
         blank.Pos.Yaw = row.Along == EnumAxis.X ? GameMath.PIHALF : 0;
         EntityBehaviorBurnout.Begin(blank, world.Api.ModLoader.GetModSystem<SeaWeatherSystem>().Clock.Hours);
         world.SpawnEntity(blank);
-        shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: the fire is lit", byEntity.GetName(), LogRow.Length, row.Wood.Code, row.Water.Code);
+        shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: dry grass on the middle log, the base of her first fire", byEntity.GetName(),
+            LogRow.Length, row.Wood.Code, row.Water.Code);
     }
 }
