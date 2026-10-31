@@ -172,11 +172,13 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     {
         if (drop.ResolvedItemstack?.Collectible is not { } piece
             || layings.FirstOrDefault(laying => laying.Value.Takes(new DummySlot(drop.ResolvedItemstack))).Key is not { } stage
-            || framing.WoodOf(stage) is not { } laid) return drop;
+            || (framing.WoodOf(stage) ?? framing.Wood) is not { } laid) return drop;
 
         var wood = Wood.Parse(laid);
         var asLaid = drop.Clone();
-        asLaid.Code = new AssetLocation(wood.Domain, piece.CodeWithVariant(Wood.VariantCode, wood.Species).Path);
+        asLaid.Code = piece.Code.Domain == Shipyard.Mod.Info.ModID
+            ? new AssetLocation(piece.Code.Domain, piece.CodeWithVariant(Wood.VariantCode, wood.Code).Path)
+            : new AssetLocation(wood.Domain, piece.CodeWithVariant(Wood.VariantCode, wood.Species).Path);
         return asLaid.Resolve(entity.World, "laid wreckage", entity.Code) ? asLaid : drop;
     }
 

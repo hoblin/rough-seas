@@ -232,6 +232,34 @@ public class HullModelTests
     }
 
     [Fact]
+    public void TripsDriedBetweenRotTheRawShareNoFurtherThanItsShare()
+    {
+        var hull = Covered(new() { ["raw"] = 1, ["prepared"] = 1 });
+
+        for (int trip = 0; trip < 3; trip++)
+        {
+            hull.Pass(3, afloat: true, sun: 0, waterCelsius: 20);
+            hull.Pass(1, afloat: false, sun: 1);
+        }
+
+        Assert.Equal(0.5, hull.Condition, 6);
+    }
+
+    [Fact]
+    public void ABareFrameAfloatSpendsNoneOfTheKeepingOfHidesSewnOnLater()
+    {
+        var hides = new Dictionary<string, int>();
+        var hull = new CrackingHull(() => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig("currach")), Fixtures.HullConfig);
+        hull.CoveredBy(() => new HideCover(hides, 0));
+
+        hull.Pass(5, afloat: true, sun: 0, waterCelsius: 20);
+        hides["raw"] = 2;
+        hull.Pass(0.5, afloat: true, sun: 0, waterCelsius: 20);
+
+        Assert.Equal(1, hull.Condition);
+    }
+
+    [Fact]
     public void ADayInTheSunDriesACoverHoweverLongSheWasAfloat()
     {
         var hull = Covered(new() { ["prepared"] = 2 });

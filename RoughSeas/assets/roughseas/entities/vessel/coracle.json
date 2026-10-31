@@ -37,7 +37,7 @@
             "seep": {"litresPerHourASeam": 12, "greaseDays": 2.5},
             "cover": {"hides": {"prepared": 2}, "seams": 0}
         },
-        "passivephysicsmultibox": {"collisionBoxes": [{"x1": -0.75, "y1": 0, "z1": -0.535, "x2": 0.75, "y2": 0.4, "z2": 0.535}], "groundDragFactor": 1, "airDragFallingFactor": 0.5, "gravityFactor": 1.0},
+        "passivephysicsmultibox": {"collisionBoxes": [{"x1": -0.535, "y1": 0, "z1": -0.75, "x2": 0.535, "y2": 0.4, "z2": 0.75}], "groundDragFactor": 1, "airDragFallingFactor": 0.5, "gravityFactor": 1.0},
         "creaturecarrier": {"seats": [{"apName": "FrontSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "selectionBox": "HullAP"}]},
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP"]},
         "roughseas:seaforces": {

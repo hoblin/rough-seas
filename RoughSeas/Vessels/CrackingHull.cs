@@ -13,6 +13,7 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
     private const string GreaseKey = "greaseDays";
     private const string ExposureKey = "exposureDays";
     private const string DryingKey = "dryingDays";
+    private const string RottedKey = "rotted";
     private const double Gravity = 9.81;
     private const double LitresPerCubicMetre = 1000;
 
@@ -56,7 +57,7 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public void Pass(double days, bool afloat, double sun, double waterCelsius = 20)
     {
-        if (Cover != null) Weather(days, afloat, sun, waterCelsius);
+        if (Cover is { Total: > 0 }) Weather(days, afloat, sun, waterCelsius);
         if (seep == null || !afloat || GreaseDays <= 0) return;
 
         Tree.SetDouble(GreaseKey, Math.Max(0, GreaseDays - days));
@@ -70,7 +71,8 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
         else if (before > 0 && sun > 0) (after, drying) = drying + days * sun >= config.Hides.DryDays ? (0, 0) : (before, drying + days * sun);
         else return;
 
-        double rot = Cover!.Rot(config.Hides, before, after);
+        var rotted = Tree.GetOrAddTreeAttribute(RottedKey);
+        double rot = Cover!.Rot(config.Hides, before, after, stage => rotted.GetDouble(stage), (stage, share) => rotted.SetDouble(stage, share));
         Tree.SetDouble(ExposureKey, after);
         Tree.SetDouble(DryingKey, drying);
         if (rot > 0)

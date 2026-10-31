@@ -16,9 +16,18 @@ public sealed record HideCover(IReadOnlyDictionary<string, int> Sections, int Se
     public double SoakedKg(HidesConfig hides) =>
         Sections.Sum(entry => entry.Value * hides.SquareMetresASection * hides.KilogramsASquareMetre * hides.Of(entry.Key).Uptake);
 
-    /// <summary>The share of the cover that rots as its exposure grows from <paramref name="before"/> to <paramref name="after"/>, each type no further than its own share.</summary>
-    public double Rot(HidesConfig hides, double before, double after) =>
-        Total == 0 ? 0 : Sections.Sum(entry => (double)entry.Value / Total * (Rotted(hides, entry.Key, after) - Rotted(hides, entry.Key, before)));
+    /// <summary>
+    /// The share of the cover that rots as its exposure grows from <paramref name="before"/> to <paramref name="after"/>.
+    /// Each type keeps how much of it has rotted already, through <paramref name="rotted"/> and <paramref name="rot"/>, and
+    /// rots no further than all of it, however often the cover dries and is wetted again.
+    /// </summary>
+    public double Rot(HidesConfig hides, double before, double after, Func<string, double> rotted, Action<string, double> rot) =>
+        Total == 0 ? 0 : Sections.Sum(entry =>
+        {
+            double was = rotted(entry.Key), now = Math.Min(1, was + Rotted(hides, entry.Key, after) - Rotted(hides, entry.Key, before));
+            if (now > was) rot(entry.Key, now);
+            return (double)entry.Value / Total * (now - was);
+        });
 
     private static double Rotted(HidesConfig hides, string stage, double exposure)
     {
