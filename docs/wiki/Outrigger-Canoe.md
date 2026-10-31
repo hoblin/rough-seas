@@ -1,6 +1,6 @@
 ![The outrigger canoe afloat](images/outrigger-canoe/afloat-bow.webp)
 
-A dugout with a float log held out to one side on three booms lashed across her gunwales, and a mast stayed fore, aft and out to the float. Her crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Her hull, booms, float and spars can each be of their own wood.
+A dugout with a float log held out to one side on three booms lashed across her gunwales, and a mast stayed fore, aft and out to the float. Her crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Her hull, her float and her poles can each be of their own wood.
 
 ## In Rough Seas
 
@@ -60,7 +60,7 @@ Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged whe
 
    ![The float hewn, the mast and spars up](images/outrigger-canoe/build-mast.webp)
 
-7. **Bend on the sail and set up the stays.** Hold linen cloth on her, four pieces for her 3.8 m² of sail, then four ropes: the forestay, the backstay, the shroud out to the float and the sheet. She is finished and takes her seats.
+7. **Bend on the sail and set up the stays.** Hold linen cloth on her, four pieces for her 3.5 m² of sail, then four ropes: the forestay, the backstay, the shroud out to the float and the sheet. She is finished and takes her seats.
 
    ![Rigged, the sail furled on its spar](images/outrigger-canoe/build-rigged.webp)
 

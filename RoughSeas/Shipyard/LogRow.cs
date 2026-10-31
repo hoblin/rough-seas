@@ -17,11 +17,12 @@ public sealed record LogRow(Wood Wood, BlockPos Centre, EnumAxis Along, int Leng
         return Offsets(length).All(offset => logAt(At(centre, log.Axis, offset)) == log) ? new LogRow(log.Wood, centre, log.Axis, length) : null;
     }
 
-    public static LogRow? Run(BlockPos pos, Func<BlockPos, LyingLog?> logAt)
+    /// <summary>The logs of one wood lying end to end through <paramref name="pos"/>, counted no further than past <paramref name="longest"/>: a longer run comes back longer than it, not whole.</summary>
+    public static LogRow? Run(BlockPos pos, Func<BlockPos, LyingLog?> logAt, int longest)
     {
         if (logAt(pos) is not { } log) return null;
 
-        int Reach(int step) => Enumerable.Range(1, int.MaxValue - 1).TakeWhile(n => logAt(At(pos, log.Axis, n * step)) == log).Count();
+        int Reach(int step) => Enumerable.Range(1, longest).TakeWhile(n => logAt(At(pos, log.Axis, n * step)) == log).Count();
         int back = Reach(-1), length = back + 1 + Reach(1);
         return new LogRow(log.Wood, At(pos, log.Axis, (length - 1) / 2 - back), log.Axis, length);
     }

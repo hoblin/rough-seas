@@ -79,7 +79,7 @@ public class LogRowTests
 
         Assert.All(Enumerable.Range(8, 5), x =>
         {
-            var run = LogRow.Run(new BlockPos(x, 5, 10), logs.GetValueOrDefault);
+            var run = LogRow.Run(new BlockPos(x, 5, 10), logs.GetValueOrDefault, 5);
             Assert.Equal((Centre, 5), (run?.Centre, run?.Length));
         });
     }
@@ -89,7 +89,7 @@ public class LogRowTests
     {
         Lay(Oak, Oak, Oak);
 
-        var run = LogRow.Run(new BlockPos(8, 5, 10), logs.GetValueOrDefault)!;
+        var run = LogRow.Run(new BlockPos(8, 5, 10), logs.GetValueOrDefault, 5)!;
 
         Assert.Equal(3, run.Length);
         Assert.Equal(new BlockPos(9, 5, 10), run.Centre);
@@ -101,7 +101,15 @@ public class LogRowTests
     {
         Lay(Oak, Oak, Birch, Oak, Oak);
 
-        Assert.Equal(2, LogRow.Run(new BlockPos(8, 5, 10), logs.GetValueOrDefault)?.Length);
+        Assert.Equal(2, LogRow.Run(new BlockPos(8, 5, 10), logs.GetValueOrDefault, 5)?.Length);
+    }
+
+    [Fact]
+    public void ARunLongerThanAskedComesBackLongerThanAskedNotWhole()
+    {
+        foreach (var x in Enumerable.Range(0, 20)) logs[new BlockPos(x, 5, 10)] = new LyingLog(Oak, EnumAxis.X);
+
+        Assert.InRange(LogRow.Run(new BlockPos(10, 5, 10), logs.GetValueOrDefault, 3)!.Length, 4, 7);
     }
 
     private void Lay(params Wood[] woods)

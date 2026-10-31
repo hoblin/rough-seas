@@ -108,7 +108,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
         if (entity.Api is ICoreClientAPI capi && framing.Wood is { } wood)
         {
-            LathTexture.Draw(capi, ref entityShape, ref shapeIsCloned, LathTexture.Frame, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
+            WoodTexture.Draw(capi, ref entityShape, ref shapeIsCloned, WoodTexture.Frame, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
         }
     }
 
@@ -148,7 +148,7 @@ public class FramingConfig
         foreach (var stage in Stages) stage.Pieces = pieces(stage.Group);
     }
 
-    /// <summary>The part of her designed build that her laths make: its share and reference, taken by the wood they are of.</summary>
+    /// <summary>The name of the part of her designed build that her laths or poles make: its share and reference, taken by the wood they are of.</summary>
     public string FramePart = "";
 
     public string Laths = "";

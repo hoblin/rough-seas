@@ -6,7 +6,7 @@ using Vintagestory.API.Common;
 namespace RoughSeas.Shipyard;
 
 /// <summary>A part drawn in the wood it was split or hewn from: the debarked side of that wood's lying log.</summary>
-public static class LathTexture
+public static class WoodTexture
 {
     public const string Frame = "frame";
     public const string Float = "float";

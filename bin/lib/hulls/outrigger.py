@@ -16,15 +16,23 @@ BOOMS = (9.5, -10, 24)
 BOOM = 1.4
 MAST = (12, 8)
 MASTHEAD = 49
+SPAR_METRES = 3
 TACK = (-14, 11.5)
-YARD_END = (30, 52)
-SPAR_END = (38, 15)
 REACH = 20
 SAIL_STRIPS = 16
-CLOTHS = 4
+CLOTH_SQUARE_METRES = 1
 
 LASHING_TURNS = 13
 GUNWALE_METRES = WALL * VOXEL_METRES
+
+
+def spar_end(rise):
+    length = SPAR_METRES / VOXEL_METRES
+    return (TACK[0] + length * math.cos(math.radians(rise)), TACK[1] + length * math.sin(math.radians(rise)))
+
+
+YARD_END = spar_end(55)
+SPAR_END = spar_end(3.6)
 
 
 def float_body():
@@ -118,12 +126,13 @@ def area():
 
 
 def furled():
+    cloths = math.ceil(area() / CLOTH_SQUARE_METRES)
     rolls = []
-    for n in range(CLOTHS):
-        a, b = n / CLOTHS, (n + 1) / CLOTHS
+    for n in range(cloths):
+        a, b = n / cloths, (n + 1) / cloths
         at = lambda f: (TACK[0] + f * (YARD_END[0] - TACK[0]), TACK[1] + f * (YARD_END[1] - TACK[1]) - 1.4, 8)
         rolls.append([beam(f"SailRoll{n + 1}", at(a), at(b), 2.2, 2.2, "sail", overlap=0)])
-    print(f"sail: {area():.1f} m² of crab claw, {CLOTHS} cloths")
+    print(f"sail: {area():.1f} m² of crab claw, {cloths} cloths")
     return rig("SailFurled", [group(f"SailFurled{n}", (0, 0, 0), (0, 0, 0), roll) for n, roll in enumerate(rolls, 1)])
 
 
@@ -149,7 +158,7 @@ def stays():
     return [
         rope("Forestay", top, (-21, RIM + 1, 8)),
         rope("Backstay", top, (35, RIM + 1, 8)),
-        rope("Shroud", top, (BOOMS[0] + 1.5, RIM + 1.4, 30)),
+        rope("Shroud", top, (BOOMS[0] + 1.5, FLOAT_Y + FLOAT_DIAMETER / 2, FLOAT_Z - 1)),
         rope("Sheet", reached((SPAR_END[0] - 1, SPAR_END[1] - 0.6, 8)), (28, RIM + 1, 8)),
     ]
 

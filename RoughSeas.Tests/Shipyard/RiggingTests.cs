@@ -1,8 +1,10 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RoughSeas.Shipyard;
+using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Tests.Shipyard;
 
@@ -93,11 +95,49 @@ public class RiggingTests
     }
 
     [Fact]
-    public void HerPolesAreAllHerFrameWood()
+    public void HerFirstBoomIsOneOfHerSixPolesOfFrame()
     {
         var outrigger = JustJoined();
         var poles = outrigger.Stages.Where(stage => stage.Work == FramingWork.Pole).Sum(stage => stage.Pieces);
 
         Assert.Equal(1.0 / poles, outrigger.Framed, 6);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(GameMath.PIHALF)]
+    [InlineData(GameMath.PI)]
+    public void AFloatRowOnHerStarboardSideJoinsHerAsSheLies(float yaw) =>
+        Assert.Equal((Row(yaw, 1).Centre, false), Float(yaw, Row(yaw, 1)) is var (row, turned) ? (row.Centre, turned) : default);
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(GameMath.PIHALF)]
+    public void AFloatRowOnHerPortSideTurnsHerEndForEnd(float yaw) =>
+        Assert.Equal((Row(yaw, -1).Centre, true), Float(yaw, Row(yaw, -1)) is var (row, turned) ? (row.Centre, turned) : default);
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(4)]
+    public void OnlyARowOfHerFloatsLogsMakesHerFloat(int logs) => Assert.Null(Float(0, Row(0, 1, logs)));
+
+    [Fact]
+    public void LogsLyingAcrossHerMakeNoFloat() => Assert.Null(Float(GameMath.PIHALF, Row(0, 1)));
+
+    private static readonly Vec3d Hull = new(100.5, 5, 200.5);
+
+    private static LogRow Row(float yaw, int side, int logs = 3)
+    {
+        var (alongX, alongZ) = HullShape.ToWorld(1, 0, yaw);
+        var (x, z) = HullShape.ToWorld(0, side * Config.FloatOffMetres, yaw);
+        var axis = Math.Abs(alongX) > Math.Abs(alongZ) ? EnumAxis.X : EnumAxis.Z;
+        var centre = new BlockPos((int)Math.Floor(Hull.X + x), (int)Hull.Y, (int)Math.Floor(Hull.Z + z));
+        return new LogRow(new Wood("game", "oak"), centre, axis, logs);
+    }
+
+    private static (LogRow Row, bool EndForEnd)? Float(float yaw, LogRow laid)
+    {
+        var logs = laid.Blocks.ToDictionary(pos => pos, _ => new LyingLog(laid.Wood, laid.Along));
+        return EntityBehaviorRiggable.FloatBeside(Hull.X, Hull.Y, Hull.Z, yaw, Config.FloatLogs, Config.FloatOffMetres, logs.GetValueOrDefault);
     }
 }

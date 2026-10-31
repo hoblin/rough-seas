@@ -187,22 +187,21 @@ At every stage she is a vessel: she floats and can be picked up, her build goes 
 
 ### Rigged in place
 
-`roughseas:riggable` on a finished hull and `roughseas:rigging` on the vessel she becomes build one vessel onto another, the way an outrigger was really made: a finished dugout, a float log alongside, booms lashed across both. A pole held on a riggable hull, for her `seconds`, with `floatLogs` logs of one wood lying end to end along her `floatMetres` off to either side, lays her first boom: the logs are taken away and she is replaced, where she lies, by the entity of her `vessel` code and her own wood, at the start of her rigging. What a hull keeps (its cracks, the water in it) goes with her, through the vessel behaviours that implement `IHandedOver`, turned end for end when the float lay on the side opposite the rigged model's. Riders get off, and what her accessory slots held drops beside her. A hull still being built is refused.
+`roughseas:riggable` on a finished hull and `roughseas:rigging` on the vessel she becomes build one vessel onto another, the way an outrigger was really made: a finished dugout, a float log alongside, booms lashed across both. One of her successor's `poles` held on a riggable hull, for the successor's first stage's `seconds`, with `floatLogs` logs of one wood lying end to end along her `floatOffMetres` off to either side, lays her first boom: the logs are taken away and she is replaced, where she lies, by the entity of her `vessel` code and her own wood, at the start of her rigging. What a hull keeps (its cracks, the water in it) goes with her, through the vessel behaviours that implement `IHandedOver`, turned end for end when the float lay on the side opposite the rigged model's. Riders get off, and what her accessory slots held drops beside her. A hull still being built is refused.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
-| `vessel` | entity code | none | the vessel she becomes, without its wood (ours `roughseas:outrigger`) |
-| `poles` | item code | none | what lays her first boom, wildcards allowed |
-| `seconds` | s | 0 | how long it is held on her |
+| `vessel` | entity code | none | the vessel she becomes, without its wood (ours `roughseas:outrigger`); it carries `roughseas:rigging` |
 
 `roughseas:rigging` is `roughseas:framing` started that way: the same `stages` and keys, its first stage begun with the boom laid, and no bark. On top of them:
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
 | `floatLogs` | count | 0 | the logs her float is laid from |
-| `floatMetres` | m | 0 | how far off her centreline they lie: the row is found through the block that far out, within half a block |
+| `floatOffMetres` | m | 0 | how far off her centreline they lie: the row is found through the block that far out, within half a block |
+| `floorMetres` | m | 0 | the top of her hold's floor above her origin, her hull's: the bilge draws its water from there |
 | `floatPart` | part name | none | the part of her `parts` her float makes: its share and its `reference` stay, the material is the float's wood. Her shape's `float` texture is drawn in that wood |
-| `rigged` | shape groups | none | groups shown only once she is finished, such as vanilla's `SailUnfurled` and `SailHalf` |
+| `rigged` | shape groups | none | groups shown only once every piece is laid, such as vanilla's `SailUnfurled` and `SailHalf`; until then her sail stays furled |
 
 A vessel already in a world from before, with no build of its own, is finished, its float and poles of its hull's wood. Our outrigger's builder, `bin/lib/hulls/outrigger.py`, draws her on the dugout's own hull.
 

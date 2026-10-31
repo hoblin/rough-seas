@@ -43,7 +43,7 @@
             ],
             "damage": {"textures": ["inside"], "material": "wood"},
             "sources": {
-                "parts": "Her hull is the dugout she was built on, 400 kg of oak. Her float is three metres of log some 30 cm across, 0.21 m³ (bin/lib/hulls/outrigger.py), 143 kg of oak; her six poles (three 2.75 m booms and a 3 m mast about 9 cm across, two 3.25 m spars about 8 cm), 0.1 m³, 70 kg. A float or poles of another wood weigh by their own",
+                "parts": "Her hull is the dugout she was built on, 400 kg of oak. Her float is three metres of log some 30 cm across, 0.21 m³ (bin/lib/hulls/outrigger.py), 143 kg of oak; her six poles (three 2.6 m booms and a 3 m mast about 9 cm across, two 3 m spars about 8 cm), 0.1 m³, 70 kg. A float or poles of another wood weigh by their own",
                 "impactCapacity": "The dugout's hull: the float and rig lashed to it take no knock a hull takes",
                 "shell": "The dugout's walls, about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe)",
                 "depthMetres": "The dugout's: keel to gunwale",
@@ -55,7 +55,8 @@
             "framePart": "poles",
             "floatPart": "float",
             "floatLogs": 3,
-            "floatMetres": 2,
+            "floatOffMetres": 2,
+            "floorMetres": 0.075,
             "poles": "roughseas:pole-*",
             "rope": "game:rope",
             "cloth": "game:cloth-*",
@@ -71,12 +72,13 @@
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
                 "floatLogs": "A small outrigger's float is about 3 m long",
-                "floatMetres": "A small outrigger's float rides 1.5 to 2 m off her hull: hull, gap, float, three blocks across",
+                "floatOffMetres": "A small outrigger's float rides 1.5 to 2 m off her hull: hull, gap, float, three blocks across",
+                "floorMetres": "The dugout's hold floor: her 0.5 m rim less its 0.425 m hollow",
                 "booms": "Setting one pole across her or up, about three minutes, as fitting one of a canoe's laths",
                 "lashing": "One rope is ten metres of lashing: about a quarter of an hour, as a canoe's (an estimate). Each boom is lashed to both gunwales and to the float, thirteen turns a lashing (ten round, three frapping) of their girth: 56 m, counted by her shape's builder",
                 "ends": "A float's end hewn to a point over 0.375 m takes off two thirds of that much log, about 18 L. An axe stroke bites some 0.08 L (its 10 cm edge 2 cm deep, a 4 cm chip), 30 strokes a minute (H. Glaser, physiology of forestry work, FAO): some 7.5 minutes",
-                "sail": "A crab claw of 3.8 m² between her two spars (bin/lib/hulls/outrigger.py), one cloth a square metre, as one linen block covers: four, each laced to the spars in about a quarter of an hour (an estimate)",
-                "stays": "A forestay, a backstay, a shroud to the float and the sheet, each under ten metres: one rope each, set up in about a quarter of an hour (an estimate)"
+                "sail": "A crab claw of 3.5 m² between her two 3 m spars (bin/lib/hulls/outrigger.py), one cloth a square metre, as one linen block covers: four, each laced to the spars in about a quarter of an hour (an estimate)",
+                "stays": "A forestay, a backstay, a shroud out to the float and the sheet, each under ten metres: one rope each, set up in about a quarter of an hour (an estimate)"
             }
         },
         "roughseas:launch": {

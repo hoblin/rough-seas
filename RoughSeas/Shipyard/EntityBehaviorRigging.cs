@@ -5,6 +5,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Shipyard;
 
@@ -17,12 +18,20 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
     public new const string Code = "roughseas:rigging";
 
     private const string FloatKey = "float";
+    private const string SailKey = "sailPosition";
 
     private RiggingConfig rig = null!;
 
     private string? FloatWood => Tree?.GetString(FloatKey);
 
+    public override double FloorMetres => rig.FloorMetres;
+
     public override string PropertyName() => Code;
+
+    public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
+    {
+        if (!framing.Built && entity.WatchedAttributes.GetInt(SailKey) != 0) entity.WatchedAttributes.SetInt(SailKey, 0);
+    }
 
     public static void Begin(Entity vessel, RiggingConfig rig, string poleWood, string floatWood) =>
         Begin(vessel, DataVersion, tree =>
@@ -40,7 +49,7 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
         if (entity.Api is ICoreClientAPI capi && FloatWood is { } wood)
         {
-            LathTexture.Draw(capi, ref entityShape, ref shapeIsCloned, LathTexture.Float, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
+            WoodTexture.Draw(capi, ref entityShape, ref shapeIsCloned, WoodTexture.Float, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
         }
     }
 
@@ -57,9 +66,12 @@ public class RiggingConfig : FramingConfig
 
     public int FloatLogs;
 
-    public double FloatMetres;
+    public double FloatOffMetres;
 
-    /// <summary>The shape's groups shown only once she is finished.</summary>
+    /// <summary>The top of the hold's floor above her origin: her hull's, finished before she was rigged.</summary>
+    public double FloorMetres;
+
+    /// <summary>The shape's groups shown only once every piece is laid.</summary>
     public string[] Rigged = [];
 
     public static new RiggingConfig? Of(EntityProperties type) => Of<RiggingConfig>(type, EntityBehaviorRigging.Code);

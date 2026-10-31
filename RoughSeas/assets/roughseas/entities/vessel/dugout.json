@@ -62,14 +62,7 @@
                 "hewSaturation": "As hard as a patch of mending: hewing out a day's char by hand"
             }
         },
-        "roughseas:riggable": {
-            "vessel": "roughseas:outrigger",
-            "poles": "roughseas:pole-*",
-            "seconds": 3,
-            "sources": {
-                "seconds": "Setting her first boom across her onto the float row, about three minutes, as each boom after it"
-            }
-        },
+        "roughseas:riggable": {"vessel": "roughseas:outrigger"},
         "roughseas:launch": {
             "pushNewtons": 300,
             "strideMetres": 0.6,

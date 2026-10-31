@@ -7,8 +7,8 @@ using Vintagestory.API.Datastructures;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A vessel framed or rigged where she lies: her stages are laid in order, piece by piece, until her seams are sealed
-/// and her ribs have set. Her state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is
+/// A vessel framed or rigged where she lies: her stages are laid in order, piece by piece, and she is finished once
+/// the last is laid and what was laid wet has set. Her state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is
 /// finished.
 /// </summary>
 public sealed class Framing
@@ -36,7 +36,7 @@ public sealed class Framing
 
     public bool Built => Current == null;
 
-    /// <summary>The wood her laths are split from, once the first is laid.</summary>
+    /// <summary>The wood her laths or poles are split from, once the first is laid.</summary>
     public string? Wood => Tree?.GetString(WoodKey);
 
     /// <summary>When her last rib has dried enough to hold its bend, in game hours.</summary>
@@ -79,7 +79,7 @@ public sealed class Framing
 
     public bool Finished(double hours) => Built && hours >= SetsAt;
 
-    /// <summary>Lays the current stage's next piece, of <paramref name="wood"/> when it is a lath, setting by <paramref name="setsAt"/>.</summary>
+    /// <summary>Lays the current stage's next piece, of <paramref name="wood"/> when it is a lath or pole, setting by <paramref name="setsAt"/>.</summary>
     public void Lay(string? wood, double setsAt)
     {
         if (Current is not { } stage) return;

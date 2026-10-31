@@ -19,35 +19,54 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
 {
     public const string Code = "roughseas:riggable";
 
-    private string vessel = "";
-    private AssetLocation poles = null!;
-    private double seconds;
+    private EntityProperties? successor;
+    private RiggingConfig? rig;
 
     public override string PropertyName() => Code;
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
-        vessel = attributes["vessel"].AsString("");
-        poles = new AssetLocation(attributes["poles"].AsString(""));
-        seconds = attributes["seconds"].AsDouble();
+        var vessel = attributes["vessel"].AsString("");
+        successor = Wood.Of(properties.Variant) is { } wood ? entity.World.GetEntityType(new AssetLocation($"{vessel}-{wood.Code}")) : null;
+        rig = successor == null ? null : RiggingConfig.Of(successor);
+    }
+
+    /// <summary>
+    /// The row of <paramref name="logs"/> lying along a hull at <paramref name="x"/>, <paramref name="y"/>,
+    /// <paramref name="z"/> turned to <paramref name="yaw"/>, found through the block <paramref name="offMetres"/> off her
+    /// centreline on either side; end for end when it lies on her port side, opposite the rigged model's float.
+    /// </summary>
+    public static (LogRow Row, bool EndForEnd)? FloatBeside(double x, double y, double z, double yaw, int logs, double offMetres, System.Func<BlockPos, LyingLog?> logAt)
+    {
+        var (alongX, alongZ) = HullShape.ToWorld(1, 0, yaw);
+        var axis = Math.Abs(alongX) > Math.Abs(alongZ) ? EnumAxis.X : EnumAxis.Z;
+        foreach (var side in new[] { 1, -1 })
+        {
+            var (dx, dz) = HullShape.ToWorld(0, side * offMetres, yaw);
+            var row = LogRow.Run(new BlockPos((int)Math.Floor(x + dx), (int)Math.Floor(y + 0.5), (int)Math.Floor(z + dz)), logAt, logs);
+            if (row?.Length == logs && row.Along == axis) return (row, side < 0);
+        }
+        return null;
     }
 
     public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
     {
-        if (slot.Itemstack?.Collectible is not { } pole || !WildcardUtil.Match(poles, pole.Code)) return null;
+        if (rig == null || slot.Itemstack?.Collectible is not { } pole || !WildcardUtil.Match(new AssetLocation(rig.Poles), pole.Code)) return null;
+
+        var seconds = rig.Stages[0].Seconds;
         if (entity.GetBehavior<EntityBehaviorBuild>() is { Finished: false }) return (seconds, "shipyard-rig-unfinished");
 
-        return (seconds, Rig() is { } rig && Float(rig, null) != null ? null : "shipyard-float-row");
+        return (seconds, Float(rig) != null ? null : "shipyard-float-row");
     }
 
     public void Lay(EntityAgent byEntity, ItemSlot slot)
     {
         var world = entity.World;
         var shipyard = world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
-        if (WorkWith(slot) is not { Refusal: null } || Successor() is not { } type || Rig() is not { } rig
-            || Float(rig, byEntity) is not var (row, endForEnd) || slot.Itemstack?.Collectible.Variant["wood"] is not { } poleWood) return;
+        if (WorkWith(slot) is not { Refusal: null } || successor == null || rig == null || Float(rig) is not var (row, endForEnd)
+            || !LandClaims.MayBreak(byEntity, row.Blocks) || slot.Itemstack?.Collectible.Variant["wood"] is not { } poleWood) return;
 
-        var rigged = world.ClassRegistry.CreateEntity(type);
+        var rigged = world.ClassRegistry.CreateEntity(successor);
         rigged.Pos.SetFrom(entity.Pos);
         if (endForEnd) rigged.Pos.Yaw = GameMath.Mod(entity.Pos.Yaw + GameMath.PI, GameMath.TWOPI);
         foreach (var state in entity.SidedProperties.Behaviors.OfType<IHandedOver>()) state.HandOver(rigged, endForEnd);
@@ -67,33 +86,19 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
     }
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled) =>
-        entity.GetBehavior<EntityBehaviorBuild>() is { Finished: false } ? null : ObjectCacheUtil.GetOrCreate(world.Api, $"{Code}/help/{poles}", () => new[]
+        rig == null || entity.GetBehavior<EntityBehaviorBuild>() is { Finished: false } ? null : ObjectCacheUtil.GetOrCreate(world.Api, $"{Code}/help/{rig.Poles}", () => new[]
         {
             new WorldInteraction
             {
                 ActionLangCode = "roughseas:shipyard-rig",
                 MouseButton = EnumMouseButton.Right,
-                Itemstacks = [.. world.SearchItems(poles).Select(pole => new ItemStack(pole))]
+                Itemstacks = [.. world.SearchItems(new AssetLocation(rig.Poles)).Select(pole => new ItemStack(pole))]
             }
         });
 
-    private EntityProperties? Successor() =>
-        Wood.Of(entity.Properties.Variant) is { } wood ? entity.World.GetEntityType(new AssetLocation($"{vessel}-{wood.Code}")) : null;
-
-    private RiggingConfig? Rig() => Successor() is { } type ? RiggingConfig.Of(type) : null;
-
-    private (LogRow Row, bool EndForEnd)? Float(RiggingConfig rig, EntityAgent? byEntity)
+    private (LogRow Row, bool EndForEnd)? Float(RiggingConfig rig)
     {
         var accessor = entity.World.BlockAccessor;
-        var (alongX, alongZ) = HullShape.ToWorld(1, 0, entity.Pos.Yaw);
-        var axis = Math.Abs(alongX) > Math.Abs(alongZ) ? EnumAxis.X : EnumAxis.Z;
-        foreach (var side in new[] { 1, -1 })
-        {
-            var (x, z) = HullShape.ToWorld(0, side * rig.FloatMetres, entity.Pos.Yaw);
-            var at = new BlockPos((int)Math.Floor(entity.Pos.X + x), (int)Math.Floor(entity.Pos.Y + 0.5), (int)Math.Floor(entity.Pos.Z + z));
-            var row = LogRow.Run(at, pos => LyingLog.Of(accessor.GetBlock(pos)));
-            if (row?.Length == rig.FloatLogs && row.Along == axis && (byEntity == null || LandClaims.MayBreak(byEntity, row.Blocks))) return (row, side < 0);
-        }
-        return null;
+        return FloatBeside(entity.Pos.X, entity.Pos.Y, entity.Pos.Z, entity.Pos.Yaw, rig.FloatLogs, rig.FloatOffMetres, pos => LyingLog.Of(accessor.GetBlock(pos)));
     }
 }
