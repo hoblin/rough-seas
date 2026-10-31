@@ -45,9 +45,10 @@ public class EntityBehaviorDroop(Entity entity) : EntityBehavior(entity)
 
     private void OnSoaked()
     {
-        if (Sag() == shown) return;
+        int sag = Sag();
+        if (sag == shown) return;
 
-        shown = Sag();
+        shown = sag;
         entity.MarkShapeModified();
     }
 

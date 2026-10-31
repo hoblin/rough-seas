@@ -60,8 +60,8 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
         if (collectible is not Item item || BaseShape(capi) is not { } shape) return null;
 
         bool cloned = true;
-        var built = framing.Stages.Select(stage => stage.Replaces).OfType<string>().Append(Shipyard.Framing.SheetGroup);
-        var ignored = item.Shape.IgnoreElements?.Except(built) ?? [];
+        var drawnByBuild = framing.Stages.Select(stage => stage.Replaces).OfType<string>().Append(Shipyard.Framing.SheetGroup);
+        var ignored = item.Shape.IgnoreElements?.Except(drawnByBuild) ?? [];
         shape.RemoveElements(framing.Hidden().Concat(ignored).ToArray());
         if (framing.Wood is { } wood) WoodTexture.Draw(capi, ref shape, ref cloned, WoodTexture.Frame, wood, item.Textures, capi.ItemTextureAtlas);
         capi.Tesselator.TesselateShape(item, shape, out var mesh);

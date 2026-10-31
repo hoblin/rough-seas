@@ -16,6 +16,9 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
     /// <summary>Whether the held item does work on the vessel selected, refused or not.</summary>
     public static bool WorksOn(ItemSlot slot, EntitySelection? entitySel) => Hull(entitySel)?.WorkWith(slot) != null;
 
+    /// <summary>Whether the entity selected is a vessel built piece by piece, being built or finished.</summary>
+    public static bool Builds(EntitySelection? entitySel) => Hull(entitySel) != null;
+
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
         if (Hull(entitySel)?.WorkWith(slot) is not { } job) return;

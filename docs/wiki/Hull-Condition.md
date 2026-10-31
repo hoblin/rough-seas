@@ -143,7 +143,7 @@ A bottom leak keeps its pace as she fills, for the water inside rises with her; 
 A wooden hull barely wears: the dugout, the outrigger, the bark canoe and the sailboat need no upkeep. Two hulls change just by floating, counted in game hours afloat:
 
 - The [hide currach](Hide-Currach)'s seams seep 30 litres a game hour into her bilge once the grease is gone. Rendered fat keeps them tight for two and a half days afloat; look at her to see when the next greasing is due.
-- The [reed boat](Reed-Boat) soaks up 67 kg of water a day afloat, sitting deeper as it does and its ends sagging: with its rider it lies awash within the day, and left alone it is on the bottom within two. Ashore under the open sky, in daylight and no rain, it dries out, but each drying leaves a third of what it drove out behind as rot that never dries. Soaked and dried a few times, it sinks the moment it is launched.
+- The [reed boat](Reed-Boat) soaks up 33 kg of water a day afloat, sitting deeper as it does and its ends sagging: after a day its rider sits awash, and left alone it is on the bottom within four. Ashore under the open sky, in daylight and no rain, it dries out, but each drying leaves a third of what it drove out behind as rot that never dries. Soaked and dried a few times, it sinks the moment it is launched.
 
 A [raft](Raft) has no hull to fill: a knock works its lashings loose instead, and once they are all loose it comes apart.
 

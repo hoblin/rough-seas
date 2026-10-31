@@ -14,8 +14,8 @@ using Vintagestory.API.Util;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A vessel built up from the bark sheet stripped off a standing tree, stage by stage in the order her
-/// <see cref="FramingConfig.Stages"/> give, each piece drawn where it lies.
+/// A vessel built up where she lies, stage by stage in the order her <see cref="FramingConfig.Stages"/> give, each
+/// piece drawn where it is laid: from a bark sheet stripped off a standing tree, or from bundles bound where they lay.
 /// </summary>
 public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity), IWorkedHull
 {

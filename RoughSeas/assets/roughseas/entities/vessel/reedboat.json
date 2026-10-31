@@ -2,11 +2,11 @@
     "code": "reedboat",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 50,
+    "weight": 50.4,
     "attributes": {
         "speedMultiplier": 1.3,
         "turnSpeed": 1.2,
-        "swimmingOffsetY": 0.275,
+        "swimmingOffsetY": 0.07,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -25,7 +25,7 @@
             "parts": [{"material": "reed", "share": 43.2}, {"material": "rope-flax", "share": 7.2}],
             "depthMetres": 0.2,
             "shell": {"kind": "bundle", "material": "reed", "metres": 0.2, "backing": {"material": "rope-flax", "metres": 0.01}, "backedShare": 0.1, "bottomBackedShare": 0.05},
-            "soak": {"kgPerDay": 67, "dryKgPerDay": 200, "rotShare": 0.35, "saturationKg": 250},
+            "soak": {"kgPerDay": 33, "dryKgPerDay": 200, "rotShare": 0.35, "saturationKg": 250},
             "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
             "damage": {"textures": ["reed"], "material": "reed"},
             "sources": {
@@ -33,7 +33,7 @@
                 "parts": "Reed bundles and reed cord, by weight; the cord counts as flax rope",
                 "depthMetres": "Her bundles stand 20 cm from bottom to top",
                 "shell": "Bundles of stems, which a blow bends and an edge parts without harm; she comes apart where an edge cuts a lashing. Reed rope, as flax rope, 1 cm thick; by the model, eight ties 0.5 voxel wide along each bundle's 48 voxels and the five lashings across her cover about a tenth of her sides and a twentieth of her bottom. A breaker's pressure bends the stems, which spring back",
-                "soak": "Balance on history, per kilogram of reed as the old 60 kg boat took it: the reed takes up a third of its weight in water every six hours afloat, near the 41 kg caballito's 27 kg taken up on a day's fishing (festival.si.edu), and saturates at five times its weight; a sunny day ashore drives four times its weight out again, but each drying leaves a third of what it drove out as rot, so a boat soaked through and dried five times is past saving where Titicaca's totora boats last months"
+                "soak": "A caballito of 41 kg dry weighs some 68 kg soaked with sea water after a day's use (festival.si.edu): its reed takes up two thirds of its weight in water a day afloat, 33 kg on her 50.4. Unmeasured, balance on history: the reed saturates at five times its weight, a sunny day ashore drives four times its weight out again, and each drying leaves a third of what it drove out as rot, so a boat soaked and dried a few times is past saving where Titicaca's totora boats, dried after every trip, last months"
             }
         },
         "roughseas:framing": {
@@ -51,7 +51,7 @@
         "roughseas:droop": {
             "ends": ["Tips1", "Tips2"],
             "sources": {
-                "ends": "Her ends stand up only by the stiffness of their bound reed, against their weight; soaked, the reed is heavier and limp, and the ends sag until, saturated, they lie on the water. No line holds them up, as none held Ra I's stern"
+                "ends": "Her ends stand up only by the stiffness of their bound reed, against their weight; soaked, the reed is heavier and limp, and they sag as far as she is soaked toward saturation, where they would lie flat. No line holds them up, as none held Ra I's stern"
             }
         },
         "passivephysicsmultibox": {
@@ -110,7 +110,7 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/reedboat"},
-        "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}},
+        "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "lashing": {"base": "game:item/resource/rope"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "roughseas:framing"},

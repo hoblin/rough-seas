@@ -21,7 +21,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current and the wind |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:launch` | client and server | a push from the shore that slides a heavy vessel into the water ([Built in place](#built-in-place)) |
-| `roughseas:framing` | client and server | a bark hull stripped off a standing tree and framed piece by piece where it lies ([Framed in place](#framed-in-place)) |
+| `roughseas:framing` | client and server | a vessel laid piece by piece where she lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound by the water ([Bound in place](#bound-in-place)) |
 | `roughseas:riggable` | client and server | a finished hull that a boom laid across her joins to a float, making her the vessel she is rigged into ([Rigged in place](#rigged-in-place)) |
 | `roughseas:rigging` | client and server | that vessel, rigged piece by piece where she lies ([Rigged in place](#rigged-in-place)) |
 | `roughseas:droop` | client | ends that sag as a reed hull soaks ([Bound in place](#bound-in-place)) |
@@ -167,7 +167,7 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 
 - `lath`: a lath, wet. Five logs lying end to end with a splitting wedge on each split into laths when an axe drives a wedge; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
 - `pole`: a pole. Three logs lying end to end with a splitting wedge on each split into poles. Like laths, the first makes her frame of its wood.
-- `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done.
+- `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done. A hold kept on past her last lashing ties nothing; a fresh click ties her as vanilla does.
 - `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
 - `hew`: any axe, which loses a point of durability a piece.
 - `cloth`: a piece of cloth.
@@ -218,7 +218,7 @@ A vessel already in a world from before, with no build of its own, is finished w
 
 ### Bound in place
 
-A block of class `roughseas:BlockBundles` is bundles lying where they were laid, the way a reed boat was really made: two long bundles side by side by the water, lashed together. It has the variants `count` (`one`, `two`) and `axis` (`we`, `ns`): a bundle placed lies along the way its placer looks, and a second held on it lies beside the first. Rope held on the pair for the first stage's `seconds`, with water beside the block or a block below, takes the block away and leaves, where it lay, the entity of its `vessel` attribute, framed with that first stage's first piece laid: its rope the first lashing. Everything after is `roughseas:framing`, with no bark and no wood: our reed boat's stages are `Lashing` and `Tips`, which `replaces` her flat ends (`Flat1`, `Flat2`) with bound-up ones. Draw the block's `one` and `two` shapes from the same geometry as the vessel's `Blank` and `Flat` groups, as `bin/lib/hulls/reedboat.py` does, so the bundles become the vessel without moving.
+A block of class `roughseas:BlockBundles` is bundles lying where they were laid, the way a reed boat was really made: two long bundles side by side by the water, lashed together. It has the variants `count` (`one`, `two`) and `axis` (`we`, `ns`): a bundle placed lies along the way its placer looks, and a second held on it lies beside the first. Rope held on the pair for the first stage's `seconds`, with water beside the block, level with it or a block lower, takes the block away and leaves, where it lay, the entity of its `vessel` attribute, framed with that first stage's first piece laid: its rope the first lashing. Everything after is `roughseas:framing`, with no bark and no wood: our reed boat's stages are `Lashing` and `Tips`, which `replaces` her flat ends (`Flat1`, `Flat2`) with bound-up ones. Draw the block's `one` and `two` shapes from the same geometry as the vessel's `Blank` and `Flat` groups, as `bin/lib/hulls/reedboat.py` does, so the bundles become the vessel without moving.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |

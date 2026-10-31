@@ -4,7 +4,9 @@ Two bundles of reeds three metres long, lashed side by side, their ends bound up
 
 ## In Rough Seas
 
-A day or two afloat at a time. The reed boat is the first thing you can build that floats you, and hard to break: a club or a breaker only bends the bundles, and a blade harms it only where it cuts a lashing. A hard knock on a rock, a ram or a run of rapids tears it, though, and lightning tears it apart. Mostly, water is what ends it. The reed soaks up a third of its weight in water every six hours afloat, sitting lower and lower: with its rider aboard it lies awash within the day, and left alone it is on the bottom within two. As it soaks, its ends sag, since nothing but the reed holds them up. Haul it out under the open sky and it dries in the sun, but each drying leaves it a little more rotten, and soaked through and dried a few times, it sinks the moment it is launched. It can't be mended, and the sea washes straight through it, so there is nothing to bail. Take it across the lake or out to the island, and dry it before the trip home. It is a summer boat: you sit wet on it.
+A day afloat at a time. The reed boat is the first thing you can build that floats you, and hard to break: a club or a breaker only bends the bundles, and a blade harms it only where it cuts a lashing. A hard knock on a rock, a ram or a run of rapids tears it, though, and lightning tears it apart. Mostly, water is what ends it. The reed soaks up two thirds of its weight in water a day afloat, sitting lower and lower: after a day its rider sits awash, and left alone it is on the bottom within four days. As it soaks, its ends sag, since nothing but the reed holds them up. Haul it out under the open sky and it dries in the sun, but each drying leaves it a little more rotten, and soaked through and dried a few times, it sinks the moment it is launched. It can't be mended, and the sea washes straight through it, so there is nothing to bail. Take it across the lake or out to the island, and dry it before the trip home. It is a summer boat: you sit wet on it.
+
+![Her rider sits at the waterline](images/reed-boat/afloat-rider.webp)
 
 ## Where it comes from
 
@@ -17,7 +19,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | Speed | 1.3 × the raft, rowed; about 5 m/s, faster than a swimmer |
 | Turning | nimble |
 | [Hull](Hull-Condition) | 3000 J; tears, shown as *Reed torn* |
-| [Soaking](Hull-Condition#seeping-and-soaking) | 67 kg of water a day afloat: awash with its rider within the day, on the bottom within two left alone; dries ashore in the sun, a third of it left behind as rot |
+| [Soaking](Hull-Condition#seeping-and-soaking) | 33 kg of water a day afloat: its rider awash after a day, on the bottom within four left alone; dries ashore in the sun, a third of it left behind as rot |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 14 cm empty, 5 cm with its rider, when dry |
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |

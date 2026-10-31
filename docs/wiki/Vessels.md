@@ -5,7 +5,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
 | [Raft](Raft) | floating cargo downriver | 1 × | breaks on a few hard knocks |
-| [Reed boat](Reed-Boat) | a day or two afloat, bound by the water from two reed bundles | 1.3 × | you sit wet and low; sinks within two days afloat unless dried, can't be mended |
+| [Reed boat](Reed-Boat) | a day afloat, bound by the water from two reed bundles | 1.3 × | you sit wet and low, awash after a day; sinks within four days afloat unless dried, can't be mended |
 | [Dugout](Dugout) | the tough workhorse | 1.5 × | heavy, and tippy in a sea |
 | [Coracle](Coracle) | fishing and short hops, worn on your back | 0.5 × | slow, swamps in a chop |
 | [Birch-bark canoe](Birch-Bark-Canoe) | long river journeys, through [rapids](Rapids) | 2.1 × | fragile |
@@ -54,4 +54,4 @@ A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a 
 
 A better vessel costs more than a worse one for the same job: the reed boat costs a knife, four stacks and a half of reeds and some rope, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
 
-All six new vessels are built in the crafting grid ([recipes](Recipes)), and each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).
+The coracle and the hide currach are made in the crafting grid ([recipes](Recipes)); the reed boat, the dugout, the bark canoe and the outrigger are built in place, by the water or where their material lies, as each one's page shows. Each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).

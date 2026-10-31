@@ -7,7 +7,6 @@ VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
 KNOT_METRES = 0.3
 
-BOW, STERN = -16, 32
 BODY = (-8, 24)
 GIRTH = 3.2
 CENTRE = 8
@@ -49,13 +48,12 @@ def raised_end(name, start, direction, droop):
         turns = math.dist(a, b) / TIP_TURN_PITCH
         ties = [(t + 0.5) / turns for t in range(math.floor(turns))]
         segments.append(beam(f"{name}{i}", a, b, 2 * TIP_GIRTHS[i - 1], TIP_GIRTHS[i - 1], "reed",
-                             ties=ties, tie=(0.25, 0.12), tie_tex="rope", rounded=True, overlap=0.1))
+                             ties=ties, tie=(0.3, 0.15), tie_tex="lashing", rounded=True, overlap=0.1))
     return segments
 
 
 def lashing(name, x):
-    return [box(name, (x - 0.4, -0.15, CENTRE - GIRTH - 0.15), (x + 0.4, GIRTH + 0.15, CENTRE + GIRTH + 0.15),
-                {"north": "rope", "south": "rope", "up": "rope", "down": "rope", "east": "rope", "west": "rope"}, grain="z")]
+    return [box(name, (x - 0.5, -0.2, CENTRE - GIRTH - 0.2), (x + 0.5, GIRTH + 0.2, CENTRE + GIRTH + 0.2), "lashing", grain="z")]
 
 
 def ropes_of(metres):
@@ -124,6 +122,7 @@ def build(target):
     shape = Shape(target, {
         "reed": "roughseas:entity/vessel/reed",
         "rope": "game:block/cloth/reedrope",
+        "lashing": "game:item/resource/rope",
     })
     envelope()
     bundle_ropes()

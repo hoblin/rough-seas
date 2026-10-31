@@ -93,12 +93,25 @@ public class ReedBoatTests
     public void HerEndsSagWithHerSoak(double soaked, int sag) => Assert.Equal(sag, EntityBehaviorDroop.SagOf(soaked, 4));
 
     [Fact]
-    public void EachEndIsDrawnAtEverySag()
+    public void EachEndIsDrawnAtTheSameSagsFromDryToSaturated()
     {
-        var droop = Entity["behaviorConfigs"]![EntityBehaviorDroop.Code]!["ends"]!.Values<string>();
+        var ends = Entity["behaviorConfigs"]![EntityBehaviorDroop.Code]!["ends"]!.Values<string>().ToArray();
+        int sags = Shape.GetElementByName(ends[0]!).Children.Length;
 
-        Assert.All(droop, end => Assert.Equal(Enumerable.Range(0, 4).Select(n => $"{end}Droop{n}"),
+        Assert.True(sags > 1);
+        Assert.All(ends, end => Assert.Equal(Enumerable.Range(0, sags).Select(n => $"{end}Droop{n}"),
             Shape.GetElementByName(end!).Children.Select(child => child.Name)));
+    }
+
+    [Fact]
+    public void HerItemShowsHerEndsDry()
+    {
+        var item = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "items", "reedboat.json")));
+        var ignored = item["shape"]!["ignoreElements"]!.Values<string>().ToHashSet();
+        var sags = Shape.GetElementByName("Tips1").Children.Select(child => child.Name).ToArray();
+
+        Assert.Equal(sags.Skip(1).Concat(sags.Select(sag => sag.Replace("Tips1", "Tips2")).Skip(1)).ToHashSet(),
+            ignored.Where(name => name!.Contains("Droop")).ToHashSet());
     }
 
     private static string Draw(JToken element) => element.ToString(Formatting.None);
