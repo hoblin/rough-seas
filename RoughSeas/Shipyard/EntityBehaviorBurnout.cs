@@ -22,7 +22,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
 
     private const string VersionKey = "version";
     private const string CheckedAtKey = "checkedAt";
-    private const int DataVersion = 2;
+    private const int DataVersion = 1;
     private const float TickSeconds = 1;
     private const float ParticleSeconds = 0.1f;
     private const int FlamesPerPuff = 3;
@@ -78,11 +78,6 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         shipyard = entity.Api.ModLoader.GetModSystem<ShipyardModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         if (entity.Api.Side == EnumAppSide.Client) entity.WatchedAttributes.RegisterModifiedListener(TreeKey, OnBuildChanged);
-        else if (Tree is { } tree && tree.GetInt(VersionKey) < DataVersion)
-        {
-            burnout.Migrate();
-            tree.SetInt(VersionKey, DataVersion);
-        }
     }
 
     public override void AfterInitialized(bool onFirstSpawn)

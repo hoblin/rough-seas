@@ -17,7 +17,6 @@ public sealed class Burnout
     public const int VoxelsPerClay = 25;
 
     private const string LevelKey = "level";
-    private const string LegacyClayedKey = "clayed";
     private const string ClayKey = "clayVoxels";
     private const string LitKey = "lit";
     private const string CharredKey = "charred";
@@ -94,14 +93,6 @@ public sealed class Burnout
     {
         tree.SetInt(LevelKey, 0);
         LaidFire.Kindle(tree);
-    }
-
-    public void Migrate()
-    {
-        bool firstFire = Level == 0 && (HoursBurnt > 0 || Lit);
-        if (Tree.GetBool(LegacyClayedKey) || firstFire) Tree.SetInt(ClayKey, rimVoxels);
-        if (HoursBurnt > 0 || Lit) LaidFire.Lay(Tree);
-        Tree.RemoveAttribute(LegacyClayedKey);
     }
 
     public string? ClayRefusal() => Busy() ?? (Clayed ? "shipyard-clayed-already" : null);

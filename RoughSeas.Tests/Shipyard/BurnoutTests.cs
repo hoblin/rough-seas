@@ -241,36 +241,6 @@ public class BurnoutTests
     }
 
     [Fact]
-    public void AFirstFireFromBeforeClayBurnsOnUnspoiled()
-    {
-        tree = new TreeAttribute();
-        tree.SetInt("level", 0);
-        tree.SetBool("lit", true);
-        tree.SetDouble("burntHours", 1);
-        var blank = Dugout();
-        blank.Migrate();
-        blank.Burn(blank.HoursPerFire);
-
-        Assert.True(blank.Charred);
-        Assert.False(blank.Spoiled);
-    }
-
-    [Fact]
-    public void ABlankFromBeforeKeepsItsClayAndItsFire()
-    {
-        tree = new TreeAttribute();
-        tree.SetInt("level", 2);
-        tree.SetBool("clayed", true);
-        tree.SetDouble("burntHours", 3);
-        var blank = Dugout();
-        blank.Migrate();
-
-        Assert.True(blank.Clayed);
-        Assert.True(blank.Fire.Laid);
-        Assert.Null(blank.LightRefusal());
-    }
-
-    [Fact]
     public void TheHollowBurnsOutInTheDaysAMishoonTakes()
     {
         double days = Config.Hollowings * Dugout().HoursPerFire / 24;
