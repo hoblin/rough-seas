@@ -142,6 +142,13 @@ public class RiggingTests
     [Fact]
     public void LogsLyingAcrossHerMakeNoFloat() => Assert.Null(Float(GameMath.PIHALF, Row(0, 1)));
 
+    [Fact]
+    public void ARowNotCentredOnHerMakesNoFloat()
+    {
+        var centred = Row(0, 1);
+        Assert.Null(Float(0, centred with { Centre = centred.Centre.AddCopy(centred.Along == EnumAxis.X ? 1 : 0, 0, centred.Along == EnumAxis.Z ? 1 : 0) }));
+    }
+
     private static readonly Vec3d Hull = new(100.5, 5, 200.5);
 
     private static LogRow Row(float yaw, int side, int logs = 3)

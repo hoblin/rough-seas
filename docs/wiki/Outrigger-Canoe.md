@@ -43,7 +43,7 @@ Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged whe
 
    ![Three logs with a wedge on each](images/outrigger-canoe/build-poles.webp)
 
-2. **Lay her float.** Beside a finished dugout, lay three more logs of one wood on their sides, end to end along her, a block off: hull, gap, float.
+2. **Lay her float.** Beside a finished dugout, lay three more logs of one wood on their sides, end to end along her, the middle one beside her middle, a block off: hull, gap, float.
 
    ![A dugout with three logs alongside](images/outrigger-canoe/build-float.webp)
 

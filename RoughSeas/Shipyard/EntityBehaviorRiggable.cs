@@ -33,8 +33,8 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
 
     /// <summary>
     /// The row of <paramref name="logs"/> lying along a hull at <paramref name="x"/>, <paramref name="y"/>,
-    /// <paramref name="z"/> turned to <paramref name="yaw"/>, found through the block <paramref name="offMetres"/> off her
-    /// centreline on either side; end for end when it lies on her port side, opposite the rigged model's float.
+    /// <paramref name="z"/> turned to <paramref name="yaw"/>, its middle log the block <paramref name="offMetres"/> off her
+    /// middle on either side, where the rigged model draws her float; end for end when it lies on her port side.
     /// </summary>
     public static (LogRow Row, bool EndForEnd)? FloatBeside(double x, double y, double z, double yaw, int logs, double offMetres, System.Func<BlockPos, LyingLog?> logAt)
     {
@@ -43,8 +43,9 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         foreach (var side in new[] { 1, -1 })
         {
             var (dx, dz) = HullShape.ToWorld(0, side * offMetres, yaw);
-            var row = LogRow.Run(new BlockPos((int)Math.Floor(x + dx), (int)Math.Floor(y + 0.5), (int)Math.Floor(z + dz)), logAt, logs);
-            if (row?.Length == logs && row.Along == axis) return (row, side < 0);
+            var beside = new BlockPos((int)Math.Floor(x + dx), (int)Math.Floor(y + 0.5), (int)Math.Floor(z + dz));
+            var row = LogRow.Run(beside, logAt, logs);
+            if (row?.Length == logs && row.Along == axis && row.Centre.Equals(beside)) return (row, side < 0);
         }
         return null;
     }
