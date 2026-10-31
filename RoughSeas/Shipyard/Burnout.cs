@@ -98,7 +98,8 @@ public sealed class Burnout
 
     public void Migrate()
     {
-        if (Tree.GetBool(LegacyClayedKey)) Tree.SetInt(ClayKey, rimVoxels);
+        bool firstFire = Level == 0 && (HoursBurnt > 0 || Lit);
+        if (Tree.GetBool(LegacyClayedKey) || firstFire) Tree.SetInt(ClayKey, rimVoxels);
         if (HoursBurnt > 0 || Lit) LaidFire.Lay(Tree);
         Tree.RemoveAttribute(LegacyClayedKey);
     }

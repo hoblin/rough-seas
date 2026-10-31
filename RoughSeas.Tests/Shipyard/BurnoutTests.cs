@@ -241,6 +241,21 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void AFirstFireFromBeforeClayBurnsOnUnspoiled()
+    {
+        tree = new TreeAttribute();
+        tree.SetInt("level", 0);
+        tree.SetBool("lit", true);
+        tree.SetDouble("burntHours", 1);
+        var blank = Dugout();
+        blank.Migrate();
+        blank.Burn(blank.HoursPerFire);
+
+        Assert.True(blank.Charred);
+        Assert.False(blank.Spoiled);
+    }
+
+    [Fact]
     public void ABlankFromBeforeKeepsItsClayAndItsFire()
     {
         tree = new TreeAttribute();
