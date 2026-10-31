@@ -1,4 +1,4 @@
-The oceans turn. Every basin carries great slow circles of water, the gyres, and a vessel left alone drifts with them.
+The oceans turn. Every basin carries great slow circles of water, the gyres, and every vessel on them is carried along.
 
 ## How the oceans turn
 
@@ -20,9 +20,11 @@ The temperature of the water has no effect yet. Cold water that saps a swimmer's
 
 ## Drift
 
-A vessel nobody is steering drifts with the current, and the wind pushes it a little too: 1.5% of the wind's speed, the way a real hull is set downwind. A passenger who isn't at the helm drifts along with it. A vessel you are steering isn't pushed at all: the course is yours.
+The current carries every vessel afloat, and the wind's drift on the water adds a little: 1.5% of the wind's speed, the way a real hull is set downwind. It carries the one you steer as well. Row or sail against it and you make that much less ground; go with it and you make that much more. In a western boundary current at 2 m/s, a slow vessel gets nowhere upstream.
 
-So a boat left at the water's edge is not where you left it when you come back. [Tie it up or anchor it](Mooring) before you step ashore.
+A vessel doesn't take the current's speed at once. The water drags her up to it, so a light boat lying across the stream is carried off within seconds, and a heavy one lying along it takes a minute or more.
+
+So a boat left at the water's edge is not where you left it when you come back. [Tie it up or anchor it](Mooring) before you step ashore. A vessel held at anchor or on a rope swings until she lies along the stream, bow to the current, and the current pulls on her rope with the wind and the waves.
 
 Drift only happens where the game is running, within about 128 blocks of a player. A vessel far from everyone stays put until someone comes near.
 

@@ -91,7 +91,7 @@ capi.Event.RegisterGameTickListener(_ =>
 
 ### Something that swims with the current
 
-The current is a velocity in m/s. Vanilla's water drag slows whatever swims every tick, so adding the current's speed to an entity's motion once isn't enough, and adding all of it every tick is too much. Our `roughseas:currentdrift` adds, each tick on the server, as much of the current as the drag has just taken away, so the drag pulls the entity toward the current's speed rather than to rest (ours add a little of the wind too):
+The current is a velocity in m/s. Vanilla's water drag slows whatever swims every tick, so adding the current's speed to an entity's motion once isn't enough, and adding all of it every tick is too much. A simple swimmer, a fish or a bobbing float, adds each tick on the server as much of the current as the drag has just taken away, so the drag pulls it toward the current's speed rather than to rest:
 
 ```csharp
 var current = sea.CurrentAt(pos.X, pos.Z);
@@ -102,7 +102,7 @@ pos.Motion.Z += current.Z * carried;
 
 `physics` is the entity's `EntityBehaviorPassivePhysics`, whose drag is applied 33 times a second; 60 turns m/s into blocks per tick. An entity of yours that moves by other physics adds the current to its own motion its own way.
 
-Our behaviour carries vessels nobody steers ([Building a vessel](Building-a-Vessel#currents)). A vessel a player steers is moved by that player's client, which the server's drift doesn't reach, so a mod that sails its own vessels adds `CurrentAt` to its own motion.
+A vessel is carried by the drag on her hull instead, by her mass and her shape, steered or not: our `roughseas:currentdrift` does it for any boat that carries it ([Building a vessel](Building-a-Vessel#currents)). `CurrentAt` answers on both sides, so a vessel steered from a client reads the current there from the map the server sends.
 
 ### The sea's time
 

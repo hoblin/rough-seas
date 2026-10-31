@@ -55,6 +55,15 @@ public static class Fixtures
         return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity));
     }
 
+    public static HullDrag Drag(string vessel, Aboard aboard)
+    {
+        var drift = vessel.StartsWith("boat-")
+            ? BehaviorConfig("boats-drift.json", vessel, CurrentDrift.Code)
+            : Entity(vessel)["behaviorConfigs"]![CurrentDrift.Code]!;
+        var form = HullForm.From(new JsonObject(drift), Config().Drift, 0, 0);
+        return new HullDrag(form, Hull(vessel).Float(aboard).DraftMetres, aboard.Total, Config().Waves.WaterDensity, Config().Drift);
+    }
+
     public static Resistance Resistance(string vessel, string wood = "oak")
     {
         var shell = IntegrityConfig(vessel)["shell"]!.ToString().Replace("{wood}", wood).Replace("{material}", wood);

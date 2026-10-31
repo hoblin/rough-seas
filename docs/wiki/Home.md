@@ -20,7 +20,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [The look of the sea](The-Look-of-the-Sea): how the swell, whitecaps and surf are drawn, tuned against photographs.
 - [Storms](Storms): squalls, gales and hurricanes, where they form and how they warn you.
 - [Lightning](Lightning): strikes in warm storms, and the masts that draw them.
-- [Currents](Currents): the gyres, warm and cold water, and the drift of a boat left alone.
+- [Currents](Currents): the gyres, warm and cold water, and how they carry every boat afloat.
 
 **Your vessel**
 - [Hull condition](Hull-Condition): where a blow cracks a hull, how the crack leaks, and what it is made of.

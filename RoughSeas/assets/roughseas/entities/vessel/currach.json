@@ -98,6 +98,15 @@
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
         },
+        "roughseas:currentdrift": {
+            "lengthMetres": 4,
+            "beamMetres": 1.1,
+            "sources": {
+                "lengthMetres": "A 4 m hull, as her waterplane",
+                "beamMetres": "1.1 m wide, as her waterplane",
+                "sideDrag": "Hide over round ribs: the round-bilged hull's cross-flow drag"
+            }
+        },
         "roughseas:seaforces": {
             "beamMetres": 1.1,
             "mastMetres": 0,
@@ -144,6 +153,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]

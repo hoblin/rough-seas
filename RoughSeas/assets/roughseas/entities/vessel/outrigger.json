@@ -138,6 +138,17 @@
                 {"code": "LowerMastAP", "forCategoryCodes": []}
             ]
         },
+        "roughseas:currentdrift": {
+            "lengthMetres": 4.5,
+            "beamMetres": 0.9,
+            "finSquareMetres": 0.38,
+            "sources": {
+                "lengthMetres": "The dugout's 4.5 m hull",
+                "beamMetres": "The dugout's 0.9 m hull; her float stands apart, and only its side counts",
+                "sideDrag": "A round-bottomed log: the round-bilged hull's cross-flow drag",
+                "finSquareMetres": "Her float, a 3 m log 0.25 m thick floating half under, shows 3 m by 0.125 m to the water across her"
+            }
+        },
         "roughseas:seaforces": {
             "beamMetres": 2.6,
             "mastMetres": 3,
@@ -187,6 +198,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]

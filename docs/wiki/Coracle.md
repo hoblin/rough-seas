@@ -25,7 +25,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
 | [Rapids](Rapids) | broken within seconds |
 | [Lightning](Lightning) | a strike nearby breaks it |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [In a current](Currents#drift) | carried with it and a little with the wind, steered or not |
 | [Mooring](Mooring) | tied to a post, or worn home |
 | Carried | worn on the back, in the backpack slot |
 | Seats | one, sculling over the bow with its own paddle |

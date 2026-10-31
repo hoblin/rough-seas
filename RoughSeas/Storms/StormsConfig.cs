@@ -9,6 +9,7 @@ public class StormsConfig
     public BilgeConfig Bilge = new();
     public SwampingConfig Swamping = new();
     public ResponseConfig Response = new();
+    public DriftConfig Drift = new();
     public MooringConfig Mooring = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
@@ -88,6 +89,17 @@ public class SwampingConfig
 
     /// <summary>The factor on the speed she makes at this reference mass that she makes at this mass, both in kilograms.</summary>
     public double SpeedFactor(double referenceKg, double kg) => Math.Pow(referenceKg / kg, SpeedExponent);
+}
+
+public class DriftConfig
+{
+    public double KinematicViscosity;
+    public double TransitionReynolds;
+    public double FormFactor;
+    public double BowDrag;
+    public double SideDrag;
+    public double SyncSeconds;
+    public double LogSeconds;
 }
 
 public class MooringConfig

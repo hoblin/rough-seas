@@ -14,4 +14,6 @@ public static class Compass
         var toward = Math.Atan2(towardX, -towardZ) / GameMath.DEG2RAD_DOUBLE;
         return ((toward + 180) % 360 + 360) % 360;
     }
+
+    public static double TowardDegrees(double towardX, double towardZ) => (FromDegrees(towardX, towardZ) + 180) % 360;
 }

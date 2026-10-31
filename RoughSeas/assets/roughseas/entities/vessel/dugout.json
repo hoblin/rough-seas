@@ -117,6 +117,15 @@
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
         },
+        "roughseas:currentdrift": {
+            "lengthMetres": 4.5,
+            "beamMetres": 0.9,
+            "sources": {
+                "lengthMetres": "Her hull by the model, 4.5 m (bin/lib/hulls/dugout.py)",
+                "beamMetres": "Her hull by the model, 0.9 m wide",
+                "sideDrag": "A round-bottomed log: the round-bilged hull's cross-flow drag"
+            }
+        },
         "roughseas:seaforces": {
             "beamMetres": 0.9,
             "mastMetres": 0,
@@ -167,6 +176,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]

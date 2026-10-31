@@ -18,7 +18,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:bilge` | client and server | the water aboard: from waves, leaks and rain, bailed out, swamping the hull when full |
 | `roughseas:vesselintegrity` | client and server, first in both lists | the hull: how it floats and sinks, what cracks or breaks it, its leaks, mending, wreckage |
 | `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
-| `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current and the wind |
+| `roughseas:currentdrift` | client and server | the current carrying the vessel by the drag on her hull, steered or not, and swinging her on a mooring |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:launch` | client and server | a push from the shore that slides a heavy vessel into the water ([Built in place](#built-in-place)) |
 | `roughseas:framing` | client and server | a vessel laid piece by piece where she lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound by the water ([Bound in place](#bound-in-place)) |
@@ -28,7 +28,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
-They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, and `mooring` and `currentdrift` on the server. `vesselintegrity` and `currentdrift` also work alone.
+They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, `currentdrift` for one the current carries, and `mooring` on the server. `vesselintegrity` and `currentdrift` also work alone.
 
 `vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`, so that a right-click with mending material mends the hull rather than seating the player.
 
@@ -52,6 +52,7 @@ Our [coracle](Coracle), its sources left out, carries all five:
         "wreckage": [{ "type": "item", "code": "game:stick", "quantity": { "avg": 3, "var": 2 } }],
         "damage": { "textures": ["hide"], "material": "hide" }
     },
+    "roughseas:currentdrift": { "lengthMetres": 1.4, "beamMetres": 1.4, "bowDrag": 0.55, "sideDrag": 0.55 },
     "roughseas:seaforces": {
         "beamMetres": 1.4, "mastMetres": 0, "windageSquareMetres": 0.5,
         "heave": 0.8, "capsizeBreakerMetres": 0.6,
@@ -64,7 +65,7 @@ Our [coracle](Coracle), its sources left out, carries all five:
         { "code": "roughseas:vesselintegrity" }, { "code": "repulseagents" }, { "code": "passivephysicsmultibox" },
         { "code": "interpolateposition" }, { "code": "hidewatersurface", "hideWaterElement": "hideWater/*" },
         { "code": "selectionboxes" }, { "code": "creaturecarrier" }, { "code": "ropetieable" },
-        { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }
+        { "code": "roughseas:currentdrift" }, { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }
     ]
 },
 "server": {
@@ -318,10 +319,26 @@ For sounds of your own, the server raises events on the behaviours:
 - **A stake.** Vanilla's `ropetieable` on both sides: a rope from the vessel to a fence post.
 - **An anchor.** An accessory slot (`rideableaccessories`) that takes vanilla's anchor, as vanilla's sailboat has. Spare rode is any item with a `rodeMetres` attribute in the same accessories, such as our anchor warp.
 
-At anchor, a vessel ships less water, though a breaker slams it in full; tied to a stake, it takes the sea in full. In a storm the sea's pull on it grows with its beam and its windage, and a rope can snap. With no player near, a storm can throw it ashore.
+At anchor, a vessel ships less water, though a breaker slams it in full; tied to a stake, it takes the sea in full. In a storm the sea's pull on it grows with its beam and its windage, and a rope can snap. With `currentdrift`, the current pulls too, by the drag on her hull ([Currents](#currents)), and she swings to lie along the stream. With no player near, a storm can throw it ashore.
 
 A rider's client steers a vessel, and the server can't hold one it doesn't move: a steered vessel drags its anchor along.
 
 ## Currents
 
-`roughseas:currentdrift`, on the server; it has no keys. An unsteered vessel in the water drifts with the [current](Currents) and a little with the wind; a sunk one stays put. It needs vanilla's passive physics on the entity (`passivephysics`, or `passivephysicsmultibox`). A rider's client moves a steered vessel, so the current doesn't reach it: a mod that sails its own vessels adds the current to its own motion, read from `CurrentAt` ([Reading the sea](Reading-the-Sea)).
+`roughseas:currentdrift`, on the client and the server. A vessel in the water is carried by the [current](Currents), and a little by the wind's drift on the water, through the drag the water puts on her hull: the faster the water runs past her and the more of her it meets, the harder it pulls, and the heavier she is, the slower she takes its speed. A sunk one stays put. It needs vanilla's passive physics on the entity (`passivephysics`, or `passivephysicsmultibox`), and it works on any `EntityBoat`.
+
+It carries a vessel where her physics runs: on the server while nobody steers her, on the rider's client while someone does. Listed on the server alone, it carries her only while nobody steers. What a rider rows or sails is vanilla's speed through the water, and the current adds to it, so she makes less ground against it and more with it.
+
+On a mooring, its pull joins the wind's and the waves' on the rope and the anchor, and held at one point she swings bow to the stream, as she settles where it pulls least.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `lengthMetres` | m | the selection box's longer side | her length at the waterline |
+| `beamMetres` | m | its shorter side | her own beam at the waterline; an outrigger's float stands apart and is not in it |
+| `bowDrag` | | 0 | the drag of a blunt bow on beam by draft, such as a raft's log ends; a fine bow has none beyond the water along her sides |
+| `sideDrag` | | 0.75 | the drag of her side, on length by draft, as the water meets her across: about 0.75 for a round-bilged hull |
+| `finSquareMetres` | m² | 0 | what a keel or a float adds below the water to the side she resists with |
+
+Her draft and mass come from `vesselintegrity` when she has it, as she floats now, and otherwise from her `weight` in a box of her length and beam. [The science of the hull](The-Science-of-the-Hull#carried-by-the-current) has the formulas.
+
+A mod that sails its own vessels with its own physics reads the drag from `HullDrag`, built from a `HullForm`, her draft and her mass: `Pull` is the water's force on her, `Settle` how fast she takes the water's speed, `Swing` how she turns when held at the bow.

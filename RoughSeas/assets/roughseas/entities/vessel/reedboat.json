@@ -88,6 +88,15 @@
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
         },
+        "roughseas:currentdrift": {
+            "lengthMetres": 3,
+            "beamMetres": 0.4,
+            "sources": {
+                "lengthMetres": "Her 3 m bundles",
+                "beamMetres": "Her two 20 cm bundles side by side",
+                "sideDrag": "Round bundles with tapered, upturned ends: the round-bilged hull's cross-flow drag"
+            }
+        },
         "roughseas:seaforces": {
             "beamMetres": 0.4,
             "mastMetres": 0,
@@ -122,6 +131,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"}
         ]
     },

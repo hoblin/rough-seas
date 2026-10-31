@@ -56,6 +56,18 @@
             ]
         },
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP"]},
+        "roughseas:currentdrift": {
+            "lengthMetres": 1.4,
+            "beamMetres": 1.4,
+            "bowDrag": 0.55,
+            "sideDrag": 0.55,
+            "sources": {
+                "lengthMetres": "A round bowl 1.4 m across, as her waterplane: as long as she is wide",
+                "beamMetres": "A round bowl 1.4 m across",
+                "bowDrag": "Round, so the same from every side as across her",
+                "sideDrag": "A short upright cylinder in cross-flow, mirrored at the surface into one twice her draft, has a drag coefficient of about 0.6 on diameter by height (Hoerner 1965, Fluid-Dynamic Drag, ch. 3); a bowl's rounded bottom sheds less, as a sphere's 0.47 on its frontal area does"
+            }
+        },
         "roughseas:seaforces": {
             "beamMetres": 1.4,
             "mastMetres": 0,
@@ -101,6 +113,7 @@
             {"code": "selectionboxes"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]

@@ -1,4 +1,25 @@
 [
-    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-raft.json" },
-    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-sailed.json" }
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/behaviorConfigs/roughseas:currentdrift", "side": "Server", "value": {
+        "lengthMetres": 4.25, "beamMetres": 1.9, "bowDrag": 1.0, "sideDrag": 0.85,
+        "sources": {
+            "lengthMetres": "Vanilla's model: her logs run 4.25 m",
+            "beamMetres": "Vanilla's model: her logs lie 1.9 m across",
+            "bowDrag": "Her logs' sawn ends meet the water face on: a flat-faced cylinder in axial flow has a drag coefficient of 0.8 to 1.1, a flat disc 1.17 (Hoerner 1965, Fluid-Dynamic Drag, ch. 3)",
+            "sideDrag": "Across her she is a wide, shallow section with rounded corners, side ratio 3 to 5 once mirrored at the surface: 1.0 to 1.3 sharp-edged (Delany & Sorensen 1953, NACA TN 3038), less with round logs, lowered again by her finite length (Hoerner 1965, ch. 3)"
+        }
+    } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:currentdrift" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:currentdrift" } },
+
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/roughseas:currentdrift", "side": "Server", "value": {
+        "lengthMetres": 8.5, "beamMetres": 2.5, "finSquareMetres": 0.5,
+        "sources": {
+            "lengthMetres": "Vanilla's model: her hull runs 8.5 m",
+            "beamMetres": "Her 2.5 m beam, as the sea's forces take it",
+            "sideDrag": "A planked, round-bilged hull: the round-bilged hull's cross-flow drag",
+            "finSquareMetres": "Vanilla's model: two keel beams, each 1 m long and 0.25 m deep, under her bottom"
+        }
+    } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:currentdrift" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:currentdrift" } }
 ]
