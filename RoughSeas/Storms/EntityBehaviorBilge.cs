@@ -146,8 +146,9 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
             return;
         }
 
-        double top = water.HeightOf(water.Levels);
-        double surface = built.FloorMetres + Fill * (top - built.FloorMetres);
-        water.Show(Enumerable.Range(1, water.Levels).FirstOrDefault(level => water.HeightOf(level) >= surface, water.Levels));
+        double rim = IHull.Of(entity)?.DepthMetres ?? water.HeightOf(water.Levels);
+        double surface = built.FloorMetres + Fill * (rim - built.FloorMetres);
+        int level = Enumerable.Range(1, water.Levels).LastOrDefault(level => water.HeightOf(level) <= surface, 1);
+        water.Show(level, surface - water.HeightOf(level));
     }
 }
