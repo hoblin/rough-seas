@@ -32,6 +32,8 @@ public interface IHullForm
     /// <summary>What she breaks up into as far as she is built, from the finished vessel's wreckage.</summary>
     BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed);
 
+    HideCover? Cover { get; }
+
     /// <summary>Raised on either side when what she is built of, or how much of her hold holds water, changes.</summary>
     event Action? Reformed;
 }

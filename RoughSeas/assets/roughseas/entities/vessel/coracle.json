@@ -31,9 +31,11 @@
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, the lattice's 14 laths 6 cm wide cross 60% of the bottom, and their 28 ends rising to the gunwale 47% of the sides. A breaker presses the hide onto them, each lath 1 cm deep bending over the 0.37 m from the bottom to the gunwale",
                 "depthMetres": "Bottom to gunwale: the laths rise 0.35 m (Museum Wales, Teifi coracle), over the hide under them",
                 "waterplaneSquareMetres": "An oval 1.5 by 1.07 m at the gunwale and 1.2 by 0.8 m at the bottom (Museum Wales, Teifi coracle): about a square metre at the waterline between them",
-                "seep": "Hide seams and stitch holes weep once the fat has washed out of them; one seam across her bowl, some 1.8 m of it, weeps as the currach's do a metre"
+                "seep": "A seam where one hide meets the next weeps once the fat has washed out of it: some 1.8 m of seam across her bowl, weeping as the currach's do a metre. A coracle from before her build was one large hide, with no seam",
+                "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             },
-            "seep": {"litresPerHour": 12, "greaseDays": 2.5}
+            "seep": {"litresPerHourASeam": 12, "greaseDays": 2.5},
+            "cover": {"hides": {"prepared": 2}, "seams": 0}
         },
         "passivephysicsmultibox": {"collisionBoxes": [{"x1": -0.75, "y1": 0, "z1": -0.535, "x2": 0.75, "y2": 0.4, "z2": 0.535}], "groundDragFactor": 1, "airDragFallingFactor": 0.5, "gravityFactor": 1.0},
         "creaturecarrier": {"seats": [{"apName": "FrontSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "selectionBox": "HullAP"}]},

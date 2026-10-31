@@ -45,6 +45,8 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
 
     public virtual double UnhewnLitres => 0;
 
+    public virtual HideCover? Cover => null;
+
     public virtual double DepthMetres(double designed) => designed;
 
     public virtual double WaterplaneSquareMetres(double designed) => designed;

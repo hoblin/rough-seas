@@ -9,6 +9,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
+using RoughSeas.Vessels;
 
 namespace RoughSeas.Shipyard;
 
@@ -29,8 +30,8 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
 
     public int Hides => Tree?.GetInt(HidesKey) ?? 0;
 
-    public IReadOnlyDictionary<string, int> Cover =>
-        Tree?.GetTreeAttribute(CoverKey) is { } cover ? cover.ToDictionary(entry => entry.Key, entry => cover.GetInt(entry.Key)) : new Dictionary<string, int>();
+    public override HideCover? Cover =>
+        Tree?.GetTreeAttribute(CoverKey) is { } cover ? new HideCover(cover.ToDictionary(entry => entry.Key, entry => cover.GetInt(entry.Key)), System.Math.Max(0, Hides - 1)) : null;
 
     public override string PropertyName() => Code;
 

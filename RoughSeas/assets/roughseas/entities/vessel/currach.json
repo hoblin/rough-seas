@@ -20,7 +20,8 @@
             "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.01}, "backedShare": 0.4, "bottomBackedShare": 0.31, "spanMetres": 0.15},
             "depthMetres": 0.45,
             "waterplaneSquareMetres": 4.4,
-            "seep": {"litresPerHour": 30, "greaseDays": 2.5},
+            "seep": {"litresPerHourASeam": 15, "greaseDays": 2.5},
+            "cover": {"hides": {"prepared": 8}, "seams": 2},
             "repairs": [
                 {"material": {"type": "item", "code": "game:hide-prepared-large", "stacksize": 1}, "restores": 0.67, "saturation": 80},
                 {"material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1}, "restores": 0.5, "saturation": 40, "greases": true}
@@ -32,7 +33,8 @@
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, ribs 0.8 voxel wide every 3 and three stringers a side back 40% of her sides, the ribs and the keelson 31% of her bottom. A breaker presses the hide onto the laths, each 1 cm deep bending over the 0.15 m between stringers",
                 "depthMetres": "Keel to gunwale amidships: a 5 cm draft with its rower in a 100 kg hull and about 0.4 m of side above it",
                 "waterplaneSquareMetres": "A hull 4.7 m long and 1.2 m in beam, double-ended and fine at both ends, about 0.78 of her box at the waterline",
-                "seep": "Hide seams and stitch holes weep once the tallow has washed out of them, a little at every seam; Aran crews dressed their currachs every few days"
+                "seep": "A seam where one hide meets the next weeps once the tallow has washed out of it, and Aran crews dressed their currachs every few days: a seam across her, some 2.3 m of it, 15 L an hour. A currach from before her build was three large hides, two seams",
+                "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             }
         },
         "passivephysicsmultibox": {
