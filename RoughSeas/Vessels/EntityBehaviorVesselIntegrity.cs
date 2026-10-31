@@ -188,7 +188,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     {
         form = entity.SidedProperties.Behaviors.OfType<IHullForm>().FirstOrDefault();
         if (form != null) form.Reformed += Rebuild;
-        if (model is CrackingHull cracking && form != null) cracking.CoveredBy(() => form.Cover);
+        if (model is CrackingHull cracking && entity.SidedProperties.Behaviors.OfType<ICovered>().FirstOrDefault() is { } covered) cracking.CoveredBy(() => covered.Cover);
         Rebuild();
     }
 

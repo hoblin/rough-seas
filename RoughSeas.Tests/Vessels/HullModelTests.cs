@@ -187,7 +187,7 @@ public class HullModelTests
     }
 
     [Fact]
-    public void ColdWaterKeepsARawHideFortnightsLonger()
+    public void ColdWaterKeepsARawHideAFortnightLonger()
     {
         var hull = Covered(new() { ["raw"] = 2 });
 

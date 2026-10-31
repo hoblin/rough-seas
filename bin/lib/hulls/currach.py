@@ -97,7 +97,7 @@ def thwart(hull, half):
     x = CENTRE + THWART_SHARE * 2 * half - half
     reach = breadth(hull.section(x), THWART_SEAT) - 0.4
     y = THWART_SEAT - THWART
-    return [[box("Thwart", (x - THWART / 2, y, CENTRE - reach), (x + THWART / 2, THWART_SEAT, CENTRE + reach), "frame", grain="z")]]
+    return [[box("ThwartPole", (x - THWART / 2, y, CENTRE - reach), (x + THWART / 2, THWART_SEAT, CENTRE + reach), "frame", grain="z")]]
 
 
 def cover(hull):

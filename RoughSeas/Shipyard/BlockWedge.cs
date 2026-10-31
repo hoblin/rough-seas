@@ -10,8 +10,7 @@ namespace RoughSeas.Shipyard;
 
 /// <summary>
 /// A wedge driven into a lying log. With one on each log of a row lying end to end, the axe drives them all, and the
-/// trunk splits along its grain into what a trunk of that length gives: five logs into a bundle of laths, three into
-/// a set of poles.
+/// trunk splits along its grain into poles as long as the row.
 /// </summary>
 public class BlockWedge : Block
 {

@@ -7253,16 +7253,16 @@
      "faces": {},
      "children": [
       {
-       "name": "Thwart",
+       "name": "ThwartPole",
        "from": [ 26.084, 5.6, 0.417 ],
        "to": [ 27.484, 7, 15.583 ],
        "faces": {
-        "north": { "texture": "#frame", "uv": [ 0.5, 1.5, 1.9, 2.9 ] },
-        "east": { "texture": "#frame", "uv": [ 0, 11, 15.166, 12.4 ] },
-        "south": { "texture": "#frame", "uv": [ 9, 2.5, 10.4, 3.9 ] },
-        "west": { "texture": "#frame", "uv": [ 0, 0, 15.166, 1.4 ] },
-        "up": { "texture": "#frame", "uv": [ 0, 10.5, 15.166, 11.9 ], "rotation": 90 },
-        "down": { "texture": "#frame", "uv": [ 0.5, 2, 15.666, 3.4 ], "rotation": 90 }
+        "north": { "texture": "#frame", "uv": [ 13, 5, 14.4, 6.4 ] },
+        "east": { "texture": "#frame", "uv": [ 0, 3.5, 15.166, 4.9 ] },
+        "south": { "texture": "#frame", "uv": [ 9.5, 5, 10.9, 6.4 ] },
+        "west": { "texture": "#frame", "uv": [ 0, 11.5, 15.166, 12.9 ] },
+        "up": { "texture": "#frame", "uv": [ 0, 1, 15.166, 2.4 ], "rotation": 90 },
+        "down": { "texture": "#frame", "uv": [ 0.5, 12, 15.666, 13.4 ], "rotation": 90 }
        }
       }
      ],

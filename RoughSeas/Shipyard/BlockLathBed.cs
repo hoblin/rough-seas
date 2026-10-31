@@ -13,6 +13,7 @@ public class BlockLathBed : Block
     {
         if (!byPlayer.Entity.Controls.ShiftKey || !byPlayer.InventoryManager.ActiveHotbarSlot.Empty) return base.OnBlockInteractStart(world, byPlayer, blockSel);
         if (world.BlockAccessor.GetBlockEntity(blockSel.Position) is not BlockEntityLathBed bed) return false;
+        if (!world.Claims.TryAccess(byPlayer, blockSel.Position, EnumBlockAccessFlags.Use)) return false;
         if (world.Side != EnumAppSide.Server) return true;
 
         var hit = blockSel.Position.ToVec3d().Add(blockSel.HitPosition);

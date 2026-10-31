@@ -173,13 +173,13 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 - `lath`: a lath, wet. Two to five logs lying end to end with a splitting wedge on each split into poles as long as the row when an axe drives a wedge, and an axe splits a pole into laths of its length in the crafting grid; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
 - `pole`: a pole, split from such a row. Like laths, the first makes her frame of its wood.
 - `hide`: a hide of one of `hideStates`, which covers as many of the stage's pieces as small hides it is worth (small 1, medium 2, large 3, huge 5) and is held on her as many times `seconds`.
-
-Every piece of a `lath` or `pole` stage takes one at least as long as it, cut down; a shorter one is refused. The shape names each piece's length: its builder writes `"metres"` on the piece's group, measured along the run its frame texture draws (`stages()` in `bin/lib/hulls/shape.py` does it), and an item's length is its `length` variant.
 - `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done.
 - `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
 - `hew`: any axe, which loses a point of durability a piece.
 - `cloth`: a piece of cloth.
 - `plank`: a plank, `planks` the item code.
+
+Every piece of a `lath` or `pole` stage takes one at least as long as it, cut down; a shorter one is refused. The shape names each piece's length: its builder writes `"metres"` on the piece's group, measured along the run its frame texture draws (`stages()` in `bin/lib/hulls/shape.py` does it), and an item's length is its `length` variant.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
@@ -234,7 +234,7 @@ A wet lath held with Shift on the ground lies there at its full length, centred 
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
-| `layout` | object | none | how her first stage's laths are laid out: `{ "kind": "lattice", "along": 7, "across": 7 }`, so many laths along and across with every one crossing every other (our coracle), or `{ "kind": "pair", "beamMetres": 1.2, "toleranceMetres": 0.25 }`, two laths side by side at her beam, overlapping end for end within the tolerance (our currach) |
+| `layout` | object | none | how her first stage's laths are laid out: `{ "kind": "lattice", "along": 7, "across": 7 }`, so many laths along and across, each crossing every lath across it, spaced as her model draws them within `toleranceMetres` (`alongSpacingMetres`, `acrossSpacingMetres`; our coracle), or `{ "kind": "pair", "beamMetres": 1.2, "toleranceMetres": 0.25 }`, two laths side by side at her beam, overlapping end for end within the tolerance (our currach) |
 | `overturned` | bool | false | she is built upside down, and is finished only once turned over: a right-click with an empty hand turns her, once every piece she needs is laid |
 | `overturnedPivot` | voxels | 0 | the height of the line along her length she is turned about, so that her gunwale lies on the ground |
 

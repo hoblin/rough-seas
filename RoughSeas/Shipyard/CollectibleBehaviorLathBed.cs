@@ -11,6 +11,8 @@ public class CollectibleBehaviorLathBed(CollectibleObject collectible) : Collect
 {
     public const string Code = "roughseas:lathbed";
 
+    private const int Replaceable = 6000;
+
     private static readonly AssetLocation Bed = new("roughseas:lathbed");
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent,
@@ -20,8 +22,10 @@ public class CollectibleBehaviorLathBed(CollectibleObject collectible) : Collect
 
         var world = byEntity.World;
         var accessor = world.BlockAccessor;
-        var pos = accessor.GetBlockEntity(blockSel.Position) is BlockEntityLathBed ? blockSel.Position : blockSel.Position.UpCopy();
-        if (accessor.GetBlockEntity(pos) is not BlockEntityLathBed && !Ground(accessor, blockSel, pos)) return;
+        var aimed = accessor.GetBlock(blockSel.Position);
+        var pos = accessor.GetBlockEntity(blockSel.Position) is BlockEntityLathBed || aimed.Replaceable >= Replaceable ? blockSel.Position : blockSel.Position.UpCopy();
+        if (!pos.Equals(blockSel.Position) && blockSel.Face != BlockFacing.UP) return;
+        if (accessor.GetBlockEntity(pos) is not BlockEntityLathBed && !Ground(accessor, pos)) return;
 
         handling = EnumHandling.PreventSubsequent;
         handHandling = EnumHandHandling.PreventDefault;
@@ -47,10 +51,9 @@ public class CollectibleBehaviorLathBed(CollectibleObject collectible) : Collect
         world.PlaySoundAt(new AssetLocation("game:sounds/block/planks"), pos, 0, (byEntity as EntityPlayer)?.Player);
     }
 
-    private static bool Ground(IBlockAccessor accessor, BlockSelection blockSel, BlockPos pos) =>
-        blockSel.Face == BlockFacing.UP
-        && accessor.GetBlock(blockSel.Position).CanAttachBlockAt(accessor, accessor.GetBlock(pos), blockSel.Position, BlockFacing.UP)
-        && accessor.GetBlock(pos).Replaceable >= 6000;
+    private static bool Ground(IBlockAccessor accessor, BlockPos pos) =>
+        accessor.GetBlock(pos.DownCopy()).CanAttachBlockAt(accessor, accessor.GetBlock(pos), pos.DownCopy(), BlockFacing.UP)
+        && accessor.GetBlock(pos).Replaceable >= Replaceable;
 
     private static double Snap(double metres) => Math.Round(metres * 16) / 16;
 }

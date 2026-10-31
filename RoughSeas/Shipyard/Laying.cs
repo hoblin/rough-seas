@@ -51,7 +51,7 @@ public abstract class Laying
         && metres < framing.NextMetres;
 }
 
-/// <summary>A lath split from the row, bent into her wet.</summary>
+/// <summary>A lath split from a pole, bent into her wet.</summary>
 public sealed class LathLaying(AssetLocation laths) : Laying
 {
     private const string Wet = "wet";

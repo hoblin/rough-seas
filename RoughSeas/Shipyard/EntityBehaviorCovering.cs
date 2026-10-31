@@ -17,7 +17,7 @@ namespace RoughSeas.Shipyard;
 /// A hide boat bound from laths laid out on the ground, then framed and covered piece by piece where she lies, upside
 /// down when her build says so. Her cover is the hides sewn on her, by type, and a seam between each.
 /// </summary>
-public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entity)
+public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entity), ICovered
 {
     public new const string Code = "roughseas:covering";
 
@@ -34,8 +34,9 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
 
     public int Hides => Tree?.GetInt(HidesKey) ?? 0;
 
-    public override HideCover? Cover =>
-        Tree?.GetTreeAttribute(CoverKey) is { } cover ? new HideCover(cover.ToDictionary(entry => entry.Key, entry => cover.GetInt(entry.Key)), System.Math.Max(0, Hides - 1)) : null;
+    public HideCover? Cover => Tree == null ? null : new HideCover(
+        Tree.GetTreeAttribute(CoverKey) is { } cover ? cover.ToDictionary(entry => entry.Key, entry => cover.GetInt(entry.Key)) : new Dictionary<string, int>(),
+        System.Math.Max(0, Hides - 1));
 
     public override string PropertyName() => Code;
 
@@ -49,10 +50,11 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
             if (config.Overturned) tree.SetBool(UprightKey, false);
         });
 
-    public override (double Seconds, string? Refusal)? WorkWith(ItemSlot slot) =>
-        base.WorkWith(slot) is { } job && framing.Current is { Work: FramingWork.Hide } && sea.Clock.Hours < framing.SetsAt
-            ? (job.Seconds, "shipyard-frame-setting")
-            : base.WorkWith(slot);
+    public override (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
+    {
+        var job = base.WorkWith(slot);
+        return job is { } work && framing.Current is { Work: FramingWork.Hide } && sea.Clock.Hours < framing.SetsAt ? (work.Seconds, "shipyard-frame-setting") : job;
+    }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {

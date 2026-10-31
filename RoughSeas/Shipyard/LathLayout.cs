@@ -28,20 +28,38 @@ public abstract class LathLayout
     protected abstract LaidOut? Shaped(IReadOnlyList<LaidLath> laths);
 }
 
-/// <summary>Laths laid flat along and across, every one crossing every other, as a coracle's bottom was begun.</summary>
+/// <summary>
+/// Laths laid flat along and across, each crossing every lath across it, as a coracle's bottom was begun: so many each
+/// way, at the spacing her model draws them, within a tolerance.
+/// </summary>
 public sealed class LatticeLayout : LathLayout
 {
     [JsonProperty] public int Along;
     [JsonProperty] public int Across;
+    [JsonProperty] public double AlongSpacingMetres;
+    [JsonProperty] public double AcrossSpacingMetres;
+    [JsonProperty] public double ToleranceMetres;
 
     protected override LaidOut? Shaped(IReadOnlyList<LaidLath> laths)
     {
         var alongX = laths.Where(lath => lath.Along == EnumAxis.X).ToArray();
         var alongZ = laths.Where(lath => lath.Along == EnumAxis.Z).ToArray();
-        var (along, across) = alongX.Length == Along ? (alongX, alongZ) : (alongZ, alongX);
-        if (along.Length != Along || across.Length != Across || !along.All(lath => across.All(lath.Crosses))) return null;
+        if (!alongX.All(lath => alongZ.All(lath.Crosses))) return null;
+
+        var (along, across) = Fits(alongX, alongZ) ? (alongX, alongZ) : Fits(alongZ, alongX) ? (alongZ, alongX) : default;
+        if (along == null || across == null) return null;
 
         return new LaidOut(laths[0].Wood, alongZ.Average(lath => lath.X), alongX.Average(lath => lath.Z), along[0].Along, [.. along, .. across]);
+    }
+
+    private bool Fits(LaidLath[] along, LaidLath[] across) =>
+        along.Length == Along && across.Length == Across && Spaced(along, AlongSpacingMetres) && Spaced(across, AcrossSpacingMetres);
+
+    private bool Spaced(LaidLath[] laths, double spacing)
+    {
+        var apart = laths.Select(lath => lath.Along == EnumAxis.X ? lath.Z : lath.X).Order().ToArray();
+        double middle = apart.Average();
+        return apart.Select((at, n) => at - middle - (n - (apart.Length - 1) / 2.0) * spacing).All(off => Math.Abs(off) <= ToleranceMetres);
     }
 }
 

@@ -27,7 +27,7 @@
      "faces": {},
      "children": [
       {
-       "name": "Lath1x1Frame",
+       "name": "BentLath1x1Frame",
        "from": [ -1.311, 5.6, 2.6 ],
        "to": [ -1.311, 5.6, 2.6 ],
        "rotationOrigin": [ -1.311, 5.6, 2.6 ],
@@ -35,22 +35,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath1x1",
+         "name": "BentLath1x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.604, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 5, 1, 8.604, 1.3 ] },
-          "east": { "texture": "#frame", "uv": [ 6, 3.5, 6.96, 3.8 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 6.5, 5.104, 6.8 ] },
-          "west": { "texture": "#frame", "uv": [ 2, 11, 2.96, 11.3 ] },
-          "up": { "texture": "#frame", "uv": [ 10.5, 5, 14.104, 5.96 ] },
-          "down": { "texture": "#frame", "uv": [ 6.5, 10.5, 10.104, 11.46 ] }
+          "north": { "texture": "#frame", "uv": [ 7.5, 14.5, 11.104, 14.8 ] },
+          "east": { "texture": "#frame", "uv": [ 2, 9.5, 2.96, 9.8 ] },
+          "south": { "texture": "#frame", "uv": [ 5, 0.5, 8.604, 0.8 ] },
+          "west": { "texture": "#frame", "uv": [ 3.5, 12.5, 4.46, 12.8 ] },
+          "up": { "texture": "#frame", "uv": [ 11.5, 14, 15.104, 14.96 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 9, 3.604, 9.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath1x2Frame",
+       "name": "BentLath1x2Frame",
        "from": [ 0.56, 2.52, 2.6 ],
        "to": [ 0.56, 2.52, 2.6 ],
        "rotationOrigin": [ 0.56, 2.52, 2.6 ],
@@ -58,44 +58,44 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath1x2",
+         "name": "BentLath1x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.153, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 0.5, 8.5, 3.653, 8.8 ] },
-          "east": { "texture": "#frame", "uv": [ 8.5, 14.5, 9.46, 14.8 ] },
-          "south": { "texture": "#frame", "uv": [ 8.5, 3.5, 11.653, 3.8 ] },
-          "west": { "texture": "#frame", "uv": [ 9.5, 1.5, 10.46, 1.8 ] },
-          "up": { "texture": "#frame", "uv": [ 3, 10, 6.153, 10.96 ] },
-          "down": { "texture": "#frame", "uv": [ 7, 7, 10.153, 7.96 ] }
+          "north": { "texture": "#frame", "uv": [ 4, 7.5, 7.153, 7.8 ] },
+          "east": { "texture": "#frame", "uv": [ 10.5, 14.5, 11.46, 14.8 ] },
+          "south": { "texture": "#frame", "uv": [ 9, 13.5, 12.153, 13.8 ] },
+          "west": { "texture": "#frame", "uv": [ 13, 4.5, 13.96, 4.8 ] },
+          "up": { "texture": "#frame", "uv": [ 12.5, 4.5, 15.653, 5.46 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 4.5, 3.153, 5.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath1x3Frame",
+       "name": "BentLath1x3Frame",
        "from": [ 2.847, 0.35, 2.6 ],
        "to": [ 2.847, 0.35, 2.6 ],
        "rotationOrigin": [ 2.847, 0.35, 2.6 ],
        "faces": {},
        "children": [
         {
-         "name": "Lath1x3",
+         "name": "BentLath1x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 10.305, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 4, 12, 14.305, 12.3 ] },
-          "east": { "texture": "#frame", "uv": [ 1.5, 15.5, 2.46, 15.8 ] },
-          "south": { "texture": "#frame", "uv": [ 2, 3, 12.305, 3.3 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 8, 7.46, 8.3 ] },
-          "up": { "texture": "#frame", "uv": [ 5, 6.5, 15.305, 7.46 ] },
-          "down": { "texture": "#frame", "uv": [ 3.5, 14, 13.805, 14.96 ] }
+          "north": { "texture": "#frame", "uv": [ 2, 10, 12.305, 10.3 ] },
+          "east": { "texture": "#frame", "uv": [ 9, 15, 9.96, 15.3 ] },
+          "south": { "texture": "#frame", "uv": [ 4, 5.5, 14.305, 5.8 ] },
+          "west": { "texture": "#frame", "uv": [ 7, 3.5, 7.96, 3.8 ] },
+          "up": { "texture": "#frame", "uv": [ 4, 11, 14.305, 11.96 ] },
+          "down": { "texture": "#frame", "uv": [ 4, 6, 14.305, 6.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath1x4Frame",
+       "name": "BentLath1x4Frame",
        "from": [ 13.153, 0.35, 2.6 ],
        "to": [ 13.153, 0.35, 2.6 ],
        "rotationOrigin": [ 13.153, 0.35, 2.6 ],
@@ -103,22 +103,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath1x4",
+         "name": "BentLath1x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.153, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 11, 4, 14.153, 4.3 ] },
-          "east": { "texture": "#frame", "uv": [ 14.5, 1.5, 15.46, 1.8 ] },
-          "south": { "texture": "#frame", "uv": [ 11, 7, 14.153, 7.3 ] },
-          "west": { "texture": "#frame", "uv": [ 7, 10.5, 7.96, 10.8 ] },
-          "up": { "texture": "#frame", "uv": [ 10, 10.5, 13.153, 11.46 ] },
-          "down": { "texture": "#frame", "uv": [ 4, 1.5, 7.153, 2.46 ] }
+          "north": { "texture": "#frame", "uv": [ 5, 10, 8.153, 10.3 ] },
+          "east": { "texture": "#frame", "uv": [ 12, 6.5, 12.96, 6.8 ] },
+          "south": { "texture": "#frame", "uv": [ 3.5, 0, 6.653, 0.3 ] },
+          "west": { "texture": "#frame", "uv": [ 8, 0.5, 8.96, 0.8 ] },
+          "up": { "texture": "#frame", "uv": [ 1, 14.5, 4.153, 15.46 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 15, 3.153, 15.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath1x5Frame",
+       "name": "BentLath1x5Frame",
        "from": [ 15.44, 2.52, 2.6 ],
        "to": [ 15.44, 2.52, 2.6 ],
        "rotationOrigin": [ 15.44, 2.52, 2.6 ],
@@ -126,22 +126,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath1x5",
+         "name": "BentLath1x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.604, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 10.5, 2, 14.104, 2.3 ] },
-          "east": { "texture": "#frame", "uv": [ 8.5, 3, 9.46, 3.3 ] },
-          "south": { "texture": "#frame", "uv": [ 11, 1.5, 14.604, 1.8 ] },
-          "west": { "texture": "#frame", "uv": [ 12.5, 13.5, 13.46, 13.8 ] },
-          "up": { "texture": "#frame", "uv": [ 10.5, 9, 14.104, 9.96 ] },
-          "down": { "texture": "#frame", "uv": [ 1.5, 4.5, 5.104, 5.46 ] }
+          "north": { "texture": "#frame", "uv": [ 9.5, 5.5, 13.104, 5.8 ] },
+          "east": { "texture": "#frame", "uv": [ 12, 11.5, 12.96, 11.8 ] },
+          "south": { "texture": "#frame", "uv": [ 3, 0, 6.604, 0.3 ] },
+          "west": { "texture": "#frame", "uv": [ 11.5, 13.5, 12.46, 13.8 ] },
+          "up": { "texture": "#frame", "uv": [ 6, 6.5, 9.604, 7.46 ] },
+          "down": { "texture": "#frame", "uv": [ 0.5, 10.5, 4.104, 11.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath2x1Frame",
+       "name": "BentLath2x1Frame",
        "from": [ -2.887, 5.6, 4.4 ],
        "to": [ -2.887, 5.6, 4.4 ],
        "rotationOrigin": [ -2.887, 5.6, 4.4 ],
@@ -149,22 +149,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath2x1",
+         "name": "BentLath2x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.354, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 11, 6.854, 11.3 ] },
-          "east": { "texture": "#frame", "uv": [ 9.5, 5.5, 10.46, 5.8 ] },
-          "south": { "texture": "#frame", "uv": [ 3, 11, 6.354, 11.3 ] },
-          "west": { "texture": "#frame", "uv": [ 10, 2.5, 10.96, 2.8 ] },
-          "up": { "texture": "#frame", "uv": [ 6.5, 4.5, 9.854, 5.46 ] },
-          "down": { "texture": "#frame", "uv": [ 3.5, 11, 6.854, 11.96 ] }
+          "north": { "texture": "#frame", "uv": [ 3, 9.5, 6.354, 9.8 ] },
+          "east": { "texture": "#frame", "uv": [ 14.5, 8, 15.46, 8.3 ] },
+          "south": { "texture": "#frame", "uv": [ 0, 13.5, 3.354, 13.8 ] },
+          "west": { "texture": "#frame", "uv": [ 1.5, 7, 2.46, 7.3 ] },
+          "up": { "texture": "#frame", "uv": [ 9, 1, 12.354, 1.96 ] },
+          "down": { "texture": "#frame", "uv": [ 2, 12.5, 5.354, 13.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath2x2Frame",
+       "name": "BentLath2x2Frame",
        "from": [ -1.56, 2.52, 4.4 ],
        "to": [ -1.56, 2.52, 4.4 ],
        "rotationOrigin": [ -1.56, 2.52, 4.4 ],
@@ -172,44 +172,44 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath2x2",
+         "name": "BentLath2x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.709, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 10, 12.5, 12.709, 12.8 ] },
-          "east": { "texture": "#frame", "uv": [ 2, 12, 2.96, 12.3 ] },
-          "south": { "texture": "#frame", "uv": [ 5, 13, 7.709, 13.3 ] },
-          "west": { "texture": "#frame", "uv": [ 4.5, 15.5, 5.46, 15.8 ] },
-          "up": { "texture": "#frame", "uv": [ 6, 0, 8.709, 0.96 ] },
-          "down": { "texture": "#frame", "uv": [ 8, 5.5, 10.709, 6.46 ] }
+          "north": { "texture": "#frame", "uv": [ 12, 6.5, 14.709, 6.8 ] },
+          "east": { "texture": "#frame", "uv": [ 7, 10, 7.96, 10.3 ] },
+          "south": { "texture": "#frame", "uv": [ 4.5, 5, 7.209, 5.3 ] },
+          "west": { "texture": "#frame", "uv": [ 7.5, 12.5, 8.46, 12.8 ] },
+          "up": { "texture": "#frame", "uv": [ 11, 11, 13.709, 11.96 ] },
+          "down": { "texture": "#frame", "uv": [ 12.5, 0.5, 15.209, 1.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath2x3Frame",
+       "name": "BentLath2x3Frame",
        "from": [ 0.063, 0.35, 4.4 ],
        "to": [ 0.063, 0.35, 4.4 ],
        "rotationOrigin": [ 0.063, 0.35, 4.4 ],
        "faces": {},
        "children": [
         {
-         "name": "Lath2x3",
+         "name": "BentLath2x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 15.875, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 1, 15.875, 1.3 ] },
-          "east": { "texture": "#frame", "uv": [ 14.5, 8, 15.46, 8.3 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 4.5, 15.875, 4.8 ] },
-          "west": { "texture": "#frame", "uv": [ 1, 8, 1.96, 8.3 ] },
-          "up": { "texture": "#frame", "uv": [ 0, 14.5, 15.875, 15.46 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 2, 15.875, 2.96 ] }
+          "north": { "texture": "#frame", "uv": [ 0, 9.5, 15.875, 9.8 ] },
+          "east": { "texture": "#frame", "uv": [ 13, 5.5, 13.96, 5.8 ] },
+          "south": { "texture": "#frame", "uv": [ 0, 9, 15.875, 9.3 ] },
+          "west": { "texture": "#frame", "uv": [ 4.5, 2, 5.46, 2.3 ] },
+          "up": { "texture": "#frame", "uv": [ 0, 2.5, 15.875, 3.46 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 13, 15.875, 13.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath2x4Frame",
+       "name": "BentLath2x4Frame",
        "from": [ 15.937, 0.35, 4.4 ],
        "to": [ 15.937, 0.35, 4.4 ],
        "rotationOrigin": [ 15.937, 0.35, 4.4 ],
@@ -217,22 +217,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath2x4",
+         "name": "BentLath2x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.709, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 6, 8, 8.709, 8.3 ] },
-          "east": { "texture": "#frame", "uv": [ 2, 8.5, 2.96, 8.8 ] },
-          "south": { "texture": "#frame", "uv": [ 4, 3, 6.709, 3.3 ] },
-          "west": { "texture": "#frame", "uv": [ 11, 9.5, 11.96, 9.8 ] },
-          "up": { "texture": "#frame", "uv": [ 12.5, 7.5, 15.209, 8.46 ] },
-          "down": { "texture": "#frame", "uv": [ 7, 12.5, 9.709, 13.46 ] }
+          "north": { "texture": "#frame", "uv": [ 11.5, 11.5, 14.209, 11.8 ] },
+          "east": { "texture": "#frame", "uv": [ 0.5, 6.5, 1.46, 6.8 ] },
+          "south": { "texture": "#frame", "uv": [ 9, 13, 11.709, 13.3 ] },
+          "west": { "texture": "#frame", "uv": [ 1.5, 10.5, 2.46, 10.8 ] },
+          "up": { "texture": "#frame", "uv": [ 3.5, 4.5, 6.209, 5.46 ] },
+          "down": { "texture": "#frame", "uv": [ 5.5, 4.5, 8.209, 5.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath2x5Frame",
+       "name": "BentLath2x5Frame",
        "from": [ 17.56, 2.52, 4.4 ],
        "to": [ 17.56, 2.52, 4.4 ],
        "rotationOrigin": [ 17.56, 2.52, 4.4 ],
@@ -240,22 +240,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath2x5",
+         "name": "BentLath2x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.354, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 1.5, 11, 4.854, 11.3 ] },
-          "east": { "texture": "#frame", "uv": [ 5.5, 1, 6.46, 1.3 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 9, 3.354, 9.3 ] },
-          "west": { "texture": "#frame", "uv": [ 8.5, 1, 9.46, 1.3 ] },
-          "up": { "texture": "#frame", "uv": [ 10.5, 7.5, 13.854, 8.46 ] },
-          "down": { "texture": "#frame", "uv": [ 2.5, 3, 5.854, 3.96 ] }
+          "north": { "texture": "#frame", "uv": [ 7.5, 15, 10.854, 15.3 ] },
+          "east": { "texture": "#frame", "uv": [ 9, 11, 9.96, 11.3 ] },
+          "south": { "texture": "#frame", "uv": [ 12, 2.5, 15.354, 2.8 ] },
+          "west": { "texture": "#frame", "uv": [ 14, 1.5, 14.96, 1.8 ] },
+          "up": { "texture": "#frame", "uv": [ 7.5, 10, 10.854, 10.96 ] },
+          "down": { "texture": "#frame", "uv": [ 8, 5.5, 11.354, 6.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath3x1Frame",
+       "name": "BentLath3x1Frame",
        "from": [ -3.732, 5.6, 6.2 ],
        "to": [ -3.732, 5.6, 6.2 ],
        "rotationOrigin": [ -3.732, 5.6, 6.2 ],
@@ -263,22 +263,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath3x1",
+         "name": "BentLath3x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.282, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 9.5, 11.5, 12.782, 11.8 ] },
-          "east": { "texture": "#frame", "uv": [ 10.5, 11.5, 11.46, 11.8 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 4, 4.782, 4.3 ] },
-          "west": { "texture": "#frame", "uv": [ 6, 8, 6.96, 8.3 ] },
-          "up": { "texture": "#frame", "uv": [ 12.5, 12.5, 15.782, 13.46 ] },
-          "down": { "texture": "#frame", "uv": [ 8, 3.5, 11.282, 4.46 ] }
+          "north": { "texture": "#frame", "uv": [ 6, 10.5, 9.282, 10.8 ] },
+          "east": { "texture": "#frame", "uv": [ 0, 6, 0.96, 6.3 ] },
+          "south": { "texture": "#frame", "uv": [ 11.5, 15, 14.782, 15.3 ] },
+          "west": { "texture": "#frame", "uv": [ 9.5, 2.5, 10.46, 2.8 ] },
+          "up": { "texture": "#frame", "uv": [ 2.5, 10, 5.782, 10.96 ] },
+          "down": { "texture": "#frame", "uv": [ 11.5, 11, 14.782, 11.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath3x2Frame",
+       "name": "BentLath3x2Frame",
        "from": [ -2.598, 2.52, 6.2 ],
        "to": [ -2.598, 2.52, 6.2 ],
        "rotationOrigin": [ -2.598, 2.52, 6.2 ],
@@ -286,44 +286,44 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath3x2",
+         "name": "BentLath3x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.575, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 6, 9.5, 8.575, 9.8 ] },
-          "east": { "texture": "#frame", "uv": [ 10.5, 7.5, 11.46, 7.8 ] },
-          "south": { "texture": "#frame", "uv": [ 11, 6.5, 13.575, 6.8 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 11, 7.46, 11.3 ] },
-          "up": { "texture": "#frame", "uv": [ 12.5, 3.5, 15.075, 4.46 ] },
-          "down": { "texture": "#frame", "uv": [ 5.5, 0, 8.075, 0.96 ] }
+          "north": { "texture": "#frame", "uv": [ 2.5, 4.5, 5.075, 4.8 ] },
+          "east": { "texture": "#frame", "uv": [ 6.5, 4.5, 7.46, 4.8 ] },
+          "south": { "texture": "#frame", "uv": [ 0.5, 9.5, 3.075, 9.8 ] },
+          "west": { "texture": "#frame", "uv": [ 12, 11, 12.96, 11.3 ] },
+          "up": { "texture": "#frame", "uv": [ 2.5, 12.5, 5.075, 13.46 ] },
+          "down": { "texture": "#frame", "uv": [ 2, 0.5, 4.575, 1.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath3x3Frame",
+       "name": "BentLath3x3Frame",
        "from": [ -1.212, 0.35, 6.2 ],
        "to": [ -1.212, 0.35, 6.2 ],
        "rotationOrigin": [ -1.212, 0.35, 6.2 ],
        "faces": {},
        "children": [
         {
-         "name": "Lath3x3",
+         "name": "BentLath3x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 18.425, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 15, 16, 15.3 ] },
-          "east": { "texture": "#frame", "uv": [ 5, 14.5, 5.96, 14.8 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 12.5, 16, 12.8 ] },
-          "west": { "texture": "#frame", "uv": [ 12.5, 3.5, 13.46, 3.8 ] },
-          "up": { "texture": "#frame", "uv": [ 0, 6.5, 16, 7.46 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 1, 16, 1.96 ] }
+          "north": { "texture": "#frame", "uv": [ 0, 5.5, 16, 5.8 ] },
+          "east": { "texture": "#frame", "uv": [ 1.5, 5, 2.46, 5.3 ] },
+          "south": { "texture": "#frame", "uv": [ 0, 13, 16, 13.3 ] },
+          "west": { "texture": "#frame", "uv": [ 5, 6, 5.96, 6.3 ] },
+          "up": { "texture": "#frame", "uv": [ 0, 2, 16, 2.96 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 9.5, 16, 10.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath3x4Frame",
+       "name": "BentLath3x4Frame",
        "from": [ 17.212, 0.35, 6.2 ],
        "to": [ 17.212, 0.35, 6.2 ],
        "rotationOrigin": [ 17.212, 0.35, 6.2 ],
@@ -331,22 +331,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath3x4",
+         "name": "BentLath3x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.575, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 5, 15, 7.575, 15.3 ] },
-          "east": { "texture": "#frame", "uv": [ 14, 4.5, 14.96, 4.8 ] },
-          "south": { "texture": "#frame", "uv": [ 8.5, 9.5, 11.075, 9.8 ] },
-          "west": { "texture": "#frame", "uv": [ 0, 7.5, 0.96, 7.8 ] },
-          "up": { "texture": "#frame", "uv": [ 12.5, 5, 15.075, 5.96 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 0.5, 3.075, 1.46 ] }
+          "north": { "texture": "#frame", "uv": [ 6.5, 9.5, 9.075, 9.8 ] },
+          "east": { "texture": "#frame", "uv": [ 5, 5.5, 5.96, 5.8 ] },
+          "south": { "texture": "#frame", "uv": [ 12, 3, 14.575, 3.3 ] },
+          "west": { "texture": "#frame", "uv": [ 11, 6, 11.96, 6.3 ] },
+          "up": { "texture": "#frame", "uv": [ 9.5, 5, 12.075, 5.96 ] },
+          "down": { "texture": "#frame", "uv": [ 9.5, 10, 12.075, 10.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath3x5Frame",
+       "name": "BentLath3x5Frame",
        "from": [ 18.598, 2.52, 6.2 ],
        "to": [ 18.598, 2.52, 6.2 ],
        "rotationOrigin": [ 18.598, 2.52, 6.2 ],
@@ -354,22 +354,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath3x5",
+         "name": "BentLath3x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.282, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 10.5, 13, 13.782, 13.3 ] },
-          "east": { "texture": "#frame", "uv": [ 0.5, 8, 1.46, 8.3 ] },
-          "south": { "texture": "#frame", "uv": [ 9.5, 5, 12.782, 5.3 ] },
-          "west": { "texture": "#frame", "uv": [ 12, 8.5, 12.96, 8.8 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 9, 4.782, 9.96 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 3, 3.282, 3.96 ] }
+          "north": { "texture": "#frame", "uv": [ 1.5, 15, 4.782, 15.3 ] },
+          "east": { "texture": "#frame", "uv": [ 0.5, 5, 1.46, 5.3 ] },
+          "south": { "texture": "#frame", "uv": [ 10.5, 15, 13.782, 15.3 ] },
+          "west": { "texture": "#frame", "uv": [ 8.5, 2.5, 9.46, 2.8 ] },
+          "up": { "texture": "#frame", "uv": [ 6.5, 0.5, 9.782, 1.46 ] },
+          "down": { "texture": "#frame", "uv": [ 7, 7.5, 10.282, 8.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath4x1Frame",
+       "name": "BentLath4x1Frame",
        "from": [ -4, 5.6, 8 ],
        "to": [ -4, 5.6, 8 ],
        "rotationOrigin": [ -4, 5.6, 8 ],
@@ -377,22 +377,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath4x1",
+         "name": "BentLath4x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.264, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 12, 7, 15.264, 7.3 ] },
-          "east": { "texture": "#frame", "uv": [ 11.5, 9, 12.46, 9.3 ] },
-          "south": { "texture": "#frame", "uv": [ 7.5, 15.5, 10.764, 15.8 ] },
-          "west": { "texture": "#frame", "uv": [ 6, 1.5, 6.96, 1.8 ] },
-          "up": { "texture": "#frame", "uv": [ 4.5, 12.5, 7.764, 13.46 ] },
-          "down": { "texture": "#frame", "uv": [ 8.5, 6, 11.764, 6.96 ] }
+          "north": { "texture": "#frame", "uv": [ 9.5, 12.5, 12.764, 12.8 ] },
+          "east": { "texture": "#frame", "uv": [ 2.5, 4.5, 3.46, 4.8 ] },
+          "south": { "texture": "#frame", "uv": [ 3, 4.5, 6.264, 4.8 ] },
+          "west": { "texture": "#frame", "uv": [ 6, 0.5, 6.96, 0.8 ] },
+          "up": { "texture": "#frame", "uv": [ 5.5, 12.5, 8.764, 13.46 ] },
+          "down": { "texture": "#frame", "uv": [ 7, 13.5, 10.264, 14.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath4x2Frame",
+       "name": "BentLath4x2Frame",
        "from": [ -2.92, 2.52, 8 ],
        "to": [ -2.92, 2.52, 8 ],
        "rotationOrigin": [ -2.92, 2.52, 8 ],
@@ -400,44 +400,44 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath4x2",
+         "name": "BentLath4x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.54, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 2.5, 12.5, 5.04, 12.8 ] },
-          "east": { "texture": "#frame", "uv": [ 6.5, 9, 7.46, 9.3 ] },
-          "south": { "texture": "#frame", "uv": [ 2, 12, 4.54, 12.3 ] },
-          "west": { "texture": "#frame", "uv": [ 6, 9, 6.96, 9.3 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 12, 4.04, 12.96 ] },
-          "down": { "texture": "#frame", "uv": [ 3.5, 6, 6.04, 6.96 ] }
+          "north": { "texture": "#frame", "uv": [ 4.5, 12, 7.04, 12.3 ] },
+          "east": { "texture": "#frame", "uv": [ 15, 0, 15.96, 0.3 ] },
+          "south": { "texture": "#frame", "uv": [ 6, 11.5, 8.54, 11.8 ] },
+          "west": { "texture": "#frame", "uv": [ 8, 1.5, 8.96, 1.8 ] },
+          "up": { "texture": "#frame", "uv": [ 6, 1, 8.54, 1.96 ] },
+          "down": { "texture": "#frame", "uv": [ 0.5, 8.5, 3.04, 9.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath4x3Frame",
+       "name": "BentLath4x3Frame",
        "from": [ -1.6, 0.35, 8 ],
        "to": [ -1.6, 0.35, 8 ],
        "rotationOrigin": [ -1.6, 0.35, 8 ],
        "faces": {},
        "children": [
         {
-         "name": "Lath4x3",
+         "name": "BentLath4x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 19.2, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 4, 16, 4.3 ] },
-          "east": { "texture": "#frame", "uv": [ 7.5, 12.5, 8.46, 12.8 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 10.5, 16, 10.8 ] },
-          "west": { "texture": "#frame", "uv": [ 13.5, 14.5, 14.46, 14.8 ] },
-          "up": { "texture": "#frame", "uv": [ 0, 4.5, 16, 5.46 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 10.5, 16, 11.46 ] }
+          "north": { "texture": "#frame", "uv": [ 0, 5, 16, 5.3 ] },
+          "east": { "texture": "#frame", "uv": [ 10, 6.5, 10.96, 6.8 ] },
+          "south": { "texture": "#frame", "uv": [ 0, 9, 16, 9.3 ] },
+          "west": { "texture": "#frame", "uv": [ 11, 9, 11.96, 9.3 ] },
+          "up": { "texture": "#frame", "uv": [ 0, 12, 16, 12.96 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 4, 16, 4.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath4x4Frame",
+       "name": "BentLath4x4Frame",
        "from": [ 17.6, 0.35, 8 ],
        "to": [ 17.6, 0.35, 8 ],
        "rotationOrigin": [ 17.6, 0.35, 8 ],
@@ -445,22 +445,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath4x4",
+         "name": "BentLath4x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.54, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 4, 6.04, 4.3 ] },
-          "east": { "texture": "#frame", "uv": [ 6, 9, 6.96, 9.3 ] },
-          "south": { "texture": "#frame", "uv": [ 11, 7.5, 13.54, 7.8 ] },
-          "west": { "texture": "#frame", "uv": [ 14, 5, 14.96, 5.3 ] },
-          "up": { "texture": "#frame", "uv": [ 8, 3, 10.54, 3.96 ] },
-          "down": { "texture": "#frame", "uv": [ 6, 7.5, 8.54, 8.46 ] }
+          "north": { "texture": "#frame", "uv": [ 6, 2, 8.54, 2.3 ] },
+          "east": { "texture": "#frame", "uv": [ 9.5, 12, 10.46, 12.3 ] },
+          "south": { "texture": "#frame", "uv": [ 6, 13.5, 8.54, 13.8 ] },
+          "west": { "texture": "#frame", "uv": [ 7.5, 9, 8.46, 9.3 ] },
+          "up": { "texture": "#frame", "uv": [ 1, 10.5, 3.54, 11.46 ] },
+          "down": { "texture": "#frame", "uv": [ 9, 8.5, 11.54, 9.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath4x5Frame",
+       "name": "BentLath4x5Frame",
        "from": [ 18.92, 2.52, 8 ],
        "to": [ 18.92, 2.52, 8 ],
        "rotationOrigin": [ 18.92, 2.52, 8 ],
@@ -468,22 +468,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath4x5",
+         "name": "BentLath4x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.264, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 9, 2, 12.264, 2.3 ] },
-          "east": { "texture": "#frame", "uv": [ 3, 4, 3.96, 4.3 ] },
-          "south": { "texture": "#frame", "uv": [ 7.5, 11, 10.764, 11.3 ] },
-          "west": { "texture": "#frame", "uv": [ 9, 13, 9.96, 13.3 ] },
-          "up": { "texture": "#frame", "uv": [ 8.5, 11, 11.764, 11.96 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 13, 3.764, 13.96 ] }
+          "north": { "texture": "#frame", "uv": [ 3.5, 12, 6.764, 12.3 ] },
+          "east": { "texture": "#frame", "uv": [ 11, 3.5, 11.96, 3.8 ] },
+          "south": { "texture": "#frame", "uv": [ 8, 9, 11.264, 9.3 ] },
+          "west": { "texture": "#frame", "uv": [ 1, 8.5, 1.96, 8.8 ] },
+          "up": { "texture": "#frame", "uv": [ 1, 10, 4.264, 10.96 ] },
+          "down": { "texture": "#frame", "uv": [ 3, 11.5, 6.264, 12.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath5x1Frame",
+       "name": "BentLath5x1Frame",
        "from": [ -3.732, 5.6, 9.8 ],
        "to": [ -3.732, 5.6, 9.8 ],
        "rotationOrigin": [ -3.732, 5.6, 9.8 ],
@@ -491,22 +491,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath5x1",
+         "name": "BentLath5x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.282, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 10, 5.5, 13.282, 5.8 ] },
-          "east": { "texture": "#frame", "uv": [ 10.5, 0.5, 11.46, 0.8 ] },
-          "south": { "texture": "#frame", "uv": [ 3, 10, 6.282, 10.3 ] },
-          "west": { "texture": "#frame", "uv": [ 13.5, 6, 14.46, 6.3 ] },
-          "up": { "texture": "#frame", "uv": [ 5, 8, 8.282, 8.96 ] },
-          "down": { "texture": "#frame", "uv": [ 6.5, 0, 9.782, 0.96 ] }
+          "north": { "texture": "#frame", "uv": [ 2.5, 14, 5.782, 14.3 ] },
+          "east": { "texture": "#frame", "uv": [ 8.5, 13.5, 9.46, 13.8 ] },
+          "south": { "texture": "#frame", "uv": [ 9, 8.5, 12.282, 8.8 ] },
+          "west": { "texture": "#frame", "uv": [ 11.5, 13.5, 12.46, 13.8 ] },
+          "up": { "texture": "#frame", "uv": [ 1, 8.5, 4.282, 9.46 ] },
+          "down": { "texture": "#frame", "uv": [ 0.5, 5, 3.782, 5.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath5x2Frame",
+       "name": "BentLath5x2Frame",
        "from": [ -2.598, 2.52, 9.8 ],
        "to": [ -2.598, 2.52, 9.8 ],
        "rotationOrigin": [ -2.598, 2.52, 9.8 ],
@@ -514,44 +514,44 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath5x2",
+         "name": "BentLath5x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.575, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 8.5, 14, 11.075, 14.3 ] },
-          "east": { "texture": "#frame", "uv": [ 14.5, 3.5, 15.46, 3.8 ] },
-          "south": { "texture": "#frame", "uv": [ 8, 5, 10.575, 5.3 ] },
-          "west": { "texture": "#frame", "uv": [ 10, 0.5, 10.96, 0.8 ] },
-          "up": { "texture": "#frame", "uv": [ 5, 9, 7.575, 9.96 ] },
-          "down": { "texture": "#frame", "uv": [ 8, 1.5, 10.575, 2.46 ] }
+          "north": { "texture": "#frame", "uv": [ 1.5, 14.5, 4.075, 14.8 ] },
+          "east": { "texture": "#frame", "uv": [ 10.5, 12.5, 11.46, 12.8 ] },
+          "south": { "texture": "#frame", "uv": [ 6, 5.5, 8.575, 5.8 ] },
+          "west": { "texture": "#frame", "uv": [ 9.5, 7, 10.46, 7.3 ] },
+          "up": { "texture": "#frame", "uv": [ 2.5, 4, 5.075, 4.96 ] },
+          "down": { "texture": "#frame", "uv": [ 1.5, 3, 4.075, 3.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath5x3Frame",
+       "name": "BentLath5x3Frame",
        "from": [ -1.212, 0.35, 9.8 ],
        "to": [ -1.212, 0.35, 9.8 ],
        "rotationOrigin": [ -1.212, 0.35, 9.8 ],
        "faces": {},
        "children": [
         {
-         "name": "Lath5x3",
+         "name": "BentLath5x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 18.425, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 0.5, 16, 0.8 ] },
-          "east": { "texture": "#frame", "uv": [ 8, 13.5, 8.96, 13.8 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 8.5, 16, 8.8 ] },
-          "west": { "texture": "#frame", "uv": [ 11, 3.5, 11.96, 3.8 ] },
-          "up": { "texture": "#frame", "uv": [ 0, 11, 16, 11.96 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 0, 16, 0.96 ] }
+          "north": { "texture": "#frame", "uv": [ 0, 2, 16, 2.3 ] },
+          "east": { "texture": "#frame", "uv": [ 8, 2, 8.96, 2.3 ] },
+          "south": { "texture": "#frame", "uv": [ 0, 1.5, 16, 1.8 ] },
+          "west": { "texture": "#frame", "uv": [ 13.5, 0.5, 14.46, 0.8 ] },
+          "up": { "texture": "#frame", "uv": [ 0, 2, 16, 2.96 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 2, 16, 2.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath5x4Frame",
+       "name": "BentLath5x4Frame",
        "from": [ 17.212, 0.35, 9.8 ],
        "to": [ 17.212, 0.35, 9.8 ],
        "rotationOrigin": [ 17.212, 0.35, 9.8 ],
@@ -559,22 +559,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath5x4",
+         "name": "BentLath5x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.575, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 2.5, 13.5, 5.075, 13.8 ] },
-          "east": { "texture": "#frame", "uv": [ 3, 10, 3.96, 10.3 ] },
-          "south": { "texture": "#frame", "uv": [ 10.5, 8, 13.075, 8.3 ] },
-          "west": { "texture": "#frame", "uv": [ 5, 8.5, 5.96, 8.8 ] },
-          "up": { "texture": "#frame", "uv": [ 3.5, 12, 6.075, 12.96 ] },
-          "down": { "texture": "#frame", "uv": [ 8.5, 8, 11.075, 8.96 ] }
+          "north": { "texture": "#frame", "uv": [ 9, 1, 11.575, 1.3 ] },
+          "east": { "texture": "#frame", "uv": [ 9, 11.5, 9.96, 11.8 ] },
+          "south": { "texture": "#frame", "uv": [ 9.5, 1, 12.075, 1.3 ] },
+          "west": { "texture": "#frame", "uv": [ 7.5, 13, 8.46, 13.3 ] },
+          "up": { "texture": "#frame", "uv": [ 9, 9.5, 11.575, 10.46 ] },
+          "down": { "texture": "#frame", "uv": [ 3.5, 6, 6.075, 6.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath5x5Frame",
+       "name": "BentLath5x5Frame",
        "from": [ 18.598, 2.52, 9.8 ],
        "to": [ 18.598, 2.52, 9.8 ],
        "rotationOrigin": [ 18.598, 2.52, 9.8 ],
@@ -582,22 +582,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath5x5",
+         "name": "BentLath5x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.282, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 9.5, 5.5, 12.782, 5.8 ] },
-          "east": { "texture": "#frame", "uv": [ 8.5, 13, 9.46, 13.3 ] },
-          "south": { "texture": "#frame", "uv": [ 0.5, 14.5, 3.782, 14.8 ] },
-          "west": { "texture": "#frame", "uv": [ 2.5, 14, 3.46, 14.3 ] },
-          "up": { "texture": "#frame", "uv": [ 7, 7, 10.282, 7.96 ] },
-          "down": { "texture": "#frame", "uv": [ 11.5, 14.5, 14.782, 15.46 ] }
+          "north": { "texture": "#frame", "uv": [ 2, 2, 5.282, 2.3 ] },
+          "east": { "texture": "#frame", "uv": [ 11.5, 10, 12.46, 10.3 ] },
+          "south": { "texture": "#frame", "uv": [ 8.5, 13.5, 11.782, 13.8 ] },
+          "west": { "texture": "#frame", "uv": [ 0, 5, 0.96, 5.3 ] },
+          "up": { "texture": "#frame", "uv": [ 1.5, 12.5, 4.782, 13.46 ] },
+          "down": { "texture": "#frame", "uv": [ 1, 10, 4.282, 10.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath6x1Frame",
+       "name": "BentLath6x1Frame",
        "from": [ -2.887, 5.6, 11.6 ],
        "to": [ -2.887, 5.6, 11.6 ],
        "rotationOrigin": [ -2.887, 5.6, 11.6 ],
@@ -605,22 +605,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath6x1",
+         "name": "BentLath6x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.354, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 0.5, 15.5, 3.854, 15.8 ] },
-          "east": { "texture": "#frame", "uv": [ 14.5, 6, 15.46, 6.3 ] },
-          "south": { "texture": "#frame", "uv": [ 6.5, 1.5, 9.854, 1.8 ] },
-          "west": { "texture": "#frame", "uv": [ 11.5, 15, 12.46, 15.3 ] },
-          "up": { "texture": "#frame", "uv": [ 10.5, 3.5, 13.854, 4.46 ] },
-          "down": { "texture": "#frame", "uv": [ 2, 8, 5.354, 8.96 ] }
+          "north": { "texture": "#frame", "uv": [ 8.5, 3.5, 11.854, 3.8 ] },
+          "east": { "texture": "#frame", "uv": [ 3.5, 10, 4.46, 10.3 ] },
+          "south": { "texture": "#frame", "uv": [ 4.5, 7.5, 7.854, 7.8 ] },
+          "west": { "texture": "#frame", "uv": [ 10, 8.5, 10.96, 8.8 ] },
+          "up": { "texture": "#frame", "uv": [ 6, 7, 9.354, 7.96 ] },
+          "down": { "texture": "#frame", "uv": [ 3.5, 10.5, 6.854, 11.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath6x2Frame",
+       "name": "BentLath6x2Frame",
        "from": [ -1.56, 2.52, 11.6 ],
        "to": [ -1.56, 2.52, 11.6 ],
        "rotationOrigin": [ -1.56, 2.52, 11.6 ],
@@ -628,44 +628,44 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath6x2",
+         "name": "BentLath6x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.709, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 11, 6.209, 11.3 ] },
-          "east": { "texture": "#frame", "uv": [ 11.5, 6, 12.46, 6.3 ] },
-          "south": { "texture": "#frame", "uv": [ 4, 9.5, 6.709, 9.8 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 12.5, 7.46, 12.8 ] },
-          "up": { "texture": "#frame", "uv": [ 0, 6.5, 2.709, 7.46 ] },
-          "down": { "texture": "#frame", "uv": [ 12.5, 14.5, 15.209, 15.46 ] }
+          "north": { "texture": "#frame", "uv": [ 10.5, 6.5, 13.209, 6.8 ] },
+          "east": { "texture": "#frame", "uv": [ 12, 6.5, 12.96, 6.8 ] },
+          "south": { "texture": "#frame", "uv": [ 0.5, 6.5, 3.209, 6.8 ] },
+          "west": { "texture": "#frame", "uv": [ 6.5, 15, 7.46, 15.3 ] },
+          "up": { "texture": "#frame", "uv": [ 12, 4, 14.709, 4.96 ] },
+          "down": { "texture": "#frame", "uv": [ 12.5, 5, 15.209, 5.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath6x3Frame",
+       "name": "BentLath6x3Frame",
        "from": [ 0.063, 0.35, 11.6 ],
        "to": [ 0.063, 0.35, 11.6 ],
        "rotationOrigin": [ 0.063, 0.35, 11.6 ],
        "faces": {},
        "children": [
         {
-         "name": "Lath6x3",
+         "name": "BentLath6x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 15.875, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 8.5, 15.875, 8.8 ] },
-          "east": { "texture": "#frame", "uv": [ 12, 9.5, 12.96, 9.8 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 5.5, 15.875, 5.8 ] },
-          "west": { "texture": "#frame", "uv": [ 10, 2.5, 10.96, 2.8 ] },
-          "up": { "texture": "#frame", "uv": [ 0, 6, 15.875, 6.96 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 1.5, 15.875, 2.46 ] }
+          "north": { "texture": "#frame", "uv": [ 0, 15, 15.875, 15.3 ] },
+          "east": { "texture": "#frame", "uv": [ 14.5, 15.5, 15.46, 15.8 ] },
+          "south": { "texture": "#frame", "uv": [ 0, 2.5, 15.875, 2.8 ] },
+          "west": { "texture": "#frame", "uv": [ 13.5, 2.5, 14.46, 2.8 ] },
+          "up": { "texture": "#frame", "uv": [ 0, 2, 15.875, 2.96 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 10, 15.875, 10.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath6x4Frame",
+       "name": "BentLath6x4Frame",
        "from": [ 15.937, 0.35, 11.6 ],
        "to": [ 15.937, 0.35, 11.6 ],
        "rotationOrigin": [ 15.937, 0.35, 11.6 ],
@@ -673,22 +673,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath6x4",
+         "name": "BentLath6x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.709, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 4.5, 15, 7.209, 15.3 ] },
-          "east": { "texture": "#frame", "uv": [ 12, 7.5, 12.96, 7.8 ] },
-          "south": { "texture": "#frame", "uv": [ 5, 8, 7.709, 8.3 ] },
-          "west": { "texture": "#frame", "uv": [ 7, 0.5, 7.96, 0.8 ] },
-          "up": { "texture": "#frame", "uv": [ 2, 14, 4.709, 14.96 ] },
-          "down": { "texture": "#frame", "uv": [ 7.5, 7.5, 10.209, 8.46 ] }
+          "north": { "texture": "#frame", "uv": [ 4, 7.5, 6.709, 7.8 ] },
+          "east": { "texture": "#frame", "uv": [ 3.5, 15, 4.46, 15.3 ] },
+          "south": { "texture": "#frame", "uv": [ 2, 3, 4.709, 3.3 ] },
+          "west": { "texture": "#frame", "uv": [ 6.5, 8.5, 7.46, 8.8 ] },
+          "up": { "texture": "#frame", "uv": [ 11, 10, 13.709, 10.96 ] },
+          "down": { "texture": "#frame", "uv": [ 8, 10.5, 10.709, 11.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath6x5Frame",
+       "name": "BentLath6x5Frame",
        "from": [ 17.56, 2.52, 11.6 ],
        "to": [ 17.56, 2.52, 11.6 ],
        "rotationOrigin": [ 17.56, 2.52, 11.6 ],
@@ -696,22 +696,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath6x5",
+         "name": "BentLath6x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.354, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 6.5, 11.5, 9.854, 11.8 ] },
-          "east": { "texture": "#frame", "uv": [ 10, 0.5, 10.96, 0.8 ] },
-          "south": { "texture": "#frame", "uv": [ 9, 1.5, 12.354, 1.8 ] },
-          "west": { "texture": "#frame", "uv": [ 4.5, 0, 5.46, 0.3 ] },
-          "up": { "texture": "#frame", "uv": [ 6, 8.5, 9.354, 9.46 ] },
-          "down": { "texture": "#frame", "uv": [ 11, 0, 14.354, 0.96 ] }
+          "north": { "texture": "#frame", "uv": [ 11.5, 12, 14.854, 12.3 ] },
+          "east": { "texture": "#frame", "uv": [ 12, 6, 12.96, 6.3 ] },
+          "south": { "texture": "#frame", "uv": [ 8, 11, 11.354, 11.3 ] },
+          "west": { "texture": "#frame", "uv": [ 11, 7.5, 11.96, 7.8 ] },
+          "up": { "texture": "#frame", "uv": [ 12, 0, 15.354, 0.96 ] },
+          "down": { "texture": "#frame", "uv": [ 11.5, 13, 14.854, 13.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath7x1Frame",
+       "name": "BentLath7x1Frame",
        "from": [ -1.311, 5.6, 13.4 ],
        "to": [ -1.311, 5.6, 13.4 ],
        "rotationOrigin": [ -1.311, 5.6, 13.4 ],
@@ -719,22 +719,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath7x1",
+         "name": "BentLath7x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.604, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 9, 6.5, 12.604, 6.8 ] },
-          "east": { "texture": "#frame", "uv": [ 0.5, 8, 1.46, 8.3 ] },
-          "south": { "texture": "#frame", "uv": [ 11, 8, 14.604, 8.3 ] },
-          "west": { "texture": "#frame", "uv": [ 13.5, 14, 14.46, 14.3 ] },
-          "up": { "texture": "#frame", "uv": [ 8.5, 12.5, 12.104, 13.46 ] },
-          "down": { "texture": "#frame", "uv": [ 4.5, 3, 8.104, 3.96 ] }
+          "north": { "texture": "#frame", "uv": [ 7.5, 14.5, 11.104, 14.8 ] },
+          "east": { "texture": "#frame", "uv": [ 1, 1.5, 1.96, 1.8 ] },
+          "south": { "texture": "#frame", "uv": [ 10, 13, 13.604, 13.3 ] },
+          "west": { "texture": "#frame", "uv": [ 0.5, 7.5, 1.46, 7.8 ] },
+          "up": { "texture": "#frame", "uv": [ 0.5, 0.5, 4.104, 1.46 ] },
+          "down": { "texture": "#frame", "uv": [ 2, 9.5, 5.604, 10.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath7x2Frame",
+       "name": "BentLath7x2Frame",
        "from": [ 0.56, 2.52, 13.4 ],
        "to": [ 0.56, 2.52, 13.4 ],
        "rotationOrigin": [ 0.56, 2.52, 13.4 ],
@@ -742,44 +742,44 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath7x2",
+         "name": "BentLath7x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.153, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 2.5, 0, 5.653, 0.3 ] },
-          "east": { "texture": "#frame", "uv": [ 8, 3.5, 8.96, 3.8 ] },
-          "south": { "texture": "#frame", "uv": [ 0.5, 12.5, 3.653, 12.8 ] },
-          "west": { "texture": "#frame", "uv": [ 12.5, 9.5, 13.46, 9.8 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 1, 4.653, 1.96 ] },
-          "down": { "texture": "#frame", "uv": [ 2, 14.5, 5.153, 15.46 ] }
+          "north": { "texture": "#frame", "uv": [ 0.5, 3.5, 3.653, 3.8 ] },
+          "east": { "texture": "#frame", "uv": [ 11.5, 12.5, 12.46, 12.8 ] },
+          "south": { "texture": "#frame", "uv": [ 7, 1, 10.153, 1.3 ] },
+          "west": { "texture": "#frame", "uv": [ 10, 0.5, 10.96, 0.8 ] },
+          "up": { "texture": "#frame", "uv": [ 0.5, 7.5, 3.653, 8.46 ] },
+          "down": { "texture": "#frame", "uv": [ 0.5, 13.5, 3.653, 14.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath7x3Frame",
+       "name": "BentLath7x3Frame",
        "from": [ 2.847, 0.35, 13.4 ],
        "to": [ 2.847, 0.35, 13.4 ],
        "rotationOrigin": [ 2.847, 0.35, 13.4 ],
        "faces": {},
        "children": [
         {
-         "name": "Lath7x3",
+         "name": "BentLath7x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 10.305, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 4, 6.5, 14.305, 6.8 ] },
-          "east": { "texture": "#frame", "uv": [ 6.5, 8, 7.46, 8.3 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 9.5, 11.805, 9.8 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 13.5, 7.46, 13.8 ] },
-          "up": { "texture": "#frame", "uv": [ 1, 5.5, 11.305, 6.46 ] },
-          "down": { "texture": "#frame", "uv": [ 2, 3, 12.305, 3.96 ] }
+          "north": { "texture": "#frame", "uv": [ 3, 8, 13.305, 8.3 ] },
+          "east": { "texture": "#frame", "uv": [ 14, 10.5, 14.96, 10.8 ] },
+          "south": { "texture": "#frame", "uv": [ 4, 3, 14.305, 3.3 ] },
+          "west": { "texture": "#frame", "uv": [ 13, 2, 13.96, 2.3 ] },
+          "up": { "texture": "#frame", "uv": [ 1, 12.5, 11.305, 13.46 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 12, 10.305, 12.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath7x4Frame",
+       "name": "BentLath7x4Frame",
        "from": [ 13.153, 0.35, 13.4 ],
        "to": [ 13.153, 0.35, 13.4 ],
        "rotationOrigin": [ 13.153, 0.35, 13.4 ],
@@ -787,22 +787,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath7x4",
+         "name": "BentLath7x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.153, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 6, 12, 9.153, 12.3 ] },
-          "east": { "texture": "#frame", "uv": [ 10.5, 5.5, 11.46, 5.8 ] },
-          "south": { "texture": "#frame", "uv": [ 0.5, 4, 3.653, 4.3 ] },
-          "west": { "texture": "#frame", "uv": [ 13, 8, 13.96, 8.3 ] },
-          "up": { "texture": "#frame", "uv": [ 2.5, 12, 5.653, 12.96 ] },
-          "down": { "texture": "#frame", "uv": [ 1.5, 12.5, 4.653, 13.46 ] }
+          "north": { "texture": "#frame", "uv": [ 6.5, 13.5, 9.653, 13.8 ] },
+          "east": { "texture": "#frame", "uv": [ 10, 6.5, 10.96, 6.8 ] },
+          "south": { "texture": "#frame", "uv": [ 0, 8.5, 3.153, 8.8 ] },
+          "west": { "texture": "#frame", "uv": [ 5.5, 2, 6.46, 2.3 ] },
+          "up": { "texture": "#frame", "uv": [ 3, 4.5, 6.153, 5.46 ] },
+          "down": { "texture": "#frame", "uv": [ 9.5, 2, 12.653, 2.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath7x5Frame",
+       "name": "BentLath7x5Frame",
        "from": [ 15.44, 2.52, 13.4 ],
        "to": [ 15.44, 2.52, 13.4 ],
        "rotationOrigin": [ 15.44, 2.52, 13.4 ],
@@ -810,22 +810,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath7x5",
+         "name": "BentLath7x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.604, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 8.5, 7.104, 8.8 ] },
-          "east": { "texture": "#frame", "uv": [ 8, 14.5, 8.96, 14.8 ] },
-          "south": { "texture": "#frame", "uv": [ 11, 8, 14.604, 8.3 ] },
-          "west": { "texture": "#frame", "uv": [ 11.5, 5.5, 12.46, 5.8 ] },
-          "up": { "texture": "#frame", "uv": [ 10, 2, 13.604, 2.96 ] },
-          "down": { "texture": "#frame", "uv": [ 4.5, 3, 8.104, 3.96 ] }
+          "north": { "texture": "#frame", "uv": [ 2.5, 15, 6.104, 15.3 ] },
+          "east": { "texture": "#frame", "uv": [ 3, 8, 3.96, 8.3 ] },
+          "south": { "texture": "#frame", "uv": [ 10.5, 3.5, 14.104, 3.8 ] },
+          "west": { "texture": "#frame", "uv": [ 12.5, 4, 13.46, 4.3 ] },
+          "up": { "texture": "#frame", "uv": [ 10, 12, 13.604, 12.96 ] },
+          "down": { "texture": "#frame", "uv": [ 1, 7, 4.604, 7.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath8x1Frame",
+       "name": "BentLath8x1Frame",
        "from": [ -0.1, 5.6, 1.684 ],
        "to": [ -0.1, 5.6, 1.684 ],
        "rotationOrigin": [ -0.1, 5.6, 1.684 ],
@@ -834,22 +834,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath8x1",
+         "name": "BentLath8x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.342, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 2.5, 4, 5.842, 4.3 ] },
-          "east": { "texture": "#frame", "uv": [ 4, 3.5, 4.96, 3.8 ] },
-          "south": { "texture": "#frame", "uv": [ 4, 11.5, 7.342, 11.8 ] },
-          "west": { "texture": "#frame", "uv": [ 13.5, 4, 14.46, 4.3 ] },
-          "up": { "texture": "#frame", "uv": [ 9, 4, 12.342, 4.96 ] },
-          "down": { "texture": "#frame", "uv": [ 9, 7, 12.342, 7.96 ] }
+          "north": { "texture": "#frame", "uv": [ 8, 0.5, 11.342, 0.8 ] },
+          "east": { "texture": "#frame", "uv": [ 8.5, 14, 9.46, 14.3 ] },
+          "south": { "texture": "#frame", "uv": [ 7.5, 6.5, 10.842, 6.8 ] },
+          "west": { "texture": "#frame", "uv": [ 11, 13, 11.96, 13.3 ] },
+          "up": { "texture": "#frame", "uv": [ 9, 4.5, 12.342, 5.46 ] },
+          "down": { "texture": "#frame", "uv": [ 3, 14, 6.342, 14.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath8x2Frame",
+       "name": "BentLath8x2Frame",
        "from": [ -0.1, 2.52, 2.981 ],
        "to": [ -0.1, 2.52, 2.981 ],
        "rotationOrigin": [ -0.1, 2.52, 2.981 ],
@@ -858,22 +858,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath8x2",
+         "name": "BentLath8x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.451, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 5, 1, 7.451, 1.3 ] },
-          "east": { "texture": "#frame", "uv": [ 12, 12, 12.96, 12.3 ] },
-          "south": { "texture": "#frame", "uv": [ 3, 1, 5.451, 1.3 ] },
-          "west": { "texture": "#frame", "uv": [ 8, 13.5, 8.96, 13.8 ] },
-          "up": { "texture": "#frame", "uv": [ 2, 2.5, 4.451, 3.46 ] },
-          "down": { "texture": "#frame", "uv": [ 9, 6.5, 11.451, 7.46 ] }
+          "north": { "texture": "#frame", "uv": [ 10, 10, 12.451, 10.3 ] },
+          "east": { "texture": "#frame", "uv": [ 5.5, 9, 6.46, 9.3 ] },
+          "south": { "texture": "#frame", "uv": [ 12.5, 10.5, 14.951, 10.8 ] },
+          "west": { "texture": "#frame", "uv": [ 2.5, 13, 3.46, 13.3 ] },
+          "up": { "texture": "#frame", "uv": [ 9.5, 7, 11.951, 7.96 ] },
+          "down": { "texture": "#frame", "uv": [ 3.5, 7, 5.951, 7.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath8x3Frame",
+       "name": "BentLath8x3Frame",
        "from": [ -0.1, 0.65, 4.565 ],
        "to": [ -0.1, 0.65, 4.565 ],
        "rotationOrigin": [ -0.1, 0.65, 4.565 ],
@@ -881,22 +881,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath8x3",
+         "name": "BentLath8x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 6.87, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 2.5, 2.5, 9.37, 2.8 ] },
-          "east": { "texture": "#frame", "uv": [ 9.5, 6, 10.46, 6.3 ] },
-          "south": { "texture": "#frame", "uv": [ 6, 6, 12.87, 6.3 ] },
-          "west": { "texture": "#frame", "uv": [ 9.5, 11, 10.46, 11.3 ] },
-          "up": { "texture": "#frame", "uv": [ 4.5, 2.5, 11.37, 3.46 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 10.5, 7.37, 11.46 ] }
+          "north": { "texture": "#frame", "uv": [ 3, 8.5, 9.87, 8.8 ] },
+          "east": { "texture": "#frame", "uv": [ 4.5, 12.5, 5.46, 12.8 ] },
+          "south": { "texture": "#frame", "uv": [ 7, 11.5, 13.87, 11.8 ] },
+          "west": { "texture": "#frame", "uv": [ 5.5, 11.5, 6.46, 11.8 ] },
+          "up": { "texture": "#frame", "uv": [ 4.5, 6, 11.37, 6.96 ] },
+          "down": { "texture": "#frame", "uv": [ 4.5, 2.5, 11.37, 3.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath8x4Frame",
+       "name": "BentLath8x4Frame",
        "from": [ -0.1, 0.65, 11.435 ],
        "to": [ -0.1, 0.65, 11.435 ],
        "rotationOrigin": [ -0.1, 0.65, 11.435 ],
@@ -905,22 +905,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath8x4",
+         "name": "BentLath8x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.451, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 13, 2.5, 15.451, 2.8 ] },
-          "east": { "texture": "#frame", "uv": [ 7.5, 13, 8.46, 13.3 ] },
-          "south": { "texture": "#frame", "uv": [ 8, 12, 10.451, 12.3 ] },
-          "west": { "texture": "#frame", "uv": [ 2.5, 11, 3.46, 11.3 ] },
-          "up": { "texture": "#frame", "uv": [ 11.5, 12.5, 13.951, 13.46 ] },
-          "down": { "texture": "#frame", "uv": [ 4, 11.5, 6.451, 12.46 ] }
+          "north": { "texture": "#frame", "uv": [ 9.5, 13.5, 11.951, 13.8 ] },
+          "east": { "texture": "#frame", "uv": [ 0.5, 7.5, 1.46, 7.8 ] },
+          "south": { "texture": "#frame", "uv": [ 11, 1, 13.451, 1.3 ] },
+          "west": { "texture": "#frame", "uv": [ 14.5, 14.5, 15.46, 14.8 ] },
+          "up": { "texture": "#frame", "uv": [ 7.5, 1, 9.951, 1.96 ] },
+          "down": { "texture": "#frame", "uv": [ 4.5, 13, 6.951, 13.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath8x5Frame",
+       "name": "BentLath8x5Frame",
        "from": [ -0.1, 2.52, 13.019 ],
        "to": [ -0.1, 2.52, 13.019 ],
        "rotationOrigin": [ -0.1, 2.52, 13.019 ],
@@ -929,22 +929,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath8x5",
+         "name": "BentLath8x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.342, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 5, 6.842, 5.3 ] },
-          "east": { "texture": "#frame", "uv": [ 4, 4, 4.96, 4.3 ] },
-          "south": { "texture": "#frame", "uv": [ 2, 11, 5.342, 11.3 ] },
-          "west": { "texture": "#frame", "uv": [ 3, 7, 3.96, 7.3 ] },
-          "up": { "texture": "#frame", "uv": [ 8.5, 4.5, 11.842, 5.46 ] },
-          "down": { "texture": "#frame", "uv": [ 3.5, 14, 6.842, 14.96 ] }
+          "north": { "texture": "#frame", "uv": [ 2.5, 2.5, 5.842, 2.8 ] },
+          "east": { "texture": "#frame", "uv": [ 3.5, 4.5, 4.46, 4.8 ] },
+          "south": { "texture": "#frame", "uv": [ 10.5, 8, 13.842, 8.3 ] },
+          "west": { "texture": "#frame", "uv": [ 10.5, 2, 11.46, 2.3 ] },
+          "up": { "texture": "#frame", "uv": [ 11.5, 12, 14.842, 12.96 ] },
+          "down": { "texture": "#frame", "uv": [ 4.5, 7.5, 7.842, 8.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath9x1Frame",
+       "name": "BentLath9x1Frame",
        "from": [ 2.6, 5.6, 0.356 ],
        "to": [ 2.6, 5.6, 0.356 ],
        "rotationOrigin": [ 2.6, 5.6, 0.356 ],
@@ -953,22 +953,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath9x1",
+         "name": "BentLath9x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.257, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 11.5, 10.5, 14.757, 10.8 ] },
-          "east": { "texture": "#frame", "uv": [ 14, 11, 14.96, 11.3 ] },
-          "south": { "texture": "#frame", "uv": [ 3.5, 2.5, 6.757, 2.8 ] },
-          "west": { "texture": "#frame", "uv": [ 2, 2.5, 2.96, 2.8 ] },
-          "up": { "texture": "#frame", "uv": [ 3.5, 11, 6.757, 11.96 ] },
-          "down": { "texture": "#frame", "uv": [ 1, 12, 4.257, 12.96 ] }
+          "north": { "texture": "#frame", "uv": [ 7, 1.5, 10.257, 1.8 ] },
+          "east": { "texture": "#frame", "uv": [ 11, 12.5, 11.96, 12.8 ] },
+          "south": { "texture": "#frame", "uv": [ 7.5, 1.5, 10.757, 1.8 ] },
+          "west": { "texture": "#frame", "uv": [ 12.5, 13, 13.46, 13.3 ] },
+          "up": { "texture": "#frame", "uv": [ 11.5, 4.5, 14.757, 5.46 ] },
+          "down": { "texture": "#frame", "uv": [ 12, 5, 15.257, 5.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath9x2Frame",
+       "name": "BentLath9x2Frame",
        "from": [ 2.6, 2.52, 1.414 ],
        "to": [ 2.6, 2.52, 1.414 ],
        "rotationOrigin": [ 2.6, 2.52, 1.414 ],
@@ -977,22 +977,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath9x2",
+         "name": "BentLath9x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.274, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 5.5, 15.5, 7.774, 15.8 ] },
-          "east": { "texture": "#frame", "uv": [ 4, 12, 4.96, 12.3 ] },
-          "south": { "texture": "#frame", "uv": [ 10.5, 0, 12.774, 0.3 ] },
-          "west": { "texture": "#frame", "uv": [ 14.5, 5.5, 15.46, 5.8 ] },
-          "up": { "texture": "#frame", "uv": [ 13, 5, 15.274, 5.96 ] },
-          "down": { "texture": "#frame", "uv": [ 5, 11.5, 7.274, 12.46 ] }
+          "north": { "texture": "#frame", "uv": [ 1.5, 9.5, 3.774, 9.8 ] },
+          "east": { "texture": "#frame", "uv": [ 5, 12.5, 5.96, 12.8 ] },
+          "south": { "texture": "#frame", "uv": [ 7.5, 3, 9.774, 3.3 ] },
+          "west": { "texture": "#frame", "uv": [ 4.5, 1, 5.46, 1.3 ] },
+          "up": { "texture": "#frame", "uv": [ 7, 2.5, 9.274, 3.46 ] },
+          "down": { "texture": "#frame", "uv": [ 3, 7.5, 5.274, 8.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath9x3Frame",
+       "name": "BentLath9x3Frame",
        "from": [ 2.6, 0.65, 2.708 ],
        "to": [ 2.6, 0.65, 2.708 ],
        "rotationOrigin": [ 2.6, 0.65, 2.708 ],
@@ -1000,22 +1000,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath9x3",
+         "name": "BentLath9x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 10.583, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3, 2.5, 13.583, 2.8 ] },
-          "east": { "texture": "#frame", "uv": [ 11.5, 2, 12.46, 2.3 ] },
-          "south": { "texture": "#frame", "uv": [ 1, 3.5, 11.583, 3.8 ] },
-          "west": { "texture": "#frame", "uv": [ 14.5, 13, 15.46, 13.3 ] },
-          "up": { "texture": "#frame", "uv": [ 2, 6, 12.583, 6.96 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 13, 10.583, 13.96 ] }
+          "north": { "texture": "#frame", "uv": [ 1, 5, 11.583, 5.3 ] },
+          "east": { "texture": "#frame", "uv": [ 14.5, 2.5, 15.46, 2.8 ] },
+          "south": { "texture": "#frame", "uv": [ 2, 11, 12.583, 11.3 ] },
+          "west": { "texture": "#frame", "uv": [ 14, 13, 14.96, 13.3 ] },
+          "up": { "texture": "#frame", "uv": [ 5, 7, 15.583, 7.96 ] },
+          "down": { "texture": "#frame", "uv": [ 3.5, 11.5, 14.083, 12.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath9x4Frame",
+       "name": "BentLath9x4Frame",
        "from": [ 2.6, 0.65, 13.292 ],
        "to": [ 2.6, 0.65, 13.292 ],
        "rotationOrigin": [ 2.6, 0.65, 13.292 ],
@@ -1024,22 +1024,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath9x4",
+         "name": "BentLath9x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.274, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3, 1, 5.274, 1.3 ] },
-          "east": { "texture": "#frame", "uv": [ 2.5, 2.5, 3.46, 2.8 ] },
-          "south": { "texture": "#frame", "uv": [ 9.5, 7, 11.774, 7.3 ] },
-          "west": { "texture": "#frame", "uv": [ 12, 0.5, 12.96, 0.8 ] },
-          "up": { "texture": "#frame", "uv": [ 11.5, 6, 13.774, 6.96 ] },
-          "down": { "texture": "#frame", "uv": [ 3.5, 11.5, 5.774, 12.46 ] }
+          "north": { "texture": "#frame", "uv": [ 5.5, 5.5, 7.774, 5.8 ] },
+          "east": { "texture": "#frame", "uv": [ 13.5, 5.5, 14.46, 5.8 ] },
+          "south": { "texture": "#frame", "uv": [ 12.5, 10.5, 14.774, 10.8 ] },
+          "west": { "texture": "#frame", "uv": [ 0.5, 6.5, 1.46, 6.8 ] },
+          "up": { "texture": "#frame", "uv": [ 11.5, 10, 13.774, 10.96 ] },
+          "down": { "texture": "#frame", "uv": [ 4, 1.5, 6.274, 2.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath9x5Frame",
+       "name": "BentLath9x5Frame",
        "from": [ 2.6, 2.52, 14.586 ],
        "to": [ 2.6, 2.52, 14.586 ],
        "rotationOrigin": [ 2.6, 2.52, 14.586 ],
@@ -1048,22 +1048,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath9x5",
+         "name": "BentLath9x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.257, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3, 13, 6.257, 13.3 ] },
-          "east": { "texture": "#frame", "uv": [ 14, 12, 14.96, 12.3 ] },
-          "south": { "texture": "#frame", "uv": [ 1, 10.5, 4.257, 10.8 ] },
-          "west": { "texture": "#frame", "uv": [ 12.5, 6.5, 13.46, 6.8 ] },
-          "up": { "texture": "#frame", "uv": [ 6.5, 8.5, 9.757, 9.46 ] },
-          "down": { "texture": "#frame", "uv": [ 9.5, 14.5, 12.757, 15.46 ] }
+          "north": { "texture": "#frame", "uv": [ 8.5, 4.5, 11.757, 4.8 ] },
+          "east": { "texture": "#frame", "uv": [ 4, 2.5, 4.96, 2.8 ] },
+          "south": { "texture": "#frame", "uv": [ 5.5, 12, 8.757, 12.3 ] },
+          "west": { "texture": "#frame", "uv": [ 7.5, 12, 8.46, 12.3 ] },
+          "up": { "texture": "#frame", "uv": [ 8.5, 7, 11.757, 7.96 ] },
+          "down": { "texture": "#frame", "uv": [ 2.5, 13.5, 5.757, 14.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath10x1Frame",
+       "name": "BentLath10x1Frame",
        "from": [ 5.3, 5.6, -0.341 ],
        "to": [ 5.3, 5.6, -0.341 ],
        "rotationOrigin": [ 5.3, 5.6, -0.341 ],
@@ -1072,22 +1072,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath10x1",
+         "name": "BentLath10x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.235, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 4, 6.5, 7.235, 6.8 ] },
-          "east": { "texture": "#frame", "uv": [ 9.5, 4, 10.46, 4.3 ] },
-          "south": { "texture": "#frame", "uv": [ 8, 12.5, 11.235, 12.8 ] },
-          "west": { "texture": "#frame", "uv": [ 1.5, 6.5, 2.46, 6.8 ] },
-          "up": { "texture": "#frame", "uv": [ 0.5, 7.5, 3.735, 8.46 ] },
-          "down": { "texture": "#frame", "uv": [ 3.5, 9.5, 6.735, 10.46 ] }
+          "north": { "texture": "#frame", "uv": [ 0.5, 7.5, 3.735, 7.8 ] },
+          "east": { "texture": "#frame", "uv": [ 14.5, 5.5, 15.46, 5.8 ] },
+          "south": { "texture": "#frame", "uv": [ 4.5, 8.5, 7.735, 8.8 ] },
+          "west": { "texture": "#frame", "uv": [ 14, 13, 14.96, 13.3 ] },
+          "up": { "texture": "#frame", "uv": [ 9.5, 5.5, 12.735, 6.46 ] },
+          "down": { "texture": "#frame", "uv": [ 7, 13.5, 10.235, 14.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath10x2Frame",
+       "name": "BentLath10x2Frame",
        "from": [ 5.3, 2.52, 0.649 ],
        "to": [ 5.3, 2.52, 0.649 ],
        "rotationOrigin": [ 5.3, 2.52, 0.649 ],
@@ -1096,22 +1096,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath10x2",
+         "name": "BentLath10x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.227, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 11, 15, 13.227, 15.3 ] },
-          "east": { "texture": "#frame", "uv": [ 3.5, 0, 4.46, 0.3 ] },
-          "south": { "texture": "#frame", "uv": [ 7, 9, 9.227, 9.3 ] },
-          "west": { "texture": "#frame", "uv": [ 3.5, 0, 4.46, 0.3 ] },
-          "up": { "texture": "#frame", "uv": [ 5, 7, 7.227, 7.96 ] },
-          "down": { "texture": "#frame", "uv": [ 2.5, 11, 4.727, 11.96 ] }
+          "north": { "texture": "#frame", "uv": [ 10, 3.5, 12.227, 3.8 ] },
+          "east": { "texture": "#frame", "uv": [ 9, 2, 9.96, 2.3 ] },
+          "south": { "texture": "#frame", "uv": [ 13, 4.5, 15.227, 4.8 ] },
+          "west": { "texture": "#frame", "uv": [ 7, 7.5, 7.96, 7.8 ] },
+          "up": { "texture": "#frame", "uv": [ 2.5, 11, 4.727, 11.96 ] },
+          "down": { "texture": "#frame", "uv": [ 10.5, 3, 12.727, 3.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath10x3Frame",
+       "name": "BentLath10x3Frame",
        "from": [ 5.3, 0.65, 1.858 ],
        "to": [ 5.3, 0.65, 1.858 ],
        "rotationOrigin": [ 5.3, 0.65, 1.858 ],
@@ -1119,22 +1119,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath10x3",
+         "name": "BentLath10x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 12.283, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 1.5, 5.5, 13.783, 5.8 ] },
-          "east": { "texture": "#frame", "uv": [ 6.5, 12, 7.46, 12.3 ] },
-          "south": { "texture": "#frame", "uv": [ 3.5, 2.5, 15.783, 2.8 ] },
-          "west": { "texture": "#frame", "uv": [ 8.5, 7, 9.46, 7.3 ] },
-          "up": { "texture": "#frame", "uv": [ 2, 6, 14.283, 6.96 ] },
-          "down": { "texture": "#frame", "uv": [ 2, 8, 14.283, 8.96 ] }
+          "north": { "texture": "#frame", "uv": [ 3, 10.5, 15.283, 10.8 ] },
+          "east": { "texture": "#frame", "uv": [ 12.5, 6, 13.46, 6.3 ] },
+          "south": { "texture": "#frame", "uv": [ 3, 6.5, 15.283, 6.8 ] },
+          "west": { "texture": "#frame", "uv": [ 0.5, 1.5, 1.46, 1.8 ] },
+          "up": { "texture": "#frame", "uv": [ 0, 10, 12.283, 10.96 ] },
+          "down": { "texture": "#frame", "uv": [ 1.5, 6.5, 13.783, 7.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath10x4Frame",
+       "name": "BentLath10x4Frame",
        "from": [ 5.3, 0.65, 14.142 ],
        "to": [ 5.3, 0.65, 14.142 ],
        "rotationOrigin": [ 5.3, 0.65, 14.142 ],
@@ -1143,22 +1143,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath10x4",
+         "name": "BentLath10x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.227, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 1.5, 12.5, 3.727, 12.8 ] },
-          "east": { "texture": "#frame", "uv": [ 6.5, 9.5, 7.46, 9.8 ] },
-          "south": { "texture": "#frame", "uv": [ 0.5, 4.5, 2.727, 4.8 ] },
-          "west": { "texture": "#frame", "uv": [ 13.5, 2.5, 14.46, 2.8 ] },
-          "up": { "texture": "#frame", "uv": [ 12, 10, 14.227, 10.96 ] },
-          "down": { "texture": "#frame", "uv": [ 10.5, 1.5, 12.727, 2.46 ] }
+          "north": { "texture": "#frame", "uv": [ 10.5, 7, 12.727, 7.3 ] },
+          "east": { "texture": "#frame", "uv": [ 2, 6, 2.96, 6.3 ] },
+          "south": { "texture": "#frame", "uv": [ 11, 3, 13.227, 3.3 ] },
+          "west": { "texture": "#frame", "uv": [ 14, 1, 14.96, 1.3 ] },
+          "up": { "texture": "#frame", "uv": [ 2, 2.5, 4.227, 3.46 ] },
+          "down": { "texture": "#frame", "uv": [ 12.5, 14, 14.727, 14.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath10x5Frame",
+       "name": "BentLath10x5Frame",
        "from": [ 5.3, 2.52, 15.351 ],
        "to": [ 5.3, 2.52, 15.351 ],
        "rotationOrigin": [ 5.3, 2.52, 15.351 ],
@@ -1167,22 +1167,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath10x5",
+         "name": "BentLath10x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.235, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 11, 12, 14.235, 12.3 ] },
-          "east": { "texture": "#frame", "uv": [ 0.5, 1, 1.46, 1.3 ] },
-          "south": { "texture": "#frame", "uv": [ 5.5, 5.5, 8.735, 5.8 ] },
-          "west": { "texture": "#frame", "uv": [ 1.5, 4.5, 2.46, 4.8 ] },
-          "up": { "texture": "#frame", "uv": [ 10.5, 12, 13.735, 12.96 ] },
-          "down": { "texture": "#frame", "uv": [ 6.5, 3.5, 9.735, 4.46 ] }
+          "north": { "texture": "#frame", "uv": [ 8, 9.5, 11.235, 9.8 ] },
+          "east": { "texture": "#frame", "uv": [ 6, 1, 6.96, 1.3 ] },
+          "south": { "texture": "#frame", "uv": [ 7, 6, 10.235, 6.3 ] },
+          "west": { "texture": "#frame", "uv": [ 0, 11.5, 0.96, 11.8 ] },
+          "up": { "texture": "#frame", "uv": [ 0, 9.5, 3.235, 10.46 ] },
+          "down": { "texture": "#frame", "uv": [ 11.5, 12.5, 14.735, 13.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath11x1Frame",
+       "name": "BentLath11x1Frame",
        "from": [ 8, 5.6, -0.56 ],
        "to": [ 8, 5.6, -0.56 ],
        "rotationOrigin": [ 8, 5.6, -0.56 ],
@@ -1191,22 +1191,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath11x1",
+         "name": "BentLath11x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.23, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 7, 5.5, 10.23, 5.8 ] },
-          "east": { "texture": "#frame", "uv": [ 2.5, 11.5, 3.46, 11.8 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 8, 4.73, 8.3 ] },
-          "west": { "texture": "#frame", "uv": [ 13, 11.5, 13.96, 11.8 ] },
-          "up": { "texture": "#frame", "uv": [ 5, 8, 8.23, 8.96 ] },
-          "down": { "texture": "#frame", "uv": [ 12, 14.5, 15.23, 15.46 ] }
+          "north": { "texture": "#frame", "uv": [ 4.5, 10, 7.73, 10.3 ] },
+          "east": { "texture": "#frame", "uv": [ 3.5, 2.5, 4.46, 2.8 ] },
+          "south": { "texture": "#frame", "uv": [ 3.5, 4.5, 6.73, 4.8 ] },
+          "west": { "texture": "#frame", "uv": [ 0, 9.5, 0.96, 9.8 ] },
+          "up": { "texture": "#frame", "uv": [ 8.5, 1, 11.73, 1.96 ] },
+          "down": { "texture": "#frame", "uv": [ 8.5, 8, 11.73, 8.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath11x2Frame",
+       "name": "BentLath11x2Frame",
        "from": [ 8, 2.52, 0.412 ],
        "to": [ 8, 2.52, 0.412 ],
        "rotationOrigin": [ 8, 2.52, 0.412 ],
@@ -1215,22 +1215,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath11x2",
+         "name": "BentLath11x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.215, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 1, 3, 3.215, 3.3 ] },
-          "east": { "texture": "#frame", "uv": [ 6.5, 10.5, 7.46, 10.8 ] },
-          "south": { "texture": "#frame", "uv": [ 7, 5, 9.215, 5.3 ] },
-          "west": { "texture": "#frame", "uv": [ 5.5, 2.5, 6.46, 2.8 ] },
-          "up": { "texture": "#frame", "uv": [ 6, 11.5, 8.215, 12.46 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 11.5, 2.215, 12.46 ] }
+          "north": { "texture": "#frame", "uv": [ 5, 15, 7.215, 15.3 ] },
+          "east": { "texture": "#frame", "uv": [ 9, 8, 9.96, 8.3 ] },
+          "south": { "texture": "#frame", "uv": [ 11, 3, 13.215, 3.3 ] },
+          "west": { "texture": "#frame", "uv": [ 14, 0, 14.96, 0.3 ] },
+          "up": { "texture": "#frame", "uv": [ 13.5, 1, 15.715, 1.96 ] },
+          "down": { "texture": "#frame", "uv": [ 13, 4, 15.215, 4.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath11x3Frame",
+       "name": "BentLath11x3Frame",
        "from": [ 8, 0.65, 1.6 ],
        "to": [ 8, 0.65, 1.6 ],
        "rotationOrigin": [ 8, 0.65, 1.6 ],
@@ -1238,22 +1238,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath11x3",
+         "name": "BentLath11x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 12.8, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 0.5, 12.8, 0.8 ] },
-          "east": { "texture": "#frame", "uv": [ 10, 5, 10.96, 5.3 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 7, 12.8, 7.3 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 13.5, 7.46, 13.8 ] },
-          "up": { "texture": "#frame", "uv": [ 0.5, 9, 13.3, 9.96 ] },
-          "down": { "texture": "#frame", "uv": [ 2.5, 0.5, 15.3, 1.46 ] }
+          "north": { "texture": "#frame", "uv": [ 2, 9, 14.8, 9.3 ] },
+          "east": { "texture": "#frame", "uv": [ 2, 0.5, 2.96, 0.8 ] },
+          "south": { "texture": "#frame", "uv": [ 2, 8, 14.8, 8.3 ] },
+          "west": { "texture": "#frame", "uv": [ 0.5, 0, 1.46, 0.3 ] },
+          "up": { "texture": "#frame", "uv": [ 2.5, 7, 15.3, 7.96 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 6, 12.8, 6.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath11x4Frame",
+       "name": "BentLath11x4Frame",
        "from": [ 8, 0.65, 14.4 ],
        "to": [ 8, 0.65, 14.4 ],
        "rotationOrigin": [ 8, 0.65, 14.4 ],
@@ -1262,22 +1262,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath11x4",
+         "name": "BentLath11x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.215, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 3, 11, 5.215, 11.3 ] },
-          "east": { "texture": "#frame", "uv": [ 0.5, 8.5, 1.46, 8.8 ] },
-          "south": { "texture": "#frame", "uv": [ 7, 2.5, 9.215, 2.8 ] },
-          "west": { "texture": "#frame", "uv": [ 14.5, 5.5, 15.46, 5.8 ] },
-          "up": { "texture": "#frame", "uv": [ 3.5, 2.5, 5.715, 3.46 ] },
-          "down": { "texture": "#frame", "uv": [ 8, 0.5, 10.215, 1.46 ] }
+          "north": { "texture": "#frame", "uv": [ 2.5, 7, 4.715, 7.3 ] },
+          "east": { "texture": "#frame", "uv": [ 13, 6, 13.96, 6.3 ] },
+          "south": { "texture": "#frame", "uv": [ 12, 1, 14.215, 1.3 ] },
+          "west": { "texture": "#frame", "uv": [ 2.5, 14, 3.46, 14.3 ] },
+          "up": { "texture": "#frame", "uv": [ 12, 9.5, 14.215, 10.46 ] },
+          "down": { "texture": "#frame", "uv": [ 12.5, 13, 14.715, 13.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath11x5Frame",
+       "name": "BentLath11x5Frame",
        "from": [ 8, 2.52, 15.588 ],
        "to": [ 8, 2.52, 15.588 ],
        "rotationOrigin": [ 8, 2.52, 15.588 ],
@@ -1286,22 +1286,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath11x5",
+         "name": "BentLath11x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.23, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 2.5, 1.5, 5.73, 1.8 ] },
-          "east": { "texture": "#frame", "uv": [ 9, 6.5, 9.96, 6.8 ] },
-          "south": { "texture": "#frame", "uv": [ 3, 14.5, 6.23, 14.8 ] },
-          "west": { "texture": "#frame", "uv": [ 10.5, 4.5, 11.46, 4.8 ] },
-          "up": { "texture": "#frame", "uv": [ 8.5, 7, 11.73, 7.96 ] },
-          "down": { "texture": "#frame", "uv": [ 7.5, 4.5, 10.73, 5.46 ] }
+          "north": { "texture": "#frame", "uv": [ 3, 8, 6.23, 8.3 ] },
+          "east": { "texture": "#frame", "uv": [ 8, 1, 8.96, 1.3 ] },
+          "south": { "texture": "#frame", "uv": [ 4, 10, 7.23, 10.3 ] },
+          "west": { "texture": "#frame", "uv": [ 6.5, 4, 7.46, 4.3 ] },
+          "up": { "texture": "#frame", "uv": [ 1, 0.5, 4.23, 1.46 ] },
+          "down": { "texture": "#frame", "uv": [ 12, 3.5, 15.23, 4.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath12x1Frame",
+       "name": "BentLath12x1Frame",
        "from": [ 10.7, 5.6, -0.341 ],
        "to": [ 10.7, 5.6, -0.341 ],
        "rotationOrigin": [ 10.7, 5.6, -0.341 ],
@@ -1310,22 +1310,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath12x1",
+         "name": "BentLath12x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.235, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 9.5, 5, 12.735, 5.3 ] },
-          "east": { "texture": "#frame", "uv": [ 4, 11.5, 4.96, 11.8 ] },
-          "south": { "texture": "#frame", "uv": [ 6.5, 0.5, 9.735, 0.8 ] },
-          "west": { "texture": "#frame", "uv": [ 3, 13, 3.96, 13.3 ] },
-          "up": { "texture": "#frame", "uv": [ 7.5, 7, 10.735, 7.96 ] },
-          "down": { "texture": "#frame", "uv": [ 10.5, 7, 13.735, 7.96 ] }
+          "north": { "texture": "#frame", "uv": [ 0.5, 6.5, 3.735, 6.8 ] },
+          "east": { "texture": "#frame", "uv": [ 11.5, 3, 12.46, 3.3 ] },
+          "south": { "texture": "#frame", "uv": [ 12.5, 11.5, 15.735, 11.8 ] },
+          "west": { "texture": "#frame", "uv": [ 12, 7.5, 12.96, 7.8 ] },
+          "up": { "texture": "#frame", "uv": [ 0, 1, 3.235, 1.96 ] },
+          "down": { "texture": "#frame", "uv": [ 3, 4, 6.235, 4.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath12x2Frame",
+       "name": "BentLath12x2Frame",
        "from": [ 10.7, 2.52, 0.649 ],
        "to": [ 10.7, 2.52, 0.649 ],
        "rotationOrigin": [ 10.7, 2.52, 0.649 ],
@@ -1334,22 +1334,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath12x2",
+         "name": "BentLath12x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.227, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 11.5, 5, 13.727, 5.3 ] },
-          "east": { "texture": "#frame", "uv": [ 10, 5, 10.96, 5.3 ] },
-          "south": { "texture": "#frame", "uv": [ 7.5, 2.5, 9.727, 2.8 ] },
-          "west": { "texture": "#frame", "uv": [ 9.5, 4, 10.46, 4.3 ] },
-          "up": { "texture": "#frame", "uv": [ 9.5, 12.5, 11.727, 13.46 ] },
-          "down": { "texture": "#frame", "uv": [ 9, 5.5, 11.227, 6.46 ] }
+          "north": { "texture": "#frame", "uv": [ 5, 0.5, 7.227, 0.8 ] },
+          "east": { "texture": "#frame", "uv": [ 12.5, 4, 13.46, 4.3 ] },
+          "south": { "texture": "#frame", "uv": [ 3.5, 9.5, 5.727, 9.8 ] },
+          "west": { "texture": "#frame", "uv": [ 12, 1.5, 12.96, 1.8 ] },
+          "up": { "texture": "#frame", "uv": [ 1, 11, 3.227, 11.96 ] },
+          "down": { "texture": "#frame", "uv": [ 8, 9, 10.227, 9.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath12x3Frame",
+       "name": "BentLath12x3Frame",
        "from": [ 10.7, 0.65, 1.858 ],
        "to": [ 10.7, 0.65, 1.858 ],
        "rotationOrigin": [ 10.7, 0.65, 1.858 ],
@@ -1357,22 +1357,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath12x3",
+         "name": "BentLath12x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 12.283, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 2.5, 8, 14.783, 8.3 ] },
-          "east": { "texture": "#frame", "uv": [ 10, 2, 10.96, 2.3 ] },
-          "south": { "texture": "#frame", "uv": [ 3.5, 13, 15.783, 13.3 ] },
-          "west": { "texture": "#frame", "uv": [ 8, 8.5, 8.96, 8.8 ] },
-          "up": { "texture": "#frame", "uv": [ 1, 5, 13.283, 5.96 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 2.5, 12.783, 3.46 ] }
+          "north": { "texture": "#frame", "uv": [ 3.5, 7, 15.783, 7.3 ] },
+          "east": { "texture": "#frame", "uv": [ 7, 12, 7.96, 12.3 ] },
+          "south": { "texture": "#frame", "uv": [ 2, 12, 14.283, 12.3 ] },
+          "west": { "texture": "#frame", "uv": [ 7.5, 6, 8.46, 6.3 ] },
+          "up": { "texture": "#frame", "uv": [ 2.5, 2, 14.783, 2.96 ] },
+          "down": { "texture": "#frame", "uv": [ 0, 3.5, 12.283, 4.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath12x4Frame",
+       "name": "BentLath12x4Frame",
        "from": [ 10.7, 0.65, 14.142 ],
        "to": [ 10.7, 0.65, 14.142 ],
        "rotationOrigin": [ 10.7, 0.65, 14.142 ],
@@ -1381,22 +1381,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath12x4",
+         "name": "BentLath12x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.227, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 12.5, 5.5, 14.727, 5.8 ] },
-          "east": { "texture": "#frame", "uv": [ 2, 5.5, 2.96, 5.8 ] },
-          "south": { "texture": "#frame", "uv": [ 5, 12, 7.227, 12.3 ] },
-          "west": { "texture": "#frame", "uv": [ 10, 6.5, 10.96, 6.8 ] },
-          "up": { "texture": "#frame", "uv": [ 11, 14, 13.227, 14.96 ] },
-          "down": { "texture": "#frame", "uv": [ 5, 7.5, 7.227, 8.46 ] }
+          "north": { "texture": "#frame", "uv": [ 11.5, 14, 13.727, 14.3 ] },
+          "east": { "texture": "#frame", "uv": [ 6.5, 5.5, 7.46, 5.8 ] },
+          "south": { "texture": "#frame", "uv": [ 7, 6, 9.227, 6.3 ] },
+          "west": { "texture": "#frame", "uv": [ 6.5, 4.5, 7.46, 4.8 ] },
+          "up": { "texture": "#frame", "uv": [ 3.5, 9.5, 5.727, 10.46 ] },
+          "down": { "texture": "#frame", "uv": [ 2.5, 3, 4.727, 3.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath12x5Frame",
+       "name": "BentLath12x5Frame",
        "from": [ 10.7, 2.52, 15.351 ],
        "to": [ 10.7, 2.52, 15.351 ],
        "rotationOrigin": [ 10.7, 2.52, 15.351 ],
@@ -1405,22 +1405,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath12x5",
+         "name": "BentLath12x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.235, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 11.5, 4, 14.735, 4.3 ] },
-          "east": { "texture": "#frame", "uv": [ 4.5, 7.5, 5.46, 7.8 ] },
-          "south": { "texture": "#frame", "uv": [ 3, 1, 6.235, 1.3 ] },
-          "west": { "texture": "#frame", "uv": [ 8, 3, 8.96, 3.3 ] },
-          "up": { "texture": "#frame", "uv": [ 5, 10, 8.235, 10.96 ] },
-          "down": { "texture": "#frame", "uv": [ 8.5, 5.5, 11.735, 6.46 ] }
+          "north": { "texture": "#frame", "uv": [ 0.5, 8.5, 3.735, 8.8 ] },
+          "east": { "texture": "#frame", "uv": [ 3.5, 14.5, 4.46, 14.8 ] },
+          "south": { "texture": "#frame", "uv": [ 12, 5, 15.235, 5.3 ] },
+          "west": { "texture": "#frame", "uv": [ 4, 7.5, 4.96, 7.8 ] },
+          "up": { "texture": "#frame", "uv": [ 7.5, 8.5, 10.735, 9.46 ] },
+          "down": { "texture": "#frame", "uv": [ 4, 14, 7.235, 14.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath13x1Frame",
+       "name": "BentLath13x1Frame",
        "from": [ 13.4, 5.6, 0.356 ],
        "to": [ 13.4, 5.6, 0.356 ],
        "rotationOrigin": [ 13.4, 5.6, 0.356 ],
@@ -1429,22 +1429,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath13x1",
+         "name": "BentLath13x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.257, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 6, 11, 9.257, 11.3 ] },
-          "east": { "texture": "#frame", "uv": [ 5.5, 1.5, 6.46, 1.8 ] },
-          "south": { "texture": "#frame", "uv": [ 8.5, 9.5, 11.757, 9.8 ] },
-          "west": { "texture": "#frame", "uv": [ 0, 1, 0.96, 1.3 ] },
-          "up": { "texture": "#frame", "uv": [ 8.5, 0, 11.757, 0.96 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 13, 3.757, 13.96 ] }
+          "north": { "texture": "#frame", "uv": [ 0, 0.5, 3.257, 0.8 ] },
+          "east": { "texture": "#frame", "uv": [ 12, 7.5, 12.96, 7.8 ] },
+          "south": { "texture": "#frame", "uv": [ 9, 9.5, 12.257, 9.8 ] },
+          "west": { "texture": "#frame", "uv": [ 11.5, 6, 12.46, 6.3 ] },
+          "up": { "texture": "#frame", "uv": [ 3, 6.5, 6.257, 7.46 ] },
+          "down": { "texture": "#frame", "uv": [ 2, 4.5, 5.257, 5.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath13x2Frame",
+       "name": "BentLath13x2Frame",
        "from": [ 13.4, 2.52, 1.414 ],
        "to": [ 13.4, 2.52, 1.414 ],
        "rotationOrigin": [ 13.4, 2.52, 1.414 ],
@@ -1453,22 +1453,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath13x2",
+         "name": "BentLath13x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.274, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 4, 5, 6.274, 5.3 ] },
-          "east": { "texture": "#frame", "uv": [ 3, 0.5, 3.96, 0.8 ] },
-          "south": { "texture": "#frame", "uv": [ 4, 7.5, 6.274, 7.8 ] },
-          "west": { "texture": "#frame", "uv": [ 0, 7, 0.96, 7.3 ] },
-          "up": { "texture": "#frame", "uv": [ 2, 9, 4.274, 9.96 ] },
-          "down": { "texture": "#frame", "uv": [ 11, 1.5, 13.274, 2.46 ] }
+          "north": { "texture": "#frame", "uv": [ 10.5, 12, 12.774, 12.3 ] },
+          "east": { "texture": "#frame", "uv": [ 1, 9.5, 1.96, 9.8 ] },
+          "south": { "texture": "#frame", "uv": [ 2, 1, 4.274, 1.3 ] },
+          "west": { "texture": "#frame", "uv": [ 5.5, 2, 6.46, 2.3 ] },
+          "up": { "texture": "#frame", "uv": [ 7, 2.5, 9.274, 3.46 ] },
+          "down": { "texture": "#frame", "uv": [ 11, 5.5, 13.274, 6.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath13x3Frame",
+       "name": "BentLath13x3Frame",
        "from": [ 13.4, 0.65, 2.708 ],
        "to": [ 13.4, 0.65, 2.708 ],
        "rotationOrigin": [ 13.4, 0.65, 2.708 ],
@@ -1476,22 +1476,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath13x3",
+         "name": "BentLath13x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 10.583, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 4, 3, 14.583, 3.3 ] },
-          "east": { "texture": "#frame", "uv": [ 14.5, 8, 15.46, 8.3 ] },
-          "south": { "texture": "#frame", "uv": [ 2.5, 6.5, 13.083, 6.8 ] },
-          "west": { "texture": "#frame", "uv": [ 0.5, 10.5, 1.46, 10.8 ] },
-          "up": { "texture": "#frame", "uv": [ 4.5, 8.5, 15.083, 9.46 ] },
-          "down": { "texture": "#frame", "uv": [ 2, 11, 12.583, 11.96 ] }
+          "north": { "texture": "#frame", "uv": [ 1, 3.5, 11.583, 3.8 ] },
+          "east": { "texture": "#frame", "uv": [ 5.5, 6.5, 6.46, 6.8 ] },
+          "south": { "texture": "#frame", "uv": [ 4.5, 8.5, 15.083, 8.8 ] },
+          "west": { "texture": "#frame", "uv": [ 2.5, 12, 3.46, 12.3 ] },
+          "up": { "texture": "#frame", "uv": [ 3.5, 7, 14.083, 7.96 ] },
+          "down": { "texture": "#frame", "uv": [ 2, 7.5, 12.583, 8.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath13x4Frame",
+       "name": "BentLath13x4Frame",
        "from": [ 13.4, 0.65, 13.292 ],
        "to": [ 13.4, 0.65, 13.292 ],
        "rotationOrigin": [ 13.4, 0.65, 13.292 ],
@@ -1500,22 +1500,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath13x4",
+         "name": "BentLath13x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.274, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 8, 7, 10.274, 7.3 ] },
-          "east": { "texture": "#frame", "uv": [ 1, 0, 1.96, 0.3 ] },
-          "south": { "texture": "#frame", "uv": [ 5.5, 9, 7.774, 9.3 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 3.5, 7.46, 3.8 ] },
-          "up": { "texture": "#frame", "uv": [ 2.5, 2.5, 4.774, 3.46 ] },
-          "down": { "texture": "#frame", "uv": [ 10.5, 5, 12.774, 5.96 ] }
+          "north": { "texture": "#frame", "uv": [ 8, 5, 10.274, 5.3 ] },
+          "east": { "texture": "#frame", "uv": [ 8.5, 7.5, 9.46, 7.8 ] },
+          "south": { "texture": "#frame", "uv": [ 6, 14, 8.274, 14.3 ] },
+          "west": { "texture": "#frame", "uv": [ 14, 12, 14.96, 12.3 ] },
+          "up": { "texture": "#frame", "uv": [ 10.5, 9.5, 12.774, 10.46 ] },
+          "down": { "texture": "#frame", "uv": [ 3.5, 8.5, 5.774, 9.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath13x5Frame",
+       "name": "BentLath13x5Frame",
        "from": [ 13.4, 2.52, 14.586 ],
        "to": [ 13.4, 2.52, 14.586 ],
        "rotationOrigin": [ 13.4, 2.52, 14.586 ],
@@ -1524,22 +1524,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath13x5",
+         "name": "BentLath13x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.257, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 7.5, 2.5, 10.757, 2.8 ] },
-          "east": { "texture": "#frame", "uv": [ 4.5, 8, 5.46, 8.3 ] },
-          "south": { "texture": "#frame", "uv": [ 5.5, 4, 8.757, 4.3 ] },
-          "west": { "texture": "#frame", "uv": [ 10, 12, 10.96, 12.3 ] },
-          "up": { "texture": "#frame", "uv": [ 9.5, 8, 12.757, 8.96 ] },
-          "down": { "texture": "#frame", "uv": [ 7, 6, 10.257, 6.96 ] }
+          "north": { "texture": "#frame", "uv": [ 0, 2.5, 3.257, 2.8 ] },
+          "east": { "texture": "#frame", "uv": [ 0, 14, 0.96, 14.3 ] },
+          "south": { "texture": "#frame", "uv": [ 11, 14, 14.257, 14.3 ] },
+          "west": { "texture": "#frame", "uv": [ 1, 12.5, 1.96, 12.8 ] },
+          "up": { "texture": "#frame", "uv": [ 3.5, 9.5, 6.757, 10.46 ] },
+          "down": { "texture": "#frame", "uv": [ 3, 13.5, 6.257, 14.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath14x1Frame",
+       "name": "BentLath14x1Frame",
        "from": [ 16.1, 5.6, 1.684 ],
        "to": [ 16.1, 5.6, 1.684 ],
        "rotationOrigin": [ 16.1, 5.6, 1.684 ],
@@ -1548,22 +1548,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath14x1",
+         "name": "BentLath14x1",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.342, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 9, 3.5, 12.342, 3.8 ] },
-          "east": { "texture": "#frame", "uv": [ 10, 2, 10.96, 2.3 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 2, 4.842, 2.3 ] },
-          "west": { "texture": "#frame", "uv": [ 1, 2.5, 1.96, 2.8 ] },
-          "up": { "texture": "#frame", "uv": [ 6.5, 3, 9.842, 3.96 ] },
-          "down": { "texture": "#frame", "uv": [ 7, 4.5, 10.342, 5.46 ] }
+          "north": { "texture": "#frame", "uv": [ 10.5, 14.5, 13.842, 14.8 ] },
+          "east": { "texture": "#frame", "uv": [ 12.5, 1.5, 13.46, 1.8 ] },
+          "south": { "texture": "#frame", "uv": [ 0.5, 3.5, 3.842, 3.8 ] },
+          "west": { "texture": "#frame", "uv": [ 6, 8.5, 6.96, 8.8 ] },
+          "up": { "texture": "#frame", "uv": [ 6.5, 10.5, 9.842, 11.46 ] },
+          "down": { "texture": "#frame", "uv": [ 8.5, 7, 11.842, 7.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath14x2Frame",
+       "name": "BentLath14x2Frame",
        "from": [ 16.1, 2.52, 2.981 ],
        "to": [ 16.1, 2.52, 2.981 ],
        "rotationOrigin": [ 16.1, 2.52, 2.981 ],
@@ -1572,22 +1572,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath14x2",
+         "name": "BentLath14x2",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.451, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 6.5, 6, 8.951, 6.3 ] },
-          "east": { "texture": "#frame", "uv": [ 6.5, 4.5, 7.46, 4.8 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 8, 2.451, 8.3 ] },
-          "west": { "texture": "#frame", "uv": [ 3.5, 4.5, 4.46, 4.8 ] },
-          "up": { "texture": "#frame", "uv": [ 7.5, 3, 9.951, 3.96 ] },
-          "down": { "texture": "#frame", "uv": [ 8.5, 11.5, 10.951, 12.46 ] }
+          "north": { "texture": "#frame", "uv": [ 5.5, 15, 7.951, 15.3 ] },
+          "east": { "texture": "#frame", "uv": [ 11.5, 9, 12.46, 9.3 ] },
+          "south": { "texture": "#frame", "uv": [ 10.5, 2.5, 12.951, 2.8 ] },
+          "west": { "texture": "#frame", "uv": [ 4.5, 15, 5.46, 15.3 ] },
+          "up": { "texture": "#frame", "uv": [ 0.5, 9, 2.951, 9.96 ] },
+          "down": { "texture": "#frame", "uv": [ 6.5, 4.5, 8.951, 5.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath14x3Frame",
+       "name": "BentLath14x3Frame",
        "from": [ 16.1, 0.65, 4.565 ],
        "to": [ 16.1, 0.65, 4.565 ],
        "rotationOrigin": [ 16.1, 0.65, 4.565 ],
@@ -1595,22 +1595,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath14x3",
+         "name": "BentLath14x3",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 6.87, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 7, 14.5, 13.87, 14.8 ] },
-          "east": { "texture": "#frame", "uv": [ 7, 7.5, 7.96, 7.8 ] },
-          "south": { "texture": "#frame", "uv": [ 1, 5, 7.87, 5.3 ] },
-          "west": { "texture": "#frame", "uv": [ 3, 0.5, 3.96, 0.8 ] },
-          "up": { "texture": "#frame", "uv": [ 5, 1.5, 11.87, 2.46 ] },
-          "down": { "texture": "#frame", "uv": [ 1.5, 4.5, 8.37, 5.46 ] }
+          "north": { "texture": "#frame", "uv": [ 0.5, 7.5, 7.37, 7.8 ] },
+          "east": { "texture": "#frame", "uv": [ 7.5, 6, 8.46, 6.3 ] },
+          "south": { "texture": "#frame", "uv": [ 1.5, 1.5, 8.37, 1.8 ] },
+          "west": { "texture": "#frame", "uv": [ 6, 13.5, 6.96, 13.8 ] },
+          "up": { "texture": "#frame", "uv": [ 7, 8, 13.87, 8.96 ] },
+          "down": { "texture": "#frame", "uv": [ 3, 13, 9.87, 13.96 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath14x4Frame",
+       "name": "BentLath14x4Frame",
        "from": [ 16.1, 0.65, 11.435 ],
        "to": [ 16.1, 0.65, 11.435 ],
        "rotationOrigin": [ 16.1, 0.65, 11.435 ],
@@ -1619,22 +1619,22 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath14x4",
+         "name": "BentLath14x4",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 2.451, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 6.5, 10, 8.951, 10.3 ] },
-          "east": { "texture": "#frame", "uv": [ 9.5, 7.5, 10.46, 7.8 ] },
-          "south": { "texture": "#frame", "uv": [ 10.5, 4, 12.951, 4.3 ] },
-          "west": { "texture": "#frame", "uv": [ 14, 4, 14.96, 4.3 ] },
-          "up": { "texture": "#frame", "uv": [ 3.5, 10.5, 5.951, 11.46 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 13.5, 2.951, 14.46 ] }
+          "north": { "texture": "#frame", "uv": [ 9, 12, 11.451, 12.3 ] },
+          "east": { "texture": "#frame", "uv": [ 9.5, 0, 10.46, 0.3 ] },
+          "south": { "texture": "#frame", "uv": [ 5.5, 6, 7.951, 6.3 ] },
+          "west": { "texture": "#frame", "uv": [ 4, 13.5, 4.96, 13.8 ] },
+          "up": { "texture": "#frame", "uv": [ 8, 12.5, 10.451, 13.46 ] },
+          "down": { "texture": "#frame", "uv": [ 13, 4.5, 15.451, 5.46 ] }
          }
         }
        ]
       },
       {
-       "name": "Lath14x5Frame",
+       "name": "BentLath14x5Frame",
        "from": [ 16.1, 2.52, 13.019 ],
        "to": [ 16.1, 2.52, 13.019 ],
        "rotationOrigin": [ 16.1, 2.52, 13.019 ],
@@ -1643,16 +1643,16 @@
        "faces": {},
        "children": [
         {
-         "name": "Lath14x5",
+         "name": "BentLath14x5",
          "from": [ 0, -0.15, -0.48 ],
          "to": [ 3.342, 0.15, 0.48 ],
          "faces": {
-          "north": { "texture": "#frame", "uv": [ 1, 2.5, 4.342, 2.8 ] },
-          "east": { "texture": "#frame", "uv": [ 3, 13.5, 3.96, 13.8 ] },
-          "south": { "texture": "#frame", "uv": [ 11, 6, 14.342, 6.3 ] },
-          "west": { "texture": "#frame", "uv": [ 0.5, 11.5, 1.46, 11.8 ] },
-          "up": { "texture": "#frame", "uv": [ 12, 0.5, 15.342, 1.46 ] },
-          "down": { "texture": "#frame", "uv": [ 5.5, 7.5, 8.842, 8.46 ] }
+          "north": { "texture": "#frame", "uv": [ 2, 5, 5.342, 5.3 ] },
+          "east": { "texture": "#frame", "uv": [ 14.5, 12, 15.46, 12.3 ] },
+          "south": { "texture": "#frame", "uv": [ 6, 8, 9.342, 8.3 ] },
+          "west": { "texture": "#frame", "uv": [ 14.5, 3, 15.46, 3.3 ] },
+          "up": { "texture": "#frame", "uv": [ 5, 10.5, 8.342, 11.46 ] },
+          "down": { "texture": "#frame", "uv": [ 7, 0.5, 10.342, 1.46 ] }
          }
         }
        ]

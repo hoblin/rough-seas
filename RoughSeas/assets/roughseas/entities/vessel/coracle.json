@@ -31,7 +31,7 @@
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, the lattice's 14 laths 6 cm wide cross 60% of the bottom, and their 28 ends rising to the gunwale 47% of the sides. A breaker presses the hide onto them, each lath 1 cm deep bending over the 0.37 m from the bottom to the gunwale",
                 "depthMetres": "Bottom to gunwale: the laths rise 0.35 m (Museum Wales, Teifi coracle), over the hide under them",
                 "waterplaneSquareMetres": "An oval 1.5 by 1.07 m at the gunwale and 1.2 by 0.8 m at the bottom (Museum Wales, Teifi coracle): about a square metre at the waterline between them",
-                "seep": "A seam where one hide meets the next weeps once the fat has washed out of it: some 1.8 m of seam across her bowl, weeping as the currach's do a metre. A coracle from before her build was one large hide, with no seam",
+                "seep": "A seam where one hide meets the next weeps once the fat has washed out of it: some 1.8 m of seam across her bowl, weeping as the currach's do a metre. A coracle from before her build is covered in prepared hide over her two sections, with no seam, as her old recipe's one large hide had",
                 "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             },
             "seep": {"litresPerHourASeam": 12, "greaseDays": 2.5},
@@ -71,7 +71,7 @@
             "rope": "game:rope",
             "hides": "game:hide-*",
             "hideStates": ["raw", "soaked", "scraped", "prepared", "oiled", "pelt", "salted"],
-            "layout": {"kind": "lattice", "along": 7, "across": 7},
+            "layout": {"kind": "lattice", "along": 7, "across": 7, "alongSpacingMetres": 0.1125, "acrossSpacingMetres": 0.16875, "toleranceMetres": 0.1},
             "stages": [
                 {"group": "Lattice", "work": "lath", "seconds": 3, "lines": true},
                 {"group": "Binding", "work": "rope", "seconds": 15},
@@ -81,7 +81,7 @@
             ],
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
-                "layout": "Teifi coracles were begun as a lattice of laths laid flat on the ground, seven along and seven across (Hornell 1938), their ends bent up later into the gunwale",
+                "layout": "Teifi coracles were begun as a lattice of laths laid flat on the ground, seven along and seven across (Hornell 1938), their ends bent up later into the gunwale. Spaced as her model draws them (ALONG_SPACING and ACROSS_SPACING in bin/lib/hulls/coracle.py), within 10 cm, so that binding moves no lath further",
                 "binding": "One rope ties a dozen crossings of the bottom, a few turns of cord each, some quarter of an hour (an estimate); the shape's builder counts the crossings on her bottom",
                 "gunwale": "Plaiting one lath round the bent-up ends, some ten minutes (an estimate); Teifi gunwales were three plaits of soaked hazel (Hornell 1938). The laths dry in place and set her shape in a couple of days, as the canoe's ribs do",
                 "cover": "Stretching and sewing a small hide's worth of cover, some twenty minutes (an estimate); a bigger hide covers more at once and takes as much longer",

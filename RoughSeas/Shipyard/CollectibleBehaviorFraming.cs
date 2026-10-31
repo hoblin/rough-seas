@@ -6,14 +6,14 @@ using Vintagestory.API.Config;
 
 namespace RoughSeas.Shipyard;
 
-/// <summary>What a vessel being built takes from the hand, held on her, lays her next piece.</summary>
+/// <summary>What a vessel being built, or laths laid out for one, takes from the hand: held on it, it lays the next piece.</summary>
 public class CollectibleBehaviorFraming(CollectibleObject collectible) : CollectibleBehavior(collectible)
 {
     public const string Code = "roughseas:framing";
 
     private readonly HeldWork work = new();
 
-    /// <summary>Whether the held item does work on the vessel selected, refused or not.</summary>
+    /// <summary>Whether the held item does work on what is selected, refused or not.</summary>
     public static bool WorksOn(ItemSlot slot, EntityAgent byEntity, BlockSelection? blockSel, EntitySelection? entitySel) => Hull(byEntity, blockSel, entitySel)?.WorkWith(slot) != null;
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)

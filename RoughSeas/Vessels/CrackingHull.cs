@@ -66,6 +66,8 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
     {
         double wet = afloat ? WetDays + days : Math.Max(0, WetDays - days * sun);
         double rot = afloat ? Cover!.Rot(config.Hides, wet, days, waterCelsius) : 0;
+        if (wet == WetDays && rot == 0) return;
+
         Tree.SetDouble(WetKey, wet);
         if (rot > 0)
         {
@@ -81,7 +83,7 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
     public override double LitresPerSecond(Afloat afloat, double depthMetres) => HullShape.Places.Sum(place => LitresPerSecond(place, afloat, depthMetres));
 
     public bool Needs(HullRepair repair, HullPlace place) =>
-        repair.Greases ? seep != null && GreaseDays < seep.GreaseDays : Worst() is not null;
+        repair.Greases ? seep != null && GreaseDays < seep.GreaseDays && Cover is not { Total: 0 } : Worst() is not null;
 
     public string Mend(HullRepair repair, HullPlace place)
     {

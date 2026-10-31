@@ -81,8 +81,8 @@ def laths():
     return pieces
 
 
-def lattice(shape_of):
-    return [path(f"Lath{n}x", shape_of(piece), LATH_WIDTH, LATH_THICKNESS, "frame", overlap=0) for n, piece in enumerate(laths(), 1)]
+def lattice(prefix, shape_of):
+    return [path(f"{prefix}{n}x", shape_of(piece), LATH_WIDTH, LATH_THICKNESS, "frame", overlap=0) for n, piece in enumerate(laths(), 1)]
 
 
 def on_bottom(x, z):
@@ -173,7 +173,7 @@ def surface(prefix, height, texture="null"):
 
 
 def finished():
-    return [*(element for piece in lattice(lambda piece: piece[1]) for element in piece),
+    return [*(element for piece in lattice("BentLath", lambda piece: piece[1]) for element in piece),
             *(element for rope in ties() for element in rope),
             *(element for plait in plaits() for element in plait),
             *(element for section in cover() for element in section),
@@ -182,8 +182,8 @@ def finished():
 
 def build(path_):
     shape = Shape(path_, {**TEXTURES, "bilge": BILGE})
-    shape.add(stages("Lattice", lattice(lambda piece: piece[0])))
-    shape.add(stages("LatticeBent", lattice(lambda piece: piece[1])))
+    shape.add(stages("Lattice", lattice("Lath", lambda piece: piece[0])))
+    shape.add(stages("LatticeBent", lattice("BentLath", lambda piece: piece[1])))
     shape.add(stages("Binding", ties()))
     shape.add(stages("Gunwale", plaits()))
     shape.add(stages("Cover", cover(), wood="none"))

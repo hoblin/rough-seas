@@ -2,9 +2,9 @@ The mountain streams of Vintage Story 1.22 run down in white water. Every second
 
 | Vessel, in oak | Each second | Until |
 | --- | --- | --- |
-| [Coracle](Coracle) | three quarters of a stove-in bottom | its bottom is stove in in a second or two |
+| [Coracle](Coracle) | under half of a stove-in bottom | its bottom is stove in in two or three seconds |
 | [Raft](Raft) | a quarter of its lashings | it comes apart in about four seconds |
-| [Hide currach](Hide-Currach), [reed boat](Reed-Boat) | a tenth | the currach's bottom is stove in in about eight seconds, the reed boat torn through in ten |
+| [Hide currach](Hide-Currach), [reed boat](Reed-Boat) | a tenth | the currach's bottom is stove in in about nine seconds, the reed boat torn through in ten |
 | [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | a hundredth | about a minute and a quarter |
 | [Sailboat](Sailboat) | less | nearly two minutes |
 | [Birch-bark canoe](Birch-Bark-Canoe) | nothing | |

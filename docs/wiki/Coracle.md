@@ -38,7 +38,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 A coracle is built where its laths are laid out on the ground, piece by piece, each piece drawn on her as it goes on.
 
 1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for her lattice and three 5 m ones for her gunwale. Laths bend only wet: two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground or in her as in the bundle.
-2. **Lay the lattice.** Hold Shift and right-click the ground with a wet lath: it lies at its full length where you aim, along the way you face. Lay seven side by side, a hand's breadth apart, then seven across them, every one crossing all the others. A lath laid wrong comes back to an empty hand with Shift + right-click.
+2. **Lay the lattice.** Hold Shift and right-click the ground with a wet lath: it lies at its full length where you aim, along the way you face. Lay seven side by side, a hand's breadth apart, then seven across them, each crossing all seven beneath it, about as far apart as her bottom draws them. A lath laid wrong comes back to an empty hand with Shift + right-click.
 
    ![Fourteen wet laths laid out as a lattice](images/coracle/build-laths.webp)
 

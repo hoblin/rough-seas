@@ -15,8 +15,8 @@ using Vintagestory.API.Util;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A vessel built up from the bark sheet stripped off a standing tree, stage by stage in the order her
-/// <see cref="FramingConfig.Stages"/> give, each piece drawn where it lies.
+/// A vessel built up where she lies, stage by stage in the order her <see cref="FramingConfig.Stages"/> give, each
+/// piece drawn where it lies: a bark canoe from the sheet stripped off a standing tree, and the builds begun otherwise.
 /// </summary>
 public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity), IWorkedHull
 {
@@ -105,7 +105,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         if (framing.Current is not { } stage) return null;
 
         var laying = layings[stage];
-        return ObjectCacheUtil.GetOrCreate(world.Api, $"{Code}/help/{stage.Group}", () => new[]
+        return ObjectCacheUtil.GetOrCreate(world.Api, $"{Code}/help/{entity.Code}/{stage.Group}", () => new[]
         {
             new WorldInteraction { ActionLangCode = laying.Action, MouseButton = EnumMouseButton.Right, Itemstacks = laying.Shown(world).ToArray() }
         });

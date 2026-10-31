@@ -31,9 +31,9 @@
             "sources": {
                 "parts": "By the model: 8.6 m² of hide 5 mm thick at 860 kg/m³, some 37 kg, over 21 ribs, 7 stringers and two gunwales of laths 1 by 6 cm, 83 m of ash, some 30 kg, and a thwart pole: about 70 kg",
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, ribs 0.8 voxel wide every 3 and three stringers a side back 40% of her sides, the ribs and the keelson 31% of her bottom. A breaker presses the hide onto the laths, each 1 cm deep bending over the 0.15 m between stringers",
-                "depthMetres": "Keel to gunwale amidships: a 5 cm draft with its rower in a 100 kg hull and about 0.4 m of side above it",
+                "depthMetres": "Keel to gunwale amidships: a 3 cm draft with her rower in a 70 kg hull and about 0.4 m of side above it",
                 "waterplaneSquareMetres": "A hull 4.7 m long and 1.2 m in beam, double-ended and fine at both ends, about 0.78 of her box at the waterline",
-                "seep": "A seam where one hide meets the next weeps once the tallow has washed out of it, and Aran crews dressed their currachs every few days: a seam across her, some 2.3 m of it, 15 L an hour. A currach from before her build was three large hides, two seams",
+                "seep": "A seam where one hide meets the next weeps once the tallow has washed out of it, and Aran crews dressed their currachs every few days: a seam across her, some 2.3 m of it, 15 L an hour. A currach from before her build is covered in prepared hide over her eight sections, with the two seams the three large hides of her old recipe had",
                 "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             }
         },

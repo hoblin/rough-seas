@@ -157,7 +157,7 @@ public class VesselShapeTests
     {
         var (entity, _, shape) = Load(vessel);
         var configs = entity["behaviorConfigs"]!;
-        if ((configs["roughseas:framing"] ?? configs["roughseas:rigging"])?["stages"] is not { } stages) return;
+        if ((configs["roughseas:framing"] ?? configs["roughseas:rigging"] ?? configs["roughseas:covering"])?["stages"] is not { } stages) return;
 
         var elements = Elements(shape["elements"]!).ToDictionary(element => element.Value<string>("name")!);
         if (configs["roughseas:framing"] != null)
@@ -175,6 +175,10 @@ public class VesselShapeTests
             if (stage.Value<string>("replaces") is { } replaced)
             {
                 Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{replaced}{n}"), Pieces(replaced));
+            }
+            if (stage.Value<string>("bends") is { } bent)
+            {
+                Assert.Equal(Pieces(bent).Select(name => name!.Replace(bent, bent + "Bent")), Pieces(bent + "Bent"));
             }
         });
     }
@@ -241,4 +245,19 @@ public class VesselShapeTests
     private static IEnumerable<string> TextureCodes(JToken textures) => textures.Children<JProperty>().Select(texture => texture.Name);
 
     private static IEnumerable<string> LogTextureCodes(JToken type) => type["attributes"]?["logTextures"] is { } faces ? TextureCodes(faces) : [];
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void LaysOutAsManyLathsOnTheGroundAsHerFirstStageDraws(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        if (entity["behaviorConfigs"]!["roughseas:covering"] is not { } covering) return;
+
+        var layout = covering["layout"]!;
+        var laths = layout.Value<string>("kind") == "pair" ? 2 : layout.Value<int>("along") + layout.Value<int>("across");
+        var first = covering["stages"]![0]!.Value<string>("group");
+        var group = Elements(shape["elements"]!).Single(element => element.Value<string>("name") == first);
+
+        Assert.Equal(laths, group["children"]!.Count());
+    }
 }
