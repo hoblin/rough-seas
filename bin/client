@@ -58,9 +58,9 @@ leave_world() {
   local log=$BENCH_DATA/Logs/server-main.log after
   [[ $(pgrep -af -- "--dataPath $BENCH_DATA --tracelog") == *--openWorld* ]] || return 0
   after=$(log_lines "$log")
-  "$root/bin/game" leave >/dev/null || return 0
+  "$root/bin/game" leave >/dev/null || { echo "The game did not answer to leave the world; stopping the client unsaved" >&2; return 1; }
   wait_for_log "$log" "$after" "Stopped the server!" 60 ||
-    echo "The world did not finish saving within a minute; stopping the client anyway" >&2
+    { echo "The world did not finish saving within a minute; stopping the client anyway" >&2; return 1; }
 }
 
 bench_settings() {
@@ -72,17 +72,18 @@ bench_settings() {
 
 cd "$root"
 if [ "$world" = stop ]; then
-  leave_world
+  saved=0
+  leave_world || saved=$?
   stop_session "$session" "$BENCH_DATA"
-  echo "World saved and the client stopped"
-  exit
+  echo "Client stopped"
+  exit "$saved"
 fi
 
 dotnet build RoughSeas -v quiet -nologo
 dotnet build AgentBridge -v quiet -nologo
 seed_settings
 
-leave_world
+leave_world || true
 stop_session "$session" "$BENCH_DATA"
 bench_settings
 require_free_port "$BENCH_BRIDGE_PORT" "agent bridge"
