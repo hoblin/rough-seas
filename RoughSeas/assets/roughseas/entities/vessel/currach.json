@@ -92,7 +92,7 @@
             "overturnedPivot": 5.5,
             "stages": [
                 {"group": "Gunwale", "work": "lath", "seconds": 3},
-                {"group": "Ends", "work": "rope", "seconds": 15},
+                {"group": "EndLashing", "work": "rope", "seconds": 15},
                 {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true, "lines": true},
                 {"group": "Stringers", "work": "lath", "seconds": 3, "lines": true},
                 {"group": "Cover", "work": "hide", "seconds": 20, "part": "hide"},
@@ -102,7 +102,7 @@
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
                 "layout": "A currach's gunwale was laid out on the ground first and her ribs set into it (Hornell 1938, the Boyne currach woven round its gunwale on the ground): two long laths laid side by side at her beam, whose ends the first rope draws together",
-                "ends": "Each end bound with some ten metres of cord, a quarter of an hour's work (an estimate)",
+                "endLashing": "Each end bound with some ten metres of cord, a quarter of an hour's work (an estimate)",
                 "ribs": "Fitting one rib, about three minutes, as the canoe's: currach ribs were scalded, bent over the gunwale and set into it, built upside down (the Boyne and Aran currachs). Bent in wet, they hold their bend once dry, in a couple of days",
                 "cover": "Stretching and sewing a small hide's worth of cover, some twenty minutes (an estimate); a bigger hide covers more at once and takes as much longer",
                 "lacing": "The hide laced to the gunwale at short intervals (Hornell 1938), every 5 cm, each turn round the gunwale and the hide's edge: the shape's builder counts the rope",

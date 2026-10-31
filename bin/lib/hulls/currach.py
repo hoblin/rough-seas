@@ -142,7 +142,7 @@ def build(path_):
     })
     hull, half = hull_of_gunwale()
     shape.add(stages("Gunwale", gunwales(hull)))
-    shape.add(stages("Ends", ends(half)))
+    shape.add(stages("EndLashing", ends(half)))
     shape.add(stages("Ribs", ribs(hull, half)))
     shape.add(stages("Stringers", stringers(hull)))
     shape.add(stages("Cover", cover(hull), wood="none"))

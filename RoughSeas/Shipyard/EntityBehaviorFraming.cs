@@ -25,6 +25,9 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     protected const int DataVersion = 1;
     protected const string WoodPrefix = "wood-";
 
+    private const double HeldSlackSeconds = 0.5;
+
+    private readonly Dictionary<long, long> laidAt = [];
     private FramingConfig config = null!;
     private Dictionary<FramingStage, Laying> layings = null!;
     protected ISeaWeather sea = null!;
@@ -81,7 +84,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
         var laying = layings[stage];
         double setsAt = sea.Clock.Hours + laying.WetHours(entity.World, slot);
-        if (WorkWith(slot) is not { Refusal: null }) return;
+        if (WorkWith(slot) is not { Refusal: null } job || Hurried(byEntity, job.Seconds)) return;
 
         var wood = laying.WoodOf(slot);
         var pieces = laying.Pieces(slot);
@@ -133,6 +136,19 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     }
 
     protected virtual void Laid(FramingStage stage, CollectibleObject piece, int pieces) { }
+
+    private bool Hurried(EntityAgent byEntity, double seconds)
+    {
+        long now = entity.World.ElapsedMilliseconds;
+        if (laidAt.TryGetValue(byEntity.EntityId, out var last) && now - last < (seconds - HeldSlackSeconds) * 1000)
+        {
+            Shipyard.Log(entity, "{0} lays again {1} ms after the last piece, faster than its {2} s: ignored", byEntity.GetName(), now - last, seconds);
+            return true;
+        }
+
+        laidAt[byEntity.EntityId] = now;
+        return false;
+    }
 
     protected virtual FramingConfig Configure(JsonObject attributes) => attributes.AsObject<FramingConfig>(new FramingConfig());
 
