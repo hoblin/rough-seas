@@ -27,9 +27,9 @@ Speeds are against the raft, measured on a calm sea.
 | [Raft](Raft) | 1200 J | none | never floods | 2 m | none | a rope | picked up |
 | [Reed boat](Reed-Boat) | 3000 J, and tears | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
 | [Dugout](Dugout) | 30 000 J | 1156 l | awash | 0.9 m | none | a log | no |
-| [Coracle](Coracle) | 400 J | 250 l | awash | 0.6 m | none | a small hide | worn on the back |
+| [Coracle](Coracle) | 400 J | 350 l | awash | 0.6 m | greased every few days | a small hide; fat for its seams | worn on the back |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 5200 J | 600 l | awash | 0.75 m | none | bark of its tree | picked up |
-| [Hide currach](Hide-Currach) | 3000 J | 1500 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
+| [Hide currach](Hide-Currach) | 3000 J | 1800 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
 | [Outrigger canoe](Outrigger-Canoe) | 30 000 J | 1578 l, 1156 without washstrakes | awash | 2.6 m | none | a log | no |
 | [Sailboat](Sailboat) | 40 000 J | 1500 l | sinks | 3.3 m | none | planks | no |
 
@@ -42,9 +42,9 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | [Raft](Raft) | 2 | either seat, oar in hand | a basket in place of either rider |
 | [Reed boat](Reed-Boat) | 1 | its seat | a basket |
 | [Dugout](Dugout) | 2 | the front seat, oar in hand | a basket in place of the passenger |
-| [Coracle](Coracle) | 1 | its seat | none |
+| [Coracle](Coracle) | 1 | its floor | none |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships, oar in hand | a basket in place of the passenger |
-| [Hide currach](Hide-Currach) | 1 | the stern thwart | 3 spots on its bottom, each a basket, storage vessel or chest |
+| [Hide currach](Hide-Currach) | 1 | the thwart | 3 spots on its bottom, each a basket, storage vessel or chest |
 | [Outrigger canoe](Outrigger-Canoe) | 2 | the front seat, oar in hand | a basket in place of the passenger |
 | [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
 

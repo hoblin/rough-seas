@@ -14,11 +14,11 @@ What is left of her side above the water is her *freeboard*, and the hover text 
 | Vessel | Freeboard, empty | With one aboard |
 | --- | --- | --- |
 | [Raft](Raft), oak | 8 cm | awash |
-| [Coracle](Coracle) | 26 cm | 20 cm |
+| [Coracle](Coracle) | 34 cm | 27 cm |
 | [Dugout](Dugout), oak | 44 cm | 41 cm |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 28 cm | 25 cm |
 | [Reed boat](Reed-Boat), fresh | 36 cm | 25 cm |
-| [Hide currach](Hide-Currach) | 42 cm | 40 cm |
+| [Hide currach](Hide-Currach) | 43 cm | 42 cm |
 | [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 55 cm | 53 cm |
 | [Sailboat](Sailboat), oak | 52 cm | 50 cm |
 
@@ -46,8 +46,8 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 
 | Vessel | Holds up awash |
 | --- | --- |
-| [Coracle](Coracle) | 13 kg: its rider's gear, and no armour |
-| [Hide currach](Hide-Currach) | 38 kg: three baskets, but not three chests |
+| [Coracle](Coracle) | 18 kg: its rider's gear, and no armour |
+| [Hide currach](Hide-Currach) | 24 kg: her rower's gear and three baskets, but not a chest besides |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 41 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Dugout](Dugout), oak | 187 kg |
@@ -81,8 +81,8 @@ Either the planks hold, or the windward bow, side or quarter it hits is stove in
 
 | Vessel | A spilling breaker of | A plunging breaker of |
 | --- | --- | --- |
-| [Coracle](Coracle) | 3.8 m | 0.5 m |
-| [Hide currach](Hide-Currach) | 5.8 m | 0.7 m |
+| [Coracle](Coracle) | 2.7 m | 0.3 m |
+| [Hide currach](Hide-Currach) | 25 m | 2.8 m |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 11 m | 1.2 m |
 | [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | none | 3.3 m |
 | [Sailboat](Sailboat) | none | 14 m |

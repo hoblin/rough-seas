@@ -129,20 +129,21 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 
 | Vessel | Bilge | Stove-in bottom | Stove-in side | The bottom fills her in |
 | --- | --- | --- | --- | --- |
-| [Coracle](Coracle) | 250 litres | 107 litres a minute | 21 | two and a half minutes |
+| [Coracle](Coracle) | 350 litres | 124 litres a minute | 22 | three minutes |
 | [Dugout](Dugout) | 1156 litres | 157 | 47 | seven and a half minutes |
 | [Outrigger canoe](Outrigger-Canoe) | 1578 litres | 170 | 18 | nine minutes |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 600 litres | 84 | none | seven minutes |
 | [Sailboat](Sailboat) | 1500 litres | 325 | 242 | four and a half minutes |
-| [Hide currach](Hide-Currach) | 1500 litres | 86 | none | seventeen minutes |
+| [Hide currach](Hide-Currach) | 1800 litres | 73 | none | twenty-five minutes |
 
 A bottom leak keeps its pace as she fills, for the water inside rises with her; a side leak slows once the water inside stands above it. A bottom only cracked by a hard knock lets in about a third as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) she is done.
 
 ## Seeping and soaking
 
-A wooden hull barely wears: the dugout, the outrigger, the bark canoe and the sailboat need no upkeep. Two hulls change just by floating, counted in game hours afloat:
+A wooden hull barely wears: the dugout, the outrigger, the bark canoe and the sailboat need no upkeep. Hide and reed change just by floating, counted in game hours afloat:
 
-- The [hide currach](Hide-Currach)'s seams seep 30 litres a game hour into her bilge once the grease is gone. Rendered fat keeps them tight for two and a half days afloat; look at her to see when the next greasing is due.
+- A hide cover, the [coracle](Coracle)'s and the [hide currach](Hide-Currach)'s, seeps at every seam where one hide meets the next once the grease is gone: 15 litres a game hour a seam across a currach, 12 across a coracle. Rendered fat keeps them tight for two and a half days afloat; look at her to see when the next greasing is due.
+- A cover rots by the hides it is sewn from. Untanned hide, raw, soaked or scraped, keeps a day afloat in water at 20 °C and two weeks at 5 °C, then rots through in as long again, cracking her everywhere; salted hide keeps half a day more, oiled hide and pelts three times as long, and bark-tanned prepared hide a year. Hauled ashore under the open sky in daylight, a cover dries and keeps afresh, as untanned covers were dried every day. A wet cover is heavier by the water it takes up.
 - The [reed boat](Reed-Boat) soaks up 80 kg of water a day afloat, sitting deeper as it does, and lies on the bottom after about three days. Ashore under the open sky, in daylight and no rain, it dries out, but each drying leaves a third of what it drove out behind as rot that never dries. Soaked through and dried about five times, it sinks the moment it is launched.
 
 A [raft](Raft) has no hull to fill: a knock works its lashings loose instead, and once they are all loose it comes apart.
@@ -163,9 +164,9 @@ A vessel broken up, by one severe blow, by every place stove in, by its lashings
 | [Sailboat](Sailboat) | about 40 planks, a few support beams, ropes and linen |
 | [Reed boat](Reed-Boat) | a handful of reed tops |
 | [Dugout](Dugout) | firewood |
-| [Coracle](Coracle) | a few sticks |
+| [Coracle](Coracle) | a few laths |
 | [Birch-bark canoe](Birch-Bark-Canoe) | some bark and a stick |
-| [Hide currach](Hide-Currach) | sticks and a couple of leathers |
+| [Hide currach](Hide-Currach) | a few laths |
 | [Outrigger canoe](Outrigger-Canoe) | firewood, a rope, some linen, and planks once she has washstrakes |
 
 Whatever it carried goes with it.

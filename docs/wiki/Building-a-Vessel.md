@@ -24,6 +24,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:framing` | client and server | a bark hull stripped off a standing tree and framed piece by piece where it lies ([Framed in place](#framed-in-place)) |
 | `roughseas:riggable` | client and server | a finished hull that a boom laid across her joins to a float, making her the vessel she is rigged into ([Rigged in place](#rigged-in-place)) |
 | `roughseas:rigging` | client and server | that vessel, rigged piece by piece where she lies ([Rigged in place](#rigged-in-place)) |
+| `roughseas:covering` | client and server | a hull bound from laths laid out on the ground, framed and covered with hides piece by piece where it lies ([Laid out on the ground](#laid-out-on-the-ground)) |
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
@@ -33,30 +34,35 @@ They build on each other, so add them in this order. `seaforces` is the vessel's
 
 Every key may carry a `sources` entry beside it, text about where each number came from. Our code doesn't read it; we keep a real-world source for every number there, and so can you.
 
-Our [coracle](Coracle), its sources left out, carries all five:
+Our [coracle](Coracle), its sources and its build left out, carries all five:
 
 ```json
 "behaviorConfigs": {
     "roughseas:vesselintegrity": {
         "impactCapacity": 400,
-        "parts": [{ "material": "hide", "share": 0.5 }, { "material": "wood-willow", "share": 0.5 }],
+        "parts": [{ "name": "hide", "material": "hide", "share": 0.46 }, { "name": "frame", "material": "wood-willow", "share": 0.54 }],
         "shell": {
             "kind": "skin", "material": "hide", "metres": 0.005,
-            "backing": { "material": "wood-willow", "metres": 0.03 },
-            "backedShare": 0.15, "bottomBackedShare": 0.44, "spanMetres": 0.52
+            "backing": { "material": "wood-willow", "metres": 0.01 },
+            "backedShare": 0.47, "bottomBackedShare": 0.6, "spanMetres": 0.37
         },
-        "depthMetres": 0.27,
-        "waterplaneSquareMetres": 1.25,
-        "repairs": [{ "material": { "type": "item", "code": "game:hide-prepared-small", "stacksize": 1 }, "restores": 0.67, "saturation": 40 }],
-        "wreckage": [{ "type": "item", "code": "game:stick", "quantity": { "avg": 3, "var": 2 } }],
+        "depthMetres": 0.36,
+        "waterplaneSquareMetres": 1.0,
+        "seep": { "litresPerHourASeam": 12, "greaseDays": 2.5 },
+        "cover": { "hides": { "prepared": 2 }, "seams": 0 },
+        "repairs": [
+            { "material": { "type": "item", "code": "game:hide-prepared-small", "stacksize": 1 }, "restores": 0.67, "saturation": 40 },
+            { "material": { "type": "item", "code": "game:fat-rendered", "stacksize": 1 }, "restores": 0.5, "saturation": 20, "greases": true }
+        ],
+        "wreckage": [{ "type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": { "avg": 3, "var": 2 } }],
         "damage": { "textures": ["hide"], "material": "hide" }
     },
     "roughseas:seaforces": {
-        "beamMetres": 1.4, "mastMetres": 0, "windageSquareMetres": 0.5,
+        "beamMetres": 1.07, "mastMetres": 0, "windageSquareMetres": 0.5,
         "heave": 0.8, "capsizeBreakerMetres": 0.6,
         "rollResponse": 1.6, "pitchResponse": 1.6
     },
-    "roughseas:bilge": { "capacityLitres": 250, "deckSquareMetres": 1.5, "drainLitresPerHour": 0 }
+    "roughseas:bilge": { "capacityLitres": 350, "deckSquareMetres": 1.26, "drainLitresPerHour": 0 }
 },
 "client": {
     "behaviors": [
@@ -164,8 +170,11 @@ List `roughseas:burnout` and `roughseas:launch` before `creaturecarrier`, so tha
 
 She is then laid stage by stage, in the order of `stages`, each piece held on her for its stage's `seconds`. A stage's `work` says what lays a piece of it:
 
-- `lath`: a lath, wet. Five logs lying end to end with a splitting wedge on each split into laths when an axe drives a wedge; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
-- `pole`: a pole. Three logs lying end to end with a splitting wedge on each split into poles. Like laths, the first makes her frame of its wood.
+- `lath`: a lath, wet. Two to five logs lying end to end with a splitting wedge on each split into poles as long as the row when an axe drives a wedge, and an axe splits a pole into laths of its length in the crafting grid; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
+- `pole`: a pole, split from such a row. Like laths, the first makes her frame of its wood.
+- `hide`: a hide of one of `hideStates`, which covers as many of the stage's pieces as small hides it is worth (small 1, medium 2, large 3, huge 5) and is held on her as many times `seconds`.
+
+Every piece of a `lath` or `pole` stage takes one at least as long as it, cut down; a shorter one is refused. The shape names each piece's length: its builder writes `"metres"` on the piece's group, measured along the run its frame texture draws (`stages()` in `bin/lib/hulls/shape.py` does it), and an item's length is its `length` variant.
 - `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done.
 - `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
 - `hew`: any axe, which loses a point of durability a piece.
@@ -176,7 +185,7 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 | --- | --- | --- | --- |
 | `stages` | list | none | what she is laid with, in order: each a `group`, a `work`, `seconds` a piece, and the flags below |
 | `group` | shape group | none | the group that draws the stage, one child per piece: `Frame1`, `Frame2`…; the count of children is the count of pieces. A look at her shows the stage by the lang key `roughseas:shipyard-stage-{group}` in lower case, with the pieces laid and the pieces in all |
-| `work` | `lath`, `pole`, `rope`, `pitch`, `hew` or `cloth` | `lath` | what lays a piece |
+| `work` | `lath`, `pole`, `rope`, `pitch`, `hew`, `cloth`, `plank` or `hide` | `lath` | what lays a piece |
 | `seconds` | s | 0 | how long a piece is held on her: the real time of that work over sixty |
 | `lines` | bool | false | its laths line her shell: the shell's `backing` backs her only where they are laid |
 | `sets` | bool | false | its laths are bent in wet: she is finished only once the wettest of them has dried |
@@ -187,8 +196,10 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 | `part` | part name | none | the part of her `parts` its pieces make, weighing as far as they are laid, in the wood they are of; pieces of one wood only, and her wreckage of them comes in it |
 | `texture` | texture code | none | the shape's texture that draws the pieces, redrawn in the wood they are of |
 | `replaces` | shape group | none | a group whose pieces each piece of this stage takes away once laid, `{replaces}{n}` for `{group}{n}`: a float's blunt end, for its hewn one |
+| `bends` | stage group | none | a stage this one bends once its first piece is laid: from then on that stage's pieces show from the group `{bends}Bent`, `{bends}Bent1`, `{bends}Bent2`…, and no longer from their own: a coracle's lattice, bent up by her gunwale |
 | `framePart` | part name | none | the part of her `parts`, by its `name`, that her laths or poles make: its share and its `reference` stay, the material is their wood, and only what is laid weighs and takes knocks. Her shape's `frame` texture is drawn in that wood |
-| `laths`, `poles`, `rope`, `pitch`, `cloth`, `planks` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `roughseas:pole-*`, `game:rope`, `game:glueportion-pitch-*`, `game:cloth-*`, `game:plank-*`) |
+| `laths`, `poles`, `rope`, `pitch`, `cloth`, `planks`, `hides` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `roughseas:pole-*`, `game:rope`, `game:glueportion-pitch-*`, `game:cloth-*`, `game:plank-*`, `game:hide-*`) |
+| `hideStates` | list | none | the hides' `type` variants a `hide` stage takes: ours every stage before leather, `raw`, `soaked`, `scraped`, `prepared`, `oiled`, `pelt` and `salted` |
 | `barkSeconds` | s | 0 | how long the knife takes the bark off |
 | `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
 
@@ -215,6 +226,20 @@ At every stage she is a vessel: she floats and can be picked up, her build goes 
 
 A vessel already in a world from before, with no build of its own, is finished with every stage on, the `optional` ones too, its float, poles and pieces of its hull's wood. Our outrigger's builder, `bin/lib/hulls/outrigger.py`, draws her on the dugout's own hull.
 
+### Laid out on the ground
+
+`roughseas:covering` builds a hide boat the way coracles and currachs were really made: laths laid out on the ground, bound into her first frame where they lie, then framed and covered with hides. It is `roughseas:framing` begun that way, with the same `stages` and keys and no bark.
+
+A wet lath held with Shift on the ground lies there at its full length, centred where the player aims, along or across the way they face: our block `roughseas:lathbed` holds the laths whose middles lie in it, and Shift with an empty hand takes the nearest back. Rope held on laths that lie in one of the vessel's `layout`s, every one at least as long as the longest piece of her first stage, of one wood and wet, binds them, for her second stage's `seconds`: the laths are taken away and the entity of her code is laid there, centred on them, her first stage laid and her second begun. Laths that make no layout stay laths. Laths dry where they lie as in the hand, and a dry one is refused, there and at binding.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `layout` | object | none | how her first stage's laths are laid out: `{ "kind": "lattice", "along": 7, "across": 7 }`, so many laths along and across with every one crossing every other (our coracle), or `{ "kind": "pair", "beamMetres": 1.2, "toleranceMetres": 0.25 }`, two laths side by side at her beam, overlapping end for end within the tolerance (our currach) |
+| `overturned` | bool | false | she is built upside down, and is finished only once turned over: a right-click with an empty hand turns her, once every piece she needs is laid |
+| `overturnedPivot` | voxels | 0 | the height of the line along her length she is turned about, so that her gunwale lies on the ground |
+
+A `hide` stage waits until her frame has set: a hide is refused while what was laid wet is still wet. A vessel bound anew starts ungreased. One from before the build, with no build of its own, is finished, the right way up, and covered as its hull's `cover` says. Our coracle's and currach's builders, `bin/lib/hulls/coracle.py` and `currach.py`, draw them, and print the ropes their lashings take and the sections their covers come to.
+
 ## The hull
 
 `roughseas:vesselintegrity`: the hull ([Hull condition](Hull-Condition)). Every blow lands on one of seven places and meets what really takes it ([How a hull takes a blow](Hull-Condition#how-a-hull-takes-a-blow)):
@@ -236,7 +261,8 @@ A broad load cracks its place by its share of the capacity and breaks the hull u
 | `depthMetres` | keel to gunwale amidships. With it the vessel floats by its mass; without it, at its `freeboardMetres` |
 | `waterplaneSquareMetres` | the area it cuts at the water, for a hull with a hold. Leave it out for a solid one, a raft or a bundle, which presses down through its own depth |
 | `hullBox` | `[fromX, fromY, fromZ, toX, toY, toZ]` in the shape's voxels: the hull its places are measured on, when its `Hull` element reaches over more than the hull. By default, the `Hull` element |
-| `seep` | `{ "litresPerHour", "greaseDays" }` on a cracking hull: what its seams let in once ungreased, and how many days afloat a full greasing lasts |
+| `seep` | `{ "litresPerHourASeam", "greaseDays" }` on a cracking hull: what each seam between hides lets in once ungreased, and how many days afloat a full greasing lasts |
+| `cover` | `{ "hides": { "prepared": 2 }, "seams": 0 }` on a cracking hull: the hides it is covered with, by their `type` and the small hides' worth of each, and its seams, when no build says otherwise. A cover rots and soaks afloat by its hides, from `config/vessels/hides.json` ([Seeping and soaking](Hull-Condition#seeping-and-soaking)); a hull built with `roughseas:covering` is covered with the hides sewn on her |
 | `soak` | `{ "kgPerDay", "dryKgPerDay", "rotShare", "saturationKg" }` on a reed hull: the water it takes up a day afloat, what it dries a day in full sun, the share of what dries that stays as rot, and the most it holds |
 | `runsRapids` | true if rapids don't strike it |
 | `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives) |

@@ -30,7 +30,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Carried | too heavy to pick up |
 | Seats | two: the front one steers, under sail too, and paddles with an [oar](https://wiki.vintagestory.at/Oar) in hand; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | a finished [dugout](Dugout), 3 logs for her float, 3 logs split into 6 poles, 10 ropes and 4 linen cloths; washstrakes, when she takes them, 10 planks and 4 ropes |
+| Built from | a finished [dugout](Dugout), 3 logs for her float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when she takes them, 10 planks and 4 ropes |
 | Wreckage | firewood, a rope, some linen, and planks once she has washstrakes |
 
 Its sail drives it the same whatever the wind does; sailing by the wind comes in [Seamanship](Roadmap#seamanship).
@@ -39,7 +39,7 @@ Its sail drives it the same whatever the wind does; sailing by the wind comes in
 
 Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged where she lies, piece by piece, each piece drawn on her as it goes on. Nothing in it needs a saw.
 
-1. **Split the poles.** Lay three logs of one wood on their sides, end to end, anywhere, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on a wedge: the trunk splits into 6 poles, every one she takes. Any wood will do, a modded tree's too.
+1. **Split the poles.** Lay three logs of one wood on their sides, end to end, anywhere, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on a wedge: the trunk splits into 64 poles of 3 m. She takes six, and a longer pole serves too, cut down. Any wood will do, a modded tree's too.
 
    ![Three logs with a wedge on each](images/outrigger-canoe/build-poles.webp)
 

@@ -32,7 +32,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | Carried | picked up |
 | Seats | two: a paddler amidships, with an [oar](https://wiki.vintagestory.at/Oar) in hand, and a passenger in the bow |
 | Cargo | a basket (8 slots) in the bow, in place of the passenger |
-| Built from | a sheet of bark off a standing tree, 29 laths, 22 ropes and a litre of hot pitch |
+| Built from | a sheet of bark off a standing tree, 29 laths (10 of 5 m, 19 of 2 m), 22 ropes and a litre of hot pitch |
 | Wreckage | bark and a stick |
 
 ## How it is built
@@ -43,9 +43,9 @@ A bark canoe is built where its bark comes off the tree, piece by piece, each pi
 
    ![The sheet stripped off a birch](images/birch-bark-canoe/build-sheet.webp)
 
-2. **Split the laths.** Lay five logs of one wood on their sides, end to end, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on a wedge: the wedges drive in and the trunk splits into 32 laths. Any wood will do, and the canoe's frame is as strong and as heavy as that wood.
+2. **Split the laths.** Lay two to five logs of one wood on their sides, end to end, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on a wedge: the wedges drive in and the trunk splits into 64 poles as long as the row. An axe splits a pole into 16 [laths](Recipes#laths) of its length in the crafting grid. Her gunwales and sheathing take 5 m laths; her stems, thwarts and ribs any lath of 2 m or more, cut down. Any wood will do, and the canoe's frame is as strong and as heavy as that wood.
 3. **Soak them.** Laths bend only wet: two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, in the bundle as in the canoe, so a bundle kept too long goes back in the barrel.
-4. **Frame her.** Hold a wet lath on the sheet, a few seconds a lath: the inwales, the three thwarts and the outwales first, which raise the bark into a hull, then the two stems. One row's laths make one canoe: they must all be of one wood.
+4. **Frame her.** Hold a wet lath on the sheet, a few seconds a lath: the inwales, the three thwarts and the outwales first, which raise the bark into a hull, then the two stems. Her laths must all be of one wood.
 
    ![The gunwales and thwarts on the raised bark](images/birch-bark-canoe/build-frame.webp)
 

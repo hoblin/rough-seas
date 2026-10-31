@@ -7,18 +7,18 @@ Boats with a hull hold the water that comes aboard in their bilge, and nothing t
 | Vessel | Bilge | Deck open to the rain |
 | --- | --- | --- |
 | [Sailboat](Sailboat) | 1500 litres | 8 m² |
-| [Hide currach](Hide-Currach) | 1500 litres | 5.5 m² |
+| [Hide currach](Hide-Currach) | 1800 litres | 4 m² |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 600 litres | 3.5 m² |
 | [Outrigger canoe](Outrigger-Canoe) | 1578 litres, 1156 without washstrakes | 3.4 m² |
 | [Dugout](Dugout) | 1156 litres | 3.4 m² |
-| [Coracle](Coracle) | 250 litres | 1.5 m² |
+| [Coracle](Coracle) | 350 litres | 1.3 m² |
 | [Raft](Raft), [reed boat](Reed-Boat) | none: water washes through | |
 
 Water comes in four ways:
 
 - **Over the side**, when [waves](Surf-and-Swamping#shipping-water) run higher than her freeboard, or all at once when a load presses her gunwale under.
 - **Through her cracks.** A [crack](Hull-Condition#leaks) in the bottom always leaks, one in the side once she sits low; look at her to see how many litres a minute.
-- **Through her seams.** An ungreased [hide currach](Hide-Currach) seeps 30 litres a game hour.
+- **Through her seams.** An ungreased hide cover seeps at every seam between hides: 15 litres a game hour a seam on a [hide currach](Hide-Currach), 12 on a [coracle](Coracle).
 - **From the sky.** Rain falls into an open boat: up to 10 litres per square metre of deck each game hour in a downpour, less in lighter rain. A sailboat in heavy rain takes in about 80 litres a game hour, some 40 litres a real minute. A boat under a roof stays dry.
 
 Water aboard weighs a boat down, and a full bilge [swamps](Surf-and-Swamping#swamping) it.
@@ -49,7 +49,7 @@ A bucket clears about 200 litres a minute. Against a calm sea and rain that is p
 
 The currach, shipping some 150 litres a minute, can be kept dry by one bailer with a bucket. The others can't. An open sailboat left at [anchor](Anchoring) with nobody bailing in a 7 m sea swamps in about two and a half minutes.
 
-A leak is the same race. A bucket keeps up with a stove-in bottom on most boats: the dugout's lets in about 160 litres a minute, the currach's under 90. Not the sailboat's, which lets in over 300; and two or three bad cracks outpace any bailer. Bail to stay afloat, and [mend](Mending) to stop it.
+A leak is the same race. A bucket keeps up with a stove-in bottom on most boats: the dugout's lets in about 160 litres a minute, the currach's under 75. Not the sailboat's, which lets in over 300; and two or three bad cracks outpace any bailer. Bail to stay afloat, and [mend](Mending) to stop it.
 
 So at sea in a storm, keep bailing, and don't leave a boat out in one. The night you sleep through passes for a boat afloat near you too: she takes its waves, its rain and her leaks while you sleep. The bilge never drains by itself: a boat swamped in the night is still full in the morning.
 

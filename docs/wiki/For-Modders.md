@@ -115,3 +115,16 @@ The outrigger canoe is a finished dugout rigged where she lies ([Rigged in place
 
 New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys, `roughseas:framing`'s works `pole`, `hew`, `cloth` and `plank` and its keys `replaces`, `optional`, `raisesMetres`, `raisesLitres`, `part` and `texture`, `roughseas:burnout`'s keys `blankDepthMetres`, `blankWaterplaneSquareMetres` and `unhewnLitres`, a part's `name` and `takesKnocks`, and the items `roughseas:pole-{wood}`.
 
+### Coracles and currachs laid out on the ground
+
+The coracle and the hide currach are laid out as laths on the ground and built where they lie ([Laid out on the ground](Building-a-Vessel#laid-out-on-the-ground)), and their grid recipes are gone. Their codes are still `roughseas:coracle` and `roughseas:currach`, so one of yours loads finished, the currach the right way up, both covered in prepared hide.
+
+- Their rowers hold an oar, as the dugout's do: both set `requiresPaddlingTool` and paddle with vanilla's `crudeOar` strokes. The coracle's sculling paddle, the currach's two oars and tholes, their `roughseas-coracle-*` and `roughseas-currach-*` strokes and `patches/player-coracle.json` and `patches/player-currach.json` are gone.
+- Their shapes are new: the coracle a Teifi basket of a lattice and a plaited gunwale, 1.5 by 1.07 m, with no seat board; the currach double-ended, 4.7 by 1.2 m, with ribs, stringers and a thwart pole in place of her transom, floor and stem post. A patch that addressed their old elements misses. Their bilges hold 350 and 1800 litres, and they weigh about 20 and 70 kg.
+- Laths and poles have a length: `roughseas:lath-{wood}-{2|3|4|5}-{dry|wet}` and `roughseas:pole-{wood}-{2|3|4|5}`, no longer `lath-{wood}-{dry|wet}` and `pole-{wood}`. A row of two to five wedged logs splits into 64 poles as long as it; the wedge's `splits` list one per row length. An axe splits a pole into 16 laths of its length in the crafting grid (`recipes/grid/laths.json`). Their name takes the length as `{1}`.
+- Every piece of a `lath` or `pole` stage names its length in the shape, a `"metres"` key on its group, and takes a lath or pole at least that long. The bark canoe's and the outrigger's pieces name theirs too.
+- `seep`'s `litresPerHour` is now `litresPerHourASeam`: a cover seeps at every seam between hides. A cracking hull's new `cover` gives the hides of one from before its build; `config/vessels/hides.json` gives each hide's keeping afloat and the water it takes up, and a patch can change them.
+- `IAfloat.Pass` takes the water's temperature, and `IHullForm` grew `Cover`, the hides a vessel being built is covered with.
+- Hides carry our collectible behaviour `roughseas:framing`, as rope does; laths carry `roughseas:lathbed` by their JSON, and with Shift lay themselves on the ground. Rope held on laths laid out in a layout binds them rather than doing what vanilla's rope does.
+
+New: the behaviour `roughseas:covering` with its keys `layout`, `overturned` and `overturnedPivot`, `roughseas:framing`'s work `hide` and its keys `bends`, `hides` and `hideStates`, the block `roughseas:lathbed`, the collectible behaviour `roughseas:lathbed`, `roughseas:vesselintegrity`'s key `cover`, and `config/vessels/hides.json`.
