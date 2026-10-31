@@ -32,6 +32,8 @@ public static class Fixtures
 
     public static Vessel Sailboat => Vessel("boat-sailed");
 
+    public static UnderwaterConfig Underwater(string vessel) => SeaForces(vessel)["underwater"]!.ToObject<UnderwaterConfig>()!;
+
     public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)));
 
     public static Seaworthiness Afloat(string vessel, double litres = 0)
