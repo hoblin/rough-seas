@@ -184,7 +184,8 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 | `seals` | bool | false | her hold holds water only once the stage is done; until then water runs through her |
 | `litres` | l | 0 | the pitch one piece takes |
 | `optional` | bool | false | she is finished without it, and it goes on her any time after: an outrigger's washstrakes |
-| `raisesMetres`, `raisesLitres` | m, l | 0 | how much higher her side and how much more her hold, once the stage is done |
+| `raisesMetres`, `raisesLitres` | m, l | 0 | how much higher her side and how much more her hold, once the stage is done, on top of her `depthMetres` and her bilge's `capacityLitres` |
+| `part` | part name | none | the part of her `parts` its pieces make, weighing as far as they are laid |
 | `replaces` | shape group | none | a group whose pieces each piece of this stage takes away once laid, `{replaces}{n}` for `{group}{n}`: a float's blunt end, for its hewn one |
 | `framePart` | part name | none | the part of her `parts`, by its `name`, that her laths or poles make: its share and its `reference` stay, the material is their wood, and only what is laid weighs and takes knocks. Her shape's `frame` texture is drawn in that wood |
 | `laths`, `poles`, `rope`, `pitch`, `cloth`, `planks` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `roughseas:pole-*`, `game:rope`, `game:glueportion-pitch-*`, `game:cloth-*`, `game:plank-*`) |

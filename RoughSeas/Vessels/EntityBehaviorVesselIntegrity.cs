@@ -425,7 +425,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     {
         if (Afloat.Sunk) infotext.AppendLine(Lang.Get("roughseas:vessel-sunk"));
         model.Describe(infotext);
-        if (inWater && model.LitresPerSecond(Afloat, flotation.DepthMetres) is var leaking and >= 0.01)
+        if (inWater && model.LitresPerSecond(Afloat, depthMetres) is var leaking and >= 0.01)
         {
             infotext.AppendLine(Lang.Get("roughseas:vessel-leaking", Math.Round(leaking * 60)));
         }
@@ -565,7 +565,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
             hold.Ship(hold.CapacityLitres - hold.Litres, Afloat.Sunk ? "on the bottom" : "over the gunwale");
             return;
         }
-        double litres = model.Inflow(lap.Seconds, lap.Hours, Afloat, flotation.DepthMetres);
+        double litres = model.Inflow(lap.Seconds, lap.Hours, Afloat, depthMetres);
         if (litres <= 0) return;
 
         hold.Ship(litres, "through her leaks");

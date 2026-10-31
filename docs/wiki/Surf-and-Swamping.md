@@ -19,7 +19,7 @@ What is left of her side above the water is her *freeboard*, and the hover text 
 | [Birch-bark canoe](Birch-Bark-Canoe) | 28 cm | 25 cm |
 | [Reed boat](Reed-Boat), fresh | 36 cm | 25 cm |
 | [Hide currach](Hide-Currach) | 42 cm | 40 cm |
-| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 56 cm | 53 cm |
+| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 55 cm | 53 cm |
 | [Sailboat](Sailboat), oak | 52 cm | 50 cm |
 
 When her freeboard reaches nothing, the sea comes over her gunwale and she floods, cracked or not: a boat loaded down to the water fills in a moment. The raft and the reed boat are solid: pressed under, they lie awash and still hold their load up.
@@ -51,7 +51,7 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 | [Birch-bark canoe](Birch-Bark-Canoe) | 41 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Dugout](Dugout), oak | 187 kg |
-| [Outrigger canoe](Outrigger-Canoe), oak | 298 kg |
+| [Outrigger canoe](Outrigger-Canoe), oak | 309 kg |
 | [Reed boat](Reed-Boat), fresh | 248 kg, less the water it has soaked up |
 | [Sailboat](Sailboat), oak | nothing: she goes down |
 

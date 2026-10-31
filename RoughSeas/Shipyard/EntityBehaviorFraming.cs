@@ -32,9 +32,9 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     public override bool Finished => framing.Finished(sea.Clock.Hours);
 
-    public override double HoldLitres(double designed) => framing.Sealed ? designed - framing.Unraised(stage => stage.RaisesLitres) : 0;
+    public override double HoldLitres(double designed) => framing.Sealed ? designed + framing.Raised(stage => stage.RaisesLitres) : 0;
 
-    public override double DepthMetres(double designed) => designed - framing.Unraised(stage => stage.RaisesMetres);
+    public override double DepthMetres(double designed) => designed + framing.Raised(stage => stage.RaisesMetres);
 
     public override double Uncut => 0;
 
@@ -56,8 +56,9 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     public override VesselPart[] Built(VesselPart[] designed) =>
         designed.Select(part => part.Name == config.FramePart
-            ? part.As(framing.Wood is { } wood ? WoodPrefix + wood : part.Material, framing.Framed)
-            : part).ToArray();
+                ? part.As(framing.Wood is { } wood ? WoodPrefix + wood : part.Material, framing.Framed)
+                : config.Stages.FirstOrDefault(stage => stage.Part == part.Name) is { } stage ? part.As(part.Material, framing.Share(stage))
+                : part).ToArray();
 
     public override Shell Formed(Shell designed) =>
         designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? "", framing.Lined);
@@ -123,7 +124,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     protected override string ShapeKey() => framing.ShapeKey;
 
-    protected override string FormKey() => $"{framing.Wood}/{framing.Framed}/{framing.Lined}/{framing.Sealed}/{framing.Unraised(stage => stage.RaisesMetres)}";
+    protected override string FormKey() => framing.ShapeKey;
 
     private bool LaidAny(ItemSlot piece)
     {

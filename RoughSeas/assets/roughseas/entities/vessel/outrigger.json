@@ -2,7 +2,7 @@
     "code": "outrigger",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 574,
+    "weight": 594,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "plank": "inside-north"},
@@ -26,10 +26,11 @@
             "parts": [
                 {"material": "wood-{wood}", "reference": "wood-oak", "share": 361},
                 {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 143, "takesKnocks": false},
-                {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 70, "takesKnocks": false}
+                {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 70, "takesKnocks": false},
+                {"name": "strakes", "material": "wood-{wood}", "reference": "wood-oak", "share": 20, "takesKnocks": false}
             ],
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.54},
-            "depthMetres": 0.7125,
+            "depthMetres": 0.5625,
             "waterplaneSquareMetres": 3.58,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
@@ -44,10 +45,10 @@
             ],
             "damage": {"textures": ["inside"], "material": "wood"},
             "sources": {
-                "parts": "Her hull is the dugout she was built on, 361 kg of oak. Her float is three metres of log some 30 cm across, 0.21 m³ (bin/lib/hulls/outrigger.py), 143 kg of oak; her six poles (three 2.6 m booms and a 3 m mast about 9 cm across, two 3 m spars about 8 cm), 0.1 m³, 70 kg. A float or poles of another wood weigh by their own",
+                "parts": "Her hull is the dugout she was built on, 361 kg of oak. Her float is three metres of log some 30 cm across, 0.21 m³ (bin/lib/hulls/outrigger.py), 143 kg of oak; her six poles (three 2.6 m booms and a 3 m mast about 9 cm across, two 3 m spars about 8 cm), 0.1 m³, 70 kg; her washstrakes, ten boards about 2 cm thick, 0.03 m³, 20 kg, as they are fitted. A float or poles of another wood weigh by their own",
                 "impactCapacity": "The dugout's hull, in her hull's wood alone: the float and rig lashed to it take no knock a hull takes",
                 "shell": "The dugout's walls, about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe)",
-                "depthMetres": "The dugout's 0.5625 m, keel to gunwale, and her washstrakes' 15 cm: without them her side is the dugout's",
+                "depthMetres": "The dugout's, keel to gunwale: her washstrakes raise it by their stage's raisesMetres once sewn",
                 "waterplaneSquareMetres": "The dugout's 2.83 m² and her float's, a 3 m log 0.25 m wide at the water",
                 "repairs": "Her hull is a dugout's, mended as one"
             }
@@ -62,7 +63,7 @@
             "poles": "roughseas:pole-*",
             "rope": "game:rope",
             "cloth": "game:cloth-*",
-            "planks": "game:plank-*",
+            "planks": "*:plank-*",
             "rigged": ["SailUnfurled", "SailHalf"],
             "stages": [
                 {"group": "Booms", "work": "pole", "seconds": 3},
@@ -71,7 +72,7 @@
                 {"group": "Mast", "work": "pole", "seconds": 3},
                 {"group": "SailFurled", "work": "cloth", "seconds": 15},
                 {"group": "Stays", "work": "rope", "seconds": 15},
-                {"group": "Strakes", "work": "plank", "seconds": 20, "optional": true},
+                {"group": "Strakes", "work": "plank", "seconds": 20, "optional": true, "part": "strakes"},
                 {"group": "Seams", "work": "rope", "seconds": 15, "optional": true, "raisesMetres": 0.15, "raisesLitres": 422}
             ],
             "sources": {
@@ -155,11 +156,11 @@
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 1578,
+            "capacityLitres": 1156,
             "deckSquareMetres": 3.4,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "The dugout's 1156 L hollow and the 422 L her washstrakes enclose above it (bin/lib/hulls/outrigger.py)",
+                "capacityLitres": "The dugout's hollow: her washstrakes add the 422 L they enclose once sewn (bin/lib/hulls/outrigger.py)",
                 "deckSquareMetres": "Her open hollow, 4.5 m by 0.75 m, catches the rain",
                 "drainLitresPerHour": "One log, no seams: nothing leaks"
             }

@@ -80,8 +80,11 @@ public sealed class Framing
 
     public int Laid(FramingStage stage) => Tree?.GetInt(stage.Group) ?? stage.Pieces;
 
-    /// <summary>What the stages not yet done withhold of what they bring her, each its <paramref name="brings"/>.</summary>
-    public double Unraised(Func<FramingStage, double> brings) => Stages.Where(stage => Laid(stage) < stage.Pieces).Sum(brings);
+    /// <summary>What the stages done bring her, each its <paramref name="brings"/>.</summary>
+    public double Raised(Func<FramingStage, double> brings) => Stages.Where(stage => Laid(stage) >= stage.Pieces).Sum(brings);
+
+    /// <summary>How much of the stage is laid.</summary>
+    public double Share(FramingStage stage) => stage.Pieces == 0 ? 1 : (double)Laid(stage) / stage.Pieces;
 
     public bool Finished(double hours) => Built && hours >= SetsAt;
 
@@ -138,6 +141,9 @@ public sealed class FramingStage
 
     /// <summary>How much more her hold takes once the stage is done.</summary>
     public double RaisesLitres;
+
+    /// <summary>The part of her <c>parts</c>, by its name, that this stage's pieces make: there as far as they are laid.</summary>
+    public string? Part;
 
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
     [Newtonsoft.Json.JsonIgnore]
