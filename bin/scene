@@ -44,7 +44,7 @@ bin/scene seats [CODE...]  the player in every seat of each vessel (default: our
                            and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
 bin/scene strokes [CODE...]
-                           the player rowing or paddling each vessel (default: ours), forward and
+                           the player rowing or paddling each vessel (default: ours with their own oars or paddle), forward and
                            backward, from the front, the side and behind, in third person: a burst
                            over one stroke per view, <temp>/strokes/CODE-STROKE-VIEW/sheet.png.
                            Checks the rower's arms frame by frame.
