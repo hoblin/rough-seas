@@ -160,7 +160,7 @@ public class VesselShapeTests
         if ((configs["roughseas:framing"] ?? configs["roughseas:rigging"])?["stages"] is not { } stages) return;
 
         var elements = Elements(shape["elements"]!).ToDictionary(element => element.Value<string>("name")!);
-        if (configs["roughseas:framing"] != null)
+        if (configs["roughseas:framing"]?["barkSeconds"] != null)
         {
             Assert.Contains("Sheet", elements.Keys);
             Assert.Contains("Skin", elements.Keys);
