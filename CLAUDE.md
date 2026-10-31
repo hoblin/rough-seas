@@ -63,7 +63,7 @@ Each holds what one kind of work needs; read it in full before that work. They a
 
 ## Tickets
 
-Tickets are GitHub issues in this repository. A bug your own change brought in is fixed in the same pull request. A bug or a follow-up found along the way that lies outside the ticket's scope becomes its own issue, not an out-of-scope fix, labelled `agent-filed`. Tickets the maintainers settled carry `decided`. The two are not equal: a finding from a review subagent sees a slice of the code and imagines what could go wrong; it is filed so it is not lost, and it is read with suspicion before anyone works on it. State the evidence in such an issue (what you saw, where) rather than the fear.
+Tickets are GitHub issues in this repository. A bug your own change brought in is fixed in the same pull request. A small thing found along the way is fixed on the spot, in the same pull request. Only a bug that is work of its own, outside the ticket's scope, becomes its own issue, labelled `agent-filed`. Tickets the maintainers settled carry `decided`. The two are not equal: a finding from a review subagent sees a slice of the code and imagines what could go wrong; it is filed so it is not lost, and it is read with suspicion before anyone works on it. State the evidence in such an issue (what you saw, where) rather than the fear.
 
 A `decided` ticket is ready for anyone, an outside contributor included: say on the issue that you take it. The rest wait for the maintainers: `agent-filed` until they confirm it, `draft` and `parked` until they settle.
 
@@ -81,7 +81,7 @@ Verify it yourself, through the bench. Never hand an in-game check to a human; a
 
 A pull request under 1000 lines of diff skips the `/rpi:feature` flow's multi-agent self-review: Copilot's review is enough for a small change, and five reviewing subagents cost more than they find. Over 1000 lines, run it.
 
-Copilot's review, like any automated review, is advice, not a gate. Judge each finding on its merits: fix a real defect or a real risk; answer a nitpick, a style point or a speculative edge case in one line saying why the code stays, and resolve the thread. A minor finding worth doing later becomes an issue, not another round: every round of fixes brings a new review with new minor points, and five rounds cost hours and buy nothing. When Copilot keeps raising them round after round, the maintainers decide when the PR is done.
+Copilot's review, like any automated review, is advice, not a gate. Judge each finding on its merits: fix a real defect or a real risk; answer a nitpick, a style point or a speculative edge case in one line saying why the code stays, and resolve the thread. A small finding worth doing is fixed in the same push, not left for an issue. When Copilot keeps raising new minor points round after round, the maintainers decide when the PR is done.
 
 The maintainers' agents merge their own pull requests; an outside contributor's waits for the code owner's review.
 
