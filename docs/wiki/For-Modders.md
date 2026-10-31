@@ -89,6 +89,7 @@ New: the behaviours `roughseas:burnout` and `roughseas:launch` with their keys, 
 
 The bark canoe is stripped off a standing tree and framed where it lies ([Framed in place](Building-a-Vessel#framed-in-place)), and its grid recipe is gone. No key was removed, so a canoe of yours loads finished, and the bark from a log still mends it.
 
+- The bark canoe's rower holds an oar, as the dugout's does: it sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes, kneeling. Its own paddle, its `roughseas-barkcanoe-*` strokes and `patches/player-barkcanoe.json` are gone.
 - A knife held on a standing birch, elm or spruce trunk strips it: the trunk becomes our `roughseas:debarkedtrunk-{wood}`, which keeps the grown log's tree-felling group, its spread and its hold on the leaves, and drops vanilla's debarked log. A mod that looks for `log-grown-*` to find a trunk misses a stripped one.
 - Rope held on a canoe still being lashed lashes her instead of tying itself to her: a Harmony prefix on `ItemRope.OnHeldInteractStart`. Once her lashing is done, rope ties to her as before.
 - Rope and every liquid container in the game, a modded one too, carry our collectible behaviour `roughseas:framing`, and our laths carry it by their JSON, so that holding them on a canoe being built lays her next piece.

@@ -177,7 +177,7 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 | `barkSeconds` | s | 0 | how long the knife takes the bark off |
 | `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
 
-At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and the item shows her as far as she is built, and she takes her seats only once finished. Give the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull: the behaviour shows the one or the other. A group `Paddle` shows once every piece is laid. The item lists `Sheet` in its `ignoreElements`. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
+At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and the item shows her as far as she is built, and she takes her seats only once finished. Give the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull: the behaviour shows the one or the other. The item lists `Sheet` in its `ignoreElements`. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
 
 ## The hull
 

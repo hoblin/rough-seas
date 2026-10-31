@@ -10,11 +10,12 @@
         "turnSpeed": 1.2,
         "swimmingOffsetY": 0.35,
         "shouldSwivelFromMotion": false,
+        "requiresPaddlingTool": true,
         "mountAnimations": {
             "idle": "roughseas-kneel",
-            "ready": "roughseas-barkcanoe-ready",
-            "forwards": "roughseas-barkcanoe-forward",
-            "backwards": "roughseas-barkcanoe-backward"
+            "ready": "crudeOarReady",
+            "forwards": "crudeOarForward",
+            "backwards": "crudeOarBackward"
         },
         "rightClickPickup": true
     },
@@ -137,11 +138,6 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/barkcanoe", "ignoreElements": ["hideWater", "Bilge"]},
-        "animations": [
-            {"code": "roughseas-barkcanoe-ready", "animation": "roughseas-barkcanoe-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
-            {"code": "roughseas-barkcanoe-forward", "animation": "roughseas-barkcanoe-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
-            {"code": "roughseas-barkcanoe-backward", "animation": "roughseas-barkcanoe-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
-        ],
         "textures": {"lashing": {"base": "game:item/resource/rope"}, "pitch": {"base": "game:block/liquid/glue-cold"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},

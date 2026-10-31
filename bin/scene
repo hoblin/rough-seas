@@ -283,8 +283,7 @@ seats() {
 
 strokes() {
   local codes=("$@") dir=strokes id
-  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:barkcanoe-birch roughseas:outrigger-oak roughseas:coracle \
-    roughseas:currach)
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:outrigger-oak roughseas:coracle roughseas:currach)
   for code in "${codes[@]}"; do
     clear >/dev/null
     id=$(dock "$code" | jq -r '.vessels[0].EntityId')

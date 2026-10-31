@@ -1,14 +1,11 @@
 import math
 
-from shape import BILGE, Hull, Shape, beam, box, group, paddle, path, plank, throat
-from stroke import crew, paddling
+from shape import BILGE, Hull, Shape, box, group, path, plank
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
 CENTRE = 8
 SKIN = 0.6
-STOWED = ((-2, 1, 6.5), (0, 5, 3))
-SHAFT = 15
 VOXEL_METRES = 1 / 16
 
 GUNWALE = 0.6
@@ -202,12 +199,9 @@ def build(path_):
     shape.add(stages("Sheathing", sheathing(hull)))
     shape.add(stages("Ribs", ribs(hull)))
     shape.add(stages("Pitch", [seam("SternSeam", STERN), seam("BowSeam", bow(STERN)), gores(hull, -1), gores(hull, 1)]))
-    shape.add(paddle(*STOWED, SHAFT, 7, "frame"))
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
-    crew(shape, "barkcanoe", "BackSeat", "roughseas-kneel",
-         paddling("barkcanoe", STOWED, throat(SHAFT), -0.5, 3.5, 5.2, 2.5),
-         {"R": "PaddleThroat", "L": "PaddleGrip"}, {"rotationX": -15, "rotationZ": 20})
+    shape.write()
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 ![The birch-bark canoe afloat](images/birch-bark-canoe/afloat-bow.webp)
 
-One sheet of birch bark over a frame of split laths: gunwales lashed on at intervals, three thwarts, sheathing and ribs inside, and high, upswept stems, its seams black with pitch. One person kneels amidships and paddles it with the paddle it carries; a second rides in the bow.
+One sheet of birch bark over a frame of split laths: gunwales lashed on at intervals, three thwarts, sheathing and ribs inside, and high, upswept stems, its seams black with pitch. One person kneels amidships and paddles it with an [oar](https://wiki.vintagestory.at/Oar) in hand; a second rides in the bow.
 
 ## In Rough Seas
 
@@ -30,7 +30,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | two: a paddler amidships, with its own paddle, and a passenger in the bow |
+| Seats | two: a paddler amidships, with an [oar](https://wiki.vintagestory.at/Oar) in hand, and a passenger in the bow |
 | Cargo | a basket (8 slots) in the bow, in place of the passenger |
 | Built from | a sheet of bark off a standing tree, 29 laths, 22 ropes and a litre of hot pitch |
 | Wreckage | bark and a stick |

@@ -69,7 +69,6 @@ public class FramingTests
         var sheet = Sheet().Hidden().ToList();
 
         Assert.Contains(Framing.SkinGroup, sheet);
-        Assert.Contains(Framing.PaddleGroup, sheet);
         Assert.Contains("Frame1", sheet);
         Assert.DoesNotContain(Framing.SheetGroup, sheet);
         Assert.Equal([Framing.SheetGroup], canoe);
