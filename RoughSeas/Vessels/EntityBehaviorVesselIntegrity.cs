@@ -690,7 +690,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         vessels.Log(entity, "broke up");
         var world = entity.World;
         var box = entity.SelectionBox;
-        foreach (var drop in wreckage)
+        foreach (var drop in form?.Wrecked(wreckage) ?? wreckage)
         {
             var stack = drop.GetNextItemStack();
             if (stack == null) continue;

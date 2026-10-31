@@ -1,4 +1,5 @@
 using System;
+using Vintagestory.API.Common;
 
 namespace RoughSeas.Vessels;
 
@@ -18,6 +19,12 @@ public interface IHullForm
 
     /// <summary>Her shell as far as she is built, from the shell of the finished vessel.</summary>
     Shell Formed(Shell designed);
+
+    /// <summary>What she breaks up into as far as she is built, from the finished vessel's wreckage.</summary>
+    BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed);
+
+    /// <summary>The height of her mast as far as she is built, from the finished vessel's.</summary>
+    double MastMetres(double designed);
 
     /// <summary>Raised on either side when what she is built of, or how much of her hold holds water, changes.</summary>
     event Action? Reformed;

@@ -20,6 +20,9 @@ public class VesselPart
     /// <summary>How much of it is in her yet, by weight and strength: all of it unless she is still being built.</summary>
     public double Present = 1;
 
+    /// <summary>Whether a knock on her lands on it: a float or a rig lashed to her hull weighs, but takes none.</summary>
+    public bool TakesKnocks = true;
+
     public VesselPart As(string material, double present) =>
-        new() { Name = Name, Material = material, Reference = Reference == "" ? Material : Reference, Share = Share, Present = present };
+        new() { Name = Name, Material = material, Reference = Reference == "" ? Material : Reference, Share = Share, Present = present, TakesKnocks = TakesKnocks };
 }

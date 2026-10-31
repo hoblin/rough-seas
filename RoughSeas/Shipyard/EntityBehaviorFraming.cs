@@ -60,6 +60,9 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     public override Shell Formed(Shell designed) =>
         designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? "", framing.Lined);
 
+    public override BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed) =>
+        designed.Where(drop => drop.ResolvedItemstack is not { } stack || LaidAny(new DummySlot(stack))).ToArray();
+
     public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
     {
         if (framing.Current is not { } stage || !layings[stage].Takes(slot)) return null;
@@ -119,6 +122,12 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     protected override string ShapeKey() => framing.ShapeKey;
 
     protected override string FormKey() => $"{framing.Wood}/{framing.Framed}/{framing.Lined}/{framing.Sealed}";
+
+    private bool LaidAny(ItemSlot piece)
+    {
+        var stages = layings.Where(laying => laying.Value.Takes(piece)).Select(laying => laying.Key).ToArray();
+        return stages.Length == 0 || stages.Any(stage => framing.Laid(stage) > 0);
+    }
 
     private int Pieces(string group)
     {

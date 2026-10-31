@@ -43,6 +43,10 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
 
     public abstract Shell Formed(Shell designed);
 
+    public virtual BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed) => designed;
+
+    public virtual double MastMetres(double designed) => designed;
+
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         Shipyard = entity.Api.ModLoader.GetModSystem<ShipyardModSystem>();

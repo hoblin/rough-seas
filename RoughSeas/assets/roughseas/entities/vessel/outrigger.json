@@ -25,8 +25,8 @@
             "impactCapacity": 30000,
             "parts": [
                 {"material": "wood-{wood}", "reference": "wood-oak", "share": 400},
-                {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 143},
-                {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 70}
+                {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 143, "takesKnocks": false},
+                {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 70, "takesKnocks": false}
             ],
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.53},
             "depthMetres": 0.41,
@@ -44,7 +44,7 @@
             "damage": {"textures": ["inside"], "material": "wood"},
             "sources": {
                 "parts": "Her hull is the dugout she was built on, 400 kg of oak. Her float is three metres of log some 30 cm across, 0.21 m³ (bin/lib/hulls/outrigger.py), 143 kg of oak; her six poles (three 2.6 m booms and a 3 m mast about 9 cm across, two 3 m spars about 8 cm), 0.1 m³, 70 kg. A float or poles of another wood weigh by their own",
-                "impactCapacity": "The dugout's hull: the float and rig lashed to it take no knock a hull takes",
+                "impactCapacity": "The dugout's hull, in her hull's wood alone: the float and rig lashed to it take no knock a hull takes",
                 "shell": "The dugout's walls, about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe)",
                 "depthMetres": "The dugout's: keel to gunwale",
                 "waterplaneSquareMetres": "The dugout's 2.25 m² and her float's, a 3 m log 0.25 m wide at the water",
@@ -55,6 +55,7 @@
             "framePart": "poles",
             "floatPart": "float",
             "floatLogs": 3,
+            "mast": "Mast",
             "floatOffMetres": 2,
             "floorMetres": 0.075,
             "poles": "roughseas:pole-*",

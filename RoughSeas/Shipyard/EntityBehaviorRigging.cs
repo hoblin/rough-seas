@@ -26,6 +26,9 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 
     public override double FloorMetres => rig.FloorMetres;
 
+    public override double MastMetres(double designed) =>
+        framing.Stages.FirstOrDefault(stage => stage.Group == rig.Mast) is { } mast && framing.Laid(mast) > 0 ? designed : 0;
+
     public override string PropertyName() => Code;
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
@@ -67,6 +70,9 @@ public class RiggingConfig : FramingConfig
     public int FloatLogs;
 
     public double FloatOffMetres;
+
+    /// <summary>The stage whose first piece stands her mast.</summary>
+    public string Mast = "";
 
     /// <summary>The top of the hold's floor above her origin: her hull's, finished before she was rigged.</summary>
     public double FloorMetres;
