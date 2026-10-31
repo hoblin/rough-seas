@@ -64,7 +64,7 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
    | ![The charred hollow](images/dugout/build-charred.webp) | ![Hewing out the char with an axe](images/dugout/build-hewing.webp) |
    | Charred, ready to hew | Hewing |
 
-7. **Again, six times.** Clay, dry grass and four firewood in the hollow, light, hew. Each fire takes the hollow deeper, and the sixth finishes her.
+7. **Again, until six fires have burned.** Clay, dry grass and four firewood in the hollow, light, hew. Each fire takes the hollow deeper, and the sixth finishes her.
 
    | | |
    | --- | --- |
