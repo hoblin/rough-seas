@@ -9,8 +9,8 @@ Boats with a hull hold the water that comes aboard in their bilge, and nothing t
 | [Sailboat](Sailboat) | 1500 litres | 8 m² |
 | [Hide currach](Hide-Currach) | 1500 litres | 5.5 m² |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 600 litres | 3.5 m² |
-| [Outrigger canoe](Outrigger-Canoe) | 450 litres | 3 m² |
-| [Dugout](Dugout) | 450 litres | 3 m² |
+| [Outrigger canoe](Outrigger-Canoe) | 1578 litres, 1156 without washstrakes | 3.4 m² |
+| [Dugout](Dugout) | 1156 litres | 3.4 m² |
 | [Coracle](Coracle) | 250 litres | 1.5 m² |
 | [Raft](Raft), [reed boat](Reed-Boat) | none: water washes through | |
 
@@ -42,14 +42,14 @@ A bucket clears about 200 litres a minute. Against a calm sea and rain that is p
 | Vessel | Time to swamp |
 | --- | --- |
 | [Coracle](Coracle) | a quarter of a minute |
-| [Dugout](Dugout), [outrigger](Outrigger-Canoe) | half a minute |
+| [Dugout](Dugout), [outrigger](Outrigger-Canoe) | about a minute |
 | [Sailboat](Sailboat) | a minute |
 | [Birch-bark canoe](Birch-Bark-Canoe) | two minutes |
 | [Hide currach](Hide-Currach) | ten minutes |
 
 The currach, shipping some 150 litres a minute, can be kept dry by one bailer with a bucket. The others can't. An open sailboat left at [anchor](Anchoring) with nobody bailing in a 7 m sea swamps in about two and a half minutes.
 
-A leak is the same race. A bucket keeps up with a stove-in bottom on most boats: the dugout's lets in about 180 litres a minute, the currach's under 90. Not the sailboat's, which lets in over 300; and two or three bad cracks outpace any bailer. Bail to stay afloat, and [mend](Mending) to stop it.
+A leak is the same race. A bucket keeps up with a stove-in bottom on most boats: the dugout's lets in about 160 litres a minute, the currach's under 90. Not the sailboat's, which lets in over 300; and two or three bad cracks outpace any bailer. Bail to stay afloat, and [mend](Mending) to stop it.
 
 So at sea in a storm, keep bailing, and don't leave a boat out in one. The night you sleep through passes for a boat afloat near you too: she takes its waves, its rain and her leaks while you sleep. The bilge never drains by itself: a boat swamped in the night is still full in the morning.
 

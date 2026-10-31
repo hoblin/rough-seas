@@ -109,7 +109,9 @@ The outrigger canoe is a finished dugout rigged where she lies ([Rigged in place
 - Axes and cloth carry our collectible behaviour `roughseas:framing` too, as rope does.
 - The wedge's `laths` and `lath` attributes are now `splits`: what a row of so many wedged logs splits into, five into laths, three into poles.
 
-- `IHullForm` grew `Wrecked` and `MastMetres`: what a vessel being built breaks into and how tall her mast stands so far. An implementation of yours returns the designed values to keep its behaviour.
+- `IHullForm` grew `Wrecked`, `UnhewnLitres`, `DepthMetres` and `WaterplaneSquareMetres`, and `Hollowed` became `HoldLitres`: what a vessel being built breaks into, the wood she still carries outside her hull, and her depth, waterplane and hold so far. A vessel with a mast that stands only once stepped implements the new `IMasted`. An implementation of yours returns the designed values to keep its behaviour.
+- The dugout is the five logs from first to last: 4.5 m long, 0.9 m wide, 0.56 m deep, a 1156-litre hold and 361 kg in oak, against 400 kg and 450 litres before. Her shape's stage groups are each level's whole trunk, `Clay{n}` each fire's rim, and `Shell` the finished hull; the item hides the stages as before. A dugout of yours loads as she was, at her new size.
+- The outrigger takes optional washstrakes, sawn planks: `roughseas:framing`'s stages may be `optional` and raise her side and hold. One saved without a build has them on.
 
-New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys, `roughseas:framing`'s works `pole`, `hew` and `cloth` and its key `replaces`, a part's `name` and `takesKnocks`, and the items `roughseas:pole-{wood}`.
+New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys, `roughseas:framing`'s works `pole`, `hew`, `cloth` and `plank` and its keys `replaces`, `optional`, `raisesMetres` and `raisesLitres`, `roughseas:burnout`'s keys `blankDepthMetres`, `blankWaterplaneSquareMetres`, `unhewnLitres` and `soundLitresPerStroke`, a part's `name` and `takesKnocks`, and the items `roughseas:pole-{wood}`.
 

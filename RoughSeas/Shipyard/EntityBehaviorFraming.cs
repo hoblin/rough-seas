@@ -32,7 +32,9 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     public override bool Finished => framing.Finished(sea.Clock.Hours);
 
-    public override double Hollowed => framing.Sealed ? 1 : 0;
+    public override double HoldLitres(double designed) => framing.Sealed ? designed - framing.Unraised(stage => stage.RaisesLitres) : 0;
+
+    public override double DepthMetres(double designed) => designed - framing.Unraised(stage => stage.RaisesMetres);
 
     public override double Uncut => 0;
 
@@ -121,7 +123,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     protected override string ShapeKey() => framing.ShapeKey;
 
-    protected override string FormKey() => $"{framing.Wood}/{framing.Framed}/{framing.Lined}/{framing.Sealed}";
+    protected override string FormKey() => $"{framing.Wood}/{framing.Framed}/{framing.Lined}/{framing.Sealed}/{framing.Unraised(stage => stage.RaisesMetres)}";
 
     private bool LaidAny(ItemSlot piece)
     {
@@ -169,6 +171,8 @@ public class FramingConfig
     public string Pitch = "";
 
     public string Cloth = "";
+
+    public string Planks = "";
 
     /// <summary>How long a knife takes the bark off a standing trunk: the real time of that work over sixty.</summary>
     public double BarkSeconds;

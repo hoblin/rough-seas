@@ -1,10 +1,10 @@
 ![The outrigger canoe afloat](images/outrigger-canoe/afloat-bow.webp)
 
-A dugout with a float log held out to one side on three booms lashed across her gunwales, and a mast stayed fore, aft and out to the float. Her crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Her hull, her float and her poles can each be of their own wood.
+A dugout with a float log held out to one side on three booms lashed across her gunwales, and a mast stayed fore, aft and out to the float: 5 blocks long and 3 across, hull, gap and float. For the open sea she takes washstrakes of sawn planks sewn along her sides and over her ends. Her crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Her hull, her float and her poles can each be of their own wood.
 
 ## In Rough Seas
 
-For a long crossing of open sea. The outrigger is the fastest vessel before metal, and it sails, leaving every rowed boat far astern. The float keeps the narrow hull upright where a dugout would roll over, though her low sides ship water as a dugout's do. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
+For a long crossing of open sea. The outrigger is the fastest vessel before metal, and it sails, leaving every rowed boat far astern. The float keeps the narrow hull upright where a dugout would roll over. Built without a saw she is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise her side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
 
 ## Where it comes from
 
@@ -18,11 +18,11 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Turning | clumsy |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): her hull is the dugout's |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 21 cm empty, 19 cm with its helmsman, in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 318 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | with washstrakes 56 cm empty, 53 cm with its helmsman; without them 44 and 41, as the dugout's; in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 298 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place |
-| [Bilge](Bailing) | 450 litres |
-| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.5 m breaker; it barely rolls in a sea |
+| [Bilge](Bailing) | 1578 litres with washstrakes, 1156 without |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.6 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3 m mast draws strikes |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
@@ -30,8 +30,8 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Carried | too heavy to pick up |
 | Seats | two: the front one steers, under sail too, and paddles with an [oar](https://wiki.vintagestory.at/Oar) in hand; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | a finished [dugout](Dugout), 3 logs for her float, 3 logs split into 6 poles, 10 ropes and 4 linen cloths |
-| Wreckage | firewood, a rope and some linen |
+| Built from | a finished [dugout](Dugout), 3 logs for her float, 3 logs split into 6 poles, 10 ropes and 4 linen cloths; washstrakes, when she takes them, 10 planks and 4 ropes |
+| Wreckage | firewood, a rope, some linen, and planks once she has washstrakes |
 
 Its sail drives it the same whatever the wind does; sailing by the wind comes in [Seamanship](Roadmap#seamanship).
 
@@ -64,7 +64,11 @@ Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged whe
 
    ![Rigged, the sail furled on its spar](images/outrigger-canoe/build-rigged.webp)
 
-Push her into the water with Shift and an empty hand: she is heavy, a few centimetres a push over dry ground, so rig her at the water's edge. An outrigger from before the build loads finished.
+8. **Washstrakes, when you take her to sea.** Any time after she is finished, once you have a saw: hold planks on her, a board along each side four planks long and an end piece over her bow and her stern, ten in all, then four ropes to sew them on, a stitch every 7.6 cm. Sewn, they raise her side 15 cm and add 422 litres to her hold: a 2 m swell that boards a dugout runs past her. Without them she is a coastal boat.
+
+   ![Washstrakes sewn along her sides and over her ends](images/outrigger-canoe/build-strakes.webp)
+
+Push her into the water with Shift and an empty hand: she is heavy, a few centimetres a push over dry ground, so rig her at the water's edge. An outrigger from before the build loads finished, with her washstrakes on, as she was built.
 
 ## Its neighbours
 

@@ -27,10 +27,10 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private const double MinDousingRain = 0.05;
     private const double DousingPerRain = 0.5;
     private const double FlameReach = 0.8;
-    private const string ClayGroup = "Clay";
-    private const string WoodTexture = "inside";
+    private const string ShellGroup = "Shell";
+    private static readonly string[] WoodTextures = ["inside", "bark", "rings"];
     private const string CharTexture = "char";
-    private static readonly string[] Stages = ["Blank", "Char", "Wood", "Fire"];
+    private static readonly string[] Stages = ["Blank", "Char", "Wood", "Fire", "Clay"];
 
     private static readonly AssetLocation FireBlock = new("game:fire");
     private static readonly AssetLocation FireSound = new("game:sounds/environment/fire");
@@ -48,11 +48,17 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
 
     public override bool Finished => burnout.Finished;
 
-    public override double Hollowed => burnout.Hollowed;
+    public override double HoldLitres(double designed) => designed * burnout.Hollowed;
 
     public override double Uncut => 1 - burnout.Hollowed;
 
-    public override double FloorMetres => config.RimMetres - config.HollowDepthMetres * burnout.Hollowed;
+    public override double FloorMetres => burnout.TopMetres - config.HollowDepthMetres * burnout.Hollowed;
+
+    public override double UnhewnLitres => burnout.UnhewnLitres;
+
+    public override double DepthMetres(double designed) => burnout.Toward(config.BlankDepthMetres, designed);
+
+    public override double WaterplaneSquareMetres(double designed) => burnout.Toward(config.BlankWaterplaneSquareMetres, designed);
 
     private double UncutMetres => config.HollowDepthMetres * (1 - burnout.Hollowed);
 
@@ -68,7 +74,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     {
         base.Initialize(properties, attributes);
         config = attributes.AsObject<BurnoutConfig>(new BurnoutConfig());
-        burnout = new Burnout(() => Tree, MarkDirty, config, RimVoxels(), () => Hold is { } hold ? hold.CapacityLitres + hold.UncutLitres : 0);
+        burnout = new Burnout(() => Tree, MarkDirty, config, RimVoxels, () => Hold is { } hold ? hold.CapacityLitres + hold.UncutLitres : 0);
         clay = new AssetLocation(config.Clay);
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
     }
@@ -97,7 +103,9 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
-        if (burnout.Spoiled) ShapeFaces.Retexture(ref entityShape, ref shapeIsCloned, WoodTexture, CharTexture);
+        if (!burnout.Spoiled) return;
+
+        foreach (var wood in WoodTextures) ShapeFaces.Retexture(ref entityShape, ref shapeIsCloned, wood, CharTexture);
     }
 
     public override void OnGameTick(float deltaTime)
@@ -257,28 +265,29 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
             new WorldInteraction { ActionLangCode = action, MouseButton = EnumMouseButton.Right, Itemstacks = with().Select(collectible => new ItemStack(collectible)).ToArray() }
         });
 
-    private int RimVoxels()
+    private int RimVoxels(int level)
     {
         if (entity.Properties.Client?.Shape?.Base is not { } shape) return 0;
 
         var path = shape.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json");
-        return ObjectCacheUtil.GetOrCreate(entity.Api, $"{Code}/rim/{path}",
-            () => Shape.TryGet(entity.Api, path)?.GetElementByName(ClayGroup) is { } rim ? Burnout.TopVoxels(rim) : 0);
+        return ObjectCacheUtil.GetOrCreate(entity.Api, $"{Code}/rim/{path}/{level}",
+            () => Shape.TryGet(entity.Api, path)?.GetElementByName($"Clay{level}") is { } rim ? Burnout.TopVoxels(rim) : 0);
     }
 
     protected override IEnumerable<string> Hidden()
     {
-        if (burnout.Finished) return [.. Stages, ClayGroup];
+        if (burnout.Finished) return Stages;
 
         var level = burnout.Level;
         var showing = new List<string> { $"Blank{level}" };
         if (burnout.Lit || burnout.Charred || burnout.Spoiled) showing.Add($"Char{level}");
         if (burnout.Fire.Laid) showing.Add($"Wood{level}");
         if (burnout.Lit) showing.Add($"Fire{level}");
+        if (burnout.ClayVoxels > 0) showing.Add($"Clay{level}");
         return Enumerable.Range(0, burnout.Hollowings)
             .SelectMany(n => Stages.Select(stage => $"{stage}{n}"))
             .Except(showing)
-            .Concat(burnout.ClayVoxels > 0 ? [] : [ClayGroup]);
+            .Append(ShellGroup);
     }
 
     protected override string FormKey() => burnout.Level.ToString();

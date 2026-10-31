@@ -1,8 +1,8 @@
 import math
 from pathlib import Path
 
-from dugout import RIM, STATIONS, WALL, WOOD, log
-from shape import BILGE, Hull, Shape, beam, box, group, path, run, stages
+from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, log
+from shape import BILGE, Hull, Shape, beam, box, group, path, plank, run, stages
 
 VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
@@ -10,7 +10,7 @@ ROPE_METRES = 10
 FLOAT_Z = 40
 FLOAT_Y = 2.9
 FLOAT_DIAMETER = 4.8
-FLOAT_FROM, FLOAT_TO = -17, 31
+FLOAT_FROM, FLOAT_TO = -16, 32
 TAPER = 6
 BOOMS = (9.5, -10, 24)
 BOOM = 1.4
@@ -24,6 +24,13 @@ CLOTH_SQUARE_METRES = 1
 
 LASHING_TURNS = 13
 GUNWALE_METRES = WALL * VOXEL_METRES
+GUNWALE = PROFILE[-1][0]
+
+STRAKE = 2.4
+STRAKE_THICKNESS = 0.4
+PLANK = 16
+STITCH_PITCH = 0.076 / VOXEL_METRES
+STITCH_TURN_METRES = 2 * (0.06 + 0.05 + 0.02 + 0.02)
 
 
 def spar_end(rise):
@@ -66,7 +73,7 @@ def lashings():
     afloat = 2 * (BOOM + FLOAT_DIAMETER) * VOXEL_METRES * LASHING_TURNS
     ties, metres = [], []
     for n, x in enumerate(BOOMS, 1):
-        for side, z in (("Port", 8 - 6), ("Starboard", 8 + 6)):
+        for side, z in (("Port", CENTRE - GUNWALE + 1), ("Starboard", CENTRE + GUNWALE - 1)):
             ties.append(lashing(f"Lash{n}{side}", x, z, RIM - 0.8, RIM + 2.4))
             metres.append(gunwale)
         ties.append(lashing(f"Lash{n}Float", x, FLOAT_Z, FLOAT_Y - FLOAT_DIAMETER / 2 - 0.3, FLOAT_Y + FLOAT_DIAMETER / 2 + BOOM + 0.3))
@@ -156,11 +163,61 @@ def stays():
     x, z = MAST
     top = (x, MASTHEAD - 1, z)
     return [
-        rope("Forestay", top, (-21, RIM + 1, 8)),
-        rope("Backstay", top, (35, RIM + 1, 8)),
+        rope("Forestay", top, (-26, RIM + 1, 8)),
+        rope("Backstay", top, (42, RIM + 1, 8)),
         rope("Shroud", top, (BOOMS[0] + 1.5, FLOAT_Y + FLOAT_DIAMETER / 2, FLOAT_Z - 1)),
-        rope("Sheet", reached((SPAR_END[0] - 1, SPAR_END[1] - 0.6, 8)), (28, RIM + 1, 8)),
+        rope("Sheet", reached((SPAR_END[0] - 1, SPAR_END[1] - 0.6, 8)), (34, RIM + 1, 8)),
     ]
+
+
+def sheer(hull, x, side):
+    _, y, z = hull.at(x, len(PROFILE) - 1, side)
+    return (x, y, z)
+
+
+def strakes(hull):
+    planks = []
+    for side, label in ((-1, "Port"), (1, "Starboard")):
+        x = HOLLOW[0]
+        while x < HOLLOW[1] - 1e-6:
+            end = min(x + PLANK, HOLLOW[1])
+            a, b = (sheer(hull, at, side) for at in (x, end))
+            low = lambda point: (point[0], point[1] - 0.6, point[2])
+            planks.append([plank(f"Strake{label}{len(planks) + 1}", low(a), low(b), STRAKE + 0.6, STRAKE_THICKNESS, 0, side, "plank", "plank")])
+            x = end
+    for label, slices in ENDS.items():
+        x0, x1 = sorted((min(piece[0] for piece in slices), max(piece[1] for piece in slices)))
+        half = slices[0][2]
+        planks.append([box(f"Strake{label}", (x0, RIM - 0.6, CENTRE - half), (x1, RIM + STRAKE, CENTRE + half), "plank")])
+    extra = 2 * (GUNWALE - WALL) * STRAKE * (HOLLOW[1] - HOLLOW[0]) * VOXEL_METRES ** 3 * 1000
+    print(f"washstrakes: {len(planks)} planks of a metre, the sides and an end piece at bow and stern, {STRAKE * VOXEL_METRES * 100:.0f} cm raising her side, {extra:.0f} L more hold")
+    return planks
+
+
+def seams(hull):
+    stitches = []
+    for side, label in ((-1, "Port"), (1, "Starboard")):
+        x, n = HOLLOW[0] + STITCH_PITCH / 2, 1
+        while x < HOLLOW[1]:
+            _, y, z = sheer(hull, x, side)
+            z0, z1 = sorted((z - side * (WALL + 0.3), z + side * (STRAKE_THICKNESS + 0.3)))
+            stitches.append(box(f"Stitch{label}{n}", (x - 0.2, y - 0.9, z0), (x + 0.2, y + 0.4, z1), "lashing", grain="y"))
+            x, n = x + STITCH_PITCH, n + 1
+    for label, slices in ENDS.items():
+        x0, x1 = sorted((min(piece[0] for piece in slices), max(piece[1] for piece in slices)))
+        half = slices[0][2]
+        for side in (-1, 1):
+            x, n = x0 + STITCH_PITCH / 2, 1
+            while x < x1:
+                z = CENTRE + side * half
+                z0, z1 = sorted((z - side * 0.3, z + side * 0.3))
+                stitches.append(box(f"Stitch{label}{'Port' if side < 0 else 'Starboard'}{n}", (x - 0.2, RIM - 0.9, z0), (x + 0.2, RIM + 0.4, z1),
+                                    "lashing", grain="y"))
+                x, n = x + STITCH_PITCH, n + 1
+    metres = len(stitches) * STITCH_TURN_METRES
+    ropes = math.ceil(metres / ROPE_METRES)
+    print(f"seams: {len(stitches)} stitches {STITCH_PITCH * VOXEL_METRES * 100:.1f} cm apart, {metres:.0f} m of cord, {ropes} ropes")
+    return [stitches[len(stitches) * r // ropes:len(stitches) * (r + 1) // ropes] for r in range(ropes)]
 
 
 def build(target):
@@ -170,6 +227,7 @@ def build(target):
         "float": "game:block/wood/debarked/oak",
         "sail": "game:block/cloth/linen/plain",
         "lashing": "game:item/resource/rope",
+        "plank": "game:block/wood/planks/oak1",
         "bilge": BILGE,
     })
     hull = Hull("Side", STATIONS, 8, WALL, WOOD, WOOD, edge=WOOD)
@@ -181,7 +239,8 @@ def build(target):
     shape.add(stages("Mast", mast()))
     shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
     shape.add(stages("Stays", stays()))
-    shape.add(hull.hide_water(7.7), hull.bilge(7.7))
+    shape.add(stages("Strakes", strakes(hull)), stages("Seams", seams(hull)))
+    shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     shape.keep("Hull", "FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage")
     shape.write()

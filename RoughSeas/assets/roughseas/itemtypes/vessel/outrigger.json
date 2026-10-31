@@ -2,7 +2,7 @@
     "code": "outrigger",
     "class": "roughseas:ItemVessel",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
-    "attributes": {"handbook": {"groupBy": ["outrigger-*"]}, "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north"}},
+    "attributes": {"handbook": {"groupBy": ["outrigger-*"]}, "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "plank": "inside-north"}},
     "durability": 100,
     "maxstacksize": 1,
     "materialDensity": 1,

@@ -30,11 +30,10 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     private double rained;
     private float sinceUpdate;
 
-    public double CapacityLitres => holdLitres * Hollowed;
+    public double CapacityLitres => form.Value?.HoldLitres(holdLitres) ?? holdLitres;
 
     public double UncutLitres => holdLitres * (form.Value?.Uncut ?? 0);
 
-    private double Hollowed => form.Value?.Hollowed ?? 1;
 
     public double Litres
     {

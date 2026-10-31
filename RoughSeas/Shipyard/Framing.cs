@@ -34,7 +34,8 @@ public sealed class Framing
     /// <summary>The stage to work on next; none once every piece is laid.</summary>
     public FramingStage? Current => Stages.FirstOrDefault(stage => Laid(stage) < stage.Pieces);
 
-    public bool Built => Current == null;
+    /// <summary>Whether every stage she needs is laid; an optional one may still be to come.</summary>
+    public bool Built => Stages.Where(stage => !stage.Optional).All(stage => Laid(stage) >= stage.Pieces);
 
     /// <summary>The wood her laths or poles are split from, once the first is laid.</summary>
     public string? Wood => Tree?.GetString(WoodKey);
@@ -68,14 +69,19 @@ public sealed class Framing
     /// <summary>What a look at her says of her build at <paramref name="hours"/>; nothing once she is finished.</summary>
     public string? Progress(double hours)
     {
-        if (Tree == null || Finished(hours)) return null;
+        if (Tree == null) return null;
+        if (Current is { } stage && (!Built || Laid(stage) > 0))
+        {
+            return Lang.Get($"roughseas:shipyard-stage-{stage.Group.ToLowerInvariant()}", Laid(stage), stage.Pieces);
+        }
 
-        return Current is { } stage
-            ? Lang.Get($"roughseas:shipyard-stage-{stage.Group.ToLowerInvariant()}", Laid(stage), stage.Pieces)
-            : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
+        return Finished(hours) ? null : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
     }
 
     public int Laid(FramingStage stage) => Tree?.GetInt(stage.Group) ?? stage.Pieces;
+
+    /// <summary>What the stages not yet done withhold of what they bring her, each its <paramref name="brings"/>.</summary>
+    public double Unraised(Func<FramingStage, double> brings) => Stages.Where(stage => Laid(stage) < stage.Pieces).Sum(brings);
 
     public bool Finished(double hours) => Built && hours >= SetsAt;
 
@@ -124,9 +130,18 @@ public sealed class FramingStage
     /// <summary>The group whose pieces this stage's take away, piece for piece: <c>{Replaces}{n}</c> goes once <c>{Group}{n}</c> is laid.</summary>
     public string? Replaces;
 
+    /// <summary>Whether she is finished without it, and it may go on her any time after.</summary>
+    public bool Optional;
+
+    /// <summary>How much higher her side stands once the stage is done.</summary>
+    public double RaisesMetres;
+
+    /// <summary>How much more her hold takes once the stage is done.</summary>
+    public double RaisesLitres;
+
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public int Pieces;
 }
 
-public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth }
+public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank }

@@ -13,7 +13,7 @@ namespace RoughSeas.Shipyard;
 /// A finished hull rigged where she lies: the float her first boom joined to her, then the rest of her booms, lashing,
 /// spars, sail and stays, in the order her stages give.
 /// </summary>
-public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity)
+public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity), IMasted
 {
     public new const string Code = "roughseas:rigging";
 
@@ -26,7 +26,7 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 
     public override double FloorMetres => rig.FloorMetres;
 
-    public override double MastMetres(double designed) =>
+    public double MastMetres(double designed) =>
         framing.Stages.FirstOrDefault(stage => stage.Group == rig.Mast) is { } mast && framing.Laid(mast) > 0 ? designed : 0;
 
     public override string PropertyName() => Code;

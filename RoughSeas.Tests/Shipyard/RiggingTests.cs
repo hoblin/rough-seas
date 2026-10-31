@@ -67,8 +67,26 @@ public class RiggingTests
             outrigger.Lay(null, 0);
         }
 
-        Assert.Equal(["Booms", "Lashing", "Ends", "Mast", "SailFurled", "Stays"], order);
+        Assert.Equal(["Booms", "Lashing", "Ends", "Mast", "SailFurled", "Stays", "Strakes", "Seams"], order);
     }
+
+    [Fact]
+    public void SheIsFinishedBeforeHerWashstrakesAndTheyRaiseHerSideOnceSewn()
+    {
+        var outrigger = JustJoined();
+        LayUpTo(outrigger, "Strakes");
+
+        Assert.True(outrigger.Finished(0));
+        Assert.Equal(0.15, outrigger.Unraised(stage => stage.RaisesMetres), 6);
+
+        while (outrigger.Current is not null) outrigger.Lay(null, 0);
+
+        Assert.Equal(0, outrigger.Unraised(stage => stage.RaisesMetres));
+    }
+
+    [Fact]
+    public void AnOutriggerFromBeforeTheBuildHasHerWashstrakes() =>
+        Assert.Equal(0, Outrigger().Unraised(stage => stage.RaisesLitres));
 
     [Fact]
     public void HewingAnEndOfHerFloatTakesItsBluntEndAway()

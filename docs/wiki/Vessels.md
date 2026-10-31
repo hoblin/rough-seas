@@ -26,11 +26,11 @@ Speeds are against the raft, measured on a calm sea.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Raft](Raft) | 1200 J | none | never floods | 2 m | none | a rope | picked up |
 | [Reed boat](Reed-Boat) | 3000 J, and tears | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
-| [Dugout](Dugout) | 30 000 J | 450 l | awash | 0.75 m | none | a log | no |
+| [Dugout](Dugout) | 30 000 J | 1156 l | awash | 0.9 m | none | a log | no |
 | [Coracle](Coracle) | 400 J | 250 l | awash | 0.6 m | none | a small hide | worn on the back |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 5200 J | 600 l | awash | 0.75 m | none | bark of its tree | picked up |
 | [Hide currach](Hide-Currach) | 3000 J | 1500 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
-| [Outrigger canoe](Outrigger-Canoe) | 30 000 J | 450 l | awash | 2.5 m | none | a log | no |
+| [Outrigger canoe](Outrigger-Canoe) | 30 000 J | 1578 l, 1156 without washstrakes | awash | 2.6 m | none | a log | no |
 | [Sailboat](Sailboat) | 40 000 J | 1500 l | sinks | 3.3 m | none | planks | no |
 
 Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more, and what floods awash in oak may sink [in a heavy wood or loaded hard](Surf-and-Swamping#swamping). Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [Seamanship](Roadmap#seamanship); its column is what overturned each vessel in 1.0.

@@ -15,11 +15,11 @@ What is left of her side above the water is her *freeboard*, and the hover text 
 | --- | --- | --- |
 | [Raft](Raft), oak | 8 cm | awash |
 | [Coracle](Coracle) | 26 cm | 20 cm |
-| [Dugout](Dugout), oak | 24 cm | 20 cm |
+| [Dugout](Dugout), oak | 44 cm | 41 cm |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 28 cm | 25 cm |
 | [Reed boat](Reed-Boat), fresh | 36 cm | 25 cm |
 | [Hide currach](Hide-Currach) | 42 cm | 40 cm |
-| [Outrigger canoe](Outrigger-Canoe), oak | 21 cm | 19 cm |
+| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 56 cm | 53 cm |
 | [Sailboat](Sailboat), oak | 52 cm | 50 cm |
 
 When her freeboard reaches nothing, the sea comes over her gunwale and she floods, cracked or not: a boat loaded down to the water fills in a moment. The raft and the reed boat are solid: pressed under, they lie awash and still hold their load up.
@@ -50,8 +50,8 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 | [Hide currach](Hide-Currach) | 38 kg: three baskets, but not three chests |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 41 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
-| [Dugout](Dugout), oak | 207 kg |
-| [Outrigger canoe](Outrigger-Canoe), oak | 318 kg |
+| [Dugout](Dugout), oak | 187 kg |
+| [Outrigger canoe](Outrigger-Canoe), oak | 298 kg |
 | [Reed boat](Reed-Boat), fresh | 248 kg, less the water it has soaked up |
 | [Sailboat](Sailboat), oak | nothing: she goes down |
 
@@ -99,12 +99,12 @@ A breaker as high as a vessel's capsizing height overturns it. Everyone aboard i
 | Vessel | Rides the swell | Capsized by a breaker of |
 | --- | --- | --- |
 | [Coracle](Coracle) | well | 0.6 m |
-| [Dugout](Dugout) | badly | 0.75 m |
+| [Dugout](Dugout) | badly | 0.9 m |
 | [Birch-bark canoe](Birch-Bark-Canoe) | very well | 0.75 m |
 | [Reed boat](Reed-Boat) | well | 0.9 m |
 | [Raft](Raft) | very well | 2 m |
 | [Hide currach](Hide-Currach) | very well | 2 m |
-| [Outrigger canoe](Outrigger-Canoe) | fairly | 2.5 m |
+| [Outrigger canoe](Outrigger-Canoe) | fairly | 2.6 m |
 | [Sailboat](Sailboat) | fairly | 3.3 m |
 
 The currach's 2 m is the surf the Aran islanders worked their currachs through. The coracle, the dugout and the canoe are river boats and go over in a short, steep sea.

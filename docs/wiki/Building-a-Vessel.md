@@ -123,7 +123,8 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 
 Each hollowing then takes, in the hollow, what vanilla's campfire takes: clay along the rim, dry grass, four of anything vanilla builds a firepit with (`firepitConstructable`), and a torch or firestarter. Once the fire burns out, an axe held on the blank hews out the char a stroke at a time; the last hewing finishes her.
 
-- **Clay.** A ball covers 25 voxels, as in vanilla's clay forming, and the rim takes as many voxels as the shape's `Clay` group covers seen from above, one voxel thick. Nothing to set: the count follows your shape.
+- **Clay.** A ball covers 25 voxels, as in vanilla's clay forming, and the rim takes as many voxels as the shape's `Clay{level}` group covers seen from above, one voxel thick: each fire's rim, as she narrows. Nothing to set: the count follows your shape.
+- **The outside.** The blank is the whole trunk the logs make: each hewing also takes a sixth of `unhewnLitres` of sound wood off her outside, at `soundLitresPerStroke` a stroke, and her depth and waterplane go from `blankDepthMetres` and `blankWaterplaneSquareMetres` to her finished ones a sixth at a time. That wood weighs and floats until it is hewn away.
 - **A fire without clay** is never refused. While the rim lacks any of its clay, the fire chars the rim at the hollow's rate, and once that char reaches `wallMetres` the blank is spoiled: she is drawn with every face of her wood texture charred, takes no more work, and breaks up as any vessel does.
 - **Strokes.** A stroke breaks away a strip of the fire's char as wide as `axeEdgeMetres` across `hollowBeamMetres` of hollow, so a hewing takes the hollow's share of the hold over one such strip. The holder strikes every `secondsPerStroke`, and `hewSaturation` is spread over a hewing's strokes. Every axe in the game, a modded one too, hews.
 
@@ -131,7 +132,11 @@ Each hollowing then takes, in the hollow, what vanilla's campfire takes: clay al
 | --- | --- | --- | --- |
 | `hollowings` | count | 1 | the fires and hewings that hollow her out |
 | `hollowDepthMetres` | m | 0 | from the rim to the floor of the finished hollow |
-| `rimMetres` | m | 0 | the rim's height above the vessel's origin, where the first fire burns |
+| `rimMetres` | m | 0 | the finished rim's height above the vessel's origin |
+| `blankDepthMetres` | m | 0 | the trunk's height as the logs lay, where the first fire burns |
+| `blankWaterplaneSquareMetres` | m² | 0 | the trunk's waterplane, floating |
+| `unhewnLitres` | l | 0 | the trunk's wood outside the finished hull |
+| `soundLitresPerStroke` | l | 1 | the sound wood one stroke held hews off her outside |
 | `charMillimetresPerHour` | mm per game hour | 1 | how fast the fire chars its way down: one fire burns for the hollow's depth over `hollowings` at this rate |
 | `clay` | item code | none | what guards the rim, wildcards allowed (ours `game:clay-*`) |
 | `wallMetres` | m | 1 | the char on an unguarded rim that spoils the blank: her walls' thickness |
@@ -142,7 +147,7 @@ Each hollowing then takes, in the hollow, what vanilla's campfire takes: clay al
 
 The vessel needs a `roughseas:bilge` too: its `capacityLitres` is the hollow that the build cuts out. At every stage she is a vessel: the wood not yet cut out weighs and floats as her hull does, backs her sides below the cut and her bottom against a blow, and her `roughseas:bilge` holds only what is cut, so a blank floats solid and a half-hollowed hull ships half a bilge. She cracks and breaks as a finished one, rain puts her fire out, and water in the hollow keeps it from being lit. She gets her seats only when finished. A vessel already in a world from before, with no build of its own, is finished.
 
-Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its charred top), `Wood` (the fire laid on it) and `Fire` (its embers once lit) each have one child per hollowing from the rim down: `Blank0`, `Blank1`…; `Clay`, the clay along the rim, is one group. The behaviour shows the ones the build is at and hides the rest, and all of them once she is finished; the item lists them in its `ignoreElements`. A spoiled blank's faces take the shape's `char` texture in place of `inside`. Our dugout's builder, `bin/lib/hulls/dugout.py`, draws them.
+Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its charred top), `Wood` (the fire laid on it) and `Fire` (its embers once lit) each have one child per hollowing: `Blank0`, `Blank1`…, `Blank{n}` the whole trunk as it stands at that level, worked from the logs a sixth of the way to the hull at each; `Clay` too has one, `Clay{n}`, the rim of that level. `Shell` is the finished hull. The behaviour shows the ones the build is at and hides the rest, and only `Shell` once she is finished; the item lists the stages in its `ignoreElements`. A spoiled blank's faces take the shape's `char` texture in place of `inside`, `bark` and `rings`, the log's own faces she starts in. Our dugout's builder, `bin/lib/hulls/dugout.py`, draws them.
 
 `roughseas:launch` lets anyone ashore push a vessel with Shift and an empty hand. A push slides her as far as one step of a person's push moves her mass against the ground's friction ([why](The-Science-of-the-Hull#building-a-dugout)), away from the one pushing.
 
@@ -166,6 +171,7 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 - `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
 - `hew`: any axe, which loses a point of durability a piece.
 - `cloth`: a piece of cloth.
+- `plank`: a plank, `planks` the item code.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
@@ -177,9 +183,11 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 | `sets` | bool | false | its laths are bent in wet: she is finished only once the wettest of them has dried |
 | `seals` | bool | false | her hold holds water only once the stage is done; until then water runs through her |
 | `litres` | l | 0 | the pitch one piece takes |
+| `optional` | bool | false | she is finished without it, and it goes on her any time after: an outrigger's washstrakes |
+| `raisesMetres`, `raisesLitres` | m, l | 0 | how much higher her side and how much more her hold, once the stage is done |
 | `replaces` | shape group | none | a group whose pieces each piece of this stage takes away once laid, `{replaces}{n}` for `{group}{n}`: a float's blunt end, for its hewn one |
 | `framePart` | part name | none | the part of her `parts`, by its `name`, that her laths or poles make: its share and its `reference` stay, the material is their wood, and only what is laid weighs and takes knocks. Her shape's `frame` texture is drawn in that wood |
-| `laths`, `poles`, `rope`, `pitch`, `cloth` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `roughseas:pole-*`, `game:rope`, `game:glueportion-pitch-*`, `game:cloth-*`) |
+| `laths`, `poles`, `rope`, `pitch`, `cloth`, `planks` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `roughseas:pole-*`, `game:rope`, `game:glueportion-pitch-*`, `game:cloth-*`, `game:plank-*`) |
 | `barkSeconds` | s | 0 | how long the knife takes the bark off |
 | `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
 
@@ -202,7 +210,7 @@ At every stage she is a vessel: she floats and can be picked up, her build goes 
 | `floatOffMetres` | m | 0 | how far off her centreline they lie: the row is found through the block that far out, within half a block |
 | `floorMetres` | m | 0 | the top of her hold's floor above her origin, her hull's: the bilge draws its water from there |
 | `floatPart` | part name | none | the part of her `parts` her float makes: its share and its `reference` stay, the material is the float's wood. Her shape's `float` texture is drawn in that wood |
-| `rigged` | shape groups | none | groups shown only once every piece is laid, such as vanilla's `SailUnfurled` and `SailHalf`; until then her sail stays furled |
+| `rigged` | shape groups | none | groups shown only once every piece she needs is laid, such as vanilla's `SailUnfurled` and `SailHalf`; until then her sail stays furled |
 
 A vessel already in a world from before, with no build of its own, is finished, its float and poles of its hull's wood. Our outrigger's builder, `bin/lib/hulls/outrigger.py`, draws her on the dugout's own hull.
 

@@ -1,6 +1,6 @@
 ![The dugout afloat](images/dugout/afloat-bow.webp)
 
-A single log, burnt and hewn hollow beside the water it floats on. The bark comes off, the sides stand steep over a round bottom, and the ends are left solid and blunt. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
+A single log, burnt and hewn hollow beside the water it floats on, from the five logs as they lay: 4.5 m of the 5 m trunk, 0.9 m wide and 0.56 m deep. The bark comes off, the sides stand steep over a round bottom, and the ends are left solid and blunt. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
 
 ## In Rough Seas
 
@@ -18,11 +18,11 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Turning | slow |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 24 cm empty, 20 cm with its paddler, in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 207 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 44 cm empty, 41 cm with its paddler, in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 187 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its wood closes two fifths of a stove-in place |
-| [Bilge](Bailing) | 450 litres |
-| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker, with only 0.2 m of freeboard |
+| [Bilge](Bailing) | 1156 litres |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker: her round bottom rolls |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
 | [Lightning](Lightning) | a 6000 J strike scratches a place |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
@@ -30,22 +30,22 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Carried | too heavy to pick up |
 | Seats | two: the front one paddles, with an [oar](https://wiki.vintagestory.at/Oar) in hand; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | 5 logs of one wood beside the water, then six fires: each takes 11 clay, dry grass, 4 firewood and an axe; about a week in all |
+| Built from | 5 logs of one wood beside the water, then six fires: each takes clay for its rim (25 balls on the fresh trunk, 12 on the last), dry grass, 4 firewood and an axe; about a week in all |
 | Wreckage | firewood |
 
 ## How it is built
 
-Not in the crafting grid: in the world, on the shore, the way dugouts really were made. It is burnt out a fire at a time, and every fire is laid as you lay a campfire.
+Not in the crafting grid: in the world, on the shore, the way dugouts really were made. It is burnt out a fire at a time, and every fire is laid as you lay a campfire. She is the five logs from first to last: each hewing takes the char out of her hollow and a sixth of her outside away, the bark first, then her top down to a level sheer, her bottom round and her ends raked, so she turns from a squared trunk into a boat where the logs lay.
 
 1. **Lay the logs.** Five logs of one wood on their sides, end to end along the shore, with water in the very next blocks, level with them or a block lower. Any wood, a modded tree's too, and redwood's log sections. Five logs of mixed woods stay a wall of logs.
 
    ![Five oak logs end to end at the water's edge](images/dugout/build-logs.webp)
 
-2. **Lay the fire's base.** Hold dry grass and Shift + right-click the top of the middle log, as you start a campfire. The logs become one blank, the grass on it, ready for its first fire. Until then they stay logs, so a wall of logs never turns into a boat.
+2. **Lay the fire's base.** Hold dry grass and Shift + right-click the top of the middle log, as you start a campfire. The logs become one blank where they lie, the whole trunk at its full size, the grass on it, ready for its first fire. Until then they stay logs, so a wall of logs never turns into a boat.
 
    ![The fresh blank on the shore](images/dugout/build-blank.webp)
 
-3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 11 balls. The blank's panel counts them.
+3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 25 balls round the top of the fresh trunk, fewer each fire as she narrows, 12 for the last. The blank's panel counts them.
 
    ![Wet clay all along the rim](images/dugout/build-clay.webp)
 
@@ -57,12 +57,12 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
 
    ![The fire burning along the blank](images/dugout/build-fire.webp)
 
-6. **Hew out the char.** Once the fire is out, the hollow is black with char. Hold right-click with an axe: you swing again and again, and the char comes away down to sound wood. It tires you as hard work does.
+6. **Hew out the char.** Once the fire is out, the hollow is black with char. Hold right-click with an axe: you swing again and again, and the char comes away down to sound wood, and a sixth of her outside with it. It tires you as hard work does: some 110 strokes a hewing, the most of them in sound wood.
 
    | | |
    | --- | --- |
-   | ![The charred hollow](images/dugout/build-charred.webp) | ![Hewing out the char with an axe](images/dugout/build-hewing.webp) |
-   | Charred, ready to hew | Hewing |
+   | ![The charred hollow](images/dugout/build-charred.webp) | ![Three hewings in: bark gone, sides rounding, ends drawing in](images/dugout/build-hewing.webp) |
+   | Charred, ready to hew | Three hewings in |
 
 7. **Again, until six fires have burned.** Clay, dry grass and four firewood in the hollow, light, hew. Each fire takes the hollow deeper, and the sixth finishes her.
 
@@ -71,7 +71,7 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
    | ![The first hollow cut](images/dugout/build-hewn.webp) | ![Four fires in, the hollow charred deep](images/dugout/build-deep.webp) |
    | One fire in, hewn | Four fires in, charred |
 
-8. **Push her in** with Shift and a right-click, an empty hand, standing on the shore side. A heavy blank takes many pushes; a few friends push her in sooner.
+8. **Push her in** with Shift and a right-click, an empty hand, standing on the shore side. A blank is the whole trunk, two and a half tonnes of oak, and barely moves; the finished hull, a seventh of that, slides in. A few friends push sooner.
 
    ![Finished, on the shore](images/dugout/ashore-quarter.webp)
 
