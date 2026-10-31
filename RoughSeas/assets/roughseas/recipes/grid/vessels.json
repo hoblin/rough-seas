@@ -11,18 +11,6 @@
         "output": { "type": "item", "code": "roughseas:reedboat" }
     },
     {
-        "name": "Coracle",
-        "ingredientPattern": "SHS,SFS",
-        "ingredients": {
-            "S": { "type": "item", "code": "game:stick", "quantity": 2 },
-            "H": { "type": "item", "code": "game:hide-prepared-large" },
-            "F": { "type": "item", "code": "game:fat-rendered" }
-        },
-        "width": 3,
-        "height": 2,
-        "output": { "type": "item", "code": "roughseas:coracle" }
-    },
-    {
         "name": "Splitting wedge",
         "ingredientPattern": "KF",
         "ingredients": {
@@ -33,17 +21,5 @@
         "height": 1,
         "shapeless": true,
         "output": { "type": "block", "code": "roughseas:wedge-we" }
-    },
-    {
-        "name": "Hide currach",
-        "ingredientPattern": "PHP,HFH,PPP",
-        "ingredients": {
-            "P": { "type": "item", "code": "*:plank-*", "quantity": 2 },
-            "H": { "type": "item", "code": "game:hide-prepared-large" },
-            "F": { "type": "item", "code": "game:fat-rendered", "quantity": 2 }
-        },
-        "width": 3,
-        "height": 3,
-        "output": { "type": "item", "code": "roughseas:currach" }
     }
 ]

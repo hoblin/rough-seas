@@ -30,7 +30,7 @@ public static class LashingRope
 
     private static bool Lash(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handling)
     {
-        if (!CollectibleBehaviorFraming.WorksOn(slot, entitySel)) return true;
+        if (!CollectibleBehaviorFraming.WorksOn(slot, byEntity, blockSel, entitySel)) return true;
         if (slot.Itemstack?.Collectible.GetCollectibleBehavior<CollectibleBehaviorFraming>(true) is not { } lashing) return true;
 
         var handled = EnumHandling.PassThrough;

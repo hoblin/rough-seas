@@ -45,7 +45,7 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
 
         var stages = ObjectCacheUtil.GetOrCreate(api, $"{Code}/stages/{collectible.Code}", () =>
         {
-            var config = api.World.GetEntityType(collectible.Code) is { } type ? FramingConfig.Of(type) : null;
+            var config = api.World.GetEntityType(collectible.Code) is { } type ? FramingConfig.Of(type) ?? CoveringConfig.Of(type) : null;
             config?.Measure(collectible is Item { Shape.Base: { } shape } ? FramingConfig.ShapeAt(api, shape) : null);
             return config?.Stages;
         });

@@ -20,6 +20,7 @@ public abstract class Laying
         FramingWork.Hew => new HewLaying(),
         FramingWork.Cloth => new PieceLaying(new AssetLocation(config.Cloth), "roughseas:shipyard-bend-sail"),
         FramingWork.Plank => new PlankLaying(new AssetLocation(config.Planks)),
+        FramingWork.Hide => new HideLaying(new AssetLocation(config.Hides), config.HideStates),
         _ => new PitchLaying(new AssetLocation(config.Pitch), stage.Litres)
     };
 
@@ -38,6 +39,8 @@ public abstract class Laying
     public virtual double WetHours(IWorldAccessor world, ItemSlot slot) => 0;
 
     public abstract void Spend(ItemSlot slot, EntityAgent byEntity);
+
+    public virtual int Pieces(ItemSlot slot) => 1;
 
     /// <summary>What the help shows this work done with.</summary>
     public abstract IEnumerable<ItemStack> Shown(IWorldAccessor world);
@@ -178,4 +181,23 @@ public sealed class PitchLaying(AssetLocation pitch, double litres) : Laying
     private ItemStack? Pitch(ItemSlot slot) =>
         slot.Itemstack?.Collectible is BlockLiquidContainerBase container && container.GetContent(slot.Itemstack) is { } content
         && WildcardUtil.Match(pitch, content.Collectible.Code) ? content : null;
+}
+
+public sealed class HideLaying(AssetLocation hides, string[] states) : Laying
+{
+    private static readonly Dictionary<string, int> Sections = new() { ["small"] = 1, ["medium"] = 2, ["large"] = 3, ["huge"] = 5 };
+
+    public override string Action => "roughseas:shipyard-sew-hide";
+
+    public override bool Takes(ItemSlot slot) =>
+        slot.Itemstack?.Collectible is { } hide && WildcardUtil.Match(hides, hide.Code)
+        && states.Contains(hide.Variant["type"]) && hide.Variant["size"] is { } size && Sections.ContainsKey(size);
+
+    public override int Pieces(ItemSlot slot) => Sections[slot.Itemstack!.Collectible.Variant["size"]];
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
+        world.SearchItems(hides).Where(hide => states.Contains(hide.Variant["type"]) && hide.Variant["size"] is { } size && Sections.ContainsKey(size))
+            .Select(hide => new ItemStack(hide));
 }

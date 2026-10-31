@@ -27,7 +27,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     private FramingConfig config = null!;
     private Dictionary<FramingStage, Laying> layings = null!;
-    private ISeaWeather sea = null!;
+    protected ISeaWeather sea = null!;
 
     protected Framing framing = null!;
 
@@ -68,11 +68,11 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     public override BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed) =>
         designed.Where(drop => drop.ResolvedItemstack is not { } stack || LaidAny(new DummySlot(stack))).Select(AsLaid).ToArray();
 
-    public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
+    public virtual (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
     {
         if (framing.Current is not { } stage || !layings[stage].Takes(slot)) return null;
 
-        return (stage.Seconds, layings[stage].Refusal(slot, framing));
+        return (stage.Seconds * Math.Min(layings[stage].Pieces(slot), stage.Pieces - framing.Laid(stage)), layings[stage].Refusal(slot, framing));
     }
 
     public void Lay(EntityAgent byEntity, ItemSlot slot)
@@ -84,10 +84,13 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         if (WorkWith(slot) is not { Refusal: null }) return;
 
         var wood = laying.WoodOf(slot);
+        var pieces = laying.Pieces(slot);
+        var piece = slot.Itemstack!.Collectible;
         bool creative = (byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode == EnumGameMode.Creative;
         if (!creative) laying.Spend(slot, byEntity);
         slot.MarkDirty();
-        framing.Lay(wood, setsAt);
+        Laid(stage, piece, pieces);
+        framing.Lay(wood, setsAt, pieces);
         entity.World.PlaySoundAt(new AssetLocation("game:sounds/player/build"), entity, null, true, 16);
         Shipyard.Log(entity, "{0} lays {1} {2} of {3}{4}{5}", byEntity.GetName(), stage.Group, framing.Laid(stage), stage.Pieces,
             wood != null ? $", of {wood}" : "", stage.Sets ? $", setting in {setsAt - sea.Clock.Hours:F0} h" : "");
@@ -128,6 +131,8 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
             }
         }
     }
+
+    protected virtual void Laid(FramingStage stage, CollectibleObject piece, int pieces) { }
 
     protected virtual FramingConfig Configure(JsonObject attributes) => attributes.AsObject<FramingConfig>(new FramingConfig());
 
@@ -202,6 +207,10 @@ public class FramingConfig
     public string Cloth = "";
 
     public string Planks = "";
+
+    public string Hides = "";
+
+    public string[] HideStates = [];
 
     /// <summary>How long a knife takes the bark off a standing trunk: the real time of that work over sixty.</summary>
     public double BarkSeconds;

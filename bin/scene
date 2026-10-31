@@ -52,7 +52,7 @@ bin/scene recipe PAGE OUTPUT FILE [FROM]
                            the handbook's crafting grid that makes OUTPUT (out of FROM, when given) on
                            handbook page PAGE, held on that recipe, "=" and output included, as a .png
                            FILE at twice the game's size:
-                           bin/scene recipe item-roughseas:coracle roughseas:coracle coracle.png.
+                           bin/scene recipe item-roughseas:reedboat roughseas:reedboat reedboat.png.
                            Opens the handbook and waits for it to build its pages.
 bin/scene recipes DIR      every recipe the mod adds, by `recipe`, into DIR: docs/wiki/images/recipes
                            for the wiki. A new recipe gets its line in this script's list.
@@ -283,7 +283,7 @@ seats() {
 
 strokes() {
   local codes=("$@") dir=strokes id
-  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:coracle roughseas:currach)
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat)
   for code in "${codes[@]}"; do
     clear >/dev/null
     id=$(dock "$code" | jq -r '.vessels[0].EntityId')
@@ -335,8 +335,7 @@ recipes() {
 birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
 splitting-wedge    block-roughseas:wedge-we          roughseas:wedge-we
 reed-boat          item-roughseas:reedboat           roughseas:reedboat
-coracle            item-roughseas:coracle            roughseas:coracle
-currach            item-roughseas:currach            roughseas:currach
+laths              item-roughseas:lath-oak-5-dry     roughseas:lath-oak-5-dry
 anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
 anchor-warp-ropes  item-rope                         game:rope                    roughseas:anchorwarp
 EOF

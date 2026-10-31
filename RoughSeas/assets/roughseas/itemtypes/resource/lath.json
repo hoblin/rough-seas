@@ -2,7 +2,7 @@
     "code": "lath",
     "class": "roughseas:ItemOfWood",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}, {"code": "state", "states": ["dry", "wet"]}],
-    "behaviors": [{"name": "roughseas:framing"}],
+    "behaviors": [{"name": "roughseas:framing"}, {"name": "roughseas:lathbed"}],
     "attributes": {
         "logTextures": {"wood": "inside-north"},
         "handbook": {"groupBy": ["lath-*"]},

@@ -28,6 +28,10 @@ public class ShipyardModSystem : ModSystem
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorCarriedBuild.Code, typeof(CollectibleBehaviorCarriedBuild));
         api.RegisterBlockBehaviorClass(BlockBehaviorStrippable.Code, typeof(BlockBehaviorStrippable));
         api.RegisterBlockClass(BlockWedge.ClassName, typeof(BlockWedge));
+        api.RegisterBlockClass(BlockLathBed.ClassName, typeof(BlockLathBed));
+        api.RegisterBlockEntityClass(BlockEntityLathBed.ClassName, typeof(BlockEntityLathBed));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLathBed.Code, typeof(CollectibleBehaviorLathBed));
+        api.RegisterEntityBehaviorClass(EntityBehaviorCovering.Code, typeof(EntityBehaviorCovering));
         FireOnLogs.Attach();
         LashingRope.Attach();
     }
@@ -63,15 +67,14 @@ public class ShipyardModSystem : ModSystem
         var builds = new List<FramingConfig>();
         foreach (var type in api.World.EntityTypes)
         {
-            if (Wood.Of(type.Variant) is not { } wood) continue;
-
             var framing = FramingConfig.Of(type);
-            if (framing != null)
+            var covering = CoveringConfig.Of(type);
+            if (framing != null && Wood.Of(type.Variant) is { } wood) Strippable(api.World, type, wood, framing);
+            if ((framing ?? (FramingConfig?)covering) != null && api.World.GetItem(type.Code) is { } item)
             {
-                Strippable(api.World, type, wood, framing);
-                if (api.World.GetItem(type.Code) is { } item) item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
+                item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
             }
-            if ((framing ?? RiggingConfig.Of(type)) is { } built) builds.Add(built);
+            if ((framing ?? covering ?? (FramingConfig?)RiggingConfig.Of(type)) is { } built) builds.Add(built);
         }
         Framed(api.World, builds);
     }
