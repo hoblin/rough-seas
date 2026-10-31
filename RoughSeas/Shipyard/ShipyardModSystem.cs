@@ -28,6 +28,10 @@ public class ShipyardModSystem : ModSystem
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorCarriedBuild.Code, typeof(CollectibleBehaviorCarriedBuild));
         api.RegisterBlockBehaviorClass(BlockBehaviorStrippable.Code, typeof(BlockBehaviorStrippable));
         api.RegisterBlockClass(BlockWedge.ClassName, typeof(BlockWedge));
+        api.RegisterBlockClass(BlockLathBed.ClassName, typeof(BlockLathBed));
+        api.RegisterBlockEntityClass(BlockEntityLathBed.ClassName, typeof(BlockEntityLathBed));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLathBed.Code, typeof(CollectibleBehaviorLathBed));
+        api.RegisterEntityBehaviorClass(EntityBehaviorCovering.Code, typeof(EntityBehaviorCovering));
         api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
         FireOnLogs.Attach();
         LashingRope.Attach();
@@ -65,12 +69,13 @@ public class ShipyardModSystem : ModSystem
         foreach (var type in api.World.EntityTypes)
         {
             var framing = FramingConfig.Of(type);
-            if (framing != null)
+            var covering = CoveringConfig.Of(type);
+            if (framing is { BarkSeconds: > 0 } && Wood.Of(type.Variant) is { } wood) Strippable(api.World, type, wood, framing);
+            if ((framing ?? (FramingConfig?)covering) != null && api.World.GetItem(type.Code) is { } item)
             {
-                if (framing.BarkSeconds > 0 && Wood.Of(type.Variant) is { } wood) Strippable(api.World, type, wood, framing);
-                if (api.World.GetItem(type.Code) is { } item) item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
+                item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
             }
-            if ((framing ?? RiggingConfig.Of(type)) is { } built) builds.Add(built);
+            if ((framing ?? covering ?? (FramingConfig?)RiggingConfig.Of(type)) is { } built) builds.Add(built);
         }
         Framed(api.World, builds);
     }
@@ -111,10 +116,10 @@ public class ShipyardModSystem : ModSystem
         grown.CollectibleBehaviors = grown.CollectibleBehaviors.Append(behavior);
     }
 
-    /// <summary>Lets rope, cloth, axes and every liquid container lay a vessel's pieces, as her laths and poles do by their own JSON.</summary>
+    /// <summary>Lets rope, cloth, planks, hides, axes and every liquid container lay a vessel's pieces, as her laths and poles do by their own JSON.</summary>
     private static void Framed(IWorldAccessor world, List<FramingConfig> builds)
     {
-        var codes = builds.SelectMany(built => new[] { built.Rope, built.Cloth, built.Planks }).Where(code => code != "").Distinct().Select(code => new AssetLocation(code)).ToArray();
+        var codes = builds.SelectMany(built => new[] { built.Rope, built.Cloth, built.Planks, built.Hides }).Where(code => code != "").Distinct().Select(code => new AssetLocation(code)).ToArray();
         bool hews = builds.Any(built => built.Stages.Any(stage => stage.Work == FramingWork.Hew));
         var tools = world.Collectibles.Where(collectible => collectible?.Code != null
             && (collectible is BlockLiquidContainerBase || hews && collectible.Tool == EnumTool.Axe || codes.Any(code => WildcardUtil.Match(code, collectible.Code))));

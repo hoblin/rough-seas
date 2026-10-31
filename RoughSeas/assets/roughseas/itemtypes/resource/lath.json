@@ -1,14 +1,16 @@
 {
     "code": "lath",
     "class": "roughseas:ItemOfWood",
-    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "state", "states": ["dry", "wet"]}],
-    "behaviors": [{"name": "roughseas:framing"}],
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}, {"code": "state", "states": ["dry", "wet"]}],
+    "behaviors": [{"name": "roughseas:framing"}, {"name": "roughseas:lathbed"}],
     "attributes": {
         "logTextures": {"wood": "inside-north"},
         "handbook": {"groupBy": ["lath-*"]},
         "sources": {
             "transitionableProps": "A thin lath soaked through holds a bend as it dries in place, and is set in a couple of days (the Lac du Flambeau build, canoe.csumc.wisc.edu); in the bundle it dries as fast",
-            "soaking": "recipes/barrel/lath.json: water enters the same thin wood by the same diffusion it leaves by, so a lath soaks through in as long as it takes to dry; it takes up about a third of its dry weight, from air-dry past the fibre saturation point (Wood Handbook, FPL-GTR-282, ch. 4), some 0.15 L for a lath of the canoe's 15 kg of cedar"
+            "soaking": "recipes/barrel/lath.json: water enters the same thin wood by the same diffusion it leaves by, so a lath soaks through in as long as it takes to dry; it takes up about a third of its dry weight, from air-dry past the fibre saturation point (Wood Handbook, FPL-GTR-282, ch. 4): 0.08 L a metre for a lath of 1 by 6 cm of white cedar, 400 kg/m³",
+            "length": "A lath is split from a pole as long as the row it came from; a place on a vessel takes any lath at least as long as it, cut down, the offcut lost",
+            "split": "recipes/grid/laths.json: a pole's billet, some 11 cm square, halved four times along its grain gives 16 laths of about 1 by 6 cm (Adney & Chapelle 1964: canoe ribs ⅜ by 2½ to 3 inches, sheathing thinner)"
         }
     },
     "shape": {"base": "roughseas:item/lath"},
@@ -21,7 +23,7 @@
             "type": "Dry",
             "freshHours": {"avg": 48},
             "transitionHours": {"avg": 0.01},
-            "transitionedStack": {"type": "item", "code": "roughseas:lath-{wood}-dry"},
+            "transitionedStack": {"type": "item", "code": "roughseas:lath-{wood}-{length}-dry"},
             "transitionRatio": 1
         }]
     },

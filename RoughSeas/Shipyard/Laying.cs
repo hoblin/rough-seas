@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -19,6 +20,7 @@ public abstract class Laying
         FramingWork.Hew => new HewLaying(),
         FramingWork.Cloth => new PieceLaying(new AssetLocation(config.Cloth), "roughseas:shipyard-bend-sail"),
         FramingWork.Plank => new PlankLaying(new AssetLocation(config.Planks)),
+        FramingWork.Hide => new HideLaying(new AssetLocation(config.Hides), config.HideStates),
         _ => new PitchLaying(new AssetLocation(config.Pitch), stage.Litres)
     };
 
@@ -38,11 +40,20 @@ public abstract class Laying
 
     public abstract void Spend(ItemSlot slot, EntityAgent byEntity);
 
+    public virtual int Pieces(ItemSlot slot) => 1;
+
     /// <summary>What the help shows this work done with.</summary>
     public abstract IEnumerable<ItemStack> Shown(IWorldAccessor world);
+
+    /// <summary>Whether the lath or pole in <paramref name="slot"/> is shorter than the piece it would make; a longer one is cut down to it.</summary>
+    protected static bool Short(ItemSlot slot, Framing framing) => ShorterThan(slot, framing.NextMetres);
+
+    public static bool ShorterThan(ItemSlot slot, double metres) =>
+        double.TryParse(slot.Itemstack?.Collectible.Variant["length"], NumberStyles.Float, CultureInfo.InvariantCulture, out var length)
+        && length < metres;
 }
 
-/// <summary>A lath split from the row, bent into her wet.</summary>
+/// <summary>A lath split from a pole, bent into her wet.</summary>
 public sealed class LathLaying(AssetLocation laths) : Laying
 {
     private const string Wet = "wet";
@@ -54,6 +65,7 @@ public sealed class LathLaying(AssetLocation laths) : Laying
     public override string? Refusal(ItemSlot slot, Framing framing) =>
         slot.Itemstack!.Collectible.Variant["state"] != Wet ? "shipyard-soak-laths"
         : framing.Wood is { } wood && wood != WoodOf(slot) ? "shipyard-laths-one-wood"
+        : Short(slot, framing) ? "shipyard-lath-short"
         : null;
 
     public override string? WoodOf(ItemSlot slot) => slot.Itemstack?.Collectible.Variant["wood"];
@@ -74,7 +86,9 @@ public sealed class PoleLaying(AssetLocation poles) : Laying
     public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible is { } pole && WildcardUtil.Match(poles, pole.Code);
 
     public override string? Refusal(ItemSlot slot, Framing framing) =>
-        framing.Wood is { } wood && wood != WoodOf(slot) ? "shipyard-poles-one-wood" : null;
+        framing.Wood is { } wood && wood != WoodOf(slot) ? "shipyard-poles-one-wood"
+        : Short(slot, framing) ? "shipyard-pole-short"
+        : null;
 
     public override string? WoodOf(ItemSlot slot) => slot.Itemstack?.Collectible.Variant["wood"];
 
@@ -169,4 +183,23 @@ public sealed class PitchLaying(AssetLocation pitch, double litres) : Laying
     private ItemStack? Pitch(ItemSlot slot) =>
         slot.Itemstack?.Collectible is BlockLiquidContainerBase container && container.GetContent(slot.Itemstack) is { } content
         && WildcardUtil.Match(pitch, content.Collectible.Code) ? content : null;
+}
+
+public sealed class HideLaying(AssetLocation hides, string[] states) : Laying
+{
+    private static readonly Dictionary<string, int> Sections = new() { ["small"] = 1, ["medium"] = 2, ["large"] = 3, ["huge"] = 5 };
+
+    public override string Action => "roughseas:shipyard-sew-hide";
+
+    public override bool Takes(ItemSlot slot) =>
+        slot.Itemstack?.Collectible is { } hide && WildcardUtil.Match(hides, hide.Code)
+        && states.Contains(hide.Variant["type"]) && hide.Variant["size"] is { } size && Sections.ContainsKey(size);
+
+    public override int Pieces(ItemSlot slot) => Sections[slot.Itemstack!.Collectible.Variant["size"]];
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
+        world.SearchItems(hides).Where(hide => states.Contains(hide.Variant["type"]) && hide.Variant["size"] is { } size && Sections.ContainsKey(size))
+            .Select(hide => new ItemStack(hide));
 }

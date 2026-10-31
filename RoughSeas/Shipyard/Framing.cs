@@ -17,8 +17,9 @@ public sealed class Framing
     public const string SkinGroup = "Skin";
 
     public const string WoodKey = "wood";
-    private const string SetsAtKey = "setsAt";
+    public const string SetsAtKey = "setsAt";
     private const string PieceWoodSuffix = "Wood";
+    private const string BentSuffix = "Bent";
 
     private readonly Func<ITreeAttribute?> tree;
     private readonly Action changed;
@@ -63,7 +64,8 @@ public sealed class Framing
     {
         var pieces = Stages.SelectMany(stage =>
             Enumerable.Range(Laid(stage) + 1, Math.Max(0, stage.Pieces - Laid(stage))).Select(n => $"{stage.Group}{n}")
-                .Concat(stage.Replaces is { } replaced ? Enumerable.Range(1, Laid(stage)).Select(n => $"{replaced}{n}") : []));
+                .Concat(stage.Replaces is { } replaced ? Enumerable.Range(1, Laid(stage)).Select(n => $"{replaced}{n}") : [])
+                .Concat(stage.Bends is { } bent ? Bent(stage, bent) : []));
         if (Tree == null) return pieces.Append(SheetGroup);
 
         bool started = Stages.Any(stage => Laid(stage) > 0);
@@ -82,6 +84,16 @@ public sealed class Framing
         return Finished(hours) ? null : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
     }
 
+    private IEnumerable<string> Bent(FramingStage stage, string bent)
+    {
+        var flat = Stages.First(other => other.Group == bent);
+        return Laid(stage) > 0
+            ? Enumerable.Range(1, flat.Pieces).Select(n => $"{bent}{n}")
+            : Enumerable.Range(1, flat.Pieces).Select(n => $"{bent}{BentSuffix}{n}");
+    }
+
+    public double NextMetres => Current is { } stage && Laid(stage) < stage.Metres.Length ? stage.Metres[Laid(stage)] : 0;
+
     public int Laid(FramingStage stage) => Tree?.GetInt(stage.Group) ?? stage.Pieces;
 
     /// <summary>What the stages done bring her, each its <paramref name="brings"/>.</summary>
@@ -93,11 +105,11 @@ public sealed class Framing
     public bool Finished(double hours) => Built && hours >= SetsAt;
 
     /// <summary>Lays the current stage's next piece, of <paramref name="wood"/> when it is of one, setting by <paramref name="setsAt"/>.</summary>
-    public void Lay(string? wood, double setsAt)
+    public void Lay(string? wood, double setsAt, int pieces = 1)
     {
         if (Current is not { } stage) return;
 
-        Tree!.SetInt(stage.Group, Laid(stage) + 1);
+        Tree!.SetInt(stage.Group, Math.Min(stage.Pieces, Laid(stage) + pieces));
         if (wood != null) Tree.SetString(stage.Part != null ? stage.Group + PieceWoodSuffix : WoodKey, wood);
         if (stage.Sets) Tree.SetDouble(SetsAtKey, Math.Max(SetsAt, setsAt));
         changed();
@@ -149,12 +161,19 @@ public sealed class FramingStage
     /// <summary>The part of her <c>parts</c>, by its name, that this stage's pieces make: there as far as they are laid, of the wood they are.</summary>
     public string? Part;
 
+    /// <summary>The stage this one bends once its first piece is laid: from then on that stage shows from <c>{Bends}Bent{n}</c>.</summary>
+    public string? Bends;
+
     /// <summary>The shape's texture that draws the pieces, retextured in the wood they are of.</summary>
     public string? Texture;
 
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public int Pieces;
+
+    /// <summary>The metres of lath or pole each piece takes, as its shape names them.</summary>
+    [Newtonsoft.Json.JsonIgnore]
+    public double[] Metres = [];
 }
 
-public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank }
+public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank, Hide }

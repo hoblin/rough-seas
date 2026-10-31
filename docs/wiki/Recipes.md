@@ -22,7 +22,7 @@ Not in the grid any more: a dugout is burnt and hewn out of five logs on the sho
 
 ## Coracle
 
-![The coracle from 8 sticks, a large prepared hide and rendered fat](images/recipes/coracle.png)
+Not in the grid any more: wet laths are laid out on the ground as a lattice, bound with rope, bent up into a basket and covered with hides where it lies. See [how it is built](Coracle#how-it-is-built).
 
 ## Birch-bark canoe
 
@@ -30,19 +30,25 @@ Not in the grid any more: its bark is stripped off a standing tree in one sheet,
 
 ## Splitting wedge
 
-Whittled from firewood with a knife. One on each of five logs lying end to end, driven with an axe, splits the trunk into 32 laths for a bark canoe; on each of three, into 6 poles for an outrigger. The wedges come back.
+Whittled from firewood with a knife. One on each of two to five logs of one wood lying end to end, driven with an axe, splits the trunk into 64 poles as long as the row: a row of three gives 3 m poles, a row of five 5 m ones. The wedges come back.
 
 ![The splitting wedge from firewood and a knife](images/recipes/splitting-wedge.png)
 
+## Laths
+
+An axe splits a pole into 16 laths as long as the pole. A piece of a vessel takes any lath at least as long as it, cut down.
+
+![16 laths split from a pole with an axe](images/recipes/laths.png)
+
 ## Soaked laths
 
-Laths bend into a canoe only wet: two days in a barrel of water, 0.15 litres a lath. They dry again in two days.
+Laths bend into a vessel's frame only wet: two days in a barrel of water, 0.08 litres a metre of lath. They dry again in two days.
 
-![Laths soaked in a barrel of water](images/recipes/soaked-laths.png)
+![A 5 m lath soaked in a barrel with 0.4 litres of water](images/recipes/soaked-laths.png)
 
 ## Hide currach
 
-![The hide currach from 10 planks, 3 large prepared hides and 2 rendered fat](images/recipes/currach.png)
+Not in the grid any more: two long wet laths are laid out on the ground and bound into her gunwale, framed upside down, covered with hides and turned over. See [how it is built](Hide-Currach#how-it-is-built).
 
 ## Outrigger canoe
 

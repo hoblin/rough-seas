@@ -9,7 +9,7 @@ namespace RoughSeas.Tests.Shipyard;
 public class FramingTests
 {
     private static readonly JToken Entity = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "vessel", "barkcanoe.json")));
-    private static readonly Shape Shape = JsonConvert.DeserializeObject<Shape>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "barkcanoe.json")))!;
+    private static readonly JObject Shape = JObject.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "barkcanoe.json")))!;
 
     private TreeAttribute? tree;
     private int changes;
@@ -17,7 +17,7 @@ public class FramingTests
     private Framing Canoe()
     {
         var config = JsonConvert.DeserializeObject<FramingConfig>(Entity["behaviorConfigs"]![EntityBehaviorFraming.Code]!.ToString())!;
-        foreach (var stage in config.Stages) stage.Pieces = Shape.GetElementByName(stage.Group).Children.Length;
+        config.Measure(Shape);
         return new Framing(() => tree, () => changes++, config.Stages);
     }
 
@@ -103,14 +103,8 @@ public class FramingTests
     }
 
     [Fact]
-    public void ARowOfLogsHasLathsEnoughForHerWholeFrame()
-    {
-        var laths = Canoe().Stages.Where(stage => stage.Work == FramingWork.Lath).Sum(stage => stage.Pieces);
-        var row = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "blocks", "wedge.json")))["attributes"]!["splits"]!
-            .Single(split => split.Value<int>("logs") == 5).Value<int>("count");
-
-        Assert.InRange(laths, 1, row);
-    }
+    public void EveryLathSheTakesNamesItsLengthAndAFiveMetreRowIsLongEnough() =>
+        Assert.All(Canoe().Stages.Where(stage => stage.Work == FramingWork.Lath).SelectMany(stage => stage.Metres), metres => Assert.InRange(metres, 0.5, 5));
 
     [Fact]
     public void HerFrameIsTheWoodOfItsLathsAndGrowsWithThem()

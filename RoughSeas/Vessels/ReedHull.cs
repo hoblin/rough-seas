@@ -39,7 +39,7 @@ public sealed class ReedHull : HullModel, IAfloat, IKnockable, ISoaking
         return Torn >= 1 ? Knock.BrokenUp : Knock.Harmed;
     }
 
-    public void Pass(double days, bool afloat, double sun)
+    public void Pass(double days, bool afloat, double sun, double waterCelsius = 20)
     {
         double water = SoakedKg;
         if (afloat)

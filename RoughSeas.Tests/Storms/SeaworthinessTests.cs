@@ -68,7 +68,7 @@ public class SeaworthinessTests
     [Fact]
     public void AFullBilgeLeavesHerAwashSoEveryCrestComesAboard()
     {
-        var full = Fixtures.Afloat("currach", litres: 1500);
+        var full = Fixtures.Afloat("currach", litres: 1800);
         Assert.Equal(0, full.FreeboardMetres);
         Assert.Equal(1, full.ShippedShare(waves.Crest(0.5, breaking: false)));
     }

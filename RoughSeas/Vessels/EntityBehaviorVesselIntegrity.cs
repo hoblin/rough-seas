@@ -110,6 +110,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
+    public static void Ungreased(Entity vessel)
+    {
+        var tree = new TreeAttribute();
+        tree.SetInt(VersionKey, DataVersion);
+        CrackingHull.Ungrease(tree);
+        vessel.WatchedAttributes.SetAttribute(TreeKey, tree);
+    }
+
     private IVesselHold? Hold => entity.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault();
 
     private static JsonItemStack OfWood(JsonItemStack stack, Wood? wood)
@@ -180,6 +188,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     {
         form = entity.SidedProperties.Behaviors.OfType<IHullForm>().FirstOrDefault();
         if (form != null) form.Reformed += Rebuild;
+        if (model is CrackingHull cracking && entity.SidedProperties.Behaviors.OfType<ICovered>().FirstOrDefault() is { } covered) cracking.CoveredBy(() => covered.Cover);
         Rebuild();
     }
 
@@ -585,7 +594,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         Tree.SetDouble(CheckedAtKey, now);
         if (now == last) return;
         double sun = afloat ? 0 : Sunlight();
-        timed.Pass((now - last) / entity.World.Calendar.HoursPerDay, afloat, sun);
+        timed.Pass((now - last) / entity.World.Calendar.HoursPerDay, afloat, sun, seaWeather.CurrentAt(entity.Pos.X, entity.Pos.Z).WaterCelsius);
         vessels.Log(entity, "{0:F1} h {1}: hull {2:F2}, {3:F0} kg soaked", now - last,
             afloat ? "afloat" : sun > 0 ? "drying in the sun" : "ashore", Integrity, model.SoakedKg);
     }

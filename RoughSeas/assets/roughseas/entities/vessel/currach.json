@@ -2,104 +2,61 @@
     "code": "currach",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 100,
+    "weight": 70,
     "attributes": {
         "speedMultiplier": 1.6,
         "turnSpeed": 0.9,
         "swimmingOffsetY": 0.42,
         "shouldSwivelFromMotion": false,
-        "mountAnimations": {
-            "idle": "roughseas-sitthwart",
-            "ready": "roughseas-currach-ready",
-            "forwards": "roughseas-currach-forward",
-            "backwards": "roughseas-currach-backward"
-        },
-        "rightClickPickup": true
+        "mountAnimations": {"idle": "roughseas-sitthwart", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
+        "rightClickPickup": true,
+        "requiresPaddlingTool": true
     },
     "hitboxSize": {"x": 1.2, "y": 0.6},
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
-            "parts": [{"material": "hide", "share": 0.4}, {"material": "wood-ash", "share": 0.6}],
-            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.025}, "backedShare": 0.27, "bottomBackedShare": 0.7, "spanMetres": 0.64},
+            "parts": [{"name": "hide", "material": "hide", "share": 0.52}, {"name": "frame", "material": "wood-ash", "share": 0.48}],
+            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.01}, "backedShare": 0.4, "bottomBackedShare": 0.31, "spanMetres": 0.15},
             "depthMetres": 0.45,
-            "waterplaneSquareMetres": 3.75,
-            "seep": {"litresPerHour": 30, "greaseDays": 2.5},
+            "waterplaneSquareMetres": 4.4,
+            "seep": {"litresPerHourASeam": 15, "greaseDays": 2.5},
+            "cover": {"hides": {"prepared": 8}, "seams": 2},
             "repairs": [
-                {
-                    "material": {"type": "item", "code": "game:hide-prepared-large", "stacksize": 1},
-                    "restores": 0.67,
-                    "saturation": 80
-                },
-                {
-                    "material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1},
-                    "restores": 0.5,
-                    "saturation": 40,
-                    "greases": true
-                }
+                {"material": {"type": "item", "code": "game:hide-prepared-large", "stacksize": 1}, "restores": 0.67, "saturation": 80},
+                {"material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1}, "restores": 0.5, "saturation": 40, "greases": true}
             ],
-            "wreckage": [
-                {"type": "item", "code": "game:stick", "quantity": {"avg": 4, "var": 2}},
-                {"type": "item", "code": "game:leather-normal-plain", "quantity": {"avg": 2, "var": 1}}
-            ],
+            "wreckage": [{"type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": {"avg": 4, "var": 2}}],
             "damage": {"textures": ["hide"], "material": "hide"},
             "sources": {
-                "parts": "Hides stretched over a frame of ash laths and gunwales, about two fifths hide by weight",
-                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, laths 2.5 cm deep and 0.8 voxel wide every 3 voxels back 27% of the sides, and floor battens 1.4 every 2 back 70% of the bottom. A breaker presses the hide onto the laths, each bending under its share of the side over the 10.3 voxels from the floor to the inwale",
-                "depthMetres": "Keel to gunwale amidships: a 5 cm draft with its rower in a 100 kg hull and about 0.4 m of side above it",
-                "waterplaneSquareMetres": "A 4 m hull 1.1 m wide, full amidships, so that 1500 L aboard settles her by her 0.4 m of side",
-                "seep": "Hide seams and stitch holes weep once the tallow has washed out of them, a little at every seam; Aran crews dressed their currachs every few days"
+                "parts": "By the model: 8.6 m² of hide 5 mm thick at 860 kg/m³, some 37 kg, over 21 ribs, 7 stringers and two gunwales of laths 1 by 6 cm, 83 m of ash, some 30 kg, and a thwart pole: about 70 kg",
+                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, ribs 0.8 voxel wide every 3 and three stringers a side back 40% of her sides, the ribs and the keelson 31% of her bottom. A breaker presses the hide onto the laths, each 1 cm deep bending over the 0.15 m between stringers",
+                "depthMetres": "Keel to gunwale amidships: a 3 cm draft with her rower in a 70 kg hull and about 0.4 m of side above it",
+                "waterplaneSquareMetres": "A hull 4.7 m long and 1.2 m in beam, double-ended and fine at both ends, about 0.78 of her box at the waterline",
+                "seep": "A seam where one hide meets the next weeps once the tallow has washed out of it, and Aran crews dressed their currachs every few days: a seam across her, some 2.3 m of it, 15 L an hour. A currach from before her build is covered in prepared hide over her eight sections, with the two seams the three large hides of her old recipe had",
+                "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             }
         },
         "passivephysicsmultibox": {
-            "collisionBoxes": [
-                {"x1": -0.562, "y1": 0, "z1": -2.0, "x2": 0.562, "y2": 0.6, "z2": -0.667},
-                {"x1": -0.562, "y1": 0, "z1": -0.667, "x2": 0.562, "y2": 0.6, "z2": 0.667},
-                {"x1": -0.562, "y1": 0, "z1": 0.667, "x2": 0.562, "y2": 0.6, "z2": 2.0}
-            ],
+            "collisionBoxes": [{"x1": -0.6, "y1": 0, "z1": -2.35, "x2": 0.6, "y2": 0.6, "z2": -0.783}, {"x1": -0.6, "y1": 0, "z1": -0.783, "x2": 0.6, "y2": 0.6, "z2": 0.783}, {"x1": -0.6, "y1": 0, "z1": 0.783, "x2": 0.6, "y2": 0.6, "z2": 2.35}],
             "groundDragFactor": 1,
             "airDragFallingFactor": 0.5,
             "gravityFactor": 1.0
         },
-        "creaturecarrier": {
-            "seats": [
-                {
-                    "apName": "BackSeatAP",
-                    "controllable": true,
-                    "bodyYawLimit": 0.4,
-                    "eyeHeight": 1,
-                    "selectionBox": "HullAP"
-                }
-            ]
-        },
+        "creaturecarrier": {"seats": [{"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "selectionBox": "HullAP"}]},
         "selectionboxes": {"selectionBoxes": ["BackSeatAP", "ForeCargoAP", "MidCargoAP", "AftCargoAP", "HullAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
                 {"code": "BackSeatAP", "forCategoryCodes": []},
-                {
-                    "code": "Fore Cargo",
-                    "forCategoryCodes": ["basket", "chest"],
-                    "attachmentPointCode": "ForeCargoAP",
-                    "stepParentTo": {"": {"elementName": "ForeCargo"}}
-                },
-                {
-                    "code": "Mid Cargo",
-                    "forCategoryCodes": ["basket", "chest"],
-                    "attachmentPointCode": "MidCargoAP",
-                    "stepParentTo": {"": {"elementName": "MidCargo"}}
-                },
-                {
-                    "code": "Aft Cargo",
-                    "forCategoryCodes": ["basket", "chest"],
-                    "attachmentPointCode": "AftCargoAP",
-                    "stepParentTo": {"": {"elementName": "AftCargo"}}
-                },
+                {"code": "Fore Cargo", "forCategoryCodes": ["basket", "chest"], "attachmentPointCode": "ForeCargoAP", "stepParentTo": {"": {"elementName": "ForeCargo"}}},
+                {"code": "Mid Cargo", "forCategoryCodes": ["basket", "chest"], "attachmentPointCode": "MidCargoAP", "stepParentTo": {"": {"elementName": "MidCargo"}}},
+                {"code": "Aft Cargo", "forCategoryCodes": ["basket", "chest"], "attachmentPointCode": "AftCargoAP", "stepParentTo": {"": {"elementName": "AftCargo"}}},
                 {"code": "HullAP", "forCategoryCodes": []}
             ]
         },
         "roughseas:seaforces": {
-            "beamMetres": 1.1,
+            "beamMetres": 1.2,
             "mastMetres": 0,
             "windageSquareMetres": 0.9,
             "heave": 0.85,
@@ -107,20 +64,50 @@
             "rollResponse": 1.2,
             "pitchResponse": 1.5,
             "sources": {
-                "heave": "A hide hull of 100 kg sits on the water and rises with the crest: it rides over seas that board heavier boats",
+                "heave": "A hide hull of 70 kg sits on the water and rises with the crest: it rides over seas that board heavier boats",
                 "capsizeBreakerMetres": "Aran currachs are launched and landed through breaking surf: the light, flared hull lifts to a breaker that rolls a heavier boat of its beam",
                 "rollResponse": "A beamy, light hull rolls with the sea about as much as vanilla's boats",
                 "pitchResponse": "The light, flexing hull follows the swell bow and stern"
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 1500,
-            "deckSquareMetres": 5.5,
+            "capacityLitres": 1800,
+            "deckSquareMetres": 4.0,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "A 6 m hull, about 1 m wide and 0.5 m deep inside, half of its box",
-                "deckSquareMetres": "The open hull, 6 m by 1 m less its taper, catches the rain",
+                "capacityLitres": "A 4.7 m hull, 1.2 m in beam at the gunwale and 0.45 m deep, about two fifths of her box",
+                "deckSquareMetres": "The open hull, 4.7 m by 1.2 m less her taper at both ends, catches the rain",
                 "drainLitresPerHour": "Greased hide is watertight; the wear of an ungreased hull is upkeep, not a leak"
+            }
+        },
+        "roughseas:covering": {
+            "framePart": "frame",
+            "laths": "roughseas:lath-*",
+            "poles": "roughseas:pole-*",
+            "rope": "game:rope",
+            "hides": "game:hide-*",
+            "hideStates": ["raw", "soaked", "scraped", "prepared", "oiled", "pelt", "salted"],
+            "layout": {"kind": "pair", "beamMetres": 1.2, "toleranceMetres": 0.25},
+            "overturned": true,
+            "overturnedPivot": 5.5,
+            "stages": [
+                {"group": "Gunwale", "work": "lath", "seconds": 3},
+                {"group": "EndLashing", "work": "rope", "seconds": 15},
+                {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true, "lines": true},
+                {"group": "Stringers", "work": "lath", "seconds": 3, "lines": true},
+                {"group": "Cover", "work": "hide", "seconds": 20, "part": "hide"},
+                {"group": "Lacing", "work": "rope", "seconds": 15, "seals": true},
+                {"group": "Thwart", "work": "pole", "seconds": 3}
+            ],
+            "sources": {
+                "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
+                "layout": "A currach's gunwale was laid out on the ground first and her ribs set into it (Hornell 1938, the Boyne currach woven round its gunwale on the ground): two long laths laid side by side at her beam, whose ends the first rope draws together",
+                "endLashing": "Each end bound with some ten metres of cord, a quarter of an hour's work (an estimate)",
+                "ribs": "Fitting one rib, about three minutes, as the canoe's: currach ribs were scalded, bent over the gunwale and set into it, built upside down (the Boyne and Aran currachs). Bent in wet, they hold their bend once dry, in a couple of days",
+                "cover": "Stretching and sewing a small hide's worth of cover, some twenty minutes (an estimate); a bigger hide covers more at once and takes as much longer",
+                "lacing": "The hide laced to the gunwale at short intervals (Hornell 1938), every 5 cm, each turn round the gunwale and the hide's edge: the shape's builder counts the rope",
+                "overturned": "Built upside down, her gunwale on the ground, she is turned over before she goes afloat (the Boyne currach was lifted out and turned upright to be covered; Aran currachs are carried upside down)",
+                "framePart": "Her frame is the wood of her laths: its share and the weight it was set for are ash's, its strength and density are those of the wood split"
             }
         }
     },
@@ -128,14 +115,10 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater", "Bilge"]},
-        "animations": [
-            {"code": "roughseas-currach-ready", "animation": "roughseas-currach-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
-            {"code": "roughseas-currach-forward", "animation": "roughseas-currach-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
-            {"code": "roughseas-currach-backward", "animation": "roughseas-currach-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
-        ],
-        "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+        "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}, "bilge": {"base": "game:block/liquid/waterportion"}, "lashing": {"base": "game:item/resource/rope"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
+            {"code": "roughseas:covering"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -151,6 +134,7 @@
     "server": {
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
+            {"code": "roughseas:covering"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

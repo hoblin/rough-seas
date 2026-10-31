@@ -45,8 +45,8 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
 
         var stages = ObjectCacheUtil.GetOrCreate(api, $"{Code}/stages/{collectible.Code}", () =>
         {
-            var config = api.World.GetEntityType(collectible.Code) is { } type ? FramingConfig.Of(type) : null;
-            config?.Count(group => FramingConfig.PiecesIn(BaseShape(api), group));
+            var config = api.World.GetEntityType(collectible.Code) is { } type ? FramingConfig.Of(type) ?? CoveringConfig.Of(type) : null;
+            config?.Measure(collectible is Item { Shape.Base: { } shape } ? FramingConfig.ShapeAt(api, shape) : null);
             return config?.Stages;
         });
         return stages == null ? null : new Framing(() => tree, () => { }, stages);
@@ -60,7 +60,7 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
         if (collectible is not Item item || BaseShape(capi) is not { } shape) return null;
 
         bool cloned = true;
-        var drawnByBuild = framing.Stages.Select(stage => stage.Replaces).OfType<string>().Append(Shipyard.Framing.SheetGroup);
+        var drawnByBuild = framing.Stages.SelectMany(stage => new[] { stage.Replaces, stage.Bends }).OfType<string>().Append(Shipyard.Framing.SheetGroup);
         var ignored = item.Shape.IgnoreElements?.Except(drawnByBuild) ?? [];
         shape.RemoveElements(framing.Hidden().Concat(ignored).ToArray());
         if (framing.Wood is { } wood) WoodTexture.Draw(capi, ref shape, ref cloned, WoodTexture.Frame, wood, item.Textures, capi.ItemTextureAtlas);

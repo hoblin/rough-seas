@@ -6,22 +6,22 @@ using Vintagestory.API.Config;
 
 namespace RoughSeas.Shipyard;
 
-/// <summary>What a vessel being built takes from the hand, held on her, lays her next piece.</summary>
+/// <summary>What a vessel being built, or laths laid out for one, takes from the hand: held on it, it lays the next piece.</summary>
 public class CollectibleBehaviorFraming(CollectibleObject collectible) : CollectibleBehavior(collectible)
 {
     public const string Code = "roughseas:framing";
 
     private readonly HeldWork work = new();
 
-    /// <summary>Whether the held item does work on the vessel selected, refused or not.</summary>
-    public static bool WorksOn(ItemSlot slot, EntitySelection? entitySel) => Hull(entitySel)?.WorkWith(slot) != null;
+    /// <summary>Whether the held item does work on what is selected, refused or not.</summary>
+    public static bool WorksOn(ItemSlot slot, EntityAgent byEntity, BlockSelection? blockSel, EntitySelection? entitySel) => Hull(byEntity, blockSel, entitySel)?.WorkWith(slot) != null;
 
     /// <summary>Whether the entity selected is a vessel built piece by piece, being built or finished.</summary>
-    public static bool Builds(EntitySelection? entitySel) => Hull(entitySel) != null;
+    public static bool Builds(EntitySelection? entitySel) => entitySel?.Entity?.SidedProperties?.Behaviors.OfType<IWorkedHull>().Any() == true;
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
-        if (Hull(entitySel)?.WorkWith(slot) is not { } job) return;
+        if (Hull(byEntity, blockSel, entitySel)?.WorkWith(slot) is not { } job) return;
 
         handling = EnumHandling.PreventSubsequent;
         handHandling = EnumHandHandling.PreventDefault;
@@ -36,7 +36,7 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
 
     public override bool OnHeldInteractStep(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, ref EnumHandling handling)
     {
-        if (Hull(entitySel)?.WorkWith(slot) is not { Refusal: null } job) return false;
+        if (Hull(byEntity, blockSel, entitySel)?.WorkWith(slot) is not { Refusal: null } job) return false;
 
         handling = EnumHandling.PreventSubsequent;
         return work.Step(secondsUsed, job.Seconds);
@@ -44,7 +44,7 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
 
     public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, ref EnumHandling handling)
     {
-        if (Hull(entitySel) is not { } hull || hull.WorkWith(slot) is not { Refusal: null } job)
+        if (Hull(byEntity, blockSel, entitySel) is not { } hull || hull.WorkWith(slot) is not { Refusal: null } job)
         {
             work.Stop(byEntity);
             return;
@@ -60,6 +60,7 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
         return true;
     }
 
-    private static IWorkedHull? Hull(EntitySelection? entitySel) =>
-        entitySel?.Entity?.SidedProperties?.Behaviors.OfType<IWorkedHull>().FirstOrDefault();
+    private static IWorkedHull? Hull(EntityAgent byEntity, BlockSelection? blockSel, EntitySelection? entitySel) =>
+        entitySel?.Entity?.SidedProperties?.Behaviors.OfType<IWorkedHull>().FirstOrDefault()
+        ?? (blockSel == null ? null : byEntity.World.BlockAccessor.GetBlockEntity(blockSel.Position) as IWorkedHull);
 }

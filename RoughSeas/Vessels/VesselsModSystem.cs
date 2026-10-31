@@ -16,6 +16,7 @@ public class VesselsModSystem : ModSystem
     private static readonly AssetLocation RapidsAsset = new("roughseas:config/vessels/rapids.json");
     private static readonly AssetLocation MassAsset = new("roughseas:config/vessels/mass.json");
     private static readonly AssetLocation HullAsset = new("roughseas:config/vessels/hull.json");
+    private static readonly AssetLocation HidesAsset = new("roughseas:config/vessels/hides.json");
     private const string Channel = "roughseas:vessels";
 
     public MaterialTable Materials { get; private set; } = null!;
@@ -79,6 +80,7 @@ public class VesselsModSystem : ModSystem
         Rapids = api.Assets.Get<Rapids>(RapidsAsset);
         Mass = api.Assets.Get<VesselMass>(MassAsset);
         HullConfig = api.Assets.Get<HullConfig>(HullAsset);
+        HullConfig.Hides = api.Assets.Get<HidesConfig>(HidesAsset);
     }
 
     public void Log(Entity entity, string format, params object[] args) =>

@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Laths split from a pole",
+        "ingredientPattern": "AP",
+        "ingredients": {
+            "A": { "type": "item", "tags": ["tool-axe"], "isTool": true },
+            "P": { "type": "item", "code": "roughseas:pole-*", "name": "pole" }
+        },
+        "width": 2,
+        "height": 1,
+        "shapeless": true,
+        "output": { "type": "item", "code": "roughseas:lath-{pole}-dry", "quantity": 16 }
+    }
+]

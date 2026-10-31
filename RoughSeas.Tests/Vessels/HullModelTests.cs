@@ -175,6 +175,149 @@ public class HullModelTests
     }
 
     [Fact]
+    public void ARawHideCoverRotsOnceItHasKeptAsLongAsGreenHideKeeps()
+    {
+        var hull = Covered(new() { ["raw"] = 2 });
+
+        hull.Pass(0.9, afloat: true, sun: 0, waterCelsius: 20);
+        Assert.Equal(1, hull.Condition);
+
+        hull.Pass(0.5, afloat: true, sun: 0, waterCelsius: 20);
+        Assert.True(hull.Condition < 1);
+    }
+
+    [Fact]
+    public void ColdWaterKeepsARawHideAFortnightLonger()
+    {
+        var hull = Covered(new() { ["raw"] = 2 });
+
+        hull.Pass(10, afloat: true, sun: 0, waterCelsius: 5);
+
+        Assert.Equal(1, hull.Condition);
+    }
+
+    [Fact]
+    public void ARawHideDriedAshoreKeepsAfreshAsUmiakSkinsDid()
+    {
+        var hull = Covered(new() { ["raw"] = 2 });
+
+        for (int day = 0; day < 10; day++)
+        {
+            hull.Pass(0.5, afloat: true, sun: 0, waterCelsius: 20);
+            hull.Pass(1, afloat: false, sun: 1);
+        }
+
+        Assert.Equal(1, hull.Condition);
+    }
+
+    [Fact]
+    public void DaysKeptInColdWaterCountAsTheFewTheyAreWhenSheComesIntoWarm()
+    {
+        var hull = Covered(new() { ["raw"] = 2 });
+
+        hull.Pass(10, afloat: true, sun: 0, waterCelsius: 5);
+        hull.Pass(0.1, afloat: true, sun: 0, waterCelsius: 20);
+
+        Assert.Equal(1, hull.Condition);
+    }
+
+    [Fact]
+    public void ARottedRawShareRotsNoFurtherThanItsShare()
+    {
+        var hull = Covered(new() { ["raw"] = 1, ["prepared"] = 1 });
+
+        hull.Pass(10, afloat: true, sun: 0, waterCelsius: 20);
+
+        Assert.Equal(0.5, hull.Condition, 6);
+    }
+
+    [Fact]
+    public void TripsDriedBetweenRotTheRawShareNoFurtherThanItsShare()
+    {
+        var hull = Covered(new() { ["raw"] = 1, ["prepared"] = 1 });
+
+        for (int trip = 0; trip < 3; trip++)
+        {
+            hull.Pass(3, afloat: true, sun: 0, waterCelsius: 20);
+            hull.Pass(1, afloat: false, sun: 1);
+        }
+
+        Assert.Equal(0.5, hull.Condition, 6);
+    }
+
+    [Fact]
+    public void ABareFrameAfloatSpendsNoneOfTheKeepingOfHidesSewnOnLater()
+    {
+        var hides = new Dictionary<string, int>();
+        var hull = new CrackingHull(() => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig("currach")), Fixtures.HullConfig);
+        hull.CoveredBy(() => new HideCover(hides, 0));
+
+        hull.Pass(5, afloat: true, sun: 0, waterCelsius: 20);
+        hides["raw"] = 2;
+        hull.Pass(0.5, afloat: true, sun: 0, waterCelsius: 20);
+
+        Assert.Equal(1, hull.Condition);
+    }
+
+    [Fact]
+    public void ADayInTheSunDriesACoverHoweverLongSheWasAfloat()
+    {
+        var hull = Covered(new() { ["prepared"] = 2 });
+        hull.Pass(120, afloat: true, sun: 0);
+
+        hull.Pass(1, afloat: false, sun: 1);
+
+        Assert.Equal(0, hull.SoakedKg);
+    }
+
+    [Fact]
+    public void ABarkTannedCoverOutlastsASeasonAfloat()
+    {
+        var hull = Covered(new() { ["prepared"] = 2 });
+
+        hull.Pass(120, afloat: true, sun: 0, waterCelsius: 20);
+
+        Assert.Equal(1, hull.Condition);
+    }
+
+    [Fact]
+    public void OnlyTheRawShareOfAMixedCoverRots()
+    {
+        var mixed = Covered(new() { ["raw"] = 1, ["prepared"] = 1 });
+        var raw = Covered(new() { ["raw"] = 2 }, new TreeAttribute());
+
+        mixed.Pass(1.4, afloat: true, sun: 0, waterCelsius: 20);
+        raw.Pass(1.4, afloat: true, sun: 0, waterCelsius: 20);
+
+        Assert.Equal(1 - raw.Condition, 2 * (1 - mixed.Condition), 6);
+    }
+
+    [Fact]
+    public void AWetCoverWeighsWithTheWaterItTookUpAndASaltedOneMore()
+    {
+        var raw = Covered(new() { ["raw"] = 2 });
+        var salted = Covered(new() { ["salted"] = 2 }, new TreeAttribute());
+        Assert.Equal(0, raw.SoakedKg);
+
+        raw.Pass(0.1, afloat: true, sun: 0);
+        salted.Pass(0.1, afloat: true, sun: 0);
+
+        Assert.True(raw.SoakedKg > 0);
+        Assert.True(salted.SoakedKg > raw.SoakedKg);
+    }
+
+    [Fact]
+    public void EverySeamWeepsOnceTheGreaseIsGone()
+    {
+        var one = Covered(new() { ["prepared"] = 2 }, seams: 1);
+        var three = Covered(new() { ["prepared"] = 2 }, new TreeAttribute(), seams: 3);
+        one.Pass(3, afloat: true, sun: 0);
+        three.Pass(3, afloat: true, sun: 0);
+
+        Assert.Equal(3 * one.Inflow(1, 1, Draft(0.05), 0.45), three.Inflow(1, 1, Draft(0.05), 0.45), 6);
+    }
+
+    [Fact]
     public void AWoodenHullDoesNotWearAfloat()
     {
         var hull = Cracking("dugout");
@@ -263,6 +406,14 @@ public class HullModelTests
 
     private CrackingHull Cracking(string vessel) =>
         new(() => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig(vessel)), Fixtures.HullConfig);
+
+    private CrackingHull Covered(Dictionary<string, int> hides, TreeAttribute? own = null, int seams = 0)
+    {
+        var hullTree = own ?? tree;
+        var hull = new CrackingHull(() => hullTree, () => changes++, new JsonObject(Fixtures.IntegrityConfig("currach")), Fixtures.HullConfig);
+        hull.CoveredBy(() => new HideCover(hides, seams));
+        return hull;
+    }
 
     private ReedHull Reed() => new(() => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig("reedboat")));
 
