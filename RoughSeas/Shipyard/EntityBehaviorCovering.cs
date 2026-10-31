@@ -13,6 +13,10 @@ using RoughSeas.Vessels;
 
 namespace RoughSeas.Shipyard;
 
+/// <summary>
+/// A hide boat bound from laths laid out on the ground, then framed and covered piece by piece where she lies, upside
+/// down when her build says so. Her cover is the hides sewn on her, by type, and a seam between each.
+/// </summary>
 public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entity)
 {
     public new const string Code = "roughseas:covering";

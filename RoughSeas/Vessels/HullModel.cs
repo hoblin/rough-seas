@@ -92,6 +92,7 @@ public interface IKnockable
 public interface IAfloat
 {
     /// <param name="sun">The daylight it dries in ashore; 0 in shade, rain or water.</param>
+    /// <param name="waterCelsius">The water it lies in.</param>
     void Pass(double days, bool afloat, double sun, double waterCelsius = 20);
 }
 

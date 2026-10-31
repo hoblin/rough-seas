@@ -188,7 +188,7 @@ public class FramingConfig
         (type.Server?.BehaviorsAsJsonObj ?? type.Client?.BehaviorsAsJsonObj)?
             .FirstOrDefault(behavior => behavior["code"].AsString() == code)?.AsObject<T>();
 
-    /// <summary>The shape at <paramref name="shape"/> as its JSON, which keeps the metres its builder names for each piece.</summary>
+    /// <summary>The shape's JSON: the typed <see cref="Shape"/> drops the <c>metres</c> its builder writes on each piece.</summary>
     public static JObject? ShapeAt(ICoreAPI api, AssetLocation shape)
     {
         var path = shape.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json");
@@ -226,6 +226,7 @@ public class FramingConfig
 
     public string Hides = "";
 
+    /// <summary>The hides' <c>type</c> variants a hide stage takes.</summary>
     public string[] HideStates = [];
 
     /// <summary>How long a knife takes the bark off a standing trunk: the real time of that work over sixty.</summary>

@@ -4,6 +4,7 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Shipyard;
 
+/// <summary>Laths lying on the ground: Shift with an empty hand takes the nearest back, and breaking it drops them all.</summary>
 public class BlockLathBed : Block
 {
     public const string ClassName = "roughseas:BlockLathBed";

@@ -6,6 +6,7 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Shipyard;
 
+/// <summary>A wet lath held with Shift on the ground lies there at its full length, centred where aimed, along the holder's facing.</summary>
 public class CollectibleBehaviorLathBed(CollectibleObject collectible) : CollectibleBehavior(collectible)
 {
     public const string Code = "roughseas:lathbed";

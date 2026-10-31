@@ -36,7 +36,6 @@ public class BlockEntityLathBed : BlockEntity, IWorkedHull
         Changed();
     }
 
-    /// <summary>Takes back the lath whose middle lies nearest <paramref name="x"/>, <paramref name="z"/>.</summary>
     public ItemStack? TakeNearest(double x, double z)
     {
         if (laths.MinBy(lath => Math.Pow(Pos.X + lath.X - x, 2) + Math.Pow(Pos.Z + lath.Z - z, 2)) is not { } nearest) return null;
@@ -127,7 +126,6 @@ public class BlockEntityLathBed : BlockEntity, IWorkedHull
         MarkMeshDirty();
     }
 
-    /// <summary>Whether the lath in <paramref name="slot"/> is still wet enough to bend.</summary>
     public static bool Wet(ItemStack lath) => lath.Collectible.Variant["state"] == "wet";
 
     public static double Metres(ItemStack lath) => double.Parse(lath.Collectible.Variant["length"] ?? "1", System.Globalization.CultureInfo.InvariantCulture);

@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace RoughSeas.Vessels;
 
+/// <summary>
+/// The hides a hull is covered with: small hides' worth of each <c>type</c>, and the seams between them. Each type keeps
+/// afloat for a while, longer in cold water, then rots through in as long again, and takes up its share of water.
+/// </summary>
 public sealed record HideCover(IReadOnlyDictionary<string, int> Sections, int Seams)
 {
     public int Total => Sections.Values.Sum();

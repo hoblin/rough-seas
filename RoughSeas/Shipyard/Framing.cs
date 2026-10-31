@@ -161,6 +161,7 @@ public sealed class FramingStage
     /// <summary>The part of her <c>parts</c>, by its name, that this stage's pieces make: there as far as they are laid, of the wood they are.</summary>
     public string? Part;
 
+    /// <summary>The stage this one bends once its first piece is laid: from then on that stage shows from <c>{Bends}Bent{n}</c>.</summary>
     public string? Bends;
 
     /// <summary>The shape's texture that draws the pieces, retextured in the wood they are of.</summary>
@@ -170,6 +171,7 @@ public sealed class FramingStage
     [Newtonsoft.Json.JsonIgnore]
     public int Pieces;
 
+    /// <summary>The metres of lath or pole each piece takes, as its shape names them.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public double[] Metres = [];
 }
