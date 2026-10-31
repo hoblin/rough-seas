@@ -12,7 +12,7 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
-        if (!firstEvent || Blank(entitySel) is not { CanHew: true }) return;
+        if (Blank(entitySel) is not { CanHew: true }) return;
 
         byEntity.Attributes.SetInt(StrokesKey, 0);
         handling = EnumHandling.PreventDefault;

@@ -13,7 +13,7 @@ public class BurnoutTests
     private static readonly JToken Entity = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "vessel", "dugout.json")));
     private static readonly BurnoutConfig Config = JsonConvert.DeserializeObject<BurnoutConfig>(Entity["behaviorConfigs"]![EntityBehaviorBurnout.Code]!.ToString())!;
     private static readonly double HoldLitres = Entity["behaviorConfigs"]!["roughseas:bilge"]!.Value<double>("capacityLitres");
-    private static readonly int RimVoxels = Burnout.VoxelsOver(JsonConvert.DeserializeObject<Shape>(
+    private static readonly int RimVoxels = Burnout.TopVoxels(JsonConvert.DeserializeObject<Shape>(
         File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "dugout.json")))!.GetElementByName("Clay"));
 
     private TreeAttribute? tree;
@@ -46,9 +46,9 @@ public class BurnoutTests
 
     private static void LayTheFire(Burnout blank)
     {
-        while (blank.Firewood < blank.FirewoodPile) blank.LayFirewood(8);
-        blank.Kindle();
-        while (!blank.Laid) blank.LayFirewood(1);
+        while (blank.Fire.OnPile < blank.Fire.PileFirewood) blank.Fire.Add(8);
+        blank.Fire.Kindle();
+        while (!blank.Fire.Laid) blank.Fire.Add(1);
     }
 
     private Burnout Hollowed()
@@ -68,12 +68,12 @@ public class BurnoutTests
     }
 
     [Fact]
-    public void TheCharcoalPitOnTheLogsChartsTheTopWithoutClay()
+    public void TheCharcoalPitOnTheLogsCharsTheTopWithoutClay()
     {
         var blank = Blank();
 
         Assert.True(blank.Lit);
-        Assert.True(blank.Laid);
+        Assert.True(blank.Fire.Laid);
         Assert.False(blank.NeedsClay);
         Assert.False(blank.Burn(blank.HoursPerFire / 2));
         Assert.True(blank.Burn(blank.HoursPerFire / 2));
@@ -120,17 +120,17 @@ public class BurnoutTests
 
         Assert.Equal("shipyard-lay-fire-first", blank.LightRefusal());
         Assert.Equal("shipyard-pile-first", blank.KindlingRefusal());
-        Assert.Equal(2, blank.LayFirewood(2));
+        Assert.Equal(2, blank.Fire.Add(2));
         Assert.Equal("shipyard-pile-first", blank.FirewoodRefusal(piles: false));
-        while (blank.Firewood < blank.FirewoodPile) blank.LayFirewood(8);
+        while (blank.Fire.OnPile < blank.Fire.PileFirewood) blank.Fire.Add(8);
         Assert.Equal("shipyard-kindle-first", blank.FirewoodRefusal(piles: true));
-        blank.Kindle();
-        for (int firewood = 0; firewood < Burnout.FirepitFirewood; firewood++)
+        blank.Fire.Kindle();
+        for (int firewood = 0; firewood < LaidFire.FirepitFirewood; firewood++)
         {
             Assert.Null(blank.FirewoodRefusal(piles: false));
-            Assert.Equal(1, blank.LayFirewood(8));
+            Assert.Equal(1, blank.Fire.Add(8));
         }
-        Assert.True(blank.Laid);
+        Assert.True(blank.Fire.Laid);
         Assert.Equal("shipyard-laid-already", blank.FirewoodRefusal(piles: true));
         Assert.Null(blank.LightRefusal());
     }
@@ -139,9 +139,9 @@ public class BurnoutTests
     public void ThePileTakesOnlyWhatItLacks()
     {
         var blank = Hollowed();
-        while (blank.Firewood < blank.FirewoodPile - 3) blank.LayFirewood(1);
+        while (blank.Fire.OnPile < blank.Fire.PileFirewood - 3) blank.Fire.Add(1);
 
-        Assert.Equal(3, blank.LayFirewood(8));
+        Assert.Equal(3, blank.Fire.Add(8));
     }
 
     [Fact]
@@ -165,9 +165,9 @@ public class BurnoutTests
         blank.Burn(blank.HoursPerFire);
 
         Assert.Equal(0, blank.ClayVoxels);
-        Assert.Equal(0, blank.Firewood);
-        Assert.False(blank.Kindled);
-        Assert.False(blank.Laid);
+        Assert.Equal(0, blank.Fire.OnPile);
+        Assert.False(blank.Fire.Kindled);
+        Assert.False(blank.Fire.Laid);
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class BurnoutTests
         blank.Douse();
 
         Assert.False(blank.Burn(blank.HoursPerFire));
-        Assert.True(blank.Laid);
+        Assert.True(blank.Fire.Laid);
         blank.Light();
         Assert.True(blank.Burn(blank.HoursPerFire / 2));
     }
@@ -187,9 +187,8 @@ public class BurnoutTests
     public void HewingTakesAStrokeForEveryChipOfTheDaysChar()
     {
         var blank = Charred(Blank());
-        double chipLitres = Config.AxeEdgeMetres * Config.AxeEdgeMetres * Config.HollowDepthMetres / Config.Hollowings * 1000;
 
-        Assert.Equal((int)Math.Ceiling(HoldLitres / Config.Hollowings / chipLitres), blank.StrokesPerHewing);
+        Assert.Equal(106, blank.StrokesPerHewing);
         for (int stroke = 1; stroke < blank.StrokesPerHewing; stroke++) Assert.False(blank.Stroke());
         Assert.Equal(0, blank.Level);
         Assert.True(blank.Stroke());
@@ -205,7 +204,7 @@ public class BurnoutTests
         while (!blank.Finished)
         {
             if (blank.NeedsClay) ClayTheRim(blank);
-            if (!blank.Laid) LayTheFire(blank);
+            if (!blank.Fire.Laid) LayTheFire(blank);
             if (!blank.Lit) blank.Light();
             blank.Burn(blank.HoursPerFire);
             Hew(blank);
@@ -228,7 +227,7 @@ public class BurnoutTests
         blank.Migrate();
 
         Assert.True(blank.Clayed);
-        Assert.True(blank.Laid);
+        Assert.True(blank.Fire.Laid);
         Assert.Null(blank.LightRefusal());
     }
 
