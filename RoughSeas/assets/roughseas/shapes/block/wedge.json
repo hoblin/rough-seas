@@ -1,0 +1,30 @@
+{
+    "textureWidth": 16,
+    "textureHeight": 16,
+    "textures": {"wood": "game:block/wood/debarked/oak"},
+    "elements": [
+        {
+            "name": "Head",
+            "from": [6, 1, 4], "to": [10, 4, 12],
+            "faces": {
+                "north": {"texture": "#wood", "uv": [6, 0, 10, 3]},
+                "east": {"texture": "#wood", "uv": [4, 0, 12, 3]},
+                "south": {"texture": "#wood", "uv": [6, 0, 10, 3]},
+                "west": {"texture": "#wood", "uv": [4, 0, 12, 3]},
+                "up": {"texture": "#wood", "uv": [6, 4, 10, 12]},
+                "down": {"texture": "#wood", "uv": [6, 4, 10, 12]}
+            }
+        },
+        {
+            "name": "Blade",
+            "from": [6.75, -2, 4.5], "to": [9.25, 1, 11.5],
+            "faces": {
+                "north": {"texture": "#wood", "uv": [6, 4, 8.5, 7]},
+                "east": {"texture": "#wood", "uv": [4, 4, 11, 7]},
+                "south": {"texture": "#wood", "uv": [6, 4, 8.5, 7]},
+                "west": {"texture": "#wood", "uv": [4, 4, 11, 7]},
+                "down": {"texture": "#wood", "uv": [6, 4, 8.5, 11]}
+            }
+        }
+    ]
+}

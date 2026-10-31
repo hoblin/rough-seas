@@ -31,6 +31,21 @@ public class MaterialTableTests
     }
 
     [Fact]
+    public void APartNotYetInHerAddsNothingAndAPartOfAnotherWoodWeighsItsVolumeOfThatWood()
+    {
+        var oak = new VesselPart { Material = "wood-oak", Share = 1 };
+        var bark = new VesselPart { Material = "hide", Share = 1 };
+        var full = table.Build([bark, oak], 100);
+
+        var bare = table.Build([bark, oak.As("wood-ebony", 0)], 100);
+        var ebony = table.Build([bark, oak.As("wood-ebony", 1)], 100);
+
+        Assert.Equal(50, bare.Kilograms, 6);
+        Assert.Equal(full.Litres, ebony.Litres, 6);
+        Assert.Equal(50 + 50.0 / 600 * 1200, ebony.Kilograms, 6);
+    }
+
+    [Fact]
     public void ScalesTheCapacityByEveryPartAgainstItsReference()
     {
         var parts = new[] { Part("wood-ebony", "wood-oak"), Part("rope-bast", "rope-flax") };

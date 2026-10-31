@@ -31,7 +31,7 @@ public class MaterialTable
 
         return parts.Aggregate(new HullBuild(0, 0), (build, part) =>
         {
-            double referenceShare = referenceKilograms * part.Share / shares;
+            double referenceShare = referenceKilograms * part.Share / shares * part.Present;
             double litres = Litres(referenceShare, ReferenceOf(part));
             return new HullBuild(build.Kilograms + litres / 1000 * Density(part.Material), build.Litres + litres);
         });

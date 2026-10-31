@@ -58,6 +58,18 @@ public abstract class Shell
         return solid;
     }
 
+    /// <summary>This shell lined by <paramref name="material"/> over <paramref name="lined"/> of what its finished lining covers.</summary>
+    public Shell Lined(string material, double lined)
+    {
+        if (Backing == null) return this;
+
+        var shell = (Shell)MemberwiseClone();
+        shell.Backing = lined > 0 ? new RigidShell { Material = material, Metres = Backing.Metres, SpanMetres = Backing.SpanMetres } : null;
+        shell.BackedShare = BackedShare * lined;
+        shell.BottomBackedShare = BottomBackedShare * lined;
+        return shell;
+    }
+
     public abstract double Holed(MaterialTable materials, double holeSquareMetres);
 
     public abstract double Slammed(MaterialTable materials);

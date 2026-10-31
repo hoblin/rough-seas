@@ -23,7 +23,7 @@ public class LogRowTests
 
         Assert.NotNull(row);
         Assert.Equal(Oak, row.Wood);
-        Assert.Equal(BlockFacing.SOUTH, row.Water);
+        Assert.Equal(BlockFacing.SOUTH, row.Water(water.Contains));
         Assert.Equal(Enumerable.Range(8, 5), row.Blocks.Select(pos => pos.X));
     }
 
@@ -33,7 +33,7 @@ public class LogRowTests
         Lay(Oak, Oak, Oak, Oak, Oak);
         Flood(BlockFacing.NORTH, -1);
 
-        Assert.Equal(BlockFacing.NORTH, Find()?.Water);
+        Assert.Equal(BlockFacing.NORTH, Find()?.Water(water.Contains));
     }
 
     [Fact]
@@ -61,7 +61,23 @@ public class LogRowTests
         Flood(BlockFacing.SOUTH, 0);
         water.Remove(new BlockPos(12, 5, 11));
 
-        Assert.Null(Find());
+        Assert.Null(Find()!.Water(water.Contains));
+    }
+
+    [Fact]
+    public void ARowIsFoundThroughAnyOfItsLogs()
+    {
+        Lay(Oak, Oak, Oak, Oak, Oak);
+
+        Assert.All(Enumerable.Range(8, 5), x => Assert.Equal(Centre, LogRow.Through(new BlockPos(x, 5, 10), logs.GetValueOrDefault)?.Centre));
+    }
+
+    [Fact]
+    public void FourLogsMakeNoRowThroughAnyOfThem()
+    {
+        Lay(Oak, Oak, Oak, Oak);
+
+        Assert.All(Enumerable.Range(8, 4), x => Assert.Null(LogRow.Through(new BlockPos(x, 5, 10), logs.GetValueOrDefault)));
     }
 
     private void Lay(params Wood[] woods)
@@ -74,5 +90,5 @@ public class LogRowTests
         foreach (var x in Enumerable.Range(8, 5)) water.Add(new BlockPos(x, 5 + dy, 10).AddCopy(side));
     }
 
-    private LogRow? Find() => LogRow.Find(Centre, logs.GetValueOrDefault, water.Contains);
+    private LogRow? Find() => LogRow.Find(Centre, logs.GetValueOrDefault);
 }

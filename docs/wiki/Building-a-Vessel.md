@@ -21,6 +21,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current and the wind |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:launch` | client and server | a push from the shore that slides a heavy vessel into the water ([Built in place](#built-in-place)) |
+| `roughseas:framing` | client and server | a bark hull stripped off a standing tree and framed piece by piece where it lies ([Framed in place](#framed-in-place)) |
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
@@ -150,6 +151,33 @@ Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its
 | `friction` | coefficient | 0 | of the hull sliding on the shore |
 
 List `roughseas:burnout` and `roughseas:launch` before `creaturecarrier`, so that a click with clay, dry grass, firewood or a torch builds her, and a push with Shift doesn't seat the player.
+
+### Framed in place
+
+`roughseas:framing` builds a vessel the way a bark canoe was really made: its bark comes off a standing tree in one sheet, and its frame goes into that sheet where it lies. A knife held on a standing trunk of your vessel's wood, at least `trunkBlocks` tall, for `barkSeconds`, strips the whole trunk and drops the vessel beside it at the start of her build: the entity of your vessel's code and that wood. The rule needs nothing from you: any vessel with this behaviour whose code ends in a wood (`barkcanoe-{wood}`) is stripped off that wood's grown logs, in every mod's woods, and the trunk stays a grown log of its tree with its bark gone, so that it still fells whole and holds its leaves.
+
+She is then laid stage by stage, in the order of `stages`, each piece held on her for its stage's `seconds`. A stage's `work` says what lays a piece of it:
+
+- `lath`: a lath, wet. Five logs lying end to end with a splitting wedge on each split into laths when an axe drives a wedge; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
+- `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done.
+- `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `stages` | list | none | what she is laid with, in order: each a `group`, a `work`, `seconds` a piece, and the flags below |
+| `group` | shape group | none | the group that draws the stage, one child per piece: `Frame1`, `Frame2`…; the count of children is the count of pieces |
+| `work` | `lath`, `rope` or `pitch` | `lath` | what lays a piece |
+| `seconds` | s | 0 | how long a piece is held on her: the real time of that work over sixty |
+| `lines` | bool | false | its laths line her shell: the shell's `backing` backs her only where they are laid |
+| `sets` | bool | false | its laths are bent in wet: she is finished only once the wettest of them has dried |
+| `seals` | bool | false | her hold holds water only once the stage is done; until then water runs through her |
+| `litres` | l | 0 | the pitch one piece takes |
+| `framePart` | material | none | the part of her `parts` her laths make: its share and its `reference` stay, the material is the laths' wood, and only what is laid weighs |
+| `laths`, `rope`, `pitch` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `game:rope`, `game:glueportion-pitch-*`) |
+| `barkSeconds` | s | 0 | how long the knife takes the bark off |
+| `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
+
+At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and she takes her seats only once finished. Give the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull: the behaviour shows the one or the other. A group `Paddle` shows once every piece is laid. The item lists `Sheet` in its `ignoreElements`. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
 
 ## The hull
 

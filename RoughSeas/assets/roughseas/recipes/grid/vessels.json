@@ -23,16 +23,16 @@
         "output": { "type": "item", "code": "roughseas:coracle" }
     },
     {
-        "name": "Bark canoe",
-        "ingredientPattern": "BBB,SRS,BBB",
+        "name": "Splitting wedge",
+        "ingredientPattern": "KF",
         "ingredients": {
-            "B": { "type": "item", "code": "roughseas:bark-*", "name": "wood", "quantity": 2 },
-            "S": { "type": "item", "code": "game:stick" },
-            "R": { "type": "item", "code": "game:resin" }
+            "K": { "type": "item", "tags": ["tool-knife"], "isTool": true },
+            "F": { "type": "item", "code": "game:firewood" }
         },
-        "width": 3,
-        "height": 3,
-        "output": { "type": "item", "code": "roughseas:barkcanoe-{wood}" }
+        "width": 2,
+        "height": 1,
+        "shapeless": true,
+        "output": { "type": "block", "code": "roughseas:wedge-we" }
     },
     {
         "name": "Hide currach",

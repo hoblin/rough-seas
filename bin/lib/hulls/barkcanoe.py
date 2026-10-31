@@ -1,10 +1,41 @@
-from shape import BILGE, Hull, Shape, box, paddle, throat
+import math
+
+from shape import BILGE, Hull, Shape, beam, box, group, paddle, path, plank, throat
 from stroke import crew, paddling
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
+CENTRE = 8
+SKIN = 0.6
 STOWED = ((-2, 1, 6.5), (0, 5, 3))
 SHAFT = 15
+VOXEL_METRES = 1 / 16
+
+GUNWALE = 0.6
+SHEATHING = 0.15
+SHEATHED_STRAKES = 3
+RIB_WIDTH = 1.2
+RIB_DEPTH = 0.45
+RIBS = range(-18, 36, 4)
+THWARTS = [(-8, 5.4, 5.6), (8, 5.8, 5.4), (24, 5.4, 5.6)]
+STERN = [(-19, 2.1), (-22, 2.75), (-24, 3.65), (-25.2, 5), (-25.6, 7), (-25.7, 9), (-25.5, 10.6), (-24.9, 11.4)]
+STEM_WIDTH = 0.8
+STEM_THICKNESS = 0.8
+GORES = [-20, -13, 29, 36]
+
+LASHING_STEP = 2.5
+STEM_STITCH_STEP = 1.6
+# Adney & Chapelle 1964, the Malecite canoe: groups of eight to ten turns of split root, about two inches apart,
+# round gunwales about 1 1/4 inch square on either side of the bark; the stem bound by a stitch to the inch.
+TURNS_PER_GROUP = 9
+ROOT_METRES = 0.003
+GROUP_GAP_METRES = 0.0508
+GUNWALE_METRES = 0.032
+BARK_METRES = 0.005
+STITCH_METRES = 0.0254
+STEM_GIRTH_METRES = 0.08
+# Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
+ROPE_METRES = 10
 
 
 def section(x, breadth, rocker, rise):
@@ -27,38 +58,150 @@ STATIONS = [
 ]
 
 
-def stem(name, x, direction):
+def lined(stations, depth):
+    lined_stations = []
+    for x, edges in stations:
+        inner = []
+        for k, (h, y) in enumerate(edges):
+            (h0, y0), (h1, y1) = edges[max(k - 1, 0)], edges[min(k + 1, len(edges) - 1)]
+            run, rise = h1 - h0, y1 - y0
+            norm = math.hypot(run, rise) or 1
+            inner.append((max(h - depth * rise / norm, 0), y + depth * run / norm))
+        lined_stations.append((x, inner))
+    return lined_stations
+
+
+def sheet():
+    girth = sum(math.dist(a, b) for a, b in zip(PROFILE, PROFILE[1:]))
+    flat, curl = girth - 2, 2.4
+    x0, x1 = STATIONS[0][0] - 1, STATIONS[-1][0] + 1
+    return group("Sheet", (0, 0, 0), (0, 0, 0), [
+        box("SheetFlat", (x0, 0, CENTRE - flat), (x1, 0.4, CENTRE + flat), "bark"),
+        box("SheetCurlPort", (x0 + 1, 0, CENTRE - flat - curl), (x1 - 1, 0.4, CENTRE - flat), "bark",
+            origin=(0, 0, CENTRE - flat), rot=(-28, 0, 0)),
+        box("SheetCurlStarboard", (x0 + 1, 0, CENTRE + flat), (x1 - 1, 0.4, CENTRE + flat + curl), "bark",
+            origin=(0, 0, CENTRE + flat), rot=(28, 0, 0)),
+    ])
+
+
+def gunwale(hull, name, side, inside):
+    top = len(PROFILE) - 1
     pieces = []
-    rises = [(0, 3.6, 6.5), (0.6, 6.5, 8.4), (1.1, 8.4, 9.7), (1.2, 9.7, 10.5)]
-    for n, (lean, low, high) in enumerate(rises, 1):
-        x0 = x + direction * lean
-        a, b = sorted((x0, x0 + direction * 1.6))
-        pieces.append(box(f"{name}{n}", (a, low, 7.4), (b, high, 8.6), "bark", grain="y"))
-    a, b = sorted((x + direction * 0.4, x + direction * 2.8))
-    pieces.append(box(f"{name}Head", (a, 9.6, 7.2), (b, 10.4, 8.8), "bark"))
+    for i in range(len(hull.stations) - 1):
+        a, b = hull.point(i, top, side), hull.point(i + 1, top, side)
+        if inside:
+            a, b = ((p[0], p[1] - GUNWALE, p[2] - side * SKIN) for p in (a, b))
+        else:
+            a, b = ((p[0], p[1] - GUNWALE, p[2]) for p in (a, b))
+        if abs(a[2] - b[2]) < 1e-6 and abs(a[2] - CENTRE) < 1e-6:
+            continue
+        pieces.append(plank(f"{name}{i + 1}", a, b, GUNWALE, GUNWALE, 0, side if inside else -side, "frame", "frame"))
     return pieces
 
 
-def build(path):
-    shape = Shape(path, {
+def thwart(n, x, half, y):
+    return [box(f"Thwart{n}", (x, y, CENTRE - half), (x + 1.4, y + 0.8, CENTRE + half), "frame", grain="z")]
+
+
+def stem(name, points):
+    return path(name, points, STEM_WIDTH, STEM_THICKNESS, "frame", grain="x")
+
+
+def bow(points):
+    middle = (STATIONS[0][0] + STATIONS[-1][0]) / 2
+    return [(2 * middle - x, y) for x, y in points]
+
+
+def on_centre(points, lift=0):
+    return [(x, y + lift, CENTRE) for x, y in points]
+
+
+def sheathing(hull):
+    liner = Hull("Sheathing", lined(hull.stations, SKIN)[1:-1], CENTRE, SHEATHING, "frame", "frame", edge="frame")
+    strakes = liner.strakes()
+    laths = []
+    for k in range(1, SHEATHED_STRAKES + 1):
+        for label in ("Port", "Starboard"):
+            prefix = f"Sheathing{label}{k}x"
+            laths.append([strake for strake in strakes if strake["name"].startswith(prefix)])
+    return laths
+
+
+def ribs(hull):
+    middle = (STATIONS[0][0] + STATIONS[-1][0]) / 2
+    order = sorted(RIBS, key=lambda x: (abs(x + RIB_WIDTH / 2 - middle), x))
+    return [hull.rib(f"Rib{n}x", x, "frame", width=RIB_WIDTH, depth=RIB_DEPTH) for n, x in enumerate(order, 1)]
+
+
+def wraps(hull):
+    top = len(PROFILE) - 1
+    margin = 0.1
+    girth = 2 * (2 * GUNWALE_METRES + BARK_METRES + GUNWALE_METRES)
+    turns_per_metre = TURNS_PER_GROUP / (TURNS_PER_GROUP * ROOT_METRES + GROUP_GAP_METRES)
+    turns, metres = [], 0
+    for side, label in ((-1, "Port"), (1, "Starboard")):
+        x, n = STATIONS[1][0] + 1, 1
+        while x < STATIONS[-2][0] - 1:
+            _, y, z = hull.at(x, top, side)
+            z0, z1 = sorted((z + side * (GUNWALE + margin), z - side * (SKIN + GUNWALE + margin)))
+            turns.append(box(f"Wrap{label}{n}", (x, y - GUNWALE - margin, z0), (x + 0.5, y + margin, z1), "lashing", grain="y"))
+            x, n = x + LASHING_STEP, n + 1
+        sheer = [hull.point(i, top, side) for i in range(len(hull.stations))]
+        metres += sum(math.dist(a, b) for a, b in zip(sheer, sheer[1:])) * VOXEL_METRES * turns_per_metre * girth
+    for name, points in (("Stern", STERN), ("Bow", bow(STERN))):
+        along = on_centre(points[2:-1])
+        for n, (a, b) in enumerate(zip(along, along[1:]), 1):
+            steps = max(1, round(math.dist(a, b) / STEM_STITCH_STEP))
+            for s in range(steps):
+                f = (s + 0.5) / steps
+                at = [p + f * (q - p) for p, q in zip(a, b)]
+                turns.append(box(f"Stitch{name}{n}x{s + 1}", (at[0] - 0.25, at[1] - 0.25, CENTRE - 1), (at[0] + 0.25, at[1] + 0.25, CENTRE + 1),
+                                 "lashing", grain="z"))
+            metres += math.dist(a, b) * VOXEL_METRES / STITCH_METRES * STEM_GIRTH_METRES
+    ropes = math.ceil(metres / ROPE_METRES)
+    print(f"lashing: {metres:.0f} m of root in {len(turns)} wraps, {ropes} ropes of {ROPE_METRES} m")
+    return [turns[len(turns) * r // ropes:len(turns) * (r + 1) // ropes] for r in range(ropes)]
+
+
+def gores(hull, side):
+    pieces = []
+    for n, x in enumerate(GORES, 1):
+        points = [hull.at(x, k, side) for k in range(1, len(PROFILE))]
+        points = [(p[0], p[1], p[2] + side * 0.05) for p in points]
+        pieces += path(f"Gore{'Port' if side < 0 else 'Starboard'}{n}x", points, 0.5, 0.15, "pitch", grain="y")
+    return pieces
+
+
+def seam(name, points):
+    return path(name, on_centre(points[1:-2]), STEM_WIDTH + 0.4, STEM_THICKNESS + 0.3, "pitch", grain="x")
+
+
+def stages(name, laths):
+    return group(name, (0, 0, 0), (0, 0, 0), [group(f"{name}{n}", (0, 0, 0), (0, 0, 0), pieces) for n, pieces in enumerate(laths, 1)])
+
+
+def build(path_):
+    shape = Shape(path_, {
         "bark": "game:block/wood/bark/birch-h",
         "frame": "game:block/wood/debarked/birch",
         "lashing": "game:item/resource/rope",
+        "pitch": "game:block/liquid/glue-cold",
         "bilge": BILGE,
     })
-    hull = Hull("Skin", STATIONS, 8, 0.6, "bark", "frame", edge="bark")
-    shape.add(hull.strakes())
-    shape.add(hull.rail("Gunwale", "frame", height=0.8, thickness=1.4, lift=-0.2))
-    for n, x in enumerate(range(-18, 36, 4), 1):
-        shape.add(hull.rib(f"Rib{n}x", x, "frame", width=1.2, depth=0.5))
-    shape.add(stem("SternStem", -25.2, -1), stem("BowStem", 41.2, 1))
-    for n, (x, half, y) in enumerate([(-8, 5.4, 5.6), (8, 5.8, 5.4), (24, 5.4, 5.6)], 1):
-        shape.add(box(f"Thwart{n}", (x, y, 8 - half), (x + 1.4, y + 0.8, 8 + half), "frame", grain="z"))
-    top = len(PROFILE) - 1
-    for side, label in ((-1, "Port"), (1, "Starboard")):
-        for n, x in enumerate(range(-18, 36, 5), 1):
-            _, y, z = hull.at(x, top, side)
-            shape.add(box(f"Lashing{label}{n}", (x, y - 1.1, z - 0.8), (x + 0.5, y + 0.45, z + 0.8), "lashing", grain="y"))
+    hull = Hull("Skin", STATIONS, CENTRE, SKIN, "bark", "bark", edge="bark")
+    shape.add(sheet(), group("Skin", (0, 0, 0), (0, 0, 0), hull.strakes()))
+    shape.add(stages("Frame", [
+        gunwale(hull, "InwalePort", -1, True),
+        gunwale(hull, "InwaleStarboard", 1, True),
+        *(thwart(n, *spec) for n, spec in enumerate(THWARTS, 1)),
+        gunwale(hull, "OutwalePort", -1, False),
+        gunwale(hull, "OutwaleStarboard", 1, False),
+    ]))
+    shape.add(stages("Stems", [stem("SternStem", on_centre(STERN)), stem("BowStem", on_centre(bow(STERN)))]))
+    shape.add(stages("Lashing", wraps(hull)))
+    shape.add(stages("Sheathing", sheathing(hull)))
+    shape.add(stages("Ribs", ribs(hull)))
+    shape.add(stages("Pitch", [seam("SternSeam", STERN), seam("BowSeam", bow(STERN)), gores(hull, -1), gores(hull, 1)]))
     shape.add(paddle(*STOWED, SHAFT, 7, "frame"))
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")

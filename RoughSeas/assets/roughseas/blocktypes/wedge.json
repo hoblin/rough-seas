@@ -1,0 +1,43 @@
+{
+    "code": "wedge",
+    "class": "roughseas:BlockWedge",
+    "variantgroups": [{"code": "grain", "states": ["we", "ns"]}],
+    "attributes": {
+        "splitSeconds": 18,
+        "laths": 32,
+        "lath": "roughseas:lath-{wood}-dry",
+        "sources": {
+            "splitSeconds": "Driving a row of wedges until a five-metre trunk splits along its grain, some 15 to 20 minutes (an estimate, about as long as felling such a tree with an axe), over sixty",
+            "laths": "A trunk halved five times over: 32 laths, as many as one canoe takes and a few to spare"
+        }
+    },
+    "shapeByType": {
+        "*-we": {"base": "roughseas:block/wedge", "rotateY": 90},
+        "*-ns": {"base": "roughseas:block/wedge"}
+    },
+    "textures": {"wood": {"base": "game:block/wood/debarked/oak"}},
+    "blockmaterial": "Wood",
+    "drawtype": "json",
+    "sidesolid": {"all": false},
+    "sideopaque": {"all": false},
+    "lightAbsorption": 0,
+    "replaceable": 100,
+    "resistance": 0.5,
+    "collisionboxByType": {
+        "*-we": {"x1": 0.25, "y1": 0, "z1": 0.375, "x2": 0.75, "y2": 0.25, "z2": 0.625},
+        "*-ns": {"x1": 0.375, "y1": 0, "z1": 0.25, "x2": 0.625, "y2": 0.25, "z2": 0.75}
+    },
+    "selectionboxByType": {
+        "*-we": {"x1": 0.25, "y1": 0, "z1": 0.375, "x2": 0.75, "y2": 0.25, "z2": 0.625},
+        "*-ns": {"x1": 0.375, "y1": 0, "z1": 0.25, "x2": 0.625, "y2": 0.25, "z2": 0.75}
+    },
+    "drops": [{"type": "block", "code": "roughseas:wedge-we"}],
+    "maxStackSize": 16,
+    "materialDensity": 700,
+    "combustibleProps": {"burnTemperature": 700, "burnDuration": 10},
+    "sounds": {"place": "game:block/planks", "hit": "game:block/planks", "break": "game:block/planks"},
+    "creativeinventory": {"general": ["*-we"], "items": ["*-we"]},
+    "guiTransform": {"rotation": {"x": -22, "y": 45, "z": 0}, "origin": {"x": 0.5, "y": 0.1, "z": 0.5}, "scale": 2.4},
+    "tpHandTransform": {"translation": {"x": -0.9, "y": -0.2, "z": -0.6}, "rotation": {"x": 0, "y": 0, "z": -60}, "scale": 0.8},
+    "groundTransform": {"origin": {"x": 0.5, "y": 0, "z": 0.5}, "scale": 2.5}
+}
