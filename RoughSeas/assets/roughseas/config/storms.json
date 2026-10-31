@@ -67,6 +67,22 @@
             "rollDamping": "A small hull without bilge keels rolls on for several swings: damping ratio about 0.06 to 0.1 (boatdesign.net, a 25 m patrol boat)"
         }
     },
+    "drive": {
+        "frictionCoefficient": 0.075,
+        "frictionLogOffset": 2,
+        "kinematicViscosity": 1.19e-6,
+        "minReynolds": 100000,
+        "crossFlowDrag": 1.848,
+        "crossFlowDragPerLengthOverDraft": -0.0591,
+        "lengthOverDraft": [5, 25],
+        "sources": {
+            "frictionCoefficient": "A hull's drag along its length at the low speeds the waves move it is skin friction on its wetted surface: the ITTC 1957 model-ship correlation line, C_F = 0.075 / (log10 Re - 2)^2",
+            "kinematicViscosity": "Seawater at 15 °C, 1.1892e-6 m2/s (ITTC 2011, Fresh Water and Seawater Properties, 7.5-02-01-03)",
+            "minReynolds": "The ITTC line is fitted to turbulent flow from model scale up; below Re 10^5 the boundary layer is laminar and the line no longer holds, so a slower hull takes the line's value there",
+            "crossFlowDrag": "A hull's drag across its length on its lateral area under water: the cross-flow drag coefficient fitted to captive model tests, C_D = 1.848 - 0.0591 L/d (Yoshimura, Nakao and Ishibashi, MARSIM 2009, eq. 19)",
+            "lengthOverDraft": "The span of length over draft the fit was made on (its figure 8); a hull outside it takes the fit's value at its end"
+        }
+    },
     "mooring": {
         "anchoredExposure": 0.3,
         "stakeRope": "rope-flax",
