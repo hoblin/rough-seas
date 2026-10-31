@@ -73,8 +73,10 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
         if (framing.Current is not { } stage) return;
 
         var laying = layings[stage];
-        var wood = laying.WoodOf(slot);
         double setsAt = sea.Clock.Hours + laying.WetHours(entity.World, slot);
+        if (WorkWith(slot) is not { Refusal: null }) return;
+
+        var wood = laying.WoodOf(slot);
         bool creative = (byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode == EnumGameMode.Creative;
         if (!creative) laying.Spend(slot, byEntity);
         slot.MarkDirty();
