@@ -57,14 +57,15 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     public override VesselPart[] Built(VesselPart[] designed) =>
         designed.Select(part => part.Name == config.FramePart
                 ? part.As(framing.Wood is { } wood ? WoodPrefix + wood : part.Material, framing.Framed)
-                : config.Stages.FirstOrDefault(stage => stage.Part == part.Name) is { } stage ? part.As(part.Material, framing.Share(stage))
+                : config.Stages.FirstOrDefault(stage => stage.Part == part.Name) is { } stage
+                    ? part.As(framing.WoodOf(stage) is { } pieces ? WoodPrefix + pieces : part.Material, framing.Share(stage))
                 : part).ToArray();
 
     public override Shell Formed(Shell designed) =>
         designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? "", framing.Lined);
 
     public override BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed) =>
-        designed.Where(drop => drop.ResolvedItemstack is not { } stack || LaidAny(new DummySlot(stack))).ToArray();
+        designed.Where(drop => drop.ResolvedItemstack is not { } stack || LaidAny(new DummySlot(stack))).Select(AsLaid).ToArray();
 
     public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
     {
@@ -112,9 +113,18 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
-        if (entity.Api is ICoreClientAPI capi && framing.Wood is { } wood)
+        if (entity.Api is not ICoreClientAPI capi) return;
+
+        if (framing.Wood is { } wood)
         {
             WoodTexture.Draw(capi, ref entityShape, ref shapeIsCloned, WoodTexture.Frame, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
+        }
+        foreach (var stage in config.Stages)
+        {
+            if (stage.Texture is { } texture && framing.WoodOf(stage) is { } pieces)
+            {
+                WoodTexture.Draw(capi, ref entityShape, ref shapeIsCloned, texture, pieces, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
+            }
         }
     }
 
@@ -130,6 +140,18 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     {
         var stages = layings.Where(laying => laying.Value.Takes(piece)).Select(laying => laying.Key).ToArray();
         return stages.Length == 0 || stages.Any(stage => framing.Laid(stage) > 0);
+    }
+
+    private BlockDropItemStack AsLaid(BlockDropItemStack drop)
+    {
+        if (drop.ResolvedItemstack?.Collectible is not { } piece
+            || layings.FirstOrDefault(laying => laying.Value.Takes(new DummySlot(drop.ResolvedItemstack))).Key is not { } stage
+            || framing.WoodOf(stage) is not { } laid) return drop;
+
+        var wood = Wood.Parse(laid);
+        var asLaid = drop.Clone();
+        asLaid.Code = new AssetLocation(wood.Domain, piece.CodeWithVariant(Wood.VariantCode, wood.Species).Path);
+        return asLaid.Resolve(entity.World, "laid wreckage", entity.Code) ? asLaid : drop;
     }
 
     private int Pieces(string group)

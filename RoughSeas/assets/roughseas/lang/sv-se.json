@@ -71,6 +71,7 @@
     "shipyard-hew-float": "Hugg till flottörens ände",
     "shipyard-bend-sail": "Slå under en våd av seglet",
     "shipyard-poles-one-wood": "Hennes rigg är av ett annat träslag: en rad stockar ger en rigg",
+    "shipyard-planks-one-wood": "Hennes stänkbord är av ett annat träslag: passa in plankor av ett träslag",
     "shipyard-rig-unfinished": "Gör stockbåten färdig innan du riggar henne",
     "shipyard-float-row": "Lägg tre stockar av samma träslag på sidan längs henne, den mittersta vid hennes mitt, ett block ifrån: hennes flottör",
     "shipyard-stage-booms": "Utriggarbommar: {0} av {1} stänger",

@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Şamandıranın ucunu yont",
     "shipyard-bend-sail": "Yelkenin bir parçasını bağla",
     "shipyard-poles-one-wood": "Donanımı başka bir ağaçtan: bir sıra kütük bir donanım eder",
+    "shipyard-planks-one-wood": "Yükseltme tahtaları başka bir ağaçtan: tek bir ağacın kalaslarını yerleştir",
     "shipyard-rig-unfinished": "Donatmadan önce oyma kayığı bitir",
     "shipyard-float-row": "Aynı ağaçtan üç kütüğü onun boyunca, ortadakini onun ortası hizasında, bir blok açıkta yan yatır: şamandırası",
     "shipyard-stage-booms": "Denge kolları: {0} / {1} sırık",

@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Az úszótest végének kifaragása",
     "shipyard-bend-sail": "Egy vitorlavászon felkötése",
     "shipyard-poles-one-wood": "A szerelete más fából van: egy sor rönk egy szerelethez elég",
+    "shipyard-planks-one-wood": "Az oldalmagasító deszkái más fából vannak: egyféle fából illessz deszkákat",
     "shipyard-rig-unfinished": "Előbb fejezd be a bödönhajót, csak aztán szereld fel",
     "shipyard-float-row": "Fektess három azonos fájú rönköt az oldalukra mellé, a középsőt a közepével szemben, egy blokknyira: ez az úszóteste",
     "shipyard-stage-booms": "Kitámasztórudak: {0} / {1} rúd",

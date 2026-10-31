@@ -73,6 +73,7 @@
     "shipyard-hew-float": "削尖浮木的一端",
     "shipyard-bend-sail": "系上一块帆布",
     "shipyard-poles-one-wood": "它的帆装是另一种木头：一排原木只够一套帆装",
+    "shipyard-planks-one-wood": "它的舷侧板是另一种木头：装上同一种木头的木板",
     "shipyard-rig-unfinished": "先造好独木舟，再给它装帆具",
     "shipyard-float-row": "把同一种木头的三根原木侧放在它旁边，中间那根对着它的中部，隔开一格：这是它的浮木",
     "shipyard-stage-booms": "横杆：{0} / {1} 根木杆",

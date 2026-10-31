@@ -71,6 +71,13 @@ bench_settings() {
 }
 
 cd "$root"
+if [ "$world" = stop ]; then
+  leave_world
+  stop_session "$session" "$BENCH_DATA"
+  echo "World saved and the client stopped"
+  exit
+fi
+
 dotnet build RoughSeas -v quiet -nologo
 dotnet build AgentBridge -v quiet -nologo
 seed_settings

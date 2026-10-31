@@ -72,6 +72,7 @@
     "shipyard-hew-float": "Hogg til flottørens ende",
     "shipyard-bend-sail": "Slå under en duk av seilet",
     "shipyard-poles-one-wood": "Riggen hennes er av et annet treslag: én rekke stokker gir én rigg",
+    "shipyard-planks-one-wood": "Skvettbordene hennes er av et annet treslag: tilpass planker av ett treslag",
     "shipyard-rig-unfinished": "Gjør stokkebåten ferdig før du rigger henne",
     "shipyard-float-row": "Legg tre stokker av samme treslag på siden langs henne, den midterste ut for midten hennes, en blokk unna: flottøren hennes",
     "shipyard-stage-booms": "Utriggerbommer: {0} av {1} stenger",

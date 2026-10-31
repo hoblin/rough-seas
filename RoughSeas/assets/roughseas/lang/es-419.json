@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Desbastar el extremo del flotador",
     "shipyard-bend-sail": "Envergar una pieza de la vela",
     "shipyard-poles-one-wood": "Su aparejo es de otra madera: una hilera de troncos da un aparejo",
+    "shipyard-planks-one-wood": "Sus falcas son de otra madera: ajusta tablas de una sola madera",
     "shipyard-rig-unfinished": "Termina la piragua antes de aparejarla",
     "shipyard-float-row": "Acuesta tres troncos de una misma madera a lo largo de ella, el del medio frente a su centro, a un bloque: su flotador",
     "shipyard-stage-booms": "Brazos: {0} de {1} perchas",

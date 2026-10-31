@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Đẽo đầu phao",
     "shipyard-bend-sail": "Buộc một tấm vải buồm",
     "shipyard-poles-one-wood": "Bộ buồm của nó là gỗ khác: một hàng gỗ làm được một bộ buồm",
+    "shipyard-planks-one-wood": "Ván be của nó là gỗ khác: hãy lắp ván cùng một loại gỗ",
     "shipyard-rig-unfinished": "Hoàn thành thuyền độc mộc trước khi lắp buồm",
     "shipyard-float-row": "Đặt ba khúc gỗ cùng loại nằm nghiêng dọc theo thuyền, khúc giữa ngang với giữa thuyền, cách một khối: phao của nó",
     "shipyard-stage-booms": "Cần phao: {0} trên {1} cây sào",

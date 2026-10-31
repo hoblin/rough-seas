@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Hew the float's end",
     "shipyard-bend-sail": "Bend on a cloth of the sail",
     "shipyard-poles-one-wood": "Her rig is of another wood: one row of logs makes one rig",
+    "shipyard-planks-one-wood": "Her washstrakes are of another wood: fit planks of one wood",
     "shipyard-rig-unfinished": "Finish the dugout before rigging her",
     "shipyard-float-row": "Lay three logs of one wood on their sides along her, the middle one beside her middle, a block off: her float",
     "shipyard-stage-booms": "Booms: {0} of {1} poles",

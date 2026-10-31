@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Höggva enda flotholtsins",
     "shipyard-bend-sail": "Festa dúk seglsins",
     "shipyard-poles-one-wood": "Reiði hans er úr öðrum viði: ein röð drumba gefur einn reiða",
+    "shipyard-planks-one-wood": "Byrðingar hans eru úr öðrum viði: felldu borð úr einum viði",
     "shipyard-rig-unfinished": "Kláraðu eintrjáninginn áður en þú reiðir hann",
     "shipyard-float-row": "Leggðu þrjá drumba af sama viði á hliðina meðfram honum, þann miðjasta við miðju hans, einum kubbi frá: flotholtið hans",
     "shipyard-stage-booms": "Þvertré: {0} af {1} stöngum",

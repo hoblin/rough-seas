@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Otesat konec plováku",
     "shipyard-bend-sail": "Přivázat kus plachty",
     "shipyard-poles-one-wood": "Její výstroj je z jiného dřeva: jedna řada klád dá jednu výstroj",
+    "shipyard-planks-one-wood": "Její nástavné desky jsou z jiného dřeva: usazujte desky z jednoho dřeva",
     "shipyard-rig-unfinished": "Nejdřív dokončete dlabaný člun, pak ho vystrojte",
     "shipyard-float-row": "Položte tři klády jednoho dřeva na bok podél něj, prostřední naproti jeho středu, blok od něj: jeho plovák",
     "shipyard-stage-booms": "Ramena: {0} z {1} tyčí",

@@ -73,6 +73,7 @@
     "shipyard-hew-float": "浮き材の端を削る",
     "shipyard-bend-sail": "帆布を一枚結び付ける",
     "shipyard-poles-one-wood": "この艤装は別の木です：丸太一列で艤装一つ分です",
+    "shipyard-planks-one-wood": "この舷側板は別の木です：同じ木の板を取り付けてください",
     "shipyard-rig-unfinished": "艤装する前に丸木舟を完成させてください",
     "shipyard-float-row": "同じ木の丸太3本を横に寝かせ、真ん中の1本を舟の真ん中に合わせて、1ブロック離して舟に沿って並べます：これが浮き材です",
     "shipyard-stage-booms": "腕木：円材 {0} / {1}",

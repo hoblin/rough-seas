@@ -1,6 +1,6 @@
 ![The outrigger canoe afloat](images/outrigger-canoe/afloat-bow.webp)
 
-A dugout with a float log held out to one side on three booms lashed across her gunwales, and a mast stayed fore, aft and out to the float: 5 blocks long and 3 across, hull, gap and float. For the open sea she takes washstrakes of sawn planks sewn along her sides and over her ends. Her crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Her hull, her float and her poles can each be of their own wood.
+A dugout with a float log held out to one side on three booms lashed across her gunwales, and a mast stayed fore, aft and out to the float: 5 blocks long and 3 across, hull, gap and float. For the open sea she takes washstrakes of sawn planks sewn along her sides and over her ends. Her crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Her hull, her float, her poles and her washstrakes can each be of their own wood.
 
 ## In Rough Seas
 
@@ -64,7 +64,7 @@ Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged whe
 
    ![Rigged, the sail furled on its spar](images/outrigger-canoe/build-rigged.webp)
 
-8. **Washstrakes, when you take her to sea.** Any time after she is finished, once you have a saw: hold planks on her, a board along each side four planks long and an end piece over her bow and her stern, ten in all, then four ropes to sew them on, a stitch every 7.6 cm. Sewn, they raise her side 15 cm and add 422 litres to her hold: a 2 m swell that boards a dugout runs past her. Without them she is a coastal boat.
+8. **Washstrakes, when you take her to sea.** Any time after she is finished, once you have a saw: hold planks of one wood on her, a board along each side four planks long and an end piece over her bow and her stern, ten in all, then four ropes to sew them on, a stitch every 7.6 cm. Sewn, they raise her side 15 cm and add 422 litres to her hold: a 2 m swell that boards a dugout runs past her. Without them she is a coastal boat.
 
    ![Washstrakes sewn along her sides and over her ends](images/outrigger-canoe/build-strakes.webp)
 

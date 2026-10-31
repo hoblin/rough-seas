@@ -72,6 +72,7 @@
     "shipyard-hew-float": "Hug flyderens ende til",
     "shipyard-bend-sail": "Slå en bane af sejlet under",
     "shipyard-poles-one-wood": "Hendes rig er af en anden træsort: én række stammer giver én rig",
+    "shipyard-planks-one-wood": "Hendes sætbord er af en anden træsort: tilpas planker af én træsort",
     "shipyard-rig-unfinished": "Gør stammebåden færdig, før du rigger hende til",
     "shipyard-float-row": "Læg tre stammer af samme træ på siden langs hende, den midterste ud for hendes midte, en blok fra: hendes flyder",
     "shipyard-stage-booms": "Udriggerbomme: {0} af {1} stænger",

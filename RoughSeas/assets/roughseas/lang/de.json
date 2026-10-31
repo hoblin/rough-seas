@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Das Ende des Schwimmers zuhauen",
     "shipyard-bend-sail": "Eine Bahn des Segels anschlagen",
     "shipyard-poles-one-wood": "Sein Rigg ist aus einer anderen Holzart: eine Reihe Stämme ergibt ein Rigg",
+    "shipyard-planks-one-wood": "Seine Setzborde sind aus einer anderen Holzart: passe Bretter derselben Holzart an",
     "shipyard-rig-unfinished": "Stelle den Einbaum fertig, bevor du ihn aufriggst",
     "shipyard-float-row": "Lege drei Stämme derselben Holzart auf die Seite neben ihn, den mittleren auf Höhe seiner Mitte, einen Block entfernt: sein Schwimmer",
     "shipyard-stage-booms": "Auslegerbäume: {0} von {1} Stangen",

@@ -71,6 +71,7 @@
     "shipyard-hew-float": "Het uiteinde van de drijver bijhakken",
     "shipyard-bend-sail": "Een kleed van het zeil aanslaan",
     "shipyard-poles-one-wood": "Zijn tuig is van een andere houtsoort: één rij stammen geeft één tuig",
+    "shipyard-planks-one-wood": "Zijn zetboorden zijn van een andere houtsoort: pas planken van één houtsoort",
     "shipyard-rig-unfinished": "Bouw de boomstamkano af voordat je hem tuigt",
     "shipyard-float-row": "Leg drie stammen van één houtsoort op hun zij langs hem, de middelste naast zijn midden, een blok ervandaan: zijn drijver",
     "shipyard-stage-booms": "Uitleggerbomen: {0} van {1} palen",

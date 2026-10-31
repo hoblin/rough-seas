@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Tailler le bout du flotteur",
     "shipyard-bend-sail": "Enverguer un carré de la voile",
     "shipyard-poles-one-wood": "Son gréement est d'un autre bois : une rangée de bûches donne un gréement",
+    "shipyard-planks-one-wood": "Ses fargues sont d'un autre bois : ajustez des planches d'un même bois",
     "shipyard-rig-unfinished": "Finissez la pirogue avant de la gréer",
     "shipyard-float-row": "Couchez trois bûches d'un même bois le long d'elle, celle du milieu face à son milieu, à un bloc : son flotteur",
     "shipyard-stage-booms": "Bras : {0} sur {1} perches",

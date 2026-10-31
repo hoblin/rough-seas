@@ -71,6 +71,7 @@
     "shipyard-hew-float": "Veistä kellukkeen pää",
     "shipyard-bend-sail": "Kiinnitä purjeen kaista",
     "shipyard-poles-one-wood": "Sen takila on toista puuta: yksi tukkirivi riittää yhteen takilaan",
+    "shipyard-planks-one-wood": "Sen laitalaudat ovat toista puuta: sovita saman puun lautoja",
     "shipyard-rig-unfinished": "Tee ruuhi valmiiksi ennen kuin takiloit sen",
     "shipyard-float-row": "Aseta kolme saman puun tukkia kyljelleen sen viereen, keskimmäinen sen keskikohdan kohdalle, kuution päähän: sen kelluke",
     "shipyard-stage-booms": "Ulokepuomit: {0} / {1} salkoa",

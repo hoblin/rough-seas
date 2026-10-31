@@ -72,7 +72,7 @@
                 {"group": "Mast", "work": "pole", "seconds": 3},
                 {"group": "SailFurled", "work": "cloth", "seconds": 15},
                 {"group": "Stays", "work": "rope", "seconds": 15},
-                {"group": "Strakes", "work": "plank", "seconds": 20, "optional": true, "part": "strakes"},
+                {"group": "Strakes", "work": "plank", "seconds": 20, "optional": true, "part": "strakes", "texture": "plank"},
                 {"group": "Seams", "work": "rope", "seconds": 15, "optional": true, "raisesMetres": 0.15, "raisesLitres": 422}
             ],
             "sources": {

@@ -73,6 +73,7 @@
     "shipyard-hew-float": "Sgrossare l'estremità del galleggiante",
     "shipyard-bend-sail": "Inferire una pezza della vela",
     "shipyard-poles-one-wood": "La sua attrezzatura è di un altro legno: una fila di tronchi dà un'attrezzatura",
+    "shipyard-planks-one-wood": "Le sue falche sono di un altro legno: adatta assi di un solo legno",
     "shipyard-rig-unfinished": "Finisci la piroga prima di armarla",
     "shipyard-float-row": "Stendi tre tronchi dello stesso legno su un fianco lungo di lei, quello centrale accanto al suo centro, a un blocco: il suo galleggiante",
     "shipyard-stage-booms": "Bracci: {0} di {1} pertiche",

@@ -73,6 +73,7 @@
     "shipyard-hew-float": "부력재 끝 깎기",
     "shipyard-bend-sail": "돛천 한 장 달기",
     "shipyard-poles-one-wood": "의장이 다른 나무입니다: 통나무 한 줄로 의장 한 벌을 만듭니다",
+    "shipyard-planks-one-wood": "뱃전 덧판이 다른 나무입니다: 같은 나무의 판자를 맞추십시오",
     "shipyard-rig-unfinished": "의장하기 전에 통나무배를 완성하십시오",
     "shipyard-float-row": "같은 나무 통나무 세 개를 옆으로 눕혀, 가운데 것을 배의 가운데에 맞추고, 한 블록 떨어뜨려 배와 나란히 놓으십시오: 부력재가 됩니다",
     "shipyard-stage-booms": "버팀대: 장대 {0} / {1}",

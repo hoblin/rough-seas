@@ -48,6 +48,9 @@ START
                        BENCH_MODS picks the mods loaded (default "roughseas agentbridge"):
                        BENCH_MODS=agentbridge, or BENCH_MODS= for vanilla, to tell our crash from
                        the game's. Without agentbridge, bin/game cannot drive it; read the log.
+  bin/client stop      close the game when done: save and leave the world, waiting for the save,
+                       then stop the client. Killing its tmux session instead loses what changed
+                       since the last autosave.
   bin/client server    connect the client to this clone's dedicated server instead (multiplayer).
                        The player needs admin there, once per server data folder:
                        tmux send-keys -t <bench>-server '/op <your player name>' Enter
