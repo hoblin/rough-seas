@@ -77,7 +77,7 @@ A player meets your work at sea, not in the diff. Before the PR leaves draft, lo
 
 Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[shipyard\]\|\[sounds\]\|\[ew\]' "$BENCH_DATA/Logs/server-debug.log"`; what a client decides, such as the sounds it plays itself, is in `client-debug.log`).
 
-Close the game when you're done testing. A bench client left running holds the machine's video memory, and three clones' games starve everything else. Leave the world with `bin/game leave`. In a world the client opened itself, wait for a new `Stopped the server!` line in `$BENCH_DATA/Logs/server-main.log`, since the world is saved only then; a client connected to a server just disconnects. Then `tmux kill-session -t "$BENCH-client"`. A server stops with `/stop` in its tmux session, `$BENCH-server`.
+Close the game when you're done testing. A bench client left running holds the machine's video memory, and three clones' games starve everything else. `bin/client stop` saves the world, waits for the save and stops the client; killing its tmux session instead loses whatever changed since the last autosave. A server stops with `/stop` in its tmux session, `$BENCH-server`.
 
 ## Shipping
 
