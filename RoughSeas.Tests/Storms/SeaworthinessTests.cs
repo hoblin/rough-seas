@@ -10,12 +10,12 @@ public class SeaworthinessTests
     private readonly SwampingConfig swamping = Fixtures.Config().Swamping;
 
     [Fact]
-    public void AMetreAndAHalfSwellComesOverTheDugoutButNotTheCurrachOrTheOutrigger()
+    public void AMetreAndAHalfSwellComesOverTheDugoutAndTheOutriggerBuiltOnHerButNotTheCurrach()
     {
         var crest = waves.Crest(1.5, breaking: false);
         Assert.True(Of("dugout").ShippedShare(crest) > 0);
+        Assert.True(Of("outrigger").ShippedShare(crest) > 0);
         Assert.Equal(0, Of("currach").ShippedShare(crest));
-        Assert.Equal(0, Of("outrigger").ShippedShare(crest));
     }
 
     [Fact]

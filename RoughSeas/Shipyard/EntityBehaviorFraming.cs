@@ -17,17 +17,18 @@ namespace RoughSeas.Shipyard;
 /// A vessel built up from the bark sheet stripped off a standing tree, stage by stage in the order her
 /// <see cref="FramingConfig.Stages"/> give, each piece drawn where it lies.
 /// </summary>
-public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
+public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity), IWorkedHull
 {
     public const string Code = "roughseas:framing";
 
-    private const int DataVersion = 1;
-    private const string WoodPrefix = "wood-";
+    protected const int DataVersion = 1;
+    protected const string WoodPrefix = "wood-";
 
     private FramingConfig config = null!;
-    private Framing framing = null!;
     private Dictionary<FramingStage, Laying> layings = null!;
     private ISeaWeather sea = null!;
+
+    protected Framing framing = null!;
 
     public override bool Finished => framing.Finished(sea.Clock.Hours);
 
@@ -42,7 +43,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         base.Initialize(properties, attributes);
-        config = attributes.AsObject<FramingConfig>(new FramingConfig());
+        config = Configure(attributes);
         config.Count(Pieces);
         framing = new Framing(() => Tree, MarkDirty, config.Stages);
         layings = config.Stages.ToDictionary(stage => stage, stage => Laying.For(stage, config));
@@ -52,22 +53,20 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
     public static void Begin(Entity vessel) => Begin(vessel, DataVersion, _ => { });
 
     public override VesselPart[] Built(VesselPart[] designed) =>
-        designed.Select(part => part.Material == config.FramePart
+        designed.Select(part => part.Name == config.FramePart
             ? part.As(framing.Wood is { } wood ? WoodPrefix + wood : part.Material, framing.Framed)
             : part).ToArray();
 
     public override Shell Formed(Shell designed) =>
-        designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? config.FramePart, framing.Lined);
+        designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? "", framing.Lined);
 
-    /// <summary>The work the held item does on her now, with the lang key refusing it, or null when it does none.</summary>
-    public (FramingStage Stage, string? Refusal)? WorkWith(ItemSlot slot)
+    public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
     {
         if (framing.Current is not { } stage || !layings[stage].Takes(slot)) return null;
 
-        return (stage, layings[stage].Refusal(slot, framing));
+        return (stage.Seconds, layings[stage].Refusal(slot, framing));
     }
 
-    /// <summary>Lays the current stage's next piece from <paramref name="slot"/>. Server only.</summary>
     public void Lay(EntityAgent byEntity, ItemSlot slot)
     {
         if (framing.Current is not { } stage) return;
@@ -84,7 +83,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
         entity.World.PlaySoundAt(new AssetLocation("game:sounds/player/build"), entity, null, true, 16);
         Shipyard.Log(entity, "{0} lays {1} {2} of {3}{4}{5}", byEntity.GetName(), stage.Group, framing.Laid(stage), stage.Pieces,
             wood != null ? $", of {wood}" : "", stage.Sets ? $", setting in {setsAt - sea.Clock.Hours:F0} h" : "");
-        if (framing.Built) Shipyard.Log(entity, "built: her ribs set in {0:F0} h", Math.Max(0, framing.SetsAt - sea.Clock.Hours));
+        if (framing.Built) Shipyard.Log(entity, "built{0}", framing.Stages.Any(stage => stage.Sets) ? $": her ribs set in {Math.Max(0, framing.SetsAt - sea.Clock.Hours):F0} h" : "");
     }
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
@@ -109,9 +108,11 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
         if (entity.Api is ICoreClientAPI capi && framing.Wood is { } wood)
         {
-            LathTexture.Draw(capi, ref entityShape, ref shapeIsCloned, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
+            LathTexture.Draw(capi, ref entityShape, ref shapeIsCloned, LathTexture.Frame, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
         }
     }
+
+    protected virtual FramingConfig Configure(JsonObject attributes) => attributes.AsObject<FramingConfig>(new FramingConfig());
 
     protected override IEnumerable<string> Hidden() => framing.Hidden();
 
@@ -129,13 +130,15 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
     }
 }
 
-public sealed class FramingConfig
+public class FramingConfig
 {
     public FramingStage[] Stages = [];
 
-    public static FramingConfig? Of(EntityProperties type) =>
+    public static FramingConfig? Of(EntityProperties type) => Of<FramingConfig>(type, EntityBehaviorFraming.Code);
+
+    protected static T? Of<T>(EntityProperties type, string code) where T : FramingConfig =>
         (type.Server?.BehaviorsAsJsonObj ?? type.Client?.BehaviorsAsJsonObj)?
-            .FirstOrDefault(behavior => behavior["code"].AsString() == EntityBehaviorFraming.Code)?.AsObject<FramingConfig>();
+            .FirstOrDefault(behavior => behavior["code"].AsString() == code)?.AsObject<T>();
 
     public static int PiecesIn(Shape? shape, string group) => shape?.GetElementByName(group)?.Children?.Length ?? 0;
 
@@ -150,9 +153,13 @@ public sealed class FramingConfig
 
     public string Laths = "";
 
+    public string Poles = "";
+
     public string Rope = "";
 
     public string Pitch = "";
+
+    public string Cloth = "";
 
     /// <summary>How long a knife takes the bark off a standing trunk: the real time of that work over sixty.</summary>
     public double BarkSeconds;

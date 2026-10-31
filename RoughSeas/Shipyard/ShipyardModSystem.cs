@@ -22,6 +22,8 @@ public class ShipyardModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorBurnout.Code, typeof(EntityBehaviorBurnout));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHew.Code, typeof(CollectibleBehaviorHew));
         api.RegisterEntityBehaviorClass(EntityBehaviorFraming.Code, typeof(EntityBehaviorFraming));
+        api.RegisterEntityBehaviorClass(EntityBehaviorRigging.Code, typeof(EntityBehaviorRigging));
+        api.RegisterEntityBehaviorClass(EntityBehaviorRiggable.Code, typeof(EntityBehaviorRiggable));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorFraming.Code, typeof(CollectibleBehaviorFraming));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorCarriedBuild.Code, typeof(CollectibleBehaviorCarriedBuild));
         api.RegisterBlockBehaviorClass(BlockBehaviorStrippable.Code, typeof(BlockBehaviorStrippable));
@@ -58,16 +60,20 @@ public class ShipyardModSystem : ModSystem
         {
             axe.CollectibleBehaviors = axe.CollectibleBehaviors.Append(new CollectibleBehaviorHew(axe));
         }
-        var ropes = new List<AssetLocation>();
+        var tools = new List<AssetLocation>();
         foreach (var type in api.World.EntityTypes)
         {
-            if (FramingConfig.Of(type) is not { } framing || Wood.Of(type.Variant) is not { } wood) continue;
+            if (Wood.Of(type.Variant) is not { } wood) continue;
 
-            Strippable(api.World, type, wood, framing);
-            ropes.Add(new AssetLocation(framing.Rope));
-            if (api.World.GetItem(type.Code) is { } item) item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
+            var framing = FramingConfig.Of(type);
+            if (framing != null)
+            {
+                Strippable(api.World, type, wood, framing);
+                if (api.World.GetItem(type.Code) is { } item) item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
+            }
+            if ((framing ?? RiggingConfig.Of(type)) is { } built) tools.AddRange(Tools(built));
         }
-        Framed(api.World, ropes);
+        Framed(api.World, tools);
     }
 
     public void Log(Entity entity, string format, params object[] args) =>
@@ -85,6 +91,8 @@ public class ShipyardModSystem : ModSystem
 
     private void Strippable(IWorldAccessor world, EntityProperties type, Wood wood, FramingConfig framing)
     {
+        if (framing.BarkSeconds <= 0) return;
+
         var grown = world.GetBlock(new AssetLocation(wood.Domain, $"log-grown-{wood.Species}-ud"));
         var debarked = world.GetBlock(new AssetLocation(Mod.Info.ModID, $"debarkedtrunk-{wood.Code}"));
         if (grown == null || debarked == null)
@@ -106,11 +114,14 @@ public class ShipyardModSystem : ModSystem
         grown.CollectibleBehaviors = grown.CollectibleBehaviors.Append(behavior);
     }
 
-    /// <summary>Lets rope and every liquid container lay a canoe's pieces, as her laths do by their own JSON.</summary>
-    private static void Framed(IWorldAccessor world, List<AssetLocation> ropes)
+    private static IEnumerable<AssetLocation> Tools(FramingConfig built) =>
+        new[] { built.Rope, built.Cloth }.Where(code => code != "").Select(code => new AssetLocation(code));
+
+    /// <summary>Lets rope, cloth, axes and every liquid container lay a vessel's pieces, as her laths and poles do by their own JSON.</summary>
+    private static void Framed(IWorldAccessor world, List<AssetLocation> codes)
     {
         var tools = world.Collectibles.Where(collectible => collectible?.Code != null
-            && (collectible is BlockLiquidContainerBase || ropes.Any(rope => WildcardUtil.Match(rope, collectible.Code))));
+            && (collectible is BlockLiquidContainerBase || collectible.Tool == EnumTool.Axe || codes.Any(code => WildcardUtil.Match(code, collectible.Code))));
         foreach (var tool in tools.Where(tool => !tool.HasBehavior<CollectibleBehaviorFraming>()))
         {
             tool.CollectibleBehaviors = tool.CollectibleBehaviors.Append(new CollectibleBehaviorFraming(tool));

@@ -243,6 +243,24 @@ public class HullModelTests
         Assert.True(SinksDry());
     }
 
+    [Fact]
+    public void ACrackStaysWhereItIsWhenTheHullIsTurnedEndForEnd()
+    {
+        var hull = Cracking("dugout");
+        hull.Take(HullPlace.PortBow, 0.3);
+        hull.Take(HullPlace.Bottom, 0.2);
+
+        hull.TurnEndForEnd(tree);
+
+        Assert.Equal(0.3, hull.Crack(HullPlace.StarboardQuarter), 6);
+        Assert.Equal(0.2, hull.Crack(HullPlace.Bottom), 6);
+        Assert.Equal(0, hull.Crack(HullPlace.PortBow));
+    }
+
+    [Fact]
+    public void TurningEndForEndTwiceBringsEveryPlaceBack() =>
+        Assert.All(HullShape.Places, place => Assert.Equal(place, place.EndForEnd().EndForEnd()));
+
     private CrackingHull Cracking(string vessel) =>
         new(() => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig(vessel)), Fixtures.HullConfig);
 

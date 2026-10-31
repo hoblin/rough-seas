@@ -21,6 +21,21 @@ def section(x, breadth, lift):
     return (x, [(h * breadth, y + lift * (1 - y / RIM)) for h, y in PROFILE])
 
 
+STATIONS = [
+    section(-17, 0.72, 1.2),
+    section(-11, 0.92, 0.4),
+    section(-3, 1, 0),
+    section(7, 1, 0),
+    section(17, 1, 0),
+    section(25, 0.92, 0.4),
+    section(31, 0.72, 1.2),
+]
+
+
+def log(hull):
+    return [hull.strakes(), *(end(name, slices, hull.cz) for name, slices in ENDS.items())]
+
+
 def end(name, slices, centre):
     blocks = []
     for n, (x0, x1, half, bottom) in enumerate(slices, 1):
@@ -73,19 +88,9 @@ def build(path):
     shape = Shape(path, {"inside": "game:block/wood/debarked/oak", "bilge": BILGE, "char": "game:block/coal/charcoal",
                          "clay": "game:block/clay/blueclay", "ember": "game:block/coal/ember",
                          "burntlog": "game:block/wood/firepit/burntlog"})
-    stations = [
-        section(-17, 0.72, 1.2),
-        section(-11, 0.92, 0.4),
-        section(-3, 1, 0),
-        section(7, 1, 0),
-        section(17, 1, 0),
-        section(25, 0.92, 0.4),
-        section(31, 0.72, 1.2),
-    ]
-    hull = Hull("Side", stations, 8, WALL, WOOD, WOOD, edge=WOOD)
-    shape.add(hull.strakes())
-    shape.add(*(end(name, slices, hull.cz) for name, slices in ENDS.items()))
-    shape.add(blank(hull, min(edges[0][1] for _, edges in stations) + hull.t), clay(hull))
+    hull = Hull("Side", STATIONS, 8, WALL, WOOD, WOOD, edge=WOOD)
+    shape.add(*log(hull))
+    shape.add(blank(hull, min(edges[0][1] for _, edges in STATIONS) + hull.t), clay(hull))
     shape.add(hull.hide_water(7.7), hull.bilge(7.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
     shape.write()

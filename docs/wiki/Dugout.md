@@ -85,7 +85,7 @@ She floats, and an axe breaks her up, at every stage, so a half-built dugout can
 
 - The [birch-bark canoe](Birch-Bark-Canoe) is the other river boat: faster, carried around the falls and through the [rapids](Rapids), but holed by a landing the dugout never notices.
 - The [reed boat](Reed-Boat) and the [raft](Raft) are cheaper and don't last.
-- For the sea, the [outrigger canoe](Outrigger-Canoe) is a dugout made steady with a float.
+- For the sea, the [outrigger canoe](Outrigger-Canoe) is a dugout made steady with a float: a finished dugout is rigged into one where she lies.
 
 ## Every form it takes
 

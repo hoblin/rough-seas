@@ -156,16 +156,26 @@ public class VesselShapeTests
     public void DrawsEveryPieceOfItsFramingInItsOwnGroup(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
-        if (entity["behaviorConfigs"]!["roughseas:framing"]?["stages"] is not { } stages) return;
+        var configs = entity["behaviorConfigs"]!;
+        if ((configs["roughseas:framing"] ?? configs["roughseas:rigging"])?["stages"] is not { } stages) return;
 
         var elements = Elements(shape["elements"]!).ToDictionary(element => element.Value<string>("name")!);
-        Assert.Contains("Sheet", elements.Keys);
-        Assert.Contains("Skin", elements.Keys);
-        Assert.All(stages.Select(stage => stage.Value<string>("group")!), group =>
+        if (configs["roughseas:framing"]?.Value<double>("barkSeconds") > 0)
         {
-            var pieces = elements[group]["children"]!.Select(piece => piece.Value<string>("name")).ToList();
+            Assert.Contains("Sheet", elements.Keys);
+            Assert.Contains("Skin", elements.Keys);
+        }
+        List<string?> Pieces(string group) => elements[group]["children"]!.Select(piece => piece.Value<string>("name")).ToList();
+        Assert.All(stages, stage =>
+        {
+            var group = stage.Value<string>("group")!;
+            var pieces = Pieces(group);
             Assert.NotEmpty(pieces);
             Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{group}{n}"), pieces);
+            if (stage.Value<string>("replaces") is { } replaced)
+            {
+                Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{replaced}{n}"), Pieces(replaced));
+            }
         });
     }
 

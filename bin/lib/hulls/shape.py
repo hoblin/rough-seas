@@ -91,6 +91,10 @@ def group(name, at, rot, children):
     return box(name, at, at, {}, origin=at, rot=rot, children=children)
 
 
+def stages(name, pieces):
+    return group(name, (0, 0, 0), (0, 0, 0), [group(f"{name}{n}", (0, 0, 0), (0, 0, 0), piece) for n, piece in enumerate(pieces, 1)])
+
+
 def heading(start, end):
     dx, dy, dz = (e - s for s, e in zip(start, end))
     level = math.hypot(dx, dz)
@@ -303,8 +307,8 @@ class Shape:
     def turn_about(self, centre):
         self.elements = [mirror(element, centre) for element in self.elements]
 
-    def keep(self, *names):
-        current = {e["name"]: e for e in json.loads(self.path.read_text())["elements"]}
+    def keep(self, *names, source=None):
+        current = {e["name"]: e for e in json.loads(Path(source or self.path).read_text())["elements"]}
         for name in names:
             self.elements.append(current[name])
 

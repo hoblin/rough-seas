@@ -283,7 +283,7 @@ seats() {
 
 strokes() {
   local codes=("$@") dir=strokes id
-  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:outrigger-oak roughseas:coracle roughseas:currach)
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:coracle roughseas:currach)
   for code in "${codes[@]}"; do
     clear >/dev/null
     id=$(dock "$code" | jq -r '.vessels[0].EntityId')
@@ -337,8 +337,6 @@ splitting-wedge    block-roughseas:wedge-we          roughseas:wedge-we
 reed-boat          item-roughseas:reedboat           roughseas:reedboat
 coracle            item-roughseas:coracle            roughseas:coracle
 currach            item-roughseas:currach            roughseas:currach
-outrigger          item-roughseas:outrigger-oak      roughseas:outrigger-oak
-outrigger-redwood  item-roughseas:outrigger-redwood  roughseas:outrigger-redwood
 anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
 anchor-warp-ropes  item-rope                         game:rope                    roughseas:anchorwarp
 EOF

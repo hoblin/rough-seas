@@ -131,7 +131,7 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 | --- | --- | --- | --- | --- |
 | [Coracle](Coracle) | 250 litres | 107 litres a minute | 21 | two and a half minutes |
 | [Dugout](Dugout) | 450 litres | 184 | 130 | two and a half minutes |
-| [Outrigger canoe](Outrigger-Canoe) | 600 litres | 186 | 98 | three minutes |
+| [Outrigger canoe](Outrigger-Canoe) | 450 litres | 190 | 138 | two and a half minutes |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 600 litres | 84 | none | seven minutes |
 | [Sailboat](Sailboat) | 1500 litres | 325 | 242 | four and a half minutes |
 | [Hide currach](Hide-Currach) | 1500 litres | 86 | none | seventeen minutes |
@@ -166,7 +166,7 @@ A vessel broken up, by one severe blow, by every place stove in, by its lashings
 | [Coracle](Coracle) | a few sticks |
 | [Birch-bark canoe](Birch-Bark-Canoe) | some bark and a stick |
 | [Hide currach](Hide-Currach) | sticks and a couple of leathers |
-| [Outrigger canoe](Outrigger-Canoe) | a few planks, a rope and some linen |
+| [Outrigger canoe](Outrigger-Canoe) | firewood, a rope and some linen |
 
 Whatever it carried goes with it.
 

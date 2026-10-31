@@ -13,7 +13,10 @@ public abstract class Laying
     public static Laying For(FramingStage stage, FramingConfig config) => stage.Work switch
     {
         FramingWork.Lath => new LathLaying(new AssetLocation(config.Laths)),
+        FramingWork.Pole => new PoleLaying(new AssetLocation(config.Poles)),
         FramingWork.Rope => new RopeLaying(new AssetLocation(config.Rope)),
+        FramingWork.Hew => new HewLaying(),
+        FramingWork.Cloth => new ClothLaying(new AssetLocation(config.Cloth)),
         _ => new PitchLaying(new AssetLocation(config.Pitch), stage.Litres)
     };
 
@@ -62,7 +65,45 @@ public sealed class LathLaying(AssetLocation laths) : Laying
         world.SearchItems(laths).Where(lath => lath.Variant["state"] == Wet).Select(lath => new ItemStack(lath));
 }
 
-/// <summary>A rope, its length the lashing that binds the bark to her gunwales and stems.</summary>
+public sealed class PoleLaying(AssetLocation poles) : Laying
+{
+    public override string Action => "roughseas:shipyard-lay-pole";
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible is { } pole && WildcardUtil.Match(poles, pole.Code);
+
+    public override string? Refusal(ItemSlot slot, Framing framing) =>
+        framing.Wood is { } wood && wood != WoodOf(slot) ? "shipyard-poles-one-wood" : null;
+
+    public override string? WoodOf(ItemSlot slot) => slot.Itemstack?.Collectible.Variant["wood"];
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) => world.SearchItems(poles).Select(pole => new ItemStack(pole));
+}
+
+public sealed class HewLaying : Laying
+{
+    public override string Action => "roughseas:shipyard-hew-float";
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible.Tool == EnumTool.Axe;
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.Itemstack!.Collectible.DamageItem(byEntity.World, byEntity, slot);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
+        world.Items.Where(item => item.Code != null && item.Tool == EnumTool.Axe).Select(axe => new ItemStack(axe));
+}
+
+public sealed class ClothLaying(AssetLocation cloth) : Laying
+{
+    public override string Action => "roughseas:shipyard-bend-sail";
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible is { } piece && WildcardUtil.Match(cloth, piece.Code);
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) => world.SearchItems(cloth).Select(piece => new ItemStack(piece));
+}
+
 public sealed class RopeLaying(AssetLocation rope) : Laying
 {
     public override string Action => "roughseas:shipyard-lash";

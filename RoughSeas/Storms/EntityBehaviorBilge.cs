@@ -12,7 +12,7 @@ using RoughSeas.Vessels;
 
 namespace RoughSeas.Storms;
 
-public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesselHold
+public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesselHold, IHandedOver
 {
     public const string Code = "roughseas:bilge";
 
@@ -86,6 +86,8 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     {
         if (form.Value != null) form.Value.Reformed += ShowWater;
     }
+
+    public void HandOver(Entity successor, bool endForEnd) => successor.WatchedAttributes.SetAttribute(TreeKey, Tree.Clone());
 
     public void Ship(double litres, string cause)
     {

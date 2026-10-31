@@ -14,7 +14,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
-public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
+public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 {
     public const string Code = "roughseas:vesselintegrity";
 
@@ -335,6 +335,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
         var item = stack.Collectible;
         model.Adopt(CarriedCondition.Integrity(item.GetRemainingDurability(stack), item.GetMaxDurability(stack)));
+    }
+
+    public void HandOver(Entity successor, bool endForEnd)
+    {
+        var handed = (ITreeAttribute)Tree.Clone();
+        if (endForEnd) model.TurnEndForEnd(handed);
+        successor.WatchedAttributes.SetAttribute(TreeKey, handed);
     }
 
     /// <summary>Vanilla's shift pickup, server only, with the hull's condition carried on the item.</summary>

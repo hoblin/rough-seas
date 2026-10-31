@@ -7,8 +7,8 @@ using Vintagestory.API.Datastructures;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A bark hull framed where she lies: her stages are laid in order, piece by piece, until her seams are sealed and
-/// her ribs have set. Her state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is
+/// A vessel framed or rigged where she lies: her stages are laid in order, piece by piece, until her seams are sealed
+/// and her ribs have set. Her state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is
 /// finished.
 /// </summary>
 public sealed class Framing
@@ -16,7 +16,7 @@ public sealed class Framing
     public const string SheetGroup = "Sheet";
     public const string SkinGroup = "Skin";
 
-    private const string WoodKey = "wood";
+    public const string WoodKey = "wood";
     private const string SetsAtKey = "setsAt";
 
     private readonly Func<ITreeAttribute?> tree;
@@ -43,7 +43,7 @@ public sealed class Framing
     public double SetsAt => Tree?.GetDouble(SetsAtKey) ?? 0;
 
     /// <summary>How much of her frame's wood is in her.</summary>
-    public double Framed => Share(stage => stage.Work == FramingWork.Lath);
+    public double Framed => Share(stage => stage.Work is FramingWork.Lath or FramingWork.Pole);
 
     /// <summary>How much of her lining is laid.</summary>
     public double Lined => Share(stage => stage.Lines);
@@ -56,12 +56,13 @@ public sealed class Framing
     /// <summary>The groups of her shape that her build doesn't show yet, or no longer shows.</summary>
     public IEnumerable<string> Hidden()
     {
-        if (Tree == null) return [SheetGroup];
+        var pieces = Stages.SelectMany(stage =>
+            Enumerable.Range(Laid(stage) + 1, Math.Max(0, stage.Pieces - Laid(stage))).Select(n => $"{stage.Group}{n}")
+                .Concat(stage.Replaces is { } replaced ? Enumerable.Range(1, Laid(stage)).Select(n => $"{replaced}{n}") : []));
+        if (Tree == null) return pieces.Append(SheetGroup);
 
         bool started = Stages.Any(stage => Laid(stage) > 0);
-        return Stages
-            .SelectMany(stage => Enumerable.Range(Laid(stage) + 1, Math.Max(0, stage.Pieces - Laid(stage))).Select(n => $"{stage.Group}{n}"))
-            .Append(started ? SheetGroup : SkinGroup);
+        return pieces.Append(started ? SheetGroup : SkinGroup);
     }
 
     /// <summary>What a look at her says of her build at <paramref name="hours"/>; nothing once she is finished.</summary>
@@ -120,9 +121,12 @@ public sealed class FramingStage
     /// <summary>The litres of pitch one piece takes.</summary>
     public double Litres;
 
+    /// <summary>The group whose pieces this stage's take away, piece for piece: <c>{Replaces}{n}</c> goes once <c>{Group}{n}</c> is laid.</summary>
+    public string? Replaces;
+
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public int Pieces;
 }
 
-public enum FramingWork { Lath, Rope, Pitch }
+public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth }

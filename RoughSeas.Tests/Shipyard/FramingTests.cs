@@ -106,7 +106,8 @@ public class FramingTests
     public void ARowOfLogsHasLathsEnoughForHerWholeFrame()
     {
         var laths = Canoe().Stages.Where(stage => stage.Work == FramingWork.Lath).Sum(stage => stage.Pieces);
-        var row = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "blocks", "wedge.json")))["attributes"]!.Value<int>("laths");
+        var row = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "blocks", "wedge.json")))["attributes"]!["splits"]!
+            .Single(split => split.Value<int>("logs") == 5).Value<int>("count");
 
         Assert.InRange(laths, 1, row);
     }

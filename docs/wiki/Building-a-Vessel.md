@@ -22,6 +22,8 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:launch` | client and server | a push from the shore that slides a heavy vessel into the water ([Built in place](#built-in-place)) |
 | `roughseas:framing` | client and server | a bark hull stripped off a standing tree and framed piece by piece where it lies ([Framed in place](#framed-in-place)) |
+| `roughseas:riggable` | client and server | a finished hull that a boom laid across her joins to a float, making her the vessel she is rigged into ([Rigged in place](#rigged-in-place)) |
+| `roughseas:rigging` | client and server | that vessel, rigged piece by piece where she lies ([Rigged in place](#rigged-in-place)) |
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
@@ -159,25 +161,50 @@ List `roughseas:burnout` and `roughseas:launch` before `creaturecarrier`, so tha
 She is then laid stage by stage, in the order of `stages`, each piece held on her for its stage's `seconds`. A stage's `work` says what lays a piece of it:
 
 - `lath`: a lath, wet. Five logs lying end to end with a splitting wedge on each split into laths when an axe drives a wedge; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
+- `pole`: a pole. Three logs lying end to end with a splitting wedge on each split into poles. Like laths, the first makes her frame of its wood.
 - `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done.
 - `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
+- `hew`: any axe, which loses a point of durability a piece.
+- `cloth`: a piece of cloth.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
 | `stages` | list | none | what she is laid with, in order: each a `group`, a `work`, `seconds` a piece, and the flags below |
 | `group` | shape group | none | the group that draws the stage, one child per piece: `Frame1`, `Frame2`…; the count of children is the count of pieces. A look at her shows the stage by the lang key `roughseas:shipyard-stage-{group}` in lower case, with the pieces laid and the pieces in all |
-| `work` | `lath`, `rope` or `pitch` | `lath` | what lays a piece |
+| `work` | `lath`, `pole`, `rope`, `pitch`, `hew` or `cloth` | `lath` | what lays a piece |
 | `seconds` | s | 0 | how long a piece is held on her: the real time of that work over sixty |
 | `lines` | bool | false | its laths line her shell: the shell's `backing` backs her only where they are laid |
 | `sets` | bool | false | its laths are bent in wet: she is finished only once the wettest of them has dried |
 | `seals` | bool | false | her hold holds water only once the stage is done; until then water runs through her |
 | `litres` | l | 0 | the pitch one piece takes |
-| `framePart` | material | none | the part of her `parts` her laths make: its share and its `reference` stay, the material is the laths' wood, and only what is laid weighs and takes knocks. Her shape's `frame` texture is drawn in that wood |
-| `laths`, `rope`, `pitch` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `game:rope`, `game:glueportion-pitch-*`) |
+| `replaces` | shape group | none | a group whose pieces each piece of this stage takes away once laid, `{replaces}{n}` for `{group}{n}`: a float's blunt end, for its hewn one |
+| `framePart` | part name | none | the part of her `parts`, by its `name`, that her laths or poles make: its share and its `reference` stay, the material is their wood, and only what is laid weighs and takes knocks. Her shape's `frame` texture is drawn in that wood |
+| `laths`, `poles`, `rope`, `pitch`, `cloth` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `roughseas:pole-*`, `game:rope`, `game:glueportion-pitch-*`, `game:cloth-*`) |
 | `barkSeconds` | s | 0 | how long the knife takes the bark off |
 | `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
 
 At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and the item shows her as far as she is built, and she takes her seats only once finished. Give the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull: the behaviour shows the one or the other. The item lists `Sheet` in its `ignoreElements`. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
+
+### Rigged in place
+
+`roughseas:riggable` on a finished hull and `roughseas:rigging` on the vessel she becomes build one vessel onto another, the way an outrigger was really made: a finished dugout, a float log alongside, booms lashed across both. A pole held on a riggable hull, for her `seconds`, with `floatLogs` logs of one wood lying end to end along her `floatMetres` off to either side, lays her first boom: the logs are taken away and she is replaced, where she lies, by the entity of her `vessel` code and her own wood, at the start of her rigging. What a hull keeps (its cracks, the water in it) goes with her, through the vessel behaviours that implement `IHandedOver`, turned end for end when the float lay on the side opposite the rigged model's. Riders get off, and what her accessory slots held drops beside her. A hull still being built is refused.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `vessel` | entity code | none | the vessel she becomes, without its wood (ours `roughseas:outrigger`) |
+| `poles` | item code | none | what lays her first boom, wildcards allowed |
+| `seconds` | s | 0 | how long it is held on her |
+
+`roughseas:rigging` is `roughseas:framing` started that way: the same `stages` and keys, its first stage begun with the boom laid, and no bark. On top of them:
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `floatLogs` | count | 0 | the logs her float is laid from |
+| `floatMetres` | m | 0 | how far off her centreline they lie: the row is found through the block that far out, within half a block |
+| `floatPart` | part name | none | the part of her `parts` her float makes: its share and its `reference` stay, the material is the float's wood. Her shape's `float` texture is drawn in that wood |
+| `rigged` | shape groups | none | groups shown only once she is finished, such as vanilla's `SailUnfurled` and `SailHalf` |
+
+A vessel already in a world from before, with no build of its own, is finished, its float and poles of its hull's wood. Our outrigger's builder, `bin/lib/hulls/outrigger.py`, draws her on the dugout's own hull.
 
 ## The hull
 
@@ -196,10 +223,10 @@ A broad load cracks its place by its share of the capacity and breaks the hull u
 | `impactCapacity` | the energy in joules a broad load must reach to break up a hull of its reference material; a load of a third of it cracks its place a third of the way to stove in. Without it, no broad load harms the hull |
 | `shell` | what the hull's outside is, for point blows, cuts and breakers; see below. Without it, the frame's capacity resists point blows and cuts too, and no breaker harms the hull |
 | `minImpactSpeed` | the speed in m/s a hull takes in its stride when it runs into something, a block or another hull: a knock below it is no knock, and only the energy above it counts. Default 1 |
-| `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1). Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
+| `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1); a `name` lets a build find the part whatever it is made of. Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
 | `depthMetres` | keel to gunwale amidships. With it the vessel floats by its mass; without it, at its `freeboardMetres` |
 | `waterplaneSquareMetres` | the area it cuts at the water, for a hull with a hold. Leave it out for a solid one, a raft or a bundle, which presses down through its own depth |
-| `hullBox` | `[fromX, fromY, fromZ, toX, toY, toZ]` in the shape's voxels: the hull its places are measured on, when its `Hull` element reaches over more than the hull (our outrigger's covers its float). By default, the `Hull` element |
+| `hullBox` | `[fromX, fromY, fromZ, toX, toY, toZ]` in the shape's voxels: the hull its places are measured on, when its `Hull` element reaches over more than the hull. By default, the `Hull` element |
 | `seep` | `{ "litresPerHour", "greaseDays" }` on a cracking hull: what its seams let in once ungreased, and how many days afloat a full greasing lasts |
 | `soak` | `{ "kgPerDay", "dryKgPerDay", "rotShare", "saturationKg" }` on a reed hull: the water it takes up a day afloat, what it dries a day in full sun, the share of what dries that stays as rot, and the most it holds |
 | `runsRapids` | true if rapids don't strike it |

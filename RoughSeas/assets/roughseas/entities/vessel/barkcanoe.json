@@ -24,7 +24,7 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 2400,
             "runsRapids": true,
-            "parts": [{"material": "bark", "share": 0.5}, {"material": "wood-tuja", "share": 0.5}],
+            "parts": [{"material": "bark", "share": 0.5}, {"name": "frame", "material": "wood-tuja", "share": 0.5}],
             "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 1, "spanMetres": 0.25},
             "depthMetres": 0.29,
             "waterplaneSquareMetres": 2.4,
@@ -56,7 +56,7 @@
             "gravityFactor": 1.0
         },
         "roughseas:framing": {
-            "framePart": "wood-tuja",
+            "framePart": "frame",
             "laths": "roughseas:lath-*",
             "rope": "game:rope",
             "pitch": "game:glueportion-pitch-*",

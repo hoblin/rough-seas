@@ -2,51 +2,99 @@
     "code": "outrigger",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 250,
+    "weight": 613,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
-        "logTextures": {"bark": "all", "inside": "inside-north"},
+        "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north"},
         "speedMultiplier": 1.3,
         "turnSpeed": 0.5,
-        "swimmingOffsetY": 0.32,
+        "swimmingOffsetY": 0.3,
         "shouldSwivelFromMotion": false,
-        "mountAnimations": {"idle": "roughseas-sitlegsforward", "ready": "roughseas-outrigger-ready", "forwards": "roughseas-outrigger-forward", "backwards": "roughseas-outrigger-backward"},
+        "requiresPaddlingTool": true,
+        "mountAnimations": {
+            "idle": "roughseas-sitlegsforward",
+            "ready": "crudeOarReady",
+            "forwards": "crudeOarForward",
+            "backwards": "crudeOarBackward"
+        },
         "unfurlSails": true
     },
-    "hitboxSize": {"x": 1.2, "y": 0.5},
+    "hitboxSize": {"x": 1, "y": 0.56},
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
-            "impactCapacity": 15000,
-            "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
-            "hullBox": [-32, 0, 3, 48, 9, 13],
-            "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.47},
-            "depthMetres": 0.61,
-            "waterplaneSquareMetres": 1.5,
+            "impactCapacity": 30000,
+            "parts": [
+                {"material": "wood-{wood}", "reference": "wood-oak", "share": 400},
+                {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 143},
+                {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 70}
+            ],
+            "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.53},
+            "depthMetres": 0.41,
+            "waterplaneSquareMetres": 3,
             "repairs": [{
-                "material": {"type": "item", "code": "{plank}", "stacksize": 2},
-                "restores": 0.071,
+                "material": {"type": "block", "code": "{log}", "stacksize": 1},
+                "restores": 0.4,
                 "saturation": 80
             }],
             "wreckage": [
-                {"type": "item", "code": "{plank}", "quantity": {"avg": 8, "var": 4}},
+                {"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}},
                 {"type": "item", "code": "game:rope", "quantity": {"avg": 1, "var": 1}},
-                {"type": "block", "code": "game:linen-normal-down", "quantity": {"avg": 1, "var": 1}}
+                {"type": "item", "code": "game:cloth-plain", "quantity": {"avg": 1, "var": 1}}
             ],
-            "damage": {"textures": ["bark", "inside"], "material": "wood"},
+            "damage": {"textures": ["inside"], "material": "wood"},
             "sources": {
-                "shell": "A main hull hollowed from one log, its walls about 5 cm thick as a dugout's (en.wikipedia.org/wiki/Dufuna_canoe). A side stands from the bottom with its gunwale free, and a breaker bends it as a cantilever: by the model, 7.6 voxels from the bottom's edge to the gunwale",
-                "hullBox": "The main hull alone, in the shape's voxels: its Hull box reaches over the outrigger float, which is not where a knock cracks her",
-                "depthMetres": "Keel to the top of the washstrakes: a 0.21 m draft with one paddler and the 0.4 m of side Pacific outrigger hulls carry above it",
-                "waterplaneSquareMetres": "A slender 5 m hull about 0.5 m wide at the water, fine at both ends, so that 600 L aboard settles her by her 0.4 m of side"
+                "parts": "Her hull is the dugout she was built on, 400 kg of oak. Her float is three metres of log some 30 cm across, 0.21 m³ (bin/lib/hulls/outrigger.py), 143 kg of oak; her six poles (three 2.75 m booms and a 3 m mast about 9 cm across, two 3.25 m spars about 8 cm), 0.1 m³, 70 kg. A float or poles of another wood weigh by their own",
+                "impactCapacity": "The dugout's hull: the float and rig lashed to it take no knock a hull takes",
+                "shell": "The dugout's walls, about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe)",
+                "depthMetres": "The dugout's: keel to gunwale",
+                "waterplaneSquareMetres": "The dugout's 2.25 m² and her float's, a 3 m log 0.25 m wide at the water",
+                "repairs": "Her hull is a dugout's, mended as one"
+            }
+        },
+        "roughseas:rigging": {
+            "framePart": "poles",
+            "floatPart": "float",
+            "floatLogs": 3,
+            "floatMetres": 2,
+            "poles": "roughseas:pole-*",
+            "rope": "game:rope",
+            "cloth": "game:cloth-*",
+            "rigged": ["SailUnfurled", "SailHalf"],
+            "stages": [
+                {"group": "Booms", "work": "pole", "seconds": 3},
+                {"group": "Lashing", "work": "rope", "seconds": 15},
+                {"group": "Ends", "work": "hew", "seconds": 7.5, "replaces": "Blunt"},
+                {"group": "Mast", "work": "pole", "seconds": 3},
+                {"group": "SailFurled", "work": "cloth", "seconds": 15},
+                {"group": "Stays", "work": "rope", "seconds": 15}
+            ],
+            "sources": {
+                "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
+                "floatLogs": "A small outrigger's float is about 3 m long",
+                "floatMetres": "A small outrigger's float rides 1.5 to 2 m off her hull: hull, gap, float, three blocks across",
+                "booms": "Setting one pole across her or up, about three minutes, as fitting one of a canoe's laths",
+                "lashing": "One rope is ten metres of lashing: about a quarter of an hour, as a canoe's (an estimate). Each boom is lashed to both gunwales and to the float, thirteen turns a lashing (ten round, three frapping) of their girth: 56 m, counted by her shape's builder",
+                "ends": "A float's end hewn to a point over 0.375 m takes off two thirds of that much log, about 18 L. An axe stroke bites some 0.08 L (its 10 cm edge 2 cm deep, a 4 cm chip), 30 strokes a minute (H. Glaser, physiology of forestry work, FAO): some 7.5 minutes",
+                "sail": "A crab claw of 3.8 m² between her two spars (bin/lib/hulls/outrigger.py), one cloth a square metre, as one linen block covers: four, each laced to the spars in about a quarter of an hour (an estimate)",
+                "stays": "A forestay, a backstay, a shroud to the float and the sheet, each under ten metres: one rope each, set up in about a quarter of an hour (an estimate)"
+            }
+        },
+        "roughseas:launch": {
+            "pushNewtons": 300,
+            "strideMetres": 0.6,
+            "friction": 0.4,
+            "sources": {
+                "pushNewtons": "A sustained two-handed push by an adult, about 300 N (Snook and Ciriello, 1991, maximum acceptable forces)",
+                "strideMetres": "One step of the push",
+                "friction": "Wood sliding over wet sand or mud, about 0.4"
             }
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
-                {"x1": -0.312, "y1": 0, "z1": -2.5, "x2": 0.312, "y2": 0.5, "z2": -1.25},
-                {"x1": -0.312, "y1": 0, "z1": -1.25, "x2": 0.312, "y2": 0.5, "z2": 0.0},
-                {"x1": -0.312, "y1": 0, "z1": 0.0, "x2": 0.312, "y2": 0.5, "z2": 1.25},
-                {"x1": -0.312, "y1": 0, "z1": 1.25, "x2": 0.312, "y2": 0.5, "z2": 2.5},
-                {"x1": -1.748, "y1": 0, "z1": -1.5, "x2": -1.373, "y2": 0.35, "z2": 1.5}
+                {"x1": -0.375, "y1": 0, "z1": -2.0, "x2": 0.375, "y2": 0.56, "z2": -0.667},
+                {"x1": -0.375, "y1": 0, "z1": -0.667, "x2": 0.375, "y2": 0.56, "z2": 0.667},
+                {"x1": -0.375, "y1": 0, "z1": 0.667, "x2": 0.375, "y2": 0.56, "z2": 2.0},
+                {"x1": -2.15, "y1": 0, "z1": -1.5, "x2": -1.85, "y2": 0.35, "z2": 1.5}
             ],
             "groundDragFactor": 1,
             "airDragFallingFactor": 0.5,
@@ -54,55 +102,57 @@
         },
         "creaturecarrier": {
             "seats": [
-                {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1},
                 {
-                    "apName": "BackSeatAP",
+                    "apName": "FrontSeatAP",
                     "controllable": true,
                     "bodyYawLimit": 0.4,
                     "eyeHeight": 1,
                     "selectionBox": "HullAP"
-                }
+                },
+                {"apName": "BackSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1, "reverse": true}
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "LowerMastAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP", "LowerMastAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
+                {"code": "FrontSeatAP", "forCategoryCodes": []},
                 {
-                    "code": "Front Seat",
+                    "code": "Back Seat",
                     "forCategoryCodes": ["basket"],
-                    "attachmentPointCode": "FrontSeatAP",
-                    "stepParentTo": {"": {"elementName": "FrontSeat"}},
+                    "attachmentPointCode": "BackSeatAP",
+                    "stepParentTo": {"": {"elementName": "BackSeat"}},
                     "emptyInteractPassThrough": true
                 },
-                {"code": "BackSeatAP", "forCategoryCodes": []},
-                {"code": "LowerMastAP", "forCategoryCodes": []},
-                {"code": "HullAP", "forCategoryCodes": []}
+                {"code": "HullAP", "forCategoryCodes": []},
+                {"code": "LowerMastAP", "forCategoryCodes": []}
             ]
         },
         "roughseas:seaforces": {
-            "beamMetres": 2.1,
-            "mastMetres": 3.4,
+            "beamMetres": 2.5,
+            "mastMetres": 3,
             "windageSquareMetres": 4,
-            "heave": 0.7,
-            "capsizeBreakerMetres": 2.1,
+            "heave": 0.5,
+            "capsizeBreakerMetres": 2.5,
             "rollResponse": 0.3,
             "pitchResponse": 0.8,
             "sources": {
-                "heave": "Balance: a narrow, light hull rises with most of a crest",
+                "beamMetres": "Hull and float apart: half the hull's 0.75 m, the float's 2 m out and half its 0.3 m",
+                "mastMetres": "A small outrigger's mast, about 3 m",
+                "heave": "As the dugout she is built on: her float adds a third to her waterplane and her rig half again to her weight, so she rises to a crest as slowly",
                 "capsizeBreakerMetres": "The float spreads the craft to its whole beam: a breaker must be as high as hull and float apart to roll it",
                 "rollResponse": "The float's buoyancy and weight hold the hull upright: very steady in a sea",
                 "pitchResponse": "A long, narrow hull cuts through the swell rather than riding it"
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 600,
+            "capacityLitres": 450,
             "deckSquareMetres": 3,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "A 7 m hull, about 0.45 m wide and 0.4 m deep inside, half of its box",
-                "deckSquareMetres": "The open hull, 7 m by 0.45 m, catches the rain",
-                "drainLitresPerHour": "Balance: lashed washstrakes weep, but too little to count against a sea"
+                "capacityLitres": "The dugout's hollow, about 0.5 m wide and 0.35 m deep over 5 m, half of its box",
+                "deckSquareMetres": "Its open hollow, 5 m by 0.6 m, catches the rain",
+                "drainLitresPerHour": "One log, no seams: nothing leaks"
             }
         }
     },
@@ -110,11 +160,6 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater", "Bilge"]},
-        "animations": [
-            {"code": "roughseas-outrigger-ready", "animation": "roughseas-outrigger-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
-            {"code": "roughseas-outrigger-forward", "animation": "roughseas-outrigger-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
-            {"code": "roughseas-outrigger-backward", "animation": "roughseas-outrigger-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
-        ],
         "textures": {
             "sail": {"base": "game:block/cloth/linen/plain"},
             "lashing": {"base": "game:item/resource/rope"},
@@ -127,6 +172,8 @@
             {"code": "interpolateposition"},
             {"code": "hidewatersurface", "hideWaterElement": "hideWater/*"},
             {"code": "selectionboxes"},
+            {"code": "roughseas:rigging"},
+            {"code": "roughseas:launch"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
@@ -140,6 +187,8 @@
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},
+            {"code": "roughseas:rigging"},
+            {"code": "roughseas:launch"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},

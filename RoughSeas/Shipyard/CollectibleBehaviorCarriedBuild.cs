@@ -62,7 +62,7 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
         bool cloned = true;
         var ignored = item.Shape.IgnoreElements?.Where(element => element != Shipyard.Framing.SheetGroup) ?? [];
         shape.RemoveElements(framing.Hidden().Concat(ignored).ToArray());
-        if (framing.Wood is { } wood) LathTexture.Draw(capi, ref shape, ref cloned, wood, item.Textures, capi.ItemTextureAtlas);
+        if (framing.Wood is { } wood) LathTexture.Draw(capi, ref shape, ref cloned, LathTexture.Frame, wood, item.Textures, capi.ItemTextureAtlas);
         capi.Tesselator.TesselateShape(item, shape, out var mesh);
         return capi.Render.UploadMultiTextureMesh(mesh);
     }
