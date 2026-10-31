@@ -204,10 +204,42 @@ public class HullModelTests
         for (int day = 0; day < 10; day++)
         {
             hull.Pass(0.5, afloat: true, sun: 0, waterCelsius: 20);
-            hull.Pass(0.5, afloat: false, sun: 1);
+            hull.Pass(1, afloat: false, sun: 1);
         }
 
         Assert.Equal(1, hull.Condition);
+    }
+
+    [Fact]
+    public void DaysKeptInColdWaterCountAsTheFewTheyAreWhenSheComesIntoWarm()
+    {
+        var hull = Covered(new() { ["raw"] = 2 });
+
+        hull.Pass(10, afloat: true, sun: 0, waterCelsius: 5);
+        hull.Pass(0.1, afloat: true, sun: 0, waterCelsius: 20);
+
+        Assert.Equal(1, hull.Condition);
+    }
+
+    [Fact]
+    public void ARottedRawShareRotsNoFurtherThanItsShare()
+    {
+        var hull = Covered(new() { ["raw"] = 1, ["prepared"] = 1 });
+
+        hull.Pass(10, afloat: true, sun: 0, waterCelsius: 20);
+
+        Assert.Equal(0.5, hull.Condition, 6);
+    }
+
+    [Fact]
+    public void ADayInTheSunDriesACoverHoweverLongSheWasAfloat()
+    {
+        var hull = Covered(new() { ["prepared"] = 2 });
+        hull.Pass(120, afloat: true, sun: 0);
+
+        hull.Pass(1, afloat: false, sun: 1);
+
+        Assert.Equal(0, hull.SoakedKg);
     }
 
     [Fact]

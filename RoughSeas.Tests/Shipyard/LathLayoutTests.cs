@@ -45,6 +45,14 @@ public class LathLayoutTests
         Assert.Equal(EnumAxis.Z, Lattice.Find(Grid(10, 20, alongSpacing: 0.16875, acrossSpacing: 0.1125), 1.8)?.Along);
 
     [Fact]
+    public void LathsSlidAlongTheirLengthFromHerMiddleMakeNoBlank()
+    {
+        var laths = Grid(10, 20).Select(lath => lath.Along == EnumAxis.X ? lath with { X = lath.X + 0.4 } : lath).ToList();
+
+        Assert.Null(Lattice.Find(laths, 1.8));
+    }
+
+    [Fact]
     public void SixAcrossIsNotYetALattice() => Assert.Null(Lattice.Find(Grid(10, 20).Take(13).ToList(), 1.8));
 
     [Fact]

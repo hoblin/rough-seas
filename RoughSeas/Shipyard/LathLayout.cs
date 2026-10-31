@@ -53,7 +53,15 @@ public sealed class LatticeLayout : LathLayout
     }
 
     private bool Fits(LaidLath[] along, LaidLath[] across) =>
-        along.Length == Along && across.Length == Across && Spaced(along, AlongSpacingMetres) && Spaced(across, AcrossSpacingMetres);
+        along.Length == Along && across.Length == Across && Spaced(along, AlongSpacingMetres) && Spaced(across, AcrossSpacingMetres)
+        && Centred(along, across) && Centred(across, along);
+
+    private bool Centred(LaidLath[] laths, LaidLath[] across)
+    {
+        double OwnAxis(LaidLath lath) => laths[0].Along == EnumAxis.X ? lath.X : lath.Z;
+        double middle = across.Average(OwnAxis);
+        return laths.All(lath => Math.Abs(OwnAxis(lath) - middle) <= ToleranceMetres);
+    }
 
     private bool Spaced(LaidLath[] laths, double spacing)
     {

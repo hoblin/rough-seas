@@ -46,9 +46,11 @@ public abstract class Laying
     public abstract IEnumerable<ItemStack> Shown(IWorldAccessor world);
 
     /// <summary>Whether the lath or pole in <paramref name="slot"/> is shorter than the piece it would make; a longer one is cut down to it.</summary>
-    protected static bool Short(ItemSlot slot, Framing framing) =>
-        double.TryParse(slot.Itemstack?.Collectible.Variant["length"], NumberStyles.Float, CultureInfo.InvariantCulture, out var metres)
-        && metres < framing.NextMetres;
+    protected static bool Short(ItemSlot slot, Framing framing) => ShorterThan(slot, framing.NextMetres);
+
+    public static bool ShorterThan(ItemSlot slot, double metres) =>
+        double.TryParse(slot.Itemstack?.Collectible.Variant["length"], NumberStyles.Float, CultureInfo.InvariantCulture, out var length)
+        && length < metres;
 }
 
 /// <summary>A lath split from a pole, bent into her wet.</summary>

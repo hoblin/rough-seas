@@ -11,7 +11,8 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 {
     private const string CracksKey = "cracks";
     private const string GreaseKey = "greaseDays";
-    private const string WetKey = "wetDays";
+    private const string ExposureKey = "exposureDays";
+    private const string DryingKey = "dryingDays";
     private const double Gravity = 9.81;
     private const double LitresPerCubicMetre = 1000;
 
@@ -29,9 +30,9 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public HideCover? Cover => covered() ?? designedCover;
 
-    public double WetDays => Tree?.GetDouble(WetKey) ?? 0;
+    public double ExposureDays => Tree?.GetDouble(ExposureKey) ?? 0;
 
-    public override double SoakedKg => WetDays > 0 ? Cover?.SoakedKg(config.Hides) ?? 0 : 0;
+    public override double SoakedKg => ExposureDays > 0 ? Cover?.SoakedKg(config.Hides) ?? 0 : 0;
 
     public void CoveredBy(Func<HideCover?> cover) => covered = cover;
 
@@ -64,11 +65,14 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     private void Weather(double days, bool afloat, double sun, double waterCelsius)
     {
-        double wet = afloat ? WetDays + days : Math.Max(0, WetDays - days * sun);
-        double rot = afloat ? Cover!.Rot(config.Hides, wet, days, waterCelsius) : 0;
-        if (wet == WetDays && rot == 0) return;
+        double before = ExposureDays, drying = Tree.GetDouble(DryingKey), after;
+        if (afloat) (after, drying) = (before + config.Hides.Exposure(days, waterCelsius), 0);
+        else if (before > 0 && sun > 0) (after, drying) = drying + days * sun >= config.Hides.DryDays ? (0, 0) : (before, drying + days * sun);
+        else return;
 
-        Tree.SetDouble(WetKey, wet);
+        double rot = Cover!.Rot(config.Hides, before, after);
+        Tree.SetDouble(ExposureKey, after);
+        Tree.SetDouble(DryingKey, drying);
         if (rot > 0)
         {
             var cracks = Tree.GetOrAddTreeAttribute(CracksKey);

@@ -29,6 +29,7 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         var vessel = attributes["vessel"].AsString("");
         successor = Wood.Of(properties.Variant) is { } wood ? entity.World.GetEntityType(new AssetLocation($"{vessel}-{wood.Code}")) : null;
         rig = successor == null ? null : RiggingConfig.Of(successor);
+        rig?.Measure(successor?.Client?.Shape?.Base is { } shape ? FramingConfig.ShapeAt(entity.Api, shape) : null);
     }
 
     /// <summary>
@@ -56,6 +57,8 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
 
         var seconds = rig.Stages[0].Seconds;
         if (entity.GetBehavior<EntityBehaviorBuild>() is { Finished: false }) return (seconds, "shipyard-rig-unfinished");
+
+        if (Laying.ShorterThan(slot, rig.Stages[0].Metres.FirstOrDefault())) return (seconds, "shipyard-pole-short");
 
         return (seconds, Float(rig) != null ? null : "shipyard-float-row");
     }

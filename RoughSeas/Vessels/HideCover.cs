@@ -6,7 +6,8 @@ namespace RoughSeas.Vessels;
 
 /// <summary>
 /// The hides a hull is covered with: small hides' worth of each <c>type</c>, and the seams between them. Each type keeps
-/// afloat for a while, longer in cold water, then rots through in as long again, and takes up its share of water.
+/// for so many days wet at <see cref="HidesConfig.KeepCelsius"/>, then rots through in as long again, and takes up its
+/// share of water.
 /// </summary>
 public sealed record HideCover(IReadOnlyDictionary<string, int> Sections, int Seams)
 {
@@ -15,12 +16,15 @@ public sealed record HideCover(IReadOnlyDictionary<string, int> Sections, int Se
     public double SoakedKg(HidesConfig hides) =>
         Sections.Sum(entry => entry.Value * hides.SquareMetresASection * hides.KilogramsASquareMetre * hides.Of(entry.Key).Uptake);
 
-    public double Rot(HidesConfig hides, double wetDays, double days, double waterCelsius) =>
-        Total == 0 ? 0 : Sections.Sum(entry =>
-        {
-            double keep = hides.KeepDays(entry.Key, waterCelsius);
-            return (double)entry.Value / Total * Math.Clamp(wetDays - keep, 0, days) / keep;
-        });
+    /// <summary>The share of the cover that rots as its exposure grows from <paramref name="before"/> to <paramref name="after"/>, each type no further than its own share.</summary>
+    public double Rot(HidesConfig hides, double before, double after) =>
+        Total == 0 ? 0 : Sections.Sum(entry => (double)entry.Value / Total * (Rotted(hides, entry.Key, after) - Rotted(hides, entry.Key, before)));
+
+    private static double Rotted(HidesConfig hides, string stage, double exposure)
+    {
+        double keep = hides.Of(stage).KeepDays;
+        return Math.Clamp((exposure - keep) / keep, 0, 1);
+    }
 }
 
 public sealed class HidesConfig
@@ -33,7 +37,10 @@ public sealed class HidesConfig
 
     public HideStage Of(string stage) => Stages.TryGetValue(stage, out var known) ? known : Stages["raw"];
 
-    public double KeepDays(string stage, double waterCelsius) => Of(stage).KeepDays * Math.Pow(KeepQ10, (KeepCelsius - waterCelsius) / 10);
+    public double DryDays;
+
+    /// <summary><paramref name="days"/> wet in water at <paramref name="waterCelsius"/>, as days wet at <see cref="KeepCelsius"/>.</summary>
+    public double Exposure(double days, double waterCelsius) => days * Math.Pow(KeepQ10, (waterCelsius - KeepCelsius) / 10);
 }
 
 public sealed class HideStage

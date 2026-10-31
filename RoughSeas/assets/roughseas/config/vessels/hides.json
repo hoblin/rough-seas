@@ -3,6 +3,7 @@
     "kilogramsASquareMetre": 4.3,
     "keepCelsius": 20,
     "keepQ10": 5.8,
+    "dryDays": 1,
     "stages": {
         "raw": {"keepDays": 1, "uptake": 0.14},
         "soaked": {"keepDays": 1, "uptake": 0.14},
@@ -16,7 +17,8 @@
         "squareMetresASection": "One section of a cover is one small hide: a moose's hide, some 3.5 m², over the three leather vanilla tans from its large hide",
         "kilogramsASquareMetre": "Hide 5 mm thick (raw cowhide is 2 to 6 mm) at 860 kg/m³, dry leather (engineeringtoolbox.com)",
         "keepCelsius": "Green hide keeps a day at 20 °C, two weeks at 5 °C and three weeks at 0 °C before it putrefies (CSIRO Meat Technology Update 98/3)",
-        "keepQ10": "From those keeping times: fourteen times longer over 15 °C colder, 5.8 times for every 10 °C",
+        "keepQ10": "From those keeping times: fourteen times longer over 15 °C colder, 5.8 times for every 10 °C. A cover's time wet counts at the temperature of the water it was in, as days wet at 20 °C",
+        "dryDays": "A day ashore in the sun dries a cover through and stops its rot afresh: umiak skins, untanned, were taken out and dried every day (indigenousboats.blogspot.com, 2011)",
         "raw": "Untanned hide wet through putrefies as green hide does (CSIRO); once past its keeping, it rots through in as long again. Umiak skins, untanned, had to be taken out and dried daily or they rotted (indigenousboats.blogspot.com, 2011). Re-wetted fresh hide takes up some 14% of its weight within the hour (leathermag.com, soaking practices)",
         "soaked": "Limed and soaked hide is still untanned collagen: no keeping time was measured for it, so it keeps as raw hide does",
         "scraped": "Scraped hide is untanned collagen, as raw hide",
