@@ -44,6 +44,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     private Rams rams = null!;
     private HullContacts hullContacts = null!;
     private Resistance resistance;
+    private Shell? shell;
+    private double frameJoules;
+    private IHullForm? form;
     private DamageConversion damageConversion = null!;
     private VesselsModSystem vessels = null!;
     private ISeaWeather seaWeather = null!;
@@ -158,9 +161,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         else if (Tree.GetInt(VersionKey) < DataVersion) Migrate(Tree);
 
         damageConversion = vessels.DamageConversion;
-        double frame = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(parts);
-        resistance = Shell.Of(attributes["shell"])?.Resists(frame, vessels.Materials, vessels.HullConfig, damageConversion.CutShare)
-            ?? Resistance.Whole(frame);
+        frameJoules = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(parts);
+        shell = Shell.Of(attributes["shell"]);
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         watch = seaWeather.Clock.StartWatch();
         runsRapids = attributes["runsRapids"].AsBool(false);
@@ -170,7 +172,15 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
             .ToArray();
     }
 
-    public override void AfterInitialized(bool onFirstSpawn) => Float();
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        Float();
+        if (entity.World.Side != EnumAppSide.Server) return;
+
+        form = entity.SidedProperties.Behaviors.OfType<IHullForm>().FirstOrDefault();
+        if (form != null) form.Reformed += Resist;
+        Resist();
+    }
 
     public override ITexPositionSource? GetTextureSource(ref EnumHandling handling)
     {
@@ -187,6 +197,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     public override void OnEntityDespawn(EntityDespawnData despawn)
     {
         entity.PhysicsUpdateWatcher -= OnPhysicsUpdate;
+        if (form != null) form.Reformed -= Resist;
         base.OnEntityDespawn(despawn);
     }
 
@@ -254,6 +265,12 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
             place.Code(), backed ? ", backed" : "", Load(blow, load), Load(blow, resists), knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
         Struck?.Invoke(place, severity, knock == Knock.BrokenUp || model.Stage(place) > stage ? knock : null);
         if (knock == Knock.BrokenUp || Resistance.BreaksFrame(blow, loss)) Break();
+    }
+
+    private void Resist()
+    {
+        var hull = form == null ? shell : shell?.Uncut(form.UncutMetres, form.Hollowed);
+        resistance = hull?.Resists(frameJoules, vessels.Materials, vessels.HullConfig, damageConversion.CutShare) ?? Resistance.Whole(frameJoules);
     }
 
     public double JoulesAt(double metresPerSecond) => impact.Joules(Aboard.Impact, metresPerSecond);
@@ -554,10 +571,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
     private double Sunlight()
     {
-        var accessor = entity.World.BlockAccessor;
         var pos = entity.Pos.AsBlockPos;
-        if (accessor.GetRainMapHeightAt(pos) > pos.Y) return 0;
-        if ((accessor.GetClimateAt(pos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0) > MaxDryingRain) return 0;
+        if (entity.World.BlockAccessor.GetRainMapHeightAt(pos) > pos.Y || VanillaRain.FallingOn(entity) > MaxDryingRain) return 0;
 
         float daylight = entity.World.Calendar.GetDayLightStrength(pos);
         return daylight >= MinSunlight ? daylight : 0;

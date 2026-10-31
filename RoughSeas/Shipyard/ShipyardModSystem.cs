@@ -19,7 +19,11 @@ public class ShipyardModSystem : ModSystem
     {
         api.RegisterBlockBehaviorClass(BlockBehaviorBlankLog.Code, typeof(BlockBehaviorBlankLog));
         api.RegisterEntityBehaviorClass(EntityBehaviorBurnout.Code, typeof(EntityBehaviorBurnout));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHew.Code, typeof(CollectibleBehaviorHew));
+        CharcoalPitOnLogs.Attach();
     }
+
+    public override void Dispose() => CharcoalPitOnLogs.Detach();
 
     // The server sends its blocks, behaviours included, to clients only after this phase.
     public override void AssetsFinalize(ICoreAPI api)
@@ -38,6 +42,10 @@ public class ShipyardModSystem : ModSystem
                 log.BlockBehaviors = log.BlockBehaviors.Append(behavior);
                 log.CollectibleBehaviors = log.CollectibleBehaviors.Append(behavior);
             }
+        }
+        foreach (var axe in api.World.Items.Where(item => item?.Code != null && item.Tool == EnumTool.Axe))
+        {
+            axe.CollectibleBehaviors = axe.CollectibleBehaviors.Append(new CollectibleBehaviorHew(axe));
         }
     }
 

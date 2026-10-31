@@ -45,13 +45,19 @@
             "rimMetres": 0.5,
             "charMillimetresPerHour": 2.5,
             "clay": "game:clay-*",
+            "firewoodPile": 32,
+            "axeEdgeMetres": 0.1,
+            "secondsPerStroke": 2,
             "hewSaturation": 80,
             "sources": {
                 "charMillimetresPerHour": "A burn of 3 to 5 hours chars 6 to 13 mm of wood (Agency House dugout diary, 2021-2023, agencyhouse.org/dugout-canoe)",
                 "hollowings": "Wet clay goes along the rim before each fire (PHMC dugout project, 2005; SUNY Potsdam, 2015), and the fire is tended round the clock until the clay is spent, about a day and a night: 7 cm at a time, the 0.42 m hollow takes six fires and about a week, as Wampanoag builders burn a mishoon for 6 to 10 days (Plimoth Patuxet, The Making of a Mishoon)",
                 "hollowDepthMetres": "Rim to floor of the hollow: the 0.5 m hull less its 7.5 cm bottom",
-                "clay": "A clay block digs into 4.5 clay; a band 10 cm wide and 3 cm thick along 10 m of rim and ends is 0.03 m³, under a seventh of one: one clay a day",
-                "hewSaturation": "As hard as a patch of mending: scraping out a day's char by hand"
+                "clay": "Wet clay one voxel thick over the rim outline the shape draws (its Clay group), at vanilla's 25 voxels a ball (BEClayForm.PutClay)",
+                "firewoodPile": "Vanilla's charcoal pit: dry grass lays a firepit only on a full pile of firewood, 32 in ground storage (ItemDryGrass), and four firewood finish the firepit (BlockFirepit)",
+                "axeEdgeMetres": "A stroke cuts through the day's char to the sound wood under it and takes a chip about as wide and as long as the axe's edge, about 10 cm on a felling axe",
+                "secondsPerStroke": "The best working rhythm with an axe is 25 to 35 strokes a minute (H. Glaser, physiology of forestry work, FAO)",
+                "hewSaturation": "As hard as a patch of mending: hewing out a day's char by hand"
             }
         },
         "roughseas:launch": {

@@ -10,6 +10,9 @@ public interface IHullForm
     /// <summary>How high the floor of her hold stands above her origin now: the top of the wood not yet cut out.</summary>
     double FloorMetres { get; }
 
+    /// <summary>How deep the wood not yet cut out still stands in her hold.</summary>
+    double UncutMetres { get; }
+
     /// <summary>Raised on either side when <see cref="Hollowed"/> changes.</summary>
     event Action? Reformed;
 }

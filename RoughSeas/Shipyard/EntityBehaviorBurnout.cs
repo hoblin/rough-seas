@@ -22,7 +22,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
 
     private const string VersionKey = "version";
     private const string CheckedAtKey = "checkedAt";
-    private const int DataVersion = 1;
+    private const int DataVersion = 2;
     private const float TickSeconds = 1;
     private const float ParticleSeconds = 0.1f;
     private const int FlamesPerPuff = 3;
@@ -30,12 +30,14 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
     private const double DousingPerRain = 0.5;
     private const double FlameReach = 0.8;
     private const string Unfinished = "roughseas-unfinished";
-    private static readonly string[] Stages = ["Blank", "Char", "Fire"];
+    private const string ClayGroup = "Clay";
+    private static readonly string[] Stages = ["Blank", "Char", "Wood", "Fire"];
 
     private static readonly AssetLocation FireBlock = new("game:fire");
     private static readonly AssetLocation FireSound = new("game:sounds/environment/fire");
     private static readonly AssetLocation IgniteSound = new("game:sounds/torch-ignite");
     private static readonly AssetLocation ClaySound = new("game:sounds/block/dirt1");
+    private static readonly AssetLocation WoodSound = new("game:sounds/block/planks");
 
     private BurnoutConfig config = null!;
     private Burnout burnout = null!;
@@ -54,18 +56,31 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
 
     public double FloorMetres => config.RimMetres - config.HollowDepthMetres * burnout.Hollowed;
 
+    public double UncutMetres => config.HollowDepthMetres * (1 - burnout.Hollowed);
+
+    public bool CanHew => !burnout.Finished && burnout.HewRefusal() == null;
+
+    public double SecondsPerStroke => config.SecondsPerStroke;
+
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
+
+    private IVesselHold? Hold => entity.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault();
 
     public override string PropertyName() => Code;
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         config = attributes.AsObject<BurnoutConfig>(new BurnoutConfig());
-        burnout = new Burnout(() => Tree, MarkDirty, config);
+        burnout = new Burnout(() => Tree, MarkDirty, config, RimVoxels(), () => Hold is { } hold ? hold.CapacityLitres + hold.UncutLitres : 0);
         clay = new AssetLocation(config.Clay);
         shipyard = entity.Api.ModLoader.GetModSystem<ShipyardModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         if (entity.Api.Side == EnumAppSide.Client) entity.WatchedAttributes.RegisterModifiedListener(TreeKey, OnBuildChanged);
+        else if (Tree is { } tree && tree.GetInt(VersionKey) < DataVersion)
+        {
+            burnout.Migrate();
+            tree.SetInt(VersionKey, DataVersion);
+        }
     }
 
     public override void AfterInitialized(bool onFirstSpawn)
@@ -82,6 +97,20 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         tree.SetDouble(CheckedAtKey, hours);
         Burnout.Begin(tree);
         vessel.WatchedAttributes.SetAttribute(TreeKey, tree);
+    }
+
+    /// <returns>Whether char is left to hew after this stroke.</returns>
+    public bool Hew(EntityAgent byEntity, ItemSlot axe)
+    {
+        byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(burnout.SaturationPerStroke);
+        entity.World.PlaySoundAt(new AssetLocation($"game:sounds/block/chop{1 + entity.World.Rand.Next(3)}"), entity, null, true, 16);
+        if (!burnout.Stroke()) return true;
+
+        axe.Itemstack?.Collectible.DamageItem(entity.World, byEntity, axe);
+        shipyard.Log(entity, burnout.Finished ? "{0} hews out the last char: she is finished" : "{0} hews out the char in {3} strokes: hollow {1} of {2} cut",
+            byEntity.GetName(), burnout.Level, burnout.Hollowings, burnout.StrokesPerHewing);
+        Reformed?.Invoke();
+        return false;
     }
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements) =>
@@ -106,13 +135,12 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         double now = sea.Clock.Hours;
         double hours = now - Tree.GetDouble(CheckedAtKey, now);
         Tree.SetDouble(CheckedAtKey, now);
-        bool clayed = burnout.Clayed;
         if (burnout.Burn(hours))
         {
-            shipyard.Log(entity, "the fire burns out after {0:F0} h: hollow {1} of {2} charred{3}", burnout.HoursPerFire, burnout.Level + 1, burnout.Hollowings, clayed ? ", the clay spent" : "");
+            shipyard.Log(entity, "the fire burns out after {0:F0} h: hollow {1} of {2} charred{3}", burnout.HoursPerFire, burnout.Level + 1, burnout.Hollowings, burnout.NeedsClay ? ", the clay spent" : "");
             return;
         }
-        if (Rain() is var rain and > MinDousingRain && entity.World.Rand.NextDouble() < rain * DousingPerRain)
+        if (VanillaRain.FallingOn(entity) is var rain and > MinDousingRain && entity.World.Rand.NextDouble() < rain * DousingPerRain)
         {
             burnout.Douse();
             shipyard.Log(entity, "rain puts the fire out at {0:F1} of {1:F0} h", burnout.HoursBurnt, burnout.HoursPerFire);
@@ -127,6 +155,8 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         var refusal = step switch
         {
             Step.Clay => burnout.ClayRefusal(),
+            Step.Firewood => burnout.FirewoodRefusal(itemslot.Itemstack!.Collectible is ItemFirewood),
+            Step.Kindle => burnout.KindlingRefusal(),
             Step.Light => Wet() ? "shipyard-bail-first" : burnout.LightRefusal(),
             _ => burnout.HewRefusal()
         };
@@ -137,17 +167,26 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         }
         if (entity.World.Side != EnumAppSide.Server) return;
 
+        bool creative = (byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode == EnumGameMode.Creative;
         switch (step)
         {
             case Step.Clay:
-                if ((byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode != EnumGameMode.Creative)
-                {
-                    itemslot.TakeOut(1);
-                    itemslot.MarkDirty();
-                }
+                Spend(itemslot, 1, creative);
                 burnout.Clay();
                 entity.World.PlaySoundAt(ClaySound, entity, null, true, 16);
-                shipyard.Log(entity, "{0} smears clay along the rim", byEntity.GetName());
+                shipyard.Log(entity, "{0} smears clay along the rim: {1} of {2} voxels", byEntity.GetName(), burnout.ClayVoxels, burnout.RimVoxels);
+                break;
+            case Step.Firewood:
+                Spend(itemslot, burnout.LayFirewood(Offered(byEntity, itemslot)), creative);
+                entity.World.PlaySoundAt(WoodSound, entity, null, true, 16);
+                shipyard.Log(entity, "{0} lays firewood in hollow {1}: {2} of {3} on the pile, {4} of {5} on the firepit", byEntity.GetName(), burnout.Level + 1,
+                    burnout.Firewood, burnout.FirewoodPile, burnout.Firepit, Burnout.FirepitFirewood);
+                break;
+            case Step.Kindle:
+                Spend(itemslot, 1, creative);
+                burnout.Kindle();
+                entity.World.PlaySoundAt(WoodSound, entity, null, true, 16);
+                shipyard.Log(entity, "{0} lays dry grass on the firewood", byEntity.GetName());
                 break;
             case Step.Light:
                 if (itemslot.Itemstack!.Collectible is ItemFirestarter) itemslot.Itemstack.Collectible.DamageItem(entity.World, byEntity, itemslot);
@@ -155,14 +194,6 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
                 burnout.Light();
                 entity.World.PlaySoundAt(IgniteSound, entity, null, true, 16);
                 shipyard.Log(entity, "{0} lights a fire in hollow {1} of {2}: {3:F0} h to burn", byEntity.GetName(), burnout.Level + 1, burnout.Hollowings, burnout.HoursPerFire - burnout.HoursBurnt);
-                break;
-            default:
-                itemslot.Itemstack!.Collectible.DamageItem(entity.World, byEntity, itemslot);
-                byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(config.HewSaturation);
-                burnout.Hew();
-                entity.World.PlaySoundAt(new AssetLocation($"game:sounds/block/chop{1 + entity.World.Rand.Next(3)}"), entity, null, true, 16);
-                shipyard.Log(entity, burnout.Finished ? "{0} hews out the last char: she is finished" : "{0} hews out the char: hollow {1} of {2} cut", byEntity.GetName(), burnout.Level, burnout.Hollowings);
-                Reformed?.Invoke();
                 break;
         }
     }
@@ -172,6 +203,9 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         if (burnout.Finished || burnout.Lit) return null;
         if (burnout.Charred) return Help(world, "roughseas:shipyard-hew", () => world.Items.Where(item => item.Tool == EnumTool.Axe && item.Code != null));
         if (burnout.NeedsClay && !burnout.Clayed) return Help(world, "roughseas:shipyard-clay", () => world.SearchItems(clay));
+        if (burnout.Firewood < burnout.FirewoodPile) return Help(world, "roughseas:shipyard-firewood", () => world.Items.Where(item => item is ItemFirewood));
+        if (!burnout.Kindled) return Help(world, "roughseas:shipyard-kindle", () => world.Items.Where(item => item is ItemDryGrass));
+        if (!burnout.Laid) return Help(world, "roughseas:shipyard-firewood", () => world.Items.Where(Constructs), "firepit");
         return Help(world, "roughseas:shipyard-light", () => BlockBehaviorCanIgnite.CanIgniteStacks(world.Api, true).Select(stack => stack.Collectible));
     }
 
@@ -181,8 +215,14 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         {
             infotext.AppendLine(Lang.Get("roughseas:shipyard-hollowed", burnout.Level, burnout.Hollowings));
             if (burnout.Lit) infotext.AppendLine(Lang.Get("roughseas:shipyard-burns", Math.Ceiling(burnout.HoursPerFire - burnout.HoursBurnt)));
-            else if (burnout.Charred) infotext.AppendLine(Lang.Get("roughseas:shipyard-charred"));
-            else if (burnout.Clayed) infotext.AppendLine(Lang.Get("roughseas:shipyard-clayed"));
+            else if (burnout.Charred) infotext.AppendLine(Lang.Get("roughseas:shipyard-charred", burnout.Strokes, burnout.StrokesPerHewing));
+            else
+            {
+                if (burnout.NeedsClay) infotext.AppendLine(Lang.Get("roughseas:shipyard-rim-clay", burnout.ClayBallsOn, burnout.ClayBalls));
+                if (burnout.Laid) infotext.AppendLine(Lang.Get("roughseas:shipyard-laid"));
+                else if (burnout.Kindled) infotext.AppendLine(Lang.Get("roughseas:shipyard-firepit", burnout.Firepit, Burnout.FirepitFirewood));
+                else infotext.AppendLine(Lang.Get("roughseas:shipyard-pile", burnout.Firewood, burnout.FirewoodPile));
+            }
         }
         base.GetInfoText(infotext);
     }
@@ -196,20 +236,39 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         base.OnEntityDespawn(despawn);
     }
 
-    private enum Step { Clay, Light, Hew }
+    private enum Step { Clay, Firewood, Kindle, Light, Hew }
 
     private Step? StepWith(ItemSlot slot) => slot.Itemstack?.Collectible switch
     {
         null => null,
         { Tool: EnumTool.Axe } => Step.Hew,
         ItemFirestarter => Step.Light,
+        ItemDryGrass => Step.Kindle,
+        var collectible when collectible is ItemFirewood || Constructs(collectible) => Step.Firewood,
         Block block when block.HasBehavior<BlockBehaviorCanIgnite>() => Step.Light,
         var collectible when WildcardUtil.Match(clay, collectible.Code) => Step.Clay,
         _ => null
     };
 
-    private WorldInteraction[] Help(IWorldAccessor world, string action, Func<IEnumerable<CollectibleObject>> with) =>
-        ObjectCacheUtil.GetOrCreate(world.Api, $"{action}/{clay}", () => new[]
+    private static bool Constructs(CollectibleObject collectible) => collectible.Attributes?.IsTrue("firepitConstructable") == true;
+
+    private static int Offered(EntityAgent byEntity, ItemSlot slot)
+    {
+        var pile = slot.Itemstack!.Collectible.GetBehavior<CollectibleBehaviorGroundStorable>()?.StorageProps;
+        int quantity = pile == null ? 1 : byEntity.Controls.CtrlKey ? pile.BulkTransferQuantity : pile.TransferQuantity;
+        return Math.Min(quantity, slot.StackSize);
+    }
+
+    private static void Spend(ItemSlot slot, int quantity, bool creative)
+    {
+        if (creative) return;
+
+        slot.TakeOut(quantity);
+        slot.MarkDirty();
+    }
+
+    private WorldInteraction[] Help(IWorldAccessor world, string action, Func<IEnumerable<CollectibleObject>> with, string stage = "") =>
+        ObjectCacheUtil.GetOrCreate(world.Api, $"{action}/{stage}/{clay}", () => new[]
         {
             new WorldInteraction { ActionLangCode = action, MouseButton = EnumMouseButton.Right, Itemstacks = with().Select(collectible => new ItemStack(collectible)).ToArray() }
         });
@@ -220,21 +279,31 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         return burnout.Finished;
     }
 
+    private int RimVoxels()
+    {
+        if (entity.Properties.Client?.Shape?.Base is not { } shape) return 0;
+
+        var path = shape.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json");
+        return ObjectCacheUtil.GetOrCreate(entity.Api, $"{Code}/rim/{path}",
+            () => Shape.TryGet(entity.Api, path)?.GetElementByName(ClayGroup) is { } rim ? Burnout.VoxelsOver(rim) : 0);
+    }
+
     private IEnumerable<string> Hidden()
     {
-        if (burnout.Finished) return [.. Stages, "Clay"];
+        if (burnout.Finished) return [.. Stages, ClayGroup];
 
         var level = burnout.Level;
         var showing = new List<string> { $"Blank{level}" };
         if (burnout.Lit || burnout.Charred) showing.Add($"Char{level}");
+        if (burnout.Laid) showing.Add($"Wood{level}");
         if (burnout.Lit) showing.Add($"Fire{level}");
         return Enumerable.Range(0, burnout.Hollowings)
             .SelectMany(n => Stages.Select(stage => $"{stage}{n}"))
             .Except(showing)
-            .Concat(burnout.Clayed ? [] : ["Clay"]);
+            .Concat(burnout.ClayVoxels > 0 ? [] : [ClayGroup]);
     }
 
-    private string ShapeKey() => $"{burnout.Level}/{burnout.Clayed}/{burnout.Lit}/{burnout.Charred}";
+    private string ShapeKey() => $"{burnout.Level}/{burnout.ClayVoxels > 0}/{burnout.Laid}/{burnout.Lit}/{burnout.Charred}";
 
     private void OnBuildChanged()
     {
@@ -279,17 +348,8 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehavior(entity), IHul
         }
     }
 
-    private double Rain()
-    {
-        var pos = entity.Pos;
-        if (entity.World.BlockAccessor.GetRainMapHeightAt((int)pos.X, (int)pos.Z) > pos.Y) return 0;
-
-        return entity.Api.ModLoader.GetModSystem<WeatherSystemBase>()?.GetPrecipitation(pos.XYZ) ?? 0;
-    }
-
     private bool Wet() =>
-        entity.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault()?.Litres >= 1 ||
-        IHull.Of(entity)?.Afloat.Sunk == true;
+        Hold?.Litres >= 1 || IHull.Of(entity)?.Afloat.Sunk == true;
 
     private void MarkDirty() => entity.WatchedAttributes.MarkPathDirty(TreeKey);
 }

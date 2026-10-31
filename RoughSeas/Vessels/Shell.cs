@@ -46,6 +46,18 @@ public abstract class Shell
             BackedShare, BottomBackedShare ?? BackedShare, Slammed(materials) * hull.SoakedStrengthShare);
     }
 
+    /// <summary>This shell with <paramref name="metres"/> of its own wood not yet cut out of the hold behind it: that wood backs the sides below the cut and the whole bottom.</summary>
+    public Shell Uncut(double metres, double hollowed)
+    {
+        if (metres <= 0) return this;
+
+        var solid = (Shell)MemberwiseClone();
+        solid.Backing = new RigidShell { Material = Material, Metres = metres };
+        solid.BackedShare = 1 - hollowed;
+        solid.BottomBackedShare = 1;
+        return solid;
+    }
+
     public abstract double Holed(MaterialTable materials, double holeSquareMetres);
 
     public abstract double Slammed(MaterialTable materials);
