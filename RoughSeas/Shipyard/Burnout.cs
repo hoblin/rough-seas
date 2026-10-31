@@ -6,9 +6,10 @@ using Vintagestory.API.Datastructures;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A hull hollowed out of a blank by fire and the axe, one hollowing at a time: each takes clay along the rim (the
-/// first fire needs none), a <see cref="LaidFire"/> that burns until its char is deep enough, and axe strokes that cut
-/// the char out. Its state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is finished.
+/// A hull hollowed out of a blank by fire and the axe, one hollowing at a time: each takes clay along the rim, a
+/// <see cref="LaidFire"/> that burns until its char is deep enough, and axe strokes that cut the char out. A fire
+/// burning with the rim unguarded chars the rim too, and once that char reaches through the wall the blank is
+/// spoiled. Its state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is finished.
 /// </summary>
 public sealed class Burnout
 {
@@ -22,6 +23,7 @@ public sealed class Burnout
     private const string CharredKey = "charred";
     private const string BurntKey = "burntHours";
     private const string StrokesKey = "strokes";
+    private const string RimCharKey = "rimCharMetres";
     private const double MillimetresPerMetre = 1000;
     private const double LitresPerCubicMetre = 1000;
 
@@ -34,7 +36,7 @@ public sealed class Burnout
     public Burnout(Func<ITreeAttribute> tree, Action changed, BurnoutConfig config, int rimVoxels, Func<double> holdLitres)
     {
         (this.tree, this.changed, this.config, this.rimVoxels, this.holdLitres) = (tree, changed, config, rimVoxels, holdLitres);
-        Fire = new LaidFire(tree, changed, config.FirewoodPile);
+        Fire = new LaidFire(tree, changed);
     }
 
     public LaidFire Fire { get; }
@@ -67,12 +69,16 @@ public sealed class Burnout
 
     public double HoursPerFire => CharMetres * MillimetresPerMetre / config.CharMillimetresPerHour;
 
-    public bool NeedsClay => Level > 0;
+    public double RimCharMetres => Tree?.GetDouble(RimCharKey) ?? 0;
+
+    public double WallMetres => config.WallMetres;
+
+    public bool Spoiled => RimCharMetres >= config.WallMetres;
 
     public int Strokes => Tree?.GetInt(StrokesKey) ?? 0;
 
     public int StrokesPerHewing =>
-        Math.Max(1, (int)Math.Ceiling(holdLitres() / Hollowings / (config.AxeEdgeMetres * config.AxeEdgeMetres * CharMetres * LitresPerCubicMetre)));
+        Math.Max(1, (int)Math.Ceiling(holdLitres() / Hollowings / (config.AxeEdgeMetres * CharMetres * config.HollowBeamMetres * LitresPerCubicMetre)));
 
     public float SaturationPerStroke => config.HewSaturation / StrokesPerHewing;
 
@@ -87,8 +93,7 @@ public sealed class Burnout
     public static void Begin(ITreeAttribute tree)
     {
         tree.SetInt(LevelKey, 0);
-        LaidFire.Lay(tree);
-        tree.SetBool(LitKey, true);
+        LaidFire.Kindle(tree);
     }
 
     public void Migrate()
@@ -98,18 +103,17 @@ public sealed class Burnout
         Tree.RemoveAttribute(LegacyClayedKey);
     }
 
-    public string? ClayRefusal() =>
-        Busy() ?? (!NeedsClay ? "shipyard-no-clay-yet" : Clayed ? "shipyard-clayed-already" : null);
+    public string? ClayRefusal() => Busy() ?? (Clayed ? "shipyard-clayed-already" : null);
 
-    public string? FirewoodRefusal(bool piles) => Busy() ?? Fire.FirewoodRefusal(piles);
+    public string? FirewoodRefusal() => Busy() ?? Fire.FirewoodRefusal();
 
     public string? KindlingRefusal() => Busy() ?? Fire.KindlingRefusal();
 
-    public string? LightRefusal() =>
-        Busy() ?? (!Fire.Laid ? "shipyard-lay-fire-first" : NeedsClay && !Clayed ? "shipyard-clay-first" : null);
+    public string? LightRefusal() => Busy() ?? (!Fire.Laid ? "shipyard-lay-fire-first" : null);
 
     public string? HewRefusal() =>
-        Lit ? "shipyard-burning"
+        Spoiled ? "shipyard-spoiled"
+        : Lit ? "shipyard-burning"
         : !Charred ? "shipyard-burn-first"
         : null;
 
@@ -136,6 +140,7 @@ public sealed class Burnout
         if (!Lit || hours <= 0) return false;
 
         double burnt = HoursBurnt + hours;
+        if (!Clayed) Tree.SetDouble(RimCharKey, RimCharMetres + (Math.Min(burnt, HoursPerFire) - HoursBurnt) * config.CharMillimetresPerHour / MillimetresPerMetre);
         if (burnt < HoursPerFire)
         {
             bool newHour = Math.Floor(burnt) > Math.Floor(HoursBurnt);
@@ -171,7 +176,8 @@ public sealed class Burnout
     }
 
     private string? Busy() =>
-        Lit ? "shipyard-burning"
+        Spoiled ? "shipyard-spoiled"
+        : Lit ? "shipyard-burning"
         : Charred ? "shipyard-hew-first"
         : null;
 }
@@ -183,8 +189,9 @@ public sealed class BurnoutConfig
     public double RimMetres;
     public double CharMillimetresPerHour = 1;
     public string Clay = "";
-    public int FirewoodPile = 1;
     public double AxeEdgeMetres = 1;
+    public double HollowBeamMetres = 1;
+    public double WallMetres = 1;
     public double SecondsPerStroke = 1;
     public float HewSaturation;
 }

@@ -20,11 +20,11 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
         vessel = properties["vessel"].AsString("");
     }
 
-    public bool TryLay(EntityAgent byEntity, BlockPos pos, IReadOnlyCollection<BlockPos> fire)
+    public bool TryLay(EntityAgent byEntity, BlockPos pos)
     {
-        if (Row(byEntity, pos, fire) is not { } row) return false;
+        if (Row(byEntity, pos) is not { } row) return false;
 
-        if (byEntity.World.Side == EnumAppSide.Server) Lay(byEntity, row, fire);
+        if (byEntity.World.Side == EnumAppSide.Server) Lay(byEntity, row);
         return true;
     }
 
@@ -38,7 +38,7 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
             }
             : null;
 
-    private static LogRow? Row(EntityAgent byEntity, BlockPos pos, IReadOnlyCollection<BlockPos> fire)
+    private static LogRow? Row(EntityAgent byEntity, BlockPos pos)
     {
         var world = byEntity.World;
         var accessor = world.BlockAccessor;
@@ -46,10 +46,10 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
             at => accessor.GetBlock(at) is var log && log.HasBehavior<BlockBehaviorBlankLog>() ? LogOf(log) : null,
             at => accessor.GetBlock(at, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid() && fluid.LiquidCode?.Contains("water") == true);
         var player = (byEntity as EntityPlayer)?.Player;
-        return row?.Blocks.Concat(fire).All(at => world.Claims.TestAccess(player, at, EnumBlockAccessFlags.BuildOrBreak) == EnumWorldAccessResponse.Granted) == true ? row : null;
+        return row?.Blocks.All(at => world.Claims.TestAccess(player, at, EnumBlockAccessFlags.BuildOrBreak) == EnumWorldAccessResponse.Granted) == true ? row : null;
     }
 
-    private void Lay(EntityAgent byEntity, LogRow row, IReadOnlyCollection<BlockPos> fire)
+    private void Lay(EntityAgent byEntity, LogRow row)
     {
         var world = byEntity.World;
         var shipyard = world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
@@ -60,13 +60,13 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
             return;
         }
 
-        foreach (var pos in fire.Concat(row.Blocks)) world.BlockAccessor.SetBlock(0, pos);
+        foreach (var pos in row.Blocks) world.BlockAccessor.SetBlock(0, pos);
         var blank = world.ClassRegistry.CreateEntity(type);
         blank.Pos.SetPos(row.Centre.ToVec3d().Add(0.5, 0, 0.5));
         blank.Pos.Yaw = row.Along == EnumAxis.X ? GameMath.PIHALF : 0;
         EntityBehaviorBurnout.Begin(blank, world.Api.ModLoader.GetModSystem<SeaWeatherSystem>().Clock.Hours);
         world.SpawnEntity(blank);
-        shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: the charcoal pit of {4} blocks on the middle log takes the row", byEntity.GetName(),
-            LogRow.Length, row.Wood.Code, row.Water.Code, fire.Count);
+        shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: dry grass on the middle log, the base of her first fire", byEntity.GetName(),
+            LogRow.Length, row.Wood.Code, row.Water.Code);
     }
 }

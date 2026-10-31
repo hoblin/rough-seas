@@ -45,8 +45,9 @@
             "rimMetres": 0.5,
             "charMillimetresPerHour": 2.5,
             "clay": "game:clay-*",
-            "firewoodPile": 32,
             "axeEdgeMetres": 0.1,
+            "hollowBeamMetres": 0.6,
+            "wallMetres": 0.05,
             "secondsPerStroke": 2,
             "hewSaturation": 80,
             "sources": {
@@ -54,8 +55,9 @@
                 "hollowings": "Wet clay goes along the rim before each fire (PHMC dugout project, 2005; SUNY Potsdam, 2015), and the fire is tended round the clock until the clay is spent, about a day and a night: 7 cm at a time, the 0.42 m hollow takes six fires and about a week, as Wampanoag builders burn a mishoon for 6 to 10 days (Plimoth Patuxet, The Making of a Mishoon)",
                 "hollowDepthMetres": "Rim to floor of the hollow: the 0.5 m hull less its 7.5 cm bottom",
                 "clay": "Wet clay one voxel thick over the rim outline the shape draws (its Clay group), at vanilla's 25 voxels a ball (BEClayForm.PutClay)",
-                "firewoodPile": "Vanilla's charcoal pit: dry grass lays a firepit only on a full pile of firewood, 32 in ground storage (ItemDryGrass), and four firewood finish the firepit (BlockFirepit)",
-                "axeEdgeMetres": "A stroke cuts through the day's char to the sound wood under it and takes a chip about as wide and as long as the axe's edge, about 10 cm on a felling axe",
+                "axeEdgeMetres": "Char has lost its fibres and crumbles, so a stroke breaks it away down to the sound wood along its whole sweep across the hollow, a strip as wide as the axe's edge, about 10 cm on a felling axe",
+                "hollowBeamMetres": "The hollow's width the stroke sweeps: the hull's 0.75 m beam less its two 7.5 cm walls (bin/lib/hulls/dugout.py)",
+                "wallMetres": "Her shell's 5 cm walls: a fire burning with the rim unguarded chars it at the hollow's rate, and once the char reaches through a wall's thickness the blank is spoiled",
                 "secondsPerStroke": "The best working rhythm with an axe is 25 to 35 strokes a minute (H. Glaser, physiology of forestry work, FAO)",
                 "hewSaturation": "As hard as a patch of mending: hewing out a day's char by hand"
             }
