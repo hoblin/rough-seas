@@ -91,8 +91,35 @@ def group(name, at, rot, children):
     return box(name, at, at, {}, origin=at, rot=rot, children=children)
 
 
-def stages(name, pieces):
-    return group(name, (0, 0, 0), (0, 0, 0), [group(f"{name}{n}", (0, 0, 0), (0, 0, 0), piece) for n, piece in enumerate(pieces, 1)])
+def stages(name, pieces, wood="frame"):
+    """A stage's pieces, each its own group; a piece of wood names the metres of lath or pole it takes, the length
+    drawn in that texture along its run."""
+    children = []
+    for n, piece in enumerate(pieces, 1):
+        child = group(f"{name}{n}", (0, 0, 0), (0, 0, 0), piece)
+        metres = span(piece, wood) / VOXELS_A_METRE
+        if metres > 0:
+            child["metres"] = round(metres, 2)
+        children.append(child)
+    return group(name, (0, 0, 0), (0, 0, 0), children)
+
+
+VOXELS_A_METRE = 16
+
+
+def span(elements, tex):
+    total = 0
+    for element in elements:
+        children = element.get("children", [])
+        if element["name"].endswith("Frame") and children:
+            board = children[0]
+            if any(face["texture"] == "#" + tex for face in board["faces"].values()):
+                total += board["to"][0] + board["from"][0]
+        elif children:
+            total += span(children, tex)
+        elif any(face["texture"] == "#" + tex for face in element["faces"].values()):
+            total += max(b - a for a, b in zip(element["from"], element["to"]))
+    return total
 
 
 def heading(start, end):

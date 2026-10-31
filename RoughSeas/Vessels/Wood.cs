@@ -37,7 +37,7 @@ public record Wood(string Domain, string Species)
     public string Name => Lang.Get($"{Vanilla}:material-{Species}");
 
     public static string? NameOf(CollectibleObject collectible) =>
-        Of(collectible.Variant) is { } wood ? Lang.GetMatching($"{collectible.Code.Domain}:item-{collectible.Code.Path}", wood.Name) : null;
+        Of(collectible.Variant) is { } wood ? Lang.GetMatching($"{collectible.Code.Domain}:item-{collectible.Code.Path}", wood.Name, collectible.Variant["length"]) : null;
 
     public AssetLocation Locate(AssetLocation code) => code.Path switch
     {

@@ -11,14 +11,14 @@ namespace RoughSeas.Tests.Shipyard;
 public class RiggingTests
 {
     private static readonly JToken Entity = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "vessel", "outrigger.json")));
-    private static readonly Shape Shape = JsonConvert.DeserializeObject<Shape>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "outrigger.json")))!;
+    private static readonly JObject Shape = JObject.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "outrigger.json")))!;
     private static readonly RiggingConfig Config = JsonConvert.DeserializeObject<RiggingConfig>(Entity["behaviorConfigs"]![EntityBehaviorRigging.Code]!.ToString())!;
 
     private TreeAttribute? tree;
 
     private Framing Outrigger()
     {
-        foreach (var stage in Config.Stages) stage.Pieces = Shape.GetElementByName(stage.Group).Children.Length;
+        Config.Measure(Shape);
         return new Framing(() => tree, () => { }, Config.Stages);
     }
 
@@ -103,17 +103,11 @@ public class RiggingTests
     }
 
     [Fact]
-    public void ARowOfThreeLogsSplitsIntoEveryPoleSheTakesAndNoMore()
-    {
-        var poles = Outrigger().Stages.Where(stage => stage.Work == FramingWork.Pole).Sum(stage => stage.Pieces);
-        var split = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "blocks", "wedge.json")))["attributes"]!["splits"]!
-            .Single(split => split.Value<string>("item")!.StartsWith("roughseas:pole-"));
-
-        Assert.Equal(poles, split.Value<int>("count"));
-    }
+    public void EveryPoleSheTakesIsCutFromAThreeMetrePole() =>
+        Assert.All(Outrigger().Stages.Where(stage => stage.Work == FramingWork.Pole).SelectMany(stage => stage.Metres), metres => Assert.InRange(metres, 2.5, 3));
 
     [Fact]
-    public void HerFirstBoomIsOneOfHerSixPolesOfFrame()
+    public void HerFirstBoomIsOneOfHerPolesOfFrame()
     {
         var outrigger = JustJoined();
         var poles = outrigger.Stages.Where(stage => stage.Work == FramingWork.Pole).Sum(stage => stage.Pieces);

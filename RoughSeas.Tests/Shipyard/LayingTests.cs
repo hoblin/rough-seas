@@ -8,7 +8,7 @@ namespace RoughSeas.Tests.Shipyard;
 public class LayingTests
 {
     private static readonly AssetLocation Laths = new("roughseas:lath-*");
-    private static readonly FramingStage Frame = new() { Group = "Frame", Work = FramingWork.Lath, Pieces = 2 };
+    private static readonly FramingStage Frame = new() { Group = "Frame", Work = FramingWork.Lath, Pieces = 2, Metres = [4.4, 1.2] };
 
     private readonly TreeAttribute tree = new();
     private readonly Framing canoe;
@@ -32,6 +32,17 @@ public class LayingTests
 
         Assert.Null(laying.Refusal(Lath("oak", "wet"), canoe));
         Assert.Equal("shipyard-laths-one-wood", laying.Refusal(Lath("maple", "wet"), canoe));
+    }
+
+    [Fact]
+    public void ALathShorterThanItsPieceIsRefusedAndALongerOneIsCutToIt()
+    {
+        Assert.Equal("shipyard-lath-short", laying.Refusal(Lath("oak", "wet", 4), canoe));
+        Assert.Null(laying.Refusal(Lath("oak", "wet", 5), canoe));
+
+        canoe.Lay("oak", 0);
+
+        Assert.Null(laying.Refusal(Lath("oak", "wet", 2), canoe));
     }
 
     [Fact]
@@ -81,8 +92,8 @@ public class LayingTests
 
     private static DummySlot Pole(string wood) => new(new ItemStack(new Item
     {
-        Code = new AssetLocation($"roughseas:pole-{wood}"),
-        Variant = new RelaxedReadOnlyDictionary<string, string>(new Dictionary<string, string> { ["wood"] = wood })
+        Code = new AssetLocation($"roughseas:pole-{wood}-3"),
+        Variant = new RelaxedReadOnlyDictionary<string, string>(new Dictionary<string, string> { ["wood"] = wood, ["length"] = "3" })
     }));
 
     private static DummySlot Plank(string domain, string wood) => new(new ItemStack(new Item
@@ -91,9 +102,9 @@ public class LayingTests
         Variant = new RelaxedReadOnlyDictionary<string, string>(new Dictionary<string, string> { ["wood"] = wood })
     }));
 
-    private static DummySlot Lath(string wood, string state) => new(new ItemStack(new Item
+    private static DummySlot Lath(string wood, string state, int metres = 5) => new(new ItemStack(new Item
     {
-        Code = new AssetLocation($"roughseas:lath-{wood}-{state}"),
-        Variant = new RelaxedReadOnlyDictionary<string, string>(new Dictionary<string, string> { ["wood"] = wood, ["state"] = state })
+        Code = new AssetLocation($"roughseas:lath-{wood}-{metres}-{state}"),
+        Variant = new RelaxedReadOnlyDictionary<string, string>(new Dictionary<string, string> { ["wood"] = wood, ["length"] = $"{metres}", ["state"] = state })
     }));
 }

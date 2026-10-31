@@ -1,7 +1,7 @@
 {
     "code": "pole",
     "class": "roughseas:ItemOfWood",
-    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}],
     "behaviors": [{"name": "roughseas:framing"}],
     "attributes": {
         "logTextures": {"wood": "inside-north"},

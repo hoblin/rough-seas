@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -40,6 +41,11 @@ public abstract class Laying
 
     /// <summary>What the help shows this work done with.</summary>
     public abstract IEnumerable<ItemStack> Shown(IWorldAccessor world);
+
+    /// <summary>Whether the lath or pole in <paramref name="slot"/> is shorter than the piece it would make; a longer one is cut down to it.</summary>
+    protected static bool Short(ItemSlot slot, Framing framing) =>
+        double.TryParse(slot.Itemstack?.Collectible.Variant["length"], NumberStyles.Float, CultureInfo.InvariantCulture, out var metres)
+        && metres < framing.NextMetres;
 }
 
 /// <summary>A lath split from the row, bent into her wet.</summary>
@@ -54,6 +60,7 @@ public sealed class LathLaying(AssetLocation laths) : Laying
     public override string? Refusal(ItemSlot slot, Framing framing) =>
         slot.Itemstack!.Collectible.Variant["state"] != Wet ? "shipyard-soak-laths"
         : framing.Wood is { } wood && wood != WoodOf(slot) ? "shipyard-laths-one-wood"
+        : Short(slot, framing) ? "shipyard-lath-short"
         : null;
 
     public override string? WoodOf(ItemSlot slot) => slot.Itemstack?.Collectible.Variant["wood"];
@@ -74,7 +81,9 @@ public sealed class PoleLaying(AssetLocation poles) : Laying
     public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible is { } pole && WildcardUtil.Match(poles, pole.Code);
 
     public override string? Refusal(ItemSlot slot, Framing framing) =>
-        framing.Wood is { } wood && wood != WoodOf(slot) ? "shipyard-poles-one-wood" : null;
+        framing.Wood is { } wood && wood != WoodOf(slot) ? "shipyard-poles-one-wood"
+        : Short(slot, framing) ? "shipyard-pole-short"
+        : null;
 
     public override string? WoodOf(ItemSlot slot) => slot.Itemstack?.Collectible.Variant["wood"];
 

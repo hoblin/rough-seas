@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
@@ -46,7 +47,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     {
         base.Initialize(properties, attributes);
         config = Configure(attributes);
-        config.Count(Pieces);
+        config.Measure(entity.Properties.Client?.Shape?.Base is { } shape ? FramingConfig.ShapeAt(entity.Api, shape) : null);
         framing = new Framing(() => Tree, MarkDirty, config.Stages);
         layings = config.Stages.ToDictionary(stage => stage, stage => Laying.For(stage, config));
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
@@ -154,14 +155,6 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         return asLaid.Resolve(entity.World, "laid wreckage", entity.Code) ? asLaid : drop;
     }
 
-    private int Pieces(string group)
-    {
-        if (entity.Properties.Client?.Shape?.Base is not { } shape) return 0;
-
-        var path = shape.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json");
-        return ObjectCacheUtil.GetOrCreate(entity.Api, $"{Code}/pieces/{path}/{group}",
-            () => FramingConfig.PiecesIn(Shape.TryGet(entity.Api, path), group));
-    }
 }
 
 public class FramingConfig
@@ -174,13 +167,26 @@ public class FramingConfig
         (type.Server?.BehaviorsAsJsonObj ?? type.Client?.BehaviorsAsJsonObj)?
             .FirstOrDefault(behavior => behavior["code"].AsString() == code)?.AsObject<T>();
 
-    public static int PiecesIn(Shape? shape, string group) => shape?.GetElementByName(group)?.Children?.Length ?? 0;
-
-    /// <summary>Counts each stage's pieces with <paramref name="pieces"/>, from the group that draws it.</summary>
-    public void Count(System.Func<string, int> pieces)
+    /// <summary>The shape at <paramref name="shape"/> as its JSON, which keeps the metres its builder names for each piece.</summary>
+    public static JObject? ShapeAt(ICoreAPI api, AssetLocation shape)
     {
-        foreach (var stage in Stages) stage.Pieces = pieces(stage.Group);
+        var path = shape.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json");
+        return ObjectCacheUtil.GetOrCreate(api, $"{EntityBehaviorFraming.Code}/shape/{path}", () => api.Assets.TryGet(path)?.ToObject<JObject>());
     }
+
+    /// <summary>Counts each stage's pieces from the group that draws it in <paramref name="shape"/>, and the metres of wood each takes.</summary>
+    public void Measure(JObject? shape)
+    {
+        foreach (var stage in Stages)
+        {
+            stage.Metres = Named(shape?["elements"], stage.Group)?["children"]?.Select(piece => piece.Value<double?>("metres") ?? 0).ToArray() ?? [];
+            stage.Pieces = stage.Metres.Length;
+        }
+    }
+
+    private static JToken? Named(JToken? elements, string name) =>
+        elements?.FirstOrDefault(element => element.Value<string>("name") == name)
+        ?? elements?.Select(element => Named(element["children"], name)).FirstOrDefault(found => found != null);
 
     /// <summary>The name of the part of her designed build that her laths or poles make: its share and reference, taken by the wood they are of.</summary>
     public string FramePart = "";

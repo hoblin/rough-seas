@@ -82,6 +82,8 @@ public sealed class Framing
         return Finished(hours) ? null : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
     }
 
+    public double NextMetres => Current is { } stage && Laid(stage) < stage.Metres.Length ? stage.Metres[Laid(stage)] : 0;
+
     public int Laid(FramingStage stage) => Tree?.GetInt(stage.Group) ?? stage.Pieces;
 
     /// <summary>What the stages done bring her, each its <paramref name="brings"/>.</summary>
@@ -155,6 +157,9 @@ public sealed class FramingStage
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public int Pieces;
+
+    [Newtonsoft.Json.JsonIgnore]
+    public double[] Metres = [];
 }
 
 public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank }
