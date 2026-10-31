@@ -77,6 +77,8 @@ A player meets your work at sea, not in the diff. Before the PR leaves draft, lo
 
 Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[shipyard\]\|\[sounds\]\|\[ew\]' "$BENCH_DATA/Logs/server-debug.log"`; what a client decides, such as the sounds it plays itself, is in `client-debug.log`).
 
+Close the game when you're done testing. A bench client left running holds the machine's video memory, and three clones' games starve everything else. Leave the world with `bin/game leave`, then `tmux kill-session -t "$BENCH-client"`. A server stops with `/stop` in its tmux session, `$BENCH-server`.
+
 ## Shipping
 
 A pull request under 1000 lines of diff skips the `/rpi:feature` flow's multi-agent self-review: Copilot's review is enough for a small change, and five reviewing subagents cost more than they find. Over 1000 lines, run it.
