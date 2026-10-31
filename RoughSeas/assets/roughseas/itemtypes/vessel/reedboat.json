@@ -6,8 +6,8 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/reedboat"},
-    "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "paddle": {"base": "game:block/wood/debarked/birch"}},
+    "shape": {"base": "roughseas:entity/vessel/reedboat", "ignoreElements": ["Flat", "Tips1Droop1", "Tips1Droop2", "Tips1Droop3", "Tips2Droop1", "Tips2Droop2", "Tips2Droop3"]},
+    "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},

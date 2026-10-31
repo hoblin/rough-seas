@@ -52,7 +52,10 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
     }
 
-    public static void Begin(Entity vessel) => Begin(vessel, DataVersion, _ => { });
+    public static void Begin(Entity vessel, string? firstLaid = null) => Begin(vessel, DataVersion, tree =>
+    {
+        if (firstLaid != null) tree.SetInt(firstLaid, 1);
+    });
 
     public override VesselPart[] Built(VesselPart[] designed) =>
         designed.Select(part => part.Name == config.FramePart

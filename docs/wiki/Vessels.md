@@ -5,7 +5,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
 | [Raft](Raft) | floating cargo downriver | 1 × | breaks on a few hard knocks |
-| [Reed boat](Reed-Boat) | a few days afloat, built in minutes | 1.3 × | sinks after three days afloat unless dried, can't be mended |
+| [Reed boat](Reed-Boat) | a day or two afloat, bound by the water from two reed bundles | 1.3 × | you sit wet and low; sinks within two days afloat unless dried, can't be mended |
 | [Dugout](Dugout) | the tough workhorse | 1.5 × | heavy, and tippy in a sea |
 | [Coracle](Coracle) | fishing and short hops, worn on your back | 0.5 × | slow, swamps in a chop |
 | [Birch-bark canoe](Birch-Bark-Canoe) | long river journeys, through [rapids](Rapids) | 2.1 × | fragile |
@@ -40,7 +40,7 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | | Seats | Steered from | Cargo |
 | --- | --- | --- | --- |
 | [Raft](Raft) | 2 | either seat, oar in hand | a basket in place of either rider |
-| [Reed boat](Reed-Boat) | 1 | its seat | a basket |
+| [Reed boat](Reed-Boat) | 1 | its seat, oar in hand | a basket |
 | [Dugout](Dugout) | 2 | the front seat, oar in hand | a basket in place of the passenger |
 | [Coracle](Coracle) | 1 | its seat | none |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships, oar in hand | a basket in place of the passenger |
@@ -52,6 +52,6 @@ A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a 
 
 ## Cost follows use
 
-A better vessel costs more than a worse one for the same job: the reed boat costs a knife and an armful of reeds, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
+A better vessel costs more than a worse one for the same job: the reed boat costs a knife, four stacks and a half of reeds and some rope, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
 
 All six new vessels are built in the crafting grid ([recipes](Recipes)), and each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).

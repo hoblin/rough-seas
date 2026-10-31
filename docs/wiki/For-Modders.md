@@ -115,3 +115,13 @@ The outrigger canoe is a finished dugout rigged where she lies ([Rigged in place
 
 New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys, `roughseas:framing`'s works `pole`, `hew`, `cloth` and `plank` and its keys `replaces`, `optional`, `raisesMetres`, `raisesLitres`, `part` and `texture`, `roughseas:burnout`'s keys `blankDepthMetres`, `blankWaterplaneSquareMetres` and `unhewnLitres`, a part's `name` and `takesKnocks`, and the items `roughseas:pole-{wood}`.
 
+### Reed boats bound in place
+
+The reed boat is bound from two reed bundles laid by the water ([Bound in place](Building-a-Vessel#bound-in-place)), and its grid recipe is gone. Her code is still `roughseas:reedboat`, so a reed boat of yours loads finished, with her ends bound up and her soak as it was.
+
+- She is a float of two 20 cm bundles: 3 m by 0.4 m, 0.2 m deep, 50 kg, her rider 5 cm above the water. Her shape, collision boxes and seat height changed, and her `Hull`, `FrontSeat` and `Cargo` elements with them; a patch that addressed her old shape's `Port`, `Starboard`, `Core` or `Binding` elements misses. Her `soak` and the `reed` material's density changed with her ([why](The-Science-of-the-Hull)).
+- Her rower holds an oar: she sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes. Her own paddle, its `roughseas-reedboat-*` strokes and `patches/player-reedboat.json` are gone.
+- `roughseas:framing` no longer needs a vessel of a wood, and strips a tree only when it has `barkSeconds`.
+- The help text `roughseas:shipyard-lash` now reads "Lash her with rope" on every framed vessel.
+
+New: the block `roughseas:reedbundle-{one|two}-{we|ns}` of class `roughseas:BlockBundles`, the behaviour `roughseas:droop`, and the hull model interface `ISoaking`.

@@ -2,41 +2,62 @@
     "code": "reedboat",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 60,
+    "weight": 50,
     "attributes": {
         "speedMultiplier": 1.3,
         "turnSpeed": 1.2,
-        "swimmingOffsetY": 0.3,
+        "swimmingOffsetY": 0.275,
         "shouldSwivelFromMotion": false,
+        "requiresPaddlingTool": true,
         "mountAnimations": {
             "idle": "roughseas-sitlegsforward",
-            "ready": "roughseas-reedboat-ready",
-            "forwards": "roughseas-reedboat-forward",
-            "backwards": "roughseas-reedboat-backward"
+            "ready": "crudeOarReady",
+            "forwards": "crudeOarForward",
+            "backwards": "crudeOarBackward"
         },
         "rightClickPickup": true
     },
-    "hitboxSize": {"x": 1.2, "y": 0.45},
+    "hitboxSize": {"x": 0.4, "y": 0.2},
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
             "model": "reed",
             "impactCapacity": 3000,
-            "parts": [{"material": "reed"}],
-            "depthMetres": 0.45,
-            "shell": {"kind": "bundle", "material": "reed", "metres": 0.45, "backing": {"material": "rope-flax", "metres": 0.022}, "backedShare": 0.17, "bottomBackedShare": 0.07},
-            "soak": {"kgPerDay": 80, "dryKgPerDay": 240, "rotShare": 0.35, "saturationKg": 300},
+            "parts": [{"material": "reed", "share": 43.2}, {"material": "rope-flax", "share": 7.2}],
+            "depthMetres": 0.2,
+            "shell": {"kind": "bundle", "material": "reed", "metres": 0.2, "backing": {"material": "rope-flax", "metres": 0.01}, "backedShare": 0.1, "bottomBackedShare": 0.05},
+            "soak": {"kgPerDay": 67, "dryKgPerDay": 200, "rotShare": 0.35, "saturationKg": 250},
             "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
             "damage": {"textures": ["reed"], "material": "reed"},
             "sources": {
-                "depthMetres": "The bundles stand about 0.45 m from bottom to top",
-                "shell": "Bundles of stems, which a blow bends and an edge parts without harm; she comes apart where an edge cuts a lashing. Reed rope, as flax rope, wrapped 2.2 cm thick; by the model, ten ties 0.8 voxel wide along each side bundle's 46 voxels cover 17% of her sides, and four bindings across her 7% of her bottom. A breaker's pressure bends the stems, which spring back",
-                "soak": "Balance on history: unridden, the reed takes up its own weight in water every 18 hours and lies on the bottom after about three days afloat (Heyerdahl's Ra II settled about 10 cm a day); a sunny day ashore drives most of it out again, but each drying leaves a third of what it drove out as rot, so a boat soaked through and dried five times is past saving where Titicaca's totora boats last months"
+                "weight": "Her two bundles are 288 reeds, 144 each, and her ties, lashings and ends eight ropes of six reeds: at the rush mat's calibration, a game reed is about 0.15 kg of dry reed (a 1 m² mat of 8 reeds weighs 1 to 1.5 kg as real rushes), 43.2 kg of bundles and 7.2 kg of cord, as a real 1 cm cord weighs 90 g a metre. A caballito de totora 2.44 × 0.41 × 0.23 m weighs 41 kg dry (festival.si.edu, storied objects, reed raft); hers, 3 × 0.4 × 0.2 m of the same build, 42.8 kg",
+                "parts": "Reed bundles and reed cord, by weight; the cord counts as flax rope",
+                "depthMetres": "Her bundles stand 20 cm from bottom to top",
+                "shell": "Bundles of stems, which a blow bends and an edge parts without harm; she comes apart where an edge cuts a lashing. Reed rope, as flax rope, 1 cm thick; by the model, eight ties 0.5 voxel wide along each bundle's 48 voxels and the five lashings across her cover about a tenth of her sides and a twentieth of her bottom. A breaker's pressure bends the stems, which spring back",
+                "soak": "Balance on history, per kilogram of reed as the old 60 kg boat took it: the reed takes up a third of its weight in water every six hours afloat, near the 41 kg caballito's 27 kg taken up on a day's fishing (festival.si.edu), and saturates at five times its weight; a sunny day ashore drives four times its weight out again, but each drying leaves a third of what it drove out as rot, so a boat soaked through and dried five times is past saving where Titicaca's totora boats last months"
+            }
+        },
+        "roughseas:framing": {
+            "rope": "game:rope",
+            "stages": [
+                {"group": "Lashing", "work": "rope", "seconds": 15},
+                {"group": "Tips", "work": "rope", "seconds": 15, "replaces": "Flat"}
+            ],
+            "sources": {
+                "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
+                "lashing": "One rope is ten metres of cord, some ten turns pulled tight around both bundles: about a quarter of an hour. Her five lashings of two turns, each with its knot, take 11.8 m, two ropes, counted by her shape's builder; the first binds the bundles into her where they lie",
+                "tips": "Each end is pulled together and up, and bound in a spiral of turns some six centimetres apart, 8.8 m of cord: one rope an end, a quarter of an hour"
+            }
+        },
+        "roughseas:droop": {
+            "ends": ["Tips1", "Tips2"],
+            "sources": {
+                "ends": "Her ends stand up only by the stiffness of their bound reed, against their weight; soaked, the reed is heavier and limp, and the ends sag until, saturated, they lie on the water. No line holds them up, as none held Ra I's stern"
             }
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [
-                {"x1": -0.438, "y1": 0, "z1": -1.5, "x2": 0.438, "y2": 0.45, "z2": 0.0},
-                {"x1": -0.438, "y1": 0, "z1": 0.0, "x2": 0.438, "y2": 0.45, "z2": 1.5}
+                {"x1": -0.2, "y1": 0, "z1": -1.5, "x2": 0.2, "y2": 0.2, "z2": 0.0},
+                {"x1": -0.2, "y1": 0, "z1": 0.0, "x2": 0.2, "y2": 0.2, "z2": 1.5}
             ],
             "groundDragFactor": 1,
             "airDragFallingFactor": 0.5,
@@ -68,16 +89,18 @@
             ]
         },
         "roughseas:seaforces": {
-            "beamMetres": 0.9,
+            "beamMetres": 0.4,
             "mastMetres": 0,
-            "windageSquareMetres": 0.6,
+            "windageSquareMetres": 0.3,
             "heave": 0.8,
             "capsizeBreakerMetres": 0.9,
             "rollResponse": 1.2,
             "pitchResponse": 1.2,
             "sources": {
+                "beamMetres": "Her two 20 cm bundles side by side",
+                "windageSquareMetres": "Her 3 m length over a freeboard of about 5 cm with her rider aboard, and her two raised ends",
                 "heave": "Reed is light and rises with the crest",
-                "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
+                "capsizeBreakerMetres": "Huanchaco's caballitos are paddled out through the surf and ride its breakers in (festival.si.edu): the low float slips under a breaker, which rolls her only once it stands as high as her rider sits, about 0.9 m",
                 "rollResponse": "Bundles bound into a flat-bottomed hull: a little livelier than vanilla's boats",
                 "pitchResponse": "Light and short, it lifts to each swell"
             }
@@ -87,14 +110,11 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/reedboat"},
-        "animations": [
-            {"code": "roughseas-reedboat-ready", "animation": "roughseas-reedboat-ready", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
-            {"code": "roughseas-reedboat-forward", "animation": "roughseas-reedboat-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
-            {"code": "roughseas-reedboat-backward", "animation": "roughseas-reedboat-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
-        ],
-        "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "paddle": {"base": "game:block/wood/debarked/birch"}},
+        "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
+            {"code": "roughseas:framing"},
+            {"code": "roughseas:droop"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -108,6 +128,7 @@
     "server": {
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
+            {"code": "roughseas:framing"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

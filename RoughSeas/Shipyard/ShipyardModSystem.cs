@@ -28,6 +28,7 @@ public class ShipyardModSystem : ModSystem
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorCarriedBuild.Code, typeof(CollectibleBehaviorCarriedBuild));
         api.RegisterBlockBehaviorClass(BlockBehaviorStrippable.Code, typeof(BlockBehaviorStrippable));
         api.RegisterBlockClass(BlockWedge.ClassName, typeof(BlockWedge));
+        api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
         FireOnLogs.Attach();
         LashingRope.Attach();
     }
@@ -63,12 +64,10 @@ public class ShipyardModSystem : ModSystem
         var builds = new List<FramingConfig>();
         foreach (var type in api.World.EntityTypes)
         {
-            if (Wood.Of(type.Variant) is not { } wood) continue;
-
             var framing = FramingConfig.Of(type);
             if (framing != null)
             {
-                Strippable(api.World, type, wood, framing);
+                if (framing.BarkSeconds > 0 && Wood.Of(type.Variant) is { } wood) Strippable(api.World, type, wood, framing);
                 if (api.World.GetItem(type.Code) is { } item) item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
             }
             if ((framing ?? RiggingConfig.Of(type)) is { } built) builds.Add(built);

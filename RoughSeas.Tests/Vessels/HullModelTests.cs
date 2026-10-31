@@ -229,7 +229,7 @@ public class HullModelTests
         bool SinksDry() => hull.Float(hull.Crewed(bodies: 0, kit: 0, soaked: reed.SoakedKg)).Sunk;
         void Cycle()
         {
-            reed.Pass(3, afloat: true, sun: 0);
+            reed.Pass(1.5, afloat: true, sun: 0);
             reed.Pass(10, afloat: false, sun: 1);
         }
 
