@@ -32,6 +32,12 @@ public class FramingTests
         while (canoe.Current is { } stage) canoe.Lay(stage.Work == FramingWork.Lath ? wood : null, setsAt);
     }
 
+    private static FramingStage LayUpTo(Framing canoe, System.Func<FramingStage, bool> stage, double setsAt = 0)
+    {
+        while (canoe.Current is { } current && !stage(current)) canoe.Lay("oak", setsAt);
+        return Assert.IsType<FramingStage>(canoe.Current);
+    }
+
     [Fact]
     public void ACanoeFromBeforeTheBuildIsFinished()
     {
@@ -54,6 +60,31 @@ public class FramingTests
         Assert.Equal(0, sheet.Lined);
         Assert.False(sheet.Sealed);
         Assert.Null(sheet.Wood);
+    }
+
+    [Fact]
+    public void ASheetShowsOnlyTheFlatBarkAndAFinishedCanoeAllButIt()
+    {
+        var canoe = Canoe().Hidden().ToList();
+        var sheet = Sheet().Hidden().ToList();
+
+        Assert.Contains(Framing.SkinGroup, sheet);
+        Assert.Contains(Framing.PaddleGroup, sheet);
+        Assert.Contains("Frame1", sheet);
+        Assert.DoesNotContain(Framing.SheetGroup, sheet);
+        Assert.Equal([Framing.SheetGroup], canoe);
+    }
+
+    [Fact]
+    public void EachPieceShowsOnceItIsLaid()
+    {
+        var canoe = Sheet();
+        canoe.Lay("oak", 0);
+
+        Assert.DoesNotContain("Frame1", canoe.Hidden());
+        Assert.Contains("Frame2", canoe.Hidden());
+        Assert.Contains(Framing.SheetGroup, canoe.Hidden());
+        Assert.DoesNotContain(Framing.SkinGroup, canoe.Hidden());
     }
 
     [Fact]
@@ -88,27 +119,28 @@ public class FramingTests
         canoe.Lay("maple", 0);
 
         Assert.Equal("maple", canoe.Wood);
-        Assert.InRange(canoe.Framed, 0.01, 0.1);
+        Assert.Equal(1.0 / canoe.Stages.Where(stage => stage.Work == FramingWork.Lath).Sum(stage => stage.Pieces), canoe.Framed, 6);
     }
 
     [Fact]
     public void TheSheathingLinesHerAsItIsLaid()
     {
         var canoe = Sheet();
-        while (canoe.Current?.Lines != true) canoe.Lay("oak", 0);
+        var lining = LayUpTo(canoe, stage => stage.Lines);
         canoe.Lay("oak", 0);
 
-        Assert.Equal(1.0 / canoe.Current!.Pieces, canoe.Lined, 6);
+        Assert.Equal(1.0 / lining.Pieces, canoe.Lined, 6);
     }
 
     [Fact]
     public void HerHoldHoldsWaterOnlyOnceEverySeamIsPitched()
     {
         var canoe = Sheet();
-        while (canoe.Current?.Seals != true) canoe.Lay("oak", 0);
+        var seams = LayUpTo(canoe, stage => stage.Seals);
+        for (int seam = 1; seam < seams.Pieces; seam++) canoe.Lay(null, 0);
 
         Assert.False(canoe.Sealed);
-        LayAll(canoe);
+        canoe.Lay(null, 0);
         Assert.True(canoe.Sealed);
     }
 
@@ -124,10 +156,10 @@ public class FramingTests
     }
 
     [Fact]
-    public void TheWettestRibSetsLast()
+    public void TheWettestRibSetsLastAndOnlyRibsSet()
     {
         var canoe = Sheet();
-        while (canoe.Current?.Sets != true) canoe.Lay("oak", 0);
+        LayUpTo(canoe, stage => stage.Sets, setsAt: 100);
         canoe.Lay("oak", 50);
         canoe.Lay("oak", 30);
 

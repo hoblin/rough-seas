@@ -37,7 +37,7 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
 
     protected ShipyardModSystem Shipyard { get; private set; } = null!;
 
-    protected ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
+    protected ITreeAttribute? Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
     public virtual VesselPart[] Built(VesselPart[] designed) => designed;
 
@@ -93,7 +93,7 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
     /// <summary>Changes whenever what she shows changes.</summary>
     protected abstract string ShapeKey();
 
-    /// <summary>Changes whenever her hull's form, what it is built of or what its hold holds, changes.</summary>
+    /// <summary>Changes whenever what her hull is built of, or how much of her hold holds water, changes.</summary>
     protected abstract string FormKey();
 
     protected void MarkDirty()

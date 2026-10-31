@@ -14,18 +14,14 @@ using Vintagestory.API.Util;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A bark canoe built up from the sheet stripped off a standing tree: gunwales and thwarts, stems, lashing, sheathing
-/// and ribs go on in that order, each piece drawn where it lies, and her seams are pitched last. She is finished once
-/// her ribs have dried in their bend.
+/// A vessel built up from the bark sheet stripped off a standing tree, stage by stage in the order her
+/// <see cref="FramingConfig.Stages"/> give, each piece drawn where it lies.
 /// </summary>
 public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
 {
     public const string Code = "roughseas:framing";
 
     private const int DataVersion = 1;
-    private const string SheetGroup = "Sheet";
-    private const string SkinGroup = "Skin";
-    private const string PaddleGroup = "Paddle";
     private const string WoodPrefix = "wood-";
 
     private FramingConfig config = null!;
@@ -41,15 +37,13 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
 
     public override double FloorMetres => 0;
 
-    public FramingConfig Config => config;
-
     public override string PropertyName() => Code;
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         base.Initialize(properties, attributes);
         config = attributes.AsObject<FramingConfig>(new FramingConfig());
-        foreach (var stage in config.Stages) stage.Pieces = Pieces(stage.Group);
+        config.Count(Pieces);
         framing = new Framing(() => Tree, MarkDirty, config.Stages);
         layings = config.Stages.ToDictionary(stage => stage, stage => Laying.For(stage, config));
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
@@ -82,7 +76,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
         var wood = laying.WoodOf(slot);
         double setsAt = sea.Clock.Hours + laying.WetHours(entity.World, slot);
         bool creative = (byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode == EnumGameMode.Creative;
-        if (!creative) laying.Spend(slot);
+        if (!creative) laying.Spend(slot, byEntity);
         slot.MarkDirty();
         framing.Lay(wood, setsAt);
         entity.World.PlaySoundAt(new AssetLocation("game:sounds/player/build"), entity, null, true, 16);
@@ -104,29 +98,22 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
 
     public override void GetInfoText(StringBuilder infotext)
     {
-        if (Tree != null && !Finished)
-        {
-            if (framing.Current is { } stage)
-            {
-                infotext.AppendLine(Lang.Get($"roughseas:shipyard-stage-{stage.Group.ToLowerInvariant()}", framing.Laid(stage), stage.Pieces));
-            }
-            else infotext.AppendLine(Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(framing.SetsAt - sea.Clock.Hours)));
-        }
+        if (framing.Progress(sea.Clock.Hours) is { } progress) infotext.AppendLine(progress);
         base.GetInfoText(infotext);
     }
 
-    protected override IEnumerable<string> Hidden()
+    public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
-        if (Tree == null) return [SheetGroup];
-
-        bool started = config.Stages.Any(stage => framing.Laid(stage) > 0);
-        return config.Stages
-            .SelectMany(stage => Enumerable.Range(framing.Laid(stage) + 1, Math.Max(0, stage.Pieces - framing.Laid(stage))).Select(n => $"{stage.Group}{n}"))
-            .Append(started ? SheetGroup : SkinGroup)
-            .Concat(framing.Built ? [] : [PaddleGroup]);
+        base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
+        if (entity.Api is ICoreClientAPI capi && framing.Wood is { } wood)
+        {
+            LathTexture.Draw(capi, ref entityShape, ref shapeIsCloned, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
+        }
     }
 
-    protected override string ShapeKey() => string.Join("/", config.Stages.Select(framing.Laid));
+    protected override IEnumerable<string> Hidden() => framing.Hidden();
+
+    protected override string ShapeKey() => framing.ShapeKey;
 
     protected override string FormKey() => $"{framing.Wood}/{framing.Framed}/{framing.Lined}/{framing.Sealed}";
 
@@ -136,13 +123,25 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity)
 
         var path = shape.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json");
         return ObjectCacheUtil.GetOrCreate(entity.Api, $"{Code}/pieces/{path}/{group}",
-            () => Shape.TryGet(entity.Api, path)?.GetElementByName(group)?.Children?.Length ?? 0);
+            () => FramingConfig.PiecesIn(Shape.TryGet(entity.Api, path), group));
     }
 }
 
 public sealed class FramingConfig
 {
     public FramingStage[] Stages = [];
+
+    public static FramingConfig? Of(EntityProperties type) =>
+        (type.Server?.BehaviorsAsJsonObj ?? type.Client?.BehaviorsAsJsonObj)?
+            .FirstOrDefault(behavior => behavior["code"].AsString() == EntityBehaviorFraming.Code)?.AsObject<FramingConfig>();
+
+    public static int PiecesIn(Shape? shape, string group) => shape?.GetElementByName(group)?.Children?.Length ?? 0;
+
+    /// <summary>Counts each stage's pieces with <paramref name="pieces"/>, from the group that draws it.</summary>
+    public void Count(System.Func<string, int> pieces)
+    {
+        foreach (var stage in Stages) stage.Pieces = pieces(stage.Group);
+    }
 
     /// <summary>The part of her designed build that her laths make: its share and reference, taken by the wood they are of.</summary>
     public string FramePart = "";
@@ -156,6 +155,5 @@ public sealed class FramingConfig
     /// <summary>How long a knife takes the bark off a standing trunk: the real time of that work over sixty.</summary>
     public double BarkSeconds;
 
-    /// <summary>The trunk the sheet comes off, at the least: as long as she is.</summary>
     public int TrunkBlocks;
 }

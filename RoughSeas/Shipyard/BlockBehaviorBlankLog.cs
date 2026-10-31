@@ -34,7 +34,7 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
         var accessor = world.BlockAccessor;
         var row = LogRow.Find(pos, at => accessor.GetBlock(at) is var log && log.HasBehavior<BlockBehaviorBlankLog>() ? LyingLog.Of(log) : null);
         var water = row?.Water(at => accessor.GetBlock(at, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid() && fluid.LiquidCode?.Contains("water") == true);
-        return water != null && LandClaims.Grant(byEntity, row!.Blocks) ? (row, water) : null;
+        return water != null && LandClaims.MayBreak(byEntity, row!.Blocks) ? (row, water) : null;
     }
 
     private void Lay(EntityAgent byEntity, LogRow row, BlockFacing water)

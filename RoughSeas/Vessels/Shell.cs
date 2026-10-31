@@ -95,7 +95,7 @@ public class RigidShell : Shell
         Resistance.Holing(materials.Toughness(Material), Metres, holeSquareMetres);
 
     public override double Slammed(MaterialTable materials) =>
-        Bends(materials, SpanMetres, FixedEnds) + (Backing?.Bends(materials, SpanMetres, FixedEnds) ?? 0);
+        Bends(materials, SpanMetres, FixedEnds) + (Backing?.Bends(materials, SpanMetres, FixedEnds) ?? 0) * BackedShare;
 }
 
 /// <summary>A hull hollowed from one log: each side stands from the bottom with its gunwale free.</summary>

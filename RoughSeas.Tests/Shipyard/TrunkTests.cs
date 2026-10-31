@@ -8,7 +8,7 @@ public class TrunkTests
     private readonly HashSet<BlockPos> trunk = [];
 
     [Fact]
-    public void ATrunkRunsFromItsFootToItsTopWhicheverOfItsBlocksIsCut()
+    public void ATrunkRunsFromItsFootToItsTopWhicheverOfItsBlocksIsHeld()
     {
         Grow(10, 6);
 

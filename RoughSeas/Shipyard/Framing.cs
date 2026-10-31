@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Shipyard;
@@ -12,6 +13,10 @@ namespace RoughSeas.Shipyard;
 /// </summary>
 public sealed class Framing
 {
+    public const string SheetGroup = "Sheet";
+    public const string SkinGroup = "Skin";
+    public const string PaddleGroup = "Paddle";
+
     private const string WoodKey = "wood";
     private const string SetsAtKey = "setsAt";
 
@@ -45,6 +50,31 @@ public sealed class Framing
     public double Lined => Share(stage => stage.Lines);
 
     public bool Sealed => Stages.Where(stage => stage.Seals).All(stage => Laid(stage) >= stage.Pieces);
+
+    /// <summary>Changes whenever what she shows changes.</summary>
+    public string ShapeKey => $"{string.Join("/", Stages.Select(Laid))}/{Wood}";
+
+    /// <summary>The groups of her shape that her build doesn't show yet, or no longer shows.</summary>
+    public IEnumerable<string> Hidden()
+    {
+        if (Tree == null) return [SheetGroup];
+
+        bool started = Stages.Any(stage => Laid(stage) > 0);
+        return Stages
+            .SelectMany(stage => Enumerable.Range(Laid(stage) + 1, Math.Max(0, stage.Pieces - Laid(stage))).Select(n => $"{stage.Group}{n}"))
+            .Append(started ? SheetGroup : SkinGroup)
+            .Concat(Built ? [] : [PaddleGroup]);
+    }
+
+    /// <summary>What a look at her says of her build at <paramref name="hours"/>; nothing once she is finished.</summary>
+    public string? Progress(double hours)
+    {
+        if (Tree == null || Finished(hours)) return null;
+
+        return Current is { } stage
+            ? Lang.Get($"roughseas:shipyard-stage-{stage.Group.ToLowerInvariant()}", Laid(stage), stage.Pieces)
+            : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
+    }
 
     public int Laid(FramingStage stage) => Tree?.GetInt(stage.Group) ?? stage.Pieces;
 

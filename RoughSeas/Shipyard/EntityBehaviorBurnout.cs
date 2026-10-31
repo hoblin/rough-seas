@@ -97,7 +97,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
-        if (burnout.Spoiled) CharAllOver(ref entityShape, ref shapeIsCloned);
+        if (burnout.Spoiled) ShapeFaces.Retexture(ref entityShape, ref shapeIsCloned, WoodTexture, CharTexture);
     }
 
     public override void OnGameTick(float deltaTime)
@@ -284,38 +284,6 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     protected override string FormKey() => burnout.Level.ToString();
 
     protected override string ShapeKey() => $"{burnout.Level}/{burnout.ClayVoxels > 0}/{burnout.Fire.Laid}/{burnout.Lit}/{burnout.Charred}/{burnout.Spoiled}";
-
-    private static void CharAllOver(ref Shape shape, ref bool shapeIsCloned)
-    {
-        if (!shapeIsCloned)
-        {
-            shape = shape.Clone();
-            shapeIsCloned = true;
-        }
-        foreach (var element in shape.Elements) Char(element);
-    }
-
-    private static void Char(ShapeElement element)
-    {
-        var faces = element.FacesResolved ?? [];
-        for (int i = 0; i < faces.Length; i++)
-        {
-            if (faces[i] is not { Texture: WoodTexture } face) continue;
-
-            faces[i] = new ShapeElementFace
-            {
-                Texture = CharTexture,
-                Uv = face.Uv,
-                ReflectiveMode = face.ReflectiveMode,
-                WindMode = face.WindMode,
-                WindData = face.WindData,
-                Rotation = face.Rotation,
-                Glow = face.Glow,
-                Enabled = face.Enabled
-            };
-        }
-        foreach (var child in element.Children ?? []) Char(child);
-    }
 
     private void Flicker(ICoreClientAPI capi, float deltaTime)
     {

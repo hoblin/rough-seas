@@ -107,12 +107,22 @@ public class ShellTests
     }
 
     [Fact]
-    public void BarkWithNoLiningYetBendsAlone()
+    public void BarkWithNoLiningYetIsBackedNowhere()
     {
         var canoe = new RigidShell { Material = "bark", Metres = 0.005, Backing = new RigidShell { Material = "wood-oak", Metres = 0.003 }, BackedShare = 1, SpanMetres = 0.25 };
 
         Assert.Null(canoe.Lined("wood-oak", 0).Backing);
         Assert.False(canoe.Lined("wood-oak", 0).Resists(2400, materials, Hull, CutShare).Backed(HullPlace.Bottom, 0));
+    }
+
+    [Fact]
+    public void ABreakerBendsTheLiningOnlyAsFarAsItIsLaid()
+    {
+        var canoe = new RigidShell { Material = "bark", Metres = 0.005, Backing = new RigidShell { Material = "wood-oak", Metres = 0.003 }, BackedShare = 1, SpanMetres = 0.25 };
+        var bark = new RigidShell { Material = "bark", Metres = 0.005, SpanMetres = 0.25 };
+        double full = canoe.Slammed(materials), bare = bark.Slammed(materials);
+
+        Assert.Equal(bare + (full - bare) / 2, canoe.Lined("wood-oak", 0.5).Slammed(materials), 6);
     }
 
     [Fact]

@@ -18,10 +18,10 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | --- | --- |
 | Speed | 2.1 × the raft, the fastest paddled boat |
 | Turning | nimble |
-| [Hull](Hull-Condition) | 2400 J |
+| [Hull](Hull-Condition) | 5200 J with an oak frame, 6100 J in birch; 2400 J in white cedar, the wood of a canoe from before the build |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 28 cm empty, 25 cm with its paddler |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 41 kg of gear, armour and containers |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 27 cm empty, 24 cm with its paddler, in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 27 kg of gear, armour and containers in oak, more in a lighter wood |
 | [Mending](Mending) | 2 bark of its tree close a third of a stove-in place |
 | [Bilge](Bailing) | 600 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
@@ -57,7 +57,7 @@ A bark canoe is built where its bark comes off the tree, piece by piece, each pi
 
    ![Sheathing laid and half her ribs in](images/birch-bark-canoe/build-ribs.webp)
 
-7. **Pitch the seams.** Hold a bowl or pot of hot pitch glue on her to pitch each of her four seams, a quarter litre a seam: one pot of glue. Glue that has set must be heated again.
+7. **Pitch the seams.** Hold a bowl, jug or bucket of hot pitch glue on her to pitch each of her four seams, a quarter litre a seam: one pot of glue. Glue that has set must be heated again.
 
    ![Finished, her seams pitched](images/birch-bark-canoe/build-pitched.webp)
 

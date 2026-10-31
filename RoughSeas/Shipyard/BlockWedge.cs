@@ -93,7 +93,7 @@ public class BlockWedge : Block
     {
         var accessor = world.BlockAccessor;
         var row = LogRow.Through(wedge.DownCopy(), at => accessor.GetBlock(at.UpCopy()) is BlockWedge ? LyingLog.Of(accessor.GetBlock(at)) : null);
-        return row != null && LandClaims.Grant(byPlayer.Entity, row.Blocks.SelectMany(log => new[] { log, log.UpCopy() })) ? row : null;
+        return row != null && LandClaims.MayBreak(byPlayer.Entity, row.Blocks.SelectMany(log => new[] { log, log.UpCopy() })) ? row : null;
     }
 
     private void Split(IWorldAccessor world, IPlayer byPlayer, LogRow row)

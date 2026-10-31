@@ -38,13 +38,7 @@ public class BlockBehaviorStrippable(Block block) : BlockBehavior(block)
         if (byPlayer.InventoryManager.ActiveTool != EnumTool.Knife) return false;
 
         handling = EnumHandling.PreventDefault;
-        var trunk = TrunkAt(world, blockSel.Position);
-        if (trunk.Height < trunkBlocks)
-        {
-            (world.Api as ICoreClientAPI)?.TriggerIngameError(this, "shipyard-trunk-short", Lang.Get("roughseas:shipyard-trunk-short", trunkBlocks));
-            return false;
-        }
-        if (!LandClaims.Grant(byPlayer.Entity, trunk.Blocks)) return false;
+        if (Strippable(world, byPlayer, blockSel.Position) == null) return false;
 
         work.Start(byPlayer.Entity);
         return true;
@@ -60,7 +54,8 @@ public class BlockBehaviorStrippable(Block block) : BlockBehavior(block)
     public override void OnBlockInteractStop(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref EnumHandling handling)
     {
         handling = EnumHandling.PreventDefault;
-        if (work.Stop(byPlayer.Entity, secondsUsed, seconds) && world.Side == EnumAppSide.Server) Strip(world, byPlayer, TrunkAt(world, blockSel.Position));
+        if (!work.Stop(byPlayer.Entity, secondsUsed, seconds) || world.Side != EnumAppSide.Server) return;
+        if (Strippable(world, byPlayer, blockSel.Position) is { } trunk) Strip(world, byPlayer, trunk);
     }
 
     public override bool OnBlockInteractCancel(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref EnumHandling handling)
@@ -80,7 +75,16 @@ public class BlockBehaviorStrippable(Block block) : BlockBehavior(block)
             }
         });
 
-    private Trunk TrunkAt(IWorldAccessor world, BlockPos pos) => Trunk.Through(pos, at => world.BlockAccessor.GetBlock(at).Id == block.Id);
+    private Trunk? Strippable(IWorldAccessor world, IPlayer byPlayer, BlockPos pos)
+    {
+        var trunk = Trunk.Through(pos, at => world.BlockAccessor.GetBlock(at).Id == block.Id);
+        if (trunk.Height < trunkBlocks)
+        {
+            (world.Api as ICoreClientAPI)?.TriggerIngameError(this, "shipyard-trunk-short", Lang.Get("roughseas:shipyard-trunk-short", trunkBlocks));
+            return null;
+        }
+        return LandClaims.MayBreak(byPlayer.Entity, trunk.Blocks) ? trunk : null;
+    }
 
     private void Strip(IWorldAccessor world, IPlayer byPlayer, Trunk trunk)
     {

@@ -534,13 +534,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
     private void Reform(IVesselHold hold, bool rebuilt = false)
     {
-        if (!rebuilt && hold.UncutLitres == uncutLitres && hold.CapacityLitres == holdLitres) return;
+        bool changed = hold.UncutLitres != uncutLitres || hold.CapacityLitres != holdLitres;
+        if (!changed && !rebuilt) return;
 
         uncutLitres = hold.UncutLitres;
         holdLitres = hold.CapacityLitres;
         var hull = build.WithUncut(uncutLitres);
         flotation = new Flotation(depthMetres, hold.CapacityLitres > 0 ? waterplaneSquareMetres : 0, hull.Litres);
-        if (entity.World.Side == EnumAppSide.Server)
+        if (changed && entity.World.Side == EnumAppSide.Server)
         {
             vessels.Log(entity, "hull of {0:F0} L of wood with a hold of {1:F0} L", hull.Litres, hold.CapacityLitres);
         }

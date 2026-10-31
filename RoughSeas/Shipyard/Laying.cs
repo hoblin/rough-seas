@@ -31,7 +31,7 @@ public abstract class Laying
     /// <summary>How long this piece stays wet once laid, in game hours.</summary>
     public virtual double WetHours(IWorldAccessor world, ItemSlot slot) => 0;
 
-    public abstract void Spend(ItemSlot slot);
+    public abstract void Spend(ItemSlot slot, EntityAgent byEntity);
 
     /// <summary>What the help shows this work done with.</summary>
     public abstract IEnumerable<ItemStack> Shown(IWorldAccessor world);
@@ -56,7 +56,7 @@ public sealed class LathLaying(AssetLocation laths) : Laying
     public override double WetHours(IWorldAccessor world, ItemSlot slot) =>
         slot.Itemstack!.Collectible.UpdateAndGetTransitionState(world, slot, EnumTransitionType.Dry)?.FreshHoursLeft ?? 0;
 
-    public override void Spend(ItemSlot slot) => slot.TakeOut(1);
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
 
     public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
         world.SearchItems(laths).Where(lath => lath.Variant["state"] == Wet).Select(lath => new ItemStack(lath));
@@ -67,12 +67,15 @@ public sealed class RopeLaying(AssetLocation rope) : Laying
 {
     public override string Action => "roughseas:shipyard-lash";
 
-    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible.Code == rope;
+    private const string TiedKey = "clothId";
 
-    public override void Spend(ItemSlot slot) => slot.TakeOut(1);
+    public override bool Takes(ItemSlot slot) =>
+        slot.Itemstack is { } stack && WildcardUtil.Match(rope, stack.Collectible.Code) && stack.Attributes.GetInt(TiedKey) == 0;
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
 
     public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
-        world.GetItem(rope) is { } item ? [new ItemStack(item)] : [];
+        world.SearchItems(rope).Select(item => new ItemStack(item));
 }
 
 /// <summary>Hot pitch from a container, poured along one seam.</summary>
@@ -93,11 +96,11 @@ public sealed class PitchLaying(AssetLocation pitch, double litres) : Laying
         return container.GetCurrentLitres(slot.Itemstack) < litres - 1e-6 ? "shipyard-pitch-short" : null;
     }
 
-    public override void Spend(ItemSlot slot)
+    public override void Spend(ItemSlot slot, EntityAgent byEntity)
     {
         var container = (BlockLiquidContainerBase)slot.Itemstack!.Collectible;
-        var props = container.GetContentProps(slot.Itemstack)!;
-        container.TryTakeContent(slot.Itemstack, (int)Math.Round(litres * props.ItemsPerLitre));
+        var portions = (int)Math.Round(litres * container.GetContentProps(slot.Itemstack)!.ItemsPerLitre);
+        container.SplitStackAndPerformAction(byEntity, slot, stack => container.TryTakeContent(stack, portions)?.StackSize ?? 0);
     }
 
     public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>

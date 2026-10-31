@@ -71,7 +71,7 @@ A hull's strength comes from its build, and for a wooden hull also from its wood
 
 A wood from another mod counts by its species when we know it (the list is in [Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)); one we don't counts as an average wood.
 
-An ebony sailboat takes more than four times the knocks and the breakers of a kapok one. Against a club or an axe, what counts is how tough the wood is rather than how strong: birch and beech are the toughest, oak close behind, and pine and spruce give twice as easily. The numbers: [The science of the hull](The-Science-of-the-Hull#hulls). The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood; the [coracle](Coracle) and [hide currach](Hide-Currach) have a single build each, and the [bark canoe](Birch-Bark-Canoe) is as strong whichever bark it is built of. Their capacities, in oak, are compared on [Vessels](Vessels).
+An ebony sailboat takes more than four times the knocks and the breakers of a kapok one. Against a club or an axe, what counts is how tough the wood is rather than how strong: birch and beech are the toughest, oak close behind, and pine and spruce give twice as easily. The numbers: [The science of the hull](The-Science-of-the-Hull#hulls). The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood, and the [bark canoe](Birch-Bark-Canoe)'s frame of the wood its laths were split from, whichever bark covers it; the [coracle](Coracle) and [hide currach](Hide-Currach) have a single build each. Their capacities, in oak, are compared on [Vessels](Vessels).
 
 The wood weighs too: a hull of a light wood floats higher and paddles a little faster than oak, one of a heavy wood lower and slower, and one heavier than seawater goes down when she floods ([Surf and swamping](Surf-and-Swamping#how-she-floats)).
 
@@ -95,7 +95,7 @@ What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 | [Dugout](Dugout) | scratches | scratches |
 | [Outrigger canoe](Outrigger-Canoe) | scratches | scratches |
 | [Sailboat](Sailboat) | scratches | cracks |
-| [Birch-bark canoe](Birch-Bark-Canoe) | scratches | cracks |
+| [Birch-bark canoe](Birch-Bark-Canoe) | scratches | scratches |
 | [Reed boat](Reed-Boat) | tears a little | tears a third of it |
 | [Hide currach](Hide-Currach) | scratches | cracks |
 | [Raft](Raft) | shakes a quarter of its lashings loose | mostly breaks it up |

@@ -131,7 +131,7 @@ The rest (cedar, which is Siberian pine, ginkgo, banyan, bearnut, tamanu, spurge
 
 ### Canoes of elm and spruce bark
 
-The [birch-bark canoe](Birch-Bark-Canoe) is built of the barks real canoes were made of: birch, elm and spruce. Wildcraft has elm and spruce, so their logs give bark with a knife, and the bark builds an elm-bark or a spruce-bark canoe, mended with the same bark. Its other barks build no canoe.
+The [birch-bark canoe](Birch-Bark-Canoe) is built of the barks real canoes were made of: birch, elm and spruce. Wildcraft has elm and spruce, so a knife strips their standing trunks of at least five blocks into an elm-bark or a spruce-bark canoe, and the trunk stands on bare, in Wildcraft's own debarked wood, and still fells whole. Their logs give bark for patches with a knife, mended with the same bark. Its other barks build no canoe. Any of its 43 woods splits into laths for a canoe's frame, which then has that wood's strength and weight.
 
 ### Its own boats
 
@@ -141,7 +141,7 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 
 - Vessels of Wildcraft's woods carry its name in their codes, `roughseas:dugout-wildcrafttree-elm`, so two mods with a wood of the same name never meet. Vanilla's woods keep their codes, `roughseas:dugout-oak`.
 - Take Wildcraft out of a world and the vessels built of its woods go with it, as its own blocks do.
-- Any other mod's trees work the same way, with nothing to write for it. Rough Seas reads every mod's `worldproperties/block/wood.json`, and builds from the blocks a wood has in vanilla's shapes: `log-placed-{wood}-ud` and `-we`, `plank-{wood}`, `debarkedlog-{wood}-ud` and `logsection-placed-{wood}-ne-ud`, in that mod's own domain. A mod's birch, elm or spruce gives canoe bark.
+- Any other mod's trees work the same way, with nothing to write for it. Rough Seas reads every mod's `worldproperties/block/wood.json`, and builds from the blocks a wood has in vanilla's shapes: `log-placed-{wood}-ud` and `-we`, `plank-{wood}`, `debarkedlog-{wood}-ud` and `logsection-placed-{wood}-ne-ud`, in that mod's own domain. A mod's birch, elm or spruce gives canoe bark: its standing trunk, `log-grown-{wood}-ud`, strips into a canoe and becomes our `roughseas:debarkedtrunk-{wood}`, with that log's tree-felling group and leaf hold and that wood's debarked texture, dropping the mod's `debarkedlog-{wood}-ud`. Laths come as `roughseas:lath-{domain}-{wood}-{dry|wet}`.
 
 ## SheyderMod
 
