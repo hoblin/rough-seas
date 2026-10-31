@@ -109,5 +109,7 @@ The outrigger canoe is a finished dugout rigged where she lies ([Rigged in place
 - Axes and cloth carry our collectible behaviour `roughseas:framing` too, as rope does.
 - The wedge's `laths` and `lath` attributes are now `splits`: what a row of so many wedged logs splits into, five into laths, three into poles.
 
-New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys, `roughseas:framing`'s works `pole`, `hew` and `cloth` and its key `replaces`, a part's `name`, and the items `roughseas:pole-{wood}`.
+- `IHullForm` grew `Wrecked` and `MastMetres`: what a vessel being built breaks into and how tall her mast stands so far. An implementation of yours returns the designed values to keep its behaviour.
+
+New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys, `roughseas:framing`'s works `pole`, `hew` and `cloth` and its key `replaces`, a part's `name` and `takesKnocks`, and the items `roughseas:pole-{wood}`.
 

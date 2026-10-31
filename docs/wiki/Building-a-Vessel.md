@@ -198,6 +198,7 @@ At every stage she is a vessel: she floats and can be picked up, her build goes 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
 | `floatLogs` | count | 0 | the logs her float is laid from |
+| `mast` | shape group | none | the stage whose first piece stands her mast: until it is laid she has none, and draws no lightning |
 | `floatOffMetres` | m | 0 | how far off her centreline they lie: the row is found through the block that far out, within half a block |
 | `floorMetres` | m | 0 | the top of her hold's floor above her origin, her hull's: the bilge draws its water from there |
 | `floatPart` | part name | none | the part of her `parts` her float makes: its share and its `reference` stay, the material is the float's wood. Her shape's `float` texture is drawn in that wood |
@@ -222,7 +223,7 @@ A broad load cracks its place by its share of the capacity and breaks the hull u
 | `impactCapacity` | the energy in joules a broad load must reach to break up a hull of its reference material; a load of a third of it cracks its place a third of the way to stove in. Without it, no broad load harms the hull |
 | `shell` | what the hull's outside is, for point blows, cuts and breakers; see below. Without it, the frame's capacity resists point blows and cuts too, and no breaker harms the hull |
 | `minImpactSpeed` | the speed in m/s a hull takes in its stride when it runs into something, a block or another hull: a knock below it is no knock, and only the energy above it counts. Default 1 |
-| `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1); a `name` lets a build find the part whatever it is made of. Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
+| `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1); a `name` lets a build find the part whatever it is made of, and `"takesKnocks": false` keeps a part (a float, a rig) in her weight and buoyancy but out of her strength. Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
 | `depthMetres` | keel to gunwale amidships. With it the vessel floats by its mass; without it, at its `freeboardMetres` |
 | `waterplaneSquareMetres` | the area it cuts at the water, for a hull with a hold. Leave it out for a solid one, a raft or a bundle, which presses down through its own depth |
 | `hullBox` | `[fromX, fromY, fromZ, toX, toY, toZ]` in the shape's voxels: the hull its places are measured on, when its `Hull` element reaches over more than the hull. By default, the `Hull` element |
