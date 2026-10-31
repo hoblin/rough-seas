@@ -57,7 +57,7 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
 
    ![The fire burning along the blank](images/dugout/build-fire.webp)
 
-6. **Hew out the char.** Once the fire is out, the hollow is black with char. Hold right-click with an axe: you swing again and again, and the char comes away down to sound wood, and a sixth of her outside with it. It tires you as hard work does: some 110 strokes a hewing, the most of them in sound wood.
+6. **Hew out the char.** Once the fire is out, the hollow is black with char. Hold right-click with an axe: you swing again and again, and the char comes away down to sound wood, and a sixth of her outside with it. It tires you as hard work does: some 30 strokes a hewing, about a minute.
 
    | | |
    | --- | --- |

@@ -215,7 +215,7 @@ public class BurnoutTests
     {
         var blank = Charred(Blank());
 
-        Assert.Equal(110, blank.StrokesPerHewing);
+        Assert.Equal(32, blank.StrokesPerHewing);
         for (int stroke = 1; stroke < blank.StrokesPerHewing; stroke++) Assert.False(blank.Stroke());
         Assert.Equal(0, blank.Level);
         Assert.True(blank.Stroke());

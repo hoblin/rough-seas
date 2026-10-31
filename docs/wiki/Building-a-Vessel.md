@@ -124,7 +124,7 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 Each hollowing then takes, in the hollow, what vanilla's campfire takes: clay along the rim, dry grass, four of anything vanilla builds a firepit with (`firepitConstructable`), and a torch or firestarter. Once the fire burns out, an axe held on the blank hews out the char a stroke at a time; the last hewing finishes her.
 
 - **Clay.** A ball covers 25 voxels, as in vanilla's clay forming, and the rim takes as many voxels as the shape's `Clay{level}` group covers seen from above, one voxel thick: each fire's rim, as she narrows. Nothing to set: the count follows your shape.
-- **The outside.** The blank is the whole trunk the logs make: each hewing also takes a sixth of `unhewnLitres` of sound wood off her outside, at `soundLitresPerStroke` a stroke, and her depth and waterplane go from `blankDepthMetres` and `blankWaterplaneSquareMetres` to her finished ones a sixth at a time. That wood weighs and floats until it is hewn away.
+- **The outside.** The blank is the whole trunk the logs make: each hewing also takes a sixth of `unhewnLitres` of sound wood off her outside, with the strokes that hew out the char, and her depth and waterplane go from `blankDepthMetres` and `blankWaterplaneSquareMetres` to her finished ones a sixth at a time. That wood weighs and floats until it is hewn away.
 - **A fire without clay** is never refused. While the rim lacks any of its clay, the fire chars the rim at the hollow's rate, and once that char reaches `wallMetres` the blank is spoiled: she is drawn with every face of her wood texture charred, takes no more work, and breaks up as any vessel does.
 - **Strokes.** A stroke breaks away a strip of the fire's char as wide as `axeEdgeMetres` across `hollowBeamMetres` of hollow, so a hewing takes the hollow's share of the hold over one such strip. The holder strikes every `secondsPerStroke`, and `hewSaturation` is spread over a hewing's strokes. Every axe in the game, a modded one too, hews.
 
@@ -136,7 +136,6 @@ Each hollowing then takes, in the hollow, what vanilla's campfire takes: clay al
 | `blankDepthMetres` | m | 0 | the trunk's height as the logs lay, where the first fire burns |
 | `blankWaterplaneSquareMetres` | m² | 0 | the trunk's waterplane, floating |
 | `unhewnLitres` | l | 0 | the trunk's wood outside the finished hull |
-| `soundLitresPerStroke` | l | 1 | the sound wood one stroke held hews off her outside |
 | `charMillimetresPerHour` | mm per game hour | 1 | how fast the fire chars its way down: one fire burns for the hollow's depth over `hollowings` at this rate |
 | `clay` | item code | none | what guards the rim, wildcards allowed (ours `game:clay-*`) |
 | `wallMetres` | m | 1 | the char on an unguarded rim that spoils the blank: her walls' thickness |

@@ -80,8 +80,7 @@ public sealed class Burnout
     public int Strokes => Tree?.GetInt(StrokesKey) ?? 0;
 
     public int StrokesPerHewing =>
-        Math.Max(1, (int)Math.Ceiling(holdLitres() / Hollowings / (config.AxeEdgeMetres * CharMetres * config.HollowBeamMetres * LitresPerCubicMetre)))
-        + (int)Math.Ceiling(config.UnhewnLitres / Hollowings / config.SoundLitresPerStroke);
+        Math.Max(1, (int)Math.Ceiling(holdLitres() / Hollowings / (config.AxeEdgeMetres * CharMetres * config.HollowBeamMetres * LitresPerCubicMetre)));
 
     public double UnhewnLitres => config.UnhewnLitres * (1 - Worked);
 
@@ -199,5 +198,4 @@ public sealed class BurnoutConfig
     public double BlankDepthMetres;
     public double BlankWaterplaneSquareMetres;
     public double UnhewnLitres;
-    public double SoundLitresPerStroke = 1;
 }
