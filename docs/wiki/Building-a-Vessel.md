@@ -116,7 +116,13 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 
 ## Built in place
 
-`roughseas:burnout` builds a vessel the way a dugout was really made: from five logs of one wood lying end to end beside the water, burnt and hewn out a day at a time. A fire laid on the middle log of such a row, with a torch or a firestarter, takes the logs away and leaves the vessel there as a blank, burning: the entity of your vessel's code and the logs' wood. Each hollowing after that takes wet clay along the rim, a fire, and an axe to hew out the char; the last one finishes her. The rule for the row needs nothing from you: any vessel with this behaviour whose code ends in a wood (`dugout-{wood}`) is built from that wood's lying logs, and lying log sections, in every mod's woods.
+`roughseas:burnout` builds a vessel the way a dugout was really made: from five logs of one wood lying end to end beside the water, burnt and hewn out a fire at a time. Dry grass laid with Shift on the middle log of such a row, where vanilla would start a campfire, takes the logs away and leaves the vessel there as a blank, the grass its first fire's base: the entity of your vessel's code and the logs' wood. The rule for the row needs nothing from you: any vessel with this behaviour whose code ends in a wood (`dugout-{wood}`) is built from that wood's lying logs, and lying log sections, in every mod's woods.
+
+Each hollowing then takes, in the hollow, what vanilla's campfire takes: clay along the rim, dry grass, four of anything vanilla builds a firepit with (`firepitConstructable`), and a torch or firestarter. Once the fire burns out, an axe held on the blank hews out the char a stroke at a time; the last hewing finishes her.
+
+- **Clay.** A ball covers 25 voxels, as in vanilla's clay forming, and the rim takes as many voxels as the shape's `Clay` group covers seen from above, one voxel thick. Nothing to set: the count follows your shape.
+- **A fire without clay** is never refused. While the rim lacks any of its clay, the fire chars the rim at the hollow's rate, and once that char reaches `wallMetres` the blank is spoiled: she is drawn with every face of her wood texture charred, takes no more work, and breaks up as any vessel does.
+- **Strokes.** A stroke breaks away a strip of the fire's char as wide as `axeEdgeMetres` across `hollowBeamMetres` of hollow, so a hewing takes the hollow's share of the hold over one such strip. The holder strikes every `secondsPerStroke`, and `hewSaturation` is spread over a hewing's strokes. Every axe in the game, a modded one too, hews.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
@@ -124,12 +130,16 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 | `hollowDepthMetres` | m | 0 | from the rim to the floor of the finished hollow |
 | `rimMetres` | m | 0 | the rim's height above the vessel's origin, where the first fire burns |
 | `charMillimetresPerHour` | mm per game hour | 1 | how fast the fire chars its way down: one fire burns for the hollow's depth over `hollowings` at this rate |
-| `clay` | item code | none | what guards the rim, wildcards allowed (ours `game:clay-*`); one a fire |
-| `hewSaturation` | saturation | 0 | what a hewing costs the one who hews |
+| `clay` | item code | none | what guards the rim, wildcards allowed (ours `game:clay-*`) |
+| `wallMetres` | m | 1 | the char on an unguarded rim that spoils the blank: her walls' thickness |
+| `axeEdgeMetres` | m | 1 | the width of char a stroke breaks away |
+| `hollowBeamMetres` | m | 1 | the width of the hollow a stroke sweeps across |
+| `secondsPerStroke` | s | 1 | how often a held axe strikes |
+| `hewSaturation` | saturation | 0 | what a whole hewing costs the one who hews |
 
-The vessel needs a `roughseas:bilge` too: its `capacityLitres` is the hollow that the build cuts out. At every stage she is a vessel: the wood not yet cut out weighs and floats as her hull does, and her `roughseas:bilge` holds only what is cut, so a blank floats solid and a half-hollowed hull ships half a bilge. She cracks and breaks as a finished one, rain puts her fire out, and water in the hollow keeps it from being lit. She gets her seats only when finished. A vessel already in a world from before, with no build of its own, is finished.
+The vessel needs a `roughseas:bilge` too: its `capacityLitres` is the hollow that the build cuts out. At every stage she is a vessel: the wood not yet cut out weighs and floats as her hull does, backs her sides below the cut and her bottom against a blow, and her `roughseas:bilge` holds only what is cut, so a blank floats solid and a half-hollowed hull ships half a bilge. She cracks and breaks as a finished one, rain puts her fire out, and water in the hollow keeps it from being lit. She gets her seats only when finished. A vessel already in a world from before, with no build of its own, is finished.
 
-Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its charred top) and `Fire` (the fire burning on it) each have one child per hollowing from the rim down: `Blank0`, `Blank1`…; `Clay`, the clay along the rim, is one group. The behaviour shows the ones the build is at and hides the rest, and all of them once she is finished; the item lists them in its `ignoreElements`. Our dugout's builder, `bin/lib/hulls/dugout.py`, draws them.
+Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its charred top), `Wood` (the fire laid on it) and `Fire` (its embers once lit) each have one child per hollowing from the rim down: `Blank0`, `Blank1`…; `Clay`, the clay along the rim, is one group. The behaviour shows the ones the build is at and hides the rest, and all of them once she is finished; the item lists them in its `ignoreElements`. A spoiled blank's faces take the shape's `char` texture in place of `inside`. Our dugout's builder, `bin/lib/hulls/dugout.py`, draws them.
 
 `roughseas:launch` lets anyone ashore push a vessel with Shift and an empty hand. A push slides her as far as one step of a person's push moves her mass against the ground's friction ([why](The-Science-of-the-Hull#building-a-dugout)), away from the one pushing.
 
@@ -139,7 +149,7 @@ Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its
 | `strideMetres` | m | 0 | how far a push carries |
 | `friction` | coefficient | 0 | of the hull sliding on the shore |
 
-List `roughseas:burnout` and `roughseas:launch` before `creaturecarrier`, so that a click with clay, a torch or an axe builds her, and a push with Shift doesn't seat the player.
+List `roughseas:burnout` and `roughseas:launch` before `creaturecarrier`, so that a click with clay, dry grass, firewood or a torch builds her, and a push with Shift doesn't seat the player.
 
 ## The hull
 
