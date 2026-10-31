@@ -15,6 +15,8 @@ public sealed class DriftSwitch : IDisposable
         var prefix = new HarmonyMethod(typeof(DriftSwitch), nameof(Prefix));
         harmony.Patch(AccessTools.Method(typeof(CurrentDrift), nameof(CurrentDrift.OnGameTick)), prefix: prefix);
         harmony.Patch(AccessTools.Method(typeof(CurrentDrift), "BeforeMove"), prefix: prefix);
+        harmony.Patch(AccessTools.Method(typeof(CurrentDrift), "Rowed"), prefix: prefix);
+        harmony.Patch(AccessTools.Method(typeof(CurrentDrift), nameof(CurrentDrift.HeldAtBow)), prefix: prefix);
     }
 
     public bool Drifting

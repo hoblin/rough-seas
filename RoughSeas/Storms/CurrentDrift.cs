@@ -76,9 +76,14 @@ public class CurrentDrift(Entity entity) : EntityBehavior(entity)
         }
     }
 
-    public void SwingAboutBow(float deltaTime)
+    /// <summary>While a mooring holds her, she turns about her bow under the water running past; let go, she stops turning.</summary>
+    public void HeldAtBow(bool held, float deltaTime)
     {
-        if (water is not { } w || hullBoxes == null) return;
+        if (!held || water is not { } w || hullBoxes == null)
+        {
+            turnPerSecond = 0;
+            return;
+        }
 
         var pos = entity.Pos;
         lock (setLock) turnPerSecond = w.Drag.Swing(w.X - setX, w.Z - setZ, pos.Yaw, turnPerSecond, deltaTime);
@@ -177,6 +182,10 @@ public class CurrentDrift(Entity entity) : EntityBehavior(entity)
         water = null;
         turnPerSecond = 0;
         lock (setLock) (setX, setZ) = (0, 0);
+        if (entity.World.Side == EnumAppSide.Server && entity.WatchedAttributes.HasAttribute(SetKey))
+        {
+            entity.WatchedAttributes.RemoveAttribute(SetKey);
+        }
     }
 
     private void TakeHelm()

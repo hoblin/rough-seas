@@ -117,11 +117,10 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         if (entity.World.Side != EnumAppSide.Server || forces == null || !entity.Alive) return;
 
         using var _ = storms.Budget.Measure();
-        var held = true;
-        if (Anchor is { } leashed) Leash(leashed);
-        else if (StakeRope() is { } rope && Stake(rope) is { } stake) Hold(stake.X + 0.5, stake.Z + 0.5, storms.Config.Mooring.StakeReachMetres);
-        else held = false;
-        if (held && mountable?.IsBeingControlled() != true) drift?.SwingAboutBow(deltaTime);
+        var held = Anchor is { } leashed
+            ? Leash(leashed)
+            : StakeRope() is { } rope && Stake(rope) is { } stake && Hold(stake.X + 0.5, stake.Z + 0.5, storms.Config.Mooring.StakeReachMetres);
+        drift?.HeldAtBow(held, deltaTime);
 
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
@@ -244,36 +243,34 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         SpareRodeSlot()?.Itemstack is { } coil ? coil.StackSize * coil.Collectible.Attributes["rodeMetres"].AsDouble() : 0;
 
     /// <summary>A steered vessel drags its anchor along: the rider's client moves it, and the server cannot hold it back.</summary>
-    private void Leash(Anchor anchor)
+    private bool Leash(Anchor anchor)
     {
         var reach = anchor.Reach(Depth(anchor));
-        if (mountable?.IsBeingControlled() != true)
-        {
-            Hold(anchor.X, anchor.Z, reach);
-            return;
-        }
+        if (mountable?.IsBeingControlled() != true) return Hold(anchor.X, anchor.Z, reach);
 
         var pos = entity.Pos;
         var (dx, dz) = (pos.X - anchor.X, pos.Z - anchor.Z);
         var distance = Math.Sqrt(dx * dx + dz * dz);
-        if (distance <= reach) return;
+        if (distance <= reach) return false;
 
         var over = (distance - reach) / distance;
         Anchor = anchor.DraggedBy(dx * over, dz * over);
+        return false;
     }
 
-    private void Hold(double x, double z, double reach)
+    private bool Hold(double x, double z, double reach)
     {
         var pos = entity.Pos;
         var (dx, dz) = (pos.X - x, pos.Z - z);
         var distance = Math.Sqrt(dx * dx + dz * dz);
-        if (distance <= reach) return;
+        if (distance <= reach) return false;
 
         var outward = (pos.Motion.X * dx + pos.Motion.Z * dz) / distance;
         var pull = Math.Max(0, outward) + Math.Min(distance - reach, ReelInBlocksPerTick);
         pos.Motion.X -= pull * dx / distance;
         pos.Motion.Z -= pull * dz / distance;
         drift?.Hold(dx / distance, dz / distance);
+        return mountable?.IsBeingControlled() != true;
     }
 
     private static BlockPos? Stake(ClothSystem rope) => rope.FirstPoint.PinnedToBlockPos ?? rope.LastPoint.PinnedToBlockPos;
