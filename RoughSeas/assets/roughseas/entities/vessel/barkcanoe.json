@@ -54,6 +54,32 @@
             "airDragFallingFactor": 0.5,
             "gravityFactor": 1.0
         },
+        "roughseas:framing": {
+            "framePart": "wood-tuja",
+            "laths": "roughseas:lath-*",
+            "rope": "game:rope",
+            "pitch": "game:glueportion-pitch-*",
+            "barkSeconds": 30,
+            "trunkBlocks": 5,
+            "stages": [
+                {"group": "Frame", "work": "lath", "seconds": 3},
+                {"group": "Stems", "work": "lath", "seconds": 3},
+                {"group": "Lashing", "work": "rope", "seconds": 15},
+                {"group": "Sheathing", "work": "lath", "seconds": 3, "lines": true},
+                {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true},
+                {"group": "Pitch", "work": "pitch", "seconds": 7.5, "litres": 0.25, "seals": true}
+            ],
+            "sources": {
+                "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
+                "barkSeconds": "Scoring a five-metre sheet along the trunk and around it, then prying and peeling it whole: some 20 to 40 minutes (an estimate; robin-wood.co.uk, 2014, describes the work but gives no time)",
+                "trunkBlocks": "The sheet is the canoe's whole length, five metres",
+                "frame": "Fitting one lath, about three minutes: a steamed rib has to be driven in within a couple of minutes, before it cools (robin-wood.co.uk, birch bark canoe build, 2014)",
+                "lashing": "One rope is ten metres of lashing, some fifty turns, each through a hole made with an awl: about a quarter of an hour (an estimate). The canoe takes as much as her gunwales and stems need, groups of eight to ten turns two inches apart (Adney & Chapelle 1964), counted by her shape's builder",
+                "pitch": "About a quart of pitch for a canoe (forums.wcha.org, bark pitch questions), one vanilla pot of pitch, a quarter litre to each of her four seams; pitching them all about half an hour (an estimate)",
+                "ribs": "Ribs bent in wet hold their bend once dry, a couple of days (the Lac du Flambeau build, canoe.csumc.wisc.edu): their laths dry as they would in the bundle",
+                "framePart": "Her frame is the wood of her laths: its share and the weight it was set for are white cedar's, its strength and density are those of the wood split"
+            }
+        },
         "creaturecarrier": {
             "seats": [
                 {
@@ -116,9 +142,10 @@
             {"code": "roughseas-barkcanoe-forward", "animation": "roughseas-barkcanoe-forward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true},
             {"code": "roughseas-barkcanoe-backward", "animation": "roughseas-barkcanoe-backward", "animationSpeed": 0.75, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4, "clientSide": true}
         ],
-        "textures": {"lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+        "textures": {"lashing": {"base": "game:item/resource/rope"}, "pitch": {"base": "game:block/liquid/glue-cold"}, "bilge": {"base": "game:block/liquid/waterportion"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
+            {"code": "roughseas:framing"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "interpolateposition"},
@@ -134,6 +161,7 @@
     "server": {
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
+            {"code": "roughseas:framing"},
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},

@@ -13,4 +13,10 @@ public class VesselPart
 
     /// <summary>Its share of the reference build's weight, in proportion to the other parts' shares.</summary>
     public double Share = 1;
+
+    /// <summary>How much of it is in her yet, by weight and strength: all of it unless she is still being built.</summary>
+    public double Present = 1;
+
+    public VesselPart As(string material, double present) =>
+        new() { Material = material, Reference = Reference == "" ? Material : Reference, Share = Share, Present = present };
 }

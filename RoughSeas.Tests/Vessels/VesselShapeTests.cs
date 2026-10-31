@@ -151,6 +151,24 @@ public class VesselShapeTests
         Assert.DoesNotContain($"Blank{hollowings}", names);
     }
 
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void DrawsEveryPieceOfItsFramingInItsOwnGroup(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        if (entity["behaviorConfigs"]!["roughseas:framing"]?["stages"] is not { } stages) return;
+
+        var elements = Elements(shape["elements"]!).ToDictionary(element => element.Value<string>("name")!);
+        Assert.Contains("Sheet", elements.Keys);
+        Assert.Contains("Skin", elements.Keys);
+        Assert.All(stages.Select(stage => stage.Value<string>("group")!), group =>
+        {
+            var pieces = elements[group]["children"]!.Select(piece => piece.Value<string>("name")).ToList();
+            Assert.NotEmpty(pieces);
+            Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{group}{n}"), pieces);
+        });
+    }
+
     [Fact]
     public void KeysEveryAxisOfWhatEachStrokeMoves()
     {

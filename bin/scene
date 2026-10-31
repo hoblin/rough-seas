@@ -331,17 +331,17 @@ recipes() {
   local dir=$1 name page output from
   mkdir -p "$dir"
   while read -r name page output from; do
-    recipe "item-$page" "$output" "$dir/$name.png" "$from"
+    recipe "$page" "$output" "$dir/$name.png" "$from"
   done <<'EOF'
-birch-bark         roughseas:bark-birch         roughseas:bark-birch
-reed-boat          roughseas:reedboat           roughseas:reedboat
-coracle            roughseas:coracle            roughseas:coracle
-birch-bark-canoe   roughseas:barkcanoe-birch    roughseas:barkcanoe-birch
-currach            roughseas:currach            roughseas:currach
-outrigger          roughseas:outrigger-oak      roughseas:outrigger-oak
-outrigger-redwood  roughseas:outrigger-redwood  roughseas:outrigger-redwood
-anchor-warp        roughseas:anchorwarp         roughseas:anchorwarp
-anchor-warp-ropes  rope                         game:rope                    roughseas:anchorwarp
+birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
+splitting-wedge    block-roughseas:wedge-we          roughseas:wedge-we
+reed-boat          item-roughseas:reedboat           roughseas:reedboat
+coracle            item-roughseas:coracle            roughseas:coracle
+currach            item-roughseas:currach            roughseas:currach
+outrigger          item-roughseas:outrigger-oak      roughseas:outrigger-oak
+outrigger-redwood  item-roughseas:outrigger-redwood  roughseas:outrigger-redwood
+anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
+anchor-warp-ropes  item-rope                         game:rope                    roughseas:anchorwarp
 EOF
   "$game" close >/dev/null
   ls "$dir"

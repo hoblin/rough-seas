@@ -7,6 +7,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
 
 namespace RoughSeas.Shipyard;
 
@@ -20,10 +21,20 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockBehaviorClass(BlockBehaviorBlankLog.Code, typeof(BlockBehaviorBlankLog));
         api.RegisterEntityBehaviorClass(EntityBehaviorBurnout.Code, typeof(EntityBehaviorBurnout));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHew.Code, typeof(CollectibleBehaviorHew));
+        api.RegisterEntityBehaviorClass(EntityBehaviorFraming.Code, typeof(EntityBehaviorFraming));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorFraming.Code, typeof(CollectibleBehaviorFraming));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorCarriedBuild.Code, typeof(CollectibleBehaviorCarriedBuild));
+        api.RegisterBlockBehaviorClass(BlockBehaviorStrippable.Code, typeof(BlockBehaviorStrippable));
+        api.RegisterBlockClass(BlockWedge.ClassName, typeof(BlockWedge));
         FireOnLogs.Attach();
+        LashingRope.Attach();
     }
 
-    public override void Dispose() => FireOnLogs.Detach();
+    public override void Dispose()
+    {
+        FireOnLogs.Detach();
+        LashingRope.Detach();
+    }
 
     // The server sends its blocks, behaviours included, to clients only after this phase.
     public override void AssetsFinalize(ICoreAPI api)
@@ -47,6 +58,16 @@ public class ShipyardModSystem : ModSystem
         {
             axe.CollectibleBehaviors = axe.CollectibleBehaviors.Append(new CollectibleBehaviorHew(axe));
         }
+        var ropes = new List<AssetLocation>();
+        foreach (var type in api.World.EntityTypes)
+        {
+            if (FramingConfig.Of(type) is not { } framing || Wood.Of(type.Variant) is not { } wood) continue;
+
+            Strippable(api.World, type, wood, framing);
+            ropes.Add(new AssetLocation(framing.Rope));
+            if (api.World.GetItem(type.Code) is { } item) item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
+        }
+        Framed(api.World, ropes);
     }
 
     public void Log(Entity entity, string format, params object[] args) =>
@@ -61,6 +82,40 @@ public class ShipyardModSystem : ModSystem
             .Select(world.GetBlock)
             .OfType<Block>()
             .Where(log => log.Id > 0);
+
+    private void Strippable(IWorldAccessor world, EntityProperties type, Wood wood, FramingConfig framing)
+    {
+        var grown = world.GetBlock(new AssetLocation(wood.Domain, $"log-grown-{wood.Species}-ud"));
+        var debarked = world.GetBlock(new AssetLocation(Mod.Info.ModID, $"debarkedtrunk-{wood.Code}"));
+        if (grown == null || debarked == null)
+        {
+            Log("no standing trunk of {0} to strip for {1}: its bark needs a debarkedtrunk variant", wood.Code, type.Code);
+            return;
+        }
+
+        DebarkedTrunk.Dress(world, debarked, grown, wood);
+        var behavior = new BlockBehaviorStrippable(grown);
+        behavior.Initialize(new JsonObject(new JObject
+        {
+            ["vessel"] = type.Code.ToString(),
+            ["debarked"] = debarked.Code.ToString(),
+            ["seconds"] = framing.BarkSeconds,
+            ["trunkBlocks"] = framing.TrunkBlocks
+        }));
+        grown.BlockBehaviors = grown.BlockBehaviors.Append(behavior);
+        grown.CollectibleBehaviors = grown.CollectibleBehaviors.Append(behavior);
+    }
+
+    /// <summary>Lets rope and every liquid container lay a canoe's pieces, as her laths do by their own JSON.</summary>
+    private static void Framed(IWorldAccessor world, List<AssetLocation> ropes)
+    {
+        var tools = world.Collectibles.Where(collectible => collectible?.Code != null
+            && (collectible is BlockLiquidContainerBase || ropes.Any(rope => WildcardUtil.Match(rope, collectible.Code))));
+        foreach (var tool in tools.Where(tool => !tool.HasBehavior<CollectibleBehaviorFraming>()))
+        {
+            tool.CollectibleBehaviors = tool.CollectibleBehaviors.Append(new CollectibleBehaviorFraming(tool));
+        }
+    }
 
     private static bool BurnsOut(EntityProperties type) =>
         type.Server?.BehaviorsAsJsonObj?.Any(behavior => behavior["code"].AsString() == EntityBehaviorBurnout.Code) == true;

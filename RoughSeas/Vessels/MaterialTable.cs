@@ -21,8 +21,12 @@ public class MaterialTable
         this.logger = logger;
     }
 
-    public double StrengthFactor(IEnumerable<VesselPart> parts) =>
-        parts.Aggregate(1.0, (factor, part) => factor * StrengthRatio(part.Material, ReferenceOf(part)));
+    public double StrengthFactor(IReadOnlyCollection<VesselPart> parts)
+    {
+        double shares = parts.Sum(part => part.Share);
+        double present = shares > 0 ? parts.Sum(part => part.Share * part.Present) / shares : 1;
+        return present * parts.Aggregate(1.0, (factor, part) => factor * Math.Pow(StrengthRatio(part.Material, ReferenceOf(part)), part.Present));
+    }
 
     public HullBuild Build(IReadOnlyCollection<VesselPart> parts, double referenceKilograms)
     {
@@ -31,7 +35,7 @@ public class MaterialTable
 
         return parts.Aggregate(new HullBuild(0, 0), (build, part) =>
         {
-            double referenceShare = referenceKilograms * part.Share / shares;
+            double referenceShare = referenceKilograms * part.Share / shares * part.Present;
             double litres = Litres(referenceShare, ReferenceOf(part));
             return new HullBuild(build.Kilograms + litres / 1000 * Density(part.Material), build.Litres + litres);
         });

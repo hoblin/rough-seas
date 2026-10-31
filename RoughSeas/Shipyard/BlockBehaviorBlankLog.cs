@@ -22,34 +22,22 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
 
     public bool TryLay(EntityAgent byEntity, BlockPos pos)
     {
-        if (Row(byEntity, pos) is not { } row) return false;
+        if (Row(byEntity, pos) is not var (row, water)) return false;
 
-        if (byEntity.World.Side == EnumAppSide.Server) Lay(byEntity, row);
+        if (byEntity.World.Side == EnumAppSide.Server) Lay(byEntity, row, water);
         return true;
     }
 
-    public static LyingLog? LogOf(Block block) =>
-        block.Variant["wood"] is { } species
-            ? block.Variant["rotation"] switch
-            {
-                "we" => new LyingLog(new Wood(block.Code.Domain, species), EnumAxis.X),
-                "ns" => new LyingLog(new Wood(block.Code.Domain, species), EnumAxis.Z),
-                _ => null
-            }
-            : null;
-
-    private static LogRow? Row(EntityAgent byEntity, BlockPos pos)
+    private static (LogRow, BlockFacing)? Row(EntityAgent byEntity, BlockPos pos)
     {
         var world = byEntity.World;
         var accessor = world.BlockAccessor;
-        var row = LogRow.Find(pos,
-            at => accessor.GetBlock(at) is var log && log.HasBehavior<BlockBehaviorBlankLog>() ? LogOf(log) : null,
-            at => accessor.GetBlock(at, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid() && fluid.LiquidCode?.Contains("water") == true);
-        var player = (byEntity as EntityPlayer)?.Player;
-        return row?.Blocks.All(at => world.Claims.TestAccess(player, at, EnumBlockAccessFlags.BuildOrBreak) == EnumWorldAccessResponse.Granted) == true ? row : null;
+        var row = LogRow.Find(pos, at => accessor.GetBlock(at) is var log && log.HasBehavior<BlockBehaviorBlankLog>() ? LyingLog.Of(log) : null);
+        var water = row?.Water(at => accessor.GetBlock(at, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid() && fluid.LiquidCode?.Contains("water") == true);
+        return water != null && LandClaims.MayBreak(byEntity, row!.Blocks) ? (row, water) : null;
     }
 
-    private void Lay(EntityAgent byEntity, LogRow row)
+    private void Lay(EntityAgent byEntity, LogRow row, BlockFacing water)
     {
         var world = byEntity.World;
         var shipyard = world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
@@ -67,6 +55,6 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
         EntityBehaviorBurnout.Begin(blank, world.Api.ModLoader.GetModSystem<SeaWeatherSystem>().Clock.Hours);
         world.SpawnEntity(blank);
         shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: dry grass on the middle log, the base of her first fire", byEntity.GetName(),
-            LogRow.Length, row.Wood.Code, row.Water.Code);
+            LogRow.Length, row.Wood.Code, water.Code);
     }
 }
