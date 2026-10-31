@@ -24,7 +24,7 @@ public sealed record HideCover(IReadOnlyDictionary<string, int> Sections, int Se
     public double Rot(HidesConfig hides, double before, double after, Func<string, double> rotted, Action<string, double> rot) =>
         Total == 0 ? 0 : Sections.Sum(entry =>
         {
-            double was = rotted(entry.Key), now = Math.Min(1, was + Rotted(hides, entry.Key, after) - Rotted(hides, entry.Key, before));
+            double was = rotted(entry.Key), now = Math.Min(1, was + Math.Max(0, Rotted(hides, entry.Key, after) - Rotted(hides, entry.Key, before)));
             if (now > was) rot(entry.Key, now);
             return (double)entry.Value / Total * (now - was);
         });
