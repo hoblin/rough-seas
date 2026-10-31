@@ -38,8 +38,11 @@ public class CollectibleBehaviorLathBed(CollectibleObject collectible) : Collect
         }
         var hit = blockSel.Position.ToVec3d().Add(blockSel.HitPosition);
         var facing = BlockFacing.HorizontalFromYaw(byEntity.Pos.Yaw);
-        bed.Add(slot.TakeOut(1), Snap(hit.X), Snap(hit.Z), facing.Axis);
+        var lath = slot.TakeOut(1);
+        bed.Add(lath, Snap(hit.X), Snap(hit.Z), facing.Axis);
         slot.MarkDirty();
+        world.Api.ModLoader.GetModSystem<ShipyardModSystem>().Log("{0} lays {1} on the ground at {2:F3} {3:F3}, along {4}", byEntity.GetName(), lath.Collectible.Code,
+            Snap(hit.X), Snap(hit.Z), facing.Axis);
         world.PlaySoundAt(new AssetLocation("game:sounds/block/planks"), pos, 0, (byEntity as EntityPlayer)?.Player);
     }
 

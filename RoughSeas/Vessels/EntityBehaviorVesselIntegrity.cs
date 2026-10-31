@@ -110,6 +110,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
+    public static void Ungreased(Entity vessel)
+    {
+        var tree = new TreeAttribute();
+        tree.SetInt(VersionKey, DataVersion);
+        CrackingHull.Ungrease(tree);
+        vessel.WatchedAttributes.SetAttribute(TreeKey, tree);
+    }
+
     private IVesselHold? Hold => entity.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault();
 
     private static JsonItemStack OfWood(JsonItemStack stack, Wood? wood)

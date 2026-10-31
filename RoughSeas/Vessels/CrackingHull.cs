@@ -26,6 +26,8 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public double GreaseDays => seep == null ? 0 : Tree.GetDouble(GreaseKey, seep.GreaseDays);
 
+    public static void Ungrease(ITreeAttribute tree) => tree.SetDouble(GreaseKey, 0);
+
     public override int Stage(HullPlace place) => Crack(place) is var crack and > 0 ? Math.Max(1, StageOf(crack)) : 0;
 
     public double Crack(HullPlace place) => Cracks?.GetFloat(place.Code()) ?? 0;

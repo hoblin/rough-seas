@@ -24,6 +24,7 @@ public class BlockEntityLathBed : BlockEntity, IWorkedHull
     private const string LathsKey = "laths";
     private const double LathMetres = 0.01;
     private const int Reach = 4;
+    private const int Gap = 2;
 
     private readonly List<BedLath> laths = [];
 
@@ -64,6 +65,7 @@ public class BlockEntityLathBed : BlockEntity, IWorkedHull
         vessel.Pos.Yaw = bound.Laid.Along == EnumAxis.X ? GameMath.PIHALF : 0;
         double hours = world.Api.ModLoader.GetModSystem<SeaWeatherSystem>().Clock.Hours;
         EntityBehaviorCovering.Begin(vessel, bound.Config, bound.Laid.Wood.Code, hours + bound.WetHours);
+        EntityBehaviorVesselIntegrity.Ungreased(vessel);
         foreach (var bed in bound.Beds) world.BlockAccessor.SetBlock(0, bed.Pos);
         if ((byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode != EnumGameMode.Creative) bound.Rope.Spend(slot, byEntity);
         slot.MarkDirty();
@@ -170,9 +172,9 @@ public class BlockEntityLathBed : BlockEntity, IWorkedHull
         var queue = new Queue<BlockEntityLathBed>([this]);
         while (queue.TryDequeue(out var bed))
         {
-            for (int dx = -1; dx <= 1; dx++)
+            for (int dx = -Gap; dx <= Gap; dx++)
             {
-                for (int dz = -1; dz <= 1; dz++)
+                for (int dz = -Gap; dz <= Gap; dz++)
                 {
                     var at = bed.Pos.AddCopy(dx, 0, dz);
                     if (found.ContainsKey(at) || Math.Abs(at.X - Pos.X) > Reach || Math.Abs(at.Z - Pos.Z) > Reach) continue;

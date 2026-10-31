@@ -51,7 +51,7 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
-        if (Upright || !framing.Built || mode != EnumInteractMode.Interact || !byEntity.Controls.ShiftKey || !itemslot.Empty) return;
+        if (Upright || !framing.Built || mode != EnumInteractMode.Interact || byEntity.Controls.ShiftKey || !itemslot.Empty) return;
 
         handled = EnumHandling.PreventSubsequent;
         if (entity.World.Side != EnumAppSide.Server) return;
@@ -66,7 +66,7 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
     {
         if (Upright || !framing.Built) return base.GetInteractionHelp(world, es, player, ref handled);
 
-        return [new WorldInteraction { ActionLangCode = "roughseas:shipyard-turn-over", MouseButton = EnumMouseButton.Right, HotKeyCode = "shift" }];
+        return [new WorldInteraction { ActionLangCode = "roughseas:shipyard-turn-over", MouseButton = EnumMouseButton.Right }];
     }
 
     public override void GetInfoText(StringBuilder infotext)

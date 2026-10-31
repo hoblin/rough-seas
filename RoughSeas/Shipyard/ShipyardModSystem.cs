@@ -118,7 +118,7 @@ public class ShipyardModSystem : ModSystem
     /// <summary>Lets rope, cloth, axes and every liquid container lay a vessel's pieces, as her laths and poles do by their own JSON.</summary>
     private static void Framed(IWorldAccessor world, List<FramingConfig> builds)
     {
-        var codes = builds.SelectMany(built => new[] { built.Rope, built.Cloth, built.Planks }).Where(code => code != "").Distinct().Select(code => new AssetLocation(code)).ToArray();
+        var codes = builds.SelectMany(built => new[] { built.Rope, built.Cloth, built.Planks, built.Hides }).Where(code => code != "").Distinct().Select(code => new AssetLocation(code)).ToArray();
         bool hews = builds.Any(built => built.Stages.Any(stage => stage.Work == FramingWork.Hew));
         var tools = world.Collectibles.Where(collectible => collectible?.Code != null
             && (collectible is BlockLiquidContainerBase || hews && collectible.Tool == EnumTool.Axe || codes.Any(code => WildcardUtil.Match(code, collectible.Code))));
