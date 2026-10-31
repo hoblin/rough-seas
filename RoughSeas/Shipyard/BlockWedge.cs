@@ -9,8 +9,9 @@ using Vintagestory.API.Util;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A wedge driven into a lying log. With one on each of five logs lying end to end, the axe drives them all, and the
-/// trunk splits along its grain into a bundle of laths.
+/// A wedge driven into a lying log. With one on each log of a row lying end to end, the axe drives them all, and the
+/// trunk splits along its grain into what a trunk of that length gives: five logs into a bundle of laths, three into
+/// a set of poles.
 /// </summary>
 public class BlockWedge : Block
 {
@@ -20,15 +21,13 @@ public class BlockWedge : Block
 
     private readonly HeldWork work = new();
     private double seconds;
-    private int laths;
-    private string lathCode = "";
+    private WedgeSplit[] splits = [];
 
     public override void OnLoaded(ICoreAPI api)
     {
         base.OnLoaded(api);
         seconds = Attributes["splitSeconds"].AsDouble();
-        laths = Attributes["laths"].AsInt();
-        lathCode = Attributes["lath"].AsString("");
+        splits = Attributes["splits"].AsObject<WedgeSplit[]>([]);
     }
 
     public override bool CanPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref string failureCode)
@@ -53,7 +52,8 @@ public class BlockWedge : Block
 
         if (Row(world, byPlayer, blockSel.Position) == null)
         {
-            (world.Api as ICoreClientAPI)?.TriggerIngameError(this, "shipyard-wedge-each-log", Lang.Get("roughseas:shipyard-wedge-each-log", LogRow.Length));
+            var lengths = splits.Select(split => split.Logs).Order().ToArray();
+            (world.Api as ICoreClientAPI)?.TriggerIngameError(this, "shipyard-wedge-each-log", Lang.Get("roughseas:shipyard-wedge-each-log", lengths.First(), lengths.Last()));
             return false;
         }
         work.Start(byPlayer.Entity);
@@ -92,17 +92,19 @@ public class BlockWedge : Block
     private LogRow? Row(IWorldAccessor world, IPlayer byPlayer, BlockPos wedge)
     {
         var accessor = world.BlockAccessor;
-        var row = LogRow.Through(wedge.DownCopy(), at => accessor.GetBlock(at.UpCopy()) is BlockWedge ? LyingLog.Of(accessor.GetBlock(at)) : null);
-        return row != null && LandClaims.MayBreak(byPlayer.Entity, row.Blocks.SelectMany(log => new[] { log, log.UpCopy() })) ? row : null;
+        var row = LogRow.Run(wedge.DownCopy(), at => accessor.GetBlock(at.UpCopy()) is BlockWedge ? LyingLog.Of(accessor.GetBlock(at)) : null, splits.Max(split => split.Logs));
+        return row != null && splits.Any(split => split.Logs == row.Length)
+            && LandClaims.MayBreak(byPlayer.Entity, row.Blocks.SelectMany(log => new[] { log, log.UpCopy() })) ? row : null;
     }
 
     private void Split(IWorldAccessor world, IPlayer byPlayer, LogRow row)
     {
         var shipyard = world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
-        var lath = world.GetItem(new AssetLocation(lathCode.Replace("{wood}", row.Wood.Code)));
-        if (lath == null)
+        var split = splits.First(split => split.Logs == row.Length);
+        var piece = world.GetItem(new AssetLocation(split.Item.Replace("{wood}", row.Wood.Code)));
+        if (piece == null)
         {
-            shipyard.Log("no laths of {0} to split a row into", row.Wood.Code);
+            shipyard.Log("no {0} of {1} to split a row into", split.Item, row.Wood.Code);
             return;
         }
 
@@ -113,10 +115,13 @@ public class BlockWedge : Block
             foreach (var wedge in GetDrops(world, log.UpCopy(), byPlayer)) world.SpawnItemEntity(wedge, log.ToVec3d().Add(0.5, 0.5, 0.5));
         }
         var at = row.Centre.ToVec3d().Add(0.5, 0.5, 0.5);
-        world.SpawnItemEntity(new ItemStack(lath, laths), at);
-        world.SpawnCubeParticles(at, new ItemStack(lath), 2, 32, 0.8f);
+        world.SpawnItemEntity(new ItemStack(piece, split.Count), at);
+        world.SpawnCubeParticles(at, new ItemStack(piece), 2, 32, 0.8f);
         world.PlaySoundAt(SplitSound, at.X, at.Y, at.Z, byPlayer);
         byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack?.Collectible.DamageItem(world, byPlayer.Entity, byPlayer.InventoryManager.ActiveHotbarSlot);
-        shipyard.Log("{0} splits a row of {1} at {2} {3} into {4} laths", byPlayer.PlayerName, row.Wood.Code, row.Centre.X, row.Centre.Z, laths);
+        shipyard.Log("{0} splits a row of {1} {2} at {3} {4} into {5} {6}", byPlayer.PlayerName, row.Length, row.Wood.Code, row.Centre.X, row.Centre.Z,
+            split.Count, piece.Code);
     }
 }
+
+public sealed record WedgeSplit(int Logs, string Item, int Count);

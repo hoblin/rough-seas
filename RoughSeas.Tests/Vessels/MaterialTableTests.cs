@@ -65,6 +65,15 @@ public class MaterialTableTests
     }
 
     [Fact]
+    public void APartThatTakesNoKnocksLeavesTheCapacityToTheRest()
+    {
+        var hull = Part("wood-ebony", "wood-oak");
+        var rig = new VesselPart { Material = "wood-oak", Share = 9, Present = 0.1, TakesKnocks = false };
+
+        Assert.Equal(table.StrengthFactor([hull]), table.StrengthFactor([hull, rig]), 6);
+    }
+
+    [Fact]
     public void KnowsAnotherModsWoodByItsSpecies()
     {
         Assert.Equal(0.65, table.StrengthFactor([Part("wood-wildcrafttree-elm", "wood-oak")]), 6);

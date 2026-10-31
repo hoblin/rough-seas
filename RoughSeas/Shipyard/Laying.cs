@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
@@ -13,7 +14,11 @@ public abstract class Laying
     public static Laying For(FramingStage stage, FramingConfig config) => stage.Work switch
     {
         FramingWork.Lath => new LathLaying(new AssetLocation(config.Laths)),
+        FramingWork.Pole => new PoleLaying(new AssetLocation(config.Poles)),
         FramingWork.Rope => new RopeLaying(new AssetLocation(config.Rope)),
+        FramingWork.Hew => new HewLaying(),
+        FramingWork.Cloth => new PieceLaying(new AssetLocation(config.Cloth), "roughseas:shipyard-bend-sail"),
+        FramingWork.Plank => new PlankLaying(new AssetLocation(config.Planks)),
         _ => new PitchLaying(new AssetLocation(config.Pitch), stage.Litres)
     };
 
@@ -25,7 +30,7 @@ public abstract class Laying
     /// <summary>The lang key saying why this piece can't go on her now, or null.</summary>
     public virtual string? Refusal(ItemSlot slot, Framing framing) => null;
 
-    /// <summary>The wood this piece is of, when it is a lath.</summary>
+    /// <summary>The wood this piece is of, when it is of one.</summary>
     public virtual string? WoodOf(ItemSlot slot) => null;
 
     /// <summary>How long this piece stays wet once laid, in game hours.</summary>
@@ -62,7 +67,62 @@ public sealed class LathLaying(AssetLocation laths) : Laying
         world.SearchItems(laths).Where(lath => lath.Variant["state"] == Wet).Select(lath => new ItemStack(lath));
 }
 
-/// <summary>A rope, its length the lashing that binds the bark to her gunwales and stems.</summary>
+public sealed class PoleLaying(AssetLocation poles) : Laying
+{
+    public override string Action => "roughseas:shipyard-lay-pole";
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible is { } pole && WildcardUtil.Match(poles, pole.Code);
+
+    public override string? Refusal(ItemSlot slot, Framing framing) =>
+        framing.Wood is { } wood && wood != WoodOf(slot) ? "shipyard-poles-one-wood" : null;
+
+    public override string? WoodOf(ItemSlot slot) => slot.Itemstack?.Collectible.Variant["wood"];
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) => world.SearchItems(poles).Select(pole => new ItemStack(pole));
+}
+
+public sealed class HewLaying : Laying
+{
+    public override string Action => "roughseas:shipyard-hew-float";
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible.Tool == EnumTool.Axe;
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.Itemstack!.Collectible.DamageItem(byEntity.World, byEntity, slot);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
+        world.Items.Where(item => item.Code != null && item.Tool == EnumTool.Axe).Select(axe => new ItemStack(axe));
+}
+
+public sealed class PieceLaying(AssetLocation pieces, string action) : Laying
+{
+    public override string Action => action;
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible is { } piece && WildcardUtil.Match(pieces, piece.Code);
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) => world.SearchItems(pieces).Select(piece => new ItemStack(piece));
+}
+
+public sealed class PlankLaying(AssetLocation planks) : Laying
+{
+    public override string Action => "roughseas:shipyard-fit-plank";
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible is { } plank && WildcardUtil.Match(planks, plank.Code);
+
+    public override string? Refusal(ItemSlot slot, Framing framing) =>
+        framing.Current is { } stage && framing.WoodOf(stage) is { } wood && wood != WoodOf(slot) ? "shipyard-planks-one-wood" : null;
+
+    public override string? WoodOf(ItemSlot slot) =>
+        slot.Itemstack?.Collectible is { } plank && plank.Variant[Wood.VariantCode] is { } species ? new Wood(plank.Code.Domain, species).Code : null;
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) => world.SearchItems(planks).Select(plank => new ItemStack(plank));
+}
+
 public sealed class RopeLaying(AssetLocation rope) : Laying
 {
     public override string Action => "roughseas:shipyard-lash";

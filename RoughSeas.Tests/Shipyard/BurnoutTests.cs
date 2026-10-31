@@ -13,13 +13,14 @@ public class BurnoutTests
     private static readonly JToken Entity = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "vessel", "dugout.json")));
     private static readonly BurnoutConfig Config = JsonConvert.DeserializeObject<BurnoutConfig>(Entity["behaviorConfigs"]![EntityBehaviorBurnout.Code]!.ToString())!;
     private static readonly double HoldLitres = Entity["behaviorConfigs"]!["roughseas:bilge"]!.Value<double>("capacityLitres");
-    private static readonly int RimVoxels = Burnout.TopVoxels(JsonConvert.DeserializeObject<Shape>(
-        File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "dugout.json")))!.GetElementByName("Clay"));
+    private static readonly Shape DugoutShape = JsonConvert.DeserializeObject<Shape>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "dugout.json")))!;
 
     private TreeAttribute? tree;
     private int changes;
 
     private Burnout Dugout() => new(() => tree!, () => changes++, Config, RimVoxels, () => HoldLitres);
+
+    private static int RimVoxels(int level) => Burnout.TopVoxels(DugoutShape.GetElementByName($"Clay{level}"));
 
     private Burnout Blank()
     {
@@ -94,10 +95,10 @@ public class BurnoutTests
     [Fact]
     public void TheRimTakesBallsOfClayByVanillasVoxelsOverItsOutline()
     {
-        var dugout = Dugout();
+        var blank = Blank();
 
-        Assert.Equal(268, dugout.RimVoxels);
-        Assert.Equal(11, dugout.ClayBalls);
+        Assert.Equal(608, blank.RimVoxels);
+        Assert.Equal(25, blank.ClayBalls);
     }
 
     [Fact]
@@ -214,7 +215,7 @@ public class BurnoutTests
     {
         var blank = Charred(Blank());
 
-        Assert.Equal(18, blank.StrokesPerHewing);
+        Assert.Equal(32, blank.StrokesPerHewing);
         for (int stroke = 1; stroke < blank.StrokesPerHewing; stroke++) Assert.False(blank.Stroke());
         Assert.Equal(0, blank.Level);
         Assert.True(blank.Stroke());

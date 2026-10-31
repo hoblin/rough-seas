@@ -14,7 +14,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
-public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
+public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 {
     public const string Code = "roughseas:vesselintegrity";
 
@@ -337,6 +337,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         model.Adopt(CarriedCondition.Integrity(item.GetRemainingDurability(stack), item.GetMaxDurability(stack)));
     }
 
+    public void HandOver(Entity successor, bool endForEnd)
+    {
+        var handed = (ITreeAttribute)Tree.Clone();
+        if (endForEnd) model.TurnEndForEnd(handed);
+        successor.WatchedAttributes.SetAttribute(TreeKey, handed);
+    }
+
     /// <summary>Vanilla's shift pickup, server only, with the hull's condition carried on the item.</summary>
     public bool TryPickUp(EntityAgent byEntity)
     {
@@ -418,7 +425,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     {
         if (Afloat.Sunk) infotext.AppendLine(Lang.Get("roughseas:vessel-sunk"));
         model.Describe(infotext);
-        if (inWater && model.LitresPerSecond(Afloat, flotation.DepthMetres) is var leaking and >= 0.01)
+        if (inWater && model.LitresPerSecond(Afloat, depthMetres) is var leaking and >= 0.01)
         {
             infotext.AppendLine(Lang.Get("roughseas:vessel-leaking", Math.Round(leaking * 60)));
         }
@@ -534,13 +541,15 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
     private void Reform(IVesselHold hold, bool rebuilt = false)
     {
-        bool changed = hold.UncutLitres != uncutLitres || hold.CapacityLitres != holdLitres;
+        var solid = hold.UncutLitres + (form?.UnhewnLitres ?? 0);
+        bool changed = solid != uncutLitres || hold.CapacityLitres != holdLitres;
         if (!changed && !rebuilt) return;
 
-        uncutLitres = hold.UncutLitres;
+        uncutLitres = solid;
         holdLitres = hold.CapacityLitres;
         var hull = build.WithUncut(uncutLitres);
-        flotation = new Flotation(depthMetres, hold.CapacityLitres > 0 ? waterplaneSquareMetres : 0, hull.Litres);
+        var waterplane = form?.WaterplaneSquareMetres(waterplaneSquareMetres) ?? waterplaneSquareMetres;
+        flotation = new Flotation(form?.DepthMetres(depthMetres) ?? depthMetres, hold.CapacityLitres > 0 ? waterplane : 0, hull.Litres);
         if (changed && entity.World.Side == EnumAppSide.Server)
         {
             vessels.Log(entity, "hull of {0:F0} L of wood with a hold of {1:F0} L", hull.Litres, hold.CapacityLitres);
@@ -556,7 +565,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
             hold.Ship(hold.CapacityLitres - hold.Litres, Afloat.Sunk ? "on the bottom" : "over the gunwale");
             return;
         }
-        double litres = model.Inflow(lap.Seconds, lap.Hours, Afloat, flotation.DepthMetres);
+        double litres = model.Inflow(lap.Seconds, lap.Hours, Afloat, depthMetres);
         if (litres <= 0) return;
 
         hold.Ship(litres, "through her leaks");
@@ -683,7 +692,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         vessels.Log(entity, "broke up");
         var world = entity.World;
         var box = entity.SelectionBox;
-        foreach (var drop in wreckage)
+        foreach (var drop in form?.Wrecked(wreckage) ?? wreckage)
         {
             var stack = drop.GetNextItemStack();
             if (stack == null) continue;

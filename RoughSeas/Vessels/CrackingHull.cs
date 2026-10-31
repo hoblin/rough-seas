@@ -87,6 +87,18 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public override void Adopt(float integrity) { }
 
+    public override void TurnEndForEnd(ITreeAttribute tree)
+    {
+        if (tree.GetTreeAttribute(CracksKey) is not { } cracks) return;
+
+        var turned = new TreeAttribute();
+        foreach (var place in HullShape.Places.Where(place => cracks.HasAttribute(place.Code())))
+        {
+            turned.SetFloat(place.EndForEnd().Code(), cracks.GetFloat(place.Code()));
+        }
+        tree[CracksKey] = turned;
+    }
+
     public override double LitresPerSecond(HullPlace place, Afloat afloat, double depthMetres)
     {
         double head = Waterline(place, afloat) - Math.Max(CrackHeight(place, depthMetres), afloat.InsideMetres);

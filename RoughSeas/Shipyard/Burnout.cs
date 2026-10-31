@@ -29,10 +29,10 @@ public sealed class Burnout
     private readonly Func<ITreeAttribute> tree;
     private readonly Action changed;
     private readonly BurnoutConfig config;
-    private readonly int rimVoxels;
+    private readonly System.Func<int, int> rimVoxels;
     private readonly Func<double> holdLitres;
 
-    public Burnout(Func<ITreeAttribute> tree, Action changed, BurnoutConfig config, int rimVoxels, Func<double> holdLitres)
+    public Burnout(Func<ITreeAttribute> tree, Action changed, BurnoutConfig config, System.Func<int, int> rimVoxels, Func<double> holdLitres)
     {
         (this.tree, this.changed, this.config, this.rimVoxels, this.holdLitres) = (tree, changed, config, rimVoxels, holdLitres);
         Fire = new LaidFire(tree, changed);
@@ -52,13 +52,16 @@ public sealed class Burnout
 
     public int ClayVoxels => Tree?.GetInt(ClayKey) ?? 0;
 
-    public int RimVoxels => rimVoxels;
+    /// <summary>How much of the way from the blank to the finished hull she is worked, inside and out.</summary>
+    public double Worked => Hollowed;
 
-    public int ClayBalls => (int)Math.Ceiling((double)rimVoxels / VoxelsPerClay);
+    public int RimVoxels => rimVoxels(Level);
+
+    public int ClayBalls => (int)Math.Ceiling((double)RimVoxels / VoxelsPerClay);
 
     public int ClayBallsOn => (int)Math.Ceiling((double)ClayVoxels / VoxelsPerClay);
 
-    public bool Clayed => ClayVoxels >= rimVoxels;
+    public bool Clayed => ClayVoxels >= RimVoxels;
 
     public bool Lit => Tree?.GetBool(LitKey) == true;
 
@@ -78,6 +81,12 @@ public sealed class Burnout
 
     public int StrokesPerHewing =>
         Math.Max(1, (int)Math.Ceiling(holdLitres() / Hollowings / (config.AxeEdgeMetres * CharMetres * config.HollowBeamMetres * LitresPerCubicMetre)));
+
+    public double UnhewnLitres => config.UnhewnLitres * (1 - Worked);
+
+    public double TopMetres => Toward(config.BlankDepthMetres, config.RimMetres);
+
+    public double Toward(double blank, double finished) => blank + (finished - blank) * Worked;
 
     public float SaturationPerStroke => config.HewSaturation / StrokesPerHewing;
 
@@ -111,7 +120,7 @@ public sealed class Burnout
 
     public void Clay()
     {
-        Tree.SetInt(ClayKey, Math.Min(rimVoxels, ClayVoxels + VoxelsPerClay));
+        Tree.SetInt(ClayKey, Math.Min(RimVoxels, ClayVoxels + VoxelsPerClay));
         changed();
     }
 
@@ -186,4 +195,7 @@ public sealed class BurnoutConfig
     public double WallMetres = 1;
     public double SecondsPerStroke = 1;
     public float HewSaturation;
+    public double BlankDepthMetres;
+    public double BlankWaterplaneSquareMetres;
+    public double UnhewnLitres;
 }

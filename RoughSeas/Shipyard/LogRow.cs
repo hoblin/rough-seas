@@ -6,26 +6,31 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Shipyard;
 
-public sealed record LogRow(Wood Wood, BlockPos Centre, EnumAxis Along)
+public sealed record LogRow(Wood Wood, BlockPos Centre, EnumAxis Along, int Length)
 {
-    public const int Length = 5;
+    public BlockPos[] Blocks => Offsets(Length).Select(offset => At(Centre, Along, offset)).ToArray();
 
-    private static readonly int[] Offsets = Enumerable.Range(-Length / 2, Length).ToArray();
-
-    public BlockPos[] Blocks => Offsets.Select(offset => At(Centre, Along, offset)).ToArray();
-
-    public static LogRow? Find(BlockPos centre, Func<BlockPos, LyingLog?> logAt)
+    public static LogRow? Find(BlockPos centre, int length, Func<BlockPos, LyingLog?> logAt)
     {
         if (logAt(centre) is not { } log) return null;
 
-        return Offsets.All(offset => logAt(At(centre, log.Axis, offset)) == log) ? new LogRow(log.Wood, centre, log.Axis) : null;
+        return Offsets(length).All(offset => logAt(At(centre, log.Axis, offset)) == log) ? new LogRow(log.Wood, centre, log.Axis, length) : null;
     }
 
-    public static LogRow? Through(BlockPos pos, Func<BlockPos, LyingLog?> logAt) =>
-        logAt(pos) is { } log ? Offsets.Select(offset => Find(At(pos, log.Axis, -offset), logAt)).FirstOrDefault(row => row != null) : null;
+    /// <summary>The logs of one wood lying end to end through <paramref name="pos"/>, counted no further than past <paramref name="longest"/>: a longer run comes back longer than it, not whole.</summary>
+    public static LogRow? Run(BlockPos pos, Func<BlockPos, LyingLog?> logAt, int longest)
+    {
+        if (logAt(pos) is not { } log) return null;
+
+        int Reach(int step) => Enumerable.Range(1, longest).TakeWhile(n => logAt(At(pos, log.Axis, n * step)) == log).Count();
+        int back = Reach(-1), length = back + 1 + Reach(1);
+        return new LogRow(log.Wood, At(pos, log.Axis, (length - 1) / 2 - back), log.Axis, length);
+    }
 
     public BlockFacing? Water(Func<BlockPos, bool> waterAt) =>
         Across(Along).FirstOrDefault(side => Blocks.All(pos => waterAt(pos.AddCopy(side)) || waterAt(pos.AddCopy(side).DownCopy())));
+
+    private static int[] Offsets(int length) => Enumerable.Range(-(length - 1) / 2, length).ToArray();
 
     private static BlockPos At(BlockPos centre, EnumAxis axis, int offset) =>
         axis == EnumAxis.X ? centre.AddCopy(offset, 0, 0) : centre.AddCopy(0, 0, offset);

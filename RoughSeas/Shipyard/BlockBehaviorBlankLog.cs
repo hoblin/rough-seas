@@ -12,6 +12,8 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
 {
     public const string Code = "roughseas:blanklog";
 
+    private const int Logs = 5;
+
     private string vessel = "";
 
     public override void Initialize(JsonObject properties)
@@ -32,7 +34,7 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
     {
         var world = byEntity.World;
         var accessor = world.BlockAccessor;
-        var row = LogRow.Find(pos, at => accessor.GetBlock(at) is var log && log.HasBehavior<BlockBehaviorBlankLog>() ? LyingLog.Of(log) : null);
+        var row = LogRow.Find(pos, Logs, at => accessor.GetBlock(at) is var log && log.HasBehavior<BlockBehaviorBlankLog>() ? LyingLog.Of(log) : null);
         var water = row?.Water(at => accessor.GetBlock(at, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid() && fluid.LiquidCode?.Contains("water") == true);
         return water != null && LandClaims.MayBreak(byEntity, row!.Blocks) ? (row, water) : null;
     }
@@ -55,6 +57,6 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
         EntityBehaviorBurnout.Begin(blank, world.Api.ModLoader.GetModSystem<SeaWeatherSystem>().Clock.Hours);
         world.SpawnEntity(blank);
         shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: dry grass on the middle log, the base of her first fire", byEntity.GetName(),
-            LogRow.Length, row.Wood.Code, water.Code);
+            row.Length, row.Wood.Code, water.Code);
     }
 }

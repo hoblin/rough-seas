@@ -26,11 +26,11 @@ Speeds are against the raft, measured on a calm sea.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Raft](Raft) | 1200 J | none | never floods | 2 m | none | a rope | picked up |
 | [Reed boat](Reed-Boat) | 3000 J, and tears | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
-| [Dugout](Dugout) | 30 000 J | 450 l | awash | 0.75 m | none | a log | no |
+| [Dugout](Dugout) | 30 000 J | 1156 l | awash | 0.9 m | none | a log | no |
 | [Coracle](Coracle) | 400 J | 250 l | awash | 0.6 m | none | a small hide | worn on the back |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 5200 J | 600 l | awash | 0.75 m | none | bark of its tree | picked up |
 | [Hide currach](Hide-Currach) | 3000 J | 1500 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
-| [Outrigger canoe](Outrigger-Canoe) | 15 000 J | 600 l | awash | 2.1 m | none | planks | no |
+| [Outrigger canoe](Outrigger-Canoe) | 30 000 J | 1578 l, 1156 without washstrakes | awash | 2.6 m | none | a log | no |
 | [Sailboat](Sailboat) | 40 000 J | 1500 l | sinks | 3.3 m | none | planks | no |
 
 Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more, and what floods awash in oak may sink [in a heavy wood or loaded hard](Surf-and-Swamping#swamping). Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [Seamanship](Roadmap#seamanship); its column is what overturned each vessel in 1.0.
@@ -45,7 +45,7 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | [Coracle](Coracle) | 1 | its seat | none |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships, oar in hand | a basket in place of the passenger |
 | [Hide currach](Hide-Currach) | 1 | the stern thwart | 3 spots on its bottom, each a basket, storage vessel or chest |
-| [Outrigger canoe](Outrigger-Canoe) | 2 | aft | a basket in place of the passenger |
+| [Outrigger canoe](Outrigger-Canoe) | 2 | the front seat, oar in hand | a basket in place of the passenger |
 | [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
 
 A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a crate 20 of one kind (16 aged, 25 in ebony or purpleheart). The raft and the sailboat take more besides: an oar rest on the raft; a lantern, anchor, figurehead, ratlines, shields and a fence post for a tied animal on the sailboat. Each vessel's page lists them.

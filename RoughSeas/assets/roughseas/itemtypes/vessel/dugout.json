@@ -2,7 +2,7 @@
     "code": "dugout",
     "class": "roughseas:ItemVessel",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
-    "attributes": {"handbook": {"groupBy": ["dugout-*"]}, "logTextures": {"inside": "inside-north"}},
+    "attributes": {"handbook": {"groupBy": ["dugout-*"]}, "logTextures": {"inside": "inside-north", "bark": "all", "rings": "east"}},
     "durability": 100,
     "maxstacksize": 1,
     "materialDensity": 1,

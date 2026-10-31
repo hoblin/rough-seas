@@ -21,8 +21,9 @@ public class MaterialTable
         this.logger = logger;
     }
 
-    public double StrengthFactor(IReadOnlyCollection<VesselPart> parts)
+    public double StrengthFactor(IReadOnlyCollection<VesselPart> built)
     {
+        var parts = built.Where(part => part.TakesKnocks).ToArray();
         double shares = parts.Sum(part => part.Share);
         double present = shares > 0 ? parts.Sum(part => part.Share * part.Present) / shares : 1;
         return present * parts.Aggregate(1.0, (factor, part) => factor * Math.Pow(StrengthRatio(part.Material, ReferenceOf(part)), part.Present));

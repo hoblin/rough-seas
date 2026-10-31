@@ -29,7 +29,7 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
 
     public abstract bool Finished { get; }
 
-    public abstract double Hollowed { get; }
+    public abstract double HoldLitres(double designed);
 
     public abstract double Uncut { get; }
 
@@ -42,6 +42,14 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
     public virtual VesselPart[] Built(VesselPart[] designed) => designed;
 
     public abstract Shell Formed(Shell designed);
+
+    public virtual double UnhewnLitres => 0;
+
+    public virtual double DepthMetres(double designed) => designed;
+
+    public virtual double WaterplaneSquareMetres(double designed) => designed;
+
+    public virtual BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed) => designed;
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {

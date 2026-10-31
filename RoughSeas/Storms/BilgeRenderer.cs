@@ -9,8 +9,8 @@ using RoughSeas.Vessels;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The water aboard, one level of the shape's <c>Bilge</c> group: it follows the hull's position and heading but not
-/// its roll and pitch, so it stays level with the sea.
+/// The water aboard, one level of the shape's <c>Bilge</c> group raised to the water's own height: it follows the hull's
+/// position and heading but not its roll and pitch, so it stays level with the sea.
 /// </summary>
 public sealed class BilgeRenderer : IRenderer
 {
@@ -24,6 +24,7 @@ public sealed class BilgeRenderer : IRenderer
     private readonly Vec4f pivot = new();
     private MultiTextureMeshRef? mesh;
     private int? levels;
+    private float lift;
 
     public BilgeRenderer(ICoreClientAPI capi, Entity entity)
     {
@@ -43,8 +44,10 @@ public sealed class BilgeRenderer : IRenderer
     public double HeightOf(int level) =>
         entity.Properties.Client.LoadedShapeForEntity?.GetElementByName(LevelsElement)?.Children?[level - 1].Children?[0].From?[1] / HullShape.VoxelsPerBlock ?? 0;
 
-    public void Show(int level)
+    /// <summary>Shows the water as <paramref name="level"/>'s surface raised by <paramref name="liftMetres"/>.</summary>
+    public void Show(int level, double liftMetres = 0)
     {
+        lift = (float)liftMetres;
         if (level == Level && (mesh != null || level == 0)) return;
 
         Level = level;
@@ -70,7 +73,7 @@ public sealed class BilgeRenderer : IRenderer
         middle.Set(0.5f, half, 0.5f, 1);
         Mat4f.MulWithVec4(hull.ModelMat, middle, pivot);
         float yaw = entity.Pos.Yaw + ((entity.Properties.Client.Shape?.rotateY ?? 0) + 90) * GameMath.DEG2RAD + hull.yangle;
-        model.Identity().Translate(pivot.X, pivot.Y, pivot.Z).RotateY(yaw).Translate(-0.5f, -half, -0.5f);
+        model.Identity().Translate(pivot.X, pivot.Y, pivot.Z).RotateY(yaw).Translate(-0.5f, -half + lift, -0.5f);
 
         var render = capi.Render;
         var prog = render.PreparedStandardShader((int)entity.Pos.X, (int)Math.Ceiling(entity.Pos.Y), (int)entity.Pos.Z);

@@ -26,7 +26,7 @@ Not in the grid any more: its bark is stripped off a standing tree in one sheet,
 
 ## Splitting wedge
 
-Whittled from firewood with a knife. One on each of five logs lying end to end, driven with an axe, splits the trunk into 32 laths for a bark canoe; the wedges come back.
+Whittled from firewood with a knife. One on each of five logs lying end to end, driven with an axe, splits the trunk into 32 laths for a bark canoe; on each of three, into 6 poles for an outrigger. The wedges come back.
 
 ![The splitting wedge from firewood and a knife](images/recipes/splitting-wedge.png)
 
@@ -42,12 +42,7 @@ Laths bend into a canoe only wet: two days in a barrel of water, 0.15 litres a l
 
 ## Outrigger canoe
 
-Logs and planks of one wood, a modded tree's too. Redwood, and any wood that comes in sections, builds from its log sections, with planks of any wood from the same mod.
-
-| | |
-| --- | --- |
-| ![The outrigger canoe from 4 logs, 8 planks, 2 ropes and a sail](images/recipes/outrigger.png) | ![The redwood outrigger canoe from redwood log sections](images/recipes/outrigger-redwood.png) |
-| From logs | From redwood log sections |
+Not in the grid any more: a finished dugout is rigged where she lies with a float, poles split with wedges, rope and linen cloth. See [how it is built](Outrigger-Canoe#how-it-is-built).
 
 ## Anchor warp
 

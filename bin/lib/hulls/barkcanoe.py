@@ -1,6 +1,6 @@
 import math
 
-from shape import BILGE, Hull, Shape, box, group, path, plank
+from shape import BILGE, Hull, Shape, box, group, path, plank, stages
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -171,10 +171,6 @@ def gores(hull, side):
 
 def seam(name, points):
     return path(name, on_centre(points[1:-2]), STEM_WIDTH + 0.4, STEM_THICKNESS + 0.3, "pitch", grain="x")
-
-
-def stages(name, laths):
-    return group(name, (0, 0, 0), (0, 0, 0), [group(f"{name}{n}", (0, 0, 0), (0, 0, 0), pieces) for n, pieces in enumerate(laths, 1)])
 
 
 def build(path_):

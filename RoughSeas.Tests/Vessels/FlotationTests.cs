@@ -10,7 +10,7 @@ public class FlotationTests
     {
         var dugout = Fixtures.Hull("dugout");
 
-        Assert.Equal(0.2, dugout.Float(dugout.Crewed()).FreeboardMetres, 0.01);
+        Assert.Equal(0.41, dugout.Float(dugout.Crewed()).FreeboardMetres, 0.01);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class FlotationTests
     {
         var leadwood = Fixtures.Hull("dugout", "leadwood");
 
-        Assert.True(leadwood.Float(leadwood.Crewed(litres: 450), litres: 450).Sunk);
+        Assert.True(leadwood.Float(leadwood.Crewed(litres: 1156), litres: 1156).Sunk);
     }
 
     [Fact]
@@ -71,8 +71,8 @@ public class FlotationTests
         var ebony = Fixtures.Hull("dugout", "ebony");
         var oak = Fixtures.Hull("dugout");
 
-        Assert.True(ebony.Float(ebony.Crewed(bodies: 130, kit: 70, litres: 200)).FreeboardMetres <= 0);
-        Assert.True(oak.Float(oak.Crewed(bodies: 130, kit: 70, litres: 200)).FreeboardMetres > 0);
+        Assert.True(ebony.Float(ebony.Crewed(bodies: 130, kit: 70, litres: 900)).FreeboardMetres <= 0);
+        Assert.True(oak.Float(oak.Crewed(bodies: 130, kit: 70, litres: 900)).FreeboardMetres > 0);
     }
 
     [Fact]

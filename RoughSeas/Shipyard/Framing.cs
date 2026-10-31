@@ -7,8 +7,8 @@ using Vintagestory.API.Datastructures;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A bark hull framed where she lies: her stages are laid in order, piece by piece, until her seams are sealed and
-/// her ribs have set. Her state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is
+/// A vessel framed or rigged where she lies: her stages are laid in order, piece by piece, and she is finished once
+/// the last is laid and what was laid wet has set. Her state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is
 /// finished.
 /// </summary>
 public sealed class Framing
@@ -16,8 +16,9 @@ public sealed class Framing
     public const string SheetGroup = "Sheet";
     public const string SkinGroup = "Skin";
 
-    private const string WoodKey = "wood";
+    public const string WoodKey = "wood";
     private const string SetsAtKey = "setsAt";
+    private const string PieceWoodSuffix = "Wood";
 
     private readonly Func<ITreeAttribute?> tree;
     private readonly Action changed;
@@ -34,16 +35,20 @@ public sealed class Framing
     /// <summary>The stage to work on next; none once every piece is laid.</summary>
     public FramingStage? Current => Stages.FirstOrDefault(stage => Laid(stage) < stage.Pieces);
 
-    public bool Built => Current == null;
+    /// <summary>Whether every stage she needs is laid; an optional one may still be to come.</summary>
+    public bool Built => Stages.Where(stage => !stage.Optional).All(stage => Laid(stage) >= stage.Pieces);
 
-    /// <summary>The wood her laths are split from, once the first is laid.</summary>
+    /// <summary>The wood her laths or poles are split from, once the first is laid.</summary>
     public string? Wood => Tree?.GetString(WoodKey);
+
+    /// <summary>The wood the pieces of a stage that makes a part of her are of, once the first is laid.</summary>
+    public string? WoodOf(FramingStage stage) => Tree?.GetString(stage.Group + PieceWoodSuffix);
 
     /// <summary>When her last rib has dried enough to hold its bend, in game hours.</summary>
     public double SetsAt => Tree?.GetDouble(SetsAtKey) ?? 0;
 
     /// <summary>How much of her frame's wood is in her.</summary>
-    public double Framed => Share(stage => stage.Work == FramingWork.Lath);
+    public double Framed => Share(stage => stage.Work is FramingWork.Lath or FramingWork.Pole);
 
     /// <summary>How much of her lining is laid.</summary>
     public double Lined => Share(stage => stage.Lines);
@@ -51,40 +56,49 @@ public sealed class Framing
     public bool Sealed => Stages.Where(stage => stage.Seals).All(stage => Laid(stage) >= stage.Pieces);
 
     /// <summary>Changes whenever what she shows changes.</summary>
-    public string ShapeKey => $"{string.Join("/", Stages.Select(Laid))}/{Wood}";
+    public string ShapeKey => $"{string.Join("/", Stages.Select(Laid))}/{Wood}/{string.Join("/", Stages.Select(WoodOf))}";
 
     /// <summary>The groups of her shape that her build doesn't show yet, or no longer shows.</summary>
     public IEnumerable<string> Hidden()
     {
-        if (Tree == null) return [SheetGroup];
+        var pieces = Stages.SelectMany(stage =>
+            Enumerable.Range(Laid(stage) + 1, Math.Max(0, stage.Pieces - Laid(stage))).Select(n => $"{stage.Group}{n}")
+                .Concat(stage.Replaces is { } replaced ? Enumerable.Range(1, Laid(stage)).Select(n => $"{replaced}{n}") : []));
+        if (Tree == null) return pieces.Append(SheetGroup);
 
         bool started = Stages.Any(stage => Laid(stage) > 0);
-        return Stages
-            .SelectMany(stage => Enumerable.Range(Laid(stage) + 1, Math.Max(0, stage.Pieces - Laid(stage))).Select(n => $"{stage.Group}{n}"))
-            .Append(started ? SheetGroup : SkinGroup);
+        return pieces.Append(started ? SheetGroup : SkinGroup);
     }
 
     /// <summary>What a look at her says of her build at <paramref name="hours"/>; nothing once she is finished.</summary>
     public string? Progress(double hours)
     {
-        if (Tree == null || Finished(hours)) return null;
+        if (Tree == null) return null;
+        if (Current is { } stage && (!Built || Laid(stage) > 0))
+        {
+            return Lang.Get($"roughseas:shipyard-stage-{stage.Group.ToLowerInvariant()}", Laid(stage), stage.Pieces);
+        }
 
-        return Current is { } stage
-            ? Lang.Get($"roughseas:shipyard-stage-{stage.Group.ToLowerInvariant()}", Laid(stage), stage.Pieces)
-            : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
+        return Finished(hours) ? null : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
     }
 
     public int Laid(FramingStage stage) => Tree?.GetInt(stage.Group) ?? stage.Pieces;
 
+    /// <summary>What the stages done bring her, each its <paramref name="brings"/>.</summary>
+    public double Raised(Func<FramingStage, double> brings) => Stages.Where(stage => Laid(stage) >= stage.Pieces).Sum(brings);
+
+    /// <summary>How much of the stage is laid.</summary>
+    public double Share(FramingStage stage) => stage.Pieces == 0 ? 1 : (double)Laid(stage) / stage.Pieces;
+
     public bool Finished(double hours) => Built && hours >= SetsAt;
 
-    /// <summary>Lays the current stage's next piece, of <paramref name="wood"/> when it is a lath, setting by <paramref name="setsAt"/>.</summary>
+    /// <summary>Lays the current stage's next piece, of <paramref name="wood"/> when it is of one, setting by <paramref name="setsAt"/>.</summary>
     public void Lay(string? wood, double setsAt)
     {
         if (Current is not { } stage) return;
 
         Tree!.SetInt(stage.Group, Laid(stage) + 1);
-        if (wood != null) Tree.SetString(WoodKey, wood);
+        if (wood != null) Tree.SetString(stage.Part != null ? stage.Group + PieceWoodSuffix : WoodKey, wood);
         if (stage.Sets) Tree.SetDouble(SetsAtKey, Math.Max(SetsAt, setsAt));
         changed();
     }
@@ -120,9 +134,27 @@ public sealed class FramingStage
     /// <summary>The litres of pitch one piece takes.</summary>
     public double Litres;
 
+    /// <summary>The group whose pieces this stage's take away, piece for piece: <c>{Replaces}{n}</c> goes once <c>{Group}{n}</c> is laid.</summary>
+    public string? Replaces;
+
+    /// <summary>Whether she is finished without it, and it may go on her any time after.</summary>
+    public bool Optional;
+
+    /// <summary>How much higher her side stands once the stage is done.</summary>
+    public double RaisesMetres;
+
+    /// <summary>How much more her hold takes once the stage is done.</summary>
+    public double RaisesLitres;
+
+    /// <summary>The part of her <c>parts</c>, by its name, that this stage's pieces make: there as far as they are laid, of the wood they are.</summary>
+    public string? Part;
+
+    /// <summary>The shape's texture that draws the pieces, retextured in the wood they are of.</summary>
+    public string? Texture;
+
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public int Pieces;
 }
 
-public enum FramingWork { Lath, Rope, Pitch }
+public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank }

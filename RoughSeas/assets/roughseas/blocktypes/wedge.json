@@ -4,11 +4,13 @@
     "variantgroups": [{"code": "grain", "states": ["we", "ns"]}],
     "attributes": {
         "splitSeconds": 18,
-        "laths": 32,
-        "lath": "roughseas:lath-{wood}-dry",
+        "splits": [
+            {"logs": 5, "item": "roughseas:lath-{wood}-dry", "count": 32},
+            {"logs": 3, "item": "roughseas:pole-{wood}", "count": 6}
+        ],
         "sources": {
-            "splitSeconds": "Driving a row of wedges until a five-metre trunk splits along its grain, some 15 to 20 minutes (an estimate, about as long as felling such a tree with an axe), over sixty",
-            "laths": "A trunk halved five times over: 32 laths, as many as one canoe takes and a few to spare"
+            "splitSeconds": "Driving a row of wedges until a trunk splits along its grain, some 15 to 20 minutes (an estimate, about as long as felling such a tree with an axe), over sixty",
+            "splits": "Five logs: a trunk halved five times over, 32 laths, as many as one canoe takes and a few to spare. Three logs: the same 40 cm trunk, 3 m long, split in halves and each half in thirds, as rails are split; a sixth is a 60° wedge whose inscribed round is about 13 cm across, dressed to the 8 to 10 cm of an outrigger's booms, mast and spars: six poles, every one of which goes into her (three booms, the mast, the crab-claw's two spars)"
         }
     },
     "shapeByType": {

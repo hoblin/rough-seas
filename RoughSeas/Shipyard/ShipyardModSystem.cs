@@ -22,6 +22,8 @@ public class ShipyardModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorBurnout.Code, typeof(EntityBehaviorBurnout));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHew.Code, typeof(CollectibleBehaviorHew));
         api.RegisterEntityBehaviorClass(EntityBehaviorFraming.Code, typeof(EntityBehaviorFraming));
+        api.RegisterEntityBehaviorClass(EntityBehaviorRigging.Code, typeof(EntityBehaviorRigging));
+        api.RegisterEntityBehaviorClass(EntityBehaviorRiggable.Code, typeof(EntityBehaviorRiggable));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorFraming.Code, typeof(CollectibleBehaviorFraming));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorCarriedBuild.Code, typeof(CollectibleBehaviorCarriedBuild));
         api.RegisterBlockBehaviorClass(BlockBehaviorStrippable.Code, typeof(BlockBehaviorStrippable));
@@ -58,16 +60,20 @@ public class ShipyardModSystem : ModSystem
         {
             axe.CollectibleBehaviors = axe.CollectibleBehaviors.Append(new CollectibleBehaviorHew(axe));
         }
-        var ropes = new List<AssetLocation>();
+        var builds = new List<FramingConfig>();
         foreach (var type in api.World.EntityTypes)
         {
-            if (FramingConfig.Of(type) is not { } framing || Wood.Of(type.Variant) is not { } wood) continue;
+            if (Wood.Of(type.Variant) is not { } wood) continue;
 
-            Strippable(api.World, type, wood, framing);
-            ropes.Add(new AssetLocation(framing.Rope));
-            if (api.World.GetItem(type.Code) is { } item) item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
+            var framing = FramingConfig.Of(type);
+            if (framing != null)
+            {
+                Strippable(api.World, type, wood, framing);
+                if (api.World.GetItem(type.Code) is { } item) item.CollectibleBehaviors = item.CollectibleBehaviors.Append(new CollectibleBehaviorCarriedBuild(item));
+            }
+            if ((framing ?? RiggingConfig.Of(type)) is { } built) builds.Add(built);
         }
-        Framed(api.World, ropes);
+        Framed(api.World, builds);
     }
 
     public void Log(Entity entity, string format, params object[] args) =>
@@ -106,11 +112,13 @@ public class ShipyardModSystem : ModSystem
         grown.CollectibleBehaviors = grown.CollectibleBehaviors.Append(behavior);
     }
 
-    /// <summary>Lets rope and every liquid container lay a canoe's pieces, as her laths do by their own JSON.</summary>
-    private static void Framed(IWorldAccessor world, List<AssetLocation> ropes)
+    /// <summary>Lets rope, cloth, axes and every liquid container lay a vessel's pieces, as her laths and poles do by their own JSON.</summary>
+    private static void Framed(IWorldAccessor world, List<FramingConfig> builds)
     {
+        var codes = builds.SelectMany(built => new[] { built.Rope, built.Cloth, built.Planks }).Where(code => code != "").Distinct().Select(code => new AssetLocation(code)).ToArray();
+        bool hews = builds.Any(built => built.Stages.Any(stage => stage.Work == FramingWork.Hew));
         var tools = world.Collectibles.Where(collectible => collectible?.Code != null
-            && (collectible is BlockLiquidContainerBase || ropes.Any(rope => WildcardUtil.Match(rope, collectible.Code))));
+            && (collectible is BlockLiquidContainerBase || hews && collectible.Tool == EnumTool.Axe || codes.Any(code => WildcardUtil.Match(code, collectible.Code))));
         foreach (var tool in tools.Where(tool => !tool.HasBehavior<CollectibleBehaviorFraming>()))
         {
             tool.CollectibleBehaviors = tool.CollectibleBehaviors.Append(new CollectibleBehaviorFraming(tool));

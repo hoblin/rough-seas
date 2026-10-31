@@ -87,10 +87,10 @@ Extreme Weathers' whiteout needs precipitation above 0.95 at −2 °C or colder.
 
 ### What its woods do in our vessels
 
-- **Built** from the wood's own logs and planks, as vanilla's are: an outrigger canoe in the crafting grid, a dugout burnt out of five of its logs lying on the shore ([How it is built](Dugout#how-it-is-built)). Its seven giant trees, whose logs come as sections, build from those sections as redwood does, in the grid and on the shore alike. The [hide currach](Hide-Currach) takes its planks too.
-- **Look.** A vessel wears its wood's own timber, and the outrigger its bark, taken from Wildcraft's log of that tree.
-- **Named** after the wood, by the name Wildcraft gives it: an elm dugout, a mahogany outrigger canoe.
-- **Mended** with that wood's own logs or planks, as for a vanilla wood; a broken outrigger leaves that wood's planks.
+- **Built** from the wood's own logs, as vanilla's are: a dugout burnt out of five of its logs lying on the shore ([How it is built](Dugout#how-it-is-built)), then rigged into an outrigger canoe with a float of three logs and poles split from three more ([How it is built](Outrigger-Canoe#how-it-is-built)), each of any wood. Its seven giant trees, whose logs come as sections, build from those sections as redwood does. The [hide currach](Hide-Currach) takes its planks.
+- **Look.** A vessel wears its wood's own timber, taken from Wildcraft's log of that tree; an outrigger's float and poles wear theirs.
+- **Named** after the wood of the hull, by the name Wildcraft gives it: an elm dugout, a mahogany outrigger canoe.
+- **Mended** with that wood's own logs, as for a vanilla wood.
 - **Weight** comes from the real tree's density, as for vanilla's woods. Six are heavier than seawater: azobe (ekki), guajacum (lignum vitae), leadwood, mangrove, umnini (pink ivory) and dalbergia (African blackwood). A dugout or outrigger of them floats while its side is above the water, but goes to the bottom when it floods ([Swamping](Surf-and-Swamping#swamping)); a dugout blank of them, solid wood, sinks the moment it is pushed in. A wood without a sourced density weighs as an unknown wood, 610 kg/m³.
 - **Strength** comes from the real tree each wood stands for, by the same table as vanilla's woods ([Hull condition](Hull-Condition#what-it-is-made-of)):
 
