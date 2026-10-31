@@ -15,7 +15,6 @@ public sealed class Framing
 {
     public const string SheetGroup = "Sheet";
     public const string SkinGroup = "Skin";
-    public const string PaddleGroup = "Paddle";
 
     private const string WoodKey = "wood";
     private const string SetsAtKey = "setsAt";
@@ -62,8 +61,7 @@ public sealed class Framing
         bool started = Stages.Any(stage => Laid(stage) > 0);
         return Stages
             .SelectMany(stage => Enumerable.Range(Laid(stage) + 1, Math.Max(0, stage.Pieces - Laid(stage))).Select(n => $"{stage.Group}{n}"))
-            .Append(started ? SheetGroup : SkinGroup)
-            .Concat(Built ? [] : [PaddleGroup]);
+            .Append(started ? SheetGroup : SkinGroup);
     }
 
     /// <summary>What a look at her says of her build at <paramref name="hours"/>; nothing once she is finished.</summary>
