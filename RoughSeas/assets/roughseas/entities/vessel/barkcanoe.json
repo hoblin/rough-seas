@@ -6,8 +6,6 @@
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/bark"}],
     "attributes": {
         "logTextures": {"bark": "all", "frame": "inside-north"},
-        "speedMultiplier": 2,
-        "turnSpeed": 1.2,
         "swimmingOffsetY": 0.406,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
@@ -21,6 +19,17 @@
     },
     "hitboxSize": {"x": 1, "y": 0.44},
     "behaviorConfigs": {
+        "roughseas:propulsion": {
+            "paddle": "paddling",
+            "sweepMetres": 1.09,
+            "handsAboveWaterMetres": 0.65,
+            "strokes": {"pole": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}, "paddle": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}},
+            "sources": {
+                "sweepMetres": "Her paddler kneels 0.16 m aft of her middle and the blade swept at arm's length works some 0.7 m beyond her gunwale, 0.38 + 0.7 m out: 1.09 m from her middle",
+                "handsAboveWaterMetres": "She is paddled kneeling, sitting back on the heels on her floor at about her waterline: a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m), and his heels lift him some 5 cm more",
+                "sideDrag": "Bark over round ribs: the round-bilged hull's cross-flow drag"
+            }
+        },
         "roughseas:vesselintegrity": {
             "impactCapacity": 2400,
             "runsRapids": true,
@@ -153,6 +162,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]
@@ -167,6 +177,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},

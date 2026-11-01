@@ -6,8 +6,6 @@
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "plank": "inside-north"},
-        "speedMultiplier": 1.3,
-        "turnSpeed": 0.5,
         "swimmingOffsetY": 0.463,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
@@ -21,6 +19,19 @@
     },
     "hitboxSize": {"x": 1, "y": 0.6},
     "behaviorConfigs": {
+        "roughseas:propulsion": {
+            "finSquareMetres": 0.38,
+            "paddle": "paddling",
+            "sweepMetres": 1.34,
+            "handsAboveWaterMetres": 0.67,
+            "strokes": {"pole": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}, "paddle": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}},
+            "sources": {
+                "sweepMetres": "The dugout's seat, 0.69 m forward of her middle, and the blade swept at arm's length works some 0.7 m beyond her gunwale: 1.34 m from her middle",
+                "handsAboveWaterMetres": "The dugout's seat, 0.07 m above her waterline, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
+                "finSquareMetres": "Her float, a 3 m log 0.25 m thick floating half under, shows 3 m by 0.125 m to the water across her",
+                "sideDrag": "A round-bottomed log: the round-bilged hull's cross-flow drag"
+            }
+        },
         "roughseas:vesselintegrity": {
             "impactCapacity": 30000,
             "parts": [
@@ -189,6 +200,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]
@@ -204,6 +216,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},

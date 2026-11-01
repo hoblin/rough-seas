@@ -4,16 +4,26 @@
     "tags": ["inanimate", "vehicle"],
     "weight": 75.2,
     "attributes": {
-        "speedMultiplier": 1.6,
-        "turnSpeed": 0.9,
         "swimmingOffsetY": 0.575,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {"idle": "roughseas-sitthwart", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
         "rightClickPickup": true,
-        "requiresPaddlingTool": true
+        "requiresPaddlingTool": false
     },
     "hitboxSize": {"x": 1.2, "y": 0.6},
     "behaviorConfigs": {
+        "roughseas:propulsion": {
+            "oars": {"stroke": "rowing", "bladeSquareMetres": 0.1, "spanMetres": 4.2},
+            "sweepMetres": 1.5,
+            "handsAboveWaterMetres": 1.0,
+            "strokes": {"pole": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}, "tholeoar": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}},
+            "sources": {
+                "sweepMetres": "Her rower sits on the thwart 1.18 m aft of her middle and a pole swept at arm's length works some 0.7 m beyond her 0.62 m half-beam: 1.5 m from her middle",
+                "handsAboveWaterMetres": "Her thwart lies 0.4 m above her waterline, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
+                "sideDrag": "Hide over round ribs: the round-bilged hull's cross-flow drag",
+                "oars": "Her two oars on their tholes (the oar's own sources); from blade to blade across her about 4.2 m: her 0.62 m half-beam at the tholes and some 1.5 m of each 3 m oar outboard of its thole to its blade's middle, by the model"
+            }
+        },
         "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
             "parts": [{"name": "hide", "material": "hide", "share": 36.9}, {"name": "frame", "material": "wood-ash", "share": 38.3}],
@@ -128,6 +138,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]
@@ -142,6 +153,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},
