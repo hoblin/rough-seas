@@ -14,8 +14,8 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 
 | | |
 | --- | --- |
-| Speed | half the raft, paddled |
-| Turning | spins on the spot |
+| Speed | 1 m/s, sculled over the bow or poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Turning | spins on the spot, 177° a second |
 | [Hull](Hull-Condition) | 400 J with a willow frame, the weakest of all; about 690 J in oak, 810 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 12 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 33 cm empty, 26 cm with its paddler |
@@ -28,7 +28,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post, or worn home |
 | Carried | worn on the back, in the backpack slot |
-| Seats | one, on the floor, with an [oar](https://wiki.vintagestory.at/Oar) in hand |
+| Seats | one, on the floor, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand |
 | Cargo | none |
 | Built from | 14 laths of 2 m and 3 of 5 m, 5 ropes and two small hides' worth of hide, then greased |
 | Wreckage | a few laths |

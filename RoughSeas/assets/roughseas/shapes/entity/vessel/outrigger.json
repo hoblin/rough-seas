@@ -8180,6 +8180,15 @@
    "attachmentpoints": [
     { "code": "LowerMastAP", "posX": "3", "posY": "0", "posZ": "3", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
+  },
+  {
+   "name": "OarStorage",
+   "from": [ -16, 1.5, 12.399999999999999 ],
+   "to": [ 32, 3.0, 14.0 ],
+   "faces": {},
+   "attachmentpoints": [
+    { "code": "OarAP", "posX": "0", "posY": "0", "posZ": "-7.2", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ]
   }
  ]
 }

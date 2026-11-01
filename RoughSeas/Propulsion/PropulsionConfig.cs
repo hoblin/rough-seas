@@ -25,6 +25,7 @@ public class StrokeConfig
     public double DragCoefficient;
     public int Blades = 1;
     public double PushNewtons;
+    public double PushMetres;
 }
 
 public class PoleConfig

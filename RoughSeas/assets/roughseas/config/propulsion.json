@@ -1,11 +1,11 @@
 {
     "rower": {
         "metabolicWatts": 1040,
-        "satietyPerKilojoule": 0.79,
+        "satietyPerKilojoule": 1.4,
         "vanillaPace": 30,
         "sources": {
             "metabolicWatts": "The average finisher of a canoe marathon, some 30 km in about two hours, is a trained club paddler, not an elite: young male flatwater kayakers' maximal aerobic power is 138.5 ± 24.5 W (Frontiers in Public Health 2020, 8:526477), and two hours are held at about 75% of the aerobic maximum, between the marathon's 74% and the half marathon's 81% (fractional utilisation of 30 marathon and ultramarathon runners). 104 W at the paddle, which paddling's 10% gross efficiency (Gomes et al. 2012) asks 1040 W of his body for. Pushed through a paddle into a racing K1, whose tow drag Gomes et al. measured (Sports Biomechanics 2015, 14:394), those 104 W hold her at about 10.7 km/h, a club pace over a marathon. What his body gives is the limit, and each stroke turns its own share of it into work",
-            "satietyPerKilojoule": "Vanilla's own scale: sprinting costs 1.5 satiety a second over walking (vanilla's EntityBehaviorHunger). Running costs about 4.2 J per kilogram and metre (Margaria 1963); a 75 kg body at vanilla's sprint of about 6 m/s spends 1.9 kW. 1.5 satiety for 1.9 kJ",
+            "satietyPerKilojoule": "Vanilla's own scale: sprinting costs 1.5 satiety a second over walking (vanilla's EntityBehaviorHunger). Vanilla walks 1.68 m/s on the bench and sprints twice that (GlobalConstants.SprintSpeedMultiplier), 3.4 m/s; running costs about 4.2 J per kilogram and metre (Margaria 1963), so a 75 kg body sprinting spends 1.07 kW: 1.5 satiety for 1.07 kJ",
             "vanillaPace": "Vanilla scales hunger by its calendar against its default 60 × 0.5 = 30 (EntityBehaviorHunger), and rowing does the same"
         }
     },
@@ -22,12 +22,14 @@
             "strokesPerMinute": 15,
             "driveShare": 0.5,
             "pushNewtons": 300,
-            "grossEfficiency": 0.175,
+            "pushMetres": 2,
+            "grossEfficiency": 0.10,
             "sources": {
                 "strokesPerMinute": "A good punter takes 24 minutes for the 0.9 miles from Darwin to Jesus lock, 1 m/s (Nicolson 2008); a shove carries the punt about the 2 m the pole travels from the bed ahead of the hands to behind them, and she glides as far again while it comes up: some 4 m a stroke, 15 a minute",
                 "driveShare": "The pole pushes on the bed for half the stroke and is brought up hand over hand for the other half (Nicolson 2008)",
                 "pushNewtons": "A sustained two-handed push by an adult, about 300 N (Snook and Ciriello 1991, as the launch shove takes it)",
-                "grossEfficiency": "No one has measured poling; its nearest measured analogue is a push of the whole body, rowing: gross efficiency about 17.5% at 124 to 182 W (Fukunaga et al. 1986, European Journal of Applied Physiology 55:471). Bringing the pole up costs its own lift each stroke on top: its middle rises half the way from the bed to the hands"
+                "grossEfficiency": "No one has measured poling. Seated, a poler shoves with the arms and trunk as a paddler does, not the legs as a rower on a stretcher: paddling's 10% (Gomes et al. 2012). Bringing the pole up costs its own lift each stroke on top: its middle rises half the way from the bed to the hands, and the same effort drives a punt faster with a paddle than with a pole because of it (Nicolson 2008)",
+                "pushMetres": "A shove lasts while the hands travel the pole's planted length, about the 2 m it travels from the bed ahead of the hands to behind them (Nicolson 2008); then it is brought up, and a hull that runs faster than the shove leaves less time to push in each stroke"
             }
         },
         "paddling": {

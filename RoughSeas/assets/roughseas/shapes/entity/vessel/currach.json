@@ -8479,6 +8479,15 @@
    "attachmentpoints": [
     { "code": "AftCargoAP", "posX": "8", "posY": "0", "posZ": "8", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
+  },
+  {
+   "name": "OarStorage",
+   "from": [ -16, 1.5, 13.2 ],
+   "to": [ 32, 3.0, 14.8 ],
+   "faces": {},
+   "attachmentpoints": [
+    { "code": "OarAP", "posX": "0", "posY": "0", "posZ": "-7.2", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ]
   }
  ],
  "animations": [

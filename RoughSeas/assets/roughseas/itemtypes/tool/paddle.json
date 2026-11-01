@@ -5,7 +5,7 @@
     "attributes": {
         "paddlingTool": true,
         "roughseas:propulsion": {"tool": "paddle", "bladeSquareMetres": 0.054},
-        "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/paddle"}},
+        "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/paddle-stowed"}},
         "logTextures": {"wood": "inside-north"},
         "handbook": {"groupBy": ["paddle-*"]},
         "sources": {
@@ -20,6 +20,6 @@
     "combustibleProps": {"burnTemperature": 700, "burnDuration": 30},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 0.75, "y": 0.5, "z": 0.5}, "scale": 1.1},
-    "tpHandTransform": {"translation": {"x": -1.3, "y": -0.28, "z": -0.53}, "rotation": {"x": -3, "y": 1, "z": -22}, "origin": {"x": 0.5, "y": 0.2, "z": 0.5}, "scale": 1},
+    "tpHandTransform": {"translation": {"x": 0.9492, "y": -0.1337, "z": 0.4912}, "rotation": {"x": -3, "y": 1, "z": -22}, "origin": {"x": 0, "y": 0, "z": 0}, "scale": 1},
     "groundTransform": {"origin": {"x": 0.75, "y": 0, "z": 0.5}, "scale": 1}
 }

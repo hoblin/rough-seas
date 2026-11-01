@@ -23,7 +23,7 @@
             "paddle": "paddling",
             "sweepMetres": 1.09,
             "handsAboveWaterMetres": 0.65,
-            "strokes": {"pole": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}, "paddle": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}},
+            "strokes": {"pole": {"ready": "roughseas-barkcanoe-pole-ready", "forwards": "roughseas-barkcanoe-pole-forward", "backwards": "roughseas-barkcanoe-pole-backward"}, "paddle": {"ready": "roughseas-barkcanoe-paddle-ready", "forwards": "roughseas-barkcanoe-paddle-forward", "backwards": "roughseas-barkcanoe-paddle-backward"}},
             "sources": {
                 "sweepMetres": "Her paddler kneels 0.16 m aft of her middle and the blade swept at arm's length works some 0.7 m beyond her gunwale, 0.38 + 0.7 m out: 1.09 m from her middle",
                 "handsAboveWaterMetres": "She is paddled kneeling, sitting back on the heels on her floor at about her waterline: a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m), and his heels lift him some 5 cm more",
@@ -105,7 +105,7 @@
                 {"apName": "FrontSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1}
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP", "OarAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
@@ -117,7 +117,8 @@
                     "emptyInteractPassThrough": true
                 },
                 {"code": "BackSeatAP", "forCategoryCodes": []},
-                {"code": "HullAP", "forCategoryCodes": []}
+                {"code": "HullAP", "forCategoryCodes": []},
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
             ]
         },
         "roughseas:seaforces": {

@@ -1,5 +1,7 @@
 import math
 
+from held import PADDLE, POLE, paddling, poling, tools, waterline
+from stroke import player_patch, seat
 from physics import afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, group, path, plank, renamed, span, stages
 
@@ -258,8 +260,13 @@ def build(path_):
     shape.add(laths[2], laths[3])
     shape.add(stages("Pitch", [seam("SternSeam", STERN), seam("BowSeam", bow(STERN)), gores(hull, -1), gores(hull, 1)]))
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
-    shape.keep("Hull", "FrontSeat", "BackSeat")
+    shape.keep("Hull", "FrontSeat", "BackSeat", "OarStorage")
     shape.write()
+    at = seat(shape, "BackSeat")
+    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, waterline("barkcanoe"), {
+        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 6.5, 1.5)),
+        "pole": ("pole", POLE, poling(POLE, at, 4, 4, 7, 1.5)),
+    }))
     report(hull, laths)
 
 

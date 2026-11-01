@@ -18,7 +18,7 @@
             "paddle": "sculling",
             "sweepMetres": 1.0,
             "handsAboveWaterMetres": 0.6,
-            "strokes": {"pole": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}, "paddle": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}},
+            "strokes": {"pole": {"ready": "roughseas-coracle-pole-ready", "forwards": "roughseas-coracle-pole-forward", "backwards": "roughseas-coracle-pole-backward"}, "paddle": {"ready": "roughseas-coracle-paddle-ready", "forwards": "roughseas-coracle-paddle-forward", "backwards": "roughseas-coracle-paddle-backward"}},
             "sources": {
                 "sweepMetres": "The blade sculls just ahead of her bow, about 0.3 m beyond her 0.69 m half-width: 1 m from her middle",
                 "handsAboveWaterMetres": "Her seat lies about her waterline, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
@@ -52,7 +52,15 @@
         },
         "passivephysicsmultibox": {"collisionBoxes": [{"x1": -0.535, "y1": 0, "z1": -0.75, "x2": 0.535, "y2": 0.4, "z2": 0.75}], "groundDragFactor": 1, "airDragFallingFactor": 0.5, "gravityFactor": 1.0},
         "creaturecarrier": {"seats": [{"apName": "FrontSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "selectionBox": "HullAP"}]},
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP", "OarAP"]},
+        "rideableaccessories": {
+            "dropContentsOnDeath": true,
+            "wearableSlots": [
+                {"code": "FrontSeatAP", "forCategoryCodes": []},
+                {"code": "HullAP", "forCategoryCodes": []},
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
+            ]
+        },
         "roughseas:seaforces": {
             "beamMetres": 1.07,
             "mastMetres": 0,
@@ -116,6 +124,7 @@
             {"code": "interpolateposition"},
             {"code": "hidewatersurface", "hideWaterElement": "hideWater/*"},
             {"code": "selectionboxes"},
+            {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
             {"code": "roughseas:propulsion"},
@@ -130,6 +139,7 @@
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},
+            {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
             {"code": "roughseas:propulsion"},

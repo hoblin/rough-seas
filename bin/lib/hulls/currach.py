@@ -2,7 +2,8 @@ import math
 
 from physics import afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
-from stroke import crew, moved, strokes
+from held import POLE, poling, tools, waterline
+from stroke import crew, moved, player_patch, seat, strokes
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
@@ -252,9 +253,13 @@ def build(path_):
     shape.add(*pins)
     shape.add(stages("Oars", [[oar(name, side, rests[name])] for name, side in OARS.items()], wood="none"))
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
-    shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo")
-    crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
-         {"rotationZ": 12})
+    shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
+    rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
+                 {"rotationZ": 12})
+    at = seat(shape, "BackSeat")
+    player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, waterline("currach"), {
+        "pole": ("pole", POLE, poling(POLE, at, 3, 3, 3, -2)),
+    }))
     print(f"oars: {blade_span(rests):.2f} m from blade to blade across her")
     report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()])
 

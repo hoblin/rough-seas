@@ -6,13 +6,13 @@
         "sweepMetres": 1.65,
         "handsAboveWaterMetres": 0.8,
         "strokes": {
-            "pole": { "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward" },
-            "paddle": { "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward" }
+            "pole": {"ready": "roughseas-raft-pole-ready", "forwards": "roughseas-raft-pole-forward", "backwards": "roughseas-raft-pole-backward"},
+            "paddle": {"ready": "roughseas-raft-paddle-ready", "forwards": "roughseas-raft-paddle-forward", "backwards": "roughseas-raft-paddle-backward"}
         },
         "sources": {
             "bowDrag": "Her logs' sawn ends meet the water face on: a flat-faced cylinder in axial flow has a drag coefficient of 0.8 to 1.1, a flat disc 1.17 (Hoerner 1965, Fluid-Dynamic Drag, ch. 3)",
             "sideDrag": "Across her she is a wide, shallow section with rounded corners, side ratio 3 to 5 once mirrored at the surface: 1.0 to 1.3 sharp-edged (Delany & Sorensen 1953, NACA TN 3038), less with round logs, lowered again by her finite length (Hoerner 1965, ch. 3)",
-            "sweepMetres": "Her rower sits at her middle and the blade swept at arm's length works some 0.7 m beyond her 0.95 m half-beam: 1.65 m",
+            "sweepMetres": "Her rower sits by her side, and the blade swept at arm's length works some 0.7 m beyond her 0.95 m half-beam: 1.65 m from her middle",
             "handsAboveWaterMetres": "Her logs' tops lie some 0.2 m above the water, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)"
         }
     } },

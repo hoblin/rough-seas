@@ -21,7 +21,7 @@
             "paddle": "paddling",
             "sweepMetres": 0.9,
             "handsAboveWaterMetres": 0.72,
-            "strokes": {"pole": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}, "paddle": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}},
+            "strokes": {"pole": {"ready": "roughseas-reedboat-pole-ready", "forwards": "roughseas-reedboat-pole-forward", "backwards": "roughseas-reedboat-pole-backward"}, "paddle": {"ready": "roughseas-reedboat-paddle-ready", "forwards": "roughseas-reedboat-paddle-forward", "backwards": "roughseas-reedboat-paddle-backward"}},
             "sources": {
                 "sweepMetres": "Her rider sits at her middle and the blade swept at arm's length works some 0.7 m beyond her gunwale, 0.2 + 0.7 m out: 0.9 m",
                 "handsAboveWaterMetres": "Astride her bundles 0.12 m above the water, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
@@ -83,7 +83,7 @@
                 }
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "CargoAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "CargoAP", "HullAP", "OarAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
@@ -94,7 +94,8 @@
                     "attachmentPointCode": "CargoAP",
                     "stepParentTo": {"": {"elementName": "Cargo"}}
                 },
-                {"code": "HullAP", "forCategoryCodes": []}
+                {"code": "HullAP", "forCategoryCodes": []},
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
             ]
         },
         "roughseas:seaforces": {

@@ -26,6 +26,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:rigging` | client and server | that vessel, rigged piece by piece where she lies ([Rigged in place](#rigged-in-place)) |
 | `roughseas:covering` | client and server | a hull bound from laths laid out on the ground, framed and covered with hides piece by piece where it lies ([Laid out on the ground](#laid-out-on-the-ground)) |
 | `roughseas:droop` | client | ends that sag as a reed hull soaks ([Bound in place](#bound-in-place)) |
+| `roughseas:propulsion` | client and server | what drives her when she is paddled, poled or rowed: the tools she takes, her hull's form for the water's drag on her, and the rower's strokes ([Driving her](#driving-her)) |
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
@@ -106,7 +107,26 @@ A crest stands half a wave's height above still water, seven tenths when it brea
 
 **Riding the drawn swell.** On a client, the vessel is posed on the surface under it, sampled at the ends and sides of a square as wide as its collision box's longer side. A vessel that floats by its mass follows that pose on its own heave and roll periods, from its draft, depth and beam ([How a hull answers](Reading-the-Sea#how-a-hull-answers)); one that doesn't takes the water's pose as it lies. This rides on vanilla's boat: the entity must be an `EntityBoat` or derive from it, and a class of yours that overrides `OnRenderFrame` calls the base, or it isn't posed. A vessel that can't, poses itself on the same surface through [the drawn sea](Reading-the-Sea#the-drawn-sea). Where no swell is drawn it rolls and pitches as vanilla rocks it, times `rollResponse` and `pitchResponse`.
 
-**Its mass slows it.** An `EntityBoat` makes its entity attribute `speedMultiplier` at its reference mass: its own `weight` and one 75 kg rider. Heavier, it is slower, and lighter a little faster ([why](The-Science-of-the-Hull#floating)): the hull in its own material, riders, gear, armour, containers and the water aboard all count. A swamped one makes no speed, and its riders are moved into the water beside it, holding on.
+**Its mass slows it.** Under sail, and for a vessel without `roughseas:propulsion`, an `EntityBoat` makes its entity attribute `speedMultiplier` at its reference mass: its own `weight` and one 75 kg rider. Heavier, it is slower, and lighter a little faster ([why](The-Science-of-the-Hull#floating)): the hull in its own material, riders, gear, armour, containers and the water aboard all count. A vessel with `roughseas:propulsion` is slowed by her mass through her drag instead ([Driving her](#driving-her)). A swamped one makes no speed, and its riders are moved into the water beside it, holding on.
+
+## Driving her
+
+`roughseas:propulsion`. With it, a vessel goes as fast as her rower drives her against the water's drag on her hull ([how](The-Science-of-the-Hull#driving-her)), in place of vanilla's `speedMultiplier` and our old `turnSpeed`, which ours no longer carry. It needs `roughseas:vesselintegrity` for her hull's size, draft and mass, and `roughseas:seaforces` for the water's depth under her, which a pole needs. Under sail she goes as vanilla sails her.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `bowDrag` | coefficient | 0 | a blunt bow's own drag, on her beam by her draft; a fine one adds none beyond the form factor |
+| `sideDrag` | coefficient | 0.75 | the water's drag across her as she turns, on her length by her draft |
+| `finSquareMetres` | m² | 0 | a keel's or a float's side, which the water meets across her too |
+| `paddle` | stroke | none | how a paddle drives her: `paddling` along her side or `sculling` over her bow; none, and a paddle doesn't serve her |
+| `oars` | | none | her own oars on thole pins: `stroke` (`rowing`), `bladeSquareMetres` of each, and `spanMetres` from blade to blade across her |
+| `sweepMetres` | m | 0 | how far from her middle a held tool sweeps her round |
+| `handsAboveWaterMetres` | m | 0 | how high her rower's hands are over the water: a pole reaches that much less deep |
+| `strokes` | | none | the rower's `ready`, `forwards` and `backwards` animations for each tool she takes: `pole`, `paddle`, and `tholeoar` for her own oars |
+
+Her length and beam are her `Hull` box. The rower's power and each stroke's rate, drive and efficiency are in `config/propulsion.json`, the drag law's constants in `config/vessels/drag.json`, each number with its source.
+
+A tool is an item whose attributes carry `roughseas:propulsion`: `tool` is `pole` (its `metres`, or its `length` variant), `paddle` or `tholeoar` (each with `bladeSquareMetres`). A vessel that takes a held tool sets vanilla's `requiresPaddlingTool`, and the tool `paddlingTool`. Our poles and paddles carry `attachableToEntity` with the category `oar`, so a slot of that category, as vanilla's raft has, stows them.
 
 ## The bilge
 

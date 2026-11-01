@@ -49,11 +49,14 @@ public sealed class PoleStroke(string code, StrokeConfig config, double poleKg, 
 {
     public double LiftWatts => poleKg * Gravity * (depthMetres + handsAboveWaterMetres) / 2 * StrokesPerMinute / 60;
 
+    private double RecoverySeconds => (1 - Config.DriveShare) * 60 / StrokesPerMinute;
+
     public override double Thrust(double metresPerSecond, double watts)
     {
         var pushing = watts - LiftWatts;
         if (pushing <= 0) return 0;
-        var most = Config.DriveShare * Config.PushNewtons;
-        return metresPerSecond <= 0 ? most : Math.Min(most, pushing / metresPerSecond);
+        var speed = Math.Max(0, metresPerSecond);
+        var shoves = Config.PushNewtons * Config.PushMetres / (Config.PushMetres + speed * RecoverySeconds);
+        return speed <= 0 ? shoves : Math.Min(shoves, pushing / speed);
     }
 }

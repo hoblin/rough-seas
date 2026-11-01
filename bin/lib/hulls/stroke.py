@@ -142,8 +142,8 @@ def crew(shape, vessel, seated, idle, strokes, grips, lean):
     rower = Rower(seat(shape, seated), idle)
     shape.animations, player = fit(rower, shape.elements, strokes, grips, lean)
     shape.write()
-    player_patch(f"player-{vessel}", player)
     rowed(shape, rower, shape.animations, player)
+    return player
 
 
 def player_patch(name, animations):

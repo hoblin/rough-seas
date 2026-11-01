@@ -16,7 +16,7 @@
             "oars": {"stroke": "rowing", "bladeSquareMetres": 0.1, "spanMetres": 4.96},
             "sweepMetres": 1.5,
             "handsAboveWaterMetres": 1.0,
-            "strokes": {"pole": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}, "tholeoar": {"ready": "roughseas-currach-ready", "forwards": "roughseas-currach-forward", "backwards": "roughseas-currach-backward"}},
+            "strokes": {"pole": {"ready": "roughseas-currach-pole-ready", "forwards": "roughseas-currach-pole-forward", "backwards": "roughseas-currach-pole-backward"}, "tholeoar": {"ready": "roughseas-currach-ready", "forwards": "roughseas-currach-forward", "backwards": "roughseas-currach-backward"}},
             "sources": {
                 "sweepMetres": "Her rower sits on the thwart 1.18 m aft of her middle and a pole swept at arm's length works some 0.7 m beyond her 0.62 m half-beam: 1.5 m from her middle",
                 "handsAboveWaterMetres": "Her thwart lies 0.4 m above her waterline, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
@@ -55,7 +55,7 @@
             "gravityFactor": 1.0
         },
         "creaturecarrier": {"seats": [{"apName": "BackSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "selectionBox": "HullAP"}]},
-        "selectionboxes": {"selectionBoxes": ["BackSeatAP", "ForeCargoAP", "MidCargoAP", "AftCargoAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["BackSeatAP", "ForeCargoAP", "MidCargoAP", "AftCargoAP", "HullAP", "OarAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
@@ -63,7 +63,8 @@
                 {"code": "Fore Cargo", "forCategoryCodes": ["basket", "chest"], "attachmentPointCode": "ForeCargoAP", "stepParentTo": {"": {"elementName": "ForeCargo"}}},
                 {"code": "Mid Cargo", "forCategoryCodes": ["basket", "chest"], "attachmentPointCode": "MidCargoAP", "stepParentTo": {"": {"elementName": "MidCargo"}}},
                 {"code": "Aft Cargo", "forCategoryCodes": ["basket", "chest"], "attachmentPointCode": "AftCargoAP", "stepParentTo": {"": {"elementName": "AftCargo"}}},
-                {"code": "HullAP", "forCategoryCodes": []}
+                {"code": "HullAP", "forCategoryCodes": []},
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
             ]
         },
         "roughseas:seaforces": {

@@ -22,7 +22,7 @@
             "paddle": "paddling",
             "sweepMetres": 1.34,
             "handsAboveWaterMetres": 0.67,
-            "strokes": {"pole": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}, "paddle": {"ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"}},
+            "strokes": {"pole": {"ready": "roughseas-dugout-pole-ready", "forwards": "roughseas-dugout-pole-forward", "backwards": "roughseas-dugout-pole-backward"}, "paddle": {"ready": "roughseas-dugout-paddle-ready", "forwards": "roughseas-dugout-paddle-forward", "backwards": "roughseas-dugout-paddle-backward"}},
             "sources": {
                 "sweepMetres": "Her rower sits 0.69 m forward of her middle and the blade swept at arm's length works some 0.7 m beyond her gunwale, 0.45 + 0.7 m out: 1.34 m from her middle",
                 "handsAboveWaterMetres": "Her seat lies 0.07 m above her waterline with one aboard (bin/lib/hulls/dugout.py), and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
@@ -112,7 +112,7 @@
                 {"apName": "BackSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1, "reverse": true}
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "HullAP", "OarAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
@@ -124,7 +124,8 @@
                     "stepParentTo": {"": {"elementName": "BackSeat"}},
                     "emptyInteractPassThrough": true
                 },
-                {"code": "HullAP", "forCategoryCodes": []}
+                {"code": "HullAP", "forCategoryCodes": []},
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
             ]
         },
         "roughseas:seaforces": {

@@ -1,5 +1,7 @@
 import math
 
+from held import PADDLE, POLE, paddling, poling, tools, waterline
+from stroke import player_patch, seat
 from physics import afloat, kilograms
 from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
 
@@ -254,12 +256,21 @@ def build(path):
     shape.add(*build_stages())
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     shape.elements.append(hull_box())
-    shape.keep("FrontSeat", "BackSeat")
+    shape.keep("FrontSeat", "BackSeat", "OarStorage")
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
     afloat("dugout", kilograms("wood-oak", envelope - hold), RIM * VOXEL_METRES, hold, deck())
     shape.write()
+    crew_tools(shape, "dugout")
+
+
+def crew_tools(shape, vessel):
+    at = seat(shape, "FrontSeat")
+    player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, waterline(vessel), {
+        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1)),
+        "pole": ("pole", POLE, poling(POLE, at, 6, 6, 4, -0.5)),
+    }))
 
 
 if __name__ == "__main__":
