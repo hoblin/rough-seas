@@ -17,7 +17,7 @@ What is left of her side above the water is her *freeboard*, and the hover text 
 | [Coracle](Coracle) | 33 cm | 26 cm |
 | [Dugout](Dugout), oak | 47 cm | 45 cm |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 cm | 32 cm |
-| [Reed boat](Reed-Boat), fresh | 14 cm | 5 cm |
+| [Reed boat](Reed-Boat), fresh | 13 cm | 5 cm |
 | [Hide currach](Hide-Currach) | 58 cm | 56 cm |
 | [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 58 cm | 56 cm |
 | [Sailboat](Sailboat), oak | 52 cm | 50 cm |

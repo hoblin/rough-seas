@@ -24,7 +24,7 @@ TIP_REACH = (0, 3, 6, 8)
 
 def drawn_girth():
     litres = BUNDLE_REEDS * REED_KG / MATERIALS["reed"]["density"] * 1000
-    length = BODY[1] - BODY[0] + sum((b - a) * share ** 2 for a, b, share in zip(TIP_REACH, TIP_REACH[1:], TIP_SHARES))
+    length = BODY[1] - BODY[0] + 2 * sum((b - a) * share ** 2 for a, b, share in zip(TIP_REACH, TIP_REACH[1:], TIP_SHARES))
     return math.sqrt(litres / (ROUNDED_SHARE * length * VOXEL_METRES_CUBED_LITRES))
 
 
@@ -118,7 +118,7 @@ def laid(sides):
 def envelope():
     body = GIRTH ** 2 * (BODY[1] - BODY[0])
     ends = sum((b - a) * g ** 2 for a, b, g in zip(TIP_REACH, TIP_REACH[1:], TIP_GIRTHS))
-    litres = ROUNDED_SHARE * (body + ends) * VOXEL_METRES_CUBED_LITRES
+    litres = ROUNDED_SHARE * (body + 2 * ends) * VOXEL_METRES_CUBED_LITRES
     print(f"a bundle of {BUNDLE_REEDS} reeds: {(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]) * VOXEL_METRES:.1f} m long, "
           f"{GIRTH * VOXEL_METRES * 100:.1f} cm across, {litres:.1f} L as drawn; two: {2 * litres:.1f} L")
 

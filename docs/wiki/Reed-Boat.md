@@ -20,7 +20,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | Turning | nimble |
 | [Hull](Hull-Condition) | 3000 J; tears, shown as *Reed torn* |
 | [Soaking](Hull-Condition#seeping-and-soaking) | 33 kg of water a day afloat: its rider awash after a day, on the bottom within four left alone; dries ashore in the sun, a third of it left behind as rot |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 14 cm empty, 5 cm with its rider, when dry |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 13 cm empty, 5 cm with its rider, when dry |
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
