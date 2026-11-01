@@ -233,6 +233,19 @@ At every stage she is a vessel: she floats and can be picked up, her build goes 
 
 A vessel already in a world from before, with no build of its own, is finished with every stage on, the `optional` ones too, its float, poles and pieces of its hull's wood. Our outrigger's builder, `bin/lib/hulls/outrigger.py`, draws her on the dugout's own hull.
 
+`roughseas:floatlashing` beside `roughseas:rigging` gives her float lashings of their own, as a raft's ([An outrigger's float](Hull-Condition#an-outriggers-float)). A knock from the float's `side`, and a weapon that hits outside her hull on that side, meets the float instead of her hull, and works the lashings loose by its share of `impactCapacity` times the share of her `lashing` stage laid: a float not yet lashed comes away at any knock. `repairs` bind them up again, as a hull's do. Once they give out she is replaced by her `hull` vessel of her own wood, which takes her hull's cracks and bilge through `IHandedOver`; her float breaks into firewood, every `firewoodLitres` of what is left of it a piece, each laid pole comes away as a pole as long as its piece, her planks as planks of their wood, and each piece of a stage `keeps` names as that item, the rest of her lashings and seams parting. The state lives in her `roughseas:vessel` tree as `float/lashing`. Her shape draws the float as its lashings give in the groups `FloatLashingLoose`, `FloatLashingTorn` and `FloatLashingShifted` under `FloatLashing`, each with a `replaces` list of the sound rig's elements it is drawn instead of; one shows once every piece of her `lashing` stage is laid: loose from a tenth of the lashings gone, torn from a half, shifted from three quarters. Her item leaves out `FloatLashing`.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `side` | hull place | `StarboardSide` | the place her float stands off, in her shape's frame |
+| `impactCapacity` | J | 0 | the knock her lashings, all laid, take before they give out |
+| `hull` | entity code | none | the vessel she is left, without its wood (ours `roughseas:dugout`) |
+| `keeps` | stage group → item code | none | what each piece of a stage comes away as |
+| `firewoodLitres` | L | 0 | her float's wood a piece of firewood holds |
+| `repairs` | | none | as the hull's |
+
+`roughseas:rigging` takes `lashing` for this, the stage group that lashes her booms to her float.
+
 ### Bound in place
 
 A block of class `roughseas:BlockBundles` is bundles lying where they were laid, the way a reed boat was really made: two long bundles side by side by the water, lashed together. It has the variants `count` (`one`, `two`) and `axis` (`we`, `ns`): a bundle placed lies along the way its placer looks, and a second held on it lies beside the first. Rope held on the pair for the first stage's `seconds`, with water beside the block, level with it or a block lower, takes the block away and leaves, where it lay, the entity of its `vessel` attribute, framed with that first stage's first piece laid: its rope the first lashing. Everything after is `roughseas:framing`, with no bark and no wood: our reed boat's stages are `Lashing` and `Tips`, which `replaces` her flat ends (`Flat1`, `Flat2`) with bound-up ones. Draw the block's `one` and `two` shapes from the same geometry as the vessel's `Blank` and `Flat` groups, as `bin/lib/hulls/reedboat.py` does, so the bundles become the vessel without moving.
@@ -288,7 +301,7 @@ A broad load cracks its place by its share of the capacity and breaks the hull u
 | `runsRapids` | true if rapids don't strike it |
 | `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives) |
 | `wreckage` | what it leaves when it breaks up, as a block's drops |
-| `damage` | how the cracks show: `textures` (the shape's textures that crack) and `material` (`wood`, `bark`, `reed` or `hide`), which also picks the hull's [sounds](#sounds) |
+| `damage` | `material` (`wood`, `bark`, `reed` or `hide`), which picks the hull's [sounds](#sounds), and `textures`, the shape's textures that crack: for a hull whose shape draws no wounds, an overlay of `wood` or `reed` marks on each damaged place |
 
 `repairsByType` and `wreckageByType` work as vanilla's `ByType` keys do.
 
@@ -303,7 +316,9 @@ A broad load cracks its place by its share of the capacity and breaks the hull u
 
 Its keys: `material`, a row of `materials.json`; `metres`, its thickness; `spanMetres`, how far what a breaker bends reaches between what holds it (frames apart, a lath's length, a carved side's height); `backing`, `{ "material", "metres" }`, what lines or holds it; and `backedShare` and `bottomBackedShare`, the share of the sides and of the bottom the backing covers (1 for a lining, the laths' share of the area for a skin). A thicker shell of a tougher material holds more blows; a thicker one on closer frames holds bigger breakers. The material's `toughness` (and `cutToughness`, where an edge parts it differently) and `strength` come from its row in `config/vessels/materials.json`: add a row by patch for a material of your own. Our vessels each carry a `shell` with its sources; the coracle's is above. How the numbers combine: [The science of the hull](The-Science-of-the-Hull#hulls).
 
-**Places.** The seven places, bow, side and quarter each side and the bottom, are taken from the hull's selection box `HullAP`, or the entity's selection box without one. A blow lands by where it comes from: a knock and an explosion by their direction, a weapon by where it hits, a breaker on the windward side, rapids and a throw ashore on the bottom. The damage marks go on the shape's elements whose centre lies in a cracked place, worked out from the model: there is nothing to configure.
+**Places.** The seven places, bow, side and quarter each side and the bottom, are taken from the hull's selection box `HullAP`, or the entity's selection box without one. A blow lands by where it comes from: a knock and an explosion by their direction, a weapon by where it hits, a breaker on the windward side, rapids and a throw ashore on the bottom. The overlay's marks go on the shape's elements whose centre lies in a cracked place, worked out from the model: there is nothing to configure.
+
+**Wounds.** A shape can draw each place's crack in the model itself, seen from outside and from aboard. Under a group `Wound{Place}`, beside a board of that place, it draws the crack at each stage it can reach, `Wound{Place}Scratched`, `Cracked`, `Split` and `StoveIn` (`Place` as `PortBow`, `StarboardSide`, `Bottom`); the vessel shows the one its crack has reached and hides the rest, with no key to set. A build stage that draws its own skin draws its own wounds, named with its level after the form: `Wound{Place}{Form}{level}` under `Wound{Place}{level}`, as our dugout's `WoundPortBowSplitBlank3`, hidden with the level. Our builders draw them through `bin/lib/hulls/wounds.py`: each crack through the wall along the grain, as long as the shell's `spanMetres`, a stove-in place broken inward. The item leaves out the `Wound{Place}` groups.
 
 **Knocks.** A knock is vanilla's own collision: when the physics stops the hull against a block, the speed it loses into that block strikes it, so a glancing blow counts only the part pointing into the wall. It takes vanilla's passive physics on the entity (`passivephysicsmultibox`, or `passivephysics`). A drifting vessel is measured on the server and a steered one on its rider's client, which reports to the server.
 

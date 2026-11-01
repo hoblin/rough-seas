@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RoughSeas.Vessels;
@@ -19,6 +20,8 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 
     private const string FloatKey = "float";
     private const string SailKey = "sailPosition";
+    private const int ShortestPole = 2;
+    private const int LongestPole = 5;
 
     private RiggingConfig rig = null!;
 
@@ -28,6 +31,43 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 
     public double MastMetres(double designed) =>
         framing.Stages.FirstOrDefault(stage => stage.Group == rig.Mast) is { } mast && framing.Laid(mast) > 0 ? designed : 0;
+
+    public double FloatOffMetres => rig.FloatOffMetres;
+
+    public double Lashed => framing.Stages.FirstOrDefault(stage => stage.Group == rig.Lashing) is { } lashing ? framing.Share(lashing) : 1;
+
+    /// <summary>
+    /// What of her rig comes away whole when her float does: each pole laid, as long as its piece took, the planks
+    /// and the pieces that <paramref name="keeps"/> names by stage, and her float as firewood. Lashings and seams part.
+    /// </summary>
+    public IEnumerable<ItemStack> Stripped(IWorldAccessor world, IReadOnlyDictionary<string, string> keeps, double firewoodLitres)
+    {
+        var own = Wood.Of(entity.Properties.Variant)?.Code;
+        foreach (var stage in framing.Stages)
+        {
+            int laid = framing.Laid(stage);
+            var codes = stage.Work switch
+            {
+                FramingWork.Pole when (framing.Wood ?? own) is { } wood => stage.Metres.Take(laid).Select(metres => Pole(wood, metres)),
+                FramingWork.Plank when (framing.WoodOf(stage) ?? own) is { } wood => Enumerable.Repeat(Wood.Parse(wood).Plank, laid),
+                _ when keeps.TryGetValue(stage.Group, out var kept) => Enumerable.Repeat(new AssetLocation(kept), laid),
+                _ => []
+            };
+            foreach (var code in codes)
+            {
+                if (world.GetItem(code) is { } item) yield return new ItemStack(item);
+                else if (world.GetBlock(code) is { } block) yield return new ItemStack(block);
+            }
+        }
+        if (FloatStage is { WoodLitres: { Length: > 0 } litres } hewing && world.GetItem(new AssetLocation("game:firewood")) is { } firewood)
+        {
+            int pieces = (int)Math.Round(litres[framing.Laid(hewing)] / firewoodLitres);
+            if (pieces > 0) yield return new ItemStack(firewood, pieces);
+        }
+    }
+
+    private AssetLocation Pole(string wood, double metres) =>
+        new(Shipyard.Mod.Info.ModID, $"pole-{wood}-{Math.Clamp((int)Math.Ceiling(metres), ShortestPole, LongestPole)}");
 
     public override string PropertyName() => Code;
 
@@ -88,6 +128,9 @@ public class RiggingConfig : FramingConfig
 
     /// <summary>The stage whose first piece stands her mast.</summary>
     public string Mast = "";
+
+    /// <summary>The stage that lashes her booms to her float.</summary>
+    public string Lashing = "";
 
     /// <summary>The top of the hold's floor above her origin: her hull's, finished before she was rigged.</summary>
     public double FloorMetres;

@@ -11,11 +11,13 @@ Look at a vessel to read its hull. A sound one says *Hull: sound*; a cracked one
 | *split* | a half to three quarters | up to 19 cm² |
 | *stove in* | three quarters or more | up to 25 cm², a hole 5.6 cm across |
 
-![A hide currach stove in on her port side and cracked on her bottom, leaking 30 litres a minute](images/mechanics/damaged-currach.webp)
+![A hide currach stove in on her port side and cracked on her bottom, leaking 18 litres a minute](images/mechanics/damaged-currach.webp)
 
 Below it: how many litres a minute she leaks, and her [freeboard](Surf-and-Swamping#how-she-floats) in centimetres, the side she shows above the water; *Awash* when the sea comes over it, *Sunk* when she lies on the bottom.
 
-The hull shows each crack where it is, marked in its own material: first light scratches, then wood splitting along the grain, bark tearing or hide holed. A vessel you pick up carries its hull with it, every crack in place, and its durability on the item shows how much is left.
+The hull shows each crack where it is, in the hull itself, from outside and from your seat aboard: a scratch is a hairline through the wall, a crack runs along the grain, a split opens across the whole span between what holds the shell and its edge springs, and a place stove in is broken through, its shell pushed in and the dark of the breach around it. Bark splits along its grain, and a bark canoe's sheathing breaks with it; hide tears into a flap. The crack is as long as the shell's span, but drawn wider than the few millimetres it really opens, so that you see it. A dugout, a bark canoe still being built shows its cracks too. A vessel you pick up carries its hull with it, every crack in place, and its durability on the item shows how much is left.
+
+![A dugout seen from her seat: a crack along the grain in her floor, and to either side places split and stove in](images/mechanics/wounds-from-the-seat.webp)
 
 The [raft](Raft) and the [reed boat](Reed-Boat) are not cracked: the raft reads *Lashings* in percent, the reed boat *Reed waterlogged* and, once something has torn it, *Reed torn*, and their marks spread over the whole of them.
 
@@ -29,6 +31,12 @@ A hull has seven places: the port and starboard bow, the port and starboard side
 - **A weapon** strikes where it hits; **an explosion**, the side facing it.
 
 Each harming blow cracks its own place further, and a second knock elsewhere cracks elsewhere.
+
+### An outrigger's float
+
+An [outrigger](Outrigger-Canoe)'s float stands 2 m out from her side, so a knock from that side meets the float before her hull, and so does a blade that strikes it. It harms not the float but the lashings that hold it under her booms, as a [raft](Raft)'s: look at her to read *Float lashings* in percent. As they work loose the float hangs lower under the booms, then a lashing parts and the float slews, and once they give out the float comes away with her booms, and the mast they hold up comes down with it. She is left the [dugout](Dugout) she was rigged on, her hull's cracks and the water in her as they were, and her float, booms, mast, spars, sail, stays and washstrakes float off beside her as firewood, poles, cloth, rope and planks. [Flax twine](Mending) binds them up again before that. A knock from her other side, or on her bow or quarter, strikes her hull as before.
+
+![An outrigger with a fifth of her float lashings left: the float hangs low and slewed under her booms, its lashings parted](images/mechanics/float-coming-away.webp)
 
 ## How a hull takes a blow
 
@@ -93,7 +101,7 @@ What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 | Vessel | At 2 m/s | At 4 m/s |
 | --- | --- | --- |
 | [Dugout](Dugout) | scratches | scratches |
-| [Outrigger canoe](Outrigger-Canoe) | scratches | scratches |
+| [Outrigger canoe](Outrigger-Canoe) | scratches; on her float's side, works nearly half its lashings loose | scratches; on her float's side, tears the float away |
 | [Sailboat](Sailboat) | scratches | cracks |
 | [Birch-bark canoe](Birch-Bark-Canoe) | scratches | scratches |
 | [Reed boat](Reed-Boat) | tears a little | tears a third of it |

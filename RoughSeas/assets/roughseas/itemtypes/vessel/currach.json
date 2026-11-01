@@ -6,8 +6,11 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": ["hideWater", "Bilge"]},
-    "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+    "shape": {"base": "roughseas:entity/vessel/currach", "ignoreElements": [
+        "hideWater", "Bilge",
+        "WoundPortBow", "WoundStarboardBow", "WoundPortSide", "WoundStarboardSide", "WoundPortQuarter", "WoundStarboardQuarter", "WoundBottom"
+    ]},
+    "textures": {"hide": {"base": "game:block/leather/poor"}, "frame": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}, "breach": {"base": "game:block/black"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},

@@ -2,6 +2,7 @@ import math
 
 from physics import afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, group, path, plank, renamed, span, stages
+from wounds import wound
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -253,12 +254,16 @@ def build(path_):
              stages("Stems", [stem("SternStem", on_centre(STERN)), stem("BowStem", on_centre(bow(STERN)))]),
              stages("Sheathing", sheathing(hull)),
              stages("Ribs", ribs(hull))]
-    shape.add(sheet(), skin, laths[0], laths[1])
+    flat = sheet()
+    shape.add(flat, skin, laths[0], laths[1])
     shape.add(stages("Lashing", wraps(hull)))
     shape.add(laths[2], laths[3])
     shape.add(stages("Pitch", [seam("SternSeam", STERN), seam("BowSeam", bow(STERN)), gores(hull, -1), gores(hull, 1)]))
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
+    *rising, finished = skin["children"]
+    wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
+          lining=SHEATHING)
     shape.write()
     report(hull, laths)
 

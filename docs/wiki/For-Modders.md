@@ -85,6 +85,16 @@ The dugout is burnt and hewn out of five logs on the shore ([Built in place](Bui
 
 New: the behaviours `roughseas:burnout` and `roughseas:launch` with their keys, the collectible behaviour `roughseas:hew`, and the watched tree `roughseas:build` on a vessel being built.
 
+### Damage drawn in the model
+
+Our vessels draw each place's crack in their own model, from a scratch to a hull stove in, and an outrigger's float takes the knocks on its side on its own lashings ([Building a vessel](Building-a-Vessel#the-hull)). A vessel of yours loads as it did, its overlay still drawn from `damage.textures`.
+
+- Our dugout, outrigger, bark canoe, coracle and currach dropped `damage.textures`: their wounds are `Wound{Place}…` groups in their shapes, which a patch to their shapes keeps. A patch that adds textures back draws the overlay over them.
+- A knock on an outrigger's float side no longer cracks her starboard side: it goes to `IOutboard`, `roughseas:floatlashing` on ours, whose lashings live in `roughseas:vessel/float`. An outrigger saved before has them whole.
+- Once those lashings give out the outrigger is replaced by a dugout (`EnumDespawnReason.Removed`), as rigging replaced the dugout before.
+
+New: `IOutboard`, `EntityBehaviorVesselIntegrity.Impact`, the behaviour `roughseas:floatlashing` with its keys, and `roughseas:rigging`'s `lashing`.
+
 ### Bark canoes framed in place
 
 The bark canoe is stripped off a standing tree and framed where it lies ([Framed in place](Building-a-Vessel#framed-in-place)), and its grid recipe is gone. No key was removed, so a canoe of yours loads finished, and the bark from a log still mends it.

@@ -10,6 +10,9 @@ namespace RoughSeas.Vessels;
 
 public sealed class HullDamage
 {
+    public const int FirstWoundedStage = 1;
+    public static readonly string[] WoundForms = ["Scratched", "Cracked", "Split", "StoveIn"];
+
     private readonly ICoreClientAPI capi;
     private readonly Entity entity;
     private readonly HullDamageConfig config;
@@ -22,7 +25,7 @@ public sealed class HullDamage
         this.config = config;
     }
 
-    public bool Visible => shown.Stages.Count > 0;
+    public bool Visible => shown.Positions.Count > 0;
 
     public bool Shows(System.Func<HullPlace, int> stage) =>
         HullShape.Places.All(place => stage(place) == shown.Stages.GetValueOrDefault(place));
@@ -52,7 +55,7 @@ public sealed class HullDamage
     public void Retexture(ref Shape shape, ref bool shapeIsCloned, HullShape hull)
     {
         var snapshot = shown;
-        if (snapshot.Stages.Count == 0) return;
+        if (snapshot.Positions.Count == 0) return;
 
         if (!shapeIsCloned)
         {
@@ -67,6 +70,28 @@ public sealed class HullDamage
         {
             if (!shape.TextureSizes.TryGetValue(code, out var size)) continue;
             foreach (var place in snapshot.Stages.Keys) shape.TextureSizes[Placed(code, place)] = size;
+        }
+    }
+
+    public string[] Unreached(Shape shape)
+    {
+        var stages = shown.Stages;
+        return Unreached(shape.Elements, place => stages.GetValueOrDefault(place)).ToArray();
+    }
+
+    public static IEnumerable<string> Unreached(ShapeElement[]? elements, System.Func<HullPlace, int> stage) =>
+        Unreached(elements, HullShape.Places
+            .SelectMany(place => WoundForms
+                .Where((_, n) => FirstWoundedStage + n != stage(place))
+                .Select(form => $"Wound{place}{form}"))
+            .ToArray());
+
+    private static IEnumerable<string> Unreached(ShapeElement[]? elements, string[] hidden)
+    {
+        foreach (var element in elements ?? [])
+        {
+            if (element.Name is { } named && hidden.Any(form => named.StartsWith(form, StringComparison.Ordinal))) yield return named;
+            else foreach (var name in Unreached(element.Children, hidden)) yield return name;
         }
     }
 

@@ -4,7 +4,7 @@ A dugout with a float log held out to one side on three crooked booms lashed acr
 
 ## In Rough Seas
 
-For a long crossing of open sea. The outrigger is the fastest vessel before metal, and it sails, leaving every rowed boat far astern. The float keeps the narrow hull upright where a dugout would roll over. Built without a saw she is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise her side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
+For a long crossing of open sea. The outrigger is the fastest vessel before metal, and it sails, leaving every rowed boat far astern. The float keeps the narrow hull upright where a dugout would roll over. It also stands out on its side, so knocks from that side work its lashings loose rather than cracking her hull; let them give out and the float and rig come away, leaving the dugout. Built without a saw she is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise her side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
 
 ## Where it comes from
 
@@ -20,7 +20,8 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | with washstrakes 58 cm empty, 56 cm with its helmsman; without them 43 and 41; in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 271 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
-| [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place |
+| [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place; 1 flax twine binds up a ninth of her float's lashings |
+| [Her float](Hull-Condition#an-outriggers-float) | takes the knocks on its side on its lashings: with one aboard, losing 2 m/s into rock works nearly half of them loose, and 4 m/s tears them out and leaves her the dugout |
 | [Bilge](Bailing) | 1720 litres with washstrakes, 1298 without |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.6 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3 m mast draws strikes |

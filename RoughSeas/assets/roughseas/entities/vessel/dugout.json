@@ -32,7 +32,7 @@
                 "saturation": 80
             }],
             "wreckage": [{"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}}],
-            "damage": {"textures": ["inside"], "material": "wood"},
+            "damage": {"material": "wood"},
             "sources": {
                 "weight": "Her finished hull, 393 L of wood by the model (bin/lib/hulls/dugout.py: a 0.56 m deep, 0.9 m wide, 4.5 m long hull with 5 cm walls, cut from the five logs' square 1 m trunk), in oak",
                 "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.114 m (bin/lib/hulls/dugout.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
@@ -150,6 +150,7 @@
         "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater", "Bilge"]},
         "textures": {
             "bilge": {"base": "game:block/liquid/waterportion"},
+            "breach": {"base": "game:block/black"},
             "char": {"base": "game:block/coal/charcoal"},
             "clay": {"base": "game:block/clay/blueclay"},
             "ember": {"base": "game:block/coal/ember"},

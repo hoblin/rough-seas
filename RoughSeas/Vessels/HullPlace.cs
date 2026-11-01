@@ -18,6 +18,8 @@ public static class HullPlaces
 {
     public static string Code(this HullPlace place) => place.ToString().ToLowerInvariant();
 
+    public static bool IsPort(this HullPlace place) => place is HullPlace.PortBow or HullPlace.PortSide or HullPlace.PortQuarter;
+
     public static HullPlace EndForEnd(this HullPlace place) => place switch
     {
         HullPlace.PortBow => HullPlace.StarboardQuarter,
@@ -53,6 +55,8 @@ public readonly record struct HullShape(double HalfLength, double HalfBeam, doub
         if (height - Keel < BottomShare * Depth && Math.Abs(across) < HalfBeam / 2) return HullPlace.Bottom;
         return Side(along, across);
     }
+
+    public bool Beyond(double across) => Math.Abs(across - CentreAcross) > HalfBeam;
 
     public HullPlace Toward(double along, double across) =>
         Side(Math.Abs(along) > Math.Abs(across) ? Math.Sign(along) * HalfLength : 0, across);

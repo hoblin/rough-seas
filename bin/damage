@@ -21,13 +21,8 @@ STAGES = 4
 
 PALE_WOOD = (214, 182, 130)
 SPLIT = (38, 24, 14)
-INNER_BARK = (176, 112, 62)
-BARK_EDGE = (70, 44, 26)
 REED_FIBRE = (170, 152, 92)
 REED_GAP = (44, 40, 20)
-HIDE_SCUFF = (196, 170, 128)
-HOLE = (20, 14, 10)
-HOLE_RIM = (120, 92, 60)
 
 
 class Canvas:
@@ -68,30 +63,6 @@ def splits(canvas, rand, count, shortest, longest, edge):
                 canvas.put(x + i, drift + 1, PALE_WOOD, 170)
 
 
-def tears(canvas, rand, count, size, inner, edge):
-    for _ in range(count):
-        cx, cy = rand.randrange(SIZE), rand.randrange(SIZE)
-        w, h = rand.randint(size, size * 2), rand.randint(max(1, size // 2), size)
-        for y in range(cy, cy + h):
-            for x in range(cx - w // 2, cx + w // 2 + 1):
-                if rand.random() < 0.85:
-                    canvas.put(x, y, inner, 230)
-        canvas.line(cx - w // 2, cy - 1, cx + w // 2, cy - 1, edge, 240)
-        canvas.line(cx - w // 2 - 1, cy + h, cx + w // 2 - 1, cy + h, edge, 200)
-
-
-def holes(canvas, rand, count, radius):
-    for _ in range(count):
-        cx, cy = rand.randrange(SIZE), rand.randrange(SIZE)
-        for y in range(cy - radius - 1, cy + radius + 2):
-            for x in range(cx - radius - 1, cx + radius + 2):
-                d = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
-                if d <= radius:
-                    canvas.put(x, y, HOLE, 250)
-                elif d <= radius + 1:
-                    canvas.put(x, y, HOLE_RIM, 200)
-
-
 def frays(canvas, rand, count, length):
     for _ in range(count):
         x, y = rand.randrange(SIZE), rand.randrange(SIZE)
@@ -117,18 +88,6 @@ def wood(canvas, rand, stage):
         splits(canvas, rand, 6, 16, 30, True)
 
 
-def bark(canvas, rand, stage):
-    if stage == 1:
-        scratches(canvas, rand, 6, INNER_BARK)
-    elif stage == 2:
-        tears(canvas, rand, 3, 2, INNER_BARK, BARK_EDGE)
-    elif stage == 3:
-        tears(canvas, rand, 3, 4, INNER_BARK, BARK_EDGE)
-    else:
-        tears(canvas, rand, 2, 4, INNER_BARK, BARK_EDGE)
-        holes(canvas, rand, 2, 2)
-
-
 def reed(canvas, rand, stage):
     if stage == 1:
         frays(canvas, rand, 6, 4)
@@ -142,24 +101,9 @@ def reed(canvas, rand, stage):
         frays(canvas, rand, 6, 8)
 
 
-def hide(canvas, rand, stage):
-    if stage == 1:
-        scratches(canvas, rand, 7, HIDE_SCUFF)
-    elif stage == 2:
-        scratches(canvas, rand, 6, HIDE_SCUFF)
-        holes(canvas, rand, 2, 0)
-    elif stage == 3:
-        holes(canvas, rand, 3, 1)
-    else:
-        holes(canvas, rand, 3, 2)
-        tears(canvas, rand, 1, 3, HOLE, HOLE_RIM)
-
-
 MATERIALS = {
     "wood": (wood, "game:block/wood/debarked/oak"),
-    "bark": (bark, "game:block/wood/bark/birch-h"),
     "reed": (reed, "roughseas:entity/vessel/reed"),
-    "hide": (hide, "game:block/leather/poor"),
 }
 
 

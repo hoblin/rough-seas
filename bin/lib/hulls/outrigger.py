@@ -4,6 +4,7 @@ from pathlib import Path
 from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, deck, log, volumes
 from physics import afloat, kilograms
 from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, group, path, plank, run, stages
+from wounds import wound
 
 VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
@@ -29,6 +30,13 @@ SAIL_STRIPS = 16
 CLOTH_SQUARE_METRES = 1
 
 LASHING_TURNS = 13
+FRAYED = 2.4
+FRAYED_DEGREES = 16
+FLOAT_FORMS = {
+    "Loose": (0.8, 0, 0, 0, ()),
+    "Torn": (1.2, 1, 2, 3, (2,)),
+    "Shifted": (1.6, 3, 5, 6, (1, 2, 3)),
+}
 GUNWALE_METRES = WALL * VOXEL_METRES
 GUNWALE = PROFILE[-1][0]
 
@@ -153,6 +161,51 @@ def lashings():
     assert all(per_rope), "a rope with no lashing"
     print(f"lashing: {total:.0f} m in {len(ties)} lashings of {LASHING_TURNS} turns, {ropes} ropes of {ROPE_METRES} m")
     return per_rope
+
+
+def slack(name, x, drop):
+    """A float lashing worked loose, its turns reaching from the boom down to the float hanging lower."""
+    low, high = float_lashed()
+    return [box(f"{name}{k}", (x - 1, low - drop, FLOAT_Z + a), (x + 1, high, FLOAT_Z + b), "lashing", grain="y")
+            for k, (a, b) in enumerate([(-0.9, -0.4), (0.4, 0.9)], 1)]
+
+
+def frayed(name, x, drop):
+    """A float lashing parted: its ends hang from the boom."""
+    _, high = float_lashed()
+    return [box(f"{name}{k}", (x - 0.4, high - FRAYED, FLOAT_Z + a), (x + 0.4, high, FLOAT_Z + b), "lashing",
+                origin=(x, high, FLOAT_Z), rot=(0, 0, side * FRAYED_DEGREES), grain="y")
+            for k, (a, b, side) in enumerate([(-0.9, -0.4, 1), (0.4, 0.9, -1)], 1)]
+
+
+def float_lashed():
+    return FLOAT_Y - FLOAT_DIAMETER / 2 - 0.3, FLOAT_Y + FLOAT_DIAMETER / 2 + BOOM + 0.3
+
+
+def hung(name, drop, along, degrees, roll):
+    """The hewn float as its lashings let it go: hanging lower under her booms, slid along and turned."""
+    elements, _, _ = float_pass(HEWINGS)
+    middle = ((FLOAT_FROM + FLOAT_TO) / 2, FLOAT_Y, FLOAT_Z)
+    shift = (along, -drop, 0)
+
+    def moved(element):
+        return dict(element, name=f"{name}{element['name']}",
+                    **{end: [c + s - m for c, s, m in zip(element[end], shift, middle)] for end in ("from", "to")})
+
+    return box(name, middle, middle, {}, rot=(roll, degrees, 0), children=[moved(element) for element in elements])
+
+
+def float_forms():
+    """The float as its lashings give: slack, then one torn, then all parted. Each form names the elements of the sound
+    rig it is drawn instead of."""
+    replaced = [*(f"Lash{n}Float{k}" for n in range(1, len(BOOMS) + 1) for k in (1, 2)), f"Hewing{HEWINGS}"]
+    children = []
+    for form, (drop, along, degrees, roll, parted) in FLOAT_FORMS.items():
+        lashings = [part for n, x in enumerate(BOOMS, 1) for part in (frayed if n in parted else slack)(f"Lash{n}Float{form}", x, drop)]
+        piece = group(f"FloatLashing{form}", (0, 0, 0), (0, 0, 0), [*lashings, hung(f"Float{form}", drop, along, degrees, roll)])
+        piece["replaces"] = replaced
+        children.append(piece)
+    return group("FloatLashing", (0, 0, 0), (0, 0, 0), children)
 
 
 def rig(name, children):
@@ -306,9 +359,10 @@ def build(target):
     })
     hull = Hull("Side", STATIONS, 8, WALL, WOOD, WOOD, edge=WOOD)
     logs, passes = hewing()
-    shape.add(*log(hull))
+    shell = [element for piece in log(hull) for element in piece]
+    shape.add(shell)
     shape.add(logs, booms(), passes)
-    shape.add(stages("Lashing", lashings()))
+    shape.add(stages("Lashing", lashings()), float_forms())
     shape.add(stages("Mast", mast()))
     shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
     shape.add(stages("Stays", stays()))
@@ -316,6 +370,7 @@ def build(target):
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     shape.keep("Hull", "FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage")
+    wound(shape, [("", shell, WOOD)])
     shape.write()
     report(hull, passes["children"][-1])
 

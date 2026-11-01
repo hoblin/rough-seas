@@ -8,8 +8,11 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/barkcanoe", "ignoreElements": ["hideWater", "Bilge", "Sheet"]},
-    "textures": {"lashing": {"base": "game:item/resource/rope"}, "pitch": {"base": "game:block/liquid/glue-cold"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+    "shape": {"base": "roughseas:entity/vessel/barkcanoe", "ignoreElements": [
+        "hideWater", "Bilge", "Sheet",
+        "WoundPortBow", "WoundStarboardBow", "WoundPortSide", "WoundStarboardSide", "WoundPortQuarter", "WoundStarboardQuarter", "WoundBottom"
+    ]},
+    "textures": {"lashing": {"base": "game:item/resource/rope"}, "pitch": {"base": "game:block/liquid/glue-cold"}, "bilge": {"base": "game:block/liquid/waterportion"}, "breach": {"base": "game:block/black"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},

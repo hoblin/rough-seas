@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Shipyard;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -667,7 +668,7 @@ public class BridgeCommands : ModSystem
         var hull = entity?.GetBehavior<EntityBehaviorVesselIntegrity>();
         if (hull == null) return TextCommandResult.Error("Not a vessel");
 
-        hull.Strike(joules, Enum.Parse<HullPlace>(place, ignoreCase: true));
+        hull.Impact(joules, Enum.Parse<HullPlace>(place, ignoreCase: true));
         return TextCommandResult.Success(HullState(entity!));
     }
 
@@ -680,7 +681,8 @@ public class BridgeCommands : ModSystem
         var cracks = hull.Model is CrackingHull cracking
             ? ", cracks " + string.Join(" ", HullShape.Places.Select(place => $"{place.Code()} {cracking.Crack(place):F2}"))
             : "";
-        return $"{entity.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity:F2}{cracks}, " +
+        var lashing = entity.GetBehavior<EntityBehaviorFloatLashing>() is { } floated ? $", float lashing {floated.Condition:F2}" : "";
+        return $"{entity.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity:F2}{cracks}{lashing}, " +
             $"{hull.Aboard.Total:F0} kg aboard, draft {afloat.DraftMetres:F3} m, freeboard {afloat.FreeboardMetres:F3} m, sunk {afloat.Sunk}";
     }
 

@@ -43,7 +43,7 @@
                 {"type": "item", "code": "game:cloth-plain", "quantity": {"avg": 1, "var": 1}},
                 {"type": "item", "code": "{plank}", "quantity": {"avg": 2, "var": 2}}
             ],
-            "damage": {"textures": ["inside"], "material": "wood"},
+            "damage": {"material": "wood"},
             "sources": {
                 "parts": "By the model (bin/lib/hulls/outrigger.py), in oak: her hull is the dugout she was built on, 265 kg; her float, three metres of log hewn round to some 30 cm across, 224 L, 151 kg, and the three logs it is hewn from 3000 L before the first pass; her six poles (three crooked booms 9 cm across, a 3 m mast 9 cm across, two 3 m spars 7.5 cm), 118 L, 79 kg; her washstrakes, ten boards 2.5 cm thick, 41 L, 28 kg, as they are fitted. A float or poles of another wood weigh by their own",
                 "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.155 m (bin/lib/hulls/outrigger.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
@@ -60,6 +60,7 @@
             "floatStage": "Hewing",
             "floatLogs": 3,
             "mast": "Mast",
+            "lashing": "Lashing",
             "floatOffMetres": 2,
             "floorMetres": 0.05,
             "poles": "roughseas:pole-*",
@@ -89,6 +90,22 @@
                 "stays": "A forestay, a backstay, a shroud out to the float and the sheet, each under ten metres: one rope each, set up in about a quarter of an hour (an estimate)",
                 "strakes": "Optional, any time she is finished: one washstrake a side between her solid ends, a board some 15 cm high, as Pacific washstrakes ran 15 to 20 cm (a Tikopia hull 43 cm deep carries a 15 cm one, Haddon & Hornell, Canoes of Oceania, via collections.maa.cam.ac.uk/objects/555827; Hawaiian mo'o 6 to 8 in). Sawn planks, a metre a plank: 8 along her sides, and a board across each end of her hollow, where her solid ends begin, as the end pieces lashed on at Tobi and Kapingamarangi (Haddon & Hornell; Buck 1950), so the sea cannot come in over her low ends: 10. Fitting one, with its row of holes, about twenty minutes (an estimate)",
                 "seams": "Sewn on through holes 3 in apart over a split batten (Haddon & Hornell, Mont-Dore canoe): each stitch about 30 cm of cord round wall, plank and batten, 116 stitches along her sides and her end boards, 35 m, four ropes (bin/lib/hulls/outrigger.py). Sewn, they raise her side 15 cm and add the 422 L of hold between them, her 2.81 m² opening 15 cm higher"
+            }
+        },
+        "roughseas:floatlashing": {
+            "side": "StarboardSide",
+            "impactCapacity": 2080,
+            "hull": "roughseas:dugout",
+            "keeps": {"SailFurled": "game:cloth-plain", "Stays": "game:rope"},
+            "firewoodLitres": 49,
+            "repairs": [{"material": {"type": "item", "code": "game:flaxtwine", "stacksize": 1}, "restores": 0.11, "saturation": 30}],
+            "sources": {
+                "side": "Her float lies 2 m off her starboard side as her model draws her, a hull turned end for end when rigged from the port: a knock from that side meets the float before her hull",
+                "impactCapacity": "As the raft's lashings, which take 1200 J in their three ropes, 40 J a metre: her booms are lashed to her gunwales and her float with 52 m of rope (bin/lib/hulls/outrigger.py), every turn of it between the float and her hull",
+                "hull": "What she was rigged on, left once her float comes away: the dugout",
+                "keeps": "What comes away whole with the float: her poles as they were laid, her sail's cloths, and her stays; her lashings part, and her washstrakes come off as the planks they were",
+                "firewoodLitres": "As the dugout breaks up: eight pieces of firewood from her 393 L of wood",
+                "repairs": "As the raft's: one and a half twines bind up a rope's worth of lashing, nine for her six ropes"
             }
         },
         "roughseas:launch": {
@@ -175,7 +192,8 @@
         "textures": {
             "sail": {"base": "game:block/cloth/linen/plain"},
             "lashing": {"base": "game:item/resource/rope"},
-            "bilge": {"base": "game:block/liquid/waterportion"}
+            "bilge": {"base": "game:block/liquid/waterportion"},
+            "breach": {"base": "game:block/black"}
         },
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
@@ -185,6 +203,7 @@
             {"code": "hidewatersurface", "hideWaterElement": "hideWater/*"},
             {"code": "selectionboxes"},
             {"code": "roughseas:rigging"},
+            {"code": "roughseas:floatlashing"},
             {"code": "roughseas:launch"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
@@ -200,6 +219,7 @@
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},
             {"code": "roughseas:rigging"},
+            {"code": "roughseas:floatlashing"},
             {"code": "roughseas:launch"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
