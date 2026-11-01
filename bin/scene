@@ -11,7 +11,7 @@ bin/scene look ID [DX DY DZ]
                            the one way to look at anything: fly to entity ID's position plus DX DY DZ
                            (default 3 1 0: east of it and a block up), hover there and aim at it.
                            ID may be a point instead, X,Y,Z as commands take them (relative to the
-                           map centre): blocks with no entity yet, such as logs laid out to build on.
+                           world's spawn): blocks with no entity yet, such as logs laid out to build on.
                            A shot from any side, over land or sea; 0 6 0.01 looks straight down,
                            above the water's tint. `bin/game hotkey togglehud` hides the HUD.
 bin/scene photo ID FILE [DX DY DZ] [hover]
@@ -68,6 +68,10 @@ noon() {
   "$game" do '/time set 12:00' >/dev/null
 }
 
+placed() {
+  "$game" entity "$1" | jq -r --argjson c "$("$game" state | jq -c .centre)" --argjson dy "${2:-0}" '.pos | "\(.X - $c.X) \(.Y + $dy) \(.Z - $c.Z)"'
+}
+
 dock() {
   local codes=("$@")
   [ ${#codes[@]} -eq 0 ] && codes=(boat-raft-oak boat-sailed-oak)
@@ -99,8 +103,8 @@ look() {
   fi
   entity=$("$game" entity "$id")
   [[ $entity == {* ]] || { echo "$entity" >&2; exit 1; }
-  at=$(jq -r --argjson dx "$dx" --argjson dy "$dy" --argjson dz "$dz" <<<"$entity" \
-    '.pos | "\(.X - 512000 + $dx) \(.Y + $dy) \(.Z - 512000 + $dz)"')
+  at=$(jq -r --argjson c "$("$game" state | jq -c .centre)" --argjson dx "$dx" --argjson dy "$dy" --argjson dz "$dz" <<<"$entity" \
+    '.pos | "\(.X - $c.X + $dx) \(.Y + $dy) \(.Z - $c.Z + $dz)"')
   "$game" do "/bridge fly $at" >/dev/null
   "$game" aim "$id" >/dev/null
 }
@@ -198,7 +202,7 @@ views() {
   around "$id" -4 2.4 4; shot afloat-bow
   around "$id" -4 2.4 -4; shot afloat-stern
   around "$id" 0 7 0.01; shot afloat-above
-  at=$("$game" entity "$id" | jq -r '.pos | "\(.X - 512000) \(.Y) \(.Z - 512000)"')
+  at=$(placed "$id")
   read -r x y z <<<"$at"
   local apart
   apart=$(awk -v s="$s" 'BEGIN { print 3 + 2 * s }')
@@ -230,7 +234,7 @@ views() {
   id=$(nearest "$code")
   around "$id" -5 1.6 0; shot ashore-side
   around "$id" 4 2.6 4; shot ashore-quarter
-  at=$("$game" entity "$id" | jq -r '.pos | "\(.X - 512000) \(.Y + 0.5) \(.Z - 512000)"')
+  at=$(placed "$id" 0.5)
   clear 16 >/dev/null
   "$game" do "/bridge drop $item $at" >/dev/null
   sleep 2

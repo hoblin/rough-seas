@@ -62,6 +62,8 @@ START
                        while they play.
   bin/ref              fetch Anego's sources and decompile the engine into ref/ (gitignored)
   bin/model            edit, preview and check shapes in Blender, headless; bin/model help
+  bin/film             film a scene from a screenplay in one run: setting, cast, camera, captions;
+                       bin/film help
   bin/game wait [S]    block until the world is loaded and the server answers, closing the
                        character-creation dialog; fails after S seconds (default 180).
                        bin/client already does it.
@@ -86,6 +88,9 @@ LOOK
                              fluid at feet and head, seabed height, season, temperature, rainfall,
                              wind vector, precipitation, wind/weather pattern, weather event
   bin/game entity ID         server side: code, alive, pos, behaviours, all watched attributes
+  bin/game where [ID]        client side, as drawn: entity ID's (the player's without ID) code, position
+                             and yaw. Cheap enough to poll: it leaves the chat alone, where every
+                             `entity` reply lands and, kept long, stalls the frames
   (log)                      storms log every event to the server's debug log, tagged [storms]:
                              breakers with their energy, water shipped, anchors down, dragged and
                              lost, ropes snapped, lightning, the ashore roll when a moored vessel
@@ -94,8 +99,8 @@ LOOK
   (sound log)                every sound the client starts, fades or stops, ours and vanilla's, with
                              its file, type, distance and volume, tagged [sound]:
                              grep -a '\[sound\]' "$BENCH_DATA/Logs/client-debug.log"
-  bin/game fps [SECONDS]     frames rendered over SECONDS (default 5): fps, mean and 95th-percentile
-                             frame time in ms. Compare a change against BENCH_MODS=agentbridge from
+  bin/game fps [SECONDS]     frames rendered over SECONDS (default 5): fps, mean, 95th-percentile and
+                             longest frame time in ms. Compare a change against BENCH_MODS=agentbridge from
                              the same place and camera.
   bin/game shot [FILE] [gui] in-engine screenshot of the world alone: no HUD, hand or held item
                              (default shot.png; a relative FILE lands in the clone's temp folder,
@@ -110,6 +115,17 @@ LOOK
                              shots land seconds apart on a lagging bench. Hold a key through it:
                              bin/game press W 4000 & sleep 1; bin/game burst row; wait
   bin/game hotkey CODE       cyclecamera for third person; bin/game hotkey alone lists every code
+  bin/game camera first|third|off
+                             the game's own first- or third-person view; off ends the free camera
+  bin/game camera on=ID bearing=DEG distance=M height=M [look=ID] [hold=1]
+                  [seconds=S toBearing=DEG toDistance=M toHeight=M]
+                             the free camera: placed around entity ID (or `player`), DEG clockwise
+                             from its heading (0 ahead, 90 to starboard, 180 astern), M blocks off
+                             and up, looking at ID or `look`; it follows the entity, or with hold=1
+                             stays where it stood. With seconds, it moves to the second station
+                             over S seconds, easing in and out. The player stays put and in the
+                             picture, seated aboard or rowing: the view is the game's third person
+                             brought to zero distance. bin/game camera alone shows the shot
   To look at anything, fly: `bin/scene look ID` from any side, `/bridge fly` anywhere. To only
   look, '/gamemode spectator' draws no player at all, but spectators pick nothing.
 
@@ -123,7 +139,7 @@ ACT
                              them); fails after S seconds (default 30). Use it after a /tp.
   bin/game look YAW PITCH    aim the camera, radians. Yaw 0 faces +Z, pi/2 +X, pi -Z;
                              pitch pi is level, above pi looks down (range 1.59-4.70)
-  bin/game aim ID            aim the camera at an entity
+  bin/game aim ID            aim the camera at the middle of an entity's selection box
   bin/game hover [ID [BOX]]  make the game treat entity ID as looked at, whatever the camera points
                              at: the HUD shows its name and info text, interactions target it, and
                              the reply is that name and text as JSON. Without ID, stop.
@@ -135,7 +151,8 @@ ACT
   bin/game hover X Y Z       the same for the top face of the block at absolute X Y Z (as `state`
                              prints them), water included: a held raft or block is placed on it.
   bin/game slot N            select hotbar slot N (0-9)
-  bin/game press KEYS [MS]   hold keys for MS ms (default 100). GlKeys names, comma-separated:
+  bin/game press KEYS [MS]   hold keys for MS ms (default 100), or until `press KEYS up` with MS
+                             `down`. GlKeys names, comma-separated:
                              W,A,S,D, Space, ShiftLeft, ControlLeft, Q, E, R, F, Number1 ...
                              Mounted, W/S row or sail and A/D steer.
   bin/game click [BUTTON] [MS]  hold left, right (default) or middle on what the camera points at
@@ -189,6 +206,9 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood.
                              Until a flight has landed it refuses: "Still flying there"
+  /bridge spawn CODE X Y Z [YAW]
+                             spawn an entity there (~ relative) facing YAW degrees; replies with its
+                             id. A vessel over water lies on the surface
   /bridge mount ID [SEAT]    seat the player in an existing seatable entity: a steering seat first,
                              or the seat of index SEAT (0 is the first in its entity's seats)
   /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
@@ -262,8 +282,10 @@ RECIPES
     An idle swimmer sinks to the seabed.
 
 GOTCHAS
-  Coordinates in commands are relative to the map centre (512000), as the game shows them;
-    `state` and `entity` print absolute ones. Use ~ for relative to the player.
+  Coordinates in commands are relative to the world's spawn, as the game shows them: the map
+    centre in a standard world, elsewhere in a world whose mod moves the spawn (an Earth map).
+    `state` and `entity` print absolute ones, and `state`.centre the spawn they are counted from.
+    Use ~ for relative to the player.
   After a teleport, ~ commands use the client's stale position until it catches up: `do` waits for
     the bridge's own flights; after a /tp, `arrive` first.
   A camera change shows in `state`.lookingAt on the next frame; wait ~0.5 s.
@@ -284,16 +306,15 @@ if [[ ${1:-help} == help ]]; then
 fi
 source "$(dirname "$0")/lib/bench.sh"
 bridge=http://127.0.0.1:$BENCH_BRIDGE_PORT
-centre=512000
 
-get() { curl -sf -m "${request_limit:-600}" -H 'X-Agent-Bridge: 1' "$@"; }
+get() { curl -s --fail-with-body -m "${request_limit:-600}" -H 'X-Agent-Bridge: 1' "$@"; }
 post() { get -X POST --data-binary "${2:-}" "$bridge$1"; }
 fail() { echo "$1" >&2; exit 1; }
 
 arrive() {
   local x=$1 y=$2 z=$3 deadline=$((SECONDS + ${4:-30})) request_limit=10
-  until get "$bridge/state" | jq -e --argjson c "$centre" --argjson x "$x" --argjson y "$y" --argjson z "$z" \
-    '[.pos.X - $c - $x, .pos.Y - $y, .pos.Z - $c - $z] | all(fabs < 1)' >/dev/null; do
+  until get "$bridge/state" | jq -e --argjson x "$x" --argjson y "$y" --argjson z "$z" \
+    '[.pos.X - .centre.X - $x, .pos.Y - $y, .pos.Z - .centre.Z - $z] | all(fabs < 1)' >/dev/null; do
     [ $SECONDS -lt $deadline ] || fail "The client never arrived at $x $y $z; bin/game state shows where it is"
     sleep 0.5
   done
@@ -339,6 +360,7 @@ case "${1:-}" in
   arrive) arrive "$2" "$3" "$4" "${5:-30}" ;;
   here) post /chat "/bridge here" ;;
   entity) post /chat "/bridge entity $2" ;;
+  where) post "/where?entity=${2:-}" ;;
   shot)
     file=${2:-shot.png}
     [[ $file == /* ]] || file=$BENCH_TMP/$file
@@ -365,6 +387,13 @@ case "${1:-}" in
   press) post "/input?keys=$2&ms=${3:-100}" ;;
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
   hotkey) post "/hotkey?code=${2:-}" ;;
+  camera)
+    shift
+    case "${1:-}" in
+      off|first|third) post "/camera?mode=$1" ;;
+      *) post "/camera?$(IFS='&'; echo "$*")" ;;
+    esac
+    ;;
   scroll) post "/scroll?steps=${2:-1}" ;;
   close) post /close-dialogs ;;
   respawn) post /respawn ;;
