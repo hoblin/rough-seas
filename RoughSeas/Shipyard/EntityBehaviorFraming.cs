@@ -39,7 +39,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     public override double HoldLitres(double designed) => framing.Sealed ? designed + framing.Raised(stage => stage.RaisesLitres) : 0;
 
-    public override double DepthMetres(double designed) => designed + framing.Raised(stage => stage.RaisesMetres);
+    public override double DepthMetres(double designed) => Lifted(designed) + framing.Raised(stage => stage.RaisesMetres);
 
     public override double Uncut => 0;
 
@@ -141,6 +141,11 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     protected virtual void Laid(FramingStage stage, CollectibleObject piece, int pieces) { }
 
+    private double Lifted(double designed) =>
+        config.Stages.FirstOrDefault(stage => stage.Lifts != null) is { } lifting && config.FlatDepthMetres > 0
+            ? config.FlatDepthMetres + (designed - config.FlatDepthMetres) * framing.Share(lifting)
+            : designed;
+
     private bool Hurried(EntityAgent byEntity, double seconds)
     {
         long now = entity.World.ElapsedMilliseconds;
@@ -206,10 +211,17 @@ public class FramingConfig
     {
         foreach (var stage in Stages)
         {
-            stage.Metres = Named(shape?["elements"], stage.Group)?["children"]?.Select(piece => piece.Value<double?>("metres") ?? 0).ToArray() ?? [];
-            stage.Pieces = stage.Metres.Length;
+            var group = Named(shape?["elements"], stage.Group);
+            var pieces = group?["children"]?.ToArray() ?? [];
+            stage.Metres = pieces.Select(piece => piece.Value<double?>("metres") ?? 0).ToArray();
+            stage.Pieces = pieces.Length;
+            stage.WoodLitres = Measured(group, pieces, "woodLitres");
+            stage.WaterlineSquareMetres = Measured(group, pieces, "waterlineSquareMetres");
         }
     }
+
+    private static double[] Measured(JToken? group, JToken[] pieces, string key) =>
+        group?.Value<double?>(key) is { } before ? [before, .. pieces.Select(piece => piece.Value<double?>(key) ?? 0)] : [];
 
     private static JToken? Named(JToken? elements, string name) =>
         elements?.FirstOrDefault(element => element.Value<string>("name") == name)
@@ -239,4 +251,6 @@ public class FramingConfig
     public double BarkSeconds;
 
     public int TrunkBlocks;
+
+    public double FlatDepthMetres;
 }

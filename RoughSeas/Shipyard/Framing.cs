@@ -20,6 +20,7 @@ public sealed class Framing
     public const string SetsAtKey = "setsAt";
     private const string PieceWoodSuffix = "Wood";
     private const string BentSuffix = "Bent";
+    private const string LevelSuffix = "At";
 
     private readonly Func<ITreeAttribute?> tree;
     private readonly Action changed;
@@ -65,6 +66,9 @@ public sealed class Framing
         var pieces = Stages.SelectMany(stage =>
             Enumerable.Range(Laid(stage) + 1, Math.Max(0, stage.Pieces - Laid(stage))).Select(n => $"{stage.Group}{n}")
                 .Concat(stage.Replaces is { } replaced ? Enumerable.Range(1, Laid(stage)).Select(n => $"{replaced}{n}") : [])
+                .Concat(stage.Successive ? Enumerable.Range(1, Math.Max(0, Laid(stage) - 1)).Select(n => $"{stage.Group}{n}") : [])
+                .Concat(stage.Follows is { } followed ? Following(stage, followed) : [])
+                .Concat(stage.Lifts is { } lifted ? Others(lifted, stage.Pieces, Laid(stage)) : [])
                 .Concat(stage.Bends is { } bent ? Bent(stage, bent) : []));
         if (Tree == null) return pieces.Append(SheetGroup);
 
@@ -83,6 +87,18 @@ public sealed class Framing
 
         return Finished(hours) ? null : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
     }
+
+    /// <summary>How far the stage named <paramref name="group"/> is laid, which the stages that follow it are drawn at.</summary>
+    public int Level(string group) => Stages.FirstOrDefault(stage => stage.Group == group) is { } stage ? Laid(stage) : 0;
+
+    private IEnumerable<string> Following(FramingStage stage, string followed)
+    {
+        int levels = Stages.FirstOrDefault(other => other.Group == followed)?.Pieces ?? 0;
+        return Enumerable.Range(1, Laid(stage)).SelectMany(n => Others($"{stage.Group}{n}{LevelSuffix}", levels, Level(followed), 0));
+    }
+
+    private static IEnumerable<string> Others(string prefix, int levels, int level, int first = 1) =>
+        Enumerable.Range(first, levels - first + 1).Where(k => k != level).Select(k => $"{prefix}{k}");
 
     private IEnumerable<string> Bent(FramingStage stage, string bent)
     {
@@ -167,6 +183,15 @@ public sealed class FramingStage
     /// <summary>The shape's texture that draws the pieces, retextured in the wood they are of.</summary>
     public string? Texture;
 
+    /// <summary>Whether each piece is the whole work again, carried one step further: only the last laid shows.</summary>
+    public bool Successive;
+
+    /// <summary>The stage whose progress this stage's pieces are drawn at: <c>{Group}{n}At{k}</c> shows once that stage has <c>k</c> laid.</summary>
+    public string? Follows;
+
+    /// <summary>The group this stage raises piece by piece: <c>{Lifts}{k}</c> shows while <c>k</c> of its pieces are laid.</summary>
+    public string? Lifts;
+
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public int Pieces;
@@ -174,6 +199,14 @@ public sealed class FramingStage
     /// <summary>The metres of lath or pole each piece takes, as its shape names them.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public double[] Metres = [];
+
+    /// <summary>The litres of wood each piece leaves, as its shape measures them, and what lay there before the first.</summary>
+    [Newtonsoft.Json.JsonIgnore]
+    public double[] WoodLitres = [];
+
+    /// <summary>The square metres at the waterline each piece leaves, as its shape measures them, and what lay there before the first.</summary>
+    [Newtonsoft.Json.JsonIgnore]
+    public double[] WaterlineSquareMetres = [];
 }
 
 public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank, Hide }

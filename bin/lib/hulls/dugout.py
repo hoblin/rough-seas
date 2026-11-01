@@ -1,5 +1,6 @@
 import math
 
+from physics import afloat, kilograms
 from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
 
 LOG = 16
@@ -11,7 +12,7 @@ WOOD = "inside"
 BARK = "bark"
 RINGS = "rings"
 RIM = 9
-WALL = 1.2
+WALL = 0.8
 HOLLOWINGS = 6
 BANDS = 3
 WALL_BANDS = 2
@@ -22,6 +23,7 @@ BED = 0.55
 GLOW = 160
 VOXEL_METRES = 1 / 16
 TRUNK_METRES = LOG * VOXEL_METRES
+HITBOX_METRES = 0.6
 ENDS = {
     "Stern": [(-24.5, -22, 5.0, 1.6), (-26.5, -24.5, 4.0, 2.8), (-28, -26.5, 2.9, 4.2)],
     "Bow": [(38, 40.5, 5.0, 1.6), (40.5, 42.5, 4.0, 2.8), (42.5, 44, 2.9, 4.2)],
@@ -224,8 +226,16 @@ def volumes():
             y += step
         x += step
     litres = VOXEL_METRES ** 3 * 1000
-    trunk_litres = math.pi * (TRUNK_METRES / 2) ** 2 * LOGS * TRUNK_METRES * 1000
+    trunk_litres = TRUNK_METRES ** 2 * LOGS * TRUNK_METRES * 1000
     return envelope * litres, hold * litres, trunk_litres
+
+
+def deck():
+    step, area, x = 0.25, 0, HOLLOW[0] + 0.125
+    while x < HOLLOW[1]:
+        area += 2 * hollow_half(x) * step
+        x += step
+    return area * VOXEL_METRES ** 2
 
 
 def hull_box():
@@ -249,6 +259,7 @@ def build(path):
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
+    afloat("dugout", kilograms("wood-oak", envelope - hold), RIM * VOXEL_METRES, hold, deck(), HITBOX_METRES)
     shape.write()
 
 

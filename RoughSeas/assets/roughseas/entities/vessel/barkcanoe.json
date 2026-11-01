@@ -2,13 +2,13 @@
     "code": "barkcanoe",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 30,
+    "weight": 26.2,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/bark"}],
     "attributes": {
         "logTextures": {"bark": "all", "frame": "inside-north"},
         "speedMultiplier": 2,
         "turnSpeed": 1.2,
-        "swimmingOffsetY": 0.35,
+        "swimmingOffsetY": 0.409,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -24,10 +24,10 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 2400,
             "runsRapids": true,
-            "parts": [{"material": "bark", "share": 0.5}, {"name": "frame", "material": "wood-tuja", "share": 0.5}],
+            "parts": [{"material": "bark", "share": 13.3}, {"name": "frame", "material": "wood-tuja", "share": 12.9}],
             "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 1, "spanMetres": 0.25},
-            "depthMetres": 0.29,
-            "waterplaneSquareMetres": 2.4,
+            "depthMetres": 0.375,
+            "waterplaneSquareMetres": 2.02,
             "repairs": [{
                 "material": {"type": "item", "code": "roughseas:bark-{wood}", "stacksize": 2},
                 "restores": 0.33,
@@ -39,10 +39,11 @@
             ],
             "damage": {"textures": ["bark"], "material": "bark"},
             "sources": {
-                "parts": "Bark sewn over a frame of white cedar ribs, sheathing and gunwales, about half of each by weight",
+                "parts": "By the model (bin/lib/hulls/barkcanoe.py): 4.76 m² of bark 5 mm thick, 13.3 kg, over 61 m of laths 1 by 6 cm, 12.9 kg of white cedar",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.049 m (bin/lib/hulls/barkcanoe.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Balance: bark half a centimetre thick, lined all over by the cedar sheathing, 1/8 in thick (native-art-in-canada.com/birchbarkcanoes.html), so a blow splits both. A breaker bends bark and sheathing together between the ribs, by the model every 4 voxels",
-                "depthMetres": "Keel to gunwale amidships: a 4 cm draft with one paddler in a 30 kg hull and about a quarter metre of side above it",
-                "waterplaneSquareMetres": "A 4.5 m canoe 0.75 m wide, fine at both ends, so that 600 L aboard settles her by her quarter metre of side"
+                "depthMetres": "Keel to gunwale amidships, by the model (bin/lib/hulls/barkcanoe.py)",
+                "waterplaneSquareMetres": "So that her 650 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)"
             }
         },
         "passivephysicsmultibox": {
@@ -62,8 +63,9 @@
             "pitch": "game:glueportion-pitch-*",
             "barkSeconds": 30,
             "trunkBlocks": 5,
+            "flatDepthMetres": 0.025,
             "stages": [
-                {"group": "Frame", "work": "lath", "seconds": 3},
+                {"group": "Frame", "work": "lath", "seconds": 3, "follows": "Frame", "lifts": "Skin"},
                 {"group": "Stems", "work": "lath", "seconds": 3},
                 {"group": "Lashing", "work": "rope", "seconds": 15},
                 {"group": "Sheathing", "work": "lath", "seconds": 3, "lines": true},
@@ -73,7 +75,8 @@
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
                 "barkSeconds": "Scoring a five-metre sheet along the trunk and around it, then prying and peeling it whole: some 20 to 40 minutes (an estimate; robin-wood.co.uk, 2014, describes the work but gives no time)",
-                "trunkBlocks": "The sheet is the canoe's whole length, five metres",
+                "trunkBlocks": "A sheet five metres long, a little longer than the canoe, trimmed to her as her sides are raised",
+                "flatDepthMetres": "The sheet lying flat, as thick as the model draws it (bin/lib/hulls/barkcanoe.py): her sides rise a step with each piece of her frame, until they stand at her full depth",
                 "frame": "Fitting one lath, about three minutes: a steamed rib has to be driven in within a couple of minutes, before it cools (robin-wood.co.uk, birch bark canoe build, 2014)",
                 "lashing": "One rope is ten metres of lashing, some fifty turns, each through a hole made with an awl: about a quarter of an hour (an estimate). The canoe takes as much as her gunwales and stems need, groups of eight to ten turns two inches apart (Adney & Chapelle 1964), counted by her shape's builder",
                 "pitch": "About a quart of pitch for a canoe (forums.wcha.org, bark pitch questions), one vanilla pot of pitch, a quarter litre to each of her four seams; pitching them all about half an hour (an estimate)",
@@ -117,19 +120,19 @@
             "rollResponse": 1.8,
             "pitchResponse": 1.2,
             "sources": {
-                "heave": "A 30 kg bark hull rises with the crest",
+                "heave": "A 26 kg bark hull rises with the crest",
                 "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
                 "rollResponse": "Narrow and round in section: quick to roll",
                 "pitchResponse": "Light and short, it lifts to each swell"
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 600,
-            "deckSquareMetres": 3.5,
+            "capacityLitres": 650,
+            "deckSquareMetres": 2.21,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "A 5 m hull, about 0.7 m wide and 0.35 m deep inside, half of its box",
-                "deckSquareMetres": "The open hull, 5 m by 0.7 m, catches the rain",
+                "capacityLitres": "Her hollow inside the bark to the gunwale, by the model (bin/lib/hulls/barkcanoe.py)",
+                "deckSquareMetres": "Her opening at the gunwale catches the rain, by the model (bin/lib/hulls/barkcanoe.py)",
                 "drainLitresPerHour": "Pitched seams hold; a holed hull is the integrity's business"
             }
         }

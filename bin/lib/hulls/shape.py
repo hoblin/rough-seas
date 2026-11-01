@@ -105,6 +105,7 @@ def stages(name, pieces, wood="frame"):
 
 
 VOXELS_A_METRE = 16
+VOXEL_METRES_CUBED_LITRES = 1000 / VOXELS_A_METRE ** 3
 
 
 def span(elements, tex):
@@ -287,6 +288,43 @@ class Hull:
     def section(self, x):
         edges = range(len(self.stations[0][1]))
         return [(abs(self.at(x, k, 1)[2] - self.cz), self.at(x, k, 1)[1]) for k in edges]
+
+    def half(self, x, y, inset=0):
+        edges = self.section(x)
+        if y < edges[0][1] + inset or y > edges[-1][1]:
+            return 0
+        return max(0, breadth(edges, y) - inset)
+
+    def span(self):
+        return self.stations[0][0], self.stations[-1][0]
+
+    def litres(self, top=None, inset=0, step=0.25):
+        x0, x1 = self.span()
+        total, x = 0, x0 + step / 2
+        while x < x1:
+            edges = self.section(x)
+            high = min(top, edges[-1][1]) if top is not None else edges[-1][1]
+            y = edges[0][1] + step / 2
+            while y < high:
+                total += 2 * self.half(x, y, inset) * step * step
+                y += step
+            x += step
+        return total * VOXEL_METRES_CUBED_LITRES
+
+    def square_metres(self, height, inset=0, step=0.25):
+        x0, x1 = self.span()
+        total, x = 0, x0 + step / 2
+        while x < x1:
+            total += 2 * self.half(x, height, inset) * step
+            x += step
+        return total / VOXELS_A_METRE ** 2
+
+    def skin_square_metres(self):
+        total = 0
+        for plank in self.strakes():
+            board = plank["children"][0]
+            total += (board["to"][0] + board["from"][0]) * (board["to"][1] - board["from"][1])
+        return total / VOXELS_A_METRE ** 2
 
     def rib(self, name, x, tex, width=1, depth=1):
         edges = self.section(x)

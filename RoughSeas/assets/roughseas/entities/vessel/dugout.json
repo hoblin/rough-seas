@@ -2,13 +2,13 @@
     "code": "dugout",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 361,
+    "weight": 265,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "bark": "all", "rings": "east"},
         "speedMultiplier": 1.4,
         "turnSpeed": 0.7,
-        "swimmingOffsetY": 0.3,
+        "swimmingOffsetY": 0.504,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -25,7 +25,7 @@
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.54},
             "depthMetres": 0.5625,
-            "waterplaneSquareMetres": 2.83,
+            "waterplaneSquareMetres": 2.91,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
@@ -34,36 +34,37 @@
             "wreckage": [{"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}}],
             "damage": {"textures": ["inside"], "material": "wood"},
             "sources": {
-                "weight": "Her finished hull, 535 L of wood by the model (bin/lib/hulls/dugout.py: a 0.56 m deep, 0.9 m wide, 4.5 m long hull cut from the five logs' 1 m trunk), in oak",
+                "weight": "Her finished hull, 393 L of wood by the model (bin/lib/hulls/dugout.py: a 0.56 m deep, 0.9 m wide, 4.5 m long hull with 5 cm walls, cut from the five logs' square 1 m trunk), in oak",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.114 m (bin/lib/hulls/dugout.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Walls about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe). Carved from one log, a side stands from the bottom with its gunwale free, and a breaker bends it as a cantilever: by the model, 8.6 voxels from the bottom's edge to the gunwale",
                 "depthMetres": "Keel to gunwale by the model: the 1 m trunk with its top hewn away to a level sheer",
-                "waterplaneSquareMetres": "So that her 1156 L hold full, with one aboard, brings her gunwale to the water: about two thirds of her 4.5 m by 0.9 m box, as a round-ended log"
+                "waterplaneSquareMetres": "So that her 1298 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)"
             }
         },
         "roughseas:burnout": {
             "hollowings": 6,
-            "hollowDepthMetres": 0.4875,
+            "hollowDepthMetres": 0.5125,
             "rimMetres": 0.5625,
             "blankDepthMetres": 1,
-            "blankWaterplaneSquareMetres": 4.85,
-            "unhewnLitres": 2236,
+            "blankWaterplaneSquareMetres": 5,
+            "unhewnLitres": 3309,
             "charMillimetresPerHour": 2.5,
             "clay": "game:clay-*",
             "axeEdgeMetres": 0.1,
-            "hollowBeamMetres": 0.75,
+            "hollowBeamMetres": 0.8,
             "wallMetres": 0.05,
             "secondsPerStroke": 2,
             "hewSaturation": 80,
             "sources": {
                 "charMillimetresPerHour": "A burn of 3 to 5 hours chars 6 to 13 mm of wood (Agency House dugout diary, 2021-2023, agencyhouse.org/dugout-canoe)",
-                "hollowings": "Wet clay goes along the rim before each fire (PHMC dugout project, 2005; SUNY Potsdam, 2015), and the fire is tended round the clock until the clay is spent, about a day and a night: 7 cm at a time, the 0.42 m hollow takes six fires and about a week, as Wampanoag builders burn a mishoon for 6 to 10 days (Plimoth Patuxet, The Making of a Mishoon)",
-                "hollowDepthMetres": "Rim to floor of the hollow: the 0.56 m hull less its 7.5 cm bottom",
+                "hollowings": "Wet clay goes along the rim before each fire (PHMC dugout project, 2005; SUNY Potsdam, 2015), and the fire is tended round the clock until the clay is spent, about a day and a half: 8.5 cm at a time, the 0.51 m hollow takes six fires and about nine days, as Wampanoag builders burn a mishoon for 6 to 10 days (Plimoth Patuxet, The Making of a Mishoon)",
+                "hollowDepthMetres": "Rim to floor of the hollow: the 0.56 m hull less its 5 cm bottom",
                 "blankDepthMetres": "The five logs are a trunk 1 m across: one block, as they lie",
-                "blankWaterplaneSquareMetres": "A round 1 m trunk of oak floats 0.62 of its diameter deep, where it is 0.97 m wide, over its 5 m",
-                "unhewnLitres": "The round 1 m trunk, 3927 L, less the finished hull's 1691 L envelope (bin/lib/hulls/dugout.py): hewn away a sixth at each hewing, as the outside is shaped. Shaping it is not timed: the strokes that hew out the char shape the outside with them, a simplification for play until shaping gets work of its own",
+                "blankWaterplaneSquareMetres": "The five square logs as they lie, 5 m by 1 m at any draft",
+                "unhewnLitres": "The square 1 m trunk of five logs, 5000 L, less the finished hull's 1691 L envelope (bin/lib/hulls/dugout.py): hewn away a sixth at each hewing, as the outside is shaped. Shaping it is not timed: the strokes that hew out the char shape the outside with them, a simplification for play until shaping gets work of its own",
                 "clay": "Wet clay one voxel thick over the rim outline the shape draws (its Clay group), at vanilla's 25 voxels a ball (BEClayForm.PutClay)",
                 "axeEdgeMetres": "Char has lost its fibres and crumbles, so a stroke breaks it away down to the sound wood along its whole sweep across the hollow, a strip as wide as the axe's edge, about 10 cm on a felling axe",
-                "hollowBeamMetres": "The hollow's width the stroke sweeps: the hull's 0.9 m beam less its two 7.5 cm walls (bin/lib/hulls/dugout.py)",
+                "hollowBeamMetres": "The hollow's width the stroke sweeps: the hull's 0.9 m beam less its two 5 cm walls (bin/lib/hulls/dugout.py)",
                 "wallMetres": "Her shell's 5 cm walls: a fire burning with the rim unguarded chars it at the hollow's rate, and once the char reaches through a wall's thickness the blank is spoiled",
                 "secondsPerStroke": "The best working rhythm with an axe is 25 to 35 strokes a minute (H. Glaser, physiology of forestry work, FAO)",
                 "hewSaturation": "As hard as a patch of mending: hewing out a day's char by hand"
@@ -126,19 +127,19 @@
             "rollResponse": 2.5,
             "pitchResponse": 1.2,
             "sources": {
-                "heave": "Balance: 360 kg of log rises slowly to a crest; a light hull rises with it, a heavy one lets it climb the side",
+                "heave": "Balance: 265 kg of log rises slowly to a crest; a light hull rises with it, a heavy one lets it climb the side",
                 "capsizeBreakerMetres": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
                 "rollResponse": "A round-bottomed log has little form stability: tippy in a sea",
                 "pitchResponse": "A long, heavy log rides through the swell with little pitch"
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 1156,
-            "deckSquareMetres": 3.4,
+            "capacityLitres": 1298,
+            "deckSquareMetres": 2.81,
             "drainLitresPerHour": 0,
             "sources": {
                 "capacityLitres": "Her hollow to the rim, by the model (bin/lib/hulls/dugout.py)",
-                "deckSquareMetres": "Her open hollow, 4.5 m by 0.75 m, catches the rain",
+                "deckSquareMetres": "Her hollow's opening at the rim catches the rain, by the model (bin/lib/hulls/dugout.py)",
                 "drainLitresPerHour": "One log, no seams: nothing leaks"
             }
         }
