@@ -88,8 +88,7 @@ public sealed class Framing
         return Finished(hours) ? null : Lang.Get("roughseas:shipyard-ribs-setting", Math.Ceiling(SetsAt - hours));
     }
 
-    /// <summary>How far the stage named <paramref name="group"/> is laid, which the stages that follow it are drawn at.</summary>
-    public int Level(string group) => Stages.FirstOrDefault(stage => stage.Group == group) is { } stage ? Laid(stage) : 0;
+    private int Level(string group) => Stages.FirstOrDefault(stage => stage.Group == group) is { } stage ? Laid(stage) : 0;
 
     private IEnumerable<string> Following(FramingStage stage, string followed)
     {

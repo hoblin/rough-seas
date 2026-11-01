@@ -129,12 +129,12 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 
 | Vessel | Bilge | Stove-in bottom | Stove-in side | The bottom fills her in |
 | --- | --- | --- | --- | --- |
-| [Coracle](Coracle) | 350 litres | 124 litres a minute | 22 | three minutes |
-| [Dugout](Dugout) | 1156 litres | 157 | 47 | seven and a half minutes |
-| [Outrigger canoe](Outrigger-Canoe) | 1578 litres | 170 | 18 | nine minutes |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 600 litres | 84 | none | seven minutes |
+| [Coracle](Coracle) | 265 litres | 119 litres a minute | none | two and a quarter minutes |
+| [Dugout](Dugout) | 1298 litres | 137 | none | nine and a half minutes |
+| [Outrigger canoe](Outrigger-Canoe) | 1748 litres | 159 | none | eleven minutes |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 650 litres | 90 | none | seven minutes |
 | [Sailboat](Sailboat) | 1500 litres | 325 | 242 | four and a half minutes |
-| [Hide currach](Hide-Currach) | 1800 litres | 73 | none | twenty-five minutes |
+| [Hide currach](Hide-Currach) | 1952 litres | 83 | none | twenty-four minutes |
 
 A bottom leak keeps its pace as she fills, for the water inside rises with her; a side leak slows once the water inside stands above it. A bottom only cracked by a hard knock lets in about a third as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) she is done.
 

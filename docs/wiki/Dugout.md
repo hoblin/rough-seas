@@ -18,10 +18,10 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Turning | slow |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 44 cm empty, 41 cm with its paddler, in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 187 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 47 cm empty, 45 cm with its paddler, in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 137 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its wood closes two fifths of a stove-in place |
-| [Bilge](Bailing) | 1156 litres |
+| [Bilge](Bailing) | 1298 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker: her round bottom rolls |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
 | [Lightning](Lightning) | a 6000 J strike scratches a place |
@@ -30,7 +30,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Carried | too heavy to pick up |
 | Seats | two: the front one paddles, with an [oar](https://wiki.vintagestory.at/Oar) in hand; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | 5 logs of one wood beside the water, then six fires: each takes clay for its rim (25 balls on the fresh trunk, 12 on the last), dry grass, 4 firewood and an axe; about a week in all |
+| Built from | 5 logs of one wood beside the water, then six fires: each takes clay for its rim (23 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and an axe; about nine days in all |
 | Wreckage | firewood |
 
 ## How it is built
@@ -45,7 +45,7 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
 
    ![The fresh blank on the shore](images/dugout/build-blank.webp)
 
-3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 25 balls round the top of the fresh trunk, fewer each fire as she narrows, 12 for the last. The blank's panel counts them.
+3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 23 balls round the top of the fresh trunk, fewer each fire as she narrows, 10 for the last. The blank's panel counts them.
 
    ![Wet clay all along the rim](images/dugout/build-clay.webp)
 
@@ -53,7 +53,7 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
 
    ![Firewood laid along the blank](images/dugout/build-laid.webp)
 
-5. **Light it** with a torch or a firestarter. The fire burns for about a day and a night and chars a hand's breadth into the wood. Rain puts it out, and no fire burns in a hollow with water in it: bail it and light it again, and it burns what it had left.
+5. **Light it** with a torch or a firestarter. The fire burns for about a day and a half and chars a hand's breadth into the wood. Rain puts it out, and no fire burns in a hollow with water in it: bail it and light it again, and it burns what it had left.
 
    ![The fire burning along the blank](images/dugout/build-fire.webp)
 
@@ -71,7 +71,7 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
    | ![The first hollow cut](images/dugout/build-hewn.webp) | ![Four fires in, the hollow charred deep](images/dugout/build-deep.webp) |
    | One fire in, hewn | Four fires in, charred |
 
-8. **Push her in** with Shift and a right-click, an empty hand, standing on the shore side. A blank is the whole trunk, two and a half tonnes of oak, and barely moves; the finished hull, a seventh of that, slides in. A few friends push sooner.
+8. **Push her in** with Shift and a right-click, an empty hand, standing on the shore side. A blank is the whole square trunk, more than three tonnes of oak, and barely moves; the finished hull, a thirteenth of that, slides in. A few friends push sooner.
 
    ![Finished, on the shore](images/dugout/ashore-quarter.webp)
 

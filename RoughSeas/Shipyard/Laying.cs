@@ -213,7 +213,6 @@ public sealed class HideLaying(AssetLocation hides, string[] states) : Laying
         }
     }
 
-    /// <summary>The hides, largest first, that the sections left over from one make up again.</summary>
     public static IEnumerable<string> Remainder(int sections)
     {
         foreach (var (size, count) in Sections.OrderByDescending(entry => entry.Value))
