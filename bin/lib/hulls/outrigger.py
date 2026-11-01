@@ -7,7 +7,6 @@ from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, grou
 
 VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
-HITBOX_METRES = 0.6
 
 LOG = 16
 FLOAT_Z = 40
@@ -256,7 +255,7 @@ def strakes(hull):
         half = end_half(hull, x)
         x0, x1 = sorted((x, x - inward * STRAKE_THICKNESS))
         planks.append([box(f"Strake{label}", (x0, RIM - 0.6, CENTRE - half), (x1, RIM + STRAKE, CENTRE + half), "plank")])
-    extra = 2 * (GUNWALE - WALL) * STRAKE * (HOLLOW[1] - HOLLOW[0]) * VOXEL_METRES ** 3 * 1000
+    extra = deck() * STRAKE * VOXEL_METRES * 1000
     print(f"washstrakes: {len(planks)} planks of a metre, the sides and a board across each end of her hollow, "
           f"{STRAKE * VOXEL_METRES * 100:.0f} cm raising her side, {extra:.0f} L more hold, {strake_litres(hull):.1f} L of plank")
     return planks
@@ -338,9 +337,8 @@ def report(hull, finished_float):
     parts = {"hull": kilograms("wood-oak", envelope - hold), "float": kilograms("wood-oak", finished_float["woodLitres"]),
              "poles": kilograms("wood-oak", pole_litres()), "strakes": kilograms("wood-oak", strake_litres(hull))}
     print("outrigger parts in oak: " + ", ".join(f"{name} {kg:.0f} kg" for name, kg in parts.items()) + f", poles {pole_litres():.0f} L")
-    waterplane = afloat("dugout", parts["hull"], RIM * VOXEL_METRES, hold, deck(), HITBOX_METRES)
-    afloat("outrigger", sum(parts.values()), RIM * VOXEL_METRES, hold, deck(), HITBOX_METRES,
-           waterplane=waterplane + finished_float["waterlineSquareMetres"])
+    waterplane = afloat("dugout", parts["hull"], RIM * VOXEL_METRES, hold, deck())
+    afloat("outrigger", sum(parts.values()), RIM * VOXEL_METRES, hold, deck(), waterplane=waterplane + finished_float["waterlineSquareMetres"])
 
 
 if __name__ == "__main__":

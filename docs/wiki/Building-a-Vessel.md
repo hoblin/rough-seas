@@ -41,14 +41,14 @@ Our [coracle](Coracle), its sources and its build left out, carries all five:
 "behaviorConfigs": {
     "roughseas:vesselintegrity": {
         "impactCapacity": 400,
-        "parts": [{ "name": "hide", "material": "hide", "share": 0.46 }, { "name": "frame", "material": "wood-willow", "share": 0.54 }],
+        "parts": [{ "name": "hide", "material": "hide", "share": 9.1 }, { "name": "frame", "material": "wood-willow", "share": 8.0 }],
         "shell": {
             "kind": "skin", "material": "hide", "metres": 0.005,
             "backing": { "material": "wood-willow", "metres": 0.01 },
-            "backedShare": 0.47, "bottomBackedShare": 0.6, "spanMetres": 0.37
+            "backedShare": 0.47, "bottomBackedShare": 0.65, "spanMetres": 0.37
         },
-        "depthMetres": 0.36,
-        "waterplaneSquareMetres": 1.0,
+        "depthMetres": 0.35,
+        "waterplaneSquareMetres": 1.04,
         "seep": { "litresPerHourASeam": 12, "greaseDays": 2.5 },
         "cover": { "hides": { "prepared": 2 }, "seams": 0 },
         "repairs": [
@@ -63,7 +63,7 @@ Our [coracle](Coracle), its sources and its build left out, carries all five:
         "heave": 0.8, "capsizeBreakerMetres": 0.6,
         "rollResponse": 1.6, "pitchResponse": 1.6
     },
-    "roughseas:bilge": { "capacityLitres": 350, "deckSquareMetres": 1.26, "drainLitresPerHour": 0 }
+    "roughseas:bilge": { "capacityLitres": 265, "deckSquareMetres": 1.07, "drainLitresPerHour": 0 }
 },
 "client": {
     "behaviors": [

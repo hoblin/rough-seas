@@ -23,7 +23,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 36 cm empty, 32 cm with its paddler, in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 24 kg of gear, armour and containers in oak, more in a lighter wood |
 | [Mending](Mending) | 2 bark of its tree close a third of a stove-in place |
-| [Bilge](Bailing) | 650 litres |
+| [Bilge](Bailing) | 608 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
 | [Rapids](Rapids) | runs them unharmed, the only vessel that does |
 | [Lightning](Lightning) | a strike nearby almost always breaks it |

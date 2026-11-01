@@ -14,15 +14,21 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
 {
     public const string Code = "roughseas:carriedbuild";
 
-    private Dictionary<string, MultiTextureMeshRef> meshes = [];
+    private const string FinishedKey = "finished";
+
+    private Dictionary<string, MultiTextureMeshRef?> meshes = [];
 
     public override void OnBeforeRender(ICoreClientAPI capi, ItemStack itemstack, EnumItemRenderTarget target, ref ItemRenderInfo renderinfo)
     {
-        if (Framing(capi, itemstack) is not { } framing) return;
-
-        var upright = EntityBehaviorCovering.UprightIn(itemstack.Attributes.GetTreeAttribute(EntityBehaviorBuild.TreeKey));
-        var key = $"{framing.ShapeKey}/{upright}";
-        if (!meshes.TryGetValue(key, out var mesh)) meshes[key] = mesh = Tesselate(capi, framing, upright);
+        var tree = itemstack.Attributes.GetTreeAttribute(EntityBehaviorBuild.TreeKey);
+        var key = tree == null ? FinishedKey : null;
+        if (key == null || !meshes.TryGetValue(key, out var mesh))
+        {
+            if (Framing(capi, itemstack) is not { } framing) return;
+            var upright = EntityBehaviorCovering.UprightIn(tree);
+            key ??= $"{framing.ShapeKey}/{upright}";
+            if (!meshes.TryGetValue(key, out mesh)) meshes[key] = mesh = Tesselate(capi, framing, upright);
+        }
         if (mesh != null) renderinfo.ModelRef = mesh;
     }
 

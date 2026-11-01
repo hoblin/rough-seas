@@ -137,7 +137,7 @@ public class RiggingTests
 
     [Fact]
     public void AnOutriggerFromBeforeTheBuildHasHerWashstrakes() =>
-        Assert.Equal(450, Outrigger().Raised(stage => stage.RaisesLitres));
+        Assert.Equal(422, Outrigger().Raised(stage => stage.RaisesLitres));
 
     [Fact]
     public void EveryPoleSheTakesIsCutFromAThreeMetrePole() =>

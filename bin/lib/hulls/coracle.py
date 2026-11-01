@@ -27,7 +27,6 @@ PLAIT_HEIGHT = 0.4
 HIDE = 0.2
 HIDE_METRES = 0.005
 LATH_SQUARE_METRES = 0.01 * 0.06
-HITBOX_METRES = 0.4
 # A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
 SECTION_SQUARE_METRES = 1.2
 
@@ -211,7 +210,7 @@ def report(lattice_stage, gunwale_stage):
     deck = math.pi * (GUNWALE[0] - inset) * (GUNWALE[1] - inset) * VOXEL_METRES ** 2
     print(f"coracle: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of willow; "
           f"bowl {bowl_litres(0, 0):.0f} L outside")
-    afloat("coracle", hide_kg + frame_kg, DEPTH * VOXEL_METRES, hold, deck, HITBOX_METRES)
+    afloat("coracle", hide_kg + frame_kg, DEPTH * VOXEL_METRES, hold, deck)
 
 
 def build(path_):

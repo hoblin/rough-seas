@@ -21,7 +21,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Freeboard](Surf-and-Swamping#how-she-floats) | with washstrakes 58 cm empty, 56 cm with its helmsman; without them 43 and 41; in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 271 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place |
-| [Bilge](Bailing) | 1748 litres with washstrakes, 1298 without |
+| [Bilge](Bailing) | 1720 litres with washstrakes, 1298 without |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.6 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3 m mast draws strikes |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
@@ -47,12 +47,12 @@ Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged whe
 
    ![A dugout with three logs alongside](images/outrigger-canoe/build-float.webp)
 
-3. **Join them.** Hold a pole on the dugout: her first boom goes across her gunwales onto the logs, and the logs become her float where they lie, still three logs a metre across. She is now the outrigger, her hull the same hull, with its cracks and the water in it. A float on the far side turns her end for end. A dugout pushed off the block grid is drawn the last few centimetres onto the logs, so her float lies exactly where they lay.
+3. **Join them.** Hold a pole on the dugout: her first boom goes across her gunwales onto the logs, and the logs become her float where they lie, still three logs a metre across. She is now the outrigger, her hull the same hull, with its cracks and the water in it. A float on the far side turns her end for end. A dugout pushed off the block grid slides onto them, up to half a block, so her float lies exactly where they lay.
 
    ![The first boom across](images/outrigger-canoe/build-boom.webp)
 
 4. **Lay the booms.** Hold the other two poles on her for the fore and aft booms. Each is a crooked pole that rests on her gunwales and on the logs' top, as the curved booms of Hawaii and the Marshall Islands came down to the float. All her poles must be of one wood.
-5. **Hew the float.** Hold an axe on her: each pass, about a minute, hews the float all round, top, sides and bottom alike, from the square logs toward a round log 30 cm across with its ends pointed and lifted. Six passes take it down from 3000 litres of wood to 224. The booms settle onto it as it shrinks: they never hang in the air and never pass through wood. While the float is still the logs, she weighs two tonnes and barely moves.
+5. **Hew the float.** Hold an axe on her: each pass, about three minutes, hews the float all round, top, sides and bottom alike, from the square logs toward a round log 30 cm across with its ends pointed and lifted. Six passes take it down from 3000 litres of wood to 224. The booms settle onto it as it shrinks: they never hang in the air and never pass through wood. While the float is still the logs, she weighs two tonnes and barely moves.
 
    ![Three passes hewn, the booms settled onto the float](images/outrigger-canoe/build-hewing.webp)
 
@@ -68,7 +68,7 @@ Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged whe
 
    ![Rigged, the sail furled on its spar](images/outrigger-canoe/build-rigged.webp)
 
-9. **Washstrakes, when you take her to sea.** Any time after she is finished, once you have a saw: hold planks of one wood on her, a board along each side four planks long and a board across each end of her hollow, ten in all, then four ropes to sew them on, a stitch every 7.6 cm. Sewn, they raise her side 15 cm and add 450 litres to her hold: a 2 m swell that boards a dugout runs past her. Without them she is a coastal boat.
+9. **Washstrakes, when you take her to sea.** Any time after she is finished, once you have a saw: hold planks of one wood on her, a board along each side four planks long and a board across each end of her hollow, ten in all, then four ropes to sew them on, a stitch every 7.6 cm. Sewn, they raise her side 15 cm and add 422 litres to her hold: a 2 m swell that boards a dugout runs past her. Without them she is a coastal boat.
 
    ![Washstrakes sewn along her sides and across her ends](images/outrigger-canoe/build-strakes.webp)
 

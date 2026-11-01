@@ -185,10 +185,10 @@ public sealed class FramingStage
     /// <summary>Whether each piece is the whole work again, carried one step further: only the last laid shows.</summary>
     public bool Successive;
 
-    /// <summary>The stage whose progress this stage's pieces are drawn at: <c>{Group}{n}At{k}</c> shows once that stage has <c>k</c> laid.</summary>
+    /// <summary>The stage whose progress this stage's pieces are drawn at: <c>{Group}{n}At{k}</c> shows while that stage has exactly <c>k</c> laid.</summary>
     public string? Follows;
 
-    /// <summary>The group this stage raises piece by piece: <c>{Lifts}{k}</c> shows while <c>k</c> of its pieces are laid.</summary>
+    /// <summary>The group this stage raises piece by piece: <c>{Lifts}{k}</c> shows while <c>k</c> of this stage's pieces are laid.</summary>
     public string? Lifts;
 
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
@@ -199,11 +199,11 @@ public sealed class FramingStage
     [Newtonsoft.Json.JsonIgnore]
     public double[] Metres = [];
 
-    /// <summary>The litres of wood each piece leaves, as its shape measures them, and what lay there before the first.</summary>
+    /// <summary>The litres of wood left with each count laid, as its shape measures them: index 0 is what lay there before the first piece.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public double[] WoodLitres = [];
 
-    /// <summary>The square metres at the waterline each piece leaves, as its shape measures them, and what lay there before the first.</summary>
+    /// <summary>The square metres at the waterline with each count laid, as its shape measures them: index 0 is what lay there before the first piece.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public double[] WaterlineSquareMetres = [];
 }

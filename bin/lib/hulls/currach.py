@@ -34,7 +34,6 @@ ROPE_METRES = 10
 HIDE_METRES = 0.005
 LATH_SQUARE_METRES = 0.01 * 0.06
 POLE_SQUARE_METRES = 0.09 * 0.09
-HITBOX_METRES = 0.6
 
 
 def section(x, breadth, rocker, rise):
@@ -196,8 +195,8 @@ def report(hull, laths, thwart_stage):
     hide_kg = kilograms("hide", area * HIDE_METRES * 1000)
     frame_kg = kilograms("wood-ash", (metres * LATH_SQUARE_METRES + pole * POLE_SQUARE_METRES) * 1000)
     print(f"currach: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath and {pole:.2f} m of pole, {frame_kg:.1f} kg of ash")
-    afloat("currach", hide_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(inset=hull.t),
-           hull.square_metres(SHEER - 0.01, inset=hull.t), HITBOX_METRES)
+    afloat("currach", hide_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=hull.t),
+           hull.square_metres(SHEER - 0.01, inset=hull.t))
 
 
 if __name__ == "__main__":

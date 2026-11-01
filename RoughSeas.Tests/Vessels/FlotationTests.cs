@@ -34,7 +34,7 @@ public class FlotationTests
     public void AFloodedLightBoatFloatsAwash()
     {
         var currach = Fixtures.Hull("currach");
-        var afloat = currach.Float(currach.Crewed(litres: 1952), litres: 1952);
+        var afloat = currach.Float(currach.Crewed(litres: 1878), litres: 1878);
 
         Assert.False(afloat.Sunk);
         Assert.Equal(0, afloat.FreeboardMetres);
@@ -45,7 +45,7 @@ public class FlotationTests
     {
         var currach = Fixtures.Hull("currach");
 
-        Assert.True(currach.Float(currach.Crewed(containers: 60, litres: 1952), litres: 1952).Sunk);
+        Assert.True(currach.Float(currach.Crewed(containers: 60, litres: 1878), litres: 1878).Sunk);
     }
 
     [Fact]

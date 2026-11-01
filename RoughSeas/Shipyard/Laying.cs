@@ -205,10 +205,12 @@ public sealed class HideLaying(AssetLocation hides, string[] states) : Laying
     public override void Spend(ItemSlot slot, EntityAgent byEntity, int used)
     {
         var hide = slot.Itemstack!.Collectible;
+        var attributes = slot.Itemstack.Attributes.Clone();
         Spend(slot, byEntity);
         foreach (var size in Remainder(Pieces(hide) - used))
         {
-            var rest = new ItemStack(byEntity.World.GetItem(hide.CodeWithVariant("size", size)));
+            if (byEntity.World.GetItem(hide.CodeWithVariant("size", size)) is not { } smaller) continue;
+            var rest = new ItemStack(smaller) { Attributes = attributes.Clone() };
             if (!byEntity.TryGiveItemStack(rest)) byEntity.World.SpawnItemEntity(rest, byEntity.Pos.XYZ);
         }
     }

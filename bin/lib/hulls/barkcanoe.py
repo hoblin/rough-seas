@@ -37,7 +37,6 @@ ROPE_METRES = 10
 SHEET_LENGTH = 80
 SHEET_THICKNESS = 0.4
 LATH_SQUARE_METRES = 0.01 * 0.06
-HITBOX_METRES = 0.44
 
 
 def section(x, breadth, rocker, rise):
@@ -271,8 +270,8 @@ def report(hull, laths):
     frame_kg = kilograms("wood-tuja", metres * LATH_SQUARE_METRES * 1000)
     print(f"barkcanoe: {bark:.2f} m² of bark, {bark_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of white cedar; "
           f"sheet {SHEET_LENGTH / VOXELS_A_METRE:.2f} m, {SHEET_THICKNESS / VOXELS_A_METRE:.3f} m thick")
-    afloat("barkcanoe", bark_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(inset=SKIN),
-           hull.square_metres(SHEER - 0.01, inset=SKIN), HITBOX_METRES)
+    afloat("barkcanoe", bark_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=SKIN),
+           hull.square_metres(SHEER - 0.01, inset=SKIN))
 
 
 if __name__ == "__main__":

@@ -330,6 +330,7 @@ class Hull:
         total = 0
         for plank in self.strakes():
             board = plank["children"][0]
+            # plank() draws a board from -overlap to length + overlap: the sum is its length without the overlaps.
             total += (board["to"][0] + board["from"][0]) * (board["to"][1] - board["from"][1])
         return total / VOXELS_A_METRE ** 2
 

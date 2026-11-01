@@ -23,7 +23,6 @@ BED = 0.55
 GLOW = 160
 VOXEL_METRES = 1 / 16
 TRUNK_METRES = LOG * VOXEL_METRES
-HITBOX_METRES = 0.6
 ENDS = {
     "Stern": [(-24.5, -22, 5.0, 1.6), (-26.5, -24.5, 4.0, 2.8), (-28, -26.5, 2.9, 4.2)],
     "Bow": [(38, 40.5, 5.0, 1.6), (40.5, 42.5, 4.0, 2.8), (42.5, 44, 2.9, 4.2)],
@@ -259,7 +258,7 @@ def build(path):
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
-    afloat("dugout", kilograms("wood-oak", envelope - hold), RIM * VOXEL_METRES, hold, deck(), HITBOX_METRES)
+    afloat("dugout", kilograms("wood-oak", envelope - hold), RIM * VOXEL_METRES, hold, deck())
     shape.write()
 
 

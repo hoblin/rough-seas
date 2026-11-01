@@ -6,7 +6,7 @@
     "attributes": {
         "speedMultiplier": 1.6,
         "turnSpeed": 0.9,
-        "swimmingOffsetY": 0.576,
+        "swimmingOffsetY": 0.575,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {"idle": "roughseas-sitthwart", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
         "rightClickPickup": true,
@@ -19,7 +19,7 @@
             "parts": [{"name": "hide", "material": "hide", "share": 36.9}, {"name": "frame", "material": "wood-ash", "share": 38.3}],
             "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.01}, "backedShare": 0.4, "bottomBackedShare": 0.31, "spanMetres": 0.15},
             "depthMetres": 0.6,
-            "waterplaneSquareMetres": 3.51,
+            "waterplaneSquareMetres": 3.39,
             "seep": {"litresPerHourASeam": 15, "greaseDays": 2.5},
             "cover": {"hides": {"prepared": 8}, "seams": 2},
             "repairs": [
@@ -30,10 +30,10 @@
             "damage": {"textures": ["hide"], "material": "hide"},
             "sources": {
                 "parts": "By the model (bin/lib/hulls/currach.py): 8.6 m² of hide 5 mm thick at 860 kg/m³, 37 kg, over 21 ribs, 7 stringers and two gunwales of laths 1 by 6 cm, 81 m of ash, and a thwart pole 9 cm across, 38 kg: 75 kg",
-                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.042 m (bin/lib/hulls/currach.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.043 m (bin/lib/hulls/currach.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, ribs 0.8 voxel wide every 3 and three stringers a side back 40% of her sides, the ribs and the keelson 31% of her bottom. A breaker presses the hide onto the laths, each 1 cm deep bending over the 0.15 m between stringers",
                 "depthMetres": "Keel to gunwale amidships, by the model (bin/lib/hulls/currach.py)",
-                "waterplaneSquareMetres": "So that her 1952 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
+                "waterplaneSquareMetres": "So that her 1878 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
                 "seep": "A seam where one hide meets the next weeps once the tallow has washed out of it, and Aran crews dressed their currachs every few days: a seam across her, some 2.3 m of it, 15 L an hour. A currach from before her build is covered in prepared hide over her eight sections, with the two seams the three large hides of her old recipe had",
                 "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             }
@@ -72,11 +72,11 @@
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 1952,
+            "capacityLitres": 1878,
             "deckSquareMetres": 3.98,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "Her hollow inside the hide to the gunwale, by the model (bin/lib/hulls/currach.py)",
+                "capacityLitres": "Her hollow inside the hide up to her gunwale amidships, where water first spills over, by the model (bin/lib/hulls/currach.py)",
                 "deckSquareMetres": "Her opening at the gunwale catches the rain, by the model (bin/lib/hulls/currach.py)",
                 "drainLitresPerHour": "Greased hide is watertight; the wear of an ungreased hull is upkeep, not a leak"
             }

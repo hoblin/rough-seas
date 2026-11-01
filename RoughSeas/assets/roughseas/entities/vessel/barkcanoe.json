@@ -8,7 +8,7 @@
         "logTextures": {"bark": "all", "frame": "inside-north"},
         "speedMultiplier": 2,
         "turnSpeed": 1.2,
-        "swimmingOffsetY": 0.409,
+        "swimmingOffsetY": 0.406,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -27,7 +27,7 @@
             "parts": [{"material": "bark", "share": 13.3}, {"name": "frame", "material": "wood-tuja", "share": 12.9}],
             "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 1, "spanMetres": 0.25},
             "depthMetres": 0.375,
-            "waterplaneSquareMetres": 2.02,
+            "waterplaneSquareMetres": 1.91,
             "repairs": [{
                 "material": {"type": "item", "code": "roughseas:bark-{wood}", "stacksize": 2},
                 "restores": 0.33,
@@ -40,10 +40,10 @@
             "damage": {"textures": ["bark"], "material": "bark"},
             "sources": {
                 "parts": "By the model (bin/lib/hulls/barkcanoe.py): 4.76 m² of bark 5 mm thick, 13.3 kg, over 61 m of laths 1 by 6 cm, 12.9 kg of white cedar",
-                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.049 m (bin/lib/hulls/barkcanoe.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.052 m (bin/lib/hulls/barkcanoe.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Balance: bark half a centimetre thick, lined all over by the cedar sheathing, 1/8 in thick (native-art-in-canada.com/birchbarkcanoes.html), so a blow splits both. A breaker bends bark and sheathing together between the ribs, by the model every 4 voxels",
                 "depthMetres": "Keel to gunwale amidships, by the model (bin/lib/hulls/barkcanoe.py)",
-                "waterplaneSquareMetres": "So that her 650 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)"
+                "waterplaneSquareMetres": "So that her 608 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)"
             }
         },
         "passivephysicsmultibox": {
@@ -127,11 +127,11 @@
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 650,
+            "capacityLitres": 608,
             "deckSquareMetres": 2.21,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "Her hollow inside the bark to the gunwale, by the model (bin/lib/hulls/barkcanoe.py)",
+                "capacityLitres": "Her hollow inside the bark up to her gunwale amidships, where water first spills over, by the model (bin/lib/hulls/barkcanoe.py)",
                 "deckSquareMetres": "Her opening at the gunwale catches the rain, by the model (bin/lib/hulls/barkcanoe.py)",
                 "drainLitresPerHour": "Pitched seams hold; a holed hull is the integrity's business"
             }

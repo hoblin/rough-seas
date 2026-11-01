@@ -69,13 +69,13 @@
             "rigged": ["SailUnfurled", "SailHalf"],
             "stages": [
                 {"group": "Booms", "work": "pole", "seconds": 3, "follows": "Hewing"},
-                {"group": "Hewing", "work": "hew", "seconds": 60, "successive": true, "replaces": "FloatLog"},
+                {"group": "Hewing", "work": "hew", "seconds": 193, "successive": true, "replaces": "FloatLog"},
                 {"group": "Lashing", "work": "rope", "seconds": 15},
                 {"group": "Mast", "work": "pole", "seconds": 3},
                 {"group": "SailFurled", "work": "cloth", "seconds": 15},
                 {"group": "Stays", "work": "rope", "seconds": 15},
                 {"group": "Strakes", "work": "plank", "seconds": 20, "optional": true, "part": "strakes", "texture": "plank"},
-                {"group": "Seams", "work": "rope", "seconds": 15, "optional": true, "raisesMetres": 0.15, "raisesLitres": 450}
+                {"group": "Seams", "work": "rope", "seconds": 15, "optional": true, "raisesMetres": 0.15, "raisesLitres": 422}
             ],
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
@@ -83,12 +83,12 @@
                 "floatOffMetres": "A small outrigger's float rides 1.5 to 2 m off her hull: hull, gap, float, three blocks across",
                 "floorMetres": "The dugout's hold floor: her 0.5625 m rim less its 0.5125 m hollow",
                 "booms": "Setting one pole across her or up, about three minutes, as fitting one of a canoe's laths. A crooked pole, as Hawaiian and Marshallese booms curved down to the float (Young, 1876, marshall.csu.edu.au/Marshalls/html/culture/Canoes.html), takes its curve as it is laid: it rests on her gunwales and on the float's top, and settles with every pass as the float is hewn down beneath it",
-                "hewing": "Six passes of the axe all round take the three logs, 3000 L, down to the round float with pointed ends, 224 L (bin/lib/hulls/outrigger.py). Chip by chip, about 470 L a pass, an axe biting some 0.08 L a stroke 30 times a minute (H. Glaser, physiology of forestry work, FAO) would hold for three or four minutes a pass; a pass takes a minute instead, as long as a dugout's hewing, a call for play as the dugout's was",
+                "hewing": "Six passes of the axe all round take the three logs, 3000 L, down to the round float with pointed ends, 224 L (bin/lib/hulls/outrigger.py). Chip by chip, 463 L a pass, an axe biting some 0.08 L a stroke 30 times a minute (H. Glaser, physiology of forestry work, FAO): 193 minutes of real work, a pass of 193 s",
                 "lashing": "One rope is ten metres of lashing: about a quarter of an hour, as a canoe's (an estimate). Once the float is hewn, each boom is lashed to both gunwales and straight to the float, thirteen turns a lashing (ten round, three frapping) of their girth: 52 m, counted by her shape's builder",
                 "sail": "A crab claw of 3.5 m² between her two 3 m spars (bin/lib/hulls/outrigger.py), one cloth a square metre, as one linen block covers: four, each laced to the spars in about a quarter of an hour (an estimate)",
                 "stays": "A forestay, a backstay, a shroud out to the float and the sheet, each under ten metres: one rope each, set up in about a quarter of an hour (an estimate)",
                 "strakes": "Optional, any time she is finished: one washstrake a side between her solid ends, a board some 15 cm high, as Pacific washstrakes ran 15 to 20 cm (a Tikopia hull 43 cm deep carries a 15 cm one, Haddon & Hornell, Canoes of Oceania, via collections.maa.cam.ac.uk/objects/555827; Hawaiian mo'o 6 to 8 in). Sawn planks, a metre a plank: 8 along her sides, and a board across each end of her hollow, where her solid ends begin, as the end pieces lashed on at Tobi and Kapingamarangi (Haddon & Hornell; Buck 1950), so the sea cannot come in over her low ends: 10. Fitting one, with its row of holes, about twenty minutes (an estimate)",
-                "seams": "Sewn on through holes 3 in apart over a split batten (Haddon & Hornell, Mont-Dore canoe): each stitch about 30 cm of cord round wall, plank and batten, 116 stitches along her sides and her end boards, 35 m, four ropes (bin/lib/hulls/outrigger.py). Sewn, they raise her side 15 cm and add the 450 L of hold between them"
+                "seams": "Sewn on through holes 3 in apart over a split batten (Haddon & Hornell, Mont-Dore canoe): each stitch about 30 cm of cord round wall, plank and batten, 116 stitches along her sides and her end boards, 35 m, four ropes (bin/lib/hulls/outrigger.py). Sewn, they raise her side 15 cm and add the 422 L of hold between them, her 2.81 m² opening 15 cm higher"
             }
         },
         "roughseas:launch": {
@@ -162,7 +162,7 @@
             "deckSquareMetres": 2.81,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "The dugout's hollow: her washstrakes add the 450 L they enclose once sewn (bin/lib/hulls/outrigger.py)",
+                "capacityLitres": "The dugout's hollow: her washstrakes add the 422 L they enclose once sewn (bin/lib/hulls/outrigger.py)",
                 "deckSquareMetres": "The dugout's opening at the rim catches the rain (bin/lib/hulls/dugout.py)",
                 "drainLitresPerHour": "One log, no seams: nothing leaks"
             }
