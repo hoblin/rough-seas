@@ -103,6 +103,7 @@ public class StormsModSystem : ModSystem
     public override void Dispose()
     {
         VesselDraught.Detach();
+        if (api?.Side == EnumAppSide.Server) BreathUnderSurface.Detach();
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();
         FloatMotion.Detach();
@@ -113,7 +114,9 @@ public class StormsModSystem : ModSystem
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {
-        new StormLightning(this, sapi.ModLoader.GetModSystem<SeaWeatherSystem>(), sapi).Start();
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        new StormLightning(this, sea, sapi).Start();
+        BreathUnderSurface.Attach(this, sea, sapi);
         Budget.CountTicks(sapi);
         sapi.ChatCommands.Create("storms")
             .WithDescription("Rough Seas: storms acting on vessels")
