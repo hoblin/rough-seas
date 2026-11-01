@@ -91,11 +91,17 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
 
     public override void OnGameTick(float deltaTime)
     {
-        if (entity.World.Side != EnumAppSide.Server || EffortWatts <= 0 || Stroke == null) return;
-        if (entity.GetBehavior<EntityBehaviorSeatable>()?.Controller is not EntityPlayer rower) return;
+        if (entity.World.Side != EnumAppSide.Server) return;
 
         using var _ = vessels.Budget.Measure();
-        fatigue.Spend(entity, rower, EffortWatts, deltaTime, Stroke.Code);
+        var rower = entity.GetBehavior<EntityBehaviorSeatable>()?.Controller as EntityPlayer;
+        if (EffortWatts > 0 && Stroke != null && rower != null) fatigue.Spend(entity, rower, EffortWatts, deltaTime, Stroke.Code);
+        else fatigue.Seated(entity, rower);
+    }
+
+    public override void OnEntityDespawn(EntityDespawnData despawn)
+    {
+        if (entity.World.Side == EnumAppSide.Server) fatigue.Settle(entity);
     }
 
     private Vec2d Idle(Vec2d vanilla)
