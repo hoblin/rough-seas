@@ -4,12 +4,12 @@ A cracked hull is mended with the stuff it was built from. Hold the material, ri
 | --- | --- | --- | --- |
 | [Raft](Raft), wood or bamboo | 1 flax twine | a fifth of its lashings | 30 |
 | [Sailboat](Sailboat) | 10 planks of its wood | a fifteenth of a stove-in place | 80 |
-| [Dugout](Dugout) | 1 log of its wood | two fifths of a stove-in place | 80 |
+| [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | 1 log of its hull's wood | two fifths of a stove-in place | 80 |
 | [Coracle](Coracle) | 1 small prepared hide | two thirds of a stove-in place | 40 |
+| [Coracle](Coracle), greasing | 1 rendered fat | its seams for 1.25 days afloat | 20 |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2 bark of its tree | a third of a stove-in place | 40 |
 | [Hide currach](Hide-Currach) | 1 large prepared hide | two thirds of a stove-in place | 80 |
 | [Hide currach](Hide-Currach), greasing | 1 rendered fat | its seams for 1.25 days afloat | 40 |
-| [Outrigger canoe](Outrigger-Canoe) | 2 planks of its wood | a fourteenth of a stove-in place | 80 |
 | [Reed boat](Reed-Boat) | cannot be mended | | |
 
 - The wood must be the hull's own: an oak sailboat takes oak planks, and a canoe the bark of the tree it was built from.
@@ -19,7 +19,7 @@ A cracked hull is mended with the stuff it was built from. Hold the material, ri
 - Too few in hand for a patch, and the hull says how many it takes.
 - Birch bark comes off a birch log with a knife ([recipe](Recipes#birch-bark)).
 
-The [hide currach](Hide-Currach) takes two kinds of care. Its seams [seep](Hull-Condition#seeping-and-soaking) once their grease is gone, and rendered fat seals them: a full greasing lasts two and a half days afloat, and each fat gives half of that. Look at the currach to see when the next greasing is due; fat on a currach greased full is never eaten. Fat does nothing for a crack; a hole wants a new hide.
+The [hide currach](Hide-Currach) and the [coracle](Coracle) take two kinds of care. Their seams [seep](Hull-Condition#seeping-and-soaking) once their grease is gone, and rendered fat seals them: a full greasing lasts two and a half days afloat, and each fat gives half of that. One built anew starts ungreased. Look at her to see when the next greasing is due; fat on a hull greased full is never eaten. Fat does nothing for a crack; a hole, a rotted hide's too, wants a new hide.
 
 The [reed boat](Reed-Boat) can't be mended at all, only dried out ashore, and each drying leaves it a little more rotten. When it is past saving, build another.
 

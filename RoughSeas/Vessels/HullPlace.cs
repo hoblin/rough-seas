@@ -17,6 +17,17 @@ public enum HullPlace
 public static class HullPlaces
 {
     public static string Code(this HullPlace place) => place.ToString().ToLowerInvariant();
+
+    public static HullPlace EndForEnd(this HullPlace place) => place switch
+    {
+        HullPlace.PortBow => HullPlace.StarboardQuarter,
+        HullPlace.StarboardBow => HullPlace.PortQuarter,
+        HullPlace.PortSide => HullPlace.StarboardSide,
+        HullPlace.StarboardSide => HullPlace.PortSide,
+        HullPlace.PortQuarter => HullPlace.StarboardBow,
+        HullPlace.StarboardQuarter => HullPlace.PortBow,
+        _ => place
+    };
 }
 
 public readonly record struct HullShape(double HalfLength, double HalfBeam, double Depth, double CentreAlong, double CentreAcross, double Keel)

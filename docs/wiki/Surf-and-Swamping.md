@@ -14,12 +14,12 @@ What is left of her side above the water is her *freeboard*, and the hover text 
 | Vessel | Freeboard, empty | With one aboard |
 | --- | --- | --- |
 | [Raft](Raft), oak | 8 cm | awash |
-| [Coracle](Coracle) | 26 cm | 20 cm |
-| [Dugout](Dugout), oak | 24 cm | 20 cm |
+| [Coracle](Coracle) | 34 cm | 27 cm |
+| [Dugout](Dugout), oak | 44 cm | 41 cm |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 28 cm | 25 cm |
-| [Reed boat](Reed-Boat), fresh | 36 cm | 25 cm |
-| [Hide currach](Hide-Currach) | 42 cm | 40 cm |
-| [Outrigger canoe](Outrigger-Canoe), oak | 45 cm | 40 cm |
+| [Reed boat](Reed-Boat), fresh | 14 cm | 5 cm |
+| [Hide currach](Hide-Currach) | 43 cm | 42 cm |
+| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 55 cm | 53 cm |
 | [Sailboat](Sailboat), oak | 52 cm | 50 cm |
 
 When her freeboard reaches nothing, the sea comes over her gunwale and she floods, cracked or not: a boat loaded down to the water fills in a moment. The raft and the reed boat are solid: pressed under, they lie awash and still hold their load up.
@@ -46,13 +46,13 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 
 | Vessel | Holds up awash |
 | --- | --- |
-| [Coracle](Coracle) | 13 kg: its rider's gear, and no armour |
-| [Hide currach](Hide-Currach) | 38 kg: three baskets, but not three chests |
+| [Coracle](Coracle) | 18 kg: its rider's gear, and no armour |
+| [Hide currach](Hide-Currach) | 24 kg: her rower's gear and three baskets, but not a chest besides |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 41 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
-| [Outrigger canoe](Outrigger-Canoe), oak | 130 kg |
-| [Dugout](Dugout), oak | 207 kg |
-| [Reed boat](Reed-Boat), fresh | 248 kg, less the water it has soaked up |
+| [Reed boat](Reed-Boat), fresh | 118 kg, less the water it has soaked up |
+| [Dugout](Dugout), oak | 187 kg |
+| [Outrigger canoe](Outrigger-Canoe), oak | 309 kg |
 | [Sailboat](Sailboat), oak | nothing: she goes down |
 
 The wood counts. A sailboat carries two fifths of her weight in ballast to stand up to her sail: of oak, aged wood, birch, maple, purpleheart or ebony she goes down, while of pine, larch, acacia, walnut, bald cypress, redwood or kapok she floats awash. Ebony floats a dugout or an outrigger awash empty, and takes it down only loaded hard. A wood heavier than seawater sinks any hull of it, such as Wildcraft's ekki, lignum vitae, leadwood, mangrove, pink ivory and African blackwood ([Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)).
@@ -81,11 +81,10 @@ Either the planks hold, or the windward bow, side or quarter it hits is stove in
 
 | Vessel | A spilling breaker of | A plunging breaker of |
 | --- | --- | --- |
-| [Coracle](Coracle) | 3.8 m | 0.5 m |
-| [Hide currach](Hide-Currach) | 5.8 m | 0.7 m |
+| [Coracle](Coracle) | 2.7 m | 0.3 m |
+| [Hide currach](Hide-Currach) | 25 m | 2.8 m |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 11 m | 1.2 m |
-| [Dugout](Dugout) | none | 3.3 m |
-| [Outrigger canoe](Outrigger-Canoe) | none | 4.1 m |
+| [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | none | 3.3 m |
 | [Sailboat](Sailboat) | none | 14 m |
 | [Raft](Raft), [reed boat](Reed-Boat) | none | none |
 
@@ -100,12 +99,12 @@ A breaker as high as a vessel's capsizing height overturns it. Everyone aboard i
 | Vessel | Rides the swell | Capsized by a breaker of |
 | --- | --- | --- |
 | [Coracle](Coracle) | well | 0.6 m |
-| [Dugout](Dugout) | badly | 0.75 m |
+| [Dugout](Dugout) | badly | 0.9 m |
 | [Birch-bark canoe](Birch-Bark-Canoe) | very well | 0.75 m |
 | [Reed boat](Reed-Boat) | well | 0.9 m |
 | [Raft](Raft) | very well | 2 m |
 | [Hide currach](Hide-Currach) | very well | 2 m |
-| [Outrigger canoe](Outrigger-Canoe) | fairly | 2.1 m |
+| [Outrigger canoe](Outrigger-Canoe) | fairly | 2.6 m |
 | [Sailboat](Sailboat) | fairly | 3.3 m |
 
 The currach's 2 m is the surf the Aran islanders worked their currachs through. The coracle, the dugout and the canoe are river boats and go over in a short, steep sea.

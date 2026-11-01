@@ -5,7 +5,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
 | [Raft](Raft) | floating cargo downriver | 1 × | breaks on a few hard knocks |
-| [Reed boat](Reed-Boat) | a few days afloat, built in minutes | 1.3 × | sinks after three days afloat unless dried, can't be mended |
+| [Reed boat](Reed-Boat) | a day afloat, bound by the water from two reed bundles | 1.3 × | you sit wet and low, awash after a day; sinks within four days afloat unless dried, can't be mended |
 | [Dugout](Dugout) | the tough workhorse | 1.5 × | heavy, and tippy in a sea |
 | [Coracle](Coracle) | fishing and short hops, worn on your back | 0.5 × | slow, swamps in a chop |
 | [Birch-bark canoe](Birch-Bark-Canoe) | long river journeys, through [rapids](Rapids) | 2.1 × | fragile |
@@ -26,11 +26,11 @@ Speeds are against the raft, measured on a calm sea.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Raft](Raft) | 1200 J | none | never floods | 2 m | none | a rope | picked up |
 | [Reed boat](Reed-Boat) | 3000 J, and tears | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
-| [Dugout](Dugout) | 30 000 J | 450 l | awash | 0.75 m | none | a log | no |
-| [Coracle](Coracle) | 400 J | 250 l | awash | 0.6 m | none | a small hide | worn on the back |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 2400 J | 600 l | awash | 0.75 m | none | bark of its tree | picked up |
-| [Hide currach](Hide-Currach) | 3000 J | 1500 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
-| [Outrigger canoe](Outrigger-Canoe) | 15 000 J | 600 l | awash | 2.1 m | none | planks | no |
+| [Dugout](Dugout) | 30 000 J | 1156 l | awash | 0.9 m | none | a log | no |
+| [Coracle](Coracle) | 690 J | 350 l | awash | 0.6 m | greased every few days | a small hide; fat for its seams | worn on the back |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 5200 J | 600 l | awash | 0.75 m | none | bark of its tree | picked up |
+| [Hide currach](Hide-Currach) | 2800 J | 1800 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
+| [Outrigger canoe](Outrigger-Canoe) | 30 000 J | 1578 l, 1156 without washstrakes | awash | 2.6 m | none | a log | no |
 | [Sailboat](Sailboat) | 40 000 J | 1500 l | sinks | 3.3 m | none | planks | no |
 
 Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more, and what floods awash in oak may sink [in a heavy wood or loaded hard](Surf-and-Swamping#swamping). Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [Seamanship](Roadmap#seamanship); its column is what overturned each vessel in 1.0.
@@ -40,18 +40,18 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | | Seats | Steered from | Cargo |
 | --- | --- | --- | --- |
 | [Raft](Raft) | 2 | either seat, oar in hand | a basket in place of either rider |
-| [Reed boat](Reed-Boat) | 1 | its seat | a basket |
-| [Dugout](Dugout) | 2 | the front seat | a basket in place of the passenger |
-| [Coracle](Coracle) | 1 | its seat | none |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships | a basket in place of the passenger |
-| [Hide currach](Hide-Currach) | 1 | the stern thwart | 3 spots on its bottom, each a basket, storage vessel or chest |
-| [Outrigger canoe](Outrigger-Canoe) | 2 | aft | a basket in place of the passenger |
+| [Reed boat](Reed-Boat) | 1 | its seat, oar in hand | a basket |
+| [Dugout](Dugout) | 2 | the front seat, oar in hand | a basket in place of the passenger |
+| [Coracle](Coracle) | 1 | its floor | none |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships, oar in hand | a basket in place of the passenger |
+| [Hide currach](Hide-Currach) | 1 | the thwart | 3 spots on its bottom, each a basket, storage vessel or chest |
+| [Outrigger canoe](Outrigger-Canoe) | 2 | the front seat, oar in hand | a basket in place of the passenger |
 | [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
 
 A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a crate 20 of one kind (16 aged, 25 in ebony or purpleheart). The raft and the sailboat take more besides: an oar rest on the raft; a lantern, anchor, figurehead, ratlines, shields and a fence post for a tied animal on the sailboat. Each vessel's page lists them.
 
 ## Cost follows use
 
-A better vessel costs more than a worse one for the same job: the reed boat costs a knife and an armful of reeds, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
+A better vessel costs more than a worse one for the same job: the reed boat costs a knife, four stacks and a half of reeds and some rope, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
 
-All six new vessels are built in the crafting grid ([recipes](Recipes)), and each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).
+The coracle and the hide currach are made in the crafting grid ([recipes](Recipes)); the reed boat, the dugout, the bark canoe and the outrigger are built in place, by the water or where their material lies, as each one's page shows. Each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).

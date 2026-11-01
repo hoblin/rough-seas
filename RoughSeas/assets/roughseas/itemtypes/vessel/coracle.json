@@ -11,8 +11,8 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater", "Bilge"]},
-    "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "rim": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+    "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater", "Bilge", "Lattice"]},
+    "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "frame": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},

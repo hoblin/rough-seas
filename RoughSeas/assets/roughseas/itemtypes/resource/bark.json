@@ -1,6 +1,6 @@
 {
     "code": "bark",
-    "class": "roughseas:ItemBark",
+    "class": "roughseas:ItemOfWood",
     "variantgroups": [{ "code": "wood", "loadFromProperties": "roughseas:vessel/bark" }],
     "attributes": { "handbook": { "groupBy": ["bark-*"] }, "logTextures": { "bark": "all", "oak": "inside-north" } },
     "maxstacksize": 32,

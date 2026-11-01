@@ -53,6 +53,8 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
 
     public abstract void Adopt(float integrity);
 
+    public virtual void TurnEndForEnd(ITreeAttribute tree) { }
+
     protected ITreeAttribute Tree => tree();
 
     protected void Changed() => changed();
@@ -90,7 +92,14 @@ public interface IKnockable
 public interface IAfloat
 {
     /// <param name="sun">The daylight it dries in ashore; 0 in shade, rain or water.</param>
-    void Pass(double days, bool afloat, double sun);
+    /// <param name="waterCelsius">The water it lies in.</param>
+    void Pass(double days, bool afloat, double sun, double waterCelsius = 20);
+}
+
+public interface ISoaking
+{
+    /// <summary>How near to saturated it is, from 0 dry to 1.</summary>
+    double Soaked { get; }
 }
 
 /// <summary>A hull mended by hand, at the place looked at where the model has places.</summary>

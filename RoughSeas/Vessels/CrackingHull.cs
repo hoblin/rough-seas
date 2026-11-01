@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Vintagestory.API.Config;
@@ -10,21 +11,37 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 {
     private const string CracksKey = "cracks";
     private const string GreaseKey = "greaseDays";
+    private const string ExposureKey = "exposureDays";
+    private const string DryingKey = "dryingDays";
+    private const string RottedKey = "rotted";
     private const double Gravity = 9.81;
     private const double LitresPerCubicMetre = 1000;
 
     private readonly HullConfig config;
     private readonly SeepConfig? seep;
+    private readonly HideCover? designedCover;
+    private Func<HideCover?> covered = () => null;
 
     public CrackingHull(Func<ITreeAttribute> tree, Action changed, JsonObject attributes, HullConfig config) : base(tree, changed)
     {
         this.config = config;
         seep = attributes["seep"].AsObject<SeepConfig?>(null);
+        designedCover = attributes["cover"].AsObject<CoverConfig?>(null) is { } cover ? new HideCover(cover.Hides, cover.Seams) : null;
     }
+
+    public HideCover? Cover => covered() ?? designedCover;
+
+    public double ExposureDays => Tree?.GetDouble(ExposureKey) ?? 0;
+
+    public override double SoakedKg => ExposureDays > 0 ? Cover?.SoakedKg(config.Hides) ?? 0 : 0;
+
+    public void CoveredBy(Func<HideCover?> cover) => covered = cover;
 
     public override float Condition => (float)(1 - HullShape.Places.Sum(Crack) / HullShape.Places.Length);
 
     public double GreaseDays => seep == null ? 0 : Tree.GetDouble(GreaseKey, seep.GreaseDays);
+
+    public static void Ungrease(ITreeAttribute tree) => tree.SetDouble(GreaseKey, 0);
 
     public override int Stage(HullPlace place) => Crack(place) is var crack and > 0 ? Math.Max(1, StageOf(crack)) : 0;
 
@@ -38,21 +55,41 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
         return Condition <= 0 ? Knock.BrokenUp : Knock.Harmed;
     }
 
-    public void Pass(double days, bool afloat, double sun)
+    public void Pass(double days, bool afloat, double sun, double waterCelsius = 20)
     {
+        if (Cover is { Total: > 0 }) Weather(days, afloat, sun, waterCelsius);
         if (seep == null || !afloat || GreaseDays <= 0) return;
 
         Tree.SetDouble(GreaseKey, Math.Max(0, GreaseDays - days));
         Changed();
     }
 
+    private void Weather(double days, bool afloat, double sun, double waterCelsius)
+    {
+        double before = ExposureDays, drying = Tree.GetDouble(DryingKey), after;
+        if (afloat) (after, drying) = (before + config.Hides.Exposure(days, waterCelsius), 0);
+        else if (before > 0 && sun > 0) (after, drying) = drying + days * sun >= config.Hides.DryDays ? (0, 0) : (before, drying + days * sun);
+        else return;
+
+        var rotted = Tree.GetOrAddTreeAttribute(RottedKey);
+        double rot = Cover!.Rot(config.Hides, before, after, stage => rotted.GetDouble(stage), (stage, share) => rotted.SetDouble(stage, share));
+        Tree.SetDouble(ExposureKey, after);
+        Tree.SetDouble(DryingKey, drying);
+        if (rot > 0)
+        {
+            var cracks = Tree.GetOrAddTreeAttribute(CracksKey);
+            foreach (var place in HullShape.Places) cracks.SetFloat(place.Code(), (float)Math.Clamp(Crack(place) + rot, 0, 1));
+        }
+        Changed();
+    }
+
     public override double Inflow(double seconds, double hours, Afloat afloat, double depthMetres) =>
-        base.Inflow(seconds, hours, afloat, depthMetres) + (seep != null && GreaseDays <= 0 ? seep.LitresPerHour * hours : 0);
+        base.Inflow(seconds, hours, afloat, depthMetres) + (seep != null && GreaseDays <= 0 ? seep.LitresPerHourASeam * (Cover?.Seams ?? 1) * hours : 0);
 
     public override double LitresPerSecond(Afloat afloat, double depthMetres) => HullShape.Places.Sum(place => LitresPerSecond(place, afloat, depthMetres));
 
     public bool Needs(HullRepair repair, HullPlace place) =>
-        repair.Greases ? seep != null && GreaseDays < seep.GreaseDays : Worst() is not null;
+        repair.Greases ? seep != null && GreaseDays < seep.GreaseDays && Cover is not { Total: 0 } : Worst() is not null;
 
     public string Mend(HullRepair repair, HullPlace place)
     {
@@ -87,6 +124,18 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public override void Adopt(float integrity) { }
 
+    public override void TurnEndForEnd(ITreeAttribute tree)
+    {
+        if (tree.GetTreeAttribute(CracksKey) is not { } cracks) return;
+
+        var turned = new TreeAttribute();
+        foreach (var place in HullShape.Places.Where(place => cracks.HasAttribute(place.Code())))
+        {
+            turned.SetFloat(place.EndForEnd().Code(), cracks.GetFloat(place.Code()));
+        }
+        tree[CracksKey] = turned;
+    }
+
     public override double LitresPerSecond(HullPlace place, Afloat afloat, double depthMetres)
     {
         double head = Waterline(place, afloat) - Math.Max(CrackHeight(place, depthMetres), afloat.InsideMetres);
@@ -116,8 +165,14 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
 public class SeepConfig
 {
-    public double LitresPerHour;
+    public double LitresPerHourASeam;
     public double GreaseDays;
+}
+
+public class CoverConfig
+{
+    public Dictionary<string, int> Hides = [];
+    public int Seams;
 }
 
 public class HullConfig
@@ -130,4 +185,7 @@ public class HullConfig
     public double CrackSquareMetres => CrackSquareCentimetres / SquareCentimetresPerSquareMetre;
     public double SideCrackShare;
     public double SoakedStrengthShare;
+
+    [Newtonsoft.Json.JsonIgnore]
+    public HidesConfig Hides = new();
 }

@@ -10,7 +10,7 @@ Treat the mod as a game we own, not a pile of patches. Each system (wind, boat d
 
 Every new text a player sees ships in every locale the game officially supports (the codes in the install's `assets/game/lang/languages.json`), in that language's nautical terms.
 
-The handbook's guide pages (`RoughSeas/assets/roughseas/config/handbook/`) explain the mod to a player, short and in vanilla's style. A mechanic's own pull request leaves them alone; they are checked against what ships once before each release. The wiki (`docs/wiki/`, published by CI on merge; `bin/wiki-links` checks it) holds the depth the guide leaves out, and gets the same check before each release, its roadmap included.
+The handbook's guide pages (`RoughSeas/assets/roughseas/config/handbook/`) explain the mod to a player, short and in vanilla's style. The wiki (`docs/wiki/`, published by CI on merge; `bin/wiki-links` checks it) holds the depth the guide leaves out. Both always match what the code does: a pull request that changes what a guide or wiki page describes updates that page, screenshots included, in the same pull request. Before each release both get one more check against what ships, the wiki's roadmap included, to catch what a pull request missed.
 
 A pull request that makes Rough Seas work beside another mod adds or updates that mod's section on the wiki's page of tested mods (`docs/wiki/Other-Mods.md`), not a page of its own, in the same pull request. The section gives the mod's tested version and verdict, and says how the two play together in one mod set: what the other mod does beside ours, what we changed in how it behaves, and what someone building a server or another mod should know. It is written for server owners and modders, and it doesn't cover our own bugs fixed on the way. Otherwise this knowledge lives only in a closed pull request.
 
@@ -61,9 +61,13 @@ Each holds what one kind of work needs; read it in full before that work. They a
 - `docs/modeling.md`: before changing a shape, with `bin/model help`.
 - `docs/qa.md`: before a release's QA session, with `bin/qa help`.
 
+## Think about what you are asked
+
+A task is written before its author has seen what you see. When what you find makes a step pointless or wrong, say so and ask before doing it; never carry it out to the letter. Development without good communication is poor development.
+
 ## Tickets
 
-Tickets are GitHub issues in this repository. A bug or a follow-up found while working a ticket becomes its own issue, not an out-of-scope fix, labelled `agent-filed`. Tickets the maintainers settled carry `decided`. The two are not equal: a finding from a review subagent sees a slice of the code and imagines what could go wrong; it is filed so it is not lost, and it is read with suspicion before anyone works on it. State the evidence in such an issue (what you saw, where) rather than the fear.
+Tickets are GitHub issues in this repository. A bug your own change brought in is fixed in the same pull request. A small thing found along the way is fixed on the spot, in the same pull request. Only a bug that is work of its own, outside the ticket's scope, becomes its own issue, labelled `agent-filed`. Tickets the maintainers settled carry `decided`. The two are not equal: a finding from a review subagent sees a slice of the code and imagines what could go wrong; it is filed so it is not lost, and it is read with suspicion before anyone works on it. State the evidence in such an issue (what you saw, where) rather than the fear.
 
 A `decided` ticket is ready for anyone, an outside contributor included: say on the issue that you take it. The rest wait for the maintainers: `agent-filed` until they confirm it, `draft` and `parked` until they settle.
 
@@ -77,11 +81,13 @@ A player meets your work at sea, not in the diff. Before the PR leaves draft, lo
 
 Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[shipyard\]\|\[sounds\]\|\[ew\]' "$BENCH_DATA/Logs/server-debug.log"`; what a client decides, such as the sounds it plays itself, is in `client-debug.log`).
 
+Close the game when you're done testing. A bench client left running holds the machine's video memory, and three clones' games starve everything else. `bin/client stop` saves the world, waits for the save and stops the client; killing its tmux session instead loses whatever changed since the last autosave. A server stops with `/stop` in its tmux session, `$BENCH-server`.
+
 ## Shipping
 
 A pull request under 1000 lines of diff skips the `/rpi:feature` flow's multi-agent self-review: Copilot's review is enough for a small change, and five reviewing subagents cost more than they find. Over 1000 lines, run it.
 
-Copilot's review, like any automated review, is advice, not a gate. Judge each finding on its merits: fix a real defect or a real risk; answer a nitpick, a style point or a speculative edge case in one line saying why the code stays, and resolve the thread. A minor finding worth doing later becomes an issue, not another round: every round of fixes brings a new review with new minor points, and five rounds cost hours and buy nothing. When Copilot keeps raising them round after round, the maintainers decide when the PR is done.
+Copilot's review, like any automated review, is advice, not a gate. Judge each finding on its merits: fix a real defect or a real risk; answer a nitpick, a style point or a speculative edge case in one line saying why the code stays, and resolve the thread. A small finding worth doing is fixed in the same push, not left for an issue. When Copilot keeps raising new minor points round after round, the maintainers decide when the PR is done.
 
 The maintainers' agents merge their own pull requests; an outside contributor's waits for the code owner's review.
 

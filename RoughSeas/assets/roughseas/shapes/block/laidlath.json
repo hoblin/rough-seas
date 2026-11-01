@@ -1,0 +1,19 @@
+{
+    "textureWidth": 16,
+    "textureHeight": 16,
+    "textures": {"wood": "game:block/wood/debarked/oak"},
+    "elements": [
+        {
+            "name": "Lath",
+            "from": [-8, 0, -0.48], "to": [8, 0.16, 0.48],
+            "faces": {
+                "north": {"texture": "#wood", "uv": [0, 4, 16, 4.16]},
+                "east": {"texture": "#wood", "uv": [4, 4, 4.96, 4.16]},
+                "south": {"texture": "#wood", "uv": [0, 9, 16, 9.16]},
+                "west": {"texture": "#wood", "uv": [9, 9, 9.96, 9.16]},
+                "up": {"texture": "#wood", "uv": [0, 6, 16, 6.96]},
+                "down": {"texture": "#wood", "uv": [0, 11, 16, 11.96]}
+            }
+        }
+    ]
+}
