@@ -57,13 +57,19 @@ public sealed class SurfaceClock : IRenderer
         var state = sea.At(field.HighestX, field.HighestZ);
         surface.Aim(field.Height, Math.Atan2(state.WindZ, state.WindX), state.Beaufort, field.Height / storms.Config.Surface.FullFoamMetres);
 
-        var regionSize = capi.World.BlockAccessor.RegionSize;
-        var here = ((int)Math.Floor(pos.X / regionSize), (int)Math.Floor(pos.Z / regionSize));
-        var crossed = here != region;
-        region = here;
+        region = Raise(surface, sea, pos.X, pos.Z, time.Seconds, capi.World.BlockAccessor.RegionSize, region);
+    }
+
+    /// <summary>Raises the trains of the region a position is in at this time of the waves; returns that region.</summary>
+    /// <param name="region">The region the surface's trains were last raised for, if any.</param>
+    public static (int X, int Z) Raise(SeaSurface surface, SeaWeatherSystem sea, double x, double z, double seconds, int regionSize,
+        (int X, int Z)? region)
+    {
+        var here = ((int)Math.Floor(x / regionSize), (int)Math.Floor(z / regionSize));
         var slotHours = sea.Config.SeaSampleHours;
-        var slot = (long)Math.Floor(sea.Clock.HoursAt(time.Seconds) / slotHours);
-        surface.Raise(sea.Source.Generation(pos.X, pos.Z, slot - 1), sea.Source.Generation(pos.X, pos.Z, slot), sea.Clock.SecondsAt(slot * slotHours), crossed);
+        var slot = (long)Math.Floor(sea.Clock.HoursAt(seconds) / slotHours);
+        surface.Raise(sea.Source.Generation(x, z, slot - 1), sea.Source.Generation(x, z, slot), sea.Clock.SecondsAt(slot * slotHours), here != region);
+        return here;
     }
 
     private static double Degrees(double radians) => (radians * 180 / Math.PI + 360) % 360;

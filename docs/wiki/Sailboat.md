@@ -26,7 +26,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | [Lightning](Lightning) | its 6 m mast draws strikes |
 | [Rapids](Rapids) | barely harmed |
 | [Anchoring](Anchoring) | stone anchor on 120 m of rope, 210 m with an anchor warp |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [Left alone](Currents#drift) | drifts with the current and the waves |
 | [Mooring](Mooring) | tied to a post, or anchored |
 | Carried | too big to pick up |
 | Seats | two aft: the starboard one steers, the port one takes a passenger |

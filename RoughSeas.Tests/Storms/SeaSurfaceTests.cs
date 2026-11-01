@@ -282,4 +282,154 @@ public class SeaSurfaceTests
         }
         Assert.Equal(surface.DisplacementAt(FarX + fromCameraX, FarZ + fromCameraZ).Y, rise, 3);
     }
+
+    [Fact]
+    public void MovesTheWaterForwardUnderACrestAndBackInATrough()
+    {
+        var (surface, number, frequency) = OneTrain(2);
+
+        for (var i = 0; i < 12; i++)
+        {
+            var x = FarX + i * 3.1;
+            var rise = surface.DisplacementAt(x, FarZ).Y;
+            var (alongX, acrossZ) = surface.OrbitalVelocityAt(x, FarZ);
+
+            Assert.Equal(frequency * rise * Math.Exp(number * rise), alongX, 9);
+            Assert.Equal(0, acrossZ, 9);
+            Assert.Equal(Math.Sign(rise), Math.Sign(alongX));
+        }
+    }
+
+    [Fact]
+    public void FadesWithDepthAsTheWavenumberSays()
+    {
+        var (surface, number, _) = OneTrain(2);
+        var x = FarX + 4;
+        var (atSurface, _) = surface.OrbitalVelocityAt(x, FarZ);
+        var (deeper, _) = surface.OrbitalVelocityAt(x, FarZ, depth: 3);
+
+        Assert.Equal(Math.Exp(-number * 3), deeper / atSurface, 9);
+    }
+
+    [Fact]
+    public void AHullAsLongAsTheWaveFeelsItsWaterCancelOut()
+    {
+        var (surface, number, _) = OneTrain(2);
+        var length = 2 * Math.PI / number;
+        var x = FarX + 4;
+        var (alone, _) = surface.OrbitalVelocityAt(x, FarZ);
+        var (halfAWave, _) = surface.OrbitalVelocityAt(x, FarZ, side: length / 2);
+        var (wholeWave, _) = surface.OrbitalVelocityAt(x, FarZ, side: length);
+
+        Assert.Equal(2 / Math.PI, halfAWave / alone, 9);
+        Assert.Equal(0, wholeWave, 9);
+    }
+
+    [Fact]
+    public void CarriesAFloatingBodyDownTheWavesByTheStokesDrift()
+    {
+        const double height = 2;
+        var (surface, number, frequency) = OneTrain(height);
+        var amplitude = height / (2 * Math.Sqrt(2));
+        var period = 2 * Math.PI / frequency;
+        var x = FarX;
+        var seconds = 0.0;
+        for (; seconds < 200 * period; seconds += Frame)
+        {
+            surface.Advance(seconds);
+            x += surface.OrbitalVelocityAt(x, FarZ).X * Frame;
+        }
+
+        // Stokes (1847): a^2 omega k a second along the waves' travel at the surface
+        Assert.InRange((x - FarX) / seconds / (amplitude * amplitude * frequency * number), 0.95, 1.05);
+    }
+
+    [Fact]
+    public void CarriesABodyUnderTheSurfaceLess()
+    {
+        var (surface, number, frequency) = OneTrain(2);
+        var period = 2 * Math.PI / frequency;
+        var (atSurface, deep) = (FarX, FarX);
+        for (var seconds = 0.0; seconds < 200 * period; seconds += Frame)
+        {
+            surface.Advance(seconds);
+            atSurface += surface.OrbitalVelocityAt(atSurface, FarZ).X * Frame;
+            deep += surface.OrbitalVelocityAt(deep, FarZ, depth: 2).X * Frame;
+        }
+
+        // held 2 m under the surface it rises and falls with the whole wave but sways with the water 2 m down:
+        // half the drift from each, (e^(-2kd) + e^(-kd)) / 2 of the surface's
+        var fade = Math.Exp(-number * 2);
+        Assert.True(deep - FarX > 0, $"drifted {deep - FarX:F2} m");
+        Assert.InRange((deep - FarX) / (atSurface - FarX), 0.95 * (fade * fade + fade) / 2, 1.05 * (fade * fade + fade) / 2);
+    }
+
+    [Fact]
+    public void ReadsASquareHullAtHeadingZeroAsTheSquare()
+    {
+        var (surface, _, _) = OneTrain(2);
+        for (var i = 0; i < 6; i++)
+        {
+            var x = FarX + i * 2.3;
+            var lift = surface.DisplacementAt(x, FarZ).Y;
+
+            Assert.Equal(surface.OrbitalVelocityAt(x, FarZ, side: 3).X, surface.HullVelocityAt(x, FarZ, lift, 0, -Math.PI / 2, 3, 3).X, 9);
+        }
+    }
+
+    [Fact]
+    public void AveragesTheWaterAlongAHullLyingAlongTheWavesAndNotAcrossThem()
+    {
+        var (surface, number, _) = OneTrain(2);
+        var length = 2 * Math.PI / number;
+        var x = FarX + 4;
+        var lift = surface.DisplacementAt(x, FarZ).Y;
+        var point = surface.HullVelocityAt(x, FarZ, lift, 0, 0, 0, 0).X;
+        // yaw -π/2 lays the hull's length along world X, the waves' travel; yaw 0 lays it along Z, along their crests
+        var along = surface.HullVelocityAt(x, FarZ, lift, 0, -Math.PI / 2, length / 2, 0.5).X;
+        var across = surface.HullVelocityAt(x, FarZ, lift, 0, 0, length / 2, 0.5).X;
+
+        Assert.Equal(2 / Math.PI, along / point, 9);
+        Assert.Equal(Sinc(number * 0.25), across / point, 9);
+    }
+
+    [Fact]
+    public void AveragesTheWaterOverTheDraft()
+    {
+        var (surface, number, _) = OneTrain(2);
+        var x = FarX + 4;
+        var lift = surface.DisplacementAt(x, FarZ).Y;
+        var atSurface = surface.HullVelocityAt(x, FarZ, lift, 0, 0, 0, 0).X;
+        var deep = surface.HullVelocityAt(x, FarZ, lift, 2, 0, 0, 0).X;
+
+        Assert.Equal((1 - Math.Exp(-number * 2)) / (number * 2), deep / atSurface, 9);
+    }
+
+    private static double Sinc(double x) => Math.Sin(x) / x;
+
+    /// <summary>One train along +X, its length a whole step of the surface's stretch, settled at once.</summary>
+    private static (SeaSurface Surface, double Number, double Frequency) OneTrain(double height)
+    {
+        var config = Fixtures.Config().Surface;
+        var single = new SurfaceConfig
+        {
+            Trains = [new SurfaceTrainConfig { AngleDegrees = 0, LengthFactor = 1, Energy = 1 }],
+            Steepness = config.Steepness,
+            MinLengthBlocks = config.MinLengthBlocks,
+            SettleSeconds = config.SettleSeconds,
+            TurnDegrees = config.TurnDegrees,
+            Stretch = config.Stretch,
+            AimSeconds = config.AimSeconds,
+            FullFoamMetres = config.FullFoamMetres,
+            Whitecaps = config.Whitecaps,
+        };
+        var length = Math.Pow(1 + config.Stretch, 16);
+        var number = 2 * Math.PI / length;
+        var surface = new SeaSurface(single, new Waves(Fixtures.Config().Waves));
+        var raised = new WaveGeneration(0, Math.Sqrt(2 * Math.PI * length / 9.81));
+        surface.Aim(height, 0, 6);
+        surface.Raise(raised, raised, 0);
+        surface.Advance(0);
+        return (surface, number, Math.Sqrt(9.81 * number));
+    }
 }

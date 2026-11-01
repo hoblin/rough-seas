@@ -25,7 +25,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | takes them badly |
 | [Lightning](Lightning) | a strike nearby almost always breaks her |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [Left alone](Currents#drift) | drifts with the current and the waves |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | one: the rower on the thwart, with an [oar](https://wiki.vintagestory.at/Oar) in hand |

@@ -37,6 +37,7 @@ public class StormsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorMooring.Code, typeof(EntityBehaviorMooring));
         api.RegisterBlockBehaviorClass(BlockBehaviorBailer.Code, typeof(BlockBehaviorBailer));
         VesselDraught.Attach();
+        WaveCarry.Attach();
     }
 
     public override void AssetsLoaded(ICoreAPI api)
@@ -51,8 +52,9 @@ public class StormsModSystem : ModSystem
         var surface = Surface = new SeaSurface(Config.Surface, Waves);
         var field = new SurfaceField();
         surface.Changed += change => Log("surface: " + change);
-        DrawnSea = new DrawnSea(surface, field);
-        DrawnWater = new DrawnWater(DrawnSea);
+        var drawn = new DrawnSea(surface, field.Factor);
+        DrawnSea = drawn;
+        DrawnWater = new DrawnWater(drawn);
         if (SurfaceShader.Attach(surface, field, capi))
         {
             clock = new SurfaceClock(this, sea, surface, field, capi);
@@ -61,6 +63,8 @@ public class StormsModSystem : ModSystem
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         VesselMotion.Attach(this, capi, DrawnSea, surface);
         FloatMotion.Attach(DrawnSea);
+        BodyUnderSurface.Attach(this, DrawnWater, Config.Swim);
+        BodyAfloat.Attach(this, capi, drawn, DrawnWater, Config.Body);
         RegisterSurfaceCommands(capi);
     }
 
@@ -103,9 +107,12 @@ public class StormsModSystem : ModSystem
     public override void Dispose()
     {
         VesselDraught.Detach();
+        WaveCarry.Detach();
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();
         FloatMotion.Detach();
+        BodyUnderSurface.Detach();
+        BodyAfloat.Detach();
         EyeUnderSurface.Detach();
         SurfaceShader.Detach();
         clock?.Dispose();

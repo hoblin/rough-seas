@@ -24,7 +24,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker |
 | [Rapids](Rapids) | broken in about four seconds |
 | [Lightning](Lightning) | a strike nearby breaks it |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [Left alone](Currents#drift) | drifts with the current and the waves |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | two, fore and aft; either one paddles, with an oar in hand |

@@ -14,11 +14,11 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 
 | Code | Sides | What it does |
 | --- | --- | --- |
-| `roughseas:seaforces` | client and server | the vessel's contact with the sea: waves aboard, breaker strikes, the ride on the drawn swell, its mass slowing it, the settling it draws. Mooring needs it |
+| `roughseas:seaforces` | client and server | the vessel's contact with the sea: waves aboard, breaker strikes, the ride on the drawn swell and the sway of the water under it, its mass slowing it, the settling it draws. Mooring needs it |
 | `roughseas:bilge` | client and server | the water aboard: from waves, leaks and rain, bailed out, swamping the hull when full |
 | `roughseas:vesselintegrity` | client and server, first in both lists | the hull: how it floats and sinks, what cracks or breaks it, its leaks, mending, wreckage |
 | `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
-| `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current and the wind |
+| `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:launch` | client and server | a push from the shore that slides a heavy vessel into the water ([Built in place](#built-in-place)) |
 | `roughseas:framing` | client and server | a vessel laid piece by piece where she lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound by the water ([Bound in place](#bound-in-place)) |
@@ -350,4 +350,4 @@ A rider's client steers a vessel, and the server can't hold one it doesn't move:
 
 ## Currents
 
-`roughseas:currentdrift`, on the server; it has no keys. An unsteered vessel in the water drifts with the [current](Currents) and a little with the wind; a sunk one stays put. It needs vanilla's passive physics on the entity (`passivephysics`, or `passivephysicsmultibox`). A rider's client moves a steered vessel, so the current doesn't reach it: a mod that sails its own vessels adds the current to its own motion, read from `CurrentAt` ([Reading the sea](Reading-the-Sea)).
+`roughseas:currentdrift`, on the server; it has no keys. An unsteered vessel in the water drifts with the [current](Currents); a sunk one stays put. The waves' drift is `roughseas:seaforces`'s, steered or not. It needs vanilla's passive physics on the entity (`passivephysics`, or `passivephysicsmultibox`). A rider's client moves a steered vessel, so the current doesn't reach it: a mod that sails its own vessels adds the current to its own motion, read from `CurrentAt` ([Reading the sea](Reading-the-Sea)).

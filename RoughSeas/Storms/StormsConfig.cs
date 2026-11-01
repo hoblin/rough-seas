@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace RoughSeas.Storms;
 
@@ -9,11 +10,69 @@ public class StormsConfig
     public BilgeConfig Bilge = new();
     public SwampingConfig Swamping = new();
     public ResponseConfig Response = new();
+    public DriveConfig Drive = new();
     public MooringConfig Mooring = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
     public SurfaceConfig Surface = new();
     public EyeConfig Eye = new();
+    public SwimConfig Swim = new();
+    public BodyConfig Body = new();
+}
+
+public class SwimConfig
+{
+    public double LeastShare;
+    public double StrokeLift;
+    public double JumpLiftPerTick;
+    public double JumpLiftAboveShare;
+}
+
+public class BodyConfig
+{
+    public string Build = "";
+    public Dictionary<string, BodyBuildConfig> Builds = [];
+    public double FatDensity;
+    public double LeanDensity;
+    public double TidalLitres;
+    public double BreathSeconds;
+    public double AddedMass;
+    public double DragArea;
+    public double SeawaterDensity;
+    public double FreshwaterDensity;
+    public double ArmourDensity;
+    public BreakingConfig Breaking = new();
+
+    public BodyBuildConfig BuildOf => Builds[Build];
+}
+
+public class BodyBuildConfig
+{
+    public double HeightMetres;
+    public double MassKg;
+    public double AgeYears;
+    public double FatShare;
+    public double[] Frc = [];
+    public BodySegmentConfig[] Segments = [];
+}
+
+public class BodySegmentConfig
+{
+    public string Name = "";
+    public double From;
+    public double To;
+    public double MassShare;
+    public double Density;
+    public bool Lungs;
+}
+
+public class BreakingConfig
+{
+    public double Aeration;
+    public double AerationAfterPeriod;
+    public double PlumeDepthPerHeight;
+    public double RollerSpeedRatio;
+    public double RollerSeconds;
 }
 
 public class EyeConfig
