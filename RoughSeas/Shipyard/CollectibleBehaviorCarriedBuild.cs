@@ -20,8 +20,9 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
     {
         if (Framing(capi, itemstack) is not { } framing) return;
 
-        var key = framing.ShapeKey;
-        if (!meshes.TryGetValue(key, out var mesh)) meshes[key] = mesh = Tesselate(capi, framing);
+        var upright = EntityBehaviorCovering.UprightIn(itemstack.Attributes.GetTreeAttribute(EntityBehaviorBuild.TreeKey));
+        var key = $"{framing.ShapeKey}/{upright}";
+        if (!meshes.TryGetValue(key, out var mesh)) meshes[key] = mesh = Tesselate(capi, framing, upright);
         if (mesh != null) renderinfo.ModelRef = mesh;
     }
 
@@ -41,8 +42,7 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
 
     private Framing? Framing(ICoreAPI api, ItemStack stack)
     {
-        if (stack.Attributes.GetTreeAttribute(EntityBehaviorBuild.TreeKey) is not { } tree) return null;
-
+        var tree = stack.Attributes.GetTreeAttribute(EntityBehaviorBuild.TreeKey);
         var stages = ObjectCacheUtil.GetOrCreate(api, $"{Code}/stages/{collectible.Code}", () =>
         {
             var config = api.World.GetEntityType(collectible.Code) is { } type ? FramingConfig.Of(type) ?? CoveringConfig.Of(type) : null;
@@ -55,7 +55,7 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
     private Shape? BaseShape(ICoreAPI api) =>
         collectible is Item { Shape.Base: { } shape } ? Shape.TryGet(api, shape.CopyWithPathPrefixAndAppendixOnce("shapes/", ".json")) : null;
 
-    private MultiTextureMeshRef? Tesselate(ICoreClientAPI capi, Framing framing)
+    private MultiTextureMeshRef? Tesselate(ICoreClientAPI capi, Framing framing, bool upright)
     {
         if (collectible is not Item item || BaseShape(capi) is not { } shape) return null;
 
@@ -64,6 +64,10 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
         var ignored = item.Shape.IgnoreElements?.Except(drawnByBuild) ?? [];
         shape.RemoveElements(framing.Hidden().Concat(ignored).ToArray());
         if (framing.Wood is { } wood) WoodTexture.Draw(capi, ref shape, ref cloned, WoodTexture.Frame, wood, item.Textures, capi.ItemTextureAtlas);
+        if (!upright && capi.World.GetEntityType(collectible.Code) is { } type && CoveringConfig.Of(type) is { } covering)
+        {
+            EntityBehaviorCovering.Overturn(shape, covering.OverturnedPivot);
+        }
         capi.Tesselator.TesselateShape(item, shape, out var mesh);
         return capi.Render.UploadMultiTextureMesh(mesh);
     }

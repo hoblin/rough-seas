@@ -12,12 +12,13 @@ def kilograms(material, litres):
     return litres / 1000 * MATERIALS[material]["density"]
 
 
-def afloat(name, hull_kg, depth, hold, deck, hitbox):
+def afloat(name, hull_kg, depth, hold, deck, hitbox, waterplane=None):
     full = hull_kg + MASS["crewKg"] + MASS["playerGearKg"] + SEAWATER_KG_PER_LITRE * hold
-    waterplane = full / (SEAWATER_KG_PER_LITRE * 1000 * depth)
+    rule = waterplane is None
+    waterplane = full / (SEAWATER_KG_PER_LITRE * 1000 * depth) if rule else waterplane
     draft = (hull_kg + MASS["crewKg"]) / (SEAWATER_KG_PER_LITRE * 1000 * waterplane)
     offset = hitbox + SWIM_LINE_METRES - draft
     print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth:.4g} m, hold {hold:.0f} L, deck {deck:.2f} m², "
-          f"waterplane {waterplane:.2f} m² (full hold and one aboard bring her gunwale to the water), "
+          f"waterplane {waterplane:.2f} m²{' (full hold and one aboard bring her gunwale to the water)' if rule else ''}, "
           f"draft {draft:.3f} m with one aboard, swimmingOffsetY {offset:.3f}")
     return waterplane

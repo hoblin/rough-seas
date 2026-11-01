@@ -19,252 +19,418 @@
      "faces": {},
      "children": [
       {
-       "name": "GunwalePort1Frame",
-       "from": [ -29.567, 10.4, 7.616 ],
-       "to": [ -29.567, 10.4, 7.616 ],
-       "rotationOrigin": [ -29.567, 10.4, 7.616 ],
-       "rotationY": 36.304,
-       "rotationZ": -3.07,
+       "name": "Gunwale1At1",
+       "from": [ 0, 0, 0 ],
+       "to": [ 0, 0, 0 ],
+       "rotationOrigin": [ 0, 0, 0 ],
        "faces": {},
        "children": [
         {
-         "name": "GunwalePort1",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 3.985, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 6, 1.5, 10.235, 2.4 ] },
-          "east": { "texture": "#frame", "uv": [ 4, 2, 5, 2.9 ] },
-          "south": { "texture": "#frame", "uv": [ 6.5, 3, 10.735, 3.9 ] },
-          "west": { "texture": "#frame", "uv": [ 2, 5, 3, 5.9 ] },
-          "up": { "texture": "#frame", "uv": [ 4.5, 13.5, 8.735, 14.5 ] },
-          "down": { "texture": "#frame", "uv": [ 11, 6.5, 15.235, 7.5 ] }
-         }
+         "name": "GunwalePort1FrameOpen",
+         "from": [ -29.567, 10.4, 7.616 ],
+         "to": [ -29.567, 10.4, 7.616 ],
+         "rotationOrigin": [ -29.567, 10.4, 7.616 ],
+         "rotationY": 36.304,
+         "rotationZ": -3.07,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort1Open",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 3.985, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 6, 1.5, 10.235, 2.4 ] },
+            "east": { "texture": "#frame", "uv": [ 4, 2, 5, 2.9 ] },
+            "south": { "texture": "#frame", "uv": [ 6.5, 3, 10.735, 3.9 ] },
+            "west": { "texture": "#frame", "uv": [ 2, 5, 3, 5.9 ] },
+            "up": { "texture": "#frame", "uv": [ 4.5, 13.5, 8.735, 14.5 ] },
+            "down": { "texture": "#frame", "uv": [ 11, 6.5, 15.235, 7.5 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwalePort2FrameOpen",
+         "from": [ -26.562, 10.2, 5.408 ],
+         "to": [ -26.562, 10.2, 5.408 ],
+         "rotationOrigin": [ -26.562, 10.2, 5.408 ],
+         "rotationY": 31.698,
+         "rotationZ": -3.241,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort2Open",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 5.557, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 1, 11, 6.807, 11.9 ] },
+            "east": { "texture": "#frame", "uv": [ 1, 13, 2, 13.9 ] },
+            "south": { "texture": "#frame", "uv": [ 6, 2.5, 11.807, 3.4 ] },
+            "west": { "texture": "#frame", "uv": [ 6.5, 6, 7.5, 6.9 ] },
+            "up": { "texture": "#frame", "uv": [ 2.5, 3.5, 8.307, 4.5 ] },
+            "down": { "texture": "#frame", "uv": [ 9.5, 10, 15.307, 11 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwalePort3FrameOpen",
+         "from": [ -22.054, 9.9, 2.624 ],
+         "to": [ -22.054, 9.9, 2.624 ],
+         "rotationOrigin": [ -22.054, 9.9, 2.624 ],
+         "rotationY": 18.377,
+         "rotationZ": -2.892,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort3Open",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 8.177, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 5, 13.5, 13.427, 14.4 ] },
+            "east": { "texture": "#frame", "uv": [ 7, 6, 8, 6.9 ] },
+            "south": { "texture": "#frame", "uv": [ 2.5, 2.5, 10.927, 3.4 ] },
+            "west": { "texture": "#frame", "uv": [ 14, 12.5, 15, 13.4 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 14.5, 9.927, 15.5 ] },
+            "down": { "texture": "#frame", "uv": [ 1.5, 5, 9.927, 6 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwalePort4FrameOpen",
+         "from": [ -14.54, 9.5, 0.128 ],
+         "to": [ -14.54, 9.5, 0.128 ],
+         "rotationOrigin": [ -14.54, 9.5, 0.128 ],
+         "rotationY": 6.801,
+         "rotationZ": -1.514,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort4Open",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 11.604, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 14.5, 11.854, 15.4 ] },
+            "east": { "texture": "#frame", "uv": [ 1, 13.5, 2, 14.4 ] },
+            "south": { "texture": "#frame", "uv": [ 0, 13, 11.854, 13.9 ] },
+            "west": { "texture": "#frame", "uv": [ 9.5, 13, 10.5, 13.9 ] },
+            "up": { "texture": "#frame", "uv": [ 2.5, 10, 14.354, 11 ] },
+            "down": { "texture": "#frame", "uv": [ 3.5, 2, 15.354, 3 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwalePort5FrameOpen",
+         "from": [ -3.27, 9.2, -1.216 ],
+         "to": [ -3.27, 9.2, -1.216 ],
+         "rotationOrigin": [ -3.27, 9.2, -1.216 ],
+         "rotationY": 1.951,
+         "rotationZ": -0.508,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort5Open",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 11.527, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 1, 9, 12.777, 9.9 ] },
+            "east": { "texture": "#frame", "uv": [ 13.5, 2.5, 14.5, 3.4 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 2, 13.277, 2.9 ] },
+            "west": { "texture": "#frame", "uv": [ 10.5, 11.5, 11.5, 12.4 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 9.5, 13.277, 10.5 ] },
+            "down": { "texture": "#frame", "uv": [ 0.5, 1, 12.277, 2 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwalePortAsternFrame",
+         "from": [ 8, 9.1, -1.6 ],
+         "to": [ 8, 9.1, -1.6 ],
+         "rotationOrigin": [ 8, 9.1, -1.6 ],
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePortAstern",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 39.85, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 12, 16, 12.9 ] },
+            "east": { "texture": "#frame", "uv": [ 5.5, 10, 6.5, 10.9 ] },
+            "south": { "texture": "#frame", "uv": [ 0, 11.5, 16, 12.4 ] },
+            "west": { "texture": "#frame", "uv": [ 4, 0, 5, 0.9 ] },
+            "up": { "texture": "#frame", "uv": [ 0, 7.5, 16, 8.5 ] },
+            "down": { "texture": "#frame", "uv": [ 0, 1, 16, 2 ] }
+           }
+          }
+         ]
         }
        ]
       },
       {
-       "name": "GunwalePort2Frame",
-       "from": [ -26.562, 10.2, 5.408 ],
-       "to": [ -26.562, 10.2, 5.408 ],
-       "rotationOrigin": [ -26.562, 10.2, 5.408 ],
-       "rotationY": 31.698,
-       "rotationZ": -3.241,
+       "name": "Gunwale1At2",
+       "from": [ 0, 0, 0 ],
+       "to": [ 0, 0, 0 ],
+       "rotationOrigin": [ 0, 0, 0 ],
        "faces": {},
        "children": [
         {
-         "name": "GunwalePort2",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 5.557, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 1, 11, 6.807, 11.9 ] },
-          "east": { "texture": "#frame", "uv": [ 1, 13, 2, 13.9 ] },
-          "south": { "texture": "#frame", "uv": [ 6, 2.5, 11.807, 3.4 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 6, 7.5, 6.9 ] },
-          "up": { "texture": "#frame", "uv": [ 2.5, 3.5, 8.307, 4.5 ] },
-          "down": { "texture": "#frame", "uv": [ 9.5, 10, 15.307, 11 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwalePort3Frame",
-       "from": [ -22.054, 9.9, 2.624 ],
-       "to": [ -22.054, 9.9, 2.624 ],
-       "rotationOrigin": [ -22.054, 9.9, 2.624 ],
-       "rotationY": 18.377,
-       "rotationZ": -2.892,
-       "faces": {},
-       "children": [
+         "name": "GunwalePort1Frame",
+         "from": [ -29.567, 10.4, 7.616 ],
+         "to": [ -29.567, 10.4, 7.616 ],
+         "rotationOrigin": [ -29.567, 10.4, 7.616 ],
+         "rotationY": 36.304,
+         "rotationZ": -3.07,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort1",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 3.985, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 6, 1.5, 10.235, 2.4 ] },
+            "east": { "texture": "#frame", "uv": [ 4, 2, 5, 2.9 ] },
+            "south": { "texture": "#frame", "uv": [ 6.5, 3, 10.735, 3.9 ] },
+            "west": { "texture": "#frame", "uv": [ 2, 5, 3, 5.9 ] },
+            "up": { "texture": "#frame", "uv": [ 4.5, 13.5, 8.735, 14.5 ] },
+            "down": { "texture": "#frame", "uv": [ 11, 6.5, 15.235, 7.5 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwalePort3",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 8.177, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 5, 13.5, 13.427, 14.4 ] },
-          "east": { "texture": "#frame", "uv": [ 7, 6, 8, 6.9 ] },
-          "south": { "texture": "#frame", "uv": [ 2.5, 2.5, 10.927, 3.4 ] },
-          "west": { "texture": "#frame", "uv": [ 14, 12.5, 15, 13.4 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 14.5, 9.927, 15.5 ] },
-          "down": { "texture": "#frame", "uv": [ 1.5, 5, 9.927, 6 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwalePort4Frame",
-       "from": [ -14.54, 9.5, 0.128 ],
-       "to": [ -14.54, 9.5, 0.128 ],
-       "rotationOrigin": [ -14.54, 9.5, 0.128 ],
-       "rotationY": 6.801,
-       "rotationZ": -1.514,
-       "faces": {},
-       "children": [
+         "name": "GunwalePort2Frame",
+         "from": [ -26.562, 10.2, 5.408 ],
+         "to": [ -26.562, 10.2, 5.408 ],
+         "rotationOrigin": [ -26.562, 10.2, 5.408 ],
+         "rotationY": 31.698,
+         "rotationZ": -3.241,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort2",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 5.557, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 1, 11, 6.807, 11.9 ] },
+            "east": { "texture": "#frame", "uv": [ 1, 13, 2, 13.9 ] },
+            "south": { "texture": "#frame", "uv": [ 6, 2.5, 11.807, 3.4 ] },
+            "west": { "texture": "#frame", "uv": [ 6.5, 6, 7.5, 6.9 ] },
+            "up": { "texture": "#frame", "uv": [ 2.5, 3.5, 8.307, 4.5 ] },
+            "down": { "texture": "#frame", "uv": [ 9.5, 10, 15.307, 11 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwalePort4",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 11.604, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 14.5, 11.854, 15.4 ] },
-          "east": { "texture": "#frame", "uv": [ 1, 13.5, 2, 14.4 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 13, 11.854, 13.9 ] },
-          "west": { "texture": "#frame", "uv": [ 9.5, 13, 10.5, 13.9 ] },
-          "up": { "texture": "#frame", "uv": [ 2.5, 10, 14.354, 11 ] },
-          "down": { "texture": "#frame", "uv": [ 3.5, 2, 15.354, 3 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwalePort5Frame",
-       "from": [ -3.27, 9.2, -1.216 ],
-       "to": [ -3.27, 9.2, -1.216 ],
-       "rotationOrigin": [ -3.27, 9.2, -1.216 ],
-       "rotationY": 1.951,
-       "rotationZ": -0.508,
-       "faces": {},
-       "children": [
+         "name": "GunwalePort3Frame",
+         "from": [ -22.054, 9.9, 2.624 ],
+         "to": [ -22.054, 9.9, 2.624 ],
+         "rotationOrigin": [ -22.054, 9.9, 2.624 ],
+         "rotationY": 18.377,
+         "rotationZ": -2.892,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort3",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 8.177, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 5, 13.5, 13.427, 14.4 ] },
+            "east": { "texture": "#frame", "uv": [ 7, 6, 8, 6.9 ] },
+            "south": { "texture": "#frame", "uv": [ 2.5, 2.5, 10.927, 3.4 ] },
+            "west": { "texture": "#frame", "uv": [ 14, 12.5, 15, 13.4 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 14.5, 9.927, 15.5 ] },
+            "down": { "texture": "#frame", "uv": [ 1.5, 5, 9.927, 6 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwalePort5",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 11.527, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 1, 9, 12.777, 9.9 ] },
-          "east": { "texture": "#frame", "uv": [ 13.5, 2.5, 14.5, 3.4 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 2, 13.277, 2.9 ] },
-          "west": { "texture": "#frame", "uv": [ 10.5, 11.5, 11.5, 12.4 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 9.5, 13.277, 10.5 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 1, 12.277, 2 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwalePort6Frame",
-       "from": [ 8, 9.1, -1.6 ],
-       "to": [ 8, 9.1, -1.6 ],
-       "rotationOrigin": [ 8, 9.1, -1.6 ],
-       "rotationY": -1.951,
-       "rotationZ": 0.508,
-       "faces": {},
-       "children": [
+         "name": "GunwalePort4Frame",
+         "from": [ -14.54, 9.5, 0.128 ],
+         "to": [ -14.54, 9.5, 0.128 ],
+         "rotationOrigin": [ -14.54, 9.5, 0.128 ],
+         "rotationY": 6.801,
+         "rotationZ": -1.514,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort4",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 11.604, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 14.5, 11.854, 15.4 ] },
+            "east": { "texture": "#frame", "uv": [ 1, 13.5, 2, 14.4 ] },
+            "south": { "texture": "#frame", "uv": [ 0, 13, 11.854, 13.9 ] },
+            "west": { "texture": "#frame", "uv": [ 9.5, 13, 10.5, 13.9 ] },
+            "up": { "texture": "#frame", "uv": [ 2.5, 10, 14.354, 11 ] },
+            "down": { "texture": "#frame", "uv": [ 3.5, 2, 15.354, 3 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwalePort6",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 11.527, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 0, 11.777, 0.9 ] },
-          "east": { "texture": "#frame", "uv": [ 1.5, 0, 2.5, 0.9 ] },
-          "south": { "texture": "#frame", "uv": [ 3, 9, 14.777, 9.9 ] },
-          "west": { "texture": "#frame", "uv": [ 0, 3.5, 1, 4.4 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 5, 13.277, 6 ] },
-          "down": { "texture": "#frame", "uv": [ 2.5, 13, 14.277, 14 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwalePort7Frame",
-       "from": [ 19.27, 9.2, -1.216 ],
-       "to": [ 19.27, 9.2, -1.216 ],
-       "rotationOrigin": [ 19.27, 9.2, -1.216 ],
-       "rotationY": -6.801,
-       "rotationZ": 1.514,
-       "faces": {},
-       "children": [
+         "name": "GunwalePort5Frame",
+         "from": [ -3.27, 9.2, -1.216 ],
+         "to": [ -3.27, 9.2, -1.216 ],
+         "rotationOrigin": [ -3.27, 9.2, -1.216 ],
+         "rotationY": 1.951,
+         "rotationZ": -0.508,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort5",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 11.527, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 1, 9, 12.777, 9.9 ] },
+            "east": { "texture": "#frame", "uv": [ 13.5, 2.5, 14.5, 3.4 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 2, 13.277, 2.9 ] },
+            "west": { "texture": "#frame", "uv": [ 10.5, 11.5, 11.5, 12.4 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 9.5, 13.277, 10.5 ] },
+            "down": { "texture": "#frame", "uv": [ 0.5, 1, 12.277, 2 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwalePort7",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 11.604, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 2.5, 14.5, 14.354, 15.4 ] },
-          "east": { "texture": "#frame", "uv": [ 0.5, 10, 1.5, 10.9 ] },
-          "south": { "texture": "#frame", "uv": [ 0.5, 7.5, 12.354, 8.4 ] },
-          "west": { "texture": "#frame", "uv": [ 13.5, 3.5, 14.5, 4.4 ] },
-          "up": { "texture": "#frame", "uv": [ 4, 10.5, 15.854, 11.5 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 7.5, 12.354, 8.5 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwalePort8Frame",
-       "from": [ 30.54, 9.5, 0.128 ],
-       "to": [ 30.54, 9.5, 0.128 ],
-       "rotationOrigin": [ 30.54, 9.5, 0.128 ],
-       "rotationY": -18.377,
-       "rotationZ": 2.892,
-       "faces": {},
-       "children": [
+         "name": "GunwalePort6Frame",
+         "from": [ 8, 9.1, -1.6 ],
+         "to": [ 8, 9.1, -1.6 ],
+         "rotationOrigin": [ 8, 9.1, -1.6 ],
+         "rotationY": -1.951,
+         "rotationZ": 0.508,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort6",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 11.527, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 0, 11.777, 0.9 ] },
+            "east": { "texture": "#frame", "uv": [ 1.5, 0, 2.5, 0.9 ] },
+            "south": { "texture": "#frame", "uv": [ 3, 9, 14.777, 9.9 ] },
+            "west": { "texture": "#frame", "uv": [ 0, 3.5, 1, 4.4 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 5, 13.277, 6 ] },
+            "down": { "texture": "#frame", "uv": [ 2.5, 13, 14.277, 14 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwalePort8",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 8.177, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 7, 1, 15.427, 1.9 ] },
-          "east": { "texture": "#frame", "uv": [ 14.5, 11.5, 15.5, 12.4 ] },
-          "south": { "texture": "#frame", "uv": [ 4, 10, 12.427, 10.9 ] },
-          "west": { "texture": "#frame", "uv": [ 0, 1.5, 1, 2.4 ] },
-          "up": { "texture": "#frame", "uv": [ 1, 3.5, 9.427, 4.5 ] },
-          "down": { "texture": "#frame", "uv": [ 5.5, 9.5, 13.927, 10.5 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwalePort9Frame",
-       "from": [ 38.054, 9.9, 2.624 ],
-       "to": [ 38.054, 9.9, 2.624 ],
-       "rotationOrigin": [ 38.054, 9.9, 2.624 ],
-       "rotationY": -31.698,
-       "rotationZ": 3.241,
-       "faces": {},
-       "children": [
+         "name": "GunwalePort7Frame",
+         "from": [ 19.27, 9.2, -1.216 ],
+         "to": [ 19.27, 9.2, -1.216 ],
+         "rotationOrigin": [ 19.27, 9.2, -1.216 ],
+         "rotationY": -6.801,
+         "rotationZ": 1.514,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort7",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 11.604, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 2.5, 14.5, 14.354, 15.4 ] },
+            "east": { "texture": "#frame", "uv": [ 0.5, 10, 1.5, 10.9 ] },
+            "south": { "texture": "#frame", "uv": [ 0.5, 7.5, 12.354, 8.4 ] },
+            "west": { "texture": "#frame", "uv": [ 13.5, 3.5, 14.5, 4.4 ] },
+            "up": { "texture": "#frame", "uv": [ 4, 10.5, 15.854, 11.5 ] },
+            "down": { "texture": "#frame", "uv": [ 0.5, 7.5, 12.354, 8.5 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwalePort9",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 5.557, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 0.5, 14.5, 6.307, 15.4 ] },
-          "east": { "texture": "#frame", "uv": [ 3, 13, 4, 13.9 ] },
-          "south": { "texture": "#frame", "uv": [ 0, 1.5, 5.807, 2.4 ] },
-          "west": { "texture": "#frame", "uv": [ 7, 6, 8, 6.9 ] },
-          "up": { "texture": "#frame", "uv": [ 5, 13.5, 10.807, 14.5 ] },
-          "down": { "texture": "#frame", "uv": [ 9, 6.5, 14.807, 7.5 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwalePort10Frame",
-       "from": [ 42.562, 10.2, 5.408 ],
-       "to": [ 42.562, 10.2, 5.408 ],
-       "rotationOrigin": [ 42.562, 10.2, 5.408 ],
-       "rotationY": -36.304,
-       "rotationZ": 3.07,
-       "faces": {},
-       "children": [
+         "name": "GunwalePort8Frame",
+         "from": [ 30.54, 9.5, 0.128 ],
+         "to": [ 30.54, 9.5, 0.128 ],
+         "rotationOrigin": [ 30.54, 9.5, 0.128 ],
+         "rotationY": -18.377,
+         "rotationZ": 2.892,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort8",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 8.177, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 7, 1, 15.427, 1.9 ] },
+            "east": { "texture": "#frame", "uv": [ 14.5, 11.5, 15.5, 12.4 ] },
+            "south": { "texture": "#frame", "uv": [ 4, 10, 12.427, 10.9 ] },
+            "west": { "texture": "#frame", "uv": [ 0, 1.5, 1, 2.4 ] },
+            "up": { "texture": "#frame", "uv": [ 1, 3.5, 9.427, 4.5 ] },
+            "down": { "texture": "#frame", "uv": [ 5.5, 9.5, 13.927, 10.5 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwalePort10",
-         "from": [ -0.25, 0, 0 ],
-         "to": [ 3.985, 0.9, 1 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 6, 4.5, 10.235, 5.4 ] },
-          "east": { "texture": "#frame", "uv": [ 0.5, 7.5, 1.5, 8.4 ] },
-          "south": { "texture": "#frame", "uv": [ 3.5, 8.5, 7.735, 9.4 ] },
-          "west": { "texture": "#frame", "uv": [ 4.5, 7, 5.5, 7.9 ] },
-          "up": { "texture": "#frame", "uv": [ 4, 11, 8.235, 12 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 14, 4.735, 15 ] }
-         }
+         "name": "GunwalePort9Frame",
+         "from": [ 38.054, 9.9, 2.624 ],
+         "to": [ 38.054, 9.9, 2.624 ],
+         "rotationOrigin": [ 38.054, 9.9, 2.624 ],
+         "rotationY": -31.698,
+         "rotationZ": 3.241,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort9",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 5.557, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0.5, 14.5, 6.307, 15.4 ] },
+            "east": { "texture": "#frame", "uv": [ 3, 13, 4, 13.9 ] },
+            "south": { "texture": "#frame", "uv": [ 0, 1.5, 5.807, 2.4 ] },
+            "west": { "texture": "#frame", "uv": [ 7, 6, 8, 6.9 ] },
+            "up": { "texture": "#frame", "uv": [ 5, 13.5, 10.807, 14.5 ] },
+            "down": { "texture": "#frame", "uv": [ 9, 6.5, 14.807, 7.5 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwalePort10Frame",
+         "from": [ 42.562, 10.2, 5.408 ],
+         "to": [ 42.562, 10.2, 5.408 ],
+         "rotationOrigin": [ 42.562, 10.2, 5.408 ],
+         "rotationY": -36.304,
+         "rotationZ": 3.07,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwalePort10",
+           "from": [ -0.25, 0, 0 ],
+           "to": [ 3.985, 0.9, 1 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 6, 4.5, 10.235, 5.4 ] },
+            "east": { "texture": "#frame", "uv": [ 0.5, 7.5, 1.5, 8.4 ] },
+            "south": { "texture": "#frame", "uv": [ 3.5, 8.5, 7.735, 9.4 ] },
+            "west": { "texture": "#frame", "uv": [ 4.5, 7, 5.5, 7.9 ] },
+            "up": { "texture": "#frame", "uv": [ 4, 11, 8.235, 12 ] },
+            "down": { "texture": "#frame", "uv": [ 0.5, 14, 4.735, 15 ] }
+           }
+          }
+         ]
         }
        ]
       }
@@ -279,252 +445,418 @@
      "faces": {},
      "children": [
       {
-       "name": "GunwaleStarboard1Frame",
-       "from": [ -29.567, 10.4, 8.384 ],
-       "to": [ -29.567, 10.4, 8.384 ],
-       "rotationOrigin": [ -29.567, 10.4, 8.384 ],
-       "rotationY": -36.304,
-       "rotationZ": -3.07,
+       "name": "Gunwale2At1",
+       "from": [ 0, 0, 0 ],
+       "to": [ 0, 0, 0 ],
+       "rotationOrigin": [ 0, 0, 0 ],
        "faces": {},
        "children": [
         {
-         "name": "GunwaleStarboard1",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 3.985, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 7.5, 14, 11.735, 14.9 ] },
-          "east": { "texture": "#frame", "uv": [ 13.5, 14.5, 14.5, 15.4 ] },
-          "south": { "texture": "#frame", "uv": [ 9.5, 8, 13.735, 8.9 ] },
-          "west": { "texture": "#frame", "uv": [ 13.5, 2.5, 14.5, 3.4 ] },
-          "up": { "texture": "#frame", "uv": [ 7, 3, 11.235, 4 ] },
-          "down": { "texture": "#frame", "uv": [ 3, 2.5, 7.235, 3.5 ] }
-         }
+         "name": "GunwaleStarboard1FrameOpen",
+         "from": [ -29.567, 10.4, 8.384 ],
+         "to": [ -29.567, 10.4, 8.384 ],
+         "rotationOrigin": [ -29.567, 10.4, 8.384 ],
+         "rotationY": -36.304,
+         "rotationZ": -3.07,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard1Open",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 3.985, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 7.5, 14, 11.735, 14.9 ] },
+            "east": { "texture": "#frame", "uv": [ 13.5, 14.5, 14.5, 15.4 ] },
+            "south": { "texture": "#frame", "uv": [ 9.5, 8, 13.735, 8.9 ] },
+            "west": { "texture": "#frame", "uv": [ 13.5, 2.5, 14.5, 3.4 ] },
+            "up": { "texture": "#frame", "uv": [ 7, 3, 11.235, 4 ] },
+            "down": { "texture": "#frame", "uv": [ 3, 2.5, 7.235, 3.5 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwaleStarboard2FrameOpen",
+         "from": [ -26.562, 10.2, 10.592 ],
+         "to": [ -26.562, 10.2, 10.592 ],
+         "rotationOrigin": [ -26.562, 10.2, 10.592 ],
+         "rotationY": -31.698,
+         "rotationZ": -3.241,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard2Open",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 5.557, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 12, 5.807, 12.9 ] },
+            "east": { "texture": "#frame", "uv": [ 9.5, 8, 10.5, 8.9 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 6, 7.307, 6.9 ] },
+            "west": { "texture": "#frame", "uv": [ 13.5, 9, 14.5, 9.9 ] },
+            "up": { "texture": "#frame", "uv": [ 2, 5, 7.807, 6 ] },
+            "down": { "texture": "#frame", "uv": [ 3, 5, 8.807, 6 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwaleStarboard3FrameOpen",
+         "from": [ -22.054, 9.9, 13.376 ],
+         "to": [ -22.054, 9.9, 13.376 ],
+         "rotationOrigin": [ -22.054, 9.9, 13.376 ],
+         "rotationY": -18.377,
+         "rotationZ": -2.892,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard3Open",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 8.177, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 13, 8.427, 13.9 ] },
+            "east": { "texture": "#frame", "uv": [ 5.5, 0, 6.5, 0.9 ] },
+            "south": { "texture": "#frame", "uv": [ 6.5, 11, 14.927, 11.9 ] },
+            "west": { "texture": "#frame", "uv": [ 3.5, 12, 4.5, 12.9 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 14.5, 9.927, 15.5 ] },
+            "down": { "texture": "#frame", "uv": [ 6, 9.5, 14.427, 10.5 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwaleStarboard4FrameOpen",
+         "from": [ -14.54, 9.5, 15.872 ],
+         "to": [ -14.54, 9.5, 15.872 ],
+         "rotationOrigin": [ -14.54, 9.5, 15.872 ],
+         "rotationY": -6.801,
+         "rotationZ": -1.514,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard4Open",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 11.604, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 0.5, 11.854, 1.4 ] },
+            "east": { "texture": "#frame", "uv": [ 7, 5.5, 8, 6.4 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 1.5, 13.354, 2.4 ] },
+            "west": { "texture": "#frame", "uv": [ 5, 2, 6, 2.9 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 10.5, 13.354, 11.5 ] },
+            "down": { "texture": "#frame", "uv": [ 2.5, 2.5, 14.354, 3.5 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwaleStarboard5FrameOpen",
+         "from": [ -3.27, 9.2, 17.216 ],
+         "to": [ -3.27, 9.2, 17.216 ],
+         "rotationOrigin": [ -3.27, 9.2, 17.216 ],
+         "rotationY": -1.951,
+         "rotationZ": -0.508,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard5Open",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 11.527, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 3.5, 6.5, 15.277, 7.4 ] },
+            "east": { "texture": "#frame", "uv": [ 11.5, 4, 12.5, 4.9 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 1, 13.277, 1.9 ] },
+            "west": { "texture": "#frame", "uv": [ 8, 4.5, 9, 5.4 ] },
+            "up": { "texture": "#frame", "uv": [ 4, 11, 15.777, 12 ] },
+            "down": { "texture": "#frame", "uv": [ 1, 9.5, 12.777, 10.5 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwaleStarboardAsternFrame",
+         "from": [ 8, 9.1, 17.6 ],
+         "to": [ 8, 9.1, 17.6 ],
+         "rotationOrigin": [ 8, 9.1, 17.6 ],
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboardAstern",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 39.85, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 5, 16, 5.9 ] },
+            "east": { "texture": "#frame", "uv": [ 5, 11, 6, 11.9 ] },
+            "south": { "texture": "#frame", "uv": [ 0, 8, 16, 8.9 ] },
+            "west": { "texture": "#frame", "uv": [ 6, 7, 7, 7.9 ] },
+            "up": { "texture": "#frame", "uv": [ 0, 6.5, 16, 7.5 ] },
+            "down": { "texture": "#frame", "uv": [ 0, 7.5, 16, 8.5 ] }
+           }
+          }
+         ]
         }
        ]
       },
       {
-       "name": "GunwaleStarboard2Frame",
-       "from": [ -26.562, 10.2, 10.592 ],
-       "to": [ -26.562, 10.2, 10.592 ],
-       "rotationOrigin": [ -26.562, 10.2, 10.592 ],
-       "rotationY": -31.698,
-       "rotationZ": -3.241,
+       "name": "Gunwale2At2",
+       "from": [ 0, 0, 0 ],
+       "to": [ 0, 0, 0 ],
+       "rotationOrigin": [ 0, 0, 0 ],
        "faces": {},
        "children": [
         {
-         "name": "GunwaleStarboard2",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 5.557, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 12, 5.807, 12.9 ] },
-          "east": { "texture": "#frame", "uv": [ 9.5, 8, 10.5, 8.9 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 6, 7.307, 6.9 ] },
-          "west": { "texture": "#frame", "uv": [ 13.5, 9, 14.5, 9.9 ] },
-          "up": { "texture": "#frame", "uv": [ 2, 5, 7.807, 6 ] },
-          "down": { "texture": "#frame", "uv": [ 3, 5, 8.807, 6 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwaleStarboard3Frame",
-       "from": [ -22.054, 9.9, 13.376 ],
-       "to": [ -22.054, 9.9, 13.376 ],
-       "rotationOrigin": [ -22.054, 9.9, 13.376 ],
-       "rotationY": -18.377,
-       "rotationZ": -2.892,
-       "faces": {},
-       "children": [
+         "name": "GunwaleStarboard1Frame",
+         "from": [ -29.567, 10.4, 8.384 ],
+         "to": [ -29.567, 10.4, 8.384 ],
+         "rotationOrigin": [ -29.567, 10.4, 8.384 ],
+         "rotationY": -36.304,
+         "rotationZ": -3.07,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard1",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 3.985, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 7.5, 14, 11.735, 14.9 ] },
+            "east": { "texture": "#frame", "uv": [ 13.5, 14.5, 14.5, 15.4 ] },
+            "south": { "texture": "#frame", "uv": [ 9.5, 8, 13.735, 8.9 ] },
+            "west": { "texture": "#frame", "uv": [ 13.5, 2.5, 14.5, 3.4 ] },
+            "up": { "texture": "#frame", "uv": [ 7, 3, 11.235, 4 ] },
+            "down": { "texture": "#frame", "uv": [ 3, 2.5, 7.235, 3.5 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwaleStarboard3",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 8.177, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 13, 8.427, 13.9 ] },
-          "east": { "texture": "#frame", "uv": [ 5.5, 0, 6.5, 0.9 ] },
-          "south": { "texture": "#frame", "uv": [ 6.5, 11, 14.927, 11.9 ] },
-          "west": { "texture": "#frame", "uv": [ 3.5, 12, 4.5, 12.9 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 14.5, 9.927, 15.5 ] },
-          "down": { "texture": "#frame", "uv": [ 6, 9.5, 14.427, 10.5 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwaleStarboard4Frame",
-       "from": [ -14.54, 9.5, 15.872 ],
-       "to": [ -14.54, 9.5, 15.872 ],
-       "rotationOrigin": [ -14.54, 9.5, 15.872 ],
-       "rotationY": -6.801,
-       "rotationZ": -1.514,
-       "faces": {},
-       "children": [
+         "name": "GunwaleStarboard2Frame",
+         "from": [ -26.562, 10.2, 10.592 ],
+         "to": [ -26.562, 10.2, 10.592 ],
+         "rotationOrigin": [ -26.562, 10.2, 10.592 ],
+         "rotationY": -31.698,
+         "rotationZ": -3.241,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard2",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 5.557, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 12, 5.807, 12.9 ] },
+            "east": { "texture": "#frame", "uv": [ 9.5, 8, 10.5, 8.9 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 6, 7.307, 6.9 ] },
+            "west": { "texture": "#frame", "uv": [ 13.5, 9, 14.5, 9.9 ] },
+            "up": { "texture": "#frame", "uv": [ 2, 5, 7.807, 6 ] },
+            "down": { "texture": "#frame", "uv": [ 3, 5, 8.807, 6 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwaleStarboard4",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 11.604, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 0, 0.5, 11.854, 1.4 ] },
-          "east": { "texture": "#frame", "uv": [ 7, 5.5, 8, 6.4 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 1.5, 13.354, 2.4 ] },
-          "west": { "texture": "#frame", "uv": [ 5, 2, 6, 2.9 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 10.5, 13.354, 11.5 ] },
-          "down": { "texture": "#frame", "uv": [ 2.5, 2.5, 14.354, 3.5 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwaleStarboard5Frame",
-       "from": [ -3.27, 9.2, 17.216 ],
-       "to": [ -3.27, 9.2, 17.216 ],
-       "rotationOrigin": [ -3.27, 9.2, 17.216 ],
-       "rotationY": -1.951,
-       "rotationZ": -0.508,
-       "faces": {},
-       "children": [
+         "name": "GunwaleStarboard3Frame",
+         "from": [ -22.054, 9.9, 13.376 ],
+         "to": [ -22.054, 9.9, 13.376 ],
+         "rotationOrigin": [ -22.054, 9.9, 13.376 ],
+         "rotationY": -18.377,
+         "rotationZ": -2.892,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard3",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 8.177, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 13, 8.427, 13.9 ] },
+            "east": { "texture": "#frame", "uv": [ 5.5, 0, 6.5, 0.9 ] },
+            "south": { "texture": "#frame", "uv": [ 6.5, 11, 14.927, 11.9 ] },
+            "west": { "texture": "#frame", "uv": [ 3.5, 12, 4.5, 12.9 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 14.5, 9.927, 15.5 ] },
+            "down": { "texture": "#frame", "uv": [ 6, 9.5, 14.427, 10.5 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwaleStarboard5",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 11.527, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 6.5, 15.277, 7.4 ] },
-          "east": { "texture": "#frame", "uv": [ 11.5, 4, 12.5, 4.9 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 1, 13.277, 1.9 ] },
-          "west": { "texture": "#frame", "uv": [ 8, 4.5, 9, 5.4 ] },
-          "up": { "texture": "#frame", "uv": [ 4, 11, 15.777, 12 ] },
-          "down": { "texture": "#frame", "uv": [ 1, 9.5, 12.777, 10.5 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwaleStarboard6Frame",
-       "from": [ 8, 9.1, 17.6 ],
-       "to": [ 8, 9.1, 17.6 ],
-       "rotationOrigin": [ 8, 9.1, 17.6 ],
-       "rotationY": 1.951,
-       "rotationZ": 0.508,
-       "faces": {},
-       "children": [
+         "name": "GunwaleStarboard4Frame",
+         "from": [ -14.54, 9.5, 15.872 ],
+         "to": [ -14.54, 9.5, 15.872 ],
+         "rotationOrigin": [ -14.54, 9.5, 15.872 ],
+         "rotationY": -6.801,
+         "rotationZ": -1.514,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard4",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 11.604, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 0, 0.5, 11.854, 1.4 ] },
+            "east": { "texture": "#frame", "uv": [ 7, 5.5, 8, 6.4 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 1.5, 13.354, 2.4 ] },
+            "west": { "texture": "#frame", "uv": [ 5, 2, 6, 2.9 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 10.5, 13.354, 11.5 ] },
+            "down": { "texture": "#frame", "uv": [ 2.5, 2.5, 14.354, 3.5 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwaleStarboard6",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 11.527, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 2, 7, 13.777, 7.9 ] },
-          "east": { "texture": "#frame", "uv": [ 10, 3, 11, 3.9 ] },
-          "south": { "texture": "#frame", "uv": [ 1.5, 0.5, 13.277, 1.4 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 12.5, 7.5, 13.4 ] },
-          "up": { "texture": "#frame", "uv": [ 0.5, 7, 12.277, 8 ] },
-          "down": { "texture": "#frame", "uv": [ 4, 13.5, 15.777, 14.5 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwaleStarboard7Frame",
-       "from": [ 19.27, 9.2, 17.216 ],
-       "to": [ 19.27, 9.2, 17.216 ],
-       "rotationOrigin": [ 19.27, 9.2, 17.216 ],
-       "rotationY": 6.801,
-       "rotationZ": 1.514,
-       "faces": {},
-       "children": [
+         "name": "GunwaleStarboard5Frame",
+         "from": [ -3.27, 9.2, 17.216 ],
+         "to": [ -3.27, 9.2, 17.216 ],
+         "rotationOrigin": [ -3.27, 9.2, 17.216 ],
+         "rotationY": -1.951,
+         "rotationZ": -0.508,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard5",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 11.527, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 3.5, 6.5, 15.277, 7.4 ] },
+            "east": { "texture": "#frame", "uv": [ 11.5, 4, 12.5, 4.9 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 1, 13.277, 1.9 ] },
+            "west": { "texture": "#frame", "uv": [ 8, 4.5, 9, 5.4 ] },
+            "up": { "texture": "#frame", "uv": [ 4, 11, 15.777, 12 ] },
+            "down": { "texture": "#frame", "uv": [ 1, 9.5, 12.777, 10.5 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwaleStarboard7",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 11.604, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 8.5, 15.354, 9.4 ] },
-          "east": { "texture": "#frame", "uv": [ 4, 0, 5, 0.9 ] },
-          "south": { "texture": "#frame", "uv": [ 3.5, 5.5, 15.354, 6.4 ] },
-          "west": { "texture": "#frame", "uv": [ 6.5, 13, 7.5, 13.9 ] },
-          "up": { "texture": "#frame", "uv": [ 1.5, 13, 13.354, 14 ] },
-          "down": { "texture": "#frame", "uv": [ 0.5, 0, 12.354, 1 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwaleStarboard8Frame",
-       "from": [ 30.54, 9.5, 15.872 ],
-       "to": [ 30.54, 9.5, 15.872 ],
-       "rotationOrigin": [ 30.54, 9.5, 15.872 ],
-       "rotationY": 18.377,
-       "rotationZ": 2.892,
-       "faces": {},
-       "children": [
+         "name": "GunwaleStarboard6Frame",
+         "from": [ 8, 9.1, 17.6 ],
+         "to": [ 8, 9.1, 17.6 ],
+         "rotationOrigin": [ 8, 9.1, 17.6 ],
+         "rotationY": 1.951,
+         "rotationZ": 0.508,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard6",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 11.527, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 2, 7, 13.777, 7.9 ] },
+            "east": { "texture": "#frame", "uv": [ 10, 3, 11, 3.9 ] },
+            "south": { "texture": "#frame", "uv": [ 1.5, 0.5, 13.277, 1.4 ] },
+            "west": { "texture": "#frame", "uv": [ 6.5, 12.5, 7.5, 13.4 ] },
+            "up": { "texture": "#frame", "uv": [ 0.5, 7, 12.277, 8 ] },
+            "down": { "texture": "#frame", "uv": [ 4, 13.5, 15.777, 14.5 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwaleStarboard8",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 8.177, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 5.5, 6, 13.927, 6.9 ] },
-          "east": { "texture": "#frame", "uv": [ 9.5, 2, 10.5, 2.9 ] },
-          "south": { "texture": "#frame", "uv": [ 2.5, 0.5, 10.927, 1.4 ] },
-          "west": { "texture": "#frame", "uv": [ 4.5, 7, 5.5, 7.9 ] },
-          "up": { "texture": "#frame", "uv": [ 7, 13, 15.427, 14 ] },
-          "down": { "texture": "#frame", "uv": [ 7, 9, 15.427, 10 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwaleStarboard9Frame",
-       "from": [ 38.054, 9.9, 13.376 ],
-       "to": [ 38.054, 9.9, 13.376 ],
-       "rotationOrigin": [ 38.054, 9.9, 13.376 ],
-       "rotationY": 31.698,
-       "rotationZ": 3.241,
-       "faces": {},
-       "children": [
+         "name": "GunwaleStarboard7Frame",
+         "from": [ 19.27, 9.2, 17.216 ],
+         "to": [ 19.27, 9.2, 17.216 ],
+         "rotationOrigin": [ 19.27, 9.2, 17.216 ],
+         "rotationY": 6.801,
+         "rotationZ": 1.514,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard7",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 11.604, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 3.5, 8.5, 15.354, 9.4 ] },
+            "east": { "texture": "#frame", "uv": [ 4, 0, 5, 0.9 ] },
+            "south": { "texture": "#frame", "uv": [ 3.5, 5.5, 15.354, 6.4 ] },
+            "west": { "texture": "#frame", "uv": [ 6.5, 13, 7.5, 13.9 ] },
+            "up": { "texture": "#frame", "uv": [ 1.5, 13, 13.354, 14 ] },
+            "down": { "texture": "#frame", "uv": [ 0.5, 0, 12.354, 1 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwaleStarboard9",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 5.557, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 9.5, 9.307, 10.4 ] },
-          "east": { "texture": "#frame", "uv": [ 9, 10, 10, 10.9 ] },
-          "south": { "texture": "#frame", "uv": [ 3.5, 0.5, 9.307, 1.4 ] },
-          "west": { "texture": "#frame", "uv": [ 2.5, 13, 3.5, 13.9 ] },
-          "up": { "texture": "#frame", "uv": [ 3.5, 6.5, 9.307, 7.5 ] },
-          "down": { "texture": "#frame", "uv": [ 4.5, 9.5, 10.307, 10.5 ] }
-         }
-        }
-       ]
-      },
-      {
-       "name": "GunwaleStarboard10Frame",
-       "from": [ 42.562, 10.2, 10.592 ],
-       "to": [ 42.562, 10.2, 10.592 ],
-       "rotationOrigin": [ 42.562, 10.2, 10.592 ],
-       "rotationY": 36.304,
-       "rotationZ": 3.07,
-       "faces": {},
-       "children": [
+         "name": "GunwaleStarboard8Frame",
+         "from": [ 30.54, 9.5, 15.872 ],
+         "to": [ 30.54, 9.5, 15.872 ],
+         "rotationOrigin": [ 30.54, 9.5, 15.872 ],
+         "rotationY": 18.377,
+         "rotationZ": 2.892,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard8",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 8.177, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 5.5, 6, 13.927, 6.9 ] },
+            "east": { "texture": "#frame", "uv": [ 9.5, 2, 10.5, 2.9 ] },
+            "south": { "texture": "#frame", "uv": [ 2.5, 0.5, 10.927, 1.4 ] },
+            "west": { "texture": "#frame", "uv": [ 4.5, 7, 5.5, 7.9 ] },
+            "up": { "texture": "#frame", "uv": [ 7, 13, 15.427, 14 ] },
+            "down": { "texture": "#frame", "uv": [ 7, 9, 15.427, 10 ] }
+           }
+          }
+         ]
+        },
         {
-         "name": "GunwaleStarboard10",
-         "from": [ -0.25, 0, -1 ],
-         "to": [ 3.985, 0.9, 0 ],
-         "rotationOrigin": [ 0, 0, 0 ],
-         "faces": {
-          "north": { "texture": "#frame", "uv": [ 3.5, 5, 7.735, 5.9 ] },
-          "east": { "texture": "#frame", "uv": [ 5.5, 14.5, 6.5, 15.4 ] },
-          "south": { "texture": "#frame", "uv": [ 9.5, 7, 13.735, 7.9 ] },
-          "west": { "texture": "#frame", "uv": [ 9, 13, 10, 13.9 ] },
-          "up": { "texture": "#frame", "uv": [ 3, 12, 7.235, 13 ] },
-          "down": { "texture": "#frame", "uv": [ 0, 0, 4.235, 1 ] }
-         }
+         "name": "GunwaleStarboard9Frame",
+         "from": [ 38.054, 9.9, 13.376 ],
+         "to": [ 38.054, 9.9, 13.376 ],
+         "rotationOrigin": [ 38.054, 9.9, 13.376 ],
+         "rotationY": 31.698,
+         "rotationZ": 3.241,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard9",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 5.557, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 3.5, 9.5, 9.307, 10.4 ] },
+            "east": { "texture": "#frame", "uv": [ 9, 10, 10, 10.9 ] },
+            "south": { "texture": "#frame", "uv": [ 3.5, 0.5, 9.307, 1.4 ] },
+            "west": { "texture": "#frame", "uv": [ 2.5, 13, 3.5, 13.9 ] },
+            "up": { "texture": "#frame", "uv": [ 3.5, 6.5, 9.307, 7.5 ] },
+            "down": { "texture": "#frame", "uv": [ 4.5, 9.5, 10.307, 10.5 ] }
+           }
+          }
+         ]
+        },
+        {
+         "name": "GunwaleStarboard10Frame",
+         "from": [ 42.562, 10.2, 10.592 ],
+         "to": [ 42.562, 10.2, 10.592 ],
+         "rotationOrigin": [ 42.562, 10.2, 10.592 ],
+         "rotationY": 36.304,
+         "rotationZ": 3.07,
+         "faces": {},
+         "children": [
+          {
+           "name": "GunwaleStarboard10",
+           "from": [ -0.25, 0, -1 ],
+           "to": [ 3.985, 0.9, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {
+            "north": { "texture": "#frame", "uv": [ 3.5, 5, 7.735, 5.9 ] },
+            "east": { "texture": "#frame", "uv": [ 5.5, 14.5, 6.5, 15.4 ] },
+            "south": { "texture": "#frame", "uv": [ 9.5, 7, 13.735, 7.9 ] },
+            "west": { "texture": "#frame", "uv": [ 9, 13, 10, 13.9 ] },
+            "up": { "texture": "#frame", "uv": [ 3, 12, 7.235, 13 ] },
+            "down": { "texture": "#frame", "uv": [ 0, 0, 4.235, 1 ] }
+           }
+          }
+         ]
         }
        ]
       }

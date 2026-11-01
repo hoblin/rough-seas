@@ -45,16 +45,28 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
         });
 
     public override VesselPart[] Built(VesselPart[] designed) =>
-        base.Built(designed).Select(part => part.Name == rig.FloatPart && FloatWood is { } wood ? part.As(WoodPrefix + wood, 1) : part).ToArray();
+        base.Built(designed).Select(part => part.Name == rig.FloatPart && FloatWood is { } wood ? part.As(WoodPrefix + wood, FloatShare(stage => stage.WoodLitres)) : part).ToArray();
+
+    public override double WaterplaneSquareMetres(double designed) =>
+        FloatStage is { WaterlineSquareMetres: { Length: > 0 } waterline } stage
+            ? designed + waterline[framing.Laid(stage)] - waterline[^1]
+            : designed;
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
-        if (entity.Api is ICoreClientAPI capi && FloatWood is { } wood)
+        if (entity.Api is not ICoreClientAPI capi || FloatWood is not { } wood) return;
+
+        foreach (var (part, face) in new[] { (WoodTexture.Float, WoodTexture.BareSide), (WoodTexture.FloatBark, WoodTexture.Bark), (WoodTexture.FloatRings, WoodTexture.Rings) })
         {
-            WoodTexture.Draw(capi, ref entityShape, ref shapeIsCloned, WoodTexture.Float, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas);
+            WoodTexture.Draw(capi, ref entityShape, ref shapeIsCloned, part, wood, entity.Properties.Client.Textures, capi.EntityTextureAtlas, face);
         }
     }
+
+    private FramingStage? FloatStage => framing.Stages.FirstOrDefault(stage => stage.Group == rig.FloatStage);
+
+    private double FloatShare(System.Func<FramingStage, double[]> measured) =>
+        FloatStage is { } stage && measured(stage) is { Length: > 0 } values ? values[framing.Laid(stage)] / values[^1] : 1;
 
     protected override FramingConfig Configure(JsonObject attributes) => rig = attributes.AsObject<RiggingConfig>(new RiggingConfig());
 
@@ -66,6 +78,9 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 public class RiggingConfig : FramingConfig
 {
     public string FloatPart = "";
+
+    /// <summary>The stage that hews the float from its logs: its passes measure what wood is left and how wide it stands at the water.</summary>
+    public string FloatStage = "";
 
     public int FloatLogs;
 

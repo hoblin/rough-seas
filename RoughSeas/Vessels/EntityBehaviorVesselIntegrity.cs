@@ -90,6 +90,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public HullModel Model => model;
 
+    /// <summary>How much water her material can soak up before, with nothing aboard, it no longer holds her up.</summary>
+    public double SoakToSinkKg => flotation.BuoyantKg - build.Kilograms;
+
     /// <summary>What the hull's surface is made of, as its JSON's <c>damage.material</c> names it: wood unless set.</summary>
     public string Material { get; private set; } = "wood";
 

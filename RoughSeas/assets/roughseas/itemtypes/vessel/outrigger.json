@@ -2,13 +2,18 @@
     "code": "outrigger",
     "class": "roughseas:ItemVessel",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
-    "attributes": {"handbook": {"groupBy": ["outrigger-*"]}, "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "plank": "inside-north"}},
+    "attributes": {"handbook": {"groupBy": ["outrigger-*"]}, "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "plank": "inside-north"}},
     "durability": 100,
     "maxstacksize": 1,
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater", "Bilge", "SailUnfurled", "SailHalf", "Blunt"]},
+    "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": [
+        "hideWater", "Bilge", "SailUnfurled", "SailHalf", "FloatLog", "Hewing1", "Hewing2", "Hewing3", "Hewing4", "Hewing5",
+        "Booms1At0", "Booms1At1", "Booms1At2", "Booms1At3", "Booms1At4", "Booms1At5",
+        "Booms2At0", "Booms2At1", "Booms2At2", "Booms2At3", "Booms2At4", "Booms2At5",
+        "Booms3At0", "Booms3At1", "Booms3At2", "Booms3At3", "Booms3At4", "Booms3At5"
+    ]},
     "textures": {
         "sail": {"base": "game:block/cloth/linen/plain"},
         "lashing": {"base": "game:item/resource/rope"},

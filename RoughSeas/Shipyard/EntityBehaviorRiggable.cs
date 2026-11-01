@@ -51,6 +51,12 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         return null;
     }
 
+    public static (double X, double Z) OntoRow(double x, double z, double yaw, double offMetres, BlockPos centre)
+    {
+        var (floatX, floatZ) = HullShape.ToWorld(0, offMetres, yaw);
+        return (centre.X + 0.5 - x - floatX, centre.Z + 0.5 - z - floatZ);
+    }
+
     public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
     {
         if (rig == null || slot.Itemstack?.Collectible is not { } pole || !WildcardUtil.Match(new AssetLocation(rig.Poles), pole.Code)) return null;
@@ -73,6 +79,9 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         var rigged = world.ClassRegistry.CreateEntity(successor);
         rigged.Pos.SetFrom(entity.Pos);
         if (endForEnd) rigged.Pos.Yaw = GameMath.Mod(entity.Pos.Yaw + GameMath.PI, GameMath.TWOPI);
+        var (dx, dz) = OntoRow(rigged.Pos.X, rigged.Pos.Z, rigged.Pos.Yaw, rig.FloatOffMetres, row.Centre);
+        rigged.Pos.X += dx;
+        rigged.Pos.Z += dz;
         foreach (var state in entity.SidedProperties.Behaviors.OfType<IHandedOver>()) state.HandOver(rigged, endForEnd);
         EntityBehaviorRigging.Begin(rigged, rig, poleWood, row.Wood.Code);
 
@@ -85,8 +94,8 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         world.SpawnEntity(rigged);
         entity.Die(EnumDespawnReason.Removed);
         world.PlaySoundAt(new AssetLocation("game:sounds/player/build"), rigged, null, true, 16);
-        shipyard.Log(rigged, "rigged by {0} from {1} {2}{3}: a boom of {4} across her joins a float of {5} {6} logs", byEntity.GetName(),
-            entity.Code, entity.EntityId, endForEnd ? ", turned end for end" : "", poleWood, row.Length, row.Wood.Code);
+        shipyard.Log(rigged, "rigged by {0} from {1} {2}{3}: a boom of {4} across her joins a float of {5} {6} logs, her hull moved {7:F2} m onto them",
+            byEntity.GetName(), entity.Code, entity.EntityId, endForEnd ? ", turned end for end" : "", poleWood, row.Length, row.Wood.Code, Math.Sqrt(dx * dx + dz * dz));
     }
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled) =>

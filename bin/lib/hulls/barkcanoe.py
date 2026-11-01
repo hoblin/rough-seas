@@ -1,7 +1,7 @@
 import math
 
 from physics import afloat, kilograms
-from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, group, path, plank, span, stages
+from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, group, path, plank, renamed, span, stages
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -130,13 +130,6 @@ def frame_pieces(hull):
         gunwale(hull, "OutwalePort", -1, False),
         gunwale(hull, "OutwaleStarboard", 1, False),
     ]
-
-
-def renamed(element, suffix):
-    copy = dict(element, name=element["name"] + suffix)
-    if "children" in element:
-        copy["children"] = [renamed(child, suffix) for child in element["children"]]
-    return copy
 
 
 def raising():

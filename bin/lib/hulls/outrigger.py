@@ -1,19 +1,27 @@
 import math
 from pathlib import Path
 
-from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, log
-from shape import BILGE, Hull, Shape, beam, box, group, path, plank, run, stages
+from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, deck, log, volumes
+from physics import afloat, kilograms
+from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, group, path, plank, run, stages
 
 VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
+HITBOX_METRES = 0.6
 
+LOG = 16
 FLOAT_Z = 40
 FLOAT_Y = 2.9
 FLOAT_DIAMETER = 4.8
 FLOAT_FROM, FLOAT_TO = -16, 32
 TAPER = 6
+TAPER_STEP = 2
+HEWINGS = 6
+ROUNDED = 0.68
 BOOMS = (9.5, -10, 24)
 BOOM = 1.4
+POLE = 1.4
+SPAR = 1.2
 MAST = (12, 8)
 MASTHEAD = 49
 SPAR_METRES = 3
@@ -42,25 +50,84 @@ YARD_END = spar_end(55)
 SPAR_END = spar_end(3.6)
 
 
-def float_body():
-    centre = lambda x: (x, FLOAT_Y, FLOAT_Z)
-    body = beam("FloatBody", centre(FLOAT_FROM + TAPER), centre(FLOAT_TO - TAPER), FLOAT_DIAMETER, FLOAT_DIAMETER, "float",
-                rounded=True, overlap=0)
-    blunt = [[beam(f"BluntEnd{n}", centre(a), centre(b), FLOAT_DIAMETER, FLOAT_DIAMETER, "float", rounded=True, overlap=0)]
-             for n, (a, b) in enumerate([(FLOAT_FROM, FLOAT_FROM + TAPER), (FLOAT_TO - TAPER, FLOAT_TO)], 1)]
-    return group("Float", (0, 0, 0), (0, 0, 0), [body]), stages("Blunt", blunt)
+def worked(n):
+    return n / HEWINGS
 
 
-def hewn_end(name, start, direction):
-    points = [(start + direction * step, FLOAT_Y + lift, FLOAT_Z) for step, lift in ((0, 0), (TAPER / 2, 0.5), (TAPER, 1.4))]
-    girth = [FLOAT_DIAMETER, FLOAT_DIAMETER * 0.65]
-    return path(name, points, lambda i: girth[i - 1], lambda i: girth[i - 1], "float", rounded=True)
+def tapered(x):
+    return max(0, FLOAT_FROM + TAPER - x, x - (FLOAT_TO - TAPER)) / TAPER
 
 
-def boom(name, x):
-    float_top = FLOAT_Y + FLOAT_DIAMETER / 2 + BOOM / 2
-    points = [(x, RIM + 0.6, 0.5), (x, RIM + 1.4, 14.5), (x, RIM + 0.6, 30), (x, float_top, FLOAT_Z + 2.5)]
+def hewn(x, n):
+    """The float's section at x after n passes: its half-width, bottom and top, each worked n/6 of the way from the
+    square logs to the round float, whose ends are hewn to a lifted point."""
+    t = tapered(x)
+    girth, centre = FLOAT_DIAMETER * (1 - 0.35 * t), FLOAT_Y + 1.4 * t
+    w = worked(n)
+    return LOG / 2 + (girth / 2 - LOG / 2) * w, (centre - girth / 2) * w, LOG + (centre + girth / 2 - LOG) * w
+
+
+def float_cuts():
+    ends = [FLOAT_FROM + k * TAPER_STEP for k in range(TAPER // TAPER_STEP + 1)]
+    return ends + [FLOAT_TO - TAPER + k * TAPER_STEP for k in range(TAPER // TAPER_STEP + 1)]
+
+
+def float_top(n):
+    return hewn((FLOAT_FROM + FLOAT_TO) / 2, n)[2]
+
+
+def log_faces(x0, x1):
+    return {"north": "floatbark", "south": "floatbark", "up": "floatbark", "down": "floatbark",
+            "west": "floatrings" if x0 <= FLOAT_FROM else "floatbark", "east": "floatrings" if x1 >= FLOAT_TO else "floatbark"}
+
+
+def float_pass(n):
+    elements, litres, waterline = [], 0, 0
+    roundness = 1 - (1 - ROUNDED) * worked(n)
+    cuts = float_cuts()
+    for i, (x0, x1) in enumerate(zip(cuts, cuts[1:]), 1):
+        half, low, high = hewn((x0 + x1) / 2, n)
+        middle, rise = (low + high) / 2, (high - low) / 2
+        if n == 0:
+            elements.append(box(f"FloatLogx{i}", (x0, low, FLOAT_Z - half), (x1, high, FLOAT_Z + half), log_faces(x0, x1)))
+        else:
+            elements.append(box(f"Hewn{n}x{i}", (x0, middle - rise * roundness, FLOAT_Z - half), (x1, middle + rise * roundness, FLOAT_Z + half), "float"))
+            elements.append(box(f"Hewn{n}x{i}Round", (x0, low, FLOAT_Z - half * roundness), (x1, high, FLOAT_Z + half * roundness), "float"))
+        litres += (x1 - x0) * 2 * half * 2 * rise * roundness * (2 - roundness) * VOXEL_METRES_CUBED_LITRES
+        waterline += (x1 - x0) * 2 * half * VOXEL_METRES ** 2
+    return elements, round(litres, 1), round(waterline, 3)
+
+
+def hewing():
+    logs, litres, waterline = float_pass(0)
+    passes = []
+    for n in range(1, HEWINGS + 1):
+        elements, wood, plane = float_pass(n)
+        piece = group(f"Hewing{n}", (0, 0, 0), (0, 0, 0), elements)
+        piece["woodLitres"], piece["waterlineSquareMetres"] = wood, plane
+        passes.append(piece)
+    stage = group("Hewing", (0, 0, 0), (0, 0, 0), passes)
+    stage["woodLitres"], stage["waterlineSquareMetres"] = litres, waterline
+    print(f"float: three logs {litres:.0f} L, {waterline:.2f} m² at the water, hewn in {HEWINGS} passes to "
+          f"{passes[-1]['woodLitres']:.0f} L, {passes[-1]['waterlineSquareMetres']:.2f} m²")
+    return group("FloatLog", (0, 0, 0), (0, 0, 0), [group("FloatLog1", (0, 0, 0), (0, 0, 0), logs)]), stage
+
+
+def boom(name, x, n):
+    """A crooked pole over her gunwales, resting on the float's top as the passes leave it."""
+    end = float_top(n) + BOOM / 2
+    points = [(x, RIM + 0.6, 0.5), (x, RIM + 1.4, 14.5), (x, max(RIM + 0.6, end), 30), (x, end, FLOAT_Z + 2.5)]
     return path(name, points, BOOM, BOOM, "frame")
+
+
+def booms():
+    pieces = []
+    for n, x in enumerate(BOOMS, 1):
+        piece = group(f"Booms{n}", (0, 0, 0), (0, 0, 0),
+                      [group(f"Booms{n}At{k}", (0, 0, 0), (0, 0, 0), boom(f"Boom{n}At{k}x", x, k)) for k in range(HEWINGS + 1)])
+        piece["metres"] = stages("Measure", [boom(f"Boom{n}x", x, HEWINGS)])["children"][0]["metres"]
+        pieces.append(piece)
+    return group("Booms", (0, 0, 0), (0, 0, 0), pieces)
 
 
 def lashing(name, x, z, low, high):
@@ -146,10 +213,10 @@ def furled():
 def mast():
     x, z = MAST
     return [
-        run("MastPole", (x - 1, 1.4, z - 1), (x + 1, MASTHEAD, z + 1), "frame", axis="y")
+        run("MastPole", (x - POLE / 2, 1.4, z - POLE / 2), (x + POLE / 2, MASTHEAD, z + POLE / 2), "frame", axis="y")
         + [box("MastStep", (x - 2, 1, z - 2), (x + 2, 2.4, z + 2), WOOD)],
-        [rig("Yard", [beam("YardSpar", (*TACK, 8), (*YARD_END, 8), 1.2, 1.2, "frame")])],
-        [rig("Boom", [beam("BoomSpar", (TACK[0], TACK[1] - 0.6, 8), (*SPAR_END, 8), 1.2, 1.2, "frame")])],
+        [rig("Yard", [beam("YardSpar", (*TACK, 8), (*YARD_END, 8), SPAR, SPAR, "frame")])],
+        [rig("Boom", [beam("BoomSpar", (TACK[0], TACK[1] - 0.6, 8), (*SPAR_END, 8), SPAR, SPAR, "frame")])],
     ]
 
 
@@ -185,13 +252,24 @@ def strakes(hull):
             low = lambda point: (point[0], point[1] - 0.6, point[2])
             planks.append([plank(f"Strake{label}{len(planks) + 1}", low(a), low(b), STRAKE + 0.6, STRAKE_THICKNESS, 0, side, "plank", "plank")])
             x = end
-    for label, slices in ENDS.items():
-        x0, x1 = sorted((min(piece[0] for piece in slices), max(piece[1] for piece in slices)))
-        half = slices[0][2]
+    for label, x, inward in (("Stern", HOLLOW[0], 1), ("Bow", HOLLOW[1], -1)):
+        half = end_half(hull, x)
+        x0, x1 = sorted((x, x - inward * STRAKE_THICKNESS))
         planks.append([box(f"Strake{label}", (x0, RIM - 0.6, CENTRE - half), (x1, RIM + STRAKE, CENTRE + half), "plank")])
     extra = 2 * (GUNWALE - WALL) * STRAKE * (HOLLOW[1] - HOLLOW[0]) * VOXEL_METRES ** 3 * 1000
-    print(f"washstrakes: {len(planks)} planks of a metre, the sides and an end piece at bow and stern, {STRAKE * VOXEL_METRES * 100:.0f} cm raising her side, {extra:.0f} L more hold")
+    print(f"washstrakes: {len(planks)} planks of a metre, the sides and a board across each end of her hollow, "
+          f"{STRAKE * VOXEL_METRES * 100:.0f} cm raising her side, {extra:.0f} L more hold, {strake_litres(hull):.1f} L of plank")
     return planks
+
+
+def end_half(hull, x):
+    return abs(sheer(hull, x, 1)[2] - CENTRE)
+
+
+def strake_litres(hull):
+    sides = 2 * (HOLLOW[1] - HOLLOW[0])
+    ends = sum(2 * end_half(hull, x) for x in HOLLOW)
+    return (sides + ends) * (STRAKE + 0.6) * STRAKE_THICKNESS * VOXEL_METRES_CUBED_LITRES
 
 
 def seams(hull):
@@ -203,17 +281,13 @@ def seams(hull):
             z0, z1 = sorted((z - side * (WALL + 0.3), z + side * (STRAKE_THICKNESS + 0.3)))
             stitches.append(box(f"Stitch{label}{n}", (x - 0.2, y - 0.9, z0), (x + 0.2, y + 0.4, z1), "lashing", grain="y"))
             x, n = x + STITCH_PITCH, n + 1
-    for label, slices in ENDS.items():
-        x0, x1 = sorted((min(piece[0] for piece in slices), max(piece[1] for piece in slices)))
-        half = slices[0][2]
-        for side in (-1, 1):
-            x, n = x0 + STITCH_PITCH / 2, 1
-            while x < x1:
-                z = CENTRE + side * half
-                z0, z1 = sorted((z - side * 0.3, z + side * 0.3))
-                stitches.append(box(f"Stitch{label}{'Port' if side < 0 else 'Starboard'}{n}", (x - 0.2, RIM - 0.9, z0), (x + 0.2, RIM + 0.4, z1),
-                                    "lashing", grain="y"))
-                x, n = x + STITCH_PITCH, n + 1
+    for label, x in (("Stern", HOLLOW[0]), ("Bow", HOLLOW[1])):
+        half = end_half(hull, x)
+        z, n = CENTRE - half + STITCH_PITCH / 2, 1
+        while z < CENTRE + half:
+            stitches.append(box(f"Stitch{label}{n}", (x - 0.3 - STRAKE_THICKNESS, RIM - 0.9, z - 0.2), (x + 0.3 + STRAKE_THICKNESS, RIM + 0.4, z + 0.2),
+                                "lashing", grain="y"))
+            z, n = z + STITCH_PITCH, n + 1
     metres = len(stitches) * STITCH_TURN_METRES
     ropes = math.ceil(metres / ROPE_METRES)
     print(f"seams: {len(stitches)} stitches {STITCH_PITCH * VOXEL_METRES * 100:.1f} cm apart, {metres:.0f} m of cord, {ropes} ropes")
@@ -225,17 +299,18 @@ def build(target):
         WOOD: "game:block/wood/debarked/oak",
         "frame": "game:block/wood/debarked/oak",
         "float": "game:block/wood/debarked/oak",
+        "floatbark": "game:block/wood/bark/oak-h",
+        "floatrings": "game:block/wood/treetrunk/oak",
         "sail": "game:block/cloth/linen/plain",
         "lashing": "game:item/resource/rope",
         "plank": "game:block/wood/planks/oak1",
         "bilge": BILGE,
     })
     hull = Hull("Side", STATIONS, 8, WALL, WOOD, WOOD, edge=WOOD)
+    logs, passes = hewing()
     shape.add(*log(hull))
-    shape.add(*float_body())
-    shape.add(stages("Booms", [boom(f"Boom{n}x", x) for n, x in enumerate(BOOMS, 1)]))
+    shape.add(logs, booms(), passes)
     shape.add(stages("Lashing", lashings()))
-    shape.add(stages("Ends", [hewn_end("HewnBow", FLOAT_FROM + TAPER, -1), hewn_end("HewnStern", FLOAT_TO - TAPER, 1)]))
     shape.add(stages("Mast", mast()))
     shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
     shape.add(stages("Stays", stays()))
@@ -244,6 +319,28 @@ def build(target):
     shape.keep("Hull", "FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage")
     shape.write()
+    report(hull, passes["children"][-1])
+
+
+def pole_litres():
+    boom_length = sum(math.dist(a, b) for a, b in zip(boom_points(), boom_points()[1:])) * len(BOOMS)
+    spars = 2 * SPAR_METRES / VOXEL_METRES
+    return (boom_length * BOOM ** 2 + (MASTHEAD - 1.4) * POLE ** 2 + spars * SPAR ** 2) * VOXEL_METRES_CUBED_LITRES
+
+
+def boom_points():
+    end = float_top(HEWINGS) + BOOM / 2
+    return [(RIM + 0.6, 0.5), (RIM + 1.4, 14.5), (RIM + 0.6, 30), (end, FLOAT_Z + 2.5)]
+
+
+def report(hull, finished_float):
+    envelope, hold, _ = volumes()
+    parts = {"hull": kilograms("wood-oak", envelope - hold), "float": kilograms("wood-oak", finished_float["woodLitres"]),
+             "poles": kilograms("wood-oak", pole_litres()), "strakes": kilograms("wood-oak", strake_litres(hull))}
+    print("outrigger parts in oak: " + ", ".join(f"{name} {kg:.0f} kg" for name, kg in parts.items()) + f", poles {pole_litres():.0f} L")
+    waterplane = afloat("dugout", parts["hull"], RIM * VOXEL_METRES, hold, deck(), HITBOX_METRES)
+    afloat("outrigger", sum(parts.values()), RIM * VOXEL_METRES, hold, deck(), HITBOX_METRES,
+           waterplane=waterplane + finished_float["waterlineSquareMetres"])
 
 
 if __name__ == "__main__":

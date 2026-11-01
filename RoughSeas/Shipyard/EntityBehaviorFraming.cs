@@ -94,7 +94,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         var pieces = laying.Pieces(slot);
         var piece = slot.Itemstack!.Collectible;
         bool creative = (byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode == EnumGameMode.Creative;
-        if (!creative) laying.Spend(slot, byEntity);
+        if (!creative) laying.Spend(slot, byEntity, Math.Min(pieces, stage.Pieces - framing.Laid(stage)));
         slot.MarkDirty();
         Laid(stage, piece, pieces);
         framing.Lay(wood, setsAt, pieces);

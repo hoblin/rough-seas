@@ -2,11 +2,11 @@
     "code": "coracle",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 20,
+    "weight": 17.1,
     "attributes": {
         "speedMultiplier": 0.5,
         "turnSpeed": 3,
-        "swimmingOffsetY": 0.35,
+        "swimmingOffsetY": 0.332,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {"idle": "sitflooridle", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
         "rightClickPickup": true,
@@ -16,10 +16,10 @@
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
             "impactCapacity": 400,
-            "parts": [{"name": "hide", "material": "hide", "share": 0.46}, {"name": "frame", "material": "wood-willow", "share": 0.54}],
-            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-willow", "metres": 0.01}, "backedShare": 0.47, "bottomBackedShare": 0.6, "spanMetres": 0.37},
-            "depthMetres": 0.36,
-            "waterplaneSquareMetres": 1.0,
+            "parts": [{"name": "hide", "material": "hide", "share": 9.1}, {"name": "frame", "material": "wood-willow", "share": 8.0}],
+            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-willow", "metres": 0.01}, "backedShare": 0.47, "bottomBackedShare": 0.65, "spanMetres": 0.37},
+            "depthMetres": 0.35,
+            "waterplaneSquareMetres": 1.04,
             "repairs": [
                 {"material": {"type": "item", "code": "game:hide-prepared-small", "stacksize": 1}, "restores": 0.67, "saturation": 40},
                 {"material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1}, "restores": 0.5, "saturation": 20, "greases": true}
@@ -27,10 +27,11 @@
             "wreckage": [{"type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": {"avg": 3, "var": 2}}],
             "damage": {"textures": ["hide"], "material": "hide"},
             "sources": {
-                "parts": "By the model: 2.1 m² of hide 5 mm thick at 860 kg/m³, some 9 kg, over 14 lattice laths and three plaits of 1 by 6 cm, 35 m of willow, some 10 kg: about 20 kg, as Hornell (1938) gives one-man coracles at 18 to 40 lb, a hide cover nearly double a cloth one's",
-                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, the lattice's 14 laths 6 cm wide cross 60% of the bottom, and their 28 ends rising to the gunwale 47% of the sides. A breaker presses the hide onto them, each lath 1 cm deep bending over the 0.37 m from the bottom to the gunwale",
-                "depthMetres": "Bottom to gunwale: the laths rise 0.35 m (Museum Wales, Teifi coracle), over the hide under them",
-                "waterplaneSquareMetres": "An oval 1.5 by 1.07 m at the gunwale and 1.2 by 0.8 m at the bottom (Museum Wales, Teifi coracle): about a square metre at the waterline between them",
+                "parts": "By the model (bin/lib/hulls/coracle.py): 2.12 m² of hide 5 mm thick at 860 kg/m³, 9.1 kg, over 14 lattice laths and three plaits of 1 by 6 cm, 33 m of willow, 8 kg: 17 kg, as Hornell (1938) gives one-man coracles at 18 to 40 lb",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.086 m (bin/lib/hulls/coracle.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
+                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, the lattice's 14 laths 6 cm wide cross 65% of the bottom, and their 28 ends rising to the gunwale 47% of the sides. A breaker presses the hide onto them, each lath 1 cm deep bending over the 0.37 m from the bottom to the gunwale",
+                "depthMetres": "Bottom to gunwale: the laths rise 0.35 m (Museum Wales, Teifi coracle), as the model draws them",
+                "waterplaneSquareMetres": "So that her 265 L bowl full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
                 "seep": "A seam where one hide meets the next weeps once the fat has washed out of it: some 1.8 m of seam across her bowl, weeping as the currach's do a metre. A coracle from before her build is covered in prepared hide over her two sections, with no seam, as her old recipe's one large hide had",
                 "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             },
@@ -49,19 +50,19 @@
             "rollResponse": 1.6,
             "pitchResponse": 1.6,
             "sources": {
-                "heave": "A 20 kg basket sits on the water and rises with the crest",
+                "heave": "A 17 kg basket sits on the water and rises with the crest",
                 "capsizeBreakerMetres": "A crest that catches the low rim tips the bowl and its paddler out: coracles keep to rivers and sheltered water",
                 "rollResponse": "A round, flat bowl tilts with every slope of the water",
                 "pitchResponse": "Round, it tilts the same every way"
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 350,
-            "deckSquareMetres": 1.26,
+            "capacityLitres": 265,
+            "deckSquareMetres": 1.07,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "By the model: a bowl 0.35 m deep from an oval of 0.75 m² at the bottom to 1.26 m² at the gunwale, some 350 L",
-                "deckSquareMetres": "Her mouth, an oval 1.5 by 1.07 m",
+                "capacityLitres": "Her bowl inside the hide and laths, to the gunwale, by the model (bin/lib/hulls/coracle.py)",
+                "deckSquareMetres": "Her mouth inside the gunwale, by the model (bin/lib/hulls/coracle.py)",
                 "drainLitresPerHour": "Greased hide is watertight"
             }
         },
@@ -71,7 +72,7 @@
             "rope": "game:rope",
             "hides": "game:hide-*",
             "hideStates": ["raw", "soaked", "scraped", "prepared", "oiled", "pelt", "salted"],
-            "layout": {"kind": "lattice", "along": 7, "across": 7, "alongSpacingMetres": 0.1125, "acrossSpacingMetres": 0.16875, "toleranceMetres": 0.1},
+            "layout": {"kind": "lattice", "along": 7, "across": 7, "alongSpacingMetres": 0.125, "acrossSpacingMetres": 0.1875, "toleranceMetres": 0.0625},
             "stages": [
                 {"group": "Lattice", "work": "lath", "seconds": 3, "lines": true},
                 {"group": "Binding", "work": "rope", "seconds": 15},
@@ -81,7 +82,7 @@
             ],
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
-                "layout": "Teifi coracles were begun as a lattice of laths laid flat on the ground, seven along and seven across (Hornell 1938), their ends bent up later into the gunwale. Spaced as her model draws them (ALONG_SPACING and ACROSS_SPACING in bin/lib/hulls/coracle.py), within 10 cm, so that binding moves no lath further",
+                "layout": "Teifi coracles were begun as a lattice of laths laid flat on the ground, seven along and seven across (Hornell 1938), their ends bent up later into the gunwale. Spaced as her model draws them (ALONG_SPACING and ACROSS_SPACING in bin/lib/hulls/coracle.py), whole steps of the 1/16 m the bed lays laths by, so a lath laid on its place stays there when she is bound; one laid a step off is moved that step",
                 "binding": "One rope ties a dozen crossings of the bottom, a few turns of cord each, some quarter of an hour (an estimate); the shape's builder counts the crossings on her bottom",
                 "gunwale": "Plaiting one lath round the bent-up ends, some ten minutes (an estimate); Teifi gunwales were three plaits of soaked hazel (Hornell 1938). The laths dry in place and set her shape in a couple of days, as the canoe's ribs do",
                 "cover": "Stretching and sewing a small hide's worth of cover, some twenty minutes (an estimate); a bigger hide covers more at once and takes as much longer",

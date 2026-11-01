@@ -91,6 +91,13 @@ def group(name, at, rot, children):
     return box(name, at, at, {}, origin=at, rot=rot, children=children)
 
 
+def renamed(element, suffix):
+    copy = dict(element, name=element["name"] + suffix)
+    if "children" in element:
+        copy["children"] = [renamed(child, suffix) for child in element["children"]]
+    return copy
+
+
 def stages(name, pieces, wood="frame"):
     """A stage's pieces, each its own group; a piece of wood names the metres of lath or pole it takes, the length
     drawn in that texture along its run."""

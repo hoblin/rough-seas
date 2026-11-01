@@ -22,7 +22,7 @@ public class BlockEntityLathBed : BlockEntity, IWorkedHull
     public const string ClassName = "roughseas:LathBed";
 
     private const string LathsKey = "laths";
-    private const double CrossingLiftMetres = 0.01;
+    private const double CrossingLiftMetres = 0.01875;
     private const int ReachBlocks = 4;
     private const int GapBlocks = 2;
 
