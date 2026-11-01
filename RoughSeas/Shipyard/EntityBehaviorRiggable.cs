@@ -73,8 +73,12 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
     {
         var world = entity.World;
         var shipyard = world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
-        if (WorkWith(slot) is not { Refusal: null } || successor == null || rig == null || Float(rig) is not var (row, endForEnd)
-            || !LandClaims.MayBreak(byEntity, row.Blocks) || slot.Itemstack?.Collectible.Variant["wood"] is not { } poleWood) return;
+        if (WorkWith(slot) is not { Refusal: null } || successor == null || rig == null || Float(rig) is not var (row, endForEnd)) return;
+        if (!LandClaims.MayBreak(byEntity, row.Blocks) || slot.Itemstack?.Collectible.Variant["wood"] is not { } poleWood)
+        {
+            shipyard.Log(entity, "not rigged by {0}: the float's logs are claimed, or the pole is of no wood", byEntity.GetName());
+            return;
+        }
 
         var rigged = world.ClassRegistry.CreateEntity(successor);
         rigged.Pos.SetFrom(entity.Pos);

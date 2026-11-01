@@ -14,7 +14,7 @@ public static class WoodTexture
     public const string FloatRings = "floatrings";
 
     public const string BareSide = "inside-north";
-    public const string Bark = "all";
+    public const string Bark = "up";
     public const string Rings = "east";
 
     public static void Draw(ICoreClientAPI capi, ref Shape shape, ref bool shapeIsCloned, string part, string wood, IDictionary<string, CompositeTexture> textures, ITextureAtlasAPI atlas, string face = BareSide)

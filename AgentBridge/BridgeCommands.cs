@@ -567,11 +567,7 @@ public class BridgeCommands : ModSystem
 
         var path = key.Split('/');
         ITreeAttribute attributes = entity.WatchedAttributes;
-        foreach (var tree in path[..^1])
-        {
-            if (attributes.GetTreeAttribute(tree) is not { } inner) return TextCommandResult.Error($"No tree {tree} in {key}");
-            attributes = inner;
-        }
+        foreach (var tree in path[..^1]) attributes = attributes.GetOrAddTreeAttribute(tree);
 
         var leaf = path[^1];
         var number = double.TryParse(value, CultureInfo.InvariantCulture, out var parsed) ? parsed : (double?)null;

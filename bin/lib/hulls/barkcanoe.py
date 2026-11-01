@@ -111,7 +111,7 @@ def raised(share):
 
 def frame_at(share):
     """The final frame's plan, lying on the bark where it has risen to at that share."""
-    return [(x, edges[:-1] + [(edges[-1][0], height(bend(edges, share), edges[-1][0]))]) for x, edges in STATIONS]
+    return [(x, edges[:-1] + [(edges[-1][0], height(bend(edges, share), edges[-1][0]) + GUNWALE * (1 - share))]) for x, edges in STATIONS]
 
 
 def sheer_at(stations, x):
