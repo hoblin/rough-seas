@@ -109,7 +109,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public double ReferenceKg { get; private set; }
 
-    public HullShape Shape => shape ??= ShapeOf(entity, hullBox);
+    public HullShape Shape => shape ?? (MeasuredShape(entity, hullBox) is { } measured ? (shape = measured).Value : HitboxShape(entity));
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
@@ -729,16 +729,18 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private Block FluidBelow() =>
         entity.World.BlockAccessor.GetBlock(entity.Pos.XYZ.Add(0, -WaterlineProbeMetres, 0).AsBlockPos, BlockLayersAccess.Fluid);
 
-    private static HullShape ShapeOf(Entity entity, double[]? hullBox)
+    private static HullShape? MeasuredShape(Entity entity, double[]? hullBox)
     {
         if (hullBox is { Length: 6 } box) return HullShape.FromVoxels(box[..3], box[3..]);
 
         var boxes = entity.GetBehavior<EntityBehaviorSelectionBoxes>()?.selectionBoxes ?? [];
-        if (boxes.FirstOrDefault(box => box.AttachPoint.Code == HullBox)?.AttachPoint.ParentElement is { From: { } from, To: { } to })
-        {
-            return HullShape.FromVoxels(from, to);
-        }
+        return boxes.FirstOrDefault(box => box.AttachPoint?.Code == HullBox)?.AttachPoint.ParentElement is { From: { } from, To: { } to }
+            ? HullShape.FromVoxels(from, to)
+            : null;
+    }
 
+    private static HullShape HitboxShape(Entity entity)
+    {
         var hitbox = entity.SelectionBox;
         return new HullShape(Math.Max(hitbox.XSize, hitbox.ZSize) / 2, Math.Min(hitbox.XSize, hitbox.ZSize) / 2, hitbox.YSize, 0, 0, 0);
     }
