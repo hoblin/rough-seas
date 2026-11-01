@@ -2,6 +2,7 @@ import math
 
 from physics import afloat, kilograms
 from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
+from wounds import wound
 
 LOG = 16
 LOGS = 5
@@ -250,11 +251,14 @@ def build(path):
                          "bilge": BILGE, "char": "game:block/coal/charcoal", "clay": "game:block/clay/blueclay",
                          "ember": "game:block/coal/ember", "burntlog": "game:block/wood/firepit/burntlog"})
     hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD, edge=WOOD)
-    shape.add(group("Shell", (0, 0, 0), (0, 0, 0), [element for piece in log(hull) for element in (piece if isinstance(piece, list) else [piece])]))
-    shape.add(*build_stages())
+    shell = group("Shell", (0, 0, 0), (0, 0, 0), [element for piece in log(hull) for element in (piece if isinstance(piece, list) else [piece])])
+    shape.add(shell)
+    blank, *rest = build_stages()
+    shape.add(blank, *rest)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     shape.elements.append(hull_box())
     shape.keep("FrontSeat", "BackSeat")
+    wound(shape, [("", [shell], WOOD), *((level["name"], [level], BARK if n == 0 else WOOD) for n, level in enumerate(blank["children"]))])
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")

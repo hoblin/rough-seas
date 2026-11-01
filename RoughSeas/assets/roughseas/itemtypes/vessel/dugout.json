@@ -8,9 +8,13 @@
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater", "Bilge", "Blank", "Char", "Clay", "Wood", "Fire"]},
+    "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": [
+        "hideWater", "Bilge", "Blank", "Char", "Clay", "Wood", "Fire",
+        "WoundPortBow", "WoundStarboardBow", "WoundPortSide", "WoundStarboardSide", "WoundPortQuarter", "WoundStarboardQuarter", "WoundBottom"
+    ]},
     "textures": {
         "bilge": {"base": "game:block/liquid/waterportion"},
+        "breach": {"base": "game:block/black"},
         "char": {"base": "game:block/coal/charcoal"},
         "clay": {"base": "game:block/clay/blueclay"},
         "ember": {"base": "game:block/coal/ember"},

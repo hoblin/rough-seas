@@ -2,6 +2,7 @@ import math
 
 from physics import afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
+from wounds import wound
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
@@ -179,11 +180,13 @@ def build(path_):
     shape.add(laths[0])
     shape.add(stages("EndLashing", ends(half)))
     shape.add(laths[1], laths[2])
-    shape.add(stages("Cover", cover(hull), wood="none"))
+    hide = stages("Cover", cover(hull), wood="none")
+    shape.add(hide)
     shape.add(stages("Lacing", lacing(hull)))
     shape.add(thwart_stage)
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo")
+    wound(shape, [("", [hide], "hide")])
     shape.write()
     report(hull, laths, thwart_stage)
 

@@ -4,6 +4,7 @@ from pathlib import Path
 
 from physics import afloat, kilograms
 from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Shape, beam, bilge, box, group, path, plank, stages, water_plane, write
+from wounds import wound
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
@@ -220,11 +221,13 @@ def build(path_):
     shape.add(stages("LatticeBent", lattice("BentLath", lambda piece: piece[1])))
     shape.add(stages("Binding", ties()))
     shape.add(gunwale)
-    shape.add(stages("Cover", cover(), wood="none"))
+    hide = stages("Cover", cover(), wood="none")
+    shape.add(hide)
     shape.add(stages("Lacing", lacing()))
     shape.add(group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", DEPTH - 0.5)),
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
     shape.keep("Hull", "FrontSeat")
+    wound(shape, [("", [hide], "hide")])
     shape.write()
 
     back = Path(path_).with_name("coracle-back.json")

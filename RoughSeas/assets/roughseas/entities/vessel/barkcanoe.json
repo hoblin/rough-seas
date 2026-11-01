@@ -37,7 +37,7 @@
                 {"type": "item", "code": "roughseas:bark-{wood}", "quantity": {"avg": 4, "var": 2}},
                 {"type": "item", "code": "game:stick", "quantity": {"avg": 1, "var": 1}}
             ],
-            "damage": {"textures": ["bark"], "material": "bark"},
+            "damage": {"material": "bark"},
             "sources": {
                 "parts": "By the model (bin/lib/hulls/barkcanoe.py): 4.76 m² of bark 5 mm thick, 13.3 kg, over 61 m of laths 1 by 6 cm, 12.9 kg of white cedar",
                 "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.052 m (bin/lib/hulls/barkcanoe.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
@@ -141,7 +141,7 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/barkcanoe", "ignoreElements": ["hideWater", "Bilge"]},
-        "textures": {"lashing": {"base": "game:item/resource/rope"}, "pitch": {"base": "game:block/liquid/glue-cold"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+        "textures": {"lashing": {"base": "game:item/resource/rope"}, "pitch": {"base": "game:block/liquid/glue-cold"}, "bilge": {"base": "game:block/liquid/waterportion"}, "breach": {"base": "game:block/black"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "roughseas:framing"},

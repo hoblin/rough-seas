@@ -5,7 +5,8 @@ using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Vessels;
 
-public sealed class LashedHull(Func<ITreeAttribute> tree, Action changed) : HullModel(tree, changed), IKnockable, IMendable
+public sealed class LashedHull(Func<ITreeAttribute> tree, Action changed, string described = "roughseas:vessel-lashing")
+    : HullModel(tree, changed), IKnockable, IMendable
 {
     private const string LashingKey = "lashing";
 
@@ -29,7 +30,7 @@ public sealed class LashedHull(Func<ITreeAttribute> tree, Action changed) : Hull
     }
 
     public override void Describe(StringBuilder info) =>
-        info.AppendLine(Lang.Get("roughseas:vessel-lashing", (int)Math.Round(Condition * 100)));
+        info.AppendLine(Lang.Get(described, (int)Math.Round(Condition * 100)));
 
     public override void Adopt(float integrity) => SetLashing(integrity);
 

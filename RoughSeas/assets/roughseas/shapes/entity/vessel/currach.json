@@ -2,7 +2,7 @@
  "editor": { "allAngles": false, "entityTextureMode": false },
  "textureWidth": 16,
  "textureHeight": 16,
- "textures": { "hide": "game:block/leather/poor", "frame": "game:block/wood/debarked/oak", "lashing": "game:item/resource/rope", "bilge": "game:block/liquid/waterportion" },
+ "textures": { "hide": "game:block/leather/poor", "frame": "game:block/wood/debarked/oak", "lashing": "game:item/resource/rope", "bilge": "game:block/liquid/waterportion", "breach": "game:block/black" },
  "elements": [
   {
    "name": "Gunwale",
@@ -5572,6 +5572,288 @@
           "up": { "texture": "#hide", "uv": [ 2, 13.5, 10.347, 14 ] },
           "down": { "texture": "#hide", "uv": [ 7, 6.5, 15.347, 7 ] }
          }
+        },
+        {
+         "name": "WoundPortBow",
+         "from": [ -0.25, 0, 0 ],
+         "to": [ -0.25, 0, 0 ],
+         "rotationOrigin": [ 0, 0, 0 ],
+         "rotationX": -12.42,
+         "faces": {},
+         "children": [
+          {
+           "name": "WoundPortBowScratched",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortBowScratchedx1",
+             "from": [ 0.5, 2.547, -0.06 ],
+             "to": [ 1, 2.647, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 2, 2.5, 2.1 ] },
+              "east": { "texture": "#breach", "uv": [ 14.5, 8, 15.12, 8.1 ] },
+              "south": { "texture": "#breach", "uv": [ 4, 2, 4.5, 2.1 ] },
+              "west": { "texture": "#breach", "uv": [ 2.5, 12, 3.12, 12.1 ] },
+              "up": { "texture": "#breach", "uv": [ 4, 1.5, 4.5, 2.12 ] },
+              "down": { "texture": "#breach", "uv": [ 3, 10, 3.5, 10.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowScratchedx2",
+             "from": [ 1, 3.061, -0.06 ],
+             "to": [ 1.5, 3.161, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2.5, 3.5, 3, 3.6 ] },
+              "east": { "texture": "#breach", "uv": [ 7.5, 13.5, 8.12, 13.6 ] },
+              "south": { "texture": "#breach", "uv": [ 14.5, 11, 15, 11.1 ] },
+              "west": { "texture": "#breach", "uv": [ 1.5, 11, 2.12, 11.1 ] },
+              "up": { "texture": "#breach", "uv": [ 15, 14.5, 15.5, 15.12 ] },
+              "down": { "texture": "#breach", "uv": [ 9.5, 9.5, 10, 10.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowScratchedx3",
+             "from": [ 1.5, 2.624, -0.06 ],
+             "to": [ 2, 2.724, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11, 7.5, 11.5, 7.6 ] },
+              "east": { "texture": "#breach", "uv": [ 12, 1.5, 12.62, 1.6 ] },
+              "south": { "texture": "#breach", "uv": [ 13, 1.5, 13.5, 1.6 ] },
+              "west": { "texture": "#breach", "uv": [ 14.5, 5.5, 15.12, 5.6 ] },
+              "up": { "texture": "#breach", "uv": [ 9.5, 5, 10, 5.62 ] },
+              "down": { "texture": "#breach", "uv": [ 7.5, 4.5, 8, 5.12 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortBowCracked",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortBowCrackedx1",
+             "from": [ 0.5, 2.862, -0.06 ],
+             "to": [ 1, 3.062, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2.5, 8, 3, 8.2 ] },
+              "east": { "texture": "#breach", "uv": [ 11, 3, 11.62, 3.2 ] },
+              "south": { "texture": "#breach", "uv": [ 10, 8, 10.5, 8.2 ] },
+              "west": { "texture": "#breach", "uv": [ 9, 12.5, 9.62, 12.7 ] },
+              "up": { "texture": "#breach", "uv": [ 6.5, 5, 7, 5.62 ] },
+              "down": { "texture": "#breach", "uv": [ 0, 5.5, 0.5, 6.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowCrackedx2",
+             "from": [ 1, 2.503, -0.06 ],
+             "to": [ 1.5, 2.703, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 13.5, 3.5, 14, 3.7 ] },
+              "east": { "texture": "#breach", "uv": [ 3.5, 11.5, 4.12, 11.7 ] },
+              "south": { "texture": "#breach", "uv": [ 14, 6.5, 14.5, 6.7 ] },
+              "west": { "texture": "#breach", "uv": [ 5.5, 5, 6.12, 5.2 ] },
+              "up": { "texture": "#breach", "uv": [ 13, 0.5, 13.5, 1.12 ] },
+              "down": { "texture": "#breach", "uv": [ 0.5, 11.5, 1, 12.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowCrackedx3",
+             "from": [ 1.5, 2.648, -0.06 ],
+             "to": [ 2, 2.848, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 6.5, 6, 6.7 ] },
+              "east": { "texture": "#breach", "uv": [ 2, 14, 2.62, 14.2 ] },
+              "south": { "texture": "#breach", "uv": [ 12, 6.5, 12.5, 6.7 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 2, 1.62, 2.2 ] },
+              "up": { "texture": "#breach", "uv": [ 6.5, 8, 7, 8.62 ] },
+              "down": { "texture": "#breach", "uv": [ 4.5, 12, 5, 12.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortBowSplit",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortBowSplitx1",
+             "from": [ 0.5, 1.773, -0.06 ],
+             "to": [ 1.3, 2.223, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1, 5, 1.8, 5.45 ] },
+              "east": { "texture": "#breach", "uv": [ 8, 2, 8.62, 2.45 ] },
+              "south": { "texture": "#breach", "uv": [ 2, 6, 2.8, 6.45 ] },
+              "west": { "texture": "#breach", "uv": [ 11.5, 6.5, 12.12, 6.95 ] },
+              "up": { "texture": "#breach", "uv": [ 13.5, 11, 14.3, 11.62 ] },
+              "down": { "texture": "#breach", "uv": [ 10, 5, 10.8, 5.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowSplitx2",
+             "from": [ 1.3, 1.582, -0.06 ],
+             "to": [ 2.1, 2.032, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 13, 0, 13.8, 0.45 ] },
+              "east": { "texture": "#breach", "uv": [ 12, 5.5, 12.62, 5.95 ] },
+              "south": { "texture": "#breach", "uv": [ 13, 11.5, 13.8, 11.95 ] },
+              "west": { "texture": "#breach", "uv": [ 15, 3.5, 15.62, 3.95 ] },
+              "up": { "texture": "#breach", "uv": [ 0.5, 11.5, 1.3, 12.12 ] },
+              "down": { "texture": "#breach", "uv": [ 3, 0, 3.8, 0.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowSplitx3",
+             "from": [ 2.1, 1.605, -0.06 ],
+             "to": [ 2.9, 2.055, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 4, 6, 4.8, 6.45 ] },
+              "east": { "texture": "#breach", "uv": [ 7.5, 2, 8.12, 2.45 ] },
+              "south": { "texture": "#breach", "uv": [ 13.5, 9.5, 14.3, 9.95 ] },
+              "west": { "texture": "#breach", "uv": [ 1.5, 4.5, 2.12, 4.95 ] },
+              "up": { "texture": "#breach", "uv": [ 5, 0, 5.8, 0.62 ] },
+              "down": { "texture": "#breach", "uv": [ 12.5, 3, 13.3, 3.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowSplitLip",
+             "from": [ 0.5, 2.38, 0.3 ],
+             "to": [ 2.9, 3.58, 0.8 ],
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 1, 11.5, 3.4, 12.7 ] },
+              "east": { "texture": "#hide", "uv": [ 8, 10, 8.5, 11.2 ] },
+              "south": { "texture": "#hide", "uv": [ 13, 0.5, 15.4, 1.7 ] },
+              "west": { "texture": "#hide", "uv": [ 9, 7, 9.5, 8.2 ] },
+              "up": { "texture": "#hide", "uv": [ 8, 4, 10.4, 4.5 ] },
+              "down": { "texture": "#hide", "uv": [ 3, 2.5, 5.4, 3 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortBowStoveIn",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortBowStoveInBreach",
+             "from": [ 0.9, 1.355, -0.06 ],
+             "to": [ 2.5, 3.21, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 11.5, 3.6, 13.355 ] },
+              "east": { "texture": "#breach", "uv": [ 9.5, 11.5, 10.12, 13.355 ] },
+              "south": { "texture": "#breach", "uv": [ 5.5, 2, 7.1, 3.855 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 4, 1.62, 5.855 ] },
+              "up": { "texture": "#breach", "uv": [ 12.5, 6.5, 14.1, 7.12 ] },
+              "down": { "texture": "#breach", "uv": [ 0, 14, 1.6, 14.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowStoveInShard",
+             "from": [ 1, 1.355, 0.56 ],
+             "to": [ 2.4, 3.21, 1.06 ],
+             "rotationOrigin": [ 1, 1.355, 0.5 ],
+             "rotationX": 50,
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 9, 5.5, 10.4, 7.355 ] },
+              "east": { "texture": "#hide", "uv": [ 4.5, 3, 5, 4.855 ] },
+              "south": { "texture": "#hide", "uv": [ 4.5, 0.5, 5.9, 2.355 ] },
+              "west": { "texture": "#hide", "uv": [ 5.5, 6.5, 6, 8.355 ] },
+              "up": { "texture": "#hide", "uv": [ 13.5, 10, 14.9, 10.5 ] },
+              "down": { "texture": "#hide", "uv": [ 11.5, 12.5, 12.9, 13 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowStoveInBowx1",
+             "from": [ 0.5, 2.224, -0.06 ],
+             "to": [ 0.633, 2.674, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 14.5, 2, 14.633, 2.45 ] },
+              "east": { "texture": "#breach", "uv": [ 10, 0.5, 10.62, 0.95 ] },
+              "south": { "texture": "#breach", "uv": [ 14.5, 12.5, 14.633, 12.95 ] },
+              "west": { "texture": "#breach", "uv": [ 1.5, 7, 2.12, 7.45 ] },
+              "up": { "texture": "#breach", "uv": [ 2, 13.5, 2.133, 14.12 ] },
+              "down": { "texture": "#breach", "uv": [ 0, 8.5, 0.133, 9.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowStoveInBowx2",
+             "from": [ 0.633, 2.317, -0.06 ],
+             "to": [ 0.767, 2.767, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 5, 5.633, 5.45 ] },
+              "east": { "texture": "#breach", "uv": [ 10.5, 5.5, 11.12, 5.95 ] },
+              "south": { "texture": "#breach", "uv": [ 13.5, 11, 13.633, 11.45 ] },
+              "west": { "texture": "#breach", "uv": [ 6.5, 12, 7.12, 12.45 ] },
+              "up": { "texture": "#breach", "uv": [ 9.5, 10.5, 9.633, 11.12 ] },
+              "down": { "texture": "#breach", "uv": [ 4, 7, 4.133, 7.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowStoveInBowx3",
+             "from": [ 0.767, 2.114, -0.06 ],
+             "to": [ 0.9, 2.564, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 6.5, 3.5, 6.633, 3.95 ] },
+              "east": { "texture": "#breach", "uv": [ 13.5, 4, 14.12, 4.45 ] },
+              "south": { "texture": "#breach", "uv": [ 4, 9.5, 4.133, 9.95 ] },
+              "west": { "texture": "#breach", "uv": [ 6, 0.5, 6.62, 0.95 ] },
+              "up": { "texture": "#breach", "uv": [ 5.5, 2, 5.633, 2.62 ] },
+              "down": { "texture": "#breach", "uv": [ 1, 5.5, 1.133, 6.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowStoveInSternx1",
+             "from": [ 2.5, 2.302, -0.06 ],
+             "to": [ 2.633, 2.752, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1, 15, 1.133, 15.45 ] },
+              "east": { "texture": "#breach", "uv": [ 13.5, 3, 14.12, 3.45 ] },
+              "south": { "texture": "#breach", "uv": [ 2.5, 7.5, 2.633, 7.95 ] },
+              "west": { "texture": "#breach", "uv": [ 14, 1.5, 14.62, 1.95 ] },
+              "up": { "texture": "#breach", "uv": [ 0, 11, 0.133, 11.62 ] },
+              "down": { "texture": "#breach", "uv": [ 1, 14.5, 1.133, 15.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowStoveInSternx2",
+             "from": [ 2.633, 1.937, -0.06 ],
+             "to": [ 2.767, 2.387, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11, 1.5, 11.133, 1.95 ] },
+              "east": { "texture": "#breach", "uv": [ 4, 3.5, 4.62, 3.95 ] },
+              "south": { "texture": "#breach", "uv": [ 13, 1, 13.133, 1.45 ] },
+              "west": { "texture": "#breach", "uv": [ 11, 6, 11.62, 6.45 ] },
+              "up": { "texture": "#breach", "uv": [ 13.5, 3, 13.633, 3.62 ] },
+              "down": { "texture": "#breach", "uv": [ 0, 14, 0.133, 14.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortBowStoveInSternx3",
+             "from": [ 2.767, 1.868, -0.06 ],
+             "to": [ 2.9, 2.318, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11.5, 1.5, 11.633, 1.95 ] },
+              "east": { "texture": "#breach", "uv": [ 3.5, 5, 4.12, 5.45 ] },
+              "south": { "texture": "#breach", "uv": [ 9, 4.5, 9.133, 4.95 ] },
+              "west": { "texture": "#breach", "uv": [ 9, 13.5, 9.62, 13.95 ] },
+              "up": { "texture": "#breach", "uv": [ 13.5, 0, 13.633, 0.62 ] },
+              "down": { "texture": "#breach", "uv": [ 8.5, 13.5, 8.633, 14.12 ] }
+             }
+            }
+           ]
+          }
+         ]
         }
        ]
       },
@@ -5684,6 +5966,288 @@
           "up": { "texture": "#hide", "uv": [ 4, 1.5, 12.347, 2 ] },
           "down": { "texture": "#hide", "uv": [ 7, 2, 15.347, 2.5 ] }
          }
+        },
+        {
+         "name": "WoundStarboardBow",
+         "from": [ -0.25, 0, -0.5 ],
+         "to": [ -0.25, 0, -0.5 ],
+         "rotationOrigin": [ 0, 0, 0 ],
+         "rotationX": 12.42,
+         "faces": {},
+         "children": [
+          {
+           "name": "WoundStarboardBowScratched",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardBowScratchedx1",
+             "from": [ 0.5, 2.95, -0.06 ],
+             "to": [ 1, 3.05, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1.5, 8.5, 2, 8.6 ] },
+              "east": { "texture": "#breach", "uv": [ 7, 1, 7.62, 1.1 ] },
+              "south": { "texture": "#breach", "uv": [ 10, 12, 10.5, 12.1 ] },
+              "west": { "texture": "#breach", "uv": [ 14, 15.5, 14.62, 15.6 ] },
+              "up": { "texture": "#breach", "uv": [ 14, 14, 14.5, 14.62 ] },
+              "down": { "texture": "#breach", "uv": [ 14, 2.5, 14.5, 3.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowScratchedx2",
+             "from": [ 1, 2.521, -0.06 ],
+             "to": [ 1.5, 2.621, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 1.5, 6, 1.6 ] },
+              "east": { "texture": "#breach", "uv": [ 4, 8, 4.62, 8.1 ] },
+              "south": { "texture": "#breach", "uv": [ 4.5, 5, 5, 5.1 ] },
+              "west": { "texture": "#breach", "uv": [ 6.5, 0, 7.12, 0.1 ] },
+              "up": { "texture": "#breach", "uv": [ 1.5, 10, 2, 10.62 ] },
+              "down": { "texture": "#breach", "uv": [ 13.5, 0, 14, 0.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowScratchedx3",
+             "from": [ 1.5, 2.563, -0.06 ],
+             "to": [ 2, 2.663, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 10.5, 3.5, 11, 3.6 ] },
+              "east": { "texture": "#breach", "uv": [ 7.5, 1, 8.12, 1.1 ] },
+              "south": { "texture": "#breach", "uv": [ 4, 11, 4.5, 11.1 ] },
+              "west": { "texture": "#breach", "uv": [ 12.5, 6, 13.12, 6.1 ] },
+              "up": { "texture": "#breach", "uv": [ 3.5, 7.5, 4, 8.12 ] },
+              "down": { "texture": "#breach", "uv": [ 0.5, 10.5, 1, 11.12 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardBowCracked",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardBowCrackedx1",
+             "from": [ 0.5, 2.911, -0.06 ],
+             "to": [ 1, 3.111, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 12.5, 9.5, 13, 9.7 ] },
+              "east": { "texture": "#breach", "uv": [ 4.5, 14.5, 5.12, 14.7 ] },
+              "south": { "texture": "#breach", "uv": [ 6, 0, 6.5, 0.2 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 11, 1.62, 11.2 ] },
+              "up": { "texture": "#breach", "uv": [ 7.5, 6, 8, 6.62 ] },
+              "down": { "texture": "#breach", "uv": [ 9, 10.5, 9.5, 11.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowCrackedx2",
+             "from": [ 1, 2.77, -0.06 ],
+             "to": [ 1.5, 2.97, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 4, 6, 4.5, 6.2 ] },
+              "east": { "texture": "#breach", "uv": [ 2, 12.5, 2.62, 12.7 ] },
+              "south": { "texture": "#breach", "uv": [ 8, 2.5, 8.5, 2.7 ] },
+              "west": { "texture": "#breach", "uv": [ 3.5, 3.5, 4.12, 3.7 ] },
+              "up": { "texture": "#breach", "uv": [ 1, 11.5, 1.5, 12.12 ] },
+              "down": { "texture": "#breach", "uv": [ 2.5, 7, 3, 7.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowCrackedx3",
+             "from": [ 1.5, 2.603, -0.06 ],
+             "to": [ 2, 2.803, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 14, 10.5, 14.5, 10.7 ] },
+              "east": { "texture": "#breach", "uv": [ 11, 7.5, 11.62, 7.7 ] },
+              "south": { "texture": "#breach", "uv": [ 8, 15, 8.5, 15.2 ] },
+              "west": { "texture": "#breach", "uv": [ 7, 4.5, 7.62, 4.7 ] },
+              "up": { "texture": "#breach", "uv": [ 7.5, 10.5, 8, 11.12 ] },
+              "down": { "texture": "#breach", "uv": [ 13.5, 11, 14, 11.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardBowSplit",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardBowSplitx1",
+             "from": [ 0.5, 1.442, -0.06 ],
+             "to": [ 1.3, 1.892, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 13, 2.5, 13.8, 2.95 ] },
+              "east": { "texture": "#breach", "uv": [ 13.5, 1, 14.12, 1.45 ] },
+              "south": { "texture": "#breach", "uv": [ 3.5, 9, 4.3, 9.45 ] },
+              "west": { "texture": "#breach", "uv": [ 0, 3, 0.62, 3.45 ] },
+              "up": { "texture": "#breach", "uv": [ 12.5, 14, 13.3, 14.62 ] },
+              "down": { "texture": "#breach", "uv": [ 8.5, 13.5, 9.3, 14.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowSplitx2",
+             "from": [ 1.3, 1.649, -0.06 ],
+             "to": [ 2.1, 2.099, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 12.5, 5.5, 13.3, 5.95 ] },
+              "east": { "texture": "#breach", "uv": [ 10, 8, 10.62, 8.45 ] },
+              "south": { "texture": "#breach", "uv": [ 9, 10.5, 9.8, 10.95 ] },
+              "west": { "texture": "#breach", "uv": [ 15, 4.5, 15.62, 4.95 ] },
+              "up": { "texture": "#breach", "uv": [ 0.5, 6.5, 1.3, 7.12 ] },
+              "down": { "texture": "#breach", "uv": [ 6.5, 12.5, 7.3, 13.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowSplitx3",
+             "from": [ 2.1, 1.737, -0.06 ],
+             "to": [ 2.9, 2.187, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 2.5, 5.8, 2.95 ] },
+              "east": { "texture": "#breach", "uv": [ 0.5, 9.5, 1.12, 9.95 ] },
+              "south": { "texture": "#breach", "uv": [ 6.5, 2, 7.3, 2.45 ] },
+              "west": { "texture": "#breach", "uv": [ 8.5, 14, 9.12, 14.45 ] },
+              "up": { "texture": "#breach", "uv": [ 12.5, 12, 13.3, 12.62 ] },
+              "down": { "texture": "#breach", "uv": [ 1.5, 1, 2.3, 1.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowSplitLip",
+             "from": [ 0.5, 2.38, -0.3 ],
+             "to": [ 2.9, 3.58, 0.2 ],
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 11.5, 7.5, 13.9, 8.7 ] },
+              "east": { "texture": "#hide", "uv": [ 1.5, 10, 2, 11.2 ] },
+              "south": { "texture": "#hide", "uv": [ 5.5, 5, 7.9, 6.2 ] },
+              "west": { "texture": "#hide", "uv": [ 14, 12.5, 14.5, 13.7 ] },
+              "up": { "texture": "#hide", "uv": [ 8, 3.5, 10.4, 4 ] },
+              "down": { "texture": "#hide", "uv": [ 10.5, 11, 12.9, 11.5 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardBowStoveIn",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardBowStoveInBreach",
+             "from": [ 0.9, 1.355, -0.06 ],
+             "to": [ 2.5, 3.21, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 8.5, 6.6, 10.355 ] },
+              "east": { "texture": "#breach", "uv": [ 5, 1, 5.62, 2.855 ] },
+              "south": { "texture": "#breach", "uv": [ 5, 0, 6.6, 1.855 ] },
+              "west": { "texture": "#breach", "uv": [ 2.5, 3.5, 3.12, 5.355 ] },
+              "up": { "texture": "#breach", "uv": [ 3, 7, 4.6, 7.62 ] },
+              "down": { "texture": "#breach", "uv": [ 7.5, 11, 9.1, 11.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowStoveInShard",
+             "from": [ 1, 1.355, -0.56 ],
+             "to": [ 2.4, 3.21, -0.06 ],
+             "rotationOrigin": [ 1, 1.355, 0 ],
+             "rotationX": -50,
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 2, 9, 3.4, 10.855 ] },
+              "east": { "texture": "#hide", "uv": [ 9, 8.5, 9.5, 10.355 ] },
+              "south": { "texture": "#hide", "uv": [ 6, 6, 7.4, 7.855 ] },
+              "west": { "texture": "#hide", "uv": [ 5, 9, 5.5, 10.855 ] },
+              "up": { "texture": "#hide", "uv": [ 8.5, 5, 9.9, 5.5 ] },
+              "down": { "texture": "#hide", "uv": [ 8, 12.5, 9.4, 13 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowStoveInBowx1",
+             "from": [ 0.5, 2.076, -0.06 ],
+             "to": [ 0.633, 2.526, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 14, 12.5, 14.133, 12.95 ] },
+              "east": { "texture": "#breach", "uv": [ 12.5, 9.5, 13.12, 9.95 ] },
+              "south": { "texture": "#breach", "uv": [ 2.5, 5, 2.633, 5.45 ] },
+              "west": { "texture": "#breach", "uv": [ 14.5, 14.5, 15.12, 14.95 ] },
+              "up": { "texture": "#breach", "uv": [ 2.5, 15, 2.633, 15.62 ] },
+              "down": { "texture": "#breach", "uv": [ 0, 4.5, 0.133, 5.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowStoveInBowx2",
+             "from": [ 0.633, 2.072, -0.06 ],
+             "to": [ 0.767, 2.522, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 8, 3.5, 8.133, 3.95 ] },
+              "east": { "texture": "#breach", "uv": [ 6, 12, 6.62, 12.45 ] },
+              "south": { "texture": "#breach", "uv": [ 14.5, 7, 14.633, 7.45 ] },
+              "west": { "texture": "#breach", "uv": [ 5.5, 2, 6.12, 2.45 ] },
+              "up": { "texture": "#breach", "uv": [ 0.5, 1.5, 0.633, 2.12 ] },
+              "down": { "texture": "#breach", "uv": [ 10, 10, 10.133, 10.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowStoveInBowx3",
+             "from": [ 0.767, 2.297, -0.06 ],
+             "to": [ 0.9, 2.748, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0, 11, 0.133, 11.45 ] },
+              "east": { "texture": "#breach", "uv": [ 13, 4, 13.62, 4.45 ] },
+              "south": { "texture": "#breach", "uv": [ 4, 3, 4.133, 3.45 ] },
+              "west": { "texture": "#breach", "uv": [ 3.5, 4, 4.12, 4.45 ] },
+              "up": { "texture": "#breach", "uv": [ 15, 5, 15.133, 5.62 ] },
+              "down": { "texture": "#breach", "uv": [ 11, 6.5, 11.133, 7.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowStoveInSternx1",
+             "from": [ 2.5, 2.109, -0.06 ],
+             "to": [ 2.633, 2.559, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 3.5, 12.5, 3.633, 12.95 ] },
+              "east": { "texture": "#breach", "uv": [ 13.5, 0, 14.12, 0.45 ] },
+              "south": { "texture": "#breach", "uv": [ 0.5, 9, 0.633, 9.45 ] },
+              "west": { "texture": "#breach", "uv": [ 5, 14, 5.62, 14.45 ] },
+              "up": { "texture": "#breach", "uv": [ 15, 15, 15.133, 15.62 ] },
+              "down": { "texture": "#breach", "uv": [ 14.5, 4, 14.633, 4.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowStoveInSternx2",
+             "from": [ 2.633, 2.158, -0.06 ],
+             "to": [ 2.767, 2.608, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 6.5, 8, 6.633, 8.45 ] },
+              "east": { "texture": "#breach", "uv": [ 14, 0, 14.62, 0.45 ] },
+              "south": { "texture": "#breach", "uv": [ 0.5, 7, 0.633, 7.45 ] },
+              "west": { "texture": "#breach", "uv": [ 14, 4.5, 14.62, 4.95 ] },
+              "up": { "texture": "#breach", "uv": [ 8, 14, 8.133, 14.62 ] },
+              "down": { "texture": "#breach", "uv": [ 14, 6.5, 14.133, 7.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardBowStoveInSternx3",
+             "from": [ 2.767, 1.808, -0.06 ],
+             "to": [ 2.9, 2.258, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 3, 5.5, 3.133, 5.95 ] },
+              "east": { "texture": "#breach", "uv": [ 14, 12.5, 14.62, 12.95 ] },
+              "south": { "texture": "#breach", "uv": [ 15, 11, 15.133, 11.45 ] },
+              "west": { "texture": "#breach", "uv": [ 4, 14, 4.62, 14.45 ] },
+              "up": { "texture": "#breach", "uv": [ 10.5, 8, 10.633, 8.62 ] },
+              "down": { "texture": "#breach", "uv": [ 6, 13, 6.133, 13.62 ] }
+             }
+            }
+           ]
+          }
+         ]
         }
        ]
       },
@@ -6011,6 +6575,288 @@
           "up": { "texture": "#hide", "uv": [ 1, 7, 12.775, 7.5 ] },
           "down": { "texture": "#hide", "uv": [ 1.5, 5, 13.275, 5.5 ] }
          }
+        },
+        {
+         "name": "WoundPortSide",
+         "from": [ -0.25, 0, 0 ],
+         "to": [ -0.25, 0, 0 ],
+         "rotationOrigin": [ 0, 0, 0 ],
+         "rotationX": -17.147,
+         "faces": {},
+         "children": [
+          {
+           "name": "WoundPortSideScratched",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortSideScratchedx1",
+             "from": [ 9.775, 3.089, -0.06 ],
+             "to": [ 10.275, 3.189, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 13.5, 9, 14, 9.1 ] },
+              "east": { "texture": "#breach", "uv": [ 7, 1, 7.62, 1.1 ] },
+              "south": { "texture": "#breach", "uv": [ 12.5, 6, 13, 6.1 ] },
+              "west": { "texture": "#breach", "uv": [ 10.5, 11.5, 11.12, 11.6 ] },
+              "up": { "texture": "#breach", "uv": [ 6.5, 11, 7, 11.62 ] },
+              "down": { "texture": "#breach", "uv": [ 3, 4, 3.5, 4.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideScratchedx2",
+             "from": [ 10.275, 3.251, -0.06 ],
+             "to": [ 10.775, 3.351, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11.5, 1, 12, 1.1 ] },
+              "east": { "texture": "#breach", "uv": [ 5.5, 15.5, 6.12, 15.6 ] },
+              "south": { "texture": "#breach", "uv": [ 11, 11, 11.5, 11.1 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 15.5, 1.62, 15.6 ] },
+              "up": { "texture": "#breach", "uv": [ 4.5, 9.5, 5, 10.12 ] },
+              "down": { "texture": "#breach", "uv": [ 10.5, 12.5, 11, 13.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideScratchedx3",
+             "from": [ 10.775, 3.317, -0.06 ],
+             "to": [ 11.275, 3.417, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 2.5, 6, 2.6 ] },
+              "east": { "texture": "#breach", "uv": [ 0.5, 4, 1.12, 4.1 ] },
+              "south": { "texture": "#breach", "uv": [ 13, 1.5, 13.5, 1.6 ] },
+              "west": { "texture": "#breach", "uv": [ 4.5, 2, 5.12, 2.1 ] },
+              "up": { "texture": "#breach", "uv": [ 4, 4.5, 4.5, 5.12 ] },
+              "down": { "texture": "#breach", "uv": [ 13.5, 11.5, 14, 12.12 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortSideCracked",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortSideCrackedx1",
+             "from": [ 9.775, 3.016, -0.06 ],
+             "to": [ 10.275, 3.216, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1.5, 14.5, 2, 14.7 ] },
+              "east": { "texture": "#breach", "uv": [ 6.5, 7, 7.12, 7.2 ] },
+              "south": { "texture": "#breach", "uv": [ 8, 7, 8.5, 7.2 ] },
+              "west": { "texture": "#breach", "uv": [ 7, 13.5, 7.62, 13.7 ] },
+              "up": { "texture": "#breach", "uv": [ 7.5, 0.5, 8, 1.12 ] },
+              "down": { "texture": "#breach", "uv": [ 4.5, 9.5, 5, 10.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideCrackedx2",
+             "from": [ 10.275, 3.235, -0.06 ],
+             "to": [ 10.775, 3.435, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 5, 2.5, 5.2 ] },
+              "east": { "texture": "#breach", "uv": [ 13.5, 8.5, 14.12, 8.7 ] },
+              "south": { "texture": "#breach", "uv": [ 6.5, 4.5, 7, 4.7 ] },
+              "west": { "texture": "#breach", "uv": [ 2.5, 13, 3.12, 13.2 ] },
+              "up": { "texture": "#breach", "uv": [ 6, 1, 6.5, 1.62 ] },
+              "down": { "texture": "#breach", "uv": [ 6, 14.5, 6.5, 15.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideCrackedx3",
+             "from": [ 10.775, 2.725, -0.06 ],
+             "to": [ 11.275, 2.925, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 0.5, 2.5, 0.7 ] },
+              "east": { "texture": "#breach", "uv": [ 0.5, 8, 1.12, 8.2 ] },
+              "south": { "texture": "#breach", "uv": [ 11.5, 7, 12, 7.2 ] },
+              "west": { "texture": "#breach", "uv": [ 4, 6, 4.62, 6.2 ] },
+              "up": { "texture": "#breach", "uv": [ 13, 13, 13.5, 13.62 ] },
+              "down": { "texture": "#breach", "uv": [ 1, 7, 1.5, 7.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortSideSplit",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortSideSplitx1",
+             "from": [ 8.875, 1.889, -0.06 ],
+             "to": [ 9.675, 2.339, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 8, 2.8, 8.45 ] },
+              "east": { "texture": "#breach", "uv": [ 5.5, 14.5, 6.12, 14.95 ] },
+              "south": { "texture": "#breach", "uv": [ 8.5, 4, 9.3, 4.45 ] },
+              "west": { "texture": "#breach", "uv": [ 8, 8.5, 8.62, 8.95 ] },
+              "up": { "texture": "#breach", "uv": [ 14, 6, 14.8, 6.62 ] },
+              "down": { "texture": "#breach", "uv": [ 13, 14, 13.8, 14.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideSplitx2",
+             "from": [ 9.675, 1.942, -0.06 ],
+             "to": [ 10.475, 2.392, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 12.5, 8, 13.3, 8.45 ] },
+              "east": { "texture": "#breach", "uv": [ 10.5, 14.5, 11.12, 14.95 ] },
+              "south": { "texture": "#breach", "uv": [ 10, 10.5, 10.8, 10.95 ] },
+              "west": { "texture": "#breach", "uv": [ 5, 5.5, 5.62, 5.95 ] },
+              "up": { "texture": "#breach", "uv": [ 3, 3.5, 3.8, 4.12 ] },
+              "down": { "texture": "#breach", "uv": [ 9, 2, 9.8, 2.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideSplitx3",
+             "from": [ 10.475, 1.702, -0.06 ],
+             "to": [ 11.275, 2.152, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 4.5, 7, 5.3, 7.45 ] },
+              "east": { "texture": "#breach", "uv": [ 6, 11.5, 6.62, 11.95 ] },
+              "south": { "texture": "#breach", "uv": [ 11.5, 2.5, 12.3, 2.95 ] },
+              "west": { "texture": "#breach", "uv": [ 13.5, 1, 14.12, 1.45 ] },
+              "up": { "texture": "#breach", "uv": [ 9.5, 8.5, 10.3, 9.12 ] },
+              "down": { "texture": "#breach", "uv": [ 10.5, 15, 11.3, 15.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideSplitLip",
+             "from": [ 8.875, 2.518, 0.3 ],
+             "to": [ 11.275, 3.718, 0.8 ],
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 4, 9, 6.4, 10.2 ] },
+              "east": { "texture": "#hide", "uv": [ 12.5, 2, 13, 3.2 ] },
+              "south": { "texture": "#hide", "uv": [ 8.5, 7, 10.9, 8.2 ] },
+              "west": { "texture": "#hide", "uv": [ 15, 1, 15.5, 2.2 ] },
+              "up": { "texture": "#hide", "uv": [ 11.5, 14.5, 13.9, 15 ] },
+              "down": { "texture": "#hide", "uv": [ 7, 11, 9.4, 11.5 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortSideStoveIn",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortSideStoveInBreach",
+             "from": [ 9.275, 1.494, -0.06 ],
+             "to": [ 10.875, 3.487, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0.5, 11, 2.1, 12.994 ] },
+              "east": { "texture": "#breach", "uv": [ 15, 10, 15.62, 11.994 ] },
+              "south": { "texture": "#breach", "uv": [ 6, 0.5, 7.6, 2.494 ] },
+              "west": { "texture": "#breach", "uv": [ 5.5, 6, 6.12, 7.994 ] },
+              "up": { "texture": "#breach", "uv": [ 12.5, 7.5, 14.1, 8.12 ] },
+              "down": { "texture": "#breach", "uv": [ 2, 12.5, 3.6, 13.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideStoveInShard",
+             "from": [ 9.375, 1.494, 0.56 ],
+             "to": [ 10.775, 3.487, 1.06 ],
+             "rotationOrigin": [ 9.375, 1.494, 0.5 ],
+             "rotationX": 50,
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 6.5, 6.5, 7.9, 8.494 ] },
+              "east": { "texture": "#hide", "uv": [ 4.5, 11, 5, 12.994 ] },
+              "south": { "texture": "#hide", "uv": [ 3, 10, 4.4, 11.994 ] },
+              "west": { "texture": "#hide", "uv": [ 2, 4, 2.5, 5.994 ] },
+              "up": { "texture": "#hide", "uv": [ 9.5, 9, 10.9, 9.5 ] },
+              "down": { "texture": "#hide", "uv": [ 10, 4, 11.4, 4.5 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideStoveInBowx1",
+             "from": [ 8.875, 2.319, -0.06 ],
+             "to": [ 9.008, 2.769, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 0, 5.633, 0.45 ] },
+              "east": { "texture": "#breach", "uv": [ 13.5, 14.5, 14.12, 14.95 ] },
+              "south": { "texture": "#breach", "uv": [ 9.5, 1, 9.633, 1.45 ] },
+              "west": { "texture": "#breach", "uv": [ 3, 11.5, 3.62, 11.95 ] },
+              "up": { "texture": "#breach", "uv": [ 9.5, 11.5, 9.633, 12.12 ] },
+              "down": { "texture": "#breach", "uv": [ 14.5, 6.5, 14.633, 7.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideStoveInBowx2",
+             "from": [ 9.008, 2.53, -0.06 ],
+             "to": [ 9.142, 2.98, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1.5, 10, 1.633, 10.45 ] },
+              "east": { "texture": "#breach", "uv": [ 10.5, 7, 11.12, 7.45 ] },
+              "south": { "texture": "#breach", "uv": [ 11.5, 12, 11.633, 12.45 ] },
+              "west": { "texture": "#breach", "uv": [ 13, 3.5, 13.62, 3.95 ] },
+              "up": { "texture": "#breach", "uv": [ 7, 13.5, 7.133, 14.12 ] },
+              "down": { "texture": "#breach", "uv": [ 15.5, 12, 15.633, 12.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideStoveInBowx3",
+             "from": [ 9.142, 2.203, -0.06 ],
+             "to": [ 9.275, 2.653, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11.5, 1, 11.633, 1.45 ] },
+              "east": { "texture": "#breach", "uv": [ 9.5, 11.5, 10.12, 11.95 ] },
+              "south": { "texture": "#breach", "uv": [ 15, 1.5, 15.133, 1.95 ] },
+              "west": { "texture": "#breach", "uv": [ 5.5, 8.5, 6.12, 8.95 ] },
+              "up": { "texture": "#breach", "uv": [ 7, 4, 7.133, 4.62 ] },
+              "down": { "texture": "#breach", "uv": [ 1, 5, 1.133, 5.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideStoveInSternx1",
+             "from": [ 10.875, 2.547, -0.06 ],
+             "to": [ 11.008, 2.997, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0.5, 4.5, 0.633, 4.95 ] },
+              "east": { "texture": "#breach", "uv": [ 13, 11, 13.62, 11.45 ] },
+              "south": { "texture": "#breach", "uv": [ 2.5, 7, 2.633, 7.45 ] },
+              "west": { "texture": "#breach", "uv": [ 7.5, 6.5, 8.12, 6.95 ] },
+              "up": { "texture": "#breach", "uv": [ 14, 12.5, 14.133, 13.12 ] },
+              "down": { "texture": "#breach", "uv": [ 5.5, 2.5, 5.633, 3.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideStoveInSternx2",
+             "from": [ 11.008, 1.995, -0.06 ],
+             "to": [ 11.142, 2.445, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0, 5.5, 0.133, 5.95 ] },
+              "east": { "texture": "#breach", "uv": [ 14, 7, 14.62, 7.45 ] },
+              "south": { "texture": "#breach", "uv": [ 6.5, 3.5, 6.633, 3.95 ] },
+              "west": { "texture": "#breach", "uv": [ 6, 4.5, 6.62, 4.95 ] },
+              "up": { "texture": "#breach", "uv": [ 13.5, 6, 13.633, 6.62 ] },
+              "down": { "texture": "#breach", "uv": [ 13.5, 9, 13.633, 9.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortSideStoveInSternx3",
+             "from": [ 11.142, 2.254, -0.06 ],
+             "to": [ 11.275, 2.704, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 8.5, 5.633, 8.95 ] },
+              "east": { "texture": "#breach", "uv": [ 6.5, 8, 7.12, 8.45 ] },
+              "south": { "texture": "#breach", "uv": [ 8, 10.5, 8.133, 10.95 ] },
+              "west": { "texture": "#breach", "uv": [ 0.5, 6.5, 1.12, 6.95 ] },
+              "up": { "texture": "#breach", "uv": [ 3.5, 1.5, 3.633, 2.12 ] },
+              "down": { "texture": "#breach", "uv": [ 7, 8.5, 7.133, 9.12 ] }
+             }
+            }
+           ]
+          }
+         ]
         }
        ]
       },
@@ -6114,6 +6960,288 @@
           "up": { "texture": "#hide", "uv": [ 3, 9.5, 14.775, 10 ] },
           "down": { "texture": "#hide", "uv": [ 3, 5.5, 14.775, 6 ] }
          }
+        },
+        {
+         "name": "WoundStarboardSide",
+         "from": [ -0.25, 0, -0.5 ],
+         "to": [ -0.25, 0, -0.5 ],
+         "rotationOrigin": [ 0, 0, 0 ],
+         "rotationX": 17.147,
+         "faces": {},
+         "children": [
+          {
+           "name": "WoundStarboardSideScratched",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardSideScratchedx1",
+             "from": [ 9.775, 3.152, -0.06 ],
+             "to": [ 10.275, 3.252, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0.5, 7.5, 1, 7.6 ] },
+              "east": { "texture": "#breach", "uv": [ 8.5, 6.5, 9.12, 6.6 ] },
+              "south": { "texture": "#breach", "uv": [ 11, 6, 11.5, 6.1 ] },
+              "west": { "texture": "#breach", "uv": [ 10.5, 8, 11.12, 8.1 ] },
+              "up": { "texture": "#breach", "uv": [ 9, 5, 9.5, 5.62 ] },
+              "down": { "texture": "#breach", "uv": [ 8.5, 13, 9, 13.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideScratchedx2",
+             "from": [ 10.275, 3.14, -0.06 ],
+             "to": [ 10.775, 3.24, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 7.5, 9, 8, 9.1 ] },
+              "east": { "texture": "#breach", "uv": [ 4.5, 2.5, 5.12, 2.6 ] },
+              "south": { "texture": "#breach", "uv": [ 3.5, 9, 4, 9.1 ] },
+              "west": { "texture": "#breach", "uv": [ 10.5, 3.5, 11.12, 3.6 ] },
+              "up": { "texture": "#breach", "uv": [ 6, 2, 6.5, 2.62 ] },
+              "down": { "texture": "#breach", "uv": [ 7.5, 2.5, 8, 3.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideScratchedx3",
+             "from": [ 10.775, 3.026, -0.06 ],
+             "to": [ 11.275, 3.126, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2.5, 5, 3, 5.1 ] },
+              "east": { "texture": "#breach", "uv": [ 6.5, 8, 7.12, 8.1 ] },
+              "south": { "texture": "#breach", "uv": [ 13, 3.5, 13.5, 3.6 ] },
+              "west": { "texture": "#breach", "uv": [ 0, 11.5, 0.62, 11.6 ] },
+              "up": { "texture": "#breach", "uv": [ 8, 6.5, 8.5, 7.12 ] },
+              "down": { "texture": "#breach", "uv": [ 5.5, 14.5, 6, 15.12 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardSideCracked",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardSideCrackedx1",
+             "from": [ 9.775, 3.187, -0.06 ],
+             "to": [ 10.275, 3.387, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1.5, 14.5, 2, 14.7 ] },
+              "east": { "texture": "#breach", "uv": [ 7.5, 13.5, 8.12, 13.7 ] },
+              "south": { "texture": "#breach", "uv": [ 2, 4.5, 2.5, 4.7 ] },
+              "west": { "texture": "#breach", "uv": [ 12, 0.5, 12.62, 0.7 ] },
+              "up": { "texture": "#breach", "uv": [ 4.5, 5.5, 5, 6.12 ] },
+              "down": { "texture": "#breach", "uv": [ 4, 14, 4.5, 14.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideCrackedx2",
+             "from": [ 10.275, 2.731, -0.06 ],
+             "to": [ 10.775, 2.931, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0, 10, 0.5, 10.2 ] },
+              "east": { "texture": "#breach", "uv": [ 8.5, 13, 9.12, 13.2 ] },
+              "south": { "texture": "#breach", "uv": [ 3.5, 11, 4, 11.2 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 14, 1.62, 14.2 ] },
+              "up": { "texture": "#breach", "uv": [ 1.5, 5.5, 2, 6.12 ] },
+              "down": { "texture": "#breach", "uv": [ 10.5, 1.5, 11, 2.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideCrackedx3",
+             "from": [ 10.775, 2.752, -0.06 ],
+             "to": [ 11.275, 2.952, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 8.5, 5.5, 8.7 ] },
+              "east": { "texture": "#breach", "uv": [ 7, 14, 7.62, 14.2 ] },
+              "south": { "texture": "#breach", "uv": [ 0.5, 1.5, 1, 1.7 ] },
+              "west": { "texture": "#breach", "uv": [ 6, 8.5, 6.62, 8.7 ] },
+              "up": { "texture": "#breach", "uv": [ 10.5, 10.5, 11, 11.12 ] },
+              "down": { "texture": "#breach", "uv": [ 10, 3, 10.5, 3.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardSideSplit",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardSideSplitx1",
+             "from": [ 8.875, 1.811, -0.06 ],
+             "to": [ 9.675, 2.261, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1, 6, 1.8, 6.45 ] },
+              "east": { "texture": "#breach", "uv": [ 0.5, 8.5, 1.12, 8.95 ] },
+              "south": { "texture": "#breach", "uv": [ 6, 3, 6.8, 3.45 ] },
+              "west": { "texture": "#breach", "uv": [ 2, 3, 2.62, 3.45 ] },
+              "up": { "texture": "#breach", "uv": [ 10.5, 10.5, 11.3, 11.12 ] },
+              "down": { "texture": "#breach", "uv": [ 7.5, 13.5, 8.3, 14.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideSplitx2",
+             "from": [ 9.675, 2.031, -0.06 ],
+             "to": [ 10.475, 2.481, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 9, 7.5, 9.8, 7.95 ] },
+              "east": { "texture": "#breach", "uv": [ 5, 9, 5.62, 9.45 ] },
+              "south": { "texture": "#breach", "uv": [ 8.5, 10.5, 9.3, 10.95 ] },
+              "west": { "texture": "#breach", "uv": [ 4.5, 12.5, 5.12, 12.95 ] },
+              "up": { "texture": "#breach", "uv": [ 7.5, 11.5, 8.3, 12.12 ] },
+              "down": { "texture": "#breach", "uv": [ 3.5, 11, 4.3, 11.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideSplitx3",
+             "from": [ 10.475, 1.897, -0.06 ],
+             "to": [ 11.275, 2.347, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 11, 5.8, 11.45 ] },
+              "east": { "texture": "#breach", "uv": [ 9, 9, 9.62, 9.45 ] },
+              "south": { "texture": "#breach", "uv": [ 13.5, 4.5, 14.3, 4.95 ] },
+              "west": { "texture": "#breach", "uv": [ 0.5, 4, 1.12, 4.45 ] },
+              "up": { "texture": "#breach", "uv": [ 0, 2.5, 0.8, 3.12 ] },
+              "down": { "texture": "#breach", "uv": [ 1, 9.5, 1.8, 10.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideSplitLip",
+             "from": [ 8.875, 2.518, -0.3 ],
+             "to": [ 11.275, 3.718, 0.2 ],
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 12, 10.5, 14.4, 11.7 ] },
+              "east": { "texture": "#hide", "uv": [ 9.5, 2, 10, 3.2 ] },
+              "south": { "texture": "#hide", "uv": [ 1, 10, 3.4, 11.2 ] },
+              "west": { "texture": "#hide", "uv": [ 4.5, 12, 5, 13.2 ] },
+              "up": { "texture": "#hide", "uv": [ 1, 0, 3.4, 0.5 ] },
+              "down": { "texture": "#hide", "uv": [ 1, 4.5, 3.4, 5 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardSideStoveIn",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardSideStoveInBreach",
+             "from": [ 9.275, 1.494, -0.06 ],
+             "to": [ 10.875, 3.487, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 10.5, 7, 12.1, 8.994 ] },
+              "east": { "texture": "#breach", "uv": [ 12.5, 2, 13.12, 3.994 ] },
+              "south": { "texture": "#breach", "uv": [ 12.5, 9.5, 14.1, 11.494 ] },
+              "west": { "texture": "#breach", "uv": [ 3, 9.5, 3.62, 11.494 ] },
+              "up": { "texture": "#breach", "uv": [ 8.5, 4, 10.1, 4.62 ] },
+              "down": { "texture": "#breach", "uv": [ 1, 5.5, 2.6, 6.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideStoveInShard",
+             "from": [ 9.375, 1.494, -0.56 ],
+             "to": [ 10.775, 3.487, -0.06 ],
+             "rotationOrigin": [ 9.375, 1.494, 0 ],
+             "rotationX": -50,
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 2.5, 0, 3.9, 1.994 ] },
+              "east": { "texture": "#hide", "uv": [ 5.5, 0, 6, 1.994 ] },
+              "south": { "texture": "#hide", "uv": [ 6, 13.5, 7.4, 15.494 ] },
+              "west": { "texture": "#hide", "uv": [ 11, 7.5, 11.5, 9.494 ] },
+              "up": { "texture": "#hide", "uv": [ 6.5, 12, 7.9, 12.5 ] },
+              "down": { "texture": "#hide", "uv": [ 13.5, 8.5, 14.9, 9 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideStoveInBowx1",
+             "from": [ 8.875, 2.058, -0.06 ],
+             "to": [ 9.008, 2.508, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 10.5, 3, 10.633, 3.45 ] },
+              "east": { "texture": "#breach", "uv": [ 4, 5.5, 4.62, 5.95 ] },
+              "south": { "texture": "#breach", "uv": [ 11, 0.5, 11.133, 0.95 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 0, 1.62, 0.45 ] },
+              "up": { "texture": "#breach", "uv": [ 11, 3, 11.133, 3.62 ] },
+              "down": { "texture": "#breach", "uv": [ 9.5, 12.5, 9.633, 13.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideStoveInBowx2",
+             "from": [ 9.008, 2.081, -0.06 ],
+             "to": [ 9.142, 2.531, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 4.5, 10, 4.633, 10.45 ] },
+              "east": { "texture": "#breach", "uv": [ 14.5, 7.5, 15.12, 7.95 ] },
+              "south": { "texture": "#breach", "uv": [ 15, 14, 15.133, 14.45 ] },
+              "west": { "texture": "#breach", "uv": [ 0, 10, 0.62, 10.45 ] },
+              "up": { "texture": "#breach", "uv": [ 13.5, 2, 13.633, 2.62 ] },
+              "down": { "texture": "#breach", "uv": [ 3.5, 0, 3.633, 0.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideStoveInBowx3",
+             "from": [ 9.142, 2.258, -0.06 ],
+             "to": [ 9.275, 2.708, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 8, 11.5, 8.133, 11.95 ] },
+              "east": { "texture": "#breach", "uv": [ 7.5, 5, 8.12, 5.45 ] },
+              "south": { "texture": "#breach", "uv": [ 8, 2.5, 8.133, 2.95 ] },
+              "west": { "texture": "#breach", "uv": [ 10.5, 0, 11.12, 0.45 ] },
+              "up": { "texture": "#breach", "uv": [ 5.5, 3.5, 5.633, 4.12 ] },
+              "down": { "texture": "#breach", "uv": [ 12.5, 10.5, 12.633, 11.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideStoveInSternx1",
+             "from": [ 10.875, 2.002, -0.06 ],
+             "to": [ 11.008, 2.452, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 14, 14.5, 14.133, 14.95 ] },
+              "east": { "texture": "#breach", "uv": [ 7.5, 13.5, 8.12, 13.95 ] },
+              "south": { "texture": "#breach", "uv": [ 4, 3.5, 4.133, 3.95 ] },
+              "west": { "texture": "#breach", "uv": [ 11.5, 10.5, 12.12, 10.95 ] },
+              "up": { "texture": "#breach", "uv": [ 5, 12, 5.133, 12.62 ] },
+              "down": { "texture": "#breach", "uv": [ 2, 15, 2.133, 15.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideStoveInSternx2",
+             "from": [ 11.008, 2.538, -0.06 ],
+             "to": [ 11.142, 2.988, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 3.5, 8.5, 3.633, 8.95 ] },
+              "east": { "texture": "#breach", "uv": [ 3.5, 1, 4.12, 1.45 ] },
+              "south": { "texture": "#breach", "uv": [ 8.5, 11.5, 8.633, 11.95 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 5.5, 1.62, 5.95 ] },
+              "up": { "texture": "#breach", "uv": [ 0, 1.5, 0.133, 2.12 ] },
+              "down": { "texture": "#breach", "uv": [ 12.5, 1, 12.633, 1.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardSideStoveInSternx3",
+             "from": [ 11.142, 2.08, -0.06 ],
+             "to": [ 11.275, 2.53, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 6.5, 2.133, 6.95 ] },
+              "east": { "texture": "#breach", "uv": [ 0, 7.5, 0.62, 7.95 ] },
+              "south": { "texture": "#breach", "uv": [ 8, 14.5, 8.133, 14.95 ] },
+              "west": { "texture": "#breach", "uv": [ 0, 3, 0.62, 3.45 ] },
+              "up": { "texture": "#breach", "uv": [ 13.5, 2.5, 13.633, 3.12 ] },
+              "down": { "texture": "#breach", "uv": [ 15.5, 8, 15.633, 8.62 ] }
+             }
+            }
+           ]
+          }
+         ]
         }
        ]
       },
@@ -6174,6 +7302,288 @@
           "up": { "texture": "#hide", "uv": [ 2.5, 15, 14.27, 15.5 ] },
           "down": { "texture": "#hide", "uv": [ 1.5, 5.5, 13.27, 6 ] }
          }
+        },
+        {
+         "name": "WoundBottom",
+         "from": [ -0.25, 0, 0 ],
+         "to": [ -0.25, 0, 0 ],
+         "rotationOrigin": [ 0, 0, 0 ],
+         "rotationX": -90,
+         "faces": {},
+         "children": [
+          {
+           "name": "WoundBottomScratched",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundBottomScratchedx1",
+             "from": [ 0.5, 1.084, -0.06 ],
+             "to": [ 1, 1.184, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 12.5, 5.5, 13, 5.6 ] },
+              "east": { "texture": "#breach", "uv": [ 10, 10.5, 10.62, 10.6 ] },
+              "south": { "texture": "#breach", "uv": [ 13.5, 5, 14, 5.1 ] },
+              "west": { "texture": "#breach", "uv": [ 12, 1, 12.62, 1.1 ] },
+              "up": { "texture": "#breach", "uv": [ 8.5, 3.5, 9, 4.12 ] },
+              "down": { "texture": "#breach", "uv": [ 10.5, 0.5, 11, 1.12 ] }
+             }
+            },
+            {
+             "name": "WoundBottomScratchedx2",
+             "from": [ 1, 1.036, -0.06 ],
+             "to": [ 1.5, 1.136, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 9.5, 13.5, 10, 13.6 ] },
+              "east": { "texture": "#breach", "uv": [ 5, 5, 5.62, 5.1 ] },
+              "south": { "texture": "#breach", "uv": [ 3, 12.5, 3.5, 12.6 ] },
+              "west": { "texture": "#breach", "uv": [ 4.5, 15.5, 5.12, 15.6 ] },
+              "up": { "texture": "#breach", "uv": [ 5.5, 4.5, 6, 5.12 ] },
+              "down": { "texture": "#breach", "uv": [ 2.5, 0, 3, 0.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomScratchedx3",
+             "from": [ 1.5, 0.54, -0.06 ],
+             "to": [ 2, 0.64, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 13.5, 5.5, 13.6 ] },
+              "east": { "texture": "#breach", "uv": [ 2.5, 11, 3.12, 11.1 ] },
+              "south": { "texture": "#breach", "uv": [ 14, 6, 14.5, 6.1 ] },
+              "west": { "texture": "#breach", "uv": [ 10, 5, 10.62, 5.1 ] },
+              "up": { "texture": "#breach", "uv": [ 6.5, 0, 7, 0.62 ] },
+              "down": { "texture": "#breach", "uv": [ 3, 7, 3.5, 7.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundBottomCracked",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundBottomCrackedx1",
+             "from": [ 0.5, 0.757, -0.06 ],
+             "to": [ 1, 0.957, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 12, 8.5, 12.5, 8.7 ] },
+              "east": { "texture": "#breach", "uv": [ 2.5, 13.5, 3.12, 13.7 ] },
+              "south": { "texture": "#breach", "uv": [ 13, 8, 13.5, 8.2 ] },
+              "west": { "texture": "#breach", "uv": [ 10, 14, 10.62, 14.2 ] },
+              "up": { "texture": "#breach", "uv": [ 8, 3.5, 8.5, 4.12 ] },
+              "down": { "texture": "#breach", "uv": [ 2, 13.5, 2.5, 14.12 ] }
+             }
+            },
+            {
+             "name": "WoundBottomCrackedx2",
+             "from": [ 1, 0.694, -0.06 ],
+             "to": [ 1.5, 0.894, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 14.5, 10.5, 15, 10.7 ] },
+              "east": { "texture": "#breach", "uv": [ 7, 12, 7.62, 12.2 ] },
+              "south": { "texture": "#breach", "uv": [ 3.5, 2.5, 4, 2.7 ] },
+              "west": { "texture": "#breach", "uv": [ 0, 1.5, 0.62, 1.7 ] },
+              "up": { "texture": "#breach", "uv": [ 15, 8, 15.5, 8.62 ] },
+              "down": { "texture": "#breach", "uv": [ 11, 6, 11.5, 6.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomCrackedx3",
+             "from": [ 1.5, 1.051, -0.06 ],
+             "to": [ 2, 1.251, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 12.5, 5, 13, 5.2 ] },
+              "east": { "texture": "#breach", "uv": [ 6.5, 3, 7.12, 3.2 ] },
+              "south": { "texture": "#breach", "uv": [ 4.5, 12.5, 5, 12.7 ] },
+              "west": { "texture": "#breach", "uv": [ 4, 8.5, 4.62, 8.7 ] },
+              "up": { "texture": "#breach", "uv": [ 10, 3, 10.5, 3.62 ] },
+              "down": { "texture": "#breach", "uv": [ 2.5, 0, 3, 0.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundBottomSplit",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundBottomSplitx1",
+             "from": [ 0.5, 1.773, -0.06 ],
+             "to": [ 1.3, 2.223, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 14.5, 2.8, 14.95 ] },
+              "east": { "texture": "#breach", "uv": [ 11.5, 10.5, 12.12, 10.95 ] },
+              "south": { "texture": "#breach", "uv": [ 7, 7.5, 7.8, 7.95 ] },
+              "west": { "texture": "#breach", "uv": [ 13.5, 14, 14.12, 14.45 ] },
+              "up": { "texture": "#breach", "uv": [ 5.5, 14, 6.3, 14.62 ] },
+              "down": { "texture": "#breach", "uv": [ 13.5, 15, 14.3, 15.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomSplitx2",
+             "from": [ 1.3, 1.71, -0.06 ],
+             "to": [ 2.1, 2.16, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 9.5, 5.8, 9.95 ] },
+              "east": { "texture": "#breach", "uv": [ 10.5, 5, 11.12, 5.45 ] },
+              "south": { "texture": "#breach", "uv": [ 12.5, 3.5, 13.3, 3.95 ] },
+              "west": { "texture": "#breach", "uv": [ 3, 13.5, 3.62, 13.95 ] },
+              "up": { "texture": "#breach", "uv": [ 13.5, 11.5, 14.3, 12.12 ] },
+              "down": { "texture": "#breach", "uv": [ 0, 0.5, 0.8, 1.12 ] }
+             }
+            },
+            {
+             "name": "WoundBottomSplitx3",
+             "from": [ 2.1, 1.877, -0.06 ],
+             "to": [ 2.9, 2.327, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 7.5, 5, 8.3, 5.45 ] },
+              "east": { "texture": "#breach", "uv": [ 2, 3.5, 2.62, 3.95 ] },
+              "south": { "texture": "#breach", "uv": [ 12, 6.5, 12.8, 6.95 ] },
+              "west": { "texture": "#breach", "uv": [ 8, 7, 8.62, 7.45 ] },
+              "up": { "texture": "#breach", "uv": [ 11, 14.5, 11.8, 15.12 ] },
+              "down": { "texture": "#breach", "uv": [ 5.5, 0, 6.3, 0.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomSplitLip",
+             "from": [ 0.5, 2.75, 0.3 ],
+             "to": [ 2.9, 3.95, 0.8 ],
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 5.5, 9, 7.9, 10.2 ] },
+              "east": { "texture": "#hide", "uv": [ 9, 7.5, 9.5, 8.7 ] },
+              "south": { "texture": "#hide", "uv": [ 12.5, 9.5, 14.9, 10.7 ] },
+              "west": { "texture": "#hide", "uv": [ 1, 9, 1.5, 10.2 ] },
+              "up": { "texture": "#hide", "uv": [ 12.5, 3.5, 14.9, 4 ] },
+              "down": { "texture": "#hide", "uv": [ 13, 13.5, 15.4, 14 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundBottomStoveIn",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundBottomStoveInBreach",
+             "from": [ 0.9, 0.5, -0.06 ],
+             "to": [ 2.5, 3.489, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 2.5, 3.6, 5.489 ] },
+              "east": { "texture": "#breach", "uv": [ 12, 12, 12.62, 14.989 ] },
+              "south": { "texture": "#breach", "uv": [ 14, 5, 15.6, 7.989 ] },
+              "west": { "texture": "#breach", "uv": [ 5.5, 11.5, 6.12, 14.489 ] },
+              "up": { "texture": "#breach", "uv": [ 3.5, 8, 5.1, 8.62 ] },
+              "down": { "texture": "#breach", "uv": [ 7.5, 0, 9.1, 0.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomStoveInShard",
+             "from": [ 1, 0.5, 0.56 ],
+             "to": [ 2.4, 3.489, 1.06 ],
+             "rotationOrigin": [ 1, 0.5, 0.5 ],
+             "rotationX": 50,
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 0, 9.5, 1.4, 12.489 ] },
+              "east": { "texture": "#hide", "uv": [ 2.5, 6.5, 3, 9.489 ] },
+              "south": { "texture": "#hide", "uv": [ 13, 6, 14.4, 8.989 ] },
+              "west": { "texture": "#hide", "uv": [ 3, 7.5, 3.5, 10.489 ] },
+              "up": { "texture": "#hide", "uv": [ 1.5, 12, 2.9, 12.5 ] },
+              "down": { "texture": "#hide", "uv": [ 9, 1, 10.4, 1.5 ] }
+             }
+            },
+            {
+             "name": "WoundBottomStoveInBowx1",
+             "from": [ 0.5, 1.692, -0.06 ],
+             "to": [ 0.633, 2.142, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1.5, 12.5, 1.633, 12.95 ] },
+              "east": { "texture": "#breach", "uv": [ 5, 1.5, 5.62, 1.95 ] },
+              "south": { "texture": "#breach", "uv": [ 10, 15, 10.133, 15.45 ] },
+              "west": { "texture": "#breach", "uv": [ 9.5, 14, 10.12, 14.45 ] },
+              "up": { "texture": "#breach", "uv": [ 8, 0, 8.133, 0.62 ] },
+              "down": { "texture": "#breach", "uv": [ 5.5, 9, 5.633, 9.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomStoveInBowx2",
+             "from": [ 0.633, 1.671, -0.06 ],
+             "to": [ 0.767, 2.121, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 6, 11.5, 6.133, 11.95 ] },
+              "east": { "texture": "#breach", "uv": [ 13.5, 6, 14.12, 6.45 ] },
+              "south": { "texture": "#breach", "uv": [ 3.5, 6.5, 3.633, 6.95 ] },
+              "west": { "texture": "#breach", "uv": [ 8.5, 9.5, 9.12, 9.95 ] },
+              "up": { "texture": "#breach", "uv": [ 9, 10, 9.133, 10.62 ] },
+              "down": { "texture": "#breach", "uv": [ 9.5, 8, 9.633, 8.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomStoveInBowx3",
+             "from": [ 0.767, 1.948, -0.06 ],
+             "to": [ 0.9, 2.398, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11, 11, 11.133, 11.45 ] },
+              "east": { "texture": "#breach", "uv": [ 4, 10, 4.62, 10.45 ] },
+              "south": { "texture": "#breach", "uv": [ 5.5, 1, 5.633, 1.45 ] },
+              "west": { "texture": "#breach", "uv": [ 10, 5.5, 10.62, 5.95 ] },
+              "up": { "texture": "#breach", "uv": [ 1.5, 15, 1.633, 15.62 ] },
+              "down": { "texture": "#breach", "uv": [ 8, 7, 8.133, 7.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomStoveInSternx1",
+             "from": [ 2.5, 1.998, -0.06 ],
+             "to": [ 2.633, 2.448, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0, 14.5, 0.133, 14.95 ] },
+              "east": { "texture": "#breach", "uv": [ 3.5, 6, 4.12, 6.45 ] },
+              "south": { "texture": "#breach", "uv": [ 4, 5.5, 4.133, 5.95 ] },
+              "west": { "texture": "#breach", "uv": [ 7, 12, 7.62, 12.45 ] },
+              "up": { "texture": "#breach", "uv": [ 10.5, 12.5, 10.633, 13.12 ] },
+              "down": { "texture": "#breach", "uv": [ 6, 5, 6.133, 5.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomStoveInSternx2",
+             "from": [ 2.633, 1.991, -0.06 ],
+             "to": [ 2.767, 2.441, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 7, 8.5, 7.133, 8.95 ] },
+              "east": { "texture": "#breach", "uv": [ 15, 6, 15.62, 6.45 ] },
+              "south": { "texture": "#breach", "uv": [ 15.5, 1, 15.633, 1.45 ] },
+              "west": { "texture": "#breach", "uv": [ 4, 5.5, 4.62, 5.95 ] },
+              "up": { "texture": "#breach", "uv": [ 12, 12, 12.133, 12.62 ] },
+              "down": { "texture": "#breach", "uv": [ 0.5, 7, 0.633, 7.62 ] }
+             }
+            },
+            {
+             "name": "WoundBottomStoveInSternx3",
+             "from": [ 2.767, 1.721, -0.06 ],
+             "to": [ 2.9, 2.171, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11.5, 11, 11.633, 11.45 ] },
+              "east": { "texture": "#breach", "uv": [ 8.5, 5.5, 9.12, 5.95 ] },
+              "south": { "texture": "#breach", "uv": [ 8, 2, 8.133, 2.45 ] },
+              "west": { "texture": "#breach", "uv": [ 9, 13, 9.62, 13.45 ] },
+              "up": { "texture": "#breach", "uv": [ 15, 9.5, 15.133, 10.12 ] },
+              "down": { "texture": "#breach", "uv": [ 8, 6.5, 8.133, 7.12 ] }
+             }
+            }
+           ]
+          }
+         ]
         }
        ]
       },
@@ -6656,6 +8066,288 @@
           "up": { "texture": "#hide", "uv": [ 3, 12.5, 11.347, 13 ] },
           "down": { "texture": "#hide", "uv": [ 7, 6, 15.347, 6.5 ] }
          }
+        },
+        {
+         "name": "WoundPortQuarter",
+         "from": [ -0.25, 0, 0 ],
+         "to": [ -0.25, 0, 0 ],
+         "rotationOrigin": [ 0, 0, 0 ],
+         "rotationX": -12.42,
+         "faces": {},
+         "children": [
+          {
+           "name": "WoundPortQuarterScratched",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortQuarterScratchedx1",
+             "from": [ 6.347, 2.741, -0.06 ],
+             "to": [ 6.847, 2.841, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 8.5, 5, 9, 5.1 ] },
+              "east": { "texture": "#breach", "uv": [ 8, 14.5, 8.62, 14.6 ] },
+              "south": { "texture": "#breach", "uv": [ 0.5, 2, 1, 2.1 ] },
+              "west": { "texture": "#breach", "uv": [ 13, 13, 13.62, 13.1 ] },
+              "up": { "texture": "#breach", "uv": [ 7, 7.5, 7.5, 8.12 ] },
+              "down": { "texture": "#breach", "uv": [ 13.5, 2.5, 14, 3.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterScratchedx2",
+             "from": [ 6.847, 2.618, -0.06 ],
+             "to": [ 7.347, 2.718, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 15, 1.5, 15.5, 1.6 ] },
+              "east": { "texture": "#breach", "uv": [ 3, 9.5, 3.62, 9.6 ] },
+              "south": { "texture": "#breach", "uv": [ 5, 5.5, 5.5, 5.6 ] },
+              "west": { "texture": "#breach", "uv": [ 14.5, 4.5, 15.12, 4.6 ] },
+              "up": { "texture": "#breach", "uv": [ 8, 13.5, 8.5, 14.12 ] },
+              "down": { "texture": "#breach", "uv": [ 1.5, 2, 2, 2.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterScratchedx3",
+             "from": [ 7.347, 2.976, -0.06 ],
+             "to": [ 7.847, 3.076, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11.5, 13.5, 12, 13.6 ] },
+              "east": { "texture": "#breach", "uv": [ 5, 6.5, 5.62, 6.6 ] },
+              "south": { "texture": "#breach", "uv": [ 9, 13, 9.5, 13.1 ] },
+              "west": { "texture": "#breach", "uv": [ 4.5, 14, 5.12, 14.1 ] },
+              "up": { "texture": "#breach", "uv": [ 3.5, 1.5, 4, 2.12 ] },
+              "down": { "texture": "#breach", "uv": [ 14.5, 14, 15, 14.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortQuarterCracked",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortQuarterCrackedx1",
+             "from": [ 6.347, 2.94, -0.06 ],
+             "to": [ 6.847, 3.14, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 13.5, 14.5, 14, 14.7 ] },
+              "east": { "texture": "#breach", "uv": [ 4.5, 4, 5.12, 4.2 ] },
+              "south": { "texture": "#breach", "uv": [ 6, 13.5, 6.5, 13.7 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 2.5, 1.62, 2.7 ] },
+              "up": { "texture": "#breach", "uv": [ 12, 7.5, 12.5, 8.12 ] },
+              "down": { "texture": "#breach", "uv": [ 10, 6, 10.5, 6.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterCrackedx2",
+             "from": [ 6.847, 2.659, -0.06 ],
+             "to": [ 7.347, 2.859, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 1.5, 6, 1.7 ] },
+              "east": { "texture": "#breach", "uv": [ 9, 3.5, 9.62, 3.7 ] },
+              "south": { "texture": "#breach", "uv": [ 4.5, 3.5, 5, 3.7 ] },
+              "west": { "texture": "#breach", "uv": [ 0.5, 13, 1.12, 13.2 ] },
+              "up": { "texture": "#breach", "uv": [ 6, 9.5, 6.5, 10.12 ] },
+              "down": { "texture": "#breach", "uv": [ 13.5, 2, 14, 2.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterCrackedx3",
+             "from": [ 7.347, 2.547, -0.06 ],
+             "to": [ 7.847, 2.747, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1.5, 10, 2, 10.2 ] },
+              "east": { "texture": "#breach", "uv": [ 12, 4.5, 12.62, 4.7 ] },
+              "south": { "texture": "#breach", "uv": [ 0, 13.5, 0.5, 13.7 ] },
+              "west": { "texture": "#breach", "uv": [ 3.5, 9.5, 4.12, 9.7 ] },
+              "up": { "texture": "#breach", "uv": [ 10.5, 5.5, 11, 6.12 ] },
+              "down": { "texture": "#breach", "uv": [ 7.5, 11, 8, 11.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortQuarterSplit",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortQuarterSplitx1",
+             "from": [ 5.447, 1.761, -0.06 ],
+             "to": [ 6.247, 2.211, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 8.5, 5.8, 8.95 ] },
+              "east": { "texture": "#breach", "uv": [ 3, 5.5, 3.62, 5.95 ] },
+              "south": { "texture": "#breach", "uv": [ 13, 4, 13.8, 4.45 ] },
+              "west": { "texture": "#breach", "uv": [ 1.5, 8.5, 2.12, 8.95 ] },
+              "up": { "texture": "#breach", "uv": [ 2.5, 13, 3.3, 13.62 ] },
+              "down": { "texture": "#breach", "uv": [ 1.5, 9.5, 2.3, 10.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterSplitx2",
+             "from": [ 6.247, 1.553, -0.06 ],
+             "to": [ 7.047, 2.003, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 13, 4, 13.8, 4.45 ] },
+              "east": { "texture": "#breach", "uv": [ 0.5, 13.5, 1.12, 13.95 ] },
+              "south": { "texture": "#breach", "uv": [ 12.5, 7.5, 13.3, 7.95 ] },
+              "west": { "texture": "#breach", "uv": [ 13, 7, 13.62, 7.45 ] },
+              "up": { "texture": "#breach", "uv": [ 4.5, 14.5, 5.3, 15.12 ] },
+              "down": { "texture": "#breach", "uv": [ 7, 14.5, 7.8, 15.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterSplitx3",
+             "from": [ 7.047, 1.522, -0.06 ],
+             "to": [ 7.847, 1.972, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 5, 6.3, 5.45 ] },
+              "east": { "texture": "#breach", "uv": [ 6, 2, 6.62, 2.45 ] },
+              "south": { "texture": "#breach", "uv": [ 6, 15, 6.8, 15.45 ] },
+              "west": { "texture": "#breach", "uv": [ 11.5, 13.5, 12.12, 13.95 ] },
+              "up": { "texture": "#breach", "uv": [ 4, 15, 4.8, 15.62 ] },
+              "down": { "texture": "#breach", "uv": [ 3.5, 9, 4.3, 9.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterSplitLip",
+             "from": [ 5.447, 2.38, 0.3 ],
+             "to": [ 7.847, 3.58, 0.8 ],
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 4.5, 12.5, 6.9, 13.7 ] },
+              "east": { "texture": "#hide", "uv": [ 9.5, 8, 10, 9.2 ] },
+              "south": { "texture": "#hide", "uv": [ 1.5, 13.5, 3.9, 14.7 ] },
+              "west": { "texture": "#hide", "uv": [ 7.5, 13, 8, 14.2 ] },
+              "up": { "texture": "#hide", "uv": [ 3, 11.5, 5.4, 12 ] },
+              "down": { "texture": "#hide", "uv": [ 7, 0, 9.4, 0.5 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundPortQuarterStoveIn",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundPortQuarterStoveInBreach",
+             "from": [ 5.847, 1.355, -0.06 ],
+             "to": [ 7.447, 3.21, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5.5, 14, 7.1, 15.855 ] },
+              "east": { "texture": "#breach", "uv": [ 1, 11, 1.62, 12.855 ] },
+              "south": { "texture": "#breach", "uv": [ 6, 9.5, 7.6, 11.355 ] },
+              "west": { "texture": "#breach", "uv": [ 6.5, 2, 7.12, 3.855 ] },
+              "up": { "texture": "#breach", "uv": [ 6.5, 12, 8.1, 12.62 ] },
+              "down": { "texture": "#breach", "uv": [ 3, 13.5, 4.6, 14.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterStoveInShard",
+             "from": [ 5.947, 1.355, 0.56 ],
+             "to": [ 7.347, 3.21, 1.06 ],
+             "rotationOrigin": [ 5.947, 1.355, 0.5 ],
+             "rotationX": 50,
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 3, 9, 4.4, 10.855 ] },
+              "east": { "texture": "#hide", "uv": [ 0.5, 4.5, 1, 6.355 ] },
+              "south": { "texture": "#hide", "uv": [ 13.5, 11, 14.9, 12.855 ] },
+              "west": { "texture": "#hide", "uv": [ 2, 8.5, 2.5, 10.355 ] },
+              "up": { "texture": "#hide", "uv": [ 8.5, 8, 9.9, 8.5 ] },
+              "down": { "texture": "#hide", "uv": [ 3.5, 4.5, 4.9, 5 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterStoveInBowx1",
+             "from": [ 5.447, 2.225, -0.06 ],
+             "to": [ 5.58, 2.675, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 3.5, 7, 3.633, 7.45 ] },
+              "east": { "texture": "#breach", "uv": [ 0, 11, 0.62, 11.45 ] },
+              "south": { "texture": "#breach", "uv": [ 11.5, 5, 11.633, 5.45 ] },
+              "west": { "texture": "#breach", "uv": [ 4, 7.5, 4.62, 7.95 ] },
+              "up": { "texture": "#breach", "uv": [ 5.5, 12.5, 5.633, 13.12 ] },
+              "down": { "texture": "#breach", "uv": [ 15, 2.5, 15.133, 3.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterStoveInBowx2",
+             "from": [ 5.58, 2.055, -0.06 ],
+             "to": [ 5.714, 2.505, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0, 14, 0.133, 14.45 ] },
+              "east": { "texture": "#breach", "uv": [ 5, 0.5, 5.62, 0.95 ] },
+              "south": { "texture": "#breach", "uv": [ 5.5, 9.5, 5.633, 9.95 ] },
+              "west": { "texture": "#breach", "uv": [ 3.5, 3, 4.12, 3.45 ] },
+              "up": { "texture": "#breach", "uv": [ 4, 2, 4.133, 2.62 ] },
+              "down": { "texture": "#breach", "uv": [ 12, 8, 12.133, 8.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterStoveInBowx3",
+             "from": [ 5.714, 1.969, -0.06 ],
+             "to": [ 5.847, 2.419, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 14, 4, 14.133, 4.45 ] },
+              "east": { "texture": "#breach", "uv": [ 11.5, 7, 12.12, 7.45 ] },
+              "south": { "texture": "#breach", "uv": [ 7, 2, 7.133, 2.45 ] },
+              "west": { "texture": "#breach", "uv": [ 2, 13.5, 2.62, 13.95 ] },
+              "up": { "texture": "#breach", "uv": [ 4, 14, 4.133, 14.62 ] },
+              "down": { "texture": "#breach", "uv": [ 14, 1, 14.133, 1.62 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterStoveInSternx1",
+             "from": [ 7.447, 1.767, -0.06 ],
+             "to": [ 7.58, 2.217, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 9, 4, 9.133, 4.45 ] },
+              "east": { "texture": "#breach", "uv": [ 2, 13, 2.62, 13.45 ] },
+              "south": { "texture": "#breach", "uv": [ 10, 13.5, 10.133, 13.95 ] },
+              "west": { "texture": "#breach", "uv": [ 1, 1.5, 1.62, 1.95 ] },
+              "up": { "texture": "#breach", "uv": [ 9.5, 12, 9.633, 12.62 ] },
+              "down": { "texture": "#breach", "uv": [ 3.5, 3.5, 3.633, 4.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterStoveInSternx2",
+             "from": [ 7.58, 2.018, -0.06 ],
+             "to": [ 7.714, 2.468, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 8.5, 10, 8.633, 10.45 ] },
+              "east": { "texture": "#breach", "uv": [ 0.5, 7.5, 1.12, 7.95 ] },
+              "south": { "texture": "#breach", "uv": [ 6, 3, 6.133, 3.45 ] },
+              "west": { "texture": "#breach", "uv": [ 8.5, 1.5, 9.12, 1.95 ] },
+              "up": { "texture": "#breach", "uv": [ 11, 14.5, 11.133, 15.12 ] },
+              "down": { "texture": "#breach", "uv": [ 11.5, 11.5, 11.633, 12.12 ] }
+             }
+            },
+            {
+             "name": "WoundPortQuarterStoveInSternx3",
+             "from": [ 7.714, 1.921, -0.06 ],
+             "to": [ 7.847, 2.371, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 7, 6.5, 7.133, 6.95 ] },
+              "east": { "texture": "#breach", "uv": [ 11.5, 3.5, 12.12, 3.95 ] },
+              "south": { "texture": "#breach", "uv": [ 0, 11.5, 0.133, 11.95 ] },
+              "west": { "texture": "#breach", "uv": [ 11, 13.5, 11.62, 13.95 ] },
+              "up": { "texture": "#breach", "uv": [ 3.5, 9.5, 3.633, 10.12 ] },
+              "down": { "texture": "#breach", "uv": [ 13, 13, 13.133, 13.62 ] }
+             }
+            }
+           ]
+          }
+         ]
         }
        ]
       },
@@ -6768,6 +8460,288 @@
           "up": { "texture": "#hide", "uv": [ 2.5, 0, 10.847, 0.5 ] },
           "down": { "texture": "#hide", "uv": [ 6.5, 5.5, 14.847, 6 ] }
          }
+        },
+        {
+         "name": "WoundStarboardQuarter",
+         "from": [ -0.25, 0, -0.5 ],
+         "to": [ -0.25, 0, -0.5 ],
+         "rotationOrigin": [ 0, 0, 0 ],
+         "rotationX": 12.42,
+         "faces": {},
+         "children": [
+          {
+           "name": "WoundStarboardQuarterScratched",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardQuarterScratchedx1",
+             "from": [ 6.347, 2.87, -0.06 ],
+             "to": [ 6.847, 2.97, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2, 7.5, 2.5, 7.6 ] },
+              "east": { "texture": "#breach", "uv": [ 8.5, 12, 9.12, 12.1 ] },
+              "south": { "texture": "#breach", "uv": [ 8.5, 11, 9, 11.1 ] },
+              "west": { "texture": "#breach", "uv": [ 0.5, 5, 1.12, 5.1 ] },
+              "up": { "texture": "#breach", "uv": [ 9, 5, 9.5, 5.62 ] },
+              "down": { "texture": "#breach", "uv": [ 15, 0, 15.5, 0.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterScratchedx2",
+             "from": [ 6.847, 3.065, -0.06 ],
+             "to": [ 7.347, 3.165, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 0.5, 5.5, 0.6 ] },
+              "east": { "texture": "#breach", "uv": [ 4.5, 11, 5.12, 11.1 ] },
+              "south": { "texture": "#breach", "uv": [ 5.5, 15.5, 6, 15.6 ] },
+              "west": { "texture": "#breach", "uv": [ 5.5, 12.5, 6.12, 12.6 ] },
+              "up": { "texture": "#breach", "uv": [ 14.5, 3.5, 15, 4.12 ] },
+              "down": { "texture": "#breach", "uv": [ 13.5, 4.5, 14, 5.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterScratchedx3",
+             "from": [ 7.347, 2.719, -0.06 ],
+             "to": [ 7.847, 2.819, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11, 1.5, 11.5, 1.6 ] },
+              "east": { "texture": "#breach", "uv": [ 10, 10.5, 10.62, 10.6 ] },
+              "south": { "texture": "#breach", "uv": [ 9.5, 0.5, 10, 0.6 ] },
+              "west": { "texture": "#breach", "uv": [ 11, 4.5, 11.62, 4.6 ] },
+              "up": { "texture": "#breach", "uv": [ 3, 4, 3.5, 4.62 ] },
+              "down": { "texture": "#breach", "uv": [ 6.5, 5.5, 7, 6.12 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardQuarterCracked",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardQuarterCrackedx1",
+             "from": [ 6.347, 2.412, -0.06 ],
+             "to": [ 6.847, 2.612, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 1, 6, 1.5, 6.2 ] },
+              "east": { "texture": "#breach", "uv": [ 5, 5, 5.62, 5.2 ] },
+              "south": { "texture": "#breach", "uv": [ 6, 15, 6.5, 15.2 ] },
+              "west": { "texture": "#breach", "uv": [ 11.5, 6.5, 12.12, 6.7 ] },
+              "up": { "texture": "#breach", "uv": [ 9.5, 13.5, 10, 14.12 ] },
+              "down": { "texture": "#breach", "uv": [ 13, 9, 13.5, 9.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterCrackedx2",
+             "from": [ 6.847, 2.754, -0.06 ],
+             "to": [ 7.347, 2.954, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 0.5, 4.5, 1, 4.7 ] },
+              "east": { "texture": "#breach", "uv": [ 5, 6.5, 5.62, 6.7 ] },
+              "south": { "texture": "#breach", "uv": [ 0.5, 3.5, 1, 3.7 ] },
+              "west": { "texture": "#breach", "uv": [ 5, 15.5, 5.62, 15.7 ] },
+              "up": { "texture": "#breach", "uv": [ 4, 3, 4.5, 3.62 ] },
+              "down": { "texture": "#breach", "uv": [ 12.5, 10, 13, 10.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterCrackedx3",
+             "from": [ 7.347, 2.584, -0.06 ],
+             "to": [ 7.847, 2.784, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11, 14, 11.5, 14.2 ] },
+              "east": { "texture": "#breach", "uv": [ 3, 1, 3.62, 1.2 ] },
+              "south": { "texture": "#breach", "uv": [ 9, 2.5, 9.5, 2.7 ] },
+              "west": { "texture": "#breach", "uv": [ 10, 8.5, 10.62, 8.7 ] },
+              "up": { "texture": "#breach", "uv": [ 15, 0.5, 15.5, 1.12 ] },
+              "down": { "texture": "#breach", "uv": [ 12, 2, 12.5, 2.62 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardQuarterSplit",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardQuarterSplitx1",
+             "from": [ 5.447, 1.634, -0.06 ],
+             "to": [ 6.247, 2.084, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 4, 1, 4.8, 1.45 ] },
+              "east": { "texture": "#breach", "uv": [ 0.5, 8.5, 1.12, 8.95 ] },
+              "south": { "texture": "#breach", "uv": [ 4.5, 5.5, 5.3, 5.95 ] },
+              "west": { "texture": "#breach", "uv": [ 12, 5, 12.62, 5.45 ] },
+              "up": { "texture": "#breach", "uv": [ 9, 9, 9.8, 9.62 ] },
+              "down": { "texture": "#breach", "uv": [ 1, 2, 1.8, 2.62 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterSplitx2",
+             "from": [ 6.247, 1.472, -0.06 ],
+             "to": [ 7.047, 1.922, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 7, 0, 7.8, 0.45 ] },
+              "east": { "texture": "#breach", "uv": [ 15, 12, 15.62, 12.45 ] },
+              "south": { "texture": "#breach", "uv": [ 4, 8, 4.8, 8.45 ] },
+              "west": { "texture": "#breach", "uv": [ 7, 0.5, 7.62, 0.95 ] },
+              "up": { "texture": "#breach", "uv": [ 14.5, 12.5, 15.3, 13.12 ] },
+              "down": { "texture": "#breach", "uv": [ 7, 3.5, 7.8, 4.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterSplitx3",
+             "from": [ 7.047, 1.664, -0.06 ],
+             "to": [ 7.847, 2.114, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 14.5, 11.5, 15.3, 11.95 ] },
+              "east": { "texture": "#breach", "uv": [ 8.5, 10.5, 9.12, 10.95 ] },
+              "south": { "texture": "#breach", "uv": [ 0.5, 12, 1.3, 12.45 ] },
+              "west": { "texture": "#breach", "uv": [ 3, 13.5, 3.62, 13.95 ] },
+              "up": { "texture": "#breach", "uv": [ 3.5, 10, 4.3, 10.62 ] },
+              "down": { "texture": "#breach", "uv": [ 6, 11.5, 6.8, 12.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterSplitLip",
+             "from": [ 5.447, 2.38, -0.3 ],
+             "to": [ 7.847, 3.58, 0.2 ],
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 0, 0.5, 2.4, 1.7 ] },
+              "east": { "texture": "#hide", "uv": [ 4.5, 0.5, 5, 1.7 ] },
+              "south": { "texture": "#hide", "uv": [ 11.5, 14, 13.9, 15.2 ] },
+              "west": { "texture": "#hide", "uv": [ 7.5, 4, 8, 5.2 ] },
+              "up": { "texture": "#hide", "uv": [ 10, 15, 12.4, 15.5 ] },
+              "down": { "texture": "#hide", "uv": [ 1, 1, 3.4, 1.5 ] }
+             }
+            }
+           ]
+          },
+          {
+           "name": "WoundStarboardQuarterStoveIn",
+           "from": [ 0, 0, 0 ],
+           "to": [ 0, 0, 0 ],
+           "rotationOrigin": [ 0, 0, 0 ],
+           "faces": {},
+           "children": [
+            {
+             "name": "WoundStarboardQuarterStoveInBreach",
+             "from": [ 5.847, 1.355, -0.06 ],
+             "to": [ 7.447, 3.21, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 2.5, 9, 4.1, 10.855 ] },
+              "east": { "texture": "#breach", "uv": [ 9, 4, 9.62, 5.855 ] },
+              "south": { "texture": "#breach", "uv": [ 7.5, 3.5, 9.1, 5.355 ] },
+              "west": { "texture": "#breach", "uv": [ 0.5, 9, 1.12, 10.855 ] },
+              "up": { "texture": "#breach", "uv": [ 6, 10.5, 7.6, 11.12 ] },
+              "down": { "texture": "#breach", "uv": [ 3.5, 12.5, 5.1, 13.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterStoveInShard",
+             "from": [ 5.947, 1.355, -0.56 ],
+             "to": [ 7.347, 3.21, -0.06 ],
+             "rotationOrigin": [ 5.947, 1.355, 0 ],
+             "rotationX": -50,
+             "faces": {
+              "north": { "texture": "#hide", "uv": [ 5.5, 13, 6.9, 14.855 ] },
+              "east": { "texture": "#hide", "uv": [ 9.5, 8, 10, 9.855 ] },
+              "south": { "texture": "#hide", "uv": [ 4, 3.5, 5.4, 5.355 ] },
+              "west": { "texture": "#hide", "uv": [ 7.5, 4.5, 8, 6.355 ] },
+              "up": { "texture": "#hide", "uv": [ 1.5, 9.5, 2.9, 10 ] },
+              "down": { "texture": "#hide", "uv": [ 5.5, 8, 6.9, 8.5 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterStoveInBowx1",
+             "from": [ 5.447, 1.943, -0.06 ],
+             "to": [ 5.58, 2.393, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 10.5, 1.5, 10.633, 1.95 ] },
+              "east": { "texture": "#breach", "uv": [ 4.5, 7.5, 5.12, 7.95 ] },
+              "south": { "texture": "#breach", "uv": [ 6.5, 1, 6.633, 1.45 ] },
+              "west": { "texture": "#breach", "uv": [ 12, 15, 12.62, 15.45 ] },
+              "up": { "texture": "#breach", "uv": [ 10.5, 1.5, 10.633, 2.12 ] },
+              "down": { "texture": "#breach", "uv": [ 8, 14.5, 8.133, 15.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterStoveInBowx2",
+             "from": [ 5.58, 1.9, -0.06 ],
+             "to": [ 5.714, 2.35, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 7.5, 11, 7.633, 11.45 ] },
+              "east": { "texture": "#breach", "uv": [ 6.5, 11.5, 7.12, 11.95 ] },
+              "south": { "texture": "#breach", "uv": [ 4, 6, 4.133, 6.45 ] },
+              "west": { "texture": "#breach", "uv": [ 6, 8, 6.62, 8.45 ] },
+              "up": { "texture": "#breach", "uv": [ 4, 9.5, 4.133, 10.12 ] },
+              "down": { "texture": "#breach", "uv": [ 14, 9.5, 14.133, 10.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterStoveInBowx3",
+             "from": [ 5.714, 2.101, -0.06 ],
+             "to": [ 5.847, 2.551, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 8, 13.5, 8.133, 13.95 ] },
+              "east": { "texture": "#breach", "uv": [ 2.5, 15, 3.12, 15.45 ] },
+              "south": { "texture": "#breach", "uv": [ 0.5, 4, 0.633, 4.45 ] },
+              "west": { "texture": "#breach", "uv": [ 6.5, 13, 7.12, 13.45 ] },
+              "up": { "texture": "#breach", "uv": [ 4, 6, 4.133, 6.62 ] },
+              "down": { "texture": "#breach", "uv": [ 14, 7.5, 14.133, 8.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterStoveInSternx1",
+             "from": [ 7.447, 2.315, -0.06 ],
+             "to": [ 7.58, 2.765, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 11.5, 0.5, 11.633, 0.95 ] },
+              "east": { "texture": "#breach", "uv": [ 1, 3.5, 1.62, 3.95 ] },
+              "south": { "texture": "#breach", "uv": [ 13, 9, 13.133, 9.45 ] },
+              "west": { "texture": "#breach", "uv": [ 3.5, 5, 4.12, 5.45 ] },
+              "up": { "texture": "#breach", "uv": [ 10, 12, 10.133, 12.62 ] },
+              "down": { "texture": "#breach", "uv": [ 7, 5.5, 7.133, 6.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterStoveInSternx2",
+             "from": [ 7.58, 2.179, -0.06 ],
+             "to": [ 7.714, 2.629, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 10.5, 9, 10.633, 9.45 ] },
+              "east": { "texture": "#breach", "uv": [ 8.5, 1, 9.12, 1.45 ] },
+              "south": { "texture": "#breach", "uv": [ 14.5, 7, 14.633, 7.45 ] },
+              "west": { "texture": "#breach", "uv": [ 1.5, 12.5, 2.12, 12.95 ] },
+              "up": { "texture": "#breach", "uv": [ 7.5, 10.5, 7.633, 11.12 ] },
+              "down": { "texture": "#breach", "uv": [ 8.5, 4.5, 8.633, 5.12 ] }
+             }
+            },
+            {
+             "name": "WoundStarboardQuarterStoveInSternx3",
+             "from": [ 7.714, 1.793, -0.06 ],
+             "to": [ 7.847, 2.243, 0.56 ],
+             "faces": {
+              "north": { "texture": "#breach", "uv": [ 5, 11, 5.133, 11.45 ] },
+              "east": { "texture": "#breach", "uv": [ 0.5, 0.5, 1.12, 0.95 ] },
+              "south": { "texture": "#breach", "uv": [ 9.5, 5, 9.633, 5.45 ] },
+              "west": { "texture": "#breach", "uv": [ 14.5, 11, 15.12, 11.45 ] },
+              "up": { "texture": "#breach", "uv": [ 11, 7.5, 11.133, 8.12 ] },
+              "down": { "texture": "#breach", "uv": [ 3.5, 9, 3.633, 9.62 ] }
+             }
+            }
+           ]
+          }
+         ]
         }
        ]
       },

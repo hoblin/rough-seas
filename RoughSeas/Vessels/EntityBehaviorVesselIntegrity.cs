@@ -10,6 +10,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
@@ -47,6 +48,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private Shell? shell;
     private double frameJoules;
     private IHullForm? form;
+    private IOutboard? outboard;
     private DamageConversion damageConversion = null!;
     private VesselsModSystem vessels = null!;
     private ISeaWeather seaWeather = null!;
@@ -190,6 +192,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     public override void AfterInitialized(bool onFirstSpawn)
     {
         form = entity.SidedProperties.Behaviors.OfType<IHullForm>().FirstOrDefault();
+        outboard = entity.SidedProperties.Behaviors.OfType<IOutboard>().FirstOrDefault();
         if (form != null) form.Reformed += Rebuild;
         if (model is CrackingHull cracking && entity.SidedProperties.Behaviors.OfType<ICovered>().FirstOrDefault() is { } covered) cracking.CoveredBy(() => covered.Cover);
         Rebuild();
@@ -197,15 +200,20 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public override ITexPositionSource? GetTextureSource(ref EnumHandling handling)
     {
-        if (damage?.Visible != true) return null;
+        if (damage?.Overlaid != true) return null;
 
         handling = EnumHandling.PreventSubsequent;
         var capi = (ICoreClientAPI)entity.Api;
         return damage.Over(capi.Tesselator.GetTextureSource(entity, null, entity.WatchedAttributes.GetInt("textureIndex")));
     }
 
-    public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements) =>
-        damage?.Retexture(ref entityShape, ref shapeIsCloned, Shape);
+    public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
+    {
+        if (damage == null) return;
+
+        damage.Retexture(ref entityShape, ref shapeIsCloned, Shape);
+        willDeleteElements = (willDeleteElements ?? []).Append(damage.Hidden(entityShape));
+    }
 
     public override void OnEntityDespawn(EntityDespawnData despawn)
     {
@@ -302,17 +310,28 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     {
         var place = Toward(knocked.TowardX, knocked.TowardZ);
         double mass = Aboard.Impact;
+        double joules;
         if (knocked.Against == 0)
         {
-            double joules = impact.Joules(mass, knocked.SpeedLost);
+            joules = impact.Joules(mass, knocked.SpeedLost);
             vessels.Log(entity, "impact at {0:F1} m/s into the {1} with {2:F0} kg aboard: {3:F0} J", knocked.SpeedLost, place.Code(), mass, joules);
-            Strike(joules, place);
-            return;
         }
-        double rammedJoules = rams.Joules(mass, knocked.TheirKg, knocked.SpeedLost);
-        vessels.Log(entity, "rammed vessel {0} at {1:F1} m/s into the {2}, {3:F0} kg against {4:F0}: {5:F0} J",
-            knocked.Against, knocked.SpeedLost, place.Code(), mass, knocked.TheirKg, rammedJoules);
-        Strike(rammedJoules, place);
+        else
+        {
+            joules = rams.Joules(mass, knocked.TheirKg, knocked.SpeedLost);
+            vessels.Log(entity, "rammed vessel {0} at {1:F1} m/s into the {2}, {3:F0} kg against {4:F0}: {5:F0} J",
+                knocked.Against, knocked.SpeedLost, place.Code(), mass, knocked.TheirKg, joules);
+        }
+        Impact(joules, place);
+    }
+
+    /// <summary>A knock toward this place: on what stands off her there, when something does, else on her hull.</summary>
+    public void Impact(double joules, HullPlace place)
+    {
+        if (!entity.Alive) return;
+
+        if (outboard?.Side == place) outboard.Strike(joules);
+        else Strike(joules, place);
     }
 
     public HullPlace Toward(double worldX, double worldZ)
@@ -325,6 +344,15 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     {
         var (along, across) = HullShape.ToHull(relative.X, relative.Z, entity.Pos.Yaw);
         return Shape.At(along, relative.Y, across);
+    }
+
+    private Vec3d? Landing(DamageSource source, Blow blow) =>
+        blow == Blow.Broad && source.GetSourcePosition() is { } from ? from.SubCopy(entity.Pos.XYZ) : source.HitPosition;
+
+    private bool LandsOutboard(Vec3d relative)
+    {
+        var (_, across) = HullShape.ToHull(relative.X, relative.Z, entity.Pos.Yaw);
+        return Shape.Beyond(across) && (across < Shape.CentreAcross) == outboard!.Side.IsPort();
     }
 
     public Vec3d PointAt(HullPlace place)
@@ -388,7 +416,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         entity.SetActivityRunning("invulnerable", InvulnerableMs);
         var place = PlaceOf(damageSource);
         vessels.Log(entity, "takes {0:F1} {1} damage from {2} at the {3}", damage, damageSource.Type, damageSource.Source, place.Code());
-        Strike(damageConversion.Joules(damageSource, damage), place, damageConversion.BlowOf(damageSource));
+        var blow = damageConversion.BlowOf(damageSource);
+        double joules = damageConversion.Joules(damageSource, damage);
+        if (outboard == null || Landing(damageSource, blow) is not { } hit || !LandsOutboard(hit)) Strike(joules, place, blow);
+        else if (blow == Blow.Broad) outboard.Strike(joules);
+        else vessels.Log(entity, "a {0} blow lands on what stands off her {1}: its wood takes it", blow.ToString().ToLowerInvariant(), outboard.Side.Code());
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)

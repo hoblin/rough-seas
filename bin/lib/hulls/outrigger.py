@@ -1,9 +1,11 @@
 import math
+from collections import namedtuple
 from pathlib import Path
 
 from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, deck, log, volumes
 from physics import afloat, kilograms
 from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, group, path, plank, run, stages
+from wounds import wound
 
 VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
@@ -29,6 +31,14 @@ SAIL_STRIPS = 16
 CLOTH_SQUARE_METRES = 1
 
 LASHING_TURNS = 13
+FRAYED = 2.4
+FRAYED_DEGREES = 16
+FloatForm = namedtuple("FloatForm", "drop along yaw roll parted")
+FLOAT_FORMS = {
+    "Loose": FloatForm(drop=0.8, along=0, yaw=0, roll=0, parted=()),
+    "Torn": FloatForm(drop=1.2, along=1, yaw=2, roll=3, parted=(2,)),
+    "Shifted": FloatForm(drop=1.6, along=3, yaw=5, roll=6, parted=(1, 2)),
+}
 GUNWALE_METRES = WALL * VOXEL_METRES
 GUNWALE = PROFILE[-1][0]
 
@@ -153,6 +163,52 @@ def lashings():
     assert all(per_rope), "a rope with no lashing"
     print(f"lashing: {total:.0f} m in {len(ties)} lashings of {LASHING_TURNS} turns, {ropes} ropes of {ROPE_METRES} m")
     return per_rope
+
+
+def slack(name, x, drop):
+    """A float lashing worked loose, its turns reaching from the boom down to the float hanging lower."""
+    low, high = float_lashed()
+    return [box(f"{name}{k}", (x - 1, low - drop, FLOAT_Z + a), (x + 1, high, FLOAT_Z + b), "lashing", grain="y")
+            for k, (a, b) in enumerate([(-0.9, -0.4), (0.4, 0.9)], 1)]
+
+
+def frayed(name, x):
+    """A float lashing parted: its ends hang from the boom."""
+    _, high = float_lashed()
+    return [box(f"{name}{k}", (x - 0.4, high - FRAYED, FLOAT_Z + a), (x + 0.4, high, FLOAT_Z + b), "lashing",
+                origin=(x, high, FLOAT_Z), rot=(0, 0, side * FRAYED_DEGREES), grain="y")
+            for k, (a, b, side) in enumerate([(-0.9, -0.4, 1), (0.4, 0.9, -1)], 1)]
+
+
+def float_lashed():
+    return FLOAT_Y - FLOAT_DIAMETER / 2 - 0.3, FLOAT_Y + FLOAT_DIAMETER / 2 + BOOM + 0.3
+
+
+def hung(name, form):
+    """The hewn float as its lashings let it go: hanging lower under her booms, slid along and turned."""
+    elements, _, _ = float_pass(HEWINGS)
+    middle = ((FLOAT_FROM + FLOAT_TO) / 2, FLOAT_Y, FLOAT_Z)
+    shift = (form.along, -form.drop, 0)
+
+    def moved(element):
+        return dict(element, name=f"{name}{element['name']}",
+                    **{end: [c + s - m for c, s, m in zip(element[end], shift, middle)] for end in ("from", "to")})
+
+    return box(name, middle, middle, {}, rot=(form.roll, form.yaw, 0), children=[moved(element) for element in elements])
+
+
+def float_forms():
+    """The float as its lashings give: slack, then one torn, then all but one parted. Each form names the elements of
+    the sound rig it is drawn instead of."""
+    replaced = [*(f"Lash{n}Float{k}" for n in range(1, len(BOOMS) + 1) for k in (1, 2)), f"Hewing{HEWINGS}"]
+    children = []
+    for name, form in FLOAT_FORMS.items():
+        lashings = [part for n, x in enumerate(BOOMS, 1)
+                    for part in (frayed(f"Lash{n}Float{name}", x) if n in form.parted else slack(f"Lash{n}Float{name}", x, form.drop))]
+        piece = group(f"FloatLashing{name}", (0, 0, 0), (0, 0, 0), [*lashings, hung(f"Float{name}", form)])
+        piece["replaces"] = replaced
+        children.append(piece)
+    return group("FloatLashing", (0, 0, 0), (0, 0, 0), children)
 
 
 def rig(name, children):
@@ -306,9 +362,10 @@ def build(target):
     })
     hull = Hull("Side", STATIONS, 8, WALL, WOOD, WOOD, edge=WOOD)
     logs, passes = hewing()
-    shape.add(*log(hull))
+    shell = group("Shell", (0, 0, 0), (0, 0, 0), [element for piece in log(hull) for element in piece])
+    shape.add(shell)
     shape.add(logs, booms(), passes)
-    shape.add(stages("Lashing", lashings()))
+    shape.add(stages("Lashing", lashings()), float_forms())
     shape.add(stages("Mast", mast()))
     shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
     shape.add(stages("Stays", stays()))
@@ -316,6 +373,7 @@ def build(target):
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     shape.keep("Hull", "FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage")
+    wound(shape, [("", [shell], WOOD)])
     shape.write()
     report(hull, passes["children"][-1])
 
