@@ -51,7 +51,8 @@ public sealed class FrameTimer : IRenderer
             frames = measured.Length,
             fps = Math.Round(measured.Length / measured.Sum(), 1),
             meanMs = Math.Round(measured.Average() * 1000, 2),
-            p95Ms = Math.Round(measured[(int)(measured.Length * 0.95)] * 1000, 2)
+            p95Ms = Math.Round(measured[(int)(measured.Length * 0.95)] * 1000, 2),
+            maxMs = Math.Round(measured[^1] * 1000, 2)
         }) + "\n";
     }
 

@@ -119,6 +119,11 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("entity code"))
                 .HandleWith(args => Ride(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("spawn")
+                .WithDescription("Spawn an entity at a position facing a yaw in degrees and reply with its id; a vessel over water lies on the surface")
+                .WithArgs(parsers.Word("entity code"), parsers.WorldPosition("position"), parsers.OptionalDouble("yaw", 0))
+                .HandleWith(args => Spawn((string)args[0], (Vec3d)args[1], (double)args[2]))
+            .EndSubCommand()
             .BeginSubCommand("mount")
                 .WithDescription("Seat the caller in an entity, a steering seat first, or in its seat of this index")
                 .RequiresPlayer()
@@ -401,9 +406,9 @@ public class BridgeCommands : ModSystem
         var target = new Vec3d((int)chosen.Value.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)chosen.Value.z + 0.5);
         if (player.Entity.MountedOn != null)
         {
-            var accessor = sapi.World.BlockAccessor;
+            var centre = sapi.World.DefaultSpawnPosition;
             return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture, "Beaufort {0}, waves {1:F1} m at {2:F0} {3:F0}; '/tp {2:F0} {4} {3:F0}' sails there with the vessel",
-                force, chosen.Value.state.WaveHeight, target.X - accessor.MapSizeX / 2, target.Z - accessor.MapSizeZ / 2, target.Y));
+                force, chosen.Value.state.WaveHeight, target.X - centre.X, target.Z - centre.Z, target.Y));
         }
         var flown = Fly(player, target);
         return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture, "{0}: Beaufort {1}, waves {2:F1} m", flown.StatusMessage, force, chosen.Value.state.WaveHeight));
@@ -558,7 +563,8 @@ public class BridgeCommands : ModSystem
         player.Entity.TeleportTo(position);
         var accessor = sapi.World.BlockAccessor;
         var flight = settle.Watch(position);
-        return TextCommandResult.Success($"Hovering at {position.X - accessor.MapSizeX / 2:0.#} {position.Y:0.#} {position.Z - accessor.MapSizeZ / 2:0.#} (flight {flight})");
+        var centre = sapi.World.DefaultSpawnPosition;
+        return TextCommandResult.Success($"Hovering at {position.X - centre.X:0.#} {position.Y:0.#} {position.Z - centre.Z:0.#} (flight {flight})");
     }
 
     private static TextCommandResult Set(Entity? entity, string key, string value)
@@ -593,18 +599,34 @@ public class BridgeCommands : ModSystem
 
         if (player.Entity.Teleporting) return TextCommandResult.Error("Still flying there; ride again in a second");
 
-        var boat = sapi.World.ClassRegistry.CreateEntity(type);
-        var pos = player.Entity.Pos;
+        return Mount(player, Spawn(type, player.Entity.Pos.XYZ, player.Entity.Pos.Yaw, afloat: true));
+    }
+
+    private TextCommandResult Spawn(string code, Vec3d position, double yaw)
+    {
+        var type = sapi.World.GetEntityType(new AssetLocation(code));
+        if (type == null) return TextCommandResult.Error($"No entity type {code}");
+
+        var entity = Spawn(type, position, (float)(yaw * GameMath.DEG2RAD), afloat: false);
+        return TextCommandResult.Success($"Spawned {entity.Code} {entity.EntityId}");
+    }
+
+    private Entity Spawn(EntityProperties type, Vec3d position, float yaw, bool afloat)
+    {
+        var entity = sapi.World.ClassRegistry.CreateEntity(type);
+        var y = afloat || entity is EntityBoat ? Surface(position) : position.Y;
+        entity.Pos.SetPos(position.X, y, position.Z);
+        entity.Pos.Yaw = yaw;
+        sapi.World.SpawnEntity(entity);
+        return entity;
+    }
+
+    private double Surface(Vec3d position)
+    {
         var accessor = sapi.World.BlockAccessor;
-        var below = pos.AsBlockPos;
+        var below = position.AsBlockPos;
         while (below.Y > 0 && accessor.GetBlock(below, BlockLayersAccess.FluidOrSolid).Id == 0) below.Y--;
-        var surface = accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid()
-            ? sapi.World.SeaLevel - 1
-            : pos.Y;
-        boat.Pos.SetPos(pos.X, surface, pos.Z);
-        boat.Pos.Yaw = pos.Yaw;
-        sapi.World.SpawnEntity(boat);
-        return Mount(player, boat);
+        return accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid() ? sapi.World.SeaLevel - 1 : position.Y;
     }
 
     private static TextCommandResult Mount(IPlayer player, Entity? target, int index = -1)

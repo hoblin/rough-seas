@@ -71,18 +71,36 @@ public class ScreenshotCapture : IRenderer
         }
         if (pending.Count > 0)
         {
-            var path = Path.Combine(Path.GetTempPath(), "agentbridge-screenshot.png");
-            using (var bitmap = Grab())
-            {
-                bitmap.Save(path);
-            }
-            var png = File.ReadAllBytes(path);
-            while (pending.TryDequeue(out var shot)) shot.SetResult(png);
+            // Encoded off the main thread: a stalled frame shows in a recording running beside it.
+            var bitmap = Grab();
+            var shots = pending.ToArray();
+            pending.Clear();
+            _ = Task.Run(() => Save(bitmap, shots));
         }
         if (!showGuisAfter) return;
 
         capi.TriggerChatMessage(".gui on");
         showGuisAfter = false;
+    }
+
+    private static void Save(BitmapRef bitmap, TaskCompletionSource<byte[]>[] shots)
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"agentbridge-screenshot-{Guid.NewGuid()}.png");
+        try
+        {
+            bitmap.Save(path);
+            var png = File.ReadAllBytes(path);
+            foreach (var shot in shots) shot.SetResult(png);
+        }
+        catch (Exception e)
+        {
+            foreach (var shot in shots) shot.SetException(e);
+        }
+        finally
+        {
+            bitmap.Dispose();
+            File.Delete(path);
+        }
     }
 
     private BitmapRef Grab() => capi.Render.GrabScreenshot(capi.Render.FrameWidth, capi.Render.FrameHeight, false, true);

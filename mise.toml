@@ -2,6 +2,7 @@
 blender = "4.5.14"
 dotnet = "10"
 node = "24.22.0"
+uv = "0.13.6"
 
 [env]
 VINTAGE_STORY = "{{env.HOME}}/.local/share/vintagestory-1.22.7"
