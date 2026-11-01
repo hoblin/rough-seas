@@ -11,6 +11,8 @@ FACE_AXES = {
     "up": ("x", "z"), "down": ("x", "z"),
 }
 AXIS = {"x": 0, "y": 1, "z": 2}
+ROUNDED = 0.68
+ROUNDED_SHARE = ROUNDED * (2 - ROUNDED)
 
 
 def num(value):
@@ -153,8 +155,8 @@ def beam(name, start, end, width, height, tex, *, ties=(), tie=None, tie_tex=Non
     w, h = width / 2, height / 2
     if rounded:
         parts = [
-            box(name, (-overlap, -h * 0.68, -w), (length + overlap, h * 0.68, w), tex, grain=grain),
-            box(name + "Round", (-overlap - 0.01, -h, -w * 0.68), (length + overlap - 0.01, h, w * 0.68), tex, grain=grain),
+            box(name, (-overlap, -h * ROUNDED, -w), (length + overlap, h * ROUNDED, w), tex, grain=grain),
+            box(name + "Round", (-overlap - 0.01, -h, -w * ROUNDED), (length + overlap - 0.01, h, w * ROUNDED), tex, grain=grain),
         ]
     else:
         parts = [box(name, (-overlap, -h, -w), (length + overlap, h, w), tex, grain=grain)]

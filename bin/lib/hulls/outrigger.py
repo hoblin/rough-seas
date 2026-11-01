@@ -3,7 +3,7 @@ from pathlib import Path
 
 from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, deck, log, volumes
 from physics import afloat, kilograms
-from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, group, path, plank, run, stages
+from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, group, path, plank, run, stages
 
 VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
@@ -16,7 +16,6 @@ FLOAT_FROM, FLOAT_TO = -16, 32
 TAPER = 6
 TAPER_STEP = 2
 HEWINGS = 6
-ROUNDED = 0.68
 BOOMS = (9.5, -10, 24)
 BOOM = 1.4
 POLE = 1.4

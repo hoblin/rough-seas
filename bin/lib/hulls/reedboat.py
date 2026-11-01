@@ -1,23 +1,35 @@
 import math
 from pathlib import Path
 
-from shape import Shape, beam, box, group, path, stages, write
+from physics import MATERIALS
+from shape import ROUNDED_SHARE, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, stages, write
 
 VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
 KNOT_METRES = 0.3
 
 BODY = (-8, 24)
-GIRTH = 3.2
 CENTRE = 8
 SIDES = (("Port", -1), ("Starboard", 1))
+BUNDLE_REEDS = 144
+REED_KG = 0.15
 
 TIE_PITCH = 4
 TIE_TURNS = 2
 LASHINGS = (-6, 1, 8, 15, 22)
 LASHING_TURNS = 2
-TIP_GIRTHS = (3.2, 2.6, 1.8, 1.1)
+TIP_SHARES = (1, 0.8125, 0.5625, 0.34375)
 TIP_REACH = (0, 3, 6, 8)
+
+
+def drawn_girth():
+    litres = BUNDLE_REEDS * REED_KG / MATERIALS["reed"]["density"] * 1000
+    length = BODY[1] - BODY[0] + sum((b - a) * share ** 2 for a, b, share in zip(TIP_REACH, TIP_REACH[1:], TIP_SHARES))
+    return math.sqrt(litres / (ROUNDED_SHARE * length * VOXEL_METRES_CUBED_LITRES))
+
+
+GIRTH = drawn_girth()
+TIP_GIRTHS = tuple(GIRTH * share for share in TIP_SHARES)
 TIP_RISE = (0, 1.2, 3.4, 6.4)
 TIP_TURN_PITCH = 1
 DROOPS = 4
@@ -104,12 +116,11 @@ def laid(sides):
 
 
 def envelope():
-    body = math.pi * (GIRTH / 2) ** 2 * (BODY[1] - BODY[0])
-    ends = sum(math.pi / 12 * (b - a) * (ga ** 2 + ga * gb + gb ** 2)
-               for a, b, ga, gb in zip(TIP_REACH, TIP_REACH[1:], TIP_GIRTHS, TIP_GIRTHS[1:]))
-    litres = (body + 2 * ends) * VOXEL_METRES ** 3 * 1000
-    print(f"a bundle: {(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]) * VOXEL_METRES:.1f} m long, "
-          f"{GIRTH * VOXEL_METRES * 100:.0f} cm across, {litres:.1f} L; two: {2 * litres:.1f} L")
+    body = GIRTH ** 2 * (BODY[1] - BODY[0])
+    ends = sum((b - a) * g ** 2 for a, b, g in zip(TIP_REACH, TIP_REACH[1:], TIP_GIRTHS))
+    litres = ROUNDED_SHARE * (body + ends) * VOXEL_METRES_CUBED_LITRES
+    print(f"a bundle of {BUNDLE_REEDS} reeds: {(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]) * VOXEL_METRES:.1f} m long, "
+          f"{GIRTH * VOXEL_METRES * 100:.1f} cm across, {litres:.1f} L as drawn; two: {2 * litres:.1f} L")
 
 
 def block(target, sides):
