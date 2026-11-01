@@ -73,6 +73,8 @@ Sailing reads the wind: a sail works with the wind's direction, rowing on one si
 
 ### Body in water
 
+A person is one module behind an interface: the body, its mass and its volume by height from measured anatomy, and what it carries. Vessels, the swimmer and any other system ask it what a player weighs and displaces. One reference body serves every player, the same in a boat and in the water. What is carried is weighed by a game convention: the hotbar is the belt, what the person has at hand, and the backpack is the store, which the game lets one person carry as many people would in life. So armour and the tools and weapons in the hotbar are weighed, each by a real analogue; materials, even in the hotbar, and everything in the backpack are not. The body floats by the water it displaces under the drawn surface. Extra weight doesn't sink a swimmer but makes them work, and stamina pays for it.
+
 Swimming drains a stamina whose rate depends on water temperature and on how well the player has eaten; exhausted, you sink. Cold kills at a rate set by the biome's climate and the current temperature, from real cold-water survival data; vanilla's flat rate is replaced. Diving builds on this: the Jonas-tech diving suit gives air and light, and armour and lanterns stop being a free ticket to the seabed.
 
 ### Creatures
