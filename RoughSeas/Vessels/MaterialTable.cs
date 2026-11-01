@@ -69,7 +69,7 @@ public class MaterialTable
     private double? Strength(string material) =>
         Row(material, row => row.Strength, "strength", "vessels of it count as their reference build");
 
-    private double Density(string material) =>
+    public double Density(string material) =>
         Row(material, row => row.Density, "density", "it weighs as an unknown wood does")
         ?? materials[UnknownWood].Density!.Value;
 

@@ -21,7 +21,7 @@ public abstract class Laying
         FramingWork.Cloth => new PieceLaying(new AssetLocation(config.Cloth), "roughseas:shipyard-bend-sail"),
         FramingWork.Plank => new PlankLaying(new AssetLocation(config.Planks)),
         FramingWork.Hide => new HideLaying(new AssetLocation(config.Hides), config.HideStates),
-        FramingWork.Oar => new PieceLaying(new AssetLocation(config.Oars), "roughseas:shipyard-ship-oar"),
+        FramingWork.Oar => new OarLaying(new AssetLocation(config.Oars)),
         _ => new PitchLaying(new AssetLocation(config.Pitch), stage.Litres)
     };
 
@@ -122,6 +122,19 @@ public sealed class PieceLaying(AssetLocation pieces, string action) : Laying
     public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
 
     public override IEnumerable<ItemStack> Shown(IWorldAccessor world) => world.SearchItems(pieces).Select(piece => new ItemStack(piece));
+}
+
+public sealed class OarLaying(AssetLocation oars) : Laying
+{
+    public override string Action => "roughseas:shipyard-ship-oar";
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible is { } oar && WildcardUtil.Match(oars, oar.Code);
+
+    public override string? WoodOf(ItemSlot slot) => slot.Itemstack?.Collectible.Variant[Wood.VariantCode];
+
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
+
+    public override IEnumerable<ItemStack> Shown(IWorldAccessor world) => world.SearchItems(oars).Select(oar => new ItemStack(oar));
 }
 
 public sealed class PlankLaying(AssetLocation planks) : Laying

@@ -62,7 +62,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         if (boat.GetBehavior<EntityBehaviorSeatable>()?.Controller is not EntityAgent rower || hull == null) return Idle(vanilla);
 
         using var _ = vessels.Budget.Measure();
-        var tool = Tool.Of(rower.RightHandItemSlot?.Itemstack, propulsion.Config);
+        var tool = Tool.Of(rower.RightHandItemSlot?.Itemstack, propulsion.Config, vessels.Materials.Density);
         var sailing = boat.WatchedAttributes.GetInt(SailKey) > 0;
         strokes.Show(boat, sailing ? null : strokes.KindOf(tool, station.HasOars));
         if (sailing || boat.SpeedMultiplier <= 0) return Idle(vanilla);
