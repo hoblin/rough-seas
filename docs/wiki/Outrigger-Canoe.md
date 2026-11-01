@@ -52,7 +52,7 @@ Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged whe
    ![The first boom across](images/outrigger-canoe/build-boom.webp)
 
 4. **Lay the booms.** Hold the other two poles on her for the fore and aft booms. Each is a crooked pole that rests on her gunwales and on the logs' top, as the curved booms of Hawaii and the Marshall Islands came down to the float. All her poles must be of one wood.
-5. **Hew the float.** Hold an axe on her: each pass, about three minutes, hews the float all round, top, sides and bottom alike, from the square logs toward a round log 30 cm across with its ends pointed and lifted. Six passes take it down from 3000 litres of wood to 224. The booms settle onto it as it shrinks: they never hang in the air and never pass through wood. While the float is still the logs, she weighs two tonnes and barely moves.
+5. **Hew the float.** Hold an axe on her: each pass hews the float all round, top, sides and bottom alike, from the square logs toward a round log 30 cm across with its ends pointed and lifted. Six passes take it down from 3000 litres of wood to 224. The booms settle onto it as it shrinks: they never hang in the air and never pass through wood. While the float is still the logs, she weighs two tonnes and barely moves.
 
    ![Three passes hewn, the booms settled onto the float](images/outrigger-canoe/build-hewing.webp)
 

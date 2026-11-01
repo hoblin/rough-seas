@@ -46,7 +46,7 @@ A coracle is built where its laths are laid out on the ground, piece by piece, e
 
    ![The lattice bound](images/coracle/build-bound.webp)
 
-4. **Plait the gunwale.** Hold the 5 m laths on her, ten seconds each: the first bends the lattice's ends up into her bowl, and three plaits make her gunwale. Two days later the laths have dried and her frame has set; until then no hide goes on.
+4. **Plait the gunwale.** Hold the 5 m laths on her: the first bends the lattice's ends up into her bowl, and three plaits make her gunwale. Two days later the laths have dried and her frame has set; until then no hide goes on.
 
    ![The gunwale plaited and the lattice bent up](images/coracle/build-gunwale.webp)
 

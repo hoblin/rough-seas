@@ -44,7 +44,7 @@ A reed boat is bound where its bundles lie, by the water, each binding drawn on 
    ![One bundle laid by the water](images/reed-boat/build-bundle.webp)
    ![The pair side by side](images/reed-boat/build-pair.webp)
 
-3. **Bind them into a boat.** Hold rope on the pair for a quarter of a minute: the first lashing goes around both, and they are the boat, where they lay. She floats and can be carried from now on, but has no seat yet.
+3. **Bind them into a boat.** Hold rope on the pair: the first lashing goes around both, and they are the boat, where they lay. She floats and can be carried from now on, but has no seat yet.
 
    ![The first lashing](images/reed-boat/build-bound.webp)
 

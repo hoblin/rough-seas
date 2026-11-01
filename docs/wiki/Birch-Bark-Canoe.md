@@ -39,13 +39,13 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 
 A bark canoe is built where its bark comes off the tree, piece by piece, each piece drawn on her as it goes on.
 
-1. **Strip the bark.** Hold a knife on a standing birch whose trunk is at least five blocks tall, for half a minute. The bark comes off in one sheet five metres long, the height you stripped, and falls to the ground beside the tree: that sheet is the canoe, not yet framed. It floats and can be carried from the start, but has no seat. The tree stands on with its wood bare, and the axe still fells it whole. Beside a mod that adds elm or spruce, their trunks give their bark the same way.
+1. **Strip the bark.** Hold a knife on a standing birch whose trunk is at least five blocks tall. The bark comes off in one sheet five metres long, the height you stripped, and falls to the ground beside the tree: that sheet is the canoe, not yet framed. It floats and can be carried from the start, but has no seat. The tree stands on with its wood bare, and the axe still fells it whole. Beside a mod that adds elm or spruce, their trunks give their bark the same way.
 
    ![The sheet stripped off a birch](images/birch-bark-canoe/build-sheet.webp)
 
 2. **Split the laths.** Lay two to five logs of one wood on their sides, end to end, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on a wedge: the wedges drive in and the trunk splits into 64 poles as long as the row. An axe splits a pole into 16 [laths](Recipes#laths) of its length in the crafting grid. Her gunwales take 5 m laths, her sheathing 4 m ones; her stems, thwarts and ribs any lath of 2 m or more, cut down. Any wood will do, and the canoe's frame is as strong and as heavy as that wood.
 3. **Soak them.** Laths bend only wet: two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, in the bundle as in the canoe, so a bundle kept too long goes back in the barrel.
-4. **Frame her.** Hold a wet lath on the sheet, a few seconds a lath: the inwales, the three thwarts and the outwales first, then the two stems. The first inwale trims the sheet to her length, and each piece of the frame raises her sides a seventh of the way, the frame riding on the bark as it rises, until the outwales clamp them standing. Her laths must all be of one wood.
+4. **Frame her.** Hold a wet lath on the sheet: the inwales, the three thwarts and the outwales first, then the two stems. The first inwale trims the sheet to her length, and each piece of the frame raises her sides a seventh of the way, the frame riding on the bark as it rises, until the outwales clamp them standing. Her laths must all be of one wood.
 
    | | |
    | --- | --- |

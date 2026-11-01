@@ -69,7 +69,7 @@
             "rigged": ["SailUnfurled", "SailHalf"],
             "stages": [
                 {"group": "Booms", "work": "pole", "seconds": 3, "follows": "Hewing"},
-                {"group": "Hewing", "work": "hew", "seconds": 193, "successive": true, "replaces": "FloatLog"},
+                {"group": "Hewing", "work": "hew", "seconds": 30, "successive": true, "replaces": "FloatLog"},
                 {"group": "Lashing", "work": "rope", "seconds": 15},
                 {"group": "Mast", "work": "pole", "seconds": 3},
                 {"group": "SailFurled", "work": "cloth", "seconds": 15},
@@ -83,7 +83,7 @@
                 "floatOffMetres": "A small outrigger's float rides 1.5 to 2 m off her hull: hull, gap, float, three blocks across",
                 "floorMetres": "The dugout's hold floor: her 0.5625 m rim less its 0.5125 m hollow",
                 "booms": "Setting one pole across her or up, about three minutes, as fitting one of a canoe's laths. A crooked pole, as Hawaiian and Marshallese booms curved down to the float (Young, 1876, marshall.csu.edu.au/Marshalls/html/culture/Canoes.html), takes its curve as it is laid: it rests on her gunwales and on the float's top, and settles with every pass as the float is hewn down beneath it",
-                "hewing": "Six passes of the axe all round take the three logs, 3000 L, down to the round float with pointed ends, 224 L (bin/lib/hulls/outrigger.py). Chip by chip, 463 L a pass, an axe biting some 0.08 L a stroke 30 times a minute (H. Glaser, physiology of forestry work, FAO): 193 minutes of real work, a pass of 193 s",
+                "hewing": "Six passes of the axe all round take the three logs, 3000 L, down to the round float with pointed ends, 224 L (bin/lib/hulls/outrigger.py). Chip by chip, 463 L a pass, an axe biting some 0.08 L a stroke 30 times a minute (H. Glaser, physiology of forestry work, FAO): some three hours of real work a pass. A pass takes as long as vanilla takes to fell a large oak with a flint axe, 30 s (ItemAxe: a log's break time times the root of the tree's size)",
                 "lashing": "One rope is ten metres of lashing: about a quarter of an hour, as a canoe's (an estimate). Once the float is hewn, each boom is lashed to both gunwales and straight to the float, thirteen turns a lashing (ten round, three frapping) of their girth: 52 m, counted by her shape's builder",
                 "sail": "A crab claw of 3.5 m² between her two 3 m spars (bin/lib/hulls/outrigger.py), one cloth a square metre, as one linen block covers: four, each laced to the spars in about a quarter of an hour (an estimate)",
                 "stays": "A forestay, a backstay, a shroud out to the float and the sheet, each under ten metres: one rope each, set up in about a quarter of an hour (an estimate)",

@@ -49,7 +49,7 @@ A currach is built upside down where her gunwale is laid out on the ground, piec
    | ![The bow bound, the stern ends still apart](images/currach/build-bow.webp) | ![The gunwale bound, lying upside down](images/currach/build-gunwale.webp) |
    | The first rope, at her bow | The second, at her stern |
 
-4. **Frame her.** Hold wet laths on her, a few seconds each: the ribs, bent over the gunwale from the middle out, then the stringers along them. Two days later the ribs have dried and her frame has set; until then no hide goes on.
+4. **Frame her.** Hold wet laths on her: the ribs, bent over the gunwale from the middle out, then the stringers along them. Two days later the ribs have dried and her frame has set; until then no hide goes on.
 
    ![Her frame, upside down](images/currach/build-frame.webp)
 
