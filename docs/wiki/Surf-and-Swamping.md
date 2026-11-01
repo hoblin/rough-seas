@@ -14,12 +14,12 @@ What is left of her side above the water is her *freeboard*, and the hover text 
 | Vessel | Freeboard, empty | With one aboard |
 | --- | --- | --- |
 | [Raft](Raft), oak | 8 cm | awash |
-| [Coracle](Coracle) | 34 cm | 27 cm |
-| [Dugout](Dugout), oak | 44 cm | 41 cm |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 28 cm | 25 cm |
-| [Reed boat](Reed-Boat), fresh | 14 cm | 5 cm |
-| [Hide currach](Hide-Currach) | 43 cm | 42 cm |
-| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 55 cm | 53 cm |
+| [Coracle](Coracle) | 33 cm | 26 cm |
+| [Dugout](Dugout), oak | 47 cm | 45 cm |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 36 cm | 32 cm |
+| [Reed boat](Reed-Boat), fresh | 13 cm | 5 cm |
+| [Hide currach](Hide-Currach) | 58 cm | 56 cm |
+| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 58 cm | 56 cm |
 | [Sailboat](Sailboat), oak | 52 cm | 50 cm |
 
 When her freeboard reaches nothing, the sea comes over her gunwale and she floods, cracked or not: a boat loaded down to the water fills in a moment. The raft and the reed boat are solid: pressed under, they lie awash and still hold their load up.
@@ -35,7 +35,7 @@ Boats with a hull hold that water in their [bilge](Bailing), with what their [cr
 A litre of seawater weighs a kilogram, and a bilge holds hundreds. As it fills, a boat:
 
 - **rides lower.** With one aboard, a full bilge brings her gunwale down to the water, so each wave comes aboard more easily than the last;
-- **gets slower.** It paddles as hard and pushes a heavier hull, so the lighter the boat, the more its water slows it: half full, a heavy dugout keeps nine tenths of its speed, a coracle four fifths and a hide currach, whose bilge holds 15 times its weight, two thirds. A load slows her the same way, a second rider or a hold of chests, and a hull of a light wood is a little faster than oak: a kapok dugout makes a seventh more speed, an ebony one a sixteenth less;
+- **gets slower.** It paddles as hard and pushes a heavier hull, so the lighter the boat for her bilge, the more its water slows it: half full, a dugout or a coracle keeps four fifths of its speed and a hide currach, whose bilge holds 25 times her weight, two thirds. A load slows her the same way, a second rider or a hold of chests, and a hull of a light wood is a little faster than oak: a kapok dugout makes an eighth more speed, an ebony one a sixteenth less;
 - **rolls harder.** The water sloshing across the bilge leans with every roll and adds to it, twice the roll when full, and a breaker half as high overturns it.
 
 ## Swamping
@@ -46,13 +46,13 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 
 | Vessel | Holds up awash |
 | --- | --- |
-| [Coracle](Coracle) | 18 kg: its rider's gear, and no armour |
-| [Hide currach](Hide-Currach) | 24 kg: her rower's gear and three baskets, but not a chest besides |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 41 kg |
+| [Coracle](Coracle) | 14 kg: its rider's gear, and no armour |
+| [Hide currach](Hide-Currach) | 26 kg: her rower's gear and three baskets, but not a chest besides |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 36 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Reed boat](Reed-Boat), fresh | 118 kg, less the water it has soaked up |
-| [Dugout](Dugout), oak | 187 kg |
-| [Outrigger canoe](Outrigger-Canoe), oak | 309 kg |
+| [Dugout](Dugout), oak | 137 kg |
+| [Outrigger canoe](Outrigger-Canoe), oak | 271 kg |
 | [Sailboat](Sailboat), oak | nothing: she goes down |
 
 The wood counts. A sailboat carries two fifths of her weight in ballast to stand up to her sail: of oak, aged wood, birch, maple, purpleheart or ebony she goes down, while of pine, larch, acacia, walnut, bald cypress, redwood or kapok she floats awash. Ebony floats a dugout or an outrigger awash empty, and takes it down only loaded hard. A wood heavier than seawater sinks any hull of it, such as Wildcraft's ekki, lignum vitae, leadwood, mangrove, pink ivory and African blackwood ([Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)).

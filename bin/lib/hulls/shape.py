@@ -11,6 +11,8 @@ FACE_AXES = {
     "up": ("x", "z"), "down": ("x", "z"),
 }
 AXIS = {"x": 0, "y": 1, "z": 2}
+ROUNDED = 0.68
+ROUNDED_SHARE = ROUNDED * (2 - ROUNDED)
 
 
 def num(value):
@@ -91,6 +93,13 @@ def group(name, at, rot, children):
     return box(name, at, at, {}, origin=at, rot=rot, children=children)
 
 
+def renamed(element, suffix):
+    copy = dict(element, name=element["name"] + suffix)
+    if "children" in element:
+        copy["children"] = [renamed(child, suffix) for child in element["children"]]
+    return copy
+
+
 def stages(name, pieces, wood="frame"):
     """A stage's pieces, each its own group; a piece of wood names the metres of lath or pole it takes, the length
     drawn in that texture along its run."""
@@ -105,6 +114,7 @@ def stages(name, pieces, wood="frame"):
 
 
 VOXELS_A_METRE = 16
+VOXEL_METRES_CUBED_LITRES = 1000 / VOXELS_A_METRE ** 3
 
 
 def span(elements, tex):
@@ -145,8 +155,8 @@ def beam(name, start, end, width, height, tex, *, ties=(), tie=None, tie_tex=Non
     w, h = width / 2, height / 2
     if rounded:
         parts = [
-            box(name, (-overlap, -h * 0.68, -w), (length + overlap, h * 0.68, w), tex, grain=grain),
-            box(name + "Round", (-overlap - 0.01, -h, -w * 0.68), (length + overlap - 0.01, h, w * 0.68), tex, grain=grain),
+            box(name, (-overlap, -h * ROUNDED, -w), (length + overlap, h * ROUNDED, w), tex, grain=grain),
+            box(name + "Round", (-overlap - 0.01, -h, -w * ROUNDED), (length + overlap - 0.01, h, w * ROUNDED), tex, grain=grain),
         ]
     else:
         parts = [box(name, (-overlap, -h, -w), (length + overlap, h, w), tex, grain=grain)]
@@ -287,6 +297,44 @@ class Hull:
     def section(self, x):
         edges = range(len(self.stations[0][1]))
         return [(abs(self.at(x, k, 1)[2] - self.cz), self.at(x, k, 1)[1]) for k in edges]
+
+    def half(self, x, y, inset=0):
+        edges = self.section(x)
+        if y < edges[0][1] + inset or y > edges[-1][1]:
+            return 0
+        return max(0, breadth(edges, y) - inset)
+
+    def span(self):
+        return self.stations[0][0], self.stations[-1][0]
+
+    def litres(self, top=None, inset=0, step=0.25):
+        x0, x1 = self.span()
+        total, x = 0, x0 + step / 2
+        while x < x1:
+            edges = self.section(x)
+            high = min(top, edges[-1][1]) if top is not None else edges[-1][1]
+            y = edges[0][1] + step / 2
+            while y < high:
+                total += 2 * self.half(x, y, inset) * step * step
+                y += step
+            x += step
+        return total * VOXEL_METRES_CUBED_LITRES
+
+    def square_metres(self, height, inset=0, step=0.25):
+        x0, x1 = self.span()
+        total, x = 0, x0 + step / 2
+        while x < x1:
+            total += 2 * self.half(x, height, inset) * step
+            x += step
+        return total / VOXELS_A_METRE ** 2
+
+    def skin_square_metres(self):
+        total = 0
+        for plank in self.strakes():
+            board = plank["children"][0]
+            # plank() draws a board from -overlap to length + overlap: the sum is its length without the overlaps.
+            total += (board["to"][0] + board["from"][0]) * (board["to"][1] - board["from"][1])
+        return total / VOXELS_A_METRE ** 2
 
     def rib(self, name, x, tex, width=1, depth=1):
         edges = self.section(x)

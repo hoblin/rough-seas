@@ -1,6 +1,7 @@
 import math
 
-from shape import BILGE, Hull, Shape, box, breadth, path, stages
+from physics import afloat, kilograms
+from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
@@ -30,6 +31,9 @@ LACING_TURN_METRES = 0.15
 LACES = 12
 # Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
 ROPE_METRES = 10
+HIDE_METRES = 0.005
+LATH_SQUARE_METRES = 0.01 * 0.06
+POLE_SQUARE_METRES = 0.09 * 0.09
 
 
 def section(x, breadth, rocker, rise):
@@ -61,6 +65,35 @@ def hull_of_gunwale():
 def gunwales(hull):
     rail = hull.rail("Gunwale", "frame", height=0.9, thickness=1.0, lift=-0.5)
     return [[plank for plank in rail if plank["name"].startswith(f"Gunwale{side}")] for side in ("Port", "Starboard")]
+
+
+def open_gunwales(hull):
+    """Her gunwale laths with only the bow drawn together: astern they still run straight, their own length on."""
+    top = len(PROFILE) - 1
+    pieces = []
+    for (side, label), closed in zip(((-1, "Port"), (1, "Starboard")), gunwales(hull)):
+        bow = [p for p, (x0, _), (x1, _) in zip(closed, hull.stations, hull.stations[1:]) if x1 <= CENTRE + 1e-6]
+        middle = hull.at(CENTRE, top, side)
+        stern = [hull.point(i, top, side) for i in range(len(hull.stations)) if hull.stations[i][0] >= CENTRE - 1e-6]
+        reach = sum(math.dist(a, b) for a, b in zip(stern, stern[1:]))
+        start = (middle[0], middle[1] - 0.5, middle[2])
+        end = (middle[0] + reach, middle[1] - 0.5, middle[2])
+        pieces.append([*(renamed(p, "Open") for p in bow),
+                       plank(f"Gunwale{label}Astern", start, end, 0.9, 1.0, 0, side, "frame", "frame")])
+    return pieces
+
+
+def gunwale_stage(hull):
+    closed, opened = gunwales(hull), open_gunwales(hull)
+    pieces = []
+    for n, (shut, apart) in enumerate(zip(closed, opened), 1):
+        piece = group(f"Gunwale{n}", (0, 0, 0), (0, 0, 0), [
+            group(f"Gunwale{n}At1", (0, 0, 0), (0, 0, 0), apart),
+            group(f"Gunwale{n}At2", (0, 0, 0), (0, 0, 0), shut),
+        ])
+        piece["metres"] = round(span(shut, "frame") / VOXELS_A_METRE, 2)
+        pieces.append(piece)
+    return group("Gunwale", (0, 0, 0), (0, 0, 0), pieces)
 
 
 def ends(half):
@@ -141,16 +174,29 @@ def build(path_):
         "bilge": BILGE,
     })
     hull, half = hull_of_gunwale()
-    shape.add(stages("Gunwale", gunwales(hull)))
+    laths = [gunwale_stage(hull), stages("Ribs", ribs(hull, half)), stages("Stringers", stringers(hull))]
+    thwart_stage = stages("Thwart", thwart(hull, half))
+    shape.add(laths[0])
     shape.add(stages("EndLashing", ends(half)))
-    shape.add(stages("Ribs", ribs(hull, half)))
-    shape.add(stages("Stringers", stringers(hull)))
+    shape.add(laths[1], laths[2])
     shape.add(stages("Cover", cover(hull), wood="none"))
     shape.add(stages("Lacing", lacing(hull)))
-    shape.add(stages("Thwart", thwart(hull, half)))
+    shape.add(thwart_stage)
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo")
     shape.write()
+    report(hull, laths, thwart_stage)
+
+
+def report(hull, laths, thwart_stage):
+    area = hull.skin_square_metres()
+    metres = sum(piece["metres"] for stage in laths for piece in stage["children"])
+    pole = sum(piece["metres"] for piece in thwart_stage["children"])
+    hide_kg = kilograms("hide", area * HIDE_METRES * 1000)
+    frame_kg = kilograms("wood-ash", (metres * LATH_SQUARE_METRES + pole * POLE_SQUARE_METRES) * 1000)
+    print(f"currach: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath and {pole:.2f} m of pole, {frame_kg:.1f} kg of ash")
+    afloat("currach", hide_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=hull.t),
+           hull.square_metres(SHEER - 0.01, inset=hull.t))
 
 
 if __name__ == "__main__":

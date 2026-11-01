@@ -68,7 +68,7 @@ public class SeaworthinessTests
     [Fact]
     public void AFullBilgeLeavesHerAwashSoEveryCrestComesAboard()
     {
-        var full = Fixtures.Afloat("currach", litres: 1800);
+        var full = Fixtures.Afloat("currach", litres: 1878);
         Assert.Equal(0, full.FreeboardMetres);
         Assert.Equal(1, full.ShippedShare(waves.Crest(0.5, breaking: false)));
     }
@@ -105,8 +105,8 @@ public class SeaworthinessTests
     public void WaterAboardLowersHerSideUntilAFullBilgeBringsItToTheWater()
     {
         var dugout = Fixtures.Hull("dugout");
-        Assert.True(Fixtures.Afloat("dugout", litres: 578).FreeboardMetres < Of("dugout").FreeboardMetres);
-        Assert.InRange(dugout.Float(dugout.Crewed(litres: 1155), litres: 1155).FreeboardMetres, -0.01, 0.01);
+        Assert.True(Fixtures.Afloat("dugout", litres: 649).FreeboardMetres < Of("dugout").FreeboardMetres);
+        Assert.InRange(dugout.Float(dugout.Crewed(litres: 1297), litres: 1297).FreeboardMetres, -0.01, 0.01);
     }
 
     private static Seaworthiness Of(string vessel) => Fixtures.Afloat(vessel);

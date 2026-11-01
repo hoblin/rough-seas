@@ -18,10 +18,10 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | Turning | steady |
 | [Hull](Hull-Condition) | 3000 J with an ash frame: she rides the sea, but one hard knock holes her; about 2800 J in oak, 3300 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 15 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 43 cm empty, 42 cm with her rower |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 58 cm empty, 56 cm with her rower |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash with three baskets aboard; three chests take her down |
 | [Mending](Mending) | 1 large prepared hide closes two thirds of a stove-in place; 1 rendered fat greases her for 1.25 days |
-| [Bilge](Bailing) | 1800 litres |
+| [Bilge](Bailing) | 1878 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | takes them badly |
 | [Lightning](Lightning) | a strike nearby almost always breaks her |
@@ -30,27 +30,30 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | Carried | picked up |
 | Seats | one: the rower on the thwart, with an [oar](https://wiki.vintagestory.at/Oar) in hand |
 | Cargo | three spots on the bottom, forward of the rower; each takes a basket (8 slots), a storage vessel (12) or a chest (16; a treasure chest 4) |
-| Built from | 2 laths of 5 m for her gunwale, 21 of 3 m for her ribs and 7 of 5 m for her stringers, 6 ropes, eight small hides' worth of hide and a 3 m pole, then greased |
+| Built from | 2 laths of 5 m for her gunwale, 9 of 3 m and 12 of 2 m for her ribs and 7 of 5 m for her stringers, 6 ropes, eight small hides' worth of hide and a 2 m pole, then greased |
 | Wreckage | a few laths |
 
 ## How it is built
 
 A currach is built upside down where her gunwale is laid out on the ground, piece by piece, each piece drawn on her as it goes on.
 
-1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: her gunwales and stringers take 5 m laths, her ribs 3 m ones.
-2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath: it lies at its full length where you aim, along the way you face. Lay a second beside it, a little over a metre apart.
+1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: her gunwales and stringers take 5 m laths, her nine longest ribs 3 m ones and the other twelve 2 m ones.
+2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath: it lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay a second beside it, eighteen sixteenths of a block apart, a little over a metre, as far apart as her gunwale laths are drawn: one laid a sixteenth off is drawn onto its place when she is bound.
 
    ![Two long laths laid side by side](images/currach/build-laths.webp)
 
-3. **Bind the ends.** Hold rope on the laths: the first rope draws their ends together into her gunwale where they lie, and the second binds the other end.
+3. **Bind the ends.** Hold rope on the laths: the first rope draws their ends together at her bow where they lie, while astern they still run straight; the second draws them together at her stern and closes her gunwale.
 
-   ![The gunwale bound, lying upside down](images/currach/build-gunwale.webp)
+   | | |
+   | --- | --- |
+   | ![The bow bound, the stern ends still apart](images/currach/build-bow.webp) | ![The gunwale bound, lying upside down](images/currach/build-gunwale.webp) |
+   | The first rope, at her bow | The second, at her stern |
 
-4. **Frame her.** Hold wet laths on her, a few seconds each: the ribs, bent over the gunwale from the middle out, then the stringers along them. Two days later the ribs have dried and her frame has set; until then no hide goes on.
+4. **Frame her.** Hold wet laths on her: the ribs, bent over the gunwale from the middle out, then the stringers along them. Two days later the ribs have dried and her frame has set; until then no hide goes on.
 
    ![Her frame, upside down](images/currach/build-frame.webp)
 
-5. **Sew on hides.** Hold a hide on her: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. Her cover is eight parts of one small hide's area each; a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. Four ropes lace the cover to her gunwale, and a 3 m pole set across her is her thwart.
+5. **Sew on hides.** Hold a hide on her: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. Her cover is eight parts of one small hide's area each; a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. A hide bigger than what is left of her cover is cut to fit, and the rest comes back to you as the smaller hides it still makes. Four ropes lace the cover to her gunwale, and a 2 m pole set across her is her thwart.
 
    ![Covered and laced, still upside down](images/currach/build-covered.webp)
 

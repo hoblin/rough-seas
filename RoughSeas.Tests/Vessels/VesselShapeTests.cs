@@ -174,7 +174,17 @@ public class VesselShapeTests
             Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{group}{n}"), pieces);
             if (stage.Value<string>("replaces") is { } replaced)
             {
-                Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{replaced}{n}"), Pieces(replaced));
+                int replacing = stage.Value<bool>("successive") ? 1 : pieces.Count;
+                Assert.Equal(Enumerable.Range(1, replacing).Select(n => $"{replaced}{n}"), Pieces(replaced));
+            }
+            if (stage.Value<string>("follows") is { } followed)
+            {
+                int levels = Pieces(followed).Count;
+                Assert.All(pieces, piece => Assert.Contains($"{piece}At{levels}", Pieces(piece!)));
+            }
+            if (stage.Value<string>("lifts") is { } lifted)
+            {
+                Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{lifted}{n}"), Pieces(lifted));
             }
             if (stage.Value<string>("bends") is { } bent)
             {

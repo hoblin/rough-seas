@@ -20,7 +20,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | Turning | nimble |
 | [Hull](Hull-Condition) | 3000 J; tears, shown as *Reed torn* |
 | [Soaking](Hull-Condition#seeping-and-soaking) | 33 kg of water a day afloat: its rider awash after a day, on the bottom within four left alone; dries ashore in the sun, a third of it left behind as rot |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 14 cm empty, 5 cm with its rider, when dry |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 13 cm empty, 5 cm with its rider, when dry |
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
@@ -44,7 +44,7 @@ A reed boat is bound where its bundles lie, by the water, each binding drawn on 
    ![One bundle laid by the water](images/reed-boat/build-bundle.webp)
    ![The pair side by side](images/reed-boat/build-pair.webp)
 
-3. **Bind them into a boat.** Hold rope on the pair for a quarter of a minute: the first lashing goes around both, and they are the boat, where they lay. She floats and can be carried from now on, but has no seat yet.
+3. **Bind them into a boat.** Hold rope on the pair: the first lashing goes around both, and they are the boat, where they lay. She floats and can be carried from now on, but has no seat yet.
 
    ![The first lashing](images/reed-boat/build-bound.webp)
 

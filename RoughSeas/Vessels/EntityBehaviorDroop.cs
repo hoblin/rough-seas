@@ -9,7 +9,8 @@ namespace RoughSeas.Vessels;
 
 /// <summary>
 /// Ends that stand up by their own stiffness and sag as the hull soaks. Each end is drawn at several sags, from dry
-/// to saturated, as the children <c>{end}Droop{n}</c> of its group; she shows the one her soak has reached.
+/// to as soaked as she gets before she goes down, as the children <c>{end}Droop{n}</c> of its group; she shows the one
+/// her soak has reached.
 /// </summary>
 public class EntityBehaviorDroop(Entity entity) : EntityBehavior(entity)
 {
@@ -41,7 +42,7 @@ public class EntityBehaviorDroop(Entity entity) : EntityBehavior(entity)
             Enumerable.Range(0, sags).Where(n => n != sag).Select(n => $"{end}{SagPrefix}{n}")).ToArray());
     }
 
-    private int Sag() => SagOf((entity.GetBehavior<EntityBehaviorVesselIntegrity>()?.Model as ISoaking)?.Soaked ?? 0, sags);
+    private int Sag() => entity.GetBehavior<EntityBehaviorVesselIntegrity>() is { SoakToSinkKg: > 0 } hull ? SagOf(hull.Model.SoakedKg / hull.SoakToSinkKg, sags) : 0;
 
     private void OnSoaked()
     {

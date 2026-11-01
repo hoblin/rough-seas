@@ -6,7 +6,7 @@
     "attributes": {
         "speedMultiplier": 1.3,
         "turnSpeed": 1.2,
-        "swimmingOffsetY": 0.07,
+        "swimmingOffsetY": 0.083,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -23,15 +23,15 @@
             "model": "reed",
             "impactCapacity": 3000,
             "parts": [{"material": "reed", "share": 43.2}, {"material": "rope-flax", "share": 7.2}],
-            "depthMetres": 0.2,
-            "shell": {"kind": "bundle", "material": "reed", "metres": 0.2, "backing": {"material": "rope-flax", "metres": 0.01}, "backedShare": 0.1, "bottomBackedShare": 0.05},
+            "depthMetres": 0.182,
+            "shell": {"kind": "bundle", "material": "reed", "metres": 0.182, "backing": {"material": "rope-flax", "metres": 0.01}, "backedShare": 0.1, "bottomBackedShare": 0.05},
             "soak": {"kgPerDay": 33, "dryKgPerDay": 200, "rotShare": 0.35, "saturationKg": 250},
             "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
             "damage": {"textures": ["reed"], "material": "reed"},
             "sources": {
-                "weight": "Her two bundles are 288 reeds, 144 each, and her ties, lashings and ends eight ropes of six reeds: at the rush mat's calibration, a game reed is about 0.15 kg of dry reed (a 1 m² mat of 8 reeds weighs 1 to 1.5 kg as real rushes), 43.2 kg of bundles and 7.2 kg of cord, as a real 1 cm cord weighs 90 g a metre. A caballito de totora 2.44 × 0.41 × 0.23 m weighs 41 kg dry (festival.si.edu, storied objects, reed raft); hers, 3 × 0.4 × 0.2 m of the same build, 42.8 kg",
+                "weight": "Her two bundles are 288 reeds, 144 each, and her ties, lashings and ends eight ropes of six reeds: at the rush mat's calibration, a game reed is about 0.15 kg of dry reed (a 1 m² mat of 8 reeds weighs 1 to 1.5 kg as real rushes), 43.2 kg of bundles and 7.2 kg of cord, as a real 1 cm cord weighs 90 g a metre. A caballito de totora 2.44 × 0.41 × 0.23 m weighs 41 kg dry (festival.si.edu, storied objects, reed raft); hers, 3 × 0.36 × 0.18 m of the same build, 43.2 kg",
                 "parts": "Reed bundles and reed cord, by weight; the cord counts as flax rope",
-                "depthMetres": "Her bundles stand 20 cm from bottom to top",
+                "depthMetres": "Her bundles stand 18 cm from bottom to top: 144 reeds each, 80 L at the reed's density, drawn round (bin/lib/hulls/reedboat.py)",
                 "shell": "Bundles of stems, which a blow bends and an edge parts without harm; she comes apart where an edge cuts a lashing. Reed rope, as flax rope, 1 cm thick; by the model, eight ties 0.5 voxel wide along each bundle's 48 voxels and the five lashings across her cover about a tenth of her sides and a twentieth of her bottom. A breaker's pressure bends the stems, which spring back",
                 "soak": "A caballito of 41 kg dry weighs some 68 kg soaked with sea water after a day's use (festival.si.edu): its reed takes up two thirds of its weight in water a day afloat, 33 kg on her 50.4. Unmeasured, balance on history: the reed saturates at five times its weight, a sunny day ashore drives four times its weight out again, and each drying leaves a third of what it drove out as rot, so a boat soaked and dried a few times is past saving where Titicaca's totora boats, dried after every trip, last months"
             }
@@ -89,7 +89,7 @@
             ]
         },
         "roughseas:seaforces": {
-            "beamMetres": 0.4,
+            "beamMetres": 0.36,
             "mastMetres": 0,
             "windageSquareMetres": 0.3,
             "heave": 0.8,
@@ -97,7 +97,7 @@
             "rollResponse": 1.2,
             "pitchResponse": 1.2,
             "sources": {
-                "beamMetres": "Her two 20 cm bundles side by side",
+                "beamMetres": "Her two 18 cm bundles side by side",
                 "windageSquareMetres": "Her 3 m length over a freeboard of about 5 cm with her rider aboard, and her two raised ends",
                 "heave": "Reed is light and rises with the crest",
                 "capsizeBreakerMetres": "Huanchaco's caballitos are paddled out through the surf and ride its breakers in (festival.si.edu): the low float slips under a breaker, which rolls her only once it stands as high as her rider sits, about 0.9 m",

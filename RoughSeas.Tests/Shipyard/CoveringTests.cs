@@ -54,6 +54,14 @@ public class CoveringTests
         Assert.Equal("Lacing", coracle.Current?.Group);
     }
 
+    [Theory]
+    [InlineData(0, new string[0])]
+    [InlineData(1, new[] { "small" })]
+    [InlineData(3, new[] { "large" })]
+    [InlineData(4, new[] { "large", "small" })]
+    public void WhatAHideHasLeftOverComesBackAsTheHidesItStillMakes(int sections, string[] hides) =>
+        Assert.Equal(hides, HideLaying.Remainder(sections));
+
     [Fact]
     public void ACoracleFromBeforeTheBuildHasHerLatticeBent()
     {

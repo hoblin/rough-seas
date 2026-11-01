@@ -1,6 +1,7 @@
 import math
 
-from shape import BILGE, Hull, Shape, box, group, path, plank, stages
+from physics import afloat, kilograms
+from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, group, path, plank, renamed, span, stages
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -33,6 +34,9 @@ STITCH_METRES = 0.0254
 STEM_GIRTH_METRES = 0.08
 # Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
 ROPE_METRES = 10
+SHEET_LENGTH = 80
+SHEET_THICKNESS = 0.4
+LATH_SQUARE_METRES = 0.01 * 0.06
 
 
 def section(x, breadth, rocker, rise):
@@ -71,14 +75,76 @@ def lined(stations, depth):
 def sheet():
     girth = sum(math.dist(a, b) for a, b in zip(PROFILE, PROFILE[1:]))
     flat, curl = girth - 2, 2.4
-    x0, x1 = STATIONS[0][0] - 1, STATIONS[-1][0] + 1
+    middle = (STATIONS[0][0] + STATIONS[-1][0]) / 2
+    x0, x1 = middle - SHEET_LENGTH / 2, middle + SHEET_LENGTH / 2
     return group("Sheet", (0, 0, 0), (0, 0, 0), [
-        box("SheetFlat", (x0, 0, CENTRE - flat), (x1, 0.4, CENTRE + flat), "bark"),
-        box("SheetCurlPort", (x0 + 1, 0, CENTRE - flat - curl), (x1 - 1, 0.4, CENTRE - flat), "bark",
-            origin=(0, 0, CENTRE - flat), rot=(-28, 0, 0)),
-        box("SheetCurlStarboard", (x0 + 1, 0, CENTRE + flat), (x1 - 1, 0.4, CENTRE + flat + curl), "bark",
-            origin=(0, 0, CENTRE + flat), rot=(28, 0, 0)),
+        box("SheetFlat", (x0, 0, CENTRE - flat), (x1, SHEET_THICKNESS, CENTRE + flat), "bark"),
+        box("SheetCurlPort", (x0 + 1, 0, CENTRE - flat - curl), (x1 - 1, SHEET_THICKNESS, CENTRE - flat), "bark",
+            origin=(0, 0, CENTRE - flat), rot=(28, 0, 0)),
+        box("SheetCurlStarboard", (x0 + 1, 0, CENTRE + flat), (x1 - 1, SHEET_THICKNESS, CENTRE + flat + curl), "bark",
+            origin=(0, 0, CENTRE + flat), rot=(-28, 0, 0)),
     ])
+
+
+def bend(edges, share):
+    """A half-section of bark bent up from flat by a share of its final angles, each length of it kept."""
+    points = [(0.0, share * edges[0][1])]
+    for (h0, y0), (h1, y1) in zip(edges, edges[1:]):
+        h, y = points[-1]
+        angle = share * math.atan2(y1 - y0, h1 - h0)
+        reach = math.dist((h0, y0), (h1, y1))
+        points.append((h + reach * math.cos(angle), y + reach * math.sin(angle)))
+    return points
+
+
+def height(edges, half):
+    for (h0, y0), (h1, y1) in zip(edges, edges[1:]):
+        if h0 <= half <= h1 and h1 > h0:
+            return y0 + (half - h0) / (h1 - h0) * (y1 - y0)
+    return edges[-1][1]
+
+
+def raised(share):
+    return [(x, bend(edges, share)) for x, edges in STATIONS]
+
+
+def frame_at(share):
+    """The final frame's plan, lying on the bark where it has risen to at that share."""
+    return [(x, edges[:-1] + [(edges[-1][0], height(bend(edges, share), edges[-1][0]) + GUNWALE * (1 - share))]) for x, edges in STATIONS]
+
+
+def sheer_at(stations, x):
+    for (x0, e0), (x1, e1) in zip(stations, stations[1:]):
+        if x0 <= x <= x1:
+            return e0[-1][1] + (x - x0) / (x1 - x0) * (e1[-1][1] - e0[-1][1])
+    return stations[-1][1][-1][1]
+
+
+def frame_pieces(hull):
+    lift = lambda x: sheer_at(hull.stations, x + 0.7) - sheer_at(STATIONS, x + 0.7)
+    return [
+        gunwale(hull, "InwalePort", -1, True),
+        gunwale(hull, "InwaleStarboard", 1, True),
+        *(thwart(n, x, half, y + lift(x)) for n, (x, half, y) in enumerate(THWARTS, 1)),
+        gunwale(hull, "OutwalePort", -1, False),
+        gunwale(hull, "OutwaleStarboard", 1, False),
+    ]
+
+
+def raising():
+    """The bark raised a step with each piece of the frame, and each piece drawn at every step from when it is laid."""
+    levels = len(frame_pieces(Hull("Frame", STATIONS, CENTRE, SKIN, "bark", "bark")))
+    skins = [group(f"Skin{k}", (0, 0, 0), (0, 0, 0), Hull(f"Skin{k}x", raised(k / levels), CENTRE, SKIN, "bark", "bark", edge="bark").strakes())
+             for k in range(1, levels + 1)]
+    at = {k: frame_pieces(Hull("Frame", frame_at(k / levels), CENTRE, SKIN, "bark", "bark")) for k in range(1, levels + 1)}
+    pieces = []
+    for n in range(1, levels + 1):
+        final = at[levels][n - 1]
+        variants = [group(f"Frame{n}At{k}", (0, 0, 0), (0, 0, 0), [renamed(e, f"At{k}") for e in at[k][n - 1]]) for k in range(n, levels + 1)]
+        piece = group(f"Frame{n}", (0, 0, 0), (0, 0, 0), variants)
+        piece["metres"] = round(span(final, "frame") / VOXELS_A_METRE, 2)
+        pieces.append(piece)
+    return group("Skin", (0, 0, 0), (0, 0, 0), skins), group("Frame", (0, 0, 0), (0, 0, 0), pieces)
 
 
 def gunwale(hull, name, side, inside):
@@ -182,22 +248,30 @@ def build(path_):
         "bilge": BILGE,
     })
     hull = Hull("Skin", STATIONS, CENTRE, SKIN, "bark", "bark", edge="bark")
-    shape.add(sheet(), group("Skin", (0, 0, 0), (0, 0, 0), hull.strakes()))
-    shape.add(stages("Frame", [
-        gunwale(hull, "InwalePort", -1, True),
-        gunwale(hull, "InwaleStarboard", 1, True),
-        *(thwart(n, *spec) for n, spec in enumerate(THWARTS, 1)),
-        gunwale(hull, "OutwalePort", -1, False),
-        gunwale(hull, "OutwaleStarboard", 1, False),
-    ]))
-    shape.add(stages("Stems", [stem("SternStem", on_centre(STERN)), stem("BowStem", on_centre(bow(STERN)))]))
+    skin, frame = raising()
+    laths = [frame,
+             stages("Stems", [stem("SternStem", on_centre(STERN)), stem("BowStem", on_centre(bow(STERN)))]),
+             stages("Sheathing", sheathing(hull)),
+             stages("Ribs", ribs(hull))]
+    shape.add(sheet(), skin, laths[0], laths[1])
     shape.add(stages("Lashing", wraps(hull)))
-    shape.add(stages("Sheathing", sheathing(hull)))
-    shape.add(stages("Ribs", ribs(hull)))
+    shape.add(laths[2], laths[3])
     shape.add(stages("Pitch", [seam("SternSeam", STERN), seam("BowSeam", bow(STERN)), gores(hull, -1), gores(hull, 1)]))
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat")
     shape.write()
+    report(hull, laths)
+
+
+def report(hull, laths):
+    bark = hull.skin_square_metres()
+    metres = sum(piece.get("metres", 0) for stage in laths for piece in stage["children"])
+    bark_kg = kilograms("bark", bark * BARK_METRES * 1000)
+    frame_kg = kilograms("wood-tuja", metres * LATH_SQUARE_METRES * 1000)
+    print(f"barkcanoe: {bark:.2f} m² of bark, {bark_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of white cedar; "
+          f"sheet {SHEET_LENGTH / VOXELS_A_METRE:.2f} m, {SHEET_THICKNESS / VOXELS_A_METRE:.3f} m thick")
+    afloat("barkcanoe", bark_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=SKIN),
+           hull.square_metres(SHEER - 0.01, inset=SKIN))
 
 
 if __name__ == "__main__":

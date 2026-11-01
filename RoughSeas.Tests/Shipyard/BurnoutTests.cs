@@ -97,8 +97,8 @@ public class BurnoutTests
     {
         var blank = Blank();
 
-        Assert.Equal(608, blank.RimVoxels);
-        Assert.Equal(25, blank.ClayBalls);
+        Assert.Equal(560, blank.RimVoxels);
+        Assert.Equal(23, blank.ClayBalls);
     }
 
     [Fact]

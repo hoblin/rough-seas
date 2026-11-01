@@ -119,7 +119,7 @@ New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys
 
 The reed boat is bound from two reed bundles laid by the water ([Bound in place](Building-a-Vessel#bound-in-place)), and its grid recipe is gone. Her code is still `roughseas:reedboat`, so a reed boat of yours loads finished, with her ends bound up and her soak as it was.
 
-- She is a float of two 20 cm bundles: 3 m by 0.4 m, 0.2 m deep, 50 kg, her rider 5 cm above the water. Her shape, collision boxes and seat height changed, and her `Hull`, `FrontSeat` and `Cargo` elements with them; a patch that addressed her old shape's `Port`, `Starboard`, `Core` or `Binding` elements misses. Her `soak` and the `reed` material's density changed with her ([why](The-Science-of-the-Hull)).
+- She is a float of two 18 cm bundles: 3 m by 0.36 m, 0.18 m deep, 50 kg, her rider 5 cm above the water. Her shape, collision boxes and seat height changed, and her `Hull`, `FrontSeat` and `Cargo` elements with them; a patch that addressed her old shape's `Port`, `Starboard`, `Core` or `Binding` elements misses. Her `soak` and the `reed` material's density changed with her ([why](The-Science-of-the-Hull)).
 - Her rower holds an oar: she sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes. Her own paddle, its `roughseas-reedboat-*` strokes and `patches/player-reedboat.json` are gone.
 - `roughseas:framing` no longer needs a vessel of a wood, and strips a tree only when it has `barkSeconds`.
 - The help text `roughseas:shipyard-lash` now reads "Lash her with rope" on every framed vessel.
@@ -139,3 +139,17 @@ The coracle and the hide currach are laid out as laths on the ground and built w
 - Hides carry our collectible behaviour `roughseas:framing`, as rope does; laths carry `roughseas:lathbed` by their JSON, and with Shift lay themselves on the ground. Rope held on laths laid out in a layout binds them rather than doing what vanilla's rope does.
 
 New: the behaviour `roughseas:covering` with its keys `layout`, `overturned` and `overturnedPivot`, `roughseas:framing`'s work `hide` and its keys `bends`, `hides` and `hideStates`, the block `roughseas:lathbed`, the collectible behaviour `roughseas:lathbed`, `roughseas:vesselintegrity`'s key `cover`, the interface `ICovered`, and `config/vessels/hides.json`.
+
+### Every build without a jump, every hull by its model
+
+Each vessel built in place now changes the way the work would, and floats by numbers measured off her model ([why](The-Science-of-the-Hull#floating)).
+
+- The weights, depths, waterplanes, holds, decks and `swimmingOffsetY` of the dugout, outrigger, bark canoe, coracle and currach changed. The dugout's walls are 5 cm and her blank is the square trunk: `unhewnLitres` 3309, `blankWaterplaneSquareMetres` 5, `hollowDepthMetres` 0.5125, `hollowBeamMetres` 0.8. A patch that set these numbers sets them against her new model.
+- The outrigger's float is hewn from its three logs in six passes: her stage `Ends` and the groups `Float` and `Blunt` are gone, and `Hewing` (a `successive` stage replacing `FloatLog`) comes after `Booms`, whose pieces follow it (`follows`). Her washstrakes' end pieces are boards across her hollow, and the washstrakes add 422 litres, her measured opening 15 cm higher. The bark canoe's and the currach's holds stop at the lowest point of their gunwale, where water first spills over: 608 and 1878 litres. Her texture codes `floatbark` and `floatrings` draw the logs, in the float's wood. A dugout off the block grid is squared onto the logs when rigged, turned and moved so the float lies on them, no end of it more than half a block; one turned further from the row isn't rigged.
+- The bark canoe's sheet is 5 m long and her `Skin` group has one child a frame piece, `Skin1` to `Skin7`; her frame pieces show from `Frame{n}At{k}`. The finished canoe's item is drawn by `roughseas:carriedbuild` too, which shows only her last step.
+- The coracle's lattice is spaced 0.125 m and 0.1875 m, the currach's pair 1.1375 m, both within 0.0625 m; the currach's gunwale pieces show from `Gunwale{n}At{k}`, her stern ends apart until her second end lashing.
+- A hide bigger than what is left of a cover gives back the rest as smaller hides of its kind. `Laying.Spend` has an overload taking the pieces the work used.
+- A reed boat's ends sag over the soak she takes before she sinks with nothing aboard, not over her full saturation. The interface `ISoaking` is gone; `EntityBehaviorVesselIntegrity.SoakToSinkKg` gives that soak.
+- A refused piece logs a `[shipyard]` line once a hold.
+
+New: `roughseas:framing`'s stage keys `successive`, `follows` and `lifts` and its key `flatDepthMetres`, `roughseas:rigging`'s key `floatStage`, the shape keys `woodLitres` and `waterlineSquareMetres`, and `bin/lib/hulls/physics.py`, which prints what each builder measures.

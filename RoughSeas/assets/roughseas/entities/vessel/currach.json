@@ -2,11 +2,11 @@
     "code": "currach",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 70,
+    "weight": 75.2,
     "attributes": {
         "speedMultiplier": 1.6,
         "turnSpeed": 0.9,
-        "swimmingOffsetY": 0.42,
+        "swimmingOffsetY": 0.575,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {"idle": "roughseas-sitthwart", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
         "rightClickPickup": true,
@@ -16,10 +16,10 @@
     "behaviorConfigs": {
         "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
-            "parts": [{"name": "hide", "material": "hide", "share": 0.52}, {"name": "frame", "material": "wood-ash", "share": 0.48}],
+            "parts": [{"name": "hide", "material": "hide", "share": 36.9}, {"name": "frame", "material": "wood-ash", "share": 38.3}],
             "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.01}, "backedShare": 0.4, "bottomBackedShare": 0.31, "spanMetres": 0.15},
-            "depthMetres": 0.45,
-            "waterplaneSquareMetres": 4.4,
+            "depthMetres": 0.6,
+            "waterplaneSquareMetres": 3.39,
             "seep": {"litresPerHourASeam": 15, "greaseDays": 2.5},
             "cover": {"hides": {"prepared": 8}, "seams": 2},
             "repairs": [
@@ -29,16 +29,17 @@
             "wreckage": [{"type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": {"avg": 4, "var": 2}}],
             "damage": {"textures": ["hide"], "material": "hide"},
             "sources": {
-                "parts": "By the model: 8.6 m² of hide 5 mm thick at 860 kg/m³, some 37 kg, over 21 ribs, 7 stringers and two gunwales of laths 1 by 6 cm, 83 m of ash, some 30 kg, and a thwart pole: about 70 kg",
+                "parts": "By the model (bin/lib/hulls/currach.py): 8.6 m² of hide 5 mm thick at 860 kg/m³, 37 kg, over 21 ribs, 7 stringers and two gunwales of laths 1 by 6 cm, 81 m of ash, and a thwart pole 9 cm across, 38 kg: 75 kg",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.043 m (bin/lib/hulls/currach.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, ribs 0.8 voxel wide every 3 and three stringers a side back 40% of her sides, the ribs and the keelson 31% of her bottom. A breaker presses the hide onto the laths, each 1 cm deep bending over the 0.15 m between stringers",
-                "depthMetres": "Keel to gunwale amidships: a 3 cm draft with her rower in a 70 kg hull and about 0.4 m of side above it",
-                "waterplaneSquareMetres": "A hull 4.7 m long and 1.2 m in beam, double-ended and fine at both ends, about 0.78 of her box at the waterline",
+                "depthMetres": "Keel to gunwale amidships, by the model (bin/lib/hulls/currach.py)",
+                "waterplaneSquareMetres": "So that her 1878 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
                 "seep": "A seam where one hide meets the next weeps once the tallow has washed out of it, and Aran crews dressed their currachs every few days: a seam across her, some 2.3 m of it, 15 L an hour. A currach from before her build is covered in prepared hide over her eight sections, with the two seams the three large hides of her old recipe had",
                 "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             }
         },
         "passivephysicsmultibox": {
-            "collisionBoxes": [{"x1": -0.6, "y1": 0, "z1": -2.35, "x2": 0.6, "y2": 0.6, "z2": -0.783}, {"x1": -0.6, "y1": 0, "z1": -0.783, "x2": 0.6, "y2": 0.6, "z2": 0.783}, {"x1": -0.6, "y1": 0, "z1": 0.783, "x2": 0.6, "y2": 0.6, "z2": 2.35}],
+            "collisionBoxes": [{"x1": -0.6, "y1": 0, "z1": -2.35, "x2": 0.6, "y2": 0.7, "z2": -0.783}, {"x1": -0.6, "y1": 0, "z1": -0.783, "x2": 0.6, "y2": 0.7, "z2": 0.783}, {"x1": -0.6, "y1": 0, "z1": 0.783, "x2": 0.6, "y2": 0.7, "z2": 2.35}],
             "groundDragFactor": 1,
             "airDragFallingFactor": 0.5,
             "gravityFactor": 1.0
@@ -64,19 +65,19 @@
             "rollResponse": 1.2,
             "pitchResponse": 1.5,
             "sources": {
-                "heave": "A hide hull of 70 kg sits on the water and rises with the crest: it rides over seas that board heavier boats",
+                "heave": "A hide hull of 75 kg sits on the water and rises with the crest: it rides over seas that board heavier boats",
                 "capsizeBreakerMetres": "Aran currachs are launched and landed through breaking surf: the light, flared hull lifts to a breaker that rolls a heavier boat of its beam",
                 "rollResponse": "A beamy, light hull rolls with the sea about as much as vanilla's boats",
                 "pitchResponse": "The light, flexing hull follows the swell bow and stern"
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 1800,
-            "deckSquareMetres": 4.0,
+            "capacityLitres": 1878,
+            "deckSquareMetres": 3.98,
             "drainLitresPerHour": 0,
             "sources": {
-                "capacityLitres": "A 4.7 m hull, 1.2 m in beam at the gunwale and 0.45 m deep, about two fifths of her box",
-                "deckSquareMetres": "The open hull, 4.7 m by 1.2 m less her taper at both ends, catches the rain",
+                "capacityLitres": "Her hollow inside the hide up to her gunwale amidships, where water first spills over, by the model (bin/lib/hulls/currach.py)",
+                "deckSquareMetres": "Her opening at the gunwale catches the rain, by the model (bin/lib/hulls/currach.py)",
                 "drainLitresPerHour": "Greased hide is watertight; the wear of an ungreased hull is upkeep, not a leak"
             }
         },
@@ -87,11 +88,11 @@
             "rope": "game:rope",
             "hides": "game:hide-*",
             "hideStates": ["raw", "soaked", "scraped", "prepared", "oiled", "pelt", "salted"],
-            "layout": {"kind": "pair", "beamMetres": 1.2, "toleranceMetres": 0.25},
+            "layout": {"kind": "pair", "beamMetres": 1.1375, "toleranceMetres": 0.0625},
             "overturned": true,
             "overturnedPivot": 5.5,
             "stages": [
-                {"group": "Gunwale", "work": "lath", "seconds": 3},
+                {"group": "Gunwale", "work": "lath", "seconds": 3, "follows": "EndLashing"},
                 {"group": "EndLashing", "work": "rope", "seconds": 15},
                 {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true, "lines": true},
                 {"group": "Stringers", "work": "lath", "seconds": 3, "lines": true},
@@ -101,7 +102,7 @@
             ],
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
-                "layout": "A currach's gunwale was laid out on the ground first and her ribs set into it (Hornell 1938, the Boyne currach woven round its gunwale on the ground): two long laths laid side by side at her beam, whose ends the first rope draws together",
+                "layout": "A currach's gunwale was laid out on the ground first and her ribs set into it (Hornell 1938, the Boyne currach woven round its gunwale on the ground): two long laths laid side by side as far apart as her model draws her gunwale laths, 1.14 m, to within a step of the 1/16 m the bed lays laths by, whose ends at the bow the first rope draws together; astern they run straight on until the second rope draws them together there",
                 "endLashing": "Each end bound with some ten metres of cord, a quarter of an hour's work (an estimate)",
                 "ribs": "Fitting one rib, about three minutes, as the canoe's: currach ribs were scalded, bent over the gunwale and set into it, built upside down (the Boyne and Aran currachs). Bent in wet, they hold their bend once dry, in a couple of days",
                 "cover": "Stretching and sewing a small hide's worth of cover, some twenty minutes (an estimate); a bigger hide covers more at once and takes as much longer",

@@ -40,6 +40,9 @@ public abstract class Laying
 
     public abstract void Spend(ItemSlot slot, EntityAgent byEntity);
 
+    /// <summary>Takes the piece, of which the work needs only <paramref name="used"/> of its <see cref="Pieces"/>.</summary>
+    public virtual void Spend(ItemSlot slot, EntityAgent byEntity, int used) => Spend(slot, byEntity);
+
     public virtual int Pieces(ItemSlot slot) => 1;
 
     /// <summary>What the help shows this work done with.</summary>
@@ -199,7 +202,30 @@ public sealed class HideLaying(AssetLocation hides, string[] states) : Laying
 
     public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.TakeOut(1);
 
+    public override void Spend(ItemSlot slot, EntityAgent byEntity, int used)
+    {
+        var hide = slot.Itemstack!.Collectible;
+        var attributes = slot.Itemstack.Attributes.Clone();
+        Spend(slot, byEntity);
+        foreach (var size in Remainder(Pieces(hide) - used))
+        {
+            if (byEntity.World.GetItem(hide.CodeWithVariant("size", size)) is not { } smaller) continue;
+            var rest = new ItemStack(smaller) { Attributes = attributes.Clone() };
+            if (!byEntity.TryGiveItemStack(rest)) byEntity.World.SpawnItemEntity(rest, byEntity.Pos.XYZ);
+        }
+    }
+
+    public static IEnumerable<string> Remainder(int sections)
+    {
+        foreach (var (size, count) in Sections.OrderByDescending(entry => entry.Value))
+        {
+            for (; sections >= count; sections -= count) yield return size;
+        }
+    }
+
     public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
         world.SearchItems(hides).Where(hide => states.Contains(hide.Variant["type"]) && hide.Variant["size"] is { } size && Sections.ContainsKey(size))
             .Select(hide => new ItemStack(hide));
+
+    private static int Pieces(CollectibleObject hide) => Sections[hide.Variant["size"]];
 }

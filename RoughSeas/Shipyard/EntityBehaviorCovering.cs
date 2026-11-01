@@ -30,7 +30,7 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
 
     public override bool Finished => base.Finished && Upright;
 
-    public bool Upright => Tree?.GetBool(UprightKey, true) ?? true;
+    public bool Upright => UprightIn(Tree);
 
     public int Hides => Tree?.GetInt(HidesKey) ?? 0;
 
@@ -92,18 +92,26 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
             entityShape = entityShape.Clone();
             shapeIsCloned = true;
         }
+        Overturn(entityShape, covering.OverturnedPivot);
+    }
+
+    public static bool UprightIn(ITreeAttribute? build) => build?.GetBool(UprightKey, true) ?? true;
+
+    /// <summary>Turns <paramref name="shape"/> keel up about the line <paramref name="pivot"/> voxels above her keel.</summary>
+    public static void Overturn(Shape shape, double pivot)
+    {
         var turned = new ShapeElement
         {
             Name = Overturned,
             From = [0, 0, 0],
             To = [0, 0, 0],
-            RotationOrigin = [0, covering.OverturnedPivot, 8],
+            RotationOrigin = [0, pivot, 8],
             RotationX = 180,
-            Children = entityShape.Elements,
+            Children = shape.Elements,
             FacesResolved = new ShapeElementFace[6]
         };
         foreach (var child in turned.Children) child.ParentElement = turned;
-        entityShape.Elements = [turned];
+        shape.Elements = [turned];
     }
 
     protected override void Laid(FramingStage stage, CollectibleObject piece, int pieces)

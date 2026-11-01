@@ -71,7 +71,29 @@ public class FramingTests
         Assert.Contains(Framing.SkinGroup, sheet);
         Assert.Contains("Frame1", sheet);
         Assert.DoesNotContain(Framing.SheetGroup, sheet);
-        Assert.Equal([Framing.SheetGroup], canoe);
+        Assert.Contains(Framing.SheetGroup, canoe);
+        Assert.DoesNotContain("Skin7", canoe);
+        Assert.DoesNotContain("Frame1At7", canoe);
+        Assert.DoesNotContain("Ribs14", canoe);
+    }
+
+    [Fact]
+    public void EachPieceOfHerFrameRaisesHerBarkAStepAndRidesOnIt()
+    {
+        var canoe = Sheet();
+        canoe.Lay("oak", 0);
+
+        Assert.DoesNotContain("Skin1", canoe.Hidden());
+        Assert.Contains("Skin2", canoe.Hidden());
+        Assert.DoesNotContain("Frame1At1", canoe.Hidden());
+
+        canoe.Lay("oak", 0);
+
+        Assert.Contains("Skin1", canoe.Hidden());
+        Assert.DoesNotContain("Skin2", canoe.Hidden());
+        Assert.Contains("Frame1At1", canoe.Hidden());
+        Assert.DoesNotContain("Frame1At2", canoe.Hidden());
+        Assert.DoesNotContain("Frame2At2", canoe.Hidden());
     }
 
     [Fact]

@@ -41,14 +41,14 @@ Our [coracle](Coracle), its sources and its build left out, carries all five:
 "behaviorConfigs": {
     "roughseas:vesselintegrity": {
         "impactCapacity": 400,
-        "parts": [{ "name": "hide", "material": "hide", "share": 0.46 }, { "name": "frame", "material": "wood-willow", "share": 0.54 }],
+        "parts": [{ "name": "hide", "material": "hide", "share": 9.1 }, { "name": "frame", "material": "wood-willow", "share": 8.0 }],
         "shell": {
             "kind": "skin", "material": "hide", "metres": 0.005,
             "backing": { "material": "wood-willow", "metres": 0.01 },
-            "backedShare": 0.47, "bottomBackedShare": 0.6, "spanMetres": 0.37
+            "backedShare": 0.47, "bottomBackedShare": 0.65, "spanMetres": 0.37
         },
-        "depthMetres": 0.36,
-        "waterplaneSquareMetres": 1.0,
+        "depthMetres": 0.35,
+        "waterplaneSquareMetres": 1.04,
         "seep": { "litresPerHourASeam": 12, "greaseDays": 2.5 },
         "cover": { "hides": { "prepared": 2 }, "seams": 0 },
         "repairs": [
@@ -63,7 +63,7 @@ Our [coracle](Coracle), its sources and its build left out, carries all five:
         "heave": 0.8, "capsizeBreakerMetres": 0.6,
         "rollResponse": 1.6, "pitchResponse": 1.6
     },
-    "roughseas:bilge": { "capacityLitres": 350, "deckSquareMetres": 1.26, "drainLitresPerHour": 0 }
+    "roughseas:bilge": { "capacityLitres": 265, "deckSquareMetres": 1.07, "drainLitresPerHour": 0 }
 },
 "client": {
     "behaviors": [
@@ -196,19 +196,24 @@ Every piece of a `lath` or `pole` stage takes one at least as long as it, cut do
 | `raisesMetres`, `raisesLitres` | m, l | 0 | how much higher her side and how much more her hold, once the stage is done, on top of her `depthMetres` and her bilge's `capacityLitres` |
 | `part` | part name | none | the part of her `parts` its pieces make, weighing as far as they are laid, in the wood they are of; pieces of one wood only, and her wreckage of them comes in it |
 | `texture` | texture code | none | the shape's texture that draws the pieces, redrawn in the wood they are of |
-| `replaces` | shape group | none | a group whose pieces each piece of this stage takes away once laid, `{replaces}{n}` for `{group}{n}`: a float's blunt end, for its hewn one |
+| `replaces` | shape group | none | a group whose pieces each piece of this stage takes away once laid, `{replaces}{n}` for `{group}{n}`; with `successive`, the one piece `{replaces}1` the first piece takes away: an outrigger's float logs, for the first pass hewn from them |
+| `successive` | bool | false | each piece is the whole work again, a step further, and only the last laid shows: an outrigger's float, hewn down pass by pass |
+| `follows` | stage group | none | a stage whose progress this stage's pieces are drawn at: each piece shows from `{group}{n}At{k}`, `k` the pieces that stage has laid, so a piece moves with what it rests on (an outrigger's booms settling onto the float as it is hewn, a currach's gunwale laths drawn together at her stern by her second end lashing). A stage may follow itself |
+| `lifts` | shape group | none | a group this stage raises piece by piece: `{lifts}{k}` shows while `k` of its pieces are laid (a bark canoe's skin, from flat to standing) |
+| `metres`, `woodLitres`, `waterlineSquareMetres` | in the shape | none | written by the builder on each piece's group: the lath or pole it takes, and, on a `successive` stage and on the stage's own group for what lay before its first piece, the wood that is left and how wide it stands at the water |
 | `bends` | stage group | none | a stage this one bends once its first piece is laid: from then on that stage's pieces show from the group `{bends}Bent`, `{bends}Bent1`, `{bends}Bent2`…, and no longer from their own: a coracle's lattice, bent up by her gunwale |
 | `framePart` | part name | none | the part of her `parts`, by its `name`, that her laths or poles make: its share and its `reference` stay, the material is their wood, and only what is laid weighs and takes knocks. Her shape's `frame` texture is drawn in that wood |
 | `laths`, `poles`, `rope`, `pitch`, `cloth`, `planks`, `hides` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `roughseas:pole-*`, `game:rope`, `game:glueportion-pitch-*`, `game:cloth-*`, `game:plank-*`, `game:hide-*`) |
 | `hideStates` | list | none | the hides' `type` variants a `hide` stage takes: ours every stage before leather, `raw`, `soaked`, `scraped`, `prepared`, `oiled`, `pelt` and `salted` |
 | `barkSeconds` | s | 0 | how long the knife takes the bark off |
 | `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
+| `flatDepthMetres` | m | 0 | how thick she floats while her `lifts` stage has none of its pieces: a sheet lying flat; she floats as deep as her `depthMetres` once it is done, between in step |
 
-At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and the item shows her as far as she is built, and she takes her seats only once finished. A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull: the behaviour shows the one or the other. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as she is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
+At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and the item shows her as far as she is built, and she takes her seats only once finished. A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull, one child a step: the behaviour shows the sheet until a piece is laid, then the step her `lifts` stage has reached. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as she is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
 
 ### Rigged in place
 
-`roughseas:riggable` on a finished hull and `roughseas:rigging` on the vessel she becomes build one vessel onto another, the way an outrigger was really made: a finished dugout, a float log alongside, booms lashed across both. One of her successor's `poles` held on a riggable hull, for the successor's first stage's `seconds`, with `floatLogs` logs of one wood lying end to end along her `floatOffMetres` off to either side, the middle one beside her middle where the model draws the float, lays her first boom: the logs are taken away and she is replaced, where she lies, by the entity of her `vessel` code and her own wood, at the start of her rigging. What a hull keeps (its cracks, the water in it) goes with her, through the vessel behaviours that implement `IHandedOver`, turned end for end when the float lay on the side opposite the rigged model's. Riders get off, and what her accessory slots held drops beside her. A hull still being built is refused.
+`roughseas:riggable` on a finished hull and `roughseas:rigging` on the vessel she becomes build one vessel onto another, the way an outrigger was really made: a finished dugout, a float log alongside, booms lashed across both. One of her successor's `poles` held on a riggable hull, for the successor's first stage's `seconds`, with `floatLogs` logs of one wood lying end to end along her `floatOffMetres` off to either side, the middle one beside her middle where the model draws the float, lays her first boom: the logs are taken away and she is replaced by the entity of her `vessel` code and her own wood, at the start of her rigging, moved by what is left of a block so that the float the model draws lies exactly on the logs. What a hull keeps (its cracks, the water in it) goes with her, through the vessel behaviours that implement `IHandedOver`, turned end for end when the float lay on the side opposite the rigged model's. Riders get off, and what her accessory slots held drops beside her. A hull still being built is refused.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
@@ -222,6 +227,7 @@ At every stage she is a vessel: she floats and can be picked up, her build goes 
 | `mast` | shape group | none | the stage whose first piece stands her mast: until it is laid she has none, and draws no lightning |
 | `floatOffMetres` | m | 0 | how far off her centreline they lie: the row is found through the block that far out, within half a block |
 | `floorMetres` | m | 0 | the top of her hold's floor above her origin, her hull's: the bilge draws its water from there |
+| `floatStage` | stage group | none | the `successive` stage that hews her float from its logs: the float weighs as the wood its last pass left, and stands at the water as wide, from the three logs to the finished float |
 | `floatPart` | part name | none | the part of her `parts` her float makes: its share and its `reference` stay, the material is the float's wood. Her shape's `float` texture is drawn in that wood |
 | `rigged` | shape groups | none | groups shown only once every piece she needs is laid, such as vanilla's `SailUnfurled` and `SailHalf`; until then her sail stays furled |
 
@@ -235,7 +241,7 @@ A block of class `roughseas:BlockBundles` is bundles lying where they were laid,
 | --- | --- | --- | --- |
 | `vessel` | entity code | none | in the block's `attributes`: the vessel the bundles are bound into (ours `roughseas:reedboat`); it carries `roughseas:framing`, whose first stage's `work` is `rope` |
 
-`roughseas:droop` draws ends that stand up by the stiffness of their reed and sag as the hull soaks. Each end's group has one child per sag, `{end}Droop0` dry to `{end}Droop{n}` saturated, and the behaviour shows the one nearest how soaked the hull is, as a `reed` hull counts it. The item lists every sag but `Droop0` in its `ignoreElements`.
+`roughseas:droop` draws ends that stand up by the stiffness of their reed and sag as the hull soaks. Each end's group has one child per sag, `{end}Droop0` dry to `{end}Droop{n}` as soaked as she gets afloat, and the behaviour shows the one nearest the water her material has taken up against what it can take before, with nothing aboard, it no longer holds her up. The item lists every sag but `Droop0` in its `ignoreElements`.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |

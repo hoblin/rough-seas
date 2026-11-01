@@ -2,7 +2,8 @@ import json
 import math
 from pathlib import Path
 
-from shape import BILGE, Shape, beam, bilge, box, group, path, plank, stages, water_plane, write
+from physics import afloat, kilograms
+from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Shape, beam, bilge, box, group, path, plank, stages, water_plane, write
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
@@ -13,10 +14,10 @@ BOTTOM = (9.6, 6.4)
 DEPTH = 5.6
 STAVES = 24
 
-# Hornell 1938: seven laths along and seven across; their spacing fills the bottom.
+# Hornell 1938: seven laths along and seven across; their spacing fills the bottom, on the 1/16 m the lath bed lays them by.
 LATHS = 7
-ALONG_SPACING = 1.8
-ACROSS_SPACING = 2.7
+ALONG_SPACING = 2
+ACROSS_SPACING = 3
 LATH_WIDTH = 0.96
 LATH_THICKNESS = 0.3
 PLAITS = 3
@@ -24,6 +25,8 @@ PLAIT_WIDTH = 0.6
 PLAIT_HEIGHT = 0.4
 
 HIDE = 0.2
+HIDE_METRES = 0.005
+LATH_SQUARE_METRES = 0.01 * 0.06
 # A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
 SECTION_SQUARE_METRES = 1.2
 
@@ -75,8 +78,9 @@ def laths():
         for offset in offsets(spacing):
             points = bent(along, offset, y)
             reach = length(points) / 2
-            ends = [(CENTRE - reach, y, CENTRE + offset), (CENTRE + reach, y, CENTRE + offset)] if along == "x" \
-                else [(CENTRE + offset, y, CENTRE - reach), (CENTRE + offset, y, CENTRE + reach)]
+            flat = y - HIDE
+            ends = [(CENTRE - reach, flat, CENTRE + offset), (CENTRE + reach, flat, CENTRE + offset)] if along == "x" \
+                else [(CENTRE + offset, flat, CENTRE - reach), (CENTRE + offset, flat, CENTRE + reach)]
             pieces.append((ends, points))
     return pieces
 
@@ -95,7 +99,7 @@ def ties():
     ropes = math.ceil(len(crossings) * TIE_METRES / ROPE_METRES)
     print(f"binding: {len(crossings)} crossings tied, {len(crossings) * TIE_METRES:.0f} m, {ropes} ropes of {ROPE_METRES} m")
     top = HIDE + 2 * LATH_THICKNESS + 0.15
-    knots = [box(f"Tie{n}", (x - 0.6, HIDE - 0.1, z - 0.6), (x + 0.6, top, z + 0.6), "lashing") for n, (x, z) in enumerate(crossings, 1)]
+    knots = [box(f"Tie{n}", (x - 0.6, 0, z - 0.6), (x + 0.6, top, z + 0.6), "lashing") for n, (x, z) in enumerate(crossings, 1)]
     return [knots[len(knots) * r // ropes:len(knots) * (r + 1) // ropes] for r in range(ropes)]
 
 
@@ -180,12 +184,42 @@ def finished():
             *(element for rope in lacing() for element in rope)]
 
 
+def bowl_litres(inset, floor):
+    step, total = 0.05, 0
+    y = floor + step / 2
+    while y < DEPTH:
+        a, b = (axis - inset for axis in axes_at(y))
+        total += math.pi * a * b * step
+        y += step
+    return total * VOXEL_METRES_CUBED_LITRES
+
+
+def axes_at(y):
+    knee = DEPTH * 0.45
+    (lower, upper, y0, y1) = (BOTTOM, mid(), 0, knee) if y < knee else (mid(), GUNWALE, knee, DEPTH)
+    share = (y - y0) / (y1 - y0)
+    return tuple(l + (u - l) * share for l, u in zip(lower, upper))
+
+
+def report(lattice_stage, gunwale_stage):
+    area = sum(square for _, square, _ in panels())
+    metres = sum(piece["metres"] for stage in (lattice_stage, gunwale_stage) for piece in stage["children"])
+    hide_kg, frame_kg = kilograms("hide", area * HIDE_METRES * 1000), kilograms("wood-willow", metres * LATH_SQUARE_METRES * 1000)
+    inset = HIDE + 2 * LATH_THICKNESS
+    hold = bowl_litres(inset, inset)
+    deck = math.pi * (GUNWALE[0] - inset) * (GUNWALE[1] - inset) * VOXEL_METRES ** 2
+    print(f"coracle: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of willow; "
+          f"bowl {bowl_litres(0, 0):.0f} L outside")
+    afloat("coracle", hide_kg + frame_kg, DEPTH * VOXEL_METRES, hold, deck)
+
+
 def build(path_):
     shape = Shape(path_, {**TEXTURES, "bilge": BILGE})
-    shape.add(stages("Lattice", lattice("Lath", lambda piece: piece[0])))
+    flat, gunwale = stages("Lattice", lattice("Lath", lambda piece: piece[0])), stages("Gunwale", plaits())
+    shape.add(flat)
     shape.add(stages("LatticeBent", lattice("BentLath", lambda piece: piece[1])))
     shape.add(stages("Binding", ties()))
-    shape.add(stages("Gunwale", plaits()))
+    shape.add(gunwale)
     shape.add(stages("Cover", cover(), wood="none"))
     shape.add(stages("Lacing", lacing()))
     shape.add(group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", DEPTH - 0.5)),
@@ -200,6 +234,7 @@ def build(path_):
     worn["textures"] = TEXTURES
     write(back, worn)
     print(f"{back}: worn bowl")
+    report(flat, gunwale)
 
 
 if __name__ == "__main__":

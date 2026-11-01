@@ -2,13 +2,13 @@
     "code": "outrigger",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 594,
+    "weight": 523.5,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
-        "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "plank": "inside-north"},
+        "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "plank": "inside-north"},
         "speedMultiplier": 1.3,
         "turnSpeed": 0.5,
-        "swimmingOffsetY": 0.3,
+        "swimmingOffsetY": 0.463,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -24,14 +24,14 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 30000,
             "parts": [
-                {"material": "wood-{wood}", "reference": "wood-oak", "share": 361},
-                {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 143, "takesKnocks": false},
-                {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 70, "takesKnocks": false},
-                {"name": "strakes", "material": "wood-{wood}", "reference": "wood-oak", "share": 20, "takesKnocks": false}
+                {"material": "wood-{wood}", "reference": "wood-oak", "share": 265.4},
+                {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 151.2, "takesKnocks": false},
+                {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 79.1, "takesKnocks": false},
+                {"name": "strakes", "material": "wood-{wood}", "reference": "wood-oak", "share": 27.8, "takesKnocks": false}
             ],
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.54},
             "depthMetres": 0.5625,
-            "waterplaneSquareMetres": 3.58,
+            "waterplaneSquareMetres": 3.78,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
@@ -45,30 +45,32 @@
             ],
             "damage": {"textures": ["inside"], "material": "wood"},
             "sources": {
-                "parts": "Her hull is the dugout she was built on, 361 kg of oak. Her float is three metres of log some 30 cm across, 0.21 m³ (bin/lib/hulls/outrigger.py), 143 kg of oak; her six poles (three 2.6 m booms and a 3 m mast about 9 cm across, two 3 m spars about 8 cm), 0.1 m³, 70 kg; her washstrakes, ten boards about 2 cm thick, 0.03 m³, 20 kg, as they are fitted. A float or poles of another wood weigh by their own",
+                "parts": "By the model (bin/lib/hulls/outrigger.py), in oak: her hull is the dugout she was built on, 265 kg; her float, three metres of log hewn round to some 30 cm across, 224 L, 151 kg, and the three logs it is hewn from 3000 L before the first pass; her six poles (three crooked booms 9 cm across, a 3 m mast 9 cm across, two 3 m spars 7.5 cm), 118 L, 79 kg; her washstrakes, ten boards 2.5 cm thick, 41 L, 28 kg, as they are fitted. A float or poles of another wood weigh by their own",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.155 m (bin/lib/hulls/outrigger.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "impactCapacity": "The dugout's hull, in her hull's wood alone: the float and rig lashed to it take no knock a hull takes",
                 "shell": "The dugout's walls, about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe)",
                 "depthMetres": "The dugout's, keel to gunwale: her washstrakes raise it by their stage's raisesMetres once sewn",
-                "waterplaneSquareMetres": "The dugout's 2.83 m² and her float's, a 3 m log 0.25 m wide at the water",
+                "waterplaneSquareMetres": "The dugout's 2.91 m² and her float's 0.86 m², a 3 m log 0.3 m wide at the water with hewn ends, by the model (bin/lib/hulls/outrigger.py); her three logs, before they are hewn, stand 3 m² at the water",
                 "repairs": "Her hull is a dugout's, mended as one"
             }
         },
         "roughseas:rigging": {
             "framePart": "poles",
             "floatPart": "float",
+            "floatStage": "Hewing",
             "floatLogs": 3,
             "mast": "Mast",
             "floatOffMetres": 2,
-            "floorMetres": 0.075,
+            "floorMetres": 0.05,
             "poles": "roughseas:pole-*",
             "rope": "game:rope",
             "cloth": "game:cloth-*",
             "planks": "*:plank-*",
             "rigged": ["SailUnfurled", "SailHalf"],
             "stages": [
-                {"group": "Booms", "work": "pole", "seconds": 3},
+                {"group": "Booms", "work": "pole", "seconds": 3, "follows": "Hewing"},
+                {"group": "Hewing", "work": "hew", "seconds": 30, "successive": true, "replaces": "FloatLog"},
                 {"group": "Lashing", "work": "rope", "seconds": 15},
-                {"group": "Ends", "work": "hew", "seconds": 7.5, "replaces": "Blunt"},
                 {"group": "Mast", "work": "pole", "seconds": 3},
                 {"group": "SailFurled", "work": "cloth", "seconds": 15},
                 {"group": "Stays", "work": "rope", "seconds": 15},
@@ -79,14 +81,14 @@
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
                 "floatLogs": "A small outrigger's float is about 3 m long",
                 "floatOffMetres": "A small outrigger's float rides 1.5 to 2 m off her hull: hull, gap, float, three blocks across",
-                "floorMetres": "The dugout's hold floor: her 0.5 m rim less its 0.425 m hollow",
-                "booms": "Setting one pole across her or up, about three minutes, as fitting one of a canoe's laths",
-                "lashing": "One rope is ten metres of lashing: about a quarter of an hour, as a canoe's (an estimate). Each boom is lashed to both gunwales and to the float, thirteen turns a lashing (ten round, three frapping) of their girth: 56 m, counted by her shape's builder",
-                "ends": "A float's end hewn to a point over 0.375 m takes off two thirds of that much log, about 18 L. An axe stroke bites some 0.08 L (its 10 cm edge 2 cm deep, a 4 cm chip), 30 strokes a minute (H. Glaser, physiology of forestry work, FAO): some 7.5 minutes",
+                "floorMetres": "The dugout's hold floor: her 0.5625 m rim less its 0.5125 m hollow",
+                "booms": "Setting one pole across her or up, about three minutes, as fitting one of a canoe's laths. A crooked pole, as Hawaiian and Marshallese booms curved down to the float (Young, 1876, marshall.csu.edu.au/Marshalls/html/culture/Canoes.html), takes its curve as it is laid: it rests on her gunwales and on the float's top, and settles with every pass as the float is hewn down beneath it",
+                "hewing": "Six passes of the axe all round take the three logs, 3000 L, down to the round float with pointed ends, 224 L (bin/lib/hulls/outrigger.py). Chip by chip, 463 L a pass, an axe biting some 0.08 L a stroke 30 times a minute (H. Glaser, physiology of forestry work, FAO): some three hours of real work a pass. A pass takes as long as vanilla takes to fell a large oak with a flint axe, 30 s (ItemAxe: a log's break time times the root of the tree's size)",
+                "lashing": "One rope is ten metres of lashing: about a quarter of an hour, as a canoe's (an estimate). Once the float is hewn, each boom is lashed to both gunwales and straight to the float, thirteen turns a lashing (ten round, three frapping) of their girth: 52 m, counted by her shape's builder",
                 "sail": "A crab claw of 3.5 m² between her two 3 m spars (bin/lib/hulls/outrigger.py), one cloth a square metre, as one linen block covers: four, each laced to the spars in about a quarter of an hour (an estimate)",
                 "stays": "A forestay, a backstay, a shroud out to the float and the sheet, each under ten metres: one rope each, set up in about a quarter of an hour (an estimate)",
-                "strakes": "Optional, any time she is finished: one washstrake a side between her solid ends, a board some 15 cm high, as Pacific washstrakes ran 15 to 20 cm (a Tikopia hull 43 cm deep carries a 15 cm one, Haddon & Hornell, Canoes of Oceania, via collections.maa.cam.ac.uk/objects/555827; Hawaiian mo'o 6 to 8 in). Sawn planks, a metre a plank: 8 along her sides, and an end piece over each solid end, as the end pieces lashed on at Tobi and Kapingamarangi (Haddon & Hornell; Buck 1950), so the sea cannot come in over her low ends: 10. Fitting one, with its row of holes, about twenty minutes (an estimate)",
-                "seams": "Sewn on through holes 3 in apart over a split batten (Haddon & Hornell, Mont-Dore canoe): each stitch about 30 cm of cord round wall, plank and batten, 118 stitches along her sides and her end pieces, 35 m, four ropes (bin/lib/hulls/outrigger.py). Sewn, they raise her side 15 cm and add the 422 L of hold between them"
+                "strakes": "Optional, any time she is finished: one washstrake a side between her solid ends, a board some 15 cm high, as Pacific washstrakes ran 15 to 20 cm (a Tikopia hull 43 cm deep carries a 15 cm one, Haddon & Hornell, Canoes of Oceania, via collections.maa.cam.ac.uk/objects/555827; Hawaiian mo'o 6 to 8 in). Sawn planks, a metre a plank: 8 along her sides, and a board across each end of her hollow, where her solid ends begin, as the end pieces lashed on at Tobi and Kapingamarangi (Haddon & Hornell; Buck 1950), so the sea cannot come in over her low ends: 10. Fitting one, with its row of holes, about twenty minutes (an estimate)",
+                "seams": "Sewn on through holes 3 in apart over a split batten (Haddon & Hornell, Mont-Dore canoe): each stitch about 30 cm of cord round wall, plank and batten, 116 stitches along her sides and her end boards, 35 m, four ropes (bin/lib/hulls/outrigger.py). Sewn, they raise her side 15 cm and add the 422 L of hold between them, her 2.81 m² opening 15 cm higher"
             }
         },
         "roughseas:launch": {
@@ -156,12 +158,12 @@
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 1156,
-            "deckSquareMetres": 3.4,
+            "capacityLitres": 1298,
+            "deckSquareMetres": 2.81,
             "drainLitresPerHour": 0,
             "sources": {
                 "capacityLitres": "The dugout's hollow: her washstrakes add the 422 L they enclose once sewn (bin/lib/hulls/outrigger.py)",
-                "deckSquareMetres": "Her open hollow, 4.5 m by 0.75 m, catches the rain",
+                "deckSquareMetres": "The dugout's opening at the rim catches the rain (bin/lib/hulls/dugout.py)",
                 "drainLitresPerHour": "One log, no seams: nothing leaks"
             }
         }

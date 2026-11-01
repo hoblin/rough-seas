@@ -27,6 +27,7 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
         handHandling = EnumHandHandling.PreventDefault;
         if (job.Refusal != null)
         {
+            if (firstEvent) byEntity.Api.ModLoader.GetModSystem<ShipyardModSystem>().Log("{0} refused at {1}: {2}", byEntity.GetName(), byEntity.Pos.AsBlockPos, job.Refusal);
             (byEntity.Api as ICoreClientAPI)?.TriggerIngameError(this, job.Refusal, Lang.Get("roughseas:" + job.Refusal));
             handHandling = EnumHandHandling.PreventDefaultAction;
             return;

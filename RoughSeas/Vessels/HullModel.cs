@@ -96,12 +96,6 @@ public interface IAfloat
     void Pass(double days, bool afloat, double sun, double waterCelsius = 20);
 }
 
-public interface ISoaking
-{
-    /// <summary>How near to saturated it is, from 0 dry to 1.</summary>
-    double Soaked { get; }
-}
-
 /// <summary>A hull mended by hand, at the place looked at where the model has places.</summary>
 public interface IMendable
 {

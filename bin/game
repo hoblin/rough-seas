@@ -198,7 +198,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              double or float stays what it is; e.g. the sailboat's sailPosition 0, 1, 2;
                              TREE/KEY reaches into a tree: roughseas:vessel/cracks/portside 0.6 for a
                              crack (once the hull has one), roughseas:vessel/lashing 0.6 for a raft,
-                             roughseas:bilge/litres 200 for the water aboard
+                             roughseas:bilge/litres 200 for the water aboard; a tree it lacks is started,
+                             so roughseas:build/Frame 0 makes a spawned bark canoe her bare sheet
   /bridge fly X Y Z          hover there in creative free flight, out of any seat: no sinking.
                              X Y Z as /tp takes them (~ relative). Then `aim ID` or `look`
                              frames the shot, e.g. /bridge fly ~6 ~4 ~ and bin/game aim 4300.

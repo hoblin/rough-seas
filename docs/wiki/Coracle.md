@@ -18,10 +18,10 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | Turning | spins on the spot |
 | [Hull](Hull-Condition) | 400 J with a willow frame, the weakest of all; about 690 J in oak, 810 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 12 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 34 cm empty, 27 cm with its paddler |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | 33 cm empty, 26 cm with its paddler |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's gear; armour takes it down |
 | [Mending](Mending) | 1 small prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
-| [Bilge](Bailing) | 350 litres |
+| [Bilge](Bailing) | 265 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
 | [Rapids](Rapids) | broken within seconds |
 | [Lightning](Lightning) | a strike nearby breaks it |
@@ -38,7 +38,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 A coracle is built where its laths are laid out on the ground, piece by piece, each piece drawn on her as it goes on.
 
 1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for her lattice and three 5 m ones for her gunwale. Laths bend only wet: two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground or in her as in the bundle.
-2. **Lay the lattice.** Hold Shift and right-click the ground with a wet lath: it lies at its full length where you aim, along the way you face. Lay seven side by side, a hand's breadth apart, then seven across them, each crossing all seven beneath it, about as far apart as her bottom draws them. A lath laid wrong comes back to an empty hand with Shift + right-click.
+2. **Lay the lattice.** Hold Shift and right-click the ground with a wet lath: it lies at its full length where you aim, along the way you face. A lath lies where you aim, to the sixteenth of a block. Lay seven side by side, an eighth of a block apart, then seven across them, three sixteenths of a block apart, each crossing all seven beneath it: that is how her bottom draws them, so binding moves no lath. One laid a sixteenth off is drawn onto its place when she is bound; further off, the laths stay laths. A lath laid wrong comes back to an empty hand with Shift + right-click.
 
    ![Fourteen wet laths laid out as a lattice](images/coracle/build-laths.webp)
 
@@ -46,11 +46,11 @@ A coracle is built where its laths are laid out on the ground, piece by piece, e
 
    ![The lattice bound](images/coracle/build-bound.webp)
 
-4. **Plait the gunwale.** Hold the 5 m laths on her, ten seconds each: the first bends the lattice's ends up into her bowl, and three plaits make her gunwale. Two days later the laths have dried and her frame has set; until then no hide goes on.
+4. **Plait the gunwale.** Hold the 5 m laths on her: the first bends the lattice's ends up into her bowl, and three plaits make her gunwale. Two days later the laths have dried and her frame has set; until then no hide goes on.
 
    ![The gunwale plaited and the lattice bent up](images/coracle/build-gunwale.webp)
 
-5. **Sew on hides.** Hold a hide on her: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. Her cover is two parts of one small hide's area each; a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew.
+5. **Sew on hides.** Hold a hide on her: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. Her cover is two parts of one small hide's area each; a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. A hide bigger than what is left of her cover is cut to fit, and the rest comes back to you as the smaller hides it still makes.
 
    ![Half her cover sewn](images/coracle/build-cover.webp)
 
