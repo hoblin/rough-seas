@@ -19,7 +19,7 @@
     "materialDensity": 600,
     "combustibleProps": {"burnTemperature": 700, "burnDuration": 30},
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
-    "guiTransform": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 0.75, "y": 0.5, "z": 0.5}, "scale": 1.1},
+    "guiTransform": {"rotation": {"x": -60, "y": 45, "z": 0}, "origin": {"x": 0.75, "y": 0.5, "z": 0.5}, "scale": 1.6},
     "tpHandTransform": {"translation": {"x": 0.9492, "y": -0.1337, "z": 0.4912}, "rotation": {"x": -3, "y": 1, "z": -22}, "origin": {"x": 0, "y": 0, "z": 0}, "scale": 1},
     "groundTransform": {"origin": {"x": 0.75, "y": 0, "z": 0.5}, "scale": 1}
 }

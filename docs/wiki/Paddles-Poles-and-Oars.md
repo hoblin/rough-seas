@@ -23,6 +23,13 @@ A pole reaches the bottom at about these depths, a little less from the currach,
 - Paddling, poling and rowing make you hungry, about as much as sprinting does.
 - A round, short hull turns easily and goes slowly: the coracle spins on the spot. A long one runs straight and turns slowly; the outrigger's float makes her slowest of all to turn.
 
+| | |
+| --- | --- |
+| ![Paddling a bark canoe along her side](images/propulsion/paddling.webp) | ![Poling a dugout off the bottom](images/propulsion/poling.webp) |
+| A paddle along the side | A pole off the bottom |
+| ![Rowing a currach on her thole pins](images/propulsion/rowing.webp) | ![Sculling a coracle over her bow](images/propulsion/sculling.webp) |
+| The currach's oars on their thole pins | A coracle sculled over her bow |
+
 ## How fast
 
 One rower, the average finisher of a canoe marathon, on calm water with nothing else aboard; poled in a metre of water with a 3 m pole. A load slows her, and a crack that floods her more.

@@ -14,7 +14,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 
 | | |
 | --- | --- |
-| Speed | 2.5 × the raft under full sail |
+| Speed | 7.2 m/s under full sail, at vanilla's pace |
 | Turning | steady |
 | [Hull](Hull-Condition) | 40 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
