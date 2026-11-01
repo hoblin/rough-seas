@@ -106,7 +106,7 @@ Our behaviour carries vessels nobody steers ([Building a vessel](Building-a-Vess
 
 ### The sea's time
 
-Everything of ours at sea keeps one clock, `sea.Clock`, on either side: the waves that come aboard, rain into a bilge, leaks and seeping, lightning, a hull soaking or losing its grease, and the drawn waves. It is the world's calendar, so it stands still under `/time stop` and while the game is paused, races while everyone sleeps, and leaps when the calendar is moved on with `/time add`. Motion keeps vanilla's tick, as vanilla's boats do: rowing, sailing, a current's push and a mooring's hold go on while time stands still. A mechanic of yours at sea that keeps the same clock happens in step with ours.
+Everything of ours at sea keeps one clock, `sea.Clock`, on either side: the waves that come aboard, rain into a bilge, leaks and seeping, lightning, a hull soaking or losing its grease, and the drawn waves. It is the world's calendar, so it stands still under `/time stop`, while the game is paused and while the calendar is stopped (`/time calendarspeedmul 0`), races while everyone sleeps, and leaps when the calendar is moved on with `/time add`. Motion keeps vanilla's tick, as vanilla's boats do: rowing, sailing, a current's push and a mooring's hold go on while time stands still. A mechanic of yours at sea that keeps the same clock happens in step with ours.
 
 It tells time in two units. Game hours suit what the calendar counts: days afloat, rain by the hour. Seconds at vanilla's pace suit what the real world times in seconds, a wave's period or a leak's litres a second: they are real seconds at the normal speed of time, 120 to a game hour in a default world, and they stand and race with the calendar.
 

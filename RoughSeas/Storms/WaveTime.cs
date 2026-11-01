@@ -17,7 +17,7 @@ public sealed class WaveTime(SeaClock clock)
     public double Advance(double deltaSeconds, double speedOfTime)
     {
         var world = clock.Seconds;
-        var ahead = Seconds + deltaSeconds * speedOfTime / SeaClock.VanillaSpeedOfTime;
+        var ahead = Seconds + clock.SecondsIn(deltaSeconds, speedOfTime);
         Seconds = double.IsNaN(Seconds) || Math.Abs(world - ahead) > SnapSeconds
             ? world
             : ahead + (world - ahead) * (1 - Math.Exp(-deltaSeconds / PullSeconds));

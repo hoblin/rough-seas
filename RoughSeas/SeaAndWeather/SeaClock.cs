@@ -4,13 +4,13 @@ using Vintagestory.API.Common;
 namespace RoughSeas.SeaAndWeather;
 
 /// <summary>
-/// The one clock everything at sea keeps: the world's calendar, so it stands under <c>/time stop</c> and pause, races
+/// The one clock everything at sea keeps: the world's calendar, so it stands under <c>/time stop</c>, pause and a
+/// stopped calendar (<c>/time calendarspeedmul 0</c>), races
 /// while players sleep, and leaps with <c>/time add</c>. Reach it as <c>SeaWeatherSystem.Clock</c>, on either side.
 /// </summary>
 public sealed class SeaClock
 {
-    internal const double VanillaSpeedOfTime = 60;
-
+    private const double VanillaSpeedOfTime = 60;
     private const double SecondsPerGameHour = 3600;
     private const double VanillaCalendarSpeedMul = 0.5;
     private const double RunSlack = 2;
@@ -34,9 +34,14 @@ public sealed class SeaClock
     /// </summary>
     public double Seconds => SecondsAt(Hours);
 
-    public double SecondsAt(double totalHours) => totalHours * SecondsPerGameHour / (VanillaSpeedOfTime * calendarSpeedMul());
+    public double SecondsAt(double totalHours) => totalHours * SecondsPerGameHour / (VanillaSpeedOfTime * Pace);
 
-    public double HoursAt(double seconds) => seconds * VanillaSpeedOfTime * calendarSpeedMul() / SecondsPerGameHour;
+    public double HoursAt(double seconds) => seconds * VanillaSpeedOfTime * Pace / SecondsPerGameHour;
+
+    public double SecondsIn(double realSeconds, double speedOfTime) =>
+        SecondsAt(realSeconds * speedOfTime * calendarSpeedMul() / SecondsPerGameHour);
+
+    private double Pace => calendarSpeedMul() is > 0 and var mul ? mul : VanillaCalendarSpeedMul;
 
     /// <summary>A watch for one mechanic, which keeps its own last lap.</summary>
     public Watch StartWatch() => new(this);

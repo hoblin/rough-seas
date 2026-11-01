@@ -4,22 +4,22 @@ namespace RoughSeas.Tests.SeaAndWeather;
 
 public class SeaClockTests
 {
-    private const double CalendarSpeedMul = 0.5;
     private const double Normal = 60;
     private const double Sleeping = 17060;
     private const double Tick = 1 / 30.0;
 
+    private double calendarSpeedMul = 0.5;
     private double hours = 1160.25;
     private double speed = Normal;
     private readonly SeaClock clock;
 
-    public SeaClockTests() => clock = new SeaClock(() => hours, () => CalendarSpeedMul, () => speed);
+    public SeaClockTests() => clock = new SeaClock(() => hours, () => calendarSpeedMul, () => speed);
 
     private void Run(double realSeconds)
     {
         for (var ran = 0.0; ran < realSeconds; ran += Tick)
         {
-            hours += Tick * speed * CalendarSpeedMul / 3600;
+            hours += Tick * speed * calendarSpeedMul / 3600;
             clock.Track(Tick);
         }
     }
@@ -71,6 +71,19 @@ public class SeaClockTests
     }
 
     [Fact]
+    public void StandsWhereItStoodWhenTheCalendarIsStopped()
+    {
+        var watch = Started();
+        var stoppedAt = clock.Seconds;
+        calendarSpeedMul = 0;
+        Run(60);
+
+        Assert.Equal(stoppedAt, clock.Seconds);
+        Assert.Equal(default, watch.Lap());
+        Assert.Equal(hours, clock.HoursAt(clock.SecondsAt(hours)), 9);
+    }
+
+    [Fact]
     public void LapsNothingWhenTheWorldsClockIsSetBack()
     {
         var watch = Started();
@@ -106,7 +119,7 @@ public class SeaClockTests
         Assert.InRange(lap.Seconds - lap.LivedSeconds, clock.SecondsAt(2) - TwoTicksAt(Sleeping), clock.SecondsAt(2));
     }
 
-    private double TwoTicksAt(double speedOfTime) => clock.SecondsAt(2 * Tick * speedOfTime * CalendarSpeedMul / 3600);
+    private double TwoTicksAt(double speedOfTime) => clock.SecondsAt(2 * Tick * speedOfTime * calendarSpeedMul / 3600);
 
     [Fact]
     public void LivesNoneOfTheHoursAddedWhileTheWorldsClockStands()
