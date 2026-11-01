@@ -56,7 +56,7 @@ SCREENPLAY
     until:             what only success produces; the scene goes on until it holds
                        {moved: NAME, by: BLOCKS}    NAME has moved that far since the scene began
                        {near: NAME, to: NAME, within: BLOCKS}
-                       {afloat: NAME}               a vessel on the water, not sunk
+                       {afloat: NAME}               a vessel not sunk
     timeout: 120       seconds until fails the scene
   A scene lasts until its until holds, its camera has moved and its caption has been read. Nothing
   waits a fixed pause.
@@ -67,6 +67,7 @@ import os
 import pathlib
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -178,6 +179,7 @@ class Set:
         self.game.expect(line, "Hovering")
 
     def clear(self):
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
         for step in (lambda: self.game.camera("first"), lambda: self.game.run("press", "W,A,S,D", "up"),
                      lambda: self.game.do(".gui on"), lambda: self.game.do("/bridge dismount")):
             try:
@@ -406,7 +408,8 @@ def film(screenplay, out, captions):
         game.do(".vrec stop")
         wall = time.monotonic() - started
         recording = False
-    except (Failure, subprocess.CalledProcessError) as failure:
+    except (Failure, subprocess.CalledProcessError, KeyboardInterrupt) as failure:
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
         where = f"scene {number}: {screenplay.scenes[number - 1].get('name', number)}" if number else "setting the scene"
         print(f"\nFailed during {where}\n{failure}", file=sys.stderr)
         try:
@@ -445,7 +448,7 @@ def scout(screenplay, out, names):
             camera.frame(name)
             shots.append(out / f"scout-{name}.png")
             game.shot(shots[-1])
-    except Failure as failure:
+    except (Failure, KeyboardInterrupt) as failure:
         print(failure, file=sys.stderr)
         set.clear()
         sys.exit("Scouting failed")
@@ -474,7 +477,7 @@ def main():
         screenplay = Screenplay(words[0])
     except Failure as failure:
         sys.exit(str(failure))
-    out = pathlib.Path(args.out).expanduser() if args.out else videos_root() / project() / screenplay.slug
+    out = pathlib.Path(args.out).expanduser().resolve() if args.out else videos_root() / project() / screenplay.slug
     out.mkdir(parents=True, exist_ok=True)
     if scouting:
         scout(screenplay, out, words[1:])
