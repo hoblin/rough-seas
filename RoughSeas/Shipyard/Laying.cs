@@ -21,6 +21,7 @@ public abstract class Laying
         FramingWork.Cloth => new PieceLaying(new AssetLocation(config.Cloth), "roughseas:shipyard-bend-sail"),
         FramingWork.Plank => new PlankLaying(new AssetLocation(config.Planks)),
         FramingWork.Hide => new HideLaying(new AssetLocation(config.Hides), config.HideStates),
+        FramingWork.Oar => new PieceLaying(new AssetLocation(config.Oars), "roughseas:shipyard-ship-oar"),
         _ => new PitchLaying(new AssetLocation(config.Pitch), stage.Litres)
     };
 

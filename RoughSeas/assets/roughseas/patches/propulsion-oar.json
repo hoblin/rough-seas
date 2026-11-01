@@ -1,0 +1,3 @@
+[
+    { "op": "add", "file": "game:itemtypes/tool/oar.json", "path": "/attributes/roughseas:propulsion", "value": { "tool": "pole", "metres": 2 } }
+]

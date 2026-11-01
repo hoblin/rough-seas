@@ -5,7 +5,10 @@
     "behaviors": [{"name": "roughseas:framing"}],
     "attributes": {
         "logTextures": {"wood": "inside-north"},
-        "handbook": {"groupBy": ["pole-*"]}
+        "handbook": {"groupBy": ["pole-*"]},
+        "paddlingTool": true,
+        "roughseas:propulsion": {"tool": "pole"},
+        "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole"}}
     },
     "shape": {"base": "roughseas:item/pole"},
     "maxstacksize": 8,
