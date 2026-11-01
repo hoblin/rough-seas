@@ -8,7 +8,8 @@ namespace RoughSeas.Tests.Shipyard;
 public class FloatLashingTests
 {
     private static readonly JObject Shape = JObject.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "outrigger.json")));
-    private static readonly JToken Item = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "items", "outrigger.json")));
+    private static readonly JToken Entity = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "vessel", "outrigger.json")));
+    private static readonly JToken Item =JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "items", "outrigger.json")));
 
     [Theory]
     [InlineData(0, null)]
@@ -50,6 +51,19 @@ public class FloatLashingTests
         lashing.Mend(new HullRepair { Restores = 0.11f }, HullPlace.StarboardSide);
         Assert.Equal(0.51, lashing.Condition, 2);
         Assert.Equal(Knock.BrokenUp, lashing.Take(HullPlace.StarboardSide, 1));
+    }
+
+    [Fact]
+    public void NineTwinesBindUpLashingsThatGaveOut()
+    {
+        var tree = new TreeAttribute();
+        var lashing = new LashedHull(() => tree, () => { }, "roughseas:vessel-float-lashing");
+        var twine = Entity["behaviorConfigs"]![EntityBehaviorFloatLashing.Code]!["repairs"]![0]!.ToObject<HullRepair>()!;
+        lashing.Take(HullPlace.StarboardSide, 1);
+
+        for (int n = 0; n < 9; n++) lashing.Mend(twine, HullPlace.StarboardSide);
+
+        Assert.Equal(1, lashing.Condition);
     }
 
     [Fact]

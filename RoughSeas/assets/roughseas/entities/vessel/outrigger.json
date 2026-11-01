@@ -98,7 +98,7 @@
             "hull": "roughseas:dugout",
             "keeps": {"SailFurled": "game:cloth-plain", "Stays": "game:rope"},
             "firewoodLitres": 49,
-            "repairs": [{"material": {"type": "item", "code": "game:flaxtwine", "stacksize": 1}, "restores": 0.11, "saturation": 30}],
+            "repairs": [{"material": {"type": "item", "code": "game:flaxtwine", "stacksize": 1}, "restores": 0.1112, "saturation": 30}],
             "sources": {
                 "side": "Her float lies 2 m off her starboard side as her model draws her, a hull turned end for end when rigged from the port: a knock from that side meets the float before her hull",
                 "impactCapacity": "As the raft's lashings, which take 1200 J in their three ropes, 40 J a metre: her booms are lashed to her gunwales and her float with 52 m of rope (bin/lib/hulls/outrigger.py), every turn of it between the float and her hull",
