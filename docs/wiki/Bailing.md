@@ -2,7 +2,7 @@ Boats with a hull hold the water that comes aboard in their bilge, and nothing t
 
 ## The bilge
 
-![An oak dugout half full, her bilge at 600 of 1156 litres and her side down to 23 cm](images/mechanics/dugout-bilge.webp)
+![An oak dugout half full, her bilge at 650 of 1298 litres and her side down to 25 cm](images/mechanics/dugout-bilge.webp)
 
 | Vessel | Bilge | Deck open to the rain |
 | --- | --- | --- |
