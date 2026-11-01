@@ -61,6 +61,10 @@ Each holds what one kind of work needs; read it in full before that work. They a
 - `docs/modeling.md`: before changing a shape, with `bin/model help`.
 - `docs/qa.md`: before a release's QA session, with `bin/qa help`.
 
+## Think about what you are asked
+
+A task is written before its author has seen what you see. When what you find makes a step pointless or wrong, say so and ask before doing it; never carry it out to the letter. Development without good communication is poor development.
+
 ## Tickets
 
 Tickets are GitHub issues in this repository. A bug your own change brought in is fixed in the same pull request. A small thing found along the way is fixed on the spot, in the same pull request. Only a bug that is work of its own, outside the ticket's scope, becomes its own issue, labelled `agent-filed`. Tickets the maintainers settled carry `decided`. The two are not equal: a finding from a review subagent sees a slice of the code and imagines what could go wrong; it is filed so it is not lost, and it is read with suspicion before anyone works on it. State the evidence in such an issue (what you saw, where) rather than the fear.
