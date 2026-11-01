@@ -179,20 +179,21 @@ class Set:
         self.game.expect(line, "Hovering")
 
     def clear(self):
-        signal.signal(signal.SIGINT, signal.SIG_IGN)
-        for step in (lambda: self.game.camera("first"), lambda: self.game.run("press", "W,A,S,D", "up"),
-                     lambda: self.game.do(".gui on"), lambda: self.game.do("/bridge dismount")):
+        interrupt = signal.signal(signal.SIGINT, signal.SIG_IGN)
+        steps = [lambda: self.game.do(".vrec stop"), lambda: self.game.camera("first"),
+                 lambda: self.game.run("press", "W,A,S,D", "up"), lambda: self.game.do(".gui on"),
+                 lambda: self.game.do("/bridge dismount"),
+                 *(lambda id=id: self.game.do(f"/entity remove e[id={id}]") for id in self.ids.values())]
+        if self.calm:
+            steps += [lambda: self.game.do("/weather setprecipa"), lambda: self.game.do("/weather acp true")]
+        if self.home:
+            steps.append(lambda: self.game.do("/bridge fly {:.1f} {:.1f} {:.1f}".format(*self.home)))
+        for step in steps:
             try:
                 step()
-            except Failure:
-                pass
-        for id in self.ids.values():
-            self.game.do(f"/entity remove e[id={id}]")
-        if self.calm:
-            self.game.do("/weather setprecipa")
-            self.game.do("/weather acp true")
-        if self.home:
-            self.game.do("/bridge fly {:.1f} {:.1f} {:.1f}".format(*self.home))
+            except Failure as failure:
+                print(f"Clearing up: {failure}", file=sys.stderr)
+        signal.signal(signal.SIGINT, interrupt)
 
     def id(self, name):
         if name == "player":
@@ -387,7 +388,7 @@ def film(screenplay, out, captions):
     for stale in [mp4, out / "failure.png", *out.glob("[0-9][0-9]-*.png")]:
         stale.unlink(missing_ok=True)
 
-    stills, marks, recording, number = [], [], False, 0
+    stills, marks, number = [], [], 0
     try:
         print("Setting the scene", file=sys.stderr)
         set.build()
@@ -395,7 +396,6 @@ def film(screenplay, out, captions):
         game.do(".gui off")
         started = time.monotonic()
         game.do(".vrec start")
-        recording = True
         for number, data in enumerate(screenplay.scenes, 1):
             scene = Scene(game, set, camera, data)
             print(f"Scene {number}: {scene.name}", file=sys.stderr)
@@ -407,7 +407,6 @@ def film(screenplay, out, captions):
                 marks.append((begins, time.monotonic() - started, data["say"]))
         game.do(".vrec stop")
         wall = time.monotonic() - started
-        recording = False
     except (Failure, subprocess.CalledProcessError, KeyboardInterrupt) as failure:
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         where = f"scene {number}: {screenplay.scenes[number - 1].get('name', number)}" if number else "setting the scene"
@@ -417,8 +416,6 @@ def film(screenplay, out, captions):
             print(f"The game as the failure found it: {out / 'failure.png'}", file=sys.stderr)
         except Failure:
             pass
-        if recording:
-            game.do(".vrec stop")
         set.clear()
         sys.exit("Filming failed")
     set.clear()
