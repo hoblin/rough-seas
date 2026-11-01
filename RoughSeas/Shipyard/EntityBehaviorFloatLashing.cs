@@ -26,6 +26,8 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
     private const string TreeKey = "float";
     private const string FormsGroup = "FloatLashing";
     private const double ScatterSpeed = 0.3;
+    private const double ScatterRise = 0.2;
+    private const double FloatHeight = 0.5;
 
     private FloatLashingConfig config = null!;
     private LashedHull lashing = null!;
@@ -61,11 +63,15 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
 
     public void Strike(double joules)
     {
-        double holds = config.ImpactCapacity * (Rigging?.Lashed ?? 1);
-        var knock = lashing.Take(Side, Loss(joules, holds));
+        double holds = config.ImpactCapacity * (Rigging?.LashedShare ?? 1);
+        double loss = Loss(joules, holds);
+        if (loss <= 0) return;
+
+        int stage = lashing.Stage(Side);
+        var knock = lashing.Take(Side, loss);
         Shipyard.Log(entity, "a knock of {0:F0} J meets her float, its lashings holding {1:F0} J: {2}, lashings now {3:F2}",
             joules, holds, knock.ToString().ToLowerInvariant(), lashing.Condition);
-        Struck?.Invoke(knock);
+        if (knock == Knock.BrokenUp || lashing.Stage(Side) > stage) Struck?.Invoke(knock);
         if (knock == Knock.BrokenUp) ComeApart();
     }
 
@@ -111,7 +117,7 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
         willDeleteElements = (willDeleteElements ?? []).Append(hidden.ToArray());
     }
 
-    public static double Loss(double joules, double holds) => holds > 0 ? joules / holds : 1;
+    public static double Loss(double joules, double holds) => joules <= 0 ? 0 : holds > 0 ? joules / holds : 1;
 
     public static string? FormOf(int stage) => stage switch
     {
@@ -121,7 +127,7 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
         _ => "Shifted"
     };
 
-    private string? Form() => Rigging?.Lashed < 1 ? null : FormOf(lashing.Stage(Side));
+    private string? Form() => Rigging?.LashedShare < 1 ? null : FormOf(lashing.Stage(Side));
 
     private void OnLashingChanged()
     {
@@ -145,18 +151,22 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
         foreach (var state in entity.SidedProperties.Behaviors.OfType<IHandedOver>()) state.HandOver(hull, false);
         hull.WatchedAttributes.GetTreeAttribute(EntityBehaviorVesselIntegrity.TreeKey)?.RemoveAttribute(TreeKey);
 
-        var (x, z) = HullShape.ToWorld(0, Rigging?.FloatOffMetres ?? 0, entity.Pos.Yaw);
-        var floatAt = entity.Pos.XYZ.Add(x, 0.5, z);
+        var off = (Side.IsPort() ? -1 : 1) * (Rigging?.FloatOffMetres ?? 0);
+        var (x, z) = HullShape.ToWorld(0, off, entity.Pos.Yaw);
+        var floatAt = entity.Pos.XYZ.Add(x, FloatHeight, z);
         var stripped = Rigging?.Stripped(world, config.Keeps, config.FirewoodLitres).ToArray() ?? [];
         foreach (var stack in stripped)
         {
-            var scatter = new Vec3d(world.Rand.NextDouble() - 0.5, 0.2, world.Rand.NextDouble() - 0.5).Mul(ScatterSpeed);
+            var scatter = new Vec3d(world.Rand.NextDouble() - 0.5, ScatterRise, world.Rand.NextDouble() - 0.5).Mul(ScatterSpeed);
             world.SpawnItemEntity(stack, floatAt, scatter);
         }
-        foreach (var seat in entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []) (seat.Passenger as EntityAgent)?.TryUnmount();
+        var seated = (entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []).Select(seat => seat.Passenger as EntityAgent).ToArray();
+        foreach (var rider in seated) rider?.TryUnmount();
         entity.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory.DropAll(entity.Pos.XYZ);
 
         world.SpawnEntity(hull);
+        var seats = hull.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
+        foreach (var (rider, seat) in seated.Zip(seats)) rider?.TryMount(seat);
         entity.Die(EnumDespawnReason.Removed);
         Shipyard.Log(hull, "her float's lashings gave out: float, booms and rig came away from {0} {1} as {2}",
             entity.Code, entity.EntityId, string.Join(", ", stripped.Select(stack => $"{stack.StackSize} {stack.Collectible.Code}")));

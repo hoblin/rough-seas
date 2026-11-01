@@ -1,9 +1,12 @@
 import json
 import math
 
+from physics import ASSETS
 from shape import box, group, seed
 from transform import apply, direct, identity, local, mul, rotation, unapply
 
+# The places, their shares and the forms are the game's: HullPlace, HullShape and HullDamage.WoundForms, held together
+# by VesselShapeTests.
 PLACES = ("PortBow", "StarboardBow", "PortSide", "StarboardSide", "PortQuarter", "StarboardQuarter", "Bottom")
 FORMS = ("Scratched", "Cracked", "Split", "StoveIn")
 END_SHARE = 0.4
@@ -13,7 +16,7 @@ SIDE_REACH = 0.9
 BREACH = "breach"
 PROUD = 0.06
 WALL = 1.5
-SEEN = 1.5
+SHORTEST = 1.5
 LENGTHS = {"Scratched": 0.3, "Cracked": 0.6, "Split": 1}
 GAPS = {"Scratched": 0.1, "Cracked": 0.2, "Split": 0.45}
 SEGMENTS = 3
@@ -52,10 +55,10 @@ class HullBox:
 
 def wound(shape, levels, lining=0):
     """Draws, on each level of the hull's skin a build shows, a wound at each place on the board nearest the place's
-    middle, at every stage its crack can reach: Wound{Place}{Form}{level} under Wound{Place}{level}, beside the board
+    mark, at every stage its crack can reach: Wound{Place}{Form}{level} under Wound{Place}{level}, beside the board
     in its frame, through its wall and the lining inside it. A level is (name, elements, texture); the finished hull's
     is named ""."""
-    entity = json.loads((shape.path.parents[3] / "entities" / "vessel" / shape.path.name).read_text())
+    entity = json.loads((ASSETS / "entities/vessel" / shape.path.name).read_text())
     shell = entity["behaviorConfigs"]["roughseas:vesselintegrity"]["shell"]
     span = shell["spanMetres"] * 16
     sprung = SPRUNG_DEGREES[shell.get("kind", "rigid")]
@@ -164,7 +167,7 @@ def crack(frame, name, length, gap, middle):
 
 
 def reach(frame, share, span):
-    return min(max(share * span, SEEN), frame.length - 1)
+    return min(max(share * span, SHORTEST), frame.length - 1)
 
 
 def crack_of(frame, name, form, span, sprung, texture):

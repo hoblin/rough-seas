@@ -167,7 +167,7 @@ public class BridgeCommands : ModSystem
                     : TextCommandResult.Error("Not seated, or the seat would not let go"))
             .EndSubCommand()
             .BeginSubCommand("strike")
-                .WithDescription("Strike a vessel's hull at a place (its port side by default) with an impact of this many joules; the hull rolls against it as it does for any impact")
+                .WithDescription("Strike a vessel's hull at a place (its port side by default) with an impact of this many joules; the hull rolls against it as it does for any impact, and an outrigger's float takes it on its side")
                 .WithArgs(parsers.Long("id"), parsers.Double("joules"), parsers.OptionalWordRange("place", Places))
                 .HandleWith(args => Strike(sapi.World.GetEntityById((long)args[0]), (double)args[1], args[2] as string ?? "portside"))
             .EndSubCommand()

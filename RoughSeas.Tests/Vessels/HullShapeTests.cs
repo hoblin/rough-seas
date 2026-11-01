@@ -28,6 +28,14 @@ public class HullShapeTests
     }
 
     [Fact]
+    public void APointPastHerSideIsOutsideHer()
+    {
+        Assert.False(dugout.Beyond(0.3));
+        Assert.True(dugout.Beyond(2));
+        Assert.True(dugout.Beyond(-2));
+    }
+
+    [Fact]
     public void EveryPlaceItPointsAtIsThatPlace()
     {
         Assert.All(HullShape.Places, place =>

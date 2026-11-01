@@ -34,6 +34,12 @@ public class FloatLashingTests
     }
 
     [Fact]
+    public void NoKnockLeavesTheLashingsAsTheyAre()
+    {
+        Assert.Equal(0, EntityBehaviorFloatLashing.Loss(0, 0));
+    }
+
+    [Fact]
     public void TheLashingsWearAsTheRaftsDoAndAreBoundUpAgain()
     {
         var tree = new TreeAttribute();

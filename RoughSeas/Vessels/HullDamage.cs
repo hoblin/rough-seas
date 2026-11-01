@@ -25,7 +25,7 @@ public sealed class HullDamage
         this.config = config;
     }
 
-    public bool Visible => shown.Positions.Count > 0;
+    public bool Overlaid => shown.Positions.Count > 0;
 
     public bool Shows(System.Func<HullPlace, int> stage) =>
         HullShape.Places.All(place => stage(place) == shown.Stages.GetValueOrDefault(place));
@@ -73,25 +73,25 @@ public sealed class HullDamage
         }
     }
 
-    public string[] Unreached(Shape shape)
+    public string[] Hidden(Shape shape)
     {
         var stages = shown.Stages;
-        return Unreached(shape.Elements, place => stages.GetValueOrDefault(place)).ToArray();
+        return Hidden(shape.Elements, place => stages.GetValueOrDefault(place)).ToArray();
     }
 
-    public static IEnumerable<string> Unreached(ShapeElement[]? elements, System.Func<HullPlace, int> stage) =>
-        Unreached(elements, HullShape.Places
+    public static IEnumerable<string> Hidden(ShapeElement[]? elements, System.Func<HullPlace, int> stage) =>
+        Hidden(elements, HullShape.Places
             .SelectMany(place => WoundForms
                 .Where((_, n) => FirstWoundedStage + n != stage(place))
                 .Select(form => $"Wound{place}{form}"))
             .ToArray());
 
-    private static IEnumerable<string> Unreached(ShapeElement[]? elements, string[] hidden)
+    private static IEnumerable<string> Hidden(ShapeElement[]? elements, string[] forms)
     {
         foreach (var element in elements ?? [])
         {
-            if (element.Name is { } named && hidden.Any(form => named.StartsWith(form, StringComparison.Ordinal))) yield return named;
-            else foreach (var name in Unreached(element.Children, hidden)) yield return name;
+            if (element.Name is { } named && forms.Any(form => named.StartsWith(form, StringComparison.Ordinal))) yield return named;
+            else foreach (var name in Hidden(element.Children, forms)) yield return name;
         }
     }
 

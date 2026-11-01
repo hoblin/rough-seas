@@ -33,7 +33,7 @@ public sealed class HullSounds(SoundscapeModSystem sounds, ICoreServerAPI sapi)
         {
             hull.Struck += (place, severity, knock) => Struck(entity, hull, place, severity, knock);
             hull.BrokeUp += () => BrokeUp(entity, hull);
-            foreach (var outboard in entity.SidedProperties.Behaviors.OfType<IOutboard>()) outboard.Struck += knock => Lashing(entity, hull, outboard, knock);
+            foreach (var outboard in entity.SidedProperties.Behaviors.OfType<IOutboard>()) outboard.Struck += knock => FloatStruck(entity, hull, outboard, knock);
         }
         if (entity.GetBehavior<EntityBehaviorSeaForces>() is { } forces) forces.Took += wave => Took(entity, hull, forces, wave);
     }
@@ -48,9 +48,9 @@ public sealed class HullSounds(SoundscapeModSystem sounds, ICoreServerAPI sapi)
             $"{knock?.ToString().ToLowerInvariant() ?? "knock"} at the {place.Code()}");
     }
 
-    private void Lashing(Entity vessel, EntityBehaviorVesselIntegrity hull, IOutboard outboard, Knock knock)
+    private void FloatStruck(Entity vessel, EntityBehaviorVesselIntegrity hull, IOutboard outboard, Knock knock)
     {
-        if (!Config.Hull.Models.TryGetValue(LashedModel, out var voices) || voices.Values.FirstOrDefault() is not { } voice) return;
+        if (!Config.Hull.Models.TryGetValue(LashedModel, out var voices) || !voices.TryGetValue(hull.Material, out var voice) && !voices.TryGetValue("wood", out voice)) return;
 
         var at = vessel.Pos.XYZ.Add(hull.PointAt(outboard.Side));
         var sounds = knock == Knock.BrokenUp ? voice.Break ?? [] : voice.Harm is { } harm ? [harm] : [];

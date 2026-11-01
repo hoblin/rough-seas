@@ -200,7 +200,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public override ITexPositionSource? GetTextureSource(ref EnumHandling handling)
     {
-        if (damage?.Visible != true) return null;
+        if (damage?.Overlaid != true) return null;
 
         handling = EnumHandling.PreventSubsequent;
         var capi = (ICoreClientAPI)entity.Api;
@@ -212,7 +212,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         if (damage == null) return;
 
         damage.Retexture(ref entityShape, ref shapeIsCloned, Shape);
-        willDeleteElements = (willDeleteElements ?? []).Append(damage.Unreached(entityShape));
+        willDeleteElements = (willDeleteElements ?? []).Append(damage.Hidden(entityShape));
     }
 
     public override void OnEntityDespawn(EntityDespawnData despawn)
@@ -325,8 +325,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         Impact(joules, place);
     }
 
+    /// <summary>A knock toward this place: on what stands off her there, when something does, else on her hull.</summary>
     public void Impact(double joules, HullPlace place)
     {
+        if (!entity.Alive) return;
+
         if (outboard?.Side == place) outboard.Strike(joules);
         else Strike(joules, place);
     }
@@ -343,7 +346,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         return Shape.At(along, relative.Y, across);
     }
 
-    private bool Outboard(Vec3d relative)
+    private bool LandsOutboard(Vec3d relative)
     {
         var (_, across) = HullShape.ToHull(relative.X, relative.Z, entity.Pos.Yaw);
         return Shape.Beyond(across) && (across < Shape.CentreAcross) == outboard!.Side.IsPort();
@@ -410,8 +413,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         entity.SetActivityRunning("invulnerable", InvulnerableMs);
         var place = PlaceOf(damageSource);
         vessels.Log(entity, "takes {0:F1} {1} damage from {2} at the {3}", damage, damageSource.Type, damageSource.Source, place.Code());
-        if (outboard != null && damageSource.HitPosition is { } hit && Outboard(hit)) outboard.Strike(damageConversion.Joules(damageSource, damage));
-        else Strike(damageConversion.Joules(damageSource, damage), place, damageConversion.BlowOf(damageSource));
+        var blow = damageConversion.BlowOf(damageSource);
+        double joules = damageConversion.Joules(damageSource, damage);
+        if (outboard == null || damageSource.HitPosition is not { } hit || !LandsOutboard(hit)) Strike(joules, place, blow);
+        else if (blow == Blow.Broad) outboard.Strike(joules);
+        else vessels.Log(entity, "a {0} blow lands on what stands off her {1}: its wood takes it", blow.ToString().ToLowerInvariant(), outboard.Side.Code());
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)

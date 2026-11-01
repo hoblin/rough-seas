@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -68,7 +69,7 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
         bool cloned = true;
         var drawnByBuild = framing.Stages.SelectMany(stage => new[] { stage.Replaces, stage.Bends }).OfType<string>().Append(Shipyard.Framing.SheetGroup);
         var ignored = item.Shape.IgnoreElements?.Except(drawnByBuild) ?? [];
-        shape.RemoveElements(framing.Hidden().Concat(ignored).ToArray());
+        shape.RemoveElements(framing.Hidden().Concat(ignored).Concat(HullDamage.Hidden(shape.Elements, _ => 0)).ToArray());
         if (framing.Wood is { } wood) WoodTexture.Draw(capi, ref shape, ref cloned, WoodTexture.Frame, wood, item.Textures, capi.ItemTextureAtlas);
         if (!upright && capi.World.GetEntityType(collectible.Code) is { } type && CoveringConfig.Of(type) is { } covering)
         {

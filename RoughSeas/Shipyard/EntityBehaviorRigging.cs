@@ -34,7 +34,7 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 
     public double FloatOffMetres => rig.FloatOffMetres;
 
-    public double Lashed => framing.Stages.FirstOrDefault(stage => stage.Group == rig.Lashing) is { } lashing ? framing.Share(lashing) : 1;
+    public double LashedShare => framing.Stages.FirstOrDefault(stage => stage.Group == rig.Lashing) is { } lashing ? framing.Share(lashing) : 1;
 
     /// <summary>
     /// What of her rig comes away whole when her float does: each pole laid, as long as its piece took, the planks

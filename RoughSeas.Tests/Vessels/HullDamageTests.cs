@@ -14,7 +14,7 @@ public class HullDamageTests
     [Fact]
     public void APlaceShowsTheWoundOfTheStageItsCrackReachedOnEveryLevel()
     {
-        var hidden = HullDamage.Unreached(Hull, place => place == HullPlace.PortBow ? 3 : 0).ToList();
+        var hidden = HullDamage.Hidden(Hull, place => place == HullPlace.PortBow ? 3 : 0).ToList();
 
         Assert.DoesNotContain("WoundPortBowSplit", hidden);
         Assert.DoesNotContain("WoundPortBowSplitBlank3", hidden);
@@ -25,7 +25,7 @@ public class HullDamageTests
     [Fact]
     public void ASoundPlaceShowsNoWound()
     {
-        var hidden = HullDamage.Unreached(Hull, _ => 0).ToList();
+        var hidden = HullDamage.Hidden(Hull, _ => 0).ToList();
 
         Assert.Equal(3 * HullDamage.WoundForms.Length, hidden.Count);
     }
@@ -33,13 +33,13 @@ public class HullDamageTests
     [Fact]
     public void AScratchIsAlreadyDrawn()
     {
-        Assert.DoesNotContain("WoundBottomScratched", HullDamage.Unreached(Hull, _ => 1));
+        Assert.DoesNotContain("WoundBottomScratched", HullDamage.Hidden(Hull, _ => 1));
     }
 
     [Fact]
     public void HidesAWoundWholeNotPieceByPiece()
     {
-        Assert.DoesNotContain("WoundBottomStoveInx1", HullDamage.Unreached(Hull, _ => 0));
+        Assert.DoesNotContain("WoundBottomStoveInx1", HullDamage.Hidden(Hull, _ => 0));
     }
 
     private static ShapeElement Board(string name, params ShapeElement[] wounds) => new() { Name = name, Children = wounds };
