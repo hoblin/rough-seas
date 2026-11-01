@@ -4,7 +4,7 @@ A dugout with a float log held out to one side on three crooked booms lashed acr
 
 ## In Rough Seas
 
-For a long crossing of open sea. The outrigger is the fastest vessel before metal, and it sails, leaving every rowed boat far astern. The float keeps the narrow hull upright where a dugout would roll over. Built without a saw she is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise her side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
+For a long crossing of open sea. The outrigger sails, leaving every rowed boat far astern; for now she sails at vanilla's pace, a little slower than the sailboat, until sailing reads the wind. The float keeps the narrow hull upright where a dugout would roll over. Built without a saw she is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise her side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
 
 ## Where it comes from
 
