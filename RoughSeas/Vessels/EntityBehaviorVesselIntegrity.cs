@@ -346,6 +346,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         return Shape.At(along, relative.Y, across);
     }
 
+    private Vec3d? Landing(DamageSource source, Blow blow) =>
+        blow == Blow.Broad && source.GetSourcePosition() is { } from ? from.SubCopy(entity.Pos.XYZ) : source.HitPosition;
+
     private bool LandsOutboard(Vec3d relative)
     {
         var (_, across) = HullShape.ToHull(relative.X, relative.Z, entity.Pos.Yaw);
@@ -415,7 +418,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         vessels.Log(entity, "takes {0:F1} {1} damage from {2} at the {3}", damage, damageSource.Type, damageSource.Source, place.Code());
         var blow = damageConversion.BlowOf(damageSource);
         double joules = damageConversion.Joules(damageSource, damage);
-        if (outboard == null || damageSource.HitPosition is not { } hit || !LandsOutboard(hit)) Strike(joules, place, blow);
+        if (outboard == null || Landing(damageSource, blow) is not { } hit || !LandsOutboard(hit)) Strike(joules, place, blow);
         else if (blow == Blow.Broad) outboard.Strike(joules);
         else vessels.Log(entity, "a {0} blow lands on what stands off her {1}: its wood takes it", blow.ToString().ToLowerInvariant(), outboard.Side.Code());
     }
