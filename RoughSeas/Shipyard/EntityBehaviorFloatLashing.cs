@@ -78,7 +78,7 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
         if (mode != EnumInteractMode.Interact || repairs.FirstOrDefault(repair => itemslot.Itemstack?.Collectible.Code == repair.Material.Code) is not { } repair) return;
-        if (!lashing.Needs(repair, Side)) return;
+        if (!lashing.Needs(repair, Side) || itemslot.StackSize < repair.Material.StackSize) return;
 
         handled = EnumHandling.PreventSubsequent;
         if (entity.World.Side != EnumAppSide.Server) return;

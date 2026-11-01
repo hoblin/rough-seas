@@ -107,15 +107,16 @@ def centre(element, m):
 
 
 class Frame:
-    """A board's own axes: through it, the one facing out of the hull toward the place; along it, of the other two,
-    the one lying most along the hull, as the grain does; and across it. A board thicker than a wall, a solid log, is
-    wounded in its face toward the place, as deep as a wall. A lining against the skin's inside breaks with it."""
+    """A board's own axes: through it, its thickness, or for a solid log the axis facing out toward the place; along it,
+    of the other two, the one lying most along the hull, as the grain does; and across it. A solid log is wounded in its
+    face toward the place, as deep as a wall. A lining against the skin's inside breaks with it."""
 
     def __init__(self, board, m, outward, target, lining):
         sizes = size(board)
         directions = [direct(m, [float(i == axis) for i in range(3)]) for axis in range(3)]
         facing = [sum(d * o for d, o in zip(direction, outward)) / math.hypot(*direction) for direction in directions]
-        self.through = max(range(3), key=lambda axis: abs(facing[axis]))
+        thinnest = min(range(3), key=lambda axis: sizes[axis])
+        self.through = thinnest if sizes[thinnest] < WALL else max(range(3), key=lambda axis: abs(facing[axis]))
         rest = [axis for axis in range(3) if axis != self.through]
         self.along = max(rest, key=lambda axis: abs(directions[axis][0]) / math.hypot(*directions[axis]))
         self.across = next(axis for axis in rest if axis != self.along)
