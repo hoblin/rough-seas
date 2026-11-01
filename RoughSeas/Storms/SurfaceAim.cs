@@ -6,8 +6,7 @@ namespace RoughSeas.Storms;
 /// <summary>
 /// Aims a drawn surface at a point: its field over the point's region and the eight around it, and the waves the
 /// point's region raises by the waves' clock, all read from the sea map. A client aims the sea it draws with it
-/// (<see cref="SurfaceClock"/>), and the server the sea it judges a body by (<see cref="SwellAround"/>), so both stand
-/// at the same height at the same point and time.
+/// (<see cref="SurfaceClock"/>), and the server the sea it judges a body by (<see cref="SwellAround"/>).
 /// </summary>
 public sealed class SurfaceAim(SeaSurface surface, SurfaceField field, SurfaceConfig config, SeaWeatherConfig sea, SeaClock clock)
 {

@@ -4,6 +4,7 @@ using System.Globalization;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 
@@ -12,7 +13,7 @@ namespace RoughSeas.Storms;
 /// <summary>
 /// Lets a player's breath follow the drawn sea: out of air under a crest, breathing in a trough. Vanilla's
 /// <c>EntityBehaviorBreathe.Check</c> judges the eye, once a second on the server, by the block it is in; while a player
-/// is in the water, the server builds the sea their client draws around them (<see cref="SwellAround"/>) and judges the
+/// is in or on the water, the server builds the sea their client draws around them (<see cref="SwellAround"/>) and judges the
 /// eye against it (<see cref="DrawnBreath"/>). Vanilla's oxygen numbers stand. Players out of the water or aboard a
 /// vessel, suffocation in solid blocks and every other entity stay vanilla's. On the server alone.
 /// </summary>
@@ -67,15 +68,14 @@ public static class BreathUnderSurface
         var eyeY = pos.Y + (entity.Swimming ? entity.Properties.SwimmingEyeHeight : entity.Properties.EyeHeight);
         var vanilla = __instance.HasAir;
         var swell = double.NaN;
+        var aboard = entity.MountedOn?.Entity is EntityBoat;
         BreathVerdict verdict;
         // the drawn water is read from blocks of the main dimension
-        if (pos.Dimension != 0 || !(entity.Swimming || entity.FeetInLiquid))
+        if (pos.Dimension != Dimensions.NormalWorld || !(entity.Swimming || entity.FeetInLiquid || aboard))
         {
             verdict = BreathVerdict.Dry;
             swells.Remove(player.PlayerUID);
         }
-        // a rider's position here is the vessel's at still water; their client lifts both onto the drawn sea
-        else if (entity.MountedOn?.Entity is EntityBoat) verdict = BreathVerdict.Aboard;
         else
         {
             if (!swells.TryGetValue(player.PlayerUID, out var around))
@@ -84,7 +84,10 @@ public static class BreathUnderSurface
             }
             around.At(sea.Map, x, z, sea.Clock.Seconds, sapi.WorldManager.RegionSize);
             swell = around.Sea.HeightAt(x, z);
-            verdict = DrawnBreath.Judge(around.Water, new BlockColumn(sapi.World.BlockAccessor, (int)Math.Floor(x), (int)Math.Floor(z)), x, eyeY, z);
+            // a rider's position here is the vessel's at still water; their client lifts both onto the drawn sea
+            verdict = aboard
+                ? BreathVerdict.Aboard
+                : DrawnBreath.Judge(around.Water, new BlockColumn(sapi.World.BlockAccessor, (int)Math.Floor(x), (int)Math.Floor(z)), x, eyeY, z);
         }
         if (DrawnBreath.HasAir(verdict) is { } air) __instance.HasAir = air;
         Decided(player, verdict, x, eyeY, z, swell, vanilla, __instance.HasAir);

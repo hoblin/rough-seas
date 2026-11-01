@@ -1,16 +1,10 @@
 using RoughSeas.Storms;
+using static RoughSeas.Tests.Storms.WaterFixtures;
 
 namespace RoughSeas.Tests.Storms;
 
 public class DrawnBreathTests
 {
-    private const double X = 512031.25;
-    private const double Z = 512300.5;
-    private const int SeaFloor = 40;
-    private const int WaterTop = 62;
-    private const double StillLevel = 7 / 8.0;
-    private const double StillSurface = WaterTop + StillLevel;
-
     private static BreathVerdict Judge(double eyeY, double swell, Column? column = null, bool drawn = true) =>
         DrawnBreath.Judge(new DrawnWater(new Sea(swell, drawn)), column ?? new Column(), X, eyeY, Z);
 
@@ -77,27 +71,5 @@ public class DrawnBreathTests
     public void LeavesVanillasCheckStanding(BreathVerdict verdict)
     {
         Assert.Null(DrawnBreath.HasAir(verdict));
-    }
-
-    private sealed class Sea(double height, bool drawn) : IDrawnSea
-    {
-        public bool Swell => drawn;
-
-        public bool SwellAt(double x, double z) => drawn;
-
-        public double Seconds => 0;
-
-        public double HeightAt(double x, double z) => drawn ? height : 0;
-
-        public SeaPose PoseOf(double x, double z, double yaw, double length, double width) => default;
-    }
-
-    private sealed class Column(int top = WaterTop, int[]? solid = null) : IWaterColumn
-    {
-        public bool Water(int y) => y > SeaFloor && y <= top;
-
-        public double Level(int y) => y == top ? StillLevel : 1;
-
-        public bool Solid(int y) => y <= SeaFloor || (solid?.Contains(y) ?? false);
     }
 }

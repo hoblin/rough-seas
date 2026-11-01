@@ -26,15 +26,16 @@ public class SwellAroundTests
     private double SlotSeconds => clock.SecondsAt(Sea.Config().SeaSampleHours);
 
     [Theory]
-    [InlineData(12)]
-    [InlineData(200)]
-    public void StandsAtTheHeightTheClientDrawsAtTheSamePointAndTime(double intoSlot)
+    [InlineData(12, 3)]
+    [InlineData(200, 3)]
+    [InlineData(12, 40)]
+    public void StandsAtTheHeightTheClientDrawsAtTheSamePointAndTime(double intoSlot, int secondsInTheWater)
     {
         var slot = 1000;
         var end = slot * SlotSeconds + intoSlot;
         var (client, clientSea) = ClientSurface();
         var server = new SwellAround(Fixtures.Config().Surface, new Waves(Fixtures.Config().Waves), Sea.Config(), clock);
-        var serverFrom = end - 3;
+        var serverFrom = end - secondsInTheWater;
         var sentAt = double.NegativeInfinity;
         var nextCheck = serverFrom;
         var compared = 0;
@@ -68,7 +69,7 @@ public class SwellAroundTests
             compared++;
         }
 
-        Assert.Equal(4, compared);
+        Assert.Equal(secondsInTheWater + 1, compared);
         Assert.InRange(highest, 0.3, 3);
     }
 

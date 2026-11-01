@@ -7,7 +7,9 @@ namespace RoughSeas.SeaAndWeather;
 /// <summary>
 /// The sea map as a client holds it: the snapshots the server sends, each region eased from its last snapshot to its
 /// newest over the map's update interval. A client reads the sea through it (<see cref="SeaMapClient"/>), and the server
-/// keeps a copy of what it sent (<see cref="SeaMapServer.Sent"/>), so it reads the same numbers its clients draw from.
+/// keeps a copy of what it sent (<see cref="SeaMapServer.Sent"/>), so it reads the same numbers its clients draw from,
+/// save for a region a client takes for the first time: the client reads that snapshot at once, while the copy still
+/// eases from the one before.
 /// </summary>
 public class SeaMap(SeaWeatherConfig config, SeaClock clock, Func<int> regionSize) : ISeaSource
 {

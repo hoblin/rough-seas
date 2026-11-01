@@ -4,8 +4,9 @@ namespace RoughSeas.Storms;
 
 /// <summary>
 /// The drawn sea around one body, built on the server as the body's client draws it: the same surface and field, aimed
-/// the same way (<see cref="SurfaceAim"/>) from the sea map the server sent and run on the world's clock. Only the
-/// handover between regions may differ for its few seconds, since each side eases it from what it drew before.
+/// the same way (<see cref="SurfaceAim"/>) from the sea map the server sent and run on the world's clock. The two sides
+/// may differ for a few seconds in two cases: the handover between regions, which each side eases from what it drew before, and a
+/// region the client takes for the first time (<see cref="SeaMap"/>).
 /// </summary>
 public sealed class SwellAround
 {

@@ -11,7 +11,6 @@ public sealed class SurfaceClock : IRenderer
     private readonly StormsModSystem storms;
     private readonly SeaWeatherSystem sea;
     private readonly SeaSurface surface;
-    private readonly SurfaceField field;
     private readonly ICoreClientAPI capi;
     private readonly WaveTime time;
     private readonly SurfaceAim aim;
@@ -23,7 +22,6 @@ public sealed class SurfaceClock : IRenderer
         this.storms = storms;
         this.sea = sea;
         this.surface = surface;
-        this.field = field;
         this.capi = capi;
         time = new WaveTime(sea.Clock);
         aim = new SurfaceAim(surface, field, storms.Config.Surface, sea.Config, sea.Clock);
