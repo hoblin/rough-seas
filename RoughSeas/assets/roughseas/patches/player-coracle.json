@@ -2447,7 +2447,7 @@
         "value": {
             "code": "roughseas-coracle-paddle-ready",
             "animation": "roughseas-coracle-paddle-ready",
-            "animationSpeed": 0.6667,
+            "animationSpeed": 0.3333,
             "blendMode": "Average",
             "easeInSpeed": 4,
             "easeOutSpeed": 4,
@@ -2477,7 +2477,7 @@
         "value": {
             "code": "roughseas-coracle-paddle-forward",
             "animation": "roughseas-coracle-paddle-forward",
-            "animationSpeed": 0.6667,
+            "animationSpeed": 0.3333,
             "blendMode": "Average",
             "easeInSpeed": 4,
             "easeOutSpeed": 4,
@@ -2507,7 +2507,7 @@
         "value": {
             "code": "roughseas-coracle-paddle-backward",
             "animation": "roughseas-coracle-paddle-backward",
-            "animationSpeed": 0.6667,
+            "animationSpeed": 0.3333,
             "blendMode": "Average",
             "easeInSpeed": 4,
             "easeOutSpeed": 4,

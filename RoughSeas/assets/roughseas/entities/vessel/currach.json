@@ -26,7 +26,7 @@
         },
         "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
-            "parts": [{"name": "hide", "material": "hide", "share": 36.9}, {"name": "frame", "material": "wood-ash", "share": 38.3}, {"name": "oars", "material": "wood-ash", "share": 11.3}],
+            "parts": [{"name": "hide", "material": "hide", "share": 36.9}, {"name": "frame", "material": "wood-ash", "share": 38.3}, {"name": "oars", "material": "wood-ash", "share": 11.3, "takesKnocks": false}],
             "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.01}, "backedShare": 0.4, "bottomBackedShare": 0.31, "spanMetres": 0.15},
             "depthMetres": 0.6,
             "waterplaneSquareMetres": 3.41,

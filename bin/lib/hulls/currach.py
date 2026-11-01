@@ -3,7 +3,7 @@ import math
 from physics import afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
 from held import POLE, poling, tools, waterline
-from stroke import crew, moved, player_patch, seat, strokes
+from stroke import crew, drive_share, moved, player_patch, seat, strokes
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
@@ -34,6 +34,7 @@ FRAMES = 30
 SWEEP_DEGREES = 28
 REST_PITCH = -13
 DIP_DEGREES = 11
+DIP_SHARPNESS = 3
 
 # A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
 SECTION_SQUARE_METRES = 1.2
@@ -206,11 +207,13 @@ def oar(name, side, rest):
 
 
 def sweep(u):
-    return -math.cos(2 * math.pi * u)
+    drive = drive_share("rowing")
+    return -math.cos(math.pi * u / drive) if u < drive else math.cos(math.pi * (u - drive) / (1 - drive))
 
 
 def depth(u):
-    return max(0.0, min(1.0, 0.5 + 1.6 * math.sin(2 * math.pi * u)))
+    drive = drive_share("rowing")
+    return min(1.0, DIP_SHARPNESS * math.sin(math.pi * u / drive)) if u < drive else 0.0
 
 
 def rowing(rests):

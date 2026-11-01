@@ -126,7 +126,7 @@ A crest stands half a wave's height above still water, seven tenths when it brea
 
 Her length and beam are her `Hull` box. The rower's power and each stroke's rate, drive and efficiency are in `config/propulsion.json`, the drag law's constants in `config/vessels/drag.json`, each number with its source.
 
-A tool is an item whose attributes carry `roughseas:propulsion`: `tool` is `pole` (its `metres`, or its `length` variant), `paddle` or `tholeoar` (each with `bladeSquareMetres`). A vessel that takes a held tool sets vanilla's `requiresPaddlingTool`, and the tool `paddlingTool`. Our poles and paddles carry `attachableToEntity` with the category `oar`, so a slot of that category, as vanilla's raft has, stows them.
+A tool is an item whose attributes carry `roughseas:propulsion`: `tool` is `pole` (its `metres`, or its `length` variant) or `paddle` (its `bladeSquareMetres`). Oars on thole pins are the vessel's own, given by her `oars`, not a tool in hand. A vessel that takes a held tool sets vanilla's `requiresPaddlingTool`, and the tool `paddlingTool`. Our poles and paddles carry `attachableToEntity` with the category `oar`, so a slot of that category, as vanilla's raft has, stows them.
 
 ## The bilge
 

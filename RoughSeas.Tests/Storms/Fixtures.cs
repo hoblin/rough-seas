@@ -21,7 +21,7 @@ public static class Fixtures
 
     private static readonly Lazy<PropulsionConfig> propulsion = new(() => JsonConvert.DeserializeObject<PropulsionConfig>(Shipped("propulsion.json"))!);
 
-    private static readonly Lazy<VesselMass> mass =new(() => JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!);
+    private static readonly Lazy<VesselMass> mass = new(() => JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!);
 
     private static readonly Lazy<HullConfig> hullConfig = new(() =>
     {
@@ -88,7 +88,14 @@ public static class Fixtures
         return new HullDrag(form, Hull(vessel).Float(aboard).DraftMetres, aboard.Total, WaterDensity, Drag);
     }
 
-    public const double WaterDensity = VesselMass.SeawaterKgPerLitre * 1000;
+    public const double WaterDensity = VesselMass.SeawaterKgPerLitre * KilogramsPerCubicMetre;
+
+    private const double KilogramsPerCubicMetre = 1000;
+
+    public static double PaddleSquareMetres => (double)JToken.Parse(Shipped(Path.Combine("tools", "paddle.json")))["attributes"]![Tool.AttributeKey]!["bladeSquareMetres"]!;
+
+    public static RowerStation Station(string vessel, double depthMetres) =>
+        new(new JsonObject(PropulsionOf(vessel)), Propulsion, WaterDensity, _ => depthMetres);
 
     private static IEnumerable<JToken> Elements(string shape)
     {

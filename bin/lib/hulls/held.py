@@ -2,7 +2,7 @@ import json
 import math
 
 from physics import SWIM_LINE_METRES
-from stroke import CENTRE, ROOT, Rower, fit, moved, posed, seat, speed, turn
+from stroke import CENTRE, ROOT, Rower, drive_share, fit, moved, posed, seat, strokes, turn
 from transform import angles, apply, euler, mul, nearest, translation, undirect
 
 ASSETS = ROOT / "RoughSeas/assets/roughseas"
@@ -12,7 +12,7 @@ FRAMES = 30
 TOOL = "Tool"
 RIGHT = "ToolRight"
 LEFT = "ToolLeft"
-STROKES = json.loads((ASSETS / "config/propulsion.json").read_text())["strokes"]
+LOOPED = {"sculling": 2}
 
 
 def inverse(m):
@@ -29,7 +29,7 @@ class Tool:
 
     def __init__(self, item, shape, right, left):
         transform = json.loads((ASSETS / "itemtypes" / f"{item}.json").read_text())["tpHandTransform"]
-        if any(transform.get("origin", {}).get(axis, 0) for axis in "xyz") or transform.get("scale", 1) != 1:
+        if "origin" not in transform or any(transform["origin"].get(axis, 0) for axis in "xyz") or transform.get("scale", 1) != 1:
             raise ValueError(f"{item}: a held tool's tpHandTransform turns about its hand point, unscaled")
         rotation = [transform.get("rotation", {}).get(axis, 0) + r for axis, r in zip("xyz", HAND_POINT_ROTATION)]
         self.placing = mul(translation([transform.get("translation", {}).get(axis, 0) for axis in "xyz"]), euler(rotation))
@@ -70,10 +70,7 @@ def wrist(rower, tool, body, matrix):
 def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline):
     rower = Rower(seat(shape, seated), idle)
     group = tool.group()
-    ready, forward, backward = poses
-    keys = list(range(0, FRAMES, 2))
-    plan = [{"code": f"roughseas-{vessel}-{kind}-{name}", "frames": FRAMES, "keys": k, "speed": speed(stroke, FRAMES),
-             "pose": pose} for name, pose, k in (("ready", ready, [0]), ("forward", forward, keys), ("backward", backward, keys))]
+    plan = strokes(f"{vessel}-{kind}", FRAMES, *poses, stroke=stroke, per_loop=LOOPED.get(stroke, 1))
     _, player = fit(rower, [group], plan, {"R": RIGHT, "L": LEFT}, lean)
     offset = [(s - c) / 16 for s, c in zip(rower.seat, CENTRE)]
     reference = None
@@ -105,8 +102,8 @@ def waterline(vessel):
     return entity["hitboxSize"]["y"] + SWIM_LINE_METRES - entity["attributes"]["swimmingOffsetY"]
 
 
-def tools(shape, vessel, seated, idle, lean, line, strokes):
-    return [animation for kind, (stroke, tool, poses) in strokes.items()
+def tools(shape, vessel, seated, idle, lean, line, by_kind):
+    return [animation for kind, (stroke, tool, poses) in by_kind.items()
             for animation in held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, line)]
 
 
@@ -125,7 +122,7 @@ def paddling(tool, at, ahead, behind, above, out, side=-1):
         return tool.held_at(hand, {"rotationX": -side * lean, "rotationZ": pitch})
 
     def stroke(frame):
-        reach, lift = phase(frame, STROKES["paddling"]["driveShare"])
+        reach, lift = phase(frame, drive_share("paddling"))
         hand = (x - ahead + (ahead + behind) * reach, y + above + 2 * (1 - reach) ** 2 + 4.5 * lift, out + side * lift)
         return placed(hand, 30 + 20 * lift, -95 + 40 * reach)
 
@@ -140,7 +137,7 @@ def poling(tool, at, ahead, behind, above, out, side=-1):
         return tool.held_at(hand, {"rotationX": -side * lean, "rotationZ": pitch})
 
     def stroke(frame):
-        reach, lift = phase(frame, STROKES["pole"]["driveShare"])
+        reach, lift = phase(frame, drive_share("pole"))
         hand = (x - ahead + (ahead + behind) * reach, y + above - 2 * reach + 6 * lift, out)
         return placed(hand, 12, -100 + 30 * reach)
 

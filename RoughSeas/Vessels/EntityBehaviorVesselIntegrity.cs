@@ -109,6 +109,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public double ReferenceKg { get; private set; }
 
+    // Her selection boxes load after her first physics on a client; only a measured shape is kept.
     public HullShape Shape => shape ?? (MeasuredShape(entity, hullBox) is { } measured ? (shape = measured).Value : HitboxShape(entity));
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);

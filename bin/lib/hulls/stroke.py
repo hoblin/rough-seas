@@ -28,39 +28,19 @@ def unturn(rotations, v):
     return undirect(euler([rotations.get("rotation" + axis, 0) for axis in "XYZ"]), v)
 
 
-def gripped(rest, throat, hand, turned):
-    origin, resting = rest
-    reach = turn(turned, throat)
-    return {"Paddle": moved(origin, resting, [h - r for h, r in zip(hand, reach)], turned)}
-
-
-def paddling(vessel, rest, throat, catch, finish, height, out, side=-1, frames=30):
-    def placed(hand, lean, pitch):
-        return gripped(rest, throat, hand, {"rotationX": -side * lean, "rotationZ": pitch})
-
-    def stroke(frame):
-        u = frame / frames
-        drive = u < 0.55
-        f = u / 0.55 if drive else (u - 0.55) / 0.45
-        ease = 0.5 - 0.5 * math.cos(math.pi * f)
-        reach = ease if drive else 1 - ease
-        lift = 0 if drive else math.sin(math.pi * f)
-        hand = (catch + (finish - catch) * reach, height + 2 * (1 - reach) ** 2 + 4.5 * lift, out + side * lift)
-        return placed(hand, 30 + 20 * lift, -95 + 40 * reach)
-
-    return strokes(vessel, frames, lambda frame: placed(((catch + finish) / 2, height + 2, out - side), 62, -95),
-                   stroke, lambda frame: stroke(frames - frame), stroke="paddling")
-
-
-def speed(stroke, frames):
+def speed(stroke, frames, per_loop=1):
     rate = json.loads(PROPULSION.read_text())["strokes"][stroke]["strokesPerMinute"]
-    return round(frames * rate / 60 / FRAMES_A_SECOND, 4)
+    return round(frames * rate / per_loop / 60 / FRAMES_A_SECOND, 4)
 
 
-def strokes(vessel, frames, ready, forward, backward, stroke):
+def drive_share(stroke):
+    return json.loads(PROPULSION.read_text())["strokes"][stroke]["driveShare"]
+
+
+def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1):
     keys = list(range(0, frames, 2))
     return [{"code": f"roughseas-{vessel}-{name}", "frames": frames, "keys": keys if name != "ready" else [0],
-             "speed": speed(stroke, frames), "pose": pose}
+             "speed": speed(stroke, frames, per_loop), "pose": pose}
             for name, pose in (("ready", ready), ("forward", forward), ("backward", backward))]
 
 

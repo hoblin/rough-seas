@@ -159,13 +159,13 @@ New: `roughseas:framing`'s stage keys `successive`, `follows` and `lifts` and it
 A paddled, poled or rowed vessel goes as fast as her rower drives her against the water's drag on her ([Driving her](Building-a-Vessel#driving-her)), and the tools that drive her are items of their own.
 
 - Our vessels no longer carry `speedMultiplier` or `turnSpeed`: their speed and turn come from our behaviour `roughseas:propulsion`, which vanilla's raft gets by patch. A Harmony postfix on `EntityBoat.SeatsToMotion` hands any boat that carries it to the behaviour; vanilla's sailboat and every other mod's boat move as before. Under sail, vanilla's motion stands.
-- While a rider rows one, the behaviour sets her `EntityBehaviorPassivePhysics.WaterDragValue` to 1, since its own drag takes the water's place, and gives her vanilla's back when nobody rows. A mod that reads that value off a rowed vessel reads 1.
+- While someone holds her controls and she is not under sail, the behaviour sets her `EntityBehaviorPassivePhysics.WaterDragValue` to 1, since its own drag takes the water's place, and gives her vanilla's back otherwise. A mod that reads that value off such a vessel reads 1.
 - What the rower spends is the behaviour's `EffortWatts`, the power his body gives while he strokes, and `Stroke`, the stroke he makes; until a stamina of our own takes it, the effort costs him satiety.
 - Vanilla's crude oar carries `roughseas:propulsion` as a 2 m pole, and its `tpHandTransform` is ours, so it lies in the hand where our strokes put a pole.
 - Each vessel's rower has strokes of his own for each tool, `roughseas-{vessel}-{pole|paddle}-{ready|forward|backward}`, in `patches/player-{vessel}.json`, the raft's too; they key `ItemAnchor` to hold the tool where the stroke puts it. The currach's are `roughseas-currach-{ready|forward|backward}` again, with her own oars and thole pins.
 - Every vessel of ours has an `Oar Storage` slot, its box `OarAP` after her others; the coracle takes `rideableaccessories` for it.
 - The pole is drawn at its length: `shapeByType` takes `item/pole-{2|3|4|5}` and its attributes are by type. The shape `item/pole` is gone.
 - The currach's build ends with a stage `Oars` of the new work `oar`, two `roughseas:tholeoar-{wood}`, and her `parts` gain `oars`; `roughseas:covering`'s new key `oars` names what that stage takes. She weighs 87 kg.
-- The hull's drag law, `HullDrag` with `WaveMaking`, lives with the hull, and a vessel's size for it is her `Hull` box, which a client now measures once her selection boxes load rather than taking a 1 m box.
+- The hull's drag law, `HullDrag` with `WaveMaking`, lives with the hull, and a vessel's size for it is her `Hull` box, which a client now measures once her selection boxes load rather than keeping her entity's selection box for good.
 
 New: the behaviour `roughseas:propulsion` with its keys, the items `roughseas:paddle-{wood}` and `roughseas:tholeoar-{wood}`, the item attribute `roughseas:propulsion`, `config/propulsion.json` and `config/vessels/drag.json`.

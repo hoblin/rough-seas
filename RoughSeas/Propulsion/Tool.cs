@@ -1,3 +1,4 @@
+using System.Globalization;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -18,15 +19,14 @@ public abstract class Tool
         {
             Pole.Code => new Pole(MetresOf(collectible, attributes), collectible.MaterialDensity, config.Pole),
             Paddle.Code => new Paddle(attributes["bladeSquareMetres"].AsDouble()),
-            TholeOar.Code => new TholeOar(attributes["bladeSquareMetres"].AsDouble()),
             _ => null
         };
     }
 
+    public abstract Propulsor? Drive(RowerStation station, out string? refusal);
+
     private static double MetresOf(CollectibleObject collectible, JsonObject attributes) =>
-        collectible.Variant["length"] is { } length && double.TryParse(length, System.Globalization.CultureInfo.InvariantCulture, out var metres)
-            ? metres
-            : attributes["metres"].AsDouble();
+        double.TryParse(collectible.Variant["length"], CultureInfo.InvariantCulture, out var metres) ? metres : attributes["metres"].AsDouble();
 }
 
 public sealed class Pole(double metres, double density, PoleConfig config) : Tool
@@ -40,6 +40,8 @@ public sealed class Pole(double metres, double density, PoleConfig config) : Too
     public double Kilograms => metres * config.DressedMetres * config.DressedMetres * density;
 
     public double Reach(double handsAboveWaterMetres) => config.Reach(metres, handsAboveWaterMetres);
+
+    public override Propulsor? Drive(RowerStation station, out string? refusal) => station.Poled(this, out refusal);
 }
 
 public sealed class Paddle(double bladeSquareMetres) : Tool
@@ -48,14 +50,5 @@ public sealed class Paddle(double bladeSquareMetres) : Tool
 
     public override string Kind => Code;
 
-    public double BladeSquareMetres => bladeSquareMetres;
-}
-
-public sealed class TholeOar(double bladeSquareMetres) : Tool
-{
-    public const string Code = "tholeoar";
-
-    public override string Kind => Code;
-
-    public double BladeSquareMetres => bladeSquareMetres;
+    public override Propulsor? Drive(RowerStation station, out string? refusal) => station.Paddled(bladeSquareMetres, out refusal);
 }

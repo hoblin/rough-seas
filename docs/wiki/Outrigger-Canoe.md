@@ -77,7 +77,7 @@ Push her into the water with Shift and an empty hand: she is heavy, a few centim
 ## Its neighbours
 
 - The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it carries cargo and can be carried.
-- The [sailboat](Sailboat) is slower and carries far more.
+- The [sailboat](Sailboat) sails faster for now and carries far more.
 - The [dugout](Dugout) is the same hull without the float: she is built on one, and is as tough, and tippy at sea.
 
 ## Every form it takes

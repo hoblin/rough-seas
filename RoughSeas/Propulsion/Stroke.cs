@@ -33,11 +33,11 @@ public abstract class Stroke(string code, StrokeConfig config)
 
 public sealed class BladeStroke(string code, StrokeConfig config, double bladeSquareMetres, double waterDensity) : Stroke(code, config)
 {
-    private readonly double drag = waterDensity / 2 * config.DragCoefficient * bladeSquareMetres * config.Blades;
+    private readonly double drag = waterDensity / 2 * config.DragCoefficient * bladeSquareMetres;
 
     public override double Thrust(double metresPerSecond, double watts)
     {
-        if (watts <= 0) return 0;
+        if (watts <= 0 || drag <= 0) return 0;
         var drive = Config.DriveShare;
         var ahead = Math.Max(0, metresPerSecond);
         var slip = Solve(s => drive * drag * s * s * (ahead + s), watts);

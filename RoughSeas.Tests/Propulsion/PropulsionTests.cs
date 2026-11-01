@@ -7,7 +7,6 @@ namespace RoughSeas.Tests.Propulsion;
 public class PropulsionTests
 {
     private const double StepSeconds = 0.05;
-    private const double PaddleSquareMetres = 0.06;
     private const double PoleDensity = 600;
 
     [Fact]
@@ -17,7 +16,7 @@ public class PropulsionTests
     }
 
     [Fact]
-    public void TheCoracleSkullsSlowlyAndSpinsOnTheSpot()
+    public void TheCoracleScullsSlowlyAndSpinsOnTheSpot()
     {
         Assert.True(Cruise("coracle", Paddled("coracle")) < Cruise("barkcanoe", Paddled("barkcanoe")) / 2);
         Assert.True(Spin("coracle", Paddled("coracle")) > 4 * Spin("barkcanoe", Paddled("barkcanoe")));
@@ -28,7 +27,7 @@ public class PropulsionTests
     {
         var oars = Fixtures.PropulsionOf("currach")["oars"]!;
         var rowed = new TholeOars(Blade("rowing", (double)oars["bladeSquareMetres"]!), (double)oars["spanMetres"]!);
-        var paddled = new HeldTool(Blade("paddling", PaddleSquareMetres), Sweep("currach"));
+        var paddled = new HeldTool(Blade("paddling", Fixtures.PaddleSquareMetres), Sweep("currach"));
 
         Assert.True(Cruise("currach", rowed) > 1.2 * Cruise("currach", paddled));
     }
@@ -81,9 +80,50 @@ public class PropulsionTests
     }
 
     [Fact]
+    public void APoleFindsNoBottomInWaterDeeperThanItReaches()
+    {
+        var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
+
+        Assert.NotNull(Fixtures.Station("dugout", 1).Propulsor(pole, out _));
+        Assert.Null(Fixtures.Station("dugout", 3).Propulsor(pole, out var refusal));
+        Assert.Contains("deeper", refusal);
+    }
+
+    [Fact]
+    public void APaddleInTheCurrachLeavesHerRowingHerOwnOars()
+    {
+        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(new Paddle(Fixtures.PaddleSquareMetres), out _));
+        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(null, out _));
+    }
+
+    [Fact]
+    public void AnEmptyHandMovesNoBoatWithoutOarsOfHerOwn()
+    {
+        Assert.Null(Fixtures.Station("dugout", 1).Propulsor(null, out var refusal));
+        Assert.NotNull(refusal);
+    }
+
+    [Fact]
+    public void OneOarPulledWhileSheGoesAheadTurnsHerAsSheGoes()
+    {
+        var push = Oars().Push(1, 1, 1, 0, 180);
+
+        Assert.True(push.Newtons > 0);
+        Assert.True(push.NewtonMetres > 0);
+    }
+
+    [Fact]
+    public void AHeldToolSweepingAsItDrivesSplitsTheRowersEffort()
+    {
+        var paddle = new HeldTool(Blade("paddling", Fixtures.PaddleSquareMetres), 1);
+
+        Assert.True(paddle.Push(1, 1, 1, 0, 104).Newtons < paddle.Push(1, 0, 1, 0, 104).Newtons);
+    }
+
+    [Fact]
     public void AFasterHullTakesLessFromTheSameBlade()
     {
-        var blade = Blade("paddling", PaddleSquareMetres);
+        var blade = Blade("paddling", Fixtures.PaddleSquareMetres);
 
         Assert.True(blade.Thrust(2, 104) < blade.Thrust(0.5, 104));
     }
@@ -121,7 +161,7 @@ public class PropulsionTests
     private static TholeOars Oars() => new(Blade("rowing", 0.1), 4.2);
 
     private static HeldTool Paddled(string vessel) =>
-        new(Blade((string)Fixtures.PropulsionOf(vessel)["paddle"]!, PaddleSquareMetres), Sweep(vessel));
+        new(Blade((string)Fixtures.PropulsionOf(vessel)["paddle"]!, Fixtures.PaddleSquareMetres), Sweep(vessel));
 
     private static double Sweep(string vessel) => (double)Fixtures.PropulsionOf(vessel)["sweepMetres"]!;
 

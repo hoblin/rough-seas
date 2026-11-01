@@ -5,8 +5,8 @@ A vessel goes as fast as you can drive her against the water. Each tool drives h
 | Tool | Made from | Works | In |
 | --- | --- | --- | --- |
 | Paddle | a 2 m [pole](Recipes#paddle), an axe and a knife | in water of any depth | every boat but the currach; the coracle is sculled with it over her bow |
-| Pole | split from a row of logs, 2 to 5 m long | where it reaches the bottom: in water about a metre shallower than it is long | every boat |
-| Crude oar | vanilla's | as a 2 m pole: in water of about a metre | every boat |
+| Pole | split from a row of logs, 2 to 5 m long | where it reaches the bottom: in water about a metre shallower than it is long | every boat but the sailboat |
+| Crude oar | vanilla's | as a 2 m pole: in water of about a metre | every boat but the sailboat |
 | Thole oar | a 3 m [pole and a short lath](Recipes#thole-oar), an axe and a knife | in water of any depth, on a thole pin | the [currach](Hide-Currach), two of them, shipped as the last step of her build |
 
 A pole reaches the bottom at about these depths, a little less from the currach, whose rower sits high:
