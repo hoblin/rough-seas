@@ -4,10 +4,10 @@
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}],
     "behaviors": [{"name": "roughseas:framing"}],
     "attributesByType": {
-        "*-2": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-2"}}},
-        "*-3": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-3"}}},
-        "*-4": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-4"}}},
-        "*-5": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-5"}}}
+        "*-2": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-2-stowed"}}},
+        "*-3": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-3-stowed"}}},
+        "*-4": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-4-stowed"}}},
+        "*-5": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-5-stowed"}}}
     },
     "shapeByType": {"*-2": {"base": "roughseas:item/pole-2"}, "*-3": {"base": "roughseas:item/pole-3"}, "*-4": {"base": "roughseas:item/pole-4"}, "*-5": {"base": "roughseas:item/pole-5"}},
     "maxstacksize": 8,

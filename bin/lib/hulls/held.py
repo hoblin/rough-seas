@@ -3,7 +3,7 @@ import math
 
 from physics import SWIM_LINE_METRES
 from stroke import CENTRE, ROOT, Rower, fit, moved, posed, seat, speed, turn
-from transform import angles, apply, euler, mul, translation, undirect
+from transform import angles, apply, euler, mul, nearest, translation, undirect
 
 ASSETS = ROOT / "RoughSeas/assets/roughseas"
 ANCHOR = "ItemAnchor"
@@ -54,6 +54,8 @@ def lowest(matrices, elements):
     return min(corner[1] for corner in corners)
 
 
+# The game draws a held item from the hand's ItemAnchor through the item's tpHandTransform (EntityShapeRenderer.RenderItem),
+# so turning ItemAnchor puts the tool where the stroke has it.
 def wrist(rower, tool, body, matrix):
     lower = rower.arms["R"].frames(body)[-1]
     anchor = rower.chain(ANCHOR)[-1]
@@ -74,12 +76,20 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
              "pose": pose} for name, pose, k in (("ready", ready, [0]), ("forward", forward, keys), ("backward", backward, keys))]
     _, player = fit(rower, [group], plan, {"R": RIGHT, "L": LEFT}, lean)
     offset = [(s - c) / 16 for s, c in zip(rower.seat, CENTRE)]
+    reference = None
     for step, animation in zip(plan, player):
         deepest = math.inf
+        previous = reference
         for keyframe, frame in zip(animation["keyframes"], step["keys"]):
             matrices = posed([group], lambda name, pose=step["pose"](frame): pose.get(name, {}))
             body = keyframe["elements"]
-            keyframe["elements"][ANCHOR] = wrist(rower, tool, body, mul(translation([-o for o in offset]), matrices[TOOL]))
+            anchor = wrist(rower, tool, body, mul(translation([-o for o in offset]), matrices[TOOL]))
+            if previous is not None:
+                turned = nearest([anchor["rotation" + a] for a in "XYZ"], previous)
+                anchor |= {"rotation" + a: round(v, 2) for a, v in zip("XYZ", turned)}
+            previous = [anchor["rotation" + a] for a in "XYZ"]
+            reference = reference or previous
+            keyframe["elements"][ANCHOR] = anchor
             deepest = min(deepest, lowest(matrices, tool.elements) - waterline)
         print(f"{animation['code']}: the tool reaches {-deepest:.2f} m under the water" if deepest < 0
               else f"{animation['code']}: the tool stays {deepest:.2f} m over the water")

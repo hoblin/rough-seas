@@ -2,6 +2,10 @@ using System;
 
 namespace RoughSeas.Vessels;
 
+/// <summary>
+/// The waves a hull makes, by Michell's thin-ship integral (Michell 1898; Tuck 1989) over a Wigley hull of her length,
+/// beam and draft: parabolic along her and down her. Newtons against her at a speed in m/s.
+/// </summary>
 public sealed class WaveMaking(double lengthMetres, double beamMetres, double draftMetres, double waterDensity)
 {
     private const double Gravity = 9.81;

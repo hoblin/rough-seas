@@ -3,6 +3,11 @@ using Vintagestory.API.Config;
 
 namespace RoughSeas.Propulsion;
 
+/// <summary>
+/// Between a boat's <c>ForwardSpeed</c> and how far she really goes: vanilla's swimming physics divides her motion by
+/// up to 1.25 when it is fast (<c>EntityBehaviorPassivePhysics.MotionAndCollision</c>). Its water drag is left out:
+/// a rowed vessel's is set to none while ours acts.
+/// </summary>
 public static class VanillaSwim
 {
     private const double TicksPerSecond = 60;

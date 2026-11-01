@@ -2,6 +2,7 @@
     "code": "tholeoar",
     "class": "roughseas:ItemOfWood",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
+    "behaviors": [{"name": "roughseas:framing"}],
     "attributes": {
         "logTextures": {"wood": "inside-north"},
         "handbook": {"groupBy": ["tholeoar-*"]},

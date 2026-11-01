@@ -19,6 +19,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     private const double RadiansPerAngularVelocity = 30;
     private const double JoulesPerKilojoule = 1000;
     private const long LogEveryMilliseconds = 5000;
+    private const double SpentLogSeconds = 10;
     private static readonly string[] StrokeKeys = ["ready", "forwards", "backwards"];
 
     private PropulsionModSystem propulsion = null!;
@@ -37,7 +38,10 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     private string? logged;
     private long loggedAt;
     private HullForm? loggedForm;
+    private double spentSeconds;
+    private double spentSatiety;
 
+    /// <summary>What her rower's body gives while he strokes, in watts: the effort a stamina reads.</summary>
     public double EffortWatts { get; private set; }
 
     public Stroke? Stroke { get; private set; }
@@ -107,7 +111,12 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var calendar = entity.World.Calendar;
         var kilojoules = EffortWatts * deltaTime / JoulesPerKilojoule;
         var pace = calendar.SpeedOfTime * calendar.CalendarSpeedMul / propulsion.Config.Rower.VanillaPace;
-        rower.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation((float)(kilojoules * propulsion.Config.Rower.SatietyPerKilojoule * pace));
+        var satiety = kilojoules * propulsion.Config.Rower.SatietyPerKilojoule * pace;
+        rower.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation((float)satiety);
+        (spentSeconds, spentSatiety) = (spentSeconds + deltaTime, spentSatiety + satiety);
+        if (spentSeconds < SpentLogSeconds) return;
+        vessels.Log(entity, "{0} spent {1:F1} satiety on {2:F0} s of {3}", rower.GetName(), spentSatiety, spentSeconds, Stroke.Code);
+        (spentSeconds, spentSatiety) = (0, 0);
     }
 
     private Vec2d Idle(Vec2d vanilla)
