@@ -39,6 +39,8 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
     /// </summary>
     public static (LogRow Row, bool EndForEnd)? FloatBeside(double x, double y, double z, double yaw, int logs, double offMetres, System.Func<BlockPos, LyingLog?> logAt)
     {
+        if (logs / 2.0 * Math.Abs(Math.Sin(yaw - Squared(yaw))) > MostMovedMetres) return null;
+
         var (alongX, alongZ) = HullShape.ToWorld(1, 0, yaw);
         var axis = Math.Abs(alongX) > Math.Abs(alongZ) ? EnumAxis.X : EnumAxis.Z;
         foreach (var side in new[] { 1, -1 })
@@ -51,11 +53,16 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         return null;
     }
 
-    public static (double X, double Z) OntoRow(double x, double z, double yaw, double offMetres, BlockPos centre)
+    public static (double X, double Y, double Z, double Yaw) OntoRow(double yaw, double offMetres, BlockPos centre)
     {
-        var (floatX, floatZ) = HullShape.ToWorld(0, offMetres, yaw);
-        return (centre.X + 0.5 - x - floatX, centre.Z + 0.5 - z - floatZ);
+        var squared = Squared(yaw);
+        var (floatX, floatZ) = HullShape.ToWorld(0, offMetres, squared);
+        return (centre.X + 0.5 - floatX, centre.Y, centre.Z + 0.5 - floatZ, squared);
     }
+
+    private const double MostMovedMetres = 0.5;
+
+    private static double Squared(double yaw) => GameMath.Mod(Math.Round(yaw / GameMath.PIHALF) * GameMath.PIHALF, GameMath.TWOPI);
 
     public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
     {
@@ -83,9 +90,10 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         var rigged = world.ClassRegistry.CreateEntity(successor);
         rigged.Pos.SetFrom(entity.Pos);
         if (endForEnd) rigged.Pos.Yaw = GameMath.Mod(entity.Pos.Yaw + GameMath.PI, GameMath.TWOPI);
-        var (dx, dz) = OntoRow(rigged.Pos.X, rigged.Pos.Z, rigged.Pos.Yaw, rig.FloatOffMetres, row.Centre);
-        rigged.Pos.X += dx;
-        rigged.Pos.Z += dz;
+        var (x, y, z, yaw) = OntoRow(rigged.Pos.Yaw, rig.FloatOffMetres, row.Centre);
+        var moved = rigged.Pos.XYZ.DistanceTo(x, y, z);
+        rigged.Pos.SetPos(x, y, z);
+        rigged.Pos.Yaw = (float)yaw;
         foreach (var state in entity.SidedProperties.Behaviors.OfType<IHandedOver>()) state.HandOver(rigged, endForEnd);
         EntityBehaviorRigging.Begin(rigged, rig, poleWood, row.Wood.Code);
 
@@ -99,7 +107,7 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         entity.Die(EnumDespawnReason.Removed);
         world.PlaySoundAt(new AssetLocation("game:sounds/player/build"), rigged, null, true, 16);
         shipyard.Log(rigged, "rigged by {0} from {1} {2}{3}: a boom of {4} across her joins a float of {5} {6} logs, her hull moved {7:F2} m onto them",
-            byEntity.GetName(), entity.Code, entity.EntityId, endForEnd ? ", turned end for end" : "", poleWood, row.Length, row.Wood.Code, Math.Sqrt(dx * dx + dz * dz));
+            byEntity.GetName(), entity.Code, entity.EntityId, endForEnd ? ", turned end for end" : "", poleWood, row.Length, row.Wood.Code, moved);
     }
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled) =>

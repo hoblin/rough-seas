@@ -81,20 +81,30 @@ public class RiggingTests
     }
 
     [Theory]
-    [InlineData(100.5, 200.5, 0)]
-    [InlineData(100.2, 200.9, 0)]
-    [InlineData(100.9, 200.1, GameMath.PIHALF)]
-    public void HerHullIsBroughtOntoTheLogsSoTheFloatLiesWhereTheyLay(double x, double z, float yaw)
+    [InlineData(100.5, 5, 200.5, 0)]
+    [InlineData(100.2, 5.3, 200.9, 0)]
+    [InlineData(100.9, 4.8, 200.1, GameMath.PIHALF)]
+    [InlineData(100.5, 5, 200.5, GameMath.PIHALF + 0.2)]
+    public void HerHullIsBroughtOntoTheLogsSoTheFloatLiesWhereTheyLay(double x, double y, double z, float yaw)
     {
         var (dx, dz) = HullShape.ToWorld(0, Config.FloatOffMetres, yaw);
-        var row = new BlockPos((int)Math.Floor(x + dx), 5, (int)Math.Floor(z + dz));
-        var (moveX, moveZ) = EntityBehaviorRiggable.OntoRow(x, z, yaw, Config.FloatOffMetres, row);
+        var row = new BlockPos((int)Math.Floor(x + dx), (int)Math.Floor(y + 0.5), (int)Math.Floor(z + dz));
+        var (atX, atY, atZ, squared) = EntityBehaviorRiggable.OntoRow(yaw, Config.FloatOffMetres, row);
+        var (floatX, floatZ) = HullShape.ToWorld(0, Config.FloatOffMetres, squared);
 
-        Assert.Equal(row.X + 0.5, x + moveX + dx, 6);
-        Assert.Equal(row.Z + 0.5, z + moveZ + dz, 6);
-        Assert.InRange(Math.Abs(moveX), 0, 0.5);
-        Assert.InRange(Math.Abs(moveZ), 0, 0.5);
+        Assert.Equal(0, Math.Sin(2 * squared), 6);
+        Assert.Equal((row.X + 0.5, row.Y, row.Z + 0.5), (Math.Round(atX + floatX, 6), atY, Math.Round(atZ + floatZ, 6)));
+        Assert.InRange(Math.Abs(atX - x), 0, 0.5 + Math.Abs(Math.Sin(yaw - squared)) * Config.FloatOffMetres);
+        Assert.InRange(Math.Abs(atY - y), 0, 0.5);
     }
+
+    [Theory]
+    [InlineData(0.15f)]
+    [InlineData(-0.15f)]
+    public void AHullSlightlyAskewIsSquaredOntoTheRow(float skew) => Assert.NotNull(Float(skew, Row(0, 1)));
+
+    [Fact]
+    public void AHullTooFarAskewOfTheRowMakesNoFloat() => Assert.Null(Float(0.5f, Row(0, 1)));
 
     [Fact]
     public void HerFirstBoomIsAcrossHerOnceTheFloatJoins()

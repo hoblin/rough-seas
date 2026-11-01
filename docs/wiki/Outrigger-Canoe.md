@@ -47,7 +47,7 @@ Not in the crafting grid: an outrigger is a finished [dugout](Dugout) rigged whe
 
    ![A dugout with three logs alongside](images/outrigger-canoe/build-float.webp)
 
-3. **Join them.** Hold a pole on the dugout: her first boom goes across her gunwales onto the logs, and the logs become her float where they lie, still three logs a metre across. She is now the outrigger, her hull the same hull, with its cracks and the water in it. A float on the far side turns her end for end. A dugout pushed off the block grid slides onto them, up to half a block, so her float lies exactly where they lay.
+3. **Join them.** Hold a pole on the dugout: her first boom goes across her gunwales onto the logs, and the logs become her float where they lie, still three logs a metre across. She is now the outrigger, her hull the same hull, with its cracks and the water in it. A float on the far side turns her end for end. A dugout pushed off the block grid, or lying a little askew, is squared onto them, so her float lies exactly where they lay; one lying too far askew has to be pushed straight first.
 
    ![The first boom across](images/outrigger-canoe/build-boom.webp)
 
