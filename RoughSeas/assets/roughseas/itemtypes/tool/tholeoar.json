@@ -1,0 +1,22 @@
+{
+    "code": "tholeoar",
+    "class": "roughseas:ItemOfWood",
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
+    "behaviors": [{"name": "roughseas:framing"}],
+    "attributes": {
+        "logTextures": {"wood": "inside-north"},
+        "handbook": {"groupBy": ["tholeoar-*"]},
+        "sources": {
+            "shape": "An Aran oar: some 3 m long, square in the loom, with a long, narrow blade, almost none, so as not to catch a crab in the surf, and the triangular bull nailed to its loom that rides the single thole pin (Royal Museums Greenwich, an Aran currach's oars; Hornell 1938). Here 3 m with a blade 1 m by 10 cm, the bull 0.9 m from the grip"
+        }
+    },
+    "shape": {"base": "roughseas:item/tholeoar"},
+    "storageFlags": 257,
+    "maxstacksize": 2,
+    "materialDensity": 600,
+    "combustibleProps": {"burnTemperature": 700, "burnDuration": 40},
+    "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
+    "guiTransform": {"rotation": {"x": -60, "y": 45, "z": 0}, "origin": {"x": 1.5, "y": 0.5, "z": 0.5}, "scale": 0.9},
+    "tpHandTransform": {"translation": {"x": -1.3, "y": -0.28, "z": -0.53}, "rotation": {"x": -3, "y": 1, "z": -22}, "origin": {"x": 0.5, "y": 0.2, "z": 0.5}, "scale": 1},
+    "groundTransform": {"origin": {"x": 1.5, "y": 0, "z": 0.5}, "scale": 1}
+}

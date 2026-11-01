@@ -3,6 +3,8 @@ import math
 from pathlib import Path
 
 from physics import afloat, kilograms
+from held import PADDLE, POLE, poling, sculling, tools, waterline
+from stroke import player_patch, seat
 from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Shape, beam, bilge, box, group, path, plank, stages, water_plane, write
 
 CENTRE = 8
@@ -224,8 +226,13 @@ def build(path_):
     shape.add(stages("Lacing", lacing()))
     shape.add(group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", DEPTH - 0.5)),
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
-    shape.keep("Hull", "FrontSeat")
+    shape.keep("Hull", "FrontSeat", "OarStorage")
     shape.write()
+    at = seat(shape, "FrontSeat")
+    player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, waterline("coracle"), {
+        "paddle": ("sculling", PADDLE, sculling(PADDLE, at, 6.5, 5, 2.5)),
+        "pole": ("pole", POLE, poling(POLE, at, 3, 3, 8, -2.5)),
+    }))
 
     back = Path(path_).with_name("coracle-back.json")
     worn = json.loads(back.read_text())

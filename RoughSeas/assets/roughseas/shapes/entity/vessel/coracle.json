@@ -6910,6 +6910,15 @@
    "attachmentpoints": [
     { "code": "FrontSeatAP", "posX": "7", "posY": "0", "posZ": "7", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
+  },
+  {
+   "name": "OarStorage",
+   "from": [ -8, 1.5, 13.2 ],
+   "to": [ 24, 3.0, 14.8 ],
+   "faces": {},
+   "attachmentpoints": [
+    { "code": "OarAP", "posX": "0", "posY": "0", "posZ": "0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ]
   }
  ]
 }

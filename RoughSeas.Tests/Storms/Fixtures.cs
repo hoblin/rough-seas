@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RoughSeas.Propulsion;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -15,6 +16,10 @@ public static class Fixtures
 
     private static readonly Lazy<Dictionary<string, Material>> materials =
         new(() => JsonConvert.DeserializeObject<Dictionary<string, Material>>(Shipped("materials.json"))!);
+
+    private static readonly Lazy<DragConfig> drag = new(() => JsonConvert.DeserializeObject<DragConfig>(Shipped("drag.json"))!);
+
+    private static readonly Lazy<PropulsionConfig> propulsion = new(() => JsonConvert.DeserializeObject<PropulsionConfig>(Shipped("propulsion.json"))!);
 
     private static readonly Lazy<VesselMass> mass = new(() => JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!);
 
@@ -58,6 +63,45 @@ public static class Fixtures
             ? (double?)OptionalBehaviorConfig("storms-vessels.json", vessel, "roughseas:bilge")?["capacityLitres"] ?? 0
             : (double?)Entity(vessel)["behaviorConfigs"]!["roughseas:bilge"]?["capacityLitres"] ?? 0;
         return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity));
+    }
+
+    public static DragConfig Drag => drag.Value;
+
+    public static PropulsionConfig Propulsion => propulsion.Value;
+
+    public static JToken PropulsionOf(string vessel) => vessel.StartsWith("boat-")
+        ? BehaviorConfig("propulsion-vessels.json", vessel, EntityBehaviorPropulsion.Code)
+        : Entity(vessel)["behaviorConfigs"]![EntityBehaviorPropulsion.Code]!;
+
+    public static HullShape Shape(string vessel)
+    {
+        var hull = vessel.StartsWith("boat-")
+            ? JArray.Parse(Shipped("vessels-hull-boxes.json")).Single(patch => (string?)patch["file"] == $"game:shapes/entity/nonliving/boat/{vessel[5..]}.json")["value"]!
+            : Elements(Shipped(Path.Combine("shapes", (string)Entity(vessel)["client"]!["shape"]!["base"]!.ToString().Split('/').Last() + ".json")))
+                .Single(element => element["attachmentpoints"]?.Any(point => (string?)point["code"] == "HullAP") == true);
+        return HullShape.FromVoxels(hull["from"]!.ToObject<double[]>()!, hull["to"]!.ToObject<double[]>()!);
+    }
+
+    public static HullDrag DragOf(string vessel, Aboard aboard)
+    {
+        var form = HullForm.From(new JsonObject(PropulsionOf(vessel)), Drag, Shape(vessel));
+        return new HullDrag(form, Hull(vessel).Float(aboard).DraftMetres, aboard.Total, WaterDensity, Drag);
+    }
+
+    public const double WaterDensity = VesselMass.SeawaterKgPerLitre * KilogramsPerCubicMetre;
+
+    private const double KilogramsPerCubicMetre = 1000;
+
+    public static double PaddleSquareMetres => (double)JToken.Parse(Shipped(Path.Combine("tools", "paddle.json")))["attributes"]![Tool.AttributeKey]!["bladeSquareMetres"]!;
+
+    public static RowerStation Station(string vessel, double depthMetres) =>
+        new(new JsonObject(PropulsionOf(vessel)), Propulsion, WaterDensity, _ => depthMetres);
+
+    private static IEnumerable<JToken> Elements(string shape)
+    {
+        static IEnumerable<JToken> Descend(JToken? elements) =>
+            elements?.SelectMany(element => Descend(element["children"]).Prepend(element)) ?? [];
+        return Descend(JToken.Parse(shape)["elements"]);
     }
 
     public static Resistance Resistance(string vessel, string wood = "oak")

@@ -14,7 +14,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 
 | | |
 | --- | --- |
-| Speed | 2.5 × the raft under full sail |
+| Speed | 7.2 m/s under full sail, at vanilla's pace |
 | Turning | steady |
 | [Hull](Hull-Condition) | 40 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
@@ -39,7 +39,7 @@ Its sail drives it the same whatever the wind does; sailing by the wind comes in
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is faster and steadier, and carries one basket.
+- The [outrigger canoe](Outrigger-Canoe) is steadier and carries one basket; she sails slower for now.
 - The [hide currach](Hide-Currach) is the small, cheap boat for the coast, and it rides over surf that would swamp the sailboat, though a breaker that stoves in her hide leaves the sailboat's planks whole.
 
 ## Every form it takes

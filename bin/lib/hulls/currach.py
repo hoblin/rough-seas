@@ -2,6 +2,8 @@ import math
 
 from physics import afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
+from held import POLE, poling, tools, waterline
+from stroke import crew, drive_share, moved, player_patch, seat, strokes
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
@@ -20,6 +22,19 @@ STRINGER = 0.6
 THWART_SHARE = 0.75
 THWART = 1.4
 THWART_SEAT = 7
+
+OARS = {"OarStarboard": -1, "OarPort": 1}
+THOLE_AHEAD = 9.6
+BULL = 2.4
+INBOARD = 8.8
+LOOM_END = 14
+BLADE_START = 23.2
+OUTBOARD = 39.2
+FRAMES = 30
+SWEEP_DEGREES = 28
+REST_PITCH = -13
+DIP_DEGREES = 11
+DIP_SHARPNESS = 3
 
 # A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
 SECTION_SQUARE_METRES = 1.2
@@ -166,6 +181,61 @@ def lacing(hull):
     return [wraps[len(wraps) * r // ropes:len(wraps) * (r + 1) // ropes] for r in range(ropes)]
 
 
+def thole_station(half):
+    return CENTRE + THWART_SHARE * 2 * half - half - THOLE_AHEAD
+
+
+def tholes(hull, half):
+    x = thole_station(half)
+    top = len(PROFILE) - 1
+    pins, rests = [], {}
+    for name, side in OARS.items():
+        _, y, z = hull.at(x, top, side)
+        pins.append(box(f"Thole{name[3:]}", (x - 0.3, y - 0.6, z - 0.3), (x + 0.3, y + BULL + 1.2, z + 0.3), "frame", grain="y"))
+        rests[name] = (x, y + 0.4 + BULL, z)
+    return pins, rests
+
+
+def oar(name, side, rest):
+    return group(name, rest, (side * 90, 0, 0), [
+        box(f"{name}Grip", (-INBOARD, -0.35, -0.35), (-INBOARD + 3, 0.35, 0.35), "frame"),
+        box(f"{name}Loom", (-INBOARD + 3, -0.4, -0.4), (LOOM_END, 0.4, 0.4), "frame"),
+        box(f"{name}Bull", (-1.6, -BULL, -0.7), (1.6, -0.4, 0.7), "frame"),
+        box(f"{name}Shaft", (LOOM_END, -0.3, -0.3), (BLADE_START, 0.3, 0.3), "frame"),
+        box(f"{name}Blade", (BLADE_START, -0.15, -0.8), (OUTBOARD, 0.15, 0.8), "frame"),
+    ])
+
+
+def sweep(u):
+    drive = drive_share("rowing")
+    return -math.cos(math.pi * u / drive) if u < drive else math.cos(math.pi * (u - drive) / (1 - drive))
+
+
+def depth(u):
+    drive = drive_share("rowing")
+    return min(1.0, DIP_SHARPNESS * math.sin(math.pi * u / drive)) if u < drive else 0.0
+
+
+def rowing(rests):
+    def pose(sweep_at, depth_at):
+        def at(frame):
+            u = frame / FRAMES
+            yaw = 90 - SWEEP_DEGREES * sweep_at(u)
+            pitch = REST_PITCH - DIP_DEGREES * depth_at(u)
+            return {name: moved(rests[name], (side * 90, 0, 0), rests[name], {"rotationY": -side * yaw, "rotationZ": pitch})
+                    for name, side in OARS.items()}
+        return at
+
+    return strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
+                   pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)), stroke="rowing")
+
+
+def blade_span(rests):
+    reach = (BLADE_START + OUTBOARD) / 2 * math.cos(math.radians(-REST_PITCH))
+    across = [abs(z - CENTRE) + reach for _, _, z in rests.values()]
+    return sum(across) / VOXELS_A_METRE
+
+
 def build(path_):
     shape = Shape(path_, {
         "hide": "game:block/leather/poor",
@@ -182,20 +252,36 @@ def build(path_):
     shape.add(stages("Cover", cover(hull), wood="none"))
     shape.add(stages("Lacing", lacing(hull)))
     shape.add(thwart_stage)
+    pins, rests = tholes(hull, half)
+    shape.add(*pins)
+    shape.add(stages("Oars", [[oar(name, side, rests[name])] for name, side in OARS.items()], wood="none"))
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
-    shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo")
-    shape.write()
-    report(hull, laths, thwart_stage)
+    shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
+    rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
+                 {"rotationZ": 12})
+    at = seat(shape, "BackSeat")
+    player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, waterline("currach"), {
+        "pole": ("pole", POLE, poling(POLE, at, 3, 3, 3, -2)),
+    }))
+    print(f"oars: {blade_span(rests):.2f} m from blade to blade across her")
+    report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()])
 
 
-def report(hull, laths, thwart_stage):
+def litres(element):
+    size = [t - f for f, t in zip(element["from"], element["to"])]
+    return size[0] * size[1] * size[2] * VOXEL_METRES ** 3 * 1000
+
+
+def report(hull, laths, thwart_stage, oars):
     area = hull.skin_square_metres()
     metres = sum(piece["metres"] for stage in laths for piece in stage["children"])
     pole = sum(piece["metres"] for piece in thwart_stage["children"])
     hide_kg = kilograms("hide", area * HIDE_METRES * 1000)
     frame_kg = kilograms("wood-ash", (metres * LATH_SQUARE_METRES + pole * POLE_SQUARE_METRES) * 1000)
-    print(f"currach: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath and {pole:.2f} m of pole, {frame_kg:.1f} kg of ash")
-    afloat("currach", hide_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=hull.t),
+    oars_kg = kilograms("wood-ash", sum(litres(part) for oar_ in oars for part in oar_["children"]))
+    print(f"currach: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath and {pole:.2f} m of pole, {frame_kg:.1f} kg of ash;"
+          f" two oars, {oars_kg:.1f} kg")
+    afloat("currach", hide_kg + frame_kg + oars_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=hull.t),
            hull.square_metres(SHEER - 0.01, inset=hull.t))
 
 

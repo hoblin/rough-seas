@@ -1,7 +1,7 @@
 import math
 from pathlib import Path
 
-from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, deck, log, volumes
+from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes
 from physics import afloat, kilograms
 from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, group, path, plank, run, stages
 
@@ -315,8 +315,9 @@ def build(target):
     shape.add(stages("Strakes", strakes(hull)), stages("Seams", seams(hull)))
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     shape.keep("Hull", "FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
-    shape.keep("LowerMastStorage")
+    shape.keep("LowerMastStorage", "OarStorage")
     shape.write()
+    crew_tools(shape, "outrigger")
     report(hull, passes["children"][-1])
 
 

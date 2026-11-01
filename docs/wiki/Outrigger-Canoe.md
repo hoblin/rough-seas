@@ -4,7 +4,7 @@ A dugout with a float log held out to one side on three crooked booms lashed acr
 
 ## In Rough Seas
 
-For a long crossing of open sea. The outrigger is the fastest vessel before metal, and it sails, leaving every rowed boat far astern. The float keeps the narrow hull upright where a dugout would roll over. Built without a saw she is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise her side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
+For a long crossing of open sea. The outrigger sails, leaving every rowed boat far astern; for now she sails at vanilla's pace, a little slower than the sailboat, until sailing reads the wind. The float keeps the narrow hull upright where a dugout would roll over. Built without a saw she is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise her side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
 
 ## Where it comes from
 
@@ -14,8 +14,8 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 
 | | |
 | --- | --- |
-| Speed | 2.7 × the raft under full sail, faster than the sailboat |
-| Turning | clumsy |
+| Speed | 5.9 m/s under full sail, at vanilla's pace until sailing reads the wind; 1.6 m/s paddled, 1.8 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Turning | clumsy, 14° a second paddled |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): her hull is the dugout's |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | with washstrakes 58 cm empty, 56 cm with its helmsman; without them 43 and 41; in oak |
@@ -28,7 +28,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
-| Seats | two: the front one steers, under sail too, and paddles with an [oar](https://wiki.vintagestory.at/Oar) in hand; the back one takes a passenger |
+| Seats | two: the front one steers, under sail too, and paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
 | Built from | a finished [dugout](Dugout), 3 logs for her float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when she takes them, 10 planks and 4 ropes |
 | Wreckage | firewood, a rope, some linen, and planks once she has washstrakes |
@@ -77,7 +77,7 @@ Push her into the water with Shift and an empty hand: she is heavy, a few centim
 ## Its neighbours
 
 - The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it carries cargo and can be carried.
-- The [sailboat](Sailboat) is slower and carries far more.
+- The [sailboat](Sailboat) sails faster for now and carries far more.
 - The [dugout](Dugout) is the same hull without the float: she is built on one, and is as tough, and tippy at sea.
 
 ## Every form it takes

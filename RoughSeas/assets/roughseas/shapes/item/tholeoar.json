@@ -1,0 +1,354 @@
+{
+    "textureWidth": 16,
+    "textureHeight": 16,
+    "textures": {
+        "wood": "game:block/wood/debarked/oak"
+    },
+    "elements": [
+        {
+            "name": "Grip",
+            "from": [
+                0,
+                7.65,
+                7.65
+            ],
+            "to": [
+                3,
+                8.35,
+                8.35
+            ],
+            "faces": {
+                "north": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        3,
+                        4.7
+                    ]
+                },
+                "south": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        9,
+                        3,
+                        9.7
+                    ]
+                },
+                "east": {
+                    "texture": "#wood",
+                    "uv": [
+                        4,
+                        4,
+                        4.7,
+                        4.7
+                    ]
+                },
+                "west": {
+                    "texture": "#wood",
+                    "uv": [
+                        9,
+                        9,
+                        9.7,
+                        9.7
+                    ]
+                },
+                "up": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        6,
+                        3,
+                        6.7
+                    ]
+                },
+                "down": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        11,
+                        3,
+                        11.7
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Loom",
+            "from": [
+                3,
+                7.6,
+                7.6
+            ],
+            "to": [
+                22,
+                8.4,
+                8.4
+            ],
+            "faces": {
+                "north": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        4.8
+                    ]
+                },
+                "south": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        9,
+                        16,
+                        9.8
+                    ]
+                },
+                "east": {
+                    "texture": "#wood",
+                    "uv": [
+                        4,
+                        4,
+                        4.8,
+                        4.8
+                    ]
+                },
+                "west": {
+                    "texture": "#wood",
+                    "uv": [
+                        9,
+                        9,
+                        9.8,
+                        9.8
+                    ]
+                },
+                "up": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        6,
+                        16,
+                        6.8
+                    ]
+                },
+                "down": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        11,
+                        16,
+                        11.8
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Bull",
+            "from": [
+                12.8,
+                5.6,
+                7.3
+            ],
+            "to": [
+                16,
+                7.6,
+                8.7
+            ],
+            "faces": {
+                "north": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        3.2,
+                        6.0
+                    ]
+                },
+                "south": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        9,
+                        3.2,
+                        11.0
+                    ]
+                },
+                "east": {
+                    "texture": "#wood",
+                    "uv": [
+                        4,
+                        4,
+                        5.4,
+                        6.0
+                    ]
+                },
+                "west": {
+                    "texture": "#wood",
+                    "uv": [
+                        9,
+                        9,
+                        10.4,
+                        11.0
+                    ]
+                },
+                "up": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        6,
+                        3.2,
+                        7.4
+                    ]
+                },
+                "down": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        11,
+                        3.2,
+                        12.4
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Shaft",
+            "from": [
+                22,
+                7.7,
+                7.7
+            ],
+            "to": [
+                32,
+                8.3,
+                8.3
+            ],
+            "faces": {
+                "north": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        10,
+                        4.6
+                    ]
+                },
+                "south": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        9,
+                        10,
+                        9.6
+                    ]
+                },
+                "east": {
+                    "texture": "#wood",
+                    "uv": [
+                        4,
+                        4,
+                        4.6,
+                        4.6
+                    ]
+                },
+                "west": {
+                    "texture": "#wood",
+                    "uv": [
+                        9,
+                        9,
+                        9.6,
+                        9.6
+                    ]
+                },
+                "up": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        6,
+                        10,
+                        6.6
+                    ]
+                },
+                "down": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        11,
+                        10,
+                        11.6
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Blade",
+            "from": [
+                32,
+                7.85,
+                7.2
+            ],
+            "to": [
+                48,
+                8.15,
+                8.8
+            ],
+            "faces": {
+                "north": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        4.3
+                    ]
+                },
+                "south": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        9,
+                        16,
+                        9.3
+                    ]
+                },
+                "east": {
+                    "texture": "#wood",
+                    "uv": [
+                        4,
+                        4,
+                        5.6,
+                        4.3
+                    ]
+                },
+                "west": {
+                    "texture": "#wood",
+                    "uv": [
+                        9,
+                        9,
+                        10.6,
+                        9.3
+                    ]
+                },
+                "up": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        6,
+                        16,
+                        7.6
+                    ]
+                },
+                "down": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        11,
+                        16,
+                        12.6
+                    ]
+                }
+            }
+        }
+    ]
+}

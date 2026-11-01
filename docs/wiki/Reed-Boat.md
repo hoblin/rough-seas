@@ -1,6 +1,6 @@
 ![The reed boat afloat](images/reed-boat/afloat-bow.webp)
 
-Two bundles of reeds three metres long, lashed side by side, their ends bound up into points. More a float than a boat: one person sits on it, low and half in the water, and rows it with an [oar](https://wiki.vintagestory.at/Oar) in hand, with a basket behind.
+Two bundles of reeds three metres long, lashed side by side, their ends bound up into points. More a float than a boat: one person sits on it, low and half in the water, and paddles or poles it, with a basket behind.
 
 ## In Rough Seas
 
@@ -16,8 +16,8 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 
 | | |
 | --- | --- |
-| Speed | 1.3 × the raft, rowed; about 5 m/s, faster than a swimmer |
-| Turning | nimble |
+| Speed | 2.3 m/s, paddled or poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Turning | nimble, 33° a second |
 | [Hull](Hull-Condition) | 3000 J; tears, shown as *Reed torn* |
 | [Soaking](Hull-Condition#seeping-and-soaking) | 33 kg of water a day afloat: its rider awash after a day, on the bottom within four left alone; dries ashore in the sun, a third of it left behind as rot |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 13 cm empty, 5 cm with its rider, when dry |
@@ -29,7 +29,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up, from the first binding on |
-| Seats | one rower, with an [oar](https://wiki.vintagestory.at/Oar) in hand |
+| Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand |
 | Cargo | a basket (8 slots) |
 | Built from | two reed bundles, each 144 cattail tops, papyrus tops or thatch and two ropes, and four ropes more: 288 reeds and 8 ropes, 50 kg |
 | Wreckage | reed tops, broken up with an axe once it has sunk |

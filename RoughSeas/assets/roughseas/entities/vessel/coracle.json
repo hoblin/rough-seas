@@ -4,8 +4,6 @@
     "tags": ["inanimate", "vehicle"],
     "weight": 17.1,
     "attributes": {
-        "speedMultiplier": 0.5,
-        "turnSpeed": 3,
         "swimmingOffsetY": 0.332,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {"idle": "sitflooridle", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
@@ -14,6 +12,20 @@
     },
     "hitboxSize": {"x": 1.5, "y": 0.4},
     "behaviorConfigs": {
+        "roughseas:propulsion": {
+            "bowDrag": 0.55,
+            "sideDrag": 0.55,
+            "paddle": "sculling",
+            "sweepMetres": 1.0,
+            "handsAboveWaterMetres": 0.6,
+            "strokes": {"pole": {"ready": "roughseas-coracle-pole-ready", "forwards": "roughseas-coracle-pole-forward", "backwards": "roughseas-coracle-pole-backward"}, "paddle": {"ready": "roughseas-coracle-paddle-ready", "forwards": "roughseas-coracle-paddle-forward", "backwards": "roughseas-coracle-paddle-backward"}},
+            "sources": {
+                "sweepMetres": "The blade sculls just ahead of her bow, about 0.3 m beyond her 0.69 m half-width: 1 m from her middle",
+                "handsAboveWaterMetres": "Her seat lies about her waterline, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
+                "bowDrag": "Round, so the same from every side as across her",
+                "sideDrag": "A short upright cylinder in cross-flow, mirrored at the surface into one twice her draft, has a drag coefficient of about 0.6 on diameter by height (Hoerner 1965, Fluid-Dynamic Drag, ch. 3); a bowl's rounded bottom sheds less, as a sphere's 0.47 on its frontal area does"
+            }
+        },
         "roughseas:vesselintegrity": {
             "impactCapacity": 400,
             "parts": [{"name": "hide", "material": "hide", "share": 9.1}, {"name": "frame", "material": "wood-willow", "share": 8.0}],
@@ -40,7 +52,15 @@
         },
         "passivephysicsmultibox": {"collisionBoxes": [{"x1": -0.535, "y1": 0, "z1": -0.75, "x2": 0.535, "y2": 0.4, "z2": 0.75}], "groundDragFactor": 1, "airDragFallingFactor": 0.5, "gravityFactor": 1.0},
         "creaturecarrier": {"seats": [{"apName": "FrontSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "selectionBox": "HullAP"}]},
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP", "OarAP"]},
+        "rideableaccessories": {
+            "dropContentsOnDeath": true,
+            "wearableSlots": [
+                {"code": "FrontSeatAP", "forCategoryCodes": []},
+                {"code": "HullAP", "forCategoryCodes": []},
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
+            ]
+        },
         "roughseas:seaforces": {
             "beamMetres": 1.07,
             "mastMetres": 0,
@@ -104,8 +124,10 @@
             {"code": "interpolateposition"},
             {"code": "hidewatersurface", "hideWaterElement": "hideWater/*"},
             {"code": "selectionboxes"},
+            {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]
@@ -117,8 +139,10 @@
             {"code": "repulseagents"},
             {"code": "passivephysicsmultibox"},
             {"code": "selectionboxes"},
+            {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"},
             {"code": "roughseas:mooring"},

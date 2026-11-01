@@ -2,6 +2,8 @@ import math
 from pathlib import Path
 
 from physics import MATERIALS
+from held import PADDLE, POLE, paddling, poling, tools, waterline
+from stroke import player_patch, seat
 from shape import ROUNDED_SHARE, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, stages, write
 
 VOXEL_METRES = 1 / 16
@@ -141,8 +143,13 @@ def build(target):
     shape.add(stages("Flat", flats(SIDES)))
     shape.add(stages("Lashing", lashings()))
     shape.add(stages("Tips", tips()))
-    shape.keep("Hull", "FrontSeat", "Cargo")
+    shape.keep("Hull", "FrontSeat", "Cargo", "OarStorage")
     shape.write()
+    at = seat(shape, "FrontSeat")
+    player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, waterline("reedboat"), {
+        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 5, 3.5)),
+        "pole": ("pole", POLE, poling(POLE, at, 5, 5, 3, 3.5)),
+    }))
     blocks = Path(target).parents[2] / "block"
     block(blocks / "reedbundle-one.json", SIDES[:1])
     block(blocks / "reedbundle-two.json", SIDES)
