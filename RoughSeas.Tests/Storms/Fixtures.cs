@@ -18,7 +18,12 @@ public static class Fixtures
 
     private static readonly Lazy<VesselMass> mass = new(() => JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!);
 
-    private static readonly Lazy<HullConfig> hullConfig = new(() => JsonConvert.DeserializeObject<HullConfig>(Shipped("hull.json"))!);
+    private static readonly Lazy<HullConfig> hullConfig = new(() =>
+    {
+        var config = JsonConvert.DeserializeObject<HullConfig>(Shipped("hull.json"))!;
+        config.Hides = JsonConvert.DeserializeObject<HidesConfig>(Shipped("hides.json"))!;
+        return config;
+    });
 
     public static StormsConfig Config() => config.Value;
 

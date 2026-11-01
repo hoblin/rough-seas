@@ -14,11 +14,11 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
-public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
+public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 {
     public const string Code = "roughseas:vesselintegrity";
 
-    private const string TreeKey = "roughseas:vessel";
+    public const string TreeKey = "roughseas:vessel";
     private const string CarriedKey = "roughseas:vessel";
     private const string VersionKey = "version";
     private const string CheckedAtKey = "checkedAt";
@@ -44,6 +44,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     private Rams rams = null!;
     private HullContacts hullContacts = null!;
     private Resistance resistance;
+    private Shell? shell;
+    private double frameJoules;
+    private IHullForm? form;
     private DamageConversion damageConversion = null!;
     private VesselsModSystem vessels = null!;
     private ISeaWeather seaWeather = null!;
@@ -51,9 +54,12 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     private HullModel model = null!;
     private Flotation flotation = null!;
     private HullBuild build;
+    private VesselPart[] parts = [];
+    private double impactCapacity;
     private double depthMetres;
     private double waterplaneSquareMetres;
     private double uncutLitres;
+    private double holdLitres;
     private double referenceDraft;
     private HullRepair[] repairs = [];
     private BlockDropItemStack[] wreckage = [];
@@ -104,6 +110,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
+    public static void Ungreased(Entity vessel)
+    {
+        var tree = new TreeAttribute();
+        tree.SetInt(VersionKey, DataVersion);
+        CrackingHull.Ungrease(tree);
+        vessel.WatchedAttributes.SetAttribute(TreeKey, tree);
+    }
+
     private IVesselHold? Hold => entity.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault();
 
     private static JsonItemStack OfWood(JsonItemStack stack, Wood? wood)
@@ -131,7 +145,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         model = HullModel.For(attributes["model"].AsString("cracking"), () => Tree, MarkDirty, attributes, vessels.HullConfig);
         Material = attributes["damage"]["material"].AsString(Material);
         hullBox = attributes["hullBox"].AsArray<double>(null);
-        var parts = attributes["parts"].AsObject<VesselPart[]>([]);
+        parts = attributes["parts"].AsObject<VesselPart[]>([]);
         build = vessels.Materials.Build(parts, properties.Weight);
         depthMetres = attributes["depthMetres"].AsDouble();
         waterplaneSquareMetres = attributes["waterplaneSquareMetres"].AsDouble();
@@ -158,9 +172,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         else if (Tree.GetInt(VersionKey) < DataVersion) Migrate(Tree);
 
         damageConversion = vessels.DamageConversion;
-        double frame = attributes["impactCapacity"].AsDouble() * vessels.Materials.StrengthFactor(parts);
-        resistance = Shell.Of(attributes["shell"])?.Resists(frame, vessels.Materials, vessels.HullConfig, damageConversion.CutShare)
-            ?? Resistance.Whole(frame);
+        impactCapacity = attributes["impactCapacity"].AsDouble();
+        frameJoules = impactCapacity * vessels.Materials.StrengthFactor(parts);
+        shell = Shell.Of(attributes["shell"]);
         seaWeather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         watch = seaWeather.Clock.StartWatch();
         runsRapids = attributes["runsRapids"].AsBool(false);
@@ -170,7 +184,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
             .ToArray();
     }
 
-    public override void AfterInitialized(bool onFirstSpawn) => Float();
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        form = entity.SidedProperties.Behaviors.OfType<IHullForm>().FirstOrDefault();
+        if (form != null) form.Reformed += Rebuild;
+        if (model is CrackingHull cracking && entity.SidedProperties.Behaviors.OfType<ICovered>().FirstOrDefault() is { } covered) cracking.CoveredBy(() => covered.Cover);
+        Rebuild();
+    }
 
     public override ITexPositionSource? GetTextureSource(ref EnumHandling handling)
     {
@@ -187,6 +207,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     public override void OnEntityDespawn(EntityDespawnData despawn)
     {
         entity.PhysicsUpdateWatcher -= OnPhysicsUpdate;
+        if (form != null) form.Reformed -= Rebuild;
         base.OnEntityDespawn(despawn);
     }
 
@@ -256,6 +277,19 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         if (knock == Knock.BrokenUp || Resistance.BreaksFrame(blow, loss)) Break();
     }
 
+    private void Rebuild()
+    {
+        var built = form?.Built(parts) ?? parts;
+        build = vessels.Materials.Build(built, entity.Properties.Weight);
+        if (Hold is { } hold) Reform(hold, true);
+        Float();
+        if (entity.World.Side != EnumAppSide.Server) return;
+
+        frameJoules = impactCapacity * vessels.Materials.StrengthFactor(built);
+        var hull = form == null ? shell : shell == null ? null : form.Formed(shell);
+        resistance = hull?.Resists(frameJoules, vessels.Materials, vessels.HullConfig, damageConversion.CutShare) ?? Resistance.Whole(frameJoules);
+    }
+
     public double JoulesAt(double metresPerSecond) => impact.Joules(Aboard.Impact, metresPerSecond);
 
     private static string Load(Blow blow, double load) =>
@@ -299,6 +333,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
     public void TakeConditionFrom(ItemStack stack)
     {
+        foreach (var state in entity.SidedProperties.Behaviors.OfType<ICarriedState>()) state.TakeFrom(stack);
         if (stack.Attributes.GetTreeAttribute(CarriedKey) is { } carried)
         {
             entity.WatchedAttributes.SetAttribute(TreeKey, carried.Clone());
@@ -309,6 +344,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
 
         var item = stack.Collectible;
         model.Adopt(CarriedCondition.Integrity(item.GetRemainingDurability(stack), item.GetMaxDurability(stack)));
+    }
+
+    public void HandOver(Entity successor, bool endForEnd)
+    {
+        var handed = (ITreeAttribute)Tree.Clone();
+        if (endForEnd) model.TurnEndForEnd(handed);
+        successor.WatchedAttributes.SetAttribute(TreeKey, handed);
     }
 
     /// <summary>Vanilla's shift pickup, server only, with the hull's condition carried on the item.</summary>
@@ -327,6 +369,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         var carried = (ITreeAttribute)Tree.Clone();
         carried.RemoveAttribute(CheckedAtKey);
         stack.Attributes[CarriedKey] = carried;
+        foreach (var state in entity.SidedProperties.Behaviors.OfType<ICarriedState>()) state.Carry(stack);
         if (!byEntity.TryGiveItemStack(stack)) entity.World.SpawnItemEntity(stack, entity.Pos.XYZ);
 
         entity.World.Logger.Audit("{0} Picked up 1x{1} at {2}.", byEntity.GetName(), stack.Collectible.Code, entity.Pos);
@@ -391,7 +434,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
     {
         if (Afloat.Sunk) infotext.AppendLine(Lang.Get("roughseas:vessel-sunk"));
         model.Describe(infotext);
-        if (inWater && model.LitresPerSecond(Afloat, flotation.DepthMetres) is var leaking and >= 0.01)
+        if (inWater && model.LitresPerSecond(Afloat, depthMetres) is var leaking and >= 0.01)
         {
             infotext.AppendLine(Lang.Get("roughseas:vessel-leaking", Math.Round(leaking * 60)));
         }
@@ -505,14 +548,18 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         (wasSunk, wasAwash) = (Afloat.Sunk, awash);
     }
 
-    private void Reform(IVesselHold hold)
+    private void Reform(IVesselHold hold, bool rebuilt = false)
     {
-        if (hold.UncutLitres == uncutLitres) return;
+        var solid = hold.UncutLitres + (form?.UnhewnLitres ?? 0);
+        bool changed = solid != uncutLitres || hold.CapacityLitres != holdLitres;
+        if (!changed && !rebuilt) return;
 
-        uncutLitres = hold.UncutLitres;
+        uncutLitres = solid;
+        holdLitres = hold.CapacityLitres;
         var hull = build.WithUncut(uncutLitres);
-        flotation = new Flotation(depthMetres, hold.CapacityLitres > 0 ? waterplaneSquareMetres : 0, hull.Litres);
-        if (entity.World.Side == EnumAppSide.Server)
+        var waterplane = form?.WaterplaneSquareMetres(waterplaneSquareMetres) ?? waterplaneSquareMetres;
+        flotation = new Flotation(form?.DepthMetres(depthMetres) ?? depthMetres, hold.CapacityLitres > 0 ? waterplane : 0, hull.Litres);
+        if (changed && entity.World.Side == EnumAppSide.Server)
         {
             vessels.Log(entity, "hull of {0:F0} L of wood with a hold of {1:F0} L", hull.Litres, hold.CapacityLitres);
         }
@@ -527,7 +574,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
             hold.Ship(hold.CapacityLitres - hold.Litres, Afloat.Sunk ? "on the bottom" : "over the gunwale");
             return;
         }
-        double litres = model.Inflow(lap.Seconds, lap.Hours, Afloat, flotation.DepthMetres);
+        double litres = model.Inflow(lap.Seconds, lap.Hours, Afloat, depthMetres);
         if (litres <= 0) return;
 
         hold.Ship(litres, "through her leaks");
@@ -547,17 +594,15 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         Tree.SetDouble(CheckedAtKey, now);
         if (now == last) return;
         double sun = afloat ? 0 : Sunlight();
-        timed.Pass((now - last) / entity.World.Calendar.HoursPerDay, afloat, sun);
+        timed.Pass((now - last) / entity.World.Calendar.HoursPerDay, afloat, sun, seaWeather.CurrentAt(entity.Pos.X, entity.Pos.Z).WaterCelsius);
         vessels.Log(entity, "{0:F1} h {1}: hull {2:F2}, {3:F0} kg soaked", now - last,
             afloat ? "afloat" : sun > 0 ? "drying in the sun" : "ashore", Integrity, model.SoakedKg);
     }
 
     private double Sunlight()
     {
-        var accessor = entity.World.BlockAccessor;
         var pos = entity.Pos.AsBlockPos;
-        if (accessor.GetRainMapHeightAt(pos) > pos.Y) return 0;
-        if ((accessor.GetClimateAt(pos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0) > MaxDryingRain) return 0;
+        if (entity.World.BlockAccessor.GetRainMapHeightAt(pos) > pos.Y || VanillaRain.FallingOn(entity) > MaxDryingRain) return 0;
 
         float daylight = entity.World.Calendar.GetDayLightStrength(pos);
         return daylight >= MinSunlight ? daylight : 0;
@@ -656,7 +701,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull
         vessels.Log(entity, "broke up");
         var world = entity.World;
         var box = entity.SelectionBox;
-        foreach (var drop in wreckage)
+        foreach (var drop in form?.Wrecked(wreckage) ?? wreckage)
         {
             var stack = drop.GetNextItemStack();
             if (stack == null) continue;

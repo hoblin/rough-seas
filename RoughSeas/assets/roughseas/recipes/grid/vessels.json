@@ -1,49 +1,26 @@
 [
     {
-        "name": "Reed boat",
-        "ingredientPattern": "RRR,RKR,RRR",
+        "name": "Reed bundle",
+        "ingredientPattern": "RRR,LKL",
         "ingredients": {
-            "R": { "type": "item", "code": "game:*", "allowedVariants": ["papyrustops", "cattailtops", "thatch"], "quantity": 3 },
+            "R": { "type": "item", "code": "game:*", "allowedVariants": ["papyrustops", "cattailtops", "thatch"], "quantity": 48 },
+            "L": { "type": "item", "code": "game:rope" },
             "K": { "type": "item", "tags": ["tool-knife"], "isTool": true }
         },
         "width": 3,
-        "height": 3,
-        "output": { "type": "item", "code": "roughseas:reedboat" }
-    },
-    {
-        "name": "Coracle",
-        "ingredientPattern": "SHS,SFS",
-        "ingredients": {
-            "S": { "type": "item", "code": "game:stick", "quantity": 2 },
-            "H": { "type": "item", "code": "game:hide-prepared-large" },
-            "F": { "type": "item", "code": "game:fat-rendered" }
-        },
-        "width": 3,
         "height": 2,
-        "output": { "type": "item", "code": "roughseas:coracle" }
+        "output": { "type": "block", "code": "roughseas:reedbundle-one-we" }
     },
     {
-        "name": "Bark canoe",
-        "ingredientPattern": "BBB,SRS,BBB",
+        "name": "Splitting wedge",
+        "ingredientPattern": "KF",
         "ingredients": {
-            "B": { "type": "item", "code": "roughseas:bark-*", "name": "wood", "quantity": 2 },
-            "S": { "type": "item", "code": "game:stick" },
-            "R": { "type": "item", "code": "game:resin" }
+            "K": { "type": "item", "tags": ["tool-knife"], "isTool": true },
+            "F": { "type": "item", "code": "game:firewood" }
         },
-        "width": 3,
-        "height": 3,
-        "output": { "type": "item", "code": "roughseas:barkcanoe-{wood}" }
-    },
-    {
-        "name": "Hide currach",
-        "ingredientPattern": "PHP,HFH,PPP",
-        "ingredients": {
-            "P": { "type": "item", "code": "*:plank-*", "quantity": 2 },
-            "H": { "type": "item", "code": "game:hide-prepared-large" },
-            "F": { "type": "item", "code": "game:fat-rendered", "quantity": 2 }
-        },
-        "width": 3,
-        "height": 3,
-        "output": { "type": "item", "code": "roughseas:currach" }
+        "width": 2,
+        "height": 1,
+        "shapeless": true,
+        "output": { "type": "block", "code": "roughseas:wedge-we" }
     }
 ]

@@ -5,7 +5,7 @@ using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Vessels;
 
-public sealed class ReedHull : HullModel, IAfloat, IKnockable
+public sealed class ReedHull : HullModel, IAfloat, IKnockable, ISoaking
 {
     private const string WaterKey = "waterKg";
     private const string RotKey = "rotKg";
@@ -28,6 +28,8 @@ public sealed class ReedHull : HullModel, IAfloat, IKnockable
 
     public bool ByPlace => false;
 
+    public double Soaked => 1 - Dryness;
+
     private double Dryness => soak.SaturationKg > 0 ? Math.Max(0, 1 - SoakedKg / soak.SaturationKg) : 1;
 
     public Knock Take(HullPlace place, double loss)
@@ -37,7 +39,7 @@ public sealed class ReedHull : HullModel, IAfloat, IKnockable
         return Torn >= 1 ? Knock.BrokenUp : Knock.Harmed;
     }
 
-    public void Pass(double days, bool afloat, double sun)
+    public void Pass(double days, bool afloat, double sun, double waterCelsius = 20)
     {
         double water = SoakedKg;
         if (afloat)

@@ -1,10 +1,35 @@
 import math
 
-from shape import BILGE, Hull, Shape, box, group
-from stroke import crew, moved, strokes
+from shape import BILGE, Hull, Shape, box, breadth, path, stages
 
-PROFILE = [(0, 0), (5.6, 0), (7.3, 2.8), (8.4, 6.6), (8.8, 9.6)]
+CENTRE = 8
+VOXEL_METRES = 1 / 16
+PROFILE = [(0, 0), (6.1, 0), (8, 2.8), (9.2, 6.6), (9.6, 9.6)]
 SHEER = 9.6
+
+# Her gunwale is one 5 m lath a side, its ends drawn together at bow and stern: a little under its length round her sheer.
+GUNWALE_METRES = 4.95
+# Bow to stern, each end the other's mirror: (share of her half-length, breadth, rocker, rise of the sheer).
+LINES = [(1, 0.04, 5.6, 1.3), (0.92, 0.27, 3.4, 1.1), (0.8, 0.56, 1.6, 0.8), (0.6, 0.82, 0.5, 0.4), (0.3, 0.96, 0.05, 0.1), (0, 1, 0, 0)]
+
+RIB_SPACING = 3
+RIB_WIDTH = 0.8
+RIB_DEPTH = 0.4
+STRINGER = 0.6
+THWART_SHARE = 0.75
+THWART = 1.4
+THWART_SEAT = 7
+
+# A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
+SECTION_SQUARE_METRES = 1.2
+# The ends bound with some 10 m of cord each (an estimate); the hide laced to the gunwale every 5 cm, each turn round
+# the gunwale and the hide's edge some 15 cm of cord (Hornell 1938: "laced at short intervals").
+END_METRES = 10
+LACING_STEP_METRES = 0.05
+LACING_TURN_METRES = 0.15
+LACES = 12
+# Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
+ROPE_METRES = 10
 
 
 def section(x, breadth, rocker, rise):
@@ -12,101 +37,120 @@ def section(x, breadth, rocker, rise):
     return (x, [(h * breadth, rocker + y * (top - rocker) / SHEER) for h, y in PROFILE])
 
 
-STATIONS = [
-    section(-23, 0.8, 0.8, 0.2),
-    section(-16, 0.93, 0.25, 0),
-    section(-8, 1, 0, 0),
-    section(4, 1, 0, 0),
-    section(16, 0.96, 0.05, 0.1),
-    section(25, 0.82, 0.5, 0.4),
-    section(32, 0.56, 1.6, 0.8),
-    section(37, 0.27, 3.4, 1.1),
-    section(40, 0.04, 5.6, 1.3),
-]
+def stations(half):
+    ends = [section(CENTRE - share * half, *rest) for share, *rest in LINES]
+    return ends + [section(2 * CENTRE - x, *rest) for (x, _), (_, *rest) in zip(reversed(ends[:-1]), reversed(LINES[:-1]))]
 
 
-TURN = 8.3
-THWART = -15
-STATION = 22
-BULL = 2.4
-SHIPPED = (9.3, 6.6)
-FRAMES = 30
-OARS = {"OarStarboard": -1, "OarPort": 1}
+def sheer_metres(hull):
+    top = len(PROFILE) - 1
+    points = [hull.point(i, top, 1) for i in range(len(hull.stations))]
+    return sum(math.dist(a, b) for a, b in zip(points, points[1:])) * VOXEL_METRES
 
 
-def oar(name, side):
-    return group(name, shipped(side), (side * 90, 0, 0), [
-        box(f"{name}Grip", (-8, -0.35, -0.35), (-5, 0.35, 0.35), "frame"),
-        box(f"{name}Loom", (-5, -0.45, -0.45), (11, 0.45, 0.45), "frame"),
-        box(f"{name}Bull", (-1.6, -BULL, -0.7), (1.6, -0.45, 0.7), "frame"),
-        box(f"{name}Shaft", (11, -0.3, -0.3), (21, 0.3, 0.3), "frame"),
-        box(f"{name}Blade", (21, -0.6, -0.2), (27, 0.6, 0.2), "frame"),
-    ])
+def hull_of_gunwale():
+    low, high = 20.0, 60.0
+    for _ in range(40):
+        half = (low + high) / 2
+        hull = Hull("Skin", stations(half), CENTRE, 0.5, "hide", "hide", edge="hide")
+        low, high = (half, high) if sheer_metres(hull) < GUNWALE_METRES else (low, half)
+    print(f"hull: {2 * half * VOXEL_METRES:.2f} m long, {2 * PROFILE[-1][0] * VOXEL_METRES:.2f} m in beam, gunwale {sheer_metres(hull):.2f} m a side")
+    return hull, half
 
 
-def rowlock(hull, side):
-    x, y, z = hull.at(2 * TURN - STATION, len(PROFILE) - 1, side)
-    pin = box(f"Thole{'Port' if side > 0 else 'Starboard'}", (STATION - 0.3, y - 0.6, z - 0.3),
-              (STATION + 0.3, y + BULL + 1.2, z + 0.3), "frame", grain="y")
-    return pin, (STATION, y + 0.4 + BULL, z)
+def gunwales(hull):
+    rail = hull.rail("Gunwale", "frame", height=0.9, thickness=1.0, lift=-0.5)
+    return [[plank for plank in rail if plank["name"].startswith(f"Gunwale{side}")] for side in ("Port", "Starboard")]
 
 
-def shipped(side):
-    y, inboard = SHIPPED
-    return (0, y, 8 + side * inboard)
+def ends(half):
+    knots = []
+    for name, x in (("Bow", CENTRE - half), ("Stern", CENTRE + half)):
+        _, edges = section(x, *LINES[0][1:])
+        y = edges[-1][1]
+        inward = 1 if name == "Bow" else -1
+        knots.append([box(f"{name}Lash", (min(x, x + inward * 2.5), y - 1.6, CENTRE - 1), (max(x, x + inward * 2.5), y + 0.4, CENTRE + 1), "lashing")])
+    return knots
 
 
-def sweep(u):
-    return -math.cos(2 * math.pi * u)
+def ribs(hull, half):
+    xs = [x for x in range(int(CENTRE - half + 6), int(CENTRE + half - 5), RIB_SPACING)]
+    middle = sum(xs) / len(xs)
+    order = sorted(xs, key=lambda x: (abs(x - middle), x))
+    return [hull.rib(f"Rib{n}x", x, "frame", width=RIB_WIDTH, depth=RIB_DEPTH) for n, x in enumerate(order, 1)]
 
 
-def depth(u):
-    return max(0.0, min(1.0, 0.5 + 1.6 * math.sin(2 * math.pi * u)))
+def stringers(hull):
+    pieces = []
+    inside = hull.t + STRINGER / 2
+    for k in range(1, len(PROFILE) - 1):
+        for side, label in ((-1, "Port"), (1, "Starboard")):
+            points = [hull.point(i, k, side) for i in range(1, len(hull.stations) - 1)]
+            points = [(x, y + inside, z - side * inside) for x, y, z in points]
+            pieces.append(path(f"Stringer{label}{k}x", points, STRINGER, STRINGER, "frame", overlap=0))
+    keel = [(x, edges[0][1] + inside, CENTRE) for x, edges in hull.stations[1:-1]]
+    pieces.insert(0, path("Keelson", keel, STRINGER, STRINGER, "frame", overlap=0))
+    return pieces
 
 
-def rowing(tholes):
-    def pose(sweep_at, depth_at):
-        def at(frame):
-            u = frame / FRAMES
-            yaw = 90 - 28 * sweep_at(u)
-            pitch = -13 - 11 * depth_at(u)
-            return {name: moved(shipped(side), (side * 90, 0, 0), tholes[name],
-                                {"rotationY": -side * yaw, "rotationZ": pitch})
-                    for name, side in OARS.items()}
-        return at
-
-    return strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
-                   pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)))
+def thwart(hull, half):
+    x = CENTRE + THWART_SHARE * 2 * half - half
+    reach = breadth(hull.section(x), THWART_SEAT) - 0.4
+    y = THWART_SEAT - THWART
+    return [[box("ThwartPole", (x - THWART / 2, y, CENTRE - reach), (x + THWART / 2, THWART_SEAT, CENTRE + reach), "frame", grain="z")]]
 
 
-def build(path):
-    shape = Shape(path, {
+def cover(hull):
+    planks = hull.strakes()
+    areas = []
+    for plank in planks:
+        board = plank["children"][0]
+        areas.append((plank["from"][0], (board["to"][0] + board["from"][0]) * (board["to"][1] - board["from"][1]) * VOXEL_METRES ** 2, plank))
+    area = sum(square for _, square, _ in areas)
+    sections = math.ceil(area / SECTION_SQUARE_METRES)
+    print(f"cover: {area:.2f} m² of hide, {sections} sections of {SECTION_SQUARE_METRES} m²")
+    parts, done = [[] for _ in range(sections)], 0
+    for _, square, plank in sorted(areas, key=lambda entry: entry[0]):
+        parts[min(sections - 1, int((done + square / 2) / (area / sections)))].append(plank)
+        done += square
+    return parts
+
+
+def lacing(hull):
+    perimeter = 2 * sheer_metres(hull)
+    metres = perimeter / LACING_STEP_METRES * LACING_TURN_METRES + perimeter
+    ropes = math.ceil(metres / ROPE_METRES)
+    print(f"lacing: {metres:.0f} m round a {perimeter:.2f} m gunwale, {ropes} ropes")
+    top = len(PROFILE) - 1
+    wraps = []
+    for side, label in ((-1, "Port"), (1, "Starboard")):
+        for n in range(LACES):
+            i = 1 + n * (len(hull.stations) - 3) / (LACES - 1)
+            a, b = hull.point(int(i), top, side), hull.point(min(int(i) + 1, len(hull.stations) - 1), top, side)
+            f = i - int(i)
+            x, y, z = (p + f * (q - p) for p, q in zip(a, b))
+            wraps.append(box(f"Lace{label}{n + 1}", (x - 0.4, y - 1.6, z - 0.7), (x + 0.4, y + 0.4, z + 0.7), "lashing"))
+    return [wraps[len(wraps) * r // ropes:len(wraps) * (r + 1) // ropes] for r in range(ropes)]
+
+
+def build(path_):
+    shape = Shape(path_, {
         "hide": "game:block/leather/poor",
         "frame": "game:block/wood/debarked/oak",
+        "lashing": "game:item/resource/rope",
         "bilge": BILGE,
     })
-    hull = Hull("Skin", STATIONS, 8, 0.5, "hide", "hide", edge="hide")
-    shape.add(hull.strakes())
-    shape.add(hull.transom("Transom", -22.5, 0.8, "hide"))
-    shape.add(hull.rail("Outwale", "frame", height=0.9, thickness=0.7, lift=-0.5))
-    shape.add(hull.rail("Inwale", "frame", height=0.7, thickness=1.6, lift=-1.4))
-    for n, x in enumerate(range(-20, 38, 3), 1):
-        shape.add(hull.rib(f"Lath{n}x", x, "frame", width=0.8, depth=0.4))
-    for n, x in enumerate(range(-20, 24, 2), 1):
-        (_, y), (half, _) = hull.section(x + 0.7)[:2]
-        shape.add(box(f"Floor{n}", (x, y + 0.4, 8 - half + 0.6), (x + 1.4, y + 0.8, 8 + half - 0.6), "frame", grain="z"))
-    half = hull.section(THWART + 0.8)[-1][0] - 1
-    shape.add(box("Thwart", (THWART, 6.2, 8 - half), (THWART + 1.6, 7, 8 + half), "frame", grain="z"))
-    shape.add(box("StemPost", (38.4, 5, 7.3), (40.6, 11.2, 8.7), "frame", grain="y"))
-    shape.add(hull.hide_water(9.2), hull.bilge(9.2))
-    shape.turn_about(TURN)
-    tholes = {}
-    for name, side in OARS.items():
-        pin, tholes[name] = rowlock(hull, side)
-        shape.add(pin, oar(name, side))
+    hull, half = hull_of_gunwale()
+    shape.add(stages("Gunwale", gunwales(hull)))
+    shape.add(stages("EndLashing", ends(half)))
+    shape.add(stages("Ribs", ribs(hull, half)))
+    shape.add(stages("Stringers", stringers(hull)))
+    shape.add(stages("Cover", cover(hull), wood="none"))
+    shape.add(stages("Lacing", lacing(hull)))
+    shape.add(stages("Thwart", thwart(hull, half)))
+    shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo")
-    crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(tholes), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
-         {"rotationZ": 12})
+    shape.write()
 
 
 if __name__ == "__main__":

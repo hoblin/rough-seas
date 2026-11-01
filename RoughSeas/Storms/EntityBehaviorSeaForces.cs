@@ -31,6 +31,8 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private float speedMultiplier;
     private readonly Dictionary<string, SeatPose> seated = new();
     private EntityBehaviorSeatable? seatable;
+    private IMasted? mast;
+    private double designedMastMetres;
     private SeaClock.Watch watch = null!;
     private float sinceUpdate;
     private double sinceWave;
@@ -43,7 +45,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public double BeamMetres { get; private set; }
 
-    public double MastMetres { get; private set; }
+    public double MastMetres => mast?.MastMetres(designedMastMetres) ?? designedMastMetres;
 
     public IBuoyant? Buoyant => buoyant;
 
@@ -73,7 +75,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         watch = sea.Clock.StartWatch();
         Ride = new WaveRide(storms, weather, this);
         BeamMetres = attributes["beamMetres"].AsDouble();
-        MastMetres = attributes["mastMetres"].AsDouble();
+        designedMastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();
         dry = Seaworthiness.From(attributes);
         speedMultiplier = properties.Attributes?["speedMultiplier"].AsFloat(1) ?? 1;
@@ -86,6 +88,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         bilge = entity.GetBehavior<EntityBehaviorBilge>();
         mooring = entity.GetBehavior<EntityBehaviorMooring>();
         seatable = entity.GetBehavior<EntityBehaviorSeatable>();
+        mast = entity.SidedProperties.Behaviors.OfType<IMasted>().FirstOrDefault();
     }
 
     public double Force(SeaState state) =>

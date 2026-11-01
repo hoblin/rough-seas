@@ -10,12 +10,11 @@ public class SeaworthinessTests
     private readonly SwampingConfig swamping = Fixtures.Config().Swamping;
 
     [Fact]
-    public void AMetreAndAHalfSwellComesOverTheDugoutButNotTheCurrachOrTheOutrigger()
+    public void ATwoMetreSwellComesOverTheDugoutButNotTheCurrach()
     {
-        var crest = waves.Crest(1.5, breaking: false);
+        var crest = waves.Crest(2, breaking: false);
         Assert.True(Of("dugout").ShippedShare(crest) > 0);
         Assert.Equal(0, Of("currach").ShippedShare(crest));
-        Assert.Equal(0, Of("outrigger").ShippedShare(crest));
     }
 
     [Fact]
@@ -69,7 +68,7 @@ public class SeaworthinessTests
     [Fact]
     public void AFullBilgeLeavesHerAwashSoEveryCrestComesAboard()
     {
-        var full = Fixtures.Afloat("currach", litres: 1500);
+        var full = Fixtures.Afloat("currach", litres: 1800);
         Assert.Equal(0, full.FreeboardMetres);
         Assert.Equal(1, full.ShippedShare(waves.Crest(0.5, breaking: false)));
     }
@@ -106,8 +105,8 @@ public class SeaworthinessTests
     public void WaterAboardLowersHerSideUntilAFullBilgeBringsItToTheWater()
     {
         var dugout = Fixtures.Hull("dugout");
-        Assert.True(Fixtures.Afloat("dugout", litres: 225).FreeboardMetres < Of("dugout").FreeboardMetres);
-        Assert.InRange(dugout.Float(dugout.Crewed(litres: 449), litres: 449).FreeboardMetres, -0.01, 0.01);
+        Assert.True(Fixtures.Afloat("dugout", litres: 578).FreeboardMetres < Of("dugout").FreeboardMetres);
+        Assert.InRange(dugout.Float(dugout.Crewed(litres: 1155), litres: 1155).FreeboardMetres, -0.01, 0.01);
     }
 
     private static Seaworthiness Of(string vessel) => Fixtures.Afloat(vessel);

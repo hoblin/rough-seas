@@ -10,6 +10,8 @@ bin/scene dock [CODE...]   calm noon at open sea, the player in creative flying 
 bin/scene look ID [DX DY DZ]
                            the one way to look at anything: fly to entity ID's position plus DX DY DZ
                            (default 3 1 0: east of it and a block up), hover there and aim at it.
+                           ID may be a point instead, X,Y,Z as commands take them (relative to the
+                           map centre): blocks with no entity yet, such as logs laid out to build on.
                            A shot from any side, over land or sea; 0 6 0.01 looks straight down,
                            above the water's tint. `bin/game hotkey togglehud` hides the HUD.
 bin/scene photo ID FILE [DX DY DZ] [hover]
@@ -42,7 +44,7 @@ bin/scene seats [CODE...]  the player in every seat of each vessel (default: our
                            and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
 bin/scene strokes [CODE...]
-                           the player rowing or paddling each vessel (default: ours), forward and
+                           the player rowing or paddling each vessel (default: ours with their own oars or paddle), forward and
                            backward, from the front, the side and behind, in third person: a burst
                            over one stroke per view, <temp>/strokes/CODE-STROKE-VIEW/sheet.png.
                            Checks the rower's arms frame by frame.
@@ -50,7 +52,7 @@ bin/scene recipe PAGE OUTPUT FILE [FROM]
                            the handbook's crafting grid that makes OUTPUT (out of FROM, when given) on
                            handbook page PAGE, held on that recipe, "=" and output included, as a .png
                            FILE at twice the game's size:
-                           bin/scene recipe item-roughseas:coracle roughseas:coracle coracle.png.
+                           bin/scene recipe item-roughseas:reedboat roughseas:reedboat reedboat.png.
                            Opens the handbook and waits for it to build its pages.
 bin/scene recipes DIR      every recipe the mod adds, by `recipe`, into DIR: docs/wiki/images/recipes
                            for the wiki. A new recipe gets its line in this script's list.
@@ -85,6 +87,14 @@ dock() {
 
 look() {
   local id=$1 dx=${2:-3} dy=${3:-1} dz=${4:-0} entity at
+  if [[ $id == *,*,* ]]; then
+    local x y z
+    IFS=, read -r x y z <<<"$id"
+    "$game" do "/bridge fly $(awk -v x="$x" -v y="$y" -v z="$z" -v dx="$dx" -v dy="$dy" -v dz="$dz" 'BEGIN { print x + dx, y + dy, z + dz }')" >/dev/null
+    "$game" look $(awk -v dx="$dx" -v dy="$dy" -v dz="$dz" \
+      'BEGIN { pi = atan2(0, -1); print atan2(-dx, -dz), pi + atan2(dy + 1.6, sqrt(dx * dx + dz * dz)) }') >/dev/null
+    return
+  fi
   entity=$("$game" entity "$id")
   [[ $entity == {* ]] || { echo "$entity" >&2; exit 1; }
   at=$(jq -r --argjson dx "$dx" --argjson dy "$dy" --argjson dz "$dz" <<<"$entity" \
@@ -273,8 +283,6 @@ seats() {
 
 strokes() {
   local codes=("$@") dir=strokes id
-  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:barkcanoe-birch roughseas:outrigger-oak roughseas:coracle \
-    roughseas:currach)
   for code in "${codes[@]}"; do
     clear >/dev/null
     id=$(dock "$code" | jq -r '.vessels[0].EntityId')
@@ -321,17 +329,14 @@ recipes() {
   local dir=$1 name page output from
   mkdir -p "$dir"
   while read -r name page output from; do
-    recipe "item-$page" "$output" "$dir/$name.png" "$from"
+    recipe "$page" "$output" "$dir/$name.png" "$from"
   done <<'EOF'
-birch-bark         roughseas:bark-birch         roughseas:bark-birch
-reed-boat          roughseas:reedboat           roughseas:reedboat
-coracle            roughseas:coracle            roughseas:coracle
-birch-bark-canoe   roughseas:barkcanoe-birch    roughseas:barkcanoe-birch
-currach            roughseas:currach            roughseas:currach
-outrigger          roughseas:outrigger-oak      roughseas:outrigger-oak
-outrigger-redwood  roughseas:outrigger-redwood  roughseas:outrigger-redwood
-anchor-warp        roughseas:anchorwarp         roughseas:anchorwarp
-anchor-warp-ropes  rope                         game:rope                    roughseas:anchorwarp
+birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
+splitting-wedge    block-roughseas:wedge-we          roughseas:wedge-we
+reed-bundle        block-roughseas:reedbundle-one-we roughseas:reedbundle-one-we
+laths              item-roughseas:lath-oak-5-dry     roughseas:lath-oak-5-dry
+anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
+anchor-warp-ropes  item-rope                         game:rope                    roughseas:anchorwarp
 EOF
   "$game" close >/dev/null
   ls "$dir"

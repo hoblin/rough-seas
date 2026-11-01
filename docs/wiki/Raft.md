@@ -35,7 +35,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 
 ## Its neighbours
 
-- The [reed boat](Reed-Boat) is cheaper still, and lies on the bottom after three days afloat.
+- The [reed boat](Reed-Boat) needs no axe, carries you low and wet, and lies on the bottom within four days afloat.
 - The [dugout](Dugout) costs five logs and an axe's work, and takes knocks no raft survives.
 
 ## Every form it takes

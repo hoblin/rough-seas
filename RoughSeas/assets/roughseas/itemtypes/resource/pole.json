@@ -1,0 +1,18 @@
+{
+    "code": "pole",
+    "class": "roughseas:ItemOfWood",
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}],
+    "behaviors": [{"name": "roughseas:framing"}],
+    "attributes": {
+        "logTextures": {"wood": "inside-north"},
+        "handbook": {"groupBy": ["pole-*"]}
+    },
+    "shape": {"base": "roughseas:item/pole"},
+    "maxstacksize": 8,
+    "materialDensity": 600,
+    "combustibleProps": {"burnTemperature": 700, "burnDuration": 40},
+    "creativeinventory": {"general": ["*"], "items": ["*"]},
+    "guiTransform": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 0.5, "y": 0.1, "z": 0.5}, "scale": 1.6},
+    "tpHandTransform": {"translation": {"x": -0.7, "y": -0.1, "z": -0.5}, "rotation": {"x": 0, "y": 0, "z": -10}, "scale": 0.9},
+    "groundTransform": {"origin": {"x": 0.5, "y": 0, "z": 0.5}, "scale": 2.5}
+}

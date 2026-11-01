@@ -1,0 +1,19 @@
+{
+    "code": "debarkedtrunk",
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/bark"}],
+    "behaviors": [{"name": "PushEventOnBlockBroken", "properties": {"eventName": "testForDecay"}}, {"name": "MyceliumHost"}, {"name": "RopeTieable"}],
+    "shape": {"base": "game:block/basic/cube"},
+    "drawtype": "cube",
+    "blockmaterial": "Wood",
+    "requiredMiningTier": 1,
+    "textures": {"all": {"base": "game:block/wood/debarked/birch", "rotation": 90}},
+    "replaceable": 500,
+    "resistance": 4.5,
+    "sounds": {
+        "place": "game:block/planks",
+        "walk": "game:walk/wood",
+        "hit": "game:block/planks",
+        "break": "game:block/planks",
+        "byTool": {"Axe": {"hit": "game:block/chop", "break": "game:block/planks"}}
+    }
+}

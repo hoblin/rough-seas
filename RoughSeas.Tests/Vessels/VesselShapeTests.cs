@@ -145,10 +145,42 @@ public class VesselShapeTests
         if (entity["behaviorConfigs"]!["roughseas:burnout"]?.Value<int>("hollowings") is not { } hollowings) return;
 
         var names = Elements(shape["elements"]!).Select(element => element.Value<string>("name")).ToHashSet();
-        var stages = Enumerable.Range(0, hollowings).SelectMany(n => new[] { $"Blank{n}", $"Char{n}", $"Fire{n}" }).Append("Clay");
+        var stages = Enumerable.Range(0, hollowings).SelectMany(n => new[] { $"Blank{n}", $"Char{n}", $"Wood{n}", $"Fire{n}" }).Append("Clay");
 
         Assert.Empty(stages.Where(stage => !names.Contains(stage)));
         Assert.DoesNotContain($"Blank{hollowings}", names);
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void DrawsEveryPieceOfItsFramingInItsOwnGroup(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        var configs = entity["behaviorConfigs"]!;
+        if ((configs["roughseas:framing"] ?? configs["roughseas:rigging"] ?? configs["roughseas:covering"])?["stages"] is not { } stages) return;
+
+        var elements = Elements(shape["elements"]!).ToDictionary(element => element.Value<string>("name")!);
+        if (configs["roughseas:framing"]?["barkSeconds"] != null)
+        {
+            Assert.Contains("Sheet", elements.Keys);
+            Assert.Contains("Skin", elements.Keys);
+        }
+        List<string?> Pieces(string group) => elements[group]["children"]!.Select(piece => piece.Value<string>("name")).ToList();
+        Assert.All(stages, stage =>
+        {
+            var group = stage.Value<string>("group")!;
+            var pieces = Pieces(group);
+            Assert.NotEmpty(pieces);
+            Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{group}{n}"), pieces);
+            if (stage.Value<string>("replaces") is { } replaced)
+            {
+                Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{replaced}{n}"), Pieces(replaced));
+            }
+            if (stage.Value<string>("bends") is { } bent)
+            {
+                Assert.Equal(Pieces(bent).Select(name => name!.Replace(bent, bent + "Bent")), Pieces(bent + "Bent"));
+            }
+        });
     }
 
     [Fact]
@@ -213,4 +245,19 @@ public class VesselShapeTests
     private static IEnumerable<string> TextureCodes(JToken textures) => textures.Children<JProperty>().Select(texture => texture.Name);
 
     private static IEnumerable<string> LogTextureCodes(JToken type) => type["attributes"]?["logTextures"] is { } faces ? TextureCodes(faces) : [];
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void LaysOutAsManyLathsOnTheGroundAsHerFirstStageDraws(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        if (entity["behaviorConfigs"]!["roughseas:covering"] is not { } covering) return;
+
+        var layout = covering["layout"]!;
+        var laths = layout.Value<string>("kind") == "pair" ? 2 : layout.Value<int>("along") + layout.Value<int>("across");
+        var first = covering["stages"]![0]!.Value<string>("group");
+        var group = Elements(shape["elements"]!).Single(element => element.Value<string>("name") == first);
+
+        Assert.Equal(laths, group["children"]!.Count());
+    }
 }

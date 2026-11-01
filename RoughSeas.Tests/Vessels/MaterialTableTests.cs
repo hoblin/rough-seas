@@ -31,11 +31,46 @@ public class MaterialTableTests
     }
 
     [Fact]
+    public void APartNotYetInHerAddsNothingAndAPartOfAnotherWoodWeighsItsVolumeOfThatWood()
+    {
+        var oak = new VesselPart { Material = "wood-oak", Share = 1 };
+        var hide = new VesselPart { Material = "hide", Share = 1 };
+        var full = table.Build([hide, oak], 100);
+
+        var bare = table.Build([hide, oak.As("wood-ebony", 0)], 100);
+        var ebony = table.Build([hide, oak.As("wood-ebony", 1)], 100);
+
+        Assert.Equal(50, bare.Kilograms, 6);
+        Assert.Equal(full.Litres, ebony.Litres, 6);
+        Assert.Equal(50 + 50.0 / 600 * 1200, ebony.Kilograms, 6);
+    }
+
+    [Fact]
+    public void APartTakesItsShareOfTheCapacityOnlyAsFarAsItIsInHer()
+    {
+        var oak = new VesselPart { Material = "wood-oak", Share = 1 };
+        var hide = new VesselPart { Material = "hide", Share = 1 };
+
+        Assert.Equal(0.5, table.StrengthFactor([hide, oak.As("wood-ebony", 0)]), 6);
+        Assert.Equal(1.6, table.StrengthFactor([hide, oak.As("wood-ebony", 1)]), 6);
+        Assert.Equal(0.75 * Math.Pow(1.6, 0.5), table.StrengthFactor([hide, oak.As("wood-ebony", 0.5)]), 6);
+    }
+
+    [Fact]
     public void ScalesTheCapacityByEveryPartAgainstItsReference()
     {
         var parts = new[] { Part("wood-ebony", "wood-oak"), Part("rope-bast", "rope-flax") };
 
         Assert.Equal(0.8, table.StrengthFactor(parts), 6);
+    }
+
+    [Fact]
+    public void APartThatTakesNoKnocksLeavesTheCapacityToTheRest()
+    {
+        var hull = Part("wood-ebony", "wood-oak");
+        var rig = new VesselPart { Material = "wood-oak", Share = 9, Present = 0.1, TakesKnocks = false };
+
+        Assert.Equal(table.StrengthFactor([hull]), table.StrengthFactor([hull, rig]), 6);
     }
 
     [Fact]

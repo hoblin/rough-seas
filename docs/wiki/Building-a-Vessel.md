@@ -21,6 +21,11 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:launch` | client and server | a push from the shore that slides a heavy vessel into the water ([Built in place](#built-in-place)) |
+| `roughseas:framing` | client and server | a vessel laid piece by piece where she lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound by the water ([Bound in place](#bound-in-place)) |
+| `roughseas:riggable` | client and server | a finished hull that a boom laid across her joins to a float, making her the vessel she is rigged into ([Rigged in place](#rigged-in-place)) |
+| `roughseas:rigging` | client and server | that vessel, rigged piece by piece where she lies ([Rigged in place](#rigged-in-place)) |
+| `roughseas:covering` | client and server | a hull bound from laths laid out on the ground, framed and covered with hides piece by piece where it lies ([Laid out on the ground](#laid-out-on-the-ground)) |
+| `roughseas:droop` | client | ends that sag as a reed hull soaks ([Bound in place](#bound-in-place)) |
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
@@ -30,30 +35,35 @@ They build on each other, so add them in this order. `seaforces` is the vessel's
 
 Every key may carry a `sources` entry beside it, text about where each number came from. Our code doesn't read it; we keep a real-world source for every number there, and so can you.
 
-Our [coracle](Coracle), its sources left out, carries all five:
+Our [coracle](Coracle), its sources and its build left out, carries all five:
 
 ```json
 "behaviorConfigs": {
     "roughseas:vesselintegrity": {
         "impactCapacity": 400,
-        "parts": [{ "material": "hide", "share": 0.5 }, { "material": "wood-willow", "share": 0.5 }],
+        "parts": [{ "name": "hide", "material": "hide", "share": 0.46 }, { "name": "frame", "material": "wood-willow", "share": 0.54 }],
         "shell": {
             "kind": "skin", "material": "hide", "metres": 0.005,
-            "backing": { "material": "wood-willow", "metres": 0.03 },
-            "backedShare": 0.15, "bottomBackedShare": 0.44, "spanMetres": 0.52
+            "backing": { "material": "wood-willow", "metres": 0.01 },
+            "backedShare": 0.47, "bottomBackedShare": 0.6, "spanMetres": 0.37
         },
-        "depthMetres": 0.27,
-        "waterplaneSquareMetres": 1.25,
-        "repairs": [{ "material": { "type": "item", "code": "game:hide-prepared-small", "stacksize": 1 }, "restores": 0.67, "saturation": 40 }],
-        "wreckage": [{ "type": "item", "code": "game:stick", "quantity": { "avg": 3, "var": 2 } }],
+        "depthMetres": 0.36,
+        "waterplaneSquareMetres": 1.0,
+        "seep": { "litresPerHourASeam": 12, "greaseDays": 2.5 },
+        "cover": { "hides": { "prepared": 2 }, "seams": 0 },
+        "repairs": [
+            { "material": { "type": "item", "code": "game:hide-prepared-small", "stacksize": 1 }, "restores": 0.67, "saturation": 40 },
+            { "material": { "type": "item", "code": "game:fat-rendered", "stacksize": 1 }, "restores": 0.5, "saturation": 20, "greases": true }
+        ],
+        "wreckage": [{ "type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": { "avg": 3, "var": 2 } }],
         "damage": { "textures": ["hide"], "material": "hide" }
     },
     "roughseas:seaforces": {
-        "beamMetres": 1.4, "mastMetres": 0, "windageSquareMetres": 0.5,
+        "beamMetres": 1.07, "mastMetres": 0, "windageSquareMetres": 0.5,
         "heave": 0.8, "capsizeBreakerMetres": 0.6,
         "rollResponse": 1.6, "pitchResponse": 1.6
     },
-    "roughseas:bilge": { "capacityLitres": 250, "deckSquareMetres": 1.5, "drainLitresPerHour": 0 }
+    "roughseas:bilge": { "capacityLitres": 350, "deckSquareMetres": 1.26, "drainLitresPerHour": 0 }
 },
 "client": {
     "behaviors": [
@@ -116,20 +126,34 @@ To show the water, give the shape a group `Bilge` with one child per level from 
 
 ## Built in place
 
-`roughseas:burnout` builds a vessel the way a dugout was really made: from five logs of one wood lying end to end beside the water, burnt and hewn out a day at a time. A fire laid on the middle log of such a row, with a torch or a firestarter, takes the logs away and leaves the vessel there as a blank, burning: the entity of your vessel's code and the logs' wood. Each hollowing after that takes wet clay along the rim, a fire, and an axe to hew out the char; the last one finishes her. The rule for the row needs nothing from you: any vessel with this behaviour whose code ends in a wood (`dugout-{wood}`) is built from that wood's lying logs, and lying log sections, in every mod's woods.
+`roughseas:burnout` builds a vessel the way a dugout was really made: from five logs of one wood lying end to end beside the water, burnt and hewn out a fire at a time. Dry grass laid with Shift on the middle log of such a row, where vanilla would start a campfire, takes the logs away and leaves the vessel there as a blank, the grass its first fire's base: the entity of your vessel's code and the logs' wood. The rule for the row needs nothing from you: any vessel with this behaviour whose code ends in a wood (`dugout-{wood}`) is built from that wood's lying logs, and lying log sections, in every mod's woods.
+
+Each hollowing then takes, in the hollow, what vanilla's campfire takes: clay along the rim, dry grass, four of anything vanilla builds a firepit with (`firepitConstructable`), and a torch or firestarter. Once the fire burns out, an axe held on the blank hews out the char a stroke at a time; the last hewing finishes her.
+
+- **Clay.** A ball covers 25 voxels, as in vanilla's clay forming, and the rim takes as many voxels as the shape's `Clay{level}` group covers seen from above, one voxel thick: each fire's rim, as she narrows. Nothing to set: the count follows your shape.
+- **The outside.** The blank is the whole trunk the logs make: each hewing also takes a sixth of `unhewnLitres` of sound wood off her outside, with the strokes that hew out the char, and her depth and waterplane go from `blankDepthMetres` and `blankWaterplaneSquareMetres` to her finished ones a sixth at a time. That wood weighs and floats until it is hewn away.
+- **A fire without clay** is never refused. While the rim lacks any of its clay, the fire chars the rim at the hollow's rate, and once that char reaches `wallMetres` the blank is spoiled: she is drawn with every face of her wood texture charred, takes no more work, and breaks up as any vessel does.
+- **Strokes.** A stroke breaks away a strip of the fire's char as wide as `axeEdgeMetres` across `hollowBeamMetres` of hollow, so a hewing takes the hollow's share of the hold over one such strip. The holder strikes every `secondsPerStroke`, and `hewSaturation` is spread over a hewing's strokes. Every axe in the game, a modded one too, hews.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
 | `hollowings` | count | 1 | the fires and hewings that hollow her out |
 | `hollowDepthMetres` | m | 0 | from the rim to the floor of the finished hollow |
-| `rimMetres` | m | 0 | the rim's height above the vessel's origin, where the first fire burns |
+| `rimMetres` | m | 0 | the finished rim's height above the vessel's origin |
+| `blankDepthMetres` | m | 0 | the trunk's height as the logs lay, where the first fire burns |
+| `blankWaterplaneSquareMetres` | m² | 0 | the trunk's waterplane, floating |
+| `unhewnLitres` | l | 0 | the trunk's wood outside the finished hull |
 | `charMillimetresPerHour` | mm per game hour | 1 | how fast the fire chars its way down: one fire burns for the hollow's depth over `hollowings` at this rate |
-| `clay` | item code | none | what guards the rim, wildcards allowed (ours `game:clay-*`); one a fire |
-| `hewSaturation` | saturation | 0 | what a hewing costs the one who hews |
+| `clay` | item code | none | what guards the rim, wildcards allowed (ours `game:clay-*`) |
+| `wallMetres` | m | 1 | the char on an unguarded rim that spoils the blank: her walls' thickness |
+| `axeEdgeMetres` | m | 1 | the width of char a stroke breaks away |
+| `hollowBeamMetres` | m | 1 | the width of the hollow a stroke sweeps across |
+| `secondsPerStroke` | s | 1 | how often a held axe strikes |
+| `hewSaturation` | saturation | 0 | what a whole hewing costs the one who hews |
 
-The vessel needs a `roughseas:bilge` too: its `capacityLitres` is the hollow that the build cuts out. At every stage she is a vessel: the wood not yet cut out weighs and floats as her hull does, and her `roughseas:bilge` holds only what is cut, so a blank floats solid and a half-hollowed hull ships half a bilge. She cracks and breaks as a finished one, rain puts her fire out, and water in the hollow keeps it from being lit. She gets her seats only when finished. A vessel already in a world from before, with no build of its own, is finished.
+The vessel needs a `roughseas:bilge` too: its `capacityLitres` is the hollow that the build cuts out. At every stage she is a vessel: the wood not yet cut out weighs and floats as her hull does, backs her sides below the cut and her bottom against a blow, and her `roughseas:bilge` holds only what is cut, so a blank floats solid and a half-hollowed hull ships half a bilge. She cracks and breaks as a finished one, rain puts her fire out, and water in the hollow keeps it from being lit. She gets her seats only when finished. A vessel already in a world from before, with no build of its own, is finished.
 
-Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its charred top) and `Fire` (the fire burning on it) each have one child per hollowing from the rim down: `Blank0`, `Blank1`…; `Clay`, the clay along the rim, is one group. The behaviour shows the ones the build is at and hides the rest, and all of them once she is finished; the item lists them in its `ignoreElements`. Our dugout's builder, `bin/lib/hulls/dugout.py`, draws them.
+Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its charred top), `Wood` (the fire laid on it) and `Fire` (its embers once lit) each have one child per hollowing: `Blank0`, `Blank1`…, `Blank{n}` the whole trunk as it stands at that level, worked from the logs a sixth of the way to the hull at each; `Clay` too has one, `Clay{n}`, the rim of that level. `Shell` is the finished hull. The behaviour shows the ones the build is at and hides the rest, and only `Shell` once she is finished; the item lists the stages in its `ignoreElements`. A spoiled blank's faces take the shape's `char` texture in place of `inside`, `bark` and `rings`, the log's own faces she starts in. Our dugout's builder, `bin/lib/hulls/dugout.py`, draws them.
 
 `roughseas:launch` lets anyone ashore push a vessel with Shift and an empty hand. A push slides her as far as one step of a person's push moves her mass against the ground's friction ([why](The-Science-of-the-Hull#building-a-dugout)), away from the one pushing.
 
@@ -139,7 +163,97 @@ Give the shape its stages as groups. `Blank` (the wood still uncut), `Char` (its
 | `strideMetres` | m | 0 | how far a push carries |
 | `friction` | coefficient | 0 | of the hull sliding on the shore |
 
-List `roughseas:burnout` and `roughseas:launch` before `creaturecarrier`, so that a click with clay, a torch or an axe builds her, and a push with Shift doesn't seat the player.
+List `roughseas:burnout` and `roughseas:launch` before `creaturecarrier`, so that a click with clay, dry grass, firewood or a torch builds her, and a push with Shift doesn't seat the player.
+
+### Framed in place
+
+`roughseas:framing` builds a vessel the way a bark canoe was really made: its bark comes off a standing tree in one sheet, and its frame goes into that sheet where it lies. A knife held on a standing trunk of your vessel's wood, at least `trunkBlocks` tall, for `barkSeconds`, strips the whole trunk and drops the vessel beside it at the start of her build: the entity of your vessel's code and that wood. Any vessel with this behaviour whose code ends in a wood (`barkcanoe-{wood}`) is stripped off that wood's grown logs, `{domain}:log-grown-{species}-ud`, and the trunk becomes our `roughseas:debarkedtrunk-{wood}`, a grown log of its tree with its bark gone, so that it still fells whole and holds its leaves. That block exists for the woods in `config/vessels/canoebarks.json`, every mod's included; a vessel of another wood is not stripped, and the server's debug log says so.
+
+She is then laid stage by stage, in the order of `stages`, each piece held on her for its stage's `seconds`. A stage's `work` says what lays a piece of it:
+
+- `lath`: a lath, wet. Two to five logs lying end to end with a splitting wedge on each split into poles as long as the row when an axe drives a wedge, and an axe splits a pole into laths of its length in the crafting grid; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
+- `pole`: a pole, split from such a row. Like laths, the first makes her frame of its wood.
+- `hide`: a hide of one of `hideStates`, which covers as many of the stage's pieces as small hides it is worth (small 1, medium 2, large 3, huge 5) and is held on her as many times `seconds`.
+- `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done. A hold kept on past her last lashing ties nothing; a fresh click ties her as vanilla does.
+- `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
+- `hew`: any axe, which loses a point of durability a piece.
+- `cloth`: a piece of cloth.
+- `plank`: a plank, `planks` the item code.
+
+Every piece of a `lath` or `pole` stage takes one at least as long as it, cut down; a shorter one is refused. The shape names each piece's length: its builder writes `"metres"` on the piece's group, measured along the run its frame texture draws (`stages()` in `bin/lib/hulls/shape.py` does it), and an item's length is its `length` variant.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `stages` | list | none | what she is laid with, in order: each a `group`, a `work`, `seconds` a piece, and the flags below |
+| `group` | shape group | none | the group that draws the stage, one child per piece: `Frame1`, `Frame2`…; the count of children is the count of pieces. A look at her shows the stage by the lang key `roughseas:shipyard-stage-{group}` in lower case, with the pieces laid and the pieces in all |
+| `work` | `lath`, `pole`, `rope`, `pitch`, `hew`, `cloth`, `plank` or `hide` | `lath` | what lays a piece |
+| `seconds` | s | 0 | how long a piece is held on her: the real time of that work over sixty |
+| `lines` | bool | false | its laths line her shell: the shell's `backing` backs her only where they are laid |
+| `sets` | bool | false | its laths are bent in wet: she is finished only once the wettest of them has dried |
+| `seals` | bool | false | her hold holds water only once the stage is done; until then water runs through her |
+| `litres` | l | 0 | the pitch one piece takes |
+| `optional` | bool | false | she is finished without it, and it goes on her any time after: an outrigger's washstrakes |
+| `raisesMetres`, `raisesLitres` | m, l | 0 | how much higher her side and how much more her hold, once the stage is done, on top of her `depthMetres` and her bilge's `capacityLitres` |
+| `part` | part name | none | the part of her `parts` its pieces make, weighing as far as they are laid, in the wood they are of; pieces of one wood only, and her wreckage of them comes in it |
+| `texture` | texture code | none | the shape's texture that draws the pieces, redrawn in the wood they are of |
+| `replaces` | shape group | none | a group whose pieces each piece of this stage takes away once laid, `{replaces}{n}` for `{group}{n}`: a float's blunt end, for its hewn one |
+| `bends` | stage group | none | a stage this one bends once its first piece is laid: from then on that stage's pieces show from the group `{bends}Bent`, `{bends}Bent1`, `{bends}Bent2`…, and no longer from their own: a coracle's lattice, bent up by her gunwale |
+| `framePart` | part name | none | the part of her `parts`, by its `name`, that her laths or poles make: its share and its `reference` stay, the material is their wood, and only what is laid weighs and takes knocks. Her shape's `frame` texture is drawn in that wood |
+| `laths`, `poles`, `rope`, `pitch`, `cloth`, `planks`, `hides` | item codes | none | what each work takes, wildcards allowed (ours `roughseas:lath-*`, `roughseas:pole-*`, `game:rope`, `game:glueportion-pitch-*`, `game:cloth-*`, `game:plank-*`, `game:hide-*`) |
+| `hideStates` | list | none | the hides' `type` variants a `hide` stage takes: ours every stage before leather, `raw`, `soaked`, `scraped`, `prepared`, `oiled`, `pelt` and `salted` |
+| `barkSeconds` | s | 0 | how long the knife takes the bark off |
+| `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
+
+At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and the item shows her as far as she is built, and she takes her seats only once finished. A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull: the behaviour shows the one or the other. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as she is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
+
+### Rigged in place
+
+`roughseas:riggable` on a finished hull and `roughseas:rigging` on the vessel she becomes build one vessel onto another, the way an outrigger was really made: a finished dugout, a float log alongside, booms lashed across both. One of her successor's `poles` held on a riggable hull, for the successor's first stage's `seconds`, with `floatLogs` logs of one wood lying end to end along her `floatOffMetres` off to either side, the middle one beside her middle where the model draws the float, lays her first boom: the logs are taken away and she is replaced, where she lies, by the entity of her `vessel` code and her own wood, at the start of her rigging. What a hull keeps (its cracks, the water in it) goes with her, through the vessel behaviours that implement `IHandedOver`, turned end for end when the float lay on the side opposite the rigged model's. Riders get off, and what her accessory slots held drops beside her. A hull still being built is refused.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `vessel` | entity code | none | the vessel she becomes, without its wood (ours `roughseas:outrigger`); it carries `roughseas:rigging` |
+
+`roughseas:rigging` is `roughseas:framing` started that way: the same `stages` and keys, its first stage begun with the boom laid, and no bark. On top of them:
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `floatLogs` | count | 0 | the logs her float is laid from |
+| `mast` | shape group | none | the stage whose first piece stands her mast: until it is laid she has none, and draws no lightning |
+| `floatOffMetres` | m | 0 | how far off her centreline they lie: the row is found through the block that far out, within half a block |
+| `floorMetres` | m | 0 | the top of her hold's floor above her origin, her hull's: the bilge draws its water from there |
+| `floatPart` | part name | none | the part of her `parts` her float makes: its share and its `reference` stay, the material is the float's wood. Her shape's `float` texture is drawn in that wood |
+| `rigged` | shape groups | none | groups shown only once every piece she needs is laid, such as vanilla's `SailUnfurled` and `SailHalf`; until then her sail stays furled |
+
+A vessel already in a world from before, with no build of its own, is finished with every stage on, the `optional` ones too, its float, poles and pieces of its hull's wood. Our outrigger's builder, `bin/lib/hulls/outrigger.py`, draws her on the dugout's own hull.
+
+### Bound in place
+
+A block of class `roughseas:BlockBundles` is bundles lying where they were laid, the way a reed boat was really made: two long bundles side by side by the water, lashed together. It has the variants `count` (`one`, `two`) and `axis` (`we`, `ns`): a bundle placed lies along the way its placer looks, and a second held on it lies beside the first. Rope held on the pair for the first stage's `seconds`, with water beside the block, level with it or a block lower, takes the block away and leaves, where it lay, the entity of its `vessel` attribute, framed with that first stage's first piece laid: its rope the first lashing. Everything after is `roughseas:framing`, with no bark and no wood: our reed boat's stages are `Lashing` and `Tips`, which `replaces` her flat ends (`Flat1`, `Flat2`) with bound-up ones. Draw the block's `one` and `two` shapes from the same geometry as the vessel's `Blank` and `Flat` groups, as `bin/lib/hulls/reedboat.py` does, so the bundles become the vessel without moving.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `vessel` | entity code | none | in the block's `attributes`: the vessel the bundles are bound into (ours `roughseas:reedboat`); it carries `roughseas:framing`, whose first stage's `work` is `rope` |
+
+`roughseas:droop` draws ends that stand up by the stiffness of their reed and sag as the hull soaks. Each end's group has one child per sag, `{end}Droop0` dry to `{end}Droop{n}` saturated, and the behaviour shows the one nearest how soaked the hull is, as a `reed` hull counts it. The item lists every sag but `Droop0` in its `ignoreElements`.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `ends` | shape groups | none | the groups of the ends that sag (ours `Tips1`, `Tips2`) |
+
+### Laid out on the ground
+
+`roughseas:covering` builds a hide boat the way coracles and currachs were really made: laths laid out on the ground, bound into her first frame where they lie, then framed and covered with hides. It is `roughseas:framing` begun that way, with the same `stages` and keys and no bark.
+
+A wet lath held with Shift on the ground lies there at its full length, centred where the player aims, along or across the way they face: our block `roughseas:lathbed` holds the laths whose middles lie in it, and Shift with an empty hand takes the nearest back. Rope held on laths that lie in one of the vessel's `layout`s, every one at least as long as the longest piece of her first stage, of one wood and wet, binds them, for her second stage's `seconds`: the laths are taken away and the entity of her code is laid there, centred on them, her first stage laid and her second begun. Laths that make no layout stay laths. Laths dry where they lie as in the hand, and a dry one is refused, there and at binding.
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `layout` | object | none | how her first stage's laths are laid out: `{ "kind": "lattice", "along": 7, "across": 7 }`, so many laths along and across, each crossing every lath across it, spaced as her model draws them within `toleranceMetres` (`alongSpacingMetres`, `acrossSpacingMetres`; our coracle), or `{ "kind": "pair", "beamMetres": 1.2, "toleranceMetres": 0.25 }`, two laths side by side at her beam, overlapping end for end within the tolerance (our currach) |
+| `overturned` | bool | false | she is built upside down, and is finished only once turned over: a right-click with an empty hand turns her, once every piece she needs is laid |
+| `overturnedPivot` | voxels | 0 | the height of the line along her length she is turned about, so that her gunwale lies on the ground |
+
+A `hide` stage waits until her frame has set: a hide is refused while what was laid wet is still wet. A vessel bound anew starts ungreased. One from before the build, with no build of its own, is finished, the right way up, and covered as its hull's `cover` says. Our coracle's and currach's builders, `bin/lib/hulls/coracle.py` and `currach.py`, draw them, and print the ropes their lashings take and the sections their covers come to.
 
 ## The hull
 
@@ -158,11 +272,12 @@ A broad load cracks its place by its share of the capacity and breaks the hull u
 | `impactCapacity` | the energy in joules a broad load must reach to break up a hull of its reference material; a load of a third of it cracks its place a third of the way to stove in. Without it, no broad load harms the hull |
 | `shell` | what the hull's outside is, for point blows, cuts and breakers; see below. Without it, the frame's capacity resists point blows and cuts too, and no breaker harms the hull |
 | `minImpactSpeed` | the speed in m/s a hull takes in its stride when it runs into something, a block or another hull: a knock below it is no knock, and only the energy above it counts. Default 1 |
-| `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1). Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
+| `parts` | what it is built from, each `{ "material": "wood-{material}", "reference": "wood-oak", "share": 0.6 }`: the material, the one its capacity and `weight` were set for (the material itself when left out), and its share of that weight, in proportion to the other parts' (default 1); a `name` lets a build find the part whatever it is made of, and `"takesKnocks": false` keeps a part (a float, a rig) in her weight and buoyancy but out of her strength. Each part scales the capacity by its strength against its reference's, and its share of the weight by its density, from `config/vessels/materials.json` |
 | `depthMetres` | keel to gunwale amidships. With it the vessel floats by its mass; without it, at its `freeboardMetres` |
 | `waterplaneSquareMetres` | the area it cuts at the water, for a hull with a hold. Leave it out for a solid one, a raft or a bundle, which presses down through its own depth |
-| `hullBox` | `[fromX, fromY, fromZ, toX, toY, toZ]` in the shape's voxels: the hull its places are measured on, when its `Hull` element reaches over more than the hull (our outrigger's covers its float). By default, the `Hull` element |
-| `seep` | `{ "litresPerHour", "greaseDays" }` on a cracking hull: what its seams let in once ungreased, and how many days afloat a full greasing lasts |
+| `hullBox` | `[fromX, fromY, fromZ, toX, toY, toZ]` in the shape's voxels: the hull its places are measured on, when its `Hull` element reaches over more than the hull. By default, the `Hull` element |
+| `seep` | `{ "litresPerHourASeam", "greaseDays" }` on a cracking hull: what each seam between hides lets in once ungreased, and how many days afloat a full greasing lasts |
+| `cover` | `{ "hides": { "prepared": 2 }, "seams": 0 }` on a cracking hull: the hides it is covered with, by their `type` and the small hides' worth of each, and its seams, when no build says otherwise. A cover rots and soaks afloat by its hides, from `config/vessels/hides.json` ([Seeping and soaking](Hull-Condition#seeping-and-soaking)); a hull built with `roughseas:covering` is covered with the hides sewn on her |
 | `soak` | `{ "kgPerDay", "dryKgPerDay", "rotShare", "saturationKg" }` on a reed hull: the water it takes up a day afloat, what it dries a day in full sun, the share of what dries that stays as rot, and the most it holds |
 | `runsRapids` | true if rapids don't strike it |
 | `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives) |

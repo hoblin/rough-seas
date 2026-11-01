@@ -10,7 +10,7 @@ public class FlotationTests
     {
         var dugout = Fixtures.Hull("dugout");
 
-        Assert.Equal(0.2, dugout.Float(dugout.Crewed()).FreeboardMetres, 0.01);
+        Assert.Equal(0.41, dugout.Float(dugout.Crewed()).FreeboardMetres, 0.01);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class FlotationTests
     public void AFloodedLightBoatFloatsAwash()
     {
         var currach = Fixtures.Hull("currach");
-        var afloat = currach.Float(currach.Crewed(litres: 1500), litres: 1500);
+        var afloat = currach.Float(currach.Crewed(litres: 1800), litres: 1800);
 
         Assert.False(afloat.Sunk);
         Assert.Equal(0, afloat.FreeboardMetres);
@@ -45,7 +45,7 @@ public class FlotationTests
     {
         var currach = Fixtures.Hull("currach");
 
-        Assert.True(currach.Float(currach.Crewed(containers: 60, litres: 1500), litres: 1500).Sunk);
+        Assert.True(currach.Float(currach.Crewed(containers: 60, litres: 1800), litres: 1800).Sunk);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class FlotationTests
     {
         var leadwood = Fixtures.Hull("dugout", "leadwood");
 
-        Assert.True(leadwood.Float(leadwood.Crewed(litres: 450), litres: 450).Sunk);
+        Assert.True(leadwood.Float(leadwood.Crewed(litres: 1156), litres: 1156).Sunk);
     }
 
     [Fact]
@@ -71,8 +71,8 @@ public class FlotationTests
         var ebony = Fixtures.Hull("dugout", "ebony");
         var oak = Fixtures.Hull("dugout");
 
-        Assert.True(ebony.Float(ebony.Crewed(bodies: 130, kit: 70, litres: 200)).FreeboardMetres <= 0);
-        Assert.True(oak.Float(oak.Crewed(bodies: 130, kit: 70, litres: 200)).FreeboardMetres > 0);
+        Assert.True(ebony.Float(ebony.Crewed(bodies: 130, kit: 70, litres: 900)).FreeboardMetres <= 0);
+        Assert.True(oak.Float(oak.Crewed(bodies: 130, kit: 70, litres: 900)).FreeboardMetres > 0);
     }
 
     [Fact]
@@ -102,13 +102,34 @@ public class FlotationTests
     }
 
     [Fact]
-    public void AReedBoatSoakedForThreeDaysLiesOnTheBottom()
+    public void AReedBoatLeftAfloatLiesOnTheBottomWithinFourDays()
     {
         var reed = Fixtures.Hull("reedboat");
         var soak = Fixtures.IntegrityConfig("reedboat")["soak"]!;
         double perDay = (double)soak["kgPerDay"]!;
 
-        Assert.False(reed.Float(reed.Crewed(soaked: perDay * 2.5)).Sunk);
-        Assert.True(reed.Float(reed.Crewed(bodies: 0, kit: 0, soaked: perDay * 3.5)).Sunk);
+        Assert.False(reed.Float(reed.Crewed(bodies: 0, kit: 0, soaked: perDay * 3)).Sunk);
+        Assert.True(reed.Float(reed.Crewed(bodies: 0, kit: 0, soaked: perDay * 4)).Sunk);
+    }
+
+    [Fact]
+    public void HerRiderSitsAwashAfterABitMoreThanADayAfloat()
+    {
+        var reed = Fixtures.Hull("reedboat");
+        double perDay = (double)Fixtures.IntegrityConfig("reedboat")["soak"]!["kgPerDay"]!;
+
+        Assert.True(reed.Float(reed.Crewed(soaked: perDay)).FreeboardMetres > 0);
+        Assert.Equal(0, reed.Float(reed.Crewed(soaked: perDay * 1.5)).FreeboardMetres, 6);
+    }
+
+    [Fact]
+    public void AReedBoatCarriesHerRiderLowWithAFewCentimetresOfFreeboard()
+    {
+        var reed = Fixtures.Hull("reedboat");
+
+        var afloat = reed.Float(reed.Crewed());
+
+        Assert.False(afloat.Sunk);
+        Assert.InRange(afloat.FreeboardMetres, 0.02, 0.08);
     }
 }

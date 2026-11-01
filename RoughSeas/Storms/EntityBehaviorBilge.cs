@@ -12,7 +12,7 @@ using RoughSeas.Vessels;
 
 namespace RoughSeas.Storms;
 
-public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesselHold
+public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesselHold, IHandedOver
 {
     public const string Code = "roughseas:bilge";
 
@@ -30,11 +30,10 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     private double rained;
     private float sinceUpdate;
 
-    public double CapacityLitres => holdLitres * Hollowed;
+    public double CapacityLitres => form.Value?.HoldLitres(holdLitres) ?? holdLitres;
 
-    public double UncutLitres => holdLitres - CapacityLitres;
+    public double UncutLitres => holdLitres * (form.Value?.Uncut ?? 0);
 
-    private double Hollowed => form.Value?.Hollowed ?? 1;
 
     public double Litres
     {
@@ -87,6 +86,8 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         if (form.Value != null) form.Value.Reformed += ShowWater;
     }
 
+    public void HandOver(Entity successor, bool endForEnd) => successor.WatchedAttributes.SetAttribute(TreeKey, Tree.Clone());
+
     public void Ship(double litres, string cause)
     {
         var wasSwamped = Swamped;
@@ -111,7 +112,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         using var _ = storms.Budget.Measure();
         var hours = watch.Lap().Hours;
         sinceUpdate = 0;
-        var inflow = sea.DangerousOceans ? Rainfall() * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
+        var inflow = sea.DangerousOceans ? VanillaRain.FallingOn(entity) * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
         Ship(inflow, "by rain");
         Litres -= drainLitresPerHour * hours;
         if ((rained += inflow) < 1) return;
@@ -145,17 +146,9 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
             return;
         }
 
-        double top = water.HeightOf(water.Levels);
-        double surface = built.FloorMetres + Fill * (top - built.FloorMetres);
-        water.Show(Enumerable.Range(1, water.Levels).FirstOrDefault(level => water.HeightOf(level) >= surface, water.Levels));
-    }
-
-    private double Rainfall()
-    {
-        var accessor = entity.World.BlockAccessor;
-        var pos = entity.Pos.AsBlockPos;
-        if (accessor.GetRainMapHeightAt(pos) > pos.Y) return 0;
-
-        return accessor.GetClimateAt(pos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0;
+        double rim = IHull.Of(entity)?.DepthMetres ?? water.HeightOf(water.Levels);
+        double surface = built.FloorMetres + Fill * (rim - built.FloorMetres);
+        int level = Enumerable.Range(1, water.Levels).LastOrDefault(level => water.HeightOf(level) <= surface, 1);
+        water.Show(level, surface - water.HeightOf(level));
     }
 }
