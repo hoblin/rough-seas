@@ -394,6 +394,8 @@ def film(screenplay, out, captions):
         set.build()
         game.do(f".vrec filetarget {raw_dir}")
         game.do(".gui off")
+        if "camera" in screenplay.scenes[0]:
+            camera.frame(screenplay.scenes[0]["camera"])
         started = time.monotonic()
         game.do(".vrec start")
         for number, data in enumerate(screenplay.scenes, 1):

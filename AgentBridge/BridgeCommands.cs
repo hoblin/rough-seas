@@ -626,7 +626,7 @@ public class BridgeCommands : ModSystem
         var accessor = sapi.World.BlockAccessor;
         var below = position.AsBlockPos;
         while (below.Y > 0 && accessor.GetBlock(below, BlockLayersAccess.FluidOrSolid).Id == 0) below.Y--;
-        return accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid() ? sapi.World.SeaLevel - 1 : position.Y;
+        return accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid() ? below.Y : position.Y;
     }
 
     private static TextCommandResult Mount(IPlayer player, Entity? target, int index = -1)
