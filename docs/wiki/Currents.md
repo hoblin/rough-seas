@@ -20,10 +20,14 @@ The temperature of the water has no effect yet. Cold water that saps a swimmer's
 
 ## Drift
 
-A vessel nobody is steering drifts with the current, and the wind pushes it a little too: 1.5% of the wind's speed, the way a real hull is set downwind. A passenger who isn't at the helm drifts along with it. A vessel you are steering isn't pushed at all: the course is yours.
+Every vessel afloat drifts with the current, steered or not. The current carries a hull through the drag of the water on its underwater body, so a light hull takes up the current's speed within seconds and a heavy, loaded one more slowly, and a hull lying across the stream is caught sooner than one lying along it.
+
+At the helm you paddle or sail through the water, and the water moves under you. Heading upstream you make your usual speed through the water, so you gain ground only if that beats the current; heading across it you are set downstream by all of it. When you stop paddling the hull glides on and slows by its own drag.
+
+A vessel at anchor or tied to a stake swings to lie along the stream, stern downstream, and the current pulls on its rope and anchor: hardly at all in the slow middle of a basin, much harder in a boundary current, since the pull grows with the square of the speed. A hull lying along the stream feels far less of it than one lying across.
 
 So a boat left at the water's edge is not where you left it when you come back. [Tie it up or anchor it](Mooring) before you step ashore.
 
 Drift only happens where the game is running, within about 128 blocks of a player. A vessel far from everyone stays put until someone comes near.
 
-The [raft](Raft), the [sailboat](Sailboat) and every vessel of the mod drift the same way. Currents run with [Dangerous oceans](World-Settings#dangerous-oceans) on or off.
+The [raft](Raft), the [sailboat](Sailboat) and every vessel of the mod drift the same way. Currents run with [Dangerous oceans](World-Settings#dangerous-oceans) on or off; a rope that parts or an anchor that drags in one follows the setting, as in a storm.

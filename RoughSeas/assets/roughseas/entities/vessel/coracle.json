@@ -48,6 +48,14 @@
             "capsizeBreakerMetres": 0.6,
             "rollResponse": 1.6,
             "pitchResponse": 1.6,
+            "underwater": {
+                "bowOnDrag": 0.5,
+                "broadsideDrag": 0.5,
+                "sources": {
+                    "bowOnDrag": "A shallow round bowl meets the water alike from every side, as a sphere does: about 0.5 below its drag crisis (Hoerner 1965, Fluid-Dynamic Drag, ch. 3)",
+                    "broadsideDrag": "As bow-on: round, she has no side"
+                }
+            },
             "sources": {
                 "heave": "A 20 kg basket sits on the water and rises with the crest",
                 "capsizeBreakerMetres": "A crest that catches the low rim tips the bowl and its paddler out: coracles keep to rivers and sheltered water",
@@ -105,6 +113,7 @@
             {"code": "selectionboxes"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]

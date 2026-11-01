@@ -96,6 +96,14 @@
             "capsizeBreakerMetres": 0.9,
             "rollResponse": 1.2,
             "pitchResponse": 1.2,
+            "underwater": {
+                "bowOnDrag": 0,
+                "broadsideDrag": 1.0,
+                "sources": {
+                    "bowOnDrag": "Her bundles taper to points at both ends: her drag ahead is the friction on her wetted surface",
+                    "broadsideDrag": "Her side is the side of round reed bundles: a cylinder of her length to twice her draft, which takes about 1.0 (Hoerner 1965, Fluid-Dynamic Drag, ch. 3: 1.2 across a subcritical flow, 0.82 of it for a cylinder ten times as long as it is thick)"
+                }
+            },
             "sources": {
                 "beamMetres": "Her two 20 cm bundles side by side",
                 "windageSquareMetres": "Her 3 m length over a freeboard of about 5 cm with her rider aboard, and her two raised ends",
@@ -122,6 +130,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"}
         ]
     },

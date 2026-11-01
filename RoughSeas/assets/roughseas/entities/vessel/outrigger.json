@@ -146,6 +146,21 @@
             "capsizeBreakerMetres": 2.6,
             "rollResponse": 0.3,
             "pitchResponse": 0.8,
+            "underwater": {
+                "bowOnDrag": 0,
+                "broadsideDrag": 1.0,
+                "appendage": {
+                    "frontalSquareMetres": 0.04,
+                    "lateralSquareMetres": 0.36,
+                    "bowOnDrag": 0.14,
+                    "broadsideDrag": 1.0
+                },
+                "sources": {
+                    "bowOnDrag": "A fine bow parts the water with next to no pressure drag at a paddler's speeds: her drag ahead is the friction on her wetted surface",
+                    "broadsideDrag": "A hull's side across the flow: a round bottom and its mirror in the surface make a cylinder of her length to twice her draft, which takes about 1.0 (Hoerner 1965, Fluid-Dynamic Drag, ch. 3: 1.2 across a subcritical flow, 0.82 of it for a cylinder ten times as long as it is thick)",
+                    "appendage": "The float, a log about 3 m long and 0.3 m thick riding about 0.12 m deep. Its pointed ends take only friction: about 1.2 m2 wetted at the ITTC 1957 line's 0.0039 for 3 m at 1 m/s, form factor 1.2, over its 0.04 m2 bow-on; its side is a log's, as the hull's"
+                }
+            },
             "sources": {
                 "beamMetres": "Hull and float apart: half the hull's 0.9 m, the float's 2 m out and half its 0.3 m",
                 "mastMetres": "A small outrigger's mast, about 3 m",
@@ -187,6 +202,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}
         ]

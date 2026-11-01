@@ -42,7 +42,6 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         api.Network.RegisterChannel(Channel).RegisterMessageType<SeaMapSnapshot>();
         new VanillaWind(this, api).Follow();
         VanillaWeatherPatches.Attach(this, api.Side);
-        api.RegisterEntityBehaviorClass(CurrentDrift.Code, typeof(CurrentDrift));
     }
 
     public override void StartServerSide(ICoreServerAPI sapi)

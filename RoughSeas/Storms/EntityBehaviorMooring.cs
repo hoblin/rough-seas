@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using HarmonyLib;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
@@ -20,6 +22,9 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private const double Unmoored = -1;
     private const double NewtonsPerKilonewton = 1000;
     private const double ReelInBlocksPerTick = 0.01;
+    private const double TautMetres = 0.5;
+    private const double PullLogShare = 0.1;
+    private const double StillMps = 0.01;
     private static readonly AssetLocation RopeRipSound = new("game:sounds/effect/roperip");
 
     private StormsModSystem storms = null!;
@@ -29,11 +34,18 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private EntityBehaviorSeaForces? forces;
     private EntityBehaviorAttachable? accessories;
     private EntityBehaviorRopeTieable? tieable;
+    private EntityBehaviorCurrentDrift? drift;
+    private EntityBehaviorPassivePhysicsMultiBox? physics;
+    private double swingRate;
+    private float sinceSwingLog;
+    private double loggedPull;
+    private long loggedPullAt;
     private IMountable? mountable;
     private AshoreRoll? ashore;
     private float ashoreIn;
     private float sinceUpdate;
     private bool hanging;
+    private bool taut;
 
     public Anchor? Anchor
     {
@@ -88,6 +100,8 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         forces = entity.GetBehavior<EntityBehaviorSeaForces>();
         accessories = entity.GetBehavior<EntityBehaviorAttachable>();
         tieable = entity.GetBehavior<EntityBehaviorRopeTieable>();
+        drift = entity.GetBehavior<EntityBehaviorCurrentDrift>();
+        physics = entity.GetBehavior<EntityBehaviorPassivePhysicsMultiBox>();
         if (forces != null && entity.World.Side == EnumAppSide.Server) forces.Wave += Strain;
     }
 
@@ -115,13 +129,23 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         if (entity.World.Side != EnumAppSide.Server || forces == null || !entity.Alive) return;
 
         using var _ = storms.Budget.Measure();
-        if (Anchor is { } leashed) Leash(leashed);
-        else if (StakeRope() is { } rope && Stake(rope) is { } stake) Hold(stake.X + 0.5, stake.Z + 0.5, storms.Config.Mooring.StakeReachMetres);
+        var held = false;
+        if (Anchor is { } leashed) held = Leash(leashed);
+        else if (StakeRope() is { } rope && Stake(rope) is { } stake)
+        {
+            // vanilla's cloth spring would drag a hull with no water drag on her to the stake: the rope holds her here,
+            // and only when taut
+            if (drift != null) rope.CanPull = false;
+            held = Hold(stake.X + 0.5, stake.Z + 0.5, Reach(rope));
+        }
+        taut = held && mountable?.IsBeingControlled() != true;
+        if (taut) Swing(deltaTime);
 
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
         FollowAnchor();
+        StrainSteady();
         if (ashore != null)
         {
             ashoreIn -= sinceUpdate;
@@ -141,7 +165,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var (x, z, reach) = Anchor is { } anchor
             ? (anchor.X, anchor.Z, anchor.Reach(Depth(anchor)))
             : StakeRope() is { } rope && Stake(rope) is { } stake
-                ? (stake.X + 0.5, stake.Z + 0.5, storms.Config.Mooring.StakeReachMetres)
+                ? (stake.X + 0.5, stake.Z + 0.5, Reach(rope))
                 : (0, 0, Unmoored);
         Tree.SetDouble("pointX", x);
         Tree.SetDouble("pointZ", z);
@@ -153,6 +177,101 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var force = forces!.Force(state);
         if (Anchor is { } anchor) Strain(anchor, force, state);
         else if (StakeRope() is { } rope) Strain(rope, force);
+    }
+
+    /// <summary>
+    /// The current's pull on her mooring, newtons in world axes: the drag of her underwater body on the water running
+    /// past her as the rope holds her taut. Nothing while she swings free within its reach or someone steers her.
+    /// </summary>
+    private (double X, double Z) CurrentPull()
+    {
+        if (!taut || !entity.Swimming || drift?.Body is not { } body) return (0, 0);
+
+        var (vx, vz) = drift.Velocity;
+        var (wx, wz) = drift.Water;
+        return body.Pull(vx, vz, wx, wz, entity.Pos.Yaw);
+    }
+
+    /// <summary>A steady pull past what the rope or the anchor holds parts or drags it, whatever the waves do.</summary>
+    private void StrainSteady()
+    {
+        var (x, z) = CurrentPull();
+        var pull = Math.Sqrt(x * x + z * z);
+        if (Anchor is { } anchor) StrainSteady(anchor, pull, x, z);
+        else if (StakeRope() is { } rope) StrainSteady(rope, pull);
+        else loggedPull = 0;
+    }
+
+    private void StrainSteady(Anchor anchor, double pull, double x, double z)
+    {
+        var rope = RopeNewtons(anchor.Rope);
+        var holding = anchor.Holding(Depth(anchor), storms.Config.Mooring.AnchorFullScope);
+        if (Changed(pull))
+        {
+            storms.Log(entity, "the current pulls {0:F0} N on her rode; the anchor holds {1:F0} N at scope {2:F1}, the {3} {4:F0} N",
+                pull, holding, anchor.RodeMetres / Math.Max(1, Depth(anchor)), anchor.Rope, rope);
+        }
+        if (!sea.DangerousOceans || pull <= 0) return;
+
+        if (pull >= rope)
+        {
+            LoseAnchor(anchor);
+            storms.Log(entity, "rode snapped: the current pulls {0:F0} N, the {1} holds {2:F0} N; anchor lost", pull, anchor.Rope, rope);
+            return;
+        }
+        if (pull < holding) return;
+
+        var drag = storms.Config.Mooring.AnchorDragMetres / pull;
+        Anchor = anchor.DraggedBy(x * drag, z * drag);
+        storms.Log(entity, "anchor dragged: the current pulls {0:F0} N, it holds {1:F0} N", pull, holding);
+    }
+
+    private void StrainSteady(ClothSystem stakeRope, double pull)
+    {
+        var rope = RopeNewtons(storms.Config.Mooring.StakeRope);
+        if (Changed(pull)) storms.Log(entity, "the current pulls {0:F0} N on her stake rope, which holds {1:F0} N", pull, rope);
+        if (!sea.DangerousOceans || pull < rope) return;
+
+        PartStake(stakeRope);
+        storms.Log(entity, "stake rope snapped: the current pulls {0:F0} N, the rope holds {1:F0} N", pull, rope);
+    }
+
+    /// <summary>Whether the pull has changed by a tenth since it was last logged, a log interval ago or more.</summary>
+    private bool Changed(double pull)
+    {
+        var now = entity.World.ElapsedMilliseconds;
+        if (now - loggedPullAt < storms.Config.Drift.LogSeconds * 1000) return false;
+        if (Math.Abs(pull - loggedPull) <= PullLogShare * Math.Max(pull, loggedPull)) return false;
+
+        (loggedPull, loggedPullAt) = (pull, now);
+        return true;
+    }
+
+    /// <summary>
+    /// Held at her bow, she turns until the water's drag on her side balances about it: stern downstream, lying along
+    /// the stream.
+    /// </summary>
+    private void Swing(float deltaTime)
+    {
+        if (!entity.Swimming || drift?.Body is not { } body || physics == null) return;
+
+        var pos = entity.Pos;
+        var (vx, vz) = drift.Velocity;
+        var (wx, wz) = drift.Water;
+        var (along, across) = HullShape.ToHull(wx - vx, wz - vz, pos.Yaw);
+        (swingRate, var turned) = body.Swing(swingRate, across, deltaTime);
+        // turning counterclockwise in her own frame lowers her yaw
+        var yaw = (float)(pos.Yaw - turned);
+        if (physics.AdjustCollisionBoxesToYaw(deltaTime, true, yaw)) pos.Yaw = yaw;
+        else swingRate = 0;
+
+        sinceSwingLog += deltaTime;
+        if (sinceSwingLog < storms.Config.Drift.LogSeconds || Math.Sqrt(along * along + across * across) < StillMps) return;
+
+        sinceSwingLog = 0;
+        var (x, z) = body.Pull(vx, vz, wx, wz, pos.Yaw);
+        storms.Log(entity, "swings at {0:F1} deg/s, {1:F0} deg off the stream with her stern {2}, the current pulling {3:F0} N",
+            -swingRate * GameMath.RAD2DEG, Math.Atan2(Math.Abs(across), along) * GameMath.RAD2DEG, along >= 0 ? "downstream" : "upstream", Math.Sqrt(x * x + z * z));
     }
 
     private void FollowAnchor()
@@ -218,37 +337,47 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private double SpareRodeMetres() =>
         SpareRodeSlot()?.Itemstack is { } coil ? coil.StackSize * coil.Collectible.Attributes["rodeMetres"].AsDouble() : 0;
 
-    /// <summary>A steered vessel drags its anchor along: the rider's client moves it, and the server cannot hold it back.</summary>
-    private void Leash(Anchor anchor)
+    /// <summary>
+    /// Holds the vessel at the anchor's reach, whether the rode is taut. A steered vessel drags its anchor along
+    /// instead: the rider's client moves it, and the server cannot hold it back.
+    /// </summary>
+    private bool Leash(Anchor anchor)
     {
         var reach = anchor.Reach(Depth(anchor));
-        if (mountable?.IsBeingControlled() != true)
-        {
-            Hold(anchor.X, anchor.Z, reach);
-            return;
-        }
+        if (mountable?.IsBeingControlled() != true) return Hold(anchor.X, anchor.Z, reach);
 
         var pos = entity.Pos;
         var (dx, dz) = (pos.X - anchor.X, pos.Z - anchor.Z);
         var distance = Math.Sqrt(dx * dx + dz * dz);
-        if (distance <= reach) return;
+        if (distance <= reach) return false;
 
         var over = (distance - reach) / distance;
         Anchor = anchor.DraggedBy(dx * over, dz * over);
+        return false;
     }
 
-    private void Hold(double x, double z, double reach)
+    /// <summary>Takes away the vessel's motion out past the point's reach; whether the rope is taut.</summary>
+    private bool Hold(double x, double z, double reach)
     {
         var pos = entity.Pos;
         var (dx, dz) = (pos.X - x, pos.Z - z);
         var distance = Math.Sqrt(dx * dx + dz * dz);
-        if (distance <= reach) return;
+        if (distance < reach - TautMetres) return false;
+        if (distance <= reach) return true;
 
         var outward = (pos.Motion.X * dx + pos.Motion.Z * dz) / distance;
         var pull = Math.Max(0, outward) + Math.Min(distance - reach, ReelInBlocksPerTick);
         pos.Motion.X -= pull * dx / distance;
         pos.Motion.Z -= pull * dz / distance;
+        return true;
     }
+
+    /// <summary>As far as the rope reaches: its own length, which a tied rope takes from where it was tied, up to vanilla's longest.</summary>
+    private double Reach(ClothSystem rope) =>
+        Math.Min(storms.Config.Mooring.StakeReachMetres, RopeConstraints(rope).Sum(constraint => constraint.SpringLength));
+
+    private static readonly AccessTools.FieldRef<ClothSystem, List<ClothConstraint>> RopeConstraints =
+        AccessTools.FieldRefAccess<ClothSystem, List<ClothConstraint>>("Constraints");
 
     private static BlockPos? Stake(ClothSystem rope) => rope.FirstPoint.PinnedToBlockPos ?? rope.LastPoint.PinnedToBlockPos;
 
@@ -256,30 +385,46 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     {
         var rand = entity.World.Rand;
         var rope = RopeNewtons(anchor.Rope);
-        if (rand.NextDouble() < Waves.ChanceToExceed(force, rope))
+        var (cx, cz) = CurrentPull();
+        var current = Math.Sqrt(cx * cx + cz * cz);
+        if (rand.NextDouble() < Waves.ChanceToExceed(force, rope, current))
         {
             LoseAnchor(anchor);
-            storms.Log(entity, "rode snapped: the sea pulls {0:F0} N, the {1} holds {2:F0} N; anchor lost", force, anchor.Rope, rope);
+            storms.Log(entity, "rode snapped: the sea pulls {0:F0} N on the current's {1:F0} N, the {2} holds {3:F0} N; anchor lost", force, current, anchor.Rope, rope);
             return;
         }
 
         var holding = anchor.Holding(Depth(anchor), storms.Config.Mooring.AnchorFullScope);
-        if (state.WindSpeed <= 0 || rand.NextDouble() >= Waves.ChanceToExceed(force, holding)) return;
+        if (rand.NextDouble() >= Waves.ChanceToExceed(force, holding, current)) return;
 
-        var drag = storms.Config.Mooring.AnchorDragMetres / state.WindSpeed;
-        Anchor = anchor.DraggedBy(state.WindX * drag, state.WindZ * drag);
-        storms.Log(entity, "anchor dragged: the sea pulls {0:F0} N, it holds {1:F0} N at scope {2:F1}", force, holding, anchor.RodeMetres / Math.Max(1, Depth(anchor)));
+        // dragged the way the wind, the waves and the current pull together
+        var wind = Math.Max(state.WindSpeed, 1e-9);
+        var (x, z) = (state.WindX / wind * force + cx, state.WindZ / wind * force + cz);
+        var pull = Math.Sqrt(x * x + z * z);
+        if (pull <= 0) return;
+
+        var drag = storms.Config.Mooring.AnchorDragMetres / pull;
+        Anchor = anchor.DraggedBy(x * drag, z * drag);
+        storms.Log(entity, "anchor dragged: the sea pulls {0:F0} N on the current's {1:F0} N, it holds {2:F0} N at scope {3:F1}",
+            force, current, holding, anchor.RodeMetres / Math.Max(1, Depth(anchor)));
     }
 
     private void Strain(ClothSystem stakeRope, double force)
     {
         var rope = RopeNewtons(storms.Config.Mooring.StakeRope);
-        if (entity.World.Rand.NextDouble() >= Waves.ChanceToExceed(force, rope)) return;
+        var (cx, cz) = CurrentPull();
+        var current = Math.Sqrt(cx * cx + cz * cz);
+        if (entity.World.Rand.NextDouble() >= Waves.ChanceToExceed(force, rope, current)) return;
 
+        PartStake(stakeRope);
+        storms.Log(entity, "stake rope snapped: the sea pulls {0:F0} N on the current's {1:F0} N, the rope holds {2:F0} N", force, current, rope);
+    }
+
+    private void PartStake(ClothSystem stakeRope)
+    {
         tieable?.Detach(stakeRope);
         cloths.UnregisterCloth(stakeRope.ClothId);
         Snapped();
-        storms.Log(entity, "stake rope snapped: the sea pulls {0:F0} N, the rope holds {1:F0} N", force, rope);
     }
 
     private void LoseAnchor(Anchor anchor)

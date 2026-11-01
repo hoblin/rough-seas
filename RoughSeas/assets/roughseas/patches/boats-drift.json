@@ -1,4 +1,6 @@
 [
-    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-raft.json" },
-    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-sailed.json" }
+    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-raft.json", "side": "Server" },
+    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-sailed.json", "side": "Server" },
+    { "op": "add", "path": "/client/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-raft.json", "side": "Server" },
+    { "op": "add", "path": "/client/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-sailed.json", "side": "Server" }
 ]
