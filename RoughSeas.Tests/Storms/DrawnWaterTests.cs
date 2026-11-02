@@ -1,16 +1,10 @@
 using RoughSeas.Storms;
+using static RoughSeas.Tests.Storms.WaterFixtures;
 
 namespace RoughSeas.Tests.Storms;
 
 public class DrawnWaterTests
 {
-    private const double X = 512031.25;
-    private const double Z = 512300.5;
-    private const int SeaFloor = 40;
-    private const int WaterTop = 62;
-    private const double StillLevel = 7 / 8.0;
-    private const double StillSurface = WaterTop + StillLevel;
-
     [Fact]
     public void LeavesThePointToTheBlocksWhileNoSwellIsDrawn()
     {
@@ -102,27 +96,5 @@ public class DrawnWaterTests
         var ground = new Column(top: SeaFloor - 1, solid: Enumerable.Range(0, WaterTop + 1).ToArray());
 
         Assert.Null(new DrawnWater(new Sea(3)).SurfaceAt(ground, X, StillSurface + 1.7, Z));
-    }
-
-    private sealed class Sea(double height, bool swell = true, bool local = true) : IDrawnSea
-    {
-        public bool Swell => swell;
-
-        public bool SwellAt(double x, double z) => swell && local;
-
-        public double Seconds => 0;
-
-        public double HeightAt(double x, double z) => swell ? height : 0;
-
-        public SeaPose PoseOf(double x, double z, double yaw, double length, double width) => default;
-    }
-
-    private sealed class Column(int top = WaterTop, int[]? solid = null, double level = StillLevel) : IWaterColumn
-    {
-        public bool Water(int y) => y > SeaFloor && y <= top;
-
-        public double Level(int y) => y == top ? level : 1;
-
-        public bool Solid(int y) => y <= SeaFloor || (solid?.Contains(y) ?? false);
     }
 }
