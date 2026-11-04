@@ -7,10 +7,11 @@ using Vintagestory.GameContent;
 namespace RoughSeas.Vessels;
 
 /// <summary>
-/// Vanilla's boat, with the oars she carries following her rower's stroke. A speed multiplier of 0 leaves her dead
-/// in the water: no paddling, no turning.
+/// Vanilla's boat, with the oars she carries following her rower's stroke and seats that face their riders the
+/// way they are turned (<see cref="VesselSeat"/>). A speed multiplier of 0 leaves her dead in the water: no
+/// paddling, no turning.
 /// </summary>
-public class EntityVessel : EntityBoat
+public class EntityVessel : EntityBoat, ISeatInstSupplier
 {
     public const string ClassName = "roughseas:EntityVessel";
 
@@ -38,4 +39,7 @@ public class EntityVessel : EntityBoat
         Wood.Of(Properties.Variant) is { } wood ? Lang.GetMatching($"{Code.Domain}:item-creature-{Code.Path}", wood.Name) : base.GetName();
 
     protected override bool HasPaddle(Entity entity) => SpeedMultiplier > 0 && base.HasPaddle(entity);
+
+    IMountableSeat ISeatInstSupplier.CreateSeat(IMountable mountable, string seatId, SeatConfig config) =>
+        new VesselSeat(mountable, seatId, config);
 }

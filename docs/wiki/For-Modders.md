@@ -205,6 +205,16 @@ New: the enum `Side`, the class `Paddler`, the keys `paddleAbeamMetres` and `vee
 
 New: the `pole` key with `stroke`, `handsAboveWaterMetres` and `stance`, the stroke `seatedpole`, the animation `roughseas-stand`, `SeatPoses`, `bin/lib/hulls/leg.py` and `physics.stands`, which decides from a hull whether her poler stands, and the bench's `bin/scene shallows`.
 
+### The currach rowed facing her stern
+
+Her rower sits where a real Aran rower does: facing her stern, pulling his oars on pins that stand just abaft his thwart.
+
+- Our vessels' seats are `VesselSeat`, vanilla's boat seat turned by its `mountRotation`: the rider's body, head and camera face that way. Vanilla turns only the limits a body is held in. The currach's seat has `mountRotation` y 180; a pole's `stance` takes a `mountRotation` of its own, so her poler stands facing her bow.
+- Her thwart, seat and thole pins moved: the `BackSeat` box is at x 2.12 to 10.12, its point on the thwart; the cargo boxes lie two forward of the rower and one aft of his feet. Her `spanMetres` is 4.12 and her `bladeSquareMetres` 0.057, the blade under the water and her `sweepMetres` 1.3.
+- Her oars pivot on their pins through the bull on the loom's after side, the loom lying on her gunwale, their looms reach from the pin to her middle, and their blades stand upright, face to the water they push.
+
+New: `RoughSeas.Vessels.VesselSeat`, and a seat's `mountRotation` read by `bin/lib/hulls/stroke.py`.
+
 ### Every box inside the round it builds
 
 Our vessels' shapes are rebuilt so that no box stands outside the round it builds and no two faces share a plane. A vessel of yours loads as it did; a patch that addresses their elements by name should look again.

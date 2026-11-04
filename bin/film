@@ -21,7 +21,7 @@ A failed scene is named, its picture saved as failure.png, and the world cleared
 
 SCREENPLAY
   setting:             before the recording starts, never on camera
-    place: sea         sea (/bridge sea), shore (/bridge shore), {force: N} (/bridge force N), or
+    place: sea         sea (/bridge sea: ocean 128 blocks all round), shore (/bridge shore), {force: N} (/bridge force N), or
                        [X, Y, Z] as commands take them. The search starts where the player is, and
                        the run ends by flying the player back there, so a second run films the
                        same place.
