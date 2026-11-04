@@ -33,7 +33,7 @@ dotnet test RoughSeas.Tests # unit tests
 
 Unit tests do not tell you whether a storm feels right. A change is done when you have seen it happen in the game.
 
-The test bench in `bin/` runs the game with the mod and drives it from the shell. It needs Linux with `tmux`, `jq`, `curl` and ImageMagick, and a game account that has logged in once with the launcher. Its first run copies that login from `~/.config/VintagestoryData`.
+The test bench in `bin/` runs the game with the mod and drives it from the shell. It needs Linux with `tmux`, `jq`, `curl` and ImageMagick (`bin/film` also `ffmpeg`, and `uv`, which mise installs), and a game account that has logged in once with the launcher. Its first run copies that login from `~/.config/VintagestoryData`.
 
 ```sh
 bin/client      # build, start the game in tmux, open a test world

@@ -3,16 +3,28 @@
     "class": "roughseas:ItemOfWood",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}],
     "behaviors": [{"name": "roughseas:framing"}],
-    "attributes": {
-        "logTextures": {"wood": "inside-north"},
-        "handbook": {"groupBy": ["pole-*"]}
+    "attributesByType": {
+        "*-2": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-2-stowed"}}},
+        "*-3": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-3-stowed"}}},
+        "*-4": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-4-stowed"}}},
+        "*-5": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"]}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-5-stowed"}}}
     },
-    "shape": {"base": "roughseas:item/pole"},
+    "shapeByType": {"*-2": {"base": "roughseas:item/pole-2"}, "*-3": {"base": "roughseas:item/pole-3"}, "*-4": {"base": "roughseas:item/pole-4"}, "*-5": {"base": "roughseas:item/pole-5"}},
     "maxstacksize": 8,
     "materialDensity": 600,
     "combustibleProps": {"burnTemperature": 700, "burnDuration": 40},
     "creativeinventory": {"general": ["*"], "items": ["*"]},
-    "guiTransform": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 0.5, "y": 0.1, "z": 0.5}, "scale": 1.6},
-    "tpHandTransform": {"translation": {"x": -0.7, "y": -0.1, "z": -0.5}, "rotation": {"x": 0, "y": 0, "z": -10}, "scale": 0.9},
-    "groundTransform": {"origin": {"x": 0.5, "y": 0, "z": 0.5}, "scale": 2.5}
+    "guiTransformByType": {
+        "*-2": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 1, "y": 0.1, "z": 0.5}, "scale": 0.8},
+        "*-3": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 1.5, "y": 0.1, "z": 0.5}, "scale": 0.533},
+        "*-4": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 2, "y": 0.1, "z": 0.5}, "scale": 0.4},
+        "*-5": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 2.5, "y": 0.1, "z": 0.5}, "scale": 0.32}
+    },
+    "tpHandTransform": {"translation": {"x": 0.7679, "y": 0.2813, "z": 0.4726}, "rotation": {"x": -3, "y": 1, "z": -22}, "origin": {"x": 0, "y": 0, "z": 0}, "scale": 1},
+    "groundTransformByType": {
+        "*-2": {"origin": {"x": 1, "y": 0, "z": 0.5}, "scale": 1},
+        "*-3": {"origin": {"x": 1.5, "y": 0, "z": 0.5}, "scale": 1},
+        "*-4": {"origin": {"x": 2, "y": 0, "z": 0.5}, "scale": 1},
+        "*-5": {"origin": {"x": 2.5, "y": 0, "z": 0.5}, "scale": 1}
+    }
 }

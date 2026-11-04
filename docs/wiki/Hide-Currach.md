@@ -14,8 +14,8 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 
 | | |
 | --- | --- |
-| Speed | 1.7 × the raft, rowed |
-| Turning | steady |
+| Speed | 2.5 m/s rowed on her thole pins, 2 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Turning | 42° a second, rowed: one oar pulled, the other backed |
 | [Hull](Hull-Condition) | 3000 J with an ash frame: she rides the sea, but one hard knock holes her; about 2800 J in oak, 3300 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 15 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 58 cm empty, 56 cm with her rower |
@@ -28,7 +28,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | one: the rower on the thwart, with an [oar](https://wiki.vintagestory.at/Oar) in hand |
+| Seats | one: the rower on the thwart, rowing her own two oars with an empty hand, or poling her through shallows |
 | Cargo | three spots on the bottom, forward of the rower; each takes a basket (8 slots), a storage vessel (12) or a chest (16; a treasure chest 4) |
 | Built from | 2 laths of 5 m for her gunwale, 9 of 3 m and 12 of 2 m for her ribs and 7 of 5 m for her stringers, 6 ropes, eight small hides' worth of hide and a 2 m pole, then greased |
 | Wreckage | a few laths |
@@ -53,7 +53,7 @@ A currach is built upside down where her gunwale is laid out on the ground, piec
 
    ![Her frame, upside down](images/currach/build-frame.webp)
 
-5. **Sew on hides.** Hold a hide on her: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. Her cover is eight parts of one small hide's area each; a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. A hide bigger than what is left of her cover is cut to fit, and the rest comes back to you as the smaller hides it still makes. Four ropes lace the cover to her gunwale, and a 2 m pole set across her is her thwart.
+5. **Sew on hides.** Hold a hide on her: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. Her cover is eight parts of one small hide's area each; a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. A hide bigger than what is left of her cover is cut to fit, and the rest comes back to you as the smaller hides it still makes. Four ropes lace the cover to her gunwale, and a 2 m pole set across her is her thwart. Last, ship her two [thole oars](Recipes#thole-oar), one on each thole pin: hold one on her and right-click. They stay aboard from then on, as on Aran, where they came off only to dry.
 
    ![Covered and laced, still upside down](images/currach/build-covered.webp)
 

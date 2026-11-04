@@ -84,6 +84,7 @@ Sailing becomes sailing.
 
 The sea becomes dangerous to you, not only to your boat.
 
+- **Breath under the waves.** A crest that covers your head takes your air, and a trough gives it back, as the screen shows.
 - **Body in water.** Swimming wears you out, faster in cold water and on an empty stomach; exhausted, you sink. Cold water kills at the rate measured for real people in real seas, and a warm [current](Currents) off a cold coast can save your life.
 - **Creatures.** Sharks that hunt swimmers and small boats and dodge your blows; whales; and, deep down, rust creatures.
 

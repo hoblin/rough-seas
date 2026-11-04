@@ -17,6 +17,7 @@ public class VesselsModSystem : ModSystem
     private static readonly AssetLocation MassAsset = new("roughseas:config/vessels/mass.json");
     private static readonly AssetLocation HullAsset = new("roughseas:config/vessels/hull.json");
     private static readonly AssetLocation HidesAsset = new("roughseas:config/vessels/hides.json");
+    private static readonly AssetLocation DragAsset = new("roughseas:config/vessels/drag.json");
     private const string Channel = "roughseas:vessels";
 
     public MaterialTable Materials { get; private set; } = null!;
@@ -24,6 +25,7 @@ public class VesselsModSystem : ModSystem
     public Rapids Rapids { get; private set; } = null!;
     public VesselMass Mass { get; private set; } = null!;
     public HullConfig HullConfig { get; private set; } = null!;
+    public DragConfig Drag { get; private set; } = null!;
     public TickBudget Budget { get; } = new("vessels");
 
     private ICoreAPI api = null!;
@@ -81,6 +83,7 @@ public class VesselsModSystem : ModSystem
         Mass = api.Assets.Get<VesselMass>(MassAsset);
         HullConfig = api.Assets.Get<HullConfig>(HullAsset);
         HullConfig.Hides = api.Assets.Get<HidesConfig>(HidesAsset);
+        Drag = api.Assets.Get<DragConfig>(DragAsset);
     }
 
     public void Log(Entity entity, string format, params object[] args) =>

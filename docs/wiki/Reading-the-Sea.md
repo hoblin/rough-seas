@@ -6,9 +6,11 @@ Rough Seas keeps the sea twice, for two different jobs.
 
 **The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike her, the current that carries her. It knows no single wave. A wave that reaches a vessel is drawn by chance from the state, once a wave period, and two vessels side by side meet different waves.
 
-**The drawn sea** is the sea as a picture: the moving surface a client draws, built from the sea state around its player. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same picture: two players in one region see the same crests. But it is a picture, and not the wave the server struck with.
+**The drawn sea** is the moving surface a client draws, built from the sea map the server sends it and the world's clock. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same surface: two players in one region see the same crests. It is not the wave the server struck a vessel with.
 
-So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms or moves on the server: the sea state. A hull's pose on the screen: the drawn sea. Nothing on the server should wait for a crest a client draws.
+So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms or moves on the server: the sea state. A hull's pose on the screen: the drawn sea. Nothing on the server should wait for a crest a client reports.
+
+Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a player's breath: under a crest a swimmer has no air, in a trough the head is clear.
 
 ## Reaching us
 
@@ -143,7 +145,7 @@ Lap at least twice a second, as ours do. While everyone sleeps that is an hour o
 
 ## The drawn sea
 
-The drawn sea exists only on a client:
+Our drawn sea for other mods is the client's:
 
 ```csharp
 IDrawnSea? drawn = capi.ModLoader.GetModSystem<StormsModSystem>().DrawnSea;
@@ -187,7 +189,7 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 - **Blend by `Hold`.** Where no swell is drawn, your vessel rocks however it rocked before. Ours keep vanilla's rocking there, and take the pose where the swell holds them fully, blending between by `Hold`. So a boat rowed from a calm river into the surf passes from one to the other without a jump.
 - **Scale it as your hull would.** Ours multiply roll and pitch by a vessel's `rollResponse` and `pitchResponse`: a raft lies flatter on the water than its slope, a narrow canoe rolls more.
 
-The pose is only the picture. The server knows nothing of it, and it changes as the waves move: read it every frame, in your render path.
+The pose is only the picture, and it changes as the waves move: read it every frame, in your render path.
 
 ### How a hull answers
 

@@ -208,4 +208,4 @@ public sealed class FramingStage
     public double[] WaterlineSquareMetres = [];
 }
 
-public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank, Hide }
+public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank, Hide, Oar }

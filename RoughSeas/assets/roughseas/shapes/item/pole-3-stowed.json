@@ -1,0 +1,78 @@
+{
+    "textureWidth": 16,
+    "textureHeight": 16,
+    "textures": {
+        "wood": "game:block/wood/debarked/oak"
+    },
+    "elements": [
+        {
+            "name": "Pole",
+            "from": [
+                0,
+                0,
+                -0.75
+            ],
+            "to": [
+                48,
+                1.5,
+                0.75
+            ],
+            "faces": {
+                "north": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        5.5
+                    ]
+                },
+                "east": {
+                    "texture": "#wood",
+                    "uv": [
+                        4,
+                        4,
+                        5.5,
+                        5.5
+                    ]
+                },
+                "south": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        9,
+                        16,
+                        10.5
+                    ]
+                },
+                "west": {
+                    "texture": "#wood",
+                    "uv": [
+                        9,
+                        9,
+                        10.5,
+                        10.5
+                    ]
+                },
+                "up": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        6,
+                        16,
+                        7.5
+                    ]
+                },
+                "down": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        11,
+                        16,
+                        12.5
+                    ]
+                }
+            }
+        }
+    ]
+}

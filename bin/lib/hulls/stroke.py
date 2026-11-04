@@ -9,13 +9,14 @@ from transform import apply, direct, euler, identity, local, mul, undirect
 ROOT = Path(__file__).resolve().parents[3]
 SERAPH = Path(os.environ.get("VINTAGE_STORY", "")) / "assets/game/shapes/entity/humanoid/seraph-faceless.json"
 POSES = ROOT / "RoughSeas/assets/roughseas/patches/player-poses.json"
+PROPULSION = ROOT / "RoughSeas/assets/roughseas/config/propulsion.json"
 PATCHES = ROOT / "RoughSeas/assets/roughseas/patches"
 
 ARMS = {"R": ("UpperArmR", "LowerArmR"), "L": ("UpperArmL", "LowerArmL")}
 OUTBOARD = {"R": -1, "L": 1}
 # Outweighs the seat pose (80) so far that the fit can leave it out of the arms and torso.
 WEIGHT = 10000
-SPEED = 0.75
+FRAMES_A_SECOND = 30
 CENTRE = (8, 0, 8)
 
 
@@ -27,34 +28,20 @@ def unturn(rotations, v):
     return undirect(euler([rotations.get("rotation" + axis, 0) for axis in "XYZ"]), v)
 
 
-def gripped(rest, throat, hand, turned):
-    origin, resting = rest
-    reach = turn(turned, throat)
-    return {"Paddle": moved(origin, resting, [h - r for h, r in zip(hand, reach)], turned)}
+def speed(stroke, frames, per_loop=1):
+    rate = json.loads(PROPULSION.read_text())["strokes"][stroke]["strokesPerMinute"]
+    return round(frames * rate / per_loop / 60 / FRAMES_A_SECOND, 4)
 
 
-def paddling(vessel, rest, throat, catch, finish, height, out, side=-1, frames=30):
-    def placed(hand, lean, pitch):
-        return gripped(rest, throat, hand, {"rotationX": -side * lean, "rotationZ": pitch})
-
-    def stroke(frame):
-        u = frame / frames
-        drive = u < 0.55
-        f = u / 0.55 if drive else (u - 0.55) / 0.45
-        ease = 0.5 - 0.5 * math.cos(math.pi * f)
-        reach = ease if drive else 1 - ease
-        lift = 0 if drive else math.sin(math.pi * f)
-        hand = (catch + (finish - catch) * reach, height + 2 * (1 - reach) ** 2 + 4.5 * lift, out + side * lift)
-        return placed(hand, 30 + 20 * lift, -95 + 40 * reach)
-
-    return strokes(vessel, frames, lambda frame: placed(((catch + finish) / 2, height + 2, out - side), 62, -95),
-                   stroke, lambda frame: stroke(frames - frame))
+def drive_share(stroke):
+    return json.loads(PROPULSION.read_text())["strokes"][stroke]["driveShare"]
 
 
-def strokes(vessel, frames, ready, forward, backward):
+def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1):
     keys = list(range(0, frames, 2))
     return [{"code": f"roughseas-{vessel}-{name}", "frames": frames, "keys": keys if name != "ready" else [0],
-             "pose": pose} for name, pose in (("ready", ready), ("forward", forward), ("backward", backward))]
+             "speed": speed(stroke, frames, per_loop), "pose": pose}
+            for name, pose in (("ready", ready), ("forward", forward), ("backward", backward))]
 
 
 def moved(origin, rest, target, turned):
@@ -135,11 +122,12 @@ def crew(shape, vessel, seated, idle, strokes, grips, lean):
     rower = Rower(seat(shape, seated), idle)
     shape.animations, player = fit(rower, shape.elements, strokes, grips, lean)
     shape.write()
-    player_patch(f"player-{vessel}", player)
     rowed(shape, rower, shape.animations, player)
+    return player
 
 
 def player_patch(name, animations):
+    speeds = {animation["code"]: animation.pop("speed") for animation in animations}
     ops = []
     for animation in animations:
         ops.append({"op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-",
@@ -148,7 +136,7 @@ def player_patch(name, animations):
         elements = sorted({e for k in animation["keyframes"] for e in k["elements"]})
         ops.append({"op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-",
                     "side": "Server", "value": {
-                        "code": animation["code"], "animation": animation["code"], "animationSpeed": SPEED,
+                        "code": animation["code"], "animation": animation["code"], "animationSpeed": speeds[animation["code"]],
                         "blendMode": "Average",
                         "easeInSpeed": 4, "easeOutSpeed": 4,
                         "elementWeight": {e: WEIGHT for e in elements},
@@ -217,5 +205,5 @@ def fit(rower, elements, strokes, grips, lean):
         common = {"code": stroke["code"], "quantityframes": stroke["frames"], "onActivityStopped": "EaseOut",
                   "onAnimationEnd": "Repeat"}
         vessel.append({"name": stroke["code"], **common, "keyframes": own})
-        player.append({"name": stroke["code"], **common, "keyframes": arms})
+        player.append({"name": stroke["code"], **common, "keyframes": arms, "speed": stroke["speed"]})
     return vessel, player

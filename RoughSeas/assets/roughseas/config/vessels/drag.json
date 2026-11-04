@@ -1,0 +1,14 @@
+{
+    "kinematicViscosity": 1.19e-6,
+    "transitionReynolds": 5e5,
+    "formFactor": 1.2,
+    "bowDrag": 0,
+    "sideDrag": 0.75,
+    "sources": {
+        "kinematicViscosity": "Seawater at 15 °C, m²/s (ITTC 2011, Fresh Water and Seawater Properties, 7.5-02-01-03)",
+        "transitionReynolds": "Below about 5·10⁵ the flow along a plate stays laminar (Schlichting, Boundary-Layer Theory) and the ITTC-1957 line no longer holds; slower than that it is read at the transition",
+        "formFactor": "A slender round-bilged small craft's form factor 1 + k is 1.1 to 1.3 on the ITTC-1957 line (Molland, Turnock & Hudson 2011, Ship Resistance and Propulsion)",
+        "bowDrag": "A fine bow adds no drag of its own beyond the form factor; a blunt one sets its own, on beam by draft",
+        "sideDrag": "A round-bilged hull's section in cross-flow has a drag coefficient of 0.6 to 1.0 (Faltinsen 1990, Sea Loads on Ships and Offshore Structures, ch. 6), lowered by the finite length of the hull (Hoerner 1965, Fluid-Dynamic Drag, ch. 3)"
+    }
+}

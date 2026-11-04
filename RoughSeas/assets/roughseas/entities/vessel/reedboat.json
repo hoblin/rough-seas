@@ -4,8 +4,6 @@
     "tags": ["inanimate", "vehicle"],
     "weight": 50.4,
     "attributes": {
-        "speedMultiplier": 1.3,
-        "turnSpeed": 1.2,
         "swimmingOffsetY": 0.083,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
@@ -19,6 +17,17 @@
     },
     "hitboxSize": {"x": 0.4, "y": 0.2},
     "behaviorConfigs": {
+        "roughseas:propulsion": {
+            "paddle": "paddling",
+            "sweepMetres": 0.9,
+            "handsAboveWaterMetres": 0.72,
+            "strokes": {"pole": {"ready": "roughseas-reedboat-pole-ready", "forwards": "roughseas-reedboat-pole-forward", "backwards": "roughseas-reedboat-pole-backward"}, "paddle": {"ready": "roughseas-reedboat-paddle-ready", "forwards": "roughseas-reedboat-paddle-forward", "backwards": "roughseas-reedboat-paddle-backward"}},
+            "sources": {
+                "sweepMetres": "Her rider sits at her middle and the blade swept at arm's length works some 0.7 m beyond her gunwale, 0.2 + 0.7 m out: 0.9 m",
+                "handsAboveWaterMetres": "Astride her bundles 0.12 m above the water, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
+                "sideDrag": "Round bundles with tapered, upturned ends: the round-bilged hull's cross-flow drag"
+            }
+        },
         "roughseas:vesselintegrity": {
             "model": "reed",
             "impactCapacity": 3000,
@@ -74,7 +83,7 @@
                 }
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "CargoAP", "HullAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "CargoAP", "HullAP", "OarAP"]},
         "rideableaccessories": {
             "dropContentsOnDeath": true,
             "wearableSlots": [
@@ -85,7 +94,8 @@
                     "attachmentPointCode": "CargoAP",
                     "stepParentTo": {"": {"elementName": "Cargo"}}
                 },
-                {"code": "HullAP", "forCategoryCodes": []}
+                {"code": "HullAP", "forCategoryCodes": []},
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
             ]
         },
         "roughseas:seaforces": {
@@ -122,6 +132,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"}
         ]
     },
@@ -135,6 +146,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "roughseas:currentdrift"},
+            {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:mooring"},
             {"code": "ropetieable"}

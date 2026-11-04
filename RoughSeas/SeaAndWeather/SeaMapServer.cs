@@ -18,6 +18,9 @@ public class SeaMapServer(SeaWeatherSystem sea, ICoreServerAPI sapi)
 
     private SeaMapConfig Config => sea.Config.Map;
 
+    /// <summary>The map as the clients near it hold it, from the snapshots sent them.</summary>
+    public SeaMap Sent { get; } = new(sea.Config, sea.Clock, () => sapi.WorldManager.RegionSize);
+
     private SeaModel Model => sea.Model;
 
     public void Start()
@@ -74,6 +77,7 @@ public class SeaMapServer(SeaWeatherSystem sea, ICoreServerAPI sapi)
             var data = SerializerUtil.Serialize(snapshot);
             var near = players.Where(player => Around(player).Contains(region)).ToArray();
             if (near.Length > 0) channel.SendPacket(snapshot, data, near);
+            Sent.Receive(snapshot);
             mapRegion.SetModdata(SeaMapSnapshot.ModdataKey, data);
             sent[region] = DateTime.UtcNow;
         }

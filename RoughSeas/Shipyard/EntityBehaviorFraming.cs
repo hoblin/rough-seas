@@ -244,6 +244,8 @@ public class FramingConfig
 
     public string Hides = "";
 
+    public string Oars = "";
+
     /// <summary>The hides' <c>type</c> variants a hide stage takes.</summary>
     public string[] HideStates = [];
 
