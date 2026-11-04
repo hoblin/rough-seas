@@ -6,10 +6,10 @@ Read before changing a shape, with `bin/model help`. Shapes are edited in Blende
 
 A hull of a few hundred tilted boards is no shape to place by hand, so each vessel of ours has a builder in `bin/lib/hulls/` (Python, no Blender), and `bin/model build [VESSEL...]` writes its shape JSON from it. The builder is the source: change the vessel there and rebuild; an edit made to the JSON alone is lost on the next build. Look at the result with `bin/model preview` and in the game.
 
-`bin/model build` is a generator, not a test, and a slow one: about 20 minutes for every vessel, nearly all of it fitting the rowers' arms to their strokes. Run it only when what it writes must change, and only for the vessels whose output changes:
+`bin/model build` is a generator, not a test. It builds the vessels side by side and prints each one's output as she finishes: under a minute for all of them, the bark canoe the longest. Run it only when what it writes must change, and only for the vessels whose output changes:
 
 - a vessel's own builder changed: `bin/model build VESSEL` (the outrigger is built from the dugout's hull, so a dugout change rebuilds both);
-- code every builder uses changed (`shape.py`, `fit.py`, `wounds.py`, `physics.py`), or the stroke fitting (`stroke.py`, `arm.py`, `leg.py`, `held.py`): every vessel;
+- code every builder uses changed (`shape.py`, `fit.py`, `wounds.py`, `physics.py`, `transform.py`), or the stroke fitting (`stroke.py`, `arm.py`, `leg.py`, `limb.py`, `held.py`): every vessel;
 - a value the builders read from a vessel's entity JSON changed (her weight, waterplane, `swimmingOffsetY`, hitbox, `pole`): that vessel;
 - a merge left a generated file in conflict (a shape, `player-*.json`): take either side and rebuild the vessels that file belongs to; never resolve it by hand.
 

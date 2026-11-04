@@ -29,8 +29,10 @@ def identity():
     return [[float(i == j) for j in range(4)] for i in range(4)]
 
 
+# Every sum here starts from 0 as sum() does, so negative zeros add up to 0.0 and no shape writes -0.0.
 def mul(a, b):
-    return [[sum(a[i][k] * b[k][j] for k in range(4)) for j in range(4)] for i in range(4)]
+    b0, b1, b2, b3 = b
+    return [[0 + r[0] * b0[j] + r[1] * b1[j] + r[2] * b2[j] + r[3] * b3[j] for j in range(4)] for r in a]
 
 
 def translation(v):
@@ -68,19 +70,35 @@ def nearest(turn, previous):
 
 
 def apply(m, p):
-    return tuple(sum(m[i][k] * c for k, c in enumerate((*p, 1))) for i in range(3))
+    x, y, z = p
+    return tuple(0 + r[0] * x + r[1] * y + r[2] * z + r[3] for r in m[:3])
 
 
 def direct(m, v):
-    return tuple(sum(m[i][k] * c for k, c in enumerate(v)) for i in range(3))
+    x, y, z = v
+    return tuple(0 + r[0] * x + r[1] * y + r[2] * z for r in m[:3])
 
 
 def undirect(m, v):
-    return tuple(sum(m[k][i] * c for k, c in enumerate(v)) for i in range(3))
+    x, y, z = v
+    r0, r1, r2 = m[0], m[1], m[2]
+    return (0 + r0[0] * x + r1[0] * y + r2[0] * z, 0 + r0[1] * x + r1[1] * y + r2[1] * z,
+            0 + r0[2] * x + r1[2] * y + r2[2] * z)
+
+
+def inverse(m):
+    r = [[m[j][i] for j in range(3)] for i in range(3)]
+    t = [-sum(r[i][k] * m[k][3] for k in range(3)) for i in range(3)]
+    return [r[0] + [t[0]], r[1] + [t[1]], r[2] + [t[2]], [0, 0, 0, 1]]
 
 
 def unapply(m, p):
-    return undirect(m, [c - m[i][3] for i, c in enumerate(p)])
+    return undirect(m, (p[0] - m[0][3], p[1] - m[1][3], p[2] - m[2][3]))
+
+
+def depth(m, size, p):
+    x, y, z = unapply(m, p)
+    return min(x, size[0] - x, y, size[1] - y, z, size[2] - z)
 
 
 # The engine's element transform for animations of version 0, as bin/lib/vsmodel/pose.py has it for Blender.

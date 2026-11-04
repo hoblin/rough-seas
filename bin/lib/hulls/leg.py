@@ -1,6 +1,7 @@
 import math
 
-from transform import apply, identity, local, mul
+from limb import Limb
+from transform import apply
 
 SOLE = (2, 0, 1.5)
 # Knee flexion and hip abduction in degrees, AAOS normal values.
@@ -13,21 +14,14 @@ MOST = 0.2
 DAMPING = 1e-3
 
 
-class Leg:
+class Leg(Limb):
 
-    def __init__(self, chain, idle, outboard):
-        *self.body, self.upper, self.lower = chain
-        self.idle = idle
-        self.outboard = outboard
-
-    def sole(self, pose):
-        m = identity()
-        for element in [*self.body, self.upper, self.lower]:
-            m = mul(m, local(element, pose.get(element["name"]) or self.idle.get(element["name"]) or {}))
-        return apply(m, [c / 16 for c in SOLE])
+    def sole(self, pose, trunk=None):
+        return apply(self.frames(pose, trunk)[-1], [c / 16 for c in SOLE])
 
     def plant(self, pose, foot):
         upper, lower = self.upper["name"], self.lower["name"]
+        trunk = self.trunk(pose)
         start = self.idle.get(upper, {}), self.idle.get(lower, {})
         angles = [start[0].get("rotationX", 0), start[0].get("rotationZ", 0) - BENT / 2, start[1].get("rotationZ", 0) + BENT]
 
@@ -36,7 +30,7 @@ class Leg:
                            lower: {"rotationX": start[1].get("rotationX", 0), "rotationY": 0, "rotationZ": a[2]}}
 
         def miss(a):
-            return [s - f for s, f in zip(self.sole(posed(a)), foot)]
+            return [s - f for s, f in zip(self.sole(posed(a), trunk), foot)]
 
         for _ in range(ROUNDS):
             error = miss(angles)

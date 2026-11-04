@@ -1,6 +1,7 @@
 import json
 import math
 import os
+from functools import cache
 from pathlib import Path
 
 from arm import Arm
@@ -13,8 +14,8 @@ POSES = ROOT / "RoughSeas/assets/roughseas/patches/player-poses.json"
 PROPULSION = ROOT / "RoughSeas/assets/roughseas/config/propulsion.json"
 PATCHES = ROOT / "RoughSeas/assets/roughseas/patches"
 
-ARMS = {"R": ("UpperArmR", "LowerArmR"), "L": ("UpperArmL", "LowerArmL")}
-LEGS = {"R": ("UpperFootR", "LowerFootR"), "L": ("UpperFootL", "LowerFootL")}
+ARMS = {"R": "LowerArmR", "L": "LowerArmL"}
+LEGS = {"R": "LowerFootR", "L": "LowerFootL"}
 OUTBOARD = {"R": -1, "L": 1}
 # Outweighs the seat pose (80) so far that the fit can leave it out of the arms and torso.
 WEIGHT = 10000
@@ -32,13 +33,17 @@ def unturn(rotations, v):
     return undirect(euler([rotations.get("rotation" + axis, 0) for axis in "XYZ"]), v)
 
 
+@cache
+def propelled(stroke):
+    return json.loads(PROPULSION.read_text())["strokes"][stroke]
+
+
 def speed(stroke, frames, per_loop=1):
-    rate = json.loads(PROPULSION.read_text())["strokes"][stroke]["strokesPerMinute"]
-    return round(frames * rate / per_loop / 60 / FRAMES_A_SECOND, 4)
+    return round(frames * propelled(stroke)["strokesPerMinute"] / per_loop / 60 / FRAMES_A_SECOND, 4)
 
 
 def drive_share(stroke):
-    return json.loads(PROPULSION.read_text())["strokes"][stroke]["driveShare"]
+    return propelled(stroke)["driveShare"]
 
 
 def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1):
@@ -106,8 +111,8 @@ class Rower:
                                                   if op["path"] == "/animations/-"]
         sitting = next(a for a in animations if a["code"] == idle)
         self.idle = next(k["elements"] for k in sitting["keyframes"] if k["frame"] == 0)
-        self.arms = {side: Arm(self.chain(lower), self.idle, OUTBOARD[side]) for side, (_, lower) in ARMS.items()}
-        self.legs = {side: Leg(self.chain(lower), self.idle, OUTBOARD[side]) for side, (_, lower) in LEGS.items()}
+        self.arms = {side: Arm(self.chain(lower), self.idle, OUTBOARD[side]) for side, lower in ARMS.items()}
+        self.legs = {side: Leg(self.chain(lower), self.idle, OUTBOARD[side]) for side, lower in LEGS.items()}
 
     def chain(self, name):
         def descend(elements, path):
@@ -131,10 +136,10 @@ class Rower:
         return tuple((p - s + h) / 16 for p, s, h in zip(point, self.seat, CENTRE))
 
     def hand(self, pose, side):
-        return tuple(s + 16 * c - h for s, c, h in zip(self.seat, self.arms[side].joints(pose)[-1], CENTRE))
+        return tuple(s + 16 * c - h for s, c, h in zip(self.seat, self.arms[side].posture(pose).joints[-1], CENTRE))
 
 
-def crew(shape, vessel, seated, idle, strokes, grips, lean):
+def crew(shape, seated, idle, strokes, grips, lean):
     rower = Rower(seat(shape, seated), idle)
     shape.animations, player = fit(rower, shape.elements, strokes, grips, lean)
     shape.write()
@@ -206,14 +211,15 @@ def fit(rower, elements, strokes, grips, lean):
             hands = [rower.body(centre(elements, m, grip)) for m in placed]
             axes = [held(m, grip) for m in placed]
             thumbs = [[tuple(thumb * c for c in axis) for axis in axes] for thumb in (1, -1)]
-            holds = [arm.stroke(bodies, hands, held_as) for held_as in thumbs]
+            holds = arm.stroke(bodies, hands, thumbs)
             chosen = min(range(2), key=lambda i: holds[i][1])
             arms = holds[chosen][0]
             for i in range(1, len(arms)):
                 arms[i] = arm.follow(arms[i], arms[i - 1])
             for frame, body, pose, hand, axis in zip(stroke["keys"], bodies, arms, hands, thumbs[chosen]):
                 body |= pose
-                for name, (excess, _) in arm.faults(body, hand, axis).items():
+                posture = arm.posture(body)
+                for name, (excess, _) in arm.faults(posture, hand, arm.angles(posture, axis)).items():
                     faults[f"{side} {name}"] = max(faults.get(f"{side} {name}", (0, 0)), (excess, frame))
         for frame, body in zip(stroke["keys"], bodies):
             depth = rower.arms["L"].through(body, rower.arms["R"])

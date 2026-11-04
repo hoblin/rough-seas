@@ -1,11 +1,11 @@
 import functools
 import math
 
-from held import PADDLE, POLE, paddling, seated_poling, standing_poling, tools, waterline
+from held import PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
-from physics import afloat, kilograms, stands
+from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, kilograms, per_rope, ropes, stands
 from fit import APART, TOLERANCE, lined as lined_section
-from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
+from shape import BILGE, VOXEL_METRES, VOXELS_A_METRE, Hull, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
 from transform import add, scale, sub, unit
 from wounds import wound
 
@@ -13,7 +13,6 @@ PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
 CENTRE = 8
 SKIN = 0.6
-VOXEL_METRES = 1 / 16
 
 GUNWALE = 0.6
 SHEATHING = 0.15
@@ -41,11 +40,8 @@ GUNWALE_METRES = 0.032
 BARK_METRES = 0.005
 STITCH_METRES = 0.0254
 STEM_GIRTH_METRES = 0.08
-# Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
-ROPE_METRES = 10
 SHEET_LENGTH = 80
 SHEET_THICKNESS = 0.4
-LATH_SQUARE_METRES = 0.01 * 0.06
 
 
 def section(x, breadth, rocker, rise):
@@ -295,9 +291,9 @@ def wraps(hull, cuts):
                 turns.append(box(f"Stitch{name}{n}x{s + 1}", (at[0] - 0.25, at[1] - 0.25, CENTRE - 1), (at[0] + 0.25, at[1] + 0.25, CENTRE + 1),
                                  "lashing", grain="z"))
             metres += math.dist(a, b) * VOXEL_METRES / STITCH_METRES * STEM_GIRTH_METRES
-    ropes = math.ceil(metres / ROPE_METRES)
-    print(f"lashing: {metres:.0f} m of root in {len(turns)} wraps, {ropes} ropes of {ROPE_METRES} m")
-    return [turns[len(turns) * r // ropes:len(turns) * (r + 1) // ropes] for r in range(ropes)]
+    count = ropes(metres)
+    print(f"lashing: {metres:.0f} m of root in {len(turns)} wraps, {count} ropes of {ROPE_METRES} m")
+    return per_rope(turns, count)
 
 
 def gores(hull, side):
@@ -352,11 +348,9 @@ def build(path_):
     at = seat(shape, "BackSeat")
     line = waterline("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT
-    pole = (("pole", POLE, standing_poling(POLE, (poler, SKIN, CENTRE), line * VOXELS_A_METRE, CENTRE - SHEER - 1,
-                                           hull.half(poler, SKIN + 1, inset=SKIN),
-                                           floor_at=lambda x, across: hull.floor(x, across, inset=SKIN)))
-            if stands("barkcanoe", SKIN * VOXEL_METRES)
-            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - SHEER - 1)))
+    pole = poling(stands("barkcanoe", SKIN * VOXEL_METRES), at, line * VOXELS_A_METRE, CENTRE - SHEER - 1,
+                  (poler, SKIN, CENTRE), hull.half(poler, SKIN + 1, inset=SKIN),
+                  floor_at=lambda x, across: hull.floor(x, across, inset=SKIN))
     player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 6.5, 1.5)),
         "pole": pole,
