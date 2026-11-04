@@ -124,7 +124,7 @@ Breaking waves slam the windward side, and a plunging crest far harder than a sp
 
 ### Rapids
 
-White water batters the bottom of every hull but one, every second it is in it. See [Rapids](Rapids).
+White water batters the bottom of every hull but two, every second it is in it. See [Rapids](Rapids).
 
 ### Weapons, explosions and lightning
 

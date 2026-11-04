@@ -30,6 +30,7 @@
             "impactCapacity": 400,
             "parts": [{"name": "hide", "material": "hide", "share": 9.4}, {"name": "frame", "material": "wood-willow", "share": 7.7}],
             "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-willow", "metres": 0.01}, "backedShare": 0.47, "bottomBackedShare": 0.65, "spanMetres": 0.37, "frame": {"material": "wood-willow", "metres": 0.01, "widthMetres": 0.06, "spacingMetres": 0.128, "spanMetres": 0.128}},
+            "runsRapids": true,
             "depthMetres": 0.35,
             "waterplaneSquareMetres": 1.06,
             "repairs": [
@@ -42,6 +43,7 @@
                 "parts": "By the model (bin/lib/hulls/coracle.py): 2.18 m² of hide 5 mm thick at 860 kg/m³, 9.4 kg, over 14 lattice laths and three plaits of 1 by 6 cm, 32 m of willow, 8 kg: 17 kg, as Hornell (1938) gives one-man coracles at 18 to 40 lb",
                 "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.085 m (bin/lib/hulls/coracle.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, the lattice's 14 laths 6 cm wide cross 65% of the bottom, and their 28 ends rising to the gunwale 47% of the sides. A breaker presses the hide onto them, each lath 1 cm deep bending over the 0.37 m from the bottom to the gunwale. A knock, a ram or rapids presses the hide onto the lath behind where it lands: wet hide stretches to 60% before it parts (pickled cowhide, 26.6 MPa at 60% elongation; Tensile Properties of Indigenous Kenyan Boran Pickled and Tanned Bovine Hide), so on a lath it passes the blow on, and the lath, 1 by 6 cm of willow, breaks by its impact bending work across its section; between two laths, their 6 cm breadth over 47% of her sides setting them 12.8 cm apart and crossing as far, it sags as a membrane until its pull breaks both. Hornell (British Coracles and Irish Curraghs, 1938) has coracles shoot rapids on rock-strewn rivers and a hole or a rent mended with a tarred patch",
+                "runsRapids": "She shoots them as the bark canoe does: Hornell (British Coracles and Irish Curraghs, 1938) has her float in from 2 to 3 in. of water, go almost anywhere and shoot rapids and thread narrow channels. A stub, as the rapids' strike is (rapids.json): until rapids are worked out from draft (#260), which hull runs them is this flag",
                 "depthMetres": "Bottom to gunwale: the laths rise 0.35 m (Museum Wales, Teifi coracle), as the model draws them",
                 "waterplaneSquareMetres": "So that her 272 L bowl full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
                 "seep": "A seam where one hide meets the next weeps once the fat has washed out of it: some 1.8 m of seam across her bowl, weeping as the currach's do a metre. A coracle from before her build is covered in prepared hide over her two sections, with no seam, as her old recipe's one large hide had",
@@ -94,7 +96,7 @@
             "hideStates": ["raw", "soaked", "scraped", "prepared", "oiled", "pelt", "salted"],
             "layout": {"kind": "lattice", "along": 7, "across": 7, "alongSpacingMetres": 0.125, "acrossSpacingMetres": 0.1875, "toleranceMetres": 0.0625},
             "stages": [
-                {"group": "Lattice", "work": "lath", "seconds": 3, "lines": true},
+                {"group": "Lattice", "work": "lath", "seconds": 3, "lines": true, "members": true},
                 {"group": "Binding", "work": "rope", "seconds": 15},
                 {"group": "Gunwale", "work": "lath", "seconds": 10, "sets": true, "bends": "Lattice"},
                 {"group": "Cover", "work": "hide", "seconds": 20, "part": "hide"},

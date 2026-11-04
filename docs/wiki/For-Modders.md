@@ -239,4 +239,6 @@ New: a material's `crushStrength` and `densificationStrain`, `Resistance.Cushion
 - Our coracle, bark canoe and currach carry a `frame`, a 1 by 6 cm lath of their build's wood, and feel a knock from about 1.2 m/s with one aboard where they used to shrug off 2 m/s. A patch that removes the `frame` gives them the whole-frame knock back.
 - `Resistance.Loss` and `Resistance.BreaksFrame` are now the resistance's own, and `BreaksFrame` takes the blow's severity, and whether it landed on a member, rather than its loss. `Resistance.Backed` takes the blow.
 
-New: a shell's `frame` (`FrameMember`), `Resistance.Framed` (`FramedResistance`), a material's `tensileStrength` and `elongation`, `HullModel.FrameBroken`.
+- While she is built, a broad load meets only the frame members laid: `roughseas:framing`'s stages marked `members` lay them, and `Shell.Framed` spaces them wider while some are missing.
+
+New: a shell's `frame` (`FrameMember`), `Resistance.Framed` (`FramedResistance`), a material's `tensileStrength` and `elongation`, `HullModel.FrameBroken`, a framing stage's `members`.

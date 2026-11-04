@@ -161,16 +161,16 @@ public class ShellTests
     }
 
     [Fact]
-    public void AFrameWithNoLiningStillTakesTheWoodItWasBuiltFrom() =>
-        Assert.Equal("wood-oak", Framed(new SkinShell { Material = "hide", Metres = 0.005 }).Lined("wood-oak", 1).Frame!.Material);
+    public void TheFrameBehindIsOfTheWoodItWasBuiltFrom() =>
+        Assert.Equal("wood-oak", Framed(new SkinShell { Material = "hide", Metres = 0.005 }).Framed("wood-oak", 1).Frame!.Material);
 
     [Fact]
-    public void TheFrameBehindIsOfTheWoodItWasBuiltFrom()
+    public void ABlowMeetsOnlyTheFrameMembersAlreadyLaid()
     {
         var canoe = Framed(new RigidShell { Material = "bark", Metres = 0.005, Backing = new RigidShell { Material = "wood-ash", Metres = 0.003 }, BackedShare = 1 });
 
-        Assert.Equal("wood-oak", canoe.Lined("wood-oak", 0.5).Frame!.Material);
-        Assert.Null(canoe.Lined("wood-oak", 0).Frame);
+        Assert.Null(canoe.Lined("wood-oak", 1).Framed("wood-oak", 0).Frame);
+        Assert.Equal(0.2, canoe.Framed("wood-oak", 0.5).Frame!.Share, 9);
     }
 
     [Fact]

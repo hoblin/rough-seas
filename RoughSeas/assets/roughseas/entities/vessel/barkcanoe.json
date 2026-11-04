@@ -53,6 +53,7 @@
                 "parts": "By the model (bin/lib/hulls/barkcanoe.py): 4.76 m² of bark 5 mm thick, 13.3 kg, over 61 m of laths 1 by 6 cm, 12.8 kg of white cedar",
                 "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.052 m (bin/lib/hulls/barkcanoe.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Balance: bark half a centimetre thick, lined all over by the cedar sheathing, 1/8 in thick (native-art-in-canada.com/birchbarkcanoes.html), so a blow splits both. A breaker bends bark and sheathing together between the ribs, by the model every 4 voxels. A knock, a ram or a blast splits the bark and the sheathing where it lands, as a point blow does, and the rib behind takes the rest, 1 by 6 cm of cedar breaking by its impact bending work across its section, or both ribs, every 4 voxels, when it lands between them. Bark is the weak part: Adney and Chapelle (The Bark Canoes and Skin Boats of North America, 1964) quote LaHontan that the canoes were easily damaged and their bark mended at the end of each day, and Malecite canoes wore shoes to keep rocks and snags off the bark",
+                "runsRapids": "She draws almost no water and rides over the rocks (docs/design.md). A stub, as the rapids' strike is (rapids.json): until rapids are worked out from draft (#260), which hull runs them is this flag",
                 "depthMetres": "Keel to gunwale amidships, by the model (bin/lib/hulls/barkcanoe.py)",
                 "waterplaneSquareMetres": "So that her 609 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)"
             }
@@ -80,7 +81,7 @@
                 {"group": "Stems", "work": "lath", "seconds": 3},
                 {"group": "Lashing", "work": "rope", "seconds": 15},
                 {"group": "Sheathing", "work": "lath", "seconds": 3, "lines": true},
-                {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true},
+                {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true, "members": true},
                 {"group": "Pitch", "work": "pitch", "seconds": 7.5, "litres": 0.25, "seals": true}
             ],
             "sources": {

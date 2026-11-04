@@ -69,13 +69,22 @@ public abstract class Shell
     /// <summary>This shell lined by <paramref name="material"/> over <paramref name="lined"/> of what its finished lining covers.</summary>
     public Shell Lined(string material, double lined)
     {
-        if (Backing == null && Frame == null) return this;
+        if (Backing == null) return this;
 
         var shell = (Shell)MemberwiseClone();
-        shell.Backing = lined > 0 && Backing != null ? new RigidShell { Material = material, Metres = Backing.Metres, SpanMetres = Backing.SpanMetres } : null;
-        shell.Frame = lined > 0 ? Frame?.Of(material) : null;
+        shell.Backing = lined > 0 ? new RigidShell { Material = material, Metres = Backing.Metres, SpanMetres = Backing.SpanMetres } : null;
         shell.BackedShare = BackedShare * lined;
         shell.BottomBackedShare = BottomBackedShare * lined;
+        return shell;
+    }
+
+    /// <summary>This shell with <paramref name="laid"/> of its frame's members laid, of <paramref name="material"/>.</summary>
+    public Shell Framed(string material, double laid)
+    {
+        if (Frame == null) return this;
+
+        var shell = (Shell)MemberwiseClone();
+        shell.Frame = laid > 0 ? Frame.Of(material, laid) : null;
         return shell;
     }
 
@@ -163,10 +172,11 @@ public class FrameMember
 
     public double GapMetres => SpacingMetres - WidthMetres;
 
-    public FrameMember Of(string material)
+    public FrameMember Of(string material, double laid)
     {
         var member = (FrameMember)MemberwiseClone();
         member.Material = material;
+        member.SpacingMetres = SpacingMetres / laid;
         return member;
     }
 

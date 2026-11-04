@@ -106,8 +106,8 @@
             "stages": [
                 {"group": "Gunwale", "work": "lath", "seconds": 3, "follows": "EndLashing"},
                 {"group": "EndLashing", "work": "rope", "seconds": 15},
-                {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true, "lines": true},
-                {"group": "Stringers", "work": "lath", "seconds": 3, "lines": true},
+                {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true, "lines": true, "members": true},
+                {"group": "Stringers", "work": "lath", "seconds": 3, "lines": true, "members": true},
                 {"group": "Cover", "work": "hide", "seconds": 20, "part": "hide"},
                 {"group": "Lacing", "work": "rope", "seconds": 15, "seals": true},
                 {"group": "Thwart", "work": "pole", "seconds": 3},

@@ -212,6 +212,7 @@ Every piece of a `lath` or `pole` stage takes one at least as long as it, cut do
 | `work` | `lath`, `pole`, `rope`, `pitch`, `hew`, `cloth`, `plank` or `hide` | `lath` | what lays a piece |
 | `seconds` | s | 0 | how long a piece is held on her: the real time of that work over sixty |
 | `lines` | bool | false | its laths line her shell: the shell's `backing` backs her only where they are laid |
+| `members` | bool | false | its laths are the members of her shell's `frame`: a broad load meets only those laid, spaced wider while some are missing |
 | `sets` | bool | false | its laths are bent in wet: she is finished only once the wettest of them has dried |
 | `seals` | bool | false | her hold holds water only once the stage is done; until then water runs through her |
 | `litres` | l | 0 | the pitch one piece takes |
