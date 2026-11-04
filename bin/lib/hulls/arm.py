@@ -1,6 +1,6 @@
 import math
 
-from transform import angles, apply, direct, euler, identity, local, mul, nearest, unapply, undirect
+from transform import angles, apply, cross, direct, dot, euler, identity, local, mul, nearest, sub, unapply, undirect, unit
 
 GRIP = (1.25, 0.6, 1)
 REST_OVERLAP = 0.75 / 16
@@ -34,23 +34,6 @@ SHOULDER_STRENGTH = 77.2
 ELBOW_STRENGTH = 69.5
 
 
-def dot(a, b):
-    return sum(x * y for x, y in zip(a, b))
-
-
-def cross(a, b):
-    return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
-
-
-def minus(a, b):
-    return tuple(x - y for x, y in zip(a, b))
-
-
-def unit(v):
-    length = math.sqrt(dot(v, v))
-    return tuple(c / length for c in v)
-
-
 def along(a, b, share):
     return tuple(x + share * (y - x) for x, y in zip(a, b))
 
@@ -67,7 +50,7 @@ def off_middle(value, span):
 
 def basis(first, second):
     e1 = unit(first)
-    e2 = unit(minus(second, tuple(dot(second, e1) * c for c in e1)))
+    e2 = unit(sub(second, tuple(dot(second, e1) * c for c in e1)))
     return [e1, e2, cross(e1, e2)]
 
 
@@ -143,20 +126,20 @@ class Arm:
 
     def place(self, pose, hand, swivel):
         torso = self.frames(pose)[len(self.body) - 1]
-        target = minus(unapply(torso, hand), self.shoulder)
+        target = sub(unapply(torso, hand), self.shoulder)
         upper, fore = math.sqrt(dot(self.humerus, self.humerus)), math.sqrt(dot(self.forearm, self.forearm))
         reach = max(abs(upper - fore) + 1e-6, min(upper + fore - 1e-6, math.sqrt(dot(target, target))))
         bend = self.flexion(reach)
         forearm = direct(euler([*self.bend[:2], self.bend[2] + bend]), self.forearm)
         axis = unit(target)
         down = undirect(torso, (0, -1, 0))
-        first = unit(minus(down, tuple(dot(down, axis) * c for c in axis)))
+        first = unit(sub(down, tuple(dot(down, axis) * c for c in axis)))
         second = cross(axis, first)
         out = (reach * reach + upper * upper - fore * fore) / (2 * reach)
         radius = math.sqrt(max(0.0, upper * upper - out * out))
         elbow = tuple(out * a + radius * (math.cos(swivel) * f + math.sin(swivel) * s)
                       for a, f, s in zip(axis, first, second))
-        to_hand = minus(tuple(reach * a for a in axis), elbow)
+        to_hand = sub(tuple(reach * a for a in axis), elbow)
         posed, rest = basis(elbow, to_hand), basis(self.humerus, forearm)
         turned = [[sum(posed[k][i] * rest[k][j] for k in range(3)) for j in range(3)] + [0] for i in range(3)]
         total = angles(turned + [[0, 0, 0, 1]])
@@ -200,7 +183,7 @@ class Arm:
     def angles(self, pose, grip):
         shoulder, elbow, _ = self.joints(pose)
         *_, torso, upper, lower = self.frames(pose)
-        humerus = unit(undirect(torso, minus(elbow, shoulder)))
+        humerus = unit(undirect(torso, sub(elbow, shoulder)))
         held = undirect(lower, grip)
         return {
             "shoulder elevation": math.degrees(math.acos(max(-1.0, min(1.0, -humerus[1])))),

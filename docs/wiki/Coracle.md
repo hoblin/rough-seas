@@ -21,7 +21,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 33 cm empty, 26 cm with its paddler |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's gear; armour takes it down |
 | [Mending](Mending) | 1 small prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
-| [Bilge](Bailing) | 265 litres |
+| [Bilge](Bailing) | 272 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
 | [Rapids](Rapids) | broken within seconds |
 | [Lightning](Lightning) | a strike nearby breaks it |

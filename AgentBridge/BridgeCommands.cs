@@ -59,9 +59,10 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Entity(args.Caller, (long)args[0]))
             .EndSubCommand()
             .BeginSubCommand("sea")
-                .WithDescription("Fly the caller to the nearest open sea within 1500 blocks, hovering just above the surface")
+                .WithDescription("Fly the caller to the nearest open sea within 1500 blocks, with ocean all round for a clearing of blocks (default 128), hovering just above the surface")
                 .RequiresPlayer()
-                .HandleWith(args => Sea((IServerPlayer)args.Caller.Player))
+                .WithArgs(parsers.OptionalInt("clear", 128))
+                .HandleWith(args => Sea((IServerPlayer)args.Caller.Player, (int)args[0]))
             .EndSubCommand()
             .BeginSubCommand("shore")
                 .WithDescription("Fly the caller to the nearest dry, open ground beside the sea within 256 blocks, hovering just above it")
@@ -453,22 +454,30 @@ public class BridgeCommands : ModSystem
             && map.GetUnpaddedIntLerpedForBlockPos(x, z, regionSize) >= 250;
     }
 
-    private TextCommandResult Sea(IServerPlayer player)
+    private TextCommandResult Sea(IServerPlayer player, int clear)
     {
         const int range = 1500;
         const int step = 16;
         var origin = player.Entity.Pos.AsBlockPos;
+        var reach = clear / step;
+        var around = Enumerable.Range(-reach, 2 * reach + 1)
+            .SelectMany(i => Enumerable.Range(-reach, 2 * reach + 1), (i, j) => (x: i * step, z: j * step))
+            .Where(offset => offset.x * offset.x + offset.z * offset.z <= clear * clear)
+            .ToArray();
+
+        bool Clear(int x, int z) => around.All(offset => OpenSea(x + offset.x, z + offset.z));
 
         var sea = Enumerable.Range(-range / step, 2 * range / step + 1)
             .SelectMany(i => Enumerable.Range(-range / step, 2 * range / step + 1), (i, j) => (x: origin.X + i * step, z: origin.Z + j * step))
             .Where(point => OpenSea(point.x, point.z))
             .OrderBy(point => (point.x - origin.X) * (long)(point.x - origin.X) + (point.z - origin.Z) * (long)(point.z - origin.Z))
+            .Where(point => Clear(point.x, point.z))
             .Select(point => ((int x, int z)?)point)
             .FirstOrDefault();
-        if (sea == null) return TextCommandResult.Error($"No open sea in the generated regions within {range} blocks");
+        if (sea == null) return TextCommandResult.Error($"No open sea {clear} blocks clear in the generated regions within {range} blocks");
 
         var flown = Fly(player, new Vec3d(sea.Value.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, sea.Value.z + 0.5));
-        return TextCommandResult.Success($"{flown.StatusMessage}, over open sea");
+        return TextCommandResult.Success($"{flown.StatusMessage}, over open sea {clear} blocks clear");
     }
 
     private TextCommandResult Shore(IServerPlayer player)

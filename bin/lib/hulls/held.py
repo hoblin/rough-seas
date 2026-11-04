@@ -1,9 +1,10 @@
 import json
 import math
+import re
 
 from physics import STANDING_HIP_METRES, SWIM_LINE_METRES
 from stroke import CENTRE, ROOT, Rower, centre, drive_share, facing, fit, moved, named, posed, rowed, seat, turn, unturn
-from transform import angles, apply, euler, mul, nearest, translation, unapply, undirect
+from transform import angles, apply, euler, mul, nearest, translation, unapply, undirect, unit
 
 ASSETS = ROOT / "RoughSeas/assets/roughseas"
 ANCHOR = "ItemAnchor"
@@ -31,11 +32,6 @@ SEATED_CHEST = 7
 SEATED_REACH = (-3, 3)
 REST = 8
 CLEARANCE = 0.05
-
-
-def unit(v):
-    length = math.sqrt(sum(c * c for c in v))
-    return [c / length for c in v]
 
 
 def inverse(m):
@@ -108,12 +104,7 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         hands = round(stance.at[1] / VOXELS_A_METRE - waterline + STANDING_HIP_METRES, 2)
         print(f"{vessel}-{kind}: stands {', '.join(f'{a} {v:+.3f}' for a, v in zip('xyz', shift))} m from {seated}, "
               f"his hands {hands:.2f} m over the water at the end of the shove")
-        poling = propulsion_of(vessel)["pole"]
-        written = poling.get("stance", {}).get("riderOffset", {})
-        if [written.get(a, 0) for a in "xyz"] != shift or poling.get("handsAboveWaterMetres") != hands:
-            raise ValueError(f"{vessel}: her pole stance in JSON, riderOffset {written} and handsAboveWaterMetres "
-                             f"{poling.get('handsAboveWaterMetres')}, is not the one fitted: write "
-                             f"{dict(zip('xyz', shift))} and {hands}")
+        record_stance(vessel, shift, hands)
     group = tool.group()
     poses = stance.poses if stance else poses
     plan = named(f"{vessel}-{kind}", FRAMES, {name: pose for name, (pose, *_) in poses.items()}, stroke,
@@ -250,13 +241,20 @@ PADDLE = Tool("tool/paddle", "paddle", (13, 8, 8), (0.5, 8, 8))
 POLE = Tool("resource/pole", "pole-3", (12.8, 0.75, 8), (8, 0.75, 8))
 
 
-def propulsion_of(vessel):
+def record_stance(vessel, shift, hands):
+    """Writes the stance fitted here into the vessel's pole config, her entity's or, for a vanilla boat, the patch
+    that gives her propulsion; nothing else in the file changes."""
     path = ASSETS / "entities/vessel" / f"{vessel}.json"
-    if path.exists():
-        return json.loads(path.read_text())["behaviorConfigs"]["roughseas:propulsion"]
-    patches = json.loads((ASSETS / "patches/propulsion-vessels.json").read_text())
-    return next(op["value"] for op in patches if op["path"] == "/behaviorConfigs/roughseas:propulsion"
-                and op["file"].endswith(f"boat-{vessel}.json"))
+    if not path.exists():
+        path = ASSETS / "patches/propulsion-vessels.json"
+    text = path.read_text()
+    start = text.index('"pole": {', text.index(f"boat-{vessel}.json") if path.name.startswith("propulsion") else 0)
+    end = text.index("\n", start)
+    number = lambda value: f"{value + 0.0:g}"
+    offset = ", ".join(f'"{a}": {number(v)}' for a, v in zip("xyz", shift))
+    pole = re.sub(r'"handsAboveWaterMetres": [-\d.]+', f'"handsAboveWaterMetres": {number(hands)}', text[start:end])
+    pole = re.sub(r'"riderOffset": \{[^}]*\}', f'"riderOffset": {{{offset}}}', pole)
+    path.write_text(text[:start] + pole + text[end:])
 
 
 def waterline(vessel):

@@ -48,4 +48,4 @@ One rower, the average finisher of a canoe marathon, on calm water with nothing 
 | [Hide currach](Hide-Currach) | 2.4 m/s, rowed | 2.4 m/s | 39° a second, rowed |
 | [Outrigger canoe](Outrigger-Canoe) | 1.5 m/s | 1.9 m/s | 14° a second |
 
-A metre a second is 3.6 km/h; the voyageurs' canoes made some 2.2 m/s on the lakes. How these speeds come about, and where each number comes from, is on [the science of the hull](The-Science-of-the-Hull#driving-her).
+A metre a second is 3.6 km/h; the voyageurs' canoes made some 2.2 m/s on the lakes. Vanilla rows every hull at the same 3 m/s, and a hull with a sail at 0.7, so most of these go slower than vanilla, the raft at an eighth of its pace and the bark canoe poled at nine tenths; the outrigger, sail and all, goes twice as fast. How these speeds come about, and where each number comes from, is on [the science of the hull](The-Science-of-the-Hull#driving-her).

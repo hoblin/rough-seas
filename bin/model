@@ -13,6 +13,12 @@ BUILD
                                    and seats in its JSON (docs/modeling.md). A vessel with its own
                                    oars or paddle also gets the rower's arms fitted to them, and
                                    <temp>/model/VESSEL-rowed.json shows both for bin/model pose.
+                                   A shape whose boxes stand outside the round they build, or whose
+                                   faces share a plane, is not written: the build names each box and
+                                   how far out it stands, or the two faces (docs/modeling.md).
+                                   About 20 minutes for all, mostly the arms: build only the
+                                   vessels whose output must change. It is a generator, not a
+                                   test (docs/modeling.md says when).
 EDIT
   bin/model edit SHAPE SCRIPT      import SHAPE, run SCRIPT (Python, bpy) on the scene, export
                                    back over SHAPE. The usual way to change any other model.
@@ -34,9 +40,13 @@ CHECK
                                    each animation as the game will, on every frame. Ends PASSED or
                                    FAILED (exit 1). A SHAPE must come back identical; a BLEND you
                                    edited only has to play as the game will.
-  bin/model test                   check the probe shape, our vessels, the vanilla boats, a fish
-                                   and an animation made in Blender (bin/lib/vsmodel/test). Run it
-                                   after changing bin/model.
+  bin/model test                   test bin/model itself: that a shape survives Blender untouched
+                                   and an animation made there plays as the game will. Checks the
+                                   probe shape, which holds every feature our builders write, the
+                                   vanilla boats, a fish, and an animation made in Blender
+                                   (bin/lib/vsmodel/test). Run it after changing bin/lib/vsmodel;
+                                   a shape needs it only when it starts using a feature the probe
+                                   lacks, and then that feature goes into the probe.
 
 SHAPE is a shape JSON file: ours under RoughSeas/assets/roughseas/shapes, vanilla under
 $VINTAGE_STORY/assets/survival/shapes. Vanilla shapes are read-only: export them into
@@ -165,8 +175,7 @@ case "$1" in
     tests=$root/bin/lib/vsmodel/test
     boats=$VINTAGE_STORY/assets/survival/shapes/entity/nonliving/boat
     failed=0
-    for shape in "$tests/probe.json" "$root"/RoughSeas/assets/roughseas/shapes/entity/vessel/*.json \
-      "$boats"/{raft,raft-bamboo,sailed,sailed-anchorstone}.json \
+    for shape in "$tests/probe.json" "$boats"/{raft,raft-bamboo,sailed,sailed-anchorstone}.json \
       "$VINTAGE_STORY/assets/survival/shapes/entity/animal/fish/saltwater/amberjack-adult.json"; do
       if "$0" check "$shape" >"$work/test.log"; then echo "PASSED $shape"; else failed=1; echo "FAILED $shape"; cat "$work/test.log"; fi
     done
