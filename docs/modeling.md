@@ -36,7 +36,7 @@ A cuboid that builds a round shape keeps every corner inside the surface it foll
 
 ## What bin/model guarantees
 
-- A shape that goes through Blender untouched comes back identical: every value, every animation. `bin/model check` proves it for a shape; `bin/model test` for the probe (`bin/lib/vsmodel/test/probe.json`), our vessels, the vanilla boats and a fish.
+- A shape that goes through Blender untouched comes back identical: every value, every animation. `bin/model check` proves it for a shape; `bin/model test` for the probe (`bin/lib/vsmodel/test/probe.json`), the vanilla boats and a fish. The probe holds every feature our builders write, so our own shapes are not in the test; a builder that starts writing a new feature adds it to the probe.
 - Blender plays every animation as the game will, on every frame, within 0.1° and 1/800 block. `bin/lib/vsmodel/pose.py` evaluates poses with the engine's own math (`ShapeElement.GetLocalTransformMatrix`, both animation versions, the keyframe resolution of `Animation` and the keyframe interpolation of `ClientAnimator`); `check` compares Blender's evaluated pose with it, and export refuses an animation that would play otherwise.
 - What changed in Blender is exported, and only that. Vanilla shapes in the game install are never written.
 
