@@ -11,6 +11,7 @@ namespace RoughSeas.Vessels;
 public class Course
 {
     private const long WindowMs = 100;
+    private const double TeleportBlocks = 20;
     private const double MillisecondsPerSecond = 1000;
 
     private readonly Queue<(long Ms, double X, double Z)> track = new();
@@ -36,7 +37,11 @@ public class Course
     {
         lock (gate)
         {
-            if (batch is { } ended && ended.Ms != milliseconds)
+            if (batch is { } last && Jumped(last, x, z))
+            {
+                track.Clear();
+            }
+            else if (batch is { } ended && ended.Ms != milliseconds)
             {
                 track.Enqueue(ended);
                 while (track.Count > 2 && ended.Ms - track.Peek().Ms > WindowMs) track.Dequeue();
@@ -44,4 +49,7 @@ public class Course
             batch = (milliseconds, x, z);
         }
     }
+
+    private static bool Jumped((long Ms, double X, double Z) last, double x, double z) =>
+        (x - last.X) * (x - last.X) + (z - last.Z) * (z - last.Z) > TeleportBlocks * TeleportBlocks;
 }

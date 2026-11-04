@@ -48,6 +48,19 @@ public class CourseTests
     }
 
     [Fact]
+    public void ATeleportIsNoTravel()
+    {
+        course.Record(0, 0, 0);
+        course.Record(0.05, 0, 17);
+        course.Record(500, 300, 34);
+        course.Record(500.05, 300, 51);
+        course.Record(500.1, 300, 68);
+
+        Assert.Equal(50.0 / 17, course.Velocity.X, 6);
+        Assert.Equal(0, course.Velocity.Z, 9);
+    }
+
+    [Fact]
     public void AHullHeldStillMovesAtNoSpeedHoweverHardSheIsDriven()
     {
         for (long ms = 0; ms <= 200; ms += 17) course.Record(3, 4, ms);

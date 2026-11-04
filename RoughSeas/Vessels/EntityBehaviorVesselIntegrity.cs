@@ -228,6 +228,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public override void OnGameTick(float deltaTime)
     {
+        if (entity.World.Side == EnumAppSide.Client && !MovedHere()) course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
         if ((sinceUpdate += deltaTime) >= UpdateSeconds)
         {
             Float();
@@ -539,14 +540,18 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         lock (impactLock) pendingImpacts.Add(by);
     }
 
+    private bool MovedHere()
+    {
+        var mount = entity.GetInterface<IMountable>();
+        return entity.Api is ICoreClientAPI client ? mount?.Controller == client.World.Player.Entity : mount?.IsBeingControlled() != true;
+    }
+
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
     {
         // Physics steps pass 0; the rider's frame-end call carries motion EntityBoat rewrote, never a collision. See docs/modding.md.
         if (accum != 0) return;
-        course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
-        var mount = entity.GetInterface<IMountable>();
         var client = entity.Api as ICoreClientAPI;
-        if (client != null ? mount?.Controller != client.World.Player.Entity : mount?.IsBeingControlled() == true)
+        if (!MovedHere())
         {
             lock (impactLock)
             {
@@ -557,6 +562,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         }
 
         using var _ = vessels.Budget.Measure();
+        course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
         var motion = entity.Pos.Motion;
         var contacts = hullContacts.Around(entity, this, withSteered: client != null);
         var knocks = new List<Knocked>();
