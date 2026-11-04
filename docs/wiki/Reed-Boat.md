@@ -32,14 +32,14 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; she is too narrow to stand on, so she is poled sitting |
 | Cargo | a basket (8 slots) |
 | Built from | two reed bundles, each 144 cattail tops, papyrus tops or thatch and two ropes, and four ropes more: 288 reeds and 8 ropes, 50 kg |
-| Wreckage | reed tops, broken up with an axe once it has sunk |
+| Wreckage | the tops each bundle was bound from, broken up with an axe once it has sunk |
 
 ## How it is built
 
 A reed boat is bound where its bundles lie, by the water, each binding drawn on her as it goes on.
 
-1. **Bind two bundles.** In the crafting grid, 144 cattail tops, papyrus tops or thatch and two ropes make a three-metre bundle, tied every quarter metre; the knife cuts and trims ([recipe](Recipes#reed-bundle)).
-2. **Lay them by the water.** Place a bundle on the ground beside the water, level with it or a block above: it lies along the way you look. Place the second on it, and it lies beside the first. They lie as long as they are, three blocks.
+1. **Bind two bundles.** In the crafting grid, 144 cattail tops, papyrus tops or thatch and two ropes make a three-metre bundle, tied every quarter metre; the knife cuts and trims ([recipe](Recipes#reed-bundle)). A bundle is of the plant it was bound from, and keeps its colour: olive cattail, green papyrus or straw-pale tule.
+2. **Lay them by the water.** Place a bundle on the ground beside the water, level with it or a block above: it lies along the way you look. Place the second on it, and it lies beside the first, of the same plant or another. They lie as long as they are, three blocks.
 
    ![One bundle laid by the water](images/reed-boat/build-bundle.webp)
    ![The pair side by side](images/reed-boat/build-pair.webp)
@@ -57,7 +57,7 @@ A reed boat is bound where its bundles lie, by the water, each binding drawn on 
    ![The bow bound up](images/reed-boat/build-bow.webp)
    ![Finished](images/reed-boat/build-finished.webp)
 
-Carry her to the water and row away. A reed boat from before the build loads finished.
+Carry her to the water and row away. Each of her sides stays the bundle it was, in its plant's colour, with both plants' stems bound together in her ends, and when she breaks up each bundle leaves the tops it was bound from. A reed boat from before the build loads finished, and one from before bundles kept their plant is of cattail.
 
 ## Its neighbours
 

@@ -57,6 +57,8 @@
     <None Include="..\RoughSeas\assets\roughseas\itemtypes\tool\*.json" LinkBase="tools" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\blocktypes\*.json" LinkBase="blocks" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\textures\entity\vessel\damage\*.png" LinkBase="damage" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\textures\entity\vessel\reed-*.png" LinkBase="textures" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\recipes\grid\vessels.json" Link="recipes/vessels.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\lang\*.json" LinkBase="lang" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

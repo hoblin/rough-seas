@@ -1,5 +1,12 @@
 {
     "roughseas:barkcanoe-by-bark": [
         "/iir remapq roughseas:barkcanoe-birch roughseas:barkcanoe force"
+    ],
+    "roughseas:reed-by-plant": [
+        "/iir remapq roughseas:reedboat-cattailtops-cattailtops roughseas:reedboat force",
+        "/bir remapq roughseas:reedbundle-cattailtops-none-we roughseas:reedbundle-one-we force",
+        "/bir remapq roughseas:reedbundle-cattailtops-none-ns roughseas:reedbundle-one-ns force",
+        "/bir remapq roughseas:reedbundle-cattailtops-cattailtops-we roughseas:reedbundle-two-we force",
+        "/bir remapq roughseas:reedbundle-cattailtops-cattailtops-ns roughseas:reedbundle-two-ns force"
     ]
 }

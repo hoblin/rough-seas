@@ -1,6 +1,10 @@
 {
     "code": "reedboat",
     "class": "roughseas:EntityVessel",
+    "variantgroups": [
+        {"code": "port", "states": ["cattailtops", "papyrustops", "thatch"]},
+        {"code": "starboard", "states": ["cattailtops", "papyrustops", "thatch"]}
+    ],
     "tags": ["inanimate", "vehicle"],
     "weight": 50.4,
     "attributes": {
@@ -37,8 +41,8 @@
             "depthMetres": 0.182,
             "shell": {"kind": "bundle", "material": "reed", "metres": 0.182, "backing": {"material": "rope-flax", "metres": 0.01}, "backedShare": 0.1, "bottomBackedShare": 0.05},
             "soak": {"kgPerDay": 33, "dryKgPerDay": 200, "rotShare": 0.35, "saturationKg": 250},
-            "wreckage": [{"type": "item", "code": "game:cattailtops", "quantity": {"avg": 8, "var": 4}}],
-            "damage": {"textures": ["reed"], "material": "reed"},
+            "wreckage": [{"type": "item", "code": "game:{port}", "quantity": {"avg": 4, "var": 2}}, {"type": "item", "code": "game:{starboard}", "quantity": {"avg": 4, "var": 2}}],
+            "damage": {"textures": ["port", "starboard", "tips"], "material": "reed"},
             "sources": {
                 "weight": "Her two bundles are 288 reeds, 144 each, and her ties, lashings and ends eight ropes of six reeds: at the rush mat's calibration, a game reed is about 0.15 kg of dry reed (a 1 m² mat of 8 reeds weighs 1 to 1.5 kg as real rushes), 43.2 kg of bundles and 7.2 kg of cord, as a real 1 cm cord weighs 90 g a metre. A caballito de totora 2.44 × 0.41 × 0.23 m weighs 41 kg dry (festival.si.edu, storied objects, reed raft); hers, 3 × 0.36 × 0.18 m of the same build, 43.2 kg",
                 "parts": "Reed bundles and reed cord, by weight; the cord counts as flax rope",
@@ -123,7 +127,11 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/reedboat"},
-        "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "lashing": {"base": "game:item/resource/rope"}},
+        "textures": {
+            "port": {"base": "roughseas:entity/vessel/reed-{port}"},
+            "starboard": {"base": "roughseas:entity/vessel/reed-{starboard}"},
+            "tips": {"base": "roughseas:entity/vessel/reed-{port}", "blendedOverlays": [{"base": "roughseas:entity/vessel/reed-{starboard}-strands"}]},
+            "rope": {"base": "game:block/cloth/reedrope"}, "lashing": {"base": "game:item/resource/rope"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "roughseas:framing"},

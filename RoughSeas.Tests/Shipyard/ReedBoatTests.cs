@@ -114,5 +114,49 @@ public class ReedBoatTests
             ignored.Where(name => name!.Contains("Droop")).ToHashSet());
     }
 
+    [Fact]
+    public void EveryPlantABundleIsBoundFromIsABundleAndASideOfHerOwn()
+    {
+        var recipe = JArray.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "recipes", "vessels.json")))
+            .Single(recipe => recipe.Value<string>("name") == "Reed bundle");
+        var plants = recipe["ingredients"]!["R"]!["allowedVariants"]!.Values<string>().Order().ToArray();
+        var item = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "items", "reedboat.json")));
+
+        Assert.Equal(plants, States(Bundle, Reeds.Port));
+        Assert.Equal([Reeds.None, .. plants], States(Bundle, Reeds.Starboard));
+        Assert.All(new[] { Entity, item }, boat =>
+        {
+            Assert.Equal(plants, States(boat, Reeds.Port));
+            Assert.Equal(plants, States(boat, Reeds.Starboard));
+        });
+    }
+
+    [Fact]
+    public void EveryPlantHasItsReedToDrawABundleInAndItsStrandsToBindIntoAnother()
+    {
+        Assert.All(States(Entity, Reeds.Port), plant =>
+        {
+            Assert.True(File.Exists(Path.Combine(AppContext.BaseDirectory, "textures", $"reed-{plant}.png")), plant);
+            Assert.True(File.Exists(Path.Combine(AppContext.BaseDirectory, "textures", $"reed-{plant}-strands.png")), plant);
+        });
+    }
+
+    [Theory]
+    [InlineData("cattailtops", "cattailtops")]
+    [InlineData("papyrustops", "thatch")]
+    public void SheBreaksIntoWhatEachOfHerBundlesWasBoundFrom(string port, string starboard)
+    {
+        var wreckage = Entity["behaviorConfigs"]!["roughseas:vesselintegrity"]!["wreckage"]!
+            .Select(drop => drop.Value<string>("code")!.Replace($"{{{Reeds.Port}}}", port).Replace($"{{{Reeds.Starboard}}}", starboard));
+
+        Assert.Equal([$"game:{port}", $"game:{starboard}"], wreckage);
+    }
+
+    private static readonly JToken Bundle = JToken.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "blocks", "reedbundle.json")));
+
+    private static string[] States(JToken type, string group) =>
+        type["variantgroups"]!.Single(variant => variant.Value<string>("code") == group)["states"]!.Values<string>().Select(state => state!)
+            .OrderBy(state => state == Reeds.None ? "" : state).ToArray();
+
     private static string Draw(JToken element) => element.ToString(Formatting.None);
 }

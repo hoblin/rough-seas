@@ -170,7 +170,7 @@ A vessel broken up, by one severe blow, by every place stove in, by its lashings
 | --- | --- |
 | [Raft](Raft) | a few logs (or bamboo stakes) and maybe a rope |
 | [Sailboat](Sailboat) | about 40 planks, a few support beams, ropes and linen |
-| [Reed boat](Reed-Boat) | a handful of reed tops |
+| [Reed boat](Reed-Boat) | a handful of tops from each bundle, of the plant it was bound from |
 | [Dugout](Dugout) | firewood |
 | [Coracle](Coracle) | a few laths |
 | [Birch-bark canoe](Birch-Bark-Canoe) | some bark and a stick |
