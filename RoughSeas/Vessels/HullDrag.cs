@@ -18,7 +18,9 @@ public readonly record struct HullForm(double LengthMetres, double BeamMetres, d
 /// Along: ITTC-1957 friction on Mumford's wetted surface by the form factor, and a blunt bow's own drag on beam by draft.
 /// Across: cross-flow drag on her length by draft and any keel or float, strip by strip along her as she turns. She
 /// answers with her mass and the water she carries with her: Lamb's prolate spheroid of her length and beam along, a
-/// flat plate of her draft across (Newman 1977). Speeds are m/s through the water, forces newtons, torques N·m.
+/// flat plate of her draft across (Newman 1977). Under way she also resists turning in proportion to her speed: the
+/// linear yaw damping of Clarke, Gedling and Hine's regression (Trans. RINA 125, 1983), whose slender-body term alone is
+/// the lift her underwater body makes against the turn. Speeds are m/s through the water, forces newtons, torques N·m.
 /// </summary>
 public sealed class HullDrag
 {
@@ -27,6 +29,9 @@ public sealed class HullDrag
     private const double MumfordSides = 1.7;
     private const double SpinMoment = 32;
     private const double RodMoment = 12;
+    private const double SlenderYawDamping = 0.25;
+    private const double BeamOnDraftYawDamping = 0.039;
+    private const double BeamOnLengthYawDamping = 0.56;
 
     private readonly HullForm form;
     private readonly DragConfig config;
@@ -35,6 +40,7 @@ public sealed class HullDrag
     private readonly double wettedSquareMetres;
     private readonly double sideSquareMetres;
     private readonly WaveMaking waves;
+    private readonly double yawDamping;
 
     public HullDrag(HullForm form, double draftMetres, double kilograms, double waterDensity, DragConfig config)
     {
@@ -48,6 +54,8 @@ public sealed class HullDrag
         AlongKg = kilograms * (1 + SurgeAddedShare(form.LengthMetres / form.BeamMetres));
         var acrossKg = kilograms + halfDensity * Math.PI * draft * draft * form.LengthMetres;
         TurningKgSquareMetres = acrossKg * form.LengthMetres * form.LengthMetres / RodMoment;
+        var clarke = SlenderYawDamping + BeamOnDraftYawDamping * form.BeamMetres / draft - BeamOnLengthYawDamping * form.BeamMetres / form.LengthMetres;
+        yawDamping = Math.PI * halfDensity * draft * draft * form.LengthMetres * form.LengthMetres * Math.Max(0, clarke);
     }
 
     public double AlongKg { get; }
@@ -57,10 +65,11 @@ public sealed class HullDrag
     public double Along(double metresPerSecond) =>
         -AlongDrag(metresPerSecond) * metresPerSecond * Math.Abs(metresPerSecond) - Math.Sign(metresPerSecond) * waves.Newtons(metresPerSecond);
 
-    public double Turning(double radiansPerSecond)
+    public double Turning(double radiansPerSecond, double metresPerSecond)
     {
         var length = form.LengthMetres;
-        return -SideDrag / length * radiansPerSecond * Math.Abs(radiansPerSecond) * Math.Pow(length, 4) / SpinMoment;
+        return -SideDrag / length * radiansPerSecond * Math.Abs(radiansPerSecond) * Math.Pow(length, 4) / SpinMoment
+               - yawDamping * Math.Abs(metresPerSecond) * radiansPerSecond;
     }
 
     private double SideDrag => halfDensity * form.SideDrag * sideSquareMetres;

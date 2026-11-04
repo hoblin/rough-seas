@@ -5,7 +5,7 @@ from pathlib import Path
 
 from arm import Arm
 from leg import Leg
-from transform import apply, direct, euler, identity, local, mul, undirect
+from transform import apply, direct, euler, identity, local, mul, unapply, undirect
 
 ROOT = Path(__file__).resolve().parents[3]
 SERAPH = Path(os.environ.get("VINTAGE_STORY", "")) / "assets/game/shapes/entity/humanoid/seraph-faceless.json"
@@ -19,6 +19,8 @@ OUTBOARD = {"R": -1, "L": 1}
 # Outweighs the seat pose (80) so far that the fit can leave it out of the arms and torso.
 WEIGHT = 10000
 FRAMES_A_SECOND = 30
+# The trunk's rotation each way, AAOS normal value for the thoracolumbar spine.
+TRUNK_ROTATION = 45
 CENTRE = (8, 0, 8)
 
 
@@ -39,12 +41,15 @@ def drive_share(stroke):
     return json.loads(PROPULSION.read_text())["strokes"][stroke]["driveShare"]
 
 
-def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1, bodies=None):
+def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1):
+    return named(vessel, frames, {"ready": ready, "forward": forward, "backward": backward}, stroke, per_loop)
+
+
+def named(vessel, frames, poses, stroke, per_loop=1):
     keys = list(range(0, frames, 2))
-    return [{"code": f"roughseas-{vessel}-{name}", "frames": frames, "keys": keys if name != "ready" else [0],
-             "speed": speed(stroke, frames, per_loop), "pose": pose, "body": body}
-            for name, pose, body in zip(("ready", "forward", "backward"), (ready, forward, backward),
-                                        bodies or (None, None, None))]
+    return [{"code": f"roughseas-{vessel}-{name}", "frames": frames, "keys": [0] if name.endswith("ready") else keys,
+             "speed": speed(stroke, frames, per_loop), "pose": pose}
+            for name, pose in poses.items()]
 
 
 def moved(origin, rest, target, turned):
@@ -115,6 +120,13 @@ class Rower:
 
         return descend(self.seraph["elements"], [])
 
+    def facing(self, pose, point):
+        hips = self.arms["R"].body[1]
+        middle = [(a + b) / 32 - a / 16 for a, b in zip(hips["from"], hips["to"])]
+        aim = [p - m for p, m in zip(unapply(self.arms["R"].frames(pose)[1], point), middle)]
+        turn = math.degrees(math.atan2(aim[2], -aim[0]))
+        return round(max(-TRUNK_ROTATION, min(TRUNK_ROTATION, turn)), 2)
+
     def body(self, point):
         return tuple((p - s + h) / 16 for p, s, h in zip(point, self.seat, CENTRE))
 
@@ -184,7 +196,8 @@ def fit(rower, elements, strokes, grips, lean):
         placed = [posed(elements, lambda name, pose=pose: pose.get(name, {})) for pose in poses]
         bodies = [{"UpperTorso": lean} | (stroke["body"](frame) if stroke.get("body") else {}) for frame in stroke["keys"]]
         faults = {}
-        for side, grip in grips.items():
+        hands_on = stroke.get("grips", grips)
+        for side, grip in hands_on.items():
             arm = rower.arms[side]
             hands = [rower.body(centre(elements, m, grip)) for m in placed]
             axes = [held(m, grip) for m in placed]
@@ -202,7 +215,7 @@ def fit(rower, elements, strokes, grips, lean):
             depth = rower.arms["L"].through(body, rower.arms["R"])
             faults["arms through each other"] = max(faults.get("arms through each other", (0, 0)), (depth, frame))
         worst = max(math.dist(rower.hand(body, side), centre(elements, m, grip))
-                    for body, m in zip(bodies, placed) for side, grip in grips.items())
+                    for body, m in zip(bodies, placed) for side, grip in hands_on.items())
         own = [{"frame": frame, "elements": every_axis(pose)} for frame, pose in zip(stroke["keys"], poses)]
         arms = [{"frame": frame, "elements": every_axis(body)} for frame, body in zip(stroke["keys"], bodies)]
         print(f"{stroke['code']}: hands within {worst:.2f} of the grips")
@@ -210,7 +223,7 @@ def fit(rower, elements, strokes, grips, lean):
             if round(excess, 1):
                 print(f"  {name} by {excess:.1f} at frame {frame}")
         common = {"code": stroke["code"], "quantityframes": stroke["frames"], "onActivityStopped": "EaseOut",
-                  "onAnimationEnd": "Repeat"}
+                  "onAnimationEnd": stroke.get("ends", "Repeat")}
         vessel.append({"name": stroke["code"], **common, "keyframes": own})
         player.append({"name": stroke["code"], **common, "keyframes": arms, "speed": stroke["speed"]})
     return vessel, player

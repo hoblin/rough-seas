@@ -18,6 +18,8 @@ public static class HullPlaces
 {
     public static string Code(this HullPlace place) => place.ToString().ToLowerInvariant();
 
+    public static bool IsPort(this HullPlace place) => place is HullPlace.PortBow or HullPlace.PortSide or HullPlace.PortQuarter;
+
     public static HullPlace EndForEnd(this HullPlace place) => place switch
     {
         HullPlace.PortBow => HullPlace.StarboardQuarter,
@@ -35,7 +37,8 @@ public readonly record struct HullShape(double HalfLength, double HalfBeam, doub
     public const double EndShare = 0.4;
     public const double BottomShare = 0.25;
     public const double VoxelsPerBlock = 16;
-    private const double MarkReach = 0.8;
+    private const double MarkReach = 0.7;
+    private const double Stagger = 0.15;
     private const double SideReach = 0.9;
 
     public static readonly HullPlace[] Places = Enum.GetValues<HullPlace>();
@@ -52,6 +55,14 @@ public readonly record struct HullShape(double HalfLength, double HalfBeam, doub
         across -= CentreAcross;
         if (height - Keel < BottomShare * Depth && Math.Abs(across) < HalfBeam / 2) return HullPlace.Bottom;
         return Side(along, across);
+    }
+
+    public bool Beyond(double across) => Math.Abs(across - CentreAcross) > HalfBeam;
+
+    public HullShape Spanning(double across)
+    {
+        double low = Math.Min(CentreAcross - HalfBeam, across), high = Math.Max(CentreAcross + HalfBeam, across);
+        return this with { HalfBeam = (high - low) / 2, CentreAcross = (low + high) / 2 };
     }
 
     public HullPlace Toward(double along, double across) =>
@@ -79,7 +90,9 @@ public readonly record struct HullShape(double HalfLength, double HalfBeam, doub
             HullPlace.PortQuarter or HullPlace.StarboardQuarter => MarkReach,
             _ => 0
         };
-        double across = place is HullPlace.PortBow or HullPlace.PortSide or HullPlace.PortQuarter ? -SideReach : SideReach;
+        bool port = place.IsPort();
+        along += port ? -Stagger : Stagger;
+        double across = port ? -SideReach : SideReach;
         return (CentreAlong + along * HalfLength, Keel + Depth / 2, CentreAcross + across * HalfBeam);
     }
 

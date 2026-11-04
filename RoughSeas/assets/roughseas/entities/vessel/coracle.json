@@ -17,7 +17,7 @@
             "sideDrag": 0.55,
             "paddle": "sculling",
             "sweepMetres": 1.0,
-            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.89, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": -0.012, "z": -0.188}, "eyeHeight": 1.7}},
+            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.89, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": -0.012, "z": 0}, "eyeHeight": 1.7}},
             "strokes": {"pole": {"ready": "roughseas-coracle-pole-ready", "forwards": "roughseas-coracle-pole-forward", "backwards": "roughseas-coracle-pole-backward"}, "paddle": {"ready": "roughseas-coracle-paddle-ready", "forwards": "roughseas-coracle-paddle-forward", "backwards": "roughseas-coracle-paddle-backward"}},
             "sources": {
                 "sweepMetres": "The blade sculls just ahead of her bow, about 0.3 m beyond her 0.69 m half-width: 1 m from her middle",
@@ -37,7 +37,7 @@
                 {"material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1}, "restores": 0.5, "saturation": 20, "greases": true}
             ],
             "wreckage": [{"type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": {"avg": 3, "var": 2}}],
-            "damage": {"textures": ["hide"], "material": "hide"},
+            "damage": {"material": "hide"},
             "sources": {
                 "parts": "By the model (bin/lib/hulls/coracle.py): 2.12 m² of hide 5 mm thick at 860 kg/m³, 9.1 kg, over 14 lattice laths and three plaits of 1 by 6 cm, 33 m of willow, 8 kg: 17 kg, as Hornell (1938) gives one-man coracles at 18 to 40 lb",
                 "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.086 m (bin/lib/hulls/coracle.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
@@ -115,7 +115,7 @@
         "size": 1,
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/coracle", "ignoreElements": ["hideWater", "Bilge"]},
-        "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "frame": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}},
+        "textures": {"hide": {"base": "game:block/cloth/armor-padding/hide"}, "frame": {"base": "game:block/wood/debarked/oak"}, "lashing": {"base": "game:item/resource/rope"}, "bilge": {"base": "game:block/liquid/waterportion"}, "breach": {"base": "game:block/black"}},
         "behaviors": [
             {"code": "roughseas:vesselintegrity"},
             {"code": "roughseas:covering"},

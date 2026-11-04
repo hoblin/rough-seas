@@ -17,6 +17,7 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
     private readonly OarsConfig? oars = attributes["oars"].AsObject<OarsConfig?>(null);
     private readonly double sweepMetres = attributes["sweepMetres"].AsDouble();
     private readonly PolingConfig poling = attributes["pole"].AsObject<PolingConfig>(new());
+    private readonly double abeamMetres = attributes["paddleAbeamMetres"].AsDouble();
 
     public bool HasOars => oars != null;
 
@@ -40,7 +41,7 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
     public Propulsor? Paddled(double bladeSquareMetres, out string? refusal)
     {
         refusal = null;
-        return paddle != null ? new HeldTool(Blade(paddle, bladeSquareMetres), sweepMetres) : Oars(out refusal, "a paddle doesn't serve her");
+        return paddle != null ? new HeldTool(Blade(paddle, bladeSquareMetres), sweepMetres, abeamMetres) : Oars(out refusal, "a paddle doesn't serve her");
     }
 
     private Propulsor? Oars(out string? refusal, string without)

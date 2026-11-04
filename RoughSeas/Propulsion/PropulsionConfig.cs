@@ -27,6 +27,7 @@ public class StrokeConfig
     public double DragCoefficient;
     public double PushNewtons;
     public double PushMetres;
+    public double VeerDegrees;
 }
 
 public class PolingConfig

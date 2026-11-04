@@ -51,7 +51,9 @@
             "driveShare": 0.5,
             "dragCoefficient": 1.2,
             "grossEfficiency": 0.10,
+            "veerDegrees": 10,
             "sources": {
+                "veerDegrees": "A single blade drives her from one side and turns her away from it, so a paddler holding a course changes sides when she veers off it, as the Donegal curragh's paddler does (Badge, via indigenousboats.blogspot.com, 2015) and canoe and outrigger crews do on a call. Nobody has measured how far off they let her go, but how often they change has been counted: 3 to 5 strokes a side in a touring canoe at about 40 a minute (paddling.com forums), 8 to 12 in an outrigger (Gold Coast Outrigger Club) or 10 to 20 (Journal of Sports Science and Medicine 2011, 10:52). At 10° our bark canoe changes every 3.7 strokes and our outrigger every 8.6, both within what was counted",
                 "strokesPerMinute": "Voyageurs on the lakes kept about 40 strokes a minute through the day (McGill University, The Birch Bark Canoe), below the 55 of an elite C1 over 1000 m (Kinematic analysis of canoe stroke, Journal of Human Kinetics 2011)",
                 "driveShare": "A single blade is pulled back through the water and carried forward through the air over the same reach at about the same hand speed: half the stroke in the water",
                 "dragCoefficient": "A paddle blade's drag coefficient stays near that of a finite flat plate across blade designs (wind-tunnel tests of three blades, Sports Engineering, Springer BF02844156): about 1.2 for a plate square to the flow (Hoerner 1965, Fluid-Dynamic Drag, ch. 3)",

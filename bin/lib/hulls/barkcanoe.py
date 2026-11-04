@@ -1,9 +1,10 @@
 import math
 
-from held import PADDLE, POLE, paddling, poling, standing_poling, tools, waterline
+from held import PADDLE, POLE, paddling, seated_poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
 from physics import afloat, kilograms, stands
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, group, path, plank, renamed, span, stages
+from wounds import wound
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -257,23 +258,29 @@ def build(path_):
              stages("Stems", [stem("SternStem", on_centre(STERN)), stem("BowStem", on_centre(bow(STERN)))]),
              stages("Sheathing", sheathing(hull)),
              stages("Ribs", ribs(hull))]
-    shape.add(sheet(), skin, laths[0], laths[1])
+    flat = sheet()
+    shape.add(flat, skin, laths[0], laths[1])
     shape.add(stages("Lashing", wraps(hull)))
     shape.add(laths[2], laths[3])
     shape.add(stages("Pitch", [seam("SternSeam", STERN), seam("BowSeam", bow(STERN)), gores(hull, -1), gores(hull, 1)]))
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat", "OarStorage")
+    *rising, finished = skin["children"]
+    wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
+          lining=SHEATHING, framing=([laths[3]], "frame"))
     shape.write()
     at = seat(shape, "BackSeat")
     line = waterline("barkcanoe")
-    pole = (("pole", POLE, standing_poling(POLE, (CENTRE_THWART + POLER_AFT, SKIN, CENTRE), line * VOXELS_A_METRE,
-                                           CENTRE - SHEER - 1))
+    poler = CENTRE_THWART + POLER_AFT
+    pole = (("pole", POLE, standing_poling(POLE, (poler, SKIN, CENTRE), line * VOXELS_A_METRE, CENTRE - SHEER - 1,
+                                           hull.half(poler, SKIN + 1, inset=SKIN),
+                                           floor_at=lambda x, across: hull.floor(x, across, inset=SKIN)))
             if stands("barkcanoe", SKIN * VOXEL_METRES)
-            else ("seatedpole", POLE, poling(POLE, at, 4, 4, 7, 1.5)))
+            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - SHEER - 1)))
     player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 6.5, 1.5)),
         "pole": pole,
-    }))
+    }, ("Skin",)))
     report(hull, laths)
 
 

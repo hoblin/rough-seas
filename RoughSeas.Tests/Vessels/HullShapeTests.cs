@@ -28,6 +28,32 @@ public class HullShapeTests
     }
 
     [Fact]
+    public void APointPastHerSideIsOutsideHer()
+    {
+        Assert.False(dugout.Beyond(0.3));
+        Assert.True(dugout.Beyond(2));
+        Assert.True(dugout.Beyond(-2));
+    }
+
+    [Fact]
+    public void HerReachRunsOutToWhatStandsOffHerSide()
+    {
+        var reach = dugout.Spanning(2);
+
+        Assert.False(reach.Beyond(1.9));
+        Assert.True(reach.Beyond(-0.4));
+        Assert.Equal(dugout.HalfLength, reach.HalfLength);
+        Assert.Equal(dugout, dugout.Spanning(0));
+    }
+
+    [Fact]
+    public void AVesselMetOnlyAtHerFloatIsStillBesideHer()
+    {
+        Assert.False(HullContacts.Within(0, 0, dugout, 0, 4.5, dugout, slack: 0));
+        Assert.True(HullContacts.Within(0, 0, dugout.Spanning(2), 0, 4.5, dugout, slack: 0));
+    }
+
+    [Fact]
     public void EveryPlaceItPointsAtIsThatPlace()
     {
         Assert.All(HullShape.Places, place =>

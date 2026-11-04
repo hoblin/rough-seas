@@ -1,9 +1,10 @@
 import math
 
-from held import PADDLE, POLE, VOXELS_A_METRE, paddling, poling, standing_poling, tools, waterline
+from held import PADDLE, POLE, VOXELS_A_METRE, paddling, seated_poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
 from physics import afloat, kilograms, stands
 from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
+from wounds import wound
 
 LOG = 16
 LOGS = 5
@@ -253,30 +254,36 @@ def build(path):
                          "bilge": BILGE, "char": "game:block/coal/charcoal", "clay": "game:block/clay/blueclay",
                          "ember": "game:block/coal/ember", "burntlog": "game:block/wood/firepit/burntlog"})
     hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD, edge=WOOD)
-    shape.add(group("Shell", (0, 0, 0), (0, 0, 0), [element for piece in log(hull) for element in (piece if isinstance(piece, list) else [piece])]))
-    shape.add(*build_stages())
+    shell = group("Shell", (0, 0, 0), (0, 0, 0), [element for piece in log(hull) for element in (piece if isinstance(piece, list) else [piece])])
+    shape.add(shell)
+    blank, *rest = build_stages()
+    shape.add(blank, *rest)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     shape.elements.append(hull_box())
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
+    wound(shape, [("", [shell], WOOD), *((level["name"], [level], BARK if n == 0 else WOOD) for n, level in enumerate(blank["children"]))])
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
     afloat("dugout", kilograms("wood-oak", envelope - hold), RIM * VOXEL_METRES, hold, deck())
     shape.write()
-    crew_tools(shape, "dugout")
+    crew_tools(shape, "dugout", ("Shell",))
 
 
-def crew_tools(shape, vessel, outboard=(0, 0), **hull):
+def crew_tools(shape, vessel, walls, catch=None, fore=3, outboard=(0, 0), **given):
     at = seat(shape, "FrontSeat")
     line = waterline(vessel)
-    floor = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD).section(POLER_AT)[0][1] + WALL
-    pole = (("pole", POLE, standing_poling(POLE, (POLER_AT, floor, CENTRE), line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1))
-            if stands(vessel, floor * VOXEL_METRES, outboard=outboard, **hull)
-            else ("seatedpole", POLE, poling(POLE, at, 6, 6, 4, -0.5)))
+    hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD)
+    floor = hull.section(POLER_AT)[0][1] + WALL
+    chine = hull.half(POLER_AT, floor + 1, inset=WALL)
+    pole = (("pole", POLE, standing_poling(POLE, (POLER_AT, floor, CENTRE), line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1,
+                                           chine, floor_at=lambda x, across: hull.floor(x, across, inset=WALL)))
+            if stands(vessel, floor * VOXEL_METRES, outboard=outboard, **given)
+            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1)))
     player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
-        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1)),
+        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1, catch=catch, fore=fore)),
         "pole": pole,
-    }))
+    }, walls))
 
 
 if __name__ == "__main__":

@@ -7,20 +7,28 @@ namespace RoughSeas.Propulsion;
 
 public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> strokes, VesselsModSystem vessels)
 {
-    private static readonly string[] Keys = ["ready", "forwards", "backwards"];
+    private const string Ready = "ready";
+    private const string Forwards = "forwards";
+    private const string Change = "change";
+    private static readonly string[] Keys = [Ready, Forwards, "backwards"];
 
     private bool shown;
-    private string? kind;
-    private Entity? stroking;
+    private (string? Kind, bool Changing, bool Sweeping, Entity? Rower) showing;
 
-    public string? KindOf(Tool? tool, bool ownOars) =>
-        tool != null && strokes.ContainsKey(tool.Kind) ? tool.Kind
+    public bool Sided(Tool? tool) => tool != null && strokes.ContainsKey(OnSide(tool.Kind, Side.Port));
+
+    public string? KindOf(Tool? tool, bool ownOars, Side side) =>
+        tool != null && strokes.ContainsKey(OnSide(tool.Kind, side)) ? OnSide(tool.Kind, side)
+        : tool != null && strokes.ContainsKey(tool.Kind) ? tool.Kind
         : ownOars && strokes.ContainsKey(RowerStation.OwnOars) ? RowerStation.OwnOars
         : null;
 
-    public void Show(EntityBoat boat, Entity? rower, string? wanted, SeatPose? stance)
+    /// <param name="sweeping">A sided paddle turning her where she lies: it sweeps forward on the side that turns her, whichever
+    /// way vanilla's keys would row.</param>
+    /// <param name="stance">Where the rower stands to work the tool, on his seat alone; none, and he works it seated.</param>
+    public void Show(EntityBoat boat, Entity? rower, string? wanted, bool changing, bool sweeping, SeatPose? stance)
     {
-        if (shown && wanted == kind && rower == stroking) return;
+        if (shown && showing == (wanted, changing, sweeping, rower)) return;
 
         var seats = boat.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
         foreach (var key in Keys)
@@ -29,11 +37,13 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
             {
                 foreach (var seat in seats) seat.Passenger?.AnimManager?.StopAnimation(playing);
             }
-            boat.MountAnimations[key] = wanted == null ? "" : strokes[wanted][key];
+            boat.MountAnimations[key] = wanted == null ? "" : strokes[wanted][changing && key != Ready ? Change : sweeping && key != Ready ? Forwards : key];
         }
         var poses = SeatPoses.Of(boat);
         foreach (var seat in seats) poses.Stand(seat, rower != null && seat.Passenger == rower ? stance : null);
-        (shown, kind, stroking) = (true, wanted, rower);
-        vessels.Log(boat, wanted == null ? "strokes stowed" : stance == null ? "strokes of the {0}" : "strokes of the {0}, standing", wanted ?? "");
+        (shown, showing) = (true, (wanted, changing, sweeping, rower));
+        vessels.Log(boat, wanted == null ? "strokes stowed" : changing ? "changes to the {0}" : stance == null ? "strokes of the {0}" : "strokes of the {0}, standing", wanted ?? "");
     }
+
+    private static string OnSide(string kind, Side side) => $"{kind}-{side.ToString().ToLowerInvariant()}";
 }
