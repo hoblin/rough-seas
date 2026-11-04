@@ -94,10 +94,12 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     {
         var accessor = entity.World.BlockAccessor;
         var pos = at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
-        var depth = 0;
-        while (depth < maxBlocks && accessor.GetBlock(pos, BlockLayersAccess.Fluid).IsLiquid())
+        var depth = 0.0;
+        var surface = !accessor.GetBlock(pos.UpCopy(), BlockLayersAccess.Fluid).IsLiquid();
+        while (depth < maxBlocks && accessor.GetBlock(pos, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid())
         {
-            depth++;
+            depth += surface ? fluid.LiquidLevel / 8.0 : 1;
+            surface = false;
             pos.Down();
         }
         return depth;

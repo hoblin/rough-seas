@@ -7,7 +7,7 @@ namespace RoughSeas.Propulsion;
 /// <summary>
 /// Where her rower sits and what drives her from there: the tools she takes, how far a sweep reaches round her, how
 /// high his hands are over the water, and her own oars when she has them. The water's depth under her comes from
-/// <paramref name="depthWithin"/>, which counts whole metres down to a limit.
+/// <paramref name="depthWithin"/>, which measures from the surface to the bed, down to a limit in blocks.
 /// </summary>
 public sealed class RowerStation(JsonObject attributes, PropulsionConfig config, double waterDensity, Func<int, double> depthWithin)
 {

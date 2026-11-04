@@ -131,6 +131,16 @@ public class PropulsionTests
         Assert.Null(Fixtures.Station("barkcanoe", 1).Stance(Paddle.Code));
     }
 
+    [Theory]
+    [InlineData("dugout")]
+    [InlineData("barkcanoe")]
+    public void StandingHeReachesTheBedOfTheShallowestSeaWithTheShortestPole(string vessel)
+    {
+        const double oneBlockOfStillWater = 7 / 8.0;
+
+        Assert.NotNull(Fixtures.Station(vessel, oneBlockOfStillWater).Propulsor(new Pole(2, PoleDensity, Fixtures.Propulsion.Pole), out _));
+    }
+
     [Fact]
     public void StandingHeShovesHarderThanFromTheSeat()
     {
