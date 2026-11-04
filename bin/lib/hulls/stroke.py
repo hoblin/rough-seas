@@ -189,12 +189,16 @@ def every_axis(pose):
     return keyed
 
 
+def leaning(lean, body):
+    return body | {"UpperTorso": lean | body.get("UpperTorso", {})}
+
+
 def fit(rower, elements, strokes, grips, lean):
     vessel, player = [], []
     for stroke in strokes:
         poses = [stroke["pose"](frame) for frame in stroke["keys"]]
         placed = [posed(elements, lambda name, pose=pose: pose.get(name, {})) for pose in poses]
-        bodies = [{"UpperTorso": lean} | (stroke["body"](frame) if stroke.get("body") else {}) for frame in stroke["keys"]]
+        bodies = [leaning(lean, stroke["body"](frame) if stroke.get("body") else {}) for frame in stroke["keys"]]
         faults = {}
         hands_on = stroke.get("grips", grips)
         for side, grip in hands_on.items():
