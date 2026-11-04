@@ -42,8 +42,9 @@ public class StanceConfig
     public string Animation = "";
     public Vec3f? RiderOffset;
     public float EyeHeight;
+    public Vec3f? MountRotation;
 
-    public SeatPose Pose => new(RiderOffset, Animation, EyeHeight);
+    public SeatPose Pose => new(RiderOffset, Animation, EyeHeight, MountRotation);
 }
 
 public class PoleConfig

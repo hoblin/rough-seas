@@ -4,7 +4,7 @@ import re
 
 from physics import ASSETS, STANDING_HIP_METRES, SWIM_LINE_METRES
 from shape import VOXELS_A_METRE, save
-from stroke import CENTRE, Rower, centre, drive_share, fit, moved, named, posed, rowed, seat, turn, unturn
+from stroke import Rower, centre, drive_share, facing, fit, moved, named, posed, rowed, seat, turn, unturn
 from transform import angles, apply, depth, euler, inverse, mul, nearest, translation, undirect, unit
 
 ANCHOR = "ItemAnchor"
@@ -91,7 +91,7 @@ def wrist(rower, tool, body, matrix):
 
 def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline, hull=()):
     stance = poses if isinstance(poses, Stance) else None
-    rower = Rower(stance.at, stance.idle) if stance else Rower(seat(shape, seated), idle)
+    rower = Rower(stance.at, stance.idle) if stance else Rower(seat(shape, seated), idle, facing(shape, vessel, seated))
     if stance:
         shift = [round((a - s) / VOXELS_A_METRE, 3) for a, s in zip(stance.at, seat(shape, seated))]
         hands = round(stance.at[1] / VOXELS_A_METRE - waterline + STANDING_HIP_METRES, 2)
@@ -131,7 +131,6 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
     own, player = fit(rower, [group], plan, STARBOARD, lean)
     if hasattr(shape, "path"):
         rowed(shape, rower, own, player, f"{vessel}-{kind}", [group])
-    offset = [(s - c) / 16 for s, c in zip(rower.seat, CENTRE)]
     through = (0, 0, None, None)
     reference = None
     for step, animation in zip(plan, player):
@@ -143,7 +142,7 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
             if step["code"].endswith("starboard-forward") and frame < FRAMES * drive_share(stroke):
                 abeam.append(abs(centre(tool.elements, matrices, BLADE)[2] - rower.seat[2]) / 16)
             body = keyframe["elements"]
-            anchor = wrist(rower, tool, body, mul(translation([-o for o in offset]), matrices[TOOL]))
+            anchor = wrist(rower, tool, body, mul(rower.placing, matrices[TOOL]))
             if previous is not None:
                 turned = nearest([anchor["rotation" + a] for a in "XYZ"], previous)
                 anchor |= {"rotation" + a: round(v, 2) for a, v in zip("XYZ", turned)}

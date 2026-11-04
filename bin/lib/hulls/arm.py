@@ -15,6 +15,9 @@ SWING = ((-90, 60), (-45, 180), (130, 180), (270, 60))
 # Shoulder rotation is (external, internal); wrist deviation (ulnar, radial), radial tipping the held axis's
 # thumb end toward the elbow.
 RANGES = {"shoulder rotation": (-90, 70), "elbow flexion": (0, 150), "wrist deviation": (-30, 20)}
+# Internal rotation by the arm's elevation: AAOS's 70 is measured with the arm raised to 90°; with the arm at the side,
+# elbow bent 90°, it is 80 to 90°, where the trunk stops the forearm (the body check here).
+INTERNAL = ((0, 90), (90, 70))
 COMFORT = ("shoulder rotation", "wrist deviation")
 # A passed limit outweighs any discomfort, so the arm passes one only when no pose keeps them all.
 LIMIT = 100
@@ -154,7 +157,8 @@ class Arm(Limb):
     def strain(self, posture, hand, grip):
         angles = self.angles(posture, grip)
         limits = sum((excess / half) ** 2 for excess, half in self.faults(posture, hand, angles).values())
-        comfort = sum(off_middle(angles[name], RANGES[name]) ** 2 for name in COMFORT)
+        spans = self.spans(angles)
+        comfort = sum(off_middle(angles[name], spans[name]) ** 2 for name in COMFORT)
         return LIMIT * limits + comfort + posture.effort
 
     def effort(self, joints):
@@ -180,9 +184,14 @@ class Arm(Limb):
             "wrist deviation": math.degrees(math.asin(max(-1.0, min(1.0, held[1])))),
         }
 
+    def spans(self, angles):
+        (low, at_side), (high, raised) = INTERNAL
+        share = min(1.0, max(0.0, (angles["shoulder elevation"] - low) / (high - low)))
+        return RANGES | {"shoulder rotation": (RANGES["shoulder rotation"][0], at_side + (raised - at_side) * share),
+                         "shoulder elevation": (ELEVATION[0], elevation_limit(angles["shoulder plane"]))}
+
     def faults(self, posture, hand, angles):
-        spans = RANGES | {"shoulder elevation": (ELEVATION[0], elevation_limit(angles["shoulder plane"]))}
-        faults = {name: (beyond(angles[name], span), (span[1] - span[0]) / 2) for name, span in spans.items()}
+        faults = {name: (beyond(angles[name], span), (span[1] - span[0]) / 2) for name, span in self.spans(angles).items()}
         faults["arm inside the body"] = (posture.inside, 1)
         faults["hand off the grip"] = (16 * math.dist(hand, posture.joints[-1]), 1)
         return {name: fault for name, fault in faults.items() if fault[0] > 0}

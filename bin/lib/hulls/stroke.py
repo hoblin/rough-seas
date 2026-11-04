@@ -6,13 +6,14 @@ from pathlib import Path
 
 from arm import Arm
 from leg import Leg
-from transform import apply, direct, euler, identity, local, mul, unapply, undirect
+from transform import apply, direct, euler, identity, local, mul, rotation, translation, unapply, undirect
 
 ROOT = Path(__file__).resolve().parents[3]
 SERAPH = Path(os.environ.get("VINTAGE_STORY", "")) / "assets/game/shapes/entity/humanoid/seraph-faceless.json"
 POSES = ROOT / "RoughSeas/assets/roughseas/patches/player-poses.json"
 PROPULSION = ROOT / "RoughSeas/assets/roughseas/config/propulsion.json"
 PATCHES = ROOT / "RoughSeas/assets/roughseas/patches"
+ENTITIES = ROOT / "RoughSeas/assets/roughseas/entities/vessel"
 
 ARMS = {"R": "LowerArmR", "L": "LowerArmL"}
 LEGS = {"R": "LowerFootR", "L": "LowerFootL"}
@@ -97,6 +98,15 @@ def seat(shape, name):
     return tuple(f + float(point["pos" + axis]) for f, axis in zip(element["from"], "XYZ"))
 
 
+def facing(shape, vessel, name):
+    entity = ENTITIES / f"{vessel}.json"
+    if not entity.exists():
+        return 0
+    code = find(shape.elements, name)["attachmentpoints"][0]["code"]
+    seats = json.loads(entity.read_text())["behaviorConfigs"]["creaturecarrier"]["seats"]
+    return next(s for s in seats if s["apName"] == code).get("mountRotation", {}).get("y", 0)
+
+
 # Every grip lies along its gear's x: a paddle's shaft, which a T-grip's palm caps, or an oar's loom.
 def held(matrices, name):
     return direct(matrices[name], (1, 0, 0))
@@ -104,9 +114,11 @@ def held(matrices, name):
 
 class Rower:
 
-    def __init__(self, seat, idle):
+    def __init__(self, seat, idle, yaw=0):
         self.seraph = json.loads(SERAPH.read_text())
         self.seat = seat
+        self.yaw = yaw
+        self.placing = mul(mul(translation([h / 16 for h in CENTRE]), rotation("Y", yaw)), translation([-s / 16 for s in seat]))
         animations = self.seraph["animations"] + [op["value"] for op in json.loads(POSES.read_text())
                                                   if op["path"] == "/animations/-"]
         sitting = next(a for a in animations if a["code"] == idle)
@@ -133,14 +145,17 @@ class Rower:
         return round(max(-TRUNK_ROTATION, min(TRUNK_ROTATION, turn)), 2)
 
     def body(self, point):
-        return tuple((p - s + h) / 16 for p, s, h in zip(point, self.seat, CENTRE))
+        return apply(self.placing, [p / 16 for p in point])
+
+    def along(self, axis):
+        return direct(self.placing, axis)
 
     def hand(self, pose, side):
-        return tuple(s + 16 * c - h for s, c, h in zip(self.seat, self.arms[side].posture(pose).joints[-1], CENTRE))
+        return tuple(16 * c for c in unapply(self.placing, self.arms[side].posture(pose).joints[-1]))
 
 
-def crew(shape, seated, idle, strokes, grips, lean):
-    rower = Rower(seat(shape, seated), idle)
+def crew(shape, vessel, seated, idle, strokes, grips, lean):
+    rower = Rower(seat(shape, seated), idle, facing(shape, vessel, seated))
     shape.animations, player = fit(rower, shape.elements, strokes, grips, lean)
     shape.write()
     rowed(shape, rower, shape.animations, player)
@@ -169,7 +184,8 @@ def player_patch(name, animations):
 
 def rowed(shape, rower, vessel, player, name=None, gear=()):
     offset = [s - h for s, h in zip(rower.seat, CENTRE)]
-    seated = {"name": "Rower", "from": offset, "to": offset, "faces": {}, "children": rower.seraph["elements"]}
+    seated = {"name": "Rower", "from": offset, "to": offset, "rotationOrigin": list(rower.seat), "rotationY": -rower.yaw,
+              "faces": {}, "children": rower.seraph["elements"]}
     animations = []
     for own, arms in zip(vessel, player):
         keyframes = [{"frame": a["frame"], "elements": every_axis(rower.idle) | a["elements"] | b["elements"]}
@@ -209,7 +225,7 @@ def fit(rower, elements, strokes, grips, lean):
         for side, grip in hands_on.items():
             arm = rower.arms[side]
             hands = [rower.body(centre(elements, m, grip)) for m in placed]
-            axes = [held(m, grip) for m in placed]
+            axes = [rower.along(held(m, grip)) for m in placed]
             thumbs = [[tuple(thumb * c for c in axis) for axis in axes] for thumb in (1, -1)]
             holds = arm.stroke(bodies, hands, thumbs)
             chosen = min(range(2), key=lambda i: holds[i][1])

@@ -89,7 +89,8 @@ LOOK
                              wind vector, precipitation, wind/weather pattern, weather event
   bin/game entity ID         server side: code, alive, pos, behaviours, all watched attributes
   bin/game where [ID]        client side, as drawn: entity ID's (the player's without ID) code, position
-                             and yaw. Cheap enough to poll: it leaves the chat alone, where every
+                             and yaw, and a creature's body yaw, in the world's frame as yaw is.
+                             Cheap enough to poll: it leaves the chat alone, where every
                              `entity` reply lands and, kept long, stalls the frames
   (log)                      storms log every event to the server's debug log, tagged [storms]:
                              breakers with their energy, water shipped, anchors down, dragged and
@@ -176,7 +177,10 @@ ACT
                              the handbook still building, or the wrong page
 
 SERVER COMMANDS (via bin/game do; /help bridge lists them)
-  /bridge sea                fly to the nearest open sea, hovering just above the surface
+  /bridge sea [CLEAR]        fly to the nearest open sea with ocean all round for CLEAR blocks (default
+                             128, room to row or sail off without running ashore), hovering just
+                             above the surface; 0 takes the nearest ocean, a coast's edge included;
+                             at most 512
   /bridge shore              fly to the nearest flat, dry ground beside the sea, hovering just above
                              it. Far out at sea no shore is loaded: it flies toward the coast and
                              says to run it again once the land has loaded
