@@ -8,6 +8,7 @@ public class ImpactTests
     private const long StepMs = 17;
 
     private readonly Impact impact = new(give: 1, guardMs: 500);
+    private readonly Course course = new();
     private long now;
     private double x, z;
 
@@ -31,7 +32,7 @@ public class ImpactTests
     public void PointsTheKnockTowardTheObstacleAlongTheAxisItBlocked()
     {
         Sail((-3, 4), (-3, 4));
-        var knocked = impact.Step(0, 4 * PerTick, x, z += 4.0 * StepMs / 1000, now += StepMs)!.Value;
+        var knocked = Step(0, 4 * PerTick, x, z += 4.0 * StepMs / 1000)!.Value;
 
         Assert.Equal(-3, knocked.TowardX, 6);
         Assert.Equal(0, knocked.TowardZ, 6);
@@ -81,11 +82,32 @@ public class ImpactTests
     [Fact]
     public void TakesTheSpeedFromHowFarTheHullReallyMoved()
     {
-        impact.Step(6 * PerTick, 0, x, z, now += StepMs);
-        impact.Step(6 * PerTick, 0, x += 2.0 * StepMs / 1000, z, now += StepMs);
-        var knocked = impact.Step(0, 0, x, z, now += StepMs)!.Value;
+        Step(6 * PerTick, 0, x, z);
+        Step(6 * PerTick, 0, x += 2.0 * StepMs / 1000, z);
+        var knocked = Step(0, 0, x, z)!.Value;
 
         Assert.Equal(2, knocked.SpeedLost, 6);
+    }
+
+    [Theory]
+    [InlineData(6, 100)]
+    [InlineData(12, 200)]
+    public void ReadsTheSameSpeedWhateverHowManyStepsAFrameRuns(int steps, long frameMs)
+    {
+        Knocked? knocked = null;
+        for (int frame = 0; frame < 4 && knocked == null; frame++)
+        {
+            now += frameMs;
+            for (int step = 0; step < steps && knocked == null; step++)
+            {
+                bool blocked = frame == 3 && step == steps / 2;
+                if (!blocked) x += 3.0 * frameMs / 1000 / steps;
+                course.Record(x, z, now);
+                knocked = impact.Step(blocked ? 0 : 3 * PerTick, 0, course.Velocity, now);
+            }
+        }
+
+        Assert.Equal(3, knocked!.Value.SpeedLost, 6);
     }
 
     [Fact]
@@ -119,9 +141,15 @@ public class ImpactTests
         foreach (var (vx, vz) in metresPerSecond)
         {
             double seconds = StepMs / 1000.0;
-            if (impact.Step(vx * PerTick, vz * PerTick, x += vx * seconds, z += vz * seconds, now += StepMs) is { } knocked) impacts.Add(knocked.SpeedLost);
+            if (Step(vx * PerTick, vz * PerTick, x += vx * seconds, z += vz * seconds) is { } knocked) impacts.Add(knocked.SpeedLost);
         }
         return impacts;
+    }
+
+    private Knocked? Step(double motionX, double motionZ, double atX, double atZ)
+    {
+        course.Record(atX, atZ, now += StepMs);
+        return impact.Step(motionX, motionZ, course.Velocity, now);
     }
 
     private List<double> Pressed(double asked, double wobble)
@@ -130,7 +158,7 @@ public class ImpactTests
         for (int step = 0; step < 30; step++)
         {
             bool asking = step % 2 == 0;
-            if (impact.Step(asking ? asked * PerTick : 0, 0, x += asking ? wobble : 0, z, now += StepMs) is { } knocked) impacts.Add(knocked.SpeedLost);
+            if (Step(asking ? asked * PerTick : 0, 0, x += asking ? wobble : 0, z) is { } knocked) impacts.Add(knocked.SpeedLost);
         }
         return impacts;
     }

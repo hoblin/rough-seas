@@ -43,6 +43,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private readonly List<Knocked> pendingImpacts = new();
     private Impact impact = null!;
     private Rams rams = null!;
+    private readonly Course course = new();
     private HullContacts hullContacts = null!;
     private Resistance resistance;
     private Shell? shell;
@@ -531,6 +532,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public bool Steered => entity.GetInterface<IMountable>()?.IsBeingControlled() == true;
 
+    public (double X, double Z) Velocity => course.Velocity;
+
     public void Rammed(Knocked by)
     {
         lock (impactLock) pendingImpacts.Add(by);
@@ -540,6 +543,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     {
         // Physics steps pass 0; the rider's frame-end call carries motion EntityBoat rewrote, never a collision. See docs/modding.md.
         if (accum != 0) return;
+        course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
         var mount = entity.GetInterface<IMountable>();
         var client = entity.Api as ICoreClientAPI;
         if (client != null ? mount?.Controller != client.World.Player.Entity : mount?.IsBeingControlled() == true)
@@ -558,7 +562,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         var knocks = new List<Knocked>();
         lock (impactLock)
         {
-            if (impact.Step(motion.X, motion.Z, entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds) is { } stopped) knocks.Add(stopped);
+            if (impact.Step(motion.X, motion.Z, course.Velocity, entity.World.ElapsedMilliseconds) is { } stopped) knocks.Add(stopped);
             knocks.AddRange(rams.Step(contacts));
             if (client == null) pendingImpacts.AddRange(knocks);
         }

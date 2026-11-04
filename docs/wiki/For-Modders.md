@@ -217,7 +217,7 @@ Our vessels' shapes are rebuilt so that no box stands outside the round it build
 
 ### Bundles that crush, knocks that happen once
 
-- A knock against a block is read as vanilla reads a fall: on the step a collision first blocks an axis of her motion, at the speed her position really changed by over the tenth of a second before, not from `Pos.Motion`, which a steered vessel's rider rewrites each frame. A vessel held against a rock, by a current or her rider paddling on, strikes it once. `Impact.Step` takes her position in place of her motion's history.
+- A knock against a block is read as vanilla reads a fall: on the step a collision first blocks an axis of her motion, at the speed her position really changed by over the tenth of a second before, not from `Pos.Motion`, which a steered vessel's rider rewrites each frame. A vessel held against a rock, by a current or her rider paddling on, strikes it once. A ram's closing speed comes from both hulls' real change of position too. `IHull.Velocity` gives a hull's, in m/s, kept by `Course`; `Impact.Step` takes it in place of her motion's history, and `Contact`'s closing speed is in m/s.
 - A `bundle` shell takes a broad load by crushing its stems first: `Resistance.CushionJoules`, from the material's new `crushStrength` and `densificationStrain`, across the bundle's `metres` along one metre of it. Only what is left meets `impactCapacity`. Our reed boat's `impactCapacity` is now her lashings' work to break, 30,600 J. A `bundle` shell of yours on our `reed` row crushes too, and takes knocks it used to tear from.
 - The bench's `/bridge current SPEED YAW` sets one current everywhere in place of the sea's, to carry an unridden vessel as a river would.
 
