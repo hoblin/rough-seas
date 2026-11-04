@@ -59,6 +59,12 @@ public readonly record struct HullShape(double HalfLength, double HalfBeam, doub
 
     public bool Beyond(double across) => Math.Abs(across - CentreAcross) > HalfBeam;
 
+    public HullShape Spanning(double across)
+    {
+        double low = Math.Min(CentreAcross - HalfBeam, across), high = Math.Max(CentreAcross + HalfBeam, across);
+        return this with { HalfBeam = (high - low) / 2, CentreAcross = (low + high) / 2 };
+    }
+
     public HullPlace Toward(double along, double across) =>
         Side(Math.Abs(along) > Math.Abs(across) ? Math.Sign(along) * HalfLength : 0, across);
 

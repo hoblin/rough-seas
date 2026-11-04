@@ -11,6 +11,9 @@ public interface IOutboard
     /// <summary>The hull's place it stands off, in her shape's frame.</summary>
     HullPlace Side { get; }
 
+    /// <summary>How far it stands off her centreline toward its side, in metres.</summary>
+    double OffMetres { get; }
+
     /// <param name="joules">The knock, as the hull would have taken it.</param>
     void Strike(double joules);
 

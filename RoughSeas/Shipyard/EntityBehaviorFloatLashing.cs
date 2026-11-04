@@ -37,6 +37,8 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
 
     public HullPlace Side => config.Side;
 
+    public double OffMetres => Rigging?.FloatOffMetres ?? 0;
+
     public float Condition => lashing.Condition;
 
     public event Action<Knock>? Struck;

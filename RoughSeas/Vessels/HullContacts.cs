@@ -7,20 +7,23 @@ namespace RoughSeas.Vessels;
 
 public class HullContacts(EntityPartitioning partitioning)
 {
-    public List<Contact> Around(Entity vessel, HullShape shape, bool withSteered)
+    public List<Contact> Around(Entity vessel, IHull ours, bool withSteered)
     {
         var pos = vessel.Pos;
+        var shape = ours.Shape;
+        var reach = Footprint.Of(ours.Reach, pos.X, pos.Z, pos.Yaw);
         var own = Footprint.Of(shape, pos.X, pos.Z, pos.Yaw);
         var contacts = new List<Contact>();
-        partitioning.WalkEntities(pos.XYZ, shape.HalfLength + Math.Abs(shape.CentreAlong) + partitioning.LargestTouchDistance, other =>
+        partitioning.WalkEntities(pos.XYZ, Reach(ours.Reach) + partitioning.LargestTouchDistance, other =>
         {
             if (other != vessel && other.Alive && other.Pos.Dimension == pos.Dimension && IHull.Of(other) is { } hull &&
                 (withSteered || !hull.Steered) &&
                 Level(pos.Y, shape, other.Pos.Y, hull.Shape) &&
-                Footprint.Of(hull.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw) is var theirs && own.Touches(theirs))
+                Footprint.Of(hull.Reach, other.Pos.X, other.Pos.Z, other.Pos.Yaw) is var theirReach && reach.Touches(theirReach))
             {
+                var toward = own.Touches(theirReach) ? Footprint.Of(hull.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw) : reach;
                 var closing = pos.Motion - other.Pos.Motion;
-                contacts.Add(new Contact(other.EntityId, theirs.X - own.X, theirs.Z - own.Z, closing.X, closing.Z, hull.Aboard.Impact));
+                contacts.Add(new Contact(other.EntityId, toward.X - own.X, toward.Z - own.Z, closing.X, closing.Z, hull.Aboard.Impact));
             }
             return true;
         }, EnumEntitySearchType.Creatures);
@@ -31,7 +34,7 @@ public class HullContacts(EntityPartitioning partitioning)
     public static bool Within(double x, double z, HullShape shape, double theirX, double theirZ, HullShape theirs, double slack) =>
         Math.Sqrt((theirX - x) * (theirX - x) + (theirZ - z) * (theirZ - z)) <= Reach(shape) + Reach(theirs) + slack;
 
-    private static double Reach(HullShape shape) => Math.Sqrt(Math.Pow(shape.HalfLength + Math.Abs(shape.CentreAlong), 2) + Math.Pow(shape.HalfBeam, 2));
+    private static double Reach(HullShape shape) => Math.Sqrt(Math.Pow(shape.HalfLength + Math.Abs(shape.CentreAlong), 2) + Math.Pow(shape.HalfBeam + Math.Abs(shape.CentreAcross), 2));
 
     public static bool Level(double y, HullShape shape, double theirY, HullShape theirs) =>
         y + shape.Keel <= theirY + theirs.Keel + theirs.Depth && theirY + theirs.Keel <= y + shape.Keel + shape.Depth;

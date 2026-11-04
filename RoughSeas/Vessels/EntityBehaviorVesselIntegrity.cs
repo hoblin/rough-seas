@@ -114,6 +114,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     // Her selection boxes load after her first physics on a client; only a measured shape is kept.
     public HullShape Shape => shape ?? (MeasuredShape(entity, hullBox) is { } measured ? (shape = measured).Value : HitboxShape(entity));
 
+    public HullShape Reach => outboard is { } off ? Shape.Spanning(off.Side.IsPort() ? -off.OffMetres : off.OffMetres) : Shape;
+
     private ITreeAttribute Tree => entity.WatchedAttributes.GetTreeAttribute(TreeKey);
 
     public static void Ungreased(Entity vessel)
@@ -512,7 +514,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         var other = knocked.Against != 0 ? entity.World.GetEntityById(knocked.Against) : null;
         var hull = other == null ? null : IHull.Of(other);
         if (hull != null && (other!.Pos.Dimension != entity.Pos.Dimension ||
-            !HullContacts.Within(entity.Pos.X, entity.Pos.Z, Shape, other.Pos.X, other.Pos.Z, hull.Shape, ReportSlackMetres)))
+            !HullContacts.Within(entity.Pos.X, entity.Pos.Z, Reach, other.Pos.X, other.Pos.Z, hull.Reach, ReportSlackMetres)))
         {
             vessels.Log(entity, "ignored a ram {0} reported against vessel {1}, which is not beside her", player.PlayerName, knocked.Against);
             return;
@@ -550,7 +552,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
         using var _ = vessels.Budget.Measure();
         var motion = entity.Pos.Motion;
-        var contacts = hullContacts.Around(entity, Shape, withSteered: client != null);
+        var contacts = hullContacts.Around(entity, this, withSteered: client != null);
         var knocks = new List<Knocked>();
         lock (impactLock)
         {

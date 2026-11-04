@@ -178,6 +178,7 @@ Our vessels draw each place's crack in their own model, from a scratch to a hull
 - A knock on an outrigger's float side no longer cracks her starboard side: it goes to `IOutboard`, `roughseas:floatlashing` on ours, whose lashings live in `roughseas:vessel/float`. So do a blast's and lightning's broad load landing outside her hull on that side; a blade or a club there only chips the float. An outrigger saved before has her lashings whole.
 - Once those lashings give out the outrigger is replaced by a dugout (`EnumDespawnReason.Removed`), as rigging replaced the dugout before. Her riders keep their seats; what her accessory slots held drops beside her.
 - `HullDamage.Visible` is `Overlaid`, true only while an overlay is drawn.
+- Two vessels meet where either one's `IHull.Reach` touches the other's: her hull out to what stands off it, so a vessel that crosses only an outrigger's float rams the float. The knock's direction is still taken from the hulls, or toward the outboard when only it was met.
 - `HullShape.PointOf` sets each port place a little toward the bow and each starboard place toward the stern, so a leak no longer starts at the mirror of the other side's.
 
-New: `IOutboard`, `EntityBehaviorVesselIntegrity.Impact`, `HullDamage.Hidden`, the behaviour `roughseas:floatlashing` with its keys, and `roughseas:rigging`'s `lashing`.
+New: `IOutboard` with `OffMetres`, `IHull.Reach`, `HullShape.Spanning`, `EntityBehaviorVesselIntegrity.Impact`, `HullDamage.Hidden`, the behaviour `roughseas:floatlashing` with its keys, and `roughseas:rigging`'s `lashing`.
