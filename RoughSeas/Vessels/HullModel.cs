@@ -128,6 +128,9 @@ public interface IHull : IBuoyant
 {
     HullShape Shape { get; }
 
+    /// <summary>Her shape out to what stands off her hull: where another vessel meets her.</summary>
+    HullShape Reach { get; }
+
     /// <summary>Server only: whether her rider's client measures her contacts, as it steers her.</summary>
     bool Steered { get; }
 

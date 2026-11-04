@@ -18,7 +18,8 @@ public class FirstStageTests
         ?? elements.Select(element => element["children"] is { } children ? Find(children, name) : null).FirstOrDefault(found => found != null);
 
     private static IEnumerable<JToken> Boxes(JToken element) =>
-        element["children"] is { } children ? children.SelectMany(Boxes) : [element];
+        element.Value<string>("name")!.StartsWith("Wound") ? []
+        : element["children"] is { } children ? children.SelectMany(Boxes) : [element];
 
     private static (double[] From, double[] To) Bounds(JToken group)
     {

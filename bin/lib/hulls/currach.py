@@ -4,6 +4,7 @@ from physics import afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
 from held import POLE, poling, tools, waterline
 from stroke import crew, drive_share, moved, player_patch, seat, strokes
+from wounds import wound
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
@@ -249,7 +250,8 @@ def build(path_):
     shape.add(laths[0])
     shape.add(stages("EndLashing", ends(half)))
     shape.add(laths[1], laths[2])
-    shape.add(stages("Cover", cover(hull), wood="none"))
+    hide = stages("Cover", cover(hull), wood="none")
+    shape.add(hide)
     shape.add(stages("Lacing", lacing(hull)))
     shape.add(thwart_stage)
     pins, rests = tholes(hull, half)
@@ -257,6 +259,7 @@ def build(path_):
     shape.add(stages("Oars", [[oar(name, side, rests[name])] for name, side in OARS.items()], wood="none"))
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
+    wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
                  {"rotationZ": 12})
     at = seat(shape, "BackSeat")
