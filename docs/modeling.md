@@ -32,6 +32,16 @@ Don't run it to see whether something still works: a refactor, a merge, a review
 - `wounds.py` draws a cracking hull's damage into its model, last in a builder, once the `Hull` box is kept: `wound(shape, levels, lining, framing)` puts, on each level of skin a build shows (`""` the finished hull, `Blank3`, `Skin5`…), a `Wound{Place}{level}` group beside the board nearest each place's middle with room for the wound, in that board's frame, holding the crack at each stage, `Scratched`, `Cracked`, `Split`, `StoveIn`. Each runs along the grain through the wall, or a solid log's face, and through any `lining` inside it: a split or a place stove in as long as the shell's `spanMetres` from the entity JSON, a scratch and a crack a share of it, none shorter than 1.5 voxels; a group beside the board, never its child, keeps every element with children a zero-size group. A `framing`, the stage of ribs or laths under the skin with their texture, breaks its member nearest each place from a split on: the member is wrapped whole in `Wound{Place}Whole`, and its two halves, turned inward about their far ends, sit beside it in `Wound{Place}Frame`. Port places sit a little toward the bow and starboard toward the stern, as `HullShape.PointOf` has them. The outrigger draws her float's forms as its lashings give, `FloatLashing{Loose,Torn,Shifted}`, each listing the elements it `replaces`. Look at them in the game, struck with `/bridge strike`: a preview draws every stage at once.
 - `bin/damage` draws the overlays a hull without wounds shows, wood's (vanilla's raft and sailboat) and reed's, four stages each, from a seed; `bin/damage PREVIEW.png` lays them over their textures to look at.
 
+## Writing a builder
+
+- **Compute once what a loop doesn't change.** Pose what stays fixed outside the loop over what varies, such as the trunk in a frame or the stroke's constants, and share it between the alternatives tried.
+- **Build a part once.** Reuse a stage already built; don't call its builder again for a report or a second shape.
+- **Reject cheaply first.** Test a box's bounds before a point's depth in it.
+- **Hot math goes through `transform.py`.** Its helpers are unrolled for speed; a loop that runs a million times takes no generators or `sum()` over three or four terms.
+- **A fact lives once.** A measured quantity goes in `physics.py` with its source, and a unit in `shape.py`. Import it; never copy it into a builder.
+- **Measure before optimising:** `python3 -m cProfile -s cumtime bin/lib/hulls/VESSEL.py OUT`.
+- **Write a file another vessel reads with `shape.save`.** The vessels build side by side.
+
 ## Boxes inside the round they build
 
 A cuboid that builds a round shape keeps every corner inside the surface it follows, and two faces never share a plane. A corner past the curve shows as a square tooth on the outline; two faces in one plane fight over the pixel and flicker.
