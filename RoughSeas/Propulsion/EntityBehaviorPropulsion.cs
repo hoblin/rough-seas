@@ -28,8 +28,6 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     private Fatigue fatigue = null!;
     private Paddler paddler = null!;
     private IHull? hull;
-    private EntityBehaviorPassivePhysics? physics;
-    private double vanillaWaterDrag;
     private (HullForm Form, double Draft, double Kg) dragFor;
     private HullDrag? drag;
     private string? logged;
@@ -39,6 +37,8 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     public double EffortWatts { get; private set; }
 
     public Stroke? Stroke { get; private set; }
+
+    public bool Driving { get; private set; }
 
     public override string PropertyName() => Code;
 
@@ -55,8 +55,6 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     public override void AfterInitialized(bool onFirstSpawn)
     {
         hull = IHull.Of(entity);
-        physics = entity.GetBehavior<EntityBehaviorPassivePhysics>();
-        vanillaWaterDrag = physics?.WaterDragValue ?? 0;
         var sea = entity.GetBehavior<EntityBehaviorSeaForces>();
         station = new RowerStation(attributes, propulsion.Config, propulsion.WaterDensity, blocks => sea?.WaterDepth(blocks) ?? 0);
     }
@@ -90,7 +88,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         strokes.Show(boat, rower, idle ? null : strokes.KindOf(tool, station.HasOars, side), changing, sided && ahead == 0 && turn != 0,
             idle ? null : station.Stance(tool?.Kind));
         if (idle) return Idle(vanilla);
-        if (physics != null) physics.WaterDragValue = 1;
+        Driving = true;
 
         var water = Drag(boat);
         var speed = VanillaSwim.Realized(boat.ForwardSpeed);
@@ -144,7 +142,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     private Vec2d Idle(Vec2d vanilla)
     {
         paddler.Rest();
-        if (physics != null) physics.WaterDragValue = vanillaWaterDrag;
+        Driving = false;
         EffortWatts = 0;
         Stroke = null;
         return vanilla;
