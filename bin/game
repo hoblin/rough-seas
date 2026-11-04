@@ -179,7 +179,8 @@ ACT
 SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge sea [CLEAR]        fly to the nearest open sea with ocean all round for CLEAR blocks (default
                              128, room to row or sail off without running ashore), hovering just
-                             above the surface; 0 takes the nearest ocean, a coast's edge included
+                             above the surface; 0 takes the nearest ocean, a coast's edge included;
+                             at most 512
   /bridge shore              fly to the nearest flat, dry ground beside the sea, hovering just above
                              it. Far out at sea no shore is loaded: it flies toward the coast and
                              says to run it again once the land has loaded

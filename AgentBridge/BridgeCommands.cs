@@ -61,7 +61,7 @@ public class BridgeCommands : ModSystem
             .BeginSubCommand("sea")
                 .WithDescription("Fly the caller to the nearest open sea within 1500 blocks, with ocean all round for a clearing of blocks (default 128), hovering just above the surface")
                 .RequiresPlayer()
-                .WithArgs(parsers.OptionalInt("clear", 128))
+                .WithArgs(parsers.OptionalIntRange("clear", 0, 512, 128))
                 .HandleWith(args => Sea((IServerPlayer)args.Caller.Player, (int)args[0]))
             .EndSubCommand()
             .BeginSubCommand("shore")
