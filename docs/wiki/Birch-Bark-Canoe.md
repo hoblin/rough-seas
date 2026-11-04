@@ -18,7 +18,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | --- | --- |
 | Speed | 2.1 m/s paddled, 2.8 m/s poled: the fastest paddled boat ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | 26° a second |
-| [Hull](Hull-Condition) | 5200 J with an oak frame, 6100 J in birch; 2400 J in white cedar, the wood of a canoe from before the build |
+| [Hull](Hull-Condition) | a knock splits the bark and its sheathing at 23 J in white cedar, 43 J in oak, and breaks the rib behind at 47 J, 88 J in oak; 5200 J more with an oak frame breaks her up, 6100 J in birch, 2400 J in white cedar, the wood of a canoe from before the build |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 36 cm empty, 32 cm with its paddler, in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 24 kg of gear, armour and containers in oak, more in a lighter wood |

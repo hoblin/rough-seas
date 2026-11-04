@@ -25,6 +25,7 @@ public abstract class Shell
     public RigidShell? Backing;
     public double BackedShare;
     public double? BottomBackedShare;
+    public FrameMember? Frame;
 
     public static Shell? Of(JsonObject shell)
     {
@@ -43,7 +44,8 @@ public abstract class Shell
         var hole = hull.CrackSquareMetres;
         return new(frameJoules, Holed(materials, hole), Cut(materials, hole, cutShare),
             BackingHoled(materials, hole), Backing?.Cut(materials, hole, cutShare) ?? 0,
-            BackedShare, BottomBackedShare ?? BackedShare, Slammed(materials) * hull.SoakedStrengthShare, Cushions(materials));
+            BackedShare, BottomBackedShare ?? BackedShare, Slammed(materials) * hull.SoakedStrengthShare, Cushions(materials),
+            Frame == null ? 0 : Opens(materials, hole) + Frame.Breaks(materials));
     }
 
     /// <summary>This shell with <paramref name="metres"/> of its own wood not yet cut out of the hold behind it: that wood backs the sides below the cut and the whole bottom.</summary>
@@ -65,6 +67,7 @@ public abstract class Shell
 
         var shell = (Shell)MemberwiseClone();
         shell.Backing = lined > 0 ? new RigidShell { Material = material, Metres = Backing.Metres, SpanMetres = Backing.SpanMetres } : null;
+        shell.Frame = lined > 0 ? Frame?.Of(material) : null;
         shell.BackedShare = BackedShare * lined;
         shell.BottomBackedShare = BottomBackedShare * lined;
         return shell;
@@ -78,6 +81,9 @@ public abstract class Shell
         Resistance.Bending(materials.ModulusOfRupture(Material), Metres, spanMetres, momentFactor);
 
     protected virtual double Cushions(MaterialTable materials) => 0;
+
+    protected virtual double Opens(MaterialTable materials, double holeSquareMetres) =>
+        Holed(materials, holeSquareMetres) + BackingHoled(materials, holeSquareMetres);
 
     protected virtual double BackingHoled(MaterialTable materials, double holeSquareMetres) => Backing?.Holed(materials, holeSquareMetres) ?? 0;
 
@@ -109,8 +115,8 @@ public class CarvedShell : RigidShell
 }
 
 /// <summary>
-/// A hide stretched over laths: it springs back from a blow, which harms only a lath that backs it, and a breaker
-/// presses it onto the laths, each bending under its share of the side.
+/// A hide stretched over laths: it springs back from a blow, which harms only a lath that backs it, gives under a
+/// knock and opens nothing, and a breaker presses it onto the laths, each bending under its share of the side.
 /// </summary>
 public class SkinShell : Shell
 {
@@ -118,8 +124,22 @@ public class SkinShell : Shell
 
     public override double Holed(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
 
+    protected override double Opens(MaterialTable materials, double holeSquareMetres) => 0;
+
     public override double Slammed(MaterialTable materials) =>
         Backing is null ? double.PositiveInfinity : Backing.Bends(materials, SpanMetres, Propped) * BackedShare;
+}
+
+/// <summary>The lath or rib behind a shell: a broad blow where it lands breaks it by its impact bending work across its section.</summary>
+public class FrameMember
+{
+    public string Material = "wood";
+    public double Metres;
+    public double WidthMetres;
+
+    public FrameMember Of(string material) => new() { Material = material, Metres = Metres, WidthMetres = WidthMetres };
+
+    public double Breaks(MaterialTable materials) => materials.Toughness(Material) * Metres * WidthMetres;
 }
 
 /// <summary>

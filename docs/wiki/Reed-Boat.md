@@ -24,7 +24,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
-| [Rapids](Rapids) | torn through in about ten seconds |
+| [Rapids](Rapids) | unharmed: its bundles crush and take each strike |
 | [Lightning](Lightning) | torn apart |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |

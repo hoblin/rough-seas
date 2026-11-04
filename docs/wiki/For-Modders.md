@@ -232,3 +232,11 @@ Our vessels' shapes are rebuilt so that no box stands outside the round it build
 - The bench's `/bridge current SPEED YAW` sets one current everywhere in place of the sea's, to carry an unridden vessel as a river would.
 
 New: a material's `crushStrength` and `densificationStrain`, `Resistance.CushionJoules` and `Resistance.Severity`.
+
+### Framed hulls take a knock where it lands
+
+- A `shell` can name its `frame`, `{ "material", "metres", "widthMetres" }`: the lath or rib behind it. A broad load (a knock, a ram, rapids, a blast, lightning) on such a shell meets only the shell where it lands and that member, `Resistance.PlaceJoules`: a `rigid` shell's holing with its lining, nothing for a `skin`, which gives, plus the member's `toughness` across its section. The member's breaking brings the place to a split (`HullModel.FrameBroken`, a crack of 0.5), twice that stoves it in, and only what is left meets `impactCapacity` to break the hull up. A shell without a `frame` takes a broad load as before.
+- Our coracle, bark canoe and currach carry a `frame`, a 1 by 6 cm lath of their build's wood, and feel a knock from about 1.2 m/s with one aboard where they used to shrug off 2 m/s. A patch that removes the `frame` gives them the whole-frame knock back.
+- `Resistance.Loss` and `Resistance.BreaksFrame` are now the resistance's own, and `BreaksFrame` takes the blow's severity rather than its loss.
+
+New: a shell's `frame` (`FrameMember`), `Resistance.PlaceJoules`, `HullModel.FrameBroken`.

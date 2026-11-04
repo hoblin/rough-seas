@@ -16,14 +16,14 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | --- | --- |
 | Speed | 1 m/s sculled over the bow, 1.2 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | spins on the spot, 177° a second |
-| [Hull](Hull-Condition) | 400 J with a willow frame, the weakest of all; about 690 J in oak, 810 J in birch |
+| [Hull](Hull-Condition) | a knock breaks the willow lath behind the hide at 24 J, 45 J in oak: past her 1 m/s sculled, only a current or a fall drives her that hard; 400 J more with a willow frame breaks her up, the weakest of all, about 690 J in oak, 810 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 12 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 33 cm empty, 26 cm with its paddler |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's gear; armour takes it down |
 | [Mending](Mending) | 1 small prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
 | [Bilge](Bailing) | 272 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
-| [Rapids](Rapids) | broken within seconds |
+| [Rapids](Rapids) | the bottom stove in at the first rock |
 | [Lightning](Lightning) | a strike nearby breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post, or worn home |

@@ -117,6 +117,44 @@ public class ShellTests
     }
 
     [Fact]
+    public void AKnockPressesAHideOntoTheLathBehindWhichBreaksByItsSection()
+    {
+        var hide = Framed(new SkinShell { Material = "hide", Metres = 0.005, Backing = new RigidShell { Material = "wood-ash", Metres = 0.01 }, BackedShare = 0.3 });
+
+        Assert.Equal(68000 * 0.01 * 0.06, hide.Resists(3000, materials, Hull, CutShare).Against(Blow.Broad, backed: false), 6);
+    }
+
+    [Fact]
+    public void AKnockSplitsBarkAndItsSheathingBeforeTheRibBehindTakesTheRest()
+    {
+        var canoe = Framed(new RigidShell { Material = "bark", Metres = 0.005, Backing = new RigidShell { Material = "wood-oak", Metres = 0.003 }, BackedShare = 1 });
+
+        Assert.Equal(Resistance.Holing(700, 0.005, Hole) + Resistance.Holing(75000, 0.003, Hole) + 68000 * 0.01 * 0.06,
+            canoe.Resists(2400, materials, Hull, CutShare).Against(Blow.Broad, backed: false), 6);
+    }
+
+    [Fact]
+    public void TheFrameBehindIsOfTheWoodItWasBuiltFrom()
+    {
+        var canoe = Framed(new RigidShell { Material = "bark", Metres = 0.005, Backing = new RigidShell { Material = "wood-ash", Metres = 0.003 }, BackedShare = 1 });
+
+        Assert.Equal("wood-oak", canoe.Lined("wood-oak", 0.5).Frame!.Material);
+        Assert.Null(canoe.Lined("wood-oak", 0).Frame);
+    }
+
+    [Fact]
+    public void AHullWithoutAFrameBehindItsShellTakesAKnockWithItsWholeFrame()
+    {
+        Assert.Equal(3000, Skin.Resists(3000, materials, Hull, CutShare).Against(Blow.Broad, backed: false));
+    }
+
+    private static T Framed<T>(T shell) where T : Shell
+    {
+        shell.Frame = new FrameMember { Material = "wood-ash", Metres = 0.01, WidthMetres = 0.06 };
+        return shell;
+    }
+
+    [Fact]
     public void ABreakerBendsTheLiningOnlyAsFarAsItIsLaid()
     {
         var canoe = new RigidShell { Material = "bark", Metres = 0.005, Backing = new RigidShell { Material = "wood-oak", Metres = 0.003 }, BackedShare = 1, SpanMetres = 0.25 };

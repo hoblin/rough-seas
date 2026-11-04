@@ -27,7 +27,7 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 3000,
             "parts": [{"name": "hide", "material": "hide", "share": 37.4}, {"name": "frame", "material": "wood-ash", "share": 39.6}, {"name": "oars", "material": "wood-ash", "share": 11.5, "takesKnocks": false}],
-            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.01}, "backedShare": 0.4, "bottomBackedShare": 0.31, "spanMetres": 0.15},
+            "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.01}, "backedShare": 0.4, "bottomBackedShare": 0.31, "spanMetres": 0.15, "frame": {"material": "wood-ash", "metres": 0.01, "widthMetres": 0.06}},
             "depthMetres": 0.6,
             "waterplaneSquareMetres": 3.47,
             "seep": {"litresPerHourASeam": 15, "greaseDays": 2.5},
@@ -41,7 +41,7 @@
             "sources": {
                 "parts": "By the model (bin/lib/hulls/currach.py): 8.7 m² of hide 5 mm thick at 860 kg/m³, 37 kg, over 22 ribs, 7 stringers and two gunwales of laths 1 by 6 cm, 83 m of ash, and a thwart pole 9 cm across, 40 kg; and her two 3 m oars, 11.5 kg: 88.5 kg",
                 "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.046 m (bin/lib/hulls/currach.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
-                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, ribs 0.8 voxel wide every 3 and three stringers a side back 40% of her sides, the ribs and the keelson 31% of her bottom. A breaker presses the hide onto the laths, each 1 cm deep bending over the 0.15 m between stringers",
+                "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, ribs 0.8 voxel wide every 3 and three stringers a side back 40% of her sides, the ribs and the keelson 31% of her bottom. A breaker presses the hide onto the laths, each 1 cm deep bending over the 0.15 m between stringers. A knock, a ram or rapids presses the hide onto the lath behind where it lands: wet hide stretches to 60% before it parts (pickled cowhide, 26.6 MPa at 60% elongation; Tensile Properties of Indigenous Kenyan Boran Pickled and Tanned Bovine Hide), so it gives and passes the blow on, and the lath, 1 by 6 cm of ash, breaks by its impact bending work across its section. Hornell (British Coracles and Irish Curraghs, 1938) has curragh builders cover the frame's rough ends, which would otherwise cut the hide: a broken lath's end is what opens it",
                 "depthMetres": "Keel to gunwale amidships, by the model (bin/lib/hulls/currach.py)",
                 "waterplaneSquareMetres": "So that her 1911 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
                 "seep": "A seam where one hide meets the next weeps once the tallow has washed out of it, and Aran crews dressed their currachs every few days: a seam across her, some 2.3 m of it, 15 L an hour. A currach from before her build is covered in prepared hide over her eight sections, with the two seams the three large hides of her old recipe had",

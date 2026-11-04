@@ -64,11 +64,14 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
     /// <summary>A share within rounding of none or of the whole, as seven sevenths summed come to, is exactly that.</summary>
     protected static double Snapped(double share) => share < ShareTolerance ? 0 : share > 1 - ShareTolerance ? 1 : share;
 
+    /// <summary>The crack from which a place is split and the frame member behind it drawn broken.</summary>
+    public const double FrameBroken = 0.5;
+
     protected static int StageOf(double damage) => damage switch
     {
         < 0.1 => 0,
         < 0.25 => 1,
-        < 0.5 => 2,
+        < FrameBroken => 2,
         < 0.75 => 3,
         _ => 4
     };

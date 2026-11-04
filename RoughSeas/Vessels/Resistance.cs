@@ -14,6 +14,7 @@ public enum Blow
 /// <param name="BackedShare">Of the side's area, the share a lath or sheathing backs; <paramref name="BottomBackedShare"/> the bottom's.</param>
 /// <param name="SlamPascals">The breaker's pressure the soaked planking bends to breaking under; infinite where nothing does.</param>
 /// <param name="CushionJoules">What the shell takes of a broad blow by crushing before anything behind it bears the rest, as a bundle of stems does.</param>
+/// <param name="PlaceJoules">What breaks a framed hull where a broad blow lands: its shell opening there and the frame member behind it; 0 where the whole frame takes the blow.</param>
 public readonly record struct Resistance(
     double FrameJoules,
     double ShellPoint,
@@ -23,7 +24,8 @@ public readonly record struct Resistance(
     double BackedShare = 0,
     double BottomBackedShare = 0,
     double SlamPascals = double.PositiveInfinity,
-    double CushionJoules = 0)
+    double CushionJoules = 0,
+    double PlaceJoules = 0)
 {
     public static Resistance Whole(double frameJoules) => new(frameJoules, frameJoules, frameJoules);
 
@@ -44,6 +46,7 @@ public readonly record struct Resistance(
         Blow.Cut when backed => Yielding(ShellCut) + BackingCut,
         Blow.Cut => ShellCut,
         Blow.Slam => SlamPascals,
+        _ when PlaceJoules > 0 => PlaceJoules,
         _ => FrameJoules
     };
 
@@ -58,8 +61,9 @@ public readonly record struct Resistance(
 
     private static double Yielding(double shell) => double.IsPositiveInfinity(shell) ? 0 : shell;
 
-    public static double Loss(double severity, Blow blow, bool byPlace) => blow switch
+    public double Loss(double severity, Blow blow, bool byPlace) => blow switch
     {
+        Blow.Broad when PlaceJoules > 0 => Place(Math.Min(1, severity * HullModel.FrameBroken), byPlace),
         Blow.Broad => severity,
         Blow.Slam => severity >= 1 ? Place(1, byPlace) : 0,
         _ => Place(Math.Min(1, severity), byPlace)
@@ -67,5 +71,6 @@ public readonly record struct Resistance(
 
     private static double Place(double loss, bool byPlace) => loss / (byPlace ? 1 : HullShape.Places.Length);
 
-    public static bool BreaksFrame(Blow blow, double loss) => blow == Blow.Broad && loss >= 1;
+    public bool BreaksFrame(Blow blow, double severity) => blow == Blow.Broad &&
+        (PlaceJoules > 0 ? (severity - 1 / HullModel.FrameBroken) * PlaceJoules >= FrameJoules : severity >= 1);
 }
