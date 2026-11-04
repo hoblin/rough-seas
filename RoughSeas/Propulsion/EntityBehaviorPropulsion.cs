@@ -71,9 +71,9 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
 
         using var _ = vessels.Budget.Measure();
         var tool = Tool.Of(rower.RightHandItemSlot?.Itemstack, propulsion.Config, vessels.Materials.Density);
-        var sailing = boat.WatchedAttributes.GetInt(SailKey) > 0;
+        var idle = boat.WatchedAttributes.GetInt(SailKey) > 0 || boat.SpeedMultiplier <= 0;
         string? refusal = null;
-        var propulsor = sailing || boat.SpeedMultiplier <= 0 ? null : station.Propulsor(tool, out refusal);
+        var propulsor = idle ? null : station.Propulsor(tool, out refusal);
         var ahead = Math.Sign(vanilla.X);
         var turn = Math.Sign(vanilla.Y);
         var trying = propulsor != null && (ahead != 0 || turn != 0);
@@ -87,9 +87,9 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         }
         var side = (Side)boat.WatchedAttributes.GetInt(PaddleSideKey, (int)Side.Starboard);
         var changing = sided && boat.WatchedAttributes.GetBool(PaddleChangingKey);
-        strokes.Show(boat, rower, sailing ? null : strokes.KindOf(tool, station.HasOars, side), changing, sided && ahead == 0 && turn != 0,
-            sailing ? null : station.Stance(tool?.Kind));
-        if (sailing || boat.SpeedMultiplier <= 0) return Idle(vanilla);
+        strokes.Show(boat, rower, idle ? null : strokes.KindOf(tool, station.HasOars, side), changing, sided && ahead == 0 && turn != 0,
+            idle ? null : station.Stance(tool?.Kind));
+        if (idle) return Idle(vanilla);
         if (physics != null) physics.WaterDragValue = 1;
 
         var water = Drag(boat);
