@@ -242,3 +242,14 @@ New: a material's `crushStrength` and `densificationStrain`, `Resistance.Cushion
 - While she is built, a broad load meets only the frame members laid: `roughseas:framing`'s stages marked `members` lay them, and `Shell.Framed` spaces them wider while some are missing.
 
 New: a shell's `frame` (`FrameMember`), `Resistance.Framed` (`FramedResistance`), a material's `tensileStrength` and `elongation`, `HullModel.FrameBroken`, a framing stage's `members`.
+
+### Reed boats of the plant they were bound from
+
+A reed bundle keeps the plant it was bound from, and the boat each of her bundles. A world's reed boats and bundles from before load as cattail, through the engine's remap files.
+
+- The bundle is `roughseas:reedbundle-{port}-{starboard}-{axis}`, its `count` gone: `starboard` is `none` while it lies alone. Each plant is the code of the vanilla tops item it was bound from, `cattailtops`, `papyrustops` or `thatch`, and the grid recipe makes the bundle of the tops it takes.
+- The boat is `roughseas:reedboat-{port}-{starboard}`, her item the same; the creative inventory lists the three of one plant. Bound from two plants, each side is its own. Her wreckage is a handful of each side's tops, `game:{port}` and `game:{starboard}`.
+- Her shape draws each bundle in its own texture, `port` and `starboard`, and her bound ends in `tips`: the port plant's reed with the starboard plant's strands (`reed-{plant}-strands`) laid over it. The textures `roughseas:entity/vessel/reed-{plant}` replace `reed`, and her `damage` marks all three.
+- A W–E pair binds into a boat turned half round from before (`yaw` 3π/2, was π/2), so each bundle stays on the side it lay.
+
+New: `Reeds`, the plants a vessel's bundles were bound from, and its name.

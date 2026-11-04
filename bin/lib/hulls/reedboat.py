@@ -15,6 +15,7 @@ CENTRE = 8
 SIDES = (("Port", -1), ("Starboard", 1))
 BUNDLE_REEDS = 144
 REED_KG = 0.15
+REED = "roughseas:entity/vessel/reed-cattailtops"
 
 TIE_PITCH = 4
 TIE_TURNS = 2
@@ -46,15 +47,16 @@ def bundle_z(side):
 
 def bundle(name, side):
     z = bundle_z(side)
+    texture = name.lower()
     ties = [f / (BODY[1] - BODY[0]) for f in range(TIE_PITCH // 2, BODY[1] - BODY[0], TIE_PITCH)]
-    return [beam(f"{name}Body", (BODY[0], GIRTH / 2, z), (BODY[1], GIRTH / 2, z), GIRTH, GIRTH, "reed",
+    return [beam(f"{name}Body", (BODY[0], GIRTH / 2, z), (BODY[1], GIRTH / 2, z), GIRTH, GIRTH, texture,
                  ties=ties, tie=(0.5, TIE_MARGIN), tie_tex="rope", rounded=True, overlap=0)]
 
 
-def flat_end(name, side, start, direction):
+def flat_end(name, texture, side, start, direction):
     z = bundle_z(side)
     points = [(start + direction * reach, girth / 2, z) for reach, girth in zip(TIP_REACH, TIP_GIRTHS)]
-    return path(name, points, lambda i: TIP_GIRTHS[i - 1], lambda i: TIP_GIRTHS[i - 1], "reed", rounded=True, overlap=0, continues=True)
+    return path(name, points, lambda i: TIP_GIRTHS[i - 1], lambda i: TIP_GIRTHS[i - 1], texture, rounded=True, overlap=0, continues=True)
 
 
 def raised_points(start, direction, droop):
@@ -72,7 +74,7 @@ def raised_end(name, start, direction, droop):
         turns = math.dist(a, b) / TIP_TURN_PITCH
         ties = [(t + 0.5) / turns for t in range(math.floor(turns))]
         thinner = 2 * APART if i == 1 else 0
-        segments.append(beam(f"{name}{i}", a, b, 2 * TIP_GIRTHS[i - 1] - thinner, TIP_GIRTHS[i - 1] - thinner, "reed",
+        segments.append(beam(f"{name}{i}", a, b, 2 * TIP_GIRTHS[i - 1] - thinner, TIP_GIRTHS[i - 1] - thinner, "tips",
                              ties=ties, tie=(0.3, TIE_MARGIN), tie_tex="lashing", rounded=True, overlap=TIP_OVERLAP))
     return segments
 
@@ -141,7 +143,7 @@ def tips():
 
 
 def flats(sides):
-    return [[element for name, side in sides for element in flat_end(f"Flat{name}{n}x", side, start, direction)]
+    return [[element for name, side in sides for element in flat_end(f"Flat{name}{n}x", name.lower(), side, start, direction)]
             for n, (start, direction) in enumerate(ENDS, 1)]
 
 
@@ -159,13 +161,15 @@ def envelope():
 
 def block(target, sides):
     write(target, {"textureWidth": 16, "textureHeight": 16,
-                   "textures": {"reed": "roughseas:entity/vessel/reed", "rope": "game:block/cloth/reedrope"},
+                   "textures": {**{name.lower(): REED for name, _ in sides}, "rope": "game:block/cloth/reedrope"},
                    "elements": laid(sides)})
 
 
 def build(target):
     shape = Shape(target, {
-        "reed": "roughseas:entity/vessel/reed",
+        "port": REED,
+        "starboard": REED,
+        "tips": REED,
         "rope": "game:block/cloth/reedrope",
         "lashing": "game:item/resource/rope",
     })

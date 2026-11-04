@@ -12,7 +12,7 @@ Not in the grid any more: two reed bundles are laid by the water and bound into 
 
 ## Reed bundle
 
-Cattail tops, papyrus tops or thatch, the reed that tule gives, bound with two ropes. Two of them, laid side by side by the water and bound with rope, make a [reed boat](Reed-Boat#how-it-is-built).
+Cattail tops, papyrus tops or thatch, the reed that tule gives, bound with two ropes into a bundle of that plant. Two of them, laid side by side by the water and bound with rope, make a [reed boat](Reed-Boat#how-it-is-built).
 
 ![A reed bundle from 144 cattail tops, papyrus tops or thatch, two ropes and a knife](images/recipes/reed-bundle.png)
 

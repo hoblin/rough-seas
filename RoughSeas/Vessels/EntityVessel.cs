@@ -36,7 +36,8 @@ public class EntityVessel : EntityBoat, ISeatInstSupplier
     }
 
     public override string GetName() =>
-        Wood.Of(Properties.Variant) is { } wood ? Lang.GetMatching($"{Code.Domain}:item-creature-{Code.Path}", wood.Name) : base.GetName();
+        Wood.Of(Properties.Variant) is { } wood ? Lang.GetMatching($"{Code.Domain}:item-creature-{Code.Path}", wood.Name)
+        : Reeds.NameOf(Code, Properties.Variant, "item-creature") ?? base.GetName();
 
     protected override bool HasPaddle(Entity entity) => SpeedMultiplier > 0 && base.HasPaddle(entity);
 

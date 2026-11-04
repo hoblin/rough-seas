@@ -57,7 +57,7 @@ bin/scene recipe PAGE OUTPUT FILE [FROM]
                            the handbook's crafting grid that makes OUTPUT (out of FROM, when given) on
                            handbook page PAGE, held on that recipe, "=" and output included, as a .png
                            FILE at twice the game's size:
-                           bin/scene recipe item-roughseas:reedboat roughseas:reedboat reedboat.png.
+                           bin/scene recipe block-roughseas:reedbundle-papyrustops-none-we roughseas:reedbundle-papyrustops-none-we reedbundle.png.
                            Opens the handbook and waits for it to build its pages.
 bin/scene recipes DIR      every recipe the mod adds, by `recipe`, into DIR: docs/wiki/images/recipes
                            for the wiki. A new recipe gets its line in this script's list.
@@ -170,7 +170,7 @@ clear() {
   local range=${1:-64}
   shift || true
   local types=("$@")
-  [ ${#types[@]} -eq 0 ] && types=(boat-* roughseas:reedboat roughseas:dugout-* roughseas:coracle roughseas:barkcanoe-* roughseas:currach roughseas:outrigger-* item)
+  [ ${#types[@]} -eq 0 ] && types=(boat-* roughseas:reedboat-* roughseas:dugout-* roughseas:coracle roughseas:barkcanoe-* roughseas:currach roughseas:outrigger-* item)
   for type in "${types[@]}"; do
     "$game" do "/entity remove e[type=$type,range=$range]"
   done
@@ -271,7 +271,7 @@ views() {
 
 seats() {
   local codes=("$@") dir=$BENCH_TMP/seats id
-  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat roughseas:coracle roughseas:barkcanoe-birch roughseas:currach \
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat-cattailtops-cattailtops roughseas:coracle roughseas:barkcanoe-birch roughseas:currach \
     roughseas:dugout-oak roughseas:outrigger-oak boat-raft-oak boat-sailed-oak)
   mkdir -p "$dir"
   local shots=() seat
@@ -353,7 +353,7 @@ recipes() {
   done <<'EOF'
 birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
 splitting-wedge    block-roughseas:wedge-we          roughseas:wedge-we
-reed-bundle        block-roughseas:reedbundle-one-we roughseas:reedbundle-one-we
+reed-bundle        block-roughseas:reedbundle-cattailtops-none-we roughseas:reedbundle-cattailtops-none-we
 laths              item-roughseas:lath-oak-5-dry     roughseas:lath-oak-5-dry
 anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
 paddle             item-roughseas:paddle-oak         roughseas:paddle-oak
