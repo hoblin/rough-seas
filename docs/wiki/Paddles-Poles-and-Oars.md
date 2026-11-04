@@ -45,7 +45,7 @@ One rower, the average finisher of a canoe marathon, on calm water with nothing 
 | [Dugout](Dugout) | 1.7 m/s | 2.2 m/s | 19° a second |
 | [Coracle](Coracle) | 1 m/s, sculled | 1.2 m/s | 177° a second |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2.1 m/s | 2.8 m/s | 26° a second |
-| [Hide currach](Hide-Currach) | 2.5 m/s, rowed | 2.4 m/s | 40° a second, rowed |
+| [Hide currach](Hide-Currach) | 2.4 m/s, rowed | 2.4 m/s | 39° a second, rowed |
 | [Outrigger canoe](Outrigger-Canoe) | 1.5 m/s | 1.9 m/s | 14° a second |
 
 A metre a second is 3.6 km/h; the voyageurs' canoes made some 2.2 m/s on the lakes. How these speeds come about, and where each number comes from, is on [the science of the hull](The-Science-of-the-Hull#driving-her).

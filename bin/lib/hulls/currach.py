@@ -5,7 +5,7 @@ from physics import MASS, afloat, kilograms, stands
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
 from held import POLE, seated_poling, standing_poling, tools, waterline
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, seat, strokes
-from transform import direct, unapply
+from transform import apply, direct, euler, unapply, undirect
 from wounds import wound
 
 CENTRE = 8
@@ -239,9 +239,11 @@ def pitches(rests, chest):
 
 
 def chest_height(shape):
-    rower = Rower(seat(shape, "BackSeat"), "roughseas-sitthwart", facing(shape, "currach", "BackSeat"))
+    rower = rower_of(shape)
     matrices = posed(rower.seraph["elements"], lambda name: rower.idle.get(name, {}))
-    return 16 * unapply(rower.placing, [c / 16 for c in centre(rower.seraph["elements"], matrices, "UpperTorso")])[1]
+    torso = find(rower.seraph["elements"], "UpperTorso")
+    ribs = apply(matrices["UpperTorso"], [0, 0, (torso["to"][2] - torso["from"][2]) / 32])
+    return 16 * unapply(rower.placing, ribs)[1]
 
 
 def blade_square_metres(rests, chest):
@@ -294,32 +296,72 @@ def solve(low, high, too_far):
     return (low + high) / 2
 
 
+def rower_of(shape):
+    return Rower(seat(shape, "BackSeat"), "roughseas-sitthwart", facing(shape, "currach", "BackSeat"))
+
+
+def reach_of(arm):
+    return 16 * math.dist((0, 0, 0), [h + f for h, f in zip(arm.humerus, direct(euler(arm.bend), arm.forearm))])
+
+
+def trunk(rower, lean):
+    elements = rower.seraph["elements"]
+
+    def frames(pose):
+        return posed(elements, lambda name: pose.get(name) or rower.idle.get(name, {}))
+
+    hip = hip_joint(elements, frames({}))
+    resting = rower.idle.get("LowerTorso", {})
+    turned = resting | {"rotationZ": resting.get("rotationZ", 0) + lean}
+    pose = {"LowerTorso": turned, "UpperTorso": {"rotationZ": 0}}
+    matrices = frames(pose)
+    shift = undirect(matrices["LowerTorso"], [a - b for a, b in zip(hip, hip_joint(elements, matrices))])
+    pose["LowerTorso"] = turned | {"offset" + a: round(turned.get("offset" + a, 0) + 16 * s, 3) for a, s in zip("XYZ", shift)}
+    for leg in rower.legs.values():
+        pose |= leg.plant(pose, leg.sole({}))
+    return pose
+
+
+def hip_joint(elements, matrices):
+    return apply(matrices["LowerTorso"], [c / 16 for c in find(elements, "UpperFootR")["rotationOrigin"]])
+
+
+def shoulder_at(rower, lean):
+    return tuple(16 * c for c in unapply(rower.placing, rower.arms["R"].joints(trunk(rower, lean))[0]))
+
+
+def lean_for(rower, grip):
+    reach = reach_of(rower.arms["R"])
+    return solve(FINISH_LEAN, CATCH_LEAN, lambda lean: math.dist(shoulder_at(rower, lean), grip) < reach)
+
+
 def arc(shape, rests, chest):
-    rower = Rower(seat(shape, "BackSeat"), "roughseas-sitthwart", facing(shape, "currach", "BackSeat"))
-    arm = rower.arms["R"]
-    reach = 16 * (math.dist((0, 0, 0), arm.humerus) + math.dist((0, 0, 0), arm.forearm))
-    drive = pitches(rests, chest)["OarPort"][1]
+    rower = rower_of(shape)
+    reach = reach_of(rower.arms["R"])
+    ends = pitches(rests, chest)["OarPort"][0]
 
     def shape_point(point):
         return tuple(16 * c for c in unapply(rower.placing, point))
 
-    shoulder = shape_point(arm.joints({"UpperTorso": {"rotationZ": CATCH_LEAN}})[0])
-    catch = solve(90, 90 + CATCH_DEGREES, lambda yaw: math.dist(shoulder, grip_at(rests, yaw, drive)) > reach)
-    leaning = {"UpperTorso": {"rotationZ": FINISH_LEAN}}
+    shoulder = shoulder_at(rower, CATCH_LEAN)
+    catch = solve(90, 90 + CATCH_DEGREES, lambda yaw: math.dist(shoulder, grip_at(rests, yaw, ends)) > reach)
+    leaning = trunk(rower, FINISH_LEAN)
     matrices = posed(rower.seraph["elements"], lambda name: leaning.get(name) or rower.idle.get(name, {}))
     torso = find(rower.seraph["elements"], "UpperTorso")
     forward = direct(matrices["UpperTorso"], (-1, 0, 0))
     middle = centre(rower.seraph["elements"], matrices, "UpperTorso")
     depth = (torso["to"][0] - torso["from"][0]) / 2
     body = shape_point([(m + depth * f) / 16 for m, f in zip(middle, forward)])[0] + HAND_THICKNESS
-    finish = solve(90 - FINISH_DEGREES, 90, lambda yaw: grip_at(rests, yaw, drive)[0] > body)
+    finish = solve(90 - FINISH_DEGREES, 90, lambda yaw: grip_at(rests, yaw, ends)[0] > body)
     print(f"stroke: catch {catch - 90:.0f}° forward of square, leaning {CATCH_LEAN}°; finish {90 - finish:.0f}° aft of it,"
           f" leaning {-FINISH_LEAN}° back")
     return (catch + finish) / 2, (catch - finish) / 2
 
 
-def rowing(rests, chest, sweep_middle, sweep_degrees):
+def rowing(shape, rests, chest, sweep_middle, sweep_degrees):
     pitched = pitches(rests, chest)
+    rower = rower_of(shape)
+    oars = [oar(name, side, rests[name]) for name, side in OARS.items()]
 
     def pose(sweep_at, depth_at):
         def at(frame):
@@ -330,14 +372,17 @@ def rowing(rests, chest, sweep_middle, sweep_degrees):
                     for name, side in OARS.items()}
         return at
 
-    def swing(sweep_at):
-        return lambda frame: {"UpperTorso": {"rotationZ": (CATCH_LEAN + FINISH_LEAN) / 2
-                                                         - (CATCH_LEAN - FINISH_LEAN) / 2 * sweep_at(frame / FRAMES)}}
+    def swing(posed_at):
+        def body(frame):
+            pose_ = posed_at(frame)
+            grip = centre(oars, posed(oars, lambda name: pose_.get(name, {})), "OarPortGrip")
+            return trunk(rower, lean_for(rower, grip))
+        return body
 
     rowed = strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
                     pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)), stroke="rowing")
-    for stroke, sweep_at in zip(rowed, (lambda u: 0, sweep, lambda u: sweep(1 - u))):
-        stroke["body"] = swing(sweep_at)
+    for stroke in rowed:
+        stroke["body"] = swing(stroke["pose"])
     return rowed
 
 
@@ -375,7 +420,7 @@ def build(path_):
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     chest = chest_height(shape)
     middle, degrees = arc(shape, rests, chest)
-    rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests, chest, middle, degrees), {"R": "OarPortGrip", "L": "OarStarboardGrip"},
+    rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(shape, rests, chest, middle, degrees), {"R": "OarPortGrip", "L": "OarStarboardGrip"},
                  {"rotationZ": 12})
     at = seat(shape, "BackSeat")
     line = waterline("currach")

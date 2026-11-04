@@ -14,8 +14,8 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 
 | | |
 | --- | --- |
-| Speed | 2.5 m/s rowed on her thole pins, 2.4 m/s poled standing ([how fast](Paddles-Poles-and-Oars#how-fast)) |
-| Turning | 40° a second, rowed: one oar pulled, the other backed |
+| Speed | 2.4 m/s rowed on her thole pins, 2.4 m/s poled standing ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Turning | 39° a second, rowed: one oar pulled, the other backed |
 | [Hull](Hull-Condition) | 3000 J with an ash frame: she rides the sea, but one hard knock holes her; about 2800 J in oak, 3300 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 15 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 58 cm empty, 56 cm with her rower |

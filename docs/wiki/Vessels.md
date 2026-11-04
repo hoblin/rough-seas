@@ -14,7 +14,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
-| [Hide currach](Hide-Currach) | the first venture along the coast, cargo included | 2.5 m/s, rowed | needs greasing, one hard knock holes it |
+| [Hide currach](Hide-Currach) | the first venture along the coast, cargo included | 2.4 m/s, rowed | needs greasing, one hard knock holes it |
 | [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | 5.9 m/s, sailing | stays where launched |
 | [Sailboat](Sailboat) | long voyages and heavy cargo | 7.2 m/s, sailing | dear to build, ships water fast in a gale |
 
