@@ -25,7 +25,8 @@ public class ShellTests
         ["wood-ash"] = new() { Strength = 104, Toughness = 68000 },
         ["hide"] = new() { CutToughness = 17000 },
         ["bark"] = new() { Strength = 114, Toughness = 700, CutToughness = 700 },
-        ["rope-flax"] = new() { CutToughness = 5700 }
+        ["rope-flax"] = new() { CutToughness = 5700 },
+        ["reed"] = new() { CrushStrength = 1, DensificationStrain = 0.75 }
     }, new CountingLogger());
 
     private static readonly BundleShell Reeds = new()
@@ -155,6 +156,23 @@ public class ShellTests
 
         Assert.Equal(double.PositiveInfinity, resists.Against(Blow.Point, backed: false));
         Assert.Equal(double.PositiveInfinity, resists.Against(Blow.Point, backed: true));
+    }
+
+    [Fact]
+    public void ABroadBlowCrushesTheMetreOfBundleItMeetsBeforeTheLashingsBearIt()
+    {
+        var resists = Reeds.Resists(3000, materials, Hull, CutShare);
+
+        Assert.Equal(1e6 * 0.75 * Math.PI * 0.45 * 0.45 / 4, resists.CushionJoules, 6);
+        Assert.Equal(3000, resists.Against(Blow.Broad, backed: false));
+    }
+
+    [Fact]
+    public void PlanksCrushNothingAwayFromABroadBlow()
+    {
+        var planks = new RigidShell { Material = "wood-oak", Metres = 0.02 };
+
+        Assert.Equal(0, planks.Resists(3000, materials, Hull, CutShare).CushionJoules);
     }
 
     [Fact]

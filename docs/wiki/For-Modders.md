@@ -224,3 +224,11 @@ Our vessels' shapes are rebuilt so that no box stands outside the round it build
 - The currach's and the bark canoe's ends are as broad as what they close round: the currach is 4.76 m long, with a 1911-litre hold; the bark canoe's stem stands 5 cm higher inside her bark, and her lashing takes 21 ropes.
 - The dugout's stepped ends are no wider than the hull they continue, her lower ends narrowest: she is 252 kg of oak where she was 265, with 3329 litres hewn away (`unhewnLitres`).
 - A reed bundle and the outrigger's float are as thick as their round: the bundles are 19 cm across, and the float is 196 litres, 132 kg in oak, which makes the outrigger 491 kg.
+
+### Bundles that crush, knocks that happen once
+
+- A knock against a block is read as vanilla reads a fall: on the step a collision first blocks an axis of her motion, at the speed her position really changed by over the tenth of a second before, not from `Pos.Motion`, which a steered vessel's rider rewrites each frame. A vessel held against a rock, by a current or her rider paddling on, strikes it once. A ram's closing speed comes from both hulls' real change of position too. `IHull.Velocity` gives a hull's, in m/s, kept by `Course`; `Impact.Step` takes it in place of her motion's history, and `Contact`'s closing speed is in m/s.
+- A `bundle` shell takes a broad load by crushing its stems first: `Resistance.CushionJoules`, from the material's new `crushStrength` and `densificationStrain`, across the bundle's `metres` along one metre of it. Only what is left meets `impactCapacity`. Our reed boat's `impactCapacity` is now her lashings' work to break, 30,600 J. A `bundle` shell of yours on our `reed` row crushes too, and takes knocks it used to tear from.
+- The bench's `/bridge current SPEED YAW` sets one current everywhere in place of the sea's, to carry an unridden vessel as a river would.
+
+New: a material's `crushStrength` and `densificationStrain`, `Resistance.CushionJoules` and `Resistance.Severity`.

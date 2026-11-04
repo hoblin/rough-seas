@@ -43,7 +43,7 @@ public abstract class Shell
         var hole = hull.CrackSquareMetres;
         return new(frameJoules, Holed(materials, hole), Cut(materials, hole, cutShare),
             BackingHoled(materials, hole), Backing?.Cut(materials, hole, cutShare) ?? 0,
-            BackedShare, BottomBackedShare ?? BackedShare, Slammed(materials) * hull.SoakedStrengthShare);
+            BackedShare, BottomBackedShare ?? BackedShare, Slammed(materials) * hull.SoakedStrengthShare, Cushions(materials));
     }
 
     /// <summary>This shell with <paramref name="metres"/> of its own wood not yet cut out of the hold behind it: that wood backs the sides below the cut and the whole bottom.</summary>
@@ -76,6 +76,8 @@ public abstract class Shell
 
     public double Bends(MaterialTable materials, double spanMetres, double momentFactor) =>
         Resistance.Bending(materials.ModulusOfRupture(Material), Metres, spanMetres, momentFactor);
+
+    protected virtual double Cushions(MaterialTable materials) => 0;
 
     protected virtual double BackingHoled(MaterialTable materials, double holeSquareMetres) => Backing?.Holed(materials, holeSquareMetres) ?? 0;
 
@@ -123,10 +125,13 @@ public class SkinShell : Shell
 /// <summary>
 /// Bundled stems, as a broom is: each stem bends alone and no crack runs from one to the next, so a blow springs off
 /// it, a breaker bends them and they spring back, and an edge parts only the stems it meets. It comes apart where an
-/// edge cuts a lashing that binds it.
+/// edge cuts a lashing that binds it. A broad blow crushes the stems it meets, across the bundle and along the metre of
+/// it a block's face meets, and only what that crushing leaves loads the lashings.
 /// </summary>
 public class BundleShell : Shell
 {
+    private const double BlockMetres = 1;
+
     public override double Holed(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
 
     public override double Cut(MaterialTable materials, double holeSquareMetres, double cutShare) => double.PositiveInfinity;
@@ -134,4 +139,7 @@ public class BundleShell : Shell
     protected override double BackingHoled(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
 
     public override double Slammed(MaterialTable materials) => double.PositiveInfinity;
+
+    protected override double Cushions(MaterialTable materials) =>
+        materials.CrushJoulesPerCubicMetre(Material) * Math.PI * Metres * Metres / 4 * BlockMetres;
 }

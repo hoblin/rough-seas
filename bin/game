@@ -211,6 +211,11 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              (wildcards: tallplant-*), within RANGE blocks (default 256, at most 512)
   /bridge drift [on|off]     whether unridden vessels drift with the current and the wind. Off on
                              every start, so a vessel stays where it was put; a drift test turns it on
+  /bridge current SPEED|off [YAW]
+                             one current everywhere in place of the sea's, SPEED m/s toward YAW degrees
+                             (0 toward +Z, 90 toward +X), as a river carries a vessel; with drift on,
+                             an unridden one rides it into whatever you built across it. off gives
+                             the sea's currents back
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood.
                              Until a flight has landed it refuses: "Still flying there"

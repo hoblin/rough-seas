@@ -3,31 +3,31 @@ using System;
 namespace RoughSeas.Vessels;
 
 /// <summary>
-/// A hull's knocks, read from vanilla's own collision: physics zeroes each axis of the motion a collision blocked,
-/// so the motion kept on that axis a step earlier is the speed lost into the obstacle. Motion is in blocks per
-/// 1/60 s, as <c>Pos.Motion</c> holds it; speeds are in m/s.
+/// A hull's knocks, measured as vanilla measures a fall: one happens on the step a collision first blocks an axis of
+/// the hull's motion, and its speed is how fast the hull really moved along that axis just before, from its change of
+/// position. A steered hull's motion is what her rider asks of her, rewritten every frame, so a hull held against a
+/// rock strikes it once, not each time she is asked to move on. Speeds are in m/s.
 /// </summary>
 public class Impact(double give, long guardMs)
 {
-    private const double TicksPerSecond = 60;
-
-    private double keptX, keptZ;
+    private bool blockedX, blockedZ;
     private long? struckAt;
 
-    public Knocked? Step(double motionX, double motionZ, long milliseconds)
+    /// <param name="velocity">How fast the hull really moved before this step, in m/s.</param>
+    public Knocked? Step(double motionX, double motionZ, (double X, double Z) velocity, long milliseconds)
     {
-        double lostX = motionX == 0 ? keptX : 0;
-        double lostZ = motionZ == 0 ? keptZ : 0;
-        (keptX, keptZ) = (motionX, motionZ);
+        bool hitX = motionX == 0 && !blockedX, hitZ = motionZ == 0 && !blockedZ;
+        (blockedX, blockedZ) = (motionX == 0, motionZ == 0);
 
-        double speedLost = Math.Sqrt(lostX * lostX + lostZ * lostZ) * TicksPerSecond;
+        double lostX = hitX ? velocity.X : 0, lostZ = hitZ ? velocity.Z : 0;
+        double speedLost = Math.Sqrt(lostX * lostX + lostZ * lostZ);
         if (speedLost <= give || milliseconds - struckAt < guardMs) return null;
 
         struckAt = milliseconds;
-        return new Knocked(speedLost, lostX * TicksPerSecond, lostZ * TicksPerSecond);
+        return new Knocked(speedLost, lostX, lostZ);
     }
 
-    public void Forget() => (keptX, keptZ) = (0, 0);
+    public void Forget() => (blockedX, blockedZ) = (false, false);
 
     public double Joules(double kilograms, double speedLost) => 0.5 * kilograms * (speedLost * speedLost - give * give);
 }

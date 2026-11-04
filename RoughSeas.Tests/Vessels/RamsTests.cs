@@ -4,7 +4,6 @@ namespace RoughSeas.Tests.Vessels;
 
 public class RamsTests
 {
-    private const double PerTick = 1 / 60.0;
     private const long Other = 7;
 
     private readonly Rams rams = new(give: 1);
@@ -21,7 +20,7 @@ public class RamsTests
     [Fact]
     public void CountsOnlyTheSpeedAlongTheLineBetweenThem()
     {
-        var knocked = Assert.Single(rams.Step([new Contact(Other, 3, 4, 0, 5 * PerTick)]));
+        var knocked = Assert.Single(rams.Step([new Contact(Other, 3, 4, 0, 5)]));
 
         Assert.Equal(4, knocked.SpeedLost, 6);
     }
@@ -29,7 +28,7 @@ public class RamsTests
     [Fact]
     public void PointsTheKnockTowardTheBodyRammed()
     {
-        var knocked = Assert.Single(rams.Step([new Contact(Other, 0, -2, 0, -3 * PerTick)]));
+        var knocked = Assert.Single(rams.Step([new Contact(Other, 0, -2, 0, -3)]));
 
         Assert.Equal(0, knocked.TowardX, 6);
         Assert.Equal(-3, knocked.TowardZ, 6);
@@ -38,7 +37,7 @@ public class RamsTests
     [Fact]
     public void CarriesTheWeightOfTheHullRammedWithTheRam()
     {
-        var knocked = Assert.Single(rams.Step([new Contact(Other, 2, 0, 3 * PerTick, 0, TheirKg: 400)]));
+        var knocked = Assert.Single(rams.Step([new Contact(Other, 2, 0, 3, 0, TheirKg: 400)]));
 
         Assert.Equal(400, knocked.TheirKg);
     }
@@ -46,7 +45,7 @@ public class RamsTests
     [Fact]
     public void ABodyMetOnlyAtTheFloatClosesAtItsSpeedAlongTheHullAndStrikesTheFloat()
     {
-        var knocked = Assert.Single(rams.Step([new Contact(Other, 4, 2.5, 3 * PerTick, 0, Outboard: true)]));
+        var knocked = Assert.Single(rams.Step([new Contact(Other, 4, 2.5, 3, 0, Outboard: true)]));
 
         Assert.True(knocked.SpeedLost > 2);
         Assert.True(knocked.Outboard);
@@ -113,5 +112,5 @@ public class RamsTests
         Assert.Equal(0.5 * 200 * (9 - 1) / 2, rams.Joules(kilograms: 200, theirKilograms: 1e9, closingSpeed: 3), 3);
     }
 
-    private static Contact Touching(double towardX, double closingX) => new(Other, towardX, 0, closingX * PerTick, 0);
+    private static Contact Touching(double towardX, double closingX) => new(Other, towardX, 0, closingX, 0);
 }

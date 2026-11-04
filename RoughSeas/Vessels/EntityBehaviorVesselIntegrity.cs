@@ -43,6 +43,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private readonly List<Knocked> pendingImpacts = new();
     private Impact impact = null!;
     private Rams rams = null!;
+    private readonly Course course = new();
+    private bool? ranHere;
     private HullContacts hullContacts = null!;
     private Resistance resistance;
     private Shell? shell;
@@ -227,6 +229,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public override void OnGameTick(float deltaTime)
     {
+        if (entity.World.Side == EnumAppSide.Client && !RunsHere()) course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
         if ((sinceUpdate += deltaTime) >= UpdateSeconds)
         {
             Float();
@@ -273,8 +276,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         if (!entity.Alive) return;
         var rand = entity.World.Rand;
         bool backed = resistance.Backed(place, rand.NextDouble());
-        double resists = resistance.Against(blow, backed) * Scatter.Of(damageConversion.Variation.GetValueOrDefault(blow), rand);
-        double severity = resists > 0 ? load / resists : 0;
+        double strength = Scatter.Of(damageConversion.Variation.GetValueOrDefault(blow), rand);
+        double resists = resistance.Against(blow, backed) * strength;
+        double severity = resistance.Severity(load, blow, backed, strength);
         if (model is not IKnockable knockable)
         {
             vessels.Log(entity, "struck at the {0} with {1}: the hull gives, unharmed", place.Code(), Load(blow, load));
@@ -285,8 +289,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         double loss = Resistance.Loss(severity, blow, knockable.ByPlace);
         int stage = model.Stage(place);
         var knock = loss > 0 ? knockable.Take(place, loss) : (Knock?)null;
-        vessels.Log(entity, "{0} at the {1}{2} with {3} against {4}: {5}, hull now {6:F2}", blow.ToString().ToLowerInvariant(),
-            place.Code(), backed ? ", backed" : "", Load(blow, load), Load(blow, resists), knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
+        string crushed = blow == Blow.Broad && resistance.CushionJoules > 0 ? $", its shell crushing to take {resistance.CushionJoules * strength:F0} J," : "";
+        vessels.Log(entity, "{0} at the {1}{2} with {3}{4} against {5}: {6}, hull now {7:F2}", blow.ToString().ToLowerInvariant(),
+            place.Code(), backed ? ", backed" : "", Load(blow, load), crushed, Load(blow, resists), knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
         Struck?.Invoke(place, severity, knock == Knock.BrokenUp || model.Stage(place) > stage ? knock : null);
         if (knock == Knock.BrokenUp || Resistance.BreaksFrame(blow, loss)) Break();
     }
@@ -529,18 +534,28 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public bool Steered => entity.GetInterface<IMountable>()?.IsBeingControlled() == true;
 
+    public (double X, double Z) Velocity => course.Velocity;
+
     public void Rammed(Knocked by)
     {
         lock (impactLock) pendingImpacts.Add(by);
+    }
+
+    private bool RunsHere()
+    {
+        var mount = entity.GetInterface<IMountable>();
+        bool here = entity.Api is ICoreClientAPI client ? mount?.Controller == client.World.Player.Entity : mount?.IsBeingControlled() != true;
+        if (here != ranHere) course.Forget();
+        ranHere = here;
+        return here;
     }
 
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
     {
         // Physics steps pass 0; the rider's frame-end call carries motion EntityBoat rewrote, never a collision. See docs/modding.md.
         if (accum != 0) return;
-        var mount = entity.GetInterface<IMountable>();
         var client = entity.Api as ICoreClientAPI;
-        if (client != null ? mount?.Controller != client.World.Player.Entity : mount?.IsBeingControlled() == true)
+        if (!RunsHere())
         {
             lock (impactLock)
             {
@@ -551,12 +566,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         }
 
         using var _ = vessels.Budget.Measure();
+        course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
         var motion = entity.Pos.Motion;
         var contacts = hullContacts.Around(entity, this, withSteered: client != null);
         var knocks = new List<Knocked>();
         lock (impactLock)
         {
-            if (impact.Step(motion.X, motion.Z, entity.World.ElapsedMilliseconds) is { } stopped) knocks.Add(stopped);
+            if (impact.Step(motion.X, motion.Z, course.Velocity, entity.World.ElapsedMilliseconds) is { } stopped) knocks.Add(stopped);
             knocks.AddRange(rams.Step(contacts));
             if (client == null) pendingImpacts.AddRange(knocks);
         }

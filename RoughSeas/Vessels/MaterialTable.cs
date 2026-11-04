@@ -56,6 +56,10 @@ public class MaterialTable
 
     public double? CutToughness(string material) => materials.GetValueOrDefault(material)?.CutToughness;
 
+    public double CrushJoulesPerCubicMetre(string material) =>
+        (Row(material, row => row.CrushStrength, "crush strength", "it takes no blow by crushing") ?? 0) * PascalsPerMegapascal
+        * (Row(material, row => row.DensificationStrain, "densification strain", "it takes no blow by crushing") ?? 0);
+
     public double ModulusOfRupture(string material) =>
         (Strength(material) ?? materials[UnknownWood].Strength!.Value) * PascalsPerMegapascal;
 

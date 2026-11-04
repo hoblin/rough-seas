@@ -22,8 +22,9 @@ public class HullContacts(EntityPartitioning partitioning)
                 Footprint.Of(hull.Reach, other.Pos.X, other.Pos.Z, other.Pos.Yaw) is var theirReach && reach.Touches(theirReach))
             {
                 var theirs = Footprint.Of(hull.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw);
-                var closing = pos.Motion - other.Pos.Motion;
-                contacts.Add(new Contact(other.EntityId, theirs.X - own.X, theirs.Z - own.Z, closing.X, closing.Z, hull.Aboard.Impact,
+                var (ourX, ourZ) = ours.Velocity;
+                var (theirX, theirZ) = hull.Velocity;
+                contacts.Add(new Contact(other.EntityId, theirs.X - own.X, theirs.Z - own.Z, ourX - theirX, ourZ - theirZ, hull.Aboard.Impact,
                     Outboard: !own.Touches(theirReach), TheirOutboard: !reach.Touches(theirs)));
             }
             return true;

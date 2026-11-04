@@ -131,6 +131,9 @@ public interface IHull : IBuoyant
     /// <summary>Her shape out to what stands off her hull: where another vessel meets her.</summary>
     HullShape Reach { get; }
 
+    /// <summary>How fast she really moves, in m/s, from her change of position: not her motion, which her rider rewrites.</summary>
+    (double X, double Z) Velocity { get; }
+
     /// <summary>Server only: whether her rider's client measures her contacts, as it steers her.</summary>
     bool Steered { get; }
 

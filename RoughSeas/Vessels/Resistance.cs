@@ -13,6 +13,7 @@ public enum Blow
 /// <param name="ShellPoint">The shell's own holing work; infinite where it yields to a blow, as a skin or a bundle does, and then only what backs it can break.</param>
 /// <param name="BackedShare">Of the side's area, the share a lath or sheathing backs; <paramref name="BottomBackedShare"/> the bottom's.</param>
 /// <param name="SlamPascals">The breaker's pressure the soaked planking bends to breaking under; infinite where nothing does.</param>
+/// <param name="CushionJoules">What the shell takes of a broad blow by crushing before anything behind it bears the rest, as a bundle of stems does.</param>
 public readonly record struct Resistance(
     double FrameJoules,
     double ShellPoint,
@@ -21,7 +22,8 @@ public readonly record struct Resistance(
     double BackingCut = 0,
     double BackedShare = 0,
     double BottomBackedShare = 0,
-    double SlamPascals = double.PositiveInfinity)
+    double SlamPascals = double.PositiveInfinity,
+    double CushionJoules = 0)
 {
     public static Resistance Whole(double frameJoules) => new(frameJoules, frameJoules, frameJoules);
 
@@ -44,6 +46,15 @@ public readonly record struct Resistance(
         Blow.Slam => SlamPascals,
         _ => FrameJoules
     };
+
+    /// <summary>The blow's load over what resists it, after the shell's crushing took its share of a broad one.</summary>
+    /// <param name="strength">How strong this piece of material happens to be, as a share of its measured strength.</param>
+    public double Severity(double load, Blow blow, bool backed, double strength)
+    {
+        double resists = Against(blow, backed) * strength;
+        double left = blow == Blow.Broad ? Math.Max(0, load - CushionJoules * strength) : load;
+        return resists > 0 ? left / resists : 0;
+    }
 
     private static double Yielding(double shell) => double.IsPositiveInfinity(shell) ? 0 : shell;
 
