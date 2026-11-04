@@ -14,4 +14,8 @@ public class Material
     public string CrushStrengthSource = "";
     public double? DensificationStrain;
     public string DensificationStrainSource = "";
+    public double? TensileStrength;
+    public string TensileStrengthSource = "";
+    public double? Elongation;
+    public string ElongationSource = "";
 }

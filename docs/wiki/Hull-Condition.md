@@ -53,8 +53,8 @@ No two boats are quite alike, as no two pieces of wood are, so the same knock ma
 
 ### Hide, bark and reed
 
-- **Hide** springs back from a club or a stone, unless a rib or a lath is right behind it there, and then that breaks. A blade cuts hide anywhere. A knock, a ram or rapids presses the hide onto the lath behind where it lands: the hide gives and stays whole, and the lath breaks, a split with the lath snapped behind it, and a harder blow stoves the place in. Only what a stove-in place can't take goes on into the whole frame and can break her up.
-- **Bark** is no hide: it splits along its grain under a knock, with the sheathing that lines it, and the rib behind takes the rest. A light knock opens the bark and leaves the rib whole; a harder one breaks the rib too.
+- **Hide** springs back from a club or a stone, unless a rib or a lath is right behind it there, and then that breaks. A blade cuts hide anywhere. A knock, a ram or rapids that lands on a lath presses the hide onto it: the hide stays whole, and the lath breaks, a split with the lath snapped behind it, and a harder blow stoves the place in. One that lands between two laths stretches the hide first, and it is the hide's pull that breaks both laths, so it takes about twice as much. Only what a stove-in place can't take goes on into the whole frame and can break her up.
+- **Bark** is no hide: it splits along its grain under a knock, with the sheathing that lines it, and the rib behind takes the rest, or both ribs when it lands between them. A light knock opens the bark and leaves the ribs whole; a harder one breaks them too.
 - **Reed bundles** spring back from every blow and every breaker. A blade harms them only where it cuts a lashing, and the boat comes apart once the reed is torn through. A knock, a ram, rapids or lightning crushes the bundles where it lands, and they take it: only what that leaves strains the lashings, and only the lashings part. A knock at any speed a paddle or a river gives leaves her whole; only a heavy blast tears her.
 
 ## What it is made of
@@ -104,13 +104,13 @@ What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 | [Dugout](Dugout) | scratches | scratches |
 | [Outrigger canoe](Outrigger-Canoe) | scratches; on her float's side, works nearly half its lashings loose | scratches; on her float's side, tears the float away |
 | [Sailboat](Sailboat) | scratches | cracks |
-| [Birch-bark canoe](Birch-Bark-Canoe) | stoves it in where it hit | stoves it in |
+| [Birch-bark canoe](Birch-Bark-Canoe) | splits it with its ribs broken, or stoves it in on a rib | stoves it in |
 | [Reed boat](Reed-Boat) | nothing | nothing |
 | [Hide currach](Hide-Currach) | stoves it in where it hit | stoves it in |
 | [Raft](Raft) | shakes a quarter of its lashings loose | mostly breaks it up |
-| [Coracle](Coracle) | stoves it in where it hit | stoves it in, sometimes breaks it up |
+| [Coracle](Coracle) | splits it with its laths broken, or stoves it in on a lath | stoves it in |
 
-Every knock adds to its place's crack, so a scratch from a bump becomes a crack after a few more. The three framed hulls feel a knock far sooner than the rest, since one lath or rib takes it rather than the whole boat. With one aboard, in oak, a currach's lath breaks at 1.2 m/s, a coracle's at 1.4; a bark canoe's bark opens at 1.3 m/s and its rib breaks at 1.6. A gentle landing, up to 1 m/s, is as safe in them as in any boat.
+Every knock adds to its place's crack, so a scratch from a bump becomes a crack after a few more. The three framed hulls feel a knock far sooner than the rest, since one lath or rib takes it rather than the whole boat; but a knock that breaks nothing in them, neither opening bark nor snapping a lath, leaves no mark, for hide and green wood spring back. With one aboard, in oak, a knock on a lath breaks it at 1.2 m/s in a currach and 1.4 in a coracle, and one between two laths breaks both at 1.5 and 1.8; a bark canoe's bark opens at 1.3 m/s, and its ribs break at 1.6 on a rib and 1.8 between two. A gentle landing, up to 1 m/s, is as safe in them as in any boat.
 
 ### Rams
 

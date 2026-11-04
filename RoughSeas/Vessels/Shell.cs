@@ -45,7 +45,13 @@ public abstract class Shell
         return new(frameJoules, Holed(materials, hole), Cut(materials, hole, cutShare),
             BackingHoled(materials, hole), Backing?.Cut(materials, hole, cutShare) ?? 0,
             BackedShare, BottomBackedShare ?? BackedShare, Slammed(materials) * hull.SoakedStrengthShare, Cushions(materials),
-            Frame == null ? 0 : Opens(materials, hole) + Frame.Breaks(materials));
+            Frame == null || frameJoules <= 0 ? null : Framed(Frame, materials, hole, hull.SoakedStrengthShare));
+    }
+
+    private FramedResistance Framed(FrameMember frame, MaterialTable materials, double hole, double soaked)
+    {
+        double opens = Opens(materials, hole), breaks = frame.Breaks(materials);
+        return new(opens + breaks, opens + Gives(materials, 2 * frame.BreakingNewtons(materials, soaked)) + 2 * breaks, frame.Share, opens);
     }
 
     /// <summary>This shell with <paramref name="metres"/> of its own wood not yet cut out of the hold behind it: that wood backs the sides below the cut and the whole bottom.</summary>
@@ -63,10 +69,10 @@ public abstract class Shell
     /// <summary>This shell lined by <paramref name="material"/> over <paramref name="lined"/> of what its finished lining covers.</summary>
     public Shell Lined(string material, double lined)
     {
-        if (Backing == null) return this;
+        if (Backing == null && Frame == null) return this;
 
         var shell = (Shell)MemberwiseClone();
-        shell.Backing = lined > 0 ? new RigidShell { Material = material, Metres = Backing.Metres, SpanMetres = Backing.SpanMetres } : null;
+        shell.Backing = lined > 0 && Backing != null ? new RigidShell { Material = material, Metres = Backing.Metres, SpanMetres = Backing.SpanMetres } : null;
         shell.Frame = lined > 0 ? Frame?.Of(material) : null;
         shell.BackedShare = BackedShare * lined;
         shell.BottomBackedShare = BottomBackedShare * lined;
@@ -84,6 +90,8 @@ public abstract class Shell
 
     protected virtual double Opens(MaterialTable materials, double holeSquareMetres) =>
         Holed(materials, holeSquareMetres) + BackingHoled(materials, holeSquareMetres);
+
+    protected virtual double Gives(MaterialTable materials, double newtons) => 0;
 
     protected virtual double BackingHoled(MaterialTable materials, double holeSquareMetres) => Backing?.Holed(materials, holeSquareMetres) ?? 0;
 
@@ -115,8 +123,9 @@ public class CarvedShell : RigidShell
 }
 
 /// <summary>
-/// A hide stretched over laths: it springs back from a blow, which harms only a lath that backs it, gives under a
-/// knock and opens nothing, and a breaker presses it onto the laths, each bending under its share of the side.
+/// A hide stretched over laths: it springs back from a blow, which harms only a lath that backs it, opens under no
+/// knock but sags between two laths until its pull breaks them, and a breaker presses it onto the laths, each
+/// bending under its share of the side.
 /// </summary>
 public class SkinShell : Shell
 {
@@ -125,6 +134,16 @@ public class SkinShell : Shell
     public override double Holed(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
 
     protected override double Opens(MaterialTable materials, double holeSquareMetres) => 0;
+
+    protected override double Gives(MaterialTable materials, double newtons)
+    {
+        var (modulus, strain) = materials.Stretch(Material);
+        if (modulus <= 0 || Frame is null) return 0;
+
+        double gap = Frame.GapMetres, stiffness = 8 * modulus * Metres * gap / Math.Pow(gap, 3);
+        double sag = Math.Min(Math.Cbrt(newtons / stiffness), gap * Math.Sqrt(strain / 2));
+        return stiffness * Math.Pow(sag, 4) / 4;
+    }
 
     public override double Slammed(MaterialTable materials) =>
         Backing is null ? double.PositiveInfinity : Backing.Bends(materials, SpanMetres, Propped) * BackedShare;
@@ -136,11 +155,29 @@ public class FrameMember
     public string Material = "wood";
     public double Metres;
     public double WidthMetres;
+    public double SpacingMetres;
+    /// <summary>Its length between the members it crosses, where a skin's pull bends it.</summary>
+    public double SpanMetres;
 
-    public FrameMember Of(string material) => new() { Material = material, Metres = Metres, WidthMetres = WidthMetres };
+    public double Share => WidthMetres / SpacingMetres;
+
+    public double GapMetres => SpacingMetres - WidthMetres;
+
+    public FrameMember Of(string material)
+    {
+        var member = (FrameMember)MemberwiseClone();
+        member.Material = material;
+        return member;
+    }
 
     public double Breaks(MaterialTable materials) => materials.Toughness(Material) * Metres * WidthMetres;
+
+    public double BreakingNewtons(MaterialTable materials, double soaked) =>
+        2 * materials.ModulusOfRupture(Material) * soaked * WidthMetres * Metres * Metres / (3 * SpanMetres);
 }
+
+/// <summary>What breaks a framed hull where a broad blow lands: on a member, or between two, which it lands on by <paramref name="MemberShare"/>.</summary>
+public readonly record struct FramedResistance(double OverMemberJoules, double BetweenMembersJoules, double MemberShare, double OpensJoules);
 
 /// <summary>
 /// Bundled stems, as a broom is: each stem bends alone and no crack runs from one to the next, so a blow springs off
