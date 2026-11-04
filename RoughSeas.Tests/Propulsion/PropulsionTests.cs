@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using RoughSeas.Propulsion;
 using RoughSeas.Tests.Storms;
 using RoughSeas.Vessels;
+using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Tests.Propulsion;
 
@@ -219,6 +220,21 @@ public class PropulsionTests
     public void VanillaCarriesABoatAtTheSpeedItIsCommanded(double metresPerSecond)
     {
         Assert.Equal(metresPerSecond, VanillaSwim.Realized(VanillaSwim.Commanded(metresPerSecond)), 3);
+    }
+
+    [Fact]
+    public void OurDragTakesOverFromVanillasAlongTheWaterAndLeavesItOnHerHeave()
+    {
+        const double waterDrag = 0.92;
+        const float seconds = 1 / 60f;
+        var motion = new Vec3d(0.03, 0.002, -0.01);
+
+        VanillaSwim.LeaveWaterDragOnHeave(motion, waterDrag, seconds);
+        motion.Scale(Math.Pow(waterDrag, seconds * 33));
+
+        Assert.Equal(0.03, motion.X, 9);
+        Assert.Equal(-0.01, motion.Z, 9);
+        Assert.Equal(0.002 * Math.Pow(waterDrag, seconds * 33), motion.Y, 9);
     }
 
     [Theory]
