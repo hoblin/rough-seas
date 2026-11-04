@@ -1,8 +1,7 @@
-import math
-
 from held import PADDLE, POLE, VOXELS_A_METRE, paddling, seated_poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
 from physics import afloat, kilograms, stands
+from fit import APART, Swept
 from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
 from wounds import wound
 
@@ -26,7 +25,7 @@ BED = 0.55
 GLOW = 160
 VOXEL_METRES = 1 / 16
 TRUNK_METRES = LOG * VOXEL_METRES
-ENDS = {
+SLICES = {
     "Stern": [(-24.5, -22, 5.0, 1.6), (-26.5, -24.5, 4.0, 2.8), (-28, -26.5, 2.9, 4.2)],
     "Bow": [(38, 40.5, 5.0, 1.6), (40.5, 42.5, 4.0, 2.8), (42.5, 44, 2.9, 4.2)],
 }
@@ -49,36 +48,52 @@ STATIONS = [
 ]
 
 
+def waist_of(bottom):
+    return bottom + (RIM - bottom) / 3
+
+
+def inscribed(slices, edges):
+    """Her stepped ends, each slice an upper block over a narrower lower one, as wide as its rough size gives but no
+    wider than the hull's end section, or the slice before it, at every height its blocks reach."""
+    outline = lambda y: breadth(edges, y)
+    drawn = []
+    for x0, x1, half, bottom in slices:
+        waist = waist_of(bottom)
+        upper, lower = min(half, outline(waist), outline(RIM)), min(half * 0.7, outline(bottom), outline(waist))
+        drawn.append((x0, x1, upper, lower, bottom))
+        outline = lambda y, upper=upper, lower=lower, bottom=bottom, waist=waist: upper if y >= waist else lower if y >= bottom else 0
+    return drawn
+
+
+ENDS = {"Stern": inscribed(SLICES["Stern"], STATIONS[0][1]), "Bow": inscribed(SLICES["Bow"], STATIONS[-1][1])}
+
+
 def log(hull):
     return [hull.strakes(), *(end(name, slices, hull.cz) for name, slices in ENDS.items())]
 
 
 def end(name, slices, centre):
     blocks = []
-    for n, (x0, x1, half, bottom) in enumerate(slices, 1):
+    for n, (x0, x1, upper, lower, bottom) in enumerate(slices, 1):
         waist = waist_of(bottom)
-        blocks.append(box(f"{name}{n}Upper", (x0, waist, centre - half), (x1, RIM, centre + half), WOOD))
-        blocks.append(box(f"{name}{n}Lower", (x0, bottom, centre - half * 0.7), (x1, waist, centre + half * 0.7), WOOD))
+        blocks.append(box(f"{name}{n}Upper", (x0, waist, centre - upper), (x1, RIM, centre + upper), WOOD))
+        blocks.append(box(f"{name}{n}Lower", (x0, bottom, centre - lower), (x1, waist, centre + lower), WOOD))
     return blocks
-
-
-def waist_of(bottom):
-    return bottom + (RIM - bottom) / 3
 
 
 def end_slice(x):
     for slices in ENDS.values():
-        for x0, x1, half, bottom in slices:
+        for x0, x1, upper, lower, bottom in slices:
             if x0 <= x <= x1:
-                return half, bottom
+                return upper, lower, bottom
     return None
 
 
 def finished_half(x, y):
     x = min(max(x, ENDS["Stern"][-1][0]), ENDS["Bow"][-1][1])
     if (piece := end_slice(x)) is not None:
-        half, bottom = piece
-        return 0 if y < bottom else half * 0.7 if y < waist_of(bottom) else half
+        upper, lower, bottom = piece
+        return 0 if y < bottom else lower if y < waist_of(bottom) else upper
     for (x0, edges0), (x1, edges1) in zip(STATIONS, STATIONS[1:]):
         if x0 <= x <= x1:
             f = (x - x0) / (x1 - x0)
@@ -90,7 +105,7 @@ def finished_half(x, y):
 def finished_bottom(x):
     x = min(max(x, ENDS["Stern"][-1][0]), ENDS["Bow"][-1][1])
     if (piece := end_slice(x)) is not None:
-        return piece[1]
+        return piece[2]
     for (x0, edges0), (x1, edges1) in zip(STATIONS, STATIONS[1:]):
         if x0 <= x <= x1:
             return edges0[0][1] + (x - x0) / (x1 - x0) * (edges1[0][1] - edges0[0][1])
@@ -126,7 +141,15 @@ def segments(n):
     stern, bow = extent(n)
     cuts = {stern, bow, *HOLLOW, *(x for x, _ in STATIONS), *(edge for slices in ENDS.values() for piece in slices for edge in piece[:2])}
     points = sorted(x for x in cuts if stern <= x <= bow)
-    return [(a, b) for a, b in zip(points, points[1:]) if b - a > 1e-6]
+    return [piece for a, b in zip(points, points[1:]) if b - a > 1e-6 for piece in walled(n, a, b)]
+
+
+def walled(n, x0, x1):
+    """The segment, halved until the hollow's wall keeps some thickness all along each piece."""
+    if n == 0 or not hollowed((x0 + x1) / 2) or narrowest(n, x0, x1, level(n, x0, x1), top(n)) > hollow(x0, x1) + APART or x1 - x0 < 1:
+        return [(x0, x1)]
+    middle = (x0 + x1) / 2
+    return walled(n, x0, middle) + walled(n, middle, x1)
 
 
 def hollowed(x):
@@ -147,26 +170,40 @@ def bands(low, high, count):
 
 
 def trunk(n):
+    """The trunk at hewing n, a run of segments in bands, each band as wide as the pass leaves the trunk at the
+    narrowest of its corners, so that none stands outside it; the walls of the hollow from where it is widest."""
     pieces = []
     for i, (x0, x1) in enumerate(segments(n), 1):
         mid = (x0 + x1) / 2
         tex = faces(n, x0, x1)
-        bottom = finished_bottom(mid) * worked(n)
+        bottom = max(finished_bottom(x) for x in (x0, x1)) * worked(n)
         cut = n > 0 and hollowed(mid)
-        solid_top = floor(n, mid) if cut else top(n)
+        solid_top = level(n, x0, x1) if cut else top(n)
         for k, (low, high) in enumerate(bands(bottom, solid_top, BANDS), 1):
-            half = half_at(n, mid, (low + high) / 2)
+            half = narrowest(n, x0, x1, low, high)
             if half > 0:
                 pieces.append(box(f"Blank{n}x{i}Body{k}", (x0, low, CENTRE - half), (x1, high, CENTRE + half), tex))
         if not cut:
             continue
-        inner = hollow_half(mid)
+        inner = hollow(x0, x1)
         for k, (low, high) in enumerate(bands(solid_top, top(n), WALL_BANDS), 1):
-            half = half_at(n, mid, (low + high) / 2)
+            half = narrowest(n, x0, x1, low, high)
             if half > inner:
                 pieces.append(box(f"Blank{n}x{i}Port{k}", (x0, low, CENTRE - half), (x1, high, CENTRE - inner), tex))
                 pieces.append(box(f"Blank{n}x{i}Starboard{k}", (x0, low, CENTRE + inner), (x1, high, CENTRE + half), tex))
     return pieces
+
+
+def narrowest(n, x0, x1, low, high):
+    return min(half_at(n, x, y) for x in (x0, x1) for y in (low, high))
+
+
+def level(n, x0, x1):
+    return min(floor(n, x) for x in (x0, x1))
+
+
+def hollow(x0, x1):
+    return max(hollow_half(x) for x in (x0, x1))
 
 
 def fire(n):
@@ -175,9 +212,9 @@ def fire(n):
         mid = (x0 + x1) / 2
         if not hollowed(mid):
             continue
-        height, half = floor(n, mid) if n > 0 else top(n), hollow_half(mid)
+        height, half = level(n, x0, x1) if n > 0 else top(n), hollow(x0, x1)
         planes.append(water_plane(f"Char{n}x{i}", x0, x1, CENTRE - half, CENTRE + half, height + CHAR_LIFT, "char"))
-        if half > 1:
+        if half > 1 and x1 - x0 > 1:
             embers.append(glowing(box(f"Fire{n}Embers{i}", (x0 + 0.5, height, CENTRE - half * BED),
                                       (x1 - 0.5, height + EMBERS, CENTRE + half * BED), "ember")))
     height = floor(n, CENTRE) if n > 0 else top(n)
@@ -191,9 +228,9 @@ def clay(n):
     strips = []
     for i, (x0, x1) in enumerate(segments(n), 1):
         mid = (x0 + x1) / 2
-        half, height = half_at(n, mid, top(n)), top(n)
+        half, height = min(half_at(n, x, top(n)) for x in (x0, x1)), top(n)
         if hollowed(mid):
-            inner = hollow_half(mid)
+            inner = hollow(x0, x1)
             strips.append(box(f"Clay{n}x{i}Port", (x0, height, CENTRE - half), (x1, height + CLAY, CENTRE - inner), "clay"))
             strips.append(box(f"Clay{n}x{i}Starboard", (x0, height, CENTRE + inner), (x1, height + CLAY, CENTRE + half), "clay"))
         elif half > 0:
@@ -213,6 +250,18 @@ def build_stages():
         for name, children in (("Blank", trunk(n)), ("Char", planes), ("Wood", logs), ("Fire", embers), ("Clay", clay(n))):
             stages[name].append(group(f"{name}{n}", (0, 0, 0), (0, 0, 0), children))
     return [group(name, (0, 0, 0), (0, 0, 0), children) for name, children in stages.items()]
+
+
+def hewn(shape, hull, shell, blank, rest):
+    """What the dugout's shapes follow: her finished hull, and at each hewing the trunk as that pass leaves it."""
+    shape.within(hull.outline("her hull, its end section carried on", ends=False), shell)
+    shape.together(shell)
+    for n in range(HOLLOWINGS):
+        stage = [blank["children"][n], *(group["children"][n] for group in rest)]
+        if n:
+            shape.within(Swept(f"the trunk hewn {n} times", lambda x, y, n=n: half_at(n, x, min(y, top(n))), lambda x, n=n: finished_bottom(x) * worked(n),
+                               extent(n), CENTRE), blank["children"][n], rest[-1]["children"][n])
+        shape.together(stage)
 
 
 def volumes():
@@ -258,6 +307,7 @@ def build(path):
     shape.add(shell)
     blank, *rest = build_stages()
     shape.add(blank, *rest)
+    hewn(shape, hull, shell, blank, rest)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     shape.elements.append(hull_box())
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
