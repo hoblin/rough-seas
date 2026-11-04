@@ -64,7 +64,7 @@ Our [coracle](Coracle), its sources and its build left out, carries all five:
         "heave": 0.8, "capsizeBreakerMetres": 0.6,
         "rollResponse": 1.6, "pitchResponse": 1.6
     },
-    "roughseas:bilge": { "capacityLitres": 265, "deckSquareMetres": 1.07, "drainLitresPerHour": 0 }
+    "roughseas:bilge": { "capacityLitres": 272, "deckSquareMetres": 1.07, "drainLitresPerHour": 0 }
 },
 "client": {
     "behaviors": [

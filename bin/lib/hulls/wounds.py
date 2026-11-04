@@ -129,8 +129,15 @@ def beside(board, name, children):
 
 def host(boards, hull, place):
     target = hull.point(place)
-    placed = [found for found in boards if hull.place(centre(*found[:2])) == place] or boards
+    roomy = [found for found in boards if room(found[0])] or boards
+    placed = [found for found in roomy if hull.place(centre(*found[:2])) == place] or roomy
     return min(placed, key=lambda found: math.dist(centre(*found[:2]), target))
+
+
+def room(board):
+    """Whether the board is long enough for the shortest crack and broad enough for the smallest hole stove in."""
+    _, breadth, length = sorted(size(board))
+    return length >= SHORTEST + 1 and breadth >= 1 + 0.6
 
 
 def skin(elements, texture, parent=None):

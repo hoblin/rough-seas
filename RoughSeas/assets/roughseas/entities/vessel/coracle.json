@@ -4,7 +4,7 @@
     "tags": ["inanimate", "vehicle"],
     "weight": 17.1,
     "attributes": {
-        "swimmingOffsetY": 0.332,
+        "swimmingOffsetY": 0.333,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {"idle": "sitflooridle", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
         "rightClickPickup": true,
@@ -28,10 +28,10 @@
         },
         "roughseas:vesselintegrity": {
             "impactCapacity": 400,
-            "parts": [{"name": "hide", "material": "hide", "share": 9.1}, {"name": "frame", "material": "wood-willow", "share": 8.0}],
+            "parts": [{"name": "hide", "material": "hide", "share": 9.4}, {"name": "frame", "material": "wood-willow", "share": 7.7}],
             "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-willow", "metres": 0.01}, "backedShare": 0.47, "bottomBackedShare": 0.65, "spanMetres": 0.37},
             "depthMetres": 0.35,
-            "waterplaneSquareMetres": 1.04,
+            "waterplaneSquareMetres": 1.06,
             "repairs": [
                 {"material": {"type": "item", "code": "game:hide-prepared-small", "stacksize": 1}, "restores": 0.67, "saturation": 40},
                 {"material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1}, "restores": 0.5, "saturation": 20, "greases": true}
@@ -39,11 +39,11 @@
             "wreckage": [{"type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": {"avg": 3, "var": 2}}],
             "damage": {"material": "hide"},
             "sources": {
-                "parts": "By the model (bin/lib/hulls/coracle.py): 2.12 m² of hide 5 mm thick at 860 kg/m³, 9.1 kg, over 14 lattice laths and three plaits of 1 by 6 cm, 33 m of willow, 8 kg: 17 kg, as Hornell (1938) gives one-man coracles at 18 to 40 lb",
-                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.086 m (bin/lib/hulls/coracle.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
+                "parts": "By the model (bin/lib/hulls/coracle.py): 2.18 m² of hide 5 mm thick at 860 kg/m³, 9.4 kg, over 14 lattice laths and three plaits of 1 by 6 cm, 32 m of willow, 8 kg: 17 kg, as Hornell (1938) gives one-man coracles at 18 to 40 lb",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.085 m (bin/lib/hulls/coracle.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, the lattice's 14 laths 6 cm wide cross 65% of the bottom, and their 28 ends rising to the gunwale 47% of the sides. A breaker presses the hide onto them, each lath 1 cm deep bending over the 0.37 m from the bottom to the gunwale",
                 "depthMetres": "Bottom to gunwale: the laths rise 0.35 m (Museum Wales, Teifi coracle), as the model draws them",
-                "waterplaneSquareMetres": "So that her 265 L bowl full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
+                "waterplaneSquareMetres": "So that her 272 L bowl full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
                 "seep": "A seam where one hide meets the next weeps once the fat has washed out of it: some 1.8 m of seam across her bowl, weeping as the currach's do a metre. A coracle from before her build is covered in prepared hide over her two sections, with no seam, as her old recipe's one large hide had",
                 "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             },
@@ -77,7 +77,7 @@
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 265,
+            "capacityLitres": 272,
             "deckSquareMetres": 1.07,
             "drainLitresPerHour": 0,
             "sources": {

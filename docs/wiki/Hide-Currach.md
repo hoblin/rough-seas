@@ -21,7 +21,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 58 cm empty, 56 cm with her rower |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash with three baskets aboard; three chests take her down |
 | [Mending](Mending) | 1 large prepared hide closes two thirds of a stove-in place; 1 rendered fat greases her for 1.25 days |
-| [Bilge](Bailing) | 1878 litres |
+| [Bilge](Bailing) | 1911 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | takes them badly |
 | [Lightning](Lightning) | a strike nearby almost always breaks her |
@@ -38,7 +38,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 A currach is built upside down where her gunwale is laid out on the ground, piece by piece, each piece drawn on her as it goes on.
 
 1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: her gunwales and stringers take 5 m laths, her nine longest ribs 3 m ones and the other twelve 2 m ones.
-2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath: it lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay a second beside it, eighteen sixteenths of a block apart, a little over a metre, as far apart as her gunwale laths are drawn: one laid a sixteenth off is drawn onto its place when she is bound.
+2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath: it lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay a second beside it, seventeen sixteenths of a block apart, a little over a metre, as far apart as her gunwale laths are drawn: one laid a sixteenth off is drawn onto its place when she is bound.
 
    ![Two long laths laid side by side](images/currach/build-laths.webp)
 

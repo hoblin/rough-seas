@@ -1,8 +1,12 @@
+import copy
 import hashlib
 import json
 import math
 import re
 from pathlib import Path
+
+from fit import APART, TOLERANCE, Loft, check, corners, posed
+from transform import apply, direct
 
 FACES = ("north", "east", "south", "west", "up", "down")
 FACE_AXES = {
@@ -12,7 +16,6 @@ FACE_AXES = {
 }
 AXIS = {"x": 0, "y": 1, "z": 2}
 ROUNDED = 0.68
-ROUNDED_SHARE = ROUNDED * (2 - ROUNDED)
 
 
 def num(value):
@@ -121,6 +124,8 @@ def span(elements, tex):
     total = 0
     for element in elements:
         children = element.get("children", [])
+        if element["name"].endswith("TopFrame"):
+            continue
         if element["name"].endswith("Frame") and children:
             board = children[0]
             if any(face["texture"] == "#" + tex for face in board["faces"].values()):
@@ -153,19 +158,23 @@ def beam(name, start, end, width, height, tex, *, ties=(), tie=None, tie_tex=Non
          rounded=False):
     yaw, pitch, length = heading(start, end)
     w, h = width / 2, height / 2
-    if rounded:
-        parts = [
-            box(name, (-overlap, -h * ROUNDED, -w), (length + overlap, h * ROUNDED, w), tex, grain=grain),
-            box(name + "Round", (-overlap - 0.01, -h, -w * ROUNDED), (length + overlap - 0.01, h, w * ROUNDED), tex, grain=grain),
-        ]
-    else:
-        parts = [box(name, (-overlap, -h, -w), (length + overlap, h, w), tex, grain=grain)]
+    roundness = ROUNDED if rounded else None
+    parts = section(name, (-overlap, 0, 0), length + 2 * overlap, w, h, tex, grain, roundness)
     tie_width, margin = tie or (0.8, 0.35)
     for n, f in enumerate(ties, 1):
-        x = f * length
-        parts.append(box(f"{name}Tie{n}", (x - tie_width / 2, -h - margin, -w - margin),
-                         (x + tie_width / 2, h + margin, w + margin), tie_tex, grain="z"))
+        parts += section(f"{name}Tie{n}", (f * length - tie_width / 2, 0, 0), tie_width, w + margin, h + margin, tie_tex, "z", roundness)
     return group(name + "Frame", start, (0, yaw, pitch), parts)
+
+
+def section(name, at, length, w, h, tex, grain="x", roundness=None):
+    """Boxes along x from at, round the axis through it: one 2w by 2h, or two crossed, the second roundness as wide
+    as the first is high, with every corner on the ellipse of half-axes w and h."""
+    x, y, z = at
+    if roundness is None:
+        return [box(name, (x, y - h, z - w), (x + length, y + h, z + w), tex, grain=grain)]
+    w, h = w / math.hypot(1, roundness), h / math.hypot(1, roundness)
+    return [box(name, (x, y - h * roundness, z - w), (x + length, y + h * roundness, z + w), tex, grain=grain),
+            box(name + "Round", (x + APART, y - h, z - w * roundness), (x + length - APART, y + h, z + w * roundness), tex, grain=grain)]
 
 
 def paddle(at, rot, shaft, blade, tex):
@@ -182,9 +191,16 @@ def throat(shaft):
     return (0.6 * shaft, 0.35, 0.35)
 
 
-def path(name, points, width, height, tex, **options):
-    return [beam(f"{name}{i}", a, b, width(i) if callable(width) else width, height(i) if callable(height) else height,
-                 tex, **options) for i, (a, b) in enumerate(zip(points, points[1:]), 1)]
+def path(name, points, width, height, tex, *, continues=False, **options):
+    """Beams through the points, every other one a little thinner so that neighbours share no plane where they meet;
+    one that continues a beam already drawn starts thinner."""
+    return [beam(f"{name}{i}", a, b, (width(i) if callable(width) else width) - shrunk(i, continues),
+                 (height(i) if callable(height) else height) - shrunk(i, continues), tex, **options)
+            for i, (a, b) in enumerate(zip(points, points[1:]), 1)]
+
+
+def shrunk(i, continues=False):
+    return 2 * APART * ((i + continues) % 2 == 0)
 
 
 def water_plane(name, x0, x1, z0, z1, height, texture="null"):
@@ -217,6 +233,95 @@ def across(start, end, up):
     return math.sqrt(dot(square, square)), math.degrees(math.atan2(dot(square, outward), dot(square, rising)))
 
 
+def rise(a, b, c, d):
+    return [((p - q) + (r - s)) / 2 for p, q, r, s in zip(d, a, c, b)]
+
+
+def cross(u, v):
+    return [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]
+
+
+def add(p, q):
+    return [a + b for a, b in zip(p, q)]
+
+
+def sub(p, q):
+    return [a - b for a, b in zip(p, q)]
+
+
+def scale(v, k):
+    return [a * k for a in v]
+
+
+def dot(u, v):
+    return sum(a * b for a, b in zip(u, v))
+
+
+def unit(v):
+    return scale(v, 1 / math.sqrt(dot(v, v)))
+
+
+def clear_of(cuts, along, made, slide=False):
+    """made(short), drawn back at either end by short until neither end shares a plane with an end already cut along
+    the same line, or, sliding, moved along it whole; made returns the element's parts with its two ends last, and
+    those are added to cuts."""
+    short = [0, 0]
+    while True:
+        parts = made(short)
+        clash = [any(abs(dot(along, other)) > 0.999 and abs(dot(sub(end, at), other)) < APART - 1e-9 for at, other in cuts) for end in parts[-2:]]
+        if not any(clash):
+            cuts.extend((end, along) for end in parts[-2:])
+            return parts
+        short = [short[0] + APART, short[1] - APART] if slide else [s + APART * hit for s, hit in zip(short, clash)]
+
+
+def ends_of(elements):
+    """The cuts at either end of each box along its own length, as clear_of keeps them."""
+    cuts = []
+    for element, m in posed(elements):
+        along = unit(direct(m, (1, 0, 0)))
+        (x0, y0, z0), (x1, y1, z1) = element["from"], element["to"]
+        middle = ((y0 + y1) / 2, (z0 + z1) / 2)
+        for x in (x0, x1):
+            cuts.append(([c * 16 for c in apply(m, [(x - x0) / 16, (middle[0] - y0) / 16, (middle[1] - z0) / 16])], along))
+    return cuts
+
+
+def widest(made, surface, reach):
+    """The widest made(width), up to reach, whose every corner lies inside the surface."""
+    low, high = 0.0, reach
+    for _ in range(30):
+        low, high = ((low + high) / 2, high) if max(surface.beyond(p) for p in corners_of(made((low + high) / 2))) <= 0 else (low, (low + high) / 2)
+    return low
+
+
+def seated(made, surface, depth=0):
+    """How far in, from depth on, the element made(depth) has to sit for every corner to lie inside the surface."""
+    for _ in range(50):
+        out = max(surface.beyond(p) for p in corners_of(made(depth)))
+        if out <= TOLERANCE / 2:
+            break
+        depth += out
+    return depth
+
+
+def rested(made, surface):
+    """Where the element made(offset) comes to rest inside the surface, moved each time toward the surface's nearest
+    point by as far as its outermost corner stands beyond it."""
+    offset = [0, 0, 0]
+    for _ in range(50):
+        worst = max(corners_of(made(offset)), key=surface.beyond)
+        out = surface.beyond(worst)
+        if out <= TOLERANCE / 2:
+            break
+        offset = add(offset, scale(surface.inward(worst), out))
+    return offset
+
+
+def corners_of(element):
+    return [corner for part, m in posed([element]) for corner in corners(part, m)]
+
+
 def breadth(edges, y):
     for (h0, y0), (h1, y1) in zip(edges, edges[1:]):
         if y0 <= y <= y1 and y1 > y0:
@@ -247,33 +352,101 @@ class Hull:
                 return tuple(p + f * (q - p) for p, q in zip(a, b))
         raise ValueError(f"x {x} lies outside the hull")
 
-    def strakes(self):
-        elements = []
-        count = len(self.stations[0][1]) - 1
-        for side, label in ((-1, "Port"), (1, "Starboard")):
-            for k in range(count):
-                for i in range(len(self.stations) - 1):
-                    a, b = self.point(i, k, side), self.point(i + 1, k, side)
-                    c, d = self.point(i + 1, k + 1, side), self.point(i, k + 1, side)
-                    up = [((p - q) + (r - t)) / 2 for p, q, r, t in zip(d, a, c, b)]
-                    height, flare = across(a, b, up)
-                    if height < 1e-6:
-                        continue
-                    elements.append(plank(f"{self.prefix}{label}{k + 1}x{i + 1}", a, b, height, self.t, side * flare,
-                                          side, self.outer, self.inner, edge=self.edge))
-        return elements
+    def strakes(self, cuts=None):
+        """The skin, panel by panel between neighbouring stations and edges. A tapering panel takes a board along each
+        of its edges, each as tall as the panel's narrow end, the upper one hanging; each board reaches as far past a
+        station as that station's line leans out, stops at the hull's ends, and sits inward until its outermost corner
+        touches the loft, and no nearer the depth of a neighbour it overlaps than to keep their faces apart. Each board's
+        ends keep clear of those already cut, the ones in cuts too, which collects them."""
+        loft = self.outline("the hull", ends=False)
+        hull = Hull(self.prefix, self.refined(), self.cz, self.t, self.outer, self.inner, self.edge)
+        panels = [panel for panel in hull.panels() if across(panel[4][0], panel[4][1], rise(*panel[4]))[0] >= 1e-6]
+        last = len(hull.stations) - 2
+        bottoms, tops, cuts = {}, {}, [] if cuts is None else cuts
 
-    def rail(self, name, tex, height=1, thickness=None, lift=0):
+        def placed(*args, **options):
+            return clear_of(cuts, unit(sub(args[2][1], args[2][0])), lambda short: self.board(*args, **options, short=short))
+
+        for name, side, k, i, (a, b, c, d) in panels:
+            near = [bottoms[side, k, i - 1][0]] if (side, k, i - 1) in bottoms else []
+            bottoms[side, k, i] = placed(name, side, (a, b, d, c), 1, (i == 0, i == last), loft, near, aside=APART * (i % 2))
+        for name, side, k, i, (a, b, c, d) in panels:
+            if abs(across(a, b, sub(d, a))[0] - across(a, b, sub(c, b))[0]) <= TOLERANCE:
+                continue
+            near = [bottoms[key][0] for key in ((side, k, i - 1), (side, k, i + 1)) if key in bottoms]
+            near += [tops[side, k, i - 1][0]] if (side, k, i - 1) in tops else []
+            tops[side, k, i] = placed(name + "Top", side, (d, c, a, b), -1, (i == 0, i == last), loft, near, bottoms[side, k, i][0] + APART,
+                                     aside=APART * (i % 2))
+        return [made[1] for made in (*bottoms.values(), *tops.values())]
+
+    def refined(self):
+        """The stations, with more between two of them wherever a panel tapers more than its two boards can cover: each
+        added where the panel's narrow end has grown twice as tall."""
+        stations = [self.stations[0]]
+        for (x0, _), (x1, _) in zip(self.stations, self.stations[1:]):
+            stations += [(x, self.section(x)) for x in self.split(x0, x1)]
+        return stations
+
+    def split(self, x0, x1):
+        for k in range(len(self.stations[0][1]) - 1):
+            a, b, c, d = self.at(x0, k, 1), self.at(x1, k, 1), self.at(x1, k + 1, 1), self.at(x0, k + 1, 1)
+            low, high = sorted((across(a, b, sub(d, a))[0], across(a, b, sub(c, b))[0]))
+            hanging = min(across(d, c, sub(a, d))[0], across(d, c, sub(b, c))[0])
+            if low + hanging < high - TOLERANCE and hanging > 1e-6:
+                narrow = x0 if across(a, b, sub(d, a))[0] < across(a, b, sub(c, b))[0] else x1
+                x = narrow + (x1 + x0 - 2 * narrow) * hanging / (high - low)
+                return self.split(min(x0, x), max(x0, x)) + self.split(min(x, x1), max(x, x1))
+        return [x1]
+
+    def panels(self):
+        for side, label in ((-1, "Port"), (1, "Starboard")):
+            for k in range(len(self.stations[0][1]) - 1):
+                for i in range(len(self.stations) - 1):
+                    yield f"{self.prefix}{label}{k + 1}x{i + 1}", side, k, i, (
+                        self.point(i, k, side), self.point(i + 1, k, side), self.point(i + 1, k + 1, side), self.point(i, k + 1, side))
+
+    def board(self, name, side, quad, turn, ends, loft, near, below=0, short=(0, 0), aside=0):
+        a, b, d, c = quad
+        along = unit(sub(b, a))
+        up = rise(a, b, c, d)
+        rise_a, rise_b = across(a, b, sub(d, a))[0], across(a, b, sub(c, b))[0]
+        height, flare = min(rise_a, rise_b), across(a, b, up)[1]
+        start = sub(a, scale(along, max(0, -dot(sub(d, a), along) * height / rise_a)))
+        end = add(b, scale(along, max(0, dot(sub(c, b), along) * height / rise_b)))
+        lift = unit(sub(up, scale(along, dot(up, along))))
+        start, end, height = add(start, scale(lift, aside)), add(end, scale(lift, aside)), height - aside
+        normal = unit(cross(along, lift))
+        normal = scale(normal, math.copysign(1, dot(normal, (0, 1, self.cz - (a[2] + b[2]) / 2))))
+        made = lambda s, e: plank(name, s, e, height, self.t, turn * side * flare, turn * side, self.outer, self.inner, edge=self.edge, overlap=0)
+        x0, x1 = self.span()
+        reach = corners_of(made(start, end))
+        past = max(0, x0 - min(p[0] for p in reach)), max(0, max(p[0] for p in reach) - x1)
+        start = add(start, scale(along, (past[0] + APART * (past[0] > 0 and not ends[0])) / along[0]))
+        end = sub(end, scale(along, (past[1] + APART * (past[1] > 0 and not ends[1])) / along[0]))
+        start, end = add(start, scale(along, short[0])), sub(end, scale(along, short[1]))
+        sunk = seated(lambda depth: made(add(start, scale(normal, depth)), add(end, scale(normal, depth))), loft)
+        depth = max(sunk, below)
+        while clashing := [other for other in near if abs(depth - other) < APART - 1e-9]:
+            depth = max(clashing) + APART
+        board = made(add(start, scale(normal, depth)), add(end, scale(normal, depth)))
+        if abs(a[2] - self.cz) < 1e-6 and abs(b[2] - self.cz) < 1e-6:
+            del board["children"][0]["faces"]["down"]
+        return depth, board, start, end
+
+    def rail(self, name, tex, height=1, thickness=None, lift=0, inset=0):
         elements = []
         top = len(self.stations[0][1]) - 1
         thickness = thickness or self.t + 0.5
+        inside = self.outline("the skin's inside", inset=inset, ends=False)
         for side, label in ((-1, "Port"), (1, "Starboard")):
             for i in range(len(self.stations) - 1):
                 a, b = self.point(i, top, side), self.point(i + 1, top, side)
-                a, b = (a[0], a[1] + lift, a[2]), (b[0], b[1] + lift, b[2])
                 if abs(a[2] - b[2]) < 1e-6 and a[2] == self.cz:
                     continue
-                elements.append(plank(f"{name}{label}{i + 1}", a, b, height, thickness, 0, side, tex, tex))
+                made = lambda depth, a=a, b=b, side=side, label=label, i=i: plank(
+                    f"{name}{label}{i + 1}", (a[0], a[1] + lift, a[2] - side * depth), (b[0], b[1] + lift, b[2] - side * depth),
+                    height, thickness, 0, side, tex, tex, overlap=0)
+                elements.append(made(seated(made, inside, inset) if inset else 0))
         return elements
 
     def hide_water(self, height):
@@ -307,6 +480,9 @@ class Hull:
     def span(self):
         return self.stations[0][0], self.stations[-1][0]
 
+    def outline(self, name, inset=0, ends=True):
+        return Loft(name, self.section, self.span(), self.cz, inset, ends)
+
     def litres(self, top=None, inset=0, step=0.25):
         x0, x1 = self.span()
         total, x = 0, x0 + step / 2
@@ -329,15 +505,14 @@ class Hull:
         return total / VOXELS_A_METRE ** 2
 
     def skin_square_metres(self):
-        total = 0
-        for plank in self.strakes():
-            board = plank["children"][0]
-            # plank() draws a board from -overlap to length + overlap: the sum is its length without the overlaps.
-            total += (board["to"][0] + board["from"][0]) * (board["to"][1] - board["from"][1])
-        return total / VOXELS_A_METRE ** 2
+        return sum(math.sqrt(dot(spread := cross(sub(c, a), sub(d, b)), spread)) / 2 for *_, (a, b, c, d) in self.panels()) / VOXELS_A_METRE ** 2
 
-    def rib(self, name, x, tex, width=1, depth=1):
+    def rib(self, name, x, tex, width=1, depth=1, inset=None):
+        """A rib at x, a piece along each edge of the section, each sunk until it lies inside the skin (and what lines
+        it, inset deep); every other piece a little narrower, so that two share no plane where they meet."""
         edges = self.section(x)
+        inset = self.t if inset is None else inset
+        inside = self.outline("the skin's inside", inset=inset, ends=False)
         elements = []
         for side, label in ((-1, "Port"), (1, "Starboard")):
             for k in range(len(edges) - 1):
@@ -348,9 +523,13 @@ class Hull:
                     continue
                 flare = math.degrees(math.atan2(spread, rise))
                 z = self.cz + side * h0
-                z0, z1 = sorted((z - side * self.t, z - side * (self.t + depth)))
-                elements.append(box(f"{name}{label}{k + 1}", (x - width / 2, y0, z0), (x + width / 2, y0 + length, z1),
-                                    tex, origin=(x, y0, z), rot=(side * flare, 0, 0), grain="y"))
+                z0, z1 = sorted((z - side * inset, z - side * (inset + depth)))
+                half = width / 2 - APART * ((k + (side > 0)) % 2)
+                normal = unit([0, spread, -side * rise])
+                made = lambda s, z0=z0, z1=z1, y0=y0, z=z, half=half, normal=normal: box(
+                    f"{name}{label}{k + 1}", (x - half, y0 + normal[1] * s, z0 + normal[2] * s), (x + half, y0 + length + normal[1] * s, z1 + normal[2] * s),
+                    tex, origin=(x, y0 + normal[1] * s, z + normal[2] * s), rot=(side * flare, 0, 0), grain="y")
+                elements.append(made(seated(made, inside)))
         return elements
 
     def transom(self, name, x, thickness, tex, step=1.5):
@@ -371,6 +550,14 @@ class Shape:
         self.textures = textures
         self.elements = []
         self.animations = []
+        self.fits = []
+        self.views = []
+
+    def within(self, surface, *elements, only=lambda name: True):
+        self.fits.append((surface, flattened(elements), only))
+
+    def together(self, *elements):
+        self.views.append(flattened(elements))
 
     def add(self, *elements):
         for element in elements:
@@ -388,6 +575,9 @@ class Shape:
             self.elements.append(current[name])
 
     def write(self):
+        faults = check(self.fits, self.views)
+        if faults:
+            raise SystemExit(f"{self.path.name}: its boxes leave the round shapes they build or share a plane\n  " + "\n  ".join(faults))
         shape = {
             "editor": {"allAngles": False, "entityTextureMode": False},
             "textureWidth": 16,
@@ -406,6 +596,10 @@ def write(path, shape):
     for leaf in (r"[\[{]\n[^\[\]{}]*?\n\s*[\]}]", r"\{\n[^{}]*?\n\s*\}"):
         text = re.sub(leaf, lambda m: " ".join(m.group(0).split()), text)
     path.write_text(text + "\n")
+
+
+def flattened(elements):
+    return copy.deepcopy([e for element in elements for e in (element if isinstance(element, list) else [element])])
 
 
 def count(elements):

@@ -30,7 +30,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Carried | too heavy to pick up |
 | Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | 5 logs of one wood beside the water, then six fires: each takes clay for its rim (23 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and an axe; about nine days in all |
+| Built from | 5 logs of one wood beside the water, then six fires: each takes clay for its rim (22 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and an axe; about nine days in all |
 | Wreckage | firewood |
 
 ## How it is built
@@ -45,7 +45,7 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
 
    ![The fresh blank on the shore](images/dugout/build-blank.webp)
 
-3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 23 balls round the top of the fresh trunk, fewer each fire as she narrows, 10 for the last. The blank's panel counts them.
+3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 22 balls round the top of the fresh trunk, fewer each fire as she narrows, 10 for the last. The blank's panel counts them.
 
    ![Wet clay all along the rim](images/dugout/build-clay.webp)
 

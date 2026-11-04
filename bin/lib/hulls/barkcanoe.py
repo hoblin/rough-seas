@@ -3,7 +3,8 @@ import math
 from held import PADDLE, POLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from physics import afloat, kilograms
-from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, group, path, plank, renamed, span, stages
+from fit import APART, TOLERANCE, lined as inner
+from shape import BILGE, VOXELS_A_METRE, Hull, Shape, add, box, clear_of, corners_of, group, path, plank, renamed, rested, scale, span, stages, sub, unit, widest
 from wounds import wound
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
@@ -18,7 +19,8 @@ SHEATHED_STRAKES = 3
 RIB_WIDTH = 1.2
 RIB_DEPTH = 0.45
 RIBS = range(-18, 36, 4)
-THWARTS = [(-8, 5.4, 5.6), (8, 5.8, 5.4), (24, 5.4, 5.6)]
+THWARTS = (-8, 8, 24)
+THWART = (1.4, 0.8)
 STERN = [(-19, 2.1), (-22, 2.75), (-24, 3.65), (-25.2, 5), (-25.6, 7), (-25.7, 9), (-25.5, 10.6), (-24.9, 11.4)]
 STEM_WIDTH = 0.8
 STEM_THICKNESS = 0.8
@@ -47,8 +49,10 @@ def section(x, breadth, rocker, rise):
     return (x, [(h * breadth, rocker + y * (top - rocker) / SHEER) for h, y in PROFILE])
 
 
+# Her ends are as broad as the stem the bark is sewn round, and the bark over it.
+STEM_BREADTH = (STEM_WIDTH / 2 + SKIN) / PROFILE[-1][0]
 STATIONS = [
-    section(-26, 0.06, 4.2, 3.6),
+    section(-26, STEM_BREADTH, 4.2, 3.6),
     section(-23, 0.4, 2.2, 1.9),
     section(-16, 0.75, 0.7, 0.7),
     section(-8, 0.93, 0.1, 0.2),
@@ -58,21 +62,12 @@ STATIONS = [
     section(24, 0.93, 0.1, 0.2),
     section(32, 0.75, 0.7, 0.7),
     section(39, 0.4, 2.2, 1.9),
-    section(42, 0.06, 4.2, 3.6),
+    section(42, STEM_BREADTH, 4.2, 3.6),
 ]
 
 
 def lined(stations, depth):
-    lined_stations = []
-    for x, edges in stations:
-        inner = []
-        for k, (h, y) in enumerate(edges):
-            (h0, y0), (h1, y1) = edges[max(k - 1, 0)], edges[min(k + 1, len(edges) - 1)]
-            run, rise = h1 - h0, y1 - y0
-            norm = math.hypot(run, rise) or 1
-            inner.append((max(h - depth * rise / norm, 0), y + depth * run / norm))
-        lined_stations.append((x, inner))
-    return lined_stations
+    return [(x, inner(edges, depth)) for x, edges in stations]
 
 
 def sheet():
@@ -123,50 +118,99 @@ def sheer_at(stations, x):
     return stations[-1][1][-1][1]
 
 
-def frame_pieces(hull):
-    lift = lambda x: sheer_at(hull.stations, x + 0.7) - sheer_at(STATIONS, x + 0.7)
+def frame_pieces(hull, bark, cuts):
+    """Her frame on the plan of hull, seated on the bark as it is raised: inwales and thwarts inside it, outwales outside."""
+    inside, outside = bark.outline("the bark's inside", inset=SKIN), bark.outline("an outwale's outside", inset=-GUNWALE)
     return [
-        gunwale(hull, "InwalePort", -1, True),
-        gunwale(hull, "InwaleStarboard", 1, True),
-        *(thwart(n, x, half, y + lift(x)) for n, (x, half, y) in enumerate(THWARTS, 1)),
-        gunwale(hull, "OutwalePort", -1, False),
-        gunwale(hull, "OutwaleStarboard", 1, False),
+        gunwale(hull, "InwalePort", -1, True, inside, cuts),
+        gunwale(hull, "InwaleStarboard", 1, True, inside, cuts),
+        *(thwart(n, x, hull, bark, cuts) for n, x in enumerate(THWARTS, 1)),
+        gunwale(hull, "OutwalePort", -1, False, outside, cuts),
+        gunwale(hull, "OutwaleStarboard", 1, False, outside, cuts),
     ]
 
 
 def raising():
     """The bark raised a step with each piece of the frame, and each piece drawn at every step from when it is laid."""
-    levels = len(frame_pieces(Hull("Frame", STATIONS, CENTRE, SKIN, "bark", "bark")))
-    skins = [group(f"Skin{k}", (0, 0, 0), (0, 0, 0), Hull(f"Skin{k}x", raised(k / levels), CENTRE, SKIN, "bark", "bark", edge="bark").strakes())
-             for k in range(1, levels + 1)]
-    at = {k: frame_pieces(Hull("Frame", frame_at(k / levels), CENTRE, SKIN, "bark", "bark")) for k in range(1, levels + 1)}
+    hull = Hull("Frame", STATIONS, CENTRE, SKIN, "bark", "bark")
+    levels = len(frame_pieces(hull, hull, []))
+    barks = {k: Hull(f"Skin{k}x", raised(k / levels), CENTRE, SKIN, "bark", "bark", edge="bark") for k in range(1, levels + 1)}
+    cuts = {k: [] for k in barks}
+    skins = [group(f"Skin{k}", (0, 0, 0), (0, 0, 0), bark.strakes(cuts[k])) for k, bark in barks.items()]
+    at = {k: frame_pieces(Hull("Frame", frame_at(k / levels), CENTRE, SKIN, "bark", "bark"), barks[k], cuts[k]) for k in range(1, levels + 1)}
     pieces = []
     for n in range(1, levels + 1):
         final = at[levels][n - 1]
         variants = [group(f"Frame{n}At{k}", (0, 0, 0), (0, 0, 0), [renamed(e, f"At{k}") for e in at[k][n - 1]]) for k in range(n, levels + 1)]
         piece = group(f"Frame{n}", (0, 0, 0), (0, 0, 0), variants)
-        piece["metres"] = round(span(final, "frame") / VOXELS_A_METRE, 2)
+        piece["metres"] = round((run(hull, len(PROFILE) - 1) if "wale" in final[0]["name"] else span(final, "frame")) / VOXELS_A_METRE, 2)
         pieces.append(piece)
-    return group("Skin", (0, 0, 0), (0, 0, 0), skins), group("Frame", (0, 0, 0), (0, 0, 0), pieces)
+    return group("Skin", (0, 0, 0), (0, 0, 0), skins), group("Frame", (0, 0, 0), (0, 0, 0), pieces), cuts[levels]
 
 
-def gunwale(hull, name, side, inside):
+def gunwale(hull, name, side, inside, surface, cuts):
+    """A gunwale along her sheer, seated against the bark; at the ends it stops where it no longer fits beside the
+    stem. Every other piece is a little lower and shorter, so that two share no plane where they meet, and no piece
+    ends in the plane of an end already cut."""
     top = len(PROFILE) - 1
     pieces = []
     for i in range(len(hull.stations) - 1):
         a, b = hull.point(i, top, side), hull.point(i + 1, top, side)
-        if inside:
-            a, b = ((p[0], p[1] - GUNWALE, p[2] - side * SKIN) for p in (a, b))
-        else:
-            a, b = ((p[0], p[1] - GUNWALE, p[2]) for p in (a, b))
         if abs(a[2] - b[2]) < 1e-6 and abs(a[2] - CENTRE) < 1e-6:
             continue
-        pieces.append(plank(f"{name}{i + 1}", a, b, GUNWALE, GUNWALE, 0, side if inside else -side, "frame", "frame"))
+        drop, base = GUNWALE + APART * (i % 2), SKIN if inside else 0
+        piece = lambda a, b, i=i, drop=drop, base=base: lambda offset: plank(
+            f"{name}{i + 1}", add((a[0], a[1] - drop, a[2] - side * base), offset), add((b[0], b[1] - drop, b[2] - side * base), offset),
+            GUNWALE - 2 * APART * (i % 2), GUNWALE, 0, side if inside else -side, "frame", "frame", overlap=0)
+
+        def moved(a, b):
+            offset = rested(piece(a, b), surface)
+            return max(surface.beyond(p) for p in corners_of(piece(a, b)(offset))) > TOLERANCE / 2
+
+        if i in (0, len(hull.stations) - 2) and moved(a, b):
+            stem, inner = (a, b) if abs(a[2] - CENTRE) < abs(b[2] - CENTRE) else (b, a)
+            towards = lambda cut: sorted((tuple(p + cut * (q - p) for p, q in zip(stem, inner)), inner))
+            short, fits = 0.0, 1.0
+            for _ in range(20):
+                cut = (short + fits) / 2
+                short, fits = (cut, fits) if moved(*towards(cut)) else (short, cut)
+            if fits > 1 - 1e-6:
+                continue
+            a, b = towards(fits)
+        along = unit(sub(b, a))
+
+        def made(short, a=a, b=b, i=i):
+            made = piece(add(a, scale(along, short[0])), sub(b, scale(along, short[1])))
+            offset = add(rested(made, surface), (0, APART * (i % 2), 0))
+            return made(offset), add(add(a, scale(along, short[0])), offset), add(sub(b, scale(along, short[1])), offset)
+
+        pieces.append(clear_of(cuts, along, made)[0])
     return pieces
 
 
-def thwart(n, x, half, y):
-    return [box(f"Thwart{n}", (x, y, CENTRE - half), (x + 1.4, y + 0.8, CENTRE + half), "frame", grain="z")]
+def thwart(n, x, hull, bark, cuts):
+    """A thwart mortised through the inwales at their middle height, its ends short of the bark, slid along clear of
+    the ends already cut."""
+    width, height = THWART
+    y = sheer_at(hull.stations, x + width / 2) - GUNWALE / 2 - height / 2
+
+    def placed(short):
+        pole = lambda reach: box(f"Thwart{n}", (x + short[0], y, CENTRE - reach), (x + width + short[0], y + height, CENTRE + reach), "frame", grain="z")
+        return pole(widest(pole, bark.outline("the bark's inside", inset=SKIN + APART), PROFILE[-1][0])), (x + short[0], y, CENTRE), (x + width + short[0], y, CENTRE)
+
+    return [clear_of(cuts, (1, 0, 0), placed, slide=True)[0]]
+
+
+def stern_line():
+    """Her stem's curve, moved aft off her end and up into the bark sewn round it, as far as it takes to lie inside."""
+    inside = Hull("Skin", STATIONS, CENTRE, SKIN, "bark", "bark").outline("the bark's inside", inset=SKIN)
+    out = lambda dx, dy: max(inside.beyond(p) for p in corners_of(group("Stem", (0, 0, 0), (0, 0, 0),
+                                                                         stem("SternStem", on_centre([(x + dx, y + dy) for x, y in STERN])))))
+    dx = max(0, inside.x0 - min(p[0] for p in corners_of(group("Stem", (0, 0, 0), (0, 0, 0), stem("SternStem", on_centre(STERN)))))) + APART
+    low, high = 0.0, SHEER
+    for _ in range(30):
+        low, high = ((low + high) / 2, high) if out(dx, (low + high) / 2) > TOLERANCE / 2 else (low, (low + high) / 2)
+    return [(x + dx, y + high) for x, y in STERN]
 
 
 def stem(name, points):
@@ -182,9 +226,16 @@ def on_centre(points, lift=0):
     return [(x, y + lift, CENTRE) for x, y in points]
 
 
+def run(hull, edge):
+    """How long a lath lying along the edge runs, station to station."""
+    return sum(math.dist(hull.point(i, edge, 1), hull.point(i + 1, edge, 1)) for i in range(len(hull.stations) - 1))
+
+
 def sheathing(hull):
-    liner = Hull("Sheathing", lined(hull.stations, SKIN)[1:-1], CENTRE, SHEATHING, "frame", "frame", edge="frame")
-    strakes = liner.strakes()
+    cuts = []
+    Hull("Skin", raised(1), CENTRE, SKIN, "bark", "bark").strakes(cuts)
+    liner = Hull("Sheathing", lined(hull.stations, SKIN + APART)[1:-1], CENTRE, SHEATHING, "frame", "frame", edge="frame")
+    strakes = liner.strakes(cuts)
     laths = []
     for k in range(1, SHEATHED_STRAKES + 1):
         for label in ("Port", "Starboard"):
@@ -193,13 +244,22 @@ def sheathing(hull):
     return laths
 
 
+def sheathed(hull):
+    """The sheathing, each lath as long as the two edges it lies between run."""
+    stage = stages("Sheathing", sheathing(hull))
+    liner = Hull("Sheathing", lined(hull.stations, SKIN + APART)[1:-1], CENTRE, SHEATHING, "frame", "frame")
+    for piece, k in zip(stage["children"], (k for k in range(SHEATHED_STRAKES) for _ in ("Port", "Starboard"))):
+        piece["metres"] = round((run(liner, k) + run(liner, k + 1)) / 2 / VOXELS_A_METRE, 2)
+    return stage
+
+
 def ribs(hull):
     middle = (STATIONS[0][0] + STATIONS[-1][0]) / 2
     order = sorted(RIBS, key=lambda x: (abs(x + RIB_WIDTH / 2 - middle), x))
-    return [hull.rib(f"Rib{n}x", x, "frame", width=RIB_WIDTH, depth=RIB_DEPTH) for n, x in enumerate(order, 1)]
+    return [hull.rib(f"Rib{n}x", x, "frame", width=RIB_WIDTH, depth=RIB_DEPTH, inset=SKIN + SHEATHING + APART) for n, x in enumerate(order, 1)]
 
 
-def wraps(hull):
+def wraps(hull, cuts):
     top = len(PROFILE) - 1
     margin = 0.1
     girth = 2 * (2 * GUNWALE_METRES + BARK_METRES + GUNWALE_METRES)
@@ -208,13 +268,19 @@ def wraps(hull):
     for side, label in ((-1, "Port"), (1, "Starboard")):
         x, n = STATIONS[1][0] + 1, 1
         while x < STATIONS[-2][0] - 1:
+            if any(at - 0.25 < x < at + THWART[0] + 0.25 for at in THWARTS):
+                x += LASHING_STEP
+                continue
             _, y, z = hull.at(x, top, side)
             z0, z1 = sorted((z + side * (GUNWALE + margin), z - side * (SKIN + GUNWALE + margin)))
-            turns.append(box(f"Wrap{label}{n}", (x, y - GUNWALE - margin, z0), (x + 0.5, y + margin, z1), "lashing", grain="y"))
+            wrap = lambda short, x=x, y=y, z0=z0, z1=z1, n=n: (
+                box(f"Wrap{label}{n}", (x - 0.25 + short[0], y - GUNWALE - margin, z0), (x + 0.25 - short[1], y + margin, z1), "lashing", grain="y"),
+                (x - 0.25 + short[0], y, z), (x + 0.25 - short[1], y, z))
+            turns.append(clear_of(cuts, (1, 0, 0), wrap, slide=True)[0])
             x, n = x + LASHING_STEP, n + 1
         sheer = [hull.point(i, top, side) for i in range(len(hull.stations))]
         metres += sum(math.dist(a, b) for a, b in zip(sheer, sheer[1:])) * VOXEL_METRES * turns_per_metre * girth
-    for name, points in (("Stern", STERN), ("Bow", bow(STERN))):
+    for name, points in (("Stern", stern_line()), ("Bow", bow(stern_line()))):
         along = on_centre(points[2:-1])
         for n, (a, b) in enumerate(zip(along, along[1:]), 1):
             steps = max(1, round(math.dist(a, b) / STEM_STITCH_STEP))
@@ -239,7 +305,7 @@ def gores(hull, side):
 
 
 def seam(name, points):
-    return path(name, on_centre(points[1:-2]), STEM_WIDTH + 0.4, STEM_THICKNESS + 0.3, "pitch", grain="x")
+    return path(name, on_centre(points[1:-2]), STEM_WIDTH + 0.4, STEM_THICKNESS + 0.3, "pitch", grain="x", overlap=0.25 + APART)
 
 
 def build(path_):
@@ -251,16 +317,27 @@ def build(path_):
         "bilge": BILGE,
     })
     hull = Hull("Skin", STATIONS, CENTRE, SKIN, "bark", "bark", edge="bark")
-    skin, frame = raising()
+    skin, frame, cuts = raising()
     laths = [frame,
-             stages("Stems", [stem("SternStem", on_centre(STERN)), stem("BowStem", on_centre(bow(STERN)))]),
-             stages("Sheathing", sheathing(hull)),
+             stages("Stems", [stem("SternStem", on_centre(stern_line())), stem("BowStem", on_centre(bow(stern_line())))]),
+             sheathed(hull),
              stages("Ribs", ribs(hull))]
     flat = sheet()
-    shape.add(flat, skin, laths[0], laths[1])
-    shape.add(stages("Lashing", wraps(hull)))
-    shape.add(laths[2], laths[3])
-    shape.add(stages("Pitch", [seam("SternSeam", STERN), seam("BowSeam", bow(STERN)), gores(hull, -1), gores(hull, 1)]))
+    lashed = stages("Lashing", wraps(hull, cuts))
+    pitched = stages("Pitch", [seam("SternSeam", stern_line()), seam("BowSeam", bow(stern_line())), gores(hull, -1), gores(hull, 1)])
+    shape.add(flat, skin, *laths[:2], lashed, *laths[2:], pitched)
+    levels = len(skin["children"])
+    shape.together(flat)
+    for k, level in enumerate(skin["children"], 1):
+        bark = Hull(f"Skin{k}x", raised(k / levels), CENTRE, SKIN, "bark", "bark")
+        laid = [piece["children"][k - n] for n, piece in enumerate(frame["children"][:k], 1)]
+        shape.within(bark.outline(f"the bark raised to frame piece {k}"), level)
+        shape.within(bark.outline("the bark's inside", inset=SKIN), laid, only=lambda name: "Outwale" not in name)
+        shape.within(bark.outline("an outwale's outside", inset=-GUNWALE), laid, only=lambda name: "Outwale" in name)
+        shape.together(level, laid, *((laths[1:], lashed, pitched) if k == levels else ()))
+    shape.within(hull.outline("the bark's inside", inset=SKIN), laths[1])
+    shape.within(Hull("Sheathing", lined(hull.stations, SKIN + APART), CENTRE, SHEATHING, "frame", "frame").outline("the sheathing"), laths[2])
+    shape.within(hull.outline("the sheathing's inside", inset=SKIN + SHEATHING + APART), laths[3])
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
     shape.keep("Hull", "FrontSeat", "BackSeat", "OarStorage")
     *rising, finished = skin["children"]

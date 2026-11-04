@@ -4,13 +4,15 @@ from pathlib import Path
 from physics import MATERIALS
 from held import PADDLE, POLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
-from shape import ROUNDED_SHARE, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, stages, write
+from fit import APART, Tube, Union
+from shape import ROUNDED, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, section, stages, write
 
 VOXEL_METRES = 1 / 16
 ROPE_METRES = 10
 KNOT_METRES = 0.3
 
 BODY = (-8, 24)
+ENDS = ((BODY[0], -1), (BODY[1], 1))
 CENTRE = 8
 SIDES = (("Port", -1), ("Starboard", 1))
 BUNDLE_REEDS = 144
@@ -20,17 +22,19 @@ TIE_PITCH = 4
 TIE_TURNS = 2
 LASHINGS = (-6, 1, 8, 15, 22)
 LASHING_TURNS = 2
+TIE_MARGIN = 0.15
+LASHING_MARGIN = 0.2
 TIP_SHARES = (1, 0.8125, 0.5625, 0.34375)
 TIP_REACH = (0, 3, 6, 8)
 
 
-def drawn_girth():
+def round_girth():
     litres = BUNDLE_REEDS * REED_KG / MATERIALS["reed"]["density"] * 1000
     length = BODY[1] - BODY[0] + 2 * sum((b - a) * share ** 2 for a, b, share in zip(TIP_REACH, TIP_REACH[1:], TIP_SHARES))
-    return math.sqrt(litres / (ROUNDED_SHARE * length * VOXEL_METRES_CUBED_LITRES))
+    return math.sqrt(litres / (math.pi / 4 * length * VOXEL_METRES_CUBED_LITRES))
 
 
-GIRTH = drawn_girth()
+GIRTH = round_girth()
 TIP_GIRTHS = tuple(GIRTH * share for share in TIP_SHARES)
 TIP_RISE = (0, 1.2, 3.4, 6.4)
 TIP_TURN_PITCH = 1
@@ -45,29 +49,55 @@ def bundle(name, side):
     z = bundle_z(side)
     ties = [f / (BODY[1] - BODY[0]) for f in range(TIE_PITCH // 2, BODY[1] - BODY[0], TIE_PITCH)]
     return [beam(f"{name}Body", (BODY[0], GIRTH / 2, z), (BODY[1], GIRTH / 2, z), GIRTH, GIRTH, "reed",
-                 ties=ties, tie=(0.5, 0.15), tie_tex="rope", rounded=True, overlap=0)]
+                 ties=ties, tie=(0.5, TIE_MARGIN), tie_tex="rope", rounded=True, overlap=0)]
 
 
 def flat_end(name, side, start, direction):
     z = bundle_z(side)
     points = [(start + direction * reach, girth / 2, z) for reach, girth in zip(TIP_REACH, TIP_GIRTHS)]
-    return path(name, points, lambda i: TIP_GIRTHS[i - 1], lambda i: TIP_GIRTHS[i - 1], "reed", rounded=True, overlap=0)
+    return path(name, points, lambda i: TIP_GIRTHS[i - 1], lambda i: TIP_GIRTHS[i - 1], "reed", rounded=True, overlap=0, continues=True)
+
+
+def raised_points(start, direction, droop):
+    lift = 1 - droop / (DROOPS - 1)
+    return [(start + direction * reach, TIP_GIRTHS[0] / 2 + rise * lift, CENTRE) for reach, rise in zip(TIP_REACH, TIP_RISE)]
 
 
 def raised_end(name, start, direction, droop):
-    lift = 1 - droop / (DROOPS - 1)
-    points = [(start + direction * reach, TIP_GIRTHS[0] / 2 + rise * lift, CENTRE) for reach, rise in zip(TIP_REACH, TIP_RISE)]
+    points = raised_points(start, direction, droop)
     segments = []
     for i, (a, b) in enumerate(zip(points, points[1:]), 1):
         turns = math.dist(a, b) / TIP_TURN_PITCH
         ties = [(t + 0.5) / turns for t in range(math.floor(turns))]
-        segments.append(beam(f"{name}{i}", a, b, 2 * TIP_GIRTHS[i - 1], TIP_GIRTHS[i - 1], "reed",
-                             ties=ties, tie=(0.3, 0.15), tie_tex="lashing", rounded=True, overlap=0.1))
+        thinner = 2 * APART if i == 1 else 0
+        segments.append(beam(f"{name}{i}", a, b, 2 * TIP_GIRTHS[i - 1] - thinner, TIP_GIRTHS[i - 1] - thinner, "reed",
+                             ties=ties, tie=(0.3, TIE_MARGIN), tie_tex="lashing", rounded=True, overlap=0.1))
     return segments
 
 
 def lashing(name, x):
-    return [box(name, (x - 0.5, -0.2, CENTRE - GIRTH - 0.2), (x + 0.5, GIRTH + 0.2, CENTRE + GIRTH + 0.2), "lashing", grain="z")]
+    """Turns round both bundles: round each of them, and straight across between them."""
+    reach = GIRTH / 2 + LASHING_MARGIN
+    rounds = [e for label, side in SIDES for e in section(f"{name}{label}", (x - 0.5, GIRTH / 2, bundle_z(side)), 1, reach, reach, "lashing", "z", ROUNDED)]
+    return [box(name, (x - 0.5 + 2 * APART, GIRTH / 2 - reach, bundle_z(-1)), (x + 0.5 - 2 * APART, GIRTH / 2 + reach, bundle_z(1)), "lashing", grain="z"),
+            *rounds]
+
+
+def bundles(margin=0):
+    return Union("the bundles", [Tube(f"the {label} bundle", (BODY[0], GIRTH / 2, bundle_z(side)), (BODY[1], GIRTH / 2, bundle_z(side)),
+                                      GIRTH + 2 * margin, GIRTH + 2 * margin) for label, side in SIDES])
+
+
+def ends(points, widths, heights, margin=0):
+    return [Tube("an end", a, b, w + 2 * margin, h + 2 * margin) for a, b, w, h in zip(points, points[1:], widths, heights)]
+
+
+def flat_rounds(side, start, direction):
+    return ends([(start + direction * reach, girth / 2, bundle_z(side)) for reach, girth in zip(TIP_REACH, TIP_GIRTHS)], TIP_GIRTHS, TIP_GIRTHS)
+
+
+def raised_rounds(start, direction, droop, margin=0):
+    return ends(raised_points(start, direction, droop), [2 * g for g in TIP_GIRTHS], TIP_GIRTHS, margin)
 
 
 def ropes_of(metres):
@@ -102,7 +132,7 @@ def tips():
     assert ropes_of(metres) == 1, "an end takes more than one rope"
     print(f"ends: {turns:.0f} turns bind each end up, {metres:.1f} m of cord, one rope an end")
     ends = []
-    for n, (start, direction) in enumerate(((BODY[0], -1), (BODY[1], 1)), 1):
+    for n, (start, direction) in enumerate(ENDS, 1):
         ends.append([group(f"Tips{n}Droop{k}", (0, 0, 0), (0, 0, 0), raised_end(f"Tip{n}Droop{k}x", start, direction, k))
                      for k in range(DROOPS)])
     return ends
@@ -110,7 +140,7 @@ def tips():
 
 def flats(sides):
     return [[element for name, side in sides for element in flat_end(f"Flat{name}{n}x", side, start, direction)]
-            for n, (start, direction) in enumerate(((BODY[0], -1), (BODY[1], 1)), 1)]
+            for n, (start, direction) in enumerate(ENDS, 1)]
 
 
 def laid(sides):
@@ -120,9 +150,9 @@ def laid(sides):
 def envelope():
     body = GIRTH ** 2 * (BODY[1] - BODY[0])
     ends = sum((b - a) * g ** 2 for a, b, g in zip(TIP_REACH, TIP_REACH[1:], TIP_GIRTHS))
-    litres = ROUNDED_SHARE * (body + 2 * ends) * VOXEL_METRES_CUBED_LITRES
+    litres = math.pi / 4 * (body + 2 * ends) * VOXEL_METRES_CUBED_LITRES
     print(f"a bundle of {BUNDLE_REEDS} reeds: {(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]) * VOXEL_METRES:.1f} m long, "
-          f"{GIRTH * VOXEL_METRES * 100:.1f} cm across, {litres:.1f} L as drawn; two: {2 * litres:.1f} L")
+          f"{GIRTH * VOXEL_METRES * 100:.1f} cm across, {litres:.1f} L; two: {2 * litres:.1f} L")
 
 
 def block(target, sides):
@@ -139,10 +169,21 @@ def build(target):
     })
     envelope()
     bundle_ropes()
-    shape.add(group("Blank", (0, 0, 0), (0, 0, 0), [e for name, side in SIDES for e in bundle(name, side)]))
-    shape.add(stages("Flat", flats(SIDES)))
-    shape.add(stages("Lashing", lashings()))
-    shape.add(stages("Tips", tips()))
+    blank = group("Blank", (0, 0, 0), (0, 0, 0), [e for name, side in SIDES for e in bundle(name, side)])
+    flat, lashed, bound = stages("Flat", flats(SIDES)), stages("Lashing", lashings()), stages("Tips", tips())
+    shape.add(blank, flat, lashed, bound)
+    tied, untied = (lambda name: "Tie" in name), (lambda name: "Tie" not in name)
+    shape.within(bundles(), blank, only=untied)
+    shape.within(bundles(TIE_MARGIN), blank, only=tied)
+    shape.within(Union("the flat ends", [t for _, side in SIDES for start, direction in ENDS for t in flat_rounds(side, start, direction)]), flat)
+    shape.within(bundles(LASHING_MARGIN), lashed)
+    shape.together(blank, flat, lashed)
+    for droop in range(DROOPS):
+        ends_bound = [end["children"][droop] for end in bound["children"]]
+        for margin, only in ((0, untied), (TIE_MARGIN, tied)):
+            shape.within(Union("the bound ends", [t for start, direction in ENDS for t in raised_rounds(start, direction, droop, margin)]),
+                         ends_bound, only=only)
+        shape.together(blank, lashed, ends_bound)
     shape.keep("Hull", "FrontSeat", "Cargo", "OarStorage")
     shape.write()
     at = seat(shape, "FrontSeat")

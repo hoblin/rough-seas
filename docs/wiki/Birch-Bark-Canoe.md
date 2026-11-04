@@ -23,7 +23,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 36 cm empty, 32 cm with its paddler, in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 24 kg of gear, armour and containers in oak, more in a lighter wood |
 | [Mending](Mending) | 2 bark of its tree close a third of a stove-in place |
-| [Bilge](Bailing) | 608 litres |
+| [Bilge](Bailing) | 609 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
 | [Rapids](Rapids) | runs them unharmed, the only vessel that does |
 | [Lightning](Lightning) | a strike nearby almost always breaks it |
@@ -32,7 +32,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | Carried | picked up |
 | Seats | two: a paddler amidships, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, and a passenger in the bow |
 | Cargo | a basket (8 slots) in the bow, in place of the passenger |
-| Built from | a sheet of bark off a standing tree, 29 laths (4 of 5 m, 6 of 4 m, 19 of 2 m), 22 ropes and a litre of hot pitch |
+| Built from | a sheet of bark off a standing tree, 29 laths (4 of 5 m, 6 of 4 m, 19 of 2 m), 21 ropes and a litre of hot pitch |
 | Wreckage | bark and a stick |
 
 ## How it is built

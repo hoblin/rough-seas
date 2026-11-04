@@ -19,7 +19,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): her hull is the dugout's |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | with washstrakes 58 cm empty, 56 cm with its helmsman; without them 43 and 41; in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 271 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 262 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place; 1 flax twine binds up a ninth of her float's lashings |
 | [Her float](Hull-Condition#an-outriggers-float) | takes the knocks on its side on its lashings: with one aboard, losing 2 m/s into rock works nearly half of them loose, and 4 m/s tears them out and leaves her the dugout |
 | [Bilge](Bailing) | 1720 litres with washstrakes, 1298 without |
