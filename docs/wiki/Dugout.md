@@ -35,21 +35,23 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 
 ## How it is built
 
-Not in the crafting grid: in the world, on the shore, the way dugouts really were made. It is burnt out a fire at a time, and every fire is laid as you lay a campfire. She is the five logs from first to last: each hewing takes the char out of her hollow and a sixth of her outside away, the bark first, then her top down to a level sheer, her bottom round and her ends raked, so she turns from a squared trunk into a boat where the logs lay.
+You don't craft a dugout in the grid: you burn it out of five logs on the shore, a fire at a time, and lay every fire as you lay a campfire. The logs stay the boat from first to last. Each hewing takes the char out of the hollow and a sixth of the outside away: the bark first, then the top down to a level sheer, the bottom round and the ends raked, until the squared trunk is a boat where the logs lay.
 
-1. **Lay the logs.** Five logs of one wood on their sides, end to end along the shore, with water in the very next blocks, level with them or a block lower. Any wood, a modded tree's too, and redwood's log sections. Five logs of mixed woods stay a wall of logs.
+![The whole build, from five logs to the finished dugout](images/dugout/build-dugout.webp)
+
+1. **Lay the logs.** Lay five logs of one wood on their sides, end to end along the shore, with water in the very next blocks, level with them or one block lower. Any wood works, a modded tree's too, and so do redwood's log sections. Five logs of mixed woods stay a wall of logs.
 
    ![Five oak logs end to end at the water's edge](images/dugout/build-logs.webp)
 
-2. **Lay the fire's base.** Hold dry grass and Shift + right-click the top of the middle log, as you start a campfire. The logs become one blank where they lie, the whole trunk at its full size, the grass on it, ready for its first fire. Until then they stay logs, so a wall of logs never turns into a boat.
+2. **Lay the fire's base.** Hold dry grass and Shift + right-click the top of the middle log, as you start a campfire. The logs become one blank where they lie, the whole trunk at its full size, with the grass on it, ready for its first fire. Until then they stay logs, so a wall of logs never turns into a boat.
 
    ![The fresh blank on the shore](images/dugout/build-blank.webp)
 
-3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 22 balls round the top of the fresh trunk, fewer each fire as she narrows, 10 for the last. The blank's panel counts them.
+3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 22 balls for the fresh trunk, fewer each fire as it narrows, 10 for the last. The blank's panel counts them.
 
    ![Wet clay all along the rim](images/dugout/build-clay.webp)
 
-4. **Build the fire.** Right-click with firewood four times, as you build a campfire on its grass. The wood lies along the blank.
+4. **Build the fire.** Right-click the blank with firewood four times, as you build a campfire on its grass. The wood lies along the blank.
 
    ![Firewood laid along the blank](images/dugout/build-laid.webp)
 
@@ -57,29 +59,29 @@ Not in the crafting grid: in the world, on the shore, the way dugouts really wer
 
    ![The fire burning along the blank](images/dugout/build-fire.webp)
 
-6. **Hew out the char.** Once the fire is out, the hollow is black with char. Hold right-click with an axe: you swing again and again, and the char comes away down to sound wood, and a sixth of her outside with it. It tires you as hard work does.
+6. **Hew out the char.** Once the fire is out, the hollow is black with char. Hold right-click on it with an axe: you swing again and again, and the char comes away down to sound wood, with a sixth of the outside. It tires you as hard work does.
 
    | | |
    | --- | --- |
    | ![The charred hollow](images/dugout/build-charred.webp) | ![Three hewings in: bark gone, sides rounding, ends drawing in](images/dugout/build-hewing.webp) |
    | Charred, ready to hew | Three hewings in |
 
-7. **Again, until six fires have burned.** Clay, dry grass and four firewood in the hollow, light, hew. Each fire takes the hollow deeper, and the sixth finishes her.
+7. **Repeat until six fires have burned.** Clay the rim, lay dry grass and four firewood in the hollow, light it and hew. Each fire takes the hollow deeper, and the sixth finishes the dugout.
 
    | | |
    | --- | --- |
    | ![The first hollow cut](images/dugout/build-hewn.webp) | ![Four fires in, the hollow charred deep](images/dugout/build-deep.webp) |
    | One fire in, hewn | Four fires in, charred |
 
-8. **Push her in** with Shift and a right-click, an empty hand, standing on the shore side. A blank is the whole square trunk, more than three tonnes of oak, and barely moves; the finished hull, a thirteenth of that, slides in. A few friends push sooner.
+8. **Push it in.** Stand on the shore side and Shift + right-click the dugout with an empty hand. A blank is the whole square trunk, more than three tonnes of oak, and barely moves; the finished hull, a thirteenth of that, slides in. A few friends push sooner.
 
-   ![Finished, on the shore](images/dugout/ashore-quarter.webp)
+   ![Finished, on the shore](images/dugout/build-finished.webp)
 
-**Never light a fire without clay.** Nothing stops you, but with the rim bare the fire burns it too, and by the time it dies it has charred right through the sides. What you find is not a hollow but a crooked log, black all over: a spoiled blank. Nothing more can be done with it but to break it up with an axe for firewood.
+**Never light a fire without clay.** Nothing stops you, but with the rim bare the fire burns it too, and by the time it dies it has charred right through the sides. What you find is not a hollow but a crooked log, black all over: a spoiled blank. All you can do with it is break it up with an axe for firewood.
 
 ![A spoiled blank, charred all over](images/dugout/build-spoiled.webp)
 
-She floats, and an axe breaks her up, at every stage, so a half-built dugout can be launched, or broken up for firewood. Her seats are there only once she is finished.
+The dugout floats at every stage and an axe breaks it up at every stage, so you can launch a half-built dugout or break it up for firewood. Its seats appear only once it is finished.
 
 ## Its neighbours
 

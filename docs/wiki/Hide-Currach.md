@@ -35,33 +35,35 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 
 ## How it is built
 
-A currach is built upside down where her gunwale is laid out on the ground, piece by piece, each piece drawn on her as it goes on.
+You build a currach upside down, where you lay its gunwale out on the ground, piece by piece. Each piece shows on the currach as you lay it.
 
-1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: her gunwales and stringers take 5 m laths, her nine longest ribs 3 m ones and the other thirteen 2 m ones.
-2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath: it lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay a second beside it, seventeen sixteenths of a block apart, a little over a metre, as far apart as her gunwale laths are drawn: one laid a sixteenth off is drawn onto its place when she is bound.
+![The whole build, from two laths to the currach turned over](images/currach/build-hide-currach.webp)
+
+1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: the gunwales and stringers take 5 m laths, the nine longest ribs 3 m ones and the other thirteen 2 m ones.
+2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath. It lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay a second one next to it, seventeen sixteenths of a block apart, a little over a metre, as far apart as the gunwale laths are drawn. A lath laid a sixteenth off is moved onto its place when you bind them.
 
    ![Two long laths laid side by side](images/currach/build-laths.webp)
 
-3. **Bind the ends.** Hold rope on the laths: the first rope draws their ends together at her bow where they lie, while astern they still run straight; the second draws them together at her stern and closes her gunwale.
+3. **Bind the ends.** Hold a rope on the laths: the first rope draws their ends together at the bow, while at the stern they still run straight. The second rope draws them together at the stern and closes the gunwale.
 
    | | |
    | --- | --- |
    | ![The bow bound, the stern ends still apart](images/currach/build-bow.webp) | ![The gunwale bound, lying upside down](images/currach/build-gunwale.webp) |
-   | The first rope, at her bow | The second, at her stern |
+   | The first rope, at the bow | The second, at the stern |
 
-4. **Frame her.** Hold wet laths on her: the ribs, bent over the gunwale from the middle out, then the stringers along them. Two days later the ribs have dried and her frame has set; until then no hide goes on.
+4. **Frame it.** Hold wet laths on the currach: the ribs, bent over the gunwale from the middle out, then the stringers along them. Two days later the ribs have dried and the frame has set; until then no hide goes on.
 
-   ![Her frame, upside down](images/currach/build-frame.webp)
+   ![The frame, upside down](images/currach/build-frame.webp)
 
-5. **Sew on hides.** Hold a hide on her: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. Her cover is eight parts of one small hide's area each; a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. A hide bigger than what is left of her cover is cut to fit, and the rest comes back to you as the smaller hides it still makes. Four ropes lace the cover to her gunwale, and a 2 m pole set across her is her thwart. Last, ship her two [thole oars](Recipes#thole-oar), one on each thole pin: hold one on her and right-click. They stay aboard from then on, as on Aran, where they came off only to dry.
+5. **Sew on hides.** Hold a hide on the currach: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. The cover is eight parts of one small hide's area each: a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. A hide bigger than what is left of the cover is cut to fit, and you get the rest back as the smaller hides it still makes. Hold four ropes on it to lace the cover to the gunwale, and a 2 m pole to set the thwart across it. Last, ship its two [thole oars](Recipes#thole-oar), one on each thole pin: hold one on the currach and right-click. They stay aboard from then on, as on Aran, where they came off only to dry.
 
    ![Covered and laced, still upside down](images/currach/build-covered.webp)
 
-6. **Turn her over.** Right-click her with an empty hand. She takes her seat once she is the right way up; grease her with rendered fat before she goes afloat, or her seams seep.
+6. **Turn it over.** Right-click the currach with an empty hand. It takes its seat once it is the right way up. Grease it with rendered fat before it goes afloat, or its seams seep.
 
    ![Turned over and finished](images/currach/build-turned.webp)
 
-The hides she is sewn from decide how long she lasts afloat ([Seeping and soaking](Hull-Condition#seeping-and-soaking)): untanned hide rots within days in warm water unless dried ashore, prepared hide lasts years. A currach from before the build loads finished, the right way up, covered in prepared hide.
+The hides you sew it from decide how long the currach lasts afloat ([Seeping and soaking](Hull-Condition#seeping-and-soaking)): untanned hide rots within days in warm water unless dried ashore, prepared hide lasts years. A currach from before the build loads finished, the right way up, covered in prepared hide.
 
 ## Its neighbours
 

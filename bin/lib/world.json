@@ -12,8 +12,12 @@
       "what": "A sand flat under 1 m of water on the spawn island's west shore, temperate (47°). The bed shelves west: 4 m at x -108, 5 m at -112, 7 m at -120, 11 m at -132. A sand beach rises to the east."
     },
     "beach": {
-      "at": [-2970, 113, 9646],
-      "what": "A grassy, flat strip at y111, two blocks above the water, subtropical (30°, about 18 °C in spring): room to build from x -2986 to -2946. The sea is to the south, shallow for 20 blocks (2-9 m) before it deepens."
+      "at": [-3298, 112, 9842],
+      "what": "The build site: a sand spit in a calm freshwater lagoon, subtropical and wet (30°, about 21 °C in spring), its sand flush with the water at y109 from x -3312 to -3292 and z 9840 to 9844, so a vessel laid on it lies by the water, as the reed boat and the dugout ask. Water a metre deep all round, with lily pads; a birch stands at -3306 9843, the builds go east of it."
+    },
+    "lagoon": {
+      "at": [-3298, 111, 9850],
+      "what": "Open water in the beach zone's lagoon, just south of its sand spit: a vessel afloat on calm fresh water with the spit, its birch and the reeds behind her, for the wiki's afloat pictures."
     },
     "current": {
       "at": [-2900, 111, -2700],

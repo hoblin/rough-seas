@@ -35,30 +35,29 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 
 ## How it is built
 
-A coracle is built where its laths are laid out on the ground, piece by piece, each piece drawn on her as it goes on.
+You build a coracle where you lay its laths out on the ground, piece by piece. Each piece shows on the coracle as you lay it.
 
-1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for her lattice and three 5 m ones for her gunwale. Laths bend only wet: two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground or in her as in the bundle.
-2. **Lay the lattice.** Hold Shift and right-click the ground with a wet lath: it lies at its full length where you aim, along the way you face. A lath lies where you aim, to the sixteenth of a block. Lay seven side by side, an eighth of a block apart, then seven across them, three sixteenths of a block apart, each crossing all seven beneath it: that is how her bottom draws them, so binding moves no lath. One laid a sixteenth off is drawn onto its place when she is bound; further off, the laths stay laths. A lath laid wrong comes back to an empty hand with Shift + right-click.
+![The whole build, from the lattice to the finished coracle](images/coracle/build-coracle.webp)
+
+1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for the lattice and three 5 m ones for the gunwale. Laths bend only when wet: soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground, in the coracle or in the bundle.
+2. **Lay the lattice.** Hold Shift and right-click the ground with a wet lath. It lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay seven side by side, an eighth of a block apart, then seven across them, three sixteenths of a block apart, each crossing all seven beneath it. That is how the coracle's bottom draws them, so binding moves no lath. A lath laid a sixteenth off is moved onto its place when you bind the lattice; further off, the laths stay laths. To take back a lath laid wrong, Shift + right-click it with an empty hand.
 
    ![Fourteen wet laths laid out as a lattice](images/coracle/build-laths.webp)
 
-3. **Bind the crossings.** Hold rope on the lattice: the first rope ties it into the coracle where it lies, and two more tie the rest of the crossings on her bottom. Laths laid any other way, or of two woods, stay laths.
+3. **Bind the crossings.** Hold a rope on the lattice: the first rope ties it into the coracle where it lies, and two more tie the rest of the crossings on its bottom. Laths laid any other way, or of two woods, stay laths.
 
    ![The lattice bound](images/coracle/build-bound.webp)
 
-4. **Plait the gunwale.** Hold the 5 m laths on her: the first bends the lattice's ends up into her bowl, and three plaits make her gunwale. Two days later the laths have dried and her frame has set; until then no hide goes on.
+4. **Plait the gunwale.** Hold the 5 m laths on the coracle. The first bends the lattice's ends up into a bowl, and three plaits make the gunwale. Two days later the laths have dried and the frame has set; until then no hide goes on.
 
    ![The gunwale plaited and the lattice bent up](images/coracle/build-gunwale.webp)
 
-5. **Sew on hides.** Hold a hide on her: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. Her cover is two parts of one small hide's area each; a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. A hide bigger than what is left of her cover is cut to fit, and the rest comes back to you as the smaller hides it still makes.
-
-   ![Half her cover sewn](images/coracle/build-cover.webp)
-
-6. **Lace the cover.** Two ropes lace the hide to the gunwale. Her hold holds water only once it is laced, and she is finished: grease her with rendered fat before she goes afloat, or her seams seep.
+5. **Sew on hides.** Hold a hide on the coracle: any hide before it is leather, raw, salted, soaked, scraped, prepared, oiled or a pelt. The cover is two parts of one small hide's area each: a small hide covers one part, a medium two, a large three, a huge five, and takes as much longer to sew. Each part is one half of the coracle, side to side. A hide bigger than what is left of the cover is cut to fit, and you get the rest back as the smaller hides it still makes.
+6. **Lace the cover.** Hold two ropes on the coracle to lace the hide to the gunwale. The hold keeps water out only once it is laced, and the coracle is finished. Grease it with rendered fat before it goes afloat, or its seams seep.
 
    ![Laced and finished](images/coracle/build-laced.webp)
 
-The hide she is sewn from decides how long she lasts afloat ([Seeping and soaking](Hull-Condition#seeping-and-soaking)): untanned hide rots within days in warm water unless dried ashore, prepared hide lasts years. A coracle from before the build loads finished, covered in prepared hide.
+The hide you sew it from decides how long the coracle lasts afloat ([Seeping and soaking](Hull-Condition#seeping-and-soaking)): untanned hide rots within days in warm water unless dried ashore, prepared hide lasts years. A coracle from before the build loads finished, covered in prepared hide.
 
 ## Its neighbours
 

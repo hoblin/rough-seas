@@ -36,28 +36,30 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 
 ## How it is built
 
-A reed boat is bound where its bundles lie, by the water, each binding drawn on her as it goes on.
+You bind a reed boat where its bundles lie, by the water. Each binding shows on the boat as you tie it.
 
-1. **Bind two bundles.** In the crafting grid, 144 cattail tops, papyrus tops or thatch and two ropes make a three-metre bundle, tied every quarter metre; the knife cuts and trims ([recipe](Recipes#reed-bundle)). A bundle is of the plant it was bound from, and keeps its colour: olive cattail, green papyrus or straw-pale tule.
-2. **Lay them by the water.** Place a bundle on the ground beside the water, level with it or a block above: it lies along the way you look. Place the second on it, and it lies beside the first, of the same plant or another. They lie as long as they are, three blocks.
+![The whole build, from one bundle to the finished boat](images/reed-boat/build-reed-boat.webp)
+
+1. **Bind two bundles.** In the crafting grid, 144 cattail tops, papyrus tops or thatch and two ropes make a three-metre bundle, tied every quarter metre; the knife cuts and trims ([recipe](Recipes#reed-bundle)). A bundle keeps the colour of its plant: olive cattail, green papyrus or straw-pale tule.
+2. **Lay them by the water.** Place a bundle on the ground next to the water, level with it or one block above. It lies along the way you look. Place the second bundle on it, and it lies next to the first, of the same plant or another. Each bundle is three blocks long.
 
    ![One bundle laid by the water](images/reed-boat/build-bundle.webp)
    ![The pair side by side](images/reed-boat/build-pair.webp)
 
-3. **Bind them into a boat.** Hold rope on the pair: the first lashing goes around both, and they are the boat, where they lay. She floats and can be carried from now on, but has no seat yet.
+3. **Tie them into a boat.** Hold a rope on the pair. The first lashing goes around both bundles, and they become the boat where they lie. From now on the boat floats and can be carried, but has no seat yet.
 
    ![The first lashing](images/reed-boat/build-bound.webp)
 
-4. **Lash her.** Hold a second rope on her to finish the lashings along her length.
+4. **Lash the boat.** Hold a second rope on it to lash it along its length.
 
-   ![Lashed along her length](images/reed-boat/build-lashed.webp)
+   ![Lashed along its length](images/reed-boat/build-lashed.webp)
 
-5. **Bind up her ends.** Hold a rope on her for each end: it is drawn together and bound up into a point, one end at a time. With both ends up she is finished and takes her rider.
+5. **Bind up the ends.** Hold a rope on the boat for each end, and the end is drawn together and bound up into a point. With both ends up, the boat is finished and takes a rider.
 
-   ![The bow bound up](images/reed-boat/build-bow.webp)
+   ![One end bound up](images/reed-boat/build-bow.webp)
    ![Finished](images/reed-boat/build-finished.webp)
 
-Carry her to the water and row away. Each of her sides stays the bundle it was, in its plant's colour, with both plants' stems bound together in her ends, and when she breaks up each bundle leaves the tops it was bound from. A reed boat from before the build loads finished, and one from before bundles kept their plant is of cattail.
+Carry it to the water and row away. Each side of the boat stays the bundle it was, in its plant's colour, with both plants' stems bound together in the ends. When the boat breaks up, each bundle leaves the tops it was bound from. A reed boat from before the build loads finished, and one from before bundles kept their plant is of cattail.
 
 ## Its neighbours
 
