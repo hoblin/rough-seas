@@ -11154,8 +11154,8 @@
     {
      "frame": 0,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 112, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -112, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 105.44, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -105.44, "rotationZ": -10.48 }
      }
     }
    ]
@@ -11170,106 +11170,106 @@
     {
      "frame": 0,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 136.0, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -136.0, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 140.0, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -140.0, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 2,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 132.78, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -132.78, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 135.37, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -135.37, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 4,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 124.0, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -124.0, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 122.72, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -122.72, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 6,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 112.0, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -112.0, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 105.44, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -105.44, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 8,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 100.0, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -100.0, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 88.16, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -88.16, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 10,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 91.22, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -91.22, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 75.52, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -75.52, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 12,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 88.0, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -88.0, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 70.89, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -70.89, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 14,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 89.45, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -89.45, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 72.97, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -72.97, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 16,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 93.61, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -93.61, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 78.97, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -78.97, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 18,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 100.0, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -100.0, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 88.16, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -88.16, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 20,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 107.83, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -107.83, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 99.44, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -99.44, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 22,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 116.17, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -116.17, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 111.44, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -111.44, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 24,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 124.0, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -124.0, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 122.72, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -122.72, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 26,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 130.39, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -130.39, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 131.92, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -131.92, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 28,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 134.55, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -134.55, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 137.92, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -137.92, "rotationZ": -10.48 }
      }
     }
    ]
@@ -11284,106 +11284,106 @@
     {
      "frame": 0,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 136.0, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -136.0, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 140.0, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -140.0, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 2,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 134.55, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -134.55, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 137.92, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -137.92, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 4,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 130.39, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -130.39, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 131.92, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -131.92, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 6,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 124.0, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -124.0, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 122.72, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -122.72, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 8,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 116.17, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -116.17, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 111.44, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -111.44, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 10,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 107.83, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -107.83, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 99.44, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -99.44, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 12,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 100.0, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -100.0, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 88.16, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -88.16, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 14,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 93.61, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -93.61, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 78.97, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -78.97, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 16,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 89.45, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -89.45, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 72.97, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -72.97, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 18,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 88.0, "rotationZ": -10.2 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -88.0, "rotationZ": -3.57 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 70.89, "rotationZ": -13.39 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -70.89, "rotationZ": -10.48 }
      }
     },
     {
      "frame": 20,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 91.22, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -91.22, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 75.52, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -75.52, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 22,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 100.0, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -100.0, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 88.16, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -88.16, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 24,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 112.0, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -112.0, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 105.44, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -105.44, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 26,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 124.0, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -124.0, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 122.72, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -122.72, "rotationZ": -36.46 }
      }
     },
     {
      "frame": 28,
      "elements": {
-      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 132.78, "rotationZ": -39.06 },
-      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -132.78, "rotationZ": -32.43 }
+      "OarStarboard": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 90, "rotationY": 135.37, "rotationZ": -39.38 },
+      "OarPort": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -90, "rotationY": -135.37, "rotationZ": -36.46 }
      }
     }
    ]

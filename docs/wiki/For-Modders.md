@@ -188,7 +188,7 @@ New: `IOutboard` with `OffMetres`, `IHull.Reach`, `HullShape.Spanning`, `EntityB
 Her rower sits where a real Aran rower does: facing her stern, pulling his oars on pins that stand just abaft his thwart.
 
 - Our vessels' seats are `VesselSeat`, vanilla's boat seat turned by its `mountRotation`: the rider's body, head and camera face that way. Vanilla turns only the limits a body is held in. The currach's seat has `mountRotation` y 180.
-- Her thwart, seat and thole pins moved: the `BackSeat` box is at x 2.12 to 10.12, its point on the thwart; the cargo boxes lie two forward of the rower and one aft of his feet. Her `spanMetres` is 3.76 and her `sweepMetres` 1.3.
+- Her thwart, seat and thole pins moved: the `BackSeat` box is at x 2.12 to 10.12, its point on the thwart; the cargo boxes lie two forward of the rower and one aft of his feet. Her `spanMetres` is 3.66 and her `sweepMetres` 1.3.
 - Her oars pivot on their pins through the bull on the loom's after side, the loom lying on her gunwale, their looms reach from the pin to her middle, and their blades stand upright, face to the water they push.
 
 New: `RoughSeas.Vessels.VesselSeat`, and a seat's `mountRotation` read by `bin/lib/hulls/stroke.py`.

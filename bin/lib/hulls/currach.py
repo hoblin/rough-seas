@@ -4,7 +4,8 @@ import statistics
 from physics import MASS, afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
 from held import POLE, poling, tools, waterline
-from stroke import crew, drive_share, moved, player_patch, seat, strokes
+from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, seat, strokes
+from transform import direct, unapply
 from wounds import wound
 
 CENTRE = 8
@@ -40,16 +41,18 @@ GRIP = 0.115 * VOXELS_A_METRE
 LOOM_END = 14
 BLADE = 16
 BLADE_BREADTH = 1.6
-# One hand over the other where the grips cross.
-HANDS_APART = 1.2
+# One hand over the other where the grips cross, a hand's thickness apart: 3.3 cm (NASA-STD-3000, hand thickness at
+# the metacarpals of a 50th-percentile man).
+HAND_THICKNESS = 0.033 * VOXELS_A_METRE
 FRAMES = 30
-# The arc and the swing of his back, fitted to his arms (arm.py).
-SWEEP_DEGREES = 24
-SWEEP_MIDDLE = 112
-LEAN = 18
-SWING = 12
-COVER = 1
-CLEAR = 2
+# The trunk from the vertical, forward at the catch and back at the finish: the world's best rowers, 22.5° and 25°
+# (Kleshnev, row2k 2014, video of 25 small-boat rowers).
+CATCH_LEAN = 22.5
+FINISH_LEAN = -25
+# A fixed-seat stroke sweeps some 50° forward of square at the catch and 35° aft of it at the finish (gigrower.co.uk,
+# 2010; John Welsford's skiffs), unless the rower's reach or his chest stops it sooner.
+CATCH_DEGREES = 50
+FINISH_DEGREES = 35
 DIP_SHARPNESS = 3
 
 # A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
@@ -223,14 +226,29 @@ def oar(name, side, rest):
     ])
 
 
-def pitches(rests):
+def pitches(rests, chest):
     rest = next(iter(rests.values()))
     outboard = OAR - inboard(rest) - GRIP
     above = rest[1] - waterline("currach") * VOXELS_A_METRE
-    apart = math.degrees(math.asin(HANDS_APART / 2 / (inboard(rest) + GRIP / 2)))
-    drive = -math.degrees(math.asin((above + COVER + BLADE_BREADTH / 2) / (outboard - BLADE))) - apart
-    recovery = -math.degrees(math.asin((above - CLEAR - BLADE_BREADTH / 2) / outboard)) + apart
+    hand = inboard(rest) + GRIP / 2
+    apart = math.degrees(math.asin(HAND_THICKNESS / 2 / hand))
+    drive = -math.degrees(math.asin((chest - rest[1]) / hand))
+    recovery = -math.degrees(math.asin((above - BLADE_BREADTH / 2) / outboard)) + apart
     return {name: (recovery + side * apart, drive + side * apart) for name, side in OARS.items()}
+
+
+def chest_height(shape):
+    rower = Rower(seat(shape, "BackSeat"), "roughseas-sitthwart", facing(shape, "currach", "BackSeat"))
+    matrices = posed(rower.seraph["elements"], lambda name: rower.idle.get(name, {}))
+    return 16 * unapply(rower.placing, [c / 16 for c in centre(rower.seraph["elements"], matrices, "UpperTorso")])[1]
+
+
+def blade_square_metres(rests, chest):
+    rest = next(iter(rests.values()))
+    outboard = OAR - inboard(rest) - GRIP
+    above = rest[1] - waterline("currach") * VOXELS_A_METRE
+    wet = [min(BLADE, max(0.0, outboard - above / math.sin(math.radians(-drive)))) for _, drive in pitches(rests, chest).values()]
+    return statistics.fmean(wet) / VOXELS_A_METRE * BLADE_BREADTH / VOXELS_A_METRE
 
 
 def rowing_station(hull):
@@ -258,20 +276,61 @@ def depth(u):
     return min(1.0, DIP_SHARPNESS * math.sin(math.pi * u / drive)) if u < drive else 0.0
 
 
-def rowing(rests):
-    pitched = pitches(rests)
+def oar_pose(rests, name, side, yaw, pitch):
+    return moved(rests[name], (side * 90, 0, 0), rests[name], {"rotationY": -side * yaw, "rotationZ": pitch})
+
+
+def grip_at(rests, yaw, pitch):
+    oars = [oar(name, side, rests[name]) for name, side in OARS.items()]
+    matrices = posed(oars, lambda name: oar_pose(rests, name, OARS[name], yaw, pitch) if name in OARS else {})
+    return centre(oars, matrices, "OarPortGrip")
+
+
+def solve(low, high, too_far):
+    for _ in range(40):
+        middle = (low + high) / 2
+        low, high = (low, middle) if too_far(middle) else (middle, high)
+    return (low + high) / 2
+
+
+def arc(shape, rests, chest):
+    rower = Rower(seat(shape, "BackSeat"), "roughseas-sitthwart", facing(shape, "currach", "BackSeat"))
+    arm = rower.arms["R"]
+    reach = 16 * (math.dist((0, 0, 0), arm.humerus) + math.dist((0, 0, 0), arm.forearm))
+    drive = pitches(rests, chest)["OarPort"][1]
+
+    def shape_point(point):
+        return tuple(16 * c for c in unapply(rower.placing, point))
+
+    shoulder = shape_point(arm.joints({"UpperTorso": {"rotationZ": CATCH_LEAN}})[0])
+    catch = solve(90, 90 + CATCH_DEGREES, lambda yaw: math.dist(shoulder, grip_at(rests, yaw, drive)) > reach)
+    leaning = {"UpperTorso": {"rotationZ": FINISH_LEAN}}
+    matrices = posed(rower.seraph["elements"], lambda name: leaning.get(name) or rower.idle.get(name, {}))
+    torso = find(rower.seraph["elements"], "UpperTorso")
+    forward = direct(matrices["UpperTorso"], (-1, 0, 0))
+    middle = centre(rower.seraph["elements"], matrices, "UpperTorso")
+    depth = (torso["to"][0] - torso["from"][0]) / 2
+    body = shape_point([(m + depth * f) / 16 for m, f in zip(middle, forward)])[0] + HAND_THICKNESS
+    finish = solve(90 - FINISH_DEGREES, 90, lambda yaw: grip_at(rests, yaw, drive)[0] > body)
+    print(f"stroke: catch {catch - 90:.0f}° forward of square, leaning {CATCH_LEAN}°; finish {90 - finish:.0f}° aft of it,"
+          f" leaning {-FINISH_LEAN}° back")
+    return (catch + finish) / 2, (catch - finish) / 2
+
+
+def rowing(rests, chest, sweep_middle, sweep_degrees):
+    pitched = pitches(rests, chest)
 
     def pose(sweep_at, depth_at):
         def at(frame):
             u = frame / FRAMES
-            yaw = SWEEP_MIDDLE - SWEEP_DEGREES * sweep_at(u)
+            yaw = sweep_middle - sweep_degrees * sweep_at(u)
             return {name: moved(rests[name], (side * 90, 0, 0), rests[name],
                                 {"rotationY": -side * yaw, "rotationZ": pitched[name][0] + (pitched[name][1] - pitched[name][0]) * depth_at(u)})
                     for name, side in OARS.items()}
         return at
 
     def swing(sweep_at):
-        return lambda frame: {"rotationZ": LEAN - SWING * sweep_at(frame / FRAMES)}
+        return lambda frame: {"rotationZ": (CATCH_LEAN + FINISH_LEAN) / 2 - (CATCH_LEAN - FINISH_LEAN) / 2 * sweep_at(frame / FRAMES)}
 
     rowed = strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
                     pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)), stroke="rowing")
@@ -280,11 +339,11 @@ def rowing(rests):
     return rowed
 
 
-def blade_span(rests):
+def blade_span(rests, chest, sweep_middle, sweep_degrees):
     drive = drive_share("rowing")
-    abeam = statistics.fmean(math.sin(math.radians(SWEEP_MIDDLE - SWEEP_DEGREES * sweep(drive * k / 100))) for k in range(100))
+    abeam = statistics.fmean(math.sin(math.radians(sweep_middle - sweep_degrees * sweep(drive * k / 100))) for k in range(100))
     across = [inboard(rest) + (OAR - inboard(rest) - GRIP - BLADE / 2) * math.cos(math.radians(pitched)) * abeam
-              for rest, (_, pitched) in zip(rests.values(), pitches(rests).values())]
+              for rest, (_, pitched) in zip(rests.values(), pitches(rests, chest).values())]
     return sum(across) / VOXELS_A_METRE
 
 
@@ -312,13 +371,16 @@ def build(path_):
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
-    rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests), {"R": "OarPortGrip", "L": "OarStarboardGrip"},
+    chest = chest_height(shape)
+    middle, degrees = arc(shape, rests, chest)
+    rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests, chest, middle, degrees), {"R": "OarPortGrip", "L": "OarStarboardGrip"},
                  {"rotationZ": 12})
     at = seat(shape, "BackSeat")
     player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, waterline("currach"), {
         "pole": ("pole", POLE, poling(POLE, at, 3, 3, 3, 2 * CENTRE + 2, side=1)),
     }))
-    print(f"oars: {blade_span(rests):.2f} m from blade to blade across her")
+    print(f"oars: {blade_span(rests, chest, middle, degrees):.2f} m from blade to blade across her,"
+          f" {blade_square_metres(rests, chest):.3f} m² of blade under the water")
     report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()])
 
 
