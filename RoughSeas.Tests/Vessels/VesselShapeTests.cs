@@ -195,18 +195,6 @@ public class VesselShapeTests
         });
     }
 
-    [Theory]
-    [MemberData(nameof(Vessels))]
-    public void HasEveryStrokeItsRowerTakesUp(string vessel)
-    {
-        var strokes = Load(vessel).Entity["behaviorConfigs"]!["roughseas:propulsion"]?["strokes"];
-        if (strokes == null) return;
-
-        var registered = PlayerPatches().Where(op => op.Value<string>("path") == "/client/animations/-")
-            .Select(op => op["value"]!.Value<string>("code")).ToHashSet();
-        Assert.All(strokes.SelectTokens("*.*").Select(code => code.Value<string>()), code => Assert.Contains(code, registered));
-    }
-
     [Fact]
     public void KeysEveryAxisOfWhatEachStrokeMoves()
     {

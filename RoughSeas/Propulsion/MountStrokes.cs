@@ -7,11 +7,12 @@ namespace RoughSeas.Propulsion;
 public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> strokes, VesselsModSystem vessels)
 {
     private const string Ready = "ready";
+    private const string Forwards = "forwards";
     private const string Change = "change";
-    private static readonly string[] Keys = [Ready, "forwards", "backwards"];
+    private static readonly string[] Keys = [Ready, Forwards, "backwards"];
 
     private bool shown;
-    private (string? Kind, bool Changing) showing;
+    private (string? Kind, bool Changing, bool Sweeping) showing;
 
     public bool Sided(Tool? tool) => tool != null && strokes.ContainsKey(OnSide(tool.Kind, Side.Port));
 
@@ -21,9 +22,11 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
         : ownOars && strokes.ContainsKey(RowerStation.OwnOars) ? RowerStation.OwnOars
         : null;
 
-    public void Show(EntityBoat boat, string? wanted, bool changing)
+    /// <param name="sweeping">A sided paddle turning her where she lies: it sweeps forward on the side that turns her, whichever
+    /// way vanilla's keys would row.</param>
+    public void Show(EntityBoat boat, string? wanted, bool changing, bool sweeping)
     {
-        if (shown && showing == (wanted, changing)) return;
+        if (shown && showing == (wanted, changing, sweeping)) return;
 
         var seats = boat.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
         foreach (var key in Keys)
@@ -32,9 +35,9 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
             {
                 foreach (var seat in seats) seat.Passenger?.AnimManager?.StopAnimation(playing);
             }
-            boat.MountAnimations[key] = wanted == null ? "" : strokes[wanted][changing && key != Ready ? Change : key];
+            boat.MountAnimations[key] = wanted == null ? "" : strokes[wanted][changing && key != Ready ? Change : sweeping && key != Ready ? Forwards : key];
         }
-        (shown, showing) = (true, (wanted, changing));
+        (shown, showing) = (true, (wanted, changing, sweeping));
         vessels.Log(boat, wanted == null ? "strokes stowed" : changing ? "changes to the {0}" : "strokes of the {0}", wanted ?? "");
     }
 

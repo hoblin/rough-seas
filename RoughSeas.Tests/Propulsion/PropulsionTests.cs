@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using RoughSeas.Propulsion;
 using RoughSeas.Tests.Storms;
 using RoughSeas.Vessels;
@@ -8,6 +9,7 @@ public class PropulsionTests
 {
     private const double StepSeconds = 0.05;
     private const double PoleDensity = 600;
+    private const int ChangeStrokes = 1;
 
     [Fact]
     public void ABarkCanoeWithAPaddleCruisesAtACanoesPace()
@@ -161,9 +163,28 @@ public class PropulsionTests
     [Theory]
     [InlineData("barkcanoe", 3, 5)]
     [InlineData("outrigger", 8, 20)]
-    public void HoldingHerCourseSheChangesSidesAsOftenAsRealPaddlersDo(string vessel, double least, double most)
+    public void HoldingHerCourseHeChangesSidesAsOftenAsRealPaddlersDo(string vessel, double least, double most)
     {
         Assert.InRange(StrokesASide(vessel), least, most);
+    }
+
+    [Theory]
+    [InlineData("dugout")]
+    [InlineData("outrigger")]
+    [InlineData("barkcanoe")]
+    [InlineData("reedboat")]
+    [InlineData("coracle")]
+    [InlineData("currach")]
+    [InlineData("boat-raft")]
+    public void HasEveryStrokeItsRowerTakesUp(string vessel)
+    {
+        var registered = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "patches"), "player-*.json")
+            .SelectMany(file => JArray.Parse(File.ReadAllText(file)))
+            .Where(op => op.Value<string>("path") == "/client/animations/-")
+            .Select(op => op["value"]!.Value<string>("code")).ToHashSet();
+
+        Assert.All(Fixtures.PropulsionOf(vessel)["strokes"]!.SelectTokens("*.*").Select(code => code.Value<string>()),
+            code => Assert.Contains(code, registered));
     }
 
     [Fact]
@@ -201,20 +222,16 @@ public class PropulsionTests
         return speed;
     }
 
-    private static double StrokesASide(string vessel) => Zigzag(vessel, Fixtures.Propulsion.Strokes["paddling"].VeerDegrees).Strokes;
-
-    private static (double Strokes, double Swing) Zigzag(string vessel, double veerDegrees)
+    private static double StrokesASide(string vessel)
     {
         var propulsor = Paddled(vessel);
         var drag = Drag(vessel);
-        var paddler = new Paddler(veerDegrees);
+        var paddler = new Paddler(Fixtures.Propulsion.Strokes["paddling"].VeerDegrees);
         var strokeSeconds = 60 / propulsor.Stroke.StrokesPerMinute;
         double speed = 0, turn = 0, yaw = 0;
         var changes = new List<double>();
-        var swing = 0.0;
         for (var t = 0.0; t < 600; t += StepSeconds)
         {
-            if (t > 60) swing = Math.Max(swing, Math.Abs(yaw) * 180 / Math.PI);
             paddler.Lap(StepSeconds);
             if (paddler.Paddle(1, 0, (float)yaw, strokeSeconds) && t > 60) changes.Add(t);
             var push = paddler.Changing ? default : propulsor.Push(1, 0, paddler.Side, speed, turn, Watts(propulsor));
@@ -222,7 +239,8 @@ public class PropulsionTests
             turn += (push.NewtonMetres + drag.Turning(turn, speed)) / drag.TurningKgSquareMetres * StepSeconds;
             yaw += turn * StepSeconds;
         }
-        return ((changes[^1] - changes[0]) / (changes.Count - 1) / strokeSeconds - 1, swing);
+        var paddling = (changes[^1] - changes[0]) / (changes.Count - 1) / strokeSeconds;
+        return paddling - ChangeStrokes;
     }
 
     private static double Spin(string vessel, Propulsor propulsor)

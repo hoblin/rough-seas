@@ -14,7 +14,7 @@ public class PaddlerTests
     [InlineData(-1, 1, Side.Port)]
     [InlineData(1, -1, Side.Port)]
     [InlineData(-1, -1, Side.Starboard)]
-    public void ToTurnHerSheWorksTheSideThatTurnsHer(int ahead, int turn, Side side)
+    public void ToTurnHerHeWorksTheSideThatTurnsHer(int ahead, int turn, Side side)
     {
         var paddler = new Paddler(5);
 
@@ -24,7 +24,7 @@ public class PaddlerTests
     }
 
     [Fact]
-    public void HoldingHerCourseSheKeepsHerSideUntilSheVeersOffIt()
+    public void HoldingHerCourseHeKeepsHisSideUntilSheVeersOffIt()
     {
         var paddler = new Paddler(5);
         paddler.Paddle(1, 0, 0, StrokeSeconds);
@@ -35,7 +35,7 @@ public class PaddlerTests
     }
 
     [Fact]
-    public void ChangingSidesTakesHerAStroke()
+    public void ChangingSidesTakesHimAStroke()
     {
         var paddler = new Paddler(5);
         paddler.Paddle(1, -1, 0, StrokeSeconds);
@@ -50,7 +50,16 @@ public class PaddlerTests
     }
 
     [Fact]
-    public void BackingOffHerCourseSheChangesToTheSideThatBacksHerBack()
+    public void GoingAsternAfterAheadHeTakesANewCourse()
+    {
+        var paddler = new Paddler(5);
+        paddler.Paddle(1, 0, 0, StrokeSeconds);
+
+        Assert.False(paddler.Paddle(-1, 0, Veer * 1.1f, StrokeSeconds));
+    }
+
+    [Fact]
+    public void BackingOffHerCourseHeChangesToTheSideThatBacksHerBack()
     {
         var paddler = new Paddler(5);
         paddler.Paddle(-1, 0, 0, StrokeSeconds);

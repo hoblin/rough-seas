@@ -15,8 +15,8 @@ public abstract class Propulsor(Stroke stroke)
 }
 
 /// <summary>
-/// A tool worked over one side, <paramref name="abeamMetres"/> out from her middle: what drives her along it turns her
-/// away from that side.
+/// A tool in the rower's hands. Worked <paramref name="abeamMetres"/> out from her middle on one side, what drives her
+/// along turns her away from that side; at none it drives her straight.
 /// </summary>
 public sealed class HeldTool(Stroke stroke, double sweepMetres, double abeamMetres = 0) : Propulsor(stroke)
 {

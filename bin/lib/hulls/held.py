@@ -130,7 +130,7 @@ def eased(u):
     return 0.5 - 0.5 * math.cos(math.pi * min(1, max(0, u)))
 
 
-def paddling(tool, at, ahead, behind, above, out, lift=6, catch=None, fore=3):
+def paddling(tool, at, ahead, behind, above, out, catch=None, fore=3):
     x, y, z = at
     catch = ahead if catch is None else catch
     sides = {-1: out, 1: 2 * z - out}
@@ -157,7 +157,7 @@ def paddling(tool, at, ahead, behind, above, out, lift=6, catch=None, fore=3):
             across, regrip = eased(u), eased((u - 0.2) / 0.6)
             hand = [s + (e - s) * across for s, e in zip(start, end)]
             hand[0] -= fore * math.sin(math.pi * u)
-            hand[1] += lift * math.sin(math.pi * u)
+            hand[1] += 6 * math.sin(math.pi * u)
             return placed(hand, lean * (1 - 2 * across), -95) | {
                 RIGHT: {"offsetX": (tool.left[0] - tool.right[0]) * regrip, "offsetY": 2 * math.sin(math.pi * regrip), "offsetZ": 0},
                 LEFT: {"offsetX": (tool.right[0] - tool.left[0]) * regrip, "offsetY": 0, "offsetZ": 0}}

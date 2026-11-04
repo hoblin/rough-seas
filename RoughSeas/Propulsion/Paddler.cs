@@ -12,12 +12,13 @@ public enum Side
 /// <summary>
 /// The side a single blade works on. Paddled on one side she turns away from it, so the paddler holds a course by
 /// changing sides once she has veered off it by <paramref name="veerDegrees"/>, and turns her by paddling on the side
-/// that turns her. A change of sides takes one stroke, the paddle carried over the bow while her hands change grips.
+/// that turns her. A change of sides takes one stroke, the paddle carried over the bow while his hands change grips.
 /// </summary>
 public sealed class Paddler(double veerDegrees)
 {
     private readonly float veerRadians = (float)(veerDegrees * GameMath.DEG2RAD);
     private float? course;
+    private int going;
     private double changing;
     private double onThisSide;
 
@@ -25,10 +26,11 @@ public sealed class Paddler(double veerDegrees)
 
     public bool Changing => changing > 0;
 
-    /// <returns>Whether she starts changing sides.</returns>
+    /// <returns>Whether he starts changing sides.</returns>
     public bool Paddle(int ahead, int turn, float yaw, double strokeSeconds)
     {
-        course = ahead == 0 || turn != 0 ? null : course ?? yaw;
+        var holding = ahead != 0 && turn == 0;
+        (course, going) = (holding ? (ahead == going ? course : null) ?? yaw : null, ahead);
         var wanted = Wanted(ahead, turn != 0 ? turn : Correction(yaw));
         if (Changing || wanted == Side) return false;
 

@@ -375,6 +375,7 @@ def build(target):
     shape.keep("LowerMastStorage", "OarStorage")
     wound(shape, [("", [shell], WOOD)])
     shape.write()
+    # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", catch=5, fore=1)
     report(hull, passes["children"][-1])
 

@@ -72,17 +72,18 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var propulsor = sailing || boat.SpeedMultiplier <= 0 ? null : station.Propulsor(tool, out refusal);
         var ahead = Math.Sign(vanilla.X);
         var turn = Math.Sign(vanilla.Y);
-        var stroking = propulsor != null && (ahead != 0 || turn != 0) && boat.Swimming;
+        var trying = propulsor != null && (ahead != 0 || turn != 0);
+        var stroking = trying && boat.Swimming;
         var sided = strokes.Sided(tool);
         if (boat.World.Side == EnumAppSide.Server)
         {
-            if (stroking && sided) Paddle(boat, rower, ahead, turn, propulsor!.Stroke);
-            else if (!sided || ahead == 0 && turn == 0) paddler.Rest();
+            if (!trying || !sided) paddler.Rest();
+            else if (stroking) Paddle(boat, rower, ahead, turn, propulsor!.Stroke);
             Publish();
         }
         var side = (Side)boat.WatchedAttributes.GetInt(PaddleSideKey, (int)Side.Starboard);
         var changing = sided && boat.WatchedAttributes.GetBool(PaddleChangingKey);
-        strokes.Show(boat, sailing ? null : strokes.KindOf(tool, station.HasOars, side), changing);
+        strokes.Show(boat, sailing ? null : strokes.KindOf(tool, station.HasOars, side), changing, sided && ahead == 0 && turn != 0);
         if (sailing || boat.SpeedMultiplier <= 0) return Idle(vanilla);
         if (physics != null) physics.WaterDragValue = 1;
 
@@ -129,10 +130,10 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
 
     private void Paddle(EntityBoat boat, EntityAgent rower, int ahead, int turn, Stroke stroke)
     {
-        var strokes = paddler.Strokes(stroke.StrokesPerMinute);
+        var onThisSide = paddler.Strokes(stroke.StrokesPerMinute);
         if (!paddler.Paddle(ahead, turn, boat.Pos.Yaw, 60 / stroke.StrokesPerMinute)) return;
-        vessels.Log(boat, "{0} changes her paddle to {1} after {2:F0} strokes, {3:F1}° off her course",
-            rower.GetName(), paddler.Side, strokes, paddler.OffCourseDegrees(boat.Pos.Yaw));
+        vessels.Log(boat, "{0} changes his paddle to {1} after {2:F0} strokes, {3:F1}° off her course",
+            rower.GetName(), paddler.Side.ToString().ToLowerInvariant(), onThisSide, paddler.OffCourseDegrees(boat.Pos.Yaw));
     }
 
     private Vec2d Idle(Vec2d vanilla)
@@ -171,7 +172,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
             vessels.Log(boat, "{0} {1} at {2:F0} W, ahead {3} turn {4}: {5:F0} N and {6:F0} N·m at {7:F2} m/s, {8:F2} rad/s, against {9:F0} N of drag on {10:F0} kg at {11:F3} m draft{12}",
                 rower.GetName(), propulsor.Stroke.Code, EffortWatts * propulsor.Stroke.GrossEfficiency, ahead, turn, push.Newtons, push.NewtonMetres, speed, spin,
                 -water.Along(speed), hull!.Aboard.Total, hull.Afloat.DraftMetres,
-                side == null ? "" : $", on her {side} side");
+                side == null ? "" : $", on her {side.ToString()!.ToLowerInvariant()} side");
         }
     }
 }
