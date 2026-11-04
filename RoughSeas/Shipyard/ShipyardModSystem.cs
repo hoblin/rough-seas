@@ -24,6 +24,7 @@ public class ShipyardModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorFraming.Code, typeof(EntityBehaviorFraming));
         api.RegisterEntityBehaviorClass(EntityBehaviorRigging.Code, typeof(EntityBehaviorRigging));
         api.RegisterEntityBehaviorClass(EntityBehaviorRiggable.Code, typeof(EntityBehaviorRiggable));
+        api.RegisterEntityBehaviorClass(EntityBehaviorFloatLashing.Code, typeof(EntityBehaviorFloatLashing));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorFraming.Code, typeof(CollectibleBehaviorFraming));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorCarriedBuild.Code, typeof(CollectibleBehaviorCarriedBuild));
         api.RegisterBlockBehaviorClass(BlockBehaviorStrippable.Code, typeof(BlockBehaviorStrippable));

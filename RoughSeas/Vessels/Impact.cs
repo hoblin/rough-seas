@@ -34,4 +34,11 @@ public class Impact(double give, long guardMs)
 
 /// <param name="Against">The vessel rammed; 0 for the ground.</param>
 /// <param name="TheirKg">What the vessel rammed weighed with all aboard her.</param>
-public readonly record struct Knocked(double SpeedLost, double TowardX, double TowardZ, long Against = 0, double TheirKg = 0);
+/// <param name="Outboard">Whether it met only what stands off this hull, not the hull itself.</param>
+/// <param name="TheirOutboard">Whether it met only what stands off the vessel rammed.</param>
+public readonly record struct Knocked(double SpeedLost, double TowardX, double TowardZ, long Against = 0, double TheirKg = 0,
+    bool Outboard = false, bool TheirOutboard = false)
+{
+    public Knocked Mirrored(long against, double theirKg) =>
+        this with { TowardX = -TowardX, TowardZ = -TowardZ, Against = against, TheirKg = theirKg, Outboard = TheirOutboard, TheirOutboard = Outboard };
+}

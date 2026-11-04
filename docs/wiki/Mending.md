@@ -5,6 +5,7 @@ A cracked hull is mended with the stuff it was built from. Hold the material, ri
 | [Raft](Raft), wood or bamboo | 1 flax twine | a fifth of its lashings | 30 |
 | [Sailboat](Sailboat) | 10 planks of its wood | a fifteenth of a stove-in place | 80 |
 | [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | 1 log of its hull's wood | two fifths of a stove-in place | 80 |
+| [Outrigger canoe](Outrigger-Canoe), her float | 1 flax twine | a ninth of its lashings | 30 |
 | [Coracle](Coracle) | 1 small prepared hide | two thirds of a stove-in place | 40 |
 | [Coracle](Coracle), greasing | 1 rendered fat | its seams for 1.25 days afloat | 20 |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2 bark of its tree | a third of a stove-in place | 40 |

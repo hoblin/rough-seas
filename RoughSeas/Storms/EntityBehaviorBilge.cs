@@ -84,6 +84,10 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     public override void AfterInitialized(bool onFirstSpawn)
     {
         if (form.Value != null) form.Value.Reformed += ShowWater;
+        if (entity.World.Side != EnumAppSide.Server || Litres <= CapacityLitres) return;
+
+        storms.Log(entity, "{0:F0} L over her gunwale: her hold takes {1:F0}", Litres - CapacityLitres, CapacityLitres);
+        Litres = CapacityLitres;
     }
 
     public void HandOver(Entity successor, bool endForEnd) => successor.WatchedAttributes.SetAttribute(TreeKey, Tree.Clone());
