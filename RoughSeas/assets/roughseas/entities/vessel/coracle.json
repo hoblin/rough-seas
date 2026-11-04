@@ -4,7 +4,7 @@
     "tags": ["inanimate", "vehicle"],
     "weight": 17.1,
     "attributes": {
-        "swimmingOffsetY": 0.332,
+        "swimmingOffsetY": 0.333,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {"idle": "sitflooridle", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
         "rightClickPickup": true,
@@ -17,7 +17,7 @@
             "sideDrag": 0.55,
             "paddle": "sculling",
             "sweepMetres": 1.0,
-            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.89, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": -0.012, "z": 0}, "eyeHeight": 1.7}},
+            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.9, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": -0.012, "z": 0}, "eyeHeight": 1.7}},
             "strokes": {"pole": {"ready": "roughseas-coracle-pole-ready", "forwards": "roughseas-coracle-pole-forward", "backwards": "roughseas-coracle-pole-backward"}, "paddle": {"ready": "roughseas-coracle-paddle-ready", "forwards": "roughseas-coracle-paddle-forward", "backwards": "roughseas-coracle-paddle-backward"}},
             "sources": {
                 "sweepMetres": "The blade sculls just ahead of her bow, about 0.3 m beyond her 0.69 m half-width: 1 m from her middle",
@@ -28,10 +28,10 @@
         },
         "roughseas:vesselintegrity": {
             "impactCapacity": 400,
-            "parts": [{"name": "hide", "material": "hide", "share": 9.1}, {"name": "frame", "material": "wood-willow", "share": 8.0}],
+            "parts": [{"name": "hide", "material": "hide", "share": 9.4}, {"name": "frame", "material": "wood-willow", "share": 7.7}],
             "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-willow", "metres": 0.01}, "backedShare": 0.47, "bottomBackedShare": 0.65, "spanMetres": 0.37},
             "depthMetres": 0.35,
-            "waterplaneSquareMetres": 1.04,
+            "waterplaneSquareMetres": 1.06,
             "repairs": [
                 {"material": {"type": "item", "code": "game:hide-prepared-small", "stacksize": 1}, "restores": 0.67, "saturation": 40},
                 {"material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1}, "restores": 0.5, "saturation": 20, "greases": true}
@@ -39,11 +39,11 @@
             "wreckage": [{"type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": {"avg": 3, "var": 2}}],
             "damage": {"material": "hide"},
             "sources": {
-                "parts": "By the model (bin/lib/hulls/coracle.py): 2.12 m² of hide 5 mm thick at 860 kg/m³, 9.1 kg, over 14 lattice laths and three plaits of 1 by 6 cm, 33 m of willow, 8 kg: 17 kg, as Hornell (1938) gives one-man coracles at 18 to 40 lb",
-                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.086 m (bin/lib/hulls/coracle.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
+                "parts": "By the model (bin/lib/hulls/coracle.py): 2.18 m² of hide 5 mm thick at 860 kg/m³, 9.4 kg, over 14 lattice laths and three plaits of 1 by 6 cm, 32 m of willow, 8 kg: 17 kg, as Hornell (1938) gives one-man coracles at 18 to 40 lb",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.085 m (bin/lib/hulls/coracle.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Raw cowhide is 2 to 6 mm thick. A blow springs back off the hide unless a lath backs it where it lands: by the model, the lattice's 14 laths 6 cm wide cross 65% of the bottom, and their 28 ends rising to the gunwale 47% of the sides. A breaker presses the hide onto them, each lath 1 cm deep bending over the 0.37 m from the bottom to the gunwale",
                 "depthMetres": "Bottom to gunwale: the laths rise 0.35 m (Museum Wales, Teifi coracle), as the model draws them",
-                "waterplaneSquareMetres": "So that her 265 L bowl full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
+                "waterplaneSquareMetres": "So that her 272 L bowl full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)",
                 "seep": "A seam where one hide meets the next weeps once the fat has washed out of it: some 1.8 m of seam across her bowl, weeping as the currach's do a metre. A coracle from before her build is covered in prepared hide over her two sections, with no seam, as her old recipe's one large hide had",
                 "cover": "The hides a vessel is covered with as her build lays them; one from before her build is covered with prepared hides, as the grid made her"
             },
@@ -77,7 +77,7 @@
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 265,
+            "capacityLitres": 272,
             "deckSquareMetres": 1.07,
             "drainLitresPerHour": 0,
             "sources": {
@@ -103,7 +103,7 @@
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
                 "layout": "Teifi coracles were begun as a lattice of laths laid flat on the ground, seven along and seven across (Hornell 1938), their ends bent up later into the gunwale. Spaced as her model draws them (ALONG_SPACING and ACROSS_SPACING in bin/lib/hulls/coracle.py), whole steps of the 1/16 m the bed lays laths by, so a lath laid on its place stays there when she is bound; one laid a step off is moved that step",
-                "binding": "One rope ties a dozen crossings of the bottom, a few turns of cord each, some quarter of an hour (an estimate); the shape's builder counts the crossings on her bottom",
+                "binding": "One rope ties nine crossings of the bottom, a few turns of cord each, some quarter of an hour (an estimate); the shape's builder counts the crossings on her bottom",
                 "gunwale": "Plaiting one lath round the bent-up ends, some ten minutes (an estimate); Teifi gunwales were three plaits of soaked hazel (Hornell 1938). The laths dry in place and set her shape in a couple of days, as the canoe's ribs do",
                 "cover": "Stretching and sewing a small hide's worth of cover, some twenty minutes (an estimate); a bigger hide covers more at once and takes as much longer",
                 "lacing": "The hide laced to the gunwale at short intervals (Hornell 1938), every 5 cm, each turn round the gunwale and the hide's edge: the shape's builder counts the rope",

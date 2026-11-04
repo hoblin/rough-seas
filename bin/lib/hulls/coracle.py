@@ -2,20 +2,15 @@ import json
 import math
 from pathlib import Path
 
+from fit import APART, Oval
 from physics import afloat, kilograms, stands
 from held import PADDLE, POLE, sculling, seated_poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
-from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Shape, beam, bilge, box, group, path, plank, stages, water_plane, write
+from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
 from wounds import wound
 
 CENTRE = 8
 VOXEL_METRES = 1 / 16
-
-# A Teifi coracle, Museum Wales: 1.5 m long, 1.07 m across; a flat bottom whose laths rise about 0.35 m to the gunwale.
-GUNWALE = (12, 8.56)
-BOTTOM = (9.6, 6.4)
-DEPTH = 5.6
-STAVES = 24
 
 # Hornell 1938: seven laths along and seven across; their spacing fills the bottom, on the 1/16 m the lath bed lays them by.
 LATHS = 7
@@ -29,6 +24,16 @@ PLAIT_HEIGHT = 0.4
 
 HIDE = 0.2
 HIDE_METRES = 0.005
+
+# A Teifi coracle, Museum Wales: 1.5 m long, 1.07 m across; a flat bottom whose laths rise about 0.35 m to the gunwale.
+# The hide is stretched over the frame, so the bottom reaches round the outermost laths, the across ones over the along.
+GUNWALE = (12, 8.56)
+BOTTOM = (ACROSS_SPACING * (LATHS // 2) + LATH_WIDTH / 2 + HIDE + LATH_THICKNESS, ALONG_SPACING * (LATHS // 2) + LATH_WIDTH / 2 + HIDE)
+DEPTH = 5.6
+STAVES = 24
+STRIP = 2
+KNEE = DEPTH * 0.45
+SIDE_HEIGHTS = (0, KNEE, DEPTH)
 LATH_SQUARE_METRES = 0.01 * 0.06
 # A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
 SECTION_SQUARE_METRES = 1.2
@@ -36,6 +41,7 @@ SECTION_SQUARE_METRES = 1.2
 # A crossing tied with a few turns of cord, about 0.8 m of it (an estimate); the hide laced to the gunwale every 5 cm,
 # each turn round the gunwale and the hide's edge, some 15 cm of cord (Hornell 1938: "laced at short intervals").
 TIE_METRES = 0.8
+TIE = 1.2
 LACING_STEP_METRES = 0.05
 LACING_TURN_METRES = 0.15
 LACING_WRAPS = 16
@@ -62,13 +68,38 @@ def half(axes, across):
     return axes[0] * math.sqrt(max(0.0, 1 - (across / axes[1]) ** 2))
 
 
-def bent(along, offset, y):
+def bent(along, offset, layer):
     """A lath of the bottom bent up at both ends to the gunwale, in its own plane: along x at z offset, or along z."""
-    (a, b), (ga, gb) = (BOTTOM, GUNWALE) if along == "x" else (BOTTOM[::-1], GUNWALE[::-1])
-    flat, rim = half((a, b), offset), half((ga, gb), offset)
-    run = [(-rim, DEPTH), (-flat - (rim - flat) * 0.55, DEPTH * 0.45), (-flat, y), (flat, y),
-           (flat + (rim - flat) * 0.55, DEPTH * 0.45), (rim, DEPTH)]
+    run = rising(along, offset, layer)
+    run = [(-u, h) for u, h in reversed(run)] + run
     return [(CENTRE + u, h, CENTRE + offset) if along == "x" else (CENTRE + offset, h, CENTRE + u) for u, h in run]
+
+
+def rising(along, offset, layer):
+    """Where a lath's centre turns up from the bottom, then at the knee and at the gunwale, out from the middle: its
+    outer face against the hide's inside (or the laths under it) where its edge lies nearest the bowl."""
+    floor = HIDE + layer * LATH_THICKNESS
+    edge = abs(offset) + LATH_WIDTH / 2
+
+    def wall(h):
+        axes = tuple(axis - floor for axis in axes_at(h))
+        return half(axes if along == "x" else axes[::-1], edge), h
+
+    lines = [inward((0, floor), (1, floor)), inward(wall(floor), wall(KNEE)), inward(wall(KNEE), wall(DEPTH)), ((0, DEPTH), (1, DEPTH))]
+    return [meeting(*pair) for pair in zip(lines, lines[1:])]
+
+
+def inward(p, q):
+    du, dh = q[0] - p[0], q[1] - p[1]
+    shift = LATH_THICKNESS / 2 / math.hypot(du, dh)
+    return (p[0] - dh * shift, p[1] + du * shift), (q[0] - dh * shift, q[1] + du * shift)
+
+
+def meeting(first, second):
+    (p, q), (r, s) = first, second
+    d1, d2 = (q[0] - p[0], q[1] - p[1]), (s[0] - r[0], s[1] - r[1])
+    t = ((r[0] - p[0]) * d2[1] - (r[1] - p[1]) * d2[0]) / (d1[0] * d2[1] - d1[1] * d2[0])
+    return p[0] + t * d1[0], p[1] + t * d1[1]
 
 
 def length(points):
@@ -77,11 +108,11 @@ def length(points):
 
 def laths():
     pieces = []
-    for along, spacing, y in (("x", ALONG_SPACING, HIDE + LATH_THICKNESS / 2), ("z", ACROSS_SPACING, HIDE + 1.5 * LATH_THICKNESS)):
+    for along, spacing, layer in (("x", ALONG_SPACING, 0), ("z", ACROSS_SPACING, 1)):
         for offset in offsets(spacing):
-            points = bent(along, offset, y)
+            points = bent(along, offset, layer)
             reach = length(points) / 2
-            flat = y - HIDE
+            flat = (layer + 0.5) * LATH_THICKNESS
             ends = [(CENTRE - reach, flat, CENTRE + offset), (CENTRE + reach, flat, CENTRE + offset)] if along == "x" \
                 else [(CENTRE + offset, flat, CENTRE - reach), (CENTRE + offset, flat, CENTRE + reach)]
             pieces.append((ends, points))
@@ -92,17 +123,17 @@ def lattice(prefix, shape_of):
     return [path(f"{prefix}{n}x", shape_of(piece), LATH_WIDTH, LATH_THICKNESS, "frame", overlap=0) for n, piece in enumerate(laths(), 1)]
 
 
-def on_bottom(x, z):
-    return ((x - CENTRE) / BOTTOM[0]) ** 2 + ((z - CENTRE) / BOTTOM[1]) ** 2 < 1
+def on_bottom(dx, dz):
+    return abs(dx) + TIE / 2 <= rising("x", dz, 0)[0][0] and abs(dz) + TIE / 2 <= rising("z", dx, 1)[0][0]
 
 
 def ties():
-    crossings = [(CENTRE + dx, CENTRE + dz) for dz in offsets(ALONG_SPACING) for dx in offsets(ACROSS_SPACING)
-                 if on_bottom(CENTRE + dx, CENTRE + dz)]
+    crossings = [(CENTRE + dx, CENTRE + dz) for dz in offsets(ALONG_SPACING) for dx in offsets(ACROSS_SPACING) if on_bottom(dx, dz)]
     ropes = math.ceil(len(crossings) * TIE_METRES / ROPE_METRES)
     print(f"binding: {len(crossings)} crossings tied, {len(crossings) * TIE_METRES:.0f} m, {ropes} ropes of {ROPE_METRES} m")
     top = HIDE + 2 * LATH_THICKNESS + 0.15
-    knots = [box(f"Tie{n}", (x - 0.6, 0, z - 0.6), (x + 0.6, top, z + 0.6), "lashing") for n, (x, z) in enumerate(crossings, 1)]
+    knots = [box(f"Tie{n}", (x - TIE / 2, HIDE + APART, z - TIE / 2), (x + TIE / 2, top, z + TIE / 2), "lashing")
+             for n, (x, z) in enumerate(crossings, 1)]
     return [knots[len(knots) * r // ropes:len(knots) * (r + 1) // ropes] for r in range(ropes)]
 
 
@@ -110,29 +141,43 @@ def plaits():
     rings = []
     for n in range(PLAITS):
         y = DEPTH - n * PLAIT_HEIGHT
-        points = [oval(GUNWALE, y, k, out=LATH_THICKNESS) for k in range(STAVES + 1)]
-        rings.append(path(f"Plait{n + 1}x", points, PLAIT_WIDTH, PLAIT_HEIGHT, "frame", overlap=0.1))
+        points = [oval(GUNWALE, y, k, out=LATH_THICKNESS) for k in range(STAVES + 2)]
+        turn = max(abs(math.remainder(heading(b, c)[0] - heading(a, b)[0], 360)) for a, b, c in zip(points, points[1:], points[2:]))
+        overlap = PLAIT_WIDTH / 2 * math.tan(math.radians(turn) / 2)
+        rings.append(path(f"Plait{n + 1}x", points[:-1], PLAIT_WIDTH, PLAIT_HEIGHT, "frame", overlap=overlap))
     return rings
 
 
 def panels():
-    """The hide over the frame, outside it: strips across the bottom and boards up the sides, each with the angle round
-    the bowl its middle lies at and its area in square metres."""
+    """The hide over the frame, outside it: strips across the bottom, a facet under each side board's foot joining
+    them to the sides, and boards up the sides, each with the angle round the bowl its middle lies at and the square
+    metres of hide it stands for (the facets carry the bottom's, the strips none)."""
     pieces = []
-    for n, dz in enumerate(range(-5, 6, 2), 1):
-        reach = half(BOTTOM, abs(dz) - 1)
+    for n, dz in enumerate(range(-5, 6, STRIP), 1):
+        reach = half(BOTTOM, abs(dz) + STRIP / 2)
         for side, label in ((-1, "Bow"), (1, "Stern")):
             x0, x1 = sorted((CENTRE, CENTRE + side * reach))
-            element = box(f"Bottom{label}{n}", (x0, 0, CENTRE + dz - 1), (x1, HIDE, CENTRE + dz + 1), "hide")
-            pieces.append((math.atan2(dz, side * reach / 2), (x1 - x0) * 2 * VOXEL_METRES ** 2, element))
+            element = box(f"Bottom{label}{n}", (x0, 2 * APART, CENTRE + dz - STRIP / 2), (x1, HIDE - 2 * APART, CENTRE + dz + STRIP / 2), "hide")
+            pieces.append((math.atan2(dz, side * reach / 2), 0, element))
     for k in range(STAVES):
-        for tier, (lower, upper, y0, y1) in enumerate([(BOTTOM, mid(), 0, DEPTH * 0.45), (mid(), GUNWALE, DEPTH * 0.45, DEPTH)], 1):
-            a, b = oval(lower, y0, k), oval(lower, y0, k + 1)
-            top = oval(upper, y1, k)
-            rise = math.dist(a, top)
-            flare = math.degrees(math.atan2(math.hypot(top[0] - a[0], top[2] - a[2]), y1 - y0))
-            element = plank(f"Side{tier}x{k + 1}", a, b, rise, HIDE, flare, -1, "hide", "hide", overlap=0.5)
-            pieces.append((2 * math.pi * (k + 1) / STAVES, math.dist(a, b) * rise * VOXEL_METRES ** 2, element))
+        a, b = oval(BOTTOM, 0, k), oval(BOTTOM, 0, k + 1)
+        y0 = APART * (k % 2)
+        yaw = math.degrees(math.atan2(a[2] - b[2], b[0] - a[0]))
+        facet = box(f"Floor{k + 1}", (0, y0, 0), (math.dist(a, b), HIDE - y0, STRIP), "hide")
+        sector = abs((a[0] - CENTRE) * (b[2] - CENTRE) - (b[0] - CENTRE) * (a[2] - CENTRE)) / 2
+        pieces.append((2 * math.pi * (k + 0.5) / STAVES, sector * VOXEL_METRES ** 2, group(f"Floor{k + 1}Frame", a, (0, yaw, 0), [facet])))
+        for row, (y0, y1) in enumerate(zip(SIDE_HEIGHTS, SIDE_HEIGHTS[1:])):
+            a, b = oval(axes_at(y0), y0, k), oval(axes_at(y0), y0, k + 1)
+            d, c = oval(axes_at(y1), y1, k), oval(axes_at(y1), y1, k + 1)
+            rise, flare = across(a, b, [((p - q) + (r - s)) / 2 for p, q, r, s in zip(d, a, c, b)])
+            wide = math.dist(c, d)
+            middleward = [a[2] - b[2], 0, b[0] - a[0]]
+            middleward = [v / math.hypot(*middleward) for v in middleward]
+            board = lambda depth, a=a, b=b, rise=rise, flare=flare, wide=wide, row=row, middleward=middleward: plank(
+                f"Side{row + 1}x{k + 1}", [p + v * depth for p, v in zip(a, middleward)], [p + v * depth for p, v in zip(b, middleward)], rise, HIDE, -flare, -1,
+                "hide", "hide", overlap=(wide - math.dist(a, b)) / 2)
+            element = board(seated(board, bowl()))
+            pieces.append((2 * math.pi * (k + 1) / STAVES, (math.dist(a, b) + wide) / 2 * rise * VOXEL_METRES ** 2, element))
     return pieces
 
 
@@ -197,9 +242,12 @@ def bowl_litres(inset, floor):
     return total * VOXEL_METRES_CUBED_LITRES
 
 
+def bowl():
+    return Oval("the bowl", (CENTRE, CENTRE), axes_at, floor=0)
+
+
 def axes_at(y):
-    knee = DEPTH * 0.45
-    (lower, upper, y0, y1) = (BOTTOM, mid(), 0, knee) if y < knee else (mid(), GUNWALE, knee, DEPTH)
+    (lower, upper, y0, y1) = (BOTTOM, mid(), 0, KNEE) if y < KNEE else (mid(), GUNWALE, KNEE, DEPTH)
     share = (y - y0) / (y1 - y0)
     return tuple(l + (u - l) * share for l, u in zip(lower, upper))
 
@@ -222,11 +270,18 @@ def build(path_):
     shape.add(flat)
     bent = stages("LatticeBent", lattice("BentLath", lambda piece: piece[1]))
     shape.add(bent)
-    shape.add(stages("Binding", ties()))
+    binding = stages("Binding", ties())
+    shape.add(binding)
     shape.add(gunwale)
     hide = stages("Cover", cover(), wood="none")
     shape.add(hide)
-    shape.add(stages("Lacing", lacing()))
+    shape.within(bowl(), hide)
+    shape.within(Oval("the hide's inside", (CENTRE, CENTRE), axes_at, floor=0, inset=HIDE), bent, binding)
+    shape.within(Oval("the gunwale", (CENTRE, CENTRE), lambda y: tuple(axis + LATH_THICKNESS + PLAIT_WIDTH / 2 for axis in GUNWALE)), gunwale)
+    laced = stages("Lacing", lacing())
+    shape.add(laced)
+    shape.together(flat, binding)
+    shape.together(bent, binding, gunwale, hide, laced)
     shape.add(group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", DEPTH - 0.5)),
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
     shape.keep("Hull", "FrontSeat", "OarStorage")

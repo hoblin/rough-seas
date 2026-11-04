@@ -1,7 +1,8 @@
 import math
 
 from physics import afloat, kilograms, stands
-from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
+from fit import APART
+from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
 from held import POLE, seated_poling, standing_poling, tools, waterline
 from stroke import crew, drive_share, moved, player_patch, seat, strokes
 from wounds import wound
@@ -13,8 +14,11 @@ SHEER = 9.6
 
 # Her gunwale is one 5 m lath a side, its ends drawn together at bow and stern: a little under its length round her sheer.
 GUNWALE_METRES = 4.95
-# Bow to stern, each end the other's mirror: (share of her half-length, breadth, rocker, rise of the sheer).
-LINES = [(1, 0.04, 5.6, 1.3), (0.92, 0.27, 3.4, 1.1), (0.8, 0.56, 1.6, 0.8), (0.6, 0.82, 0.5, 0.4), (0.3, 0.96, 0.05, 0.1), (0, 1, 0, 0)]
+HIDE = 0.5
+GUNWALE = 1.0
+# Bow to stern, each end the other's mirror: (share of her half-length, breadth, rocker, rise of the sheer). Her ends are
+# as broad as the two gunwale laths drawn together there and the hide over them.
+LINES = [(1, (GUNWALE + HIDE) / PROFILE[-1][0], 5.6, 1.3), (0.92, 0.27, 3.4, 1.1), (0.8, 0.56, 1.6, 0.8), (0.6, 0.82, 0.5, 0.4), (0.3, 0.96, 0.05, 0.1), (0, 1, 0, 0)]
 
 RIB_SPACING = 3
 RIB_WIDTH = 0.8
@@ -73,14 +77,14 @@ def hull_of_gunwale():
     low, high = 20.0, 60.0
     for _ in range(40):
         half = (low + high) / 2
-        hull = Hull("Skin", stations(half), CENTRE, 0.5, "hide", "hide", edge="hide")
+        hull = Hull("Skin", stations(half), CENTRE, HIDE, "hide", "hide", edge="hide")
         low, high = (half, high) if sheer_metres(hull) < GUNWALE_METRES else (low, half)
     print(f"hull: {2 * half * VOXEL_METRES:.2f} m long, {2 * PROFILE[-1][0] * VOXEL_METRES:.2f} m in beam, gunwale {sheer_metres(hull):.2f} m a side")
     return hull, half
 
 
 def gunwales(hull):
-    rail = hull.rail("Gunwale", "frame", height=0.9, thickness=1.0, lift=-0.5)
+    rail = hull.rail("Gunwale", "frame", height=0.9, thickness=GUNWALE, lift=-0.5, inset=hull.t)
     return [[plank for plank in rail if plank["name"].startswith(f"Gunwale{side}")] for side in ("Port", "Starboard")]
 
 
@@ -93,10 +97,10 @@ def open_gunwales(hull):
         middle = hull.at(CENTRE, top, side)
         stern = [hull.point(i, top, side) for i in range(len(hull.stations)) if hull.stations[i][0] >= CENTRE - 1e-6]
         reach = sum(math.dist(a, b) for a, b in zip(stern, stern[1:]))
-        start = (middle[0], middle[1] - 0.5, middle[2])
-        end = (middle[0] + reach, middle[1] - 0.5, middle[2])
+        start = (middle[0], middle[1] - 0.5, middle[2] - side * hull.t)
+        end = (middle[0] + reach, middle[1] - 0.5, middle[2] - side * hull.t)
         pieces.append([*(renamed(p, "Open") for p in bow),
-                       plank(f"Gunwale{label}Astern", start, end, 0.9, 1.0, 0, side, "frame", "frame")])
+                       plank(f"Gunwale{label}Astern", start, end, 0.9, GUNWALE, 0, side, "frame", "frame")])
     return pieces
 
 
@@ -131,39 +135,43 @@ def ribs(hull, half):
 
 
 def stringers(hull):
+    """Laths along her edges inside the hide, each as far in as its corners need to lie inside it."""
+    inside = hull.outline("the hide's inside", inset=hull.t, ends=False)
     pieces = []
-    inside = hull.t + STRINGER / 2
     for k in range(1, len(PROFILE) - 1):
         for side, label in ((-1, "Port"), (1, "Starboard")):
             points = [hull.point(i, k, side) for i in range(1, len(hull.stations) - 1)]
-            points = [(x, y + inside, z - side * inside) for x, y, z in points]
-            pieces.append(path(f"Stringer{label}{k}x", points, STRINGER, STRINGER, "frame", overlap=0))
-    keel = [(x, edges[0][1] + inside, CENTRE) for x, edges in hull.stations[1:-1]]
-    pieces.insert(0, path("Keelson", keel, STRINGER, STRINGER, "frame", overlap=0))
+            made = lambda depth, points=points, side=side, label=label: path(
+                f"Stringer{label}{k}x", [(x, y + depth, z - side * depth) for x, y, z in points], STRINGER, STRINGER, "frame", overlap=0)
+            pieces.append(made(seated(lambda depth: group("Stringer", (0, 0, 0), (0, 0, 0), made(depth)), inside, hull.t + STRINGER / 2 + APART)))
+    keel = [(x, edges[0][1], CENTRE) for x, edges in hull.stations[1:-1]]
+    made = lambda depth: path("Keelson", [(x, y + depth, z) for x, y, z in keel], STRINGER, STRINGER, "frame", overlap=0)
+    pieces.insert(0, made(seated(lambda depth: group("Keelson", (0, 0, 0), (0, 0, 0), made(depth)), inside, hull.t + STRINGER / 2 + APART)))
     return pieces
 
 
 def thwart(hull, half):
     x = CENTRE + THWART_SHARE * 2 * half - half
-    reach = breadth(hull.section(x), THWART_SEAT) - 0.4
     y = THWART_SEAT - THWART
-    return [[box("ThwartPole", (x - THWART / 2, y, CENTRE - reach), (x + THWART / 2, THWART_SEAT, CENTRE + reach), "frame", grain="z")]]
+    pole = lambda reach: box("ThwartPole", (x - THWART / 2, y, CENTRE - reach), (x + THWART / 2, THWART_SEAT, CENTRE + reach), "frame", grain="z")
+    return [[pole(widest(pole, hull.outline("the hide's inside", inset=hull.t), PROFILE[-1][0]))]]
 
 
-def cover(hull):
-    planks = hull.strakes()
-    areas = []
-    for plank in planks:
-        board = plank["children"][0]
-        areas.append((plank["from"][0], (board["to"][0] + board["from"][0]) * (board["to"][1] - board["from"][1]) * VOXEL_METRES ** 2, plank))
-    area = sum(square for _, square, _ in areas)
+def cover(hull, cuts):
+    area = hull.skin_square_metres()
     sections = math.ceil(area / SECTION_SQUARE_METRES)
     print(f"cover: {area:.2f} m² of hide, {sections} sections of {SECTION_SQUARE_METRES} m²")
+    planks = [(plank["from"][0], size(plank["children"][0]), plank) for plank in hull.strakes(cuts)]
+    drawn = sum(square for _, square, _ in planks)
     parts, done = [[] for _ in range(sections)], 0
-    for _, square, plank in sorted(areas, key=lambda entry: entry[0]):
-        parts[min(sections - 1, int((done + square / 2) / (area / sections)))].append(plank)
+    for _, square, plank in sorted(planks, key=lambda entry: entry[0]):
+        parts[min(sections - 1, int((done + square / 2) / (drawn / sections)))].append(plank)
         done += square
     return parts
+
+
+def size(board):
+    return (board["to"][0] - board["from"][0]) * (board["to"][1] - board["from"][1])
 
 
 def lacing(hull):
@@ -248,16 +256,17 @@ def build(path_):
     hull, half = hull_of_gunwale()
     laths = [gunwale_stage(hull), stages("Ribs", ribs(hull, half)), stages("Stringers", stringers(hull))]
     thwart_stage = stages("Thwart", thwart(hull, half))
-    shape.add(laths[0])
-    shape.add(stages("EndLashing", ends(half)))
-    shape.add(laths[1], laths[2])
-    hide = stages("Cover", cover(hull), wood="none")
-    shape.add(hide)
-    shape.add(stages("Lacing", lacing(hull)))
-    shape.add(thwart_stage)
+    lashed = stages("EndLashing", ends(half))
+    hide = stages("Cover", cover(hull, ends_of([*(plank for side in gunwales(hull) for plank in side), *laths[2]["children"]])), wood="none")
+    laced = stages("Lacing", lacing(hull))
     pins, rests = tholes(hull, half)
-    shape.add(*pins)
-    shape.add(stages("Oars", [[oar(name, side, rests[name])] for name, side in OARS.items()], wood="none"))
+    oars = stages("Oars", [[oar(name, side, rests[name])] for name, side in OARS.items()], wood="none")
+    shape.add(laths[0], lashed, laths[1], laths[2], hide, laced, thwart_stage, *pins, oars)
+    opened, closed = ([piece["children"][at] for piece in laths[0]["children"]] for at in (0, 1))
+    shape.within(hull.outline("the hull"), hide)
+    shape.within(hull.outline("the hide's inside", inset=hull.t), closed, laths[1:], thwart_stage)
+    shape.together(opened, *pins)
+    shape.together(closed, lashed, laths[1:], hide, laced, thwart_stage, *pins, oars)
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))

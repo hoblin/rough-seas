@@ -2,11 +2,11 @@
     "code": "dugout",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 265,
+    "weight": 252,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "bark": "all", "rings": "east"},
-        "swimmingOffsetY": 0.504,
+        "swimmingOffsetY": 0.508,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -22,7 +22,7 @@
             "paddle": "paddling",
             "sweepMetres": 1.34,
             "paddleAbeamMetres": 0.63,
-            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.91, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": -0.875, "y": -0.124, "z": 0}, "eyeHeight": 1.7}},
+            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.92, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": -0.875, "y": -0.124, "z": 0}, "eyeHeight": 1.7}},
             "strokes": {"pole": {"ready": "roughseas-dugout-pole-ready", "forwards": "roughseas-dugout-pole-forward", "backwards": "roughseas-dugout-pole-backward"}, "paddle-starboard": {"ready": "roughseas-dugout-paddle-starboard-ready", "forwards": "roughseas-dugout-paddle-starboard-forward", "backwards": "roughseas-dugout-paddle-starboard-backward", "change": "roughseas-dugout-paddle-to-starboard"}, "paddle-port": {"ready": "roughseas-dugout-paddle-port-ready", "forwards": "roughseas-dugout-paddle-port-forward", "backwards": "roughseas-dugout-paddle-port-backward", "change": "roughseas-dugout-paddle-to-port"}},
             "sources": {
                 "sweepMetres": "Her rower sits 0.69 m forward of her middle and the blade swept at arm's length works some 0.7 m beyond her gunwale, 0.45 + 0.7 m out: 1.34 m from her middle",
@@ -36,7 +36,7 @@
             "parts": [{"material": "wood-{wood}", "reference": "wood-oak"}],
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.54},
             "depthMetres": 0.5625,
-            "waterplaneSquareMetres": 2.91,
+            "waterplaneSquareMetres": 2.89,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
@@ -45,8 +45,8 @@
             "wreckage": [{"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}}],
             "damage": {"material": "wood"},
             "sources": {
-                "weight": "Her finished hull, 393 L of wood by the model (bin/lib/hulls/dugout.py: a 0.56 m deep, 0.9 m wide, 4.5 m long hull with 5 cm walls, cut from the five logs' square 1 m trunk), in oak",
-                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.114 m (bin/lib/hulls/dugout.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
+                "weight": "Her finished hull, 373 L of wood by the model (bin/lib/hulls/dugout.py: a 0.56 m deep, 0.9 m wide, 4.5 m long hull with 5 cm walls, cut from the five logs' square 1 m trunk), in oak",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.110 m (bin/lib/hulls/dugout.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "shell": "Walls about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe). Carved from one log, a side stands from the bottom with its gunwale free, and a breaker bends it as a cantilever: by the model, 8.6 voxels from the bottom's edge to the gunwale",
                 "depthMetres": "Keel to gunwale by the model: the 1 m trunk with its top hewn away to a level sheer",
                 "waterplaneSquareMetres": "So that her 1298 L hold full, with one aboard, brings her gunwale to the water (bin/lib/hulls/physics.py)"
@@ -58,7 +58,7 @@
             "rimMetres": 0.5625,
             "blankDepthMetres": 1,
             "blankWaterplaneSquareMetres": 5,
-            "unhewnLitres": 3309,
+            "unhewnLitres": 3329,
             "charMillimetresPerHour": 2.5,
             "clay": "game:clay-*",
             "axeEdgeMetres": 0.1,
@@ -72,7 +72,7 @@
                 "hollowDepthMetres": "Rim to floor of the hollow: the 0.56 m hull less its 5 cm bottom",
                 "blankDepthMetres": "The five logs are a trunk 1 m across: one block, as they lie",
                 "blankWaterplaneSquareMetres": "The five square logs as they lie, 5 m by 1 m at any draft",
-                "unhewnLitres": "The square 1 m trunk of five logs, 5000 L, less the finished hull's 1691 L envelope (bin/lib/hulls/dugout.py): hewn away a sixth at each hewing, as the outside is shaped. Shaping it is not timed: the strokes that hew out the char shape the outside with them, a simplification for play until shaping gets work of its own",
+                "unhewnLitres": "The square 1 m trunk of five logs, 5000 L, less the finished hull's 1671 L envelope (bin/lib/hulls/dugout.py): hewn away a sixth at each hewing, as the outside is shaped. Shaping it is not timed: the strokes that hew out the char shape the outside with them, a simplification for play until shaping gets work of its own",
                 "clay": "Wet clay one voxel thick over the rim outline the shape draws (its Clay group), at vanilla's 25 voxels a ball (BEClayForm.PutClay)",
                 "axeEdgeMetres": "Char has lost its fibres and crumbles, so a stroke breaks it away down to the sound wood along its whole sweep across the hollow, a strip as wide as the axe's edge, about 10 cm on a felling axe",
                 "hollowBeamMetres": "The hollow's width the stroke sweeps: the hull's 0.9 m beam less its two 5 cm walls (bin/lib/hulls/dugout.py)",
