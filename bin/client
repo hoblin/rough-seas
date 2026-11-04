@@ -95,9 +95,11 @@ launch() {
 make_reference() {
   local server=$BENCH-reference data=$BENCH_TMP/reference zone config after
   local player audit=$BENCH_TMP/reference/Logs/server-audit.log
-  [[ " $mods " == *" agentbridge "* ]] || { echo "Making the reference world needs agentbridge in BENCH_MODS" >&2; exit 1; }
+  [[ " $mods " == *" agentbridge "* && " $mods " == *" roughseas "* ]] ||
+    { echo "Making the reference world needs both mods: run bin/client with the default BENCH_MODS" >&2; exit 1; }
   echo "This machine has no reference world for seed $seed; making it at $reference"
   rm -rf "$data"
+  trap "stop_session '$session' '$BENCH_DATA'; stop_server '$server' '$data'" EXIT
   config=$(jq -nc --arg seed "$seed" '{WorldConfig: {Seed: $seed, WorldName: "Rough Seas bench",
     PlayStyle: "roughseastest", PlayStyleLangCode: "roughseas-test", WorldType: "standard"}}')
   start_server "$server" "$data" "$config"
@@ -111,6 +113,7 @@ make_reference() {
   done
   stop_session "$session" "$BENCH_DATA"
   stop_server "$server" "$data"
+  trap - EXIT
   mkdir -p "$BENCH_REFERENCE"
   mv -f "$data/Saves/default.vcdbs" "$reference.part"
   mv -f "$reference.part" "$reference"
