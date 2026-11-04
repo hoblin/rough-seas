@@ -44,6 +44,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private Impact impact = null!;
     private Rams rams = null!;
     private readonly Course course = new();
+    private bool? ranHere;
     private HullContacts hullContacts = null!;
     private Resistance resistance;
     private Shell? shell;
@@ -228,7 +229,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public override void OnGameTick(float deltaTime)
     {
-        if (entity.World.Side == EnumAppSide.Client && !MovedHere()) course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
+        if (entity.World.Side == EnumAppSide.Client && !RunsHere()) course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
         if ((sinceUpdate += deltaTime) >= UpdateSeconds)
         {
             Float();
@@ -540,10 +541,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         lock (impactLock) pendingImpacts.Add(by);
     }
 
-    private bool MovedHere()
+    private bool RunsHere()
     {
         var mount = entity.GetInterface<IMountable>();
-        return entity.Api is ICoreClientAPI client ? mount?.Controller == client.World.Player.Entity : mount?.IsBeingControlled() != true;
+        bool here = entity.Api is ICoreClientAPI client ? mount?.Controller == client.World.Player.Entity : mount?.IsBeingControlled() != true;
+        if (here != ranHere) course.Forget();
+        ranHere = here;
+        return here;
     }
 
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
@@ -551,7 +555,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         // Physics steps pass 0; the rider's frame-end call carries motion EntityBoat rewrote, never a collision. See docs/modding.md.
         if (accum != 0) return;
         var client = entity.Api as ICoreClientAPI;
-        if (!MovedHere())
+        if (!RunsHere())
         {
             lock (impactLock)
             {

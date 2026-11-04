@@ -50,6 +50,15 @@ public class Course
         }
     }
 
+    public void Forget()
+    {
+        lock (gate)
+        {
+            track.Clear();
+            batch = null;
+        }
+    }
+
     private static bool Jumped((long Ms, double X, double Z) last, double x, double z) =>
         (x - last.X) * (x - last.X) + (z - last.Z) * (z - last.Z) > TeleportBlocks * TeleportBlocks;
 }

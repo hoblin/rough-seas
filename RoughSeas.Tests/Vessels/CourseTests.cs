@@ -48,6 +48,19 @@ public class CourseTests
     }
 
     [Fact]
+    public void ACourseForgottenKnowsNoSpeedUntilSheMovesAgain()
+    {
+        course.Record(0, 0, 0);
+        course.Record(0.3, 0, 100);
+        course.Record(0.6, 0, 200);
+        course.Forget();
+        course.Record(5, 0, 5000);
+        course.Record(5, 0, 5017);
+
+        Assert.Equal((0.0, 0.0), course.Velocity);
+    }
+
+    [Fact]
     public void ATeleportIsNoTravel()
     {
         course.Record(0, 0, 0);
