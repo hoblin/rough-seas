@@ -218,6 +218,8 @@ def near(walls, points, margin):
 
 
 def rested(walls, tool, pose, middle):
+    """The pose with its tool moved the shortest way out of the walls, outboard of `middle` or up, and how far in
+    voxels: a stopgap over guessed stroke lines, #252."""
     points = along_tool(posed([tool.group()], lambda name: pose.get(name, {})), tool.elements)
     touching = near(walls, points, REST / VOXELS_A_METRE)
 
