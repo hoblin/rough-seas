@@ -183,11 +183,33 @@ Our vessels draw each place's crack in their own model, from a scratch to a hull
 
 New: `IOutboard` with `OffMetres`, `IHull.Reach`, `HullShape.Spanning`, `EntityBehaviorVesselIntegrity.Impact`, `HullDamage.Hidden`, the behaviour `roughseas:floatlashing` with its keys, and `roughseas:rigging`'s `lashing`.
 
+### Paddling on both sides
+
+A paddle works on one side and turns her away from it, and the paddler changes sides to hold a course or to turn her ([Driving her](The-Science-of-the-Hull#driving-her)). A vessel of yours loads as it did.
+
+- A paddled vessel's `strokes` hold `paddle-starboard` and `paddle-port` in place of `paddle`, each with a fourth animation, `change`, that carries the paddle over to that side: `roughseas-{vessel}-paddle-{starboard|port}-{ready|forward|backward}` and `roughseas-{vessel}-paddle-to-{starboard|port}`. A vessel whose `strokes` keep a bare `paddle`, the coracle sculling over her bow, is paddled on no side. A patch that played or replaced `roughseas-{vessel}-paddle-{ready|forward|backward}` misses.
+- Her new key `paddleAbeamMetres` is how far out from her middle the blade drives: its thrust turns her by that lever. Without it a paddle drives her straight, as before.
+- The side is decided on the server, which syncs it to every client in her watched attributes `roughseas:paddleSide` (−1 starboard, 1 port) and `roughseas:paddleChanging`.
+- `HullDrag.Turning` takes her speed through the water: under way a hull resists turning in proportion to it, so every vessel turns on a wider circle while she makes way than before, and spins on the spot as before. `Propulsor.Push` takes the `Side` the tool works on.
+- `config/propulsion.json`'s `paddling` stroke gains `veerDegrees`, how far off her course she goes before the paddler changes sides.
+
+New: the enum `Side`, the class `Paddler`, the keys `paddleAbeamMetres` and `veerDegrees`, and the watched attributes `roughseas:paddleSide` and `roughseas:paddleChanging`.
+
+### Poled standing
+
+- `roughseas:propulsion`'s `handsAboveWaterMetres` moved into its new `pole` object, with the `stroke` the pole makes and the `stance` the rower takes to work it ([Driving her](Building-a-Vessel#driving-her)). A patch that set the old key sets nothing.
+- With a pole in hand, the rower's seat changes while he holds her controls: its `RiderOffset`, `Animation` and `EyeHeight` become the stance's, and go back when he puts the pole away, leaves her or someone else takes her. Only the seat of whoever holds her controls changes. A mod that reads a seat's config off one of our vessels reads the stance while he poles.
+- One owner now writes a seat's pose, `SeatPoses` in `RoughSeas.Vessels`. A swamped hull's hold outranks a stance, and a stance outranks the seat as built.
+- New player animation `roughseas-stand`, which the stance stands the rower in. The pole strokes key his legs and hips too, `UpperFootR/L`, `LowerFootR/L` and `LowerTorso`.
+- `config/propulsion.json` has a second pole stroke, `seatedpole`, for a vessel too tender to stand on. `pole` is the standing one, at a gross efficiency of 0.134.
+
+New: the `pole` key with `stroke`, `handsAboveWaterMetres` and `stance`, the stroke `seatedpole`, the animation `roughseas-stand`, `SeatPoses`, `bin/lib/hulls/leg.py` and `physics.stands`, which decides from a hull whether her poler stands, and the bench's `bin/scene shallows`.
+
 ### The currach rowed facing her stern
 
 Her rower sits where a real Aran rower does: facing her stern, pulling his oars on pins that stand just abaft his thwart.
 
-- Our vessels' seats are `VesselSeat`, vanilla's boat seat turned by its `mountRotation`: the rider's body, head and camera face that way. Vanilla turns only the limits a body is held in. The currach's seat has `mountRotation` y 180.
+- Our vessels' seats are `VesselSeat`, vanilla's boat seat turned by its `mountRotation`: the rider's body, head and camera face that way. Vanilla turns only the limits a body is held in. The currach's seat has `mountRotation` y 180; a pole's `stance` takes a `mountRotation` of its own, so her poler stands facing her bow.
 - Her thwart, seat and thole pins moved: the `BackSeat` box is at x 2.12 to 10.12, its point on the thwart; the cargo boxes lie two forward of the rower and one aft of his feet. Her `spanMetres` is 3.66 and her `sweepMetres` 1.3.
 - Her oars pivot on their pins through the bull on the loom's after side, the loom lying on her gunwale, their looms reach from the pin to her middle, and their blades stand upright, face to the water they push.
 

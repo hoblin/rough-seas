@@ -4,16 +4,19 @@
         "sideDrag": 0.85,
         "paddle": "paddling",
         "sweepMetres": 1.65,
-        "handsAboveWaterMetres": 0.8,
+        "paddleAbeamMetres": 0.7,
+        "pole": {"stroke": "pole", "handsAboveWaterMetres": 1.2, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": 0.125, "z": 0}, "eyeHeight": 1.7}},
         "strokes": {
             "pole": {"ready": "roughseas-raft-pole-ready", "forwards": "roughseas-raft-pole-forward", "backwards": "roughseas-raft-pole-backward"},
-            "paddle": {"ready": "roughseas-raft-paddle-ready", "forwards": "roughseas-raft-paddle-forward", "backwards": "roughseas-raft-paddle-backward"}
+            "paddle-starboard": {"ready": "roughseas-raft-paddle-starboard-ready", "forwards": "roughseas-raft-paddle-starboard-forward", "backwards": "roughseas-raft-paddle-starboard-backward", "change": "roughseas-raft-paddle-to-starboard"},
+            "paddle-port": {"ready": "roughseas-raft-paddle-port-ready", "forwards": "roughseas-raft-paddle-port-forward", "backwards": "roughseas-raft-paddle-port-backward", "change": "roughseas-raft-paddle-to-port"}
         },
         "sources": {
             "bowDrag": "Her logs' sawn ends meet the water face on: a flat-faced cylinder in axial flow has a drag coefficient of 0.8 to 1.1, a flat disc 1.17 (Hoerner 1965, Fluid-Dynamic Drag, ch. 3)",
             "sideDrag": "Across her she is a wide, shallow section with rounded corners, side ratio 3 to 5 once mirrored at the surface: 1.0 to 1.3 sharp-edged (Delany & Sorensen 1953, NACA TN 3038), less with round logs, lowered again by her finite length (Hoerner 1965, ch. 3)",
             "sweepMetres": "Her rower sits by her side, and the blade swept at arm's length works some 0.7 m beyond her 0.95 m half-beam: 1.65 m from her middle",
-            "handsAboveWaterMetres": "Her logs' tops lie some 0.2 m above the water, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)"
+            "paddleAbeamMetres": "Her paddle's blade drives 0.70 m out from her middle, where her rower sits, as his stroke is drawn (bin/lib/hulls/raft.py)",
+            "pole": "Poled standing where her rower sits, on top of her logs, 0.27 m above the water: a raft of logs bears a man standing far more stiffly than any canoe (bin/lib/hulls/physics.py), and a log raft is poled standing (Territory Stories, Northern Territory Library). His hands end the shove at his hip, 0.93 m over his soles (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m"
         }
     } },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:propulsion" } },

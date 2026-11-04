@@ -75,7 +75,6 @@ Sailing becomes sailing.
 - **Sailing by the wind.** A sail drives a boat by where the wind blows from: fast with the wind on the quarter, slow close to it, and nowhere straight into it. On an island with the wind against you, you may wait for it to turn.
 - **Leeway.** The wind pushes every vessel sideways, harder the stronger it blows and the more the vessel shows above water, sail and all.
 - **Weathervaning.** A boat at [anchor](Anchoring) swings bow to the wind, and rides the waves the way real boats do.
-- **Rowing on one side** turns a boat.
 - **A windsock** to read the wind.
 - **Masts that break** in strong wind, by the strength of their wood.
 - **Heel, and capsizing back.** A vessel heels as wind on its sail or a breaking wave on its beam leans it over, against its own stability. It ships water as the gunwale goes under, and past the angle it can't come back from it goes over. Sail and sea become two forces on one mechanic.

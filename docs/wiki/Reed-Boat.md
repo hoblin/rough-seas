@@ -16,7 +16,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 
 | | |
 | --- | --- |
-| Speed | 2.3 m/s, paddled or poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 2.1 m/s paddled, 2.3 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | nimble, 33° a second |
 | [Hull](Hull-Condition) | 3000 J; tears, shown as *Reed torn* |
 | [Soaking](Hull-Condition#seeping-and-soaking) | 33 kg of water a day afloat: its rider awash after a day, on the bottom within four left alone; dries ashore in the sun, a third of it left behind as rot |
@@ -29,7 +29,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up, from the first binding on |
-| Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand |
+| Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; she is too narrow to stand on, so she is poled sitting |
 | Cargo | a basket (8 slots) |
 | Built from | two reed bundles, each 144 cattail tops, papyrus tops or thatch and two ropes, and four ropes more: 288 reeds and 8 ropes, 50 kg |
 | Wreckage | reed tops, broken up with an axe once it has sunk |

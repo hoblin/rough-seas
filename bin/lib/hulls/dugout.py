@@ -1,8 +1,8 @@
 import math
 
-from held import PADDLE, POLE, paddling, poling, tools, waterline
+from held import PADDLE, POLE, VOXELS_A_METRE, paddling, seated_poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
-from physics import afloat, kilograms
+from physics import afloat, kilograms, stands
 from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
 from wounds import wound
 
@@ -31,6 +31,7 @@ ENDS = {
     "Bow": [(38, 40.5, 5.0, 1.6), (40.5, 42.5, 4.0, 2.8), (42.5, 44, 2.9, 4.2)],
 }
 HOLLOW = (-22, 38)
+POLER_AT = HOLLOW[0] + 5
 
 
 def section(x, breadth, lift):
@@ -266,15 +267,23 @@ def build(path):
           f"hewn off outside {trunk_litres - envelope:.0f} L")
     afloat("dugout", kilograms("wood-oak", envelope - hold), RIM * VOXEL_METRES, hold, deck())
     shape.write()
-    crew_tools(shape, "dugout")
+    crew_tools(shape, "dugout", ("Shell",))
 
 
-def crew_tools(shape, vessel):
+def crew_tools(shape, vessel, walls, catch=None, fore=3, outboard=(0, 0), **given):
     at = seat(shape, "FrontSeat")
-    player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, waterline(vessel), {
-        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1)),
-        "pole": ("pole", POLE, poling(POLE, at, 6, 6, 4, -0.5)),
-    }))
+    line = waterline(vessel)
+    hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD)
+    floor = hull.section(POLER_AT)[0][1] + WALL
+    chine = hull.half(POLER_AT, floor + 1, inset=WALL)
+    pole = (("pole", POLE, standing_poling(POLE, (POLER_AT, floor, CENTRE), line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1,
+                                           chine, floor_at=lambda x, across: hull.floor(x, across, inset=WALL)))
+            if stands(vessel, floor * VOXEL_METRES, outboard=outboard, **given)
+            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1)))
+    player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
+        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1, catch=catch, fore=fore)),
+        "pole": pole,
+    }, walls))
 
 
 if __name__ == "__main__":

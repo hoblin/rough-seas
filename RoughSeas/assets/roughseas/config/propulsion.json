@@ -23,13 +23,27 @@
             "driveShare": 0.5,
             "pushNewtons": 300,
             "pushMetres": 2,
+            "grossEfficiency": 0.134,
+            "sources": {
+                "strokesPerMinute": "A good punter, standing, takes 24 minutes for the 0.9 miles from Darwin to Jesus lock, 1 m/s (Nicolson 2008); a shove carries the punt about the 2 m the pole travels from the bed ahead of the hands to behind them, and she glides as far again while it comes up: some 4 m a stroke, 15 a minute",
+                "driveShare": "The pole pushes on the bed for half the stroke, the hands walking up it to its top end, and is drawn forward through them like a pool cue for the other half (Nicolson 2008; Paddle Canada, Introduction to Canoe Poling Skills)",
+                "pushNewtons": "A sustained two-handed push by a standing adult, about 300 N (Snook and Ciriello 1991, as the launch shove takes it)",
+                "grossEfficiency": "No one has measured poling. A canoe poler stands and drives with the legs, bending the knees, and the arms and trunk (Paddle Canada; ACA, Canoe Poling): the nearest measured stroke is the stand-up paddler's, 13.4 ± 2.3% gross at 45 strokes a minute, its slowest rate measured and the nearest to poling's 15 (Castañeda-Babarro et al. 2020, International Journal of Environmental Research and Public Health 17:4893); the Venetian gondolier, rowing standing, spends 9.2 to 14.5% (Capelli et al. 1990). Bringing the pole up costs its own lift each stroke on top: its middle rises half the way from the bed to the hands, and the same effort drives a punt faster with a paddle than with a pole because of it (Nicolson 2008)",
+                "pushMetres": "A shove lasts while the hands travel the pole's planted length, about the 2 m it travels from the bed ahead of the hands to behind them (Nicolson 2008); then it is brought up, and a hull that runs faster than the shove leaves less time to push in each stroke"
+            }
+        },
+        "seatedpole": {
+            "strokesPerMinute": 15,
+            "driveShare": 0.5,
+            "pushNewtons": 300,
+            "pushMetres": 2,
             "grossEfficiency": 0.10,
             "sources": {
-                "strokesPerMinute": "A good punter takes 24 minutes for the 0.9 miles from Darwin to Jesus lock, 1 m/s (Nicolson 2008); a shove carries the punt about the 2 m the pole travels from the bed ahead of the hands to behind them, and she glides as far again while it comes up: some 4 m a stroke, 15 a minute",
-                "driveShare": "The pole pushes on the bed for half the stroke and is brought up hand over hand for the other half (Nicolson 2008)",
-                "pushNewtons": "A sustained two-handed push by an adult, about 300 N (Snook and Ciriello 1991, as the launch shove takes it)",
-                "grossEfficiency": "No one has measured poling. Seated, a poler shoves with the arms and trunk as a paddler does, not the legs as a rower on a stretcher: paddling's 10% (Gomes et al. 2012). Bringing the pole up costs its own lift each stroke on top: its middle rises half the way from the bed to the hands, and the same effort drives a punt faster with a paddle than with a pole because of it (Nicolson 2008)",
-                "pushMetres": "A shove lasts while the hands travel the pole's planted length, about the 2 m it travels from the bed ahead of the hands to behind them (Nicolson 2008); then it is brought up, and a hull that runs faster than the shove leaves less time to push in each stroke"
+                "strokesPerMinute": "The standing pole's rate (Nicolson 2008): the pole comes up and goes down the same way",
+                "driveShare": "As the standing pole's",
+                "pushNewtons": "The same sustained two-handed push (Snook and Ciriello 1991)",
+                "grossEfficiency": "Where her hull is too tender for a man to stand on, he poles from the seat and shoves with the arms and trunk as a paddler does, not the legs: paddling's 10% (Gomes et al. 2012), less the pole's own lift each stroke",
+                "pushMetres": "As the standing pole's"
             }
         },
         "paddling": {
@@ -37,7 +51,9 @@
             "driveShare": 0.5,
             "dragCoefficient": 1.2,
             "grossEfficiency": 0.10,
+            "veerDegrees": 10,
             "sources": {
+                "veerDegrees": "A single blade drives her from one side and turns her away from it, so a paddler holding a course changes sides when she veers off it, as the Donegal curragh's paddler does (Badge, via indigenousboats.blogspot.com, 2015) and canoe and outrigger crews do on a call. Nobody has measured how far off they let her go, but how often they change has been counted: 3 to 5 strokes a side in a touring canoe at about 40 a minute (paddling.com forums), 8 to 12 in an outrigger (Gold Coast Outrigger Club) or 10 to 20 (Journal of Sports Science and Medicine 2011, 10:52). At 10° our bark canoe changes every 3.7 strokes and our outrigger every 8.6, both within what was counted",
                 "strokesPerMinute": "Voyageurs on the lakes kept about 40 strokes a minute through the day (McGill University, The Birch Bark Canoe), below the 55 of an elite C1 over 1000 m (Kinematic analysis of canoe stroke, Journal of Human Kinetics 2011)",
                 "driveShare": "A single blade is pulled back through the water and carried forward through the air over the same reach at about the same hand speed: half the stroke in the water",
                 "dragCoefficient": "A paddle blade's drag coefficient stays near that of a finite flat plate across blade designs (wind-tunnel tests of three blades, Sports Engineering, Springer BF02844156): about 1.2 for a plate square to the flow (Hoerner 1965, Fluid-Dynamic Drag, ch. 3)",

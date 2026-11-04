@@ -7,6 +7,9 @@ bin/scene dock [CODE...]   calm noon at open sea, the player in creative flying 
                            each CODE (default boat-raft-oak boat-sailed-oak) is spawned unmanned
                            beside it, 4 blocks apart, and holds still. Prints the spawned entity ids.
                            A CODE without a domain is the game's; ours carry theirs: roughseas:dugout-oak.
+bin/scene shallows [DEPTH]  after dock: a granite bed DEPTH whole metres (default 1) under the surface where
+                           the player hovers, 25 blocks across and 85 along +z, the way a vessel spawned at
+                           yaw 0 heads: water a pole reaches the bottom of.
 bin/scene look ID [DX DY DZ]
                            the one way to look at anything: fly to entity ID's position plus DX DY DZ
                            (default 3 1 0: east of it and a block up), hover there and aim at it.
@@ -155,6 +158,12 @@ storm() {
     x=$((x + 6))
   done
   "$game" do '/seas here'
+}
+
+shallows() {
+  local bed=$((${1:-1} + 2))
+  "$game" do '/bridge hold game:rock-granite' "/we mark ~-12 ~-$bed ~-12 ~12 ~-$bed ~72" '/we fill' '/we clear' \
+    '/clearinv' >/dev/null
 }
 
 clear() {
@@ -363,6 +372,7 @@ case "${1:-}" in
   strokes) shift; strokes "$@" ;;
   photo) shift; photo "$@" ;;
   dock) shift; dock "$@" ;;
+  shallows) shift; shallows "$@" ;;
   look) shift; look "$@" ;;
   storm) shift; storm "$@" ;;
   clear) shift; clear "$@" ;;

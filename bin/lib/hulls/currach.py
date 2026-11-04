@@ -1,9 +1,9 @@
 import math
 import statistics
 
-from physics import MASS, afloat, kilograms
+from physics import MASS, afloat, kilograms, stands
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
-from held import POLE, poling, tools, waterline
+from held import POLE, seated_poling, standing_poling, tools, waterline
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, seat, strokes
 from transform import direct, unapply
 from wounds import wound
@@ -28,6 +28,7 @@ THWART_SEAT = SHEER - 0.15 * VOXELS_A_METRE
 # A seated man's centre of mass lies some 9 cm from his hips toward his feet: his thighs, 20% of his mass, at 0.19 m,
 # his shanks and feet, 12%, at 0.45 m (Winter 2009, table 4.1).
 SEATED_CENTRE = 0.09 * VOXELS_A_METRE
+POLER_AFT = 5
 
 OARS = {"OarStarboard": -1, "OarPort": 1}
 # Dingle's thole pins stand 15 in abaft their thwart (Hornell 1938); none is given for Aran.
@@ -330,12 +331,13 @@ def rowing(rests, chest, sweep_middle, sweep_degrees):
         return at
 
     def swing(sweep_at):
-        return lambda frame: {"rotationZ": (CATCH_LEAN + FINISH_LEAN) / 2 - (CATCH_LEAN - FINISH_LEAN) / 2 * sweep_at(frame / FRAMES)}
+        return lambda frame: {"UpperTorso": {"rotationZ": (CATCH_LEAN + FINISH_LEAN) / 2
+                                                         - (CATCH_LEAN - FINISH_LEAN) / 2 * sweep_at(frame / FRAMES)}}
 
     rowed = strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
                     pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)), stroke="rowing")
     for stroke, sweep_at in zip(rowed, (lambda u: 0, sweep, lambda u: sweep(1 - u))):
-        stroke["lean"] = swing(sweep_at)
+        stroke["body"] = swing(sweep_at)
     return rowed
 
 
@@ -376,9 +378,17 @@ def build(path_):
     rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests, chest, middle, degrees), {"R": "OarPortGrip", "L": "OarStarboardGrip"},
                  {"rotationZ": 12})
     at = seat(shape, "BackSeat")
-    player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, waterline("currach"), {
-        "pole": ("pole", POLE, poling(POLE, at, 3, 3, 3, 2 * CENTRE + 2, side=1)),
-    }))
+    line = waterline("currach")
+    poler = sum(hull.span()) / 2 + POLER_AFT
+    floor = hull.section(poler)[0][1] + hull.t + RIB_DEPTH
+    pole = (("pole", POLE, standing_poling(POLE, (poler, floor, CENTRE), line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1,
+                                           hull.half(poler, floor + 1, inset=hull.t + RIB_DEPTH),
+                                           floor_at=lambda x, across: hull.floor(x, across, inset=hull.t + RIB_DEPTH)))
+            if stands("currach", floor * VOXEL_METRES)
+            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1)))
+    player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, line, {
+        "pole": pole,
+    }, ("Cover",)))
     print(f"oars: {blade_span(rests, chest, middle, degrees):.2f} m from blade to blade across her,"
           f" {blade_square_metres(rests, chest):.3f} m² of blade under the water")
     report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()])

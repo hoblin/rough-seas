@@ -15,11 +15,11 @@
         "roughseas:propulsion": {
             "oars": {"stroke": "rowing", "bladeSquareMetres": 0.1, "spanMetres": 3.66},
             "sweepMetres": 1.3,
-            "handsAboveWaterMetres": 1.0,
+            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.94, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0.43, "y": -0.392, "z": 0}, "eyeHeight": 1.7, "mountRotation": {"y": 0}}},
             "strokes": {"pole": {"ready": "roughseas-currach-pole-ready", "forwards": "roughseas-currach-pole-forward", "backwards": "roughseas-currach-pole-backward"}, "tholeoar": {"ready": "roughseas-currach-ready", "forwards": "roughseas-currach-forward", "backwards": "roughseas-currach-backward"}},
             "sources": {
-                "sweepMetres": "Her rower sits on the thwart 0.12 m forward of her middle and a pole swept at arm's length works some 0.7 m beyond her gunwale, 0.59 + 0.7 m out: 1.3 m from her middle",
-                "handsAboveWaterMetres": "Her thwart lies 0.4 m above her waterline, 0.15 m under her gunwale as Aran thwarts lie on the lower gunwale (Hornell 1938), and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
+                "sweepMetres": "Her poler stands 0.31 m aft of her middle and a pole swept at arm's length works some 0.7 m beyond her gunwale, 0.59 + 0.7 m out: 1.3 m from her middle",
+                "pole": "Poled standing on her floor: her 1.2 m of beam bears a man standing far more stiffly than the narrowest canoe polers stand in (bin/lib/hulls/physics.py). No source shows a currach poled, so he stands where a canoe poler does, about a foot aft of her middle (ACA, Canoe Poling), off his thwart. His hands end the shove at his hip, 0.93 m over his soles (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
                 "sideDrag": "Hide over round ribs: the round-bilged hull's cross-flow drag",
                 "oars": "Her two oars on their tholes (the oar's own sources); from blade to blade across her 3.66 m by the model (bin/lib/hulls/currach.py), over her drive's sweep: the tholes at her gunwale 0.38 m abaft her thwart (Dingle's, Hornell 1938; none is given for Aran), each 3 m oar's loom reaching from its pin to her middle (Hornell's rule for the inboard) and some 1.8 m of it outboard to its blade's middle, the blade buried"
             }
