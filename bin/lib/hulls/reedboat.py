@@ -23,6 +23,7 @@ TIE_TURNS = 2
 LASHINGS = (-6, 1, 8, 15, 22)
 LASHING_TURNS = 2
 TIE_MARGIN = 0.15
+TIP_OVERLAP = 0.1
 LASHING_MARGIN = 0.2
 TIP_SHARES = (1, 0.8125, 0.5625, 0.34375)
 TIP_REACH = (0, 3, 6, 8)
@@ -59,8 +60,11 @@ def flat_end(name, side, start, direction):
 
 
 def raised_points(start, direction, droop):
+    """Where a bound end's segments run, the last drawn back by the overlap its beam reaches past its tip."""
     lift = 1 - droop / (DROOPS - 1)
-    return [(start + direction * reach, TIP_GIRTHS[0] / 2 + rise * lift, CENTRE) for reach, rise in zip(TIP_REACH, TIP_RISE)]
+    points = [(start + direction * reach, TIP_GIRTHS[0] / 2 + rise * lift, CENTRE) for reach, rise in zip(TIP_REACH, TIP_RISE)]
+    points[-1] = tuple(q - (q - p) * TIP_OVERLAP / math.dist(points[-2], points[-1]) for p, q in zip(points[-2], points[-1]))
+    return points
 
 
 def raised_end(name, start, direction, droop):
@@ -71,7 +75,7 @@ def raised_end(name, start, direction, droop):
         ties = [(t + 0.5) / turns for t in range(math.floor(turns))]
         thinner = 2 * APART if i == 1 else 0
         segments.append(beam(f"{name}{i}", a, b, 2 * TIP_GIRTHS[i - 1] - thinner, TIP_GIRTHS[i - 1] - thinner, "reed",
-                             ties=ties, tie=(0.3, TIE_MARGIN), tie_tex="lashing", rounded=True, overlap=0.1))
+                             ties=ties, tie=(0.3, TIE_MARGIN), tie_tex="lashing", rounded=True, overlap=TIP_OVERLAP))
     return segments
 
 
@@ -88,8 +92,13 @@ def bundles(margin=0):
                                       GIRTH + 2 * margin, GIRTH + 2 * margin) for label, side in SIDES])
 
 
-def ends(points, widths, heights, margin=0):
-    return [Tube("an end", a, b, w + 2 * margin, h + 2 * margin) for a, b, w, h in zip(points, points[1:], widths, heights)]
+def ends(points, widths, heights, margin=0, overlap=0):
+    """The round of each segment between the points, as long as it is drawn: reaching overlap past both its ends."""
+    rounds = []
+    for a, b, w, h in zip(points, points[1:], widths, heights):
+        reach = [(q - p) * overlap / math.dist(a, b) for p, q in zip(a, b)]
+        rounds.append(Tube("an end", [p - r for p, r in zip(a, reach)], [q + r for q, r in zip(b, reach)], w + 2 * margin, h + 2 * margin))
+    return rounds
 
 
 def flat_rounds(side, start, direction):
@@ -97,7 +106,7 @@ def flat_rounds(side, start, direction):
 
 
 def raised_rounds(start, direction, droop, margin=0):
-    return ends(raised_points(start, direction, droop), [2 * g for g in TIP_GIRTHS], TIP_GIRTHS, margin)
+    return ends(raised_points(start, direction, droop), [2 * g for g in TIP_GIRTHS], TIP_GIRTHS, margin, TIP_OVERLAP)
 
 
 def ropes_of(metres):
@@ -181,7 +190,7 @@ def build(target):
     for droop in range(DROOPS):
         ends_bound = [end["children"][droop] for end in bound["children"]]
         for margin, only in ((0, untied), (TIE_MARGIN, tied)):
-            shape.within(Union("the bound ends", [t for start, direction in ENDS for t in raised_rounds(start, direction, droop, margin)]),
+            shape.within(Union("the bound ends", [*bundles(margin).parts, *(t for start, direction in ENDS for t in raised_rounds(start, direction, droop, margin))]),
                          ends_bound, only=only)
         shape.together(blank, lashed, ends_bound)
     shape.keep("Hull", "FrontSeat", "Cargo", "OarStorage")

@@ -149,8 +149,9 @@ def plaits():
 
 
 def panels():
-    """The hide over the frame, outside it: strips across the bottom and boards up the sides, each with the angle round
-    the bowl its middle lies at and its area in square metres."""
+    """The hide over the frame, outside it: strips across the bottom, a facet under each side board's foot joining
+    them to the sides, and boards up the sides, each with the angle round the bowl its middle lies at and the square
+    metres of hide it stands for (the facets carry the bottom's, the strips none)."""
     pieces = []
     for n, dz in enumerate(range(-5, 6, STRIP), 1):
         reach = half(BOTTOM, abs(dz) + STRIP / 2)
@@ -170,10 +171,10 @@ def panels():
             d, c = oval(axes_at(y1), y1, k), oval(axes_at(y1), y1, k + 1)
             rise, flare = across(a, b, [((p - q) + (r - s)) / 2 for p, q, r, s in zip(d, a, c, b)])
             wide = math.dist(c, d)
-            inward = [a[2] - b[2], 0, b[0] - a[0]]
-            inward = [v / math.hypot(*inward) for v in inward]
-            board = lambda depth, a=a, b=b, rise=rise, flare=flare, wide=wide, row=row, inward=inward: plank(
-                f"Side{row + 1}x{k + 1}", [p + v * depth for p, v in zip(a, inward)], [p + v * depth for p, v in zip(b, inward)], rise, HIDE, -flare, -1,
+            middleward = [a[2] - b[2], 0, b[0] - a[0]]
+            middleward = [v / math.hypot(*middleward) for v in middleward]
+            board = lambda depth, a=a, b=b, rise=rise, flare=flare, wide=wide, row=row, middleward=middleward: plank(
+                f"Side{row + 1}x{k + 1}", [p + v * depth for p, v in zip(a, middleward)], [p + v * depth for p, v in zip(b, middleward)], rise, HIDE, -flare, -1,
                 "hide", "hide", overlap=(wide - math.dist(a, b)) / 2)
             element = board(seated(board, bowl()))
             pieces.append((2 * math.pi * (k + 1) / STAVES, (math.dist(a, b) + wide) / 2 * rise * VOXEL_METRES ** 2, element))

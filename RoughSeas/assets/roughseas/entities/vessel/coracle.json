@@ -103,7 +103,7 @@
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
                 "layout": "Teifi coracles were begun as a lattice of laths laid flat on the ground, seven along and seven across (Hornell 1938), their ends bent up later into the gunwale. Spaced as her model draws them (ALONG_SPACING and ACROSS_SPACING in bin/lib/hulls/coracle.py), whole steps of the 1/16 m the bed lays laths by, so a lath laid on its place stays there when she is bound; one laid a step off is moved that step",
-                "binding": "One rope ties a dozen crossings of the bottom, a few turns of cord each, some quarter of an hour (an estimate); the shape's builder counts the crossings on her bottom",
+                "binding": "One rope ties nine crossings of the bottom, a few turns of cord each, some quarter of an hour (an estimate); the shape's builder counts the crossings on her bottom",
                 "gunwale": "Plaiting one lath round the bent-up ends, some ten minutes (an estimate); Teifi gunwales were three plaits of soaked hazel (Hornell 1938). The laths dry in place and set her shape in a couple of days, as the canoe's ribs do",
                 "cover": "Stretching and sewing a small hide's worth of cover, some twenty minutes (an estimate); a bigger hide covers more at once and takes as much longer",
                 "lacing": "The hide laced to the gunwale at short intervals (Hornell 1938), every 5 cm, each turn round the gunwale and the hide's edge: the shape's builder counts the rope",

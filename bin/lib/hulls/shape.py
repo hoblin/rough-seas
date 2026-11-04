@@ -124,8 +124,6 @@ def span(elements, tex):
     total = 0
     for element in elements:
         children = element.get("children", [])
-        if element["name"].endswith("TopFrame"):
-            continue
         if element["name"].endswith("Frame") and children:
             board = children[0]
             if any(face["texture"] == "#" + tex for face in board["faces"].values()):

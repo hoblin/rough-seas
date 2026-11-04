@@ -97,7 +97,7 @@ def log_faces(x0, x1):
 def float_pass(n):
     elements, litres, waterline = [], 0, 0
     roundness = 1 - (1 - ROUNDED) * worked(n)
-    inscribed = 1 + (math.hypot(1, roundness) - 1) * (1 - worked(n))
+    unhewn = 1 + (math.hypot(1, roundness) - 1) * (1 - worked(n))
     cuts = float_cuts()
     for i, (x0, x1) in enumerate(zip(cuts, cuts[1:]), 1):
         half, low, high = hewn((x0 + x1) / 2, n)
@@ -105,7 +105,7 @@ def float_pass(n):
         if n == 0:
             elements.append(box(f"FloatLogx{i}", (x0, low, FLOAT_Z - half), (x1, high, FLOAT_Z + half), log_faces(x0, x1)))
         else:
-            elements += section(f"Hewn{n}x{i}", (x0, middle, FLOAT_Z), x1 - x0, half * inscribed, rise * inscribed, "float", roundness=roundness)
+            elements += section(f"Hewn{n}x{i}", (x0, middle, FLOAT_Z), x1 - x0, half * unhewn, rise * unhewn, "float", roundness=roundness)
         litres += (x1 - x0) * 2 * half * 2 * rise * (1 - (1 - math.pi / 4) * worked(n)) * VOXEL_METRES_CUBED_LITRES
         waterline += (x1 - x0) * 2 * half * VOXEL_METRES ** 2
     return elements, round(litres, 1), round(waterline, 3)
@@ -163,7 +163,7 @@ def lashings():
                 lashing(f"Lash{n}{side}", x, z, RIM - 0.8 + short[0], boom_height(z) + BOOM / 2 + CORD - short[1]),
                 (x, RIM - 0.8 + short[0], z), (x, boom_height(z) + BOOM / 2 + CORD - short[1], z)))[0])
             metres.append(gunwale)
-        ties.append(lashing(f"Lash{n}Float", x, FLOAT_Z, *float_lashed()))
+        ties.append(lashing(f"Lash{n}Float", x, FLOAT_Z, *float_lashed(x)))
         metres.append(afloat)
     total = sum(metres)
     ropes = math.ceil(total / ROPE_METRES)
@@ -180,30 +180,34 @@ def lashings():
 def slack(name, x, form):
     """A float lashing worked loose, its turns reaching from the boom down round the float hanging lower: as low as
     they still wrap it where it hangs."""
-    _, high = float_lashed()
-    float_ = Union("the hanging float", [hanging_tube(tube, form) for tube in round_float("the float", CORD).parts])
-    turns = []
-    for k, (a, b) in enumerate([(-STRAP[1], -STRAP[0]), STRAP], 1):
-        wraps = lambda low: all(float_.beyond((px, low, FLOAT_Z + pz)) <= 0 for px in (x - LASH, x + LASH) for pz in (a, b))
-        inside, below = FLOAT_Y - form.drop, FLOAT_Y - form.drop - FLOAT_DIAMETER
-        for _ in range(30):
-            inside, below = ((inside + below) / 2, below) if wraps((inside + below) / 2) else (inside, (inside + below) / 2)
-        turns.append(box(f"{name}{k}", (x - LASH, inside, FLOAT_Z + a), (x + LASH, high, FLOAT_Z + b), "lashing", grain="y"))
-    return turns
+    _, high = float_lashed(x)
+    low = lowest(Union("the hanging float", [hanging_tube(tube, form) for tube in round_float("the float", CORD).parts]), x, FLOAT_Y - form.drop)
+    return [box(f"{name}{k}", (x - LASH, low, FLOAT_Z + a), (x + LASH, high, FLOAT_Z + b), "lashing", grain="y")
+            for k, (a, b) in enumerate([(-STRAP[1], -STRAP[0]), STRAP], 1)]
 
 
 def frayed(name, x):
     """A float lashing parted: its ends hang from the boom."""
-    _, high = float_lashed()
+    _, high = float_lashed(x)
     return [box(f"{name}{k}", (x - 0.4, high - FRAYED, FLOAT_Z + a), (x + 0.4, high, FLOAT_Z + b), "lashing",
                 origin=(x, high, FLOAT_Z), rot=(0, 0, side * FRAYED_DEGREES), grain="y")
             for k, (a, b, side) in enumerate([(-0.9, -0.4, 1), (0.4, 0.9, -1)], 1)]
 
 
-def float_lashed():
-    """How low and high a float lashing's turns reach: under the round float at their own distance from its middle,
-    and over the boom on it, with the cord round both."""
-    return FLOAT_Y - math.sqrt((FLOAT_DIAMETER / 2 + CORD) ** 2 - STRAP[1] ** 2), FLOAT_Y + FLOAT_DIAMETER / 2 + BOOM + CORD
+def float_lashed(x):
+    """How low and high a float lashing's turns reach: under the round float where they still wrap it, and over the
+    boom on it, with the cord round both."""
+    return lowest(round_float("the float", CORD), x, FLOAT_Y), FLOAT_Y + FLOAT_DIAMETER / 2 + BOOM + CORD
+
+
+def lowest(float_, x, middle):
+    """How low a lashing's turns at x reach and still wrap the float, its middle at that height."""
+    inside, below = middle, middle - FLOAT_DIAMETER
+    for _ in range(30):
+        low = (inside + below) / 2
+        wraps = all(float_.beyond((px, low, FLOAT_Z + pz)) <= 0 for px in (x - LASH, x + LASH) for pz in (-STRAP[1], STRAP[1]))
+        inside, below = (low, below) if wraps else (inside, low)
+    return inside
 
 
 def hung(name, form):
@@ -415,7 +419,7 @@ def rigged(shape, hull, shell, logs, passes):
     lashed = [leaf for rope in named["Lashing"]["children"] for leaf in rope["children"]]
     rig = [named[name] for name in ("Mast", "Stays", "Strakes", "Seams")]
     finished = passes["children"][-1]
-    shape.within(hull.outline("her hull"), shell, only=lambda name: name.startswith("Side"))
+    shape.within(hull.outline("her hull, its end section carried on", ends=False), shell)
     shape.within(round_float("the round float"), finished)
     shape.within(Union("the float and the boom on it", [round_float("the float", CORD), *boomed()]), lashed, only=lambda name: "Float" in name)
     for k, hewing in enumerate([logs, *passes["children"]]):
@@ -454,7 +458,7 @@ def hanging_tube(tube, form):
     middle = ((FLOAT_FROM + FLOAT_TO) / 2, FLOAT_Y, FLOAT_Z)
     shift = (form.along, -form.drop, 0)
     moved = lambda point: [c * 16 for c in apply(frame, [(p + s - m) / 16 for p, s, m in zip(point, shift, middle)])]
-    ends = ([c * 16 for c in apply(tube.frame, (0, 0, 0))], [c * 16 for c in apply(tube.frame, (1 / 16, 0, 0))])
+    ends = ([c * 16 for c in apply(tube.frame, (0, 0, 0))], [c * 16 for c in apply(tube.frame, (tube.length / 16, 0, 0))])
     return Tube(tube.name, *map(moved, ends), 2 * tube.w, 2 * tube.h)
 
 

@@ -15,6 +15,9 @@ class Surface:
     def beyond(self, point):
         raise NotImplementedError
 
+    def inward(self, point):
+        raise NotImplementedError
+
 
 class Oval(Surface):
     def __init__(self, name, centre, axes, floor=None, inset=0):
@@ -114,11 +117,12 @@ class Tube(Surface):
         dx, dy, dz = (e - s for s, e in zip(start, end))
         yaw, pitch = math.degrees(math.atan2(-dz, dx)), math.degrees(math.atan2(dy, math.hypot(dx, dz)))
         self.frame = local({"from": start, "rotationOrigin": start, "rotationY": yaw, "rotationZ": pitch}, {})
+        self.length = math.dist(start, end)
         self.w, self.h = width / 2, height / 2
 
     def beyond(self, point):
-        _, y, z = (c * 16 for c in unapply(self.frame, [c / 16 for c in point]))
-        return radial(z, y, self.w, self.h)
+        x, y, z = (c * 16 for c in unapply(self.frame, [c / 16 for c in point]))
+        return max(radial(z, y, self.w, self.h), -x, x - self.length)
 
 
 class Union(Surface):
@@ -229,17 +233,17 @@ def overlap(a, b, normal):
         for p, q in zip(subject, subject[1:] + subject[:1]):
             if inside(q):
                 if not inside(p):
-                    kept.append(cross(p, q, (x0, y0), (x1, y1)))
+                    kept.append(crossing(p, q, (x0, y0), (x1, y1)))
                 kept.append(q)
             elif inside(p):
-                kept.append(cross(p, q, (x0, y0), (x1, y1)))
+                kept.append(crossing(p, q, (x0, y0), (x1, y1)))
         subject = kept
         if not subject:
             return 0
     return abs(shoelace(subject)) / max(abs(c) for c in normal)
 
 
-def cross(p, q, a, b):
+def crossing(p, q, a, b):
     dx, dy = q[0] - p[0], q[1] - p[1]
     ex, ey = b[0] - a[0], b[1] - a[1]
     t = ((a[0] - p[0]) * ey - (a[1] - p[1]) * ex) / (dx * ey - dy * ex)

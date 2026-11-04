@@ -1,9 +1,10 @@
+import functools
 import math
 
 from held import PADDLE, POLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from physics import afloat, kilograms
-from fit import APART, TOLERANCE, lined as inner
+from fit import APART, TOLERANCE, lined as lined_section
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, add, box, clear_of, corners_of, group, path, plank, renamed, rested, scale, span, stages, sub, unit, widest
 from wounds import wound
 
@@ -67,7 +68,7 @@ STATIONS = [
 
 
 def lined(stations, depth):
-    return [(x, inner(edges, depth)) for x, edges in stations]
+    return [(x, lined_section(edges, depth)) for x, edges in stations]
 
 
 def sheet():
@@ -163,17 +164,17 @@ def gunwale(hull, name, side, inside, surface, cuts):
             f"{name}{i + 1}", add((a[0], a[1] - drop, a[2] - side * base), offset), add((b[0], b[1] - drop, b[2] - side * base), offset),
             GUNWALE - 2 * APART * (i % 2), GUNWALE, 0, side if inside else -side, "frame", "frame", overlap=0)
 
-        def moved(a, b):
+        def stands_out(a, b):
             offset = rested(piece(a, b), surface)
             return max(surface.beyond(p) for p in corners_of(piece(a, b)(offset))) > TOLERANCE / 2
 
-        if i in (0, len(hull.stations) - 2) and moved(a, b):
+        if i in (0, len(hull.stations) - 2) and stands_out(a, b):
             stem, inner = (a, b) if abs(a[2] - CENTRE) < abs(b[2] - CENTRE) else (b, a)
             towards = lambda cut: sorted((tuple(p + cut * (q - p) for p, q in zip(stem, inner)), inner))
             short, fits = 0.0, 1.0
             for _ in range(20):
                 cut = (short + fits) / 2
-                short, fits = (cut, fits) if moved(*towards(cut)) else (short, cut)
+                short, fits = (cut, fits) if stands_out(*towards(cut)) else (short, cut)
             if fits > 1 - 1e-6:
                 continue
             a, b = towards(fits)
@@ -201,8 +202,9 @@ def thwart(n, x, hull, bark, cuts):
     return [clear_of(cuts, (1, 0, 0), placed, slide=True)[0]]
 
 
+@functools.cache
 def stern_line():
-    """Her stem's curve, moved aft off her end and up into the bark sewn round it, as far as it takes to lie inside."""
+    """Her stem's curve, moved in from her end and up into the bark sewn round it, as far as it takes to lie inside."""
     inside = Hull("Skin", STATIONS, CENTRE, SKIN, "bark", "bark").outline("the bark's inside", inset=SKIN)
     out = lambda dx, dy: max(inside.beyond(p) for p in corners_of(group("Stem", (0, 0, 0), (0, 0, 0),
                                                                          stem("SternStem", on_centre([(x + dx, y + dy) for x, y in STERN])))))

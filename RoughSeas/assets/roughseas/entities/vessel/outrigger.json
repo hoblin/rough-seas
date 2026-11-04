@@ -2,11 +2,11 @@
     "code": "outrigger",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 504.6,
+    "weight": 491.2,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "plank": "inside-north"},
-        "swimmingOffsetY": 0.468,
+        "swimmingOffsetY": 0.471,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -37,14 +37,14 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 30000,
             "parts": [
-                {"material": "wood-{wood}", "reference": "wood-oak", "share": 265.4},
+                {"material": "wood-{wood}", "reference": "wood-oak", "share": 252.0},
                 {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 132.0, "takesKnocks": false},
                 {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 79.1, "takesKnocks": false},
                 {"name": "strakes", "material": "wood-{wood}", "reference": "wood-oak", "share": 27.8, "takesKnocks": false}
             ],
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.54},
             "depthMetres": 0.5625,
-            "waterplaneSquareMetres": 3.78,
+            "waterplaneSquareMetres": 3.75,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
@@ -58,12 +58,12 @@
             ],
             "damage": {"material": "wood"},
             "sources": {
-                "parts": "By the model (bin/lib/hulls/outrigger.py), in oak: her hull is the dugout she was built on, 265 kg; her float, three metres of log hewn round to some 30 cm across, 196 L, 132 kg, and the three logs it is hewn from 3000 L before the first pass; her six poles (three crooked booms 9 cm across, a 3 m mast 9 cm across, two 3 m spars 7.5 cm), 118 L, 79 kg; her washstrakes, ten boards 2.5 cm thick, 41 L, 28 kg, as they are fitted. A float or poles of another wood weigh by their own",
-                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.150 m (bin/lib/hulls/outrigger.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
+                "parts": "By the model (bin/lib/hulls/outrigger.py), in oak: her hull is the dugout she was built on, 252 kg; her float, three metres of log hewn round to some 30 cm across, 196 L, 132 kg, and the three logs it is hewn from 3000 L before the first pass; her six poles (three crooked booms 9 cm across, a 3 m mast 9 cm across, two 3 m spars 7.5 cm), 118 L, 79 kg; her washstrakes, ten boards 2.5 cm thick, 41 L, 28 kg, as they are fitted. A float or poles of another wood weigh by their own",
+                "swimmingOffsetY": "Drawn at the draft she floats at with one aboard, 0.147 m (bin/lib/hulls/outrigger.py): vanilla floats a boat with the water 0.018 m over her selection box's top less this offset",
                 "impactCapacity": "The dugout's hull, in her hull's wood alone: the float and rig lashed to it take no knock a hull takes",
                 "shell": "The dugout's walls, about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe)",
                 "depthMetres": "The dugout's, keel to gunwale: her washstrakes raise it by their stage's raisesMetres once sewn",
-                "waterplaneSquareMetres": "The dugout's 2.91 m² and her float's 0.86 m², a 3 m log 0.3 m wide at the water with hewn ends, by the model (bin/lib/hulls/outrigger.py); her three logs, before they are hewn, stand 3 m² at the water",
+                "waterplaneSquareMetres": "The dugout's 2.89 m² and her float's 0.86 m², a 3 m log 0.3 m wide at the water with hewn ends, by the model (bin/lib/hulls/outrigger.py); her three logs, before they are hewn, stand 3 m² at the water",
                 "repairs": "Her hull is a dugout's, mended as one"
             }
         },

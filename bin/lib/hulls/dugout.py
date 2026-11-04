@@ -27,7 +27,7 @@ BED = 0.55
 GLOW = 160
 VOXEL_METRES = 1 / 16
 TRUNK_METRES = LOG * VOXEL_METRES
-ENDS = {
+SLICES = {
     "Stern": [(-24.5, -22, 5.0, 1.6), (-26.5, -24.5, 4.0, 2.8), (-28, -26.5, 2.9, 4.2)],
     "Bow": [(38, 40.5, 5.0, 1.6), (40.5, 42.5, 4.0, 2.8), (42.5, 44, 2.9, 4.2)],
 }
@@ -49,36 +49,52 @@ STATIONS = [
 ]
 
 
+def waist_of(bottom):
+    return bottom + (RIM - bottom) / 3
+
+
+def inscribed(slices, edges):
+    """Her stepped ends, each slice an upper block over a narrower lower one, as wide as its rough size gives but no
+    wider than the hull's end section, or the slice before it, at every height its blocks reach."""
+    outline = lambda y: breadth(edges, y)
+    drawn = []
+    for x0, x1, half, bottom in slices:
+        waist = waist_of(bottom)
+        upper, lower = min(half, outline(waist), outline(RIM)), min(half * 0.7, outline(bottom), outline(waist))
+        drawn.append((x0, x1, upper, lower, bottom))
+        outline = lambda y, upper=upper, lower=lower, bottom=bottom, waist=waist: upper if y >= waist else lower if y >= bottom else 0
+    return drawn
+
+
+ENDS = {"Stern": inscribed(SLICES["Stern"], STATIONS[0][1]), "Bow": inscribed(SLICES["Bow"], STATIONS[-1][1])}
+
+
 def log(hull):
     return [hull.strakes(), *(end(name, slices, hull.cz) for name, slices in ENDS.items())]
 
 
 def end(name, slices, centre):
     blocks = []
-    for n, (x0, x1, half, bottom) in enumerate(slices, 1):
+    for n, (x0, x1, upper, lower, bottom) in enumerate(slices, 1):
         waist = waist_of(bottom)
-        blocks.append(box(f"{name}{n}Upper", (x0, waist, centre - half), (x1, RIM, centre + half), WOOD))
-        blocks.append(box(f"{name}{n}Lower", (x0, bottom, centre - half * 0.7), (x1, waist, centre + half * 0.7), WOOD))
+        blocks.append(box(f"{name}{n}Upper", (x0, waist, centre - upper), (x1, RIM, centre + upper), WOOD))
+        blocks.append(box(f"{name}{n}Lower", (x0, bottom, centre - lower), (x1, waist, centre + lower), WOOD))
     return blocks
-
-
-def waist_of(bottom):
-    return bottom + (RIM - bottom) / 3
 
 
 def end_slice(x):
     for slices in ENDS.values():
-        for x0, x1, half, bottom in slices:
+        for x0, x1, upper, lower, bottom in slices:
             if x0 <= x <= x1:
-                return half, bottom
+                return upper, lower, bottom
     return None
 
 
 def finished_half(x, y):
     x = min(max(x, ENDS["Stern"][-1][0]), ENDS["Bow"][-1][1])
     if (piece := end_slice(x)) is not None:
-        half, bottom = piece
-        return 0 if y < bottom else half * 0.7 if y < waist_of(bottom) else half
+        upper, lower, bottom = piece
+        return 0 if y < bottom else lower if y < waist_of(bottom) else upper
     for (x0, edges0), (x1, edges1) in zip(STATIONS, STATIONS[1:]):
         if x0 <= x <= x1:
             f = (x - x0) / (x1 - x0)
@@ -90,7 +106,7 @@ def finished_half(x, y):
 def finished_bottom(x):
     x = min(max(x, ENDS["Stern"][-1][0]), ENDS["Bow"][-1][1])
     if (piece := end_slice(x)) is not None:
-        return piece[1]
+        return piece[2]
     for (x0, edges0), (x1, edges1) in zip(STATIONS, STATIONS[1:]):
         if x0 <= x <= x1:
             return edges0[0][1] + (x - x0) / (x1 - x0) * (edges1[0][1] - edges0[0][1])
@@ -131,7 +147,7 @@ def segments(n):
 
 def walled(n, x0, x1):
     """The segment, halved until the hollow's wall keeps some thickness all along each piece."""
-    if n == 0 or not hollowed((x0 + x1) / 2) or narrowest(n, x0, x1, floor(n, x0), top(n)) > hollow(x0, x1) + APART or x1 - x0 < 1:
+    if n == 0 or not hollowed((x0 + x1) / 2) or narrowest(n, x0, x1, level(n, x0, x1), top(n)) > hollow(x0, x1) + APART or x1 - x0 < 1:
         return [(x0, x1)]
     middle = (x0 + x1) / 2
     return walled(n, x0, middle) + walled(n, middle, x1)
@@ -239,7 +255,7 @@ def build_stages():
 
 def hewn(shape, hull, shell, blank, rest):
     """What the dugout's shapes follow: her finished hull, and at each hewing the trunk as that pass leaves it."""
-    shape.within(hull.outline("her hull"), shell, only=lambda name: name.startswith("Side"))
+    shape.within(hull.outline("her hull, its end section carried on", ends=False), shell)
     shape.together(shell)
     for n in range(HOLLOWINGS):
         stage = [blank["children"][n], *(group["children"][n] for group in rest)]

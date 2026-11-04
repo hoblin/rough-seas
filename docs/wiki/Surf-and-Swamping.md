@@ -15,11 +15,11 @@ What is left of her side above the water is her *freeboard*, and the hover text 
 | --- | --- | --- |
 | [Raft](Raft), oak | 8 cm | awash |
 | [Coracle](Coracle) | 33 cm | 26 cm |
-| [Dugout](Dugout), oak | 47 cm | 45 cm |
+| [Dugout](Dugout), oak | 48 cm | 45 cm |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 cm | 32 cm |
 | [Reed boat](Reed-Boat), fresh | 13 cm | 5 cm |
 | [Hide currach](Hide-Currach) | 58 cm | 56 cm |
-| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 58 cm | 56 cm |
+| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 58 cm | 57 cm |
 | [Sailboat](Sailboat), oak | 52 cm | 50 cm |
 
 When her freeboard reaches nothing, the sea comes over her gunwale and she floods, cracked or not: a boat loaded down to the water fills in a moment. The raft and the reed boat are solid: pressed under, they lie awash and still hold their load up.
@@ -51,8 +51,8 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Reed boat](Reed-Boat), fresh | 118 kg, less the water it has soaked up |
-| [Dugout](Dugout), oak | 137 kg |
-| [Outrigger canoe](Outrigger-Canoe), oak | 262 kg |
+| [Dugout](Dugout), oak | 131 kg |
+| [Outrigger canoe](Outrigger-Canoe), oak | 254 kg |
 | [Sailboat](Sailboat), oak | nothing: she goes down |
 
 The wood counts. A sailboat carries two fifths of her weight in ballast to stand up to her sail: of oak, aged wood, birch, maple, purpleheart or ebony she goes down, while of pine, larch, acacia, walnut, bald cypress, redwood or kapok she floats awash. Ebony floats a dugout or an outrigger awash empty, and takes it down only loaded hard. A wood heavier than seawater sinks any hull of it, such as Wildcraft's ekki, lignum vitae, leadwood, mangrove, pink ivory and African blackwood ([Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)).

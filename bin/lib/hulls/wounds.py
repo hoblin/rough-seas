@@ -19,6 +19,9 @@ PROUD = 0.06
 WALL = 1.5
 SHORTEST = 1.5
 LENGTHS = {"Scratched": 0.3, "Cracked": 0.6, "Split": 1}
+HOLE = 1
+HOLE_EDGE = 0.6
+END_CLEAR = 1
 GAPS = {"Scratched": 0.1, "Cracked": 0.2, "Split": 0.45}
 SEGMENTS = 3
 WANDER = 0.6
@@ -137,7 +140,7 @@ def host(boards, hull, place):
 def room(board):
     """Whether the board is long enough for the shortest crack and broad enough for the smallest hole stove in."""
     _, breadth, length = sorted(size(board))
-    return length >= SHORTEST + 1 and breadth >= 1 + 0.6
+    return length >= SHORTEST + END_CLEAR and breadth >= HOLE + HOLE_EDGE
 
 
 def skin(elements, texture, parent=None):
@@ -218,7 +221,7 @@ def crack(frame, name, length, gap, middle):
 
 
 def reach(frame, share, span):
-    return min(max(share * span, SHORTEST), frame.length - 1)
+    return min(max(share * span, SHORTEST), frame.length - END_CLEAR)
 
 
 def crack_of(frame, name, form, span, sprung, texture):
@@ -240,7 +243,7 @@ def split(frame, name, form, span, sprung, texture):
 def stove_in(frame, name, form, span, sprung, texture):
     broken = reach(frame, 1, span)
     length, tail = broken / (1 + 2 * TAIL_SHARE), broken * TAIL_SHARE / (1 + 2 * TAIL_SHARE)
-    hole = max(1, min(HOLE_SHARE * frame.breadth, frame.breadth - 0.6))
+    hole = max(HOLE, min(HOLE_SHARE * frame.breadth, frame.breadth - HOLE_EDGE))
     middle, mid_across = frame.middle(broken, hole)
     along = (middle - length / 2, middle + length / 2)
     across = (mid_across - hole / 2, mid_across + hole / 2)
