@@ -14,6 +14,7 @@ public enum Blow
 /// <param name="BackedShare">Of the side's area, the share a lath or sheathing backs; <paramref name="BottomBackedShare"/> the bottom's.</param>
 /// <param name="SlamPascals">The breaker's pressure the soaked planking bends to breaking under; infinite where nothing does.</param>
 /// <param name="CushionJoules">What the shell takes of a broad blow by crushing before anything behind it bears the rest, as a bundle of stems does.</param>
+/// <param name="Framed">What breaks a hull of skin over a frame where a broad blow lands; without it the whole frame takes the blow.</param>
 public readonly record struct Resistance(
     double FrameJoules,
     double ShellPoint,
@@ -23,7 +24,8 @@ public readonly record struct Resistance(
     double BackedShare = 0,
     double BottomBackedShare = 0,
     double SlamPascals = double.PositiveInfinity,
-    double CushionJoules = 0)
+    double CushionJoules = 0,
+    FramedResistance? Framed = null)
 {
     public static Resistance Whole(double frameJoules) => new(frameJoules, frameJoules, frameJoules);
 
@@ -35,7 +37,8 @@ public readonly record struct Resistance(
     public static double Holing(double toughness, double shellMetres, double holeSquareMetres) =>
         toughness * 2 * Math.Sqrt(Math.PI * holeSquareMetres) * shellMetres;
 
-    public bool Backed(HullPlace place, double draw) => draw < (place == HullPlace.Bottom ? BottomBackedShare : BackedShare);
+    public bool Backed(HullPlace place, double draw, Blow blow = Blow.Point) =>
+        draw < (blow == Blow.Broad && Framed is { } framed ? framed.MemberShare : place == HullPlace.Bottom ? BottomBackedShare : BackedShare);
 
     public double Against(Blow blow, bool backed) => blow switch
     {
@@ -44,6 +47,7 @@ public readonly record struct Resistance(
         Blow.Cut when backed => Yielding(ShellCut) + BackingCut,
         Blow.Cut => ShellCut,
         Blow.Slam => SlamPascals,
+        _ when Framed is { } framed => backed ? framed.OverMemberJoules : framed.BetweenMembersJoules,
         _ => FrameJoules
     };
 
@@ -58,14 +62,19 @@ public readonly record struct Resistance(
 
     private static double Yielding(double shell) => double.IsPositiveInfinity(shell) ? 0 : shell;
 
-    public static double Loss(double severity, Blow blow, bool byPlace) => blow switch
+    public double Loss(double severity, Blow blow, bool byPlace, bool backed) => blow switch
     {
+        Blow.Broad when Framed is { } framed => Breaks(framed, severity, backed) ? Place(Math.Min(1, severity * HullModel.FrameBroken), byPlace) : 0,
         Blow.Broad => severity,
         Blow.Slam => severity >= 1 ? Place(1, byPlace) : 0,
         _ => Place(Math.Min(1, severity), byPlace)
     };
 
+    private bool Breaks(FramedResistance framed, double severity, bool backed) =>
+        severity >= 1 || framed.OpensJoules > 0 && severity * Against(Blow.Broad, backed) >= framed.OpensJoules;
+
     private static double Place(double loss, bool byPlace) => loss / (byPlace ? 1 : HullShape.Places.Length);
 
-    public static bool BreaksFrame(Blow blow, double loss) => blow == Blow.Broad && loss >= 1;
+    public bool BreaksFrame(Blow blow, double severity, bool backed) => blow == Blow.Broad &&
+        (Framed != null ? (severity - 1 / HullModel.FrameBroken) * Against(blow, backed) >= FrameJoules : severity >= 1);
 }

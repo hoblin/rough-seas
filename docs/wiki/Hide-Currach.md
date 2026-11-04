@@ -16,14 +16,14 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | --- | --- |
 | Speed | 2.4 m/s rowed on her thole pins, 2.4 m/s poled standing ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | 39° a second, rowed: one oar pulled, the other backed |
-| [Hull](Hull-Condition) | 3000 J with an ash frame: she rides the sea, but one hard knock holes her; about 2800 J in oak, 3300 J in birch |
+| [Hull](Hull-Condition) | she rides the sea, but a knock breaks the ash lath behind her hide at 41 J, rowing into a rock at 1.2 m/s, and the two either side of a gap at 96 J, 1.5 m/s; 3000 J more with an ash frame breaks her up, about 2800 J in oak, 3300 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 15 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 58 cm empty, 56 cm with her rower |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash with three baskets aboard; three chests take her down |
 | [Mending](Mending) | 1 large prepared hide closes two thirds of a stove-in place; 1 rendered fat greases her for 1.25 days |
 | [Bilge](Bailing) | 1911 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
-| [Rapids](Rapids) | takes them badly |
+| [Rapids](Rapids) | doesn't survive them for now: the bottom stove in at the first rock ([a simplified model](Rapids)) |
 | [Lightning](Lightning) | a strike nearby almost always breaks her |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |

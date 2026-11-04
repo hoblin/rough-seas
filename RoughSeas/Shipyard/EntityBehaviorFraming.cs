@@ -70,7 +70,8 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
                 : part).ToArray();
 
     public override Shell Formed(Shell designed) =>
-        designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? "", framing.Lined);
+        designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? "", framing.Lined)
+            .Framed(framing.Wood is { } frameWood ? WoodPrefix + frameWood : designed.Frame?.Material ?? "", framing.Members);
 
     public override BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed) =>
         designed.Where(drop => drop.ResolvedItemstack is not { } stack || LaidAny(new DummySlot(stack))).Select(AsLaid).ToArray();

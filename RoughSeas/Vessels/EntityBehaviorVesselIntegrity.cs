@@ -275,7 +275,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     {
         if (!entity.Alive) return;
         var rand = entity.World.Rand;
-        bool backed = resistance.Backed(place, rand.NextDouble());
+        bool backed = resistance.Backed(place, rand.NextDouble(), blow);
         double strength = Scatter.Of(damageConversion.Variation.GetValueOrDefault(blow), rand);
         double resists = resistance.Against(blow, backed) * strength;
         double severity = resistance.Severity(load, blow, backed, strength);
@@ -286,14 +286,16 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
             return;
         }
 
-        double loss = Resistance.Loss(severity, blow, knockable.ByPlace);
+        double loss = resistance.Loss(severity, blow, knockable.ByPlace, backed);
         int stage = model.Stage(place);
         var knock = loss > 0 ? knockable.Take(place, loss) : (Knock?)null;
         string crushed = blow == Blow.Broad && resistance.CushionJoules > 0 ? $", its shell crushing to take {resistance.CushionJoules * strength:F0} J," : "";
-        vessels.Log(entity, "{0} at the {1}{2} with {3}{4} against {5}: {6}, hull now {7:F2}", blow.ToString().ToLowerInvariant(),
-            place.Code(), backed ? ", backed" : "", Load(blow, load), crushed, Load(blow, resists), knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
+        string against = blow == Blow.Broad && resistance.Framed != null ? (backed ? "its shell and the frame member behind it, " : "its shell between two frame members and both, ") : "";
+        vessels.Log(entity, "{0} at the {1}{2} with {3}{4} against {5}{6}: {7}, the {1} at stage {8}, hull now {9:F2}", blow.ToString().ToLowerInvariant(),
+            place.Code(), backed && blow != Blow.Broad ? ", backed" : "", Load(blow, load), crushed, against, Load(blow, resists), knock?.ToString().ToLowerInvariant() ?? "unharmed",
+            model.Stage(place), Integrity);
         Struck?.Invoke(place, severity, knock == Knock.BrokenUp || model.Stage(place) > stage ? knock : null);
-        if (knock == Knock.BrokenUp || Resistance.BreaksFrame(blow, loss)) Break();
+        if (knock == Knock.BrokenUp || resistance.BreaksFrame(blow, severity, backed)) Break();
     }
 
     private void Rebuild()

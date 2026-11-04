@@ -1,4 +1,4 @@
-Every vessel has a hull, and a knock cracks it where it lands. A crack leaks, the leaks fill the bilge, and a hull is lost by flooding far more often than by breaking: only a really severe blow breaks one up at once. What a blow does depends on what it is and what it meets: a ram tests the whole frame, a club only the plank where it lands, a breaking wave how far the planking bends.
+Every vessel has a hull, and a knock cracks it where it lands. A crack leaks, the leaks fill the bilge, and a hull is lost by flooding far more often than by breaking: only a really severe blow breaks one up at once. What a blow does depends on what it is and what it meets: a ram tests the whole frame of a planked or carved hull, but only the skin and the rib behind it on a hull of skin over a frame, a club only the plank where it lands, a breaking wave how far the planking bends.
 
 ## Reading it
 
@@ -42,7 +42,7 @@ An [outrigger](Outrigger-Canoe)'s float stands 2 m out from her side, so a knock
 
 What a blow does depends on what it is:
 
-- **A knock, a ram, rapids, an explosion or lightning** shakes the whole boat. A heavy, stout hull takes it in its stride; a light one cracks where it was hit, and a hard enough one breaks it up at once.
+- **A knock, a ram, rapids, an explosion or lightning** shakes the whole boat. A heavy, stout hull takes it in its stride; a light one cracks where it was hit, and a hard enough one breaks it up at once. The [coracle](Coracle), the [bark canoe](Birch-Bark-Canoe) and the [hide currach](Hide-Currach) are skins over a frame of laths, and there a blow meets only the skin where it lands and the lath or rib behind it ([below](#hide-bark-and-reed)).
 - **A club, a spear, a stone or a fist** hits one plank. A thin plank gives sooner than a thick one: a club that only cracks a dugout's wall can stave in a sailboat's plank at one blow.
 - **An axe or a saw** cuts through far more easily: an iron axe opens a place of most boats at every swing.
 - **A breaking wave** presses on the windward side, and either the planks hold or they are stove in ([Breakers](Surf-and-Swamping#breakers)).
@@ -51,9 +51,10 @@ A hull breaks up from one really severe blow, or once every place is stove in. C
 
 No two boats are quite alike, as no two pieces of wood are, so the same knock may crack one hull a little more than another. There are no dice: a small knock on a stout hull always leaves a small scratch, and a big one on a light hull is always trouble. Small knocks add up.
 
-### Hide and reed
+### Hide, bark and reed
 
-- **Hide** springs back from a club or a stone, unless a rib or a lath is right behind it there, and then that breaks. A blade cuts hide anywhere.
+- **Hide** springs back from a club or a stone, unless a rib or a lath is right behind it there, and then that breaks. A blade cuts hide anywhere. A knock, a ram or rapids that lands on a lath presses the hide onto it: the hide stays whole, and the lath breaks, a split with the lath snapped behind it, and a harder blow stoves the place in. One that lands between two laths stretches the hide first, and it is the hide's pull that breaks both laths, so it takes about twice as much. Only what a stove-in place can't take goes on into the whole frame and can break her up.
+- **Bark** is no hide: it splits along its grain under a knock, with the sheathing that lines it, and the rib behind takes the rest, or both ribs when it lands between them. A light knock opens the bark and leaves the ribs whole; a harder one breaks them too.
 - **Reed bundles** spring back from every blow and every breaker. A blade harms them only where it cuts a lashing, and the boat comes apart once the reed is torn through. A knock, a ram, rapids or lightning crushes the bundles where it lands, and they take it: only what that leaves strains the lashings, and only the lashings part. A knock at any speed a paddle or a river gives leaves her whole; only a heavy blast tears her.
 
 ## What it is made of
@@ -103,13 +104,13 @@ What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 | [Dugout](Dugout) | scratches | scratches |
 | [Outrigger canoe](Outrigger-Canoe) | scratches; on her float's side, works nearly half its lashings loose | scratches; on her float's side, tears the float away |
 | [Sailboat](Sailboat) | scratches | cracks |
-| [Birch-bark canoe](Birch-Bark-Canoe) | scratches | scratches |
+| [Birch-bark canoe](Birch-Bark-Canoe) | splits it with its ribs broken, or stoves it in on a rib | stoves it in |
 | [Reed boat](Reed-Boat) | nothing | nothing |
-| [Hide currach](Hide-Currach) | scratches | cracks |
+| [Hide currach](Hide-Currach) | stoves it in where it hit | stoves it in |
 | [Raft](Raft) | shakes a quarter of its lashings loose | mostly breaks it up |
-| [Coracle](Coracle) | cracks | breaks it up |
+| [Coracle](Coracle) | splits it with its laths broken, or stoves it in on a lath | stoves it in |
 
-Every knock adds to its place's crack, so a scratch from a bump becomes a crack after a few more.
+Every knock adds to its place's crack, so a scratch from a bump becomes a crack after a few more. The three framed hulls feel a knock far sooner than the rest, since one lath or rib takes it rather than the whole boat; but a knock that breaks nothing in them, neither opening bark nor snapping a lath, leaves no mark, for hide and green wood spring back. With one aboard, in oak, a knock on a lath breaks it at 1.2 m/s in a currach and 1.4 in a coracle, and one between two laths breaks both at 1.5 and 1.8; a bark canoe's bark opens at 1.3 m/s, and its ribs break at 1.6 on a rib and 1.8 between two. A gentle landing, up to 1 m/s, is as safe in them as in any boat.
 
 ### Rams
 
@@ -123,7 +124,7 @@ Breaking waves slam the windward side, and a plunging crest far harder than a sp
 
 ### Rapids
 
-White water batters the bottom of every hull but one, every second it is in it. See [Rapids](Rapids).
+White water batters the bottom of every hull but two, every second it is in it. See [Rapids](Rapids).
 
 ### Weapons, explosions and lightning
 

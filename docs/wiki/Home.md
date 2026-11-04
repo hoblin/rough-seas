@@ -25,7 +25,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 **Your vessel**
 - [Hull condition](Hull-Condition): where a blow cracks a hull, how the crack leaks, and what it is made of.
 - [Mending](Mending): patching a hull with its own material.
-- [Rapids](Rapids): white water, and the one boat that runs it.
+- [Rapids](Rapids): white water, and the two boats that run it.
 - [Surf and swamping](Surf-and-Swamping): how a hull floats, shipping water, sinking, breakers and capsizing.
 - [Bailing](Bailing): the bilge, the rain, and keeping up.
 
