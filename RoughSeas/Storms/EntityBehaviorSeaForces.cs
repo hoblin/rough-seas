@@ -29,7 +29,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private double windageSquareMetres;
     private Seaworthiness dry;
     private float speedMultiplier;
-    private readonly Dictionary<string, SeatPose> seated = new();
     private EntityBehaviorSeatable? seatable;
     private IMasted? mast;
     private double designedMastMetres;
@@ -95,10 +94,12 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     {
         var accessor = entity.World.BlockAccessor;
         var pos = at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
-        var depth = 0;
-        while (depth < maxBlocks && accessor.GetBlock(pos, BlockLayersAccess.Fluid).IsLiquid())
+        var depth = 0.0;
+        var surface = !accessor.GetBlock(pos.UpCopy(), BlockLayersAccess.Fluid).IsLiquid();
+        while (depth < maxBlocks && accessor.GetBlock(pos, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid())
         {
-            depth++;
+            depth += surface ? fluid.LiquidLevel / 8.0 : 1;
+            surface = false;
             pos.Down();
         }
         return depth;
@@ -204,16 +205,12 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         if (entity is EntityBoat boat)
         {
             boat.SpeedMultiplier = swamped ? 0 : speedMultiplier * (float)SpeedFactor();
+            var poses = SeatPoses.Of(boat);
             var seats = Seats;
             for (var i = 0; i < seats.Length; i++)
             {
                 var seat = seats[i];
-                if (seat.Config == null) continue;
-                if (!seated.TryGetValue(seat.SeatId, out var dry))
-                {
-                    seated[seat.SeatId] = dry = new SeatPose(seat.Config.RiderOffset, seat.Config.Animation ?? boat.MountAnimations["idle"]);
-                }
-                Hold(seat, swamped ? new SeatPose(Alongside(i), HoldAnimation) : dry);
+                poses.Hold(seat, swamped ? new SeatPose(Alongside(i), HoldAnimation) : null);
             }
         }
         if (buoyant?.Afloat.Sunk == true && entity.World.Side == EnumAppSide.Server) Founder();
@@ -238,24 +235,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     }
 
     private Vec3f Alongside(int seat) => new(0, HoldDepthMetres, (float)(BeamMetres / 2 + HoldReachMetres) * (seat % 2 == 0 ? 1 : -1));
-
-    /// <summary>
-    /// Puts the seat in this pose. The pose is the seat's own animation, which vanilla stops when its rider leaves, so a
-    /// rider who lets go of a swamped hull does not keep holding on.
-    /// </summary>
-    private static void Hold(IMountableSeat seat, SeatPose pose)
-    {
-        var config = seat.Config;
-        var shown = config.Animation;
-        config.RiderOffset = pose.Offset;
-        config.Animation = pose.Animation;
-        if (shown == pose.Animation || seat.Passenger?.AnimManager is not { } animations) return;
-
-        if (shown != null) animations.StopAnimation(shown);
-        animations.StartAnimation(pose.Animation);
-    }
-
-    private readonly record struct SeatPose(Vec3f? Offset, string Animation);
 
     /// <param name="Height">This one wave's height, sampled from the sea's significant height; not a crest the client renders.</param>
     /// <param name="FromX">With <paramref name="FromZ"/>, the world direction the wave came from, not normalised.</param>

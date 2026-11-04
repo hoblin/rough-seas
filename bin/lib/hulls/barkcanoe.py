@@ -1,9 +1,9 @@
 import functools
 import math
 
-from held import PADDLE, POLE, paddling, poling, tools, waterline
+from held import PADDLE, POLE, paddling, seated_poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
-from physics import afloat, kilograms
+from physics import afloat, kilograms, stands
 from fit import APART, TOLERANCE, lined as lined_section
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, add, box, clear_of, corners_of, group, path, plank, renamed, rested, scale, span, stages, sub, unit, widest
 from wounds import wound
@@ -22,6 +22,8 @@ RIB_DEPTH = 0.45
 RIBS = range(-18, 36, 4)
 THWARTS = (-8, 8, 24)
 THWART = (1.4, 0.8)
+CENTRE_THWART = THWARTS[1]
+POLER_AFT = 5
 STERN = [(-19, 2.1), (-22, 2.75), (-24, 3.65), (-25.2, 5), (-25.6, 7), (-25.7, 9), (-25.5, 10.6), (-24.9, 11.4)]
 STEM_WIDTH = 0.8
 STEM_THICKNESS = 0.8
@@ -347,10 +349,17 @@ def build(path_):
           lining=SHEATHING, framing=([laths[3]], "frame"))
     shape.write()
     at = seat(shape, "BackSeat")
-    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, waterline("barkcanoe"), {
+    line = waterline("barkcanoe")
+    poler = CENTRE_THWART + POLER_AFT
+    pole = (("pole", POLE, standing_poling(POLE, (poler, SKIN, CENTRE), line * VOXELS_A_METRE, CENTRE - SHEER - 1,
+                                           hull.half(poler, SKIN + 1, inset=SKIN),
+                                           floor_at=lambda x, across: hull.floor(x, across, inset=SKIN)))
+            if stands("barkcanoe", SKIN * VOXEL_METRES)
+            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - SHEER - 1)))
+    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 6.5, 1.5)),
-        "pole": ("pole", POLE, poling(POLE, at, 4, 4, 7, 1.5)),
-    }))
+        "pole": pole,
+    }, ("Skin",)))
     report(hull, laths)
 
 

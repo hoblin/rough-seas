@@ -15,11 +15,11 @@
         "roughseas:propulsion": {
             "oars": {"stroke": "rowing", "bladeSquareMetres": 0.1, "spanMetres": 4.96},
             "sweepMetres": 1.5,
-            "handsAboveWaterMetres": 1.0,
+            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.94, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": -0.863, "y": -0.505, "z": 0}, "eyeHeight": 1.7}},
             "strokes": {"pole": {"ready": "roughseas-currach-pole-ready", "forwards": "roughseas-currach-pole-forward", "backwards": "roughseas-currach-pole-backward"}, "tholeoar": {"ready": "roughseas-currach-ready", "forwards": "roughseas-currach-forward", "backwards": "roughseas-currach-backward"}},
             "sources": {
                 "sweepMetres": "Her rower sits on the thwart 1.18 m aft of her middle and a pole swept at arm's length works some 0.7 m beyond her 0.62 m half-beam: 1.5 m from her middle",
-                "handsAboveWaterMetres": "Her thwart lies 0.4 m above her waterline, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
+                "pole": "Poled standing on her floor: her 1.2 m of beam bears a man standing far more stiffly than the narrowest canoe polers stand in (bin/lib/hulls/physics.py). No source shows a currach poled, so he stands where a canoe poler does, about a foot aft of her middle (ACA, Canoe Poling), off his thwart. His hands end the shove at his hip, 0.93 m over his soles (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
                 "sideDrag": "Hide over round ribs: the round-bilged hull's cross-flow drag",
                 "oars": "Her two oars on their tholes (the oar's own sources); from blade to blade across her 4.96 m by the model (bin/lib/hulls/currach.py): the tholes at her gunwale and some 1.9 m of each 3 m oar outboard of its thole to its blade's middle"
             }

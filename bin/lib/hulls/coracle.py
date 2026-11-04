@@ -3,10 +3,10 @@ import math
 from pathlib import Path
 
 from fit import APART, Oval
-from physics import afloat, kilograms
-from held import PADDLE, POLE, poling, sculling, tools, waterline
+from physics import afloat, kilograms, stands
+from held import PADDLE, POLE, sculling, seated_poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
-from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Shape, across, beam, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
+from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
 from wounds import wound
 
 CENTRE = 8
@@ -288,10 +288,16 @@ def build(path_):
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
     at = seat(shape, "FrontSeat")
-    player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, waterline("coracle"), {
+    line = waterline("coracle")
+    floor = HIDE + 2 * LATH_THICKNESS
+    pole = (("pole", POLE, standing_poling(POLE, (CENTRE, floor, CENTRE), line / VOXEL_METRES, CENTRE - GUNWALE[1] - 1,
+                                           BOTTOM[1] - HIDE - 2 * LATH_THICKNESS))
+            if stands("coracle", floor * VOXEL_METRES)
+            else ("seatedpole", POLE, seated_poling(POLE, at, line / VOXEL_METRES, CENTRE - GUNWALE[1] - 1)))
+    player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, line, {
         "paddle": ("sculling", PADDLE, sculling(PADDLE, at, 6.5, 5, 2.5)),
-        "pole": ("pole", POLE, poling(POLE, at, 3, 3, 8, -2.5)),
-    }))
+        "pole": pole,
+    }, ("Cover",)))
 
     back = Path(path_).with_name("coracle-back.json")
     worn = json.loads(back.read_text())

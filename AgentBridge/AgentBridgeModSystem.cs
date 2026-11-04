@@ -39,6 +39,7 @@ public class AgentBridgeModSystem : ModSystem
     private EntityLoadBlackBox blackBox = null!;
     private HandbookRecipe recipes = null!;
     private FreeCamera freeCamera = null!;
+    private LimbColours limbs = null!;
     private SwellReading? swell;
     private readonly HttpListener listener = new();
 
@@ -56,6 +57,7 @@ public class AgentBridgeModSystem : ModSystem
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         recipes = new HandbookRecipe(api);
         freeCamera = new FreeCamera(api);
+        limbs = new LimbColours(api);
         if (api.ModLoader.IsModEnabled("roughseas")) swell = new SwellReading(api);
         listener.Prefixes.Add(Prefix);
         listener.Start();
@@ -119,6 +121,7 @@ public class AgentBridgeModSystem : ModSystem
                 "/hotkey" =>(Encoding.UTF8.GetBytes(await OnMainThread(() => Hotkey(context.Request.QueryString["code"]))), "text/plain"),
                 "/where" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Where(context.Request.QueryString["entity"]))), "application/json"),
                 "/camera" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Camera(context.Request.QueryString))), "application/json"),
+                "/limbs" => (Encoding.UTF8.GetBytes(await OnMainThread(() => limbs.Show(context.Request.QueryString["on"] != "0"))), "text/plain"),
                 "/leave" => (Encoding.UTF8.GetBytes(Leave()), "text/plain"),
                 _ => throw new FileNotFoundException("Unknown endpoint; bin/game help lists what the bridge does")
             };

@@ -28,8 +28,10 @@ SCREENPLAY
     time: "10:00"      /time set; it only moves the clock forward
     weather: calm      clear sky, still wind, no rain, patterns held; or a list of commands. The
                        rain is handed back to the weather (/weather setprecipa) after the take.
+    shallows: 1        a granite bed that many whole metres under the surface, by `bin/scene shallows`:
+                       25 blocks across and 85 along +z, so a vessel cast at yaw 0 heads along it
     do: [COMMAND...]   anything else, run in order
-  cast:                entities spawned for the film and removed after it, by name
+  cast:               entities spawned for the film and removed after it, by name
     currach: {spawn: roughseas:currach, at: [0, 0, 6], yaw: 0}
                        at: blocks from the player at the place (default where the player is); yaw
                        in degrees. A vessel over water lies on the surface.
@@ -76,6 +78,7 @@ import yaml
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 GAME = ROOT / "bin" / "game"
+SCENE = ROOT / "bin" / "scene"
 WORDS_PER_SECOND = 2.7
 MINIMUM_DWELL_SECONDS = 2.0
 POLL_SECONDS = 0.5
@@ -155,6 +158,10 @@ class Set:
         self.calm = weather == "calm"
         for line in CALM if self.calm else weather or []:
             self.game.do(line)
+        if "shallows" in setting:
+            shallows = subprocess.run([str(SCENE), "shallows", str(setting["shallows"])], capture_output=True, text=True)
+            if shallows.returncode != 0:
+                raise Failure(f"bin/scene shallows {setting['shallows']}: {(shallows.stdout + shallows.stderr).strip()}")
         for line in setting.get("do") or []:
             self.game.do(self.cue(line))
         for name, member in self.screenplay.cast.items():

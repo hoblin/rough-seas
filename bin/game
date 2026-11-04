@@ -114,6 +114,10 @@ LOOK
                              a few shots (a stroke, a swing) is seen only this way: separate
                              shots land seconds apart on a lagging bench. Hold a key through it:
                              bin/game press W 4000 & sleep 1; bin/game burst row; wait
+  bin/game limbs [on|off]    draw the player unclothed, each limb in its own colour: arms red (upper) and orange
+                             on the left, blue and cyan on the right; legs green and lime on the left, purple
+                             and pink on the right; upper torso yellow, lower grey; a face's side shaded. For
+                             checking a pose on a screenshot; off for every picture a player sees
   bin/game hotkey CODE       cyclecamera for third person; bin/game hotkey alone lists every code
   bin/game camera first|third|off
                              the game's own first- or third-person view; off ends the free camera
@@ -395,6 +399,7 @@ case "${1:-}" in
       *) post "/camera?$(IFS='&'; echo "$*")" ;;
     esac
     ;;
+  limbs) post "/limbs?on=$([ "${2:-on}" = off ] && echo 0 || echo 1)" ;;
   scroll) post "/scroll?steps=${2:-1}" ;;
   close) post /close-dialogs ;;
   respawn) post /respawn ;;

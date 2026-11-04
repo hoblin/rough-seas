@@ -195,6 +195,16 @@ A paddle works on one side and turns her away from it, and the paddler changes s
 
 New: the enum `Side`, the class `Paddler`, the keys `paddleAbeamMetres` and `veerDegrees`, and the watched attributes `roughseas:paddleSide` and `roughseas:paddleChanging`.
 
+### Poled standing
+
+- `roughseas:propulsion`'s `handsAboveWaterMetres` moved into its new `pole` object, with the `stroke` the pole makes and the `stance` the rower takes to work it ([Driving her](Building-a-Vessel#driving-her)). A patch that set the old key sets nothing.
+- With a pole in hand, the rower's seat changes while he holds her controls: its `RiderOffset`, `Animation` and `EyeHeight` become the stance's, and go back when he puts the pole away, leaves her or someone else takes her. Only the seat of whoever holds her controls changes. A mod that reads a seat's config off one of our vessels reads the stance while he poles.
+- One owner now writes a seat's pose, `SeatPoses` in `RoughSeas.Vessels`. A swamped hull's hold outranks a stance, and a stance outranks the seat as built.
+- New player animation `roughseas-stand`, which the stance stands the rower in. The pole strokes key his legs and hips too, `UpperFootR/L`, `LowerFootR/L` and `LowerTorso`.
+- `config/propulsion.json` has a second pole stroke, `seatedpole`, for a vessel too tender to stand on. `pole` is the standing one, at a gross efficiency of 0.134.
+
+New: the `pole` key with `stroke`, `handsAboveWaterMetres` and `stance`, the stroke `seatedpole`, the animation `roughseas-stand`, `SeatPoses`, `bin/lib/hulls/leg.py` and `physics.stands`, which decides from a hull whether her poler stands, and the bench's `bin/scene shallows`.
+
 ### Every box inside the round it builds
 
 Our vessels' shapes are rebuilt so that no box stands outside the round it builds and no two faces share a plane. A vessel of yours loads as it did; a patch that addresses their elements by name should look again.

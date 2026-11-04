@@ -1,9 +1,9 @@
 import math
 
-from physics import afloat, kilograms
+from physics import afloat, kilograms, stands
 from fit import APART
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
-from held import POLE, poling, tools, waterline
+from held import POLE, seated_poling, standing_poling, tools, waterline
 from stroke import crew, drive_share, moved, player_patch, seat, strokes
 from wounds import wound
 
@@ -27,6 +27,7 @@ STRINGER = 0.6
 THWART_SHARE = 0.75
 THWART = 1.4
 THWART_SEAT = 7
+POLER_AFT = 5
 
 OARS = {"OarStarboard": -1, "OarPort": 1}
 THOLE_AHEAD = 9.6
@@ -272,9 +273,17 @@ def build(path_):
     rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
                  {"rotationZ": 12})
     at = seat(shape, "BackSeat")
-    player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, waterline("currach"), {
-        "pole": ("pole", POLE, poling(POLE, at, 3, 3, 3, -2)),
-    }))
+    line = waterline("currach")
+    poler = sum(hull.span()) / 2 + POLER_AFT
+    floor = hull.section(poler)[0][1] + hull.t + RIB_DEPTH
+    pole = (("pole", POLE, standing_poling(POLE, (poler, floor, CENTRE), line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1,
+                                           hull.half(poler, floor + 1, inset=hull.t + RIB_DEPTH),
+                                           floor_at=lambda x, across: hull.floor(x, across, inset=hull.t + RIB_DEPTH)))
+            if stands("currach", floor * VOXEL_METRES)
+            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1)))
+    player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, line, {
+        "pole": pole,
+    }, ("Cover",)))
     print(f"oars: {blade_span(rests):.2f} m from blade to blade across her")
     report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()])
 

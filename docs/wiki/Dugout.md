@@ -14,7 +14,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 
 | | |
 | --- | --- |
-| Speed | 1.7 m/s paddled, 1.9 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 1.7 m/s paddled, 2.2 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | slow, 19° a second |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
@@ -28,7 +28,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
-| Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; the back one takes a passenger |
+| Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at her bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
 | Built from | 5 logs of one wood beside the water, then six fires: each takes clay for its rim (22 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and an axe; about nine days in all |
 | Wreckage | firewood |

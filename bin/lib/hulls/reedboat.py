@@ -1,8 +1,8 @@
 import math
 from pathlib import Path
 
-from physics import MATERIALS
-from held import PADDLE, POLE, paddling, poling, tools, waterline
+from physics import MATERIALS, stands
+from held import PADDLE, POLE, paddling, seated_poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
 from shape import ROUNDED, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, section, stages, write
@@ -196,10 +196,15 @@ def build(target):
     shape.keep("Hull", "FrontSeat", "Cargo", "OarStorage")
     shape.write()
     at = seat(shape, "FrontSeat")
-    player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, waterline("reedboat"), {
+    line = waterline("reedboat")
+    girth, length = GIRTH * VOXEL_METRES, (BODY[1] - BODY[0]) * VOXEL_METRES
+    pole = (("pole", POLE, standing_poling(POLE, (at[0], GIRTH, CENTRE), line / VOXEL_METRES, CENTRE - GIRTH - 1, GIRTH))
+            if stands("reedboat", girth, form="rectangle", waterplane=2 * girth * length, beam_metres=2 * girth, depth_metres=girth)
+            else ("seatedpole", POLE, seated_poling(POLE, at, line / VOXEL_METRES, CENTRE - GIRTH - 1)))
+    player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 5, 3.5)),
-        "pole": ("pole", POLE, poling(POLE, at, 5, 5, 3, 3.5)),
-    }))
+        "pole": pole,
+    }, ("Blank", "Lashing")))
     blocks = Path(target).parents[2] / "block"
     block(blocks / "reedbundle-one.json", SIDES[:1])
     block(blocks / "reedbundle-two.json", SIDES)

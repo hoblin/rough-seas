@@ -15,7 +15,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | | |
 | --- | --- |
 | Speed | 0.4 m/s paddled, 0.7 m/s poled: a barge ([how fast](Paddles-Poles-and-Oars#how-fast)) |
-| Turning | 15° a second, poled 24° |
+| Turning | 15° a second, poled 26° |
 | [Hull](Hull-Condition) | 1200 J in oak; bamboo a third more, aged wood half |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | in oak 8 cm empty, awash with a rider; in bamboo 9 cm with a rider |
@@ -27,7 +27,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | two, fore and aft; either one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; vanilla's crude oar poles it through water of about a metre |
+| Seats | two, fore and aft; either one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing on the logs to pole; vanilla's crude oar poles it through water of under a metre |
 | Cargo | a basket (8 slots) in place of either rider |
 | Fittings | a rest for a spare pole, paddle or oar |
 | Built from | 12 logs and 3 ropes, or 18 bamboo stakes and 3 ropes |

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using RoughSeas.Vessels;
+using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Propulsion;
 
@@ -26,6 +28,22 @@ public class StrokeConfig
     public double PushNewtons;
     public double PushMetres;
     public double VeerDegrees;
+}
+
+public class PolingConfig
+{
+    public string Stroke = Pole.Code;
+    public double HandsAboveWaterMetres;
+    public StanceConfig? Stance;
+}
+
+public class StanceConfig
+{
+    public string Animation = "";
+    public Vec3f? RiderOffset;
+    public float EyeHeight;
+
+    public SeatPose Pose => new(RiderOffset, Animation, EyeHeight);
 }
 
 public class PoleConfig
