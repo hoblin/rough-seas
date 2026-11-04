@@ -15,6 +15,7 @@ LEFT = "ToolLeft"
 BLADE = "Blade"
 STARBOARD = {"R": RIGHT, "L": LEFT}
 PORT = {"R": LEFT, "L": RIGHT}
+CHANGE = "to-"
 LOOPED = {"sculling": 2}
 
 
@@ -75,8 +76,10 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
     group = tool.group()
     plan = named(f"{vessel}-{kind}", FRAMES, {name: pose for name, (pose, _) in poses.items()}, stroke,
                  LOOPED.get(stroke, 1))
-    for step, (pose, grips) in zip(plan, poses.values()):
+    for step, (name, (pose, grips)) in zip(plan, poses.items()):
         step["grips"] = grips
+        if name.startswith(CHANGE):
+            step |= {"keys": step["keys"] + [FRAMES - 1], "ends": "Hold"}
     _, player = fit(rower, [group], plan, STARBOARD, lean)
     offset = [(s - c) / 16 for s, c in zip(rower.seat, CENTRE)]
     reference = None
@@ -153,7 +156,7 @@ def paddling(tool, at, ahead, behind, above, out, catch=None, fore=3):
         (start, lean), (end, _) = ready(-side), ready(side)
 
         def at_frame(frame):
-            u = frame / FRAMES
+            u = frame / (FRAMES - 1)
             across, regrip = eased(u), eased((u - 0.2) / 0.6)
             hand = [s + (e - s) * across for s, e in zip(start, end)]
             hand[0] -= fore * math.sin(math.pi * u)
@@ -169,7 +172,7 @@ def paddling(tool, at, ahead, behind, above, out, catch=None, fore=3):
         return {f"{name}-ready": (lambda frame: placed(*ready(side), -95), grips),
                 f"{name}-forward": (forward, grips),
                 f"{name}-backward": (lambda frame: forward(FRAMES - frame), grips),
-                f"to-{name}": (switch(side), PORT if side < 0 else STARBOARD)}
+                f"{CHANGE}{name}": (switch(side), PORT if side < 0 else STARBOARD)}
 
     return side_strokes(-1, "starboard", STARBOARD) | side_strokes(1, "port", PORT)
 

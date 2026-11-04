@@ -138,6 +138,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
 
     private Vec2d Idle(Vec2d vanilla)
     {
+        paddler.Rest();
         if (physics != null) physics.WaterDragValue = vanillaWaterDrag;
         EffortWatts = 0;
         Stroke = null;

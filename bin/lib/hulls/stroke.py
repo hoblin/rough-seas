@@ -208,7 +208,7 @@ def fit(rower, elements, strokes, grips, lean):
             if round(excess, 1):
                 print(f"  {name} by {excess:.1f} at frame {frame}")
         common = {"code": stroke["code"], "quantityframes": stroke["frames"], "onActivityStopped": "EaseOut",
-                  "onAnimationEnd": "Repeat"}
+                  "onAnimationEnd": stroke.get("ends", "Repeat")}
         vessel.append({"name": stroke["code"], **common, "keyframes": own})
         player.append({"name": stroke["code"], **common, "keyframes": arms, "speed": stroke["speed"]})
     return vessel, player
