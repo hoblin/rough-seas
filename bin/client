@@ -99,6 +99,8 @@ make_reference() {
     { echo "Making the reference world needs both mods: run bin/client with the default BENCH_MODS" >&2; exit 1; }
   echo "This machine has no reference world for seed $seed; making it at $reference"
   rm -rf "$data"
+  leave_world || true
+  stop_session "$session" "$BENCH_DATA"
   trap "stop_session '$session' '$BENCH_DATA'; stop_server '$server' '$data'" EXIT
   config=$(jq -nc --arg seed "$seed" '{WorldConfig: {Seed: $seed, WorldName: "Rough Seas bench",
     PlayStyle: "roughseastest", PlayStyleLangCode: "roughseas-test", WorldType: "standard"}}')
@@ -115,8 +117,8 @@ make_reference() {
   stop_server "$server" "$data"
   trap - EXIT
   mkdir -p "$BENCH_REFERENCE"
-  mv -f "$data/Saves/default.vcdbs" "$reference.part"
-  mv -f "$reference.part" "$reference"
+  mv -f "$data/Saves/default.vcdbs" "$reference.$BENCH"
+  mv -f "$reference.$BENCH" "$reference"
   rm -rf "$data"
 }
 
