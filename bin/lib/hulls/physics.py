@@ -20,6 +20,35 @@ NARROWEST_STOOD_IN_METRES = 0.71
 CANOE = "barkcanoe"
 CANOE_FLOOR_METRES = 0.6 / 16
 
+# Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
+ROPE_METRES = 10
+HIDE_METRES = 0.005
+LATH_SQUARE_METRES = 0.01 * 0.06
+# A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
+SECTION_SQUARE_METRES = 1.2
+# The hide laced to the gunwale every 5 cm, each turn round the gunwale and the hide's edge some 15 cm of cord
+# (Hornell 1938: "laced at short intervals").
+LACING_STEP_METRES = 0.05
+LACING_TURN_METRES = 0.15
+
+
+def ropes(metres):
+    return math.ceil(metres / ROPE_METRES)
+
+
+def per_rope(pieces, count):
+    return [pieces[len(pieces) * r // count:len(pieces) * (r + 1) // count] for r in range(count)]
+
+
+def hide_sections(area):
+    sections = math.ceil(area / SECTION_SQUARE_METRES)
+    print(f"cover: {area:.2f} m² of hide, {sections} sections of {SECTION_SQUARE_METRES} m²")
+    return sections
+
+
+def lacing_metres(perimeter):
+    return perimeter / LACING_STEP_METRES * LACING_TURN_METRES + perimeter
+
 
 def stiffness(hull_kg, waterplane, beam_metres, floor_metres, centre_metres, form="ellipse", outboard=(0, 0)):
     kg = hull_kg + MASS["crewKg"] + MASS["playerGearKg"]

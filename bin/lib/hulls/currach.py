@@ -1,16 +1,15 @@
 import math
 import statistics
 
-from physics import MASS, afloat, kilograms, stands
+from physics import HIDE_METRES, LATH_SQUARE_METRES, MASS, afloat, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from fit import APART
-from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
-from held import POLE, seated_poling, standing_poling, tools, waterline
+from shape import BILGE, VOXEL_METRES, VOXELS_A_METRE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
+from held import poling, tools, waterline
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
 from wounds import wound
 
 CENTRE = 8
-VOXEL_METRES = 1 / 16
 PROFILE = [(0, 0), (6.1, 0), (8, 2.8), (9.2, 6.6), (9.6, 9.6)]
 SHEER = 9.6
 
@@ -62,18 +61,9 @@ CATCH_DEGREES = 50
 FINISH_DEGREES = 35
 DIP_SHARPNESS = 3
 
-# A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
-SECTION_SQUARE_METRES = 1.2
-# The ends bound with some 10 m of cord each (an estimate); the hide laced to the gunwale every 5 cm, each turn round
-# the gunwale and the hide's edge some 15 cm of cord (Hornell 1938: "laced at short intervals").
+# The ends bound with some 10 m of cord each (an estimate).
 END_METRES = 10
-LACING_STEP_METRES = 0.05
-LACING_TURN_METRES = 0.15
 LACES = 12
-# Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
-ROPE_METRES = 10
-HIDE_METRES = 0.005
-LATH_SQUARE_METRES = 0.01 * 0.06
 POLE_SQUARE_METRES = 0.09 * 0.09
 
 
@@ -178,13 +168,12 @@ def thwart(hull, x):
 
 def cover(hull, cuts):
     area = hull.skin_square_metres()
-    sections = math.ceil(area / SECTION_SQUARE_METRES)
-    print(f"cover: {area:.2f} m² of hide, {sections} sections of {SECTION_SQUARE_METRES} m²")
-    planks = [(plank["from"][0], size(plank["children"][0]), plank) for plank in hull.strakes(cuts)]
-    drawn = sum(square for _, square, _ in planks)
+    sections = hide_sections(area)
+    boards = [(board["from"][0], size(board["children"][0]), board) for board in hull.strakes(cuts)]
+    drawn = sum(square for _, square, _ in boards)
     parts, done = [[] for _ in range(sections)], 0
-    for _, square, plank in sorted(planks, key=lambda entry: entry[0]):
-        parts[min(sections - 1, int((done + square / 2) / (drawn / sections)))].append(plank)
+    for _, square, board in sorted(boards, key=lambda entry: entry[0]):
+        parts[min(sections - 1, int((done + square / 2) / (drawn / sections)))].append(board)
         done += square
     return parts
 
@@ -195,9 +184,9 @@ def size(board):
 
 def lacing(hull):
     perimeter = 2 * sheer_metres(hull)
-    metres = perimeter / LACING_STEP_METRES * LACING_TURN_METRES + perimeter
-    ropes = math.ceil(metres / ROPE_METRES)
-    print(f"lacing: {metres:.0f} m round a {perimeter:.2f} m gunwale, {ropes} ropes")
+    metres = lacing_metres(perimeter)
+    count = ropes(metres)
+    print(f"lacing: {metres:.0f} m round a {perimeter:.2f} m gunwale, {count} ropes")
     top = len(PROFILE) - 1
     wraps = []
     for side, label in ((-1, "Port"), (1, "Starboard")):
@@ -207,7 +196,7 @@ def lacing(hull):
             f = i - int(i)
             x, y, z = (p + f * (q - p) for p, q in zip(a, b))
             wraps.append(box(f"Lace{label}{n + 1}", (x - 0.4, y - 1.6, z - 0.7), (x + 0.4, y + 0.4, z + 0.7), "lashing"))
-    return [wraps[len(wraps) * r // ropes:len(wraps) * (r + 1) // ropes] for r in range(ropes)]
+    return per_rope(wraps, count)
 
 
 def tholes(hull, x):
@@ -337,7 +326,7 @@ def hip_joint(elements, matrices):
 
 
 def shoulder_at(rower, lean):
-    return tuple(16 * c for c in unapply(rower.placing, rower.arms["R"].joints(trunk(rower, lean))[0]))
+    return tuple(16 * c for c in unapply(rower.placing, rower.arms["R"].posture(trunk(rower, lean)).joints[0]))
 
 
 def lean_for(rower, grip):
@@ -437,11 +426,9 @@ def build(path_):
     line = waterline("currach")
     poler = sum(hull.span()) / 2 + POLER_AFT
     floor = hull.section(poler)[0][1] + hull.t + RIB_DEPTH
-    pole = (("pole", POLE, standing_poling(POLE, (poler, floor, CENTRE), line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1,
-                                           hull.half(poler, floor + 1, inset=hull.t + RIB_DEPTH),
-                                           floor_at=lambda x, across: hull.floor(x, across, inset=hull.t + RIB_DEPTH)))
-            if stands("currach", floor * VOXEL_METRES)
-            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1)))
+    pole = poling(stands("currach", floor * VOXEL_METRES), at, line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1,
+                  (poler, floor, CENTRE), hull.half(poler, floor + 1, inset=hull.t + RIB_DEPTH),
+                  floor_at=lambda x, across: hull.floor(x, across, inset=hull.t + RIB_DEPTH))
     player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, line, {
         "pole": pole,
     }, ("Cover",)))

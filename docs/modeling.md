@@ -6,10 +6,10 @@ Read before changing a shape, with `bin/model help`. Shapes are edited in Blende
 
 A hull of a few hundred tilted boards is no shape to place by hand, so each vessel of ours has a builder in `bin/lib/hulls/` (Python, no Blender), and `bin/model build [VESSEL...]` writes its shape JSON from it. The builder is the source: change the vessel there and rebuild; an edit made to the JSON alone is lost on the next build. Look at the result with `bin/model preview` and in the game.
 
-`bin/model build` is a generator, not a test, and a slow one: about 20 minutes for every vessel, nearly all of it fitting the rowers' arms to their strokes. Run it only when what it writes must change, and only for the vessels whose output changes:
+`bin/model build` is a generator, not a test. It builds the vessels side by side and prints each one's output as she finishes: under a minute for all of them, the bark canoe the longest. Run it only when what it writes must change, and only for the vessels whose output changes:
 
 - a vessel's own builder changed: `bin/model build VESSEL` (the outrigger is built from the dugout's hull, so a dugout change rebuilds both);
-- code every builder uses changed (`shape.py`, `fit.py`, `wounds.py`, `physics.py`), or the stroke fitting (`stroke.py`, `arm.py`, `leg.py`, `held.py`): every vessel;
+- code every builder uses changed (`shape.py`, `fit.py`, `wounds.py`, `physics.py`, `transform.py`), or the stroke fitting (`stroke.py`, `arm.py`, `leg.py`, `limb.py`, `held.py`): every vessel;
 - a value the builders read from a vessel's entity JSON changed (her weight, waterplane, `swimmingOffsetY`, hitbox, `pole`): that vessel;
 - a merge left a generated file in conflict (a shape, `player-*.json`): take either side and rebuild the vessels that file belongs to; never resolve it by hand.
 
@@ -31,6 +31,16 @@ Don't run it to see whether something still works: a refactor, a merge, a review
 - In an animation of version 0 an offset is turned by the element's rotation; `stroke.moved` puts an element at a point in the shape, turned as asked, from where it rests.
 - `wounds.py` draws a cracking hull's damage into its model, last in a builder, once the `Hull` box is kept: `wound(shape, levels, lining, framing)` puts, on each level of skin a build shows (`""` the finished hull, `Blank3`, `Skin5`…), a `Wound{Place}{level}` group beside the board nearest each place's middle with room for the wound, in that board's frame, holding the crack at each stage, `Scratched`, `Cracked`, `Split`, `StoveIn`. Each runs along the grain through the wall, or a solid log's face, and through any `lining` inside it: a split or a place stove in as long as the shell's `spanMetres` from the entity JSON, a scratch and a crack a share of it, none shorter than 1.5 voxels; a group beside the board, never its child, keeps every element with children a zero-size group. A `framing`, the stage of ribs or laths under the skin with their texture, breaks its member nearest each place from a split on: the member is wrapped whole in `Wound{Place}Whole`, and its two halves, turned inward about their far ends, sit beside it in `Wound{Place}Frame`. Port places sit a little toward the bow and starboard toward the stern, as `HullShape.PointOf` has them. The outrigger draws her float's forms as its lashings give, `FloatLashing{Loose,Torn,Shifted}`, each listing the elements it `replaces`. Look at them in the game, struck with `/bridge strike`: a preview draws every stage at once.
 - `bin/damage` draws the overlays a hull without wounds shows, wood's (vanilla's raft and sailboat) and reed's, four stages each, from a seed; `bin/damage PREVIEW.png` lays them over their textures to look at.
+
+## Writing a builder
+
+- **Compute once what a loop doesn't change.** Pose what stays fixed outside the loop over what varies, such as the trunk in a frame or the stroke's constants, and share it between the alternatives tried.
+- **Build a part once.** Reuse a stage already built; don't call its builder again for a report or a second shape.
+- **Reject cheaply first.** Test a box's bounds before a point's depth in it.
+- **Hot math goes through `transform.py`.** Its helpers are unrolled for speed; a loop that runs a million times takes no generators or `sum()` over three or four terms.
+- **A fact lives once.** A measured quantity goes in `physics.py` with its source, and a unit in `shape.py`. Import it; never copy it into a builder.
+- **Measure before optimising:** `python3 -m cProfile -s cumtime bin/lib/hulls/VESSEL.py OUT`.
+- **Write a file another vessel reads with `shape.save`.** The vessels build side by side.
 
 ## Boxes inside the round they build
 

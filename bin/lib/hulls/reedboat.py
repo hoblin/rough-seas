@@ -1,14 +1,12 @@
 import math
 from pathlib import Path
 
-from physics import MATERIALS, stands
-from held import PADDLE, POLE, paddling, seated_poling, standing_poling, tools, waterline
+from physics import MATERIALS, ropes, stands
+from held import PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
-from shape import ROUNDED, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, section, stages, write
+from shape import ROUNDED, VOXEL_METRES, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, section, stages, write
 
-VOXEL_METRES = 1 / 16
-ROPE_METRES = 10
 KNOT_METRES = 0.3
 
 BODY = (-8, 24)
@@ -109,27 +107,22 @@ def raised_rounds(start, direction, droop, margin=0):
     return ends(raised_points(start, direction, droop), [2 * g for g in TIP_GIRTHS], TIP_GIRTHS, margin, TIP_OVERLAP)
 
 
-def ropes_of(metres):
-    return math.ceil(metres / ROPE_METRES)
-
-
 def bundle_ropes():
     ties = len(range(TIE_PITCH // 2, BODY[1] - BODY[0], TIE_PITCH))
     metres = ties * (TIE_TURNS * math.pi * GIRTH * VOXEL_METRES + KNOT_METRES)
-    print(f"bundle: {ties} ties {TIE_PITCH * VOXEL_METRES * 100:.0f} cm apart, {metres:.1f} m of cord, {ropes_of(metres)} ropes")
-    return ropes_of(metres)
+    print(f"bundle: {ties} ties {TIE_PITCH * VOXEL_METRES * 100:.0f} cm apart, {metres:.1f} m of cord, {ropes(metres)} ropes")
 
 
 def lashings():
     around = (2 * GIRTH + math.pi * GIRTH) * VOXEL_METRES
     each = LASHING_TURNS * around + KNOT_METRES
     total = each * len(LASHINGS)
-    ropes = ropes_of(total)
+    count = ropes(total)
     order = sorted(LASHINGS, key=lambda x: abs(x - CENTRE))
-    per_rope = [[] for _ in range(ropes)]
+    per_rope = [[] for _ in range(count)]
     for n, x in enumerate(order):
-        per_rope[n * ropes // len(order)] += lashing(f"Lash{n + 1}", x)
-    print(f"lashing: {len(LASHINGS)} lashings of {LASHING_TURNS} turns, {total:.1f} m of cord, {ropes} ropes")
+        per_rope[n * count // len(order)] += lashing(f"Lash{n + 1}", x)
+    print(f"lashing: {len(LASHINGS)} lashings of {LASHING_TURNS} turns, {total:.1f} m of cord, {count} ropes")
     return per_rope
 
 
@@ -138,7 +131,7 @@ def tips():
     turns = [math.dist(a, b) / TIP_TURN_PITCH for a, b in zip(points, points[1:])]
     metres = sum(n * (2 * g + math.pi * g) for n, g in zip(turns, TIP_GIRTHS)) * VOXEL_METRES + KNOT_METRES
     turns = sum(turns)
-    assert ropes_of(metres) == 1, "an end takes more than one rope"
+    assert ropes(metres) == 1, "an end takes more than one rope"
     print(f"ends: {turns:.0f} turns bind each end up, {metres:.1f} m of cord, one rope an end")
     ends = []
     for n, (start, direction) in enumerate(ENDS, 1):
@@ -198,9 +191,8 @@ def build(target):
     at = seat(shape, "FrontSeat")
     line = waterline("reedboat")
     girth, length = GIRTH * VOXEL_METRES, (BODY[1] - BODY[0]) * VOXEL_METRES
-    pole = (("pole", POLE, standing_poling(POLE, (at[0], GIRTH, CENTRE), line / VOXEL_METRES, CENTRE - GIRTH - 1, GIRTH))
-            if stands("reedboat", girth, form="rectangle", waterplane=2 * girth * length, beam_metres=2 * girth, depth_metres=girth)
-            else ("seatedpole", POLE, seated_poling(POLE, at, line / VOXEL_METRES, CENTRE - GIRTH - 1)))
+    pole = poling(stands("reedboat", girth, form="rectangle", waterplane=2 * girth * length, beam_metres=2 * girth, depth_metres=girth),
+                  at, line / VOXEL_METRES, CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)
     player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 5, 3.5)),
         "pole": pole,

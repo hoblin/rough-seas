@@ -1,8 +1,8 @@
-from held import PADDLE, POLE, VOXELS_A_METRE, paddling, seated_poling, standing_poling, tools, waterline
+from held import PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from physics import afloat, kilograms, stands
 from fit import APART, Swept
-from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
+from shape import BILGE, VOXEL_METRES, VOXELS_A_METRE, Hull, Shape, box, breadth, group, water_plane
 from wounds import wound
 
 LOG = 16
@@ -23,7 +23,6 @@ CLAY = 0.5
 EMBERS = 0.6
 BED = 0.55
 GLOW = 160
-VOXEL_METRES = 1 / 16
 TRUNK_METRES = LOG * VOXEL_METRES
 SLICES = {
     "Stern": [(-24.5, -22, 5.0, 1.6), (-26.5, -24.5, 4.0, 2.8), (-28, -26.5, 2.9, 4.2)],
@@ -326,10 +325,9 @@ def crew_tools(shape, vessel, walls, catch=None, fore=3, outboard=(0, 0), **give
     hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD)
     floor = hull.section(POLER_AT)[0][1] + WALL
     chine = hull.half(POLER_AT, floor + 1, inset=WALL)
-    pole = (("pole", POLE, standing_poling(POLE, (POLER_AT, floor, CENTRE), line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1,
-                                           chine, floor_at=lambda x, across: hull.floor(x, across, inset=WALL)))
-            if stands(vessel, floor * VOXEL_METRES, outboard=outboard, **given)
-            else ("seatedpole", POLE, seated_poling(POLE, at, line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1)))
+    pole = poling(stands(vessel, floor * VOXEL_METRES, outboard=outboard, **given), at, line * VOXELS_A_METRE,
+                  CENTRE - PROFILE[-1][0] - 1, (POLER_AT, floor, CENTRE), chine,
+                  floor_at=lambda x, across: hull.floor(x, across, inset=WALL))
     player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1, catch=catch, fore=fore)),
         "pole": pole,

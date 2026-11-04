@@ -16,9 +16,10 @@ BUILD
                                    A shape whose boxes stand outside the round they build, or whose
                                    faces share a plane, is not written: the build names each box and
                                    how far out it stands, or the two faces (docs/modeling.md).
-                                   About 20 minutes for all, mostly the arms: build only the
-                                   vessels whose output must change. It is a generator, not a
-                                   test (docs/modeling.md says when).
+                                   The vessels build side by side, each printing as she finishes,
+                                   all in under a minute: build only the vessels whose output
+                                   must change. It is a generator, not a test (docs/modeling.md
+                                   says when).
 EDIT
   bin/model edit SHAPE SCRIPT      import SHAPE, run SCRIPT (Python, bpy) on the scene, export
                                    back over SHAPE. The usual way to change any other model.
@@ -146,13 +147,24 @@ case "$1" in
     hulls=$root/bin/lib/hulls
     vessels=("${@:2}")
     if [ ${#vessels[@]} -eq 0 ]; then
-      vessels=("$hulls"/*.py)
+      mapfile -t vessels < <(grep -l '^def build(' "$hulls"/*.py)
       vessels=("${vessels[@]##*/}")
       vessels=("${vessels[@]%.py}")
     fi
+    logs=$work/build
+    mkdir -p "$logs"
+    declare -A building
     for vessel in "${vessels[@]}"; do
-      [[ $vessel == shape || $vessel == stroke ]] || python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json"
+      python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json" >"$logs/$vessel.log" 2>&1 &
+      building[$!]=$vessel
     done
+    failed=0
+    while [ ${#building[@]} -gt 0 ]; do
+      wait -n -p built || failed=1
+      cat "$logs/${building[$built]}.log"
+      unset "building[$built]"
+    done
+    exit $failed
     ;;
   edit) need 3 "$@"; blender_do edit "$(realpath "$2")" "$(realpath "$3")" ;;
   import)

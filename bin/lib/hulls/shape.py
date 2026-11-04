@@ -117,6 +117,7 @@ def stages(name, pieces, wood="frame"):
 
 
 VOXELS_A_METRE = 16
+VOXEL_METRES = 1 / VOXELS_A_METRE
 VOXEL_METRES_CUBED_LITRES = 1000 / VOXELS_A_METRE ** 3
 
 
@@ -442,8 +443,8 @@ class Hull:
         return planes
 
     def section(self, x):
-        edges = range(len(self.stations[0][1]))
-        return [(abs(self.at(x, k, 1)[2] - self.cz), self.at(x, k, 1)[1]) for k in edges]
+        points = (self.at(x, k, 1) for k in range(len(self.stations[0][1])))
+        return [(abs(z - self.cz), y) for _, y, z in points]
 
     def half(self, x, y, inset=0):
         edges = self.section(x)
@@ -575,7 +576,14 @@ def write(path, shape):
     text = json.dumps(shape, indent=1)
     for leaf in (r"[\[{]\n[^\[\]{}]*?\n\s*[\]}]", r"\{\n[^{}]*?\n\s*\}"):
         text = re.sub(leaf, lambda m: " ".join(m.group(0).split()), text)
-    path.write_text(text + "\n")
+    save(path, text + "\n")
+
+
+def save(path, text):
+    """Replaces the file whole, in one step: the vessels build side by side and read each other's files."""
+    part = path.with_name(path.name + ".part")
+    part.write_text(text)
+    part.replace(path)
 
 
 def flattened(elements):

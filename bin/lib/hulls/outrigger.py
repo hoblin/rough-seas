@@ -2,15 +2,12 @@ import math
 from collections import namedtuple
 from pathlib import Path
 
-from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes
-from physics import afloat, built, kilograms
+from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, hull_box, log, volumes
+from physics import ROPE_METRES, afloat, built, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
-from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, clear_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, VOXEL_METRES, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
-
-VOXEL_METRES = 1 / 16
-ROPE_METRES = 10
 
 LOG = 16
 FLOAT_Z = 40
@@ -166,15 +163,15 @@ def lashings():
         ties.append(lashing(f"Lash{n}Float", x, FLOAT_Z, *float_lashed(x)))
         metres.append(afloat)
     total = sum(metres)
-    ropes = math.ceil(total / ROPE_METRES)
-    per_rope = [[] for _ in range(ropes)]
+    count = ropes(total)
+    lashed = [[] for _ in range(count)]
     done = 0
     for tie, length in zip(ties, metres):
-        per_rope[min(ropes - 1, int((done + length / 2) / (total / ropes)))] += tie
+        lashed[min(count - 1, int((done + length / 2) / (total / count)))] += tie
         done += length
-    assert all(per_rope), "a rope with no lashing"
-    print(f"lashing: {total:.0f} m in {len(ties)} lashings of {LASHING_TURNS} turns, {ropes} ropes of {ROPE_METRES} m")
-    return per_rope
+    assert all(lashed), "a rope with no lashing"
+    print(f"lashing: {total:.0f} m in {len(ties)} lashings of {LASHING_TURNS} turns, {count} ropes of {ROPE_METRES} m")
+    return lashed
 
 
 def slack(name, x, form):
@@ -374,9 +371,9 @@ def seams(hull):
                                 "lashing", grain="y"))
             z, n = z + STITCH_PITCH, n + 1
     metres = len(stitches) * STITCH_TURN_METRES
-    ropes = math.ceil(metres / ROPE_METRES)
-    print(f"seams: {len(stitches)} stitches {STITCH_PITCH * VOXEL_METRES * 100:.1f} cm apart, {metres:.0f} m of cord, {ropes} ropes")
-    return [stitches[len(stitches) * r // ropes:len(stitches) * (r + 1) // ropes] for r in range(ropes)]
+    count = ropes(metres)
+    print(f"seams: {len(stitches)} stitches {STITCH_PITCH * VOXEL_METRES * 100:.1f} cm apart, {metres:.0f} m of cord, {count} ropes")
+    return per_rope(stitches, count)
 
 
 def build(target):
@@ -403,7 +400,8 @@ def build(target):
     shape.add(stages("Strakes", strakes(hull)), stages("Seams", seams(hull)))
     rigged(shape, hull, shell, logs, passes)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
-    shape.keep("Hull", "FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
+    shape.elements.append(hull_box())
+    shape.keep("FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage", "OarStorage")
     wound(shape, [("", [shell], WOOD)])
     shape.write()

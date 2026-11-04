@@ -1,16 +1,16 @@
+import copy
 import json
 import math
 from pathlib import Path
 
 from fit import APART, Oval
-from physics import afloat, kilograms, stands
-from held import PADDLE, POLE, sculling, seated_poling, standing_poling, tools, waterline
+from physics import HIDE_METRES, LATH_SQUARE_METRES, ROPE_METRES, afloat, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
+from held import PADDLE, poling, sculling, tools, waterline
 from stroke import player_patch, seat
-from shape import BILGE, VOXEL_METRES_CUBED_LITRES, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
+from shape import BILGE, VOXEL_METRES, VOXEL_METRES_CUBED_LITRES, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
 from wounds import wound
 
 CENTRE = 8
-VOXEL_METRES = 1 / 16
 
 # Hornell 1938: seven laths along and seven across; their spacing fills the bottom, on the 1/16 m the lath bed lays them by.
 LATHS = 7
@@ -23,7 +23,6 @@ PLAIT_WIDTH = 0.6
 PLAIT_HEIGHT = 0.4
 
 HIDE = 0.2
-HIDE_METRES = 0.005
 
 # A Teifi coracle, Museum Wales: 1.5 m long, 1.07 m across; a flat bottom whose laths rise about 0.35 m to the gunwale.
 # The hide is stretched over the frame, so the bottom reaches round the outermost laths, the across ones over the along.
@@ -34,19 +33,11 @@ STAVES = 24
 STRIP = 2
 KNEE = DEPTH * 0.45
 SIDE_HEIGHTS = (0, KNEE, DEPTH)
-LATH_SQUARE_METRES = 0.01 * 0.06
-# A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
-SECTION_SQUARE_METRES = 1.2
 
-# A crossing tied with a few turns of cord, about 0.8 m of it (an estimate); the hide laced to the gunwale every 5 cm,
-# each turn round the gunwale and the hide's edge, some 15 cm of cord (Hornell 1938: "laced at short intervals").
+# A crossing tied with a few turns of cord, about 0.8 m of it (an estimate).
 TIE_METRES = 0.8
 TIE = 1.2
-LACING_STEP_METRES = 0.05
-LACING_TURN_METRES = 0.15
 LACING_WRAPS = 16
-# Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
-ROPE_METRES = 10
 
 TEXTURES = {
     "hide": "game:block/cloth/armor-padding/hide",
@@ -129,12 +120,11 @@ def on_bottom(dx, dz):
 
 def ties():
     crossings = [(CENTRE + dx, CENTRE + dz) for dz in offsets(ALONG_SPACING) for dx in offsets(ACROSS_SPACING) if on_bottom(dx, dz)]
-    ropes = math.ceil(len(crossings) * TIE_METRES / ROPE_METRES)
-    print(f"binding: {len(crossings)} crossings tied, {len(crossings) * TIE_METRES:.0f} m, {ropes} ropes of {ROPE_METRES} m")
+    count = ropes(len(crossings) * TIE_METRES)
+    print(f"binding: {len(crossings)} crossings tied, {len(crossings) * TIE_METRES:.0f} m, {count} ropes of {ROPE_METRES} m")
     top = HIDE + 2 * LATH_THICKNESS + 0.15
-    knots = [box(f"Tie{n}", (x - TIE / 2, HIDE + APART, z - TIE / 2), (x + TIE / 2, top, z + TIE / 2), "lashing")
-             for n, (x, z) in enumerate(crossings, 1)]
-    return [knots[len(knots) * r // ropes:len(knots) * (r + 1) // ropes] for r in range(ropes)]
+    return per_rope([box(f"Tie{n}", (x - TIE / 2, HIDE + APART, z - TIE / 2), (x + TIE / 2, top, z + TIE / 2), "lashing")
+                     for n, (x, z) in enumerate(crossings, 1)], count)
 
 
 def plaits():
@@ -185,11 +175,13 @@ def mid():
     return tuple(b + (g - b) * 0.55 for b, g in zip(BOTTOM, GUNWALE))
 
 
-def cover():
-    pieces = panels()
-    area = sum(square for _, square, _ in pieces)
-    sections = math.ceil(area / SECTION_SQUARE_METRES)
-    print(f"cover: {area:.2f} m² of hide, {sections} sections of {SECTION_SQUARE_METRES} m²")
+def hide_area(pieces):
+    return sum(square for _, square, _ in pieces)
+
+
+def cover(pieces):
+    area = hide_area(pieces)
+    sections = hide_sections(area)
     sectors = [[] for _ in range(sections)]
     for angle, _, element in pieces:
         sectors[int((angle % (2 * math.pi)) / (2 * math.pi) * sections) % sections].append(element)
@@ -198,9 +190,9 @@ def cover():
 
 def lacing():
     perimeter = length([oval(GUNWALE, DEPTH, k) for k in range(STAVES + 1)]) * VOXEL_METRES
-    metres = perimeter / LACING_STEP_METRES * LACING_TURN_METRES + perimeter
-    ropes = math.ceil(metres / ROPE_METRES)
-    print(f"lacing: {metres:.0f} m round a {perimeter:.2f} m gunwale, {ropes} ropes")
+    metres = lacing_metres(perimeter)
+    count = ropes(metres)
+    print(f"lacing: {metres:.0f} m round a {perimeter:.2f} m gunwale, {count} ropes")
     wraps = []
     for n in range(LACING_WRAPS):
         x, y, z = oval(GUNWALE, DEPTH, n * STAVES / LACING_WRAPS, out=LATH_THICKNESS)
@@ -208,7 +200,7 @@ def lacing():
         wraps.append(group(f"Lace{n + 1}Turn", (x, y, z), (0, -angle, 0), [
             box(f"Lace{n + 1}", (-1, -1.4, -0.3), (1.2, 0.5, 0.3), "lashing"),
         ]))
-    return [wraps[len(wraps) * r // ropes:len(wraps) * (r + 1) // ropes] for r in range(ropes)]
+    return per_rope(wraps, count)
 
 
 def surface(prefix, height, texture="null"):
@@ -222,14 +214,6 @@ def surface(prefix, height, texture="null"):
             planes.append(water_plane(f"{prefix}{n}", CENTRE - reach, CENTRE + reach, CENTRE + offset, CENTRE + offset + 2,
                                       height, texture))
     return planes
-
-
-def finished():
-    return [*(element for piece in lattice("BentLath", lambda piece: piece[1]) for element in piece),
-            *(element for rope in ties() for element in rope),
-            *(element for plait in plaits() for element in plait),
-            *(element for section in cover() for element in section),
-            *(element for rope in lacing() for element in rope)]
 
 
 def bowl_litres(inset, floor):
@@ -252,8 +236,7 @@ def axes_at(y):
     return tuple(l + (u - l) * share for l, u in zip(lower, upper))
 
 
-def report(lattice_stage, gunwale_stage):
-    area = sum(square for _, square, _ in panels())
+def report(lattice_stage, gunwale_stage, area):
     metres = sum(piece["metres"] for stage in (lattice_stage, gunwale_stage) for piece in stage["children"])
     hide_kg, frame_kg = kilograms("hide", area * HIDE_METRES * 1000), kilograms("wood-willow", metres * LATH_SQUARE_METRES * 1000)
     inset = HIDE + 2 * LATH_THICKNESS
@@ -266,19 +249,26 @@ def report(lattice_stage, gunwale_stage):
 
 def build(path_):
     shape = Shape(path_, {**TEXTURES, "bilge": BILGE})
-    flat, gunwale = stages("Lattice", lattice("Lath", lambda piece: piece[0])), stages("Gunwale", plaits())
+    plaited = plaits()
+    flat, gunwale = stages("Lattice", lattice("Lath", lambda piece: piece[0])), stages("Gunwale", plaited)
     shape.add(flat)
-    bent = stages("LatticeBent", lattice("BentLath", lambda piece: piece[1]))
+    bent_laths = lattice("BentLath", lambda piece: piece[1])
+    bent = stages("LatticeBent", bent_laths)
     shape.add(bent)
-    binding = stages("Binding", ties())
+    tied = ties()
+    binding = stages("Binding", tied)
     shape.add(binding)
     shape.add(gunwale)
-    hide = stages("Cover", cover(), wood="none")
+    pieces = panels()
+    covered = cover(pieces)
+    hide = stages("Cover", covered, wood="none")
     shape.add(hide)
     shape.within(bowl(), hide)
     shape.within(Oval("the hide's inside", (CENTRE, CENTRE), axes_at, floor=0, inset=HIDE), bent, binding)
     shape.within(Oval("the gunwale", (CENTRE, CENTRE), lambda y: tuple(axis + LATH_THICKNESS + PLAIT_WIDTH / 2 for axis in GUNWALE)), gunwale)
-    laced = stages("Lacing", lacing())
+    laces = lacing()
+    worn_bowl = copy.deepcopy([element for stage in (bent_laths, tied, plaited, covered, laces) for piece in stage for element in piece])
+    laced = stages("Lacing", laces)
     shape.add(laced)
     shape.together(flat, binding)
     shape.together(bent, binding, gunwale, hide, laced)
@@ -290,10 +280,8 @@ def build(path_):
     at = seat(shape, "FrontSeat")
     line = waterline("coracle")
     floor = HIDE + 2 * LATH_THICKNESS
-    pole = (("pole", POLE, standing_poling(POLE, (CENTRE, floor, CENTRE), line / VOXEL_METRES, CENTRE - GUNWALE[1] - 1,
-                                           BOTTOM[1] - HIDE - 2 * LATH_THICKNESS))
-            if stands("coracle", floor * VOXEL_METRES)
-            else ("seatedpole", POLE, seated_poling(POLE, at, line / VOXEL_METRES, CENTRE - GUNWALE[1] - 1)))
+    pole = poling(stands("coracle", floor * VOXEL_METRES), at, line / VOXEL_METRES, CENTRE - GUNWALE[1] - 1,
+                  (CENTRE, floor, CENTRE), BOTTOM[1] - HIDE - 2 * LATH_THICKNESS)
     player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, line, {
         "paddle": ("sculling", PADDLE, sculling(PADDLE, at, 6.5, 5, 2.5)),
         "pole": pole,
@@ -302,11 +290,11 @@ def build(path_):
     back = Path(path_).with_name("coracle-back.json")
     worn = json.loads(back.read_text())
     root = worn["elements"][0]
-    root["children"][0]["children"] = finished()
+    root["children"][0]["children"] = worn_bowl
     worn["textures"] = TEXTURES
     write(back, worn)
     print(f"{back}: worn bowl")
-    report(flat, gunwale)
+    report(flat, gunwale, hide_area(pieces))
 
 
 if __name__ == "__main__":

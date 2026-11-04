@@ -2,11 +2,11 @@ import json
 import math
 import re
 
-from physics import STANDING_HIP_METRES, SWIM_LINE_METRES
-from stroke import CENTRE, ROOT, Rower, centre, drive_share, facing, fit, moved, named, posed, rowed, seat, turn, unturn
-from transform import angles, apply, euler, mul, nearest, translation, unapply, undirect, unit
+from physics import ASSETS, STANDING_HIP_METRES, SWIM_LINE_METRES
+from shape import VOXELS_A_METRE, save
+from stroke import Rower, centre, drive_share, facing, fit, moved, named, posed, rowed, seat, turn, unturn
+from transform import angles, apply, depth, euler, inverse, mul, nearest, translation, undirect, unit
 
-ASSETS = ROOT / "RoughSeas/assets/roughseas"
 ANCHOR = "ItemAnchor"
 HAND_POINT_ROTATION = (0, -180, 0)
 FRAMES = 30
@@ -19,7 +19,6 @@ PORT = {"R": LEFT, "L": RIGHT}
 CHANGE = "to-"
 LOOPED = {"sculling": 2}
 STANDING = "roughseas-stand"
-VOXELS_A_METRE = 16
 PLANT_DEPTH_METRES = 1
 HAND_SPAN = 5
 STRIDE = 3
@@ -32,12 +31,6 @@ SEATED_CHEST = 7
 SEATED_REACH = (-3, 3)
 REST = 8
 CLEARANCE = 0.05
-
-
-def inverse(m):
-    r = [[m[j][i] for j in range(3)] for i in range(3)]
-    t = [-sum(r[i][k] * m[k][3] for k in range(3)) for i in range(3)]
-    return [r[0] + [t[0]], r[1] + [t[1]], r[2] + [t[2]], [0, 0, 0, 1]]
 
 
 def marker(name, point):
@@ -199,8 +192,9 @@ def along_tool(matrices, elements):
 
 
 def into(walls, points):
-    return max(((min(min(v, s - v) for v, s in zip(unapply(m, p), size)), part, wall)
-                for wall, size, m, _ in walls for part, p in points), default=(0, None, None))
+    return max(((depth(m, size, p), part, wall) for wall, size, m, (low, high) in walls for part, p in points
+                if low[0] <= p[0] <= high[0] and low[1] <= p[1] <= high[1] and low[2] <= p[2] <= high[2]),
+               default=(0, None, None))
 
 
 def near(walls, points, margin):
@@ -254,7 +248,7 @@ def record_stance(vessel, shift, hands):
     offset = ", ".join(f'"{a}": {number(v)}' for a, v in zip("xyz", shift))
     pole = re.sub(r'"handsAboveWaterMetres": [-\d.]+', f'"handsAboveWaterMetres": {number(hands)}', text[start:end])
     pole = re.sub(r'"riderOffset": \{[^}]*\}', f'"riderOffset": {{{offset}}}', pole)
-    path.write_text(text[:start] + pole + text[end:])
+    save(path, text[:start] + pole + text[end:])
 
 
 def waterline(vessel):
@@ -339,15 +333,10 @@ def standing_poling(tool, at, line, out, chine, side=-1, floor_at=None):
     reach_y = [floor + 21, floor + 19]
     plant = [x + reach for reach in PLANT]
 
-    def lerp(span, share):
-        return span[0] + (span[1] - span[0]) * share
-
     def placed(frame):
         reach, lift = phase(frame, drive_share("pole"))
         hand = (lerp(reach_x, reach), lerp(reach_y, reach) - DROP * reach, out - side * HANDS_INBOARD)
-        foot = (lerp(plant, reach), bed + 20 * lift, out)
-        upper = 48 - math.dist(hand, foot)
-        return tool.gripped(hand, foot, {LEFT: upper, RIGHT: upper + HAND_SPAN})
+        return planted(tool, hand, (lerp(plant, reach), bed + 20 * lift, out))
 
     feet = {"R": (x + STRIDE, floor_at(x + STRIDE, chine), z + side * (chine - FOOT_HALF)),
             "L": (x - STRIDE, floor_at(x - STRIDE, 2 * FOOT_HALF), z - side * FOOT_HALF)}
@@ -361,6 +350,21 @@ def standing_poling(tool, at, line, out, chine, side=-1, floor_at=None):
         return hips
 
     return Stance(at, STANDING, three(placed, body), feet)
+
+
+def lerp(span, share):
+    return span[0] + (span[1] - span[0]) * share
+
+
+def planted(tool, hand, foot):
+    upper = 48 - math.dist(hand, foot)
+    return tool.gripped(hand, foot, {LEFT: upper, RIGHT: upper + HAND_SPAN})
+
+
+def poling(standing, seat_at, line, out, stand_at, chine, floor_at=None):
+    if standing:
+        return "pole", POLE, standing_poling(POLE, stand_at, line, out, chine, floor_at=floor_at)
+    return "seatedpole", POLE, seated_poling(POLE, seat_at, line, out)
 
 
 def toward_grips(rower, tool, pose, hips):
@@ -380,15 +384,10 @@ def seated_poling(tool, at, line, out, side=-1):
     x, seat_y, _ = at
     bed = line - VOXELS_A_METRE * PLANT_DEPTH_METRES
 
-    def lerp(span, share):
-        return span[0] + (span[1] - span[0]) * share
-
     def placed(frame):
         reach, lift = phase(frame, drive_share("seatedpole"))
         hand = (lerp(SEATED_REACH, reach) + x, seat_y + SEATED_CHEST, out - side * HANDS_INBOARD)
-        foot = (x + lerp(PLANT, reach), bed + 20 * lift, out)
-        upper = 48 - math.dist(hand, foot)
-        return tool.gripped(hand, foot, {LEFT: upper, RIGHT: upper + HAND_SPAN})
+        return planted(tool, hand, (x + lerp(PLANT, reach), bed + 20 * lift, out))
 
     def body(rower, frame):
         return {"UpperTorso": {"rotationY": toward_grips(rower, tool, placed(frame), {})}}
