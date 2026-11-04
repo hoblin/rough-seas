@@ -353,7 +353,7 @@ recipes() {
   done <<'EOF'
 birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
 splitting-wedge    block-roughseas:wedge-we          roughseas:wedge-we
-reed-bundle        block-roughseas:reedbundle-one-we roughseas:reedbundle-one-we
+reed-bundle        block-roughseas:reedbundle-cattailtops-none-we roughseas:reedbundle-cattailtops-none-we
 laths              item-roughseas:lath-oak-5-dry     roughseas:lath-oak-5-dry
 anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
 paddle             item-roughseas:paddle-oak         roughseas:paddle-oak
