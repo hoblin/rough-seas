@@ -1,4 +1,5 @@
 import math
+import statistics
 
 from physics import MASS, afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
@@ -31,21 +32,22 @@ OARS = {"OarStarboard": -1, "OarPort": 1}
 # Dingle's thole pins stand 15 in abaft their thwart (Hornell 1938); none is given for Aran.
 THOLE_ABAFT = 0.38 * VOXELS_A_METRE
 # The pin passes through the bull, nailed to the loom's after side (Hornell 1938).
-BULL = 1.4
-LOOM = 0.4
+PIN_TO_LOOM = 1.4
+LOOM_RADIUS = 0.4
 OAR = 48
 # The grips cross 6 to 12 in amidships (the Celtic MKE currach club): each 0.115 m past her middle.
 GRIP = 0.115 * VOXELS_A_METRE
 LOOM_END = 14
 BLADE = 16
+BLADE_BREADTH = 1.6
 # One hand over the other where the grips cross.
 HANDS_APART = 1.2
 FRAMES = 30
 # The arc and the swing of his back, fitted to his arms (arm.py).
-SWEEP_DEGREES = 26
-SWEEP_MIDDLE = 120
-LEAN = 16
-SWING = 14
+SWEEP_DEGREES = 24
+SWEEP_MIDDLE = 112
+LEAN = 18
+SWING = 12
 COVER = 1
 CLEAR = 2
 DIP_SHARPNESS = 3
@@ -199,8 +201,8 @@ def tholes(hull, x):
     pins, rests = [], {}
     for name, side in OARS.items():
         _, y, z = hull.at(x, top, side)
-        pins.append(box(f"Thole{name[3:]}", (x - 0.3, y - 0.6, z - 0.3), (x + 0.3, y + 2 * LOOM + 1.6, z + 0.3), "frame", grain="y"))
-        rests[name] = (x, y + LOOM, z)
+        pins.append(box(f"Thole{name[3:]}", (x - 0.3, y - 0.6, z - 0.3), (x + 0.3, y + 2 * LOOM_RADIUS + 1.6, z + 0.3), "frame", grain="y"))
+        rests[name] = (x, y + LOOM_RADIUS, z)
     return pins, rests
 
 
@@ -211,13 +213,13 @@ def inboard(rest):
 def oar(name, side, rest):
     loom = inboard(rest)
     outboard = OAR - loom - GRIP
-    z = side * BULL
+    z = side * PIN_TO_LOOM
     return group(name, rest, (side * 90, 0, 0), [
         box(f"{name}Grip", (-loom - GRIP, -0.35, z - 0.35), (-loom, 0.35, z + 0.35), "frame"),
-        box(f"{name}Loom", (-loom, -LOOM, z - LOOM), (LOOM_END, LOOM, z + LOOM), "frame"),
-        box(f"{name}Bull", (-1.6, -LOOM, min(0, z) - 0.7), (1.6, LOOM, max(0, z) + 0.7), "frame"),
+        box(f"{name}Loom", (-loom, -LOOM_RADIUS, z - LOOM_RADIUS), (LOOM_END, LOOM_RADIUS, z + LOOM_RADIUS), "frame"),
+        box(f"{name}Bull", (-1.6, -LOOM_RADIUS, min(0, z) - 0.7), (1.6, LOOM_RADIUS, max(0, z) + 0.7), "frame"),
         box(f"{name}Shaft", (LOOM_END, -0.3, z - 0.3), (outboard - BLADE, 0.3, z + 0.3), "frame"),
-        box(f"{name}Blade", (outboard - BLADE, -0.15, z - 0.8), (outboard, 0.15, z + 0.8), "frame"),
+        box(f"{name}Blade", (outboard - BLADE, -BLADE_BREADTH / 2, z - 0.15), (outboard, BLADE_BREADTH / 2, z + 0.15), "frame"),
     ])
 
 
@@ -225,9 +227,10 @@ def pitches(rests):
     rest = next(iter(rests.values()))
     outboard = OAR - inboard(rest) - GRIP
     above = rest[1] - waterline("currach") * VOXELS_A_METRE
-    drive = -math.degrees(math.asin((above + COVER) / (outboard - BLADE / 2)))
-    recovery = -math.degrees(math.asin((above - CLEAR) / outboard))
-    return recovery, drive
+    apart = math.degrees(math.asin(HANDS_APART / 2 / (inboard(rest) + GRIP / 2)))
+    drive = -math.degrees(math.asin((above + COVER + BLADE_BREADTH / 2) / (outboard - BLADE))) - apart
+    recovery = -math.degrees(math.asin((above - CLEAR - BLADE_BREADTH / 2) / outboard)) + apart
+    return {name: (recovery + side * apart, drive + side * apart) for name, side in OARS.items()}
 
 
 def rowing_station(hull):
@@ -256,15 +259,14 @@ def depth(u):
 
 
 def rowing(rests):
-    recovery, drive = pitches(rests)
-    apart = math.degrees(math.asin(HANDS_APART / 2 / (inboard(next(iter(rests.values()))) + GRIP / 2)))
+    pitched = pitches(rests)
 
     def pose(sweep_at, depth_at):
         def at(frame):
             u = frame / FRAMES
             yaw = SWEEP_MIDDLE - SWEEP_DEGREES * sweep_at(u)
-            pitch = recovery + (drive - recovery) * depth_at(u)
-            return {name: moved(rests[name], (side * 90, 0, 0), rests[name], {"rotationY": -side * yaw, "rotationZ": pitch + side * apart})
+            return {name: moved(rests[name], (side * 90, 0, 0), rests[name],
+                                {"rotationY": -side * yaw, "rotationZ": pitched[name][0] + (pitched[name][1] - pitched[name][0]) * depth_at(u)})
                     for name, side in OARS.items()}
         return at
 
@@ -279,8 +281,10 @@ def rowing(rests):
 
 
 def blade_span(rests):
-    _, drive = pitches(rests)
-    across = [inboard(rest) + (OAR - inboard(rest) - GRIP - BLADE / 2) * math.cos(math.radians(drive)) for rest in rests.values()]
+    drive = drive_share("rowing")
+    abeam = statistics.fmean(math.sin(math.radians(SWEEP_MIDDLE - SWEEP_DEGREES * sweep(drive * k / 100))) for k in range(100))
+    across = [inboard(rest) + (OAR - inboard(rest) - GRIP - BLADE / 2) * math.cos(math.radians(pitched)) * abeam
+              for rest, (_, pitched) in zip(rests.values(), pitches(rests).values())]
     return sum(across) / VOXELS_A_METRE
 
 

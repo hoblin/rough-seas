@@ -18,7 +18,7 @@ public class VesselSeat(IMountable mountable, string seatId, SeatConfig config) 
         get
         {
             var position = base.SeatPosition;
-            position.Yaw += config.MountRotation.Y * GameMath.DEG2RAD;
+            position.Yaw += Config.MountRotation.Y * GameMath.DEG2RAD;
             return position;
         }
     }
