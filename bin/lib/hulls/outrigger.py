@@ -375,7 +375,7 @@ def build(target):
     shape.keep("LowerMastStorage", "OarStorage")
     wound(shape, [("", [shell], WOOD)])
     shape.write()
-    crew_tools(shape, "outrigger")
+    crew_tools(shape, "outrigger", catch=5, fore=1)
     report(hull, passes["children"][-1])
 
 

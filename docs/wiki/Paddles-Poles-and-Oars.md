@@ -18,6 +18,7 @@ A pole reaches the bottom at about these depths, a little less from the currach,
 ## Using them
 
 - Sit in the seat that steers, the tool in hand: <kbd>W</kbd> and <kbd>S</kbd> drive her, <kbd>A</kbd> and <kbd>D</kbd> sweep her round. The currach is rowed with an empty hand, her own two oars on their thole pins.
+- A paddle works on one side and turns her away from it. Holding <kbd>W</kbd>, the paddler keeps her course as real paddlers do: once the bow has swung off it, she changes sides, carrying the paddle over the bow while her hands change grips, a stroke without drive. The bow wanders a little either side of the course; a short hull changes sides every few strokes, a long one less often. <kbd>A</kbd> and <kbd>D</kbd> put her on the side that turns the boat.
 - Past a pole's reach the stroke finds nothing: she glides on and slows.
 - A pole or a paddle stows aboard every vessel with <kbd>Ctrl</kbd> + right-click on her, one at a time; the raft keeps one on its oar rest.
 - Paddling, poling and rowing make you hungry, about as much as sprinting does.
@@ -29,6 +30,8 @@ A pole reaches the bottom at about these depths, a little less from the currach,
 | A paddle along the side | A pole off the bottom |
 | ![Rowing a currach on her thole pins](images/propulsion/rowing.webp) | ![Sculling a coracle over her bow](images/propulsion/sculling.webp) |
 | The currach's oars on their thole pins | A coracle sculled over her bow |
+| ![A bark canoe's paddler changing sides](images/propulsion/changing-sides.webp) | |
+| A paddler changing sides | |
 
 ## How fast
 

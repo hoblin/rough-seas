@@ -2,7 +2,7 @@ import json
 import math
 
 from physics import SWIM_LINE_METRES
-from stroke import CENTRE, ROOT, Rower, drive_share, fit, moved, posed, seat, strokes, turn
+from stroke import CENTRE, ROOT, Rower, centre, drive_share, fit, moved, named, posed, seat, turn
 from transform import angles, apply, euler, mul, nearest, translation, undirect
 
 ASSETS = ROOT / "RoughSeas/assets/roughseas"
@@ -12,6 +12,9 @@ FRAMES = 30
 TOOL = "Tool"
 RIGHT = "ToolRight"
 LEFT = "ToolLeft"
+BLADE = "Blade"
+STARBOARD = {"R": RIGHT, "L": LEFT}
+PORT = {"R": LEFT, "L": RIGHT}
 LOOPED = {"sculling": 2}
 
 
@@ -70,15 +73,21 @@ def wrist(rower, tool, body, matrix):
 def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline):
     rower = Rower(seat(shape, seated), idle)
     group = tool.group()
-    plan = strokes(f"{vessel}-{kind}", FRAMES, *poses, stroke=stroke, per_loop=LOOPED.get(stroke, 1))
-    _, player = fit(rower, [group], plan, {"R": RIGHT, "L": LEFT}, lean)
+    plan = named(f"{vessel}-{kind}", FRAMES, {name: pose for name, (pose, _) in poses.items()}, stroke,
+                 LOOPED.get(stroke, 1))
+    for step, (pose, grips) in zip(plan, poses.values()):
+        step["grips"] = grips
+    _, player = fit(rower, [group], plan, STARBOARD, lean)
     offset = [(s - c) / 16 for s, c in zip(rower.seat, CENTRE)]
     reference = None
     for step, animation in zip(plan, player):
         deepest = math.inf
         previous = reference
+        abeam = []
         for keyframe, frame in zip(animation["keyframes"], step["keys"]):
             matrices = posed([group], lambda name, pose=step["pose"](frame): pose.get(name, {}))
+            if step["code"].endswith("starboard-forward") and frame < FRAMES * drive_share(stroke):
+                abeam.append(abs(centre(tool.elements, matrices, BLADE)[2] - rower.seat[2]) / 16)
             body = keyframe["elements"]
             anchor = wrist(rower, tool, body, mul(translation([-o for o in offset]), matrices[TOOL]))
             if previous is not None:
@@ -90,6 +99,8 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
             deepest = min(deepest, lowest(matrices, tool.elements) - waterline)
         print(f"{animation['code']}: the tool reaches {-deepest:.2f} m under the water" if deepest < 0
               else f"{animation['code']}: the tool stays {deepest:.2f} m over the water")
+        if step["code"].endswith("starboard-forward"):
+            print(f"{animation['code']}: the blade drives {sum(abeam) / len(abeam):.2f} m abeam of the seat")
     return player
 
 
@@ -115,19 +126,52 @@ def phase(frame, drive):
     return (ease if driving else 1 - ease), (0 if driving else math.sin(math.pi * f))
 
 
-def paddling(tool, at, ahead, behind, above, out, side=-1):
-    x, y, _ = at
+def eased(u):
+    return 0.5 - 0.5 * math.cos(math.pi * min(1, max(0, u)))
+
+
+def paddling(tool, at, ahead, behind, above, out, lift=6, catch=None, fore=3):
+    x, y, z = at
+    catch = ahead if catch is None else catch
+    sides = {-1: out, 1: 2 * z - out}
 
     def placed(hand, lean, pitch):
-        return tool.held_at(hand, {"rotationX": -side * lean, "rotationZ": pitch})
+        return tool.held_at(hand, {"rotationX": lean, "rotationZ": pitch})
 
-    def stroke(frame):
-        reach, lift = phase(frame, drive_share("paddling"))
-        hand = (x - ahead + (ahead + behind) * reach, y + above + 2 * (1 - reach) ** 2 + 4.5 * lift, out + side * lift)
-        return placed(hand, 30 + 20 * lift, -95 + 40 * reach)
+    def ready(side):
+        return (x + (behind - ahead) / 2, y + above + 2, sides[side] - side), -side * 62
 
-    return (lambda frame: placed((x + (behind - ahead) / 2, y + above + 2, out - side), 62, -95), stroke,
-            lambda frame: stroke(FRAMES - frame))
+    def stroke(side):
+        def at_frame(frame):
+            reach, rise = phase(frame, drive_share("paddling"))
+            hand = (x - catch + (catch + behind) * reach, y + above + 2 * (1 - reach) ** 2 + 4.5 * rise, sides[side] + side * rise)
+            return placed(hand, -side * (30 + 20 * rise), -95 + 40 * reach)
+
+        return at_frame
+
+    def switch(side):
+        (start, lean), (end, _) = ready(-side), ready(side)
+
+        def at_frame(frame):
+            u = frame / FRAMES
+            across, regrip = eased(u), eased((u - 0.2) / 0.6)
+            hand = [s + (e - s) * across for s, e in zip(start, end)]
+            hand[0] -= fore * math.sin(math.pi * u)
+            hand[1] += lift * math.sin(math.pi * u)
+            return placed(hand, lean * (1 - 2 * across), -95) | {
+                RIGHT: {"offsetX": (tool.left[0] - tool.right[0]) * regrip, "offsetY": 2 * math.sin(math.pi * regrip), "offsetZ": 0},
+                LEFT: {"offsetX": (tool.right[0] - tool.left[0]) * regrip, "offsetY": 0, "offsetZ": 0}}
+
+        return at_frame
+
+    def side_strokes(side, name, grips):
+        forward = stroke(side)
+        return {f"{name}-ready": (lambda frame: placed(*ready(side), -95), grips),
+                f"{name}-forward": (forward, grips),
+                f"{name}-backward": (lambda frame: forward(FRAMES - frame), grips),
+                f"to-{name}": (switch(side), PORT if side < 0 else STARBOARD)}
+
+    return side_strokes(-1, "starboard", STARBOARD) | side_strokes(1, "port", PORT)
 
 
 def poling(tool, at, ahead, behind, above, out, side=-1):
@@ -141,7 +185,8 @@ def poling(tool, at, ahead, behind, above, out, side=-1):
         hand = (x - ahead + (ahead + behind) * reach, y + above - 2 * reach + 6 * lift, out)
         return placed(hand, 12, -100 + 30 * reach)
 
-    return (lambda frame: placed((x, y + above + 2, out), 10, -90), stroke, lambda frame: stroke(FRAMES - frame))
+    return {"ready": (lambda frame: placed((x, y + above + 2, out), 10, -90), STARBOARD), "forward": (stroke, STARBOARD),
+            "backward": (lambda frame: stroke(FRAMES - frame), STARBOARD)}
 
 
 def sculling(tool, at, ahead, above, sweep):
@@ -152,5 +197,5 @@ def sculling(tool, at, ahead, above, sweep):
         hand = (x - ahead + 0.8 * math.sin(2 * turn_), y + above, z + sweep * math.sin(turn_))
         return tool.held_at(hand, {"rotationX": -25 * math.sin(turn_), "rotationZ": -135})
 
-    return (lambda frame: tool.held_at((x - ahead + 2, y + above + 0.5, z - 3), {"rotationX": 70, "rotationZ": -100}),
-            scull, lambda frame: scull(FRAMES - frame))
+    return {"ready": (lambda frame: tool.held_at((x - ahead + 2, y + above + 0.5, z - 3), {"rotationX": 70, "rotationZ": -100}), STARBOARD),
+            "forward": (scull, STARBOARD), "backward": (lambda frame: scull(FRAMES - frame), STARBOARD)}

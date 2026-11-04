@@ -121,8 +121,9 @@ A crest stands half a wave's height above still water, seven tenths when it brea
 | `paddle` | stroke | none | how a paddle drives her: `paddling` along her side or `sculling` over her bow; none, and a paddle doesn't serve her |
 | `oars` | | none | her own oars on thole pins: `stroke` (`rowing`), `bladeSquareMetres` of each, and `spanMetres` from blade to blade across her |
 | `sweepMetres` | m | 0 | how far from her middle a held tool sweeps her round |
+| `paddleAbeamMetres` | m | 0 | how far out from her middle a paddle's blade drives, the lever by which it turns her away from its side |
 | `handsAboveWaterMetres` | m | 0 | how high her rower's hands are over the water: a pole reaches that much less deep |
-| `strokes` | | none | the rower's `ready`, `forwards` and `backwards` animations for each tool she takes: `pole`, `paddle`, and `tholeoar` for her own oars |
+| `strokes` | | none | the rower's `ready`, `forwards` and `backwards` animations for each tool she takes: `pole`, `paddle`, and `tholeoar` for her own oars. A paddle worked on either side takes `paddle-starboard` and `paddle-port` instead, each with a `change` that carries it over to that side |
 
 Her length and beam are her `Hull` box. The rower's power and each stroke's rate, drive and efficiency are in `config/propulsion.json`, the drag law's constants in `config/vessels/drag.json`, each number with its source.
 

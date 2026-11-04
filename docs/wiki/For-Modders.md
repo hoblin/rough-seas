@@ -182,3 +182,15 @@ Our vessels draw each place's crack in their own model, from a scratch to a hull
 - `HullShape.PointOf` sets each port place a little toward the bow and each starboard place toward the stern, so a leak no longer starts at the mirror of the other side's.
 
 New: `IOutboard` with `OffMetres`, `IHull.Reach`, `HullShape.Spanning`, `EntityBehaviorVesselIntegrity.Impact`, `HullDamage.Hidden`, the behaviour `roughseas:floatlashing` with its keys, and `roughseas:rigging`'s `lashing`.
+
+### Paddling on both sides
+
+A paddle works on one side and turns her away from it, and the paddler changes sides to hold a course or to turn her ([Driving her](The-Science-of-the-Hull#driving-her)). A vessel of yours loads as it did.
+
+- A paddled vessel's `strokes` hold `paddle-starboard` and `paddle-port` in place of `paddle`, each with a fourth animation, `change`, that carries the paddle over to that side: `roughseas-{vessel}-paddle-{starboard|port}-{ready|forward|backward}` and `roughseas-{vessel}-paddle-to-{starboard|port}`. A vessel whose `strokes` keep a bare `paddle`, the coracle sculling over her bow, is paddled on no side. A patch that played or replaced `roughseas-{vessel}-paddle-{ready|forward|backward}` misses.
+- Her new key `paddleAbeamMetres` is how far out from her middle the blade drives: its thrust turns her by that lever. Without it a paddle drives her straight, as before.
+- The side is decided on the server, which syncs it to every client in her watched attributes `roughseas:paddleSide` (−1 starboard, 1 port) and `roughseas:paddleChanging`.
+- `HullDrag.Turning` takes her speed through the water: under way a hull resists turning in proportion to it, so every vessel turns on a wider circle while she makes way than before, and spins on the spot as before. `Propulsor.Push` takes the `Side` the tool works on.
+- `config/propulsion.json`'s `paddling` stroke gains `veerDegrees`, how far off her course she goes before the paddler changes sides.
+
+New: the enum `Side`, the class `Paddler`, the keys `paddleAbeamMetres` and `veerDegrees`, and the watched attributes `roughseas:paddleSide` and `roughseas:paddleChanging`.
