@@ -38,10 +38,14 @@ def drive_share(stroke):
 
 
 def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1):
+    return named(vessel, frames, {"ready": ready, "forward": forward, "backward": backward}, stroke, per_loop)
+
+
+def named(vessel, frames, poses, stroke, per_loop=1):
     keys = list(range(0, frames, 2))
-    return [{"code": f"roughseas-{vessel}-{name}", "frames": frames, "keys": keys if name != "ready" else [0],
+    return [{"code": f"roughseas-{vessel}-{name}", "frames": frames, "keys": [0] if name.endswith("ready") else keys,
              "speed": speed(stroke, frames, per_loop), "pose": pose}
-            for name, pose in (("ready", ready), ("forward", forward), ("backward", backward))]
+            for name, pose in poses.items()]
 
 
 def moved(origin, rest, target, turned):
@@ -180,7 +184,8 @@ def fit(rower, elements, strokes, grips, lean):
         placed = [posed(elements, lambda name, pose=pose: pose.get(name, {})) for pose in poses]
         bodies = [{"UpperTorso": lean} for _ in poses]
         faults = {}
-        for side, grip in grips.items():
+        hands_on = stroke.get("grips", grips)
+        for side, grip in hands_on.items():
             arm = rower.arms[side]
             hands = [rower.body(centre(elements, m, grip)) for m in placed]
             axes = [held(m, grip) for m in placed]
@@ -195,7 +200,7 @@ def fit(rower, elements, strokes, grips, lean):
                 for name, (excess, _) in arm.faults(body, hand, axis).items():
                     faults[f"{side} {name}"] = max(faults.get(f"{side} {name}", (0, 0)), (excess, frame))
         worst = max(math.dist(rower.hand(body, side), centre(elements, m, grip))
-                    for body, m in zip(bodies, placed) for side, grip in grips.items())
+                    for body, m in zip(bodies, placed) for side, grip in hands_on.items())
         own = [{"frame": frame, "elements": every_axis(pose)} for frame, pose in zip(stroke["keys"], poses)]
         arms = [{"frame": frame, "elements": every_axis(body)} for frame, body in zip(stroke["keys"], bodies)]
         print(f"{stroke['code']}: hands within {worst:.2f} of the grips")
@@ -203,7 +208,7 @@ def fit(rower, elements, strokes, grips, lean):
             if round(excess, 1):
                 print(f"  {name} by {excess:.1f} at frame {frame}")
         common = {"code": stroke["code"], "quantityframes": stroke["frames"], "onActivityStopped": "EaseOut",
-                  "onAnimationEnd": "Repeat"}
+                  "onAnimationEnd": stroke.get("ends", "Repeat")}
         vessel.append({"name": stroke["code"], **common, "keyframes": own})
         player.append({"name": stroke["code"], **common, "keyframes": arms, "speed": stroke["speed"]})
     return vessel, player

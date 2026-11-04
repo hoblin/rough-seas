@@ -23,10 +23,12 @@
             "finSquareMetres": 0.38,
             "paddle": "paddling",
             "sweepMetres": 1.34,
+            "paddleAbeamMetres": 0.63,
             "handsAboveWaterMetres": 0.67,
-            "strokes": {"pole": {"ready": "roughseas-outrigger-pole-ready", "forwards": "roughseas-outrigger-pole-forward", "backwards": "roughseas-outrigger-pole-backward"}, "paddle": {"ready": "roughseas-outrigger-paddle-ready", "forwards": "roughseas-outrigger-paddle-forward", "backwards": "roughseas-outrigger-paddle-backward"}},
+            "strokes": {"pole": {"ready": "roughseas-outrigger-pole-ready", "forwards": "roughseas-outrigger-pole-forward", "backwards": "roughseas-outrigger-pole-backward"}, "paddle-starboard": {"ready": "roughseas-outrigger-paddle-starboard-ready", "forwards": "roughseas-outrigger-paddle-starboard-forward", "backwards": "roughseas-outrigger-paddle-starboard-backward", "change": "roughseas-outrigger-paddle-to-starboard"}, "paddle-port": {"ready": "roughseas-outrigger-paddle-port-ready", "forwards": "roughseas-outrigger-paddle-port-forward", "backwards": "roughseas-outrigger-paddle-port-backward", "change": "roughseas-outrigger-paddle-to-port"}},
             "sources": {
                 "sweepMetres": "The dugout's seat, 0.69 m forward of her middle, and the blade swept at arm's length works some 0.7 m beyond her gunwale: 1.34 m from her middle",
+                "paddleAbeamMetres": "Her paddle's blade drives 0.63 m out from her middle, as her paddler's stroke is drawn (bin/lib/hulls/dugout.py)",
                 "handsAboveWaterMetres": "The dugout's seat, 0.07 m above her waterline, and a seated man's shoulders stand about 0.6 m over his seat (NASA-STD-3000, sitting shoulder height of a 50th-percentile man, 0.59 m)",
                 "finSquareMetres": "Her float, a 3 m log 0.25 m thick floating half under, shows 3 m by 0.125 m to the water across her",
                 "sideDrag": "A round-bottomed log: the round-bilged hull's cross-flow drag"

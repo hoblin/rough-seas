@@ -158,7 +158,7 @@
     "roughseas:item-handbooktitle-roughseas:pole-*": "使用方法",
     "roughseas:item-handbooktext-roughseas:pole-*": "同一种木头的两到五根原木首尾相接，每根上放一个劈木楔，用斧头打入楔子后，就劈成64根与这排原木等长的木杆。<br>- 在合成栏中用斧头把一根劈成16根<a href=\"handbook://item-roughseas:lath-oak-5-dry\">木条</a>。<br>- 把一根木杆横按在造好的独木舟上，就能把它装配成边架艇：它的横杆、桅杆和帆桁都用三米长的木杆。<br>- 把一根木杆按在正在建造的船上，就能把它安到位。<br>- 坐在船上手持它，即可在浅水中撑船：水深比木杆短约一米的地方，它能撑到水底，再深就够不着了。对着船按<hk>ctrl</hk> + <hk>rightmouse</hk>，把它收到船上。",
     "roughseas:item-handbooktitle-roughseas:paddle-*": "使用方法",
-    "roughseas:item-handbooktext-roughseas:paddle-*": "在合成格中用斧头和小刀，由两米长的<a href=\"handbook://item-roughseas:pole-oak-2\">木杆</a>削成。<br>- 坐在船上手持它即可划船：<hk>walkforward</hk>和<hk>walkbackward</hk>推船前后行，<hk>walkleft</hk>和<hk>walkright</hk>让船转向。任何深度的水里都能用。<br>- 圆皮舟要用它在船头左右摇动来推进。<br>- 除库拉船外每种船都能用；库拉船用自己的长桨划。<br>- 对着船按<hk>ctrl</hk> + <hk>rightmouse</hk>，把它收到船上。",
+    "roughseas:item-handbooktext-roughseas:paddle-*": "在合成格中用斧头和小刀，由两米长的<a href=\"handbook://item-roughseas:pole-oak-2\">木杆</a>削成。<br>- 坐在船上手持它即可划船：<hk>walkforward</hk>和<hk>walkbackward</hk>推船前后行，<hk>walkleft</hk>和<hk>walkright</hk>让船转向。任何深度的水里都能用。<br>- 只在一舷划，船会偏离那一舷：为保持航向，你会自行换舷，每次少划一桨；要转向时，就在能让船转过去的那一舷划。<br>- 圆皮舟要用它在船头左右摇动来推进。<br>- 除库拉船外每种船都能用；库拉船用自己的长桨划。<br>- 对着船按<hk>ctrl</hk> + <hk>rightmouse</hk>，把它收到船上。",
     "roughseas:item-handbooktitle-roughseas:tholeoar-*": "使用方法",
     "roughseas:item-handbooktext-roughseas:tholeoar-*": "在合成格中用斧头和小刀，由一根三米长的<a href=\"handbook://item-roughseas:pole-oak-3\">木杆</a>和一根两米长的<a href=\"handbook://item-roughseas:lath-oak-2-dry\">木条</a>（做木块）制成。<br>- <a href=\"handbook://item-roughseas:currach\">库拉船</a>在建造的最后一步装上两支，两侧桨桩上各一支：手持一支对着船按<hk>rightmouse</hk>。长桨留在船上，坐在坐板上空手即可划行。",
     "roughseas:item-handbooktitle-roughseas:currach": "使用方法",

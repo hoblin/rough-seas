@@ -269,10 +269,10 @@ def build(path):
     crew_tools(shape, "dugout")
 
 
-def crew_tools(shape, vessel):
+def crew_tools(shape, vessel, catch=None, fore=3):
     at = seat(shape, "FrontSeat")
     player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, waterline(vessel), {
-        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1)),
+        "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1, catch=catch, fore=fore)),
         "pole": ("pole", POLE, poling(POLE, at, 6, 6, 4, -0.5)),
     }))
 
