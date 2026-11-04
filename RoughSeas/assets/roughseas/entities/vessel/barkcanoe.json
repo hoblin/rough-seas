@@ -28,7 +28,7 @@
             "sources": {
                 "sweepMetres": "Her paddler kneels 0.16 m aft of her middle and the blade swept at arm's length works some 0.7 m beyond her gunwale, 0.38 + 0.7 m out: 1.09 m from her middle",
                 "paddleAbeamMetres": "Her paddle's blade drives 0.60 m out from her middle, as her paddler's stroke is drawn (bin/lib/hulls/barkcanoe.py)",
-                "pole": "Poled standing, about a foot behind her centre thwart, in the diagonal stance on one side (ACA, Canoe Poling; Paddle Canada, Introduction to Canoe Poling Skills): she is wider than the 28 in polers still stand in (bin/lib/hulls/physics.py). Her floor lies at about her waterline, and his hands end the shove at his hip, 0.93 m over his soles (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
+                "pole": "Poled standing, about a foot behind her centre thwart, on her centreline in the diagonal stance, his rear foot in the chine (ACA, Canoe Poling; Paddle Canada, Introduction to Canoe Poling Skills): she is wider than the 28 in polers still stand in (bin/lib/hulls/physics.py). Her floor lies at about her waterline, and his hands end the shove at his hip, 0.93 m over his soles (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
                 "sideDrag": "Bark over round ribs: the round-bilged hull's cross-flow drag"
             }
         },
