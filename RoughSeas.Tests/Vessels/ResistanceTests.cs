@@ -11,6 +11,31 @@ public class ResistanceTests
     }
 
     [Fact]
+    public void ABroadBlowTheShellCrushesAwayLeavesTheFrameUnloaded()
+    {
+        var bundle = new Resistance(FrameJoules: 30000, ShellPoint: double.PositiveInfinity, ShellCut: double.PositiveInfinity, CushionJoules: 20000);
+
+        Assert.Equal(0, bundle.Severity(15000, Blow.Broad, backed: false, strength: 1));
+        Assert.Equal(0.5, bundle.Severity(35000, Blow.Broad, backed: false, strength: 1));
+    }
+
+    [Fact]
+    public void AWeakerPieceCrushesLessAndBindsLess()
+    {
+        var bundle = new Resistance(FrameJoules: 30000, ShellPoint: double.PositiveInfinity, ShellCut: double.PositiveInfinity, CushionJoules: 20000);
+
+        Assert.Equal(1, bundle.Severity(25000, Blow.Broad, backed: false, strength: 0.5), 9);
+    }
+
+    [Fact]
+    public void OnlyABroadBlowIsCrushedAway()
+    {
+        var bundle = new Resistance(FrameJoules: 30000, ShellPoint: 400, ShellCut: 100, CushionJoules: 20000);
+
+        Assert.Equal(2, bundle.Severity(800, Blow.Point, backed: false, strength: 1));
+    }
+
+    [Fact]
     public void ABlowOnTheShellOpensAtMostThePlaceItLands()
     {
         Assert.Equal(1, Resistance.Loss(3, Blow.Point, byPlace: true));

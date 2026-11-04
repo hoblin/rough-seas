@@ -273,8 +273,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         if (!entity.Alive) return;
         var rand = entity.World.Rand;
         bool backed = resistance.Backed(place, rand.NextDouble());
-        double resists = resistance.Against(blow, backed) * Scatter.Of(damageConversion.Variation.GetValueOrDefault(blow), rand);
-        double severity = resists > 0 ? load / resists : 0;
+        double strength = Scatter.Of(damageConversion.Variation.GetValueOrDefault(blow), rand);
+        double resists = resistance.Against(blow, backed) * strength;
+        double severity = resistance.Severity(load, blow, backed, strength);
         if (model is not IKnockable knockable)
         {
             vessels.Log(entity, "struck at the {0} with {1}: the hull gives, unharmed", place.Code(), Load(blow, load));
@@ -285,8 +286,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         double loss = Resistance.Loss(severity, blow, knockable.ByPlace);
         int stage = model.Stage(place);
         var knock = loss > 0 ? knockable.Take(place, loss) : (Knock?)null;
-        vessels.Log(entity, "{0} at the {1}{2} with {3} against {4}: {5}, hull now {6:F2}", blow.ToString().ToLowerInvariant(),
-            place.Code(), backed ? ", backed" : "", Load(blow, load), Load(blow, resists), knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
+        string crushed = blow == Blow.Broad && resistance.CushionJoules > 0 ? $", its shell crushing to take {resistance.CushionJoules * strength:F0} J," : "";
+        vessels.Log(entity, "{0} at the {1}{2} with {3}{4} against {5}: {6}, hull now {7:F2}", blow.ToString().ToLowerInvariant(),
+            place.Code(), backed ? ", backed" : "", Load(blow, load), crushed, Load(blow, resists), knock?.ToString().ToLowerInvariant() ?? "unharmed", Integrity);
         Struck?.Invoke(place, severity, knock == Knock.BrokenUp || model.Stage(place) > stage ? knock : null);
         if (knock == Knock.BrokenUp || Resistance.BreaksFrame(blow, loss)) Break();
     }
@@ -556,7 +558,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         var knocks = new List<Knocked>();
         lock (impactLock)
         {
-            if (impact.Step(motion.X, motion.Z, entity.World.ElapsedMilliseconds) is { } stopped) knocks.Add(stopped);
+            if (impact.Step(motion.X, motion.Z, entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds) is { } stopped) knocks.Add(stopped);
             knocks.AddRange(rams.Step(contacts));
             if (client == null) pendingImpacts.AddRange(knocks);
         }

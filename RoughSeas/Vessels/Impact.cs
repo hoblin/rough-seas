@@ -1,35 +1,56 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoughSeas.Vessels;
 
 /// <summary>
-/// A hull's knocks, read from vanilla's own collision: physics zeroes each axis of the motion a collision blocked,
-/// so the motion kept on that axis a step earlier is the speed lost into the obstacle. Motion is in blocks per
-/// 1/60 s, as <c>Pos.Motion</c> holds it; speeds are in m/s.
+/// A hull's knocks, measured as vanilla measures a fall: one happens on the step a collision first blocks an axis of
+/// the hull's motion, and its speed is how fast the hull really moved along that axis just before, from its change of
+/// position. A steered hull's motion is what her rider asks of her, rewritten every frame, so a hull held against a
+/// rock strikes it once, not each time she is asked to move on. Speeds are in m/s.
 /// </summary>
 public class Impact(double give, long guardMs)
 {
-    private const double TicksPerSecond = 60;
+    private const long WindowMs = 100;
+    private const double MillisecondsPerSecond = 1000;
 
-    private double keptX, keptZ;
+    private readonly Queue<(long Ms, double X, double Z)> track = new();
+    private bool blockedX, blockedZ;
     private long? struckAt;
 
-    public Knocked? Step(double motionX, double motionZ, long milliseconds)
+    public Knocked? Step(double motionX, double motionZ, double x, double z, long milliseconds)
     {
-        double lostX = motionX == 0 ? keptX : 0;
-        double lostZ = motionZ == 0 ? keptZ : 0;
-        (keptX, keptZ) = (motionX, motionZ);
+        bool hitX = motionX == 0 && !blockedX, hitZ = motionZ == 0 && !blockedZ;
+        (blockedX, blockedZ) = (motionX == 0, motionZ == 0);
+        var (speedX, speedZ) = Speed();
+        track.Enqueue((milliseconds, x, z));
+        while (track.Count > 1 && milliseconds - track.Peek().Ms > WindowMs) track.Dequeue();
 
-        double speedLost = Math.Sqrt(lostX * lostX + lostZ * lostZ) * TicksPerSecond;
+        double lostX = hitX ? speedX : 0, lostZ = hitZ ? speedZ : 0;
+        double speedLost = Math.Sqrt(lostX * lostX + lostZ * lostZ);
         if (speedLost <= give || milliseconds - struckAt < guardMs) return null;
 
         struckAt = milliseconds;
-        return new Knocked(speedLost, lostX * TicksPerSecond, lostZ * TicksPerSecond);
+        return new Knocked(speedLost, lostX, lostZ);
     }
 
-    public void Forget() => (keptX, keptZ) = (0, 0);
+    public void Forget()
+    {
+        track.Clear();
+        (blockedX, blockedZ) = (false, false);
+    }
 
     public double Joules(double kilograms, double speedLost) => 0.5 * kilograms * (speedLost * speedLost - give * give);
+
+    private (double X, double Z) Speed()
+    {
+        if (track.Count < 2) return (0, 0);
+        var (since, fromX, fromZ) = track.Peek();
+        var (until, toX, toZ) = track.Last();
+        double seconds = (until - since) / MillisecondsPerSecond;
+        return seconds > 0 ? ((toX - fromX) / seconds, (toZ - fromZ) / seconds) : (0, 0);
+    }
 }
 
 /// <param name="Against">The vessel rammed; 0 for the ground.</param>

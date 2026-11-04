@@ -10,4 +10,8 @@ public class Material
     public string ToughnessSource = "";
     public double? CutToughness;
     public string CutToughnessSource = "";
+    public double? CrushStrength;
+    public string CrushStrengthSource = "";
+    public double? DensificationStrain;
+    public string DensificationStrainSource = "";
 }

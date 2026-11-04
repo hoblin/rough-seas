@@ -54,7 +54,7 @@ No two boats are quite alike, as no two pieces of wood are, so the same knock ma
 ### Hide and reed
 
 - **Hide** springs back from a club or a stone, unless a rib or a lath is right behind it there, and then that breaks. A blade cuts hide anywhere.
-- **Reed bundles** spring back from every blow and every breaker. A blade harms them only where it cuts a lashing, and the boat comes apart once the reed is torn through. Knocks, rams, rapids and lightning still tear it.
+- **Reed bundles** spring back from every blow and every breaker. A blade harms them only where it cuts a lashing, and the boat comes apart once the reed is torn through. A knock, a ram, rapids or lightning crushes the bundles where it lands, and they take it: only what that leaves strains the lashings, and only the lashings part. A knock at any speed a paddle or a river gives leaves her whole; only a heavy blast tears her.
 
 ## What it is made of
 
@@ -87,7 +87,7 @@ The wood weighs too: a hull of a light wood floats higher and paddles a little f
 
 ### Knocks and landings
 
-Running into rock or the shore strikes the hull by the speed it loses into the obstacle: hitting it head-on loses all of it, while a hull glancing along a shore loses only the part that pointed into it. Up to about 1 m/s the hull takes it in its stride, so easing in to a landing is always safe.
+Running into rock or the shore strikes the hull by the speed it loses into the obstacle: hitting it head-on loses all of it, while a hull glancing along a shore loses only the part that pointed into it. Up to about 1 m/s the hull takes it in its stride, so easing in to a landing is always safe. A hull strikes once, when she meets the rock: paddling on against it, or a current holding her there, strikes it no more.
 
 The knock grows with everything aboard:
 
@@ -104,7 +104,7 @@ What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 | [Outrigger canoe](Outrigger-Canoe) | scratches; on her float's side, works nearly half its lashings loose | scratches; on her float's side, tears the float away |
 | [Sailboat](Sailboat) | scratches | cracks |
 | [Birch-bark canoe](Birch-Bark-Canoe) | scratches | scratches |
-| [Reed boat](Reed-Boat) | tears a little | tears a third of it |
+| [Reed boat](Reed-Boat) | nothing | nothing |
 | [Hide currach](Hide-Currach) | scratches | cracks |
 | [Raft](Raft) | shakes a quarter of its lashings loose | mostly breaks it up |
 | [Coracle](Coracle) | cracks | breaks it up |

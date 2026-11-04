@@ -31,6 +31,7 @@ public class BridgeCommands : ModSystem
 
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
+    private CurrentOverride? current;
     private ChunkSettle settle = null!;
     private int suspendMs;
 
@@ -41,7 +42,11 @@ public class BridgeCommands : ModSystem
         sapi = api;
         settle = new ChunkSettle(api, Mod.Logger);
         var benchDefaults = Environment.GetEnvironmentVariable("AGENT_BRIDGE_BENCH_DEFAULTS") != "off";
-        if (api.ModLoader.IsModEnabled("roughseas")) drift = new DriftSwitch { Drifting = !benchDefaults };
+        if (api.ModLoader.IsModEnabled("roughseas"))
+        {
+            drift = new DriftSwitch { Drifting = !benchDefaults };
+            current = new CurrentOverride();
+        }
         if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
         api.Event.ServerSuspend += HoldSuspension;
         var parsers = api.ChatCommands.Parsers;
@@ -108,6 +113,11 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Whether unridden vessels drift with the current and the wind; off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
                 .HandleWith(args => Drift(args[0] as string))
+            .EndSubCommand()
+            .BeginSubCommand("current")
+                .WithDescription("Set one current everywhere in place of the sea's, SPEED m/s toward a yaw in degrees as the camera's (0 toward +Z, 90 toward +X), as a river carries a vessel; 'off' gives the sea's back")
+                .WithArgs(parsers.Word("speed or off"), parsers.OptionalDouble("yaw", 0))
+                .HandleWith(args => Current((string)args[0], (double)args[1]))
             .EndSubCommand()
             .BeginSubCommand("set")
                 .WithDescription("Set an entity's watched attribute, tree/key for one inside a tree: int, float, bool or string by the value's form, while a double or float stays what it is")
@@ -199,7 +209,11 @@ public class BridgeCommands : ModSystem
             .EndSubCommand();
     }
 
-    public override void Dispose() => drift?.Dispose();
+    public override void Dispose()
+    {
+        drift?.Dispose();
+        current?.Dispose();
+    }
 
     private void TurnOffTemporalEffects(ITreeAttribute config)
     {
@@ -216,6 +230,21 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success(drift.Drifting
             ? "Unridden vessels drift with the current and the wind"
             : "Unridden vessels hold still; /bridge drift on lets them drift");
+    }
+
+    private TextCommandResult Current(string speed, double yaw)
+    {
+        if (current == null) return TextCommandResult.Error("Rough Seas is not loaded; there is no current to set");
+        if (speed == "off")
+        {
+            current.Clear();
+            return TextCommandResult.Success("The sea's own currents flow again");
+        }
+        if (!double.TryParse(speed, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var metresPerSecond))
+            return TextCommandResult.Error("Give the current's speed in m/s, or off");
+
+        current.Set(metresPerSecond, yaw);
+        return TextCommandResult.Success($"A current of {metresPerSecond:F1} m/s flows toward yaw {yaw:F0}° everywhere; unridden vessels ride it once /bridge drift is on");
     }
 
     private TextCommandResult Lag(int ms, int ticks)

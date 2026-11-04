@@ -9,6 +9,7 @@ public class ImpactTests
 
     private readonly Impact impact = new(give: 1, guardMs: 500);
     private long now;
+    private double x, z;
 
     [Fact]
     public void ReportsTheSpeedLostWhenTheHullStopsAgainstAWall()
@@ -29,8 +30,8 @@ public class ImpactTests
     [Fact]
     public void PointsTheKnockTowardTheObstacleAlongTheAxisItBlocked()
     {
-        impact.Step(-3 * PerTick, 4 * PerTick, now += StepMs);
-        var knocked = impact.Step(0, 4 * PerTick, now += StepMs)!.Value;
+        Sail((-3, 4), (-3, 4));
+        var knocked = impact.Step(0, 4 * PerTick, x, z += 4.0 * StepMs / 1000, now += StepMs)!.Value;
 
         Assert.Equal(-3, knocked.TowardX, 6);
         Assert.Equal(0, knocked.TowardZ, 6);
@@ -57,12 +58,43 @@ public class ImpactTests
     }
 
     [Fact]
-    public void StrikesAgainOnceTheGuardHasPassed()
+    public void ARiderPaddlingOnAgainstTheRockStrikesItOnce()
     {
-        Assert.Single(Sail((3, 0), (0, 0)));
+        Assert.Single(Sail((3, 0), (3, 0), (0, 0)));
+
+        for (int second = 0; second < 5; second++)
+        {
+            now += 1000;
+            Assert.Empty(Pressed(3, 0));
+        }
+    }
+
+    [Fact]
+    public void AHullHeldOffAMomentAndPressedBackGainsNoSpeedToStrikeWith()
+    {
+        Sail((3, 0), (3, 0), (0, 0));
         now += 1000;
 
-        Assert.Single(Sail((3, 0), (0, 0)));
+        Assert.Empty(Pressed(3, 0.003));
+    }
+
+    [Fact]
+    public void TakesTheSpeedFromHowFarTheHullReallyMoved()
+    {
+        impact.Step(6 * PerTick, 0, x, z, now += StepMs);
+        impact.Step(6 * PerTick, 0, x += 2.0 * StepMs / 1000, z, now += StepMs);
+        var knocked = impact.Step(0, 0, x, z, now += StepMs)!.Value;
+
+        Assert.Equal(2, knocked.SpeedLost, 6);
+    }
+
+    [Fact]
+    public void StrikesAgainOnceTheGuardHasPassed()
+    {
+        Assert.Single(Sail((3, 0), (3, 0), (0, 0)));
+        now += 1000;
+
+        Assert.Single(Sail((3, 0), (3, 0), (0, 0)));
     }
 
     [Fact]
@@ -84,9 +116,21 @@ public class ImpactTests
     private List<double> Sail(params (double x, double z)[] metresPerSecond)
     {
         var impacts = new List<double>();
-        foreach (var (x, z) in metresPerSecond)
+        foreach (var (vx, vz) in metresPerSecond)
         {
-            if (impact.Step(x * PerTick, z * PerTick, now += StepMs) is { } knocked) impacts.Add(knocked.SpeedLost);
+            double seconds = StepMs / 1000.0;
+            if (impact.Step(vx * PerTick, vz * PerTick, x += vx * seconds, z += vz * seconds, now += StepMs) is { } knocked) impacts.Add(knocked.SpeedLost);
+        }
+        return impacts;
+    }
+
+    private List<double> Pressed(double asked, double wobble)
+    {
+        var impacts = new List<double>();
+        for (int step = 0; step < 30; step++)
+        {
+            bool asking = step % 2 == 0;
+            if (impact.Step(asking ? asked * PerTick : 0, 0, x += asking ? wobble : 0, z, now += StepMs) is { } knocked) impacts.Add(knocked.SpeedLost);
         }
         return impacts;
     }

@@ -22,7 +22,7 @@ The game's lightning harms every creature within 8 blocks of where it lands, and
 | [Sailboat](Sailboat) | scratches a place |
 | [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | scratches a place |
 | [Hide currach](Hide-Currach), [birch-bark canoe](Birch-Bark-Canoe), [raft](Raft), [coracle](Coracle) | breaks it up |
-| [Reed boat](Reed-Boat) | tears it apart |
+| [Reed boat](Reed-Boat) | nothing: its bundles take it |
 
 The players aboard take the game's own lightning damage as well.
 
