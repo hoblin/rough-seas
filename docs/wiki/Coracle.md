@@ -23,7 +23,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Mending](Mending) | 1 small prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
 | [Bilge](Bailing) | 272 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
-| [Rapids](Rapids) | the bottom stove in at the first rock |
+| [Rapids](Rapids) | doesn't survive them for now: the bottom stove in at the first rock ([a simplified model](Rapids)) |
 | [Lightning](Lightning) | a strike nearby breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post, or worn home |

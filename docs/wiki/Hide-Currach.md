@@ -23,7 +23,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Mending](Mending) | 1 large prepared hide closes two thirds of a stove-in place; 1 rendered fat greases her for 1.25 days |
 | [Bilge](Bailing) | 1911 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
-| [Rapids](Rapids) | takes them badly |
+| [Rapids](Rapids) | doesn't survive them for now: the bottom stove in at the first rock ([a simplified model](Rapids)) |
 | [Lightning](Lightning) | a strike nearby almost always breaks her |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |

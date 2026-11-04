@@ -1,5 +1,7 @@
 The mountain streams of Vintage Story 1.22 run down in white water. Every second a hull spends in it, the rocks strike its bottom with 300 joules, a hard knock, again and again.
 
+**Rapids are a simplified model for now.** Every hull but the bark canoe takes the same strike each second, whatever it weighs and however little water it draws. Real coracles shot rapids, floating in a few inches of water, but here the [coracle](Coracle) and the [hide currach](Hide-Currach) don't survive them: their first rock breaks the lath under the hide. Keep them out of white water. Rapids worked out from how deep a hull draws, how heavy it is and how fast the river runs are planned.
+
 | Vessel, in oak | Each second | Until |
 | --- | --- | --- |
 | [Coracle](Coracle), [hide currach](Hide-Currach) | a lath under the bottom broken through | the bottom is stove in at the first strike |
