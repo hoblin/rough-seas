@@ -143,7 +143,6 @@ photo() {
     sleep 1
     "$game" shot "$gui" gui >/dev/null
     "$game" hover >/dev/null
-    "$game" do '/time resume' >/dev/null
     local quarter=$((width / 4)) panel
     panel=$(magick "$clean" "$gui" -compose difference -composite -crop "$((quarter * 2))x$((height / 6))+${quarter}+0" +repage \
       -colorspace gray -threshold 8% -trim -format '%wx%h+%[fx:page.x+'"$quarter"']+%[fx:page.y]' info:)
