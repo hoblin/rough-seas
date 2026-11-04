@@ -2,7 +2,7 @@ import math
 from collections import namedtuple
 from pathlib import Path
 
-from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes
+from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, hull_box, log, volumes
 from physics import ROPE_METRES, afloat, built, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
@@ -400,7 +400,8 @@ def build(target):
     shape.add(stages("Strakes", strakes(hull)), stages("Seams", seams(hull)))
     rigged(shape, hull, shell, logs, passes)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
-    shape.keep("Hull", "FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
+    shape.elements.append(hull_box())
+    shape.keep("FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage", "OarStorage")
     wound(shape, [("", [shell], WOOD)])
     shape.write()
