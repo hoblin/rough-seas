@@ -10,6 +10,8 @@ bin/scene dock [CODE...]   calm noon at open sea, the player in creative flying 
 bin/scene shallows [DEPTH]  after dock: a granite bed DEPTH whole metres (default 1) under the surface where
                            the player hovers, 25 blocks across and 85 along +z, the way a vessel spawned at
                            yaw 0 heads: water a pole reaches the bottom of.
+bin/scene dress            the player in plain period clothes, a hunter's shirt, dark trousers and worn leather boots, as a player at
+                           sea is in any picture made for others; a take of the bench world starts undressed.
 bin/scene look ID [DX DY DZ]
                            the one way to look at anything: fly to entity ID's position plus DX DY DZ
                            (default 3 1 0: east of it and a block up), hover there and aim at it.
@@ -69,6 +71,12 @@ game="$(dirname "$0")/game"
 
 noon() {
   "$game" do '/time set 12:00' >/dev/null
+}
+
+outfit=(game:clothes-upperbody-hunter-shirt game:clothes-lowerbody-commoner-trousers game:clothes-foot-worn-leather-boots)
+
+dress() {
+  for piece in "${outfit[@]}"; do "$game" do "/bridge dress $piece" >/dev/null; done
 }
 
 calm() {
@@ -251,6 +259,7 @@ views() {
   clear 16 >/dev/null
 
   "$game" do '/clearinv' >/dev/null
+  dress
   "$game" slot 0 >/dev/null
   "$game" do "/bridge hold $item" >/dev/null
   "$game" look 0 3.3 >/dev/null
@@ -259,7 +268,7 @@ views() {
   "$game" hotkey cyclecamera >/dev/null
   sleep 1; shot held '' 16
   "$game" hotkey cyclecamera >/dev/null
-  if "$game" do '/clearinv' "/bridge wear $item" | grep -q Wearing; then
+  if "$game" do '/clearinv' "/bridge wear $item" | grep -q Wearing && dress; then
     "$game" hotkey cyclecamera >/dev/null
     sleep 1; shot worn '' 16
     "$game" hotkey cyclecamera >/dev/null
@@ -373,6 +382,7 @@ case "${1:-}" in
   photo) shift; photo "$@" ;;
   dock) shift; dock "$@" ;;
   shallows) shift; shallows "$@" ;;
+  dress) dress ;;
   look) shift; look "$@" ;;
   storm) shift; storm "$@" ;;
   clear) shift; clear "$@" ;;

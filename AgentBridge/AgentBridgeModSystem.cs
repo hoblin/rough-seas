@@ -268,7 +268,7 @@ public class AgentBridgeModSystem : ModSystem
         {
             hover.Target = null;
             hover.Block = new BlockPos((int)Math.Floor(x), (int)Math.Floor(y), (int)Math.Floor(z));
-            hover.Hit = new Vec3d(x - Math.Floor(x), 1, z - Math.Floor(z));
+            hover.Hit = block.Contains('.') ? new Vec3d(x - Math.Floor(x), 1, z - Math.Floor(z)) : null;
             return JsonSerializer.Serialize(new { block = capi.World.BlockAccessor.GetBlock(hover.Block).Code.ToString() }) + "\n";
         }
         if (!long.TryParse(entity, out var id))

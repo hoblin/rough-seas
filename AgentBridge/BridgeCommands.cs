@@ -134,7 +134,7 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Current((string)args[0], (double)args[1]))
             .EndSubCommand()
             .BeginSubCommand("set")
-                .WithDescription("Set an entity's watched attribute, tree/key for one inside a tree: int, double, bool or string by the value's form, while a double or float stays what it is")
+                .WithDescription("Set an entity's watched attribute, tree/key for one inside a tree: int, float, bool or string by the value's form, a double with a trailing d (0.05d), while a double or float stays what it is")
                 .WithArgs(parsers.Long("id"), parsers.Word("key"), parsers.Word("value"))
                 .HandleWith(args => Set(sapi.World.GetEntityById((long)args[0]), (string)args[1], (string)args[2]))
             .EndSubCommand()
@@ -160,6 +160,12 @@ public class BridgeCommands : ModSystem
                 .RequiresPlayer()
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Wear(args.Caller.Player, (string)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("dress")
+                .WithDescription("Put a piece of clothing on the caller, in the outfit slot that takes it, replacing what was there")
+                .RequiresPlayer()
+                .WithArgs(parsers.Word("item code"))
+                .HandleWith(args => Dress(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
             .BeginSubCommand("hold")
                 .WithDescription("Put an item into the caller's active hotbar slot, held in the hand")
@@ -696,6 +702,8 @@ public class BridgeCommands : ModSystem
         foreach (var tree in path[..^1]) attributes = attributes.GetOrAddTreeAttribute(tree);
 
         var leaf = path[^1];
+        var asDouble = value.EndsWith('d') && double.TryParse(value[..^1], CultureInfo.InvariantCulture, out _);
+        if (asDouble) value = value[..^1];
         var number = double.TryParse(value, CultureInfo.InvariantCulture, out var parsed) ? parsed : (double?)null;
         switch (attributes[leaf])
         {
@@ -703,7 +711,8 @@ public class BridgeCommands : ModSystem
             case FloatAttribute when number is { } f: attributes.SetFloat(leaf, (float)f); break;
             default:
                 if (int.TryParse(value, CultureInfo.InvariantCulture, out var whole)) attributes.SetInt(leaf, whole);
-                else if (number is { } fraction) attributes.SetDouble(leaf, fraction);
+                else if (number is { } fraction && asDouble) attributes.SetDouble(leaf, fraction);
+                else if (number is { } single) attributes.SetFloat(leaf, (float)single);
                 else if (bool.TryParse(value, out var flag)) attributes.SetBool(leaf, flag);
                 else attributes.SetString(leaf, value);
                 break;
@@ -777,6 +786,19 @@ public class BridgeCommands : ModSystem
         slot.Itemstack = stack;
         slot.MarkDirty();
         return TextCommandResult.Success($"Wearing {code}");
+    }
+
+    private TextCommandResult Dress(IPlayer player, string code)
+    {
+        var stack = Stack(code);
+        if (stack == null) return TextCommandResult.Error($"No item or block {code}");
+
+        var slot = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName).FirstOrDefault(slot => slot.CanHold(new DummySlot(stack)));
+        if (slot == null) return TextCommandResult.Error($"No outfit slot takes {code}");
+
+        slot.Itemstack = stack;
+        slot.MarkDirty();
+        return TextCommandResult.Success($"Dressed in {code}");
     }
 
     private TextCommandResult Hold(IPlayer player, string code)
