@@ -44,6 +44,26 @@ public class RamsTests
     }
 
     [Fact]
+    public void ABodyMetOnlyAtTheFloatClosesAtItsSpeedAlongTheHullAndStrikesTheFloat()
+    {
+        var knocked = Assert.Single(rams.Step([new Contact(Other, 4, 2.5, 3 * PerTick, 0, Outboard: true)]));
+
+        Assert.True(knocked.SpeedLost > 2);
+        Assert.True(knocked.Outboard);
+        Assert.False(knocked.TheirOutboard);
+    }
+
+    [Fact]
+    public void TheOtherHullTakesItsShareWhereItWasMet()
+    {
+        var mirrored = new Knocked(3, 2, 1, Other, 400, Outboard: true).Mirrored(9, 300);
+
+        Assert.Equal((-2, -1, 9L, 300.0), (mirrored.TowardX, mirrored.TowardZ, mirrored.Against, mirrored.TheirKg));
+        Assert.False(mirrored.Outboard);
+        Assert.True(mirrored.TheirOutboard);
+    }
+
+    [Fact]
     public void IgnoresABodyDriftingAgainstTheHullUnderItsGive()
     {
         Assert.Empty(rams.Step([Touching(towardX: 2, closingX: 0.8)]));

@@ -52,7 +52,7 @@ public class VesselsModSystem : ModSystem
     }
 
     public void Report(Entity vessel, Knocked knocked) =>
-        reports?.SendPacket(new ImpactReport { EntityId = vessel.EntityId, SpeedLost = knocked.SpeedLost, TowardX = knocked.TowardX, TowardZ = knocked.TowardZ, Against = knocked.Against, TheirKg = knocked.TheirKg });
+        reports?.SendPacket(new ImpactReport { EntityId = vessel.EntityId, SpeedLost = knocked.SpeedLost, TowardX = knocked.TowardX, TowardZ = knocked.TowardZ, Against = knocked.Against, TheirKg = knocked.TheirKg, Outboard = knocked.Outboard, TheirOutboard = knocked.TheirOutboard });
 
     public override void Dispose()
     {

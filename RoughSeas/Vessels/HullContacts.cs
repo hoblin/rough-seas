@@ -21,9 +21,10 @@ public class HullContacts(EntityPartitioning partitioning)
                 Level(pos.Y, shape, other.Pos.Y, hull.Shape) &&
                 Footprint.Of(hull.Reach, other.Pos.X, other.Pos.Z, other.Pos.Yaw) is var theirReach && reach.Touches(theirReach))
             {
-                var toward = own.Touches(theirReach) ? Footprint.Of(hull.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw) : reach;
+                var theirs = Footprint.Of(hull.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw);
                 var closing = pos.Motion - other.Pos.Motion;
-                contacts.Add(new Contact(other.EntityId, toward.X - own.X, toward.Z - own.Z, closing.X, closing.Z, hull.Aboard.Impact));
+                contacts.Add(new Contact(other.EntityId, theirs.X - own.X, theirs.Z - own.Z, closing.X, closing.Z, hull.Aboard.Impact,
+                    Outboard: !own.Touches(theirReach), TheirOutboard: !reach.Touches(theirs)));
             }
             return true;
         }, EnumEntitySearchType.Creatures);

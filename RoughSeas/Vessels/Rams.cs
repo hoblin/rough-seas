@@ -37,10 +37,13 @@ public class Rams(double give)
         double apart = Math.Max(1e-9, Math.Sqrt(contact.TowardX * contact.TowardX + contact.TowardZ * contact.TowardZ));
         double towardX = contact.TowardX / apart, towardZ = contact.TowardZ / apart;
         double speed = (contact.ClosingX * towardX + contact.ClosingZ * towardZ) * TicksPerSecond;
-        return new Knocked(speed, towardX * speed, towardZ * speed, contact.Against, contact.TheirKg);
+        return new Knocked(speed, towardX * speed, towardZ * speed, contact.Against, contact.TheirKg, contact.Outboard, contact.TheirOutboard);
     }
 }
 
 /// <param name="TowardX">From this hull's centre to the other's.</param>
 /// <param name="ClosingX">This hull's motion less the other's.</param>
-public readonly record struct Contact(long Against, double TowardX, double TowardZ, double ClosingX, double ClosingZ, double TheirKg = 0);
+/// <param name="Outboard">Whether the other met only what stands off this hull.</param>
+/// <param name="TheirOutboard">Whether this vessel met only what stands off the other's hull.</param>
+public readonly record struct Contact(long Against, double TowardX, double TowardZ, double ClosingX, double ClosingZ, double TheirKg = 0,
+    bool Outboard = false, bool TheirOutboard = false);

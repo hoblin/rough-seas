@@ -311,7 +311,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     private void Strike(Knocked knocked)
     {
-        var place = Toward(knocked.TowardX, knocked.TowardZ);
+        var place = knocked.Outboard && outboard != null ? outboard.Side : Toward(knocked.TowardX, knocked.TowardZ);
         double mass = Aboard.Impact;
         double joules;
         if (knocked.Against == 0)
@@ -510,7 +510,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
             vessels.Log(entity, "ignored an impact reported by {0}, who does not steer it", player.PlayerName);
             return;
         }
-        var knocked = new Knocked(report.SpeedLost, report.TowardX, report.TowardZ, report.Against, report.TheirKg);
+        var knocked = new Knocked(report.SpeedLost, report.TowardX, report.TowardZ, report.Against, report.TheirKg, report.Outboard, report.TheirOutboard);
         var other = knocked.Against != 0 ? entity.World.GetEntityById(knocked.Against) : null;
         var hull = other == null ? null : IHull.Of(other);
         if (hull != null && (other!.Pos.Dimension != entity.Pos.Dimension ||
@@ -523,7 +523,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         lock (impactLock) pendingImpacts.Add(knocked);
         if (hull is { Steered: false })
         {
-            hull.Rammed(knocked with { TowardX = -knocked.TowardX, TowardZ = -knocked.TowardZ, Against = entity.EntityId, TheirKg = Aboard.Impact });
+            hull.Rammed(knocked.Mirrored(entity.EntityId, Aboard.Impact));
         }
     }
 
