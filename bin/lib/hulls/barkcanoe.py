@@ -1,8 +1,8 @@
 import math
 
-from held import PADDLE, POLE, paddling, poling, tools, waterline
+from held import PADDLE, POLE, paddling, poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
-from physics import afloat, kilograms
+from physics import afloat, kilograms, stands
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, group, path, plank, renamed, span, stages
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
@@ -18,6 +18,8 @@ RIB_WIDTH = 1.2
 RIB_DEPTH = 0.45
 RIBS = range(-18, 36, 4)
 THWARTS = [(-8, 5.4, 5.6), (8, 5.8, 5.4), (24, 5.4, 5.6)]
+CENTRE_THWART = THWARTS[1][0]
+POLER_AFT = 5
 STERN = [(-19, 2.1), (-22, 2.75), (-24, 3.65), (-25.2, 5), (-25.6, 7), (-25.7, 9), (-25.5, 10.6), (-24.9, 11.4)]
 STEM_WIDTH = 0.8
 STEM_THICKNESS = 0.8
@@ -263,9 +265,14 @@ def build(path_):
     shape.keep("Hull", "FrontSeat", "BackSeat", "OarStorage")
     shape.write()
     at = seat(shape, "BackSeat")
-    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, waterline("barkcanoe"), {
+    line = waterline("barkcanoe")
+    pole = (("pole", POLE, standing_poling(POLE, (CENTRE_THWART + POLER_AFT, SKIN, CENTRE), line * VOXELS_A_METRE,
+                                           CENTRE - SHEER - 1))
+            if stands("barkcanoe", SKIN * VOXEL_METRES)
+            else ("seatedpole", POLE, poling(POLE, at, 4, 4, 7, 1.5)))
+    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 6.5, 1.5)),
-        "pole": ("pole", POLE, poling(POLE, at, 4, 4, 7, 1.5)),
+        "pole": pole,
     }))
     report(hull, laths)
 

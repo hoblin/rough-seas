@@ -89,6 +89,57 @@ public class PropulsionTests
         Assert.Contains("deeper", refusal);
     }
 
+    [Theory]
+    [InlineData("dugout")]
+    [InlineData("outrigger")]
+    [InlineData("barkcanoe")]
+    [InlineData("coracle")]
+    [InlineData("currach")]
+    [InlineData("boat-raft")]
+    public void APolerStandsWhereHerHullBearsAManStanding(string vessel)
+    {
+        var station = Fixtures.Station(vessel, 1);
+
+        Assert.Equal("roughseas-stand", station.Stance(Pole.Code)?.Animation);
+        Assert.Equal(Pole.Code, station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), out _)!.Stroke.Code);
+    }
+
+    [Fact]
+    public void TheDugoutsPolerStandsAtHerBowEndOnHerFloor()
+    {
+        var offset = Fixtures.Station("dugout", 1).Stance(Pole.Code)!.Value.Offset!;
+
+        Assert.Equal(-0.875, offset.X, 3);
+        Assert.Equal(-0.124, offset.Y, 3);
+        Assert.Equal(-0.188, offset.Z, 3);
+    }
+
+    [Fact]
+    public void OnTheReedBoatTooTenderToStandOnHePolesFromTheSeat()
+    {
+        var station = Fixtures.Station("reedboat", 1);
+
+        Assert.Null(station.Stance(Pole.Code));
+        Assert.Equal("seatedpole", station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), out _)!.Stroke.Code);
+    }
+
+    [Fact]
+    public void APaddleKeepsHimSeated()
+    {
+        Assert.Null(Fixtures.Station("barkcanoe", 1).Stance(Paddle.Code));
+    }
+
+    [Fact]
+    public void StandingHeShovesHarderThanFromTheSeat()
+    {
+        var kg = 3 * 0.09 * 0.09 * PoleDensity;
+        var metabolic = Fixtures.Propulsion.Rower.MetabolicWatts;
+        var standing = new PoleStroke("pole", Fixtures.Propulsion.Strokes["pole"], kg, 1, 1);
+        var seated = new PoleStroke("seatedpole", Fixtures.Propulsion.Strokes["seatedpole"], kg, 1, 0.6);
+
+        Assert.True(standing.Thrust(1.5, metabolic * standing.GrossEfficiency) > seated.Thrust(1.5, metabolic * seated.GrossEfficiency));
+    }
+
     [Fact]
     public void APaddleInTheCurrachLeavesHerRowingHerOwnOars()
     {

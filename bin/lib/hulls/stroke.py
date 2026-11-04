@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 from arm import Arm
+from leg import Leg
 from transform import apply, direct, euler, identity, local, mul, undirect
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -13,6 +14,7 @@ PROPULSION = ROOT / "RoughSeas/assets/roughseas/config/propulsion.json"
 PATCHES = ROOT / "RoughSeas/assets/roughseas/patches"
 
 ARMS = {"R": ("UpperArmR", "LowerArmR"), "L": ("UpperArmL", "LowerArmL")}
+LEGS = {"R": ("UpperFootR", "LowerFootR"), "L": ("UpperFootL", "LowerFootL")}
 OUTBOARD = {"R": -1, "L": 1}
 # Outweighs the seat pose (80) so far that the fit can leave it out of the arms and torso.
 WEIGHT = 10000
@@ -37,11 +39,12 @@ def drive_share(stroke):
     return json.loads(PROPULSION.read_text())["strokes"][stroke]["driveShare"]
 
 
-def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1):
+def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1, bodies=None):
     keys = list(range(0, frames, 2))
     return [{"code": f"roughseas-{vessel}-{name}", "frames": frames, "keys": keys if name != "ready" else [0],
-             "speed": speed(stroke, frames, per_loop), "pose": pose}
-            for name, pose in (("ready", ready), ("forward", forward), ("backward", backward))]
+             "speed": speed(stroke, frames, per_loop), "pose": pose, "body": body}
+            for name, pose, body in zip(("ready", "forward", "backward"), (ready, forward, backward),
+                                        bodies or (None, None, None))]
 
 
 def moved(origin, rest, target, turned):
@@ -99,6 +102,7 @@ class Rower:
         sitting = next(a for a in animations if a["code"] == idle)
         self.idle = next(k["elements"] for k in sitting["keyframes"] if k["frame"] == 0)
         self.arms = {side: Arm(self.chain(lower), self.idle, OUTBOARD[side]) for side, (_, lower) in ARMS.items()}
+        self.legs = {side: Leg(self.chain(lower), self.idle, OUTBOARD[side]) for side, (_, lower) in LEGS.items()}
 
     def chain(self, name):
         def descend(elements, path):
@@ -146,7 +150,7 @@ def player_patch(name, animations):
     print(f"{path}: {len(animations)} animations")
 
 
-def rowed(shape, rower, vessel, player):
+def rowed(shape, rower, vessel, player, name=None, gear=()):
     offset = [s - h for s, h in zip(rower.seat, CENTRE)]
     seated = {"name": "Rower", "from": offset, "to": offset, "faces": {}, "children": rower.seraph["elements"]}
     animations = []
@@ -154,12 +158,12 @@ def rowed(shape, rower, vessel, player):
         keyframes = [{"frame": a["frame"], "elements": every_axis(rower.idle) | a["elements"] | b["elements"]}
                      for a, b in zip(own["keyframes"], arms["keyframes"])]
         animations.append(own | {"keyframes": keyframes})
-    path = Path(os.environ.get("BENCH_TMP", "/tmp")) / "model" / f"{shape.path.stem}-rowed.json"
+    path = Path(os.environ.get("BENCH_TMP", "/tmp")) / "model" / f"{name or shape.path.stem + '-rowed'}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({"textureWidth": 16, "textureHeight": 16,
                                 "textures": shape.textures | rower.seraph["textures"],
                                 "elements": [e for e in shape.elements if e["name"] not in ("hideWater", "Bilge")]
-                                + [seated], "animations": animations}))
+                                + [seated, *gear], "animations": animations}))
     print(f"{path}: the vessel rowed, for bin/model pose")
 
 
@@ -178,7 +182,7 @@ def fit(rower, elements, strokes, grips, lean):
     for stroke in strokes:
         poses = [stroke["pose"](frame) for frame in stroke["keys"]]
         placed = [posed(elements, lambda name, pose=pose: pose.get(name, {})) for pose in poses]
-        bodies = [{"UpperTorso": lean} for _ in poses]
+        bodies = [{"UpperTorso": lean} | (stroke["body"](frame) if stroke.get("body") else {}) for frame in stroke["keys"]]
         faults = {}
         for side, grip in grips.items():
             arm = rower.arms[side]
@@ -194,6 +198,9 @@ def fit(rower, elements, strokes, grips, lean):
                 body |= pose
                 for name, (excess, _) in arm.faults(body, hand, axis).items():
                     faults[f"{side} {name}"] = max(faults.get(f"{side} {name}", (0, 0)), (excess, frame))
+        for frame, body in zip(stroke["keys"], bodies):
+            depth = rower.arms["L"].through(body, rower.arms["R"])
+            faults["arms through each other"] = max(faults.get("arms through each other", (0, 0)), (depth, frame))
         worst = max(math.dist(rower.hand(body, side), centre(elements, m, grip))
                     for body, m in zip(bodies, placed) for side, grip in grips.items())
         own = [{"frame": frame, "elements": every_axis(pose)} for frame, pose in zip(stroke["keys"], poses)]

@@ -1,8 +1,8 @@
 import math
 
-from held import PADDLE, POLE, paddling, poling, tools, waterline
+from held import PADDLE, POLE, VOXELS_A_METRE, paddling, poling, standing_poling, tools, waterline
 from stroke import player_patch, seat
-from physics import afloat, kilograms
+from physics import afloat, kilograms, stands
 from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
 
 LOG = 16
@@ -30,6 +30,7 @@ ENDS = {
     "Bow": [(38, 40.5, 5.0, 1.6), (40.5, 42.5, 4.0, 2.8), (42.5, 44, 2.9, 4.2)],
 }
 HOLLOW = (-22, 38)
+POLER_AT = HOLLOW[0] + 5
 
 
 def section(x, breadth, lift):
@@ -265,11 +266,16 @@ def build(path):
     crew_tools(shape, "dugout")
 
 
-def crew_tools(shape, vessel):
+def crew_tools(shape, vessel, outboard=(0, 0), **hull):
     at = seat(shape, "FrontSeat")
-    player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, waterline(vessel), {
+    line = waterline(vessel)
+    floor = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD).section(POLER_AT)[0][1] + WALL
+    pole = (("pole", POLE, standing_poling(POLE, (POLER_AT, floor, CENTRE), line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1))
+            if stands(vessel, floor * VOXEL_METRES, outboard=outboard, **hull)
+            else ("seatedpole", POLE, poling(POLE, at, 6, 6, 4, -0.5)))
+    player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1)),
-        "pole": ("pole", POLE, poling(POLE, at, 6, 6, 4, -0.5)),
+        "pole": pole,
     }))
 
 

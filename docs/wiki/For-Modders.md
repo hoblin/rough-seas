@@ -169,3 +169,13 @@ A paddled, poled or rowed vessel goes as fast as her rower drives her against th
 - The hull's drag law, `HullDrag` with `WaveMaking`, lives with the hull, and a vessel's size for it is her `Hull` box, which a client now measures once her selection boxes load rather than keeping her entity's selection box for good.
 
 New: the behaviour `roughseas:propulsion` with its keys, the items `roughseas:paddle-{wood}` and `roughseas:tholeoar-{wood}`, the item attribute `roughseas:propulsion`, `config/propulsion.json` and `config/vessels/drag.json`.
+
+### Poled standing
+
+- `roughseas:propulsion`'s `handsAboveWaterMetres` moved into its new `pole` object, with the `stroke` the pole makes and the `stance` the rower takes to work it ([Driving her](Building-a-Vessel#driving-her)). A patch that set the old key sets nothing.
+- With a pole in hand, the rower's seat changes while he holds her controls: its `RiderOffset`, `Animation` and `EyeHeight` become the stance's, and go back when he puts the pole away, leaves her or someone else takes her. Only the seat of whoever holds her controls changes. A mod that reads a seat's config off one of our vessels reads the stance while he poles.
+- One owner now writes a seat's pose, `SeatPoses` in `RoughSeas.Vessels`. A swamped hull's hold outranks a stance, and a stance outranks the seat as built.
+- New player animation `roughseas-stand`, which the stance stands the rower in. The pole strokes key his legs and hips too, `UpperFootR/L`, `LowerFootR/L` and `LowerTorso`.
+- `config/propulsion.json` has a second pole stroke, `seatedpole`, for a vessel too tender to stand on. `pole` is the standing one, at a gross efficiency of 0.134.
+
+New: the `pole` key with `stroke`, `handsAboveWaterMetres` and `stance`, the stroke `seatedpole`, the animation `roughseas-stand`, `SeatPoses`, `bin/lib/hulls/leg.py` and `physics.stands`, which decides from a hull whether her poler stands, and the bench's `bin/scene shallows`.

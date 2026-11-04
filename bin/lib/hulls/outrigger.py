@@ -2,7 +2,7 @@ import math
 from pathlib import Path
 
 from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes
-from physics import afloat, kilograms
+from physics import afloat, built, kilograms
 from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, group, path, plank, run, stages
 
 VOXEL_METRES = 1 / 16
@@ -317,8 +317,10 @@ def build(target):
     shape.keep("Hull", "FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage", "OarStorage")
     shape.write()
-    crew_tools(shape, "outrigger")
-    report(hull, passes["children"][-1])
+    finished_float = passes["children"][-1]
+    crew_tools(shape, "outrigger", outboard=(finished_float["waterlineSquareMetres"], (FLOAT_Z - 8) * VOXEL_METRES),
+               waterplane=built("dugout")["waterplane"])
+    report(hull, finished_float)
 
 
 def pole_litres():

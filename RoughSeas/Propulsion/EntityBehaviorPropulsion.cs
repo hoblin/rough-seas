@@ -59,12 +59,17 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
 
     public Vec2d Drive(EntityBoat boat, Vec2d vanilla)
     {
-        if (boat.GetBehavior<EntityBehaviorSeatable>()?.Controller is not EntityAgent rower || hull == null) return Idle(vanilla);
+        if (boat.GetBehavior<EntityBehaviorSeatable>()?.Controller is not EntityAgent rower || hull == null)
+        {
+            strokes.Show(boat, null, null, null);
+            return Idle(vanilla);
+        }
 
         using var _ = vessels.Budget.Measure();
         var tool = Tool.Of(rower.RightHandItemSlot?.Itemstack, propulsion.Config, vessels.Materials.Density);
         var sailing = boat.WatchedAttributes.GetInt(SailKey) > 0;
-        strokes.Show(boat, sailing ? null : strokes.KindOf(tool, station.HasOars));
+        var kind = sailing ? null : strokes.KindOf(tool, station.HasOars);
+        strokes.Show(boat, rower, kind, station.Stance(kind));
         if (sailing || boat.SpeedMultiplier <= 0) return Idle(vanilla);
         if (physics != null) physics.WaterDragValue = 1;
 

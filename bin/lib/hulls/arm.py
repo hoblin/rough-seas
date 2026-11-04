@@ -3,6 +3,8 @@ import math
 from transform import angles, apply, direct, euler, identity, local, mul, nearest, unapply, undirect
 
 GRIP = (1.25, 0.6, 1)
+REST_OVERLAP = 0.75 / 16
+SHOULDER_SHARE = 0.25
 # Joint ranges in degrees, AAOS normal values. SWING is the shoulder's highest elevation in each plane of
 # elevation (0 out to the side, 90 straight ahead, -90 straight back): extension 60, horizontal abduction 45,
 # horizontal adduction 130.
@@ -209,8 +211,7 @@ class Arm:
         shoulder, elbow, reached = self.joints(pose)
         spans = RANGES | {"shoulder elevation": (ELEVATION[0], elevation_limit(angles["shoulder plane"]))}
         faults = {name: (beyond(angles[name], span), (span[1] - span[0]) / 2) for name, span in spans.items()}
-        faults["arm inside the body"] = (self.inside(pose, [along(shoulder, elbow, k) for k in (0.5, 0.75, 1)]
-                                                     + [along(elbow, reached, k) for k in (0.25, 0.5, 0.75, 1)]), 1)
+        faults["arm inside the body"] = (self.inside(pose), 1)
         faults["hand off the grip"] = (16 * math.dist(hand, reached), 1)
         return {name: fault for name, fault in faults.items() if fault[0] > 0}
 
@@ -229,12 +230,38 @@ class Arm:
                             for f, t, a in zip(forward, twisted, axis))
         return math.degrees(math.atan2(-forward[2] * self.outboard, -forward[0]))
 
-    # Measured on the arm's centre line: vanilla's resting arm lies with its centre line on the torso's side.
-    def inside(self, pose, points):
+    # The seraph's shoulder turns inside its torso, and its resting arm already lies REST_OVERLAP into the torso's side:
+    # the depth past that, of the arm's own boxes below its shoulder.
+    def inside(self, pose):
+        *body, upper, lower = self.frames(pose)
+        points = [p for element, m, top in ((self.upper, upper, SHOULDER_SHARE), (self.lower, lower, 0))
+                  for p in surface(element, m, top)]
         depth = 0.0
-        for element, m in zip(self.body, self.frames(pose)):
+        for element, m in zip(self.body, body):
             size = [(b - a) / 16 for a, b in zip(element["from"], element["to"])]
             for point in points:
                 q = unapply(m, point)
-                depth += max(0.0, min(min(v, s - v) for v, s in zip(q, size))) ** 2
+                depth += max(0.0, min(min(v, s - v) for v, s in zip(q, size)) - REST_OVERLAP) ** 2
         return 16 * math.sqrt(depth)
+
+
+    def through(self, pose, other):
+        *_, upper, lower = self.frames(pose)
+        *_, other_upper, other_lower = other.frames(pose)
+        points = [p for element, m in ((self.upper, upper), (self.lower, lower)) for p in surface(element, m, 0)]
+        depth = 0.0
+        for element, m in ((other.upper, other_upper), (other.lower, other_lower)):
+            size = [(b - a) / 16 for a, b in zip(element["from"], element["to"])]
+            for point in points:
+                q = unapply(m, point)
+                depth = max(depth, min(min(v, s - v) for v, s in zip(q, size)))
+        return 16 * depth
+
+
+def surface(element, m, top):
+    f, t = element["from"], element["to"]
+    shares = (0, 0.5, 1)
+    return [apply(m, [(f[0] + (t[0] - f[0]) * i) / 16 - f[0] / 16,
+                      (t[1] - (t[1] - f[1]) * (top + (1 - top) * j)) / 16 - f[1] / 16,
+                      (f[2] + (t[2] - f[2]) * k) / 16 - f[2] / 16])
+            for i in shares for j in shares for k in shares]

@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Vessels;
 using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Propulsion;
@@ -15,9 +16,11 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
     private readonly string? paddle = attributes["paddle"].AsString();
     private readonly OarsConfig? oars = attributes["oars"].AsObject<OarsConfig?>(null);
     private readonly double sweepMetres = attributes["sweepMetres"].AsDouble();
-    private readonly double handsAboveWaterMetres = attributes["handsAboveWaterMetres"].AsDouble();
+    private readonly PolingConfig poling = attributes["pole"].AsObject<PolingConfig>(new());
 
     public bool HasOars => oars != null;
+
+    public SeatPose? Stance(string? kind) => kind == Pole.Code ? poling.Stance?.Pose : null;
 
     public Propulsor? Propulsor(Tool? tool, out string? refusal)
     {
@@ -27,10 +30,11 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
 
     public Propulsor? Poled(Pole pole, out string? refusal)
     {
-        var reach = pole.Reach(handsAboveWaterMetres);
+        var hands = poling.HandsAboveWaterMetres;
+        var reach = pole.Reach(hands);
         var depth = depthWithin((int)Math.Ceiling(reach) + 1);
         refusal = depth > reach ? $"a {pole.Metres:F0} m pole reaches {reach:F1} m, the water is deeper" : null;
-        return refusal == null ? new HeldTool(new PoleStroke(Pole.Code, config.Strokes[Pole.Code], pole.Kilograms, depth, handsAboveWaterMetres), sweepMetres) : null;
+        return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole.Kilograms, depth, hands), sweepMetres) : null;
     }
 
     public Propulsor? Paddled(double bladeSquareMetres, out string? refusal)
