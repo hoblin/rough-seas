@@ -14,17 +14,18 @@
                        clear it again: the angles are checked before the take.
   bin/film help        this text.
 
-Run it after bin/client, on a world with open sea near the player. Renders land in
+Run it after bin/client, in its take of the bench world. Renders land in
 ~/Videos/<project>/<screenplay>/ ($XDG_VIDEOS_DIR when set), outside the repository; the
 screenplay is the file worth keeping, in thoughts/shared/screenplays/YYYY-MM-DD/<slug>.yml.
 A failed scene is named, its picture saved as failure.png, and the world cleared as after a take.
 
 SCREENPLAY
   setting:             before the recording starts, never on camera
-    place: sea         sea (/bridge sea: ocean 128 blocks all round), shore (/bridge shore), {force: N} (/bridge force N), or
-                       [X, Y, Z] as commands take them. The search starts where the player is, and
-                       the run ends by flying the player back there, so a second run films the
-                       same place.
+    place: open-sea    a zone of the bench world (bin/game zone lists them), the same spot in every
+                       clone's take; or sea (/bridge sea: ocean 128 blocks all round), shore
+                       (/bridge shore), {force: N} (/bridge force N), or [X, Y, Z] as commands take
+                       them. A search starts where the player is, and the run ends by flying the
+                       player back there, so a second run films the same place.
     time: "10:00"      /time set; it only moves the clock forward
     weather: calm      clear sky, still wind, no rain, patterns held; or a list of commands. The
                        rain is handed back to the weather (/weather setprecipa) after the take.
@@ -64,6 +65,7 @@ SCREENPLAY
   waits a fixed pause.
 """
 import argparse
+import json
 import math
 import os
 import pathlib
@@ -79,6 +81,7 @@ import yaml
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 GAME = ROOT / "bin" / "game"
 SCENE = ROOT / "bin" / "scene"
+ZONES = json.loads((ROOT / "bin" / "lib" / "world.json").read_text())["zones"]
 WORDS_PER_SECOND = 2.7
 MINIMUM_DWELL_SECONDS = 2.0
 POLL_SECONDS = 0.5
@@ -179,10 +182,12 @@ class Set:
             line = f"/bridge {place}"
         elif isinstance(place, dict) and "force" in place:
             line = f"/bridge force {place['force']}"
+        elif isinstance(place, str) and place in ZONES:
+            line = "/bridge fly {} {} {}".format(*ZONES[place]["at"])
         elif isinstance(place, list) and len(place) == 3:
             line = "/bridge fly {} {} {}".format(*place)
         else:
-            raise Failure(f"A place is sea, shore, {{force: N}} or [X, Y, Z], not {place!r}")
+            raise Failure(f"A place is a zone (bin/game zone lists them), sea, shore, {{force: N}} or [X, Y, Z], not {place!r}")
         self.game.expect(line, "Hovering")
 
     def clear(self):

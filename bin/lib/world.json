@@ -1,0 +1,27 @@
+{
+  "seed": "254",
+  "game": "1.22.7",
+  "start": "open-sea",
+  "zones": {
+    "open-sea": {
+      "at": [352, 111, 160],
+      "what": "Open sea off the spawn island, temperate (latitude 47°): ocean 128 blocks all round, seabed at y28, about 80 m deep. The island lies to the west."
+    },
+    "shallows": {
+      "at": [-92, 111, 43],
+      "what": "A sand flat under 1 m of water on the spawn island's west shore, temperate (47°). The bed shelves west: 4 m at x -108, 5 m at -112, 7 m at -120, 11 m at -132. A sand beach rises to the east."
+    },
+    "beach": {
+      "at": [-2970, 113, 9646],
+      "what": "A grassy, flat strip at y111, two blocks above the water, subtropical (30°, about 18 °C in spring): room to build from x -2986 to -2946. The sea is to the south, shallow for 20 blocks (2-9 m) before it deepens."
+    },
+    "current": {
+      "at": [-2900, 111, -2700],
+      "what": "A cold boundary current running south at 0.5 m/s along a western shore (52°), water about 1 °C, 15 m deep. Land lies to the west."
+    },
+    "cold-shore": {
+      "at": [2906, 113, -7048],
+      "what": "A forested shore at 60°, sea to the east, water below 0 °C; spring days near freezing."
+    }
+  }
+}
