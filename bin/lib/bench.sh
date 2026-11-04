@@ -42,6 +42,20 @@ wait_until_running() {
   done
 }
 
+start_server() {
+  local session=$1 data=$2 config=${3:-}
+  stop_server "$session" "$data"
+  require_free_port "$BENCH_SERVER_PORT" "dedicated server"
+  mkdir -p "$data" "$BENCH_TMP"
+  touch "$BENCH_TMP/server-started"
+  tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
+    "$(game_env) dotnet VintagestoryServer.dll --dataPath $data --tracelog --port $BENCH_SERVER_PORT \
+     ${config:+--withconfig=$(printf %q "$config")} --addOrigin $root/RoughSeas/assets \
+     --addModPath $root/RoughSeas/bin/Debug/Mods $root/AgentBridge/bin/Debug/Mods"
+  echo "Server starting in tmux session $session on port $BENCH_SERVER_PORT; logs in $data/Logs"
+  wait_until_running "$session" "$data" "$BENCH_TMP/server-started" 180
+}
+
 require_free_port() {
   local port=$1 what=$2
   if ss -ltnH "sport = :$port" | grep -q .; then

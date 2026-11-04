@@ -4,7 +4,7 @@ One sheet of birch bark over a frame of split laths: gunwales lashed on at inter
 
 ## In Rough Seas
 
-For long river journeys. The canoe is fast and draws almost no water, and it is the one vessel that runs rapids without taking a rock strike every second. It is also fragile: a landing that a dugout would never notice can hole it. Carry spare birch bark and patch it on the way, and pick it up to carry it past whatever the river won't let you through.
+For long river journeys. The canoe is fast and draws almost no water, and with the coracle it runs rapids without taking a rock strike every second. It is also fragile: a landing that a dugout would never notice can hole it. Carry spare birch bark and patch it on the way, and pick it up to carry it past whatever the river won't let you through.
 
 Birch is the one canoe bark in vanilla. Beside a mod that adds elm or spruce, such as [Wildcraft](Other-Mods#wildcraft-trees-and-shrubs), their bark builds canoes too: the Iroquois built theirs of elm bark, and northern and Pacific peoples of spruce bark. An elm-bark canoe is mended with elm bark. No other bark is flexible and tough enough to make one.
 
@@ -18,14 +18,14 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | --- | --- |
 | Speed | 2.1 m/s paddled, 2.8 m/s poled: the fastest paddled boat ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | 26° a second |
-| [Hull](Hull-Condition) | 5200 J with an oak frame, 6100 J in birch; 2400 J in white cedar, the wood of a canoe from before the build |
+| [Hull](Hull-Condition) | a knock splits the bark and its sheathing at 23 J in white cedar, 43 J in oak, and breaks the rib behind at 47 J, 88 J in oak, or the two either side at 71 J, 133 J in oak; 5200 J more with an oak frame breaks her up, 6100 J in birch, 2400 J in white cedar, the wood of a canoe from before the build |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 36 cm empty, 32 cm with its paddler, in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 24 kg of gear, armour and containers in oak, more in a lighter wood |
 | [Mending](Mending) | 2 bark of its tree close a third of a stove-in place |
 | [Bilge](Bailing) | 609 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
-| [Rapids](Rapids) | runs them unharmed, the only vessel that does |
+| [Rapids](Rapids) | runs them unharmed, as only the coracle also does |
 | [Lightning](Lightning) | a strike nearby almost always breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |

@@ -36,7 +36,7 @@ Unit tests do not tell you whether a storm feels right. A change is done when yo
 The test bench in `bin/` runs the game with the mod and drives it from the shell. It needs Linux with `tmux`, `jq`, `curl` and ImageMagick (`bin/film` also `ffmpeg`, and `uv`, which mise installs), and a game account that has logged in once with the launcher. Its first run copies that login from `~/.config/VintagestoryData`.
 
 ```sh
-bin/client      # build, start the game in tmux, open a test world
+bin/client      # build, start the game in tmux, open a fresh copy of the bench world
 bin/game help   # everything the bench can do
 ```
 

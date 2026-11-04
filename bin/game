@@ -39,18 +39,26 @@ START
                        once the world is loaded and the server answers (~35 s). A running world
                        is saved and left first, as Save & Quit does: vessels, ropes, the
                        player's place and /worldconfig changes are there after the restart.
-                       Opens singleplayer world WORLD (default "sea"); a new world is made with the
-                       AgentBridge preset: creative, standard worldgen, 70% ocean.
-                       An existing world is reopened without the preset: re-applying it crashes
-                       the client on some worlds (#24).
+                       Without WORLD it opens this job's take: a copy of the bench world, the same
+                       for every clone (seed and zones in bin/lib/world.json), made fresh from the
+                       machine's reference save when no take is open; a restart keeps the take.
+                       The first take on a machine makes the reference (a few minutes): the
+                       dedicated server generates the seed's world, the client visits every zone so
+                       its chunks are built, and the save goes to $BENCH_REFERENCE/SEED.vcdbs.
+                       With WORLD it opens singleplayer world WORLD instead, for what needs fresh
+                       worldgen or an old save; a new one is made with the AgentBridge preset
+                       (creative, standard worldgen, 70% ocean) and a random seed. An existing
+                       world is reopened without the preset: re-applying it crashes the client on
+                       some worlds (#24).
                        Every start turns temporal storms, stability and rifts off, and unridden
                        vessels hold still until /bridge drift on.
                        BENCH_MODS picks the mods loaded (default "roughseas agentbridge"):
                        BENCH_MODS=agentbridge, or BENCH_MODS= for vanilla, to tell our crash from
                        the game's. Without agentbridge, bin/game cannot drive it; read the log.
   bin/client stop      close the game when done: save and leave the world, waiting for the save,
-                       then stop the client. Killing its tmux session instead loses what changed
-                       since the last autosave.
+                       then stop the client, and throw the take away, so the next job starts on a
+                       clean world. Killing its tmux session instead loses what changed since the
+                       last autosave.
   bin/client server    connect the client to this clone's dedicated server instead (multiplayer).
                        The player needs admin there, once per server data folder:
                        tmux send-keys -t <bench>-server '/op <your player name>' Enter
@@ -140,6 +148,8 @@ ACT
                              "Hovering at X Y Z" (/bridge fly, sea, storm) waits for `arrive`,
                              then for the server to load the chunks around the player, by
                              its debug log ("[bridge] flight N: chunks loaded ... after S s")
+  bin/game zone [NAME]       fly to zone NAME of the bench world, hovering over it, as `do` flies;
+                             without NAME, list the zones and what each is for (bin/lib/world.json)
   bin/game arrive X Y Z [S]  block until the client stands within a block of X Y Z (as commands take
                              them); fails after S seconds (default 30). Use it after a /tp.
   bin/game look YAW PITCH    aim the camera, radians. Yaw 0 faces +Z, pi/2 +X, pi -Z;
@@ -304,7 +314,8 @@ GOTCHAS
     the bridge's own flights; after a /tp, `arrive` first.
   A camera change shows in `state`.lookingAt on the next frame; wait ~0.5 s.
   A new player gets a character-creation dialog that pauses the game: `wait` closes it.
-  New worlds get a random seed, so do not hard-code sea coordinates: use /bridge sea.
+  Coordinates hold only in the bench world: name a zone (bin/game zone) there, and search
+    (/bridge sea, shore, find) in any other world, whose seed is random.
   `bin/scene clear` removes entities only; blocks you placed and /worldconfig changes stay.
   Never `pkill -f "bin/game ..."`: the pattern matches, and kills, your own shell. Every wait has a
     timeout instead.
@@ -335,8 +346,8 @@ arrive() {
 }
 
 settle() {
-  local flight=$1 deadline=$((SECONDS + ${2:-180})) log=$BENCH_DATA/Logs/server-debug.log line
-  [ "$BENCH_DATA/server/Logs/server-debug.log" -nt "$log" ] && log=$BENCH_DATA/server/Logs/server-debug.log
+  local flight=$1 deadline=$((SECONDS + ${2:-180})) log=${BENCH_SERVER_LOG:-$BENCH_DATA/Logs/server-debug.log} line
+  [ -n "${BENCH_SERVER_LOG:-}" ] || [ ! "$BENCH_DATA/server/Logs/server-debug.log" -nt "$log" ] || log=$BENCH_DATA/server/Logs/server-debug.log
   until line=$(grep -a "\[bridge\] flight $flight: chunks" "$log"); do
     [ $SECONDS -lt $deadline ] || fail "The server's chunks around flight $flight never settled; read $log"
     sleep 1
@@ -372,6 +383,13 @@ case "${1:-}" in
     done
     ;;
   arrive) arrive "$2" "$3" "$4" "${5:-30}" ;;
+  zone)
+    world_file=$(dirname "$0")/lib/world.json
+    [ -n "${2:-}" ] || exec jq -r '.zones | to_entries[] | "\(.key): \(.value.what)"' "$world_file"
+    at=$(jq -r --arg name "$2" '.zones[$name].at // empty | join(" ")' "$world_file")
+    [ -n "$at" ] || fail "No zone $2 in $world_file; bin/game zone lists them"
+    "$0" do "/bridge fly $at"
+    ;;
   here) post /chat "/bridge here" ;;
   entity) post /chat "/bridge entity $2" ;;
   where) post "/where?entity=${2:-}" ;;

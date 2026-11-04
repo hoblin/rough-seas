@@ -4,6 +4,10 @@ namespace RoughSeas.Tests.Vessels;
 
 public class ResistanceTests
 {
+    private static readonly Resistance Hull = new(FrameJoules: 30000, ShellPoint: 400, ShellCut: 100);
+    private static readonly Resistance Framed = new(FrameJoules: 400, ShellPoint: double.PositiveInfinity, ShellCut: 100, Framed: new(40, 100, 0.4, 0));
+    private static readonly Resistance Bark = new(FrameJoules: 400, ShellPoint: 20, ShellCut: 20, Framed: new(40, 60, 0.2, 20));
+
     [Fact]
     public void TheWholeFrameTakesABroadLoadWhateverTheShell()
     {
@@ -38,41 +42,83 @@ public class ResistanceTests
     [Fact]
     public void ABlowOnTheShellOpensAtMostThePlaceItLands()
     {
-        Assert.Equal(1, Resistance.Loss(3, Blow.Point, byPlace: true));
-        Assert.Equal(1, Resistance.Loss(3, Blow.Cut, byPlace: true));
-        Assert.Equal(0.4, Resistance.Loss(0.4, Blow.Point, byPlace: true));
+        Assert.Equal(1, Hull.Loss(3, Blow.Point, byPlace: true, backed: true));
+        Assert.Equal(1, Hull.Loss(3, Blow.Cut, byPlace: true, backed: true));
+        Assert.Equal(0.4, Hull.Loss(0.4, Blow.Point, byPlace: true, backed: true));
     }
 
     [Fact]
     public void ABlowOnTheShellOfAHullReckonedWholeTakesOnePlacesShareOfIt()
     {
-        Assert.Equal(1.0 / HullShape.Places.Length, Resistance.Loss(3, Blow.Cut, byPlace: false), 9);
+        Assert.Equal(1.0 / HullShape.Places.Length, Hull.Loss(3, Blow.Cut, byPlace: false, backed: true), 9);
     }
 
     [Fact]
     public void ABroadLoadWeighsOnTheWholeHullAlike()
     {
-        Assert.Equal(1.2, Resistance.Loss(1.2, Blow.Broad, byPlace: false));
+        Assert.Equal(1.2, Hull.Loss(1.2, Blow.Broad, byPlace: false, backed: true));
     }
 
     [Fact]
     public void OnlyABroadLoadBeyondTheFrameBreaksItAtOnce()
     {
-        Assert.True(Resistance.BreaksFrame(Blow.Broad, Resistance.Loss(1.2, Blow.Broad, byPlace: true)));
-        Assert.False(Resistance.BreaksFrame(Blow.Broad, Resistance.Loss(0.9, Blow.Broad, byPlace: true)));
-        Assert.False(Resistance.BreaksFrame(Blow.Point, Resistance.Loss(5, Blow.Point, byPlace: true)));
+        Assert.True(Hull.BreaksFrame(Blow.Broad, 1.2, backed: false));
+        Assert.False(Hull.BreaksFrame(Blow.Broad, 0.9, backed: false));
+        Assert.False(Hull.BreaksFrame(Blow.Point, 5, backed: false));
+    }
+
+    [Fact]
+    public void ABroadBlowOnAFramedHullMeetsOnlyItsShellAndTheMembersWhereItLands()
+    {
+        Assert.Equal(40, Framed.Against(Blow.Broad, backed: true));
+        Assert.Equal(100, Framed.Against(Blow.Broad, backed: false));
+        Assert.Equal(0.5, Framed.Severity(20, Blow.Broad, backed: true, strength: 1));
+    }
+
+    [Fact]
+    public void ABroadBlowLandsOverAFrameMemberByTheMembersShareOfTheHull()
+    {
+        Assert.True(Framed.Backed(HullPlace.Bottom, 0.39, Blow.Broad));
+        Assert.False(Framed.Backed(HullPlace.PortSide, 0.41, Blow.Broad));
+    }
+
+    [Fact]
+    public void TheMemberBehindBreaksJustAsTheModelDrawsItBroken()
+    {
+        Assert.Equal(HullModel.FrameBroken, Framed.Loss(1, Blow.Broad, byPlace: true, backed: true));
+        Assert.Equal(1, Framed.Loss(3, Blow.Broad, byPlace: true, backed: true));
+    }
+
+    [Fact]
+    public void AKnockThatBreaksNothingLeavesAHideAndItsLathsWhole() =>
+        Assert.Equal(0, Framed.Loss(0.9, Blow.Broad, byPlace: true, backed: false));
+
+    [Fact]
+    public void AKnockThatOpensBarkCracksItThoughTheRibsHold()
+    {
+        Assert.Equal(HullModel.FrameBroken / 2, Bark.Loss(0.5, Blow.Broad, byPlace: true, backed: true));
+        Assert.Equal(0, Bark.Loss(0.4, Blow.Broad, byPlace: true, backed: true));
+    }
+
+    [Fact]
+    public void OnlyWhatAStoveInPlaceLeavesOverReachesTheWholeFrame()
+    {
+        Assert.False(Framed.BreaksFrame(Blow.Broad, 11.9, backed: true));
+        Assert.True(Framed.BreaksFrame(Blow.Broad, 12.5, backed: true));
+        Assert.False(Framed.BreaksFrame(Blow.Broad, 5.9, backed: false));
+        Assert.True(Framed.BreaksFrame(Blow.Broad, 6, backed: false));
     }
 
     [Fact]
     public void ABreakerBelowThePlankingsStrengthLeavesItWhole() =>
-        Assert.Equal(0, Resistance.Loss(0.9, Blow.Slam, byPlace: true));
+        Assert.Equal(0, Hull.Loss(0.9, Blow.Slam, byPlace: true, backed: true));
 
     [Fact]
     public void ABreakerBeyondThePlankingsStrengthStovesInThePlaceItSlams()
     {
-        Assert.Equal(1, Resistance.Loss(1.3, Blow.Slam, byPlace: true));
-        Assert.Equal(1.0 / HullShape.Places.Length, Resistance.Loss(1.3, Blow.Slam, byPlace: false), 9);
-        Assert.False(Resistance.BreaksFrame(Blow.Slam, Resistance.Loss(5, Blow.Slam, byPlace: true)));
+        Assert.Equal(1, Hull.Loss(1.3, Blow.Slam, byPlace: true, backed: true));
+        Assert.Equal(1.0 / HullShape.Places.Length, Hull.Loss(1.3, Blow.Slam, byPlace: false, backed: true), 9);
+        Assert.False(Hull.BreaksFrame(Blow.Slam, 5, backed: false));
     }
 
     [Fact]

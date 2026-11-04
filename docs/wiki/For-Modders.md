@@ -233,6 +233,16 @@ Our vessels' shapes are rebuilt so that no box stands outside the round it build
 
 New: a material's `crushStrength` and `densificationStrain`, `Resistance.CushionJoules` and `Resistance.Severity`.
 
+### Framed hulls take a knock where it lands
+
+- A `shell` can name its `frame`, `{ "material", "metres", "widthMetres", "spacingMetres", "spanMetres" }`: the laths or ribs behind it. A broad load (a knock, a ram, rapids, a blast, lightning) on such a shell meets only the shell where it lands and the members there, `Resistance.Framed`: on a member (`Resistance.Backed` rolls it by `MemberShare`), a `rigid` shell's holing with its lining, nothing for a `skin`, plus the member's `toughness` across its section; between two, both members, and a `skin`'s stretch across the gap until its pull breaks them, from a material's new `tensileStrength` and `elongation`. The members' breaking brings the place to a split (`HullModel.FrameBroken`, a crack of 0.5), twice that stoves it in, and only what is left meets `impactCapacity` to break the hull up; a load that neither opens the shell nor breaks a member leaves the place whole. A shell without a `frame`, or a hull with no `impactCapacity`, takes a broad load as before.
+- Our coracle, bark canoe and currach carry a `frame`, a 1 by 6 cm lath of their build's wood, and feel a knock from about 1.2 m/s with one aboard where they used to shrug off 2 m/s. A patch that removes the `frame` gives them the whole-frame knock back.
+- `Resistance.Loss` and `Resistance.BreaksFrame` are now the resistance's own, and `BreaksFrame` takes the blow's severity, and whether it landed on a member, rather than its loss. `Resistance.Backed` takes the blow.
+
+- While she is built, a broad load meets only the frame members laid: `roughseas:framing`'s stages marked `members` lay them, and `Shell.Framed` spaces them wider while some are missing.
+
+New: a shell's `frame` (`FrameMember`), `Resistance.Framed` (`FramedResistance`), a material's `tensileStrength` and `elongation`, `HullModel.FrameBroken`, a framing stage's `members`.
+
 ### Reed boats of the plant they were bound from
 
 A reed bundle keeps the plant it was bound from, and the boat each of her bundles. A world's reed boats and bundles from before load as cattail, through the engine's remap files.

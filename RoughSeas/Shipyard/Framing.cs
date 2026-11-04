@@ -55,6 +55,9 @@ public sealed class Framing
     /// <summary>How much of her lining is laid.</summary>
     public double Lined => Share(stage => stage.Lines);
 
+    /// <summary>How much of the frame members behind her shell are laid.</summary>
+    public double Members => Share(stage => stage.Members);
+
     public bool Sealed => Stages.Where(stage => stage.Seals).All(stage => Laid(stage) >= stage.Pieces);
 
     /// <summary>Changes whenever what she shows changes.</summary>
@@ -151,6 +154,9 @@ public sealed class FramingStage
 
     /// <summary>Whether its pieces line the shell, backing it where they lie.</summary>
     public bool Lines;
+
+    /// <summary>Whether its pieces are the frame members behind the shell, which take a broad blow where it lands.</summary>
+    public bool Members;
 
     /// <summary>Whether its pieces are bent wet and hold her shape only once dry.</summary>
     public bool Sets;
