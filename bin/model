@@ -16,6 +16,9 @@ BUILD
                                    A shape whose boxes stand outside the round they build, or whose
                                    faces share a plane, is not written: the build names each box and
                                    how far out it stands, or the two faces (docs/modeling.md).
+                                   About 20 minutes for all, mostly the arms: build only the
+                                   vessels whose output must change. It is a generator, not a
+                                   test (docs/modeling.md says when).
 EDIT
   bin/model edit SHAPE SCRIPT      import SHAPE, run SCRIPT (Python, bpy) on the scene, export
                                    back over SHAPE. The usual way to change any other model.

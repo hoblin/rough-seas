@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 from fit import APART, TOLERANCE, Loft, check, corners, posed
-from transform import apply, direct
+from transform import add, apply, cross, direct, dot, scale, sub, unit
 
 FACES = ("north", "east", "south", "west", "up", "down")
 FACE_AXES = {
@@ -233,30 +233,6 @@ def across(start, end, up):
 
 def rise(a, b, c, d):
     return [((p - q) + (r - s)) / 2 for p, q, r, s in zip(d, a, c, b)]
-
-
-def cross(u, v):
-    return [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]
-
-
-def add(p, q):
-    return [a + b for a, b in zip(p, q)]
-
-
-def sub(p, q):
-    return [a - b for a, b in zip(p, q)]
-
-
-def scale(v, k):
-    return [a * k for a in v]
-
-
-def dot(u, v):
-    return sum(a * b for a, b in zip(u, v))
-
-
-def unit(v):
-    return scale(v, 1 / math.sqrt(dot(v, v)))
 
 
 def clear_of(cuts, along, made, slide=False):

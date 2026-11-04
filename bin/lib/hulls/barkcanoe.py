@@ -5,7 +5,8 @@ from held import PADDLE, POLE, paddling, seated_poling, standing_poling, tools, 
 from stroke import player_patch, seat
 from physics import afloat, kilograms, stands
 from fit import APART, TOLERANCE, lined as lined_section
-from shape import BILGE, VOXELS_A_METRE, Hull, Shape, add, box, clear_of, corners_of, group, path, plank, renamed, rested, scale, span, stages, sub, unit, widest
+from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
+from transform import add, scale, sub, unit
 from wounds import wound
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]

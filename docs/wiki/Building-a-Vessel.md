@@ -125,7 +125,7 @@ A crest stands half a wave's height above still water, seven tenths when it brea
 | `pole` | | none | how a pole drives her: `stroke` (`pole` standing, `seatedpole` from the seat), `handsAboveWaterMetres`, how high his hands are over the water at the end of the shove, so that a pole reaches that much less deep, and `stance`, where he stands to pole: the `animation` he stands in, his `riderOffset` from his seat's attachment point in blocks and his `eyeHeight`. With no `stance`, he poles from the seat |
 | `strokes` | | none | the rower's `ready`, `forwards` and `backwards` animations for each tool she takes: `pole`, `paddle`, and `tholeoar` for her own oars. A paddle worked on either side takes `paddle-starboard` and `paddle-port` instead, each with a `change` that carries it over to that side |
 
-Our vessels' builders decide the stance from the hull: `stands` in `bin/lib/hulls/physics.py` stands the poler where her hull, with him standing, is at least as stiff as the narrowest canoe polers stand in ([why](The-Science-of-the-Hull#driving-her)), and the builder prints the stance's offset and his hands' height for her JSON.
+Our vessels' builders decide the stance from the hull: `stands` in `bin/lib/hulls/physics.py` stands the poler where her hull, with him standing, is at least as stiff as the narrowest canoe polers stand in ([why](The-Science-of-the-Hull#driving-her)), and the builder writes the stance's offset and his hands' height into her JSON.
 
 Her length and beam are her `Hull` box. The rower's power and each stroke's rate, drive and efficiency are in `config/propulsion.json`, the drag law's constants in `config/vessels/drag.json`, each number with its source.
 

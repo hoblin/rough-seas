@@ -4,9 +4,9 @@ from pathlib import Path
 
 from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes
 from physics import afloat, built, kilograms
-from transform import apply, local
+from transform import add, apply, local
 from fit import APART, Tube, Union
-from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, add, beam, box, clear_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
 
 VOXEL_METRES = 1 / 16

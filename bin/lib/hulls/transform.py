@@ -1,6 +1,30 @@
 import math
 
 
+def dot(a, b):
+    return sum(x * y for x, y in zip(a, b))
+
+
+def cross(a, b):
+    return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
+
+
+def add(a, b):
+    return tuple(x + y for x, y in zip(a, b))
+
+
+def sub(a, b):
+    return tuple(x - y for x, y in zip(a, b))
+
+
+def scale(v, k):
+    return tuple(c * k for c in v)
+
+
+def unit(v):
+    return scale(v, 1 / math.sqrt(dot(v, v)))
+
+
 def identity():
     return [[float(i == j) for j in range(4)] for i in range(4)]
 
