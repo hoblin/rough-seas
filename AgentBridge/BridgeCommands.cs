@@ -710,8 +710,8 @@ public class BridgeCommands : ModSystem
             case DoubleAttribute when number is { } d: attributes.SetDouble(leaf, d); break;
             case FloatAttribute when number is { } f: attributes.SetFloat(leaf, (float)f); break;
             default:
-                if (int.TryParse(value, CultureInfo.InvariantCulture, out var whole)) attributes.SetInt(leaf, whole);
-                else if (number is { } fraction && asDouble) attributes.SetDouble(leaf, fraction);
+                if (number is { } exact && asDouble) attributes.SetDouble(leaf, exact);
+                else if (int.TryParse(value, CultureInfo.InvariantCulture, out var whole)) attributes.SetInt(leaf, whole);
                 else if (number is { } single) attributes.SetFloat(leaf, (float)single);
                 else if (bool.TryParse(value, out var flag)) attributes.SetBool(leaf, flag);
                 else attributes.SetString(leaf, value);

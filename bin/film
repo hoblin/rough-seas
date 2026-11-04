@@ -373,11 +373,12 @@ class Scene:
         for action in self.scene.get("do") or []:
             self.set.act(action)
         seconds = self.camera.frame(self.scene["camera"]) if "camera" in self.scene else 0
+        framed = time.monotonic()
         keys = ",".join(self.scene.get("keys") or [])
         if keys:
             self.game.run("press", keys, "down")
         try:
-            self.wait(self.scene.get("until"), began + max(seconds, self.dwell()), began + self.scene.get("timeout", DEFAULT_TIMEOUT))
+            self.wait(self.scene.get("until"), max(framed + seconds, began + self.dwell()), began + self.scene.get("timeout", DEFAULT_TIMEOUT))
             self.game.shot(still, recording=True)
         finally:
             if keys:
