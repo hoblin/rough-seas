@@ -254,7 +254,8 @@ public class AgentBridgeModSystem : ModSystem
         var target = long.TryParse(entity, out var id)
             ? capi.World.GetEntityById(id) ?? throw new FileNotFoundException($"No entity {id} near the player")
             : capi.World.Player.Entity;
-        return JsonSerializer.Serialize(new { target.EntityId, code = target.Code.ToString(), target.Pos.X, target.Pos.Y, target.Pos.Z, target.Pos.Yaw }) + "\n";
+        return JsonSerializer.Serialize(new { target.EntityId, code = target.Code.ToString(), target.Pos.X, target.Pos.Y, target.Pos.Z, target.Pos.Yaw,
+            bodyYaw = (target as EntityAgent)?.BodyYaw }) + "\n";
     }
 
     private string Hover(string? entity, string? box, string? block)

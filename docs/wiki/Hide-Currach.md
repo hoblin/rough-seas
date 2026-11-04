@@ -1,6 +1,6 @@
 ![The currach afloat](images/currach/afloat-bow.webp)
 
-A light frame of split laths, ribs bent over two long gunwales and stringers along them, with hides laced over it and sealed with rendered fat. She is pointed at both ends, where her gunwales are drawn together and bound, and a thwart pole across her aft takes the rower, who rows her with an [oar](https://wiki.vintagestory.at/Oar) in hand.
+A light frame of split laths, ribs bent over two long gunwales and stringers along them, with hides laced over it and sealed with rendered fat. She is pointed at both ends, where her gunwales are drawn together and bound, and a thwart pole across her middle, a hand below her gunwale, takes the rower. He sits facing her stern and pulls her two oars on their thole pins, which stand just abaft him.
 
 ## In Rough Seas
 
@@ -15,7 +15,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | | |
 | --- | --- |
 | Speed | 2.5 m/s rowed on her thole pins, 2 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
-| Turning | 42° a second, rowed: one oar pulled, the other backed |
+| Turning | 32° a second, rowed: one oar pulled, the other backed |
 | [Hull](Hull-Condition) | 3000 J with an ash frame: she rides the sea, but one hard knock holes her; about 2800 J in oak, 3300 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 15 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 58 cm empty, 56 cm with her rower |
@@ -28,8 +28,8 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | one: the rower on the thwart, rowing her own two oars with an empty hand, or poling her through shallows |
-| Cargo | three spots on the bottom, forward of the rower; each takes a basket (8 slots), a storage vessel (12) or a chest (16; a treasure chest 4) |
+| Seats | one: the rower on the thwart, facing her stern, rowing her own two oars with an empty hand, or poling her through shallows |
+| Cargo | three spots on the bottom, two behind the rower and one beyond his feet; each takes a basket (8 slots), a storage vessel (12) or a chest (16; a treasure chest 4) |
 | Built from | 2 laths of 5 m for her gunwale, 9 of 3 m and 12 of 2 m for her ribs and 7 of 5 m for her stringers, 6 ropes, eight small hides' worth of hide and a 2 m pole, then greased |
 | Wreckage | a few laths |
 

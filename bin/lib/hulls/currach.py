@@ -1,6 +1,6 @@
 import math
 
-from physics import afloat, kilograms
+from physics import MASS, afloat, kilograms
 from shape import BILGE, VOXELS_A_METRE, Hull, Shape, box, breadth, group, path, plank, renamed, span, stages
 from held import POLE, poling, tools, waterline
 from stroke import crew, drive_share, moved, player_patch, seat, strokes
@@ -19,21 +19,34 @@ RIB_SPACING = 3
 RIB_WIDTH = 0.8
 RIB_DEPTH = 0.4
 STRINGER = 0.6
-THWART_SHARE = 0.75
 THWART = 1.4
-THWART_SEAT = 7
+# Aran thwarts are nailed to the lower gunwale, the upper some 6 in above it (Hornell 1938).
+THWART_SEAT = SHEER - 0.15 * VOXELS_A_METRE
+# A seated man's centre of mass lies some 9 cm from his hips toward his feet: his thighs, 20% of his mass, at 0.19 m,
+# his shanks and feet, 12%, at 0.45 m (Winter 2009, table 4.1).
+SEATED_CENTRE = 0.09 * VOXELS_A_METRE
 
 OARS = {"OarStarboard": -1, "OarPort": 1}
-THOLE_AHEAD = 9.6
-BULL = 2.4
-INBOARD = 8.8
+# Dingle's thole pins stand 15 in abaft their thwart (Hornell 1938); none is given for Aran.
+THOLE_ABAFT = 0.38 * VOXELS_A_METRE
+# The pin passes through the bull, nailed to the loom's after side (Hornell 1938).
+BULL = 1.4
+LOOM = 0.4
+OAR = 48
+# The grips cross 6 to 12 in amidships (the Celtic MKE currach club): each 0.115 m past her middle.
+GRIP = 0.115 * VOXELS_A_METRE
 LOOM_END = 14
-BLADE_START = 23.2
-OUTBOARD = 39.2
+BLADE = 16
+# One hand over the other where the grips cross.
+HANDS_APART = 1.2
 FRAMES = 30
-SWEEP_DEGREES = 28
-REST_PITCH = -13
-DIP_DEGREES = 11
+# The arc and the swing of his back, fitted to his arms (arm.py).
+SWEEP_DEGREES = 26
+SWEEP_MIDDLE = 120
+LEAN = 16
+SWING = 14
+COVER = 1
+CLEAR = 2
 DIP_SHARPNESS = 3
 
 # A small hide is about 1.2 m²: a moose's 3.5 m² over the three leather vanilla tans from its large hide.
@@ -141,8 +154,7 @@ def stringers(hull):
     return pieces
 
 
-def thwart(hull, half):
-    x = CENTRE + THWART_SHARE * 2 * half - half
+def thwart(hull, x):
     reach = breadth(hull.section(x), THWART_SEAT) - 0.4
     y = THWART_SEAT - THWART
     return [[box("ThwartPole", (x - THWART / 2, y, CENTRE - reach), (x + THWART / 2, THWART_SEAT, CENTRE + reach), "frame", grain="z")]]
@@ -181,29 +193,55 @@ def lacing(hull):
     return [wraps[len(wraps) * r // ropes:len(wraps) * (r + 1) // ropes] for r in range(ropes)]
 
 
-def thole_station(half):
-    return CENTRE + THWART_SHARE * 2 * half - half - THOLE_AHEAD
-
-
-def tholes(hull, half):
-    x = thole_station(half)
+def tholes(hull, x):
     top = len(PROFILE) - 1
     pins, rests = [], {}
     for name, side in OARS.items():
         _, y, z = hull.at(x, top, side)
-        pins.append(box(f"Thole{name[3:]}", (x - 0.3, y - 0.6, z - 0.3), (x + 0.3, y + BULL + 1.2, z + 0.3), "frame", grain="y"))
-        rests[name] = (x, y + 0.4 + BULL, z)
+        pins.append(box(f"Thole{name[3:]}", (x - 0.3, y - 0.6, z - 0.3), (x + 0.3, y + 2 * LOOM + 1.6, z + 0.3), "frame", grain="y"))
+        rests[name] = (x, y + LOOM, z)
     return pins, rests
 
 
+def inboard(rest):
+    return abs(rest[2] - CENTRE)
+
+
 def oar(name, side, rest):
+    loom = inboard(rest)
+    outboard = OAR - loom - GRIP
+    z = side * BULL
     return group(name, rest, (side * 90, 0, 0), [
-        box(f"{name}Grip", (-INBOARD, -0.35, -0.35), (-INBOARD + 3, 0.35, 0.35), "frame"),
-        box(f"{name}Loom", (-INBOARD + 3, -0.4, -0.4), (LOOM_END, 0.4, 0.4), "frame"),
-        box(f"{name}Bull", (-1.6, -BULL, -0.7), (1.6, -0.4, 0.7), "frame"),
-        box(f"{name}Shaft", (LOOM_END, -0.3, -0.3), (BLADE_START, 0.3, 0.3), "frame"),
-        box(f"{name}Blade", (BLADE_START, -0.15, -0.8), (OUTBOARD, 0.15, 0.8), "frame"),
+        box(f"{name}Grip", (-loom - GRIP, -0.35, z - 0.35), (-loom, 0.35, z + 0.35), "frame"),
+        box(f"{name}Loom", (-loom, -LOOM, z - LOOM), (LOOM_END, LOOM, z + LOOM), "frame"),
+        box(f"{name}Bull", (-1.6, -LOOM, min(0, z) - 0.7), (1.6, LOOM, max(0, z) + 0.7), "frame"),
+        box(f"{name}Shaft", (LOOM_END, -0.3, z - 0.3), (outboard - BLADE, 0.3, z + 0.3), "frame"),
+        box(f"{name}Blade", (outboard - BLADE, -0.15, z - 0.8), (outboard, 0.15, z + 0.8), "frame"),
     ])
+
+
+def pitches(rests):
+    rest = next(iter(rests.values()))
+    outboard = OAR - inboard(rest) - GRIP
+    above = rest[1] - waterline("currach") * VOXELS_A_METRE
+    drive = -math.degrees(math.asin((above + COVER) / (outboard - BLADE / 2)))
+    recovery = -math.degrees(math.asin((above - CLEAR) / outboard))
+    return recovery, drive
+
+
+def rowing_station(hull):
+    x = CENTRE
+    for _ in range(8):
+        pole = sum(piece["metres"] for piece in stages("Thwart", thwart(hull, x))["children"])
+        _, rests = tholes(hull, x + THOLE_ABAFT)
+        oars = sum(litres(part) for name, side in OARS.items() for part in oar(name, side, rests[name])["children"])
+        rower = MASS["crewKg"] + MASS["playerGearKg"]
+        weights = {"rower": (rower, SEATED_CENTRE), "thwart": (kilograms("wood-ash", pole * POLE_SQUARE_METRES * 1000), 0),
+                   "oars": (kilograms("wood-ash", oars), THOLE_ABAFT)}
+        x = CENTRE - sum(kg * d for kg, d in weights.values()) / sum(kg for kg, _ in weights.values())
+    print(f"thwart: {(x - CENTRE) / VOXELS_A_METRE:+.2f} m from her middle, where she floats level with her rower and his oars;"
+          f" tholes {THOLE_ABAFT / VOXELS_A_METRE:.2f} m abaft it")
+    return x
 
 
 def sweep(u):
@@ -217,22 +255,31 @@ def depth(u):
 
 
 def rowing(rests):
+    recovery, drive = pitches(rests)
+    apart = math.degrees(math.asin(HANDS_APART / 2 / (inboard(next(iter(rests.values()))) + GRIP / 2)))
+
     def pose(sweep_at, depth_at):
         def at(frame):
             u = frame / FRAMES
-            yaw = 90 - SWEEP_DEGREES * sweep_at(u)
-            pitch = REST_PITCH - DIP_DEGREES * depth_at(u)
-            return {name: moved(rests[name], (side * 90, 0, 0), rests[name], {"rotationY": -side * yaw, "rotationZ": pitch})
+            yaw = SWEEP_MIDDLE - SWEEP_DEGREES * sweep_at(u)
+            pitch = recovery + (drive - recovery) * depth_at(u)
+            return {name: moved(rests[name], (side * 90, 0, 0), rests[name], {"rotationY": -side * yaw, "rotationZ": pitch + side * apart})
                     for name, side in OARS.items()}
         return at
 
-    return strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
-                   pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)), stroke="rowing")
+    def swing(sweep_at):
+        return lambda frame: {"rotationZ": LEAN - SWING * sweep_at(frame / FRAMES)}
+
+    rowed = strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
+                    pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)), stroke="rowing")
+    for stroke, sweep_at in zip(rowed, (lambda u: 0, sweep, lambda u: sweep(1 - u))):
+        stroke["lean"] = swing(sweep_at)
+    return rowed
 
 
 def blade_span(rests):
-    reach = (BLADE_START + OUTBOARD) / 2 * math.cos(math.radians(-REST_PITCH))
-    across = [abs(z - CENTRE) + reach for _, _, z in rests.values()]
+    _, drive = pitches(rests)
+    across = [inboard(rest) + (OAR - inboard(rest) - GRIP - BLADE / 2) * math.cos(math.radians(drive)) for rest in rests.values()]
     return sum(across) / VOXELS_A_METRE
 
 
@@ -245,23 +292,24 @@ def build(path_):
     })
     hull, half = hull_of_gunwale()
     laths = [gunwale_stage(hull), stages("Ribs", ribs(hull, half)), stages("Stringers", stringers(hull))]
-    thwart_stage = stages("Thwart", thwart(hull, half))
+    station = rowing_station(hull)
+    thwart_stage = stages("Thwart", thwart(hull, station))
     shape.add(laths[0])
     shape.add(stages("EndLashing", ends(half)))
     shape.add(laths[1], laths[2])
     shape.add(stages("Cover", cover(hull), wood="none"))
     shape.add(stages("Lacing", lacing(hull)))
     shape.add(thwart_stage)
-    pins, rests = tholes(hull, half)
+    pins, rests = tholes(hull, station + THOLE_ABAFT)
     shape.add(*pins)
     shape.add(stages("Oars", [[oar(name, side, rests[name])] for name, side in OARS.items()], wood="none"))
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
-    rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests), {"R": "OarStarboardGrip", "L": "OarPortGrip"},
+    rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(rests), {"R": "OarPortGrip", "L": "OarStarboardGrip"},
                  {"rotationZ": 12})
     at = seat(shape, "BackSeat")
     player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, waterline("currach"), {
-        "pole": ("pole", POLE, poling(POLE, at, 3, 3, 3, -2)),
+        "pole": ("pole", POLE, poling(POLE, at, 3, 3, 3, 2 * CENTRE + 2, side=1)),
     }))
     print(f"oars: {blade_span(rests):.2f} m from blade to blade across her")
     report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()])

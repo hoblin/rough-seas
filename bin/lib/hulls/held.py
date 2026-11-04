@@ -2,7 +2,7 @@ import json
 import math
 
 from physics import SWIM_LINE_METRES
-from stroke import CENTRE, ROOT, Rower, drive_share, fit, moved, posed, seat, strokes, turn
+from stroke import ROOT, Rower, drive_share, facing, fit, moved, posed, seat, strokes, turn
 from transform import angles, apply, euler, mul, nearest, translation, undirect
 
 ASSETS = ROOT / "RoughSeas/assets/roughseas"
@@ -68,11 +68,10 @@ def wrist(rower, tool, body, matrix):
 
 
 def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline):
-    rower = Rower(seat(shape, seated), idle)
+    rower = Rower(seat(shape, seated), idle, facing(shape, vessel, seated))
     group = tool.group()
     plan = strokes(f"{vessel}-{kind}", FRAMES, *poses, stroke=stroke, per_loop=LOOPED.get(stroke, 1))
     _, player = fit(rower, [group], plan, {"R": RIGHT, "L": LEFT}, lean)
-    offset = [(s - c) / 16 for s, c in zip(rower.seat, CENTRE)]
     reference = None
     for step, animation in zip(plan, player):
         deepest = math.inf
@@ -80,7 +79,7 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         for keyframe, frame in zip(animation["keyframes"], step["keys"]):
             matrices = posed([group], lambda name, pose=step["pose"](frame): pose.get(name, {}))
             body = keyframe["elements"]
-            anchor = wrist(rower, tool, body, mul(translation([-o for o in offset]), matrices[TOOL]))
+            anchor = wrist(rower, tool, body, mul(rower.placing, matrices[TOOL]))
             if previous is not None:
                 turned = nearest([anchor["rotation" + a] for a in "XYZ"], previous)
                 anchor |= {"rotation" + a: round(v, 2) for a, v in zip("XYZ", turned)}

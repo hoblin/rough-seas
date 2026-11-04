@@ -169,3 +169,13 @@ A paddled, poled or rowed vessel goes as fast as her rower drives her against th
 - The hull's drag law, `HullDrag` with `WaveMaking`, lives with the hull, and a vessel's size for it is her `Hull` box, which a client now measures once her selection boxes load rather than keeping her entity's selection box for good.
 
 New: the behaviour `roughseas:propulsion` with its keys, the items `roughseas:paddle-{wood}` and `roughseas:tholeoar-{wood}`, the item attribute `roughseas:propulsion`, `config/propulsion.json` and `config/vessels/drag.json`.
+
+### The currach rowed facing her stern
+
+Her rower sits where a real Aran rower does: facing her stern, pulling his oars on pins that stand just abaft his thwart.
+
+- Our vessels' seats are `VesselSeat`, vanilla's boat seat turned by its `mountRotation`: the rider's body, head and camera face that way. Vanilla turns only the limits a body is held in. The currach's seat has `mountRotation` y 180.
+- Her thwart, seat and thole pins moved: the `BackSeat` box is at x 2.12 to 10.12, its point on the thwart; the cargo boxes lie two forward of the rower and one aft of his feet. Her `spanMetres` is 4.53 and her `sweepMetres` 1.3.
+- Her oars pivot on their pins through the bull on the loom's after side, the loom lying on her gunwale, and their looms reach from the pin to her middle.
+
+New: `RoughSeas.Vessels.VesselSeat`, and a seat's `mountRotation` read by `bin/lib/hulls/stroke.py`.

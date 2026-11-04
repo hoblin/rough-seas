@@ -89,7 +89,8 @@ LOOK
                              wind vector, precipitation, wind/weather pattern, weather event
   bin/game entity ID         server side: code, alive, pos, behaviours, all watched attributes
   bin/game where [ID]        client side, as drawn: entity ID's (the player's without ID) code, position
-                             and yaw. Cheap enough to poll: it leaves the chat alone, where every
+                             and yaw, and a creature's body yaw (a seated rider's: which way it
+                             faces in its seat). Cheap enough to poll: it leaves the chat alone, where every
                              `entity` reply lands and, kept long, stalls the frames
   (log)                      storms log every event to the server's debug log, tagged [storms]:
                              breakers with their energy, water shipped, anchors down, dragged and
