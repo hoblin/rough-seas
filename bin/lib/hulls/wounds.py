@@ -75,8 +75,9 @@ def wound(shape, levels, lining=0, framing=None):
     for level, elements, texture in levels:
         boards = list(skin(elements, texture))
         for place in PLACES:
-            board, m, siblings = host(boards, hull, place)
-            frame = Frame(board, m, hull.outward(place), hull.point(place), lining)
+            framed = lambda found: Frame(found[0], found[1], hull.outward(place), hull.point(place), lining)
+            board, m, siblings = host(boards, hull, place, lambda found: framed(found).roomy())
+            frame = framed((board, m))
             forms = [group(f"Wound{place}{form}{level}", (0, 0, 0), (0, 0, 0),
                            draw(frame, f"Wound{place}{form}{level}", form, span, sprung, texture))
                      for form, draw in zip(FORMS, (crack_of, crack_of, split, stove_in))]
@@ -130,17 +131,11 @@ def beside(board, name, children):
     return {**wound, "faces": {}, "children": children}
 
 
-def host(boards, hull, place):
+def host(boards, hull, place, fits=lambda found: True):
     target = hull.point(place)
-    roomy = [found for found in boards if room(found[0])] or boards
+    roomy = [found for found in boards if fits(found)] or boards
     placed = [found for found in roomy if hull.place(centre(*found[:2])) == place] or roomy
     return min(placed, key=lambda found: math.dist(centre(*found[:2]), target))
-
-
-def room(board):
-    """Whether the board is long enough for the shortest crack and broad enough for the smallest hole stove in."""
-    _, breadth, length = sorted(size(board))
-    return length >= SHORTEST + END_CLEAR and breadth >= HOLE + HOLE_EDGE
 
 
 def skin(elements, texture, parent=None):
@@ -180,6 +175,10 @@ class Frame:
         self.thickness = depth
         aimed = [c * 16 for c in unapply(m, [t / 16 for t in target])]
         self.aim = (aimed[self.along], aimed[self.across])
+
+    def roomy(self):
+        """Whether the board is long enough for the shortest crack and broad enough for the smallest hole stove in."""
+        return self.length >= SHORTEST + END_CLEAR and self.breadth >= HOLE + HOLE_EDGE
 
     def middle(self, length, breadth):
         return tuple(min(max(aim, extent / 2 + 0.5), size - extent / 2 - 0.5) if size > extent + 1 else size / 2
