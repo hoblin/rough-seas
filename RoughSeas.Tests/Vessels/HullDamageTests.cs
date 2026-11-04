@@ -8,7 +8,9 @@ public class HullDamageTests
     private static readonly ShapeElement[] Hull =
     [
         Board("SidePort1", Wound("PortBow", ""), Wound("Bottom", "")),
-        Board("Blank3", Wound("PortBow", "Blank3"))
+        Board("Blank3", Wound("PortBow", "Blank3")),
+        Board("Rib1x", Board("WoundPortSideWhole", Board("Rib1xPort1")), Board("WoundPortSideFrame",
+            Board("WoundPortSideSplitFrame"), Board("WoundPortSideStoveInFrame")))
     ];
 
     [Fact]
@@ -27,7 +29,20 @@ public class HullDamageTests
     {
         var hidden = HullDamage.Hidden(Hull, _ => 0).ToList();
 
-        Assert.Equal(3 * HullDamage.WoundForms.Length, hidden.Count);
+        Assert.Equal(3 * HullDamage.WoundForms.Length + 2, hidden.Count);
+        Assert.DoesNotContain("WoundPortSideWhole", hidden);
+    }
+
+    [Theory]
+    [InlineData(2, "WoundPortSideSplitFrame", "WoundPortSideWhole")]
+    [InlineData(3, "WoundPortSideWhole", "WoundPortSideSplitFrame")]
+    [InlineData(4, "WoundPortSideWhole", "WoundPortSideStoveInFrame")]
+    public void TheFrameUnderTheSkinBreaksFromASplitOn(int stage, string hiddenPart, string shownPart)
+    {
+        var hidden = HullDamage.Hidden(Hull, place => place == HullPlace.PortSide ? stage : 0).ToList();
+
+        Assert.Contains(hiddenPart, hidden);
+        Assert.DoesNotContain(shownPart, hidden);
     }
 
     [Fact]

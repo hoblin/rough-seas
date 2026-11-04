@@ -12,6 +12,7 @@ public sealed class HullDamage
 {
     public const int FirstWoundedStage = 1;
     public static readonly string[] WoundForms = ["Scratched", "Cracked", "Split", "StoveIn"];
+    public static readonly int FrameBrokenStage = FirstWoundedStage + Array.IndexOf(WoundForms, "Split");
 
     private readonly ICoreClientAPI capi;
     private readonly Entity entity;
@@ -80,11 +81,12 @@ public sealed class HullDamage
     }
 
     public static IEnumerable<string> Hidden(ShapeElement[]? elements, System.Func<HullPlace, int> stage) =>
-        Hidden(elements, HullShape.Places
-            .SelectMany(place => WoundForms
-                .Where((_, n) => FirstWoundedStage + n != stage(place))
-                .Select(form => $"Wound{place}{form}"))
-            .ToArray());
+        Hidden(elements, HullShape.Places.SelectMany(place => Unshown(place, stage(place))).ToArray());
+
+    private static IEnumerable<string> Unshown(HullPlace place, int stage) => WoundForms
+        .Where((_, n) => FirstWoundedStage + n != stage)
+        .Select(form => $"Wound{place}{form}")
+        .Concat(stage >= FrameBrokenStage ? [$"Wound{place}Whole"] : []);
 
     private static IEnumerable<string> Hidden(ShapeElement[]? elements, string[] forms)
     {

@@ -186,7 +186,7 @@ def build(path_):
     shape.add(thwart_stage)
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo")
-    wound(shape, [("", [hide], "hide")])
+    wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     shape.write()
     report(hull, laths, thwart_stage)
 

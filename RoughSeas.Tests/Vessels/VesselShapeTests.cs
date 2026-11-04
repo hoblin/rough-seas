@@ -246,7 +246,7 @@ public class VesselShapeTests
         var (entity, _, shape) = Load(vessel);
         if (!CracksByPlace(entity)) return;
 
-        var wound = new Regex($"^Wound({string.Join("|", HullShape.Places)})(?!{string.Join("|", HullDamage.WoundForms)})(\\w*)$");
+        var wound = new Regex($"^Wound({string.Join("|", HullShape.Places)})(?!{string.Join("|", HullDamage.WoundForms)}|Whole$|Frame$)(\\w*)$");
         var wounds = Elements(shape["elements"]!)
             .Select(element => (Match: wound.Match(element.Value<string>("name")!), Element: element))
             .Where(found => found.Match.Success)
@@ -278,6 +278,20 @@ public class VesselShapeTests
 
         var ignored = item["shape"]!["ignoreElements"]!.Values<string>();
         Assert.Empty(HullShape.Places.Select(place => $"Wound{place}").Except(ignored));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void BreaksOneMemberOfItsFrameAtEachPlaceAndLeavesItWholeOnTheItem(string vessel)
+    {
+        var (_, item, shape) = Load(vessel);
+        var names = Elements(shape["elements"]!).Select(element => element.Value<string>("name")!).ToHashSet();
+        if (!names.Contains("WoundBottomWhole")) return;
+
+        var broken = HullShape.Places.Select(place => $"Wound{place}Frame").ToList();
+        Assert.All(HullShape.Places, place => Assert.Contains($"Wound{place}Whole", names));
+        Assert.Subset(names, broken.ToHashSet());
+        Assert.Empty(broken.Except(item["shape"]!["ignoreElements"]!.Values<string>()));
     }
 
     private static ShapeElement[] Resolved(JToken shape)

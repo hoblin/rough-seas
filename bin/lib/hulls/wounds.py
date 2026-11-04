@@ -11,7 +11,8 @@ PLACES = ("PortBow", "StarboardBow", "PortSide", "StarboardSide", "PortQuarter",
 FORMS = ("Scratched", "Cracked", "Split", "StoveIn")
 END_SHARE = 0.4
 BOTTOM_SHARE = 0.25
-MARK_REACH = 0.8
+MARK_REACH = 0.7
+STAGGER = 0.15
 SIDE_REACH = 0.9
 BREACH = "breach"
 PROUD = 0.06
@@ -26,6 +27,8 @@ MIN_LIP = 0.2
 HOLE_SHARE = 0.5
 TAIL_SHARE = 0.25
 SPRUNG_DEGREES = {"carved": 12, "rigid": 15, "skin": 50}
+FRAME_BENT = {"Split": 0.25, "StoveIn": 1}
+FRAME_GAP = 0.2
 
 
 class HullBox:
@@ -45,7 +48,9 @@ class HullBox:
         if place == "Bottom":
             return self.along, self.keel, self.across
         along = -MARK_REACH if place.endswith("Bow") else MARK_REACH if place.endswith("Quarter") else 0
-        across = -SIDE_REACH if place.startswith("Port") else SIDE_REACH
+        port = place.startswith("Port")
+        along += -STAGGER if port else STAGGER
+        across = -SIDE_REACH if port else SIDE_REACH
         return self.along + along * self.half_length, self.keel + self.depth / 2, self.across + across * self.half_beam
 
     @staticmethod
@@ -53,11 +58,12 @@ class HullBox:
         return (0, -1, 0) if place == "Bottom" else (0, 0, -1 if place.startswith("Port") else 1)
 
 
-def wound(shape, levels, lining=0):
+def wound(shape, levels, lining=0, framing=None):
     """Draws, on each level of the hull's skin a build shows, a wound at each place on the board nearest the place's
     mark, at every stage its crack can reach: Wound{Place}{Form}{level} under Wound{Place}{level}, beside the board
     in its frame, through its wall and the lining inside it. A level is (name, elements, texture); the finished hull's
-    is named ""."""
+    is named "". The framing, (elements, texture), breaks under the skin from a split on: its member nearest each place's
+    mark is wrapped whole in Wound{Place}Whole, and drawn broken beside it as Wound{Place}{Form}Frame."""
     entity = json.loads((ASSETS / "entities/vessel" / shape.path.name).read_text())
     shell = entity["behaviorConfigs"]["roughseas:vesselintegrity"]["shell"]
     span = shell["spanMetres"] * 16
@@ -72,7 +78,44 @@ def wound(shape, levels, lining=0):
                            draw(frame, f"Wound{place}{form}{level}", form, span, sprung, texture))
                      for form, draw in zip(FORMS, (crack_of, crack_of, split, stove_in))]
             siblings.append(beside(board, f"Wound{place}{level}", forms))
+    if framing:
+        elements, texture = framing
+        members = list(skin(elements, texture))
+        for place in PLACES:
+            found = host(members, hull, place)
+            members.remove(found)
+            broken(found, hull.outward(place), f"Wound{place}", sprung, texture)
     shape.textures[BREACH] = "game:block/black"
+
+
+def broken(found, outward, name, sprung, texture):
+    member, m, siblings = found
+    siblings[siblings.index(member)] = group(f"{name}Whole", (0, 0, 0), (0, 0, 0), [member])
+    forms = [group(f"{name}{form}Frame", (0, 0, 0), (0, 0, 0), halves(member, m, outward, f"{name}{form}Frame", sprung * share, texture))
+             for form, share in FRAME_BENT.items()]
+    siblings.append(beside(member, f"{name}Frame", forms))
+
+
+def halves(member, m, outward, name, degrees, texture):
+    """The member snapped across its length at its middle, each half turned inward about its far end."""
+    sizes = size(member)
+    directions = [direct(m, [float(i == axis) for i in range(3)]) for axis in range(3)]
+    facing = [sum(d * o for d, o in zip(direction, outward)) for direction in directions]
+    long = max(range(3), key=lambda axis: sizes[axis])
+    through, across = sorted((axis for axis in range(3) if axis != long), key=lambda axis: -abs(facing[axis]))
+    inward = -1 if facing[through] > 0 else 1
+    turned = direct(rotation("XYZ"[across], 90), [float(axis == long) for axis in range(3)])
+    swing = 1 if turned[through] * inward > 0 else -1
+    middle = sizes[long] / 2
+    pieces = []
+    for n, (low, high, end, sign) in enumerate(((0, middle - FRAME_GAP / 2, 0, 1),
+                                                (middle + FRAME_GAP / 2, sizes[long], sizes[long], -1)), 1):
+        frm, to, origin = [0, 0, 0], list(sizes), [s / 2 for s in sizes]
+        frm[long], to[long], origin[long] = low, high, end
+        rot = [0, 0, 0]
+        rot[across] = sign * swing * degrees
+        pieces.append(box(f"{name}{n}", frm, to, texture, origin=origin, rot=tuple(rot), grain="xyz"[long]))
+    return pieces
 
 
 def beside(board, name, children):

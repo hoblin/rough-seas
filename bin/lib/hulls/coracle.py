@@ -218,7 +218,8 @@ def build(path_):
     shape = Shape(path_, {**TEXTURES, "bilge": BILGE})
     flat, gunwale = stages("Lattice", lattice("Lath", lambda piece: piece[0])), stages("Gunwale", plaits())
     shape.add(flat)
-    shape.add(stages("LatticeBent", lattice("BentLath", lambda piece: piece[1])))
+    bent = stages("LatticeBent", lattice("BentLath", lambda piece: piece[1]))
+    shape.add(bent)
     shape.add(stages("Binding", ties()))
     shape.add(gunwale)
     hide = stages("Cover", cover(), wood="none")
@@ -227,7 +228,7 @@ def build(path_):
     shape.add(group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", DEPTH - 0.5)),
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
     shape.keep("Hull", "FrontSeat")
-    wound(shape, [("", [hide], "hide")])
+    wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
 
     back = Path(path_).with_name("coracle-back.json")

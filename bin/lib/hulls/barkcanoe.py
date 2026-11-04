@@ -263,7 +263,7 @@ def build(path_):
     shape.keep("Hull", "FrontSeat", "BackSeat")
     *rising, finished = skin["children"]
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
-          lining=SHEATHING)
+          lining=SHEATHING, framing=([laths[3]], "frame"))
     shape.write()
     report(hull, laths)
 
