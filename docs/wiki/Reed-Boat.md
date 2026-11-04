@@ -29,7 +29,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up, from the first binding on |
-| Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand |
+| Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; she is too narrow to stand on, so she is poled sitting |
 | Cargo | a basket (8 slots) |
 | Built from | two reed bundles, each 144 cattail tops, papyrus tops or thatch and two ropes, and four ropes more: 288 reeds and 8 ropes, 50 kg |
 | Wreckage | reed tops, broken up with an axe once it has sunk |

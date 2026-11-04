@@ -16,7 +16,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 
 | | |
 | --- | --- |
-| Speed | 2.1 m/s paddled, 2.5 m/s poled: the fastest paddled boat ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 2.1 m/s paddled, 2.8 m/s poled: the fastest paddled boat ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | 26° a second |
 | [Hull](Hull-Condition) | 5200 J with an oak frame, 6100 J in birch; 2400 J in white cedar, the wood of a canoe from before the build |
 | Upkeep | none |
@@ -30,7 +30,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | two: a paddler amidships, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, and a passenger in the bow |
+| Seats | two: a paddler amidships, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing behind her middle thwart to pole, and a passenger in the bow |
 | Cargo | a basket (8 slots) in the bow, in place of the passenger |
 | Built from | a sheet of bark off a standing tree, 29 laths (4 of 5 m, 6 of 4 m, 19 of 2 m), 22 ropes and a litre of hot pitch |
 | Wreckage | bark and a stick |

@@ -3,7 +3,7 @@ from collections import namedtuple
 from pathlib import Path
 
 from dugout import CENTRE, ENDS, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes
-from physics import afloat, kilograms
+from physics import afloat, built, kilograms
 from shape import BILGE, ROUNDED, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, group, path, plank, run, stages
 from wounds import wound
 
@@ -375,9 +375,12 @@ def build(target):
     shape.keep("LowerMastStorage", "OarStorage")
     wound(shape, [("", [shell], WOOD)])
     shape.write()
+    finished_float = passes["children"][-1]
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
-    crew_tools(shape, "outrigger", catch=5, fore=1)
-    report(hull, passes["children"][-1])
+    crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
+               outboard=(finished_float["waterlineSquareMetres"], (FLOAT_Z - 8) * VOXEL_METRES),
+               waterplane=built("dugout")["waterplane"])
+    report(hull, finished_float)
 
 
 def pole_litres():

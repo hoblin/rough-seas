@@ -14,7 +14,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 
 | | |
 | --- | --- |
-| Speed | 5.9 m/s under full sail, at vanilla's pace until sailing reads the wind; 1.5 m/s paddled, 1.8 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 5.9 m/s under full sail, at vanilla's pace until sailing reads the wind; 1.5 m/s paddled, 1.9 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | clumsy, 14° a second paddled |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): her hull is the dugout's |
 | Upkeep | none |
@@ -29,7 +29,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
-| Seats | two: the front one steers, under sail too, and paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; the back one takes a passenger |
+| Seats | two: the front one steers, under sail too, and paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at her bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
 | Built from | a finished [dugout](Dugout), 3 logs for her float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when she takes them, 10 planks and 4 ropes |
 | Wreckage | firewood, a rope, some linen, and planks once she has washstrakes |
