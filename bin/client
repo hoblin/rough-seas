@@ -2,16 +2,20 @@
 set -euo pipefail
 source "$(dirname "$0")/lib/bench.sh"
 
-world=${1:-sea}
+world=${1:-take}
 mods=${BENCH_MODS-roughseas agentbridge}
 session=$BENCH-client
 login_from=$HOME/.config/VintagestoryData/clientsettings.json
+world_file=$root/bin/lib/world.json
+seed=$(jq -r .seed "$world_file")
+reference=$BENCH_REFERENCE/$seed.vcdbs
+take=$BENCH_DATA/Saves/take.vcdbs
 
 if [ "$world" = server ]; then
   target="--connect 127.0.0.1:$BENCH_SERVER_PORT"
 elif [ "$world" = qa ]; then
   target="--connect 127.0.0.1:$QA_PORT"
-elif [[ " $mods " == *" agentbridge "* && ! -f $BENCH_DATA/Saves/$world.vcdbs ]]; then
+elif [[ " $mods " == *" agentbridge "* && ! -f $BENCH_DATA/Saves/$world.vcdbs && $world != take ]]; then
   target="--openWorld $(printf %q "$world") --playStyle roughseas-test"
 else
   target="--openWorld $(printf %q "$world")"
@@ -70,12 +74,61 @@ bench_settings() {
   mv -f "$settings.bench" "$settings"
 }
 
+launch() {
+  local target=$1
+  leave_world || true
+  stop_session "$session" "$BENCH_DATA"
+  bench_settings
+  require_free_port "$BENCH_BRIDGE_PORT" "agent bridge"
+  place_window
+  # $target goes first: the embedded server re-parses these arguments, does not know --openWorld,
+  # and would take the world name as one more value of a preceding --addOrigin or --addModPath.
+  tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
+    "$(game_env) ./run.sh $target --dataPath $BENCH_DATA --tracelog $mod_args"
+  echo "Client starting in tmux session $session ($target; mods: ${mods:-none}); logs in $BENCH_DATA/Logs"
+  if [[ " $mods " == *" agentbridge "* ]]; then
+    "$root/bin/game" wait >/dev/null
+    echo "World loaded and the server answers"
+  fi
+}
+
+make_reference() {
+  local server=$BENCH-reference data=$BENCH_TMP/reference zone config after
+  local player audit=$BENCH_TMP/reference/Logs/server-audit.log
+  [[ " $mods " == *" agentbridge "* && " $mods " == *" roughseas "* ]] ||
+    { echo "Making the reference world needs both mods: run bin/client with the default BENCH_MODS" >&2; exit 1; }
+  echo "This machine has no reference world for seed $seed; making it at $reference"
+  rm -rf "$data"
+  leave_world || true
+  stop_session "$session" "$BENCH_DATA"
+  trap "stop_session '$session' '$BENCH_DATA'; stop_server '$server' '$data'" EXIT
+  config=$(jq -nc --arg seed "$seed" '{WorldConfig: {Seed: $seed, WorldName: "Rough Seas bench",
+    PlayStyle: "roughseastest", PlayStyleLangCode: "roughseas-test", WorldType: "standard"}}')
+  start_server "$server" "$data" "$config"
+  launch "--connect 127.0.0.1:$BENCH_SERVER_PORT"
+  player=$(jq -r .stringSettings.playername "$BENCH_DATA/clientsettings.json")
+  after=$(log_lines "$audit")
+  tmux send-keys -t "=$server:" "/op $player" Enter
+  wait_for_log "$audit" "$after" "the role $player" 30 || { echo "The reference server never made $player an admin; read $audit" >&2; exit 1; }
+  for zone in $(jq -r '.zones | keys[]' "$world_file") "$(jq -r .start "$world_file")"; do
+    BENCH_SERVER_LOG=$data/Logs/server-debug.log "$root/bin/game" zone "$zone" >/dev/null
+  done
+  stop_session "$session" "$BENCH_DATA"
+  stop_server "$server" "$data"
+  trap - EXIT
+  mkdir -p "$BENCH_REFERENCE"
+  mv -f "$data/Saves/default.vcdbs" "$reference.$BENCH"
+  mv -f "$reference.$BENCH" "$reference"
+  rm -rf "$data"
+}
+
 cd "$root"
 if [ "$world" = stop ]; then
   saved=0
   leave_world || saved=$?
   stop_session "$session" "$BENCH_DATA"
-  echo "Client stopped"
+  rm -f "$take" "$take-wal" "$take-shm"
+  echo "Client stopped, this job's copy of the reference world thrown away"
   exit "$saved"
 fi
 
@@ -83,17 +136,9 @@ dotnet build RoughSeas -v quiet -nologo
 dotnet build AgentBridge -v quiet -nologo
 seed_settings
 
-leave_world || true
-stop_session "$session" "$BENCH_DATA"
-bench_settings
-require_free_port "$BENCH_BRIDGE_PORT" "agent bridge"
-place_window
-# $target goes first: the embedded server re-parses these arguments, does not know --openWorld,
-# and would take the world name as one more value of a preceding --addOrigin or --addModPath.
-tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
-  "$(game_env) ./run.sh $target --dataPath $BENCH_DATA --tracelog $mod_args"
-echo "Client starting in tmux session $session ($target; mods: ${mods:-none}); logs in $BENCH_DATA/Logs"
-if [[ " $mods " == *" agentbridge "* ]]; then
-  "$root/bin/game" wait >/dev/null
-  echo "World loaded and the server answers"
+if [ "$world" = take ] && [ ! -f "$take" ]; then
+  [ -f "$reference" ] || make_reference
+  mkdir -p "$(dirname "$take")"
+  cp -f "$reference" "$take"
 fi
+launch "$target"
