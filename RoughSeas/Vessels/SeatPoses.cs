@@ -42,19 +42,18 @@ public sealed class SeatPoses
         if (pose is { } given) layer[seat.SeatId] = given;
         else layer.Remove(seat.SeatId);
         var shown = holds.TryGetValue(seat.SeatId, out var hold) ? hold : stances.TryGetValue(seat.SeatId, out var stance) ? stance : asBuilt;
-        Show(seat, shown, shown.EyeHeight ?? asBuilt.EyeHeight ?? config.EyeHeight);
+        Show(seat, shown, shown.EyeHeight ?? asBuilt.EyeHeight ?? config.EyeHeight, config.Animation ?? asBuilt.Animation);
     }
 
-    private static void Show(IMountableSeat seat, SeatPose pose, float eyeHeight)
+    private static void Show(IMountableSeat seat, SeatPose pose, float eyeHeight, string shown)
     {
         var config = seat.Config;
-        var shown = config.Animation;
         config.RiderOffset = pose.Offset;
         config.Animation = pose.Animation;
         config.EyeHeight = eyeHeight;
         if (shown == pose.Animation || seat.Passenger?.AnimManager is not { } animations) return;
 
-        if (shown != null) animations.StopAnimation(shown);
+        animations.StopAnimation(shown);
         animations.StartAnimation(pose.Animation);
     }
 }

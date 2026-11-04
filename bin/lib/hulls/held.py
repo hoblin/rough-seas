@@ -123,6 +123,8 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         if name.startswith(CHANGE):
             step |= {"keys": step["keys"] + [FRAMES - 1], "ends": "Hold"}
     walls = hull_walls(shape, hull) if hull else []
+    if hull and not walls:
+        raise ValueError(f"{vessel}: no element of her shape is named {' or '.join(hull)}, so nothing checks the tool")
     if walls:
         middle = sum(m[2][3] for _, _, m, _ in walls) / len(walls)
         for step in plan:

@@ -28,9 +28,11 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
     /// <param name="stance">Where the rower stands to work the tool, on his seat alone; none, and he works it seated.</param>
     public void Show(EntityBoat boat, Entity? rower, string? wanted, bool changing, bool sweeping, SeatPose? stance)
     {
+        var seats = boat.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
+        var poses = SeatPoses.Of(boat);
+        foreach (var seat in seats) poses.Stand(seat, rower != null && seat.Passenger == rower ? stance : null);
         if (shown && showing == (wanted, changing, sweeping, rower)) return;
 
-        var seats = boat.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
         foreach (var key in Keys)
         {
             if (boat.MountAnimations.GetValueOrDefault(key) is { Length: > 0 } playing)
@@ -39,8 +41,6 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
             }
             boat.MountAnimations[key] = wanted == null ? "" : strokes[wanted][changing && key != Ready ? Change : sweeping && key != Ready ? Forwards : key];
         }
-        var poses = SeatPoses.Of(boat);
-        foreach (var seat in seats) poses.Stand(seat, rower != null && seat.Passenger == rower ? stance : null);
         (shown, showing) = (true, (wanted, changing, sweeping, rower));
         vessels.Log(boat, wanted == null ? "strokes stowed" : changing ? "changes to the {0}" : stance == null ? "strokes of the {0}" : "strokes of the {0}, standing", wanted ?? "");
     }

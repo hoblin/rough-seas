@@ -377,7 +377,7 @@ def build(target):
     shape.write()
     finished_float = passes["children"][-1]
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
-    crew_tools(shape, "outrigger", ("Side",), catch=5, fore=1,
+    crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], (FLOAT_Z - 8) * VOXEL_METRES),
                waterplane=built("dugout")["waterplane"])
     report(hull, finished_float)
