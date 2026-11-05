@@ -30,50 +30,58 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Carried | too heavy to pick up |
 | Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at her bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | 5 logs of one wood beside the water, then six fires: each takes clay for its rim (22 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and an axe; about nine days in all |
+| Built from | 5 logs of one wood beside the water and an axe to strip their bark, then six fires: each takes clay for its rim (19 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and the axe; about nine days in all |
 | Wreckage | firewood |
 
 ## How it is built
 
-You don't craft a dugout in the grid: you burn it out of five logs on the shore, a fire at a time, and lay every fire as you lay a campfire. The logs stay the boat from first to last. Each hewing takes the char out of the hollow and a sixth of the outside away: the bark first, then the top down to a level sheer, the bottom round and the ends raked, until the squared trunk is a boat where the logs lay.
-
-![The whole build, from five logs to the finished dugout](images/dugout/build-dugout.webp)
+You don't craft a dugout in the grid: you burn it out of five logs on the shore, a fire at a time, and lay every fire as you lay a campfire. The logs stay the boat from first to last. Each hewing takes the char out of the hollow and a sixth of the outside away: the top down to a level sheer, the bottom round and the ends raked, until the squared trunk is a boat where the logs lay.
 
 1. **Lay the logs.** Lay five logs of one wood on their sides, end to end along the shore, with water in the very next blocks, level with them or one block lower. Any wood works, a modded tree's too, and so do redwood's log sections. Five logs of mixed woods stay a wall of logs.
 
    ![Five oak logs end to end at the water's edge](images/dugout/build-logs.webp)
 
-2. **Lay the fire's base.** Hold dry grass and Shift + right-click the top of the middle log, as you start a campfire. The logs become one blank where they lie, the whole trunk at its full size, with the grass on it, ready for its first fire. Until then they stay logs, so a wall of logs never turns into a boat.
+2. **Start the trunk.** Hold an axe and Shift + right-click the middle log. The logs become one trunk to work, where they lie and as they look. Until then they stay logs, so a wall of logs never turns into a boat.
 
-   ![The fresh blank on the shore](images/dugout/build-blank.webp)
+   ![The fresh trunk on the shore, still in its bark](images/dugout/build-blank.webp)
 
-3. **Guard the rim with clay.** Right-click the blank with clay, a ball at a time, until wet clay runs all along the rim and over both ends: 22 balls for the fresh trunk, fewer each fire as it narrows, 10 for the last. The blank's panel counts them.
+3. **Strip the bark.** Hold right-click on the trunk with the axe. Each stroke takes the bark off one side of one log, the tops first, then each side: 15 strokes. Nothing else goes on until the trunk is bare, because the fire is laid on bare wood.
 
-   ![Wet clay all along the rim](images/dugout/build-clay.webp)
+   ![The trunk stripped of its bark](images/dugout/build-debarked.webp)
 
-4. **Build the fire.** Right-click the blank with firewood four times, as you build a campfire on its grass. The wood lies along the blank.
+4. **Guard the rim with clay.** Right-click the trunk with clay, a ball at a time, until wet clay runs along both edges and over both ends: 19 balls for the fresh trunk, fewer each fire as the hull narrows, 10 for the last. Each ball shows where it goes, and the trunk's panel counts them. The clay is the kind you hold: blue, red or fire clay.
 
-   ![Firewood laid along the blank](images/dugout/build-laid.webp)
+   ![Wet clay along both edges and over the ends](images/dugout/build-clay.webp)
 
-5. **Light it** with a torch or a firestarter. The fire burns for about a day and a half and chars a hand's breadth into the wood. Rain puts it out, and no fire burns in a hollow with water in it: bail it and light it again, and it burns what it had left.
-
-   ![The fire burning along the blank](images/dugout/build-fire.webp)
-
-6. **Hew out the char.** Once the fire is out, the hollow is black with char. Hold right-click on it with an axe: you swing again and again, and the char comes away down to sound wood, with a sixth of the outside. It tires you as hard work does.
+5. **Lay the fire.** Right-click the trunk with dry grass to lay the tinder, then four times with firewood. Each piece lies along the trunk where the fire will burn.
 
    | | |
    | --- | --- |
-   | ![The charred hollow](images/dugout/build-charred.webp) | ![Three hewings in: bark gone, sides rounding, ends drawing in](images/dugout/build-hewing.webp) |
-   | Charred, ready to hew | Three hewings in |
+   | ![Dry grass between the clay](images/dugout/build-grass.webp) | ![Firewood laid on the grass](images/dugout/build-laid.webp) |
+   | The tinder | The firewood on it |
 
-7. **Repeat until six fires have burned.** Clay the rim, lay dry grass and four firewood in the hollow, light it and hew. Each fire takes the hollow deeper, and the sixth finishes the dugout.
+6. **Light it** with a torch or a firestarter. The grass catches first and the wood takes in its first hour. Then the fire smoulders for about a day and a half, with little flame and a lot of smoke, and burns down to a bed of embers that chars a hand's breadth into the wood. Rain puts it out, and no fire burns in a hollow with water in it: bail it and light it again, and it burns what it had left.
 
    | | |
    | --- | --- |
-   | ![The first hollow cut](images/dugout/build-hewn.webp) | ![Four fires in, the hollow charred deep](images/dugout/build-deep.webp) |
-   | One fire in, hewn | Four fires in, charred |
+   | ![The fire catching](images/dugout/build-fire.webp) | ![The fire smouldering](images/dugout/build-burning.webp) |
+   | Catching | Smouldering |
 
-8. **Push it in.** Stand on the shore side and Shift + right-click the dugout with an empty hand. A blank is the whole square trunk, more than three tonnes of oak, and barely moves; the finished hull, a thirteenth of that, slides in. A few friends push sooner.
+7. **Hew out the char.** Once the fire is out, the wood it lay on is black with char, and the dried clay still sits on the rim. Hold right-click on the trunk with an axe: you swing again and again, and the char comes away down to sound wood, with the clay, the rim under it and a sixth of the outside. It tires you as hard work does.
+
+   | | |
+   | --- | --- |
+   | ![The charred top](images/dugout/build-charred.webp) | ![The first hollow cut](images/dugout/build-hewn.webp) |
+   | Charred, ready to hew | One fire in, hewn |
+
+8. **Repeat until six fires have burned.** Clay the rim, lay dry grass and four firewood, light it and hew. Each fire takes the hollow deeper, and the sixth finishes the dugout.
+
+   | | |
+   | --- | --- |
+   | ![Three hewings in](images/dugout/build-hewn-3.webp) | ![Four fires in, the hollow charred deep](images/dugout/build-charred-4.webp) |
+   | Three hewings in | Four fires in, charred |
+
+9. **Push it in.** Stand on the shore side and Shift + right-click the dugout with an empty hand. A fresh trunk is a metre square, more than three tonnes of oak, and barely moves; the finished hull, a thirteenth of that, slides in. A few friends push sooner.
 
    ![Finished, on the shore](images/dugout/build-finished.webp)
 

@@ -6,7 +6,7 @@
     "weight": 491.2,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
-        "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "plank": "inside-north"},
+        "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "rings": "east", "plank": "inside-north"},
         "swimmingOffsetY": 0.435,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,

@@ -34,14 +34,12 @@ public class ShipyardModSystem : ModSystem
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLathBed.Code, typeof(CollectibleBehaviorLathBed));
         api.RegisterEntityBehaviorClass(EntityBehaviorCovering.Code, typeof(EntityBehaviorCovering));
         api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
-        FireOnLogs.Attach();
         LashingRope.Attach();
         CuttingKnife.Attach();
     }
 
     public override void Dispose()
     {
-        FireOnLogs.Detach();
         LashingRope.Detach();
         CuttingKnife.Detach();
     }

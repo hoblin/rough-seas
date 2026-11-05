@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 
 import units
-from fit import APART, TOLERANCE, Loft, check, corners, depth_into, enclosed, posed
+from fit import APART, TOLERANCE, Loft, check, coplanar, corners, depth_into, enclosed, posed
 from transform import add, apply, cross, direct, dot, scale, sub, unit
 
 FACES = ("north", "east", "south", "west", "up", "down")
@@ -453,8 +453,13 @@ class Hull:
                 continue
             near = [bottoms[key][0] for key in ((side, k, i - 1), (side, k, i + 1)) if key in bottoms]
             near += [tops[side, k, i - 1][0]] if (side, k, i - 1) in tops else []
-            tops[side, k, i] = placed(name + "Top", side, (d, c, a, b), -1, (i == 0, i == last), loft, near, bottoms[side, k, i][0] + APART,
-                                     aside=APART * (i % 2), flush=flush(side, k, i))
+            below = bottoms[side, k, i][0] + APART
+            while True:
+                tops[side, k, i] = placed(name + "Top", side, (d, c, a, b), -1, (i == 0, i == last), loft, near, below,
+                                         aside=APART * (i % 2), flush=flush(side, k, i))
+                if not any(coplanar([bottoms[side, k, i][1], tops[side, k, i][1]])):
+                    break
+                below = tops[side, k, i][0] + APART
         return [made[1] for made in (*bottoms.values(), *tops.values())]
 
     def refined(self):

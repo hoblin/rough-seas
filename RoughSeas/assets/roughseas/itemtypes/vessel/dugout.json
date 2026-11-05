@@ -9,16 +9,21 @@
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
     "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": [
-        "hideWater", "Bilge", "Blank", "Char", "Clay", "Wood", "Fire",
+        "hideWater", "Bilge", "Bark", "Blank", "Char", "Grass", "Clay", "Wood", "Fire",
         "WoundPortBow", "WoundStarboardBow", "WoundPortSide", "WoundStarboardSide", "WoundPortQuarter", "WoundStarboardQuarter", "WoundBottom"
     ]},
     "textures": {
         "bilge": {"base": "game:block/liquid/waterportion"},
         "breach": {"base": "game:block/black"},
-        "char": {"base": "game:block/coal/charcoal"},
+        "char": {"base": "game:block/wood/firepit/burntlog"},
         "clay": {"base": "game:block/clay/blueclay"},
+        "clay-red": {"base": "game:block/clay/redclay"},
+        "clay-fire": {"base": "game:block/clay/fireclay"},
         "ember": {"base": "game:block/coal/ember"},
-        "burntlog": {"base": "game:block/wood/firepit/burntlog"}
+        "burntlog": {"base": "game:block/wood/firepit/burntlog"},
+        "hay": {"base": "game:block/hay/normal-side"},
+        "firewood": {"base": "game:block/wood/firewood/side"},
+        "firewoodend": {"base": "game:block/wood/firewood/north"}
     },
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {

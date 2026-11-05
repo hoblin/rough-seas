@@ -2,7 +2,7 @@ import math
 from collections import namedtuple
 from pathlib import Path
 
-from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes, walls
+from dugout import CENTRE, HOLLOW, PROFILE, RIM, RINGS, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes, walls
 from physics import LASHING_JOULES_PER_METRE, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
@@ -386,6 +386,7 @@ def build(target):
         "float": "game:block/wood/debarked/oak",
         "floatbark": "game:block/wood/bark/oak-h",
         "floatrings": "game:block/wood/treetrunk/oak",
+        RINGS: "game:block/wood/treetrunk/oak",
         "sail": "game:block/cloth/linen/plain",
         "lashing": "game:item/resource/rope",
         "plank": "game:block/wood/planks/oak1",
