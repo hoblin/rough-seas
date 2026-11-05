@@ -1,11 +1,12 @@
 [
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/behaviorConfigs/roughseas:seaforces", "side": "Server", "value": {
-        "beamMetres": 2, "mastMetres": 0, "windageSquareMetres": 1,
-        "heave": 0.9, "capsizeBreakerMetres": 2, "rollResponse": 0.6, "pitchResponse": 0.6,
+        "mastMetres": 0, "windageSquareMetres": 1,
+        "heave": 0.9, "capsizeBreakerBeams": 1, "rollResponse": 0.6, "pitchResponse": 0.6,
         "sources": {
+            "beamMetres": "Her hull's own, measured across her logs",
             "heave": "A raft lies flat on the water and rises with the crest",
-            "capsizeBreakerMetres": "Seamanship: a breaking wave as high as the craft's beam can roll it over",
-            "rollResponse": "Logs lashed side by side, 2 m wide, have great form stability: little roll, though every crest washes over",
+            "capsizeBreakerBeams": "Seamanship: a breaking wave as high as the craft's beam can roll it over",
+            "rollResponse": "Logs lashed side by side across her beam have great form stability: little roll, though every crest washes over",
             "pitchResponse": "A flat raft lies on the water and tilts little with the swell"
         }
     } },

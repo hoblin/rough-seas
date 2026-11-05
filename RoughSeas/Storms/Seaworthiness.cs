@@ -14,10 +14,12 @@ public readonly record struct Seaworthiness(
     double RollResponse,
     double PitchResponse)
 {
-    public static Seaworthiness From(JsonObject attributes) => new(
+    public static Seaworthiness From(JsonObject attributes, double beamMetres) => new(
         attributes["freeboardMetres"].AsDouble(),
         attributes["heave"].AsDouble(),
-        attributes["capsizeBreakerMetres"].AsDouble(double.PositiveInfinity),
+        attributes["capsizeBreakerMetres"].AsDouble(attributes["capsizeBreakerBeams"].Exists
+            ? attributes["capsizeBreakerBeams"].AsDouble() * beamMetres
+            : double.PositiveInfinity),
         attributes["rollResponse"].AsDouble(1),
         attributes["pitchResponse"].AsDouble(1));
 

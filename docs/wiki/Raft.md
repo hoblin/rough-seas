@@ -6,6 +6,8 @@ Logs laid side by side and lashed with rope to three cross-logs. It is the game'
 
 A barge for floating cargo down a river or across a calm lake. A raft never swamps, because the water washes straight through it, and it holds its rider up even pressed under: an oak raft with one aboard lies awash, its logs at the water, and still paddles, while a pine or bamboo one carries its rider above the water. Only a heavy load goes down with it: two riders in plate sink an oak raft. That is all it does well. Knocks don't break its logs, they work its lashings loose: a few hard knocks shake it apart, and [rapids](Rapids) do it in seconds. A [breaking sea](Surf-and-Swamping#breakers) can't: its logs are far stronger than any breaker. The wood counts: an oak raft takes more than a pine one, and a bamboo one more than either. Bind its lashings up again with flax twine.
 
+It is slow because its front is the flat sawn ends of its logs, the whole width of the raft pushed face on through the water. Paddled it makes under half a metre a second, and poled in shallow water nearly twice that.
+
 ## Where it comes from
 
 The raft is as old as people on the water: whoever first crossed a river on two logs tied together had built one. Timber was floated to market as great rafts down the Rhine, the Vistula and the rivers of North America for centuries, the logs themselves the cargo; bamboo rafts still work the rivers of Asia; and in 1947 Thor Heyerdahl's *Kon-Tiki*, nine balsa logs lashed with hemp, drifted 7000 kilometres from Peru to Polynesia on the currents and the trade wind.
@@ -14,8 +16,8 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 
 | | |
 | --- | --- |
-| Speed | 0.4 m/s paddled, 0.7 m/s poled: a barge ([how fast](Paddles-Poles-and-Oars#how-fast)) |
-| Turning | 15° a second, poled 26° |
+| Speed | 0.45 m/s paddled, 0.8 m/s poled: a barge ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Turning | 17° a second, poled 28° |
 | [Hull](Hull-Condition) | 1200 J in oak; bamboo a third more, aged wood half |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | in oak 8 cm empty, awash with a rider; in bamboo 9 cm with a rider |
@@ -27,7 +29,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | two, fore and aft; either one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing on the logs to pole; vanilla's crude oar poles it through water of under a metre |
+| Seats | two, fore and aft, knelt on; either one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, kneeling by the side you paddle and standing on the logs to pole; vanilla's crude oar poles it through water of under a metre |
 | Cargo | a basket (8 slots) in place of either rider |
 | Fittings | a rest for a spare pole, paddle or oar |
 | Built from | 12 logs and 3 ropes, or 18 bamboo stakes and 3 ropes |

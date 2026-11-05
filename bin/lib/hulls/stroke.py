@@ -105,9 +105,9 @@ def centre(elements, matrices, name):
 
 
 def seat(shape, name):
-    element = find(shape.elements, name)
-    point = element["attachmentpoints"][0]
-    return tuple(f + float(point["pos" + axis]) for f, axis in zip(element["from"], "XYZ"))
+    point = find(shape.elements, name)["attachmentpoints"][0]
+    placed = posed(shape.elements, lambda element: {})[name]
+    return tuple(units.voxels(c) for c in apply(placed, [units.metres(float(point["pos" + axis])) for axis in "XYZ"]))
 
 
 def facing(shape, vessel, name):

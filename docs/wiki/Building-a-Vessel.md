@@ -92,7 +92,7 @@ Every vessel of ours is a whole example, each number with its source: `assets/ro
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
-| `beamMetres` | m | 0 | the hull's width: how much of a crest it takes aboard, how hard the sea pulls on its mooring, how it rolls |
+| `beamMetres` | m | her `Hull` box's | the hull's width: how much of a crest it takes aboard, how hard the sea pulls on its mooring, how it rolls. Leave it out to take her `Hull` box's width; give it where the sea meets more than her hull, as the outrigger's float |
 | `windageSquareMetres` | m² | 0 | what the wind catches, hull and rig: how hard the wind pulls on its mooring |
 | `mastMetres` | m | 0 | a mast's height above the hull; [lightning](Lightning) seeks it |
 | `freeboardMetres` | m | 0 | the side above the water, empty, for a vessel that doesn't [float by its mass](#floating); ours leave it out |
@@ -100,6 +100,7 @@ Every vessel of ours is a whole example, each number with its source: `assets/ro
 | `rollResponse` | × | 1 | how many times the water's slope across it it rolls on the drawn swell |
 | `pitchResponse` | × | 1 | the same along it |
 | `capsizeBreakerMetres` | m | none | the breaker that overturns it, empty |
+| `capsizeBreakerBeams` | × | none | the same as a share of `beamMetres`, where the source gives it so: the raft's is 1, a breaker as high as she is wide. A `capsizeBreakerMetres` given wins |
 
 A crest stands half a wave's height above still water, seven tenths when it breaks; the hull rises with `heave` of that. Water aboard adds to the roll, twice as much when full. A vessel that floats by its mass ships water over the freeboard it floats at; one with a fixed `freeboardMetres` loses it in proportion to its bilge, all of it when full.
 
