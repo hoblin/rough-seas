@@ -267,12 +267,41 @@ public class PropulsionTests
     public void APaddlerAtRestChangesSidesAtOnce()
     {
         var paddler = new Paddler(10);
-        paddler.Paddle(1, 0, 0, 1.5);
         paddler.Rest();
         paddler.Lap(0.05);
 
         Assert.True(paddler.Paddle(1, -1, 0, 1.5));
         Assert.Equal((Side.Port, true), (paddler.Side, paddler.Changing));
+    }
+
+    [Fact]
+    public void APaddlerWhoRestedOutHisStrokeChangesSidesAtOnce()
+    {
+        var paddler = new Paddler(10);
+        paddler.Paddle(1, 0, 0, 1.5);
+        paddler.Lap(0.6);
+        paddler.Rest();
+        paddler.Lap(1);
+
+        Assert.True(paddler.Paddle(1, -1, 0, 1.5));
+        Assert.Equal((Side.Port, true), (paddler.Side, paddler.Changing));
+    }
+
+    [Fact]
+    public void APaddlerTakingUpBeforeHisStrokeEndsKeepsItsPhase()
+    {
+        var paddler = new Paddler(10);
+        paddler.Paddle(1, 0, 0, 1.5);
+        paddler.Lap(0.6);
+        paddler.Rest();
+        paddler.Lap(0.3);
+        paddler.Paddle(1, 0, 0, 1.5);
+
+        Assert.True(paddler.Paddle(1, -1, 0, 1.5));
+        paddler.Lap(0.5);
+        Assert.Equal(Side.Starboard, paddler.Side);
+        paddler.Lap(0.2);
+        Assert.Equal(Side.Port, paddler.Side);
     }
 
     [Theory]

@@ -71,7 +71,8 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
                 finishingFrom = Begun(running) ? running.Iterations : -1;
                 if (finishingFrom >= 0) vessels.Log(boat, "finishes the {0} from frame {1:F0} before the {2}", current.Code, running.CurrentFrame, seat.actionAnim ?? "ready pose");
             }
-            if (running.Iterations == finishingFrom && running.CurrentFrame < running.Animation.QuantityFrames - 1)
+            if (running.Iterations == finishingFrom && (running.Animation.OnAnimationEnd != EnumEntityAnimationEndHandling.Hold ||
+                                                        running.CurrentFrame < running.Animation.QuantityFrames - 1))
             {
                 seat.actionAnim = current.Code;
                 if (boat.MountAnimations.GetValueOrDefault(Ready) is { Length: > 0 } ready && ready != current.Code) rower.AnimManager.StopAnimation(ready);
