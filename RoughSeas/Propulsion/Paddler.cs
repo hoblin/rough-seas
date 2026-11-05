@@ -23,6 +23,7 @@ public sealed class Paddler(double veerDegrees)
     private int going;
     private double changing;
     private double onThisSide;
+    private bool paddling;
     private (Side Side, double Seconds, double Change)? coming;
 
     public Side Side { get; private set; } = Side.Starboard;
@@ -36,7 +37,7 @@ public sealed class Paddler(double veerDegrees)
     public bool Paddle(int ahead, int turn, float yaw, double strokeSeconds)
     {
         var holding = ahead != 0 && turn == 0;
-        (course, going) = (holding ? (ahead == going ? course : null) ?? yaw : null, ahead);
+        (course, going, paddling) = (holding ? (ahead == going ? course : null) ?? yaw : null, ahead, true);
         var wanted = Wanted(ahead, turn != 0 ? turn : Correction(yaw));
         if (Changing || coming != null || wanted == Side) return false;
 
@@ -46,12 +47,12 @@ public sealed class Paddler(double veerDegrees)
         return true;
     }
 
-    public void Rest() => (course, onThisSide, coming) = (null, 0, null);
+    public void Rest() => (course, onThisSide, coming, paddling) = (null, 0, null, false);
 
     public void Lap(double seconds)
     {
         changing = Math.Max(0, changing - seconds);
-        onThisSide += seconds;
+        if (paddling) onThisSide += seconds;
         if (coming is not { } next) return;
         var left = next.Seconds - seconds;
         if (left > 0)

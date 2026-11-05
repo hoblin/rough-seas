@@ -79,14 +79,15 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
             }
         }
         finishingFrom = null;
-        playing = seat.actionAnim == null ? null : (seat.actionAnim, tool);
+        playing = seat.actionAnim == null ? null : seat.actionAnim == playing?.Code ? playing : (seat.actionAnim, tool);
     }
 
     /// <summary>
-    /// A stroke that came round less than one blend ago counts as finished: the client's strokes run up to that far
-    /// from the server's phase, which decides when the paddler changes sides.
+    /// A looping stroke that came round less than one blend ago counts as finished: the client's strokes run up to that
+    /// far from the server's phase, which decides when the paddler changes sides. A change of sides is always played out.
     /// </summary>
     private static bool Begun(RunningAnimation running) =>
+        running.Animation.OnAnimationEnd == EnumEntityAnimationEndHandling.Hold ||
         running.CurrentFrame >= FramesASecond * running.meta.AnimationSpeed / running.meta.EaseInSpeed;
 
     private static string OnSide(string kind, Side side) => $"{kind}-{side.ToString().ToLowerInvariant()}";

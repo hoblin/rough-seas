@@ -267,6 +267,9 @@ public class PropulsionTests
     public void APaddlerAtRestChangesSidesAtOnce()
     {
         var paddler = new Paddler(10);
+        paddler.Paddle(1, 0, 0, 1.5);
+        paddler.Rest();
+        paddler.Lap(0.05);
 
         Assert.True(paddler.Paddle(1, -1, 0, 1.5));
         Assert.Equal((Side.Port, true), (paddler.Side, paddler.Changing));
