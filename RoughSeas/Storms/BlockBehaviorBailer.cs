@@ -63,7 +63,8 @@ public class BlockBehaviorBailer(Block block) : BlockBehavior(block)
 
     public override string? GetHeldTpUseAnimation(ItemSlot activeHotbarSlot, Entity forEntity, ref EnumHandling bhHandling)
     {
-        if (forEntity is not EntityAgent agent || !Empty(activeHotbarSlot)) return null;
+        // Named only while the hand is in use, so the name changes on release and vanilla stops the scoop.
+        if (forEntity is not EntityAgent { Controls.HandUse: EnumHandInteract.HeldItemInteract } agent || !Empty(activeHotbarSlot)) return null;
         if (Bilge(agent, (agent as EntityPlayer)?.Player?.CurrentEntitySelection) is not { Litres: > 0 }) return null;
 
         bhHandling = EnumHandling.PreventDefault;

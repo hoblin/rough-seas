@@ -29,7 +29,9 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private const double MinDousingRain = 0.05;
     private const double DousingPerRain = 0.5;
     private const string ShellGroup = "Shell";
-    private static readonly string[] WoodTextures = ["inside", "bark", "rings"];
+    private static readonly string[] WoodTextures = ["inside", "hewn", "bark", "rings"];
+    private const string HullElement = "Hull";
+    private const string StepPart = "Step";
     private const string CharTexture = "char";
     private const string ClayTexture = "clay";
     private const string BarkGroup = "Bark";
@@ -51,6 +53,11 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private const int ChipsPerBlow = 6;
     private const float ChipScale = 0.8f;
     private const float ChipThrow = 2;
+    /// <summary>BlockFirepit.OnEntityInside, each server tick.</summary>
+    private const double FirepitBurnChance = 0.05;
+    /// <summary>BlockFirepit.OnEntityInside.</summary>
+    private const float FirepitBurnDamage = 0.5f;
+    private static readonly AssetLocation LitFirepit = new("game:firepit-lit");
 
     private BurnoutConfig config = null!;
     private Burnout burnout = null!;
@@ -77,6 +84,8 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private double UncutMetres => config.HollowDepthMetres * (1 - burnout.Hollowed);
 
     public bool CanHew => !burnout.Finished && burnout.HewRefusal() == null;
+
+    public bool CanLight => !burnout.Finished && !Wet() && burnout.LightRefusal() == null;
 
     public double SecondsPerStroke => config.SecondsPerStroke;
 
@@ -141,9 +150,30 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         {
             ShapeFaces.Retexture(ref entityShape, ref shapeIsCloned, ClayTexture, $"{ClayTexture}-{type}");
         }
+        if (!burnout.Finished && config.HullBoxesMetres.ElementAtOrDefault(burnout.Level) is { } box) FitHull(ref entityShape, ref shapeIsCloned, box);
         if (!burnout.Spoiled) return;
 
         foreach (var wood in WoodTextures) ShapeFaces.Retexture(ref entityShape, ref shapeIsCloned, wood, CharTexture);
+    }
+
+    private static void FitHull(ref Shape entityShape, ref bool shapeIsCloned, BoxMetres box)
+    {
+        if (!shapeIsCloned)
+        {
+            entityShape = entityShape.Clone();
+            shapeIsCloned = true;
+        }
+        if (entityShape.GetElementByName(HullElement) is not { } hull) return;
+
+        hull.From = HullShape.ToModel(box.From);
+        hull.To = HullShape.ToModel(box.To);
+        // A shape's clone shares its attachment points, and each point reads its size from its ParentElement: one
+        // blank's box would size every dugout's.
+        hull.AttachmentPoints = (hull.AttachmentPoints ?? []).Select(point => new AttachmentPoint
+        {
+            ParentElement = hull, Code = point.Code, PosX = (hull.To[0] - hull.From[0]) / 2, PosY = point.PosY,
+            PosZ = (hull.To[2] - hull.From[2]) / 2, RotationX = point.RotationX, RotationY = point.RotationY, RotationZ = point.RotationZ
+        }).ToArray();
     }
 
     public override void OnGameTick(float deltaTime)
@@ -154,7 +184,10 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
             Chip(capi);
             return;
         }
-        if ((sinceTick += deltaTime) < TickSeconds || !burnout.Lit) return;
+        if (!burnout.Lit) return;
+
+        Scorch();
+        if ((sinceTick += deltaTime) < TickSeconds) return;
 
         sinceTick = 0;
         if (Wet())
@@ -229,16 +262,20 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
                 entity.World.PlaySoundAt(WoodSound, entity, null, true, 16);
                 Shipyard.Log(entity, "{0} lays dry grass in hollow {1}", byEntity.GetName(), burnout.Level + 1);
                 break;
-            case Step.Light:
-                if (itemslot.Itemstack!.Collectible is ItemFirestarter) itemslot.Itemstack.Collectible.DamageItem(entity.World, byEntity, itemslot);
-                Tree.SetDouble(CheckedAtKey, sea.Clock.Hours);
-                burnout.Light();
-                entity.World.PlaySoundAt(IgniteSound, entity, null, true, 16);
-                Shipyard.Log(entity, "{0} lights a fire in hollow {1} of {2}: {3:F0} h to burn, {4}", byEntity.GetName(), burnout.Level + 1, burnout.Hollowings,
-                    burnout.HoursPerFire - burnout.HoursBurnt, burnout.Clayed ? "the rim guarded with clay" : $"the rim unguarded, {burnout.ClayVoxels} of {burnout.RimVoxels} voxels clayed");
-                break;
         }
     }
+
+    public void Light(EntityAgent byEntity)
+    {
+        Tree.SetDouble(CheckedAtKey, sea.Clock.Hours);
+        burnout.Light();
+        entity.World.PlaySoundAt(IgniteSound, entity, null, true, 16);
+        Shipyard.Log(entity, "{0} lights a fire in hollow {1} of {2}: {3:F0} h to burn, {4}", byEntity.GetName(), burnout.Level + 1, burnout.Hollowings,
+            burnout.HoursPerFire - burnout.HoursBurnt, burnout.Clayed ? "the rim guarded with clay" : $"the rim unguarded, {burnout.ClayVoxels} of {burnout.RimVoxels} voxels clayed");
+    }
+
+    public void LogMisfire(EntityAgent byEntity, float secondsUsed) =>
+        Shipyard.Log(entity, "{0}'s firestarter fails to light hollow {1} after {2:F1} s", byEntity.GetName(), burnout.Level + 1, secondsUsed);
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
     {
@@ -369,6 +406,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
             if (burnout.Cut(section))
             {
                 pieces.Add($"{before}x{section}Inside");
+                if (section < burnout.Sections && burnout.Cut(section + 1)) pieces.Add($"Hewn{level}x{section}{StepPart}");
                 yield return $"Hewn{level}x{section}";
             }
             else if (charred) yield return $"Char{level}x{section}";
@@ -440,8 +478,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         foreach (var hewer in capi.World.AllOnlinePlayers.Select(player => player.Entity).OfType<EntityPlayer>())
         {
             if (hewer.Properties.Client.AnimationsByMetaCode.GetValueOrDefault(CollectibleBehaviorHew.Animation) is not { } hewing
-                || hewer.AnimManager?.GetAnimationState(hewing.Animation) is not { Running: true } swing
-                || !swing.meta.Code.StartsWith(CollectibleBehaviorHew.Animation, StringComparison.Ordinal)
+                || hewer.AnimManager?.GetAnimationState(CollectibleBehaviorHew.Animation) is not { Running: true } swing
                 || Tree?.GetLong(HewerKey) != hewer.EntityId
                 || hewer.Pos.DistanceTo(entity.Pos) > ChipReachMetres)
             {
@@ -473,6 +510,31 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         Shipyard.Log(entity, "{0}'s blow throws {1} chips of {2} {3:F2} m along her", hewer.GetName(), ChipsPerBlow, chip.Code, along);
         capi.World.SpawnCubeParticles(entity.Pos.XYZ.Add(x, height, z), new ItemStack(chip), ChipSpreadMetres, ChipsPerBlow, ChipScale, null,
             new Vec3f((float)outX, ChipThrow, (float)outZ));
+    }
+
+    private void Scorch()
+    {
+        var rand = entity.World.Rand;
+        var middle = entity.Pos.XYZ.Add(0, FloorMetres, 0);
+        double floor = entity.Pos.Y + FloorMetres, top = entity.Pos.Y + burnout.TopMetres;
+        foreach (var victim in entity.World.GetEntitiesAround(middle, (float)config.HollowLengthMetres, (float)(top - floor) + 1, other => other != entity && other.Alive))
+        {
+            if (!InFire(victim, floor, top) || rand.NextDouble() >= FirepitBurnChance) continue;
+
+            bool burnt = victim.ReceiveDamage(new DamageSource { Source = EnumDamageSource.Block, SourceBlock = entity.World.GetBlock(LitFirepit), SourcePos = middle,
+                Type = EnumDamageType.Fire }, FirepitBurnDamage);
+            if (burnt) Shipyard.Log(entity, "the fire in hollow {0} burns {1} standing in it: {2:F1} damage", burnout.Level + 1, victim.GetName(), FirepitBurnDamage);
+        }
+    }
+
+    private bool InFire(Entity victim, double floor, double top)
+    {
+        var box = victim.CollisionBox;
+        if (victim.Pos.Y + box.Y2 < floor || victim.Pos.Y + box.Y1 > top) return false;
+
+        var (along, across) = HullShape.ToHull(victim.Pos.X - entity.Pos.X, victim.Pos.Z - entity.Pos.Z, entity.Pos.Yaw);
+        double reach = box.XSize / 2;
+        return Math.Abs(along) < config.HollowLengthMetres / 2 + reach && Math.Abs(across) < config.HollowBeamMetres / 2 + reach;
     }
 
     private bool Wet() =>

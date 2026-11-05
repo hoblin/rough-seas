@@ -60,14 +60,14 @@ You don't craft a dugout in the grid: you burn it out of five logs on the shore,
    | ![Dry grass between the clay](images/dugout/build-grass.webp) | ![Firewood laid on the grass](images/dugout/build-laid.webp) |
    | The tinder | The firewood on it |
 
-6. **Light it** with a torch or a firestarter. The grass catches first and the wood takes in its first hour. Then the fire smoulders for about a day and a half, with little flame and a lot of smoke, and burns down to a bed of embers that chars a hand's breadth into the wood. Rain puts it out, and no fire burns in a hollow with water in it: bail it and light it again, and it burns what it had left.
+6. **Light it.** Hold right-click on the trunk with a torch or a firestarter, as you light a campfire. A firestarter often fails: hold it again until the fire takes. The grass catches first and the wood takes in its first hour. Keep out of the hollow while it burns: it burns you as a campfire does. Then the fire smoulders for about a day and a half, with little flame and a lot of smoke, and burns down to a bed of embers that chars a hand's breadth into the wood. Rain puts it out, and no fire burns in a hollow with water in it: bail it and light it again, and it burns what it had left.
 
    | | |
    | --- | --- |
    | ![The fire catching](images/dugout/build-fire.webp) | ![The fire smouldering](images/dugout/build-burning.webp) |
    | Catching | Smouldering |
 
-7. **Hew out the char.** Once the fire is out, the wood it lay on is black with char, and the dried clay still sits on the rim. Hold right-click on the trunk with an axe: you swing again and again, and chips fly at every blow. First you cut the char out of the hollow from the bow to the stern, a third of it at a time, its floor going down to sound wood. Then you trim the outside back from the stern to the bow, and the rim comes down with its clay. It tires you as hard work does.
+7. **Hew out the char.** Once the fire is out, the wood it lay on is black with char, and the dried clay still sits on the rim. Hold right-click on the trunk with an axe: you swing again and again, and chips fly at every blow. First you cut the char out of the hollow from the bow to the stern, a third of it at a time, its floor going down to sound wood, scorched brown by the fire. Then you trim the outside back from the stern to the bow, and the rim comes down with its clay. It tires you as hard work does.
 
    | | |
    | --- | --- |

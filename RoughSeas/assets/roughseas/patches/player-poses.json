@@ -149,6 +149,96 @@
             } }
         ]
     } },
+    { "op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-", "value": {
+        "name": "Hew", "code": "roughseas-hew", "quantityframes": 60,
+        "onActivityStopped": "EaseOut", "onAnimationEnd": "Repeat",
+        "keyframes": [
+            { "frame": 0, "elements": {
+                "LowerTorso": { "offsetX": 0.3, "offsetY": 0.0, "offsetZ": -0.3, "rotationX": -3.0, "rotationY": 15.0, "rotationZ": -1.0 },
+                "UpperTorso": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 30.0, "rotationZ": 2.0 },
+                "UpperArmR": { "offsetX": 0.0, "offsetY": 0.5, "offsetZ": 0.0, "rotationX": -81.0, "rotationY": -42.0, "rotationZ": -64.0 },
+                "LowerArmR": { "offsetX": 0.0, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": -10.0, "rotationY": 0.0, "rotationZ": -14.0 },
+                "ItemAnchor": { "offsetX": -6.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -25.0, "rotationY": 0.0, "rotationZ": 44.0 },
+                "UpperArmL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -25.0, "rotationY": -22.0, "rotationZ": -26.0 },
+                "LowerArmL": { "offsetX": 0.0, "offsetY": 1.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -25.0, "rotationZ": -65.0 },
+                "Neck": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -1.0, "rotationY": -3.0, "rotationZ": -2.0 },
+                "Head": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": -5.0, "rotationZ": 10.0 },
+                "UpperFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -13.0 },
+                "LowerFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 10.0 },
+                "UpperFootR": { "offsetX": 0.0, "offsetY": -0.5, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 5.0, "rotationZ": -19.0 },
+                "LowerFootR": { "offsetX": 0.0, "offsetY": 0.5, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 32.0 }
+            } },
+            { "frame": 56, "elements": {
+                "LowerTorso": { "offsetX": 0.3, "offsetY": 0.0, "offsetZ": -0.3, "rotationX": -3.0, "rotationY": -30.0, "rotationZ": -1.0 },
+                "UpperTorso": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": -15.0, "rotationZ": 2.0 },
+                "UpperArmR": { "offsetX": 0.0, "offsetY": 0.5, "offsetZ": 0.0, "rotationX": -18.0, "rotationY": -20.0, "rotationZ": -66.0 },
+                "LowerArmR": { "offsetX": 0.0, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": -23.0, "rotationY": 0.0, "rotationZ": -105.0 },
+                "ItemAnchor": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 29.0 },
+                "UpperArmL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 36.0, "rotationY": -14.0, "rotationZ": -66.0 },
+                "LowerArmL": { "offsetX": 0.0, "offsetY": 1.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -25.0, "rotationZ": -16.0 },
+                "Neck": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 3.0, "rotationZ": -2.0 },
+                "Head": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 25.0, "rotationZ": 6.0 },
+                "UpperFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 19.0, "rotationZ": -15.0 },
+                "LowerFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 25.0 },
+                "UpperFootR": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -8.0, "rotationZ": -20.0 },
+                "LowerFootR": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 15.0 }
+            } }
+        ]
+    } },
+    { "op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-", "value": {
+        "name": "Hew-fp", "code": "roughseas-hew-fp", "quantityframes": 60,
+        "onActivityStopped": "EaseOut", "onAnimationEnd": "Repeat",
+        "keyframes": [
+            { "frame": 0, "elements": {
+                "LowerTorso": { "offsetX": 0.3, "offsetY": 0.0, "offsetZ": -0.3, "rotationX": -3.0, "rotationY": 0.0, "rotationZ": -1.0 },
+                "UpperTorso": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 20.0, "rotationZ": -6.0 },
+                "UpperArmR": { "offsetX": 0.5, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": -77.0, "rotationY": -18.0, "rotationZ": -104.0 },
+                "LowerArmR": { "offsetX": 0.0, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": -10.0, "rotationY": 0.0, "rotationZ": -6.0 },
+                "ItemAnchor": { "offsetX": -4.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 72.0 },
+                "UpperArmL": { "offsetX": 0.5, "offsetY": -1.0, "offsetZ": 0.0, "rotationX": -17.0, "rotationY": -18.0, "rotationZ": -11.0 },
+                "LowerArmL": { "offsetX": 0.0, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -25.0, "rotationZ": -120.0 },
+                "Neck": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -1.0, "rotationY": -3.0, "rotationZ": -2.0 },
+                "Head": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": -5.0, "rotationZ": 10.0 },
+                "UpperFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -13.0 },
+                "LowerFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 10.0 },
+                "UpperFootR": { "offsetX": 0.0, "offsetY": -0.5, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 5.0, "rotationZ": -19.0 },
+                "LowerFootR": { "offsetX": 0.0, "offsetY": 0.5, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 32.0 }
+            } },
+            { "frame": 1, "elements": {
+                "LowerTorso": { "offsetX": 0.3, "offsetY": 0.0, "offsetZ": -0.3, "rotationX": -3.0, "rotationY": 1.0, "rotationZ": -1.0 },
+                "UpperTorso": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 20.0, "rotationZ": -6.0 },
+                "UpperArmR": { "offsetX": 0.5, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": -77.0, "rotationY": -18.0, "rotationZ": -104.0 },
+                "LowerArmR": { "offsetX": 0.0, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": -10.0, "rotationY": 0.0, "rotationZ": -6.0 },
+                "ItemAnchor": { "offsetX": -4.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 72.0 },
+                "UpperArmL": { "offsetX": 0.5, "offsetY": -1.0, "offsetZ": 0.0, "rotationX": -17.0, "rotationY": -18.0, "rotationZ": -11.0 },
+                "LowerArmL": { "offsetX": 0.0, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -25.0, "rotationZ": -120.0 },
+                "Neck": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -1.0, "rotationY": -3.0, "rotationZ": -2.0 },
+                "Head": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": -5.0, "rotationZ": 10.0 },
+                "UpperFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -13.0 },
+                "LowerFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 10.0 },
+                "UpperFootR": { "offsetX": 0.0, "offsetY": -0.5, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 5.0, "rotationZ": -19.0 },
+                "LowerFootR": { "offsetX": 0.0, "offsetY": 0.5, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 32.0 }
+            } },
+            { "frame": 4, "elements": {
+                "ItemAnchor": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0 }
+            } },
+            { "frame": 56, "elements": {
+                "LowerTorso": { "offsetX": 0.3, "offsetY": 0.0, "offsetZ": -0.3, "rotationX": -3.0, "rotationY": -46.0, "rotationZ": -1.0 },
+                "UpperTorso": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": -16.0, "rotationZ": 2.0 },
+                "UpperArmR": { "offsetX": 0.0, "offsetY": 1.5, "offsetZ": -0.5, "rotationX": -100.0, "rotationY": -33.0, "rotationZ": -119.0 },
+                "LowerArmR": { "offsetX": 0.0, "offsetY": 1.5, "offsetZ": 0.0, "rotationX": -10.0, "rotationY": 0.0, "rotationZ": -105.0 },
+                "ItemAnchor": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 51.0 },
+                "UpperArmL": { "offsetX": 3.0, "offsetY": 0.0, "offsetZ": -0.5, "rotationX": -5.0, "rotationY": -17.0, "rotationZ": -86.0 },
+                "LowerArmL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -25.0, "rotationZ": -18.0 },
+                "Neck": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 3.0, "rotationZ": -2.0 },
+                "Head": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 25.0, "rotationZ": 6.0 },
+                "UpperFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 19.0, "rotationZ": -15.0 },
+                "LowerFootL": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 25.0 },
+                "UpperFootR": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -8.0, "rotationZ": -20.0 },
+                "LowerFootR": { "offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 15.0 }
+            } }
+        ]
+    } },
     { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
         "code": "roughseas-sitlegsforward", "animation": "roughseas-sitlegsforward", "clientSide": true, "blendMode": "Average", "easeInSpeed": 2,
         "elementWeight": { "LowerTorso": 80, "UpperTorso": 80, "UpperFootR": 80, "UpperFootL": 80, "LowerFootR": 80, "LowerFootL": 80, "UpperArmR": 80, "LowerArmR": 80, "UpperArmL": 80, "LowerArmL": 80 },
@@ -190,13 +280,13 @@
         "elementBlendMode": { "UpperTorso": "Average", "Head": "Average", "UpperArmR": "Average", "LowerArmR": "Average", "UpperArmL": "Average", "LowerArmL": "Average", "ItemAnchor": "Average" }
     } },
     { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
-        "code": "roughseas-hew", "animation": "axechop", "blendMode": "Add", "animationSpeed": 1.65, "holdEyePosAfterEasein": 0.3,
+        "code": "roughseas-hew", "animation": "roughseas-hew", "blendMode": "Add", "holdEyePosAfterEasein": 0.3,
         "elementWeight": { "UpperArmR": 20, "LowerArmR": 20, "UpperArmL": 20, "LowerArmL": 20 },
         "elementBlendMode": { "UpperArmR": "AddAverage", "LowerArmR": "AddAverage", "UpperArmL": "AddAverage", "LowerArmL": "AddAverage" },
-        "animationSounds": [{ "frame": 23, "location": "game:sounds/block/chop*", "range": 16, "randomizePitch": true }]
+        "animationSounds": [{ "frame": 59, "location": "game:sounds/block/chop*", "range": 16, "randomizePitch": true }]
     } },
     { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
-        "code": "roughseas-hew-fp", "animation": "axechop-fp", "blendMode": "Add", "animationSpeed": 1.65, "holdEyePosAfterEasein": 0.3,
+        "code": "roughseas-hew-fp", "animation": "roughseas-hew-fp", "blendMode": "Add", "holdEyePosAfterEasein": 0.3,
         "elementWeight": { "UpperArmR": 20, "LowerArmR": 20, "UpperArmL": 20, "LowerArmL": 20 },
         "elementBlendMode": { "UpperArmR": "AddAverage", "LowerArmR": "AddAverage", "UpperArmL": "AddAverage", "LowerArmL": "AddAverage" }
     } }

@@ -81,4 +81,14 @@ public class HullShapeTests
         Assert.Equal(0.3, x, 6);
         Assert.Equal(-1.2, z, 6);
     }
+
+    [Fact]
+    public void ABoxInMetresFromWhereSheStandsIsDrawnBackInHerShapesVoxels()
+    {
+        double[] fromVoxels = [-32, 0, 0], toVoxels = [48, 16, 16];
+        var shape = HullShape.FromVoxels(fromVoxels, toVoxels);
+        double[] from = [shape.CentreAlongMetres - shape.HalfLengthMetres, shape.KeelMetres, shape.CentreAcrossMetres - shape.HalfBeamMetres];
+
+        Assert.Equal(fromVoxels, HullShape.ToModel(from));
+    }
 }

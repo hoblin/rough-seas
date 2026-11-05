@@ -55,6 +55,9 @@ public readonly record struct HullShape(double HalfLengthMetres, double HalfBeam
     private static double[] FromModel(double[] voxels) =>
         [Voxels.ToMetres(voxels[0]) - ModelOriginMetres, Voxels.ToMetres(voxels[1]), Voxels.ToMetres(voxels[2]) - ModelOriginMetres];
 
+    public static double[] ToModel(double[] metres) =>
+        [Voxels.FromMetres(metres[0] + ModelOriginMetres), Voxels.FromMetres(metres[1]), Voxels.FromMetres(metres[2] + ModelOriginMetres)];
+
     public HullPlace At(double along, double height, double across)
     {
         along -= CentreAlongMetres;

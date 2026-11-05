@@ -16,6 +16,7 @@
         "bilge": {"base": "game:block/liquid/waterportion"},
         "breach": {"base": "game:block/black"},
         "char": {"base": "game:block/wood/firepit/burntlog"},
+        "hewn": {"base": "game:block/wood/charred"},
         "clay": {"base": "game:block/clay/blueclay"},
         "clay-red": {"base": "game:block/clay/redclay"},
         "clay-fire": {"base": "game:block/clay/fireclay"},

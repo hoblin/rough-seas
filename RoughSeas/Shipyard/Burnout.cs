@@ -245,4 +245,11 @@ public sealed class BurnoutConfig
     public int BarkPieces;
     public double HollowLengthMetres;
     public double[][] HewnSectionsMetres = [];
+    public BoxMetres[] HullBoxesMetres = [];
+}
+
+public sealed class BoxMetres
+{
+    public double[] From = [];
+    public double[] To = [];
 }

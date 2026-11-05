@@ -205,6 +205,7 @@
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/vessel/outrigger", "ignoreElements": ["hideWater", "Bilge"]},
         "textures": {
+            "hewn": {"base": "game:block/wood/charred"},
             "sail": {"base": "game:block/cloth/linen/plain"},
             "lashing": {"base": "game:item/resource/rope"},
             "bilge": {"base": "game:block/liquid/waterportion"},
