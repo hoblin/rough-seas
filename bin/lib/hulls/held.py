@@ -1,11 +1,10 @@
 import copy
 import json
 import math
-import re
 
 from physics import ASSETS, STANDING_HIP_METRES, SWIM_LINE_METRES
 import units
-from shape import save
+from entity import read, record
 from motion import faults, switches, unwind
 from stroke import Rower, centre, drive_share, facing, fit, moved, named, played, posed, resting, rowed, seat, seraph, turn, unturn
 from transform import angles, apply, depth, euler, inverse, mul, translation, undirect, unit
@@ -106,7 +105,11 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         hands = round(units.metres(stance.at[1]) - waterline + STANDING_HIP_METRES, 2)
         print(f"{vessel}-{kind}: stands {', '.join(f'{a} {v:+.3f}' for a, v in zip('xyz', shift))} m from {seated}, "
               f"his hands {hands:.2f} m over the water at the end of the shove")
-        record_stance(vessel, shift, hands)
+        record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": {"handsAboveWaterMetres": hands, "stance": {"riderOffset": dict(zip("xyz", shift))}}}}})
+    elif stroke == "seatedpole":
+        hands = round(units.metres(rower.seat[1] + SEATED_CHEST) - waterline, 2)
+        print(f"{vessel}-{kind}: his hands {hands:.2f} m over the water as he shoves from the seat")
+        record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": {"handsAboveWaterMetres": hands}}}})
     group = tool.group()
     poses = stance.poses if stance else poses
     plan = named(f"{vessel}-{kind}", FRAMES, {name: pose for name, (pose, *_) in poses.items()}, stroke,
@@ -165,6 +168,7 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         through = (0, 0, None, None)
         if step["code"].endswith("starboard-forward"):
             print(f"{animation['code']}: the blade drives {sum(abeam) / len(abeam):.2f} m abeam of the seat")
+            record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"paddleAbeamMetres": round(sum(abeam) / len(abeam), 2)}}})
     return player
 
 
@@ -253,24 +257,8 @@ PADDLE = Tool("tool/paddle", "paddle", (13, 8, 8), (0.5, 8, 8))
 POLE = Tool("resource/pole", "pole-3", (12.8, 0.75, 8), (8, 0.75, 8), turns=(0, 90, 180, 270))
 
 
-def record_stance(vessel, shift, hands):
-    """Writes the stance fitted here into the vessel's pole config, her entity's or, for a vanilla boat, the patch
-    that gives her propulsion; nothing else in the file changes."""
-    path = ASSETS / "entities/vessel" / f"{vessel}.json"
-    if not path.exists():
-        path = ASSETS / "patches/propulsion-vessels.json"
-    text = path.read_text()
-    start = text.index('"pole": {', text.index(f"boat-{vessel}.json") if path.name.startswith("propulsion") else 0)
-    end = text.index("\n", start)
-    number = lambda value: f"{value + 0.0:g}"
-    offset = ", ".join(f'"{a}": {number(v)}' for a, v in zip("xyz", shift))
-    pole = re.sub(r'"handsAboveWaterMetres": [-\d.]+', f'"handsAboveWaterMetres": {number(hands)}', text[start:end])
-    pole = re.sub(r'"riderOffset": \{[^}]*\}', f'"riderOffset": {{{offset}}}', pole)
-    save(path, text[:start] + pole + text[end:])
-
-
 def waterline(vessel):
-    entity = json.loads((ASSETS / "entities/vessel" / f"{vessel}.json").read_text())
+    entity = read(vessel)
     return entity["hitboxSize"]["y"] + SWIM_LINE_METRES - entity["attributes"]["swimmingOffsetY"]
 
 

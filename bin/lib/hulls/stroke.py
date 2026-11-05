@@ -5,6 +5,7 @@ from functools import cache
 from pathlib import Path
 
 import units
+from jsontext import load
 
 from arm import Arm
 from leg import Leg
@@ -114,7 +115,7 @@ def facing(shape, vessel, name):
     if not entity.exists():
         return 0
     code = find(shape.elements, name)["attachmentpoints"][0]["code"]
-    seats = json.loads(entity.read_text())["behaviorConfigs"]["creaturecarrier"]["seats"]
+    seats = load(entity)["behaviorConfigs"]["creaturecarrier"]["seats"]
     return next(s for s in seats if s["apName"] == code).get("mountRotation", {}).get("y", 0)
 
 
@@ -179,8 +180,8 @@ def played(vessel):
     gives her propulsion."""
     entity = ENTITIES / f"{vessel}.json"
     if entity.exists():
-        return json.loads(entity.read_text())["behaviorConfigs"]["roughseas:propulsion"]["strokes"]
-    return next(op["value"]["strokes"] for op in json.loads((PATCHES / "propulsion-vessels.json").read_text())
+        return load(entity)["behaviorConfigs"]["roughseas:propulsion"]["strokes"]
+    return next(op["value"]["strokes"] for op in load(PATCHES / "propulsion-vessels.json")
                 if op["file"].endswith(f"boat-{vessel}.json") and "strokes" in op["value"])
 
 

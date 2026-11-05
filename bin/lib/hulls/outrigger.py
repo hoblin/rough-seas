@@ -3,10 +3,11 @@ from collections import namedtuple
 from pathlib import Path
 
 from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, hull_box, log, volumes
-from physics import ROPE_METRES, afloat, built, kilograms, per_rope, ropes
+from physics import ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
+from entity import merged, record
 from shape import BILGE, ROUNDED, Hull, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
 
@@ -407,11 +408,12 @@ def build(target):
     wound(shape, [("", [shell], WOOD)])
     shape.write()
     finished_float = passes["children"][-1]
+    hull_alone, measured = report(hull, finished_float)
+    record("outrigger", measured)
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),
-               waterplane=built("dugout")["waterplane"])
-    report(hull, finished_float)
+               waterplane=hull_alone["behaviorConfigs"]["roughseas:vesselintegrity"]["waterplaneSquareMetres"])
 
 
 def rigged(shape, hull, shell, logs, passes):
@@ -488,8 +490,9 @@ def report(hull, finished_float):
     parts = {"hull": kilograms("wood-oak", envelope - hold), "float": kilograms("wood-oak", finished_float["woodLitres"]),
              "poles": kilograms("wood-oak", pole_litres()), "strakes": kilograms("wood-oak", strake_litres(hull))}
     print("outrigger parts in oak: " + ", ".join(f"{name} {kg:.0f} kg" for name, kg in parts.items()) + f", poles {pole_litres():.0f} L")
-    waterplane = afloat("dugout", parts["hull"], units.metres(RIM), hold, deck())
-    afloat("outrigger", sum(parts.values()), units.metres(RIM), hold, deck(), waterplane=waterplane + finished_float["waterlineSquareMetres"])
+    hull_alone = afloat("dugout", parts["hull"], units.metres(RIM), hold, deck())
+    waterplane = hull_alone["behaviorConfigs"]["roughseas:vesselintegrity"]["waterplaneSquareMetres"] + finished_float["waterlineSquareMetres"]
+    return hull_alone, merged(afloat("outrigger", sum(parts.values()), units.metres(RIM), hold, deck(), waterplane=waterplane), shares(parts.values()))
 
 
 if __name__ == "__main__":

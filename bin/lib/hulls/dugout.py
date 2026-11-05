@@ -3,6 +3,7 @@ from stroke import player_patch, seat
 from physics import afloat, kilograms, stands
 from fit import APART, Swept
 import units
+from entity import record
 from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
 from wounds import wound
 
@@ -314,7 +315,7 @@ def build(path):
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
-    afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck())
+    record("dugout", afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck()))
     shape.write()
     crew_tools(shape, "dugout", ("Shell",))
 

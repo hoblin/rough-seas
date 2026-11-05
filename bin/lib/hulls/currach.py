@@ -1,9 +1,10 @@
 import math
 import statistics
 
-from physics import HIDE_METRES, LATH_SQUARE_METRES, MASS, afloat, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
+from physics import HIDE_METRES, LATH_SQUARE_METRES, MASS, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from fit import APART
 import units
+from entity import merged, record
 from shape import BILGE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
 from held import poling, tools, waterline
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
@@ -425,6 +426,7 @@ def build(path_):
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
+    record("currach", report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()]))
     chest = chest_height(shape)
     middle, degrees = arc(shape, rests, chest)
     rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(shape, rests, chest, middle, degrees), {"R": "OarPortGrip", "L": "OarStarboardGrip"},
@@ -439,9 +441,9 @@ def build(path_):
     player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, line, {
         "pole": pole,
     }, ("Cover",)))
-    print(f"oars: {blade_span(rests, chest, middle, degrees):.2f} m from blade to blade across her,"
-          f" {blade_square_metres(rests, chest):.3f} m² of blade under the water")
-    report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()])
+    span, blade = blade_span(rests, chest, middle, degrees), blade_square_metres(rests, chest)
+    print(f"oars: {span:.2f} m from blade to blade across her, {blade:.3f} m² of blade under the water")
+    record("currach", {"behaviorConfigs": {"roughseas:propulsion": {"oars": {"spanMetres": round(span, 2), "bladeSquareMetres": round(blade, 3)}}}})
 
 
 def litres(element):
@@ -458,8 +460,8 @@ def report(hull, laths, thwart_stage, oars):
     oars_kg = kilograms("wood-ash", sum(litres(part) for oar_ in oars for part in oar_["children"]))
     print(f"currach: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath and {pole:.2f} m of pole, {frame_kg:.1f} kg of ash;"
           f" two oars, {oars_kg:.1f} kg")
-    afloat("currach", hide_kg + frame_kg + oars_kg, units.metres(SHEER), hull.litres(SHEER, inset=hull.t),
-           hull.square_metres(SHEER - 0.01, inset=hull.t))
+    return merged(afloat("currach", hide_kg + frame_kg + oars_kg, units.metres(SHEER), hull.litres(SHEER, inset=hull.t),
+                         hull.square_metres(SHEER - 0.01, inset=hull.t)), shares([hide_kg, frame_kg, oars_kg]))
 
 
 if __name__ == "__main__":

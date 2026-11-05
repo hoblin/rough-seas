@@ -1,11 +1,12 @@
 import math
 from pathlib import Path
 
-from physics import MATERIALS, ropes, stands
+from physics import MATERIALS, afloat, ropes, shares, stands
 from held import PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
 import units
+from entity import merged, record
 from shape import ROUNDED, Shape, beam, box, group, path, section, stages, write
 
 KNOT_METRES = 0.3
@@ -16,6 +17,7 @@ CENTRE = 8
 SIDES = (("Port", -1), ("Starboard", 1))
 BUNDLE_REEDS = 144
 REED_KG = 0.15
+REEDS_A_ROPE = 6
 REED = "roughseas:entity/vessel/reed-cattailtops"
 
 TIE_PITCH = 4
@@ -114,6 +116,7 @@ def bundle_ropes():
     ties = len(range(TIE_PITCH // 2, BODY[1] - BODY[0], TIE_PITCH))
     metres = ties * (units.metres(TIE_TURNS * math.pi * GIRTH) + KNOT_METRES)
     print(f"bundle: {ties} ties {units.metres(TIE_PITCH) * 100:.0f} cm apart, {metres:.1f} m of cord, {ropes(metres)} ropes")
+    return ropes(metres)
 
 
 def lashings():
@@ -175,7 +178,7 @@ def build(target):
         "lashing": "game:item/resource/rope",
     })
     envelope()
-    bundle_ropes()
+    cords = len(SIDES) * bundle_ropes()
     blank = group("Blank", (0, 0, 0), (0, 0, 0), [e for name, side in SIDES for e in bundle(name, side)])
     flat, lashed, bound = stages("Flat", flats(SIDES)), stages("Lashing", lashings()), stages("Tips", tips())
     shape.add(blank, flat, lashed, bound)
@@ -193,9 +196,13 @@ def build(target):
         shape.together(blank, lashed, ends_bound)
     shape.keep("Hull", "FrontSeat", "Cargo", "OarStorage")
     shape.write()
+    cords += len(lashed["children"]) + len(ENDS)
+    reed_kg, cord_kg = len(SIDES) * BUNDLE_REEDS * REED_KG, cords * REEDS_A_ROPE * REED_KG
+    litres = sum(kg / MATERIALS[material]["density"] * 1000 for material, kg in (("reed", reed_kg), ("rope-flax", cord_kg)))
+    girth, length = units.metres(GIRTH), units.metres(BODY[1] - BODY[0])
+    record("reedboat", merged(afloat("reedboat", reed_kg + cord_kg, girth, solid_litres=litres), shares([reed_kg, cord_kg])))
     at = seat(shape, "FrontSeat")
     line = waterline("reedboat")
-    girth, length = units.metres(GIRTH), units.metres(BODY[1] - BODY[0])
     pole = poling(stands("reedboat", girth, form="rectangle", waterplane=2 * girth * length, beam_metres=2 * girth, depth_metres=girth),
                   at, units.voxels(line), CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)
     player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {

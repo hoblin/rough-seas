@@ -2,6 +2,7 @@ import json
 import math
 
 import units
+from jsontext import load
 
 from physics import ASSETS
 from shape import box, group, seed
@@ -69,7 +70,7 @@ def wound(shape, levels, lining=0, framing=None):
     in its frame, through its wall and the lining inside it. A level is (name, elements, texture); the finished hull's
     is named "". The framing, (elements, texture), breaks under the skin from a split on: its member nearest each place's
     mark is wrapped whole in Wound{Place}Whole, and drawn broken beside it as Wound{Place}{Form}Frame."""
-    entity = json.loads((ASSETS / "entities/vessel" / shape.path.name).read_text())
+    entity = load(ASSETS / "entities/vessel" / shape.path.name)
     shell = entity["behaviorConfigs"]["roughseas:vesselintegrity"]["shell"]
     span = units.voxels(shell["spanMetres"])
     sprung = SPRUNG_DEGREES[shell.get("kind", "rigid")]

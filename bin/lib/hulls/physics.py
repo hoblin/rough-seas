@@ -3,6 +3,7 @@ import math
 from pathlib import Path
 
 import units
+from jsontext import load
 
 ASSETS = Path(__file__).resolve().parents[3] / "RoughSeas/assets/roughseas"
 VESSELS = ASSETS / "config/vessels"
@@ -69,10 +70,10 @@ def stiffness(hull_kg, waterplane, beam_metres, floor_metres, centre_metres, for
 
 
 def built(name):
-    entity = json.loads((ASSETS / f"entities/vessel/{name}.json").read_text())
-    integrity, forces = (entity["behaviorConfigs"][code] for code in ("roughseas:vesselintegrity", "roughseas:seaforces"))
+    entity = load(ASSETS / f"entities/vessel/{name}.json")
+    integrity = entity["behaviorConfigs"]["roughseas:vesselintegrity"]
     return {"hull_kg": entity["weight"], "waterplane": integrity.get("waterplaneSquareMetres"),
-            "beam_metres": forces["beamMetres"], "depth_metres": integrity["depthMetres"]}
+            "beam_metres": entity["behaviorConfigs"]["roughseas:seaforces"]["beamMetres"], "depth_metres": integrity["depthMetres"]}
 
 
 def stands(name, floor_metres, form="ellipse", outboard=(0, 0), **given):
@@ -94,16 +95,34 @@ def kilograms(material, litres):
 
 
 def hitbox_height(name):
-    return json.loads((ASSETS / f"entities/vessel/{name}.json").read_text())["hitboxSize"]["y"]
+    return load(ASSETS / f"entities/vessel/{name}.json")["hitboxSize"]["y"]
 
 
-def afloat(name, hull_kg, depth, hold, deck, waterplane=None):
-    full = hull_kg + MASS["crewKg"] + MASS["playerGearKg"] + SEAWATER_KG_PER_LITRE * hold
-    by_full_hold = waterplane is None
-    waterplane = full / (SEAWATER_KG_PER_LITRE * 1000 * depth) if by_full_hold else waterplane
-    draft = (hull_kg + MASS["crewKg"]) / (SEAWATER_KG_PER_LITRE * 1000 * waterplane)
+def afloat(name, hull_kg, depth, hold=0, deck=0, waterplane=None, solid_litres=None):
+    """Her weight, the depth and waterplane she floats by, her hold and the offset vanilla floats her at with one
+    aboard, as her entity takes them. A solid hull is pressed down through her depth as her material is."""
+    crewed = hull_kg + MASS["crewKg"]
+    integrity = {"depthMetres": round(depth, 4)}
+    configs = {"roughseas:vesselintegrity": integrity}
+    if solid_litres is not None:
+        draft = depth * crewed / (solid_litres * SEAWATER_KG_PER_LITRE)
+        print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth:.4g} m, {solid_litres:.0f} L of material, "
+              f"draft {draft:.3f} m with one aboard", end="")
+    else:
+        full = crewed + MASS["playerGearKg"] + SEAWATER_KG_PER_LITRE * hold
+        by_full_hold = waterplane is None
+        waterplane = full / (SEAWATER_KG_PER_LITRE * 1000 * depth) if by_full_hold else waterplane
+        draft = crewed / (SEAWATER_KG_PER_LITRE * 1000 * waterplane)
+        integrity["waterplaneSquareMetres"] = round(waterplane, 3)
+        configs["roughseas:bilge"] = {"capacityLitres": round(hold, 1), "deckSquareMetres": round(deck, 3)}
+        print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth:.4g} m, hold {hold:.0f} L, deck {deck:.2f} m², "
+              f"waterplane {waterplane:.2f} m²{' (full hold and one aboard bring her gunwale to the water)' if by_full_hold else ''}, "
+              f"draft {draft:.3f} m with one aboard", end="")
     offset = hitbox_height(name) + SWIM_LINE_METRES - draft
-    print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth:.4g} m, hold {hold:.0f} L, deck {deck:.2f} m², "
-          f"waterplane {waterplane:.2f} m²{' (full hold and one aboard bring her gunwale to the water)' if by_full_hold else ''}, "
-          f"draft {draft:.3f} m with one aboard, swimmingOffsetY {offset:.3f}")
-    return waterplane
+    print(f", swimmingOffsetY {offset:.3f}")
+    return {"weight": round(hull_kg, 1), "attributes": {"swimmingOffsetY": round(offset, 3)}, "behaviorConfigs": configs}
+
+
+def shares(kilograms_by_part):
+    """Each part's share of her weight, in the order her parts are listed."""
+    return {"behaviorConfigs": {"roughseas:vesselintegrity": {"parts": {n: {"share": round(kg, 1)} for n, kg in enumerate(kilograms_by_part)}}}}

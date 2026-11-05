@@ -4,10 +4,11 @@ import math
 from pathlib import Path
 
 from fit import APART, Oval
-from physics import HIDE_METRES, LATH_SQUARE_METRES, ROPE_METRES, afloat, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
+from physics import HIDE_METRES, LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from held import PADDLE, poling, sculling, tools, waterline
 from stroke import player_patch, seat
 import units
+from entity import merged, record
 from shape import BILGE, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
 from wounds import wound
 
@@ -245,7 +246,7 @@ def report(lattice_stage, gunwale_stage, area):
     deck = units.metres(math.pi * (GUNWALE[0] - inset) * (GUNWALE[1] - inset), 2)
     print(f"coracle: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of willow; "
           f"bowl {bowl_litres(0, 0):.0f} L outside")
-    afloat("coracle", hide_kg + frame_kg, units.metres(DEPTH), hold, deck)
+    return merged(afloat("coracle", hide_kg + frame_kg, units.metres(DEPTH), hold, deck), shares([hide_kg, frame_kg]))
 
 
 def build(path_):
@@ -278,6 +279,7 @@ def build(path_):
     shape.keep("Hull", "FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
+    record("coracle", report(flat, gunwale, hide_area(pieces)))
     at = seat(shape, "FrontSeat")
     line = waterline("coracle")
     floor = HIDE + 2 * LATH_THICKNESS
@@ -295,7 +297,6 @@ def build(path_):
     worn["textures"] = TEXTURES
     write(back, worn)
     print(f"{back}: worn bowl")
-    report(flat, gunwale, hide_area(pieces))
 
 
 if __name__ == "__main__":

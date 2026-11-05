@@ -3,9 +3,10 @@ import math
 
 from held import PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
-from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, kilograms, per_rope, ropes, stands
+from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes, stands
 from fit import APART, TOLERANCE, lined as lined_section
 import units
+from entity import merged, record
 from shape import BILGE, Hull, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
 from transform import add, scale, sub, unit
 from wounds import wound
@@ -346,6 +347,7 @@ def build(path_):
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
           lining=SHEATHING, framing=([laths[3]], "frame"))
     shape.write()
+    record("barkcanoe", report(hull, laths))
     at = seat(shape, "BackSeat")
     line = waterline("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT
@@ -356,7 +358,6 @@ def build(path_):
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 6.5, 1.5)),
         "pole": pole,
     }, ("Skin",)))
-    report(hull, laths)
 
 
 def report(hull, laths):
@@ -366,8 +367,8 @@ def report(hull, laths):
     frame_kg = kilograms("wood-tuja", metres * LATH_SQUARE_METRES * 1000)
     print(f"barkcanoe: {bark:.2f} m² of bark, {bark_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of white cedar; "
           f"sheet {units.metres(SHEET_LENGTH):.2f} m, {units.metres(SHEET_THICKNESS):.3f} m thick")
-    afloat("barkcanoe", bark_kg + frame_kg, units.metres(SHEER), hull.litres(SHEER, inset=SKIN),
-           hull.square_metres(SHEER - 0.01, inset=SKIN))
+    return merged(afloat("barkcanoe", bark_kg + frame_kg, units.metres(SHEER), hull.litres(SHEER, inset=SKIN),
+                         hull.square_metres(SHEER - 0.01, inset=SKIN)), shares([bark_kg, frame_kg]))
 
 
 if __name__ == "__main__":
