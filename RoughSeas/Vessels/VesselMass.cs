@@ -35,13 +35,26 @@ public class VesselMass
     }
 
     /// <summary>
-    /// The riders her saved seats name. Read as she initialises: vanilla rewrites the record from the seats as each saved
-    /// rider is seated again, dropping those whose entities haven't loaded yet.
+    /// The rider each of her saved seats names. Read as she initialises: vanilla rewrites the record from the seats as each
+    /// saved rider is seated again, dropping those whose entities haven't loaded yet.
     /// </summary>
-    public static IEnumerable<long> Recorded(Entity vessel) =>
+    public static Dictionary<string, long> Recorded(Entity vessel) =>
         vessel.WatchedAttributes["seatdata"] is TreeAttribute seats
-            ? seats.Values.OfType<TreeAttribute>().Select(seat => seat.GetLong("passenger")).Where(id => id != 0)
+            ? seats.Values.OfType<TreeAttribute>()
+                .Where(seat => seat.GetLong("passenger") != 0)
+                .ToDictionary(seat => seat.GetString("seatid"), seat => seat.GetLong("passenger"))
             : [];
+
+    /// <summary>Whether a saved seat still waits for its rider: empty, the rider not loaded or loaded still holding it.</summary>
+    public static bool Awaits(Entity vessel, string seatId, long riderId)
+    {
+        var seat = vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats.FirstOrDefault(seat => seat.SeatId == seatId);
+        if (seat?.Passenger != null) return false;
+        if (vessel.World.GetEntityById(riderId) is not { } rider) return true;
+
+        return rider.WatchedAttributes["mountedOn"] is TreeAttribute held
+            && held.GetLong("entityIdMount") == vessel.EntityId && held.GetString("seatId") == seatId;
+    }
 
     private double Kit(Entity passenger)
     {
