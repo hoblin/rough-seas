@@ -456,11 +456,11 @@ def build(path_):
 
 
 def shell(hull, hide, laths, box):
-    """What backs her hide: her ribs and stringers; a breaker bends it between her keelson, stringers and gunwale, as
-    far apart along her section as they stand amidships, and her laths between her ribs."""
+    """What backs her hide: her ribs and stringers; a breaker on her side bends it between her stringers and gunwale,
+    as far apart up her side as they stand amidships, and her laths between her ribs."""
     sides, bottom = backed([hide], ["hide"], laths[1:], box)
-    section = hull.section(sum(hull.span()) / 2)
-    apart = units.metres(sum(math.dist(a, b) for a, b in zip(section, section[1:])) / (len(section) - 1))
+    side = hull.section(sum(hull.span()) / 2)[1:]
+    apart = units.metres(sum(math.dist(a, b) for a, b in zip(side, side[1:])) / (len(side) - 1))
     return {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", apart),
             "frame": {**units.both("spacing", apart), **units.both("span", units.metres(RIB_SPACING))}}
 

@@ -110,7 +110,7 @@ What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 | [Raft](Raft) | shakes a quarter of its lashings loose | mostly breaks it up |
 | [Coracle](Coracle) | splits it with its laths broken, or stoves it in on a lath | stoves it in |
 
-Every knock adds to its place's crack, so a scratch from a bump becomes a crack after a few more. The three framed hulls feel a knock far sooner than the rest, since one lath or rib takes it rather than the whole boat; but a knock that breaks nothing in them, neither opening bark nor snapping a lath, leaves no mark, for hide and green wood spring back. With one aboard, in oak, a knock on a lath breaks it at 1.2 m/s in a currach and 1.4 in a coracle, and one between two laths breaks both at 1.6 and 1.8; a bark canoe's bark opens at 1.3 m/s, and its ribs break at 1.6 on a rib and 1.8 between two. A gentle landing, up to 1 m/s, is as safe in them as in any boat.
+Every knock adds to its place's crack, so a scratch from a bump becomes a crack after a few more. The three framed hulls feel a knock far sooner than the rest, since one lath or rib takes it rather than the whole boat; but a knock that breaks nothing in them, neither opening bark nor snapping a lath, leaves no mark, for hide and green wood spring back. With one aboard, in oak, a knock on a lath breaks it at 1.2 m/s in a currach and 1.4 in a coracle, and one between two laths breaks both at 1.5 and 1.8; a bark canoe's bark opens at 1.3 m/s, and its ribs break at 1.6 on a rib and 1.8 between two. A gentle landing, up to 1 m/s, is as safe in them as in any boat.
 
 ### Rams
 
