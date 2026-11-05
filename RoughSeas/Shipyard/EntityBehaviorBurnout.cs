@@ -32,7 +32,6 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private static readonly string[] WoodTextures = ["inside", "hewn", "bark", "rings"];
     private const string HullElement = "Hull";
     private const string StepPart = "Step";
-    private const string MultiBoxPhysics = "passivephysicsmultibox";
     private const string CharTexture = "char";
     private const string ClayTexture = "clay";
     private const string BarkGroup = "Bark";
@@ -67,8 +66,6 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private float sinceTick;
     private ILoadedSound? fire;
     private readonly Dictionary<long, float> swings = [];
-    private JsonObject collisionBoxes = null!;
-    private int collidingAt = int.MinValue;
 
     public override bool Finished => burnout.Finished;
 
@@ -100,35 +97,12 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     {
         base.Initialize(properties, attributes);
         config = attributes.AsObject<BurnoutConfig>(new BurnoutConfig());
-        collisionBoxes = attributes["collisionBoxesByHewing"];
         burnout = new Burnout(() => Tree, MarkDirty, config, RimVoxels, () => Hold?.DesignedLitres ?? 0);
         clay = new AssetLocation(config.Clay);
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
     }
 
     public override Shell Formed(Shell designed) => designed.Uncut(UncutMetres, burnout.Hollowed);
-
-    public override void AfterInitialized(bool onFirstSpawn)
-    {
-        base.AfterInitialized(onFirstSpawn);
-        if (entity.Api.Side != EnumAppSide.Server) return;
-
-        FitCollision();
-        Reformed += FitCollision;
-    }
-
-    private void FitCollision()
-    {
-        int level = burnout.Finished ? -1 : burnout.Level;
-        if (level == collidingAt || entity.GetBehavior<EntityBehaviorPassivePhysicsMultiBox>() is not { } physics
-            || entity.Properties.Server?.BehaviorsAsJsonObj?.FirstOrDefault(behavior => behavior["code"].AsString() == MultiBoxPhysics) is not { } designed) return;
-
-        var attributes = designed.Token.DeepClone();
-        if (level >= 0) attributes["collisionBoxes"] = collisionBoxes.AsArray()[level].Token.DeepClone();
-        physics.SetProperties(new JsonObject(attributes));
-        physics.AdjustCollisionBoxesToYaw(1, false, entity.Pos.Yaw);
-        collidingAt = level;        Shipyard.Log(entity, level < 0 ? "she collides as her finished hull" : "she collides as the trunk stands at hollow {0}", level + 1);
-    }
 
     public static void Begin(Entity vessel, double hours) => Begin(vessel, DataVersion, tree =>
     {

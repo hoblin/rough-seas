@@ -5,7 +5,7 @@ from physics import afloat, kilograms, stands
 from fit import APART
 import units
 from entity import merged, record
-from shape import BILGE, FACES, ORIGIN, Hull, bilge_levels, bounds, collision, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
+from shape import BILGE, FACES, ORIGIN, Hull, bilge_levels, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
 from wounds import wound
 
 LOG = 16
@@ -598,8 +598,7 @@ def deck():
 
 def level_boxes(stages):
     boxes = [bounds(stages["Blank"]["children"][n], *([stages["Bark"]] if n == 0 else [])) for n in range(HOLLOWINGS)]
-    return {"collisionBoxesByHewing": [collision({"from": frm, "to": to}, square=True)["behaviorConfigs"]["passivephysicsmultibox"]["collisionBoxes"] for frm, to in boxes],
-            "hullBoxesVoxels": [{"from": frm, "to": to} for frm, to in boxes],
+    return {"hullBoxesVoxels": [{"from": frm, "to": to} for frm, to in boxes],
             "hullBoxesMetres": [{end: [num(units.metres(c - o)) for c, o in zip(corner, ORIGIN)] for end, corner in (("from", frm), ("to", to))}
                                 for frm, to in boxes]}
 
@@ -623,7 +622,7 @@ def build(path):
     shape.add(*stages.values())
     hewn(shape, hull, shell, stages)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
-    box, measured = hull_box(shell, square=True)
+    box, measured = hull_box(shell)
     shape.add(box)
     record("dugout", merged(measured, walls()))
     shape.keep("FrontSeat", "BackSeat", "OarStorage")

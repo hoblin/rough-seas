@@ -204,7 +204,6 @@ The axe held on the blank strips its bark first, a piece a stroke, `barkPieces` 
 | `hollowLengthMetres` | m | 0 | how long the fire burns along her, where its smoke and flames rise |
 | `hewnSectionsMetres` | m | none | the sections a hewing works one at a time: spans along her from her bow, as her hull box measures her, the first and last taking her ends |
 | `hullBoxesMetres` | m | none | her hull box at each hollowing, `from` and `to` as `hullBoxMetres` gives them, round the trunk as it stands then: what the axe and every click aim at while she is built |
-| `collisionBoxesByHewing` | m | none | her `passivephysicsmultibox` collision boxes at each hollowing, round the trunk as it stands then, as many at each as she has finished: what she meets the ground and blocks with while she is built |
 
 The vessel needs a `roughseas:bilge` too: its `capacityLitres` is the hollow that the build cuts out. At every stage she is a vessel: the wood not yet cut out weighs and floats as her hull does, backs her sides below the cut and her bottom against a blow, and her `roughseas:bilge` holds only what is cut, so a blank floats solid and a half-hollowed hull ships half a bilge. She cracks and breaks as a finished one, rain puts her fire out, and water in the hollow keeps it from being lit. She gets her seats only when finished. A vessel already in a world from before, with no build of its own, is finished.
 
