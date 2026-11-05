@@ -14,6 +14,10 @@ public interface IOutboard
     /// <summary>How far it stands off her centreline toward its side, in metres.</summary>
     double OffMetres { get; }
 
+    double WaterplaneSquareMetres { get; }
+
+    double LengthMetres { get; }
+
     /// <param name="joules">The knock, as the hull would have taken it.</param>
     void Strike(double joules);
 

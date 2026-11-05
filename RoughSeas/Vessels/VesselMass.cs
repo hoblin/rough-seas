@@ -17,35 +17,43 @@ public class VesselMass
     public double ArmorKgPerWalkSpeed;
     public double CrewKg;
     public Dictionary<string, double> ContainerKg = [];
-    public double SitDownSeconds;
-    public double StandUpSeconds;
 
-    /// <summary>Built as the vessel initialises, while vanilla's saved <c>seatdata</c> still names who was aboard when she was loaded.</summary>
-    public Seating Seating(Entity vessel) => new(SitDownSeconds, StandUpSeconds, Recorded(vessel));
-
-    private static IEnumerable<long> Recorded(Entity vessel) =>
-        vessel.WatchedAttributes["seatdata"] is TreeAttribute seats
-            ? seats.Values.OfType<TreeAttribute>().Select(seat => seat.GetLong("passenger")).Where(id => id != 0).ToList()
-            : [];
-
-    public static IEnumerable<Entity> Passengers(Entity vessel) =>
-        (vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []).Select(seat => seat.Passenger).OfType<Entity>();
-
-    public Aboard Of(Entity vessel, double hullKg, Seating? seating = null)
+    public Aboard Of(Entity vessel, double hullKg, int awaitedRiders = 0)
     {
         var accessories = vessel.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory ?? Enumerable.Empty<ItemSlot>();
         var hold = vessel.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault();
         double water = (hold?.Litres ?? 0) * SeawaterKgPerLitre;
         double fill = hold is { CapacityLitres: > 0 } ? hold.Litres / hold.CapacityLitres : 0;
-        var seated = Passengers(vessel).Select(passenger => new Person(passenger.EntityId, passenger.Properties.Weight, Kit(passenger)));
-        var people = seating?.Bear(seated, vessel.World.ElapsedMilliseconds / 1000.0) ?? seated.ToList();
+        var passengers = (vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []).Select(seat => seat.Passenger).OfType<Entity>().ToList();
         return new Aboard(
             hullKg,
-            people.Sum(person => person.BodyKg),
-            people.Sum(person => person.KitKg),
+            passengers.Sum(passenger => passenger.Properties.Weight) + awaitedRiders * (CrewKg - PlayerGearKg),
+            passengers.Sum(Kit) + awaitedRiders * PlayerGearKg,
             accessories.Sum(slot => slot.Itemstack is { } stack ? Container(stack) : 0),
             water,
             water * fill);
+    }
+
+    /// <summary>
+    /// The rider each of her saved seats names. Read as she initialises: vanilla rewrites the record from the seats as each
+    /// saved rider is seated again, dropping those whose entities haven't loaded yet.
+    /// </summary>
+    public static Dictionary<string, long> Recorded(Entity vessel) =>
+        vessel.WatchedAttributes["seatdata"] is TreeAttribute seats
+            ? seats.Values.OfType<TreeAttribute>()
+                .Where(seat => seat.GetLong("passenger") != 0)
+                .ToDictionary(seat => seat.GetString("seatid"), seat => seat.GetLong("passenger"))
+            : [];
+
+    /// <summary>Whether a saved seat still waits for its rider: empty, the rider not loaded or loaded still holding it.</summary>
+    public static bool Awaits(Entity vessel, string seatId, long riderId)
+    {
+        var seat = vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats.FirstOrDefault(seat => seat.SeatId == seatId);
+        if (seat?.Passenger != null) return false;
+        if (vessel.World.GetEntityById(riderId) is not { } rider) return true;
+
+        return rider.WatchedAttributes["mountedOn"] is TreeAttribute held
+            && held.GetLong("entityIdMount") == vessel.EntityId && held.GetString("seatId") == seatId;
     }
 
     private double Kit(Entity passenger)

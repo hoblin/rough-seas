@@ -197,16 +197,16 @@ A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls
 
 | Member | What it is |
 | --- | --- |
-| `HullResponse.Of(lengthMetres, beamMetres, draftMetres, depthMetres, config)` | the response of a hull of these dimensions, floating at this draft |
+| `HullResponse.Of(lengthMetres, beamMetres, draftMetres, depthMetres, config)` | the response of a hull of these dimensions, floating at this draft, her waterplane taken as the ellipse of her length and beam |
 | `new HullResponse(heavePeriodSeconds, rollPeriodSeconds, config)` | one on periods you give; a period of 0 follows the water as it lies |
 | `Follow(pose, seconds)` | the pose the hull takes `seconds` after the last call, chasing `pose`; where no swell is drawn it comes to rest at once |
 | `HeavePeriodSeconds`, `RollPeriodSeconds` | its periods; set them as its draft changes |
-| `HullResponse.HeavePeriod(draftMetres, config)` | the heave and pitch period of a hull floating this deep, in seconds |
+| `HullResponse.HeavePeriod(kg, addedKg, kgPerMetre)` | the heave and pitch period of a hull of this mass, dragging `addedKg` of water and displacing `kgPerMetre` for each metre she sinks, in seconds |
 | `HullResponse.RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres)` | its roll period, in seconds |
 
 `Follow` returns the pose with its `Lift`, `Roll` and `Pitch` answered and its `Hold` as it was, so blend by it as before. Ours refresh the periods from the hull's draft every frame, so a laden hull answers slower than an empty one. A long gap between calls, as when a hull returns to the water, is caught up as one period at most, so the hull doesn't leap. Where the periods come from is on [The science of the hull](The-Science-of-the-Hull#riding-the-swell).
 
-`config` is the `response` block of our `config/storms.json`, reached as `StormsModSystem.Config.Response`: `heaveAddedMass`, the water a hull drags with it as it heaves, in its own masses (1); and `heaveDamping` (0.3) and `rollDamping` (0.1), how fast a swing dies, as shares of critical damping.
+`config` is the `response` block of our `config/storms.json`, reached as `StormsModSystem.Config.Response`: `heaveDamping` (0.3) and `rollDamping` (0.1), how fast a swing dies, as shares of critical damping. The water a hull drags as it heaves is `RoughSeas.Vessels.HeaveAddedMass`: `OfPlate(halfLength, halfBeam)` or `OfWaterplane(squareMetres, halfBeam)`, in kilograms; a vessel with a hull of ours gives hers as `IBuoyant.AddedKg`.
 
 ### A ship that rides our swell
 

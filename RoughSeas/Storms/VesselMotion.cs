@@ -154,7 +154,7 @@ public static class VesselMotion
         if (forces.Buoyant is { HasDraft: true } buoyant)
         {
             double draft = buoyant.Afloat.DraftMetres;
-            response.HeavePeriodSeconds = HullResponse.HeavePeriod(draft, storms!.Config.Response);
+            response.HeavePeriodSeconds = HullResponse.HeavePeriod(buoyant.Aboard.Total, buoyant.AddedKg, buoyant.KgPerMetre);
             response.RollPeriodSeconds = HullResponse.RollPeriod(length, forces.BeamMetres, draft, buoyant.DepthMetres);
         }
         responses[boat.EntityId] = (response, Seconds);

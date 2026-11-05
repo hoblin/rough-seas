@@ -197,7 +197,7 @@ public class BridgeCommands : ModSystem
             .BeginSubCommand("dismount")
                 .WithDescription("Get the caller out of whatever they are seated in, leaving it where it is")
                 .RequiresPlayer()
-                .HandleWith(args => args.Caller.Player.Entity.TryUnmount()
+                .HandleWith(args => Dismount(args.Caller.Player.Entity)
                     ? TextCommandResult.Success("Dismounted")
                     : TextCommandResult.Error("Not seated, or the seat would not let go"))
             .EndSubCommand()
@@ -678,6 +678,15 @@ public class BridgeCommands : ModSystem
 
         var flown = Fly(player, new Vec3d(coast.Value.x + 0.5, sapi.World.SeaLevel + 20, coast.Value.z + 0.5));
         return TextCommandResult.Success($"{flown.StatusMessage}, near the coast: no open beach is loaded yet, run /bridge shore again once the land has loaded");
+    }
+
+    private static bool Dismount(EntityAgent rider)
+    {
+        if (rider.MountedOn is not { } seat) return false;
+        seat.DoTeleportOnUnmount = false;
+        bool left = rider.TryUnmount();
+        seat.DoTeleportOnUnmount = true;
+        return left;
     }
 
     private TextCommandResult Fly(IServerPlayer player, Vec3d position)

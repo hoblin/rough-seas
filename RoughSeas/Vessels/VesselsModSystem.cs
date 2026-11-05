@@ -48,6 +48,7 @@ public class VesselsModSystem : ModSystem
     public override void StartClientSide(ICoreClientAPI capi)
     {
         HullLabel.Attach();
+        Disembarking.Attach();
         reports = capi.Network.GetChannel(Channel);
     }
 
@@ -57,7 +58,9 @@ public class VesselsModSystem : ModSystem
     public override void Dispose()
     {
         HullReach.Detach();
-        if (api?.Side == EnumAppSide.Client) HullLabel.Detach();
+        if (api?.Side != EnumAppSide.Client) return;
+        HullLabel.Detach();
+        Disembarking.Detach();
     }
 
     public override void StartServerSide(ICoreServerAPI api)

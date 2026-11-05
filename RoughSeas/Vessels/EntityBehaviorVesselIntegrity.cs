@@ -33,7 +33,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private const double AfloatStepHours = 1;
     /// <summary>How far below a vessel's origin to look for the water she floats in: a light hull floats with its origin above the water's block.</summary>
     public const double WaterlineProbeMetres = 0.25;
-    private const double FounderedMetres = 100;
     private const float MinSunlight = 0.5f;
     private const float MaxDryingRain = 0.05f;
     private const string HullBox = "HullAP";
@@ -57,7 +56,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private SeaClock.Watch watch = null!;
     private HullModel model = null!;
     private Flotation flotation = null!;
-    private Seating seating = null!;
+    private Dictionary<string, long> awaitedRiders = [];
     private HullBuild build;
     private VesselPart[] parts = [];
     private double impactCapacity;
@@ -107,8 +106,23 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public Afloat Afloat { get; private set; }
 
-    /// <summary>How far below vanilla's drawn waterline she floats, that line being her reference build with one rider aboard.</summary>
-    public double SettlingMetres { get; private set; }
+    public double ReferenceDraftMetres => referenceDraft;
+
+    public double KgPerMetre => flotation.KgPerMetre;
+
+    public double AddedKg
+    {
+        get
+        {
+            double floatSquareMetres = outboard?.WaterplaneSquareMetres ?? 0;
+            double hullSquareMetres = flotation.HasHold
+                ? flotation.KgPerMetre / (VesselMass.SeawaterKgPerLitre * 1000) - floatSquareMetres
+                : 4 * Shape.HalfLength * Shape.HalfBeam;
+            double floatHalfLength = (outboard?.LengthMetres ?? 0) / 2;
+            double floatAdded = floatHalfLength > 0 ? HeaveAddedMass.OfPlate(floatHalfLength, floatSquareMetres / (Math.PI * floatHalfLength)) : 0;
+            return HeaveAddedMass.OfWaterplane(hullSquareMetres, Shape.HalfBeam) + floatAdded;
+        }
+    }
 
     public Aboard Aboard { get; private set; }
 
@@ -161,8 +175,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         depthMetres = attributes["depthMetres"].AsDouble();
         waterplaneSquareMetres = attributes["waterplaneSquareMetres"].AsDouble();
         flotation = new Flotation(depthMetres, waterplaneSquareMetres, build.Litres);
-        seating = vessels.Mass.Seating(entity);
         ReferenceKg = properties.Weight + vessels.Mass.CrewKg;
+        awaitedRiders = VesselMass.Recorded(entity);
         referenceDraft = flotation.Float(new Aboard(ReferenceKg, 0, 0, 0, 0, 0), false).DraftMetres;
         impact = new Impact(attributes["minImpactSpeed"].AsDouble(1), InvulnerableMs);
         rams = new Rams(attributes["minImpactSpeed"].AsDouble(1));
@@ -232,7 +246,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     public override void OnGameTick(float deltaTime)
     {
         if (entity.World.Side == EnumAppSide.Client && !RunsHere()) course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
-        if ((sinceUpdate += deltaTime) >= UpdateSeconds || !Seated())
+        if ((sinceUpdate += deltaTime) >= UpdateSeconds)
         {
             Float();
             if (entity.World.Side == EnumAppSide.Server && entity.Alive)
@@ -588,10 +602,13 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         var hold = Hold;
         if (hold != null) Reform(hold);
         inWater = entity.Swimming || FluidBelow().IsLiquid();
-        Aboard = vessels.Mass.Of(entity, build.WithUncut(uncutLitres).Kilograms + model.SoakedKg, seating);
+        foreach (var (seatId, riderId) in awaitedRiders.ToList())
+        {
+            if (!VesselMass.Awaits(entity, seatId, riderId)) awaitedRiders.Remove(seatId);
+        }
+        Aboard = vessels.Mass.Of(entity, build.WithUncut(uncutLitres).Kilograms + model.SoakedKg, awaitedRiders.Count);
         var afloat = flotation.Float(Aboard, hold != null && (hold.Litres >= hold.CapacityLitres || Afloat.Sunk && inWater));
         Afloat = inWater ? afloat : afloat with { Sunk = false };
-        SettlingMetres = Afloat.Sunk ? FounderedMetres : Afloat.DraftMetres - referenceDraft;
         if (entity.World.Side != EnumAppSide.Server || !HasDraft || !inWater) return;
 
         if (Afloat.Sunk != wasSunk)
@@ -605,8 +622,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         if (awash && !wasAwash) vessels.Log(entity, "awash at {0:F2} m draft with {1:F0} kg aboard", Afloat.DraftMetres, Aboard.Total);
         (wasSunk, wasAwash) = (Afloat.Sunk, awash);
     }
-
-    private bool Seated() => seating.Settled(VesselMass.Passengers(entity).Select(passenger => passenger.EntityId));
 
     private void Reform(IVesselHold hold, bool rebuilt = false)
     {
