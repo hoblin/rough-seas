@@ -323,7 +323,7 @@ A wet lath held with Shift on the ground lies there at its full length, centred 
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
-| `layout` | object | none | how her first stage's laths are laid out: `{ "kind": "lattice", "along": 7, "across": 7 }`, so many laths along and across, each crossing every lath across it, spaced as her model draws them within `toleranceMetres` (`alongSpacingMetres`, `acrossSpacingMetres`; our coracle), or `{ "kind": "pair", "beamMetres": 1.2, "toleranceMetres": 0.25 }`, two laths side by side at her beam, overlapping end for end within the tolerance (our currach) |
+| `layout` | object | none | how her first stage's laths are laid out: `{ "kind": "lattice", "along": 7, "across": 7 }`, so many laths along and across, each crossing every lath across it, spaced as her model draws them within `toleranceMetres` (`alongSpacingMetres`, `acrossSpacingMetres`; our coracle), or `{ "kind": "pair", "beamMetres": 1.075, "toleranceMetres": 0.0625 }`, two laths side by side at her beam, overlapping end for end within the tolerance (our currach) |
 | `overturned` | bool | false | she is built upside down, and is finished only once turned over: a right-click with an empty hand turns her, once every piece she needs is laid |
 | `overturnedPivotVoxels` | voxels | none | `[x, y, z]`, a point on her shape the line along her length she is turned about runs through, so that her gunwale lies on the ground; our builder writes it beside `overturnedPivotMetres`, the same point in metres, which the mod doesn't read |
 
@@ -386,7 +386,7 @@ A knock strikes with ½ · mass · (speed² − `minImpactSpeed`²), where the m
 - each accessory by the category it attaches as, at its empty weight (`basket` 2 kg, `crate` 12, `chest` 20); what they hold doesn't count;
 - the water in its `roughseas:bilge`, by how full it is: a full bilge counts all its weight, a half-full one half.
 
-Give `impactCapacity` by the knocks the hull should take: our coracle's 400 J and dugout's 30,000 bracket the roster, and a hull of skin over laths gets a `frame` as well, and [Hull condition](Hull-Condition#knocks-and-landings) shows what a knock does to each.
+Give `impactCapacity` by the knocks the hull should take: our coracle's 400 J and the sailboat's 40,000 bracket the roster, and a hull of skin over laths gets a `frame` as well, and [Hull condition](Hull-Condition#knocks-and-landings) shows what a knock does to each.
 
 **Leaks.** A cracking hull's cracks leak as a hole does, faster the bigger the crack and the deeper it lies under the sea outside, and slower as the water inside rises to meet it ([Leaks](The-Science-of-the-Hull#leaks)). A bottom crack lies at the keel, any other a quarter of the way up the side, so a light hull's side cracks may ride above the water until she is laden. The numbers are in `config/vessels/hull.json`: `dischargeCoefficient`, the share of a hole's area that flows (0.61); `crackSquareCentimetres`, a stove-in crack's hole (25), which a blow must break the shell around; `sideCrackShare`, how far up the side a side crack lies (0.25); and `soakedStrengthShare`, the share of its dry strength wet wood bends to breaking under (0.57).
 

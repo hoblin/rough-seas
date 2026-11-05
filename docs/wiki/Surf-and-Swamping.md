@@ -35,7 +35,7 @@ Boats with a hull hold that water in their [bilge](Bailing), with what their [cr
 A litre of seawater weighs a kilogram, and a bilge holds hundreds. As it fills, a boat:
 
 - **rides lower.** With one aboard, a full bilge brings her gunwale down to the water, so each wave comes aboard more easily than the last;
-- **gets slower.** It paddles as hard and pushes a heavier hull, so the lighter the boat for her bilge, the more its water slows it: half full, a dugout keeps four fifths of its speed, a bark canoe or a coracle three quarters, and a hide currach, whose bilge holds 25 times her weight, three fifths. A load slows her the same way, a second rider or a hold of chests, and a hull of a light wood is a little faster than oak: a kapok dugout makes 8% more speed, an ebony one 4% less ([how](The-Science-of-the-Hull#driving-her));
+- **gets slower.** It paddles as hard and pushes a heavier hull, so the lighter the boat for her bilge, the more its water slows it: half full, a dugout or a coracle keeps four fifths of its speed, a bark canoe three quarters, and a hide currach, whose bilge holds 22 times her weight, two thirds. A load slows her the same way, a second rider or a hold of chests, and a hull of a light wood is a little faster than oak: a kapok dugout makes 8% more speed, an ebony one 4% less ([how](The-Science-of-the-Hull#driving-her));
 - **rolls harder.** The water sloshing across the bilge leans with every roll and adds to it, twice the roll when full, and a breaker half as high overturns it.
 
 ## Swamping
@@ -47,7 +47,7 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 | Vessel | Holds up awash |
 | --- | --- |
 | [Coracle](Coracle) | 14 kg: its rider's gear, and no armour |
-| [Hide currach](Hide-Currach) | 26 kg: her rower's gear and three baskets, but not a chest besides |
+| [Hide currach](Hide-Currach) | 33 kg: her rower's gear and three baskets, but not a chest besides |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Reed boat](Reed-Boat), fresh | 118 kg, less the water it has soaked up |
@@ -81,7 +81,7 @@ Either the planks hold, or the windward bow, side or quarter it hits is stove in
 
 | Vessel | A spilling breaker of | A plunging breaker of |
 | --- | --- | --- |
-| [Coracle](Coracle) | 2.2 m | 0.2 m |
+| [Coracle](Coracle), willow | 2.2 m | 0.2 m |
 | [Hide currach](Hide-Currach) | 12 m | 1.3 m |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 10 m | 1.1 m |
 | [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | none | 3.3 m |

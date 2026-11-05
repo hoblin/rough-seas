@@ -8,7 +8,7 @@ The first venture to sea under oars. A hide hull flexes with the waves instead o
 
 ## Where it comes from
 
-Currachs have worked the Atlantic coast of Ireland for as long as there are records. The early Irish ones were covered with ox hides, and the monks who sailed to the Hebrides, Iceland and, by legend, beyond, sailed in them; in 1976–77 Tim Severin crossed from Ireland to Newfoundland in the *Brendan*, a leather boat built in this way. A currach was built upside down: her gunwale laid out on the ground, her ribs bent over it and set into it, the stringers tied along them, and the frame turned over once it had set and been covered. The model is a small hide currach of that kind, 4.7 m long and 1.2 m in beam.
+Currachs have worked the Atlantic coast of Ireland for as long as there are records. The early Irish ones were covered with ox hides, and the monks who sailed to the Hebrides, Iceland and, by legend, beyond, sailed in them; in 1976–77 Tim Severin crossed from Ireland to Newfoundland in the *Brendan*, a leather boat built in this way. A currach was built upside down: her gunwale laid out on the ground, her ribs bent over it and set into it, the stringers tied along them, and the frame turned over once it had set and been covered. The model is a small hide currach of that kind, 4.8 m long and 1.2 m in beam.
 
 ## By the numbers
 
@@ -30,7 +30,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | Carried | picked up |
 | Seats | one: the rower on the thwart, facing her stern, rowing her own two oars with an empty hand, or standing on her floor, facing her bow, to pole her through shallows |
 | Cargo | three spots on the bottom, two behind the rower and one beyond his feet; each takes a basket (8 slots), a storage vessel (12) or a chest (16; a treasure chest 4) |
-| Built from | 2 laths of 5 m for her gunwale, 9 of 3 m and 13 of 2 m for her ribs and 7 of 5 m for her stringers, 6 ropes, eight small hides' worth of hide and a 2 m pole, then greased |
+| Built from | 2 laths of 5 m for her gunwale, 9 of 3 m and 13 of 2 m for her ribs and 7 of 5 m for her stringers, 6 ropes, eight small hides' worth of hide, a 2 m pole and two [thole oars](Recipes#thole-oar), then greased |
 | Wreckage | a few laths |
 
 ## How it is built

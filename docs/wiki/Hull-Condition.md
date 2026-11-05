@@ -15,7 +15,7 @@ Look at a vessel to read its hull. A sound one says *Hull: sound*; a cracked one
 
 Below it: how many litres a minute she leaks, and her [freeboard](Surf-and-Swamping#how-she-floats) in centimetres, the side she shows above the water; *Awash* when the sea comes over it, *Sunk* when she lies on the bottom.
 
-The hull shows each crack where it is, in the hull itself, from outside and from your seat aboard: a scratch is a hairline through the wall, a crack runs along the grain, a split opens across the whole span between what holds the shell and its edge springs, and a place stove in is broken through, its shell pushed in and the dark of the breach around it. Bark splits along its grain, and a bark canoe's sheathing breaks with it; hide tears into a flap. From a split on, the rib or lath under it breaks too, and a place stove in pushes its broken ends inward. A port crack sits nearer the bow than its starboard twin, so the two sides never mirror each other. The crack is as long as the shell's span, but drawn wider than the few millimetres it really opens, so that you see it. A dugout or a bark canoe still being built shows its cracks too. A vessel you pick up carries its hull with it, every crack in place, and its durability on the item shows how much is left.
+Our vessels show each crack where it is, in the hull itself, from outside and from your seat aboard: a scratch is a hairline through the wall, a crack runs along the grain, a split opens across the whole span between what holds the shell and its edge springs, and a place stove in is broken through, its shell pushed in and the dark of the breach around it. Bark splits along its grain, and a bark canoe's sheathing breaks with it; hide tears into a flap. From a split on, the rib or lath under it breaks too, and a place stove in pushes its broken ends inward. A port crack sits nearer the bow than its starboard twin, so the two sides never mirror each other. The crack is as long as the shell's span, but drawn wider than the few millimetres it really opens, so that you see it. A dugout or a bark canoe still being built shows its cracks too. The sailboat marks each cracked place on its planks instead. A vessel you pick up carries its hull with it, every crack in place, and its durability on the item shows how much is left.
 
 ![A dugout seen from its seat: a crack along the grain in its floor, and to either side places split and stove in](images/mechanics/wounds-from-the-seat.webp)
 
@@ -49,7 +49,7 @@ What a blow does depends on what it is:
 
 A hull breaks up from one really severe blow, or once every place is stove in. Cracks short of that don't break it: they let in the sea.
 
-No two boats are quite alike, as no two pieces of wood are, so the same knock may crack one hull a little more than another. There are no dice: a small knock on a stout hull always leaves a small scratch, and a big one on a light hull is always trouble. Small knocks add up.
+No two boats are quite alike, as no two pieces of wood are, so the same knock may crack one hull a little more than another. There are no dice: a small knock on a stout hull always leaves a small scratch, and a big one on a light hull is always trouble. On a planked or carved hull, small knocks add up.
 
 ### Hide, bark and reed
 
@@ -145,7 +145,7 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 | [Sailboat](Sailboat) | 8209 litres | 188 | none | forty-four minutes |
 | [Hide currach](Hide-Currach) | 1911 litres | 84 | none | twenty-three minutes |
 
-A bottom leak keeps its pace as she fills, for the water inside rises with her; a side leak slows once the water inside stands above it. A bottom only cracked by a hard knock lets in about a third as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) she is done.
+A bottom leak keeps its pace as she fills, for the water inside rises with her; a side leak slows once the water inside stands above it. A bottom only cracked by a hard knock lets in about a quarter as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) she is done.
 
 ## Seeping and soaking
 

@@ -1,6 +1,6 @@
 ![The birch-bark canoe afloat](images/birch-bark-canoe/afloat-bow.webp)
 
-One sheet of birch bark over a frame of split laths: gunwales lashed on at intervals, three thwarts, sheathing and ribs inside, and high, upswept stems, its seams black with pitch. One person kneels amidships and paddles it with an [oar](https://wiki.vintagestory.at/Oar) in hand; a second rides in the bow.
+One sheet of birch bark over a frame of split laths: gunwales lashed on at intervals, three thwarts, sheathing and ribs inside, and high, upswept stems, its seams black with pitch. One person kneels amidships and paddles it with a [paddle](Paddles-Poles-and-Oars) in hand; a second rides in the bow.
 
 ## In Rough Seas
 

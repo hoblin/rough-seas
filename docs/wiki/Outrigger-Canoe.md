@@ -18,7 +18,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Turning | clumsy, 14° a second paddled |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): her hull is the dugout's |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | with washstrakes 58 cm empty, 56 cm with its helmsman; without them 43 and 41; in oak |
+| [Freeboard](Surf-and-Swamping#how-she-floats) | with washstrakes 58 cm empty, 57 cm with its helmsman; without them 44 and 42; in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 254 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place; 1 flax twine binds up a ninth of her float's lashings |
 | [Her float](Hull-Condition#an-outriggers-float) | takes the knocks on its side on its lashings: with one aboard, losing 2 m/s into rock works nearly half of them loose, and 4 m/s tears them out and leaves her the dugout |
@@ -55,7 +55,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
    ![The first boom across](images/outrigger-canoe/build-boom.webp)
 
 4. **Lay the booms.** Hold the other two poles on the outrigger for the fore and aft booms. Each is a crooked pole that rests on the gunwales and on top of the logs, as the curved booms of Hawaii and the Marshall Islands came down to the float. All the poles must be of one wood.
-5. **Hew the float.** Hold an axe on the outrigger. Each pass hews the float all round, top, sides and bottom alike, from the square logs toward a round log 30 cm across with its ends pointed and lifted. Six passes take it down from 3000 litres of wood to 224. The booms settle onto it as it shrinks: they never hang in the air and never pass through wood. While the float is still the logs, the outrigger weighs two tonnes and barely moves.
+5. **Hew the float.** Hold an axe on the outrigger. Each pass hews the float all round, top, sides and bottom alike, from the square logs toward a round log 30 cm across with its ends pointed and lifted. Six passes take it down from 3000 litres of wood to 196. The booms settle onto it as it shrinks: they never hang in the air and never pass through wood. While the float is still the logs, the outrigger weighs two tonnes and barely moves.
 
    ![Three passes hewn, the booms settled onto the float](images/outrigger-canoe/build-hewing.webp)
 

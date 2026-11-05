@@ -18,14 +18,14 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | --- | --- |
 | Speed | 2.1 m/s paddled, 2.3 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | nimble, 33° a second |
-| [Hull](Hull-Condition) | 3000 J; tears, shown as *Reed torn* |
+| [Hull](Hull-Condition) | 30 600 J in its lashings, once the bundles have crushed; tears, shown as *Reed torn* |
 | [Soaking](Hull-Condition#seeping-and-soaking) | 33 kg of water a day afloat: its rider awash after a day, on the bottom within four left alone; dries ashore in the sun, a third of it left behind as rot |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | 14 cm empty, 5 cm with its rider, when dry |
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
 | [Rapids](Rapids) | unharmed: its bundles crush and take each strike |
-| [Lightning](Lightning) | torn apart |
+| [Lightning](Lightning) | unharmed: its bundles crush and take the strike |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up, from the first binding on |

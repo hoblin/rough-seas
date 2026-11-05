@@ -1,6 +1,6 @@
 ![The coracle afloat](images/coracle/afloat-bow.webp)
 
-An oval bowl of hide over a basket of split laths: a lattice across the flat bottom, its ends bent up into a plaited gunwale, the hide laced to it and sealed with rendered fat. It carries one person, paddled with an [oar](https://wiki.vintagestory.at/Oar), and it is light enough to wear on your back.
+An oval bowl of hide over a basket of split laths: a lattice across the flat bottom, its ends bent up into a plaited gunwale, the hide laced to it and sealed with rendered fat. It carries one person, sculled over the bow with a [paddle](Paddles-Poles-and-Oars), and it is light enough to wear on your back.
 
 ## In Rough Seas
 

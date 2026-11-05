@@ -18,14 +18,14 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 | [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | 5.9 m/s, sailing | stays where launched |
 | [Sailboat](Sailboat) | long voyages and heavy cargo | 7.2 m/s, sailing | dear to build, ships water fast in a gale |
 
-Speeds are one rower's, paddled unless noted, on calm water; under sail what the wind gives. Each tool and how fast it drives each vessel: [paddles, poles and oars](Paddles-Poles-and-Oars).
+Speeds are one rower's, paddled unless noted, on calm water; under full sail vanilla's pace, whatever the wind. Each tool and how fast it drives each vessel: [paddles, poles and oars](Paddles-Poles-and-Oars).
 
 ## Side by side
 
 | | [Hull](Hull-Condition) | [Bilge](Bailing) | [Flooded](Surf-and-Swamping#swamping) | [Capsized by](Surf-and-Swamping#capsizing) | [Upkeep](Hull-Condition#seeping-and-soaking) | [Mended with](Mending) | Carried |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [Raft](Raft) | 1200 J | none | never floods | 2 m | none | a rope | picked up |
-| [Reed boat](Reed-Boat) | 3000 J, and tears | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
+| [Raft](Raft) | 1200 J | none | never floods | 2 m | none | flax twine | picked up |
+| [Reed boat](Reed-Boat) | 30 600 J, and tears | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
 | [Dugout](Dugout) | 30 000 J | 1298 l | awash | 0.9 m | none | a log | no |
 | [Coracle](Coracle) | 690 J | 272 l | awash | 0.6 m | greased every few days | a small hide; fat for its seams | worn on the back |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 5200 J | 609 l | awash | 0.75 m | none | bark of its tree | picked up |
@@ -54,4 +54,4 @@ A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a 
 
 A better vessel costs more than a worse one for the same job: the reed boat costs a knife, four stacks and a half of reeds and some rope, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
 
-The coracle and the hide currach are made in the crafting grid ([recipes](Recipes)); the reed boat, the dugout, the bark canoe and the outrigger are built in place, by the water or where their material lies, as each one's page shows. Each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).
+The raft is made in the crafting grid; every other one is built in place, by the water or where its material lies, as each one's page shows, and the [recipes](Recipes) make what goes into them. Each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).

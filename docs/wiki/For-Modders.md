@@ -49,15 +49,6 @@ In 3.1 every blow meets what really takes it ([The hull](Building-a-Vessel#the-h
 
 New: the vessel's `shell`, `config/vessels/damage.json`'s `broadSources`, `cutShare` and `variation`, a material's `toughness` and `cutToughness`, and `hull.json`'s `soakedStrengthShare`. Gone, never documented here: `config/storms.json`'s `waves.breakerTransfer`, `waves.periodSecondsPerRootMetre` and `ashore.impactFactor`.
 
-### Heave by mass
-
-In 4.0 a vessel with a draft heaves by her own mass ([Floating](Building-a-Vessel#floating)), and what she drags with her comes from her form. A vessel of yours loads as it did; code that reads the heave changes:
-
-- `HullResponse.HeavePeriod(draftMetres, config)` gave way to `HullResponse.HeavePeriod(kg, addedKg, kgPerMetre)`; `HullResponse.Of` keeps its arguments.
-- `config/storms.json`'s `response.heaveAddedMass` is gone: `HeaveAddedMass` gives the water from a hull's waterplane.
-- `IBuoyant.SettlingMetres` is gone; `ReferenceDraftMetres`, `KgPerMetre` and `AddedKg` are new. `IOutboard` adds `WaterplaneSquareMetres` and `LengthMetres`.
-- Vanilla's `swimmingOffsetY` now sets her keel: vanilla's `Swimming` means her keel is wet.
-
 ### One sea, one clock
 
 In 3.2 every client draws the same waves, and everything at sea keeps one clock ([The sea's time](Reading-the-Sea#the-seas-time)). A vessel of yours loads as it did, but code that reads the time changes:
@@ -68,24 +59,20 @@ In 3.2 every client draws the same waves, and everything at sea keeps one clock 
 
 Gone, never documented here: `config/storms.json`'s `lightning.checkSeconds`, and in `config/soundscape.json` the `water.lapping` loop and `shore.lappingSound` and `lappingStrength`. A hull's splash is `water.splash` now, and the slaps take a `volumePerMetre`.
 
-## What not to touch
+### Heave by mass
 
-| Name | What it is |
-| --- | --- |
-| `roughseas:seamap` | the map region moddata, and the network channel that carries the map to clients |
-| `roughseas:oceancalibration` | save data: what the world's ocean map means |
-| `roughseas:vessels` | the network channel a rider's client reports its vessel's knocks over |
-| `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |
+In 4.0 a vessel with a draft heaves by her own mass ([Floating](Building-a-Vessel#floating)), and what she drags with her comes from her form. A vessel of yours loads as it did; code that reads the heave changes:
 
-## Adding and removing Rough Seas
-
-The mod can join an existing world, and leave one. Without it the world opens cleanly: each region keeps the strength of the wind we last set for up to a game hour, then vanilla rolls its own pattern.
+- `HullResponse.HeavePeriod(draftMetres, config)` gave way to `HullResponse.HeavePeriod(kg, addedKg, kgPerMetre)`; `HullResponse.Of` keeps its arguments.
+- `config/storms.json`'s `response.heaveAddedMass` is gone: `HeaveAddedMass` gives the water from a hull's waterplane.
+- `IBuoyant.SettlingMetres` is gone; `ReferenceDraftMetres`, `KgPerMetre` and `AddedKg` are new. `IOutboard` adds `WaterplaneSquareMetres` and `LengthMetres`.
+- Vanilla's `swimmingOffsetY` now sets her keel: vanilla's `Swimming` means her keel is wet.
 
 ### Dugouts built in place
 
 The dugout is burnt and hewn out of five logs on the shore ([Built in place](Building-a-Vessel#built-in-place)), and its grid recipes are gone. No key was removed, so a vessel of yours loads as it did.
 
-- The dugout's rower holds an oar, as on vanilla's raft: it sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes. A mod that patched its own paddle or strokes patches a vessel that no longer has them.
+- The dugout's rower holds what drives her, as on vanilla's raft: she sets `requiresPaddlingTool`, and her strokes are her own for each tool ([Paddles, poles and oars](#paddles-poles-and-oars)).
 - `roughseas:bilge`'s `capacityLitres` is what the finished hull holds; while she is built, she holds what is cut out of it.
 
 - An axe starts it: Shift + right-clicked on the middle log of a row, it lays the blank. Anywhere else an axe does what vanilla does.
@@ -98,7 +85,7 @@ New: the behaviours `roughseas:burnout` and `roughseas:launch` with their keys, 
 
 The bark canoe is stripped off a standing tree and framed where it lies ([Framed in place](Building-a-Vessel#framed-in-place)), and its grid recipe is gone. No key was removed, so a canoe of yours loads finished, and the bark from a log still mends it.
 
-- The bark canoe's rower holds an oar, as the dugout's does: it sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes, kneeling. Its own paddle, its `roughseas-barkcanoe-*` strokes and `patches/player-barkcanoe.json` are gone.
+- The bark canoe's rower holds what drives her, as the dugout's does: she sets `requiresPaddlingTool`, and her paddler kneels. Her own built-in paddle is gone; her strokes are her own for each tool ([Paddles, poles and oars](#paddles-poles-and-oars)).
 - A knife held on a standing birch, elm or spruce trunk strips it: the trunk becomes our `roughseas:debarkedtrunk-{wood}`, which keeps the grown log's tree-felling group, its spread and its hold on the leaves, and drops vanilla's debarked log. A mod that looks for `log-grown-*` to find a trunk misses a stripped one.
 - Rope held on a canoe still being lashed lashes her instead of tying itself to her: a Harmony prefix on `ItemRope.OnHeldInteractStart`. Once her lashing is done, rope ties to her as before.
 - Rope and every liquid container in the game, a modded one too, carry our collectible behaviour `roughseas:framing`, and our laths carry it by their JSON, so that holding them on a canoe being built lays her next piece.
@@ -111,7 +98,7 @@ New: the behaviour `roughseas:framing` with its keys, the collectible behaviour 
 The outrigger canoe is a finished dugout rigged where she lies ([Rigged in place](Building-a-Vessel#rigged-in-place)), and its grid recipes are gone. Her code is still `roughseas:outrigger-{wood}`, the wood her hull's, so an outrigger of yours loads finished, her float and poles of that wood.
 
 - Her hull is the dugout's: its shape, shell, collision boxes, seats, bilge and `impactCapacity`. Her washstrakes and platform, sawn planks, are gone, and with them her old `hullBox`. A patch that addressed her old shape's elements or her selection boxes by index misses: her boxes are the dugout's three, then `LowerMastAP`.
-- Her rower holds an oar, as the dugout's does: she sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes. With the oar in hand she sails too. Her own paddle, its `roughseas-outrigger-*` strokes and `patches/player-outrigger.json` are gone.
+- Her rower holds what drives her, as the dugout's does: she sets `requiresPaddlingTool`, and her strokes are her own for each tool ([Paddles, poles and oars](#paddles-poles-and-oars)). Her own built-in paddle is gone.
 - She mends with a log of her hull's wood, and breaks into firewood, a rope and linen.
 - A pole held on a finished dugout with a row of three logs alongside replaces the dugout with a new outrigger entity: a mod that keeps a dugout's entity id sees it die (`EnumDespawnReason.Removed`). Her hull's cracks and bilge go across through `IHandedOver`; ropes tied to the dugout do not.
 - `roughseas:framing`'s `framePart` now names a part by its new `name` key, not by its material: the bark canoe's frame part is `"name": "frame"`.
@@ -119,7 +106,7 @@ The outrigger canoe is a finished dugout rigged where she lies ([Rigged in place
 - The wedge's `laths` and `lath` attributes are now `splits`: what a row of so many wedged logs splits into, five into laths, three into poles.
 
 - `IHullForm` grew `Wrecked`, `UnhewnLitres`, `DepthMetres` and `WaterplaneSquareMetres`, and `Hollowed` became `HoldLitres`: what a vessel being built breaks into, the wood she still carries outside her hull, and her depth, waterplane and hold so far. A vessel with a mast that stands only once stepped implements the new `IMasted`. An implementation of yours returns the designed values to keep its behaviour.
-- The dugout is the five logs from first to last: 4.5 m long, 0.9 m wide, 0.56 m deep, a 1156-litre hold and 361 kg in oak, against 400 kg and 450 litres before. Her shape's stage groups are each level's whole trunk, `Clay{n}` each fire's rim, and `Shell` the finished hull; the item hides the stages as before. A dugout of yours loads as she was, at her new size.
+- The dugout is the five logs from first to last: 4.5 m long, 0.9 m wide, 0.56 m deep, a 1298-litre hold and 252 kg in oak, against 400 kg and 450 litres before. Her shape's stage groups are each level's whole trunk, `Clay{n}` each fire's rim, and `Shell` the finished hull; the item hides the stages as before. A dugout of yours loads as she was, at her new size.
 - The outrigger takes optional washstrakes, sawn planks: `roughseas:framing`'s stages may be `optional` and raise her side and hold. One saved without a build has them on.
 
 New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys, `roughseas:framing`'s works `pole`, `hew`, `cloth` and `plank` and its keys `replaces`, `optional`, `raisesMetres`, `raisesLitres`, `part` and `texture`, `roughseas:burnout`'s keys `blankDepthMetres`, `blankWaterplaneSquareMetres` and `unhewnLitres`, a part's `name` and `takesKnocks`, and the items `roughseas:pole-{wood}`.
@@ -128,19 +115,19 @@ New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys
 
 The reed boat is bound from two reed bundles laid by the water ([Bound in place](Building-a-Vessel#bound-in-place)), and its grid recipe is gone. Her code is still `roughseas:reedboat`, so a reed boat of yours loads finished, with her ends bound up and her soak as it was.
 
-- She is a float of two 18 cm bundles: 3 m by 0.36 m, 0.18 m deep, 50 kg, her rider 5 cm above the water. Her shape, collision boxes and seat height changed, and her `Hull`, `FrontSeat` and `Cargo` elements with them; a patch that addressed her old shape's `Port`, `Starboard`, `Core` or `Binding` elements misses. Her `soak` and the `reed` material's density changed with her ([why](The-Science-of-the-Hull)).
-- Her rower holds an oar: she sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes. Her own paddle, its `roughseas-reedboat-*` strokes and `patches/player-reedboat.json` are gone.
+- She is a float of two 19 cm bundles: 3 m by 0.36 m, 0.19 m deep, 50 kg, her rider 5 cm above the water. Her shape, collision boxes and seat height changed, and her `Hull`, `FrontSeat` and `Cargo` elements with them; a patch that addressed her old shape's `Port`, `Starboard`, `Core` or `Binding` elements misses. Her `soak` and the `reed` material's density changed with her ([why](The-Science-of-the-Hull)).
+- Her rower holds what drives her: she sets `requiresPaddlingTool`, and her strokes are her own for each tool ([Paddles, poles and oars](#paddles-poles-and-oars)). Her own built-in paddle is gone.
 - `roughseas:framing` no longer needs a vessel of a wood, and strips a tree only when it has `barkSeconds`.
 - The help text `roughseas:shipyard-lash` now reads "Lash her with rope" on every framed vessel.
 
-New: the block `roughseas:reedbundle-{one|two}-{we|ns}` of class `roughseas:BlockBundles`, the behaviour `roughseas:droop`, and the hull model interface `ISoaking`.
+New: the block `roughseas:reedbundle` of class `roughseas:BlockBundles` ([its codes](#reed-boats-of-the-plant-they-were-bound-from)) and the behaviour `roughseas:droop`.
 
 ### Coracles and currachs laid out on the ground
 
 The coracle and the hide currach are laid out as laths on the ground and built where they lie ([Laid out on the ground](Building-a-Vessel#laid-out-on-the-ground)), and their grid recipes are gone. Their codes are still `roughseas:coracle` and `roughseas:currach`, so one of yours loads finished, the currach the right way up, both covered in prepared hide.
 
-- Their rowers hold an oar, as the dugout's do: both set `requiresPaddlingTool` and paddle with vanilla's `crudeOar` strokes. The coracle's sculling paddle, the currach's two oars and tholes, their `roughseas-coracle-*` and `roughseas-currach-*` strokes and `patches/player-coracle.json` and `patches/player-currach.json` are gone.
-- Their shapes are new: the coracle a Teifi basket of a lattice and a plaited gunwale, 1.5 by 1.07 m, with no seat board; the currach double-ended, 4.7 by 1.2 m, with ribs, stringers and a thwart pole in place of her transom, floor and stem post. A patch that addressed their old elements misses. Their bilges hold 350 and 1800 litres, and they weigh about 20 and 70 kg.
+- The coracle's built-in sculling paddle is gone: she sets `requiresPaddlingTool`, and her sculler holds a paddle. The currach sets it `false` and is rowed with her own oars ([The currach rowed facing her stern](#the-currach-rowed-facing-her-stern)). Their strokes are their own for each tool ([Paddles, poles and oars](#paddles-poles-and-oars)).
+- Their shapes are new: the coracle a Teifi basket of a lattice and a plaited gunwale, 1.5 by 1.07 m, with no seat board; the currach double-ended, 4.76 by 1.2 m, with ribs, stringers and a thwart pole in place of her transom, floor and stem post. A patch that addressed their old elements misses. Their bilges hold 272 and 1911 litres, and they weigh 17 and 88.5 kg.
 - Laths and poles have a length: `roughseas:lath-{wood}-{2|3|4|5}-{dry|wet}` and `roughseas:pole-{wood}-{2|3|4|5}`, no longer `lath-{wood}-{dry|wet}` and `pole-{wood}`. A row of two to five wedged logs splits into 64 poles as long as it; the wedge's `splits` list one per row length. An axe splits a pole into 16 laths of its length in the crafting grid (`recipes/grid/laths.json`). Their name takes the length as `{1}`.
 - Every piece of a `lath` or `pole` stage names its length in the shape, a `"metres"` key on its group, and takes a lath or pole at least that long. The bark canoe's and the outrigger's pieces name theirs too.
 - `seep`'s `litresPerHour` is now `litresPerHourASeam`: a cover seeps at every seam between hides. A cracking hull's new `cover` gives the hides of one from before its build; `config/vessels/hides.json` gives each hide's keeping afloat and the water it takes up, and a patch can change them.
@@ -153,7 +140,7 @@ New: the behaviour `roughseas:covering` with its keys `layout`, `overturned` and
 
 Each vessel built in place now changes the way the work would, and floats by numbers measured off her model ([why](The-Science-of-the-Hull#floating)).
 
-- The weights, depths, waterplanes, holds, decks and `swimmingOffsetY` of the dugout, outrigger, bark canoe, coracle and currach changed. The dugout's walls are 5 cm and her blank is the square trunk: `unhewnLitres` 3309, `blankWaterplaneSquareMetres` 5, `hollowDepthMetres` 0.5125, `hollowBeamMetres` 0.8. A patch that set these numbers sets them against her new model.
+- The weights, depths, waterplanes, holds, decks and `swimmingOffsetY` of the dugout, outrigger, bark canoe, coracle and currach changed. The dugout's walls are 5 cm and her blank is the square trunk: `unhewnLitres` 3329, `blankWaterplaneSquareMetres` 5, `hollowDepthMetres` 0.5125, `hollowBeamMetres` 0.8. A patch that set these numbers sets them against her new model.
 - The outrigger's float is hewn from its three logs in six passes: her stage `Ends` and the groups `Float` and `Blunt` are gone, and `Hewing` (a `successive` stage replacing `FloatLog`) comes after `Booms`, whose pieces follow it (`follows`). Her washstrakes' end pieces are boards across her hollow, and the washstrakes add 422 litres, her measured opening 15 cm higher. The bark canoe's and the currach's holds stop at the lowest point of their gunwale, where water first spills over: 609 and 1911 litres. Her texture codes `floatbark` and `floatrings` draw the logs, in the float's wood. A dugout off the block grid is squared onto the logs when rigged, turned and moved so the float lies on them, no end of it more than half a block; one turned further from the row isn't rigged.
 - The bark canoe's sheet is 5 m long. Her stages are `Frame` (inwales and thwarts), `Slashes` and `Ends` (knife cuts, work `cut`) and `Outwales`, before her stems; all four lift her `Skin` group, one child a level, `Skin1` to `Skin13`, and her frame pieces show from `Frame{n}At{k}` and `Outwales{n}At{k}`. The finished canoe's item is drawn by `roughseas:carriedbuild` too, which shows only her last step.
 - The coracle's lattice is spaced 0.125 m and 0.1875 m, the currach's pair 1.075 m, both within 0.0625 m; the currach's gunwale pieces show from `Gunwale{n}At{k}`, her stern ends apart until her second end lashing.
@@ -174,7 +161,7 @@ A paddled, poled or rowed vessel goes as fast as her rower drives her against th
 - Each vessel's rower has strokes of his own for each tool, `roughseas-{vessel}-{pole|paddle}-{ready|forward|backward}`, in `patches/player-{vessel}.json`, the raft's too; they key `ItemAnchor` to hold the tool where the stroke puts it. The currach's are `roughseas-currach-{ready|forward|backward}` again, with her own oars and thole pins.
 - Every vessel of ours has an `Oar Storage` slot, its box `OarAP` after her others; the coracle takes `rideableaccessories` for it.
 - The pole is drawn at its length: `shapeByType` takes `item/pole-{2|3|4|5}` and its attributes are by type. The shape `item/pole` is gone.
-- The currach's build ends with a stage `Oars` of the new work `oar`, two `roughseas:tholeoar-{wood}`, and her `parts` gain `oars`; `roughseas:covering`'s new key `oars` names what that stage takes. She weighs 87 kg.
+- The currach's build ends with a stage `Oars` of the new work `oar`, two `roughseas:tholeoar-{wood}`, and her `parts` gain `oars`; `roughseas:covering`'s new key `oars` names what that stage takes. With them she weighs 88.5 kg.
 - The hull's drag law, `HullDrag` with `WaveMaking`, lives with the hull, and a vessel's size for it is her `Hull` box, which a client now measures once her selection boxes load rather than keeping her entity's selection box for good.
 
 New: the behaviour `roughseas:propulsion` with its keys, the items `roughseas:paddle-{wood}` and `roughseas:tholeoar-{wood}`, the item attribute `roughseas:propulsion`, `config/propulsion.json` and `config/vessels/drag.json`.
@@ -231,7 +218,7 @@ Our vessels' shapes are rebuilt so that no box stands outside the round it build
 - The coracle's bottom strips, `Bottom{Bow|Stern}{n}`, are inscribed in her bottom and joined to her sides by `Floor{n}` facets, one under each side board. Her bottom reaches round her outermost laths, her laths lie inside her hide, and her binding ties the 27 crossings where both laths lie flat: still three ropes. Her hold is 272 litres.
 - A hull lofted through stations (the currach, bark canoe, dugout and outrigger) takes more stations toward her ends, so her boards' names run on through them, and each tapering panel takes a second board, `{name}Top`.
 - The currach's and the bark canoe's ends are as broad as what they close round: the currach is 4.76 m long, with a 1911-litre hold; the bark canoe's stem stands 5 cm higher inside her bark, and her lashing takes 21 ropes.
-- The dugout's stepped ends are no wider than the hull they continue, her lower ends narrowest: she is 252 kg of oak where she was 265, with 3329 litres hewn away (`unhewnLitres`).
+- The dugout's stepped ends are no wider than the hull they continue, her lower ends narrowest: she is 252 kg of oak, with 3329 litres hewn away (`unhewnLitres`).
 - A reed bundle and the outrigger's float are as thick as their round: the bundles are 19 cm across, and the float is 196 litres, 132 kg in oak, which makes the outrigger 491 kg.
 
 ### Bundles that crush, knocks that happen once
@@ -267,7 +254,7 @@ New: `Reeds`, the plants a vessel's bundles were bound from, and its name.
 
 Vanilla's raft is paddled from her side, at her own size. A vessel of yours loads as it did.
 
-- The raft's `Hull` box is her logs, 3.88 by 1.34 m, where it reached her rope wraps' corners, 4.25 by 1.88; the bamboo raft's is 4.19 by 1.34, where it was 4.19 by 1.63. Her drag, reach, the places a knock lands and her heave all read it, and through her beam so do the sea's pull on her mooring, the water she ships and her roll: a moored raft holds about ten times longer in a gale.
+- The raft's `Hull` box is her logs, 3.88 by 1.32 m, where it reached her rope wraps' corners, 4.25 by 1.88; the bamboo raft's is 4.19 by 1.32, where it was 4.19 by 1.63. Her drag, reach, the places a knock lands and her heave all read it, and through her beam so do the sea's pull on her mooring, the water she ships and her roll: a moored raft holds about ten times longer in a gale.
 - `roughseas:seaforces`'s `beamMetres` may be left out: the hull then takes her `Hull` box's width, so a vessel's beam lives in one place. The new `capsizeBreakerBeams` gives the capsizing breaker as a share of that beam. The raft carries neither `beamMetres` nor `capsizeBreakerMetres` now. `EntityBehaviorSeaForces.BeamMetres` reads her hull each time, and `Seaworthiness.From` takes the beam.
 - `roughseas:propulsion` takes ahead and turning from the rower's keys, not from vanilla's motion: a paddled boat that carries it no longer goes astern while her rider looks astern. Vanilla's raft is one of them.
 - The raft's seats hold the body to her heading, `bodyYawLimit` 0.4, and her rower kneels, `mountAnimations.idle` `roughseas-kneel`. Her paddle strokes key `LowerTorso` and `UpperTorso` as well: he shifts toward the side he paddles and bends his trunk to it. Her pole's stance stands him half a metre toward the side he poles.
@@ -314,3 +301,16 @@ A hewing no longer changes her at once: the inside is cut a section at a time, t
 - The one who last took an axe to her is kept as `hewer` in `roughseas:build`: only that hull throws chips at their blows.
 
 New: `hewnSectionsMetres`, `roughseas-hew`, `hewer`, `IVesselHold.DesignedLitres`.
+
+## What not to touch
+
+| Name | What it is |
+| --- | --- |
+| `roughseas:seamap` | the map region moddata, and the network channel that carries the map to clients |
+| `roughseas:oceancalibration` | save data: what the world's ocean map means |
+| `roughseas:vessels` | the network channel a rider's client reports its vessel's knocks over |
+| `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |
+
+## Adding and removing Rough Seas
+
+The mod can join an existing world, and leave one. Without it the world opens cleanly: each region keeps the strength of the wind we last set for up to a game hour, then vanilla rolls its own pattern.
