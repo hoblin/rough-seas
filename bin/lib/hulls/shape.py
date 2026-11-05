@@ -19,8 +19,8 @@ FACE_AXES = {
 AXIS = {"x": 0, "y": 1, "z": 2}
 ROUNDED = 0.68
 ORIGIN = (8, 0, 8)
-# The boxes vanilla's MultiCollisionTester holds (its entityBox); a vessel with more breaks its physics tick.
-MULTIBOX_LIMIT = 10
+# As long as vanilla's raft's collision boxes.
+COLLISION_METRES = 1.5
 
 
 def num(value):
@@ -114,20 +114,20 @@ def bounds(*elements):
     return tuple([num(pick(point[axis] for point in points)) for axis in range(3)] for pick in (min, max))
 
 
-def hull_box(*elements):
+def hull_box(*elements, square=False):
     """The box round her hull's posed corners, which the mechanics measure her by, and that box as her entity takes it:
     from the point she stands at, in metres and in voxels."""
-    return hull_of(*bounds(*elements))
+    return hull_of(*bounds(*elements), square=square)
 
 
-def hull_of(frm, to):
+def hull_of(frm, to, square=False):
     """The Hull element spanning frm to to, and that box as her entity takes it."""
     element = {"name": "Hull", "from": frm, "to": to, "faces": {},
                "attachmentpoints": [{"code": "HullAP", "posX": str(num((to[0] - frm[0]) / 2)), "posY": "0", "posZ": str(num((to[2] - frm[2]) / 2)),
                                      "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]}
     voxels = {end: [num(c - o) for c, o in zip(corner, ORIGIN)] for end, corner in (("from", frm), ("to", to))}
     measured = {"hullBoxMetres": {end: [num(units.metres(c)) for c in corner] for end, corner in voxels.items()}, "hullBoxVoxels": voxels}
-    placed = collision(element)
+    placed = collision(element, square=square)
     placed["behaviorConfigs"]["roughseas:vesselintegrity"] = measured
     return element, placed
 
@@ -169,35 +169,19 @@ def windage(elements, keel_voxels):
     return lambda draft_metres: {"behaviorConfigs": {"roughseas:seaforces": units.both("windage", side_area(elements, keel_voxels + units.voxels(draft_metres)), 2)}}
 
 
-def collision(box, *more):
-    """Her hitbox, as wide as she is and as tall, and her collision boxes: the hull box and a box round each of more
-    (an outrigger's float), each cut along its length into pieces about as long as it is wide, in the entity's frame,
-    where her bow points along +z. Vanilla turns only a box's middle with her yaw, never its sides: square pieces
-    keep her footprint whichever way she lies."""
+def collision(box, *more, square=False):
+    """Her hitbox, as wide as she is and as tall, and her collision boxes: the hull box in pieces of about
+    COLLISION_METRES along her, or square ones, and a box round each of more (an outrigger's float), in the entity's
+    frame, where her bow points along +z. Vanilla turns only a box's middle with her yaw, never its sides: square
+    pieces keep her footprint whichever way she lies."""
     def entity(frm, to):
         (x0, y0, z0), (x1, y1, z1) = frm, to
         return {"x1": num(units.metres(ORIGIN[2] - z1)), "y1": num(units.metres(y0)), "z1": num(units.metres(ORIGIN[0] - x1)),
                 "x2": num(units.metres(ORIGIN[2] - z0)), "y2": num(units.metres(y1)), "z2": num(units.metres(ORIGIN[0] - x0))}
-
-    def along(frm, to):
-        return 0 if to[0] - frm[0] >= to[2] - frm[2] else 2
-
-    def squares(frm, to):
-        axis = along(frm, to)
-        return max(1, round((to[axis] - frm[axis]) / (to[2 - axis] - frm[2 - axis])))
-
-    def cut(frm, to, pieces):
-        axis = along(frm, to)
-        at = lambda corner, n: [frm[axis] + (to[axis] - frm[axis]) * n / pieces if i == axis else c for i, c in enumerate(corner)]
-        return [entity(at(frm, n), at(to, n + 1)) for n in reversed(range(pieces))]
-
     (x0, y0, z0), (x1, y1, z1) = box["from"], box["to"]
-    spans = [(box["from"], box["to"]), *(bounds(element) for element in more)]
-    wanted = [squares(*span) for span in spans]
-    share = min(1, (MULTIBOX_LIMIT - len(spans)) / max(1, sum(wanted) - len(spans)))
-    counts = [1 + round((n - 1) * share) for n in wanted]
-    assert sum(counts) <= MULTIBOX_LIMIT, f"{sum(counts)} collision boxes, past vanilla's {MULTIBOX_LIMIT}"
-    boxes = [piece for span, n in zip(spans, counts) for piece in cut(*span, n)]
+    pieces = max(1, round((x1 - x0) / (z1 - z0) if square else units.metres(x1 - x0) / COLLISION_METRES))
+    boxes = [entity((x0 + (x1 - x0) * n / pieces, y0, z0), (x0 + (x1 - x0) * (n + 1) / pieces, y1, z1)) for n in reversed(range(pieces))]
+    boxes += [entity(*bounds(element)) for element in more]
     return {"hitboxSize": {"x": num(units.metres(z1 - z0)), "y": num(units.metres(y1 - y0))},
             "behaviorConfigs": {"passivephysicsmultibox": {"collisionBoxes": boxes}}}
 

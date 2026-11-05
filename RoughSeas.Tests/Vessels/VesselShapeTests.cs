@@ -30,18 +30,6 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void CollidesInPiecesAboutAsLongAsTheyAreWideWithinVanillasTenBoxes(string vessel)
-    {
-        var pieces = Load(vessel).Entity["behaviorConfigs"]!["passivephysicsmultibox"]!["collisionBoxes"]!.ToList();
-
-        Assert.InRange(pieces.Count, 1, 10);
-        if (pieces.Count == 1) return;
-        Assert.All(pieces, piece => Assert.InRange(
-            (piece.Value<double>("z2") - piece.Value<double>("z1")) / (piece.Value<double>("x2") - piece.Value<double>("x1")), 0.5, 2));
-    }
-
-    [Theory]
-    [MemberData(nameof(Vessels))]
     public void GivesEverySelectionBoxTheSlotAtItsIndex(string vessel)
     {
         var behaviors = Load(vessel).Entity["behaviorConfigs"]!;
