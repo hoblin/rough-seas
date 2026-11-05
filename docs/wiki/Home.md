@@ -14,6 +14,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [World settings](World-Settings): the *Rough Seas* playstyle, and *Dangerous oceans*.
 - [Vessels](Vessels): which one for which water.
 - [Recipes](Recipes): everything the mod adds to the crafting grid.
+- [Paddles, poles and oars](Paddles-Poles-and-Oars): what drives each vessel, and how fast.
 
 **The sea**
 - [Wind and waves](Wind-and-Waves): the wind, the Beaufort scale, and why every wave is different.
@@ -51,6 +52,9 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 
 **Beside other mods**
 - [Beside other mods](Other-Mods): the mods we tested Rough Seas with, what changes in one mod set, and what we recommend.
+
+**Sound credits**
+- [Sound credits](Sound-Credits): the recordings the sea and the hulls sound with, and who made them.
 
 **For modders**
 - [For modders](For-Modders): what Rough Seas is to your mod, and what we keep stable.
