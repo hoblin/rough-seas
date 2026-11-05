@@ -2,7 +2,7 @@ import math
 from functools import cached_property
 
 from limb import Limb
-from transform import angles, apply, cross, depth, direct, dot, euler, nearest, sub, unapply, undirect, unit
+from transform import angles, apply, cross, depth, direct, dot, euler, sub, unapply, undirect, unit
 
 GRIP = (1.25, 0.6, 1)
 REST_OVERLAP = 0.75 / 16
@@ -87,18 +87,24 @@ class Arm(Limb):
     def posture(self, pose, trunk=None):
         return Posture(self, pose, trunk)
 
-    def stroke(self, poses, hands, holds):
+    def stroke(self, poses, hands, holds, ends=(None, None)):
+        """The arm through each hold of the stroke, as (poses, swivels, strain). A stroke loops; one given the elbow's
+        swivel at its ends, in radians, runs from the one to the other."""
         swivels = range(0, 360, SWIVEL_STEP)
         trunks = [self.trunk(pose) for pose in poses]
         places = [self.placing(trunk[-1], hand) for trunk, hand in zip(trunks, hands)]
         postures = [[self.posture(pose | place(math.radians(s)), trunk) for s in swivels]
                     for pose, trunk, place in zip(poses, trunks, places)]
+        pinned = [None] * len(poses)
+        pinned[0], pinned[-1] = ends
         fits = []
         for grips in holds:
             strains = [[self.strain(posture, hand, grip) for posture in row] for row, hand, grip in zip(postures, hands, grips)]
-            cost, path = cheapest(strains, SWING_PER_KEY // SWIVEL_STEP)
-            fits.append(([self.refine(pose, hand, grip, trunk, place, math.radians(swivels[s]))
-                          for pose, hand, grip, trunk, place, s in zip(poses, hands, grips, trunks, places, path)], cost))
+            nearest = [None if at is None else round(math.degrees(at) / SWIVEL_STEP) % len(swivels) for at in pinned]
+            cost, path = cheapest(strains, SWING_PER_KEY // SWIVEL_STEP, nearest if ends != (None, None) else None)
+            turned = [at if at is not None else self.refine(pose, hand, grip, trunk, place, math.radians(swivels[s]))
+                      for pose, hand, grip, trunk, place, s, at in zip(poses, hands, grips, trunks, places, path, pinned)]
+            fits.append(([place(at) for place, at in zip(places, turned)], turned, cost))
         return fits
 
     def refine(self, pose, hand, grip, trunk, place, swivel):
@@ -109,7 +115,7 @@ class Arm(Limb):
         while step > math.radians(0.1):
             swivel = min((swivel - step, swivel, swivel + step), key=strain_at)
             step /= 2
-        return place(swivel)
+        return swivel
 
     def placing(self, torso, hand):
         target = sub(unapply(torso, hand), self.shoulder)
@@ -136,13 +142,6 @@ class Arm(Limb):
                     self.lower["name"]: {"rotationZ": bent}}
 
         return place
-
-    def follow(self, arm, previous):
-        name = self.upper["name"]
-        turned = [arm[name]["rotation" + axis] + rest for axis, rest in zip("XYZ", self.rest)]
-        before = [previous[name]["rotation" + axis] + rest for axis, rest in zip("XYZ", self.rest)]
-        return arm | {name: {"rotation" + axis: round(value - rest, 2)
-                             for axis, value, rest in zip("XYZ", nearest(turned, before), self.rest)}}
 
     def flexion(self, reach):
         tilt = undirect(euler(self.bend[:2]), self.humerus)
@@ -249,20 +248,23 @@ class Posture:
         return self.arm.effort(self.joints)
 
 
-def cheapest(strains, swing):
+def cheapest(strains, swing, pinned=None):
+    """The least strained path of swivels, each key within `swing` steps of the one before: a loop closing on its first
+    key, or with `pinned` swivels for some keys (None where free), a run through them."""
     count = len(strains[0])
     best = None
-    for first in range(count):
+    allowed = (lambda key, s: pinned is None or pinned[key] is None or pinned[key] == s)
+    for first in (s for s in range(count) if allowed(0, s)):
         cost, back = [math.inf] * count, []
         cost[first] = strains[0][first]
-        for row in strains[1:]:
+        for key, row in enumerate(strains[1:], 1):
             ring = list(zip(cost, range(count)))
             ring = ring[-swing:] + ring + ring[:swing]
             steps = [min(ring[s:s + 2 * swing + 1]) for s in range(count)]
             back.append([came for _, came in steps])
-            cost = [total + strain for (total, _), strain in zip(steps, row)]
-        closing = min(range(count), key=lambda s: cost[s] if min(abs(s - first), count - abs(s - first)) <= swing
-                      else math.inf)
+            cost = [total + strain if allowed(key, s) else math.inf for s, ((total, _), strain) in enumerate(zip(steps, row))]
+        closes = (lambda s: min(abs(s - first), count - abs(s - first)) <= swing) if pinned is None else (lambda s: True)
+        closing = min(range(count), key=lambda s: cost[s] if closes(s) else math.inf)
         if best is None or cost[closing] < best[0]:
             path = [closing]
             for came in reversed(back):

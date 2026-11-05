@@ -6,6 +6,7 @@ from pathlib import Path
 
 from arm import Arm
 from leg import Leg
+from motion import faults, switches, unwind
 from transform import apply, direct, euler, identity, local, mul, rotation, translation, unapply, undirect
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -45,6 +46,14 @@ def speed(stroke, frames, per_loop=1):
 
 def drive_share(stroke):
     return propelled(stroke)["driveShare"]
+
+
+def resting(stroke, frames):
+    """The frame of a stroke's phase its loop starts and ends on: halfway through the recovery, the blade lifted clear
+    and the hands at the middle of their sweep, which is how a rower holds the tool at rest. Starting, stopping and
+    changing sides there meets the stroke where it is."""
+    drive = drive_share(stroke)
+    return round(frames * (drive + (1 - drive) / 2))
 
 
 def strokes(vessel, frames, ready, forward, backward, stroke, per_loop=1):
@@ -157,12 +166,44 @@ class Rower:
 def crew(shape, vessel, seated, idle, strokes, grips, lean):
     rower = Rower(seat(shape, seated), idle, facing(shape, vessel, seated))
     shape.animations, player = fit(rower, shape.elements, strokes, grips, lean)
+    smoothed(shape.path.name, shape.elements, shape.animations, vessel)
     shape.write()
     rowed(shape, rower, shape.animations, player)
     return player
 
 
+def played(vessel):
+    """The strokes the game plays for a vessel, kind by kind: her own entity's, or for a vanilla boat the patch that
+    gives her propulsion."""
+    entity = ENTITIES / f"{vessel}.json"
+    if entity.exists():
+        return json.loads(entity.read_text())["behaviorConfigs"]["roughseas:propulsion"]["strokes"]
+    return next(op["value"]["strokes"] for op in json.loads((PATCHES / "propulsion-vessels.json").read_text())
+                if op["file"].endswith(f"boat-{vessel}.json") and "strokes" in op["value"])
+
+
+def smoothed(name, elements, animations, vessel):
+    """Writes the animations' turns so that the game draws none of them the long way round, within a stroke or as it
+    blends one into the next; refuses them when one still turns that way, or two strokes of one tool meet apart. A
+    switch to another tool, rare and a new hold, only warns."""
+    blended = switches(played(vessel))
+    unwind(elements, animations, blended)
+    found = faults(elements, animations, blended)
+    for fault in found:
+        if fault.tools:
+            print(f"{name}: switching tools, {fault}")
+    refused = [str(fault) for fault in found if not fault.tools]
+    if refused:
+        raise SystemExit(f"{name}: the game would draw these jumps or turn these the long way round\n  " + "\n  ".join(refused))
+
+
+@cache
+def seraph():
+    return json.loads(SERAPH.read_text())
+
+
 def player_patch(name, animations):
+    smoothed(name, seraph()["elements"], animations, name.removeprefix("player-"))
     speeds = {animation["code"]: animation.pop("speed") for animation in animations}
     ops = []
     for animation in animations:
@@ -214,25 +255,51 @@ def leaning(lean, body):
     return body | {"UpperTorso": lean | body.get("UpperTorso", {})}
 
 
+def place(point):
+    return tuple(round(c, 4) for c in point)
+
+
 def fit(rower, elements, strokes, grips, lean):
-    vessel, player = [], []
+    """Fits the rower's arms to every stroke. A hand holds the gear one way in all of them, the way that strains it
+    least over all, so it meets itself wherever one stroke blends into the next. A looping stroke takes its own arm; a
+    pose held still, and a stroke run from one pose to another, start and end with the arm a looping stroke has at that
+    place."""
+    staged, strain = [], {}
     for stroke in strokes:
         poses = [stroke["pose"](frame) for frame in stroke["keys"]]
         placed = [posed(elements, lambda name, pose=pose: pose.get(name, {})) for pose in poses]
         bodies = [leaning(lean, stroke["body"](frame) if stroke.get("body") else {}) for frame in stroke["keys"]]
-        faults = {}
         hands_on = stroke.get("grips", grips)
-        for side, grip in hands_on.items():
+        reach = {side: ([rower.body(centre(elements, m, grip)) for m in placed],
+                        [rower.along(held(m, grip)) for m in placed]) for side, grip in hands_on.items()}
+        holds = {side: rower.arms[side].stroke(bodies, hands, [[tuple(t * c for c in a) for a in axes] for t in (1, -1)])
+                 for side, (hands, axes) in reach.items()}
+        for side, fits in holds.items():
+            for thumb, (_, _, cost) in zip((1, -1), fits):
+                strain[side, thumb] = strain.get((side, thumb), 0) + cost
+        staged.append((stroke, poses, placed, bodies, hands_on, reach, holds))
+    held_as = {side: min((1, -1), key=lambda t: strain[side, t]) for side, _ in strain}
+    looping = lambda stroke: len(stroke["keys"]) > 1 and stroke.get("ends", "Repeat") == "Repeat"
+    swivels = {}
+    for stroke, _, _, _, hands_on, reach, holds in staged:
+        if looping(stroke):
+            for side, fits in holds.items():
+                _, turned, _ = fits[(1, -1).index(held_as[side])]
+                for hand, at in zip(reach[side][0], turned):
+                    swivels.setdefault((side, place(hand)), at)
+    vessel, player = [], []
+    for stroke, poses, placed, bodies, hands_on, reach, holds in staged:
+        faults = {}
+        for side, (hands, axes) in reach.items():
             arm = rower.arms[side]
-            hands = [rower.body(centre(elements, m, grip)) for m in placed]
-            axes = [rower.along(held(m, grip)) for m in placed]
-            thumbs = [[tuple(thumb * c for c in axis) for axis in axes] for thumb in (1, -1)]
-            holds = arm.stroke(bodies, hands, thumbs)
-            chosen = min(range(2), key=lambda i: holds[i][1])
-            arms = holds[chosen][0]
-            for i in range(1, len(arms)):
-                arms[i] = arm.follow(arms[i], arms[i - 1])
-            for frame, body, pose, hand, axis in zip(stroke["keys"], bodies, arms, hands, thumbs[chosen]):
+            thumb = held_as[side]
+            thumbs = [tuple(thumb * c for c in axis) for axis in axes]
+            ends = tuple(swivels.get((side, place(hand))) for hand in (hands[0], hands[-1]))
+            if looping(stroke) or ends == (None, None):
+                arms = holds[side][(1, -1).index(thumb)][0]
+            else:
+                arms = arm.stroke(bodies, hands, [thumbs], ends)[0][0]
+            for frame, body, pose, hand, axis in zip(stroke["keys"], bodies, arms, hands, thumbs):
                 body |= pose
                 posture = arm.posture(body)
                 for name, (excess, _) in arm.faults(posture, hand, arm.angles(posture, axis)).items():

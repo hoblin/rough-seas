@@ -5,7 +5,7 @@ from physics import HIDE_METRES, LATH_SQUARE_METRES, MASS, afloat, hide_sections
 from fit import APART
 from shape import BILGE, VOXEL_METRES, VOXELS_A_METRE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
 from held import poling, tools, waterline
-from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, seat, strokes
+from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
 from wounds import wound
 
@@ -378,8 +378,14 @@ def rowing(shape, rests, chest, sweep_middle, sweep_degrees):
             return trunk(rower, lean_for(rower, grip))
         return body
 
-    rowed = strokes("currach", FRAMES, pose(lambda u: 0, lambda u: 0), pose(sweep, depth),
-                    pose(lambda u: sweep(1 - u), lambda u: depth(1 - u)), stroke="rowing")
+    start = resting("rowing", FRAMES) / FRAMES
+
+    def from_rest(u):
+        return (u + start) % 1
+
+    forward = pose(lambda u: sweep(from_rest(u)), lambda u: depth(from_rest(u)))
+    rowed = strokes("currach", FRAMES, lambda frame: forward(0), forward,
+                    pose(lambda u: sweep(from_rest(1 - u)), lambda u: depth(from_rest(1 - u))), stroke="rowing")
     for stroke in rowed:
         stroke["body"] = swing(stroke["pose"])
     return rowed

@@ -16,6 +16,9 @@ BUILD
                                    A shape whose boxes stand outside the round they build, or whose
                                    faces share a plane, is not written: the build names each box and
                                    how far out it stands, or the two faces (docs/modeling.md).
+                                   Neither is a rower's animation the game would swing the long way
+                                   round, within a stroke or as it blends one into the next: the
+                                   build names the switch, the element and the degrees.
                                    The vessels build side by side, each printing as she finishes,
                                    all in under a minute: build only the vessels whose output
                                    must change. It is a generator, not a test (docs/modeling.md

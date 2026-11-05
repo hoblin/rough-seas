@@ -57,16 +57,24 @@ def euler(angles):
     return m
 
 
+def orientation(x, y, z):
+    sx, cx = math.sin(math.radians(x)), math.cos(math.radians(x))
+    sy, cy = math.sin(math.radians(y)), math.cos(math.radians(y))
+    sz, cz = math.sin(math.radians(z)), math.cos(math.radians(z))
+    return (cy * cz, -cy * sz, sy,
+            sx * sy * cz + cx * sz, cx * cz - sx * sy * sz, -sx * cy,
+            sx * sz - cx * sy * cz, cx * sy * sz + sx * cz, cx * cy)
+
+
+def between(a, b):
+    trace = (a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3] + a[4] * b[4] + a[5] * b[5]
+             + a[6] * b[6] + a[7] * b[7] + a[8] * b[8])
+    return math.degrees(math.acos(max(-1.0, min(1.0, (trace - 1) / 2))))
+
+
 def angles(m):
     return [math.degrees(a) for a in (math.atan2(-m[1][2], m[2][2]), math.asin(max(-1.0, min(1.0, m[0][2]))),
                                       math.atan2(-m[0][1], m[0][0]))]
-
-
-def nearest(turn, previous):
-    x, y, z = turn
-    options = ([x, y, z], [x + 180, 180 - y, z + 180])
-    unwound = ([v + 360 * round((p - v) / 360) for v, p in zip(option, previous)] for option in options)
-    return min(unwound, key=lambda option: sum(abs(v - p) for v, p in zip(option, previous)))
 
 
 def apply(m, p):
