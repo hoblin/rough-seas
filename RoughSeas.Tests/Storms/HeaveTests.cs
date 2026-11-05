@@ -90,6 +90,18 @@ public class HeaveTests
     }
 
     [Fact]
+    public void AHullLadenAwashSettlesAtHerSideNotBelowIt()
+    {
+        var reedboat = Fixtures.Hull("reedboat");
+        var awash = Laden(reedboat, reedboat.Crewed(bodies: 260, kit: 40));
+
+        var immersions = Immersions(awash, reedboat.Float(reedboat.Crewed(bodies: 0, kit: 0)).DraftMetres, 8);
+
+        Assert.Equal(awash.DepthMetres, awash.DraftMetres);
+        Assert.Equal(awash.DepthMetres, immersions[^1], 3);
+    }
+
+    [Fact]
     public void AHullPressedUnderPastHerSideIsLiftedNoHarderThanHerWholeDepthLifts()
     {
         var hull = Fixtures.Hull("currach");

@@ -15,7 +15,8 @@ public readonly record struct Heave(double Kg, double KgPerMetre, double DraftMe
     public double Acceleration(double immersionMetres, double metresPerSecond)
     {
         double damping = 2 * Config.HeaveDamping * Math.Sqrt(Stiffness * VirtualKg);
-        double lifted = Stiffness * (Math.Min(immersionMetres, DepthMetres) - DraftMetres);
+        double displaced = DraftMetres < DepthMetres ? Math.Min(immersionMetres, DepthMetres) : immersionMetres;
+        double lifted = Stiffness * (displaced - DraftMetres);
         return (lifted - damping * metresPerSecond) / VirtualKg;
     }
 }

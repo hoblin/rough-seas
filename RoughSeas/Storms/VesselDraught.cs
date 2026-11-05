@@ -15,6 +15,9 @@ public static class VesselDraught
     private const string HarmonyId = "roughseas.storms.draught";
     private const double TicksPerSecond = 60;
     private const double WaterDragTicksPerSecond = 33;
+    private const double SwimDragPerMotion = 10;
+    private const double SwimDragOffset = 0.02;
+    public const double MostSwimDrag = 1.25;
     private const double VanillaLiftPerSubmergence = 60;
     private const double VanillaWaterDensity = 1000;
     private const double FounderedMetres = 100;
@@ -34,7 +37,7 @@ public static class VesselDraught
             harmony.Patch(AccessTools.PropertyGetter(typeof(EntityBoat), nameof(EntityBoat.SwimmingOffsetY)),
                 postfix: new HarmonyMethod(typeof(VesselDraught), nameof(Settle)));
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorPassivePhysics), nameof(EntityBehaviorPassivePhysics.MotionAndCollision)),
-                prefix: new HarmonyMethod(typeof(VesselDraught), nameof(Heave)));
+                prefix: new HarmonyMethod(typeof(VesselDraught), nameof(Heave)) { priority = Priority.Last });
         }
     }
 
@@ -49,6 +52,9 @@ public static class VesselDraught
     }
 
     public static double WaterDragKept(double waterDrag, double seconds) => Math.Pow(waterDrag, seconds * WaterDragTicksPerSecond);
+
+    public static double SwimDrag(double motionLength, double stepFactor) =>
+        Math.Clamp(SwimDragPerMotion * Math.Abs(motionLength * stepFactor) - SwimDragOffset, 1, MostSwimDrag);
 
     private static void Settle(EntityBoat __instance, ref double __result)
     {
@@ -67,9 +73,19 @@ public static class VesselDraught
 
         __instance.BoyancyMul = 0;
         double kept = ___feetInLiquidBefore || ___swimmingBefore ? WaterDragKept(__instance.WaterDragValue, dt) : 1;
-        double accelerated = boat.Swimming ? heave.Acceleration(Immersion(boat, pos), pos.Motion.Y * TicksPerSecond) * dt / TicksPerSecond : 0;
-        pos.Motion.Y = (pos.Motion.Y + accelerated) / kept;
+        if (!boat.Swimming)
+        {
+            pos.Motion.Y /= kept;
+            return;
+        }
+
+        var motion = pos.Motion;
+        double heaving = motion.Y + heave.Acceleration(Immersion(boat, pos), motion.Y * TicksPerSecond) * dt / TicksPerSecond;
+        double swimDrag = SwimDrag(Math.Sqrt(Square(motion.X * kept) + Square(heaving) + Square(motion.Z * kept)), dt * TicksPerSecond);
+        motion.Y = heaving * swimDrag / kept;
     }
+
+    private static double Square(double value) => value * value;
 
     private static double Immersion(EntityBoat boat, EntityPos pos)
     {
