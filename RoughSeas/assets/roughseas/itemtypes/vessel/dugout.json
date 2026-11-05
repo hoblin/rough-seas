@@ -9,7 +9,7 @@
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
     "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": [
-        "hideWater", "Bilge", "Bark", "Blank", "Char", "Grass", "Clay", "Wood", "Fire",
+        "hideWater", "Bilge", "Bark", "Blank", "Hewn", "Char", "Grass", "Clay", "Wood", "Fire",
         "WoundPortBow", "WoundStarboardBow", "WoundPortSide", "WoundStarboardSide", "WoundPortQuarter", "WoundStarboardQuarter", "WoundBottom"
     ]},
     "textures": {

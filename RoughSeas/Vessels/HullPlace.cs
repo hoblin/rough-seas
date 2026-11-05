@@ -40,7 +40,7 @@ public readonly record struct HullShape(double HalfLengthMetres, double HalfBeam
     private const double MarkReach = 0.7;
     private const double Stagger = 0.15;
     private const double SideReach = 0.9;
-    private const double ModelOriginMetres = 0.5;
+    public const double ModelOriginMetres = 0.5;
 
     public static readonly HullPlace[] Places = Enum.GetValues<HullPlace>();
 

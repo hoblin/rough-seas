@@ -8,7 +8,7 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
     public const string Code = "roughseas:hew";
 
     private const string StrokesKey = "roughseas:strokes";
-    private const string Animation = "axechop";
+    public const string Animation = "roughseas-hew";
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
@@ -19,8 +19,9 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
             handHandling = EnumHandHandling.PreventDefault;
             return;
         }
-        if (Blank(entitySel) is not { CanHew: true }) return;
+        if (Blank(entitySel) is not { CanHew: true } blank) return;
 
+        if (byEntity.World.Side == EnumAppSide.Server) blank.TakeUp(byEntity);
         byEntity.Attributes.SetInt(StrokesKey, 0);
         handling = EnumHandling.PreventDefault;
         handHandling = EnumHandHandling.PreventDefault;

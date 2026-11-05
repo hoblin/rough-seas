@@ -67,7 +67,7 @@ You don't craft a dugout in the grid: you burn it out of five logs on the shore,
    | ![The fire catching](images/dugout/build-fire.webp) | ![The fire smouldering](images/dugout/build-burning.webp) |
    | Catching | Smouldering |
 
-7. **Hew out the char.** Once the fire is out, the wood it lay on is black with char, and the dried clay still sits on the rim. Hold right-click on the trunk with an axe: you swing again and again, and the char comes away down to sound wood, with the clay, the rim under it and a sixth of the outside. It tires you as hard work does.
+7. **Hew out the char.** Once the fire is out, the wood it lay on is black with char, and the dried clay still sits on the rim. Hold right-click on the trunk with an axe: you swing again and again, and chips fly at every blow. First you cut the char out of the hollow from the bow to the stern, a third of it at a time, its floor going down to sound wood. Then you trim the outside back from the stern to the bow, and the rim comes down with its clay. It tires you as hard work does.
 
    | | |
    | --- | --- |
