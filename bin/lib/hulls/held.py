@@ -202,7 +202,14 @@ def hull_walls(shape, names):
                 walls.append((element["name"], size, m, [[f(c[i] for c in corners) for i in range(3)] for f in (min, max)]))
             collect(element.get("children", []))
 
-    collect([e for e in shape.elements if e["name"].startswith(names)])
+    def named(elements):
+        for element in elements:
+            if element["name"].startswith(names):
+                yield element
+            else:
+                yield from named(element.get("children", []))
+
+    collect(list(named(shape.elements)))
     return walls
 
 

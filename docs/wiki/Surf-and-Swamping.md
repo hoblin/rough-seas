@@ -82,7 +82,7 @@ Either the planks hold, or the windward bow, side or quarter it hits is stove in
 | Vessel | A spilling breaker of | A plunging breaker of |
 | --- | --- | --- |
 | [Coracle](Coracle) | 2.2 m | 0.2 m |
-| [Hide currach](Hide-Currach) | 15 m | 1.7 m |
+| [Hide currach](Hide-Currach) | 12 m | 1.3 m |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 10 m | 1.1 m |
 | [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | none | 3.3 m |
 | [Sailboat](Sailboat) | none | 14 m |
