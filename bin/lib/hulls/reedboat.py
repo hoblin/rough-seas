@@ -1,11 +1,14 @@
 import math
 from pathlib import Path
 
-from physics import MATERIALS, ropes, stands
-from held import PADDLE, paddling, poling, tools, waterline
+from physics import CORD_BREAKING_NEWTONS, CORD_STRETCH_AT_BREAK, MATERIALS, ROPE_METRES, afloat, ropes, shares, stands
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline_metres
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
-from shape import ROUNDED, VOXEL_METRES, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, section, stages, write
+import units
+from entity import merged, record
+from wounds import backed
+from shape import ROUNDED, Shape, hull_box, windage, beam, box, group, path, section, stages, write
 
 KNOT_METRES = 0.3
 
@@ -15,6 +18,8 @@ CENTRE = 8
 SIDES = (("Port", -1), ("Starboard", 1))
 BUNDLE_REEDS = 144
 REED_KG = 0.15
+# Vanilla's reed rope recipe: three slots of two cattail tops.
+REEDS_A_ROPE = 6
 REED = "roughseas:entity/vessel/reed-cattailtops"
 
 TIE_PITCH = 4
@@ -31,7 +36,7 @@ TIP_REACH = (0, 3, 6, 8)
 def round_girth():
     litres = BUNDLE_REEDS * REED_KG / MATERIALS["reed"]["density"] * 1000
     length = BODY[1] - BODY[0] + 2 * sum((b - a) * share ** 2 for a, b, share in zip(TIP_REACH, TIP_REACH[1:], TIP_SHARES))
-    return math.sqrt(litres / (math.pi / 4 * length * VOXEL_METRES_CUBED_LITRES))
+    return math.sqrt(litres / units.litres(units.metres(math.pi / 4 * length, 3)))
 
 
 GIRTH = round_girth()
@@ -111,12 +116,13 @@ def raised_rounds(start, direction, droop, margin=0):
 
 def bundle_ropes():
     ties = len(range(TIE_PITCH // 2, BODY[1] - BODY[0], TIE_PITCH))
-    metres = ties * (TIE_TURNS * math.pi * GIRTH * VOXEL_METRES + KNOT_METRES)
-    print(f"bundle: {ties} ties {TIE_PITCH * VOXEL_METRES * 100:.0f} cm apart, {metres:.1f} m of cord, {ropes(metres)} ropes")
+    metres = ties * (units.metres(TIE_TURNS * math.pi * GIRTH) + KNOT_METRES)
+    print(f"bundle: {ties} ties {units.metres(TIE_PITCH) * 100:.0f} cm apart, {metres:.1f} m of cord, {ropes(metres)} ropes")
+    return ropes(metres)
 
 
 def lashings():
-    around = (2 * GIRTH + math.pi * GIRTH) * VOXEL_METRES
+    around = units.metres(2 * GIRTH + math.pi * GIRTH)
     each = LASHING_TURNS * around + KNOT_METRES
     total = each * len(LASHINGS)
     count = ropes(total)
@@ -131,7 +137,7 @@ def lashings():
 def tips():
     points = list(zip(TIP_REACH, TIP_RISE))
     turns = [math.dist(a, b) / TIP_TURN_PITCH for a, b in zip(points, points[1:])]
-    metres = sum(n * (2 * g + math.pi * g) for n, g in zip(turns, TIP_GIRTHS)) * VOXEL_METRES + KNOT_METRES
+    metres = units.metres(sum(n * (2 * g + math.pi * g) for n, g in zip(turns, TIP_GIRTHS))) + KNOT_METRES
     turns = sum(turns)
     assert ropes(metres) == 1, "an end takes more than one rope"
     print(f"ends: {turns:.0f} turns bind each end up, {metres:.1f} m of cord, one rope an end")
@@ -154,9 +160,15 @@ def laid(sides):
 def envelope():
     body = GIRTH ** 2 * (BODY[1] - BODY[0])
     ends = sum((b - a) * g ** 2 for a, b, g in zip(TIP_REACH, TIP_REACH[1:], TIP_GIRTHS))
-    litres = math.pi / 4 * (body + 2 * ends) * VOXEL_METRES_CUBED_LITRES
-    print(f"a bundle of {BUNDLE_REEDS} reeds: {(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]) * VOXEL_METRES:.1f} m long, "
-          f"{GIRTH * VOXEL_METRES * 100:.1f} cm across, {litres:.1f} L; two: {2 * litres:.1f} L")
+    litres = units.litres(units.metres(math.pi / 4 * (body + 2 * ends), 3))
+    print(f"a bundle of {BUNDLE_REEDS} reeds: {units.metres(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]):.1f} m long, "
+          f"{units.metres(GIRTH) * 100:.1f} cm across, {litres:.1f} L; two: {2 * litres:.1f} L")
+
+
+def parted(group_, keep):
+    """The group with only the elements keep names, under the groups that hold them."""
+    return dict(group_, children=[parted(child, keep) if child.get("children") else child
+                                  for child in group_.get("children", []) if child.get("children") or keep(child["name"])])
 
 
 def block(target, sides):
@@ -174,7 +186,7 @@ def build(target):
         "lashing": "game:item/resource/rope",
     })
     envelope()
-    bundle_ropes()
+    cords = len(SIDES) * bundle_ropes()
     blank = group("Blank", (0, 0, 0), (0, 0, 0), [e for name, side in SIDES for e in bundle(name, side)])
     flat, lashed, bound = stages("Flat", flats(SIDES)), stages("Lashing", lashings()), stages("Tips", tips())
     shape.add(blank, flat, lashed, bound)
@@ -190,14 +202,25 @@ def build(target):
             shape.within(Union("the bound ends", [*bundles(margin).parts, *(t for start, direction in ENDS for t in raised_rounds(start, direction, droop, margin))]),
                          ends_bound, only=only)
         shape.together(blank, lashed, ends_bound)
-    shape.keep("Hull", "FrontSeat", "Cargo", "OarStorage")
+    box, measured = hull_box(blank, [end["children"][0] for end in bound["children"]])
+    shape.add(box)
+    sides, bottom = backed([parted(blank, untied)], [name.lower() for name, _ in SIDES], [parted(blank, tied), lashed], box)
+    shell = {"metres": round(units.metres(GIRTH), 4), "voxels": round(GIRTH, 3), "backedShare": sides, "bottomBackedShare": bottom}
+    cords += len(lashed["children"]) + len(ENDS)
+    capacity = round(CORD_BREAKING_NEWTONS * CORD_STRETCH_AT_BREAK * cords * ROPE_METRES / 2)
+    record("reedboat", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell, "impactCapacity": capacity}}}))
+    shape.keep("FrontSeat", "Cargo", "OarStorage")
     shape.write()
+    reed_kg, cord_kg = len(SIDES) * BUNDLE_REEDS * REED_KG, cords * REEDS_A_ROPE * REED_KG
+    litres = sum(kg / MATERIALS[material]["density"] * 1000 for material, kg in (("reed", reed_kg), ("rope-flax", cord_kg)))
+    girth, length = units.metres(GIRTH), units.metres(BODY[1] - BODY[0])
+    record("reedboat", merged(afloat("reedboat", reed_kg + cord_kg, girth, solid_litres=litres, at_draft=windage([blank, [end["children"][0] for end in bound["children"]]], box["from"][1])), shares([reed_kg, cord_kg]), measured))
     at = seat(shape, "FrontSeat")
-    line = waterline("reedboat")
-    girth, length = GIRTH * VOXEL_METRES, (BODY[1] - BODY[0]) * VOXEL_METRES
-    pole = poling(stands("reedboat", girth, form="rectangle", waterplane=2 * girth * length, beam_metres=2 * girth, depth_metres=girth),
-                  at, line / VOXEL_METRES, CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)
-    player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
+    record("reedboat", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
+    water_metres = waterline_metres("reedboat")
+    pole = poling(stands("reedboat", girth, form="rectangle", waterplane_square_metres=2 * girth * length, beam_metres=2 * girth, depth_metres=girth),
+                  at, units.voxels(water_metres), CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)
+    player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, water_metres, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 5, 3.5)),
         "pole": pole,
     }, ("Blank", "Lashing")))

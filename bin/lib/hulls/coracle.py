@@ -4,11 +4,13 @@ import math
 from pathlib import Path
 
 from fit import APART, Oval
-from physics import HIDE_METRES, LATH_SQUARE_METRES, ROPE_METRES, afloat, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
-from held import PADDLE, poling, sculling, tools, waterline
+from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
+from held import SCULL_REACH_METRES, worked_from_middle, PADDLE, poling, sculling, tools, waterline_metres
 from stroke import player_patch, seat
-from shape import BILGE, VOXEL_METRES, VOXEL_METRES_CUBED_LITRES, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
-from wounds import wound
+import units
+from entity import merged, record
+from shape import BILGE, Shape, bilge_levels, hull_box, windage, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
+from wounds import backed, wound
 
 CENTRE = 8
 
@@ -28,6 +30,7 @@ HIDE = 0.2
 # The hide is stretched over the frame, so the bottom reaches round the outermost laths, the across ones over the along.
 GUNWALE = (12, 8.56)
 BOTTOM = (ACROSS_SPACING * (LATHS // 2) + LATH_WIDTH / 2 + HIDE + LATH_THICKNESS, ALONG_SPACING * (LATHS // 2) + LATH_WIDTH / 2 + HIDE)
+# Her laths rise 0.35 m from her bottom to her gunwale (Museum Wales, Teifi coracle).
 DEPTH = 5.6
 STAVES = 24
 STRIP = 2
@@ -155,7 +158,7 @@ def panels():
         yaw = math.degrees(math.atan2(a[2] - b[2], b[0] - a[0]))
         facet = box(f"Floor{k + 1}", (0, y0, 0), (math.dist(a, b), HIDE - y0, STRIP), "hide")
         sector = abs((a[0] - CENTRE) * (b[2] - CENTRE) - (b[0] - CENTRE) * (a[2] - CENTRE)) / 2
-        pieces.append((2 * math.pi * (k + 0.5) / STAVES, sector * VOXEL_METRES ** 2, group(f"Floor{k + 1}Frame", a, (0, yaw, 0), [facet])))
+        pieces.append((2 * math.pi * (k + 0.5) / STAVES, units.metres(sector, 2), group(f"Floor{k + 1}Frame", a, (0, yaw, 0), [facet])))
         for row, (y0, y1) in enumerate(zip(SIDE_HEIGHTS, SIDE_HEIGHTS[1:])):
             a, b = oval(axes_at(y0), y0, k), oval(axes_at(y0), y0, k + 1)
             d, c = oval(axes_at(y1), y1, k), oval(axes_at(y1), y1, k + 1)
@@ -167,7 +170,7 @@ def panels():
                 f"Side{row + 1}x{k + 1}", [p + v * depth for p, v in zip(a, middleward)], [p + v * depth for p, v in zip(b, middleward)], rise, HIDE, -flare, -1,
                 "hide", "hide", overlap=(wide - math.dist(a, b)) / 2)
             element = board(seated(board, bowl()))
-            pieces.append((2 * math.pi * (k + 1) / STAVES, (math.dist(a, b) + wide) / 2 * rise * VOXEL_METRES ** 2, element))
+            pieces.append((2 * math.pi * (k + 1) / STAVES, units.metres((math.dist(a, b) + wide) / 2 * rise, 2), element))
     return pieces
 
 
@@ -189,7 +192,7 @@ def cover(pieces):
 
 
 def lacing():
-    perimeter = length([oval(GUNWALE, DEPTH, k) for k in range(STAVES + 1)]) * VOXEL_METRES
+    perimeter = units.metres(length([oval(GUNWALE, DEPTH, k) for k in range(STAVES + 1)]))
     metres = lacing_metres(perimeter)
     count = ropes(metres)
     print(f"lacing: {metres:.0f} m round a {perimeter:.2f} m gunwale, {count} ropes")
@@ -223,7 +226,7 @@ def bowl_litres(inset, floor):
         a, b = (axis - inset for axis in axes_at(y))
         total += math.pi * a * b * step
         y += step
-    return total * VOXEL_METRES_CUBED_LITRES
+    return units.litres(units.metres(total, 3))
 
 
 def bowl():
@@ -236,15 +239,35 @@ def axes_at(y):
     return tuple(l + (u - l) * share for l, u in zip(lower, upper))
 
 
-def report(lattice_stage, gunwale_stage, area):
+def shell(hide, bent, box):
+    """What backs her hide: her bent laths, each as wide as LATH_WIDTH, set as far apart as that over the share of her
+    sides they back; a breaker bends them over her side, from her bottom to her gunwale."""
+    sides, bottom = backed([hide], ["hide"], [bent], box)
+    rise = side_rise()
+    spacing = units.metres(LATH_WIDTH) / sides
+    return {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", units.metres(length(rise))),
+            "frame": {**units.both("spacing", spacing), **units.both("span", spacing)}}
+
+
+def side_rise():
+    return [(axes_at(y)[0], y) for y in (DEPTH * k / STAVES for k in range(STAVES + 1))]
+
+
+def seep():
+    """What her seam weeps once its fat is gone, across her bowl from gunwale to gunwale."""
+    seam = 2 * (units.metres(BOTTOM[0]) + units.metres(length(side_rise())))
+    return {"litresPerHourASeam": round(SEAM_LITRES_PER_HOUR_A_METRE * seam, 1)}
+
+
+def report(lattice_stage, gunwale_stage, area, side):
     metres = sum(piece["metres"] for stage in (lattice_stage, gunwale_stage) for piece in stage["children"])
     hide_kg, frame_kg = kilograms("hide", area * HIDE_METRES * 1000), kilograms("wood-willow", metres * LATH_SQUARE_METRES * 1000)
     inset = HIDE + 2 * LATH_THICKNESS
     hold = bowl_litres(inset, inset)
-    deck = math.pi * (GUNWALE[0] - inset) * (GUNWALE[1] - inset) * VOXEL_METRES ** 2
+    deck = units.metres(math.pi * (GUNWALE[0] - inset) * (GUNWALE[1] - inset), 2)
     print(f"coracle: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of willow; "
           f"bowl {bowl_litres(0, 0):.0f} L outside")
-    afloat("coracle", hide_kg + frame_kg, DEPTH * VOXEL_METRES, hold, deck)
+    return merged(afloat("coracle", hide_kg + frame_kg, units.metres(DEPTH), hold, deck, at_draft=side), shares([hide_kg, frame_kg]))
 
 
 def build(path_):
@@ -274,15 +297,22 @@ def build(path_):
     shape.together(bent, binding, gunwale, hide, laced)
     shape.add(group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", DEPTH - 0.5)),
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
-    shape.keep("Hull", "FrontSeat", "OarStorage")
+    box, measured = hull_box(hide)
+    shape.add(box)
+    record("coracle", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hide, bent, box), "seep": seep()}}}))
+    shape.keep("FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
+    layout = {"along": LATHS, "across": LATHS, **units.both("alongSpacing", units.metres(ALONG_SPACING)),
+              **units.both("acrossSpacing", units.metres(ACROSS_SPACING))}
+    record("coracle", merged(report(flat, gunwale, hide_area(pieces), windage([hide], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"layout": layout}}}))
     at = seat(shape, "FrontSeat")
-    line = waterline("coracle")
+    record("coracle", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, SCULL_REACH_METRES, ahead=True)}})
+    water_metres = waterline_metres("coracle")
     floor = HIDE + 2 * LATH_THICKNESS
-    pole = poling(stands("coracle", floor * VOXEL_METRES), at, line / VOXEL_METRES, CENTRE - GUNWALE[1] - 1,
+    pole = poling(stands("coracle", units.metres(floor)), at, units.voxels(water_metres), CENTRE - GUNWALE[1] - 1,
                   (CENTRE, floor, CENTRE), BOTTOM[1] - HIDE - 2 * LATH_THICKNESS)
-    player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, line, {
+    player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, water_metres, {
         "paddle": ("sculling", PADDLE, sculling(PADDLE, at, 6.5, 5, 2.5)),
         "pole": pole,
     }, ("Cover",)))
@@ -294,7 +324,6 @@ def build(path_):
     worn["textures"] = TEXTURES
     write(back, worn)
     print(f"{back}: worn bowl")
-    report(flat, gunwale, hide_area(pieces))
 
 
 if __name__ == "__main__":

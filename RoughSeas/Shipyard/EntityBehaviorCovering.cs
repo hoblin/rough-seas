@@ -92,20 +92,20 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
             entityShape = entityShape.Clone();
             shapeIsCloned = true;
         }
-        Overturn(entityShape, covering.OverturnedPivot);
+        Overturn(entityShape, covering.OverturnedPivotVoxels);
     }
 
     public static bool UprightIn(ITreeAttribute? build) => build?.GetBool(UprightKey, true) ?? true;
 
-    /// <summary>Turns <paramref name="shape"/> keel up about the line <paramref name="pivot"/> voxels above her keel.</summary>
-    public static void Overturn(Shape shape, double pivot)
+    /// <summary>Turns <paramref name="shape"/> keel up about the line along her through <paramref name="pivotVoxels"/>.</summary>
+    public static void Overturn(Shape shape, double[] pivotVoxels)
     {
         var turned = new ShapeElement
         {
             Name = Overturned,
             From = [0, 0, 0],
             To = [0, 0, 0],
-            RotationOrigin = [0, pivot, 8],
+            RotationOrigin = pivotVoxels,
             RotationX = 180,
             Children = shape.Elements,
             FacesResolved = new ShapeElementFace[6]
@@ -134,7 +134,7 @@ public class CoveringConfig : FramingConfig
 
     public bool Overturned;
 
-    public double OverturnedPivot;
+    public double[] OverturnedPivotVoxels = [];
 
     public static new CoveringConfig? Of(EntityProperties type) => Of<CoveringConfig>(type, EntityBehaviorCovering.Code);
 }

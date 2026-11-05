@@ -1,5 +1,7 @@
 import math
 
+import units
+
 from limb import Limb
 from transform import apply
 
@@ -17,7 +19,7 @@ DAMPING = 1e-3
 class Leg(Limb):
 
     def sole(self, pose, trunk=None):
-        return apply(self.frames(pose, trunk)[-1], [c / 16 for c in SOLE])
+        return apply(self.frames(pose, trunk)[-1], [units.metres(c) for c in SOLE])
 
     def plant(self, pose, foot):
         upper, lower = self.upper["name"], self.lower["name"]
@@ -52,7 +54,7 @@ class Leg(Limb):
     def faults(self, pose, foot):
         knee = pose[self.lower["name"]]["rotationZ"]
         spread = self.outboard * pose[self.upper["name"]]["rotationX"]
-        found = {"foot off the floor": 16 * math.dist(self.sole(pose), foot),
+        found = {"foot off the floor": units.voxels(math.dist(self.sole(pose), foot)),
                  "knee flexion": max(0.0, KNEE[0] - knee, knee - KNEE[1]),
                  "hip abduction": max(0.0, SPREAD[0] - spread, spread - SPREAD[1])}
         return {name: excess for name, excess in found.items() if excess > 1e-3}

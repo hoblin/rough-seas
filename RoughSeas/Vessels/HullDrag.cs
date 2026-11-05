@@ -6,8 +6,8 @@ namespace RoughSeas.Vessels;
 public readonly record struct HullForm(double LengthMetres, double BeamMetres, double BowDrag, double SideDrag, double FinSquareMetres)
 {
     public static HullForm From(JsonObject attributes, DragConfig defaults, HullShape shape) => new(
-        2 * shape.HalfLength,
-        2 * shape.HalfBeam,
+        2 * shape.HalfLengthMetres,
+        2 * shape.HalfBeamMetres,
         attributes["bowDrag"].AsDouble(defaults.BowDrag),
         attributes["sideDrag"].AsDouble(defaults.SideDrag),
         attributes["finSquareMetres"].AsDouble());

@@ -30,7 +30,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private JsonObject config = null!;
     private double? designedBeamMetres;
     private Seaworthiness dry;
-    private double dryBeamMetres = double.NaN;
+    private (double BeamMetres, double LengthMetres) dryFor = (double.NaN, double.NaN);
     private float speedMultiplier;
     private EntityBehaviorSeatable? seatable;
     private IMasted? mast;
@@ -45,7 +45,9 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     /// <summary>Server side, each wave as she takes it, whether or not it broke on her or shipped water.</summary>
     public event Action<TakenWave>? Took;
 
-    public double BeamMetres => designedBeamMetres ?? 2 * (hull?.Shape.HalfBeam ?? 0);
+    public double BeamMetres => designedBeamMetres ?? 2 * (hull?.Shape.HalfBeamMetres ?? 0);
+
+    public double? LengthMetres => hull is { } measured ? 2 * measured.Shape.HalfLengthMetres : null;
 
     public double MastMetres => mast?.MastMetres(designedMastMetres) ?? designedMastMetres;
 
@@ -67,8 +69,8 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     {
         get
         {
-            var beam = BeamMetres;
-            if (beam != dryBeamMetres) (dry, dryBeamMetres) = (Seaworthiness.From(config, beam), beam);
+            (double BeamMetres, double LengthMetres) size = (BeamMetres, LengthMetres ?? 0);
+            if (size != dryFor) (dry, dryFor) = (Seaworthiness.From(config, size.BeamMetres, size.LengthMetres), size);
             return dry;
         }
     }

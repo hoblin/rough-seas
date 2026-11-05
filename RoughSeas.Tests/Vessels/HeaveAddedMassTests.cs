@@ -39,7 +39,7 @@ public class HeaveAddedMassTests
         var shape = Fixtures.Shape("barkcanoe");
         var aboard = canoe.Crewed();
 
-        double added = HeaveAddedMass.OfWaterplane(canoe.Flotation.KgPerMetre / KgPerCubicMetre, shape.HalfBeam);
+        double added = HeaveAddedMass.OfWaterplane(canoe.Flotation.KgPerMetre / KgPerCubicMetre, shape.HalfBeamMetres);
 
         Assert.InRange(added / aboard.Total, 2, 10);
     }

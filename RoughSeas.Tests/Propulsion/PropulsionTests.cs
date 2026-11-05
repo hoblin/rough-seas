@@ -48,7 +48,7 @@ public class PropulsionTests
         var drag = Fixtures.DragOf("boat-raft", Fixtures.Hull("boat-raft").Crewed());
         var speed = Cruise("boat-raft", Paddled("boat-raft"));
         var bow = Fixtures.WaterDensity / 2 * (double)Fixtures.PropulsionOf("boat-raft")["bowDrag"]! *
-                  2 * Fixtures.Shape("boat-raft").HalfBeam * Fixtures.Hull("boat-raft").Float(Fixtures.Hull("boat-raft").Crewed()).DraftMetres * speed * speed;
+                  2 * Fixtures.Shape("boat-raft").HalfBeamMetres * Fixtures.Hull("boat-raft").Float(Fixtures.Hull("boat-raft").Crewed()).DraftMetres * speed * speed;
 
         Assert.True(bow > 0.9 * -drag.Along(speed));
     }

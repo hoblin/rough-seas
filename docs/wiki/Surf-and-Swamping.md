@@ -17,10 +17,10 @@ What is left of her side above the water is her *freeboard*, and the hover text 
 | [Coracle](Coracle) | 33 cm | 26 cm |
 | [Dugout](Dugout), oak | 48 cm | 45 cm |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 cm | 32 cm |
-| [Reed boat](Reed-Boat), fresh | 13 cm | 5 cm |
+| [Reed boat](Reed-Boat), fresh | 14 cm | 5 cm |
 | [Hide currach](Hide-Currach) | 58 cm | 56 cm |
 | [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 58 cm | 57 cm |
-| [Sailboat](Sailboat), oak | 52 cm | 50 cm |
+| [Sailboat](Sailboat), oak | 92 cm | 92 cm |
 
 When her freeboard reaches nothing, the sea comes over her gunwale and she floods, cracked or not: a boat loaded down to the water fills in a moment. The raft and the reed boat are solid: pressed under, they lie awash and still hold their load up.
 
@@ -81,9 +81,9 @@ Either the planks hold, or the windward bow, side or quarter it hits is stove in
 
 | Vessel | A spilling breaker of | A plunging breaker of |
 | --- | --- | --- |
-| [Coracle](Coracle) | 2.7 m | 0.3 m |
-| [Hide currach](Hide-Currach) | 25 m | 2.8 m |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 11 m | 1.2 m |
+| [Coracle](Coracle) | 2.2 m | 0.2 m |
+| [Hide currach](Hide-Currach) | 12 m | 1.3 m |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 10 m | 1.1 m |
 | [Dugout](Dugout), [outrigger canoe](Outrigger-Canoe) | none | 3.3 m |
 | [Sailboat](Sailboat) | none | 14 m |
 | [Raft](Raft), [reed boat](Reed-Boat) | none | none |

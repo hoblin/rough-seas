@@ -1,13 +1,15 @@
 import functools
 import math
 
-from held import PADDLE, paddling, poling, tools, waterline
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline_metres
 from stroke import player_patch, seat
-from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, kilograms, per_rope, ropes, stands
+from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, kilograms, per_rope, ropes, shares, stands
 from fit import APART, TOLERANCE, bounded, depth_into, lined as lined_section
-from shape import BILGE, VOXEL_METRES, VOXELS_A_METRE, Hull, Shape, box, clear_of, corners_of, group, num, path, plank, renamed, rested, span, stages, widest
+import units
+from entity import merged, record
+from shape import BILGE, Hull, Shape, bilge_levels, box, clear_of, corners_of, group, hull_box, num, path, plank, renamed, rested, span, stages, widest, windage
 from transform import add, scale, sub, unit
-from wounds import wound
+from wounds import backed, wound
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -41,6 +43,7 @@ GUNWALE_METRES = 0.032
 BARK_METRES = 0.005
 STITCH_METRES = 0.0254
 STEM_GIRTH_METRES = 0.08
+# A sheet five metres long, a little longer than the canoe, trimmed to her as her sides are raised.
 SHEET_LENGTH = 80
 SHEET_THICKNESS = SKIN
 SHEET_CURL = 2.4
@@ -225,7 +228,7 @@ def surplus(name, end):
 
 def depth(stations):
     middle = (STATIONS[0][0] + STATIONS[-1][0]) / 2
-    return round(max(edges[-1][1] for x, edges in stations if abs(x - middle) <= 8) / VOXELS_A_METRE, 4)
+    return round(units.metres(max(edges[-1][1] for x, edges in stations if abs(x - middle) <= 8)), 4)
 
 
 def variants(name, laid, first, raised):
@@ -271,7 +274,7 @@ def raising(flat, stems):
         made = []
         for n, piece in enumerate(laid, 1):
             made.append(variants(f"{name}{n}", piece, first + n - 1, raised))
-            made[-1]["metres"] = round((run(hull, len(PROFILE) - 1) if "wale" in piece[0]["name"] else span(piece, "frame")) / VOXELS_A_METRE, 2)
+            made[-1]["metres"] = round(units.metres(run(hull, len(PROFILE) - 1) if "wale" in piece[0]["name"] else span(piece, "frame")), 2)
         return group(name, (0, 0, 0), (0, 0, 0), made)
 
     frame = pieces("Frame", final[:GUNWALE_FRAME], 1)
@@ -384,7 +387,7 @@ def sheathed(hull):
     stage = stages("Sheathing", sheathing(hull))
     liner = Hull("Sheathing", lined(hull.stations, SKIN + APART)[1:-1], CENTRE, SHEATHING, "frame", "frame")
     for piece, k in zip(stage["children"], (k for k in range(SHEATHED_STRAKES) for _ in ("Port", "Starboard"))):
-        piece["metres"] = round((run(liner, k) + run(liner, k + 1)) / 2 / VOXELS_A_METRE, 2)
+        piece["metres"] = round(units.metres((run(liner, k) + run(liner, k + 1)) / 2), 2)
     return stage
 
 
@@ -428,7 +431,7 @@ def wraps(hull, cuts):
             turns.append(clear_of(cuts, (1, 0, 0), wrap, slide=True)[0])
             x, n = x + LASHING_STEP, n + 1
         sheer = [hull.point(i, top, side) for i in range(len(hull.stations))]
-        metres += sum(math.dist(a, b) for a, b in zip(sheer, sheer[1:])) * VOXEL_METRES * turns_per_metre * girth
+        metres += units.metres(sum(math.dist(a, b) for a, b in zip(sheer, sheer[1:]))) * turns_per_metre * girth
     for name, points in (("Stern", stern_line()), ("Bow", bow(stern_line()))):
         along = on_centre(points[2:-1])
         for n, (a, b) in enumerate(zip(along, along[1:]), 1):
@@ -438,7 +441,7 @@ def wraps(hull, cuts):
                 at = [p + f * (q - p) for p, q in zip(a, b)]
                 turns.append(box(f"Stitch{name}{n}x{s + 1}", (at[0] - 0.25, at[1] - 0.25, CENTRE - 1), (at[0] + 0.25, at[1] + 0.25, CENTRE + 1),
                                  "lashing", grain="z"))
-            metres += math.dist(a, b) * VOXEL_METRES / STITCH_METRES * STEM_GIRTH_METRES
+            metres += units.metres(math.dist(a, b)) / STITCH_METRES * STEM_GIRTH_METRES
     count = ropes(metres)
     print(f"lashing: {metres:.0f} m of root in {len(turns)} wraps, {count} ropes of {ROPE_METRES} m")
     return per_rope(turns, count)
@@ -494,33 +497,40 @@ def build(path_):
     shape.within(Hull("Sheathing", lined(hull.stations, SKIN + APART), CENTRE, SHEATHING, "frame", "frame").outline("the sheathing"), lining)
     shape.within(hull.outline("the sheathing's inside", inset=SKIN + SHEATHING + APART), ribbed)
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
-    shape.keep("Hull", "FrontSeat", "BackSeat", "OarStorage")
     *rising, finished = skin["children"]
+    box, measured = hull_box(finished)
+    shape.add(box)
+    sides, bottom = backed([finished], ["bark"], [lining], box)
+    apart = units.metres(RIBS.step)
+    record("barkcanoe", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", apart), "frame": units.both("spacing", apart)}}}}))
+    shape.keep("FrontSeat", "BackSeat", "OarStorage")
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
           lining=SHEATHING, framing=([ribbed], "frame"))
     shape.write()
+    framing = {"trunkBlocks": round(units.metres(SHEET_LENGTH))}
+    record("barkcanoe", merged(report(hull, laths, windage([finished], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:framing": framing}}))
     at = seat(shape, "BackSeat")
-    line = waterline("barkcanoe")
+    record("barkcanoe", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
+    water_metres = waterline_metres("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT
-    pole = poling(stands("barkcanoe", SKIN * VOXEL_METRES), at, line * VOXELS_A_METRE, CENTRE - SHEER - 1,
+    pole = poling(stands("barkcanoe", units.metres(SKIN)), at, units.voxels(water_metres), CENTRE - SHEER - 1,
                   (poler, SKIN, CENTRE), hull.half(poler, SKIN + 1, inset=SKIN),
                   floor_at=lambda x, across: hull.floor(x, across, inset=SKIN))
-    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, line, {
+    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, water_metres, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 6.5, 1.5)),
         "pole": pole,
     }, (f"Skin{LEVELS}",)))
-    report(hull, laths)
 
 
-def report(hull, laths):
+def report(hull, laths, side):
     bark = hull.skin_square_metres()
     metres = sum(piece.get("metres", 0) for stage in laths for piece in stage["children"])
     bark_kg = kilograms("bark", bark * BARK_METRES * 1000)
     frame_kg = kilograms("wood-tuja", metres * LATH_SQUARE_METRES * 1000)
     print(f"barkcanoe: {bark:.2f} m² of bark, {bark_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of white cedar; "
-          f"sheet {SHEET_LENGTH / VOXELS_A_METRE:.2f} m, {SHEET_THICKNESS / VOXELS_A_METRE:.3f} m thick")
-    afloat("barkcanoe", bark_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=SKIN),
-           hull.square_metres(SHEER - 0.01, inset=SKIN))
+          f"sheet {units.metres(SHEET_LENGTH):.2f} m, {units.metres(SHEET_THICKNESS):.3f} m thick")
+    return merged(afloat("barkcanoe", bark_kg + frame_kg, units.metres(SHEER), hull.litres(SHEER, inset=SKIN),
+                         hull.square_metres(SHEER - 0.01, inset=SKIN), at_draft=side), shares([bark_kg, frame_kg]))
 
 
 if __name__ == "__main__":

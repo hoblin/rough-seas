@@ -1,11 +1,13 @@
 import math
 from functools import cached_property
 
+import units
+
 from limb import Limb
 from transform import angles, apply, cross, depth, direct, dot, euler, sub, unapply, undirect, unit
 
 GRIP = (1.25, 0.6, 1)
-REST_OVERLAP = 0.75 / 16
+REST_OVERLAP = units.metres(0.75)
 SHOULDER_SHARE = 0.25
 # Joint ranges in degrees, AAOS normal values. SWING is the shoulder's highest elevation in each plane of
 # elevation (0 out to the side, 90 straight ahead, -90 straight back): extension 60, horizontal abduction 45,
@@ -69,10 +71,10 @@ class Arm(Limb):
 
     def __init__(self, chain, idle, outboard):
         super().__init__(chain, idle, outboard)
-        self.shoulder = tuple(c / 16 for c in self.upper["rotationOrigin"])
-        self.elbow = tuple(c / 16 for c in self.lower["rotationOrigin"])
-        self.humerus = tuple(e + f / 16 - s for e, f, s in zip(self.elbow, self.upper["from"], self.shoulder))
-        self.forearm = tuple(g / 16 + f / 16 - e for g, f, e in zip(GRIP, self.lower["from"], self.elbow))
+        self.shoulder = tuple(units.metres(c) for c in self.upper["rotationOrigin"])
+        self.elbow = tuple(units.metres(c) for c in self.lower["rotationOrigin"])
+        self.humerus = tuple(e + units.metres(f) - s for e, f, s in zip(self.elbow, self.upper["from"], self.shoulder))
+        self.forearm = tuple(units.metres(g) + units.metres(f) - e for g, f, e in zip(GRIP, self.lower["from"], self.elbow))
         self.rest = [self.upper.get("rotation" + axis, 0) for axis in "XYZ"]
         self.bend = [self.lower.get("rotation" + axis, 0) for axis in "XYZ"]
         self.body_sizes = [size_of(element) for element in self.body]
@@ -82,7 +84,7 @@ class Arm(Limb):
 
     def joints(self, frames):
         *body, upper, lower = frames
-        return apply(body[-1], self.shoulder), apply(upper, self.elbow), apply(lower, [c / 16 for c in GRIP])
+        return apply(body[-1], self.shoulder), apply(upper, self.elbow), apply(lower, [units.metres(c) for c in GRIP])
 
     def posture(self, pose, trunk=None):
         return Posture(self, pose, trunk)
@@ -192,7 +194,7 @@ class Arm(Limb):
     def faults(self, posture, hand, angles):
         faults = {name: (beyond(angles[name], span), (span[1] - span[0]) / 2) for name, span in self.spans(angles).items()}
         faults["arm inside the body"] = (posture.inside, 1)
-        faults["hand off the grip"] = (16 * math.dist(hand, posture.joints[-1]), 1)
+        faults["hand off the grip"] = (units.voxels(math.dist(hand, posture.joints[-1])), 1)
         return {name: fault for name, fault in faults.items() if fault[0] > 0}
 
     # Internal rotation is positive; 0 is the upper arm turned as it hangs at rest, its -x face forward.
@@ -219,14 +221,14 @@ class Arm(Limb):
         for m, size in zip(body, self.body_sizes):
             for point in points:
                 sunk += max(0.0, depth(m, size, point) - REST_OVERLAP) ** 2
-        return 16 * math.sqrt(sunk)
+        return units.voxels(math.sqrt(sunk))
 
     def through(self, pose, other):
         *_, upper, lower = self.frames(pose)
         *_, other_upper, other_lower = other.frames(pose)
         points = [apply(upper, p) for p in self.upper_box] + [apply(lower, p) for p in self.lower_box]
         boxes = ((other_upper, other.upper_size), (other_lower, other.lower_size))
-        return 16 * max(0.0, *(depth(m, size, point) for m, size in boxes for point in points))
+        return units.voxels(max(0.0, *(depth(m, size, point) for m, size in boxes for point in points)))
 
 
 class Posture:
@@ -274,13 +276,13 @@ def cheapest(strains, swing, pinned=None):
 
 
 def size_of(element):
-    return [(b - a) / 16 for a, b in zip(element["from"], element["to"])]
+    return [units.metres(b - a) for a, b in zip(element["from"], element["to"])]
 
 
 def samples(element, top):
     f, t = element["from"], element["to"]
     shares = (0, 0.5, 1)
-    return [((f[0] + (t[0] - f[0]) * i) / 16 - f[0] / 16,
-             (t[1] - (t[1] - f[1]) * (top + (1 - top) * j)) / 16 - f[1] / 16,
-             (f[2] + (t[2] - f[2]) * k) / 16 - f[2] / 16)
+    return [(units.metres(f[0] + (t[0] - f[0]) * i) - units.metres(f[0]),
+             units.metres(t[1] - (t[1] - f[1]) * (top + (1 - top) * j)) - units.metres(f[1]),
+             units.metres(f[2] + (t[2] - f[2]) * k) - units.metres(f[2]))
             for i in shares for j in shares for k in shares]

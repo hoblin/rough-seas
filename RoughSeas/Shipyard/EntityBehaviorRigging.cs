@@ -34,7 +34,7 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 
     public double FloatOffMetres => rig.FloatOffMetres;
 
-    public double FloatLengthMetres => rig.FloatLogs;
+    public double FloatLengthMetres => rig.FloatLengthMetres;
 
     public double FloatWaterplaneSquareMetres =>
         FloatStage is { WaterlineSquareMetres: { Length: > 0 } waterline } stage ? waterline[framing.Laid(stage)] : 0;
@@ -128,6 +128,8 @@ public class RiggingConfig : FramingConfig
     public string FloatStage = "";
 
     public int FloatLogs;
+
+    public double FloatLengthMetres;
 
     public double FloatOffMetres;
 

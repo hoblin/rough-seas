@@ -16,8 +16,8 @@ public class HeaveTests
     private static double AddedKg(Hull hull)
     {
         var shape = Fixtures.Shape(hull.Vessel);
-        double squareMetres = hull.Flotation.HasHold ? hull.Flotation.KgPerMetre / 1025 : 4 * shape.HalfLength * shape.HalfBeam;
-        return HeaveAddedMass.OfWaterplane(squareMetres, shape.HalfBeam);
+        double squareMetres = hull.Flotation.HasHold ? hull.Flotation.KgPerMetre / 1025 : 4 * shape.HalfLengthMetres * shape.HalfBeamMetres;
+        return HeaveAddedMass.OfWaterplane(squareMetres, shape.HalfBeamMetres);
     }
 
     private static List<double> Immersions(Heave heave, double from, double seconds, double step = ClientSeconds, double rising = 0)

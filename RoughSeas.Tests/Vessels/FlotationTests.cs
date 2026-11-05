@@ -34,7 +34,7 @@ public class FlotationTests
     public void AFloodedLightBoatFloatsAwash()
     {
         var currach = Fixtures.Hull("currach");
-        var afloat = currach.Float(currach.Crewed(litres: 1911), litres: 1911);
+        var afloat = currach.Float(currach.Crewed(litres: currach.CapacityLitres), litres: currach.CapacityLitres);
 
         Assert.False(afloat.Sunk);
         Assert.Equal(0, afloat.FreeboardMetres);
@@ -45,7 +45,7 @@ public class FlotationTests
     {
         var currach = Fixtures.Hull("currach");
 
-        Assert.True(currach.Float(currach.Crewed(containers: 60, litres: 1911), litres: 1911).Sunk);
+        Assert.True(currach.Float(currach.Crewed(containers: 60, litres: currach.CapacityLitres), litres: currach.CapacityLitres).Sunk);
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class FlotationTests
         var sailboat = Fixtures.Hull("boat-sailed");
 
         Assert.False(sailboat.Float(sailboat.Crewed()).Sunk);
-        Assert.True(sailboat.Float(sailboat.Crewed(litres: 1500), litres: 1500).Sunk);
+        Assert.True(sailboat.Float(sailboat.Crewed(litres: sailboat.CapacityLitres), litres: sailboat.CapacityLitres).Sunk);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class FlotationTests
     {
         var leadwood = Fixtures.Hull("dugout", "leadwood");
 
-        Assert.True(leadwood.Float(leadwood.Crewed(litres: 1298), litres: 1298).Sunk);
+        Assert.True(leadwood.Float(leadwood.Crewed(litres: leadwood.CapacityLitres), litres: leadwood.CapacityLitres).Sunk);
     }
 
     [Fact]

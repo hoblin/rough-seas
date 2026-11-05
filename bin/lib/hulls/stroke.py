@@ -4,6 +4,9 @@ import os
 from functools import cache
 from pathlib import Path
 
+import units
+from jsontext import load
+
 from arm import Arm
 from leg import Leg
 from motion import faults, switches, unwind
@@ -98,13 +101,13 @@ def find(elements, name):
 def centre(elements, matrices, name):
     element = find(elements, name)
     size = [t - f for f, t in zip(element["from"], element["to"])]
-    return tuple(16 * c for c in apply(matrices[name], [s / 32 for s in size]))
+    return tuple(units.voxels(c) for c in apply(matrices[name], [units.metres(s) / 2 for s in size]))
 
 
 def seat(shape, name):
     point = find(shape.elements, name)["attachmentpoints"][0]
     placed = posed(shape.elements, lambda element: {})[name]
-    return tuple(16 * c for c in apply(placed, [float(point["pos" + axis]) / 16 for axis in "XYZ"]))
+    return tuple(units.voxels(c) for c in apply(placed, [units.metres(float(point["pos" + axis])) for axis in "XYZ"]))
 
 
 def facing(shape, vessel, name):
@@ -112,7 +115,7 @@ def facing(shape, vessel, name):
     if not entity.exists():
         return 0
     code = find(shape.elements, name)["attachmentpoints"][0]["code"]
-    seats = json.loads(entity.read_text())["behaviorConfigs"]["creaturecarrier"]["seats"]
+    seats = load(entity)["behaviorConfigs"]["creaturecarrier"]["seats"]
     return next(s for s in seats if s["apName"] == code).get("mountRotation", {}).get("y", 0)
 
 
@@ -127,7 +130,7 @@ class Rower:
         self.seraph = json.loads(SERAPH.read_text())
         self.seat = seat
         self.yaw = yaw
-        self.placing = mul(mul(translation([h / 16 for h in CENTRE]), rotation("Y", yaw)), translation([-s / 16 for s in seat]))
+        self.placing = mul(mul(translation([units.metres(h) for h in CENTRE]), rotation("Y", yaw)), translation([units.metres(-s) for s in seat]))
         animations = self.seraph["animations"] + [op["value"] for op in json.loads(POSES.read_text())
                                                   if op["path"] == "/animations/-"]
         sitting = next(a for a in animations if a["code"] == idle)
@@ -148,19 +151,19 @@ class Rower:
 
     def facing(self, pose, point):
         hips = self.arms["R"].body[1]
-        middle = [(a + b) / 32 - a / 16 for a, b in zip(hips["from"], hips["to"])]
+        middle = [units.metres(a + b) / 2 - units.metres(a) for a, b in zip(hips["from"], hips["to"])]
         aim = [p - m for p, m in zip(unapply(self.arms["R"].frames(pose)[1], point), middle)]
         turn = math.degrees(math.atan2(aim[2], -aim[0]))
         return round(max(-TRUNK_ROTATION, min(TRUNK_ROTATION, turn)), 2)
 
     def body(self, point):
-        return apply(self.placing, [p / 16 for p in point])
+        return apply(self.placing, [units.metres(p) for p in point])
 
     def along(self, axis):
         return direct(self.placing, axis)
 
     def hand(self, pose, side):
-        return tuple(16 * c for c in unapply(self.placing, self.arms[side].posture(pose).joints[-1]))
+        return tuple(units.voxels(c) for c in unapply(self.placing, self.arms[side].posture(pose).joints[-1]))
 
 
 def crew(shape, vessel, seated, idle, strokes, grips, lean):
@@ -177,8 +180,8 @@ def played(vessel):
     gives her propulsion."""
     entity = ENTITIES / f"{vessel}.json"
     if entity.exists():
-        return json.loads(entity.read_text())["behaviorConfigs"]["roughseas:propulsion"]["strokes"]
-    return next(op["value"]["strokes"] for op in json.loads((PATCHES / "propulsion-vessels.json").read_text())
+        return load(entity)["behaviorConfigs"]["roughseas:propulsion"]["strokes"]
+    return next(op["value"]["strokes"] for op in load(PATCHES / "propulsion-vessels.json")
                 if op["file"].endswith(f"boat-{vessel}.json") and "strokes" in op["value"])
 
 

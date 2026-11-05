@@ -1,9 +1,13 @@
-import json
 import math
+from itertools import product
+
+import units
+from jsontext import load
 
 from physics import ASSETS
+from fit import corners, posed
 from shape import box, group, seed
-from transform import apply, direct, identity, local, mul, rotation, unapply
+from transform import apply, depth, direct, identity, local, mul, rotation, unapply, unit
 
 # The places, their shares and the forms are the game's: HullPlace, HullShape and HullDamage.WoundForms, held together
 # by VesselShapeTests.
@@ -32,6 +36,8 @@ TAIL_SHARE = 0.25
 SPRUNG_DEGREES = {"carved": 12, "rigid": 15, "skin": 50}
 FRAME_BENT = {"Split": 0.25, "StoveIn": 1}
 FRAME_GAP = 0.2
+CELL = 4
+PROBE = 0.05
 
 
 class HullBox:
@@ -67,9 +73,9 @@ def wound(shape, levels, lining=0, framing=None):
     in its frame, through its wall and the lining inside it. A level is (name, elements, texture); the finished hull's
     is named "". The framing, (elements, texture), breaks under the skin from a split on: its member nearest each place's
     mark is wrapped whole in Wound{Place}Whole, and drawn broken beside it as Wound{Place}{Form}Frame."""
-    entity = json.loads((ASSETS / "entities/vessel" / shape.path.name).read_text())
+    entity = load(ASSETS / "entities/vessel" / shape.path.name)
     shell = entity["behaviorConfigs"]["roughseas:vesselintegrity"]["shell"]
-    span = shell["spanMetres"] * 16
+    span = units.voxels(shell["spanMetres"])
     sprung = SPRUNG_DEGREES[shell.get("kind", "rigid")]
     hull = HullBox(next(element for element in shape.elements if element["name"] == "Hull"))
     for level, elements, texture in levels:
@@ -138,6 +144,52 @@ def host(boards, hull, place, fits=lambda found: True):
     return min(placed, key=lambda found: math.dist(centre(*found[:2]), target))
 
 
+def backed(skin_elements, textures, framing, hull_element, step=0.5, reach=1.5):
+    """The share of her sides and of her bottom where a frame member backs her skin, lying against it within reach
+    voxels on either face: sampled over each of her skin's boards, the places sorted as the game sorts them
+    (HullShape.At)."""
+    hull = HullBox(hull_element)
+    members, cells = [], {}
+    for element, m in posed(framing):
+        points = corners(element, m)
+        low, high = ([pick(point[axis] for point in points) for axis in range(3)] for pick in (min, max))
+        members.append((m, [units.metres(c) for c in size(element)]))
+        for key in product(*(range(int(low[axis] // CELL), int(high[axis] // CELL) + 1) for axis in range(3))):
+            cells.setdefault(key, []).append(len(members) - 1)
+    counts = {"Bottom": [0, 0], "Sides": [0, 0]}
+    for element, m, _ in (found for texture in textures for found in skin(skin_elements, texture)):
+        extent = size(element)
+        centre = [units.voxels(c) for c in apply(m, [units.metres(e / 2) for e in extent])]
+        straight = max(0, hull.half_length - hull.half_beam)
+        middle = min(max(centre[0], hull.along - straight), hull.along + straight)
+        inward = unit([middle - centre[0], hull.keel + hull.depth / 2 - centre[1], hull.across - centre[2]])
+        axes = [unit(direct(m, [1 if axis == k else 0 for axis in range(3)])) for k in range(3)]
+        thin = max(range(3), key=lambda axis: abs(sum(a * i for a, i in zip(axes[axis], inward))))
+        a, b = (axis for axis in range(3) if axis != thin)
+        normal = axes[thin]
+        for u in samples(extent[a], step):
+            for v in samples(extent[b], step):
+                local_point = [0.0, 0.0, 0.0]
+                local_point[a], local_point[b], local_point[thin] = u, v, extent[thin] / 2
+                point = [units.voxels(c) for c in apply(m, [units.metres(c) for c in local_point])]
+                count = counts["Bottom" if hull.place(point) == "Bottom" else "Sides"]
+                count[0] += 1
+                count[1] += any(inside(members, cells, [p + way * n * (extent[thin] / 2 + k) for p, n in zip(point, normal)])
+                                for k in samples(reach, PROBE) for way in (-1, 1))
+    return tuple(round(hits / total, 2) if total else 0 for total, hits in (counts["Sides"], counts["Bottom"]))
+
+
+def samples(length, step):
+    count = max(1, round(length / step))
+    return [(n + 0.5) * length / count for n in range(count)]
+
+
+def inside(members, cells, point):
+    key = tuple(int(c // CELL) for c in point)
+    metres = [units.metres(c) for c in point]
+    return any(depth(members[n][0], members[n][1], metres) >= 0 for n in cells.get(key, ()))
+
+
 def skin(elements, texture, parent=None):
     for element in list(elements):
         m = mul(parent or identity(), local(element, {}))
@@ -151,7 +203,7 @@ def size(element):
 
 
 def centre(element, m):
-    return tuple(c * 16 for c in apply(m, [s / 32 for s in size(element)]))
+    return tuple(units.voxels(c) for c in apply(m, [units.metres(s) / 2 for s in size(element)]))
 
 
 class Frame:
@@ -173,7 +225,7 @@ class Frame:
         depth = min(sizes[self.through], WALL)
         self.wall = (0, depth + lining) if self.inward > 0 else (sizes[self.through] - depth - lining, sizes[self.through])
         self.thickness = depth
-        aimed = [c * 16 for c in unapply(m, [t / 16 for t in target])]
+        aimed = [units.voxels(c) for c in unapply(m, [units.metres(t) for t in target])]
         self.aim = (aimed[self.along], aimed[self.across])
 
     def roomy(self):

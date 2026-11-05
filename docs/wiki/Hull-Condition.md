@@ -142,7 +142,7 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 | [Dugout](Dugout) | 1298 litres | 137 | none | nine and a half minutes |
 | [Outrigger canoe](Outrigger-Canoe) | 1720 litres | 159 | none | eleven minutes |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 609 litres | 92 | none | six and a half minutes |
-| [Sailboat](Sailboat) | 1500 litres | 325 | 242 | four and a half minutes |
+| [Sailboat](Sailboat) | 8209 litres | 188 | none | forty-four minutes |
 | [Hide currach](Hide-Currach) | 1911 litres | 84 | none | twenty-three minutes |
 
 A bottom leak keeps its pace as she fills, for the water inside rises with her; a side leak slows once the water inside stands above it. A bottom only cracked by a hard knock lets in about a third as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) she is done.
@@ -151,7 +151,7 @@ A bottom leak keeps its pace as she fills, for the water inside rises with her; 
 
 A wooden hull barely wears: the dugout, the outrigger, the bark canoe and the sailboat need no upkeep. Hide and reed change just by floating, counted in game hours afloat:
 
-- A hide cover, the [coracle](Coracle)'s and the [hide currach](Hide-Currach)'s, seeps at every seam where one hide meets the next once the grease is gone: 15 litres a game hour a seam across a currach, 12 across a coracle. Rendered fat keeps them tight for two and a half days afloat; look at her to see when the next greasing is due.
+- A hide cover, the [coracle](Coracle)'s and the [hide currach](Hide-Currach)'s, seeps at every seam where one hide meets the next once the grease is gone: about 13 litres a game hour a seam across a currach or a coracle. Rendered fat keeps them tight for two and a half days afloat; look at her to see when the next greasing is due.
 - A cover rots by the hides it is sewn from. Untanned hide, raw, soaked or scraped, keeps a day afloat in water at 20 °C and two weeks at 5 °C, then rots through in as long again, cracking her everywhere; salted hide keeps half a day more, oiled hide and pelts three times as long, and bark-tanned prepared hide a year. Its time afloat counts by the water it was in, so days in cold water spent little of its keeping. A day ashore in the sun dries a cover through, and it keeps afresh, as untanned covers were dried every day; each hide rots no further than its own part of the cover. A wet cover is heavier by the water it takes up.
 - The [reed boat](Reed-Boat) soaks up 33 kg of water a day afloat, sitting deeper as it does and its ends sagging: after a day its rider sits awash, and left alone it is on the bottom within four. Ashore under the open sky, in daylight and no rain, it dries out, but each drying leaves a third of what it drove out behind as rot that never dries. Soaked and dried a few times, it sinks the moment it is launched.
 

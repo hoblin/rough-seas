@@ -1,10 +1,10 @@
 using Newtonsoft.Json.Linq;
+using RoughSeas.Units;
 
 namespace RoughSeas.Tests.Shipyard;
 
 public class FirstStageTests
 {
-    private const double VoxelsAMetre = 16;
     private const double Centre = 8;
 
     private static JObject Shape(string vessel) => JObject.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", $"{vessel}.json")));
@@ -34,18 +34,18 @@ public class FirstStageTests
     {
         var (from, to) = Bounds(Named(Shape("dugout")["elements"]!, "Blank0"));
 
-        Assert.Equal([Centre - 2.5 * VoxelsAMetre, 0, 0], from);
-        Assert.Equal([Centre + 2.5 * VoxelsAMetre, VoxelsAMetre, VoxelsAMetre], to);
+        Assert.Equal([Centre - 2.5 * Voxels.AMetre, 0, 0], from);
+        Assert.Equal([Centre + 2.5 * Voxels.AMetre, Voxels.AMetre, Voxels.AMetre], to);
     }
 
     [Fact]
     public void AnOutriggersFloatJoinsAsTheThreeLogsBesideHer()
     {
-        var off = Entity("outrigger")["behaviorConfigs"]!["roughseas:rigging"]!.Value<double>("floatOffMetres") * VoxelsAMetre;
+        var off = Entity("outrigger")["behaviorConfigs"]!["roughseas:rigging"]!.Value<double>("floatOffVoxels");
         var (from, to) = Bounds(Named(Shape("outrigger")["elements"]!, "FloatLog1"));
 
-        Assert.Equal([Centre - 1.5 * VoxelsAMetre, 0, Centre + off - VoxelsAMetre / 2], from);
-        Assert.Equal([Centre + 1.5 * VoxelsAMetre, VoxelsAMetre, Centre + off + VoxelsAMetre / 2], to);
+        Assert.Equal([Centre - 1.5 * Voxels.AMetre, 0, Centre + off - Voxels.AMetre / 2], from);
+        Assert.Equal([Centre + 1.5 * Voxels.AMetre, Voxels.AMetre, Centre + off + Voxels.AMetre / 2], to);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class FirstStageTests
         var (from, to) = Bounds(Named(Shape("barkcanoe")["elements"]!, "SheetFlat"));
         var curl = Named(Shape("barkcanoe")["elements"]!, "SheetCurlPort");
 
-        Assert.Equal(blocks * VoxelsAMetre, to[0] - from[0], 3);
+        Assert.Equal(blocks * Voxels.AMetre, to[0] - from[0], 3);
         Assert.Equal(0, from[1]);
         Assert.True(curl.Value<double>("rotationX") > 0, "a curl lifts off the ground");
     }
@@ -79,8 +79,8 @@ public class FirstStageTests
         var along = laths.Take(7).Select(Start).Select(start => start[2]).ToArray();
         var across = laths.Skip(7).Select(Start).Select(start => start[0]).ToArray();
 
-        Assert.Equal(Spaced(layout.Value<double>("alongSpacingMetres")), along);
-        Assert.Equal(Spaced(layout.Value<double>("acrossSpacingMetres")), across);
+        Assert.Equal(Spaced(layout.Value<double>("alongSpacingVoxels")), along);
+        Assert.Equal(Spaced(layout.Value<double>("acrossSpacingVoxels")), across);
         Assert.All(laths.Take(7), lath => Assert.Equal(0, Bottom(lath), 3));
         Assert.All(laths.Skip(7), lath => Assert.Equal(Top(laths[0]), Bottom(lath), 3));
     }
@@ -92,7 +92,7 @@ public class FirstStageTests
     [Fact]
     public void ACurrachsGunwaleLathsLieAsFarApartAsHerPairIsLaid()
     {
-        var beam = Entity("currach")["behaviorConfigs"]!["roughseas:covering"]!["layout"]!.Value<double>("beamMetres");
+        var beam = Entity("currach")["behaviorConfigs"]!["roughseas:covering"]!["layout"]!.Value<double>("beamVoxels");
         var elements = Shape("currach")["elements"]!;
         double Middle(string name)
         {
@@ -101,10 +101,10 @@ public class FirstStageTests
             return astern["from"]![2]!.Value<double>() + (board["from"]![2]!.Value<double>() + board["to"]![2]!.Value<double>()) / 2;
         }
 
-        Assert.Equal(beam, (Middle("GunwaleStarboardAsternFrame") - Middle("GunwalePortAsternFrame")) / VoxelsAMetre, 2);
+        Assert.Equal(beam, Middle("GunwaleStarboardAsternFrame") - Middle("GunwalePortAsternFrame"), 2);
     }
 
     private static double[] Start(JToken box) => box.Parent!.Parent!.Parent!["from"]!.Values<double>().ToArray();
 
-    private static double[] Spaced(double metres) => [.. Enumerable.Range(-3, 7).Select(n => Centre + n * metres * VoxelsAMetre)];
+    private static double[] Spaced(double voxels) => [.. Enumerable.Range(-3, 7).Select(n => Centre + n * voxels)];
 }

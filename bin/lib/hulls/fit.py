@@ -1,6 +1,8 @@
 import math
 from itertools import combinations
 
+import units
+
 from transform import apply, direct, identity, local, mul, unapply
 
 TOLERANCE = 0.01
@@ -121,7 +123,7 @@ class Tube(Surface):
         self.w, self.h = width / 2, height / 2
 
     def beyond(self, point):
-        x, y, z = (c * 16 for c in unapply(self.frame, [c / 16 for c in point]))
+        x, y, z = (units.voxels(c) for c in unapply(self.frame, [units.metres(c) for c in point]))
         return max(radial(z, y, self.w, self.h), -x, x - self.length)
 
 
@@ -152,7 +154,7 @@ def posed(elements, parent=None):
 
 def corners(element, m):
     f, t = element["from"], element["to"]
-    return [tuple(c * 16 for c in apply(m, [(p - q) / 16 for p, q in zip((x, y, z), f)]))
+    return [tuple(units.voxels(c) for c in apply(m, [units.metres(p - q) for p, q in zip((x, y, z), f)]))
             for x in (f[0], t[0]) for y in (f[1], t[1]) for z in (f[2], t[2])]
 
 
@@ -177,7 +179,7 @@ def faces(element, m):
         for a, b in square:
             p = [0, 0, 0]
             p[axis], p[u], p[v] = level, a, b
-            points.append(tuple(c * 16 for c in apply(m, [(c - q) / 16 for c, q in zip(p, f)])))
+            points.append(tuple(units.voxels(c) for c in apply(m, [units.metres(c - q) for c, q in zip(p, f)])))
         yield direct(m, normal), points
 
 

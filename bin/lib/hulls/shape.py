@@ -3,9 +3,11 @@ import hashlib
 import json
 import math
 import re
+import tempfile
 from pathlib import Path
 
-from fit import APART, TOLERANCE, Loft, check, corners, depth_into, posed
+import units
+from fit import APART, TOLERANCE, Loft, check, corners, depth_into, enclosed, posed
 from transform import add, apply, cross, direct, dot, scale, sub, unit
 
 FACES = ("north", "east", "south", "west", "up", "down")
@@ -16,6 +18,9 @@ FACE_AXES = {
 }
 AXIS = {"x": 0, "y": 1, "z": 2}
 ROUNDED = 0.68
+ORIGIN = (8, 0, 8)
+# As long as vanilla's raft's collision boxes.
+COLLISION_METRES = 1.5
 
 
 def num(value):
@@ -63,7 +68,7 @@ def box(name, frm, to, tex, *, origin=None, rot=(0, 0, 0), grain="x", skip=(), c
     return element
 
 
-def run(name, frm, to, tex, *, axis="x", step=16, **options):
+def run(name, frm, to, tex, *, axis="x", step=units.voxels(1), **options):
     i = AXIS[axis]
     pieces, start, n = [], frm[i], 1
     while start < to[i] - 1e-6:
@@ -103,22 +108,94 @@ def renamed(element, suffix):
     return copy
 
 
+def bounds(*elements):
+    """The corners of the box round the elements as they are posed."""
+    points = [corner for element, m in posed(flattened(elements)) for corner in corners(element, m)]
+    return tuple([num(pick(point[axis] for point in points)) for axis in range(3)] for pick in (min, max))
+
+
+def hull_box(*elements):
+    """The box round her hull's posed corners, which the mechanics measure her by, and that box as her entity takes it:
+    from the point she stands at, in metres and in voxels."""
+    return hull_of(*bounds(*elements))
+
+
+def hull_of(frm, to):
+    """The Hull element spanning frm to to, and that box as her entity takes it."""
+    element = {"name": "Hull", "from": frm, "to": to, "faces": {},
+               "attachmentpoints": [{"code": "HullAP", "posX": str(num((to[0] - frm[0]) / 2)), "posY": "0", "posZ": str(num((to[2] - frm[2]) / 2)),
+                                     "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]}
+    voxels = {end: [num(c - o) for c, o in zip(corner, ORIGIN)] for end, corner in (("from", frm), ("to", to))}
+    measured = {"hullBoxMetres": {end: [num(units.metres(c)) for c in corner] for end, corner in voxels.items()}, "hullBoxVoxels": voxels}
+    placed = collision(element)
+    placed["behaviorConfigs"]["roughseas:vesselintegrity"] = measured
+    return element, placed
+
+
+def side_area(elements, low=-math.inf, high=math.inf, step=0.5):
+    """The square metres of the elements as seen from abeam, between the heights low and high (voxels): above her
+    waterline what the wind meets, below it what the water does."""
+    cells = set()
+    for element, m in posed(flattened(elements)):
+        outline = convex([(x, y) for x, y, _ in corners(element, m)])
+        (x0, y0), (x1, y1) = ([pick(p[axis] for p in outline) for axis in range(2)] for pick in (min, max))
+        for i in range(math.floor(x0 / step), math.ceil(x1 / step)):
+            for j in range(max(math.floor(y0 / step), math.ceil(low / step) if low > -math.inf else math.floor(y0 / step)),
+                           min(math.ceil(y1 / step), math.floor(high / step) if high < math.inf else math.ceil(y1 / step))):
+                if (i, j) not in cells and enclosed(((i + 0.5) * step, (j + 0.5) * step), outline):
+                    cells.add((i, j))
+    return units.metres(len(cells) * step * step, 2)
+
+
+def convex(points):
+    points = sorted(set(points))
+    if len(points) < 3:
+        return points
+    turn = lambda o, a, b: (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lower, upper = [], []
+    for point in points:
+        while len(lower) >= 2 and turn(lower[-2], lower[-1], point) <= 0:
+            lower.pop()
+        lower.append(point)
+    for point in reversed(points):
+        while len(upper) >= 2 and turn(upper[-2], upper[-1], point) <= 0:
+            upper.pop()
+        upper.append(point)
+    return lower[:-1] + upper[:-1]
+
+
+def windage(elements, keel_voxels):
+    """What the wind meets of the elements above her waterline, at the draft afloat finds her at."""
+    return lambda draft_metres: {"behaviorConfigs": {"roughseas:seaforces": units.both("windage", side_area(elements, keel_voxels + units.voxels(draft_metres)), 2)}}
+
+
+def collision(box, *more):
+    """Her hitbox, as wide as she is and as tall, and her collision boxes: the hull box in pieces of about
+    COLLISION_METRES along her, and a box round each of more (an outrigger's float), in the entity's frame, where her
+    bow points along +z."""
+    def entity(frm, to):
+        (x0, y0, z0), (x1, y1, z1) = frm, to
+        return {"x1": num(units.metres(ORIGIN[2] - z1)), "y1": num(units.metres(y0)), "z1": num(units.metres(ORIGIN[0] - x1)),
+                "x2": num(units.metres(ORIGIN[2] - z0)), "y2": num(units.metres(y1)), "z2": num(units.metres(ORIGIN[0] - x0))}
+    (x0, y0, z0), (x1, y1, z1) = box["from"], box["to"]
+    pieces = max(1, round(units.metres(x1 - x0) / COLLISION_METRES))
+    boxes = [entity((x0 + (x1 - x0) * n / pieces, y0, z0), (x0 + (x1 - x0) * (n + 1) / pieces, y1, z1)) for n in reversed(range(pieces))]
+    boxes += [entity(*bounds(element)) for element in more]
+    return {"hitboxSize": {"x": num(units.metres(z1 - z0)), "y": num(units.metres(y1 - y0))},
+            "behaviorConfigs": {"passivephysicsmultibox": {"collisionBoxes": boxes}}}
+
+
 def stages(name, pieces, wood="frame"):
     """A stage's pieces, each its own group; a piece of wood names the metres of lath or pole it takes, the length
     drawn in that texture along its run."""
     children = []
     for n, piece in enumerate(pieces, 1):
         child = group(f"{name}{n}", (0, 0, 0), (0, 0, 0), piece)
-        metres = span(piece, wood) / VOXELS_A_METRE
+        metres = units.metres(span(piece, wood))
         if metres > 0:
             child["metres"] = round(metres, 2)
         children.append(child)
     return group(name, (0, 0, 0), (0, 0, 0), children)
-
-
-VOXELS_A_METRE = 16
-VOXEL_METRES = 1 / VOXELS_A_METRE
-VOXEL_METRES_CUBED_LITRES = 1000 / VOXELS_A_METRE ** 3
 
 
 def span(elements, tex):
@@ -222,6 +299,14 @@ def bilge(floor, mask, planes):
     return group("Bilge", (0, 0, 0), (0, 0, 0), levels)
 
 
+def bilge_levels(elements):
+    """The height above her origin of each level of her bilge's water, as her bilge config takes them."""
+    levels = next(element for element in elements if element["name"] == "Bilge")["children"]
+    heights = [level["children"][0]["from"][1] for level in levels]
+    return {"behaviorConfigs": {"roughseas:bilge": {"levelHeightsMetres": [num(units.metres(h)) for h in heights],
+                                                    "levelHeightsVoxels": [num(h) for h in heights]}}}
+
+
 def across(start, end, up):
     yaw, pitch = (math.radians(angle) for angle in heading(start, end)[:2])
     along = [math.cos(pitch) * math.cos(yaw), math.sin(pitch), -math.cos(pitch) * math.sin(yaw)]
@@ -258,7 +343,7 @@ def ends_of(elements):
         (x0, y0, z0), (x1, y1, z1) = element["from"], element["to"]
         middle = ((y0 + y1) / 2, (z0 + z1) / 2)
         for x in (x0, x1):
-            cuts.append(([c * 16 for c in apply(m, [(x - x0) / 16, (middle[0] - y0) / 16, (middle[1] - z0) / 16])], along))
+            cuts.append(([units.voxels(c) for c in apply(m, [units.metres(x - x0), units.metres(middle[0] - y0), units.metres(middle[1] - z0)])], along))
     return cuts
 
 
@@ -493,7 +578,7 @@ class Hull:
                 total += 2 * self.half(x, y, inset) * step * step
                 y += step
             x += step
-        return total * VOXEL_METRES_CUBED_LITRES
+        return units.litres(units.metres(total, 3))
 
     def square_metres(self, height, inset=0, step=0.25):
         x0, x1 = self.span()
@@ -501,10 +586,10 @@ class Hull:
         while x < x1:
             total += 2 * self.half(x, height, inset) * step
             x += step
-        return total / VOXELS_A_METRE ** 2
+        return units.metres(total, 2)
 
     def skin_square_metres(self):
-        return sum(math.sqrt(dot(spread := cross(sub(c, a), sub(d, b)), spread)) / 2 for *_, (a, b, c, d) in self.panels()) / VOXELS_A_METRE ** 2
+        return units.metres(sum(math.sqrt(dot(spread := cross(sub(c, a), sub(d, b)), spread)) / 2 for *_, (a, b, c, d) in self.panels()), 2)
 
     def rib(self, name, x, tex, width=1, depth=1, inset=None, clear=()):
         """A rib at x, a piece along each edge of the section, each sunk until it lies inside the skin (and what lines
@@ -604,9 +689,9 @@ def write(path, shape):
 
 def save(path, text):
     """Replaces the file whole, in one step: the vessels build side by side and read each other's files."""
-    part = path.with_name(path.name + ".part")
-    part.write_text(text)
-    part.replace(path)
+    with tempfile.NamedTemporaryFile("w", dir=path.parent, prefix=path.name, suffix=".part", delete=False) as part:
+        part.write(text)
+    Path(part.name).replace(path)
 
 
 def flattened(elements):

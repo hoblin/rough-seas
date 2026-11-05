@@ -47,6 +47,10 @@
 </ItemGroup>
 
 <ItemGroup>
+  <EmbeddedResource Include="Units/voxel.json" LogicalName="RoughSeas.Units.voxel.json" />
+</ItemGroup>
+
+<ItemGroup>
   <Content Include="modinfo.json;worldconfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
   </Content>
