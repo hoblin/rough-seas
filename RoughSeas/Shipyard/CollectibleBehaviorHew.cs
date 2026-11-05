@@ -19,8 +19,9 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
             handHandling = EnumHandHandling.PreventDefault;
             return;
         }
-        if (Blank(entitySel) is not { CanHew: true }) return;
+        if (Blank(entitySel) is not { CanHew: true } blank) return;
 
+        if (byEntity.World.Side == EnumAppSide.Server) blank.TakeUp(byEntity);
         byEntity.Attributes.SetInt(StrokesKey, 0);
         handling = EnumHandling.PreventDefault;
         handHandling = EnumHandHandling.PreventDefault;

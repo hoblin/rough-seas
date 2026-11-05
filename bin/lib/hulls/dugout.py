@@ -576,7 +576,8 @@ def build(path):
     shape.add(box)
     record("dugout", merged(measured, walls()))
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
-    wound(shape, [("", [shell], WOOD), *((built["name"], [built], WOOD) for name in ("Blank", "Hewn") for built in stages[name]["children"])])
+    trench = stages["Hewn"]["children"][0]
+    wound(shape, [("", [shell], WOOD), *((built["name"], [built], WOOD) for built in [*stages["Blank"]["children"], trench])])
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")

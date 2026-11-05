@@ -311,4 +311,6 @@ A hewing no longer changes her at once: the inside is cut a section at a time, t
 - `IVesselHold` grew `DesignedLitres`, the hold she is built to: a hewing's strokes are counted from it.
 - `roughseas:hew` swings the player animation `roughseas-hew`, vanilla's felling chop with its chop at the blow, where it swung vanilla's `axechop` with a chop a stroke from the server.
 
-New: `hewnSectionsMetres`, `roughseas-hew`, `IVesselHold.DesignedLitres`.
+- The one who last took an axe to her is kept as `hewer` in `roughseas:build`: only that hull throws chips at their blows.
+
+New: `hewnSectionsMetres`, `roughseas-hew`, `hewer`, `IVesselHold.DesignedLitres`.

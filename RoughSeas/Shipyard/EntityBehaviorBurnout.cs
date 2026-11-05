@@ -21,6 +21,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     public const string Code = "roughseas:burnout";
 
     private const string CheckedAtKey = "checkedAt";
+    private const string HewerKey = "hewer";
     private const int DataVersion = 1;
     private const float TickSeconds = 1;
     private const int BurningPhases = 3;
@@ -99,6 +100,12 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         tree.SetDouble(CheckedAtKey, hours);
         Burnout.Begin(tree);
     });
+
+    public void TakeUp(EntityAgent hewer)
+    {
+        Tree.SetLong(HewerKey, hewer.EntityId);
+        MarkDirty();
+    }
 
     /// <returns>Whether char is left to hew after this stroke.</returns>
     public bool Hew(EntityAgent byEntity, ItemSlot axe)
@@ -435,6 +442,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
             if (hewer.Properties.Client.AnimationsByMetaCode.GetValueOrDefault(CollectibleBehaviorHew.Animation) is not { } hewing
                 || hewer.AnimManager?.GetAnimationState(hewing.Animation) is not { Running: true } swing
                 || !swing.meta.Code.StartsWith(CollectibleBehaviorHew.Animation, StringComparison.Ordinal)
+                || Tree?.GetLong(HewerKey) != hewer.EntityId
                 || hewer.Pos.DistanceTo(entity.Pos) > ChipReachMetres)
             {
                 swings.Remove(hewer.EntityId);
