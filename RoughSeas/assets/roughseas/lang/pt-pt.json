@@ -39,7 +39,7 @@
     "shipyard-kindle": "Pôr erva seca no oco",
     "shipyard-hollowed": "Escavada: {0} de {1}",
     "shipyard-burns": "A arder: {p0:falta menos de uma hora|falta # hora|faltam # horas}",
-    "shipyard-charred": "Carbonizada: {0} de {1} golpes de machado",
+    "shipyard-charred": "Carvão desbastado: {0} de {1} golpes",
     "shipyard-spoiled": "Estragada: o seu fogo ardeu sem argila na borda e carbonizou-a de lado a lado",
     "shipyard-rim-clay": "Argila na borda: {0} de {1}",
     "shipyard-firepit": "Fogueira sobre a erva seca: lenha {0} de {1}",

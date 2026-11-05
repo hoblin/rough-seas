@@ -41,7 +41,7 @@
     "shipyard-kindle": "Trockenes Gras in die Höhlung legen",
     "shipyard-hollowed": "Ausgehöhlt: {0} von {1}",
     "shipyard-burns": "Brennt: noch {p0:weniger als eine Stunde|# Stunde|# Stunden}",
-    "shipyard-charred": "Verkohlt: {0} von {1} Axthieben ausgehauen",
+    "shipyard-charred": "Kohle ausgehauen: {0} von {1} Hieben",
     "shipyard-spoiled": "Verdorben: sein Feuer brannte ohne Ton am Rand und verkohlte ihn durch und durch",
     "shipyard-rim-clay": "Ton am Rand: {0} von {1}",
     "shipyard-firepit": "Feuerstelle auf dem trockenen Gras: {0} von {1} Brennholz",

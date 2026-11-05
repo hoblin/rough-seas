@@ -41,7 +41,7 @@
     "shipyard-kindle": "Poser de l'herbe sèche dans le creux",
     "shipyard-hollowed": "Évidée : {0} sur {1}",
     "shipyard-burns": "Brûle : encore {p0:moins d'une heure|# heure|# heures}",
-    "shipyard-charred": "Carbonisée : {0} coups de hache sur {1}",
+    "shipyard-charred": "Charbon dégagé : {0} coups sur {1}",
     "shipyard-spoiled": "Gâchée : son feu a brûlé sans argile sur le bord et l'a carbonisée de part en part",
     "shipyard-rim-clay": "Argile sur le bord : {0} sur {1}",
     "shipyard-firepit": "Foyer sur l'herbe sèche : {0} sur {1} bois de chauffage",

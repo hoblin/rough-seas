@@ -39,7 +39,7 @@
     "shipyard-kindle": "Lägga torrt gräs i hålet",
     "shipyard-hollowed": "Urholkad: {0} av {1}",
     "shipyard-burns": "Brinner: {p0:under en timme|# timme|# timmar} kvar",
-    "shipyard-charred": "Förkolnad: {0} av {1} yxhugg huggna",
+    "shipyard-charred": "Kol urhugget: {0} av {1} hugg",
     "shipyard-spoiled": "Förstörd: dess eld brann utan lera på kanten och förkolnade den rakt igenom",
     "shipyard-rim-clay": "Lera på kanten: {0} av {1}",
     "shipyard-firepit": "Eldstad på det torra gräset: {0} av {1} ved",

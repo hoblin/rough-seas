@@ -39,7 +39,7 @@
     "shipyard-kindle": "Laita kuivaa ruohoa koloon",
     "shipyard-hollowed": "Koverrettu: {0} / {1}",
     "shipyard-burns": "Palaa: {p0:alle tunti|# tunti|# tuntia} jäljellä",
-    "shipyard-charred": "Hiiltynyt: {0} / {1} kirveeniskua veistetty",
+    "shipyard-charred": "Hiiltä veistetty pois: {0} / {1} iskua",
     "shipyard-spoiled": "Pilalla: sen tuli paloi ilman savea reunalla ja hiilsi sen läpi",
     "shipyard-rim-clay": "Savea reunalla: {0} / {1}",
     "shipyard-firepit": "Tulisija kuivan ruohon päällä: {0} / {1} polttopuuta",

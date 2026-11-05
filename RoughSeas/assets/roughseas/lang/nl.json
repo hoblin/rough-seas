@@ -39,7 +39,7 @@
     "shipyard-kindle": "Droog gras in de holte leggen",
     "shipyard-hollowed": "Uitgehold: {0} van {1}",
     "shipyard-burns": "Brandt: nog {p0:minder dan een uur|# uur|# uur}",
-    "shipyard-charred": "Verkoold: {0} van {1} bijlslagen uitgehakt",
+    "shipyard-charred": "Houtskool uitgehakt: {0} van {1} slagen",
     "shipyard-spoiled": "Bedorven: zijn vuur brandde zonder klei op de rand en verkoolde hem door en door",
     "shipyard-rim-clay": "Klei op de rand: {0} van {1}",
     "shipyard-firepit": "Vuurplaats op het droge gras: {0} van {1} brandhout",

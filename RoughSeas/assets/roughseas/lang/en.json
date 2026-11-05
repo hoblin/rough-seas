@@ -41,7 +41,7 @@
     "shipyard-kindle": "Lay dry grass in the hollow",
     "shipyard-hollowed": "Hollowed: {0} of {1}",
     "shipyard-burns": "Burning: {p0:under an hour|# hour|# hours} to go",
-    "shipyard-charred": "Charred: {0} of {1} axe strokes hewn",
+    "shipyard-charred": "Char hewn out: {0} of {1} strokes",
     "shipyard-spoiled": "Spoiled: her fire burned without clay on the rim and charred it through",
     "shipyard-rim-clay": "Clay on the rim: {0} of {1}",
     "shipyard-firepit": "Firepit on the dry grass: {0} of {1} firewood",

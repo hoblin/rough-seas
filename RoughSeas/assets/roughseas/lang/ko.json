@@ -41,7 +41,7 @@
     "shipyard-kindle": "움푹한 곳에 건초 놓기",
     "shipyard-hollowed": "파낸 정도: {0} / {1}",
     "shipyard-burns": "타는 중: {p0:1시간 미만|#시간} 남음",
-    "shipyard-charred": "탄 상태: 도끼질 {0} / {1}",
+    "shipyard-charred": "숯 깎아내기: {0} / {1}회",
     "shipyard-spoiled": "망가짐: 가장자리에 점토 없이 불이 타서 뱃전까지 완전히 타 버렸습니다",
     "shipyard-rim-clay": "가장자리의 점토: {0} / {1}",
     "shipyard-firepit": "건초 위의 화톳불: 장작 {0} / {1}",

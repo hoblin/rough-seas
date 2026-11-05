@@ -41,7 +41,7 @@
     "shipyard-kindle": "Leggja þurrt gras í holuna",
     "shipyard-hollowed": "Holaður: {0} af {1}",
     "shipyard-burns": "Brennur: {p0:innan við klukkustund|# klukkustund|# klukkustundir} eftir",
-    "shipyard-charred": "Kolaður: {0} af {1} axarhöggum höggvin",
+    "shipyard-charred": "Kol höggvið út: {0} af {1} höggum",
     "shipyard-spoiled": "Ónýtur: eldurinn í honum brann án leirs á brúninni og kolaði hann í gegn",
     "shipyard-rim-clay": "Leir á brúninni: {0} af {1}",
     "shipyard-firepit": "Eldstæði á þurra grasinu: {0} af {1} eldiviði",

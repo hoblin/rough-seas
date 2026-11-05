@@ -41,7 +41,7 @@
     "shipyard-kindle": "Száraz fű rakása az üregbe",
     "shipyard-hollowed": "Kivájva: {0} / {1}",
     "shipyard-burns": "Ég: még {p0:kevesebb mint egy óra|# óra|# óra}",
-    "shipyard-charred": "Elszenesedett: {0} / {1} fejszecsapás kivágva",
+    "shipyard-charred": "Szén kivágva: {0} / {1} csapás",
     "shipyard-spoiled": "Tönkrement: a tüze agyag nélkül égett a peremen, és átszenesítette",
     "shipyard-rim-clay": "Agyag a peremen: {0} / {1}",
     "shipyard-firepit": "Tűzrakás a száraz füvön: {0} / {1} tűzifa",

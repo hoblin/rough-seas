@@ -40,7 +40,7 @@
     "shipyard-kindle": "Legg tørt gress i hulrommet",
     "shipyard-hollowed": "Uthulet: {0} av {1}",
     "shipyard-burns": "Brenner: {p0:under en time|# time|# timer} igjen",
-    "shipyard-charred": "Forkullet: {0} av {1} økseslag hogget",
+    "shipyard-charred": "Trekull uthogd: {0} av {1} hogg",
     "shipyard-spoiled": "Ødelagt: ilden brant uten leire på kanten og forkullet den tvers igjennom",
     "shipyard-rim-clay": "Leire på kanten: {0} av {1}",
     "shipyard-firepit": "Bål på det tørre gresset: {0} av {1} vedkubber",

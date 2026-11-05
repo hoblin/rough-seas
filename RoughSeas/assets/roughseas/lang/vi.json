@@ -41,7 +41,7 @@
     "shipyard-kindle": "Đặt cỏ khô vào lòng thuyền",
     "shipyard-hollowed": "Đã khoét: {0} / {1}",
     "shipyard-burns": "Đang cháy: còn {p0:chưa đầy một giờ|# giờ|# giờ}",
-    "shipyard-charred": "Đã cháy thành than: đã đẽo {0} / {1} nhát rìu",
+    "shipyard-charred": "Đẽo lớp than: {0} / {1} nhát",
     "shipyard-spoiled": "Đã hỏng: lửa cháy khi mép chưa trát đất sét và đã thiêu xuyên mạn thuyền",
     "shipyard-rim-clay": "Đất sét trên mép: {0} / {1}",
     "shipyard-firepit": "Bếp củi trên cỏ khô: {0} / {1} củi",

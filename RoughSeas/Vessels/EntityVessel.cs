@@ -27,6 +27,12 @@ public class EntityVessel : EntityBoat, ISeatInstSupplier
     {
         base.AfterInitialized(onFirstSpawn);
         if (Api.Side == EnumAppSide.Server) StrayCargo.Restow(this);
+        else if (GetBehavior<EntityBehaviorInterpolatePosition>() is { } interpolation)
+        {
+            // Vanilla's interpolation starts from an empty snapshot at 0,0,0: a fresh vessel is drawn sliding in
+            // from the world's origin for her first frames.
+            interpolation.pL = interpolation.pN = new PositionSnapshot(Pos, EntityBehaviorInterpolatePosition.interval, false);
+        }
     }
 
     public override void OnRenderFrame(float dt, EnumRenderStage stage)

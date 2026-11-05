@@ -69,6 +69,30 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void HerHullBoxGoesRoundTheTrunkAsEachHewingFindsIt()
+    {
+        Assert.Equal(Config.Hollowings, Config.HullBoxesMetres.Length);
+        Assert.Equal(Config.BlankDepthMetres, Config.HullBoxesMetres[0].To[1], 2);
+        for (int level = 1; level < Config.Hollowings; level++)
+        {
+            Assert.True(Config.HullBoxesMetres[level].To[1] < Config.HullBoxesMetres[level - 1].To[1]);
+            Assert.True(Config.HullBoxesMetres[level].To[0] - Config.HullBoxesMetres[level].From[0]
+                < Config.HullBoxesMetres[level - 1].To[0] - Config.HullBoxesMetres[level - 1].From[0]);
+        }
+    }
+
+    [Fact]
+    public void EveryHewnSectionClosesAgainstTheCharOfTheNext()
+    {
+        int sections = Config.HewnSectionsMetres.Length;
+        for (int level = 0; level < Config.Hollowings; level++)
+        {
+            for (int section = 1; section < sections; section++) Assert.NotNull(DugoutShape.GetElementByName($"Hewn{level}x{section}Step"));
+            Assert.Null(DugoutShape.GetElementByName($"Hewn{level}x{sections}Step"));
+        }
+    }
+
+    [Fact]
     public void ADugoutFromBeforeTheBuildIsFinished()
     {
         var dugout = Dugout();

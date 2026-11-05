@@ -41,7 +41,7 @@
     "shipyard-kindle": "Poner paja en el hueco",
     "shipyard-hollowed": "Ahuecada: {0} de {1}",
     "shipyard-burns": "Ardiendo: {p0:falta menos de una hora|falta # hora|faltan # horas}",
-    "shipyard-charred": "Carbonizada: desbastada con {0} de {1} hachazos",
+    "shipyard-charred": "Carbón desbastado: {0} de {1} hachazos",
     "shipyard-spoiled": "Arruinada: su fuego ardió sin arcilla en el borde y la carbonizó de lado a lado",
     "shipyard-rim-clay": "Arcilla en el borde: {0} de {1}",
     "shipyard-firepit": "Hoguera sobre la paja: leña {0} de {1}",

@@ -21,6 +21,7 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockBehaviorClass(BlockBehaviorBlankLog.Code, typeof(BlockBehaviorBlankLog));
         api.RegisterEntityBehaviorClass(EntityBehaviorBurnout.Code, typeof(EntityBehaviorBurnout));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHew.Code, typeof(CollectibleBehaviorHew));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorKindle.Code, typeof(CollectibleBehaviorKindle));
         api.RegisterEntityBehaviorClass(EntityBehaviorFraming.Code, typeof(EntityBehaviorFraming));
         api.RegisterEntityBehaviorClass(EntityBehaviorRigging.Code, typeof(EntityBehaviorRigging));
         api.RegisterEntityBehaviorClass(EntityBehaviorRiggable.Code, typeof(EntityBehaviorRiggable));
@@ -36,12 +37,14 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
         LashingRope.Attach();
         CuttingKnife.Attach();
+        KindlingFirestarter.Attach();
     }
 
     public override void Dispose()
     {
         LashingRope.Detach();
         CuttingKnife.Detach();
+        KindlingFirestarter.Detach();
     }
 
     // The server sends its blocks, behaviours included, to clients only after this phase.
@@ -65,6 +68,11 @@ public class ShipyardModSystem : ModSystem
         foreach (var axe in api.World.Items.Where(item => item?.Code != null && item.Tool == EnumTool.Axe))
         {
             axe.CollectibleBehaviors = axe.CollectibleBehaviors.Append(new CollectibleBehaviorHew(axe));
+        }
+        foreach (var kindler in api.World.Collectibles.Where(collectible => collectible?.Code != null
+            && (collectible is ItemFirestarter || collectible is Block block && block.HasBehavior<BlockBehaviorCanIgnite>())))
+        {
+            kindler.CollectibleBehaviors = kindler.CollectibleBehaviors.Append(new CollectibleBehaviorKindle(kindler));
         }
         var builds = new List<FramingConfig>();
         foreach (var type in api.World.EntityTypes)

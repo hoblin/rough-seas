@@ -41,7 +41,7 @@
     "shipyard-kindle": "Oyuğa kuru ot koy",
     "shipyard-hollowed": "Oyuldu: {0} / {1}",
     "shipyard-burns": "Yanıyor: {p0:bir saatten az|# saat|# saat} kaldı",
-    "shipyard-charred": "Kömürleşti: {0} / {1} balta darbesi yontuldu",
+    "shipyard-charred": "Kömür yontuldu: {0} / {1} darbe",
     "shipyard-spoiled": "Bozuldu: ateşi kenarda kil olmadan yandı ve onu baştan başa kömürleştirdi",
     "shipyard-rim-clay": "Kenardaki kil: {0} / {1}",
     "shipyard-firepit": "Kuru otun üstünde ateş çukuru: {0} / {1} yakacak odun",

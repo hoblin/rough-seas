@@ -41,7 +41,7 @@
     "shipyard-kindle": "往凹槽裡鋪乾草",
     "shipyard-hollowed": "已掏空：{0} / {1}",
     "shipyard-burns": "燃燒中：還剩 {p0:不到一小時|# 小時|# 小時}",
-    "shipyard-charred": "已燒焦：斧頭鑿擊 {0} / {1}",
+    "shipyard-charred": "鑿去炭層：{0} / {1} 擊",
     "shipyard-spoiled": "已毀壞：邊緣沒有塗黏土就生了火，船舷被燒穿了",
     "shipyard-rim-clay": "邊緣黏土：{0} / {1}",
     "shipyard-firepit": "乾草上的篝火：柴火 {0} / {1}",

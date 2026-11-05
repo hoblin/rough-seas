@@ -41,7 +41,7 @@
     "shipyard-kindle": "Položiť suchú trávu do dutiny",
     "shipyard-hollowed": "Vydlabané: {0} z {1}",
     "shipyard-burns": "Horí: ešte {p0:menej ako hodinu|# hodinu|# hodiny|# hodiny|# hodiny|# hodín}",
-    "shipyard-charred": "Ohorené: vytesané {0} z {1} úderov sekerou",
+    "shipyard-charred": "Vysekávanie uhlíka: {0} z {1} úderov",
     "shipyard-spoiled": "Pokazený: jeho oheň horel bez ílu na okraji a prepálil ho naskrz",
     "shipyard-rim-clay": "Íl na okraji: {0} z {1}",
     "shipyard-firepit": "Ohnisko na suchej tráve: {0} z {1} kusov palivového dreva",

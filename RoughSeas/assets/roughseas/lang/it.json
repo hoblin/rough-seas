@@ -41,7 +41,7 @@
     "shipyard-kindle": "Metti erba secca nella cavità",
     "shipyard-hollowed": "Scavata: {0} su {1}",
     "shipyard-burns": "Brucia: ancora {p0:meno di un'ora|# ora|# ore}",
-    "shipyard-charred": "Carbonizzata: {0} colpi d'ascia su {1}",
+    "shipyard-charred": "Carbone asportato: {0} colpi su {1}",
     "shipyard-spoiled": "Rovinata: il suo fuoco ha bruciato senza argilla sul bordo e l'ha carbonizzata da parte a parte",
     "shipyard-rim-clay": "Argilla sul bordo: {0} su {1}",
     "shipyard-firepit": "Focolare sull'erba secca: {0} su {1} legna da ardere",
