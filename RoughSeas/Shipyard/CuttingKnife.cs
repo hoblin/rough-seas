@@ -41,11 +41,11 @@ public static class CuttingKnife
 
     private static bool Stop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel)
     {
-        if (Cutting(slot, byEntity, blockSel, entitySel) is not { } cutting) return true;
+        if (slot.Itemstack?.Collectible.GetCollectibleBehavior<CollectibleBehaviorFraming>(true) is not { } cutting) return true;
 
         var handled = EnumHandling.PassThrough;
         cutting.OnHeldInteractStop(secondsUsed, slot, byEntity, blockSel, entitySel, ref handled);
-        return false;
+        return handled == EnumHandling.PassThrough;
     }
 
     private static CollectibleBehaviorFraming? Cutting(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel) =>
