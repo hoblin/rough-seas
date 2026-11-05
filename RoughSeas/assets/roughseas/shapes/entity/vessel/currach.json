@@ -14072,7 +14072,7 @@
    "to": [ 46.115, 10.917, 17.581 ],
    "faces": {},
    "attachmentpoints": [
-    { "code": "HullAP", "posX": "38.117", "posY": "0", "posZ": "9.581", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+    { "code": "HullAP", "posX": "38.116", "posY": "0", "posZ": "9.581", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
   },
   {

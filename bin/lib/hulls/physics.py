@@ -103,7 +103,7 @@ def kilograms(material, litres):
     return litres / 1000 * MATERIALS[material]["density"]
 
 
-def hitbox_metres(name):
+def hitbox_height_of(name):
     return load(ASSETS / f"entities/vessel/{name}.json")["hitboxSize"]["y"]
 
 
@@ -130,7 +130,7 @@ def afloat(name, hull_kg, depth_metres, hold_litres=0, deck_square_metres=0, wat
         print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth_metres:.4g} m, hold {hold_litres:.0f} L, deck {deck_square_metres:.2f} m², "
               f"waterplane {waterplane_square_metres:.2f} m²{' (full hold and one aboard bring her gunwale to the water)' if by_full_hold else ''}, "
               f"draft {draft:.3f} m with one aboard", end="")
-    offset = (hitbox_metres(name) if hitbox_height_metres is None else hitbox_height_metres) + SWIM_LINE_METRES - draft
+    offset = (hitbox_height_of(name) if hitbox_height_metres is None else hitbox_height_metres) + SWIM_LINE_METRES - draft
     print(f", swimmingOffsetY {offset:.3f}")
     afloat_ = {"weight": round(hull_kg, 1), "attributes": {"swimmingOffsetY": round(offset, 3)}, "behaviorConfigs": configs}
     return merged(afloat_, at_draft(draft)) if at_draft else afloat_

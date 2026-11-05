@@ -5,7 +5,6 @@ namespace RoughSeas.Tests.Shipyard;
 
 public class FirstStageTests
 {
-    private static readonly double VoxelsAMetre = Voxels.AMetre;
     private const double Centre = 8;
 
     private static JObject Shape(string vessel) => JObject.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", $"{vessel}.json")));
@@ -35,8 +34,8 @@ public class FirstStageTests
     {
         var (from, to) = Bounds(Named(Shape("dugout")["elements"]!, "Blank0"));
 
-        Assert.Equal([Centre - 2.5 * VoxelsAMetre, 0, 0], from);
-        Assert.Equal([Centre + 2.5 * VoxelsAMetre, VoxelsAMetre, VoxelsAMetre], to);
+        Assert.Equal([Centre - 2.5 * Voxels.AMetre, 0, 0], from);
+        Assert.Equal([Centre + 2.5 * Voxels.AMetre, Voxels.AMetre, Voxels.AMetre], to);
     }
 
     [Fact]
@@ -45,8 +44,8 @@ public class FirstStageTests
         var off = Entity("outrigger")["behaviorConfigs"]!["roughseas:rigging"]!.Value<double>("floatOffVoxels");
         var (from, to) = Bounds(Named(Shape("outrigger")["elements"]!, "FloatLog1"));
 
-        Assert.Equal([Centre - 1.5 * VoxelsAMetre, 0, Centre + off - VoxelsAMetre / 2], from);
-        Assert.Equal([Centre + 1.5 * VoxelsAMetre, VoxelsAMetre, Centre + off + VoxelsAMetre / 2], to);
+        Assert.Equal([Centre - 1.5 * Voxels.AMetre, 0, Centre + off - Voxels.AMetre / 2], from);
+        Assert.Equal([Centre + 1.5 * Voxels.AMetre, Voxels.AMetre, Centre + off + Voxels.AMetre / 2], to);
     }
 
     [Fact]
@@ -56,7 +55,7 @@ public class FirstStageTests
         var flat = Named(Shape("barkcanoe")["elements"]!, "SheetFlat");
         var curl = Named(Shape("barkcanoe")["elements"]!, "SheetCurlPort");
 
-        Assert.Equal(blocks * VoxelsAMetre, flat["to"]![0]!.Value<double>() - flat["from"]![0]!.Value<double>());
+        Assert.Equal(blocks * Voxels.AMetre, flat["to"]![0]!.Value<double>() - flat["from"]![0]!.Value<double>());
         Assert.Equal(0, flat["from"]![1]!.Value<double>());
         Assert.True(curl.Value<double>("rotationX") > 0, "a curl lifts off the ground");
     }

@@ -143,7 +143,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
 
     private void ShowWater()
     {
-        if (water == null) return;
+        if (water is not { Levels: > 0 }) return;
         if (Litres <= 0 || form.Value is not { } built)
         {
             water.Show((int)Math.Ceiling(Fill * water.Levels));

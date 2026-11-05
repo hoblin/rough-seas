@@ -128,7 +128,7 @@
                 "framePart": "Her frame is the wood of her laths: its share and the weight it was set for are ash's, its strength and density are those of the wood split"
             },
             "overturnedPivotVoxels": [8, 5.458, 8],
-            "overturnedPivotMetres": [0, 0.341, 0]
+            "overturnedPivotMetres": [0.5, 0.341, 0.5]
         }
     },
     "client": {

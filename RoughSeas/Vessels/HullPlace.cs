@@ -49,7 +49,7 @@ public readonly record struct HullShape(double HalfLengthMetres, double HalfBeam
         (toMetres[0] - fromMetres[0]) / 2, (toMetres[2] - fromMetres[2]) / 2, toMetres[1] - fromMetres[1],
         (fromMetres[0] + toMetres[0]) / 2, (fromMetres[2] + toMetres[2]) / 2, fromMetres[1]);
 
-    /// <summary>The hull in a box of her shape, in the shape's voxels: a vessel the build has not measured.</summary>
+    /// <summary>The hull in a box of her shape, in the shape's voxels: a vessel whose entity gives no <c>hullBoxMetres</c>.</summary>
     public static HullShape FromVoxels(double[] fromVoxels, double[] toVoxels) => FromBox(FromModel(fromVoxels), FromModel(toVoxels));
 
     private static double[] FromModel(double[] voxels) =>

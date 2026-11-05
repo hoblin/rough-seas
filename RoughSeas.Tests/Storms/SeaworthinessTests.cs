@@ -58,6 +58,24 @@ public class SeaworthinessTests
     }
 
     [Fact]
+    public void ASailboatGoesOverInABreakerOfMoreThanHalfHerLength()
+    {
+        var length = 2 * Fixtures.Shape("boat-sailed").HalfLengthMetres;
+        Assert.False(Of("boat-sailed").Capsizes(0.55 * length - 0.01));
+        Assert.True(Of("boat-sailed").Capsizes(0.55 * length));
+    }
+
+    [Fact]
+    public void ABreakerGivenInMetresOverridesOneGivenInBeamsOrLengths()
+    {
+        var given = Seaworthiness.From(new JsonObject(JObject.Parse("""{"capsizeBreakerMetres": 2, "capsizeBreakerBeams": 1, "capsizeBreakerLengths": 0.5}""")), 1, 8);
+        var beams = Seaworthiness.From(new JsonObject(JObject.Parse("""{"capsizeBreakerBeams": 1, "capsizeBreakerLengths": 0.5}""")), 1, 8);
+
+        Assert.Equal(2, given.CapsizeBreakerMetres);
+        Assert.Equal(1, beams.CapsizeBreakerMetres);
+    }
+
+    [Fact]
     public void ACraftWithNoSeaworthinessDataNeverCapsizesAndRollsAsVanillaDoes()
     {
         var unknown = Seaworthiness.From(new JsonObject(new JObject()), 1, 1);

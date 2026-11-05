@@ -55,7 +55,7 @@ What the model can measure is never typed into JSON: the build writes it, and a 
 - `raft.py` measures vanilla's raft from vanilla's shape (her box round her logs, a log's section, the longest stretch between her lashings) and `sailboat.py` the sailboat from her planking (her box, hold, deck, windage and mast); both write into our patches.
 - A builder that reads another vessel's entity JSON reads what that vessel's last build wrote: `physics.stands` measures every hull against the bark canoe, so a change to her model takes a second build for the others.
 
-
+## Boxes inside the round they build
 
 A cuboid that builds a round shape keeps every corner inside the surface it follows, and two faces never share a plane. A corner past the curve shows as a square tooth on the outline; two faces in one plane fight over the pixel and flicker.
 

@@ -1,3 +1,5 @@
+import fcntl
+import os
 import re
 
 from jsontext import load, locate, put, skip
@@ -40,6 +42,17 @@ def patched(vessel, code):
 
 
 def write(path, root, values):
+    """Writes the values under root in the file, holding it against the other builders that write into it (the raft and
+    the sailboat share their patches)."""
+    held = os.open(path.parent, os.O_RDONLY)
+    try:
+        fcntl.flock(held, fcntl.LOCK_EX)
+        written(path, root, values)
+    finally:
+        os.close(held)
+
+
+def written(path, root, values):
     text = path.read_text()
     found = list(leaves(values))
     shown = [([step if isinstance(step, str) else "[]" for step in at], value) for at, value in found]

@@ -3,6 +3,7 @@ import hashlib
 import json
 import math
 import re
+import tempfile
 from pathlib import Path
 
 import units
@@ -122,7 +123,7 @@ def hull_box(*elements):
 def hull_of(frm, to):
     """The Hull element spanning frm to to, and that box as her entity takes it."""
     element = {"name": "Hull", "from": frm, "to": to, "faces": {},
-               "attachmentpoints": [{"code": "HullAP", "posX": str(num(ORIGIN[0] - frm[0])), "posY": "0", "posZ": str(num((to[2] - frm[2]) / 2)),
+               "attachmentpoints": [{"code": "HullAP", "posX": str(num((to[0] - frm[0]) / 2)), "posY": "0", "posZ": str(num((to[2] - frm[2]) / 2)),
                                      "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]}
     voxels = {end: [num(c - o) for c, o in zip(corner, ORIGIN)] for end, corner in (("from", frm), ("to", to))}
     measured = {"hullBoxMetres": {end: [num(units.metres(c)) for c in corner] for end, corner in voxels.items()}, "hullBoxVoxels": voxels}
@@ -163,9 +164,9 @@ def convex(points):
     return lower[:-1] + upper[:-1]
 
 
-def windage(elements, keel):
+def windage(elements, keel_voxels):
     """What the wind meets of the elements above her waterline, at the draft afloat finds her at."""
-    return lambda draft_metres: {"behaviorConfigs": {"roughseas:seaforces": units.both("windage", side_area(elements, keel + units.voxels(draft_metres)), 2)}}
+    return lambda draft_metres: {"behaviorConfigs": {"roughseas:seaforces": units.both("windage", side_area(elements, keel_voxels + units.voxels(draft_metres)), 2)}}
 
 
 def collision(box, *more):
@@ -665,9 +666,9 @@ def write(path, shape):
 
 def save(path, text):
     """Replaces the file whole, in one step: the vessels build side by side and read each other's files."""
-    part = path.with_name(path.name + ".part")
-    part.write_text(text)
-    part.replace(path)
+    with tempfile.NamedTemporaryFile("w", dir=path.parent, prefix=path.name, suffix=".part", delete=False) as part:
+        part.write(text)
+    Path(part.name).replace(path)
 
 
 def flattened(elements):

@@ -261,13 +261,13 @@ PADDLE = Tool("tool/paddle", "paddle", (13, 8, 8), (0.5, 8, 8))
 POLE = Tool("resource/pole", "pole-3", (12.8, 0.75, 8), (8, 0.75, 8), turns=(0, 90, 180, 270))
 
 
-def worked_from_middle(box, at, reach, ahead=False):
+def worked_from_middle(box, at, reach_metres, ahead=False):
     """How far from her middle the stroke works: across, reach beyond her side, as far along as the rower is from her
     middle; or, ahead, reach beyond her bow."""
     (x0, _, z0), (x1, _, z1) = box["from"], box["to"]
     if ahead:
-        return units.both("sweep", units.metres((x1 - x0) / 2) + reach)
-    return units.both("sweep", math.hypot(units.metres(at[0] - (x0 + x1) / 2), units.metres((z1 - z0) / 2) + reach))
+        return units.both("sweep", units.metres((x1 - x0) / 2) + reach_metres)
+    return units.both("sweep", math.hypot(units.metres(at[0] - (x0 + x1) / 2), units.metres((z1 - z0) / 2) + reach_metres))
 
 
 def waterline_metres(vessel):
@@ -375,10 +375,10 @@ class Stance:
         self.at, self.idle, self.poses, self.feet = at, idle, poses, feet
 
 
-def standing_poling(tool, at, line, out, chine, side=-1, floor_at=None):
+def standing_poling(tool, at, waterline_voxels, out, chine, side=-1, floor_at=None):
     x, floor, z = at
     floor_at = floor_at or (lambda foot_x, across: floor)
-    bed = line - units.voxels(PLANT_DEPTH_METRES)
+    bed = waterline_voxels - units.voxels(PLANT_DEPTH_METRES)
     reach_x = [x - 2, x + 4]
     reach_y = [floor + 21, floor + 19]
     plant = [x + reach for reach in PLANT]
@@ -411,10 +411,10 @@ def planted(tool, hand, foot):
     return tool.gripped(hand, foot, {LEFT: upper, RIGHT: upper + HAND_SPAN})
 
 
-def poling(standing, seat_at, line, out, stand_at, chine, floor_at=None):
+def poling(standing, seat_at, waterline_voxels, out, stand_at, chine, floor_at=None):
     if standing:
-        return "pole", POLE, standing_poling(POLE, stand_at, line, out, chine, floor_at=floor_at)
-    return "seatedpole", POLE, seated_poling(POLE, seat_at, line, out)
+        return "pole", POLE, standing_poling(POLE, stand_at, waterline_voxels, out, chine, floor_at=floor_at)
+    return "seatedpole", POLE, seated_poling(POLE, seat_at, waterline_voxels, out)
 
 
 def toward_grips(rower, tool, pose, hips):
@@ -430,9 +430,9 @@ def three(placed, body):
             for name, at in frames.items()}
 
 
-def seated_poling(tool, at, line, out, side=-1):
+def seated_poling(tool, at, waterline_voxels, out, side=-1):
     x, seat_y, _ = at
-    bed = line - units.voxels(PLANT_DEPTH_METRES)
+    bed = waterline_voxels - units.voxels(PLANT_DEPTH_METRES)
 
     def placed(frame):
         reach, lift = phase(frame, drive_share("seatedpole"))

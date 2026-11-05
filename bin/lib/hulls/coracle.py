@@ -241,14 +241,22 @@ def axes_at(y):
 
 def shell(hide, bent, box):
     """What backs her hide: her bent laths, each as wide as LATH_WIDTH, set as far apart as that over the share of her
-    sides they back; a breaker bends them over her side, from her bottom to her gunwale. And what her seam weeps once
-    its fat is gone, across her bowl from gunwale to gunwale."""
+    sides they back; a breaker bends them over her side, from her bottom to her gunwale."""
     sides, bottom = backed([hide], ["hide"], [bent], box)
-    rise = [(axes_at(y)[0], y) for y in (DEPTH * k / STAVES for k in range(STAVES + 1))]
+    rise = side_rise()
     spacing = units.metres(LATH_WIDTH) / sides
-    seam = 2 * (units.metres(BOTTOM[0]) + units.metres(length(rise)))
     return {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", units.metres(length(rise))),
-            "frame": {**units.both("spacing", spacing), **units.both("span", spacing)}}, round(SEAM_LITRES_PER_HOUR_A_METRE * seam, 1)
+            "frame": {**units.both("spacing", spacing), **units.both("span", spacing)}}
+
+
+def side_rise():
+    return [(axes_at(y)[0], y) for y in (DEPTH * k / STAVES for k in range(STAVES + 1))]
+
+
+def seep():
+    """What her seam weeps once its fat is gone, across her bowl from gunwale to gunwale."""
+    seam = 2 * (units.metres(BOTTOM[0]) + units.metres(length(side_rise())))
+    return {"litresPerHourASeam": round(SEAM_LITRES_PER_HOUR_A_METRE * seam, 1)}
 
 
 def report(lattice_stage, gunwale_stage, area, side):
@@ -291,8 +299,7 @@ def build(path_):
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
     box, measured = hull_box(hide)
     shape.add(box)
-    backing, weeps = shell(hide, bent, box)
-    record("coracle", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": backing, "seep": {"litresPerHourASeam": weeps}}}}))
+    record("coracle", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hide, bent, box), "seep": seep()}}}))
     shape.keep("FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()

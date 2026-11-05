@@ -6,7 +6,6 @@
         "windageSquareVoxels": 90.5,
         "heave": 0.9, "capsizeBreakerBeams": 1, "rollResponse": 0.6, "pitchResponse": 0.6,
         "sources": {
-            "beamMetres": "Her hull's own, measured across her logs",
             "heave": "A raft lies flat on the water and rises with the crest",
             "capsizeBreakerBeams": "Seamanship: a breaking wave as high as the craft's beam can roll it over",
             "rollResponse": "Logs lashed side by side across her beam have great form stability: little roll, though every crest washes over",

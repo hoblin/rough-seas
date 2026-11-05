@@ -206,12 +206,11 @@ def build(target):
     shape.add(box)
     sides, bottom = backed([parted(blank, untied)], [name.lower() for name, _ in SIDES], [parted(blank, tied), lashed], box)
     shell = {"metres": round(units.metres(GIRTH), 4), "voxels": round(GIRTH, 3), "backedShare": sides, "bottomBackedShare": bottom}
-    cord_metres = (cords + len(lashed["children"]) + len(ENDS)) * ROPE_METRES
-    capacity = round(CORD_BREAKING_NEWTONS * CORD_STRETCH_AT_BREAK * cord_metres / 2)
+    cords += len(lashed["children"]) + len(ENDS)
+    capacity = round(CORD_BREAKING_NEWTONS * CORD_STRETCH_AT_BREAK * cords * ROPE_METRES / 2)
     record("reedboat", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell, "impactCapacity": capacity}}}))
     shape.keep("FrontSeat", "Cargo", "OarStorage")
     shape.write()
-    cords += len(lashed["children"]) + len(ENDS)
     reed_kg, cord_kg = len(SIDES) * BUNDLE_REEDS * REED_KG, cords * REEDS_A_ROPE * REED_KG
     litres = sum(kg / MATERIALS[material]["density"] * 1000 for material, kg in (("reed", reed_kg), ("rope-flax", cord_kg)))
     girth, length = units.metres(GIRTH), units.metres(BODY[1] - BODY[0])

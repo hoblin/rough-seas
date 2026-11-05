@@ -136,9 +136,9 @@ public static class VesselMotion
         }
 
         var pos = boat.Pos;
-        double length = IHull.Of(boat) is { } hull ? 2 * hull.Shape.HalfLengthMetres : Math.Max(boat.CollisionBox.XSize, boat.CollisionBox.ZSize);
+        double lengthMetres = forces.LengthMetres ?? Math.Max(boat.CollisionBox.XSize, boat.CollisionBox.ZSize);
         var yaw = pos.Yaw + (boat.Properties.Client.Shape?.rotateY ?? 0) * GameMath.DEG2RAD;
-        var pose = Answer(boat, forces, sea.PoseOf(pos.X, pos.Z, yaw, length, forces.BeamMetres), length);
+        var pose = Answer(boat, forces, sea.PoseOf(pos.X, pos.Z, yaw, lengthMetres, forces.BeamMetres), lengthMetres);
         var seaworthiness = forces.Seaworthiness;
         return pose with { Roll = pose.Roll * seaworthiness.RollResponse, Pitch = pose.Pitch * seaworthiness.PitchResponse };
     }

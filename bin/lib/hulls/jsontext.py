@@ -31,6 +31,8 @@ def put(text, path, value, after=None):
     for key, value_start, value_end in items(text, start):
         if key == path[-1]:
             return text[:value_start] + dumps(value) + text[value_end:]
+    if isinstance(path[-1], int):
+        raise IndexError(f"no element {path[-1]} on the way to {path}")
     member = f"{json.dumps(path[-1])}: {dumps(value)}"
     found = items(text, start)
     if not found:

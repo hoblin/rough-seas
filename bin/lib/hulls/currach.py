@@ -432,7 +432,7 @@ def build(path_):
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     pivot = [ORIGIN[0], (box["from"][1] + box["to"][1]) / 2, CENTRE]
     covering = {"layout": units.both("beam", units.metres(2 * (PROFILE[-1][0] - HIDE - GUNWALE / 2))),
-                "overturnedPivotVoxels": [num(c) for c in pivot], "overturnedPivotMetres": [num(units.metres(c - o)) for c, o in zip(pivot, ORIGIN)]}
+                "overturnedPivotVoxels": [num(c) for c in pivot], "overturnedPivotMetres": [num(units.metres(c)) for c in pivot]}
     record("currach", merged(report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()], windage([hide], box["from"][1])), measured, bilge_levels(shape.elements),
                              {"behaviorConfigs": {"roughseas:covering": covering}}))
     chest = chest_height(shape)

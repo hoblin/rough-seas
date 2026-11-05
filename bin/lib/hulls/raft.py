@@ -34,7 +34,7 @@ def logs(elements):
             if element["name"] in LOGS or element["name"].startswith("log")]
 
 
-def kilograms_to_litres(kilograms):
+def oak_litres(kilograms):
     """Her logs' volume: her weight, as vanilla gives it, in oak."""
     return kilograms / MATERIALS["wood-oak"]["density"] * 1000
 
@@ -68,7 +68,7 @@ def build(_):
     depth = units.metres(log["to"][1] - log["from"][1])
     shell = {"metres": depth, "voxels": log["to"][1] - log["from"][1], **units.both("span", lashed(vanilla["elements"]))}
     record("raft", {"behaviorConfigs": {"roughseas:vesselintegrity": {**units.both("depth", depth), "shell": shell}}})
-    logs_litres = kilograms_to_litres(entity["weight"])
+    logs_litres = oak_litres(entity["weight"])
     seen = afloat("raft", entity["weight"], depth, solid_litres=logs_litres, hitbox_height_metres=entity["hitboxSize"]["y"],
                   at_draft=windage(logs(vanilla["elements"]), hull["from"][1]))
     record("raft", {"behaviorConfigs": {"roughseas:seaforces": seen["behaviorConfigs"]["roughseas:seaforces"]}})
