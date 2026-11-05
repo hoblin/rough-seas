@@ -100,17 +100,17 @@ def wrist(rower, tool, body, matrix):
     return {"rotation" + a: round(v, 2) for a, v in zip("XYZ", turned)} | {"offset" + a: round(v, 3) for a, v in zip("XYZ", shift)}
 
 
-def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline, hull=()):
+def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline_metres, hull=()):
     stance = poses if isinstance(poses, Stance) else None
     rower = Rower(stance.at, stance.idle) if stance else Rower(seat(shape, seated), idle, facing(shape, vessel, seated))
     if stance:
         shift = [round(units.metres(a - s), 3) for a, s in zip(stance.at, seat(shape, seated))]
-        hands = round(units.metres(stance.at[1]) - waterline + STANDING_HIP_METRES, 2)
+        hands = round(units.metres(stance.at[1]) - waterline_metres + STANDING_HIP_METRES, 2)
         print(f"{vessel}-{kind}: stands {', '.join(f'{a} {v:+.3f}' for a, v in zip('xyz', shift))} m from {seated}, "
               f"his hands {hands:.2f} m over the water at the end of the shove")
         record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": units.both("handsAboveWater", hands) | {"stance": {"riderOffset": dict(zip("xyz", shift))}}}}})
     elif stroke == "seatedpole":
-        hands = round(units.metres(rower.seat[1] + SEATED_CHEST) - waterline, 2)
+        hands = round(units.metres(rower.seat[1] + SEATED_CHEST) - waterline_metres, 2)
         print(f"{vessel}-{kind}: his hands {hands:.2f} m over the water as he shoves from the seat")
         record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": units.both("handsAboveWater", hands)}}})
     group = tool.group()
@@ -160,7 +160,7 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
                      for turn in tool.turns}
             keyframe["elements"][ANCHOR] = holds[0]
             keyframe["holds"] = holds
-            deepest = min(deepest, lowest(matrices, tool.elements) - waterline)
+            deepest = min(deepest, lowest(matrices, tool.elements) - waterline_metres)
             if walls:
                 depth, part, wall = into(walls, along_tool(matrices, tool.elements))
                 through = max(through, (units.voxels(depth), frame, part, wall), key=lambda t: t[0])
@@ -269,15 +269,15 @@ def worked_from_middle(box, at, reach, ahead=False):
     return units.both("sweep", math.hypot(units.metres(at[0] - (x0 + x1) / 2), units.metres((z1 - z0) / 2) + reach))
 
 
-def waterline(vessel):
+def waterline_metres(vessel):
     entity = read(vessel)
     return entity["hitboxSize"]["y"] + SWIM_LINE_METRES - entity["attributes"]["swimmingOffsetY"]
 
 
-def tools(shape, vessel, seated, idle, lean, line, by_kind, hull=()):
+def tools(shape, vessel, seated, idle, lean, waterline_metres, by_kind, hull=()):
     """Every tool's strokes, each tool held in whichever of the holds that look alike the game blends the shortest way
     into the other tools'."""
-    kinds = {kind: held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, line, hull)
+    kinds = {kind: held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline_metres, hull)
              for kind, (stroke, tool, poses) in by_kind.items()}
     every = [animation for animations in kinds.values() for animation in animations]
     blended = switches(played(vessel))

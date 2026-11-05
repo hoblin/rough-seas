@@ -6,7 +6,7 @@ from fit import APART
 import units
 from entity import merged, record
 from shape import BILGE, ORIGIN, Hull, bilge_levels, hull_box, num, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
-from held import ARM_REACH_METRES, worked_from_middle, poling, tools, waterline
+from held import ARM_REACH_METRES, worked_from_middle, poling, tools, waterline_metres
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
 from wounds import backed, wound
@@ -231,7 +231,7 @@ def oar(name, side, rest):
 def pitches(rests, chest):
     rest = next(iter(rests.values()))
     outboard = OAR - inboard(rest) - GRIP
-    above = rest[1] - units.voxels(waterline("currach"))
+    above = rest[1] - units.voxels(waterline_metres("currach"))
     hand = inboard(rest) + GRIP / 2
     apart = math.degrees(math.asin(HAND_THICKNESS / 2 / hand))
     drive = -math.degrees(math.asin((chest - rest[1]) / hand))
@@ -250,7 +250,7 @@ def chest_height(shape):
 def blade_square_metres(rests, chest):
     rest = next(iter(rests.values()))
     outboard = OAR - inboard(rest) - GRIP
-    above = rest[1] - units.voxels(waterline("currach"))
+    above = rest[1] - units.voxels(waterline_metres("currach"))
     wet = [min(BLADE, max(0.0, outboard - above / math.sin(math.radians(-drive)))) for _, drive in pitches(rests, chest).values()]
     return units.metres(statistics.fmean(wet)) * units.metres(BLADE_BREADTH)
 
@@ -439,14 +439,14 @@ def build(path_):
     rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(shape, rests, chest, middle, degrees), {"R": "OarPortGrip", "L": "OarStarboardGrip"},
                  {"rotationZ": 12})
     at = seat(shape, "BackSeat")
-    line = waterline("currach")
+    water_metres = waterline_metres("currach")
     poler = sum(hull.span()) / 2 + POLER_AFT
     floor = hull.section(poler)[0][1] + hull.t + RIB_DEPTH
     record("currach", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, (poler, floor, CENTRE), ARM_REACH_METRES)}})
-    pole = poling(stands("currach", units.metres(floor)), at, units.voxels(line), CENTRE - PROFILE[-1][0] - 1,
+    pole = poling(stands("currach", units.metres(floor)), at, units.voxels(water_metres), CENTRE - PROFILE[-1][0] - 1,
                   (poler, floor, CENTRE), hull.half(poler, floor + 1, inset=hull.t + RIB_DEPTH),
                   floor_at=lambda x, across: hull.floor(x, across, inset=hull.t + RIB_DEPTH))
-    player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, line, {
+    player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, water_metres, {
         "pole": pole,
     }, ("Cover",)))
     span, blade = blade_span(rests, chest, middle, degrees), blade_square_metres(rests, chest)

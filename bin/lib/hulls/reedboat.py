@@ -2,7 +2,7 @@ import math
 from pathlib import Path
 
 from physics import MATERIALS, afloat, ropes, shares, stands
-from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline_metres
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
 import units
@@ -215,10 +215,10 @@ def build(target):
     record("reedboat", merged(afloat("reedboat", reed_kg + cord_kg, girth, solid_litres=litres), shares([reed_kg, cord_kg]), measured))
     at = seat(shape, "FrontSeat")
     record("reedboat", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
-    line = waterline("reedboat")
-    pole = poling(stands("reedboat", girth, form="rectangle", waterplane=2 * girth * length, beam_metres=2 * girth, depth_metres=girth),
-                  at, units.voxels(line), CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)
-    player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
+    water_metres = waterline_metres("reedboat")
+    pole = poling(stands("reedboat", girth, form="rectangle", waterplane_square_metres=2 * girth * length, beam_metres=2 * girth, depth_metres=girth),
+                  at, units.voxels(water_metres), CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)
+    player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, water_metres, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 5, 3.5)),
         "pole": pole,
     }, ("Blank", "Lashing")))

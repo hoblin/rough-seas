@@ -79,7 +79,7 @@ def build(_):
     path = ASSETS / "patches/vessels-hull-boxes.json"
     write(path, [next(n for n, op in enumerate(load(path)) if op["file"].endswith("boat/sailed.json")), "value"], box)
     litres, deck = hold(solids(kept(elements, PLANKING)), frm, to)
-    measured = afloat("sailboat", entity["weight"], units.metres(to[1] - frm[1]), litres, deck, hitbox_metres=entity["hitboxSize"]["y"])
+    measured = afloat("sailboat", entity["weight"], units.metres(to[1] - frm[1]), litres, deck, hitbox_height_metres=entity["hitboxSize"]["y"])
     record("sailed", {"behaviorConfigs": measured["behaviorConfigs"]})
 
 

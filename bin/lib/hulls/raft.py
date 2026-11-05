@@ -67,11 +67,11 @@ def build(_):
     at = seat(shape, SEATED)
     record("raft", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(hull, at, ARM_REACH_METRES)}})
     edge = hull["from"][2]
-    line = entity["hitboxSize"]["y"] + SWIM_LINE_METRES - entity["attributes"]["swimmingOffsetY"]
-    pole = poling(stands("raft", units.metres(at[1]), form="rectangle", hull_kg=entity["weight"], waterplane=length * beam,
+    water_metres = entity["hitboxSize"]["y"] + SWIM_LINE_METRES - entity["attributes"]["swimmingOffsetY"]
+    pole = poling(stands("raft", units.metres(at[1]), form="rectangle", hull_kg=entity["weight"], waterplane_square_metres=length * beam,
                          beam_metres=beam, depth_metres=depth),
-                  at, units.voxels(line), edge - POLE_OUT, (at[0], at[1], edge + STANCE_WIDTH), STANCE_WIDTH)
-    player_patch("player-raft", tools(shape, "raft", SEATED, "roughseas-kneel", {"rotationZ": 10}, line, {
+                  at, units.voxels(water_metres), edge - POLE_OUT, (at[0], at[1], edge + STANCE_WIDTH), STANCE_WIDTH)
+    player_patch("player-raft", tools(shape, "raft", SEATED, "roughseas-kneel", {"rotationZ": 10}, water_metres, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, HANDS_ABOVE, edge + 1, bend=BEND, shift=KNEELS_OUT,
                                               middle=(hull["from"][2] + hull["to"][2]) / 2)),
         "pole": pole,

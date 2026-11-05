@@ -1,7 +1,7 @@
 import functools
 import math
 
-from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline_metres
 from stroke import player_patch, seat
 from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes, stands
 from fit import APART, TOLERANCE, lined as lined_section
@@ -356,12 +356,12 @@ def build(path_):
     record("barkcanoe", merged(report(hull, laths), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:framing": framing}}))
     at = seat(shape, "BackSeat")
     record("barkcanoe", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
-    line = waterline("barkcanoe")
+    water_metres = waterline_metres("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT
-    pole = poling(stands("barkcanoe", units.metres(SKIN)), at, units.voxels(line), CENTRE - SHEER - 1,
+    pole = poling(stands("barkcanoe", units.metres(SKIN)), at, units.voxels(water_metres), CENTRE - SHEER - 1,
                   (poler, SKIN, CENTRE), hull.half(poler, SKIN + 1, inset=SKIN),
                   floor_at=lambda x, across: hull.floor(x, across, inset=SKIN))
-    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, line, {
+    player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, water_metres, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 6.5, 1.5)),
         "pole": pole,
     }, ("Skin",)))

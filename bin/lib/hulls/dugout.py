@@ -1,4 +1,4 @@
-from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline_metres
 from stroke import find, player_patch, seat
 from physics import afloat, kilograms, stands
 from fit import APART, Swept
@@ -328,14 +328,14 @@ def build(path):
 def crew_tools(shape, vessel, walls, catch=None, fore=3, outboard=(0, 0), **given):
     at = seat(shape, "FrontSeat")
     record(vessel, {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(find(shape.elements, "Hull"), at, ARM_REACH_METRES)}})
-    line = waterline(vessel)
+    water_metres = waterline_metres(vessel)
     hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD)
     floor = hull.section(POLER_AT)[0][1] + WALL
     chine = hull.half(POLER_AT, floor + 1, inset=WALL)
-    pole = poling(stands(vessel, units.metres(floor), outboard=outboard, **given), at, units.voxels(line),
+    pole = poling(stands(vessel, units.metres(floor), outboard=outboard, **given), at, units.voxels(water_metres),
                   CENTRE - PROFILE[-1][0] - 1, (POLER_AT, floor, CENTRE), chine,
                   floor_at=lambda x, across: hull.floor(x, across, inset=WALL))
-    player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
+    player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, water_metres, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 3.5, 1, catch=catch, fore=fore)),
         "pole": pole,
     }, walls))

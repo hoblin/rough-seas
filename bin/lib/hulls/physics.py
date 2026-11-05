@@ -43,27 +43,27 @@ def per_rope(pieces, count):
     return [pieces[len(pieces) * r // count:len(pieces) * (r + 1) // count] for r in range(count)]
 
 
-def hide_sections(area):
-    sections = math.ceil(area / SECTION_SQUARE_METRES)
-    print(f"cover: {area:.2f} m² of hide, {sections} sections of {SECTION_SQUARE_METRES} m²")
+def hide_sections(area_square_metres):
+    sections = math.ceil(area_square_metres / SECTION_SQUARE_METRES)
+    print(f"cover: {area_square_metres:.2f} m² of hide, {sections} sections of {SECTION_SQUARE_METRES} m²")
     return sections
 
 
-def lacing_metres(perimeter):
-    return perimeter / LACING_STEP_METRES * LACING_TURN_METRES + perimeter
+def lacing_metres(perimeter_metres):
+    return perimeter_metres / LACING_STEP_METRES * LACING_TURN_METRES + perimeter_metres
 
 
-def stiffness(hull_kg, waterplane, beam_metres, floor_metres, centre_metres, form="ellipse", outboard=(0, 0)):
+def stiffness(hull_kg, waterplane_square_metres, beam_metres, floor_metres, centre_metres, form="ellipse", outboard=(0, 0)):
     kg = hull_kg + MASS["crewKg"] + MASS["playerGearKg"]
     volume = kg / (SEAWATER_KG_PER_LITRE * 1000)
     if form == "ellipse":
-        length = 4 * waterplane / (math.pi * beam_metres)
+        length = 4 * waterplane_square_metres / (math.pi * beam_metres)
         inertia = math.pi / 64 * length * beam_metres ** 3
     else:
-        inertia = waterplane * beam_metres ** 2 / 12
-    float_area, float_metres = outboard
-    inertia += float_area * float_metres ** 2
-    draft = volume / (waterplane + float_area)
+        inertia = waterplane_square_metres * beam_metres ** 2 / 12
+    float_square_metres, float_off_metres = outboard
+    inertia += float_square_metres * float_off_metres ** 2
+    draft = volume / (waterplane_square_metres + float_square_metres)
     centre = (MASS["crewKg"] * (floor_metres + STANDING_CENTRE_METRES) + MASS["playerGearKg"] * floor_metres
               + hull_kg * centre_metres) / kg
     return draft / 2 + inertia / volume - centre
@@ -72,17 +72,17 @@ def stiffness(hull_kg, waterplane, beam_metres, floor_metres, centre_metres, for
 def built(name):
     entity = load(ASSETS / f"entities/vessel/{name}.json")
     integrity = entity["behaviorConfigs"]["roughseas:vesselintegrity"]
-    return {"hull_kg": entity["weight"], "waterplane": integrity.get("waterplaneSquareMetres"),
+    return {"hull_kg": entity["weight"], "waterplane_square_metres": integrity.get("waterplaneSquareMetres"),
             "beam_metres": integrity["hullBoxMetres"]["to"][2] - integrity["hullBoxMetres"]["from"][2], "depth_metres": integrity["depthMetres"]}
 
 
 def stands(name, floor_metres, form="ellipse", outboard=(0, 0), **given):
     canoe = built(CANOE)
     narrowed = NARROWEST_STOOD_IN_METRES / canoe["beam_metres"]
-    least = stiffness(canoe["hull_kg"], canoe["waterplane"] * narrowed, NARROWEST_STOOD_IN_METRES, CANOE_FLOOR_METRES,
+    least = stiffness(canoe["hull_kg"], canoe["waterplane_square_metres"] * narrowed, NARROWEST_STOOD_IN_METRES, CANOE_FLOOR_METRES,
                       canoe["depth_metres"] / 3)
     hull = (built(name) if (ASSETS / f"entities/vessel/{name}.json").exists() else {}) | given
-    own = stiffness(hull["hull_kg"], hull["waterplane"], hull["beam_metres"], floor_metres, hull["depth_metres"] / 3,
+    own = stiffness(hull["hull_kg"], hull["waterplane_square_metres"], hull["beam_metres"], floor_metres, hull["depth_metres"] / 3,
                     form, outboard)
     standing = own >= least
     print(f"{name}: GM {own:+.2f} m with a man standing, against {least:+.2f} m in the narrowest canoe polers stand in: "
@@ -94,31 +94,33 @@ def kilograms(material, litres):
     return litres / 1000 * MATERIALS[material]["density"]
 
 
-def hitbox_height(name):
+def hitbox_metres(name):
     return load(ASSETS / f"entities/vessel/{name}.json")["hitboxSize"]["y"]
 
 
-def afloat(name, hull_kg, depth, hold=0, deck=0, waterplane=None, solid_litres=None, hitbox_metres=None):
+def afloat(name, hull_kg, depth_metres, hold_litres=0, deck_square_metres=0, waterplane_square_metres=None, solid_litres=None,
+           hitbox_height_metres=None):
     """Her weight, the depth and waterplane she floats by, her hold and the offset vanilla floats her at with one
     aboard, as her entity takes them. A solid hull is pressed down through her depth as her material is."""
     crewed = hull_kg + MASS["crewKg"]
-    integrity = units.both("depth", depth)
+    integrity = units.both("depth", depth_metres)
     configs = {"roughseas:vesselintegrity": integrity}
     if solid_litres is not None:
-        draft = depth * crewed / (solid_litres * SEAWATER_KG_PER_LITRE)
-        print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth:.4g} m, {solid_litres:.0f} L of material, "
+        draft = depth_metres * crewed / (solid_litres * SEAWATER_KG_PER_LITRE)
+        print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth_metres:.4g} m, {solid_litres:.0f} L of material, "
               f"draft {draft:.3f} m with one aboard", end="")
     else:
-        full = crewed + MASS["playerGearKg"] + SEAWATER_KG_PER_LITRE * hold
-        by_full_hold = waterplane is None
-        waterplane = full / (SEAWATER_KG_PER_LITRE * 1000 * depth) if by_full_hold else waterplane
-        draft = crewed / (SEAWATER_KG_PER_LITRE * 1000 * waterplane)
-        integrity |= units.both("waterplane", waterplane, 2)
-        configs["roughseas:bilge"] = units.both("capacity", hold, 3) | units.both("deck", deck, 2)
-        print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth:.4g} m, hold {hold:.0f} L, deck {deck:.2f} m², "
-              f"waterplane {waterplane:.2f} m²{' (full hold and one aboard bring her gunwale to the water)' if by_full_hold else ''}, "
+        full = crewed + MASS["playerGearKg"] + SEAWATER_KG_PER_LITRE * hold_litres
+        by_full_hold = waterplane_square_metres is None
+        if by_full_hold:
+            waterplane_square_metres = full / (SEAWATER_KG_PER_LITRE * 1000 * depth_metres)
+        draft = crewed / (SEAWATER_KG_PER_LITRE * 1000 * waterplane_square_metres)
+        integrity |= units.both("waterplane", waterplane_square_metres, 2)
+        configs["roughseas:bilge"] = units.both("capacity", hold_litres, 3) | units.both("deck", deck_square_metres, 2)
+        print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth_metres:.4g} m, hold {hold_litres:.0f} L, deck {deck_square_metres:.2f} m², "
+              f"waterplane {waterplane_square_metres:.2f} m²{' (full hold and one aboard bring her gunwale to the water)' if by_full_hold else ''}, "
               f"draft {draft:.3f} m with one aboard", end="")
-    offset = (hitbox_height(name) if hitbox_metres is None else hitbox_metres) + SWIM_LINE_METRES - draft
+    offset = (hitbox_metres(name) if hitbox_height_metres is None else hitbox_height_metres) + SWIM_LINE_METRES - draft
     print(f", swimmingOffsetY {offset:.3f}")
     return {"weight": round(hull_kg, 1), "attributes": {"swimmingOffsetY": round(offset, 3)}, "behaviorConfigs": configs}
 

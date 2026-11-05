@@ -418,7 +418,7 @@ def build(target):
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),
-               waterplane=hull_alone["behaviorConfigs"]["roughseas:vesselintegrity"]["waterplaneSquareMetres"])
+               waterplane_square_metres=hull_alone["behaviorConfigs"]["roughseas:vesselintegrity"]["waterplaneSquareMetres"])
 
 
 def rigging(raised_litres):
@@ -508,7 +508,7 @@ def report(hull, finished_float):
     print("outrigger parts in oak: " + ", ".join(f"{name} {kg:.0f} kg" for name, kg in parts.items()) + f", poles {pole_litres():.0f} L")
     hull_alone = afloat("dugout", parts["hull"], units.metres(RIM), hold, deck())
     waterplane = hull_alone["behaviorConfigs"]["roughseas:vesselintegrity"]["waterplaneSquareMetres"] + finished_float["waterlineSquareMetres"]
-    return hull_alone, merged(afloat("outrigger", sum(parts.values()), units.metres(RIM), hold, deck(), waterplane=waterplane), shares(parts.values()))
+    return hull_alone, merged(afloat("outrigger", sum(parts.values()), units.metres(RIM), hold, deck(), waterplane_square_metres=waterplane), shares(parts.values()))
 
 
 if __name__ == "__main__":

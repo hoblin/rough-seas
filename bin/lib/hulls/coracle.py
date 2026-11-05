@@ -5,7 +5,7 @@ from pathlib import Path
 
 from fit import APART, Oval
 from physics import HIDE_METRES, LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
-from held import SCULL_REACH_METRES, worked_from_middle, PADDLE, poling, sculling, tools, waterline
+from held import SCULL_REACH_METRES, worked_from_middle, PADDLE, poling, sculling, tools, waterline_metres
 from stroke import player_patch, seat
 import units
 from entity import merged, record
@@ -297,11 +297,11 @@ def build(path_):
     record("coracle", merged(report(flat, gunwale, hide_area(pieces)), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"layout": layout}}}))
     at = seat(shape, "FrontSeat")
     record("coracle", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, SCULL_REACH_METRES, ahead=True)}})
-    line = waterline("coracle")
+    water_metres = waterline_metres("coracle")
     floor = HIDE + 2 * LATH_THICKNESS
-    pole = poling(stands("coracle", units.metres(floor)), at, units.voxels(line), CENTRE - GUNWALE[1] - 1,
+    pole = poling(stands("coracle", units.metres(floor)), at, units.voxels(water_metres), CENTRE - GUNWALE[1] - 1,
                   (CENTRE, floor, CENTRE), BOTTOM[1] - HIDE - 2 * LATH_THICKNESS)
-    player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, line, {
+    player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, water_metres, {
         "paddle": ("sculling", PADDLE, sculling(PADDLE, at, 6.5, 5, 2.5)),
         "pole": pole,
     }, ("Cover",)))
