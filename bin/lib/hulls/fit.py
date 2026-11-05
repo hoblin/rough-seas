@@ -266,7 +266,7 @@ def depth_into(a, b):
             continue
         on_a = [(p[0] * axis[0] + p[1] * axis[1] + p[2] * axis[2]) / length for p in a]
         on_b = [(p[0] * axis[0] + p[1] * axis[1] + p[2] * axis[2]) / length for p in b]
-        least = min(least, min(max(on_a), max(on_b)) - max(min(on_a), min(on_b)))
+        least = min(least, max(on_a) - min(on_b), max(on_b) - min(on_a))
         if least <= TOLERANCE:
             return 0
     return least

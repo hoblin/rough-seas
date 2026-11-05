@@ -325,11 +325,12 @@ def under_gunwales(stations):
     return clipped
 
 
-def ribs(hull):
+def ribs(hull, lining):
     middle = (STATIONS[0][0] + STATIONS[-1][0]) / 2
     order = sorted(RIBS, key=lambda x: (abs(x + RIB_WIDTH / 2 - middle), x))
     headed = Hull(hull.prefix, under_gunwales(hull.stations), hull.cz, hull.t, hull.outer, hull.inner, hull.edge)
-    return [headed.rib(f"Rib{n}x", x, "frame", width=RIB_WIDTH, depth=RIB_DEPTH, inset=RIB_INSET) for n, x in enumerate(order, 1)]
+    return [headed.rib(f"Rib{n}x", x, "frame", width=RIB_WIDTH, depth=RIB_DEPTH, inset=RIB_INSET,
+                       clear=[(points, low, high) for _, points, low, high in bounded([lining])]) for n, x in enumerate(order, 1)]
 
 
 def wraps(hull, cuts):
@@ -393,7 +394,8 @@ def build(path_):
     stems = stages("Stems", [stem("SternStem", on_centre(stern_line())), stem("BowStem", on_centre(bow(stern_line())))])
     flat = sheet()
     skin, frame, cuts, shaped = raising(flat, [points for _, points, _, _ in bounded([stems])])
-    laths = [frame, stems, sheathed(hull), stages("Ribs", ribs(hull))]
+    lining = sheathed(hull)
+    laths = [frame, stems, lining, stages("Ribs", ribs(hull, lining))]
     lashed = stages("Lashing", wraps(hull, cuts))
     pitched = stages("Pitch", [seam("SternSeam", stern_line()), seam("BowSeam", bow(stern_line())), gores(hull, -1), gores(hull, 1)])
     shape.add(flat, skin, *laths[:2], lashed, *laths[2:], pitched)
@@ -409,7 +411,7 @@ def build(path_):
         shape.together(level, laid, *((laths[1:], lashed, pitched) if k == levels else ()))
     raised = [piece["children"][-1] for piece in frame["children"]]
     shape.apart(laths[1:], raised)
-    shape.apart(laths[3], laths[1:3], pressed=SHEATHING)
+    shape.apart(laths[3], laths[1:3])
     shape.within(hull.outline("the bark's inside", inset=SKIN), laths[1])
     shape.within(Hull("Sheathing", lined(hull.stations, SKIN + APART), CENTRE, SHEATHING, "frame", "frame").outline("the sheathing"), laths[2])
     shape.within(hull.outline("the sheathing's inside", inset=SKIN + SHEATHING + APART), laths[3])

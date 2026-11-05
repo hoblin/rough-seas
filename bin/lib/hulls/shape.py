@@ -5,7 +5,7 @@ import math
 import re
 from pathlib import Path
 
-from fit import APART, TOLERANCE, Loft, check, corners, posed
+from fit import APART, TOLERANCE, Loft, check, corners, depth_into, posed
 from transform import add, apply, cross, direct, dot, scale, sub, unit
 
 FACES = ("north", "east", "south", "west", "up", "down")
@@ -270,10 +270,16 @@ def widest(made, surface, reach):
     return low
 
 
-def seated(made, surface, depth=0):
-    """How far in, from depth on, the element made(depth) has to sit for every corner to lie inside the surface."""
+def seated(made, surface, depth=0, clear=()):
+    """How far in, from depth on, the element made(depth) has to sit for every corner to lie inside the surface and
+    the element to pass into none of the boxes it is to clear, each its corners and bounds as fit.bounded gives them."""
     for _ in range(50):
-        out = max(surface.beyond(p) for p in corners_of(made(depth)))
+        points = corners_of(made(depth))
+        out = max(surface.beyond(p) for p in points)
+        if clear:
+            low, high = [min(p[i] for p in points) for i in range(3)], [max(p[i] for p in points) for i in range(3)]
+            out = max([out, *(depth_into(points, box) for box, box_low, box_high in clear
+                              if all(low[i] < box_high[i] and box_low[i] < high[i] for i in range(3)))])
         if out <= TOLERANCE / 2:
             break
         depth += out
@@ -500,7 +506,7 @@ class Hull:
     def skin_square_metres(self):
         return sum(math.sqrt(dot(spread := cross(sub(c, a), sub(d, b)), spread)) / 2 for *_, (a, b, c, d) in self.panels()) / VOXELS_A_METRE ** 2
 
-    def rib(self, name, x, tex, width=1, depth=1, inset=None):
+    def rib(self, name, x, tex, width=1, depth=1, inset=None, clear=()):
         """A rib at x, a piece along each edge of the section, each sunk until it lies inside the skin (and what lines
         it, inset deep); every other piece a little narrower, so that two share no plane where they meet."""
         edges = self.section(x)
@@ -522,7 +528,7 @@ class Hull:
                 made = lambda s, z0=z0, z1=z1, y0=y0, z=z, half=half, normal=normal: box(
                     f"{name}{label}{k + 1}", (x - half, y0 + normal[1] * s, z0 + normal[2] * s), (x + half, y0 + length + normal[1] * s, z1 + normal[2] * s),
                     tex, origin=(x, y0 + normal[1] * s, z + normal[2] * s), rot=(side * flare, 0, 0), grain="y")
-                elements.append(made(seated(made, inside)))
+                elements.append(made(seated(made, inside, clear=clear)))
         return elements
 
     def transom(self, name, x, thickness, tex, step=1.5):
