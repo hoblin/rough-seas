@@ -109,6 +109,20 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public double KgPerMetre => flotation.KgPerMetre;
 
+    public double AddedKg
+    {
+        get
+        {
+            double floatSquareMetres = outboard?.WaterplaneSquareMetres ?? 0;
+            double hullSquareMetres = flotation.HasHold
+                ? flotation.KgPerMetre / (VesselMass.SeawaterKgPerLitre * 1000) - floatSquareMetres
+                : 4 * Shape.HalfLength * Shape.HalfBeam;
+            double floatHalfLength = (outboard?.LengthMetres ?? 0) / 2;
+            double floatAdded = floatHalfLength > 0 ? HeaveAddedMass.OfPlate(floatHalfLength, floatSquareMetres / (Math.PI * floatHalfLength)) : 0;
+            return HeaveAddedMass.OfWaterplane(hullSquareMetres, Shape.HalfBeam) + floatAdded;
+        }
+    }
+
     public Aboard Aboard { get; private set; }
 
     public double ReferenceKg { get; private set; }

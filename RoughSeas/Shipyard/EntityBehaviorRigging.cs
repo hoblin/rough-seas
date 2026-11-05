@@ -34,6 +34,11 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 
     public double FloatOffMetres => rig.FloatOffMetres;
 
+    public double FloatLengthMetres => rig.FloatLogs;
+
+    public double FloatWaterplaneSquareMetres =>
+        FloatStage is { WaterlineSquareMetres: { Length: > 0 } waterline } stage ? waterline[framing.Laid(stage)] : 0;
+
     public double LashedShare => framing.Stages.FirstOrDefault(stage => stage.Group == rig.Lashing) is { } lashing ? framing.Share(lashing) : 1;
 
     /// <summary>

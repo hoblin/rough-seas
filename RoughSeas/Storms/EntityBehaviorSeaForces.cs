@@ -60,8 +60,10 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public double SettlingMetres => dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
 
+    public bool? KeelWet { get; set; }
+
     public Heave? Heave => buoyant is { HasDraft: true, Afloat.Sunk: false }
-        ? new Heave(buoyant.Aboard.Total, buoyant.KgPerMetre, buoyant.Afloat.DraftMetres, buoyant.DepthMetres, storms.Config.Response)
+        ? new Heave(buoyant.Aboard.Total, buoyant.AddedKg, buoyant.KgPerMetre, buoyant.Afloat.DraftMetres, buoyant.DepthMetres, storms.Config.Response)
         : null;
 
     public override string PropertyName() => Code;

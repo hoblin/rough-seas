@@ -11,19 +11,45 @@ public class HeaveTests
     private readonly ResponseConfig config = Fixtures.Config().Response;
 
     private Heave Laden(Hull hull, Aboard aboard) =>
-        new(aboard.Total, hull.Flotation.KgPerMetre, hull.Float(aboard).DraftMetres, hull.Flotation.DepthMetres, config);
+        new(aboard.Total, AddedKg(hull), hull.Flotation.KgPerMetre, hull.Float(aboard).DraftMetres, hull.Flotation.DepthMetres, config);
 
-    private static List<double> Immersions(Heave heave, double from, double seconds, double step = ClientSeconds)
+    private static double AddedKg(Hull hull)
+    {
+        var shape = Fixtures.Shape(hull.Vessel);
+        double squareMetres = hull.Flotation.HasHold ? hull.Flotation.KgPerMetre / 1025 : 4 * shape.HalfLength * shape.HalfBeam;
+        return HeaveAddedMass.OfWaterplane(squareMetres, shape.HalfBeam);
+    }
+
+    private static List<double> Immersions(Heave heave, double from, double seconds, double step = ClientSeconds, double rising = 0)
     {
         var immersions = new List<double>();
-        double immersion = from, speed = 0;
+        double immersion = from, speed = rising;
+        bool wet = immersion > 0;
         for (double t = 0; t < seconds; t += step)
         {
-            speed += heave.Acceleration(immersion, speed) * step;
+            if (immersion > 0 && !wet) speed = heave.Entering(speed);
+            wet = immersion > 0;
+            speed += (wet ? heave.Acceleration(immersion, speed) : -HullResponse.Gravity) * step;
             immersion -= speed * step;
             immersions.Add(immersion);
         }
         return immersions;
+    }
+
+    [Theory]
+    [InlineData("barkcanoe")]
+    [InlineData("coracle")]
+    [InlineData("currach")]
+    public void ALightHullThrownClearOfTheWaterComesToRest(string vessel)
+    {
+        var hull = Fixtures.Hull(vessel);
+        var empty = Laden(hull, hull.Crewed(bodies: 0, kit: 0));
+
+        var immersions = Immersions(empty, 0.0013, 20, ServerSeconds, rising: 0.164);
+
+        Assert.True(immersions.Min() < 0, "she never left the water");
+        Assert.Equal(empty.DraftMetres, immersions[^1], 4);
+        Assert.Equal(1, immersions.Count(immersion => immersion < 0));
     }
 
     [Theory]
@@ -79,14 +105,14 @@ public class HeaveTests
     {
         var hull = Fixtures.Hull("currach");
         var heave = Laden(hull, hull.Crewed());
-        var undamped = heave with { Config = new ResponseConfig { HeaveAddedMass = config.HeaveAddedMass } };
+        var undamped = heave with { Config = new ResponseConfig() };
 
         var immersions = Immersions(undamped, heave.DraftMetres + 0.01, 4);
         var peaks = Enumerable.Range(1, immersions.Count - 2)
             .Where(i => immersions[i] > immersions[i - 1] && immersions[i] >= immersions[i + 1])
             .ToList();
 
-        Assert.Equal(HullResponse.HeavePeriod(heave.DraftMetres, config), (peaks[1] - peaks[0]) * ClientSeconds, 1);
+        Assert.Equal(HullResponse.HeavePeriod(heave.Kg, heave.AddedKg, heave.KgPerMetre), (peaks[1] - peaks[0]) * ClientSeconds, 1);
     }
 
     [Fact]

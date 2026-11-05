@@ -49,6 +49,15 @@ In 3.1 every blow meets what really takes it ([The hull](Building-a-Vessel#the-h
 
 New: the vessel's `shell`, `config/vessels/damage.json`'s `broadSources`, `cutShare` and `variation`, a material's `toughness` and `cutToughness`, and `hull.json`'s `soakedStrengthShare`. Gone, never documented here: `config/storms.json`'s `waves.breakerTransfer`, `waves.periodSecondsPerRootMetre` and `ashore.impactFactor`.
 
+### Heave by mass
+
+In 4.0 a vessel with a draft heaves by her own mass ([Floating](Building-a-Vessel#floating)), and what she drags with her comes from her form. A vessel of yours loads as it did; code that reads the heave changes:
+
+- `HullResponse.HeavePeriod(draftMetres, config)` gave way to `HullResponse.HeavePeriod(kg, addedKg, kgPerMetre)`; `HullResponse.Of` keeps its arguments.
+- `config/storms.json`'s `response.heaveAddedMass` is gone: `HeaveAddedMass` gives the water from a hull's waterplane.
+- `IBuoyant.SettlingMetres` is gone; `ReferenceDraftMetres`, `KgPerMetre` and `AddedKg` are new. `IOutboard` adds `WaterplaneSquareMetres` and `LengthMetres`.
+- Vanilla's `swimmingOffsetY` now sets her keel: vanilla's `Swimming` means her keel is wet.
+
 ### One sea, one clock
 
 In 3.2 every client draws the same waves, and everything at sea keeps one clock ([The sea's time](Reading-the-Sea#the-seas-time)). A vessel of yours loads as it did, but code that reads the time changes:

@@ -125,6 +125,9 @@ public interface IBuoyant
     /// <summary>The seawater she displaces for each metre she sinks.</summary>
     double KgPerMetre { get; }
 
+    /// <summary>The water she drags with her as she heaves (<see cref="HeaveAddedMass"/>).</summary>
+    double AddedKg { get; }
+
     Aboard Aboard { get; }
 
     double ReferenceKg { get; }

@@ -9,6 +9,9 @@ namespace RoughSeas.Storms;
 /// <summary>
 /// How a vessel with a draft floats in vanilla's physics: its swim line at its keel, so vanilla's <c>Swimming</c> means the
 /// keel is wet, and <see cref="Heave"/> in place of vanilla's buoyancy, whose <c>BoyancyMul</c> scales nothing but that.
+/// Clear of the water she falls under the real g on her own mass, not vanilla's. Nothing else of vanilla's moves her up or
+/// down: its water drag, swim drag, a flowing block's push and other entities' repulsion keep their effect along the water
+/// and lose it on her heave.
 /// </summary>
 public static class VesselDraught
 {
@@ -18,6 +21,9 @@ public static class VesselDraught
     private const double SwimDragPerMotion = 10;
     private const double SwimDragOffset = 0.02;
     public const double MostSwimDrag = 1.25;
+    private const double VanillaFlowPush = 0.3;
+    private const double LeastPushedDensity = 750;
+    private const double MostPushedDensity = 2500;
     private const double VanillaLiftPerSubmergence = 60;
     private const double VanillaWaterDensity = 1000;
     private const double FounderedMetres = 100;
@@ -38,6 +44,9 @@ public static class VesselDraught
                 postfix: new HarmonyMethod(typeof(VesselDraught), nameof(Settle)));
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorPassivePhysics), nameof(EntityBehaviorPassivePhysics.MotionAndCollision)),
                 prefix: new HarmonyMethod(typeof(VesselDraught), nameof(Heave)) { priority = Priority.Last });
+            harmony.Patch(AccessTools.Method(typeof(EntityBehaviorRepulseAgents), nameof(EntityBehaviorRepulseAgents.OnGameTick)),
+                prefix: new HarmonyMethod(typeof(VesselDraught), nameof(BeforeRepulsion)),
+                postfix: new HarmonyMethod(typeof(VesselDraught), nameof(AfterRepulsion)));
         }
     }
 
@@ -69,20 +78,29 @@ public static class VesselDraught
 
     private static void Heave(EntityBehaviorPassivePhysics __instance, EntityPos pos, float dt, bool ___feetInLiquidBefore, bool ___swimmingBefore)
     {
-        if (__instance.Entity is not EntityBoat boat || boat.GetBehavior<EntityBehaviorSeaForces>()?.Heave is not { } heave) return;
+        if (__instance.Entity is not EntityBoat boat || boat.GetBehavior<EntityBehaviorSeaForces>() is not { Heave: { } heave } forces) return;
 
         __instance.BoyancyMul = 0;
-        double kept = ___feetInLiquidBefore || ___swimmingBefore ? WaterDragKept(__instance.WaterDragValue, dt) : 1;
+        bool wetBefore = ___feetInLiquidBefore || ___swimmingBefore;
+        double airDrag = WaterDragKept(__instance.AirDragValue, dt);
+        double drag = wetBefore ? WaterDragKept(__instance.WaterDragValue, dt) : airDrag;
+        double kept = wetBefore ? 1 : airDrag;
+        bool entering = boat.Swimming && forces.KeelWet == false;
+        forces.KeelWet = boat.Swimming;
+
+        var motion = pos.Motion;
+        var push = FlowPush(boat, pos, dt, ___feetInLiquidBefore);
+        double speed = (entering ? heave.Entering(motion.Y) : motion.Y) * kept;
         if (!boat.Swimming)
         {
-            pos.Motion.Y /= kept;
+            double vanillaGravity = __instance.GravityPerSecond * dt;
+            motion.Y = (speed - HullResponse.Gravity * dt / TicksPerSecond + vanillaGravity - push.Y) / drag;
             return;
         }
 
-        var motion = pos.Motion;
-        double heaving = motion.Y + heave.Acceleration(Immersion(boat, pos), motion.Y * TicksPerSecond) * dt / TicksPerSecond;
-        double along = Math.Sqrt(Square(motion.X * kept) + Square(motion.Z * kept));
-        motion.Y = BeforeSwimDrag(heaving, along, dt * TicksPerSecond) / kept;
+        double heaving = speed + heave.Acceleration(Immersion(boat, pos), speed * TicksPerSecond) * dt / TicksPerSecond;
+        double along = Math.Sqrt(Square(motion.X * drag + push.X) + Square(motion.Z * drag + push.Z));
+        motion.Y = (BeforeSwimDrag(heaving, along, dt * TicksPerSecond) - push.Y) / drag;
     }
 
     public static double BeforeSwimDrag(double heaving, double along, double stepFactor)
@@ -95,6 +113,24 @@ public static class VesselDraught
         double a = 1 - Square(rate * heaving), b = 2 * SwimDragOffset, c = Square(SwimDragOffset) - Square(rate * along);
         double drag = Math.Abs(a) < 1e-12 ? -c / b : (-b + Math.Sqrt(b * b - 4 * a * c)) / (2 * a);
         return heaving * drag;
+    }
+
+    private static void BeforeRepulsion(EntityBehaviorRepulseAgents __instance, out double __state) => __state = __instance.entity.Pos.Motion.Y;
+
+    private static void AfterRepulsion(EntityBehaviorRepulseAgents __instance, double __state)
+    {
+        if (__instance.entity is EntityBoat boat && boat.GetBehavior<EntityBehaviorSeaForces>()?.Heave is not null) boat.Pos.Motion.Y = __state;
+    }
+
+    private static (double X, double Y, double Z) FlowPush(EntityBoat boat, EntityPos pos, float dt, bool feetInLiquidBefore)
+    {
+        if (!feetInLiquidBefore) return default;
+        var block = pos.AsBlockPos;
+        if (boat.World.BlockAccessor.GetBlock(block, BlockLayersAccess.Fluid) is not IBlockFlowing { IsStill: false } flowing) return default;
+
+        double strength = VanillaFlowPush * VanillaWaterDensity / Math.Clamp(boat.MaterialDensity, LeastPushedDensity, MostPushedDensity) * dt * TicksPerSecond;
+        var push = flowing.GetPushVector(block);
+        return (push.X * strength, push.Y * strength, push.Z * strength);
     }
 
     private static double Square(double value) => value * value;
