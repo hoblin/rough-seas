@@ -23,6 +23,7 @@ CHANGE = "to-"
 LOOPED = {"sculling": 2}
 STANDING = "roughseas-stand"
 PLANT_DEPTH_METRES = 1
+# A blade swept at arm's length works some 0.7 m beyond the side; a sculled one about 0.3 m ahead of the bow.
 ARM_REACH_METRES = 0.7
 SCULL_REACH_METRES = 0.3
 HAND_SPAN = 5

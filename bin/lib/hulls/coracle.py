@@ -30,6 +30,7 @@ HIDE = 0.2
 # The hide is stretched over the frame, so the bottom reaches round the outermost laths, the across ones over the along.
 GUNWALE = (12, 8.56)
 BOTTOM = (ACROSS_SPACING * (LATHS // 2) + LATH_WIDTH / 2 + HIDE + LATH_THICKNESS, ALONG_SPACING * (LATHS // 2) + LATH_WIDTH / 2 + HIDE)
+# Her laths rise 0.35 m from her bottom to her gunwale (Museum Wales, Teifi coracle).
 DEPTH = 5.6
 STAVES = 24
 STRIP = 2

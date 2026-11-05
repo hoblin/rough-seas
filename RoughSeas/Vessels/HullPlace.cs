@@ -44,10 +44,12 @@ public readonly record struct HullShape(double HalfLengthMetres, double HalfBeam
 
     public static readonly HullPlace[] Places = Enum.GetValues<HullPlace>();
 
+    /// <summary>The hull in a box measured from the point the vessel stands at, as her entity's <c>hullBoxMetres</c> gives it.</summary>
     public static HullShape FromBox(double[] fromMetres, double[] toMetres) => new(
         (toMetres[0] - fromMetres[0]) / 2, (toMetres[2] - fromMetres[2]) / 2, toMetres[1] - fromMetres[1],
         (fromMetres[0] + toMetres[0]) / 2, (fromMetres[2] + toMetres[2]) / 2, fromMetres[1]);
 
+    /// <summary>The hull in a box of her shape, in the shape's voxels: a vessel the build has not measured.</summary>
     public static HullShape FromVoxels(double[] fromVoxels, double[] toVoxels) => FromBox(FromModel(fromVoxels), FromModel(toVoxels));
 
     private static double[] FromModel(double[] voxels) =>

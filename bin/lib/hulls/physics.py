@@ -33,9 +33,14 @@ SECTION_SQUARE_METRES = 1.2
 # (Hornell 1938: "laced at short intervals").
 LACING_STEP_METRES = 0.05
 LACING_TURN_METRES = 0.15
+# Reed or flax cord 1 cm thick breaks as flax rope does at 12 mm (rope-flax), by its section.
 CORD_BREAKING_NEWTONS = MATERIALS["rope-flax"]["strength"] * 1000 * (10 / 12) ** 2
+# Natural fibre ropes stretch 10 to 12% before they break (machovec.com, rope comparison).
 CORD_STRETCH_AT_BREAK = 0.1
-LASHING_JOULES_PER_METRE = 1200 / (3 * ROPE_METRES)
+# A lashing takes a blow as the raft's do: her impactCapacity over the three ropes of her recipe.
+LASHING_JOULES_PER_METRE = next(op["value"]["impactCapacity"] for op in load(ASSETS / "patches/vessels-vanilla-boats.json")
+                                if op["file"].endswith("boat-raft.json") and op["path"].endswith("roughseas:vesselintegrity")) / (3 * ROPE_METRES)
+# A hide seam weeps once its tallow has washed out: some 15 L an hour across a 2.3 m seam (an estimate).
 SEAM_LITRES_PER_HOUR_A_METRE = 15 / 2.3
 
 

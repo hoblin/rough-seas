@@ -12,6 +12,7 @@ from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_bo
 from wounds import wound
 
 LOG = 16
+# A small outrigger's float rides 1.5 to 2 m off her hull, and is about 3 m long; her mast about 3 m.
 FLOAT_Z = 40
 FLOAT_Y = 2.9
 FLOAT_DIAMETER = 4.8

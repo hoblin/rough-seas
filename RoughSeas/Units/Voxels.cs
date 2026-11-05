@@ -5,6 +5,11 @@ using Newtonsoft.Json.Linq;
 
 namespace RoughSeas.Units;
 
+/// <summary>
+/// Converts between a model's voxels and metres, by the one definition of the voxel (Units/voxel.json, which the
+/// model builders read too). A value the build measures is written in metres already; this is for what is computed
+/// on the fly, a point on a model as it is drawn.
+/// </summary>
 public static class Voxels
 {
     public static readonly double AMetre = Read();

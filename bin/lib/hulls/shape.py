@@ -18,6 +18,7 @@ FACE_AXES = {
 AXIS = {"x": 0, "y": 1, "z": 2}
 ROUNDED = 0.68
 ORIGIN = (8, 0, 8)
+# As long as vanilla's raft's collision boxes.
 COLLISION_METRES = 1.5
 
 

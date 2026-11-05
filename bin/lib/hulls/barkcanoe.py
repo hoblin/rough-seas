@@ -42,6 +42,7 @@ GUNWALE_METRES = 0.032
 BARK_METRES = 0.005
 STITCH_METRES = 0.0254
 STEM_GIRTH_METRES = 0.08
+# A sheet five metres long, a little longer than the canoe, trimmed to her as her sides are raised.
 SHEET_LENGTH = 80
 SHEET_THICKNESS = 0.4
 

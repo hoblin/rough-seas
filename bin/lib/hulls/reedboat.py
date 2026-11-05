@@ -18,6 +18,7 @@ CENTRE = 8
 SIDES = (("Port", -1), ("Starboard", 1))
 BUNDLE_REEDS = 144
 REED_KG = 0.15
+# Vanilla's reed rope recipe: three slots of two cattail tops.
 REEDS_A_ROPE = 6
 REED = "roughseas:entity/vessel/reed-cattailtops"
 

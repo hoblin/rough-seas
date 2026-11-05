@@ -17,6 +17,9 @@ BARK = "bark"
 RINGS = "rings"
 RIM = 9
 WALL = 0.8
+# Wet clay goes along the rim before each fire (PHMC dugout project, 2005; SUNY Potsdam, 2015), and the fire is tended
+# until the clay is spent, about a day and a half: 8.5 cm at a time, the hollow takes six fires and about nine days, as
+# Wampanoag builders burn a mishoon for 6 to 10 days (Plimoth Patuxet, The Making of a Mishoon).
 HOLLOWINGS = 6
 BANDS = 3
 WALL_BANDS = 2
