@@ -63,7 +63,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     {
         if (boat.GetBehavior<EntityBehaviorSeatable>()?.Controller is not EntityAgent rower || hull == null)
         {
-            strokes.Show(boat, null, null, false, false, null);
+            strokes.Show(boat, null, null, false, false, null, null);
             return Idle(vanilla);
         }
 
@@ -86,7 +86,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var side = (Side)boat.WatchedAttributes.GetInt(PaddleSideKey, (int)Side.Starboard);
         var changing = sided && boat.WatchedAttributes.GetBool(PaddleChangingKey);
         strokes.Show(boat, rower, idle ? null : strokes.KindOf(tool, station.HasOars, side), changing, sided && ahead == 0 && turn != 0,
-            idle ? null : station.Stance(tool?.Kind));
+            idle ? null : station.Stance(tool?.Kind), tool?.Kind);
         if (idle) return Idle(vanilla);
         Driving = true;
 
@@ -135,8 +135,8 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     {
         var onThisSide = paddler.Strokes(stroke.StrokesPerMinute);
         if (!paddler.Paddle(ahead, turn, boat.Pos.Yaw, 60 / stroke.StrokesPerMinute)) return;
-        vessels.Log(boat, "{0} changes his paddle to {1} after {2:F0} strokes, {3:F1}° off her course",
-            rower.GetName(), paddler.Side.ToString().ToLowerInvariant(), onThisSide, paddler.OffCourseDegrees(boat.Pos.Yaw));
+        vessels.Log(boat, "{0} changes his paddle to {1} after {2:F1} strokes, {3:F1}° off her course, once the stroke he is in is done",
+            rower.GetName(), (paddler.Coming ?? paddler.Side).ToString().ToLowerInvariant(), onThisSide, paddler.OffCourseDegrees(boat.Pos.Yaw));
     }
 
     private Vec2d Idle(Vec2d vanilla)

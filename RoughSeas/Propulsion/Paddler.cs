@@ -12,7 +12,9 @@ public enum Side
 /// <summary>
 /// The side a single blade works on. Paddled on one side she turns away from it, so the paddler holds a course by
 /// changing sides once she has veered off it by <paramref name="veerDegrees"/>, and turns her by paddling on the side
-/// that turns her. A change of sides takes one stroke, the paddle carried over the bow while his hands change grips.
+/// that turns her. He finishes the stroke he is in, driving, and then changes sides: one stroke without drive, the paddle
+/// carried over the bow while his hands change grips. His strokes run from the moment he took up the side, which a change
+/// also starts, so how far into a stroke he is follows from how long he has paddled on it.
 /// </summary>
 public sealed class Paddler(double veerDegrees)
 {
@@ -21,29 +23,43 @@ public sealed class Paddler(double veerDegrees)
     private int going;
     private double changing;
     private double onThisSide;
+    private (Side Side, double Seconds, double Change)? coming;
 
     public Side Side { get; private set; } = Side.Starboard;
 
     public bool Changing => changing > 0;
 
-    /// <returns>Whether he starts changing sides.</returns>
+    /// <summary>The side he has decided on and goes over to once his stroke is done.</summary>
+    public Side? Coming => coming?.Side;
+
+    /// <returns>Whether he decides to change sides, once his stroke is done.</returns>
     public bool Paddle(int ahead, int turn, float yaw, double strokeSeconds)
     {
         var holding = ahead != 0 && turn == 0;
         (course, going) = (holding ? (ahead == going ? course : null) ?? yaw : null, ahead);
         var wanted = Wanted(ahead, turn != 0 ? turn : Correction(yaw));
-        if (Changing || wanted == Side) return false;
+        if (Changing || coming != null || wanted == Side) return false;
 
-        (Side, changing, onThisSide) = (wanted, strokeSeconds, 0);
+        var into = onThisSide % strokeSeconds;
+        coming = (wanted, into > 0 ? strokeSeconds - into : 0, strokeSeconds);
+        Lap(0);
         return true;
     }
 
-    public void Rest() => (course, onThisSide) = (null, 0);
+    public void Rest() => (course, onThisSide, coming) = (null, 0, null);
 
     public void Lap(double seconds)
     {
         changing = Math.Max(0, changing - seconds);
         onThisSide += seconds;
+        if (coming is not { } next) return;
+        var left = next.Seconds - seconds;
+        if (left > 0)
+        {
+            coming = next with { Seconds = left };
+            return;
+        }
+        (Side, changing, onThisSide, coming) = (next.Side, next.Change + left, -left, null);
     }
 
     public double Strokes(double strokesPerMinute) => onThisSide * strokesPerMinute / 60;
