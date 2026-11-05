@@ -5,12 +5,14 @@
 # ///
 """Film a scene from a screenplay in one run: bin/film SCREENPLAY.yml
 
-  bin/film SCREENPLAY [--out DIR] [--no-captions] [--webp DIR [--width PX]]
+  bin/film SCREENPLAY [--out DIR] [--no-captions] [--webp DIR [--width PX]] [--limbs]
                        set the scene up off camera, shoot every scene in one take with the game's own
                        recorder (.vrec), clear what the screenplay created and print the video, then one
                        still per scene, taken as the scene ends. Captions are burned in after the take.
                        With --webp, web copies go to DIR as well, PX wide (default 960): each still as
                        SCENE.webp, named after its scene, and the film as SCREENPLAY.webp, animated.
+                       With --limbs, the player is drawn in limb colours for the take (bin/game limbs),
+                       for debugging an animation; never with --webp.
   bin/film scout SCREENPLAY [STATION...] [--out DIR]
                        set the scene up, take a still from each named station (all by default) and
                        clear it again: the angles are checked before the take.
@@ -472,8 +474,18 @@ def webp(mp4, stills, names, directory, width):
                     "-c:v", "libwebp_anim", "-quality", "75", "-loop", "0", "-an", str(directory / f"{mp4.stem}.webp")], check=True)
 
 
-def film(screenplay, out, captions):
+def film(screenplay, out, captions, limbs=False):
     game = Game()
+    try:
+        if limbs:
+            game.run("limbs", "on")
+        return shoot(game, screenplay, out, captions)
+    finally:
+        if limbs:
+            game.run("limbs", "off")
+
+
+def shoot(game, screenplay, out, captions):
     set = Set(game, screenplay)
     camera = Camera(game, set)
     raw_dir = out / "raw"
@@ -564,7 +576,10 @@ def main():
     parser.add_argument("--no-captions", dest="captions", action="store_false")
     parser.add_argument("--webp")
     parser.add_argument("--width", type=int, default=960)
+    parser.add_argument("--limbs", action="store_true")
     args = parser.parse_args()
+    if args.limbs and args.webp:
+        sys.exit("--limbs films for debugging; a picture for the wiki is never in limb colours")
     scouting = args.words[0] == "scout"
     words = args.words[1:] if scouting else args.words
     if not words:
@@ -581,7 +596,7 @@ def main():
     if scouting:
         scout(screenplay, out, words[1:])
     else:
-        mp4, stills = film(screenplay, out, args.captions)
+        mp4, stills = film(screenplay, out, args.captions, args.limbs)
         if args.webp:
             webp(mp4, stills, [scene.get("name", "scene") for scene in screenplay.scenes], pathlib.Path(args.webp).expanduser().resolve(), args.width)
 

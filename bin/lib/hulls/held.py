@@ -1,11 +1,13 @@
+import copy
 import json
 import math
 import re
 
 from physics import ASSETS, STANDING_HIP_METRES, SWIM_LINE_METRES
 from shape import VOXELS_A_METRE, save
-from stroke import Rower, centre, drive_share, facing, fit, moved, named, posed, rowed, seat, turn, unturn
-from transform import angles, apply, depth, euler, inverse, mul, nearest, translation, undirect, unit
+from motion import faults, switches, unwind
+from stroke import Rower, centre, drive_share, facing, fit, moved, named, played, posed, resting, rowed, seat, seraph, turn, unturn
+from transform import angles, apply, depth, euler, inverse, mul, translation, undirect, unit
 
 ANCHOR = "ItemAnchor"
 HAND_POINT_ROTATION = (0, -180, 0)
@@ -39,7 +41,7 @@ def marker(name, point):
 
 class Tool:
 
-    def __init__(self, item, shape, right, left):
+    def __init__(self, item, shape, right, left, turns=(0,)):
         transform = json.loads((ASSETS / "itemtypes" / f"{item}.json").read_text())["tpHandTransform"]
         if "origin" not in transform or any(transform["origin"].get(axis, 0) for axis in "xyz") or transform.get("scale", 1) != 1:
             raise ValueError(f"{item}: a held tool's tpHandTransform turns about its hand point, unscaled")
@@ -47,6 +49,12 @@ class Tool:
         self.placing = mul(translation([transform.get("translation", {}).get(axis, 0) for axis in "xyz"]), euler(rotation))
         self.elements = json.loads((ASSETS / "shapes/item" / f"{shape}.json").read_text())["elements"]
         self.right, self.left = right, left
+        self.turns = turns
+
+    def turned(self, degrees):
+        """The tool turned about its grips' line, which `turns` say leaves it looking the same."""
+        axis = [c / 16 for c in (0, *self.right[1:])]
+        return mul(mul(translation(axis), euler((degrees, 0, 0))), translation([-c for c in axis]))
 
     def group(self):
         return {"name": TOOL, "from": [0, 0, 0], "to": [0, 0, 0], "rotationOrigin": [0, 0, 0], "faces": {},
@@ -105,7 +113,7 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
     for step, (name, (pose, grips, *body)) in zip(plan, poses.items()):
         step |= {"grips": grips, "body": body[0](rower) if body else None}
         if name.startswith(CHANGE):
-            step |= {"keys": step["keys"] + [FRAMES - 1], "ends": "Hold"}
+            step |= {"keys": list(range(FRAMES)), "ends": "Hold"}
     walls = hull_walls(shape, hull) if hull else []
     if hull and not walls:
         raise ValueError(f"{vessel}: no element of her shape is named {' or '.join(hull)}, so nothing checks the tool")
@@ -129,26 +137,22 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
                 if round(excess, 1):
                     print(f"{step['code']}: {name} by {excess:.1f} at frame {frame}")
     own, player = fit(rower, [group], plan, STARBOARD, lean)
+    reversed_change(list(poses), own, player)
     if hasattr(shape, "path"):
         rowed(shape, rower, own, player, f"{vessel}-{kind}", [group])
     through = (0, 0, None, None)
-    reference = None
     for step, animation in zip(plan, player):
         deepest = math.inf
-        previous = reference
         abeam = []
         for keyframe, frame in zip(animation["keyframes"], step["keys"]):
             matrices = posed([group], lambda name, pose=step["pose"](frame): pose.get(name, {}))
-            if step["code"].endswith("starboard-forward") and frame < FRAMES * drive_share(stroke):
+            if step["code"].endswith("starboard-forward") and (frame + resting(stroke, FRAMES)) % FRAMES < FRAMES * drive_share(stroke):
                 abeam.append(abs(centre(tool.elements, matrices, BLADE)[2] - rower.seat[2]) / 16)
             body = keyframe["elements"]
-            anchor = wrist(rower, tool, body, mul(rower.placing, matrices[TOOL]))
-            if previous is not None:
-                turned = nearest([anchor["rotation" + a] for a in "XYZ"], previous)
-                anchor |= {"rotation" + a: round(v, 2) for a, v in zip("XYZ", turned)}
-            previous = [anchor["rotation" + a] for a in "XYZ"]
-            reference = reference or previous
-            keyframe["elements"][ANCHOR] = anchor
+            holds = {turn: wrist(rower, tool, body, mul(rower.placing, mul(matrices[TOOL], tool.turned(turn))))
+                     for turn in tool.turns}
+            keyframe["elements"][ANCHOR] = holds[0]
+            keyframe["holds"] = holds
             deepest = min(deepest, lowest(matrices, tool.elements) - waterline)
             if walls:
                 depth, part, wall = into(walls, along_tool(matrices, tool.elements))
@@ -161,6 +165,19 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         if step["code"].endswith("starboard-forward"):
             print(f"{animation['code']}: the blade drives {sum(abeam) / len(abeam):.2f} m abeam of the seat")
     return player
+
+
+def reversed_change(names, own, player):
+    """The change back to a side is the change from it played backwards, frame for frame: the same arc over the bow and
+    the same slide of the hands."""
+    changes = [i for i, name in enumerate(names) if name.startswith(CHANGE)]
+    if len(changes) != 2:
+        return
+    there, back = changes
+    for animations in (own, player):
+        frames = animations[there]["keyframes"]
+        animations[back]["keyframes"] = [{"frame": f["frame"], "elements": copy.deepcopy(frames[len(frames) - 1 - i]["elements"])}
+                                         for i, f in enumerate(frames)]
 
 
 def hull_walls(shape, names):
@@ -232,7 +249,7 @@ def rested(walls, tool, pose, middle):
 
 
 PADDLE = Tool("tool/paddle", "paddle", (13, 8, 8), (0.5, 8, 8))
-POLE = Tool("resource/pole", "pole-3", (12.8, 0.75, 8), (8, 0.75, 8))
+POLE = Tool("resource/pole", "pole-3", (12.8, 0.75, 8), (8, 0.75, 8), turns=(0, 90, 180, 270))
 
 
 def record_stance(vessel, shift, hands):
@@ -257,8 +274,27 @@ def waterline(vessel):
 
 
 def tools(shape, vessel, seated, idle, lean, line, by_kind, hull=()):
-    return [animation for kind, (stroke, tool, poses) in by_kind.items()
-            for animation in held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, line, hull)]
+    """Every tool's strokes, each tool held in whichever of the holds that look alike the game blends the shortest way
+    into the other tools'."""
+    kinds = {kind: held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, line, hull)
+             for kind, (stroke, tool, poses) in by_kind.items()}
+    every = [animation for animations in kinds.values() for animation in animations]
+    blended = switches(played(vessel))
+    elements = seraph()["elements"]
+    for kind, animations in kinds.items():
+        def holding(turn):
+            for animation in animations:
+                for keyframe in animation["keyframes"]:
+                    keyframe["elements"][ANCHOR] = dict(keyframe["holds"][turn])
+            trial = copy.deepcopy(every)
+            unwind(elements, trial, blended)
+            return sum(fault.size for fault in faults(elements, trial, blended) if fault.kind == "flip")
+
+        holding(min(by_kind[kind][1].turns, key=holding))
+        for animation in animations:
+            for keyframe in animation["keyframes"]:
+                del keyframe["holds"]
+    return every
 
 
 def phase(frame, drive):
@@ -281,27 +317,28 @@ def paddling(tool, at, ahead, behind, above, out, catch=None, fore=3):
     def placed(hand, lean, pitch):
         return tool.held_at(hand, {"rotationX": lean, "rotationZ": pitch})
 
-    def ready(side):
-        return (x + (behind - ahead) / 2, y + above + 2, sides[side] - side), -side * 62
+    def holding(side, frame):
+        reach, rise = phase((frame + resting("paddling", FRAMES)) % FRAMES, drive_share("paddling"))
+        hand = (x - catch + (catch + behind) * reach, y + above + 2 * (1 - reach) ** 2 + 4.5 * rise, sides[side] + side * rise)
+        return hand, -side * (30 + 20 * rise), -95 + 40 * reach
 
     def stroke(side):
-        def at_frame(frame):
-            reach, rise = phase(frame, drive_share("paddling"))
-            hand = (x - catch + (catch + behind) * reach, y + above + 2 * (1 - reach) ** 2 + 4.5 * rise, sides[side] + side * rise)
-            return placed(hand, -side * (30 + 20 * rise), -95 + 40 * reach)
+        return lambda frame: placed(*holding(side, frame))
 
-        return at_frame
+    def sliding(frame):
+        return eased((frame / (FRAMES - 1) - 0.2) / 0.6)
+
+    crossing, upright = (x + (behind - ahead) / 2 - fore, y + above + 8), -95
 
     def switch(side):
-        (start, lean), (end, _) = ready(-side), ready(side)
+        (start, lean, pitch), (end, _, _) = holding(-side, 0), holding(side, 0)
 
         def at_frame(frame):
             u = frame / (FRAMES - 1)
-            across, regrip = eased(u), eased((u - 0.2) / 0.6)
+            across, regrip, lifted = eased(u), sliding(frame), math.sin(math.pi * u)
             hand = [s + (e - s) * across for s, e in zip(start, end)]
-            hand[0] -= fore * math.sin(math.pi * u)
-            hand[1] += 6 * math.sin(math.pi * u)
-            return placed(hand, lean * (1 - 2 * across), -95) | {
+            hand[:2] = [h + (c - h) * lifted for h, c in zip(hand, crossing)]
+            return placed(hand, lean * (1 - 2 * across), pitch + (upright - pitch) * lifted) | {
                 RIGHT: {"offsetX": (tool.left[0] - tool.right[0]) * regrip, "offsetY": 2 * math.sin(math.pi * regrip), "offsetZ": 0},
                 LEFT: {"offsetX": (tool.right[0] - tool.left[0]) * regrip, "offsetY": 0, "offsetZ": 0}}
 
@@ -309,7 +346,7 @@ def paddling(tool, at, ahead, behind, above, out, catch=None, fore=3):
 
     def side_strokes(side, name, grips):
         forward = stroke(side)
-        return {f"{name}-ready": (lambda frame: placed(*ready(side), -95), grips),
+        return {f"{name}-ready": (lambda frame: forward(0), grips),
                 f"{name}-forward": (forward, grips),
                 f"{name}-backward": (lambda frame: forward(FRAMES - frame), grips),
                 f"{CHANGE}{name}": (switch(side), PORT if side < 0 else STARBOARD)}
@@ -403,5 +440,5 @@ def sculling(tool, at, ahead, above, sweep):
         hand = (x - ahead + 0.8 * math.sin(2 * turn_), y + above, z + sweep * math.sin(turn_))
         return tool.held_at(hand, {"rotationX": -25 * math.sin(turn_), "rotationZ": -135})
 
-    return {"ready": (lambda frame: tool.held_at((x - ahead + 2, y + above + 0.5, z - 3), {"rotationX": 70, "rotationZ": -100}), STARBOARD),
+    return {"ready": (lambda frame: scull(0), STARBOARD),
             "forward": (scull, STARBOARD), "backward": (lambda frame: scull(FRAMES - frame), STARBOARD)}

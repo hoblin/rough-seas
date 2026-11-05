@@ -245,6 +245,65 @@ public class PropulsionTests
         Assert.InRange(StrokesASide(vessel), least, most);
     }
 
+    [Fact]
+    public void APaddlerFinishesTheStrokeHeIsInBeforeChangingSides()
+    {
+        const double strokeSeconds = 1.5;
+        var paddler = new Paddler(10);
+        paddler.Paddle(1, 0, 0, strokeSeconds);
+        paddler.Lap(1.4 * strokeSeconds);
+
+        Assert.True(paddler.Paddle(1, -1, 0, strokeSeconds));
+        Assert.Equal((Side.Starboard, false, Side.Port), (paddler.Side, paddler.Changing, paddler.Coming));
+        paddler.Lap(0.5 * strokeSeconds);
+        Assert.Equal((Side.Starboard, false), (paddler.Side, paddler.Changing));
+        paddler.Lap(0.2 * strokeSeconds);
+        Assert.Equal((Side.Port, true, (Side?)null), (paddler.Side, paddler.Changing, paddler.Coming));
+        paddler.Lap(strokeSeconds);
+        Assert.False(paddler.Changing);
+    }
+
+    [Fact]
+    public void APaddlerAtRestChangesSidesAtOnce()
+    {
+        var paddler = new Paddler(10);
+        paddler.Rest();
+        paddler.Lap(0.05);
+
+        Assert.True(paddler.Paddle(1, -1, 0, 1.5));
+        Assert.Equal((Side.Port, true), (paddler.Side, paddler.Changing));
+    }
+
+    [Fact]
+    public void APaddlerWhoRestedOutHisStrokeChangesSidesAtOnce()
+    {
+        var paddler = new Paddler(10);
+        paddler.Paddle(1, 0, 0, 1.5);
+        paddler.Lap(0.6);
+        paddler.Rest();
+        paddler.Lap(1);
+
+        Assert.True(paddler.Paddle(1, -1, 0, 1.5));
+        Assert.Equal((Side.Port, true), (paddler.Side, paddler.Changing));
+    }
+
+    [Fact]
+    public void APaddlerTakingUpBeforeHisStrokeEndsKeepsItsPhase()
+    {
+        var paddler = new Paddler(10);
+        paddler.Paddle(1, 0, 0, 1.5);
+        paddler.Lap(0.6);
+        paddler.Rest();
+        paddler.Lap(0.3);
+        paddler.Paddle(1, 0, 0, 1.5);
+
+        Assert.True(paddler.Paddle(1, -1, 0, 1.5));
+        paddler.Lap(0.5);
+        Assert.Equal(Side.Starboard, paddler.Side);
+        paddler.Lap(0.2);
+        Assert.Equal(Side.Port, paddler.Side);
+    }
+
     [Theory]
     [InlineData("dugout")]
     [InlineData("outrigger")]
