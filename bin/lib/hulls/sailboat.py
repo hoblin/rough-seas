@@ -10,7 +10,7 @@ from entity import record, write
 from fit import corners, posed
 from jsontext import load
 from physics import ASSETS, afloat
-from shape import bounds, hull_of
+from shape import bounds, hull_of, windage
 from transform import depth
 
 VANILLA = Path(os.environ.get("VINTAGE_STORY", "")) / "assets/survival"
@@ -18,6 +18,8 @@ SHAPE = VANILLA / "shapes/entity/nonliving/boat/sailed.json"
 ENTITY = VANILLA / "entities/nonliving/boat-sailed.json"
 HULL = re.compile(r"Hull|KeelBeam")
 PLANKING = re.compile(r"Hull|KeelBeam|Floor|ProwFloor|Gunwhale")
+MAST = re.compile(r"Mast")
+ABOVE = re.compile(r"Hull|KeelBeam|Gunwhale|Mast$|MastORIGIN|SailFurled|Furl")
 STEP = 0.5
 
 
@@ -79,7 +81,11 @@ def build(_):
     path = ASSETS / "patches/vessels-hull-boxes.json"
     write(path, [next(n for n, op in enumerate(load(path)) if op["file"].endswith("boat/sailed.json")), "value"], box)
     litres, deck = hold(solids(kept(elements, PLANKING)), frm, to)
-    measured = afloat("sailboat", entity["weight"], units.metres(to[1] - frm[1]), litres, deck, hitbox_height_metres=entity["hitboxSize"]["y"])
+    rigged = kept(elements, ABOVE)
+    measured = afloat("sailboat", entity["weight"], units.metres(to[1] - frm[1]), litres, deck, hitbox_height_metres=entity["hitboxSize"]["y"],
+                      at_draft=windage(rigged, frm[1]))
+    mast = bounds(*kept(elements, MAST))[1][1]
+    measured["behaviorConfigs"]["roughseas:seaforces"] |= units.both("mast", units.metres(mast))
     record("sailed", {"behaviorConfigs": measured["behaviorConfigs"]})
 
 

@@ -7,7 +7,7 @@ from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, kilograms, 
 from fit import APART, TOLERANCE, lined as lined_section
 import units
 from entity import merged, record
-from shape import BILGE, Hull, bilge_levels, hull_box, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
+from shape import BILGE, Hull, bilge_levels, hull_box, windage, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
 from transform import add, scale, sub, unit
 from wounds import backed, wound
 
@@ -353,7 +353,7 @@ def build(path_):
           lining=SHEATHING, framing=([laths[3]], "frame"))
     shape.write()
     framing = {"trunkBlocks": round(units.metres(SHEET_LENGTH)), **units.both("flatDepth", units.metres(SHEET_THICKNESS))}
-    record("barkcanoe", merged(report(hull, laths), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:framing": framing}}))
+    record("barkcanoe", merged(report(hull, laths, windage([finished], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:framing": framing}}))
     at = seat(shape, "BackSeat")
     record("barkcanoe", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
     water_metres = waterline_metres("barkcanoe")
@@ -367,7 +367,7 @@ def build(path_):
     }, ("Skin",)))
 
 
-def report(hull, laths):
+def report(hull, laths, side):
     bark = hull.skin_square_metres()
     metres = sum(piece.get("metres", 0) for stage in laths for piece in stage["children"])
     bark_kg = kilograms("bark", bark * BARK_METRES * 1000)
@@ -375,7 +375,7 @@ def report(hull, laths):
     print(f"barkcanoe: {bark:.2f} m² of bark, {bark_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of white cedar; "
           f"sheet {units.metres(SHEET_LENGTH):.2f} m, {units.metres(SHEET_THICKNESS):.3f} m thick")
     return merged(afloat("barkcanoe", bark_kg + frame_kg, units.metres(SHEER), hull.litres(SHEER, inset=SKIN),
-                         hull.square_metres(SHEER - 0.01, inset=SKIN)), shares([bark_kg, frame_kg]))
+                         hull.square_metres(SHEER - 0.01, inset=SKIN), at_draft=side), shares([bark_kg, frame_kg]))
 
 
 if __name__ == "__main__":

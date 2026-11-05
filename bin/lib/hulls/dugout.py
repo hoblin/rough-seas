@@ -4,7 +4,7 @@ from physics import afloat, kilograms, stands
 from fit import APART, Swept
 import units
 from entity import merged, record
-from shape import BILGE, Hull, bilge_levels, hull_box, Shape, box, breadth, group, water_plane
+from shape import BILGE, Hull, bilge_levels, hull_box, windage, Shape, box, breadth, group, water_plane
 from wounds import wound
 
 LOG = 16
@@ -319,7 +319,7 @@ def build(path):
                **units.both("blankDepth", units.metres(LOG)), **units.both("blankWaterplane", units.metres(LOGS * LOG * LOG, 2), 2),
                **units.both("unhewn", trunk_litres - envelope, 3), **units.both("hollowBeam", units.metres(2 * (PROFILE[-1][0] - WALL))),
                **units.both("wall", units.metres(WALL))}
-    record("dugout", merged(afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck()), measured, bilge_levels(shape.elements),
+    record("dugout", merged(afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck(), at_draft=windage([shell], box["from"][1])), measured, bilge_levels(shape.elements),
                             {"behaviorConfigs": {"roughseas:burnout": burnout}}))
     shape.write()
     crew_tools(shape, "dugout", ("Shell",))

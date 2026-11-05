@@ -9,7 +9,7 @@ from held import SCULL_REACH_METRES, worked_from_middle, PADDLE, poling, scullin
 from stroke import player_patch, seat
 import units
 from entity import merged, record
-from shape import BILGE, Shape, bilge_levels, hull_box, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
+from shape import BILGE, Shape, bilge_levels, hull_box, windage, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
 from wounds import backed, wound
 
 CENTRE = 8
@@ -248,7 +248,7 @@ def shell(hide, bent, box):
             "frame": {**units.both("spacing", spacing), **units.both("span", spacing)}}
 
 
-def report(lattice_stage, gunwale_stage, area):
+def report(lattice_stage, gunwale_stage, area, side):
     metres = sum(piece["metres"] for stage in (lattice_stage, gunwale_stage) for piece in stage["children"])
     hide_kg, frame_kg = kilograms("hide", area * HIDE_METRES * 1000), kilograms("wood-willow", metres * LATH_SQUARE_METRES * 1000)
     inset = HIDE + 2 * LATH_THICKNESS
@@ -256,7 +256,7 @@ def report(lattice_stage, gunwale_stage, area):
     deck = units.metres(math.pi * (GUNWALE[0] - inset) * (GUNWALE[1] - inset), 2)
     print(f"coracle: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of willow; "
           f"bowl {bowl_litres(0, 0):.0f} L outside")
-    return merged(afloat("coracle", hide_kg + frame_kg, units.metres(DEPTH), hold, deck), shares([hide_kg, frame_kg]))
+    return merged(afloat("coracle", hide_kg + frame_kg, units.metres(DEPTH), hold, deck, at_draft=side), shares([hide_kg, frame_kg]))
 
 
 def build(path_):
@@ -294,7 +294,7 @@ def build(path_):
     shape.write()
     layout = {"along": LATHS, "across": LATHS, **units.both("alongSpacing", units.metres(ALONG_SPACING)),
               **units.both("acrossSpacing", units.metres(ACROSS_SPACING))}
-    record("coracle", merged(report(flat, gunwale, hide_area(pieces)), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"layout": layout}}}))
+    record("coracle", merged(report(flat, gunwale, hide_area(pieces), windage([hide], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"layout": layout}}}))
     at = seat(shape, "FrontSeat")
     record("coracle", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, SCULL_REACH_METRES, ahead=True)}})
     water_metres = waterline_metres("coracle")

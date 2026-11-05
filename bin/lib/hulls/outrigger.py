@@ -8,7 +8,7 @@ from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
 from entity import merged, read, record
-from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, Shape, beam, box, clear_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, side_area, windage, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
 
 LOG = 16
@@ -411,7 +411,12 @@ def build(target):
     wound(shape, [("", [shell], WOOD)])
     shape.write()
     finished_float = passes["children"][-1]
-    hull_alone, measured = report(hull, finished_float)
+    rig = [element for element in shape.elements if element["name"] in ("Booms", "Mast", "SailFurled")]
+    wind, keel = windage([shell, finished_float, *rig], box["from"][1]), box["from"][1]
+    at_draft = lambda draft: merged(wind(draft), {"behaviorConfigs": {
+        "roughseas:propulsion": units.both("fin", side_area([finished_float], high=keel + units.voxels(draft)), 2),
+        "roughseas:seaforces": units.both("mast", units.metres(MASTHEAD))}})
+    hull_alone, measured = report(hull, finished_float, at_draft)
     across = bounds(shell, finished_float)
     spread = {"behaviorConfigs": {"roughseas:seaforces": units.both("beam", units.metres(across[1][2] - across[0][2]))}}
     record("outrigger", merged(measured, rigging(raised_litres), spread, bilge_levels(shape.elements)))
@@ -501,14 +506,14 @@ def boom_points():
     return [(RIM + 0.6, 0.5), (RIM + 1.4, 14.5), (RIM + 0.6, 30), (end, FLOAT_Z + 2.5)]
 
 
-def report(hull, finished_float):
+def report(hull, finished_float, side):
     envelope, hold, _ = volumes()
     parts = {"hull": kilograms("wood-oak", envelope - hold), "float": kilograms("wood-oak", finished_float["woodLitres"]),
              "poles": kilograms("wood-oak", pole_litres()), "strakes": kilograms("wood-oak", strake_litres(hull))}
     print("outrigger parts in oak: " + ", ".join(f"{name} {kg:.0f} kg" for name, kg in parts.items()) + f", poles {pole_litres():.0f} L")
     hull_alone = afloat("dugout", parts["hull"], units.metres(RIM), hold, deck())
     waterplane = hull_alone["behaviorConfigs"]["roughseas:vesselintegrity"]["waterplaneSquareMetres"] + finished_float["waterlineSquareMetres"]
-    return hull_alone, merged(afloat("outrigger", sum(parts.values()), units.metres(RIM), hold, deck(), waterplane_square_metres=waterplane), shares(parts.values()))
+    return hull_alone, merged(afloat("outrigger", sum(parts.values()), units.metres(RIM), hold, deck(), waterplane_square_metres=waterplane, at_draft=side), shares(parts.values()))
 
 
 if __name__ == "__main__":

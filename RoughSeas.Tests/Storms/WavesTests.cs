@@ -105,13 +105,13 @@ public class WavesTests
     }
 
     [Fact]
-    public void AGaleSeaPullsAMooringHarderThanTheGaleItself()
+    public void AGaleSeaPullsAMooredSailboatAboutAsHardAsTheGaleItself()
     {
         var sailboat = Fixtures.Sailboat;
         var windOnly = waves.Force(20, 0, sailboat.BeamMetres, sailboat.WindageSquareMetres);
-        var withWaves = waves.Force(20, 4, sailboat.BeamMetres, sailboat.WindageSquareMetres);
+        var sea = waves.Force(20, 4, sailboat.BeamMetres, sailboat.WindageSquareMetres) - windOnly;
 
-        Assert.True(withWaves > 2 * windOnly);
+        Assert.InRange(sea / windOnly, 0.5, 2);
     }
 
     [Fact]

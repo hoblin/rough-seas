@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 import units
-from fit import APART, TOLERANCE, Loft, check, corners, posed
+from fit import APART, TOLERANCE, Loft, check, corners, enclosed, posed
 from transform import add, apply, cross, direct, dot, scale, sub, unit
 
 FACES = ("north", "east", "south", "west", "up", "down")
@@ -128,6 +128,43 @@ def hull_of(frm, to):
     placed = collision(element)
     placed["behaviorConfigs"]["roughseas:vesselintegrity"] = measured
     return element, placed
+
+
+def side_area(elements, low=-math.inf, high=math.inf, step=0.5):
+    """The square metres of the elements as seen from abeam, between the heights low and high (voxels): above her
+    waterline what the wind meets, below it what the water does."""
+    cells = set()
+    for element, m in posed(flattened(elements)):
+        outline = convex([(x, y) for x, y, _ in corners(element, m)])
+        (x0, y0), (x1, y1) = ([pick(p[axis] for p in outline) for axis in range(2)] for pick in (min, max))
+        for i in range(math.floor(x0 / step), math.ceil(x1 / step)):
+            for j in range(max(math.floor(y0 / step), math.ceil(low / step) if low > -math.inf else math.floor(y0 / step)),
+                           min(math.ceil(y1 / step), math.floor(high / step) if high < math.inf else math.ceil(y1 / step))):
+                if (i, j) not in cells and enclosed(((i + 0.5) * step, (j + 0.5) * step), outline):
+                    cells.add((i, j))
+    return units.metres(len(cells) * step * step, 2)
+
+
+def convex(points):
+    points = sorted(set(points))
+    if len(points) < 3:
+        return points
+    turn = lambda o, a, b: (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lower, upper = [], []
+    for point in points:
+        while len(lower) >= 2 and turn(lower[-2], lower[-1], point) <= 0:
+            lower.pop()
+        lower.append(point)
+    for point in reversed(points):
+        while len(upper) >= 2 and turn(upper[-2], upper[-1], point) <= 0:
+            upper.pop()
+        upper.append(point)
+    return lower[:-1] + upper[:-1]
+
+
+def windage(elements, keel):
+    """What the wind meets of the elements above her waterline, at the draft afloat finds her at."""
+    return lambda draft_metres: {"behaviorConfigs": {"roughseas:seaforces": units.both("windage", side_area(elements, keel + units.voxels(draft_metres)), 2)}}
 
 
 def collision(box, *more):

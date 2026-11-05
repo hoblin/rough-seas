@@ -99,9 +99,10 @@ def hitbox_metres(name):
 
 
 def afloat(name, hull_kg, depth_metres, hold_litres=0, deck_square_metres=0, waterplane_square_metres=None, solid_litres=None,
-           hitbox_height_metres=None):
+           hitbox_height_metres=None, at_draft=None):
     """Her weight, the depth and waterplane she floats by, her hold and the offset vanilla floats her at with one
-    aboard, as her entity takes them. A solid hull is pressed down through her depth as her material is."""
+    aboard, as her entity takes them, with what at_draft measures at that draft. A solid hull is pressed down through
+    her depth as her material is."""
     crewed = hull_kg + MASS["crewKg"]
     integrity = units.both("depth", depth_metres)
     configs = {"roughseas:vesselintegrity": integrity}
@@ -122,7 +123,18 @@ def afloat(name, hull_kg, depth_metres, hold_litres=0, deck_square_metres=0, wat
               f"draft {draft:.3f} m with one aboard", end="")
     offset = (hitbox_metres(name) if hitbox_height_metres is None else hitbox_height_metres) + SWIM_LINE_METRES - draft
     print(f", swimmingOffsetY {offset:.3f}")
-    return {"weight": round(hull_kg, 1), "attributes": {"swimmingOffsetY": round(offset, 3)}, "behaviorConfigs": configs}
+    afloat_ = {"weight": round(hull_kg, 1), "attributes": {"swimmingOffsetY": round(offset, 3)}, "behaviorConfigs": configs}
+    return merged(afloat_, at_draft(draft)) if at_draft else afloat_
+
+
+def merged(into, *more):
+    for values in more:
+        for key, value in values.items():
+            if isinstance(value, dict) and isinstance(into.get(key), dict):
+                merged(into[key], value)
+            else:
+                into[key] = value
+    return into
 
 
 def shares(kilograms_by_part):

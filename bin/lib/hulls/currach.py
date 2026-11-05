@@ -5,7 +5,7 @@ from physics import HIDE_METRES, LATH_SQUARE_METRES, MASS, afloat, shares, hide_
 from fit import APART
 import units
 from entity import merged, record
-from shape import BILGE, ORIGIN, Hull, bilge_levels, hull_box, num, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
+from shape import BILGE, ORIGIN, Hull, bilge_levels, hull_box, num, windage, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
 from held import ARM_REACH_METRES, worked_from_middle, poling, tools, waterline_metres
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
@@ -432,7 +432,7 @@ def build(path_):
     pivot = [ORIGIN[0], (box["from"][1] + box["to"][1]) / 2, CENTRE]
     covering = {"layout": units.both("beam", units.metres(2 * (PROFILE[-1][0] - HIDE - GUNWALE / 2))),
                 "overturnedPivotVoxels": [num(c) for c in pivot], "overturnedPivotMetres": [num(units.metres(c - o)) for c, o in zip(pivot, ORIGIN)]}
-    record("currach", merged(report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()]), measured, bilge_levels(shape.elements),
+    record("currach", merged(report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()], windage([hide], box["from"][1])), measured, bilge_levels(shape.elements),
                              {"behaviorConfigs": {"roughseas:covering": covering}}))
     chest = chest_height(shape)
     middle, degrees = arc(shape, rests, chest)
@@ -469,7 +469,7 @@ def litres(element):
     return units.litres(units.metres(size[0] * size[1] * size[2], 3))
 
 
-def report(hull, laths, thwart_stage, oars):
+def report(hull, laths, thwart_stage, oars, side):
     area = hull.skin_square_metres()
     metres = sum(piece["metres"] for stage in laths for piece in stage["children"])
     pole = sum(piece["metres"] for piece in thwart_stage["children"])
@@ -479,7 +479,7 @@ def report(hull, laths, thwart_stage, oars):
     print(f"currach: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath and {pole:.2f} m of pole, {frame_kg:.1f} kg of ash;"
           f" two oars, {oars_kg:.1f} kg")
     return merged(afloat("currach", hide_kg + frame_kg + oars_kg, units.metres(SHEER), hull.litres(SHEER, inset=hull.t),
-                         hull.square_metres(SHEER - 0.01, inset=hull.t)), shares([hide_kg, frame_kg, oars_kg]))
+                         hull.square_metres(SHEER - 0.01, inset=hull.t), at_draft=side), shares([hide_kg, frame_kg, oars_kg]))
 
 
 if __name__ == "__main__":

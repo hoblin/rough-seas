@@ -9,9 +9,9 @@ from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling,
 import units
 from jsontext import load
 from entity import record, write
-from physics import ASSETS, SWIM_LINE_METRES, stands
+from physics import ASSETS, MATERIALS, SWIM_LINE_METRES, afloat, stands
 from fit import posed
-from shape import bounds, hull_of
+from shape import bounds, hull_of, windage
 from transform import apply
 from stroke import player_patch, seat
 
@@ -32,6 +32,11 @@ def logs(elements):
     """Her logs alone, as they lie in her shape: what a knock meets and the water holds up."""
     return [dict(element, children=logs(element.get("children", []))) for element in elements
             if element["name"] in LOGS or element["name"].startswith("log")]
+
+
+def kilograms_to_litres(kilograms):
+    """Her logs' volume: her weight, as vanilla gives it, in oak."""
+    return kilograms / MATERIALS["wood-oak"]["density"] * 1000
 
 
 def lashed(elements):
@@ -63,6 +68,10 @@ def build(_):
     depth = units.metres(log["to"][1] - log["from"][1])
     shell = {"metres": depth, "voxels": log["to"][1] - log["from"][1], **units.both("span", lashed(vanilla["elements"]))}
     record("raft", {"behaviorConfigs": {"roughseas:vesselintegrity": {**units.both("depth", depth), "shell": shell}}})
+    logs_litres = kilograms_to_litres(entity["weight"])
+    seen = afloat("raft", entity["weight"], depth, solid_litres=logs_litres, hitbox_height_metres=entity["hitboxSize"]["y"],
+                  at_draft=windage(logs(vanilla["elements"]), hull["from"][1]))
+    record("raft", {"behaviorConfigs": {"roughseas:seaforces": seen["behaviorConfigs"]["roughseas:seaforces"]}})
     length, beam = (units.metres(hull["to"][i] - hull["from"][i]) for i in (0, 2))
     at = seat(shape, SEATED)
     record("raft", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(hull, at, ARM_REACH_METRES)}})
