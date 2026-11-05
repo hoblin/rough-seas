@@ -73,7 +73,7 @@ public class CollectibleBehaviorCarriedBuild(CollectibleObject collectible) : Co
         if (framing.Wood is { } wood) WoodTexture.Draw(capi, ref shape, ref cloned, WoodTexture.Frame, wood, item.Textures, capi.ItemTextureAtlas);
         if (!upright && capi.World.GetEntityType(collectible.Code) is { } type && CoveringConfig.Of(type) is { } covering)
         {
-            EntityBehaviorCovering.Overturn(shape, covering.OverturnedPivot);
+            EntityBehaviorCovering.Overturn(shape, covering.OverturnedPivotVoxels);
         }
         capi.Tesselator.TesselateShape(item, shape, out var mesh);
         return capi.Render.UploadMultiTextureMesh(mesh);

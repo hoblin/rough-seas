@@ -7,7 +7,7 @@ from physics import ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
-from entity import merged, record
+from entity import merged, read, record
 from shape import BILGE, ROUNDED, Hull, hull_box, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
 
@@ -340,7 +340,7 @@ def strakes(hull):
     extra = units.litres(deck() * units.metres(STRAKE))
     print(f"washstrakes: {len(planks)} planks of a metre, the sides and a board across each end of her hollow, "
           f"{units.metres(STRAKE) * 100:.0f} cm raising her side, {extra:.0f} L more hold, {strake_litres(hull):.1f} L of plank")
-    return planks
+    return planks, extra
 
 
 def end_half(hull, x):
@@ -399,7 +399,8 @@ def build(target):
     shape.add(stages("Mast", mast()))
     shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
     shape.add(stages("Stays", stays()))
-    shape.add(stages("Strakes", strakes(hull)), stages("Seams", seams(hull)))
+    planks, raised_litres = strakes(hull)
+    shape.add(stages("Strakes", planks), stages("Seams", seams(hull)))
     rigged(shape, hull, shell, logs, passes)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     box, hull_measured = hull_box(shell)
@@ -410,11 +411,22 @@ def build(target):
     shape.write()
     finished_float = passes["children"][-1]
     hull_alone, measured = report(hull, finished_float)
-    record("outrigger", merged(measured, hull_measured))
+    record("outrigger", merged(measured, hull_measured, rigging(raised_litres)))
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),
                waterplane=hull_alone["behaviorConfigs"]["roughseas:vesselintegrity"]["waterplaneSquareMetres"])
+
+
+def rigging(raised_litres):
+    """What her rigging's build takes from her model: the float's logs, length and place, her hold's floor, and what her
+    sewn washstrakes raise."""
+    stages = read("outrigger")["behaviorConfigs"]["roughseas:rigging"]["stages"]
+    seams = next(n for n, stage in enumerate(stages) if stage["group"] == "Seams")
+    return {"behaviorConfigs": {"roughseas:rigging": {
+        "floatLogs": (FLOAT_TO - FLOAT_FROM) // LOG, **units.both("floatLength", units.metres(FLOAT_TO - FLOAT_FROM)),
+        **units.both("floatOff", units.metres(FLOAT_Z - CENTRE)), **units.both("floor", units.metres(WALL)),
+        "stages": {seams: {**units.both("raises", units.metres(STRAKE)), **units.both("raises", raised_litres, 3)}}}}}
 
 
 def rigged(shape, hull, shell, logs, passes):

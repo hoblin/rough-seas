@@ -308,7 +308,12 @@ def build(path):
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
-    record("dugout", merged(afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck()), measured))
+    burnout = {"hollowings": HOLLOWINGS, **units.both("hollowDepth", units.metres(RIM - WALL)), **units.both("rim", units.metres(RIM)),
+               **units.both("blankDepth", units.metres(LOG)), **units.both("blankWaterplane", units.metres(LOGS * LOG * LOG, 2), 2),
+               **units.both("unhewn", trunk_litres - envelope, 3), **units.both("hollowBeam", units.metres(2 * (PROFILE[-1][0] - WALL))),
+               **units.both("wall", units.metres(WALL))}
+    record("dugout", merged(afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck()), measured,
+                            {"behaviorConfigs": {"roughseas:burnout": burnout}}))
     shape.write()
     crew_tools(shape, "dugout", ("Shell",))
 

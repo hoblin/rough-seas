@@ -102,7 +102,7 @@ def afloat(name, hull_kg, depth, hold=0, deck=0, waterplane=None, solid_litres=N
     """Her weight, the depth and waterplane she floats by, her hold and the offset vanilla floats her at with one
     aboard, as her entity takes them. A solid hull is pressed down through her depth as her material is."""
     crewed = hull_kg + MASS["crewKg"]
-    integrity = {"depthMetres": round(depth, 4)}
+    integrity = units.both("depth", depth)
     configs = {"roughseas:vesselintegrity": integrity}
     if solid_litres is not None:
         draft = depth * crewed / (solid_litres * SEAWATER_KG_PER_LITRE)
@@ -113,8 +113,8 @@ def afloat(name, hull_kg, depth, hold=0, deck=0, waterplane=None, solid_litres=N
         by_full_hold = waterplane is None
         waterplane = full / (SEAWATER_KG_PER_LITRE * 1000 * depth) if by_full_hold else waterplane
         draft = crewed / (SEAWATER_KG_PER_LITRE * 1000 * waterplane)
-        integrity["waterplaneSquareMetres"] = round(waterplane, 3)
-        configs["roughseas:bilge"] = {"capacityLitres": round(hold, 1), "deckSquareMetres": round(deck, 3)}
+        integrity |= units.both("waterplane", waterplane, 2)
+        configs["roughseas:bilge"] = units.both("capacity", hold, 3) | units.both("deck", deck, 2)
         print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth:.4g} m, hold {hold:.0f} L, deck {deck:.2f} m², "
               f"waterplane {waterplane:.2f} m²{' (full hold and one aboard bring her gunwale to the water)' if by_full_hold else ''}, "
               f"draft {draft:.3f} m with one aboard", end="")

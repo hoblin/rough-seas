@@ -19,9 +19,9 @@ def dumps(value):
     return json.dumps(value)
 
 
-def put(text, path, value):
-    """The JSON text with the value at path set, every other character as it was. A missing key is added last in its
-    object, and the objects on its way with it."""
+def put(text, path, value, after=None):
+    """The JSON text with the value at path set, every other character as it was. A missing key is added after the
+    member named after, or last in its object, and the objects on its way with it."""
     for depth in range(1, len(path)):
         try:
             locate(text, path[:depth])
@@ -38,7 +38,7 @@ def put(text, path, value):
     key = skip(text, start + 1)
     line = text.rfind("\n", 0, key)
     separator = ",\n" + text[line + 1:key] if line > start else ", "
-    end = found[-1][2]
+    end = next((value_end for key, _, value_end in found if key == after), found[-1][2])
     return text[:end] + separator + member + text[end:]
 
 

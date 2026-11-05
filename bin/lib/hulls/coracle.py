@@ -281,7 +281,9 @@ def build(path_):
     shape.keep("FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
-    record("coracle", merged(report(flat, gunwale, hide_area(pieces)), measured))
+    layout = {"along": LATHS, "across": LATHS, **units.both("alongSpacing", units.metres(ALONG_SPACING)),
+              **units.both("acrossSpacing", units.metres(ACROSS_SPACING))}
+    record("coracle", merged(report(flat, gunwale, hide_area(pieces)), measured, {"behaviorConfigs": {"roughseas:covering": {"layout": layout}}}))
     at = seat(shape, "FrontSeat")
     line = waterline("coracle")
     floor = HIDE + 2 * LATH_THICKNESS

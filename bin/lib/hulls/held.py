@@ -105,11 +105,11 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         hands = round(units.metres(stance.at[1]) - waterline + STANDING_HIP_METRES, 2)
         print(f"{vessel}-{kind}: stands {', '.join(f'{a} {v:+.3f}' for a, v in zip('xyz', shift))} m from {seated}, "
               f"his hands {hands:.2f} m over the water at the end of the shove")
-        record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": {"handsAboveWaterMetres": hands, "stance": {"riderOffset": dict(zip("xyz", shift))}}}}})
+        record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": units.both("handsAboveWater", hands) | {"stance": {"riderOffset": dict(zip("xyz", shift))}}}}})
     elif stroke == "seatedpole":
         hands = round(units.metres(rower.seat[1] + SEATED_CHEST) - waterline, 2)
         print(f"{vessel}-{kind}: his hands {hands:.2f} m over the water as he shoves from the seat")
-        record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": {"handsAboveWaterMetres": hands}}}})
+        record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": units.both("handsAboveWater", hands)}}})
     group = tool.group()
     poses = stance.poses if stance else poses
     plan = named(f"{vessel}-{kind}", FRAMES, {name: pose for name, (pose, *_) in poses.items()}, stroke,
@@ -168,7 +168,7 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         through = (0, 0, None, None)
         if step["code"].endswith("starboard-forward"):
             print(f"{animation['code']}: the blade drives {sum(abeam) / len(abeam):.2f} m abeam of the seat")
-            record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"paddleAbeamMetres": round(sum(abeam) / len(abeam), 2)}}})
+            record(vessel, {"behaviorConfigs": {"roughseas:propulsion": units.both("paddleAbeam", sum(abeam) / len(abeam))}})
     return player
 
 

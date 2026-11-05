@@ -349,7 +349,8 @@ def build(path_):
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
           lining=SHEATHING, framing=([laths[3]], "frame"))
     shape.write()
-    record("barkcanoe", merged(report(hull, laths), measured))
+    framing = {"trunkBlocks": round(units.metres(SHEET_LENGTH)), **units.both("flatDepth", units.metres(SHEET_THICKNESS))}
+    record("barkcanoe", merged(report(hull, laths), measured, {"behaviorConfigs": {"roughseas:framing": framing}}))
     at = seat(shape, "BackSeat")
     line = waterline("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT
