@@ -61,11 +61,11 @@ public class FirstStageTests
     }
 
     [Fact]
-    public void ABarkCanoesGunwaleFrameLiesOnHerSheetUntilItIsWhole()
+    public void ABarkCanoesGunwaleFrameLiesOnHerSheetUntilItIsRaised()
     {
         var elements = Shape("barkcanoe")["elements"]!;
         var sheet = Bounds(Named(elements, "SheetFlat")).To[1];
-        var lying = Enumerable.Range(1, 5).SelectMany(n => Enumerable.Range(n, 6 - n).Select(k => Named(elements, $"Frame{n}At{k}")))
+        var lying = Enumerable.Range(1, 5).SelectMany(n => Enumerable.Range(n, 10 - n).Select(k => Named(elements, $"Frame{n}At{k}")))
             .SelectMany(Boxes).Select(box => Start(box)[1] + box["from"]![1]!.Value<double>());
 
         Assert.All(lying, bottom => Assert.InRange(bottom, sheet, sheet + 0.5));

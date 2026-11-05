@@ -144,7 +144,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     private double Lifted(double designed) =>
         config.Stages.FirstOrDefault(stage => stage.DepthMetres.Length > 0) is { } lifting
-            ? lifting.DepthMetres[Math.Min(framing.Laid(lifting), lifting.DepthMetres.Length - 1)]
+            ? lifting.DepthMetres[Math.Min(framing.Level(lifting.Lifts!), lifting.DepthMetres.Length - 1)]
             : designed;
 
     private bool Hurried(EntityAgent byEntity, double seconds)
