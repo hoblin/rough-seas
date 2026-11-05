@@ -4,7 +4,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
-| [Raft](Raft) | floating cargo downriver | 0.4 m/s, 0.7 poled | breaks on a few hard knocks |
+| [Raft](Raft) | floating cargo downriver | 0.45 m/s, 0.8 poled | breaks on a few hard knocks |
 | [Reed boat](Reed-Boat) | a day afloat, bound by the water from two reed bundles | 2.1 m/s | you sit wet and low, awash after a day; sinks within four days afloat unless dried, can't be mended |
 | [Dugout](Dugout) | the tough workhorse | 1.7 m/s | heavy, and tippy in a sea |
 | [Coracle](Coracle) | fishing and short hops, worn on your back | 1 m/s | slow, swamps in a chop |

@@ -50,9 +50,18 @@ public class SeaworthinessTests
     }
 
     [Fact]
+    public void ARaftGoesOverInABreakerAsHighAsHerLogsSpanAcross()
+    {
+        var beam = 2 * Fixtures.Shape("boat-raft").HalfBeam;
+        Assert.Equal(beam, Fixtures.BeamMetres("boat-raft"));
+        Assert.False(Of("boat-raft").Capsizes(beam - 0.01));
+        Assert.True(Of("boat-raft").Capsizes(beam));
+    }
+
+    [Fact]
     public void ACraftWithNoSeaworthinessDataNeverCapsizesAndRollsAsVanillaDoes()
     {
-        var unknown = Seaworthiness.From(new JsonObject(new JObject()));
+        var unknown = Seaworthiness.From(new JsonObject(new JObject()), 1);
         Assert.False(unknown.Capsizes(100));
         Assert.Equal(1, unknown.RollResponse);
         Assert.Equal(1, unknown.PitchResponse);

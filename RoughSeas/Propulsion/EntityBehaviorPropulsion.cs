@@ -59,6 +59,14 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         station = new RowerStation(attributes, propulsion.Config, propulsion.WaterDensity, blocks => sea?.WaterDepth(blocks) ?? 0);
     }
 
+    /// <summary>
+    /// Ahead and turning to port, each -1, 0 or 1, from the rower's keys: vanilla's motion reverses a paddled boat
+    /// whose rider looks astern.
+    /// </summary>
+    public static (int Ahead, int Turn) Asked(EntityControls? controls) => controls == null
+        ? (0, 0)
+        : (controls.Forward ? 1 : controls.Backward ? -1 : 0, controls.Left ? 1 : controls.Right ? -1 : 0);
+
     public Vec2d Drive(EntityBoat boat, Vec2d vanilla)
     {
         if (boat.GetBehavior<EntityBehaviorSeatable>()?.Controller is not EntityAgent rower || hull == null)
@@ -72,8 +80,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var idle = boat.WatchedAttributes.GetInt(SailKey) > 0 || boat.SpeedMultiplier <= 0;
         string? refusal = null;
         var propulsor = idle ? null : station.Propulsor(tool, out refusal);
-        var ahead = Math.Sign(vanilla.X);
-        var turn = Math.Sign(vanilla.Y);
+        var (ahead, turn) = Asked(rower.MountedOn?.Controls);
         var trying = propulsor != null && (ahead != 0 || turn != 0);
         var stroking = trying && boat.Swimming;
         var sided = strokes.Sided(tool);

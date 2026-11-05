@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using RoughSeas.Propulsion;
 using RoughSeas.Tests.Storms;
 using RoughSeas.Vessels;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Tests.Propulsion;
@@ -39,6 +40,26 @@ public class PropulsionTests
     public void ALogRaftIsABargeThatBarelyMakesWay()
     {
         Assert.InRange(Cruise("boat-raft", Paddled("boat-raft")), 0.2, 1);
+    }
+
+    [Fact]
+    public void ARaftsBluntLogEndsTakeMostOfHerPaddlersPush()
+    {
+        var drag = Fixtures.DragOf("boat-raft", Fixtures.Hull("boat-raft").Crewed());
+        var speed = Cruise("boat-raft", Paddled("boat-raft"));
+        var bow = Fixtures.WaterDensity / 2 * (double)Fixtures.PropulsionOf("boat-raft")["bowDrag"]! *
+                  2 * Fixtures.Shape("boat-raft").HalfBeam * Fixtures.Hull("boat-raft").Float(Fixtures.Hull("boat-raft").Crewed()).DraftMetres * speed * speed;
+
+        Assert.True(bow > 0.9 * -drag.Along(speed));
+    }
+
+    [Fact]
+    public void TheRowerRowsAsHisKeysAskWhereverHeLooks()
+    {
+        Assert.Equal((1, 0), EntityBehaviorPropulsion.Asked(new EntityControls { Forward = true }));
+        Assert.Equal((-1, 1), EntityBehaviorPropulsion.Asked(new EntityControls { Backward = true, Left = true }));
+        Assert.Equal((0, -1), EntityBehaviorPropulsion.Asked(new EntityControls { Right = true }));
+        Assert.Equal((0, 0), EntityBehaviorPropulsion.Asked(null));
     }
 
     [Fact]
