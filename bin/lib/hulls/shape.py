@@ -18,6 +18,7 @@ FACE_AXES = {
 AXIS = {"x": 0, "y": 1, "z": 2}
 ROUNDED = 0.68
 ORIGIN = (8, 0, 8)
+COLLISION_METRES = 1.5
 
 
 def num(value):
@@ -124,7 +125,25 @@ def hull_of(frm, to):
                                      "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]}
     voxels = {end: [num(c - o) for c, o in zip(corner, ORIGIN)] for end, corner in (("from", frm), ("to", to))}
     measured = {"hullBoxMetres": {end: [num(units.metres(c)) for c in corner] for end, corner in voxels.items()}, "hullBoxVoxels": voxels}
-    return element, {"behaviorConfigs": {"roughseas:vesselintegrity": measured}}
+    placed = collision(element)
+    placed["behaviorConfigs"]["roughseas:vesselintegrity"] = measured
+    return element, placed
+
+
+def collision(box, *more):
+    """Her hitbox, as wide as she is and as tall, and her collision boxes: the hull box in pieces of about
+    COLLISION_METRES along her, and a box round each of more (an outrigger's float), in the entity's frame, where her
+    bow points along +z."""
+    def entity(frm, to):
+        (x0, y0, z0), (x1, y1, z1) = frm, to
+        return {"x1": num(units.metres(ORIGIN[2] - z1)), "y1": num(units.metres(y0)), "z1": num(units.metres(ORIGIN[0] - x1)),
+                "x2": num(units.metres(ORIGIN[2] - z0)), "y2": num(units.metres(y1)), "z2": num(units.metres(ORIGIN[0] - x0))}
+    (x0, y0, z0), (x1, y1, z1) = box["from"], box["to"]
+    pieces = max(1, round(units.metres(x1 - x0) / COLLISION_METRES))
+    boxes = [entity((x0 + (x1 - x0) * n / pieces, y0, z0), (x0 + (x1 - x0) * (n + 1) / pieces, y1, z1)) for n in reversed(range(pieces))]
+    boxes += [entity(*bounds(element)) for element in more]
+    return {"hitboxSize": {"x": num(units.metres(z1 - z0)), "y": num(units.metres(y1 - y0))},
+            "behaviorConfigs": {"passivephysicsmultibox": {"collisionBoxes": boxes}}}
 
 
 def stages(name, pieces, wood="frame"):

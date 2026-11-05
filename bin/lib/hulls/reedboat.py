@@ -205,7 +205,7 @@ def build(target):
     shape.add(box)
     sides, bottom = backed([parted(blank, untied)], [name.lower() for name, _ in SIDES], [parted(blank, tied), lashed], box)
     shell = {"metres": round(units.metres(GIRTH), 4), "voxels": round(GIRTH, 3), "backedShare": sides, "bottomBackedShare": bottom}
-    record("reedboat", {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell}}})
+    record("reedboat", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell}}}))
     shape.keep("FrontSeat", "Cargo", "OarStorage")
     shape.write()
     cords += len(lashed["children"]) + len(ENDS)

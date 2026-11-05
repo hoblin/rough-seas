@@ -309,7 +309,7 @@ def build(path):
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     box, measured = hull_box(shell)
     shape.add(box)
-    record("dugout", walls())
+    record("dugout", merged(measured, walls()))
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
     wound(shape, [("", [shell], WOOD), *((level["name"], [level], BARK if n == 0 else WOOD) for n, level in enumerate(blank["children"]))])
     envelope, hold, trunk_litres = volumes()

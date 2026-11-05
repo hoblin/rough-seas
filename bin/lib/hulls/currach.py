@@ -426,7 +426,7 @@ def build(path_):
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     box, measured = hull_box(hide)
     shape.add(box)
-    record("currach", {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hull, hide, laths, box)}}})
+    record("currach", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hull, hide, laths, box)}}}))
     shape.keep("BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     pivot = [ORIGIN[0], (box["from"][1] + box["to"][1]) / 2, CENTRE]

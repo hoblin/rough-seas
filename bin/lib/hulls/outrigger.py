@@ -8,7 +8,7 @@ from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
 from entity import merged, read, record
-from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, hull_box, Shape, beam, box, clear_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
 
 LOG = 16
@@ -405,7 +405,7 @@ def build(target):
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     box, hull_measured = hull_box(shell)
     shape.add(box)
-    record("outrigger", walls())
+    record("outrigger", merged(hull_measured, collision(box, passes["children"][-1]), walls()))
     shape.keep("FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage", "OarStorage")
     wound(shape, [("", [shell], WOOD)])
@@ -414,7 +414,7 @@ def build(target):
     hull_alone, measured = report(hull, finished_float)
     across = bounds(shell, finished_float)
     spread = {"behaviorConfigs": {"roughseas:seaforces": units.both("beam", units.metres(across[1][2] - across[0][2]))}}
-    record("outrigger", merged(measured, hull_measured, rigging(raised_litres), spread, bilge_levels(shape.elements)))
+    record("outrigger", merged(measured, rigging(raised_litres), spread, bilge_levels(shape.elements)))
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),

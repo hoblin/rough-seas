@@ -288,7 +288,7 @@ def build(path_):
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
     box, measured = hull_box(hide)
     shape.add(box)
-    record("coracle", {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hide, bent, box)}}})
+    record("coracle", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hide, bent, box)}}}))
     shape.keep("FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
