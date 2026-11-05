@@ -5,9 +5,9 @@
         "sideDrag": 0.85,
         "paddle": "paddling",
         "sweepMetres": 1.53,
-        "paddleAbeamMetres": 0.8286,
-        "paddleAbeamVoxels": 13.258,
-        "pole": {"stroke": "pole", "handsAboveWaterMetres": 1.07, "handsAboveWaterVoxels": 17.12, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": 0, "z": -0.5}, "eyeHeight": 1.7}},
+        "paddleAbeamMetres": 0.8139,
+        "paddleAbeamVoxels": 13.023,
+        "pole": {"stroke": "pole", "handsAboveWaterMetres": 1.07, "handsAboveWaterVoxels": 17.12, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": 0, "z": -0.483}, "eyeHeight": 1.7}},
         "strokes": {
             "pole": {"ready": "roughseas-raft-pole-ready", "forwards": "roughseas-raft-pole-forward", "backwards": "roughseas-raft-pole-backward"},
             "paddle-starboard": {"ready": "roughseas-raft-paddle-starboard-ready", "forwards": "roughseas-raft-paddle-starboard-forward", "backwards": "roughseas-raft-paddle-starboard-backward", "change": "roughseas-raft-paddle-to-starboard"},

@@ -8,12 +8,15 @@ import json5
 from held import PADDLE, paddling, poling, tools
 import units
 from jsontext import load
+from entity import record, write
 from physics import ASSETS, SWIM_LINE_METRES, stands
+from shape import bounds, hull_of
 from stroke import player_patch, seat
 
 VANILLA = Path(os.environ.get("VINTAGE_STORY", "")) / "assets/survival"
-SHAPE = VANILLA / "shapes/entity/nonliving/boat/raft.json"
+SHAPES = VANILLA / "shapes/entity/nonliving/boat"
 ENTITY = VANILLA / "entities/nonliving/boat-raft.json"
+VARIANTS = ("raft", "raft-bamboo")
 SEATED = "BackSeat"
 LOGS = ("origin",)
 STANCE_WIDTH = 4
@@ -23,18 +26,30 @@ KNEELS_OUT = 5.75
 POLE_OUT = 3
 
 
-def patched(patches, file, path=None):
-    ops = load(ASSETS / "patches" / patches)
-    return next(op["value"] for op in ops if op["file"].endswith(file) and path in (None, op["path"]))
+def logs(elements):
+    """Her logs alone, as they lie in her shape: what a knock meets and the water holds up."""
+    return [dict(element, children=logs(element.get("children", []))) for element in elements
+            if element["name"] in LOGS or element["name"].startswith("log")]
+
+
+def measure(variant):
+    """Her Hull box round her logs, into the patch that adds it to her shape."""
+    box, _ = hull_of(*bounds(*logs(json5.loads((SHAPES / f"{variant}.json").read_text())["elements"])))
+    path = ASSETS / "patches/vessels-hull-boxes.json"
+    at = next(n for n, op in enumerate(load(path)) if op["file"].endswith(f"boat/{variant}.json"))
+    write(path, [at, "value"], box)
+    return box
 
 
 def build(_):
-    vanilla = json5.loads(SHAPE.read_text())
+    vanilla = json5.loads((SHAPES / "raft.json").read_text())
     entity = json5.loads(ENTITY.read_text())
-    shape = SimpleNamespace(elements=vanilla["elements"], path=SHAPE,
+    shape = SimpleNamespace(elements=vanilla["elements"], path=SHAPES / "raft.json",
                             textures={code: f"game:{path}" for code, path in vanilla["textures"].items()})
-    hull = patched("vessels-hull-boxes.json", "boat/raft.json")
-    depth = patched("vessels-vanilla-boats.json", "boat-raft.json", "/behaviorConfigs/roughseas:vesselintegrity")["depthMetres"]
+    hull, _ = (measure(variant) for variant in VARIANTS)
+    log = next(element for element in logs(vanilla["elements"])[0]["children"])
+    depth = units.metres(log["to"][1] - log["from"][1])
+    record("raft", {"behaviorConfigs": {"roughseas:vesselintegrity": units.both("depth", depth)}})
     length, beam = (units.metres(hull["to"][i] - hull["from"][i]) for i in (0, 2))
     at = seat(shape, SEATED)
     edge = hull["from"][2]

@@ -114,7 +114,11 @@ def bounds(*elements):
 def hull_box(*elements):
     """The box round her hull's posed corners, which the mechanics measure her by, and that box as her entity takes it:
     from the point she stands at, in metres and in voxels."""
-    frm, to = bounds(*elements)
+    return hull_of(*bounds(*elements))
+
+
+def hull_of(frm, to):
+    """The Hull element spanning frm to to, and that box as her entity takes it."""
     element = {"name": "Hull", "from": frm, "to": to, "faces": {},
                "attachmentpoints": [{"code": "HullAP", "posX": str(num(ORIGIN[0] - frm[0])), "posY": "0", "posZ": str(num((to[2] - frm[2]) / 2)),
                                      "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]}

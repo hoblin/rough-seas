@@ -1,3 +1,5 @@
+import re
+
 from jsontext import load, locate, put, skip
 from physics import ASSETS
 from shape import save
@@ -76,10 +78,16 @@ def leaves(values, at=()):
 
 
 def headed(text, root, header):
+    """The text with the header as a comment line first in the root object, or above its line when its first member
+    shares the line with its brace; any header written before is dropped."""
     start = locate(text, root)
-    first = text.find(GENERATED, start)
-    if first >= 0 and first < skip(text, start + 1):
-        text = text[:text.rfind("\n", 0, first) + 1] + text[text.index("\n", first) + 1:]
-    key = skip(text, start + 1)
-    line = text.rfind("\n", 0, key) + 1
-    return text[:line] + text[line:key] + header + "\n" + text[line:]
+    brace = text.rfind("\n", 0, start) + 1
+    for first in (text.find(GENERATED, brace, skip(text, start + 1)), text.find(GENERATED, text.rfind("\n", 0, brace - 1) + 1, brace)):
+        if first >= 0:
+            text = text[:text.rfind("\n", 0, first) + 1] + text[text.index("\n", first) + 1:]
+            return headed(text, root, header)
+    line = text.rfind("\n", 0, skip(text, start + 1)) + 1
+    if line <= start:
+        line = brace
+    indent = re.match(r" *", text[line:]).group(0)
+    return text[:line] + indent + header + "\n" + text[line:]
