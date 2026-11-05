@@ -81,8 +81,20 @@ public static class VesselDraught
 
         var motion = pos.Motion;
         double heaving = motion.Y + heave.Acceleration(Immersion(boat, pos), motion.Y * TicksPerSecond) * dt / TicksPerSecond;
-        double swimDrag = SwimDrag(Math.Sqrt(Square(motion.X * kept) + Square(heaving) + Square(motion.Z * kept)), dt * TicksPerSecond);
-        motion.Y = heaving * swimDrag / kept;
+        double along = Math.Sqrt(Square(motion.X * kept) + Square(motion.Z * kept));
+        motion.Y = BeforeSwimDrag(heaving, along, dt * TicksPerSecond) / kept;
+    }
+
+    public static double BeforeSwimDrag(double heaving, double along, double stepFactor)
+    {
+        double rate = SwimDragPerMotion * stepFactor;
+        double At(double drag) => SwimDrag(Math.Sqrt(Square(along) + Square(heaving * drag)), stepFactor);
+        if (At(1) <= 1) return heaving;
+        if (At(MostSwimDrag) >= MostSwimDrag) return heaving * MostSwimDrag;
+
+        double a = 1 - Square(rate * heaving), b = 2 * SwimDragOffset, c = Square(SwimDragOffset) - Square(rate * along);
+        double drag = Math.Abs(a) < 1e-12 ? -c / b : (-b + Math.Sqrt(b * b - 4 * a * c)) / (2 * a);
+        return heaving * drag;
     }
 
     private static double Square(double value) => value * value;
