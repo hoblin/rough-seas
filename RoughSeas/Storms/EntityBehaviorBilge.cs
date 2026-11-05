@@ -67,7 +67,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         drainLitresPerHour = attributes["drainLitresPerHour"].AsDouble();
         if (entity.Api is ICoreClientAPI capi)
         {
-            water = new BilgeRenderer(capi, entity);
+            water = new BilgeRenderer(capi, entity, attributes["levelHeightsMetres"].AsArray<double>([]));
             entity.WatchedAttributes.RegisterModifiedListener(TreeKey, ShowWater);
             return;
         }

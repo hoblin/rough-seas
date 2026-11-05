@@ -8,7 +8,7 @@ from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
 from entity import merged, read, record
-from shape import BILGE, ROUNDED, Hull, bounds, hull_box, Shape, beam, box, clear_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, hull_box, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
 
 LOG = 16
@@ -413,7 +413,7 @@ def build(target):
     hull_alone, measured = report(hull, finished_float)
     across = bounds(shell, finished_float)
     spread = {"behaviorConfigs": {"roughseas:seaforces": units.both("beam", units.metres(across[1][2] - across[0][2]))}}
-    record("outrigger", merged(measured, hull_measured, rigging(raised_litres), spread))
+    record("outrigger", merged(measured, hull_measured, rigging(raised_litres), spread, bilge_levels(shape.elements)))
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),

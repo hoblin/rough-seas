@@ -7,7 +7,7 @@ from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, kilograms, 
 from fit import APART, TOLERANCE, lined as lined_section
 import units
 from entity import merged, record
-from shape import BILGE, Hull, hull_box, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
+from shape import BILGE, Hull, bilge_levels, hull_box, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
 from transform import add, scale, sub, unit
 from wounds import wound
 
@@ -350,7 +350,7 @@ def build(path_):
           lining=SHEATHING, framing=([laths[3]], "frame"))
     shape.write()
     framing = {"trunkBlocks": round(units.metres(SHEET_LENGTH)), **units.both("flatDepth", units.metres(SHEET_THICKNESS))}
-    record("barkcanoe", merged(report(hull, laths), measured, {"behaviorConfigs": {"roughseas:framing": framing}}))
+    record("barkcanoe", merged(report(hull, laths), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:framing": framing}}))
     at = seat(shape, "BackSeat")
     line = waterline("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT

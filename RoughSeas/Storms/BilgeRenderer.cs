@@ -1,5 +1,4 @@
 using System;
-using RoughSeas.Units;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common.Entities;
@@ -23,14 +22,15 @@ public sealed class BilgeRenderer : IRenderer
     private readonly Matrixf model = new();
     private readonly Vec4f middle = new();
     private readonly Vec4f pivot = new();
+    private readonly double[] heightsMetres;
     private MultiTextureMeshRef? mesh;
-    private int? levels;
     private float lift;
 
-    public BilgeRenderer(ICoreClientAPI capi, Entity entity)
+    public BilgeRenderer(ICoreClientAPI capi, Entity entity, double[] heightsMetres)
     {
         this.capi = capi;
         this.entity = entity;
+        this.heightsMetres = heightsMetres;
         capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "roughseas-bilge");
     }
 
@@ -38,12 +38,11 @@ public sealed class BilgeRenderer : IRenderer
 
     public int RenderRange => 99;
 
-    public int Levels => (levels ??= entity.Properties.Client.LoadedShapeForEntity?.GetElementByName(LevelsElement)?.Children?.Length) ?? 0;
+    public int Levels => heightsMetres.Length;
 
     public int Level { get; private set; }
 
-    public double HeightOf(int level) =>
-        entity.Properties.Client.LoadedShapeForEntity?.GetElementByName(LevelsElement)?.Children?[level - 1].Children?[0].From?[1] is { } voxels ? Voxels.ToMetres(voxels) : 0;
+    public double HeightOf(int level) => heightsMetres[level - 1];
 
     /// <summary>Shows the water as <paramref name="level"/>'s surface raised by <paramref name="liftMetres"/>.</summary>
     public void Show(int level, double liftMetres = 0)

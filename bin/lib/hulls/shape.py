@@ -241,6 +241,14 @@ def bilge(floor, mask, planes):
     return group("Bilge", (0, 0, 0), (0, 0, 0), levels)
 
 
+def bilge_levels(elements):
+    """The height above her origin of each level of her bilge's water, as her bilge config takes them."""
+    levels = next(element for element in elements if element["name"] == "Bilge")["children"]
+    heights = [level["children"][0]["from"][1] for level in levels]
+    return {"behaviorConfigs": {"roughseas:bilge": {"levelHeightsMetres": [num(units.metres(h)) for h in heights],
+                                                    "levelHeightsVoxels": [num(h) for h in heights]}}}
+
+
 def across(start, end, up):
     yaw, pitch = (math.radians(angle) for angle in heading(start, end)[:2])
     along = [math.cos(pitch) * math.cos(yaw), math.sin(pitch), -math.cos(pitch) * math.sin(yaw)]
