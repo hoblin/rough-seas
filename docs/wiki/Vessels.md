@@ -18,7 +18,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 | [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | 5.9 m/s, sailing | stays where launched |
 | [Sailboat](Sailboat) | long voyages and heavy cargo | 7.2 m/s, sailing | dear to build, ships water fast in a gale |
 
-Speeds are one rower's, paddled unless noted, on calm water; under sail what the wind gives. Each tool and how fast it drives each vessel: [paddles, poles and oars](Paddles-Poles-and-Oars).
+Speeds are one rower's, paddled unless noted, on calm water; under full sail vanilla's pace, whatever the wind. Each tool and how fast it drives each vessel: [paddles, poles and oars](Paddles-Poles-and-Oars).
 
 ## Side by side
 
@@ -54,4 +54,4 @@ A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a 
 
 A better vessel costs more than a worse one for the same job: the reed boat costs a knife, four stacks and a half of reeds and some rope, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
 
-Every one of them is built in place, by the water or where its material lies, as each one's page shows; the [recipes](Recipes) make what goes into them. Each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).
+The raft is made in the crafting grid; every other one is built in place, by the water or where its material lies, as each one's page shows, and the [recipes](Recipes) make what goes into them. Each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).
