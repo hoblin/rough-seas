@@ -46,7 +46,7 @@ Our [coracle](Coracle), its sources, its build, its frame and the voxel twins of
         "shell": {
             "kind": "skin", "material": "hide", "metres": 0.005,
             "backing": { "material": "wood-willow", "metres": 0.01 },
-            "backedShare": 0.35, "bottomBackedShare": 0.51, "spanMetres": 0.3728
+            "backedShare": 0.4, "bottomBackedShare": 0.49, "spanMetres": 0.3728
         },
         "depthMetres": 0.35,
         "waterplaneSquareMetres": 1.0625,

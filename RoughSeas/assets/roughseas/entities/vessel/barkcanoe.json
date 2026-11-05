@@ -37,7 +37,7 @@
             "impactCapacity": 2400,
             "runsRapids": true,
             "parts": [{"material": "bark", "share": 13.3}, {"name": "frame", "material": "wood-tuja", "share": 12.8}],
-            "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 0.47, "spanMetres": 0.25, "spanVoxels": 4, "frame": {"material": "wood-tuja", "metres": 0.01, "widthMetres": 0.06, "spacingMetres": 0.25, "spacingVoxels": 4}, "bottomBackedShare": 0.98},
+            "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 0.48, "spanMetres": 0.25, "spanVoxels": 4, "frame": {"material": "wood-tuja", "metres": 0.01, "widthMetres": 0.06, "spacingMetres": 0.25, "spacingVoxels": 4}, "bottomBackedShare": 0.98},
             "depthMetres": 0.375,
             "depthVoxels": 6,
             "waterplaneSquareMetres": 1.9135,

@@ -160,7 +160,9 @@ def backed(skin_elements, textures, framing, hull_element, step=0.5, reach=1.5):
     for element, m, _ in (found for texture in textures for found in skin(skin_elements, texture)):
         extent = size(element)
         centre = [units.voxels(c) for c in apply(m, [units.metres(e / 2) for e in extent])]
-        inward = unit([0, hull.keel + hull.depth / 2 - centre[1], hull.across - centre[2]])
+        reach = max(0, hull.half_length - hull.half_beam)
+        middle = min(max(centre[0], hull.along - reach), hull.along + reach)
+        inward = unit([middle - centre[0], hull.keel + hull.depth / 2 - centre[1], hull.across - centre[2]])
         axes = [unit(direct(m, [1 if axis == k else 0 for axis in range(3)])) for k in range(3)]
         thin = max(range(3), key=lambda axis: abs(sum(a * i for a, i in zip(axes[axis], inward))))
         a, b = (axis for axis in range(3) if axis != thin)
