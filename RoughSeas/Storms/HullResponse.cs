@@ -12,7 +12,7 @@ namespace RoughSeas.Storms;
 /// </code></example>
 public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSeconds, ResponseConfig config)
 {
-    private const double Gravity = 9.81;
+    public const double Gravity = 9.81;
     private const double MaxStepShare = 0.05;
     private const int MaxSteps = 20;
     private const double MinMetacentricHeight = 0.02;

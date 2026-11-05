@@ -40,7 +40,7 @@ What Rough Seas' hulls stand on: how they take a blow, float, leak and ride the 
 
 ## Riding the swell
 
-- **Heave and pitch.** A hull bobs on a natural period of 2π √((M + A) / (ρ g A_w)), its mass M and the water A it drags with it, about its own mass for a small open boat (Aalto University's seakeeping notes). For a hull of straight sides that is 2π √(2 × draft / g): about 0.6 s for the bark canoe, 1.3 s for an oak dugout and 2.3 s for the sailboat.
+- **Heave and pitch.** A hull bobs on a natural period of 2π √((M + A) / (ρ g A_w)), its mass M and the water A it drags with it, about its own mass for a small open boat (Aalto University's seakeeping notes). For a hull of straight sides that is 2π √(2 × draft / g): about 0.6 s for the bark canoe, 1.3 s for an oak dugout and 2.3 s for the sailboat. A change of load moves her on the same period: weight put aboard is a force on her mass and on the water she drags with her, so she sinks to her new waterline in a bob or two and is never thrown up past where she floated.
 - **Roll.** The US Coast Guard's rule for small fishing vessels, 46 CFR 28.575, gives the roll period as 2 C B / √GM, with C = 0.373 + 0.023 B/d − 0.00043 L from her beam B, draft d and length L; GM is that of a box hull with her centre of gravity at half her depth. A small hull without bilge keels rolls on for several swings, at a damping of 0.06 to 0.1 of critical; ours rolls at 0.1.
 - So a light canoe follows a long swell as the water lies, while a heavy, deep hull lets a short chop pass under her and rolls on its own longer period.
 

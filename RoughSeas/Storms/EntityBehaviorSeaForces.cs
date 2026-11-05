@@ -58,7 +58,11 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         }
     }
 
-    public double SettlingMetres => buoyant is { HasDraft: true } ? buoyant.SettlingMetres : dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
+    public double SettlingMetres => dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
+
+    public Heave? Heave => buoyant is { HasDraft: true, Afloat.Sunk: false }
+        ? new Heave(buoyant.Aboard.Total, buoyant.KgPerMetre, buoyant.Afloat.DraftMetres, buoyant.DepthMetres, storms.Config.Response)
+        : null;
 
     public override string PropertyName() => Code;
 
@@ -188,11 +192,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     private void Capsize(double breakerMetres, bool swamped)
     {
-        var thrown = 0;
-        foreach (var seat in Seats)
-        {
-            if (seat.Passenger is EntityAgent passenger && passenger.TryUnmount()) thrown++;
-        }
+        var thrown = ThrowRiders();
         if (thrown == 0 && (swamped || bilge == null)) return;
 
         storms.Log(entity, "capsized by a {0:F1} m breaker against {1:F2} m: {2} thrown in the water", breakerMetres, Seaworthiness.CapsizeBreakerMetres, thrown);
@@ -226,12 +226,19 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     private void Founder()
     {
-        var thrown = 0;
-        foreach (var seat in Seats)
-        {
-            if (seat.Passenger is EntityAgent passenger && passenger.TryUnmount()) thrown++;
-        }
+        var thrown = ThrowRiders();
         if (thrown > 0) storms.Log(entity, "foundered: {0} thrown in the water", thrown);
+    }
+
+    private int ThrowRiders() => Seats.Count(seat => seat.Passenger is EntityAgent rider && Overboard(seat, rider));
+
+    private static bool Overboard(IMountableSeat seat, EntityAgent rider)
+    {
+        // Vanilla's dismount relocation reaches a client still seated, and there it moves the vessel instead.
+        seat.DoTeleportOnUnmount = false;
+        bool thrown = rider.TryUnmount();
+        seat.DoTeleportOnUnmount = true;
+        return thrown;
     }
 
     private Vec3f Alongside(int seat) => new(0, HoldDepthMetres, (float)(BeamMetres / 2 + HoldReachMetres) * (seat % 2 == 0 ? 1 : -1));
