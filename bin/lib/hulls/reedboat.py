@@ -2,11 +2,12 @@ import math
 from pathlib import Path
 
 from physics import MATERIALS, afloat, ropes, shares, stands
-from held import PADDLE, paddling, poling, tools, waterline
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
 import units
 from entity import merged, record
+from wounds import backed
 from shape import ROUNDED, Shape, hull_box, beam, box, group, path, section, stages, write
 
 KNOT_METRES = 0.3
@@ -163,6 +164,12 @@ def envelope():
           f"{units.metres(GIRTH) * 100:.1f} cm across, {litres:.1f} L; two: {2 * litres:.1f} L")
 
 
+def parted(group_, keep):
+    """The group with only the elements keep names, under the groups that hold them."""
+    return dict(group_, children=[parted(child, keep) if child.get("children") else child
+                                  for child in group_.get("children", []) if child.get("children") or keep(child["name"])])
+
+
 def block(target, sides):
     write(target, {"textureWidth": 16, "textureHeight": 16,
                    "textures": {**{name.lower(): REED for name, _ in sides}, "rope": "game:block/cloth/reedrope"},
@@ -196,6 +203,9 @@ def build(target):
         shape.together(blank, lashed, ends_bound)
     box, measured = hull_box(blank, [end["children"][0] for end in bound["children"]])
     shape.add(box)
+    sides, bottom = backed([parted(blank, untied)], [name.lower() for name, _ in SIDES], [parted(blank, tied), lashed], box)
+    shell = {"metres": round(units.metres(GIRTH), 4), "voxels": round(GIRTH, 3), "backedShare": sides, "bottomBackedShare": bottom}
+    record("reedboat", {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell}}})
     shape.keep("FrontSeat", "Cargo", "OarStorage")
     shape.write()
     cords += len(lashed["children"]) + len(ENDS)
@@ -204,6 +214,7 @@ def build(target):
     girth, length = units.metres(GIRTH), units.metres(BODY[1] - BODY[0])
     record("reedboat", merged(afloat("reedboat", reed_kg + cord_kg, girth, solid_litres=litres), shares([reed_kg, cord_kg]), measured))
     at = seat(shape, "FrontSeat")
+    record("reedboat", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
     line = waterline("reedboat")
     pole = poling(stands("reedboat", girth, form="rectangle", waterplane=2 * girth * length, beam_metres=2 * girth, depth_metres=girth),
                   at, units.voxels(line), CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)

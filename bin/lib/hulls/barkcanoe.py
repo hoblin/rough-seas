@@ -1,7 +1,7 @@
 import functools
 import math
 
-from held import PADDLE, paddling, poling, tools, waterline
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes, stands
 from fit import APART, TOLERANCE, lined as lined_section
@@ -9,7 +9,7 @@ import units
 from entity import merged, record
 from shape import BILGE, Hull, bilge_levels, hull_box, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
 from transform import add, scale, sub, unit
-from wounds import wound
+from wounds import backed, wound
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -345,6 +345,9 @@ def build(path_):
     *rising, finished = skin["children"]
     box, measured = hull_box(finished)
     shape.add(box)
+    sides, bottom = backed([finished], ["bark"], [laths[2]], box)
+    apart = units.metres(RIBS.step)
+    record("barkcanoe", {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", apart), "frame": units.both("spacing", apart)}}}})
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
           lining=SHEATHING, framing=([laths[3]], "frame"))
@@ -352,6 +355,7 @@ def build(path_):
     framing = {"trunkBlocks": round(units.metres(SHEET_LENGTH)), **units.both("flatDepth", units.metres(SHEET_THICKNESS))}
     record("barkcanoe", merged(report(hull, laths), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:framing": framing}}))
     at = seat(shape, "BackSeat")
+    record("barkcanoe", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
     line = waterline("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT
     pole = poling(stands("barkcanoe", units.metres(SKIN)), at, units.voxels(line), CENTRE - SHEER - 1,

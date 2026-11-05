@@ -23,6 +23,8 @@ CHANGE = "to-"
 LOOPED = {"sculling": 2}
 STANDING = "roughseas-stand"
 PLANT_DEPTH_METRES = 1
+ARM_REACH_METRES = 0.7
+SCULL_REACH_METRES = 0.3
 HAND_SPAN = 5
 STRIDE = 3
 FOOT_HALF = 1.5
@@ -256,6 +258,15 @@ def rested(walls, tool, pose, middle):
 
 PADDLE = Tool("tool/paddle", "paddle", (13, 8, 8), (0.5, 8, 8))
 POLE = Tool("resource/pole", "pole-3", (12.8, 0.75, 8), (8, 0.75, 8), turns=(0, 90, 180, 270))
+
+
+def worked_from_middle(box, at, reach, ahead=False):
+    """How far from her middle the stroke works: across, reach beyond her side, as far along as the rower is from her
+    middle; or, ahead, reach beyond her bow."""
+    (x0, _, z0), (x1, _, z1) = box["from"], box["to"]
+    if ahead:
+        return units.both("sweep", units.metres((x1 - x0) / 2) + reach)
+    return units.both("sweep", math.hypot(units.metres(at[0] - (x0 + x1) / 2), units.metres((z1 - z0) / 2) + reach))
 
 
 def waterline(vessel):

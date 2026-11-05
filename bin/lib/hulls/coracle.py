@@ -5,12 +5,12 @@ from pathlib import Path
 
 from fit import APART, Oval
 from physics import HIDE_METRES, LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
-from held import PADDLE, poling, sculling, tools, waterline
+from held import SCULL_REACH_METRES, worked_from_middle, PADDLE, poling, sculling, tools, waterline
 from stroke import player_patch, seat
 import units
 from entity import merged, record
 from shape import BILGE, Shape, bilge_levels, hull_box, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
-from wounds import wound
+from wounds import backed, wound
 
 CENTRE = 8
 
@@ -238,6 +238,16 @@ def axes_at(y):
     return tuple(l + (u - l) * share for l, u in zip(lower, upper))
 
 
+def shell(hide, bent, box):
+    """What backs her hide: her bent laths, each as wide as LATH_WIDTH, set as far apart as that over the share of her
+    sides they back; a breaker bends them over her side, from her bottom to her gunwale."""
+    sides, bottom = backed([hide], ["hide"], [bent], box)
+    rise = [(axes_at(y)[0], y) for y in (DEPTH * k / STAVES for k in range(STAVES + 1))]
+    spacing = units.metres(LATH_WIDTH) / sides
+    return {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", units.metres(length(rise))),
+            "frame": {**units.both("spacing", spacing), **units.both("span", spacing)}}
+
+
 def report(lattice_stage, gunwale_stage, area):
     metres = sum(piece["metres"] for stage in (lattice_stage, gunwale_stage) for piece in stage["children"])
     hide_kg, frame_kg = kilograms("hide", area * HIDE_METRES * 1000), kilograms("wood-willow", metres * LATH_SQUARE_METRES * 1000)
@@ -278,6 +288,7 @@ def build(path_):
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
     box, measured = hull_box(hide)
     shape.add(box)
+    record("coracle", {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hide, bent, box)}}})
     shape.keep("FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
@@ -285,6 +296,7 @@ def build(path_):
               **units.both("acrossSpacing", units.metres(ACROSS_SPACING))}
     record("coracle", merged(report(flat, gunwale, hide_area(pieces)), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"layout": layout}}}))
     at = seat(shape, "FrontSeat")
+    record("coracle", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, SCULL_REACH_METRES, ahead=True)}})
     line = waterline("coracle")
     floor = HIDE + 2 * LATH_THICKNESS
     pole = poling(stands("coracle", units.metres(floor)), at, units.voxels(line), CENTRE - GUNWALE[1] - 1,

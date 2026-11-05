@@ -1,5 +1,5 @@
-from held import PADDLE, paddling, poling, tools, waterline
-from stroke import player_patch, seat
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline
+from stroke import find, player_patch, seat
 from physics import afloat, kilograms, stands
 from fit import APART, Swept
 import units
@@ -290,6 +290,12 @@ def deck():
     return units.metres(area, 2)
 
 
+def walls():
+    """Her walls as WALL draws them; a breaker bends a side as a cantilever, from her bottom's edge to her gunwale."""
+    return {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": {"metres": units.metres(WALL), "voxels": WALL,
+                                                                        **units.both("span", units.metres(RIM - PROFILE[1][1]))}}}}
+
+
 def build(path):
     shape = Shape(path, {WOOD: "game:block/wood/debarked/oak", BARK: "game:block/wood/bark/oak-h", RINGS: "game:block/wood/treetrunk/oak",
                          "bilge": BILGE, "char": "game:block/coal/charcoal", "clay": "game:block/clay/blueclay",
@@ -303,6 +309,7 @@ def build(path):
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     box, measured = hull_box(shell)
     shape.add(box)
+    record("dugout", walls())
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
     wound(shape, [("", [shell], WOOD), *((level["name"], [level], BARK if n == 0 else WOOD) for n, level in enumerate(blank["children"]))])
     envelope, hold, trunk_litres = volumes()
@@ -320,6 +327,7 @@ def build(path):
 
 def crew_tools(shape, vessel, walls, catch=None, fore=3, outboard=(0, 0), **given):
     at = seat(shape, "FrontSeat")
+    record(vessel, {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(find(shape.elements, "Hull"), at, ARM_REACH_METRES)}})
     line = waterline(vessel)
     hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD)
     floor = hull.section(POLER_AT)[0][1] + WALL

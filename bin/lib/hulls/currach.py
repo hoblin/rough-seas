@@ -6,10 +6,10 @@ from fit import APART
 import units
 from entity import merged, record
 from shape import BILGE, ORIGIN, Hull, bilge_levels, hull_box, num, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
-from held import poling, tools, waterline
+from held import ARM_REACH_METRES, worked_from_middle, poling, tools, waterline
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
-from wounds import wound
+from wounds import backed, wound
 
 CENTRE = 8
 PROFILE = [(0, 0), (6.1, 0), (8, 2.8), (9.2, 6.6), (9.6, 9.6)]
@@ -426,6 +426,7 @@ def build(path_):
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     box, measured = hull_box(hide)
     shape.add(box)
+    record("currach", {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hull, hide, laths, box)}}})
     shape.keep("BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     pivot = [ORIGIN[0], (box["from"][1] + box["to"][1]) / 2, CENTRE]
@@ -441,6 +442,7 @@ def build(path_):
     line = waterline("currach")
     poler = sum(hull.span()) / 2 + POLER_AFT
     floor = hull.section(poler)[0][1] + hull.t + RIB_DEPTH
+    record("currach", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, (poler, floor, CENTRE), ARM_REACH_METRES)}})
     pole = poling(stands("currach", units.metres(floor)), at, units.voxels(line), CENTRE - PROFILE[-1][0] - 1,
                   (poler, floor, CENTRE), hull.half(poler, floor + 1, inset=hull.t + RIB_DEPTH),
                   floor_at=lambda x, across: hull.floor(x, across, inset=hull.t + RIB_DEPTH))
@@ -450,6 +452,16 @@ def build(path_):
     span, blade = blade_span(rests, chest, middle, degrees), blade_square_metres(rests, chest)
     print(f"oars: {span:.2f} m from blade to blade across her, {blade:.3f} m² of blade under the water")
     record("currach", {"behaviorConfigs": {"roughseas:propulsion": {"oars": units.both("span", span) | units.both("blade", blade, 2)}}})
+
+
+def shell(hull, hide, laths, box):
+    """What backs her hide: her ribs and stringers; a breaker bends it between her keelson, stringers and gunwale, as
+    far apart along her section as they stand amidships, and her laths between her ribs."""
+    sides, bottom = backed([hide], ["hide"], laths[1:], box)
+    section = hull.section(sum(hull.span()) / 2)
+    apart = units.metres(sum(math.dist(a, b) for a, b in zip(section, section[1:])) / (len(section) - 1))
+    return {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", apart),
+            "frame": {**units.both("spacing", apart), **units.both("span", units.metres(RIB_SPACING))}}
 
 
 def litres(element):

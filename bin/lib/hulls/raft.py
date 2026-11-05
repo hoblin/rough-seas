@@ -5,12 +5,14 @@ from types import SimpleNamespace
 
 import json5
 
-from held import PADDLE, paddling, poling, tools
+from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools
 import units
 from jsontext import load
 from entity import record, write
 from physics import ASSETS, SWIM_LINE_METRES, stands
+from fit import posed
 from shape import bounds, hull_of
+from transform import apply
 from stroke import player_patch, seat
 
 VANILLA = Path(os.environ.get("VINTAGE_STORY", "")) / "assets/survival"
@@ -32,6 +34,16 @@ def logs(elements):
             if element["name"] in LOGS or element["name"].startswith("log")]
 
 
+def lashed(elements):
+    """The longest stretch of log between two of her lashings: a breaker bends a log there."""
+    along = sorted(centre[0] for centre in (centre_of(element, m) for element, m in posed(elements) if element["name"].startswith("Tie")))
+    return units.metres(max(b - a for a, b in zip(along, along[1:])))
+
+
+def centre_of(element, m):
+    return [units.voxels(c) for c in apply(m, [units.metres((t - f) / 2) for f, t in zip(element["from"], element["to"])])]
+
+
 def measure(variant):
     """Her Hull box round her logs, into the patch that adds it to her shape."""
     box, _ = hull_of(*bounds(*logs(json5.loads((SHAPES / f"{variant}.json").read_text())["elements"])))
@@ -49,9 +61,11 @@ def build(_):
     hull, _ = (measure(variant) for variant in VARIANTS)
     log = next(element for element in logs(vanilla["elements"])[0]["children"])
     depth = units.metres(log["to"][1] - log["from"][1])
-    record("raft", {"behaviorConfigs": {"roughseas:vesselintegrity": units.both("depth", depth)}})
+    shell = {"metres": depth, "voxels": log["to"][1] - log["from"][1], **units.both("span", lashed(vanilla["elements"]))}
+    record("raft", {"behaviorConfigs": {"roughseas:vesselintegrity": {**units.both("depth", depth), "shell": shell}}})
     length, beam = (units.metres(hull["to"][i] - hull["from"][i]) for i in (0, 2))
     at = seat(shape, SEATED)
+    record("raft", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(hull, at, ARM_REACH_METRES)}})
     edge = hull["from"][2]
     line = entity["hitboxSize"]["y"] + SWIM_LINE_METRES - entity["attributes"]["swimmingOffsetY"]
     pole = poling(stands("raft", units.metres(at[1]), form="rectangle", hull_kg=entity["weight"], waterplane=length * beam,
