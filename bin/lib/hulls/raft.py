@@ -2,7 +2,7 @@ from types import SimpleNamespace
 
 from held import PADDLE, paddling, poling, tools
 from physics import SWIM_LINE_METRES, stands
-from shape import VOXELS_A_METRE
+import units
 from stroke import player_patch, seat
 
 SEAT = (16, 5, 1)
@@ -21,9 +21,9 @@ def build(_):
     at = seat(shape, "Seat")
     out = EDGE - 1
     line = HITBOX_HEIGHT + SWIM_LINE_METRES - SWIMMING_OFFSET
-    pole = poling(stands("raft", LOGS_TOP / VOXELS_A_METRE, form="rectangle", hull_kg=WEIGHT_KG, waterplane=SIDE_METRES ** 2,
+    pole = poling(stands("raft", units.metres(LOGS_TOP), form="rectangle", hull_kg=WEIGHT_KG, waterplane=SIDE_METRES ** 2,
                          beam_metres=SIDE_METRES, depth_metres=HITBOX_HEIGHT),
-                  at, line * VOXELS_A_METRE, out, (at[0], LOGS_TOP, at[2]), STANCE_WIDTH)
+                  at, units.voxels(line), out, (at[0], LOGS_TOP, at[2]), STANCE_WIDTH)
     player_patch("player-raft", tools(shape, "raft", "Seat", "sitflooridle", {"rotationZ": 14}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 5, 2, 3, out + 1)),
         "pole": pole,

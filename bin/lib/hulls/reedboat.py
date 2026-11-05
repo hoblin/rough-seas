@@ -5,7 +5,8 @@ from physics import MATERIALS, ropes, stands
 from held import PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
-from shape import ROUNDED, VOXEL_METRES, VOXEL_METRES_CUBED_LITRES, Shape, beam, box, group, path, section, stages, write
+import units
+from shape import ROUNDED, Shape, beam, box, group, path, section, stages, write
 
 KNOT_METRES = 0.3
 
@@ -31,7 +32,7 @@ TIP_REACH = (0, 3, 6, 8)
 def round_girth():
     litres = BUNDLE_REEDS * REED_KG / MATERIALS["reed"]["density"] * 1000
     length = BODY[1] - BODY[0] + 2 * sum((b - a) * share ** 2 for a, b, share in zip(TIP_REACH, TIP_REACH[1:], TIP_SHARES))
-    return math.sqrt(litres / (math.pi / 4 * length * VOXEL_METRES_CUBED_LITRES))
+    return math.sqrt(litres / units.litres(units.metres(math.pi / 4 * length, 3)))
 
 
 GIRTH = round_girth()
@@ -111,12 +112,12 @@ def raised_rounds(start, direction, droop, margin=0):
 
 def bundle_ropes():
     ties = len(range(TIE_PITCH // 2, BODY[1] - BODY[0], TIE_PITCH))
-    metres = ties * (TIE_TURNS * math.pi * GIRTH * VOXEL_METRES + KNOT_METRES)
-    print(f"bundle: {ties} ties {TIE_PITCH * VOXEL_METRES * 100:.0f} cm apart, {metres:.1f} m of cord, {ropes(metres)} ropes")
+    metres = ties * (units.metres(TIE_TURNS * math.pi * GIRTH) + KNOT_METRES)
+    print(f"bundle: {ties} ties {units.metres(TIE_PITCH) * 100:.0f} cm apart, {metres:.1f} m of cord, {ropes(metres)} ropes")
 
 
 def lashings():
-    around = (2 * GIRTH + math.pi * GIRTH) * VOXEL_METRES
+    around = units.metres(2 * GIRTH + math.pi * GIRTH)
     each = LASHING_TURNS * around + KNOT_METRES
     total = each * len(LASHINGS)
     count = ropes(total)
@@ -131,7 +132,7 @@ def lashings():
 def tips():
     points = list(zip(TIP_REACH, TIP_RISE))
     turns = [math.dist(a, b) / TIP_TURN_PITCH for a, b in zip(points, points[1:])]
-    metres = sum(n * (2 * g + math.pi * g) for n, g in zip(turns, TIP_GIRTHS)) * VOXEL_METRES + KNOT_METRES
+    metres = units.metres(sum(n * (2 * g + math.pi * g) for n, g in zip(turns, TIP_GIRTHS))) + KNOT_METRES
     turns = sum(turns)
     assert ropes(metres) == 1, "an end takes more than one rope"
     print(f"ends: {turns:.0f} turns bind each end up, {metres:.1f} m of cord, one rope an end")
@@ -154,9 +155,9 @@ def laid(sides):
 def envelope():
     body = GIRTH ** 2 * (BODY[1] - BODY[0])
     ends = sum((b - a) * g ** 2 for a, b, g in zip(TIP_REACH, TIP_REACH[1:], TIP_GIRTHS))
-    litres = math.pi / 4 * (body + 2 * ends) * VOXEL_METRES_CUBED_LITRES
-    print(f"a bundle of {BUNDLE_REEDS} reeds: {(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]) * VOXEL_METRES:.1f} m long, "
-          f"{GIRTH * VOXEL_METRES * 100:.1f} cm across, {litres:.1f} L; two: {2 * litres:.1f} L")
+    litres = units.litres(units.metres(math.pi / 4 * (body + 2 * ends), 3))
+    print(f"a bundle of {BUNDLE_REEDS} reeds: {units.metres(BODY[1] - BODY[0] + 2 * TIP_REACH[-1]):.1f} m long, "
+          f"{units.metres(GIRTH) * 100:.1f} cm across, {litres:.1f} L; two: {2 * litres:.1f} L")
 
 
 def block(target, sides):
@@ -194,9 +195,9 @@ def build(target):
     shape.write()
     at = seat(shape, "FrontSeat")
     line = waterline("reedboat")
-    girth, length = GIRTH * VOXEL_METRES, (BODY[1] - BODY[0]) * VOXEL_METRES
+    girth, length = units.metres(GIRTH), units.metres(BODY[1] - BODY[0])
     pole = poling(stands("reedboat", girth, form="rectangle", waterplane=2 * girth * length, beam_metres=2 * girth, depth_metres=girth),
-                  at, line / VOXEL_METRES, CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)
+                  at, units.voxels(line), CENTRE - GIRTH - 1, (at[0], GIRTH, CENTRE), GIRTH)
     player_patch("player-reedboat", tools(shape, "reedboat", "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {
         "paddle": ("paddling", PADDLE, paddling(PADDLE, at, 9, 3, 5, 3.5)),
         "pole": pole,

@@ -314,8 +314,8 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         {
             for (int i = 0; i < FlamesPerPuff; i++)
             {
-                double along = hull.CentreAlong + (rand.NextDouble() * 2 - 1) * hull.HalfLength * FlameReach;
-                double across = hull.CentreAcross + (rand.NextDouble() * 2 - 1) * hull.HalfBeam / 2;
+                double along = hull.CentreAlongMetres + (rand.NextDouble() * 2 - 1) * hull.HalfLengthMetres * FlameReach;
+                double across = hull.CentreAcrossMetres + (rand.NextDouble() * 2 - 1) * hull.HalfBeamMetres / 2;
                 var (x, z) = HullShape.ToWorld(along, across, entity.Pos.Yaw);
                 var flame = props.Clone();
                 flame.basePos = at.AddCopy(x - 0.5, 0, z - 0.5);

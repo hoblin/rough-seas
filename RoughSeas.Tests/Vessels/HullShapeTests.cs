@@ -42,7 +42,7 @@ public class HullShapeTests
 
         Assert.False(reach.Beyond(1.9));
         Assert.True(reach.Beyond(-0.4));
-        Assert.Equal(dugout.HalfLength, reach.HalfLength);
+        Assert.Equal(dugout.HalfLengthMetres, reach.HalfLengthMetres);
         Assert.Equal(dugout, dugout.Spanning(0));
     }
 

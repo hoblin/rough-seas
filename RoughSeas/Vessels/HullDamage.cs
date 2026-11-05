@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RoughSeas.Units;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Vessels;
@@ -109,7 +110,7 @@ public sealed class HullDamage
             var transform = Mat4f.Mul(Mat4f.Create(), parent, element.GetLocalTransformMatrix(0));
             if (element.FacesResolved?.Any(face => face != null && textures.Contains(face.Texture)) == true)
             {
-                var size = element.To!.Zip(element.From!, (to, from) => (float)((to - from) / HullShape.VoxelsPerBlock / 2)).ToArray();
+                var size = element.To!.Zip(element.From!, (to, from) => (float)(Voxels.ToMetres(to - from) / 2)).ToArray();
                 var centre = Mat4f.MulWithVec4(transform, size[0], size[1], size[2], 1);
                 yield return (element, hull.At(centre[0] - 0.5, centre[1], centre[2] - 0.5));
             }

@@ -2,6 +2,8 @@ import json
 import math
 from pathlib import Path
 
+import units
+
 ASSETS = Path(__file__).resolve().parents[3] / "RoughSeas/assets/roughseas"
 VESSELS = ASSETS / "config/vessels"
 MASS = json.loads((VESSELS / "mass.json").read_text())
@@ -18,7 +20,7 @@ STANDING_HIP_METRES = 0.93
 # Polers kneel in a canoe narrower than about 28 in (0.71 m): the narrowest they stand in is our bark canoe at that beam.
 NARROWEST_STOOD_IN_METRES = 0.71
 CANOE = "barkcanoe"
-CANOE_FLOOR_METRES = 0.6 / 16
+CANOE_FLOOR_METRES = units.metres(0.6)
 
 # Vanilla's rope: one item pays out up to 10 m (ClothSystem.maxLen).
 ROPE_METRES = 10

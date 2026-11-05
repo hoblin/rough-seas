@@ -1,5 +1,7 @@
 import math
 
+import units
+
 
 def dot(a, b):
     return sum(x * y for x, y in zip(a, b))
@@ -111,8 +113,8 @@ def depth(m, size, p):
 
 # The engine's element transform for animations of version 0, as bin/lib/vsmodel/pose.py has it for Blender.
 def local(element, pose):
-    origin = [c / 16 for c in element.get("rotationOrigin", (0, 0, 0))]
-    shift = [(f + pose.get("offset" + a, 0)) / 16 - o for f, a, o in zip(element["from"], "XYZ", origin)]
+    origin = [units.metres(c) for c in element.get("rotationOrigin", (0, 0, 0))]
+    shift = [units.metres(f + pose.get("offset" + a, 0)) - o for f, a, o in zip(element["from"], "XYZ", origin)]
     m = translation(origin)
     for axis in "XYZ":
         m = mul(m, rotation(axis, element.get("rotation" + axis, 0) + pose.get("rotation" + axis, 0)))

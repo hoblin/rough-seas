@@ -5,6 +5,7 @@ import math
 import re
 from pathlib import Path
 
+import units
 from fit import APART, TOLERANCE, Loft, check, corners, posed
 from transform import add, apply, cross, direct, dot, scale, sub, unit
 
@@ -63,7 +64,7 @@ def box(name, frm, to, tex, *, origin=None, rot=(0, 0, 0), grain="x", skip=(), c
     return element
 
 
-def run(name, frm, to, tex, *, axis="x", step=16, **options):
+def run(name, frm, to, tex, *, axis="x", step=units.voxels(1), **options):
     i = AXIS[axis]
     pieces, start, n = [], frm[i], 1
     while start < to[i] - 1e-6:
@@ -109,16 +110,11 @@ def stages(name, pieces, wood="frame"):
     children = []
     for n, piece in enumerate(pieces, 1):
         child = group(f"{name}{n}", (0, 0, 0), (0, 0, 0), piece)
-        metres = span(piece, wood) / VOXELS_A_METRE
+        metres = units.metres(span(piece, wood))
         if metres > 0:
             child["metres"] = round(metres, 2)
         children.append(child)
     return group(name, (0, 0, 0), (0, 0, 0), children)
-
-
-VOXELS_A_METRE = 16
-VOXEL_METRES = 1 / VOXELS_A_METRE
-VOXEL_METRES_CUBED_LITRES = 1000 / VOXELS_A_METRE ** 3
 
 
 def span(elements, tex):
@@ -258,7 +254,7 @@ def ends_of(elements):
         (x0, y0, z0), (x1, y1, z1) = element["from"], element["to"]
         middle = ((y0 + y1) / 2, (z0 + z1) / 2)
         for x in (x0, x1):
-            cuts.append(([c * 16 for c in apply(m, [(x - x0) / 16, (middle[0] - y0) / 16, (middle[1] - z0) / 16])], along))
+            cuts.append(([units.voxels(c) for c in apply(m, [units.metres(x - x0), units.metres(middle[0] - y0), units.metres(middle[1] - z0)])], along))
     return cuts
 
 
@@ -475,7 +471,7 @@ class Hull:
                 total += 2 * self.half(x, y, inset) * step * step
                 y += step
             x += step
-        return total * VOXEL_METRES_CUBED_LITRES
+        return units.litres(units.metres(total, 3))
 
     def square_metres(self, height, inset=0, step=0.25):
         x0, x1 = self.span()
@@ -483,10 +479,10 @@ class Hull:
         while x < x1:
             total += 2 * self.half(x, height, inset) * step
             x += step
-        return total / VOXELS_A_METRE ** 2
+        return units.metres(total, 2)
 
     def skin_square_metres(self):
-        return sum(math.sqrt(dot(spread := cross(sub(c, a), sub(d, b)), spread)) / 2 for *_, (a, b, c, d) in self.panels()) / VOXELS_A_METRE ** 2
+        return units.metres(sum(math.sqrt(dot(spread := cross(sub(c, a), sub(d, b)), spread)) / 2 for *_, (a, b, c, d) in self.panels()), 2)
 
     def rib(self, name, x, tex, width=1, depth=1, inset=None):
         """A rib at x, a piece along each edge of the section, each sunk until it lies inside the skin (and what lines

@@ -4,6 +4,8 @@ import os
 from functools import cache
 from pathlib import Path
 
+import units
+
 from arm import Arm
 from leg import Leg
 from motion import faults, switches, unwind
@@ -98,7 +100,7 @@ def find(elements, name):
 def centre(elements, matrices, name):
     element = find(elements, name)
     size = [t - f for f, t in zip(element["from"], element["to"])]
-    return tuple(16 * c for c in apply(matrices[name], [s / 32 for s in size]))
+    return tuple(units.voxels(c) for c in apply(matrices[name], [units.metres(s) / 2 for s in size]))
 
 
 def seat(shape, name):
@@ -127,7 +129,7 @@ class Rower:
         self.seraph = json.loads(SERAPH.read_text())
         self.seat = seat
         self.yaw = yaw
-        self.placing = mul(mul(translation([h / 16 for h in CENTRE]), rotation("Y", yaw)), translation([-s / 16 for s in seat]))
+        self.placing = mul(mul(translation([units.metres(h) for h in CENTRE]), rotation("Y", yaw)), translation([units.metres(-s) for s in seat]))
         animations = self.seraph["animations"] + [op["value"] for op in json.loads(POSES.read_text())
                                                   if op["path"] == "/animations/-"]
         sitting = next(a for a in animations if a["code"] == idle)
@@ -148,19 +150,19 @@ class Rower:
 
     def facing(self, pose, point):
         hips = self.arms["R"].body[1]
-        middle = [(a + b) / 32 - a / 16 for a, b in zip(hips["from"], hips["to"])]
+        middle = [units.metres(a + b) / 2 - units.metres(a) for a, b in zip(hips["from"], hips["to"])]
         aim = [p - m for p, m in zip(unapply(self.arms["R"].frames(pose)[1], point), middle)]
         turn = math.degrees(math.atan2(aim[2], -aim[0]))
         return round(max(-TRUNK_ROTATION, min(TRUNK_ROTATION, turn)), 2)
 
     def body(self, point):
-        return apply(self.placing, [p / 16 for p in point])
+        return apply(self.placing, [units.metres(p) for p in point])
 
     def along(self, axis):
         return direct(self.placing, axis)
 
     def hand(self, pose, side):
-        return tuple(16 * c for c in unapply(self.placing, self.arms[side].posture(pose).joints[-1]))
+        return tuple(units.voxels(c) for c in unapply(self.placing, self.arms[side].posture(pose).joints[-1]))
 
 
 def crew(shape, vessel, seated, idle, strokes, grips, lean):

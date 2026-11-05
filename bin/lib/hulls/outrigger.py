@@ -6,7 +6,8 @@ from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tool
 from physics import ROPE_METRES, afloat, built, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
-from shape import BILGE, ROUNDED, VOXEL_METRES, VOXEL_METRES_CUBED_LITRES, Hull, Shape, beam, box, clear_of, group, path, plank, run, section, stages
+import units
+from shape import BILGE, ROUNDED, Hull, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
 
 LOG = 16
@@ -41,18 +42,18 @@ FLOAT_FORMS = {
     "Torn": FloatForm(drop=1.2, along=1, yaw=2, roll=3, parted=(2,)),
     "Shifted": FloatForm(drop=1.6, along=3, yaw=5, roll=6, parted=(1, 2)),
 }
-GUNWALE_METRES = WALL * VOXEL_METRES
+GUNWALE_METRES = units.metres(WALL)
 GUNWALE = PROFILE[-1][0]
 
 STRAKE = 2.4
 STRAKE_THICKNESS = 0.4
 PLANK = 16
-STITCH_PITCH = 0.076 / VOXEL_METRES
+STITCH_PITCH = units.voxels(0.076)
 STITCH_TURN_METRES = 2 * (0.06 + 0.05 + 0.02 + 0.02)
 
 
 def spar_end(rise):
-    length = SPAR_METRES / VOXEL_METRES
+    length = units.voxels(SPAR_METRES)
     return (TACK[0] + length * math.cos(math.radians(rise)), TACK[1] + length * math.sin(math.radians(rise)))
 
 
@@ -103,8 +104,8 @@ def float_pass(n):
             elements.append(box(f"FloatLogx{i}", (x0, low, FLOAT_Z - half), (x1, high, FLOAT_Z + half), log_faces(x0, x1)))
         else:
             elements += section(f"Hewn{n}x{i}", (x0, middle, FLOAT_Z), x1 - x0, half * unhewn, rise * unhewn, "float", roundness=roundness)
-        litres += (x1 - x0) * 2 * half * 2 * rise * (1 - (1 - math.pi / 4) * worked(n)) * VOXEL_METRES_CUBED_LITRES
-        waterline += (x1 - x0) * 2 * half * VOXEL_METRES ** 2
+        litres += units.litres(units.metres((x1 - x0) * 2 * half * 2 * rise * (1 - (1 - math.pi / 4) * worked(n)), 3))
+        waterline += units.metres((x1 - x0) * 2 * half, 2)
     return elements, round(litres, 1), round(waterline, 3)
 
 
@@ -151,8 +152,8 @@ def lashing(name, x, z, low, high):
 
 
 def lashings():
-    gunwale = 2 * (BOOM * VOXEL_METRES + GUNWALE_METRES) * LASHING_TURNS
-    afloat = 2 * (BOOM + FLOAT_DIAMETER) * VOXEL_METRES * LASHING_TURNS
+    gunwale = 2 * (units.metres(BOOM) + GUNWALE_METRES) * LASHING_TURNS
+    afloat = units.metres(2 * (BOOM + FLOAT_DIAMETER)) * LASHING_TURNS
     ties, metres = [], []
     for n, x in enumerate(BOOMS, 1):
         for side, z in (("Port", CENTRE - GUNWALE + 1), ("Starboard", CENTRE + GUNWALE - 1)):
@@ -273,7 +274,7 @@ def sail(name, reefed):
 def area():
     a = (YARD_END[0] - TACK[0], YARD_END[1] - TACK[1])
     b = (SPAR_END[0] - TACK[0], SPAR_END[1] - TACK[1])
-    return abs(a[0] * b[1] - a[1] * b[0]) / 2 * VOXEL_METRES ** 2
+    return units.metres(abs(a[0] * b[1] - a[1] * b[0]) / 2, 2)
 
 
 def furled():
@@ -298,7 +299,7 @@ def mast():
 
 
 def rope(name, start, end, thick=0.3):
-    pieces = math.ceil(math.dist(start, end) / 16)
+    pieces = math.ceil(units.metres(math.dist(start, end)))
     points = [tuple(s + (e - s) * n / pieces for s, e in zip(start, end)) for n in range(pieces + 1)]
     return path(name, points, thick, thick, "lashing", overlap=0)
 
@@ -335,9 +336,9 @@ def strakes(hull):
         half = end_half(hull, x)
         x0, x1 = sorted((x - inward * APART, x - inward * (STRAKE_THICKNESS + APART)))
         planks.append([box(f"Strake{label}", (x0, RIM - 0.6 + 2 * APART, CENTRE - half), (x1, RIM + STRAKE - 2 * APART, CENTRE + half), "plank")])
-    extra = deck() * STRAKE * VOXEL_METRES * 1000
+    extra = units.litres(deck() * units.metres(STRAKE))
     print(f"washstrakes: {len(planks)} planks of a metre, the sides and a board across each end of her hollow, "
-          f"{STRAKE * VOXEL_METRES * 100:.0f} cm raising her side, {extra:.0f} L more hold, {strake_litres(hull):.1f} L of plank")
+          f"{units.metres(STRAKE) * 100:.0f} cm raising her side, {extra:.0f} L more hold, {strake_litres(hull):.1f} L of plank")
     return planks
 
 
@@ -348,7 +349,7 @@ def end_half(hull, x):
 def strake_litres(hull):
     sides = 2 * (HOLLOW[1] - HOLLOW[0])
     ends = sum(2 * end_half(hull, x) for x in HOLLOW)
-    return (sides + ends) * (STRAKE + 0.6) * STRAKE_THICKNESS * VOXEL_METRES_CUBED_LITRES
+    return units.litres(units.metres((sides + ends) * (STRAKE + 0.6) * STRAKE_THICKNESS, 3))
 
 
 def seams(hull):
@@ -372,7 +373,7 @@ def seams(hull):
             z, n = z + STITCH_PITCH, n + 1
     metres = len(stitches) * STITCH_TURN_METRES
     count = ropes(metres)
-    print(f"seams: {len(stitches)} stitches {STITCH_PITCH * VOXEL_METRES * 100:.1f} cm apart, {metres:.0f} m of cord, {count} ropes")
+    print(f"seams: {len(stitches)} stitches {units.metres(STITCH_PITCH) * 100:.1f} cm apart, {metres:.0f} m of cord, {count} ropes")
     return per_rope(stitches, count)
 
 
@@ -408,7 +409,7 @@ def build(target):
     finished_float = passes["children"][-1]
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
-               outboard=(finished_float["waterlineSquareMetres"], (FLOAT_Z - 8) * VOXEL_METRES),
+               outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),
                waterplane=built("dugout")["waterplane"])
     report(hull, finished_float)
 
@@ -458,15 +459,15 @@ def hanging_tube(tube, form):
     frame = local(hung("Float", form), {})
     middle = ((FLOAT_FROM + FLOAT_TO) / 2, FLOAT_Y, FLOAT_Z)
     shift = (form.along, -form.drop, 0)
-    moved = lambda point: [c * 16 for c in apply(frame, [(p + s - m) / 16 for p, s, m in zip(point, shift, middle)])]
-    ends = ([c * 16 for c in apply(tube.frame, (0, 0, 0))], [c * 16 for c in apply(tube.frame, (tube.length / 16, 0, 0))])
+    moved = lambda point: [units.voxels(c) for c in apply(frame, [units.metres(p + s - m) for p, s, m in zip(point, shift, middle)])]
+    ends = ([units.voxels(c) for c in apply(tube.frame, (0, 0, 0))], [units.voxels(c) for c in apply(tube.frame, (units.metres(tube.length), 0, 0))])
     return Tube(tube.name, *map(moved, ends), 2 * tube.w, 2 * tube.h)
 
 
 def pole_litres():
     boom_length = sum(math.dist(a, b) for a, b in zip(boom_points(), boom_points()[1:])) * len(BOOMS)
-    spars = 2 * SPAR_METRES / VOXEL_METRES
-    return (boom_length * BOOM ** 2 + (MASTHEAD - 1.4) * POLE ** 2 + spars * SPAR ** 2) * VOXEL_METRES_CUBED_LITRES
+    spars = units.voxels(2 * SPAR_METRES)
+    return units.litres(units.metres(boom_length * BOOM ** 2 + (MASTHEAD - 1.4) * POLE ** 2 + spars * SPAR ** 2, 3))
 
 
 def boom_height(z):
@@ -487,8 +488,8 @@ def report(hull, finished_float):
     parts = {"hull": kilograms("wood-oak", envelope - hold), "float": kilograms("wood-oak", finished_float["woodLitres"]),
              "poles": kilograms("wood-oak", pole_litres()), "strakes": kilograms("wood-oak", strake_litres(hull))}
     print("outrigger parts in oak: " + ", ".join(f"{name} {kg:.0f} kg" for name, kg in parts.items()) + f", poles {pole_litres():.0f} L")
-    waterplane = afloat("dugout", parts["hull"], RIM * VOXEL_METRES, hold, deck())
-    afloat("outrigger", sum(parts.values()), RIM * VOXEL_METRES, hold, deck(), waterplane=waterplane + finished_float["waterlineSquareMetres"])
+    waterplane = afloat("dugout", parts["hull"], units.metres(RIM), hold, deck())
+    afloat("outrigger", sum(parts.values()), units.metres(RIM), hold, deck(), waterplane=waterplane + finished_float["waterlineSquareMetres"])
 
 
 if __name__ == "__main__":

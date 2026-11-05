@@ -1,10 +1,11 @@
 using System;
+using RoughSeas.Units;
+using RoughSeas.Vessels;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
-using RoughSeas.Vessels;
 
 namespace RoughSeas.Storms;
 
@@ -42,7 +43,7 @@ public sealed class BilgeRenderer : IRenderer
     public int Level { get; private set; }
 
     public double HeightOf(int level) =>
-        entity.Properties.Client.LoadedShapeForEntity?.GetElementByName(LevelsElement)?.Children?[level - 1].Children?[0].From?[1] / HullShape.VoxelsPerBlock ?? 0;
+        entity.Properties.Client.LoadedShapeForEntity?.GetElementByName(LevelsElement)?.Children?[level - 1].Children?[0].From?[1] is { } voxels ? Voxels.ToMetres(voxels) : 0;
 
     /// <summary>Shows the water as <paramref name="level"/>'s surface raised by <paramref name="liftMetres"/>.</summary>
     public void Show(int level, double liftMetres = 0)

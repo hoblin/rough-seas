@@ -2,7 +2,8 @@ from held import PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from physics import afloat, kilograms, stands
 from fit import APART, Swept
-from shape import BILGE, VOXEL_METRES, VOXELS_A_METRE, Hull, Shape, box, breadth, group, water_plane
+import units
+from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
 from wounds import wound
 
 LOG = 16
@@ -23,7 +24,7 @@ CLAY = 0.5
 EMBERS = 0.6
 BED = 0.55
 GLOW = 160
-TRUNK_METRES = LOG * VOXEL_METRES
+TRUNK_METRES = units.metres(LOG)
 SLICES = {
     "Stern": [(-24.5, -22, 5.0, 1.6), (-26.5, -24.5, 4.0, 2.8), (-28, -26.5, 2.9, 4.2)],
     "Bow": [(38, 40.5, 5.0, 1.6), (40.5, 42.5, 4.0, 2.8), (42.5, 44, 2.9, 4.2)],
@@ -276,9 +277,8 @@ def volumes():
                 hold += 2 * max(0, half - WALL) * step * step
             y += step
         x += step
-    litres = VOXEL_METRES ** 3 * 1000
-    trunk_litres = TRUNK_METRES ** 2 * LOGS * TRUNK_METRES * 1000
-    return envelope * litres, hold * litres, trunk_litres
+    trunk_litres = units.litres(TRUNK_METRES ** 2 * LOGS * TRUNK_METRES)
+    return units.litres(units.metres(envelope, 3)), units.litres(units.metres(hold, 3)), trunk_litres
 
 
 def deck():
@@ -286,7 +286,7 @@ def deck():
     while x < HOLLOW[1]:
         area += 2 * hollow_half(x) * step
         x += step
-    return area * VOXEL_METRES ** 2
+    return units.metres(area, 2)
 
 
 def hull_box():
@@ -314,7 +314,7 @@ def build(path):
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
-    afloat("dugout", kilograms("wood-oak", envelope - hold), RIM * VOXEL_METRES, hold, deck())
+    afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck())
     shape.write()
     crew_tools(shape, "dugout", ("Shell",))
 
@@ -325,7 +325,7 @@ def crew_tools(shape, vessel, walls, catch=None, fore=3, outboard=(0, 0), **give
     hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD)
     floor = hull.section(POLER_AT)[0][1] + WALL
     chine = hull.half(POLER_AT, floor + 1, inset=WALL)
-    pole = poling(stands(vessel, floor * VOXEL_METRES, outboard=outboard, **given), at, line * VOXELS_A_METRE,
+    pole = poling(stands(vessel, units.metres(floor), outboard=outboard, **given), at, units.voxels(line),
                   CENTRE - PROFILE[-1][0] - 1, (POLER_AT, floor, CENTRE), chine,
                   floor_at=lambda x, across: hull.floor(x, across, inset=WALL))
     player_patch(f"player-{vessel}", tools(shape, vessel, "FrontSeat", "roughseas-sitlegsforward", {"rotationZ": 6}, line, {

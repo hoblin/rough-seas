@@ -3,7 +3,8 @@ import statistics
 
 from physics import HIDE_METRES, LATH_SQUARE_METRES, MASS, afloat, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from fit import APART
-from shape import BILGE, VOXEL_METRES, VOXELS_A_METRE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
+import units
+from shape import BILGE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
 from held import poling, tools, waterline
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
@@ -27,29 +28,29 @@ RIB_DEPTH = 0.4
 STRINGER = 0.6
 THWART = 1.4
 # Aran thwarts are nailed to the lower gunwale, the upper some 6 in above it (Hornell 1938).
-THWART_SEAT = SHEER - 0.15 * VOXELS_A_METRE
+THWART_SEAT = SHEER - units.voxels(0.15)
 # A seated man's centre of mass lies some 9 cm from his hips toward his feet: his thighs, 20% of his mass, at 0.19 m,
 # his shanks and feet, 12%, at 0.45 m (Winter 2009, table 4.1).
-SEATED_CENTRE = 0.09 * VOXELS_A_METRE
+SEATED_CENTRE = units.voxels(0.09)
 POLER_AFT = 5
 
 OARS = {"OarStarboard": -1, "OarPort": 1}
 # Dingle's thole pins stand 15 in abaft their thwart (Hornell 1938); none is given for Aran.
-THOLE_ABAFT = 0.38 * VOXELS_A_METRE
+THOLE_ABAFT = units.voxels(0.38)
 # The pin passes through the bull, nailed to the loom's after side (Hornell 1938).
 PIN_TO_LOOM = 1.4
 LOOM_RADIUS = 0.4
 # The bull is cut from a lath (the thole oar's recipe), as deep as the lath is broad: 6 cm.
-BULL = 0.06 * VOXELS_A_METRE
+BULL = units.voxels(0.06)
 OAR = 48
 # The grips cross 6 to 12 in amidships (the Celtic MKE currach club): each 0.115 m past her middle.
-GRIP = 0.115 * VOXELS_A_METRE
+GRIP = units.voxels(0.115)
 LOOM_END = 14
 BLADE = 16
 BLADE_BREADTH = 1.6
 # One hand over the other where the grips cross, a hand's thickness apart: 3.3 cm (NASA-STD-3000, hand thickness at
 # the metacarpals of a 50th-percentile man).
-HAND_THICKNESS = 0.033 * VOXELS_A_METRE
+HAND_THICKNESS = units.voxels(0.033)
 FRAMES = 30
 # The trunk from the vertical, forward at the catch and back at the finish: the world's best rowers, 22.5° and 25°
 # (Kleshnev, row2k 2014, video of 25 small-boat rowers).
@@ -80,7 +81,7 @@ def stations(half):
 def sheer_metres(hull):
     top = len(PROFILE) - 1
     points = [hull.point(i, top, 1) for i in range(len(hull.stations))]
-    return sum(math.dist(a, b) for a, b in zip(points, points[1:])) * VOXEL_METRES
+    return units.metres(sum(math.dist(a, b) for a, b in zip(points, points[1:])))
 
 
 def hull_of_gunwale():
@@ -89,7 +90,7 @@ def hull_of_gunwale():
         half = (low + high) / 2
         hull = Hull("Skin", stations(half), CENTRE, HIDE, "hide", "hide", edge="hide")
         low, high = (half, high) if sheer_metres(hull) < GUNWALE_METRES else (low, half)
-    print(f"hull: {2 * half * VOXEL_METRES:.2f} m long, {2 * PROFILE[-1][0] * VOXEL_METRES:.2f} m in beam, gunwale {sheer_metres(hull):.2f} m a side")
+    print(f"hull: {units.metres(2 * half):.2f} m long, {units.metres(2 * PROFILE[-1][0]):.2f} m in beam, gunwale {sheer_metres(hull):.2f} m a side")
     return hull, half
 
 
@@ -122,7 +123,7 @@ def gunwale_stage(hull):
             group(f"Gunwale{n}At1", (0, 0, 0), (0, 0, 0), apart),
             group(f"Gunwale{n}At2", (0, 0, 0), (0, 0, 0), shut),
         ])
-        piece["metres"] = round(span(shut, "frame") / VOXELS_A_METRE, 2)
+        piece["metres"] = round(units.metres(span(shut, "frame")), 2)
         pieces.append(piece)
     return group("Gunwale", (0, 0, 0), (0, 0, 0), pieces)
 
@@ -229,7 +230,7 @@ def oar(name, side, rest):
 def pitches(rests, chest):
     rest = next(iter(rests.values()))
     outboard = OAR - inboard(rest) - GRIP
-    above = rest[1] - waterline("currach") * VOXELS_A_METRE
+    above = rest[1] - units.voxels(waterline("currach"))
     hand = inboard(rest) + GRIP / 2
     apart = math.degrees(math.asin(HAND_THICKNESS / 2 / hand))
     drive = -math.degrees(math.asin((chest - rest[1]) / hand))
@@ -241,16 +242,16 @@ def chest_height(shape):
     rower = rower_of(shape)
     matrices = posed(rower.seraph["elements"], lambda name: rower.idle.get(name, {}))
     torso = find(rower.seraph["elements"], "UpperTorso")
-    ribs = apply(matrices["UpperTorso"], [0, 0, (torso["to"][2] - torso["from"][2]) / 32])
-    return 16 * unapply(rower.placing, ribs)[1]
+    ribs = apply(matrices["UpperTorso"], [0, 0, units.metres(torso["to"][2] - torso["from"][2]) / 2])
+    return units.voxels(unapply(rower.placing, ribs)[1])
 
 
 def blade_square_metres(rests, chest):
     rest = next(iter(rests.values()))
     outboard = OAR - inboard(rest) - GRIP
-    above = rest[1] - waterline("currach") * VOXELS_A_METRE
+    above = rest[1] - units.voxels(waterline("currach"))
     wet = [min(BLADE, max(0.0, outboard - above / math.sin(math.radians(-drive)))) for _, drive in pitches(rests, chest).values()]
-    return statistics.fmean(wet) / VOXELS_A_METRE * BLADE_BREADTH / VOXELS_A_METRE
+    return units.metres(statistics.fmean(wet)) * units.metres(BLADE_BREADTH)
 
 
 def rowing_station(hull):
@@ -263,8 +264,8 @@ def rowing_station(hull):
         weights = {"rower": (rower, SEATED_CENTRE), "thwart": (kilograms("wood-ash", pole * POLE_SQUARE_METRES * 1000), 0),
                    "oars": (kilograms("wood-ash", oars), THOLE_ABAFT)}
         x = CENTRE - sum(kg * d for kg, d in weights.values()) / sum(kg for kg, _ in weights.values())
-    print(f"thwart: {(x - CENTRE) / VOXELS_A_METRE:+.2f} m from her middle, where she floats level with her rower and his oars;"
-          f" tholes {THOLE_ABAFT / VOXELS_A_METRE:.2f} m abaft it")
+    print(f"thwart: {units.metres(x - CENTRE):+.2f} m from her middle, where she floats level with her rower and his oars;"
+          f" tholes {units.metres(THOLE_ABAFT):.2f} m abaft it")
     return x
 
 
@@ -300,7 +301,7 @@ def rower_of(shape):
 
 
 def reach_of(arm):
-    return 16 * math.dist((0, 0, 0), [h + f for h, f in zip(arm.humerus, direct(euler(arm.bend), arm.forearm))])
+    return units.voxels(math.dist((0, 0, 0), [h + f for h, f in zip(arm.humerus, direct(euler(arm.bend), arm.forearm))]))
 
 
 def trunk(rower, lean):
@@ -315,18 +316,18 @@ def trunk(rower, lean):
     pose = {"LowerTorso": turned, "UpperTorso": {"rotationZ": 0}}
     matrices = frames(pose)
     shift = undirect(matrices["LowerTorso"], [a - b for a, b in zip(hip, hip_joint(elements, matrices))])
-    pose["LowerTorso"] = turned | {"offset" + a: round(turned.get("offset" + a, 0) + 16 * s, 3) for a, s in zip("XYZ", shift)}
+    pose["LowerTorso"] = turned | {"offset" + a: round(turned.get("offset" + a, 0) + units.voxels(s), 3) for a, s in zip("XYZ", shift)}
     for leg in rower.legs.values():
         pose |= leg.plant(pose, leg.sole({}))
     return pose
 
 
 def hip_joint(elements, matrices):
-    return apply(matrices["LowerTorso"], [c / 16 for c in find(elements, "UpperFootR")["rotationOrigin"]])
+    return apply(matrices["LowerTorso"], [units.metres(c) for c in find(elements, "UpperFootR")["rotationOrigin"]])
 
 
 def shoulder_at(rower, lean):
-    return tuple(16 * c for c in unapply(rower.placing, rower.arms["R"].posture(trunk(rower, lean)).joints[0]))
+    return tuple(units.voxels(c) for c in unapply(rower.placing, rower.arms["R"].posture(trunk(rower, lean)).joints[0]))
 
 
 def lean_for(rower, grip):
@@ -340,7 +341,7 @@ def arc(shape, rests, chest):
     ends = pitches(rests, chest)["OarPort"][0]
 
     def shape_point(point):
-        return tuple(16 * c for c in unapply(rower.placing, point))
+        return tuple(units.voxels(c) for c in unapply(rower.placing, point))
 
     shoulder = shoulder_at(rower, CATCH_LEAN)
     catch = solve(90, 90 + CATCH_DEGREES, lambda yaw: math.dist(shoulder, grip_at(rests, yaw, ends)) > reach)
@@ -350,7 +351,7 @@ def arc(shape, rests, chest):
     forward = direct(matrices["UpperTorso"], (-1, 0, 0))
     middle = centre(rower.seraph["elements"], matrices, "UpperTorso")
     depth = (torso["to"][0] - torso["from"][0]) / 2
-    body = shape_point([(m + depth * f) / 16 for m, f in zip(middle, forward)])[0] + HAND_THICKNESS
+    body = shape_point([units.metres(m + depth * f) for m, f in zip(middle, forward)])[0] + HAND_THICKNESS
     finish = solve(90 - FINISH_DEGREES, 90, lambda yaw: grip_at(rests, yaw, ends)[0] > body)
     print(f"stroke: catch {catch - 90:.0f}° forward of square, leaning {CATCH_LEAN}°; finish {90 - finish:.0f}° aft of it,"
           f" leaning {-FINISH_LEAN}° back")
@@ -396,7 +397,7 @@ def blade_span(rests, chest, sweep_middle, sweep_degrees):
     abeam = statistics.fmean(math.sin(math.radians(sweep_middle - sweep_degrees * sweep(drive * k / 100))) for k in range(100))
     across = [inboard(rest) + (OAR - inboard(rest) - GRIP - BLADE / 2) * math.cos(math.radians(pitched)) * abeam
               for rest, (_, pitched) in zip(rests.values(), pitches(rests, chest).values())]
-    return sum(across) / VOXELS_A_METRE
+    return units.metres(sum(across))
 
 
 def build(path_):
@@ -432,7 +433,7 @@ def build(path_):
     line = waterline("currach")
     poler = sum(hull.span()) / 2 + POLER_AFT
     floor = hull.section(poler)[0][1] + hull.t + RIB_DEPTH
-    pole = poling(stands("currach", floor * VOXEL_METRES), at, line * VOXELS_A_METRE, CENTRE - PROFILE[-1][0] - 1,
+    pole = poling(stands("currach", units.metres(floor)), at, units.voxels(line), CENTRE - PROFILE[-1][0] - 1,
                   (poler, floor, CENTRE), hull.half(poler, floor + 1, inset=hull.t + RIB_DEPTH),
                   floor_at=lambda x, across: hull.floor(x, across, inset=hull.t + RIB_DEPTH))
     player_patch("player-currach", rowed + tools(shape, "currach", "BackSeat", "roughseas-sitthwart", {"rotationZ": 12}, line, {
@@ -445,7 +446,7 @@ def build(path_):
 
 def litres(element):
     size = [t - f for f, t in zip(element["from"], element["to"])]
-    return size[0] * size[1] * size[2] * VOXEL_METRES ** 3 * 1000
+    return units.litres(units.metres(size[0] * size[1] * size[2], 3))
 
 
 def report(hull, laths, thwart_stage, oars):
@@ -457,7 +458,7 @@ def report(hull, laths, thwart_stage, oars):
     oars_kg = kilograms("wood-ash", sum(litres(part) for oar_ in oars for part in oar_["children"]))
     print(f"currach: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath and {pole:.2f} m of pole, {frame_kg:.1f} kg of ash;"
           f" two oars, {oars_kg:.1f} kg")
-    afloat("currach", hide_kg + frame_kg + oars_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=hull.t),
+    afloat("currach", hide_kg + frame_kg + oars_kg, units.metres(SHEER), hull.litres(SHEER, inset=hull.t),
            hull.square_metres(SHEER - 0.01, inset=hull.t))
 
 

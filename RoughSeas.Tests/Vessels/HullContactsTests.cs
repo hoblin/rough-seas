@@ -4,7 +4,7 @@ namespace RoughSeas.Tests.Vessels;
 
 public class HullContactsTests
 {
-    private static readonly HullShape Hull = new(HalfLength: 2, HalfBeam: 0.5, Depth: 0.6, CentreAlong: 0, CentreAcross: 0, Keel: 0);
+    private static readonly HullShape Hull = new(HalfLengthMetres: 2, HalfBeamMetres: 0.5, DepthMetres: 0.6, CentreAlongMetres: 0, CentreAcrossMetres: 0, KeelMetres: 0);
 
     [Fact]
     public void TwoHullsAfloatTogetherMeet()

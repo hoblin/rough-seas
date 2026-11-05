@@ -5,7 +5,8 @@ from held import PADDLE, paddling, poling, tools, waterline
 from stroke import player_patch, seat
 from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, kilograms, per_rope, ropes, stands
 from fit import APART, TOLERANCE, lined as lined_section
-from shape import BILGE, VOXEL_METRES, VOXELS_A_METRE, Hull, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
+import units
+from shape import BILGE, Hull, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
 from transform import add, scale, sub, unit
 from wounds import wound
 
@@ -143,7 +144,7 @@ def raising():
         final = at[levels][n - 1]
         variants = [group(f"Frame{n}At{k}", (0, 0, 0), (0, 0, 0), [renamed(e, f"At{k}") for e in at[k][n - 1]]) for k in range(n, levels + 1)]
         piece = group(f"Frame{n}", (0, 0, 0), (0, 0, 0), variants)
-        piece["metres"] = round((run(hull, len(PROFILE) - 1) if "wale" in final[0]["name"] else span(final, "frame")) / VOXELS_A_METRE, 2)
+        piece["metres"] = round(units.metres(run(hull, len(PROFILE) - 1) if "wale" in final[0]["name"] else span(final, "frame")), 2)
         pieces.append(piece)
     return group("Skin", (0, 0, 0), (0, 0, 0), skins), group("Frame", (0, 0, 0), (0, 0, 0), pieces), cuts[levels]
 
@@ -250,7 +251,7 @@ def sheathed(hull):
     stage = stages("Sheathing", sheathing(hull))
     liner = Hull("Sheathing", lined(hull.stations, SKIN + APART)[1:-1], CENTRE, SHEATHING, "frame", "frame")
     for piece, k in zip(stage["children"], (k for k in range(SHEATHED_STRAKES) for _ in ("Port", "Starboard"))):
-        piece["metres"] = round((run(liner, k) + run(liner, k + 1)) / 2 / VOXELS_A_METRE, 2)
+        piece["metres"] = round(units.metres((run(liner, k) + run(liner, k + 1)) / 2), 2)
     return stage
 
 
@@ -280,7 +281,7 @@ def wraps(hull, cuts):
             turns.append(clear_of(cuts, (1, 0, 0), wrap, slide=True)[0])
             x, n = x + LASHING_STEP, n + 1
         sheer = [hull.point(i, top, side) for i in range(len(hull.stations))]
-        metres += sum(math.dist(a, b) for a, b in zip(sheer, sheer[1:])) * VOXEL_METRES * turns_per_metre * girth
+        metres += units.metres(sum(math.dist(a, b) for a, b in zip(sheer, sheer[1:]))) * turns_per_metre * girth
     for name, points in (("Stern", stern_line()), ("Bow", bow(stern_line()))):
         along = on_centre(points[2:-1])
         for n, (a, b) in enumerate(zip(along, along[1:]), 1):
@@ -290,7 +291,7 @@ def wraps(hull, cuts):
                 at = [p + f * (q - p) for p, q in zip(a, b)]
                 turns.append(box(f"Stitch{name}{n}x{s + 1}", (at[0] - 0.25, at[1] - 0.25, CENTRE - 1), (at[0] + 0.25, at[1] + 0.25, CENTRE + 1),
                                  "lashing", grain="z"))
-            metres += math.dist(a, b) * VOXEL_METRES / STITCH_METRES * STEM_GIRTH_METRES
+            metres += units.metres(math.dist(a, b)) / STITCH_METRES * STEM_GIRTH_METRES
     count = ropes(metres)
     print(f"lashing: {metres:.0f} m of root in {len(turns)} wraps, {count} ropes of {ROPE_METRES} m")
     return per_rope(turns, count)
@@ -348,7 +349,7 @@ def build(path_):
     at = seat(shape, "BackSeat")
     line = waterline("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT
-    pole = poling(stands("barkcanoe", SKIN * VOXEL_METRES), at, line * VOXELS_A_METRE, CENTRE - SHEER - 1,
+    pole = poling(stands("barkcanoe", units.metres(SKIN)), at, units.voxels(line), CENTRE - SHEER - 1,
                   (poler, SKIN, CENTRE), hull.half(poler, SKIN + 1, inset=SKIN),
                   floor_at=lambda x, across: hull.floor(x, across, inset=SKIN))
     player_patch("player-barkcanoe", tools(shape, "barkcanoe", "BackSeat", "roughseas-kneel", {"rotationZ": 10}, line, {
@@ -364,8 +365,8 @@ def report(hull, laths):
     bark_kg = kilograms("bark", bark * BARK_METRES * 1000)
     frame_kg = kilograms("wood-tuja", metres * LATH_SQUARE_METRES * 1000)
     print(f"barkcanoe: {bark:.2f} m² of bark, {bark_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of white cedar; "
-          f"sheet {SHEET_LENGTH / VOXELS_A_METRE:.2f} m, {SHEET_THICKNESS / VOXELS_A_METRE:.3f} m thick")
-    afloat("barkcanoe", bark_kg + frame_kg, SHEER / VOXELS_A_METRE, hull.litres(SHEER, inset=SKIN),
+          f"sheet {units.metres(SHEET_LENGTH):.2f} m, {units.metres(SHEET_THICKNESS):.3f} m thick")
+    afloat("barkcanoe", bark_kg + frame_kg, units.metres(SHEER), hull.litres(SHEER, inset=SKIN),
            hull.square_metres(SHEER - 0.01, inset=SKIN))
 
 

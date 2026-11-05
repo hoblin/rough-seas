@@ -36,8 +36,8 @@ public class HullContacts(EntityPartitioning partitioning)
     public static bool Within(double x, double z, HullShape shape, double theirX, double theirZ, HullShape theirs, double slack) =>
         Math.Sqrt((theirX - x) * (theirX - x) + (theirZ - z) * (theirZ - z)) <= Reach(shape) + Reach(theirs) + slack;
 
-    private static double Reach(HullShape shape) => Math.Sqrt(Math.Pow(shape.HalfLength + Math.Abs(shape.CentreAlong), 2) + Math.Pow(shape.HalfBeam + Math.Abs(shape.CentreAcross), 2));
+    private static double Reach(HullShape shape) => Math.Sqrt(Math.Pow(shape.HalfLengthMetres + Math.Abs(shape.CentreAlongMetres), 2) + Math.Pow(shape.HalfBeamMetres + Math.Abs(shape.CentreAcrossMetres), 2));
 
     public static bool Level(double y, HullShape shape, double theirY, HullShape theirs) =>
-        y + shape.Keel <= theirY + theirs.Keel + theirs.Depth && theirY + theirs.Keel <= y + shape.Keel + shape.Depth;
+        y + shape.KeelMetres <= theirY + theirs.KeelMetres + theirs.DepthMetres && theirY + theirs.KeelMetres <= y + shape.KeelMetres + shape.DepthMetres;
 }

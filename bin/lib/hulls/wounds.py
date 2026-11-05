@@ -1,6 +1,8 @@
 import json
 import math
 
+import units
+
 from physics import ASSETS
 from shape import box, group, seed
 from transform import apply, direct, identity, local, mul, rotation, unapply
@@ -69,7 +71,7 @@ def wound(shape, levels, lining=0, framing=None):
     mark is wrapped whole in Wound{Place}Whole, and drawn broken beside it as Wound{Place}{Form}Frame."""
     entity = json.loads((ASSETS / "entities/vessel" / shape.path.name).read_text())
     shell = entity["behaviorConfigs"]["roughseas:vesselintegrity"]["shell"]
-    span = shell["spanMetres"] * 16
+    span = units.voxels(shell["spanMetres"])
     sprung = SPRUNG_DEGREES[shell.get("kind", "rigid")]
     hull = HullBox(next(element for element in shape.elements if element["name"] == "Hull"))
     for level, elements, texture in levels:
@@ -151,7 +153,7 @@ def size(element):
 
 
 def centre(element, m):
-    return tuple(c * 16 for c in apply(m, [s / 32 for s in size(element)]))
+    return tuple(units.voxels(c) for c in apply(m, [units.metres(s) / 2 for s in size(element)]))
 
 
 class Frame:
@@ -173,7 +175,7 @@ class Frame:
         depth = min(sizes[self.through], WALL)
         self.wall = (0, depth + lining) if self.inward > 0 else (sizes[self.through] - depth - lining, sizes[self.through])
         self.thickness = depth
-        aimed = [c * 16 for c in unapply(m, [t / 16 for t in target])]
+        aimed = [units.voxels(c) for c in unapply(m, [units.metres(t) for t in target])]
         self.aim = (aimed[self.along], aimed[self.across])
 
     def roomy(self):

@@ -7,7 +7,8 @@ from fit import APART, Oval
 from physics import HIDE_METRES, LATH_SQUARE_METRES, ROPE_METRES, afloat, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from held import PADDLE, poling, sculling, tools, waterline
 from stroke import player_patch, seat
-from shape import BILGE, VOXEL_METRES, VOXEL_METRES_CUBED_LITRES, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
+import units
+from shape import BILGE, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
 from wounds import wound
 
 CENTRE = 8
@@ -155,7 +156,7 @@ def panels():
         yaw = math.degrees(math.atan2(a[2] - b[2], b[0] - a[0]))
         facet = box(f"Floor{k + 1}", (0, y0, 0), (math.dist(a, b), HIDE - y0, STRIP), "hide")
         sector = abs((a[0] - CENTRE) * (b[2] - CENTRE) - (b[0] - CENTRE) * (a[2] - CENTRE)) / 2
-        pieces.append((2 * math.pi * (k + 0.5) / STAVES, sector * VOXEL_METRES ** 2, group(f"Floor{k + 1}Frame", a, (0, yaw, 0), [facet])))
+        pieces.append((2 * math.pi * (k + 0.5) / STAVES, units.metres(sector, 2), group(f"Floor{k + 1}Frame", a, (0, yaw, 0), [facet])))
         for row, (y0, y1) in enumerate(zip(SIDE_HEIGHTS, SIDE_HEIGHTS[1:])):
             a, b = oval(axes_at(y0), y0, k), oval(axes_at(y0), y0, k + 1)
             d, c = oval(axes_at(y1), y1, k), oval(axes_at(y1), y1, k + 1)
@@ -167,7 +168,7 @@ def panels():
                 f"Side{row + 1}x{k + 1}", [p + v * depth for p, v in zip(a, middleward)], [p + v * depth for p, v in zip(b, middleward)], rise, HIDE, -flare, -1,
                 "hide", "hide", overlap=(wide - math.dist(a, b)) / 2)
             element = board(seated(board, bowl()))
-            pieces.append((2 * math.pi * (k + 1) / STAVES, (math.dist(a, b) + wide) / 2 * rise * VOXEL_METRES ** 2, element))
+            pieces.append((2 * math.pi * (k + 1) / STAVES, units.metres((math.dist(a, b) + wide) / 2 * rise, 2), element))
     return pieces
 
 
@@ -189,7 +190,7 @@ def cover(pieces):
 
 
 def lacing():
-    perimeter = length([oval(GUNWALE, DEPTH, k) for k in range(STAVES + 1)]) * VOXEL_METRES
+    perimeter = units.metres(length([oval(GUNWALE, DEPTH, k) for k in range(STAVES + 1)]))
     metres = lacing_metres(perimeter)
     count = ropes(metres)
     print(f"lacing: {metres:.0f} m round a {perimeter:.2f} m gunwale, {count} ropes")
@@ -223,7 +224,7 @@ def bowl_litres(inset, floor):
         a, b = (axis - inset for axis in axes_at(y))
         total += math.pi * a * b * step
         y += step
-    return total * VOXEL_METRES_CUBED_LITRES
+    return units.litres(units.metres(total, 3))
 
 
 def bowl():
@@ -241,10 +242,10 @@ def report(lattice_stage, gunwale_stage, area):
     hide_kg, frame_kg = kilograms("hide", area * HIDE_METRES * 1000), kilograms("wood-willow", metres * LATH_SQUARE_METRES * 1000)
     inset = HIDE + 2 * LATH_THICKNESS
     hold = bowl_litres(inset, inset)
-    deck = math.pi * (GUNWALE[0] - inset) * (GUNWALE[1] - inset) * VOXEL_METRES ** 2
+    deck = units.metres(math.pi * (GUNWALE[0] - inset) * (GUNWALE[1] - inset), 2)
     print(f"coracle: {area:.2f} m² of hide, {hide_kg:.1f} kg; {metres:.1f} m of lath, {frame_kg:.1f} kg of willow; "
           f"bowl {bowl_litres(0, 0):.0f} L outside")
-    afloat("coracle", hide_kg + frame_kg, DEPTH * VOXEL_METRES, hold, deck)
+    afloat("coracle", hide_kg + frame_kg, units.metres(DEPTH), hold, deck)
 
 
 def build(path_):
@@ -280,7 +281,7 @@ def build(path_):
     at = seat(shape, "FrontSeat")
     line = waterline("coracle")
     floor = HIDE + 2 * LATH_THICKNESS
-    pole = poling(stands("coracle", floor * VOXEL_METRES), at, line / VOXEL_METRES, CENTRE - GUNWALE[1] - 1,
+    pole = poling(stands("coracle", units.metres(floor)), at, units.voxels(line), CENTRE - GUNWALE[1] - 1,
                   (CENTRE, floor, CENTRE), BOTTOM[1] - HIDE - 2 * LATH_THICKNESS)
     player_patch("player-coracle", tools(shape, "coracle", "FrontSeat", "sitflooridle", {"rotationZ": 14}, line, {
         "paddle": ("sculling", PADDLE, sculling(PADDLE, at, 6.5, 5, 2.5)),

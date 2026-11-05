@@ -117,10 +117,10 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
             double floatSquareMetres = outboard?.WaterplaneSquareMetres ?? 0;
             double hullSquareMetres = flotation.HasHold
                 ? flotation.KgPerMetre / (VesselMass.SeawaterKgPerLitre * 1000) - floatSquareMetres
-                : 4 * Shape.HalfLength * Shape.HalfBeam;
+                : 4 * Shape.HalfLengthMetres * Shape.HalfBeamMetres;
             double floatHalfLength = (outboard?.LengthMetres ?? 0) / 2;
             double floatAdded = floatHalfLength > 0 ? HeaveAddedMass.OfPlate(floatHalfLength, floatSquareMetres / (Math.PI * floatHalfLength)) : 0;
-            return HeaveAddedMass.OfWaterplane(hullSquareMetres, Shape.HalfBeam) + floatAdded;
+            return HeaveAddedMass.OfWaterplane(hullSquareMetres, Shape.HalfBeamMetres) + floatAdded;
         }
     }
 
@@ -378,7 +378,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private bool LandsOutboard(Vec3d relative)
     {
         var (_, across) = HullShape.ToHull(relative.X, relative.Z, entity.Pos.Yaw);
-        return Shape.Beyond(across) && (across < Shape.CentreAcross) == outboard!.Side.IsPort();
+        return Shape.Beyond(across) && (across < Shape.CentreAcrossMetres) == outboard!.Side.IsPort();
     }
 
     public Vec3d PointAt(HullPlace place)
