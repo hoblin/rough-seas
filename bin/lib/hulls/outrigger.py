@@ -3,7 +3,7 @@ from collections import namedtuple
 from pathlib import Path
 
 from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes, walls
-from physics import ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
+from physics import LASHING_JOULES_PER_METRE, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
@@ -173,7 +173,7 @@ def lashings():
         done += length
     assert all(lashed), "a rope with no lashing"
     print(f"lashing: {total:.0f} m in {len(ties)} lashings of {LASHING_TURNS} turns, {count} ropes of {ROPE_METRES} m")
-    return lashed
+    return lashed, total
 
 
 def slack(name, x, form):
@@ -395,7 +395,8 @@ def build(target):
     shell = group("Shell", (0, 0, 0), (0, 0, 0), [element for piece in log(hull) for element in piece])
     shape.add(shell)
     shape.add(logs, booms(), passes)
-    shape.add(stages("Lashing", lashings()), float_forms())
+    lashed, lashing_metres = lashings()
+    shape.add(stages("Lashing", lashed), float_forms())
     shape.add(stages("Mast", mast()))
     shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
     shape.add(stages("Stays", stays()))
@@ -419,7 +420,8 @@ def build(target):
     hull_alone, measured = report(hull, finished_float, at_draft)
     across = bounds(shell, finished_float)
     spread = {"behaviorConfigs": {"roughseas:seaforces": units.both("beam", units.metres(across[1][2] - across[0][2]))}}
-    record("outrigger", merged(measured, rigging(raised_litres), spread, bilge_levels(shape.elements)))
+    lashing = {"behaviorConfigs": {"roughseas:floatlashing": {"impactCapacity": round(LASHING_JOULES_PER_METRE * lashing_metres)}}}
+    record("outrigger", merged(measured, rigging(raised_litres), spread, bilge_levels(shape.elements), lashing))
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),

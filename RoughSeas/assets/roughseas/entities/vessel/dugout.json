@@ -28,7 +28,7 @@
             "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.92, "handsAboveWaterVoxels": 14.72, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": -0.875, "y": -0.124, "z": 0}, "eyeHeight": 1.7}},
             "strokes": {"pole": {"ready": "roughseas-dugout-pole-ready", "forwards": "roughseas-dugout-pole-forward", "backwards": "roughseas-dugout-pole-backward"}, "paddle-starboard": {"ready": "roughseas-dugout-paddle-starboard-ready", "forwards": "roughseas-dugout-paddle-starboard-forward", "backwards": "roughseas-dugout-paddle-starboard-backward", "change": "roughseas-dugout-paddle-to-starboard"}, "paddle-port": {"ready": "roughseas-dugout-paddle-port-ready", "forwards": "roughseas-dugout-paddle-port-forward", "backwards": "roughseas-dugout-paddle-port-backward", "change": "roughseas-dugout-paddle-to-port"}},
             "sources": {
-                "pole": "Poled standing: a man standing in her stiffens her less than the narrowest canoe polers stand in (bin/lib/hulls/physics.py), and dugouts were poled from either end (Florida Museum, the Putnam County poling stick), standing at the end as the mokoro and the pirogue are; she is poled from the end her rower faces, 0.88 m ahead of his seat, on her floor at her waterline. At the end of the shove his hands are at his hip, 0.93 m over his soles (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
+                "pole": "Poled standing: a man standing in her stiffens her less than the narrowest canoe polers stand in (bin/lib/hulls/physics.py), and dugouts were poled from either end (Florida Museum, the Putnam County poling stick), standing at the end as the mokoro and the pirogue are; she is poled from the end her rower faces, on her floor at her waterline. At the end of the shove his hands are at his hip (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
                 "sideDrag": "A round-bottomed log: the round-bilged hull's cross-flow drag"
             }
         },
@@ -48,8 +48,8 @@
             "wreckage": [{"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}}],
             "damage": {"material": "wood"},
             "sources": {
-                "weight": "Her finished hull, 373 L of wood by the model (bin/lib/hulls/dugout.py: a 0.56 m deep, 0.9 m wide, 4.5 m long hull with 5 cm walls, cut from the five logs' square 1 m trunk), in oak",
-                "shell": "Walls about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe). Carved from one log, a side stands from the bottom with its gunwale free, and a breaker bends it as a cantilever: by the model, 8.6 voxels from the bottom's edge to the gunwale"
+                "weight": "Her finished hull's wood by the model (bin/lib/hulls/dugout.py: a hull with 5 cm walls cut from the five logs' square 1 m trunk), in oak",
+                "shell": "Walls about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe). Carved from one log, a side stands from the bottom with its gunwale free, and a breaker bends it as a cantilever from her bottom's edge to her gunwale"
             },
             "hullBoxMetres": {"from": [-2.25, 0, -0.45], "to": [2.25, 0.564, 0.45]},
             "hullBoxVoxels": {"from": [-36, 0, -7.2], "to": [36, 9.024, 7.2]}
@@ -138,7 +138,7 @@
             "rollResponse": 2.5,
             "pitchResponse": 1.2,
             "sources": {
-                "heave": "Balance: 265 kg of log rises slowly to a crest; a light hull rises with it, a heavy one lets it climb the side",
+                "heave": "Balance: a heavy log rises slowly to a crest; a light hull rises with it, a heavy one lets it climb the side",
                 "capsizeBreakerBeams": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
                 "rollResponse": "A round-bottomed log has little form stability: tippy in a sea",
                 "pitchResponse": "A long, heavy log rides through the swell with little pitch"

@@ -1,7 +1,7 @@
 import math
 from pathlib import Path
 
-from physics import MATERIALS, afloat, ropes, shares, stands
+from physics import CORD_BREAKING_NEWTONS, CORD_STRETCH_AT_BREAK, MATERIALS, ROPE_METRES, afloat, ropes, shares, stands
 from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline_metres
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
@@ -205,7 +205,9 @@ def build(target):
     shape.add(box)
     sides, bottom = backed([parted(blank, untied)], [name.lower() for name, _ in SIDES], [parted(blank, tied), lashed], box)
     shell = {"metres": round(units.metres(GIRTH), 4), "voxels": round(GIRTH, 3), "backedShare": sides, "bottomBackedShare": bottom}
-    record("reedboat", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell}}}))
+    cord_metres = (cords + len(lashed["children"]) + len(ENDS)) * ROPE_METRES
+    capacity = round(CORD_BREAKING_NEWTONS * CORD_STRETCH_AT_BREAK * cord_metres / 2)
+    record("reedboat", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell, "impactCapacity": capacity}}}))
     shape.keep("FrontSeat", "Cargo", "OarStorage")
     shape.write()
     cords += len(lashed["children"]) + len(ENDS)

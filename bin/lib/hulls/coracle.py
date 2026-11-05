@@ -4,7 +4,7 @@ import math
 from pathlib import Path
 
 from fit import APART, Oval
-from physics import HIDE_METRES, LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
+from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from held import SCULL_REACH_METRES, worked_from_middle, PADDLE, poling, sculling, tools, waterline_metres
 from stroke import player_patch, seat
 import units
@@ -240,12 +240,14 @@ def axes_at(y):
 
 def shell(hide, bent, box):
     """What backs her hide: her bent laths, each as wide as LATH_WIDTH, set as far apart as that over the share of her
-    sides they back; a breaker bends them over her side, from her bottom to her gunwale."""
+    sides they back; a breaker bends them over her side, from her bottom to her gunwale. And what her seam weeps once
+    its fat is gone, across her bowl from gunwale to gunwale."""
     sides, bottom = backed([hide], ["hide"], [bent], box)
     rise = [(axes_at(y)[0], y) for y in (DEPTH * k / STAVES for k in range(STAVES + 1))]
     spacing = units.metres(LATH_WIDTH) / sides
+    seam = 2 * (units.metres(BOTTOM[0]) + units.metres(length(rise)))
     return {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", units.metres(length(rise))),
-            "frame": {**units.both("spacing", spacing), **units.both("span", spacing)}}
+            "frame": {**units.both("spacing", spacing), **units.both("span", spacing)}}, round(SEAM_LITRES_PER_HOUR_A_METRE * seam, 1)
 
 
 def report(lattice_stage, gunwale_stage, area, side):
@@ -288,7 +290,8 @@ def build(path_):
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
     box, measured = hull_box(hide)
     shape.add(box)
-    record("coracle", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hide, bent, box)}}}))
+    backing, weeps = shell(hide, bent, box)
+    record("coracle", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": backing, "seep": {"litresPerHourASeam": weeps}}}}))
     shape.keep("FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()

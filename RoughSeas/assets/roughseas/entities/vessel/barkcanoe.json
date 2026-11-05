@@ -29,7 +29,7 @@
             "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.92, "handsAboveWaterVoxels": 14.72, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0.469, "y": -0.025, "z": 0}, "eyeHeight": 1.7}},
             "strokes": {"pole": {"ready": "roughseas-barkcanoe-pole-ready", "forwards": "roughseas-barkcanoe-pole-forward", "backwards": "roughseas-barkcanoe-pole-backward"}, "paddle-starboard": {"ready": "roughseas-barkcanoe-paddle-starboard-ready", "forwards": "roughseas-barkcanoe-paddle-starboard-forward", "backwards": "roughseas-barkcanoe-paddle-starboard-backward", "change": "roughseas-barkcanoe-paddle-to-starboard"}, "paddle-port": {"ready": "roughseas-barkcanoe-paddle-port-ready", "forwards": "roughseas-barkcanoe-paddle-port-forward", "backwards": "roughseas-barkcanoe-paddle-port-backward", "change": "roughseas-barkcanoe-paddle-to-port"}},
             "sources": {
-                "pole": "Poled standing, about a foot behind her centre thwart, on her centreline in the diagonal stance, his rear foot in the chine (ACA, Canoe Poling; Paddle Canada, Introduction to Canoe Poling Skills): she is wider than the 28 in polers still stand in (bin/lib/hulls/physics.py). Her floor lies at about her waterline, and his hands end the shove at his hip, 0.93 m over his soles (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
+                "pole": "Poled standing, about a foot behind her centre thwart, on her centreline in the diagonal stance, his rear foot in the chine (ACA, Canoe Poling; Paddle Canada, Introduction to Canoe Poling Skills): she is wider than the 28 in polers still stand in (bin/lib/hulls/physics.py). Her floor lies at about her waterline, and his hands end the shove at his hip (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
                 "sideDrag": "Bark over round ribs: the round-bilged hull's cross-flow drag"
             }
         },
@@ -53,8 +53,8 @@
             ],
             "damage": {"material": "bark"},
             "sources": {
-                "parts": "By the model (bin/lib/hulls/barkcanoe.py): 4.76 m² of bark 5 mm thick, 13.3 kg, over 61 m of laths 1 by 6 cm, 12.8 kg of white cedar",
-                "shell": "Balance: bark half a centimetre thick, lined all over by the cedar sheathing, 1/8 in thick (native-art-in-canada.com/birchbarkcanoes.html), so a blow splits both. A breaker bends bark and sheathing together between the ribs, by the model every 4 voxels. A knock, a ram or a blast splits the bark and the sheathing where it lands, as a point blow does, and the rib behind takes the rest, 1 by 6 cm of cedar breaking by its impact bending work across its section, or both ribs, every 4 voxels, when it lands between them. Bark is the weak part: Adney and Chapelle (The Bark Canoes and Skin Boats of North America, 1964) quote LaHontan that the canoes were easily damaged and their bark mended at the end of each day, and Malecite canoes wore shoes to keep rocks and snags off the bark",
+                "parts": "By the model (bin/lib/hulls/barkcanoe.py): her bark 5 mm thick over her laths of 1 by 6 cm white cedar",
+                "shell": "Balance: bark half a centimetre thick, lined by the cedar sheathing, 1/8 in thick (native-art-in-canada.com/birchbarkcanoes.html), so a blow splits both where it lies, by the model the share of her sides and her bottom the sheathing covers (bin/lib/hulls/wounds.py). A breaker bends bark and sheathing together between the ribs. A knock, a ram or a blast splits the bark and the sheathing where it lands, as a point blow does, and the rib behind takes the rest, 1 by 6 cm of cedar breaking by its impact bending work across its section, or both ribs when it lands between them. Bark is the weak part: Adney and Chapelle (The Bark Canoes and Skin Boats of North America, 1964) quote LaHontan that the canoes were easily damaged and their bark mended at the end of each day, and Malecite canoes wore shoes to keep rocks and snags off the bark",
                 "runsRapids": "She draws almost no water and rides over the rocks (docs/design.md). A stub, as the rapids' strike is (rapids.json): until rapids are worked out from draft (#260), which hull runs them is this flag"
             },
             "hullBoxMetres": {"from": [-2.124, 0, -0.375], "to": [2.124, 0.572, 0.375]},
@@ -130,7 +130,7 @@
             "rollResponse": 1.8,
             "pitchResponse": 1.2,
             "sources": {
-                "heave": "A 26 kg bark hull rises with the crest",
+                "heave": "A light bark hull rises with the crest",
                 "capsizeBreakerBeams": "Seamanship: a breaking wave as high as an open boat's beam can roll it over",
                 "rollResponse": "Narrow and round in section: quick to roll",
                 "pitchResponse": "Light and short, it lifts to each swell"

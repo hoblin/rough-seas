@@ -1,7 +1,7 @@
 import math
 import statistics
 
-from physics import HIDE_METRES, LATH_SQUARE_METRES, MASS, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
+from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, MASS, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from fit import APART
 import units
 from entity import merged, record
@@ -413,7 +413,8 @@ def build(path_):
     station = rowing_station(hull)
     thwart_stage = stages("Thwart", thwart(hull, station))
     lashed = stages("EndLashing", ends(half))
-    hide = stages("Cover", cover(hull, ends_of([*(plank for side in gunwales(hull) for plank in side), *laths[2]["children"]])), wood="none")
+    sections = cover(hull, ends_of([*(plank for side in gunwales(hull) for plank in side), *laths[2]["children"]]))
+    hide = stages("Cover", sections, wood="none")
     laced = stages("Lacing", lacing(hull))
     pins, rests = tholes(hull, station + THOLE_ABAFT)
     oars = stages("Oars", [[oar(name, side, rests[name])] for name, side in OARS.items()], wood="none")
@@ -426,7 +427,7 @@ def build(path_):
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
     box, measured = hull_box(hide)
     shape.add(box)
-    record("currach", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hull, hide, laths, box)}}}))
+    record("currach", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hull, hide, laths, box), "seep": seep(hull, sections)}}}))
     shape.keep("BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     pivot = [ORIGIN[0], (box["from"][1] + box["to"][1]) / 2, CENTRE]
@@ -462,6 +463,13 @@ def shell(hull, hide, laths, box):
     apart = units.metres(sum(math.dist(a, b) for a, b in zip(section, section[1:])) / (len(section) - 1))
     return {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", apart),
             "frame": {**units.both("spacing", apart), **units.both("span", units.metres(RIB_SPACING))}}
+
+
+def seep(hull, sections):
+    """What her seams weep once their tallow is gone: each a seam across her, her girth where two sections meet."""
+    girths = [2 * units.metres(sum(math.dist(a, b) for a, b in zip(edges, edges[1:])))
+              for edges in (hull.section(min(board["from"][0] for board in section)) for section in sections[1:])]
+    return {"litresPerHourASeam": round(SEAM_LITRES_PER_HOUR_A_METRE * sum(girths) / len(girths), 1)}
 
 
 def litres(element):
