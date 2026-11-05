@@ -105,11 +105,16 @@ def renamed(element, suffix):
     return copy
 
 
+def bounds(*elements):
+    """The corners of the box round the elements as they are posed."""
+    points = [corner for element, m in posed(flattened(elements)) for corner in corners(element, m)]
+    return tuple([num(pick(point[axis] for point in points)) for axis in range(3)] for pick in (min, max))
+
+
 def hull_box(*elements):
     """The box round her hull's posed corners, which the mechanics measure her by, and that box as her entity takes it:
     from the point she stands at, in metres and in voxels."""
-    points = [corner for element, m in posed(flattened(elements)) for corner in corners(element, m)]
-    frm, to = ([num(pick(point[axis] for point in points)) for axis in range(3)] for pick in (min, max))
+    frm, to = bounds(*elements)
     element = {"name": "Hull", "from": frm, "to": to, "faces": {},
                "attachmentpoints": [{"code": "HullAP", "posX": str(num(ORIGIN[0] - frm[0])), "posY": "0", "posZ": str(num((to[2] - frm[2]) / 2)),
                                      "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]}

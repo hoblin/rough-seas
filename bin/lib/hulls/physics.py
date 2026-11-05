@@ -73,7 +73,7 @@ def built(name):
     entity = load(ASSETS / f"entities/vessel/{name}.json")
     integrity = entity["behaviorConfigs"]["roughseas:vesselintegrity"]
     return {"hull_kg": entity["weight"], "waterplane": integrity.get("waterplaneSquareMetres"),
-            "beam_metres": entity["behaviorConfigs"]["roughseas:seaforces"]["beamMetres"], "depth_metres": integrity["depthMetres"]}
+            "beam_metres": integrity["hullBoxMetres"]["to"][2] - integrity["hullBoxMetres"]["from"][2], "depth_metres": integrity["depthMetres"]}
 
 
 def stands(name, floor_metres, form="ellipse", outboard=(0, 0), **given):

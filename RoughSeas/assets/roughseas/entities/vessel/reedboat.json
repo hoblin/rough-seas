@@ -109,7 +109,6 @@
             ]
         },
         "roughseas:seaforces": {
-            "beamMetres": 0.36,
             "mastMetres": 0,
             "windageSquareMetres": 0.3,
             "heave": 0.8,
@@ -117,7 +116,6 @@
             "rollResponse": 1.2,
             "pitchResponse": 1.2,
             "sources": {
-                "beamMetres": "Her two 18 cm bundles side by side",
                 "windageSquareMetres": "Her 3 m length over a freeboard of about 5 cm with her rider aboard, and her two raised ends",
                 "heave": "Reed is light and rises with the crest",
                 "capsizeBreakerMetres": "Huanchaco's caballitos are paddled out through the surf and ride its breakers in (festival.si.edu): the low float slips under a breaker, which rolls her only once it stands as high as her rider sits, about 0.9 m",
