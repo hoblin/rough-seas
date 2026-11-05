@@ -56,6 +56,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private SeaClock.Watch watch = null!;
     private HullModel model = null!;
     private Flotation flotation = null!;
+    private HashSet<long> awaitedRiders = [];
     private HullBuild build;
     private VesselPart[] parts = [];
     private double impactCapacity;
@@ -175,6 +176,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         waterplaneSquareMetres = attributes["waterplaneSquareMetres"].AsDouble();
         flotation = new Flotation(depthMetres, waterplaneSquareMetres, build.Litres);
         ReferenceKg = properties.Weight + vessels.Mass.CrewKg;
+        awaitedRiders = VesselMass.Recorded(entity).ToHashSet();
         referenceDraft = flotation.Float(new Aboard(ReferenceKg, 0, 0, 0, 0, 0), false).DraftMetres;
         impact = new Impact(attributes["minImpactSpeed"].AsDouble(1), InvulnerableMs);
         rams = new Rams(attributes["minImpactSpeed"].AsDouble(1));
@@ -600,7 +602,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         var hold = Hold;
         if (hold != null) Reform(hold);
         inWater = entity.Swimming || FluidBelow().IsLiquid();
-        Aboard = vessels.Mass.Of(entity, build.WithUncut(uncutLitres).Kilograms + model.SoakedKg);
+        awaitedRiders.RemoveWhere(id => entity.World.GetEntityById(id) != null);
+        Aboard = vessels.Mass.Of(entity, build.WithUncut(uncutLitres).Kilograms + model.SoakedKg, awaitedRiders.Count);
         var afloat = flotation.Float(Aboard, hold != null && (hold.Litres >= hold.CapacityLitres || Afloat.Sunk && inWater));
         Afloat = inWater ? afloat : afloat with { Sunk = false };
         if (entity.World.Side != EnumAppSide.Server || !HasDraft || !inWater) return;

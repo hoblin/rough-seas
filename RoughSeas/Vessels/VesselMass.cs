@@ -18,25 +18,27 @@ public class VesselMass
     public double CrewKg;
     public Dictionary<string, double> ContainerKg = [];
 
-    public Aboard Of(Entity vessel, double hullKg)
+    public Aboard Of(Entity vessel, double hullKg, int awaitedRiders = 0)
     {
         var accessories = vessel.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory ?? Enumerable.Empty<ItemSlot>();
         var hold = vessel.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault();
         double water = (hold?.Litres ?? 0) * SeawaterKgPerLitre;
         double fill = hold is { CapacityLitres: > 0 } ? hold.Litres / hold.CapacityLitres : 0;
         var passengers = (vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []).Select(seat => seat.Passenger).OfType<Entity>().ToList();
-        // Vanilla seats a saved rider only once their entity loads, after her first weighing.
-        int unloaded = Recorded(vessel).Count(id => passengers.All(passenger => passenger.EntityId != id));
         return new Aboard(
             hullKg,
-            passengers.Sum(passenger => passenger.Properties.Weight) + unloaded * (CrewKg - PlayerGearKg),
-            passengers.Sum(Kit) + unloaded * PlayerGearKg,
+            passengers.Sum(passenger => passenger.Properties.Weight) + awaitedRiders * (CrewKg - PlayerGearKg),
+            passengers.Sum(Kit) + awaitedRiders * PlayerGearKg,
             accessories.Sum(slot => slot.Itemstack is { } stack ? Container(stack) : 0),
             water,
             water * fill);
     }
 
-    private static IEnumerable<long> Recorded(Entity vessel) =>
+    /// <summary>
+    /// The riders her saved seats name. Read as she initialises: vanilla rewrites the record from the seats as each saved
+    /// rider is seated again, dropping those whose entities haven't loaded yet.
+    /// </summary>
+    public static IEnumerable<long> Recorded(Entity vessel) =>
         vessel.WatchedAttributes["seatdata"] is TreeAttribute seats
             ? seats.Values.OfType<TreeAttribute>().Select(seat => seat.GetLong("passenger")).Where(id => id != 0)
             : [];
