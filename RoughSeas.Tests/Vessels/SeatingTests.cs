@@ -23,7 +23,7 @@ public class SeatingTests
         var seating = new Seating(SitDown, StandUp);
 
         Assert.Equal(75, Kg(seating.Bear([Paddler], 10)));
-        Assert.True(seating.Settled([Paddler.Id], 10));
+        Assert.True(seating.Settled([Paddler.Id]));
     }
 
     [Fact]
@@ -33,9 +33,9 @@ public class SeatingTests
 
         Assert.Equal(0, Kg(seating.Bear([Paddler], 1)), 6);
         Assert.Equal(37.5, Kg(seating.Bear([Paddler], 1 + SitDown / 2)), 6);
-        Assert.False(seating.Settled([Paddler.Id], 1 + SitDown / 2));
-        Assert.Equal(75, Kg(seating.Bear([Paddler], 1 + SitDown)), 6);
-        Assert.True(seating.Settled([Paddler.Id], 1.1 + SitDown));
+        Assert.False(seating.Settled([Paddler.Id]));
+        Assert.Equal(75, Kg(seating.Bear([Paddler], 1.1 + SitDown)), 6);
+        Assert.True(seating.Settled([Paddler.Id]));
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public class SeatingTests
         Assert.Equal(75, Kg(seating.Bear([], 1)), 6);
         Assert.Equal(37.5, Kg(seating.Bear([], 1 + StandUp / 2)), 6);
         Assert.Empty(seating.Bear([], 1 + StandUp));
-        Assert.True(seating.Settled([], 1 + StandUp));
+        Assert.True(seating.Settled([]));
     }
 
     [Fact]
@@ -67,7 +67,36 @@ public class SeatingTests
     {
         var seating = Empty();
 
-        Assert.False(seating.Settled([Paddler.Id], 0));
+        Assert.False(seating.Settled([Paddler.Id]));
+    }
+
+    [Fact]
+    public void SheIsUnsettledUntilAWeighingHasTakenTheWholeWeight()
+    {
+        var seating = Empty();
+        seating.Bear([Paddler], 1);
+        seating.Bear([Paddler], SitDown);
+
+        Assert.False(seating.Settled([Paddler.Id]));
+    }
+
+    [Fact]
+    public void SomeoneJustSeatedIsNotYetSettled()
+    {
+        var seating = Empty();
+        seating.Bear([Paddler], 1);
+
+        Assert.False(seating.Settled([Paddler.Id]));
+    }
+
+    [Fact]
+    public void SomeoneJustUpIsNotYetSettled()
+    {
+        var seating = new Seating(SitDown, StandUp);
+        seating.Bear([Paddler], 0);
+        seating.Bear([], 1);
+
+        Assert.False(seating.Settled([]));
     }
 
     [Fact]

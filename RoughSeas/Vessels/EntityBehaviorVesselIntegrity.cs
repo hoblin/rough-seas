@@ -606,8 +606,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         (wasSunk, wasAwash) = (Afloat.Sunk, awash);
     }
 
-    private bool Seated() =>
-        seating.Settled(VesselMass.Passengers(entity).Select(passenger => passenger.EntityId), entity.World.ElapsedMilliseconds / 1000.0);
+    private bool Seated() => seating.Settled(VesselMass.Passengers(entity).Select(passenger => passenger.EntityId));
 
     private void Reform(IVesselHold hold, bool rebuilt = false)
     {

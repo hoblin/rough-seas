@@ -8,11 +8,11 @@ namespace RoughSeas.Vessels;
 public class Seating(double sitDownSeconds, double standUpSeconds)
 {
     private readonly Dictionary<long, Sitter> sitters = [];
-    private bool weighed;
+    private double? weighedAt;
 
-    public bool Settled(IEnumerable<long> seated, double seconds) =>
-        sitters.Values.All(sitter => sitter.Share(seconds, sitDownSeconds, standUpSeconds) is 0 or 1) &&
-        seated.ToHashSet().SetEquals(sitters.Where(sitter => sitter.Value.Seated).Select(sitter => sitter.Key));
+    public bool Settled(IEnumerable<long> seated) =>
+        sitters.Values.All(sitter => sitter.Seated && sitter.Share(weighedAt ?? 0, sitDownSeconds, standUpSeconds) == 1) &&
+        seated.ToHashSet().SetEquals(sitters.Keys);
 
     public IReadOnlyList<Person> Bear(IEnumerable<Person> seated, double seconds)
     {
@@ -25,9 +25,9 @@ public class Seating(double sitDownSeconds, double standUpSeconds)
         {
             sitters[person.Id] = sitters.TryGetValue(person.Id, out var sitter)
                 ? sitter.SitDown(person, seconds, sitDownSeconds, standUpSeconds)
-                : new Sitter(person, true, weighed ? seconds : double.NegativeInfinity);
+                : new Sitter(person, true, weighedAt.HasValue ? seconds : double.NegativeInfinity);
         }
-        weighed = true;
+        weighedAt = seconds;
 
         var borne = new List<Person>();
         foreach (var (id, sitter) in sitters.ToList())
