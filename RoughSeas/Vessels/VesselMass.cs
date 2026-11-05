@@ -16,18 +16,26 @@ public class VesselMass
     public double ArmorKgPerWalkSpeed;
     public double CrewKg;
     public Dictionary<string, double> ContainerKg = [];
+    public double SitDownSeconds;
+    public double StandUpSeconds;
 
-    public Aboard Of(Entity vessel, double hullKg)
+    public Seating Seating() => new(SitDownSeconds, StandUpSeconds);
+
+    public static IEnumerable<Entity> Passengers(Entity vessel) =>
+        (vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []).Select(seat => seat.Passenger).OfType<Entity>();
+
+    public Aboard Of(Entity vessel, double hullKg, Seating? seating = null)
     {
-        var seats = vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];
         var accessories = vessel.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory ?? Enumerable.Empty<ItemSlot>();
         var hold = vessel.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault();
         double water = (hold?.Litres ?? 0) * SeawaterKgPerLitre;
         double fill = hold is { CapacityLitres: > 0 } ? hold.Litres / hold.CapacityLitres : 0;
+        var seated = Passengers(vessel).Select(passenger => new Person(passenger.EntityId, passenger.Properties.Weight, Kit(passenger)));
+        var people = seating?.Bear(seated, vessel.World.ElapsedMilliseconds / 1000.0) ?? seated.ToList();
         return new Aboard(
             hullKg,
-            seats.Sum(seat => seat.Passenger?.Properties.Weight ?? 0),
-            seats.Sum(seat => seat.Passenger is { } passenger ? Kit(passenger) : 0),
+            people.Sum(person => person.BodyKg),
+            people.Sum(person => person.KitKg),
             accessories.Sum(slot => slot.Itemstack is { } stack ? Container(stack) : 0),
             water,
             water * fill);

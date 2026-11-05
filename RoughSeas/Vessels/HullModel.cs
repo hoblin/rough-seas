@@ -108,7 +108,7 @@ public interface IMendable
 }
 
 /// <summary>
-/// How a vessel floats now, from its full mass by Archimedes; refreshed twice a second on both sides. Without
+/// How a vessel floats now, from its full mass by Archimedes; refreshed twice a second on both sides, and every tick while someone boards or leaves. Without
 /// <see cref="HasDraft"/> she floats as vanilla draws her and never sinks.
 /// </summary>
 public interface IBuoyant
