@@ -39,6 +39,10 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
 
     public double OffMetres => Rigging?.FloatOffMetres ?? 0;
 
+    public double WaterplaneSquareMetres => Rigging?.FloatWaterplaneSquareMetres ?? 0;
+
+    public double LengthMetres => Rigging?.FloatLengthMetres ?? 0;
+
     public float Condition => lashing.Condition;
 
     public event Action<Knock>? Struck;

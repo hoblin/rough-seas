@@ -6,11 +6,5 @@
         "basket": 2,
         "crate": 12,
         "chest": 20
-    },
-    "sitDownSeconds": 1.55,
-    "standUpSeconds": 1.44,
-    "sources": {
-        "sitDownSeconds": "A person's weight comes onto a vessel as they sit down in her: stand-to-sit takes 1.55 ± 0.33 s in young healthy adults (Wairagkar et al. 2021, A novel approach for modelling and classifying sit-to-stand kinematics using inertial sensors, arXiv:2107.06859)",
-        "standUpSeconds": "And leaves her as they stand up: sit-to-stand takes 1.44 ± 0.36 s in the same study"
     }
 }

@@ -108,7 +108,7 @@ public interface IMendable
 }
 
 /// <summary>
-/// How a vessel floats now, from its full mass by Archimedes; refreshed twice a second on both sides, and every tick while someone boards or leaves. Without
+/// How a vessel floats now, from its full mass by Archimedes; refreshed twice a second on both sides. Without
 /// <see cref="HasDraft"/> she floats as vanilla draws her and never sinks.
 /// </summary>
 public interface IBuoyant
@@ -119,7 +119,14 @@ public interface IBuoyant
 
     Afloat Afloat { get; }
 
-    double SettlingMetres { get; }
+    /// <summary>Her draft at her reference build with one rider: where vanilla's drawn waterline places her shape.</summary>
+    double ReferenceDraftMetres { get; }
+
+    /// <summary>The seawater she displaces for each metre she sinks.</summary>
+    double KgPerMetre { get; }
+
+    /// <summary>The water she drags with her as she heaves (<see cref="HeaveAddedMass"/>).</summary>
+    double AddedKg { get; }
 
     Aboard Aboard { get; }
 

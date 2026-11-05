@@ -17,6 +17,8 @@ public sealed class Flotation(double depthMetres, double waterplaneSquareMetres,
 
     public double BuoyantKg => materialLitres * VesselMass.SeawaterKgPerLitre;
 
+    public double KgPerMetre => HasHold ? VesselMass.SeawaterKgPerLitre * LitresPerCubicMetre * waterplaneSquareMetres : BuoyantKg / depthMetres;
+
     public Afloat Float(Aboard aboard, bool flooded)
     {
         if (depthMetres <= 0) return default;
