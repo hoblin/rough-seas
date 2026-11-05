@@ -1,3 +1,4 @@
+import math
 from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools, waterline_metres
 from stroke import find, player_patch, seat
 from physics import afloat, kilograms, stands
@@ -27,6 +28,7 @@ BARE_TOP = LOG - BARK_THICKNESS
 CHAR_LIFT = 0.02
 CLAY = 0.5
 CLAY_PIECE = 12
+CLAY_BALL_VOXELS = 25
 GRASS = 0.3
 TUFTS = 14
 FIREWOOD = 4
@@ -253,6 +255,12 @@ def pieces(span, length):
     return [(a + step * k, a + step * (k + 1)) for k in range(count)]
 
 
+def balls(span, width):
+    a, b = span
+    count = math.ceil((b - a) * width / CLAY_BALL_VOXELS)
+    return [(a + (b - a) * k / count, a + (b - a) * (k + 1) / count) for k in range(count)]
+
+
 def floor_at(n, x):
     return next(height for x0, x1, height, _ in bed(n) if x0 <= x <= x1)
 
@@ -316,14 +324,27 @@ def clay(n):
         port = [box(f"Clay0Port{i}", (x0, BARE_TOP, CENTRE - BARE), (x1, BARE_TOP + CLAY, CENTRE - BARE + wall(0)), "clay",
                     skip=("west",) if i == 1 else ("east",) if x1 >= HOLLOW[1] else ()) for i, (x0, x1) in enumerate(pieces(HOLLOW, CLAY_PIECE), 1)]
         starboard = [mirrored(element, "Port", "Starboard") for element in port]
-        caps = {name: [box(f"Clay0{name}", (x0, BARE_TOP, CENTRE - BARE), (x1, BARE_TOP + CLAY, CENTRE + BARE), "clay")]
+        caps = {name: [box(f"Clay0{name}{k}", (a, BARE_TOP, CENTRE - BARE), (b, BARE_TOP + CLAY, CENTRE + BARE), "clay")
+                       for k, (a, b) in enumerate(balls((x0, x1), 2 * BARE), 1)]
                 for name, (x0, x1) in (("Stern", (ROW[0], HOLLOW[0])), ("Bow", (HOLLOW[1], ROW[1])))}
     else:
         rail = hewing(n).rail(f"Clay{n}", "clay", height=CLAY, thickness=wall(n))
-        port, starboard = (joined([element for element in rail if side in element["name"]]) for side in ("Port", "Starboard"))
-        caps = {name: [box(f"Clay{n}{name}{k}", (x0, top(n), CENTRE - upper), (x1, top(n) + CLAY, CENTRE + upper), "clay")
-                       for k, (x0, x1, upper, _, _) in enumerate(slices, 1)] for name, slices in ends_at(n).items()}
+        port, starboard = (joined(balled([element for element in rail if side in element["name"]])) for side in ("Port", "Starboard"))
+        caps = {name: [box(f"Clay{n}{name}{k}x{i}", (a, top(n), CENTRE - upper), (b, top(n) + CLAY, CENTRE + upper), "clay")
+                       for k, (x0, x1, upper, _, _) in enumerate(slices, 1)
+                       for i, (a, b) in enumerate(balls((x0, x1), 2 * upper), 1)] for name, slices in ends_at(n).items()}
     return [*reversed(caps["Stern"]), *port, *caps["Bow"], *reversed(starboard)]
+
+
+def balled(run):
+    pieces_of = []
+    for plank in run:
+        board = plank["children"][0]
+        (x0, y0, z0), (x1, y1, z1) = board["from"], board["to"]
+        for i, (a, b) in enumerate(balls((x0, x1), abs(z1 - z0))):
+            piece = box(f"{board['name']}x{i + 1}", (a, y0, z0), (b, y1, z1), "clay", origin=board.get("rotationOrigin", (0, 0, 0)))
+            pieces_of.append(dict(plank, name=f"{board['name']}x{i + 1}Frame", children=[piece]))
+    return pieces_of
 
 
 def joined(run):
