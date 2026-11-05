@@ -82,6 +82,21 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void SheCollidesInSquarePiecesAsManyAtEveryHewingAsFinished()
+    {
+        var finished = Entity["behaviorConfigs"]!["passivephysicsmultibox"]!["collisionBoxes"]!;
+        var hewings = Entity["behaviorConfigs"]![EntityBehaviorBurnout.Code]!["collisionBoxesByHewing"]!;
+
+        Assert.Equal(Config.Hollowings, hewings.Count());
+        Assert.All(hewings.Append(finished), boxes =>
+        {
+            Assert.Equal(finished.Count(), boxes.Count());
+            Assert.All(boxes, piece => Assert.InRange(
+                (piece.Value<double>("z2") - piece.Value<double>("z1")) / (piece.Value<double>("x2") - piece.Value<double>("x1")), 0.9, 1.1));
+        });
+    }
+
+    [Fact]
     public void EveryHewnSectionClosesAgainstTheCharOfTheNext()
     {
         int sections = Config.HewnSectionsMetres.Length;
