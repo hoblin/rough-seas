@@ -420,7 +420,10 @@ def build(target):
     hull_alone, measured = report(hull, finished_float, at_draft)
     across = bounds(shell, finished_float)
     spread = {"behaviorConfigs": {"roughseas:seaforces": units.both("beam", units.metres(across[1][2] - across[0][2]))}}
-    lashing = {"behaviorConfigs": {"roughseas:floatlashing": {"impactCapacity": round(LASHING_JOULES_PER_METRE * lashing_metres)}}}
+    envelope, hold, _ = volumes()
+    pieces = next(drop["quantity"]["avg"] for drop in read("dugout")["behaviorConfigs"]["roughseas:vesselintegrity"]["wreckage"] if drop["code"] == "game:firewood")
+    lashing = {"behaviorConfigs": {"roughseas:floatlashing": {"impactCapacity": round(LASHING_JOULES_PER_METRE * lashing_metres),
+                                                              "firewoodLitres": round((envelope - hold) / pieces, 1)}}}
     record("outrigger", merged(measured, rigging(raised_litres), spread, bilge_levels(shape.elements), lashing))
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
