@@ -68,7 +68,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         get
         {
             var beam = BeamMetres;
-            if (beam != dryBeamMetres) (dry, dryBeamMetres) = (Seaworthiness.From(config, beam), beam);
+            if (beam != dryBeamMetres) (dry, dryBeamMetres) = (Seaworthiness.From(config, beam, 2 * (hull?.Shape.HalfLengthMetres ?? 0)), beam);
             return dry;
         }
     }

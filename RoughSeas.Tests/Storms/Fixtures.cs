@@ -42,7 +42,7 @@ public static class Fixtures
 
     public static Vessel Sailboat => Vessel("boat-sailed");
 
-    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel));
+    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel), 2 * Shape(vessel).HalfLengthMetres);
 
     public static double BeamMetres(string vessel) => (double?)SeaForces(vessel)["beamMetres"] ?? 2 * Shape(vessel).HalfBeamMetres;
 

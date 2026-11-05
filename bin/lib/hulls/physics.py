@@ -98,7 +98,7 @@ def hitbox_height(name):
     return load(ASSETS / f"entities/vessel/{name}.json")["hitboxSize"]["y"]
 
 
-def afloat(name, hull_kg, depth, hold=0, deck=0, waterplane=None, solid_litres=None):
+def afloat(name, hull_kg, depth, hold=0, deck=0, waterplane=None, solid_litres=None, hitbox_metres=None):
     """Her weight, the depth and waterplane she floats by, her hold and the offset vanilla floats her at with one
     aboard, as her entity takes them. A solid hull is pressed down through her depth as her material is."""
     crewed = hull_kg + MASS["crewKg"]
@@ -118,7 +118,7 @@ def afloat(name, hull_kg, depth, hold=0, deck=0, waterplane=None, solid_litres=N
         print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth:.4g} m, hold {hold:.0f} L, deck {deck:.2f} m², "
               f"waterplane {waterplane:.2f} m²{' (full hold and one aboard bring her gunwale to the water)' if by_full_hold else ''}, "
               f"draft {draft:.3f} m with one aboard", end="")
-    offset = hitbox_height(name) + SWIM_LINE_METRES - draft
+    offset = (hitbox_height(name) if hitbox_metres is None else hitbox_metres) + SWIM_LINE_METRES - draft
     print(f", swimmingOffsetY {offset:.3f}")
     return {"weight": round(hull_kg, 1), "attributes": {"swimmingOffsetY": round(offset, 3)}, "behaviorConfigs": configs}
 
