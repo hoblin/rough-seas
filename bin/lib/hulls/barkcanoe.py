@@ -7,7 +7,7 @@ from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, kilograms, 
 from fit import APART, TOLERANCE, lined as lined_section
 import units
 from entity import merged, record
-from shape import BILGE, Hull, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
+from shape import BILGE, Hull, hull_box, Shape, box, clear_of, corners_of, group, path, plank, renamed, rested, span, stages, widest
 from transform import add, scale, sub, unit
 from wounds import wound
 
@@ -342,12 +342,14 @@ def build(path_):
     shape.within(Hull("Sheathing", lined(hull.stations, SKIN + APART), CENTRE, SHEATHING, "frame", "frame").outline("the sheathing"), laths[2])
     shape.within(hull.outline("the sheathing's inside", inset=SKIN + SHEATHING + APART), laths[3])
     shape.add(hull.hide_water(5.7), hull.bilge(5.7))
-    shape.keep("Hull", "FrontSeat", "BackSeat", "OarStorage")
     *rising, finished = skin["children"]
+    box, measured = hull_box(finished)
+    shape.add(box)
+    shape.keep("FrontSeat", "BackSeat", "OarStorage")
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
           lining=SHEATHING, framing=([laths[3]], "frame"))
     shape.write()
-    record("barkcanoe", report(hull, laths))
+    record("barkcanoe", merged(report(hull, laths), measured))
     at = seat(shape, "BackSeat")
     line = waterline("barkcanoe")
     poler = CENTRE_THWART + POLER_AFT

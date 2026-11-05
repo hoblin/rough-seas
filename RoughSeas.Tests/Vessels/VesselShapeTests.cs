@@ -220,7 +220,7 @@ public class VesselShapeTests
         var (entity, _, shape) = Load(vessel);
         if (Damage(entity).Textures.Length == 0) return;
 
-        var marked = HullDamage.Places(Resolved(shape), HullShapeOf(entity, shape), Damage(entity).Textures)
+        var marked = HullDamage.Places(Resolved(shape), HullShapeOf(entity), Damage(entity).Textures)
             .Select(placed => placed.Place).Distinct();
 
         Assert.Equal(HullShape.Places.Order(), marked.Order());
@@ -233,7 +233,7 @@ public class VesselShapeTests
         var (entity, _, shape) = Load(vessel);
         if (!CracksByPlace(entity)) return;
 
-        var marks = HullDamage.Places(Resolved(shape), HullShapeOf(entity, shape), ["breach"])
+        var marks = HullDamage.Places(Resolved(shape), HullShapeOf(entity), ["breach"])
             .ToDictionary(placed => placed.Element.Name, placed => placed.Place);
 
         Assert.All(HullShape.Places, place => Assert.Equal(place, marks[$"Wound{place}Scratchedx2"]));
@@ -304,12 +304,10 @@ public class VesselShapeTests
     private static bool CracksByPlace(JToken entity) =>
         entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!.Value<string>("model") is null or "cracking";
 
-    private static HullShape HullShapeOf(JToken entity, JToken shape)
+    private static HullShape HullShapeOf(JToken entity)
     {
-        var hull = Elements(shape["elements"]!).Single(element => element.Value<string>("name") == "Hull");
-        var box = entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!["hullBox"]?.ToObject<double[]>()
-            ?? hull["from"]!.ToObject<double[]>()!.Concat(hull["to"]!.ToObject<double[]>()!).ToArray();
-        return HullShape.FromVoxels(box[..3], box[3..]);
+        var box = entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!["hullBoxMetres"]!;
+        return HullShape.FromBox(box["from"]!.ToObject<double[]>()!, box["to"]!.ToObject<double[]>()!);
     }
 
     private static (JToken Entity, JToken Item, JToken Shape) Load(string vessel)

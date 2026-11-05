@@ -3951,11 +3951,11 @@
   },
   {
    "name": "Hull",
-   "from": [ -16, 0, 4.8 ],
-   "to": [ 32, 4, 11.2 ],
+   "from": [ -16.591, 0.144, 5.038 ],
+   "to": [ 32.591, 8.338, 10.962 ],
    "faces": {},
    "attachmentpoints": [
-    { "code": "HullAP", "posX": "24.0", "posY": "0", "posZ": "3.2", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+    { "code": "HullAP", "posX": "24.591", "posY": "0", "posZ": "2.962", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
   },
   {

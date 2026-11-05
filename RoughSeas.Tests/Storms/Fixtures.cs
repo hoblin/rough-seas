@@ -75,10 +75,12 @@ public static class Fixtures
 
     public static HullShape Shape(string vessel)
     {
-        var hull = vessel.StartsWith("boat-")
-            ? JArray.Parse(Shipped("vessels-hull-boxes.json")).Single(patch => (string?)patch["file"] == $"game:shapes/entity/nonliving/boat/{vessel[5..]}.json")["value"]!
-            : Elements(Shipped(Path.Combine("shapes", (string)Entity(vessel)["client"]!["shape"]!["base"]!.ToString().Split('/').Last() + ".json")))
-                .Single(element => element["attachmentpoints"]?.Any(point => (string?)point["code"] == "HullAP") == true);
+        if (!vessel.StartsWith("boat-"))
+        {
+            var box = IntegrityConfig(vessel)["hullBoxMetres"]!;
+            return HullShape.FromBox(box["from"]!.ToObject<double[]>()!, box["to"]!.ToObject<double[]>()!);
+        }
+        var hull = JArray.Parse(Shipped("vessels-hull-boxes.json")).Single(patch => (string?)patch["file"] == $"game:shapes/entity/nonliving/boat/{vessel[5..]}.json")["value"]!;
         return HullShape.FromVoxels(hull["from"]!.ToObject<double[]>()!, hull["to"]!.ToObject<double[]>()!);
     }
 

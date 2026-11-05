@@ -40,14 +40,18 @@ public readonly record struct HullShape(double HalfLengthMetres, double HalfBeam
     private const double MarkReach = 0.7;
     private const double Stagger = 0.15;
     private const double SideReach = 0.9;
+    private const double ModelOriginMetres = 0.5;
 
     public static readonly HullPlace[] Places = Enum.GetValues<HullPlace>();
 
-    public static HullShape FromBox(double fromX, double fromY, double fromZ, double toX, double toY, double toZ) => new(
-        (toX - fromX) / 2, (toZ - fromZ) / 2, toY - fromY, (fromX + toX) / 2 - 0.5, (fromZ + toZ) / 2 - 0.5, fromY);
+    public static HullShape FromBox(double[] fromMetres, double[] toMetres) => new(
+        (toMetres[0] - fromMetres[0]) / 2, (toMetres[2] - fromMetres[2]) / 2, toMetres[1] - fromMetres[1],
+        (fromMetres[0] + toMetres[0]) / 2, (fromMetres[2] + toMetres[2]) / 2, fromMetres[1]);
 
-    public static HullShape FromVoxels(double[] from, double[] to) =>
-        FromBox(Voxels.ToMetres(from[0]), Voxels.ToMetres(from[1]), Voxels.ToMetres(from[2]), Voxels.ToMetres(to[0]), Voxels.ToMetres(to[1]), Voxels.ToMetres(to[2]));
+    public static HullShape FromVoxels(double[] fromVoxels, double[] toVoxels) => FromBox(FromModel(fromVoxels), FromModel(toVoxels));
+
+    private static double[] FromModel(double[] voxels) =>
+        [Voxels.ToMetres(voxels[0]) - ModelOriginMetres, Voxels.ToMetres(voxels[1]), Voxels.ToMetres(voxels[2]) - ModelOriginMetres];
 
     public HullPlace At(double along, double height, double across)
     {

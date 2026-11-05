@@ -9,7 +9,7 @@ from held import PADDLE, poling, sculling, tools, waterline
 from stroke import player_patch, seat
 import units
 from entity import merged, record
-from shape import BILGE, Shape, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
+from shape import BILGE, Shape, hull_box, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
 from wounds import wound
 
 CENTRE = 8
@@ -276,10 +276,12 @@ def build(path_):
     shape.together(bent, binding, gunwale, hide, laced)
     shape.add(group("hideWater", (0, 0, 0), (0, 0, 0), surface("hideWater", DEPTH - 0.5)),
               bilge(HIDE + 2 * LATH_THICKNESS, DEPTH - 0.5, lambda prefix, height: surface(prefix, height, "bilge")))
-    shape.keep("Hull", "FrontSeat", "OarStorage")
+    box, measured = hull_box(hide)
+    shape.add(box)
+    shape.keep("FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
-    record("coracle", report(flat, gunwale, hide_area(pieces)))
+    record("coracle", merged(report(flat, gunwale, hide_area(pieces)), measured))
     at = seat(shape, "FrontSeat")
     line = waterline("coracle")
     floor = HIDE + 2 * LATH_THICKNESS

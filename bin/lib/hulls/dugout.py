@@ -3,8 +3,8 @@ from stroke import player_patch, seat
 from physics import afloat, kilograms, stands
 from fit import APART, Swept
 import units
-from entity import record
-from shape import BILGE, Hull, Shape, box, breadth, group, water_plane
+from entity import merged, record
+from shape import BILGE, Hull, hull_box, Shape, box, breadth, group, water_plane
 from wounds import wound
 
 LOG = 16
@@ -290,14 +290,6 @@ def deck():
     return units.metres(area, 2)
 
 
-def hull_box():
-    stern, bow = ENDS["Stern"][-1][0], ENDS["Bow"][-1][1]
-    half = PROFILE[-1][0]
-    return {"name": "Hull", "from": [stern, 0, CENTRE - half], "to": [bow, RIM + 0.5, CENTRE + half], "faces": {},
-            "attachmentpoints": [{"code": "HullAP", "posX": str(8 - stern), "posY": "0", "posZ": str(half),
-                                  "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]}
-
-
 def build(path):
     shape = Shape(path, {WOOD: "game:block/wood/debarked/oak", BARK: "game:block/wood/bark/oak-h", RINGS: "game:block/wood/treetrunk/oak",
                          "bilge": BILGE, "char": "game:block/coal/charcoal", "clay": "game:block/clay/blueclay",
@@ -309,13 +301,14 @@ def build(path):
     shape.add(blank, *rest)
     hewn(shape, hull, shell, blank, rest)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
-    shape.elements.append(hull_box())
+    box, measured = hull_box(shell)
+    shape.add(box)
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
     wound(shape, [("", [shell], WOOD), *((level["name"], [level], BARK if n == 0 else WOOD) for n, level in enumerate(blank["children"]))])
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
-    record("dugout", afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck()))
+    record("dugout", merged(afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck()), measured))
     shape.write()
     crew_tools(shape, "dugout", ("Shell",))
 

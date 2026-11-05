@@ -2636,8 +2636,8 @@
          "children": [
           {
            "name": "WoundPortQuarterScratchedx1",
-           "from": [ 5.477, 0.758, -0.06 ],
-           "to": [ 6.341, 0.858, 0.86 ],
+           "from": [ 5.472, 0.758, -0.06 ],
+           "to": [ 6.336, 0.858, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 8.5, 5, 9.364, 5.1 ] },
             "east": { "texture": "#breach", "uv": [ 7.5, 14.5, 8.42, 14.6 ] },
@@ -2649,8 +2649,8 @@
           },
           {
            "name": "WoundPortQuarterScratchedx2",
-           "from": [ 6.341, 0.636, -0.06 ],
-           "to": [ 7.205, 0.736, 0.86 ],
+           "from": [ 6.336, 0.636, -0.06 ],
+           "to": [ 7.2, 0.736, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 14.5, 1.5, 15.364, 1.6 ] },
             "east": { "texture": "#breach", "uv": [ 3, 9.5, 3.92, 9.6 ] },
@@ -2662,8 +2662,8 @@
           },
           {
            "name": "WoundPortQuarterScratchedx3",
-           "from": [ 7.205, 0.994, -0.06 ],
-           "to": [ 8.069, 1.094, 0.86 ],
+           "from": [ 7.2, 0.994, -0.06 ],
+           "to": [ 8.064, 1.094, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11.5, 13.5, 12.364, 13.6 ] },
             "east": { "texture": "#breach", "uv": [ 5, 6.5, 5.92, 6.6 ] },
@@ -2684,8 +2684,8 @@
          "children": [
           {
            "name": "WoundPortQuarterCrackedx1",
-           "from": [ 4.181, 1.03, -0.06 ],
-           "to": [ 5.909, 1.23, 0.86 ],
+           "from": [ 4.176, 1.03, -0.06 ],
+           "to": [ 5.904, 1.23, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 12.5, 14.5, 14.228, 14.7 ] },
             "east": { "texture": "#breach", "uv": [ 4.5, 4, 5.42, 4.2 ] },
@@ -2697,8 +2697,8 @@
           },
           {
            "name": "WoundPortQuarterCrackedx2",
-           "from": [ 5.909, 0.749, -0.06 ],
-           "to": [ 7.637, 0.949, 0.86 ],
+           "from": [ 5.904, 0.749, -0.06 ],
+           "to": [ 7.632, 0.949, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 5, 1.5, 6.728, 1.7 ] },
             "east": { "texture": "#breach", "uv": [ 9, 3.5, 9.92, 3.7 ] },
@@ -2710,8 +2710,8 @@
           },
           {
            "name": "WoundPortQuarterCrackedx3",
-           "from": [ 7.637, 0.637, -0.06 ],
-           "to": [ 9.365, 0.837, 0.86 ],
+           "from": [ 7.632, 0.637, -0.06 ],
+           "to": [ 9.36, 0.837, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 1, 10, 2.728, 10.2 ] },
             "east": { "texture": "#breach", "uv": [ 12, 4.5, 12.92, 4.7 ] },
@@ -3304,8 +3304,8 @@
          "children": [
           {
            "name": "WoundStarboardBowScratchedx1",
-           "from": [ 1.839, 0.967, -0.06 ],
-           "to": [ 2.703, 1.067, 0.86 ],
+           "from": [ 1.845, 0.967, -0.06 ],
+           "to": [ 2.709, 1.067, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 1.5, 8.5, 2.364, 8.6 ] },
             "east": { "texture": "#breach", "uv": [ 7, 1, 7.92, 1.1 ] },
@@ -3317,8 +3317,8 @@
           },
           {
            "name": "WoundStarboardBowScratchedx2",
-           "from": [ 2.703, 0.538, -0.06 ],
-           "to": [ 3.567, 0.638, 0.86 ],
+           "from": [ 2.709, 0.538, -0.06 ],
+           "to": [ 3.573, 0.638, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 5.5, 1.5, 6.364, 1.6 ] },
             "east": { "texture": "#breach", "uv": [ 3.5, 8, 4.42, 8.1 ] },
@@ -3330,8 +3330,8 @@
           },
           {
            "name": "WoundStarboardBowScratchedx3",
-           "from": [ 3.567, 0.58, -0.06 ],
-           "to": [ 4.431, 0.68, 0.86 ],
+           "from": [ 3.573, 0.58, -0.06 ],
+           "to": [ 4.437, 0.68, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 10, 3.5, 10.864, 3.6 ] },
             "east": { "texture": "#breach", "uv": [ 7, 1, 7.92, 1.1 ] },
@@ -3352,8 +3352,8 @@
          "children": [
           {
            "name": "WoundStarboardBowCrackedx1",
-           "from": [ 0.543, 1.001, -0.06 ],
-           "to": [ 2.271, 1.201, 0.86 ],
+           "from": [ 0.549, 1.001, -0.06 ],
+           "to": [ 2.277, 1.201, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11.5, 9.5, 13.228, 9.7 ] },
             "east": { "texture": "#breach", "uv": [ 4.5, 14.5, 5.42, 14.7 ] },
@@ -3365,8 +3365,8 @@
           },
           {
            "name": "WoundStarboardBowCrackedx2",
-           "from": [ 2.271, 0.86, -0.06 ],
-           "to": [ 3.999, 1.06, 0.86 ],
+           "from": [ 2.277, 0.86, -0.06 ],
+           "to": [ 4.005, 1.06, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3.5, 6, 5.228, 6.2 ] },
             "east": { "texture": "#breach", "uv": [ 2, 12.5, 2.92, 12.7 ] },
@@ -3378,8 +3378,8 @@
           },
           {
            "name": "WoundStarboardBowCrackedx3",
-           "from": [ 3.999, 0.693, -0.06 ],
-           "to": [ 5.727, 0.893, 0.86 ],
+           "from": [ 4.005, 0.693, -0.06 ],
+           "to": [ 5.733, 0.893, 0.86 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 13, 10.5, 14.728, 10.7 ] },
             "east": { "texture": "#breach", "uv": [ 11, 7.5, 11.92, 7.7 ] },
@@ -7832,8 +7832,8 @@
       },
       {
        "name": "WoundStarboardBowBlank1",
-       "from": [ -15, 4.539, 0.356 ],
-       "to": [ -15, 4.539, 0.356 ],
+       "from": [ -15, 0.075, 1.333 ],
+       "to": [ -15, 0.075, 1.333 ],
        "faces": {},
        "children": [
         {
@@ -7845,8 +7845,8 @@
          "children": [
           {
            "name": "WoundStarboardBowScratchedBlank1x1",
-           "from": [ 1.904, 0.724, 13.728 ],
-           "to": [ 2.768, 0.824, 15.348 ],
+           "from": [ 1.904, 3.488, 11.774 ],
+           "to": [ 2.768, 3.588, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7, 3.5, 7.864, 3.6 ] },
             "east": { "texture": "#breach", "uv": [ 6, 4, 7.62, 4.1 ] },
@@ -7858,8 +7858,8 @@
           },
           {
            "name": "WoundStarboardBowScratchedBlank1x2",
-           "from": [ 2.768, 0.775, 13.728 ],
-           "to": [ 3.632, 0.875, 15.348 ],
+           "from": [ 2.768, 3.539, 11.774 ],
+           "to": [ 3.632, 3.639, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11.5, 11.5, 12.364, 11.6 ] },
             "east": { "texture": "#breach", "uv": [ 9, 1.5, 10.62, 1.6 ] },
@@ -7871,8 +7871,8 @@
           },
           {
            "name": "WoundStarboardBowScratchedBlank1x3",
-           "from": [ 3.632, 0.639, 13.728 ],
-           "to": [ 4.496, 0.739, 15.348 ],
+           "from": [ 3.632, 3.403, 11.774 ],
+           "to": [ 4.496, 3.503, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 10.5, 3.5, 11.364, 3.6 ] },
             "east": { "texture": "#breach", "uv": [ 13, 8, 14.62, 8.1 ] },
@@ -7893,8 +7893,8 @@
          "children": [
           {
            "name": "WoundStarboardBowCrackedBlank1x1",
-           "from": [ 0.608, 0.609, 13.728 ],
-           "to": [ 2.336, 0.809, 15.348 ],
+           "from": [ 0.608, 3.273, 11.774 ],
+           "to": [ 2.336, 3.473, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 9, 5, 10.728, 5.2 ] },
             "east": { "texture": "#breach", "uv": [ 1, 14, 2.62, 14.2 ] },
@@ -7906,8 +7906,8 @@
           },
           {
            "name": "WoundStarboardBowCrackedBlank1x2",
-           "from": [ 2.336, 0.501, 13.728 ],
-           "to": [ 4.064, 0.701, 15.348 ],
+           "from": [ 2.336, 3.165, 11.774 ],
+           "to": [ 4.064, 3.365, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7, 4.5, 8.728, 4.7 ] },
             "east": { "texture": "#breach", "uv": [ 7.5, 8.5, 9.12, 8.7 ] },
@@ -7919,8 +7919,8 @@
           },
           {
            "name": "WoundStarboardBowCrackedBlank1x3",
-           "from": [ 4.064, 0.918, 13.728 ],
-           "to": [ 5.792, 1.118, 15.348 ],
+           "from": [ 4.064, 3.582, 11.774 ],
+           "to": [ 5.792, 3.782, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 4, 14.5, 5.728, 14.7 ] },
             "east": { "texture": "#breach", "uv": [ 2.5, 2.5, 4.12, 2.7 ] },
@@ -7941,8 +7941,8 @@
          "children": [
           {
            "name": "WoundStarboardBowSplitBlank1x1",
-           "from": [ 0.5, 1.968, 13.728 ],
-           "to": [ 3.38, 2.418, 15.348 ],
+           "from": [ 0.5, 1.982, 11.774 ],
+           "to": [ 3.38, 2.432, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11.5, 8, 14.38, 8.45 ] },
             "east": { "texture": "#breach", "uv": [ 11.5, 7.5, 13.12, 7.95 ] },
@@ -7954,8 +7954,8 @@
           },
           {
            "name": "WoundStarboardBowSplitBlank1x2",
-           "from": [ 3.38, 1.966, 13.728 ],
-           "to": [ 6.26, 2.416, 15.348 ],
+           "from": [ 3.38, 1.98, 11.774 ],
+           "to": [ 6.26, 2.43, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7.5, 3, 10.38, 3.45 ] },
             "east": { "texture": "#breach", "uv": [ 6.5, 3.5, 8.12, 3.95 ] },
@@ -7967,8 +7967,8 @@
           },
           {
            "name": "WoundStarboardBowSplitBlank1x3",
-           "from": [ 6.26, 2.23, 13.728 ],
-           "to": [ 9.14, 2.68, 15.348 ],
+           "from": [ 6.26, 2.244, 11.774 ],
+           "to": [ 9.14, 2.694, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 4.5, 14, 7.38, 14.45 ] },
             "east": { "texture": "#breach", "uv": [ 12.5, 0.5, 14.12, 0.95 ] },
@@ -7980,8 +7980,8 @@
           },
           {
            "name": "WoundStarboardBowSplitBlank1Lip",
-           "from": [ 0.5, 2.75, 13.038 ],
-           "to": [ 9.14, 3.95, 14.538 ],
+           "from": [ 0.5, 2.764, 11.084 ],
+           "to": [ 9.14, 3.964, 12.584 ],
            "faces": {
             "north": { "texture": "#inside", "uv": [ 2, 7, 10.64, 8.2 ] },
             "east": { "texture": "#inside", "uv": [ 9.5, 6, 11, 7.2 ] },
@@ -8002,8 +8002,8 @@
          "children": [
           {
            "name": "WoundStarboardBowStoveInBlank1Breach",
-           "from": [ 1.94, 0.5, 13.728 ],
-           "to": [ 7.7, 2.732, 15.348 ],
+           "from": [ 1.94, 1.732, 11.774 ],
+           "to": [ 7.7, 3.964, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 5.5, 12.5, 11.26, 14.732 ] },
             "east": { "texture": "#breach", "uv": [ 13, 5, 14.62, 7.232 ] },
@@ -8015,9 +8015,9 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank1Shard",
-           "from": [ 2.04, 0.5, 12.228 ],
-           "to": [ 7.6, 2.732, 13.728 ],
-           "rotationOrigin": [ 2.04, 0.5, 13.788 ],
+           "from": [ 2.04, 1.732, 10.274 ],
+           "to": [ 7.6, 3.964, 11.774 ],
+           "rotationOrigin": [ 2.04, 1.732, 11.834 ],
            "rotationX": -12,
            "faces": {
             "north": { "texture": "#inside", "uv": [ 0, 3, 5.56, 5.232 ] },
@@ -8030,8 +8030,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank1Bowx1",
-           "from": [ 0.5, 1.532, 13.728 ],
-           "to": [ 0.98, 1.982, 15.348 ],
+           "from": [ 0.5, 2.764, 11.774 ],
+           "to": [ 0.98, 3.214, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 6, 2, 6.48, 2.45 ] },
             "east": { "texture": "#breach", "uv": [ 1.5, 0, 3.12, 0.45 ] },
@@ -8043,8 +8043,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank1Bowx2",
-           "from": [ 0.98, 1.257, 13.728 ],
-           "to": [ 1.46, 1.707, 15.348 ],
+           "from": [ 0.98, 2.489, 11.774 ],
+           "to": [ 1.46, 2.939, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 0, 8.5, 0.48, 8.95 ] },
             "east": { "texture": "#breach", "uv": [ 4, 0.5, 5.62, 0.95 ] },
@@ -8056,8 +8056,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank1Bowx3",
-           "from": [ 1.46, 1.117, 13.728 ],
-           "to": [ 1.94, 1.567, 15.348 ],
+           "from": [ 1.46, 2.349, 11.774 ],
+           "to": [ 1.94, 2.799, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 0.5, 1.5, 0.98, 1.95 ] },
             "east": { "texture": "#breach", "uv": [ 11.5, 5.5, 13.12, 5.95 ] },
@@ -8069,8 +8069,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank1Sternx1",
-           "from": [ 7.7, 1.191, 13.728 ],
-           "to": [ 8.18, 1.641, 15.348 ],
+           "from": [ 7.7, 2.423, 11.774 ],
+           "to": [ 8.18, 2.873, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 12, 2, 12.48, 2.45 ] },
             "east": { "texture": "#breach", "uv": [ 4, 11, 5.62, 11.45 ] },
@@ -8082,8 +8082,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank1Sternx2",
-           "from": [ 8.18, 1.112, 13.728 ],
-           "to": [ 8.66, 1.562, 15.348 ],
+           "from": [ 8.18, 2.344, 11.774 ],
+           "to": [ 8.66, 2.794, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11.5, 14, 11.98, 14.45 ] },
             "east": { "texture": "#breach", "uv": [ 1, 13.5, 2.62, 13.95 ] },
@@ -8095,8 +8095,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank1Sternx3",
-           "from": [ 8.66, 1.272, 13.728 ],
-           "to": [ 9.14, 1.722, 15.348 ],
+           "from": [ 8.66, 2.504, 11.774 ],
+           "to": [ 9.14, 2.954, 13.394 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 1, 4, 1.48, 4.45 ] },
             "east": { "texture": "#breach", "uv": [ 7.5, 9, 9.12, 9.45 ] },
@@ -10672,8 +10672,8 @@
          "children": [
           {
            "name": "WoundStarboardBowScratchedBlank2x1",
-           "from": [ 1.904, 1.22, 12.958 ],
-           "to": [ 2.768, 1.32, 14.578 ],
+           "from": [ 1.904, 1.064, 12.958 ],
+           "to": [ 2.768, 1.164, 14.578 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 6, 3, 6.864, 3.1 ] },
             "east": { "texture": "#breach", "uv": [ 1.5, 8.5, 3.12, 8.6 ] },
@@ -10685,8 +10685,8 @@
           },
           {
            "name": "WoundStarboardBowScratchedBlank2x2",
-           "from": [ 2.768, 0.697, 12.958 ],
-           "to": [ 3.632, 0.797, 14.578 ],
+           "from": [ 2.768, 0.541, 12.958 ],
+           "to": [ 3.632, 0.641, 14.578 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11, 0.5, 11.864, 0.6 ] },
             "east": { "texture": "#breach", "uv": [ 2, 6.5, 3.62, 6.6 ] },
@@ -10698,8 +10698,8 @@
           },
           {
            "name": "WoundStarboardBowScratchedBlank2x3",
-           "from": [ 3.632, 1.083, 12.958 ],
-           "to": [ 4.496, 1.183, 14.578 ],
+           "from": [ 3.632, 0.927, 12.958 ],
+           "to": [ 4.496, 1.027, 14.578 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 10, 11.5, 10.864, 11.6 ] },
             "east": { "texture": "#breach", "uv": [ 2.5, 15, 4.12, 15.1 ] },
@@ -10720,8 +10720,8 @@
          "children": [
           {
            "name": "WoundStarboardBowCrackedBlank2x1",
-           "from": [ 0.608, 0.878, 12.958 ],
-           "to": [ 2.336, 1.078, 14.578 ],
+           "from": [ 0.608, 0.772, 12.958 ],
+           "to": [ 2.336, 0.972, 14.578 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7, 8.5, 8.728, 8.7 ] },
             "east": { "texture": "#breach", "uv": [ 5, 14, 6.62, 14.2 ] },
@@ -10733,8 +10733,8 @@
           },
           {
            "name": "WoundStarboardBowCrackedBlank2x2",
-           "from": [ 2.336, 1.062, 12.958 ],
-           "to": [ 4.064, 1.262, 14.578 ],
+           "from": [ 2.336, 0.956, 12.958 ],
+           "to": [ 4.064, 1.156, 14.578 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3, 12.5, 4.728, 12.7 ] },
             "east": { "texture": "#breach", "uv": [ 12, 6.5, 13.62, 6.7 ] },
@@ -10746,8 +10746,8 @@
           },
           {
            "name": "WoundStarboardBowCrackedBlank2x3",
-           "from": [ 4.064, 0.609, 12.958 ],
-           "to": [ 5.792, 0.809, 14.578 ],
+           "from": [ 4.064, 0.503, 12.958 ],
+           "to": [ 5.792, 0.703, 14.578 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 5, 2.5, 6.728, 2.7 ] },
             "east": { "texture": "#breach", "uv": [ 0, 13.5, 1.62, 13.7 ] },
@@ -10952,8 +10952,8 @@
          "children": [
           {
            "name": "WoundPortSideScratchedBlank2x1",
-           "from": [ 6.304, 1.271, -0.06 ],
-           "to": [ 7.168, 1.371, 1.56 ],
+           "from": [ 6.304, 1.033, -0.06 ],
+           "to": [ 7.168, 1.133, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 4.5, 3, 5.364, 3.1 ] },
             "east": { "texture": "#breach", "uv": [ 7, 5.5, 8.62, 5.6 ] },
@@ -10965,8 +10965,8 @@
           },
           {
            "name": "WoundPortSideScratchedBlank2x2",
-           "from": [ 7.168, 0.863, -0.06 ],
-           "to": [ 8.032, 0.963, 1.56 ],
+           "from": [ 7.168, 0.625, -0.06 ],
+           "to": [ 8.032, 0.725, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7, 0, 7.864, 0.1 ] },
             "east": { "texture": "#breach", "uv": [ 0.5, 9, 2.12, 9.1 ] },
@@ -10978,8 +10978,8 @@
           },
           {
            "name": "WoundPortSideScratchedBlank2x3",
-           "from": [ 8.032, 0.872, -0.06 ],
-           "to": [ 8.896, 0.972, 1.56 ],
+           "from": [ 8.032, 0.634, -0.06 ],
+           "to": [ 8.896, 0.734, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7, 11.5, 7.864, 11.6 ] },
             "east": { "texture": "#breach", "uv": [ 7, 7, 8.62, 7.1 ] },
@@ -11000,8 +11000,8 @@
          "children": [
           {
            "name": "WoundPortSideCrackedBlank2x1",
-           "from": [ 5.008, 0.863, -0.06 ],
-           "to": [ 6.736, 1.063, 1.56 ],
+           "from": [ 5.008, 0.657, -0.06 ],
+           "to": [ 6.736, 0.857, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3, 3.5, 4.728, 3.7 ] },
             "east": { "texture": "#breach", "uv": [ 8, 14.5, 9.62, 14.7 ] },
@@ -11013,8 +11013,8 @@
           },
           {
            "name": "WoundPortSideCrackedBlank2x2",
-           "from": [ 6.736, 1.299, -0.06 ],
-           "to": [ 8.464, 1.499, 1.56 ],
+           "from": [ 6.736, 1.093, -0.06 ],
+           "to": [ 8.464, 1.293, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 13, 9.5, 14.728, 9.7 ] },
             "east": { "texture": "#breach", "uv": [ 3.5, 6, 5.12, 6.2 ] },
@@ -11026,8 +11026,8 @@
           },
           {
            "name": "WoundPortSideCrackedBlank2x3",
-           "from": [ 8.464, 1.249, -0.06 ],
-           "to": [ 10.192, 1.449, 1.56 ],
+           "from": [ 8.464, 1.043, -0.06 ],
+           "to": [ 10.192, 1.243, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 6.5, 4, 8.228, 4.2 ] },
             "east": { "texture": "#breach", "uv": [ 3, 11, 4.62, 11.2 ] },
@@ -11232,8 +11232,8 @@
          "children": [
           {
            "name": "WoundStarboardSideScratchedBlank2x1",
-           "from": [ 4.104, 0.826, 13.35 ],
-           "to": [ 4.968, 0.926, 14.97 ],
+           "from": [ 4.104, 0.588, 13.35 ],
+           "to": [ 4.968, 0.688, 14.97 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 2, 11, 2.864, 11.1 ] },
             "east": { "texture": "#breach", "uv": [ 9.5, 9.5, 11.12, 9.6 ] },
@@ -11245,8 +11245,8 @@
           },
           {
            "name": "WoundStarboardSideScratchedBlank2x2",
-           "from": [ 4.968, 1.017, 13.35 ],
-           "to": [ 5.832, 1.117, 14.97 ],
+           "from": [ 4.968, 0.779, 13.35 ],
+           "to": [ 5.832, 0.879, 14.97 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3, 4, 3.864, 4.1 ] },
             "east": { "texture": "#breach", "uv": [ 11.5, 1, 13.12, 1.1 ] },
@@ -11258,8 +11258,8 @@
           },
           {
            "name": "WoundStarboardSideScratchedBlank2x3",
-           "from": [ 5.832, 1.323, 13.35 ],
-           "to": [ 6.696, 1.423, 14.97 ],
+           "from": [ 5.832, 1.085, 13.35 ],
+           "to": [ 6.696, 1.185, 14.97 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3, 8.5, 3.864, 8.6 ] },
             "east": { "texture": "#breach", "uv": [ 6.5, 10, 8.12, 10.1 ] },
@@ -11280,8 +11280,8 @@
          "children": [
           {
            "name": "WoundStarboardSideCrackedBlank2x1",
-           "from": [ 2.808, 0.972, 13.35 ],
-           "to": [ 4.536, 1.172, 14.97 ],
+           "from": [ 2.808, 0.766, 13.35 ],
+           "to": [ 4.536, 0.966, 14.97 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 14, 11.5, 15.728, 11.7 ] },
             "east": { "texture": "#breach", "uv": [ 8.5, 10.5, 10.12, 10.7 ] },
@@ -11293,8 +11293,8 @@
           },
           {
            "name": "WoundStarboardSideCrackedBlank2x2",
-           "from": [ 4.536, 1.047, 13.35 ],
-           "to": [ 6.264, 1.247, 14.97 ],
+           "from": [ 4.536, 0.841, 13.35 ],
+           "to": [ 6.264, 1.041, 14.97 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 10, 4, 11.728, 4.2 ] },
             "east": { "texture": "#breach", "uv": [ 4, 2.5, 5.62, 2.7 ] },
@@ -11306,8 +11306,8 @@
           },
           {
            "name": "WoundStarboardSideCrackedBlank2x3",
-           "from": [ 6.264, 0.861, 13.35 ],
-           "to": [ 7.992, 1.061, 14.97 ],
+           "from": [ 6.264, 0.655, 13.35 ],
+           "to": [ 7.992, 0.855, 14.97 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 0.5, 4.5, 2.228, 4.7 ] },
             "east": { "texture": "#breach", "uv": [ 6.5, 8, 8.12, 8.2 ] },
@@ -11512,8 +11512,8 @@
          "children": [
           {
            "name": "WoundPortQuarterScratchedBlank2x1",
-           "from": [ 5.504, 1.11, -0.06 ],
-           "to": [ 6.368, 1.21, 1.56 ],
+           "from": [ 5.504, 0.954, -0.06 ],
+           "to": [ 6.368, 1.054, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 12, 9, 12.864, 9.1 ] },
             "east": { "texture": "#breach", "uv": [ 12, 10, 13.62, 10.1 ] },
@@ -11525,8 +11525,8 @@
           },
           {
            "name": "WoundPortQuarterScratchedBlank2x2",
-           "from": [ 6.368, 1.143, -0.06 ],
-           "to": [ 7.232, 1.243, 1.56 ],
+           "from": [ 6.368, 0.987, -0.06 ],
+           "to": [ 7.232, 1.087, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 12.5, 11.5, 13.364, 11.6 ] },
             "east": { "texture": "#breach", "uv": [ 10, 8.5, 11.62, 8.6 ] },
@@ -11538,8 +11538,8 @@
           },
           {
            "name": "WoundPortQuarterScratchedBlank2x3",
-           "from": [ 7.232, 1.033, -0.06 ],
-           "to": [ 8.096, 1.133, 1.56 ],
+           "from": [ 7.232, 0.877, -0.06 ],
+           "to": [ 8.096, 0.977, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 2.5, 8.5, 3.364, 8.6 ] },
             "east": { "texture": "#breach", "uv": [ 13, 7.5, 14.62, 7.6 ] },
@@ -11560,8 +11560,8 @@
          "children": [
           {
            "name": "WoundPortQuarterCrackedBlank2x1",
-           "from": [ 4.208, 1.103, -0.06 ],
-           "to": [ 5.936, 1.303, 1.56 ],
+           "from": [ 4.208, 0.997, -0.06 ],
+           "to": [ 5.936, 1.197, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 4, 1, 5.728, 1.2 ] },
             "east": { "texture": "#breach", "uv": [ 12.5, 6.5, 14.12, 6.7 ] },
@@ -11573,8 +11573,8 @@
           },
           {
            "name": "WoundPortQuarterCrackedBlank2x2",
-           "from": [ 5.936, 0.886, -0.06 ],
-           "to": [ 7.664, 1.086, 1.56 ],
+           "from": [ 5.936, 0.78, -0.06 ],
+           "to": [ 7.664, 0.98, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 5.5, 8, 7.228, 8.2 ] },
             "east": { "texture": "#breach", "uv": [ 2, 5, 3.62, 5.2 ] },
@@ -11586,8 +11586,8 @@
           },
           {
            "name": "WoundPortQuarterCrackedBlank2x3",
-           "from": [ 7.664, 0.65, -0.06 ],
-           "to": [ 9.392, 0.85, 1.56 ],
+           "from": [ 7.664, 0.544, -0.06 ],
+           "to": [ 9.392, 0.744, 1.56 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11.5, 9, 13.228, 9.2 ] },
             "east": { "texture": "#breach", "uv": [ 7, 13.5, 8.62, 13.7 ] },
@@ -20193,8 +20193,8 @@
          "children": [
           {
            "name": "WoundStarboardBowScratchedBlank5x1",
-           "from": [ 1.904, 1.207, -0.06 ],
-           "to": [ 2.768, 1.307, 0.216 ],
+           "from": [ 1.904, 0.969, -0.06 ],
+           "to": [ 2.768, 1.069, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 0, 4.5, 0.864, 4.6 ] },
             "east": { "texture": "#breach", "uv": [ 11.5, 4.5, 11.776, 4.6 ] },
@@ -20206,8 +20206,8 @@
           },
           {
            "name": "WoundStarboardBowScratchedBlank5x2",
-           "from": [ 2.768, 1.531, -0.06 ],
-           "to": [ 3.632, 1.631, 0.216 ],
+           "from": [ 2.768, 1.293, -0.06 ],
+           "to": [ 3.632, 1.393, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11.5, 1, 12.364, 1.1 ] },
             "east": { "texture": "#breach", "uv": [ 14, 4, 14.276, 4.1 ] },
@@ -20219,8 +20219,8 @@
           },
           {
            "name": "WoundStarboardBowScratchedBlank5x3",
-           "from": [ 3.632, 1.617, -0.06 ],
-           "to": [ 4.496, 1.717, 0.216 ],
+           "from": [ 3.632, 1.379, -0.06 ],
+           "to": [ 4.496, 1.479, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 14.5, 6, 15.364, 6.1 ] },
             "east": { "texture": "#breach", "uv": [ 12, 5.5, 12.276, 5.6 ] },
@@ -20241,8 +20241,8 @@
          "children": [
           {
            "name": "WoundStarboardBowCrackedBlank5x1",
-           "from": [ 0.5, 1.194, -0.06 ],
-           "to": [ 1.833, 1.394, 0.216 ],
+           "from": [ 0.5, 0.956, -0.06 ],
+           "to": [ 1.833, 1.156, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3.5, 3, 4.833, 3.2 ] },
             "east": { "texture": "#breach", "uv": [ 13, 3, 13.276, 3.2 ] },
@@ -20254,8 +20254,8 @@
           },
           {
            "name": "WoundStarboardBowCrackedBlank5x2",
-           "from": [ 1.833, 1.099, -0.06 ],
-           "to": [ 3.167, 1.299, 0.216 ],
+           "from": [ 1.833, 0.861, -0.06 ],
+           "to": [ 3.167, 1.061, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 8.5, 0, 9.833, 0.2 ] },
             "east": { "texture": "#breach", "uv": [ 4.5, 9, 4.776, 9.2 ] },
@@ -20267,8 +20267,8 @@
           },
           {
            "name": "WoundStarboardBowCrackedBlank5x3",
-           "from": [ 3.167, 1.072, -0.06 ],
-           "to": [ 4.5, 1.272, 0.216 ],
+           "from": [ 3.167, 0.834, -0.06 ],
+           "to": [ 4.5, 1.034, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 1, 8, 2.333, 8.2 ] },
             "east": { "texture": "#breach", "uv": [ 8, 13, 8.276, 13.2 ] },
@@ -20350,8 +20350,8 @@
          "children": [
           {
            "name": "WoundStarboardBowStoveInBlank5Breach",
-           "from": [ 1.167, 0.563, -0.06 ],
-           "to": [ 3.833, 2.271, 0.216 ],
+           "from": [ 1.167, 0.5, -0.06 ],
+           "to": [ 3.833, 2.208, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 0, 1.5, 2.667, 3.208 ] },
             "east": { "texture": "#breach", "uv": [ 13.5, 3.5, 13.776, 5.208 ] },
@@ -20363,9 +20363,9 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank5Shard",
-           "from": [ 1.267, 0.563, -0.216 ],
-           "to": [ 3.733, 2.271, -0.06 ],
-           "rotationOrigin": [ 1.267, 0.563, 0 ],
+           "from": [ 1.267, 0.5, -0.216 ],
+           "to": [ 3.733, 2.208, -0.06 ],
+           "rotationOrigin": [ 1.267, 0.5, 0 ],
            "rotationX": -12,
            "faces": {
             "north": { "texture": "#inside", "uv": [ 7.5, 3.5, 9.967, 5.208 ] },
@@ -20378,8 +20378,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank5Bowx1",
-           "from": [ 0.5, 1.169, -0.06 ],
-           "to": [ 0.722, 1.619, 0.216 ],
+           "from": [ 0.5, 1.106, -0.06 ],
+           "to": [ 0.722, 1.556, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 10, 12, 10.222, 12.45 ] },
             "east": { "texture": "#breach", "uv": [ 11, 4, 11.276, 4.45 ] },
@@ -20391,8 +20391,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank5Bowx2",
-           "from": [ 0.722, 1.079, -0.06 ],
-           "to": [ 0.944, 1.529, 0.216 ],
+           "from": [ 0.722, 1.016, -0.06 ],
+           "to": [ 0.944, 1.466, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11, 1, 11.222, 1.45 ] },
             "east": { "texture": "#breach", "uv": [ 15, 6.5, 15.276, 6.95 ] },
@@ -20404,8 +20404,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank5Bowx3",
-           "from": [ 0.944, 0.93, -0.06 ],
-           "to": [ 1.167, 1.38, 0.216 ],
+           "from": [ 0.944, 0.867, -0.06 ],
+           "to": [ 1.167, 1.317, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 15, 11, 15.222, 11.45 ] },
             "east": { "texture": "#breach", "uv": [ 5, 10.5, 5.276, 10.95 ] },
@@ -20417,8 +20417,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank5Sternx1",
-           "from": [ 3.833, 1.213, -0.06 ],
-           "to": [ 4.056, 1.663, 0.216 ],
+           "from": [ 3.833, 1.15, -0.06 ],
+           "to": [ 4.056, 1.6, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 8.5, 5.5, 8.722, 5.95 ] },
             "east": { "texture": "#breach", "uv": [ 7, 13, 7.276, 13.45 ] },
@@ -20430,8 +20430,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank5Sternx2",
-           "from": [ 4.056, 1.031, -0.06 ],
-           "to": [ 4.278, 1.481, 0.216 ],
+           "from": [ 4.056, 0.968, -0.06 ],
+           "to": [ 4.278, 1.418, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 0, 7.5, 0.222, 7.95 ] },
             "east": { "texture": "#breach", "uv": [ 5.5, 1.5, 5.776, 1.95 ] },
@@ -20443,8 +20443,8 @@
           },
           {
            "name": "WoundStarboardBowStoveInBlank5Sternx3",
-           "from": [ 4.278, 1.066, -0.06 ],
-           "to": [ 4.5, 1.516, 0.216 ],
+           "from": [ 4.278, 1.003, -0.06 ],
+           "to": [ 4.5, 1.453, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 8, 8, 8.222, 8.45 ] },
             "east": { "texture": "#breach", "uv": [ 13.5, 13.5, 13.776, 13.95 ] },
@@ -20473,8 +20473,8 @@
          "children": [
           {
            "name": "WoundPortSideScratchedBlank5x1",
-           "from": [ 6.304, 1.662, -0.06 ],
-           "to": [ 7.168, 1.762, 0.44 ],
+           "from": [ 6.304, 1.424, -0.06 ],
+           "to": [ 7.168, 1.524, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 10, 5, 10.864, 5.1 ] },
             "east": { "texture": "#breach", "uv": [ 11, 0, 11.5, 0.1 ] },
@@ -20486,8 +20486,8 @@
           },
           {
            "name": "WoundPortSideScratchedBlank5x2",
-           "from": [ 7.168, 1.333, -0.06 ],
-           "to": [ 8.032, 1.433, 0.44 ],
+           "from": [ 7.168, 1.095, -0.06 ],
+           "to": [ 8.032, 1.195, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 1.5, 11, 2.364, 11.1 ] },
             "east": { "texture": "#breach", "uv": [ 12.5, 5, 13, 5.1 ] },
@@ -20499,8 +20499,8 @@
           },
           {
            "name": "WoundPortSideScratchedBlank5x3",
-           "from": [ 8.032, 1.458, -0.06 ],
-           "to": [ 8.896, 1.558, 0.44 ],
+           "from": [ 8.032, 1.22, -0.06 ],
+           "to": [ 8.896, 1.32, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7.5, 8.5, 8.364, 8.6 ] },
             "east": { "texture": "#breach", "uv": [ 12, 2, 12.5, 2.1 ] },
@@ -20521,8 +20521,8 @@
          "children": [
           {
            "name": "WoundPortSideCrackedBlank5x1",
-           "from": [ 5.008, 1.043, -0.06 ],
-           "to": [ 6.736, 1.243, 0.44 ],
+           "from": [ 5.008, 0.805, -0.06 ],
+           "to": [ 6.736, 1.005, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 12.5, 5.5, 14.228, 5.7 ] },
             "east": { "texture": "#breach", "uv": [ 8.5, 4.5, 9, 4.7 ] },
@@ -20534,8 +20534,8 @@
           },
           {
            "name": "WoundPortSideCrackedBlank5x2",
-           "from": [ 6.736, 1.376, -0.06 ],
-           "to": [ 8.464, 1.576, 0.44 ],
+           "from": [ 6.736, 1.138, -0.06 ],
+           "to": [ 8.464, 1.338, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 13, 0.5, 14.728, 0.7 ] },
             "east": { "texture": "#breach", "uv": [ 5.5, 13, 6, 13.2 ] },
@@ -20547,8 +20547,8 @@
           },
           {
            "name": "WoundPortSideCrackedBlank5x3",
-           "from": [ 8.464, 1.6, -0.06 ],
-           "to": [ 10.192, 1.8, 0.44 ],
+           "from": [ 8.464, 1.362, -0.06 ],
+           "to": [ 10.192, 1.562, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7, 5.5, 8.728, 5.7 ] },
             "east": { "texture": "#breach", "uv": [ 4.5, 3, 5, 3.2 ] },
@@ -20630,8 +20630,8 @@
          "children": [
           {
            "name": "WoundPortSideStoveInBlank5Breach",
-           "from": [ 4.72, 0.563, -0.06 ],
-           "to": [ 10.48, 2.271, 0.44 ],
+           "from": [ 4.72, 0.5, -0.06 ],
+           "to": [ 10.48, 2.208, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 5.5, 0.5, 11.26, 2.208 ] },
             "east": { "texture": "#breach", "uv": [ 12.5, 10.5, 13, 12.209 ] },
@@ -20643,9 +20643,9 @@
           },
           {
            "name": "WoundPortSideStoveInBlank5Shard",
-           "from": [ 4.82, 0.563, 0.44 ],
-           "to": [ 10.38, 2.271, 0.82 ],
-           "rotationOrigin": [ 4.82, 0.563, 0.38 ],
+           "from": [ 4.82, 0.5, 0.44 ],
+           "to": [ 10.38, 2.208, 0.82 ],
+           "rotationOrigin": [ 4.82, 0.5, 0.38 ],
            "rotationX": 12,
            "faces": {
             "north": { "texture": "#inside", "uv": [ 0.5, 7.5, 6.06, 9.209 ] },
@@ -20658,8 +20658,8 @@
           },
           {
            "name": "WoundPortSideStoveInBlank5Bowx1",
-           "from": [ 3.28, 0.893, -0.06 ],
-           "to": [ 3.76, 1.343, 0.44 ],
+           "from": [ 3.28, 0.83, -0.06 ],
+           "to": [ 3.76, 1.28, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 6, 7.5, 6.48, 7.95 ] },
             "east": { "texture": "#breach", "uv": [ 6.5, 11, 7, 11.45 ] },
@@ -20671,8 +20671,8 @@
           },
           {
            "name": "WoundPortSideStoveInBlank5Bowx2",
-           "from": [ 3.76, 1.293, -0.06 ],
-           "to": [ 4.24, 1.743, 0.44 ],
+           "from": [ 3.76, 1.231, -0.06 ],
+           "to": [ 4.24, 1.681, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11, 2, 11.48, 2.45 ] },
             "east": { "texture": "#breach", "uv": [ 11.5, 11.5, 12, 11.95 ] },
@@ -20684,8 +20684,8 @@
           },
           {
            "name": "WoundPortSideStoveInBlank5Bowx3",
-           "from": [ 4.24, 1.159, -0.06 ],
-           "to": [ 4.72, 1.609, 0.44 ],
+           "from": [ 4.24, 1.096, -0.06 ],
+           "to": [ 4.72, 1.546, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 10.5, 6.5, 10.98, 6.95 ] },
             "east": { "texture": "#breach", "uv": [ 3, 5, 3.5, 5.45 ] },
@@ -20697,8 +20697,8 @@
           },
           {
            "name": "WoundPortSideStoveInBlank5Sternx1",
-           "from": [ 10.48, 1.292, -0.06 ],
-           "to": [ 10.96, 1.742, 0.44 ],
+           "from": [ 10.48, 1.229, -0.06 ],
+           "to": [ 10.96, 1.679, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 8.5, 7, 8.98, 7.45 ] },
             "east": { "texture": "#breach", "uv": [ 8, 15, 8.5, 15.45 ] },
@@ -20710,8 +20710,8 @@
           },
           {
            "name": "WoundPortSideStoveInBlank5Sternx2",
-           "from": [ 10.96, 1.104, -0.06 ],
-           "to": [ 11.44, 1.554, 0.44 ],
+           "from": [ 10.96, 1.042, -0.06 ],
+           "to": [ 11.44, 1.492, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 9, 7, 9.48, 7.45 ] },
             "east": { "texture": "#breach", "uv": [ 5, 5.5, 5.5, 5.95 ] },
@@ -20723,8 +20723,8 @@
           },
           {
            "name": "WoundPortSideStoveInBlank5Sternx3",
-           "from": [ 11.44, 1.166, -0.06 ],
-           "to": [ 11.92, 1.616, 0.44 ],
+           "from": [ 11.44, 1.103, -0.06 ],
+           "to": [ 11.92, 1.553, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 13.5, 5.5, 13.98, 5.95 ] },
             "east": { "texture": "#breach", "uv": [ 10.5, 12, 11, 12.45 ] },
@@ -20753,8 +20753,8 @@
          "children": [
           {
            "name": "WoundStarboardSideScratchedBlank5x1",
-           "from": [ 4.104, 1.285, -0.06 ],
-           "to": [ 4.968, 1.385, 0.44 ],
+           "from": [ 4.104, 1.047, -0.06 ],
+           "to": [ 4.968, 1.147, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 7, 10.5, 7.864, 10.6 ] },
             "east": { "texture": "#breach", "uv": [ 5.5, 4, 6, 4.1 ] },
@@ -20766,8 +20766,8 @@
           },
           {
            "name": "WoundStarboardSideScratchedBlank5x2",
-           "from": [ 4.968, 1.53, -0.06 ],
-           "to": [ 5.832, 1.63, 0.44 ],
+           "from": [ 4.968, 1.292, -0.06 ],
+           "to": [ 5.832, 1.392, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 14.5, 8, 15.364, 8.1 ] },
             "east": { "texture": "#breach", "uv": [ 6.5, 6.5, 7, 6.6 ] },
@@ -20779,8 +20779,8 @@
           },
           {
            "name": "WoundStarboardSideScratchedBlank5x3",
-           "from": [ 5.832, 1.36, -0.06 ],
-           "to": [ 6.696, 1.46, 0.44 ],
+           "from": [ 5.832, 1.122, -0.06 ],
+           "to": [ 6.696, 1.222, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 9.5, 6, 10.364, 6.1 ] },
             "east": { "texture": "#breach", "uv": [ 1, 4.5, 1.5, 4.6 ] },
@@ -20801,8 +20801,8 @@
          "children": [
           {
            "name": "WoundStarboardSideCrackedBlank5x1",
-           "from": [ 2.808, 1.499, -0.06 ],
-           "to": [ 4.536, 1.699, 0.44 ],
+           "from": [ 2.808, 1.261, -0.06 ],
+           "to": [ 4.536, 1.461, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 2.5, 2, 4.228, 2.2 ] },
             "east": { "texture": "#breach", "uv": [ 4, 0, 4.5, 0.2 ] },
@@ -20814,8 +20814,8 @@
           },
           {
            "name": "WoundStarboardSideCrackedBlank5x2",
-           "from": [ 4.536, 1.152, -0.06 ],
-           "to": [ 6.264, 1.352, 0.44 ],
+           "from": [ 4.536, 0.914, -0.06 ],
+           "to": [ 6.264, 1.114, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3.5, 3, 5.228, 3.2 ] },
             "east": { "texture": "#breach", "uv": [ 0, 14.5, 0.5, 14.7 ] },
@@ -20827,8 +20827,8 @@
           },
           {
            "name": "WoundStarboardSideCrackedBlank5x3",
-           "from": [ 6.264, 1.136, -0.06 ],
-           "to": [ 7.992, 1.336, 0.44 ],
+           "from": [ 6.264, 0.898, -0.06 ],
+           "to": [ 7.992, 1.098, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 12, 9, 13.728, 9.2 ] },
             "east": { "texture": "#breach", "uv": [ 2.5, 11.5, 3, 11.7 ] },
@@ -20910,8 +20910,8 @@
          "children": [
           {
            "name": "WoundStarboardSideStoveInBlank5Breach",
-           "from": [ 2.52, 0.563, -0.06 ],
-           "to": [ 8.28, 2.271, 0.44 ],
+           "from": [ 2.52, 0.5, -0.06 ],
+           "to": [ 8.28, 2.208, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 6, 8.5, 11.76, 10.209 ] },
             "east": { "texture": "#breach", "uv": [ 13.5, 4, 14, 5.708 ] },
@@ -20923,9 +20923,9 @@
           },
           {
            "name": "WoundStarboardSideStoveInBlank5Shard",
-           "from": [ 2.62, 0.563, -0.44 ],
-           "to": [ 8.18, 2.271, -0.06 ],
-           "rotationOrigin": [ 2.62, 0.563, 0 ],
+           "from": [ 2.62, 0.5, -0.44 ],
+           "to": [ 8.18, 2.208, -0.06 ],
+           "rotationOrigin": [ 2.62, 0.5, 0 ],
            "rotationX": -12,
            "faces": {
             "north": { "texture": "#inside", "uv": [ 9.5, 10, 15.06, 11.709 ] },
@@ -20938,8 +20938,8 @@
           },
           {
            "name": "WoundStarboardSideStoveInBlank5Bowx1",
-           "from": [ 1.08, 1.043, -0.06 ],
-           "to": [ 1.56, 1.493, 0.44 ],
+           "from": [ 1.08, 0.98, -0.06 ],
+           "to": [ 1.56, 1.43, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 2, 2.5, 2.48, 2.95 ] },
             "east": { "texture": "#breach", "uv": [ 12.5, 7.5, 13, 7.95 ] },
@@ -20951,8 +20951,8 @@
           },
           {
            "name": "WoundStarboardSideStoveInBlank5Bowx2",
-           "from": [ 1.56, 1.115, -0.06 ],
-           "to": [ 2.04, 1.565, 0.44 ],
+           "from": [ 1.56, 1.052, -0.06 ],
+           "to": [ 2.04, 1.502, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11, 12, 11.48, 12.45 ] },
             "east": { "texture": "#breach", "uv": [ 5.5, 0.5, 6, 0.95 ] },
@@ -20964,8 +20964,8 @@
           },
           {
            "name": "WoundStarboardSideStoveInBlank5Bowx3",
-           "from": [ 2.04, 0.938, -0.06 ],
-           "to": [ 2.52, 1.388, 0.44 ],
+           "from": [ 2.04, 0.875, -0.06 ],
+           "to": [ 2.52, 1.325, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3, 4.5, 3.48, 4.95 ] },
             "east": { "texture": "#breach", "uv": [ 0, 4, 0.5, 4.45 ] },
@@ -20977,8 +20977,8 @@
           },
           {
            "name": "WoundStarboardSideStoveInBlank5Sternx1",
-           "from": [ 8.28, 1.302, -0.06 ],
-           "to": [ 8.76, 1.752, 0.44 ],
+           "from": [ 8.28, 1.239, -0.06 ],
+           "to": [ 8.76, 1.689, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 8, 12.5, 8.48, 12.95 ] },
             "east": { "texture": "#breach", "uv": [ 1.5, 13, 2, 13.45 ] },
@@ -20990,8 +20990,8 @@
           },
           {
            "name": "WoundStarboardSideStoveInBlank5Sternx2",
-           "from": [ 8.76, 1.203, -0.06 ],
-           "to": [ 9.24, 1.653, 0.44 ],
+           "from": [ 8.76, 1.14, -0.06 ],
+           "to": [ 9.24, 1.59, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 5.5, 11, 5.98, 11.45 ] },
             "east": { "texture": "#breach", "uv": [ 7.5, 9.5, 8, 9.95 ] },
@@ -21003,8 +21003,8 @@
           },
           {
            "name": "WoundStarboardSideStoveInBlank5Sternx3",
-           "from": [ 9.24, 1.357, -0.06 ],
-           "to": [ 9.72, 1.807, 0.44 ],
+           "from": [ 9.24, 1.294, -0.06 ],
+           "to": [ 9.72, 1.744, 0.44 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 12.5, 7.5, 12.98, 7.95 ] },
             "east": { "texture": "#breach", "uv": [ 9.5, 9, 10, 9.45 ] },
@@ -21033,8 +21033,8 @@
          "children": [
           {
            "name": "WoundPortQuarterScratchedBlank5x1",
-           "from": [ 0.504, 1.504, -0.06 ],
-           "to": [ 1.368, 1.604, 0.216 ],
+           "from": [ 0.504, 1.266, -0.06 ],
+           "to": [ 1.368, 1.366, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 3, 8.5, 3.864, 8.6 ] },
             "east": { "texture": "#breach", "uv": [ 0, 10, 0.276, 10.1 ] },
@@ -21046,8 +21046,8 @@
           },
           {
            "name": "WoundPortQuarterScratchedBlank5x2",
-           "from": [ 1.368, 1.275, -0.06 ],
-           "to": [ 2.232, 1.375, 0.216 ],
+           "from": [ 1.368, 1.037, -0.06 ],
+           "to": [ 2.232, 1.137, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 2, 4, 2.864, 4.1 ] },
             "east": { "texture": "#breach", "uv": [ 1, 10, 1.276, 10.1 ] },
@@ -21059,8 +21059,8 @@
           },
           {
            "name": "WoundPortQuarterScratchedBlank5x3",
-           "from": [ 2.232, 1.429, -0.06 ],
-           "to": [ 3.096, 1.529, 0.216 ],
+           "from": [ 2.232, 1.191, -0.06 ],
+           "to": [ 3.096, 1.291, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 8.5, 0.5, 9.364, 0.6 ] },
             "east": { "texture": "#breach", "uv": [ 14.5, 8, 14.776, 8.1 ] },
@@ -21081,8 +21081,8 @@
          "children": [
           {
            "name": "WoundPortQuarterCrackedBlank5x1",
-           "from": [ 0.5, 1.456, -0.06 ],
-           "to": [ 1.833, 1.656, 0.216 ],
+           "from": [ 0.5, 1.218, -0.06 ],
+           "to": [ 1.833, 1.418, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 6, 11, 7.333, 11.2 ] },
             "east": { "texture": "#breach", "uv": [ 1.5, 2.5, 1.776, 2.7 ] },
@@ -21094,8 +21094,8 @@
           },
           {
            "name": "WoundPortQuarterCrackedBlank5x2",
-           "from": [ 1.833, 1.606, -0.06 ],
-           "to": [ 3.167, 1.806, 0.216 ],
+           "from": [ 1.833, 1.368, -0.06 ],
+           "to": [ 3.167, 1.568, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 13, 8.5, 14.333, 8.7 ] },
             "east": { "texture": "#breach", "uv": [ 3.5, 5.5, 3.776, 5.7 ] },
@@ -21107,8 +21107,8 @@
           },
           {
            "name": "WoundPortQuarterCrackedBlank5x3",
-           "from": [ 3.167, 1.108, -0.06 ],
-           "to": [ 4.5, 1.308, 0.216 ],
+           "from": [ 3.167, 0.87, -0.06 ],
+           "to": [ 4.5, 1.07, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 1, 2, 2.333, 2.2 ] },
             "east": { "texture": "#breach", "uv": [ 8, 0.5, 8.276, 0.7 ] },
@@ -21190,8 +21190,8 @@
          "children": [
           {
            "name": "WoundPortQuarterStoveInBlank5Breach",
-           "from": [ 1.167, 0.563, -0.06 ],
-           "to": [ 3.833, 2.271, 0.216 ],
+           "from": [ 1.167, 0.5, -0.06 ],
+           "to": [ 3.833, 2.208, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 0.5, 5.5, 3.167, 7.208 ] },
             "east": { "texture": "#breach", "uv": [ 5.5, 0.5, 5.776, 2.208 ] },
@@ -21203,9 +21203,9 @@
           },
           {
            "name": "WoundPortQuarterStoveInBlank5Shard",
-           "from": [ 1.267, 0.563, 0.216 ],
-           "to": [ 3.733, 2.271, 0.372 ],
-           "rotationOrigin": [ 1.267, 0.563, 0.156 ],
+           "from": [ 1.267, 0.5, 0.216 ],
+           "to": [ 3.733, 2.208, 0.372 ],
+           "rotationOrigin": [ 1.267, 0.5, 0.156 ],
            "rotationX": 12,
            "faces": {
             "north": { "texture": "#inside", "uv": [ 11, 13, 13.467, 14.709 ] },
@@ -21218,8 +21218,8 @@
           },
           {
            "name": "WoundPortQuarterStoveInBlank5Bowx1",
-           "from": [ 0.5, 1.059, -0.06 ],
-           "to": [ 0.722, 1.509, 0.216 ],
+           "from": [ 0.5, 0.997, -0.06 ],
+           "to": [ 0.722, 1.447, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 13, 6.5, 13.222, 6.95 ] },
             "east": { "texture": "#breach", "uv": [ 6, 7, 6.276, 7.45 ] },
@@ -21231,8 +21231,8 @@
           },
           {
            "name": "WoundPortQuarterStoveInBlank5Bowx2",
-           "from": [ 0.722, 1.235, -0.06 ],
-           "to": [ 0.944, 1.685, 0.216 ],
+           "from": [ 0.722, 1.172, -0.06 ],
+           "to": [ 0.944, 1.622, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 9.5, 5, 9.722, 5.45 ] },
             "east": { "texture": "#breach", "uv": [ 11, 14, 11.276, 14.45 ] },
@@ -21244,8 +21244,8 @@
           },
           {
            "name": "WoundPortQuarterStoveInBlank5Bowx3",
-           "from": [ 0.944, 1.345, -0.06 ],
-           "to": [ 1.167, 1.795, 0.216 ],
+           "from": [ 0.944, 1.282, -0.06 ],
+           "to": [ 1.167, 1.732, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 13, 4.5, 13.222, 4.95 ] },
             "east": { "texture": "#breach", "uv": [ 12, 3, 12.276, 3.45 ] },
@@ -21257,8 +21257,8 @@
           },
           {
            "name": "WoundPortQuarterStoveInBlank5Sternx1",
-           "from": [ 3.833, 1.479, -0.06 ],
-           "to": [ 4.056, 1.929, 0.216 ],
+           "from": [ 3.833, 1.417, -0.06 ],
+           "to": [ 4.056, 1.867, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 10.5, 10, 10.722, 10.45 ] },
             "east": { "texture": "#breach", "uv": [ 13.5, 3.5, 13.776, 3.95 ] },
@@ -21270,8 +21270,8 @@
           },
           {
            "name": "WoundPortQuarterStoveInBlank5Sternx2",
-           "from": [ 4.056, 1.407, -0.06 ],
-           "to": [ 4.278, 1.857, 0.216 ],
+           "from": [ 4.056, 1.345, -0.06 ],
+           "to": [ 4.278, 1.795, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 12.5, 13, 12.722, 13.45 ] },
             "east": { "texture": "#breach", "uv": [ 6.5, 14.5, 6.776, 14.95 ] },
@@ -21283,8 +21283,8 @@
           },
           {
            "name": "WoundPortQuarterStoveInBlank5Sternx3",
-           "from": [ 4.278, 1.176, -0.06 ],
-           "to": [ 4.5, 1.626, 0.216 ],
+           "from": [ 4.278, 1.113, -0.06 ],
+           "to": [ 4.5, 1.563, 0.216 ],
            "faces": {
             "north": { "texture": "#breach", "uv": [ 11.5, 9, 11.722, 9.45 ] },
             "east": { "texture": "#breach", "uv": [ 9.5, 0, 9.776, 0.45 ] },
@@ -25960,8 +25960,8 @@
   },
   {
    "name": "Hull",
-   "from": [ -28, 0, 0.7999999999999998 ],
-   "to": [ 44, 9.5, 15.2 ],
+   "from": [ -28, 0, 0.8 ],
+   "to": [ 44, 9.024, 15.2 ],
    "faces": {},
    "attachmentpoints": [
     { "code": "HullAP", "posX": "36", "posY": "0", "posZ": "7.2", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }

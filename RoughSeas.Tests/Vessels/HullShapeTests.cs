@@ -5,7 +5,7 @@ namespace RoughSeas.Tests.Vessels;
 
 public class HullShapeTests
 {
-    private readonly HullShape dugout = HullShape.FromBox(-1.5, 0, 0.125, 2.5, 0.5625, 0.875);
+    private readonly HullShape dugout = HullShape.FromBox([-2, 0, -0.375], [2, 0.5625, 0.375]);
 
     [Theory]
     [InlineData(-1, -0.01, HullPlace.PortBow)]

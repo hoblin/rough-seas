@@ -17,6 +17,7 @@ FACE_AXES = {
 }
 AXIS = {"x": 0, "y": 1, "z": 2}
 ROUNDED = 0.68
+ORIGIN = (8, 0, 8)
 
 
 def num(value):
@@ -102,6 +103,19 @@ def renamed(element, suffix):
     if "children" in element:
         copy["children"] = [renamed(child, suffix) for child in element["children"]]
     return copy
+
+
+def hull_box(*elements):
+    """The box round her hull's posed corners, which the mechanics measure her by, and that box as her entity takes it:
+    from the point she stands at, in metres and in voxels."""
+    points = [corner for element, m in posed(flattened(elements)) for corner in corners(element, m)]
+    frm, to = ([num(pick(point[axis] for point in points)) for axis in range(3)] for pick in (min, max))
+    element = {"name": "Hull", "from": frm, "to": to, "faces": {},
+               "attachmentpoints": [{"code": "HullAP", "posX": str(num(ORIGIN[0] - frm[0])), "posY": "0", "posZ": str(num((to[2] - frm[2]) / 2)),
+                                     "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]}
+    voxels = {end: [num(c - o) for c, o in zip(corner, ORIGIN)] for end, corner in (("from", frm), ("to", to))}
+    measured = {"hullBoxMetres": {end: [num(units.metres(c)) for c in corner] for end, corner in voxels.items()}, "hullBoxVoxels": voxels}
+    return element, {"behaviorConfigs": {"roughseas:vesselintegrity": measured}}
 
 
 def stages(name, pieces, wood="frame"):

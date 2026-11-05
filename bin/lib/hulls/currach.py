@@ -5,7 +5,7 @@ from physics import HIDE_METRES, LATH_SQUARE_METRES, MASS, afloat, shares, hide_
 from fit import APART
 import units
 from entity import merged, record
-from shape import BILGE, Hull, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
+from shape import BILGE, Hull, hull_box, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
 from held import poling, tools, waterline
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
@@ -424,9 +424,11 @@ def build(path_):
     shape.together(opened, *pins)
     shape.together(closed, lashed, laths[1:], hide, laced, thwart_stage, *pins, oars)
     shape.add(hull.hide_water(SHEER - 0.4), hull.bilge(SHEER - 0.4))
-    shape.keep("Hull", "BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
+    box, measured = hull_box(hide)
+    shape.add(box)
+    shape.keep("BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
-    record("currach", report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()]))
+    record("currach", merged(report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()]), measured))
     chest = chest_height(shape)
     middle, degrees = arc(shape, rests, chest)
     rowed = crew(shape, "currach", "BackSeat", "roughseas-sitthwart", rowing(shape, rests, chest, middle, degrees), {"R": "OarPortGrip", "L": "OarStarboardGrip"},

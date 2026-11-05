@@ -7,12 +7,13 @@ PATCHES = ASSETS / "patches"
 recorded = {}
 
 
-def merged(into, values):
-    for key, value in values.items():
-        if isinstance(value, dict) and isinstance(into.get(key), dict):
-            merged(into[key], value)
-        else:
-            into[key] = value
+def merged(into, *more):
+    for values in more:
+        for key, value in values.items():
+            if isinstance(value, dict) and isinstance(into.get(key), dict):
+                merged(into[key], value)
+            else:
+                into[key] = value
     return into
 
 

@@ -77,7 +77,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private bool wasAwash;
     private bool inWater;
     private double leaked;
-    private double[]? hullBox;
 
     public EntityBehaviorVesselIntegrity(Entity entity) : base(entity) { }
 
@@ -129,7 +128,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     public double ReferenceKg { get; private set; }
 
     // Her selection boxes load after her first physics on a client; only a measured shape is kept.
-    public HullShape Shape => shape ?? (MeasuredShape(entity, hullBox) is { } measured ? (shape = measured).Value : HitboxShape(entity));
+    public HullShape Shape => shape ?? (MeasuredShape(entity) is { } measured ? (shape = measured).Value : HitboxShape(entity));
 
     public HullShape Reach => outboard is { } off ? Shape.Spanning(off.Side.IsPort() ? -off.OffMetres : off.OffMetres) : Shape;
 
@@ -169,7 +168,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
             .ToArray();
         model = HullModel.For(attributes["model"].AsString("cracking"), () => Tree, MarkDirty, attributes, vessels.HullConfig);
         Material = attributes["damage"]["material"].AsString(Material);
-        hullBox = attributes["hullBox"].AsArray<double>(null);
+        if (attributes["hullBoxMetres"] is { Exists: true } box) shape = HullShape.FromBox(box["from"].AsArray<double>(), box["to"].AsArray<double>());
         parts = attributes["parts"].AsObject<VesselPart[]>([]);
         build = vessels.Materials.Build(parts, properties.Weight);
         depthMetres = attributes["depthMetres"].AsDouble();
@@ -801,10 +800,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private Block FluidBelow() =>
         entity.World.BlockAccessor.GetBlock(entity.Pos.XYZ.Add(0, -WaterlineProbeMetres, 0).AsBlockPos, BlockLayersAccess.Fluid);
 
-    private static HullShape? MeasuredShape(Entity entity, double[]? hullBox)
+    private static HullShape? MeasuredShape(Entity entity)
     {
-        if (hullBox is { Length: 6 } box) return HullShape.FromVoxels(box[..3], box[3..]);
-
         var boxes = entity.GetBehavior<EntityBehaviorSelectionBoxes>()?.selectionBoxes ?? [];
         return boxes.FirstOrDefault(box => box.AttachPoint?.Code == HullBox)?.AttachPoint.ParentElement is { From: { } from, To: { } to }
             ? HullShape.FromVoxels(from, to)

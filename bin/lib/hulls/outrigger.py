@@ -2,13 +2,13 @@ import math
 from collections import namedtuple
 from pathlib import Path
 
-from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, hull_box, log, volumes
+from dugout import CENTRE, HOLLOW, PROFILE, RIM, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes
 from physics import ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
 from entity import merged, record
-from shape import BILGE, ROUNDED, Hull, Shape, beam, box, clear_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, Hull, hull_box, Shape, beam, box, clear_of, group, path, plank, run, section, stages
 from wounds import wound
 
 LOG = 16
@@ -402,14 +402,15 @@ def build(target):
     shape.add(stages("Strakes", strakes(hull)), stages("Seams", seams(hull)))
     rigged(shape, hull, shell, logs, passes)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
-    shape.elements.append(hull_box())
+    box, hull_measured = hull_box(shell)
+    shape.add(box)
     shape.keep("FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage", "OarStorage")
     wound(shape, [("", [shell], WOOD)])
     shape.write()
     finished_float = passes["children"][-1]
     hull_alone, measured = report(hull, finished_float)
-    record("outrigger", measured)
+    record("outrigger", merged(measured, hull_measured))
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),
