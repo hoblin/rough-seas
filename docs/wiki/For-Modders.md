@@ -161,7 +161,7 @@ Each vessel built in place now changes the way the work would, and floats by num
 - A reed boat's ends sag over the soak she takes before she sinks with nothing aboard, not over her full saturation. The interface `ISoaking` is gone; `EntityBehaviorVesselIntegrity.SoakToSinkKg` gives that soak.
 - A refused piece logs a `[shipyard]` line once a hold.
 
-New: `roughseas:framing`'s stage keys `successive`, `follows` and `lifts` and its key `flatDepthMetres`, `roughseas:rigging`'s key `floatStage`, the shape keys `woodLitres` and `waterlineSquareMetres`, and `bin/lib/hulls/physics.py`, which prints what each builder measures.
+New: `roughseas:framing`'s stage keys `successive`, `follows` and `lifts`, the shape key `depthMetres` on a lifted group's steps, `roughseas:rigging`'s key `floatStage`, the shape keys `woodLitres` and `waterlineSquareMetres`, and `bin/lib/hulls/physics.py`, which prints what each builder measures.
 
 ### Paddles, poles and oars
 

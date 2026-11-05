@@ -143,8 +143,8 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     protected virtual void Laid(FramingStage stage, CollectibleObject piece, int pieces) { }
 
     private double Lifted(double designed) =>
-        config.Stages.FirstOrDefault(stage => stage.Lifts != null) is { } lifting && config.FlatDepthMetres > 0
-            ? config.FlatDepthMetres + (designed - config.FlatDepthMetres) * framing.Share(lifting)
+        config.Stages.FirstOrDefault(stage => stage.DepthMetres.Length > 0) is { } lifting
+            ? lifting.DepthMetres[Math.Min(framing.Laid(lifting), lifting.DepthMetres.Length - 1)]
             : designed;
 
     private bool Hurried(EntityAgent byEntity, double seconds)
@@ -218,6 +218,10 @@ public class FramingConfig
             stage.Pieces = pieces.Length;
             stage.WoodLitres = Measured(group, pieces, "woodLitres");
             stage.WaterlineSquareMetres = Measured(group, pieces, "waterlineSquareMetres");
+            if (stage.Lifts is { } lifted && Named(shape?["elements"], lifted) is { } levels)
+            {
+                stage.DepthMetres = Measured(levels, levels["children"]?.ToArray() ?? [], "depthMetres");
+            }
         }
     }
 
@@ -254,6 +258,4 @@ public class FramingConfig
     public double BarkSeconds;
 
     public int TrunkBlocks;
-
-    public double FlatDepthMetres;
 }

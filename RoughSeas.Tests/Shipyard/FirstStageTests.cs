@@ -52,12 +52,23 @@ public class FirstStageTests
     public void ABarkSheetIsAsLongAsTheTrunkItIsStrippedFromAndLiesOnTheGround()
     {
         var blocks = Entity("barkcanoe")["behaviorConfigs"]!["roughseas:framing"]!.Value<double>("trunkBlocks");
-        var flat = Named(Shape("barkcanoe")["elements"]!, "SheetFlat");
+        var (from, to) = Bounds(Named(Shape("barkcanoe")["elements"]!, "SheetFlat"));
         var curl = Named(Shape("barkcanoe")["elements"]!, "SheetCurlPort");
 
-        Assert.Equal(blocks * VoxelsAMetre, flat["to"]![0]!.Value<double>() - flat["from"]![0]!.Value<double>());
-        Assert.Equal(0, flat["from"]![1]!.Value<double>());
+        Assert.Equal(blocks * VoxelsAMetre, to[0] - from[0], 3);
+        Assert.Equal(0, from[1]);
         Assert.True(curl.Value<double>("rotationX") > 0, "a curl lifts off the ground");
+    }
+
+    [Fact]
+    public void ABarkCanoesGunwaleFrameLiesOnHerSheetUntilItIsWhole()
+    {
+        var elements = Shape("barkcanoe")["elements"]!;
+        var sheet = Bounds(Named(elements, "SheetFlat")).To[1];
+        var lying = Enumerable.Range(1, 5).SelectMany(n => Enumerable.Range(n, 6 - n).Select(k => Named(elements, $"Frame{n}At{k}")))
+            .SelectMany(Boxes).Select(box => Start(box)[1] + box["from"]![1]!.Value<double>());
+
+        Assert.All(lying, bottom => Assert.InRange(bottom, sheet, sheet + 0.5));
     }
 
     [Fact]

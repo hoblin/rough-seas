@@ -212,6 +212,10 @@ public sealed class FramingStage
     /// <summary>The square metres at the waterline with each count laid, as its shape measures them: index 0 is what lay there before the first piece.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public double[] WaterlineSquareMetres = [];
+
+    /// <summary>How deep she stands with each count laid, keel to rim, as the shape measures the group this stage <see cref="Lifts"/>: index 0 is before the first piece.</summary>
+    [Newtonsoft.Json.JsonIgnore]
+    public double[] DepthMetres = [];
 }
 
 public enum FramingWork { Lath, Pole, Rope, Pitch, Hew, Cloth, Plank, Hide, Oar }

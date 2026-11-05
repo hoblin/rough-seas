@@ -47,14 +47,14 @@ You build a bark canoe on its sheet of bark, piece by piece. Each piece shows on
 
 2. **Split the laths.** Lay two to five logs of one wood on their sides, end to end, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on a wedge. The wedges drive in and split the trunk into 64 poles as long as the row. An axe splits a pole into 16 [laths](Recipes#laths) of its length in the crafting grid. The gunwales take 5 m laths and the sheathing 4 m ones; the stems, thwarts and ribs take any lath of 2 m or more, cut down. Any wood will do, and the frame is as strong and as heavy as that wood.
 3. **Soak them.** Laths bend only when wet: soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, in the bundle as in the canoe, so put a bundle kept too long back in the barrel.
-4. **Frame it.** Hold a wet lath on the sheet: the inwales, the three thwarts and the outwales first, then the two stems. The first inwale trims the sheet to the canoe's length. Each piece of the frame raises the sides a seventh of the way, until the outwales clamp them standing. All the laths must be of one wood.
+4. **Frame it.** Hold wet laths on the sheet, one at a time, all of one wood. Lay the two inwales and the three thwarts first: they lie flat on the bark as the gunwale frame. With the last thwart in, you turn the bark up around the frame, the way stakes hold it upright. Lay an outwale next: you raise the frame to the canoe's full height, trim the bark to its length and shape, and the outwale clamps the bark against the inwale. Then lay the second outwale and the two stems.
 
    | | |
    | --- | --- |
-   | ![Three pieces in, the sides half raised](images/birch-bark-canoe/build-raising.webp) | ![The gunwales and thwarts on the raised bark](images/birch-bark-canoe/build-frame.webp) |
-   | Three pieces in | The frame done, the sides standing |
+   | ![The gunwale frame laid flat, the bark turned up around it](images/birch-bark-canoe/build-raising.webp) | ![The frame raised and both outwales on](images/birch-bark-canoe/build-frame.webp) |
+   | The gunwale frame laid, the bark turned up | The frame raised, both outwales on |
 
-5. **Lash the bark.** Hold vanilla rope on the canoe to sew the bark to the gunwales and bind the stems. Each rope is ten metres of lashing, and the canoe takes 22.
+5. **Lash the bark.** Hold vanilla rope on the canoe to sew the bark to the gunwales and bind the stems. Each rope is ten metres of lashing, and the canoe takes 21.
 
    ![Lashed along both gunwales](images/birch-bark-canoe/build-lashed.webp)
 

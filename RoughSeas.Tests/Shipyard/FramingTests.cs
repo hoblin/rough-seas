@@ -78,7 +78,7 @@ public class FramingTests
     }
 
     [Fact]
-    public void EachPieceOfHerFrameRaisesHerBarkAStepAndRidesOnIt()
+    public void EachPieceOfHerFrameShowsHerBarkAsItLeavesItAndTheFrameWhereItLies()
     {
         var canoe = Sheet();
         canoe.Lay("oak", 0);
@@ -94,6 +94,20 @@ public class FramingTests
         Assert.Contains("Frame1At1", canoe.Hidden());
         Assert.DoesNotContain("Frame1At2", canoe.Hidden());
         Assert.DoesNotContain("Frame2At2", canoe.Hidden());
+    }
+
+    [Fact]
+    public void SheStandsAsDeepAsHerBarkAsEachPieceOfHerFrameLeavesIt()
+    {
+        var config = JsonConvert.DeserializeObject<FramingConfig>(Entity["behaviorConfigs"]![EntityBehaviorFraming.Code]!.ToString())!;
+        config.Measure(Shape);
+        var depths = config.Stages.Single(stage => stage.Lifts != null).DepthMetres;
+
+        Assert.Equal(8, depths.Length);
+        Assert.Equal(0.6 / 16, depths[0], 4);
+        Assert.Equal(depths[0], depths[4]);
+        Assert.InRange(depths[5], depths[4], depths[6]);
+        Assert.Equal(Entity["behaviorConfigs"]!["roughseas:vesselintegrity"]!.Value<double>("depthMetres"), depths[^1], 3);
     }
 
     [Fact]
