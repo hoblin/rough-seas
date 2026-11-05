@@ -5,9 +5,10 @@ using System.Linq;
 namespace RoughSeas.Vessels;
 
 /// <summary>The people aboard a vessel as her hull bears them, while each sits down or stands up.</summary>
-public class Seating(double sitDownSeconds, double standUpSeconds)
+public class Seating(double sitDownSeconds, double standUpSeconds, IEnumerable<long> aboardWhenLoaded)
 {
     private readonly Dictionary<long, Sitter> sitters = [];
+    private readonly HashSet<long> seatedBefore = aboardWhenLoaded.ToHashSet();
     private double? weighedAt;
 
     public bool Settled(IEnumerable<long> seated) =>
@@ -25,7 +26,7 @@ public class Seating(double sitDownSeconds, double standUpSeconds)
         {
             sitters[person.Id] = sitters.TryGetValue(person.Id, out var sitter)
                 ? sitter.SitDown(person, seconds, sitDownSeconds, standUpSeconds)
-                : new Sitter(person, true, weighedAt.HasValue ? seconds : double.NegativeInfinity);
+                : new Sitter(person, true, seatedBefore.Remove(person.Id) ? double.NegativeInfinity : seconds);
         }
         weighedAt = seconds;
 

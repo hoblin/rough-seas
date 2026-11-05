@@ -10,20 +10,38 @@ public class SeatingTests
 
     private static double Kg(IReadOnlyList<Person> borne) => borne.Sum(person => person.BodyKg + person.KitKg);
 
-    private static Seating Empty()
-    {
-        var seating = new Seating(SitDown, StandUp);
-        seating.Bear([], 0);
-        return seating;
-    }
+    private static Seating Empty() => new(SitDown, StandUp, []);
+
+    private static Seating LoadedWithPaddler() => new(SitDown, StandUp, [Paddler.Id]);
 
     [Fact]
-    public void SomeoneAlreadySeatedWhenSheIsFirstWeighedIsBorneInFull()
+    public void SomeoneAboardWhenSheWasLoadedIsBorneInFull()
     {
-        var seating = new Seating(SitDown, StandUp);
+        var seating = LoadedWithPaddler();
 
         Assert.Equal(75, Kg(seating.Bear([Paddler], 10)));
         Assert.True(seating.Settled([Paddler.Id]));
+    }
+
+    [Fact]
+    public void SomeoneAboardWhenSheWasLoadedIsBorneInFullThoughTheyTurnUpAfterHerFirstWeighing()
+    {
+        var seating = LoadedWithPaddler();
+        seating.Bear([], 10);
+
+        Assert.False(seating.Settled([Paddler.Id]));
+        Assert.Equal(75, Kg(seating.Bear([Paddler], 11)));
+    }
+
+    [Fact]
+    public void SomeoneAboardWhenSheWasLoadedSitsDownLikeAnyoneOnceTheyHaveLeft()
+    {
+        var seating = LoadedWithPaddler();
+        seating.Bear([Paddler], 0);
+        seating.Bear([], 1);
+        seating.Bear([], 1 + StandUp);
+
+        Assert.Equal(0, Kg(seating.Bear([Paddler], 10)), 6);
     }
 
     [Fact]
@@ -41,7 +59,7 @@ public class SeatingTests
     [Fact]
     public void ALeavingPersonsWeightComesOffAsTheyStandUp()
     {
-        var seating = new Seating(SitDown, StandUp);
+        var seating = LoadedWithPaddler();
         seating.Bear([Paddler], 0);
 
         Assert.Equal(75, Kg(seating.Bear([], 1)), 6);
@@ -53,7 +71,7 @@ public class SeatingTests
     [Fact]
     public void SomeoneWhoSitsBackDownHalfwayUpTakesUpFromWhereTheyWere()
     {
-        var seating = new Seating(SitDown, StandUp);
+        var seating = LoadedWithPaddler();
         seating.Bear([Paddler], 0);
         seating.Bear([], 1);
         double halfwayUp = Kg(seating.Bear([], 1 + StandUp / 2));
@@ -66,6 +84,7 @@ public class SeatingTests
     public void ANewcomerIsNoticedBeforeTheirWeightIsTaken()
     {
         var seating = Empty();
+        seating.Bear([], 0);
 
         Assert.False(seating.Settled([Paddler.Id]));
     }
@@ -92,7 +111,7 @@ public class SeatingTests
     [Fact]
     public void SomeoneJustUpIsNotYetSettled()
     {
-        var seating = new Seating(SitDown, StandUp);
+        var seating = LoadedWithPaddler();
         seating.Bear([Paddler], 0);
         seating.Bear([], 1);
 
@@ -102,7 +121,7 @@ public class SeatingTests
     [Fact]
     public void KitPutOnWhileSeatedIsBorneAtOnce()
     {
-        var seating = new Seating(SitDown, StandUp);
+        var seating = LoadedWithPaddler();
         seating.Bear([Paddler], 0);
 
         Assert.Equal(95, Kg(seating.Bear([Paddler with { KitKg = 30 }], 1)), 6);

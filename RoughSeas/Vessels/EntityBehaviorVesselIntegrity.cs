@@ -161,7 +161,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         depthMetres = attributes["depthMetres"].AsDouble();
         waterplaneSquareMetres = attributes["waterplaneSquareMetres"].AsDouble();
         flotation = new Flotation(depthMetres, waterplaneSquareMetres, build.Litres);
-        seating = vessels.Mass.Seating();
+        seating = vessels.Mass.Seating(entity);
         ReferenceKg = properties.Weight + vessels.Mass.CrewKg;
         referenceDraft = flotation.Float(new Aboard(ReferenceKg, 0, 0, 0, 0, 0), false).DraftMetres;
         impact = new Impact(attributes["minImpactSpeed"].AsDouble(1), InvulnerableMs);

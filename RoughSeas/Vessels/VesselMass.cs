@@ -4,6 +4,7 @@ using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
@@ -19,7 +20,13 @@ public class VesselMass
     public double SitDownSeconds;
     public double StandUpSeconds;
 
-    public Seating Seating() => new(SitDownSeconds, StandUpSeconds);
+    /// <summary>Built as the vessel initialises, while vanilla's saved <c>seatdata</c> still names who was aboard when she was loaded.</summary>
+    public Seating Seating(Entity vessel) => new(SitDownSeconds, StandUpSeconds, Recorded(vessel));
+
+    private static IEnumerable<long> Recorded(Entity vessel) =>
+        vessel.WatchedAttributes["seatdata"] is TreeAttribute seats
+            ? seats.Values.OfType<TreeAttribute>().Select(seat => seat.GetLong("passenger")).Where(id => id != 0).ToList()
+            : [];
 
     public static IEnumerable<Entity> Passengers(Entity vessel) =>
         (vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []).Select(seat => seat.Passenger).OfType<Entity>();
