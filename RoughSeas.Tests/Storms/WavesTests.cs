@@ -1,3 +1,4 @@
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 
@@ -120,8 +121,13 @@ public class WavesTests
         var breeze = waves.Force(9, 2.7, raft.BeamMetres, raft.WindageSquareMetres);
         var gale = waves.Force(20, 5.5, raft.BeamMetres, raft.WindageSquareMetres);
 
+        const double GaleWavePeriodSeconds = 10;
+        var everyWave = Waves.ChanceToExceed(gale, Fixtures.FlaxNewtons);
+        var gameDayWaves = new SeaClock(() => 0, () => 0.5, () => 60).SecondsAt(24) / GaleWavePeriodSeconds;
+
         Assert.True(Waves.ChanceToExceed(breeze, Fixtures.FlaxNewtons) < 1e-6);
-        Assert.InRange(Waves.ChanceToExceed(gale, Fixtures.FlaxNewtons), 1e-3, 0.02);
+        Assert.InRange(everyWave, 1e-4, 1e-2);
+        Assert.InRange(1 - Math.Pow(1 - everyWave, gameDayWaves), 0.05, 0.5);
     }
 
     [Fact]

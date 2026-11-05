@@ -27,7 +27,10 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private EntityBehaviorBilge? bilge;
     private EntityBehaviorMooring? mooring;
     private double windageSquareMetres;
+    private JsonObject config = null!;
+    private double? designedBeamMetres;
     private Seaworthiness dry;
+    private double dryBeamMetres = double.NaN;
     private float speedMultiplier;
     private EntityBehaviorSeatable? seatable;
     private IMasted? mast;
@@ -42,7 +45,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     /// <summary>Server side, each wave as she takes it, whether or not it broke on her or shipped water.</summary>
     public event Action<TakenWave>? Took;
 
-    public double BeamMetres { get; private set; }
+    public double BeamMetres => designedBeamMetres ?? 2 * (hull?.Shape.HalfBeam ?? 0);
 
     public double MastMetres => mast?.MastMetres(designedMastMetres) ?? designedMastMetres;
 
@@ -53,12 +56,22 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     {
         get
         {
-            var laden = dry.Laden(bilge?.Fill ?? 0, storms.Config.Swamping);
+            var laden = Dry.Laden(bilge?.Fill ?? 0, storms.Config.Swamping);
             return buoyant is { HasDraft: true } ? laden.Floating(buoyant.Afloat.FreeboardMetres) : laden;
         }
     }
 
-    public double SettlingMetres => dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
+    public double SettlingMetres => Dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
+
+    private Seaworthiness Dry
+    {
+        get
+        {
+            var beam = BeamMetres;
+            if (beam != dryBeamMetres) (dry, dryBeamMetres) = (Seaworthiness.From(config, beam), beam);
+            return dry;
+        }
+    }
 
     public bool? KeelWet { get; set; }
 
@@ -74,10 +87,10 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         watch = sea.Clock.StartWatch();
-        BeamMetres = attributes["beamMetres"].AsDouble();
+        config = attributes;
+        designedBeamMetres = attributes["beamMetres"].Exists ? attributes["beamMetres"].AsDouble() : null;
         designedMastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();
-        dry = Seaworthiness.From(attributes);
         speedMultiplier = properties.Attributes?["speedMultiplier"].AsFloat(1) ?? 1;
     }
 

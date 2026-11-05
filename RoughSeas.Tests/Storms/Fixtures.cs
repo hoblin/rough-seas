@@ -42,7 +42,9 @@ public static class Fixtures
 
     public static Vessel Sailboat => Vessel("boat-sailed");
 
-    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)));
+    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel));
+
+    public static double BeamMetres(string vessel) => (double?)SeaForces(vessel)["beamMetres"] ?? 2 * Shape(vessel).HalfBeam;
 
     public static Seaworthiness Afloat(string vessel, double litres = 0)
     {
@@ -123,8 +125,8 @@ public static class Fixtures
     private static Vessel Vessel(string entity)
     {
         var integrity = BehaviorConfig("vessels-vanilla-boats.json", entity, EntityBehaviorVesselIntegrity.Code);
-        var forces = BehaviorConfig("storms-vessels.json", entity, "roughseas:seaforces");
-        return new Vessel((double)integrity["impactCapacity"]!, (double)forces["beamMetres"]!, (double)forces["windageSquareMetres"]!);
+        var forces = SeaForces(entity);
+        return new Vessel((double)integrity["impactCapacity"]!, BeamMetres(entity), (double)forces["windageSquareMetres"]!);
     }
 
     private static JToken BehaviorConfig(string patches, string entity, string behavior) =>

@@ -262,3 +262,15 @@ A reed bundle keeps the plant it was bound from, and the boat each of her bundle
 - A W–E pair binds into a boat turned half round from before (`yaw` 3π/2, was π/2), so each bundle stays on the side it lay.
 
 New: `Reeds`, the plants a vessel's bundles were bound from, and its name.
+
+### The raft paddled kneeling
+
+Vanilla's raft is paddled from her side, at her own size. A vessel of yours loads as it did.
+
+- The raft's `Hull` box is her logs, 3.88 by 1.34 m, where it reached her rope wraps' corners, 4.25 by 1.88; the bamboo raft's is 4.19 by 1.34, where it was 4.19 by 1.63. Her drag, reach, the places a knock lands and her heave all read it, and through her beam so do the sea's pull on her mooring, the water she ships and her roll: a moored raft holds about ten times longer in a gale.
+- `roughseas:seaforces`'s `beamMetres` may be left out: the hull then takes her `Hull` box's width, so a vessel's beam lives in one place. The new `capsizeBreakerBeams` gives the capsizing breaker as a share of that beam. The raft carries neither `beamMetres` nor `capsizeBreakerMetres` now. `EntityBehaviorSeaForces.BeamMetres` reads her hull each time, and `Seaworthiness.From` takes the beam.
+- `roughseas:propulsion` takes ahead and turning from the rower's keys, not from vanilla's motion: a paddled boat that carries it no longer goes astern while her rider looks astern. Vanilla's raft is one of them.
+- The raft's seats hold the body to her heading, `bodyYawLimit` 0.4, and her rower kneels, `mountAnimations.idle` `roughseas-kneel`. Her paddle strokes key `LowerTorso` and `UpperTorso` as well: he shifts toward the side he paddles and bends his trunk to it. Her pole's stance stands him half a metre toward the side he poles.
+- In `bin/lib/hulls`, `seat` reads a seat where the game seats a rider, through the elements it hangs from, and `paddling` takes a trunk `bend`, a `shift` of the hips toward the working side and the `middle` both sides mirror about.
+
+New: `capsizeBreakerBeams`, `EntityBehaviorPropulsion.Asked`.

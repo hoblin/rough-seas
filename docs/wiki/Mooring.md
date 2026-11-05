@@ -10,7 +10,7 @@ A strong enough pull snaps the rope. Every wave pulls on it, with the wind on th
 | --- | --- | --- | --- |
 | [Sailboat](Sailboat) | 1 in 40 | 1 in 10 | 1 in 4 |
 | [Outrigger canoe](Outrigger-Canoe) | 1 in 50 | 1 in 12 | 1 in 4 |
-| [Raft](Raft) | 1 in 250 | 1 in 30 | 1 in 8 |
+| [Raft](Raft) | 1 in 2600 | 1 in 140 | 1 in 21 |
 | [Coracle](Coracle) | almost never | 1 in 150 | 1 in 20 |
 | [Hide currach](Hide-Currach) | almost never | 1 in 500 | 1 in 40 |
 | [Reed boat](Reed-Boat) | never | almost never | 1 in 100 |

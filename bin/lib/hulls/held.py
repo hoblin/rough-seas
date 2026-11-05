@@ -309,10 +309,11 @@ def eased(u):
     return 0.5 - 0.5 * math.cos(math.pi * min(1, max(0, u)))
 
 
-def paddling(tool, at, ahead, behind, above, out, catch=None, fore=3):
+def paddling(tool, at, ahead, behind, above, out, catch=None, fore=3, bend=0, shift=0, middle=None):
     x, y, z = at
     catch = ahead if catch is None else catch
-    sides = {-1: out, 1: 2 * z - out}
+    middle = z if middle is None else middle
+    sides = {-1: out, 1: 2 * middle - out}
 
     def placed(hand, lean, pitch):
         return tool.held_at(hand, {"rotationX": lean, "rotationZ": pitch})
@@ -344,12 +345,22 @@ def paddling(tool, at, ahead, behind, above, out, catch=None, fore=3):
 
         return at_frame
 
+    def bent(toward):
+        def body(rower):
+            hips = rower.idle.get("LowerTorso", {})
+            across = lambda frame: middle - z + toward(frame) * shift if shift else 0
+            return lambda frame: {"UpperTorso": {"rotationX": toward(frame) * bend},
+                                  "LowerTorso": hips | {"offsetZ": hips.get("offsetZ", 0) + across(frame)}}
+        return (body,) if bend or shift else ()
+
     def side_strokes(side, name, grips):
         forward = stroke(side)
-        return {f"{name}-ready": (lambda frame: forward(0), grips),
-                f"{name}-forward": (forward, grips),
-                f"{name}-backward": (lambda frame: forward(FRAMES - frame), grips),
-                f"{CHANGE}{name}": (switch(side), PORT if side < 0 else STARBOARD)}
+        over = bent(lambda frame: side)
+        return {f"{name}-ready": (lambda frame: forward(0), grips, *over),
+                f"{name}-forward": (forward, grips, *over),
+                f"{name}-backward": (lambda frame: forward(FRAMES - frame), grips, *over),
+                f"{CHANGE}{name}": (switch(side), PORT if side < 0 else STARBOARD,
+                                    *bent(lambda frame: side * (2 * eased(frame / (FRAMES - 1)) - 1)))}
 
     return side_strokes(-1, "starboard", STARBOARD) | side_strokes(1, "port", PORT)
 
