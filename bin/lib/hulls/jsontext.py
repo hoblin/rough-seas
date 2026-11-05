@@ -85,6 +85,9 @@ def past(text, at):
             if text[at] == '"':
                 at = past(text, at)
                 continue
+            if text.startswith("//", at):
+                at = text.index("\n", at)
+                continue
             depth += {"{": 1, "[": 1, "}": -1, "]": -1}.get(text[at], 0)
             at += 1
             if depth == 0:
