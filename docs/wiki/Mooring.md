@@ -8,13 +8,14 @@ A strong enough pull snaps the rope. Every wave pulls on it, with the wind on th
 
 | Vessel | Force 8 wind, 5.5 m sea | Force 9, 7 m | Force 10, 9 m |
 | --- | --- | --- | --- |
-| [Sailboat](Sailboat) | 1 in 40 | 1 in 10 | 1 in 4 |
-| [Outrigger canoe](Outrigger-Canoe) | 1 in 50 | 1 in 12 | 1 in 4 |
-| [Raft](Raft) | 1 in 2600 | 1 in 140 | 1 in 21 |
-| [Coracle](Coracle) | almost never | 1 in 150 | 1 in 20 |
-| [Hide currach](Hide-Currach) | almost never | 1 in 500 | 1 in 40 |
-| [Reed boat](Reed-Boat) | never | almost never | 1 in 100 |
-| [Dugout](Dugout), [birch-bark canoe](Birch-Bark-Canoe) | never | almost never | 1 in 250 |
+| [Sailboat](Sailboat) | 1 in 25 | 1 in 8 | 1 in 4 |
+| [Outrigger canoe](Outrigger-Canoe) | 1 in 60 | 1 in 13 | 1 in 5 |
+| [Hide currach](Hide-Currach) | 1 in 3100 | 1 in 150 | 1 in 23 |
+| [Raft](Raft) | 1 in 5000 | 1 in 200 | 1 in 25 |
+| [Coracle](Coracle) | almost never | 1 in 700 | 1 in 54 |
+| [Dugout](Dugout) | almost never | 1 in 810 | 1 in 64 |
+| [Birch-bark canoe](Birch-Bark-Canoe) | almost never | 1 in 3600 | 1 in 160 |
+| [Reed boat](Reed-Boat) | never | almost never | almost never |
 
 A snapped vessel drifts, and in a storm the drift is downwind. Pull small boats ashore, or pick them up, before a gale.
 

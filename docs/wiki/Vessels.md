@@ -31,7 +31,7 @@ Speeds are one rower's, paddled unless noted, on calm water; under sail what the
 | [Birch-bark canoe](Birch-Bark-Canoe) | 5200 J | 609 l | awash | 0.75 m | none | bark of its tree | picked up |
 | [Hide currach](Hide-Currach) | 2800 J | 1911 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
 | [Outrigger canoe](Outrigger-Canoe) | 30 000 J | 1720 l, 1298 without washstrakes | awash | 2.6 m | none | a log | no |
-| [Sailboat](Sailboat) | 40 000 J | 1500 l | sinks | 3.3 m | none | planks | no |
+| [Sailboat](Sailboat) | 40 000 J | 8209 l | sinks | 3.3 m | none | planks | no |
 
 Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more, and what floods awash in oak may sink [in a heavy wood or loaded hard](Surf-and-Swamping#swamping). Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [Seamanship](Roadmap#seamanship); its column is what overturned each vessel in 1.0.
 
