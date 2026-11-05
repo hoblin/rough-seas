@@ -201,6 +201,7 @@ She is then laid stage by stage, in the order of `stages`, each piece held on he
 - `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done. A hold kept on past her last lashing ties nothing; a fresh click ties her as vanilla does.
 - `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
 - `hew`: any axe, which loses a point of durability a piece.
+- `cut`: any knife, which loses a point of durability a cut. Vanilla's knife handles its own held step and release, so a Harmony prefix on `ItemKnife.OnHeldInteractStep` and `OnHeldInteractStop` hands them to the build while she wants a cut.
 - `cloth`: a piece of cloth.
 - `plank`: a plank, `planks` the item code.
 
@@ -210,7 +211,7 @@ Every piece of a `lath` or `pole` stage takes one at least as long as it, cut do
 | --- | --- | --- | --- |
 | `stages` | list | none | what she is laid with, in order: each a `group`, a `work`, `seconds` a piece, and the flags below |
 | `group` | shape group | none | the group that draws the stage, one child per piece: `Frame1`, `Frame2`…; the count of children is the count of pieces. A look at her shows the stage by the lang key `roughseas:shipyard-stage-{group}` in lower case, with the pieces laid and the pieces in all |
-| `work` | `lath`, `pole`, `rope`, `pitch`, `hew`, `cloth`, `plank` or `hide` | `lath` | what lays a piece |
+| `work` | `lath`, `pole`, `rope`, `pitch`, `hew`, `cut`, `cloth`, `plank` or `hide` | `lath` | what lays a piece |
 | `seconds` | s | 0 | how long a piece is held on her: the real time of that work over sixty |
 | `lines` | bool | false | its laths line her shell: the shell's `backing` backs her only where they are laid |
 | `members` | bool | false | its laths are the members of her shell's `frame`: a broad load meets only those laid, spaced wider while some are missing |
@@ -223,8 +224,8 @@ Every piece of a `lath` or `pole` stage takes one at least as long as it, cut do
 | `texture` | texture code | none | the shape's texture that draws the pieces, redrawn in the wood they are of |
 | `replaces` | shape group | none | a group whose pieces each piece of this stage takes away once laid, `{replaces}{n}` for `{group}{n}`; with `successive`, the one piece `{replaces}1` the first piece takes away: an outrigger's float logs, for the first pass hewn from them |
 | `successive` | bool | false | each piece is the whole work again, a step further, and only the last laid shows: an outrigger's float, hewn down pass by pass |
-| `follows` | stage group | none | a stage whose progress this stage's pieces are drawn at: each piece shows from `{group}{n}At{k}`, `k` the pieces that stage has laid, so a piece moves with what it rests on (an outrigger's booms settling onto the float as it is hewn, a currach's gunwale laths drawn together at her stern by her second end lashing). A stage may follow itself |
-| `lifts` | shape group | none | a group this stage raises piece by piece: `{lifts}{k}` shows while `k` of its pieces are laid (a bark canoe's skin, from flat to standing) |
+| `follows` | stage or lifted group | none | a stage, or a group stages lift, whose progress this stage's pieces are drawn at: each piece shows from `{group}{n}At{k}`, `k` the pieces that stage, or the stages lifting that group, have laid, so a piece moves with what it rests on (an outrigger's booms settling onto the float as it is hewn, a currach's gunwale laths drawn together at her stern by her second end lashing). A stage may follow itself |
+| `lifts` | shape group | none | a group this stage raises piece by piece, counted with every other stage that lifts it: `{lifts}{k}` shows while `k` of their pieces are laid (a bark canoe's skin, from flat through staked and raised to trimmed) |
 | `metres`, `woodLitres`, `waterlineSquareMetres` | in the shape | none | written by the builder on each piece's group: the lath or pole it takes, and, on a `successive` stage and on the stage's own group for what lay before its first piece, the wood that is left and how wide it stands at the water |
 | `bends` | stage group | none | a stage this one bends once its first piece is laid: from then on that stage's pieces show from the group `{bends}Bent`, `{bends}Bent1`, `{bends}Bent2`…, and no longer from their own: a coracle's lattice, bent up by her gunwale |
 | `framePart` | part name | none | the part of her `parts`, by its `name`, that her laths or poles make: its share and its `reference` stay, the material is their wood, and only what is laid weighs and takes knocks. Her shape's `frame` texture is drawn in that wood |
@@ -232,9 +233,8 @@ Every piece of a `lath` or `pole` stage takes one at least as long as it, cut do
 | `hideStates` | list | none | the hides' `type` variants a `hide` stage takes: ours every stage before leather, `raw`, `soaked`, `scraped`, `prepared`, `oiled`, `pelt` and `salted` |
 | `barkSeconds` | s | 0 | how long the knife takes the bark off |
 | `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
-| `flatDepthMetres` | m | 0 | how thick she floats while her `lifts` stage has none of its pieces: a sheet lying flat; she floats as deep as her `depthMetres` once it is done, between in step |
 
-At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and the item shows her as far as she is built, and she takes her seats only once finished. A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull, one child a step: the behaviour shows the sheet until a piece is laid, then the step her `lifts` stage has reached. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as she is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
+At every stage she is a vessel: she floats and can be picked up, her build goes with her onto the item and back, and the item shows her as far as she is built, and she takes her seats only once finished. A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before her frame goes in, and a group `Skin`, the bark raised into her hull, one child a step: the behaviour shows the sheet until a piece is laid, then the step her `lifts` stage has reached. The group and each step carry `depthMetres`, how deep she stands at it, keel to rim, as her builder measures it (the group's for the sheet): she floats as deep as the step she shows. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as she is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
 
 ### Rigged in place
 

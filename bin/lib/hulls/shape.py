@@ -5,7 +5,7 @@ import math
 import re
 from pathlib import Path
 
-from fit import APART, TOLERANCE, Loft, check, corners, posed
+from fit import APART, TOLERANCE, Loft, check, corners, depth_into, posed
 from transform import add, apply, cross, direct, dot, scale, sub, unit
 
 FACES = ("north", "east", "south", "west", "up", "down")
@@ -270,10 +270,16 @@ def widest(made, surface, reach):
     return low
 
 
-def seated(made, surface, depth=0):
-    """How far in, from depth on, the element made(depth) has to sit for every corner to lie inside the surface."""
+def seated(made, surface, depth=0, clear=()):
+    """How far in, from depth on, the element made(depth) has to sit for every corner to lie inside the surface and
+    the element to pass into none of the boxes it is to clear, each its corners and bounds as fit.bounded gives them."""
     for _ in range(50):
-        out = max(surface.beyond(p) for p in corners_of(made(depth)))
+        points = corners_of(made(depth))
+        out = max(surface.beyond(p) for p in points)
+        if clear:
+            low, high = [min(p[i] for p in points) for i in range(3)], [max(p[i] for p in points) for i in range(3)]
+            out = max([out, *(depth_into(points, box) for box, box_low, box_high in clear
+                              if all(low[i] < box_high[i] and box_low[i] < high[i] for i in range(3)))])
         if out <= TOLERANCE / 2:
             break
         depth += out
@@ -342,16 +348,28 @@ class Hull:
         def placed(*args, **options):
             return clear_of(cuts, unit(sub(args[2][1], args[2][0])), lambda short: self.board(*args, **options, short=short))
 
+        quads = {(side, k, i): quad for _, side, k, i, quad in panels}
+
+        def straight(side, k, i, j):
+            """Whether the panel runs on into its neighbour j without a bend, its edges in line through their station."""
+            if (side, k, j) not in quads:
+                return False
+            (a, b, c, d), (e, f, g, h) = quads[side, k, i], quads[side, k, j]
+            return all(dot(unit(sub(q, p)), unit(sub(s, r))) > 1 - 1e-9 for (p, q), (r, s) in (((a, b), (e, f)), ((d, c), (h, g))))
+
+        def flush(side, k, i):
+            return straight(side, k, i, i - 1), straight(side, k, i, i + 1)
+
         for name, side, k, i, (a, b, c, d) in panels:
             near = [bottoms[side, k, i - 1][0]] if (side, k, i - 1) in bottoms else []
-            bottoms[side, k, i] = placed(name, side, (a, b, d, c), 1, (i == 0, i == last), loft, near, aside=APART * (i % 2))
+            bottoms[side, k, i] = placed(name, side, (a, b, d, c), 1, (i == 0, i == last), loft, near, aside=APART * (i % 2), flush=flush(side, k, i))
         for name, side, k, i, (a, b, c, d) in panels:
             if abs(across(a, b, sub(d, a))[0] - across(a, b, sub(c, b))[0]) <= TOLERANCE:
                 continue
             near = [bottoms[key][0] for key in ((side, k, i - 1), (side, k, i + 1)) if key in bottoms]
             near += [tops[side, k, i - 1][0]] if (side, k, i - 1) in tops else []
             tops[side, k, i] = placed(name + "Top", side, (d, c, a, b), -1, (i == 0, i == last), loft, near, bottoms[side, k, i][0] + APART,
-                                     aside=APART * (i % 2))
+                                     aside=APART * (i % 2), flush=flush(side, k, i))
         return [made[1] for made in (*bottoms.values(), *tops.values())]
 
     def refined(self):
@@ -380,14 +398,14 @@ class Hull:
                     yield f"{self.prefix}{label}{k + 1}x{i + 1}", side, k, i, (
                         self.point(i, k, side), self.point(i + 1, k, side), self.point(i + 1, k + 1, side), self.point(i, k + 1, side))
 
-    def board(self, name, side, quad, turn, ends, loft, near, below=0, short=(0, 0), aside=0):
+    def board(self, name, side, quad, turn, ends, loft, near, below=0, short=(0, 0), aside=0, flush=(False, False)):
         a, b, d, c = quad
         along = unit(sub(b, a))
         up = rise(a, b, c, d)
         rise_a, rise_b = across(a, b, sub(d, a))[0], across(a, b, sub(c, b))[0]
         height, flare = min(rise_a, rise_b), across(a, b, up)[1]
-        start = sub(a, scale(along, max(0, -dot(sub(d, a), along) * height / rise_a)))
-        end = add(b, scale(along, max(0, dot(sub(c, b), along) * height / rise_b)))
+        start = a if flush[0] else sub(a, scale(along, max(0, -dot(sub(d, a), along) * height / rise_a)))
+        end = b if flush[1] else add(b, scale(along, max(0, dot(sub(c, b), along) * height / rise_b)))
         lift = unit(sub(up, scale(along, dot(up, along))))
         start, end, height = add(start, scale(lift, aside)), add(end, scale(lift, aside)), height - aside
         normal = unit(cross(along, lift))
@@ -488,7 +506,7 @@ class Hull:
     def skin_square_metres(self):
         return sum(math.sqrt(dot(spread := cross(sub(c, a), sub(d, b)), spread)) / 2 for *_, (a, b, c, d) in self.panels()) / VOXELS_A_METRE ** 2
 
-    def rib(self, name, x, tex, width=1, depth=1, inset=None):
+    def rib(self, name, x, tex, width=1, depth=1, inset=None, clear=()):
         """A rib at x, a piece along each edge of the section, each sunk until it lies inside the skin (and what lines
         it, inset deep); every other piece a little narrower, so that two share no plane where they meet."""
         edges = self.section(x)
@@ -510,7 +528,7 @@ class Hull:
                 made = lambda s, z0=z0, z1=z1, y0=y0, z=z, half=half, normal=normal: box(
                     f"{name}{label}{k + 1}", (x - half, y0 + normal[1] * s, z0 + normal[2] * s), (x + half, y0 + length + normal[1] * s, z1 + normal[2] * s),
                     tex, origin=(x, y0 + normal[1] * s, z + normal[2] * s), rot=(side * flare, 0, 0), grain="y")
-                elements.append(made(seated(made, inside)))
+                elements.append(made(seated(made, inside, clear=clear)))
         return elements
 
     def transom(self, name, x, thickness, tex, step=1.5):
@@ -533,12 +551,16 @@ class Shape:
         self.animations = []
         self.fits = []
         self.views = []
+        self.aparts = []
 
     def within(self, surface, *elements, only=lambda name: True):
         self.fits.append((surface, flattened(elements), only))
 
     def together(self, *elements):
         self.views.append(flattened(elements))
+
+    def apart(self, first, second, pressed=0):
+        self.aparts.append((flattened([first]), flattened([second]), pressed))
 
     def add(self, *elements):
         for element in elements:
@@ -556,9 +578,10 @@ class Shape:
             self.elements.append(current[name])
 
     def write(self):
-        faults = check(self.fits, self.views)
+        faults = check(self.fits, self.views, self.aparts)
         if faults:
-            raise SystemExit(f"{self.path.name}: its boxes leave the round shapes they build or share a plane\n  " + "\n  ".join(faults))
+            raise SystemExit(f"{self.path.name}: its boxes leave the round shapes they build, pass into each other or share a plane\n  "
+                             + "\n  ".join(faults))
         shape = {
             "editor": {"allAngles": False, "entityTextureMode": False},
             "textureWidth": 16,

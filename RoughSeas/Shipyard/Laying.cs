@@ -17,7 +17,7 @@ public abstract class Laying
         FramingWork.Lath => new LathLaying(new AssetLocation(config.Laths)),
         FramingWork.Pole => new PoleLaying(new AssetLocation(config.Poles)),
         FramingWork.Rope => new RopeLaying(new AssetLocation(config.Rope)),
-        FramingWork.Hew => new HewLaying(),
+        FramingWork.Hew or FramingWork.Cut => new ToolLaying(stage.Work),
         FramingWork.Cloth => new PieceLaying(new AssetLocation(config.Cloth), "roughseas:shipyard-bend-sail"),
         FramingWork.Plank => new PlankLaying(new AssetLocation(config.Planks)),
         FramingWork.Hide => new HideLaying(new AssetLocation(config.Hides), config.HideStates),
@@ -101,16 +101,27 @@ public sealed class PoleLaying(AssetLocation poles) : Laying
     public override IEnumerable<ItemStack> Shown(IWorldAccessor world) => world.SearchItems(poles).Select(pole => new ItemStack(pole));
 }
 
-public sealed class HewLaying : Laying
+/// <summary>Work done with a tool held on her, which wears it as vanilla wears a tool for each job: an axe hewing, a knife cutting bark.</summary>
+public sealed class ToolLaying(FramingWork work) : Laying
 {
-    public override string Action => "roughseas:shipyard-hew-float";
+    private readonly EnumTool tool = ToolOf(work)!.Value;
 
-    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible.Tool == EnumTool.Axe;
+    /// <summary>The tool a kind of work is done with; none for work that lays a piece.</summary>
+    public static EnumTool? ToolOf(FramingWork work) => work switch
+    {
+        FramingWork.Hew => EnumTool.Axe,
+        FramingWork.Cut => EnumTool.Knife,
+        _ => null
+    };
+
+    public override string Action => tool == EnumTool.Axe ? "roughseas:shipyard-hew-float" : "roughseas:shipyard-cut-bark";
+
+    public override bool Takes(ItemSlot slot) => slot.Itemstack?.Collectible.Tool == tool;
 
     public override void Spend(ItemSlot slot, EntityAgent byEntity) => slot.Itemstack!.Collectible.DamageItem(byEntity.World, byEntity, slot);
 
     public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
-        world.Items.Where(item => item.Code != null && item.Tool == EnumTool.Axe).Select(axe => new ItemStack(axe));
+        world.Items.Where(item => item.Code != null && item.Tool == tool).Select(held => new ItemStack(held));
 }
 
 public sealed class PieceLaying(AssetLocation pieces, string action) : Laying

@@ -250,6 +250,46 @@ def crossing(p, q, a, b):
     return p[0] + t * dx, p[1] + t * dy
 
 
-def check(fits, views):
+def edges_of(points):
+    return [tuple(p - q for p, q in zip(points[i], points[0])) for i in (4, 2, 1)]
+
+
+def depth_into(a, b):
+    """How far two posed boxes, each its eight corners, pass into each other: their least overlap along every axis
+    that could part them, 0 once one does."""
+    ea, eb = edges_of(a), edges_of(b)
+    crossed = [(u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]) for u in ea for v in eb]
+    least = math.inf
+    for axis in (*ea, *eb, *crossed):
+        length = math.sqrt(axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2])
+        if length < 1e-9:
+            continue
+        on_a = [(p[0] * axis[0] + p[1] * axis[1] + p[2] * axis[2]) / length for p in a]
+        on_b = [(p[0] * axis[0] + p[1] * axis[1] + p[2] * axis[2]) / length for p in b]
+        least = min(least, max(on_a) - min(on_b), max(on_b) - min(on_a))
+        if least <= TOLERANCE:
+            return 0
+    return least
+
+
+def bounded(elements):
+    for element, m in posed(elements):
+        points = corners(element, m)
+        yield element["name"], points, [min(p[i] for p in points) for i in range(3)], [max(p[i] for p in points) for i in range(3)]
+
+
+def through(first, second, pressed=0):
+    """Each box of the first elements that passes into a box of the second deeper than the two are pressed together."""
+    others = list(bounded(second))
+    for name, points, low, high in bounded(first):
+        for other, theirs, their_low, their_high in others:
+            if any(low[i] > their_high[i] - TOLERANCE or their_low[i] > high[i] - TOLERANCE for i in range(3)):
+                continue
+            if (depth := depth_into(points, theirs)) > pressed + TOLERANCE:
+                yield f"{name} passes {depth:.2f} voxels into {other}"
+
+
+def check(fits, views, aparts=()):
     faults = [fault for surface, elements, only in fits for fault in outside(surface, elements, only)]
+    faults += [fault for first, second, pressed in aparts for fault in through(first, second, pressed)]
     return faults + sorted({fault for elements in views for fault in coplanar(elements)})

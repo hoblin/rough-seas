@@ -186,7 +186,8 @@ public class VesselShapeTests
             }
             if (stage.Value<string>("lifts") is { } lifted)
             {
-                Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{lifted}{n}"), Pieces(lifted));
+                int levels = stages.Where(other => other.Value<string>("lifts") == lifted).Sum(other => Pieces(other.Value<string>("group")!).Count);
+                Assert.Equal(Enumerable.Range(1, levels).Select(n => $"{lifted}{n}"), Pieces(lifted));
             }
             if (stage.Value<string>("bends") is { } bent)
             {

@@ -72,13 +72,14 @@ public class FramingTests
         Assert.Contains("Frame1", sheet);
         Assert.DoesNotContain(Framing.SheetGroup, sheet);
         Assert.Contains(Framing.SheetGroup, canoe);
-        Assert.DoesNotContain("Skin7", canoe);
-        Assert.DoesNotContain("Frame1At7", canoe);
+        Assert.DoesNotContain("Skin13", canoe);
+        Assert.DoesNotContain("Frame1At13", canoe);
+        Assert.DoesNotContain("Outwales2At13", canoe);
         Assert.DoesNotContain("Ribs14", canoe);
     }
 
     [Fact]
-    public void EachPieceOfHerFrameRaisesHerBarkAStepAndRidesOnIt()
+    public void EachPieceOfHerFrameShowsHerBarkAsItLeavesItAndTheFrameWhereItLies()
     {
         var canoe = Sheet();
         canoe.Lay("oak", 0);
@@ -94,6 +95,37 @@ public class FramingTests
         Assert.Contains("Frame1At1", canoe.Hidden());
         Assert.DoesNotContain("Frame1At2", canoe.Hidden());
         Assert.DoesNotContain("Frame2At2", canoe.Hidden());
+    }
+
+    [Fact]
+    public void SheStandsAsDeepAsHerBarkAsEachPieceOfWorkLeavesIt()
+    {
+        var config = JsonConvert.DeserializeObject<FramingConfig>(Entity["behaviorConfigs"]![EntityBehaviorFraming.Code]!.ToString())!;
+        config.Measure(Shape);
+        var depths = config.Stages.First(stage => stage.Lifts != null).DepthMetres;
+
+        Assert.Equal(14, depths.Length);
+        Assert.Equal(0.6 / 16, depths[0], 4);
+        Assert.Equal(depths[0], depths[4]);
+        Assert.All(depths[5..10], turned => Assert.InRange(turned, depths[4], depths[^1]));
+        Assert.All(depths[10..], raised => Assert.Equal(Entity["behaviorConfigs"]!["roughseas:vesselintegrity"]!.Value<double>("depthMetres"), raised, 3));
+    }
+
+    [Fact]
+    public void HerFrameLiesFlatUntilTheFirstOuterGunwaleRaisesIt()
+    {
+        var canoe = Sheet();
+        LayUpTo(canoe, stage => stage.Group == "Outwales");
+
+        Assert.DoesNotContain("Skin9", canoe.Hidden());
+        Assert.DoesNotContain("Frame1At9", canoe.Hidden());
+
+        canoe.Lay("oak", 0);
+
+        Assert.DoesNotContain("Skin10", canoe.Hidden());
+        Assert.Contains("Frame1At9", canoe.Hidden());
+        Assert.DoesNotContain("Frame1At10", canoe.Hidden());
+        Assert.DoesNotContain("Outwales1At10", canoe.Hidden());
     }
 
     [Fact]
@@ -120,7 +152,8 @@ public class FramingTests
             canoe.Lay("oak", 0);
         }
 
-        Assert.Equal(["Frame", "Stems", "Lashing", "Sheathing", "Ribs", "Pitch"], order);
+        Assert.Equal(["Frame", "Slashes", "Outwales", "Ends", "Stems", "Lashing", "Sheathing", "Ribs", "Pitch"], order);
+        Assert.All(canoe.Stages.Where(stage => stage.Group is "Slashes" or "Ends"), stage => Assert.Equal(FramingWork.Cut, stage.Work));
         Assert.Equal(canoe.Stages.Sum(stage => stage.Pieces), changes);
     }
 
