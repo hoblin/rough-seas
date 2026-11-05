@@ -182,8 +182,9 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         switch (step)
         {
             case Step.Clay:
+                var type = itemslot.Itemstack!.Collectible.Variant["type"];
                 Spend(itemslot, creative);
-                burnout.Clay(itemslot.Itemstack!.Collectible.Variant["type"]);
+                burnout.Clay(type);
                 entity.World.PlaySoundAt(ClaySound, entity, null, true, 16);
                 Shipyard.Log(entity, "{0} smears clay along the rim: {1} of {2} voxels", byEntity.GetName(), burnout.ClayVoxels, burnout.RimVoxels);
                 break;
