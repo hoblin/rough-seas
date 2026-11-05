@@ -30,6 +30,8 @@ public static class HeaveAddedMass
     /// <summary>Legendre's complete elliptic integral of the second kind, by the arithmetic-geometric mean.</summary>
     public static double SecondKind(double eccentricity)
     {
+        if (eccentricity >= 1) return 1;
+
         double arithmetic = 1, geometric = Math.Sqrt(1 - eccentricity * eccentricity);
         double weight = 0.5, lost = weight * eccentricity * eccentricity;
         for (int step = 0; step < MostMeanSteps && arithmetic - geometric > 1e-15; step++)

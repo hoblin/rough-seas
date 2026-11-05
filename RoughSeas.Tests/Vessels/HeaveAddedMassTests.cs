@@ -12,6 +12,7 @@ public class HeaveAddedMassTests
     [InlineData(0.5, 1.4674622093394272)]
     [InlineData(0.9, 1.1716970527816141)]
     [InlineData(0.999, 1.0039944099655043)]
+    [InlineData(1, 1)]
     public void TheEllipticIntegralIsLegendres(double eccentricity, double expected)
     {
         Assert.Equal(expected, HeaveAddedMass.SecondKind(eccentricity), 9);
