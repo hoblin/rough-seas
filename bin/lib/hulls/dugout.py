@@ -5,7 +5,7 @@ from physics import afloat, kilograms, stands
 from fit import APART
 import units
 from entity import merged, record
-from shape import BILGE, FACES, Hull, bilge_levels, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
+from shape import BILGE, FACES, ORIGIN, Hull, bilge_levels, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
 from wounds import wound
 
 LOG = 16
@@ -45,6 +45,9 @@ SLICES = {
 }
 HOLLOW = (-22, 38)
 POLER_AT = HOLLOW[0] + 5
+CUTS = (ROW[0] + 2 * LOG, ROW[0] + 3 * LOG)
+SPANS = list(zip((HOLLOW[0], *CUTS), (*CUTS, HOLLOW[1])))
+LEVEL = (0, 0, 0)
 
 
 def section(x, breadth, lift):
@@ -192,16 +195,117 @@ def faced(element, faces):
     return element
 
 
+def side_window(y0, y1):
+    return (0, LOG - y1, LOG, LOG - y0)
+
+
+def end_window(z0, z1, y0, y1):
+    edge = CENTRE - LOG / 2
+    return (z0 - edge, LOG - y1, z1 - edge, LOG - y0)
+
+
+def top_window(x0, x1, start, z0, z1):
+    edge = CENTRE - LOG / 2
+    return (x0 - start, z0 - edge, x1 - start, z1 - edge)
+
+
+def joints_of(i):
+    return (() if i == 0 else ("west",)) + (() if i == LOGS - 1 else ("east",))
+
+
+def ends_of_log(i, z0, z1, y0, y1):
+    return {face: end_window(z0, z1, y0, y1) for face in ("west", "east") if face not in joints_of(i)}
+
+
+LOG_TEXTURES = {"north": WOOD, "south": WOOD, "up": WOOD, "down": BARK, "west": RINGS, "east": RINGS}
+
+
 def trunk():
     logs = []
     for i in range(LOGS):
         x0 = ROW[0] + i * LOG
-        skip = (() if i == 0 else ("west",)) + (() if i == LOGS - 1 else ("east",))
-        tex = {"north": WOOD, "south": WOOD, "up": WOOD, "down": BARK, "west": RINGS, "east": RINGS}
-        element = box(f"Blank0x{i + 1}", (x0, 0, CENTRE - BARE), (x0 + LOG, BARE_TOP, CENTRE + BARE), tex, skip=skip)
-        ends = {face: (BARK_THICKNESS, BARK_THICKNESS, LOG - BARK_THICKNESS, LOG) for face in ("west", "east") if face not in skip}
-        logs.append(faced(element, {"down": (0, 0, LOG, 2 * BARE), **ends}))
+        element = box(f"Blank0Log{i + 1}", (x0, 0, CENTRE - BARE), (x0 + LOG, BARE_TOP, CENTRE + BARE), LOG_TEXTURES, skip=joints_of(i))
+        logs.append(faced(element, {"down": (0, 0, LOG, 2 * BARE), "north": side_window(0, BARE_TOP), "south": side_window(0, BARE_TOP),
+                                    "up": top_window(x0, x0 + LOG, x0, CENTRE - BARE, CENTRE + BARE), **ends_of_log(i, CENTRE - BARE, CENTRE + BARE, 0, BARE_TOP)}))
     return logs
+
+
+def trench():
+    """The first hewing's inside cut before its outside: each log with the hollow that hewing leaves cut into it as
+    a trench, its outer faces mapped as the trunk's, so the outside stays as it was."""
+    hull = Hull("", stations_at(1), CENTRE, wall(1), WOOD, WOOD)
+    sections = {j: [] for j in range(1, len(SPANS) + 1)}
+    for i in range(LOGS):
+        x0, x1 = ROW[0] + i * LOG, ROW[0] + (i + 1) * LOG
+        a, b = max(x0, HOLLOW[0]), min(x1, HOLLOW[1])
+        along = [a, *(x for x, _ in STATIONS if a < x < b), b]
+        bottom = max(floor(1, x) for x in along)
+        half = min(hull.half(x, y, inset=wall(1)) for x in along for y in (bottom, top(1)))
+        name, joints = f"Hewn0Log{i + 1}", joints_of(i)
+        pieces = [faced(box(f"{name}Bed", (x0, 0, CENTRE - BARE), (x1, bottom, CENTRE + BARE), LOG_TEXTURES, skip=joints),
+                        {"down": (0, 0, LOG, 2 * BARE), "north": side_window(0, bottom), "south": side_window(0, bottom),
+                         **ends_of_log(i, CENTRE - BARE, CENTRE + BARE, 0, bottom)})]
+        for label, outer, z0, z1 in (("Port", "north", CENTRE - BARE, CENTRE - half), ("Starboard", "south", CENTRE + half, CENTRE + BARE)):
+            pieces.append(faced(box(f"{name}{label}", (x0, bottom, z0), (x1, BARE_TOP, z1), LOG_TEXTURES, skip=("down", *joints)),
+                                {outer: side_window(bottom, BARE_TOP), "up": top_window(x0, x1, x0, z0, z1), **ends_of_log(i, z0, z1, bottom, BARE_TOP)}))
+        for f0, f1, inner, outer in ((x0, a, "east", "west"), (b, x1, "west", "east")):
+            if f1 - f0 < 1e-6:
+                continue
+            solid = box(f"{name}Solid{outer.capitalize()}", (f0, bottom, CENTRE - half), (f1, BARE_TOP, CENTRE + half), LOG_TEXTURES,
+                        skip=("north", "south", "down", *((outer,) if outer in joints else ())))
+            solid["faces"][inner]["texture"] = "#" + WOOD
+            pieces.append(faced(solid, {"up": top_window(f0, f1, x0, CENTRE - half, CENTRE + half),
+                                        **{face: window for face, window in ends_of_log(i, CENTRE - half, CENTRE + half, bottom, BARE_TOP).items() if face == outer}}))
+        sections[section_of(x0)].extend(pieces)
+    return [group(f"Hewn0x{j}", LEVEL, LEVEL, pieces) for j, pieces in sections.items()]
+
+
+def section_of(x):
+    return 1 + sum(x >= cut for cut in CUTS)
+
+
+def sliced(stations, a, b):
+    hull = Hull("", stations, CENTRE, 0, WOOD, WOOD)
+    return [(a, hull.section(a)), *(station for station in stations if a < station[0] < b), (b, hull.section(b))]
+
+
+def cut(stations):
+    hull = Hull("", stations, CENTRE, 0, WOOD, WOOD)
+    return sorted([*stations, *((x, hull.section(x)) for x in CUTS if all(abs(x - at) > 1e-6 for at, _ in stations))])
+
+
+def skin(name, stations, thickness, cuts):
+    return Hull(f"{name}Side", stations, CENTRE, thickness, WOOD, WOOD, edge=WOOD).strakes(cuts)
+
+
+def hewn_to(name, n, floors=True):
+    """The hull as hewing n leaves it, one group a section, and its two ends: what a hewing's stages show apart. What
+    the next hewing's inside work replaces, a section's floor or the bare trunk's logs, is its Inside."""
+    if n == 0:
+        logs = trunk()
+        return [group(f"{name}x{j}", LEVEL, LEVEL, [group(f"{name}x{j}Inside", LEVEL, LEVEL, [log for log in logs if section_of(log["from"][0]) == j])])
+                for j in range(1, len(SPANS) + 1)]
+    sections, cuts = [], []
+    for j, (a, b) in enumerate(SPANS, 1):
+        stations = sliced(stations_at(n), a, b)
+        inside = [group(f"{name}x{j}Inside", LEVEL, LEVEL, floor_planes(f"{name}x{j}Floor", stations, n, n))] if floors else []
+        sections.append(group(f"{name}x{j}", LEVEL, LEVEL, [*skin(f"{name}x{j}", stations, wall(n), cuts), *inside]))
+    return [*sections, *(group(f"{name}{side}", LEVEL, LEVEL, end(f"{name}{side}", slices, CENTRE, top(n))) for side, slices in ends_at(n).items())]
+
+
+def floor_planes(name, stations, walls, deep):
+    """The floor hewing deep leaves inside the walls hewing walls left."""
+    return [water_plane(f"{name}{i}", x0, x1, CENTRE - half, CENTRE + half, height, WOOD)
+            for i, (x0, x1, height, half) in enumerate(bed_of(stations, lambda x: floor(deep, x), lambda edges, height: wall(walls)), 1)]
+
+
+def inside_hewn(n):
+    """Hewing n's sections with their inside cut and their outside not yet. Its walls stay as they stood, since the
+    next hewing's inner faces lie no further out than these, and its floor goes down to the next hewing's; the bare
+    trunk gets a trench as deep and as wide as the first hewing's hollow."""
+    if n == 0:
+        return trench()
+    return [group(f"Hewn{n}x{j}", LEVEL, LEVEL, floor_planes(f"Hewn{n}x{j}Floor", sliced(stations_at(n), a, b), n, n + 1)) for j, (a, b) in enumerate(SPANS, 1)]
 
 
 def bark():
@@ -229,23 +333,24 @@ def bark():
     return pieces
 
 
-def blank(n):
+def bed_of(stations, floor_at_x, inset):
+    """The hollow's floor between each two of the stations: the height and half-width of each."""
+    spans = []
+    for (x0, e0), (x1, e1) in zip(stations, stations[1:]):
+        height = max(floor_at_x(x0), floor_at_x(x1))
+        spans.append((x0, x1, height, min(breadth(edges, height) - inset(edges, height) for edges in (e0, e1))))
+    return spans
+
+
+def beds(n):
+    """The hollow's floor as hewing n leaves it, section by section."""
     if n == 0:
-        return trunk()
-    hull = hewing(n)
-    return [*hull.strakes(), *(element for name, slices in ends_at(n).items() for element in end(f"Blank{n}{name}", slices, CENTRE, top(n)))]
+        return [[(x0, x1, BARE_TOP, BARE - wall(0)) for x0, x1 in pieces(span, CLAY_PIECE)] for span in SPANS]
+    return [bed_of(sliced(stations_at(n), a, b), lambda x: floor(n, x), lambda edges, height: wall(n)) for a, b in SPANS]
 
 
 def bed(n):
-    """The hollow's floor as hewing n leaves it, between each two stations: the height and half-width of each."""
-    if n == 0:
-        return [(x0, x1, BARE_TOP, BARE - wall(0)) for x0, x1 in pieces(HOLLOW, CLAY_PIECE)]
-    stations, t = stations_at(n), wall(n)
-    spans = []
-    for (x0, e0), (x1, e1) in zip(stations, stations[1:]):
-        height = max(floor(n, x0), floor(n, x1))
-        spans.append((x0, x1, height, min(breadth(e0, height), breadth(e1, height)) - t))
-    return spans
+    return [span for section in beds(n) for span in section]
 
 
 def pieces(span, length):
@@ -266,14 +371,9 @@ def floor_at(n, x):
 
 
 def char(n):
-    return [water_plane(f"Char{n}x{i}", x0, x1, CENTRE - half, CENTRE + half, height + CHAR_LIFT, "char")
-            for i, (x0, x1, height, half) in enumerate(bed(n), 1)]
-
-
-def floor_planes(n):
-    if n == 0:
-        return []
-    return [water_plane(f"Blank{n}Floor{i}", x0, x1, CENTRE - half, CENTRE + half, height, WOOD) for i, (x0, x1, height, half) in enumerate(bed(n), 1)]
+    return [group(f"Char{n}x{j}", LEVEL, LEVEL, [water_plane(f"Char{n}x{j}Bed{i}", x0, x1, CENTRE - half, CENTRE + half, height + CHAR_LIFT, "char")
+                                                  for i, (x0, x1, height, half) in enumerate(spans, 1)])
+            for j, spans in enumerate(beds(n), 1)]
 
 
 def grass(n):
@@ -322,13 +422,14 @@ def clay(n):
     down starboard."""
     if n == 0:
         port = [box(f"Clay0Port{i}", (x0, BARE_TOP, CENTRE - BARE), (x1, BARE_TOP + CLAY, CENTRE - BARE + wall(0)), "clay",
-                    skip=("west",) if i == 1 else ("east",) if x1 >= HOLLOW[1] else ()) for i, (x0, x1) in enumerate(pieces(HOLLOW, CLAY_PIECE), 1)]
+                    skip=("west",) if i == 1 else ("east",) if x1 >= HOLLOW[1] else ())
+                for i, (x0, x1) in enumerate((piece for span in SPANS for piece in pieces(span, CLAY_PIECE)), 1)]
         starboard = [mirrored(element, "Port", "Starboard") for element in port]
         caps = {name: [box(f"Clay0{name}{k}", (a, BARE_TOP, CENTRE - BARE), (b, BARE_TOP + CLAY, CENTRE + BARE), "clay")
                        for k, (a, b) in enumerate(balls((x0, x1), 2 * BARE), 1)]
                 for name, (x0, x1) in (("Stern", (ROW[0], HOLLOW[0])), ("Bow", (HOLLOW[1], ROW[1])))}
     else:
-        rail = hewing(n).rail(f"Clay{n}", "clay", height=CLAY, thickness=wall(n))
+        rail = Hull(f"Blank{n}Side", cut(stations_at(n)), CENTRE, wall(n), WOOD, WOOD).rail(f"Clay{n}", "clay", height=CLAY, thickness=wall(n))
         port, starboard = (joined(balled([element for element in rail if side in element["name"]])) for side in ("Port", "Starboard"))
         caps = {name: [box(f"Clay{n}{name}{k}x{i}", (a, top(n), CENTRE - upper), (b, top(n) + CLAY, CENTRE + upper), "clay")
                        for k, (x0, x1, upper, _, _) in enumerate(slices, 1)
@@ -377,29 +478,59 @@ def glowing(element, glow):
 
 
 def build_stages():
-    stages = {"Blank": [], "Char": [], "Grass": [], "Wood": [], "Fire": [], "Clay": []}
+    stages = {"Blank": [], "Hewn": [], "Char": [], "Grass": [], "Wood": [], "Fire": [], "Clay": []}
     for n in range(HOLLOWINGS):
-        for name, children in (("Blank", [*blank(n), *floor_planes(n)]), ("Char", char(n)), ("Grass", grass(n)), ("Wood", firewood(n)),
+        blank = hewn_to(f"Blank{n}", n)
+        for name, children in (("Blank", blank), ("Hewn", inside_hewn(n)), ("Char", char(n)), ("Grass", grass(n)), ("Wood", firewood(n)),
                                ("Fire", fire(n)), ("Clay", clay(n))):
-            stages[name].append(group(f"{name}{n}", (0, 0, 0), (0, 0, 0), children))
-    return [group("Bark", (0, 0, 0), (0, 0, 0), bark()), *(group(name, (0, 0, 0), (0, 0, 0), children) for name, children in stages.items())]
+            stages[name].append(group(f"{name}{n}", LEVEL, LEVEL, children))
+    return [group("Bark", LEVEL, LEVEL, bark()), *(group(name, LEVEL, LEVEL, children) for name, children in stages.items())]
+
+
+def hewing_stages(stages, shell, n):
+    """What each stage of hewing n shows, as EntityBehaviorBurnout shows it: the inside cut section by section from
+    the stern, then the outside from the bow, each section's ends going with it."""
+    sections = len(SPANS)
+    part = lambda level, name: next(child for child in level["children"] if child["name"] == name)
+    before, inside = stages["Blank"]["children"][n], stages["Hewn"]["children"][n]
+    after = shell if n + 1 == HOLLOWINGS else stages["Blank"]["children"][n + 1]
+    char = stages["Char"]["children"][n]
+    shown = []
+    for stage in range(2 * sections + 1):
+        cut, trimmed = min(stage, sections), max(0, stage - sections)
+        parts = []
+        for j in range(1, sections + 1):
+            if j > sections - trimmed:
+                parts.append(part(after, f"{after['name']}x{j}"))
+            elif j <= cut:
+                section = part(before, f"Blank{n}x{j}")
+                parts += [child for child in section["children"] if child["name"] != f"Blank{n}x{j}Inside"] + [part(inside, f"Hewn{n}x{j}")]
+            else:
+                parts += [part(before, f"Blank{n}x{j}"), part(char, f"Char{n}x{j}")]
+        for side, j in (("Stern", 1), ("Bow", sections)):
+            level = after if j > sections - trimmed else before
+            parts += [child for child in level["children"] if child["name"] == f"{level['name']}{side}"]
+        shown.append(parts)
+    return shown
 
 
 def hewn(shape, hull, shell, stages):
     """What the dugout's shapes follow: her finished hull, and at each hewing the trunk as that pass leaves it, with
-    what each step of its fire shows on it together."""
+    what each step of its fire and each stage of its hewing shows on it together."""
     shape.within(hull.outline("her hull, its end section carried on", ends=False), shell)
     shape.together(shell)
     level = lambda name, n: stages[name]["children"][n]
     shape.together(stages["Bark"], level("Blank", 0))
     for n in range(HOLLOWINGS):
         if n:
-            shape.within(hewing(n).outline(f"the trunk hewn {n} times", ends=False), *blank(n))
+            loft = hewing(n).outline(f"the trunk hewn {n} times", ends=False)
+            shape.within(loft, level("Blank", n), level("Hewn", n))
         laid, burning = [level("Blank", n), level("Clay", n), level("Grass", n), level("Wood", n)], [level("Blank", n), level("Clay", n), level("Char", n)]
         shape.together(*laid)
         for phase in level("Fire", n)["children"]:
             shape.together(*burning, phase)
-        shape.together(level("Blank", n), level("Char", n))
+        for stage, parts in enumerate(hewing_stages(stages, shell, n)):
+            shape.together(*parts, *([level("Clay", n)] if stage <= len(SPANS) else []))
 
 
 def volumes():
@@ -440,7 +571,7 @@ def build(path):
                          "ember": "game:block/coal/ember", "burntlog": "game:block/wood/firepit/burntlog", "hay": "game:block/hay/normal-side",
                          "firewood": "game:block/wood/firewood/side", "firewoodend": "game:block/wood/firewood/north"})
     hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD, edge=WOOD)
-    shell = group("Shell", (0, 0, 0), (0, 0, 0), [element for piece in log(hull) for element in (piece if isinstance(piece, list) else [piece])])
+    shell = group("Shell", LEVEL, LEVEL, hewn_to("Shell", HOLLOWINGS, floors=False))
     shape.add(shell)
     stages = {stage["name"]: stage for stage in build_stages()}
     shape.add(*stages.values())
@@ -450,7 +581,7 @@ def build(path):
     shape.add(box)
     record("dugout", merged(measured, walls()))
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
-    wound(shape, [("", [shell], WOOD), *((level["name"], [level], WOOD) for level in stages["Blank"]["children"])])
+    wound(shape, [("", [shell], WOOD), *((built["name"], [built], WOOD) for name in ("Blank", "Hewn") for built in stages[name]["children"])])
     envelope, hold, trunk_litres = volumes()
     print(f"dugout: trunk {trunk_litres:.0f} L, finished envelope {envelope:.0f} L, hold {hold:.0f} L, wood {envelope - hold:.0f} L, "
           f"hewn off outside {trunk_litres - envelope:.0f} L")
@@ -458,7 +589,9 @@ def build(path):
                **units.both("blankDepth", units.metres(LOG)), **units.both("blankWaterplane", units.metres(LOGS * LOG * LOG, 2), 2),
                **units.both("unhewn", trunk_litres - envelope, 3), **units.both("hollowBeam", units.metres(2 * (PROFILE[-1][0] - WALL))),
                **units.both("hollowLength", units.metres(HOLLOW[1] - HOLLOW[0])),
-               **units.both("wall", units.metres(WALL)), "barkPieces": 3 * LOGS}
+               **units.both("wall", units.metres(WALL)), "barkPieces": 3 * LOGS,
+               "hewnSectionsMetres": [[num(units.metres(x - ORIGIN[0])) for x in span] for span in SPANS],
+               "hewnSectionsVoxels": [[num(x - ORIGIN[0]) for x in span] for span in SPANS]}
     record("dugout", merged(afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck(), at_draft=windage([shell], box["from"][1])), measured, bilge_levels(shape.elements),
                             {"behaviorConfigs": {"roughseas:burnout": burnout}}))
     shape.write()

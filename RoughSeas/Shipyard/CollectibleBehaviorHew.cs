@@ -8,7 +8,7 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
     public const string Code = "roughseas:hew";
 
     private const string StrokesKey = "roughseas:strokes";
-    private const string Animation = "axechop";
+    public const string Animation = "roughseas-hew";
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {

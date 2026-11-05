@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Units;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -31,7 +32,10 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private const string CharTexture = "char";
     private const string ClayTexture = "clay";
     private const string BarkGroup = "Bark";
-    private static readonly string[] Stages = ["Blank", "Char", "Grass", "Wood", "Fire", "Clay"];
+    private static readonly string[] Stages = ["Blank", "Hewn", "Char", "Grass", "Wood", "Fire", "Clay"];
+    private static readonly string[] SectionedStages = ["Blank", "Hewn", "Char"];
+    private const string SternPart = "Stern";
+    private const string BowPart = "Bow";
     private static readonly byte[][] FireLight = [[4, 7, 10], [4, 7, 14], [4, 7, 12], [4, 7, 9]];
     private static readonly double[][] ParticleChance = [[0.1, 0.15, 0.25], [0.15, 0.1, 0.2], [0.15, 0.03, 0.2], [0.08, 0, 0.12]];
 
@@ -40,6 +44,12 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private static readonly AssetLocation IgniteSound = new("game:sounds/torch-ignite");
     private static readonly AssetLocation ClaySound = new("game:sounds/block/dirt1");
     private static readonly AssetLocation WoodSound = new("game:sounds/block/planks");
+    private static readonly AssetLocation Charcoal = new("game:charcoal");
+    private const double ChipReachMetres = 5;
+    private const float ChipSpreadMetres = 0.2f;
+    private const int ChipsPerBlow = 6;
+    private const float ChipScale = 0.8f;
+    private const float ChipThrow = 2;
 
     private BurnoutConfig config = null!;
     private Burnout burnout = null!;
@@ -47,6 +57,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private AssetLocation clay = null!;
     private float sinceTick;
     private ILoadedSound? fire;
+    private readonly Dictionary<long, float> swings = [];
 
     public override bool Finished => burnout.Finished;
 
@@ -54,7 +65,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
 
     public override double Uncut => 1 - burnout.Hollowed;
 
-    public override double FloorMetres => burnout.TopMetres - config.HollowDepthMetres * burnout.Hollowed;
+    public override double FloorMetres => burnout.FloorMetres;
 
     public override double UnhewnLitres => burnout.UnhewnLitres;
 
@@ -76,7 +87,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     {
         base.Initialize(properties, attributes);
         config = attributes.AsObject<BurnoutConfig>(new BurnoutConfig());
-        burnout = new Burnout(() => Tree, MarkDirty, config, RimVoxels, () => Hold is { } hold ? hold.CapacityLitres + hold.UncutLitres : 0);
+        burnout = new Burnout(() => Tree, MarkDirty, config, RimVoxels, () => Hold?.DesignedLitres ?? 0);
         clay = new AssetLocation(config.Clay);
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
     }
@@ -93,8 +104,17 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     public bool Hew(EntityAgent byEntity, ItemSlot axe)
     {
         byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(burnout.SaturationPerStroke);
-        entity.World.PlaySoundAt(new AssetLocation($"game:sounds/block/chop{1 + entity.World.Rand.Next(3)}"), entity, null, true, 16);
-        if (!burnout.Stroke()) return true;
+        int stage = burnout.Stage;
+        if (!burnout.Stroke())
+        {
+            if (burnout.Stage != stage)
+            {
+                Shipyard.Log(entity, burnout.SectionsTrimmed == 0 ? "{0} cuts the char out of section {1} of {2} from the stern: its floor down to hollow {3}'s"
+                    : "{0} trims the outside of section {1} of {2} from the bow to hollow {3}'s", byEntity.GetName(),
+                    burnout.SectionsTrimmed == 0 ? burnout.SectionsCut : burnout.Sections - burnout.SectionsTrimmed + 1, burnout.Sections, burnout.Level + 1);
+            }
+            return true;
+        }
 
         axe.Itemstack?.Collectible.DamageItem(entity.World, byEntity, axe);
         if (burnout.Level == 0)
@@ -124,6 +144,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         if (entity.Api is ICoreClientAPI capi)
         {
             Flicker(capi);
+            Chip(capi);
             return;
         }
         if ((sinceTick += deltaTime) < TickSeconds || !burnout.Lit) return;
@@ -297,14 +318,15 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         var level = burnout.Level;
         int phase = burnout.BurningPhase(BurningPhases, CatchingHours);
         bool burning = (burnout.Lit || burnout.HoursBurnt > 0) && phase > 0;
-        var showing = new List<string> { $"Blank{level}" };
+        bool charred = burning || burnout.Charred || burnout.Spoiled;
+        var showing = new List<string>();
         var pieces = new List<string>();
+        var parts = Hewing(level, charred, pieces).ToHashSet();
         if (!burnout.Debarked)
         {
             showing.Add(BarkGroup);
             pieces.AddRange(Enumerable.Range(1, burnout.BarkStripped).Select(n => $"{BarkGroup}{n}"));
         }
-        if (burning || burnout.Charred || burnout.Spoiled) showing.Add($"Char{level}");
         if (burnout.Fire.Kindled && !burning) showing.Add($"Grass{level}");
         if (burnout.Fire.OnFirepit > 0 && !burning)
         {
@@ -321,23 +343,55 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
             showing.Add($"Clay{level}");
             pieces.AddRange(Unclayed(level));
         }
-        return levels.Except(showing).Concat(pieces).Append(ShellGroup);
+        var sectioned = Enumerable.Range(0, burnout.Hollowings).SelectMany(n => SectionedStages.Select(stage => $"{stage}{n}")).Append(ShellGroup);
+        var hidden = sectioned.SelectMany(family => Parts(family).Any(parts.Contains) ? Parts(family).Where(part => !parts.Contains(part)) : [family]);
+        return levels.Except(sectioned).Except(showing).Concat(hidden).Concat(pieces);
     }
+
+    /// <summary>
+    /// The parts of her hull a hewing shows: each section as it was until its inside is cut, from her stern, its
+    /// walls with the next hewing's floor until its outside is trimmed, from her bow, then as the next hewing leaves
+    /// it; each end goes with the section it closes. Adds to <paramref name="pieces"/> the floors the inside work took.
+    /// </summary>
+    private IEnumerable<string> Hewing(int level, bool charred, List<string> pieces)
+    {
+        string before = $"Blank{level}", after = level + 1 == burnout.Hollowings ? ShellGroup : $"Blank{level + 1}";
+        for (int section = 1; section <= burnout.Sections; section++)
+        {
+            if (burnout.Trimmed(section))
+            {
+                yield return $"{after}x{section}";
+                continue;
+            }
+            yield return $"{before}x{section}";
+            if (burnout.Cut(section))
+            {
+                pieces.Add($"{before}x{section}Inside");
+                yield return $"Hewn{level}x{section}";
+            }
+            else if (charred) yield return $"Char{level}x{section}";
+        }
+        yield return $"{(burnout.Trimmed(1) ? after : before)}{SternPart}";
+        yield return $"{(burnout.Trimmed(burnout.Sections) ? after : before)}{BowPart}";
+    }
+
+    private IEnumerable<string> Parts(string family) =>
+        Enumerable.Range(1, burnout.Sections).Select(section => $"{family}x{section}").Append(family + SternPart).Append(family + BowPart);
 
     private IEnumerable<string> Unclayed(int level)
     {
         double coated = 0;
         foreach (var piece in Element($"Clay{level}").Children ?? [])
         {
-            if (coated >= burnout.ClayVoxels) yield return piece.Name;
+            if (coated >= burnout.ClayVoxels || burnout.Trimmed(burnout.SectionAt(Voxels.ToMetres(piece.From[0]) - HullShape.ModelOriginMetres))) yield return piece.Name;
             coated += Burnout.TopVoxels(piece);
         }
     }
 
-    protected override string FormKey() => burnout.Level.ToString();
+    protected override string FormKey() => $"{burnout.Level}/{burnout.Stage}";
 
     protected override string ShapeKey() =>
-        $"{burnout.Level}/{burnout.BarkStripped}/{burnout.ClayVoxels}/{burnout.ClayType}/{burnout.Fire.Kindled}/{burnout.Fire.OnFirepit}/{burnout.Lit}/{burnout.BurningPhase(BurningPhases, CatchingHours)}/{burnout.HoursBurnt > 0}/{burnout.Charred}/{burnout.Spoiled}";
+        $"{burnout.Level}/{burnout.Stage}/{burnout.BarkStripped}/{burnout.ClayVoxels}/{burnout.ClayType}/{burnout.Fire.Kindled}/{burnout.Fire.OnFirepit}/{burnout.Lit}/{burnout.BurningPhase(BurningPhases, CatchingHours)}/{burnout.HoursBurnt > 0}/{burnout.Charred}/{burnout.Spoiled}";
 
     private void Flicker(ICoreClientAPI capi)
     {
@@ -372,6 +426,51 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
             capi.World.SpawnParticles(particles);
             particles.Quantity.avg = 0;
         }
+    }
+
+    private void Chip(ICoreClientAPI capi)
+    {
+        if (!burnout.Charred)
+        {
+            swings.Clear();
+            return;
+        }
+        foreach (var hewer in capi.World.AllOnlinePlayers.Select(player => player.Entity).OfType<EntityPlayer>())
+        {
+            if (hewer.Properties.Client.AnimationsByMetaCode.GetValueOrDefault(CollectibleBehaviorHew.Animation) is not { } hewing
+                || hewer.AnimManager?.GetAnimationState(hewing.Animation) is not { Running: true } swing
+                || !swing.meta.Code.StartsWith(CollectibleBehaviorHew.Animation, StringComparison.Ordinal)
+                || hewer.Pos.DistanceTo(entity.Pos) > ChipReachMetres)
+            {
+                swings.Remove(hewer.EntityId);
+                continue;
+            }
+            float blow = hewing.AnimationSounds?.FirstOrDefault()?.Frame ?? 0;
+            bool struck = swings.TryGetValue(hewer.EntityId, out var was)
+                && (was < blow ? swing.CurrentFrame >= blow || swing.CurrentFrame < was : swing.CurrentFrame < was && swing.CurrentFrame >= blow);
+            swings[hewer.EntityId] = swing.CurrentFrame;
+            if (struck) Chips(capi, hewer);
+        }
+    }
+
+    /// <summary>Chips fly where the axe works: char from the hollow's floor while the inside is cut, wood off the side the hewer stands at while the outside is trimmed.</summary>
+    private void Chips(ICoreClientAPI capi, Entity hewer)
+    {
+        var rand = capi.World.Rand;
+        bool inside = burnout.SectionsCut < burnout.Sections;
+        var span = config.HewnSectionsMetres[inside ? burnout.SectionsCut : burnout.Sections - burnout.SectionsTrimmed - 1];
+        double along = span[0] + rand.NextDouble() * (span[1] - span[0]);
+        var (_, hewerAcross) = HullShape.ToHull(hewer.Pos.X - entity.Pos.X, hewer.Pos.Z - entity.Pos.Z, entity.Pos.Yaw);
+        double across = inside ? (rand.NextDouble() - 0.5) * config.HollowBeamMetres : Math.Sign(hewerAcross) * (config.HollowBeamMetres / 2 + config.WallMetres);
+        double height = inside ? burnout.FloorMetres : burnout.TopMetres / 2;
+        var (x, z) = HullShape.ToWorld(along, across, entity.Pos.Yaw);
+        var chip = inside ? capi.World.GetItem(Charcoal) as CollectibleObject : Wood.Of(entity.Properties.Variant) is { } wood ? capi.World.GetBlock(wood.Plank) : null;
+        if (chip == null) return;
+
+        var (outX, outZ) = HullShape.ToWorld(0, inside ? 0 : Math.Sign(across) * ChipThrow, entity.Pos.Yaw);
+        Shipyard.Log(entity, "{0}'s blow throws {1} chips of {2} {3:F2} m along her", hewer.GetName(), ChipsPerBlow, chip.Code, along);
+        capi.World.SpawnCubeParticles(entity.Pos.XYZ.Add(x, height, z), new ItemStack(chip), ChipSpreadMetres, ChipsPerBlow, ChipScale, null,
+            new Vec3f((float)outX, ChipThrow, (float)outZ));
     }
 
     private bool Wet() =>

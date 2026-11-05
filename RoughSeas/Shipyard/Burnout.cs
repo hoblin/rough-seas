@@ -50,12 +50,20 @@ public sealed class Burnout
 
     public bool Finished => Level >= Hollowings;
 
-    public double Hollowed => (double)Level / Hollowings;
+    public int Sections => Math.Max(1, config.HewnSectionsMetres.Length);
+
+    public int Stage => Charred ? Strokes * 2 * Sections / StrokesPerHewing : 0;
+
+    public int SectionsCut => Math.Min(Stage, Sections);
+
+    public int SectionsTrimmed => Math.Max(0, Stage - Sections);
+
+    public double Hollowed => (Level + (double)SectionsCut / Sections) / Hollowings;
 
     public int ClayVoxels => Tree?.GetInt(ClayKey) ?? 0;
 
-    /// <summary>How much of the way from the blank to the finished hull she is worked, inside and out.</summary>
-    public double Worked => Hollowed;
+    /// <summary>How much of the way from the blank to the finished hull her outside is worked.</summary>
+    public double Worked => (Level + (double)SectionsTrimmed / Sections) / Hollowings;
 
     public int RimVoxels => rimVoxels(Level);
 
@@ -104,7 +112,18 @@ public sealed class Burnout
 
     public double TopMetres => Toward(config.BlankDepthMetres, config.RimMetres);
 
-    public double Toward(double blank, double finished) => blank + (finished - blank) * Worked;
+    public double FloorMetres => Toward(config.BlankDepthMetres, config.RimMetres, Hollowed) - config.HollowDepthMetres * Hollowed;
+
+    public double Toward(double blank, double finished) => Toward(blank, finished, Worked);
+
+    private static double Toward(double blank, double finished, double share) => blank + (finished - blank) * share;
+
+    /// <summary>The section of her hull, counted from her stern from 1, that a point along her lies in.</summary>
+    public int SectionAt(double alongMetres) => Math.Max(1, config.HewnSectionsMetres.Count(span => alongMetres >= span[0]));
+
+    public bool Trimmed(int section) => section > Sections - SectionsTrimmed;
+
+    public bool Cut(int section) => section <= SectionsCut;
 
     public float SaturationPerStroke => config.HewSaturation / StrokesPerHewing;
 
@@ -225,4 +244,5 @@ public sealed class BurnoutConfig
     public double UnhewnLitres;
     public int BarkPieces;
     public double HollowLengthMetres;
+    public double[][] HewnSectionsMetres = [];
 }

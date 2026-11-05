@@ -188,5 +188,16 @@
         "code": "roughseas-bail-bucket", "animation": "roughseas-bail", "animationSpeed": 0.33, "blendMode": "Average", "easeInSpeed": 4, "easeOutSpeed": 4,
         "elementWeight": { "UpperTorso": 800, "Head": 200, "UpperArmR": 800, "LowerArmR": 800, "UpperArmL": 800, "LowerArmL": 800, "ItemAnchor": 800 },
         "elementBlendMode": { "UpperTorso": "Average", "Head": "Average", "UpperArmR": "Average", "LowerArmR": "Average", "UpperArmL": "Average", "LowerArmL": "Average", "ItemAnchor": "Average" }
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-hew", "animation": "axechop", "blendMode": "Add", "animationSpeed": 1.65, "holdEyePosAfterEasein": 0.3,
+        "elementWeight": { "UpperArmR": 20, "LowerArmR": 20, "UpperArmL": 20, "LowerArmL": 20 },
+        "elementBlendMode": { "UpperArmR": "AddAverage", "LowerArmR": "AddAverage", "UpperArmL": "AddAverage", "LowerArmL": "AddAverage" },
+        "animationSounds": [{ "frame": 23, "location": "game:sounds/block/chop*", "range": 16, "randomizePitch": true }]
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-hew-fp", "animation": "axechop-fp", "blendMode": "Add", "animationSpeed": 1.65, "holdEyePosAfterEasein": 0.3,
+        "elementWeight": { "UpperArmR": 20, "LowerArmR": 20, "UpperArmL": 20, "LowerArmL": 20 },
+        "elementBlendMode": { "UpperArmR": "AddAverage", "LowerArmR": "AddAverage", "UpperArmL": "AddAverage", "LowerArmL": "AddAverage" }
     } }
 ]
