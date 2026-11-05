@@ -69,7 +69,7 @@ public class BurnoutTests
     }
 
     [Fact]
-    public void HerHullBoxGoesRoundTheTrunkAsEachHewingFindsIt()
+    public void HerHullBoxShrinksWithTheTrunkAtEachHewing()
     {
         Assert.Equal(Config.Hollowings, Config.HullBoxesMetres.Length);
         Assert.Equal(Config.BlankDepthMetres, Config.HullBoxesMetres[0].To[1], 2);

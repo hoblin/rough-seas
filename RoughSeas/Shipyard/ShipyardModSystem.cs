@@ -21,7 +21,8 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockBehaviorClass(BlockBehaviorBlankLog.Code, typeof(BlockBehaviorBlankLog));
         api.RegisterEntityBehaviorClass(EntityBehaviorBurnout.Code, typeof(EntityBehaviorBurnout));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHew.Code, typeof(CollectibleBehaviorHew));
-        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorKindle.Code, typeof(CollectibleBehaviorKindle));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLightWithTorch.Code, typeof(CollectibleBehaviorLightWithTorch));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLightWithFirestarter.Code, typeof(CollectibleBehaviorLightWithFirestarter));
         api.RegisterEntityBehaviorClass(EntityBehaviorFraming.Code, typeof(EntityBehaviorFraming));
         api.RegisterEntityBehaviorClass(EntityBehaviorRigging.Code, typeof(EntityBehaviorRigging));
         api.RegisterEntityBehaviorClass(EntityBehaviorRiggable.Code, typeof(EntityBehaviorRiggable));
@@ -37,14 +38,14 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
         LashingRope.Attach();
         CuttingKnife.Attach();
-        KindlingFirestarter.Attach();
+        LightingFirestarter.Attach();
     }
 
     public override void Dispose()
     {
         LashingRope.Detach();
         CuttingKnife.Detach();
-        KindlingFirestarter.Detach();
+        LightingFirestarter.Detach();
     }
 
     // The server sends its blocks, behaviours included, to clients only after this phase.
@@ -69,10 +70,15 @@ public class ShipyardModSystem : ModSystem
         {
             axe.CollectibleBehaviors = axe.CollectibleBehaviors.Append(new CollectibleBehaviorHew(axe));
         }
-        foreach (var kindler in api.World.Collectibles.Where(collectible => collectible?.Code != null
-            && (collectible is ItemFirestarter || collectible is Block block && block.HasBehavior<BlockBehaviorCanIgnite>())))
+        foreach (var collectible in api.World.Collectibles.Where(collectible => collectible?.Code != null))
         {
-            kindler.CollectibleBehaviors = kindler.CollectibleBehaviors.Append(new CollectibleBehaviorKindle(kindler));
+            CollectibleBehaviorLight? lighting = collectible switch
+            {
+                ItemFirestarter => new CollectibleBehaviorLightWithFirestarter(collectible),
+                Block block when block.HasBehavior<BlockBehaviorCanIgnite>() => new CollectibleBehaviorLightWithTorch(collectible),
+                _ => null
+            };
+            if (lighting != null) collectible.CollectibleBehaviors = collectible.CollectibleBehaviors.Append(lighting);
         }
         var builds = new List<FramingConfig>();
         foreach (var type in api.World.EntityTypes)

@@ -93,7 +93,7 @@ ENDS = {"Stern": inscribed(SLICES["Stern"], STATIONS[0][1]), "Bow": inscribed(SL
 
 
 def log(hull):
-    return [hull.strakes(), *(end(name, slices, hull.cz) for name, slices in ENDS.items())]
+    return [hull.strakes(), *(end(name, slices, hull.cz, inner=hull.inner) for name, slices in ENDS.items())]
 
 
 def end(name, slices, centre, top=RIM, inner=WOOD):
@@ -332,9 +332,9 @@ def step(n, j):
     low, half = hewn_bed(n, j)
     high = beds(n)[j][0][2] + CHAR_LIFT
     rise, name = high - low, f"Hewn{n}x{j}Step"
-    risers = [box(f"{name}Riser{k}", (at, y0, CENTRE - width), (at, y1, CENTRE + width), {"west": HEWN})
-              for k, (y0, y1) in enumerate(pieces((low, high), rise / STEP_BANDS), 1)
-              for width in [half if n == 0 else min(hollow_at(n, at, y) for y in (y0, y1))]]
+    width = (lambda y0, y1: half) if n == 0 else (lambda y0, y1: min(hollow_half_at(n, at, y) for y in (y0, y1)))
+    risers = [box(f"{name}Riser{k}", (at, y0, CENTRE - width(y0, y1)), (at, y1, CENTRE + width(y0, y1)), {"west": HEWN})
+              for k, (y0, y1) in enumerate(pieces((low, high), rise / STEP_BANDS), 1)]
     lips = []
     for k, (z0, z1) in enumerate(pieces((CENTRE - half, CENTRE + half), 2 * half / STEP_STRIPS), 1):
         run = rise * (STEP_RUN[0] + (STEP_RUN[1] - STEP_RUN[0]) * seed(name, k))
@@ -343,7 +343,7 @@ def step(n, j):
     return [group(name, LEVEL, LEVEL, [*risers, *lips])]
 
 
-def hollow_at(n, x, y):
+def hollow_half_at(n, x, y):
     return Hull("", stations_at(n), CENTRE, wall(n), WOOD, WOOD).half(x, y, inset=wall(n))
 
 

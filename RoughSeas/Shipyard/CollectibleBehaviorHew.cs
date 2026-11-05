@@ -8,9 +8,10 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
     public const string Code = "roughseas:hew";
 
     private const string StrokesKey = "roughseas:strokes";
+    private const string HewingKey = "roughseas:hewing";
     /// <summary>
-    /// A shape animation of its own, swinging once every two seconds, dugout.json's <c>secondsPerStroke</c>: vanilla
-    /// stops a held use only by the animation its code names.
+    /// Also the name of its shape animation, since vanilla stops a held use by the animation its code names. Its cycle
+    /// in patches/player-poses.json is one stroke: 60 frames, dugout.json's <c>secondsPerStroke</c> of 2.
     /// </summary>
     public const string Animation = "roughseas-hew";
 
@@ -19,6 +20,7 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
         if (entitySel == null && blockSel != null && firstEvent && byEntity.Controls.ShiftKey
             && byEntity.World.BlockAccessor.GetBlock(blockSel.Position).GetBehavior<BlockBehaviorBlankLog>() is { } log && log.TryLay(byEntity, blockSel.Position))
         {
+            byEntity.Attributes.SetBool(HewingKey, false);
             handling = EnumHandling.PreventDefault;
             handHandling = EnumHandHandling.PreventDefault;
             return;
@@ -26,6 +28,7 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
         if (!firstEvent || Blank(entitySel) is not { CanHew: true } blank) return;
 
         if (byEntity.World.Side == EnumAppSide.Server) blank.TakeUp(byEntity);
+        byEntity.Attributes.SetBool(HewingKey, true);
         byEntity.Attributes.SetInt(StrokesKey, 0);
         handling = EnumHandling.PreventDefault;
         handHandling = EnumHandHandling.PreventDefault;
@@ -33,7 +36,7 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
 
     public override bool OnHeldInteractStep(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, ref EnumHandling handling)
     {
-        if (Blank(entitySel) is not { CanHew: true } blank) return false;
+        if (!byEntity.Attributes.GetBool(HewingKey) || Blank(entitySel) is not { CanHew: true } blank) return false;
 
         handling = EnumHandling.PreventDefault;
         if (byEntity.World.Side != EnumAppSide.Server) return true;

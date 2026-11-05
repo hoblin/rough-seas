@@ -2,7 +2,7 @@ import math
 from collections import namedtuple
 from pathlib import Path
 
-from dugout import CENTRE, HOLLOW, PROFILE, RIM, RINGS, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes, walls
+from dugout import CENTRE, HEWN, HOLLOW, PROFILE, RIM, RINGS, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes, walls
 from physics import LASHING_JOULES_PER_METRE, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
@@ -382,6 +382,7 @@ def seams(hull):
 def build(target):
     shape = Shape(target, {
         WOOD: "game:block/wood/debarked/oak",
+        HEWN: "game:block/wood/charred",
         "frame": "game:block/wood/debarked/oak",
         "float": "game:block/wood/debarked/oak",
         "floatbark": "game:block/wood/bark/oak-h",
@@ -392,7 +393,7 @@ def build(target):
         "plank": "game:block/wood/planks/oak1",
         "bilge": BILGE,
     })
-    hull = Hull("Side", STATIONS, 8, WALL, WOOD, WOOD, edge=WOOD)
+    hull = Hull("Side", STATIONS, 8, WALL, WOOD, HEWN, edge=WOOD)
     logs, passes = hewing()
     shell = group("Shell", (0, 0, 0), (0, 0, 0), [element for piece in log(hull) for element in piece])
     shape.add(shell)

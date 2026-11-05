@@ -53,8 +53,11 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
     private const int ChipsPerBlow = 6;
     private const float ChipScale = 0.8f;
     private const float ChipThrow = 2;
+    /// <summary>BlockFirepit.OnEntityInside, each server tick.</summary>
     private const double FirepitBurnChance = 0.05;
+    /// <summary>BlockFirepit.OnEntityInside.</summary>
     private const float FirepitBurnDamage = 0.5f;
+    private static readonly AssetLocation LitFirepit = new("game:firepit-lit");
 
     private BurnoutConfig config = null!;
     private Burnout burnout = null!;
@@ -164,11 +167,13 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
 
         hull.From = HullShape.ToModel(box.From);
         hull.To = HullShape.ToModel(box.To);
-        foreach (var point in hull.AttachmentPoints ?? [])
+        // A shape's clone shares its attachment points, and each point reads its size from its ParentElement: one
+        // blank's box would size every dugout's.
+        hull.AttachmentPoints = (hull.AttachmentPoints ?? []).Select(point => new AttachmentPoint
         {
-            point.PosX = (hull.To[0] - hull.From[0]) / 2;
-            point.PosZ = (hull.To[2] - hull.From[2]) / 2;
-        }
+            ParentElement = hull, Code = point.Code, PosX = (hull.To[0] - hull.From[0]) / 2, PosY = point.PosY,
+            PosZ = (hull.To[2] - hull.From[2]) / 2, RotationX = point.RotationX, RotationY = point.RotationY, RotationZ = point.RotationZ
+        }).ToArray();
     }
 
     public override void OnGameTick(float deltaTime)
@@ -269,7 +274,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
             burnout.HoursPerFire - burnout.HoursBurnt, burnout.Clayed ? "the rim guarded with clay" : $"the rim unguarded, {burnout.ClayVoxels} of {burnout.RimVoxels} voxels clayed");
     }
 
-    public void Fails(EntityAgent byEntity, float secondsUsed) =>
+    public void LogMisfire(EntityAgent byEntity, float secondsUsed) =>
         Shipyard.Log(entity, "{0}'s firestarter fails to light hollow {1} after {2:F1} s", byEntity.GetName(), burnout.Level + 1, secondsUsed);
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
@@ -509,34 +514,27 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
 
     private void Scorch()
     {
-        var fire = FireBox();
         var rand = entity.World.Rand;
-        var middle = (fire.Start + fire.End) / 2;
-        double reach = Math.Max(fire.Width, fire.Length) / 2 + 1;
-        foreach (var victim in entity.World.GetEntitiesAround(middle, (float)reach, (float)fire.Height + 1, other => other != entity && other.Alive))
+        var middle = entity.Pos.XYZ.Add(0, FloorMetres, 0);
+        double floor = entity.Pos.Y + FloorMetres, top = entity.Pos.Y + burnout.TopMetres;
+        foreach (var victim in entity.World.GetEntitiesAround(middle, (float)config.HollowLengthMetres, (float)(top - floor) + 1, other => other != entity && other.Alive))
         {
-            if (!fire.Intersects(victim.CollisionBox, victim.Pos.XYZ) || rand.NextDouble() >= FirepitBurnChance) continue;
+            if (!InFire(victim, floor, top) || rand.NextDouble() >= FirepitBurnChance) continue;
 
-            bool burnt = victim.ReceiveDamage(new DamageSource { Source = EnumDamageSource.Entity, SourceEntity = entity, SourcePos = middle, Type = EnumDamageType.Fire },
-                FirepitBurnDamage);
+            bool burnt = victim.ReceiveDamage(new DamageSource { Source = EnumDamageSource.Block, SourceBlock = entity.World.GetBlock(LitFirepit), SourcePos = middle,
+                Type = EnumDamageType.Fire }, FirepitBurnDamage);
             if (burnt) Shipyard.Log(entity, "the fire in hollow {0} burns {1} standing in it: {2:F1} damage", burnout.Level + 1, victim.GetName(), FirepitBurnDamage);
         }
     }
 
-    private Cuboidd FireBox()
+    private bool InFire(Entity victim, double floor, double top)
     {
-        var fire = new Cuboidd(double.MaxValue, 0, double.MaxValue, double.MinValue, 0, double.MinValue);
-        foreach (var (along, across) in new[] { (-1, -1), (-1, 1), (1, -1), (1, 1) })
-        {
-            var (x, z) = HullShape.ToWorld(along * config.HollowLengthMetres / 2, across * config.HollowBeamMetres / 2, entity.Pos.Yaw);
-            fire.X1 = Math.Min(fire.X1, entity.Pos.X + x);
-            fire.Z1 = Math.Min(fire.Z1, entity.Pos.Z + z);
-            fire.X2 = Math.Max(fire.X2, entity.Pos.X + x);
-            fire.Z2 = Math.Max(fire.Z2, entity.Pos.Z + z);
-        }
-        fire.Y1 = entity.Pos.Y + FloorMetres;
-        fire.Y2 = entity.Pos.Y + burnout.TopMetres;
-        return fire;
+        var box = victim.CollisionBox;
+        if (victim.Pos.Y + box.Y2 < floor || victim.Pos.Y + box.Y1 > top) return false;
+
+        var (along, across) = HullShape.ToHull(victim.Pos.X - entity.Pos.X, victim.Pos.Z - entity.Pos.Z, entity.Pos.Yaw);
+        double reach = box.XSize / 2;
+        return Math.Abs(along) < config.HollowLengthMetres / 2 + reach && Math.Abs(across) < config.HollowBeamMetres / 2 + reach;
     }
 
     private bool Wet() =>
