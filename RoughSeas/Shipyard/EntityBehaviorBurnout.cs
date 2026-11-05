@@ -109,8 +109,8 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         {
             if (burnout.Stage != stage)
             {
-                Shipyard.Log(entity, burnout.SectionsTrimmed == 0 ? "{0} cuts the char out of section {1} of {2} from the stern: its floor down to hollow {3}'s"
-                    : "{0} trims the outside of section {1} of {2} from the bow to hollow {3}'s", byEntity.GetName(),
+                Shipyard.Log(entity, burnout.SectionsTrimmed == 0 ? "{0} cuts the char out of section {1} of {2} from the bow: its floor down to hollow {3}'s"
+                    : "{0} trims the outside of section {1} of {2} from the stern to hollow {3}'s", byEntity.GetName(),
                     burnout.SectionsTrimmed == 0 ? burnout.SectionsCut : burnout.Sections - burnout.SectionsTrimmed + 1, burnout.Sections, burnout.Level + 1);
             }
             return true;
@@ -348,11 +348,6 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         return levels.Except(sectioned).Except(showing).Concat(hidden).Concat(pieces);
     }
 
-    /// <summary>
-    /// The parts of her hull a hewing shows: each section as it was until its inside is cut, from her stern, its
-    /// walls with the next hewing's floor until its outside is trimmed, from her bow, then as the next hewing leaves
-    /// it; each end goes with the section it closes. Adds to <paramref name="pieces"/> the floors the inside work took.
-    /// </summary>
     private IEnumerable<string> Hewing(int level, bool charred, List<string> pieces)
     {
         string before = $"Blank{level}", after = level + 1 == burnout.Hollowings ? ShellGroup : $"Blank{level + 1}";
@@ -453,7 +448,6 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         }
     }
 
-    /// <summary>Chips fly where the axe works: char from the hollow's floor while the inside is cut, wood off the side the hewer stands at while the outside is trimmed.</summary>
     private void Chips(ICoreClientAPI capi, Entity hewer)
     {
         var rand = capi.World.Rand;

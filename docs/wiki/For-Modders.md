@@ -302,3 +302,13 @@ The dugout is built as the sources describe it: the bark comes off first, the fi
 - The dugout's shape: `Bark`, `Grass`, the pieces `Wood{n}x{k}`, `Fire{n}At{p}` and the pieces of `Clay{n}` are new; `Blank1` to `Blank5` are hull boards like her `Shell`, with floors, where they were stacked bands. Her ends show end grain, the outrigger's too. Her `char` texture is vanilla's burnt log.
 
 New: `barkPieces`, `hollowLengthMetres`, `shipyard-debark`, `shipyard-bark`, `shipyard-debark-first`.
+
+### The dugout's hewing shown as it's done
+
+A hewing no longer changes her at once: the inside is cut a section at a time, then the outside trimmed a section at a time, in the same strokes ([Built in place](Building-a-Vessel#built-in-place)).
+
+- `roughseas:burnout` needs `hewnSectionsMetres`, and its shape drawn in those sections: `Blank{n}`, `Char{n}` and `Shell` hold a group per section and her ends, and `Hewn{n}` is new. A burnout vessel of yours draws its levels as the dugout's do.
+- `IVesselHold` grew `DesignedLitres`, the hold she is built to: a hewing's strokes are counted from it.
+- `roughseas:hew` swings the player animation `roughseas-hew`, vanilla's felling chop with its chop at the blow, where it swung vanilla's `axechop` with a chop a stroke from the server.
+
+New: `hewnSectionsMetres`, `roughseas-hew`, `IVesselHold.DesignedLitres`.

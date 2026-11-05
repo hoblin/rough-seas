@@ -118,7 +118,7 @@ public sealed class Burnout
 
     private static double Toward(double blank, double finished, double share) => blank + (finished - blank) * share;
 
-    /// <summary>The section of her hull, counted from her stern from 1, that a point along her lies in.</summary>
+    /// <summary>Counted from 1 at her bow; her ends lie in the first and last.</summary>
     public int SectionAt(double alongMetres) => Math.Max(1, config.HewnSectionsMetres.Count(span => alongMetres >= span[0]));
 
     public bool Trimmed(int section) => section > Sections - SectionsTrimmed;

@@ -231,8 +231,7 @@ def trunk():
 
 
 def trench():
-    """The first hewing's inside cut before its outside: each log with the hollow that hewing leaves cut into it as
-    a trench, its outer faces mapped as the trunk's, so the outside stays as it was."""
+    """Its outer faces are mapped as the logs' faces, so the trunk's outside doesn't change while its inside is cut."""
     hull = Hull("", stations_at(1), CENTRE, wall(1), WOOD, WOOD)
     sections = {j: [] for j in range(1, len(SPANS) + 1)}
     for i in range(LOGS):
@@ -279,8 +278,7 @@ def skin(name, stations, thickness, cuts):
 
 
 def hewn_to(name, n, floors=True):
-    """The hull as hewing n leaves it, one group a section, and its two ends: what a hewing's stages show apart. What
-    the next hewing's inside work replaces, a section's floor or the bare trunk's logs, is its Inside."""
+    """A section's Inside is what EntityBehaviorBurnout hides once the next hewing has cut that section's inside."""
     if n == 0:
         logs = trunk()
         return [group(f"{name}x{j}", LEVEL, LEVEL, [group(f"{name}x{j}Inside", LEVEL, LEVEL, [log for log in logs if section_of(log["from"][0]) == j])])
@@ -293,16 +291,14 @@ def hewn_to(name, n, floors=True):
     return [*sections, *(group(f"{name}{side}", LEVEL, LEVEL, end(f"{name}{side}", slices, CENTRE, top(n))) for side, slices in ends_at(n).items())]
 
 
-def floor_planes(name, stations, walls, deep):
-    """The floor hewing deep leaves inside the walls hewing walls left."""
+def floor_planes(name, stations, walled, floored):
+    """The floor hewing floored leaves, inside the walls hewing walled left."""
     return [water_plane(f"{name}{i}", x0, x1, CENTRE - half, CENTRE + half, height, WOOD)
-            for i, (x0, x1, height, half) in enumerate(bed_of(stations, lambda x: floor(deep, x), lambda edges, height: wall(walls)), 1)]
+            for i, (x0, x1, height, half) in enumerate(bed_of(stations, lambda x: floor(floored, x), lambda edges, height: wall(walled)), 1)]
 
 
 def inside_hewn(n):
-    """Hewing n's sections with their inside cut and their outside not yet. Its walls stay as they stood, since the
-    next hewing's inner faces lie no further out than these, and its floor goes down to the next hewing's; the bare
-    trunk gets a trench as deep and as wide as the first hewing's hollow."""
+    """The walls stay as hewing n left them: the next hewing's inner faces lie no further out than these."""
     if n == 0:
         return trench()
     return [group(f"Hewn{n}x{j}", LEVEL, LEVEL, floor_planes(f"Hewn{n}x{j}Floor", sliced(stations_at(n), a, b), n, n + 1)) for j, (a, b) in enumerate(SPANS, 1)]
@@ -343,7 +339,6 @@ def bed_of(stations, floor_at_x, inset):
 
 
 def beds(n):
-    """The hollow's floor as hewing n leaves it, section by section."""
     if n == 0:
         return [[(x0, x1, BARE_TOP, BARE - wall(0)) for x0, x1 in pieces(span, CLAY_PIECE)] for span in SPANS]
     return [bed_of(sliced(stations_at(n), a, b), lambda x: floor(n, x), lambda edges, height: wall(n)) for a, b in SPANS]
@@ -488,8 +483,8 @@ def build_stages():
 
 
 def hewing_stages(stages, shell, n):
-    """What each stage of hewing n shows, as EntityBehaviorBurnout shows it: the inside cut section by section from
-    the stern, then the outside from the bow, each section's ends going with it."""
+    """What each stage of hewing n shows, as EntityBehaviorBurnout.Hewing picks it: insides cut from the first
+    section on, then outsides trimmed from the last."""
     sections = len(SPANS)
     part = lambda level, name: next(child for child in level["children"] if child["name"] == name)
     before, inside = stages["Blank"]["children"][n], stages["Hewn"]["children"][n]

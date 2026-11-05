@@ -289,6 +289,53 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void AHewingCutsTheInsideSectionBySectionThenTrimsTheOutsideInTheSameStrokes()
+    {
+        var blank = Charred(Bare());
+        var stages = new List<(int Cut, int Trimmed)> { (blank.SectionsCut, blank.SectionsTrimmed) };
+        while (!blank.Stroke())
+        {
+            if (stages[^1] != (blank.SectionsCut, blank.SectionsTrimmed)) stages.Add((blank.SectionsCut, blank.SectionsTrimmed));
+        }
+
+        Assert.Equal(Enumerable.Range(0, blank.Sections + 1).Select(cut => (cut, 0))
+            .Concat(Enumerable.Range(1, blank.Sections - 1).Select(trimmed => (blank.Sections, trimmed))), stages);
+        Assert.Equal(1, blank.Level);
+        Assert.Equal(0, blank.Stage);
+    }
+
+    [Fact]
+    public void TheInsideWorkCutsTheHoldAndTheOutsideWorkTrimsTheWoodWithNoStepAtTheHewingsEnd()
+    {
+        var blank = Charred(Bare());
+        while (blank.SectionsCut < blank.Sections) blank.Stroke();
+
+        Assert.Equal(1.0 / Config.Hollowings, blank.Hollowed, 6);
+        Assert.Equal(0, blank.Worked);
+        Assert.Equal(Config.UnhewnLitres, blank.UnhewnLitres);
+        Assert.Equal(Config.BlankDepthMetres, blank.TopMetres);
+        Assert.True(blank.FloorMetres < Config.BlankDepthMetres);
+
+        var lastStage = (blank.Hollowed, blank.Worked, blank.FloorMetres);
+        while (!blank.Stroke()) lastStage = (blank.Hollowed, blank.Worked, blank.FloorMetres);
+        Assert.Equal(lastStage.Hollowed, blank.Hollowed, 6);
+        Assert.True(blank.Worked > lastStage.Worked);
+        Assert.Equal(1.0 / Config.Hollowings, blank.Worked, 6);
+        Assert.Equal(lastStage.FloorMetres, blank.FloorMetres, 6);
+    }
+
+    [Theory]
+    [InlineData(-2.2, 1)]
+    [InlineData(-1, 1)]
+    [InlineData(0, 2)]
+    [InlineData(1, 3)]
+    [InlineData(2.2, 3)]
+    public void EverythingAlongHerLiesInOneSectionHerEndsInTheirs(double alongMetres, int section)
+    {
+        Assert.Equal(section, Dugout().SectionAt(alongMetres));
+    }
+
+    [Fact]
     public void EachHewingCutsMoreOfTheHoldUntilSheIsFinished()
     {
         var blank = Bare();

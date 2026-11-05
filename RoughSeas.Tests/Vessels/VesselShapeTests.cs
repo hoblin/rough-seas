@@ -149,10 +149,14 @@ public class VesselShapeTests
 
         var names = Elements(shape["elements"]!).Select(element => element.Value<string>("name")).ToHashSet();
         var bark = entity["behaviorConfigs"]!["roughseas:burnout"]!.Value<int>("barkPieces");
+        var sections = entity["behaviorConfigs"]!["roughseas:burnout"]!["hewnSectionsMetres"]!.Count();
         var stages = Enumerable.Range(0, hollowings)
-            .SelectMany(n => new[] { $"Blank{n}", $"Char{n}", $"Grass{n}", $"Wood{n}", $"Fire{n}", $"Clay{n}" }
+            .SelectMany(n => new[] { $"Blank{n}", $"Hewn{n}", $"Char{n}", $"Grass{n}", $"Wood{n}", $"Fire{n}", $"Clay{n}" }
                 .Concat(Enumerable.Range(1, LaidFire.FirepitFirewood).Select(k => $"Wood{n}x{k}"))
-                .Concat(Enumerable.Range(1, 3).Select(phase => $"Fire{n}At{phase}")))
+                .Concat(Enumerable.Range(1, 3).Select(phase => $"Fire{n}At{phase}"))
+                .Concat(Enumerable.Range(1, sections).SelectMany(j => new[] { $"Blank{n}x{j}", $"Blank{n}x{j}Inside", $"Hewn{n}x{j}", $"Char{n}x{j}" })))
+            .Concat(Enumerable.Range(1, hollowings - 1).SelectMany(n => new[] { $"Blank{n}Stern", $"Blank{n}Bow" }))
+            .Concat(Enumerable.Range(1, sections).Select(j => $"Shellx{j}")).Concat(["ShellStern", "ShellBow"])
             .Concat(Enumerable.Range(1, bark).Select(k => $"Bark{k}"));
 
         Assert.Empty(stages.Where(stage => !names.Contains(stage)));
