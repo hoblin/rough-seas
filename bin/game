@@ -165,6 +165,8 @@ ACT
                              The HUD part needs creative or survival: spectators do not pick.
   bin/game hover X Y Z       the same for the top face of the block at absolute X Y Z (as `state`
                              prints them), water included: a held raft or block is placed on it.
+                             Fractional X and Z aim at that point of the face (its centre without
+                             them): a lath laid with Shift lies centred where it is aimed.
   bin/game slot N            select hotbar slot N (0-9)
   bin/game press KEYS [MS]   hold keys for MS ms (default 100), or until `press KEYS up` with MS
                              `down`. GlKeys names, comma-separated:
@@ -219,6 +221,15 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              stop' first holds the storm where it is while you look.
   /bridge find CODE [RANGE]  fly over the nearest block at the surface whose code matches CODE
                              (wildcards: tallplant-*), within RANGE blocks (default 256, at most 512)
+  /bridge beaches [RANGE] [LENGTH] [DEPTH]
+                             list the places within RANGE blocks of loaded world (default 256) where dry
+                             ground lies flush with the water, LENGTH blocks along it (default 7) and DEPTH
+                             back (default 4): where a vessel is laid by the water. Each with its ground,
+                             its water (salt or fresh), rainfall and temperature, the wettest first; fly
+                             along a coast first so its chunks load
+  /bridge weed RADIUS        clear the plants and loose stones off the ground within RADIUS blocks of
+                             the player (at most 32), leaving the ground, the water and the lily pads
+                             on it: a build site with nothing in the way
   /bridge drift [on|off]     whether unridden vessels drift with the current and the wind. Off on
                              every start, so a vessel stays where it was put; a drift test turns it on
   /bridge current SPEED|off [YAW]
@@ -229,15 +240,22 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood.
                              Until a flight has landed it refuses: "Still flying there"
-  /bridge spawn CODE X Y Z [YAW]
+  /bridge spawn CODE X Y Z [YAW] [KEY VALUE]
                              spawn an entity there (~ relative) facing YAW degrees; replies with its
-                             id. A vessel over water lies on the surface
+                             id. A vessel over water lies on the surface. KEY VALUE is set before it
+                             enters the world, as /bridge set sets it: roughseas:build/Lashing 1
+                             spawns a vessel at that stage of her build, as the game does (one set
+                             after spawning comes a tick late: a finished hull's first tick has moved
+                             her already)
   /bridge mount ID [SEAT]    seat the player in an existing seatable entity: a steering seat first,
                              or the seat of index SEAT (0 is the first in its entity's seats)
   /bridge wear CODE          put item CODE in the first empty backpack slot, worn on the back
+  /bridge dress CODE         put clothing CODE on the player, in the outfit slot that takes it:
+                             game:clothes-upperbody-hunter-shirt for a plain player at sea in a picture
   /bridge hold CODE          put item or block CODE in the active hotbar slot, held in the hand
   /bridge drop CODE X Y Z    an item or block CODE lying on the ground there, at rest (~ relative)
-  /bridge set ID KEY VALUE   set a watched attribute: int, float, bool or string by its form, while a
+  /bridge set ID KEY VALUE   set a watched attribute: int, float, bool or string by its form, a double with a
+                             trailing d (roughseas:build/rimCharMetres 0.05d, for a tree read as doubles), while a
                              double or float stays what it is; e.g. the sailboat's sailPosition 0, 1, 2;
                              TREE/KEY reaches into a tree: roughseas:vessel/cracks/portside 0.6 for a
                              crack (once the hull has one), roughseas:vessel/lashing 0.6 for a raft,

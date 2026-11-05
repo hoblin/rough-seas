@@ -264,10 +264,11 @@ public class AgentBridgeModSystem : ModSystem
     private string Hover(string? entity, string? box, string? block)
     {
         hover.Block = null;
-        if (block?.Split(',').Select(int.Parse).ToArray() is [var x, var y, var z])
+        if (block?.Split(',').Select(value => double.Parse(value, CultureInfo.InvariantCulture)).ToArray() is [var x, var y, var z])
         {
             hover.Target = null;
-            hover.Block = new BlockPos(x, y, z);
+            hover.Block = new BlockPos((int)Math.Floor(x), (int)Math.Floor(y), (int)Math.Floor(z));
+            hover.Hit = block.Contains('.') ? new Vec3d(x - Math.Floor(x), 1, z - Math.Floor(z)) : null;
             return JsonSerializer.Serialize(new { block = capi.World.BlockAccessor.GetBlock(hover.Block).Code.ToString() }) + "\n";
         }
         if (!long.TryParse(entity, out var id))

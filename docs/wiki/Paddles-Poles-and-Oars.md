@@ -27,9 +27,9 @@ A pole reaches the bottom at about these depths. From the reed boat, poled sitti
 
 | | |
 | --- | --- |
-| ![Paddling a bark canoe along her side](images/propulsion/paddling.webp) | ![Poling a dugout standing at her bow end](images/propulsion/poling.webp) |
+| ![Paddling a bark canoe on one side](images/propulsion/paddling.webp) | ![Poling a dugout standing](images/propulsion/poling.webp) |
 | A paddle along the side | A pole off the bottom, standing |
-| ![Rowing a currach on her thole pins](images/propulsion/rowing.webp) | ![Sculling a coracle over her bow](images/propulsion/sculling.webp) |
+| ![Rowing a currach on its thole pins](images/propulsion/rowing.webp) | ![Sculling a coracle over its bow](images/propulsion/sculling.webp) |
 | The currach's oars on their thole pins | A coracle sculled over her bow |
 | ![A bark canoe's paddler changing sides](images/propulsion/changing-sides.webp) | |
 | A paddler changing sides | |

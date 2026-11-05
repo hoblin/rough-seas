@@ -5,10 +5,12 @@
 # ///
 """Film a scene from a screenplay in one run: bin/film SCREENPLAY.yml
 
-  bin/film SCREENPLAY [--out DIR] [--no-captions]
+  bin/film SCREENPLAY [--out DIR] [--no-captions] [--webp DIR [--width PX]]
                        set the scene up off camera, shoot every scene in one take with the game's own
                        recorder (.vrec), clear what the screenplay created and print the video, then one
                        still per scene, taken as the scene ends. Captions are burned in after the take.
+                       With --webp, web copies go to DIR as well, PX wide (default 960): each still as
+                       SCENE.webp, named after its scene, and the film as SCREENPLAY.webp, animated.
   bin/film scout SCREENPLAY [STATION...] [--out DIR]
                        set the scene up, take a still from each named station (all by default) and
                        clear it again: the angles are checked before the take.
@@ -31,11 +33,15 @@ SCREENPLAY
                        rain is handed back to the weather (/weather setprecipa) after the take.
     shallows: 1        a granite bed that many whole metres under the surface, by `bin/scene shallows`:
                        25 blocks across and 85 along +z, so a vessel cast at yaw 0 heads along it
-    do: [COMMAND...]   anything else, run in order
+    do: [ACTION...]    anything else, run in order, as a scene's do runs it
   cast:               entities spawned for the film and removed after it, by name
     currach: {spawn: roughseas:currach, at: [0, 0, 6], yaw: 0}
                        at: blocks from the player at the place (default where the player is); yaw
-                       in degrees. A vessel over water lies on the surface.
+                       in degrees. A vessel over water lies on the surface. build: {STAGE: N} makes
+                       a vessel enter at that stage of her build, as the game spawns her (one stage;
+                       her other stages count as not begun). Its do: [ACTION...] runs as it enters.
+                       With offstage: true it is spawned only when a scene's {enter: NAME} brings
+                       it on, as the game makes a vessel out of the blocks it was laid from.
   player:
     ride: currach      seated in a cast member, its steering seat first
     hold: CODE         the item in hand (/bridge hold)
@@ -54,7 +60,18 @@ SCREENPLAY
     do: [ACTION...]    in order, when the scene begins. An action is a command (/server or .client;
                        {name} stands for a cast member's id) or one of
                        {fly: [X, Y, Z]}  {mount: NAME}  {dismount: true}  {aim: NAME}
-                       {hand: CODE}  {use: NAME}
+                       {hand: CODE}  {use: NAME}  {enter: NAME}
+                       {face: DEGREES}   the player turned to a heading, level (0 faces +z, 90 +x),
+                                         so stations around the player stand the same every run
+                       {click: [X, Y, Z], shift: false, seconds: 0.15}
+                                         a right-click with the held item on the top face of the
+                                         block at X Y Z (as commands take them), at that point of it
+                                         to a fraction of a block, Shift held when asked: a lath laid
+                                         on the ground lies centred there. The player must pick, so
+                                         not in spectator
+                       {lay: NAME, stage: GROUP, to: N, from: 0, seconds: 0}
+                                         a build's stage laid piece by piece, from + 1 to N, spread
+                                         over the seconds (/bridge set NAME roughseas:build/GROUP)
     keys: [W]          held through the scene: W/S row, A/D steer
     until:             what only success produces; the scene goes on until it holds
                        {moved: NAME, by: BLOCKS}    NAME has moved that far since the scene began
@@ -87,7 +104,7 @@ MINIMUM_DWELL_SECONDS = 2.0
 POLL_SECONDS = 0.5
 ENTITY_WAIT_SECONDS = 30
 DEFAULT_TIMEOUT = 120
-CALM = ["/weather setprecip 0", "/weather set clearsky", "/weather setw still", "/weather acp false"]
+CALM = ["/weather setprecip -1", "/weather set clearsky", "/weather setw still", "/weather acp false"]
 
 
 class Failure(Exception):
@@ -146,15 +163,17 @@ class Set:
         self.screenplay = screenplay
         self.ids = {}
         self.home = None
+        self.origin = None
         self.calm = False
 
     def build(self):
         state = self.game.state()
-        self.home = [state["pos"]["X"] - state["centre"]["X"], state["pos"]["Y"], state["pos"]["Z"] - state["centre"]["Z"]]
+        self.home = self.position(state)
         if state.get("mountedOn"):
             self.game.do("/bridge dismount")
         setting = self.screenplay.setting
         self.place(setting.get("place", "sea"))
+        self.origin = self.position(self.game.state())
         if "time" in setting:
             self.game.do(f"/time set {setting['time']}")
         weather = setting.get("weather")
@@ -165,17 +184,88 @@ class Set:
             shallows = subprocess.run([str(SCENE), "shallows", str(setting["shallows"])], capture_output=True, text=True)
             if shallows.returncode != 0:
                 raise Failure(f"bin/scene shallows {setting['shallows']}: {(shallows.stdout + shallows.stderr).strip()}")
-        for line in setting.get("do") or []:
-            self.game.do(self.cue(line))
+        for action in setting.get("do") or []:
+            self.act(action)
         for name, member in self.screenplay.cast.items():
-            dx, dy, dz = member.get("at", [0, 0, 0])
-            reply = self.game.expect(f"/bridge spawn {member['spawn']} ~{dx} ~{dy} ~{dz} {member.get('yaw', 0)}", "Spawned")
-            self.ids[name] = int(reply.split()[-1])
+            if not member.get("offstage"):
+                self.enter(name)
         player = self.screenplay.player
         if "hold" in player:
             self.game.expect(f"/bridge hold {player['hold']}", "Holding")
         if "ride" in player:
             self.game.expect(f"/bridge mount {self.id(player['ride'])}", "Seated")
+
+    @staticmethod
+    def position(state):
+        return [state["pos"]["X"] - state["centre"]["X"], state["pos"]["Y"], state["pos"]["Z"] - state["centre"]["Z"]]
+
+    def enter(self, name):
+        if name not in self.screenplay.cast:
+            raise Failure(f"No one called {name} in the cast")
+        if name in self.ids:
+            raise Failure(f"{name} is on already")
+        member = self.screenplay.cast[name]
+        x, y, z = (origin + offset for origin, offset in zip(self.origin, member.get("at", [0, 0, 0])))
+        if len(member.get("build") or {}) > 1:
+            raise Failure(f"{name} enters at one stage of her build; set the others in her do")
+        build = " ".join(f"roughseas:build/{stage} {count}" for stage, count in (member.get("build") or {}).items())
+        reply = self.game.expect(f"/bridge spawn {member['spawn']} {x:.3f} {y:.3f} {z:.3f} {member.get('yaw', 0)} {build}".rstrip(), "Spawned")
+        self.ids[name] = int(reply.split()[-1])
+        for action in member.get("do") or []:
+            self.act(action)
+
+    def act(self, action):
+        if isinstance(action, str):
+            self.game.do(self.cue(action))
+            return
+        if isinstance(action, dict) and "lay" in action:
+            self.lay(**action)
+            return
+        if isinstance(action, dict) and "click" in action:
+            self.click(**action)
+            return
+        if not isinstance(action, dict) or len(action) != 1:
+            raise Failure(f"An action is a command or a single-key mapping, not {action!r}")
+        (verb, value), = action.items()
+        if verb == "fly":
+            self.game.expect("/bridge fly {} {} {}".format(*value), "Hovering")
+        elif verb == "mount":
+            self.game.expect(f"/bridge mount {self.id(value)}", "Seated")
+        elif verb == "dismount":
+            self.game.do("/bridge dismount")
+        elif verb == "aim":
+            self.game.run("aim", self.id(value))
+        elif verb == "hand":
+            self.game.expect(f"/bridge hold {value}", "Holding")
+        elif verb == "use":
+            self.game.do(f"/bridge interact {self.id(value)} interact")
+        elif verb == "enter":
+            self.enter(value)
+        elif verb == "face":
+            self.game.run("look", f"{math.radians(value):.4f}", f"{math.pi:.4f}")
+        else:
+            raise Failure(f"Unknown action {verb}")
+
+    def lay(self, lay, stage, to, seconds=0, **rest):
+        start = rest.pop("from", 0)
+        if rest:
+            raise Failure(f"A lay takes stage, to, from and seconds, not {', '.join(rest)}")
+        counts = list(range(start + 1, to + 1)) or [to]
+        for count in counts:
+            self.game.do(f"/bridge set {self.id(lay)} roughseas:build/{stage} {count}")
+            time.sleep(seconds / len(counts))
+
+    def click(self, click, shift=False, seconds=0.15):
+        centre = self.game.state()["centre"]
+        x, y, z = click
+        self.game.run("hover", f"{x + centre['X']:.4f}", f"{y:.4f}", f"{z + centre['Z']:.4f}")
+        held = subprocess.Popen([str(GAME), "press", "ShiftLeft", str(int(seconds * 1000) + 800)], stdout=subprocess.DEVNULL) if shift else None
+        if held:
+            time.sleep(0.3)
+        self.game.run("click", "right", str(int(seconds * 1000)))
+        if held:
+            held.wait()
+        self.game.run("hover")
 
     def place(self, place):
         if place in ("sea", "shore"):
@@ -230,6 +320,12 @@ class Camera:
             spec = self.set.screenplay.stations[spec]
         return spec
 
+    def on_stage(self, spec):
+        if spec in ("first", "third"):
+            return True
+        station = self.station(spec)
+        return all(name == "player" or name in self.set.ids for name in (station.get("around", "player"), station.get("look", "player")))
+
     def frame(self, spec):
         if spec in ("first", "third"):
             self.game.camera(spec)
@@ -274,40 +370,19 @@ class Scene:
 
     def play(self, still):
         began = time.monotonic()
-        seconds = self.camera.frame(self.scene["camera"]) if "camera" in self.scene else 0
         for action in self.scene.get("do") or []:
-            self.act(action)
+            self.set.act(action)
+        seconds = self.camera.frame(self.scene["camera"]) if "camera" in self.scene else 0
+        framed = time.monotonic()
         keys = ",".join(self.scene.get("keys") or [])
         if keys:
             self.game.run("press", keys, "down")
         try:
-            self.wait(self.scene.get("until"), began + max(seconds, self.dwell()), began + self.scene.get("timeout", DEFAULT_TIMEOUT))
+            self.wait(self.scene.get("until"), max(framed + seconds, began + self.dwell()), began + self.scene.get("timeout", DEFAULT_TIMEOUT))
             self.game.shot(still, recording=True)
         finally:
             if keys:
                 self.game.run("press", keys, "up")
-
-    def act(self, action):
-        if isinstance(action, str):
-            self.game.do(self.set.cue(action))
-            return
-        if not isinstance(action, dict) or len(action) != 1:
-            raise Failure(f"An action is a command or a single-key mapping, not {action!r}")
-        (verb, value), = action.items()
-        if verb == "fly":
-            self.game.expect("/bridge fly {} {} {}".format(*value), "Hovering")
-        elif verb == "mount":
-            self.game.expect(f"/bridge mount {self.set.id(value)}", "Seated")
-        elif verb == "dismount":
-            self.game.do("/bridge dismount")
-        elif verb == "aim":
-            self.game.run("aim", self.set.id(value))
-        elif verb == "hand":
-            self.game.expect(f"/bridge hold {value}", "Holding")
-        elif verb == "use":
-            self.game.do(f"/bridge interact {self.set.id(value)} interact")
-        else:
-            raise Failure(f"Unknown action {verb}")
 
     def wait(self, until, earliest, deadline):
         check = self.condition(until)
@@ -389,6 +464,14 @@ def encode(raw, mp4, captions, wall, ass):
                     "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", str(mp4)], check=True)
 
 
+def webp(mp4, stills, names, directory, width):
+    directory.mkdir(parents=True, exist_ok=True)
+    for still, name in zip(stills, names):
+        subprocess.run(["magick", str(still), "-resize", f"{width}x", "-quality", "82", str(directory / f"{slugify(name)}.webp")], check=True)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(mp4), "-vf", f"fps=12,scale={width}:-2:flags=lanczos",
+                    "-c:v", "libwebp_anim", "-quality", "75", "-loop", "0", "-an", str(directory / f"{mp4.stem}.webp")], check=True)
+
+
 def film(screenplay, out, captions):
     game = Game()
     set = Set(game, screenplay)
@@ -407,7 +490,9 @@ def film(screenplay, out, captions):
         game.do(f".vrec filetarget {raw_dir}")
         game.do(".gui off")
         if opening := screenplay.scenes[0].get("camera"):
-            camera.frame(opening["from"] if isinstance(opening, dict) and "from" in opening else opening)
+            station = opening["from"] if isinstance(opening, dict) and "from" in opening else opening
+            if camera.on_stage(station):
+                camera.frame(station)
         started = time.monotonic()
         game.do(".vrec start")
         for number, data in enumerate(screenplay.scenes, 1):
@@ -442,6 +527,7 @@ def film(screenplay, out, captions):
     print(mp4)
     for still in stills:
         print(still)
+    return mp4, stills
 
 
 def scout(screenplay, out, names):
@@ -476,6 +562,8 @@ def main():
     parser.add_argument("words", nargs="+")
     parser.add_argument("--out")
     parser.add_argument("--no-captions", dest="captions", action="store_false")
+    parser.add_argument("--webp")
+    parser.add_argument("--width", type=int, default=960)
     args = parser.parse_args()
     scouting = args.words[0] == "scout"
     words = args.words[1:] if scouting else args.words
@@ -493,7 +581,9 @@ def main():
     if scouting:
         scout(screenplay, out, words[1:])
     else:
-        film(screenplay, out, args.captions)
+        mp4, stills = film(screenplay, out, args.captions)
+        if args.webp:
+            webp(mp4, stills, [scene.get("name", "scene") for scene in screenplay.scenes], pathlib.Path(args.webp).expanduser().resolve(), args.width)
 
 
 if __name__ == "__main__":
