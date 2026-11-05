@@ -88,8 +88,8 @@ The dugout is burnt and hewn out of five logs on the shore ([Built in place](Bui
 - The dugout's rower holds an oar, as on vanilla's raft: it sets `requiresPaddlingTool` and paddles with vanilla's `crudeOar` strokes. A mod that patched its own paddle or strokes patches a vessel that no longer has them.
 - `roughseas:bilge`'s `capacityLitres` is what the finished hull holds; while she is built, she holds what is cut out of it.
 
-- A vanilla campfire starts it: dry grass laid with Shift on the middle log of a row lays the blank instead of vanilla's firepit (a Harmony prefix on `ItemDryGrass.OnHeldInteractStart`). Anywhere else dry grass does what vanilla does.
-- Every axe in the game, a modded one too, carries our collectible behaviour `roughseas:hew`, so that holding it on a charred blank hews.
+- An axe starts it: Shift + right-clicked on the middle log of a row, it lays the blank. Anywhere else an axe does what vanilla does.
+- Every axe in the game, a modded one too, carries our collectible behaviour `roughseas:hew`, so that holding it on a blank strips its bark and on a charred blank hews.
 - Rain on a vessel, in her bilge and drying her ashore, is what `WeatherSystemBase.GetPrecipitation` reads, as vanilla's fires do, and nothing under a roof.
 
 New: the behaviours `roughseas:burnout` and `roughseas:launch` with their keys, the collectible behaviour `roughseas:hew`, and the watched tree `roughseas:build` on a vessel being built.
@@ -290,3 +290,15 @@ New: `capsizeBreakerBeams`, `EntityBehaviorPropulsion.Asked`.
 - `HullShape`'s members are `HalfLengthMetres`, `HalfBeamMetres`, `DepthMetres`, `CentreAlongMetres`, `CentreAcrossMetres` and `KeelMetres`, where they were `HalfLength`, `HalfBeam`, `Depth`, `CentreAlong`, `CentreAcross` and `Keel`. `HullShape.FromBox(fromMetres, toMetres)` takes a box in metres from the entity's origin, and `HullShape.VoxelsPerBlock` is gone. `Seaworthiness.From(attributes, beamMetres, lengthMetres)` takes her length too.
 
 New: `hullBoxMetres`, `overturnedPivotVoxels`, `levelHeightsMetres`, `floatLengthMetres`, `capsizeBreakerLengths`, the voxel twin of every measured key, and `RoughSeas.Units.Voxels`, which converts voxels and metres from the one definition in `RoughSeas/Units/voxel.json`.
+
+### The dugout's build revised
+
+The dugout is built as the sources describe it: the bark comes off first, the fire is laid on bare wood, catches and smoulders down to embers, and every hewing is drawn the way the finished hull is ([Built in place](Building-a-Vessel#built-in-place)). A vessel of yours loads as it did.
+
+- An axe Shift + right-clicked on the middle log lays the blank, in its bark; dry grass laid with Shift on a log does what vanilla does again, and our Harmony prefix on `ItemDryGrass.OnHeldInteractStart` is gone. A blank no longer starts with its grass laid.
+- `roughseas:hew` strips the bark a stroke a piece before anything else goes on: clay, dry grass, firewood and a light are refused with `shipyard-debark-first` until it is bare.
+- A burnt-out fire leaves the clay on the rim; the hewing takes it off. The first ball's kind is kept as `clayType` in `roughseas:build`, and the bark stripped as `barkStripped`.
+- The dugout's fire spawns vanilla's fire particles at their real quantities (they never showed before) and lights the ground round it, `LightHsv` as a pit kiln's.
+- The dugout's shape: `Bark`, `Grass`, the pieces `Wood{n}x{k}`, `Fire{n}At{p}` and the pieces of `Clay{n}` are new; `Blank1` to `Blank5` are hull boards like her `Shell`, with floors, where they were stacked bands. Her ends show end grain, the outrigger's too. Her `char` texture is vanilla's burnt log.
+
+New: `barkPieces`, `hollowLengthMetres`, `shipyard-debark`, `shipyard-bark`, `shipyard-debark-first`.

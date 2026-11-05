@@ -1,3 +1,4 @@
+using RoughSeas.Shipyard;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using RoughSeas.Vessels;
@@ -147,7 +148,12 @@ public class VesselShapeTests
         if (entity["behaviorConfigs"]!["roughseas:burnout"]?.Value<int>("hollowings") is not { } hollowings) return;
 
         var names = Elements(shape["elements"]!).Select(element => element.Value<string>("name")).ToHashSet();
-        var stages = Enumerable.Range(0, hollowings).SelectMany(n => new[] { $"Blank{n}", $"Char{n}", $"Wood{n}", $"Fire{n}" }).Append("Clay");
+        var bark = entity["behaviorConfigs"]!["roughseas:burnout"]!.Value<int>("barkPieces");
+        var stages = Enumerable.Range(0, hollowings)
+            .SelectMany(n => new[] { $"Blank{n}", $"Char{n}", $"Grass{n}", $"Wood{n}", $"Fire{n}", $"Clay{n}" }
+                .Concat(Enumerable.Range(1, LaidFire.FirepitFirewood).Select(k => $"Wood{n}x{k}"))
+                .Concat(Enumerable.Range(1, 3).Select(phase => $"Fire{n}At{phase}")))
+            .Concat(Enumerable.Range(1, bark).Select(k => $"Bark{k}"));
 
         Assert.Empty(stages.Where(stage => !names.Contains(stage)));
         Assert.DoesNotContain($"Blank{hollowings}", names);

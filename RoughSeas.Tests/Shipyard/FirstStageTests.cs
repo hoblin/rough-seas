@@ -21,18 +21,19 @@ public class FirstStageTests
         element.Value<string>("name")!.StartsWith("Wound") ? []
         : element["children"] is { } children ? children.SelectMany(Boxes) : [element];
 
-    private static (double[] From, double[] To) Bounds(JToken group)
+    private static (double[] From, double[] To) Bounds(params JToken[] groups)
     {
-        var boxes = Boxes(group).ToArray();
+        var boxes = groups.SelectMany(Boxes).ToArray();
         double Edge(int axis, string end, Func<IEnumerable<double>, double> pick) => pick(boxes.Select(box => box[end]![axis]!.Value<double>()));
         return ([.. Enumerable.Range(0, 3).Select(axis => Edge(axis, "from", values => values.Min()))],
                 [.. Enumerable.Range(0, 3).Select(axis => Edge(axis, "to", values => values.Max()))]);
     }
 
     [Fact]
-    public void ADugoutsBlankIsTheFiveLogsAsTheyLie()
+    public void ADugoutsBlankIsTheFiveLogsAsTheyLieInTheirBark()
     {
-        var (from, to) = Bounds(Named(Shape("dugout")["elements"]!, "Blank0"));
+        var elements = Shape("dugout")["elements"]!;
+        var (from, to) = Bounds(Named(elements, "Blank0"), Named(elements, "Bark"));
 
         Assert.Equal([Centre - 2.5 * Voxels.AMetre, 0, 0], from);
         Assert.Equal([Centre + 2.5 * Voxels.AMetre, Voxels.AMetre, Voxels.AMetre], to);

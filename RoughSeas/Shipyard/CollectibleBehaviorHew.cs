@@ -12,6 +12,13 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
+        if (entitySel == null && blockSel != null && firstEvent && byEntity.Controls.ShiftKey
+            && byEntity.World.BlockAccessor.GetBlock(blockSel.Position).GetBehavior<BlockBehaviorBlankLog>() is { } log && log.TryLay(byEntity, blockSel.Position))
+        {
+            handling = EnumHandling.PreventDefault;
+            handHandling = EnumHandHandling.PreventDefault;
+            return;
+        }
         if (Blank(entitySel) is not { CanHew: true }) return;
 
         byEntity.Attributes.SetInt(StrokesKey, 0);

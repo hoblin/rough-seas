@@ -56,7 +56,7 @@ public class BlockBehaviorBlankLog(Block block) : BlockBehavior(block)
         blank.Pos.Yaw = row.Along == EnumAxis.X ? GameMath.PIHALF : 0;
         EntityBehaviorBurnout.Begin(blank, world.Api.ModLoader.GetModSystem<SeaWeatherSystem>().Clock.Hours);
         world.SpawnEntity(blank);
-        shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: dry grass on the middle log, the base of her first fire", byEntity.GetName(),
+        shipyard.Log(blank, "laid by {0} from {1} {2} logs, water to the {3}: the axe on the middle log, to strip the bark", byEntity.GetName(),
             row.Length, row.Wood.Code, water.Code);
     }
 }
