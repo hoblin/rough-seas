@@ -96,7 +96,7 @@ Our vessels carry no size copied by hand. `bin/model build` measures each one of
 
 What it writes, each object's comment line giving the full list:
 
-- **The hull**: `roughseas:vesselintegrity`'s `hullBoxMetres`, and from it `hitboxSize` (the hull's width and height) and `passivephysicsmultibox`'s `collisionBoxes` (the hull box in pieces of about 1.5 m, and an outrigger's float); `weight`, each part's `share`, `swimmingOffsetY`, `depthMetres` and `waterplaneSquareMetres`.
+- **The hull**: `roughseas:vesselintegrity`'s `hullBoxMetres`, and from it `hitboxSize` (the hull's width and height) and `passivephysicsmultibox`'s `collisionBoxes` (the hull box, and an outrigger's float, in pieces about as long as they are wide, since vanilla turns only a box's middle with her yaw); `weight`, each part's `share`, `swimmingOffsetY`, `depthMetres` and `waterplaneSquareMetres`.
 - **The shell**: `backedShare` and `bottomBackedShare`, sampled over her skin against the members found behind it, `spanMetres`, a `frame`'s `spacingMetres` and `spanMetres`, and a carved or bundled shell's `metres`.
 - **Strength and seams**: a reed hull's `impactCapacity` and an outrigger float lashing's, from the rope the model counts; a hide cover's `seep.litresPerHourASeam`, from the length of seam the model cuts; the float's `firewoodLitres`.
 - **The bilge**: `capacityLitres`, `deckSquareMetres` and `levelHeightsMetres`.
