@@ -54,7 +54,7 @@ public class PropulsionTests
     }
 
     [Fact]
-    public void TheRowerRowsAsHisKeysAskWhereverHeLooks()
+    public void TheRowerRowsAsHisKeysAsk()
     {
         Assert.Equal((1, 0), EntityBehaviorPropulsion.Asked(new EntityControls { Forward = true }));
         Assert.Equal((-1, 1), EntityBehaviorPropulsion.Asked(new EntityControls { Backward = true, Left = true }));

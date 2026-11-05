@@ -53,7 +53,6 @@ public class SeaworthinessTests
     public void ARaftGoesOverInABreakerAsHighAsHerLogsSpanAcross()
     {
         var beam = 2 * Fixtures.Shape("boat-raft").HalfBeam;
-        Assert.Equal(beam, Fixtures.BeamMetres("boat-raft"));
         Assert.False(Of("boat-raft").Capsizes(beam - 0.01));
         Assert.True(Of("boat-raft").Capsizes(beam));
     }

@@ -100,7 +100,7 @@ Every vessel of ours is a whole example, each number with its source: `assets/ro
 | `rollResponse` | × | 1 | how many times the water's slope across it it rolls on the drawn swell |
 | `pitchResponse` | × | 1 | the same along it |
 | `capsizeBreakerMetres` | m | none | the breaker that overturns it, empty |
-| `capsizeBreakerBeams` | × | none | the same as a share of `beamMetres`, where the source gives it so: the raft's is 1, a breaker as high as she is wide |
+| `capsizeBreakerBeams` | × | none | the same as a share of `beamMetres`, where the source gives it so: the raft's is 1, a breaker as high as she is wide. A `capsizeBreakerMetres` given wins |
 
 A crest stands half a wave's height above still water, seven tenths when it breaks; the hull rises with `heave` of that. Water aboard adds to the roll, twice as much when full. A vessel that floats by its mass ships water over the freeboard it floats at; one with a fixed `freeboardMetres` loses it in proportion to its bilge, all of it when full.
 

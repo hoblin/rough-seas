@@ -120,9 +120,11 @@ public class WavesTests
         var breeze = waves.Force(9, 2.7, raft.BeamMetres, raft.WindageSquareMetres);
         var gale = waves.Force(20, 5.5, raft.BeamMetres, raft.WindageSquareMetres);
 
-        const int GaleWavesADay = 24 * 3600 / 10;
+        const int GaleWavePeriodSeconds = 10;
+        var everyWave = Waves.ChanceToExceed(gale, Fixtures.FlaxNewtons);
         Assert.True(Waves.ChanceToExceed(breeze, Fixtures.FlaxNewtons) < 1e-6);
-        Assert.InRange(1 - Math.Pow(1 - Waves.ChanceToExceed(gale, Fixtures.FlaxNewtons), GaleWavesADay), 0.5, 1);
+        Assert.InRange(everyWave, 1e-4, 1e-2);
+        Assert.True(1 - Math.Pow(1 - everyWave, 24 * 3600 / GaleWavePeriodSeconds) > 0.9);
     }
 
     [Fact]

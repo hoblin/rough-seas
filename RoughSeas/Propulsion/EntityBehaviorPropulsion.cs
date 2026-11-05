@@ -60,8 +60,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     }
 
     /// <summary>
-    /// Ahead and turning to port, each -1, 0 or 1, from the rower's keys: vanilla's motion reverses a paddled boat
-    /// whose rider looks astern.
+    /// Ahead and turning to port, each -1, 0 or 1, from the rower's keys, whichever way he looks.
     /// </summary>
     public static (int Ahead, int Turn) Asked(EntityControls? controls) => controls == null
         ? (0, 0)

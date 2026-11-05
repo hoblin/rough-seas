@@ -156,9 +156,10 @@ case "$1" in
     fi
     logs=$work/build
     mkdir -p "$logs"
+    install_addon
     declare -A building
     for vessel in "${vessels[@]}"; do
-      python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json" >"$logs/$vessel.log" 2>&1 &
+      PYTHONPATH=$scripts/modules python3 "$hulls/$vessel.py" "$root/RoughSeas/assets/roughseas/shapes/entity/vessel/$vessel.json" >"$logs/$vessel.log" 2>&1 &
       building[$!]=$vessel
     done
     failed=0
