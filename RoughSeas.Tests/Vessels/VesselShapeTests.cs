@@ -221,6 +221,25 @@ public class VesselShapeTests
             }));
     }
 
+    [Fact]
+    public void PlaysEveryFirstPersonTwinInStepWithTheStrokeOthersSee()
+    {
+        Dictionary<string, JToken> Values(string path) => PlayerPatches().Where(op => op.Value<string>("path") == path)
+            .Select(op => op["value"]!).ToDictionary(value => value.Value<string>("code")!);
+        var shapes = Values("/animations/-");
+        var registered = Values("/client/animations/-");
+        var twins = shapes.Keys.Where(code => code.EndsWith("-fp")).ToList();
+
+        Assert.NotEmpty(twins);
+        Assert.All(twins, twin =>
+        {
+            var seen = twin[..^"-fp".Length];
+            Assert.Equal(shapes[seen].Value<int>("quantityframes"), shapes[twin].Value<int>("quantityframes"));
+            Assert.Equal(shapes[seen].Value<string>("onAnimationEnd"), shapes[twin].Value<string>("onAnimationEnd"));
+            Assert.Equal(registered[seen].Value<double?>("animationSpeed"), registered[twin].Value<double?>("animationSpeed"));
+        });
+    }
+
     private static IEnumerable<JToken> PlayerPatches() =>
         Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "patches"), "player-*.json")
             .SelectMany(file => JArray.Parse(File.ReadAllText(file)));

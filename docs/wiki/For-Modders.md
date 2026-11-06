@@ -338,6 +338,15 @@ A pole's shove, its reach and its drawing are one ([Driving her](Building-a-Vess
 
 New: `Stroke.Shove`, `Stroke.Pace`, `Propulsor.StrokeSpeed`, `StrokeConfig.Phase`, `Driving` and `Lift`, `Stroke.LiftWatts`, `MountStrokes.Pace`, `Pole.LiftJoules`, `Pole.Travel`, `PoleConfig.Footing`, `PoleConfig.Travel`, `RowerStation.BedMetres`, `MountStrokes.DrawnShare`, `EntityBehaviorPropulsion.Way` and `PoleSlide`, the `pole` keys above, `propulsion-pole-too-deep`.
 
+### The seated pole seen in first person
+
+A reed boat's rider poling in first person sees the water ahead past the arms. Everyone else, and the rider in third person, sees the stroke as before.
+
+- The reed boat's pole strokes have first-person twins, `roughseas-reedboat-pole-{ready|forward|backward}-fp`, in `patches/player-reedboat.json`. They are the strokes with both upper arms moved 7 voxels down and 3 toward the pole's side, so the hands keep the pole. Vanilla plays a mount animation's `-fp` twin on the rider's own first-person arms, as it does for its crude oar.
+- A patch to one of those strokes patches its twin too, or the rider sees the old stroke in first person. A twin of yours plays beside its stroke, so give it the same frames, end and speed.
+
+New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`.
+
 ## What not to touch
 
 | Name | What it is |

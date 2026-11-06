@@ -1,3 +1,4 @@
+import copy
 import json
 import math
 import os
@@ -28,6 +29,7 @@ FRAMES_A_SECOND = 30
 # The trunk's rotation each way, AAOS normal value for the thoracolumbar spine.
 TRUNK_ROTATION = 45
 CENTRE = (8, 0, 8)
+FIRST_PERSON = "-fp"
 
 
 def turn(rotations, v):
@@ -210,8 +212,19 @@ def seraph():
     return json.loads(SERAPH.read_text())
 
 
+def first_person(animation):
+    twin = copy.deepcopy(animation)
+    twin["name"] = twin["code"] = animation["code"] + FIRST_PERSON
+    for keyframe, arms in zip(twin["keyframes"], twin.pop("firstPerson")):
+        for arm, offsets in arms.items():
+            keyframe["elements"][arm] |= offsets
+    del animation["firstPerson"]
+    return twin
+
+
 def player_patch(name, animations):
     smoothed(name, seraph()["elements"], animations, name.removeprefix("player-"))
+    animations += [first_person(animation) for animation in list(animations) if "firstPerson" in animation]
     speeds = {animation["code"]: animation.pop("speed") for animation in animations}
     ops = []
     for animation in animations:

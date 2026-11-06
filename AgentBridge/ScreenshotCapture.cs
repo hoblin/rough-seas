@@ -38,7 +38,7 @@ public class ScreenshotCapture : IRenderer
         return shot.Task;
     }
 
-    public Task<string> Series(string folder, int count, float seconds)
+    public Task<string> Series(string folder, int count, float seconds, bool withGuis)
     {
         var series = new Burst(folder, count, seconds / count);
         capi.Event.EnqueueMainThreadTask(() =>
@@ -48,7 +48,7 @@ public class ScreenshotCapture : IRenderer
                 series.Done.SetException(new IOException("A burst is already being taken"));
                 return;
             }
-            HideGuis(false);
+            HideGuis(withGuis);
             burst = series;
         }, "agentbridge-screenshot");
         return series.Done.Task;
