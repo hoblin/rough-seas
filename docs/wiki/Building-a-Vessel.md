@@ -218,7 +218,7 @@ List `roughseas:burnout` before `creaturecarrier`, so that a click with clay, dr
 
 She is then laid stage by stage, in the order of `stages`, each piece held on her for its stage's `seconds`. A stage's `work` says what lays a piece of it:
 
-- `lath`: a lath, wet. Two to five logs lying end to end with a splitting wedge on each split into poles as long as the row when an axe drives a wedge, and an axe splits a pole into laths of its length in the crafting grid; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
+- `lath`: a lath, wet. Two to five logs lying end to end with a splitting wedge on each split into poles as long as the row once an axe has driven every wedge home, and an axe splits a pole into laths of its length in the crafting grid; laths soak in a barrel and dry again in two days. The first lath laid makes her frame of its wood, and laths of another wood are refused.
 - `pole`: a pole, split from such a row. Like laths, the first makes her frame of its wood.
 - `hide`: a hide of one of `hideStates`, which covers as many of the stage's pieces as small hides it is worth (small 1, medium 2, large 3, huge 5) and is held on her as many times `seconds`.
 - `rope`: vanilla's rope, one at a time. A rope held on her lashes her rather than tying itself to her (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until her lashing is done. A hold kept on past her last lashing ties nothing; a fresh click ties her as vanilla does.

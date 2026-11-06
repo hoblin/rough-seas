@@ -42,7 +42,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
 
 ![The whole build, from the logs to the washstrakes](images/outrigger-canoe/build-outrigger-canoe.webp)
 
-1. **Split the poles.** Lay three logs of one wood on their sides, end to end, anywhere, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on a wedge. The trunk splits into 64 poles of 3 m. The outrigger takes six, and a longer pole serves too, cut down. Any wood will do, a modded tree's too.
+1. **Split the poles.** Lay three logs of one wood on their sides, end to end, anywhere, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on each wedge in turn until it is driven home. Once the last is home, the trunk splits into 64 poles of 3 m. The outrigger takes six, and a longer pole serves too, cut down. Any wood will do, a modded tree's too.
 
    ![Three logs with a wedge on each](images/outrigger-canoe/build-poles.webp)
 

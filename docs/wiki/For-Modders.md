@@ -310,6 +310,18 @@ A vessel that becomes an entity, bound, hewn, rigged or spawned, stays where she
 - Every hull's boxes start at her origin. A box starting above it, as the reed boat's did by 9 mm, rests on the ground by float rounding, and she sinks through the block under her a few ticks later.
 - A vessel of yours on `passivephysicsmultibox` meets both: cut its hull in squares, as vanilla's raft (1.5 by 1.5 m) and sailboat (2.8 by 2.8 m) are, from `y1` 0.
 
+### Wedges driven blow by blow
+
+Each wedge is driven on its own, a step a blow, and the row splits once every wedge in it is home ([Recipes](Recipes#splitting-wedge)).
+
+- The wedge's blocks are `roughseas:wedge-{we|ns}-{0..4}`, the last part how far it is driven; it drops and is crafted as `roughseas:wedge-we-0`. Its `splitSeconds` is now `secondsPerBlow`.
+- Every axe carries `roughseas:drive`, which swings the player animation `roughseas-drive` (its butt brought down on the wedge, chop at the blow) while held on a wedge not yet home. The wedge's own hold and its progress bar are gone.
+- `roughseas:drive` and `roughseas:hew` count blows the same way, one a cycle of their animation, each on the server.
+- A pole's handbook page gives how it is split under "Created by", from `handbook.createdBy`.
+- Poles and laths show one icon for every length: the collectible behaviour `roughseas:icon` draws its `shape` in place of the item's in inventory slots and the handbook, in the item's own textures. Their per-length `guiTransformByType` is one `guiTransform`.
+
+New: `roughseas:drive`, `roughseas-drive`, `roughseas:icon`, `secondsPerBlow`, `shipyard-drive` (was `shipyard-split`), `handbook-createdby-pole`.
+
 ## What not to touch
 
 | Name | What it is |

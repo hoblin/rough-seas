@@ -21,6 +21,6 @@
         "width": 2,
         "height": 1,
         "shapeless": true,
-        "output": { "type": "block", "code": "roughseas:wedge-we" }
+        "output": { "type": "block", "code": "roughseas:wedge-we-0" }
     }
 ]
