@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -67,6 +68,9 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         ? (0, 0)
         : (controls.Forward ? 1 : controls.Backward ? -1 : 0, controls.Left ? 1 : controls.Right ? -1 : 0);
 
+    public double? PoleSlide(Entity rower, double poleMetres, double downward) =>
+        entity.GetBehavior<EntityBehaviorSeatable>()?.Controller == rower ? station.Slide(poleMetres, downward) : null;
+
     public static int Way(int ahead, int turn) => ahead < 0 || (ahead == 0 && turn < 0) ? -1 : 1;
 
     public Vec2d Drive(EntityBoat boat, Vec2d vanilla)
@@ -105,9 +109,9 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var speed = VanillaSwim.Realized(boat.ForwardSpeed);
         var spin = boat.AngularVelocity * RadiansPerAngularVelocity;
         var metabolic = propulsion.Config.Rower.MetabolicWatts;
-        var push = stroking && !changing ? propulsor!.Push(ahead, turn, side, speed, spin, metabolic * propulsor.Stroke.GrossEfficiency) : default;
-        var pulse = stroking && strokes.Drawn(rower) is { } drawn ? propulsor!.Stroke.Pulse(drawn) : 1;
-        push = new Push(push.Newtons * pulse, push.NewtonMetres * pulse);
+        var push = stroking && !changing
+            ? propulsor!.Push(ahead, turn, side, speed, spin, metabolic * propulsor.Stroke.GrossEfficiency, strokes.Drawn(rower))
+            : default;
         EffortWatts = stroking ? metabolic : 0;
         Stroke = stroking ? propulsor!.Stroke : null;
         Note(boat, rower, propulsor, refusal, push, water, speed, spin, ahead, turn, sided ? side : null);
@@ -186,10 +190,11 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         else if (resting) vessels.Log(boat, "{0} rests the {1} at {2:F2} m/s", rower.GetName(), propulsor.Stroke.Code, speed);
         else
         {
-            vessels.Log(boat, "{0} {1} at {2:F0} W, ahead {3} turn {4}: {5:F0} N and {6:F0} N·m at {7:F2} m/s, {8:F2} rad/s, against {9:F0} N of drag on {10:F0} kg at {11:F3} m draft{12}",
+            vessels.Log(boat, "{0} {1} at {2:F0} W, ahead {3} turn {4}: {5:F0} N and {6:F0} N·m at {7:F2} m/s, {8:F2} rad/s, against {9:F0} N of drag on {10:F0} kg at {11:F3} m draft{12}{13}",
                 rower.GetName(), propulsor.Stroke.Code, EffortWatts * propulsor.Stroke.GrossEfficiency, ahead, turn, push.Newtons, push.NewtonMetres, speed, spin,
                 -water.Along(speed), hull!.Aboard.Total, hull.Afloat.DraftMetres,
-                side == null ? "" : $", on her {side.ToString()!.ToLowerInvariant()} side");
+                side == null ? "" : $", on her {side.ToString()!.ToLowerInvariant()} side",
+                station.Sounded is { } bed ? string.Format(CultureInfo.InvariantCulture, ", the pole on a bed {0:F2} m down", bed) : "");
         }
     }
 }

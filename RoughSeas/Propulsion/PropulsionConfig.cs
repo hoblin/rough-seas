@@ -37,6 +37,8 @@ public class PolingConfig
     public double PlantAheadMetres;
     public double PlantAsternMetres;
     public double PlantAcrossMetres;
+    public double DrawnPoleMetres;
+    public double DrawnBedMetres;
     public StanceConfig? Stance;
 }
 

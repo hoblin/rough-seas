@@ -89,11 +89,19 @@ public class PropulsionTests
     public void APoleDrivesHerOnlyWhileTheDrawnShoveIsOnTheBedAndGivesTheSameWayOverTheStroke()
     {
         var pole = Poled("seatedpole", 3, 1);
-        var shares = Enumerable.Range(0, 300).Select(i => i / 300.0).ToList();
+        var shares = Enumerable.Range(0, 300).Select(i => (double?)(i / 300.0)).ToList();
 
-        Assert.Equal(0, pole.Pulse(0));
-        Assert.Equal(1, shares.Average(pole.Pulse), 2);
-        Assert.Equal(0.5, shares.Count(share => pole.Pulse(share) > 0) / 300.0, 2);
+        Assert.Equal(0, pole.Drawn(100, 0));
+        Assert.Equal(100, shares.Average(share => pole.Drawn(100, share)), 0);
+        Assert.Equal(0.5, shares.Count(share => pole.Drawn(100, share) > 0) / 300.0, 2);
+    }
+
+    [Fact]
+    public void AShoveFromRestPushesNoHarderThanAManCanHold()
+    {
+        var pole = Poled("seatedpole", 3, 1);
+
+        Assert.Equal(Fixtures.Propulsion.Strokes["seatedpole"].PushNewtons, Enumerable.Range(0, 30).Max(i => pole.Drawn(300, i / 30.0)));
     }
 
     [Fact]

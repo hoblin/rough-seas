@@ -54,6 +54,7 @@ class Tool:
         self.elements = json.loads((ASSETS / "shapes/item" / f"{shape}.json").read_text())["elements"]
         self.right, self.left = right, left
         self.turns = turns
+        self.length = max(element["to"][0] for element in self.elements)
 
     def turned(self, degrees):
         """The tool turned about its grips' line, which `turns` say leaves it looking the same."""
@@ -407,7 +408,7 @@ def standing_poling(tool, at, waterline_voxels, out, chine, side=-1, floor_at=No
             hips |= rower.legs[leg_side].plant(hips, rower.body(foot))
         return hips
 
-    return Stance(at, STANDING, three(placed, body, path.planting(out)), feet)
+    return Stance(at, STANDING, three(placed, body, path.planting(out, tool)), feet)
 
 
 def lerp(span, share):
@@ -415,7 +416,7 @@ def lerp(span, share):
 
 
 def planted(tool, hand, foot, crossed=0):
-    upper = 48 - math.dist(hand, foot)
+    upper = tool.length - math.dist(hand, foot)
     return tool.gripped(hand, foot, {LEFT: upper + HAND_SPAN * crossed, RIGHT: upper + HAND_SPAN * (1 - crossed)})
 
 
@@ -461,8 +462,9 @@ class PolePath:
     def turned(self, x, way):
         return self.middle + way * (x - self.middle)
 
-    def planting(self, across):
-        return (units.both("plantAhead", units.metres(self.hands[0] - ORIGIN[0]))
+    def planting(self, across, tool):
+        return (units.both("drawnPole", units.metres(tool.length)) | units.both("drawnBed", PLANT_DEPTH_METRES)
+                | units.both("plantAhead", units.metres(self.hands[0] - ORIGIN[0]))
                 | units.both("plantAstern", units.metres(self.turned(self.hands[0], -1) - ORIGIN[0]))
                 | units.both("plantAcross", units.metres(across - ORIGIN[2])))
 
@@ -494,7 +496,7 @@ def seated_poling(tool, at, waterline_voxels, out, side=-1):
     def body(rower, frame, way):
         return {"UpperTorso": {"rotationY": toward_grips(rower, tool, placed(frame, way), {})}}
 
-    return three(placed, body, path.planting(out))
+    return three(placed, body, path.planting(out, tool))
 
 
 def sculling(tool, at, ahead, above, sweep):

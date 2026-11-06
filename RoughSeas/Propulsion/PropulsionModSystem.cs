@@ -1,4 +1,5 @@
 using RoughSeas.Vessels;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
 namespace RoughSeas.Propulsion;
@@ -18,7 +19,13 @@ public class PropulsionModSystem : ModSystem
         Rowing.Attach();
     }
 
+    public override void StartClientSide(ICoreClientAPI api) => DrawnPole.Attach(this);
+
     public override void AssetsLoaded(ICoreAPI api) => Config = api.Assets.Get<PropulsionConfig>(ConfigAsset);
 
-    public override void Dispose() => Rowing.Detach();
+    public override void Dispose()
+    {
+        Rowing.Detach();
+        DrawnPole.Detach();
+    }
 }

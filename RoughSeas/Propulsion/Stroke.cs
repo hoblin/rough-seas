@@ -17,7 +17,7 @@ public abstract class Stroke(string code, StrokeConfig config)
 
     public virtual double LiftWatts => 0;
 
-    public virtual double Pulse(double drawnShare) => 1;
+    public virtual double Drawn(double meanNewtons, double? drawnShare) => meanNewtons;
 
     public abstract double Thrust(double metresPerSecond, double watts);
 
@@ -55,11 +55,12 @@ public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, doub
 
     private double RecoverySeconds => (1 - Config.DriveShare) * 60 / StrokesPerMinute;
 
-    public override double Pulse(double drawnShare)
+    public override double Drawn(double meanNewtons, double? drawnShare)
     {
+        if (drawnShare is not { } share) return meanNewtons;
         var drive = Config.DriveShare;
-        var phase = (drawnShare + drive + (1 - drive) / 2) % 1;
-        return phase < drive ? 1 / drive : 0;
+        var phase = (share + drive + (1 - drive) / 2) % 1;
+        return phase < drive ? Math.Sign(meanNewtons) * Math.Min(Config.PushNewtons, Math.Abs(meanNewtons) / drive) : 0;
     }
 
     public override double Thrust(double metresPerSecond, double watts)
