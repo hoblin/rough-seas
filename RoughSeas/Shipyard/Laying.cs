@@ -46,6 +46,9 @@ public abstract class Laying
 
     public virtual int Pieces(ItemSlot slot) => 1;
 
+    /// <summary>Whether a hold of this work shows vanilla's progress bar: work whose piece shows nothing on her until it is done.</summary>
+    public virtual bool ShowsBar => false;
+
     /// <summary>What the help shows this work done with.</summary>
     public abstract IEnumerable<ItemStack> Shown(IWorldAccessor world);
 
@@ -168,6 +171,8 @@ public sealed class PlankLaying(AssetLocation planks) : Laying
 public sealed class RopeLaying(AssetLocation rope) : Laying
 {
     public override string Action => "roughseas:shipyard-lash";
+
+    public override bool ShowsBar => true;
 
     private const string TiedKey = "clothId";
 

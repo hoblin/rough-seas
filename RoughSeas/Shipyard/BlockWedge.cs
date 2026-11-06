@@ -55,7 +55,7 @@ public class BlockWedge : Block
             (world.Api as ICoreClientAPI)?.TriggerIngameError(this, "shipyard-wedge-each-log", Lang.Get("roughseas:shipyard-wedge-each-log", lengths.First(), lengths.Last()));
             return false;
         }
-        work.Start(byPlayer.Entity);
+        work.Start(byPlayer.Entity, showsBar: true);
         return true;
     }
 

@@ -2,7 +2,6 @@ using System.Linq;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -12,15 +11,13 @@ namespace RoughSeas.Shipyard;
 /// A bundle, or two side by side, lying where they were laid. The first binding of rope around the pair, by the
 /// water, makes them the vessel they are bundles of, where they lie.
 /// </summary>
-public class BlockBundles : Block
+public class BlockBundles : Block, IWorkedBlock
 {
     public const string ClassName = "roughseas:BlockBundles";
 
     private const string AxisVariant = "axis";
-    private const string AwayFromWater = "they lie away from the water";
     private const string WaterLangCode = "shipyard-bundles-by-water";
 
-    private readonly HeldWork work = new();
     private AssetLocation vessel = null!;
     private (FramingStage Stage, Laying Laying)? binding;
 
@@ -53,36 +50,10 @@ public class BlockBundles : Block
             if (world.Side == EnumAppSide.Server) LayBeside(world, byPlayer, slot, blockSel.Position);
             return true;
         }
-        if (!Pair || Binding(world) is not { } job || !job.Laying.Takes(slot)) return base.OnBlockInteractStart(world, byPlayer, blockSel);
-        if (Refusal(world, byPlayer, blockSel.Position) is { } refusal)
-        {
-            Shipyard(world).Log("bundles at {0} not bound for {1}: {2}", At(blockSel.Position), byPlayer.PlayerName, refusal);
-            if (refusal == AwayFromWater) (world.Api as ICoreClientAPI)?.TriggerIngameError(this, WaterLangCode, Lang.Get("roughseas:" + WaterLangCode));
-            return false;
-        }
-
-        work.Start(byPlayer.Entity);
-        return true;
+        return base.OnBlockInteractStart(world, byPlayer, blockSel);
     }
 
-    public override bool OnBlockInteractStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel) =>
-        Binding(world) is { } job && work.Step(secondsUsed, job.Stage.Seconds);
-
-    public override void OnBlockInteractStop(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
-    {
-        if (Binding(world) is not { } job || !work.Stop(byPlayer.Entity, secondsUsed, job.Stage.Seconds) || world.Side != EnumAppSide.Server) return;
-
-        var slot = byPlayer.InventoryManager.ActiveHotbarSlot;
-        if (!job.Laying.Takes(slot)) Shipyard(world).Log("bundles at {0} not bound: {1} let go of the rope", At(blockSel.Position), byPlayer.PlayerName);
-        else if (Refusal(world, byPlayer, blockSel.Position) is { } refusal) Shipyard(world).Log("bundles at {0} not bound: {1}", At(blockSel.Position), refusal);
-        else Bind(world, byPlayer, slot, blockSel.Position, job);
-    }
-
-    public override bool OnBlockInteractCancel(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, EnumItemUseCancelReason cancelReason)
-    {
-        work.Stop(byPlayer.Entity);
-        return true;
-    }
+    public IWorkedHull? HullAt(IWorldAccessor world, BlockPos pos) => Pair ? new Bound(this, world, pos) : null;
 
     public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer) =>
         ObjectCacheUtil.GetOrCreate(world.Api, $"{ClassName}/help/{Code}", () => new[]
@@ -108,11 +79,6 @@ public class BlockBundles : Block
 
     private static string At(BlockPos pos) => $"{pos.X} {pos.Y} {pos.Z}";
 
-    private static string? Refusal(IWorldAccessor world, IPlayer byPlayer, BlockPos pos) =>
-        !Waterside.Beside(world.BlockAccessor, pos) ? AwayFromWater
-        : !LandClaims.MayBreak(byPlayer.Entity, [pos]) ? $"{byPlayer.PlayerName} may not break blocks on this claim"
-        : null;
-
     private (FramingStage Stage, Laying Laying)? Binding(IWorldAccessor world)
     {
         if (binding == null && world.GetEntityType(vessel) is { } type && FramingConfig.Of(type) is { Stages: [var first, ..] } config)
@@ -132,7 +98,7 @@ public class BlockBundles : Block
         Shipyard(world).Log("{0} lays a second bundle, of {1}, beside the first at {2}", byPlayer.PlayerName, plant, At(pos));
     }
 
-    private void Bind(IWorldAccessor world, IPlayer byPlayer, ItemSlot slot, BlockPos pos, (FramingStage Stage, Laying Laying) job)
+    private void Bind(IWorldAccessor world, EntityAgent byEntity, ItemSlot slot, BlockPos pos, (FramingStage Stage, Laying Laying) job)
     {
         if (world.GetEntityType(vessel) is not { } type)
         {
@@ -147,9 +113,29 @@ public class BlockBundles : Block
         boat.Pos.Yaw = Variant[AxisVariant] == AxisOf(EnumAxis.X) ? 3 * GameMath.PIHALF : 0;
         EntityBehaviorFraming.Begin(boat, job.Stage.Group);
         world.SpawnEntity(boat);
-        if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative) job.Laying.Spend(slot, byPlayer.Entity);
+        if ((byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode != EnumGameMode.Creative) job.Laying.Spend(slot, byEntity);
         slot.MarkDirty();
         world.PlaySoundAt(new AssetLocation("game:sounds/player/build"), boat, null, true, 16);
-        Shipyard(world).Log(boat, "bound by {0} from the bundles lying at {1}", byPlayer.PlayerName, At(pos));
+        Shipyard(world).Log(boat, "bound by {0} from the bundles lying at {1}", byEntity.GetName(), At(pos));
+    }
+
+    private sealed class Bound(BlockBundles bundles, IWorldAccessor world, BlockPos pos) : IWorkedHull
+    {
+        public HullWork? WorkWith(ItemSlot slot) =>
+            bundles.Binding(world) is { } job && job.Laying.Takes(slot)
+                ? new(job.Stage.Seconds, Waterside.Beside(world.BlockAccessor, pos) ? null : WaterLangCode, job.Laying.ShowsBar)
+                : null;
+
+        public void Lay(EntityAgent byEntity, ItemSlot slot)
+        {
+            if (WorkWith(slot) is not { Refusal: null }) return;
+            if (!LandClaims.MayBreak(byEntity, [pos]))
+            {
+                Shipyard(world).Log("bundles at {0} not bound: {1} may not break blocks on this claim", At(pos), byEntity.GetName());
+                return;
+            }
+
+            bundles.Bind(world, byEntity, slot, pos, bundles.Binding(world)!.Value);
+        }
     }
 }
