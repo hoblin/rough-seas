@@ -34,6 +34,9 @@ public class PolingConfig
 {
     public string Stroke = Pole.Code;
     public double HandsAboveWaterMetres;
+    public double PlantAheadMetres;
+    public double PlantAsternMetres;
+    public double PlantAcrossMetres;
     public StanceConfig? Stance;
 }
 
@@ -52,6 +55,9 @@ public class PoleConfig
     public double WorkingDegrees;
     public double DressedMetres;
 
-    public double Reach(double metres, double handsAboveWaterMetres) =>
-        metres * Math.Cos(WorkingDegrees * Math.PI / 180) - handsAboveWaterMetres;
+    private double WorkingRadians => WorkingDegrees * Math.PI / 180;
+
+    public double Reach(double metres, double handsAboveWaterMetres) => metres * Math.Cos(WorkingRadians) - handsAboveWaterMetres;
+
+    public double Footing(double handsAboveBedMetres) => handsAboveBedMetres * Math.Tan(WorkingRadians);
 }

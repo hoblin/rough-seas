@@ -111,6 +111,12 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public double WaterDepth(int maxBlocks) => WaterDepth(entity.Pos.XYZ, maxBlocks);
 
+    public double WaterDepth(double alongMetres, double acrossMetres, int maxBlocks)
+    {
+        var (x, z) = HullShape.ToWorld(alongMetres, acrossMetres, entity.Pos.Yaw);
+        return WaterDepth(entity.Pos.XYZ.Add(x, 0, z), maxBlocks);
+    }
+
     private double WaterDepth(Vec3d at, int maxBlocks)
     {
         var accessor = entity.World.BlockAccessor;

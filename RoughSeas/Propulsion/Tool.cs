@@ -26,7 +26,7 @@ public abstract class Tool
         };
     }
 
-    public abstract Propulsor? Drive(RowerStation station, out string? refusal);
+    public abstract Propulsor? Drive(RowerStation station, int way, out string? refusal);
 
     private static double MetresOf(CollectibleObject collectible, JsonObject attributes) =>
         double.TryParse(collectible.Variant["length"], CultureInfo.InvariantCulture, out var metres) ? metres : attributes["metres"].AsDouble();
@@ -48,6 +48,8 @@ public sealed class Pole(double metres, double density, PoleConfig config) : Too
 
     public double Reach(double handsAboveWaterMetres) => config.Reach(metres, handsAboveWaterMetres);
 
+    public double Footing(double handsAboveBedMetres) => config.Footing(handsAboveBedMetres);
+
     public double LiftJoules(double depthMetres, double waterDensity)
     {
         var weight = Kilograms * Gravity;
@@ -56,7 +58,7 @@ public sealed class Pole(double metres, double density, PoleConfig config) : Too
         return weight * lifted - buoyancyPerMetre * lifted * lifted / 2;
     }
 
-    public override Propulsor? Drive(RowerStation station, out string? refusal) => station.Poled(this, out refusal);
+    public override Propulsor? Drive(RowerStation station, int way, out string? refusal) => station.Poled(this, way, out refusal);
 }
 
 public sealed class Paddle(double bladeSquareMetres) : Tool
@@ -65,5 +67,5 @@ public sealed class Paddle(double bladeSquareMetres) : Tool
 
     public override string Kind => Code;
 
-    public override Propulsor? Drive(RowerStation station, out string? refusal) => station.Paddled(bladeSquareMetres, out refusal);
+    public override Propulsor? Drive(RowerStation station, int way, out string? refusal) => station.Paddled(bladeSquareMetres, out refusal);
 }

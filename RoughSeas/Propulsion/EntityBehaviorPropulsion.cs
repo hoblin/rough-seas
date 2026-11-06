@@ -57,7 +57,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     {
         hull = IHull.Of(entity);
         var sea = entity.GetBehavior<EntityBehaviorSeaForces>();
-        station = new RowerStation(attributes, propulsion.Config, propulsion.WaterDensity, blocks => sea?.WaterDepth(blocks) ?? 0);
+        station = new RowerStation(attributes, propulsion.Config, propulsion.WaterDensity, (along, across, blocks) => sea?.WaterDepth(along, across, blocks) ?? 0);
     }
 
     /// <summary>
@@ -66,6 +66,8 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     public static (int Ahead, int Turn) Asked(EntityControls? controls) => controls == null
         ? (0, 0)
         : (controls.Forward ? 1 : controls.Backward ? -1 : 0, controls.Left ? 1 : controls.Right ? -1 : 0);
+
+    public static int Way(int ahead, int turn) => ahead < 0 || (ahead == 0 && turn < 0) ? -1 : 1;
 
     public Vec2d Drive(EntityBoat boat, Vec2d vanilla)
     {
@@ -79,8 +81,8 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var tool = Tool.Of(rower.RightHandItemSlot?.Itemstack, propulsion.Config, vessels.Materials.Density);
         var idle = boat.WatchedAttributes.GetInt(SailKey) > 0 || boat.SpeedMultiplier <= 0;
         string? refusal = null;
-        var propulsor = idle ? null : station.Propulsor(tool, out refusal);
         var (ahead, turn) = Asked(rower.MountedOn?.Controls);
+        var propulsor = idle ? null : station.Propulsor(tool, Way(ahead, turn), out refusal);
         var asking = ahead != 0 || turn != 0;
         warning.Tell(rower, propulsor == null ? tool as Pole : null, asking && !idle);
         var trying = propulsor != null && asking;

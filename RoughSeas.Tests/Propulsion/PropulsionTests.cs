@@ -139,9 +139,28 @@ public class PropulsionTests
     {
         var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
 
-        Assert.NotNull(Fixtures.Station("dugout", 1).Propulsor(pole, out _));
-        Assert.Null(Fixtures.Station("dugout", 3).Propulsor(pole, out var refusal));
+        Assert.NotNull(Fixtures.Station("dugout", 1).Propulsor(pole, 1, out _));
+        Assert.Null(Fixtures.Station("dugout", 3).Propulsor(pole, 1, out var refusal));
         Assert.Contains("deeper", refusal);
+    }
+
+    [Fact]
+    public void APoleFindsTheBedWhereItsFootIsPlantedAsternOfHimGoingAheadAndAheadOfHimGoingAstern()
+    {
+        var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
+        var shelvingAstern = Fixtures.Station("reedboat", along => along > 0.3 ? 1 : 5);
+
+        Assert.NotNull(shelvingAstern.Propulsor(pole, 1, out _));
+        Assert.Null(shelvingAstern.Propulsor(pole, -1, out _));
+    }
+
+    [Fact]
+    public void ThePoleIsPlantedAheadWhenHeBacksHerOrTurnsHerToStarboardFromRest()
+    {
+        Assert.Equal(1, EntityBehaviorPropulsion.Way(1, -1));
+        Assert.Equal(1, EntityBehaviorPropulsion.Way(0, 1));
+        Assert.Equal(-1, EntityBehaviorPropulsion.Way(-1, 1));
+        Assert.Equal(-1, EntityBehaviorPropulsion.Way(0, -1));
     }
 
     [Theory]
@@ -156,7 +175,7 @@ public class PropulsionTests
         var station = Fixtures.Station(vessel, 1);
 
         Assert.Equal("roughseas-stand", station.Stance(Pole.Code)?.Animation);
-        Assert.Equal(Pole.Code, station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), out _)!.Stroke.Code);
+        Assert.Equal(Pole.Code, station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), 1, out _)!.Stroke.Code);
     }
 
     [Fact]
@@ -175,7 +194,7 @@ public class PropulsionTests
         var station = Fixtures.Station("reedboat", 1);
 
         Assert.Null(station.Stance(Pole.Code));
-        Assert.Equal("seatedpole", station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), out _)!.Stroke.Code);
+        Assert.Equal("seatedpole", station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), 1, out _)!.Stroke.Code);
     }
 
     [Fact]
@@ -191,7 +210,7 @@ public class PropulsionTests
     {
         const double oneBlockOfStillWater = 7 / 8.0;
 
-        Assert.NotNull(Fixtures.Station(vessel, oneBlockOfStillWater).Propulsor(new Pole(2, PoleDensity, Fixtures.Propulsion.Pole), out _));
+        Assert.NotNull(Fixtures.Station(vessel, oneBlockOfStillWater).Propulsor(new Pole(2, PoleDensity, Fixtures.Propulsion.Pole), 1, out _));
     }
 
     [Fact]
@@ -208,14 +227,14 @@ public class PropulsionTests
     [Fact]
     public void APaddleInTheCurrachLeavesHerRowingHerOwnOars()
     {
-        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(new Paddle(Fixtures.PaddleSquareMetres), out _));
-        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(null, out _));
+        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(new Paddle(Fixtures.PaddleSquareMetres), 1, out _));
+        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(null, 1, out _));
     }
 
     [Fact]
     public void AnEmptyHandMovesNoBoatWithoutOarsOfHerOwn()
     {
-        Assert.Null(Fixtures.Station("dugout", 1).Propulsor(null, out var refusal));
+        Assert.Null(Fixtures.Station("dugout", 1).Propulsor(null, 1, out var refusal));
         Assert.NotNull(refusal);
     }
 

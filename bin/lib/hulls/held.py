@@ -116,6 +116,8 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": units.both("handsAboveWater", hands)}}})
     group = tool.group()
     poses = stance.poses if stance else poses
+    if getattr(poses, "planting", None):
+        record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": poses.planting}}})
     plan = named(f"{vessel}-{kind}", FRAMES, {name: pose for name, (pose, *_) in poses.items()}, stroke,
                  LOOPED.get(stroke, 1))
     for step, (name, (pose, grips, *body)) in zip(plan, poses.items()):
@@ -405,7 +407,7 @@ def standing_poling(tool, at, waterline_voxels, out, chine, side=-1, floor_at=No
             hips |= rower.legs[leg_side].plant(hips, rower.body(foot))
         return hips
 
-    return Stance(at, STANDING, three(placed, body), feet)
+    return Stance(at, STANDING, three(placed, body, path.planting(out)), feet)
 
 
 def lerp(span, share):
@@ -459,12 +461,23 @@ class PolePath:
     def turned(self, x, way):
         return self.middle + way * (x - self.middle)
 
+    def planting(self, across):
+        return (units.both("plantAhead", units.metres(self.hands[0] - ORIGIN[0]))
+                | units.both("plantAstern", units.metres(self.turned(self.hands[0], -1) - ORIGIN[0]))
+                | units.both("plantAcross", units.metres(across - ORIGIN[2])))
 
-def three(placed, body):
+
+class Strokes(dict):
+    planting = {}
+
+
+def three(placed, body, planting):
     ways = {"ready": (lambda frame: 0, 1), "forward": (lambda frame: frame, 1), "backward": (lambda frame: frame, -1)}
-    return {name: (lambda frame, at=at, way=way: placed(at(frame), way), STARBOARD,
-                   lambda rower, at=at, way=way: lambda frame: body(rower, at(frame), way))
-            for name, (at, way) in ways.items()}
+    strokes = Strokes({name: (lambda frame, at=at, way=way: placed(at(frame), way), STARBOARD,
+                              lambda rower, at=at, way=way: lambda frame: body(rower, at(frame), way))
+                       for name, (at, way) in ways.items()})
+    strokes.planting = planting
+    return strokes
 
 
 def seated_poling(tool, at, waterline_voxels, out, side=-1):
@@ -481,7 +494,7 @@ def seated_poling(tool, at, waterline_voxels, out, side=-1):
     def body(rower, frame, way):
         return {"UpperTorso": {"rotationY": toward_grips(rower, tool, placed(frame, way), {})}}
 
-    return three(placed, body)
+    return three(placed, body, path.planting(out))
 
 
 def sculling(tool, at, ahead, above, sweep):
