@@ -90,6 +90,7 @@
     "shipyard-planks-one-wood": "Yükseltme tahtaları başka bir ağaçtan: tek bir ağacın kalaslarını yerleştir",
     "shipyard-lath-short": "Bu parça için fazla kısa: daha uzun bir sıra yar",
     "shipyard-pole-short": "Bu parça için fazla kısa: daha uzun bir sıra yar",
+    "propulsion-pole-too-deep": "{0} m'lik bir sırık için fazla derin",
     "shipyard-sew-hide": "Bir deri dik",
     "shipyard-frame-setting": "İskelet henüz oturmadı: çıtalarının kurumasını bekle",
     "shipyard-turn-over": "Ters çevir",

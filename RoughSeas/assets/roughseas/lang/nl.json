@@ -88,6 +88,7 @@
     "shipyard-planks-one-wood": "Zijn zetboorden zijn van een andere houtsoort: pas planken van één houtsoort",
     "shipyard-lath-short": "Te kort voor dit onderdeel: splijt een langere rij",
     "shipyard-pole-short": "Te kort voor dit onderdeel: splijt een langere rij",
+    "propulsion-pole-too-deep": "Te diep voor een vaarboom van {0} m",
     "shipyard-sew-hide": "Een huid aannaaien",
     "shipyard-frame-setting": "Het geraamte is nog niet gezet: wacht tot zijn latten droog zijn",
     "shipyard-turn-over": "Haar omdraaien",

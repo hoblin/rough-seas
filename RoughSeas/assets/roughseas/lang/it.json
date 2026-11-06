@@ -90,6 +90,7 @@
     "shipyard-planks-one-wood": "Le sue falche sono di un altro legno: adatta assi di un solo legno",
     "shipyard-lath-short": "Troppo corta per questo pezzo: spacca una fila più lunga",
     "shipyard-pole-short": "Troppo corta per questo pezzo: spacca una fila più lunga",
+    "propulsion-pole-too-deep": "Troppo profondo per una pertica da {0} m",
     "shipyard-sew-hide": "Cucire una pelle",
     "shipyard-frame-setting": "L'ossatura non ha ancora fatto presa: aspetta che le sue stecche si asciughino",
     "shipyard-turn-over": "Raddrizzarla",

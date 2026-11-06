@@ -90,6 +90,7 @@
     "shipyard-planks-one-wood": "Az oldalmagasító deszkái más fából vannak: egyféle fából illessz deszkákat",
     "shipyard-lath-short": "Túl rövid ehhez a darabhoz: hasíts egy hosszabb sort",
     "shipyard-pole-short": "Túl rövid ehhez a darabhoz: hasíts egy hosszabb sort",
+    "propulsion-pole-too-deep": "Túl mély egy {0} m-es csáklyarúdnak",
     "shipyard-sew-hide": "Bőr felvarrása",
     "shipyard-frame-setting": "A váz még nem kötött meg: várd meg, míg a lécei kiszáradnak",
     "shipyard-turn-over": "Megfordítás",

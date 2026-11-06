@@ -88,6 +88,7 @@
     "shipyard-planks-one-wood": "Sen laitalaudat ovat toista puuta: sovita saman puun lautoja",
     "shipyard-lath-short": "Liian lyhyt tähän osaan: halkaise pidempi rivi",
     "shipyard-pole-short": "Liian lyhyt tähän osaan: halkaise pidempi rivi",
+    "propulsion-pole-too-deep": "Liian syvää {0} metrin sauvoimelle",
     "shipyard-sew-hide": "Ompele talja paikalleen",
     "shipyard-frame-setting": "Runko ei ole vielä asettunut: odota, että sen rimat kuivuvat",
     "shipyard-turn-over": "Käännä se oikein päin",

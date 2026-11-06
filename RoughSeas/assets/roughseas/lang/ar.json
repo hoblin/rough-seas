@@ -90,6 +90,7 @@
     "shipyard-planks-one-wood": "ألواحه الرافعة من خشب آخر: ركّب ألواحًا من خشب واحد",
     "shipyard-lath-short": "أقصر من هذه القطعة: اشقق صفًّا أطول",
     "shipyard-pole-short": "أقصر من هذه القطعة: اشقق صفًّا أطول",
+    "propulsion-pole-too-deep": "أعمق من أن يبلغ قاعه مِردى طوله {0} م",
     "shipyard-sew-hide": "اخِط جلدًا",
     "shipyard-frame-setting": "لم يتماسك الهيكل بعد: انتظر حتى تجفّ شرائحه",
     "shipyard-turn-over": "اقلبه",

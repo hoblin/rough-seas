@@ -90,6 +90,7 @@
     "shipyard-planks-one-wood": "この舷側板は別の木です：同じ木の板を取り付けてください",
     "shipyard-lath-short": "この部材には短すぎます：もっと長い列を割ってください",
     "shipyard-pole-short": "この部材には短すぎます：もっと長い列を割ってください",
+    "propulsion-pole-too-deep": "{0}mの竿では深すぎて届きません",
     "shipyard-sew-hide": "皮を縫い付ける",
     "shipyard-frame-setting": "骨組みがまだ固まっていません：ラスが乾くまで待ってください",
     "shipyard-turn-over": "ひっくり返す",

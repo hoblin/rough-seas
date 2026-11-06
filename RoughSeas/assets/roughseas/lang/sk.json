@@ -90,6 +90,7 @@
     "shipyard-planks-one-wood": "Jeho nadstavné dosky sú z iného dreva: osadzuj dosky z jedného dreva",
     "shipyard-lath-short": "Na tento diel je prikrátka: rozštiep dlhší rad",
     "shipyard-pole-short": "Na tento diel je prikrátka: rozštiep dlhší rad",
+    "propulsion-pole-too-deep": "Príliš hlboko na {0}m bidlo",
     "shipyard-sew-hide": "Prišiť kožu",
     "shipyard-frame-setting": "Kostra ešte nestuhla: počkaj, kým jej lišty vyschnú",
     "shipyard-turn-over": "Prevrátiť ho",

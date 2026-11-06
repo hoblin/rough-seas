@@ -89,6 +89,7 @@
     "shipyard-planks-one-wood": "Skvettbordene hennes er av et annet treslag: tilpass planker av ett treslag",
     "shipyard-lath-short": "For kort til denne delen: kløyv en lengre rekke",
     "shipyard-pole-short": "For kort til denne delen: kløyv en lengre rekke",
+    "propulsion-pole-too-deep": "For dypt for en stake på {0} m",
     "shipyard-sew-hide": "Sy på et skinn",
     "shipyard-frame-setting": "Skjelettet har ikke satt seg ennå: vent til lektene har tørket",
     "shipyard-turn-over": "Snu henne",

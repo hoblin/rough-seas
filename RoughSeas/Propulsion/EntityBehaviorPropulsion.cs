@@ -27,6 +27,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
     private MountStrokes strokes = null!;
     private Fatigue fatigue = null!;
     private Paddler paddler = null!;
+    private readonly PoleWarning warning = new();
     private IHull? hull;
     private (HullForm Form, double Draft, double Kg) dragFor;
     private HullDrag? drag;
@@ -80,7 +81,9 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         string? refusal = null;
         var propulsor = idle ? null : station.Propulsor(tool, out refusal);
         var (ahead, turn) = Asked(rower.MountedOn?.Controls);
-        var trying = propulsor != null && (ahead != 0 || turn != 0);
+        var asking = ahead != 0 || turn != 0;
+        warning.Tell(rower, propulsor == null ? tool as Pole : null, asking && !idle);
+        var trying = propulsor != null && asking;
         var stroking = trying && boat.Swimming;
         var sided = strokes.Sided(tool);
         if (boat.World.Side == EnumAppSide.Server)

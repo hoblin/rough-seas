@@ -90,6 +90,7 @@
     "shipyard-planks-one-wood": "它的舷侧板是另一种木头：装上同一种木头的木板",
     "shipyard-lath-short": "对这个部件太短：劈一排更长的原木",
     "shipyard-pole-short": "对这个部件太短：劈一排更长的原木",
+    "propulsion-pole-too-deep": "水太深，{0}米的撑篙够不到底",
     "shipyard-sew-hide": "缝上一张兽皮",
     "shipyard-frame-setting": "骨架还没定形：等它的木条干透",
     "shipyard-turn-over": "把它翻过来",

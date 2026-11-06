@@ -89,6 +89,7 @@
     "shipyard-planks-one-wood": "Hendes sætbord er af en anden træsort: tilpas planker af én træsort",
     "shipyard-lath-short": "For kort til dette stykke: kløv en længere række",
     "shipyard-pole-short": "For kort til dette stykke: kløv en længere række",
+    "propulsion-pole-too-deep": "For dybt til en stage på {0} m",
     "shipyard-sew-hide": "Sy et skind på",
     "shipyard-frame-setting": "Skelettet har ikke sat sig endnu: vent til listerne er tørre",
     "shipyard-turn-over": "Vend hende",
