@@ -8,15 +8,14 @@ using Vintagestory.API.Util;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A bundle, or two side by side, lying where they were laid. The first binding of rope around the pair, by the
-/// water, makes them the vessel they are bundles of, where they lie.
+/// A bundle, or two side by side, lying where they were laid. The first binding of rope around the pair makes them
+/// the vessel they are bundles of, where they lie.
 /// </summary>
 public class BlockBundles : Block, IWorkedBlock
 {
     public const string ClassName = "roughseas:BlockBundles";
 
     private const string AxisVariant = "axis";
-    private const string WaterLangCode = "shipyard-bundles-by-water";
 
     private AssetLocation vessel = null!;
     private (FramingStage Stage, Laying Laying)? binding;
@@ -123,7 +122,7 @@ public class BlockBundles : Block, IWorkedBlock
     {
         public HullWork? WorkWith(ItemSlot slot) =>
             bundles.Binding(world) is { } job && job.Laying.Takes(slot)
-                ? new(job.Stage.Seconds, Waterside.Beside(world.BlockAccessor, pos) ? null : WaterLangCode, job.Laying.ShowsBar)
+                ? new(job.Stage.Seconds, null, job.Laying.ShowsBar)
                 : null;
 
         public void Lay(EntityAgent byEntity, ItemSlot slot)

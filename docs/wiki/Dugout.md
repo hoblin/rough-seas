@@ -37,7 +37,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 
 You don't craft a dugout in the grid: you burn it out of five logs on the shore, a fire at a time, and lay every fire as you lay a campfire. The logs stay the boat from first to last. Each hewing takes the char out of the hollow and a sixth of the outside away: the top down to a level sheer, the bottom round and the ends raked, until the squared trunk is a boat where the logs lay.
 
-1. **Lay the logs.** Lay five logs of one wood on their sides, end to end along the shore, with water in the very next blocks, level with them or one block lower. Any wood works, a modded tree's too, and so do redwood's log sections. Five logs of mixed woods stay a wall of logs.
+1. **Lay the logs.** Lay five logs of one wood on their sides, end to end along the shore, with water in the very next blocks, level with them or one block lower. The dugout is too heavy to carry, so you build it where it goes in. Any wood works, a modded tree's too, and so do redwood's log sections. Five logs of mixed woods stay a wall of logs.
 
    ![Five oak logs end to end at the water's edge](images/dugout/build-logs.webp)
 
@@ -81,7 +81,7 @@ You don't craft a dugout in the grid: you burn it out of five logs on the shore,
    | ![Three hewings in](images/dugout/build-hewn-3.webp) | ![Four fires in, the hollow charred deep](images/dugout/build-charred-4.webp) |
    | Three hewings in | Four fires in, charred |
 
-9. **Push it in.** Stand on the shore side and Shift + right-click the dugout with an empty hand. A fresh trunk is a metre square, more than three tonnes of oak, and barely moves; the finished hull, a thirteenth of that, slides in. A few friends push sooner.
+9. **Push it in.** Walk into the dugout from the shore side. It gives way before you and slides into the water. If you slip past it before it goes in, step back onto the shore behind it and walk into it again.
 
    ![Finished, on the shore](images/dugout/build-finished.webp)
 
