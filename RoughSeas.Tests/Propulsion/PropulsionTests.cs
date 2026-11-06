@@ -86,6 +86,17 @@ public class PropulsionTests
     }
 
     [Fact]
+    public void APoleDrivesHerOnlyWhileTheDrawnShoveIsOnTheBedAndGivesTheSameWayOverTheStroke()
+    {
+        var pole = Poled("seatedpole", 3, 1);
+        var shares = Enumerable.Range(0, 300).Select(i => i / 300.0).ToList();
+
+        Assert.Equal(0, pole.Pulse(0));
+        Assert.Equal(1, shares.Average(pole.Pulse), 2);
+        Assert.Equal(0.5, shares.Count(share => pole.Pulse(share) > 0) / 300.0, 2);
+    }
+
+    [Fact]
     public void TheWaterBearsPartOfAPoleBroughtUpFromTheBed()
     {
         var pole = new Pole(5, PoleDensity, Fixtures.Propulsion.Pole);

@@ -17,6 +17,8 @@ public abstract class Stroke(string code, StrokeConfig config)
 
     public virtual double LiftWatts => 0;
 
+    public virtual double Pulse(double drawnShare) => 1;
+
     public abstract double Thrust(double metresPerSecond, double watts);
 
     protected static double Solve(Func<double, double> rising, double target)
@@ -52,6 +54,13 @@ public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, doub
     public override double LiftWatts => pole.LiftJoules(depthMetres, waterDensity) * StrokesPerMinute / 60;
 
     private double RecoverySeconds => (1 - Config.DriveShare) * 60 / StrokesPerMinute;
+
+    public override double Pulse(double drawnShare)
+    {
+        var drive = Config.DriveShare;
+        var phase = (drawnShare + drive + (1 - drive) / 2) % 1;
+        return phase < drive ? 1 / drive : 0;
+    }
 
     public override double Thrust(double metresPerSecond, double watts)
     {
