@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Tests.Vessels;
 
@@ -304,6 +305,20 @@ public class VesselShapeTests
         Assert.Subset(names, broken.ToHashSet());
         Assert.Empty(broken.Except(item["shape"]!["ignoreElements"]!.Values<string>()));
     }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void StandsOnCollisionBoxesFromHerKeel(string vessel) =>
+        Assert.Equal(0, CollisionBoxes(vessel).Min(box => box.Y1));
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void CutsHerHullIntoCollisionBoxesNoLongerThanTheyAreWide(string vessel) =>
+        Assert.All(CollisionBoxes(vessel).Where(box => box.X1 < 0 && box.X2 > 0),
+            box => Assert.True(box.Length <= box.Width + 0.001, $"a box {box.Width} wide and {box.Length} long"));
+
+    private static Cuboidf[] CollisionBoxes(string vessel) =>
+        Load(vessel).Entity["behaviorConfigs"]!["passivephysicsmultibox"]!["collisionBoxes"]!.ToObject<Cuboidf[]>()!;
 
     private static ShapeElement[] Resolved(JToken shape)
     {
