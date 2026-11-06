@@ -8,7 +8,10 @@ public abstract class Propulsor(Stroke stroke)
 {
     public Stroke Stroke => stroke;
 
-    public abstract Push Push(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts);
+    public Push Push(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts) =>
+        Pushed(ahead, turn, side, metresPerSecond, radiansPerSecond, Math.Max(0, watts - stroke.LiftWatts));
+
+    protected abstract Push Pushed(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts);
 
     protected double Along(int direction, double metresPerSecond, double watts) =>
         direction == 0 ? 0 : direction * stroke.Thrust(direction * metresPerSecond, watts);
@@ -20,7 +23,7 @@ public abstract class Propulsor(Stroke stroke)
 /// </summary>
 public sealed class HeldTool(Stroke stroke, double sweepMetres, double abeamMetres = 0) : Propulsor(stroke)
 {
-    public override Push Push(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts)
+    protected override Push Pushed(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts)
     {
         var share = ahead != 0 && turn != 0 ? watts / 2 : watts;
         var along = Along(ahead, metresPerSecond, share);
@@ -30,7 +33,7 @@ public sealed class HeldTool(Stroke stroke, double sweepMetres, double abeamMetr
 
 public sealed class TholeOars(Stroke stroke, double spanMetres) : Propulsor(stroke)
 {
-    public override Push Push(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts)
+    protected override Push Pushed(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts)
     {
         var (port, starboard) = Pulls(ahead, turn);
         var share = watts / Math.Max(1, Math.Abs(port) + Math.Abs(starboard));

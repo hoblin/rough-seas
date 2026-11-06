@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -39,9 +40,21 @@ public sealed class Pole(double metres, double density, PoleConfig config) : Too
 
     public double Metres => metres;
 
-    public double Kilograms => metres * config.DressedMetres * config.DressedMetres * density;
+    private const double Gravity = 9.81;
+
+    private double SquareMetres => config.DressedMetres * config.DressedMetres;
+
+    public double Kilograms => metres * SquareMetres * density;
 
     public double Reach(double handsAboveWaterMetres) => config.Reach(metres, handsAboveWaterMetres);
+
+    public double LiftJoules(double depthMetres, double waterDensity)
+    {
+        var weight = Kilograms * Gravity;
+        var buoyancyPerMetre = waterDensity * Gravity * SquareMetres / Math.Cos(config.WorkingDegrees * Math.PI / 180);
+        var lifted = Math.Min(depthMetres, weight / buoyancyPerMetre);
+        return weight * lifted - buoyancyPerMetre * lifted * lifted / 2;
+    }
 
     public override Propulsor? Drive(RowerStation station, out string? refusal) => station.Poled(this, out refusal);
 }

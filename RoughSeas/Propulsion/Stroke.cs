@@ -15,6 +15,8 @@ public abstract class Stroke(string code, StrokeConfig config)
 
     public double GrossEfficiency => config.GrossEfficiency;
 
+    public virtual double LiftWatts => 0;
+
     public abstract double Thrust(double metresPerSecond, double watts);
 
     protected static double Solve(Func<double, double> rising, double target)
@@ -45,18 +47,17 @@ public sealed class BladeStroke(string code, StrokeConfig config, double bladeSq
     }
 }
 
-public sealed class PoleStroke(string code, StrokeConfig config, double poleKg, double depthMetres, double handsAboveWaterMetres) : Stroke(code, config)
+public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, double depthMetres, double waterDensity) : Stroke(code, config)
 {
-    public double LiftWatts => poleKg * Gravity * (depthMetres + handsAboveWaterMetres) / 2 * StrokesPerMinute / 60;
+    public override double LiftWatts => pole.LiftJoules(depthMetres, waterDensity) * StrokesPerMinute / 60;
 
     private double RecoverySeconds => (1 - Config.DriveShare) * 60 / StrokesPerMinute;
 
     public override double Thrust(double metresPerSecond, double watts)
     {
-        var pushing = watts - LiftWatts;
-        if (pushing <= 0) return 0;
+        if (watts <= 0) return 0;
         var speed = Math.Max(0, metresPerSecond);
         var shoves = Config.PushNewtons * Config.PushMetres / (Config.PushMetres + speed * RecoverySeconds);
-        return speed <= 0 ? shoves : Math.Min(shoves, pushing / speed);
+        return speed <= 0 ? shoves : Math.Min(shoves, watts / speed);
     }
 }

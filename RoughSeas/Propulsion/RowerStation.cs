@@ -35,7 +35,7 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
         var reach = pole.Reach(hands);
         var depth = depthWithin((int)Math.Ceiling(reach) + 1);
         refusal = depth > reach ? $"a {pole.Metres:F0} m pole reaches {reach:F1} m, the water is deeper" : null;
-        return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole.Kilograms, depth, hands), sweepMetres) : null;
+        return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole, depth, waterDensity), sweepMetres) : null;
     }
 
     public Propulsor? Paddled(double bladeSquareMetres, out string? refusal)
