@@ -119,7 +119,6 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
         return true;
     }
 
-    /// <returns>Whether char is left to hew after this stroke.</returns>
     public bool Strike(EntityAgent byEntity, ItemSlot axe)
     {
         byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(burnout.SaturationPerStroke);

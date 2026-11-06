@@ -9,7 +9,7 @@ using Vintagestory.API.Util;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A wedge set in a lying log, driven deeper by each blow of an axe's poll. With one on each log of a row lying end to
+/// A wedge set in a lying log, driven deeper by each blow of an axe's butt. With one on each log of a row lying end to
 /// end, the trunk splits along its grain into poles as long as the row once the last is driven home.
 /// </summary>
 public class BlockWedge : Block
@@ -19,6 +19,8 @@ public class BlockWedge : Block
     private const string Grain = "grain";
     private const string Depth = "driven";
     private const int ChipsPerBlow = 4;
+    private const float ChipSpreadMetres = 0.3f;
+    private const float ChipScale = 0.6f;
 
     private static readonly AssetLocation SplitSound = new("game:sounds/effect/treefell");
 
@@ -32,7 +34,7 @@ public class BlockWedge : Block
         splits = Attributes["splits"].AsObject<WedgeSplit[]>([]);
     }
 
-    public IStruck? At(IWorldAccessor world, BlockPos pos) => Deeper(world) is { } deeper ? new Driving(this, deeper, pos) : null;
+    public IStruck? DrivingAt(IWorldAccessor world, BlockPos pos) => Deeper(world) == null ? null : new Driving(world, pos.Copy());
 
     public override bool CanPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref string failureCode)
     {
@@ -73,11 +75,13 @@ public class BlockWedge : Block
         return false;
     }
 
-    private bool Strike(EntityAgent byEntity, ItemSlot axe, BlockWedge deeper, BlockPos pos)
+    private bool Strike(EntityAgent byEntity, ItemSlot axe, BlockPos pos)
     {
         var world = byEntity.World;
+        if (Deeper(world) is not { } deeper) return false;
+
         world.BlockAccessor.ExchangeBlock(deeper.Id, pos);
-        world.SpawnCubeParticles(pos.ToVec3d().Add(0.5, 0, 0.5), new ItemStack(world.BlockAccessor.GetBlock(pos.DownCopy())), 0.3f, ChipsPerBlow, 0.6f);
+        world.SpawnCubeParticles(pos.ToVec3d().Add(0.5, 0, 0.5), new ItemStack(world.BlockAccessor.GetBlock(pos.DownCopy())), ChipSpreadMetres, ChipsPerBlow, ChipScale);
         var shipyard = world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
         shipyard.Log("{0} drives the wedge at {1} {2} {3} to depth {4}", byEntity.GetName(), pos.X, pos.Y, pos.Z, deeper.Variant[Depth]);
         if (deeper.Deeper(world) != null) return true;
@@ -124,13 +128,15 @@ public class BlockWedge : Block
             split.Count, piece.Code);
     }
 
-    private sealed class Driving(BlockWedge wedge, BlockWedge deeper, BlockPos pos) : IStruck
+    private sealed record Driving(IWorldAccessor World, BlockPos Pos) : IStruck
     {
-        public double SecondsPerBlow => wedge.secondsPerBlow;
+        private BlockWedge? Wedge => World.BlockAccessor.GetBlock(Pos) as BlockWedge;
 
-        public bool TakeUp(EntityAgent byEntity) => wedge.TakeUp(byEntity, pos);
+        public double SecondsPerBlow => Wedge?.secondsPerBlow ?? double.PositiveInfinity;
 
-        public bool Strike(EntityAgent byEntity, ItemSlot tool) => wedge.Strike(byEntity, tool, deeper, pos);
+        public bool TakeUp(EntityAgent byEntity) => Wedge?.TakeUp(byEntity, Pos) ?? false;
+
+        public bool Strike(EntityAgent byEntity, ItemSlot tool) => Wedge?.Strike(byEntity, tool, Pos) ?? false;
     }
 }
 

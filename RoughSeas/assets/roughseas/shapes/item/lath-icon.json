@@ -2,8 +2,7 @@
     "textureWidth": 16,
     "textureHeight": 16,
     "textures": {
-        "wood": "game:block/wood/debarked/oak",
-        "tie": "game:item/resource/rope"
+        "wood": "game:block/wood/debarked/oak"
     },
     "elements": [
         {

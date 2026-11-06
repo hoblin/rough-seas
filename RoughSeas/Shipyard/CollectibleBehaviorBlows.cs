@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 
@@ -5,9 +6,9 @@ namespace RoughSeas.Shipyard;
 
 public abstract class CollectibleBehaviorBlows(CollectibleObject collectible) : CollectibleBehavior(collectible)
 {
-    protected abstract string Animation { get; }
+    private readonly Dictionary<long, IStruck> taken = [];
 
-    private string StrikingKey => $"roughseas:{Animation}";
+    protected abstract string Animation { get; }
 
     private string BlowsKey => $"roughseas:{Animation}/blows";
 
@@ -17,17 +18,15 @@ public abstract class CollectibleBehaviorBlows(CollectibleObject collectible) : 
     {
         if (!firstEvent || Struck(byEntity.World, blockSel, entitySel) is not { } work || !work.TakeUp(byEntity)) return;
 
-        byEntity.Attributes.SetBool(StrikingKey, true);
+        taken[byEntity.EntityId] = work;
         byEntity.Attributes.SetInt(BlowsKey, 0);
         handling = EnumHandling.PreventDefault;
         handHandling = EnumHandHandling.PreventDefault;
     }
 
-    protected void Unstruck(EntityAgent byEntity) => byEntity.Attributes.SetBool(StrikingKey, false);
-
     public override bool OnHeldInteractStep(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection? blockSel, EntitySelection? entitySel, ref EnumHandling handling)
     {
-        if (!byEntity.Attributes.GetBool(StrikingKey) || Struck(byEntity.World, blockSel, entitySel) is not { } work) return false;
+        if (!taken.TryGetValue(byEntity.EntityId, out var work) || !work.Equals(Struck(byEntity.World, blockSel, entitySel))) return false;
 
         handling = EnumHandling.PreventDefault;
         if (byEntity.World.Side != EnumAppSide.Server) return true;
@@ -46,11 +45,18 @@ public abstract class CollectibleBehaviorBlows(CollectibleObject collectible) : 
 
     public override void OnHeldInteractStop(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection? blockSel, EntitySelection? entitySel, ref EnumHandling handling)
     {
-        if (Struck(byEntity.World, blockSel, entitySel) != null) handling = EnumHandling.PreventDefault;
+        if (taken.Remove(byEntity.EntityId)) handling = EnumHandling.PreventDefault;
+    }
+
+    public override bool OnHeldInteractCancel(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection? blockSel, EntitySelection? entitySel, EnumItemUseCancelReason cancelReason, ref EnumHandling handled)
+    {
+        taken.Remove(byEntity.EntityId);
+        return base.OnHeldInteractCancel(secondsUsed, slot, byEntity, blockSel, entitySel, cancelReason, ref handled);
     }
 
     public override string? GetHeldTpUseAnimation(ItemSlot activeHotbarSlot, Entity forEntity, ref EnumHandling bhHandling)
     {
+        // Named only while the hand is in use, so the name changes on release and vanilla stops the swing.
         if (forEntity is not EntityPlayer { Controls.HandUse: EnumHandInteract.HeldItemInteract, Player: { } player }
             || Struck(forEntity.World, player.CurrentBlockSelection, player.CurrentEntitySelection) == null) return null;
 

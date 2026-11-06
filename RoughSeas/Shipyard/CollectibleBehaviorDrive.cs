@@ -10,5 +10,5 @@ public class CollectibleBehaviorDrive(CollectibleObject collectible) : Collectib
     protected override string Animation => "roughseas-drive";
 
     protected override IStruck? Struck(IWorldAccessor world, BlockSelection? blockSel, EntitySelection? entitySel) =>
-        entitySel == null && blockSel != null && world.BlockAccessor.GetBlock(blockSel.Position) is BlockWedge wedge ? wedge.At(world, blockSel.Position) : null;
+        entitySel == null && blockSel != null && world.BlockAccessor.GetBlock(blockSel.Position) is BlockWedge wedge ? wedge.DrivingAt(world, blockSel.Position) : null;
 }

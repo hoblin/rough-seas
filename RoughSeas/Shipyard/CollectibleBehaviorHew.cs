@@ -20,7 +20,6 @@ public class CollectibleBehaviorHew(CollectibleObject collectible) : Collectible
         if (entitySel == null && blockSel != null && firstEvent && byEntity.Controls.ShiftKey
             && byEntity.World.BlockAccessor.GetBlock(blockSel.Position).GetBehavior<BlockBehaviorBlankLog>() is { } log && log.TryLay(byEntity, blockSel.Position))
         {
-            Unstruck(byEntity);
             handling = EnumHandling.PreventDefault;
             handHandling = EnumHandHandling.PreventDefault;
             return;
