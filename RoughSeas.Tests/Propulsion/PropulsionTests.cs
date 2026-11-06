@@ -119,6 +119,16 @@ public class PropulsionTests
     }
 
     [Fact]
+    public void AFasterHullQuickensThePolersBeatAndHisStrokeIsDrawnAsQuick()
+    {
+        var pole = Poled("seatedpole", 3, 1);
+
+        Assert.Equal(1, pole.Pace(0.5), 6);
+        Assert.True(pole.Pace(2) > 1.2);
+        Assert.True(pole.LiftWatts(2) > pole.LiftWatts(0.5));
+    }
+
+    [Fact]
     public void TheWaterBearsPartOfAPoleBroughtUpFromTheBed()
     {
         const double gravity = 9.81;
@@ -136,7 +146,7 @@ public class PropulsionTests
         var heavy = new PoleStroke("seatedpole", Fixtures.Propulsion.Strokes["seatedpole"], new Pole(5, ironwood, Fixtures.Propulsion.Pole), 3, SeatedHands, Fixtures.WaterDensity);
         var push = new HeldTool(heavy, 1).Push(1, 1, Side.Starboard, 0.5, 0, SeatedWatts);
 
-        Assert.InRange(heavy.LiftWatts, SeatedWatts / 2, SeatedWatts);
+        Assert.InRange(heavy.LiftWatts(0.5), SeatedWatts / 2, SeatedWatts);
         Assert.True(push.Newtons > 0);
         Assert.True(push.NewtonMetres > 0);
     }

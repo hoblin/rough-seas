@@ -269,9 +269,9 @@ def place(point):
 
 def fit(rower, elements, strokes, grips, lean):
     """Fits the rower's arms to every stroke. A hand holds the gear one way in all of them, the way that strains it
-    least over all, so it meets itself wherever one stroke blends into the next. A looping stroke takes its own arm; a
-    pose held still, and a stroke run from one pose to another, start and end with the arm a looping stroke has at that
-    place."""
+    least over all, so it meets itself wherever one stroke blends into the next. A looping stroke takes its own arm,
+    starting from the arm an earlier looping stroke has where both start; a pose held still, and a stroke run from one
+    pose to another, start and end with the arm a looping stroke has at that place."""
     staged, strain = [], {}
     for stroke in strokes:
         poses = [stroke["pose"](frame) for frame in stroke["keys"]]

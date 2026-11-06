@@ -14,7 +14,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 
 | | |
 | --- | --- |
-| Speed | 5.9 m/s under full sail, at vanilla's pace until sailing reads the wind; 1.5 m/s paddled, 2.2 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 5.9 m/s under full sail, at vanilla's pace until sailing reads the wind; 1.5 m/s paddled, 2.1 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | clumsy, 14° a second paddled |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): her hull is the dugout's |
 | Upkeep | none |

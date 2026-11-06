@@ -25,6 +25,17 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
             ? running.CurrentFrame / running.Animation.QuantityFrames
             : null;
 
+    public void Pace(Entity rower, double pace)
+    {
+        if (playing is not { } stroke || rower.AnimManager?.GetAnimationState(stroke.Code) is not { Active: true } running ||
+            rower.Properties.Client?.AnimationsByMetaCode?.GetValueOrDefault(stroke.Code) is not { } drawn)
+        {
+            return;
+        }
+        if (ReferenceEquals(running.meta, drawn)) running.meta = drawn.Clone();
+        running.meta.AnimationSpeed = (float)(drawn.AnimationSpeed * pace);
+    }
+
     public bool Sided(Tool? tool) => tool != null && strokes.ContainsKey(OnSide(tool.Kind, Side.Port));
 
     public string? KindOf(Tool? tool, bool ownOars, Side side) =>

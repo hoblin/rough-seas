@@ -112,6 +112,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var push = stroking && !changing
             ? propulsor!.Push(ahead, turn, side, speed, spin, metabolic * propulsor.Stroke.GrossEfficiency, strokes.DrawnShare(rower))
             : default;
+        strokes.Pace(rower, stroking ? propulsor!.Stroke.Pace(speed) : 1);
         EffortWatts = stroking ? metabolic : 0;
         Stroke = stroking ? propulsor!.Stroke : null;
         Note(boat, rower, propulsor, refusal, push, water, speed, spin, ahead, turn, sided ? side : null);

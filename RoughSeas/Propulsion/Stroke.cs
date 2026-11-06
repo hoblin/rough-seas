@@ -14,7 +14,9 @@ public abstract class Stroke(string code, StrokeConfig config)
 
     public double GrossEfficiency => config.GrossEfficiency;
 
-    public virtual double LiftWatts => 0;
+    public virtual double LiftWatts(double metresPerSecond) => 0;
+
+    public virtual double Pace(double metresPerSecond) => 1;
 
     public virtual double Shove(double meanNewtons, double? drawnShare) => meanNewtons;
 
@@ -51,16 +53,26 @@ public sealed class BladeStroke(string code, StrokeConfig config, double bladeSq
 public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, double depthMetres, double handsAboveWaterMetres, double waterDensity)
     : Stroke(code, config)
 {
-    public override double LiftWatts => pole.LiftJoules(depthMetres, waterDensity) * StrokesPerMinute / 60;
+    public override double LiftWatts(double metresPerSecond) => pole.LiftJoules(depthMetres, waterDensity) / StrokeSeconds(metresPerSecond);
 
-    private double DriveSeconds => Config.DriveShare * 60 / StrokesPerMinute;
+    public override double Pace(double metresPerSecond) => DrawnSeconds / StrokeSeconds(metresPerSecond);
+
+    private double DrawnSeconds => 60 / StrokesPerMinute;
+
+    private double RecoverySeconds => (1 - Config.DriveShare) * DrawnSeconds;
 
     private double PushMetres => Math.Min(Config.PushMetres, pole.Travel(depthMetres + handsAboveWaterMetres));
+
+    private double ShoveSeconds(double metresPerSecond) =>
+        Math.Min(Config.DriveShare * DrawnSeconds, PushMetres / Math.Max(double.Epsilon, Math.Abs(metresPerSecond)));
+
+    private double StrokeSeconds(double metresPerSecond) => ShoveSeconds(metresPerSecond) + RecoverySeconds;
 
     public override double Shove(double meanNewtons, double? drawnShare)
     {
         if (drawnShare is not { } share) return meanNewtons;
         var drive = Config.DriveShare;
+        // The animation starts halfway through the recovery, as bin/lib/hulls/held.py's PolePath draws it.
         var phase = (share + drive + (1 - drive) / 2) % 1;
         return phase < drive ? meanNewtons / drive : 0;
     }
@@ -69,8 +81,7 @@ public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, doub
     {
         if (watts <= 0 || PushMetres <= 0) return 0;
         var speed = Math.Max(0, metresPerSecond);
-        if (speed <= 0) return Config.DriveShare * Config.PushNewtons;
-        var shoving = Math.Min(Config.PushNewtons, watts / (Config.DriveShare * speed));
-        return Config.DriveShare * shoving * Math.Min(1, PushMetres / (speed * DriveSeconds));
+        var shoving = Config.PushNewtons * ShoveSeconds(speed) / StrokeSeconds(speed);
+        return speed <= 0 ? shoving : Math.Min(shoving, watts / speed);
     }
 }
