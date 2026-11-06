@@ -42,7 +42,7 @@ public sealed class Pole(double metres, double density, PoleConfig config) : Too
 
     private const double Gravity = 9.81;
 
-    private double SquareMetres => config.DressedMetres * config.DressedMetres;
+    private double SquareMetres => Math.PI / 4 * config.WorkedMetres * config.WorkedMetres;
 
     public double Kilograms => metres * SquareMetres * density;
 

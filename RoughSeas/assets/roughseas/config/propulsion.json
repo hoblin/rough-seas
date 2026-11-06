@@ -11,10 +11,10 @@
     },
     "pole": {
         "workingDegrees": 20,
-        "dressedMetres": 0.09,
+        "workedMetres": 0.05,
         "sources": {
             "workingDegrees": "A punt pole is dropped close to the side and shoved back against the bed (Nicolson 2008, Basic Punting for Darwinians); tilted forward only when the punt is slow, it shoves leaning back some 20° from upright and reaches cos 20° of its length down: less the hands' height over the water, a 3 m pole works to about 2 m of water and a 5 m one to about 4 m",
-            "dressedMetres": "A pole split from the row and dressed is 8 to 10 cm across (the split's design); what it weighs is that by its length at its wood's density"
+            "workedMetres": "Worked as a tool, a pole is a pole made for pushing a boat, round and about 5 cm across, whatever the dressed pole the row split into (the maintainers' decision, #292): ash boat poles are sold 35 mm across at 2.4 m and 46 mm at 3.6 m (AG ash boat poles, E232 and E230). What it lifts each stroke is that round by its length at its wood's density"
         }
     },
     "strokes": {

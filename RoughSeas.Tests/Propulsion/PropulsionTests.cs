@@ -82,7 +82,7 @@ public class PropulsionTests
         var shallow = new HeldTool(Poled("pole", 3, 1), 1);
         var deep = new HeldTool(Poled("pole", 5, 3.5), 1);
 
-        Assert.True(deep.Push(1, 0, Side.Starboard, 1, 0, 180).Newtons < shallow.Push(1, 0, Side.Starboard, 1, 0, 180).Newtons);
+        Assert.True(deep.Push(1, 0, Side.Starboard, 1, 0, 104).Newtons < shallow.Push(1, 0, Side.Starboard, 1, 0, 104).Newtons);
     }
 
     [Fact]

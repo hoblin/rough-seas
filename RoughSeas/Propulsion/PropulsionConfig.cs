@@ -55,7 +55,7 @@ public class StanceConfig
 public class PoleConfig
 {
     public double WorkingDegrees;
-    public double DressedMetres;
+    public double WorkedMetres;
 
     private double WorkingRadians => WorkingDegrees * Math.PI / 180;
 
