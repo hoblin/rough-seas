@@ -2,7 +2,7 @@
     "code": "pole",
     "class": "roughseas:ItemOfWood",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}],
-    "behaviors": [{"name": "roughseas:framing"}],
+    "behaviors": [{"name": "roughseas:framing"}, {"name": "roughseas:icon", "properties": {"shape": {"base": "roughseas:item/pole-icon"}}}],
     "attributesByType": {
         "*-2": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"], "createdBy": "roughseas:handbook-createdby-pole"}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-2-stowed"}}},
         "*-3": {"logTextures": {"wood": "inside-north"}, "handbook": {"groupBy": ["pole-*"], "createdBy": "roughseas:handbook-createdby-pole"}, "paddlingTool": true, "roughseas:propulsion": {"tool": "pole"}, "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/pole-3-stowed"}}},
@@ -14,12 +14,7 @@
     "materialDensity": 600,
     "combustibleProps": {"burnTemperature": 700, "burnDuration": 40},
     "creativeinventory": {"general": ["*"], "items": ["*"]},
-    "guiTransformByType": {
-        "*-2": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 1, "y": 0.1, "z": 0.5}, "scale": 0.8},
-        "*-3": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 1.5, "y": 0.1, "z": 0.5}, "scale": 0.533},
-        "*-4": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 2, "y": 0.1, "z": 0.5}, "scale": 0.4},
-        "*-5": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 2.5, "y": 0.1, "z": 0.5}, "scale": 0.32}
-    },
+    "guiTransform": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 0.5, "y": 0.1, "z": 0.5}, "scale": 1.6},
     "tpHandTransform": {"translation": {"x": 0.7679, "y": 0.2813, "z": 0.4726}, "rotation": {"x": -3, "y": 1, "z": -22}, "origin": {"x": 0, "y": 0, "z": 0}, "scale": 1},
     "groundTransformByType": {
         "*-2": {"origin": {"x": 1, "y": 0, "z": 0.5}, "scale": 1},

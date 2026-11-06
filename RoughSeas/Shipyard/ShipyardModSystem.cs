@@ -22,6 +22,7 @@ public class ShipyardModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorBurnout.Code, typeof(EntityBehaviorBurnout));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHew.Code, typeof(CollectibleBehaviorHew));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorDrive.Code, typeof(CollectibleBehaviorDrive));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorIcon.Code, typeof(CollectibleBehaviorIcon));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLightWithTorch.Code, typeof(CollectibleBehaviorLightWithTorch));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLightWithFirestarter.Code, typeof(CollectibleBehaviorLightWithFirestarter));
         api.RegisterEntityBehaviorClass(EntityBehaviorFraming.Code, typeof(EntityBehaviorFraming));

@@ -1,0 +1,79 @@
+{
+    "textureWidth": 16,
+    "textureHeight": 16,
+    "textures": {
+        "wood": "game:block/wood/debarked/oak",
+        "tie": "game:item/resource/rope"
+    },
+    "elements": [
+        {
+            "name": "Lath1",
+            "from": [
+                0,
+                0,
+                7.25
+            ],
+            "to": [
+                16,
+                0.5,
+                8.75
+            ],
+            "faces": {
+                "north": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        4.5
+                    ]
+                },
+                "south": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        4.5
+                    ]
+                },
+                "east": {
+                    "texture": "#wood",
+                    "uv": [
+                        4,
+                        4,
+                        5.5,
+                        4.5
+                    ]
+                },
+                "west": {
+                    "texture": "#wood",
+                    "uv": [
+                        4,
+                        4,
+                        5.5,
+                        4.5
+                    ]
+                },
+                "up": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        5.5
+                    ]
+                },
+                "down": {
+                    "texture": "#wood",
+                    "uv": [
+                        0,
+                        4,
+                        16,
+                        5.5
+                    ]
+                }
+            }
+        }
+    ]
+}

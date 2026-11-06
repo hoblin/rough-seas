@@ -310,8 +310,9 @@ Each wedge is driven on its own, a step a blow, and the row splits once every we
 - Every axe carries `roughseas:drive`, which swings the player animation `roughseas-drive` (its butt brought down on the wedge, chop at the blow) while held on a wedge not yet home. The wedge's own hold and its progress bar are gone.
 - `roughseas:drive` and `roughseas:hew` count blows the same way, one a cycle of their animation, each on the server.
 - A pole's handbook page gives how it is split under "Created by", from `handbook.createdBy`.
+- Poles and laths show one icon for every length: the collectible behaviour `roughseas:icon` draws its `shape` in place of the item's in inventory slots and the handbook, in the item's own textures. Their per-length `guiTransformByType` is one `guiTransform`.
 
-New: `roughseas:drive`, `roughseas-drive`, `secondsPerBlow`, `shipyard-drive` (was `shipyard-split`), `handbook-createdby-pole`.
+New: `roughseas:drive`, `roughseas-drive`, `roughseas:icon`, `secondsPerBlow`, `shipyard-drive` (was `shipyard-split`), `handbook-createdby-pole`.
 
 ## What not to touch
 
