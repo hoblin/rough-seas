@@ -18,17 +18,17 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Turning | slow, 19° a second |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 48 cm empty, 45 cm with its paddler, in oak |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | 48 cm empty, 45 cm with its paddler, in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 131 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its wood closes two fifths of a stove-in place |
 | [Bilge](Bailing) | 1298 litres |
-| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker: her round bottom rolls |
+| [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker: its round bottom rolls |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
 | [Lightning](Lightning) | a 6000 J strike scratches a place |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
-| Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at her bow end to pole; the back one takes a passenger |
+| Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
 | Built from | 5 logs of one wood beside the water and an axe to strip their bark, then six fires: each takes clay for its rim (19 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and the axe; about nine days in all |
 | Wreckage | firewood |
@@ -95,7 +95,7 @@ The dugout floats at every stage and an axe breaks it up at every stage, so you 
 
 - The [birch-bark canoe](Birch-Bark-Canoe) is the other river boat: faster, carried around the falls and through the [rapids](Rapids), but holed by a landing the dugout never notices.
 - The [reed boat](Reed-Boat) and the [raft](Raft) are cheaper and don't last.
-- For the sea, the [outrigger canoe](Outrigger-Canoe) is a dugout made steady with a float: a finished dugout is rigged into one where she lies.
+- For the sea, the [outrigger canoe](Outrigger-Canoe) is a dugout made steady with a float: a finished dugout is rigged into one where it lies.
 
 ## Every form it takes
 

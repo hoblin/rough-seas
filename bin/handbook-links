@@ -10,7 +10,9 @@ from pathlib import Path
 USAGE = """Check every handbook link in every locale of the mod's texts.
 
   bin/handbook-links          every locale's text as its player sees it, a key it lacks in
-                              English: a search link must find some name the locale shows (a
+                              English. A game: key it lacks shows the game's own translation
+                              instead, without our change, so that fails. A search link must
+                              find some name the locale shows (a
                               word found in an unrelated name passes too), a guide page link
                               must name a guide page, and every locale must link the pages
                               English links. Item and block page codes are not followed here
@@ -61,6 +63,10 @@ for path in sorted((ours / "lang").glob("*.json")):
     code = path.stem
     known = None
     own = load(path)
+    vanilla = load(install / f"game/lang/{code}.json")
+    for key in english.keys() - own.keys():
+        if key.startswith("game:") and key[5:] in vanilla:
+            broken.append(f"{code}: {key} missing, so the game's own translation shows without ours")
     for key, value in {**english, **own}.items():
         links = exact(value)
         pages |= links

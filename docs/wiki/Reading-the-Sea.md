@@ -4,7 +4,7 @@ Vanilla has no place for the wind's direction, for waves or for currents, so Rou
 
 Rough Seas keeps the sea twice, for two different jobs.
 
-**The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike her, the current that carries her. It knows no single wave. A wave that reaches a vessel is drawn by chance from the state, once a wave period, and two vessels side by side meet different waves.
+**The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike it, the current that carries it. It knows no single wave. A wave that reaches a vessel is drawn by chance from the state, once a wave period, and two vessels side by side meet different waves.
 
 **The drawn sea** is the moving surface a client draws, built from the sea map the server sends it and the world's clock. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same surface: two players in one region see the same crests. It is not the wave the server struck a vessel with.
 
@@ -193,15 +193,15 @@ The pose is only the picture, and it changes as the waves move: read it every fr
 
 ### How a hull answers
 
-A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls and pitches toward the water on periods of its own: a light canoe follows a long swell as the water lies, while a heavy, deep hull lets a short chop pass under her and rolls slowly on her own. `HullResponse`, in `RoughSeas.Storms`, gives a hull those periods. Ours keep one per vessel and pass every pose through it; yours can do the same.
+A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls and pitches toward the water on periods of its own: a light canoe follows a long swell as the water lies, while a heavy, deep hull lets a short chop pass under it and rolls slowly on its own. `HullResponse`, in `RoughSeas.Storms`, gives a hull those periods. Ours keep one per vessel and pass every pose through it; yours can do the same.
 
 | Member | What it is |
 | --- | --- |
-| `HullResponse.Of(lengthMetres, beamMetres, draftMetres, depthMetres, config)` | the response of a hull of these dimensions, floating at this draft, her waterplane taken as the ellipse of her length and beam |
+| `HullResponse.Of(lengthMetres, beamMetres, draftMetres, depthMetres, config)` | the response of a hull of these dimensions, floating at this draft, its waterplane taken as the ellipse of its length and beam |
 | `new HullResponse(heavePeriodSeconds, rollPeriodSeconds, config)` | one on periods you give; a period of 0 follows the water as it lies |
 | `Follow(pose, seconds)` | the pose the hull takes `seconds` after the last call, chasing `pose`; where no swell is drawn it comes to rest at once |
 | `HeavePeriodSeconds`, `RollPeriodSeconds` | its periods; set them as its draft changes |
-| `HullResponse.HeavePeriod(kg, addedKg, kgPerMetre)` | the heave and pitch period of a hull of this mass, dragging `addedKg` of water and displacing `kgPerMetre` for each metre she sinks, in seconds |
+| `HullResponse.HeavePeriod(kg, addedKg, kgPerMetre)` | the heave and pitch period of a hull of this mass, dragging `addedKg` of water and displacing `kgPerMetre` for each metre it sinks, in seconds |
 | `HullResponse.RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres)` | its roll period, in seconds |
 
 `Follow` returns the pose with its `Lift`, `Roll` and `Pitch` answered and its `Hold` as it was, so blend by it as before. Ours refresh the periods from the hull's draft every frame, so a laden hull answers slower than an empty one. A long gap between calls, as when a hull returns to the water, is caught up as one period at most, so the hull doesn't leap. Where the periods come from is on [The science of the hull](The-Science-of-the-Hull#riding-the-swell).

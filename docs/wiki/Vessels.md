@@ -44,7 +44,7 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | [Dugout](Dugout) | 2 | the front seat, paddle or pole in hand | a basket in place of the passenger |
 | [Coracle](Coracle) | 1 | its floor, paddle or pole in hand | none |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships, paddle or pole in hand | a basket in place of the passenger |
-| [Hide currach](Hide-Currach) | 1 | the thwart, her own oars on thole pins | 3 spots on its bottom, each a basket, storage vessel or chest |
+| [Hide currach](Hide-Currach) | 1 | the thwart, its own oars on thole pins | 3 spots on its bottom, each a basket, storage vessel or chest |
 | [Outrigger canoe](Outrigger-Canoe) | 2 | the front seat, paddle or pole in hand | a basket in place of the passenger |
 | [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
 

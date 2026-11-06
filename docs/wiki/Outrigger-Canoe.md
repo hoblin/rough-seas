@@ -1,10 +1,10 @@
 ![The outrigger canoe afloat](images/outrigger-canoe/afloat-bow.webp)
 
-A dugout with a float log held out to one side on three crooked booms lashed across her gunwales and down onto it, and a mast stayed fore, aft and out to the float: 5 blocks long and 3 across, hull, gap and float. For the open sea she takes washstrakes of sawn planks sewn along her sides and across her ends. Her crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Her hull, her float, her poles and her washstrakes can each be of their own wood.
+A dugout with a float log held out to one side on three crooked booms lashed across its gunwales and down onto the float, and a mast stayed fore, aft and out to the float: 5 blocks long and 3 across, hull, gap and float. For the open sea it takes washstrakes of sawn planks sewn along its sides and across its ends. Its crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Its hull, its float, its poles and its washstrakes can each be of their own wood.
 
 ## In Rough Seas
 
-For a long crossing of open sea. The outrigger sails, leaving every rowed boat far astern; for now she sails at vanilla's pace, a little slower than the sailboat, until sailing reads the wind. The float keeps the narrow hull upright where a dugout would roll over. It also stands out on its side, so knocks from that side work its lashings loose rather than cracking her hull; let them give out and the float and rig come away, leaving the dugout. Built without a saw she is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise her side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
+For a long crossing of open sea. The outrigger sails, leaving every rowed boat far astern; for now it sails at vanilla's pace, a little slower than the sailboat, until sailing reads the wind. The float keeps the narrow hull upright where a dugout would roll over. It also stands out on its side, so knocks from that side work its lashings loose rather than cracking the hull; let them give out and the float and rig come away, leaving the dugout. Built without a saw it is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise its side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
 
 ## Where it comes from
 
@@ -16,12 +16,12 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | --- | --- |
 | Speed | 5.9 m/s under full sail, at vanilla's pace until sailing reads the wind; 1.5 m/s paddled, 2.1 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | clumsy, 14° a second paddled |
-| [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): her hull is the dugout's |
+| [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): its hull is the dugout's |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | with washstrakes 58 cm empty, 57 cm with its helmsman; without them 44 and 42; in oak |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | with washstrakes 58 cm empty, 57 cm with its helmsman; without them 44 and 42; in oak |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 254 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
-| [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place; 1 flax twine binds up a ninth of her float's lashings |
-| [Her float](Hull-Condition#an-outriggers-float) | takes the knocks on its side on its lashings: with one aboard, losing 2 m/s into rock works nearly half of them loose, and 4 m/s tears them out and leaves her the dugout |
+| [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place; 1 flax twine binds up a ninth of its float's lashings |
+| [Its float](Hull-Condition#an-outriggers-float) | takes the knocks on its side on its lashings: with one aboard, losing 2 m/s into rock works nearly half of them loose, and 4 m/s tears them out and leaves the dugout |
 | [Bilge](Bailing) | 1720 litres with washstrakes, 1298 without |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.6 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3 m mast draws strikes |
@@ -29,10 +29,10 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
-| Seats | two: the front one steers, under sail too, and paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at her bow end to pole; the back one takes a passenger |
+| Seats | two: the front one steers, under sail too, and paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | a finished [dugout](Dugout), 3 logs for her float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when she takes them, 10 planks and 4 ropes |
-| Wreckage | firewood, a rope, some linen, and planks once she has washstrakes |
+| Built from | a finished [dugout](Dugout), 3 logs for its float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when it takes them, 10 planks and 4 ropes |
+| Wreckage | firewood, a rope, some linen, and planks once it has washstrakes |
 
 Its sail drives it the same whatever the wind does; sailing by the wind comes in [Seamanship](Roadmap#seamanship).
 
@@ -81,7 +81,7 @@ Walk into it from the shore side to push it into the water. It can't be picked u
 
 - The [hide currach](Hide-Currach) is the other small boat for the sea: slower, but it carries cargo and can be carried.
 - The [sailboat](Sailboat) sails faster for now and carries far more.
-- The [dugout](Dugout) is the same hull without the float: she is built on one, and is as tough, and tippy at sea.
+- The [dugout](Dugout) is the same hull without the float: the outrigger is built on one, and is as tough, and tippy at sea.
 
 ## Every form it takes
 
