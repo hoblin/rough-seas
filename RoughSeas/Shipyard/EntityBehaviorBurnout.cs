@@ -16,7 +16,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Shipyard;
 
-public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
+public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity), IStruck
 {
     public const string Code = "roughseas:burnout";
 
@@ -87,7 +87,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
 
     public bool CanLight => !burnout.Finished && !Wet() && burnout.LightRefusal() == null;
 
-    public double SecondsPerStroke => config.SecondsPerStroke;
+    public double SecondsPerBlow => config.SecondsPerStroke;
 
     private IVesselHold? Hold => entity.SidedProperties.Behaviors.OfType<IVesselHold>().FirstOrDefault();
 
@@ -110,14 +110,17 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         Burnout.Begin(tree);
     });
 
-    public void TakeUp(EntityAgent hewer)
+    public bool TakeUp(EntityAgent hewer)
     {
+        if (entity.World.Side != EnumAppSide.Server) return true;
+
         Tree.SetLong(HewerKey, hewer.EntityId);
         MarkDirty();
+        return true;
     }
 
     /// <returns>Whether char is left to hew after this stroke.</returns>
-    public bool Hew(EntityAgent byEntity, ItemSlot axe)
+    public bool Strike(EntityAgent byEntity, ItemSlot axe)
     {
         byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(burnout.SaturationPerStroke);
         int stage = burnout.Stage;
@@ -477,8 +480,8 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity)
         }
         foreach (var hewer in capi.World.AllOnlinePlayers.Select(player => player.Entity).OfType<EntityPlayer>())
         {
-            if (hewer.Properties.Client.AnimationsByMetaCode.GetValueOrDefault(CollectibleBehaviorHew.Animation) is not { } hewing
-                || hewer.AnimManager?.GetAnimationState(CollectibleBehaviorHew.Animation) is not { Running: true } swing
+            if (hewer.Properties.Client.AnimationsByMetaCode.GetValueOrDefault(CollectibleBehaviorHew.Swing) is not { } hewing
+                || hewer.AnimManager?.GetAnimationState(CollectibleBehaviorHew.Swing) is not { Running: true } swing
                 || Tree?.GetLong(HewerKey) != hewer.EntityId
                 || hewer.Pos.DistanceTo(entity.Pos) > ChipReachMetres)
             {

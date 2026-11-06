@@ -302,6 +302,17 @@ A hewing no longer changes her at once: the inside is cut a section at a time, t
 
 New: `hewnSectionsMetres`, `roughseas-hew`, `hewer`, `IVesselHold.DesignedLitres`.
 
+### Wedges driven blow by blow
+
+Each wedge is driven on its own, a step a blow, and the row splits once every wedge in it is home ([Recipes](Recipes#splitting-wedge)).
+
+- The wedge's blocks are `roughseas:wedge-{we|ns}-{0..4}`, the last part how far it is driven; it drops and is crafted as `roughseas:wedge-we-0`. Its `splitSeconds` is now `secondsPerBlow`.
+- Every axe carries `roughseas:drive`, which swings the player animation `roughseas-drive` (its butt brought down on the wedge, chop at the blow) while held on a wedge not yet home. The wedge's own hold and its progress bar are gone.
+- `roughseas:drive` and `roughseas:hew` count blows the same way, one a cycle of their animation, each on the server.
+- A pole's handbook page gives how it is split under "Created by", from `handbook.createdBy`.
+
+New: `roughseas:drive`, `roughseas-drive`, `secondsPerBlow`, `shipyard-drive` (was `shipyard-split`), `handbook-createdby-pole`.
+
 ## What not to touch
 
 | Name | What it is |

@@ -30,7 +30,7 @@ Not in the grid any more: its bark is stripped off a standing tree in one sheet,
 
 ## Splitting wedge
 
-Whittled from firewood with a knife. One on each of two to five logs of one wood lying end to end, driven with an axe, splits the trunk into 64 poles as long as the row: a row of three gives 3 m poles, a row of five 5 m ones. The wedges come back.
+Whittled from firewood with a knife. Set one on each of two to five logs of one wood lying end to end, then hold an axe on each wedge in turn: every blow of its butt drives the wedge a step deeper, four blows from set to home. Once the last wedge is home, the trunk splits into 64 poles as long as the row: a row of three gives 3 m poles, a row of five 5 m ones. The wedges come back.
 
 ![The splitting wedge from firewood and a knife](images/recipes/splitting-wedge.png)
 
