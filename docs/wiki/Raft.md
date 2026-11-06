@@ -20,7 +20,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | Turning | 17° a second, poled 30° |
 | [Hull](Hull-Condition) | 1200 J in oak; bamboo a third more, aged wood half |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | in oak 8 cm empty, awash with a rider; in bamboo 9 cm with a rider |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | in oak 8 cm empty, awash with a rider; in bamboo 9 cm with a rider |
 | [Mending](Mending) | 1 flax twine binds up a fifth of its lashings |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker |

@@ -38,10 +38,10 @@ Hulls that take knocks as real ones do, and a guide for modders.
 
 ## 3.0 "Creak and Leak"
 
-Boats no longer burst at a hidden zero: you hear and see where a knock landed, what it did, and why she is going down.
+Boats no longer burst at a hidden zero: you hear and see where a knock landed, what it did, and why it is going down.
 
-- **Hulls that crack, leak and flood.** A knock [cracks the hull](Hull-Condition) where it lands, and the crack leaks; a hull is lost by flooding, and only a severe blow breaks it up. Look at a vessel to read each cracked place, the leak in litres a minute and her freeboard.
-- **Floating by mass.** Every vessel [floats by its mass](Surf-and-Swamping#how-she-floats), sits lower and runs slower loaded, and flooded floats awash or sinks by its wood and load. Hulls ride the swell on periods of their own mass.
+- **Hulls that crack, leak and flood.** A knock [cracks the hull](Hull-Condition) where it lands, and the crack leaks; a hull is lost by flooding, and only a severe blow breaks it up. Look at a vessel to read each cracked place, the leak in litres a minute and its freeboard.
+- **Floating by mass.** Every vessel [floats by its mass](Surf-and-Swamping#how-it-floats), sits lower and runs slower loaded, and flooded floats awash or sinks by its wood and load. Hulls ride the swell on periods of their own mass.
 - **Lashings, soaking and seams.** The [raft](Raft)'s lashings work loose and are bound up with flax twine, the [reed boat](Reed-Boat) soaks afloat and dries ashore, and the [currach](Hide-Currach)'s seams seep once their grease is gone. A [mend](Mending) patches the place you look at.
 - **The sea you can hear.** Open water by its wind, whitecaps hissing from windward, surf on the shore, and a hull that creaks, cracks and trickles as it takes water. The recordings: [Sound credits](Sound-Credits).
 - **[The drawn sea for other mods](Reading-the-Sea#the-drawn-sea).** Their vessels ride the swell a client draws, as ours do.
@@ -94,7 +94,7 @@ What lies below.
 - **Diving.** A diving suit of Jonas tech, with air and light, to work on the seabed. The old trick of diving in plate armour with a lantern no longer works.
 - **Harpoons** and **depth sounding**.
 - **Shipwrecks**: rare wrecks on the deep seabed, holding what they carried.
-- **Raising your own vessel** and what went down with it, after it [sank](Hull-Condition#when-she-is-lost).
+- **Raising your own vessel** and what went down with it, after it [sank](Hull-Condition#when-it-is-lost).
 - **Wandering traders** who sail the seas on a heading, make landfall where they meet a shore, camp on the beach for a day or two and sail on. Some sell maps to wrecks.
 - **Metal boats.**
 

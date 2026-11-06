@@ -6,11 +6,11 @@ Two bundles of reeds three metres long, lashed side by side, their ends bound up
 
 A day afloat at a time. The reed boat is the first thing you can build that floats you, and hard to break: a club or a breaker only bends the bundles, and a blade harms it only where it cuts a lashing. A knock on a rock, a ram, a run of rapids or lightning crushes the bundles for a moment, and they take it; only a heavy blast tears its lashings. Water is what ends it. The reed soaks up two thirds of its weight in water a day afloat, sitting lower and lower: after a day its rider sits awash, and left alone it is on the bottom within four days. As it soaks, its ends sag, since nothing but the reed holds them up. Haul it out under the open sky and it dries in the sun, but each drying leaves it a little more rotten, and soaked through and dried a few times, it sinks the moment it is launched. It can't be mended, and the sea washes straight through it, so there is nothing to bail. Take it across the lake or out to the island, and dry it before the trip home. It is a summer boat: you sit wet on it.
 
-![Her rider sits at the waterline](images/reed-boat/afloat-rider.webp)
+![Its rider sits at the waterline](images/reed-boat/afloat-rider.webp)
 
 ## Where it comes from
 
-People have tied reeds into boats wherever reeds grow by water: Egyptians built papyrus skiffs on the Nile, and the Sumerians reed boats sealed with bitumen in the marshes of Mesopotamia. The model follows the *caballito de totora*, the "little reed horse" of Peru's north coast, which the Moche were drawing two thousand years ago and the fishermen of Huanchaco still bind today: two bundles of totora, bound tight with cord and lashed together, their ends swept up into a point, paddled out through the surf and ridden back in on the breakers. One of them, 2.4 m long, weighs 41 kg dry and some 68 kg soaked with sea water. On Lake Titicaca the Uru and Aymara build larger *balsas* of the same reed and haul them out to dry between trips, which keeps them months. Aymara builders from the lake made Thor Heyerdahl's *Ra II*, the papyrus boat that crossed the Atlantic in 1970; with nowhere to dry her, she settled about 10 cm deeper every day of the crossing, and the first *Ra*, built without the line that held an Egyptian stern up, was abandoned once her sagging stern dragged in the sea. In California the Chumash and the Ohlone bound the same kind of boat from tule.
+People have tied reeds into boats wherever reeds grow by water: Egyptians built papyrus skiffs on the Nile, and the Sumerians reed boats sealed with bitumen in the marshes of Mesopotamia. The model follows the *caballito de totora*, the "little reed horse" of Peru's north coast, which the Moche were drawing two thousand years ago and the fishermen of Huanchaco still bind today: two bundles of totora, bound tight with cord and lashed together, their ends swept up into a point, paddled out through the surf and ridden back in on the breakers. One of them, 2.4 m long, weighs 41 kg dry and some 68 kg soaked with sea water. On Lake Titicaca the Uru and Aymara build larger *balsas* of the same reed and haul them out to dry between trips, which keeps them months. Aymara builders from the lake made Thor Heyerdahl's *Ra II*, the papyrus boat that crossed the Atlantic in 1970; with nowhere to dry it, it settled about 10 cm deeper every day of the crossing, and the first *Ra*, built without the line that held an Egyptian stern up, was abandoned once its sagging stern dragged in the sea. In California the Chumash and the Ohlone bound the same kind of boat from tule.
 
 ## By the numbers
 
@@ -20,7 +20,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | Turning | nimble, 33° a second |
 | [Hull](Hull-Condition) | 30 600 J in its lashings, once the bundles have crushed; tears, shown as *Reed torn* |
 | [Soaking](Hull-Condition#seeping-and-soaking) | 33 kg of water a day afloat: its rider awash after a day, on the bottom within four left alone; dries ashore in the sun, a third of it left behind as rot |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 14 cm empty, 5 cm with its rider, when dry |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | 14 cm empty, 5 cm with its rider, when dry |
 | [Mending](Mending) | cannot be mended |
 | [Bilge](Bailing) | none: the sea washes through |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
@@ -29,7 +29,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up, from the first binding on |
-| Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; she is too narrow to stand on, so she is poled sitting |
+| Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; it is too narrow to stand on, so it is poled sitting |
 | Cargo | a basket (8 slots) |
 | Built from | two reed bundles, each 144 cattail tops, papyrus tops or thatch and two ropes, and four ropes more: 288 reeds and 8 ropes, 50 kg |
 | Wreckage | the tops each bundle was bound from, broken up with an axe once it has sunk |

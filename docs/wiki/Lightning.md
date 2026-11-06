@@ -9,7 +9,7 @@ Wherever a storm is at least half its full strength and the air is at least 12 Â
 Any strike that lands within a mast's height of a masted vessel jumps to the top of the mast, the game's own lightning as well as the storm's. Only two vessels carry a mast:
 
 - the [sailboat](Sailboat), whose 7 m mast draws strikes from 7 blocks around;
-- the [outrigger canoe](Outrigger-Canoe), whose 3 m mast draws them from 3 blocks around once it is stepped, and until her float comes away and takes the mast with it.
+- the [outrigger canoe](Outrigger-Canoe), whose 3 m mast draws them from 3 blocks around once it is stepped, and until its float comes away and takes the mast with it.
 
 A mast is a lightning rod with you at its foot. Unmasted boats are struck only by bad luck.
 

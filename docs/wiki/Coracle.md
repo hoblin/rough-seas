@@ -16,9 +16,9 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | --- | --- |
 | Speed | 1 m/s sculled over the bow, 1.3 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | spins on the spot, 177° a second |
-| [Hull](Hull-Condition) | a knock breaks the willow lath behind the hide at 24 J, 45 J in oak, and the two either side of a gap at 57 J, 108 J in oak: past her 1 m/s sculled, only a current or a fall drives her that hard; 400 J more with a willow frame breaks her up, the weakest of all, about 690 J in oak, 810 J in birch |
+| [Hull](Hull-Condition) | a knock breaks the willow lath behind the hide at 24 J, 45 J in oak, and the two either side of a gap at 57 J, 108 J in oak: past its 1 m/s sculled, only a current or a fall drives it that hard; 400 J more with a willow frame breaks it up, the weakest of all, about 690 J in oak, 810 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 13 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 33 cm empty, 26 cm with its paddler |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | 33 cm empty, 26 cm with its paddler |
 | [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's gear; armour takes it down |
 | [Mending](Mending) | 1 small prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
 | [Bilge](Bailing) | 272 litres |
@@ -28,7 +28,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post, or worn home |
 | Carried | worn on the back, in the backpack slot |
-| Seats | one, on the floor, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; with a pole you stand in her middle |
+| Seats | one, on the floor, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; with a pole you stand in its middle |
 | Cargo | none |
 | Built from | 14 laths of 2 m and 3 of 5 m, 5 ropes and two small hides' worth of hide, then greased |
 | Wreckage | a few laths |

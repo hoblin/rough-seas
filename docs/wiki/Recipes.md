@@ -54,17 +54,17 @@ A [paddle](Paddles-Poles-and-Oars) is carved from a two-metre pole with an axe a
 
 ## Thole oar
 
-A [thole oar](Paddles-Poles-and-Oars) is made from a three-metre pole, with a two-metre lath for its bull, by an axe and a knife. A currach takes two, shipped on her thole pins as the last step of her build.
+A [thole oar](Paddles-Poles-and-Oars) is made from a three-metre pole, with a two-metre lath for its bull, by an axe and a knife. A currach takes two, shipped on its thole pins as the last step of its build.
 
 ![A thole oar from a 3 m pole, a 2 m lath, an axe and a knife](images/recipes/thole-oar.png)
 
 ## Hide currach
 
-Not in the grid any more: two long wet laths are laid out on the ground and bound into her gunwale, framed upside down, covered with hides and turned over. See [how it is built](Hide-Currach#how-it-is-built).
+Not in the grid any more: two long wet laths are laid out on the ground and bound into its gunwale, framed upside down, covered with hides and turned over. See [how it is built](Hide-Currach#how-it-is-built).
 
 ## Outrigger canoe
 
-Not in the grid any more: a finished dugout is rigged where she lies with a float, poles split with wedges, rope and linen cloth. See [how it is built](Outrigger-Canoe#how-it-is-built).
+Not in the grid any more: a finished dugout is rigged where it lies with a float, poles split with wedges, rope and linen cloth. See [how it is built](Outrigger-Canoe#how-it-is-built).
 
 ## Anchor warp
 

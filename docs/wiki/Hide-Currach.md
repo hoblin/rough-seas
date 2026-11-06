@@ -1,36 +1,36 @@
 ![The currach afloat](images/currach/afloat-bow.webp)
 
-A light frame of split laths, ribs bent over two long gunwales and stringers along them, with hides laced over it and sealed with rendered fat. She is pointed at both ends, where her gunwales are drawn together and bound, and a thwart pole across her middle, a hand below her gunwale, takes the rower. He sits facing her stern and pulls her two oars on their thole pins, which stand just abaft him.
+A light frame of split laths, ribs bent over two long gunwales and stringers along them, with hides laced over it and sealed with rendered fat. It is pointed at both ends, where its gunwales are drawn together and bound, and a thwart pole across its middle, a hand below its gunwale, takes the rower. The rower sits facing its stern and pulls its two oars on their thole pins, which stand just abaft the thwart.
 
 ## In Rough Seas
 
-The first venture to sea under oars. A hide hull flexes with the waves instead of fighting them, and the currach carries cargo, so it is the first boat in which a coast becomes a road. Her seams seep once the grease washes out of them, so she needs greasing with rendered fat every few days afloat to keep her tight.
+The first venture to sea under oars. A hide hull flexes with the waves instead of fighting them, and the currach carries cargo, so it is the first boat in which a coast becomes a road. Its seams seep once the grease washes out of them, so it needs greasing with rendered fat every few days afloat to keep it tight.
 
 ## Where it comes from
 
-Currachs have worked the Atlantic coast of Ireland for as long as there are records. The early Irish ones were covered with ox hides, and the monks who sailed to the Hebrides, Iceland and, by legend, beyond, sailed in them; in 1976–77 Tim Severin crossed from Ireland to Newfoundland in the *Brendan*, a leather boat built in this way. A currach was built upside down: her gunwale laid out on the ground, her ribs bent over it and set into it, the stringers tied along them, and the frame turned over once it had set and been covered. The model is a small hide currach of that kind, 4.8 m long and 1.2 m in beam.
+Currachs have worked the Atlantic coast of Ireland for as long as there are records. The early Irish ones were covered with ox hides, and the monks who sailed to the Hebrides, Iceland and, by legend, beyond, sailed in them; in 1976–77 Tim Severin crossed from Ireland to Newfoundland in the *Brendan*, a leather boat built in this way. A currach was built upside down: its gunwale laid out on the ground, its ribs bent over it and set into it, the stringers tied along them, and the frame turned over once it had set and been covered. The model is a small hide currach of that kind, 4.8 m long and 1.2 m in beam.
 
 ## By the numbers
 
 | | |
 | --- | --- |
-| Speed | 2.4 m/s rowed on her thole pins, 2.5 m/s poled standing ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 2.4 m/s rowed on its thole pins, 2.5 m/s poled standing ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | 39° a second, rowed: one oar pulled, the other backed |
-| [Hull](Hull-Condition) | she rides the sea, but a knock breaks the ash lath behind her hide at 41 J, rowing into a rock at 1.2 m/s, and the two either side of a gap at 102 J, 1.5 m/s; 3000 J more with an ash frame breaks her up, about 2800 J in oak, 3300 J in birch |
+| [Hull](Hull-Condition) | it rides the sea, but a knock breaks the ash lath behind its hide at 41 J, rowing into a rock at 1.2 m/s, and the two either side of a gap at 102 J, 1.5 m/s; 3000 J more with an ash frame breaks it up, about 2800 J in oak, 3300 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 13 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 58 cm empty, 56 cm with her rower |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash with three baskets aboard; three chests take her down |
-| [Mending](Mending) | 1 large prepared hide closes two thirds of a stove-in place; 1 rendered fat greases her for 1.25 days |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | 58 cm empty, 56 cm with its rower |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash with three baskets aboard; three chests take it down |
+| [Mending](Mending) | 1 large prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
 | [Bilge](Bailing) | 1911 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | doesn't survive them for now: the bottom stove in at the first rock ([a simplified model](Rapids)) |
-| [Lightning](Lightning) | a strike nearby almost always breaks her |
+| [Lightning](Lightning) | a strike nearby almost always breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | one: the rower on the thwart, facing her stern, rowing her own two oars with an empty hand, or standing on her floor, facing her bow, to pole her through shallows |
+| Seats | one: the rower on the thwart, facing its stern, rowing its own two oars with an empty hand, or standing on its floor, facing its bow, to pole it through shallows |
 | Cargo | three spots on the bottom, two behind the rower and one beyond his feet; each takes a basket (8 slots), a storage vessel (12) or a chest (16; a treasure chest 4) |
-| Built from | 2 laths of 5 m for her gunwale, 9 of 3 m and 13 of 2 m for her ribs and 7 of 5 m for her stringers, 6 ropes, eight small hides' worth of hide, a 2 m pole and two [thole oars](Recipes#thole-oar), then greased |
+| Built from | 2 laths of 5 m for its gunwale, 9 of 3 m and 13 of 2 m for its ribs and 7 of 5 m for its stringers, 6 ropes, eight small hides' worth of hide, a 2 m pole and two [thole oars](Recipes#thole-oar), then greased |
 | Wreckage | a few laths |
 
 ## How it is built
@@ -67,8 +67,8 @@ The hides you sew it from decide how long the currach lasts afloat ([Seeping and
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but she carries one basket and can't be picked up.
-- The [sailboat](Sailboat) carries far more and takes far harder blows, and she costs a shipyard's worth of planks.
+- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but it carries one basket and can't be picked up.
+- The [sailboat](Sailboat) carries far more and takes far harder blows, and it costs a shipyard's worth of planks.
 - The [dugout](Dugout) and the [bark canoe](Birch-Bark-Canoe) are what to leave on the river.
 - The [coracle](Coracle) is built of the same laths and hides, and carried on your back.
 

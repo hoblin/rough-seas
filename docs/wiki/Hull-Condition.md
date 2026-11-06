@@ -13,7 +13,7 @@ Look at a vessel to read its hull. A sound one says *Hull: sound*; a cracked one
 
 ![A hide currach stove in on its port side, leaking 68 litres a minute](images/mechanics/damaged-currach.webp)
 
-Below it: how many litres a minute she leaks, and her [freeboard](Surf-and-Swamping#how-she-floats) in centimetres, the side she shows above the water; *Awash* when the sea comes over it, *Sunk* when she lies on the bottom.
+Below it: how many litres a minute it leaks, and its [freeboard](Surf-and-Swamping#how-it-floats) in centimetres, the side it shows above the water; *Awash* when the sea comes over that side, *Sunk* when the vessel lies on the bottom.
 
 Our vessels show each crack where it is, in the hull itself, from outside and from your seat aboard: a scratch is a hairline through the wall, a crack runs along the grain, a split opens across the whole span between what holds the shell and its edge springs, and a place stove in is broken through, its shell pushed in and the dark of the breach around it. Bark splits along its grain, and a bark canoe's sheathing breaks with it; hide tears into a flap. From a split on, the rib or lath under it breaks too, and a place stove in pushes its broken ends inward. A port crack sits nearer the bow than its starboard twin, so the two sides never mirror each other. The crack is as long as the shell's span, but drawn wider than the few millimetres it really opens, so that you see it. A dugout or a bark canoe still being built shows its cracks too. The sailboat marks each cracked place on its planks instead. A vessel you pick up carries its hull with it, every crack in place, and its durability on the item shows how much is left.
 
@@ -23,10 +23,10 @@ The [raft](Raft) and the [reed boat](Reed-Boat) are not cracked: the raft reads 
 
 ## Where a blow lands
 
-A hull has seven places: the port and starboard bow, the port and starboard side, the port and starboard quarter, and the bottom. The bow and the quarter are the outer 30% of her length at each end.
+A hull has seven places: the port and starboard bow, the port and starboard side, the port and starboard quarter, and the bottom. The bow and the quarter are the outer 30% of its length at each end.
 
-- **A knock** lands where she hit: within 45° of her length, on the bow or the quarter of that side; otherwise on the side.
-- **Rapids**, and a storm that throws her ashore, strike the bottom.
+- **A knock** lands where the hull hit: within 45° of its length, on the bow or the quarter of that side; otherwise on the side.
+- **Rapids**, and a storm that throws it ashore, strike the bottom.
 - **A breaking wave** strikes the side the wind comes from.
 - **A weapon** strikes where it hits; **an explosion**, the side facing it.
 
@@ -34,7 +34,7 @@ Each harming blow cracks its own place further, and a second knock elsewhere cra
 
 ### An outrigger's float
 
-An [outrigger](Outrigger-Canoe)'s float stands 2 m out from her side, so a knock from that side meets the float before her hull, and so do a blast and lightning landing there. It harms not the float but the lashings that hold it under her booms; a blade or a club on the float only chips its log, as a [raft](Raft)'s: look at her to read *Float lashings* in percent. As they work loose the float hangs lower under the booms, then a lashing parts and the float slews, and once they give out the float comes away with her booms, and the mast they hold up comes down with it. She is left the [dugout](Dugout) she was rigged on, you still in your seat, her hull's cracks and the water in her as they were, less what her lower side can't hold, and her float, booms, mast, spars, sail, stays and washstrakes float off beside her as firewood, poles, cloth, rope and planks. [Flax twine](Mending) binds them up again before that. A knock from her other side, or on her bow or quarter, strikes her hull as before.
+An [outrigger](Outrigger-Canoe)'s float stands 2 m out from its side, so a knock from that side meets the float before the hull, and so do a blast and lightning landing there. It harms not the float but the lashings that hold it under the booms; a blade or a club on the float only chips its log, as a [raft](Raft)'s: look at the canoe to read *Float lashings* in percent. As they work loose the float hangs lower under the booms, then a lashing parts and the float slews, and once they give out the float comes away with the booms, and the mast they hold up comes down with it. What is left is the [dugout](Dugout) it was rigged on, you still in your seat, its hull's cracks and the water in it as they were, less what its lower side can't hold, and its float, booms, mast, spars, sail, stays and washstrakes float off beside it as firewood, poles, cloth, rope and planks. [Flax twine](Mending) binds them up again before that. A knock from its other side, or on its bow or quarter, strikes its hull as before.
 
 ![An outrigger with a quarter of its float lashings left: the float hangs low and slewed under the booms](images/mechanics/float-coming-away.webp)
 
@@ -53,9 +53,9 @@ No two boats are quite alike, as no two pieces of wood are, so the same knock ma
 
 ### Hide, bark and reed
 
-- **Hide** springs back from a club or a stone, unless a rib or a lath is right behind it there, and then that breaks. A blade cuts hide anywhere. A knock, a ram or rapids that lands on a lath presses the hide onto it: the hide stays whole, and the lath breaks, a split with the lath snapped behind it, and a harder blow stoves the place in. One that lands between two laths stretches the hide first, and it is the hide's pull that breaks both laths, so it takes about twice as much. Only what a stove-in place can't take goes on into the whole frame and can break her up.
+- **Hide** springs back from a club or a stone, unless a rib or a lath is right behind it there, and then that breaks. A blade cuts hide anywhere. A knock, a ram or rapids that lands on a lath presses the hide onto it: the hide stays whole, and the lath breaks, a split with the lath snapped behind it, and a harder blow stoves the place in. One that lands between two laths stretches the hide first, and it is the hide's pull that breaks both laths, so it takes about twice as much. Only what a stove-in place can't take goes on into the whole frame and can break the boat up.
 - **Bark** is no hide: it splits along its grain under a knock, with the sheathing that lines it, and the rib behind takes the rest, or both ribs when it lands between them. A light knock opens the bark and leaves the ribs whole; a harder one breaks them too.
-- **Reed bundles** spring back from every blow and every breaker. A blade harms them only where it cuts a lashing, and the boat comes apart once the reed is torn through. A knock, a ram, rapids or lightning crushes the bundles where it lands, and they take it: only what that leaves strains the lashings, and only the lashings part. A knock at any speed a paddle or a river gives leaves her whole; only a heavy blast tears her.
+- **Reed bundles** spring back from every blow and every breaker. A blade harms them only where it cuts a lashing, and the boat comes apart once the reed is torn through. A knock, a ram, rapids or lightning crushes the bundles where it lands, and they take it: only what that leaves strains the lashings, and only the lashings part. A knock at any speed a paddle or a river gives leaves the boat whole; only a heavy blast tears it.
 
 ## What it is made of
 
@@ -82,13 +82,13 @@ A wood from another mod counts by its species when we know it (the list is in [B
 
 An ebony sailboat takes more than four times the knocks and the breakers of a kapok one. Against a club or an axe, what counts is how tough the wood is rather than how strong: birch and beech are the toughest, oak close behind, and pine and spruce give twice as easily. The numbers: [The science of the hull](The-Science-of-the-Hull#hulls). The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood, and the [bark canoe](Birch-Bark-Canoe), [coracle](Coracle) and [hide currach](Hide-Currach) have frames of the wood their laths were split from, whatever bark or hide covers them. Their capacities, in oak, are compared on [Vessels](Vessels).
 
-The wood weighs too: a hull of a light wood floats higher and paddles a little faster than oak, one of a heavy wood lower and slower, and one heavier than seawater goes down when she floods ([Surf and swamping](Surf-and-Swamping#how-she-floats)).
+The wood weighs too: a hull of a light wood floats higher and paddles a little faster than oak, one of a heavy wood lower and slower, and one heavier than seawater goes down when it floods ([Surf and swamping](Surf-and-Swamping#how-it-floats)).
 
 ## What harms a hull
 
 ### Knocks and landings
 
-Running into rock or the shore strikes the hull by the speed it loses into the obstacle: hitting it head-on loses all of it, while a hull glancing along a shore loses only the part that pointed into it. Up to about 1 m/s the hull takes it in its stride, so easing in to a landing is always safe. A hull strikes once, when she meets the rock: paddling on against it, or a current holding her there, strikes it no more.
+Running into rock or the shore strikes the hull by the speed it loses into the obstacle: hitting it head-on loses all of it, while a hull glancing along a shore loses only the part that pointed into it. Up to about 1 m/s the hull takes it in its stride, so easing in to a landing is always safe. A hull strikes once, when it meets the rock: paddling on against the rock, or a current holding the hull there, strikes it no more.
 
 The knock grows with everything aboard:
 
@@ -102,7 +102,7 @@ What one rider's knock does, losing 2 or 4 m/s at once, in oak:
 | Vessel | At 2 m/s | At 4 m/s |
 | --- | --- | --- |
 | [Dugout](Dugout) | scratches | scratches |
-| [Outrigger canoe](Outrigger-Canoe) | scratches; on her float's side, works nearly half its lashings loose | scratches; on her float's side, tears the float away |
+| [Outrigger canoe](Outrigger-Canoe) | scratches; on its float's side, works nearly half its lashings loose | scratches; on its float's side, tears the float away |
 | [Sailboat](Sailboat) | scratches | cracks |
 | [Birch-bark canoe](Birch-Bark-Canoe) | splits it with its ribs broken, or stoves it in on a rib | stoves it in |
 | [Reed boat](Reed-Boat) | nothing | nothing |
@@ -114,7 +114,7 @@ Every knock adds to its place's crack, so a scratch from a bump becomes a crack 
 
 ### Rams
 
-A vessel that runs into another strikes both, the harder the faster they closed. Both take the same knock, and it is set mostly by the lighter boat: a coracle rammed by a sailboat takes about half of what a rock would give it, and the sailboat the same, which to her is nothing. As with a rock, coming alongside gently does no harm.
+A vessel that runs into another strikes both, the harder the faster they closed. Both take the same knock, and it is set mostly by the lighter boat: a coracle rammed by a sailboat takes about half of what a rock would give it, and the sailboat the same, which to the sailboat is nothing. As with a rock, coming alongside gently does no harm.
 
 Only hull against hull rams. A creature or a player swimming into a vessel only pushes it: flesh takes up the blow.
 
@@ -136,7 +136,7 @@ A crack lets the sea in faster the deeper it lies under the waterline. A crack i
 
 What one stove-in place lets in, with one aboard and a dry bilge, in a hull of oak where it has a wood:
 
-| Vessel | Bilge | Stove-in bottom | Stove-in side | The bottom fills her in |
+| Vessel | Bilge | Stove-in bottom | Stove-in side | The bottom fills it in |
 | --- | --- | --- | --- | --- |
 | [Coracle](Coracle) | 272 litres | 119 litres a minute | none | two and a quarter minutes |
 | [Dugout](Dugout) | 1298 litres | 137 | none | nine and a half minutes |
@@ -145,14 +145,14 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 | [Sailboat](Sailboat) | 8209 litres | 188 | none | forty-four minutes |
 | [Hide currach](Hide-Currach) | 1911 litres | 84 | none | twenty-three minutes |
 
-A bottom leak keeps its pace as she fills, for the water inside rises with her; a side leak slows once the water inside stands above it. A bottom only cracked by a hard knock lets in about a quarter as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) she is done.
+A bottom leak keeps its pace as the hull fills, for the water inside rises with it; a side leak slows once the water inside stands above it. A bottom only cracked by a hard knock lets in about a quarter as much. A bucket bails about 200 litres a minute ([Bailing](Bailing)): it keeps up with one bad leak in most boats, but enough cracks outpace any bailing, and then without [mending](Mending) the boat is done.
 
 ## Seeping and soaking
 
 A wooden hull barely wears: the dugout, the outrigger, the bark canoe and the sailboat need no upkeep. Hide and reed change just by floating, counted in game hours afloat:
 
-- A hide cover, the [coracle](Coracle)'s and the [hide currach](Hide-Currach)'s, seeps at every seam where one hide meets the next once the grease is gone: about 13 litres a game hour a seam across a currach or a coracle. Rendered fat keeps them tight for two and a half days afloat; look at her to see when the next greasing is due.
-- A cover rots by the hides it is sewn from. Untanned hide, raw, soaked or scraped, keeps a day afloat in water at 20 °C and two weeks at 5 °C, then rots through in as long again, cracking her everywhere; salted hide keeps half a day more, oiled hide and pelts three times as long, and bark-tanned prepared hide a year. Its time afloat counts by the water it was in, so days in cold water spent little of its keeping. A day ashore in the sun dries a cover through, and it keeps afresh, as untanned covers were dried every day; each hide rots no further than its own part of the cover. A wet cover is heavier by the water it takes up.
+- A hide cover, the [coracle](Coracle)'s and the [hide currach](Hide-Currach)'s, seeps at every seam where one hide meets the next once the grease is gone: about 13 litres a game hour a seam across a currach or a coracle. Rendered fat keeps them tight for two and a half days afloat; look at the boat to see when the next greasing is due.
+- A cover rots by the hides it is sewn from. Untanned hide, raw, soaked or scraped, keeps a day afloat in water at 20 °C and two weeks at 5 °C, then rots through in as long again, cracking the boat everywhere; salted hide keeps half a day more, oiled hide and pelts three times as long, and bark-tanned prepared hide a year. Its time afloat counts by the water it was in, so days in cold water spent little of its keeping. A day ashore in the sun dries a cover through, and it keeps afresh, as untanned covers were dried every day; each hide rots no further than its own part of the cover. A wet cover is heavier by the water it takes up.
 - The [reed boat](Reed-Boat) soaks up 33 kg of water a day afloat, sitting deeper as it does and its ends sagging: after a day its rider sits awash, and left alone it is on the bottom within four. Ashore under the open sky, in daylight and no rain, it dries out, but each drying leaves a third of what it drove out behind as rot that never dries. Soaked and dried a few times, it sinks the moment it is launched.
 
 A [raft](Raft) has no hull to fill: a knock works its lashings loose instead, and once they are all loose it comes apart.
@@ -161,9 +161,9 @@ A [raft](Raft) has no hull to fill: a knock works its lashings loose instead, an
 
 A hull is [mended](Mending) one patch at a time, with the vessel's own material, on the place you look at.
 
-## When she is lost
+## When it is lost
 
-A flooded hull lies awash or goes to the bottom, by what she is built of and what she carries ([Swamping](Surf-and-Swamping#swamping)). A sunk vessel lies on the bottom whole, her cargo still aboard: dive down to it, or break her up there with an axe for her wreckage. Raising her is planned for [The deep](Roadmap#the-deep).
+A flooded hull lies awash or goes to the bottom, by what it is built of and what it carries ([Swamping](Surf-and-Swamping#swamping)). A sunk vessel lies on the bottom whole, its cargo still aboard: dive down to it, or break it up there with an axe for its wreckage. Raising it is planned for [The deep](Roadmap#the-deep).
 
 A vessel broken up, by one severe blow, by every place stove in, by its lashings coming loose, its reed torn through or an axe on the bottom, is gone. What it was built from scatters on the water as wreckage, and like any dropped item it lasts about ten minutes:
 
@@ -176,7 +176,7 @@ A vessel broken up, by one severe blow, by every place stove in, by its lashings
 | [Coracle](Coracle) | a few laths |
 | [Birch-bark canoe](Birch-Bark-Canoe) | some bark and a stick |
 | [Hide currach](Hide-Currach) | a few laths |
-| [Outrigger canoe](Outrigger-Canoe) | firewood, a rope, some linen, and planks once she has washstrakes |
+| [Outrigger canoe](Outrigger-Canoe) | firewood, a rope, some linen, and planks once it has washstrakes |
 
 Whatever it carried goes with it.
 

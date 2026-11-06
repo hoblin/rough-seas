@@ -182,7 +182,10 @@ ACT
   bin/game close             close open dialogs
   bin/game link HREF         follow a link as a click in the game's text does: handbook://PAGECODE
                              opens a handbook page (handbook://tab-guide a tab), handbooksearch://TEXT
-                             searches it. A wrong protocol lists the known ones
+                             searches it. Replies with the page opened, "No page" for a code with no
+                             page (the game fails silently there), or what the search found; a
+                             search finds names in the client's language. A wrong protocol lists
+                             the known ones. bin/handbook-links checks every link of the mod
   bin/game recipe OUTPUT [FROM]
                              on the open handbook page, hold the crafting grid that makes OUTPUT
                              (roughseas:dugout-oak) still on that recipe, out of FROM when given
