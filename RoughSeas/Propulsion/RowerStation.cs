@@ -30,7 +30,7 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
     {
         if (BedMetres is not { } bed || downward <= 0 || poling.DrawnPoleMetres <= 0) return null;
         var footed = Math.Min(bed, poleMetres * downward - poling.HandsAboveWaterMetres);
-        var lifted = drawnShare is { } share ? config.Strokes[poling.Stroke].Lift(share) : 0;
+        var lifted = drawnShare is { } share ? config.Strokes[poling.Stroke].Lift(share) : 1;
         return (footed - poling.DrawnBedMetres) * (1 - lifted) / downward - (poleMetres - poling.DrawnPoleMetres);
     }
 

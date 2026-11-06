@@ -27,13 +27,15 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
 
     public void Pace(Entity rower, double pace)
     {
-        if (playing is not { } stroke || rower.AnimManager?.GetAnimationState(stroke.Code) is not { Active: true } running ||
-            rower.Properties.Client?.AnimationsByMetaCode?.GetValueOrDefault(stroke.Code) is not { } drawn)
+        if (playing is not { } stroke || rower.Properties.Client?.AnimationsByMetaCode?.GetValueOrDefault(stroke.Code) is not { } drawn) return;
+
+        IAnimationManager?[] animators = rower is EntityPlayer player ? [player.TpAnimManager, player.SelfFpAnimManager] : [rower.AnimManager];
+        foreach (var animator in animators)
         {
-            return;
+            if (animator?.GetAnimationState(stroke.Code) is not { Active: true } running) continue;
+            if (ReferenceEquals(running.meta, drawn)) running.meta = drawn.Clone();
+            running.meta.AnimationSpeed = (float)(drawn.AnimationSpeed * pace);
         }
-        if (ReferenceEquals(running.meta, drawn)) running.meta = drawn.Clone();
-        running.meta.AnimationSpeed = (float)(drawn.AnimationSpeed * pace);
     }
 
     public bool Sided(Tool? tool) => tool != null && strokes.ContainsKey(OnSide(tool.Kind, Side.Port));
