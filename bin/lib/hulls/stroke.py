@@ -43,6 +43,11 @@ def propelled(stroke):
     return json.loads(PROPULSION.read_text())["strokes"][stroke]
 
 
+@cache
+def poled():
+    return json.loads(PROPULSION.read_text())["pole"]
+
+
 def speed(stroke, frames, per_loop=1):
     return round(frames * propelled(stroke)["strokesPerMinute"] / per_loop / 60 / FRAMES_A_SECOND, 4)
 
@@ -289,7 +294,7 @@ def fit(rower, elements, strokes, grips, lean):
             for side, fits in holds.items():
                 _, turned, _ = fits[(1, -1).index(held_as[side])]
                 for hand, at in zip(reach[side][0], turned):
-                    swivels.setdefault((side, place(hand)), at)
+                    swivels.setdefault((side, place(hand)), (at, stroke["code"]))
     vessel, player = [], []
     for stroke, poses, placed, bodies, hands_on, reach, holds in staged:
         faults = {}
@@ -297,8 +302,11 @@ def fit(rower, elements, strokes, grips, lean):
             arm = rower.arms[side]
             thumb = held_as[side]
             thumbs = [tuple(thumb * c for c in axis) for axis in axes]
-            ends = tuple(swivels.get((side, place(hand))) for hand in (hands[0], hands[-1]))
-            if looping(stroke) or ends == (None, None):
+            ends = tuple(swivels.get((side, place(hand)), (None, None))[0] for hand in (hands[0], hands[-1]))
+            met, by = swivels.get((side, place(hands[0])), (None, None))
+            if looping(stroke) and by not in (None, stroke["code"]):
+                arms = arm.stroke(bodies, hands, [thumbs], (met, None), loops=True)[0][0]
+            elif looping(stroke) or ends == (None, None):
                 arms = holds[side][(1, -1).index(thumb)][0]
             else:
                 arms = arm.stroke(bodies, hands, [thumbs], ends)[0][0]
