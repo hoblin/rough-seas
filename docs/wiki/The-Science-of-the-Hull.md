@@ -77,8 +77,6 @@ A rowed, paddled or poled hull goes where her rower's thrust meets the water's d
 - **Rain puts it out.** Rain douses the fire as it douses any of the game's fires, and no fire burns in a hollow with water in it.
 - **The blank weighs.** Until it is cut out and hewn away, the wood is there: a fresh oak blank is the square trunk, 3375 kg, and floats 0.66 m deep, against the finished dugout's 252 kg, 373 litres of wood around a 1298-litre hold. Her depth and waterplane go from the trunk's to the hull's a sixth a hewing. A blank of a wood heavier than water sinks.
 - **The uncut wood backs her.** Below the cut, a blow on her side or bottom meets the solid wood behind the 5 cm wall as well as the wall, and resists by the thickness of both: a copper axe that would stave in a finished side only cracks a fresh blank.
-- **Launching.** A person pushes about 300 N steadily (Snook and Ciriello, *Ergonomics* 34, 1991), and wood slides over wet sand or mud at a friction of about 0.4. One push carries that force a step, 0.6 m, so it slides the vessel as far as that work moves her weight against the friction: 17 cm for an oak dugout, under 2 cm for a fresh blank.
-
 ## Building a bark canoe
 
 - **One sheet, no saw.** The peoples of the northern woodlands built their canoes with stone and bone tools, no saw: bark peeled from a standing birch, a frame split from cedar with wedges, lashings of spruce root and seams of spruce gum (Adney and Chapelle, *The Bark Canoes and Skin Boats of North America*, 1964). In the game the bark comes off in one sheet, which is the canoe from the start; vanilla rope stands in for the root and vanilla's pitch glue, resin cooked with charcoal, for the gum.

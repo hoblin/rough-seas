@@ -55,7 +55,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
    ![The first boom across](images/outrigger-canoe/build-boom.webp)
 
 4. **Lay the booms.** Hold the other two poles on the outrigger for the fore and aft booms. Each is a crooked pole that rests on the gunwales and on top of the logs, as the curved booms of Hawaii and the Marshall Islands came down to the float. All the poles must be of one wood.
-5. **Hew the float.** Hold an axe on the outrigger. Each pass hews the float all round, top, sides and bottom alike, from the square logs toward a round log 30 cm across with its ends pointed and lifted. Six passes take it down from 3000 litres of wood to 196. The booms settle onto it as it shrinks: they never hang in the air and never pass through wood. While the float is still the logs, the outrigger weighs two tonnes and barely moves.
+5. **Hew the float.** Hold an axe on the outrigger. Each pass hews the float all round, top, sides and bottom alike, from the square logs toward a round log 30 cm across with its ends pointed and lifted. Six passes take it down from 3000 litres of wood to 196. The booms settle onto it as it shrinks: they never hang in the air and never pass through wood.
 
    ![Three passes hewn, the booms settled onto the float](images/outrigger-canoe/build-hewing.webp)
 
@@ -75,7 +75,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
 
    ![Washstrakes sewn along the sides and across the ends](images/outrigger-canoe/build-strakes.webp)
 
-Push it into the water with Shift + right-click and an empty hand. It is heavy and moves a few centimetres a push over dry ground, so rig it at the water's edge. An outrigger from before the build loads finished, with its washstrakes on, as it was built.
+Walk into it from the shore side to push it into the water. It can't be picked up, so rig the dugout where it was built, at the water's edge. An outrigger from before the build loads finished, with its washstrakes on, as it was built.
 
 ## Its neighbours
 

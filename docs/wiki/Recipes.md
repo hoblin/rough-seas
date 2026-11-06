@@ -8,11 +8,11 @@ Comes off a birch log with a knife, leaving the log debarked. It [mends](Mending
 
 ## Reed boat
 
-Not in the grid any more: two reed bundles are laid by the water and bound into one with rope. See [how it is built](Reed-Boat#how-it-is-built).
+Not in the grid any more: two reed bundles are laid side by side and bound into one with rope. See [how it is built](Reed-Boat#how-it-is-built).
 
 ## Reed bundle
 
-Cattail tops, papyrus tops or thatch, the reed that tule gives, bound with two ropes into a bundle of that plant. Two of them, laid side by side by the water and bound with rope, make a [reed boat](Reed-Boat#how-it-is-built).
+Cattail tops, papyrus tops or thatch, the reed that tule gives, bound with two ropes into a bundle of that plant. Two of them, laid side by side and bound with rope, make a [reed boat](Reed-Boat#how-it-is-built).
 
 ![A reed bundle from 144 cattail tops, papyrus tops or thatch, two ropes and a knife](images/recipes/reed-bundle.png)
 
