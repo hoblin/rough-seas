@@ -40,7 +40,7 @@ You bind a reed boat where its bundles lie, anywhere: it is light enough to carr
 
 ![The whole build, from one bundle to the finished boat](images/reed-boat/build-reed-boat.webp)
 
-1. **Bind two bundles.** In the crafting grid, 144 cattail tops, papyrus tops or thatch and two ropes make a three-metre bundle, tied every quarter metre; the knife cuts and trims ([recipe](Recipes#reed-bundle)). A bundle keeps the colour of its plant: olive cattail, green papyrus or straw-pale tule.
+1. **Bind two bundles.** In the crafting grid, 144 cattail tops, papyrus tops or thatch and two ropes make a three-metre bundle, tied every quarter metre; the knife cuts and trims ([recipe](Recipes#reed-bundle)). The plant is bound dried, so a bundle has its dry colour wherever you cut it: brown cattail, pale straw papyrus or olive tule.
 2. **Lay them side by side.** Place a bundle on the ground. It lies along the way you look. Place the second bundle on it, and it lies next to the first, of the same plant or another. Each bundle is three blocks long.
 
    ![One bundle laid on the shore](images/reed-boat/build-bundle.webp)
