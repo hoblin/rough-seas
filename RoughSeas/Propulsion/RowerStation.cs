@@ -26,10 +26,13 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
 
     public double? BedMetres { get; private set; }
 
-    public double? Slide(double poleMetres, double downward) =>
-        BedMetres is { } bed && downward > 0 && poling.DrawnPoleMetres > 0
-            ? (bed - poling.DrawnBedMetres) / downward - (poleMetres - poling.DrawnPoleMetres)
-            : null;
+    public double? Slide(double poleMetres, double downward, double? drawnShare)
+    {
+        if (BedMetres is not { } bed || downward <= 0 || poling.DrawnPoleMetres <= 0) return null;
+        var footed = Math.Min(bed, poleMetres * downward - poling.HandsAboveWaterMetres);
+        var lifted = drawnShare is { } share ? config.Strokes[poling.Stroke].Lift(share) : 0;
+        return (footed - poling.DrawnBedMetres) * (1 - lifted) / downward - (poleMetres - poling.DrawnPoleMetres);
+    }
 
     public Propulsor? Propulsor(Tool? tool, int way, out string? refusal)
     {
@@ -45,7 +48,9 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
         var blocks = (int)Math.Ceiling(reach) + 1;
         var plant = way < 0 ? poling.PlantAsternMetres : poling.PlantAheadMetres;
         var foot = (double depth) => plant + Math.Sign(way) * pole.Footing(depth + hands);
-        var depth = depthAt(foot(depthAt(plant, poling.PlantAcrossMetres, blocks)), poling.PlantAcrossMetres, blocks);
+        var sounded = (double depth) => depthAt(foot(depth), poling.PlantAcrossMetres, blocks);
+        var first = sounded(depthAt(plant, poling.PlantAcrossMetres, blocks));
+        var depth = Math.Max(first, sounded(first));
         BedMetres = Math.Min(depth, reach);
         refusal = depth > reach ? $"a {pole.Metres:F0} m pole reaches {reach:F1} m, the water is deeper" : null;
         return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole, depth, hands, waterDensity), sweepMetres) : null;

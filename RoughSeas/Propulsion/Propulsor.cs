@@ -10,7 +10,7 @@ public abstract class Propulsor(Stroke stroke)
 
     public Push Push(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts, double? drawnShare = null) =>
         Pushed(ahead, turn, side, metresPerSecond, radiansPerSecond, Math.Max(0, watts - stroke.LiftWatts(metresPerSecond)),
-            (direction, speed, power) => direction == 0 ? 0 : direction * stroke.Shove(stroke.Thrust(direction * speed, power), drawnShare));
+            (direction, speed, power) => direction == 0 ? 0 : direction * stroke.Shove(stroke.Thrust(direction * speed, power), Math.Abs(speed), drawnShare));
 
     protected abstract Push Pushed(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts, Thrusting along);
 

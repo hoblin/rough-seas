@@ -16,9 +16,9 @@ public abstract class Stroke(string code, StrokeConfig config)
 
     public virtual double LiftWatts(double metresPerSecond) => 0;
 
-    public virtual double Pace(double metresPerSecond) => 1;
+    public virtual double Pace(double metresPerSecond, double? drawnShare) => 1;
 
-    public virtual double Shove(double meanNewtons, double? drawnShare) => meanNewtons;
+    public virtual double Shove(double meanNewtons, double metresPerSecond, double? drawnShare) => meanNewtons;
 
     public abstract double Thrust(double metresPerSecond, double watts);
 
@@ -55,7 +55,8 @@ public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, doub
 {
     public override double LiftWatts(double metresPerSecond) => pole.LiftJoules(depthMetres, waterDensity) / StrokeSeconds(metresPerSecond);
 
-    public override double Pace(double metresPerSecond) => DrawnSeconds / StrokeSeconds(metresPerSecond);
+    public override double Pace(double metresPerSecond, double? drawnShare) =>
+        drawnShare is { } share && Config.Driving(share) ? Config.DriveShare * DrawnSeconds / ShoveSeconds(metresPerSecond) : 1;
 
     private double DrawnSeconds => 60 / StrokesPerMinute;
 
@@ -68,14 +69,10 @@ public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, doub
 
     private double StrokeSeconds(double metresPerSecond) => ShoveSeconds(metresPerSecond) + RecoverySeconds;
 
-    public override double Shove(double meanNewtons, double? drawnShare)
-    {
-        if (drawnShare is not { } share) return meanNewtons;
-        var drive = Config.DriveShare;
-        // The animation starts halfway through the recovery, as bin/lib/hulls/held.py's PolePath draws it.
-        var phase = (share + drive + (1 - drive) / 2) % 1;
-        return phase < drive ? meanNewtons / drive : 0;
-    }
+    public override double Shove(double meanNewtons, double metresPerSecond, double? drawnShare) =>
+        drawnShare is not { } share ? meanNewtons
+        : Config.Driving(share) ? meanNewtons * StrokeSeconds(metresPerSecond) / ShoveSeconds(metresPerSecond)
+        : 0;
 
     public override double Thrust(double metresPerSecond, double watts)
     {

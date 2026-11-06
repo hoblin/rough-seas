@@ -69,7 +69,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         : (controls.Forward ? 1 : controls.Backward ? -1 : 0, controls.Left ? 1 : controls.Right ? -1 : 0);
 
     public double? PoleSlide(Entity rower, double poleMetres, double downward) =>
-        Driving && entity.GetBehavior<EntityBehaviorSeatable>()?.Controller == rower ? station.Slide(poleMetres, downward) : null;
+        Driving && entity.GetBehavior<EntityBehaviorSeatable>()?.Controller == rower ? station.Slide(poleMetres, downward, strokes.DrawnShare(rower)) : null;
 
     public static int Way(int ahead, int turn) => ahead < 0 || (ahead == 0 && turn < 0) ? -1 : 1;
 
@@ -112,7 +112,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var push = stroking && !changing
             ? propulsor!.Push(ahead, turn, side, speed, spin, metabolic * propulsor.Stroke.GrossEfficiency, strokes.DrawnShare(rower))
             : default;
-        strokes.Pace(rower, stroking ? propulsor!.Stroke.Pace(speed) : 1);
+        strokes.Pace(rower, stroking ? propulsor!.Stroke.Pace(Math.Abs(speed), strokes.DrawnShare(rower)) : 1);
         EffortWatts = stroking ? metabolic : 0;
         Stroke = stroking ? propulsor!.Stroke : null;
         Note(boat, rower, propulsor, refusal, push, water, speed, spin, ahead, turn, sided ? side : null);

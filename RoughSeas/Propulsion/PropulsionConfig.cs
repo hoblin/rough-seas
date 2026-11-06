@@ -28,6 +28,17 @@ public class StrokeConfig
     public double PushNewtons;
     public double PushMetres;
     public double VeerDegrees;
+
+    // A drawn stroke starts halfway through its recovery, as bin/lib/hulls/held.py's PolePath draws it.
+    public double Phase(double drawnShare) => (drawnShare + DriveShare + (1 - DriveShare) / 2) % 1;
+
+    public bool Driving(double drawnShare) => Phase(drawnShare) < DriveShare;
+
+    public double Lift(double drawnShare)
+    {
+        var recovered = (Phase(drawnShare) - DriveShare) / (1 - DriveShare);
+        return recovered < 0 ? 0 : 0.5 - 0.5 * Math.Cos(Math.PI * Math.Min(2 * recovered, 2 - 2 * recovered));
+    }
 }
 
 public class PolingConfig

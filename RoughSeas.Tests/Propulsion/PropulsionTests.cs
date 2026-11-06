@@ -92,9 +92,9 @@ public class PropulsionTests
         var pole = Poled("seatedpole", 3, 1);
         var shares = Enumerable.Range(0, 300).Select(i => (double?)(i / 300.0)).ToList();
 
-        Assert.Equal(0, pole.Shove(100, 0));
-        Assert.Equal(100, shares.Average(share => pole.Shove(100, share)), 0);
-        Assert.Equal(0.5, shares.Count(share => pole.Shove(100, share) > 0) / 300.0, 2);
+        Assert.Equal(0, pole.Shove(100, 0.5, 0));
+        Assert.Equal(100, shares.Average(share => pole.Shove(100, 0.5, share)), 0);
+        Assert.Equal(0.5, shares.Count(share => pole.Shove(100, 0.5, share) > 0) / 300.0, 2);
     }
 
     [Theory]
@@ -106,7 +106,7 @@ public class PropulsionTests
         var pole = Poled("seatedpole", 3, 1);
         var mean = pole.Thrust(metresPerSecond, SeatedWatts);
 
-        Assert.InRange(Enumerable.Range(0, 30).Max(i => pole.Shove(mean, i / 30.0)), 0, Fixtures.Propulsion.Strokes["seatedpole"].PushNewtons + 1e-9);
+        Assert.InRange(Enumerable.Range(0, 30).Max(i => pole.Shove(mean, metresPerSecond, i / 30.0)), 0, Fixtures.Propulsion.Strokes["seatedpole"].PushNewtons + 1e-9);
     }
 
     [Fact]
@@ -123,8 +123,12 @@ public class PropulsionTests
     {
         var pole = Poled("seatedpole", 3, 1);
 
-        Assert.Equal(1, pole.Pace(0.5), 6);
-        Assert.True(pole.Pace(2) > 1.2);
+        const double inTheShove = 0.5;
+        const double inTheRecovery = 0;
+
+        Assert.Equal(1, pole.Pace(0.5, inTheShove), 6);
+        Assert.True(pole.Pace(2, inTheShove) > 1.2);
+        Assert.Equal(1, pole.Pace(2, inTheRecovery), 6);
         Assert.True(pole.LiftWatts(2) > pole.LiftWatts(0.5));
     }
 
@@ -187,6 +191,15 @@ public class PropulsionTests
 
         Assert.NotNull(shelvingAstern.Propulsor(pole, 1, out _));
         Assert.Null(shelvingAstern.Propulsor(pole, -1, out _));
+    }
+
+    [Fact]
+    public void APoleOverAShelfEdgeTakesTheDeeperOfTheBedsItsFootCouldLandOn()
+    {
+        var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
+        var shelfAstern = Fixtures.Station("reedboat", along => along > 1 ? 1 : 3);
+
+        Assert.Null(shelfAstern.Propulsor(pole, 1, out _));
     }
 
     [Fact]
