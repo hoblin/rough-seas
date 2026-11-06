@@ -21,7 +21,10 @@ A pole reaches the bottom at about these depths. From the reed boat, poled sitti
 - With a pole in hand you stand up to pole, as polers do, wherever the vessel bears a person standing: on the raft, in the dugout, the outrigger and the currach, in the bark canoe behind her middle thwart, and in the middle of the coracle. The reed boat is too narrow to stand on, so you pole her sitting. Standing, your legs drive the shove too, so a pole drives a vessel harder than it does from a seat.
 - A paddle works on one side and turns her away from it. Holding <kbd>W</kbd>, the paddler keeps her course as real paddlers do: once the bow has swung off it, he finishes the stroke he is in and changes sides by himself, carrying the paddle over the bow while his hands change grips, a stroke without drive. The bow wanders a little either side of the course; a short hull changes sides every few strokes, a long one less often. <kbd>A</kbd> and <kbd>D</kbd> put him on the side that turns her. On the raft you kneel by the side you paddle and shuffle across when you change sides, since from her middle the paddle can't reach past her logs.
 - Let go of the keys, or press the other way, and you finish the stroke you are in, or the change of sides, first: a rower doesn't stop a stroke halfway.
-- Past a pole's reach the stroke finds nothing: she glides on and slows.
+- A pole drives her only while it shoves off the bottom, so she surges with each shove and glides between them. Hold <kbd>W</kbd> for a few strokes and she gathers way.
+- To go astern, hold <kbd>S</kbd>: you plant the pole ahead of you and shove it toward the bow.
+- The pole slides through your hands until its foot stands on the bottom, so a long pole stands high above you in shallow water.
+- Past a pole's reach the stroke finds nothing, and the game tells you so: "Too deep for a 5 m pole". She glides on and slows; take a longer pole or a paddle.
 - A pole or a paddle stows aboard every vessel with <kbd>Ctrl</kbd> + right-click on her, one at a time; the raft keeps one on its oar rest.
 - Paddling, poling and rowing make you hungry, about as much as sprinting does.
 - A round, short hull turns easily and goes slowly: the coracle spins on the spot. A long one runs straight and turns slowly; the outrigger's float makes her slowest of all to turn.
@@ -42,11 +45,11 @@ One rower, the average finisher of a canoe marathon, on calm water with nothing 
 | Vessel | Paddled | Poled | Turns |
 | --- | --- | --- | --- |
 | [Raft](Raft) | 0.45 m/s | 0.8 m/s | 17° a second |
-| [Reed boat](Reed-Boat) | 2.1 m/s | 2.3 m/s, sitting | 33° a second |
-| [Dugout](Dugout) | 1.7 m/s | 2.2 m/s | 19° a second |
-| [Coracle](Coracle) | 1 m/s, sculled | 1.2 m/s | 177° a second |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 2.1 m/s | 2.8 m/s | 26° a second |
-| [Hide currach](Hide-Currach) | 2.4 m/s, rowed | 2.4 m/s | 39° a second, rowed |
-| [Outrigger canoe](Outrigger-Canoe) | 1.5 m/s | 1.9 m/s | 14° a second |
+| [Reed boat](Reed-Boat) | 2.1 m/s | 2.5 m/s, sitting | 33° a second |
+| [Dugout](Dugout) | 1.7 m/s | 2.4 m/s | 19° a second |
+| [Coracle](Coracle) | 1 m/s, sculled | 1.3 m/s | 177° a second |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 2.1 m/s | 2.9 m/s | 26° a second |
+| [Hide currach](Hide-Currach) | 2.4 m/s, rowed | 2.5 m/s | 39° a second, rowed |
+| [Outrigger canoe](Outrigger-Canoe) | 1.5 m/s | 2.1 m/s | 14° a second |
 
-A metre a second is 3.6 km/h; the voyageurs' canoes made some 2.2 m/s on the lakes. Vanilla rows every hull at the same 3 m/s, and sails each at its own pace, so most of these go slower than vanilla, the raft at a seventh of its pace and the bark canoe poled at nine tenths; the outrigger, sail and all, goes twice as fast. How these speeds come about, and where each number comes from, is on [the science of the hull](The-Science-of-the-Hull#driving-her).
+A metre a second is 3.6 km/h; the voyageurs' canoes made some 2.2 m/s on the lakes. Vanilla rows every hull at the same 3 m/s, and sails each at its own pace, so most of these go slower than vanilla, the raft at a seventh of its pace and the bark canoe poled at nearly its pace; the outrigger, sail and all, goes twice as fast. How these speeds come about, and where each number comes from, is on [the science of the hull](The-Science-of-the-Hull#driving-her).

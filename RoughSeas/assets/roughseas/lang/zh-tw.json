@@ -88,6 +88,7 @@
     "shipyard-planks-one-wood": "它的舷側板是另一種木頭：裝上同一種木頭的木板",
     "shipyard-lath-short": "對這個部件太短：劈一排更長的原木",
     "shipyard-pole-short": "對這個部件太短：劈一排更長的原木",
+    "propulsion-pole-too-deep": "水太深，{0}公尺的撐篙搆不到底",
     "shipyard-sew-hide": "縫上一張獸皮",
     "shipyard-frame-setting": "骨架還沒定形：等它的木條乾透",
     "shipyard-turn-over": "把它翻過來",

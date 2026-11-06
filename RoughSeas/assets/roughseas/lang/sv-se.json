@@ -86,6 +86,7 @@
     "shipyard-planks-one-wood": "Hennes stänkbord är av ett annat träslag: passa in plankor av ett träslag",
     "shipyard-lath-short": "För kort för den här delen: klyv en längre rad",
     "shipyard-pole-short": "För kort för den här delen: klyv en längre rad",
+    "propulsion-pole-too-deep": "För djupt för en stake på {0} m",
     "shipyard-sew-hide": "Sy på en hud",
     "shipyard-frame-setting": "Stommen har inte satt sig än: vänta tills ribborna torkat",
     "shipyard-turn-over": "Vänd henne rätt",

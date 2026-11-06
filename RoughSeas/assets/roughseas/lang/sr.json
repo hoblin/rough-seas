@@ -86,6 +86,7 @@
     "shipyard-planks-one-wood": "Надставне даске су му од другог дрвета: намештај даске од једног дрвета",
     "shipyard-lath-short": "Прекратка за овај део: расцепи дужи низ",
     "shipyard-pole-short": "Прекратка за овај део: расцепи дужи низ",
+    "propulsion-pole-too-deep": "Сувише дубоко за мотку од {0} m",
     "shipyard-sew-hide": "Пришиј кожу",
     "shipyard-frame-setting": "Костур још није очврснуо: сачекај да му се летве осуше",
     "shipyard-turn-over": "Преврни га",

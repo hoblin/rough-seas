@@ -11,10 +11,10 @@
     },
     "pole": {
         "workingDegrees": 20,
-        "dressedMetres": 0.09,
+        "workedMetres": 0.05,
         "sources": {
             "workingDegrees": "A punt pole is dropped close to the side and shoved back against the bed (Nicolson 2008, Basic Punting for Darwinians); tilted forward only when the punt is slow, it shoves leaning back some 20° from upright and reaches cos 20° of its length down: less the hands' height over the water, a 3 m pole works to about 2 m of water and a 5 m one to about 4 m",
-            "dressedMetres": "A pole split from the row and dressed is 8 to 10 cm across (the split's design); what it weighs is that by its length at its wood's density"
+            "workedMetres": "Worked as a tool, a pole is a pole made for pushing a boat, round and about 5 cm across, whatever the dressed pole the row split into (the maintainers' decision, #292): ash boat poles are sold 35 mm across at 2.4 m and 46 mm at 3.6 m (AG ash boat poles, E232 and E230). What it lifts each stroke is that round by its length at its wood's density"
         }
     },
     "strokes": {
@@ -28,8 +28,8 @@
                 "strokesPerMinute": "A good punter, standing, takes 24 minutes for the 0.9 miles from Darwin to Jesus lock, 1 m/s (Nicolson 2008); a shove carries the punt about the 2 m the pole travels from the bed ahead of the hands to behind them, and she glides as far again while it comes up: some 4 m a stroke, 15 a minute",
                 "driveShare": "The pole pushes on the bed for half the stroke, the hands walking up it to its top end, and is drawn forward through them like a pool cue for the other half (Nicolson 2008; Paddle Canada, Introduction to Canoe Poling Skills)",
                 "pushNewtons": "A sustained two-handed push by a standing adult, about 300 N (Snook and Ciriello 1991, maximum acceptable forces)",
-                "grossEfficiency": "No one has measured poling. A canoe poler stands and drives with the legs, bending the knees, and the arms and trunk (Paddle Canada; ACA, Canoe Poling): the nearest measured stroke is the stand-up paddler's, 13.4 ± 2.3% gross at 45 strokes a minute, its slowest rate measured and the nearest to poling's 15 (Castañeda-Babarro et al. 2020, International Journal of Environmental Research and Public Health 17:4893); the Venetian gondolier, rowing standing, spends 9.2 to 14.5% (Capelli et al. 1990). Bringing the pole up costs its own lift each stroke on top: its middle rises half the way from the bed to the hands, and the same effort drives a punt faster with a paddle than with a pole because of it (Nicolson 2008)",
-                "pushMetres": "A shove lasts while the hands travel the pole's planted length, about the 2 m it travels from the bed ahead of the hands to behind them (Nicolson 2008); then it is brought up, and a hull that runs faster than the shove leaves less time to push in each stroke"
+                "grossEfficiency": "No one has measured poling. A canoe poler stands and drives with the legs, bending the knees, and the arms and trunk (Paddle Canada; ACA, Canoe Poling): the nearest measured stroke is the stand-up paddler's, 13.4 ± 2.3% gross at 45 strokes a minute, its slowest rate measured and the nearest to poling's 15 (Castañeda-Babarro et al. 2020, International Journal of Environmental Research and Public Health 17:4893); the Venetian gondolier, rowing standing, spends 9.2 to 14.5% (Capelli et al. 1990). Bringing the pole up costs its own lift each stroke on top, its foot raised from the bed to the surface less what the water bears of it, and the same effort drives a punt faster with a paddle than with a pole because of it (Nicolson 2008)",
+                "pushMetres": "A shove lasts while the hands travel the pole's planted length, about the 2 m it travels from the bed ahead of the hands to behind them (Nicolson 2008); then it is brought up, and a hull that runs faster than the shove leaves less time to push in each stroke. The hands walk up the pole through it, so a pole too short for the water ends the shove when its top reaches the upper hand. Faster than the shove's travel in its drawn time, the shove ends sooner and the punter plants again sooner: the beat quickens with her"
             }
         },
         "seatedpole": {

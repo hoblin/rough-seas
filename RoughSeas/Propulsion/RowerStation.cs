@@ -6,10 +6,11 @@ namespace RoughSeas.Propulsion;
 
 /// <summary>
 /// Where her rower sits and what drives her from there: the tools she takes, how far a sweep reaches round her, how
-/// high his hands are over the water, and her own oars when she has them. The water's depth under her comes from
-/// <paramref name="depthWithin"/>, which measures from the surface to the bed, down to a limit in blocks.
+/// high his hands are over the water, and her own oars when she has them. The water's depth at a point of her hull,
+/// along and across her in metres, comes from <paramref name="depthAt"/>, which measures from the surface to the bed,
+/// down to a limit in blocks.
 /// </summary>
-public sealed class RowerStation(JsonObject attributes, PropulsionConfig config, double waterDensity, Func<int, double> depthWithin)
+public sealed class RowerStation(JsonObject attributes, PropulsionConfig config, double waterDensity, Func<double, double, int, double> depthAt)
 {
     public const string OwnOars = "tholeoar";
 
@@ -23,19 +24,36 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
 
     public SeatPose? Stance(string? kind) => kind == Pole.Code ? poling.Stance?.Pose : null;
 
-    public Propulsor? Propulsor(Tool? tool, out string? refusal)
+    public double? BedMetres { get; private set; }
+
+    public double? Slide(double poleMetres, double downward, double? drawnShare)
     {
-        if (tool != null) return tool.Drive(this, out refusal);
+        if (BedMetres is not { } bed || downward <= 0 || poling.DrawnPoleMetres <= 0) return null;
+        var footed = Math.Min(bed, poleMetres * downward - poling.HandsAboveWaterMetres);
+        var lifted = drawnShare is { } share ? config.Strokes[poling.Stroke].Lift(share) : 1;
+        return (footed - poling.DrawnBedMetres) * (1 - lifted) / downward - (poleMetres - poling.DrawnPoleMetres);
+    }
+
+    public Propulsor? Propulsor(Tool? tool, int way, out string? refusal)
+    {
+        BedMetres = null;
+        if (tool != null) return tool.Drive(this, way, out refusal);
         return Oars(out refusal, "nothing in hand that moves her");
     }
 
-    public Propulsor? Poled(Pole pole, out string? refusal)
+    public Propulsor? Poled(Pole pole, int way, out string? refusal)
     {
         var hands = poling.HandsAboveWaterMetres;
         var reach = pole.Reach(hands);
-        var depth = depthWithin((int)Math.Ceiling(reach) + 1);
+        var blocks = (int)Math.Ceiling(reach) + 1;
+        var plant = way < 0 ? poling.PlantAsternMetres : poling.PlantAheadMetres;
+        var foot = (double depth) => plant + Math.Sign(way) * pole.Footing(depth + hands);
+        var sounded = (double depth) => depthAt(foot(depth), poling.PlantAcrossMetres, blocks);
+        var first = sounded(depthAt(plant, poling.PlantAcrossMetres, blocks));
+        var depth = Math.Max(first, sounded(first));
+        BedMetres = Math.Min(depth, reach);
         refusal = depth > reach ? $"a {pole.Metres:F0} m pole reaches {reach:F1} m, the water is deeper" : null;
-        return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole.Kilograms, depth, hands), sweepMetres) : null;
+        return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole, depth, hands, waterDensity), sweepMetres) : null;
     }
 
     public Propulsor? Paddled(double bladeSquareMetres, out string? refusal)

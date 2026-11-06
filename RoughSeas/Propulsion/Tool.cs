@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -25,7 +26,7 @@ public abstract class Tool
         };
     }
 
-    public abstract Propulsor? Drive(RowerStation station, out string? refusal);
+    public abstract Propulsor? Drive(RowerStation station, int way, out string? refusal);
 
     private static double MetresOf(CollectibleObject collectible, JsonObject attributes) =>
         double.TryParse(collectible.Variant["length"], CultureInfo.InvariantCulture, out var metres) ? metres : attributes["metres"].AsDouble();
@@ -39,11 +40,27 @@ public sealed class Pole(double metres, double density, PoleConfig config) : Too
 
     public double Metres => metres;
 
-    public double Kilograms => metres * config.DressedMetres * config.DressedMetres * density;
+    private const double Gravity = 9.81;
+
+    private double SquareMetres => Math.PI / 4 * config.WorkedMetres * config.WorkedMetres;
+
+    public double Kilograms => metres * SquareMetres * density;
 
     public double Reach(double handsAboveWaterMetres) => config.Reach(metres, handsAboveWaterMetres);
 
-    public override Propulsor? Drive(RowerStation station, out string? refusal) => station.Poled(this, out refusal);
+    public double Footing(double handsAboveBedMetres) => config.Footing(handsAboveBedMetres);
+
+    public double Travel(double handsAboveBedMetres) => config.Travel(metres, handsAboveBedMetres);
+
+    public double LiftJoules(double depthMetres, double waterDensity)
+    {
+        var weight = Kilograms * Gravity;
+        var buoyancyPerMetre = config.Slanted(waterDensity * Gravity * SquareMetres);
+        var lifted = Math.Min(depthMetres, weight / buoyancyPerMetre);
+        return weight * lifted - buoyancyPerMetre * lifted * lifted / 2;
+    }
+
+    public override Propulsor? Drive(RowerStation station, int way, out string? refusal) => station.Poled(this, way, out refusal);
 }
 
 public sealed class Paddle(double bladeSquareMetres) : Tool
@@ -52,5 +69,5 @@ public sealed class Paddle(double bladeSquareMetres) : Tool
 
     public override string Kind => Code;
 
-    public override Propulsor? Drive(RowerStation station, out string? refusal) => station.Paddled(bladeSquareMetres, out refusal);
+    public override Propulsor? Drive(RowerStation station, int way, out string? refusal) => station.Paddled(bladeSquareMetres, out refusal);
 }

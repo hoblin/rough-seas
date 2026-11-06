@@ -88,6 +88,7 @@
     "shipyard-planks-one-wood": "Her washstrakes are of another wood: fit planks of one wood",
     "shipyard-lath-short": "Too short for this piece: split a longer row",
     "shipyard-pole-short": "Too short for this piece: split a longer row",
+    "propulsion-pole-too-deep": "Too deep for a {0} m pole",
     "shipyard-sew-hide": "Sew on a hide",
     "shipyard-frame-setting": "The frame has not set yet: wait for its laths to dry",
     "shipyard-turn-over": "Turn her over",

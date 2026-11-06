@@ -12,6 +12,7 @@ public class PropulsionTests
     private const double StepSeconds = 0.05;
     private const double PoleDensity = 600;
     private const int ChangeStrokes = 1;
+    private const double SeatedHands = 0.49;
 
     [Fact]
     public void ABarkCanoeWithAPaddleCruisesAtACanoesPace()
@@ -79,10 +80,100 @@ public class PropulsionTests
     [Fact]
     public void ALongerPoleWorkingDeeperWaterSpendsMoreOfTheShoveLiftingItself()
     {
-        var shallow = new PoleStroke("pole", Fixtures.Propulsion.Strokes["pole"], 3 * 0.09 * 0.09 * PoleDensity, 1, 0.6);
-        var deep = new PoleStroke("pole", Fixtures.Propulsion.Strokes["pole"], 5 * 0.09 * 0.09 * PoleDensity, 3.5, 0.6);
+        var shallow = new HeldTool(Poled("pole", 3, 1), 1);
+        var deep = new HeldTool(Poled("pole", 5, 3.5), 1);
 
-        Assert.True(deep.Thrust(1, 180) < shallow.Thrust(1, 180));
+        Assert.True(deep.Push(1, 0, Side.Starboard, 1, 0, SeatedWatts).Newtons < shallow.Push(1, 0, Side.Starboard, 1, 0, SeatedWatts).Newtons);
+    }
+
+    [Fact]
+    public void APoleDrivesHerOnlyWhileTheDrawnShoveIsOnTheBedAndGivesTheSameWayOverTheStroke()
+    {
+        var pole = Poled("seatedpole", 3, 1);
+        var shares = Enumerable.Range(0, 300).Select(i => (double?)(i / 300.0)).ToList();
+
+        Assert.Equal(0, pole.Shove(100, 0.5, 0));
+        Assert.Equal(100, shares.Average(share => pole.Shove(100, 0.5, share)), 0);
+        Assert.Equal(0.5, shares.Count(share => pole.Shove(100, 0.5, share) > 0) / 300.0, 2);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(0.3)]
+    [InlineData(1.5)]
+    public void NoShovePushesHarderThanAManCanHold(double metresPerSecond)
+    {
+        var pole = Poled("seatedpole", 3, 1);
+        var mean = pole.Thrust(metresPerSecond, SeatedWatts);
+
+        Assert.InRange(Enumerable.Range(0, 30).Max(i => pole.Shove(mean, metresPerSecond, i / 30.0)), 0, Fixtures.Propulsion.Strokes["seatedpole"].PushNewtons + 1e-9);
+    }
+
+    [Fact]
+    public void APoleWhoseTopReachesTheHandsLeavesNoShove()
+    {
+        var reach = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole).Reach(SeatedHands);
+
+        Assert.True(Poled("seatedpole", 3, reach - 0.3).Thrust(1, SeatedWatts) < Poled("seatedpole", 3, 1).Thrust(1, SeatedWatts));
+        Assert.Equal(0, Poled("seatedpole", 3, reach).Thrust(1, SeatedWatts), 6);
+    }
+
+    [Fact]
+    public void AFasterHullQuickensThePolersBeatAndHisStrokeIsDrawnAsQuick()
+    {
+        var pole = Poled("seatedpole", 3, 1);
+
+        const double inTheShove = 0.5;
+        const double inTheRecovery = 0;
+
+        Assert.Equal(1, pole.Pace(0.5, inTheShove), 6);
+        Assert.True(pole.Pace(2, inTheShove) > 1.2);
+        Assert.Equal(1, pole.Pace(2, inTheRecovery), 6);
+        Assert.True(pole.LiftWatts(2) > pole.LiftWatts(0.5));
+    }
+
+    [Fact]
+    public void BackingHerAgainstHerWayOrAtTheLimitOfItsReachThePoleStaysWithinAMansPush()
+    {
+        const double inTheShove = 0.5;
+        var poled = new HeldTool(Poled("seatedpole", 3, 1), 1);
+        var atReach = Poled("seatedpole", 3, new Pole(3, PoleDensity, Fixtures.Propulsion.Pole).Reach(SeatedHands));
+
+        Assert.InRange(Math.Abs(poled.Push(-1, 0, Side.Starboard, 2, 0, SeatedWatts, inTheShove).Newtons), 0, Fixtures.Propulsion.Strokes["seatedpole"].PushNewtons + 1e-9);
+        Assert.Equal(0, atReach.Shove(atReach.Thrust(1, SeatedWatts), 1, inTheShove));
+        Assert.True(double.IsFinite(atReach.Pace(1, inTheShove)));
+    }
+
+    [Fact]
+    public void TurningWhereSheLiesTheStrokeKeepsTheBeatOfTheSweep()
+    {
+        var poled = new HeldTool(Poled("seatedpole", 3, 1), 1);
+
+        Assert.Equal(2, poled.StrokeSpeed(0, 1, 0, 2), 6);
+        Assert.Equal(0, poled.StrokeSpeed(-1, 0, 2, 0), 6);
+    }
+
+    [Fact]
+    public void TheWaterBearsPartOfAPoleBroughtUpFromTheBed()
+    {
+        const double gravity = 9.81;
+        const double depthMetres = 2;
+        var pole = new Pole(5, PoleDensity, Fixtures.Propulsion.Pole);
+        var inAir = pole.Kilograms * gravity * depthMetres;
+
+        Assert.InRange(pole.LiftJoules(depthMetres, Fixtures.WaterDensity), 0.5 * inAir, 0.8 * inAir);
+    }
+
+    [Fact]
+    public void APolerDrivingAndTurningAtOnceLiftsHisPoleOnce()
+    {
+        const double ironwood = 1100;
+        var heavy = new PoleStroke("seatedpole", Fixtures.Propulsion.Strokes["seatedpole"], new Pole(5, ironwood, Fixtures.Propulsion.Pole), 3, SeatedHands, Fixtures.WaterDensity);
+        var push = new HeldTool(heavy, 1).Push(1, 1, Side.Starboard, 0.5, 0, SeatedWatts);
+
+        Assert.InRange(heavy.LiftWatts(0.5), SeatedWatts / 2, SeatedWatts);
+        Assert.True(push.Newtons > 0);
+        Assert.True(push.NewtonMetres > 0);
     }
 
     [Fact]
@@ -108,9 +199,37 @@ public class PropulsionTests
     {
         var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
 
-        Assert.NotNull(Fixtures.Station("dugout", 1).Propulsor(pole, out _));
-        Assert.Null(Fixtures.Station("dugout", 3).Propulsor(pole, out var refusal));
+        Assert.NotNull(Fixtures.Station("dugout", 1).Propulsor(pole, 1, out _));
+        Assert.Null(Fixtures.Station("dugout", 3).Propulsor(pole, 1, out var refusal));
         Assert.Contains("deeper", refusal);
+    }
+
+    [Fact]
+    public void APoleFindsTheBedWhereItsFootIsPlantedAsternOfHimGoingAheadAndAheadOfHimGoingAstern()
+    {
+        var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
+        var shelvingAstern = Fixtures.Station("reedboat", along => along > 0.3 ? 1 : 5);
+
+        Assert.NotNull(shelvingAstern.Propulsor(pole, 1, out _));
+        Assert.Null(shelvingAstern.Propulsor(pole, -1, out _));
+    }
+
+    [Fact]
+    public void APoleOverAShelfEdgeTakesTheDeeperOfTheBedsItsFootCouldLandOn()
+    {
+        var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
+        var shelfAstern = Fixtures.Station("reedboat", along => along > 1 ? 1 : 3);
+
+        Assert.Null(shelfAstern.Propulsor(pole, 1, out _));
+    }
+
+    [Fact]
+    public void ThePoleIsPlantedAheadWhenHeBacksHerOrTurnsHerToStarboardFromRest()
+    {
+        Assert.Equal(1, EntityBehaviorPropulsion.Way(1, -1));
+        Assert.Equal(1, EntityBehaviorPropulsion.Way(0, 1));
+        Assert.Equal(-1, EntityBehaviorPropulsion.Way(-1, 1));
+        Assert.Equal(-1, EntityBehaviorPropulsion.Way(0, -1));
     }
 
     [Theory]
@@ -125,7 +244,7 @@ public class PropulsionTests
         var station = Fixtures.Station(vessel, 1);
 
         Assert.Equal("roughseas-stand", station.Stance(Pole.Code)?.Animation);
-        Assert.Equal(Pole.Code, station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), out _)!.Stroke.Code);
+        Assert.Equal(Pole.Code, station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), 1, out _)!.Stroke.Code);
     }
 
     [Fact]
@@ -144,7 +263,7 @@ public class PropulsionTests
         var station = Fixtures.Station("reedboat", 1);
 
         Assert.Null(station.Stance(Pole.Code));
-        Assert.Equal("seatedpole", station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), out _)!.Stroke.Code);
+        Assert.Equal("seatedpole", station.Propulsor(new Pole(3, PoleDensity, Fixtures.Propulsion.Pole), 1, out _)!.Stroke.Code);
     }
 
     [Fact]
@@ -160,31 +279,31 @@ public class PropulsionTests
     {
         const double oneBlockOfStillWater = 7 / 8.0;
 
-        Assert.NotNull(Fixtures.Station(vessel, oneBlockOfStillWater).Propulsor(new Pole(2, PoleDensity, Fixtures.Propulsion.Pole), out _));
+        Assert.NotNull(Fixtures.Station(vessel, oneBlockOfStillWater).Propulsor(new Pole(2, PoleDensity, Fixtures.Propulsion.Pole), 1, out _));
     }
 
     [Fact]
     public void StandingHeShovesHarderThanFromTheSeat()
     {
-        var kg = 3 * 0.09 * 0.09 * PoleDensity;
         var metabolic = Fixtures.Propulsion.Rower.MetabolicWatts;
-        var standing = new PoleStroke("pole", Fixtures.Propulsion.Strokes["pole"], kg, 1, 1);
-        var seated = new PoleStroke("seatedpole", Fixtures.Propulsion.Strokes["seatedpole"], kg, 1, 0.6);
+        var standing = new HeldTool(Poled("pole", 3, 1), 1);
+        var seated = new HeldTool(Poled("seatedpole", 3, 1), 1);
 
-        Assert.True(standing.Thrust(1.5, metabolic * standing.GrossEfficiency) > seated.Thrust(1.5, metabolic * seated.GrossEfficiency));
+        Assert.True(standing.Push(1, 0, Side.Starboard, 1.5, 0, metabolic * standing.Stroke.GrossEfficiency).Newtons >
+                    seated.Push(1, 0, Side.Starboard, 1.5, 0, metabolic * seated.Stroke.GrossEfficiency).Newtons);
     }
 
     [Fact]
     public void APaddleInTheCurrachLeavesHerRowingHerOwnOars()
     {
-        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(new Paddle(Fixtures.PaddleSquareMetres), out _));
-        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(null, out _));
+        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(new Paddle(Fixtures.PaddleSquareMetres), 1, out _));
+        Assert.IsType<TholeOars>(Fixtures.Station("currach", 5).Propulsor(null, 1, out _));
     }
 
     [Fact]
     public void AnEmptyHandMovesNoBoatWithoutOarsOfHerOwn()
     {
-        Assert.Null(Fixtures.Station("dugout", 1).Propulsor(null, out var refusal));
+        Assert.Null(Fixtures.Station("dugout", 1).Propulsor(null, 1, out var refusal));
         Assert.NotNull(refusal);
     }
 
@@ -358,6 +477,11 @@ public class PropulsionTests
     private static HeldTool Paddled(string vessel) =>
         new(Blade((string)Fixtures.PropulsionOf(vessel)["paddle"]!, Fixtures.PaddleSquareMetres), Sweep(vessel),
             (double?)Fixtures.PropulsionOf(vessel)["paddleAbeamMetres"] ?? 0);
+
+    private static double SeatedWatts => Fixtures.Propulsion.Rower.MetabolicWatts * Fixtures.Propulsion.Strokes["seatedpole"].GrossEfficiency;
+
+    private static PoleStroke Poled(string stroke, double metres, double depthMetres) =>
+        new(stroke, Fixtures.Propulsion.Strokes[stroke], new Pole(metres, PoleDensity, Fixtures.Propulsion.Pole), depthMetres, SeatedHands, Fixtures.WaterDensity);
 
     private static double Sweep(string vessel) => (double)Fixtures.PropulsionOf(vessel)["sweepMetres"]!;
 

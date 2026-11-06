@@ -88,6 +88,7 @@
     "shipyard-planks-one-wood": "Jej nadstawki są z innego drewna: dopasuj deski z jednego drewna",
     "shipyard-lath-short": "Za krótka na tę część: rozszczep dłuższy rząd",
     "shipyard-pole-short": "Za krótki na tę część: rozszczep dłuższy rząd",
+    "propulsion-pole-too-deep": "Za głęboko na tyczkę {0} m",
     "shipyard-sew-hide": "Przyszyj skórę",
     "shipyard-frame-setting": "Szkielet jeszcze nie stwardniał: poczekaj, aż jego listwy wyschną",
     "shipyard-turn-over": "Odwróć ją",

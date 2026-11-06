@@ -88,6 +88,7 @@
     "shipyard-planks-one-wood": "Byrðingar hans eru úr öðrum viði: felldu borð úr einum viði",
     "shipyard-lath-short": "Of stuttur í þennan hluta: kljúfðu lengri röð",
     "shipyard-pole-short": "Of stutt í þennan hluta: kljúfðu lengri röð",
+    "propulsion-pole-too-deep": "Of djúpt fyrir {0} m stjaka",
     "shipyard-sew-hide": "Sauma á skinn",
     "shipyard-frame-setting": "Grindin hefur ekki stífnað enn: bíddu þar til rimlarnir þorna",
     "shipyard-turn-over": "Snúa honum við",

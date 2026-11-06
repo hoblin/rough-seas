@@ -88,6 +88,7 @@
     "shipyard-planks-one-wood": "As falcas dela são de outra madeira: ajuste tábuas de uma só madeira",
     "shipyard-lath-short": "Curta demais para esta peça: rache uma fileira mais longa",
     "shipyard-pole-short": "Curta demais para esta peça: rache uma fileira mais longa",
+    "propulsion-pole-too-deep": "Fundo demais para uma vara de {0} m",
     "shipyard-sew-hide": "Costurar uma pele",
     "shipyard-frame-setting": "A armação ainda não firmou: espere as ripas dela secarem",
     "shipyard-turn-over": "Desvirá-la",

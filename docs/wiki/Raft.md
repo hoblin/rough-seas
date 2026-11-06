@@ -17,7 +17,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | | |
 | --- | --- |
 | Speed | 0.45 m/s paddled, 0.8 m/s poled: a barge ([how fast](Paddles-Poles-and-Oars#how-fast)) |
-| Turning | 17° a second, poled 28° |
+| Turning | 17° a second, poled 30° |
 | [Hull](Hull-Condition) | 1200 J in oak; bamboo a third more, aged wood half |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-she-floats) | in oak 8 cm empty, awash with a rider; in bamboo 9 cm with a rider |
