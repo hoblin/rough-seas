@@ -8,9 +8,14 @@ public abstract class Propulsor(Stroke stroke)
 {
     public Stroke Stroke => stroke;
 
-    public Push Push(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts, double? drawnShare = null) =>
-        Pushed(ahead, turn, side, metresPerSecond, radiansPerSecond, Math.Max(0, watts - stroke.LiftWatts(metresPerSecond)),
-            (direction, speed, power) => direction == 0 ? 0 : direction * stroke.Shove(stroke.Thrust(direction * speed, power), Math.Abs(speed), drawnShare));
+    public Push Push(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts, double? drawnShare = null)
+    {
+        var stroking = StrokeSpeed(ahead, turn, metresPerSecond, radiansPerSecond);
+        return Pushed(ahead, turn, side, metresPerSecond, radiansPerSecond, Math.Max(0, watts - stroke.LiftWatts(stroking)),
+            (direction, speed, power) => direction == 0 ? 0 : direction * stroke.Shove(stroke.Thrust(direction * speed, power, stroking), stroking, drawnShare));
+    }
+
+    public virtual double StrokeSpeed(int ahead, int turn, double metresPerSecond, double radiansPerSecond) => Math.Max(0, ahead * metresPerSecond);
 
     protected abstract Push Pushed(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts, Thrusting along);
 
@@ -23,6 +28,9 @@ public abstract class Propulsor(Stroke stroke)
 /// </summary>
 public sealed class HeldTool(Stroke stroke, double sweepMetres, double abeamMetres = 0) : Propulsor(stroke)
 {
+    public override double StrokeSpeed(int ahead, int turn, double metresPerSecond, double radiansPerSecond) =>
+        ahead != 0 ? Math.Max(0, ahead * metresPerSecond) : Math.Max(0, turn * radiansPerSecond * sweepMetres);
+
     protected override Push Pushed(int ahead, int turn, Side side, double metresPerSecond, double radiansPerSecond, double watts, Thrusting along)
     {
         var share = ahead != 0 && turn != 0 ? watts / 2 : watts;

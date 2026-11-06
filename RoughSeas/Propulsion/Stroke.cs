@@ -20,7 +20,7 @@ public abstract class Stroke(string code, StrokeConfig config)
 
     public virtual double Shove(double meanNewtons, double metresPerSecond, double? drawnShare) => meanNewtons;
 
-    public abstract double Thrust(double metresPerSecond, double watts);
+    public abstract double Thrust(double metresPerSecond, double watts, double? strokeMetresPerSecond = null);
 
     protected static double Solve(Func<double, double> rising, double target)
     {
@@ -40,7 +40,7 @@ public sealed class BladeStroke(string code, StrokeConfig config, double bladeSq
 {
     private readonly double drag = waterDensity / 2 * config.DragCoefficient * bladeSquareMetres;
 
-    public override double Thrust(double metresPerSecond, double watts)
+    public override double Thrust(double metresPerSecond, double watts, double? strokeMetresPerSecond = null)
     {
         if (watts <= 0 || drag <= 0) return 0;
         var drive = Config.DriveShare;
@@ -65,7 +65,9 @@ public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, doub
     private double PushMetres => Math.Min(Config.PushMetres, pole.Travel(depthMetres + handsAboveWaterMetres));
 
     private double ShoveSeconds(double metresPerSecond) =>
-        Math.Min(Config.DriveShare * DrawnSeconds, PushMetres / Math.Max(double.Epsilon, Math.Abs(metresPerSecond)));
+        PushMetres <= 0 || metresPerSecond <= 0
+            ? Config.DriveShare * DrawnSeconds
+            : Math.Min(Config.DriveShare * DrawnSeconds, PushMetres / metresPerSecond);
 
     private double StrokeSeconds(double metresPerSecond) => ShoveSeconds(metresPerSecond) + RecoverySeconds;
 
@@ -74,11 +76,12 @@ public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, doub
         : Config.Driving(share) ? meanNewtons * StrokeSeconds(metresPerSecond) / ShoveSeconds(metresPerSecond)
         : 0;
 
-    public override double Thrust(double metresPerSecond, double watts)
+    public override double Thrust(double metresPerSecond, double watts, double? strokeMetresPerSecond = null)
     {
         if (watts <= 0 || PushMetres <= 0) return 0;
         var speed = Math.Max(0, metresPerSecond);
-        var shoving = Config.PushNewtons * ShoveSeconds(speed) / StrokeSeconds(speed);
+        var stroking = strokeMetresPerSecond ?? speed;
+        var shoving = Config.PushNewtons * ShoveSeconds(stroking) / StrokeSeconds(stroking);
         return speed <= 0 ? shoving : Math.Min(shoving, watts / speed);
     }
 }

@@ -133,6 +133,27 @@ public class PropulsionTests
     }
 
     [Fact]
+    public void BackingHerAgainstHerWayOrAtTheLimitOfItsReachThePoleStaysWithinAMansPush()
+    {
+        const double inTheShove = 0.5;
+        var poled = new HeldTool(Poled("seatedpole", 3, 1), 1);
+        var atReach = Poled("seatedpole", 3, new Pole(3, PoleDensity, Fixtures.Propulsion.Pole).Reach(SeatedHands));
+
+        Assert.InRange(Math.Abs(poled.Push(-1, 0, Side.Starboard, 2, 0, SeatedWatts, inTheShove).Newtons), 0, Fixtures.Propulsion.Strokes["seatedpole"].PushNewtons + 1e-9);
+        Assert.Equal(0, atReach.Shove(atReach.Thrust(1, SeatedWatts), 1, inTheShove));
+        Assert.True(double.IsFinite(atReach.Pace(1, inTheShove)));
+    }
+
+    [Fact]
+    public void TurningWhereSheLiesTheStrokeKeepsTheBeatOfTheSweep()
+    {
+        var poled = new HeldTool(Poled("seatedpole", 3, 1), 1);
+
+        Assert.Equal(2, poled.StrokeSpeed(0, 1, 0, 2), 6);
+        Assert.Equal(0, poled.StrokeSpeed(-1, 0, 2, 0), 6);
+    }
+
+    [Fact]
     public void TheWaterBearsPartOfAPoleBroughtUpFromTheBed()
     {
         const double gravity = 9.81;
