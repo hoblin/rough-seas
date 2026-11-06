@@ -271,7 +271,7 @@ New: `capsizeBreakerBeams`, `EntityBehaviorPropulsion.Asked`.
 - `roughseas:bilge` takes `levelHeightsMetres`, the height of each level of water her shape draws; the renderer no longer reads them from the shape, so a bilge of yours without it shows no water.
 - `roughseas:rigging` takes `floatLengthMetres`, the float's length for the water it drags as she heaves; before, the float's count of logs stood in for it.
 - `roughseas:seaforces` takes `capsizeBreakerLengths`, the capsizing breaker as a share of her hull box's length. The sailboat's is 0.55, from the Wolfson Unit's trials: 4.25 m on her 7.72 m, where it was 3.3. The dugout, the bark canoe and the outrigger give `capsizeBreakerBeams` 1 in place of a breaker in metres. Our vessels leave `beamMetres` out, but for the outrigger, whose measured 2.57 m spans hull and float.
-- Our vessels' `hitboxSize` is their hull's width and height, and their `collisionBoxes` their hull box in pieces of about 1.5 m, with the outrigger's float. The raft's box is measured from vanilla's logs, 3.88 by 1.32 m, and the sailboat's from vanilla's planking, 7.72 by 2.5 m.
+- Our vessels' `hitboxSize` is their hull's width and height, and their `collisionBoxes` their hull box in pieces, with the outrigger's float. The raft's box is measured from vanilla's logs, 3.88 by 1.32 m, and the sailboat's from vanilla's planking, 7.72 by 2.5 m.
 - Measured values that changed: the sailboat's hold 1500 to 8209 litres, her deck 8 to 15.1 m², her waterplane 3 to 8.98 m² and her mast 6 to 7.0 m; windage, in m², the dugout 0.6 to 1.93, the currach 0.9 to 2.54, the bark canoe 0.5 to 1.41, the outrigger 4 to 2.76, the sailboat 6 to 11.46, the raft 1 to 0.35, the reed boat 0.3 to 0.18 and the coracle 0.5 to 0.35; the outrigger's `finSquareMetres` 0.38 to 0.15; the reed boat's depth 0.182 to 0.194 m and her seated poler's hands 0.72 to 0.49 m above the water; `backedShare` and `bottomBackedShare` the coracle's 0.47 and 0.65 to 0.4 and 0.49, the currach's 0.4 and 0.31 to 0.39 and 0.4, the reed boat's 0.1 and 0.05 to 0.27 and 0.28, and the bark canoe's 1 to 0.48 and 0.98; `seep.litresPerHourASeam` the coracle's 12 to 13, the currach's 15 to 12.6; the raft's `shell.spanMetres` 1.5 to 1.0. `paddleAbeamMetres` is measured from her middle. A gale's sea now pulls a moored sailboat about as hard as the gale's wind does, where it pulled twice as hard. A patch that sets one of these values sets it against her model, and on our own vessels the next build writes over it.
 - The drawn sea poses a vessel by her hull box's length and her beam; it took her collision box's longer side for both.
 - `HullShape`'s members are `HalfLengthMetres`, `HalfBeamMetres`, `DepthMetres`, `CentreAlongMetres`, `CentreAcrossMetres` and `KeelMetres`, where they were `HalfLength`, `HalfBeam`, `Depth`, `CentreAlong`, `CentreAcross` and `Keel`. `HullShape.FromBox(fromMetres, toMetres)` takes a box in metres from the entity's origin, and `HullShape.VoxelsPerBlock` is gone. `Seaworthiness.From(attributes, beamMetres, lengthMetres)` takes her length too.
@@ -301,6 +301,14 @@ A hewing no longer changes her at once: the inside is cut a section at a time, t
 - The one who last took an axe to her is kept as `hewer` in `roughseas:build`: only that hull throws chips at their blows.
 
 New: `hewnSectionsMetres`, `roughseas-hew`, `hewer`, `IVesselHold.DesignedLitres`.
+
+### A vessel lies where she is laid
+
+A vessel that becomes an entity, bound, hewn, rigged or spawned, stays where she was put: she no longer slides sideways off a ledge, nor sinks a block into the ground. A vessel of yours loads as it did.
+
+- Vanilla's `passivephysicsmultibox` turns only the middle of each collision box with her yaw, never its sides, so a box longer than it is wide reaches past her sides once she lies across it, and vanilla pushes her out of whatever it overlaps. Our vessels' `collisionBoxes` are now their hull box in squares as wide as she is, spread from end to end and overlapping where her length isn't a whole number of them: the reed boat's nine, the bark canoe's six, the dugout's five, the currach's four and the coracle's two. The outrigger's hull keeps five and her float takes the other five of the ten vanilla's physics holds, 0.25 m squares spread along her 3 m float.
+- Every hull's boxes start at her origin. A box starting above it, as the reed boat's did by 9 mm, rests on the ground by float rounding, and she sinks through the block under her a few ticks later.
+- A vessel of yours on `passivephysicsmultibox` meets both: cut its hull in squares, as vanilla's raft (1.5 by 1.5 m) and sailboat (2.8 by 2.8 m) are, from `y1` 0.
 
 ## What not to touch
 
