@@ -54,7 +54,7 @@
             "hullBoxMetres": {"from": [-0.742, 0, -0.53], "to": [0.742, 0.353, 0.53]},
             "hullBoxVoxels": {"from": [-11.876, 0, -8.483], "to": [11.876, 5.656, 8.483]}
         },
-        "passivephysicsmultibox": {"collisionBoxes": [{"x1": -0.53, "y1": 0, "z1": -0.742, "x2": 0.53, "y2": 0.353, "z2": 0.742}], "groundDragFactor": 1, "airDragFallingFactor": 0.5, "gravityFactor": 1.0},
+        "passivephysicsmultibox": {"collisionBoxes": [{"x1": -0.53, "y1": 0, "z1": -0.742, "x2": 0.53, "y2": 0.353, "z2": 0.318}, {"x1": -0.53, "y1": 0, "z1": -0.318, "x2": 0.53, "y2": 0.353, "z2": 0.742}], "groundDragFactor": 1, "airDragFallingFactor": 0.5, "gravityFactor": 1.0},
         "creaturecarrier": {"seats": [{"apName": "FrontSeatAP", "controllable": true, "bodyYawLimit": 0.4, "eyeHeight": 1, "selectionBox": "HullAP"}]},
         "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "HullAP", "OarAP"]},
         "rideableaccessories": {

@@ -36,14 +36,14 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 
 ## How it is built
 
-You bind a reed boat where its bundles lie, by the water. Each binding shows on the boat as you tie it.
+You bind a reed boat where its bundles lie, anywhere: it is light enough to carry to the water. Each binding shows on the boat as you tie it.
 
 ![The whole build, from one bundle to the finished boat](images/reed-boat/build-reed-boat.webp)
 
 1. **Bind two bundles.** In the crafting grid, 144 cattail tops, papyrus tops or thatch and two ropes make a three-metre bundle, tied every quarter metre; the knife cuts and trims ([recipe](Recipes#reed-bundle)). A bundle keeps the colour of its plant: olive cattail, green papyrus or straw-pale tule.
-2. **Lay them by the water.** Place a bundle on the ground next to the water, level with it or one block above. It lies along the way you look. Place the second bundle on it, and it lies next to the first, of the same plant or another. Each bundle is three blocks long.
+2. **Lay them side by side.** Place a bundle on the ground. It lies along the way you look. Place the second bundle on it, and it lies next to the first, of the same plant or another. Each bundle is three blocks long.
 
-   ![One bundle laid by the water](images/reed-boat/build-bundle.webp)
+   ![One bundle laid on the shore](images/reed-boat/build-bundle.webp)
    ![The pair side by side](images/reed-boat/build-pair.webp)
 
 3. **Tie them into a boat.** Hold a rope on the pair. The first lashing goes around both bundles, and they become the boat where they lie. From now on the boat floats and can be carried, but has no seat yet.

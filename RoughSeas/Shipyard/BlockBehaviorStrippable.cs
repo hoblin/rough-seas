@@ -1,7 +1,6 @@
 using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
@@ -12,13 +11,14 @@ namespace RoughSeas.Shipyard;
 /// A standing trunk whose bark a knife takes off as one sheet: the sheet is the canoe at the start of her build, and
 /// the trunk stands on with its wood bare.
 /// </summary>
-public class BlockBehaviorStrippable(Block block) : BlockBehavior(block)
+public class BlockBehaviorStrippable(Block block) : BlockBehavior(block), IWorkedBlock
 {
     public const string Code = "roughseas:strippable";
 
+    private const string TrunkShort = "shipyard-trunk-short";
+
     private static readonly AssetLocation PeelSound = new("game:sounds/block/leafy-picking");
 
-    private readonly HeldWork work = new();
     private string vessel = "";
     private AssetLocation debarked = null!;
     private double seconds;
@@ -33,36 +33,7 @@ public class BlockBehaviorStrippable(Block block) : BlockBehavior(block)
         trunkBlocks = properties["trunkBlocks"].AsInt();
     }
 
-    public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref EnumHandling handling)
-    {
-        if (byPlayer.InventoryManager.ActiveTool != EnumTool.Knife) return false;
-
-        handling = EnumHandling.PreventDefault;
-        if (Strippable(world, byPlayer, blockSel.Position) == null) return false;
-
-        work.Start(byPlayer.Entity);
-        return true;
-    }
-
-    public override bool OnBlockInteractStep(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref EnumHandling handling)
-    {
-        handling = EnumHandling.PreventDefault;
-        if (world.Rand.NextDouble() < 0.05) world.PlaySoundAt(PeelSound, blockSel.Position, 0, byPlayer);
-        return work.Step(secondsUsed, seconds);
-    }
-
-    public override void OnBlockInteractStop(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref EnumHandling handling)
-    {
-        handling = EnumHandling.PreventDefault;
-        if (!work.Stop(byPlayer.Entity, secondsUsed, seconds) || world.Side != EnumAppSide.Server) return;
-        if (Strippable(world, byPlayer, blockSel.Position) is { } trunk) Strip(world, byPlayer, trunk);
-    }
-
-    public override bool OnBlockInteractCancel(float secondsUsed, IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel, ref EnumHandling handling)
-    {
-        work.Stop(byPlayer.Entity);
-        return true;
-    }
+    public IWorkedHull HullAt(IWorldAccessor world, BlockPos pos) => new Standing(this, world, pos);
 
     public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection, IPlayer forPlayer, ref EnumHandling handling) =>
         ObjectCacheUtil.GetOrCreate(world.Api, $"{Code}/help", () => new[]
@@ -75,18 +46,9 @@ public class BlockBehaviorStrippable(Block block) : BlockBehavior(block)
             }
         });
 
-    private Trunk? Strippable(IWorldAccessor world, IPlayer byPlayer, BlockPos pos)
-    {
-        var trunk = Trunk.Through(pos, at => world.BlockAccessor.GetBlock(at).Id == block.Id);
-        if (trunk.Height < trunkBlocks)
-        {
-            (world.Api as ICoreClientAPI)?.TriggerIngameError(this, "shipyard-trunk-short", Lang.Get("roughseas:shipyard-trunk-short", trunkBlocks));
-            return null;
-        }
-        return LandClaims.MayBreak(byPlayer.Entity, trunk.Blocks) ? trunk : null;
-    }
+    private Trunk Through(IWorldAccessor world, BlockPos pos) => Trunk.Through(pos, at => world.BlockAccessor.GetBlock(at).Id == block.Id);
 
-    private void Strip(IWorldAccessor world, IPlayer byPlayer, Trunk trunk)
+    private void Strip(IWorldAccessor world, EntityAgent byEntity, ItemSlot slot, Trunk trunk)
     {
         var shipyard = world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
         var type = world.GetEntityType(new AssetLocation(vessel));
@@ -98,13 +60,40 @@ public class BlockBehaviorStrippable(Block block) : BlockBehavior(block)
         }
 
         foreach (var pos in trunk.Blocks) world.BlockAccessor.ExchangeBlock(bare.Id, pos);
-        var toward = BlockFacing.HorizontalFromYaw(byPlayer.Entity.Pos.Yaw + GameMath.PI);
+        var toward = BlockFacing.HorizontalFromYaw(byEntity.Pos.Yaw + GameMath.PI);
         var sheet = world.ClassRegistry.CreateEntity(type);
         sheet.Pos.SetPos(trunk.Foot.AddCopy(toward).ToVec3d().Add(0.5, 0, 0.5));
         sheet.Pos.Yaw = toward.Axis == EnumAxis.X ? 0 : GameMath.PIHALF;
         EntityBehaviorFraming.Begin(sheet);
         world.SpawnEntity(sheet);
-        byPlayer.InventoryManager.ActiveHotbarSlot.Itemstack?.Collectible.DamageItem(world, byPlayer.Entity, byPlayer.InventoryManager.ActiveHotbarSlot);
-        shipyard.Log(sheet, "stripped by {0} off a trunk of {1} blocks", byPlayer.PlayerName, trunk.Height);
+        slot.Itemstack?.Collectible.DamageItem(world, byEntity, slot);
+        shipyard.Log(sheet, "stripped by {0} off a trunk of {1} blocks", byEntity.GetName(), trunk.Height);
+    }
+
+    private sealed class Standing(BlockBehaviorStrippable strippable, IWorldAccessor world, BlockPos pos) : IWorkedHull
+    {
+        public HullWork? WorkWith(ItemSlot slot) =>
+            slot.Itemstack?.Collectible.Tool != EnumTool.Knife ? null
+            : strippable.Through(world, pos).Height < strippable.trunkBlocks ? new(strippable.seconds, TrunkShort, ShowsBar: true) { RefusalArgs = [strippable.trunkBlocks] }
+            : new(strippable.seconds, ShowsBar: true);
+
+        public void Working(EntityAgent byEntity)
+        {
+            if (world.Rand.NextDouble() < 0.05) world.PlaySoundAt(PeelSound, pos, 0, (byEntity as EntityPlayer)?.Player);
+        }
+
+        public void Lay(EntityAgent byEntity, ItemSlot slot)
+        {
+            if (WorkWith(slot) is not { Refusal: null }) return;
+
+            var trunk = strippable.Through(world, pos);
+            if (!LandClaims.MayBreak(byEntity, trunk.Blocks))
+            {
+                world.Api.ModLoader.GetModSystem<ShipyardModSystem>().Log("trunk at {0} not stripped: {1} may not break blocks on this claim", pos, byEntity.GetName());
+                return;
+            }
+
+            strippable.Strip(world, byEntity, slot, trunk);
+        }
     }
 }

@@ -76,11 +76,12 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     public override BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed) =>
         designed.Where(drop => drop.ResolvedItemstack is not { } stack || LaidAny(new DummySlot(stack))).Select(AsLaid).ToArray();
 
-    public virtual (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
+    public virtual HullWork? WorkWith(ItemSlot slot)
     {
         if (framing.Current is not { } stage || !layings[stage].Takes(slot)) return null;
 
-        return (stage.Seconds * Math.Min(layings[stage].Pieces(slot), stage.Pieces - framing.Laid(stage)), layings[stage].Refusal(slot, framing));
+        var laying = layings[stage];
+        return new(stage.Seconds * Math.Min(laying.Pieces(slot), stage.Pieces - framing.Laid(stage)), laying.Refusal(slot, framing), laying.ShowsBar);
     }
 
     public void Lay(EntityAgent byEntity, ItemSlot slot)

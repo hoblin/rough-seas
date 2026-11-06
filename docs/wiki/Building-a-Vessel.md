@@ -20,8 +20,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
 | `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current and the wind |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
-| `roughseas:launch` | client and server | a push from the shore that slides a heavy vessel into the water ([Built in place](#built-in-place)) |
-| `roughseas:framing` | client and server | a vessel laid piece by piece where she lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound by the water ([Bound in place](#bound-in-place)) |
+| `roughseas:framing` | client and server | a vessel laid piece by piece where she lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound together ([Bound in place](#bound-in-place)) |
 | `roughseas:riggable` | client and server | a finished hull that a boom laid across her joins to a float, making her the vessel she is rigged into ([Rigged in place](#rigged-in-place)) |
 | `roughseas:rigging` | client and server | that vessel, rigged piece by piece where she lies ([Rigged in place](#rigged-in-place)) |
 | `roughseas:covering` | client and server | a hull bound from laths laid out on the ground, framed and covered with hides piece by piece where it lies ([Laid out on the ground](#laid-out-on-the-ground)) |
@@ -96,7 +95,7 @@ Our vessels carry no size copied by hand. `bin/model build` measures each one of
 
 What it writes, each object's comment line giving the full list:
 
-- **The hull**: `roughseas:vesselintegrity`'s `hullBoxMetres`, and from it `hitboxSize` (the hull's width and height) and `passivephysicsmultibox`'s `collisionBoxes` (the hull box in pieces of about 1.5 m, and an outrigger's float); `weight`, each part's `share`, `swimmingOffsetY`, `depthMetres` and `waterplaneSquareMetres`.
+- **The hull**: `roughseas:vesselintegrity`'s `hullBoxMetres`, and from it `hitboxSize` (the hull's width and height) and `passivephysicsmultibox`'s `collisionBoxes` (the hull box from her origin up, in squares as wide as she is, and an outrigger's float in as many squares as are left of vanilla's ten boxes); `weight`, each part's `share`, `swimmingOffsetY`, `depthMetres` and `waterplaneSquareMetres`.
 - **The shell**: `backedShare` and `bottomBackedShare`, sampled over her skin against the members found behind it, `spanMetres`, a `frame`'s `spacingMetres` and `spanMetres`, and a carved or bundled shell's `metres`.
 - **Strength and seams**: a reed hull's `impactCapacity` and an outrigger float lashing's, from the rope the model counts; a hide cover's `seep.litresPerHourASeam`, from the length of seam the model cuts; the float's `firewoodLitres`.
 - **The bilge**: `capacityLitres`, `deckSquareMetres` and `levelHeightsMetres`.
@@ -209,15 +208,9 @@ The vessel needs a `roughseas:bilge` too: its `capacityLitres` is the hollow tha
 
 Give the shape its stages as groups. `Bark` holds the bark's pieces in the order the axe strips them, `Bark1` to `Bark{barkPieces}`, over `Blank0`, the bare trunk. `Blank` (the wood still uncut), `Char` (its charred top), `Grass` (the tinder), `Wood` (the fire laid on it, `Wood{n}x1` to `x4`, a piece a firewood), `Fire` (the fire once it has caught, `Fire{n}At1` to `At3`, its thirds) and `Clay` (the rim's clay, its pieces in the order the balls cover them) each have one child per hollowing: `Blank0`, `Blank1`…, `Blank{n}` the whole trunk as it stands at that level, worked from the logs a sixth of the way to the hull at each. Each `Blank{n}` holds a group per section, `Blank{n}x1` to `x{sections}`, from her bow, and her two ends, `Blank{n}Stern` at the first section's end and `Blank{n}Bow` at the last's; inside each section, `Blank{n}x{j}Inside` is what the next hewing's inside work takes away (the floor, or the bare logs). `Hewn{n}x{j}` is what the inside work leaves in its place, and `Char{n}x{j}` the char over each section. `Hewn{n}x{j}Step`, inside it, is the face the axe leaves where that section's floor meets the char of the next, shown only while the next is uncut. The hewn wood, on the floors and inside the walls, takes the shape's `hewn` texture. `Shell` is the finished hull, in the same sections and ends. The behaviour shows the ones the build is at and hides the rest, and only `Shell` once she is finished; the item lists the stages in its `ignoreElements`. A spoiled blank's faces take the shape's `char` texture in place of `inside`, `bark` and `rings`, the log's own faces she starts in, and of `hewn`. Our dugout's builder, `bin/lib/hulls/dugout.py`, draws them.
 
-`roughseas:launch` lets anyone ashore push a vessel with Shift and an empty hand. A push slides her as far as one step of a person's push moves her mass against the ground's friction ([why](The-Science-of-the-Hull#building-a-dugout)), away from the one pushing.
+A vessel built from a row of logs is too heavy to carry, so the row must lie by the water. Players push her in on foot, by vanilla's `repulseagents`, as they push any creature they walk into: give her that behaviour, `movable` as it is by default.
 
-| Key | Unit | Default | What it is |
-| --- | --- | --- | --- |
-| `pushNewtons` | N | 0 | how hard one person pushes |
-| `strideMetres` | m | 0 | how far a push carries |
-| `friction` | coefficient | 0 | of the hull sliding on the shore |
-
-List `roughseas:burnout` and `roughseas:launch` before `creaturecarrier`, so that a click with clay, dry grass, firewood or a torch builds the vessel, and a push with Shift doesn't seat the player.
+List `roughseas:burnout` before `creaturecarrier`, so that a click with clay, dry grass, firewood or a torch builds the vessel.
 
 ### Framed in place
 
@@ -304,7 +297,7 @@ A vessel already in a world from before, with no build of its own, is finished w
 
 ### Bound in place
 
-A block of class `roughseas:BlockBundles` is bundles lying where they were laid, the way a reed boat was really made: two long bundles side by side by the water, lashed together. It has the variants `port` (the plant the first bundle was bound from), `starboard` (`none`, or the plant of the second) and `axis` (`we`, `ns`): a bundle placed lies along the way its placer looks, and a second held on it lies beside the first, its `port` becoming the block's `starboard`. Ours takes the code of the vanilla tops item as the plant (`cattailtops`, `papyrustops`, `thatch`), so the vessel's `wreckage` gives each back as `game:{port}` and `game:{starboard}`. Rope held on the pair for the first stage's `seconds`, with water beside the block, level with it or a block lower, takes the block away and leaves, where it lay, the entity `{vessel}-{port}-{starboard}`, each bundle on the side it lay, framed with that first stage's first piece laid: its rope the first lashing. Everything after is `roughseas:framing`, with no bark and no wood: our reed boat's stages are `Lashing` and `Tips`, which `replaces` her flat ends (`Flat1`, `Flat2`) with bound-up ones. Draw the block's `one` and `two` shapes from the same geometry as the vessel's `Blank` and `Flat` groups, as `bin/lib/hulls/reedboat.py` does, so the bundles become the vessel without moving.
+A block of class `roughseas:BlockBundles` is bundles lying where they were laid, the way a reed boat was really made: two long bundles side by side by the water, lashed together. It has the variants `port` (the plant the first bundle was bound from), `starboard` (`none`, or the plant of the second) and `axis` (`we`, `ns`): a bundle placed lies along the way its placer looks, and a second held on it lies beside the first, its `port` becoming the block's `starboard`. Ours takes the code of the vanilla tops item as the plant (`cattailtops`, `papyrustops`, `thatch`), so the vessel's `wreckage` gives each back as `game:{port}` and `game:{starboard}`. Rope held on the pair for the first stage's `seconds`, wherever it lies, takes the block away and leaves, where it lay, the entity `{vessel}-{port}-{starboard}`, each bundle on the side it lay, framed with that first stage's first piece laid: its rope the first lashing. Everything after is `roughseas:framing`, with no bark and no wood: our reed boat's stages are `Lashing` and `Tips`, which `replaces` her flat ends (`Flat1`, `Flat2`) with bound-up ones. Draw the block's `one` and `two` shapes from the same geometry as the vessel's `Blank` and `Flat` groups, as `bin/lib/hulls/reedboat.py` does, so the bundles become the vessel without moving.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
