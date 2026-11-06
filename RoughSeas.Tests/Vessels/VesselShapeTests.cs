@@ -313,9 +313,8 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void CutsHerHullIntoCollisionBoxesNoLongerThanTheyAreWide(string vessel) =>
-        Assert.All(CollisionBoxes(vessel).Where(box => box.X1 < 0 && box.X2 > 0),
-            box => Assert.True(box.Length <= box.Width + 0.001, $"a box {box.Width} wide and {box.Length} long"));
+    public void CutsHerIntoSquareCollisionBoxes(string vessel) =>
+        Assert.All(CollisionBoxes(vessel), box => Assert.Equal(box.Width, box.Length, 0.002));
 
     private static Cuboidf[] CollisionBoxes(string vessel) =>
         Load(vessel).Entity["behaviorConfigs"]!["passivephysicsmultibox"]!["collisionBoxes"]!.ToObject<Cuboidf[]>()!;

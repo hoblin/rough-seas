@@ -306,9 +306,9 @@ New: `hewnSectionsMetres`, `roughseas-hew`, `hewer`, `IVesselHold.DesignedLitres
 
 A vessel that becomes an entity, bound, hewn, rigged or spawned, stays where she was put: she no longer slides sideways off a ledge, nor sinks a block into the ground. A vessel of yours loads as it did.
 
-- Vanilla's `passivephysicsmultibox` turns only the middle of each collision box with her yaw, never its sides, so a box longer than it is wide reaches past her sides once she lies across it, and vanilla pushes her out of whatever it overlaps. Our vessels' `collisionBoxes` are now their hull box in pieces no longer than she is wide: the reed boat's in nine, the bark canoe's in six, the dugout's in five, the currach's in four and the coracle's in two. The outrigger's hull keeps five and her float takes the other five of the ten vanilla's physics holds, each 0.6 m long on her 0.25 m float.
+- Vanilla's `passivephysicsmultibox` turns only the middle of each collision box with her yaw, never its sides, so a box longer than it is wide reaches past her sides once she lies across it, and vanilla pushes her out of whatever it overlaps. Our vessels' `collisionBoxes` are now their hull box in squares as wide as she is, spread from end to end and overlapping where her length isn't a whole number of them: the reed boat's nine, the bark canoe's six, the dugout's five, the currach's four and the coracle's two. The outrigger's hull keeps five and her float takes the other five of the ten vanilla's physics holds, 0.25 m squares spread along her 3 m float.
 - Every hull's boxes start at her origin. A box starting above it, as the reed boat's did by 9 mm, rests on the ground by float rounding, and she sinks through the block under her a few ticks later.
-- A vessel of yours on `passivephysicsmultibox` meets both: cut its hull in pieces no longer than wide, as vanilla's raft (1.5 by 1.5 m) and sailboat (2.8 by 2.8 m) are, from `y1` 0.
+- A vessel of yours on `passivephysicsmultibox` meets both: cut its hull in squares, as vanilla's raft (1.5 by 1.5 m) and sailboat (2.8 by 2.8 m) are, from `y1` 0.
 
 ## What not to touch
 

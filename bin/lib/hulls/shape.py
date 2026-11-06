@@ -170,10 +170,10 @@ def windage(elements, keel_voxels):
 
 def collision(box, *more):
     """Her hitbox, as wide as she is and as tall, and her collision boxes in the entity's frame, where her bow points
-    along +z: the hull box from her origin up, in pieces no longer than she is wide, and a box round each of more (an
-    outrigger's float) in as many of vanilla's ten as her hull leaves it. Vanilla turns only each box's middle with her
-    yaw, so a longer piece turned across her reaches past her sides; and a box starting above her origin rests on the
-    ground by float rounding, which lets her sink through the block under her."""
+    along +z: the hull box from her origin up, in squares as wide as she is spread from end to end, and the box round
+    each of more (an outrigger's float) in as many squares as her hull leaves of vanilla's ten. Vanilla turns only each
+    box's middle with her yaw, so any other piece turned across her reaches past her; and a box starting above her
+    origin rests on the ground by float rounding, which lets her sink through the block under her."""
     def entity(frm, to):
         (x0, y0, z0), (x1, y1, z1) = frm, to
         return {"x1": num(units.metres(ORIGIN[2] - z1)), "y1": num(units.metres(y0)), "z1": num(units.metres(ORIGIN[0] - x1)),
@@ -184,7 +184,9 @@ def collision(box, *more):
 
     def cut(frm, to, pieces):
         (x0, y0, z0), (x1, y1, z1) = frm, to
-        return [entity((x0 + (x1 - x0) * n / pieces, y0, z0), (x0 + (x1 - x0) * (n + 1) / pieces, y1, z1)) for n in reversed(range(pieces))]
+        side = min(z1 - z0, x1 - x0)
+        step = (x1 - x0 - side) / max(1, pieces - 1)
+        return [entity((x0 + step * n, y0, z0), (x0 + step * n + side, y1, z1)) for n in reversed(range(pieces))]
 
     (x0, y0, z0), (x1, y1, z1) = box["from"], box["to"]
     keel = ([x0, ORIGIN[1], z0], [x1, y1, z1])
