@@ -2,23 +2,20 @@ using System.Linq;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A bundle, or two side by side, lying where they were laid. The first binding of rope around the pair, by the
-/// water, makes them the vessel they are bundles of, where they lie.
+/// A bundle, or two side by side, lying where they were laid. The first binding of rope around the pair makes them
+/// the vessel they are bundles of, where they lie.
 /// </summary>
 public class BlockBundles : Block
 {
     public const string ClassName = "roughseas:BlockBundles";
 
     private const string AxisVariant = "axis";
-    private const string AwayFromWater = "they lie away from the water";
-    private const string WaterLangCode = "shipyard-bundles-by-water";
 
     private readonly HeldWork work = new();
     private AssetLocation vessel = null!;
@@ -54,12 +51,7 @@ public class BlockBundles : Block
             return true;
         }
         if (!Pair || Binding(world) is not { } job || !job.Laying.Takes(slot)) return base.OnBlockInteractStart(world, byPlayer, blockSel);
-        if (Refusal(world, byPlayer, blockSel.Position) is { } refusal)
-        {
-            Shipyard(world).Log("bundles at {0} not bound for {1}: {2}", At(blockSel.Position), byPlayer.PlayerName, refusal);
-            if (refusal == AwayFromWater) (world.Api as ICoreClientAPI)?.TriggerIngameError(this, WaterLangCode, Lang.Get("roughseas:" + WaterLangCode));
-            return false;
-        }
+        if (!LandClaims.MayBreak(byPlayer.Entity, [blockSel.Position])) return false;
 
         work.Start(byPlayer.Entity);
         return true;
@@ -74,7 +66,7 @@ public class BlockBundles : Block
 
         var slot = byPlayer.InventoryManager.ActiveHotbarSlot;
         if (!job.Laying.Takes(slot)) Shipyard(world).Log("bundles at {0} not bound: {1} let go of the rope", At(blockSel.Position), byPlayer.PlayerName);
-        else if (Refusal(world, byPlayer, blockSel.Position) is { } refusal) Shipyard(world).Log("bundles at {0} not bound: {1}", At(blockSel.Position), refusal);
+        else if (!LandClaims.MayBreak(byPlayer.Entity, [blockSel.Position])) Shipyard(world).Log("bundles at {0} not bound: {1} may not break blocks on this claim", At(blockSel.Position), byPlayer.PlayerName);
         else Bind(world, byPlayer, slot, blockSel.Position, job);
     }
 
@@ -107,11 +99,6 @@ public class BlockBundles : Block
     private static ShipyardModSystem Shipyard(IWorldAccessor world) => world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
 
     private static string At(BlockPos pos) => $"{pos.X} {pos.Y} {pos.Z}";
-
-    private static string? Refusal(IWorldAccessor world, IPlayer byPlayer, BlockPos pos) =>
-        !Waterside.Beside(world.BlockAccessor, pos) ? AwayFromWater
-        : !LandClaims.MayBreak(byPlayer.Entity, [pos]) ? $"{byPlayer.PlayerName} may not break blocks on this claim"
-        : null;
 
     private (FramingStage Stage, Laying Laying)? Binding(IWorldAccessor world)
     {

@@ -35,7 +35,6 @@ public class VesselsModSystem : ModSystem
     {
         this.api = api;
         api.RegisterEntityBehaviorClass(EntityBehaviorVesselIntegrity.Code, typeof(EntityBehaviorVesselIntegrity));
-        api.RegisterEntityBehaviorClass(EntityBehaviorLaunch.Code, typeof(EntityBehaviorLaunch));
         api.RegisterEntityBehaviorClass(EntityBehaviorDroop.Code, typeof(EntityBehaviorDroop));
         api.RegisterEntity(EntityVessel.ClassName, typeof(EntityVessel));
         api.RegisterItemClass(ItemVessel.ClassName, typeof(ItemVessel));

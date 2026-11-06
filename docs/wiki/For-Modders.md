@@ -79,7 +79,7 @@ The dugout is burnt and hewn out of five logs on the shore ([Built in place](Bui
 - Every axe in the game, a modded one too, carries our collectible behaviour `roughseas:hew`, so that holding it on a blank strips its bark and on a charred blank hews.
 - Rain on a vessel, in her bilge and drying her ashore, is what `WeatherSystemBase.GetPrecipitation` reads, as vanilla's fires do, and nothing under a roof.
 
-New: the behaviours `roughseas:burnout` and `roughseas:launch` with their keys, the collectible behaviour `roughseas:hew`, and the watched tree `roughseas:build` on a vessel being built.
+New: the behaviour `roughseas:burnout` with its keys, the collectible behaviour `roughseas:hew`, and the watched tree `roughseas:build` on a vessel being built.
 
 ### Bark canoes framed in place
 
@@ -113,7 +113,7 @@ New: the behaviours `roughseas:riggable` and `roughseas:rigging` with their keys
 
 ### Reed boats bound in place
 
-The reed boat is bound from two reed bundles laid by the water ([Bound in place](Building-a-Vessel#bound-in-place)), and its grid recipe is gone. Her code is still `roughseas:reedboat`, so a reed boat of yours loads finished, with her ends bound up and her soak as it was.
+The reed boat is bound from two reed bundles laid side by side ([Bound in place](Building-a-Vessel#bound-in-place)), and its grid recipe is gone. Her code is still `roughseas:reedboat`, so a reed boat of yours loads finished, with her ends bound up and her soak as it was.
 
 - She is a float of two 19 cm bundles: 3 m by 0.36 m, 0.19 m deep, 50 kg, her rider 5 cm above the water. Her shape, collision boxes and seat height changed, and her `Hull`, `FrontSeat` and `Cargo` elements with them; a patch that addressed her old shape's `Port`, `Starboard`, `Core` or `Binding` elements misses. Her `soak` and the `reed` material's density changed with her ([why](The-Science-of-the-Hull)).
 - Her rower holds what drives her: she sets `requiresPaddlingTool`, and her strokes are her own for each tool ([Paddles, poles and oars](#paddles-poles-and-oars)). Her own built-in paddle is gone.
