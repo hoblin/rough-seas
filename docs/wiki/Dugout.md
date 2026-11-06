@@ -14,7 +14,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 
 | | |
 | --- | --- |
-| Speed | 1.7 m/s paddled, 2.2 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 1.7 m/s paddled, 2.4 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | slow, 19° a second |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |

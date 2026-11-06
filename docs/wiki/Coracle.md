@@ -14,7 +14,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 
 | | |
 | --- | --- |
-| Speed | 1 m/s sculled over the bow, 1.2 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 1 m/s sculled over the bow, 1.3 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | spins on the spot, 177° a second |
 | [Hull](Hull-Condition) | a knock breaks the willow lath behind the hide at 24 J, 45 J in oak, and the two either side of a gap at 57 J, 108 J in oak: past her 1 m/s sculled, only a current or a fall drives her that hard; 400 J more with a willow frame breaks her up, the weakest of all, about 690 J in oak, 810 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 13 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
