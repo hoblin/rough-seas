@@ -39,6 +39,11 @@ SEATED_CLIMB = 6
 SEATED_OUTBOARD = 2
 REST = 8
 CLEARANCE = 0.05
+# The seated pole's first-person arms, in voxels, of vanilla's `-fp` twins' order (seraph-faceless.json moves the
+# shoulders up to 7 apart and 5 down), chosen on the bench: they clear the view ahead and keep the pole in it.
+SEEN_DOWN = 7
+SEEN_OUT = 3
+UPPER_ARMS = ("UpperArmR", "UpperArmL")
 
 
 def marker(name, point):
@@ -151,6 +156,9 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
                     print(f"{step['code']}: {name} by {excess:.1f} at frame {frame}")
     own, player = fit(rower, [group], plan, STARBOARD, lean)
     reversed_change(list(poses), own, player)
+    if getattr(poses, "seen", None):
+        for animation in player:
+            animation["firstPerson"] = seen(rower, animation, poses.seen)
     if hasattr(shape, "path"):
         rowed(shape, rower, own, player, f"{vessel}-{kind}", [group])
     through = (0, 0, None, None)
@@ -179,6 +187,19 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
             print(f"{animation['code']}: the blade drives {sum(abeam) / len(abeam):.2f} m out from her middle")
             record(vessel, {"behaviorConfigs": {"roughseas:propulsion": units.both("paddleAbeam", sum(abeam) / len(abeam))}})
     return player
+
+
+def seen(rower, animation, shift):
+    """Each key's upper-arm offsets that move both arms, and the tool in the hand, by `shift` voxels in the body's
+    frame."""
+    moved = [units.metres(s) for s in shift]
+    keys = []
+    for keyframe in animation["keyframes"]:
+        pose = keyframe["elements"]
+        matrices = posed(rower.seraph["elements"], lambda name: pose.get(name) or rower.idle.get(name, {}))
+        keys.append({arm: {"offset" + a: round(pose[arm].get("offset" + a, 0) + units.voxels(m), 3)
+                           for a, m in zip("XYZ", undirect(matrices[arm], moved))} for arm in UPPER_ARMS})
+    return keys
 
 
 def reversed_change(names, own, player):
@@ -475,16 +496,17 @@ class PolePath:
 
 class Strokes(dict):
 
-    def __init__(self, strokes, planting):
+    def __init__(self, strokes, planting, seen=None):
         super().__init__(strokes)
         self.planting = planting
+        self.seen = seen
 
 
-def three(placed, body, planting):
+def three(placed, body, planting, seen=None):
     ways = {"ready": (lambda frame: 0, 1), "forward": (lambda frame: frame, 1), "backward": (lambda frame: frame, -1)}
     return Strokes({name: (lambda frame, at=at, way=way: placed(at(frame), way), STARBOARD,
                            lambda rower, at=at, way=way: lambda frame: body(rower, at(frame), way))
-                    for name, (at, way) in ways.items()}, planting)
+                    for name, (at, way) in ways.items()}, planting, seen)
 
 
 def seated_poling(tool, at, waterline_voxels, out, side=-1):
@@ -501,7 +523,7 @@ def seated_poling(tool, at, waterline_voxels, out, side=-1):
     def body(rower, frame, way):
         return {"UpperTorso": {"rotationY": toward_grips(rower, tool, placed(frame, way), {})}}
 
-    return three(placed, body, path.planting(out, tool))
+    return three(placed, body, path.planting(out, tool), (0, -SEEN_DOWN, side * SEEN_OUT))
 
 
 def sculling(tool, at, ahead, above, sweep):
