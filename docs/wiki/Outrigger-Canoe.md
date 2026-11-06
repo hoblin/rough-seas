@@ -14,7 +14,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 
 | | |
 | --- | --- |
-| Speed | 5.9 m/s under full sail, at vanilla's pace until sailing reads the wind; 1.5 m/s paddled, 1.9 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | 5.9 m/s under full sail, at vanilla's pace until sailing reads the wind; 1.5 m/s paddled, 2.1 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | clumsy, 14° a second paddled |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): her hull is the dugout's |
 | Upkeep | none |
@@ -42,7 +42,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
 
 ![The whole build, from the logs to the washstrakes](images/outrigger-canoe/build-outrigger-canoe.webp)
 
-1. **Split the poles.** Lay three logs of one wood on their sides, end to end, anywhere, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on a wedge. The trunk splits into 64 poles of 3 m. The outrigger takes six, and a longer pole serves too, cut down. Any wood will do, a modded tree's too.
+1. **Split the poles.** Lay three logs of one wood on their sides, end to end, anywhere, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on each wedge in turn until it is driven home. Once the last is home, the trunk splits into 64 poles of 3 m. The outrigger takes six, and a longer pole serves too, cut down. Any wood will do, a modded tree's too.
 
    ![Three logs with a wedge on each](images/outrigger-canoe/build-poles.webp)
 

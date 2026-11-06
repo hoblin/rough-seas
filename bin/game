@@ -153,7 +153,8 @@ ACT
   bin/game arrive X Y Z [S]  block until the client stands within a block of X Y Z (as commands take
                              them); fails after S seconds (default 30). Use it after a /tp.
   bin/game look YAW PITCH    aim the camera, radians. Yaw 0 faces +Z, pi/2 +X, pi -Z;
-                             pitch pi is level, above pi looks down (range 1.59-4.70)
+                             pitch pi is level, above pi looks down (range 1.59-4.70). The body
+                             turns with it, as a focused client's does in first person
   bin/game aim ID            aim the camera at the middle of an entity's selection box
   bin/game hover [ID [BOX]]  make the game treat entity ID as looked at, whatever the camera points
                              at: the HUD shows its name and info text, interactions target it, and

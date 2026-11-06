@@ -7,7 +7,7 @@ import units
 from entity import read, record
 from shape import ORIGIN
 from motion import faults, switches, unwind
-from stroke import Rower, centre, drive_share, facing, fit, moved, named, played, posed, resting, rowed, seat, seraph, turn, unturn
+from stroke import Rower, centre, drive_share, facing, fit, moved, named, played, poled, posed, propelled, resting, rowed, seat, seraph, turn, unturn
 from transform import angles, apply, depth, euler, inverse, mul, translation, undirect, unit
 
 ANCHOR = "ItemAnchor"
@@ -32,9 +32,11 @@ FOOT_HALF = 1.5
 DROP = 2
 HIP_TURN = 45
 HANDS_INBOARD = 1
-PLANT = (12, 40)
 SEATED_CHEST = 7
 SEATED_REACH = (-3, 3)
+SEATED_RAISE = 4
+SEATED_CLIMB = 6
+SEATED_OUTBOARD = 2
 REST = 8
 CLEARANCE = 0.05
 
@@ -54,6 +56,7 @@ class Tool:
         self.elements = json.loads((ASSETS / "shapes/item" / f"{shape}.json").read_text())["elements"]
         self.right, self.left = right, left
         self.turns = turns
+        self.length = max(element["to"][0] for element in self.elements)
 
     def turned(self, degrees):
         """The tool turned about its grips' line, which `turns` say leaves it looking the same."""
@@ -116,6 +119,8 @@ def held(shape, vessel, seated, idle, kind, stroke, tool, poses, lean, waterline
         record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": units.both("handsAboveWater", hands)}}})
     group = tool.group()
     poses = stance.poses if stance else poses
+    if getattr(poses, "planting", None):
+        record(vessel, {"behaviorConfigs": {"roughseas:propulsion": {"pole": poses.planting}}})
     plan = named(f"{vessel}-{kind}", FRAMES, {name: pose for name, (pose, *_) in poses.items()}, stroke,
                  LOOPED.get(stroke, 1))
     for step, (name, (pose, grips, *body)) in zip(plan, poses.items()):
@@ -386,36 +391,35 @@ def standing_poling(tool, at, waterline_voxels, out, chine, side=-1, floor_at=No
     x, floor, z = at
     floor_at = floor_at or (lambda foot_x, across: floor)
     bed = waterline_voxels - units.voxels(PLANT_DEPTH_METRES)
-    reach_x = [x - 2, x + 4]
     reach_y = [floor + 21, floor + 19]
-    plant = [x + reach for reach in PLANT]
+    path = PolePath("pole", (x - 2, x + 4), floor + units.voxels(STANDING_HIP_METRES) - bed, waterline_voxels - bed, tool)
 
-    def placed(frame):
-        reach, lift = phase(frame, drive_share("pole"))
-        hand = (lerp(reach_x, reach), lerp(reach_y, reach) - DROP * reach, out - side * HANDS_INBOARD)
-        return planted(tool, hand, (lerp(plant, reach), bed + 20 * lift, out))
+    def placed(frame, way):
+        reach, hand_x, foot_x, lift, crossed = path.at(frame, way)
+        hand = (hand_x, lerp(reach_y, reach) - DROP * reach, out - side * HANDS_INBOARD)
+        return planted(tool, hand, (foot_x, bed + path.raised * lift, out), crossed)
 
     feet = {"R": (x + STRIDE, floor_at(x + STRIDE, chine), z + side * (chine - FOOT_HALF)),
             "L": (x - STRIDE, floor_at(x - STRIDE, 2 * FOOT_HALF), z - side * FOOT_HALF)}
 
-    def body(rower, frame):
-        reach, _ = phase(frame, drive_share("pole"))
+    def body(rower, frame, way):
+        reach = path.at(frame, way)[0]
         hips = {"LowerTorso": {"offsetY": -DROP * reach, "rotationY": side * HIP_TURN}}
-        hips["UpperTorso"] = {"rotationY": toward_grips(rower, tool, placed(frame), hips), "rotationZ": 10 + 15 * reach}
+        hips["UpperTorso"] = {"rotationY": toward_grips(rower, tool, placed(frame, way), hips), "rotationZ": 10 + 15 * reach}
         for leg_side, foot in feet.items():
             hips |= rower.legs[leg_side].plant(hips, rower.body(foot))
         return hips
 
-    return Stance(at, STANDING, three(placed, body), feet)
+    return Stance(at, STANDING, three(placed, body, path.planting(out, tool)), feet)
 
 
 def lerp(span, share):
     return span[0] + (span[1] - span[0]) * share
 
 
-def planted(tool, hand, foot):
-    upper = 48 - math.dist(hand, foot)
-    return tool.gripped(hand, foot, {LEFT: upper, RIGHT: upper + HAND_SPAN})
+def planted(tool, hand, foot, crossed=0):
+    upper = tool.length - math.dist(hand, foot)
+    return tool.gripped(hand, foot, {LEFT: upper + HAND_SPAN * crossed, RIGHT: upper + HAND_SPAN * (1 - crossed)})
 
 
 def poling(standing, seat_at, waterline_voxels, out, stand_at, chine, floor_at=None):
@@ -430,26 +434,74 @@ def toward_grips(rower, tool, pose, hips):
     return rower.facing(hips, [sum(c) / 2 for c in zip(*grips)])
 
 
-def three(placed, body):
-    frames = {"ready": lambda frame: 0, "forward": lambda frame: frame, "backward": lambda frame: FRAMES - frame}
-    return {name: (lambda frame, at=at: placed(at(frame)), STARBOARD,
-                   lambda rower, at=at: lambda frame: body(rower, at(frame)))
-            for name, at in frames.items()}
+class PolePath:
+
+    def __init__(self, stroke, hands, hands_over_bed, bed_depth, tool):
+        footing = math.tan(math.radians(poled()["workingDegrees"])) * hands_over_bed
+        travel = math.sqrt(max(0, tool.length ** 2 - hands_over_bed ** 2)) - footing
+        self.stroke = stroke
+        self.hands = hands
+        self.middle = sum(hands) / 2
+        self.plant = hands[0] + footing
+        self.end = self.plant + min(units.voxels(propelled(stroke)["pushMetres"]), travel)
+        self.raised = bed_depth
+
+    def at(self, frame, way):
+        drive = drive_share(self.stroke)
+        u = (frame / FRAMES + drive + (1 - drive) / 2) % 1
+        if u < drive:
+            reach = eased(u / drive)
+            foot, lift, crossed = lerp((self.plant, self.end), reach), 0, 1
+        else:
+            f = (u - drive) / (1 - drive)
+            reach = 1 - eased(f)
+            if f < 0.5:
+                foot, lift = lerp((self.end, self.middle), math.sin(math.pi * f)), eased(2 * f)
+            else:
+                foot, lift = lerp((self.middle, self.plant), 1 - math.cos(math.pi * (f - 0.5))), eased(2 - 2 * f)
+            crossed = 1 - lift
+        hand = lerp(self.hands, reach)
+        return reach, self.turned(hand, way), self.turned(foot, way), lift, crossed if way < 0 else 0
+
+    def turned(self, x, way):
+        return self.middle + way * (x - self.middle)
+
+    def planting(self, across, tool):
+        return (units.both("drawnPole", units.metres(tool.length)) | units.both("drawnBed", PLANT_DEPTH_METRES)
+                | units.both("plantAhead", units.metres(self.hands[0] - ORIGIN[0]))
+                | units.both("plantAstern", units.metres(self.turned(self.hands[0], -1) - ORIGIN[0]))
+                | units.both("plantAcross", units.metres(across - ORIGIN[2])))
+
+
+class Strokes(dict):
+
+    def __init__(self, strokes, planting):
+        super().__init__(strokes)
+        self.planting = planting
+
+
+def three(placed, body, planting):
+    ways = {"ready": (lambda frame: 0, 1), "forward": (lambda frame: frame, 1), "backward": (lambda frame: frame, -1)}
+    return Strokes({name: (lambda frame, at=at, way=way: placed(at(frame), way), STARBOARD,
+                           lambda rower, at=at, way=way: lambda frame: body(rower, at(frame), way))
+                    for name, (at, way) in ways.items()}, planting)
 
 
 def seated_poling(tool, at, waterline_voxels, out, side=-1):
     x, seat_y, _ = at
     bed = waterline_voxels - units.voxels(PLANT_DEPTH_METRES)
+    hand_y = seat_y + SEATED_CHEST
+    path = PolePath("seatedpole", (x + SEATED_REACH[0], x + SEATED_REACH[1]), hand_y - bed, waterline_voxels - bed, tool)
 
-    def placed(frame):
-        reach, lift = phase(frame, drive_share("seatedpole"))
-        hand = (lerp(SEATED_REACH, reach) + x, seat_y + SEATED_CHEST, out - side * HANDS_INBOARD)
-        return planted(tool, hand, (x + lerp(PLANT, reach), bed + 20 * lift, out))
+    def placed(frame, way):
+        reach, hand_x, foot_x, lift, crossed = path.at(frame, way)
+        hand = (hand_x, hand_y + SEATED_RAISE * lift + SEATED_CLIMB * reach, out + side * SEATED_OUTBOARD)
+        return planted(tool, hand, (foot_x, bed + path.raised * lift, out), crossed)
 
-    def body(rower, frame):
-        return {"UpperTorso": {"rotationY": toward_grips(rower, tool, placed(frame), {})}}
+    def body(rower, frame, way):
+        return {"UpperTorso": {"rotationY": toward_grips(rower, tool, placed(frame, way), {})}}
 
-    return three(placed, body)
+    return three(placed, body, path.planting(out, tool))
 
 
 def sculling(tool, at, ahead, above, sweep):

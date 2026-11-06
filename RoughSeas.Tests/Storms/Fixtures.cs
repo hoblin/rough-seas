@@ -98,8 +98,10 @@ public static class Fixtures
 
     public static double PaddleSquareMetres => (double)JToken.Parse(Shipped(Path.Combine("tools", "paddle.json")))["attributes"]![Tool.AttributeKey]!["bladeSquareMetres"]!;
 
-    public static RowerStation Station(string vessel, double depthMetres) =>
-        new(new JsonObject(PropulsionOf(vessel)), Propulsion, WaterDensity, _ => depthMetres);
+    public static RowerStation Station(string vessel, double depthMetres) => Station(vessel, _ => depthMetres);
+
+    public static RowerStation Station(string vessel, System.Func<double, double> depthAlong) =>
+        new(new JsonObject(PropulsionOf(vessel)), Propulsion, WaterDensity, (along, _, _) => depthAlong(along));
 
     private static IEnumerable<JToken> Elements(string shape)
     {

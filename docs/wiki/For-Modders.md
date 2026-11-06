@@ -310,6 +310,34 @@ A vessel that becomes an entity, bound, hewn, rigged or spawned, stays where she
 - Every hull's boxes start at her origin. A box starting above it, as the reed boat's did by 9 mm, rests on the ground by float rounding, and she sinks through the block under her a few ticks later.
 - A vessel of yours on `passivephysicsmultibox` meets both: cut its hull in squares, as vanilla's raft (1.5 by 1.5 m) and sailboat (2.8 by 2.8 m) are, from `y1` 0.
 
+### Wedges driven blow by blow
+
+Each wedge is driven on its own, a step a blow, and the row splits once every wedge in it is home ([Recipes](Recipes#splitting-wedge)).
+
+- The wedge's blocks are `roughseas:wedge-{we|ns}-{0..4}`, the last part how far it is driven; it drops and is crafted as `roughseas:wedge-we-0`. Its `splitSeconds` is now `secondsPerBlow`.
+- Every axe carries `roughseas:drive`, which swings the player animation `roughseas-drive` (its butt brought down on the wedge, chop at the blow) while held on a wedge not yet home. The wedge's own hold and its progress bar are gone.
+- `roughseas:drive` and `roughseas:hew` count blows the same way, one a cycle of their animation, each on the server.
+- A pole's handbook page gives how it is split under "Created by", from `handbook.createdBy`.
+- Poles and laths show one icon for every length: the collectible behaviour `roughseas:icon` draws its `shape` in place of the item's in inventory slots and the handbook, in the item's own textures. Their per-length `guiTransformByType` is one `guiTransform`.
+
+New: `roughseas:drive`, `roughseas-drive`, `roughseas:icon`, `secondsPerBlow`, `shipyard-drive` (was `shipyard-split`), `handbook-createdby-pole`.
+
+### Poled as poles are
+
+A pole's shove, its reach and its drawing are one ([Driving her](Building-a-Vessel#driving-her)). A vessel of yours loads as it did; one that takes a pole should read on.
+
+- A pole drives her only while its drawn shove is on the bed. A pole stroke's animation starts and ends halfway through its recovery, so its shove is the `driveShare` of it that begins `(1 − driveShare) / 2` in. `PoleStroke.Shove` gives the force at the share of the animation the rider is at: in the shove, the stroke's mean times the stroke's seconds over the shove's, nothing in the rest. `StrokeConfig.Phase`, `Driving` and `Lift` say where a share of the animation falls. A vessel of yours whose pole strokes are drawn another way thrusts off their beat.
+- `PoleStroke.Thrust` is the stroke's mean: `pushNewtons` for as long as the shove lasts, the drawn drive's seconds or the time she takes to pass the shove's travel, whichever is shorter, over the shove and the recovery. The travel is `pushMetres` or, for a pole too short for the water, as far as its top reaches the upper hand (`PoleConfig.Travel`). `PoleStroke` takes the `Pole` itself, the water's depth, the hands' height over the water and the water's density.
+- The beat quickens with her speed, and the shove is drawn as quick: `Stroke.Pace` is the drawn shove's seconds over the shove's at her speed while the animation is in its shove, and 1 in its recovery, which keeps its time; `MountStrokes.Pace` plays the rider's running stroke at that pace through a copy of its `AnimationMetaData`. `Stroke.LiftWatts` takes the stroke's speed, since a quicker beat lifts the pole more often. That speed, `Propulsor.StrokeSpeed`, is her speed the way the pole drives her, or the sweep's when it only turns her, and none against her way; force, pace and lift all take it.
+- Bringing the pole up costs the work of lifting its foot from the bed to the surface less what the water bears of it, paid once a stroke whether it drives her, turns her or both: `Stroke.LiftWatts`, which `Propulsor.Push` takes off before it shares the rest.
+- `roughseas:propulsion`'s `pole` takes `plantAheadMetres`, `plantAsternMetres`, `plantAcrossMetres`, `drawnPoleMetres` and `drawnBedMetres`, which our builds write. The bed is sounded where the foot lands, twice over a shelf's edge, which then takes the deeper. Without the plant keys it is sounded a pole's footing from the point she stands at; without `drawnPoleMetres` the drawn pole doesn't slide.
+- `RowerStation.Propulsor` and `Tool.Drive` take the way the stroke goes, `EntityBehaviorPropulsion.Way`: astern, or turning to starboard from rest, the pole is planted ahead of the hands. `RowerStation`'s depth now comes from a point of her hull, `EntityBehaviorSeaForces.WaterDepth(alongMetres, acrossMetres, maxBlocks)`.
+- On a client, a Harmony prefix on `EntityShapeRenderer.RenderItem` slides the pole in a controlling rider's right hand along its length to the bed, never past its top in the upper hand and back to its drawn height as the recovery lifts it, through a copy of its `tpHandTransform`. A mod that draws held items another way sees the pole at its fitted place.
+- Every vessel's `pole-backward` stroke is its own animation: the pole planted ahead of the hands and shoved toward her bow. The ready pose holds the pole upright, halfway through the recovery, where both strokes start and end.
+- A pole that finds no bed shows its rider the in-game error `roughseas-pole-too-deep`, the lang key `roughseas:propulsion-pole-too-deep`.
+
+New: `Stroke.Shove`, `Stroke.Pace`, `Propulsor.StrokeSpeed`, `StrokeConfig.Phase`, `Driving` and `Lift`, `Stroke.LiftWatts`, `MountStrokes.Pace`, `Pole.LiftJoules`, `Pole.Travel`, `PoleConfig.Footing`, `PoleConfig.Travel`, `RowerStation.BedMetres`, `MountStrokes.DrawnShare`, `EntityBehaviorPropulsion.Way` and `PoleSlide`, the `pole` keys above, `propulsion-pole-too-deep`.
+
 ## What not to touch
 
 | Name | What it is |

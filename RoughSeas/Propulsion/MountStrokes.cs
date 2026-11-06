@@ -20,6 +20,24 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
     private (string Code, string? Tool)? playing;
     private int? finishingFrom;
 
+    public double? DrawnShare(Entity rower) =>
+        playing is { } stroke && rower.AnimManager?.GetAnimationState(stroke.Code) is { Active: true } running
+            ? running.CurrentFrame / running.Animation.QuantityFrames
+            : null;
+
+    public void Pace(Entity rower, double pace)
+    {
+        if (playing is not { } stroke || rower.Properties.Client?.AnimationsByMetaCode?.GetValueOrDefault(stroke.Code) is not { } drawn) return;
+
+        IAnimationManager?[] animators = rower is EntityPlayer player ? [player.TpAnimManager, player.SelfFpAnimManager] : [rower.AnimManager];
+        foreach (var animator in animators)
+        {
+            if (animator?.GetAnimationState(stroke.Code) is not { Active: true } running) continue;
+            if (ReferenceEquals(running.meta, drawn)) running.meta = drawn.Clone();
+            running.meta.AnimationSpeed = (float)(drawn.AnimationSpeed * pace);
+        }
+    }
+
     public bool Sided(Tool? tool) => tool != null && strokes.ContainsKey(OnSide(tool.Kind, Side.Port));
 
     public string? KindOf(Tool? tool, bool ownOars, Side side) =>

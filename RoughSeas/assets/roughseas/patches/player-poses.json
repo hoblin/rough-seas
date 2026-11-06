@@ -289,5 +289,112 @@
         "code": "roughseas-hew-fp", "animation": "roughseas-hew-fp", "blendMode": "Add", "holdEyePosAfterEasein": 0.3,
         "elementWeight": { "UpperArmR": 20, "LowerArmR": 20, "UpperArmL": 20, "LowerArmL": 20 },
         "elementBlendMode": { "UpperArmR": "AddAverage", "LowerArmR": "AddAverage", "UpperArmL": "AddAverage", "LowerArmL": "AddAverage" }
+    } },
+    { "op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-", "value": {
+        "name": "Drive", "code": "roughseas-drive", "quantityframes": 45,
+        "onActivityStopped": "EaseOut", "onAnimationEnd": "Repeat",
+        "keyframes": [
+            { "frame": 0, "elements": {
+                "LowerTorso": {"offsetX": 0.0, "offsetY": 0.2, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 5.0, "rotationZ": 4.0},
+                "UpperTorso": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 5.0, "rotationZ": 8.0},
+                "UpperArmR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -9.0, "rotationY": 3.0, "rotationZ": -60.0},
+                "LowerArmR": {"offsetX": 0.0, "offsetY": 1.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -30.0},
+                "UpperArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -22.0, "rotationY": 17.0, "rotationZ": -6.0},
+                "LowerArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -19.0},
+                "Head": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 4.0, "rotationZ": 2.0},
+                "UpperFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -4.0, "rotationY": 3.0, "rotationZ": -20.0},
+                "LowerFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 19.0},
+                "UpperFootR": {"offsetX": 0.0, "offsetY": -0.1, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -3.0, "rotationZ": 6.0},
+                "LowerFootR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -2.0, "rotationY": 0.0, "rotationZ": 5.0},
+                "ItemAnchor": {"rotationX": 180.0, "rotationY": 0.0, "rotationZ": -90.0}
+            } },
+            { "frame": 6, "elements": {
+                "LowerTorso": {"offsetX": 0.0, "offsetY": 0.2, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 5.0, "rotationZ": 4.0},
+                "UpperTorso": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 5.0, "rotationZ": 8.0},
+                "UpperArmR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -9.0, "rotationY": 3.0, "rotationZ": -56.0},
+                "LowerArmR": {"offsetX": 0.0, "offsetY": 1.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -36.0},
+                "UpperArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -22.0, "rotationY": 17.0, "rotationZ": -6.0},
+                "LowerArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -19.0},
+                "Head": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 4.0, "rotationZ": 2.0},
+                "UpperFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -4.0, "rotationY": 3.0, "rotationZ": -20.0},
+                "LowerFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 19.0},
+                "UpperFootR": {"offsetX": 0.0, "offsetY": -0.1, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -3.0, "rotationZ": 6.0},
+                "LowerFootR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -2.0, "rotationY": 0.0, "rotationZ": 5.0},
+                "ItemAnchor": {"rotationX": 180.0, "rotationY": 0.0, "rotationZ": -90.0}
+            } },
+            { "frame": 30, "elements": {
+                "LowerTorso": {"offsetX": 0.0, "offsetY": 0.2, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 2.0},
+                "UpperTorso": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -2.0, "rotationZ": 0.0},
+                "UpperArmR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -21.0, "rotationY": -3.0, "rotationZ": -147.0},
+                "LowerArmR": {"offsetX": 0.0, "offsetY": 1.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -64.0},
+                "UpperArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -22.0, "rotationY": -3.0, "rotationZ": -30.0},
+                "LowerArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -30.0},
+                "Head": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 3.0, "rotationY": 5.0, "rotationZ": 2.0},
+                "UpperFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -4.0, "rotationY": 3.0, "rotationZ": -18.0},
+                "LowerFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 19.0},
+                "UpperFootR": {"offsetX": 0.0, "offsetY": -0.1, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": -3.0, "rotationZ": 6.0},
+                "LowerFootR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 8.0},
+                "ItemAnchor": {"rotationX": 180.0, "rotationY": 0.0, "rotationZ": -90.0}
+            } }
+        ]
+    } },
+    { "op": "add", "file": "game:shapes/entity/humanoid/seraph-faceless.json", "path": "/animations/-", "value": {
+        "name": "Drive-fp", "code": "roughseas-drive-fp", "quantityframes": 45,
+        "onActivityStopped": "EaseOut", "onAnimationEnd": "Repeat",
+        "keyframes": [
+            { "frame": 0, "elements": {
+                "LowerTorso": {"offsetX": 0.0, "offsetY": 0.2, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 5.0, "rotationZ": 4.0},
+                "UpperTorso": {"rotationX": 2.0, "rotationY": 5.0, "rotationZ": 8.0},
+                "UpperArmR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": -7.0, "rotationX": -28.0, "rotationY": 5.0, "rotationZ": -95.0},
+                "LowerArmR": {"offsetX": 0.0, "offsetY": 1.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -8.0},
+                "ItemAnchor": {"rotationX": 180.0, "rotationY": -90.0, "rotationZ": 15.0},
+                "UpperArmL": {"offsetX": 1.0, "offsetY": -2.0, "offsetZ": 2.0, "rotationX": -22.0, "rotationY": 17.0, "rotationZ": -6.0},
+                "LowerArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -19.0},
+                "Head": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 4.0, "rotationZ": 2.0},
+                "UpperFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -4.0, "rotationY": 3.0, "rotationZ": -20.0},
+                "LowerFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 19.0},
+                "UpperFootR": {"offsetX": 0.0, "offsetY": -0.1, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -3.0, "rotationZ": 6.0},
+                "LowerFootR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -2.0, "rotationY": 0.0, "rotationZ": 5.0}
+            } },
+            { "frame": 6, "elements": {
+                "LowerTorso": {"offsetX": 0.0, "offsetY": 0.2, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": 5.0, "rotationZ": 4.0},
+                "UpperTorso": {"rotationX": 2.0, "rotationY": 5.0, "rotationZ": 8.0},
+                "UpperArmR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": -7.0, "rotationX": -28.0, "rotationY": 5.0, "rotationZ": -95.0},
+                "LowerArmR": {"offsetX": 0.0, "offsetY": 1.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -13.0},
+                "ItemAnchor": {"rotationX": 180.0, "rotationY": -90.0, "rotationZ": 13.0},
+                "UpperArmL": {"offsetX": 1.0, "offsetY": -2.0, "offsetZ": 2.0, "rotationX": -22.0, "rotationY": 17.0, "rotationZ": -6.0},
+                "LowerArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -19.0},
+                "Head": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 2.0, "rotationY": 4.0, "rotationZ": 2.0},
+                "UpperFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -4.0, "rotationY": 3.0, "rotationZ": -20.0},
+                "LowerFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 19.0},
+                "UpperFootR": {"offsetX": 0.0, "offsetY": -0.1, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": -3.0, "rotationZ": 6.0},
+                "LowerFootR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -2.0, "rotationY": 0.0, "rotationZ": 5.0}
+            } },
+            { "frame": 30, "elements": {
+                "LowerTorso": {"offsetX": 0.0, "offsetY": 0.2, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 2.0},
+                "UpperTorso": {"rotationX": 0.0, "rotationY": -2.0, "rotationZ": 0.0},
+                "UpperArmR": {"offsetX": -2.0, "offsetY": 0.0, "offsetZ": -6.5, "rotationX": -35.0, "rotationY": -3.0, "rotationZ": -114.0},
+                "LowerArmR": {"offsetX": 0.0, "offsetY": 1.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -64.0},
+                "ItemAnchor": {"rotationX": 180.0, "rotationY": -90.0, "rotationZ": 0.0},
+                "UpperArmL": {"offsetX": 2.0, "offsetY": -1.0, "offsetZ": 2.0, "rotationX": -22.0, "rotationY": -3.0, "rotationZ": -30.0},
+                "LowerArmL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": -6.0},
+                "Head": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 3.0, "rotationY": 5.0, "rotationZ": 2.0},
+                "UpperFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": -4.0, "rotationY": 3.0, "rotationZ": -18.0},
+                "LowerFootL": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 19.0},
+                "UpperFootR": {"offsetX": 0.0, "offsetY": -0.1, "offsetZ": 0.0, "rotationX": 1.0, "rotationY": -3.0, "rotationZ": 6.0},
+                "LowerFootR": {"offsetX": 0.0, "offsetY": 0.0, "offsetZ": 0.0, "rotationX": 0.0, "rotationY": 0.0, "rotationZ": 8.0}
+            } }
+        ]
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-drive", "animation": "roughseas-drive", "blendMode": "Add", "holdEyePosAfterEasein": 0,
+        "elementWeight": { "UpperArmR": 20, "LowerArmR": 20, "UpperArmL": 0.2, "LowerArmL": 0.2 },
+        "elementBlendMode": { "UpperArmR": "AddAverage", "LowerArmR": "AddAverage", "UpperArmL": "AddAverage", "LowerArmL": "AddAverage" },
+        "animationSounds": [{ "frame": 44, "location": "game:sounds/block/chop*", "range": 16, "randomizePitch": true }]
+    } },
+    { "op": "add", "file": "game:entities/humanoid/player.json", "path": "/client/animations/-", "side": "Server", "value": {
+        "code": "roughseas-drive-fp", "animation": "roughseas-drive-fp", "blendMode": "Add", "holdEyePosAfterEasein": 0,
+        "elementWeight": { "UpperArmR": 20, "LowerArmR": 20, "UpperArmL": 0.2, "LowerArmL": 0.2 },
+        "elementBlendMode": { "UpperArmR": "AddAverage", "LowerArmR": "AddAverage", "UpperArmL": "AddAverage", "LowerArmL": "AddAverage" }
     } }
 ]
