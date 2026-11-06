@@ -20,6 +20,13 @@ public class LayingTests
     }
 
     [Fact]
+    public void ALashingShowsTheBarAndALathNone()
+    {
+        Assert.True(new RopeLaying(new AssetLocation("game:rope")).ShowsBar);
+        Assert.False(laying.ShowsBar);
+    }
+
+    [Fact]
     public void ADryLathWillNotBend() => Assert.Equal("shipyard-soak-laths", laying.Refusal(Lath("oak", "dry"), canoe));
 
     [Fact]

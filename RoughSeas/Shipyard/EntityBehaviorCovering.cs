@@ -50,10 +50,10 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
             if (config.Overturned) tree.SetBool(UprightKey, false);
         });
 
-    public override (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
+    public override HullWork? WorkWith(ItemSlot slot)
     {
         var job = base.WorkWith(slot);
-        return job is { } work && framing.Current is { Work: FramingWork.Hide } && sea.Clock.Hours < framing.SetsAt ? (work.Seconds, "shipyard-frame-setting") : job;
+        return job != null && framing.Current is { Work: FramingWork.Hide } && sea.Clock.Hours < framing.SetsAt ? job with { Refusal = "shipyard-frame-setting" } : job;
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
