@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using Vintagestory.API.Client;
-using Vintagestory.API.Config;
 using Vintagestory.GameContent;
 
 namespace AgentBridge;
@@ -30,7 +29,7 @@ public sealed class HandbookLink
 
     public string Outcome(string href)
     {
-        var handbook = capi.Gui.OpenedGuis.OfType<GuiDialogHandbook>().FirstOrDefault();
+        var handbook = capi.Gui.OpenedGuis.OfType<GuiDialogSurvivalHandbook>().FirstOrDefault();
         if (handbook == null) return "";
         if (Building(handbook)) return "The handbook is still building its pages: wait and follow the link again\n";
 

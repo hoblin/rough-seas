@@ -9,17 +9,25 @@ from pathlib import Path
 
 USAGE = """Check every handbook link in every locale of the mod's texts.
 
-  bin/handbook-links          a search link must find a name in its own locale's language,
-                              a guide page link a guide page, and every locale must link the
-                              same pages as English
+  bin/handbook-links          every locale's text as its player sees it, a key it lacks in
+                              English: a search link must find some name the locale shows (a
+                              word found in an unrelated name passes too), a guide page link
+                              must name a guide page, and every locale must link the pages
+                              English links. Item and block page codes are not followed here
   bin/handbook-links game     also follow each page link in the running bench client (bin/client)
                               and require the page to open: a wrong page code fails silently
                               in the game
 """
 
+if sys.argv[1:] == ["help"]:
+    print(USAGE, end="")
+    sys.exit(0)
+if sys.argv[1:] not in ([], ["game"]):
+    sys.exit(USAGE)
+
 repo = Path(__file__).resolve().parent.parent
 ours = repo / "RoughSeas" / "assets" / "roughseas"
-install = Path(os.environ.get("VINTAGE_STORY", Path.home() / ".local/share/vintagestory-1.22.7")) / "assets"
+install = Path(os.environ["VINTAGE_STORY"]) / "assets"
 href = re.compile(r'href=\\?"(handbook(?:search)?://[^"\\]*)')
 name_key = re.compile(r"^(?:[\w-]+:)?(?:item|block)-(?!handbook)")
 
@@ -52,10 +60,12 @@ pages = set()
 for path in sorted((ours / "lang").glob("*.json")):
     code = path.stem
     known = None
-    for key, value in load(path).items():
-        pages |= exact(value)
-        if key in english and exact(value) != exact(english[key]):
-            broken.append(f"{code}: {key} links {sorted(exact(value) ^ exact(english[key]))} differently from English")
+    own = load(path)
+    for key, value in {**english, **own}.items():
+        links = exact(value)
+        pages |= links
+        if key in own and links != exact(english.get(key, value)):
+            broken.append(f"{code}: {key} links {sorted(links ^ exact(english[key]))} differently from English")
         for link in href.findall(value):
             target = link.split("://", 1)[1]
             if link.startswith("handbooksearch://"):
@@ -66,14 +76,13 @@ for path in sorted((ours / "lang").glob("*.json")):
             elif not re.match(r"(item|block)-|tab-", target) and target not in guide_pages:
                 broken.append(f"{code}: {link} names no guide page")
 
-if len(sys.argv) > 1:
-    if sys.argv[1] != "game":
-        sys.exit(USAGE)
+if sys.argv[1:] == ["game"]:
     for link in sorted(link for link in pages if "://tab-" not in link):
         reply = subprocess.run([repo / "bin/game", "link", link], capture_output=True, text=True).stdout
         if "Opened" not in reply:
             broken.append(f"game: {link}: {reply.strip().splitlines()[-1] if reply.strip() else 'no reply'}")
     subprocess.run([repo / "bin/game", "close"], capture_output=True)
 
-print("\n".join(broken) or f"{len(pages)} pages linked, every link resolves in every locale")
+checked = "every page link opens in the game" if sys.argv[1:] == ["game"] else "page codes not followed: bin/handbook-links game"
+print("\n".join(broken) or f"{len(pages)} pages linked, every search finds a name in its locale; {checked}")
 sys.exit(1 if broken else 0)
