@@ -24,14 +24,16 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
 
     public SeatPose? Stance(string? kind) => kind == Pole.Code ? poling.Stance?.Pose : null;
 
-    public double? Sounded { get; private set; }
+    public double? BedMetres { get; private set; }
 
     public double? Slide(double poleMetres, double downward) =>
-        Sounded is { } bed && downward > 0 ? (bed - poling.DrawnBedMetres) / downward - (poleMetres - poling.DrawnPoleMetres) : null;
+        BedMetres is { } bed && downward > 0 && poling.DrawnPoleMetres > 0
+            ? (bed - poling.DrawnBedMetres) / downward - (poleMetres - poling.DrawnPoleMetres)
+            : null;
 
     public Propulsor? Propulsor(Tool? tool, int way, out string? refusal)
     {
-        Sounded = null;
+        BedMetres = null;
         if (tool != null) return tool.Drive(this, way, out refusal);
         return Oars(out refusal, "nothing in hand that moves her");
     }
@@ -44,9 +46,9 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
         var plant = way < 0 ? poling.PlantAsternMetres : poling.PlantAheadMetres;
         var foot = (double depth) => plant + Math.Sign(way) * pole.Footing(depth + hands);
         var depth = depthAt(foot(depthAt(plant, poling.PlantAcrossMetres, blocks)), poling.PlantAcrossMetres, blocks);
-        Sounded = Math.Min(depth, reach);
-        refusal = depth > reach ?$"a {pole.Metres:F0} m pole reaches {reach:F1} m, the water is deeper" : null;
-        return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole, depth, waterDensity), sweepMetres) : null;
+        BedMetres = Math.Min(depth, reach);
+        refusal = depth > reach ? $"a {pole.Metres:F0} m pole reaches {reach:F1} m, the water is deeper" : null;
+        return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole, depth, hands, waterDensity), sweepMetres) : null;
     }
 
     public Propulsor? Paddled(double bladeSquareMetres, out string? refusal)

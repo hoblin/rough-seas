@@ -26,6 +26,6 @@ public class PropulsionModSystem : ModSystem
     public override void Dispose()
     {
         Rowing.Detach();
-        DrawnPole.Detach();
+        DrawnPole.Detach(this);
     }
 }

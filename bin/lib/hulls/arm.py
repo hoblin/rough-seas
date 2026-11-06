@@ -89,7 +89,7 @@ class Arm(Limb):
     def posture(self, pose, trunk=None):
         return Posture(self, pose, trunk)
 
-    def stroke(self, poses, hands, holds, ends=(None, None), loops=None):
+    def stroke(self, poses, hands, holds, ends=(None, None), loops=False):
         """The arm through each hold of the stroke, as (poses, swivels, strain). A stroke loops; one given the elbow's
         swivel at its ends, in radians, runs from the one to the other, unless it `loops` from the first."""
         swivels = range(0, 360, SWIVEL_STEP)
@@ -104,7 +104,7 @@ class Arm(Limb):
             strains = [[self.strain(posture, hand, grip) for posture in row] for row, hand, grip in zip(postures, hands, grips)]
             nearest = [None if at is None else round(math.degrees(at) / SWIVEL_STEP) % len(swivels) for at in pinned]
             cost, path = cheapest(strains, SWING_PER_KEY // SWIVEL_STEP, nearest if ends != (None, None) else None,
-                                  ends == (None, None) if loops is None else loops)
+                                  loops or ends == (None, None))
             turned = [at if at is not None else self.refine(pose, hand, grip, trunk, place, math.radians(swivels[s]))
                       for pose, hand, grip, trunk, place, s, at in zip(poses, hands, grips, trunks, places, path, pinned)]
             fits.append(([place(at) for place, at in zip(places, turned)], turned, cost))

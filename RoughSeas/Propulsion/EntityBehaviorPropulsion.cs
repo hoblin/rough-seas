@@ -69,7 +69,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         : (controls.Forward ? 1 : controls.Backward ? -1 : 0, controls.Left ? 1 : controls.Right ? -1 : 0);
 
     public double? PoleSlide(Entity rower, double poleMetres, double downward) =>
-        entity.GetBehavior<EntityBehaviorSeatable>()?.Controller == rower ? station.Slide(poleMetres, downward) : null;
+        Driving && entity.GetBehavior<EntityBehaviorSeatable>()?.Controller == rower ? station.Slide(poleMetres, downward) : null;
 
     public static int Way(int ahead, int turn) => ahead < 0 || (ahead == 0 && turn < 0) ? -1 : 1;
 
@@ -110,7 +110,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
         var spin = boat.AngularVelocity * RadiansPerAngularVelocity;
         var metabolic = propulsion.Config.Rower.MetabolicWatts;
         var push = stroking && !changing
-            ? propulsor!.Push(ahead, turn, side, speed, spin, metabolic * propulsor.Stroke.GrossEfficiency, strokes.Drawn(rower))
+            ? propulsor!.Push(ahead, turn, side, speed, spin, metabolic * propulsor.Stroke.GrossEfficiency, strokes.DrawnShare(rower))
             : default;
         EffortWatts = stroking ? metabolic : 0;
         Stroke = stroking ? propulsor!.Stroke : null;
@@ -194,7 +194,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
                 rower.GetName(), propulsor.Stroke.Code, EffortWatts * propulsor.Stroke.GrossEfficiency, ahead, turn, push.Newtons, push.NewtonMetres, speed, spin,
                 -water.Along(speed), hull!.Aboard.Total, hull.Afloat.DraftMetres,
                 side == null ? "" : $", on her {side.ToString()!.ToLowerInvariant()} side",
-                station.Sounded is { } bed ? string.Format(CultureInfo.InvariantCulture, ", the pole on a bed {0:F2} m down", bed) : "");
+                station.BedMetres is { } bed ? string.Format(CultureInfo.InvariantCulture, ", the pole on a bed {0:F2} m down", bed) : "");
         }
     }
 }

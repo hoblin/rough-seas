@@ -34,7 +34,6 @@ HIP_TURN = 45
 HANDS_INBOARD = 1
 SEATED_CHEST = 7
 SEATED_REACH = (-3, 3)
-HANGING = 20
 SEATED_RAISE = 4
 SEATED_CLIMB = 6
 SEATED_OUTBOARD = 2
@@ -393,7 +392,7 @@ def standing_poling(tool, at, waterline_voxels, out, chine, side=-1, floor_at=No
     floor_at = floor_at or (lambda foot_x, across: floor)
     bed = waterline_voxels - units.voxels(PLANT_DEPTH_METRES)
     reach_y = [floor + 21, floor + 19]
-    path = PolePath("pole", (x - 2, x + 4), reach_y[0] - bed)
+    path = PolePath("pole", (x - 2, x + 4), floor + units.voxels(STANDING_HIP_METRES) - bed, waterline_voxels - bed, tool)
 
     def placed(frame, way):
         reach, hand_x, foot_x, lift, crossed = path.at(frame, way)
@@ -437,13 +436,15 @@ def toward_grips(rower, tool, pose, hips):
 
 class PolePath:
 
-    def __init__(self, stroke, hands, hands_over_bed):
+    def __init__(self, stroke, hands, hands_over_bed, bed_depth, tool):
+        footing = math.tan(math.radians(poled()["workingDegrees"])) * hands_over_bed
+        travel = math.sqrt(max(0, tool.length ** 2 - hands_over_bed ** 2)) - footing
         self.stroke = stroke
         self.hands = hands
         self.middle = sum(hands) / 2
-        self.plant = hands[0] + math.tan(math.radians(poled()["workingDegrees"])) * hands_over_bed
-        self.end = self.plant + units.voxels(propelled(stroke)["pushMetres"])
-        self.raised = hands_over_bed - HANGING
+        self.plant = hands[0] + footing
+        self.end = self.plant + min(units.voxels(propelled(stroke)["pushMetres"]), travel)
+        self.raised = bed_depth
 
     def at(self, frame, way):
         drive = drive_share(self.stroke)
@@ -473,23 +474,24 @@ class PolePath:
 
 
 class Strokes(dict):
-    planting = {}
+
+    def __init__(self, strokes, planting):
+        super().__init__(strokes)
+        self.planting = planting
 
 
 def three(placed, body, planting):
     ways = {"ready": (lambda frame: 0, 1), "forward": (lambda frame: frame, 1), "backward": (lambda frame: frame, -1)}
-    strokes = Strokes({name: (lambda frame, at=at, way=way: placed(at(frame), way), STARBOARD,
-                              lambda rower, at=at, way=way: lambda frame: body(rower, at(frame), way))
-                       for name, (at, way) in ways.items()})
-    strokes.planting = planting
-    return strokes
+    return Strokes({name: (lambda frame, at=at, way=way: placed(at(frame), way), STARBOARD,
+                           lambda rower, at=at, way=way: lambda frame: body(rower, at(frame), way))
+                    for name, (at, way) in ways.items()}, planting)
 
 
 def seated_poling(tool, at, waterline_voxels, out, side=-1):
     x, seat_y, _ = at
     bed = waterline_voxels - units.voxels(PLANT_DEPTH_METRES)
     hand_y = seat_y + SEATED_CHEST
-    path = PolePath("seatedpole", (x + SEATED_REACH[0], x + SEATED_REACH[1]), hand_y - bed)
+    path = PolePath("seatedpole", (x + SEATED_REACH[0], x + SEATED_REACH[1]), hand_y - bed, waterline_voxels - bed, tool)
 
     def placed(frame, way):
         reach, hand_x, foot_x, lift, crossed = path.at(frame, way)

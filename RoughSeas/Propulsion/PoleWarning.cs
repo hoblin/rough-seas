@@ -12,10 +12,10 @@ public sealed class PoleWarning
 
     private long? shownAt;
 
-    public void Tell(Entity rower, Pole? unreaching, bool trying)
+    public void Tell(Entity rower, Pole? unreaching, bool asking)
     {
         if (rower.Api is not ICoreClientAPI capi || rower != capi.World.Player?.Entity) return;
-        if (unreaching == null || !trying)
+        if (unreaching == null || !asking)
         {
             shownAt = null;
             return;

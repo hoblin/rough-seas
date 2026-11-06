@@ -4,7 +4,6 @@ namespace RoughSeas.Propulsion;
 
 public abstract class Stroke(string code, StrokeConfig config)
 {
-    protected const double Gravity = 9.81;
     private const int Bisections = 60;
 
     public string Code => code;
@@ -17,7 +16,7 @@ public abstract class Stroke(string code, StrokeConfig config)
 
     public virtual double LiftWatts => 0;
 
-    public virtual double Drawn(double meanNewtons, double? drawnShare) => meanNewtons;
+    public virtual double Shove(double meanNewtons, double? drawnShare) => meanNewtons;
 
     public abstract double Thrust(double metresPerSecond, double watts);
 
@@ -49,25 +48,29 @@ public sealed class BladeStroke(string code, StrokeConfig config, double bladeSq
     }
 }
 
-public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, double depthMetres, double waterDensity) : Stroke(code, config)
+public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, double depthMetres, double handsAboveWaterMetres, double waterDensity)
+    : Stroke(code, config)
 {
     public override double LiftWatts => pole.LiftJoules(depthMetres, waterDensity) * StrokesPerMinute / 60;
 
-    private double RecoverySeconds => (1 - Config.DriveShare) * 60 / StrokesPerMinute;
+    private double DriveSeconds => Config.DriveShare * 60 / StrokesPerMinute;
 
-    public override double Drawn(double meanNewtons, double? drawnShare)
+    private double PushMetres => Math.Min(Config.PushMetres, pole.Travel(depthMetres + handsAboveWaterMetres));
+
+    public override double Shove(double meanNewtons, double? drawnShare)
     {
         if (drawnShare is not { } share) return meanNewtons;
         var drive = Config.DriveShare;
         var phase = (share + drive + (1 - drive) / 2) % 1;
-        return phase < drive ? Math.Sign(meanNewtons) * Math.Min(Config.PushNewtons, Math.Abs(meanNewtons) / drive) : 0;
+        return phase < drive ? meanNewtons / drive : 0;
     }
 
     public override double Thrust(double metresPerSecond, double watts)
     {
-        if (watts <= 0) return 0;
+        if (watts <= 0 || PushMetres <= 0) return 0;
         var speed = Math.Max(0, metresPerSecond);
-        var shoves = Config.PushNewtons * Config.PushMetres / (Config.PushMetres + speed * RecoverySeconds);
-        return speed <= 0 ? shoves : Math.Min(shoves, watts / speed);
+        if (speed <= 0) return Config.DriveShare * Config.PushNewtons;
+        var shoving = Math.Min(Config.PushNewtons, watts / (Config.DriveShare * speed));
+        return Config.DriveShare * shoving * Math.Min(1, PushMetres / (speed * DriveSeconds));
     }
 }

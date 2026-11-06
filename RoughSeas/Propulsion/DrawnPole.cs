@@ -21,8 +21,9 @@ public static class DrawnPole
         harmony.Patch(AccessTools.Method(typeof(EntityShapeRenderer), "RenderItem"), prefix: new HarmonyMethod(typeof(DrawnPole), nameof(Slid)));
     }
 
-    public static void Detach()
+    public static void Detach(PropulsionModSystem system)
     {
+        if (propulsion != system) return;
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
         propulsion = null;

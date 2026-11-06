@@ -62,4 +62,9 @@ public class PoleConfig
     public double Reach(double metres, double handsAboveWaterMetres) => metres * Math.Cos(WorkingRadians) - handsAboveWaterMetres;
 
     public double Footing(double handsAboveBedMetres) => handsAboveBedMetres * Math.Tan(WorkingRadians);
+
+    public double Slanted(double perUpright) => perUpright / Math.Cos(WorkingRadians);
+
+    public double Travel(double metres, double handsAboveBedMetres) =>
+        handsAboveBedMetres >= metres ? 0 : Math.Max(0, Math.Sqrt(metres * metres - handsAboveBedMetres * handsAboveBedMetres) - Footing(handsAboveBedMetres));
 }

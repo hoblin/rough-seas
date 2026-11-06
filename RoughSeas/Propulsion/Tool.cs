@@ -50,10 +50,12 @@ public sealed class Pole(double metres, double density, PoleConfig config) : Too
 
     public double Footing(double handsAboveBedMetres) => config.Footing(handsAboveBedMetres);
 
+    public double Travel(double handsAboveBedMetres) => config.Travel(metres, handsAboveBedMetres);
+
     public double LiftJoules(double depthMetres, double waterDensity)
     {
         var weight = Kilograms * Gravity;
-        var buoyancyPerMetre = waterDensity * Gravity * SquareMetres / Math.Cos(config.WorkingDegrees * Math.PI / 180);
+        var buoyancyPerMetre = config.Slanted(waterDensity * Gravity * SquareMetres);
         var lifted = Math.Min(depthMetres, weight / buoyancyPerMetre);
         return weight * lifted - buoyancyPerMetre * lifted * lifted / 2;
     }

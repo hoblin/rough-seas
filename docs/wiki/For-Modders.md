@@ -306,15 +306,16 @@ New: `hewnSectionsMetres`, `roughseas-hew`, `hewer`, `IVesselHold.DesignedLitres
 
 A pole's shove, its reach and its drawing are one ([Driving her](Building-a-Vessel#driving-her)). A vessel of yours loads as it did; one that takes a pole should read on.
 
-- A pole drives her only while its drawn shove is on the bed: `PoleStroke.Drawn` gives the shove's force at a point of the stroke the rider's animation is at, the stroke's mean in its first half from halfway through the recovery, at most the stroke's `pushNewtons`, and nothing in the rest. A vessel of yours whose pole strokes are drawn another way thrusts off their beat.
-- Bringing the pole up costs the work of lifting its foot from the bed to the surface less what the water bears of it, paid once a stroke whether it drives her, turns her or both: `Stroke.LiftWatts`, which `Propulsor.Push` takes off before it shares the rest. `PoleStroke` takes the `Pole` itself and the water's density.
-- `roughseas:propulsion`'s `pole` takes `plantAheadMetres`, `plantAsternMetres`, `plantAcrossMetres`, `drawnPoleMetres` and `drawnBedMetres`, which our builds write. Without them the bed is sounded under her middle and the drawn pole doesn't slide.
+- A pole drives her only while its drawn shove is on the bed. A pole stroke's animation starts and ends halfway through its recovery, so its shove is the `driveShare` of it that begins `(1 − driveShare) / 2` in. `PoleStroke.Shove` gives the force at the share of the animation the rider is at: the stroke's mean over `driveShare` in the shove, nothing in the rest. A vessel of yours whose pole strokes are drawn another way thrusts off their beat.
+- `PoleStroke.Thrust` is the stroke's mean at that fixed beat: the push, at most `pushNewtons`, for as long as the shove's travel lasts, which is `pushMetres` or, for a pole too short for the water, as far as its top reaches the upper hand (`PoleConfig.Travel`). `PoleStroke` takes the `Pole` itself, the water's depth, the hands' height over the water and the water's density.
+- Bringing the pole up costs the work of lifting its foot from the bed to the surface less what the water bears of it, paid once a stroke whether it drives her, turns her or both: `Stroke.LiftWatts`, which `Propulsor.Push` takes off before it shares the rest.
+- `roughseas:propulsion`'s `pole` takes `plantAheadMetres`, `plantAsternMetres`, `plantAcrossMetres`, `drawnPoleMetres` and `drawnBedMetres`, which our builds write. Without the plant keys the bed is sounded a pole's footing from the point she stands at; without `drawnPoleMetres` the drawn pole doesn't slide.
 - `RowerStation.Propulsor` and `Tool.Drive` take the way the stroke goes, `EntityBehaviorPropulsion.Way`: astern, or turning to starboard from rest, the pole is planted ahead of the hands. `RowerStation`'s depth now comes from a point of her hull, `EntityBehaviorSeaForces.WaterDepth(alongMetres, acrossMetres, maxBlocks)`.
 - On a client, a Harmony prefix on `EntityShapeRenderer.RenderItem` slides the pole in a controlling rider's right hand along its length to the bed, through a copy of its `tpHandTransform`. A mod that draws held items another way sees the pole at its fitted place.
 - Every vessel's `pole-backward` stroke is its own animation: the pole planted ahead of the hands and shoved toward her bow. The ready pose holds the pole upright, halfway through the recovery, where both strokes start and end.
 - A pole that finds no bed shows its rider the in-game error `roughseas-pole-too-deep`, the lang key `roughseas:propulsion-pole-too-deep`.
 
-New: `PoleStroke.Drawn`, `Stroke.LiftWatts`, `Pole.LiftJoules`, `PoleConfig.Footing`, `RowerStation.Sounded`, `EntityBehaviorPropulsion.Way` and `PoleSlide`, the `pole` keys above, `propulsion-pole-too-deep`.
+New: `Stroke.Shove`, `Stroke.LiftWatts`, `Pole.LiftJoules`, `Pole.Travel`, `PoleConfig.Footing`, `PoleConfig.Travel`, `RowerStation.BedMetres`, `MountStrokes.DrawnShare`, `EntityBehaviorPropulsion.Way` and `PoleSlide`, the `pole` keys above, `propulsion-pole-too-deep`.
 
 ## What not to touch
 

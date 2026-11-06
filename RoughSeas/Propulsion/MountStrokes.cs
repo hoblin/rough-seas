@@ -20,7 +20,7 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
     private (string Code, string? Tool)? playing;
     private int? finishingFrom;
 
-    public double? Drawn(Entity rower) =>
+    public double? DrawnShare(Entity rower) =>
         playing is { } stroke && rower.AnimManager?.GetAnimationState(stroke.Code) is { Active: true } running
             ? running.CurrentFrame / running.Animation.QuantityFrames
             : null;
