@@ -4,6 +4,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 import unicodedata
 from pathlib import Path
 
@@ -84,7 +85,11 @@ for path in sorted((ours / "lang").glob("*.json")):
 
 if sys.argv[1:] == ["game"]:
     for link in sorted(link for link in pages if "://tab-" not in link):
-        reply = subprocess.run([repo / "bin/game", "link", link], capture_output=True, text=True).stdout
+        for _ in range(60):
+            reply = subprocess.run([repo / "bin/game", "link", link], capture_output=True, text=True).stdout
+            if "still building" not in reply:
+                break
+            time.sleep(1)
         if "Opened" not in reply:
             broken.append(f"game: {link}: {reply.strip().splitlines()[-1] if reply.strip() else 'no reply'}")
     subprocess.run([repo / "bin/game", "close"], capture_output=True)
