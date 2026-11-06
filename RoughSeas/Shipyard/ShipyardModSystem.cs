@@ -21,6 +21,8 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockBehaviorClass(BlockBehaviorBlankLog.Code, typeof(BlockBehaviorBlankLog));
         api.RegisterEntityBehaviorClass(EntityBehaviorBurnout.Code, typeof(EntityBehaviorBurnout));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHew.Code, typeof(CollectibleBehaviorHew));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorDrive.Code, typeof(CollectibleBehaviorDrive));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorIcon.Code, typeof(CollectibleBehaviorIcon));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLightWithTorch.Code, typeof(CollectibleBehaviorLightWithTorch));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLightWithFirestarter.Code, typeof(CollectibleBehaviorLightWithFirestarter));
         api.RegisterEntityBehaviorClass(EntityBehaviorFraming.Code, typeof(EntityBehaviorFraming));
@@ -68,7 +70,7 @@ public class ShipyardModSystem : ModSystem
         }
         foreach (var axe in api.World.Items.Where(item => item?.Code != null && item.Tool == EnumTool.Axe))
         {
-            axe.CollectibleBehaviors = axe.CollectibleBehaviors.Append(new CollectibleBehaviorHew(axe));
+            axe.CollectibleBehaviors = axe.CollectibleBehaviors.Append(new CollectibleBehaviorHew(axe), new CollectibleBehaviorDrive(axe));
         }
         foreach (var collectible in api.World.Collectibles.Where(collectible => collectible?.Code != null))
         {

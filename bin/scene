@@ -360,7 +360,7 @@ recipes() {
     recipe "$page" "$output" "$dir/$name.png" "$from"
   done <<'EOF'
 birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
-splitting-wedge    block-roughseas:wedge-we          roughseas:wedge-we
+splitting-wedge    block-roughseas:wedge-we-0        roughseas:wedge-we-0
 reed-bundle        block-roughseas:reedbundle-cattailtops-none-we roughseas:reedbundle-cattailtops-none-we
 laths              item-roughseas:lath-oak-5-dry     roughseas:lath-oak-5-dry
 anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
