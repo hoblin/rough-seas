@@ -35,6 +35,9 @@ HANDS_INBOARD = 1
 SEATED_CHEST = 7
 SEATED_REACH = (-3, 3)
 HANGING = 20
+SEATED_RAISE = 4
+SEATED_CLIMB = 6
+SEATED_OUTBOARD = 2
 REST = 8
 CLEARANCE = 0.05
 
@@ -489,8 +492,8 @@ def seated_poling(tool, at, waterline_voxels, out, side=-1):
     path = PolePath("seatedpole", (x + SEATED_REACH[0], x + SEATED_REACH[1]), hand_y - bed)
 
     def placed(frame, way):
-        _, hand_x, foot_x, lift, crossed = path.at(frame, way)
-        hand = (hand_x, hand_y, out - side * HANDS_INBOARD)
+        reach, hand_x, foot_x, lift, crossed = path.at(frame, way)
+        hand = (hand_x, hand_y + SEATED_RAISE * lift + SEATED_CLIMB * reach, out + side * SEATED_OUTBOARD)
         return planted(tool, hand, (foot_x, bed + path.raised * lift, out), crossed)
 
     def body(rower, frame, way):
