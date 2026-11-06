@@ -17,7 +17,7 @@ namespace RoughSeas.Shipyard;
 /// Laths laid on the ground whose middles lie in this block, each at its full length along or across. Rope bound on
 /// laths laid out in a vessel's layout ties them into her blank where they lie (<see cref="LathBinding"/>).
 /// </summary>
-public class BlockEntityLathBed : BlockEntity, IWorkedHull
+public class BlockEntityLathBed : BlockEntity, IWorkedHull, IWorkedBlock
 {
     public const string ClassName = "roughseas:LathBed";
 
@@ -47,11 +47,13 @@ public class BlockEntityLathBed : BlockEntity, IWorkedHull
 
     public IEnumerable<ItemStack> Stacks => laths.Select(lath => lath.Stack);
 
-    public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
+    public IWorkedHull HullAt(IWorldAccessor world, BlockPos pos) => this;
+
+    public HullWork? WorkWith(ItemSlot slot)
     {
         if (!LathBinding.All(Api.World).Any(binding => binding.Rope.Takes(slot)) || Bound() is not { } bound) return null;
 
-        return (bound.Binding.Seconds, bound.Wet ? null : "shipyard-soak-laths");
+        return new(bound.Binding.Seconds, bound.Wet ? null : "shipyard-soak-laths", bound.Binding.Rope.ShowsBar);
     }
 
     public void Lay(EntityAgent byEntity, ItemSlot slot)

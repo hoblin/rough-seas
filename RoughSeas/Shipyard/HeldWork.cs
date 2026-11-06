@@ -6,8 +6,8 @@ using Vintagestory.GameContent;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// Work done by holding the use button for its time: the bar fills on the holder's screen, and the work is done once
-/// the button has been held long enough. A hold ends once, however often the game reports its end: the server calls
+/// Work done by holding the use button for its time: vanilla's progress bar, when the work shows it, fills on the
+/// holder's screen, and the work is done once the button has been held long enough. A hold ends once, however often the game reports its end: the server calls
 /// a held item's stop twice when it finishes the use while catching up the client's stop.
 /// </summary>
 public sealed class HeldWork
@@ -17,13 +17,13 @@ public sealed class HeldWork
     private readonly HashSet<long> holding = [];
     private IProgressBar? bar;
 
-    public void Start(EntityAgent byEntity)
+    public void Start(EntityAgent byEntity, bool showsBar)
     {
         holding.Add(byEntity.EntityId);
         if (byEntity.Api is not ICoreClientAPI capi) return;
 
         RemoveBar(capi);
-        bar = capi.ModLoader.GetModSystem<ModSystemProgressBar>().AddProgressbar();
+        if (showsBar) bar = capi.ModLoader.GetModSystem<ModSystemProgressBar>().AddProgressbar();
     }
 
     /// <returns>Whether to keep holding.</returns>

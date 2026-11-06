@@ -136,6 +136,7 @@ public class ShipyardModSystem : ModSystem
     {
         var codes = builds.SelectMany(built => new[] { built.Rope, built.Cloth, built.Planks, built.Hides }).Where(code => code != "").Distinct().Select(code => new AssetLocation(code)).ToArray();
         var worked = builds.SelectMany(built => built.Stages).Select(stage => ToolLaying.ToolOf(stage.Work)).OfType<EnumTool>().ToHashSet();
+        if (builds.Any(built => built.BarkSeconds > 0)) worked.Add(EnumTool.Knife);
         var tools = world.Collectibles.Where(collectible => collectible?.Code != null
             && (collectible is BlockLiquidContainerBase || collectible.Tool is { } tool && worked.Contains(tool) || codes.Any(code => WildcardUtil.Match(code, collectible.Code))));
         foreach (var tool in tools.Where(tool => !tool.HasBehavior<CollectibleBehaviorFraming>()))

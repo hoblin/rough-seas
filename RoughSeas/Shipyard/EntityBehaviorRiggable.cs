@@ -64,16 +64,16 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
 
     private static double Squared(double yaw) => GameMath.Mod(Math.Round(yaw / GameMath.PIHALF) * GameMath.PIHALF, GameMath.TWOPI);
 
-    public (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
+    public HullWork? WorkWith(ItemSlot slot)
     {
         if (rig == null || slot.Itemstack?.Collectible is not { } pole || !WildcardUtil.Match(new AssetLocation(rig.Poles), pole.Code)) return null;
 
         var seconds = rig.Stages[0].Seconds;
-        if (entity.GetBehavior<EntityBehaviorBuild>() is { Finished: false }) return (seconds, "shipyard-rig-unfinished");
+        if (entity.GetBehavior<EntityBehaviorBuild>() is { Finished: false }) return new(seconds, "shipyard-rig-unfinished");
 
-        if (Laying.ShorterThan(slot, rig.Stages[0].Metres.FirstOrDefault())) return (seconds, "shipyard-pole-short");
+        if (Laying.ShorterThan(slot, rig.Stages[0].Metres.FirstOrDefault())) return new(seconds, "shipyard-pole-short");
 
-        return (seconds, Float(rig) != null ? null : "shipyard-float-row");
+        return new(seconds, Float(rig) != null ? null : "shipyard-float-row");
     }
 
     public void Lay(EntityAgent byEntity, ItemSlot slot)
