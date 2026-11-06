@@ -54,7 +54,7 @@ Without the bench, run `./build.sh` and drop the zip from `Releases/` into your 
 
 - **CI passes.** The workflow runs the unit tests and builds the release zip.
 - **It was played.** Say in the description what you did in the game and what you saw.
-- **Every text a player sees is in every locale** the game supports: the codes in the install's `assets/game/lang/languages.json`. Use that language's own nautical terms, not a word-for-word translation.
+- **Every text a player sees is in every locale** the game supports: the codes in the install's `assets/game/lang/languages.json`. Use that language's own nautical terms, not a word-for-word translation. Link a handbook page by its code (`handbook://item-roughseas:dugout-oak`), never by a search for an English word: a search finds names in the player's language. `bin/handbook-links` checks every link in every locale.
 - **No reinvented wheels.** Use what the game already does first. Then JSON assets and patches, behaviours and the mod system. Then Harmony patches. Write new code last.
 - **Clean modules.** Each system has a clear boundary and a small public interface. Numbers go in JSON assets, not in code.
 - **A maintainer approves it.** The code owner reviews outside contributions before merge.

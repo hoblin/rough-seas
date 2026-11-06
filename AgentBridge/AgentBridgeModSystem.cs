@@ -38,6 +38,7 @@ public class AgentBridgeModSystem : ModSystem
     private FrameTimer frameTimer = null!;
     private EntityLoadBlackBox blackBox = null!;
     private HandbookRecipe recipes = null!;
+    private HandbookLink links = null!;
     private FreeCamera freeCamera = null!;
     private LimbColours limbs = null!;
     private SwellReading? swell;
@@ -56,6 +57,7 @@ public class AgentBridgeModSystem : ModSystem
         frameTimer = new FrameTimer(api);
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         recipes = new HandbookRecipe(api);
+        links = new HandbookLink(api);
         freeCamera = new FreeCamera(api);
         limbs = new LimbColours(api);
         if (api.ModLoader.IsModEnabled("roughseas")) swell = new SwellReading(api);
@@ -368,7 +370,7 @@ public class AgentBridgeModSystem : ModSystem
             return "Link protocols: " + string.Join(", ", capi.LinkProtocols.Keys) + "\n";
         }
         follow(new LinkTextComponent(href));
-        return $"Followed {href}\n";
+        return $"Followed {href}\n" + links.Outcome(href!);
     }
 
     private string Leave()
