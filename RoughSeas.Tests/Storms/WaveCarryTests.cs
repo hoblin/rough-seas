@@ -33,6 +33,22 @@ public class WaveCarryTests
         }
     }
 
+    [Fact]
+    public void AHullLyingStillWithoutVanillasDragTakesTheWavesAndNoMore()
+    {
+        var motion = 0.0;
+        var before = 0.0;
+        for (var step = 0; step < 6000; step++)
+        {
+            // a steady part as well as the to and fro: a drift must not pile up
+            var waves = 0.05 + Water * Math.Sin(step * Frame);
+            motion += WaveCarry.Carried(waves, before, kept: 1);
+            before = waves;
+
+            Assert.Equal(waves / 60, motion, 9);
+        }
+    }
+
     [Theory]
     [InlineData(0.5)]
     [InlineData(1)]

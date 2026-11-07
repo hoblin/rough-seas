@@ -5,8 +5,9 @@ using RoughSeas.SeaAndWeather;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The sea's surface as the client draws it: wave trains whose direction, length and speed stay fixed for their
-/// life, advanced by one clock per frame. The water shader and every floating body read this one state.
+/// The sea's surface as the client draws it, and as the server builds it where a decision needs it (<see cref="SwellAround"/>):
+/// wave trains whose direction, length and speed stay fixed for their life, advanced by one clock per frame. The water
+/// shader and every floating body read this one state.
 /// <see cref="DisplacementAt"/> and <see cref="FoldAt"/> are the formulas of
 /// <c>assets/roughseas/shaderincludes/seasurface.vsh</c>; a change to one is made to the other.
 /// </summary>

@@ -107,6 +107,12 @@ public interface IMendable
     string Mend(HullRepair repair, HullPlace place);
 }
 
+/// <summary>A vessel whose way through the water is worked out by her own drag, with vanilla's water drag taken off her along the water.</summary>
+public interface IDriven
+{
+    bool Driving { get; }
+}
+
 /// <summary>
 /// How a vessel floats now, from its full mass by Archimedes; refreshed twice a second on both sides. Without
 /// <see cref="HasDraft"/> she floats as vanilla draws her and never sinks.
