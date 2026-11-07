@@ -1,4 +1,5 @@
 using HarmonyLib;
+using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.GameContent;
@@ -13,7 +14,6 @@ namespace RoughSeas.Storms;
 public static class DriftPhysics
 {
     private const string HarmonyId = "roughseas.storms.drift";
-    private const double TicksPerSecond = 60;
 
     private static readonly object patchLock = new();
     private static int attached;
@@ -49,7 +49,7 @@ public static class DriftPhysics
 
         var wet = ___feetInLiquidBefore || ___swimmingBefore;
         var drag = wet ? __instance.WaterDragValue : __instance.AirDragValue;
-        drift.BeforeMove(pos.Motion, dt, drag, wet, boat.Swimming && boat.ApplyGravity, dt * TicksPerSecond);
+        drift.BeforeMove(pos.Motion, dt, drag, wet, boat.Swimming && boat.ApplyGravity, dt * WaterDrag.TicksPerSecond);
     }
 
     private static void AfterMove(EntityBehaviorPassivePhysics __instance, EntityPos pos)

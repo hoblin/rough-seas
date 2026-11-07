@@ -19,7 +19,6 @@ public static class VesselMotion
     private const double LogEverySeconds = 5;
 
     private static readonly Dictionary<long, (long Frame, SeaPose Pose)> poses = [];
-    private static readonly Dictionary<long, (HullResponse Response, double Seconds)> responses = [];
     private static Harmony? harmony;
     private static StormsModSystem? storms;
     private static IDrawnSea? drawn;
@@ -53,7 +52,6 @@ public static class VesselMotion
         harmony = null;
         (storms, capi, drawn, surface) = (null, null, null, null);
         poses.Clear();
-        responses.Clear();
         (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
     }
 
@@ -129,37 +127,16 @@ public static class VesselMotion
     private static SeaPose Ride(EntityBoat boat, IDrawnSea sea)
     {
         var forces = boat.GetBehavior<EntityBehaviorSeaForces>();
-        if (forces == null || !boat.Swimming)
+        if (forces == null) return default;
+        if (!boat.Swimming)
         {
-            responses.Remove(boat.EntityId);
+            forces.Ride.Settle();
             return default;
         }
 
-        var pos = boat.Pos;
-        double side = Math.Max(boat.CollisionBox.XSize, boat.CollisionBox.ZSize);
-        double lengthMetres = forces.LengthMetres ?? side;
-        double beamMetres = forces.BeamMetres > 0 ? forces.BeamMetres : side;
-        var yaw = pos.Yaw + (boat.Properties.Client.Shape?.rotateY ?? 0) * GameMath.DEG2RAD;
-        var pose = Answer(boat, forces, sea.PoseOf(pos.X, pos.Z, yaw, lengthMetres, beamMetres), lengthMetres);
+        var pose = forces.Ride.Follow(boat, sea, Seconds);
         var seaworthiness = forces.Seaworthiness;
         return pose with { Roll = pose.Roll * seaworthiness.RollResponse, Pitch = pose.Pitch * seaworthiness.PitchResponse };
-    }
-
-    private static SeaPose Answer(EntityBoat boat, EntityBehaviorSeaForces forces, SeaPose pose, double length)
-    {
-        if (!responses.TryGetValue(boat.EntityId, out var answered))
-        {
-            answered = (new HullResponse(0, 0, storms!.Config.Response), Seconds);
-        }
-        var response = answered.Response;
-        if (forces.Buoyant is { HasDraft: true } buoyant)
-        {
-            double draft = buoyant.Afloat.DraftMetres;
-            response.HeavePeriodSeconds = HullResponse.HeavePeriod(buoyant.Aboard.Total, buoyant.AddedKg, buoyant.KgPerMetre);
-            response.RollPeriodSeconds = HullResponse.RollPeriod(length, forces.BeamMetres, draft, buoyant.DepthMetres);
-        }
-        responses[boat.EntityId] = (response, Seconds);
-        return response.Follow(pose, Seconds - answered.Seconds);
     }
 
     private static double Seconds => capi!.InWorldEllapsedMilliseconds / 1000.0;

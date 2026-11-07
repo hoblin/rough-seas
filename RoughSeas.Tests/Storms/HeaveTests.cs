@@ -11,14 +11,7 @@ public class HeaveTests
     private readonly ResponseConfig config = Fixtures.Config().Response;
 
     private Heave Laden(Hull hull, Aboard aboard) =>
-        new(aboard.Total, AddedKg(hull), hull.Flotation.KgPerMetre, hull.Float(aboard).DraftMetres, hull.Flotation.DepthMetres, config);
-
-    private static double AddedKg(Hull hull)
-    {
-        var shape = Fixtures.Shape(hull.Vessel);
-        double squareMetres = hull.Flotation.HasHold ? hull.Flotation.KgPerMetre / 1025 : 4 * shape.HalfLengthMetres * shape.HalfBeamMetres;
-        return HeaveAddedMass.OfWaterplane(squareMetres, shape.HalfBeamMetres);
-    }
+        new(aboard.Total, Fixtures.AddedKg(hull), hull.Flotation.KgPerMetre, hull.Float(aboard).DraftMetres, hull.Flotation.DepthMetres, config);
 
     private static List<double> Immersions(Heave heave, double from, double seconds, double step = ClientSeconds, double rising = 0)
     {

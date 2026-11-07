@@ -1,3 +1,4 @@
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.MathTools;
@@ -24,7 +25,7 @@ public class HullSetTests
         motion.Z /= swim;
     }
 
-    private static double Kept(double seconds) => VesselDraught.WaterDragKept(VanillaWaterDrag, seconds);
+    private static double Kept(double seconds) => WaterDrag.Kept(VanillaWaterDrag, seconds);
 
     private static double Speed(Vec3d motion) => TicksPerSecond * Math.Sqrt(motion.X * motion.X + motion.Z * motion.Z);
 

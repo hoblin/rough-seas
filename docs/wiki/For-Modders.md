@@ -347,6 +347,12 @@ A reed boat's rider poling in first person sees the water ahead past the arms. E
 
 New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`.
 
+### The waves carry every hull
+
+The drawn waves now move every `EntityBoat` with `roughseas:seaforces`, steered or not ([A ship that rides our swell](Reading-the-Sea#a-ship-that-rides-our-swell)).
+
+- `IDrawnSea` gained `HullVelocityAt`. A class of yours that implements `IDrawnSea` has to add it. Code that only reads `IDrawnSea` is unaffected.
+
 ### Currents carry every vessel
 
 A current now carries a steered vessel too, and pulls on a moored one. See [Building a vessel](Building-a-Vessel#currents).

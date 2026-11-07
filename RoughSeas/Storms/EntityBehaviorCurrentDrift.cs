@@ -124,7 +124,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         var current = sea.CurrentAt(pos.X, pos.Z);
         var w = water = new Water(current.X, current.Z, way?.WaterDrag ?? ownDrag?.Now);
         if (w.Drag is { } drag) set.Settle(drag, w.X, w.Z, pos.Yaw, deltaTime);
-        else set.Relax(w.X, w.Z, 1 - VesselDraught.WaterDragKept(physics?.WaterDragValue ?? 1, deltaTime));
+        else set.Relax(w.X, w.Z, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime));
 
         if (ours && !moves) TakeOver();
         else if (!ours && moves) GiveOver();
@@ -138,7 +138,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         if (!moves) return;
 
         // a driving hull has this drag undone along the water by Rowing.Swum already, whichever patch goes first
-        var kept = wet && way is { Driving: true } ? 1 : VesselDraught.WaterDragKept(drag, seconds);
+        var kept = wet && way is { Driving: true } ? 1 : WaterDrag.Kept(drag, seconds);
         set.Keep(motion, kept, stepFactor, swimming);
     }
 

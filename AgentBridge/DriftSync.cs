@@ -35,9 +35,9 @@ public class DriftSync : ModSystem
     }
 
     /// <summary>Tells one player, or every player, what the server's switches say now.</summary>
-    public void Send(bool drifting, (double X, double Z)? current, IServerPlayer? only = null)
+    public void Send(bool drifting, bool wavesOnly, (double X, double Z)? current, IServerPlayer? only = null)
     {
-        var state = new DriftState { Drifting = drifting, HasCurrent = current != null, X = current?.X ?? 0, Z = current?.Z ?? 0 };
+        var state = new DriftState { Drifting = drifting, WavesOnly = wavesOnly, HasCurrent = current != null, X = current?.X ?? 0, Z = current?.Z ?? 0 };
         if (only != null) serverChannel?.SendPacket(state, only);
         else serverChannel?.BroadcastPacket(state);
     }
@@ -49,6 +49,7 @@ public class DriftSync : ModSystem
         clientDrift ??= new DriftSwitch();
         clientCurrent ??= new CurrentOverride();
         clientDrift.Drifting = state.Drifting;
+        clientDrift.WavesOnly = state.WavesOnly;
         clientCurrent.Set(state.X, state.Z, state.HasCurrent);
         Mod.Logger.Debug($"[bridge] drift {state.Drifting}, current {(state.HasCurrent ? $"{state.X:F2} {state.Z:F2}" : "the sea's")}");
     }
@@ -68,6 +69,7 @@ public class DriftSync : ModSystem
 public class DriftState
 {
     public bool Drifting;
+    public bool WavesOnly;
     public bool HasCurrent;
     public double X;
     public double Z;

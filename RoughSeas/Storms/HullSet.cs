@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
 using Vintagestory.API.MathTools;
 
@@ -12,8 +13,6 @@ namespace RoughSeas.Storms;
 /// </summary>
 public sealed class HullSet
 {
-    private const double TicksPerSecond = 60;
-
     private readonly object gate = new();
     private double x;
     private double z;
@@ -35,7 +34,7 @@ public sealed class HullSet
     {
         get
         {
-            lock (gate) return (pivotX / TicksPerSecond, pivotZ / TicksPerSecond);
+            lock (gate) return (pivotX / WaterDrag.TicksPerSecond, pivotZ / WaterDrag.TicksPerSecond);
         }
     }
 
@@ -82,8 +81,8 @@ public sealed class HullSet
 
             var (restX, restZ) = ((motion.X - heldX) * kept, (motion.Z - heldZ) * kept);
             var rest = Swim(Math.Sqrt(restX * restX + restZ * restZ));
-            heldX = (x + pivotX) / TicksPerSecond;
-            heldZ = (z + pivotZ) / TicksPerSecond;
+            heldX = (x + pivotX) / WaterDrag.TicksPerSecond;
+            heldZ = (z + pivotZ) / WaterDrag.TicksPerSecond;
             var (afterX, afterZ) = (restX / rest + heldX, restZ / rest + heldZ);
             // vanilla's swim drag is a step: at a speed past its offset it takes all it will, so what passes it is the most it takes
             var before = Swim(Math.Sqrt(afterX * afterX + afterZ * afterZ)) <= 1 ? 1 : VesselDraught.MostSwimDrag;
@@ -107,7 +106,7 @@ public sealed class HullSet
     {
         lock (gate)
         {
-            (heldX, heldZ) = moves ? ((x + pivotX) / TicksPerSecond, (z + pivotZ) / TicksPerSecond) : (0, 0);
+            (heldX, heldZ) = moves ? ((x + pivotX) / WaterDrag.TicksPerSecond, (z + pivotZ) / WaterDrag.TicksPerSecond) : (0, 0);
             motion.X += heldX;
             motion.Z += heldZ;
         }
@@ -123,8 +122,8 @@ public sealed class HullSet
 
             x -= outward * outwardX;
             z -= outward * outwardZ;
-            heldX -= outward * outwardX / TicksPerSecond;
-            heldZ -= outward * outwardZ / TicksPerSecond;
+            heldX -= outward * outwardX / WaterDrag.TicksPerSecond;
+            heldZ -= outward * outwardZ / WaterDrag.TicksPerSecond;
         }
     }
 
@@ -140,8 +139,8 @@ public sealed class HullSet
         lock (gate)
         {
             (x, z, pivotX, pivotZ) = (setX, setZ, 0, 0);
-            motion.X = heldX = x / TicksPerSecond;
-            motion.Z = heldZ = z / TicksPerSecond;
+            motion.X = heldX = x / WaterDrag.TicksPerSecond;
+            motion.Z = heldZ = z / WaterDrag.TicksPerSecond;
         }
     }
 

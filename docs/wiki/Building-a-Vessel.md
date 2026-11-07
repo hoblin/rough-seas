@@ -14,7 +14,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 
 | Code | Sides | What it does |
 | --- | --- | --- |
-| `roughseas:seaforces` | client and server | the vessel's contact with the sea: waves aboard, breaker strikes, the ride on the drawn swell, its mass slowing it, the settling it draws. Mooring needs it |
+| `roughseas:seaforces` | client and server | the vessel's contact with the sea: waves aboard, breaker strikes, the ride on the drawn swell and the sway of the water under it, its mass slowing it, the settling it draws. Mooring needs it |
 | `roughseas:bilge` | client and server | the water aboard: from waves, leaks and rain, bailed out, swamping the hull when full |
 | `roughseas:vesselintegrity` | client and server, first in both lists | the hull: how it floats and sinks, what cracks or breaks it, its leaks, mending, wreckage |
 | `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
@@ -432,4 +432,4 @@ The drag is `HullDrag`, the one `roughseas:propulsion` drives against, from `ves
 | `sideDrag` | | `drag.json` | cross-flow drag on length by draft |
 | `finSquareMetres` | m² | 0 | a keel's or float's side, added to length by draft |
 
-A vessel without `vesselintegrity` has no draft to take drag on, and comes toward the water's speed at the rate of vanilla's water drag. Held by `mooring`, a vessel turns about its bow to lie along the stream, and the current's drag on it pulls on the rope and the anchor.
+A vessel without `vesselintegrity` has no draft to take drag on, and comes toward the water's speed at the rate of vanilla's water drag. Held by `mooring`, a vessel turns about its bow to lie along the stream, and the current's drag on it pulls on the rope and the anchor. The waves' own to and fro and drift are `roughseas:seaforces`'s.

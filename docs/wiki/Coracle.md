@@ -25,7 +25,7 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
 | [Rapids](Rapids) | runs them unharmed, as the bark canoe does, drawing only a few inches ([a simplified model](Rapids) for now) |
 | [Lightning](Lightning) | a strike nearby breaks it |
-| [In a current](Currents#drift) | carried with it, steered or not |
+| [In a current](Currents#drift) | carried with it and with the waves, steered or not |
 | [Mooring](Mooring) | tied to a post, or worn home |
 | Carried | worn on the back, in the backpack slot |
 | Seats | one, on the floor, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; with a pole you stand in its middle |
