@@ -93,7 +93,7 @@ Walk into it from the shore side to push it into the water. It can't be picked u
 | From above | Beside the sailboat |
 | ![Ashore, from the side](images/outrigger-canoe/ashore-side.webp) | ![Ashore, from the quarter](images/outrigger-canoe/ashore-quarter.webp) |
 | Ashore | Ashore, from the quarter |
-| ![Dropped on the ground](images/outrigger-canoe/dropped.webp) | ![Held in the hand](images/outrigger-canoe/held.webp) |
-| Dropped on the ground | Held in the hand |
-| ![The hotbar icon](images/outrigger-canoe/icon.png) | ![The wreckage it leaves](images/outrigger-canoe/wreckage.webp) |
-| In the hotbar | Its wreckage |
+| ![Dropped on the ground](images/outrigger-canoe/dropped.webp) | ![The wreckage it leaves](images/outrigger-canoe/wreckage.webp) |
+| Dropped on the ground | Its wreckage |
+| ![The hotbar icon](images/outrigger-canoe/icon.png) | |
+| In the hotbar | |

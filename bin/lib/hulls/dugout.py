@@ -5,7 +5,7 @@ from physics import afloat, kilograms, stands
 from fit import APART
 import units
 from entity import merged, record
-from shape import BILGE, FACES, ORIGIN, Hull, across, bilge_levels, corners_of, heading, plank, widest, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
+from shape import BILGE, FACES, ORIGIN, Hull, across, bilge_levels, corners_of, plank, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
 from wounds import wound
 
 LOG = 16
@@ -81,8 +81,15 @@ STATIONS = [
 BOWL_RINGS = 6
 BOWL_STAVES = 8
 PLATE = 0.45
+RIM_PIECE = 2
+SAMPLE = 0.05
 CAP = 1.5
 UNDER_BOWL = 1
+
+
+def samples(a, b):
+    count = max(1, math.ceil((b - a) / SAMPLE))
+    return [a + (b - a) * k / count for k in range(count + 1)]
 
 
 class Bowl:
@@ -134,22 +141,41 @@ class Bowl:
         outward = lambda board: sum(math.dist(p, hollow) for p in corners_of(board)) / 8 > math.dist(middle, hollow)
         return min((board for board in made if outward(board)), key=reach)
 
-    def plates(self, name):
-        drawn, spread = [], math.tan(math.pi / BOWL_STAVES)
-        surface = self.skin.outline("the trunk", ends=True)
-        for k in range(BOWL_STAVES):
-            a, b = self.point(BOWL_RINGS, k), self.point(BOWL_RINGS, k + 1)
-            high = self.top - 2 * APART - APART * (k % 3)
-            yaw, _, chord = heading(a, b)
-            middle = [(p + q) / 2 for p, q in zip(a, b)]
-            hollow = (self.x, high, CENTRE)
-            plate = lambda width, way, a=a, yaw=yaw, chord=chord, k=k, high=high: group(f"{name}Rim{k + 1}Frame", a, (0, yaw, 0), [box(
-                f"{name}Rim{k + 1}", (-spread * width, high - PLATE - a[1], min(0, way * width)), (chord + spread * width, high - a[1], max(0, way * width)),
-                {**{face: WOOD for face in FACES}, ("north" if way > 0 else "south"): HEWN})])
-            way = max((-1, 1), key=lambda way: sum(math.dist(p, hollow) for p in corners_of(plate(1, way))))
-            made = lambda width, plate=plate, way=way: plate(width, way)
-            drawn.append(made(widest(made, surface, 2 * BARE)))
+    def mouth(self, x):
+        along = abs(x - self.x) / self.length
+        return 0 if along >= 1 else (self.skin.half(self.x, self.top, inset=self.t) + self.t / 8) * math.sqrt(1 - along ** 2)
+
+    def pieces(self):
+        end = ROW[0] if self.side == "Stern" else ROW[1]
+        xs = samples(*sorted((self.x, end)))
+        xs = xs[::-1] if self.side == "Stern" else xs
+        rim = lambda x: (self.mouth(x), self.skin.half(x, self.top))
+        drawn, start, seen = [], xs[0], [rim(xs[0])]
+        for x in xs[1:]:
+            seen.append(rim(x))
+            if any(max(v) - min(v) > self.t / 3 for v in zip(*seen)) or abs(x - start) > RIM_PIECE:
+                drawn.append(tuple(sorted((start, x))))
+                start, seen = x, [rim(x)]
+        if start != xs[-1]:
+            drawn.append(tuple(sorted((start, xs[-1]))))
         return drawn
+
+    def rim(self, name, low=None, high=None, tex=WOOD):
+        laid = {"across": [], "Port": [], "Starboard": []}
+        for k, (a, b) in enumerate(self.pieces(), 1):
+            xs = samples(a, b)
+            top = self.top - 2 * APART - APART * (k % 3) if high is None else high + APART * (k % 3)
+            bottom = top - PLATE if low is None else low + APART * (k % 3)
+            edge, outer = min(self.mouth(x) for x in xs), min(self.skin.half(x, min(bottom, self.top)) for x in xs)
+            if edge <= APART:
+                laid["across"].append(box(f"{name}Rim{k}", (a, bottom, CENTRE - outer), (b, top, CENTRE + outer), tex))
+            else:
+                laid["Port"].append(box(f"{name}Rim{k}Port", (a, bottom, CENTRE - outer), (b, top, CENTRE - edge), tex))
+                laid["Starboard"].append(box(f"{name}Rim{k}Starboard", (a, bottom, CENTRE + edge), (b, top, CENTRE + outer), tex))
+        return laid
+
+    def plates(self, name):
+        return [piece for pieces in self.rim(name).values() for piece in pieces]
 
     def cap(self, name):
         x, edges = self.skin.stations[0] if self.side == "Stern" else self.skin.stations[-1]
@@ -499,17 +525,11 @@ def clay(n):
     else:
         rail = Hull(f"Blank{n}Side", cut(sliced(stations_at(n), *HOLLOW)), CENTRE, wall(n), WOOD, WOOD).rail(f"Clay{n}", "clay", height=CLAY, thickness=wall(n))
         port, starboard = (joined(balled([element for element in rail if side in element["name"]])) for side in ("Port", "Starboard"))
-        caps = {side: [clayed(plate) for plate in Bowl(n, side).plates(f"Clay{n}{side}")] for side in ("Stern", "Bow")}
-        return [*reversed(caps["Stern"]), *port, *caps["Bow"], *reversed(starboard)]
+        caps = {side: Bowl(n, side).rim(f"Clay{n}{side}", low=top(n) + 4 * APART, high=top(n) + 4 * APART + CLAY, tex="clay") for side in ("Stern", "Bow")}
+        stern, bow = caps["Stern"], caps["Bow"]
+        return [*reversed(stern["across"]), *reversed(stern["Port"]), *port, *bow["Port"], *bow["across"], *reversed(bow["Starboard"]),
+                *reversed(starboard), *stern["Starboard"]]
     return [*reversed(caps["Stern"]), *port, *caps["Bow"], *reversed(starboard)]
-
-
-def clayed(plate):
-    piece = plate["children"][0]
-    low = piece["to"][1]
-    piece = {**piece, "from": [piece["from"][0], low + 6 * APART, piece["from"][2]], "to": [piece["to"][0], low + 6 * APART + CLAY, piece["to"][2]],
-             "faces": {face: {**value, "texture": "#clay"} for face, value in piece["faces"].items()}}
-    return {**plate, "name": plate["name"], "children": [piece]}
 
 
 def balled(run):

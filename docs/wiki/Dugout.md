@@ -107,7 +107,7 @@ The dugout floats at every stage and an axe breaks it up at every stage, so you 
 | From above | Beside the sailboat |
 | ![Ashore, from the side](images/dugout/ashore-side.webp) | ![Ashore, from the quarter](images/dugout/ashore-quarter.webp) |
 | Ashore | Ashore, from the quarter |
-| ![Dropped on the ground](images/dugout/dropped.webp) | ![Held](images/dugout/held.webp) |
-| Dropped on the ground | Held: a dugout from before the build, still an item |
-| ![The hotbar icon](images/dugout/icon.png) | ![The wreckage it leaves](images/dugout/wreckage.webp) |
-| In the hotbar | Its wreckage |
+| ![Dropped on the ground](images/dugout/dropped.webp) | ![The wreckage it leaves](images/dugout/wreckage.webp) |
+| Dropped on the ground | Its wreckage |
+| ![The hotbar icon](images/dugout/icon.png) | |
+| In the hotbar | |

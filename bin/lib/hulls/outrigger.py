@@ -341,7 +341,7 @@ def strakes(hull, shell):
             x = end
     for label, x, inward in (("Stern", MOUTH[0], 1), ("Bow", MOUTH[1], -1)):
         half = end_half(hull, x)
-        x0, x1 = sorted((x - inward * APART, x - inward * (STRAKE_THICKNESS + APART)))
+        x0, x1 = sorted((x - inward * 2 * APART, x - inward * (STRAKE_THICKNESS + 2 * APART)))
         planks.append([box(f"Strake{label}", (x0, RIM - 0.6 + 2 * APART, CENTRE - half), (x1, RIM + STRAKE - 2 * APART, CENTRE + half), "plank")])
     extra = units.litres(deck() * units.metres(STRAKE))
     print(f"washstrakes: {len(planks)} planks of a metre, the sides and a board across each end of her hollow, "
