@@ -46,6 +46,9 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 
     public override string PropertyName() => Code;
 
+    /// <summary>What her motion holds of the water's set now, blocks per tick.</summary>
+    public (double X, double Z) Held => set.Held;
+
     /// <summary>What her swing about a held bow adds to her motion, blocks per tick: a mooring leaves it alone.</summary>
     public (double X, double Z) PivotMotion => set.PivotMotion;
 

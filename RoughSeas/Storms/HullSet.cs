@@ -38,6 +38,15 @@ public sealed class HullSet
         }
     }
 
+    /// <summary>What her motion holds of the set now, blocks per tick.</summary>
+    public (double X, double Z) Held
+    {
+        get
+        {
+            lock (gate) return (heldX, heldZ);
+        }
+    }
+
     /// <summary>The water's drag brings her toward its velocity for <paramref name="seconds"/>.</summary>
     public void Settle(HullDrag drag, double waterX, double waterZ, double yaw, double seconds)
     {

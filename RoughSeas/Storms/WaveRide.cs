@@ -70,8 +70,9 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         if (physics != null && forces.Driven)
         {
             // no way on and the drag taken off: nothing would ever take off what her motion holds, so it is written outright, as vanilla writes her way
-            pos.Motion.X = x / WaterDrag.TicksPerSecond;
-            pos.Motion.Z = z / WaterDrag.TicksPerSecond;
+            var (setX, setZ) = boat.GetBehavior<EntityBehaviorCurrentDrift>()?.Held ?? default;
+            pos.Motion.X = x / WaterDrag.TicksPerSecond + setX;
+            pos.Motion.Z = z / WaterDrag.TicksPerSecond + setZ;
         }
         else
         {
