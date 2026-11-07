@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RoughSeas.Vessels;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.GameContent;
@@ -29,7 +30,9 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
     {
         if (playing is not { } stroke || rower.Properties.Client?.AnimationsByMetaCode?.GetValueOrDefault(stroke.Code) is not { } drawn) return;
 
-        IAnimationManager?[] animators = rower is EntityPlayer player ? [player.TpAnimManager, player.SelfFpAnimManager] : [rower.AnimManager];
+        IAnimationManager?[] animators = rower is EntityPlayer player && rower.Api is ICoreClientAPI capi && player == capi.World.Player?.Entity
+            ? [player.TpAnimManager, player.SelfFpAnimManager]
+            : [rower.AnimManager];
         foreach (var animator in animators)
         {
             if (animator?.GetAnimationState(stroke.Code) is not { Active: true } running) continue;

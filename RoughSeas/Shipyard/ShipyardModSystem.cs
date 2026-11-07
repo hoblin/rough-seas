@@ -36,11 +36,15 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockClass(BlockLathBed.ClassName, typeof(BlockLathBed));
         api.RegisterBlockEntityClass(BlockEntityLathBed.ClassName, typeof(BlockEntityLathBed));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLathBed.Code, typeof(CollectibleBehaviorLathBed));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLongPile.Code, typeof(CollectibleBehaviorLongPile));
+        api.RegisterBlockBehaviorClass(BlockBehaviorPileFootprint.Code, typeof(BlockBehaviorPileFootprint));
+        api.RegisterBlockBehaviorClass(BlockBehaviorPileFiller.Code, typeof(BlockBehaviorPileFiller));
         api.RegisterEntityBehaviorClass(EntityBehaviorCovering.Code, typeof(EntityBehaviorCovering));
         api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
         LashingRope.Attach();
         CuttingKnife.Attach();
         LightingFirestarter.Attach();
+        StartingLongPiles.Attach();
     }
 
     public override void Dispose()
@@ -48,6 +52,7 @@ public class ShipyardModSystem : ModSystem
         LashingRope.Detach();
         CuttingKnife.Detach();
         LightingFirestarter.Detach();
+        StartingLongPiles.Detach();
     }
 
     // The server sends its blocks, behaviours included, to clients only after this phase.
