@@ -22,6 +22,7 @@ public class StormField
     private readonly double blockMetres;
     private readonly Func<double, double, double, double>? seasonalCelsius;
     // A fixed lock count keeps Count, checked on every miss, cheap: by default the locks grow with the table and Count takes them all.
+    private readonly List<Storm> staged = [];
     private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ, long Slot), Storm?> born = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Hour), Storm[]> nearTile = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Window), Storm[]> windowTile = new(Environment.ProcessorCount, 0);
@@ -47,6 +48,39 @@ public class StormField
         return Math.Abs(seasonalCelsius(x, z - span, hours) - seasonalCelsius(x, z + span, hours)) / (2 * config.Storm.GradientSpanKm) * 1000;
     }
 
+    /// <summary>
+    /// A storm put at a point by hand, at its peak now and standing still, beside those the seed brews; held in memory only,
+    /// gone on restart or <see cref="Unstage"/>.
+    /// </summary>
+    public Storm Stage(string code, double x, double z, double hours, double? peakMps, double? radius)
+    {
+        var stormType = config.Storms.First(type => type.Code == code);
+        var lifetime = stormType.LifetimeHours.Max;
+        var storm = new Storm
+        {
+            Type = stormType,
+            Shape = config.Storm,
+            BornHours = hours - lifetime / 2,
+            LifetimeHours = lifetime,
+            OriginX = x,
+            OriginZ = z,
+            VelocityX = 0,
+            VelocityZ = 0,
+            Radius = radius ?? Blocks(stormType.RadiusKm.Lerp(0.5)),
+            PeakMps = peakMps ?? stormType.PeakMps.Max,
+            Northern = prevailing.LatitudeDegrees(z) >= 0
+        };
+        staged.Add(storm);
+        Forget();
+        return storm;
+    }
+
+    public void Unstage()
+    {
+        staged.Clear();
+        Forget();
+    }
+
     public void Forget()
     {
         born.Clear();
@@ -68,6 +102,12 @@ public class StormField
         Candidates(x, z, hours, hours, range)
             .Where(storm => storm.IsActive(hours))
             .Where(storm => Distance(storm.CentreAt(hours), x, z) <= range + storm.Radius);
+
+    public IEnumerable<Storm> Brewed(string code, double x, double z, double fromHours, double toHours, double range) =>
+        Candidates(x, z, fromHours, toHours, range, code)
+            .Where(storm => storm.BornHours >= fromHours && storm.BornHours <= toHours)
+            .Where(storm => Distance((storm.OriginX, storm.OriginZ), x, z) <= range)
+            .Distinct();
 
     private Storm[] InWindow(int tileX, int tileZ, long hour)
     {
@@ -117,12 +157,13 @@ public class StormField
 
     private static double Centre(int tile, int size) => (tile + 0.5) * size;
 
-    private IEnumerable<Storm> Candidates(double x, double z, double fromHours, double toHours, double range)
+    private IEnumerable<Storm> Candidates(double x, double z, double fromHours, double toHours, double range, string? code = null)
     {
         if (born.Count > CacheLimit) born.Clear();
         for (var type = 0; type < config.Storms.Length; type++)
         {
             var stormType = config.Storms[type];
+            if (code != null && stormType.Code != code) continue;
             var reach = Blocks(stormType.LifetimeHours.Max * stormType.SpeedKmPerHour.Max + stormType.RadiusKm.Max) + range;
             var firstSlot = (long)Math.Floor((fromHours - stormType.LifetimeHours.Max) / stormType.SlotHours);
             var lastSlot = (long)Math.Floor(toHours / stormType.SlotHours);
@@ -133,6 +174,10 @@ public class StormField
                 var storm = born.GetOrAdd((type, cellX, cellZ, slot), static (key, field) => field.Brew(key.Type, key.CellX, key.CellZ, key.Slot), this);
                 if (storm != null) yield return storm;
             }
+        }
+        foreach (var storm in staged.ToArray())
+        {
+            if (code == null || storm.Code == code) yield return storm;
         }
     }
 

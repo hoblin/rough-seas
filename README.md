@@ -1,6 +1,6 @@
 # Rough Seas
 
-![Rough Seas](docs/logo/rough-seas-logo-card.png)
+![Rough Seas](docs/logo/rough-seas-logo-storm.webp)
 
 A [Vintage Story](https://www.vintagestory.at) mod that makes the ocean dangerous and worth going out on.
 

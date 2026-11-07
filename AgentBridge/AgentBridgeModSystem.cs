@@ -252,7 +252,8 @@ public class AgentBridgeModSystem : ModSystem
             player.CameraYaw = (float)Math.Atan2(dx, dz);
             player.CameraPitch = (float)(Math.PI - Math.Atan2(dy, Math.Sqrt(dx * dx + dz * dz)));
         }
-        player.Entity.BodyYaw = player.CameraYaw;
+        player.Entity.BodyYaw = player.Entity.Pos.Yaw = player.CameraYaw;
+        player.Entity.Pos.Pitch = player.CameraPitch;
         return State();
     }
 
