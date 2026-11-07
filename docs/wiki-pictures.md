@@ -17,7 +17,7 @@ Read before taking or retaking a picture for the wiki, the handbook or the mod p
 | --- | --- |
 | A vessel's gallery, `images/VESSEL/{afloat,ashore}-*.webp`, `beside-sailboat`, `dropped`, `wreckage`, `icon.png` | `bin/scene views CODE docs/wiki/images/DIR SCALE`; scales: reed boat 0.8, bark canoe 1, coracle 0.7, currach 1, dugout 1, outrigger 1.3, raft 1, sailboat 1.5 |
 | The close shot opening a vessel's page, `ashore-close.webp` | `bin/scene portrait CODE docs/wiki/images/DIR/ashore-close.webp DISTANCE`; distances: raft 4.2, reed boat 2.9 (`reedboat-papyrustops-papyrustops`), dugout 4.4, coracle 2.2, bark canoe 3.7, currach 4.3, outrigger 6.6, sailboat 12.5 |
-| A vessel's build stills and animation, `build-*.webp` | `bin/film thoughts/shared/screenplays/2026-11-04/build-VESSEL.yml --webp docs/wiki/images/DIR`; the dugout's spoiled blank is `build-dugout-spoiled.yml` |
+| A vessel's build stills and animation, `build-*.webp` | `bin/film thoughts/shared/screenplays/2026-11-04/build-VESSEL.yml --webp docs/wiki/images/DIR`. `bin/film` can't play the dugout's `build-dugout.yml` (it holds the axe until a hewing ends): her hewn stills, `build-hewn`, `build-hewn-3`, `build-charred-4` and `build-finished`, come from `2026-11-08/build-dugout-hewn.yml` with `--no-captions`, which sets each stage, and the stills before the first hewing show the bare trunk, unchanged since they were taken; her spoiled blank is `build-dugout-spoiled.yml` |
 | The propulsion loops, `images/propulsion/*.webp` | `bin/film thoughts/shared/screenplays/2026-11-05/STROKE.yml --no-captions --webp docs/wiki/images/propulsion --width 640` |
 | The recipes, `images/recipes/*.png` | `bin/scene recipes docs/wiki/images/recipes` |
 | A handbook page | `bin/game hotkey handbook`, `bin/game link handbook://PAGECODE`, `bin/game shot FILE gui` |
@@ -26,14 +26,14 @@ Read before taking or retaking a picture for the wiki, the handbook or the mod p
 
 ## The mechanics stills
 
-Each is the hull as the game damages it, struck for real, never a crack written into its tree (a written crack shows in the tree but not on the hull's panel). Dock the vessel in the `lagoon` zone and take it with `bin/scene photo ID FILE DX DY DZ`, `hover` when the caption quotes the panel.
+Each is the hull as the game damages it, struck for real, never a crack written into its tree (a written crack shows in the tree but not on the hull's panel). Each is taken in the `lagoon` zone at calm noon (`/time set 12:00`, `/weather setprecip -1`, `/weather set clearsky`, `/weather setw still`, `/time stop`), its vessel spawned under the player with `/bridge spawn CODE ~ ~-1 ~ 90`, and shot with `bin/scene photo ID FILE DX DY DZ`, adding `hover` when the caption quotes the panel.
 
 | Picture | How |
 | --- | --- |
 | `mechanics/damaged-currach.webp` | `/bridge strike ID 400 portside` on a currach |
-| `mechanics/wounds-from-the-seat.webp` | a dugout struck with 6000 J twice on the `bottom`, three times `portside`, four times `starboardside`; seated in it, looking aft at pitch 4.0 |
-| `mechanics/float-coming-away.webp` | an outrigger struck with 400 J four times `starboardside`, its lashings at 0.23; shot from the float's side |
-| `mechanics/dugout-bilge.webp` | a dugout with `/bridge set ID roughseas:bilge/litres 650`, with `hover`: the caption quotes its bilge and side from the panel |
+| `mechanics/wounds-from-the-seat.webp` | a dugout struck with 6000 J twice on the `bottom`, three times `portside`, four times `starboardside`; then `/bridge mount ID`, `bin/game camera first`, `bin/game look 4.712 4.0` (aft from the seat) and `bin/game shot`, cut to 960×540 |
+| `mechanics/float-coming-away.webp` | an outrigger struck with 400 J four times `starboardside`, its lashings at 0.23; `photo` from the float's side, `1.5 3.5 -3.5` |
+| `mechanics/dugout-bilge.webp` | a dugout with `/bridge set ID roughseas:bilge/litres 650`; `photo` from `2.5 3.5 2` with `hover`, and the caption quotes its bilge and side from the panel |
 
 ## Rakes
 

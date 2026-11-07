@@ -139,8 +139,8 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 | Vessel | Bilge | Stove-in bottom | Stove-in side | The bottom fills it in |
 | --- | --- | --- | --- | --- |
 | [Coracle](Coracle) | 272 litres | 119 litres a minute | none | two and a quarter minutes |
-| [Dugout](Dugout) | 1298 litres | 137 | none | nine and a half minutes |
-| [Outrigger canoe](Outrigger-Canoe) | 1720 litres | 159 | none | eleven minutes |
+| [Dugout](Dugout) | 1436 litres | 126 | none | eleven and a half minutes |
+| [Outrigger canoe](Outrigger-Canoe) | 1915 litres | 156 | none | twelve minutes |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 609 litres | 92 | none | six and a half minutes |
 | [Sailboat](Sailboat) | 8209 litres | 188 | none | forty-four minutes |
 | [Hide currach](Hide-Currach) | 1911 litres | 84 | none | twenty-three minutes |

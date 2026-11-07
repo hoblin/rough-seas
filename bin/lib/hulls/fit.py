@@ -185,7 +185,7 @@ def faces(element, m):
 
 def coplanar(elements, among=None):
     """Each two faces of the elements that face the same way within TOLERANCE of one plane and overlap there by more
-    than TOLERANCE square voxels: the faces that flicker."""
+    than TOLERANCE square voxels: the faces that flicker. With among, only the pairs with one of them in it."""
     planes = {}
     for element, m in posed(elements):
         for normal, points in faces(element, m):

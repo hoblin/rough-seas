@@ -22,7 +22,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 254 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place; 1 flax twine binds up a ninth of its float's lashings |
 | [Its float](Hull-Condition#an-outriggers-float) | takes the knocks on its side on its lashings: with one aboard, losing 2 m/s into rock works nearly half of them loose, and 4 m/s tears them out and leaves the dugout |
-| [Bilge](Bailing) | 1720 litres with washstrakes, 1298 without |
+| [Bilge](Bailing) | 1915 litres with washstrakes, 1436 without |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.6 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3 m mast draws strikes |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
@@ -71,7 +71,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
 
    ![Rigged, the sail furled on its spar](images/outrigger-canoe/build-rigged.webp)
 
-9. **Add washstrakes for the open sea.** Any time after it is finished, once you have a saw, hold planks of one wood on the outrigger: a board along each side four planks long and a board across each end of the hollow, ten in all. Then hold four ropes on it to sew them on, a stitch every 7.6 cm. Sewn, they raise the sides 15 cm and add 422 litres to the hold: a 2 m swell that boards a dugout runs past the outrigger. Without them it is a coastal boat.
+9. **Add washstrakes for the open sea.** Any time after it is finished, once you have a saw, hold planks of one wood on the outrigger: a board along each side five planks long and a board across each end of the hollow, twelve in all. Then hold four ropes on it to sew them on, a stitch every 7.6 cm. Sewn, they raise the sides 15 cm and add 479 litres to the hold: a 2 m swell that boards a dugout runs past the outrigger. Without them it is a coastal boat.
 
    ![Washstrakes sewn along the sides and across the ends](images/outrigger-canoe/build-strakes.webp)
 

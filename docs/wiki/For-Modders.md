@@ -377,6 +377,15 @@ A coracle and a currach start from one pile of wet laths, and every build and me
 
 New: `roughseas:covering`'s `start`, `roughseas:longpile`'s `footprint`, `repairs[].seconds`, `IMendedHull`, `roughseas-build-step`.
 
+### The dugout's ends hollowed round
+
+The dugout runs the whole length of its log row, and its hollow ends round inside ([Dugout](Dugout)). A dugout of yours loads at its new size.
+
+- The dugout is 5 m long, the five logs' whole length, where it was 4.5 m: its bottom rakes up under each end, and the log's sawn end stays its end face. In oak it is 304 kg with a 1436-litre hold, where it was 252 kg and 1298 litres, and 3114 litres are hewn away (`unhewnLitres`). Its `collisionBoxes` are six overlapping squares.
+- In its shape the boards of each end run on in the first and last sections, `Blank{n}x1` and `x3`, whose `Inside` holds the hollow's end, half a bowl of staves (`Bowl{j}x{k}`); `Hewn{n}x1` and `x3` hold the bowl the next hewing leaves. `Blank{n}Stern`, `Blank{n}Bow`, `ShellStern` and `ShellBow` hold the top of each end in strips (`Rim`) and the log's end grain (`Cap`), where they held stepped blocks. Every level keeps the row's length; its hull box only loses height.
+- `Clay{n}` lies along the ends in strips round the bowl's mouth, so the fires take 19, 13, 13, 12, 11 and 11 balls.
+- The outrigger is built on the same hull: in oak 515 kg, 547 with its washstrakes. These add 479 litres, where they added 422, and are twelve planks, a board along each side five long and one across each end at the bowl's far rim, sewn with 132 stitches.
+
 ## What not to touch
 
 | Name | What it is |

@@ -54,6 +54,8 @@ def section(x, breadth, lift):
     return (x, [(h * breadth, y + lift * (1 - y / RIM)) for h, y in PROFILE])
 
 
+# The section the log's end is left at: its bottom raked up 5 voxels, above her laden waterline, the face over it the
+# log's own sawn end.
 LOG_END = (0.72, 5)
 RAKE = (0.3, 0.5, 0.7, 0.85, 1)
 FOREFOOT = 0.8
@@ -93,6 +95,10 @@ def samples(a, b):
 
 
 class Bowl:
+    """One end of the hollow as hewing n leaves it: half an elliptical bowl built as the coracle's is, rings by height
+    and staves by angle, its sides lapped into the walls; over the solid end round it the rim, and where the log ends
+    its end grain."""
+
     def __init__(self, n, side, floored=None):
         self.n, self.side, self.t, self.top = n, side, wall(n), top(n)
         self.x, self.way = (HOLLOW[0], -1) if side == "Stern" else (HOLLOW[1], 1)
@@ -161,6 +167,8 @@ class Bowl:
         return drawn
 
     def rim(self, name, low=None, high=None, tex=WOOD):
+        """The top of the end in strips along it, from the bowl's mouth out to the hull's side and across beyond it, by
+        side as the clay goes on; low and high lay the clay over it instead."""
         laid = {"across": [], "Port": [], "Starboard": []}
         for k, (a, b) in enumerate(self.pieces(), 1):
             xs = samples(a, b)
