@@ -14,7 +14,7 @@ public static class SeaWeatherCommands
     private const double DefaultForecastRange = 60000;
     private const int ForecastLength = 10;
     private const int ForecastBearings = 12;
-    private static readonly double[] ForecastReaches = [0.08, 0.15, 0.25, 0.4];
+    private static readonly double[] ForecastReaches = [0.08, 0.15, 0.25, 0.4, 0.6, 0.8];
     private const double DefaultCurrentRange = 4000;
     private const double MaxCurrentRange = 8000;
     private const double CurrentScanStep = 64;

@@ -37,7 +37,7 @@ public sealed class FreeCamera : IRenderer
         harmony.Patch(AccessTools.Method(typeof(EntityPlayerShapeRenderer), nameof(EntityPlayerShapeRenderer.loadModelMatrixForPlayer)),
             postfix: new HarmonyMethod(typeof(FreeCamera), nameof(PlaceSelf)));
         harmony.Patch(AccessTools.Method(typeof(EntityShapeRenderer), nameof(EntityShapeRenderer.loadModelMatrix)),
-            postfix: new HarmonyMethod(typeof(FreeCamera), nameof(PlaceMount)));
+            postfix: new HarmonyMethod(typeof(FreeCamera), nameof(PlaceMount)) { priority = Priority.Last });
     }
 
     /// <summary>The middle of the entity's mesh as drawn this frame, once the mesh has been measured; else its selection box's.</summary>
