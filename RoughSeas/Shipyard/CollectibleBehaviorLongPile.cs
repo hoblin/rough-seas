@@ -21,7 +21,7 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent,
         ref EnumHandHandling handHandling, ref EnumHandling handling)
     {
-        if (blockSel == null || entitySel != null || !byEntity.Controls.ShiftKey || slot.Itemstack is not { } stack) return;
+        if (blockSel == null || entitySel != null || !byEntity.Controls.ShiftKey || slot.Empty) return;
 
         var world = byEntity.World;
         var accessor = world.BlockAccessor;
@@ -32,8 +32,8 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
         var aimed = blockSel.Clone();
         if (filler != null) aimed.Position.Add(filler.OffsetInv);
 
-        var pile = NewPile(world, aimed, stack);
-        if (pile != null && !Room(world, new PileFootprint(Metres, Angle(byEntity, aimed)), pile))
+        var pile = NewPile(world, aimed);
+        if (pile != null && !Room(byEntity, new PileFootprint(Metres, Angle(byEntity, aimed)), pile))
         {
             Shipyard(world).Log("{0} finds no room for a {1} m pile of {2} at {3}", byEntity.GetName(), Metres, collObj.Code, pile);
             (byEntity.Api as ICoreClientAPI)?.TriggerIngameError(this, "notenoughspace", Lang.Get("placefailure-notenoughspace"));
@@ -51,18 +51,11 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
     }
 
     /// <summary>Where <see cref="CollectibleBehaviorGroundStorable.Interact"/> will start a pile, if it starts one.</summary>
-    private static BlockPos? NewPile(IWorldAccessor world, BlockSelection aimed, ItemStack stack)
-    {
-        var accessor = world.BlockAccessor;
-        if ((accessor.GetBlockEntity(aimed.Position) as BlockEntityGroundStorage ?? accessor.GetBlockEntity(aimed.Position.UpCopy()) as BlockEntityGroundStorage) is not { } storage)
-        {
-            return aimed.Face == BlockFacing.UP ? aimed.Position.UpCopy() : null;
-        }
-        return aimed.Face == BlockFacing.UP && storage.TotalStackSize >= storage.Capacity &&
-               storage.Inventory[0].Itemstack?.Equals(world, stack, GlobalConstants.IgnoredStackAttributes) == false
-            ? storage.Pos.UpCopy()
+    private static BlockPos? NewPile(IWorldAccessor world, BlockSelection aimed) =>
+        aimed.Face == BlockFacing.UP && world.BlockAccessor.GetBlockEntity(aimed.Position) is not BlockEntityGroundStorage &&
+        world.BlockAccessor.GetBlockEntity(aimed.Position.UpCopy()) is not BlockEntityGroundStorage
+            ? aimed.Position.UpCopy()
             : null;
-    }
 
     /// <summary>The turn <see cref="BlockGroundStorage.CreateStorage"/> will give the new pile, worked out the same way.</summary>
     private static float Angle(EntityAgent byEntity, BlockSelection aimed)
@@ -72,9 +65,13 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
         return (int)Math.Round(toward / GameMath.PIHALF) * GameMath.PIHALF;
     }
 
-    private static bool Room(IWorldAccessor world, PileFootprint footprint, BlockPos pile) =>
-        footprint.Around(pile).Where(at => !at.Equals(pile)).All(at => Free(world, at) &&
+    private static bool Room(EntityAgent byEntity, PileFootprint footprint, BlockPos pile)
+    {
+        var world = byEntity.World;
+        var beside = footprint.Around(pile).Where(at => !at.Equals(pile)).ToList();
+        return LandClaims.MayBreak(byEntity, beside) && beside.All(at => Free(world, at) &&
             world.BlockAccessor.GetBlock(at.DownCopy()).CanAttachBlockAt(world.BlockAccessor, world.GetBlock(GroundStorage), at.DownCopy(), BlockFacing.UP));
+    }
 
     private static bool Free(IWorldAccessor world, BlockPos at) => world.BlockAccessor.GetBlock(at).Replaceable >= Replaceable;
 
