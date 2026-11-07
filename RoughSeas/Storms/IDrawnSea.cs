@@ -20,7 +20,8 @@ public interface IDrawnSea
     double HeightAt(double x, double z);
 
     /// <summary>
-    /// The water's horizontal velocity at a position now, in metres a second, averaged over the underwater body of a
+    /// The water's horizontal velocity at a position now, in metres per second of <see cref="Seconds"/>, not of the
+    /// tick, averaged over the underwater body of a
     /// hull centred there, as the water's pressure on it sums: <paramref name="lift"/> is how far the hull floats over
     /// still water and <paramref name="draft"/> how deep it reaches under that, in metres; <paramref name="yaw"/>,
     /// <paramref name="length"/> and <paramref name="beam"/> are as <see cref="PoseOf"/> takes them.

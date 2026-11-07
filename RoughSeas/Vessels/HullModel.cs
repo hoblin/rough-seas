@@ -107,9 +107,10 @@ public interface IMendable
     string Mend(HullRepair repair, HullPlace place);
 }
 
-/// <summary>A vessel whose way through the water is worked out by her own drag, with vanilla's water drag taken off her along the water.</summary>
+/// <summary>A vessel whose way through the water is worked out by her own drag while she is driven.</summary>
 public interface IDriven
 {
+    /// <summary>Whether vanilla's water drag is taken off her along the water just now.</summary>
     bool Driving { get; }
 }
 

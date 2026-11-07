@@ -8,9 +8,9 @@ Rough Seas keeps the sea twice, for two different jobs.
 
 **The drawn sea** is the moving surface a client draws, built from the sea map the server sends it and the world's clock. The server builds the same surface where it needs one: around a swimmer's head and around a vessel nobody steers. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same surface: two players in one region see the same crests. It is not the wave the server struck a vessel with.
 
-So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms or moves on the server: the sea state. A hull's pose on the screen: the drawn sea. Nothing on the server should wait for a crest a client reports.
+So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms on the server: the sea state. A hull's pose on the screen, and the water that sways it to and fro: the drawn sea. Nothing on the server should wait for a crest a client reports.
 
-Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a player's breath: under a crest a swimmer has no air, in a trough the head is clear.
+Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a player's breath: under a crest a swimmer has no air, in a trough the head is clear. It does so for a vessel nobody steers too, so the waves carry it as they carry one a client steers.
 
 ## Reaching us
 
@@ -172,11 +172,13 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | `Seconds` | the time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client |
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |
-| `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in m/s, as the waves move it, averaged over a hull's underwater body |
+| `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in metres per second of `Seconds`, as the waves move it, averaged over a hull's underwater body |
 
 `PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`, and turns those four heights into how the hull would lie on them. So the hull's size does part of the work: a long hull on short waves has its bow and stern on different crests and barely rocks, while a small one takes every wave. Its length runs along the shape's X axis. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees, so `Pos.Yaw + rotateY * GameMath.DEG2RAD`.
 
 `HullVelocityAt` is the to and fro of the water under the waves as a hull feels it: forward, along each wave's travel, under its crest, back in its trough. The water's pressure on a hull sums over its underwater body, so the velocity is averaged over its `length` along its heading `yaw` and its `beam` across, as `PoseOf` takes them, and over its `draft` under the height `lift` it floats at, in metres over still water. A hull short against the waves takes the water's velocity; one as long as a wave, or lying along short waves, feels much less of it.
+
+Its seconds are the waves' (`Seconds`), not your tick's: they race while everyone sleeps and run faster under `/time speed`. To move a hull by it each tick, scale it by the waves' seconds in the tick first, `sea.Clock.SecondsIn(dt, world.Calendar.SpeedOfTime) / dt`, as ours do. Then one wave carries a hull as far at any speed of time.
 
 `SeaPose`:
 
