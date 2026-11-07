@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace RoughSeas.Storms;
 
@@ -58,6 +59,7 @@ public class WavesConfig
     public double WhitecapExponent;
     public double BreakingDepthRatio;
     public double WaterDensity;
+    public double FreshWaterDensity;
     public double BreakingSteepness;
     public double PlungingShareAtSea;
     public double[] PlungingIribarren = [];

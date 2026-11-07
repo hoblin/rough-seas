@@ -26,6 +26,9 @@ public class StormsModSystem : ModSystem
     /// <summary>The water a point is in by <see cref="DrawnSea"/>; null on the server.</summary>
     public DrawnWater? DrawnWater { get; private set; }
 
+    /// <summary>The drawn sea around the vessels nobody steers and the players in the water; null on a client.</summary>
+    public RegionSwells? Swells { get; private set; }
+
     /// <summary>The surface behind <see cref="DrawnSea"/>, foam included; null on the server.</summary>
     internal SeaSurface? Surface { get; private set; }
 
@@ -37,6 +40,7 @@ public class StormsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorMooring.Code, typeof(EntityBehaviorMooring));
         api.RegisterBlockBehaviorClass(BlockBehaviorBailer.Code, typeof(BlockBehaviorBailer));
         VesselDraught.Attach();
+        WaveCarry.Attach();
     }
 
     public override void AssetsLoaded(ICoreAPI api)
@@ -103,6 +107,7 @@ public class StormsModSystem : ModSystem
     public override void Dispose()
     {
         VesselDraught.Detach();
+        WaveCarry.Detach();
         if (api?.Side == EnumAppSide.Server) BreathUnderSurface.Detach();
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();
@@ -117,6 +122,7 @@ public class StormsModSystem : ModSystem
         var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
         new StormLightning(this, sea, sapi).Start();
         BreathUnderSurface.Attach(this, sea, sapi);
+        Swells = new RegionSwells(this, sea, sapi);
         Budget.CountTicks(sapi);
         sapi.ChatCommands.Create("storms")
             .WithDescription("Rough Seas: storms acting on vessels")

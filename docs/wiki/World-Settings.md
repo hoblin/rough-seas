@@ -24,4 +24,4 @@ What stays either way:
 - [impacts](Hull-Condition#knocks-and-landings) on rock and shore, [rams](Hull-Condition#rams) between vessels, [rapids](Rapids), weapons and explosions, a [currach's seams and a reed boat's soaking](Hull-Condition#seeping-and-soaking);
 - [mending](Mending), [bailing](Bailing), anchoring and tying up.
 
-A swimmer breathes by the waves you see either way: a crest over your head takes your air, and a trough gives it back. Drowning is the game's own; the setting doesn't change it. Cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).
+A swimmer breathes by the waves you see either way: a crest over your head takes your air, and a trough gives it back. Drowning is the game's own; the setting doesn't change it. A crest that breaks over a swimmer drives them under while dangerous oceans are on. Cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).

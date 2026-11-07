@@ -5,8 +5,9 @@ using RoughSeas.SeaAndWeather;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The sea's surface as the client draws it: wave trains whose direction, length and speed stay fixed for their
-/// life, advanced by one clock per frame. The water shader and every floating body read this one state.
+/// The sea's surface as the client draws it, and as the server builds it where a decision needs it (<see cref="SwellAround"/>):
+/// wave trains whose direction, length and speed stay fixed for their life, advanced by one clock per frame. The water
+/// shader and every floating body read this one state.
 /// <see cref="DisplacementAt"/> and <see cref="FoldAt"/> are the formulas of
 /// <c>assets/roughseas/shaderincludes/seasurface.vsh</c>; a change to one is made to the other.
 /// </summary>
@@ -132,13 +133,20 @@ public sealed class SeaSurface
     /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
     public double HeightAt(double x, double z, double share = 1)
     {
+        var (restX, restZ) = RestOf(x, z, share);
+        return share * DisplacementAt(restX, restZ).Y;
+    }
+
+    // the point of the undisplaced water the drawn surface at x, z came from
+    private (double X, double Z) RestOf(double x, double z, double share)
+    {
         var (restX, restZ) = (x, z);
         for (var i = 0; i < SurfaceSearchSteps; i++)
         {
             var (shiftX, _, shiftZ) = DisplacementAt(restX, restZ);
             (restX, restZ) = (x - share * shiftX, z - share * shiftZ);
         }
-        return share * DisplacementAt(restX, restZ).Y;
+        return (restX, restZ);
     }
 
     public (double X, double Y, double Z) DisplacementAt(double x, double z)
@@ -155,6 +163,71 @@ public sealed class SeaSurface
         }
         return (shiftX, rise, shiftZ);
     }
+
+    /// <summary>
+    /// The water's horizontal velocity, in metres a second, averaged over the body of a hull centred here that floats
+    /// <paramref name="lift"/> metres over still water and reaches <paramref name="draft"/> metres under it, with its
+    /// <paramref name="length"/> along <paramref name="yaw"/> as <see cref="DrawnSea.PoseOf"/> takes it and its
+    /// <paramref name="beam"/> across. The water's push on a hull is its pressure summed over the hull (the
+    /// Froude–Krylov force), so it is linear wave theory's orbital velocity averaged over that body: e^(k z) over the draft,
+    /// e^(k lift) (1 − e^(−k draft)) / (k draft), and sinc(k_along length / 2) sinc(k_across beam / 2) over the plan.
+    /// </summary>
+    public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam,
+        double share = 1)
+    {
+        var (sin, cos) = Math.SinCos(yaw + Math.PI / 2);
+        return Orbital(x, z, lift, Math.Max(draft, 0), cos, -sin, length, beam, share);
+    }
+
+    private (double X, double Z) Orbital(double x, double z, double height, double draft, double alongX, double alongZ,
+        double length, double beam, double share)
+    {
+        double velocityX = 0, velocityZ = 0;
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            if (amplitude[slot] <= 0) continue;
+            var number = Wavenumber(slot);
+            var along = numberX[slot] * alongX + numberZ[slot] * alongZ;
+            var across = numberZ[slot] * alongX - numberX[slot] * alongZ;
+            var fade = Math.Exp(number * height) * (draft > 0 ? (1 - Math.Exp(-number * draft)) / (number * draft) : 1);
+            var speed = share * amplitude[slot] * frequency[slot] * Math.Sin(Phase(slot, x, z)) * fade
+                * Sinc(along * length / 2) * Sinc(across * beam / 2);
+            velocityX += speed * numberX[slot] / number;
+            velocityZ += speed * numberZ[slot] / number;
+        }
+        return (velocityX, velocityZ);
+    }
+
+    /// <summary>
+    /// The water's vertical velocity, in metres a second, at a body <paramref name="depth"/> metres under the drawn
+    /// surface here, with the waves scaled by <paramref name="share"/>. By linear deep-water theory each train moves its
+    /// water up at -ω a cos θ e^(k z), the rate its rise a sin θ changes, a quarter turn ahead of the to and fro of
+    /// <see cref="HullVelocityAt"/> (Dean and Dalrymple 1991), at the point of the water the drawn surface here came from: rising ahead of a crest, sinking behind it.
+    /// </summary>
+    public double RiseVelocityAt(double x, double z, double depth = 0, double share = 1) => Vertical(x, z, depth, share, acceleration: false);
+
+    /// <summary>
+    /// The water's vertical acceleration, in metres a second squared, where <see cref="RiseVelocityAt"/> reads its
+    /// velocity: -ω² a sin θ e^(k z) a train, slowing as it rises under a crest and gathering in a trough.
+    /// </summary>
+    public double RiseAccelerationAt(double x, double z, double depth = 0, double share = 1) => Vertical(x, z, depth, share, acceleration: true);
+
+    private double Vertical(double x, double z, double depth, double share, bool acceleration)
+    {
+        var (restX, restZ) = RestOf(x, z, share);
+        var height = share * DisplacementAt(restX, restZ).Y - Math.Max(depth, 0);
+        var sum = 0.0;
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            if (amplitude[slot] <= 0) continue;
+            var theta = Phase(slot, restX, restZ);
+            var reach = share * amplitude[slot] * Math.Exp(Wavenumber(slot) * height);
+            sum -= acceleration ? reach * frequency[slot] * frequency[slot] * Math.Sin(theta) : reach * frequency[slot] * Math.Cos(theta);
+        }
+        return sum;
+    }
+
+    private static double Sinc(double x) => Math.Abs(x) < 1e-9 ? 1 : Math.Sin(x) / x;
 
     public double FoldAt(double x, double z)
     {

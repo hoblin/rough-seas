@@ -19,13 +19,13 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Hull](Hull-Condition) | a knock breaks the willow lath behind the hide at 24 J, 45 J in oak, and the two either side of a gap at 57 J, 108 J in oak: past its 1 m/s sculled, only a current or a fall drives it that hard; 400 J more with a willow frame breaks it up, the weakest of all, about 690 J in oak, 810 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 13 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-it-floats) | 33 cm empty, 26 cm with its paddler |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's gear; armour takes it down |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's tools; armour takes it down |
 | [Mending](Mending) | 1 small prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
 | [Bilge](Bailing) | 272 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
 | [Rapids](Rapids) | runs them unharmed, as the bark canoe does, drawing only a few inches ([a simplified model](Rapids) for now) |
 | [Lightning](Lightning) | a strike nearby breaks it |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [Left alone](Currents#drift) | drifts with the current and the waves |
 | [Mooring](Mooring) | tied to a post, or worn home |
 | Carried | worn on the back, in the backpack slot |
 | Seats | one, on the floor, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; with a pole you stand in its middle |

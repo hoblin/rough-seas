@@ -347,6 +347,13 @@ A reed boat's rider poling in first person sees the water ahead past the arms. E
 
 New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`.
 
+### The waves carry every hull
+
+The drawn waves now move every `EntityBoat` with `roughseas:seaforces`, steered or not ([A ship that rides our swell](Reading-the-Sea#a-ship-that-rides-our-swell)).
+
+- `IDrawnSea` gained `HullVelocityAt`. A class of yours that implements `IDrawnSea` has to add it. Code that only reads `IDrawnSea` is unaffected.
+- `config/seaweather.json`'s `currents.stokesDriftPerMps` is gone: the wind no longer moves an unsteered vessel, and `roughseas:currentdrift` carries the current alone.
+
 ## What not to touch
 
 | Name | What it is |
@@ -359,3 +366,13 @@ New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`.
 ## Adding and removing Rough Seas
 
 The mod can join an existing world, and leave one. Without it the world opens cleanly: each region keeps the strength of the wind we last set for up to a game hour, then vanilla rolls its own pattern.
+
+### A body in the water
+
+A player floats by what the body displaces ([Swimming](Swimming)), and what a player weighs has one answer, in the new module `RoughSeas.Person`:
+
+- `api.ModLoader.GetModSystem<PersonModSystem>().Person` is an `IPerson`: `Body` (`MassKg`, and what it displaces by height) and `CarriedBy(entity)`, the armour and hotbar tools and weapons in kilograms and litres. A body sized per character would land here.
+- `config/vessels/mass.json` loses `playerGearKg`, `armorKgPerWalkSpeed` and `crewKg`. They are `body.massKg` and `carried` in the new `config/person.json`; a patch to them follows. A rider in no armour with nothing in the hotbar still weighs 75 kg, all of it now the body, so flooded hulls no longer count 10 kg of it as sinking.
+- `VesselMass.PlayerGearKg`, `ArmorKgPerWalkSpeed`, `Kit` and `ArmorKg` are gone; `CrewKg` reads the person.
+- `config/storms.json` adds `waves.freshWaterDensity`. A mod that implements `IDrawnSea` adds `RiseVelocityAt`, `RiseAccelerationAt` and `WavesTowardRadians`.
+- `CrestWatch` moved from `RoughSeas.Soundscape` to `RoughSeas.Storms`. `WaveCarry.Carried` gave way to `WaterDrag.Carried`.

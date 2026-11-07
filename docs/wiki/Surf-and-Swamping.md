@@ -5,7 +5,7 @@ Out on the water, every few seconds a wave reaches your vessel. Most lift it and
 A hull sinks into the water until it pushes aside its own weight of seawater, so how deep it floats, its *draft*, comes from everything aboard:
 
 - the hull, by what it is built of: a light wood floats higher than oak, a heavy one lower;
-- each rider, with about 10 kg of gear and their armour;
+- each rider, with their hotbar's tools and weapons and their armour;
 - each basket, crate or chest, at its empty weight;
 - the water in its bilge.
 

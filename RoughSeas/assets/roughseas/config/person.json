@@ -1,0 +1,100 @@
+{
+    "body": {
+        "heightMetres": 1.75,
+        "massKg": 75,
+        "ageYears": 40,
+        "fatShare": 0.18,
+        "frc": [2.34, 0.01, -1.09],
+        "segments": [
+            { "name": "feet", "from": 0, "to": 0.039, "massShare": 0.0274, "density": 1.1 },
+            { "name": "shanks", "from": 0.039, "to": 0.285, "massShare": 0.0866, "density": 1.09 },
+            { "name": "thighs", "from": 0.285, "to": 0.53, "massShare": 0.2832, "density": 1.05 },
+            { "name": "abdomen and pelvis", "from": 0.53, "to": 0.72, "massShare": 0.275, "density": 1.01 },
+            { "name": "chest", "from": 0.72, "to": 0.818, "massShare": 0.1596, "density": 1.03, "lungs": true },
+            { "name": "arms", "from": 0.72, "to": 0.818, "massShare": 0.0988, "density": 1.11 },
+            { "name": "neck", "from": 0.818, "to": 0.87, "massShare": 0.0111, "density": 1.11 },
+            { "name": "head", "from": 0.87, "to": 1.0, "massShare": 0.0583, "density": 1.11 }
+        ],
+        "fatDensity": 0.9,
+        "leanDensity": 1.1,
+        "tidalLitres": 0.5,
+        "breathSeconds": 2,
+        "atmospherePascals": 101325,
+        "addedMassPerRadiusCubed": 2.667,
+        "dragAreaAlong": 0.25,
+        "dragAreaAcross": 0.45,
+        "sources": {
+            "heightMetres": "Mean adult man in the US, 175.3 cm (Fryar et al. 2021, NHANES 2015-2018, Vital Health Stat 3(46), Table 5), about de Leva's reference man of 1.741 m",
+            "massKg": "The one reference body, near de Leva's reference man of 73 kg (de Leva 1996, Table 4); the vessels' crew weighs the same",
+            "ageYears": "No measured reason: a working adult inside the equation's range of 18 to 70, and it moves the lungs by only 0.01 L a year",
+            "fatShare": "Healthy body fat at a normal BMI is about 8-19% for men aged 20-39 (Gallagher et al. 2000, Am J Clin Nutr 72(3):694-701); hydrostatic weighing of 50 men found 17.7% (Timson & Coffman 1984, Med Sci Sports Exerc 16(4):411-414)",
+            "frc": "Functional residual capacity, the air left at the end of a quiet breath out, in litres: a x height (m) + b x age (years) + c, for men (Quanjer et al. 1993, Eur Respir J 6 Suppl 16:5-40, as printed in Stocks & Quanjer 1995, Eur Respir J 8:492-506, Table 8)",
+            "segments": "Segment mass shares (de Leva 1996, J Biomech 29(9):1223-1230, Table 4); segment densities in kg/L (Dempster 1955, WADC TR 55-159, Tables 16-17, with the trunk's 1.03 for the chest's tissue since its air is counted apart); landmarks as shares of stature (Drillis & Contini 1966, NYU TR 1166.03; Contini 1972, Artificial Limbs 16(1), Fig. 7): ankle 0.039, knee 0.285, hip 0.530, chest 0.720, shoulder 0.818, chin 0.870. The arms, held at the chest while treading, stand in the chest's slab; the neck takes 0.16 of the head and neck by volume, measured in 46 women, no man's measure having been reached (737 of 4631 cm3; Young et al. 1983, FAA-AM-83-16, Tables 1-2)",
+            "fatDensity": "Fat tissue at 0.900 and lean tissue at 1.100 kg/L, the two-compartment model behind hydrostatic weighing (Siri 1961, in Brozek & Henschel (eds.), Techniques for Measuring Body Composition, pp. 223-244)",
+            "tidalLitres": "A quiet breath moves about 500 mL in an adult man (Hallett, Toro & Ashurst, Physiology, Tidal Volume, StatPearls NBK482502)",
+            "breathSeconds": "Quiet breathing runs 12 to 20 breaths a minute, 3 to 5 s a breath; the lungs settle to their mean within about half a breath",
+            "atmospherePascals": "The standard atmosphere, 101325 Pa (10th CGPM, 1954): air held in the lungs shrinks under the water's pressure by Boyle's law",
+            "addedMassPerRadiusCubed": "8/3: a disc of radius a carries (8/3) rho a^3 of water, in open water (Brennen 1982, NCEL CR 82.010, Table IV) and, as a piston in a rigid surface, at the low frequencies of swell. The disc is the body's own section at the waterline, or its widest under water, so no share of its displacement is picked. A floating hemisphere's low-frequency 0.83 of its displacement (Storti & D'Elia 2001) is the check on the form",
+            "dragAreaAlong": "A body moving along its length unstreamlined: head-down skydivers fall at 240-290 km/h (FAI), so at 80 kg Cd A = 2 m g / (rho_air v^2) is about 0.2-0.3 m2; no measure of a body moving up and down in water was found, and a towed streamlined glide drags only 0.041 m2 (Cortesi et al. 2020, Int J Environ Res Public Health 17(6):2002)",
+            "dragAreaAcross": "A body moving broadside, the water carrying it across: belly-down skydivers fall at about 200 km/h (FAI), so at 80 kg Cd A is about 0.42-0.46 m2. Taken by the share of the body under water"
+        }
+    },
+    "carried": {
+        "armourKgPerWalkSpeed": 83.3,
+        "densityKgPerLitre": 7.85,
+        "toolKg": {
+            "hammer": 0.704,
+            "knife": 0.704,
+            "shears": 0.704,
+            "sickle": 0.704,
+            "chisel": 0.704,
+            "wrench": 0.704,
+            "probe": 0.704,
+            "meter": 0.704,
+            "tongs": 0.704,
+            "sling": 0.704,
+            "axe": 1.85,
+            "shovel": 1.85,
+            "hoe": 1.85,
+            "saw": 1.85,
+            "scythe": 1.85,
+            "drill": 1.85,
+            "crowbar": 1.85,
+            "crossbow": 1.85,
+            "firearm": 1.85,
+            "shield": 1.85,
+            "poleaxe": 1.85,
+            "halberd": 1.85,
+            "polearm": 1.85,
+            "pike": 1.85,
+            "pickaxe": 2.27,
+            "sword": 1.47,
+            "club": 1.47,
+            "mace": 1.47,
+            "warhammer": 1.47,
+            "javelin": 0.8,
+            "spear": 0.8,
+            "bow": 0.8,
+            "staff": 0.8
+        },
+        "sources": {
+            "armourKgPerWalkSpeed": "Armour is known by how much it slows its wearer, so another mod's counts too. Vanilla's full plate slows by 0.42, three pieces at 0.14, and suits of field armour tested on walkers weighed 35 +/- 5 kg with the doublet (Askew, Formenti & Minetti 2012, Proc R Soc B 279:640): 83 kg to the unit. Vanilla's full chain then weighs 7.5 kg, against a mail hauberk of about 9.5 kg (Cleveland Museum of Art 1916.1543). No mass of lamellar, scale or a padded coat was found",
+            "densityKgPerLitre": "Steel, 77-78.5 kN/m3 (EN 1991-1-1, Table A.4): what is carried is taken as metal throughout, so it keeps 87% of its weight in seawater. A wooden haft or a bow would float, and is not told apart",
+            "toolKg": "Whatever vanilla's item type calls a tool or weapon (EnumTool). Measured: a claw hammer, 0.704 kg (Stanley STHT0-51309); a felling axe, 1.85 kg (Bahco FGS 125-700); a pick's head alone, 2.27 kg (Fiskars IsoCore); an arming sword, 1.47 kg (Fitzwilliam Museum, a hand-and-a-half sword); a javelin, 0.8 kg (World Athletics' men's minimum). The rest had nothing measured, and take the closest: one-hand tools the hammer, long-handled tools, heavy weapons and shields the axe, one-hand weapons the sword, light shafts the javelin"
+        }
+    },
+    "breaking": {
+        "aeration": 0.2,
+        "aerationAfterPeriod": 0.01,
+        "plumeDepthPerHeight": 0.6,
+        "rollerSpeedRatio": 0.75,
+        "rollerSeconds": 1,
+        "sources": {
+            "aeration": "The air in the plume as a whole just after breaking: a mean void fraction of about 0.2 at 0.07 of a wave period, falling to 0.1 at 0.2 of it (Lamarre & Melville 1994, JASA 95(3):1317-1328, Fig. 6c, lab packets of 2 s period, read off the plot). The 24% measured at sea was one peak event at a gauge 0.2 m deep, 5% at 0.5 m and none at 0.8 m (Lamarre & Melville 1992, IEEE J Oceanic Eng 17(2), Sec. IV-C), so it is not the plume's",
+            "aerationAfterPeriod": "The same plume's mean void fraction after one wave period, about 1%, with about 5% of the air left (Lamarre & Melville 1994, Figs. 6c and A1c)",
+            "plumeDepthPerHeight": "Twice the depth of the air's centre, which sinks at about 0.2 wave heights a period to about 0.3 at one period (Lamarre & Melville 1994, Fig. 7b). This is the plume whose air the void fractions measure. Bubbles reach much deeper by echosounder, a mean of about 1.2 Hs at c_p/U10 = 1.2 and deeper in young seas (Derakhti et al. 2024, JGR Oceans 129(5), Fig. 10a), but far too dilute to tell on a body's lift, so the sea's age doesn't enter",
+            "rollerSpeedRatio": "A deep-water breaker's turbulent front advances at 0.7-0.8 of the phase speed (Rapp & Melville 1990, Phil Trans R Soc A 331:735-808)",
+            "rollerSeconds": "Active breaking is about a fifth of a whitecap's 5.3 s mean lifetime, about 1 s (Callaghan 2013, J Geophys Res Atmos 118:9997-10010)"
+        }
+    }
+}

@@ -1,6 +1,6 @@
-using RoughSeas.Soundscape;
+using RoughSeas.Storms;
 
-namespace RoughSeas.Tests.Soundscape;
+namespace RoughSeas.Tests.Storms;
 
 public class CrestWatchTests
 {
@@ -13,6 +13,20 @@ public class CrestWatchTests
     {
         var crests = Watch(seconds: 41, height: t => 0.5 * Math.Cos(2 * Math.PI * t / 4));
         Assert.Equal(10, crests.Count);
+    }
+
+    [Fact]
+    public void CountsAWholeWaveThroughTheRipplesOnIt()
+    {
+        var waves = new List<double>();
+        for (var t = 0.0; t < 81; t += Step)
+        {
+            var height = 1 * Math.Sin(2 * Math.PI * t / 8) + 0.1 * Math.Sin(2 * Math.PI * t / 1.5);
+            if (watch.WatchWave(height) is { } wave) waves.Add(wave);
+        }
+
+        Assert.Equal(9, waves.Count);
+        Assert.All(waves, wave => Assert.InRange(wave, 1.8, 2.25));
     }
 
     [Fact]

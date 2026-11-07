@@ -14,6 +14,17 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
 
     public double HeightAt(double x, double z) => ShareAt(x, z) is var share and > 0 ? surface.HeightAt(x, z, share) : 0;
 
+    public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) =>
+        ShareAt(x, z) is var share and > 0 ? surface.HullVelocityAt(x, z, lift, draft, yaw, length, beam, share) : default;
+
+    public double RiseVelocityAt(double x, double z, double depth = 0) =>
+        ShareAt(x, z) is var share and > 0 ? surface.RiseVelocityAt(x, z, depth, share) : 0;
+
+    public double RiseAccelerationAt(double x, double z, double depth = 0) =>
+        ShareAt(x, z) is var share and > 0 ? surface.RiseAccelerationAt(x, z, depth, share) : 0;
+
+    public double WavesTowardRadians => surface.WavesTowardRadians;
+
     public SeaPose PoseOf(double x, double z, double yaw, double length, double width)
     {
         var share = ShareAt(x, z);
