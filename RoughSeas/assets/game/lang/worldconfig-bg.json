@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Бурно море",
     "playstyle-desc-preset-roughseas": "Стандартно оцеляване в свят с открити океани, където вятърът, бурите и морето са опасни.",
     "worldconfig-category-roughseas": "Бурно море",
-    "worldattribute-dangerousOceans": "Опасни океани",
-    "worldattribute-dangerousOceans-desc": "Бури, прибой и мълнии могат да наводнят, преобърнат и разбият плавателни съдове и да ги откъснат от швартовите и котвата им. Ако е изключено, морето запазва времето си, но не вреди."
+    "worldattribute-bilgeWater": "Вода в лодката",
+    "worldattribute-bilgeWater-desc": "Вълните заливат съда, а дъждът вали в открития съд и го пълни с вода, докато не я изгребеш. Когато е изключено, нито вълните, нито дъждът добавят вода; през теч тя пак влиза.",
+    "worldattribute-hullDamage": "Повреди по корпуса",
+    "worldattribute-hullDamage-desc": "Скали, брегът, удари, бързеи, прибоят и времето пукат корпуса, а пукнатината пропуска вода. Кожата гние, немазаните шевове текат, а тръстиката попива вода. Когато е изключено, никой корпус не се поврежда и всеки корпус става цял.",
+    "worldattribute-stormLightning": "Мълнии",
+    "worldattribute-stormLightning-desc": "Бурите удрят с мълнии близо до теб, а мачтата ги привлича.",
+    "worldattribute-mooringStrain": "Опън на швартовете",
+    "worldattribute-mooringStrain-desc": "Бурята влачи котвите, къса швартовите въжета и изхвърля на брега съд, вързан, докато те няма.",
+    "worldattribute-oceanCurrents": "Течения",
+    "worldattribute-oceanCurrents-desc": "Теченията и вятърът отнасят съд, който никой не управлява.",
+    "worldattribute-rowerFatigue": "Умора при гребане",
+    "worldattribute-rowerFatigue-desc": "От гребане с весла или гребло и от тласкане с прът огладняваш.",
+    "worldattribute-poleDepth": "Дълбочина за прът",
+    "worldattribute-poleDepth-desc": "Прътът тласка само там, където стига дъното. Когато е изключено, тласка във вода с всякаква дълбочина като при пълен тласък."
 }

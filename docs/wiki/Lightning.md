@@ -26,4 +26,4 @@ The game's lightning harms every creature within 8 blocks of where it lands, and
 
 The players aboard take the game's own lightning damage as well.
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, storms bring no extra strikes, masts draw none, and lightning does no harm to a hull.
+With [Lightning](World-Settings#the-mechanics) off, storms bring no strikes of their own and masts draw none. With [Hull damage](World-Settings#the-mechanics) off, lightning does no harm to a hull.

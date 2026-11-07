@@ -21,6 +21,8 @@ public interface IOutboard
     /// <param name="joules">The knock, as the hull would have taken it.</param>
     void Strike(double joules);
 
+    void MendWhole();
+
     /// <summary>Server side, after a knock that leaves it worse off: what the knock did.</summary>
     event Action<Knock>? Struck;
 }

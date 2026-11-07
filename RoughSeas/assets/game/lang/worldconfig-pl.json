@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Wzburzone morze",
     "playstyle-desc-preset-roughseas": "Zwykłe przetrwanie w świecie otwartych oceanów, gdzie wiatr, sztormy i morze są groźne.",
     "worldconfig-category-roughseas": "Wzburzone morze",
-    "worldattribute-dangerousOceans": "Groźne oceany",
-    "worldattribute-dangerousOceans-desc": "Sztormy, przybój i pioruny mogą zalać, wywrócić i rozbić łodzie oraz zerwać je z cum i kotwic. Wyłączone: morze zachowuje pogodę, ale nie szkodzi."
+    "worldattribute-bilgeWater": "Woda w zęzie",
+    "worldattribute-bilgeWater-desc": "Fale przelewają się przez burtę, a deszcz pada do otwartej łodzi i napełnia jej zęzę, dopóki nie wybierzesz wody. Gdy wyłączone, ani fale, ani deszcz nie dodają wody; przeciek nadal tak.",
+    "worldattribute-hullDamage": "Uszkodzenia kadłuba",
+    "worldattribute-hullDamage-desc": "Skały, brzeg, taranowanie, bystrza, przybój i pogoda łupią kadłub, a pęknięcie przecieka. Skóra gnije, nienatłuszczone szwy przeciekają, a trzcina nasiąka wodą. Gdy wyłączone, żaden kadłub nie doznaje szkód, a każdy kadłub zostaje naprawiony w całości.",
+    "worldattribute-stormLightning": "Pioruny",
+    "worldattribute-stormLightning-desc": "Sztormy ciskają pioruny w pobliżu ciebie, a maszt je przyciąga.",
+    "worldattribute-mooringStrain": "Obciążenie cum",
+    "worldattribute-mooringStrain-desc": "Sztorm wlecze kotwice, zrywa cumy i wyrzuca na brzeg łódź zacumowaną podczas twojej nieobecności.",
+    "worldattribute-oceanCurrents": "Prądy",
+    "worldattribute-oceanCurrents-desc": "Prądy i wiatr znoszą łódź, którą nikt nie steruje.",
+    "worldattribute-rowerFatigue": "Zmęczenie wioślarza",
+    "worldattribute-rowerFatigue-desc": "Od wiosłowania, pagajowania i pchania łodzi tyczką robisz się głodny.",
+    "worldattribute-poleDepth": "Głębokość dla tyczki",
+    "worldattribute-poleDepth-desc": "Tyczka pcha tylko tam, gdzie sięga dna. Gdy wyłączone, pcha w wodzie o dowolnej głębokości jak przy pełnym pchnięciu."
 }

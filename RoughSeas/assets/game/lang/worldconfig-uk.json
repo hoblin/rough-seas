@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Буремне море",
     "playstyle-desc-preset-roughseas": "Звичайне виживання у світі з відкритим океаном, де вітер, шторми й море небезпечні.",
     "worldconfig-category-roughseas": "Буремне море",
-    "worldattribute-dangerousOceans": "Небезпечний океан",
-    "worldattribute-dangerousOceans-desc": "Шторми, прибій і блискавки можуть затопити, перекинути й розбити судна, а також зірвати їх зі швартовів і якоря. Якщо вимкнено, погода на морі лишається, але шкоди воно не завдає."
+    "worldattribute-bilgeWater": "Вода в човні",
+    "worldattribute-bilgeWater-desc": "Хвилі захльостують судно, а дощ падає у відкрите судно й наповнює його водою, доки ви її не вичерпаєте. Якщо вимкнено, ні хвилі, ні дощ води не додають; крізь теч вона все одно надходить.",
+    "worldattribute-hullDamage": "Пошкодження корпусу",
+    "worldattribute-hullDamage-desc": "Скелі, берег, тарани, пороги, прибій і негода дають корпусу тріщини, а крізь тріщину сочиться вода. Шкіра гниє, незмащені шви пропускають воду, очерет намокає. Якщо вимкнено, жоден корпус не пошкоджується, і кожен корпус стає цілим.",
+    "worldattribute-stormLightning": "Блискавки",
+    "worldattribute-stormLightning-desc": "Бурі б'ють блискавками поруч із вами, а щогла їх притягує.",
+    "worldattribute-mooringStrain": "Навантаження на швартови",
+    "worldattribute-mooringStrain-desc": "Буря тягне якорі, рве швартови й викидає на берег судно, залишене на швартовах, поки вас немає.",
+    "worldattribute-oceanCurrents": "Течії",
+    "worldattribute-oceanCurrents-desc": "Течії та вітер відносять судно, яким ніхто не керує.",
+    "worldattribute-rowerFatigue": "Утома веслувальника",
+    "worldattribute-rowerFatigue-desc": "Веслування, гребіння одним веслом і хід на жердині викликають голод.",
+    "worldattribute-poleDepth": "Глибина для жердини",
+    "worldattribute-poleDepth-desc": "Жердина штовхає лише там, де дістає до дна. Якщо вимкнено, вона штовхає на будь-якій глибині, як за повного поштовху."
 }

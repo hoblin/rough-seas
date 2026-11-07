@@ -75,6 +75,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     private float sinceUpdate = UpdateSeconds;
     private bool wasSunk;
     private bool wasAwash;
+    private bool? wasHarmed;
     private bool inWater;
     private double leaked;
 
@@ -257,6 +258,9 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
         }
         if (entity.World.Side != EnumAppSide.Server) return;
         using var budget = vessels.Budget.Measure();
+        bool harmed = Mechanic.HullDamage.On(entity.World);
+        if (!harmed && wasHarmed != false) MendWhole();
+        wasHarmed = harmed;
 
         Knocked[] impacts;
         lock (impactLock)
@@ -286,7 +290,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     /// the harm does is the hull model's.
     /// </summary>
     /// <param name="load">In joules; a slam's in pascals.</param>
-    public void Strike(double load, HullPlace place, Blow blow = Blow.Broad)
+    /// <param name="armed">A weapon's or a blast's: it harms whatever the world's hull damage; anything else is heard and leaves her whole while that is off.</param>
+    public void Strike(double load, HullPlace place, Blow blow = Blow.Broad, bool armed = false)
     {
         if (!entity.Alive) return;
         var rand = entity.World.Rand;
@@ -294,6 +299,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
         double strength = Scatter.Of(damageConversion.Variation.GetValueOrDefault(blow), rand);
         double resists = resistance.Against(blow, backed) * strength;
         double severity = resistance.Severity(load, blow, backed, strength);
+        if (!armed && !Harms($"a {blow.ToString().ToLowerInvariant()} blow at the {place.Code()} with {Load(blow, load)}"))
+        {
+            Struck?.Invoke(place, severity, null);
+            return;
+        }
         if (model is not IKnockable knockable)
         {
             vessels.Log(entity, "struck at the {0} with {1}: the hull gives, unharmed", place.Code(), Load(blow, load));
@@ -350,13 +360,28 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
         Impact(joules, place);
     }
 
+    private void MendWhole()
+    {
+        model.MendWhole();
+        outboard?.MendWhole();
+        vessels.Log(entity, "mended whole, hull {0:F2}: hull damage is off", Integrity);
+    }
+
+    private bool Harms(string what)
+    {
+        if (Mechanic.HullDamage.On(entity.World)) return true;
+
+        vessels.Log(entity, "{0} leaves her unharmed: hull damage is off", what);
+        return false;
+    }
+
     /// <summary>A knock toward this place: on what stands off her there, when something does, else on her hull.</summary>
     public void Impact(double joules, HullPlace place)
     {
         if (!entity.Alive) return;
 
-        if (outboard?.Side == place) outboard.Strike(joules);
-        else Strike(joules, place);
+        if (outboard?.Side != place) Strike(joules, place);
+        else if (Harms($"a knock of {joules:F0} J on what stands off her")) outboard.Strike(joules);
     }
 
     public HullPlace Toward(double worldX, double worldZ)
@@ -436,14 +461,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
     {
         if (entity.World.Side != EnumAppSide.Server || damageSource.Type == EnumDamageType.Heal) return;
-        if (damageSource.Source == EnumDamageSource.Weather && !seaWeather.DangerousOceans) return;
+        if (damageSource.Source == EnumDamageSource.Weather && !Harms("the weather")) return;
 
         entity.SetActivityRunning("invulnerable", InvulnerableMs);
         var place = PlaceOf(damageSource);
         vessels.Log(entity, "takes {0:F1} {1} damage from {2} at the {3}", damage, damageSource.Type, damageSource.Source, place.Code());
         var blow = damageConversion.BlowOf(damageSource);
         double joules = damageConversion.Joules(damageSource, damage);
-        if (outboard == null || Landing(damageSource, blow) is not { } hit || !LandsOutboard(hit)) Strike(joules, place, blow);
+        if (outboard == null || Landing(damageSource, blow) is not { } hit || !LandsOutboard(hit)) Strike(joules, place, blow, armed: true);
         else if (blow == Blow.Broad) outboard.Strike(joules);
         else vessels.Log(entity, "a {0} blow lands on what stands off her {1}: its wood takes it", blow.ToString().ToLowerInvariant(), outboard.Side.Code());
     }
@@ -660,6 +685,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
 
         Tree.SetDouble(CheckedAtKey, now);
         if (now == last) return;
+        if (!Harms($"{now - last:F1} h afloat or ashore")) return;
         double sun = afloat ? 0 : Sunlight();
         timed.Pass((now - last) / entity.World.Calendar.HoursPerDay, afloat, sun, seaWeather.CurrentAt(entity.Pos.X, entity.Pos.Z).WaterCelsius);
         vessels.Log(entity, "{0:F1} h {1}: hull {2:F2}, {3:F0} kg soaked", now - last,

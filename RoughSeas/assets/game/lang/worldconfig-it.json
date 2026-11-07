@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Mare grosso",
     "playstyle-desc-preset-roughseas": "Sopravvivenza normale in un mondo dagli oceani aperti, dove vento, tempeste e mare sono pericolosi.",
     "worldconfig-category-roughseas": "Mare grosso",
-    "worldattribute-dangerousOceans": "Oceani pericolosi",
-    "worldattribute-dangerousOceans-desc": "Tempeste, frangenti e fulmini possono allagare, far scuffiare e spezzare le imbarcazioni, e strapparle dagli ormeggi. Disattivato, il mare mantiene il suo meteo ma non fa danni."
+    "worldattribute-bilgeWater": "Acqua in sentina",
+    "worldattribute-bilgeWater-desc": "Le onde frangono a bordo e la pioggia cade in un'imbarcazione aperta, riempiendone la sentina finché non la sgotti. Se disattivata, né onde né pioggia aggiungono acqua; una falla sì.",
+    "worldattribute-hullDamage": "Danni allo scafo",
+    "worldattribute-hullDamage-desc": "Scogli, riva, speronamenti, rapide, frangenti e intemperie incrinano lo scafo, e una crepa fa acqua. La pelle marcisce, le cuciture non ingrassate trasudano e il giunco si inzuppa. Se disattivata, nessuno scafo subisce danni, e ogni scafo torna integro.",
+    "worldattribute-stormLightning": "Fulmini",
+    "worldattribute-stormLightning-desc": "Le tempeste scagliano fulmini vicino a te, e un albero li attira.",
+    "worldattribute-mooringStrain": "Sforzo sugli ormeggi",
+    "worldattribute-mooringStrain-desc": "Una tempesta fa arare le ancore, spezza le cime d'ormeggio e getta a riva un'imbarcazione ormeggiata mentre sei via.",
+    "worldattribute-oceanCurrents": "Correnti",
+    "worldattribute-oceanCurrents-desc": "Correnti e vento portano via un'imbarcazione che nessuno governa.",
+    "worldattribute-rowerFatigue": "Fatica del rematore",
+    "worldattribute-rowerFatigue-desc": "Remare, pagaiare e spingere con la pertica ti mettono fame.",
+    "worldattribute-poleDepth": "Profondità della pertica",
+    "worldattribute-poleDepth-desc": "La pertica spinge solo dove tocca il fondo. Se disattivata, spinge in acqua di qualsiasi profondità come a piena spinta."
 }

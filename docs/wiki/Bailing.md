@@ -53,4 +53,4 @@ A leak is the same race. A bucket keeps up with a stove-in bottom on any boat: t
 
 So at sea in a storm, keep bailing, and don't leave a boat out in one. The night you sleep through passes for a boat afloat near you too: the boat takes the night's waves, its rain and its own leaks while you sleep. The bilge never drains by itself: a boat swamped in the night is still full in the morning.
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, no waves come aboard and no rain falls in.
+With [Water in the bilge](World-Settings#the-mechanics) off, no waves come aboard and no rain falls in. A leak still fills the bilge.

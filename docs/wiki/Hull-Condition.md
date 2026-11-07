@@ -180,4 +180,4 @@ A vessel broken up, by one severe blow, by every place stove in, by its lashings
 
 Whatever it carried goes with it.
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves and lightning do no harm; knocks, rams, rapids, weapons and explosions still crack a hull, reed still soaks and hide still seeps.
+With [Hull damage](World-Settings#the-mechanics) off, only weapons and explosions harm a hull: no knock, ram, rapids, breaker or weather cracks it, hide doesn't rot, seams don't seep and reed doesn't soak. Turning it off mends every hull whole.

@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Hırçın deniz",
     "playstyle-desc-preset-roughseas": "Açık okyanusları olan, rüzgârın, fırtınaların ve denizin tehlikeli olduğu bir dünyada standart hayatta kalma.",
     "worldconfig-category-roughseas": "Hırçın deniz",
-    "worldattribute-dangerousOceans": "Tehlikeli okyanuslar",
-    "worldattribute-dangerousOceans-desc": "Fırtınalar, kıyı dalgaları ve yıldırımlar teknelere su aldırabilir, onları alabora edip parçalayabilir, bağlarından ve demirlerinden koparabilir. Kapalıyken deniz havasını korur ama zarar vermez."
+    "worldattribute-bilgeWater": "Sintinede su",
+    "worldattribute-bilgeWater-desc": "Dalgalar tekneye vurup içine dolar, yağmur da üstü açık bir tekneye yağar ve siz boşaltana kadar sintineyi doldurur. Kapalıyken ne dalga ne yağmur su ekler; su alan bir yarık yine ekler.",
+    "worldattribute-hullDamage": "Gövde hasarı",
+    "worldattribute-hullDamage-desc": "Kayalar, kıyı, bindirmeler, ivintiler, kıyı dalgaları ve hava gövdeyi çatlatır, çatlak da su alır. Deri çürür, yağlanmamış dikişler su sızdırır, saz su çeker. Kapalıyken hiçbir gövde hasar görmez ve her gövde tamamen onarılır.",
+    "worldattribute-stormLightning": "Yıldırım",
+    "worldattribute-stormLightning-desc": "Fırtınalar yakınınıza yıldırım düşürür, direk de yıldırımı çeker.",
+    "worldattribute-mooringStrain": "Bağlama yükü",
+    "worldattribute-mooringStrain-desc": "Fırtına demirleri taratır, bağlama halatlarını koparır ve siz yokken bağlı duran tekneyi kıyıya atar.",
+    "worldattribute-oceanCurrents": "Akıntılar",
+    "worldattribute-oceanCurrents-desc": "Akıntılar ve rüzgâr, kimsenin yönetmediği bir tekneyi alıp götürür.",
+    "worldattribute-rowerFatigue": "Kürekçi yorgunluğu",
+    "worldattribute-rowerFatigue-desc": "Kürek çekmek, pagaylamak ve sırıkla itmek sizi acıktırır.",
+    "worldattribute-poleDepth": "Sırık derinliği",
+    "worldattribute-poleDepth-desc": "Sırık yalnızca dibe yetiştiği yerde iter. Kapalıyken her derinlikteki suda tam itişteki gibi iter."
 }
