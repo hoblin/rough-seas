@@ -47,7 +47,7 @@ public sealed class SwimmerBreakers(PersonModSystem mod, StormsModSystem storms,
                 watchers[player.PlayerUID] = watcher = new Watcher(new CrestRoll(storms.Waves, storms.Config.Waves), sea.Clock.StartWatch());
             }
             var around = swells.Around(pos.X, pos.Z);
-            var lived = watcher.Clock.Lap().LivedSeconds;
+            var seconds = watcher.Clock.Lap().Seconds;
             if (!around.Sea.SwellAt(pos.X, pos.Z))
             {
                 watcher.Roll.Forget();
@@ -55,8 +55,13 @@ public sealed class SwimmerBreakers(PersonModSystem mod, StormsModSystem storms,
             }
             var state = sea.At(pos.X, pos.Z);
             var depth = WaterDepth.AtColumn(entity.World.BlockAccessor, pos.XYZ, storms.Config.Waves.MaxDepthBlocks);
-            if (watcher.Roll.See(around.Sea.HeightAt(pos.X, pos.Z), lived, state, depth, entity.World.Rand.NextDouble) is not { } crest) continue;
+            if (watcher.Roll.See(around.Sea.HeightAt(pos.X, pos.Z), seconds, state, depth, entity.World.Rand.NextDouble) is not { } crest) continue;
 
+            if (!crest.Broke)
+            {
+                mod.Log(entity, "server: a {0:F1} m wave passes the swimmer unbroken ({1:P1} of waves break)", crest.HeightMetres, crest.Chance);
+                continue;
+            }
             var toward = around.Sea.WavesTowardRadians;
             mod.Log(entity, "server: a {0:F1} m crest breaks over the swimmer ({1}, wind {2:F1} m/s, {3:P1} of waves break, {4:F1} m of water), at {5:F1} m/s toward {6:F0}°",
                 crest.HeightMetres, crest.Surf ? "surf" : "at sea", state.WindSpeed, crest.Chance, depth, crest.Celerity, (toward * 180 / Math.PI + 360) % 360);

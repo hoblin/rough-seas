@@ -66,7 +66,7 @@ public class CrestRollTests
                 rolls++;
                 return draw();
             });
-            if (crest is not { } hit) continue;
+            if (crest is not { Broke: true } hit) continue;
             broke++;
             highest = Math.Max(highest, hit.HeightMetres);
         }
@@ -84,6 +84,25 @@ public class CrestRollTests
     }
 
     [Fact]
+    public void RollsOnceADominantWaveOnTheDrawnTrains()
+    {
+        var surface = new SeaSurface(Fixtures.Config().Surface, Waves);
+        var raised = new WaveGeneration(0, Period);
+        surface.Aim(2.4, 0, 6);
+        surface.Raise(raised, raised, 0);
+        var roll = new CrestRoll(Waves, Config);
+        var rolls = 0;
+        const int waves = 200;
+        for (var t = 1000.0; t < 1000 + waves * Period; t += Tick)
+        {
+            surface.Advance(t);
+            if (roll.See(surface.HeightAt(100, 100), Tick, State(), Deep, () => 1) != null) rolls++;
+        }
+
+        Assert.InRange(rolls, 0.75 * waves, 1.01 * waves);
+    }
+
+    [Fact]
     public void BreaksByTheVesselsShareAtSea()
     {
         var (_, none, _) = Watch(100 * Period, Deep, () => 1);
@@ -98,11 +117,12 @@ public class CrestRollTests
     {
         const double depth = 0.5;
         var roll = new CrestRoll(Waves, Config);
-        BrokenCrest? hit = null;
+        RolledWave? hit = null;
         for (var t = 0.0; t < 40 && hit == null; t += Tick) hit = roll.See(Surface(t), Tick, State(), depth, () => 1);
 
         Assert.NotNull(hit);
         Assert.True(hit!.Value.Surf);
+        Assert.True(hit.Value.Broke);
         Assert.Equal(Waves.BreakerCelerity(hit.Value.HeightMetres, Period, depth), hit.Value.Celerity, 6);
         Assert.True(hit.Value.Celerity < Waves.BreakerCelerity(hit.Value.HeightMetres, Period, double.PositiveInfinity));
     }

@@ -50,14 +50,14 @@ public sealed class CrestRoll(Waves waves, Storms.WavesConfig config)
     private readonly CrestWatch crests = new();
     private double sinceRoll;
 
-    /// <summary>Takes the surface's next height over the body; a broken crest when a wave has just passed and broke.</summary>
+    /// <summary>Takes the surface's next height over the body; the roll when a wave has just passed and took one.</summary>
     /// <param name="surface">The drawn surface's height above still water, in metres.</param>
-    /// <param name="lived">The time the world's ticks ran through since the last call (<see cref="Lap.LivedSeconds"/>).</param>
+    /// <param name="seconds">The time since the last call. A leap of the clock brings no rolls of its own: a roll waits for a wave to pass.</param>
     /// <param name="depth">The water's depth here, in metres.</param>
     /// <param name="draw">A uniform random number, drawn only for a roll.</param>
-    public BrokenCrest? See(double surface, double lived, SeaState state, double depth, Func<double> draw)
+    public RolledWave? See(double surface, double seconds, SeaState state, double depth, Func<double> draw)
     {
-        sinceRoll += lived;
+        sinceRoll += seconds;
         var wave = crests.WatchWave(surface);
         if (state.WaveHeight < config.MinHeight)
         {
@@ -69,10 +69,8 @@ public sealed class CrestRoll(Waves waves, Storms.WavesConfig config)
         sinceRoll %= state.WavePeriod;
         var surf = waves.BreaksAt(depth, height);
         var chance = waves.BreakingChance(state.WindSpeed);
-        if (!surf && draw() >= chance) return null;
-
         var celerity = waves.BreakerCelerity(height, state.WavePeriod, depth < config.MaxDepthBlocks ? depth : double.PositiveInfinity);
-        return new BrokenCrest(height, celerity, surf, chance);
+        return new RolledWave(height, surf || draw() < chance, celerity, surf, chance);
     }
 
     public void Forget()
@@ -82,4 +80,4 @@ public sealed class CrestRoll(Waves waves, Storms.WavesConfig config)
     }
 }
 
-public readonly record struct BrokenCrest(double HeightMetres, double Celerity, bool Surf, double Chance);
+public readonly record struct RolledWave(double HeightMetres, bool Broke, double Celerity, bool Surf, double Chance);
