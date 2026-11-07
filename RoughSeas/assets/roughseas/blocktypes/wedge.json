@@ -1,0 +1,71 @@
+{
+    "code": "wedge",
+    "class": "roughseas:BlockWedge",
+    "variantgroups": [{"code": "grain", "states": ["we", "ns"]}, {"code": "driven", "states": ["0", "1", "2", "3", "4"]}],
+    "attributes": {
+        "secondsPerBlow": 1.5,
+        "splits": [
+            {"logs": 2, "item": "roughseas:pole-{wood}-2", "count": 64},
+            {"logs": 3, "item": "roughseas:pole-{wood}-3", "count": 64},
+            {"logs": 4, "item": "roughseas:pole-{wood}-4", "count": 64},
+            {"logs": 5, "item": "roughseas:pole-{wood}-5", "count": 64}
+        ],
+        "sources": {
+            "secondsPerBlow": "An estimate, nothing measured: wedges driven with a maul or an axe's butt take some 30 to 40 blows a minute, each raised overhead and brought down, 1.5 to 2 s a blow; the brisk end, 1.5 s",
+            "splits": "A trunk a metre across, as the blocks are, is 0.785 m² of wood in section. It splits by halves along its grain, as rails are split; halved six times it gives 64 billets of about 0.012 m², some 11 cm square, each dressed to the 8 to 10 cm round of an outrigger's booms, mast and spars. Every row, whatever its length, splits into poles as long as it is"
+        }
+    },
+    "shapeByType": {
+        "*-we-0": {"base": "roughseas:block/wedge", "rotateY": 90, "offsetY": -0.125},
+        "*-ns-0": {"base": "roughseas:block/wedge", "offsetY": -0.125},
+        "*-we-1": {"base": "roughseas:block/wedge", "rotateY": 90, "offsetY": -0.1875},
+        "*-ns-1": {"base": "roughseas:block/wedge", "offsetY": -0.1875},
+        "*-we-2": {"base": "roughseas:block/wedge", "rotateY": 90, "offsetY": -0.25},
+        "*-ns-2": {"base": "roughseas:block/wedge", "offsetY": -0.25},
+        "*-we-3": {"base": "roughseas:block/wedge", "rotateY": 90, "offsetY": -0.3125},
+        "*-ns-3": {"base": "roughseas:block/wedge", "offsetY": -0.3125},
+        "*-we-4": {"base": "roughseas:block/wedge", "rotateY": 90, "offsetY": -0.375},
+        "*-ns-4": {"base": "roughseas:block/wedge", "offsetY": -0.375}
+    },
+    "textures": {"wood": {"base": "game:block/wood/debarked/oak"}},
+    "blockmaterial": "Wood",
+    "drawtype": "json",
+    "sidesolid": {"all": false},
+    "sideopaque": {"all": false},
+    "lightAbsorption": 0,
+    "replaceable": 100,
+    "resistance": 0.5,
+    "collisionboxByType": {
+        "*-we-0": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.3125, "z2": 0.5844},
+        "*-ns-0": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.3125, "z2": 0.6375},
+        "*-we-1": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.25, "z2": 0.5844},
+        "*-ns-1": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.25, "z2": 0.6375},
+        "*-we-2": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.1875, "z2": 0.5844},
+        "*-ns-2": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.1875, "z2": 0.6375},
+        "*-we-3": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.125, "z2": 0.5844},
+        "*-ns-3": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.125, "z2": 0.6375},
+        "*-we-4": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.0625, "z2": 0.5844},
+        "*-ns-4": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.0625, "z2": 0.6375}
+    },
+    "selectionboxByType": {
+        "*-we-0": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.3125, "z2": 0.5844},
+        "*-ns-0": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.3125, "z2": 0.6375},
+        "*-we-1": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.25, "z2": 0.5844},
+        "*-ns-1": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.25, "z2": 0.6375},
+        "*-we-2": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.1875, "z2": 0.5844},
+        "*-ns-2": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.1875, "z2": 0.6375},
+        "*-we-3": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.125, "z2": 0.5844},
+        "*-ns-3": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.125, "z2": 0.6375},
+        "*-we-4": {"x1": 0.3625, "y1": 0, "z1": 0.4156, "x2": 0.6375, "y2": 0.0625, "z2": 0.5844},
+        "*-ns-4": {"x1": 0.4156, "y1": 0, "z1": 0.3625, "x2": 0.5844, "y2": 0.0625, "z2": 0.6375}
+    },
+    "drops": [{"type": "block", "code": "roughseas:wedge-we-0"}],
+    "maxStackSize": 16,
+    "materialDensity": 700,
+    "combustibleProps": {"burnTemperature": 700, "burnDuration": 10},
+    "sounds": {"place": "game:block/planks", "hit": "game:block/planks", "break": "game:block/planks"},
+    "creativeinventory": {"general": ["*-we-0"], "items": ["*-we-0"]},
+    "guiTransform": {"rotation": {"x": -20, "y": 70, "z": 0}, "origin": {"x": 0.5, "y": 0.1, "z": 0.5}, "scale": 2.8},
+    "tpHandTransform": {"translation": {"x": -0.9, "y": -0.2, "z": -0.6}, "rotation": {"x": 0, "y": 0, "z": -60}, "scale": 0.8},
+    "groundTransform": {"origin": {"x": 0.5, "y": 0, "z": 0.5}, "scale": 2.5}
+}

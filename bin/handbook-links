@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+import unicodedata
+from pathlib import Path
+
+USAGE = """Check every handbook link in every locale of the mod's texts.
+
+  bin/handbook-links          every locale's text as its player sees it, a key it lacks in
+                              English. A game: key it lacks shows the game's own translation
+                              instead, without our change, so that fails. A search link must
+                              find some name the locale shows (a
+                              word found in an unrelated name passes too), a guide page link
+                              must name a guide page, and every locale must link the pages
+                              English links. Item and block page codes are not followed here
+  bin/handbook-links game     also follow each page link in the running bench client (bin/client)
+                              and require the page to open: a wrong page code fails silently
+                              in the game
+"""
+
+if sys.argv[1:] == ["help"]:
+    print(USAGE, end="")
+    sys.exit(0)
+if sys.argv[1:] not in ([], ["game"]):
+    sys.exit(USAGE)
+
+repo = Path(__file__).resolve().parent.parent
+ours = repo / "RoughSeas" / "assets" / "roughseas"
+install = Path(os.environ["VINTAGE_STORY"]) / "assets"
+href = re.compile(r'href=\\?"(handbook(?:search)?://[^"\\]*)')
+name_key = re.compile(r"^(?:[\w-]+:)?(?:item|block)-(?!handbook)")
+
+
+def load(path):
+    return json.loads(path.read_text()) if path.is_file() else {}
+
+
+def searchable(text):
+    text = re.sub(r'[«»"()]', " ", unicodedata.normalize("NFD", text))
+    return unicodedata.normalize("NFC", "".join(c for c in text if unicodedata.category(c) != "Mn")).lower()
+
+
+def names(code):
+    merged = {}
+    for path in (install / "game/lang/en.json", install / f"game/lang/{code}.json", ours / "lang/en.json", ours / f"lang/{code}.json"):
+        merged.update(load(path))
+    return [searchable(value) for key, value in merged.items() if name_key.match(key)]
+
+
+def exact(value):
+    return {link for link in href.findall(value) if link.startswith("handbook://")}
+
+
+guide_pages = {code for folder in (ours / "config/handbook", install / "survival/config/handbook") for page in folder.glob("*.json")
+               for code in re.findall(r'pageCode"?\s*:\s*"([^"]+)', page.read_text())}
+english = load(ours / "lang/en.json")
+broken = []
+pages = set()
+for path in sorted((ours / "lang").glob("*.json")):
+    code = path.stem
+    known = None
+    own = load(path)
+    vanilla = load(install / f"game/lang/{code}.json")
+    for key in english.keys() - own.keys():
+        if key.startswith("game:") and key[5:] in vanilla:
+            broken.append(f"{code}: {key} missing, so the game's own translation shows without ours")
+    for key, value in {**english, **own}.items():
+        links = exact(value)
+        pages |= links
+        if key in own and links != exact(english.get(key, value)):
+            broken.append(f"{code}: {key} links {sorted(links ^ exact(english[key]))} differently from English")
+        for link in href.findall(value):
+            target = link.split("://", 1)[1]
+            if link.startswith("handbooksearch://"):
+                known = known or names(code)
+                words = [searchable(word) for word in target.split()]
+                if not any(word in name for word in words for name in known):
+                    broken.append(f"{code}: {link} finds no {code} name")
+            elif not re.match(r"(item|block)-|tab-", target) and target not in guide_pages:
+                broken.append(f"{code}: {link} names no guide page")
+
+if sys.argv[1:] == ["game"]:
+    for link in sorted(link for link in pages if "://tab-" not in link):
+        for _ in range(60):
+            reply = subprocess.run([repo / "bin/game", "link", link], capture_output=True, text=True).stdout
+            if "still building" not in reply:
+                break
+            time.sleep(1)
+        if "Opened" not in reply:
+            broken.append(f"game: {link}: {reply.strip().splitlines()[-1] if reply.strip() else 'no reply'}")
+    subprocess.run([repo / "bin/game", "close"], capture_output=True)
+
+checked = "every page link opens in the game" if sys.argv[1:] == ["game"] else "page codes not followed: bin/handbook-links game"
+print("\n".join(broken) or f"{len(pages)} pages linked, every search finds a name in its locale; {checked}")
+sys.exit(1 if broken else 0)

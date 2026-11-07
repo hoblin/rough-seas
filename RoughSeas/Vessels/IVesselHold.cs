@@ -4,6 +4,8 @@ public interface IVesselHold
 {
     double Litres { get; }
 
+    double DesignedLitres { get; }
+
     /// <summary>What her hold takes now: for a hull still being built, only the part cut out.</summary>
     double CapacityLitres { get; }
 

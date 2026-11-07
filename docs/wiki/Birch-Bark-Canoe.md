@@ -1,10 +1,10 @@
 ![The birch-bark canoe afloat](images/birch-bark-canoe/afloat-bow.webp)
 
-Sheets of birch bark sewn over a frame of close-set ribs, with gunwales lashed on at intervals, three thwarts and high, upswept ends. One person kneels amidships and paddles it with the paddle it carries; a second rides in the bow.
+One sheet of birch bark over a frame of split laths: gunwales lashed on at intervals, three thwarts, sheathing and ribs inside, and high, upswept stems, its seams black with pitch. One person kneels amidships and paddles it with a [paddle](Paddles-Poles-and-Oars) in hand; a second rides in the bow.
 
 ## In Rough Seas
 
-For long river journeys. The canoe is fast and draws almost no water, and it is the one vessel that runs rapids without taking a rock strike every second. It is also fragile: a landing that a dugout would never notice can hole it. Carry spare birch bark and patch it on the way, and pick it up to carry it past whatever the river won't let you through.
+For long river journeys. The canoe is fast and draws almost no water, and with the coracle it runs rapids without taking a rock strike every second. It is also fragile: a landing that a dugout would never notice can hole it. Carry spare birch bark and patch it on the way, and pick it up to carry it past whatever the river won't let you through.
 
 Birch is the one canoe bark in vanilla. Beside a mod that adds elm or spruce, such as [Wildcraft](Other-Mods#wildcraft-trees-and-shrubs), their bark builds canoes too: the Iroquois built theirs of elm bark, and northern and Pacific peoples of spruce bark. An elm-bark canoe is mended with elm bark. No other bark is flexible and tough enough to make one.
 
@@ -16,33 +16,66 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 
 | | |
 | --- | --- |
-| Speed | 2.1 × the raft, the fastest paddled boat |
-| Turning | nimble |
-| [Hull](Hull-Condition) | 2400 J |
+| Speed | 2.1 m/s paddled, 2.9 m/s poled: the fastest paddled boat ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Turning | 26° a second |
+| [Hull](Hull-Condition) | a knock splits the bark and its sheathing at 23 J in white cedar, 43 J in oak, and breaks the rib behind at 47 J, 88 J in oak, or the two either side at 71 J, 133 J in oak; 5200 J more with an oak frame breaks it up, 6100 J in birch, 2400 J in white cedar, the wood of a canoe from before the build |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 28 cm empty, 25 cm with its paddler |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 41 kg of gear, armour and containers |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | 36 cm empty, 32 cm with its paddler, in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 24 kg of gear, armour and containers in oak, more in a lighter wood |
 | [Mending](Mending) | 2 bark of its tree close a third of a stove-in place |
-| [Bilge](Bailing) | 600 litres |
+| [Bilge](Bailing) | 609 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
-| [Rapids](Rapids) | runs them unharmed, the only vessel that does |
+| [Rapids](Rapids) | runs them unharmed, as only the coracle also does |
 | [Lightning](Lightning) | a strike nearby almost always breaks it |
 | [Left alone](Currents#drift) | drifts with the current and the waves |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
-| Seats | two: a paddler amidships, with its own paddle, and a passenger in the bow |
+| Seats | two: a paddler amidships, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing behind its middle thwart to pole, and a passenger in the bow |
 | Cargo | a basket (8 slots) in the bow, in place of the passenger |
-| Built from | 12 birch bark, 2 sticks and resin |
+| Built from | a sheet of bark off a standing tree, 29 laths (4 of 5 m, 6 of 4 m, 19 of 2 m), 21 ropes and a litre of hot pitch |
 | Wreckage | bark and a stick |
 
 ## How it is built
 
-Birch bark comes off a birch log with a knife.
+You build a bark canoe on its sheet of bark, piece by piece. Each piece shows on the canoe as you lay it.
 
-| | |
-| --- | --- |
-| ![Birch bark from a birch log and a knife](images/recipes/birch-bark.png) | ![The birch-bark canoe from 12 birch bark, 2 sticks and resin](images/recipes/birch-bark-canoe.png) |
-| The bark | The canoe |
+![The whole build, from the sheet of bark to the finished canoe](images/birch-bark-canoe/build-birch-bark-canoe.webp)
+
+1. **Strip the bark.** Hold a knife on a standing birch with a trunk at least five blocks tall. The bark comes off in one sheet five metres long and falls to the ground next to the tree. That sheet is the canoe, not yet framed: it floats and can be carried from the start, but has no seat, so you can carry it to where you want to build. The tree stays standing with its wood bare, and an axe still fells it whole. With a mod that adds elm or spruce, their trunks give bark the same way.
+
+   ![The sheet of bark laid on the shore](images/birch-bark-canoe/build-sheet.webp)
+
+2. **Split the laths.** Lay two to five logs of one wood on their sides, end to end, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on each wedge in turn until it is driven home. Once the last is home, the trunk splits into 64 poles as long as the row. An axe splits a pole into 16 [laths](Recipes#laths) of its length in the crafting grid. The gunwales take 5 m laths and the sheathing 4 m ones; the stems, thwarts and ribs take any lath of 2 m or more, cut down. Any wood will do, and the frame is as strong and as heavy as that wood.
+3. **Soak them.** Laths bend only when wet: soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, in the bundle as in the canoe, so put a bundle kept too long back in the barrel.
+4. **Frame it.** Hold wet laths on the sheet, one at a time, all of one wood. Lay the two inwales and the three thwarts first, the middle thwart before the others: they lie flat on the bark as the gunwale frame. With the last thwart in, you turn the middle of the bark up around the frame, the way stakes hold it upright: there the sides run straight and bend up whole.
+5. **Slash the bark.** Hold a knife on the canoe to slash the bark from its edge in to the frame where the canoe narrows. Each of the four slashes lets you turn up the next length of bark, from the middle out, until the whole sheet stands. The knife wears a little with each cut.
+6. **Raise the frame.** Lay an outwale: you lift the frame to the canoe's full height, and the outwale clamps the bark against the inwale. Then lay the second outwale.
+7. **Trim the ends.** Hold the knife on the canoe again to cut the surplus bark off each end along its stem's curve, the stern first, then lay the two stems.
+
+   | | | |
+   | --- | --- | --- |
+   | ![The gunwale frame laid flat, the middle of the bark turned up](images/birch-bark-canoe/build-raising.webp) | ![The bark slashed and turned up along the whole sheet](images/birch-bark-canoe/build-slashed.webp) | ![The frame raised and both outwales on](images/birch-bark-canoe/build-frame.webp) |
+   | The gunwale frame laid | The bark slashed and turned up | The frame raised |
+
+   ![Both ends trimmed](images/birch-bark-canoe/build-trimmed.webp)
+
+8. **Lash the bark.** Hold vanilla rope on the canoe to sew the bark to the gunwales and bind the stems. Each rope is ten metres of lashing, and the canoe takes 21.
+
+   ![Lashed along both gunwales](images/birch-bark-canoe/build-lashed.webp)
+
+9. **Line it.** Hold wet laths on the canoe to lay the sheathing along the bottom, then the ribs across, from the middle out. The ribs bend in wet and hold the canoe's shape once dry.
+
+   ![Sheathing laid and half the ribs in](images/birch-bark-canoe/build-ribs.webp)
+
+10. **Pitch the seams.** Hold a bowl, jug or bucket of hot pitch glue on the canoe to pitch each of its four seams, a quarter litre a seam: one pot of glue. Glue that has set must be heated again.
+
+   ![Finished, the seams pitched](images/birch-bark-canoe/build-pitched.webp)
+
+The hold keeps water out only once the seams are pitched. Once the last rib has dried, two days after it went in, the canoe is finished and takes its seats. A canoe from before the build loads finished.
+
+Birch bark still comes off a birch log with a knife, for patches: it mends the canoe on the way.
+
+![Birch bark from a birch log and a knife](images/recipes/birch-bark.png)
 
 ## Its neighbours
 

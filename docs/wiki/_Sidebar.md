@@ -4,6 +4,7 @@
 - [World settings](World-Settings)
 - [Vessels](Vessels)
 - [Recipes](Recipes)
+- [Paddles, poles and oars](Paddles-Poles-and-Oars)
 
 **The sea**
 - [Wind and waves](Wind-and-Waves)

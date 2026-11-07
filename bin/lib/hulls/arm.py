@@ -1,8 +1,14 @@
 import math
+from functools import cached_property
 
-from transform import angles, apply, direct, euler, identity, local, mul, nearest, unapply, undirect
+import units
+
+from limb import Limb
+from transform import angles, apply, cross, depth, direct, dot, euler, sub, unapply, undirect, unit
 
 GRIP = (1.25, 0.6, 1)
+REST_OVERLAP = units.metres(0.75)
+SHOULDER_SHARE = 0.25
 # Joint ranges in degrees, AAOS normal values. SWING is the shoulder's highest elevation in each plane of
 # elevation (0 out to the side, 90 straight ahead, -90 straight back): extension 60, horizontal abduction 45,
 # horizontal adduction 130.
@@ -11,6 +17,9 @@ SWING = ((-90, 60), (-45, 180), (130, 180), (270, 60))
 # Shoulder rotation is (external, internal); wrist deviation (ulnar, radial), radial tipping the held axis's
 # thumb end toward the elbow.
 RANGES = {"shoulder rotation": (-90, 70), "elbow flexion": (0, 150), "wrist deviation": (-30, 20)}
+# Internal rotation by the arm's elevation: AAOS's 70 is measured with the arm raised to 90°; with the arm at the side,
+# elbow bent 90°, it is 80 to 90°, where the trunk stops the forearm (the body check here).
+INTERNAL = ((0, 90), (90, 70))
 COMFORT = ("shoulder rotation", "wrist deviation")
 # A passed limit outweighs any discomfort, so the arm passes one only when no pose keeps them all.
 LIMIT = 100
@@ -29,23 +38,6 @@ SHOULDER_STRENGTH = 77.2
 ELBOW_STRENGTH = 69.5
 
 
-def dot(a, b):
-    return sum(x * y for x, y in zip(a, b))
-
-
-def cross(a, b):
-    return (a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
-
-
-def minus(a, b):
-    return tuple(x - y for x, y in zip(a, b))
-
-
-def unit(v):
-    length = math.sqrt(dot(v, v))
-    return tuple(c / length for c in v)
-
-
 def along(a, b, share):
     return tuple(x + share * (y - x) for x, y in zip(a, b))
 
@@ -62,7 +54,7 @@ def off_middle(value, span):
 
 def basis(first, second):
     e1 = unit(first)
-    e2 = unit(minus(second, tuple(dot(second, e1) * c for c in e1)))
+    e2 = unit(sub(second, tuple(dot(second, e1) * c for c in e1)))
     return [e1, e2, cross(e1, e2)]
 
 
@@ -75,95 +67,84 @@ def elevation_limit(plane):
     return ELEVATION[1]
 
 
-class Arm:
+class Arm(Limb):
 
     def __init__(self, chain, idle, outboard):
-        *self.body, self.upper, self.lower = chain
-        self.idle = idle
-        self.outboard = outboard
-        self.shoulder = tuple(c / 16 for c in self.upper["rotationOrigin"])
-        self.elbow = tuple(c / 16 for c in self.lower["rotationOrigin"])
-        self.humerus = tuple(e + f / 16 - s for e, f, s in zip(self.elbow, self.upper["from"], self.shoulder))
-        self.forearm = tuple(g / 16 + f / 16 - e for g, f, e in zip(GRIP, self.lower["from"], self.elbow))
+        super().__init__(chain, idle, outboard)
+        self.shoulder = tuple(units.metres(c) for c in self.upper["rotationOrigin"])
+        self.elbow = tuple(units.metres(c) for c in self.lower["rotationOrigin"])
+        self.humerus = tuple(e + units.metres(f) - s for e, f, s in zip(self.elbow, self.upper["from"], self.shoulder))
+        self.forearm = tuple(units.metres(g) + units.metres(f) - e for g, f, e in zip(GRIP, self.lower["from"], self.elbow))
         self.rest = [self.upper.get("rotation" + axis, 0) for axis in "XYZ"]
         self.bend = [self.lower.get("rotation" + axis, 0) for axis in "XYZ"]
+        self.body_sizes = [size_of(element) for element in self.body]
+        self.upper_size, self.lower_size = size_of(self.upper), size_of(self.lower)
+        self.below_shoulder = samples(self.upper, SHOULDER_SHARE)
+        self.upper_box, self.lower_box = samples(self.upper, 0), samples(self.lower, 0)
 
-    def frames(self, pose):
-        m = identity()
-        out = []
-        for element in [*self.body, self.upper, self.lower]:
-            m = mul(m, local(element, pose.get(element["name"]) or self.idle.get(element["name"]) or {}))
-            out.append(m)
-        return out
+    def joints(self, frames):
+        *body, upper, lower = frames
+        return apply(body[-1], self.shoulder), apply(upper, self.elbow), apply(lower, [units.metres(c) for c in GRIP])
 
-    def joints(self, pose):
-        *body, upper, lower = self.frames(pose)
-        return apply(body[-1], self.shoulder), apply(upper, self.elbow), apply(lower, [c / 16 for c in GRIP])
+    def posture(self, pose, trunk=None):
+        return Posture(self, pose, trunk)
 
-    def stroke(self, poses, hands, grips):
+    def stroke(self, poses, hands, holds, ends=(None, None), loops=False):
+        """The arm through each hold of the stroke, as (poses, swivels, strain). A stroke loops; one given the elbow's
+        swivel at its ends, in radians, runs from the one to the other, unless it `loops` from the first."""
         swivels = range(0, 360, SWIVEL_STEP)
-        swing = SWING_PER_KEY // SWIVEL_STEP
-        strains = [[self.strain(pose | self.place(pose, hand, math.radians(s)), hand, grip) for s in swivels]
-                   for pose, hand, grip in zip(poses, hands, grips)]
-        count = len(swivels)
-        best = None
-        for first in range(count):
-            cost, back = [math.inf] * count, []
-            cost[first] = strains[0][first]
-            for row in strains[1:]:
-                steps = [min(((cost[(s + d) % count], (s + d) % count) for d in range(-swing, swing + 1))) for s in
-                         range(count)]
-                back.append([came for _, came in steps])
-                cost = [total + strain for (total, _), strain in zip(steps, row)]
-            closing = min(range(count), key=lambda s: cost[s] if min(abs(s - first), count - abs(s - first)) <= swing
-                          else math.inf)
-            if best is None or cost[closing] < best[0]:
-                path = [closing]
-                for came in reversed(back):
-                    path.append(came[path[-1]])
-                best = (cost[closing], path[::-1])
-        held = [self.refine(pose, hand, grip, math.radians(swivels[s]))
-                for pose, hand, grip, s in zip(poses, hands, grips, best[1])]
-        return held, best[0]
+        trunks = [self.trunk(pose) for pose in poses]
+        places = [self.placing(trunk[-1], hand) for trunk, hand in zip(trunks, hands)]
+        postures = [[self.posture(pose | place(math.radians(s)), trunk) for s in swivels]
+                    for pose, trunk, place in zip(poses, trunks, places)]
+        pinned = [None] * len(poses)
+        pinned[0], pinned[-1] = ends
+        fits = []
+        for grips in holds:
+            strains = [[self.strain(posture, hand, grip) for posture in row] for row, hand, grip in zip(postures, hands, grips)]
+            nearest = [None if at is None else round(math.degrees(at) / SWIVEL_STEP) % len(swivels) for at in pinned]
+            cost, path = cheapest(strains, SWING_PER_KEY // SWIVEL_STEP, nearest if ends != (None, None) else None,
+                                  loops or ends == (None, None))
+            turned = [at if at is not None else self.refine(pose, hand, grip, trunk, place, math.radians(swivels[s]))
+                      for pose, hand, grip, trunk, place, s, at in zip(poses, hands, grips, trunks, places, path, pinned)]
+            fits.append(([place(at) for place, at in zip(places, turned)], turned, cost))
+        return fits
 
-    def refine(self, pose, hand, grip, swivel):
+    def refine(self, pose, hand, grip, trunk, place, swivel):
         def strain_at(at):
-            return self.strain(pose | self.place(pose, hand, at), hand, grip)
+            return self.strain(self.posture(pose | place(at), trunk), hand, grip)
 
         step = math.radians(SWIVEL_STEP / 2)
         while step > math.radians(0.1):
             swivel = min((swivel - step, swivel, swivel + step), key=strain_at)
             step /= 2
-        return self.place(pose, hand, swivel)
+        return swivel
 
-    def place(self, pose, hand, swivel):
-        torso = self.frames(pose)[len(self.body) - 1]
-        target = minus(unapply(torso, hand), self.shoulder)
+    def placing(self, torso, hand):
+        target = sub(unapply(torso, hand), self.shoulder)
         upper, fore = math.sqrt(dot(self.humerus, self.humerus)), math.sqrt(dot(self.forearm, self.forearm))
         reach = max(abs(upper - fore) + 1e-6, min(upper + fore - 1e-6, math.sqrt(dot(target, target))))
         bend = self.flexion(reach)
         forearm = direct(euler([*self.bend[:2], self.bend[2] + bend]), self.forearm)
         axis = unit(target)
         down = undirect(torso, (0, -1, 0))
-        first = unit(minus(down, tuple(dot(down, axis) * c for c in axis)))
+        first = unit(sub(down, tuple(dot(down, axis) * c for c in axis)))
         second = cross(axis, first)
         out = (reach * reach + upper * upper - fore * fore) / (2 * reach)
         radius = math.sqrt(max(0.0, upper * upper - out * out))
-        elbow = tuple(out * a + radius * (math.cos(swivel) * f + math.sin(swivel) * s)
-                      for a, f, s in zip(axis, first, second))
-        to_hand = minus(tuple(reach * a for a in axis), elbow)
-        posed, rest = basis(elbow, to_hand), basis(self.humerus, forearm)
-        turned = [[sum(posed[k][i] * rest[k][j] for k in range(3)) for j in range(3)] + [0] for i in range(3)]
-        total = angles(turned + [[0, 0, 0, 1]])
-        return {self.upper["name"]: {"rotation" + a: round(t - r, 2) for a, t, r in zip("XYZ", total, self.rest)},
-                self.lower["name"]: {"rotationZ": round(bend, 2)}}
+        rest = basis(self.humerus, forearm)
+        bent = round(bend, 2)
 
-    def follow(self, arm, previous):
-        name = self.upper["name"]
-        turned = [arm[name]["rotation" + axis] + rest for axis, rest in zip("XYZ", self.rest)]
-        before = [previous[name]["rotation" + axis] + rest for axis, rest in zip("XYZ", self.rest)]
-        return arm | {name: {"rotation" + axis: round(value - rest, 2)
-                             for axis, value, rest in zip("XYZ", nearest(turned, before), self.rest)}}
+        def place(swivel):
+            elbow = tuple(out * a + radius * (math.cos(swivel) * f + math.sin(swivel) * s)
+                          for a, f, s in zip(axis, first, second))
+            posed = basis(elbow, sub(tuple(reach * a for a in axis), elbow))
+            turned = [[sum(posed[k][i] * rest[k][j] for k in range(3)) for j in range(3)] + [0] for i in range(3)]
+            total = angles(turned + [[0, 0, 0, 1]])
+            return {self.upper["name"]: {"rotation" + a: round(t - r, 2) for a, t, r in zip("XYZ", total, self.rest)},
+                    self.lower["name"]: {"rotationZ": bent}}
+
+        return place
 
     def flexion(self, reach):
         tilt = undirect(euler(self.bend[:2]), self.humerus)
@@ -175,14 +156,15 @@ class Arm:
         bends = [(math.degrees(middle + side * spread) - self.bend[2] + 180) % 360 - 180 for side in (1, -1)]
         return min(bends, key=lambda bend: beyond(-bend, RANGES["elbow flexion"]))
 
-    def strain(self, pose, hand, grip):
-        limits = sum((excess / half) ** 2 for excess, half in self.faults(pose, hand, grip).values())
-        angles = self.angles(pose, grip)
-        comfort = sum(off_middle(angles[name], RANGES[name]) ** 2 for name in COMFORT)
-        return LIMIT * limits + comfort + self.effort(pose)
+    def strain(self, posture, hand, grip):
+        angles = self.angles(posture, grip)
+        limits = sum((excess / half) ** 2 for excess, half in self.faults(posture, hand, angles).values())
+        spans = self.spans(angles)
+        comfort = sum(off_middle(angles[name], spans[name]) ** 2 for name in COMFORT)
+        return LIMIT * limits + comfort + posture.effort
 
-    def effort(self, pose):
-        shoulder, elbow, hand = self.joints(pose)
+    def effort(self, joints):
+        shoulder, elbow, hand = joints
         weights = [(along(shoulder, elbow, UPPER[1]), UPPER[0]), (along(elbow, hand, FORE[1]), FORE[0]), (hand, HAND)]
 
         def torque(joint, loads):
@@ -191,27 +173,29 @@ class Arm:
         return ((torque(shoulder, weights) / SHOULDER_STRENGTH) ** 2
                 + (torque(elbow, weights[1:]) / ELBOW_STRENGTH) ** 2)
 
-    def angles(self, pose, grip):
-        shoulder, elbow, _ = self.joints(pose)
-        *_, torso, upper, lower = self.frames(pose)
-        humerus = unit(undirect(torso, minus(elbow, shoulder)))
+    def angles(self, posture, grip):
+        shoulder, elbow, _ = posture.joints
+        *_, torso, upper, lower = posture.frames
+        humerus = unit(undirect(torso, sub(elbow, shoulder)))
         held = undirect(lower, grip)
         return {
             "shoulder elevation": math.degrees(math.acos(max(-1.0, min(1.0, -humerus[1])))),
             "shoulder plane": math.degrees(math.atan2(-humerus[0], humerus[2] * self.outboard)),
             "shoulder rotation": self.rotation(torso, upper, humerus),
-            "elbow flexion": -pose[self.lower["name"]]["rotationZ"],
+            "elbow flexion": -posture.pose[self.lower["name"]]["rotationZ"],
             "wrist deviation": math.degrees(math.asin(max(-1.0, min(1.0, held[1])))),
         }
 
-    def faults(self, pose, hand, grip):
-        angles = self.angles(pose, grip)
-        shoulder, elbow, reached = self.joints(pose)
-        spans = RANGES | {"shoulder elevation": (ELEVATION[0], elevation_limit(angles["shoulder plane"]))}
-        faults = {name: (beyond(angles[name], span), (span[1] - span[0]) / 2) for name, span in spans.items()}
-        faults["arm inside the body"] = (self.inside(pose, [along(shoulder, elbow, k) for k in (0.5, 0.75, 1)]
-                                                     + [along(elbow, reached, k) for k in (0.25, 0.5, 0.75, 1)]), 1)
-        faults["hand off the grip"] = (16 * math.dist(hand, reached), 1)
+    def spans(self, angles):
+        (low, at_side), (high, raised) = INTERNAL
+        share = min(1.0, max(0.0, (angles["shoulder elevation"] - low) / (high - low)))
+        return RANGES | {"shoulder rotation": (RANGES["shoulder rotation"][0], at_side + (raised - at_side) * share),
+                         "shoulder elevation": (ELEVATION[0], elevation_limit(angles["shoulder plane"]))}
+
+    def faults(self, posture, hand, angles):
+        faults = {name: (beyond(angles[name], span), (span[1] - span[0]) / 2) for name, span in self.spans(angles).items()}
+        faults["arm inside the body"] = (posture.inside, 1)
+        faults["hand off the grip"] = (units.voxels(math.dist(hand, posture.joints[-1])), 1)
         return {name: fault for name, fault in faults.items() if fault[0] > 0}
 
     # Internal rotation is positive; 0 is the upper arm turned as it hangs at rest, its -x face forward.
@@ -229,12 +213,77 @@ class Arm:
                             for f, t, a in zip(forward, twisted, axis))
         return math.degrees(math.atan2(-forward[2] * self.outboard, -forward[0]))
 
-    # Measured on the arm's centre line: vanilla's resting arm lies with its centre line on the torso's side.
-    def inside(self, pose, points):
-        depth = 0.0
-        for element, m in zip(self.body, self.frames(pose)):
-            size = [(b - a) / 16 for a, b in zip(element["from"], element["to"])]
+    # The seraph's shoulder turns inside its torso, and its resting arm already lies REST_OVERLAP into the torso's side:
+    # the depth past that, of the arm's own boxes below its shoulder.
+    def inside(self, frames):
+        *body, upper, lower = frames
+        points = [apply(upper, p) for p in self.below_shoulder] + [apply(lower, p) for p in self.lower_box]
+        sunk = 0.0
+        for m, size in zip(body, self.body_sizes):
             for point in points:
-                q = unapply(m, point)
-                depth += max(0.0, min(min(v, s - v) for v, s in zip(q, size))) ** 2
-        return 16 * math.sqrt(depth)
+                sunk += max(0.0, depth(m, size, point) - REST_OVERLAP) ** 2
+        return units.voxels(math.sqrt(sunk))
+
+    def through(self, pose, other):
+        *_, upper, lower = self.frames(pose)
+        *_, other_upper, other_lower = other.frames(pose)
+        points = [apply(upper, p) for p in self.upper_box] + [apply(lower, p) for p in self.lower_box]
+        boxes = ((other_upper, other.upper_size), (other_lower, other.lower_size))
+        return units.voxels(max(0.0, *(depth(m, size, point) for m, size in boxes for point in points)))
+
+
+class Posture:
+
+    def __init__(self, arm, pose, trunk=None):
+        self.arm, self.pose = arm, pose
+        self.frames = arm.frames(pose, trunk)
+
+    @cached_property
+    def joints(self):
+        return self.arm.joints(self.frames)
+
+    @cached_property
+    def inside(self):
+        return self.arm.inside(self.frames)
+
+    @cached_property
+    def effort(self):
+        return self.arm.effort(self.joints)
+
+
+def cheapest(strains, swing, pinned=None, loops=True):
+    """The least strained path of swivels, each key within `swing` steps of the one before, through any `pinned`
+    swivels (None where free): a loop closing on its first key, or a run."""
+    count = len(strains[0])
+    best = None
+    allowed = (lambda key, s: pinned is None or pinned[key] is None or pinned[key] == s)
+    for first in (s for s in range(count) if allowed(0, s)):
+        cost, back = [math.inf] * count, []
+        cost[first] = strains[0][first]
+        for key, row in enumerate(strains[1:], 1):
+            ring = list(zip(cost, range(count)))
+            ring = ring[-swing:] + ring + ring[:swing]
+            steps = [min(ring[s:s + 2 * swing + 1]) for s in range(count)]
+            back.append([came for _, came in steps])
+            cost = [total + strain if allowed(key, s) else math.inf for s, ((total, _), strain) in enumerate(zip(steps, row))]
+        closes = (lambda s: min(abs(s - first), count - abs(s - first)) <= swing) if loops else (lambda s: True)
+        closing = min(range(count), key=lambda s: cost[s] if closes(s) else math.inf)
+        if best is None or cost[closing] < best[0]:
+            path = [closing]
+            for came in reversed(back):
+                path.append(came[path[-1]])
+            best = (cost[closing], path[::-1])
+    return best
+
+
+def size_of(element):
+    return [units.metres(b - a) for a, b in zip(element["from"], element["to"])]
+
+
+def samples(element, top):
+    f, t = element["from"], element["to"]
+    shares = (0, 0.5, 1)
+    return [(units.metres(f[0] + (t[0] - f[0]) * i) - units.metres(f[0]),
+             units.metres(t[1] - (t[1] - f[1]) * (top + (1 - top) * j)) - units.metres(f[1]),
+             units.metres(f[2] + (t[2] - f[2]) * k) - units.metres(f[2]))
+            for i in shares for j in shares for k in shares]

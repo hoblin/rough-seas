@@ -10,12 +10,11 @@ public class SeaworthinessTests
     private readonly SwampingConfig swamping = Fixtures.Config().Swamping;
 
     [Fact]
-    public void AMetreAndAHalfSwellComesOverTheDugoutButNotTheCurrachOrTheOutrigger()
+    public void ATwoMetreSwellComesOverTheDugoutButNotTheCurrach()
     {
-        var crest = waves.Crest(1.5, breaking: false);
+        var crest = waves.Crest(2, breaking: false);
         Assert.True(Of("dugout").ShippedShare(crest) > 0);
         Assert.Equal(0, Of("currach").ShippedShare(crest));
-        Assert.Equal(0, Of("outrigger").ShippedShare(crest));
     }
 
     [Fact]
@@ -51,9 +50,35 @@ public class SeaworthinessTests
     }
 
     [Fact]
+    public void ARaftGoesOverInABreakerAsHighAsHerLogsSpanAcross()
+    {
+        var beam = 2 * Fixtures.Shape("boat-raft").HalfBeamMetres;
+        Assert.False(Of("boat-raft").Capsizes(beam - 0.01));
+        Assert.True(Of("boat-raft").Capsizes(beam));
+    }
+
+    [Fact]
+    public void ASailboatGoesOverInABreakerOfMoreThanHalfHerLength()
+    {
+        var length = 2 * Fixtures.Shape("boat-sailed").HalfLengthMetres;
+        Assert.False(Of("boat-sailed").Capsizes(0.55 * length - 0.01));
+        Assert.True(Of("boat-sailed").Capsizes(0.55 * length));
+    }
+
+    [Fact]
+    public void ABreakerGivenInMetresOverridesOneGivenInBeamsOrLengths()
+    {
+        var given = Seaworthiness.From(new JsonObject(JObject.Parse("""{"capsizeBreakerMetres": 2, "capsizeBreakerBeams": 1, "capsizeBreakerLengths": 0.5}""")), 1, 8);
+        var beams = Seaworthiness.From(new JsonObject(JObject.Parse("""{"capsizeBreakerBeams": 1, "capsizeBreakerLengths": 0.5}""")), 1, 8);
+
+        Assert.Equal(2, given.CapsizeBreakerMetres);
+        Assert.Equal(1, beams.CapsizeBreakerMetres);
+    }
+
+    [Fact]
     public void ACraftWithNoSeaworthinessDataNeverCapsizesAndRollsAsVanillaDoes()
     {
-        var unknown = Seaworthiness.From(new JsonObject(new JObject()));
+        var unknown = Seaworthiness.From(new JsonObject(new JObject()), 1, 1);
         Assert.False(unknown.Capsizes(100));
         Assert.Equal(1, unknown.RollResponse);
         Assert.Equal(1, unknown.PitchResponse);
@@ -69,7 +94,7 @@ public class SeaworthinessTests
     [Fact]
     public void AFullBilgeLeavesHerAwashSoEveryCrestComesAboard()
     {
-        var full = Fixtures.Afloat("currach", litres: 1500);
+        var full = Fixtures.Afloat("currach", litres: Fixtures.Hull("currach").CapacityLitres);
         Assert.Equal(0, full.FreeboardMetres);
         Assert.Equal(1, full.ShippedShare(waves.Crest(0.5, breaking: false)));
     }
@@ -106,8 +131,8 @@ public class SeaworthinessTests
     public void WaterAboardLowersHerSideUntilAFullBilgeBringsItToTheWater()
     {
         var dugout = Fixtures.Hull("dugout");
-        Assert.True(Fixtures.Afloat("dugout", litres: 225).FreeboardMetres < Of("dugout").FreeboardMetres);
-        Assert.InRange(dugout.Float(dugout.Crewed(litres: 449), litres: 449).FreeboardMetres, -0.01, 0.01);
+        Assert.True(Fixtures.Afloat("dugout", litres: dugout.CapacityLitres / 2).FreeboardMetres < Of("dugout").FreeboardMetres);
+        Assert.InRange(dugout.Float(dugout.Crewed(litres: dugout.CapacityLitres), litres: dugout.CapacityLitres).FreeboardMetres, -0.01, 0.01);
     }
 
     private static Seaworthiness Of(string vessel) => Fixtures.Afloat(vessel);

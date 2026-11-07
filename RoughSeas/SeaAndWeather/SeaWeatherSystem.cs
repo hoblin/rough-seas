@@ -25,6 +25,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     private Lazy<SeaWeatherConfig> config = null!;
     private Lazy<SeaModel>? model;
     private SeaMapClient? map;
+    private SeaMapServer? server;
     private OceanCalibration? calibration;
     private readonly HashSet<(int X, int Z)> calibrated = [];
     private WorldOceanMap? ocean;
@@ -53,7 +54,8 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         sapi.Event.GameWorldSave += () => sapi.WorldManager.SaveGame.StoreData(CalibrationKey, calibration.ToBytes());
         new VanillaRain(this, sapi).Follow();
         new VanillaRegions(this, sapi).Drive();
-        new SeaMapServer(this, sapi).Start();
+        server = new SeaMapServer(this, sapi);
+        server.Start();
         Budget.CountTicks(sapi);
         sapi.Event.RegisterGameTickListener(dt => Clock.Track(dt), 0);
         SeaWeatherCommands.Register(this, sapi);
@@ -85,6 +87,9 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     public SeaModel Model => model?.Value ?? throw new InvalidOperationException("The sea model runs on the server alone");
 
     public ISeaSource Source => map ?? (ISeaSource)Model;
+
+    /// <summary>The sea map as clients hold it, which they draw the sea from: on a client the one it reads, on the server the one it sends.</summary>
+    public SeaMap Map => (SeaMap?)map ?? server?.Sent ?? throw new InvalidOperationException("The sea map exists once a side has started");
 
     public string OceanReport(ICoreServerAPI sapi, double x, double z)
     {

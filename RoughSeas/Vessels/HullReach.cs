@@ -4,9 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using RoughSeas.Units;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
@@ -95,7 +96,7 @@ public static class HullReach
             foreach (var box in boxes)
             {
                 var element = box.AttachPoint.ParentElement;
-                var size = element.To!.Zip(element.From!, (to, from) => (float)(to - from) / 16).ToArray();
+                var size = element.To!.Zip(element.From!, (to, from) => (float)Voxels.ToMetres(to - from)).ToArray();
                 transform.Identity()
                     .RotateY(GameMath.PIHALF + entity.Pos.Yaw)
                     .Translate(-0.5f, 0, -0.5f)

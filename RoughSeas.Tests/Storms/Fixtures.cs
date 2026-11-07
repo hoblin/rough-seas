@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RoughSeas.Propulsion;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -16,9 +17,18 @@ public static class Fixtures
     private static readonly Lazy<Dictionary<string, Material>> materials =
         new(() => JsonConvert.DeserializeObject<Dictionary<string, Material>>(Shipped("materials.json"))!);
 
+    private static readonly Lazy<DragConfig> drag = new(() => JsonConvert.DeserializeObject<DragConfig>(Shipped("drag.json"))!);
+
+    private static readonly Lazy<PropulsionConfig> propulsion = new(() => JsonConvert.DeserializeObject<PropulsionConfig>(Shipped("propulsion.json"))!);
+
     private static readonly Lazy<VesselMass> mass = new(() => JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!);
 
-    private static readonly Lazy<HullConfig> hullConfig = new(() => JsonConvert.DeserializeObject<HullConfig>(Shipped("hull.json"))!);
+    private static readonly Lazy<HullConfig> hullConfig = new(() =>
+    {
+        var config = JsonConvert.DeserializeObject<HullConfig>(Shipped("hull.json"))!;
+        config.Hides = JsonConvert.DeserializeObject<HidesConfig>(Shipped("hides.json"))!;
+        return config;
+    });
 
     public static StormsConfig Config() => config.Value;
 
@@ -32,7 +42,9 @@ public static class Fixtures
 
     public static Vessel Sailboat => Vessel("boat-sailed");
 
-    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)));
+    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel), 2 * Shape(vessel).HalfLengthMetres);
+
+    public static double BeamMetres(string vessel) => (double?)SeaForces(vessel)["beamMetres"] ?? 2 * Shape(vessel).HalfBeamMetres;
 
     public static Seaworthiness Afloat(string vessel, double litres = 0)
     {
@@ -52,7 +64,50 @@ public static class Fixtures
         double capacity = vessel.StartsWith("boat-")
             ? (double?)OptionalBehaviorConfig("storms-vessels.json", vessel, "roughseas:bilge")?["capacityLitres"] ?? 0
             : (double?)Entity(vessel)["behaviorConfigs"]!["roughseas:bilge"]?["capacityLitres"] ?? 0;
-        return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity));
+        return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity), vessel);
+    }
+
+    public static DragConfig Drag => drag.Value;
+
+    public static PropulsionConfig Propulsion => propulsion.Value;
+
+    public static JToken PropulsionOf(string vessel) => vessel.StartsWith("boat-")
+        ? BehaviorConfig("propulsion-vessels.json", vessel, EntityBehaviorPropulsion.Code)
+        : Entity(vessel)["behaviorConfigs"]![EntityBehaviorPropulsion.Code]!;
+
+    public static HullShape Shape(string vessel)
+    {
+        if (!vessel.StartsWith("boat-"))
+        {
+            var box = IntegrityConfig(vessel)["hullBoxMetres"]!;
+            return HullShape.FromBox(box["from"]!.ToObject<double[]>()!, box["to"]!.ToObject<double[]>()!);
+        }
+        var hull = JArray.Parse(Shipped("vessels-hull-boxes.json")).Single(patch => (string?)patch["file"] == $"game:shapes/entity/nonliving/boat/{vessel[5..]}.json")["value"]!;
+        return HullShape.FromVoxels(hull["from"]!.ToObject<double[]>()!, hull["to"]!.ToObject<double[]>()!);
+    }
+
+    public static HullDrag DragOf(string vessel, Aboard aboard)
+    {
+        var form = HullForm.From(new JsonObject(PropulsionOf(vessel)), Drag, Shape(vessel));
+        return new HullDrag(form, Hull(vessel).Float(aboard).DraftMetres, aboard.Total, WaterDensity, Drag);
+    }
+
+    public const double WaterDensity = VesselMass.SeawaterKgPerLitre * KilogramsPerCubicMetre;
+
+    private const double KilogramsPerCubicMetre = 1000;
+
+    public static double PaddleSquareMetres => (double)JToken.Parse(Shipped(Path.Combine("tools", "paddle.json")))["attributes"]![Tool.AttributeKey]!["bladeSquareMetres"]!;
+
+    public static RowerStation Station(string vessel, double depthMetres) => Station(vessel, _ => depthMetres);
+
+    public static RowerStation Station(string vessel, System.Func<double, double> depthAlong) =>
+        new(new JsonObject(PropulsionOf(vessel)), Propulsion, WaterDensity, (along, _, _) => depthAlong(along));
+
+    private static IEnumerable<JToken> Elements(string shape)
+    {
+        static IEnumerable<JToken> Descend(JToken? elements) =>
+            elements?.SelectMany(element => Descend(element["children"]).Prepend(element)) ?? [];
+        return Descend(JToken.Parse(shape)["elements"]);
     }
 
     public static Resistance Resistance(string vessel, string wood = "oak")
@@ -74,8 +129,8 @@ public static class Fixtures
     private static Vessel Vessel(string entity)
     {
         var integrity = BehaviorConfig("vessels-vanilla-boats.json", entity, EntityBehaviorVesselIntegrity.Code);
-        var forces = BehaviorConfig("storms-vessels.json", entity, "roughseas:seaforces");
-        return new Vessel((double)integrity["impactCapacity"]!, (double)forces["beamMetres"]!, (double)forces["windageSquareMetres"]!);
+        var forces = SeaForces(entity);
+        return new Vessel((double)integrity["impactCapacity"]!, BeamMetres(entity), (double)forces["windageSquareMetres"]!);
     }
 
     private static JToken BehaviorConfig(string patches, string entity, string behavior) =>
@@ -96,7 +151,7 @@ public class NullLogger : LoggerBase
 
 public readonly record struct Vessel(double ImpactCapacity, double BeamMetres, double WindageSquareMetres);
 
-public sealed record Hull(Flotation Flotation, double Kilograms, double ReferenceKg, double CapacityLitres, JsonObject Config)
+public sealed record Hull(Flotation Flotation, double Kilograms, double ReferenceKg, double CapacityLitres, JsonObject Config, string Vessel)
 {
     public Aboard Crewed(double bodies = 65, double kit = 10, double containers = 0, double litres = 0, double soaked = 0) =>
         new(Kilograms + soaked, bodies, kit, containers, litres * VesselMass.SeawaterKgPerLitre, 0);

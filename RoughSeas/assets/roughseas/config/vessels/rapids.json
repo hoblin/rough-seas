@@ -1,4 +1,7 @@
 {
     "block": "game:rapidwater-*",
-    "joulesPerSecond": 300
+    "joulesPerSecond": 300,
+    "sources": {
+        "joulesPerSecond": "A stub, sourced nowhere: one flat strike a second whatever the hull weighs or draws, with the vessels that run rapids exempted by their runsRapids flag. To be replaced by rapids from physics (#260): strikes only where a hull's draft reaches the rocks, with energy from her mass and the flow"
+    }
 }

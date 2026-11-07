@@ -13,31 +13,5 @@
         "height": 1,
         "shapeless": true,
         "output": { "type": "item", "code": "roughseas:bark-{prefix}{wood}", "quantity": 4 }
-    },
-    {
-        "name": "Outrigger canoe",
-        "ingredientPattern": "RSR,LLL,PLP",
-        "ingredients": {
-            "R": { "type": "item", "code": "game:rope" },
-            "S": { "type": "item", "code": "game:sail" },
-            "L": { "type": "block", "code": "{domain}:log-placed-*-ud", "name": "wood", "allowedVariants": "{woods}" },
-            "P": { "type": "item", "code": "{domain}:plank-*", "name": "wood", "quantity": 4, "allowedVariants": "{woods}" }
-        },
-        "width": 3,
-        "height": 3,
-        "output": { "type": "item", "code": "roughseas:outrigger-{prefix}{wood}" }
-    },
-    {
-        "name": "Outrigger canoe from log sections",
-        "ingredientPattern": "RSR,LLL,PLP",
-        "ingredients": {
-            "R": { "type": "item", "code": "game:rope" },
-            "S": { "type": "item", "code": "game:sail" },
-            "L": { "type": "block", "code": "{domain}:logsection-placed-*-ne-ud", "name": "wood", "allowedVariants": "{woods}" },
-            "P": { "type": "item", "code": "{domain}:plank-*", "quantity": 4, "allowedVariants": "{woods}" }
-        },
-        "width": 3,
-        "height": 3,
-        "output": { "type": "item", "code": "roughseas:outrigger-{prefix}{wood}" }
     }
 ]
