@@ -68,6 +68,19 @@ One sea for everyone on a server, and calm water that sounds like calm water.
 - **Calm water that splashes.** No more creaking and knocking when you stand or swim in the shallows. A calm sea is quiet but for the splash of each passing wave, at your feet or at your hull, as loud as the wave is high. The shore laps with the game's own sound again, and the sea's roar rises from silence as the wind picks up.
 - **For modders:** [what changed](For-Modders#one-sea-one-clock) for code that reads the time.
 
+## 4.0 "Shipwright"
+
+You build every new vessel where it lies, and move it by paddle, pole and oars, by the rower's own strength.
+
+- **Vessels built in place.** Burn out and hew a dugout from a log, with a real fire, hewing you can see and clay. Strip a bark canoe off a standing tree and frame it where it falls. Bind a reed boat from two bundles of dried reeds. Lay laths for a coracle or a currach and cover them with hides that rot unless prepared. Rig an outrigger on a finished dugout. More: [Building a vessel](Building-a-Vessel).
+- **Poles, laths and wedges.** Split a row of logs into poles with wedges, blow by blow, and the poles into laths; soak the laths so they bend. More: [Recipes](Recipes).
+- **Paddle, pole and oars, by the rower.** Speed comes from the rower's strength and the hull. Paddle on both sides, changing sides as the boat veers. Pole standing, where the hull bears you, as far as the pole reaches the bottom. Row the currach facing its stern, on its thole pins. Paddle the raft kneeling. More: [Paddles, poles and oars](Paddles-Poles-and-Oars).
+- **Hulls you can see.** Cracks show on the hull where they are. A blow on a framed hull lands on its skin and the frame behind. The outrigger's float rides on lashings of its own. More: [Hull condition](Hull-Condition).
+- **Afloat by mass.** A vessel heaves by its own mass, and a rider's weight comes aboard as they sit down. More: [The science of the hull](The-Science-of-the-Hull).
+- **Launching on foot.** Push a heavy vessel into the water yourself. More: [Building a vessel](Building-a-Vessel).
+- **Under a crest.** Your eye goes under a crest that passes over it, and you hold your breath by the sea you see, on a server too. Both are the work of our first contributor, [James Riley Wilburn](https://github.com/rhino1998). More: [Reading the sea](Reading-the-Sea).
+- **The handbook** rewritten, and every one of its 33 languages corrected.
+
 ## Seamanship
 
 Sailing becomes sailing.
@@ -83,7 +96,6 @@ Sailing becomes sailing.
 
 The sea becomes dangerous to you, not only to your boat.
 
-- **Breath under the waves.** A crest that covers your head takes your air, and a trough gives it back, as the screen shows.
 - **Body in water.** Swimming wears you out, faster in cold water and on an empty stomach; exhausted, you sink. Cold water kills at the rate measured for real people in real seas, and a warm [current](Currents) off a cold coast can save your life.
 - **Creatures.** Sharks that hunt swimmers and small boats and dodge your blows; whales; and, deep down, rust creatures.
 
