@@ -125,7 +125,7 @@ public class BridgeCommands : ModSystem
             .EndSubCommand()
             .BeginSubCommand("drift")
                 .WithDescription("Whether unridden vessels drift with the current and the waves; off on every bench start, so they hold still")
-                .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
+                .WithArgs(parsers.OptionalWordRange("state", "on", "off", "waves"))
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
             .BeginSubCommand("current")
@@ -246,7 +246,12 @@ public class BridgeCommands : ModSystem
     private TextCommandResult Drift(string? state)
     {
         if (drift == null) return TextCommandResult.Error("Rough Seas is not loaded; nothing drifts by our current");
-        if (state != null) drift.Drifting = state == "on";
+        if (state != null)
+        {
+            drift.Drifting = state != "off";
+            drift.WavesOnly = state == "waves";
+        }
+        if (drift.WavesOnly) return TextCommandResult.Success("Unridden vessels drift with the waves alone, not the current");
         return TextCommandResult.Success(drift.Drifting
             ? "Unridden vessels drift with the current and the waves"
             : "Unridden vessels hold still; /bridge drift on lets them drift");

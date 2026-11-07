@@ -24,6 +24,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private bool carried;
     private double carriedSeconds;
     private (double X, double Z) drifted;
+    private (double X, double Z) carriedFrom;
     private double loggedSeconds;
     private double sway;
 
@@ -76,6 +77,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         if (!carried)
         {
             carried = true;
+            carriedFrom = (pos.X, pos.Z);
             storms.Log(boat, "carried by the drawn waves {0}: {1:F1} m by {2:F1} m, {3:F2} m draft, {4:F0} kg", Side(boat),
                 hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, hull.Kg);
         }
@@ -121,9 +123,10 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         if (boat.World.NearestPlayer(pos.X, pos.Y, pos.Z)?.Entity?.Pos.DistanceTo(pos) <= LogWithinBlocks)
         {
             var (driftX, driftZ) = (drifted.X / carriedSeconds, drifted.Z / carriedSeconds);
-            storms.Log(boat, "waves {0}: she sways up to {1:F2} m/s, drift {2:F3} {3:F3} m/s ({4:F3}) over {5:F0} s; {6:F1} by {7:F1} m, {8:F2} m draft, lifted {9:F2} m; {10}",
-                Side(boat), sway, driftX, driftZ, Math.Sqrt(driftX * driftX + driftZ * driftZ), carriedSeconds,
-                hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, rider.Lift, lyingStill ? "against the drag, lying still" : "on top of her way");
+            var (madeX, madeZ) = ((pos.X - carriedFrom.X) / carriedSeconds, (pos.Z - carriedFrom.Z) / carriedSeconds);
+            storms.Log(boat, "waves {0}: she sways up to {1:F2} m/s, the waves' drift {2:F3} {3:F3} m/s, over the ground {4:F3} {5:F3} m/s over {6:F0} s; {7:F1} by {8:F1} m, {9:F2} m draft, lifted {10:F2} m; {11}",
+                Side(boat), sway, driftX, driftZ, madeX, madeZ, carriedSeconds, hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, rider.Lift,
+                lyingStill ? "against the drag, lying still" : "on top of her way");
         }
         (loggedSeconds, sway) = (0, 0);
     }
