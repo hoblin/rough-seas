@@ -5,8 +5,9 @@ using RoughSeas.SeaAndWeather;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The sea's surface as the client draws it: wave trains whose direction, length and speed stay fixed for their
-/// life, advanced by one clock per frame. The water shader and every floating body read this one state.
+/// The sea's surface as the client draws it, and as the server builds it where a decision needs it (<see cref="SwellAround"/>):
+/// wave trains whose direction, length and speed stay fixed for their life, advanced by one clock per frame. The water
+/// shader and every floating body read this one state.
 /// <see cref="DisplacementAt"/> and <see cref="FoldAt"/> are the formulas of
 /// <c>assets/roughseas/shaderincludes/seasurface.vsh</c>; a change to one is made to the other.
 /// </summary>
@@ -155,6 +156,42 @@ public sealed class SeaSurface
         }
         return (shiftX, rise, shiftZ);
     }
+
+    /// <summary>
+    /// The water's horizontal velocity, in metres a second, averaged over the body of a hull centred here that floats
+    /// <paramref name="lift"/> metres over still water and reaches <paramref name="draft"/> metres under it, with its
+    /// <paramref name="length"/> along <paramref name="yaw"/> as <see cref="DrawnSea.PoseOf"/> takes it and its
+    /// <paramref name="beam"/> across. The water's push on a hull is its pressure summed over the hull (the
+    /// Froude–Krylov force), so it is linear wave theory's orbital velocity averaged over that body: e^(k z) over the draft,
+    /// e^(k lift) (1 − e^(−k draft)) / (k draft), and sinc(k_along length / 2) sinc(k_across beam / 2) over the plan.
+    /// </summary>
+    public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam,
+        double share = 1)
+    {
+        var (sin, cos) = Math.SinCos(yaw + Math.PI / 2);
+        return Orbital(x, z, lift, Math.Max(draft, 0), cos, -sin, length, beam, share);
+    }
+
+    private (double X, double Z) Orbital(double x, double z, double height, double draft, double alongX, double alongZ,
+        double length, double beam, double share)
+    {
+        double velocityX = 0, velocityZ = 0;
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            if (amplitude[slot] <= 0) continue;
+            var number = Wavenumber(slot);
+            var along = numberX[slot] * alongX + numberZ[slot] * alongZ;
+            var across = numberZ[slot] * alongX - numberX[slot] * alongZ;
+            var fade = Math.Exp(number * height) * (draft > 0 ? (1 - Math.Exp(-number * draft)) / (number * draft) : 1);
+            var speed = share * amplitude[slot] * frequency[slot] * Math.Sin(Phase(slot, x, z)) * fade
+                * Sinc(along * length / 2) * Sinc(across * beam / 2);
+            velocityX += speed * numberX[slot] / number;
+            velocityZ += speed * numberZ[slot] / number;
+        }
+        return (velocityX, velocityZ);
+    }
+
+    private static double Sinc(double x) => Math.Abs(x) < 1e-9 ? 1 : Math.Sin(x) / x;
 
     public double FoldAt(double x, double z)
     {

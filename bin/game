@@ -236,7 +236,7 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge weed RADIUS        clear the plants and loose stones off the ground within RADIUS blocks of
                              the player (at most 32), leaving the ground, the water and the lily pads
                              on it: a build site with nothing in the way
-  /bridge drift [on|off]     whether unridden vessels drift with the current and the wind. Off on
+  /bridge drift [on|off|waves]  whether unridden vessels drift with the current and the waves (waves: those alone). Off on
                              every start, so a vessel stays where it was put; a drift test turns it on
   /bridge current SPEED|off [YAW]
                              one current everywhere in place of the sea's, SPEED m/s toward YAW degrees

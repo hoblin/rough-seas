@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.GameContent;
@@ -17,7 +18,6 @@ public static class VesselDraught
 {
     private const string HarmonyId = "roughseas.storms.draught";
     private const double TicksPerSecond = 60;
-    private const double WaterDragTicksPerSecond = 33;
     private const double SwimDragPerMotion = 10;
     private const double SwimDragOffset = 0.02;
     public const double MostSwimDrag = 1.25;
@@ -60,8 +60,6 @@ public static class VesselDraught
         }
     }
 
-    public static double WaterDragKept(double waterDrag, double seconds) => Math.Pow(waterDrag, seconds * WaterDragTicksPerSecond);
-
     public static double SwimDrag(double motionLength, double stepFactor) =>
         Math.Clamp(SwimDragPerMotion * Math.Abs(motionLength * stepFactor) - SwimDragOffset, 1, MostSwimDrag);
 
@@ -82,8 +80,8 @@ public static class VesselDraught
 
         __instance.BoyancyMul = 0;
         bool wetBefore = ___feetInLiquidBefore || ___swimmingBefore;
-        double airDrag = WaterDragKept(__instance.AirDragValue, dt);
-        double drag = wetBefore ? WaterDragKept(__instance.WaterDragValue, dt) : airDrag;
+        double airDrag = WaterDrag.Kept(__instance.AirDragValue, dt);
+        double drag = wetBefore ? WaterDrag.Kept(__instance.WaterDragValue, dt) : airDrag;
         double kept = wetBefore ? 1 : airDrag;
         bool entering = boat.Swimming && forces.KeelWet == false;
         forces.KeelWet = boat.Swimming;

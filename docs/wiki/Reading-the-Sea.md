@@ -6,11 +6,11 @@ Rough Seas keeps the sea twice, for two different jobs.
 
 **The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike it, the current that carries it. It knows no single wave. A wave that reaches a vessel is drawn by chance from the state, once a wave period, and two vessels side by side meet different waves.
 
-**The drawn sea** is the moving surface a client draws, built from the sea map the server sends it and the world's clock. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same surface: two players in one region see the same crests. It is not the wave the server struck a vessel with.
+**The drawn sea** is the moving surface a client draws, built from the sea map the server sends it and the world's clock. The server builds the same surface where it needs one: around a swimmer's head and around a vessel nobody steers. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same surface: two players in one region see the same crests. It is not the wave the server struck a vessel with.
 
-So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms or moves on the server: the sea state. A hull's pose on the screen: the drawn sea. Nothing on the server should wait for a crest a client reports.
+So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms on the server: the sea state. A hull's pose on the screen, and the water that sways it to and fro: the drawn sea. Nothing on the server should wait for a crest a client reports.
 
-Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a player's breath: under a crest a swimmer has no air, in a trough the head is clear.
+Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a player's breath: under a crest a swimmer has no air, in a trough the head is clear. It does so for a vessel nobody steers too, so the waves carry it as they carry one a client steers.
 
 ## Reaching us
 
@@ -93,7 +93,7 @@ capi.Event.RegisterGameTickListener(_ =>
 
 ### Something that swims with the current
 
-The current is a velocity in m/s. Vanilla's water drag slows whatever swims every tick, so adding the current's speed to an entity's motion once isn't enough, and adding all of it every tick is too much. Our `roughseas:currentdrift` adds, each tick on the server, as much of the current as the drag has just taken away, so the drag pulls the entity toward the current's speed rather than to rest (ours add a little of the wind too):
+The current is a velocity in m/s. Vanilla's water drag slows whatever swims every tick, so adding the current's speed to an entity's motion once isn't enough, and adding all of it every tick is too much. Our `roughseas:currentdrift` adds, each tick on the server, as much of the current as the drag has just taken away, so the drag pulls the entity toward the current's speed rather than to rest:
 
 ```csharp
 var current = sea.CurrentAt(pos.X, pos.Z);
@@ -172,8 +172,13 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | `Seconds` | the time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client |
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |
+| `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in metres per second of `Seconds`, as the waves move it, averaged over a hull's underwater body |
 
 `PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`, and turns those four heights into how the hull would lie on them. So the hull's size does part of the work: a long hull on short waves has its bow and stern on different crests and barely rocks, while a small one takes every wave. Its length runs along the shape's X axis. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees, so `Pos.Yaw + rotateY * GameMath.DEG2RAD`.
+
+`HullVelocityAt` is the to and fro of the water under the waves as a hull feels it: forward, along each wave's travel, under its crest, back in its trough. The water's pressure on a hull sums over its underwater body, so the velocity is averaged over its `length` along its heading `yaw` and its `beam` across, as `PoseOf` takes them, and over its `draft` under the height `lift` it floats at, in metres over still water. A hull short against the waves takes the water's velocity; one as long as a wave, or lying along short waves, feels much less of it.
+
+Its seconds are the waves' (`Seconds`), not your tick's: they race while everyone sleeps and run faster under `/time speed`. To move a hull by it each tick, scale it by the waves' seconds in the tick first, `sea.Clock.SecondsIn(dt, world.Calendar.SpeedOfTime) / dt`, as ours do. Then one wave carries a hull as far at any speed of time.
 
 `SeaPose`:
 
@@ -210,7 +215,7 @@ A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls
 
 ### A ship that rides our swell
 
-A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
+A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). It is also carried to and fro with the water under the waves, by the client that steers it or by the server while nobody does: `HullVelocityAt` over its hull, at the heave it is drawn at. A floating hull displaces its own mass, so it takes that velocity whatever it weighs: its mass tells through its draft and its heave. The formulas are on [The science of the sea](The-Science-of-the-Sea#how-the-waves-carry-a-hull). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
 
 The calls above are for a vessel that isn't an `EntityBoat` and poses itself. Each frame, in its render path:
 
