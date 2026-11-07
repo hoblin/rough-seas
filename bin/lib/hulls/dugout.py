@@ -111,11 +111,26 @@ class Bowl:
             spans = bed_of(sliced(stations_at(n), *SPANS[0 if side == "Stern" else -1]), lambda x: floor(n if floored is None else floored, x), lambda edges, height: self.t)
             self.floor = spans[0 if side == "Stern" else -1][2]
         self.length = self.skin.half(self.x, self.top, inset=self.t)
+        self.end = ROW[0] if side == "Stern" else ROW[1]
+        self.across = lambda y: self.skin.half(self.x, y, inset=self.t) + self.t / 8
+        self.outer = lambda x, y: self.skin.half(x, y)
+
+    @classmethod
+    def trench(cls, side, end, floor, top, half):
+        """The first hewing's trench in the square trunk, closed round: as wide as the trench, from its floor to the
+        trunk's top, its tip at end."""
+        bowl = cls.__new__(cls)
+        bowl.n, bowl.side, bowl.t, bowl.top, bowl.floor, bowl.length, bowl.end = 0, side, wall(1), top, floor, half, end
+        bowl.way = -1 if side == "Stern" else 1
+        bowl.x = end - bowl.way * half
+        bowl.across = lambda y: half + bowl.t / 8
+        bowl.outer = lambda x, y: half
+        return bowl
 
     def ring(self, j):
         angle = math.pi / 2 * j / BOWL_RINGS
         y = self.top - (self.top - self.floor) * math.cos(angle)
-        return y, self.length * math.sin(angle), self.skin.half(self.x, y, inset=self.t) + self.t / 8
+        return y, self.length * math.sin(angle), self.across(y)
 
     def point(self, j, k, out=0):
         y, along, across = self.ring(j)
@@ -150,13 +165,12 @@ class Bowl:
 
     def mouth(self, x):
         along = abs(x - self.x) / self.length
-        return 0 if along >= 1 else (self.skin.half(self.x, self.top, inset=self.t) + self.t / 8) * math.sqrt(1 - along ** 2)
+        return 0 if along >= 1 else self.across(self.top) * math.sqrt(1 - along ** 2)
 
     def pieces(self):
-        end = ROW[0] if self.side == "Stern" else ROW[1]
-        xs = samples(*sorted((self.x, end)))
+        xs = samples(*sorted((self.x, self.end)))
         xs = xs[::-1] if self.side == "Stern" else xs
-        rim = lambda x: (self.mouth(x), self.skin.half(x, self.top))
+        rim = lambda x: (self.mouth(x), self.outer(x, self.top))
         drawn, start, seen = [], xs[0], [rim(xs[0])]
         for x in xs[1:]:
             seen.append(rim(x))
@@ -175,7 +189,7 @@ class Bowl:
             xs = samples(a, b)
             top = self.top - 2 * APART - APART * (k % 3) if high is None else high + APART * (k % 3)
             bottom = top - PLATE if low is None else low + APART * (k % 3)
-            edge, outer = min(self.mouth(x) for x in xs), min(self.skin.half(x, min(bottom, self.top)) for x in xs)
+            edge, outer = min(self.mouth(x) for x in xs), min(self.outer(x, min(bottom, self.top)) for x in xs)
             if edge <= APART:
                 laid["across"].append(box(f"{name}Rim{k}", (a, bottom, CENTRE - outer), (b, top, CENTRE + outer), tex))
             else:
@@ -188,7 +202,7 @@ class Bowl:
             return 0
         along = self.length * math.sqrt(max(0, 1 - ((self.top - y) / (self.top - self.floor)) ** 2))
         ratio = abs(x - self.x) / along if along else 1
-        return 0 if ratio >= 1 else (self.skin.half(self.x, y, inset=self.t) + self.t / 8) * math.sqrt(1 - ratio ** 2)
+        return 0 if ratio >= 1 else self.across(y) * math.sqrt(1 - ratio ** 2)
 
     def surface(self, prefix, height, texture="null"):
         drawn, x = [], self.x
@@ -351,6 +365,10 @@ def trench():
             solid["faces"][inner]["texture"] = "#" + HEWN
             pieces.append(faced(solid, {"up": top_window(f0, f1, x0, CENTRE - half, CENTRE + half),
                                         **{face: window for face, window in ends_of_log(i, CENTRE - half, CENTRE + half, bottom, BARE_TOP).items() if face == outer}}))
+        for side, end in (("Stern", a), ("Bow", b)):
+            if end in HOLLOW:
+                bowl = Bowl.trench(side, end, bottom, BARE_TOP, half)
+                pieces += [*bowl.staves(f"{name}{side}"), *bowl.plates(f"{name}{side}")]
         sections[section_of(x0)].extend(pieces)
     return [group(f"Hewn0x{j}", LEVEL, LEVEL, pieces) for j, pieces in sections.items()]
 
