@@ -23,6 +23,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     private const string CarriedKey = "roughseas:vessel";
     private const string VersionKey = "version";
     private const string CheckedAtKey = "checkedAt";
+    private const string SparedKey = "spared";
     private const int DataVersion = 2;
     private const double WreckageScatterSpeed = 0.3;
     private const int InvulnerableMs = 500;
@@ -75,7 +76,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     private float sinceUpdate = UpdateSeconds;
     private bool wasSunk;
     private bool wasAwash;
-    private bool? wasHarmed;
     private bool inWater;
     private double leaked;
 
@@ -246,6 +246,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     public override void OnGameTick(float deltaTime)
     {
         if (entity.World.Side == EnumAppSide.Client && !RunsHere()) course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
+        if (entity.World.Side == EnumAppSide.Server) Spare();
         if ((sinceUpdate += deltaTime) >= UpdateSeconds)
         {
             Float();
@@ -258,9 +259,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
         }
         if (entity.World.Side != EnumAppSide.Server) return;
         using var budget = vessels.Budget.Measure();
-        bool harmed = Mechanic.HullDamage.On(entity.World);
-        if (!harmed && wasHarmed != false) MendWhole();
-        wasHarmed = harmed;
 
         Knocked[] impacts;
         lock (impactLock)
@@ -360,10 +358,22 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
         Impact(joules, place);
     }
 
-    private void MendWhole()
+    private void Spare()
     {
+        bool spared = Tree.GetBool(SparedKey);
+        if (Mechanic.HullDamage.On(entity.World))
+        {
+            if (spared) Tree.RemoveAttribute(SparedKey);
+            return;
+        }
+
+        Tree.SetDouble(CheckedAtKey, seaWeather.Clock.Hours);
+        if (spared) return;
+
         model.MendWhole();
         outboard?.MendWhole();
+        Tree.SetBool(SparedKey, true);
+        MarkDirty();
         vessels.Log(entity, "mended whole, hull {0:F2}: hull damage is off", Integrity);
     }
 
@@ -685,7 +695,6 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
 
         Tree.SetDouble(CheckedAtKey, now);
         if (now == last) return;
-        if (!Harms($"{now - last:F1} h afloat or ashore")) return;
         double sun = afloat ? 0 : Sunlight();
         timed.Pass((now - last) / entity.World.Calendar.HoursPerDay, afloat, sun, seaWeather.CurrentAt(entity.Pos.X, entity.Pos.Z).WaterCelsius);
         vessels.Log(entity, "{0:F1} h {1}: hull {2:F2}, {3:F0} kg soaked", now - last,
