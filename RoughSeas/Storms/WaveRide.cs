@@ -66,9 +66,8 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         var (x, z) = WaveCarry.OnTheClock(rider.Water(drawn, pos.X, pos.Z, yaw, hull), rate);
 
         // under way vanilla rewrites the motion each step from the speed through the water; lying still it leaves it to the drag
-        var physics = boat.GetBehavior<EntityBehaviorPassivePhysics>();
-        var lyingStill = physics != null && boat.ForwardSpeed == 0;
-        if (lyingStill && forces.Driven)
+        var physics = boat.ForwardSpeed == 0 ? boat.GetBehavior<EntityBehaviorPassivePhysics>() : null;
+        if (physics != null && forces.Driven)
         {
             // no way on and the drag taken off: nothing would ever take off what her motion holds, so it is written outright, as vanilla writes her way
             pos.Motion.X = x / WaterDrag.TicksPerSecond;
@@ -76,10 +75,11 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         }
         else
         {
-            double? kept = lyingStill ? WaterDrag.Kept(physics!.WaterDragValue, seconds) : null;
-            var taken = lyingStill ? 1 : UnderWay(boat, physics);
-            pos.Motion.X += WaveCarry.Carried(x, applied.X, kept) * taken;
-            pos.Motion.Z += WaveCarry.Carried(z, applied.Z, kept) * taken;
+            double? kept = physics != null ? WaterDrag.Kept(physics.WaterDragValue, seconds) : null;
+            // vanilla's swimming physics divides her whole motion when it is fast, the waves' part with it
+            var swimDrag = physics != null ? 1 : VesselDraught.SwimDrag(boat.ForwardSpeed, GlobalConstants.PhysicsFrameTime * WaterDrag.TicksPerSecond);
+            pos.Motion.X += WaveCarry.Carried(x, applied.X, kept) * swimDrag;
+            pos.Motion.Z += WaveCarry.Carried(z, applied.Z, kept) * swimDrag;
         }
         applied = (x, z);
 
@@ -90,15 +90,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
             storms.Log(boat, "carried by the drawn waves {0}: {1:F1} m by {2:F1} m, {3:F2} m draft, {4:F0} kg", Side(boat),
                 hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, hull.Kg);
         }
-        Report(boat, hull, x, z, seconds, lyingStill);
-    }
-
-    private double UnderWay(EntityBoat boat, EntityBehaviorPassivePhysics? physics)
-    {
-        // vanilla's MotionAndCollision drags and divides her whole motion before she moves, the waves' part with it
-        var step = GlobalConstants.PhysicsFrameTime;
-        var swimDrag = VesselDraught.SwimDrag(boat.ForwardSpeed, step * WaterDrag.TicksPerSecond);
-        return physics == null || forces.Driven ? swimDrag : swimDrag / WaterDrag.Kept(physics.WaterDragValue, step);
+        Report(boat, hull, x, z, seconds, physics != null);
     }
 
     private IDrawnSea? SeaFor(EntityBoat boat)
