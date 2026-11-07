@@ -28,6 +28,24 @@ The water under a wave moves in a circle: forward under the crest, back in the t
 
 Read where the hull is each step, this velocity carries it a little further forward than back: the Stokes drift, `a^2 ω k` for a small body at the surface (Stokes 1847). Averaging over a hull makes a large one drift slower than a small one. Calvert et al. (2021, JFM 915:A73) measured the opposite effect as well, from a variable submergence that lags the surface; it isn't modelled, because its size hangs on a heave damping we haven't measured.
 
+## A body in the water
+
+A [swimmer](Swimming) is one reference body, a man of 1.75 m (Fryar et al. 2021) and 75 kg, the same crew a vessel counts. Its volume by height comes from segment masses (de Leva 1996), densities (Dempster 1955) and landmarks (Drillis and Contini 1966), and its tissue's volume from its fat by the two-compartment model (Siri 1961). The lungs hold the end of a breath out and half a breath more (Quanjer et al. 1993). That makes 70.9 L of tissue and 3.66 L of air. It floats in the sea with about 1.2 L clear, the water at its face, and sinks slowly in fresh water, as measured bodies do: at the end of a breath out 69% of 98 men floated in seawater and 7% in fresh water (Donoghue and Minnigerode 1977).
+
+The equation up and down, with V what lies under the drawn surface and a and w_w the water's own acceleration and velocity:
+
+```
+(m + m_a) dw/dt = ρ g V - m g + (ρ V + m_a) a - ½ ρ Cd A |w - w_w| (w - w_w)
+```
+
+This is the linear wave force on a body small against the wave (Journée and Massie 2001, 6.3.3). Across, the same form takes the water's horizontal motion, with a broadside drag area. Added mass is a disc of the body's own section, m_a = (8/3) ρ a³ (Brennen 1982), at the waterline while the surface cuts the body and at its widest under water: a little at the neck, a fifth or so of the body at the chest. The drag areas are 0.25 m² along the body and 0.45 m² broadside, from skydivers' fall speeds (FAI); nothing was found measured for a body moving up and down in water.
+
+Held air shrinks by Boyle's law at the chest's depth, lungs × p₀ / (p₀ + ρ g d), so the body turns negative with the chest about 7 m down, and sinks from there.
+
+What a player carries follows the game's line: armour, and what the hotbar's items call a tool or weapon by their own type. Full plate in the game slows a walker by 0.42, and tested field armour weighs 35 ± 5 kg (Askew et al. 2012), so armour weighs 83 kg to the unit of that penalty. Tools are by real analogues, listed in `config/person.json`, all taken as steel.
+
+A crest breaks over a swimmer at the vessels' rate. Its plume holds a mean of about 20% air just after breaking and 1% after one wave period (Lamarre and Melville 1994), not the 24% peak measured at one gauge 0.2 m down at sea (Lamarre and Melville 1992). It reaches 0.6 wave heights down, twice the depth of the air's centre after a period (Lamarre and Melville 1994). Echosounders find bubbles far deeper (Derakhti et al. 2024), too dilute to matter to a body. Its roller runs at 0.75 of the breaker's speed (Rapp and Melville 1990) for about a second (Callaghan 2013).
+
 ## Gales: mid-latitude depressions
 
 - **How many.** About 440 depressions cross the North Atlantic each year, 130 of them in winter (ERA5 reanalysis, 1979–2020; [Lodise et al. 2022](https://cdip.ucsd.edu/themes/media/docs/publications/journal_articles/JGROceans_Lodise.pdf), Table 1). Over the basin that is about one new depression per million km² a month in winter; ours are born at the same rate per day and area.

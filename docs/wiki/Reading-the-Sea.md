@@ -173,6 +173,9 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |
 | `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in m/s, as the waves move it, averaged over a hull's underwater body |
+| `RiseVelocityAt(x, z, depth)` | the water's vertical velocity there now, in m/s, `depth` metres under the surface: rising ahead of a crest, sinking behind it |
+| `RiseAccelerationAt(x, z, depth)` | the water's vertical acceleration there now, in m/s² |
+| `WavesTowardRadians` | where the drawn waves run, in radians from +X toward +Z |
 
 `PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`, and turns those four heights into how the hull would lie on them. So the hull's size does part of the work: a long hull on short waves has its bow and stern on different crests and barely rocks, while a small one takes every wave. Its length runs along the shape's X axis. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees, so `Pos.Yaw + rotateY * GameMath.DEG2RAD`.
 

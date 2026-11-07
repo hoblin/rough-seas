@@ -376,7 +376,7 @@ Its keys: `material`, a row of `materials.json`; `metres`, its thickness; `spanM
 A knock strikes with ½ · mass · (speed² − `minImpactSpeed`²), where the mass is everything aboard:
 
 - the hull, its `weight` in its own material;
-- each seated passenger by its entity's `weight`, a player with 10 kg of everyday gear and its armour, weighed from how much the armour slows its wearer (a worn item's `statModifiers.walkSpeed`, 60 kg for each 1 of slowdown);
+- each seated passenger by its entity's `weight`, a player as [the person module](For-Modders#a-body-in-the-water) weighs them: the 75 kg body with its hotbar's tools and weapons and its armour, weighed from how much the armour slows its wearer (a worn item's `statModifiers.walkSpeed`, 83 kg for each 1 of slowdown);
 - each accessory by the category it attaches as, at its empty weight (`basket` 2 kg, `crate` 12, `chest` 20); what they hold doesn't count;
 - the water in its `roughseas:bilge`, by how full it is: a full bilge counts all its weight, a half-full one half.
 
@@ -390,9 +390,9 @@ Give `impactCapacity` by the knocks the hull should take: our coracle's 400 J an
 
 A vessel with `depthMetres` floats by Archimedes, on both sides; its draft is weighed twice a second. Its draft is its full mass over 1025 kg/m³ times `waterplaneSquareMetres`; a solid hull's is its depth times its mass over what its own volume of seawater weighs, no deeper than its depth. Its freeboard is what is left of `depthMetres`.
 
-- **The full mass** is the hull, each rider's body, their gear and armour, the containers and the water aboard, by the weights in `config/vessels/mass.json` (`playerGearKg`, `armorKgPerWalkSpeed`, `crewKg` and `containerKg`), which a patch can change.
+- **The full mass** is the hull, each rider's body, what they carry, the containers and the water aboard. A patch can change the weights: `containerKg` in `config/vessels/mass.json`, and a player's in `config/person.json` (`body.massKg`, `carried`).
 - **A vessel reaches its draft by its own mass.** A change of load or of water aboard is a force on it and on the water it drags with it, damped by the water (`heaveDamping`, in the `response` block of `config/storms.json`). The water it drags is that of a flat plate of its waterplane: its `waterplaneSquareMetres` at the beam of its hull box, or that box itself for a solid hull, and an outrigger's float as a plate of its own. It sinks or rises to its new draft on the period [The Science of the Hull](The-Science-of-the-Hull#riding-the-swell) gives, and never past where it floated before. This takes the place of vanilla's buoyancy for it: its `boyancyMul` is 0 while it acts, and vanilla's drags, a flowing block's push and other entities' repulsion keep their effect along the water but not on its heave.
-- **A rider saved in its seat** who hasn't loaded yet, as when a world opens with someone aboard, weighs `crewKg` until they do.
+- **A rider saved in its seat** who hasn't loaded yet, as when a world opens with someone aboard, weighs the body's `massKg` until they do.
 - **The hull's mass and volume** come from its `parts`. Its `weight` is the reference build's, and each part's share of it has the volume of that share in its `reference` material; in its own material that volume weighs by its density. So an ebony dugout has an oak dugout's shape and weighs as ebony.
 - **Densities** are a row's `density` in `config/vessels/materials.json`, in kg/m³, with a `densitySource`. A row may carry a density alone, as `reed`, `hide` and `iron` do. A wood the table doesn't know weighs 610, the middle of the vanilla woods, takes the unknown wood's `strength` and `toughness` too, and the server log names each once.
 - **Flooding.** When its freeboard reaches nothing, the sea fills its bilge. Flooded, or solid, it sinks when what the water doesn't hold up, the hull, gear, armour and containers, outweighs what its own volume of seawater weighs; riders' bodies are held up by the water. A sunk vessel throws off its riders, lies on the bottom, fills again as it is bailed, can't be picked up, and breaks up for its wreckage under an axe.

@@ -327,7 +327,7 @@ RECIPES
     '/entity remove e[type=fish-saltwater-bream-sea-adult]'. Codes: /entity list.
   Diving, cold: '/gamemode survival' and watch `state`.vitals (oxygen drains 1000/s);
     '/time speed 600' (default 60) or '/time add 3 hours' to fast-forward.
-    An idle swimmer sinks to the seabed.
+    An idle swimmer floats with the water at the face; in fresh water, or carrying an axe, it sinks slowly.
 
 GOTCHAS
   Coordinates in commands are relative to the world's spawn, as the game shows them: the map
