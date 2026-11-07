@@ -139,15 +139,15 @@ public sealed class FreeCamera : IRenderer
 
     private static void PlaceMount(EntityShapeRenderer __instance, Entity entity, bool isShadowPass)
     {
+        var mount = __instance.entity.World.Api is ICoreClientAPI client ? client.World.Player.Entity.MountedOn?.Entity : null;
+        if (mount != null && (entity == mount || (entity as EntityAgent)?.MountedOn?.Entity == mount)) Move(__instance);
+
         if (!isShadowPass && meshMiddles.TryGetValue(entity.EntityId, out var middle))
         {
             var drawn = Mat4f.MulWithVec4(__instance.ModelMat, middle.X, middle.Y, middle.Z, 1);
             var eye = ((ICoreClientAPI)entity.World.Api).World.Player.Entity.CameraPos;
             drawnMiddles[entity.EntityId] = eye.AddCopy(drawn[0], drawn[1], drawn[2]);
         }
-
-        var mount = __instance.entity.World.Api is ICoreClientAPI client ? client.World.Player.Entity.MountedOn?.Entity : null;
-        if (mount != null && (entity == mount || (entity as EntityAgent)?.MountedOn?.Entity == mount)) Move(__instance);
     }
 
     private static void Move(EntityShapeRenderer __instance)

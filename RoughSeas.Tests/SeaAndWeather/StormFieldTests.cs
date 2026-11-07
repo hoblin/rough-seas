@@ -23,6 +23,18 @@ public class StormFieldTests
     }
 
     [Fact]
+    public void StagesASquallThatBlows()
+    {
+        var model = Fixtures.Model(seed: 42);
+
+        model.Storms.Stage("squall", X, Z, Hours, peakMps: 24, radius: null);
+
+        var wind = model.Wind(X, Z, Hours);
+        Assert.Equal("squall", wind.Storm?.Code);
+        Assert.InRange(wind.Speed, 20, 30);
+    }
+
+    [Fact]
     public void ForgetsTheStagedStormsWhenCleared()
     {
         var model = Fixtures.Model(seed: 42);

@@ -49,7 +49,7 @@ public static class SeaWeatherCommands
                 .HandleWith(args => TextCommandResult.Success(Forecast(sea, sapi, args.Caller.Pos, (string)args[0], (double)args[1], (double)args[2])))
             .EndSubCommand()
             .BeginSubCommand("stage")
-                .WithDescription("Put a storm of a type at your position, at its peak now and standing still, held until a restart; 'clear' removes the staged ones")
+                .WithDescription("Put a storm of a type over your position at its peak, held until a restart: a gale or hurricane standing still with its sea built, a squall travelling; 'clear' removes the staged ones")
                 .RequiresPlayer()
                 .WithArgs(sapi.ChatCommands.Parsers.Word("type", ["squall", "gale", "hurricane", "clear"]),
                     sapi.ChatCommands.Parsers.OptionalDouble("peak", double.NaN),
@@ -144,10 +144,12 @@ public static class SeaWeatherCommands
         if (code == "clear")
         {
             storms.Unstage();
+            sea.Model.Forget();
             return "Staged storms removed";
         }
 
         var storm = storms.Stage(code, pos.X, pos.Z, sea.Clock.Hours, double.IsNaN(peak) ? null : peak, double.IsNaN(radius) ? null : radius);
+        sea.Model.Forget();
         return $"Staged {Describe(api, storm, storm.CentreAt(sea.Clock.Hours), pos, sea.Clock.Hours)}";
     }
 

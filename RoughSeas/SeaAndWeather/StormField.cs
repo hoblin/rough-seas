@@ -49,23 +49,26 @@ public class StormField
     }
 
     /// <summary>
-    /// A storm put at a point by hand, at its peak now and standing still, beside those the seed brews; held in memory only,
-    /// gone on restart or <see cref="Unstage"/>.
+    /// A storm put over a point by hand at the peak of its life, beside those the seed brews; held in memory only, gone on
+    /// restart or <see cref="Unstage"/>. A cyclone stands still, so the sea under it has built for half its life; a storm
+    /// whose wind is its own motion travels the prevailing track, or it would blow nothing.
     /// </summary>
     public Storm Stage(string code, double x, double z, double hours, double? peakMps, double? radius)
     {
         var stormType = config.Storms.First(type => type.Code == code);
         var lifetime = stormType.LifetimeHours.Max;
+        var (towardX, towardZ) = Compass.Toward(prevailing.TowardRadians(z));
+        var speed = stormType.Cyclonic ? 0 : Blocks(stormType.SpeedKmPerHour.Lerp(0.5));
         var storm = new Storm
         {
             Type = stormType,
             Shape = config.Storm,
             BornHours = hours - lifetime / 2,
             LifetimeHours = lifetime,
-            OriginX = x,
-            OriginZ = z,
-            VelocityX = 0,
-            VelocityZ = 0,
+            OriginX = x - towardX * speed * lifetime / 2,
+            OriginZ = z - towardZ * speed * lifetime / 2,
+            VelocityX = towardX * speed,
+            VelocityZ = towardZ * speed,
             Radius = radius ?? Blocks(stormType.RadiusKm.Lerp(0.5)),
             PeakMps = peakMps ?? stormType.PeakMps.Max,
             Northern = prevailing.LatitudeDegrees(z) >= 0
