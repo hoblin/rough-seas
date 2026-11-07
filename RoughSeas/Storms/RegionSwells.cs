@@ -7,7 +7,7 @@ using Vintagestory.API.Server;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The drawn sea of each region with a vessel nobody steers or a player in the water, on the server. A client's surface depends on the region
+/// The drawn sea of each region with a vessel nobody steers or a player in or near the water, on the server. A client's surface depends on the region
 /// it is aimed from and not on the point in it, so everything in a region shares one <see cref="SwellAround"/>, aimed as
 /// often as a client aims its own. A region nothing has asked about for a while is dropped.
 /// </summary>
@@ -31,6 +31,7 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
         if (!swells.TryGetValue(region, out var swell))
         {
             swells[region] = swell = new Swell(new SwellAround(storms.Config.Surface, storms.Waves, sea.Config, sea.Clock));
+            storms.Log("server sea built for region {0} {1}, asked at x {2:0} z {3:0}; {4} regions held", region.Item1, region.Item2, x, z, swells.Count);
         }
         swell.ReadAt = now;
         var seconds = sea.Clock.Seconds;
@@ -53,6 +54,7 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
         foreach (var region in swells.Where(swell => now - swell.Value.ReadAt > ForgottenAfterSeconds).Select(swell => swell.Key).ToList())
         {
             swells.Remove(region);
+            storms.Log("server sea dropped for region {0} {1}: nothing asked for {2:0} s; {3} regions held", region.X, region.Z, ForgottenAfterSeconds, swells.Count);
         }
     }
 

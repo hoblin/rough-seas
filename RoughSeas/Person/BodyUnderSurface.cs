@@ -25,6 +25,7 @@ namespace RoughSeas.Person;
 public static class BodyUnderSurface
 {
     private const string HarmonyId = "roughseas.person.body";
+    private const int WaterAroundBlocks = 2;
 
     private static readonly ConcurrentDictionary<(long, EnumAppSide), (bool Drawn, bool Swimming, bool FeetIn)> decided = [];
     private static Harmony? harmony;
@@ -102,7 +103,8 @@ public static class BodyUnderSurface
 
     private static Immersion? BodyAt(Entity entity, EntityPos pos)
     {
-        if (pos.Dimension != Dimensions.NormalWorld || entity is EntityAgent { MountedOn: not null }) return null;
+        if (pos.Dimension != Dimensions.NormalWorld || entity is EntityAgent { MountedOn: not null } ||
+            !DrawnWater.Near(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z, WaterAroundBlocks)) return null;
         var water = entity.World.Side == EnumAppSide.Client ? clientWater : serverSwells?.Around(pos.X, pos.Z).Water;
         return water?.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is { } surface
             ? new Immersion(surface.Height, pos.Y, pos.Y + entity.SwimmingOffsetY)

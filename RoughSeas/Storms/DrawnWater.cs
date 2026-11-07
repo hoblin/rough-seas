@@ -34,10 +34,33 @@ public sealed class DrawnWater(IDrawnSea sea)
     internal WaterSurface? WaterAt<TColumn>(TColumn column, double x, double y, double z) where TColumn : IWaterColumn
     {
         var swell = sea.SwellAt(x, z) ? sea.HeightAt(x, z) : 0;
-        return TopOf(column, y, swell) is { } top ? new WaterSurface(top + column.Level(top) + swell, swell, column.Salt(top)) : null;
+        // above the block water: down as far as a crest here could reach the point, and a block more
+        return TopOf(column, y, (int)Math.Floor(y - 1 - Math.Max(swell, 0))) is { } top
+            ? new WaterSurface(top + column.Level(top) + swell, swell, column.Salt(top))
+            : null;
     }
 
-    private static int? TopOf<TColumn>(TColumn column, double y, double swell) where TColumn : IWaterColumn
+    /// <summary>
+    /// Whether water lies under a point, or under any column within <paramref name="blocksAround"/> of it, with no solid
+    /// block between, however high a crest would have to rise to reach it. Where the point's own column has none,
+    /// <see cref="WaterAt(IBlockAccessor, double, double, double)"/> finds no water whatever the sea, so the sea need
+    /// not be built to ask; the columns around let it be built before a body walks into the water. Read from the blocks
+    /// alone.
+    /// </summary>
+    public static bool Near(IBlockAccessor blocks, double x, double y, double z, int blocksAround)
+    {
+        var (atX, atZ) = ((int)Math.Floor(x), (int)Math.Floor(z));
+        for (var dx = -blocksAround; dx <= blocksAround; dx++)
+        for (var dz = -blocksAround; dz <= blocksAround; dz++)
+        {
+            if (Over(new BlockColumn(blocks, atX + dx, atZ + dz), y)) return true;
+        }
+        return false;
+    }
+
+    internal static bool Over<TColumn>(TColumn column, double y) where TColumn : IWaterColumn => TopOf(column, y, 0) is not null;
+
+    private static int? TopOf<TColumn>(TColumn column, double y, int lowest) where TColumn : IWaterColumn
     {
         var at = (int)Math.Floor(y);
         if (column.Water(at))
@@ -47,8 +70,6 @@ public sealed class DrawnWater(IDrawnSea sea)
             return at;
         }
 
-        // above it: down as far as a crest here could reach the point, and a block more
-        var lowest = (int)Math.Floor(y - 1 - Math.Max(swell, 0));
         for (var below = at; below >= lowest; below--)
         {
             // a solid block first: a waterlogged deck keeps the sea out as a dry one does
