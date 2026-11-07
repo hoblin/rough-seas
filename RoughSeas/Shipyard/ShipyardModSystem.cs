@@ -36,6 +36,8 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockClass(BlockLathBed.ClassName, typeof(BlockLathBed));
         api.RegisterBlockEntityClass(BlockEntityLathBed.ClassName, typeof(BlockEntityLathBed));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLathBed.Code, typeof(CollectibleBehaviorLathBed));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLongPile.Code, typeof(CollectibleBehaviorLongPile));
+        api.RegisterBlockBehaviorClass(BlockBehaviorPileFootprint.Code, typeof(BlockBehaviorPileFootprint));
         api.RegisterEntityBehaviorClass(EntityBehaviorCovering.Code, typeof(EntityBehaviorCovering));
         api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
         LashingRope.Attach();

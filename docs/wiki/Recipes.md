@@ -40,6 +40,12 @@ An axe splits a pole into 16 laths as long as the pole. A piece of a vessel take
 
 ![16 laths split from a pole with an axe](images/recipes/laths.png)
 
+## Poles and laths on the ground
+
+Hold Shift and right-click the ground with poles or dry laths to stack them there in a square pile, as long as they are. Hold Ctrl as well to lay a whole layer at once. A pile takes 64 poles or 160 laths. It needs room and ground along its whole length. Right-click it with an empty hand to take them back up.
+
+Poles stack 32 to a slot. As fuel, the poles split from a log burn as long as the firewood that log would give, and the laths split from a pole as long as the pole.
+
 ## Soaked laths
 
 Laths bend into a vessel's frame only wet: two days in a barrel of water, 0.08 litres a metre of lath. They dry again in two days.

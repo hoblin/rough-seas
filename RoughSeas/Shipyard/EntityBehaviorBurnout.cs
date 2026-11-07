@@ -148,7 +148,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
-        if (burnout.ClayType is { } type && entity.Properties.Client.Textures.ContainsKey($"{ClayTexture}-{type}"))
+        if (burnout.ClayType is { } type && entity.Properties.Client.Textures?.ContainsKey($"{ClayTexture}-{type}") == true)
         {
             ShapeFaces.Retexture(ref entityShape, ref shapeIsCloned, ClayTexture, $"{ClayTexture}-{type}");
         }

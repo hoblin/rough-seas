@@ -1,0 +1,3 @@
+[
+    { "op": "add", "file": "game:blocktypes/groundstorage.json", "path": "/behaviors/-", "value": { "name": "roughseas:pilefootprint" } }
+]

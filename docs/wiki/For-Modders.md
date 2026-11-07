@@ -347,6 +347,20 @@ A reed boat's rider poling in first person sees the water ahead past the arms. E
 
 New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`.
 
+### Poles and laths piled on the ground
+
+Poles and dry laths go down on the ground with vanilla's ground storage, in a square pile as long as they are ([Recipes](Recipes#poles-and-laths-on-the-ground)).
+
+- Both carry vanilla's `GroundStorable` in its `Stacking` layout, with one `stackingModel` a length, `roughseas:block/pile/{pole|lath}pile-{2..5}`: 64 poles, 8 to a layer, or 160 laths, 10 to a layer, and `maxStackingHeight` 1.
+- Our collectible behaviour `roughseas:longpile` runs before it. A new pile starts only where every block of its length has room and ground, or the player sees vanilla's `placefailure-notenoughspace`. Vanilla's fillers, `multiblock-monolithic-*`, hold the blocks beside the pile, so a click or a break on any of them reaches the pile. `roughseas:pilefootprint`, patched onto `game:groundstorage`, takes the fillers up with the pile. A mod that sets a block beside a pile of ours finds a filler there.
+- A wet lath held with Shift still goes to `roughseas:lathbed`; a dry one makes a pile.
+- A pole stacks to 32 (it was 8), and a split drops its 64 in stacks of the pole's `maxstacksize`.
+- A pole N logs long burns 1.5 × N s, a sixteenth of the 96 s its log's four firewood burn, and 1.125 × N s of kapok, purpleheart or ebony, whose log gives three. A lath burns a sixteenth of its pole.
+- The lath's item shape, `shapes/item/lath.json`, is one lath in place of the tied bundle, and the lath no longer carries `roughseas:icon`.
+- `wood-kapok` in `config/vessels/materials.json` has a `toughness`.
+
+New: `roughseas:longpile`, `roughseas:pilefootprint`, the pile shapes.
+
 ## What not to touch
 
 | Name | What it is |
