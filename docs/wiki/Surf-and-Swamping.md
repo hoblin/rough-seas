@@ -125,4 +125,4 @@ These were measured in 2.0, in seas set to each height, before capsizing was swi
 
 A vessel at [anchor](Anchoring) ships less water, three tenths of it, but a breaker slams it as hard as any other. It still lies across the waves; turning its bow into the wind comes with sailing in [Seamanship](Roadmap#seamanship).
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves don't come aboard, strike or capsize anything.
+With [Water in the bilge](World-Settings#the-mechanics) off, waves ship no water. With [Hull damage](World-Settings#the-mechanics) off, no breaker strikes a hull.

@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Rough Seas",
     "playstyle-desc-preset-roughseas": "Standard survival on a world with open oceans, where wind, storms and the sea are dangerous.",
     "worldconfig-category-roughseas": "Rough Seas",
-    "worldattribute-dangerousOceans": "Dangerous oceans",
-    "worldattribute-dangerousOceans-desc": "Storms, surf and lightning can swamp, capsize and break vessels, and tear them from their moorings. Off, the sea keeps its weather but does no harm."
+    "worldattribute-bilgeWater": "Water in the bilge",
+    "worldattribute-bilgeWater-desc": "Waves break aboard and rain falls into an open vessel, filling its bilge until you bail it out. Off, no wave or rain adds water; a leak still does.",
+    "worldattribute-hullDamage": "Hull damage",
+    "worldattribute-hullDamage-desc": "Rocks, the shore, rams, rapids, breakers and the weather crack a hull, and a crack leaks. Hide rots, ungreased seams seep and reed soaks up water. Off, no hull takes harm, and every hull is mended whole.",
+    "worldattribute-stormLightning": "Lightning",
+    "worldattribute-stormLightning-desc": "Storms strike lightning near you, and a mast draws it.",
+    "worldattribute-mooringStrain": "Mooring strain",
+    "worldattribute-mooringStrain-desc": "A storm drags anchors, snaps mooring ropes and throws a vessel moored while you are away onto the shore.",
+    "worldattribute-oceanCurrents": "Currents",
+    "worldattribute-oceanCurrents-desc": "Currents and the wind carry away a vessel nobody steers.",
+    "worldattribute-rowerFatigue": "Rower fatigue",
+    "worldattribute-rowerFatigue-desc": "Rowing, paddling and poling make you hungry.",
+    "worldattribute-poleDepth": "Pole's depth",
+    "worldattribute-poleDepth-desc": "A pole pushes only where it reaches the bottom. Off, it pushes in water of any depth as at its full stroke."
 }

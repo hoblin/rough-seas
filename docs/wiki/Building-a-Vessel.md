@@ -8,7 +8,7 @@ On the server, once a wave period, every vessel in a sea of 0.3 m or more meets 
 
 On both sides, a vessel with a hull of ours floats by its full mass: hull, riders, their gear and armour, containers and the water aboard settle it lower, and it floods when its side goes under. On a client, it rides the drawn sea: lifted with the surface under it, rolled and pitched with its slope, on periods of its own mass. Water aboard rolls it harder and slows it, and a full bilge swamps it.
 
-The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oceans) on. With it off, no wave comes aboard or strikes, no rain falls into a bilge, storms neither pull at a mooring nor throw a vessel ashore, and lightning leaves the hull alone. The sea still runs, the swell is still drawn, currents still carry vessels, knocks against rock and rams between vessels still crack a hull, and cracks still leak.
+Each way the sea harms a vessel has its own [world setting](World-Settings#the-mechanics), all on by default. Turn one off and that harm stops, while the sea, the swell and the storms still run: with *Hull damage* off nothing cracks a hull, and with *Water in the bilge* off no wave or rain comes aboard.
 
 ## The behaviours
 

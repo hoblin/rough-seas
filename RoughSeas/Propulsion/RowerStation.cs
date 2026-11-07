@@ -8,9 +8,10 @@ namespace RoughSeas.Propulsion;
 /// Where her rower sits and what drives her from there: the tools she takes, how far a sweep reaches round her, how
 /// high his hands are over the water, and her own oars when she has them. The water's depth at a point of her hull,
 /// along and across her in metres, comes from <paramref name="depthAt"/>, which measures from the surface to the bed,
-/// down to a limit in blocks.
+/// down to a limit in blocks. Unless <paramref name="deepWaterRefuses"/>, water deeper than a pole's full stroke is
+/// poled as at its full stroke.
 /// </summary>
-public sealed class RowerStation(JsonObject attributes, PropulsionConfig config, double waterDensity, Func<double, double, int, double> depthAt)
+public sealed class RowerStation(JsonObject attributes, PropulsionConfig config, double waterDensity, Func<double, double, int, double> depthAt, Func<bool> deepWaterRefuses)
 {
     public const string OwnOars = "tholeoar";
 
@@ -51,6 +52,7 @@ public sealed class RowerStation(JsonObject attributes, PropulsionConfig config,
         var sounded = (double depth) => depthAt(foot(depth), poling.PlantAcrossMetres, blocks);
         var first = sounded(depthAt(plant, poling.PlantAcrossMetres, blocks));
         var depth = Math.Max(first, sounded(first));
+        if (!deepWaterRefuses()) depth = Math.Min(depth, pole.FullStrokeDepth(hands, config.Strokes[poling.Stroke].PushMetres));
         BedMetres = Math.Min(depth, reach);
         refusal = depth > reach ? $"a {pole.Metres:F0} m pole reaches {reach:F1} m, the water is deeper" : null;
         return refusal == null ? new HeldTool(new PoleStroke(poling.Stroke, config.Strokes[poling.Stroke], pole, depth, hands, waterDensity), sweepMetres) : null;

@@ -13,8 +13,6 @@ public class HurricaneTornadoes(ExtremeWeatherCompat compat, SeaWeatherSystem se
 
     private void Roll()
     {
-        if (!sea.DangerousOceans) return;
-
         var inside = sapi.World.AllOnlinePlayers.Select(player => player.Entity?.Pos.XYZ).OfType<Vec3d>().Where(InHurricane).ToArray();
         var rand = sapi.World.Rand;
         if (inside.Length == 0 || rand.NextDouble() >= ExtremeWeatherMod.TornadoChance) return;

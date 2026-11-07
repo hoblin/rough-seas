@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Grov sjö",
     "playstyle-desc-preset-roughseas": "Standardöverlevnad i en värld med öppna hav, där vind, stormar och havet är farliga.",
     "worldconfig-category-roughseas": "Grov sjö",
-    "worldattribute-dangerousOceans": "Farliga hav",
-    "worldattribute-dangerousOceans-desc": "Stormar, bränningar och blixtar kan vattenfylla, kantra och slå sönder farkoster och slita dem loss från förtöjningar och ankare. Avstängt behåller havet sitt väder men gör ingen skada."
+    "worldattribute-bilgeWater": "Länsvatten",
+    "worldattribute-bilgeWater-desc": "Vågor bryter in över relingen och regn faller i en öppen farkost och fyller den med länsvatten tills du öser den läns. Av tillför varken vågor eller regn vatten; en läcka gör det fortfarande.",
+    "worldattribute-hullDamage": "Skrovskador",
+    "worldattribute-hullDamage-desc": "Stenar, stranden, påseglingar, forsar, bränningar och vädret får ett skrov att spricka, och en spricka läcker. Hud ruttnar, oinfettade sömmar läcker och vass suger upp vatten. Av tar inget skrov skada, och varje skrov blir helt igen.",
+    "worldattribute-stormLightning": "Blixtar",
+    "worldattribute-stormLightning-desc": "Stormar slår ner blixtar nära dig, och en mast drar till sig dem.",
+    "worldattribute-mooringStrain": "Påfrestning på förtöjningar",
+    "worldattribute-mooringStrain-desc": "En storm får ankare att dragga, sliter av förtöjningar och kastar en farkost som ligger förtöjd medan du är borta upp på stranden.",
+    "worldattribute-oceanCurrents": "Strömmar",
+    "worldattribute-oceanCurrents-desc": "Strömmar och vind för bort en farkost som ingen styr.",
+    "worldattribute-rowerFatigue": "Roddartrötthet",
+    "worldattribute-rowerFatigue-desc": "Rodd, paddling och stakning gör dig hungrig.",
+    "worldattribute-poleDepth": "Stakens djup",
+    "worldattribute-poleDepth-desc": "En stake skjuter bara där den når botten. Av skjuter den i vatten av alla djup som med ett fullt tag."
 }

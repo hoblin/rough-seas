@@ -38,4 +38,4 @@ Only the distance to the shore and the sea count, not how well it was tied. A lo
 - On the coast in fair weather: tie it up, or [anchor](Anchoring) the sailboat.
 - On the coast with a storm coming: carry it home, or anchor well out, and leave nothing that matters aboard.
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, the sea doesn't snap ropes or throw vessels ashore; currents still pull at them.
+With [Mooring strain](World-Settings#the-mechanics) off, the sea doesn't snap ropes or throw vessels ashore. With [Currents](World-Settings#the-mechanics) on, currents still pull at them.

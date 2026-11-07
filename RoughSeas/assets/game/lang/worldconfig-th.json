@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "ทะเลคลั่ง",
     "playstyle-desc-preset-roughseas": "การเอาชีวิตรอดแบบมาตรฐานในโลกที่มีมหาสมุทรเปิดกว้าง ซึ่งลม พายุ และทะเลล้วนเป็นอันตราย",
     "worldconfig-category-roughseas": "ทะเลคลั่ง",
-    "worldattribute-dangerousOceans": "มหาสมุทรอันตราย",
-    "worldattribute-dangerousOceans-desc": "พายุ คลื่นหัวแตก และฟ้าผ่าอาจทำให้น้ำท่วมเรือ เรือล่ม และเรือแตกพัง รวมถึงกระชากเรือหลุดจากที่ผูกและสมอ หากปิด ทะเลยังคงมีสภาพอากาศเช่นเดิมแต่ไม่ก่ออันตราย"
+    "worldattribute-bilgeWater": "น้ำท้องเรือ",
+    "worldattribute-bilgeWater-desc": "คลื่นซัดเข้าเรือ และฝนตกลงในเรือที่ไม่มีหลังคา น้ำท้องเรือจะเพิ่มขึ้นจนกว่าคุณจะวิดออก เมื่อปิด คลื่นและฝนจะไม่เพิ่มน้ำ แต่รอยรั่วยังทำให้น้ำเข้า",
+    "worldattribute-hullDamage": "ความเสียหายของตัวเรือ",
+    "worldattribute-hullDamage-desc": "หิน ฝั่ง การชน แก่ง คลื่นหัวแตก และสภาพอากาศทำให้ตัวเรือร้าว และรอยร้าวทำให้น้ำรั่ว หนังเน่า ตะเข็บที่ไม่ได้ทาไขมันซึมน้ำ และกกอุ้มน้ำ เมื่อปิด ไม่มีตัวเรือใดเสียหาย และตัวเรือทุกลำกลับมาสมบูรณ์",
+    "worldattribute-stormLightning": "ฟ้าผ่า",
+    "worldattribute-stormLightning-desc": "พายุทำให้ฟ้าผ่าลงใกล้ตัวคุณ และเสากระโดงเรือล่อฟ้าผ่า",
+    "worldattribute-mooringStrain": "แรงดึงที่ผูกเรือ",
+    "worldattribute-mooringStrain-desc": "พายุลากสมอ ทำให้เชือกผูกเรือขาด และซัดเรือที่ผูกไว้ขึ้นฝั่งขณะคุณไม่อยู่",
+    "worldattribute-oceanCurrents": "กระแสน้ำ",
+    "worldattribute-oceanCurrents-desc": "กระแสน้ำและลมพัดพาเรือที่ไม่มีใครบังคับให้ลอยไป",
+    "worldattribute-rowerFatigue": "ความเหนื่อยของฝีพาย",
+    "worldattribute-rowerFatigue-desc": "การพายด้วยกรรเชียง การพายด้วยไม้พาย และการถ่อเรือทำให้คุณหิว",
+    "worldattribute-poleDepth": "ความลึกของถ่อ",
+    "worldattribute-poleDepth-desc": "ถ่อดันเรือได้เฉพาะที่ที่ถ่อแตะถึงพื้น เมื่อปิด ถ่อดันได้ในน้ำทุกระดับความลึกเหมือนดันเต็มแรง"
 }

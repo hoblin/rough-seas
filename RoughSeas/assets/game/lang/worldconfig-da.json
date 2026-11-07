@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Oprørt hav",
     "playstyle-desc-preset-roughseas": "Standardoverlevelse i en verden med åbne oceaner, hvor vind, storme og havet er farlige.",
     "worldconfig-category-roughseas": "Oprørt hav",
-    "worldattribute-dangerousOceans": "Farlige oceaner",
-    "worldattribute-dangerousOceans-desc": "Storme, brænding og lyn kan fylde fartøjer med vand, få dem til at kæntre, knuse dem og rive dem løs fra fortøjning og anker. Slået fra beholder havet sit vejr, men gør ingen skade."
+    "worldattribute-bilgeWater": "Bundvand",
+    "worldattribute-bilgeWater-desc": "Bølger brydes ind over, og regn falder i et åbent fartøj og fylder bunden med vand, til du øser det lens. Slået fra tilfører hverken bølger eller regn vand; en læk gør det stadig.",
+    "worldattribute-hullDamage": "Skrogskader",
+    "worldattribute-hullDamage-desc": "Klipper, kysten, påsejlinger, strømfald, brænding og vejret får et skrog til at revne, og en revne lækker. Skind rådner, ufedtede sømme siver, og siv suger vand. Slået fra tager intet skrog skade, og hvert skrog bliver helt igen.",
+    "worldattribute-stormLightning": "Lyn",
+    "worldattribute-stormLightning-desc": "Storme slår lyn ned nær dig, og en mast trækker det til sig.",
+    "worldattribute-mooringStrain": "Belastning på fortøjninger",
+    "worldattribute-mooringStrain-desc": "En storm får ankre til at slæbe, sprænger fortøjninger og kaster et fartøj, der ligger fortøjet, mens du er væk, op på kysten.",
+    "worldattribute-oceanCurrents": "Strømme",
+    "worldattribute-oceanCurrents-desc": "Strøm og vind fører et fartøj væk, som ingen styrer.",
+    "worldattribute-rowerFatigue": "Roerens træthed",
+    "worldattribute-rowerFatigue-desc": "Roning, padling og stagning gør dig sulten.",
+    "worldattribute-poleDepth": "Stagens dybde",
+    "worldattribute-poleDepth-desc": "En stage skubber kun, hvor den når bunden. Slået fra skubber den på alle dybder som med et fuldt tag."
 }

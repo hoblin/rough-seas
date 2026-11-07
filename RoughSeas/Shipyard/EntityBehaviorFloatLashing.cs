@@ -81,6 +81,8 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
         if (knock == Knock.BrokenUp) ComeApart();
     }
 
+    public void MendWhole() => lashing.MendWhole();
+
     public MendWork? MendWith(ItemSlot slot, EntityAgent byEntity, Vec3d hit)
     {
         if (RepairWith(slot) is not { } repair || !lashing.Needs(repair, Side)) return null;

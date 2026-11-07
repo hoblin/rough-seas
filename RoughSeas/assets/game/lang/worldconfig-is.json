@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Úfinn sjór",
     "playstyle-desc-preset-roughseas": "Hefðbundin lifun í heimi með opnum úthöfum, þar sem vindur, stormar og hafið eru hættuleg.",
     "worldconfig-category-roughseas": "Úfinn sjór",
-    "worldattribute-dangerousOceans": "Hættuleg úthöf",
-    "worldattribute-dangerousOceans-desc": "Stormar, brim og eldingar geta fyllt fley, hvolft þeim og brotið þau, og slitið þau upp úr festum sínum. Slökkt heldur hafið veðri sínu en veldur engum skaða."
+    "worldattribute-bilgeWater": "Austur",
+    "worldattribute-bilgeWater-desc": "Öldur brotna inn fyrir borðstokkinn og regn fellur í opið fley og fyllir það af austri þar til þú eysir. Sé slökkt á henni bæta hvorki öldur né regn við vatni; leki gerir það enn.",
+    "worldattribute-hullDamage": "Skemmdir á skrokki",
+    "worldattribute-hullDamage-desc": "Klettar, ströndin, ásiglingar, flúðir, brot og veðrið valda sprungum í skrokki, og sprunga lekur. Húð fúnar, ósmurðir saumar leka og reyr drekkur í sig vatn. Sé slökkt á henni skemmist enginn skrokkur, og hver skrokkur verður heill á ný.",
+    "worldattribute-stormLightning": "Eldingar",
+    "worldattribute-stormLightning-desc": "Stormar slá niður eldingum nálægt þér, og mastur dregur þær að sér.",
+    "worldattribute-mooringStrain": "Álag á landfestar",
+    "worldattribute-mooringStrain-desc": "Stormur dregur akkeri, slítur landfestar og kastar upp á ströndina fleyi sem liggur bundið meðan þú ert fjarri.",
+    "worldattribute-oceanCurrents": "Straumar",
+    "worldattribute-oceanCurrents-desc": "Straumar og vindur bera burt fley sem enginn stýrir.",
+    "worldattribute-rowerFatigue": "Þreyta ræðara",
+    "worldattribute-rowerFatigue-desc": "Þú verður svangur af því að róa, paddla og stjaka.",
+    "worldattribute-poleDepth": "Dýpt stjakans",
+    "worldattribute-poleDepth-desc": "Stjaki ýtir aðeins þar sem hann nær til botns. Sé slökkt á henni ýtir hann á hvaða dýpi sem er eins og með fullu taki."
 }

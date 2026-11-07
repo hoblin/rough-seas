@@ -81,6 +81,10 @@ You build every new vessel where it lies, and move it by paddle, pole and oars, 
 - **Under a crest.** Your eye goes under a crest that passes over it, and you hold your breath by the sea you see, on a server too. Both are the work of our first contributor, [James Riley Wilburn](https://github.com/rhino1998). More: [Reading the sea](Reading-the-Sea).
 - **The handbook** rewritten, and every one of its 33 languages corrected.
 
+## 4.1
+
+- **A setting for each mechanic.** Water in the bilge, hull damage, lightning, mooring strain, currents, rower fatigue and the pole's depth each have a world setting of their own, so you choose how hard the sea is, one mechanic at a time. More: [World settings](World-Settings#the-mechanics).
+
 ## Seamanship
 
 Sailing becomes sailing.

@@ -61,6 +61,12 @@ public sealed class ReedHull : HullModel, IAfloat, IKnockable
         if (Torn > 0) info.AppendLine(Lang.Get("roughseas:vessel-torn", (int)Math.Round(Torn * 100)));
     }
 
+    public override void MendWhole()
+    {
+        foreach (var key in new[] { WaterKey, RotKey, TornKey }) Tree.RemoveAttribute(key);
+        Changed();
+    }
+
     public override void Adopt(float integrity)
     {
         Tree.SetDouble(WaterKey, (1 - integrity) * soak.SaturationKg);

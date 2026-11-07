@@ -18,8 +18,6 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
     private readonly ConcurrentDictionary<(int X, int Z), (double Hours, double Mps)> regions = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int X, int Z, long Slot), WaveGeneration> generations = new(Environment.ProcessorCount, 0);
 
-    public bool DangerousOceans => sea.DangerousOceans;
-
     public SeaClock Clock => sea.Clock;
 
     public SeaWeatherModel Weather => model;

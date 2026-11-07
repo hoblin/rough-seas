@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "驚濤駭浪",
     "playstyle-desc-preset-roughseas": "在擁有開闊海洋的世界中進行標準生存，風、暴風雨與大海都很危險。",
     "worldconfig-category-roughseas": "驚濤駭浪",
-    "worldattribute-dangerousOceans": "危險海洋",
-    "worldattribute-dangerousOceans-desc": "暴風雨、拍岸浪與閃電會讓船隻進水、翻覆、毀壞，並使其掙脫繫泊與錨泊。關閉後，海上仍有天氣變化，但不會造成傷害。"
+    "worldattribute-bilgeWater": "艙底積水",
+    "worldattribute-bilgeWater-desc": "浪頭打上船，雨水落進敞艙的船裡，艙底積水越來越多，直到你把水舀出去。關閉後，浪和雨都不再添水；漏處照樣進水。",
+    "worldattribute-hullDamage": "船體損壞",
+    "worldattribute-hullDamage-desc": "礁石、岸邊、撞擊、急流、拍岸浪和天氣都會撞裂船體，裂縫會漏水。獸皮會腐爛，沒塗油脂的接縫會滲水，蘆葦會吸水。關閉後，船體不再受損，所有船體都會恢復完好。",
+    "worldattribute-stormLightning": "閃電",
+    "worldattribute-stormLightning-desc": "暴風雨會在你附近落下閃電，桅杆會招來閃電。",
+    "worldattribute-mooringStrain": "繫泊受力",
+    "worldattribute-mooringStrain-desc": "暴風雨會拖動船錨、扯斷繫船繩，並把你不在時繫泊的船拋上岸。",
+    "worldattribute-oceanCurrents": "洋流",
+    "worldattribute-oceanCurrents-desc": "洋流和風會把無人駕駛的船帶走。",
+    "worldattribute-rowerFatigue": "划槳疲勞",
+    "worldattribute-rowerFatigue-desc": "划槳、划單葉槳和撐篙都會讓你飢餓。",
+    "worldattribute-poleDepth": "撐篙水深",
+    "worldattribute-poleDepth-desc": "撐篙只能在搆得到水底的地方推船。關閉後，在任何深度的水裡都能像撐到底一樣推船。"
 }
