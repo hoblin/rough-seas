@@ -333,7 +333,7 @@ def step(n, j):
     high = beds(n)[j][0][2] + CHAR_LIFT
     rise, name = high - low, f"Hewn{n}x{j}Step"
     width = (lambda y0, y1: half) if n == 0 else (lambda y0, y1: min(hollow_half_at(n, at, y) for y in (y0, y1)))
-    risers = [box(f"{name}Riser{k}", (at, y0, CENTRE - width(y0, y1)), (at, y1, CENTRE + width(y0, y1)), {"west": HEWN})
+    risers = [box(f"{name}Riser{k}", (at - APART, y0, CENTRE - width(y0, y1)), (at - APART, y1, CENTRE + width(y0, y1)), {"west": HEWN})
               for k, (y0, y1) in enumerate(pieces((low, high), rise / STEP_BANDS), 1)]
     lips = []
     for k, (z0, z1) in enumerate(pieces((CENTRE - half, CENTRE + half), 2 * half / STEP_STRIPS), 1):

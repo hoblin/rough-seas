@@ -15,7 +15,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
-public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
+public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver, IMendedHull
 {
     public const string Code = "roughseas:vesselintegrity";
 
@@ -450,25 +450,18 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
-        bool server = entity.World.Side == EnumAppSide.Server;
-        if (mode == EnumInteractMode.Attack)
-        {
-            if (server) Swing(byEntity, itemslot, hitPosition);
-            return;
-        }
-        if (RepairWith(itemslot) is not { } repair) return;
-        var place = At(hitPosition);
-        var refusal = Refusal(repair, itemslot, place);
-        if (refusal != null && !OnHull(byEntity)) return;
-
-        handled = EnumHandling.PreventSubsequent;
-        if (refusal != null)
-        {
-            if (entity.Api is ICoreClientAPI capi) capi.TriggerIngameError(this, "roughseas-vessel-mend", refusal);
-            return;
-        }
-        if (server) Mend(byEntity, itemslot, repair, place);
+        if (mode == EnumInteractMode.Attack && entity.World.Side == EnumAppSide.Server) Swing(byEntity, itemslot, hitPosition);
     }
+
+    public MendWork? MendWith(ItemSlot slot, EntityAgent byEntity, Vec3d hit)
+    {
+        if (RepairWith(slot) is not { } repair) return null;
+
+        var work = Refused(repair, slot, At(hit)) ?? new MendWork(repair.Seconds);
+        return work.Refusal != null && !OnHull(byEntity) ? null : work;
+    }
+
+    public void Mend(EntityAgent byEntity, ItemSlot slot, Vec3d hit) => Mend(byEntity, slot, RepairWith(slot)!, At(hit));
 
     /// <summary>Whether the held item is one this hull is mended or greased with, whether or not it would help now.</summary>
     public bool MendsWith(ItemSlot slot) => RepairWith(slot) != null;
@@ -739,14 +732,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private HullRepair? RepairWith(ItemSlot slot) =>
         repairs.FirstOrDefault(repair => slot.Itemstack?.Collectible.Code == repair.Material.Code);
 
-    private string? Refusal(HullRepair repair, ItemSlot slot, HullPlace place)
+    private MendWork? Refused(HullRepair repair, ItemSlot slot, HullPlace place)
     {
         if (model is not IMendable mendable || !mendable.Needs(repair, place))
         {
-            return Lang.Get(repair.Greases ? "roughseas:vessel-nothing-to-grease" : "roughseas:vessel-nothing-to-mend");
+            return new MendWork(repair.Seconds, repair.Greases ? "vessel-nothing-to-grease" : "vessel-nothing-to-mend");
         }
         return slot.StackSize < repair.Material.StackSize
-            ? Lang.Get("roughseas:vessel-mend-takes", repair.Material.StackSize, slot.GetStackName())
+            ? new MendWork(repair.Seconds, "vessel-mend-takes", repair.Material.StackSize, slot.GetStackName())
             : null;
     }
 

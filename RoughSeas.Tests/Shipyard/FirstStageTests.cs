@@ -73,17 +73,16 @@ public class FirstStageTests
     }
 
     [Fact]
-    public void ACoraclesLatticeLiesOnTheGroundAsTheBedSpacesItsLaths()
+    public void ACoraclesLatticeLiesWhereThePileOfShortLathsLaysItsFirstLayer()
     {
-        var layout = Entity("coracle")["behaviorConfigs"]!["roughseas:covering"]!["layout"]!;
         var laths = Named(Shape("coracle")["elements"]!, "Lattice")["children"]!.Select(lath => Boxes(lath).First()).ToArray();
+        var pile = Pile(2).Take(laths.Length).ToArray();
         var along = laths.Take(7).Select(Start).Select(start => start[2]).ToArray();
         var across = laths.Skip(7).Select(Start).Select(start => start[0]).ToArray();
 
-        Assert.Equal(Spaced(layout.Value<double>("alongSpacingVoxels")), along);
-        Assert.Equal(Spaced(layout.Value<double>("acrossSpacingVoxels")), across);
-        Assert.All(laths.Take(7), lath => Assert.Equal(0, Bottom(lath), 3));
-        Assert.All(laths.Skip(7), lath => Assert.Equal(Top(laths[0]), Bottom(lath), 3));
+        Assert.Equal(pile.Take(7).Select(lath => MiddleOf(lath, 2)), along);
+        Assert.Equal(pile.Skip(7).Select(lath => MiddleOf(lath, 0)), across);
+        Assert.All(laths.Zip(pile), pair => Assert.Equal(pair.Second["from"]![1]!.Value<double>(), Bottom(pair.First), 3));
     }
 
     private static double Bottom(JToken lath) => Start(lath)[1] + lath["from"]![1]!.Value<double>();
@@ -91,9 +90,9 @@ public class FirstStageTests
     private static double Top(JToken lath) => Start(lath)[1] + lath["to"]![1]!.Value<double>();
 
     [Fact]
-    public void ACurrachsGunwaleLathsLieAsFarApartAsHerPairIsLaid()
+    public void ACurrachsGunwaleLathsSpreadSomeSixCentimetresASideFromThePileTheyLay()
     {
-        var beam = Entity("currach")["behaviorConfigs"]!["roughseas:covering"]!["layout"]!.Value<double>("beamVoxels");
+        var pile = Pile(5).Take(2).Select(lath => MiddleOf(lath, 2)).ToArray();
         var elements = Shape("currach")["elements"]!;
         double Middle(string name)
         {
@@ -102,10 +101,15 @@ public class FirstStageTests
             return astern["from"]![2]!.Value<double>() + (board["from"]![2]!.Value<double>() + board["to"]![2]!.Value<double>()) / 2;
         }
 
-        Assert.Equal(beam, Middle("GunwaleStarboardAsternFrame") - Middle("GunwalePortAsternFrame"), 2);
+        var spread = (Middle("GunwaleStarboardAsternFrame") - Middle("GunwalePortAsternFrame") - Math.Abs(pile[1] - pile[0])) / 2;
+
+        Assert.InRange(spread / Voxels.AMetre, 0, 0.07);
     }
 
     private static double[] Start(JToken box) => box.Parent!.Parent!.Parent!["from"]!.Values<double>().ToArray();
 
-    private static double[] Spaced(double voxels) => [.. Enumerable.Range(-3, 7).Select(n => Centre + n * voxels)];
+    private static IEnumerable<JToken> Pile(int metres) =>
+        JObject.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shapes", "block", "pile", $"lathpile-{metres}.json")))["elements"]!;
+
+    private static double MiddleOf(JToken box, int axis) => (box["from"]![axis]!.Value<double>() + box["to"]![axis]!.Value<double>()) / 2;
 }

@@ -19,7 +19,7 @@ namespace RoughSeas.Shipyard;
 /// side meets it before her hull, and works the lashings loose as a raft's: mended with twine. Once they give out, the
 /// float comes away with her booms, and the mast they stay falls with it: she is left the hull she was rigged on.
 /// </summary>
-public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity), IOutboard
+public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity), IOutboard, IMendedHull
 {
     public const string Code = "roughseas:floatlashing";
 
@@ -81,20 +81,26 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
         if (knock == Knock.BrokenUp) ComeApart();
     }
 
-    public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
+    public MendWork? MendWith(ItemSlot slot, EntityAgent byEntity, Vec3d hit)
     {
-        if (mode != EnumInteractMode.Interact || repairs.FirstOrDefault(repair => itemslot.Itemstack?.Collectible.Code == repair.Material.Code) is not { } repair) return;
-        if (!lashing.Needs(repair, Side) || itemslot.StackSize < repair.Material.StackSize) return;
+        if (RepairWith(slot) is not { } repair || !lashing.Needs(repair, Side)) return null;
 
-        handled = EnumHandling.PreventSubsequent;
-        if (entity.World.Side != EnumAppSide.Server) return;
+        return slot.StackSize < repair.Material.StackSize
+            ? new MendWork(repair.Seconds, "vessel-mend-takes", repair.Material.StackSize, slot.GetStackName())
+            : new MendWork(repair.Seconds);
+    }
 
+    public void Mend(EntityAgent byEntity, ItemSlot itemslot, Vec3d hit)
+    {
+        var repair = RepairWith(itemslot)!;
         itemslot.TakeOut(repair.Material.StackSize);
         itemslot.MarkDirty();
         byEntity.GetBehavior<EntityBehaviorHunger>()?.ConsumeSaturation(repair.Saturation);
         Shipyard.Log(entity, "float {0} by {1}", lashing.Mend(repair, Side), byEntity.GetName());
         entity.World.PlaySoundAt(new AssetLocation("game:sounds/player/build"), entity, null, true, 16);
     }
+
+    private HullRepair? RepairWith(ItemSlot slot) => repairs.FirstOrDefault(repair => slot.Itemstack?.Collectible.Code == repair.Material.Code);
 
     public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
     {

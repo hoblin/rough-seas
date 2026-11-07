@@ -22,7 +22,7 @@ Not in the grid any more: a dugout is burnt and hewn out of five logs on the sho
 
 ## Coracle
 
-Not in the grid any more: wet laths are laid out on the ground as a lattice, bound with rope, bent up into a basket and covered with hides where it lies. See [how it is built](Coracle#how-it-is-built).
+Not in the grid any more: wet laths are piled on the ground as a lattice, bound with rope, bent up into a basket and covered with hides where it lies. See [how it is built](Coracle#how-it-is-built).
 
 ## Birch-bark canoe
 
@@ -42,9 +42,15 @@ An axe splits a pole into 16 laths as long as the pole. A piece of a vessel take
 
 ## Poles and laths on the ground
 
-Hold Shift and right-click the ground with poles or dry laths to stack them there in a square pile, as long as they are. Hold Ctrl as well to lay a whole layer at once. A pile takes 64 poles or 160 laths. It needs room and ground along its whole length, and nothing goes on top of it. Once laid, it rests on its whole length: dig out the ground under part of it and it stays, and with no ground left under it, it falls apart. Right-click it with an empty hand to take them back up.
+Hold Shift and right-click the ground with poles or laths, wet or dry, to start a pile there, along the way you face, then Shift + right-click the pile to add more. Hold Ctrl as well to lay a whole layer at once. Right-click the pile with an empty hand to take one back.
 
-Poles stack 32 to a slot. As fuel, the poles split from a log burn as long as the firewood that log would give, and the laths split from a pole as long as the pole.
+- **Poles** lie side by side in a square pile as long as they are, 8 to a layer, 64 in all.
+- **Laths of 3, 4 or 5 m** lie lengthwise: the first along one side of the block, the second along the other, then in toward the middle, 16 to a layer, 160 in all.
+- **Laths of 2 m** pile as a [coracle](Coracle#how-it-is-built)'s lattice: seven along, then seven across them, 14 to a layer, 140 in all. The pile is centred on its block and reaches half a block into each of the four blocks beside it.
+
+A pile needs room and ground under every block it reaches, and nothing goes on top of it. Once laid, it rests on all of them: dig out the ground under part of it and it stays, and with no ground left under it, it falls apart. A pile of fourteen wet 2 m laths, or of two wet 5 m laths and nothing more, bound with rope, starts a [coracle](Coracle#how-it-is-built) or a [currach](Hide-Currach#how-it-is-built).
+
+Poles stack 32 to a slot. As fuel, the poles split from a log burn as long as the firewood that log would give, and dry laths split from a pole as long as the pole. Wet laths don't burn.
 
 ## Soaked laths
 
@@ -66,7 +72,7 @@ A [thole oar](Paddles-Poles-and-Oars) is made from a three-metre pole, with a tw
 
 ## Hide currach
 
-Not in the grid any more: two long wet laths are laid out on the ground and bound into its gunwale, framed upside down, covered with hides and turned over. See [how it is built](Hide-Currach#how-it-is-built).
+Not in the grid any more: two long wet laths are piled on the ground and bound into its gunwale, framed upside down, covered with hides and turned over. See [how it is built](Hide-Currach#how-it-is-built).
 
 ## Outrigger canoe
 

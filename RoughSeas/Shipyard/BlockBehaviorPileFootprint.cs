@@ -10,9 +10,11 @@ namespace RoughSeas.Shipyard;
 /// On vanilla's <c>game:groundstorage</c> (patches/shipyard-groundstorage.json), ahead of its <c>UnstableFalling</c>: a long
 /// pile rests on its whole length, and takes up the fillers <see cref="CollectibleBehaviorLongPile"/> set beside it.
 /// </summary>
-public class BlockBehaviorPileFootprint(Block block) : BlockBehavior(block)
+public class BlockBehaviorPileFootprint(Block block) : BlockBehavior(block), IWorkedBlock
 {
     public const string Code = "roughseas:pilefootprint";
+
+    public IWorkedHull? HullAt(IWorldAccessor world, BlockPos pos) => LathPile.At(world, pos);
 
     private static readonly Vec3i[] Reach = Enumerable.Range(-PileFootprint.MaxReach, 2 * PileFootprint.MaxReach + 1)
         .Where(blocks => blocks != 0)

@@ -6837,6 +6837,2280 @@
     },
     {
         "op": "add",
+        "file": "game:shapes/entity/humanoid/seraph-faceless.json",
+        "path": "/animations/-",
+        "value": {
+            "name": "roughseas-barkcanoe-pole-ready-fp",
+            "code": "roughseas-barkcanoe-pole-ready-fp",
+            "quantityframes": 30,
+            "onActivityStopped": "EaseOut",
+            "onAnimationEnd": "Repeat",
+            "keyframes": [
+                {
+                    "frame": 0,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.0,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 17.5
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.32,
+                            "rotationY": 0.0,
+                            "rotationZ": -40.36
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 65.89
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.11,
+                            "rotationY": 0.0,
+                            "rotationZ": -40.94
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 57.92
+                        },
+                        "UpperArmR": {
+                            "rotationX": 20.78,
+                            "rotationY": 39.23,
+                            "rotationZ": -21.76,
+                            "offsetX": -1.581,
+                            "offsetY": -2.738,
+                            "offsetZ": 0.074
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -71.53
+                        },
+                        "UpperArmL": {
+                            "rotationX": -59.66,
+                            "rotationY": -45.72,
+                            "rotationZ": -49.84,
+                            "offsetX": -1.454,
+                            "offsetY": -2.759,
+                            "offsetZ": -0.525
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -110.2
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -144.47,
+                            "rotationY": 26.39,
+                            "rotationZ": 179.96,
+                            "offsetX": 19.002,
+                            "offsetY": 8.159,
+                            "offsetZ": -0.863
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "op": "add",
+        "file": "game:shapes/entity/humanoid/seraph-faceless.json",
+        "path": "/animations/-",
+        "value": {
+            "name": "roughseas-barkcanoe-pole-forward-fp",
+            "code": "roughseas-barkcanoe-pole-forward-fp",
+            "quantityframes": 30,
+            "onActivityStopped": "EaseOut",
+            "onAnimationEnd": "Repeat",
+            "keyframes": [
+                {
+                    "frame": 0,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.0,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 17.5
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.32,
+                            "rotationY": 0.0,
+                            "rotationZ": -40.36
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 65.89
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.11,
+                            "rotationY": 0.0,
+                            "rotationZ": -40.94
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 57.92
+                        },
+                        "UpperArmR": {
+                            "rotationX": 20.78,
+                            "rotationY": 39.23,
+                            "rotationZ": -21.76,
+                            "offsetX": -1.581,
+                            "offsetY": -2.738,
+                            "offsetZ": 0.074
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -71.53
+                        },
+                        "UpperArmL": {
+                            "rotationX": -59.66,
+                            "rotationY": -45.72,
+                            "rotationZ": -49.84,
+                            "offsetX": -1.454,
+                            "offsetY": -2.759,
+                            "offsetZ": -0.525
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -110.2
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -144.47,
+                            "rotationY": 26.39,
+                            "rotationZ": 179.96,
+                            "offsetX": 19.002,
+                            "offsetY": 8.159,
+                            "offsetZ": -0.863
+                        }
+                    }
+                },
+                {
+                    "frame": 2,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.59,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -42.59,
+                            "rotationZ": 14.45
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.16,
+                            "rotationY": 0.0,
+                            "rotationZ": -36.06
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 59.13
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.06,
+                            "rotationY": 0.0,
+                            "rotationZ": -35.82
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 50.01
+                        },
+                        "UpperArmR": {
+                            "rotationX": 55.08,
+                            "rotationY": 51.85,
+                            "rotationZ": -45.4,
+                            "offsetX": -1.617,
+                            "offsetY": -2.694,
+                            "offsetZ": 0.356
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -74.24
+                        },
+                        "UpperArmL": {
+                            "rotationX": -48.13,
+                            "rotationY": -45.01,
+                            "rotationZ": -34.16,
+                            "offsetX": -1.731,
+                            "offsetY": -2.589,
+                            "offsetZ": -0.548
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -115.14
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -113.97,
+                            "rotationY": 35.65,
+                            "rotationZ": 157.7,
+                            "offsetX": 15.722,
+                            "offsetY": 6.854,
+                            "offsetZ": -0.79
+                        }
+                    }
+                },
+                {
+                    "frame": 4,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.26,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -35.58,
+                            "rotationZ": 11.93
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.05,
+                            "rotationY": 0.0,
+                            "rotationZ": -32.1
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 52.85
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.03,
+                            "rotationY": 0.0,
+                            "rotationZ": -30.85
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 42.21
+                        },
+                        "UpperArmR": {
+                            "rotationX": 44.03,
+                            "rotationY": 51.39,
+                            "rotationZ": -34.06,
+                            "offsetX": -1.566,
+                            "offsetY": -2.731,
+                            "offsetZ": 0.297
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -78.08
+                        },
+                        "UpperArmL": {
+                            "rotationX": -45.14,
+                            "rotationY": -43.07,
+                            "rotationZ": -30.86,
+                            "offsetX": -1.79,
+                            "offsetY": -2.494,
+                            "offsetZ": -0.761
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -115.77
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -112.77,
+                            "rotationY": 26.16,
+                            "rotationZ": 155.69,
+                            "offsetX": 9.1,
+                            "offsetY": 4.181,
+                            "offsetZ": -0.603
+                        }
+                    }
+                },
+                {
+                    "frame": 6,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.05,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -31.7,
+                            "rotationZ": 10.37
+                        },
+                        "UpperFootR": {
+                            "rotationX": 6.99,
+                            "rotationY": 0.0,
+                            "rotationZ": -29.4
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 48.52
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.02,
+                            "rotationY": 0.0,
+                            "rotationZ": -27.19
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 36.41
+                        },
+                        "UpperArmR": {
+                            "rotationX": 32.64,
+                            "rotationY": 48.83,
+                            "rotationZ": -23.71,
+                            "offsetX": -1.524,
+                            "offsetY": -2.763,
+                            "offsetZ": 0.207
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -80.7
+                        },
+                        "UpperArmL": {
+                            "rotationX": -42.35,
+                            "rotationY": -41.02,
+                            "rotationZ": -28.78,
+                            "offsetX": -1.763,
+                            "offsetY": -2.463,
+                            "offsetZ": -0.909
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -115.39
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -115.82,
+                            "rotationY": 17.46,
+                            "rotationZ": 157.12,
+                            "offsetX": 2.974,
+                            "offsetY": 1.705,
+                            "offsetZ": -0.413
+                        }
+                    }
+                },
+                {
+                    "frame": 8,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.01,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -31.83,
+                            "rotationZ": 10.04
+                        },
+                        "UpperFootR": {
+                            "rotationX": 6.97,
+                            "rotationY": 0.0,
+                            "rotationZ": -28.8
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 47.56
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.02,
+                            "rotationY": 0.0,
+                            "rotationZ": -26.34
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 35.04
+                        },
+                        "UpperArmR": {
+                            "rotationX": 25.22,
+                            "rotationY": 45.9,
+                            "rotationZ": -17.2,
+                            "offsetX": -1.555,
+                            "offsetY": -2.75,
+                            "offsetZ": 0.128
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -82.28
+                        },
+                        "UpperArmL": {
+                            "rotationX": -38.38,
+                            "rotationY": -40.12,
+                            "rotationZ": -25.99,
+                            "offsetX": -1.731,
+                            "offsetY": -2.499,
+                            "offsetZ": -0.871
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -115.55
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -120.78,
+                            "rotationY": 10.98,
+                            "rotationZ": 160.1,
+                            "offsetX": 0.897,
+                            "offsetY": 0.854,
+                            "offsetZ": -0.352
+                        }
+                    }
+                },
+                {
+                    "frame": 10,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.13,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -35.84,
+                            "rotationZ": 11.0
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.01,
+                            "rotationY": 0.0,
+                            "rotationZ": -30.53
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 50.34
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.02,
+                            "rotationY": 0.0,
+                            "rotationZ": -28.76
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 38.91
+                        },
+                        "UpperArmR": {
+                            "rotationX": 22.77,
+                            "rotationY": 44.16,
+                            "rotationZ": -15.28,
+                            "offsetX": -1.645,
+                            "offsetY": -2.699,
+                            "offsetZ": 0.113
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -82.26
+                        },
+                        "UpperArmL": {
+                            "rotationX": -32.66,
+                            "rotationY": -40.62,
+                            "rotationZ": -22.05,
+                            "offsetX": -1.716,
+                            "offsetY": -2.584,
+                            "offsetZ": -0.614
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -116.52
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -126.52,
+                            "rotationY": 8.3,
+                            "rotationZ": 163.73,
+                            "offsetX": 0.761,
+                            "offsetY": 0.785,
+                            "offsetZ": -0.341
+                        }
+                    }
+                },
+                {
+                    "frame": 12,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.41,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -44.71,
+                            "rotationZ": 13.09
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.1,
+                            "rotationY": 0.0,
+                            "rotationZ": -33.98
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 55.84
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.04,
+                            "rotationY": 0.0,
+                            "rotationZ": -33.26
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 46.0
+                        },
+                        "UpperArmR": {
+                            "rotationX": 20.01,
+                            "rotationY": 40.38,
+                            "rotationZ": -14.19,
+                            "offsetX": -1.77,
+                            "offsetY": -2.614,
+                            "offsetZ": 0.185
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -81.15
+                        },
+                        "UpperArmL": {
+                            "rotationX": -25.08,
+                            "rotationY": -40.85,
+                            "rotationZ": -16.27,
+                            "offsetX": -1.7,
+                            "offsetY": -2.659,
+                            "offsetZ": -0.192
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -117.72
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -137.69,
+                            "rotationY": 2.34,
+                            "rotationZ": 169.93,
+                            "offsetX": 0.343,
+                            "offsetY": 0.586,
+                            "offsetZ": -0.3
+                        }
+                    }
+                },
+                {
+                    "frame": 14,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.79,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 15.94
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.24,
+                            "rotationY": 0.0,
+                            "rotationZ": -38.21
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 62.53
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.08,
+                            "rotationY": 0.0,
+                            "rotationZ": -38.41
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 54.04
+                        },
+                        "UpperArmR": {
+                            "rotationX": 0.14,
+                            "rotationY": 13.69,
+                            "rotationZ": -3.93,
+                            "offsetX": -1.838,
+                            "offsetY": -2.566,
+                            "offsetZ": 0.192
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -80.87
+                        },
+                        "UpperArmL": {
+                            "rotationX": -41.08,
+                            "rotationY": -46.62,
+                            "rotationZ": -33.49,
+                            "offsetX": -1.518,
+                            "offsetY": -2.764,
+                            "offsetZ": -0.241
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -113.41
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -160.38,
+                            "rotationY": -19.55,
+                            "rotationZ": 180.01,
+                            "offsetX": -0.514,
+                            "offsetY": 0.195,
+                            "offsetZ": -0.217
+                        }
+                    }
+                },
+                {
+                    "frame": 16,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.21,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 19.06
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.4,
+                            "rotationY": 0.0,
+                            "rotationZ": -42.41
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 69.08
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.14,
+                            "rotationY": 0.0,
+                            "rotationZ": -43.32
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 61.55
+                        },
+                        "UpperArmR": {
+                            "rotationX": 11.27,
+                            "rotationY": 10.64,
+                            "rotationZ": -6.02,
+                            "offsetX": -1.956,
+                            "offsetY": -2.379,
+                            "offsetZ": 0.716
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -77.57
+                        },
+                        "UpperArmL": {
+                            "rotationX": -36.22,
+                            "rotationY": -50.66,
+                            "rotationZ": -41.5,
+                            "offsetX": -1.0,
+                            "offsetY": -2.993,
+                            "offsetZ": 0.198
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -106.48
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -161.12,
+                            "rotationY": -13.3,
+                            "rotationZ": 183.08,
+                            "offsetX": -1.865,
+                            "offsetY": -0.321,
+                            "offsetZ": -0.139
+                        }
+                    }
+                },
+                {
+                    "frame": 18,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.59,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 21.91
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.57,
+                            "rotationY": 0.0,
+                            "rotationZ": -45.97
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 74.56
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.2,
+                            "rotationY": 0.0,
+                            "rotationZ": -47.38
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 67.66
+                        },
+                        "UpperArmR": {
+                            "rotationX": 19.13,
+                            "rotationY": 6.46,
+                            "rotationZ": -8.47,
+                            "offsetX": -1.961,
+                            "offsetY": -2.217,
+                            "offsetZ": 1.114
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -71.85
+                        },
+                        "UpperArmL": {
+                            "rotationX": -35.09,
+                            "rotationY": -53.31,
+                            "rotationZ": -50.36,
+                            "offsetX": -0.535,
+                            "offsetY": -3.08,
+                            "offsetZ": 0.478
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -98.49
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -162.32,
+                            "rotationY": -8.95,
+                            "rotationZ": 187.52,
+                            "offsetX": -3.399,
+                            "offsetY": -0.903,
+                            "offsetZ": -0.056
+                        }
+                    }
+                },
+                {
+                    "frame": 20,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.87,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 24.0
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.7,
+                            "rotationY": 0.0,
+                            "rotationZ": -48.45
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 78.35
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.26,
+                            "rotationY": 0.0,
+                            "rotationZ": -50.17
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 71.8
+                        },
+                        "UpperArmR": {
+                            "rotationX": 23.06,
+                            "rotationY": 2.18,
+                            "rotationZ": -10.87,
+                            "offsetX": -1.883,
+                            "offsetY": -2.143,
+                            "offsetZ": 1.364
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -66.04
+                        },
+                        "UpperArmL": {
+                            "rotationX": -36.19,
+                            "rotationY": -54.51,
+                            "rotationZ": -58.09,
+                            "offsetX": -0.198,
+                            "offsetY": -3.096,
+                            "offsetZ": 0.613
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -91.71
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -163.9,
+                            "rotationY": -7.31,
+                            "rotationZ": 191.67,
+                            "offsetX": -4.681,
+                            "offsetY": -1.388,
+                            "offsetZ": 0.011
+                        }
+                    }
+                },
+                {
+                    "frame": 22,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.99,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 24.96
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.76,
+                            "rotationY": 0.0,
+                            "rotationZ": -49.57
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 80.04
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.28,
+                            "rotationY": 0.0,
+                            "rotationZ": -51.42
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 73.64
+                        },
+                        "UpperArmR": {
+                            "rotationX": 27.25,
+                            "rotationY": 3.04,
+                            "rotationZ": -12.11,
+                            "offsetX": -1.916,
+                            "offsetY": -2.052,
+                            "offsetZ": 1.454
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -62.87
+                        },
+                        "UpperArmL": {
+                            "rotationX": -36.59,
+                            "rotationY": -54.94,
+                            "rotationZ": -61.6,
+                            "offsetX": -0.042,
+                            "offsetY": -3.09,
+                            "offsetZ": 0.673
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -88.31
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -162.61,
+                            "rotationY": -3.37,
+                            "rotationZ": 193.45,
+                            "offsetX": -5.327,
+                            "offsetY": -1.626,
+                            "offsetZ": 0.037
+                        }
+                    }
+                },
+                {
+                    "frame": 24,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.95,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 24.63
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.74,
+                            "rotationY": 0.0,
+                            "rotationZ": -49.19
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 79.47
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.27,
+                            "rotationY": 0.0,
+                            "rotationZ": -51.0
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 73.02
+                        },
+                        "UpperArmR": {
+                            "rotationX": 15.32,
+                            "rotationY": -2.72,
+                            "rotationZ": -13.86,
+                            "offsetX": -1.668,
+                            "offsetY": -2.383,
+                            "offsetZ": 1.241
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -62.12
+                        },
+                        "UpperArmL": {
+                            "rotationX": -37.76,
+                            "rotationY": -54.59,
+                            "rotationZ": -61.37,
+                            "offsetX": -0.095,
+                            "offsetY": -3.099,
+                            "offsetZ": 0.62
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -89.48
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -170.57,
+                            "rotationY": -8.4,
+                            "rotationZ": 194.13,
+                            "offsetX": 1.652,
+                            "offsetY": 1.175,
+                            "offsetZ": -0.198
+                        }
+                    }
+                },
+                {
+                    "frame": 26,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.74,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 23.07
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.64,
+                            "rotationY": 0.0,
+                            "rotationZ": -47.37
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 76.7
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.23,
+                            "rotationY": 0.0,
+                            "rotationZ": -48.95
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 70.0
+                        },
+                        "UpperArmR": {
+                            "rotationX": -0.69,
+                            "rotationY": -5.21,
+                            "rotationZ": -13.86,
+                            "offsetX": -1.569,
+                            "offsetY": -2.658,
+                            "offsetZ": 0.687
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -65.25
+                        },
+                        "UpperArmL": {
+                            "rotationX": -37.96,
+                            "rotationY": -53.71,
+                            "rotationZ": -56.28,
+                            "offsetX": -0.351,
+                            "offsetY": -3.103,
+                            "offsetZ": 0.499
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -94.8
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -178.26,
+                            "rotationY": -13.2,
+                            "rotationZ": 190.92,
+                            "offsetX": 10.813,
+                            "offsetY": 4.835,
+                            "offsetZ": -0.519
+                        }
+                    }
+                },
+                {
+                    "frame": 28,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.41,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 20.55
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.49,
+                            "rotationY": 0.0,
+                            "rotationZ": -44.3
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 72.0
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.17,
+                            "rotationY": 0.0,
+                            "rotationZ": -45.48
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 64.82
+                        },
+                        "UpperArmR": {
+                            "rotationX": 0.8,
+                            "rotationY": 13.55,
+                            "rotationZ": -11.72,
+                            "offsetX": -1.693,
+                            "offsetY": -2.667,
+                            "offsetZ": 0.15
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -69.33
+                        },
+                        "UpperArmL": {
+                            "rotationX": -38.88,
+                            "rotationY": -51.78,
+                            "rotationZ": -48.35,
+                            "offsetX": -0.772,
+                            "offsetY": -3.055,
+                            "offsetZ": 0.268
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -102.49
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -168.39,
+                            "rotationY": 3.74,
+                            "rotationZ": 189.15,
+                            "offsetX": 17.255,
+                            "offsetY": 7.429,
+                            "offsetZ": -0.762
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "op": "add",
+        "file": "game:shapes/entity/humanoid/seraph-faceless.json",
+        "path": "/animations/-",
+        "value": {
+            "name": "roughseas-barkcanoe-pole-backward-fp",
+            "code": "roughseas-barkcanoe-pole-backward-fp",
+            "quantityframes": 30,
+            "onActivityStopped": "EaseOut",
+            "onAnimationEnd": "Repeat",
+            "keyframes": [
+                {
+                    "frame": 0,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.0,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 17.5
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.32,
+                            "rotationY": 0.0,
+                            "rotationZ": -40.36
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 65.89
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.11,
+                            "rotationY": 0.0,
+                            "rotationZ": -40.94
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 57.92
+                        },
+                        "UpperArmR": {
+                            "rotationX": 20.78,
+                            "rotationY": 39.23,
+                            "rotationZ": -21.76,
+                            "offsetX": -1.581,
+                            "offsetY": -2.738,
+                            "offsetZ": 0.074
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -71.53
+                        },
+                        "UpperArmL": {
+                            "rotationX": -59.66,
+                            "rotationY": -45.72,
+                            "rotationZ": -49.84,
+                            "offsetX": -1.454,
+                            "offsetY": -2.759,
+                            "offsetZ": -0.525
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -110.2
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -144.47,
+                            "rotationY": 26.39,
+                            "rotationZ": 179.96,
+                            "offsetX": 19.002,
+                            "offsetY": 8.159,
+                            "offsetZ": -0.863
+                        }
+                    }
+                },
+                {
+                    "frame": 2,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.59,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 14.45
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.16,
+                            "rotationY": 0.0,
+                            "rotationZ": -36.06
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 59.13
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.06,
+                            "rotationY": 0.0,
+                            "rotationZ": -35.82
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 50.01
+                        },
+                        "UpperArmR": {
+                            "rotationX": 3.41,
+                            "rotationY": 23.55,
+                            "rotationZ": -2.04,
+                            "offsetX": -1.928,
+                            "offsetY": -2.505,
+                            "offsetZ": 0.073
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -92.83
+                        },
+                        "UpperArmL": {
+                            "rotationX": -77.04,
+                            "rotationY": -39.66,
+                            "rotationZ": -71.54,
+                            "offsetX": -1.035,
+                            "offsetY": -2.761,
+                            "offsetZ": -1.142
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -103.44
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -161.67,
+                            "rotationY": 12.95,
+                            "rotationZ": 171.55,
+                            "offsetX": 15.065,
+                            "offsetY": 6.438,
+                            "offsetZ": -0.675
+                        }
+                    }
+                },
+                {
+                    "frame": 4,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.26,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 11.93
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.05,
+                            "rotationY": 0.0,
+                            "rotationZ": -32.1
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 52.85
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.03,
+                            "rotationY": 0.0,
+                            "rotationZ": -30.85
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 42.21
+                        },
+                        "UpperArmR": {
+                            "rotationX": 27.87,
+                            "rotationY": 21.81,
+                            "rotationZ": 0.38,
+                            "offsetX": -2.248,
+                            "offsetY": -1.892,
+                            "offsetZ": 1.169
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -118.48
+                        },
+                        "UpperArmL": {
+                            "rotationX": -72.79,
+                            "rotationY": -43.64,
+                            "rotationZ": -78.47,
+                            "offsetX": -0.496,
+                            "offsetY": -2.942,
+                            "offsetZ": -1.047
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -94.54
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -148.36,
+                            "rotationY": 32.8,
+                            "rotationZ": 144.02,
+                            "offsetX": 6.766,
+                            "offsetY": 2.985,
+                            "offsetZ": -0.325
+                        }
+                    }
+                },
+                {
+                    "frame": 6,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.05,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 10.37
+                        },
+                        "UpperFootR": {
+                            "rotationX": 6.99,
+                            "rotationY": 0.0,
+                            "rotationZ": -29.4
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 48.52
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.02,
+                            "rotationY": 0.0,
+                            "rotationZ": -27.19
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 36.41
+                        },
+                        "UpperArmR": {
+                            "rotationX": 29.47,
+                            "rotationY": 17.3,
+                            "rotationZ": 2.4,
+                            "offsetX": -2.164,
+                            "offsetY": -1.813,
+                            "offsetZ": 1.424
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -117.02
+                        },
+                        "UpperArmL": {
+                            "rotationX": -70.78,
+                            "rotationY": -54.18,
+                            "rotationZ": -78.01,
+                            "offsetX": -0.458,
+                            "offsetY": -3.078,
+                            "offsetZ": -0.565
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -72.43
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -151.01,
+                            "rotationY": 41.26,
+                            "rotationZ": 142.63,
+                            "offsetX": -1.006,
+                            "offsetY": -0.157,
+                            "offsetZ": 0.037
+                        }
+                    }
+                },
+                {
+                    "frame": 8,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.01,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 10.04
+                        },
+                        "UpperFootR": {
+                            "rotationX": 6.97,
+                            "rotationY": 0.0,
+                            "rotationZ": -28.8
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 47.56
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.02,
+                            "rotationY": 0.0,
+                            "rotationZ": -26.34
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 35.04
+                        },
+                        "UpperArmR": {
+                            "rotationX": 28.74,
+                            "rotationY": 15.76,
+                            "rotationZ": 2.77,
+                            "offsetX": -2.121,
+                            "offsetY": -1.839,
+                            "offsetZ": 1.456
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -116.63
+                        },
+                        "UpperArmL": {
+                            "rotationX": -70.69,
+                            "rotationY": -55.72,
+                            "rotationZ": -77.16,
+                            "offsetX": -0.502,
+                            "offsetY": -3.082,
+                            "offsetZ": -0.5
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -66.87
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -151.58,
+                            "rotationY": 44.63,
+                            "rotationZ": 141.86,
+                            "offsetX": -3.544,
+                            "offsetY": -1.183,
+                            "offsetZ": 0.155
+                        }
+                    }
+                },
+                {
+                    "frame": 10,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.13,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 11.0
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.01,
+                            "rotationY": 0.0,
+                            "rotationZ": -30.53
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 50.34
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.02,
+                            "rotationY": 0.0,
+                            "rotationZ": -28.76
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 38.91
+                        },
+                        "UpperArmR": {
+                            "rotationX": 25.17,
+                            "rotationY": 17.29,
+                            "rotationZ": 1.86,
+                            "offsetX": -2.145,
+                            "offsetY": -1.96,
+                            "offsetZ": 1.249
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -117.7
+                        },
+                        "UpperArmL": {
+                            "rotationX": -71.81,
+                            "rotationY": -55.09,
+                            "rotationZ": -73.53,
+                            "offsetX": -0.755,
+                            "offsetY": -3.032,
+                            "offsetZ": -0.487
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -70.06
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -150.68,
+                            "rotationY": 41.84,
+                            "rotationZ": 142.03,
+                            "offsetX": -3.695,
+                            "offsetY": -1.241,
+                            "offsetZ": 0.144
+                        }
+                    }
+                },
+                {
+                    "frame": 12,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.41,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 13.09
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.1,
+                            "rotationY": 0.0,
+                            "rotationZ": -33.98
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 55.84
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.04,
+                            "rotationY": 0.0,
+                            "rotationZ": -33.26
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 46.0
+                        },
+                        "UpperArmR": {
+                            "rotationX": 17.22,
+                            "rotationY": 21.13,
+                            "rotationZ": -0.13,
+                            "offsetX": -2.144,
+                            "offsetY": -2.198,
+                            "offsetZ": 0.757
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -119.12
+                        },
+                        "UpperArmL": {
+                            "rotationX": -65.23,
+                            "rotationY": -54.58,
+                            "rotationZ": -59.23,
+                            "offsetX": -1.209,
+                            "offsetY": -2.9,
+                            "offsetZ": -0.357
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -75.63
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -149.69,
+                            "rotationY": 35.69,
+                            "rotationZ": 143.66,
+                            "offsetX": -4.14,
+                            "offsetY": -1.411,
+                            "offsetZ": 0.121
+                        }
+                    }
+                },
+                {
+                    "frame": 14,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -0.79,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 15.94
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.24,
+                            "rotationY": 0.0,
+                            "rotationZ": -38.21
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 62.53
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.08,
+                            "rotationY": 0.0,
+                            "rotationZ": -38.41
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 54.04
+                        },
+                        "UpperArmR": {
+                            "rotationX": 5.25,
+                            "rotationY": 26.6,
+                            "rotationZ": -2.29,
+                            "offsetX": -2.01,
+                            "offsetY": -2.441,
+                            "offsetZ": 0.017
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -118.99
+                        },
+                        "UpperArmL": {
+                            "rotationX": -61.18,
+                            "rotationY": -51.93,
+                            "rotationZ": -44.9,
+                            "offsetX": -1.756,
+                            "offsetY": -2.612,
+                            "offsetZ": -0.304
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -80.49
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -150.64,
+                            "rotationY": 27.16,
+                            "rotationZ": 148.01,
+                            "offsetX": -5.038,
+                            "offsetY": -1.755,
+                            "offsetZ": 0.113
+                        }
+                    }
+                },
+                {
+                    "frame": 16,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.21,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -33.34,
+                            "rotationZ": 19.06
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.4,
+                            "rotationY": 0.0,
+                            "rotationZ": -42.41
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 69.08
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.14,
+                            "rotationY": 0.0,
+                            "rotationZ": -43.32
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 61.55
+                        },
+                        "UpperArmR": {
+                            "rotationX": 4.54,
+                            "rotationY": 28.55,
+                            "rotationZ": -0.02,
+                            "offsetX": -2.099,
+                            "offsetY": -2.339,
+                            "offsetZ": -0.355
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -120.22
+                        },
+                        "UpperArmL": {
+                            "rotationX": -37.23,
+                            "rotationY": -43.11,
+                            "rotationZ": -28.79,
+                            "offsetX": -1.83,
+                            "offsetY": -2.564,
+                            "offsetZ": -0.272
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -79.26
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -141.03,
+                            "rotationY": 30.38,
+                            "rotationZ": 154.83,
+                            "offsetX": -6.444,
+                            "offsetY": -2.248,
+                            "offsetZ": 0.13
+                        }
+                    }
+                },
+                {
+                    "frame": 18,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.59,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -22.51,
+                            "rotationZ": 21.91
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.57,
+                            "rotationY": 0.0,
+                            "rotationZ": -45.97
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 74.56
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.2,
+                            "rotationY": 0.0,
+                            "rotationZ": -47.38
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 67.66
+                        },
+                        "UpperArmR": {
+                            "rotationX": 4.85,
+                            "rotationY": 28.59,
+                            "rotationZ": -0.87,
+                            "offsetX": -2.04,
+                            "offsetY": -2.346,
+                            "offsetZ": -0.579
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -119.33
+                        },
+                        "UpperArmL": {
+                            "rotationX": -8.17,
+                            "rotationY": -24.69,
+                            "rotationZ": -20.52,
+                            "offsetX": -1.528,
+                            "offsetY": -2.759,
+                            "offsetZ": -0.234
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -75.34
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -133.06,
+                            "rotationY": 35.01,
+                            "rotationZ": 160.04,
+                            "offsetX": -8.016,
+                            "offsetY": -2.806,
+                            "offsetZ": 0.183
+                        }
+                    }
+                },
+                {
+                    "frame": 20,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.87,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -15.61,
+                            "rotationZ": 24.0
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.7,
+                            "rotationY": 0.0,
+                            "rotationZ": -48.45
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 78.35
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.26,
+                            "rotationY": 0.0,
+                            "rotationZ": -50.17
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 71.8
+                        },
+                        "UpperArmR": {
+                            "rotationX": 4.88,
+                            "rotationY": 27.76,
+                            "rotationZ": -3.52,
+                            "offsetX": -1.916,
+                            "offsetY": -2.418,
+                            "offsetZ": -0.694
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -117.38
+                        },
+                        "UpperArmL": {
+                            "rotationX": -17.02,
+                            "rotationY": -25.63,
+                            "rotationZ": -29.42,
+                            "offsetX": -1.414,
+                            "offsetY": -2.771,
+                            "offsetZ": -0.568
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -71.13
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -128.72,
+                            "rotationY": 38.2,
+                            "rotationZ": 163.04,
+                            "offsetX": -9.309,
+                            "offsetY": -3.279,
+                            "offsetZ": 0.235
+                        }
+                    }
+                },
+                {
+                    "frame": 22,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.99,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -12.74,
+                            "rotationZ": 24.96
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.76,
+                            "rotationY": 0.0,
+                            "rotationZ": -49.57
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 80.04
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.28,
+                            "rotationY": 0.0,
+                            "rotationZ": -51.42
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 73.64
+                        },
+                        "UpperArmR": {
+                            "rotationX": 2.89,
+                            "rotationY": 26.44,
+                            "rotationZ": -4.77,
+                            "offsetX": -1.832,
+                            "offsetY": -2.454,
+                            "offsetZ": -0.79
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -116.17
+                        },
+                        "UpperArmL": {
+                            "rotationX": -21.03,
+                            "rotationY": -25.53,
+                            "rotationZ": -33.75,
+                            "offsetX": -1.352,
+                            "offsetY": -2.767,
+                            "offsetZ": -0.716
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -68.81
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -129.05,
+                            "rotationY": 38.43,
+                            "rotationZ": 165.01,
+                            "offsetX": -9.947,
+                            "offsetY": -3.521,
+                            "offsetZ": 0.268
+                        }
+                    }
+                },
+                {
+                    "frame": 24,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.95,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -17.71,
+                            "rotationZ": 24.63
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.74,
+                            "rotationY": 0.0,
+                            "rotationZ": -49.19
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 79.47
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.27,
+                            "rotationY": 0.0,
+                            "rotationZ": -51.0
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 73.02
+                        },
+                        "UpperArmR": {
+                            "rotationX": 12.49,
+                            "rotationY": 32.46,
+                            "rotationZ": -9.81,
+                            "offsetX": -1.809,
+                            "offsetY": -2.533,
+                            "offsetZ": -0.557
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -115.25
+                        },
+                        "UpperArmL": {
+                            "rotationX": -8.77,
+                            "rotationY": -26.0,
+                            "rotationZ": -23.88,
+                            "offsetX": -1.514,
+                            "offsetY": -2.768,
+                            "offsetZ": -0.22
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -77.17
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -121.23,
+                            "rotationY": 31.98,
+                            "rotationZ": 160.12,
+                            "offsetX": -2.512,
+                            "offsetY": -0.517,
+                            "offsetZ": -0.091
+                        }
+                    }
+                },
+                {
+                    "frame": 26,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.74,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -30.87,
+                            "rotationZ": 23.07
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.64,
+                            "rotationY": 0.0,
+                            "rotationZ": -47.37
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 76.7
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.23,
+                            "rotationY": 0.0,
+                            "rotationZ": -48.95
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 70.0
+                        },
+                        "UpperArmR": {
+                            "rotationX": 24.6,
+                            "rotationY": 40.35,
+                            "rotationZ": -19.28,
+                            "offsetX": -1.788,
+                            "offsetY": -2.595,
+                            "offsetZ": -0.265
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -114.1
+                        },
+                        "UpperArmL": {
+                            "rotationX": -41.75,
+                            "rotationY": -44.57,
+                            "rotationZ": -31.67,
+                            "offsetX": -1.971,
+                            "offsetY": -2.47,
+                            "offsetZ": -0.124
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -108.63
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -119.91,
+                            "rotationY": 20.07,
+                            "rotationZ": 154.78,
+                            "offsetX": 8.329,
+                            "offsetY": 3.82,
+                            "offsetZ": -0.588
+                        }
+                    }
+                },
+                {
+                    "frame": 28,
+                    "elements": {
+                        "LowerTorso": {
+                            "offsetX": 0,
+                            "offsetY": -1.41,
+                            "offsetZ": 0,
+                            "rotationX": 0,
+                            "rotationY": -45,
+                            "rotationZ": 0
+                        },
+                        "UpperTorso": {
+                            "rotationX": 0,
+                            "rotationY": -39.16,
+                            "rotationZ": 20.55
+                        },
+                        "UpperFootR": {
+                            "rotationX": 7.49,
+                            "rotationY": 0.0,
+                            "rotationZ": -44.3
+                        },
+                        "LowerFootR": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 72.0
+                        },
+                        "UpperFootL": {
+                            "rotationX": -4.17,
+                            "rotationY": 0.0,
+                            "rotationZ": -45.48
+                        },
+                        "LowerFootL": {
+                            "rotationX": 0.0,
+                            "rotationY": 0,
+                            "rotationZ": 64.82
+                        },
+                        "UpperArmR": {
+                            "rotationX": 47.74,
+                            "rotationY": 47.4,
+                            "rotationZ": -38.63,
+                            "offsetX": -1.694,
+                            "offsetY": -2.667,
+                            "offsetZ": 0.136
+                        },
+                        "LowerArmR": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -86.18
+                        },
+                        "UpperArmL": {
+                            "rotationX": -55.71,
+                            "rotationY": -45.41,
+                            "rotationZ": -41.1,
+                            "offsetX": -1.855,
+                            "offsetY": -2.536,
+                            "offsetZ": -0.356
+                        },
+                        "LowerArmL": {
+                            "rotationX": 0,
+                            "rotationY": 0,
+                            "rotationZ": -112.75
+                        },
+                        "ItemAnchor": {
+                            "rotationX": -114.53,
+                            "rotationY": 33.87,
+                            "rotationZ": 158.72,
+                            "offsetX": 16.48,
+                            "offsetY": 7.163,
+                            "offsetZ": -0.832
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "op": "add",
         "file": "game:entities/humanoid/player.json",
         "path": "/client/animations/-",
         "side": "Server",
@@ -7163,6 +9437,126 @@
         "value": {
             "code": "roughseas-barkcanoe-pole-backward",
             "animation": "roughseas-barkcanoe-pole-backward",
+            "animationSpeed": 0.25,
+            "blendMode": "Average",
+            "easeInSpeed": 4,
+            "easeOutSpeed": 4,
+            "elementWeight": {
+                "ItemAnchor": 10000,
+                "LowerArmL": 10000,
+                "LowerArmR": 10000,
+                "LowerFootL": 10000,
+                "LowerFootR": 10000,
+                "LowerTorso": 10000,
+                "UpperArmL": 10000,
+                "UpperArmR": 10000,
+                "UpperFootL": 10000,
+                "UpperFootR": 10000,
+                "UpperTorso": 10000
+            },
+            "elementBlendMode": {
+                "ItemAnchor": "Average",
+                "LowerArmL": "Average",
+                "LowerArmR": "Average",
+                "LowerFootL": "Average",
+                "LowerFootR": "Average",
+                "LowerTorso": "Average",
+                "UpperArmL": "Average",
+                "UpperArmR": "Average",
+                "UpperFootL": "Average",
+                "UpperFootR": "Average",
+                "UpperTorso": "Average"
+            }
+        }
+    },
+    {
+        "op": "add",
+        "file": "game:entities/humanoid/player.json",
+        "path": "/client/animations/-",
+        "side": "Server",
+        "value": {
+            "code": "roughseas-barkcanoe-pole-ready-fp",
+            "animation": "roughseas-barkcanoe-pole-ready-fp",
+            "animationSpeed": 0.25,
+            "blendMode": "Average",
+            "easeInSpeed": 4,
+            "easeOutSpeed": 4,
+            "elementWeight": {
+                "ItemAnchor": 10000,
+                "LowerArmL": 10000,
+                "LowerArmR": 10000,
+                "LowerFootL": 10000,
+                "LowerFootR": 10000,
+                "LowerTorso": 10000,
+                "UpperArmL": 10000,
+                "UpperArmR": 10000,
+                "UpperFootL": 10000,
+                "UpperFootR": 10000,
+                "UpperTorso": 10000
+            },
+            "elementBlendMode": {
+                "ItemAnchor": "Average",
+                "LowerArmL": "Average",
+                "LowerArmR": "Average",
+                "LowerFootL": "Average",
+                "LowerFootR": "Average",
+                "LowerTorso": "Average",
+                "UpperArmL": "Average",
+                "UpperArmR": "Average",
+                "UpperFootL": "Average",
+                "UpperFootR": "Average",
+                "UpperTorso": "Average"
+            }
+        }
+    },
+    {
+        "op": "add",
+        "file": "game:entities/humanoid/player.json",
+        "path": "/client/animations/-",
+        "side": "Server",
+        "value": {
+            "code": "roughseas-barkcanoe-pole-forward-fp",
+            "animation": "roughseas-barkcanoe-pole-forward-fp",
+            "animationSpeed": 0.25,
+            "blendMode": "Average",
+            "easeInSpeed": 4,
+            "easeOutSpeed": 4,
+            "elementWeight": {
+                "ItemAnchor": 10000,
+                "LowerArmL": 10000,
+                "LowerArmR": 10000,
+                "LowerFootL": 10000,
+                "LowerFootR": 10000,
+                "LowerTorso": 10000,
+                "UpperArmL": 10000,
+                "UpperArmR": 10000,
+                "UpperFootL": 10000,
+                "UpperFootR": 10000,
+                "UpperTorso": 10000
+            },
+            "elementBlendMode": {
+                "ItemAnchor": "Average",
+                "LowerArmL": "Average",
+                "LowerArmR": "Average",
+                "LowerFootL": "Average",
+                "LowerFootR": "Average",
+                "LowerTorso": "Average",
+                "UpperArmL": "Average",
+                "UpperArmR": "Average",
+                "UpperFootL": "Average",
+                "UpperFootR": "Average",
+                "UpperTorso": "Average"
+            }
+        }
+    },
+    {
+        "op": "add",
+        "file": "game:entities/humanoid/player.json",
+        "path": "/client/animations/-",
+        "side": "Server",
+        "value": {
+            "code": "roughseas-barkcanoe-pole-backward-fp",
+            "animation": "roughseas-barkcanoe-pole-backward-fp",
             "animationSpeed": 0.25,
             "blendMode": "Average",
             "easeInSpeed": 4,

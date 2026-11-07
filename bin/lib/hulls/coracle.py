@@ -7,6 +7,7 @@ from fit import APART, Oval
 from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, ROPE_METRES, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from held import SCULL_REACH_METRES, worked_from_middle, PADDLE, poling, sculling, tools, waterline_metres
 from stroke import player_patch, seat
+import piles
 import units
 from entity import merged, record
 from shape import BILGE, Shape, bilge_levels, hull_box, windage, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
@@ -110,6 +111,22 @@ def laths():
             ends = [(CENTRE - reach, flat, CENTRE + offset), (CENTRE + reach, flat, CENTRE + offset)] if along == "x" \
                 else [(CENTRE + offset, flat, CENTRE - reach), (CENTRE + offset, flat, CENTRE + reach)]
             pieces.append((ends, points))
+    return pieces
+
+
+def lying(metres):
+    """Laths ``metres`` long laid where her flat lattice's lie, as boxes in the order her build lays them: whole, before
+    binding cuts them to her bowl."""
+    reach = units.voxels(metres) / 2
+    pieces = []
+    for (a, b), _ in laths():
+        along = 0 if a[2] == b[2] else 2
+        lower, upper = list(a), list(a)
+        across = 2 - along
+        lower[along], upper[along] = CENTRE - reach, CENTRE + reach
+        lower[across], upper[across] = a[across] - LATH_WIDTH / 2, a[across] + LATH_WIDTH / 2
+        lower[1], upper[1] = a[1] - LATH_THICKNESS / 2, a[1] + LATH_THICKNESS / 2
+        pieces.append((tuple(lower), tuple(upper)))
     return pieces
 
 
@@ -303,9 +320,8 @@ def build(path_):
     shape.keep("FrontSeat", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
-    layout = {"along": LATHS, "across": LATHS, **units.both("alongSpacing", units.metres(ALONG_SPACING)),
-              **units.both("acrossSpacing", units.metres(ACROSS_SPACING))}
-    record("coracle", merged(report(flat, gunwale, hide_area(pieces), windage([hide], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"layout": layout}}}))
+    start = {"laths": 2 * LATHS, "metres": math.ceil(max(piece["metres"] for piece in flat["children"]))}
+    record("coracle", merged(report(flat, gunwale, hide_area(pieces), windage([hide], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"start": start}}}))
     at = seat(shape, "FrontSeat")
     record("coracle", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, SCULL_REACH_METRES, ahead=True)}})
     water_metres = waterline_metres("coracle")
@@ -316,6 +332,10 @@ def build(path_):
         "paddle": ("sculling", PADDLE, sculling(PADDLE, at, 6.5, 5, 2.5)),
         "pole": pole,
     }, ("Cover",)))
+
+    piles.lattice(lying(start["metres"]), LATH_THICKNESS)
+    for metres in (3, 4, 5):
+        piles.long(metres, LATH_WIDTH, LATH_THICKNESS)
 
     back = Path(path_).with_name("coracle-back.json")
     worn = json.loads(back.read_text())

@@ -31,7 +31,7 @@ Configure each one in your entity's `behaviorConfigs` under its code, as vanilla
 
 They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, and `mooring` and `currentdrift` on the server. `vesselintegrity` and `currentdrift` also work alone.
 
-`vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`, so that a right-click with mending material mends the hull rather than seating the player.
+`vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`.
 
 Every key may carry a `sources` entry beside it, text about where each number came from. Our code doesn't read it; we keep a real-world source for every number there, and so can you.
 
@@ -53,8 +53,8 @@ Our [coracle](Coracle), its sources, its build, its frame and the voxel twins of
         "seep": { "litresPerHourASeam": 13, "greaseDays": 2.5 },
         "cover": { "hides": { "prepared": 2 }, "seams": 0 },
         "repairs": [
-            { "material": { "type": "item", "code": "game:hide-prepared-small", "stacksize": 1 }, "restores": 0.67, "saturation": 40 },
-            { "material": { "type": "item", "code": "game:fat-rendered", "stacksize": 1 }, "restores": 0.5, "saturation": 20, "greases": true }
+            { "material": { "type": "item", "code": "game:hide-prepared-small", "stacksize": 1 }, "restores": 0.67, "saturation": 40, "seconds": 20 },
+            { "material": { "type": "item", "code": "game:fat-rendered", "stacksize": 1 }, "restores": 0.5, "saturation": 20, "greases": true, "seconds": 10 }
         ],
         "wreckage": [{ "type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": { "avg": 3, "var": 2 } }],
         "damage": { "material": "hide" }
@@ -101,7 +101,7 @@ What it writes, each object's comment line giving the full list:
 - **The bilge**: `capacityLitres`, `deckSquareMetres` and `levelHeightsMetres`.
 - **The sea**: `windageSquareMetres`, its side above the water with one aboard; `mastMetres`, its masthead's height; the outrigger's `beamMetres`, across hull and float.
 - **Driving it**: `sweepMetres`, `paddleAbeamMetres` (from its middle), `finSquareMetres` (a float's side below the water), `oars`' `spanMetres` and `bladeSquareMetres`, and the `pole`'s `handsAboveWaterMetres`, `plantAheadMetres`, `plantAsternMetres`, `plantAcrossMetres`, `drawnPoleMetres`, `drawnBedMetres` and `stance.riderOffset`.
-- **The build**: `roughseas:burnout`'s measures, `roughseas:framing`'s `trunkBlocks`, `roughseas:rigging`'s `floatLogs`, `floatLengthMetres`, `floatOffMetres`, `floorMetres` and each stage's `raisesMetres` and `raisesLitres`, and `roughseas:covering`'s `layout` and `overturnedPivotVoxels`.
+- **The build**: `roughseas:burnout`'s measures, `roughseas:framing`'s `trunkBlocks`, `roughseas:rigging`'s `floatLogs`, `floatLengthMetres`, `floatOffMetres`, `floorMetres` and each stage's `raisesMetres` and `raisesLitres`, and `roughseas:covering`'s `start` and `overturnedPivotVoxels`.
 
 **Units.** A length, an area or a volume is written twice: in metres, square metres or litres, and beside it in the shape's voxels, the key ending `Voxels`, `SquareVoxels` or `CubicVoxels` in place of `Metres`, `SquareMetres` or `Litres`: `depthMetres` and `depthVoxels`, `capacityLitres` and `capacityCubicVoxels`. The mod reads the metres; the voxels let you check a number against the model. Only `overturnedPivotVoxels`, a point on the shape, is read in voxels. A metre is 16 voxels, set once in `RoughSeas/Units/voxel.json`; `RoughSeas.Units.Voxels` converts.
 
@@ -222,11 +222,13 @@ The vessel is then laid stage by stage, in the order of `stages`, each piece hel
 - `pole`: a pole, split from such a row. Like laths, the first makes the frame of its wood.
 - `hide`: a hide of one of `hideStates`, which covers as many of the stage's pieces as small hides it is worth (small 1, medium 2, large 3, huge 5) and is held on it as many times `seconds`.
 - `rope`: vanilla's rope, one at a time. A rope held on the vessel lashes it rather than tying itself to it (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until its lashing is done. A hold kept on past its last lashing ties nothing; a fresh click ties it as vanilla does.
-- `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
+- `pitch`: hot pitch from any liquid container, or from the cooking pot it was cooked in, `litres` a piece; the pot is emptied with its last portion. Pitch that has set is refused.
 - `hew`: any axe, which loses a point of durability a piece.
 - `cut`: any knife, which loses a point of durability a cut. Vanilla's knife handles its own held step and release, so a Harmony prefix on `ItemKnife.OnHeldInteractStep` and `OnHeldInteractStop` hands them to the build while the vessel wants a cut.
 - `cloth`: a piece of cloth.
 - `plank`: a plank, `planks` the item code.
+
+While a hold does work, the holder works with both hands, vanilla's player animation `knifescrape`, as on a hide scraped on the ground; it stops when they let go or the piece is refused. An axe's hewing and driving keep their own swings.
 
 Every piece of a `lath` or `pole` stage takes one at least as long as it, cut down; a shorter one is refused. The shape names each piece's length: its builder writes `"metres"` on the piece's group, measured along the run its frame texture draws (`stages()` in `bin/lib/hulls/shape.py` does it), and an item's length is its `length` variant.
 
@@ -257,7 +259,7 @@ Every piece of a `lath` or `pole` stage takes one at least as long as it, cut do
 | `barkSeconds` | s | 0 | how long the knife takes the bark off |
 | `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
 
-At every stage it is a vessel: it floats and can be picked up, its build goes with it onto the item and back, and the item shows it as far as it is built, and it takes its seats only once finished. A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before the vessel's frame goes in, and a group `Skin`, the bark raised into the hull, one child a step: the behaviour shows the sheet until a piece is laid, then the step the vessel's `lifts` stage has reached. The group and each step carry `depthMetres`, how deep the vessel stands at it, keel to rim, as its builder measures it (the group's for the sheet): the vessel floats as deep as the step it shows. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as the vessel is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
+At every stage it is a vessel: it floats and can be picked up, its build goes with it onto the item and back, and the item shows it as far as it is built, and it takes its seats only once finished. Shift + right-click picks it up with an empty hand or holding a piece of its build, as any carried vessel. Every build, `roughseas:framing`, `covering`, `rigging` and `burnout` alike, answers from its next step: the interaction help, the line a look at the vessel shows, and, for a right-click that does no work (an empty hand, or an item no step takes), an in-game error `roughseas-build-step` naming the step and what it needs, such as "Lash it with rope (Crossings bound: 1 of 3 ropes)". A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before the vessel's frame goes in, and a group `Skin`, the bark raised into the hull, one child a step: the behaviour shows the sheet until a piece is laid, then the step the vessel's `lifts` stage has reached. The group and each step carry `depthMetres`, how deep the vessel stands at it, keel to rim, as its builder measures it (the group's for the sheet): the vessel floats as deep as the step it shows. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as the vessel is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
 
 ### Rigged in place
 
@@ -313,11 +315,11 @@ A block of class `roughseas:BlockBundles` is bundles lying where they were laid,
 
 `roughseas:covering` builds a hide boat the way coracles and currachs were really made: laths laid out on the ground, bound into its first frame where they lie, then framed and covered with hides. It is `roughseas:framing` begun that way, with the same `stages` and keys and no bark.
 
-A wet lath held with Shift on the ground lies there at its full length, centred where the player aims, along or across the way they face: our block `roughseas:lathbed` holds the laths whose middles lie in it, and Shift with an empty hand takes the nearest back. Rope held on laths that lie in one of the vessel's `layout`s, every one at least as long as the longest piece of its first stage, of one wood and wet, binds them, for its second stage's `seconds`: the laths are taken away and the entity of its code is laid there, centred on them, its first stage laid and its second begun. Laths that make no layout stay laths. Laths dry where they lie as in the hand. A dry lath held with Shift goes into vanilla's ground storage as a pile instead ([For modders](For-Modders#poles-and-laths-piled-on-the-ground)), and binding refuses it.
+Laths of every length, wet or dry, go down on the ground with Shift in vanilla's ground storage, as a pile ([For modders](For-Modders#poles-and-laths-piled-on-the-ground)). Rope held on a pile of exactly the vessel's `start`, so many wet laths of that length of one wood and nothing more, binds them, for its second stage's `seconds`: the pile is used up and the entity of its code is laid where it lay, along it, its first stage laid and its second begun, in the laths' wood. Any other pile stays a pile; a dry one of the right count is refused, saying the laths must be soaked. Vanilla's rope is ground-storable and would take a lath off the pile, so a Harmony prefix on `BlockEntityGroundStorage.OnPlayerInteractStart` hands rope's click on a pile it binds to the binding. Laths dry in the pile as in the hand.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
-| `layout` | object | none | how its first stage's laths are laid out: `{ "kind": "lattice", "along": 7, "across": 7 }`, so many laths along and across, each crossing every lath across it, spaced as its model draws them within `toleranceMetres` (`alongSpacingMetres`, `acrossSpacingMetres`; our coracle), or `{ "kind": "pair", "beamMetres": 1.075, "toleranceMetres": 0.0625 }`, two laths side by side at its beam, overlapping end for end within the tolerance (our currach) |
+| `start` | object | none | the one pile that starts it: `{ "laths": 14, "metres": 2 }`, the count of laths and their length (our coracle 14 of 2 m, our currach 2 of 5 m). Our builders write it. Draw the pile's first layer as the vessel's first stage, as `bin/lib/hulls/coracle.py` draws the 2 m pile's first layer as the coracle's flat lattice, so the blank appears with nothing moved |
 | `overturned` | bool | false | the vessel is built upside down, and is finished only once turned over: a right-click with an empty hand turns it, once every piece it needs is laid |
 | `overturnedPivotVoxels` | voxels | none | `[x, y, z]`, a point on its shape the line along its length it is turned about runs through, so that its gunwale lies on the ground; our builder writes it beside `overturnedPivotMetres`, the same point in metres, which the mod doesn't read |
 
@@ -348,7 +350,7 @@ A broad load cracks its place by its share of the capacity and breaks the hull u
 | `cover` | `{ "hides": { "prepared": 2 }, "seams": 0 }` on a cracking hull: the hides it is covered with, by their `type` and the small hides' worth of each, and its seams, when no build says otherwise. A cover rots and soaks afloat by its hides, from `config/vessels/hides.json` ([Seeping and soaking](Hull-Condition#seeping-and-soaking)); a hull built with `roughseas:covering` is covered with the hides sewn on it |
 | `soak` | `{ "kgPerDay", "dryKgPerDay", "rotShare", "saturationKg" }` on a reed hull: the water it takes up a day afloat, what it dries a day in full sun, the share of what dries that stays as rot, and the most it holds |
 | `runsRapids` | true if rapids don't strike it |
-| `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives) |
+| `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `seconds` (how long a patch is held on the hull, the real time of that work over sixty, as a build's pieces are), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives). Every material a vessel's `repairs` name carries our collectible behaviour `roughseas:framing`, which holds the patch on the hull as it holds a build's piece |
 | `wreckage` | what it leaves when it breaks up, as a block's drops |
 | `damage` | `material` (`wood`, `bark`, `reed` or `hide`), which picks the hull's [sounds](#sounds), and `textures`, the shape's textures that crack: for a hull whose shape draws no wounds, an overlay of `wood` or `reed` marks on each damaged place |
 
