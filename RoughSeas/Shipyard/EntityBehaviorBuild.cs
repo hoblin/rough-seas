@@ -133,7 +133,7 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
         Shipyard.Log(entity, "her build saved at data version {0} is brought up to {1}", tree.GetInt(VersionKey), version);
         upgrade(tree);
         tree.SetInt(VersionKey, version);
-        entity.WatchedAttributes.MarkPathDirty(TreeKey);
+        MarkDirty();
     }
 
     /// <summary>The element groups the stages not reached yet draw, and those the stages passed drew.</summary>
