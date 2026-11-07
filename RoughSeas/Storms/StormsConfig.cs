@@ -9,7 +9,6 @@ public class StormsConfig
     public BilgeConfig Bilge = new();
     public SwampingConfig Swamping = new();
     public ResponseConfig Response = new();
-    public DriveConfig Drive = new();
     public MooringConfig Mooring = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();

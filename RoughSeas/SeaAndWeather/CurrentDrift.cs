@@ -1,4 +1,3 @@
-using System;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
@@ -8,9 +7,6 @@ namespace RoughSeas.SeaAndWeather;
 public class CurrentDrift(Entity entity) : EntityBehavior(entity)
 {
     public const string Code = "roughseas:currentdrift";
-
-    private const double TicksPerSecond = 60;
-    private const double DragTicksPerSecond = 33;
 
     private SeaWeatherSystem sea = null!;
     private EntityBehaviorPassivePhysics? physics;
@@ -36,7 +32,7 @@ public class CurrentDrift(Entity entity) : EntityBehavior(entity)
         var pos = entity.Pos;
         var current = sea.CurrentAt(pos.X, pos.Z);
         // Added after each stretch of vanilla's water drag, so the drag pulls the motion towards the current, not to rest.
-        var carried = (1 - Math.Pow(physics.WaterDragValue, deltaTime * DragTicksPerSecond)) / TicksPerSecond;
+        var carried = (1 - WaterDrag.Kept(physics.WaterDragValue, deltaTime)) / WaterDrag.TicksPerSecond;
         pos.Motion.X += current.X * carried;
         pos.Motion.Z += current.Z * carried;
     }

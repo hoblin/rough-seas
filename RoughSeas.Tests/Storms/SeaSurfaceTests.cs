@@ -292,7 +292,7 @@ public class SeaSurfaceTests
         {
             var x = FarX + i * 3.1;
             var rise = surface.DisplacementAt(x, FarZ).Y;
-            var (alongX, acrossZ) = surface.OrbitalVelocityAt(x, FarZ);
+            var (alongX, acrossZ) = Orbital(surface, x, FarZ);
 
             Assert.Equal(frequency * rise * Math.Exp(number * rise), alongX, 9);
             Assert.Equal(0, acrossZ, 9);
@@ -305,8 +305,8 @@ public class SeaSurfaceTests
     {
         var (surface, number, _) = OneTrain(2);
         var x = FarX + 4;
-        var (atSurface, _) = surface.OrbitalVelocityAt(x, FarZ);
-        var (deeper, _) = surface.OrbitalVelocityAt(x, FarZ, depth: 3);
+        var (atSurface, _) = Orbital(surface, x, FarZ);
+        var (deeper, _) = Orbital(surface, x, FarZ, depth: 3);
 
         Assert.Equal(Math.Exp(-number * 3), deeper / atSurface, 9);
     }
@@ -317,9 +317,9 @@ public class SeaSurfaceTests
         var (surface, number, _) = OneTrain(2);
         var length = 2 * Math.PI / number;
         var x = FarX + 4;
-        var (alone, _) = surface.OrbitalVelocityAt(x, FarZ);
-        var (halfAWave, _) = surface.OrbitalVelocityAt(x, FarZ, side: length / 2);
-        var (wholeWave, _) = surface.OrbitalVelocityAt(x, FarZ, side: length);
+        var (alone, _) = Orbital(surface, x, FarZ);
+        var (halfAWave, _) = Orbital(surface, x, FarZ, side: length / 2);
+        var (wholeWave, _) = Orbital(surface, x, FarZ, side: length);
 
         Assert.Equal(2 / Math.PI, halfAWave / alone, 9);
         Assert.Equal(0, wholeWave, 9);
@@ -337,7 +337,7 @@ public class SeaSurfaceTests
         for (; seconds < 200 * period; seconds += Frame)
         {
             surface.Advance(seconds);
-            x += surface.OrbitalVelocityAt(x, FarZ).X * Frame;
+            x += Orbital(surface, x, FarZ).X * Frame;
         }
 
         // Stokes (1847): a^2 omega k a second along the waves' travel at the surface
@@ -353,8 +353,8 @@ public class SeaSurfaceTests
         for (var seconds = 0.0; seconds < 200 * period; seconds += Frame)
         {
             surface.Advance(seconds);
-            atSurface += surface.OrbitalVelocityAt(atSurface, FarZ).X * Frame;
-            deep += surface.OrbitalVelocityAt(deep, FarZ, depth: 2).X * Frame;
+            atSurface += Orbital(surface, atSurface, FarZ).X * Frame;
+            deep += Orbital(surface, deep, FarZ, depth: 2).X * Frame;
         }
 
         // held 2 m under the surface it rises and falls with the whole wave but sways with the water 2 m down:
@@ -362,19 +362,6 @@ public class SeaSurfaceTests
         var fade = Math.Exp(-number * 2);
         Assert.True(deep - FarX > 0, $"drifted {deep - FarX:F2} m");
         Assert.InRange((deep - FarX) / (atSurface - FarX), 0.95 * (fade * fade + fade) / 2, 1.05 * (fade * fade + fade) / 2);
-    }
-
-    [Fact]
-    public void ReadsASquareHullAtHeadingZeroAsTheSquare()
-    {
-        var (surface, _, _) = OneTrain(2);
-        for (var i = 0; i < 6; i++)
-        {
-            var x = FarX + i * 2.3;
-            var lift = surface.DisplacementAt(x, FarZ).Y;
-
-            Assert.Equal(surface.OrbitalVelocityAt(x, FarZ, side: 3).X, surface.HullVelocityAt(x, FarZ, lift, 0, -Math.PI / 2, 3, 3).X, 9);
-        }
     }
 
     [Fact]
@@ -407,29 +394,15 @@ public class SeaSurfaceTests
 
     private static double Sinc(double x) => Math.Sin(x) / x;
 
-    /// <summary>One train along +X, its length a whole step of the surface's stretch, settled at once.</summary>
+    /// <summary>The water's velocity under the drawn surface at a point, averaged over a square as wide as <paramref name="side"/>.</summary>
+    private static (double X, double Z) Orbital(SeaSurface surface, double x, double z, double depth = 0, double side = 0) =>
+        surface.HullVelocityAt(x, z, surface.DisplacementAt(x, z).Y - depth, 0, 0, side, side);
+
+    /// <summary>One train along +X, settled at once.</summary>
     private static (SeaSurface Surface, double Number, double Frequency) OneTrain(double height)
     {
-        var config = Fixtures.Config().Surface;
-        var single = new SurfaceConfig
-        {
-            Trains = [new SurfaceTrainConfig { AngleDegrees = 0, LengthFactor = 1, Energy = 1 }],
-            Steepness = config.Steepness,
-            MinLengthBlocks = config.MinLengthBlocks,
-            SettleSeconds = config.SettleSeconds,
-            TurnDegrees = config.TurnDegrees,
-            Stretch = config.Stretch,
-            AimSeconds = config.AimSeconds,
-            FullFoamMetres = config.FullFoamMetres,
-            Whitecaps = config.Whitecaps,
-        };
-        var length = Math.Pow(1 + config.Stretch, 16);
-        var number = 2 * Math.PI / length;
-        var surface = new SeaSurface(single, new Waves(Fixtures.Config().Waves));
-        var raised = new WaveGeneration(0, Math.Sqrt(2 * Math.PI * length / 9.81));
-        surface.Aim(height, 0, 6);
-        surface.Raise(raised, raised, 0);
-        surface.Advance(0);
-        return (surface, number, Math.Sqrt(9.81 * number));
+        var train = Fixtures.OneTrain(height, 16);
+        train.Surface.Advance(0);
+        return (train.Surface, train.Number, train.Frequency);
     }
 }

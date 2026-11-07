@@ -20,13 +20,6 @@ public interface IDrawnSea
     double HeightAt(double x, double z);
 
     /// <summary>
-    /// The water's horizontal velocity at a position now, in metres a second, as the drawn waves move it: forward under
-    /// a crest, back in a trough. <paramref name="depth"/> is in metres under the drawn surface, and the velocity is
-    /// averaged over a square <paramref name="side"/> metres across centred there, as a hull of that size feels it.
-    /// </summary>
-    (double X, double Z) OrbitalVelocityAt(double x, double z, double depth = 0, double side = 0);
-
-    /// <summary>
     /// The water's horizontal velocity at a position now, in metres a second, averaged over the underwater body of a
     /// hull centred there, as the water's pressure on it sums: <paramref name="lift"/> is how far the hull floats over
     /// still water and <paramref name="draft"/> how deep it reaches under that, in metres; <paramref name="yaw"/>,
