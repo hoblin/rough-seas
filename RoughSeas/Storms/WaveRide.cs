@@ -67,11 +67,20 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
 
         // under way vanilla rewrites the motion each step from the speed through the water; lying still it leaves it to the drag
         var physics = boat.ForwardSpeed == 0 ? boat.GetBehavior<EntityBehaviorPassivePhysics>() : null;
-        double? kept = physics == null ? null : forces.Driven ? 1 : WaterDrag.Kept(physics.WaterDragValue, seconds);
-        // vanilla's swimming physics divides her whole motion when it is fast, the waves' part with it
-        var swimDrag = physics != null ? 1 : VesselDraught.SwimDrag(boat.ForwardSpeed, GlobalConstants.PhysicsFrameTime * WaterDrag.TicksPerSecond);
-        pos.Motion.X += WaveCarry.Carried(x, applied.X, kept) * swimDrag;
-        pos.Motion.Z += WaveCarry.Carried(z, applied.Z, kept) * swimDrag;
+        if (physics != null && forces.Driven)
+        {
+            // no way on and the drag taken off: nothing would ever take off what her motion holds, so it is written outright, as vanilla writes her way
+            pos.Motion.X = x / WaterDrag.TicksPerSecond;
+            pos.Motion.Z = z / WaterDrag.TicksPerSecond;
+        }
+        else
+        {
+            double? kept = physics != null ? WaterDrag.Kept(physics.WaterDragValue, seconds) : null;
+            // vanilla's swimming physics divides her whole motion when it is fast, the waves' part with it
+            var swimDrag = physics != null ? 1 : VesselDraught.SwimDrag(boat.ForwardSpeed, GlobalConstants.PhysicsFrameTime * WaterDrag.TicksPerSecond);
+            pos.Motion.X += WaveCarry.Carried(x, applied.X, kept) * swimDrag;
+            pos.Motion.Z += WaveCarry.Carried(z, applied.Z, kept) * swimDrag;
+        }
         applied = (x, z);
 
         if (!carried)

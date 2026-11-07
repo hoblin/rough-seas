@@ -43,8 +43,7 @@ public static class WaveCarry
     /// blocks per physics tick, when it moved at <paramref name="beforeMetresPerSecond"/> on top of it the step
     /// before. Under way (<paramref name="kept"/> null) vanilla has just set the motion from her speed through the
     /// water, and the waves' velocity goes on top. Lying still, vanilla's drag has kept <paramref name="kept"/> of
-    /// last step's motion (all of it while <see cref="Vessels.IDriven"/> takes that drag off), the waves' part with it,
-    /// and the waves' part is brought up to this step's.
+    /// last step's motion, the waves' part with it, and the waves' part is brought up to this step's.
     /// </summary>
     internal static double Carried(double metresPerSecond, double beforeMetresPerSecond, double? kept) =>
         (metresPerSecond - (kept ?? 0) * beforeMetresPerSecond) / WaterDrag.TicksPerSecond;
