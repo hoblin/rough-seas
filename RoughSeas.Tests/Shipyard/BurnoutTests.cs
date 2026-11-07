@@ -103,7 +103,7 @@ public class BurnoutTests
         tree.SetInt("clayVoxels", Config.RimVoxelsBefore[last]);
         Assert.False(blank.Clayed);
 
-        blank.KeepClayed(Config.RimVoxelsBefore);
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
 
         Assert.True(blank.Clayed);
     }
@@ -116,9 +116,21 @@ public class BurnoutTests
         tree!.SetInt("level", last);
         tree.SetInt("clayVoxels", Config.RimVoxelsBefore[last] - Burnout.VoxelsPerClay);
 
-        blank.KeepClayed(Config.RimVoxelsBefore);
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
 
         Assert.False(blank.Clayed);
+    }
+
+    [Fact]
+    public void AHewingHalfDoneInASaveFromBeforeTheRoundEndsKeepsTheSectionsItCut()
+    {
+        var blank = Charred(Bare());
+        tree!.SetInt("strokes", Config.StrokesPerHewingBefore / 2);
+
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
+
+        Assert.Equal(blank.Sections, blank.SectionsCut);
+        Assert.Equal(0, blank.SectionsTrimmed);
     }
 
     [Fact]

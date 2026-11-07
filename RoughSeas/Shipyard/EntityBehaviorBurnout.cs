@@ -107,7 +107,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
     public override void AfterInitialized(bool onFirstSpawn)
     {
         base.AfterInitialized(onFirstSpawn);
-        Upgrade(DataVersion, _ => burnout.KeepClayed(config.RimVoxelsBefore));
+        Upgrade(DataVersion, _ => burnout.KeepProgress(config.RimVoxelsBefore, config.StrokesPerHewingBefore));
     }
 
     public static void Begin(Entity vessel, double hours) => Begin(vessel, DataVersion, tree =>

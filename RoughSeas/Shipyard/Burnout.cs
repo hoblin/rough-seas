@@ -135,11 +135,15 @@ public sealed class Burnout
     /// <summary>The voxels a layer one voxel thick takes over the outline's elements, seen from above.</summary>
     public static int TopVoxels(ShapeElement outline) => (int)Math.Round(TopArea(outline));
 
-    /// <summary>A rim clayed to the last ball by the rim it had before, <paramref name="before"/> each level's, stays
-    /// clayed by the rim it has now.</summary>
-    public void KeepClayed(int[] before)
+    /// <summary>A build saved by the hull it had before keeps where it stood: a rim clayed to the last ball by its rim
+    /// then, each level's in <paramref name="rims"/>, stays clayed, and a hewing keeps its share of
+    /// <paramref name="strokes"/> a hewing, rounded up so no section it cut comes back.</summary>
+    public void KeepProgress(int[] rims, int strokes)
     {
-        if (Tree is { } tree && Level < before.Length && ClayVoxels > 0 && ClayVoxels >= before[Level]) tree.SetInt(ClayKey, RimVoxels);
+        if (Tree is not { } tree) return;
+
+        if (Level < rims.Length && ClayVoxels > 0 && ClayVoxels >= rims[Level]) tree.SetInt(ClayKey, RimVoxels);
+        if (strokes > 0 && Strokes > 0) tree.SetInt(StrokesKey, (int)Math.Ceiling((double)Strokes * StrokesPerHewing / strokes));
     }
 
     /// <summary>The pieces of a level's clay not on the rim yet, in the order the balls cover it, and those over a
@@ -269,6 +273,7 @@ public sealed class BurnoutConfig
     public double[][] HewnSectionsMetres = [];
     public BoxMetres[] HullBoxesMetres = [];
     public int[] RimVoxelsBefore = [];
+    public int StrokesPerHewingBefore;
 }
 
 public sealed class BoxMetres

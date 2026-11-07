@@ -385,11 +385,11 @@ The dugout runs the whole length of its log row, and its hollow ends round insid
 - In its shape the boards of each end run on in the first and last sections, `Blank{n}x1` and `x3`, whose `Inside` holds the hollow's end, half a bowl of staves (`Bowl{j}x{k}`); `Hewn{n}x1` and `x3` hold the bowl the next hewing leaves. `Blank{n}Stern`, `Blank{n}Bow`, `ShellStern` and `ShellBow` hold the top of each end in strips (`Rim`) and the log's end grain (`Cap`), where they held stepped blocks. Every level keeps the row's length; its hull box only loses height.
 - `Clay{n}` lies along the ends in strips round the bowl's mouth, so the fires take 19, 13, 13, 12, 11 and 11 balls.
 - The outrigger is built on the same hull: in oak 515 kg, 547 with its washstrakes. These add 479 litres, where they added 422, and are twelve planks, a board along each side five long and one across each end at the bowl's far rim, sewn with 132 stitches.
-- A build saved under an older version of its data is brought up to date once, on the server, as it loads: `EntityBehaviorBuild.Upgrade(version, upgrade)`. The dugout's `roughseas:burnout` is at version 2: a rim clayed to the last ball by its old size, `rimVoxelsBefore`, stays clayed.
+- A build saved under an older version of its data is brought up to date once, on the server, as it loads: `EntityBehaviorBuild.Upgrade(version, upgrade)`. The dugout's `roughseas:burnout` is at version 2: a rim clayed to the last ball by its old size, `rimVoxelsBefore`, stays clayed, and a hewing keeps its share of the strokes it took then, `strokesPerHewingBefore`.
 - A framed build's stage counts as done once a later stage is begun (`Framing.Laid`), so a save whose stage took fewer pieces then still reads as built: an outrigger sewn up with her ten old washstrake planks is finished.
 - `Burnout.Unclayed` says which of a level's clay pieces aren't on the rim yet, from their exact areas.
 
-New: `rimVoxelsBefore`, `EntityBehaviorBuild.Upgrade`, `Burnout.Unclayed`, `Burnout.KeepClayed`.
+New: `rimVoxelsBefore`, `strokesPerHewingBefore`, `EntityBehaviorBuild.Upgrade`, `Burnout.Unclayed`, `Burnout.KeepProgress`.
 
 ## What not to touch
 
