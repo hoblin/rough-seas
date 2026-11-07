@@ -44,6 +44,7 @@ public class ShipyardModSystem : ModSystem
         LashingRope.Attach();
         CuttingKnife.Attach();
         LightingFirestarter.Attach();
+        StartingLongPiles.Attach();
     }
 
     public override void Dispose()
@@ -51,6 +52,7 @@ public class ShipyardModSystem : ModSystem
         LashingRope.Detach();
         CuttingKnife.Detach();
         LightingFirestarter.Detach();
+        StartingLongPiles.Detach();
     }
 
     // The server sends its blocks, behaviours included, to clients only after this phase.

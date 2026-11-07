@@ -12,73 +12,31 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
 {
     public const string Code = "roughseas:longpile";
 
-    private const int Replaceable = 6000;
-
     private static readonly AssetLocation GroundStorage = new("groundstorage");
 
     private int Metres => int.Parse(collObj.Variant["length"]);
 
-    public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent,
-        ref EnumHandHandling handHandling, ref EnumHandling handling)
-    {
-        if (blockSel == null || entitySel != null || !byEntity.Controls.ShiftKey || slot.Empty) return;
-
-        var world = byEntity.World;
-        var accessor = world.BlockAccessor;
-        var filler = accessor.GetBlock(blockSel.Position) is BlockMultiblock multiblock &&
-                     accessor.GetBlockEntity(blockSel.Position.AddCopy(multiblock.OffsetInv)) is BlockEntityGroundStorage
-            ? multiblock
-            : null;
-        var aimed = blockSel.Clone();
-        if (filler != null) aimed.Position.Add(filler.OffsetInv);
-
-        var pile = NewPile(world, aimed);
-        if (pile != null && !Room(byEntity, new PileFootprint(Metres, Angle(byEntity, aimed)), pile))
-        {
-            Shipyard(world).Log("{0} finds no room for a {1} m pile of {2} at {3}", byEntity.GetName(), Metres, collObj.Code, pile);
-            (byEntity.Api as ICoreClientAPI)?.TriggerIngameError(this, "notenoughspace", Lang.Get("placefailure-notenoughspace"));
-            (handHandling, handling) = (EnumHandHandling.PreventDefault, EnumHandling.PreventSubsequent);
-            return;
-        }
-
-        CollectibleBehaviorGroundStorable.Interact(slot, byEntity, aimed, entitySel, firstEvent, ref handHandling, ref handling);
-        if (filler != null || handHandling == EnumHandHandling.PreventDefault) handling = EnumHandling.PreventSubsequent;
-        if (world.Side == EnumAppSide.Server && pile != null && accessor.GetBlockEntity(pile) is BlockEntityGroundStorage storage &&
-            storage.Inventory[0].Itemstack?.Collectible == collObj)
-        {
-            Fill(world, storage);
-        }
-    }
-
-    /// <summary>Where <see cref="CollectibleBehaviorGroundStorable.Interact"/> will start a pile, if it starts one.</summary>
-    private static BlockPos? NewPile(IWorldAccessor world, BlockSelection aimed) =>
-        aimed.Face == BlockFacing.UP && world.BlockAccessor.GetBlockEntity(aimed.Position) is not BlockEntityGroundStorage &&
-        world.BlockAccessor.GetBlockEntity(aimed.Position.UpCopy()) is not BlockEntityGroundStorage
-            ? aimed.Position.UpCopy()
-            : null;
-
-    /// <summary>The turn <see cref="BlockGroundStorage.CreateStorage"/> will give the new pile, worked out the same way.</summary>
-    private static float Angle(EntityAgent byEntity, BlockSelection aimed)
-    {
-        var at = aimed.DidOffset ? aimed.Position.AddCopy(aimed.Face.Opposite) : aimed.Position;
-        var toward = (float)Math.Atan2(byEntity.Pos.X - (at.X + aimed.HitPosition.X), (float)byEntity.Pos.Z - (at.Z + aimed.HitPosition.Z));
-        return (int)Math.Round(toward / GameMath.PIHALF) * GameMath.PIHALF;
-    }
-
-    private static bool Room(EntityAgent byEntity, PileFootprint footprint, BlockPos pile)
+    /// <summary>Whether <see cref="BlockGroundStorage.CreateStorage"/> may start a pile of this where it is about to.</summary>
+    public bool MayStart(EntityAgent byEntity, BlockSelection blockSel)
     {
         var world = byEntity.World;
-        var beside = footprint.Around(pile).Where(at => !at.Equals(pile)).ToList();
-        return LandClaims.MayBreak(byEntity, beside) && beside.All(at => Free(world, at) &&
-            world.BlockAccessor.GetBlock(at.DownCopy()).CanAttachBlockAt(world.BlockAccessor, world.GetBlock(GroundStorage), at.DownCopy(), BlockFacing.UP));
+        var pile = blockSel.Face == null ? blockSel.Position : blockSel.Position.AddCopy(blockSel.Face);
+        var footprint = new PileFootprint(Metres, Angle(byEntity, blockSel)).Around(pile).ToList();
+        if (LandClaims.MayBreak(byEntity, footprint) && footprint.Where(at => !at.Equals(pile)).All(at => Free(world, at) &&
+                world.BlockAccessor.GetBlock(at.DownCopy()).CanAttachBlockAt(world.BlockAccessor, Pile(world), at.DownCopy(), BlockFacing.UP)))
+        {
+            return true;
+        }
+
+        Shipyard(world).Log("{0} finds no room for a {1} m pile of {2} at {3}", byEntity.GetName(), Metres, collObj.Code, pile);
+        (byEntity.Api as ICoreClientAPI)?.TriggerIngameError(this, "notenoughspace", Lang.Get("placefailure-notenoughspace"));
+        return false;
     }
 
-    private static bool Free(IWorldAccessor world, BlockPos at) => world.BlockAccessor.GetBlock(at).Replaceable >= Replaceable;
-
-    private void Fill(IWorldAccessor world, BlockEntityGroundStorage storage)
+    public void Fill(IWorldAccessor world, BlockEntityGroundStorage storage)
     {
         var filled = new PileFootprint(Metres, storage.MeshAngle).Around(storage.Pos)
-            .Where(at => !at.Equals(storage.Pos) && Free(world, at))
+            .Where(at => !at.Equals(storage.Pos))
             .ToList();
         foreach (var at in filled)
         {
@@ -86,6 +44,18 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
         }
         if (filled.Count > 0) Shipyard(world).Log("a {0} m pile of {1} at {2} holds {3} blocks beside it", Metres, collObj.Code, storage.Pos, filled.Count);
     }
+
+    /// <summary>The turn <see cref="BlockGroundStorage.CreateStorage"/> gives the new pile, worked out the same way.</summary>
+    private static float Angle(EntityAgent byEntity, BlockSelection blockSel)
+    {
+        var at = blockSel.DidOffset ? blockSel.Position.AddCopy(blockSel.Face.Opposite) : blockSel.Position;
+        var toward = (float)Math.Atan2(byEntity.Pos.X - (at.X + blockSel.HitPosition.X), (float)byEntity.Pos.Z - (at.Z + blockSel.HitPosition.Z));
+        return (int)Math.Round(toward / GameMath.PIHALF) * GameMath.PIHALF;
+    }
+
+    private static bool Free(IWorldAccessor world, BlockPos at) => world.BlockAccessor.GetBlock(at).IsReplacableBy(Pile(world));
+
+    private static Block Pile(IWorldAccessor world) => world.GetBlock(GroundStorage);
 
     private static ShipyardModSystem Shipyard(IWorldAccessor world) => world.Api.ModLoader.GetModSystem<ShipyardModSystem>();
 

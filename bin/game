@@ -176,6 +176,13 @@ ACT
                              W,A,S,D, Space, ShiftLeft, ControlLeft, Q, E, R, F, Number1 ...
                              Mounted, W/S row or sail and A/D steer.
   bin/game click [BUTTON] [MS]  hold left, right (default) or middle on what the camera points at
+  bin/game use X Y Z [KEYS] [BUTTON]
+                             click BUTTON (right by default) on the top face of the block at absolute
+                             X Y Z with KEYS held (ShiftLeft, ControlLeft,ShiftLeft), as Shift +
+                             right-click lays a pile or Ctrl + Shift a layer of it, and print the
+                             block above it and the block itself before and after. When neither
+                             changed it fails, saying how far the eye stood (the server drops a click
+                             beyond its reach) and what lies above (a plant takes the place)
   bin/game scroll [STEPS]    turn the mouse wheel STEPS notches (default 1) over the open dialogs,
                              down; negative scrolls up. A long handbook page shows its end this way
   bin/game respawn           a dead player respawns, as the death screen's Respawn button does
@@ -442,6 +449,21 @@ case "${1:-}" in
   slot) post "/look?slot=$2" ;;
   press) post "/input?keys=$2&ms=${3:-100}" ;;
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
+  use)
+    x=$2 y=$3 z=$4 keys=${5:-} button=${6:-right}
+    blocks() { echo "$(post "/hover?block=$x,$((y + 1)),$z" | jq -r .block) on $(post "/hover?block=$x,$y,$z" | jq -r .block)"; }
+    before=$(blocks)
+    [ -z "$keys" ] || post "/input?keys=$keys&ms=down" >/dev/null
+    post "/input?mouse=$button&ms=150" >/dev/null
+    [ -z "$keys" ] || post "/input?keys=$keys&ms=up" >/dev/null
+    sleep 1.2
+    after=$(blocks)
+    metres=$(get "$bridge/state" | jq --argjson x "$x" --argjson y "$y" --argjson z "$z" \
+      '[.pos.X - $x - 0.5, .pos.Y + 1.6 - $y - 1, .pos.Z - $z - 0.5] | map(. * .) | add | sqrt * 10 | round / 10')
+    echo "before: $before"
+    echo "after:  $after"
+    [ "$before" != "$after" ] || fail "Nothing changed at $x $y $z or above it: the eye is $metres m from its top (the server drops a click beyond its reach), and the block above is ${before%% on *}"
+    ;;
   hotkey) post "/hotkey?code=${2:-}" ;;
   camera)
     shift
