@@ -10,7 +10,7 @@ Fresh water holds you up less, so in a lake or a river you sink slowly unless yo
 
 Armour and the tools and weapons in your hotbar weigh on you, in the water and in a boat. Your backpack and materials don't: a stack of stones in your hand stays the game's convention. Move your tools into the backpack before a long swim, as you would leave a toolbox ashore.
 
-You have about a kilogram and a half to spare in the sea. A knife only sinks you a little lower, an axe takes you under unless you tread water, and full plate takes you down fast. Extra weight doesn't drown you by itself: it makes you swim to stay up.
+You have about a kilogram to spare in the sea. A knife only sinks you a little lower, an axe takes you under unless you tread water, and full plate takes you down fast. Extra weight doesn't drown you by itself: it makes you swim to stay up.
 
 ## Going deep
 
