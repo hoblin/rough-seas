@@ -355,7 +355,7 @@ Poles and dry laths go down on the ground with vanilla's ground storage, in a sq
 - Our collectible behaviour `roughseas:longpile` runs before it. A new pile starts only where every block of its length has room and ground, or the player sees vanilla's `placefailure-notenoughspace`. Vanilla's fillers, `multiblock-monolithic-*`, hold the blocks beside the pile, so a click or a break on any of them reaches the pile. `roughseas:pilefootprint`, patched onto `game:groundstorage`, takes the fillers up with the pile. A mod that sets a block beside a pile of ours finds a filler there.
 - A wet lath held with Shift still goes to `roughseas:lathbed`; a dry one makes a pile.
 - A pole stacks to 32 (it was 8), and a split drops its 64 in stacks of the pole's `maxstacksize`.
-- A pole N logs long burns 1.5 × N s, a sixteenth of the 96 s its log's four firewood burn, and 1.125 × N s of kapok, purpleheart or ebony, whose log gives three. A lath burns a sixteenth of its pole.
+- A row of N logs splits into 64 poles that burn as long as the logs' firewood, four of 24 s a log (three of kapok, purpleheart or ebony): a pole N logs long burns 1.5 × N s, 1.125 × N s of those three. A lath burns a sixteenth of its pole.
 - The lath's item shape, `shapes/item/lath.json`, is one lath in place of the tied bundle, and the lath no longer carries `roughseas:icon`.
 - `wood-kapok` in `config/vessels/materials.json` has a `toughness`.
 

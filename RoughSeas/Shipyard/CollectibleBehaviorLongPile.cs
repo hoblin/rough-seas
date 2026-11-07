@@ -14,6 +14,8 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
 
     private const int Replaceable = 6000;
 
+    private static readonly AssetLocation GroundStorage = new("groundstorage");
+
     private int Metres => int.Parse(collObj.Variant["length"]);
 
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent,
@@ -23,12 +25,15 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
 
         var world = byEntity.World;
         var accessor = world.BlockAccessor;
-        var filler = accessor.GetBlock(blockSel.Position) as BlockMultiblock;
+        var filler = accessor.GetBlock(blockSel.Position) is BlockMultiblock multiblock &&
+                     accessor.GetBlockEntity(blockSel.Position.AddCopy(multiblock.OffsetInv)) is BlockEntityGroundStorage
+            ? multiblock
+            : null;
         var aimed = blockSel.Clone();
         if (filler != null) aimed.Position.Add(filler.OffsetInv);
 
         var pile = NewPile(world, aimed, stack);
-        if (pile != null && !Room(accessor, new PileFootprint(Metres, Angle(byEntity, aimed)), pile))
+        if (pile != null && !Room(world, new PileFootprint(Metres, Angle(byEntity, aimed)), pile))
         {
             Shipyard(world).Log("{0} finds no room for a {1} m pile of {2} at {3}", byEntity.GetName(), Metres, collObj.Code, pile);
             (byEntity.Api as ICoreClientAPI)?.TriggerIngameError(this, "notenoughspace", Lang.Get("placefailure-notenoughspace"));
@@ -38,7 +43,11 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
 
         CollectibleBehaviorGroundStorable.Interact(slot, byEntity, aimed, entitySel, firstEvent, ref handHandling, ref handling);
         if (filler != null || handHandling == EnumHandHandling.PreventDefault) handling = EnumHandling.PreventSubsequent;
-        if (world.Side == EnumAppSide.Server && pile != null && accessor.GetBlockEntity(pile) is BlockEntityGroundStorage storage) Fill(world, storage);
+        if (world.Side == EnumAppSide.Server && pile != null && accessor.GetBlockEntity(pile) is BlockEntityGroundStorage storage &&
+            storage.Inventory[0].Itemstack?.Collectible == collObj)
+        {
+            Fill(world, storage);
+        }
     }
 
     /// <summary>Where <see cref="CollectibleBehaviorGroundStorable.Interact"/> will start a pile, if it starts one.</summary>
@@ -49,7 +58,8 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
         {
             return aimed.Face == BlockFacing.UP ? aimed.Position.UpCopy() : null;
         }
-        return storage.TotalStackSize >= storage.Capacity && storage.Inventory[0].Itemstack?.Equals(world, stack, GlobalConstants.IgnoredStackAttributes) == false
+        return aimed.Face == BlockFacing.UP && storage.TotalStackSize >= storage.Capacity &&
+               storage.Inventory[0].Itemstack?.Equals(world, stack, GlobalConstants.IgnoredStackAttributes) == false
             ? storage.Pos.UpCopy()
             : null;
     }
@@ -58,19 +68,20 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
     private static float Angle(EntityAgent byEntity, BlockSelection aimed)
     {
         var at = aimed.DidOffset ? aimed.Position.AddCopy(aimed.Face.Opposite) : aimed.Position;
-        var toward = (float)Math.Atan2(byEntity.Pos.X - (at.X + aimed.HitPosition.X), byEntity.Pos.Z - (at.Z + aimed.HitPosition.Z));
+        var toward = (float)Math.Atan2(byEntity.Pos.X - (at.X + aimed.HitPosition.X), (float)byEntity.Pos.Z - (at.Z + aimed.HitPosition.Z));
         return (int)Math.Round(toward / GameMath.PIHALF) * GameMath.PIHALF;
     }
 
-    private static bool Room(IBlockAccessor accessor, PileFootprint footprint, BlockPos pile) =>
-        footprint.Around(pile).Where(at => !at.Equals(pile)).All(at =>
-            accessor.GetBlock(at).Replaceable >= Replaceable &&
-            accessor.GetBlock(at.DownCopy()).CanAttachBlockAt(accessor, accessor.GetBlock(at), at.DownCopy(), BlockFacing.UP));
+    private static bool Room(IWorldAccessor world, PileFootprint footprint, BlockPos pile) =>
+        footprint.Around(pile).Where(at => !at.Equals(pile)).All(at => Free(world, at) &&
+            world.BlockAccessor.GetBlock(at.DownCopy()).CanAttachBlockAt(world.BlockAccessor, world.GetBlock(GroundStorage), at.DownCopy(), BlockFacing.UP));
+
+    private static bool Free(IWorldAccessor world, BlockPos at) => world.BlockAccessor.GetBlock(at).Replaceable >= Replaceable;
 
     private void Fill(IWorldAccessor world, BlockEntityGroundStorage storage)
     {
         var filled = new PileFootprint(Metres, storage.MeshAngle).Around(storage.Pos)
-            .Where(at => !at.Equals(storage.Pos) && world.BlockAccessor.GetBlock(at) is not BlockMultiblock)
+            .Where(at => !at.Equals(storage.Pos) && Free(world, at))
             .ToList();
         foreach (var at in filled)
         {

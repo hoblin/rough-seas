@@ -20,23 +20,20 @@ public class PileFootprintTests
         Assert.All(covered, pos => Assert.Equal((5, 10), (pos.Y, pos.Z)));
     }
 
-    [Fact]
-    public void APileTurnedAQuarterLiesAlongTheOtherAxis()
+    [Theory]
+    [InlineData(0, 1, 0)]
+    [InlineData(GameMath.PIHALF, 0, -1)]
+    [InlineData(GameMath.PI, -1, 0)]
+    [InlineData(-GameMath.PIHALF, 0, 1)]
+    public void AnEvenPileReachesTheWayItIsTurned(float angle, int x, int z)
     {
-        var covered = new PileFootprint(2, GameMath.PIHALF).Around(Pile).ToList();
+        var far = new PileFootprint(2, angle).Around(Pile).Last();
 
-        Assert.Equal([10, 9], covered.Select(pos => pos.Z));
-        Assert.All(covered, pos => Assert.Equal(10, pos.X));
+        Assert.Equal((10 + x, 10 + z), (far.X, far.Z));
     }
 
     [Fact]
-    public void APileTurnedAboutReachesTheOtherWay()
-    {
-        Assert.Equal([10, 9], new PileFootprint(2, GameMath.PI).Around(Pile).Select(pos => pos.X));
-    }
-
-    [Fact]
-    public void NoPileReachesFurtherThanVanillasFillersDo()
+    public void TheLongestPileReachesAsFarAsVanillasFillers()
     {
         var reach = new PileFootprint(5, 0).Around(Pile).Max(pos => Math.Abs(pos.X - Pile.X));
 
