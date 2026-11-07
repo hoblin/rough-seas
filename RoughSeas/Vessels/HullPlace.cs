@@ -89,6 +89,9 @@ public readonly record struct HullShape(double HalfLengthMetres, double HalfBeam
         return (along * Math.Cos(turn) + across * Math.Sin(turn), -along * Math.Sin(turn) + across * Math.Cos(turn));
     }
 
+    /// <summary>Where her bow lies from her origin, metres in world axes.</summary>
+    public (double X, double Z) Bow(double yaw) => ToWorld(CentreAlongMetres - HalfLengthMetres, CentreAcrossMetres, yaw);
+
     public (double Along, double Height, double Across) PointOf(HullPlace place)
     {
         if (place == HullPlace.Bottom) return (CentreAlongMetres, KeelMetres, CentreAcrossMetres);

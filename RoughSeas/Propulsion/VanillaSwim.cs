@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -20,7 +21,7 @@ public static class VanillaSwim
 
     public static void LeaveWaterDragOnHeave(Vec3d motion, double waterDrag, float seconds)
     {
-        var kept = VesselDraught.WaterDragKept(waterDrag, seconds);
+        var kept = WaterDrag.Kept(waterDrag, seconds);
         motion.X /= kept;
         motion.Z /= kept;
     }

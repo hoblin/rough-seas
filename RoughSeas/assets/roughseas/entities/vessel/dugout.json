@@ -184,6 +184,7 @@
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}

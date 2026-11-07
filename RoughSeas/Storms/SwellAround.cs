@@ -32,4 +32,7 @@ public sealed class SwellAround
         aim.Aim(map, x, z, seconds, regionSize, foam: false);
         surface.Advance(seconds);
     }
+
+    /// <summary>Brings the sea to <paramref name="seconds"/> without aiming it again, between aims.</summary>
+    public void Advance(double seconds) => surface.Advance(seconds);
 }

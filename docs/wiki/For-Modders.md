@@ -24,7 +24,7 @@ Where a page touches physics, it says what the mod does and links [The science b
 
 ## What we keep
 
-What these pages document is what we keep: vanilla's channels as they describe them, `ISeaWeather` with `SeaState`, `SeaCurrent` and `SeaClock`, `IDrawnSea` with `SeaPose` and `HullResponse`, and our vessel behaviours with their keys and their configs. It follows semantic versioning: a change that breaks any of it comes with a new major version and a line in the release notes, and what we add comes in a minor version. If you build on it, or need something it doesn't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
+What these pages document is what we keep: vanilla's channels as they describe them, `ISeaWeather` with `SeaState`, `SeaCurrent` and `SeaClock`, `IDrawnSea` with `SeaPose` and `HullResponse`, `HullDrag` with `HullForm`, and our vessel behaviours with their keys and their configs. It follows semantic versioning: a change that breaks any of it comes with a new major version and a line in the release notes, and what we add comes in a minor version. If you build on it, or need something it doesn't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
 ### Hulls that crack, leak and flood
 
@@ -346,6 +346,23 @@ A reed boat's rider poling in first person sees the water ahead past the arms. E
 - A patch to one of those strokes patches its twin too, or the rider sees the old stroke in first person. A twin of yours plays beside its stroke, so give it the same frames, end and speed.
 
 New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`.
+
+### The waves carry every hull
+
+The drawn waves now move every `EntityBoat` with `roughseas:seaforces`, steered or not ([A ship that rides our swell](Reading-the-Sea#a-ship-that-rides-our-swell)).
+
+- `IDrawnSea` gained `HullVelocityAt`. A class of yours that implements `IDrawnSea` has to add it. Code that only reads `IDrawnSea` is unaffected.
+
+### Currents carry every vessel
+
+A current now carries a steered vessel too, and pulls on a moored one. See [Building a vessel](Building-a-Vessel#currents).
+
+- `roughseas:currentdrift` goes on both sides: list it in `client.behaviors` too, or a steered vessel of yours ignores the current as before. Its class is now `RoughSeas.Storms.EntityBehaviorCurrentDrift`, and it acts only on an `EntityBoat`.
+- The wind no longer moves a vessel nobody steers: `currents.stokesDriftPerMps` is gone from `seaweather.json`.
+- `HullDrag` gained `Across`, `Pull`, `Settle`, `Swing`, `Kilograms` and `AcrossKg`. `Waves.ChanceToExceed` has a form with a steady pull.
+- A vessel's motion carries the set: read `IHull.Velocity` for her speed over the ground, as before.
+
+New: `IHullWay`, `LiveDrag`, `HullSet`, and the optional keys `bowDrag`, `sideDrag` and `finSquareMetres` under `roughseas:currentdrift`.
 
 ## What not to touch
 

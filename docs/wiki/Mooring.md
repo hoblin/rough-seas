@@ -1,4 +1,4 @@
-A vessel left alone [drifts with the current](Currents#drift), and a [storm](Storms) can throw it onto the shore. Where you leave it matters as much as how you tie it.
+A vessel left alone [is carried off by the current](Currents#drift), and a [storm](Storms) can throw it onto the shore. Where you leave it matters as much as how you tie it.
 
 ## Tying up
 
@@ -17,7 +17,9 @@ A strong enough pull snaps the rope. Every wave pulls on it, with the wind on th
 | [Birch-bark canoe](Birch-Bark-Canoe) | almost never | 1 in 3600 | 1 in 160 |
 | [Reed boat](Reed-Boat) | never | almost never | almost never |
 
-A snapped vessel drifts, and in a storm the drift is downwind. Pull small boats ashore, or pick them up, before a gale.
+In a [current](Currents) the water pulls too, more the faster it runs and the more of the vessel's side it meets. A vessel held at one point swings about its bow until it lies along the stream, where the water pulls least. A current strong enough parts a rope by itself; a weaker one leaves each wave less to make up. The table is for still water.
+
+A snapped vessel drifts. Pull small boats ashore, or pick them up, before a gale.
 
 ## Thrown ashore
 
