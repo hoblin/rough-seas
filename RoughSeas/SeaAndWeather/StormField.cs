@@ -22,7 +22,7 @@ public class StormField
     private readonly double blockMetres;
     private readonly Func<double, double, double, double>? seasonalCelsius;
     // A fixed lock count keeps Count, checked on every miss, cheap: by default the locks grow with the table and Count takes them all.
-    private readonly List<Storm> staged = [];
+    private Storm[] staged = [];
     private readonly ConcurrentDictionary<(int Type, int CellX, int CellZ, long Slot), Storm?> born = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Hour), Storm[]> nearTile = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int TileX, int TileZ, long Window), Storm[]> windowTile = new(Environment.ProcessorCount, 0);
@@ -73,14 +73,14 @@ public class StormField
             PeakMps = peakMps ?? stormType.PeakMps.Max,
             Northern = prevailing.LatitudeDegrees(z) >= 0
         };
-        staged.Add(storm);
+        staged = [.. staged, storm];
         Forget();
         return storm;
     }
 
     public void Unstage()
     {
-        staged.Clear();
+        staged = [];
         Forget();
     }
 
@@ -178,7 +178,7 @@ public class StormField
                 if (storm != null) yield return storm;
             }
         }
-        foreach (var storm in staged.ToArray())
+        foreach (var storm in staged)
         {
             if (code == null || storm.Code == code) yield return storm;
         }
