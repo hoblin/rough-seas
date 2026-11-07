@@ -109,6 +109,18 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void ClayInASaveFromBeforeNeverCountsForMoreThanTheRimHasNow()
+    {
+        var blank = Blank();
+        tree!.SetInt("level", 1);
+        tree.SetInt("clayVoxels", Config.RimVoxelsBefore[1] - Burnout.VoxelsPerClay);
+
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
+
+        Assert.Equal(blank.RimVoxels, blank.ClayVoxels);
+    }
+
+    [Fact]
     public void ARimABallShortInASaveFromBeforeStaysShort()
     {
         int last = Config.Hollowings - 1;

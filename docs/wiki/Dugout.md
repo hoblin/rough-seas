@@ -30,7 +30,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Carried | too heavy to pick up |
 | Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | 5 logs of one wood beside the water and an axe to strip their bark, then six fires: each takes clay for its rim (19 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and the axe; about nine days in all |
+| Built from | 5 logs of one wood beside the water and an axe to strip their bark, then six fires: each takes clay for its rim (19 balls on the fresh trunk, 11 on the last), dry grass, 4 firewood and the axe; about nine days in all |
 | Wreckage | firewood |
 
 ## How it is built

@@ -18,8 +18,8 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Turning | clumsy, 14° a second paddled |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): its hull is the dugout's |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-it-floats) | with washstrakes 58 cm empty, 57 cm with its helmsman; without them 44 and 42; in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 254 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | with washstrakes 58 cm empty, 56 cm with its helmsman; without them 44 and 42; in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 281 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place; 1 flax twine binds up a ninth of its float's lashings |
 | [Its float](Hull-Condition#an-outriggers-float) | takes the knocks on its side on its lashings: with one aboard, losing 2 m/s into rock works nearly half of them loose, and 4 m/s tears them out and leaves the dugout |
 | [Bilge](Bailing) | 1915 litres with washstrakes, 1436 without |
@@ -31,7 +31,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Carried | too heavy to pick up |
 | Seats | two: the front one steers, under sail too, and paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | a finished [dugout](Dugout), 3 logs for its float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when it takes them, 10 planks and 4 ropes |
+| Built from | a finished [dugout](Dugout), 3 logs for its float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when it takes them, 12 planks and 4 ropes |
 | Wreckage | firewood, a rope, some linen, and planks once it has washstrakes |
 
 Its sail drives it the same whatever the wind does; sailing by the wind comes in [Seamanship](Roadmap#seamanship).

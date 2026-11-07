@@ -136,13 +136,15 @@ public sealed class Burnout
     public static int TopVoxels(ShapeElement outline) => (int)Math.Round(TopArea(outline));
 
     /// <summary>A build saved by the hull it had before keeps where it stood: a rim clayed to the last ball by its rim
-    /// then, each level's in <paramref name="rims"/>, stays clayed, and a hewing keeps its share of
+    /// then, each level's in <paramref name="rims"/>, stays clayed, clay on it never counts for more than the rim it has
+    /// now, and a hewing keeps its share of
     /// <paramref name="strokes"/> a hewing, rounded up so no section it cut comes back.</summary>
     public void KeepProgress(int[] rims, int strokes)
     {
         if (Tree is not { } tree) return;
 
         if (Level < rims.Length && ClayVoxels > 0 && ClayVoxels >= rims[Level]) tree.SetInt(ClayKey, RimVoxels);
+        if (ClayVoxels > RimVoxels) tree.SetInt(ClayKey, RimVoxels);
         if (strokes > 0 && Strokes > 0) tree.SetInt(StrokesKey, (int)Math.Ceiling((double)Strokes * StrokesPerHewing / strokes));
     }
 
