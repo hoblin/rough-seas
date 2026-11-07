@@ -51,7 +51,8 @@
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
-                "saturation": 80
+                "saturation": 80,
+                "seconds": 30
             }],
             "wreckage": [
                 {"type": "item", "code": "game:firewood", "quantity": {"avg": 8, "var": 4}},
@@ -114,14 +115,14 @@
             "hull": "roughseas:dugout",
             "keeps": {"SailFurled": "game:cloth-plain", "Stays": "game:rope"},
             "firewoodLitres": 46.7,
-            "repairs": [{"material": {"type": "item", "code": "game:flaxtwine", "stacksize": 1}, "restores": 0.1112, "saturation": 30}],
+            "repairs": [{"material": {"type": "item", "code": "game:flaxtwine", "stacksize": 1}, "restores": 0.1112, "saturation": 30, "seconds": 15}],
             "sources": {
                 "side": "Her float lies off her starboard side as her model draws her, a hull turned end for end when rigged from the port: a knock from that side meets the float before her hull",
                 "impactCapacity": "As the raft's lashings, which take 1200 J in their three ropes, 40 J a metre: her booms are lashed to her gunwales and her float with the rope her model counts (bin/lib/hulls/outrigger.py), every turn of it between the float and her hull",
                 "hull": "What she was rigged on, left once her float comes away: the dugout",
                 "keeps": "What comes away whole with the float: her poles as they were laid, her sail's cloths, and her stays; her lashings part, and her washstrakes come off as the planks they were",
                 "firewoodLitres": "As the dugout breaks up: her wood by the model over the pieces of firewood her wreckage gives",
-                "repairs": "As the raft's: one and a half twines bind up a rope's worth of lashing, nine for her six ropes"
+                "repairs": "As the raft's: one and a half twines bind up a rope's worth of lashing, nine for her six ropes, each held as long as the raft's"
             }
         },
         "passivephysicsmultibox": {

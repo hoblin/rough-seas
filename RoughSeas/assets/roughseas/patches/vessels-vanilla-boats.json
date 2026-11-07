@@ -18,11 +18,11 @@
             "depthMetres": 0.25,
             "depthVoxels": 4,
             "shell": { "material": "wood-{material}", "metres": 0.25, "spanMetres": 1.0022, "spanVoxels": 16.035, "voxels": 4 },
-            "repairs": [{ "material": { "type": "item", "code": "flaxtwine", "stacksize": 1 }, "restores": 0.22, "saturation": 30 }],
+            "repairs": [{ "material": { "type": "item", "code": "flaxtwine", "stacksize": 1 }, "restores": 0.22, "saturation": 30, "seconds": 15 }],
             "sources": {
                 "parts": "Logs lashed with three ropes, a few kilograms of rope on a raft of logs",
                 "shell": "A blow lands on one of its logs, a log's thickness of wood. A breaker bends a log over the longest stretch between two of its lashings, as her model draws them (bin/lib/hulls/raft.py)",
-                "repairs": "A knock works the lashings loose, not the logs, and they are bound up again with twine: half of the nine twines in its three ropes mends it whole. Rope in hand ties the raft up instead"
+                "repairs": "A knock works the lashings loose, not the logs, and they are bound up again with twine: half of the nine twines in its three ropes mends it whole, each twine bound on in about a quarter of an hour (an estimate), held for the real time over sixty as a vessel's build is. Rope in hand ties the raft up instead"
             },
             "wreckageByType": {
                 "boat-raft-bamboo": [
@@ -58,9 +58,10 @@
             "waterplaneSquareVoxels": 2299.293,
             "sources": {
                 "parts": "A keelboat carries about two fifths of her weight as ballast to stand up to her sail; iron here",
+                "repairs": "A length of plank let in over the split and fastened to the frames: about twenty minutes (an estimate), held for the real time over sixty as a vessel's build is",
                 "shell": "Carvel planking, about 3/4 in thick, the least that holds a caulked seam (boatdesign.net/posts/271664). A breaker bends a plank between frames 9.36 in apart: Herreshoff's rules give 3/4 in planking at 0.105 (II) with (III) 5.87 and a 1.22, and the same yacht frames at (I) (Rules for the Construction of Wooden Yachts, 1927; herreshoff.info/Docs/AuxDocs/1927_Herreshoff_Rules_for_Wooden_Yachts.pdf)"
             },
-            "repairs": [{ "material": { "type": "item", "code": "plank-{material}", "stacksize": 10 }, "restores": 0.067, "saturation": 80 }],
+            "repairs": [{ "material": { "type": "item", "code": "plank-{material}", "stacksize": 10 }, "restores": 0.067, "saturation": 80, "seconds": 20 }],
             "wreckage": [
                 { "type": "item", "code": "plank-{material}", "quantity": { "avg": 40, "var": 15 } },
                 { "type": "block", "code": "supportbeam-{material}", "quantity": { "avg": 6, "var": 3 } },

@@ -35,16 +35,16 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 
 ## How it is built
 
-You build a coracle where you lay its laths out on the ground, piece by piece. Each piece shows on the coracle as you lay it.
+You build a coracle where you pile its laths on the ground, piece by piece. Each piece shows on the coracle as you lay it.
 
 ![The whole build, from the lattice to the finished coracle](images/coracle/build-coracle.webp)
 
 1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for the lattice and three 5 m ones for the gunwale. Laths bend only when wet: soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground, in the coracle or in the bundle.
-2. **Lay the lattice.** Hold Shift and right-click the ground with a wet lath. It lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay seven side by side, an eighth of a block apart, then seven across them, three sixteenths of a block apart, each crossing all seven beneath it. That is how the coracle's bottom draws them, so binding moves no lath. A lath laid a sixteenth off is moved onto its place when you bind the lattice; further off, the laths stay laths. To take back a lath laid wrong, Shift + right-click it with an empty hand.
+2. **Lay the lattice.** Hold Shift and right-click the ground with a wet 2 m lath to start a pile, as you pile [poles](Recipes#poles-and-laths-on-the-ground). Shift + right-click the pile with the other thirteen; hold Ctrl as well to lay a whole layer at once. Two-metre laths pile as the coracle's lattice: seven along, then seven across them. The pile is centred on the block you lay it on and reaches half a block into each of the four blocks beside it, so keep those four free. Fourteen laths make one layer, and that layer is the lattice. A fifteenth starts a second layer, and no coracle comes of that pile. To take a lath back, right-click the pile with an empty hand.
 
    ![Fourteen wet laths laid out as a lattice](images/coracle/build-laths.webp)
 
-3. **Bind the crossings.** Hold a rope on the lattice: the first rope ties it into the coracle where it lies, and two more tie the rest of the crossings on its bottom. Laths laid any other way, or of two woods, stay laths.
+3. **Bind the crossings.** Hold a rope on the pile: the first rope ties the lattice into the coracle where it lies, and two more tie the rest of the crossings on its bottom. Any other pile stays a pile. A dry pile of fourteen tells you to soak the laths first.
 
    ![The lattice bound](images/coracle/build-bound.webp)
 

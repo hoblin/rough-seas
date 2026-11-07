@@ -173,6 +173,12 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Hold(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("pot")
+                .WithDescription("Hold a cooked pot of something cooked in it, as the firepit leaves it: CONTENT, PORTIONS of it a serving, SERVINGS (glueportion-pitch-hot 100 1 is a pot of hot pitch)")
+                .RequiresPlayer()
+                .WithArgs(parsers.Word("content code"), parsers.Int("portions a serving"), parsers.Double("servings"), parsers.OptionalWord("pot code"))
+                .HandleWith(args => Pot(args.Caller.Player, (string)args[0], (int)args[1], (double)args[2], (string?)args[3] ?? "dirtyclaypot-brown-cooked"))
+            .EndSubCommand()
             .BeginSubCommand("drop")
                 .WithDescription("Drop an item on the ground at a position, at rest, as a dropped stack lies")
                 .WithArgs(parsers.Word("item code"), parsers.WorldPosition("position"))
@@ -819,6 +825,19 @@ public class BridgeCommands : ModSystem
         slot.Itemstack = stack;
         slot.MarkDirty();
         return TextCommandResult.Success($"Holding {code}");
+    }
+
+    private TextCommandResult Pot(IPlayer player, string content, int portions, double servings, string pot)
+    {
+        if (Stack(pot) is not { Collectible: IBlockMealContainer meal } held) return TextCommandResult.Error($"No cooked pot {pot}");
+        if (Stack(content) is not { } cooked) return TextCommandResult.Error($"No item or block {content}");
+
+        cooked.StackSize = portions;
+        meal.SetContents(null, held, [cooked], (float)servings);
+        var slot = player.InventoryManager.ActiveHotbarSlot;
+        slot.Itemstack = held;
+        slot.MarkDirty();
+        return TextCommandResult.Success($"Holding {pot} with {servings} servings of {portions} {content}");
     }
 
     private TextCommandResult Drop(string code, Vec3d position)

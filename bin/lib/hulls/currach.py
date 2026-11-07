@@ -431,7 +431,8 @@ def build(path_):
     shape.keep("BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     pivot = [ORIGIN[0], (box["from"][1] + box["to"][1]) / 2, CENTRE]
-    covering = {"layout": units.both("beam", units.metres(2 * (PROFILE[-1][0] - HIDE - GUNWALE / 2))),
+    gunwale = laths[0]["children"]
+    covering = {"start": {"laths": len(gunwale), "metres": math.ceil(max(piece["metres"] for piece in gunwale))},
                 "overturnedPivotVoxels": [num(c) for c in pivot], "overturnedPivotMetres": [num(units.metres(c)) for c in pivot]}
     record("currach", merged(report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()], windage([hide], box["from"][1])), measured, bilge_levels(shape.elements),
                              {"behaviorConfigs": {"roughseas:covering": covering}}))

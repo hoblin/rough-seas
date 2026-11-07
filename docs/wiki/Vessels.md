@@ -54,4 +54,6 @@ A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a 
 
 A better vessel costs more than a worse one for the same job: the reed boat costs a knife, four stacks and a half of reeds and some rope, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
 
-The raft is made in the crafting grid; every other one is built in place, by the water or where its material lies, as each one's page shows, and the [recipes](Recipes) make what goes into them. Each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).
+The raft is made in the crafting grid; every other one is built in place, by the water or where its material lies, as each one's page shows, and the [recipes](Recipes) make what goes into them. Each has its page in the game's handbook.
+
+A vessel being built tells you where it is: right-click it with an empty hand, or with anything its next step doesn't take, and it names the step and what that step needs, such as "Lash it with rope (Crossings bound: 1 of 3 ropes)". Shift + right-click picks it up, as it picks up a finished one you can carry, with an empty hand or holding a piece of its build. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).

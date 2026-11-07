@@ -8,7 +8,7 @@ from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
 from entity import merged, read, record
-from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, side_area, windage, Shape, beam, box, clear_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, side_area, windage, Shape, beam, box, clear_of, ends_of, group, path, plank, run, section, stages
 from wounds import wound
 
 LOG = 16
@@ -354,8 +354,9 @@ def strake_litres(hull):
     return units.litres(units.metres((sides + ends) * (STRAKE + 0.6) * STRAKE_THICKNESS, 3))
 
 
-def seams(hull):
-    stitches, booms = [], [((x + edge * reach, 0, 0), (1, 0, 0)) for x in BOOMS for edge in (-1, 1) for reach in (BOOM / 2, LASH)]
+def seams(hull, shell):
+    stitches = []
+    booms = [((x + edge * reach, 0, 0), (1, 0, 0)) for x in BOOMS for edge in (-1, 1) for reach in (BOOM / 2, LASH)] + ends_of([shell])
     for side, label in ((-1, "Port"), (1, "Starboard")):
         x, n = HOLLOW[0] + STITCH_PITCH / 2, 1
         while x < HOLLOW[1]:
@@ -404,7 +405,7 @@ def build(target):
     shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
     shape.add(stages("Stays", stays()))
     planks, raised_litres = strakes(hull)
-    shape.add(stages("Strakes", planks), stages("Seams", seams(hull)))
+    shape.add(stages("Strakes", planks), stages("Seams", seams(hull, shell)))
     rigged(shape, hull, shell, logs, passes)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
     box, hull_measured = hull_box(shell)

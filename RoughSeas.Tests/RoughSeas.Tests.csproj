@@ -53,6 +53,7 @@
     <None Include="..\RoughSeas\assets\roughseas\entities\vessel\*.json" LinkBase="vessel" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\shapes\entity\vessel\*.json" LinkBase="shapes" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\shapes\block\reedbundle-*.json" LinkBase="shapes/block" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\shapes\block\pile\lathpile-*.json" LinkBase="shapes/block/pile" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\itemtypes\vessel\*.json" LinkBase="items" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\itemtypes\tool\*.json" LinkBase="tools" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\itemtypes\resource\*.json" LinkBase="resources" CopyToOutputDirectory="PreserveNewest" />

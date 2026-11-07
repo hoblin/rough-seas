@@ -132,9 +132,9 @@ The coracle and the hide currach are laid out as laths on the ground and built w
 - Every piece of a `lath` or `pole` stage names its length in the shape, a `"metres"` key on its group, and takes a lath or pole at least that long. The bark canoe's and the outrigger's pieces name theirs too.
 - `seep`'s `litresPerHour` is now `litresPerHourASeam`: a cover seeps at every seam between hides. A cracking hull's new `cover` gives the hides of one from before its build; `config/vessels/hides.json` gives each hide's keeping afloat and the water it takes up, and a patch can change them.
 - `IAfloat.Pass` takes the water's temperature, and a hull whose cover is sewn on it as it is built implements the new `ICovered`.
-- Hides carry our collectible behaviour `roughseas:framing`, as rope does; laths carry `roughseas:lathbed` by their JSON, and with Shift lay themselves on the ground. Rope held on laths laid out in a layout binds them rather than doing what vanilla's rope does.
+- Hides carry our collectible behaviour `roughseas:framing`, as rope does. Laths go down with Shift in vanilla's ground storage, wet or dry ([Poles and laths piled on the ground](#poles-and-laths-piled-on-the-ground)), and rope held on a pile that starts a vessel binds it rather than doing what vanilla's rope does.
 
-New: the behaviour `roughseas:covering` with its keys `layout`, `overturned` and `overturnedPivot`, `roughseas:framing`'s work `hide` and its keys `bends`, `hides` and `hideStates`, the block `roughseas:lathbed`, the collectible behaviour `roughseas:lathbed`, `roughseas:vesselintegrity`'s key `cover`, the interface `ICovered`, and `config/vessels/hides.json`.
+New: the behaviour `roughseas:covering` with its keys `start`, `overturned` and `overturnedPivot`, `roughseas:framing`'s work `hide` and its keys `bends`, `hides` and `hideStates`, `roughseas:vesselintegrity`'s key `cover`, the interface `ICovered`, and `config/vessels/hides.json`.
 
 ### Every build without a jump, every hull by its model
 
@@ -143,7 +143,7 @@ Each vessel built in place now changes the way the work would, and floats by num
 - The weights, depths, waterplanes, holds, decks and `swimmingOffsetY` of the dugout, outrigger, bark canoe, coracle and currach changed. The dugout's walls are 5 cm and its blank is the square trunk: `unhewnLitres` 3329, `blankWaterplaneSquareMetres` 5, `hollowDepthMetres` 0.5125, `hollowBeamMetres` 0.8. A patch that set these numbers sets them against its new model.
 - The outrigger's float is hewn from its three logs in six passes: its stage `Ends` and the groups `Float` and `Blunt` are gone, and `Hewing` (a `successive` stage replacing `FloatLog`) comes after `Booms`, whose pieces follow it (`follows`). Its washstrakes' end pieces are boards across its hollow, and the washstrakes add 422 litres, its measured opening 15 cm higher. The bark canoe's and the currach's holds stop at the lowest point of their gunwale, where water first spills over: 609 and 1911 litres. The outrigger's texture codes `floatbark` and `floatrings` draw the logs, in the float's wood. A dugout off the block grid is squared onto the logs when rigged, turned and moved so the float lies on them, no end of it more than half a block; one turned further from the row isn't rigged.
 - The bark canoe's sheet is 5 m long. Its stages are `Frame` (inwales and thwarts), `Slashes` and `Ends` (knife cuts, work `cut`) and `Outwales`, before its stems; all four lift its `Skin` group, one child a level, `Skin1` to `Skin13`, and its frame pieces show from `Frame{n}At{k}` and `Outwales{n}At{k}`. The finished canoe's item is drawn by `roughseas:carriedbuild` too, which shows only its last step.
-- The coracle's lattice is spaced 0.125 m and 0.1875 m, the currach's pair 1.075 m, both within 0.0625 m; the currach's gunwale pieces show from `Gunwale{n}At{k}`, its stern ends apart until its second end lashing.
+- The currach's gunwale pieces show from `Gunwale{n}At{k}`, its stern ends apart until its second end lashing.
 - A hide bigger than what is left of a cover gives back the rest as smaller hides of its kind. `Laying.Spend` has an overload taking the pieces the work used.
 - A reed boat's ends sag over the soak it takes before it sinks with nothing aboard, not over its full saturation. The interface `ISoaking` is gone; `EntityBehaviorVesselIntegrity.SoakToSinkKg` gives that soak.
 - A refused piece logs a `[shipyard]` line once a hold.
@@ -338,28 +338,44 @@ A pole's shove, its reach and its drawing are one ([Driving it](Building-a-Vesse
 
 New: `Stroke.Shove`, `Stroke.Pace`, `Propulsor.StrokeSpeed`, `StrokeConfig.Phase`, `Driving` and `Lift`, `Stroke.LiftWatts`, `MountStrokes.Pace`, `Pole.LiftJoules`, `Pole.Travel`, `PoleConfig.Footing`, `PoleConfig.Travel`, `RowerStation.BedMetres`, `MountStrokes.DrawnShare`, `EntityBehaviorPropulsion.Way` and `PoleSlide`, the `pole` keys above, `propulsion-pole-too-deep`.
 
-### The seated pole seen in first person
+### The pole seen in first person
 
-A reed boat's rider poling in first person sees the water ahead past the arms. Everyone else, and the rider in third person, sees the stroke as before.
+A reed boat's rider poling in first person, and a bark canoe's poling standing, sees the water ahead past the arms. Everyone else, and the rider in third person, sees the stroke as before.
 
 - The reed boat's pole strokes have first-person twins, `roughseas-reedboat-pole-{ready|forward|backward}-fp`, in `patches/player-reedboat.json`. They are the strokes with both upper arms moved 7 voxels down and 3 toward the pole's side, so the hands keep the pole. Vanilla plays a mount animation's `-fp` twin on the rider's own first-person arms, as it does for its crude oar.
 - A patch to one of those strokes patches its twin too, or the rider sees the old stroke in first person. A twin of yours plays beside its stroke, so give it the same frames, end and speed.
 
-New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`.
+- The bark canoe's standing pole strokes have twins of their own, `roughseas-barkcanoe-pole-{ready|forward|backward}-fp`, in `patches/player-barkcanoe.json`: both upper arms moved 1 voxel down and 3 outboard, so the arms stay in the bottom corner through the stroke, as the raft's do, and the view over the bow stays clear. The canoe is narrow and her pole is planted close beside her, so without them the left arm swings across the middle of the view on the drive. The dugout's standing pole has none, its arms already low.
+
+New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`, `roughseas-barkcanoe-pole-{ready|forward|backward}-fp`.
 
 ### Poles and laths piled on the ground
 
-Poles and dry laths go down on the ground with vanilla's ground storage, in a square pile as long as they are ([Recipes](Recipes#poles-and-laths-on-the-ground)).
+Poles and laths, wet or dry, go down on the ground with vanilla's ground storage, in a pile as long as they are ([Recipes](Recipes#poles-and-laths-on-the-ground)).
 
-- Both carry vanilla's `GroundStorable` in its `Stacking` layout, with one `stackingModel` a length, `roughseas:block/pile/{pole|lath}pile-{2..5}`: 64 poles, 8 to a layer, or 160 laths, 10 to a layer, one at a time. `upSolid` is false, so nothing piles or stands on top of one.
-- A Harmony prefix and postfix on `BlockGroundStorage.CreateStorage`, for an item that carries our collectible behaviour `roughseas:longpile`: a new pile starts only where every block of its length has room, ground and the player's leave to build, or the player sees vanilla's `placefailure-notenoughspace`; then vanilla's fillers, `multiblock-monolithic-*`, hold the blocks beside it, so a click or a break on any of them reaches the pile. A mod that starts ground storage another way starts a pile of ours one block long. `roughseas:pilefootprint`, patched onto `game:groundstorage` ahead of its `UnstableFalling`, takes the fillers up with the pile. It also holds a long pile up while ground lies under any block of its length; with none left, the pile breaks and drops its pieces instead of falling. A mod that sets a block beside a pile of ours finds a filler there.
-- A wet lath held with Shift still goes to `roughseas:lathbed`; a dry one makes a pile.
+- Both carry vanilla's `GroundStorable` in its `Stacking` layout, with one `stackingModel` a length, `roughseas:block/pile/{pole|lath}pile-{2..5}`, one at a time or a layer with Ctrl: 64 poles, 8 to a layer; 160 laths of 3 to 5 m, 16 to a layer, lengthwise as poles lie; 140 laths of 2 m, 14 to a layer, seven along and seven across as a coracle's lattice. `upSolid` is false, so nothing piles or stands on top of one. `bin/model build` writes the lath piles' shapes (`bin/lib/hulls/piles.py`, from `coracle.py`): the 2 m pile's first layer is the coracle's flat lattice, of whole 2 m laths.
+- A Harmony prefix and postfix on `BlockGroundStorage.CreateStorage`, for an item that carries our collectible behaviour `roughseas:longpile`: a new pile starts only where every block of its footprint has room, ground and the player's leave to build, or the player sees vanilla's `placefailure-notenoughspace`; then vanilla's fillers, `multiblock-monolithic-*`, hold the blocks beside it, so a click or a break on any of them reaches the pile. Its footprint is the blocks of its length, or the behaviour's optional `footprint` property, the blocks it reaches over as `[x, z]` offsets from its own block in the pile's frame (the 2 m lath's: the block and its four neighbours). A mod that starts ground storage another way starts a pile of ours one block long. `roughseas:pilefootprint`, patched onto `game:groundstorage` ahead of its `UnstableFalling`, takes the fillers up with the pile. It also holds a long pile up while ground lies under any block of its length; with none left, the pile breaks and drops its pieces instead of falling. A mod that sets a block beside a pile of ours finds a filler there.
 - A pole stacks to 32 (it was 8), and a split drops its 64 in stacks of the pole's `maxstacksize`.
-- A row of N logs splits into 64 poles that burn as long as the logs' firewood, four of 24 s a log (three of kapok, purpleheart or ebony): a pole N logs long burns 1.5 × N s, 1.125 × N s of those three. A lath burns a sixteenth of its pole.
+- A row of N logs splits into 64 poles that burn as long as the logs' firewood, four of 24 s a log (three of kapok, purpleheart or ebony): a pole N logs long burns 1.5 × N s, 1.125 × N s of those three. A dry lath burns a sixteenth of its pole; a wet one has no `combustibleProps` and doesn't burn.
 - The lath's item shape, `shapes/item/lath.json`, is one lath in place of the tied bundle, and the lath no longer carries `roughseas:icon`.
 - Every vanilla wood in `config/vessels/materials.json` has a `toughness` now: kapok, koa (`wood-acacia`), bald cypress, larch, redwood, walnut, ebony, purpleheart and aged wood are new, each with its source.
 
 New: `roughseas:longpile`, `roughseas:pilefootprint`, the pile shapes.
+
+### Laths in one pile, work held
+
+A coracle and a currach start from one pile of wet laths, and every build and mend is held work ([Laid out on the ground](Building-a-Vessel#laid-out-on-the-ground), [The hull](Building-a-Vessel#the-hull)). A vessel of yours loads as it did, unless it set `layout`.
+
+- The lath bed is gone: the block `roughseas:lathbed`, the collectible behaviour `roughseas:lathbed` and the shape `block/laidlath`. Wet laths pile in vanilla's ground storage as dry ones do, and a 2 m pile lies as a coracle's lattice over its block and its four neighbours, through `roughseas:longpile`'s new `footprint`.
+- `roughseas:covering`'s `layout` is replaced by `start`, `{ "laths", "metres" }`: the count and length of the laths in the one pile that starts the vessel, written by our builders. Rope on a pile of exactly that many wet laths binds it into the blank where it lies and uses the pile up; a Harmony prefix on `BlockEntityGroundStorage.OnPlayerInteractStart` hands rope's click to the binding, since vanilla's rope is ground-storable.
+- Wet laths have no `combustibleProps`.
+- Mending is held: each `repairs` entry takes `seconds`, how long a patch is held on the hull. The vessel's `OnInteract` no longer mends; every material a `repairs` entry names carries our collectible behaviour `roughseas:framing`, which holds the patch as it holds a build's piece, through the interface `IMendedHull`.
+- While a build's or a mend's hold does work, the holder plays vanilla's `knifescrape`, and stops on letting go or a refusal.
+- Every cooking pot carries `roughseas:framing` too, as liquid containers do: a `pitch` stage takes hot pitch from the pot it was cooked in, and empties it with the last portion.
+- Every build answers its interaction help, its look line and a right-click that does no work from its next step in `EntityBehaviorBuild`, which raises the in-game error `roughseas-build-step`. The lang key `game:cantride-roughseas-unfinished` and the error `roughseas-unfinished` are gone. Shift + right-click picks up a vessel being built, with an empty hand or holding a piece of its build.
+- The bark canoe's `Lashing` stage holds a rope 3 seconds, where it held it 15.
+
+New: `roughseas:covering`'s `start`, `roughseas:longpile`'s `footprint`, `repairs[].seconds`, `IMendedHull`, `roughseas-build-step`.
 
 ## What not to touch
 

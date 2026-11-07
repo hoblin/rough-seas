@@ -1,4 +1,4 @@
-A cracked hull is mended with the stuff it was built from. Hold the material, right-click the hull where it is cracked, and one patch goes in there; looking at a sound place, the patch goes on the worst crack. Each patch is hard work and makes you hungry, so a long mend at sea needs food as well as material.
+A cracked hull is mended with the stuff it was built from. Hold the material on the hull where it is cracked and keep the right mouse button pressed: once you have held it long enough, one patch goes in there. Looking at a sound place, the patch goes on the worst crack. Let go early and no patch goes in. Each patch is hard work and makes you hungry, so a long mend at sea needs food as well as material.
 
 | Vessel | Patch with | Each patch closes | Satiety per patch |
 | --- | --- | --- | --- |

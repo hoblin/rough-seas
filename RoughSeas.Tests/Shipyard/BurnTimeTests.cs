@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using Vintagestory.API.Util;
 
 namespace RoughSeas.Tests.Shipyard;
 
@@ -29,6 +30,17 @@ public class BurnTimeTests
     {
         Assert.Equal(Burn(Pole, $"*-{metres}"), LathsPerPole * Burn(Lath, $"*-{metres}-*"));
         Assert.Equal(Burn(Pole, $"@pole-(kapok|purpleheart|ebony)-{metres}"), LathsPerPole * Burn(Lath, $"@lath-(kapok|purpleheart|ebony)-{metres}-.*"));
+    }
+
+    [Theory]
+    [InlineData("lath-oak-2-wet", false)]
+    [InlineData("lath-ebony-5-wet", false)]
+    [InlineData("lath-oak-2-dry", true)]
+    [InlineData("lath-ebony-5-dry", true)]
+    public void OnlyADryLathBurns(string code, bool burns)
+    {
+        var props = ((JObject)Lath["combustiblePropsByType"]!).Properties().First(type => WildcardUtil.Match(type.Name, code));
+        Assert.Equal(burns, props.Value.Type != JTokenType.Null);
     }
 
     private static double Burn(JToken item, string type) => item["combustiblePropsByType"]![type]!.Value<double>("burnDuration");

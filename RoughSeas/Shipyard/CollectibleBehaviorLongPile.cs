@@ -3,6 +3,7 @@ using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
@@ -16,26 +17,36 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
 
     private int Metres => int.Parse(collObj.Variant["length"]);
 
+    private int[][]? blocks;
+
+    private int[][] Blocks => blocks ?? PileFootprint.Lengthwise(Metres);
+
+    public override void Initialize(JsonObject properties)
+    {
+        base.Initialize(properties);
+        blocks = properties["footprint"].AsObject<int[][]?>(null);
+    }
+
     /// <summary>Whether <see cref="BlockGroundStorage.CreateStorage"/> may start a pile of this where it is about to.</summary>
     public bool MayStart(EntityAgent byEntity, BlockSelection blockSel)
     {
         var world = byEntity.World;
         var pile = blockSel.Face == null ? blockSel.Position : blockSel.Position.AddCopy(blockSel.Face);
-        var footprint = new PileFootprint(Metres, Angle(byEntity, blockSel)).Around(pile).ToList();
-        if (LandClaims.MayBreak(byEntity, footprint) && footprint.Where(at => !at.Equals(pile)).All(at => Free(world, at) &&
-                world.BlockAccessor.GetBlock(at.DownCopy()).CanAttachBlockAt(world.BlockAccessor, Pile(world), at.DownCopy(), BlockFacing.UP)))
-        {
-            return true;
-        }
+        var footprint = new PileFootprint(Blocks, Angle(byEntity, blockSel)).Around(pile).ToList();
+        var blocked = footprint.Where(at => !at.Equals(pile)).FirstOrDefault(at => !Free(world, at) ||
+            !world.BlockAccessor.GetBlock(at.DownCopy()).CanAttachBlockAt(world.BlockAccessor, Pile(world), at.DownCopy(), BlockFacing.UP));
+        bool claimed = !LandClaims.MayBreak(byEntity, footprint);
+        if (!claimed && blocked == null) return true;
 
-        Shipyard(world).Log("{0} finds no room for a {1} m pile of {2} at {3}", byEntity.GetName(), Metres, collObj.Code, pile);
+        Shipyard(world).Log("{0} finds no room for a {1} m pile of {2} at {3}: {4}", byEntity.GetName(), Metres, collObj.Code, pile,
+            claimed ? "a claim covers it" : $"{world.BlockAccessor.GetBlock(blocked).Code} at {blocked} on {world.BlockAccessor.GetBlock(blocked!.DownCopy()).Code}");
         (byEntity.Api as ICoreClientAPI)?.TriggerIngameError(this, "notenoughspace", Lang.Get("placefailure-notenoughspace"));
         return false;
     }
 
     public void Fill(IWorldAccessor world, BlockEntityGroundStorage storage)
     {
-        var filled = new PileFootprint(Metres, storage.MeshAngle).Around(storage.Pos)
+        var filled = new PileFootprint(Blocks, storage.MeshAngle).Around(storage.Pos)
             .Where(at => !at.Equals(storage.Pos))
             .ToList();
         foreach (var at in filled)

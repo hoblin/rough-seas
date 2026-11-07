@@ -67,7 +67,7 @@ You build a bark canoe on its sheet of bark, piece by piece. Each piece shows on
 
    ![Sheathing laid and half the ribs in](images/birch-bark-canoe/build-ribs.webp)
 
-10. **Pitch the seams.** Hold a bowl, jug or bucket of hot pitch glue on the canoe to pitch each of its four seams, a quarter litre a seam: one pot of glue. Glue that has set must be heated again.
+10. **Pitch the seams.** Hold hot pitch glue on the canoe to pitch each of its four seams, a quarter litre a seam. Hold it in a bowl, jug or bucket, or in the cooking pot you cooked it in. One pot of glue does the canoe, and the pot is empty after the last seam. Glue that has set must be heated again.
 
    ![Finished, the seams pitched](images/birch-bark-canoe/build-pitched.webp)
 

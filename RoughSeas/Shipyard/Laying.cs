@@ -196,26 +196,74 @@ public sealed class PitchLaying(AssetLocation pitch, double litres) : Laying
 
     public override string? Refusal(ItemSlot slot, Framing framing)
     {
-        var content = Pitch(slot)!;
-        if (content.Collectible.Variant["state"] != Hot) return "shipyard-pitch-cold";
+        var held = Pitch(slot)!;
+        if (held.Content.Collectible.Variant["state"] != Hot) return "shipyard-pitch-cold";
 
-        var container = (BlockLiquidContainerBase)slot.Itemstack!.Collectible;
-        return container.GetCurrentLitres(slot.Itemstack) < litres - 1e-6 ? "shipyard-pitch-short" : null;
+        return held.Litres < litres - 1e-6 ? "shipyard-pitch-short" : null;
     }
 
-    public override void Spend(ItemSlot slot, EntityAgent byEntity)
-    {
-        var container = (BlockLiquidContainerBase)slot.Itemstack!.Collectible;
-        var portions = (int)Math.Round(litres * container.GetContentProps(slot.Itemstack)!.ItemsPerLitre);
-        container.SplitStackAndPerformAction(byEntity, slot, stack => container.TryTakeContent(stack, portions)?.StackSize ?? 0);
-    }
+    public override void Spend(ItemSlot slot, EntityAgent byEntity) => Pitch(slot)!.Pour(litres, byEntity);
 
     public override IEnumerable<ItemStack> Shown(IWorldAccessor world) =>
         world.SearchItems(pitch).Where(glue => glue.Variant["state"] == Hot).Select(glue => new ItemStack(glue));
 
-    private ItemStack? Pitch(ItemSlot slot) =>
-        slot.Itemstack?.Collectible is BlockLiquidContainerBase container && container.GetContent(slot.Itemstack) is { } content
-        && WildcardUtil.Match(pitch, content.Collectible.Code) ? content : null;
+    private HeldPitch? Pitch(ItemSlot slot) =>
+        HeldPitch.Of(slot) is { } held && WildcardUtil.Match(pitch, held.Content.Collectible.Code) ? held : null;
+}
+
+/// <summary>Pitch in the container held in a slot: a bowl, jug or bucket, or the cooking pot it was cooked in.</summary>
+public abstract class HeldPitch(ItemSlot slot, ItemStack content)
+{
+    public ItemStack Content => content;
+
+    public abstract double Litres { get; }
+
+    public abstract void Pour(double litres, EntityAgent byEntity);
+
+    protected ItemSlot Slot => slot;
+
+    protected static float ItemsPerLitre(ItemStack content) => BlockLiquidContainerBase.GetContainableProps(content)?.ItemsPerLitre ?? 100;
+
+    public static HeldPitch? Of(ItemSlot slot) => slot.Itemstack is not { } stack ? null : stack.Collectible switch
+    {
+        BlockLiquidContainerBase container when container.GetContent(stack) is { } content => new InContainer(slot, container, content),
+        IBlockMealContainer pot when slot.Inventory?.Api?.World is { } world && pot.GetNonEmptyContents(world, stack) is [var content] => new InPot(slot, world, pot, content),
+        _ => null
+    };
+
+    private sealed class InContainer(ItemSlot slot, BlockLiquidContainerBase container, ItemStack content) : HeldPitch(slot, content)
+    {
+        public override double Litres => container.GetCurrentLitres(Slot.Itemstack);
+
+        public override void Pour(double litres, EntityAgent byEntity)
+        {
+            var portions = (int)Math.Round(litres * ItemsPerLitre(Content));
+            container.SplitStackAndPerformAction(byEntity, Slot, stack => container.TryTakeContent(stack, portions)?.StackSize ?? 0);
+        }
+    }
+
+    private sealed class InPot(ItemSlot slot, IWorldAccessor world, IBlockMealContainer pot, ItemStack content) : HeldPitch(slot, content)
+    {
+        private const string EmptiedKey = "emptiedBlockCode";
+
+        private double ServingLitres => Content.StackSize / ItemsPerLitre(Content);
+
+        public override double Litres => pot.GetQuantityServings(world, Slot.Itemstack!) * ServingLitres;
+
+        public override void Pour(double litres, EntityAgent byEntity)
+        {
+            var stack = Slot.Itemstack!;
+            var left = (float)Math.Round(pot.GetQuantityServings(world, stack) - litres / ServingLitres, 4);
+            pot.SetQuantityServings(world, stack, left);
+            byEntity.Api.ModLoader.GetModSystem<ShipyardModSystem>().Log("{0} pours {1} L of {2} from {3}: {4} servings of {5} L left",
+                byEntity.GetName(), litres, Content.Collectible.Code, stack.Collectible.Code, left, ServingLitres);
+            if (left <= 0 && stack.Collectible.Attributes?[EmptiedKey].AsString() is { } emptied && world.GetBlock(new AssetLocation(emptied)) is { } empty)
+            {
+                Slot.Itemstack = new ItemStack(empty);
+            }
+            Slot.MarkDirty();
+        }
+    }
 }
 
 public sealed class HideLaying(AssetLocation hides, string[] states) : Laying
