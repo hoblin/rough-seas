@@ -1,4 +1,4 @@
-![The coracle afloat](images/coracle/afloat-bow.webp)
+![The coracle ashore](images/coracle/ashore-close.webp)
 
 An oval bowl of hide over a basket of split laths: a lattice across the flat bottom, its ends bent up into a plaited gunwale, the hide laced to it and sealed with rendered fat. It carries one person, sculled over the bow with a [paddle](Paddles-Poles-and-Oars), and it is light enough to wear on your back.
 

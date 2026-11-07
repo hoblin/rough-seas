@@ -1,4 +1,4 @@
-![The birch-bark canoe afloat](images/birch-bark-canoe/afloat-bow.webp)
+![The birch-bark canoe ashore](images/birch-bark-canoe/ashore-close.webp)
 
 One sheet of birch bark over a frame of split laths: gunwales lashed on at intervals, three thwarts, sheathing and ribs inside, and high, upswept stems, its seams black with pitch. One person kneels amidships and paddles it with a [paddle](Paddles-Poles-and-Oars) in hand; a second rides in the bow.
 

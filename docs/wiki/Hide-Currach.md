@@ -1,4 +1,4 @@
-![The currach afloat](images/currach/afloat-bow.webp)
+![The currach ashore](images/currach/ashore-close.webp)
 
 A light frame of split laths, ribs bent over two long gunwales and stringers along them, with hides laced over it and sealed with rendered fat. It is pointed at both ends, where its gunwales are drawn together and bound, and a thwart pole across its middle, a hand below its gunwale, takes the rower. The rower sits facing its stern and pulls its two oars on their thole pins, which stand just abaft the thwart.
 

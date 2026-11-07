@@ -1,4 +1,4 @@
-![The outrigger canoe afloat](images/outrigger-canoe/afloat-bow.webp)
+![The outrigger canoe ashore](images/outrigger-canoe/ashore-close.webp)
 
 A dugout with a float log held out to one side on three crooked booms lashed across its gunwales and down onto the float, and a mast stayed fore, aft and out to the float: 5 blocks long and 3 across, hull, gap and float. For the open sea it takes washstrakes of sawn planks sewn along its sides and across its ends. Its crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Its hull, its float, its poles and its washstrakes can each be of their own wood.
 

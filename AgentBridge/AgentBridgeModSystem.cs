@@ -245,7 +245,7 @@ public class AgentBridgeModSystem : ModSystem
         {
             var target = capi.World.GetEntityById(id) ?? throw new FileNotFoundException($"No entity {id} near the player");
             var eye = player.Entity.Pos.XYZ.Add(player.Entity.LocalEyePos);
-            var center = Shot.Centre(target);
+            var center = FreeCamera.Middle(target);
             var dx = center.X - eye.X;
             var dy = center.Y - eye.Y;
             var dz = center.Z - eye.Z;
