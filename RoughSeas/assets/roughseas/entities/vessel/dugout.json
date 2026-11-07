@@ -3,11 +3,11 @@
     "code": "dugout",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 252,
+    "weight": 303.8,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "bark": "all", "rings": "east"},
-        "swimmingOffsetY": 0.472,
+        "swimmingOffsetY": 0.468,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -17,15 +17,15 @@
             "backwards": "crudeOarBackward"
         }
     },
-    "hitboxSize": {"x": 0.9, "y": 0.564},
+    "hitboxSize": {"x": 0.9, "y": 0.565},
     "behaviorConfigs": {
         "roughseas:propulsion": {
             "paddle": "paddling",
             "sweepMetres": 1.3398,
             "sweepVoxels": 21.437,
-            "paddleAbeamMetres": 0.6665,
-            "paddleAbeamVoxels": 10.664,
-            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.92, "handsAboveWaterVoxels": 14.72, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": -0.875, "y": -0.124, "z": 0}, "eyeHeight": 1.7}, "plantAheadMetres": -1.6875, "plantAheadVoxels": -27, "plantAsternMetres": -1.3125, "plantAsternVoxels": -21, "plantAcrossMetres": -0.5125, "plantAcrossVoxels": -8.2, "drawnPoleMetres": 3, "drawnPoleVoxels": 48, "drawnBedMetres": 1, "drawnBedVoxels": 16},
+            "paddleAbeamMetres": 0.6668,
+            "paddleAbeamVoxels": 10.669,
+            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.9, "handsAboveWaterVoxels": 14.4, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": -0.875, "y": -0.132, "z": 0}, "eyeHeight": 1.7}, "plantAheadMetres": -1.6875, "plantAheadVoxels": -27, "plantAsternMetres": -1.3125, "plantAsternVoxels": -21, "plantAcrossMetres": -0.5125, "plantAcrossVoxels": -8.2, "drawnPoleMetres": 3, "drawnPoleVoxels": 48, "drawnBedMetres": 1, "drawnBedVoxels": 16},
             "strokes": {"pole": {"ready": "roughseas-dugout-pole-ready", "forwards": "roughseas-dugout-pole-forward", "backwards": "roughseas-dugout-pole-backward"}, "paddle-starboard": {"ready": "roughseas-dugout-paddle-starboard-ready", "forwards": "roughseas-dugout-paddle-starboard-forward", "backwards": "roughseas-dugout-paddle-starboard-backward", "change": "roughseas-dugout-paddle-to-starboard"}, "paddle-port": {"ready": "roughseas-dugout-paddle-port-ready", "forwards": "roughseas-dugout-paddle-port-forward", "backwards": "roughseas-dugout-paddle-port-backward", "change": "roughseas-dugout-paddle-to-port"}},
             "sources": {
                 "pole": "Poled standing: a man standing in her stiffens her less than the narrowest canoe polers stand in (bin/lib/hulls/physics.py), and dugouts were poled from either end (Florida Museum, the Putnam County poling stick), standing at the end as the mokoro and the pirogue are; she is poled from the end her rower faces, on her floor at her waterline. At the end of the shove his hands are at his hip (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
@@ -38,8 +38,8 @@
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.5375, "spanVoxels": 8.6, "voxels": 0.8},
             "depthMetres": 0.5625,
             "depthVoxels": 9,
-            "waterplaneSquareMetres": 2.8912,
-            "waterplaneSquareVoxels": 740.157,
+            "waterplaneSquareMetres": 3.2267,
+            "waterplaneSquareVoxels": 826.037,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
@@ -53,8 +53,8 @@
                 "weight": "Her finished hull's wood by the model (bin/lib/hulls/dugout.py: a hull with 5 cm walls cut from the five logs' square 1 m trunk), in oak",
                 "shell": "Walls about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe). Carved from one log, a side stands from the bottom with its gunwale free, and a breaker bends it as a cantilever from her bottom's edge to her gunwale"
             },
-            "hullBoxMetres": {"from": [-2.25, 0, -0.45], "to": [2.25, 0.564, 0.45]},
-            "hullBoxVoxels": {"from": [-36, 0, -7.2], "to": [36, 9.024, 7.2]}
+            "hullBoxMetres": {"from": [-2.5, 0, -0.45], "to": [2.5, 0.565, 0.45]},
+            "hullBoxVoxels": {"from": [-40, 0, -7.2], "to": [40, 9.044, 7.2]}
         },
         "roughseas:burnout": {
             "hollowings": 6,
@@ -66,8 +66,8 @@
             "blankDepthVoxels": 16,
             "blankWaterplaneSquareMetres": 5,
             "blankWaterplaneSquareVoxels": 1280,
-            "unhewnLitres": 3329.1,
-            "unhewnCubicVoxels": 13636.101,
+            "unhewnLitres": 3114.2,
+            "unhewnCubicVoxels": 12755.902,
             "charMillimetresPerHour": 2.5,
             "clay": "game:clay-*",
             "axeEdgeMetres": 0.1,
@@ -90,12 +90,12 @@
             "hollowLengthVoxels": 60,
             "hewnSectionsMetres": [[-1.875, -0.5], [-0.5, 0.5], [0.5, 1.875]],
             "hewnSectionsVoxels": [[-30, -8], [-8, 8], [8, 30]],
-            "hullBoxesVoxels": [{"from": [-32, -0.06, 0], "to": [48, 16, 16]}, {"from": [-31.333, -0.055, 0.4], "to": [47.333, 14.57, 15.6]}, {"from": [-30.667, -0.05, 0.48], "to": [46.667, 13.461, 15.52]}, {"from": [-30, -0.043, 0.56], "to": [46, 12.351, 15.44]}, {"from": [-29.333, -0.034, 0.64], "to": [45.333, 11.242, 15.36]}, {"from": [-28.667, -0.023, 0.72], "to": [44.667, 10.132, 15.28]}],
-            "hullBoxesMetres": [{"from": [-2.5, -0.004, -0.5], "to": [2.5, 1, 0.5]}, {"from": [-2.458, -0.003, -0.475], "to": [2.458, 0.911, 0.475]}, {"from": [-2.417, -0.003, -0.47], "to": [2.417, 0.841, 0.47]}, {"from": [-2.375, -0.003, -0.465], "to": [2.375, 0.772, 0.465]}, {"from": [-2.333, -0.002, -0.46], "to": [2.333, 0.703, 0.46]}, {"from": [-2.292, -0.001, -0.455], "to": [2.292, 0.633, 0.455]}]
+            "hullBoxesVoxels": [{"from": [-32, -0.06, 0], "to": [48, 16, 16]}, {"from": [-32, -0.055, 0.4], "to": [48, 14.783, 15.6]}, {"from": [-32, -0.05, 0.48], "to": [48, 13.571, 15.52]}, {"from": [-32, -0.043, 0.56], "to": [48, 12.405, 15.44]}, {"from": [-32, -0.034, 0.64], "to": [48, 11.278, 15.36]}, {"from": [-31.999, -0.023, 0.72], "to": [47.999, 10.162, 15.28]}],
+            "hullBoxesMetres": [{"from": [-2.5, -0.004, -0.5], "to": [2.5, 1, 0.5]}, {"from": [-2.5, -0.003, -0.475], "to": [2.5, 0.924, 0.475]}, {"from": [-2.5, -0.003, -0.47], "to": [2.5, 0.848, 0.47]}, {"from": [-2.5, -0.003, -0.465], "to": [2.5, 0.775, 0.465]}, {"from": [-2.5, -0.002, -0.46], "to": [2.5, 0.705, 0.46]}, {"from": [-2.5, -0.001, -0.455], "to": [2.5, 0.635, 0.455]}]
         },
         "roughseas:riggable": {"vessel": "roughseas:outrigger"},
         "passivephysicsmultibox": {
-            "collisionBoxes": [{"x1": -0.45, "y1": 0, "z1": -2.25, "x2": 0.45, "y2": 0.564, "z2": -1.35}, {"x1": -0.45, "y1": 0, "z1": -1.35, "x2": 0.45, "y2": 0.564, "z2": -0.45}, {"x1": -0.45, "y1": 0, "z1": -0.45, "x2": 0.45, "y2": 0.564, "z2": 0.45}, {"x1": -0.45, "y1": 0, "z1": 0.45, "x2": 0.45, "y2": 0.564, "z2": 1.35}, {"x1": -0.45, "y1": 0, "z1": 1.35, "x2": 0.45, "y2": 0.564, "z2": 2.25}],
+            "collisionBoxes": [{"x1": -0.45, "y1": 0, "z1": -2.5, "x2": 0.45, "y2": 0.565, "z2": -1.6}, {"x1": -0.45, "y1": 0, "z1": -1.68, "x2": 0.45, "y2": 0.565, "z2": -0.78}, {"x1": -0.45, "y1": 0, "z1": -0.86, "x2": 0.45, "y2": 0.565, "z2": 0.04}, {"x1": -0.45, "y1": 0, "z1": -0.04, "x2": 0.45, "y2": 0.565, "z2": 0.86}, {"x1": -0.45, "y1": 0, "z1": 0.78, "x2": 0.45, "y2": 0.565, "z2": 1.68}, {"x1": -0.45, "y1": 0, "z1": 1.6, "x2": 0.45, "y2": 0.565, "z2": 2.5}],
             "groundDragFactor": 1,
             "airDragFallingFactor": 0.5,
             "gravityFactor": 1.0
@@ -130,8 +130,8 @@
         },
         "roughseas:seaforces": {
             "mastMetres": 0,
-            "windageSquareMetres": 1.9297,
-            "windageSquareVoxels": 494,
+            "windageSquareMetres": 2.1201,
+            "windageSquareVoxels": 542.75,
             "heave": 0.5,
             "capsizeBreakerBeams": 1,
             "rollResponse": 2.5,
@@ -144,10 +144,10 @@
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 1297.5,
-            "capacityCubicVoxels": 5314.741,
-            "deckSquareMetres": 2.8132,
-            "deckSquareVoxels": 720.192,
+            "capacityLitres": 1435.7,
+            "capacityCubicVoxels": 5880.744,
+            "deckSquareMetres": 3.1954,
+            "deckSquareVoxels": 818.017,
             "drainLitresPerHour": 0,
             "sources": {
                 "drainLitresPerHour": "One log, no seams: nothing leaks"

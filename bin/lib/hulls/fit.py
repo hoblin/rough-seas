@@ -183,7 +183,7 @@ def faces(element, m):
         yield direct(m, normal), points
 
 
-def coplanar(elements):
+def coplanar(elements, among=None):
     """Each two faces of the elements that face the same way within TOLERANCE of one plane and overlap there by more
     than TOLERANCE square voxels: the faces that flicker."""
     planes = {}
@@ -199,7 +199,7 @@ def coplanar(elements):
         near = members + planes.get((*normal, step + 1), [])
         for a, b in combinations(near, 2):
             pair = tuple(sorted((a[0], b[0])))
-            if a[0] == b[0] or pair in seen or abs(a[1] - b[1]) > TOLERANCE:
+            if a[0] == b[0] or pair in seen or abs(a[1] - b[1]) > TOLERANCE or among is not None and (a[0] in among) == (b[0] in among):
                 continue
             shared = overlap(a[3], b[3], a[2])
             if shared > TOLERANCE:

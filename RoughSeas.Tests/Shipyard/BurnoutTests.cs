@@ -69,15 +69,15 @@ public class BurnoutTests
     }
 
     [Fact]
-    public void HerHullBoxShrinksWithTheTrunkAtEachHewing()
+    public void HerHullBoxSinksWithTheTrunkAtEachHewingAndKeepsTheLogsLength()
     {
         Assert.Equal(Config.Hollowings, Config.HullBoxesMetres.Length);
         Assert.Equal(Config.BlankDepthMetres, Config.HullBoxesMetres[0].To[1], 2);
         for (int level = 1; level < Config.Hollowings; level++)
         {
             Assert.True(Config.HullBoxesMetres[level].To[1] < Config.HullBoxesMetres[level - 1].To[1]);
-            Assert.True(Config.HullBoxesMetres[level].To[0] - Config.HullBoxesMetres[level].From[0]
-                < Config.HullBoxesMetres[level - 1].To[0] - Config.HullBoxesMetres[level - 1].From[0]);
+            Assert.Equal(Config.HullBoxesMetres[0].To[0] - Config.HullBoxesMetres[0].From[0],
+                Config.HullBoxesMetres[level].To[0] - Config.HullBoxesMetres[level].From[0], 3);
         }
     }
 
@@ -304,7 +304,7 @@ public class BurnoutTests
     {
         var blank = Charred(Bare());
 
-        Assert.Equal(32, blank.StrokesPerHewing);
+        Assert.Equal(36, blank.StrokesPerHewing);
         for (int stroke = 1; stroke < blank.StrokesPerHewing; stroke++) Assert.False(blank.Stroke());
         Assert.Equal(0, blank.Level);
         Assert.True(blank.Stroke());

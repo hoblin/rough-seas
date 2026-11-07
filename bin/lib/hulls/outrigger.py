@@ -2,7 +2,7 @@ import math
 from collections import namedtuple
 from pathlib import Path
 
-from dugout import CENTRE, HEWN, HOLLOW, PROFILE, RIM, RINGS, STATIONS, WALL, WOOD, crew_tools, deck, log, volumes, walls
+from dugout import CENTRE, HEWN, PROFILE, RIM, RINGS, STATIONS, WALL, WOOD, crew_tools, deck, log, mouth, volumes, walls
 from physics import LASHING_JOULES_PER_METRE, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
@@ -317,24 +317,29 @@ def stays():
     ]
 
 
+MOUTH = mouth()
+
+
 def sheer(hull, x, side):
     _, y, z = hull.at(x, len(PROFILE) - 1, side)
     return (x, y, z)
 
 
-def strakes(hull):
-    planks = []
+def strakes(hull, shell):
+    planks, cuts = [], ends_of([shell])
     for side, label in ((-1, "Port"), (1, "Starboard")):
-        x = HOLLOW[0]
-        while x < HOLLOW[1] - 1e-6:
-            end = min(x + PLANK, HOLLOW[1])
+        x = MOUTH[0]
+        while x < MOUTH[1] - 1e-6:
+            end = min(x + PLANK, MOUTH[1])
             a, b = (sheer(hull, at, side) for at in (x, end))
-            low = lambda point: (point[0], point[1] - 0.6, point[2])
+            low = lambda point, side=side: (point[0], point[1] - 0.6, point[2] + side * APART)
             lift = APART * (len(planks) % 2)
-            planks.append([plank(f"Strake{label}{len(planks) + 1}", add(low(a), (0, lift, 0)), add(low(b), (0, lift, 0)), STRAKE + 0.6 - 2 * lift,
-                                 STRAKE_THICKNESS, 0, side, "plank", "plank")])
+            made = lambda short, a=a, b=b, lift=lift, n=len(planks) + 1, label=label, side=side, low=low: (plank(
+                f"Strake{label}{n}", add(low(a), (short[0], lift, 0)), add(low(b), (-short[1], lift, 0)), STRAKE + 0.6 - 2 * lift,
+                STRAKE_THICKNESS, 0, side, "plank", "plank"), a, b)
+            planks.append([clear_of(cuts, (1, 0, 0), made)[0]])
             x = end
-    for label, x, inward in (("Stern", HOLLOW[0], 1), ("Bow", HOLLOW[1], -1)):
+    for label, x, inward in (("Stern", MOUTH[0], 1), ("Bow", MOUTH[1], -1)):
         half = end_half(hull, x)
         x0, x1 = sorted((x - inward * APART, x - inward * (STRAKE_THICKNESS + APART)))
         planks.append([box(f"Strake{label}", (x0, RIM - 0.6 + 2 * APART, CENTRE - half), (x1, RIM + STRAKE - 2 * APART, CENTRE + half), "plank")])
@@ -349,8 +354,8 @@ def end_half(hull, x):
 
 
 def strake_litres(hull):
-    sides = 2 * (HOLLOW[1] - HOLLOW[0])
-    ends = sum(2 * end_half(hull, x) for x in HOLLOW)
+    sides = 2 * (MOUTH[1] - MOUTH[0])
+    ends = sum(2 * end_half(hull, x) for x in MOUTH)
     return units.litres(units.metres((sides + ends) * (STRAKE + 0.6) * STRAKE_THICKNESS, 3))
 
 
@@ -358,8 +363,8 @@ def seams(hull, shell):
     stitches = []
     booms = [((x + edge * reach, 0, 0), (1, 0, 0)) for x in BOOMS for edge in (-1, 1) for reach in (BOOM / 2, LASH)] + ends_of([shell])
     for side, label in ((-1, "Port"), (1, "Starboard")):
-        x, n = HOLLOW[0] + STITCH_PITCH / 2, 1
-        while x < HOLLOW[1]:
+        x, n = MOUTH[0] + STITCH_PITCH / 2, 1
+        while x < MOUTH[1]:
             _, y, z = sheer(hull, x, side)
             z0, z1 = sorted((z - side * (WALL + 0.3), z + side * (STRAKE_THICKNESS + 0.3)))
             stitch = lambda short, x=x, y=y, z0=z0, z1=z1, n=n: (
@@ -367,10 +372,11 @@ def seams(hull, shell):
                 (x - 0.2 + short[0], y, z0), (x + 0.2 - short[1], y, z0))
             stitches.append(clear_of(booms, (1, 0, 0), stitch)[0])
             x, n = x + STITCH_PITCH, n + 1
-    for label, x in (("Stern", HOLLOW[0]), ("Bow", HOLLOW[1])):
+    for label, x in (("Stern", MOUTH[0]), ("Bow", MOUTH[1])):
         half = end_half(hull, x)
-        z, n = CENTRE - half + STITCH_PITCH / 2, 1
-        while z < CENTRE + half:
+        inside = half - WALL - 0.5 - APART
+        z, n = CENTRE - inside, 1
+        while z <= CENTRE + inside:
             stitches.append(box(f"Stitch{label}{n}", (x - 0.3 - STRAKE_THICKNESS, RIM - 0.9 + APART, z - 0.2), (x + 0.3 + STRAKE_THICKNESS, RIM + 0.4 - APART, z + 0.2),
                                 "lashing", grain="y"))
             z, n = z + STITCH_PITCH, n + 1
@@ -404,7 +410,7 @@ def build(target):
     shape.add(stages("Mast", mast()))
     shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
     shape.add(stages("Stays", stays()))
-    planks, raised_litres = strakes(hull)
+    planks, raised_litres = strakes(hull, shell)
     shape.add(stages("Strakes", planks), stages("Seams", seams(hull, shell)))
     rigged(shape, hull, shell, logs, passes)
     shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
