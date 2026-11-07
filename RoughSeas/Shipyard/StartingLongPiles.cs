@@ -38,14 +38,15 @@ public static class StartingLongPiles
         return false;
     }
 
-    private static void After(IWorldAccessor world, BlockSelection blockSel, IPlayer player, bool __result)
+    private static void After(IWorldAccessor world, BlockSelection blockSel, bool __result)
     {
-        if (!__result || world.Side != EnumAppSide.Server || Pile(player) is not { } pile) return;
+        if (!__result || world.Side != EnumAppSide.Server) return;
 
         var at = blockSel.Face == null ? blockSel.Position : blockSel.Position.AddCopy(blockSel.Face);
-        if (world.BlockAccessor.GetBlockEntity(at) is BlockEntityGroundStorage storage) pile.Fill(world, storage);
+        if (world.BlockAccessor.GetBlockEntity(at) is BlockEntityGroundStorage storage && Pile(storage.Inventory[0].Itemstack) is { } pile) pile.Fill(world, storage);
     }
 
-    private static CollectibleBehaviorLongPile? Pile(IPlayer player) =>
-        player.InventoryManager.ActiveHotbarSlot.Itemstack?.Collectible.GetCollectibleBehavior<CollectibleBehaviorLongPile>(true);
+    private static CollectibleBehaviorLongPile? Pile(IPlayer player) => Pile(player.InventoryManager.ActiveHotbarSlot.Itemstack);
+
+    private static CollectibleBehaviorLongPile? Pile(ItemStack? stack) => stack?.Collectible.GetCollectibleBehavior<CollectibleBehaviorLongPile>(true);
 }
