@@ -7,9 +7,9 @@ using Vintagestory.API.Server;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The drawn sea of each region with a vessel nobody steers in it, on the server. A client's surface depends on the region
-/// it is aimed from and not on the point in it, so every vessel in a region shares one <see cref="SwellAround"/>, aimed as
-/// often as a client aims its own. A region no vessel has asked about for a while is dropped.
+/// The drawn sea of each region with a vessel nobody steers or a player in the water, on the server. A client's surface depends on the region
+/// it is aimed from and not on the point in it, so everything in a region shares one <see cref="SwellAround"/>, aimed as
+/// often as a client aims its own. A region nothing has asked about for a while is dropped.
 /// </summary>
 public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, ICoreServerAPI sapi)
 {
@@ -19,7 +19,10 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
     private double sweptAt;
 
     /// <summary>The sea drawn over a position now, with its waves run on to now.</summary>
-    public IDrawnSea At(double x, double z)
+    public IDrawnSea At(double x, double z) => Around(x, z).Sea;
+
+    /// <summary>The sea drawn over a position now and the water it makes of the blocks, with its waves run on to now.</summary>
+    public SwellAround Around(double x, double z)
     {
         var regionSize = sapi.WorldManager.RegionSize;
         var region = ((int)Math.Floor(x / regionSize), (int)Math.Floor(z / regionSize));
@@ -41,7 +44,7 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
             swell.Around.Advance(seconds);
         }
         swell.Seconds = seconds;
-        return swell.Around.Sea;
+        return swell.Around;
     }
 
     private void Sweep(double now)

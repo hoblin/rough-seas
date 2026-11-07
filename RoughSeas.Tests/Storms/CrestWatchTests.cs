@@ -1,6 +1,6 @@
-using RoughSeas.Soundscape;
+using RoughSeas.Storms;
 
-namespace RoughSeas.Tests.Soundscape;
+namespace RoughSeas.Tests.Storms;
 
 public class CrestWatchTests
 {

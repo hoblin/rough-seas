@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using RoughSeas.Person;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
-using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
@@ -13,10 +13,14 @@ public class VesselMass
 {
     public const double SeawaterKgPerLitre = 1.025;
 
-    public double PlayerGearKg;
-    public double ArmorKgPerWalkSpeed;
-    public double CrewKg;
     public Dictionary<string, double> ContainerKg = [];
+
+    /// <summary>Who weighs a player, aboard as in the water.</summary>
+    [JsonIgnore]
+    public IPerson Person { get; set; } = null!;
+
+    /// <summary>The body of a rider counted before they have loaded, and in a vessel's reference mass.</summary>
+    public double CrewKg => Person.Body.MassKg;
 
     public Aboard Of(Entity vessel, double hullKg, int awaitedRiders = 0)
     {
@@ -27,8 +31,8 @@ public class VesselMass
         var passengers = (vessel.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []).Select(seat => seat.Passenger).OfType<Entity>().ToList();
         return new Aboard(
             hullKg,
-            passengers.Sum(passenger => passenger.Properties.Weight) + awaitedRiders * (CrewKg - PlayerGearKg),
-            passengers.Sum(Kit) + awaitedRiders * PlayerGearKg,
+            passengers.Sum(passenger => passenger is EntityPlayer ? CrewKg : passenger.Properties.Weight) + awaitedRiders * CrewKg,
+            passengers.Sum(passenger => Person.CarriedBy(passenger).Kg),
             accessories.Sum(slot => slot.Itemstack is { } stack ? Container(stack) : 0),
             water,
             water * fill);
@@ -54,21 +58,6 @@ public class VesselMass
 
         return rider.WatchedAttributes["mountedOn"] is TreeAttribute held
             && held.GetLong("entityIdMount") == vessel.EntityId && held.GetString("seatId") == seatId;
-    }
-
-    /// <summary>What a player carries and wears, in kilograms: their gear and their armour.</summary>
-    public double Kit(Entity passenger) => passenger is EntityPlayer { Player: not null } ? PlayerGearKg + ArmorKg(passenger) : 0;
-
-    /// <summary>The armour a player wears, in kilograms, by how much it slows them.</summary>
-    public double ArmorKg(Entity passenger)
-    {
-        if (passenger is not EntityPlayer { Player: { } player }) return 0;
-
-        var worn = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName) ?? Enumerable.Empty<ItemSlot>();
-        double slowedBy = worn
-            .Select(slot => slot.Itemstack?.ItemAttributes?["statModifiers"]["walkSpeed"].AsFloat() ?? 0)
-            .Sum(walkSpeed => Math.Max(0, -walkSpeed));
-        return slowedBy * ArmorKgPerWalkSpeed;
     }
 
     private double Container(ItemStack stack) =>

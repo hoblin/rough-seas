@@ -127,20 +127,8 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         return WaterDepth(entity.Pos.XYZ.Add(x, 0, z), maxBlocks);
     }
 
-    private double WaterDepth(Vec3d at, int maxBlocks)
-    {
-        var accessor = entity.World.BlockAccessor;
-        var pos = at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
-        var depth = 0.0;
-        var surface = !accessor.GetBlock(pos.UpCopy(), BlockLayersAccess.Fluid).IsLiquid();
-        while (depth < maxBlocks && accessor.GetBlock(pos, BlockLayersAccess.Fluid) is { } fluid && fluid.IsLiquid())
-        {
-            depth += surface ? fluid.LiquidLevel / 8.0 : 1;
-            surface = false;
-            pos.Down();
-        }
-        return depth;
-    }
+    private double WaterDepth(Vec3d at, int maxBlocks) =>
+        Storms.WaterDepth.Below(entity.World.BlockAccessor, at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0), maxBlocks);
 
     public override void OnGameTick(float deltaTime)
     {

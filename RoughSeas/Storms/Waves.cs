@@ -23,6 +23,9 @@ public class Waves(WavesConfig config)
     public double BreakingChance(double windMps) =>
         Math.Min(1, config.WhitecapCoefficient * Math.Pow(windMps, config.WhitecapExponent));
 
+    /// <summary>The density of the water, in kilograms a cubic metre: the sea's or a lake's.</summary>
+    public double DensityOf(bool salt) => salt ? config.WaterDensity : config.FreshWaterDensity;
+
     public bool BreaksAt(double depth, double height) => depth < BreakingDepth(height);
 
     public double BreakingDepth(double height) => config.BreakingDepthRatio * height;

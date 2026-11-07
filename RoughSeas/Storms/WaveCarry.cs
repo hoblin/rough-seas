@@ -39,17 +39,6 @@ public static class WaveCarry
     }
 
     /// <summary>
-    /// What a hull's motion takes this step to move at <paramref name="metresPerSecond"/> on top of its own way, in
-    /// blocks per physics tick, when it moved at <paramref name="beforeMetresPerSecond"/> on top of it the step
-    /// before. Under way (<paramref name="kept"/> null) vanilla has just set the motion from her speed through the
-    /// water, and the waves' velocity goes on top. Lying still, vanilla's drag has kept <paramref name="kept"/> of
-    /// last step's motion (all of it while <see cref="Vessels.IDriven"/> takes that drag off), the waves' part with it,
-    /// and the waves' part is brought up to this step's.
-    /// </summary>
-    internal static double Carried(double metresPerSecond, double beforeMetresPerSecond, double? kept) =>
-        (metresPerSecond - (kept ?? 0) * beforeMetresPerSecond) / WaterDrag.TicksPerSecond;
-
-    /// <summary>
     /// A velocity in metres a second of the waves' clock as metres a second of the tick's, when the waves' clock runs
     /// <paramref name="wavesPerTickSecond"/> of its seconds to the tick's. One wave then moves a hull as far at any speed of time.
     /// </summary>

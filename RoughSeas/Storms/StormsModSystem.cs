@@ -26,7 +26,7 @@ public class StormsModSystem : ModSystem
     /// <summary>The water a point is in by <see cref="DrawnSea"/>; null on the server.</summary>
     public DrawnWater? DrawnWater { get; private set; }
 
-    /// <summary>The drawn sea around the vessels nobody steers; null on a client.</summary>
+    /// <summary>The drawn sea around the vessels nobody steers and the players in the water; null on a client.</summary>
     public RegionSwells? Swells { get; private set; }
 
     /// <summary>The surface behind <see cref="DrawnSea"/>, foam included; null on the server.</summary>
@@ -55,9 +55,8 @@ public class StormsModSystem : ModSystem
         var surface = Surface = new SeaSurface(Config.Surface, Waves);
         var field = new SurfaceField();
         surface.Changed += change => Log("surface: " + change);
-        var drawn = new DrawnSea(surface, field);
-        DrawnSea = drawn;
-        DrawnWater = new DrawnWater(drawn);
+        DrawnSea = new DrawnSea(surface, field);
+        DrawnWater = new DrawnWater(DrawnSea);
         if (SurfaceShader.Attach(surface, field, capi))
         {
             clock = new SurfaceClock(this, sea, surface, field, capi);
@@ -66,8 +65,6 @@ public class StormsModSystem : ModSystem
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         VesselMotion.Attach(this, capi, DrawnSea, surface);
         FloatMotion.Attach(DrawnSea);
-        BodyUnderSurface.Attach(this, DrawnWater, Config.Swim);
-        BodyAfloat.Attach(this, capi, drawn, DrawnWater, Config.Body);
         RegisterSurfaceCommands(capi);
     }
 
@@ -115,8 +112,6 @@ public class StormsModSystem : ModSystem
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();
         FloatMotion.Detach();
-        BodyUnderSurface.Detach();
-        BodyAfloat.Detach();
         EyeUnderSurface.Detach();
         SurfaceShader.Detach();
         clock?.Dispose();

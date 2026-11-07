@@ -1,6 +1,6 @@
 using System;
 
-namespace RoughSeas.Soundscape;
+namespace RoughSeas.Storms;
 
 public sealed class CrestWatch
 {

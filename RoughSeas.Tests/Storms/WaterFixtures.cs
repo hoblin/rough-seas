@@ -23,6 +23,12 @@ public static class WaterFixtures
 
         public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) => default;
 
+        public double RiseVelocityAt(double x, double z, double depth = 0) => 0;
+
+        public double RiseAccelerationAt(double x, double z, double depth = 0) => 0;
+
+        public double WavesTowardRadians => 0;
+
         public SeaPose PoseOf(double x, double z, double yaw, double length, double width) => default;
     }
 

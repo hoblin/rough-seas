@@ -65,13 +65,14 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         var rate = sea.Clock.SecondsIn(seconds, boat.World.Calendar.SpeedOfTime) / seconds;
         var (x, z) = WaveCarry.OnTheClock(rider.Water(drawn, pos.X, pos.Z, yaw, hull), rate);
 
-        // under way vanilla rewrites the motion each step from the speed through the water; lying still it leaves it to the drag
+        // under way vanilla rewrites the motion each step from the speed through the water, so nothing of the last is kept;
+        // lying still it leaves it to the drag, all of it while a rower takes that drag off
         var physics = boat.ForwardSpeed == 0 ? boat.GetBehavior<EntityBehaviorPassivePhysics>() : null;
         double? kept = physics == null ? null : forces.Driven ? 1 : WaterDrag.Kept(physics.WaterDragValue, seconds);
         // vanilla's swimming physics divides her whole motion when it is fast, the waves' part with it
         var swimDrag = physics != null ? 1 : VesselDraught.SwimDrag(boat.ForwardSpeed, GlobalConstants.PhysicsFrameTime * WaterDrag.TicksPerSecond);
-        pos.Motion.X += WaveCarry.Carried(x, applied.X, kept) * swimDrag;
-        pos.Motion.Z += WaveCarry.Carried(z, applied.Z, kept) * swimDrag;
+        pos.Motion.X += WaterDrag.Carried(x, applied.X, kept ?? 0) * swimDrag;
+        pos.Motion.Z += WaterDrag.Carried(z, applied.Z, kept ?? 0) * swimDrag;
         applied = (x, z);
 
         if (!carried)

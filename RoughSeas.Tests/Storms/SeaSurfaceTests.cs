@@ -56,6 +56,44 @@ public class SeaSurfaceTests
     }
 
     [Fact]
+    public void TheWatersVerticalMotionIsTheRateOfItsSurface()
+    {
+        const double step = 0.01;
+        var sea = Fixtures.OneTrain(2, 14);
+        double Y(double time, double restX)
+        {
+            sea.Surface.Advance(time);
+            return sea.Surface.DisplacementAt(restX, 0).Y;
+        }
+
+        for (var restX = 0.0; restX < sea.Length; restX += sea.Length / 7)
+        {
+            var (before, at, after) = (Y(120 - step, restX), Y(120, restX), Y(120 + step, restX));
+            sea.Surface.Advance(120);
+            // where the drawn surface over this point of the water now stands
+            var x = restX + sea.Surface.DisplacementAt(restX, 0).X;
+            var reach = Math.Exp(sea.Number * at);
+
+            Assert.Equal((after - before) / (2 * step) * reach, sea.Surface.RiseVelocityAt(x, 0), 2);
+            Assert.Equal((after - 2 * at + before) / (step * step) * reach, sea.Surface.RiseAccelerationAt(x, 0), 1);
+        }
+    }
+
+    [Fact]
+    public void TheWatersVerticalMotionFadesWithDepth()
+    {
+        var sea = Fixtures.OneTrain(2, 14);
+        sea.Surface.Advance(120);
+        var (x, shallow) = (0.0, 0.0);
+        for (var at = 0.0; at < sea.Length; at += 1)
+        {
+            if (Math.Abs(sea.Surface.RiseVelocityAt(at, 0)) > Math.Abs(shallow)) (x, shallow) = (at, sea.Surface.RiseVelocityAt(at, 0));
+        }
+
+        Assert.Equal(shallow * Math.Exp(-sea.Number * 3), sea.Surface.RiseVelocityAt(x, 0, 3), 6);
+    }
+
+    [Fact]
     public void RisesAndFallsSmoothlyFarFromTheOrigin()
     {
         var surface = Surface();

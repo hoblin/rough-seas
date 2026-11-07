@@ -32,8 +32,8 @@ public class CurrentDrift(Entity entity) : EntityBehavior(entity)
         var pos = entity.Pos;
         var current = sea.CurrentAt(pos.X, pos.Z);
         // Added after each stretch of vanilla's water drag, so the drag pulls the motion towards the current, not to rest.
-        var carried = (1 - WaterDrag.Kept(physics.WaterDragValue, deltaTime)) / WaterDrag.TicksPerSecond;
-        pos.Motion.X += current.X * carried;
-        pos.Motion.Z += current.Z * carried;
+        var kept = WaterDrag.Kept(physics.WaterDragValue, deltaTime);
+        pos.Motion.X += WaterDrag.Carried(current.X, current.X, kept);
+        pos.Motion.Z += WaterDrag.Carried(current.Z, current.Z, kept);
     }
 }

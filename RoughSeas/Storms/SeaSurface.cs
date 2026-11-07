@@ -133,13 +133,20 @@ public sealed class SeaSurface
     /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
     public double HeightAt(double x, double z, double share = 1)
     {
+        var (restX, restZ) = RestOf(x, z, share);
+        return share * DisplacementAt(restX, restZ).Y;
+    }
+
+    // the point of the undisplaced water the drawn surface at x, z came from
+    private (double X, double Z) RestOf(double x, double z, double share)
+    {
         var (restX, restZ) = (x, z);
         for (var i = 0; i < SurfaceSearchSteps; i++)
         {
             var (shiftX, _, shiftZ) = DisplacementAt(restX, restZ);
             (restX, restZ) = (x - share * shiftX, z - share * shiftZ);
         }
-        return share * DisplacementAt(restX, restZ).Y;
+        return (restX, restZ);
     }
 
     public (double X, double Y, double Z) DisplacementAt(double x, double z)
@@ -195,7 +202,7 @@ public sealed class SeaSurface
     /// The water's vertical velocity, in metres a second, at a body <paramref name="depth"/> metres under the drawn
     /// surface here, with the waves scaled by <paramref name="share"/>. By linear deep-water theory each train moves its
     /// water up at -ω a cos θ e^(k z), the rate its rise a sin θ changes, a quarter turn ahead of the to and fro of
-    /// <see cref="OrbitalVelocityAt"/> (Dean and Dalrymple 1991): rising ahead of a crest, sinking behind it.
+    /// <see cref="HullVelocityAt"/> (Dean and Dalrymple 1991), at the point of the water the drawn surface here came from: rising ahead of a crest, sinking behind it.
     /// </summary>
     public double RiseVelocityAt(double x, double z, double depth = 0, double share = 1) => Vertical(x, z, depth, share, acceleration: false);
 
@@ -207,12 +214,13 @@ public sealed class SeaSurface
 
     private double Vertical(double x, double z, double depth, double share, bool acceleration)
     {
-        var height = share * DisplacementAt(x, z).Y - Math.Max(depth, 0);
+        var (restX, restZ) = RestOf(x, z, share);
+        var height = share * DisplacementAt(restX, restZ).Y - Math.Max(depth, 0);
         var sum = 0.0;
         for (var slot = 0; slot < Slots; slot++)
         {
             if (amplitude[slot] <= 0) continue;
-            var theta = Phase(slot, x, z);
+            var theta = Phase(slot, restX, restZ);
             var reach = share * amplitude[slot] * Math.Exp(Wavenumber(slot) * height);
             sum -= acceleration ? reach * frequency[slot] * frequency[slot] * Math.Sin(theta) : reach * frequency[slot] * Math.Cos(theta);
         }
