@@ -107,9 +107,10 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     }
 
     protected override BuildStep? Next =>
-        framing.Progress(sea.Clock.Hours) is not { } progress ? null
-        : framing.Current is { } stage ? new BuildStep(progress, layings[stage].Action, () => layings[stage].Shown(entity.World))
-        : new BuildStep(progress);
+        Tree == null ? null
+        : framing.Current is { } stage ? new BuildStep(framing.Progress(sea.Clock.Hours), layings[stage].Action, () => layings[stage].Shown(entity.World))
+        : framing.Progress(sea.Clock.Hours) is { } progress ? new BuildStep(progress)
+        : null;
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {

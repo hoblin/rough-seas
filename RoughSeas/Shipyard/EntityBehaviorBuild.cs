@@ -101,7 +101,7 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
 
     public override void GetInfoText(StringBuilder infotext)
     {
-        if (Next is { } step) infotext.AppendLine(step.Progress);
+        if (Next?.Progress is { } progress) infotext.AppendLine(progress);
     }
 
     public void Carry(ItemStack stack)
