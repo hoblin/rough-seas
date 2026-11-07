@@ -45,6 +45,13 @@ bin/scene views CODE DIR [SCALE]
                            It changes the world as it goes: clears vessels, items and wandering
                            animals around the player, breaks the vessel, weeds the beach, and empties
                            the player's inventory.
+bin/scene portrait CODE FILE [DISTANCE]
+                           the vessel large, for a page's gallery: at calm noon ashore on the beach zone,
+                           seen from its bow quarter as the wiki's ashore-quarter, through a 40° lens
+                           from DISTANCE blocks (default 4), the player out of the frame and a
+                           spectator, which casts no shadow. The camera aims at the middle of the vessel as
+                           drawn, masts and sails included; the window's full height is cut to 4:3 round
+                           it and written as FILE (.png keeps it whole; .webp is brought to 1200×900).
 bin/scene seats [CODE...]  the player in every seat of each vessel (default: ours and the vanilla raft
                            and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
@@ -277,6 +284,35 @@ views() {
   ls "$dir"
 }
 
+portrait() {
+  local code=$1 out=$2 distance=${3:-4} id full=$BENCH_TMP/portrait.png width height
+  clear >/dev/null
+  calm
+  "$game" zone beach >/dev/null
+  "$game" do '/bridge weed 8' >/dev/null
+  id=$("$game" do "/bridge spawn $code ~ ~-2 ~ 90" | awk '/Spawned/ { print $NF }')
+  sleep 2
+  local park
+  park=$(awk -v d="$distance" 'BEGIN { print d + 6 }')
+  look "$id" "$park" "$park" "$park"
+  "$game" do '/gamemode spectator' '.clientconfig fieldOfView 40' >/dev/null
+  "$game" camera on="$id" bearing=45 distance="$distance" \
+    height="$(awk -v d="$distance" 'BEGIN { print 0.8 * d + 0.3 }')" hold=1 >/dev/null
+  for animal in pig deer fox; do "$game" do "/entity remove e[range=64,type=game:$animal-*]" >/dev/null; done
+  sleep 2
+  "$game" shot "$full" >/dev/null
+  "$game" camera off >/dev/null
+  "$game" do '.clientconfig fieldOfView 70' '/gamemode creative' >/dev/null
+  read -r width height <<<"$(identify -format '%w %h' "$full")"
+  local crop=("$full" -gravity center -crop "$((height * 4 / 3))x${height}+0+0" +repage)
+  if [[ $out == *.webp ]]; then
+    magick "${crop[@]}" -resize 1200x900 -quality 82 "$out"
+  else
+    magick "${crop[@]}" "$out"
+  fi
+  echo "$out"
+}
+
 seats() {
   local codes=("$@") dir=$BENCH_TMP/seats id
   [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat-cattailtops-cattailtops roughseas:coracle roughseas:barkcanoe-birch roughseas:currach \
@@ -376,6 +412,7 @@ case "${1:-}" in
   recipe) shift; recipe "$@" ;;
   recipes) shift; recipes "$@" ;;
   views) shift; views "$@" ;;
+  portrait) shift; portrait "$@" ;;
   seats) shift; seats "$@" ;;
   strokes) shift; strokes "$@" ;;
   photo) shift; photo "$@" ;;

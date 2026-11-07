@@ -1,4 +1,4 @@
-![The dugout afloat](images/dugout/afloat-bow.webp)
+![The dugout ashore](images/dugout/ashore-close.webp)
 
 A single log, burnt and hewn hollow beside the water it floats on, from the five logs as they lay: 4.5 m of the 5 m trunk, 0.9 m wide and 0.56 m deep. The bark comes off, the sides stand steep over a round bottom, and the ends are left solid and blunt. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
 

@@ -137,7 +137,8 @@ LOOK
                              the free camera: placed around entity ID (or `player`), DEG clockwise
                              from its heading (0 ahead, 90 to starboard, 180 astern), M blocks off
                              and up, looking at ID or `look`; it follows the entity, or with hold=1
-                             stays where it stood. With seconds, it moves to the second station
+                             stays where it stood, framing the same view after the entity is gone.
+                             It looks at the middle of the entity as drawn. With seconds, it moves to the second station
                              over S seconds, easing in and out. The player stays put and in the
                              picture, seated aboard or rowing: the view is the game's third person
                              brought to zero distance. bin/game camera alone shows the shot

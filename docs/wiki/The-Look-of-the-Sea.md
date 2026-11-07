@@ -17,9 +17,9 @@ The Beaufort scale describes each force by what the sea looks like, and the [NOA
 
 | Force | Rough Seas | The real sea |
 | --- | --- | --- |
-| **4**, moderate breeze: waves 1 to 1.5 m, fairly frequent whitecaps | ![A moderate breeze at sea, seen from a sailboat's bow](images/sea/beaufort-4.webp) | ![NOAA's photograph of Beaufort force 4](images/sea/beaufort-4-noaa.jpg) |
-| **6**, strong breeze: waves 3 to 4 m, white foam crests everywhere, some spray | ![A strong breeze under sail](images/sea/beaufort-6.webp) | ![NOAA's photograph of Beaufort force 6](images/sea/beaufort-6-noaa.jpg) |
-| **8**, gale: waves 5.5 to 7.5 m, crests breaking into spindrift, foam in well-marked streaks along the wind | ![A gale from the deck of a sailboat](images/sea/beaufort-8.webp) | ![NOAA's photograph of Beaufort force 8](images/sea/beaufort-8-noaa.jpg) |
+| **4**, moderate breeze: waves 1 to 1.5 m, fairly frequent whitecaps | ![A moderate breeze over the open sea](images/sea/beaufort-4.webp) | ![NOAA's photograph of Beaufort force 4](images/sea/beaufort-4-noaa.jpg) |
+| **6**, strong breeze: waves 3 to 4 m, white foam crests everywhere, some spray | ![A strong breeze over the open sea](images/sea/beaufort-6.webp) | ![NOAA's photograph of Beaufort force 6](images/sea/beaufort-6-noaa.jpg) |
+| **8**, gale: waves 5.5 to 7.5 m, crests breaking into spindrift, foam in well-marked streaks along the wind | ![A gale over the open sea](images/sea/beaufort-8.webp) | ![NOAA's photograph of Beaufort force 8](images/sea/beaufort-8-noaa.jpg) |
 
 What the comparison taught us:
 
