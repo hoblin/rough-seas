@@ -12,5 +12,5 @@ public readonly record struct SeaCurrent(double X, double Z, double WaterCelsius
     public double Speed => Math.Sqrt(X * X + Z * Z);
 
     /// <summary>The compass direction the current flows towards, 0 north, 90 east.</summary>
-    public double TowardDegrees => (Compass.FromDegrees(X, Z) + 180) % 360;
+    public double TowardDegrees => Compass.TowardDegrees(X, Z);
 }

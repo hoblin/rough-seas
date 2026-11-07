@@ -27,8 +27,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private EntityBehaviorBilge? bilge;
     private EntityBehaviorMooring? mooring;
     private double windageSquareMetres;
-    private UnderwaterConfig underwater = new();
-    private UnderwaterBody? body;
     private JsonObject config = null!;
     private double? designedBeamMetres;
     private Seaworthiness dry;
@@ -54,21 +52,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     public double MastMetres => mast?.MastMetres(designedMastMetres) ?? designedMastMetres;
 
     public IBuoyant? Buoyant => buoyant;
-
-    /// <summary>What she shows the water below her waterline now, at her live draft and mass; null where she has no draft.</summary>
-    public UnderwaterBody? Underwater
-    {
-        get
-        {
-            if (buoyant is not { HasDraft: true } || IHull.Of(entity) is not { } hull) return null;
-
-            var (draft, mass) = (buoyant.Afloat.DraftMetres, buoyant.Aboard.Total);
-            if (body is { } known && known.DraftMetres == draft && known.MassKg == mass) return known;
-
-            var shape = hull.Shape;
-            return body = UnderwaterBody.Of(2 * shape.HalfLengthMetres, 2 * shape.HalfBeamMetres, draft, mass, underwater, storms.Config.Drift);
-        }
-    }
 
     /// <summary>How she takes the sea now, with the water in her bilge.</summary>
     public Seaworthiness Seaworthiness
@@ -110,7 +93,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         designedBeamMetres = attributes["beamMetres"].Exists ? attributes["beamMetres"].AsDouble() : null;
         designedMastMetres = attributes["mastMetres"].AsDouble();
         windageSquareMetres = attributes["windageSquareMetres"].AsDouble();
-        underwater = attributes["underwater"].AsObject<UnderwaterConfig>(new UnderwaterConfig());
         speedMultiplier = properties.Attributes?["speedMultiplier"].AsFloat(1) ?? 1;
     }
 

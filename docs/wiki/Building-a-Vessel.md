@@ -18,7 +18,7 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:bilge` | client and server | the water aboard: from waves, leaks and rain, bailed out, swamping the hull when full |
 | `roughseas:vesselintegrity` | client and server, first in both lists | the hull: how it floats and sinks, what cracks or breaks it, its leaks, mending, wreckage |
 | `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
-| `roughseas:currentdrift` | client and server | the hull's motion through the water: the current and the wind's drift, and the paddle's or sail's drive, against its underwater body |
+| `roughseas:currentdrift` | client and server | the current's carry on the hull, by the water's drag on it, and the swing about a held bow |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:framing` | client and server | a vessel laid piece by piece where it lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound together ([Bound in place](#bound-in-place)) |
 | `roughseas:riggable` | client and server | a finished hull that a boom laid across it joins to a float, making it the vessel it is rigged into ([Rigged in place](#rigged-in-place)) |
@@ -73,7 +73,7 @@ Our [coracle](Coracle), its sources, its build, its frame and the voxel twins of
     "behaviors": [
         { "code": "roughseas:vesselintegrity" }, { "code": "repulseagents" }, { "code": "passivephysicsmultibox" },
         { "code": "interpolateposition" }, { "code": "hidewatersurface", "hideWaterElement": "hideWater/*" },
-        { "code": "selectionboxes" }, { "code": "creaturecarrier" }, { "code": "ropetieable" },
+        { "code": "selectionboxes" }, { "code": "creaturecarrier" }, { "code": "ropetieable" }, { "code": "roughseas:currentdrift" },
         { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }
     ]
 },
@@ -422,14 +422,14 @@ A rider's client steers a vessel, and the server can't hold one it doesn't move:
 
 ## Currents
 
-`roughseas:currentdrift`, on both sides; it has no keys. It moves a vessel afloat through the water where its physics runs: on the server while nobody steers it, on the rider's client while someone does. The water moves with the [current](Currents); vanilla's stroke or sail drives the hull at the speed it makes in still water, and the hull answers both by its mass and the drag of its underwater body. It needs vanilla's passive physics on the entity (`passivephysics`, or `passivephysicsmultibox`), and takes vanilla's own water drag off the hull while it floats.
+`roughseas:currentdrift`, on both sides. It carries a vessel afloat with the [current](Currents), where its physics runs: on the server while nobody steers it, on the rider's client while someone does. The velocity the water has given the hull (its set) is on top of the way it makes through the water: the water's drag brings the set toward the current's velocity, by the hull's mass and the water it drags with it. A rower's or a sail's speed through the water is what it would be in still water, and a collision that stops the hull stops the set on that axis. The entity must be an `EntityBoat` with vanilla's passive physics (`passivephysics`, or `passivephysicsmultibox`).
 
-The underwater body comes from `vesselintegrity` (the live draft and the mass aboard, the hull's length and beam) and from `underwater` in `seaforces`:
+The drag is `HullDrag`, the one `roughseas:propulsion` drives against, from `vesselintegrity`'s live draft and mass and hull box. A vessel with `roughseas:propulsion` configures its form there ([Driving it](#driving-it)). One without it, as vanilla's sailboat is, takes the same keys under `roughseas:currentdrift`:
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
-| `bowOnDrag` | | 0 | pressure drag of the ends on beam × draft; the friction on the wetted surface comes on top |
-| `broadsideDrag` | | 1 | pressure drag of the side on length × draft |
-| `appendage` | | none | a keel or an outrigger's float: `frontalSquareMetres`, `lateralSquareMetres`, `bowOnDrag`, `broadsideDrag` |
+| `bowDrag` | | `drag.json` | a blunt bow's own drag on beam by draft |
+| `sideDrag` | | `drag.json` | cross-flow drag on length by draft |
+| `finSquareMetres` | m² | 0 | a keel's or float's side, added to length by draft |
 
-A vessel without `vesselintegrity` drifts as vanilla's water drag takes it toward the water's speed. Held by `mooring`, a vessel swings about its bow to lie along the stream, and the current's drag on it pulls on the rope and the anchor.
+A vessel without `vesselintegrity` has no draft to take drag on, and comes toward the water's speed at the rate of vanilla's water drag. Held by `mooring`, a vessel turns about its bow to lie along the stream, and the current's drag on it pulls on the rope and the anchor.

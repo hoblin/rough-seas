@@ -91,6 +91,12 @@ public class SwampingConfig
     public double SpeedFactor(double referenceKg, double kg) => Math.Pow(referenceKg / kg, SpeedExponent);
 }
 
+public class DriftConfig
+{
+    public double SyncSeconds;
+    public double LogSeconds;
+}
+
 public class MooringConfig
 {
     public double AnchoredExposure;

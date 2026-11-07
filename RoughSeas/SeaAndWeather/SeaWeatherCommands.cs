@@ -36,7 +36,7 @@ public static class SeaWeatherCommands
                 .HandleWith(args => TextCommandResult.Success(Storms(sea, sapi, args.Caller.Pos, (double)args[0])))
             .EndSubCommand()
             .BeginSubCommand("currents")
-                .WithDescription("The warmest and the coldest current within a range of you, up to 8000 blocks")
+                .WithDescription("The warmest, the coldest and the fastest current within a range of you, up to 8000 blocks")
                 .RequiresPlayer()
                 .WithArgs(sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultCurrentRange))
                 .HandleWith(args => TextCommandResult.Success(Currents(sea, sapi, args.Caller.Pos, (double)args[0])))
@@ -104,8 +104,10 @@ public static class SeaWeatherCommands
             .ToArray();
         var warm = samples.MaxBy(sample => sample.Current.WarmthCelsius);
         var cold = samples.MinBy(sample => sample.Current.WarmthCelsius);
+        var fast = samples.MaxBy(sample => sample.Current.Speed);
         return $"Warmest: {Describe(api, warm.Current, warm.X, warm.Z, pos)}\n"
-            + $"Coldest: {Describe(api, cold.Current, cold.X, cold.Z, pos)}";
+            + $"Coldest: {Describe(api, cold.Current, cold.X, cold.Z, pos)}\n"
+            + $"Fastest: {Describe(api, fast.Current, fast.X, fast.Z, pos)}";
     }
 
     private static string Describe(ICoreAPI api, SeaCurrent current, double x, double z, Vec3d pos) =>

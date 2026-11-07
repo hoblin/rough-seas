@@ -11,11 +11,11 @@ public class WavesTests
     [Fact]
     public void ASteadyPullLeavesTheWavesLessToMakeUp()
     {
-        Assert.Equal(Waves.ChanceToExceed(1000, 2000), Waves.ChanceToExceed(1000, 2000, 0));
-        Assert.Equal(Waves.ChanceToExceed(1000, 1500), Waves.ChanceToExceed(1000, 2000, 500), 12);
-        Assert.Equal(1, Waves.ChanceToExceed(1000, 2000, 2000));
-        Assert.Equal(1, Waves.ChanceToExceed(0, 2000, 2500));
-        Assert.Equal(0, Waves.ChanceToExceed(0, 2000, 1500));
+        Assert.Equal(Waves.ChanceToExceed(1000, 2000), Waves.ChanceToExceed(1000, 2000, 0, 0));
+        Assert.Equal(Waves.ChanceToExceed(1000, 1500), Waves.ChanceToExceed(1000, 2000, 500, 0), 12);
+        Assert.Equal(1, Waves.ChanceToExceed(1000, 2000, 2000, 0));
+        Assert.Equal(1, Waves.ChanceToExceed(0, 2000, 2500, 0));
+        Assert.Equal(0, Waves.ChanceToExceed(0, 2000, 1500, 0));
     }
 
     [Fact]
@@ -138,6 +138,16 @@ public class WavesTests
         Assert.True(Waves.ChanceToExceed(breeze, Fixtures.FlaxNewtons) < 1e-6);
         Assert.InRange(everyWave, 1e-4, 1e-2);
         Assert.InRange(1 - Math.Pow(1 - everyWave, gameDayWaves), 0.05, 0.5);
+    }
+
+    [Fact]
+    public void ACurrentAcrossTheWindAddsToTheWaveAsAVector()
+    {
+        var across = Waves.ChanceToExceed(1000, 2000, 0, 1200);
+        Assert.Equal(Waves.ChanceToExceed(1000, 1600), across, 12);
+        Assert.True(across < Waves.ChanceToExceed(1000, 2000, 1200, 0));
+        Assert.True(across > Waves.ChanceToExceed(1000, 2000, -1200, 0));
+        Assert.Equal(1, Waves.ChanceToExceed(0, 2000, 1500, 1500));
     }
 
     [Fact]

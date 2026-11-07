@@ -57,7 +57,6 @@ public class CurrentsConfig
     public double EasternBoundaryCelsius;
     public double SeawaterFreezingCelsius;
     public int BasinReachBlocks;
-    public double StokesDriftPerMps;
 }
 
 public class BeaufortForce

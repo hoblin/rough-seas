@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -104,6 +105,8 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public SeaState At(double x, double z) => Source.At(x, z);
 
+    // not inlined, or a postfix on it (the bench's /bridge current, another mod's) misses a caller once the JIT warms up
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public SeaCurrent CurrentAt(double x, double z) => Source.CurrentAt(x, z);
 
     public void Log(string format, params object[] args) =>

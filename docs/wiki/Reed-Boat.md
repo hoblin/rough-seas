@@ -26,7 +26,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
 | [Rapids](Rapids) | unharmed: its bundles crush and take each strike |
 | [Lightning](Lightning) | unharmed: its bundles crush and take the strike |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [In a current](Currents#drift) | carried with it, steered or not |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up, from the first binding on |
 | Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; it is too narrow to stand on, so it is poled sitting |

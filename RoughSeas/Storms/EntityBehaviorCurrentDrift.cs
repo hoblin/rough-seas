@@ -1,8 +1,8 @@
 using System;
+using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
-using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -12,157 +12,231 @@ using RoughSeas.Vessels;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// Moves a floating hull through the water where her physics runs: on the server while nobody steers her, on the
-/// helm's client while someone does. The water moves with the current; her
-/// <see cref="UnderwaterBody"/> answers it, and the stroke that drives her, the same way on both sides. Vanilla's
-/// water drag, a fixed factor a tick, is taken off her while she floats with a known body.
+/// Carries a vessel with the water by its drag on her hull, where her physics runs: the server while nobody steers her,
+/// the controlling client while someone does. Her <see cref="HullSet"/> holds the velocity the water has given her, on
+/// top of the way a rower makes through the water; <see cref="DriftPhysics"/> keeps it through vanilla's physics. While
+/// she is steered the server works out the same set from the same drag, for whoever takes her next.
 /// </summary>
 public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 {
     public const string Code = "roughseas:currentdrift";
 
-    /// <summary>Vanilla's motion is in blocks per 1/60 s: passive physics moves an entity by <c>Motion * 60 * dt</c>.</summary>
-    private const double TicksPerSecond = 60;
-
-    /// <summary>Vanilla's passive physics scales a swimming entity's motion by <c>WaterDragValue^(dt * 33)</c>.</summary>
-    private const double DragTicksPerSecond = 33;
-
-    private const float MaxStepSeconds = 0.5f;
+    private const string SetKey = "roughseas:set";
     private const double StillMps = 0.01;
+    private const double SyncedMps = 0.001;
 
+    private readonly HullSet set = new();
     private StormsModSystem storms = null!;
     private SeaWeatherSystem sea = null!;
+    private EntityBehaviorPassivePhysicsMultiBox? hullBoxes;
     private EntityBehaviorPassivePhysics? physics;
-    private EntityBehaviorSeaForces? forces;
     private IMountable? mountable;
-    private double waterDrag = GlobalConstants.WaterDrag;
-    private bool? here;
+    private IHullWay? way;
+    private LiveDrag? ownDrag;
+    private JsonObject attributes = null!;
+    private volatile Water? water;
+    private volatile bool moves;
+    private double turnPerSecond;
+    private float sinceSync;
     private float sinceLog;
-    private UnderwaterBody? logged;
+    private float sinceSwingLog;
+    private (double X, double Z) synced;
 
-    /// <summary>The water's velocity over the ground where she last moved, m/s: the current's.</summary>
-    public (double X, double Z) Water { get; private set; }
-
-    /// <summary>Her velocity over the ground, m/s.</summary>
-    public (double X, double Z) Velocity => (entity.Pos.Motion.X * TicksPerSecond, entity.Pos.Motion.Z * TicksPerSecond);
-
-    public UnderwaterBody? Body => forces?.Underwater;
+    private sealed record Water(double X, double Z, HullDrag? Drag);
 
     public override string PropertyName() => Code;
+
+    /// <summary>What her swing about a held bow adds to her motion, blocks per tick: a mooring leaves it alone.</summary>
+    public (double X, double Z) PivotMotion => set.PivotMotion;
 
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         mountable = entity.GetInterface<IMountable>();
-        // a client speaks only of the hulls it steers
-        if (entity.Api.Side == EnumAppSide.Client) here = false;
+        this.attributes = attributes;
     }
 
     public override void AfterInitialized(bool onFirstSpawn)
     {
-        forces = entity.GetBehavior<EntityBehaviorSeaForces>();
+        hullBoxes = entity.GetBehavior<EntityBehaviorPassivePhysicsMultiBox>();
         physics = entity.GetBehavior<EntityBehaviorPassivePhysics>();
-        if (physics != null) waterDrag = physics.WaterDragValue;
+        way = entity.SidedProperties.Behaviors.OfType<IHullWay>().FirstOrDefault();
+        if (way == null && IHull.Of(entity) is { } hull) ownDrag = new LiveDrag(entity, hull, attributes, entity.Api.ModLoader.GetModSystem<VesselsModSystem>());
     }
 
+    /// <summary>The water's drag on her now, newtons in world axes.</summary>
+    public (double X, double Z) Pull() =>
+        water is { Drag: { } drag } w ? set.Pull(drag, w.X, w.Z, entity.Pos.Yaw) : default;
+
+    /// <summary>A mooring stops her set away from it, along the unit vector from the mooring to her.</summary>
+    public void Hold(double outwardX, double outwardZ) => set.Hold(outwardX, outwardZ);
+
     /// <summary>
-    /// Moves her for <paramref name="deltaTime"/> seconds, called right after vanilla's
-    /// <c>EntityBoat.updateBoatAngleAndMotion</c> on both sides; it acts only on the side her physics runs on.
-    /// <paramref name="before"/> is her motion before vanilla's steering rewrote it from her forward speed.
+    /// While a mooring holds her she turns about her bow under the water running past: her origin moves as the turn
+    /// takes it, so the bow stays where the rope has it. Let go, she stops turning.
     /// </summary>
-    internal void Step(EntityBoat boat, float deltaTime, (double X, double Z) before)
+    public void HeldAtBow(bool held, float deltaTime)
     {
-        if (physics == null || !Simulated()) return;
-
-        var body = entity.Swimming ? Body : null;
-        // vanilla's water drag stays on a hull that isn't afloat, or whose underwater body is unknown
-        physics.WaterDragValue = body == null ? waterDrag : 1;
-        if (!entity.Swimming) return;
-
-        using var _ = storms.Budget.Measure();
-        var seconds = Math.Min(deltaTime, MaxStepSeconds);
-        var motion = entity.Pos.Motion;
-        var drag = Math.Pow(waterDrag, seconds * DragTicksPerSecond);
-        var pos = entity.Pos;
-        var current = sea.CurrentAt(pos.X, pos.Z);
-        Water = (current.X, current.Z);
-        if (body == null)
+        if (!held || water is not { Drag: { } drag } w || hullBoxes == null || IHull.Of(entity) is not { } hull || deltaTime <= 0)
         {
-            // carried as vanilla's drag would take her toward the water's speed instead of rest, or wholly where the
-            // steering has just set her speed through it
-            var share = boat.ForwardSpeed != 0 ? 1 : 1 - drag;
-            motion.X += Water.X / TicksPerSecond * share;
-            motion.Z += Water.Z / TicksPerSecond * share;
+            Release();
             return;
         }
 
-        // vanilla's drag still damps her heave
-        motion.Y *= drag;
-        var row = Row(boat, motion);
-        var (vx, vz) = body.Carry(before.X * TicksPerSecond, before.Z * TicksPerSecond, Water.X, Water.Z, pos.Yaw, row.X, row.Z, seconds);
-        motion.X = vx / TicksPerSecond;
-        motion.Z = vz / TicksPerSecond;
-        Log(body, row, seconds);
-    }
-
-    /// <summary>
-    /// The speed through still water vanilla's stroke or sail holds her at, m/s: the motion its steering sets, less
-    /// the one physics frame of vanilla's water drag it would have met before moving her.
-    /// </summary>
-    private (double X, double Z) Row(EntityBoat boat, Vec3d motion)
-    {
-        if (boat.ForwardSpeed == 0) return (0, 0);
-
-        var frame = Math.Pow(waterDrag, GlobalConstants.PhysicsFrameTime * DragTicksPerSecond) * TicksPerSecond;
-        return (motion.X * frame, motion.Z * frame);
-    }
-
-    private bool Simulated()
-    {
-        if (entity.Api is ICoreClientAPI capi)
+        var pos = entity.Pos;
+        var yaw = pos.Yaw;
+        turnPerSecond = set.Swing(drag, w.X, w.Z, yaw, turnPerSecond, deltaTime);
+        var turned = (float)GameMath.Mod(yaw + turnPerSecond * deltaTime, GameMath.TWOPI);
+        if (!hullBoxes.AdjustCollisionBoxesToYaw(deltaTime, true, turned))
         {
-            var steeredHere = mountable?.Controller is { } helm && helm == capi.World.Player?.Entity;
-            Hand(steeredHere, "steered from this client: she moves here", "no longer steered from this client");
-            return steeredHere;
+            Release();
+            if ((sinceSwingLog += deltaTime) >= storms.Config.Drift.LogSeconds)
+            {
+                sinceSwingLog = 0;
+                storms.Log(entity, "can't swing: something stands where she would turn");
+            }
+            return;
         }
 
-        var unsteered = mountable?.IsBeingControlled() != true;
-        Hand(unsteered, "unsteered: the server moves her", "steered: her helm's client moves her");
-        return unsteered;
+        pos.Yaw = turned;
+        var (bowX, bowZ) = hull.Shape.Bow(yaw);
+        var (nextX, nextZ) = hull.Shape.Bow(turned);
+        set.Pivot((bowX - nextX) / deltaTime, (bowZ - nextZ) / deltaTime);
+        LogSwing(w, drag, deltaTime);
     }
 
-    private void Hand(bool simulated, string taken, string released)
+    public override void OnGameTick(float deltaTime)
     {
-        if (simulated == here) return;
+        if (!entity.Alive) return;
 
-        here = simulated;
-        storms.Log(entity, "drift: {0}", simulated ? taken : released);
-    }
-
-    private void Log(UnderwaterBody body, (double X, double Z) row, float seconds)
-    {
-        if (logged == null || Math.Abs(body.MassKg - logged.MassKg) > 1 || Math.Abs(body.DraftMetres - logged.DraftMetres) > 0.005)
+        var client = entity.Api as ICoreClientAPI;
+        var steered = mountable?.IsBeingControlled() == true;
+        var ours = client == null ? !steered : mountable?.Controller == client.World.Player?.Entity;
+        if ((client != null && !ours) || !entity.Swimming)
         {
-            logged = body;
-            storms.Log(entity, "underwater: {0:F2} x {1:F2} m at {2:F2} m draft, {3:F2} m2 bow-on, {4:F2} m2 broadside; {5:F0} kg, {6:F0} kg moving ahead, {7:F0} kg abeam",
-                body.LengthMetres, body.BeamMetres, body.DraftMetres, body.FrontalSquareMetres, body.LateralSquareMetres, body.MassKg, body.SurgeKg, body.SwayKg);
+            Ashore();
+            return;
         }
 
-        sinceLog += seconds;
-        if (sinceLog < storms.Config.Drift.LogSeconds) return;
+        using var _ = storms.Budget.Measure();
+        var pos = entity.Pos;
+        var current = sea.CurrentAt(pos.X, pos.Z);
+        var w = water = new Water(current.X, current.Z, way?.WaterDrag ?? ownDrag?.Now);
+        if (w.Drag is { } drag) set.Settle(drag, w.X, w.Z, pos.Yaw, deltaTime);
+        else set.Relax(w.X, w.Z, 1 - VesselDraught.WaterDragKept(physics?.WaterDragValue ?? 1, deltaTime));
+
+        if (ours && !moves) TakeOver();
+        else if (!ours && moves) GiveOver();
+        moves = ours;
+        if (client == null) Sync(deltaTime);
+        Report(w, steered, deltaTime);
+    }
+
+    internal void BeforeMove(Vec3d motion, float seconds, double drag, bool wet, bool swimming, double stepFactor)
+    {
+        if (!moves) return;
+
+        // a driving hull has this drag undone along the water by Rowing.Swum already, whichever patch goes first
+        var kept = wet && way is { Driving: true } ? 1 : VesselDraught.WaterDragKept(drag, seconds);
+        set.Keep(motion, kept, stepFactor, swimming);
+    }
+
+    internal void AfterMove(Vec3d motion)
+    {
+        if (moves) set.Collided(motion);
+    }
+
+    internal void Rowed(Vec3d motion) => set.Rowed(motion, moves);
+
+    /// <summary>For a bench switch: she stops being carried here and now.</summary>
+    public void Stopped(Vec3d motion) => set.Drop(motion);
+
+    private void TakeOver()
+    {
+        var tree = entity.WatchedAttributes.GetTreeAttribute(SetKey);
+        if (tree == null) return;
+
+        var (x, z) = (tree.GetDouble("x"), tree.GetDouble("z"));
+        set.Take(x, z, entity.Pos.Motion);
+        storms.Log(entity, "{0}: carried at {1:F2} m/s toward {2:F0}°",
+            entity.Api.Side == EnumAppSide.Client ? "steered from this client, her physics runs here" : "nobody steers her, the server moves her",
+            Speed(x, z), Compass.TowardDegrees(x, z));
+    }
+
+    private void GiveOver()
+    {
+        var (x, z) = set.Velocity;
+        storms.Log(entity, "steered: her helm's client moves her, carried at {0:F2} m/s toward {1:F0}°", Speed(x, z), Compass.TowardDegrees(x, z));
+        Release();
+    }
+
+    private void Release()
+    {
+        turnPerSecond = 0;
+        set.Pivot(0, 0);
+    }
+
+    private void Ashore()
+    {
+        if (moves && entity.Api.Side == EnumAppSide.Client) storms.Log(entity, "no longer steered from this client");
+        moves = false;
+        water = null;
+        turnPerSecond = 0;
+        set.Clear();
+        synced = default;
+        if (entity.Api.Side == EnumAppSide.Server && entity.WatchedAttributes.HasAttribute(SetKey))
+        {
+            entity.WatchedAttributes.RemoveAttribute(SetKey);
+        }
+    }
+
+    private void Sync(float deltaTime)
+    {
+        if ((sinceSync += deltaTime) < storms.Config.Drift.SyncSeconds) return;
+
+        sinceSync = 0;
+        var now = set.Velocity;
+        if (Math.Abs(now.X - synced.X) < SyncedMps && Math.Abs(now.Z - synced.Z) < SyncedMps) return;
+
+        synced = now;
+        var tree = entity.WatchedAttributes.GetOrAddTreeAttribute(SetKey);
+        tree.SetDouble("x", now.X);
+        tree.SetDouble("z", now.Z);
+        entity.WatchedAttributes.MarkPathDirty(SetKey);
+    }
+
+    private void Report(Water w, bool steered, float deltaTime)
+    {
+        if ((sinceLog += deltaTime) < storms.Config.Drift.LogSeconds) return;
 
         sinceLog = 0;
-        var (vx, vz) = Velocity;
-        var (wx, wz) = Water;
-        if (Math.Max(Speed(vx, vz), Speed(wx, wz)) < StillMps) return;
+        var (x, z) = set.Velocity;
+        if (Math.Max(Speed(x, z), Speed(w.X, w.Z)) < StillMps) return;
 
-        var (along, across) = HullShape.ToHull(vx - wx, vz - wz, entity.Pos.Yaw);
-        storms.Log(entity, "drift: water {0:F2} m/s toward {1:F0}, she makes {2:F2} m/s toward {3:F0} over the ground, through the water {4:F2} ahead and {5:F2} abeam, stroke {6:F2} m/s",
-            Speed(wx, wz), Toward(wx, wz), Speed(vx, vz), Toward(vx, vz), -along, across, Speed(row.X, row.Z));
+        var (pullX, pullZ) = Pull();
+        storms.Log(entity, "{0}: the water runs {1:F2} m/s toward {2:F0}°, carries her at {3:F2} m/s toward {4:F0}°, pulls {5:F0} N; {6:F0} kg aboard, heading {7:F0}°",
+            steered ? "steered" : "adrift", Speed(w.X, w.Z), Compass.TowardDegrees(w.X, w.Z), Speed(x, z), Compass.TowardDegrees(x, z),
+            Speed(pullX, pullZ), w.Drag?.Kilograms ?? 0, Heading());
     }
 
-    private static double Speed(double x, double z) => Math.Sqrt(x * x + z * z);
+    private void LogSwing(Water w, HullDrag drag, float deltaTime)
+    {
+        if ((sinceSwingLog += deltaTime) < storms.Config.Drift.LogSeconds) return;
 
-    private static double Toward(double x, double z) => (Compass.FromDegrees(x, z) + 180) % 360;
+        sinceSwingLog = 0;
+        var pos = entity.Pos;
+        var (x, z) = set.Velocity;
+        var (along, across) = HullShape.ToHull(w.X - x, w.Z - z, pos.Yaw);
+        if (Speed(along, across) < StillMps) return;
+
+        var (pullX, pullZ) = drag.Pull(w.X - x, w.Z - z, pos.Yaw);
+        storms.Log(entity, "swings at {0:F1}°/s, heading {1:F0}°, {2:F0}° off the stream with her stern {3}, the current pulling {4:F0} N",
+            turnPerSecond * GameMath.RAD2DEG, Heading(), Math.Atan2(Math.Abs(across), Math.Abs(along)) * GameMath.RAD2DEG,
+            along >= 0 ? "downstream" : "upstream", Speed(pullX, pullZ));
+    }
+
+    private double Heading() => Compass.TowardDegrees(Math.Sin(entity.Pos.Yaw), Math.Cos(entity.Pos.Yaw));
+
+    private static double Speed(double x, double z) => Math.Sqrt(x * x + z * z);
 }

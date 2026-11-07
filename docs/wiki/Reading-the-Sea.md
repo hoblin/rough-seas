@@ -104,7 +104,7 @@ pos.Motion.Z += current.Z * carried;
 
 `physics` is the entity's `EntityBehaviorPassivePhysics`, whose drag is applied 33 times a second; 60 turns m/s into blocks per tick. An entity of yours that moves by other physics adds the current to its own motion its own way.
 
-Our vessels don't use this: their behaviour drives the hull by the drag of its underwater body on the water's velocity relative to its own, on the server for a vessel nobody steers and on the rider's client for a steered one ([Building a vessel](Building-a-Vessel#currents)). A mod that sails its own vessels adds `CurrentAt` to its own motion on the side that moves them.
+Our vessels don't use this: their behaviour carries the hull by the water's drag on its velocity relative to the current, on the server for a vessel nobody steers and on the rider's client for a steered one ([Building a vessel](Building-a-Vessel#currents)). A mod that sails its own vessels adds `CurrentAt` to its own motion on the side that moves them.
 
 ### The sea's time
 

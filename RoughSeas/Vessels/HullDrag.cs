@@ -21,6 +21,7 @@ public readonly record struct HullForm(double LengthMetres, double BeamMetres, d
 /// flat plate of her draft across (Newman 1977). Under way she also resists turning in proportion to her speed: the
 /// linear yaw damping of Clarke, Gedling and Hine's regression (Trans. RINA 125, 1983), whose slender-body term alone is
 /// the lift her underwater body makes against the turn. Speeds are m/s through the water, forces newtons, torques N·m.
+/// Where a velocity is the water's relative to her, it is m/s east and south in world axes.
 /// </summary>
 public sealed class HullDrag
 {
@@ -32,6 +33,9 @@ public sealed class HullDrag
     private const double SlenderYawDamping = 0.25;
     private const double BeamOnDraftYawDamping = 0.039;
     private const double BeamOnLengthYawDamping = 0.56;
+    private const double EndMoment = 3;
+    private const int SwingStrips = 8;
+    private const int SwingSteps = 4;
 
     private readonly HullForm form;
     private readonly DragConfig config;
@@ -51,14 +55,19 @@ public sealed class HullDrag
         wettedSquareMetres = MumfordSides * form.LengthMetres * draft + kilograms / waterDensity / draft;
         sideSquareMetres = form.LengthMetres * draft + form.FinSquareMetres;
         waves = new WaveMaking(form.LengthMetres, form.BeamMetres, draft, waterDensity);
+        Kilograms = kilograms;
         AlongKg = kilograms * (1 + SurgeAddedShare(form.LengthMetres / form.BeamMetres));
-        var acrossKg = kilograms + halfDensity * Math.PI * draft * draft * form.LengthMetres;
-        TurningKgSquareMetres = acrossKg * form.LengthMetres * form.LengthMetres / RodMoment;
+        AcrossKg = kilograms + halfDensity * Math.PI * draft * draft * form.LengthMetres;
+        TurningKgSquareMetres = AcrossKg * form.LengthMetres * form.LengthMetres / RodMoment;
         var clarke = SlenderYawDamping + BeamOnDraftYawDamping * form.BeamMetres / draft - BeamOnLengthYawDamping * form.BeamMetres / form.LengthMetres;
         yawDamping = Math.PI * halfDensity * draft * draft * form.LengthMetres * form.LengthMetres * Math.Max(0, clarke);
     }
 
+    public double Kilograms { get; }
+
     public double AlongKg { get; }
+
+    public double AcrossKg { get; }
 
     public double TurningKgSquareMetres { get; }
 
@@ -71,6 +80,54 @@ public sealed class HullDrag
         return -SideDrag / length * radiansPerSecond * Math.Abs(radiansPerSecond) * Math.Pow(length, 4) / SpinMoment
                - yawDamping * Math.Abs(metresPerSecond) * radiansPerSecond;
     }
+
+    public double Across(double metresPerSecond) => -SideDrag * metresPerSecond * Math.Abs(metresPerSecond);
+
+    /// <summary>The water's drag on her, newtons in world axes.</summary>
+    public (double X, double Z) Pull(double waterX, double waterZ, double yaw)
+    {
+        var (along, across) = HullShape.ToHull(waterX, waterZ, yaw);
+        return HullShape.ToWorld(Along(-along), Across(-across), yaw);
+    }
+
+    /// <summary>
+    /// The water's velocity relative to her after <paramref name="seconds"/> of its drag alone: the drag at this speed,
+    /// read as a square law, integrated exactly, so a long step can't carry her past the water.
+    /// </summary>
+    public (double X, double Z) Settle(double waterX, double waterZ, double yaw, double seconds)
+    {
+        var (along, across) = HullShape.ToHull(waterX, waterZ, yaw);
+        return HullShape.ToWorld(Settled(along, Along(-along) / AlongKg, seconds), Settled(across, Across(-across) / AcrossKg, seconds), yaw);
+    }
+
+    /// <summary>
+    /// Her turn in radians of yaw a second after <paramref name="seconds"/>, held at her bow with the water running past:
+    /// each strip of her side meets the water across it less its own swing, about the moment of a rod at its end.
+    /// </summary>
+    public double Swing(double waterX, double waterZ, double yaw, double turnPerSecond, double seconds)
+    {
+        var across = HullShape.ToHull(waterX, waterZ, yaw).Across;
+        var length = form.LengthMetres;
+        var perMetre = SideDrag / length;
+        var moment = AcrossKg * length * length / EndMoment;
+        var step = seconds / SwingSteps;
+        var strip = length / SwingStrips;
+        for (var i = 0; i < SwingSteps; i++)
+        {
+            var torque = 0.0;
+            for (var s = 0; s < SwingStrips; s++)
+            {
+                var aft = (s + 0.5) * strip;
+                var flow = across + turnPerSecond * aft;
+                torque -= aft * perMetre * flow * Math.Abs(flow) * strip;
+            }
+            turnPerSecond += torque / moment * step;
+        }
+        return turnPerSecond;
+    }
+
+    private static double Settled(double speed, double acceleration, double seconds) =>
+        speed == 0 ? 0 : speed / (1 + Math.Abs(acceleration / speed) * seconds);
 
     private double SideDrag => halfDensity * form.SideDrag * sideSquareMetres;
 

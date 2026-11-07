@@ -66,6 +66,13 @@ A rowed, paddled or poled hull goes where its rower's thrust meets the water's d
 - **Standing, he drives with his legs too.** Poling has not been measured; the nearest measured stroke is the stand-up paddler's, 13.4% gross at 45 strokes a minute, its slowest rate and the nearest to poling's 15 (Castañeda-Babarro et al. 2020); a gondolier rowing standing spends 9.2 to 14.5% (Capelli et al. 1990). So a standing poler turns 13.4% of the rower's 1040 W into work, 139 W. From the seat he shoves with arms and trunk at paddling's 10%, his hands at his chest as his stroke draws them, 0.49 m above the water on the reed boat.
 - **The effort** costs satiety on vanilla's own scale: vanilla charges 1.5 satiety a second for sprinting, which a 75 kg runner at its 3.4 m/s spends 1.07 kW on (Margaria 1963, 4.2 J a kilogram and metre), so a kilojoule of effort costs 1.4 satiety, scaled with the calendar as vanilla scales hunger.
 
+## Carried by the current
+
+- **The drag.** A current moves a hull apart from the water only while the two differ, and the force is the drag the hull is driven against when rowed, on the water's velocity relative to it: along the hull the friction, the blunt bow's drag and the waves it makes, across it the cross-flow drag on length by draft and any keel or float (Hoerner's cross-flow principle, Hoerner 1965, *Fluid-Dynamic Drag*).
+- **Its answer.** The hull takes that force with its mass and the water it drags with it: Lamb's spheroid along it, a flat plate of its draft across it (Lamb 1932, *Hydrodynamics*, §114; Newman 1977, *Marine Hydrodynamics*). A drag that grows with the square of the speed takes the water's speed off it as w / (1 + k w t), so it comes up to the current quickly at first and ever more slowly after.
+- **What it comes to.** At 2 m/s the water pulls 44 times harder than at 0.3 m/s. An empty oak dugout, 252 kg, lying along a 1.5 m/s stream makes 0.49 m/s of it after 10 s and 0.89 m/s after 30 s; with 400 kg aboard, 0.33 and 0.67 m/s. Lying across it, both make about 1.3 m/s after 10 s. The sailboat lying along it makes only 0.57 m/s after 30 s.
+- **On a mooring.** Held at the bow, the water across the hull turns it about the bow, each strip of its side meeting the water less its own swing, about the moment of a rod at its end, until the water runs along it, stern downstream. There it pulls least: at 1.5 m/s, 1900 N on a sailboat lying across and 70 N lying along. The current's pull joins the wave's on the rope and the anchor as vectors, without the share that stands for an anchored hull's lie, since it is already the drag on that lie.
+
 ## Building a dugout
 
 - **Fire, then the adze.** Where people had no metal, they hollowed a log by fire: Thomas Harriot saw the Algonquians of Roanoke make their canoes "only with the helpe of fire, harchets of stones, and shels" (*A Briefe and True Report*, 1588), and John White drew them at it, a fire burning along the log while others scrape. Burnt wood comes away far more easily than sound wood (the Butser Prometheus project, [EXARC](https://exarc.net/ark:/88735/10176)), so each fire is followed by scraping out its char down to sound wood.
@@ -119,6 +126,7 @@ A rowed, paddled or poled hull goes where its rower's thrust meets the water's d
 
 ## Where we bent reality, and what is not yet real
 
+- **The current adds to the rower's speed.** What a rider rows or sails is the speed through the water, and the set the current has given the hull is added to it. In a steady stream that is exact. While the hull is still coming up to the current's speed, the drag on its way through the water and on the set are counted apart, so a hull rowed straight into a stream it has just met gains ground at first and loses it as the set grows.
 - **A stove-in crack is 25 cm²**, a hole 5.6 cm across, set for play rather than measured; a blow must break the shell around it.
 - **A point of weapon damage is 200 J**, not yet measured: an iron axe's swing comes to 600 J, more than the 67 to 312 J measured for real strikes.
 - **What backs a hide, lines a bark canoe or binds a reed boat** is read off the models: how much of a side and of the bottom the laths, the sheathing or the lashings cover, sampled over the hull's skin, and how far apart the members lie. The bark canoe's bark is 5 mm, for play.

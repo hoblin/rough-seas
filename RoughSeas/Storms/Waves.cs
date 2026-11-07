@@ -65,11 +65,16 @@ public class Waves(WavesConfig config)
     public static double ChanceToExceed(double force, double limit) => force <= 0 ? 0 : Math.Exp(-2 * limit / force);
 
     /// <summary>
-    /// The chance one wave pulls past <paramref name="limit"/> on top of a <paramref name="steady"/> pull, such as a
-    /// current's: the wave need only make up what the steady pull leaves.
+    /// The chance one wave pulls past <paramref name="limit"/> on top of a steady pull such as a current's, given along
+    /// and across the wave's own direction: the wave need only make up what the steady pull leaves, and a steady pull
+    /// past the limit is past it whatever the wave does.
     /// </summary>
-    public static double ChanceToExceed(double force, double limit, double steady) =>
-        steady >= limit ? 1 : ChanceToExceed(force, limit - steady);
+    public static double ChanceToExceed(double force, double limit, double steadyAlong, double steadyAcross)
+    {
+        if (steadyAlong * steadyAlong + steadyAcross * steadyAcross >= limit * limit) return 1;
+
+        return ChanceToExceed(force, Math.Sqrt(limit * limit - steadyAcross * steadyAcross) - steadyAlong);
+    }
 
     private double CrestMass(double height, double beam) => config.WaterDensity * beam * height * height / 4;
 }

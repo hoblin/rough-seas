@@ -25,7 +25,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
 | [Rapids](Rapids) | doesn't survive them for now: the bottom stove in at the first rock ([a simplified model](Rapids)) |
 | [Lightning](Lightning) | a strike nearby almost always breaks it |
-| [Left alone](Currents#drift) | drifts with the current and the wind |
+| [In a current](Currents#drift) | carried with it, steered or not |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | one: the rower on the thwart, facing its stern, rowing its own two oars with an empty hand, or standing on its floor, facing its bow, to pole it through shallows |

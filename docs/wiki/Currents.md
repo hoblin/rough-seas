@@ -1,4 +1,4 @@
-The oceans turn. Every basin carries great slow circles of water, the gyres, and a vessel left alone drifts with them.
+The oceans turn. Every basin carries great slow circles of water, the gyres, and they carry every vessel afloat.
 
 ## How the oceans turn
 
@@ -24,7 +24,7 @@ Every vessel afloat drifts with the current, steered or not. The current carries
 
 At the helm you paddle or sail through the water, and the water moves under you. Heading upstream you make your usual speed through the water, so you gain ground only if that beats the current; heading across it you are set downstream by all of it. When you stop paddling the hull glides on and slows by its own drag.
 
-A vessel at anchor or tied to a stake swings to lie along the stream, stern downstream, and the current pulls on its rope and anchor: hardly at all in the slow middle of a basin, much harder in a boundary current, since the pull grows with the square of the speed. A hull lying along the stream feels far less of it than one lying across.
+A vessel at anchor or tied to a stake swings about its bow to lie along the stream, stern downstream, once the rope comes taut, and the current pulls on its rope and anchor: hardly at all in the slow middle of a basin, much harder in a boundary current, since the pull grows with the square of the speed. A hull lying along the stream feels far less of it than one lying across. A pull past what the rope or the anchor holds parts or drags it.
 
 So a boat left at the water's edge is not where you left it when you come back. [Tie it up or anchor it](Mooring) before you step ashore.
 

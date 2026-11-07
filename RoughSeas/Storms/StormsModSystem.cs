@@ -38,7 +38,7 @@ public class StormsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorCurrentDrift.Code, typeof(EntityBehaviorCurrentDrift));
         api.RegisterBlockBehaviorClass(BlockBehaviorBailer.Code, typeof(BlockBehaviorBailer));
         VesselDraught.Attach();
-        HullDrift.Attach();
+        DriftPhysics.Attach();
     }
 
     public override void AssetsLoaded(ICoreAPI api)
@@ -105,7 +105,7 @@ public class StormsModSystem : ModSystem
     public override void Dispose()
     {
         VesselDraught.Detach();
-        HullDrift.Detach();
+        DriftPhysics.Detach();
         if (api?.Side == EnumAppSide.Server) BreathUnderSurface.Detach();
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();

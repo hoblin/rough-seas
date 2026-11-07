@@ -78,15 +78,11 @@
         }
     },
     "drift": {
-        "waterDensity": 1025,
-        "kinematicViscosity": 1.19e-6,
-        "formFactor": 1.2,
-        "logSeconds": 2,
+        "syncSeconds": 1,
+        "logSeconds": 5,
         "sources": {
-            "waterDensity": "Seawater, kg/m3",
-            "kinematicViscosity": "Seawater at 15 C, m2/s (ITTC 7.5-02-01-03, Fresh Water and Seawater Properties, 2011)",
-            "formFactor": "A hull's viscous drag runs above a flat plate's of her wetted surface by her form factor 1 + k, about 1.1 to 1.4 (Holtrop & Mennen 1982, An approximate power prediction method); a small open boat taken near the middle",
-            "logSeconds": "How often a hull moving through the water logs its drift and swing"
+            "syncSeconds": "How often the server tells clients how far the water has carried a vessel along, for a rider who takes her helm",
+            "logSeconds": "How often a carried or swinging hull logs the current and what it does to her"
         }
     },
     "ashore": {

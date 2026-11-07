@@ -42,8 +42,6 @@ public static class Fixtures
 
     public static Vessel Sailboat => Vessel("boat-sailed");
 
-    public static UnderwaterConfig Underwater(string vessel) => SeaForces(vessel)["underwater"]!.ToObject<UnderwaterConfig>()!;
-
     public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel), 2 * Shape(vessel).HalfLengthMetres);
 
     public static double BeamMetres(string vessel) => (double?)SeaForces(vessel)["beamMetres"] ?? 2 * Shape(vessel).HalfBeamMetres;
@@ -90,7 +88,8 @@ public static class Fixtures
 
     public static HullDrag DragOf(string vessel, Aboard aboard)
     {
-        var form = HullForm.From(new JsonObject(PropulsionOf(vessel)), Drag, Shape(vessel));
+        var attributes = vessel == "boat-sailed" ? BehaviorConfig("boats-drift.json", vessel, EntityBehaviorCurrentDrift.Code) : PropulsionOf(vessel);
+        var form = HullForm.From(new JsonObject(attributes), Drag, Shape(vessel));
         return new HullDrag(form, Hull(vessel).Float(aboard).DraftMetres, aboard.Total, WaterDensity, Drag);
     }
 
