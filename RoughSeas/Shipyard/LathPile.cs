@@ -23,10 +23,11 @@ public sealed class LathPile(BlockEntityGroundStorage pile, LathBinding binding)
     public void Lay(EntityAgent byEntity, ItemSlot slot)
     {
         var world = pile.Api.World;
-        var laths = Laths.Itemstack!;
-        if (!LathBinding.Wet(laths) || Wood.Of(laths.Collectible.Variant) is not { } wood || !LandClaims.MayBreak(byEntity, [pile.Pos])) return;
+        double wetHours = Laths.Itemstack!.Collectible.UpdateAndGetTransitionState(world, Laths, EnumTransitionType.Dry)?.FreshHoursLeft ?? 0;
+        if (Laths.Itemstack is not { } laths || !LathBinding.Wet(laths) || Wood.Of(laths.Collectible.Variant) is not { } wood
+            || !LandClaims.MayBreak(byEntity, [pile.Pos])
+            || !BlockBehaviorReinforcable.AllowRightClickPickup(world, pile.Pos, (byEntity as EntityPlayer)?.Player)) return;
 
-        double wetHours = laths.Collectible.UpdateAndGetTransitionState(world, Laths, EnumTransitionType.Dry)?.FreshHoursLeft ?? 0;
         double hours = world.Api.ModLoader.GetModSystem<SeaWeatherSystem>().Clock.Hours;
         var vessel = binding.Bind(world, pile.Pos.ToVec3d().Add(0.5, 0, 0.5), pile.MeshAngle + Lengthwise, wood, hours + wetHours);
         world.BlockAccessor.SetBlock(0, pile.Pos);
