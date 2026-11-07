@@ -80,6 +80,40 @@ public class HullRiderTests
     }
 
     [Fact]
+    public void CarriesAHullTheWayTheCrestsItSeesTravel()
+    {
+        var sea = Fixtures.OneTrain(Height, 20);
+        double Crest(double near)
+        {
+            var (best, highest) = (near, double.NegativeInfinity);
+            for (var x = near; x < near + sea.Length; x += 0.05)
+            {
+                if (sea.Sea.HeightAt(x, Z) is var height && height > highest) (best, highest) = (x, height);
+            }
+            return best;
+        }
+
+        sea.Surface.Advance(120);
+        var crest = Crest(X);
+        sea.Surface.Advance(120.5);
+        var travelled = Crest(crest - 1) - crest;
+        Assert.True(travelled > 0, $"the crest moved {travelled:F2} m");
+
+        var rider = new HullRider(Fixtures.Config().Response);
+        var (drifted, x) = (0.0, X);
+        for (var time = 120.0; time < 720; time += Frame)
+        {
+            sea.Surface.Advance(time);
+            rider.Follow(sea.Sea, x, Z, AlongTheWaves, Raft, time);
+            var along = rider.Water(sea.Sea, x, Z, AlongTheWaves, Raft).X;
+            if (sea.Sea.HeightAt(x, Z) > Height / 4) Assert.True(along > 0, $"{along:F3} m/s under a crest at {time:F1} s");
+            x += along * Frame;
+            drifted = x - X;
+        }
+        Assert.True(drifted > 0, $"drifted {drifted:F2} m");
+    }
+
+    [Fact]
     public void ReadsTheWaterAtTheHeaveItIsDrawnAt()
     {
         var sea = Fixtures.OneTrain(Height, 14);
