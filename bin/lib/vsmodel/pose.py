@@ -2,6 +2,8 @@ import math
 
 from mathutils import Matrix, Vector
 
+import units
+
 AXES = "XYZ"
 OFFSET = ("offsetX", "offsetY", "offsetZ")
 ROTATION = ("rotationX", "rotationY", "rotationZ")
@@ -25,9 +27,9 @@ def animation_error(shape, animation, other_shape, other):
         for name, matrix in a.items():
             if name not in b:
                 return math.inf, math.inf, f"{animation['code']} {name} lost"
-            degrees, units = difference(matrix, b[name])
-            if degrees > worst[0] or units > worst[1]:
-                worst = (max(degrees, worst[0]), max(units, worst[1]), f"{animation['code']} frame {frame} {name}")
+            degrees, voxels = difference(matrix, b[name])
+            if degrees > worst[0] or voxels > worst[1]:
+                worst = (max(degrees, worst[0]), max(voxels, worst[1]), f"{animation['code']} frame {frame} {name}")
     return worst
 
 
@@ -93,8 +95,8 @@ def keyed_pose(animation, name, frame):
 
 
 def local(element, pose, version):
-    origin = Vector([float(value) for value in element.get("rotationOrigin", (0, 0, 0))]) / 16
-    shift = Vector([float(value) for value in element["from"]]) / 16 + Vector([pose.get(key, 0) for key in OFFSET]) / 16 - origin
+    origin = Vector([units.metres(float(value)) for value in element.get("rotationOrigin", (0, 0, 0))])
+    shift = Vector([units.metres(float(value)) for value in element["from"]]) + Vector([units.metres(pose.get(key, 0)) for key in OFFSET]) - origin
     scale = Vector([float(element.get("scale" + axis, 1)) for axis in AXES])
     stretch = Vector([pose.get(key, 1) for key in STRETCH])
     if version == 1:
@@ -118,5 +120,4 @@ def scaling(vector):
 def difference(a, b):
     chord = math.sqrt(sum((a[row][column] - b[row][column]) ** 2 for row in range(3) for column in range(3)))
     degrees = math.degrees(2 * math.asin(min(1.0, chord / (2 * math.sqrt(2)))))
-    units = 16 * max(abs(a[row][3] - b[row][3]) for row in range(3))
-    return degrees, units
+    return degrees, units.voxels(max(abs(a[row][3] - b[row][3]) for row in range(3)))

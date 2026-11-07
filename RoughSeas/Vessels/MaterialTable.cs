@@ -56,6 +56,13 @@ public class MaterialTable
 
     public double? CutToughness(string material) => materials.GetValueOrDefault(material)?.CutToughness;
 
+    public double CrushJoulesPerCubicMetre(string material) =>
+        (Row(material, row => row.CrushStrength, "crush strength", "it takes no blow by crushing") ?? 0) * PascalsPerMegapascal
+        * (Row(material, row => row.DensificationStrain, "densification strain", "it takes no blow by crushing") ?? 0);
+
+    public (double Pascals, double Strain) Stretch(string material) =>
+        materials.GetValueOrDefault(material) is { TensileStrength: { } strength, Elongation: { } strain } ? (strength * PascalsPerMegapascal / strain, strain) : (0, 0);
+
     public double ModulusOfRupture(string material) =>
         (Strength(material) ?? materials[UnknownWood].Strength!.Value) * PascalsPerMegapascal;
 
@@ -69,7 +76,7 @@ public class MaterialTable
     private double? Strength(string material) =>
         Row(material, row => row.Strength, "strength", "vessels of it count as their reference build");
 
-    private double Density(string material) =>
+    public double Density(string material) =>
         Row(material, row => row.Density, "density", "it weighs as an unknown wood does")
         ?? materials[UnknownWood].Density!.Value;
 

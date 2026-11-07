@@ -1,0 +1,25 @@
+{
+    "code": "paddle",
+    "class": "roughseas:ItemOfWood",
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
+    "attributes": {
+        "paddlingTool": true,
+        "roughseas:propulsion": {"tool": "paddle", "bladeSquareMetres": 0.054},
+        "attachableToEntity": {"categoryCode": "oar", "attachedShape": {"base": "roughseas:item/paddle-stowed"}},
+        "logTextures": {"wood": "inside-north"},
+        "handbook": {"groupBy": ["paddle-*"]},
+        "sources": {
+            "shape": "Carved from one piece of split wood with an axe and a knife, no saw: 1.5 m long with a blade 54 cm by 10 cm, as the bark canoe's 1.5 to 1.7 m paddles with blades about 11 cm wide (a WHS maple paddle, c. 1890), the outrigger's 145 by 9.5 cm (Peabody Museum) and the coracle's 1297 by 95 mm (Science Museum Group, co42017)",
+            "bladeSquareMetres": "Its blade by the model, 0.54 by 0.1 m"
+        }
+    },
+    "shape": {"base": "roughseas:item/paddle"},
+    "storageFlags": 257,
+    "maxstacksize": 1,
+    "materialDensity": 600,
+    "combustibleProps": {"burnTemperature": 700, "burnDuration": 30},
+    "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
+    "guiTransform": {"rotation": {"x": -60, "y": 45, "z": 0}, "origin": {"x": 0.75, "y": 0.5, "z": 0.5}, "scale": 1.6},
+    "tpHandTransform": {"translation": {"x": 0.9492, "y": -0.1337, "z": 0.4912}, "rotation": {"x": -3, "y": 1, "z": -22}, "origin": {"x": 0, "y": 0, "z": 0}, "scale": 1},
+    "groundTransform": {"origin": {"x": 0.75, "y": 0, "z": 0.5}, "scale": 1}
+}

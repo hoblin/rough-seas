@@ -107,7 +107,10 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
     protected void MarkDirty()
     {
         entity.WatchedAttributes.MarkPathDirty(TreeKey);
-        if (entity.Api.Side == EnumAppSide.Server) Reform();
+        if (entity.Api.Side != EnumAppSide.Server) return;
+
+        Reform();
+        Reshape();
     }
 
     private void Reform()
@@ -121,6 +124,11 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
     private void OnBuildChanged()
     {
         Reform();
+        Reshape();
+    }
+
+    private void Reshape()
+    {
         if (ShapeKey() == shownShape) return;
 
         shownShape = ShapeKey();

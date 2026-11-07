@@ -23,6 +23,8 @@ public sealed class Burnout
     private const string BurntKey = "burntHours";
     private const string StrokesKey = "strokes";
     private const string RimCharKey = "rimCharMetres";
+    private const string BarkKey = "barkStripped";
+    private const string ClayTypeKey = "clayType";
     private const double MillimetresPerMetre = 1000;
     private const double LitresPerCubicMetre = 1000;
 
@@ -48,12 +50,20 @@ public sealed class Burnout
 
     public bool Finished => Level >= Hollowings;
 
-    public double Hollowed => (double)Level / Hollowings;
+    public int Sections => Math.Max(1, config.HewnSectionsMetres.Length);
+
+    public int Stage => Charred ? Strokes * 2 * Sections / StrokesPerHewing : 0;
+
+    public int SectionsCut => Math.Min(Stage, Sections);
+
+    public int SectionsTrimmed => Math.Max(0, Stage - Sections);
+
+    public double Hollowed => (Level + (double)SectionsCut / Sections) / Hollowings;
 
     public int ClayVoxels => Tree?.GetInt(ClayKey) ?? 0;
 
-    /// <summary>How much of the way from the blank to the finished hull she is worked, inside and out.</summary>
-    public double Worked => Hollowed;
+    /// <summary>How much of the way from the blank to the finished hull her outside is worked.</summary>
+    public double Worked => (Level + (double)SectionsTrimmed / Sections) / Hollowings;
 
     public int RimVoxels => rimVoxels(Level);
 
@@ -63,11 +73,27 @@ public sealed class Burnout
 
     public bool Clayed => ClayVoxels >= RimVoxels;
 
+    /// <summary>The kind of clay on the rim, as its first ball was.</summary>
+    public string? ClayType => Tree?.GetString(ClayTypeKey);
+
     public bool Lit => Tree?.GetBool(LitKey) == true;
 
     public bool Charred => Tree?.GetBool(CharredKey) == true;
 
     public double HoursBurnt => Tree?.GetDouble(BurntKey) ?? 0;
+
+    /// <summary>
+    /// How far the fire has burnt, from 0 while it is catching, its first <paramref name="catchingHours"/>, through
+    /// <paramref name="phases"/> shares of the hours after.
+    /// </summary>
+    public int BurningPhase(int phases, double catchingHours) =>
+        HoursBurnt < catchingHours ? 0 : Math.Clamp((int)((HoursBurnt - catchingHours) / (HoursPerFire - catchingHours) * phases) + 1, 1, phases);
+
+    public int BarkStripped => Tree?.GetInt(BarkKey) ?? 0;
+
+    public int BarkPieces => config.BarkPieces;
+
+    public bool Debarked => Level > 0 || BarkStripped >= BarkPieces;
 
     public double HoursPerFire => CharMetres * MillimetresPerMetre / config.CharMillimetresPerHour;
 
@@ -86,7 +112,18 @@ public sealed class Burnout
 
     public double TopMetres => Toward(config.BlankDepthMetres, config.RimMetres);
 
-    public double Toward(double blank, double finished) => blank + (finished - blank) * Worked;
+    public double FloorMetres => Toward(config.BlankDepthMetres, config.RimMetres, Hollowed) - config.HollowDepthMetres * Hollowed;
+
+    public double Toward(double blank, double finished) => Toward(blank, finished, Worked);
+
+    private static double Toward(double blank, double finished, double share) => blank + (finished - blank) * share;
+
+    /// <summary>Counted from 1 at her bow; her ends lie in the first and last.</summary>
+    public int SectionAt(double alongMetres) => Math.Max(1, config.HewnSectionsMetres.Count(span => alongMetres >= span[0]));
+
+    public bool Trimmed(int section) => section > Sections - SectionsTrimmed;
+
+    public bool Cut(int section) => section <= SectionsCut;
 
     public float SaturationPerStroke => config.HewSaturation / StrokesPerHewing;
 
@@ -98,11 +135,7 @@ public sealed class Burnout
     private static double TopArea(ShapeElement element) =>
         (element is { From: { } from, To: { } to } ? Math.Abs((to[0] - from[0]) * (to[2] - from[2])) : 0) + (element.Children?.Sum(TopArea) ?? 0);
 
-    public static void Begin(ITreeAttribute tree)
-    {
-        tree.SetInt(LevelKey, 0);
-        LaidFire.Kindle(tree);
-    }
+    public static void Begin(ITreeAttribute tree) => tree.SetInt(LevelKey, 0);
 
     public string? ClayRefusal() => Busy() ?? (Clayed ? "shipyard-clayed-already" : null);
 
@@ -115,11 +148,13 @@ public sealed class Burnout
     public string? HewRefusal() =>
         Spoiled ? "shipyard-spoiled"
         : Lit ? "shipyard-burning"
+        : !Debarked ? null
         : !Charred ? "shipyard-burn-first"
         : null;
 
-    public void Clay()
+    public void Clay(string? type = null)
     {
+        if (ClayVoxels == 0 && type != null) Tree.SetString(ClayTypeKey, type);
         Tree.SetInt(ClayKey, Math.Min(RimVoxels, ClayVoxels + VoxelsPerClay));
         changed();
     }
@@ -151,7 +186,6 @@ public sealed class Burnout
         }
 
         Tree.SetBool(LitKey, false);
-        Tree.SetInt(ClayKey, 0);
         Fire.Spend();
         Tree.SetBool(CharredKey, true);
         Tree.SetDouble(BurntKey, 0);
@@ -159,9 +193,16 @@ public sealed class Burnout
         return true;
     }
 
-    /// <returns>Whether this stroke cut out the last of the char.</returns>
+    /// <returns>Whether this stroke finished the work it was part of: the bark's last piece, or the last of the char.</returns>
     public bool Stroke()
     {
+        if (!Debarked)
+        {
+            Tree.SetInt(BarkKey, BarkStripped + 1);
+            changed();
+            return Debarked;
+        }
+
         if (Strokes + 1 < StrokesPerHewing)
         {
             Tree.SetInt(StrokesKey, Strokes + 1);
@@ -171,6 +212,8 @@ public sealed class Burnout
 
         Tree.SetInt(StrokesKey, 0);
         Tree.SetInt(LevelKey, Level + 1);
+        Tree.SetInt(ClayKey, 0);
+        Tree.RemoveAttribute(ClayTypeKey);
         Tree.SetBool(CharredKey, false);
         changed();
         return true;
@@ -180,6 +223,7 @@ public sealed class Burnout
         Spoiled ? "shipyard-spoiled"
         : Lit ? "shipyard-burning"
         : Charred ? "shipyard-hew-first"
+        : !Debarked ? "shipyard-debark-first"
         : null;
 }
 
@@ -198,4 +242,14 @@ public sealed class BurnoutConfig
     public double BlankDepthMetres;
     public double BlankWaterplaneSquareMetres;
     public double UnhewnLitres;
+    public int BarkPieces;
+    public double HollowLengthMetres;
+    public double[][] HewnSectionsMetres = [];
+    public BoxMetres[] HullBoxesMetres = [];
+}
+
+public sealed class BoxMetres
+{
+    public double[] From = [];
+    public double[] To = [];
 }

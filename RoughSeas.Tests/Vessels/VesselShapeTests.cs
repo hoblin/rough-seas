@@ -1,6 +1,9 @@
+using RoughSeas.Shipyard;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Tests.Vessels;
 
@@ -66,6 +69,7 @@ public class VesselShapeTests
     public void HasAnOverlayOfItsMaterialForEveryStageOfDamage(string vessel)
     {
         var damage = Damage(Load(vessel).Entity);
+        if (damage.Textures.Length == 0) return;
 
         Assert.All(Enumerable.Range(1, 4), stage =>
             Assert.True(File.Exists(Path.Combine(AppContext.BaseDirectory, "damage", Path.GetFileName(damage.Overlay(stage).Path) + ".png"))));
@@ -145,7 +149,16 @@ public class VesselShapeTests
         if (entity["behaviorConfigs"]!["roughseas:burnout"]?.Value<int>("hollowings") is not { } hollowings) return;
 
         var names = Elements(shape["elements"]!).Select(element => element.Value<string>("name")).ToHashSet();
-        var stages = Enumerable.Range(0, hollowings).SelectMany(n => new[] { $"Blank{n}", $"Char{n}", $"Wood{n}", $"Fire{n}" }).Append("Clay");
+        var bark = entity["behaviorConfigs"]!["roughseas:burnout"]!.Value<int>("barkPieces");
+        var sections = entity["behaviorConfigs"]!["roughseas:burnout"]!["hewnSectionsMetres"]!.Count();
+        var stages = Enumerable.Range(0, hollowings)
+            .SelectMany(n => new[] { $"Blank{n}", $"Hewn{n}", $"Char{n}", $"Grass{n}", $"Wood{n}", $"Fire{n}", $"Clay{n}" }
+                .Concat(Enumerable.Range(1, LaidFire.FirepitFirewood).Select(k => $"Wood{n}x{k}"))
+                .Concat(Enumerable.Range(1, 3).Select(phase => $"Fire{n}At{phase}"))
+                .Concat(Enumerable.Range(1, sections).SelectMany(j => new[] { $"Blank{n}x{j}", $"Blank{n}x{j}Inside", $"Hewn{n}x{j}", $"Char{n}x{j}" })))
+            .Concat(Enumerable.Range(1, hollowings - 1).SelectMany(n => new[] { $"Blank{n}Stern", $"Blank{n}Bow" }))
+            .Concat(Enumerable.Range(1, sections).Select(j => $"Shellx{j}")).Concat(["ShellStern", "ShellBow"])
+            .Concat(Enumerable.Range(1, bark).Select(k => $"Bark{k}"));
 
         Assert.Empty(stages.Where(stage => !names.Contains(stage)));
         Assert.DoesNotContain($"Blank{hollowings}", names);
@@ -174,7 +187,18 @@ public class VesselShapeTests
             Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{group}{n}"), pieces);
             if (stage.Value<string>("replaces") is { } replaced)
             {
-                Assert.Equal(Enumerable.Range(1, pieces.Count).Select(n => $"{replaced}{n}"), Pieces(replaced));
+                int replacing = stage.Value<bool>("successive") ? 1 : pieces.Count;
+                Assert.Equal(Enumerable.Range(1, replacing).Select(n => $"{replaced}{n}"), Pieces(replaced));
+            }
+            if (stage.Value<string>("follows") is { } followed)
+            {
+                int levels = Pieces(followed).Count;
+                Assert.All(pieces, piece => Assert.Contains($"{piece}At{levels}", Pieces(piece!)));
+            }
+            if (stage.Value<string>("lifts") is { } lifted)
+            {
+                int levels = stages.Where(other => other.Value<string>("lifts") == lifted).Sum(other => Pieces(other.Value<string>("group")!).Count);
+                Assert.Equal(Enumerable.Range(1, levels).Select(n => $"{lifted}{n}"), Pieces(lifted));
             }
             if (stage.Value<string>("bends") is { } bent)
             {
@@ -197,6 +221,25 @@ public class VesselShapeTests
             }));
     }
 
+    [Fact]
+    public void PlaysEveryFirstPersonTwinInStepWithTheStrokeOthersSee()
+    {
+        Dictionary<string, JToken> Values(string path) => PlayerPatches().Where(op => op.Value<string>("path") == path)
+            .Select(op => op["value"]!).ToDictionary(value => value.Value<string>("code")!);
+        var shapes = Values("/animations/-");
+        var registered = Values("/client/animations/-");
+        var twins = shapes.Keys.Where(code => code.EndsWith("-fp")).ToList();
+
+        Assert.NotEmpty(twins);
+        Assert.All(twins, twin =>
+        {
+            var seen = twin[..^"-fp".Length];
+            Assert.Equal(shapes[seen].Value<int>("quantityframes"), shapes[twin].Value<int>("quantityframes"));
+            Assert.Equal(shapes[seen].Value<string>("onAnimationEnd"), shapes[twin].Value<string>("onAnimationEnd"));
+            Assert.Equal(registered[seen].Value<double?>("animationSpeed"), registered[twin].Value<double?>("animationSpeed"));
+        });
+    }
+
     private static IEnumerable<JToken> PlayerPatches() =>
         Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "patches"), "player-*.json")
             .SelectMany(file => JArray.Parse(File.ReadAllText(file)));
@@ -206,17 +249,109 @@ public class VesselShapeTests
     public void MarksEveryPlaceOfItsHullOnTheModel(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
-        var elements = shape.ToObject<Shape>()!.Elements;
-        foreach (var element in elements) element.TrimTextureNamesAndResolveFaces();
-        var integrity = entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!;
-        var hull = Elements(shape["elements"]!).Single(element => element.Value<string>("name") == "Hull");
-        var box = integrity["hullBox"]?.ToObject<double[]>()
-            ?? hull["from"]!.ToObject<double[]>()!.Concat(hull["to"]!.ToObject<double[]>()!).ToArray();
+        if (Damage(entity).Textures.Length == 0) return;
 
-        var marked = HullDamage.Places(elements, HullShape.FromVoxels(box[..3], box[3..]), Damage(entity).Textures)
+        var marked = HullDamage.Places(Resolved(shape), HullShapeOf(entity), Damage(entity).Textures)
             .Select(placed => placed.Place).Distinct();
 
         Assert.Equal(HullShape.Places.Order(), marked.Order());
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void WoundsEveryPlaceOfAHullThatCracksByPlaceInThatPlace(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        if (!CracksByPlace(entity)) return;
+
+        var marks = HullDamage.Places(Resolved(shape), HullShapeOf(entity), ["breach"])
+            .ToDictionary(placed => placed.Element.Name, placed => placed.Place);
+
+        Assert.All(HullShape.Places, place => Assert.Equal(place, marks[$"Wound{place}Scratchedx2"]));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void DrawsEveryWoundAtEveryStageOfItsCrack(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        if (!CracksByPlace(entity)) return;
+
+        var wound = new Regex($"^Wound({string.Join("|", HullShape.Places)})(?!{string.Join("|", HullDamage.WoundForms)}|Whole$|Frame$)(\\w*)$");
+        var wounds = Elements(shape["elements"]!)
+            .Select(element => (Match: wound.Match(element.Value<string>("name")!), Element: element))
+            .Where(found => found.Match.Success)
+            .ToList();
+
+        Assert.Equal(HullShape.Places, wounds.Select(found => found.Match.Groups[1].Value).Distinct().Select(Enum.Parse<HullPlace>).Order());
+        Assert.All(wounds, found => Assert.Equal(
+            HullDamage.WoundForms.Select(form => $"Wound{found.Match.Groups[1].Value}{form}{found.Match.Groups[2].Value}"),
+            found.Element["children"]!.Select(form => form.Value<string>("name"))));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void DrawsNoElementInsideOut(string vessel)
+    {
+        var inverted = Elements(Load(vessel).Shape["elements"]!)
+            .Where(element => element["from"]!.Values<double>().Zip(element["to"]!.Values<double>()).Any(edges => edges.Second < edges.First))
+            .Select(element => element.Value<string>("name"));
+
+        Assert.Empty(inverted);
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void LeavesItsWoundsOffTheItem(string vessel)
+    {
+        var (entity, item, _) = Load(vessel);
+        if (!CracksByPlace(entity)) return;
+
+        var ignored = item["shape"]!["ignoreElements"]!.Values<string>();
+        Assert.Empty(HullShape.Places.Select(place => $"Wound{place}").Except(ignored));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void BreaksOneMemberOfItsFrameAtEachPlaceAndLeavesItWholeOnTheItem(string vessel)
+    {
+        var (_, item, shape) = Load(vessel);
+        var names = Elements(shape["elements"]!).Select(element => element.Value<string>("name")!).ToHashSet();
+        if (!names.Contains("WoundBottomWhole")) return;
+
+        var broken = HullShape.Places.Select(place => $"Wound{place}Frame").ToList();
+        Assert.All(HullShape.Places, place => Assert.Contains($"Wound{place}Whole", names));
+        Assert.Subset(names, broken.ToHashSet());
+        Assert.Empty(broken.Except(item["shape"]!["ignoreElements"]!.Values<string>()));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void StandsOnCollisionBoxesFromHerKeel(string vessel) =>
+        Assert.Equal(0, CollisionBoxes(vessel).Min(box => box.Y1));
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void CutsHerIntoSquareCollisionBoxes(string vessel) =>
+        Assert.All(CollisionBoxes(vessel), box => Assert.Equal(box.Width, box.Length, 0.002));
+
+    private static Cuboidf[] CollisionBoxes(string vessel) =>
+        Load(vessel).Entity["behaviorConfigs"]!["passivephysicsmultibox"]!["collisionBoxes"]!.ToObject<Cuboidf[]>()!;
+
+    private static ShapeElement[] Resolved(JToken shape)
+    {
+        var elements = shape.ToObject<Shape>()!.Elements;
+        foreach (var element in elements) element.TrimTextureNamesAndResolveFaces();
+        return elements;
+    }
+
+    private static bool CracksByPlace(JToken entity) =>
+        entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!.Value<string>("model") is null or "cracking";
+
+    private static HullShape HullShapeOf(JToken entity)
+    {
+        var box = entity["behaviorConfigs"]![EntityBehaviorVesselIntegrity.Code]!["hullBoxMetres"]!;
+        return HullShape.FromBox(box["from"]!.ToObject<double[]>()!, box["to"]!.ToObject<double[]>()!);
     }
 
     private static (JToken Entity, JToken Item, JToken Shape) Load(string vessel)

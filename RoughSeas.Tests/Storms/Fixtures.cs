@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RoughSeas.Propulsion;
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -15,6 +17,10 @@ public static class Fixtures
 
     private static readonly Lazy<Dictionary<string, Material>> materials =
         new(() => JsonConvert.DeserializeObject<Dictionary<string, Material>>(Shipped("materials.json"))!);
+
+    private static readonly Lazy<DragConfig> drag = new(() => JsonConvert.DeserializeObject<DragConfig>(Shipped("drag.json"))!);
+
+    private static readonly Lazy<PropulsionConfig> propulsion = new(() => JsonConvert.DeserializeObject<PropulsionConfig>(Shipped("propulsion.json"))!);
 
     private static readonly Lazy<VesselMass> mass = new(() => JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!);
 
@@ -37,7 +43,9 @@ public static class Fixtures
 
     public static Vessel Sailboat => Vessel("boat-sailed");
 
-    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)));
+    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel), 2 * Shape(vessel).HalfLengthMetres);
+
+    public static double BeamMetres(string vessel) => (double?)SeaForces(vessel)["beamMetres"] ?? 2 * Shape(vessel).HalfBeamMetres;
 
     public static Seaworthiness Afloat(string vessel, double litres = 0)
     {
@@ -57,7 +65,123 @@ public static class Fixtures
         double capacity = vessel.StartsWith("boat-")
             ? (double?)OptionalBehaviorConfig("storms-vessels.json", vessel, "roughseas:bilge")?["capacityLitres"] ?? 0
             : (double?)Entity(vessel)["behaviorConfigs"]!["roughseas:bilge"]?["capacityLitres"] ?? 0;
-        return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity));
+        return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity), vessel);
+    }
+
+    /// <summary>A vessel as the drawn sea meets her, with one rider and <paramref name="litres"/> in her bilge.</summary>
+    public static RiddenHull Ridden(string vessel, double litres = 0)
+    {
+        var hull = Hull(vessel);
+        var aboard = hull.Crewed(litres: litres);
+        return new RiddenHull(2 * Shape(vessel).HalfLengthMetres, BeamMetres(vessel), true, hull.Float(aboard, litres).DraftMetres,
+            hull.Flotation.DepthMetres, aboard.Total, AddedKg(hull), hull.Flotation.KgPerMetre);
+    }
+
+    public static double AddedKg(Hull hull)
+    {
+        var shape = Shape(hull.Vessel);
+        double squareMetres = hull.Flotation.HasHold ? hull.Flotation.KgPerMetre / 1025 : 4 * shape.HalfLengthMetres * shape.HalfBeamMetres;
+        return HeaveAddedMass.OfWaterplane(squareMetres, shape.HalfBeamMetres);
+    }
+
+    public readonly record struct Train(DrawnSea Sea, SeaSurface Surface, double Length, double Number, double Frequency, double Stokes);
+
+    /// <summary>One train along +X, a whole step of the surface's stretch long and <paramref name="height"/> high, settled at once.</summary>
+    /// <param name="stretch">The step: (1 + surface.stretch) to this power, in blocks.</param>
+    public static Train OneTrain(double height, int stretch)
+    {
+        var shipped = Config().Surface;
+        var single = new SurfaceConfig
+        {
+            Trains = [new SurfaceTrainConfig { AngleDegrees = 0, LengthFactor = 1, Energy = 1 }],
+            Steepness = shipped.Steepness,
+            MinLengthBlocks = shipped.MinLengthBlocks,
+            SettleSeconds = shipped.SettleSeconds,
+            TurnDegrees = shipped.TurnDegrees,
+            Stretch = shipped.Stretch,
+            AimSeconds = shipped.AimSeconds,
+            FullFoamMetres = shipped.FullFoamMetres,
+            Whitecaps = shipped.Whitecaps,
+        };
+        var length = Math.Pow(1 + shipped.Stretch, stretch);
+        var number = 2 * Math.PI / length;
+        var frequency = Math.Sqrt(9.81 * number);
+        var surface = new SeaSurface(single, new Waves(Config().Waves));
+        var raised = new WaveGeneration(0, Math.Sqrt(2 * Math.PI * length / 9.81));
+        surface.Aim(height, 0, 6);
+        surface.Raise(raised, raised, 0);
+        surface.Advance(120);
+        var field = new SurfaceField();
+        field.Update(new EvenSea(height), X0, Z0, RegionSize, CellBlocks);
+        var amplitude = height / (2 * Math.Sqrt(2));
+        return new Train(new DrawnSea(surface, field), surface, length, number, frequency, amplitude * amplitude * frequency * number);
+    }
+
+    private const int RegionSize = 512;
+    private const int CellBlocks = 32;
+    private const double X0 = 512031.25;
+    private const double Z0 = 498877.5;
+
+    private sealed class EvenSea(double height) : ISeaSource
+    {
+        public SeaSample Sample(double x, double z) => new(0, 0, 0, 0, height, 0, 0, 0, 0);
+
+        public (double X, double Z) Wind(double x, double z) => default;
+
+        public double StormPresence(double x, double z) => 0;
+
+        public SeaState At(double x, double z) => default;
+
+        public SeaCurrent CurrentAt(double x, double z) => default;
+
+        public float? RainCloudness(double x, double z, double totalDays) => 0;
+
+        public double RegionMps(int regionX, int regionZ) => 0;
+
+        public WaveGeneration Generation(double x, double z, long slot) => default;
+    }
+
+    public static DragConfig Drag => drag.Value;
+
+    public static PropulsionConfig Propulsion => propulsion.Value;
+
+    public static JToken PropulsionOf(string vessel) => vessel.StartsWith("boat-")
+        ? BehaviorConfig("propulsion-vessels.json", vessel, EntityBehaviorPropulsion.Code)
+        : Entity(vessel)["behaviorConfigs"]![EntityBehaviorPropulsion.Code]!;
+
+    public static HullShape Shape(string vessel)
+    {
+        if (!vessel.StartsWith("boat-"))
+        {
+            var box = IntegrityConfig(vessel)["hullBoxMetres"]!;
+            return HullShape.FromBox(box["from"]!.ToObject<double[]>()!, box["to"]!.ToObject<double[]>()!);
+        }
+        var hull = JArray.Parse(Shipped("vessels-hull-boxes.json")).Single(patch => (string?)patch["file"] == $"game:shapes/entity/nonliving/boat/{vessel[5..]}.json")["value"]!;
+        return HullShape.FromVoxels(hull["from"]!.ToObject<double[]>()!, hull["to"]!.ToObject<double[]>()!);
+    }
+
+    public static HullDrag DragOf(string vessel, Aboard aboard)
+    {
+        var form = HullForm.From(new JsonObject(PropulsionOf(vessel)), Drag, Shape(vessel));
+        return new HullDrag(form, Hull(vessel).Float(aboard).DraftMetres, aboard.Total, WaterDensity, Drag);
+    }
+
+    public const double WaterDensity = VesselMass.SeawaterKgPerLitre * KilogramsPerCubicMetre;
+
+    private const double KilogramsPerCubicMetre = 1000;
+
+    public static double PaddleSquareMetres => (double)JToken.Parse(Shipped(Path.Combine("tools", "paddle.json")))["attributes"]![Tool.AttributeKey]!["bladeSquareMetres"]!;
+
+    public static RowerStation Station(string vessel, double depthMetres) => Station(vessel, _ => depthMetres);
+
+    public static RowerStation Station(string vessel, System.Func<double, double> depthAlong) =>
+        new(new JsonObject(PropulsionOf(vessel)), Propulsion, WaterDensity, (along, _, _) => depthAlong(along));
+
+    private static IEnumerable<JToken> Elements(string shape)
+    {
+        static IEnumerable<JToken> Descend(JToken? elements) =>
+            elements?.SelectMany(element => Descend(element["children"]).Prepend(element)) ?? [];
+        return Descend(JToken.Parse(shape)["elements"]);
     }
 
     public static Resistance Resistance(string vessel, string wood = "oak")
@@ -79,8 +203,8 @@ public static class Fixtures
     private static Vessel Vessel(string entity)
     {
         var integrity = BehaviorConfig("vessels-vanilla-boats.json", entity, EntityBehaviorVesselIntegrity.Code);
-        var forces = BehaviorConfig("storms-vessels.json", entity, "roughseas:seaforces");
-        return new Vessel((double)integrity["impactCapacity"]!, (double)forces["beamMetres"]!, (double)forces["windageSquareMetres"]!);
+        var forces = SeaForces(entity);
+        return new Vessel((double)integrity["impactCapacity"]!, BeamMetres(entity), (double)forces["windageSquareMetres"]!);
     }
 
     private static JToken BehaviorConfig(string patches, string entity, string behavior) =>
@@ -101,7 +225,7 @@ public class NullLogger : LoggerBase
 
 public readonly record struct Vessel(double ImpactCapacity, double BeamMetres, double WindageSquareMetres);
 
-public sealed record Hull(Flotation Flotation, double Kilograms, double ReferenceKg, double CapacityLitres, JsonObject Config)
+public sealed record Hull(Flotation Flotation, double Kilograms, double ReferenceKg, double CapacityLitres, JsonObject Config, string Vessel)
 {
     public Aboard Crewed(double bodies = 65, double kit = 10, double containers = 0, double litres = 0, double soaked = 0) =>
         new(Kilograms + soaked, bodies, kit, containers, litres * VesselMass.SeawaterKgPerLitre, 0);

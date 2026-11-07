@@ -1,8 +1,9 @@
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The sea surface a client draws now, the one our own vessels ride; on a client alone.
-/// Reach it with <c>api.ModLoader.GetModSystem&lt;StormsModSystem&gt;().DrawnSea</c>. Positions are absolute block coordinates.
+/// The sea surface a client draws now, the one our own vessels ride. Reach it on a client with
+/// <c>api.ModLoader.GetModSystem&lt;StormsModSystem&gt;().DrawnSea</c>; the server builds the same around a body in the water
+/// (<see cref="SwellAround"/>). Positions are absolute block coordinates.
 /// </summary>
 public interface IDrawnSea
 {
@@ -17,13 +18,6 @@ public interface IDrawnSea
 
     /// <summary>The surface's height above still water at a position now, in metres.</summary>
     double HeightAt(double x, double z);
-
-    /// <summary>
-    /// The water's horizontal velocity at a position now, in metres a second, as the drawn waves move it: forward under
-    /// a crest, back in a trough. <paramref name="depth"/> is in metres under the drawn surface, and the velocity is
-    /// averaged over a square <paramref name="side"/> metres across centred there, as a hull of that size feels it.
-    /// </summary>
-    (double X, double Z) OrbitalVelocityAt(double x, double z, double depth = 0, double side = 0);
 
     /// <summary>
     /// The water's horizontal velocity at a position now, in metres a second, averaged over the underwater body of a

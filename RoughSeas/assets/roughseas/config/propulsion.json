@@ -1,0 +1,88 @@
+{
+    "rower": {
+        "metabolicWatts": 1040,
+        "satietyPerKilojoule": 1.4,
+        "vanillaPace": 30,
+        "sources": {
+            "metabolicWatts": "The average finisher of a canoe marathon, some 30 km that its winners paddle in two hours (ICF Canoe Marathon World Championships 2025: men's K1 29.2 km in 1:58) and the field behind them in nearer three, is a trained club paddler, not an elite: young male flatwater kayakers' maximal aerobic power is 138.5 ± 24.5 W (Frontiers in Public Health 2020, 8:526477), and two hours are held at about 75% of the aerobic maximum, between the marathon's 74% and the half marathon's 81% (fractional utilisation of 30 marathon and ultramarathon runners). 104 W at the paddle, which paddling's 10% gross efficiency (Gomes et al. 2012) asks 1040 W of his body for. Pushed through a paddle into a racing K1, whose tow drag Gomes et al. measured (Sports Biomechanics 2015, 14:394), those 104 W hold her at about 10.7 km/h, about 30 km in under three hours. What his body gives is the limit, and each stroke turns its own share of it into work",
+            "satietyPerKilojoule": "Vanilla's own scale: sprinting costs 1.5 satiety a second over walking (vanilla's EntityBehaviorHunger). Vanilla walks 1.68 m/s on the bench and sprints twice that (GlobalConstants.SprintSpeedMultiplier), 3.4 m/s; running costs about 4.2 J per kilogram and metre (Margaria 1963), so a 75 kg body sprinting spends 1.07 kW: 1.5 satiety for 1.07 kJ",
+            "vanillaPace": "Vanilla scales hunger by its calendar against its default 60 × 0.5 = 30 (EntityBehaviorHunger), and rowing does the same"
+        }
+    },
+    "pole": {
+        "workingDegrees": 20,
+        "workedMetres": 0.05,
+        "sources": {
+            "workingDegrees": "A punt pole is dropped close to the side and shoved back against the bed (Nicolson 2008, Basic Punting for Darwinians); tilted forward only when the punt is slow, it shoves leaning back some 20° from upright and reaches cos 20° of its length down: less the hands' height over the water, a 3 m pole works to about 2 m of water and a 5 m one to about 4 m",
+            "workedMetres": "Worked as a tool, a pole is a pole made for pushing a boat, round and about 5 cm across, whatever the dressed pole the row split into (the maintainers' decision, #292): ash boat poles are sold 35 mm across at 2.4 m and 46 mm at 3.6 m (AG ash boat poles, E232 and E230). What it lifts each stroke is that round by its length at its wood's density"
+        }
+    },
+    "strokes": {
+        "pole": {
+            "strokesPerMinute": 15,
+            "driveShare": 0.5,
+            "pushNewtons": 300,
+            "pushMetres": 2,
+            "grossEfficiency": 0.134,
+            "sources": {
+                "strokesPerMinute": "A good punter, standing, takes 24 minutes for the 0.9 miles from Darwin to Jesus lock, 1 m/s (Nicolson 2008); a shove carries the punt about the 2 m the pole travels from the bed ahead of the hands to behind them, and she glides as far again while it comes up: some 4 m a stroke, 15 a minute",
+                "driveShare": "The pole pushes on the bed for half the stroke, the hands walking up it to its top end, and is drawn forward through them like a pool cue for the other half (Nicolson 2008; Paddle Canada, Introduction to Canoe Poling Skills)",
+                "pushNewtons": "A sustained two-handed push by a standing adult, about 300 N (Snook and Ciriello 1991, maximum acceptable forces)",
+                "grossEfficiency": "No one has measured poling. A canoe poler stands and drives with the legs, bending the knees, and the arms and trunk (Paddle Canada; ACA, Canoe Poling): the nearest measured stroke is the stand-up paddler's, 13.4 ± 2.3% gross at 45 strokes a minute, its slowest rate measured and the nearest to poling's 15 (Castañeda-Babarro et al. 2020, International Journal of Environmental Research and Public Health 17:4893); the Venetian gondolier, rowing standing, spends 9.2 to 14.5% (Capelli et al. 1990). Bringing the pole up costs its own lift each stroke on top, its foot raised from the bed to the surface less what the water bears of it, and the same effort drives a punt faster with a paddle than with a pole because of it (Nicolson 2008)",
+                "pushMetres": "A shove lasts while the hands travel the pole's planted length, about the 2 m it travels from the bed ahead of the hands to behind them (Nicolson 2008); then it is brought up, and a hull that runs faster than the shove leaves less time to push in each stroke. The hands walk up the pole through it, so a pole too short for the water ends the shove when its top reaches the upper hand. Faster than the shove's travel in its drawn time, the shove ends sooner and the punter plants again sooner: the beat quickens with her"
+            }
+        },
+        "seatedpole": {
+            "strokesPerMinute": 15,
+            "driveShare": 0.5,
+            "pushNewtons": 300,
+            "pushMetres": 2,
+            "grossEfficiency": 0.10,
+            "sources": {
+                "strokesPerMinute": "The standing pole's rate (Nicolson 2008): the pole comes up and goes down the same way",
+                "driveShare": "As the standing pole's",
+                "pushNewtons": "The same sustained two-handed push (Snook and Ciriello 1991)",
+                "grossEfficiency": "Where her hull is too tender for a man to stand on, he poles from the seat and shoves with the arms and trunk as a paddler does, not the legs: paddling's 10% (Gomes et al. 2012), less the pole's own lift each stroke",
+                "pushMetres": "As the standing pole's"
+            }
+        },
+        "paddling": {
+            "strokesPerMinute": 40,
+            "driveShare": 0.5,
+            "dragCoefficient": 1.2,
+            "grossEfficiency": 0.10,
+            "veerDegrees": 10,
+            "sources": {
+                "veerDegrees": "A single blade drives her from one side and turns her away from it, so a paddler holding a course changes sides when she veers off it, as the Donegal curragh's paddler does (Badge, via indigenousboats.blogspot.com, 2015) and canoe and outrigger crews do on a call. Nobody has measured how far off they let her go, but how often they change has been counted: 3 to 5 strokes a side in a touring canoe at about 40 a minute (paddling.com forums), 8 to 12 in an outrigger (Gold Coast Outrigger Club) or 10 to 20 (Journal of Sports Science and Medicine 2011, 10:52). At 10° our bark canoe changes every 3.7 strokes and our outrigger every 8.6, both within what was counted",
+                "strokesPerMinute": "Voyageurs on the lakes kept about 40 strokes a minute through the day (McGill University, The Birch Bark Canoe), below the 55 of an elite C1 over 1000 m (Kinematic analysis of canoe stroke, Journal of Human Kinetics 2011)",
+                "driveShare": "A single blade is pulled back through the water and carried forward through the air over the same reach at about the same hand speed: half the stroke in the water",
+                "dragCoefficient": "A paddle blade's drag coefficient stays near that of a finite flat plate across blade designs (wind-tunnel tests of three blades, Sports Engineering, Springer BF02844156): about 1.2 for a plate square to the flow (Hoerner 1965, Fluid-Dynamic Drag, ch. 3)",
+                "grossEfficiency": "Kayakers paddling an ergometer: 10.1 ± 1.1% gross efficiency (Gomes et al. 2012, International Journal of Sports Medicine 33:654)"
+            }
+        },
+        "sculling": {
+            "strokesPerMinute": 40,
+            "driveShare": 0.9,
+            "dragCoefficient": 1.2,
+            "grossEfficiency": 0.10,
+            "sources": {
+                "strokesPerMinute": "Each half of the figure of eight a coracle man sweeps over her bow is a stroke, at the paddler's pace (as paddling)",
+                "driveShare": "A sculled blade stays in the water and drives the whole sweep, turning only at its ends (a moored test of a Korean scull found its thrust from the blade's lift through the sweep: Kim, Lee and Rheem 1989)",
+                "dragCoefficient": "The same blade as paddling's, worked across the water",
+                "grossEfficiency": "The same arms and trunk as paddling's"
+            }
+        },
+        "rowing": {
+            "strokesPerMinute": 30,
+            "driveShare": 0.4,
+            "dragCoefficient": 1.2,
+            "grossEfficiency": 0.175,
+            "sources": {
+                "strokesPerMinute": "Currach crews at about 30 strokes a minute (Baltimore Sun, 15 August 2002, the Annapolis currach races)",
+                "driveShare": "An oar's drive takes about two fifths of the stroke at such a rate and the recovery the rest, as in rowing",
+                "dragCoefficient": "An oar's blade, as a paddle's: a finite flat plate's 1.2 (Hoerner 1965)",
+                "grossEfficiency": "Rowing: about 17.5% gross at 124 to 182 W (Fukunaga et al. 1986)"
+            }
+        }
+    }
+}

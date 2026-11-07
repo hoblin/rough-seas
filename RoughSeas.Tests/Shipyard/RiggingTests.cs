@@ -40,10 +40,71 @@ public class RiggingTests
         var outrigger = Outrigger();
 
         Assert.True(outrigger.Finished(0));
-        Assert.Contains("Blunt1", outrigger.Hidden());
-        Assert.Contains("Blunt2", outrigger.Hidden());
-        Assert.DoesNotContain("Ends1", outrigger.Hidden());
+        Assert.Contains("FloatLog1", outrigger.Hidden());
+        Assert.Contains("Hewing5", outrigger.Hidden());
+        Assert.Contains("Booms1At0", outrigger.Hidden());
+        Assert.DoesNotContain("Hewing6", outrigger.Hidden());
+        Assert.DoesNotContain("Booms1At6", outrigger.Hidden());
     }
+
+    [Fact]
+    public void HerFloatJoinsAsTheThreeLogsTheyWereAndIsHewnDownPassByPass()
+    {
+        var outrigger = JustJoined();
+        Assert.DoesNotContain("FloatLog1", outrigger.Hidden());
+        Assert.DoesNotContain("Booms1At0", outrigger.Hidden());
+
+        LayUpTo(outrigger, "Hewing");
+        outrigger.Lay(null, 0);
+
+        Assert.Contains("FloatLog1", outrigger.Hidden());
+        Assert.DoesNotContain("Hewing1", outrigger.Hidden());
+        Assert.Contains("Booms1At0", outrigger.Hidden());
+        Assert.DoesNotContain("Booms3At1", outrigger.Hidden());
+
+        outrigger.Lay(null, 0);
+
+        Assert.Contains("Hewing1", outrigger.Hidden());
+        Assert.DoesNotContain("Hewing2", outrigger.Hidden());
+        Assert.DoesNotContain("Booms2At2", outrigger.Hidden());
+    }
+
+    [Fact]
+    public void HerFloatsLogsAreThreeCubicMetresHewnDownToItsRoundLog()
+    {
+        var hewing = Outrigger().Stages.Single(stage => stage.Group == Config.FloatStage);
+
+        Assert.Equal(3000, hewing.WoodLitres[0], 0);
+        Assert.Equal(3, hewing.WaterlineSquareMetres[0], 2);
+        Assert.Equal(hewing.WoodLitres.OrderByDescending(litres => litres), hewing.WoodLitres);
+        Assert.InRange(hewing.WoodLitres[^1], 150, 300);
+    }
+
+    [Theory]
+    [InlineData(100.5, 5, 200.5, 0)]
+    [InlineData(100.2, 5.3, 200.9, 0)]
+    [InlineData(100.9, 4.8, 200.1, GameMath.PIHALF)]
+    [InlineData(100.5, 5, 200.5, GameMath.PIHALF + 0.2)]
+    public void HerHullIsBroughtOntoTheLogsSoTheFloatLiesWhereTheyLay(double x, double y, double z, float yaw)
+    {
+        var (dx, dz) = HullShape.ToWorld(0, Config.FloatOffMetres, yaw);
+        var row = new BlockPos((int)Math.Floor(x + dx), (int)Math.Floor(y + 0.5), (int)Math.Floor(z + dz));
+        var (atX, atY, atZ, squared) = EntityBehaviorRiggable.OntoRow(yaw, Config.FloatOffMetres, row);
+        var (floatX, floatZ) = HullShape.ToWorld(0, Config.FloatOffMetres, squared);
+
+        Assert.Equal(0, Math.Sin(2 * squared), 6);
+        Assert.Equal((row.X + 0.5, row.Y, row.Z + 0.5), (Math.Round(atX + floatX, 6), atY, Math.Round(atZ + floatZ, 6)));
+        Assert.InRange(Math.Abs(atX - x), 0, 0.5 + Math.Abs(Math.Sin(yaw - squared)) * Config.FloatOffMetres);
+        Assert.InRange(Math.Abs(atY - y), 0, 0.5);
+    }
+
+    [Theory]
+    [InlineData(0.15f)]
+    [InlineData(-0.15f)]
+    public void AHullSlightlyAskewIsSquaredOntoTheRow(float skew) => Assert.NotNull(Float(skew, Row(0, 1)));
+
+    [Fact]
+    public void AHullTooFarAskewOfTheRowMakesNoFloat() => Assert.Null(Float(0.5f, Row(0, 1)));
 
     [Fact]
     public void HerFirstBoomIsAcrossHerOnceTheFloatJoins()
@@ -67,7 +128,7 @@ public class RiggingTests
             outrigger.Lay(null, 0);
         }
 
-        Assert.Equal(["Booms", "Lashing", "Ends", "Mast", "SailFurled", "Stays", "Strakes", "Seams"], order);
+        Assert.Equal(["Booms", "Hewing", "Lashing", "Mast", "SailFurled", "Stays", "Strakes", "Seams"], order);
     }
 
     [Fact]
@@ -87,20 +148,6 @@ public class RiggingTests
     [Fact]
     public void AnOutriggerFromBeforeTheBuildHasHerWashstrakes() =>
         Assert.Equal(422, Outrigger().Raised(stage => stage.RaisesLitres));
-
-    [Fact]
-    public void HewingAnEndOfHerFloatTakesItsBluntEndAway()
-    {
-        var outrigger = JustJoined();
-        LayUpTo(outrigger, "Ends");
-        Assert.DoesNotContain("Blunt1", outrigger.Hidden());
-
-        outrigger.Lay(null, 0);
-
-        Assert.Contains("Blunt1", outrigger.Hidden());
-        Assert.DoesNotContain("Ends1", outrigger.Hidden());
-        Assert.DoesNotContain("Blunt2", outrigger.Hidden());
-    }
 
     [Fact]
     public void EveryPoleSheTakesIsCutFromAThreeMetrePole() =>

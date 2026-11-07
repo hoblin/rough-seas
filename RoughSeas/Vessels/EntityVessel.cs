@@ -1,45 +1,38 @@
-using System.Collections.Generic;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
 /// <summary>
-/// Vanilla's boat, whose <c>speedMultiplier</c> scales turning as much as speed; here <c>turnSpeed</c> sets turning
-/// on its own, against the raft's. A multiplier of 0 leaves it dead in the water: no paddling, no turning.
+/// Vanilla's boat, with the oars she carries following her rower's stroke and seats that face their riders the
+/// way they are turned (<see cref="VesselSeat"/>). A speed multiplier of 0 leaves her dead in the water: no
+/// paddling, no turning.
 /// </summary>
-public class EntityVessel : EntityBoat
+public class EntityVessel : EntityBoat, ISeatInstSupplier
 {
     public const string ClassName = "roughseas:EntityVessel";
 
-    private static readonly string[] Strokes = ["ready", "forwards", "backwards"];
-
-    private double turnSpeed = 1;
-    private Dictionary<string, string> strokes = [];
     private OwnOars? oars;
-    private bool? underSail;
 
     public override void Initialize(EntityProperties properties, ICoreAPI api, long InChunkIndex3d)
     {
         base.Initialize(properties, api, InChunkIndex3d);
-        turnSpeed = properties.Attributes["turnSpeed"].AsDouble(1);
-        strokes = new Dictionary<string, string>(MountAnimations);
-        if (properties.Attributes["unfurlSails"].AsBool())
-        {
-            WatchedAttributes.RegisterModifiedListener("sailPosition", StrokeUnderSail);
-            StrokeUnderSail();
-        }
-        if (api.Side == EnumAppSide.Client) oars = OwnOars.Of(this, strokes);
+        if (api.Side == EnumAppSide.Client) oars = OwnOars.Of(this, MountAnimations);
     }
 
     public override void AfterInitialized(bool onFirstSpawn)
     {
         base.AfterInitialized(onFirstSpawn);
         if (Api.Side == EnumAppSide.Server) StrayCargo.Restow(this);
+        else if (GetBehavior<EntityBehaviorInterpolatePosition>() is { } interpolation)
+        {
+            // Vanilla's interpolation starts from an empty snapshot at 0,0,0: a fresh vessel is drawn sliding in
+            // from the world's origin for her first frames.
+            interpolation.pL = interpolation.pN = new PositionSnapshot(Pos, EntityBehaviorInterpolatePosition.interval, false);
+        }
     }
 
     public override void OnRenderFrame(float dt, EnumRenderStage stage)
@@ -49,30 +42,11 @@ public class EntityVessel : EntityBoat
     }
 
     public override string GetName() =>
-        Wood.Of(Properties.Variant) is { } wood ? Lang.GetMatching($"{Code.Domain}:item-creature-{Code.Path}", wood.Name) : base.GetName();
-
-    public override Vec2d SeatsToMotion(float dt)
-    {
-        var motion = base.SeatsToMotion(dt);
-        return new Vec2d(motion.X, SpeedMultiplier > 0 ? motion.Y * turnSpeed / SpeedMultiplier : 0);
-    }
+        Wood.Of(Properties.Variant) is { } wood ? Lang.GetMatching($"{Code.Domain}:item-creature-{Code.Path}", wood.Name)
+        : Reeds.NameOf(Code, Properties.Variant, "item-creature") ?? base.GetName();
 
     protected override bool HasPaddle(Entity entity) => SpeedMultiplier > 0 && base.HasPaddle(entity);
 
-    private void StrokeUnderSail()
-    {
-        var sailing = sailPosition > 0;
-        if (sailing == underSail) return;
-        underSail = sailing;
-        foreach (var stroke in Strokes)
-        {
-            var code = strokes[stroke];
-            if (sailing)
-            {
-                foreach (var seat in GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []) seat.Passenger?.AnimManager?.StopAnimation(code);
-            }
-            MountAnimations[stroke] = sailing ? "" : code;
-        }
-        Api.ModLoader.GetModSystem<VesselsModSystem>().Log(this, sailing ? "sail set: paddle stowed" : "sail furled: paddle to hand");
-    }
+    IMountableSeat ISeatInstSupplier.CreateSeat(IMountable mountable, string seatId, SeatConfig config) =>
+        new VesselSeat(mountable, seatId, config);
 }

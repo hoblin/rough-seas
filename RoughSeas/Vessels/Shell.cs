@@ -25,6 +25,7 @@ public abstract class Shell
     public RigidShell? Backing;
     public double BackedShare;
     public double? BottomBackedShare;
+    public FrameMember? Frame;
 
     public static Shell? Of(JsonObject shell)
     {
@@ -43,7 +44,14 @@ public abstract class Shell
         var hole = hull.CrackSquareMetres;
         return new(frameJoules, Holed(materials, hole), Cut(materials, hole, cutShare),
             BackingHoled(materials, hole), Backing?.Cut(materials, hole, cutShare) ?? 0,
-            BackedShare, BottomBackedShare ?? BackedShare, Slammed(materials) * hull.SoakedStrengthShare);
+            BackedShare, BottomBackedShare ?? BackedShare, Slammed(materials) * hull.SoakedStrengthShare, Cushions(materials),
+            Frame == null || frameJoules <= 0 ? null : Framed(Frame, materials, hole, hull.SoakedStrengthShare));
+    }
+
+    private FramedResistance Framed(FrameMember frame, MaterialTable materials, double hole, double soaked)
+    {
+        double opens = Opens(materials, hole), breaks = frame.Breaks(materials);
+        return new(opens + breaks, opens + Gives(materials, 2 * frame.BreakingNewtons(materials, soaked)) + 2 * breaks, frame.Share, opens);
     }
 
     /// <summary>This shell with <paramref name="metres"/> of its own wood not yet cut out of the hold behind it: that wood backs the sides below the cut and the whole bottom.</summary>
@@ -70,12 +78,29 @@ public abstract class Shell
         return shell;
     }
 
+    /// <summary>This shell with <paramref name="laid"/> of its frame's members laid, of <paramref name="material"/>.</summary>
+    public Shell Framed(string material, double laid)
+    {
+        if (Frame == null) return this;
+
+        var shell = (Shell)MemberwiseClone();
+        shell.Frame = laid > 0 ? Frame.Of(material, laid) : null;
+        return shell;
+    }
+
     public abstract double Holed(MaterialTable materials, double holeSquareMetres);
 
     public abstract double Slammed(MaterialTable materials);
 
     public double Bends(MaterialTable materials, double spanMetres, double momentFactor) =>
         Resistance.Bending(materials.ModulusOfRupture(Material), Metres, spanMetres, momentFactor);
+
+    protected virtual double Cushions(MaterialTable materials) => 0;
+
+    protected virtual double Opens(MaterialTable materials, double holeSquareMetres) =>
+        Holed(materials, holeSquareMetres) + BackingHoled(materials, holeSquareMetres);
+
+    protected virtual double Gives(MaterialTable materials, double newtons) => 0;
 
     protected virtual double BackingHoled(MaterialTable materials, double holeSquareMetres) => Backing?.Holed(materials, holeSquareMetres) ?? 0;
 
@@ -107,8 +132,9 @@ public class CarvedShell : RigidShell
 }
 
 /// <summary>
-/// A hide stretched over laths: it springs back from a blow, which harms only a lath that backs it, and a breaker
-/// presses it onto the laths, each bending under its share of the side.
+/// A hide stretched over laths: it springs back from a blow, which harms only a lath that backs it, opens under no
+/// knock but sags between two laths until its pull breaks them, and a breaker presses it onto the laths, each
+/// bending under its share of the side.
 /// </summary>
 public class SkinShell : Shell
 {
@@ -116,17 +142,63 @@ public class SkinShell : Shell
 
     public override double Holed(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
 
+    protected override double Opens(MaterialTable materials, double holeSquareMetres) => 0;
+
+    protected override double Gives(MaterialTable materials, double newtons)
+    {
+        var (modulus, strain) = materials.Stretch(Material);
+        if (modulus <= 0 || Frame is null) return 0;
+
+        double gap = Frame.GapMetres, stiffness = 8 * modulus * Metres * gap / Math.Pow(gap, 3);
+        double sag = Math.Min(Math.Cbrt(newtons / stiffness), gap * Math.Sqrt(strain / 2));
+        return stiffness * Math.Pow(sag, 4) / 4;
+    }
+
     public override double Slammed(MaterialTable materials) =>
         Backing is null ? double.PositiveInfinity : Backing.Bends(materials, SpanMetres, Propped) * BackedShare;
 }
 
+/// <summary>The lath or rib behind a shell: a broad blow where it lands breaks it by its impact bending work across its section.</summary>
+public class FrameMember
+{
+    public string Material = "wood";
+    public double Metres;
+    public double WidthMetres;
+    public double SpacingMetres;
+    /// <summary>Its length between the members it crosses, where a skin's pull bends it.</summary>
+    public double SpanMetres;
+
+    public double Share => WidthMetres / SpacingMetres;
+
+    public double GapMetres => SpacingMetres - WidthMetres;
+
+    public FrameMember Of(string material, double laid)
+    {
+        var member = (FrameMember)MemberwiseClone();
+        member.Material = material;
+        member.SpacingMetres = SpacingMetres / laid;
+        return member;
+    }
+
+    public double Breaks(MaterialTable materials) => materials.Toughness(Material) * Metres * WidthMetres;
+
+    public double BreakingNewtons(MaterialTable materials, double soaked) =>
+        2 * materials.ModulusOfRupture(Material) * soaked * WidthMetres * Metres * Metres / (3 * SpanMetres);
+}
+
+/// <summary>What breaks a framed hull where a broad blow lands: on a member, or between two, which it lands on by <paramref name="MemberShare"/>.</summary>
+public readonly record struct FramedResistance(double OverMemberJoules, double BetweenMembersJoules, double MemberShare, double OpensJoules);
+
 /// <summary>
 /// Bundled stems, as a broom is: each stem bends alone and no crack runs from one to the next, so a blow springs off
 /// it, a breaker bends them and they spring back, and an edge parts only the stems it meets. It comes apart where an
-/// edge cuts a lashing that binds it.
+/// edge cuts a lashing that binds it. A broad blow crushes the stems it meets, across the bundle and along the metre of
+/// it a block's face meets, and only what that crushing leaves loads the lashings.
 /// </summary>
 public class BundleShell : Shell
 {
+    private const double BlockMetres = 1;
+
     public override double Holed(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
 
     public override double Cut(MaterialTable materials, double holeSquareMetres, double cutShare) => double.PositiveInfinity;
@@ -134,4 +206,7 @@ public class BundleShell : Shell
     protected override double BackingHoled(MaterialTable materials, double holeSquareMetres) => double.PositiveInfinity;
 
     public override double Slammed(MaterialTable materials) => double.PositiveInfinity;
+
+    protected override double Cushions(MaterialTable materials) =>
+        materials.CrushJoulesPerCubicMetre(Material) * Math.PI * Metres * Metres / 4 * BlockMetres;
 }

@@ -7,20 +7,25 @@ namespace RoughSeas.Vessels;
 
 public class HullContacts(EntityPartitioning partitioning)
 {
-    public List<Contact> Around(Entity vessel, HullShape shape, bool withSteered)
+    public List<Contact> Around(Entity vessel, IHull ours, bool withSteered)
     {
         var pos = vessel.Pos;
+        var shape = ours.Shape;
+        var reach = Footprint.Of(ours.Reach, pos.X, pos.Z, pos.Yaw);
         var own = Footprint.Of(shape, pos.X, pos.Z, pos.Yaw);
         var contacts = new List<Contact>();
-        partitioning.WalkEntities(pos.XYZ, shape.HalfLength + Math.Abs(shape.CentreAlong) + partitioning.LargestTouchDistance, other =>
+        partitioning.WalkEntities(pos.XYZ, Reach(ours.Reach) + partitioning.LargestTouchDistance, other =>
         {
             if (other != vessel && other.Alive && other.Pos.Dimension == pos.Dimension && IHull.Of(other) is { } hull &&
                 (withSteered || !hull.Steered) &&
                 Level(pos.Y, shape, other.Pos.Y, hull.Shape) &&
-                Footprint.Of(hull.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw) is var theirs && own.Touches(theirs))
+                Footprint.Of(hull.Reach, other.Pos.X, other.Pos.Z, other.Pos.Yaw) is var theirReach && reach.Touches(theirReach))
             {
-                var closing = pos.Motion - other.Pos.Motion;
-                contacts.Add(new Contact(other.EntityId, theirs.X - own.X, theirs.Z - own.Z, closing.X, closing.Z, hull.Aboard.Impact));
+                var theirs = Footprint.Of(hull.Shape, other.Pos.X, other.Pos.Z, other.Pos.Yaw);
+                var (ourX, ourZ) = ours.Velocity;
+                var (theirX, theirZ) = hull.Velocity;
+                contacts.Add(new Contact(other.EntityId, theirs.X - own.X, theirs.Z - own.Z, ourX - theirX, ourZ - theirZ, hull.Aboard.Impact,
+                    Outboard: !own.Touches(theirReach), TheirOutboard: !reach.Touches(theirs)));
             }
             return true;
         }, EnumEntitySearchType.Creatures);
@@ -31,8 +36,8 @@ public class HullContacts(EntityPartitioning partitioning)
     public static bool Within(double x, double z, HullShape shape, double theirX, double theirZ, HullShape theirs, double slack) =>
         Math.Sqrt((theirX - x) * (theirX - x) + (theirZ - z) * (theirZ - z)) <= Reach(shape) + Reach(theirs) + slack;
 
-    private static double Reach(HullShape shape) => Math.Sqrt(Math.Pow(shape.HalfLength + Math.Abs(shape.CentreAlong), 2) + Math.Pow(shape.HalfBeam, 2));
+    private static double Reach(HullShape shape) => Math.Sqrt(Math.Pow(shape.HalfLengthMetres + Math.Abs(shape.CentreAlongMetres), 2) + Math.Pow(shape.HalfBeamMetres + Math.Abs(shape.CentreAcrossMetres), 2));
 
     public static bool Level(double y, HullShape shape, double theirY, HullShape theirs) =>
-        y + shape.Keel <= theirY + theirs.Keel + theirs.Depth && theirY + theirs.Keel <= y + shape.Keel + shape.Depth;
+        y + shape.KeelMetres <= theirY + theirs.KeelMetres + theirs.DepthMetres && theirY + theirs.KeelMetres <= y + shape.KeelMetres + shape.DepthMetres;
 }

@@ -6,8 +6,9 @@ import addon_utils
 import bpy
 from mathutils import Matrix, Vector
 
-sys.path[:0] = [os.path.dirname(__file__), os.path.join(os.environ["BLENDER_USER_SCRIPTS"], "modules")]
+sys.path[:0] = [os.path.dirname(__file__), os.path.join(os.path.dirname(__file__), "..", "hulls"), os.path.join(os.environ["BLENDER_USER_SCRIPTS"], "modules")]
 import json5  # noqa: E402
+import units  # noqa: E402
 from animation import TO_GAME, load_animations, play, save_animations  # noqa: E402
 from pose import animation_error, difference, joints, within_tolerance  # noqa: E402
 from preview import render_views  # noqa: E402
@@ -17,7 +18,7 @@ from textures import link_textures, located  # noqa: E402
 
 SIDES = {(-1, 0, 0): "north", (0, 1, 0): "east", (0, -1, 0): "west", (1, 0, 0): "south", (0, 0, 1): "up", (0, 0, -1): "down"}
 # Undoes the add-on's default import offset (translate_origin -8, -8, 0).
-TO_GAME_SPACE = Matrix.Diagonal((1 / 16, 1 / 16, 1 / 16, 1)) @ TO_GAME.to_4x4() @ Matrix.Translation((8, 8, 0))
+TO_GAME_SPACE = Matrix.Diagonal((*[units.metres(1)] * 3, 1)) @ TO_GAME.to_4x4() @ Matrix.Translation((units.voxels(0.5), units.voxels(0.5), 0))
 
 
 def main():

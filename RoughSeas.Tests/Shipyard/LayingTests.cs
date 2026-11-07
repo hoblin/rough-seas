@@ -20,6 +20,13 @@ public class LayingTests
     }
 
     [Fact]
+    public void ALashingShowsTheBarAndALathNone()
+    {
+        Assert.True(new RopeLaying(new AssetLocation("game:rope")).ShowsBar);
+        Assert.False(laying.ShowsBar);
+    }
+
+    [Fact]
     public void ADryLathWillNotBend() => Assert.Equal("shipyard-soak-laths", laying.Refusal(Lath("oak", "dry"), canoe));
 
     [Fact]
@@ -84,11 +91,24 @@ public class LayingTests
     [Fact]
     public void AnyAxeHewsAndNothingElse()
     {
-        var hewing = new HewLaying();
+        var hewing = new ToolLaying(FramingWork.Hew);
 
-        Assert.True(hewing.Takes(new DummySlot(new ItemStack(new Item { Code = new AssetLocation("game:axe-felling-flint"), Tool = EnumTool.Axe }))));
+        Assert.True(hewing.Takes(Tool("game:axe-felling-flint", EnumTool.Axe)));
+        Assert.False(hewing.Takes(Tool("game:knife-generic-flint", EnumTool.Knife)));
         Assert.False(hewing.Takes(Pole("oak")));
     }
+
+    [Fact]
+    public void AnyKnifeCutsBarkAndNothingElse()
+    {
+        var cutting = new ToolLaying(FramingWork.Cut);
+
+        Assert.True(cutting.Takes(Tool("game:knife-generic-flint", EnumTool.Knife)));
+        Assert.False(cutting.Takes(Tool("game:axe-felling-flint", EnumTool.Axe)));
+        Assert.Equal("roughseas:shipyard-cut-bark", cutting.Action);
+    }
+
+    private static DummySlot Tool(string code, EnumTool tool) => new(new ItemStack(new Item { Code = new AssetLocation(code), Tool = tool }));
 
     private static DummySlot Pole(string wood) => new(new ItemStack(new Item
     {

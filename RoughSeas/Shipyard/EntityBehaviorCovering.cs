@@ -30,7 +30,7 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
 
     public override bool Finished => base.Finished && Upright;
 
-    public bool Upright => Tree?.GetBool(UprightKey, true) ?? true;
+    public bool Upright => UprightIn(Tree);
 
     public int Hides => Tree?.GetInt(HidesKey) ?? 0;
 
@@ -50,10 +50,10 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
             if (config.Overturned) tree.SetBool(UprightKey, false);
         });
 
-    public override (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
+    public override HullWork? WorkWith(ItemSlot slot)
     {
         var job = base.WorkWith(slot);
-        return job is { } work && framing.Current is { Work: FramingWork.Hide } && sea.Clock.Hours < framing.SetsAt ? (work.Seconds, "shipyard-frame-setting") : job;
+        return job != null && framing.Current is { Work: FramingWork.Hide } && sea.Clock.Hours < framing.SetsAt ? job with { Refusal = "shipyard-frame-setting" } : job;
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
@@ -92,18 +92,26 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
             entityShape = entityShape.Clone();
             shapeIsCloned = true;
         }
+        Overturn(entityShape, covering.OverturnedPivotVoxels);
+    }
+
+    public static bool UprightIn(ITreeAttribute? build) => build?.GetBool(UprightKey, true) ?? true;
+
+    /// <summary>Turns <paramref name="shape"/> keel up about the line along her through <paramref name="pivotVoxels"/>.</summary>
+    public static void Overturn(Shape shape, double[] pivotVoxels)
+    {
         var turned = new ShapeElement
         {
             Name = Overturned,
             From = [0, 0, 0],
             To = [0, 0, 0],
-            RotationOrigin = [0, covering.OverturnedPivot, 8],
+            RotationOrigin = pivotVoxels,
             RotationX = 180,
-            Children = entityShape.Elements,
+            Children = shape.Elements,
             FacesResolved = new ShapeElementFace[6]
         };
         foreach (var child in turned.Children) child.ParentElement = turned;
-        entityShape.Elements = [turned];
+        shape.Elements = [turned];
     }
 
     protected override void Laid(FramingStage stage, CollectibleObject piece, int pieces)
@@ -126,7 +134,7 @@ public class CoveringConfig : FramingConfig
 
     public bool Overturned;
 
-    public double OverturnedPivot;
+    public double[] OverturnedPivotVoxels = [];
 
     public static new CoveringConfig? Of(EntityProperties type) => Of<CoveringConfig>(type, EntityBehaviorCovering.Code);
 }

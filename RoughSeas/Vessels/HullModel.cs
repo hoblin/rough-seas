@@ -64,11 +64,14 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
     /// <summary>A share within rounding of none or of the whole, as seven sevenths summed come to, is exactly that.</summary>
     protected static double Snapped(double share) => share < ShareTolerance ? 0 : share > 1 - ShareTolerance ? 1 : share;
 
+    /// <summary>The crack from which a place is split and the frame member behind it drawn broken.</summary>
+    public const double FrameBroken = 0.5;
+
     protected static int StageOf(double damage) => damage switch
     {
         < 0.1 => 0,
         < 0.25 => 1,
-        < 0.5 => 2,
+        < FrameBroken => 2,
         < 0.75 => 3,
         _ => 4
     };
@@ -96,18 +99,18 @@ public interface IAfloat
     void Pass(double days, bool afloat, double sun, double waterCelsius = 20);
 }
 
-public interface ISoaking
-{
-    /// <summary>How near to saturated it is, from 0 dry to 1.</summary>
-    double Soaked { get; }
-}
-
 /// <summary>A hull mended by hand, at the place looked at where the model has places.</summary>
 public interface IMendable
 {
     bool Needs(HullRepair repair, HullPlace place);
 
     string Mend(HullRepair repair, HullPlace place);
+}
+
+/// <summary>A vessel whose way through the water is worked out by her own drag, with vanilla's water drag taken off her along the water.</summary>
+public interface IDriven
+{
+    bool Driving { get; }
 }
 
 /// <summary>
@@ -122,7 +125,14 @@ public interface IBuoyant
 
     Afloat Afloat { get; }
 
-    double SettlingMetres { get; }
+    /// <summary>Her draft at her reference build with one rider: where vanilla's drawn waterline places her shape.</summary>
+    double ReferenceDraftMetres { get; }
+
+    /// <summary>The seawater she displaces for each metre she sinks.</summary>
+    double KgPerMetre { get; }
+
+    /// <summary>The water she drags with her as she heaves (<see cref="HeaveAddedMass"/>).</summary>
+    double AddedKg { get; }
 
     Aboard Aboard { get; }
 
@@ -133,6 +143,12 @@ public interface IBuoyant
 public interface IHull : IBuoyant
 {
     HullShape Shape { get; }
+
+    /// <summary>Her shape out to what stands off her hull: where another vessel meets her.</summary>
+    HullShape Reach { get; }
+
+    /// <summary>How fast she really moves, in m/s, from her change of position: not her motion, which her rider rewrites.</summary>
+    (double X, double Z) Velocity { get; }
 
     /// <summary>Server only: whether her rider's client measures her contacts, as it steers her.</summary>
     bool Steered { get; }

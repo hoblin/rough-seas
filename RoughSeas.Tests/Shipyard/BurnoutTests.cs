@@ -29,6 +29,13 @@ public class BurnoutTests
         return Dugout();
     }
 
+    private Burnout Bare()
+    {
+        var blank = Blank();
+        while (!blank.Stroke()) { }
+        return blank;
+    }
+
     private static Burnout Charred(Burnout blank)
     {
         ClayTheRim(blank);
@@ -56,9 +63,33 @@ public class BurnoutTests
 
     private Burnout Hollowed()
     {
-        var blank = Charred(Blank());
+        var blank = Charred(Bare());
         Hew(blank);
         return blank;
+    }
+
+    [Fact]
+    public void HerHullBoxShrinksWithTheTrunkAtEachHewing()
+    {
+        Assert.Equal(Config.Hollowings, Config.HullBoxesMetres.Length);
+        Assert.Equal(Config.BlankDepthMetres, Config.HullBoxesMetres[0].To[1], 2);
+        for (int level = 1; level < Config.Hollowings; level++)
+        {
+            Assert.True(Config.HullBoxesMetres[level].To[1] < Config.HullBoxesMetres[level - 1].To[1]);
+            Assert.True(Config.HullBoxesMetres[level].To[0] - Config.HullBoxesMetres[level].From[0]
+                < Config.HullBoxesMetres[level - 1].To[0] - Config.HullBoxesMetres[level - 1].From[0]);
+        }
+    }
+
+    [Fact]
+    public void EveryHewnSectionClosesAgainstTheCharOfTheNext()
+    {
+        int sections = Config.HewnSectionsMetres.Length;
+        for (int level = 0; level < Config.Hollowings; level++)
+        {
+            for (int section = 1; section < sections; section++) Assert.NotNull(DugoutShape.GetElementByName($"Hewn{level}x{section}Step"));
+            Assert.Null(DugoutShape.GetElementByName($"Hewn{level}x{sections}Step"));
+        }
     }
 
     [Fact]
@@ -71,21 +102,46 @@ public class BurnoutTests
     }
 
     [Fact]
-    public void DryGrassOnTheLogsLaysTheBlankWithItsFiresBase()
+    public void AnAxeOnTheLogsLaysTheBlankInItsBark()
     {
         var blank = Blank();
 
         Assert.Equal(0, blank.Level);
-        Assert.False(blank.Lit);
-        Assert.True(blank.Fire.Kindled);
-        Assert.False(blank.Fire.Laid);
-        Assert.Equal("shipyard-kindled-already", blank.KindlingRefusal());
+        Assert.False(blank.Debarked);
+        Assert.Equal(0, blank.BarkStripped);
+        Assert.False(blank.Fire.Kindled);
+    }
+
+    [Fact]
+    public void NothingButTheAxeWorksATrunkInItsBark()
+    {
+        var blank = Blank();
+
+        Assert.All(new[] { blank.ClayRefusal(), blank.FirewoodRefusal(), blank.KindlingRefusal(), blank.LightRefusal() },
+            refusal => Assert.Equal("shipyard-debark-first", refusal));
+        Assert.Null(blank.HewRefusal());
+    }
+
+    [Fact]
+    public void EachStrokeStripsTheBarkFromOneSideOfALog()
+    {
+        var blank = Blank();
+
+        for (int piece = 1; piece < Config.BarkPieces; piece++)
+        {
+            Assert.False(blank.Stroke());
+            Assert.Equal(piece, blank.BarkStripped);
+        }
+        Assert.True(blank.Stroke());
+        Assert.True(blank.Debarked);
+        Assert.Equal(0, blank.Level);
+        Assert.Equal("shipyard-burn-first", blank.HewRefusal());
     }
 
     [Fact]
     public void OnlyCharredWoodHewsAway()
     {
-        var blank = Blank();
+        var blank = Bare();
 
         Assert.Equal("shipyard-burn-first", blank.HewRefusal());
         Charred(blank);
@@ -95,16 +151,16 @@ public class BurnoutTests
     [Fact]
     public void TheRimTakesBallsOfClayByVanillasVoxelsOverItsOutline()
     {
-        var blank = Blank();
+        var blank = Bare();
 
-        Assert.Equal(608, blank.RimVoxels);
-        Assert.Equal(25, blank.ClayBalls);
+        Assert.Equal(461, blank.RimVoxels);
+        Assert.Equal(19, blank.ClayBalls);
     }
 
     [Fact]
     public void EachBallCoatsItsVoxelsUntilTheRimIsGuarded()
     {
-        var blank = Blank();
+        var blank = Bare();
         for (int ball = 1; ball < blank.ClayBalls; ball++) blank.Clay();
 
         Assert.False(blank.Clayed);
@@ -135,7 +191,7 @@ public class BurnoutTests
     [Fact]
     public void AFireLightsWithoutClayAndBurnsTheRimUnguarded()
     {
-        var blank = Blank();
+        var blank = Bare();
         LayTheFire(blank);
 
         Assert.Null(blank.LightRefusal());
@@ -148,7 +204,7 @@ public class BurnoutTests
     [Fact]
     public void TheRimSpoilsOnceItsCharReachesThroughTheWall()
     {
-        var blank = Blank();
+        var blank = Bare();
         LayTheFire(blank);
         blank.Light();
         double throughTheWall = Config.WallMetres * 1000 / Config.CharMillimetresPerHour;
@@ -162,7 +218,7 @@ public class BurnoutTests
     [Fact]
     public void ASpoiledBlankTakesNoMoreWork()
     {
-        var blank = Blank();
+        var blank = Bare();
         LayTheFire(blank);
         blank.Light();
         blank.Burn(blank.HoursPerFire);
@@ -181,7 +237,7 @@ public class BurnoutTests
     }
 
     [Fact]
-    public void TheFireSpendsTheClayAndItsWood()
+    public void TheFireSpendsItsWoodAndTheHewingTakesTheClayWithTheRim()
     {
         var blank = Hollowed();
         ClayTheRim(blank);
@@ -189,15 +245,48 @@ public class BurnoutTests
         blank.Light();
         blank.Burn(blank.HoursPerFire);
 
-        Assert.Equal(0, blank.ClayVoxels);
         Assert.False(blank.Fire.Kindled);
         Assert.False(blank.Fire.Laid);
+        Assert.True(blank.Clayed);
+        Hew(blank);
+        Assert.Equal(0, blank.ClayVoxels);
+        Assert.False(blank.Clayed);
+    }
+
+    [Fact]
+    public void AFireCatchesFirstThenBurnsDownInEqualShares()
+    {
+        var blank = Bare();
+        ClayTheRim(blank);
+        LayTheFire(blank);
+        blank.Light();
+        double after = blank.HoursPerFire - 1;
+
+        Assert.Equal(0, blank.BurningPhase(3, 1));
+        blank.Burn(0.99);
+        Assert.Equal(0, blank.BurningPhase(3, 1));
+        blank.Burn(0.02);
+        Assert.Equal(1, blank.BurningPhase(3, 1));
+        blank.Burn(after / 3);
+        Assert.Equal(2, blank.BurningPhase(3, 1));
+        blank.Burn(after / 3);
+        Assert.Equal(3, blank.BurningPhase(3, 1));
+    }
+
+    [Fact]
+    public void TheFirstBallOfClayNamesTheClayOnTheRim()
+    {
+        var blank = Bare();
+        blank.Clay("red");
+        blank.Clay("blue");
+
+        Assert.Equal("red", blank.ClayType);
     }
 
     [Fact]
     public void RainPutsTheFireOutAndTheRestBurnsWhenRelit()
     {
-        var blank = Blank();
+        var blank = Bare();
         ClayTheRim(blank);
         LayTheFire(blank);
         blank.Light();
@@ -213,7 +302,7 @@ public class BurnoutTests
     [Fact]
     public void EachStrokeBreaksTheCrumblingCharAwayAcrossTheHollow()
     {
-        var blank = Charred(Blank());
+        var blank = Charred(Bare());
 
         Assert.Equal(32, blank.StrokesPerHewing);
         for (int stroke = 1; stroke < blank.StrokesPerHewing; stroke++) Assert.False(blank.Stroke());
@@ -224,9 +313,56 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void AHewingCutsTheInsideSectionBySectionThenTrimsTheOutsideInTheSameStrokes()
+    {
+        var blank = Charred(Bare());
+        var stages = new List<(int Cut, int Trimmed)> { (blank.SectionsCut, blank.SectionsTrimmed) };
+        while (!blank.Stroke())
+        {
+            if (stages[^1] != (blank.SectionsCut, blank.SectionsTrimmed)) stages.Add((blank.SectionsCut, blank.SectionsTrimmed));
+        }
+
+        Assert.Equal(Enumerable.Range(0, blank.Sections + 1).Select(cut => (cut, 0))
+            .Concat(Enumerable.Range(1, blank.Sections - 1).Select(trimmed => (blank.Sections, trimmed))), stages);
+        Assert.Equal(1, blank.Level);
+        Assert.Equal(0, blank.Stage);
+    }
+
+    [Fact]
+    public void TheInsideWorkCutsTheHoldAndTheOutsideWorkTrimsTheWoodWithNoStepAtTheHewingsEnd()
+    {
+        var blank = Charred(Bare());
+        while (blank.SectionsCut < blank.Sections) blank.Stroke();
+
+        Assert.Equal(1.0 / Config.Hollowings, blank.Hollowed, 6);
+        Assert.Equal(0, blank.Worked);
+        Assert.Equal(Config.UnhewnLitres, blank.UnhewnLitres);
+        Assert.Equal(Config.BlankDepthMetres, blank.TopMetres);
+        Assert.True(blank.FloorMetres < Config.BlankDepthMetres);
+
+        var lastStage = (blank.Hollowed, blank.Worked, blank.FloorMetres);
+        while (!blank.Stroke()) lastStage = (blank.Hollowed, blank.Worked, blank.FloorMetres);
+        Assert.Equal(lastStage.Hollowed, blank.Hollowed, 6);
+        Assert.True(blank.Worked > lastStage.Worked);
+        Assert.Equal(1.0 / Config.Hollowings, blank.Worked, 6);
+        Assert.Equal(lastStage.FloorMetres, blank.FloorMetres, 6);
+    }
+
+    [Theory]
+    [InlineData(-2.2, 1)]
+    [InlineData(-1, 1)]
+    [InlineData(0, 2)]
+    [InlineData(1, 3)]
+    [InlineData(2.2, 3)]
+    public void EverythingAlongHerLiesInOneSectionHerEndsInTheirs(double alongMetres, int section)
+    {
+        Assert.Equal(section, Dugout().SectionAt(alongMetres));
+    }
+
+    [Fact]
     public void EachHewingCutsMoreOfTheHoldUntilSheIsFinished()
     {
-        var blank = Blank();
+        var blank = Bare();
         var hollowed = new List<double> { blank.Hollowed };
         while (!blank.Finished)
         {

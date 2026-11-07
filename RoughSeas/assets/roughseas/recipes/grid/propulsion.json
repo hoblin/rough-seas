@@ -1,0 +1,29 @@
+[
+    {
+        "name": "Paddle",
+        "ingredientPattern": "AKP",
+        "ingredients": {
+            "A": { "type": "item", "tags": ["tool-axe"], "isTool": true },
+            "K": { "type": "item", "tags": ["tool-knife"], "isTool": true },
+            "P": { "type": "item", "code": "roughseas:pole-*-2", "name": "wood" }
+        },
+        "width": 3,
+        "height": 1,
+        "shapeless": true,
+        "output": { "type": "item", "code": "roughseas:paddle-{wood}" }
+    },
+    {
+        "name": "Thole oar",
+        "ingredientPattern": "AK,PL",
+        "ingredients": {
+            "A": { "type": "item", "tags": ["tool-axe"], "isTool": true },
+            "K": { "type": "item", "tags": ["tool-knife"], "isTool": true },
+            "P": { "type": "item", "code": "roughseas:pole-*-3", "name": "wood" },
+            "L": { "type": "item", "code": "roughseas:lath-*-2-dry" }
+        },
+        "width": 2,
+        "height": 2,
+        "shapeless": true,
+        "output": { "type": "item", "code": "roughseas:tholeoar-{wood}" }
+    }
+]

@@ -7,8 +7,7 @@ namespace RoughSeas.Storms;
 /// The water a point is in as the sea is drawn: the still water's surface in the point's column, where vanilla draws
 /// its water mesh (7/8 of the top block for still water), plus the swell drawn there. The drawn sea rises over the
 /// block water in a crest and sinks below it in a trough, so a point a crest covers is under water in an air block,
-/// and a point a trough bares is out of it in a water block. On a client alone, as the drawn sea is. Positions are
-/// absolute block coordinates.
+/// and a point a trough bares is out of it in a water block. Positions are absolute block coordinates.
 /// </summary>
 public sealed class DrawnWater(IDrawnSea sea)
 {

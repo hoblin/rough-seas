@@ -27,18 +27,20 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
         handHandling = EnumHandHandling.PreventDefault;
         if (job.Refusal != null)
         {
-            (byEntity.Api as ICoreClientAPI)?.TriggerIngameError(this, job.Refusal, Lang.Get("roughseas:" + job.Refusal));
+            if (firstEvent) byEntity.Api.ModLoader.GetModSystem<ShipyardModSystem>().Log("{0} refused at {1}: {2}", byEntity.GetName(), byEntity.Pos.AsBlockPos, job.Refusal);
+            (byEntity.Api as ICoreClientAPI)?.TriggerIngameError(this, job.Refusal, Lang.Get("roughseas:" + job.Refusal, job.RefusalArgs));
             handHandling = EnumHandHandling.PreventDefaultAction;
             return;
         }
-        work.Start(byEntity);
+        work.Start(byEntity, job.ShowsBar);
     }
 
     public override bool OnHeldInteractStep(float secondsUsed, ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, ref EnumHandling handling)
     {
-        if (Hull(byEntity, blockSel, entitySel)?.WorkWith(slot) is not { Refusal: null } job) return false;
+        if (Hull(byEntity, blockSel, entitySel) is not { } hull || hull.WorkWith(slot) is not { Refusal: null } job) return false;
 
         handling = EnumHandling.PreventSubsequent;
+        hull.Working(byEntity);
         return work.Step(secondsUsed, job.Seconds);
     }
 
@@ -62,5 +64,5 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
 
     private static IWorkedHull? Hull(EntityAgent byEntity, BlockSelection? blockSel, EntitySelection? entitySel) =>
         entitySel?.Entity?.SidedProperties?.Behaviors.OfType<IWorkedHull>().FirstOrDefault()
-        ?? (blockSel == null ? null : byEntity.World.BlockAccessor.GetBlockEntity(blockSel.Position) as IWorkedHull);
+        ?? (blockSel == null ? null : byEntity.World.BlockAccessor.GetBlock(blockSel.Position).GetInterface<IWorkedBlock>(byEntity.World, blockSel.Position)?.HullAt(byEntity.World, blockSel.Position));
 }

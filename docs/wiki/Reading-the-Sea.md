@@ -4,11 +4,13 @@ Vanilla has no place for the wind's direction, for waves or for currents, so Rou
 
 Rough Seas keeps the sea twice, for two different jobs.
 
-**The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike her, the current that carries her. It knows no single wave. A wave that reaches a vessel is drawn by chance from the state, once a wave period, and two vessels side by side meet different waves.
+**The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike it, the current that carries it. It knows no single wave. A wave that reaches a vessel is drawn by chance from the state, once a wave period, and two vessels side by side meet different waves.
 
-**The drawn sea** is the sea as a picture: the moving surface a client draws, built from the sea state around its player. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same picture: two players in one region see the same crests. But it is a picture, and not the wave the server struck with.
+**The drawn sea** is the moving surface a client draws, built from the sea map the server sends it and the world's clock. The server builds the same surface where it needs one: around a swimmer's head and around a vessel nobody steers. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same surface: two players in one region see the same crests. It is not the wave the server struck a vessel with.
 
-So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms or moves on the server: the sea state. A hull's pose on the screen: the drawn sea. Nothing on the server should wait for a crest a client draws.
+So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms or moves on the server: the sea state. A hull's pose on the screen: the drawn sea. Nothing on the server should wait for a crest a client reports.
+
+Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a player's breath: under a crest a swimmer has no air, in a trough the head is clear.
 
 ## Reaching us
 
@@ -91,7 +93,7 @@ capi.Event.RegisterGameTickListener(_ =>
 
 ### Something that swims with the current
 
-The current is a velocity in m/s. Vanilla's water drag slows whatever swims every tick, so adding the current's speed to an entity's motion once isn't enough, and adding all of it every tick is too much. Our `roughseas:currentdrift` adds, each tick on the server, as much of the current as the drag has just taken away, so the drag pulls the entity toward the current's speed rather than to rest (ours add a little of the wind too):
+The current is a velocity in m/s. Vanilla's water drag slows whatever swims every tick, so adding the current's speed to an entity's motion once isn't enough, and adding all of it every tick is too much. Our `roughseas:currentdrift` adds, each tick on the server, as much of the current as the drag has just taken away, so the drag pulls the entity toward the current's speed rather than to rest:
 
 ```csharp
 var current = sea.CurrentAt(pos.X, pos.Z);
@@ -106,7 +108,7 @@ Our behaviour carries vessels nobody steers ([Building a vessel](Building-a-Vess
 
 ### The sea's time
 
-Everything of ours at sea keeps one clock, `sea.Clock`, on either side: the waves that come aboard, rain into a bilge, leaks and seeping, lightning, a hull soaking or losing its grease, and the drawn waves. It is the world's calendar, so it stands still under `/time stop` and while the game is paused, races while everyone sleeps, and leaps when the calendar is moved on with `/time add`. Motion keeps vanilla's tick, as vanilla's boats do: rowing, sailing, a current's push and a mooring's hold go on while time stands still. A mechanic of yours at sea that keeps the same clock happens in step with ours.
+Everything of ours at sea keeps one clock, `sea.Clock`, on either side: the waves that come aboard, rain into a bilge, leaks and seeping, lightning, a hull soaking or losing its grease, and the drawn waves. It is the world's calendar, so it stands still under `/time stop`, while the game is paused and while the calendar is stopped (`/time calendarspeedmul 0`), races while everyone sleeps, and leaps when the calendar is moved on with `/time add`. Motion keeps vanilla's tick, as vanilla's boats do: rowing, sailing, a current's push and a mooring's hold go on while time stands still. A mechanic of yours at sea that keeps the same clock happens in step with ours.
 
 It tells time in two units. Game hours suit what the calendar counts: days afloat, rain by the hour. Seconds at vanilla's pace suit what the real world times in seconds, a wave's period or a leak's litres a second: they are real seconds at the normal speed of time, 120 to a game hour in a default world, and they stand and race with the calendar.
 
@@ -143,7 +145,7 @@ Lap at least twice a second, as ours do. While everyone sleeps that is an hour o
 
 ## The drawn sea
 
-The drawn sea exists only on a client:
+Our drawn sea for other mods is the client's:
 
 ```csharp
 IDrawnSea? drawn = capi.ModLoader.GetModSystem<StormsModSystem>().DrawnSea;
@@ -170,14 +172,11 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | `Seconds` | the time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client |
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |
-| `OrbitalVelocityAt(x, z, depth, side)` | the water's horizontal velocity there now, in m/s, as the waves move it |
-| `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the same, averaged over a hull's underwater body |
+| `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in m/s, as the waves move it, averaged over a hull's underwater body |
 
 `PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`, and turns those four heights into how the hull would lie on them. So the hull's size does part of the work: a long hull on short waves has its bow and stern on different crests and barely rocks, while a small one takes every wave. Its length runs along the shape's X axis. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees, so `Pos.Yaw + rotateY * GameMath.DEG2RAD`.
 
-`OrbitalVelocityAt` is the to and fro of the water under the waves: forward, along each wave's travel, under its crest, back in its trough, by linear wave theory. `depth` is how far under the drawn surface, in metres (the motion fades with depth, faster under short waves), and `side` the width of a square it is averaged over: a body as long as a wave feels it cancel out. Read where a body is each step, the to and fro carries it a little further forward than back, the drift that waves give whatever floats.
-
-`HullVelocityAt` is what a hull feels of it: the water's pressure on a hull sums over its underwater body, so the velocity is averaged over its `length` along its heading `yaw` and its `beam` across, as `PoseOf` takes them, and over its `draft` under the height `lift` it floats at, in metres over still water. A hull short against the waves takes the water's velocity; one as long as a wave, or lying along short waves, feels much less of it.
+`HullVelocityAt` is the to and fro of the water under the waves as a hull feels it: forward, along each wave's travel, under its crest, back in its trough. The water's pressure on a hull sums over its underwater body, so the velocity is averaged over its `length` along its heading `yaw` and its `beam` across, as `PoseOf` takes them, and over its `draft` under the height `lift` it floats at, in metres over still water. A hull short against the waves takes the water's velocity; one as long as a wave, or lying along short waves, feels much less of it.
 
 `SeaPose`:
 
@@ -193,28 +192,28 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 - **Blend by `Hold`.** Where no swell is drawn, your vessel rocks however it rocked before. Ours keep vanilla's rocking there, and take the pose where the swell holds them fully, blending between by `Hold`. So a boat rowed from a calm river into the surf passes from one to the other without a jump.
 - **Scale it as your hull would.** Ours multiply roll and pitch by a vessel's `rollResponse` and `pitchResponse`: a raft lies flatter on the water than its slope, a narrow canoe rolls more.
 
-The pose is only the picture. The server knows nothing of it, and it changes as the waves move: read it every frame, in your render path.
+The pose is only the picture, and it changes as the waves move: read it every frame, in your render path.
 
 ### How a hull answers
 
-A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls and pitches toward the water on periods of its own: a light canoe follows a long swell as the water lies, while a heavy, deep hull lets a short chop pass under her and rolls slowly on her own. `HullResponse`, in `RoughSeas.Storms`, gives a hull those periods. Ours keep one per vessel and pass every pose through it; yours can do the same.
+A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls and pitches toward the water on periods of its own: a light canoe follows a long swell as the water lies, while a heavy, deep hull lets a short chop pass under it and rolls slowly on its own. `HullResponse`, in `RoughSeas.Storms`, gives a hull those periods. Ours keep one per vessel and pass every pose through it; yours can do the same.
 
 | Member | What it is |
 | --- | --- |
-| `HullResponse.Of(lengthMetres, beamMetres, draftMetres, depthMetres, config)` | the response of a hull of these dimensions, floating at this draft |
+| `HullResponse.Of(lengthMetres, beamMetres, draftMetres, depthMetres, config)` | the response of a hull of these dimensions, floating at this draft, its waterplane taken as the ellipse of its length and beam |
 | `new HullResponse(heavePeriodSeconds, rollPeriodSeconds, config)` | one on periods you give; a period of 0 follows the water as it lies |
 | `Follow(pose, seconds)` | the pose the hull takes `seconds` after the last call, chasing `pose`; where no swell is drawn it comes to rest at once |
 | `HeavePeriodSeconds`, `RollPeriodSeconds` | its periods; set them as its draft changes |
-| `HullResponse.HeavePeriod(draftMetres, config)` | the heave and pitch period of a hull floating this deep, in seconds |
+| `HullResponse.HeavePeriod(kg, addedKg, kgPerMetre)` | the heave and pitch period of a hull of this mass, dragging `addedKg` of water and displacing `kgPerMetre` for each metre it sinks, in seconds |
 | `HullResponse.RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres)` | its roll period, in seconds |
 
 `Follow` returns the pose with its `Lift`, `Roll` and `Pitch` answered and its `Hold` as it was, so blend by it as before. Ours refresh the periods from the hull's draft every frame, so a laden hull answers slower than an empty one. A long gap between calls, as when a hull returns to the water, is caught up as one period at most, so the hull doesn't leap. Where the periods come from is on [The science of the hull](The-Science-of-the-Hull#riding-the-swell).
 
-`config` is the `response` block of our `config/storms.json`, reached as `StormsModSystem.Config.Response`: `heaveAddedMass`, the water a hull drags with it as it heaves, in its own masses (1); and `heaveDamping` (0.3) and `rollDamping` (0.1), how fast a swing dies, as shares of critical damping.
+`config` is the `response` block of our `config/storms.json`, reached as `StormsModSystem.Config.Response`: `heaveDamping` (0.3) and `rollDamping` (0.1), how fast a swing dies, as shares of critical damping. The water a hull drags as it heaves is `RoughSeas.Vessels.HeaveAddedMass`: `OfPlate(halfLength, halfBeam)` or `OfWaterplane(squareMetres, halfBeam)`, in kilograms; a vessel with a hull of ours gives hers as `IBuoyant.AddedKg`.
 
 ### A ship that rides our swell
 
-A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). It is also carried to and fro with the water under the waves, by the client that steers it or by the server while nobody does: `HullVelocityAt` over its hull, answered through its mass, added mass and drag. A floating hull displaces its own mass, so the water's pressure on it grows with its mass as its inertia does: a small hull takes the water's velocity whatever it weighs, and what smooths the sway is its size against the waves and its draft. The drift that comes of it is the waves' drift for that hull; the current's is apart ([Currents](Currents#drift)). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
+A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). It is also carried to and fro with the water under the waves, by the client that steers it or by the server while nobody does: `HullVelocityAt` over its hull, at the heave it is drawn at. A floating hull displaces its own mass, so it takes that velocity whatever it weighs: its mass tells through its draft and its heave. The formulas are on [The science of the sea](The-Science-of-the-Sea#how-the-waves-carry-a-hull). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
 
 The calls above are for a vessel that isn't an `EntityBoat` and poses itself. Each frame, in its render path:
 

@@ -30,6 +30,8 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     private double rained;
     private float sinceUpdate;
 
+    public double DesignedLitres => holdLitres;
+
     public double CapacityLitres => form.Value?.HoldLitres(holdLitres) ?? holdLitres;
 
     public double UncutLitres => holdLitres * (form.Value?.Uncut ?? 0);
@@ -67,7 +69,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         drainLitresPerHour = attributes["drainLitresPerHour"].AsDouble();
         if (entity.Api is ICoreClientAPI capi)
         {
-            water = new BilgeRenderer(capi, entity);
+            water = new BilgeRenderer(capi, entity, attributes["levelHeightsMetres"].AsArray<double>([]));
             entity.WatchedAttributes.RegisterModifiedListener(TreeKey, ShowWater);
             return;
         }
@@ -84,6 +86,10 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
     public override void AfterInitialized(bool onFirstSpawn)
     {
         if (form.Value != null) form.Value.Reformed += ShowWater;
+        if (entity.World.Side != EnumAppSide.Server || Litres <= CapacityLitres) return;
+
+        storms.Log(entity, "{0:F0} L over her gunwale: her hold takes {1:F0}", Litres - CapacityLitres, CapacityLitres);
+        Litres = CapacityLitres;
     }
 
     public void HandOver(Entity successor, bool endForEnd) => successor.WatchedAttributes.SetAttribute(TreeKey, Tree.Clone());
@@ -139,7 +145,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
 
     private void ShowWater()
     {
-        if (water == null) return;
+        if (water is not { Levels: > 0 }) return;
         if (Litres <= 0 || form.Value is not { } built)
         {
             water.Show((int)Math.Ceiling(Fill * water.Levels));

@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Units;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -55,5 +56,5 @@ public class CollectibleBehaviorLathBed(CollectibleObject collectible) : Collect
         accessor.GetBlock(pos.DownCopy()).CanAttachBlockAt(accessor, accessor.GetBlock(pos), pos.DownCopy(), BlockFacing.UP)
         && accessor.GetBlock(pos).Replaceable >= Replaceable;
 
-    private static double Snap(double metres) => Math.Round(metres * 16) / 16;
+    private static double Snap(double metres) => Voxels.ToMetres(Math.Round(Voxels.FromMetres(metres)));
 }

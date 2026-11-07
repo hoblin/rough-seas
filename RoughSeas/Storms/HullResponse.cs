@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Vessels;
 
 namespace RoughSeas.Storms;
 
@@ -12,7 +13,8 @@ namespace RoughSeas.Storms;
 /// </code></example>
 public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSeconds, ResponseConfig config)
 {
-    private const double Gravity = 9.81;
+    public const double Gravity = 9.81;
+    private const double SeawaterKgPerCubicMetre = VesselMass.SeawaterKgPerLitre * 1000;
     private const double MaxStepShare = 0.05;
     private const int MaxSteps = 20;
     private const double MinMetacentricHeight = 0.02;
@@ -24,12 +26,16 @@ public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSec
     public double RollPeriodSeconds { get; set; } = rollPeriodSeconds;
 
     /// <summary>The response of a hull of these dimensions in metres, floating at this draft.</summary>
-    public static HullResponse Of(double lengthMetres, double beamMetres, double draftMetres, double depthMetres, ResponseConfig config) =>
-        new(HeavePeriod(draftMetres, config), RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres), config);
+    public static HullResponse Of(double lengthMetres, double beamMetres, double draftMetres, double depthMetres, ResponseConfig config)
+    {
+        double kgPerMetre = SeawaterKgPerCubicMetre * Math.PI * lengthMetres * beamMetres / 4;
+        double added = HeaveAddedMass.OfPlate(lengthMetres / 2, beamMetres / 2);
+        return new(HeavePeriod(kgPerMetre * draftMetres, added, kgPerMetre), RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres), config);
+    }
 
-    /// <summary>Seconds: 2π √((M + A₃₃) / (ρ g A_w)), which for a prismatic hull is a function of its draft alone.</summary>
-    public static double HeavePeriod(double draftMetres, ResponseConfig config) =>
-        2 * Math.PI * Math.Sqrt((1 + config.HeaveAddedMass) * Math.Max(draftMetres, 0) / Gravity);
+    /// <summary>Seconds: 2π √((M + A₃₃) / (ρ g A_w)), <paramref name="kgPerMetre"/> being ρ A_w.</summary>
+    public static double HeavePeriod(double kg, double addedKg, double kgPerMetre) =>
+        kgPerMetre > 0 ? 2 * Math.PI * Math.Sqrt(Math.Max(kg + addedKg, 0) / (Gravity * kgPerMetre)) : 0;
 
     /// <summary>
     /// Seconds, by 46 CFR 28.575: 2·C·B / √GM, with GM of a box hull whose centre of gravity sits at half its depth.
@@ -84,7 +90,6 @@ public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSec
 
 public class ResponseConfig
 {
-    public double HeaveAddedMass;
     public double HeaveDamping;
     public double RollDamping;
 }

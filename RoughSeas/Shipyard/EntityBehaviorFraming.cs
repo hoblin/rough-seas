@@ -39,7 +39,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 
     public override double HoldLitres(double designed) => framing.Sealed ? designed + framing.Raised(stage => stage.RaisesLitres) : 0;
 
-    public override double DepthMetres(double designed) => designed + framing.Raised(stage => stage.RaisesMetres);
+    public override double DepthMetres(double designed) => Lifted(designed) + framing.Raised(stage => stage.RaisesMetres);
 
     public override double Uncut => 0;
 
@@ -70,16 +70,18 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
                 : part).ToArray();
 
     public override Shell Formed(Shell designed) =>
-        designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? "", framing.Lined);
+        designed.Lined(framing.Wood is { } wood ? WoodPrefix + wood : designed.Backing?.Material ?? "", framing.Lined)
+            .Framed(framing.Wood is { } frameWood ? WoodPrefix + frameWood : designed.Frame?.Material ?? "", framing.Members);
 
     public override BlockDropItemStack[] Wrecked(BlockDropItemStack[] designed) =>
         designed.Where(drop => drop.ResolvedItemstack is not { } stack || LaidAny(new DummySlot(stack))).Select(AsLaid).ToArray();
 
-    public virtual (double Seconds, string? Refusal)? WorkWith(ItemSlot slot)
+    public virtual HullWork? WorkWith(ItemSlot slot)
     {
         if (framing.Current is not { } stage || !layings[stage].Takes(slot)) return null;
 
-        return (stage.Seconds * Math.Min(layings[stage].Pieces(slot), stage.Pieces - framing.Laid(stage)), layings[stage].Refusal(slot, framing));
+        var laying = layings[stage];
+        return new(stage.Seconds * Math.Min(laying.Pieces(slot), stage.Pieces - framing.Laid(stage)), laying.Refusal(slot, framing), laying.ShowsBar);
     }
 
     public void Lay(EntityAgent byEntity, ItemSlot slot)
@@ -94,7 +96,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         var pieces = laying.Pieces(slot);
         var piece = slot.Itemstack!.Collectible;
         bool creative = (byEntity as EntityPlayer)?.Player?.WorldData.CurrentGameMode == EnumGameMode.Creative;
-        if (!creative) laying.Spend(slot, byEntity);
+        if (!creative) laying.Spend(slot, byEntity, Math.Min(pieces, stage.Pieces - framing.Laid(stage)));
         slot.MarkDirty();
         Laid(stage, piece, pieces);
         framing.Lay(wood, setsAt, pieces);
@@ -140,6 +142,11 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
     }
 
     protected virtual void Laid(FramingStage stage, CollectibleObject piece, int pieces) { }
+
+    private double Lifted(double designed) =>
+        config.Stages.FirstOrDefault(stage => stage.DepthMetres.Length > 0) is { } lifting
+            ? lifting.DepthMetres[Math.Min(framing.Level(lifting.Lifts!), lifting.DepthMetres.Length - 1)]
+            : designed;
 
     private bool Hurried(EntityAgent byEntity, double seconds)
     {
@@ -206,10 +213,21 @@ public class FramingConfig
     {
         foreach (var stage in Stages)
         {
-            stage.Metres = Named(shape?["elements"], stage.Group)?["children"]?.Select(piece => piece.Value<double?>("metres") ?? 0).ToArray() ?? [];
-            stage.Pieces = stage.Metres.Length;
+            var group = Named(shape?["elements"], stage.Group);
+            var pieces = group?["children"]?.ToArray() ?? [];
+            stage.Metres = pieces.Select(piece => piece.Value<double?>("metres") ?? 0).ToArray();
+            stage.Pieces = pieces.Length;
+            stage.WoodLitres = Measured(group, pieces, "woodLitres");
+            stage.WaterlineSquareMetres = Measured(group, pieces, "waterlineSquareMetres");
+            if (stage.Lifts is { } lifted && Named(shape?["elements"], lifted) is { } levels)
+            {
+                stage.DepthMetres = Measured(levels, levels["children"]?.ToArray() ?? [], "depthMetres");
+            }
         }
     }
+
+    private static double[] Measured(JToken? group, JToken[] pieces, string key) =>
+        group?.Value<double?>(key) is { } before ? [before, .. pieces.Select(piece => piece.Value<double?>(key) ?? 0)] : [];
 
     private static JToken? Named(JToken? elements, string name) =>
         elements?.FirstOrDefault(element => element.Value<string>("name") == name)
@@ -231,6 +249,8 @@ public class FramingConfig
     public string Planks = "";
 
     public string Hides = "";
+
+    public string Oars = "";
 
     /// <summary>The hides' <c>type</c> variants a hide stage takes.</summary>
     public string[] HideStates = [];

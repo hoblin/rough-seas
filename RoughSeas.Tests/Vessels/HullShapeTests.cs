@@ -5,7 +5,7 @@ namespace RoughSeas.Tests.Vessels;
 
 public class HullShapeTests
 {
-    private readonly HullShape dugout = HullShape.FromBox(-1.5, 0, 0.125, 2.5, 0.5625, 0.875);
+    private readonly HullShape dugout = HullShape.FromBox([-2, 0, -0.375], [2, 0.5625, 0.375]);
 
     [Theory]
     [InlineData(-1, -0.01, HullPlace.PortBow)]
@@ -25,6 +25,32 @@ public class HullShapeTests
         Assert.Equal(HullPlace.Bottom, dugout.At(0, 0.05, 0));
         Assert.Equal(HullPlace.PortSide, dugout.At(0, 0.4, -0.3));
         Assert.Equal(HullPlace.StarboardQuarter, dugout.At(1.9, 0.4, 0.3));
+    }
+
+    [Fact]
+    public void APointPastHerSideIsOutsideHer()
+    {
+        Assert.False(dugout.Beyond(0.3));
+        Assert.True(dugout.Beyond(2));
+        Assert.True(dugout.Beyond(-2));
+    }
+
+    [Fact]
+    public void HerReachRunsOutToWhatStandsOffHerSide()
+    {
+        var reach = dugout.Spanning(2);
+
+        Assert.False(reach.Beyond(1.9));
+        Assert.True(reach.Beyond(-0.4));
+        Assert.Equal(dugout.HalfLengthMetres, reach.HalfLengthMetres);
+        Assert.Equal(dugout, dugout.Spanning(0));
+    }
+
+    [Fact]
+    public void AVesselMetOnlyAtHerFloatIsStillBesideHer()
+    {
+        Assert.False(HullContacts.Within(0, 0, dugout, 0, 4.5, dugout, slack: 0));
+        Assert.True(HullContacts.Within(0, 0, dugout.Spanning(2), 0, 4.5, dugout, slack: 0));
     }
 
     [Fact]
@@ -54,5 +80,15 @@ public class HullShapeTests
 
         Assert.Equal(0.3, x, 6);
         Assert.Equal(-1.2, z, 6);
+    }
+
+    [Fact]
+    public void ABoxInMetresFromWhereSheStandsIsDrawnBackInHerShapesVoxels()
+    {
+        double[] fromVoxels = [-32, 0, 0], toVoxels = [48, 16, 16];
+        var shape = HullShape.FromVoxels(fromVoxels, toVoxels);
+        double[] from = [shape.CentreAlongMetres - shape.HalfLengthMetres, shape.KeelMetres, shape.CentreAcrossMetres - shape.HalfBeamMetres];
+
+        Assert.Equal(fromVoxels, HullShape.ToModel(from));
     }
 }

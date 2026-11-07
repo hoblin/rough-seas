@@ -26,6 +26,9 @@ public class StormsModSystem : ModSystem
     /// <summary>The water a point is in by <see cref="DrawnSea"/>; null on the server.</summary>
     public DrawnWater? DrawnWater { get; private set; }
 
+    /// <summary>The drawn sea around the vessels nobody steers; null on a client.</summary>
+    public RegionSwells? Swells { get; private set; }
+
     /// <summary>The surface behind <see cref="DrawnSea"/>, foam included; null on the server.</summary>
     internal SeaSurface? Surface { get; private set; }
 
@@ -52,7 +55,7 @@ public class StormsModSystem : ModSystem
         var surface = Surface = new SeaSurface(Config.Surface, Waves);
         var field = new SurfaceField();
         surface.Changed += change => Log("surface: " + change);
-        var drawn = new DrawnSea(surface, field.Factor);
+        var drawn = new DrawnSea(surface, field);
         DrawnSea = drawn;
         DrawnWater = new DrawnWater(drawn);
         if (SurfaceShader.Attach(surface, field, capi))
@@ -108,6 +111,7 @@ public class StormsModSystem : ModSystem
     {
         VesselDraught.Detach();
         WaveCarry.Detach();
+        if (api?.Side == EnumAppSide.Server) BreathUnderSurface.Detach();
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();
         FloatMotion.Detach();
@@ -120,7 +124,10 @@ public class StormsModSystem : ModSystem
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {
-        new StormLightning(this, sapi.ModLoader.GetModSystem<SeaWeatherSystem>(), sapi).Start();
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        new StormLightning(this, sea, sapi).Start();
+        BreathUnderSurface.Attach(this, sea, sapi);
+        Swells = new RegionSwells(this, sea, sapi);
         Budget.CountTicks(sapi);
         sapi.ChatCommands.Create("storms")
             .WithDescription("Rough Seas: storms acting on vessels")

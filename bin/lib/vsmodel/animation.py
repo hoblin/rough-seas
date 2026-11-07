@@ -4,6 +4,7 @@ import math
 import bpy
 from mathutils import Euler, Matrix, Vector
 
+import units
 from pose import OFFSET, ROTATION, STRETCH, element_pose, game_rotation
 from reconcile import walk
 
@@ -140,8 +141,8 @@ def fit(track, anchors, excess, lerp=linear):
 
 def excess_over_fit(a, b):
     degrees = math.degrees(a.to_quaternion().rotation_difference(b.to_quaternion()).angle)
-    units = max((a.translation - b.translation).length, 16 * max(abs(x - y) for x, y in zip(a.to_scale(), b.to_scale())))
-    return max(degrees / FIT[0], units / FIT[1]) - 1
+    voxels = max((a.translation - b.translation).length, units.voxels(max(abs(x - y) for x, y in zip(a.to_scale(), b.to_scale()))))
+    return max(degrees / FIT[0], voxels / FIT[1]) - 1
 
 
 def basis(values):

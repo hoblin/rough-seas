@@ -3,13 +3,13 @@
         "name": "Reed bundle",
         "ingredientPattern": "RRR,LKL",
         "ingredients": {
-            "R": { "type": "item", "code": "game:*", "allowedVariants": ["papyrustops", "cattailtops", "thatch"], "quantity": 48 },
+            "R": { "type": "item", "code": "game:*", "name": "reeds", "allowedVariants": ["papyrustops", "cattailtops", "thatch"], "quantity": 48 },
             "L": { "type": "item", "code": "game:rope" },
             "K": { "type": "item", "tags": ["tool-knife"], "isTool": true }
         },
         "width": 3,
         "height": 2,
-        "output": { "type": "block", "code": "roughseas:reedbundle-one-we" }
+        "output": { "type": "block", "code": "roughseas:reedbundle-{reeds}-none-we" }
     },
     {
         "name": "Splitting wedge",
@@ -21,6 +21,6 @@
         "width": 2,
         "height": 1,
         "shapeless": true,
-        "output": { "type": "block", "code": "roughseas:wedge-we" }
+        "output": { "type": "block", "code": "roughseas:wedge-we-0" }
     }
 ]
