@@ -5,7 +5,7 @@ from physics import afloat, kilograms, stands
 from fit import APART
 import units
 from entity import merged, record
-from shape import BILGE, FACES, ORIGIN, Hull, across, bilge_levels, corners_of, plank, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
+from shape import BILGE, FACES, ORIGIN, Hull, across, bilge, bilge_levels, corners_of, plank, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
 from wounds import wound
 
 LOG = 16
@@ -84,6 +84,7 @@ BOWL_RINGS = 6
 BOWL_STAVES = 8
 PLATE = 0.45
 RIM_PIECE = 2
+SURFACE_PIECE = 0.5
 SAMPLE = 0.05
 CAP = 1.5
 UNDER_BOWL = 1
@@ -182,6 +183,24 @@ class Bowl:
                 laid["Starboard"].append(box(f"{name}Rim{k}Starboard", (a, bottom, CENTRE + edge), (b, top, CENTRE + outer), tex))
         return laid
 
+    def width(self, x, y):
+        if not self.floor < y <= self.top:
+            return 0
+        along = self.length * math.sqrt(max(0, 1 - ((self.top - y) / (self.top - self.floor)) ** 2))
+        ratio = abs(x - self.x) / along if along else 1
+        return 0 if ratio >= 1 else (self.skin.half(self.x, y, inset=self.t) + self.t / 8) * math.sqrt(1 - ratio ** 2)
+
+    def surface(self, prefix, height, texture="null"):
+        drawn, x = [], self.x
+        tip = self.x + self.way * self.length
+        while (tip - x) * self.way > APART:
+            end = x + self.way * min(SURFACE_PIECE, abs(tip - x))
+            half = max(self.width(at, height) for at in samples(*sorted((x, end))))
+            if half > APART:
+                drawn.append(water_plane(f"{prefix}{len(drawn) + 1}", *sorted((x, end)), CENTRE - half, CENTRE + half, height, texture))
+            x = end
+        return drawn
+
     def plates(self, name):
         return [piece for pieces in self.rim(name).values() for piece in pieces]
 
@@ -204,6 +223,18 @@ class Bowl:
 def log(hull):
     bowls = [Bowl(HOLLOWINGS, side) for side in ("Stern", "Bow")]
     return [hull.strakes(), *(part for bowl in bowls for part in (bowl.staves(bowl.side), bowl.plates(bowl.side), bowl.cap(bowl.side)))]
+
+
+def hold_surface(prefix, height, texture="null"):
+    hollow = Hull("", sliced(STATIONS, *HOLLOW), CENTRE, WALL, WOOD, WOOD)
+    return [*hollow.surface(prefix, height, texture), *(plane for side in ("Stern", "Bow") for plane in Bowl(HOLLOWINGS, side).surface(f"{prefix}{side}", height, texture))]
+
+
+def hold_water():
+    """The hold's water mask and bilge levels, over the hollow's run and its ends' bowls."""
+    floor = min(edges[0][1] for _, edges in sliced(STATIONS, *HOLLOW)) + WALL
+    mask = RIM - 0.3
+    return group("hideWater", LEVEL, LEVEL, hold_surface("hideWater", mask)), bilge(floor, mask, lambda prefix, height: hold_surface(prefix, height, "bilge"))
 
 
 def mouth():
@@ -687,13 +718,12 @@ def build(path):
                          "ember": "game:block/coal/ember", "burntlog": "game:block/wood/firepit/burntlog", "hay": "game:block/hay/normal-side",
                          "firewood": "game:block/wood/firewood/side", "firewoodend": "game:block/wood/firewood/north"})
     hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD, edge=WOOD)
-    hollow = Hull("Side", sliced(STATIONS, *HOLLOW), CENTRE, WALL, WOOD, WOOD)
     shell = group("Shell", LEVEL, LEVEL, hewn_to("Shell", HOLLOWINGS, floors=False))
     shape.add(shell)
     stages = {stage["name"]: stage for stage in build_stages()}
     shape.add(*stages.values())
     hewn(shape, hull, shell, stages)
-    shape.add(hollow.hide_water(RIM - 0.3), hollow.bilge(RIM - 0.3))
+    shape.add(*hold_water())
     box, measured = hull_box(shell)
     shape.add(box)
     record("dugout", merged(measured, walls()))

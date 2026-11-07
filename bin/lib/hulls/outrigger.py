@@ -2,7 +2,7 @@ import math
 from collections import namedtuple
 from pathlib import Path
 
-from dugout import CENTRE, HEWN, PROFILE, RIM, RINGS, STATIONS, WALL, WOOD, crew_tools, deck, log, mouth, volumes, walls
+from dugout import CENTRE, HEWN, PROFILE, RIM, RINGS, STATIONS, WALL, WOOD, crew_tools, deck, hold_water, log, mouth, volumes, walls
 from physics import LASHING_JOULES_PER_METRE, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
@@ -413,7 +413,7 @@ def build(target):
     planks, raised_litres = strakes(hull, shell)
     shape.add(stages("Strakes", planks), stages("Seams", seams(hull, shell)))
     rigged(shape, hull, shell, logs, passes)
-    shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
+    shape.add(*hold_water())
     box, hull_measured = hull_box(shell)
     shape.add(box)
     record("outrigger", merged(hull_measured, collision(box, passes["children"][-1]), walls()))

@@ -82,6 +82,19 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void ARimClayedToTheLastBallShowsEveryPieceOfItsClay()
+    {
+        for (int level = 0; level < Config.Hollowings; level++)
+        {
+            var blank = Blank();
+            tree!.SetInt("level", level);
+            ClayTheRim(blank);
+
+            Assert.Empty(blank.Unclayed(DugoutShape.GetElementByName($"Clay{level}")));
+        }
+    }
+
+    [Fact]
     public void EveryHewnSectionClosesAgainstTheCharOfTheNext()
     {
         int sections = Config.HewnSectionsMetres.Length;

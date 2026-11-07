@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using RoughSeas.Units;
+using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -131,6 +134,18 @@ public sealed class Burnout
 
     /// <summary>The voxels a layer one voxel thick takes over the outline's elements, seen from above.</summary>
     public static int TopVoxels(ShapeElement outline) => (int)Math.Round(TopArea(outline));
+
+    /// <summary>The pieces of a level's clay not on the rim yet, in the order the balls cover it, and those over a
+    /// section the hewing has trimmed.</summary>
+    public IEnumerable<string> Unclayed(ShapeElement clay)
+    {
+        double coated = 0;
+        foreach (var piece in clay.Children ?? [])
+        {
+            if (coated >= ClayVoxels || Trimmed(SectionAt(Voxels.ToMetres(piece.From[0]) - HullShape.ModelOriginMetres))) yield return piece.Name;
+            coated += TopArea(piece);
+        }
+    }
 
     private static double TopArea(ShapeElement element) =>
         (element is { From: { } from, To: { } to } ? Math.Abs((to[0] - from[0]) * (to[2] - from[2])) : 0) + (element.Children?.Sum(TopArea) ?? 0);
