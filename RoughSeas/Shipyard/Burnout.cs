@@ -135,6 +135,13 @@ public sealed class Burnout
     /// <summary>The voxels a layer one voxel thick takes over the outline's elements, seen from above.</summary>
     public static int TopVoxels(ShapeElement outline) => (int)Math.Round(TopArea(outline));
 
+    /// <summary>A rim clayed to the last ball by the rim it had before, <paramref name="before"/> each level's, stays
+    /// clayed by the rim it has now.</summary>
+    public void KeepClayed(int[] before)
+    {
+        if (Tree is { } tree && Level < before.Length && ClayVoxels > 0 && ClayVoxels >= before[Level]) tree.SetInt(ClayKey, RimVoxels);
+    }
+
     /// <summary>The pieces of a level's clay not on the rim yet, in the order the balls cover it, and those over a
     /// section the hewing has trimmed.</summary>
     public IEnumerable<string> Unclayed(ShapeElement clay)
@@ -261,6 +268,7 @@ public sealed class BurnoutConfig
     public double HollowLengthMetres;
     public double[][] HewnSectionsMetres = [];
     public BoxMetres[] HullBoxesMetres = [];
+    public int[] RimVoxelsBefore = [];
 }
 
 public sealed class BoxMetres

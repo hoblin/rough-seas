@@ -95,6 +95,33 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void ARimClayedToTheLastBallInASaveFromBeforeTheRoundEndsStaysClayed()
+    {
+        int last = Config.Hollowings - 1;
+        var blank = Blank();
+        tree!.SetInt("level", last);
+        tree.SetInt("clayVoxels", Config.RimVoxelsBefore[last]);
+        Assert.False(blank.Clayed);
+
+        blank.KeepClayed(Config.RimVoxelsBefore);
+
+        Assert.True(blank.Clayed);
+    }
+
+    [Fact]
+    public void ARimABallShortInASaveFromBeforeStaysShort()
+    {
+        int last = Config.Hollowings - 1;
+        var blank = Blank();
+        tree!.SetInt("level", last);
+        tree.SetInt("clayVoxels", Config.RimVoxelsBefore[last] - Burnout.VoxelsPerClay);
+
+        blank.KeepClayed(Config.RimVoxelsBefore);
+
+        Assert.False(blank.Clayed);
+    }
+
+    [Fact]
     public void EveryHewnSectionClosesAgainstTheCharOfTheNext()
     {
         int sections = Config.HewnSectionsMetres.Length;

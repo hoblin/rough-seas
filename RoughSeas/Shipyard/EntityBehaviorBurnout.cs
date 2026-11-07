@@ -22,7 +22,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
 
     private const string CheckedAtKey = "checkedAt";
     private const string HewerKey = "hewer";
-    private const int DataVersion = 1;
+    private const int DataVersion = 2;
     private const float TickSeconds = 1;
     private const int BurningPhases = 3;
     private const double CatchingHours = 1;
@@ -103,6 +103,12 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
     }
 
     public override Shell Formed(Shell designed) => designed.Uncut(UncutMetres, burnout.Hollowed);
+
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        base.AfterInitialized(onFirstSpawn);
+        Upgrade(DataVersion, _ => burnout.KeepClayed(config.RimVoxelsBefore));
+    }
 
     public static void Begin(Entity vessel, double hours) => Begin(vessel, DataVersion, tree =>
     {

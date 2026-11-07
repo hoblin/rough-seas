@@ -58,6 +58,9 @@
         },
         "roughseas:burnout": {
             "hollowings": 6,
+            // Each fire's rim in voxels as the hull with square ends drew it: a rim clayed by these in an older save
+            // stays clayed.
+            "rimVoxelsBefore": [461, 408, 359, 312, 269, 230],
             "hollowDepthMetres": 0.5125,
             "hollowDepthVoxels": 8.2,
             "rimMetres": 0.5625,
