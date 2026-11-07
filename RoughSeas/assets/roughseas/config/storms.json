@@ -58,12 +58,10 @@
         }
     },
     "response": {
-        "heaveAddedMass": 1,
         "heaveDamping": 0.3,
         "rollDamping": 0.1,
         "sources": {
-            "heaveAddedMass": "A hull heaving drags about its own mass of water with it: heave period 2π √((M + A₃₃) / (ρ g A_w)), with A₃₃ about M for a small open boat (Aalto seakeeping notes, SD06)",
-            "heaveDamping": "Balance: a boat that rises to a crest settles in a bob or two, radiating waves as it goes",
+            "heaveDamping": "A shallow hull heaving radiates waves: per metre of her, b = ρ g² Ā² / ω³ with the radiated wave Ā ≈ 2 sin(kB/2) e^(−kT) of her beam B and draft T (Newman, Marine Hydrodynamics, 1977; Journée & Massie, Offshore Hydromechanics), which at her heave period puts her damping at 0.2 to 0.4 of critical; no decay test of a small open boat was found, so the middle",
             "rollDamping": "A small hull without bilge keels rolls on for several swings: damping ratio about 0.06 to 0.1 (boatdesign.net, a 25 m patrol boat)"
         }
     },

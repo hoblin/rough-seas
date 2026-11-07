@@ -1,0 +1,31 @@
+{
+  "seed": "254",
+  "game": "1.22.7",
+  "start": "open-sea",
+  "zones": {
+    "open-sea": {
+      "at": [352, 111, 160],
+      "what": "Open sea off the spawn island, temperate (latitude 47°): ocean 128 blocks all round, seabed at y28, about 80 m deep. The island lies to the west."
+    },
+    "shallows": {
+      "at": [-92, 111, 43],
+      "what": "A sand flat under 1 m of water on the spawn island's west shore, temperate (47°). The bed shelves west: 4 m at x -108, 5 m at -112, 7 m at -120, 11 m at -132. A sand beach rises to the east."
+    },
+    "beach": {
+      "at": [-3298, 112, 9842],
+      "what": "The build site: a sand spit in a calm freshwater lagoon, subtropical and wet (30°, about 21 °C in spring), its sand flush with the water at y109 from x -3312 to -3292 and z 9840 to 9844, so a vessel laid on it lies by the water, as the dugout asks. Water a metre deep all round, with lily pads; a birch stands at -3306 9843, the builds go east of it."
+    },
+    "lagoon": {
+      "at": [-3298, 111, 9850],
+      "what": "Open water in the beach zone's lagoon, just south of its sand spit: a vessel afloat on calm fresh water with the spit, its birch and the reeds behind her, for the wiki's afloat pictures."
+    },
+    "current": {
+      "at": [-2900, 111, -2700],
+      "what": "A cold boundary current running south at 0.5 m/s along a western shore (52°), water about 1 °C, 15 m deep. Land lies to the west."
+    },
+    "cold-shore": {
+      "at": [2906, 113, -7048],
+      "what": "A forested shore at 60°, sea to the east, water below 0 °C; spring days near freezing."
+    }
+  }
+}

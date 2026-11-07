@@ -38,6 +38,9 @@ public class AgentBridgeModSystem : ModSystem
     private FrameTimer frameTimer = null!;
     private EntityLoadBlackBox blackBox = null!;
     private HandbookRecipe recipes = null!;
+    private HandbookLink links = null!;
+    private FreeCamera freeCamera = null!;
+    private LimbColours limbs = null!;
     private SwellReading? swell;
     private readonly HttpListener listener = new();
 
@@ -54,6 +57,9 @@ public class AgentBridgeModSystem : ModSystem
         frameTimer = new FrameTimer(api);
         blackBox = new EntityLoadBlackBox(Mod.Logger);
         recipes = new HandbookRecipe(api);
+        links = new HandbookLink(api);
+        freeCamera = new FreeCamera(api);
+        limbs = new LimbColours(api);
         if (api.ModLoader.IsModEnabled("roughseas")) swell = new SwellReading(api);
         listener.Prefixes.Add(Prefix);
         listener.Start();
@@ -70,6 +76,7 @@ public class AgentBridgeModSystem : ModSystem
         frameTimer?.Dispose();
         blackBox?.Dispose();
         soundLog?.Dispose();
+        freeCamera?.Dispose();
     }
 
     private async Task Serve()
@@ -103,7 +110,8 @@ public class AgentBridgeModSystem : ModSystem
                 "/screenshot" => (await screenshots.Next(context.Request.QueryString["gui"] != null), "image/png"),
                 "/burst" => (Encoding.UTF8.GetBytes(await screenshots.Series(context.Request.QueryString["folder"] ?? throw new ArgumentException("Name the folder"),
                     int.Parse(context.Request.QueryString["count"] ?? "16", CultureInfo.InvariantCulture),
-                    float.Parse(context.Request.QueryString["seconds"] ?? "1.5", CultureInfo.InvariantCulture))), "text/plain"),
+                    float.Parse(context.Request.QueryString["seconds"] ?? "1.5", CultureInfo.InvariantCulture),
+                    context.Request.QueryString["gui"] != null)), "text/plain"),
                 "/link" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Link(context.Request.QueryString["href"]))), "text/plain"),
                 "/recipe" => (Encoding.UTF8.GetBytes(await OnMainThread(() => recipes.Frame(context.Request.QueryString["output"], context.Request.QueryString["from"]))), "application/json"),
                 "/scroll" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Scroll(context.Request.QueryString["steps"]))), "text/plain"),
@@ -114,6 +122,9 @@ public class AgentBridgeModSystem : ModSystem
                 "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"], context.Request.QueryString["box"], context.Request.QueryString["block"]))), "application/json"),
                 "/fps" => (Encoding.UTF8.GetBytes(await frameTimer.Measure(double.Parse(context.Request.QueryString["seconds"] ?? "5", CultureInfo.InvariantCulture))), "application/json"),
                 "/hotkey" =>(Encoding.UTF8.GetBytes(await OnMainThread(() => Hotkey(context.Request.QueryString["code"]))), "text/plain"),
+                "/where" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Where(context.Request.QueryString["entity"]))), "application/json"),
+                "/camera" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Camera(context.Request.QueryString))), "application/json"),
+                "/limbs" => (Encoding.UTF8.GetBytes(await OnMainThread(() => limbs.Show(context.Request.QueryString["on"] != "0"))), "text/plain"),
                 "/leave" => (Encoding.UTF8.GetBytes(Leave()), "text/plain"),
                 _ => throw new FileNotFoundException("Unknown endpoint; bin/game help lists what the bridge does")
             };
@@ -177,6 +188,7 @@ public class AgentBridgeModSystem : ModSystem
         return JsonSerializer.Serialize(new
         {
             pos = new { entity.Pos.X, entity.Pos.Y, entity.Pos.Z },
+            centre = new { capi.World.DefaultSpawnPosition.X, capi.World.DefaultSpawnPosition.Z },
             camera = new { yaw = capi.World.Player.CameraYaw, pitch = capi.World.Player.CameraPitch },
             swimming = entity.Swimming,
             flying = capi.World.Player.WorldData.FreeMove,
@@ -233,23 +245,34 @@ public class AgentBridgeModSystem : ModSystem
         {
             var target = capi.World.GetEntityById(id) ?? throw new FileNotFoundException($"No entity {id} near the player");
             var eye = player.Entity.Pos.XYZ.Add(player.Entity.LocalEyePos);
-            var center = target.Pos.XYZ.Add(0, target.SelectionBox.Y2 / 2, 0);
+            var center = Shot.Centre(target);
             var dx = center.X - eye.X;
             var dy = center.Y - eye.Y;
             var dz = center.Z - eye.Z;
             player.CameraYaw = (float)Math.Atan2(dx, dz);
             player.CameraPitch = (float)(Math.PI - Math.Atan2(dy, Math.Sqrt(dx * dx + dz * dz)));
         }
+        player.Entity.BodyYaw = player.CameraYaw;
         return State();
+    }
+
+    private string Where(string? entity)
+    {
+        var target = long.TryParse(entity, out var id)
+            ? capi.World.GetEntityById(id) ?? throw new FileNotFoundException($"No entity {id} near the player")
+            : capi.World.Player.Entity;
+        return JsonSerializer.Serialize(new { target.EntityId, code = target.Code.ToString(), target.Pos.X, target.Pos.Y, target.Pos.Z, target.Pos.Yaw,
+            bodyYaw = (target as EntityAgent)?.BodyYaw }) + "\n";
     }
 
     private string Hover(string? entity, string? box, string? block)
     {
         hover.Block = null;
-        if (block?.Split(',').Select(int.Parse).ToArray() is [var x, var y, var z])
+        if (block?.Split(',').Select(value => double.Parse(value, CultureInfo.InvariantCulture)).ToArray() is [var x, var y, var z])
         {
             hover.Target = null;
-            hover.Block = new BlockPos(x, y, z);
+            hover.Block = new BlockPos((int)Math.Floor(x), (int)Math.Floor(y), (int)Math.Floor(z));
+            hover.Hit = block.Contains('.') ? new Vec3d(x - Math.Floor(x), 1, z - Math.Floor(z)) : null;
             return JsonSerializer.Serialize(new { block = capi.World.BlockAccessor.GetBlock(hover.Block).Code.ToString() }) + "\n";
         }
         if (!long.TryParse(entity, out var id))
@@ -277,7 +300,13 @@ public class AgentBridgeModSystem : ModSystem
             .Select(key => (int)Enum.Parse<GlKeys>(key, true))
             .ToList();
         var mouse = request.QueryString["mouse"];
-        var hold = int.TryParse(request.QueryString["ms"], out var ms) ? ms : 100;
+        var ms = request.QueryString["ms"];
+        if (ms is "down" or "up")
+        {
+            await OnMainThread(() => Press(keys, mouse, ms == "down"));
+            return await OnMainThread(State);
+        }
+        var hold = int.TryParse(ms, out var held) ? held : 100;
 
         await OnMainThread(() => Press(keys, mouse, true));
         try
@@ -304,6 +333,27 @@ public class AgentBridgeModSystem : ModSystem
         return down;
     }
 
+    private string Camera(System.Collections.Specialized.NameValueCollection query)
+    {
+        switch (query["mode"] ?? (query["on"] == null ? null : "free"))
+        {
+            case "free": break;
+            case "first": return freeCamera.Mode(EnumCameraMode.FirstPerson);
+            case "third": return freeCamera.Mode(EnumCameraMode.ThirdPerson);
+            case "off": return freeCamera.Release();
+            case null: return freeCamera.Describe();
+            default: throw new ArgumentException("The camera's mode is free, first, third or off");
+        }
+
+        double Number(string key, double fallback) => double.TryParse(query[key], CultureInfo.InvariantCulture, out var value) ? value : fallback;
+        long Id(string? name) => name == "player" ? capi.World.Player.Entity.EntityId : long.Parse(name!, CultureInfo.InvariantCulture);
+
+        var from = new Station(Number("bearing", 0), Number("distance", 8), Number("height", 2));
+        var to = query["seconds"] == null ? null : new Station(
+            Number("toBearing", from.Bearing), Number("toDistance", from.Distance), Number("toHeight", from.Height));
+        return freeCamera.Frame(new Shot(Id(query["on"] ?? "player"), from, to, Number("seconds", 0), query["look"] == null ? null : Id(query["look"]), query["hold"] == "1"));
+    }
+
     private string Hotkey(string? code)
     {
         var hotkey = code == null ? null : capi.Input.GetHotKeyByCode(code);
@@ -322,7 +372,7 @@ public class AgentBridgeModSystem : ModSystem
             return "Link protocols: " + string.Join(", ", capi.LinkProtocols.Keys) + "\n";
         }
         follow(new LinkTextComponent(href));
-        return $"Followed {href}\n";
+        return $"Followed {href}\n" + links.Outcome(href!);
     }
 
     private string Leave()

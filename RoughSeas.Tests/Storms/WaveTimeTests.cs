@@ -12,8 +12,9 @@ public class WaveTimeTests
     private const double StartHours = 1160.25;
 
     private double hours = StartHours;
+    private double calendarSpeedMul = CalendarSpeedMul;
 
-    private SeaClock Clock => new(() => hours, () => CalendarSpeedMul, () => Normal);
+    private SeaClock Clock => new(() => hours, () => calendarSpeedMul, () => Normal);
 
     private static double CalendarHours(double realSeconds) =>
         StartHours + Math.Floor(realSeconds / 0.033) * 0.033 * GameHoursPerSecond;
@@ -79,6 +80,17 @@ public class WaveTimeTests
         var time = Run(0, 5);
         var stoppedAt = StartHours + 4.9 * GameHoursPerSecond;
         for (var frame = 0; frame < 600; frame++) Advance(time, stoppedAt, 0);
+
+        Assert.Equal(Clock.SecondsAt(stoppedAt), time.Seconds, 3);
+    }
+
+    [Fact]
+    public void SettlesOnTheWorldsTimeWhenTheCalendarIsStopped()
+    {
+        var time = Run(0, 5);
+        var stoppedAt = StartHours + 4.9 * GameHoursPerSecond;
+        calendarSpeedMul = 0;
+        for (var frame = 0; frame < 600; frame++) Advance(time, stoppedAt);
 
         Assert.Equal(Clock.SecondsAt(stoppedAt), time.Seconds, 3);
     }

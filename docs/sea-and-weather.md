@@ -13,11 +13,13 @@ SeaModel (ISeaModel, ISeaSource)               SeaMapClient (ISeaSource)
 │  showers, currents                           │  and from the roughseas:seamap channel
 ├─ OceanBasins: the ocean map + calibration    └─ interpolated in space and in time
 ├─ WaterBody: fetch and depth upwind
-└─ WindSea: the waves those raise                SurfaceClock → SurfaceField + SeaSurface
+└─ WindSea: the waves those raise                SurfaceClock → SurfaceAim → SurfaceField + SeaSurface
 SeaMapServer ── snapshot per region ─────────→  the water shader, vessels, floating items
+└─ Sent: the map as clients hold it
+   └─ SwellAround → SurfaceAim: the drawn sea around a player in the water
 ```
 
-`SeaWeatherSystem` (`ISeaWeather`) is the one door on both sides: `At` and `CurrentAt` answer from `Source`, which is the model on the server and the received map on a client. `Model` is the server's alone and throws on a client.
+`SeaWeatherSystem` (`ISeaWeather`) is the door on both sides: `At` and `CurrentAt` answer from `Source`, which is the model on the server and the received map on a client. `Model` is the server's alone and throws on a client. `Map` is the map clients draw the sea from on either side: the received one on a client, the copy of what it sent on the server.
 
 ## The map
 
@@ -54,11 +56,12 @@ SeaMapServer ── snapshot per region ─────────→  the wate
 ## Drawing it
 
 - **The drawn sea is a function of the shared input and the world's clock**, never of a client's own history: two clients in one region draw the same crests. Nothing in it may ease from a client's last value or count its frames.
-- `WaveTime` is the waves' clock: `SeaClock.Seconds`, the calendar's game seconds over vanilla's 60 × `CalendarSpeedMul`, so it runs, stops and races as vanilla's foliage counters do (`DefaultShaderUniforms.Update`). It only smooths the calendar's whole-millisecond ticks and the server's corrections.
+- `WaveTime` is the waves' clock: `SeaClock.Seconds`, the calendar's game seconds over vanilla's 60 × `CalendarSpeedMul` (its default 0.5 while the calendar is stopped), so it runs, stops and races as vanilla's foliage counters do (`DefaultShaderUniforms.Update`). It only smooths the calendar's whole-millisecond ticks and the server's corrections.
 - `SurfaceClock` aims every `surface.aimSeconds`: `SurfaceField` samples the waves of the player's region and its neighbours into a 48 × 48 texture, `seaHeightMap`, each cell a share of the highest; `SeaSurface` takes that height and the foam of the highest cell's Beaufort force, and raises the trains of the region's generations.
 - `SeaSurface` quantises a generation to a heading (`surface.turnDegrees`) and a length step (`surface.stretch`), so a slot that brings the same sea brings the same trains. New trains take over in the other bank over `surface.settleSeconds` from their slot's start, the same moment on every client. Entering another region hands over from what is drawn, keeping the stronger bank's weight and the total energy continuous.
 - The shader, vessels and floating items read the same share (`SurfaceField.Factor`), so a boat rides the wave drawn under it.
 - **What is in the sea is judged by the drawn surface, not by the water block.** `DrawnWater` (`StormsModSystem.DrawnWater`, on a client) gives the surface over a point's water column: the still water's surface where vanilla draws it (`LiquidLevel` eighths of the top water block, 7/8 for still water) plus `IDrawnSea.HeightAt` there, looked for below the point only as far as a crest there reaches, and none where a solid block stands between (a deck, a dock, the shore). The camera's underwater view and sound follow it (`EyeUnderSurface`, after vanilla's `GetEyesInWaterColorShift` and `EyesInWaterDepth`); a body in the water asks it too.
+- **The server builds the drawn sea itself where a decision needs it.** The drawn sea is a function of the sea map, the wave generations and the world's clock, so the server keeps the map as its clients hold it (`SeaMapServer.Sent`, the snapshots it sent, read as `SeaWeatherSystem.Map` on either side), and `SurfaceAim` aims a surface the same way on both sides. `SwellAround` is that surface around one body on the server, run as long as the player is in or on the water and dropped when they leave it. It may differ from the client's for a few seconds in two cases: a handover between regions, and a region the client takes for the first time, which it reads at once while `Sent` still eases it. Breath is the first to read it: `BreathUnderSurface` postfixes vanilla's `EntityBehaviorBreathe.Check` and judges the eye against `DrawnWater` there. A crest takes the air; a trough gives it back only to an eye whose block is water. Riders keep vanilla's check, since their client lifts them onto the swell while the server holds the unlifted position. It doesn't follow the dangerous-oceans setting: drowning is vanilla's, matched here to the drawn surface.
 - **Vanilla's samplers stay on vanilla's units, in every program.** The engine numbers a program's samplers by a regex over its source, vertex shader first (`ShaderProgram.collectUniformNames`). `Use()` binds `liquidDepth`, `sky` and the shadow maps by that number; the generated setters, the cloud pass (`liquidDepth` on 4) and mods like SheyderMod (specular on 7) assume vanilla's. A sampler we declare in a shared include moves every one of them, and one we bind inside the range overwrites someone's texture: 2.0.0's `seaHeightMap` drew leaves black beside SheyderMod and wiped clouds over the sea.
 - So `seaHeightMap` is declared `uniform highp sampler2D`, which the regex doesn't match; `SurfaceShader` looks up its location itself after each compile and binds it on the GPU's last texture unit (`GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1`), which no one hard-codes. A new sampler of ours follows the same rule. `.surface samplers` shows each program's numbering and where the height map is read.
 

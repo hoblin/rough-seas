@@ -1,14 +1,28 @@
 {
     "code": "reedboat",
     "class": "roughseas:ItemVessel",
+    "variantgroups": [
+        {"code": "port", "states": ["cattailtops", "papyrustops", "thatch"]},
+        {"code": "starboard", "states": ["cattailtops", "papyrustops", "thatch"]}
+    ],
     "durability": 100,
     "maxstacksize": 1,
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/reedboat"},
-    "textures": {"reed": {"base": "roughseas:entity/vessel/reed"}, "rope": {"base": "game:block/cloth/reedrope"}, "paddle": {"base": "game:block/wood/debarked/birch"}},
-    "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
+    "shape": {"base": "roughseas:entity/vessel/reedboat", "ignoreElements": ["Flat", "Tips1Droop1", "Tips1Droop2", "Tips1Droop3", "Tips2Droop1", "Tips2Droop2", "Tips2Droop3"]},
+    "textures": {
+        "port": {"base": "roughseas:entity/vessel/reed-{port}"},
+        "starboard": {"base": "roughseas:entity/vessel/reed-{starboard}"},
+        "tips": {"base": "roughseas:entity/vessel/reed-{port}", "blendedOverlays": [{"base": "roughseas:entity/vessel/reed-{starboard}-strands"}]},
+        "rope": {"base": "game:block/cloth/reedrope"},
+        "lashing": {"base": "game:item/resource/rope"}
+    },
+    "creativeinventory": {
+        "general": ["reedboat-cattailtops-cattailtops", "reedboat-papyrustops-papyrustops", "reedboat-thatch-thatch"],
+        "items": ["reedboat-cattailtops-cattailtops", "reedboat-papyrustops-papyrustops", "reedboat-thatch-thatch"],
+        "tools": ["reedboat-cattailtops-cattailtops", "reedboat-papyrustops-papyrustops", "reedboat-thatch-thatch"]
+    },
     "guiTransform": {
         "translation": {"x": 4, "y": 7, "z": 0},
         "rotation": {"x": -32, "y": -35, "z": -180},

@@ -42,6 +42,8 @@ Rough Seas is written like a small game of its own. Each system (sea and weather
 
 The mod started from Mahjong Blonsky's video [Why doesn't Vintage Story have oceans?](https://youtu.be/NPrPEQdM14I). Thank you for asking the question.
 
+If the mod gives you a good storm, you can buy me a coffee on [Ko-fi](https://ko-fi.com/hoblin).
+
 ## Licence
 
 [MIT](LICENSE).

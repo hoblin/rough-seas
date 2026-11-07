@@ -16,6 +16,8 @@ public class VesselsModSystem : ModSystem
     private static readonly AssetLocation RapidsAsset = new("roughseas:config/vessels/rapids.json");
     private static readonly AssetLocation MassAsset = new("roughseas:config/vessels/mass.json");
     private static readonly AssetLocation HullAsset = new("roughseas:config/vessels/hull.json");
+    private static readonly AssetLocation HidesAsset = new("roughseas:config/vessels/hides.json");
+    private static readonly AssetLocation DragAsset = new("roughseas:config/vessels/drag.json");
     private const string Channel = "roughseas:vessels";
 
     public MaterialTable Materials { get; private set; } = null!;
@@ -23,6 +25,7 @@ public class VesselsModSystem : ModSystem
     public Rapids Rapids { get; private set; } = null!;
     public VesselMass Mass { get; private set; } = null!;
     public HullConfig HullConfig { get; private set; } = null!;
+    public DragConfig Drag { get; private set; } = null!;
     public TickBudget Budget { get; } = new("vessels");
 
     private ICoreAPI api = null!;
@@ -32,10 +35,10 @@ public class VesselsModSystem : ModSystem
     {
         this.api = api;
         api.RegisterEntityBehaviorClass(EntityBehaviorVesselIntegrity.Code, typeof(EntityBehaviorVesselIntegrity));
-        api.RegisterEntityBehaviorClass(EntityBehaviorLaunch.Code, typeof(EntityBehaviorLaunch));
+        api.RegisterEntityBehaviorClass(EntityBehaviorDroop.Code, typeof(EntityBehaviorDroop));
         api.RegisterEntity(EntityVessel.ClassName, typeof(EntityVessel));
         api.RegisterItemClass(ItemVessel.ClassName, typeof(ItemVessel));
-        api.RegisterItemClass(ItemBark.ClassName, typeof(ItemBark));
+        api.RegisterItemClass(ItemOfWood.ClassName, typeof(ItemOfWood));
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorHullMaterial.Code, typeof(CollectibleBehaviorHullMaterial));
         HullReach.Attach();
         api.Network.RegisterChannel(Channel).RegisterMessageType<ImpactReport>();
@@ -44,16 +47,19 @@ public class VesselsModSystem : ModSystem
     public override void StartClientSide(ICoreClientAPI capi)
     {
         HullLabel.Attach();
+        Disembarking.Attach();
         reports = capi.Network.GetChannel(Channel);
     }
 
     public void Report(Entity vessel, Knocked knocked) =>
-        reports?.SendPacket(new ImpactReport { EntityId = vessel.EntityId, SpeedLost = knocked.SpeedLost, TowardX = knocked.TowardX, TowardZ = knocked.TowardZ, Against = knocked.Against, TheirKg = knocked.TheirKg });
+        reports?.SendPacket(new ImpactReport { EntityId = vessel.EntityId, SpeedLost = knocked.SpeedLost, TowardX = knocked.TowardX, TowardZ = knocked.TowardZ, Against = knocked.Against, TheirKg = knocked.TheirKg, Outboard = knocked.Outboard, TheirOutboard = knocked.TheirOutboard });
 
     public override void Dispose()
     {
         HullReach.Detach();
-        if (api?.Side == EnumAppSide.Client) HullLabel.Detach();
+        if (api?.Side != EnumAppSide.Client) return;
+        HullLabel.Detach();
+        Disembarking.Detach();
     }
 
     public override void StartServerSide(ICoreServerAPI api)
@@ -78,6 +84,8 @@ public class VesselsModSystem : ModSystem
         Rapids = api.Assets.Get<Rapids>(RapidsAsset);
         Mass = api.Assets.Get<VesselMass>(MassAsset);
         HullConfig = api.Assets.Get<HullConfig>(HullAsset);
+        HullConfig.Hides = api.Assets.Get<HidesConfig>(HidesAsset);
+        Drag = api.Assets.Get<DragConfig>(DragAsset);
     }
 
     public void Log(Entity entity, string format, params object[] args) =>

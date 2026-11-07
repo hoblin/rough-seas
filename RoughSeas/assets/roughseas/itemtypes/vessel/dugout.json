@@ -2,19 +2,29 @@
     "code": "dugout",
     "class": "roughseas:ItemVessel",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
-    "attributes": {"handbook": {"groupBy": ["dugout-*"]}, "logTextures": {"inside": "inside-north"}},
+    "attributes": {"handbook": {"groupBy": ["dugout-*"]}, "logTextures": {"inside": "inside-north", "bark": "all", "rings": "east"}},
     "durability": 100,
     "maxstacksize": 1,
     "materialDensity": 1,
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
-    "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": ["hideWater", "Bilge", "Blank", "Char", "Clay", "Fire"]},
+    "shape": {"base": "roughseas:entity/vessel/dugout", "ignoreElements": [
+        "hideWater", "Bilge", "Bark", "Blank", "Hewn", "Char", "Grass", "Clay", "Wood", "Fire",
+        "WoundPortBow", "WoundStarboardBow", "WoundPortSide", "WoundStarboardSide", "WoundPortQuarter", "WoundStarboardQuarter", "WoundBottom"
+    ]},
     "textures": {
         "bilge": {"base": "game:block/liquid/waterportion"},
-        "char": {"base": "game:block/coal/charcoal"},
+        "breach": {"base": "game:block/black"},
+        "char": {"base": "game:block/wood/firepit/burntlog"},
+        "hewn": {"base": "game:block/wood/charred"},
         "clay": {"base": "game:block/clay/blueclay"},
+        "clay-red": {"base": "game:block/clay/redclay"},
+        "clay-fire": {"base": "game:block/clay/fireclay"},
         "ember": {"base": "game:block/coal/ember"},
-        "burntlog": {"base": "game:block/wood/firepit/burntlog"}
+        "burntlog": {"base": "game:block/wood/firepit/burntlog"},
+        "hay": {"base": "game:block/hay/normal-side"},
+        "firewood": {"base": "game:block/wood/firewood/side"},
+        "firewoodend": {"base": "game:block/wood/firewood/north"}
     },
     "creativeinventory": {"general": ["*"], "items": ["*"], "tools": ["*"]},
     "guiTransform": {

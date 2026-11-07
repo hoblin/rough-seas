@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
@@ -6,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Shipyard;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -30,6 +32,7 @@ public class BridgeCommands : ModSystem
 
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
+    private CurrentOverride? current;
     private ChunkSettle settle = null!;
     private int suspendMs;
 
@@ -40,7 +43,11 @@ public class BridgeCommands : ModSystem
         sapi = api;
         settle = new ChunkSettle(api, Mod.Logger);
         var benchDefaults = Environment.GetEnvironmentVariable("AGENT_BRIDGE_BENCH_DEFAULTS") != "off";
-        if (api.ModLoader.IsModEnabled("roughseas")) drift = new DriftSwitch { Drifting = !benchDefaults };
+        if (api.ModLoader.IsModEnabled("roughseas"))
+        {
+            drift = new DriftSwitch { Drifting = !benchDefaults };
+            current = new CurrentOverride();
+        }
         if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
         api.Event.ServerSuspend += HoldSuspension;
         var parsers = api.ChatCommands.Parsers;
@@ -58,9 +65,10 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Entity(args.Caller, (long)args[0]))
             .EndSubCommand()
             .BeginSubCommand("sea")
-                .WithDescription("Fly the caller to the nearest open sea within 1500 blocks, hovering just above the surface")
+                .WithDescription("Fly the caller to the nearest open sea within 1500 blocks, with ocean all round for a clearing of blocks (default 128), hovering just above the surface")
                 .RequiresPlayer()
-                .HandleWith(args => Sea((IServerPlayer)args.Caller.Player))
+                .WithArgs(parsers.OptionalIntRange("clear", 0, 512, 128))
+                .HandleWith(args => Sea((IServerPlayer)args.Caller.Player, (int)args[0]))
             .EndSubCommand()
             .BeginSubCommand("shore")
                 .WithDescription("Fly the caller to the nearest dry, open ground beside the sea within 256 blocks, hovering just above it")
@@ -103,13 +111,30 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("code wildcard"), parsers.OptionalIntRange("range", 1, 512, 256))
                 .HandleWith(args => Find((IServerPlayer)args.Caller.Player, (string)args[0], (int)args[1]))
             .EndSubCommand()
+            .BeginSubCommand("beaches")
+                .WithDescription("List the places in the loaded world within this range where dry ground lies flush with the sea, LENGTH blocks along the water and DEPTH back from it: where a vessel is laid by the water. Each with its ground, rainfall and temperature, the wettest first")
+                .RequiresPlayer()
+                .WithArgs(parsers.OptionalIntRange("range", 16, 512, 256), parsers.OptionalIntRange("length", 1, 32, 7), parsers.OptionalIntRange("depth", 1, 32, 4))
+                .HandleWith(args => Beaches(args.Caller.Player.Entity.Pos.AsBlockPos, (int)args[0], (int)args[1], (int)args[2]))
+            .EndSubCommand()
+            .BeginSubCommand("weed")
+                .WithDescription("Clear the plants and loose stones off the ground within this many blocks of the caller, as a scythe and a rake would: soil, rock, water and what floats on it stay")
+                .RequiresPlayer()
+                .WithArgs(parsers.IntRange("radius", 1, 32))
+                .HandleWith(args => Weed(args.Caller.Player.Entity.Pos.AsBlockPos, (int)args[0]))
+            .EndSubCommand()
             .BeginSubCommand("drift")
                 .WithDescription("Whether unridden vessels drift with the current and the wind; off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
+            .BeginSubCommand("current")
+                .WithDescription("Set one current everywhere in place of the sea's, SPEED m/s toward a yaw in degrees as the camera's (0 toward +Z, 90 toward +X), as a river carries a vessel; 'off' gives the sea's back")
+                .WithArgs(parsers.Word("speed or off"), parsers.OptionalDouble("yaw", 0))
+                .HandleWith(args => Current((string)args[0], (double)args[1]))
+            .EndSubCommand()
             .BeginSubCommand("set")
-                .WithDescription("Set an entity's watched attribute, tree/key for one inside a tree: int, float, bool or string by the value's form, while a double or float stays what it is")
+                .WithDescription("Set an entity's watched attribute, tree/key for one inside a tree: int, float, bool or string by the value's form, a double with a trailing d (0.05d), while a double or float stays what it is")
                 .WithArgs(parsers.Long("id"), parsers.Word("key"), parsers.Word("value"))
                 .HandleWith(args => Set(sapi.World.GetEntityById((long)args[0]), (string)args[1], (string)args[2]))
             .EndSubCommand()
@@ -118,6 +143,11 @@ public class BridgeCommands : ModSystem
                 .RequiresPlayer()
                 .WithArgs(parsers.Word("entity code"))
                 .HandleWith(args => Ride(args.Caller.Player, (string)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("spawn")
+                .WithDescription("Spawn an entity at a position facing a yaw in degrees and reply with its id; a vessel over water lies on the surface. With a key and value, that watched attribute is set before it enters the world, as `set` sets it: a vessel spawned at a stage of her build, as the game spawns her")
+                .WithArgs(parsers.Word("entity code"), parsers.WorldPosition("position"), parsers.OptionalDouble("yaw", 0), parsers.OptionalWord("key"), parsers.OptionalWord("value"))
+                .HandleWith(args => Spawn((string)args[0], (Vec3d)args[1], (double)args[2], args[3] as string, args[4] as string))
             .EndSubCommand()
             .BeginSubCommand("mount")
                 .WithDescription("Seat the caller in an entity, a steering seat first, or in its seat of this index")
@@ -130,6 +160,12 @@ public class BridgeCommands : ModSystem
                 .RequiresPlayer()
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Wear(args.Caller.Player, (string)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("dress")
+                .WithDescription("Put a piece of clothing on the caller, in the outfit slot that takes it, replacing what was there")
+                .RequiresPlayer()
+                .WithArgs(parsers.Word("item code"))
+                .HandleWith(args => Dress(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
             .BeginSubCommand("hold")
                 .WithDescription("Put an item into the caller's active hotbar slot, held in the hand")
@@ -161,12 +197,12 @@ public class BridgeCommands : ModSystem
             .BeginSubCommand("dismount")
                 .WithDescription("Get the caller out of whatever they are seated in, leaving it where it is")
                 .RequiresPlayer()
-                .HandleWith(args => args.Caller.Player.Entity.TryUnmount()
+                .HandleWith(args => Dismount(args.Caller.Player.Entity)
                     ? TextCommandResult.Success("Dismounted")
                     : TextCommandResult.Error("Not seated, or the seat would not let go"))
             .EndSubCommand()
             .BeginSubCommand("strike")
-                .WithDescription("Strike a vessel's hull at a place (its port side by default) with an impact of this many joules; the hull rolls against it as it does for any impact")
+                .WithDescription("Strike a vessel's hull at a place (its port side by default) with an impact of this many joules; the hull rolls against it as it does for any impact, and an outrigger's float takes it on its side")
                 .WithArgs(parsers.Long("id"), parsers.Double("joules"), parsers.OptionalWordRange("place", Places))
                 .HandleWith(args => Strike(sapi.World.GetEntityById((long)args[0]), (double)args[1], args[2] as string ?? "portside"))
             .EndSubCommand()
@@ -193,7 +229,11 @@ public class BridgeCommands : ModSystem
             .EndSubCommand();
     }
 
-    public override void Dispose() => drift?.Dispose();
+    public override void Dispose()
+    {
+        drift?.Dispose();
+        current?.Dispose();
+    }
 
     private void TurnOffTemporalEffects(ITreeAttribute config)
     {
@@ -210,6 +250,21 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success(drift.Drifting
             ? "Unridden vessels drift with the current and the wind"
             : "Unridden vessels hold still; /bridge drift on lets them drift");
+    }
+
+    private TextCommandResult Current(string speed, double yaw)
+    {
+        if (current == null) return TextCommandResult.Error("Rough Seas is not loaded; there is no current to set");
+        if (speed == "off")
+        {
+            current.Clear();
+            return TextCommandResult.Success("The sea's own currents flow again");
+        }
+        if (!double.TryParse(speed, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var metresPerSecond))
+            return TextCommandResult.Error("Give the current's speed in m/s, or off");
+
+        current.Set(metresPerSecond, yaw);
+        return TextCommandResult.Success($"A current of {metresPerSecond:F1} m/s flows toward yaw {yaw:F0}° everywhere; unridden vessels ride it once /bridge drift is on");
     }
 
     private TextCommandResult Lag(int ms, int ticks)
@@ -401,9 +456,9 @@ public class BridgeCommands : ModSystem
         var target = new Vec3d((int)chosen.Value.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, (int)chosen.Value.z + 0.5);
         if (player.Entity.MountedOn != null)
         {
-            var accessor = sapi.World.BlockAccessor;
+            var centre = sapi.World.DefaultSpawnPosition;
             return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture, "Beaufort {0}, waves {1:F1} m at {2:F0} {3:F0}; '/tp {2:F0} {4} {3:F0}' sails there with the vessel",
-                force, chosen.Value.state.WaveHeight, target.X - accessor.MapSizeX / 2, target.Z - accessor.MapSizeZ / 2, target.Y));
+                force, chosen.Value.state.WaveHeight, target.X - centre.X, target.Z - centre.Z, target.Y));
         }
         var flown = Fly(player, target);
         return TextCommandResult.Success(string.Format(CultureInfo.InvariantCulture, "{0}: Beaufort {1}, waves {2:F1} m", flown.StatusMessage, force, chosen.Value.state.WaveHeight));
@@ -447,22 +502,30 @@ public class BridgeCommands : ModSystem
             && map.GetUnpaddedIntLerpedForBlockPos(x, z, regionSize) >= 250;
     }
 
-    private TextCommandResult Sea(IServerPlayer player)
+    private TextCommandResult Sea(IServerPlayer player, int clear)
     {
         const int range = 1500;
         const int step = 16;
         var origin = player.Entity.Pos.AsBlockPos;
+        var reach = clear / step;
+        var around = Enumerable.Range(-reach, 2 * reach + 1)
+            .SelectMany(i => Enumerable.Range(-reach, 2 * reach + 1), (i, j) => (x: i * step, z: j * step))
+            .Where(offset => offset.x * offset.x + offset.z * offset.z <= clear * clear)
+            .ToArray();
+
+        bool Clear(int x, int z) => around.All(offset => OpenSea(x + offset.x, z + offset.z));
 
         var sea = Enumerable.Range(-range / step, 2 * range / step + 1)
             .SelectMany(i => Enumerable.Range(-range / step, 2 * range / step + 1), (i, j) => (x: origin.X + i * step, z: origin.Z + j * step))
             .Where(point => OpenSea(point.x, point.z))
             .OrderBy(point => (point.x - origin.X) * (long)(point.x - origin.X) + (point.z - origin.Z) * (long)(point.z - origin.Z))
+            .Where(point => Clear(point.x, point.z))
             .Select(point => ((int x, int z)?)point)
             .FirstOrDefault();
-        if (sea == null) return TextCommandResult.Error($"No open sea in the generated regions within {range} blocks");
+        if (sea == null) return TextCommandResult.Error($"No open sea {clear} blocks clear in the generated regions within {range} blocks");
 
         var flown = Fly(player, new Vec3d(sea.Value.x + 0.5, sapi.World.SeaLevel + HoverAboveSea, sea.Value.z + 0.5));
-        return TextCommandResult.Success($"{flown.StatusMessage}, over open sea");
+        return TextCommandResult.Success($"{flown.StatusMessage}, over open sea {clear} blocks clear");
     }
 
     private TextCommandResult Shore(IServerPlayer player)
@@ -525,6 +588,74 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"{flown.StatusMessage}, 3 blocks over {accessor.GetBlock(found).Code}");
     }
 
+    private TextCommandResult Beaches(BlockPos origin, int range, int length, int depth)
+    {
+        const int shown = 12;
+        var accessor = sapi.World.BlockAccessor;
+        var surface = sapi.World.SeaLevel - 1;
+        var centre = sapi.World.DefaultSpawnPosition;
+
+        int Ground(int x, int z) => accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
+        bool Loaded(int x, int z) => accessor.GetChunkAtBlockPos(new BlockPos(x, surface, z, 0)) != null;
+        bool Flush(int x, int z) => Loaded(x, z) && Ground(x, z) == surface
+            && accessor.GetBlock(new BlockPos(x, surface + 1, z, 0), BlockLayersAccess.Fluid).Id == 0;
+        bool Water(int x, int z) => Loaded(x, z) && Ground(x, z) < surface
+            && accessor.GetBlock(new BlockPos(x, surface, z, 0), BlockLayersAccess.Fluid).IsLiquid();
+
+        (int dx, int dz, string name)[] seaward = [(0, 1, "south"), (0, -1, "north"), (1, 0, "east"), (-1, 0, "west")];
+
+        string? Facing(int x, int z) => seaward.FirstOrDefault(sea =>
+        {
+            var (alongX, alongZ) = (sea.dz, sea.dx);
+            return Enumerable.Range(0, length).All(i => Enumerable.Range(0, depth).All(j =>
+                       Flush(x + i * alongX - j * sea.dx, z + i * alongZ - j * sea.dz)))
+                   && Enumerable.Range(0, length).All(i => Water(x + i * alongX + sea.dx, z + i * alongZ + sea.dz));
+        }).name;
+
+        var found = new List<(int x, int z, string sea)>();
+        for (var i = -range; i <= range; i += 2)
+        for (var j = -range; j <= range; j += 2)
+        {
+            var (x, z) = (origin.X + i, origin.Z + j);
+            if (found.Any(other => Math.Abs(other.x - x) < 2 * length && Math.Abs(other.z - z) < 2 * length)) continue;
+            if (Facing(x, z) is { } sea) found.Add((x, z, sea));
+        }
+        if (found.Count == 0) return TextCommandResult.Error($"No ground flush with the sea, {length} along and {depth} deep, within {range} blocks of loaded world");
+
+        var lines = found
+            .Select(spot =>
+            {
+                var at = new BlockPos(spot.x, surface, spot.z, 0);
+                var climate = accessor.GetClimateAt(at, EnumGetClimateMode.WorldGenValues);
+                var water = accessor.GetBlock(at.AddCopy(BlockFacing.FromCode(spot.sea)), BlockLayersAccess.Fluid).Code;
+                return (spot, rain: climate?.WorldgenRainfall ?? 0, climate?.Temperature, ground: accessor.GetBlock(at).Code, water);
+            })
+            .OrderByDescending(beach => beach.rain)
+            .Take(shown)
+            .Select(beach => $"{beach.spot.x - centre.X:0} {surface + 1} {beach.spot.z - centre.Z:0}: {beach.ground}, {beach.water} to the {beach.spot.sea}, rainfall {beach.rain:0.00}, {beach.Temperature:0} °C");
+        return TextCommandResult.Success($"{found.Count} beaches, the wettest first:\n{string.Join("\n", lines)}");
+    }
+
+    private TextCommandResult Weed(BlockPos origin, int radius)
+    {
+        var accessor = sapi.World.GetBlockAccessorBulkUpdate(true, true);
+        var cleared = 0;
+        for (var x = -radius; x <= radius; x++)
+        for (var z = -radius; z <= radius; z++)
+        for (var y = -radius; y <= radius; y++)
+        {
+            var pos = origin.AddCopy(x, y, z);
+            var block = accessor.GetBlock(pos);
+            if (block.BlockMaterial != EnumBlockMaterial.Plant && block.Code?.Path.StartsWith("loose") != true) continue;
+            if (accessor.GetBlock(pos.DownCopy(), BlockLayersAccess.Fluid).IsLiquid()) continue;
+
+            accessor.SetBlock(0, pos);
+            cleared++;
+        }
+        accessor.Commit();
+        return TextCommandResult.Success($"Cleared {cleared} plants and stones within {radius} blocks");
+    }
+
     private TextCommandResult Coast(IServerPlayer player)
     {
         const int range = 3000;
@@ -549,6 +680,15 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"{flown.StatusMessage}, near the coast: no open beach is loaded yet, run /bridge shore again once the land has loaded");
     }
 
+    private static bool Dismount(EntityAgent rider)
+    {
+        if (rider.MountedOn is not { } seat) return false;
+        seat.DoTeleportOnUnmount = false;
+        bool left = rider.TryUnmount();
+        seat.DoTeleportOnUnmount = true;
+        return left;
+    }
+
     private TextCommandResult Fly(IServerPlayer player, Vec3d position)
     {
         player.Entity.TryUnmount();
@@ -558,7 +698,8 @@ public class BridgeCommands : ModSystem
         player.Entity.TeleportTo(position);
         var accessor = sapi.World.BlockAccessor;
         var flight = settle.Watch(position);
-        return TextCommandResult.Success($"Hovering at {position.X - accessor.MapSizeX / 2:0.#} {position.Y:0.#} {position.Z - accessor.MapSizeZ / 2:0.#} (flight {flight})");
+        var centre = sapi.World.DefaultSpawnPosition;
+        return TextCommandResult.Success($"Hovering at {position.X - centre.X:0.#} {position.Y:0.#} {position.Z - centre.Z:0.#} (flight {flight})");
     }
 
     private static TextCommandResult Set(Entity? entity, string key, string value)
@@ -567,21 +708,20 @@ public class BridgeCommands : ModSystem
 
         var path = key.Split('/');
         ITreeAttribute attributes = entity.WatchedAttributes;
-        foreach (var tree in path[..^1])
-        {
-            if (attributes.GetTreeAttribute(tree) is not { } inner) return TextCommandResult.Error($"No tree {tree} in {key}");
-            attributes = inner;
-        }
+        foreach (var tree in path[..^1]) attributes = attributes.GetOrAddTreeAttribute(tree);
 
         var leaf = path[^1];
+        var asDouble = value.EndsWith('d') && double.TryParse(value[..^1], CultureInfo.InvariantCulture, out _);
+        if (asDouble) value = value[..^1];
         var number = double.TryParse(value, CultureInfo.InvariantCulture, out var parsed) ? parsed : (double?)null;
         switch (attributes[leaf])
         {
             case DoubleAttribute when number is { } d: attributes.SetDouble(leaf, d); break;
             case FloatAttribute when number is { } f: attributes.SetFloat(leaf, (float)f); break;
             default:
-                if (int.TryParse(value, CultureInfo.InvariantCulture, out var whole)) attributes.SetInt(leaf, whole);
-                else if (number is { } fraction) attributes.SetFloat(leaf, (float)fraction);
+                if (number is { } exact && asDouble) attributes.SetDouble(leaf, exact);
+                else if (int.TryParse(value, CultureInfo.InvariantCulture, out var whole)) attributes.SetInt(leaf, whole);
+                else if (number is { } single) attributes.SetFloat(leaf, (float)single);
                 else if (bool.TryParse(value, out var flag)) attributes.SetBool(leaf, flag);
                 else attributes.SetString(leaf, value);
                 break;
@@ -597,18 +737,36 @@ public class BridgeCommands : ModSystem
 
         if (player.Entity.Teleporting) return TextCommandResult.Error("Still flying there; ride again in a second");
 
-        var boat = sapi.World.ClassRegistry.CreateEntity(type);
-        var pos = player.Entity.Pos;
+        return Mount(player, Spawn(type, player.Entity.Pos.XYZ, player.Entity.Pos.Yaw, afloat: true));
+    }
+
+    private TextCommandResult Spawn(string code, Vec3d position, double yaw, string? key, string? value)
+    {
+        var type = sapi.World.GetEntityType(new AssetLocation(code));
+        if (type == null) return TextCommandResult.Error($"No entity type {code}");
+        if (key != null && value == null) return TextCommandResult.Error($"No value to set {key} to");
+
+        var entity = Spawn(type, position, (float)(yaw * GameMath.DEG2RAD), afloat: false, key == null ? null : entity => Set(entity, key, value!));
+        return TextCommandResult.Success($"Spawned {entity.Code} {entity.EntityId}");
+    }
+
+    private Entity Spawn(EntityProperties type, Vec3d position, float yaw, bool afloat, Action<Entity>? prepare = null)
+    {
+        var entity = sapi.World.ClassRegistry.CreateEntity(type);
+        var y = afloat || entity is EntityBoat ? Surface(position) : position.Y;
+        entity.Pos.SetPos(position.X, y, position.Z);
+        entity.Pos.Yaw = yaw;
+        prepare?.Invoke(entity);
+        sapi.World.SpawnEntity(entity);
+        return entity;
+    }
+
+    private double Surface(Vec3d position)
+    {
         var accessor = sapi.World.BlockAccessor;
-        var below = pos.AsBlockPos;
+        var below = position.AsBlockPos;
         while (below.Y > 0 && accessor.GetBlock(below, BlockLayersAccess.FluidOrSolid).Id == 0) below.Y--;
-        var surface = accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid()
-            ? sapi.World.SeaLevel - 1
-            : pos.Y;
-        boat.Pos.SetPos(pos.X, surface, pos.Z);
-        boat.Pos.Yaw = pos.Yaw;
-        sapi.World.SpawnEntity(boat);
-        return Mount(player, boat);
+        return accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid() ? below.Y : position.Y;
     }
 
     private static TextCommandResult Mount(IPlayer player, Entity? target, int index = -1)
@@ -637,6 +795,19 @@ public class BridgeCommands : ModSystem
         slot.Itemstack = stack;
         slot.MarkDirty();
         return TextCommandResult.Success($"Wearing {code}");
+    }
+
+    private TextCommandResult Dress(IPlayer player, string code)
+    {
+        var stack = Stack(code);
+        if (stack == null) return TextCommandResult.Error($"No item or block {code}");
+
+        var slot = player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName).FirstOrDefault(slot => slot.CanHold(new DummySlot(stack)));
+        if (slot == null) return TextCommandResult.Error($"No outfit slot takes {code}");
+
+        slot.Itemstack = stack;
+        slot.MarkDirty();
+        return TextCommandResult.Success($"Dressed in {code}");
     }
 
     private TextCommandResult Hold(IPlayer player, string code)
@@ -671,7 +842,7 @@ public class BridgeCommands : ModSystem
         var hull = entity?.GetBehavior<EntityBehaviorVesselIntegrity>();
         if (hull == null) return TextCommandResult.Error("Not a vessel");
 
-        hull.Strike(joules, Enum.Parse<HullPlace>(place, ignoreCase: true));
+        hull.Impact(joules, Enum.Parse<HullPlace>(place, ignoreCase: true));
         return TextCommandResult.Success(HullState(entity!));
     }
 
@@ -684,7 +855,8 @@ public class BridgeCommands : ModSystem
         var cracks = hull.Model is CrackingHull cracking
             ? ", cracks " + string.Join(" ", HullShape.Places.Select(place => $"{place.Code()} {cracking.Crack(place):F2}"))
             : "";
-        return $"{entity.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity:F2}{cracks}, " +
+        var lashing = entity.GetBehavior<EntityBehaviorFloatLashing>() is { } floated ? $", float lashing {floated.Condition:F2}" : "";
+        return $"{entity.Code} {entity.EntityId}: alive {entity.Alive}, integrity {hull.Integrity:F2}{cracks}{lashing}, " +
             $"{hull.Aboard.Total:F0} kg aboard, draft {afloat.DraftMetres:F3} m, freeboard {afloat.FreeboardMetres:F3} m, sunk {afloat.Sunk}";
     }
 

@@ -11,7 +11,7 @@ public class HullResponseTests
     [Fact]
     public void AHeavierHullHeavesAndRollsSlower()
     {
-        Assert.True(HullResponse.HeavePeriod(0.6, config) > HullResponse.HeavePeriod(0.2, config));
+        Assert.True(HullResponse.HeavePeriod(1800, 900, 3000) > HullResponse.HeavePeriod(600, 900, 3000));
         Assert.True(HullResponse.RollPeriod(6, 2.5, 0.64, 1.14) > HullResponse.RollPeriod(4.5, 0.75, 0.2, 0.41));
     }
 

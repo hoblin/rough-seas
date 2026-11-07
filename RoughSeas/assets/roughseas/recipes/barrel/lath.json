@@ -1,0 +1,6 @@
+[
+    {"code": "soakedlath2", "sealHours": 48, "ingredients": [{"type": "item", "code": "roughseas:lath-*-2-dry", "name": "wood", "quantity": 1}, {"type": "item", "code": "game:waterportion", "litres": 0.16, "consumeLitres": 0.16}], "output": {"type": "item", "code": "roughseas:lath-{wood}-2-wet", "stackSize": 1}},
+    {"code": "soakedlath3", "sealHours": 48, "ingredients": [{"type": "item", "code": "roughseas:lath-*-3-dry", "name": "wood", "quantity": 1}, {"type": "item", "code": "game:waterportion", "litres": 0.24, "consumeLitres": 0.24}], "output": {"type": "item", "code": "roughseas:lath-{wood}-3-wet", "stackSize": 1}},
+    {"code": "soakedlath4", "sealHours": 48, "ingredients": [{"type": "item", "code": "roughseas:lath-*-4-dry", "name": "wood", "quantity": 1}, {"type": "item", "code": "game:waterportion", "litres": 0.32, "consumeLitres": 0.32}], "output": {"type": "item", "code": "roughseas:lath-{wood}-4-wet", "stackSize": 1}},
+    {"code": "soakedlath5", "sealHours": 48, "ingredients": [{"type": "item", "code": "roughseas:lath-*-5-dry", "name": "wood", "quantity": 1}, {"type": "item", "code": "game:waterportion", "litres": 0.4, "consumeLitres": 0.4}], "output": {"type": "item", "code": "roughseas:lath-{wood}-5-wet", "stackSize": 1}}
+]

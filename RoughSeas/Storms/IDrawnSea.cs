@@ -1,8 +1,9 @@
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The sea surface a client draws now, the one our own vessels ride; on a client alone.
-/// Reach it with <c>api.ModLoader.GetModSystem&lt;StormsModSystem&gt;().DrawnSea</c>. Positions are absolute block coordinates.
+/// The sea surface a client draws now, the one our own vessels ride. Reach it on a client with
+/// <c>api.ModLoader.GetModSystem&lt;StormsModSystem&gt;().DrawnSea</c>; the server builds the same around a body in the water
+/// (<see cref="SwellAround"/>). Positions are absolute block coordinates.
 /// </summary>
 public interface IDrawnSea
 {

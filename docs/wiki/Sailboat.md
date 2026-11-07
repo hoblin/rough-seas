@@ -4,7 +4,7 @@ The game's own sailing boat: an open hull of planks on a keel, with a mast stepp
 
 ## In Rough Seas
 
-The vessel for long voyages and heavy cargo. Its hull takes knocks that would break anything else, its 1500-litre bilge gives you time in a sea, and it is the one vessel that [anchors](Anchoring). Its mast draws [lightning](Lightning), its sides catch the wind that strains a [mooring](Mooring), and its 300 planks make it the dearest thing afloat to lose. In a gale it ships water faster than one person can [bail](Bailing): run for shelter, or anchor well out and ride it out. Two fifths of its weight is ballast, so flooded it goes to the bottom with its cargo, unless it is built of a light wood: of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash.
+The vessel for long voyages and heavy cargo. Its hull takes knocks that would break anything else, its 8209-litre bilge gives you time in a sea, and it is the one vessel that [anchors](Anchoring). Its mast draws [lightning](Lightning), its sides catch the wind that strains a [mooring](Mooring), and its 300 planks make it the dearest thing afloat to lose. In a gale it ships water faster than one person can [bail](Bailing): run for shelter, or anchor well out and ride it out. Two fifths of its weight is ballast, so flooded it goes to the bottom with its cargo, unless it is built of a light wood: of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash.
 
 ## Where it comes from
 
@@ -14,16 +14,16 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 
 | | |
 | --- | --- |
-| Speed | 2.5 × the raft under full sail |
+| Speed | 7.2 m/s under full sail, at vanilla's pace |
 | Turning | steady |
 | [Hull](Hull-Condition) | 40 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-she-floats) | 52 cm empty, 50 cm with one aboard, in oak |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | 92 cm, empty or with one aboard, in oak |
 | [Flooded](Surf-and-Swamping#swamping) | sinks; floats awash in the lighter woods |
 | [Mending](Mending) | 10 planks of its wood close a fifteenth of a stove-in place |
-| [Bilge](Bailing) | 1500 litres, 8 m² of open deck |
+| [Bilge](Bailing) | 8209 litres, 15.1 m² of open deck |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 3.3 m breaker |
-| [Lightning](Lightning) | its 6 m mast draws strikes |
+| [Lightning](Lightning) | its 7 m mast draws strikes |
 | [Rapids](Rapids) | barely harmed |
 | [Anchoring](Anchoring) | stone anchor on 120 m of rope, 210 m with an anchor warp |
 | [Left alone](Currents#drift) | drifts with the current and the wind |
@@ -39,8 +39,8 @@ Its sail drives it the same whatever the wind does; sailing by the wind comes in
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is faster and steadier, and carries one basket.
-- The [hide currach](Hide-Currach) is the small, cheap boat for the coast, and it rides over surf that would swamp the sailboat, though a breaker that stoves in her hide leaves the sailboat's planks whole.
+- The [outrigger canoe](Outrigger-Canoe) is steadier and carries one basket; it sails slower for now.
+- The [hide currach](Hide-Currach) is the small, cheap boat for the coast, light enough to ride over surf, though a breaker that stoves in its hide leaves the sailboat's planks whole.
 
 ## Every form it takes
 

@@ -14,6 +14,7 @@ public sealed class HoverOverride : IDisposable
     private static Entity? target;
     private static int boxIndex;
     private static BlockPos? block;
+    private static Vec3d? hit;
     private static object? clientWorld;
     private readonly Harmony harmony = new("agentbridge.hover");
 
@@ -46,11 +47,19 @@ public sealed class HoverOverride : IDisposable
         set => block = value;
     }
 
+    /// <summary>Where on <see cref="Block"/>'s top face the pick lands, within the block.</summary>
+    public Vec3d? Hit
+    {
+        get => hit;
+        set => hit = value;
+    }
+
     public void Dispose()
     {
         harmony.UnpatchAll(harmony.Id);
         target = null;
         block = null;
+        hit = null;
     }
 
     private static void Postfix(object __instance, ref BlockSelection? blockSelection, ref EntitySelection? entitySelection)
@@ -60,6 +69,7 @@ public sealed class HoverOverride : IDisposable
         if (block != null)
         {
             blockSelection = new BlockSelection(block, BlockFacing.UP, ((IWorldAccessor)clientWorld).BlockAccessor.GetBlock(block));
+            if (hit != null) blockSelection.HitPosition = hit.Clone();
             entitySelection = null;
             return;
         }

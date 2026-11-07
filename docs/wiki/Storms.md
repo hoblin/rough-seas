@@ -33,7 +33,7 @@ The thunder is the game's own weather, played where it can play: thunder needs w
 Storms are born as often as real ones, per day and per area of sea:
 
 - **Gales** follow the storm tracks: between 30° and 70° of latitude, most of all near 50°, and half as often again in winter as in summer. They grow where cold air meets warm, so the steeper the temperature falls toward the pole, the stronger they come. Winter, when the poles grow cold, brings the strongest; a summer gale is mild. A mod that changes the world's temperatures moves them with it.
-- **Hurricanes** form between 5° and 30° from the equator, over water of at least about 26 °C, from June to November in the north, peaking in September. South of the equator their season is turned around.
+- **Hurricanes** form between 5° and 30° from the equator, over water of at least about 25 °C, from May to November in the north, peaking in August and September. South of the equator their season is turned around.
 - **Squalls** follow warm, wet climates and summer.
 
 So a cold sea in winter is gale country, the tropics in late summer are where hurricanes come from, and warm coasts see squall after squall.
@@ -64,6 +64,6 @@ That is your time to make for shore, or to [anchor](Anchoring) far out where the
 - It strains every [anchor](Anchoring) and [mooring rope](Mooring).
 - In warm air it brings [lightning](Lightning), drawn to the masts of the [sailboat](Sailboat) and the [outrigger canoe](Outrigger-Canoe).
 
-Which [vessel](Vessels) to trust in a storm: the [hide currach](Hide-Currach) rides over surf, though a storm's breakers can stave in her hide, the [outrigger](Outrigger-Canoe) barely rolls, and the [sailboat](Sailboat)'s planks stand all but a huge plunging crest; the river boats belong ashore.
+Which [vessel](Vessels) to trust in a storm: the [hide currach](Hide-Currach) rides over surf, though a storm's breakers can stave in its hide, the [outrigger](Outrigger-Canoe) barely rolls, and the [sailboat](Sailboat)'s planks stand all but a huge plunging crest; the river boats belong ashore.
 
 The walking player isn't blown about by a hurricane; the danger is all on the water. With [Dangerous oceans](World-Settings#dangerous-oceans) off, storms still come and go, but do no harm.

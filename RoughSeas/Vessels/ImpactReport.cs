@@ -11,4 +11,6 @@ public class ImpactReport
     [ProtoMember(4)] public double TowardZ;
     [ProtoMember(5)] public long Against;
     [ProtoMember(6)] public double TheirKg;
+    [ProtoMember(7)] public bool Outboard;
+    [ProtoMember(8)] public bool TheirOutboard;
 }

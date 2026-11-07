@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RoughSeas.Units;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Vessels;
 
 public sealed class HullDamage
 {
+    public const int FirstWoundedStage = 1;
+    public static readonly string[] WoundForms = ["Scratched", "Cracked", "Split", "StoveIn"];
+    public static readonly int FrameBrokenStage = FirstWoundedStage + Array.IndexOf(WoundForms, "Split");
+
     private readonly ICoreClientAPI capi;
     private readonly Entity entity;
     private readonly HullDamageConfig config;
@@ -22,7 +27,7 @@ public sealed class HullDamage
         this.config = config;
     }
 
-    public bool Visible => shown.Stages.Count > 0;
+    public bool Overlaid => shown.Positions.Count > 0;
 
     public bool Shows(System.Func<HullPlace, int> stage) =>
         HullShape.Places.All(place => stage(place) == shown.Stages.GetValueOrDefault(place));
@@ -52,7 +57,7 @@ public sealed class HullDamage
     public void Retexture(ref Shape shape, ref bool shapeIsCloned, HullShape hull)
     {
         var snapshot = shown;
-        if (snapshot.Stages.Count == 0) return;
+        if (snapshot.Positions.Count == 0) return;
 
         if (!shapeIsCloned)
         {
@@ -70,6 +75,29 @@ public sealed class HullDamage
         }
     }
 
+    public string[] Hidden(Shape shape)
+    {
+        var stages = shown.Stages;
+        return Hidden(shape.Elements, place => stages.GetValueOrDefault(place)).ToArray();
+    }
+
+    public static IEnumerable<string> Hidden(ShapeElement[]? elements, System.Func<HullPlace, int> stage) =>
+        Hidden(elements, HullShape.Places.SelectMany(place => Unshown(place, stage(place))).ToArray());
+
+    private static IEnumerable<string> Unshown(HullPlace place, int stage) => WoundForms
+        .Where((_, n) => FirstWoundedStage + n != stage)
+        .Select(form => $"Wound{place}{form}")
+        .Concat(stage >= FrameBrokenStage ? [$"Wound{place}Whole"] : []);
+
+    private static IEnumerable<string> Hidden(ShapeElement[]? elements, string[] forms)
+    {
+        foreach (var element in elements ?? [])
+        {
+            if (element.Name is { } named && forms.Any(form => named.StartsWith(form, StringComparison.Ordinal))) yield return named;
+            else foreach (var name in Hidden(element.Children, forms)) yield return name;
+        }
+    }
+
     public ITexPositionSource Over(ITexPositionSource defaultSource) => new DamagedSource(shown.Positions, defaultSource);
 
     public static IEnumerable<(ShapeElement Element, HullPlace Place)> Places(ShapeElement[]? elements, HullShape hull, string[] textures) =>
@@ -82,7 +110,7 @@ public sealed class HullDamage
             var transform = Mat4f.Mul(Mat4f.Create(), parent, element.GetLocalTransformMatrix(0));
             if (element.FacesResolved?.Any(face => face != null && textures.Contains(face.Texture)) == true)
             {
-                var size = element.To!.Zip(element.From!, (to, from) => (float)((to - from) / HullShape.VoxelsPerBlock / 2)).ToArray();
+                var size = element.To!.Zip(element.From!, (to, from) => (float)(Voxels.ToMetres(to - from) / 2)).ToArray();
                 var centre = Mat4f.MulWithVec4(transform, size[0], size[1], size[2], 1);
                 yield return (element, hull.At(centre[0] - 0.5, centre[1], centre[2] - 0.5));
             }
