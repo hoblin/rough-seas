@@ -345,7 +345,7 @@ A reed boat's rider poling in first person, and a bark canoe's poling standing, 
 - The reed boat's pole strokes have first-person twins, `roughseas-reedboat-pole-{ready|forward|backward}-fp`, in `patches/player-reedboat.json`. They are the strokes with both upper arms moved 7 voxels down and 3 toward the pole's side, so the hands keep the pole. Vanilla plays a mount animation's `-fp` twin on the rider's own first-person arms, as it does for its crude oar.
 - A patch to one of those strokes patches its twin too, or the rider sees the old stroke in first person. A twin of yours plays beside its stroke, so give it the same frames, end and speed.
 
-- The bark canoe's standing pole strokes have twins of their own, `roughseas-barkcanoe-pole-{ready|forward|backward}-fp`, in `patches/player-barkcanoe.json`: both upper arms moved 3 voxels down and 1 out, as vanilla's `crudeoarforward-fp` moves them, so the view ahead stays clear and the hands and the pole stay in it. The dugout's standing pole has none, its arms already low.
+- The bark canoe's standing pole strokes have twins of their own, `roughseas-barkcanoe-pole-{ready|forward|backward}-fp`, in `patches/player-barkcanoe.json`: both upper arms moved 1 voxel down and 3 outboard, so the arms stay in the bottom corner through the stroke, as the raft's do, and the view over the bow stays clear. The canoe is narrow and her pole is planted close beside her, so without them the left arm swings across the middle of the view on the drive. The dugout's standing pole has none, its arms already low.
 
 New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`, `roughseas-barkcanoe-pole-{ready|forward|backward}-fp`.
 

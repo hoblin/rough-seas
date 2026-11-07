@@ -39,12 +39,12 @@ SEATED_CLIMB = 6
 SEATED_OUTBOARD = 2
 REST = 8
 CLEARANCE = 0.05
-# The seated pole's first-person arms, in voxels, of vanilla's `-fp` twins' order (seraph-faceless.json moves the
-# shoulders up to 7 apart and 5 down), chosen on the bench: they clear the view ahead and keep the pole in it.
+# The first-person arms, in voxels, of vanilla's `-fp` twins' order (seraph-faceless.json moves the shoulders up to
+# 7 apart and 5 down), chosen on the bench against the raft's: they clear the view ahead and keep the arms in it.
 SEEN_DOWN = 7
 SEEN_OUT = 3
-STANDING_SEEN_DOWN = 3
-STANDING_SEEN_OUT = 1
+STANDING_SEEN_DOWN = 1
+STANDING_SEEN_OUT = 3
 UPPER_ARMS = ("UpperArmR", "UpperArmL")
 
 
