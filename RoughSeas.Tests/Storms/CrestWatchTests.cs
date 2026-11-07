@@ -16,6 +16,20 @@ public class CrestWatchTests
     }
 
     [Fact]
+    public void CountsAWholeWaveThroughTheRipplesOnIt()
+    {
+        var waves = new List<double>();
+        for (var t = 0.0; t < 81; t += Step)
+        {
+            var height = 1 * Math.Sin(2 * Math.PI * t / 8) + 0.1 * Math.Sin(2 * Math.PI * t / 1.5);
+            if (watch.WatchWave(height) is { } wave) waves.Add(wave);
+        }
+
+        Assert.Equal(9, waves.Count);
+        Assert.All(waves, wave => Assert.InRange(wave, 1.8, 2.25));
+    }
+
+    [Fact]
     public void ReadsAWaveFromItsTroughToItsCrest()
     {
         var crests = Watch(seconds: 20, height: t => 0.5 * Math.Sin(2 * Math.PI * t / 4));

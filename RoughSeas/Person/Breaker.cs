@@ -41,16 +41,16 @@ public class BreakerPacket
 }
 
 /// <summary>
-/// The crests passing one body, by the vessels' rule: one roll for each dominant wave, on the first crest above still
-/// water once a wave period has passed; in water shallower than the breaking depth it breaks for certain, otherwise by the
-/// share of waves that break. Its height is trough to crest (<see cref="CrestWatch"/>), the wave actually drawn.
+/// The waves passing one body, by the vessels' rule: one roll for each dominant wave, on the first wave to pass once a
+/// wave period has gone by; in water shallower than the breaking depth it breaks for certain, otherwise by the share of waves
+/// that break. Its height is trough to crest (<see cref="CrestWatch.WatchWave"/>), the wave actually drawn.
 /// </summary>
 public sealed class CrestRoll(Waves waves, Storms.WavesConfig config)
 {
     private readonly CrestWatch crests = new();
     private double sinceRoll;
 
-    /// <summary>Takes the surface's next height over the body; a broken crest when one has just passed and broke.</summary>
+    /// <summary>Takes the surface's next height over the body; a broken crest when a wave has just passed and broke.</summary>
     /// <param name="surface">The drawn surface's height above still water, in metres.</param>
     /// <param name="lived">The time the world's ticks ran through since the last call (<see cref="Lap.LivedSeconds"/>).</param>
     /// <param name="depth">The water's depth here, in metres.</param>
@@ -58,13 +58,13 @@ public sealed class CrestRoll(Waves waves, Storms.WavesConfig config)
     public BrokenCrest? See(double surface, double lived, SeaState state, double depth, Func<double> draw)
     {
         sinceRoll += lived;
-        var wave = crests.Watch(surface);
+        var wave = crests.WatchWave(surface);
         if (state.WaveHeight < config.MinHeight)
         {
             sinceRoll = 0;
             return null;
         }
-        if (wave is not { } height || surface <= 0 || sinceRoll < state.WavePeriod) return null;
+        if (wave is not { } height || sinceRoll < state.WavePeriod) return null;
 
         sinceRoll %= state.WavePeriod;
         var surf = waves.BreaksAt(depth, height);
