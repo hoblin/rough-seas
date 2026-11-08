@@ -29,6 +29,13 @@ public class MooringLoadTests
     }
 
     [Fact]
+    public void OfTwoLinesFarApartTheOneThePullRunsAlongTakesItWhicheverComesFirst()
+    {
+        Assert.Equal([700.0, 0.0], MooringLoad.Share(700, -600, [(1, 0), (-0.8, 0.6)]));
+        Assert.Equal([0.0, 700.0], MooringLoad.Share(700, -600, [(-0.8, 0.6), (1, 0)]));
+    }
+
+    [Fact]
     public void TwoLinesTheSameWayShareThePullEvenly()
     {
         Assert.Equal([500.0, 500.0], MooringLoad.Share(1000, 0, [(1, 0), (1, 0)]));

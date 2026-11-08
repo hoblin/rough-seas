@@ -273,6 +273,10 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var before = holds;
         if (!server && !here)
         {
+            foreach (var gone in before.Where(hold => !hold.Tether.Anchored))
+            {
+                if (cloths.GetClothSystem(gone.Tether.Key) is { } loosed) VesselRope.GiveBack(loosed);
+            }
             holds = [];
             return;
         }

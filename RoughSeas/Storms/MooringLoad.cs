@@ -23,7 +23,9 @@ public static class MooringLoad
                 var first = (pullX * b.Z - pullZ * b.X) / determinant;
                 var second = (a.X * pullZ - a.Z * pullX) / determinant;
                 if (first >= 0 && second >= 0) return [first, second];
-                return first < 0 ? [0, Along(pullX, pullZ, b)] : [Along(pullX, pullZ, a), 0];
+
+                var (alongA, alongB) = (Along(pullX, pullZ, a), Along(pullX, pullZ, b));
+                return alongA >= alongB ? [alongA, 0] : [0, alongB];
             }
         }
 
