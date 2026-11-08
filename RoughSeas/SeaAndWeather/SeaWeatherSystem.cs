@@ -50,7 +50,11 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
     {
         calibration = new OceanCalibration(Config.Ocean);
         model = new Lazy<SeaModel>(() => CreateModel(sapi));
-        sapi.Event.SaveGameLoaded += () => calibration.Load(sapi.WorldManager.SaveGame.GetData(CalibrationKey));
+        sapi.Event.SaveGameLoaded += () =>
+        {
+            calibration.Load(sapi.WorldManager.SaveGame.GetData(CalibrationKey));
+            MigrateSettings(sapi);
+        };
         sapi.Event.GameWorldSave += () => sapi.WorldManager.SaveGame.StoreData(CalibrationKey, calibration.ToBytes());
         new VanillaRain(this, sapi).Follow();
         new VanillaRegions(this, sapi).Drive();
@@ -77,8 +81,6 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         if (api.Side == EnumAppSide.Client) WindOnCoordinates.Detach();
         if (api.Side == EnumAppSide.Server) OceanGenLock.Detach();
     }
-
-    public bool DangerousOceans => api.World.Config.GetBool("dangerousOceans", true);
 
     public SeaWeatherConfig Config => config.Value;
 
@@ -109,6 +111,16 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public void Log(string format, params object[] args) =>
         Mod.Logger.Debug("[seas] " + string.Format(CultureInfo.InvariantCulture, format, args));
+
+    private void MigrateSettings(ICoreServerAPI sapi)
+    {
+        var config = sapi.WorldManager.SaveGame.WorldConfiguration;
+        if (Mechanic.Migrate(config) is { } dangerous)
+        {
+            Log("world settings: dangerous oceans {0} carried into every mechanic's own setting", dangerous ? "on" : "off");
+        }
+        Log("world settings: {0}", string.Join(", ", Mechanic.All.Select(mechanic => $"{mechanic} {(mechanic.On(config) ? "on" : "off")}")));
+    }
 
     private SeaModel CreateModel(ICoreServerAPI sapi)
     {

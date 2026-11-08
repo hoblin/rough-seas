@@ -22,7 +22,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
 
     private const string CheckedAtKey = "checkedAt";
     private const string HewerKey = "hewer";
-    private const int DataVersion = 1;
+    private const int DataVersion = 2;
     private const float TickSeconds = 1;
     private const int BurningPhases = 3;
     private const double CatchingHours = 1;
@@ -104,6 +104,12 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
 
     public override Shell Formed(Shell designed) => designed.Uncut(UncutMetres, burnout.Hollowed);
 
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        base.AfterInitialized(onFirstSpawn);
+        Upgrade(DataVersion, _ => burnout.KeepProgress(config.RimVoxelsBefore, config.StrokesPerHewingBefore));
+    }
+
     public static void Begin(Entity vessel, double hours) => Begin(vessel, DataVersion, tree =>
     {
         tree.SetDouble(CheckedAtKey, hours);
@@ -148,7 +154,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
         base.OnTesselation(ref entityShape, shapePathForLogging, ref shapeIsCloned, ref willDeleteElements);
-        if (burnout.ClayType is { } type && entity.Properties.Client.Textures.ContainsKey($"{ClayTexture}-{type}"))
+        if (burnout.ClayType is { } type && entity.Properties.Client.Textures?.ContainsKey($"{ClayTexture}-{type}") == true)
         {
             ShapeFaces.Retexture(ref entityShape, ref shapeIsCloned, ClayTexture, $"{ClayTexture}-{type}");
         }
@@ -223,7 +229,11 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
-        if (mode != EnumInteractMode.Interact || burnout.Finished || StepWith(itemslot) is not { } step) return;
+        if (mode != EnumInteractMode.Interact || burnout.Finished || StepWith(itemslot) is not { } step)
+        {
+            base.OnInteract(byEntity, itemslot, hitPosition, mode, ref handled);
+            return;
+        }
 
         handled = EnumHandling.PreventSubsequent;
         var refusal = step switch
@@ -279,34 +289,29 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
     public void LogMisfire(EntityAgent byEntity, float secondsUsed) =>
         Shipyard.Log(entity, "{0}'s firestarter fails to light hollow {1} after {2:F1} s", byEntity.GetName(), burnout.Level + 1, secondsUsed);
 
-    public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
+    protected override BuildStep? Next
     {
-        if (burnout.Finished || burnout.Spoiled || burnout.Lit) return null;
-        if (!burnout.Debarked) return Help(world, "roughseas:shipyard-debark", Axes(world));
-        if (burnout.Charred) return Help(world, "roughseas:shipyard-hew", Axes(world));
-        if (!burnout.Clayed) return Help(world, "roughseas:shipyard-clay", () => world.SearchItems(clay));
-        if (!burnout.Fire.Kindled) return Help(world, "roughseas:shipyard-kindle", () => world.Items.Where(item => item is ItemDryGrass));
-        if (!burnout.Fire.Laid) return Help(world, "roughseas:shipyard-firewood", () => world.Items.Where(Constructs));
-        return Help(world, "roughseas:shipyard-light", () => BlockBehaviorCanIgnite.CanIgniteStacks(world.Api, true).Select(stack => stack.Collectible));
-    }
-
-    public override void GetInfoText(StringBuilder infotext)
-    {
-        if (!burnout.Finished)
+        get
         {
-            infotext.AppendLine(Lang.Get("roughseas:shipyard-hollowed", burnout.Level, burnout.Hollowings));
-            if (burnout.Lit) infotext.AppendLine(Lang.Get("roughseas:shipyard-burns", Math.Ceiling(burnout.HoursPerFire - burnout.HoursBurnt)));
-            else if (burnout.Spoiled) infotext.AppendLine(Lang.Get("roughseas:shipyard-spoiled"));
-            else if (!burnout.Debarked) infotext.AppendLine(Lang.Get("roughseas:shipyard-bark", burnout.BarkStripped, burnout.BarkPieces));
-            else if (burnout.Charred) infotext.AppendLine(Lang.Get("roughseas:shipyard-charred", burnout.Strokes, burnout.StrokesPerHewing));
-            else
+            if (burnout.Finished) return null;
+
+            var world = entity.World;
+            var hollowed = Lang.Get("roughseas:shipyard-hollowed", burnout.Level, burnout.Hollowings);
+            if (burnout.Lit) return new($"{hollowed}\n{Lang.Get("roughseas:shipyard-burns", Math.Ceiling(burnout.HoursPerFire - burnout.HoursBurnt))}");
+            if (burnout.Spoiled) return new($"{hollowed}\n{Lang.Get("roughseas:shipyard-spoiled")}");
+            if (!burnout.Debarked) return new($"{hollowed}\n{Lang.Get("roughseas:shipyard-bark", burnout.BarkStripped, burnout.BarkPieces)}", "roughseas:shipyard-debark", Stacks(Axes(world)));
+            if (burnout.Charred) return new($"{hollowed}\n{Lang.Get("roughseas:shipyard-charred", burnout.Strokes, burnout.StrokesPerHewing)}", "roughseas:shipyard-hew", Stacks(Axes(world)));
+
+            var rim = $"{hollowed}\n{Lang.Get("roughseas:shipyard-rim-clay", burnout.ClayBallsOn, burnout.ClayBalls)}";
+            if (!burnout.Clayed) return new(rim, "roughseas:shipyard-clay", Stacks(() => world.SearchItems(clay)));
+            if (!burnout.Fire.Kindled) return new(rim, "roughseas:shipyard-kindle", Stacks(() => world.Items.Where(item => item is ItemDryGrass)));
+            if (!burnout.Fire.Laid)
             {
-                infotext.AppendLine(Lang.Get("roughseas:shipyard-rim-clay", burnout.ClayBallsOn, burnout.ClayBalls));
-                if (burnout.Fire.Laid) infotext.AppendLine(Lang.Get("roughseas:shipyard-laid"));
-                else if (burnout.Fire.Kindled) infotext.AppendLine(Lang.Get("roughseas:shipyard-firepit", burnout.Fire.OnFirepit, LaidFire.FirepitFirewood));
+                return new($"{rim}\n{Lang.Get("roughseas:shipyard-firepit", burnout.Fire.OnFirepit, LaidFire.FirepitFirewood)}", "roughseas:shipyard-firewood", Stacks(() => world.Items.Where(Constructs)));
             }
+            return new($"{rim}\n{Lang.Get("roughseas:shipyard-laid")}", "roughseas:shipyard-light",
+                Stacks(() => BlockBehaviorCanIgnite.CanIgniteStacks(world.Api, true).Select(stack => stack.Collectible)));
         }
-        base.GetInfoText(infotext);
     }
 
     public override void OnEntityDespawn(EntityDespawnData despawn)
@@ -342,11 +347,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
         slot.MarkDirty();
     }
 
-    private WorldInteraction[] Help(IWorldAccessor world, string action, Func<IEnumerable<CollectibleObject>> with) =>
-        ObjectCacheUtil.GetOrCreate(world.Api, $"{action}/{clay}", () => new[]
-        {
-            new WorldInteraction { ActionLangCode = action, MouseButton = EnumMouseButton.Right, Itemstacks = with().Select(collectible => new ItemStack(collectible)).ToArray() }
-        });
+    private static Func<IEnumerable<ItemStack>> Stacks(Func<IEnumerable<CollectibleObject>> with) => () => with().Select(collectible => new ItemStack(collectible));
 
     private int RimVoxels(int level) => Burnout.TopVoxels(Element($"Clay{level}"));
 
@@ -420,15 +421,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
     private IEnumerable<string> Parts(string family) =>
         Enumerable.Range(1, burnout.Sections).Select(section => $"{family}x{section}").Append(family + SternPart).Append(family + BowPart);
 
-    private IEnumerable<string> Unclayed(int level)
-    {
-        double coated = 0;
-        foreach (var piece in Element($"Clay{level}").Children ?? [])
-        {
-            if (coated >= burnout.ClayVoxels || burnout.Trimmed(burnout.SectionAt(Voxels.ToMetres(piece.From[0]) - HullShape.ModelOriginMetres))) yield return piece.Name;
-            coated += Burnout.TopVoxels(piece);
-        }
-    }
+    private IEnumerable<string> Unclayed(int level) => burnout.Unclayed(Element($"Clay{level}"));
 
     protected override string FormKey() => $"{burnout.Level}/{burnout.Stage}";
 

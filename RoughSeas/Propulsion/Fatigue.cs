@@ -1,3 +1,4 @@
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -17,7 +18,7 @@ public sealed class Fatigue(RowerConfig config, VesselsModSystem vessels)
 
     public void Spend(Entity vessel, EntityPlayer rower, double watts, float deltaTime, string stroke)
     {
-        if (rower.Player?.WorldData.CurrentGameMode is EnumGameMode.Creative or EnumGameMode.Spectator) return;
+        if (rower.Player?.WorldData.CurrentGameMode is EnumGameMode.Creative or EnumGameMode.Spectator || !Mechanic.RowerFatigue.On(vessel.World)) return;
         if (owed != rower) Settle(vessel);
 
         var calendar = vessel.World.Calendar;

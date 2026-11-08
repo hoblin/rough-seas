@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Mar bravo",
     "playstyle-desc-preset-roughseas": "Sobrevivência normal num mundo de oceanos abertos, onde o vento, as tempestades e o mar são perigosos.",
     "worldconfig-category-roughseas": "Mar bravo",
-    "worldattribute-dangerousOceans": "Oceanos perigosos",
-    "worldattribute-dangerousOceans-desc": "Tempestades, arrebentação e raios podem alagar, emborcar e quebrar embarcações, e arrancá-las da amarração ou do fundeio. Desligado, o mar mantém seu clima, mas não causa dano."
+    "worldattribute-bilgeWater": "Água no porão",
+    "worldattribute-bilgeWater-desc": "As ondas quebram a bordo e a chuva cai numa embarcação aberta, enchendo o porão até você esgotá-lo. Desativado, nem ondas nem chuva acrescentam água; um vazamento ainda acrescenta.",
+    "worldattribute-hullDamage": "Danos ao casco",
+    "worldattribute-hullDamage-desc": "Rochas, a margem, abalroamentos, corredeiras, a arrebentação e o tempo racham o casco, e uma rachadura faz água. O couro apodrece, as costuras sem untar vazam e o junco encharca. Desativado, nenhum casco sofre dano, e todo casco fica inteiro de novo.",
+    "worldattribute-stormLightning": "Raios",
+    "worldattribute-stormLightning-desc": "As tempestades lançam raios perto de você, e um mastro os atrai.",
+    "worldattribute-mooringStrain": "Tensão na amarração",
+    "worldattribute-mooringStrain-desc": "Uma tempestade faz as âncoras garrarem, arrebenta os cabos de amarração e joga na praia uma embarcação amarrada enquanto você está longe.",
+    "worldattribute-oceanCurrents": "Correntes",
+    "worldattribute-oceanCurrents-desc": "As correntes e o vento levam embora uma embarcação que ninguém governa.",
+    "worldattribute-rowerFatigue": "Cansaço do remador",
+    "worldattribute-rowerFatigue-desc": "Remar, pagaiar e varejar dão fome.",
+    "worldattribute-poleDepth": "Profundidade da vara",
+    "worldattribute-poleDepth-desc": "A vara só empurra onde alcança o fundo. Desativado, empurra em água de qualquer profundidade como num impulso completo."
 }

@@ -27,7 +27,7 @@ public class CurrentDrift(Entity entity) : EntityBehavior(entity)
 
     public override void OnGameTick(float deltaTime)
     {
-        if (physics == null || !entity.Swimming || mountable?.IsBeingControlled() == true) return;
+        if (physics == null || !entity.Swimming || mountable?.IsBeingControlled() == true || !Mechanic.Currents.On(entity.World)) return;
         using var _ = sea.Budget.Measure();
         var pos = entity.Pos;
         var current = sea.CurrentAt(pos.X, pos.Z);

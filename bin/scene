@@ -28,8 +28,8 @@ bin/scene storm [RANGE [WAVES]] [CODE...]
                            (default 60000), or those nearest WAVES metres:
                            the player hovering 12 blocks above the surface, each CODE
                            (default boat-sailed-oak boat-raft-oak) riding below, 6 blocks apart, in one
-                           sea state. Dangerous oceans on: the waves board, swamp, capsize and break them.
-                           /worldconfig dangerousOceans false keeps them whole.
+                           sea state, with every mechanic's world setting on: the waves board, swamp and
+                           break them. /worldconfig hullDamage false keeps them whole.
 bin/scene clear [RANGE] [TYPE...]
                            remove entities of each TYPE (default every vessel and item; wildcards allowed,
                            e.g. drifter-*) within RANGE blocks (default 64) of the player. Blocks,
@@ -45,6 +45,13 @@ bin/scene views CODE DIR [SCALE]
                            It changes the world as it goes: clears vessels, items and wandering
                            animals around the player, breaks the vessel, weeds the beach, and empties
                            the player's inventory.
+bin/scene portrait CODE FILE [DISTANCE]
+                           the vessel large, for a page's gallery: at calm noon ashore on the beach zone,
+                           seen from its bow quarter as the wiki's ashore-quarter, through a 40° lens
+                           from DISTANCE blocks (default 4), the player out of the frame and a
+                           spectator, which casts no shadow. The camera aims at the middle of the vessel as
+                           drawn, masts and sails included; the window's full height is cut to 4:3 round
+                           it and written as FILE (.png keeps it whole; .webp is brought to 1200×900).
 bin/scene seats [CODE...]  the player in every seat of each vessel (default: ours and the vanilla raft
                            and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
@@ -158,7 +165,11 @@ storm() {
   while [[ ${1:-} =~ ^[0-9.]+$ ]]; do numbers+=("$1"); shift; done
   local codes=("$@")
   [ ${#codes[@]} -eq 0 ] && codes=(boat-sailed-oak boat-raft-oak)
-  "$game" do '/gamemode creative' '/time set 12:00' '/worldconfig dangerousOceans true' >/dev/null
+  "$game" do '/gamemode creative' '/time set 12:00' >/dev/null
+  local setting
+  for setting in bilgeWater hullDamage stormLightning mooringStrain oceanCurrents rowerFatigue poleDepth; do
+    "$game" do "/worldconfig $setting true" >/dev/null
+  done
   local storm
   storm=$("$game" do "/bridge storm ${numbers[*]}")
   echo "$storm"
@@ -277,6 +288,35 @@ views() {
   ls "$dir"
 }
 
+portrait() {
+  local code=$1 out=$2 distance=${3:-4} id full=$BENCH_TMP/portrait.png width height
+  clear >/dev/null
+  calm
+  "$game" zone beach >/dev/null
+  "$game" do '/bridge weed 8' >/dev/null
+  id=$("$game" do "/bridge spawn $code ~ ~-2 ~ 90" | awk '/Spawned/ { print $NF }')
+  sleep 2
+  local park
+  park=$(awk -v d="$distance" 'BEGIN { print d + 6 }')
+  look "$id" "$park" "$park" "$park"
+  "$game" do '/gamemode spectator' '.clientconfig fieldOfView 40' >/dev/null
+  "$game" camera on="$id" bearing=45 distance="$distance" \
+    height="$(awk -v d="$distance" 'BEGIN { print 0.8 * d + 0.3 }')" hold=1 >/dev/null
+  for animal in pig deer fox; do "$game" do "/entity remove e[range=64,type=game:$animal-*]" >/dev/null; done
+  sleep 2
+  "$game" shot "$full" >/dev/null
+  "$game" camera off >/dev/null
+  "$game" do '.clientconfig fieldOfView 70' '/gamemode creative' >/dev/null
+  read -r width height <<<"$(identify -format '%w %h' "$full")"
+  local crop=("$full" -gravity center -crop "$((height * 4 / 3))x${height}+0+0" +repage)
+  if [[ $out == *.webp ]]; then
+    magick "${crop[@]}" -resize 1200x900 -quality 82 "$out"
+  else
+    magick "${crop[@]}" "$out"
+  fi
+  echo "$out"
+}
+
 seats() {
   local codes=("$@") dir=$BENCH_TMP/seats id
   [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat-cattailtops-cattailtops roughseas:coracle roughseas:barkcanoe-birch roughseas:currach \
@@ -363,6 +403,8 @@ birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
 splitting-wedge    block-roughseas:wedge-we-0        roughseas:wedge-we-0
 reed-bundle        block-roughseas:reedbundle-cattailtops-none-we roughseas:reedbundle-cattailtops-none-we
 laths              item-roughseas:lath-oak-5-dry     roughseas:lath-oak-5-dry
+lath-bundle        item-roughseas:lathbundle-oak-5-dry roughseas:lathbundle-oak-5-dry
+lath-bundle-untied item-roughseas:lath-oak-5-wet     roughseas:lath-oak-5-wet     roughseas:lathbundle-oak-5-soaked
 anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
 paddle             item-roughseas:paddle-oak         roughseas:paddle-oak
 thole-oar          item-roughseas:tholeoar-oak       roughseas:tholeoar-oak
@@ -376,6 +418,7 @@ case "${1:-}" in
   recipe) shift; recipe "$@" ;;
   recipes) shift; recipes "$@" ;;
   views) shift; views "$@" ;;
+  portrait) shift; portrait "$@" ;;
   seats) shift; seats "$@" ;;
   strokes) shift; strokes "$@" ;;
   photo) shift; photo "$@" ;;

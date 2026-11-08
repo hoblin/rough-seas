@@ -69,16 +69,91 @@ public class BurnoutTests
     }
 
     [Fact]
-    public void HerHullBoxShrinksWithTheTrunkAtEachHewing()
+    public void HerHullBoxSinksWithTheTrunkAtEachHewingAndKeepsTheLogsLength()
     {
         Assert.Equal(Config.Hollowings, Config.HullBoxesMetres.Length);
         Assert.Equal(Config.BlankDepthMetres, Config.HullBoxesMetres[0].To[1], 2);
         for (int level = 1; level < Config.Hollowings; level++)
         {
             Assert.True(Config.HullBoxesMetres[level].To[1] < Config.HullBoxesMetres[level - 1].To[1]);
-            Assert.True(Config.HullBoxesMetres[level].To[0] - Config.HullBoxesMetres[level].From[0]
-                < Config.HullBoxesMetres[level - 1].To[0] - Config.HullBoxesMetres[level - 1].From[0]);
+            Assert.Equal(Config.HullBoxesMetres[0].To[0] - Config.HullBoxesMetres[0].From[0],
+                Config.HullBoxesMetres[level].To[0] - Config.HullBoxesMetres[level].From[0], 3);
         }
+    }
+
+    [Fact]
+    public void ARimClayedToTheLastBallShowsEveryPieceOfItsClay()
+    {
+        for (int level = 0; level < Config.Hollowings; level++)
+        {
+            var blank = Blank();
+            tree!.SetInt("level", level);
+            ClayTheRim(blank);
+
+            Assert.Empty(blank.Unclayed(DugoutShape.GetElementByName($"Clay{level}")));
+        }
+    }
+
+    [Fact]
+    public void ARimClayedToTheLastBallInASaveFromBeforeTheRoundEndsStaysClayed()
+    {
+        int last = Config.Hollowings - 1;
+        var blank = Blank();
+        tree!.SetInt("level", last);
+        tree.SetInt("clayVoxels", Config.RimVoxelsBefore[last]);
+        Assert.False(blank.Clayed);
+
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
+
+        Assert.True(blank.Clayed);
+    }
+
+    [Fact]
+    public void ClayInASaveFromBeforeNeverCountsForMoreThanTheRimHasNow()
+    {
+        var blank = Blank();
+        tree!.SetInt("level", 1);
+        tree.SetInt("clayVoxels", Config.RimVoxelsBefore[1] - Burnout.VoxelsPerClay);
+
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
+
+        Assert.Equal(blank.RimVoxels, blank.ClayVoxels);
+    }
+
+    [Fact]
+    public void AHullFinishedInASaveFromBeforeLoadsFinished()
+    {
+        var blank = Blank();
+        tree!.SetInt("level", blank.Hollowings);
+
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
+
+        Assert.True(blank.Finished);
+    }
+
+    [Fact]
+    public void ARimABallShortInASaveFromBeforeStaysShort()
+    {
+        int last = Config.Hollowings - 1;
+        var blank = Blank();
+        tree!.SetInt("level", last);
+        tree.SetInt("clayVoxels", Config.RimVoxelsBefore[last] - Burnout.VoxelsPerClay);
+
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
+
+        Assert.False(blank.Clayed);
+    }
+
+    [Fact]
+    public void AHewingHalfDoneInASaveFromBeforeTheRoundEndsKeepsTheSectionsItCut()
+    {
+        var blank = Charred(Bare());
+        tree!.SetInt("strokes", Config.StrokesPerHewingBefore / 2);
+
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
+
+        Assert.Equal(blank.Sections, blank.SectionsCut);
+        Assert.Equal(0, blank.SectionsTrimmed);
     }
 
     [Fact]
@@ -304,7 +379,7 @@ public class BurnoutTests
     {
         var blank = Charred(Bare());
 
-        Assert.Equal(32, blank.StrokesPerHewing);
+        Assert.Equal(36, blank.StrokesPerHewing);
         for (int stroke = 1; stroke < blank.StrokesPerHewing; stroke++) Assert.False(blank.Stroke());
         Assert.Equal(0, blank.Level);
         Assert.True(blank.Stroke());

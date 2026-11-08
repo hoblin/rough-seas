@@ -1,6 +1,6 @@
 # Rough Seas
 
-![Rough Seas](docs/logo/rough-seas-logo-card.png)
+![Rough Seas](docs/logo/rough-seas-logo-storm.webp)
 
 A [Vintage Story](https://www.vintagestory.at) mod that makes the ocean dangerous and worth going out on.
 
@@ -28,7 +28,7 @@ The game's handbook explains all of this from a player's point of view. Search i
 
 Multiplayer: the server and every client need the mod.
 
-A new world can use the **Rough Seas** playstyle. It is standard survival with more open ocean. Any world has the **Dangerous oceans** setting, which is on by default. With it off, the sea keeps its weather and currents, but storms, surf and swamping do no harm.
+A new world can use the **Rough Seas** playstyle. It is standard survival with more open ocean. Each mechanic of the sea has a world setting of its own, all on by default: water in the bilge, hull damage, lightning, mooring strain, currents, rower fatigue and the pole's depth. Turn one off and the sea keeps its weather, but that mechanic leaves your game.
 
 ## Problems and ideas
 

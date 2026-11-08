@@ -44,7 +44,6 @@ The wind is the background wind of the region and season, plus every storm that 
 | --- | --- |
 | `At(x, z)` | the sea state there, a `SeaState` |
 | `CurrentAt(x, z)` | the current and the water's temperature there, a `SeaCurrent` |
-| `DangerousOceans` | the world's [Dangerous oceans](World-Settings#dangerous-oceans) setting |
 | `Clock` | the time the sea keeps, a `SeaClock`: [The sea's time](#the-seas-time) |
 
 `SeaState`:
@@ -74,7 +73,7 @@ Three things to keep in mind when you use the numbers:
 
 - **A height is the sea, not a wave.** Single waves scatter around `WaveHeight`: most lower, one in a hundred half again as high ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A mod that throws waves at something draws them the same way, one per `WavePeriod`.
 - **The wind is in m/s here.** Vanilla's `GetWindSpeedAt` gives the same wind on its own scale, 1.0 for 25 m/s ([Reading the weather](Reading-the-Weather)).
-- **The state doesn't know about danger.** Wind, waves and currents run whether or not the oceans are dangerous. A mod that harms something by them reads `DangerousOceans` first, as ours do.
+- **The state doesn't know about danger.** Wind, waves and currents run whatever the world settings. A mod that harms something by them reads the setting for that harm first, as ours do: `api.World.Config.GetBool("hullDamage", true)`, with the codes on [World settings](World-Settings#the-mechanics).
 
 ### A helm that shows the sea
 

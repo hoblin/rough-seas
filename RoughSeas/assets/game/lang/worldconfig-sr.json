@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Узбуркано море",
     "playstyle-desc-preset-roughseas": "Нормално преживљавање у свету отворених океана, где су ветар, олује и море опасни.",
     "worldconfig-category-roughseas": "Узбуркано море",
-    "worldattribute-dangerousOceans": "Опасни океани",
-    "worldattribute-dangerousOceans-desc": "Олује, бибавица и муње могу да потопе, преврну и разбију пловила, и да их откину са веза и сидра. Искључено, море задржава своје време, али не наноси штету."
+    "worldattribute-bilgeWater": "Вода у каљужи",
+    "worldattribute-bilgeWater-desc": "Таласи се ломе преко пловила, а киша пада у отворено пловило и пуни му каљужу док је не избациш. Кад је искључено, ни таласи ни киша не додају воду; кроз процеп она и даље продире.",
+    "worldattribute-hullDamage": "Оштећење трупа",
+    "worldattribute-hullDamage-desc": "Од стена, обале, удара, брзака, таласа који се ломе и времена труп пуца, а кроз напрслину продире вода. Кожа труне, неподмазани шавови пропуштају воду, а трска се натапа. Кад је искључено, ниједан труп се не оштећује, и сваки труп је поново цео.",
+    "worldattribute-stormLightning": "Муње",
+    "worldattribute-stormLightning-desc": "Олује бацају муње близу тебе, а јарбол их привлачи.",
+    "worldattribute-mooringStrain": "Оптерећење привеза",
+    "worldattribute-mooringStrain-desc": "Олуја вуче сидра, кида конопце за везивање и избацује на обалу пловило привезано док те нема.",
+    "worldattribute-oceanCurrents": "Струје",
+    "worldattribute-oceanCurrents-desc": "Струје и ветар односе пловило којим нико не управља.",
+    "worldattribute-rowerFatigue": "Умор веслача",
+    "worldattribute-rowerFatigue-desc": "Од веслања веслима, веслања лопатом и гурања мотком огладниш.",
+    "worldattribute-poleDepth": "Дубина за мотку",
+    "worldattribute-poleDepth-desc": "Мотка гура само тамо где досеже дно. Кад је искључено, гура у води било које дубине као пуним потиском."
 }

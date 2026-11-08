@@ -137,7 +137,8 @@ LOOK
                              the free camera: placed around entity ID (or `player`), DEG clockwise
                              from its heading (0 ahead, 90 to starboard, 180 astern), M blocks off
                              and up, looking at ID or `look`; it follows the entity, or with hold=1
-                             stays where it stood. With seconds, it moves to the second station
+                             stays where it stood, framing the same view after the entity is gone.
+                             It looks at the middle of the entity as drawn. With seconds, it moves to the second station
                              over S seconds, easing in and out. The player stays put and in the
                              picture, seated aboard or rowing: the view is the game's third person
                              brought to zero distance. bin/game camera alone shows the shot
@@ -176,6 +177,13 @@ ACT
                              W,A,S,D, Space, ShiftLeft, ControlLeft, Q, E, R, F, Number1 ...
                              Mounted, W/S row or sail and A/D steer.
   bin/game click [BUTTON] [MS]  hold left, right (default) or middle on what the camera points at
+  bin/game use X Y Z [KEYS] [BUTTON]
+                             click BUTTON (right by default) on the top face of the block at absolute
+                             X Y Z with KEYS held (ShiftLeft, ControlLeft,ShiftLeft), as Shift +
+                             right-click lays a pile or Ctrl + Shift a layer of it, and print the
+                             block above it and the block itself before and after. When neither
+                             changed it fails, saying how far the eye stood (the server drops a click
+                             beyond its reach) and what lies above (a plant takes the place)
   bin/game scroll [STEPS]    turn the mouse wheel STEPS notches (default 1) over the open dialogs,
                              down; negative scrolls up. A long handbook page shows its end this way
   bin/game respawn           a dead player respawns, as the death screen's Respawn button does
@@ -259,6 +267,16 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge dress CODE         put clothing CODE on the player, in the outfit slot that takes it:
                              game:clothes-upperbody-hunter-shirt for a plain player at sea in a picture
   /bridge hold CODE          put item or block CODE in the active hotbar slot, held in the hand
+  /bridge craft STACK...     lay stacks in the player's crafting grid from its top left and take what it
+                             makes, as a click on the output does: CODE, CODE*N for N of it, hand for the
+                             held stack (attributes and all), _ for an empty slot. Replies with the stack
+                             made and its attributes, what the recipe gave back into the inventory (a
+                             bucket, a stone) and what was left in the grid; all of it ends in the
+                             inventory. Nothing matched: it says what the grid held
+  /bridge pot CONTENT PORTIONS SERVINGS [POT]
+                             hold a cooked pot (dirtyclaypot-brown-cooked by default) of SERVINGS servings of
+                             PORTIONS CONTENT each, as the firepit leaves it: glueportion-pitch-hot 100 1 is a
+                             pot of hot pitch, a litre
   /bridge drop CODE X Y Z    an item or block CODE lying on the ground there, at rest (~ relative)
   /bridge set ID KEY VALUE   set a watched attribute: int, float, bool or string by its form, a double with a
                              trailing d (roughseas:build/rimCharMetres 0.05d, for a tree read as doubles), while a
@@ -442,6 +460,21 @@ case "${1:-}" in
   slot) post "/look?slot=$2" ;;
   press) post "/input?keys=$2&ms=${3:-100}" ;;
   click) post "/input?mouse=${2:-right}&ms=${3:-100}" ;;
+  use)
+    x=$2 y=$3 z=$4 keys=${5:-} button=${6:-right}
+    blocks() { echo "$(post "/hover?block=$x,$((y + 1)),$z" | jq -r .block) on $(post "/hover?block=$x,$y,$z" | jq -r .block)"; }
+    before=$(blocks)
+    [ -z "$keys" ] || post "/input?keys=$keys&ms=down" >/dev/null
+    post "/input?mouse=$button&ms=150" >/dev/null
+    [ -z "$keys" ] || post "/input?keys=$keys&ms=up" >/dev/null
+    sleep 1.2
+    after=$(blocks)
+    metres=$(get "$bridge/state" | jq --argjson x "$x" --argjson y "$y" --argjson z "$z" \
+      '[.pos.X - $x - 0.5, .pos.Y + 1.6 - $y - 1, .pos.Z - $z - 0.5] | map(. * .) | add | sqrt * 10 | round / 10')
+    echo "before: $before"
+    echo "after:  $after"
+    [ "$before" != "$after" ] || fail "Nothing changed at $x $y $z or above it: the eye is $metres m from its top (the server drops a click beyond its reach), and the block above is ${before%% on *}"
+    ;;
   hotkey) post "/hotkey?code=${2:-}" ;;
   camera)
     shift

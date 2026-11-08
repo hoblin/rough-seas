@@ -34,6 +34,8 @@ public sealed class LashedHull(Func<ITreeAttribute> tree, Action changed, string
 
     public override void Adopt(float integrity) => SetLashing(integrity);
 
+    public override void MendWhole() => SetLashing(1);
+
     private void SetLashing(double lashing)
     {
         Tree.SetFloat(LashingKey, (float)Math.Clamp(lashing, 0, 1));

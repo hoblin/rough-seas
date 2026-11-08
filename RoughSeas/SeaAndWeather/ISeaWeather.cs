@@ -8,9 +8,6 @@ namespace RoughSeas.SeaAndWeather;
 /// </summary>
 public interface ISeaWeather
 {
-    /// <summary>The world's "dangerous oceans" setting: whether the sea may do harm.</summary>
-    bool DangerousOceans { get; }
-
     /// <summary>The time the sea keeps, and every mechanic of ours at sea with it.</summary>
     SeaClock Clock { get; }
 

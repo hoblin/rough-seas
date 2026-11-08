@@ -28,4 +28,4 @@ So a boat left at the water's edge is not where you left it when you come back. 
 
 Drift only happens where the game is running, within about 128 blocks of a player. A vessel far from everyone stays put until someone comes near.
 
-The [raft](Raft), the [sailboat](Sailboat) and every vessel of the mod drift the same way. Currents run with [Dangerous oceans](World-Settings#dangerous-oceans) on or off.
+The [raft](Raft), the [sailboat](Sailboat) and every vessel of the mod drift the same way. With [Currents](World-Settings#the-mechanics) off, the currents still flow, but carry no vessel.

@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Бурное море",
     "playstyle-desc-preset-roughseas": "Обычное выживание в мире с открытым океаном, где ветер, шторма и море опасны.",
     "worldconfig-category-roughseas": "Бурное море",
-    "worldattribute-dangerousOceans": "Опасный океан",
-    "worldattribute-dangerousOceans-desc": "Бури, прибой и молнии могут залить, опрокинуть и разбить суда и сорвать их со швартовов и якорей. Если выключено, погода на море остаётся, но вреда оно не причиняет."
+    "worldattribute-bilgeWater": "Вода в лодке",
+    "worldattribute-bilgeWater-desc": "Волны захлёстывают судно, а дождь падает в открытое судно и наполняет его водой, пока вы её не вычерпаете. Если выключено, ни волны, ни дождь воды не добавляют; через течь она всё равно поступает.",
+    "worldattribute-hullDamage": "Повреждение корпуса",
+    "worldattribute-hullDamage-desc": "Скалы, берег, тараны, пороги, прибой и непогода дают корпусу трещины, а через трещину сочится вода. Кожа гниёт, несмазанные швы пропускают воду, тростник намокает. Если выключено, ни один корпус не повреждается, и каждый корпус становится целым.",
+    "worldattribute-stormLightning": "Молнии",
+    "worldattribute-stormLightning-desc": "Бури бьют молниями рядом с вами, а мачта их притягивает.",
+    "worldattribute-mooringStrain": "Нагрузка на швартовы",
+    "worldattribute-mooringStrain-desc": "Буря тащит якоря, рвёт швартовы и выбрасывает на берег судно, оставленное на швартовах, пока вас нет.",
+    "worldattribute-oceanCurrents": "Течения",
+    "worldattribute-oceanCurrents-desc": "Течения и ветер уносят судно, которым никто не правит.",
+    "worldattribute-rowerFatigue": "Усталость гребца",
+    "worldattribute-rowerFatigue-desc": "Гребля вёслами, гребля одним веслом и ход на шесте вызывают голод.",
+    "worldattribute-poleDepth": "Глубина для шеста",
+    "worldattribute-poleDepth-desc": "Шест толкает лишь там, где достаёт до дна. Если выключено, он толкает на любой глубине, как при полном толчке."
 }

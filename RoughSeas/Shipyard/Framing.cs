@@ -114,7 +114,10 @@ public sealed class Framing
 
     public double NextMetres => Current is { } stage && Laid(stage) < stage.Metres.Length ? stage.Metres[Laid(stage)] : 0;
 
-    public int Laid(FramingStage stage) => Tree?.GetInt(stage.Group) ?? stage.Pieces;
+    public int Laid(FramingStage stage) =>
+        Tree is not { } tree ? stage.Pieces
+        : Stages.SkipWhile(each => each != stage).Skip(1).Any(later => tree.GetInt(later.Group) > 0) ? stage.Pieces
+        : tree.GetInt(stage.Group);
 
     /// <summary>What the stages done bring her, each its <paramref name="brings"/>.</summary>
     public double Raised(Func<FramingStage, double> brings) => Stages.Where(stage => Laid(stage) >= stage.Pieces).Sum(brings);
@@ -123,6 +126,17 @@ public sealed class Framing
     public double Share(FramingStage stage) => stage.Pieces == 0 ? 1 : (double)Laid(stage) / stage.Pieces;
 
     public bool Finished(double hours) => Built && hours >= SetsAt;
+
+    /// <summary>Carries a save from a release whose stages took <see cref="FramingStage.PiecesBefore"/> pieces over to today's count: each keeps its share of the work, rounded up.</summary>
+    public void KeepProgress()
+    {
+        if (Tree is not { } tree) return;
+
+        foreach (var stage in Stages.Where(stage => stage.PiecesBefore > 0 && tree.GetInt(stage.Group) > 0))
+        {
+            tree.SetInt(stage.Group, Math.Min(stage.Pieces, (int)Math.Ceiling((double)tree.GetInt(stage.Group) * stage.Pieces / stage.PiecesBefore)));
+        }
+    }
 
     /// <summary>Lays the current stage's next piece, of <paramref name="wood"/> when it is of one, setting by <paramref name="setsAt"/>.</summary>
     public void Lay(string? wood, double setsAt, int pieces = 1)
@@ -202,6 +216,9 @@ public sealed class FramingStage
     /// <summary>How many pieces the stage takes, counted from the shape.</summary>
     [Newtonsoft.Json.JsonIgnore]
     public int Pieces;
+
+    /// <summary>How many pieces the stage took in the last release before its count changed; 0 when it never did.</summary>
+    public int PiecesBefore;
 
     /// <summary>The metres of lath or pole each piece takes, as its shape names them.</summary>
     [Newtonsoft.Json.JsonIgnore]

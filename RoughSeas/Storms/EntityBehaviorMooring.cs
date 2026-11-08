@@ -99,7 +99,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
     public override void OnEntityLoaded()
     {
-        if (entity.World.Side != EnumAppSide.Server || !sea.DangerousOceans) return;
+        if (entity.World.Side != EnumAppSide.Server || !Mechanic.MooringStrain.On(entity.World)) return;
 
         var lastSeen = Tree.GetDouble("lastSeenHours", Unmoored);
         var reach = Tree.GetDouble("reach", Unmoored);
@@ -128,7 +128,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             sinceUpdate = 0;
             if (ashoreIn > 0) return;
 
-            if (sea.DangerousOceans) ashore.Roll(entity.GetBehavior<EntityBehaviorVesselIntegrity>());
+            if (Mechanic.MooringStrain.On(entity.World)) ashore.Roll(entity.GetBehavior<EntityBehaviorVesselIntegrity>());
             ashore = null;
         }
         sinceUpdate = 0;
@@ -150,6 +150,8 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
     private void Strain(SeaState state)
     {
+        if (!Mechanic.MooringStrain.On(entity.World)) return;
+
         var force = forces!.Force(state);
         if (Anchor is { } anchor) Strain(anchor, force, state);
         else if (StakeRope() is { } rope) Strain(rope, force);

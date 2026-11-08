@@ -1,4 +1,4 @@
-![The sailboat afloat](images/sailboat/afloat-bow.webp)
+![The sailboat ashore](images/sailboat/ashore-close.webp)
 
 The game's own sailing boat: an open hull of planks on a keel, with a mast stepped amidships carrying one square sail on a yard, a steering oar aft and room for cargo. It is built in place on the shore, plank by plank, and launched from there.
 

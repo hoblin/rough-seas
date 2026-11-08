@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Бурнае мора",
     "playstyle-desc-preset-roughseas": "Звычайнае выжыванне ў свеце з адкрытым акіянам, дзе вецер, штормы і мора небяспечныя.",
     "worldconfig-category-roughseas": "Бурнае мора",
-    "worldattribute-dangerousOceans": "Небяспечны акіян",
-    "worldattribute-dangerousOceans-desc": "Штормы, прыбой і маланкі могуць затапіць, перакуліць і разбіць судны, а таксама сарваць іх са швартовых і з якара. Калі выключана, надвор'е на моры застаецца, але шкоды яно не робіць."
+    "worldattribute-bilgeWater": "Вада ў лодцы",
+    "worldattribute-bilgeWater-desc": "Хвалі заліваюць судна, а дождж падае ў адкрытае судна і напаўняе яго вадой, пакуль вы яе не вычарпаеце. Калі выключана, ні хвалі, ні дождж вады не дадаюць; праз цечу яна ўсё роўна паступае.",
+    "worldattribute-hullDamage": "Пашкоджанне корпуса",
+    "worldattribute-hullDamage-desc": "Скалы, бераг, тараны, парогі, прыбой і непагадзь даюць корпусу трэшчыны, а праз трэшчыну сочыцца вада. Скура гніе, незмазаныя швы прапускаюць ваду, чарот намакае. Калі выключана, ніводзін корпус не пашкоджваецца, і кожны корпус становіцца цэлым.",
+    "worldattribute-stormLightning": "Маланкі",
+    "worldattribute-stormLightning-desc": "Буры б'юць маланкамі побач з вамі, а мачта іх прыцягвае.",
+    "worldattribute-mooringStrain": "Нагрузка на швартовы",
+    "worldattribute-mooringStrain-desc": "Бура цягне якары, рве швартовы і выкідвае на бераг судна, пакінутае на швартовах, пакуль вас няма.",
+    "worldattribute-oceanCurrents": "Плыні",
+    "worldattribute-oceanCurrents-desc": "Плыні і вецер зносяць судна, якім ніхто не кіруе.",
+    "worldattribute-rowerFatigue": "Стомленасць весляра",
+    "worldattribute-rowerFatigue-desc": "Веславанне, грэбля адным вяслом і ход на жэрдцы выклікаюць голад.",
+    "worldattribute-poleDepth": "Глыбіня для жэрдкі",
+    "worldattribute-poleDepth-desc": "Жэрдка штурхае толькі там, дзе дастае да дна. Калі выключана, яна штурхае на любой глыбіні, як пры поўным штуршку."
 }

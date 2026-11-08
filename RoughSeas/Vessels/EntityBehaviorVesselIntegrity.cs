@@ -15,7 +15,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
-public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
+public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver, IMendedHull
 {
     public const string Code = "roughseas:vesselintegrity";
 
@@ -23,6 +23,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private const string CarriedKey = "roughseas:vessel";
     private const string VersionKey = "version";
     private const string CheckedAtKey = "checkedAt";
+    private const string SparedKey = "spared";
     private const int DataVersion = 2;
     private const double WreckageScatterSpeed = 0.3;
     private const int InvulnerableMs = 500;
@@ -245,6 +246,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     public override void OnGameTick(float deltaTime)
     {
         if (entity.World.Side == EnumAppSide.Client && !RunsHere()) course.Record(entity.Pos.X, entity.Pos.Z, entity.World.ElapsedMilliseconds);
+        if (entity.World.Side == EnumAppSide.Server) Spare();
         if ((sinceUpdate += deltaTime) >= UpdateSeconds)
         {
             Float();
@@ -286,7 +288,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     /// the harm does is the hull model's.
     /// </summary>
     /// <param name="load">In joules; a slam's in pascals.</param>
-    public void Strike(double load, HullPlace place, Blow blow = Blow.Broad)
+    /// <param name="armed">A weapon's or a blast's: it harms whatever the world's hull damage; anything else is heard and leaves her whole while that is off.</param>
+    public void Strike(double load, HullPlace place, Blow blow = Blow.Broad, bool armed = false)
     {
         if (!entity.Alive) return;
         var rand = entity.World.Rand;
@@ -294,6 +297,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         double strength = Scatter.Of(damageConversion.Variation.GetValueOrDefault(blow), rand);
         double resists = resistance.Against(blow, backed) * strength;
         double severity = resistance.Severity(load, blow, backed, strength);
+        if (!armed && !Harms($"a {blow.ToString().ToLowerInvariant()} blow at the {place.Code()} with {Load(blow, load)}"))
+        {
+            Struck?.Invoke(place, severity, null);
+            return;
+        }
         if (model is not IKnockable knockable)
         {
             vessels.Log(entity, "struck at the {0} with {1}: the hull gives, unharmed", place.Code(), Load(blow, load));
@@ -350,13 +358,40 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
         Impact(joules, place);
     }
 
+    private void Spare()
+    {
+        bool spared = Tree.GetBool(SparedKey);
+        if (Mechanic.HullDamage.On(entity.World))
+        {
+            if (spared) Tree.RemoveAttribute(SparedKey);
+            return;
+        }
+
+        Tree.SetDouble(CheckedAtKey, seaWeather.Clock.Hours);
+        if (spared) return;
+
+        model.MendWhole();
+        outboard?.MendWhole();
+        Tree.SetBool(SparedKey, true);
+        MarkDirty();
+        vessels.Log(entity, "mended whole, hull {0:F2}: hull damage is off", Integrity);
+    }
+
+    private bool Harms(string what)
+    {
+        if (Mechanic.HullDamage.On(entity.World)) return true;
+
+        vessels.Log(entity, "{0} leaves her unharmed: hull damage is off", what);
+        return false;
+    }
+
     /// <summary>A knock toward this place: on what stands off her there, when something does, else on her hull.</summary>
     public void Impact(double joules, HullPlace place)
     {
         if (!entity.Alive) return;
 
-        if (outboard?.Side == place) outboard.Strike(joules);
-        else Strike(joules, place);
+        if (outboard?.Side != place) Strike(joules, place);
+        else if (Harms($"a knock of {joules:F0} J on what stands off her")) outboard.Strike(joules);
     }
 
     public HullPlace Toward(double worldX, double worldZ)
@@ -436,39 +471,32 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     public override void OnEntityReceiveDamage(DamageSource damageSource, ref float damage)
     {
         if (entity.World.Side != EnumAppSide.Server || damageSource.Type == EnumDamageType.Heal) return;
-        if (damageSource.Source == EnumDamageSource.Weather && !seaWeather.DangerousOceans) return;
+        if (damageSource.Source == EnumDamageSource.Weather && !Harms("the weather")) return;
 
         entity.SetActivityRunning("invulnerable", InvulnerableMs);
         var place = PlaceOf(damageSource);
         vessels.Log(entity, "takes {0:F1} {1} damage from {2} at the {3}", damage, damageSource.Type, damageSource.Source, place.Code());
         var blow = damageConversion.BlowOf(damageSource);
         double joules = damageConversion.Joules(damageSource, damage);
-        if (outboard == null || Landing(damageSource, blow) is not { } hit || !LandsOutboard(hit)) Strike(joules, place, blow);
+        if (outboard == null || Landing(damageSource, blow) is not { } hit || !LandsOutboard(hit)) Strike(joules, place, blow, armed: true);
         else if (blow == Blow.Broad) outboard.Strike(joules);
         else vessels.Log(entity, "a {0} blow lands on what stands off her {1}: its wood takes it", blow.ToString().ToLowerInvariant(), outboard.Side.Code());
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
-        bool server = entity.World.Side == EnumAppSide.Server;
-        if (mode == EnumInteractMode.Attack)
-        {
-            if (server) Swing(byEntity, itemslot, hitPosition);
-            return;
-        }
-        if (RepairWith(itemslot) is not { } repair) return;
-        var place = At(hitPosition);
-        var refusal = Refusal(repair, itemslot, place);
-        if (refusal != null && !OnHull(byEntity)) return;
-
-        handled = EnumHandling.PreventSubsequent;
-        if (refusal != null)
-        {
-            if (entity.Api is ICoreClientAPI capi) capi.TriggerIngameError(this, "roughseas-vessel-mend", refusal);
-            return;
-        }
-        if (server) Mend(byEntity, itemslot, repair, place);
+        if (mode == EnumInteractMode.Attack && entity.World.Side == EnumAppSide.Server) Swing(byEntity, itemslot, hitPosition);
     }
+
+    public MendWork? MendWith(ItemSlot slot, EntityAgent byEntity, Vec3d hit)
+    {
+        if (RepairWith(slot) is not { } repair) return null;
+
+        var work = Refused(repair, slot, At(hit)) ?? new MendWork(repair.Seconds);
+        return work.Refusal != null && !OnHull(byEntity) ? null : work;
+    }
+
+    public void Mend(EntityAgent byEntity, ItemSlot slot, Vec3d hit) => Mend(byEntity, slot, RepairWith(slot)!, At(hit));
 
     /// <summary>Whether the held item is one this hull is mended or greased with, whether or not it would help now.</summary>
     public bool MendsWith(ItemSlot slot) => RepairWith(slot) != null;
@@ -739,14 +767,14 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver
     private HullRepair? RepairWith(ItemSlot slot) =>
         repairs.FirstOrDefault(repair => slot.Itemstack?.Collectible.Code == repair.Material.Code);
 
-    private string? Refusal(HullRepair repair, ItemSlot slot, HullPlace place)
+    private MendWork? Refused(HullRepair repair, ItemSlot slot, HullPlace place)
     {
         if (model is not IMendable mendable || !mendable.Needs(repair, place))
         {
-            return Lang.Get(repair.Greases ? "roughseas:vessel-nothing-to-grease" : "roughseas:vessel-nothing-to-mend");
+            return new MendWork(repair.Seconds, repair.Greases ? "vessel-nothing-to-grease" : "vessel-nothing-to-mend");
         }
         return slot.StackSize < repair.Material.StackSize
-            ? Lang.Get("roughseas:vessel-mend-takes", repair.Material.StackSize, slot.GetStackName())
+            ? new MendWork(repair.Seconds, "vessel-mend-takes", repair.Material.StackSize, slot.GetStackName())
             : null;
     }
 

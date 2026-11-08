@@ -78,4 +78,12 @@ public class PoleConfig
 
     public double Travel(double metres, double handsAboveBedMetres) =>
         handsAboveBedMetres >= metres ? 0 : Math.Max(0, Math.Sqrt(metres * metres - handsAboveBedMetres * handsAboveBedMetres) - Footing(handsAboveBedMetres));
+
+    /// <summary>The hands' height over the bed at which a pole travels this far: <see cref="Travel"/> solved for the height.</summary>
+    public double HandsAboveBedFor(double metres, double travelMetres)
+    {
+        var slope = Math.Tan(WorkingRadians);
+        var secantSquared = 1 + slope * slope;
+        return (Math.Sqrt(metres * metres * secantSquared - travelMetres * travelMetres) - travelMetres * slope) / secantSquared;
+    }
 }

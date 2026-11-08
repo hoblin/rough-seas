@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -58,7 +59,8 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
     {
         hull = IHull.Of(entity);
         var sea = entity.GetBehavior<EntityBehaviorSeaForces>();
-        station = new RowerStation(attributes, propulsion.Config, propulsion.WaterDensity, (along, across, blocks) => sea?.WaterDepth(along, across, blocks) ?? 0);
+        station = new RowerStation(attributes, propulsion.Config, propulsion.WaterDensity, (along, across, blocks) => sea?.WaterDepth(along, across, blocks) ?? 0,
+            () => Mechanic.PoleDepth.On(entity.World));
     }
 
     /// <summary>

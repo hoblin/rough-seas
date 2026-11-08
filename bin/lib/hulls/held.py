@@ -39,10 +39,12 @@ SEATED_CLIMB = 6
 SEATED_OUTBOARD = 2
 REST = 8
 CLEARANCE = 0.05
-# The seated pole's first-person arms, in voxels, of vanilla's `-fp` twins' order (seraph-faceless.json moves the
-# shoulders up to 7 apart and 5 down), chosen on the bench: they clear the view ahead and keep the pole in it.
+# The first-person arms, in voxels, of vanilla's `-fp` twins' order (seraph-faceless.json moves the shoulders up to
+# 7 apart and 5 down), chosen on the bench against the raft's: they clear the view ahead and keep the arms in it.
 SEEN_DOWN = 7
 SEEN_OUT = 3
+STANDING_SEEN_DOWN = 1
+STANDING_SEEN_OUT = 3
 UPPER_ARMS = ("UpperArmR", "UpperArmL")
 
 
@@ -408,7 +410,7 @@ class Stance:
         self.at, self.idle, self.poses, self.feet = at, idle, poses, feet
 
 
-def standing_poling(tool, at, waterline_voxels, out, chine, side=-1, floor_at=None):
+def standing_poling(tool, at, waterline_voxels, out, chine, side=-1, floor_at=None, clear_view=False):
     x, floor, z = at
     floor_at = floor_at or (lambda foot_x, across: floor)
     bed = waterline_voxels - units.voxels(PLANT_DEPTH_METRES)
@@ -431,7 +433,8 @@ def standing_poling(tool, at, waterline_voxels, out, chine, side=-1, floor_at=No
             hips |= rower.legs[leg_side].plant(hips, rower.body(foot))
         return hips
 
-    return Stance(at, STANDING, three(placed, body, path.planting(out, tool)), feet)
+    seen = (0, -STANDING_SEEN_DOWN, side * STANDING_SEEN_OUT) if clear_view else None
+    return Stance(at, STANDING, three(placed, body, path.planting(out, tool), seen), feet)
 
 
 def lerp(span, share):
@@ -443,9 +446,9 @@ def planted(tool, hand, foot, crossed=0):
     return tool.gripped(hand, foot, {LEFT: upper + HAND_SPAN * crossed, RIGHT: upper + HAND_SPAN * (1 - crossed)})
 
 
-def poling(standing, seat_at, waterline_voxels, out, stand_at, chine, floor_at=None):
+def poling(standing, seat_at, waterline_voxels, out, stand_at, chine, floor_at=None, clear_view=False):
     if standing:
-        return "pole", POLE, standing_poling(POLE, stand_at, waterline_voxels, out, chine, floor_at=floor_at)
+        return "pole", POLE, standing_poling(POLE, stand_at, waterline_voxels, out, chine, floor_at=floor_at, clear_view=clear_view)
     return "seatedpole", POLE, seated_poling(POLE, seat_at, waterline_voxels, out)
 
 

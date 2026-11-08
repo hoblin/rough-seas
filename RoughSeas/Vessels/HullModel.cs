@@ -53,6 +53,8 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
 
     public abstract void Adopt(float integrity);
 
+    public abstract void MendWhole();
+
     public virtual void TurnEndForEnd(ITreeAttribute tree) { }
 
     protected ITreeAttribute Tree => tree();
