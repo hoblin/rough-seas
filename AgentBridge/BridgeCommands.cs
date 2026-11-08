@@ -840,23 +840,26 @@ public class BridgeCommands : ModSystem
         if (stacks.Length > size) return TextCommandResult.Error($"The grid holds {size} stacks");
         if (Enumerable.Range(0, size).Any(i => !grid[i].Empty)) return TextCommandResult.Error("The crafting grid is not empty: take its stacks out first");
 
+        var hand = player.InventoryManager.ActiveHotbarSlot;
+        if (stacks.FirstOrDefault(code => code is not ("_" or "hand") && Stack(code.Split('*')[0]) == null) is { } unknown) return TextCommandResult.Error($"No item or block {unknown}");
+        if (stacks.Contains("hand") && hand.Empty) return TextCommandResult.Error("The hand is empty");
+
         for (int i = 0; i < stacks.Length; i++)
         {
-            ItemStack? stack;
             if (stacks[i] == "_") continue;
+
+            ItemStack stack;
             if (stacks[i] == "hand")
             {
-                stack = player.InventoryManager.ActiveHotbarSlot.TakeOutWhole();
-                player.InventoryManager.ActiveHotbarSlot.MarkDirty();
+                stack = hand.TakeOutWhole();
+                hand.MarkDirty();
             }
             else
             {
                 var parts = stacks[i].Split('*');
-                stack = Stack(parts[0]);
-                if (stack != null && parts.Length > 1) stack.StackSize = int.Parse(parts[1], CultureInfo.InvariantCulture);
+                stack = Stack(parts[0])!;
+                if (parts.Length > 1) stack.StackSize = int.Parse(parts[1], CultureInfo.InvariantCulture);
             }
-            if (stack == null) return TextCommandResult.Error($"No item or block {stacks[i]}");
-
             grid[i].Itemstack = stack;
             grid[i].MarkDirty();
         }

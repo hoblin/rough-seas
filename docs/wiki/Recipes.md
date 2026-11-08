@@ -63,7 +63,7 @@ Laths bend into a vessel's frame only wet. They soak through in two days, and dr
 **On the bottom of any water**, before you have a saw. Laths float even wet, so you weigh them down with stones:
 
 1. Put a full stack of 32 dry laths of one length and one wood in the crafting grid with stones of any rock: 26 stones for 2 m laths, 38 for 3 m, 51 for 4 m and a full stack of 64 for 5 m. You get a lath bundle.
-2. Hold the bundle and right-click any water: a pond, a river or the sea. It sinks to the bottom and stays there. It doesn't drift and doesn't despawn.
+2. Hold the bundle and right-click any water: a pond, a river or the sea. It sinks to the bottom and doesn't despawn. In still water and the sea it stays where it sank; running water, such as a waterfall's run, pushes it along as it pushes anything in it.
 3. Leave it for two days. Look at the bundle to see how long it has lain in the water.
 4. Right-click the bundle to lift it out. In deep water you dive for it.
 5. Put the bundle in the crafting grid to untie it. You get the 32 laths, wet once it has soaked two days, and every stone back.
