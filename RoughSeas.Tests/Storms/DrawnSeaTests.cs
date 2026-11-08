@@ -42,6 +42,7 @@ public class DrawnSeaTests
         Assert.False(sea.Swell);
         Assert.Equal(0, sea.HeightAt(X, Z));
         Assert.Equal(default, sea.PoseOf(X, Z, 0, Length, Width));
+        Assert.Equal(default, sea.HullVelocityAt(X, Z, 0, 0.2, 0, Length, Width));
     }
 
     [Fact]

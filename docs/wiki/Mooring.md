@@ -17,7 +17,7 @@ A strong enough pull snaps the rope. Every wave pulls on it, with the wind on th
 | [Birch-bark canoe](Birch-Bark-Canoe) | almost never | 1 in 3600 | 1 in 160 |
 | [Reed boat](Reed-Boat) | never | almost never | almost never |
 
-A snapped vessel drifts, and in a storm the drift is downwind. Pull small boats ashore, or pick them up, before a gale.
+A snapped vessel drifts with the current and the waves. Pull small boats ashore, or pick them up, before a gale.
 
 ## Thrown ashore
 

@@ -412,6 +412,13 @@ Laths soak on the bottom of any water as well as in the barrel, whose recipe sta
 
 New: `roughseas:lathbundle` (item and entity), `ItemLathBundle`, `EntityLathBundle`, `roughseas:restingphysics`, the icon `shapes/item/lathbundle-icon.json`.
 
+### The waves carry every hull
+
+The drawn waves now move every `EntityBoat` with `roughseas:seaforces`, steered or not ([A ship that rides our swell](Reading-the-Sea#a-ship-that-rides-our-swell)).
+
+- `IDrawnSea` gained `HullVelocityAt`. A class of yours that implements `IDrawnSea` has to add it. Code that only reads `IDrawnSea` is unaffected.
+- `config/seaweather.json`'s `currents.stokesDriftPerMps` is gone: the wind no longer moves an unsteered vessel, and `roughseas:currentdrift` carries the current alone.
+
 ## What not to touch
 
 | Name | What it is |

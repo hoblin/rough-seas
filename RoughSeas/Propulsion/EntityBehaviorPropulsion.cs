@@ -12,7 +12,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Propulsion;
 
-public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity)
+public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), IDriven
 {
     public const string Code = "roughseas:propulsion";
 
