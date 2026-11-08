@@ -842,6 +842,7 @@ public class BridgeCommands : ModSystem
 
         var hand = player.InventoryManager.ActiveHotbarSlot;
         if (stacks.FirstOrDefault(code => code is not ("_" or "hand") && Stack(code.Split('*')[0]) == null) is { } unknown) return TextCommandResult.Error($"No item or block {unknown}");
+        if (stacks.FirstOrDefault(code => code.Split('*') is [_, var count] && !(int.TryParse(count, NumberStyles.None, CultureInfo.InvariantCulture, out var n) && n > 0)) is { } miscounted) return TextCommandResult.Error($"Not a count of items: {miscounted}");
         if (stacks.Contains("hand") && hand.Empty) return TextCommandResult.Error("The hand is empty");
 
         for (int i = 0; i < stacks.Length; i++)
