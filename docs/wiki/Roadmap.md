@@ -85,6 +85,10 @@ You build every new vessel where it lies, and move it by paddle, pole and oars, 
 
 - **A setting for each mechanic.** Water in the bilge, hull damage, lightning, mooring strain, currents, rower fatigue and the pole's depth each have a world setting of their own, so you choose how hard the sea is, one mechanic at a time. More: [World settings](World-Settings#the-mechanics).
 
+## 4.2
+
+- **Laths soaked under stones.** Weigh a stack of laths down with stones and lay it on the bottom of any water: in two days the laths are wet, with no barrel and no saw. More: [Recipes](Recipes#soaked-laths).
+
 ## Seamanship
 
 Sailing becomes sailing.

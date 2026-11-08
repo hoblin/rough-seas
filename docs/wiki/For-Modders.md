@@ -402,6 +402,16 @@ The outrigger's washstrakes run its hull's whole length, the dugout's five logs,
 
 New: `piecesBefore`, `Framing.KeepProgress`.
 
+### Laths soaked under stones
+
+Laths soak on the bottom of any water as well as in the barrel, whose recipe stays ([Recipes](Recipes#soaked-laths)).
+
+- The item `roughseas:lathbundle-{wood}-{length}-{dry|soaked}`, class `roughseas:ItemLathBundle`, is made in the grid from 32 dry laths of one length and wood and `game:stone-*`: 26, 38, 51 or 64 stones for 2 to 5 m (`recipes/grid/lathbundles.json`). The stack attribute `weight` holds the stones, which `OnConsumedByCrafting` gives back when the bundle is untied in the grid. Untied, a `-soaked` bundle gives `-wet` laths and a `-dry` one `-dry` laths. A soaked bundle dries back to `-dry` by a vanilla `Dry` transition of 48 hours and keeps its `weight`.
+- Right-clicked on water or a block, it lays the entity `roughseas:lathbundle-{wood}-{length}`, class `roughseas:EntityLathBundle`: vanilla's passive physics at its default entity density, so it sinks, held by `roughseas:restingphysics` (`EntityBehaviorRestingPhysics`, a `passivephysics` that keeps an entity on the ground from moving sideways), so once on the bottom the push of flowing water doesn't move it. It has no `despawn` and no `roughseas:currentdrift`. Its watched tree `roughseas:soak` (`hours`, `soaked`, `checkedAt`) holds its water as hours of soaking on the sea clock: they rise while its block is water and fall at the same rate out of it, between 0 and its `soakHours` attribute, 48, the barrel's `sealHours` (`Soaking`). It is soaked once they reach `soakHours`, and stays soaked until they are back to 0, so a soaked bundle laid ashore dries in two days as its laths do. A right-click lifts it into the item of its state, a soaked one with the hours of wetness it has left as its `Dry` transition's, and laying a soaked item gives them back. It draws its stones in the texture of the rock they are.
+- `bin/model build coracle` writes the shapes `shapes/entity/lathbundle-{2..5}.json` (`bin/lib/hulls/piles.py`), its stones as many as the recipe takes.
+
+New: `roughseas:lathbundle` (item and entity), `ItemLathBundle`, `EntityLathBundle`, `roughseas:restingphysics`, the icon `shapes/item/lathbundle-icon.json`.
+
 ## What not to touch
 
 | Name | What it is |

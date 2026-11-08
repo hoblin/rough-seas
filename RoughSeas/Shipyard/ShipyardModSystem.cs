@@ -38,6 +38,9 @@ public class ShipyardModSystem : ModSystem
         api.RegisterBlockBehaviorClass(BlockBehaviorPileFiller.Code, typeof(BlockBehaviorPileFiller));
         api.RegisterEntityBehaviorClass(EntityBehaviorCovering.Code, typeof(EntityBehaviorCovering));
         api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
+        api.RegisterItemClass(ItemLathBundle.ClassName, typeof(ItemLathBundle));
+        api.RegisterEntity(EntityLathBundle.ClassName, typeof(EntityLathBundle));
+        api.RegisterEntityBehaviorClass(EntityBehaviorRestingPhysics.Code, typeof(EntityBehaviorRestingPhysics));
         LashingRope.Attach();
         CuttingKnife.Attach();
         LightingFirestarter.Attach();

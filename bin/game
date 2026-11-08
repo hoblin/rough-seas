@@ -267,6 +267,12 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge dress CODE         put clothing CODE on the player, in the outfit slot that takes it:
                              game:clothes-upperbody-hunter-shirt for a plain player at sea in a picture
   /bridge hold CODE          put item or block CODE in the active hotbar slot, held in the hand
+  /bridge craft STACK...     lay stacks in the player's crafting grid from its top left and take what it
+                             makes, as a click on the output does: CODE, CODE*N for N of it, hand for the
+                             held stack (attributes and all), _ for an empty slot. Replies with the stack
+                             made and its attributes, what the recipe gave back into the inventory (a
+                             bucket, a stone) and what was left in the grid; all of it ends in the
+                             inventory. Nothing matched: it says what the grid held
   /bridge pot CONTENT PORTIONS SERVINGS [POT]
                              hold a cooked pot (dirtyclaypot-brown-cooked by default) of SERVINGS servings of
                              PORTIONS CONTENT each, as the firepit leaves it: glueportion-pitch-hot 100 1 is a

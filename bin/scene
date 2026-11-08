@@ -403,6 +403,8 @@ birch-bark         item-roughseas:bark-birch         roughseas:bark-birch
 splitting-wedge    block-roughseas:wedge-we-0        roughseas:wedge-we-0
 reed-bundle        block-roughseas:reedbundle-cattailtops-none-we roughseas:reedbundle-cattailtops-none-we
 laths              item-roughseas:lath-oak-5-dry     roughseas:lath-oak-5-dry
+lath-bundle        item-roughseas:lathbundle-oak-5-dry roughseas:lathbundle-oak-5-dry
+lath-bundle-untied item-roughseas:lath-oak-5-wet     roughseas:lath-oak-5-wet     roughseas:lathbundle-oak-5-soaked
 anchor-warp        item-roughseas:anchorwarp         roughseas:anchorwarp
 paddle             item-roughseas:paddle-oak         roughseas:paddle-oak
 thole-oar          item-roughseas:tholeoar-oak       roughseas:tholeoar-oak
