@@ -173,6 +173,12 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Hold(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("craft")
+                .WithDescription("Lay stacks in the caller's crafting grid, slot by slot from the top left, and take what it makes, as a click on the output does: CODE, CODE*N for a stack of N, hand for the held stack, _ for an empty slot. Ingredients the recipe gives back go to the inventory, as in play")
+                .RequiresPlayer()
+                .WithArgs(parsers.All("stacks"))
+                .HandleWith(args => Craft(args.Caller.Player, ((string)args[0]).Split(' ', StringSplitOptions.RemoveEmptyEntries)))
+            .EndSubCommand()
             .BeginSubCommand("pot")
                 .WithDescription("Hold a cooked pot of something cooked in it, as the firepit leaves it: CONTENT, PORTIONS of it a serving, SERVINGS (glueportion-pitch-hot 100 1 is a pot of hot pitch)")
                 .RequiresPlayer()
@@ -826,6 +832,65 @@ public class BridgeCommands : ModSystem
         slot.MarkDirty();
         return TextCommandResult.Success($"Holding {code}");
     }
+
+    private TextCommandResult Craft(IPlayer player, string[] stacks)
+    {
+        var grid = player.InventoryManager.GetOwnInventory(GlobalConstants.craftingInvClassName);
+        var size = grid.Count - 1;
+        if (stacks.Length > size) return TextCommandResult.Error($"The grid holds {size} stacks");
+
+        for (int i = 0; i < stacks.Length; i++)
+        {
+            ItemStack? stack;
+            if (stacks[i] == "_") continue;
+            if (stacks[i] == "hand")
+            {
+                stack = player.InventoryManager.ActiveHotbarSlot.TakeOutWhole();
+                player.InventoryManager.ActiveHotbarSlot.MarkDirty();
+            }
+            else
+            {
+                var parts = stacks[i].Split('*');
+                stack = Stack(parts[0]);
+                if (stack != null && parts.Length > 1) stack.StackSize = int.Parse(parts[1], CultureInfo.InvariantCulture);
+            }
+            if (stack == null) return TextCommandResult.Error($"No item or block {stacks[i]}");
+
+            grid[i].Itemstack = stack;
+            grid[i].MarkDirty();
+        }
+
+        var output = grid[size];
+        var crafted = new DummySlot();
+        var before = Carried(player);
+        if (!output.Empty)
+        {
+            var op = new ItemStackMoveOperation(sapi.World, EnumMouseButton.Left, 0, EnumMergePriority.AutoMerge, output.StackSize) { ActingPlayer = player };
+            output.TryPutInto(crafted, ref op);
+        }
+        var givenBack = Carried(player).Select(pair => (code: pair.Key, count: pair.Value - before.GetValueOrDefault(pair.Key))).Where(pair => pair.count > 0).Select(pair => $"{pair.count}x{pair.code}").ToList();
+        var left = Enumerable.Range(0, size).Select(i => grid[i]).Where(slot => !slot.Empty).Select(slot => Describe(slot.Itemstack)).ToList();
+        foreach (var slot in Enumerable.Range(0, size).Select(i => grid[i]).Where(slot => !slot.Empty))
+        {
+            var rest = slot.TakeOutWhole();
+            if (!player.InventoryManager.TryGiveItemstack(rest, true)) sapi.World.SpawnItemEntity(rest, player.Entity.Pos.XYZ);
+            slot.MarkDirty();
+        }
+        if (crafted.Empty) return TextCommandResult.Error($"Nothing crafted; the grid held {string.Join(", ", left)}");
+
+        var made = Describe(crafted.Itemstack);
+        player.InventoryManager.TryGiveItemstack(crafted.Itemstack, true);
+        return TextCommandResult.Success($"Crafted {made}; given back: {(givenBack.Count == 0 ? "nothing" : string.Join(", ", givenBack))}; left in the grid: {(left.Count == 0 ? "nothing" : string.Join(", ", left))}");
+    }
+
+    private static string Describe(ItemStack stack) => $"{stack.StackSize}x{stack.Collectible.Code} {stack.Attributes.ToJsonToken()}";
+
+    private static Dictionary<AssetLocation, int> Carried(IPlayer player) =>
+        new[] { GlobalConstants.hotBarInvClassName, GlobalConstants.backpackInvClassName }
+            .SelectMany(name => player.InventoryManager.GetOwnInventory(name) ?? Enumerable.Empty<ItemSlot>())
+            .Where(slot => !slot.Empty)
+            .GroupBy(slot => slot.Itemstack.Collectible.Code)
+            .ToDictionary(group => group.Key, group => group.Sum(slot => slot.StackSize));
 
     private TextCommandResult Pot(IPlayer player, string content, int portions, double servings, string pot)
     {

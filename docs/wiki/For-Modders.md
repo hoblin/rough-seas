@@ -391,6 +391,16 @@ The dugout runs the whole length of its log row, and its hollow ends round insid
 
 New: `rimVoxelsBefore`, `strokesPerHewingBefore`, `EntityBehaviorBuild.Upgrade`, `Burnout.Unclayed`, `Burnout.KeepProgress`.
 
+### Laths soaked under stones
+
+Laths soak on the bottom of any water as well as in the barrel, whose recipe stays ([Recipes](Recipes#soaked-laths)).
+
+- The item `roughseas:lathbundle-{wood}-{length}-{dry|soaked}`, class `roughseas:ItemLathBundle`, is made in the grid from 32 dry laths of one length and wood and `game:stone-*`: 26, 38, 51 or 64 stones for 2 to 5 m (`recipes/grid/lathbundles.json`). The stack attribute `weight` holds the stones, which `OnConsumedByCrafting` gives back when the bundle is untied in the grid. Untied, a `-soaked` bundle gives `-wet` laths and a `-dry` one `-dry` laths. A soaked bundle dries back to `-dry` by a vanilla `Dry` transition of 48 hours and keeps its `weight`.
+- Right-clicked on water or a block, it lays the entity `roughseas:lathbundle-{wood}-{length}`, class `roughseas:EntityLathBundle`: plain passive physics at vanilla's default entity density, so it sinks and rests on the bottom. It has no `despawn` and no `roughseas:currentdrift`. It counts the hours its block is water in its watched tree `roughseas:soak` (`hours`, `soaked`, `checkedAt`) on the sea clock, up to its `soakHours` attribute, 48, the barrel's `sealHours`. A right-click lifts it into the item of its state. It draws its stones in the texture of the rock they are.
+- `bin/model build coracle` writes the shapes `shapes/entity/lathbundle-{2..5}.json` (`bin/lib/hulls/piles.py`), its stones as many as the recipe takes.
+
+New: `roughseas:lathbundle` (item and entity), `ItemLathBundle`, `EntityLathBundle`.
+
 ## What not to touch
 
 | Name | What it is |

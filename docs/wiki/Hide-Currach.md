@@ -39,7 +39,7 @@ You build a currach upside down, where you pile its gunwale laths on the ground,
 
 ![The whole build, from two laths to the currach turned over](images/currach/build-hide-currach.webp)
 
-1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: the gunwales and stringers take 5 m laths, the nine longest ribs 3 m ones and the other thirteen 2 m ones.
+1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days, in a barrel of water or bundled under stones on the bottom of any water ([how](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: the gunwales and stringers take 5 m laths, the nine longest ribs 3 m ones and the other thirteen 2 m ones.
 2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath to start a pile, as you pile [poles](Recipes#poles-and-laths-on-the-ground), along the way you face. Shift + right-click the pile with a second wet 5 m lath. The first lies along one side of the block, the second along the other. Only a pile of these two, with nothing more in it, becomes the gunwale. To take a lath back, right-click the pile with an empty hand.
 
    ![Two long laths laid side by side](images/currach/build-laths.webp)

@@ -39,7 +39,7 @@ You build a coracle where you pile its laths on the ground, piece by piece. Each
 
 ![The whole build, from the lattice to the finished coracle](images/coracle/build-coracle.webp)
 
-1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for the lattice and three 5 m ones for the gunwale. Laths bend only when wet: soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground, in the coracle or in the bundle.
+1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for the lattice and three 5 m ones for the gunwale. Laths bend only when wet: soak them two days, in a barrel of water or bundled under stones on the bottom of any water ([how](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground, in the coracle or in your inventory.
 2. **Lay the lattice.** Hold Shift and right-click the ground with a wet 2 m lath to start a pile, as you pile [poles](Recipes#poles-and-laths-on-the-ground). Shift + right-click the pile with the other thirteen; hold Ctrl as well to lay a whole layer at once. Two-metre laths pile as the coracle's lattice: seven along, then seven across them. The pile is centred on the block you lay it on and reaches half a block into each of the four blocks beside it, so keep those four free. Fourteen laths make one layer, and that layer is the lattice. A fifteenth starts a second layer, and no coracle comes of that pile. To take a lath back, right-click the pile with an empty hand.
 
    ![Fourteen wet laths laid out as a lattice](images/coracle/build-laths.webp)

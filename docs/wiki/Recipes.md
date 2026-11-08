@@ -54,9 +54,26 @@ Poles stack 32 to a slot. As fuel, the poles split from a log burn as long as th
 
 ## Soaked laths
 
-Laths bend into a vessel's frame only wet: two days in a barrel of water, 0.08 litres a metre of lath. They dry again in two days.
+Laths bend into a vessel's frame only wet. They soak through in two days, and dry again in two days out of the water. You soak them one of two ways.
+
+**In a barrel**, 0.08 litres of water a metre of lath. A barrel takes planks, so this way comes after the saw.
 
 ![A 5 m lath soaked in a barrel with 0.4 litres of water](images/recipes/soaked-laths.png)
+
+**On the bottom of any water**, before you have a saw. Laths float even wet, so you weigh them down with stones:
+
+1. Put a full stack of 32 dry laths of one length and one wood in the crafting grid with stones of any rock: 26 stones for 2 m laths, 38 for 3 m, 51 for 4 m and a full stack of 64 for 5 m. You get a lath bundle.
+2. Hold the bundle and right-click any water: a pond, a river or the sea. It sinks to the bottom and stays there. It doesn't drift and doesn't despawn.
+3. Leave it for two days. Look at the bundle to see how long it has lain in the water.
+4. Right-click the bundle to lift it out. In deep water you dive for it.
+5. Put the bundle in the crafting grid to untie it. You get the 32 laths, wet once it has soaked two days, and every stone back.
+
+Out of the water, a soaked bundle dries again in two days, as its laths do.
+
+| | |
+| --- | --- |
+| ![32 5 m laths weighted with 64 stones into a bundle](images/recipes/lath-bundle.png) | ![A soaked bundle untied into 32 wet laths](images/recipes/lath-bundle-untied.png) |
+| Bundling the laths | Untying a soaked bundle |
 
 ## Paddle
 

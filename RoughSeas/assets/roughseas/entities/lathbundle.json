@@ -1,0 +1,24 @@
+{
+    "code": "lathbundle",
+    "class": "roughseas:EntityLathBundle",
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}],
+    "tags": ["inanimate"],
+    "hitboxSize": {"x": 0.5, "y": 0.3},
+    "attributes": {
+        "logTextures": {"wood": "inside-north"},
+        "soakHours": 48,
+        "sources": {
+            "soakHours": "The barrel's soak, recipes/barrel/lath.json: water enters a lath by the diffusion it dries by, so it soaks through in the two days it takes to dry (itemtypes/resource/lath.json, sources.soaking)"
+        }
+    },
+    "client": {
+        "renderer": "Shape",
+        "shape": {"base": "roughseas:entity/lathbundle-{length}"},
+        "textures": {"stone": {"base": "game:block/stone/rock/granite1"}},
+        "behaviors": [{"code": "passivephysics"}, {"code": "interpolateposition"}]
+    },
+    "server": {
+        "behaviors": [{"code": "passivephysics"}]
+    },
+    "sounds": {}
+}
