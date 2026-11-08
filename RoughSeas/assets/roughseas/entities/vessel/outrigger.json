@@ -3,11 +3,11 @@
     "code": "outrigger",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 491.2,
+    "weight": 547.5,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "rings": "east", "plank": "inside-north"},
-        "swimmingOffsetY": 0.435,
+        "swimmingOffsetY": 0.434,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -18,7 +18,7 @@
         },
         "unfurlSails": true
     },
-    "hitboxSize": {"x": 0.9, "y": 0.564},
+    "hitboxSize": {"x": 0.9, "y": 0.565},
     "behaviorConfigs": {
         "roughseas:propulsion": {
             "finSquareMetres": 0.1484,
@@ -26,9 +26,9 @@
             "paddle": "paddling",
             "sweepMetres": 1.3398,
             "sweepVoxels": 21.437,
-            "paddleAbeamMetres": 0.6688,
-            "paddleAbeamVoxels": 10.7,
-            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.88, "handsAboveWaterVoxels": 14.08, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": -0.875, "y": -0.124, "z": 0}, "eyeHeight": 1.7}, "plantAheadMetres": -1.6875, "plantAheadVoxels": -27, "plantAsternMetres": -1.3125, "plantAsternVoxels": -21, "plantAcrossMetres": -0.5125, "plantAcrossVoxels": -8.2, "drawnPoleMetres": 3, "drawnPoleVoxels": 48, "drawnBedMetres": 1, "drawnBedVoxels": 16},
+            "paddleAbeamMetres": 0.669,
+            "paddleAbeamVoxels": 10.703,
+            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.87, "handsAboveWaterVoxels": 13.92, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": -0.875, "y": -0.132, "z": 0}, "eyeHeight": 1.7}, "plantAheadMetres": -1.6875, "plantAheadVoxels": -27, "plantAsternMetres": -1.3125, "plantAsternVoxels": -21, "plantAcrossMetres": -0.5125, "plantAcrossVoxels": -8.2, "drawnPoleMetres": 3, "drawnPoleVoxels": 48, "drawnBedMetres": 1, "drawnBedVoxels": 16},
             "strokes": {"pole": {"ready": "roughseas-outrigger-pole-ready", "forwards": "roughseas-outrigger-pole-forward", "backwards": "roughseas-outrigger-pole-backward"}, "paddle-starboard": {"ready": "roughseas-outrigger-paddle-starboard-ready", "forwards": "roughseas-outrigger-paddle-starboard-forward", "backwards": "roughseas-outrigger-paddle-starboard-backward", "change": "roughseas-outrigger-paddle-to-starboard"}, "paddle-port": {"ready": "roughseas-outrigger-paddle-port-ready", "forwards": "roughseas-outrigger-paddle-port-forward", "backwards": "roughseas-outrigger-paddle-port-backward", "change": "roughseas-outrigger-paddle-to-port"}},
             "sources": {
                 "pole": "Poled standing, as the dugout her hull is: her float makes her far stiffer than the narrowest canoe polers stand in (bin/lib/hulls/physics.py). Outrigger canoes are poled in shallows (NOAA, Ponape 1971), but no source says where the poler stands, so he stands where the dugout's does, at the end her rower faces. His hands end the shove at his hip (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
@@ -38,16 +38,16 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 30000,
             "parts": [
-                {"material": "wood-{wood}", "reference": "wood-oak", "share": 252},
+                {"material": "wood-{wood}", "reference": "wood-oak", "share": 303.8},
                 {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 132, "takesKnocks": false},
                 {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 79.4, "takesKnocks": false},
-                {"name": "strakes", "material": "wood-{wood}", "reference": "wood-oak", "share": 27.8, "takesKnocks": false}
+                {"name": "strakes", "material": "wood-{wood}", "reference": "wood-oak", "share": 32.3, "takesKnocks": false}
             ],
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.5375, "spanVoxels": 8.6, "voxels": 0.8},
             "depthMetres": 0.5625,
             "depthVoxels": 9,
-            "waterplaneSquareMetres": 3.7522,
-            "waterplaneSquareVoxels": 960.563,
+            "waterplaneSquareMetres": 4.0877,
+            "waterplaneSquareVoxels": 1046.451,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,
@@ -67,8 +67,8 @@
                 "shell": "The dugout's walls, about 5 cm thick, as the Dufuna canoe's (en.wikipedia.org/wiki/Dufuna_canoe)",
                 "repairs": "Her hull is a dugout's, mended as one"
             },
-            "hullBoxMetres": {"from": [-2.25, 0, -0.45], "to": [2.25, 0.564, 0.45]},
-            "hullBoxVoxels": {"from": [-36, 0, -7.2], "to": [36, 9.024, 7.2]}
+            "hullBoxMetres": {"from": [-2.5, 0, -0.45], "to": [2.5, 0.565, 0.45]},
+            "hullBoxVoxels": {"from": [-40, 0, -7.2], "to": [40, 9.044, 7.2]}
         },
         "roughseas:rigging": {
             "framePart": "poles",
@@ -94,7 +94,7 @@
                 {"group": "SailFurled", "work": "cloth", "seconds": 15},
                 {"group": "Stays", "work": "rope", "seconds": 15},
                 {"group": "Strakes", "work": "plank", "seconds": 20, "optional": true, "part": "strakes", "texture": "plank"},
-                {"group": "Seams", "work": "rope", "seconds": 15, "optional": true, "raisesMetres": 0.15, "raisesVoxels": 2.4, "raisesLitres": 422, "raisesCubicVoxels": 1728.461}
+                {"group": "Seams", "work": "rope", "seconds": 15, "optional": true, "raisesMetres": 0.15, "raisesVoxels": 2.4, "raisesLitres": 479.3, "raisesCubicVoxels": 1963.241}
             ],
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
@@ -114,7 +114,7 @@
             "impactCapacity": 2067,
             "hull": "roughseas:dugout",
             "keeps": {"SailFurled": "game:cloth-plain", "Stays": "game:rope"},
-            "firewoodLitres": 46.7,
+            "firewoodLitres": 56.3,
             "repairs": [{"material": {"type": "item", "code": "game:flaxtwine", "stacksize": 1}, "restores": 0.1112, "saturation": 30, "seconds": 15}],
             "sources": {
                 "side": "Her float lies off her starboard side as her model draws her, a hull turned end for end when rigged from the port: a knock from that side meets the float before her hull",
@@ -126,7 +126,7 @@
             }
         },
         "passivephysicsmultibox": {
-            "collisionBoxes": [{"x1": -0.45, "y1": 0, "z1": -2.25, "x2": 0.45, "y2": 0.564, "z2": -1.35}, {"x1": -0.45, "y1": 0, "z1": -1.35, "x2": 0.45, "y2": 0.564, "z2": -0.45}, {"x1": -0.45, "y1": 0, "z1": -0.45, "x2": 0.45, "y2": 0.564, "z2": 0.45}, {"x1": -0.45, "y1": 0, "z1": 0.45, "x2": 0.45, "y2": 0.564, "z2": 1.35}, {"x1": -0.45, "y1": 0, "z1": 1.35, "x2": 0.45, "y2": 0.564, "z2": 2.25}, {"x1": -2.124, "y1": 0.057, "z1": -1.5, "x2": -1.876, "y2": 0.342, "z2": -1.252}, {"x1": -2.124, "y1": 0.057, "z1": -0.812, "x2": -1.876, "y2": 0.342, "z2": -0.564}, {"x1": -2.124, "y1": 0.057, "z1": -0.124, "x2": -1.876, "y2": 0.342, "z2": 0.124}, {"x1": -2.124, "y1": 0.057, "z1": 0.564, "x2": -1.876, "y2": 0.342, "z2": 0.812}, {"x1": -2.124, "y1": 0.057, "z1": 1.252, "x2": -1.876, "y2": 0.342, "z2": 1.5}],
+            "collisionBoxes": [{"x1": -0.45, "y1": 0, "z1": -2.5, "x2": 0.45, "y2": 0.565, "z2": -1.6}, {"x1": -0.45, "y1": 0, "z1": -1.68, "x2": 0.45, "y2": 0.565, "z2": -0.78}, {"x1": -0.45, "y1": 0, "z1": -0.86, "x2": 0.45, "y2": 0.565, "z2": 0.04}, {"x1": -0.45, "y1": 0, "z1": -0.04, "x2": 0.45, "y2": 0.565, "z2": 0.86}, {"x1": -0.45, "y1": 0, "z1": 0.78, "x2": 0.45, "y2": 0.565, "z2": 1.68}, {"x1": -0.45, "y1": 0, "z1": 1.6, "x2": 0.45, "y2": 0.565, "z2": 2.5}, {"x1": -2.124, "y1": 0.057, "z1": -1.5, "x2": -1.876, "y2": 0.342, "z2": -1.252}, {"x1": -2.124, "y1": 0.057, "z1": -0.583, "x2": -1.876, "y2": 0.342, "z2": -0.335}, {"x1": -2.124, "y1": 0.057, "z1": 0.335, "x2": -1.876, "y2": 0.342, "z2": 0.583}, {"x1": -2.124, "y1": 0.057, "z1": 1.252, "x2": -1.876, "y2": 0.342, "z2": 1.5}],
             "groundDragFactor": 1,
             "airDragFallingFactor": 0.5,
             "gravityFactor": 1.0
@@ -165,8 +165,8 @@
             "beamVoxels": 41.185,
             "mastMetres": 3.0625,
             "mastVoxels": 49,
-            "windageSquareMetres": 2.7607,
-            "windageSquareVoxels": 706.75,
+            "windageSquareMetres": 2.9434,
+            "windageSquareVoxels": 753.5,
             "heave": 0.5,
             "capsizeBreakerBeams": 1,
             "rollResponse": 0.3,
@@ -179,10 +179,10 @@
             }
         },
         "roughseas:bilge": {
-            "capacityLitres": 1297.5,
-            "capacityCubicVoxels": 5314.741,
-            "deckSquareMetres": 2.8132,
-            "deckSquareVoxels": 720.192,
+            "capacityLitres": 1435.7,
+            "capacityCubicVoxels": 5880.744,
+            "deckSquareMetres": 3.1954,
+            "deckSquareVoxels": 818.017,
             "drainLitresPerHour": 0,
             "sources": {
                 "drainLitresPerHour": "One log, no seams: nothing leaks"

@@ -22,7 +22,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
 
     private const string CheckedAtKey = "checkedAt";
     private const string HewerKey = "hewer";
-    private const int DataVersion = 1;
+    private const int DataVersion = 2;
     private const float TickSeconds = 1;
     private const int BurningPhases = 3;
     private const double CatchingHours = 1;
@@ -103,6 +103,12 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
     }
 
     public override Shell Formed(Shell designed) => designed.Uncut(UncutMetres, burnout.Hollowed);
+
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        base.AfterInitialized(onFirstSpawn);
+        Upgrade(DataVersion, _ => burnout.KeepProgress(config.RimVoxelsBefore, config.StrokesPerHewingBefore));
+    }
 
     public static void Begin(Entity vessel, double hours) => Begin(vessel, DataVersion, tree =>
     {
@@ -415,15 +421,7 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
     private IEnumerable<string> Parts(string family) =>
         Enumerable.Range(1, burnout.Sections).Select(section => $"{family}x{section}").Append(family + SternPart).Append(family + BowPart);
 
-    private IEnumerable<string> Unclayed(int level)
-    {
-        double coated = 0;
-        foreach (var piece in Element($"Clay{level}").Children ?? [])
-        {
-            if (coated >= burnout.ClayVoxels || burnout.Trimmed(burnout.SectionAt(Voxels.ToMetres(piece.From[0]) - HullShape.ModelOriginMetres))) yield return piece.Name;
-            coated += Burnout.TopVoxels(piece);
-        }
-    }
+    private IEnumerable<string> Unclayed(int level) => burnout.Unclayed(Element($"Clay{level}"));
 
     protected override string FormKey() => $"{burnout.Level}/{burnout.Stage}";
 

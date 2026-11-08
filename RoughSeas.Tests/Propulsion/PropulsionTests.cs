@@ -280,7 +280,7 @@ public class PropulsionTests
         var offset = Fixtures.Station("dugout", 1).Stance(Pole.Code)!.Value.Offset!;
 
         Assert.Equal(-0.875, offset.X, 3);
-        Assert.Equal(-0.124, offset.Y, 3);
+        Assert.Equal(-0.132, offset.Y, 3);
         Assert.Equal(0, offset.Z, 3);
     }
 

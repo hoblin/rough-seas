@@ -1,4 +1,5 @@
 import copy
+from bisect import bisect_left
 import hashlib
 import json
 import math
@@ -490,9 +491,18 @@ class Hull:
         def flush(side, k, i):
             return straight(side, k, i, i - 1), straight(side, k, i, i + 1)
 
+        def sharing(board, beside):
+            named = {element["name"] for element, _ in posed([board])}
+            return any(coplanar([board, *beside], among=named))
+
         for name, side, k, i, (a, b, c, d) in panels:
             near = [bottoms[side, k, i - 1][0]] if (side, k, i - 1) in bottoms else []
-            placed(bottoms, (side, k, i), name, side, (a, b, d, c), 1, (i == 0, i == last), loft, near, aside=APART * (i % 2), flush=flush(side, k, i))
+            below = 0
+            while True:
+                placed(bottoms, (side, k, i), name, side, (a, b, d, c), 1, (i == 0, i == last), loft, near, below, aside=APART * (i % 2), flush=flush(side, k, i))
+                if not sharing(bottoms[side, k, i][1], [bottoms[side, k, i - 1][1]] if (side, k, i - 1) in bottoms else []):
+                    break
+                below = bottoms[side, k, i][0] + APART
         for name, side, k, i, (a, b, c, d) in panels:
             if abs(across(a, b, sub(d, a))[0] - across(a, b, sub(c, b))[0]) <= TOLERANCE:
                 continue
@@ -502,7 +512,8 @@ class Hull:
             while True:
                 placed(tops, (side, k, i), name + "Top", side, (d, c, a, b), -1, (i == 0, i == last), loft, near, below,
                        aside=APART * (i % 2), flush=flush(side, k, i))
-                if not any(coplanar([bottoms[side, k, i][1], tops[side, k, i][1]])):
+                beside = [boards[key][1] for boards, key in ((bottoms, (side, k, i)), (bottoms, (side, k, i - 1)), (bottoms, (side, k, i + 1)), (tops, (side, k, i - 1))) if key in boards]
+                if not sharing(tops[side, k, i][1], beside):
                     break
                 below = tops[side, k, i][0] + APART
         return [made[1] for made in (*bottoms.values(), *tops.values())]
@@ -596,8 +607,17 @@ class Hull:
         return planes
 
     def section(self, x):
-        points = (self.at(x, k, 1) for k in range(len(self.stations[0][1])))
-        return [(abs(z - self.cz), y) for _, y, z in points]
+        xs = [at for at, _ in self.stations]
+        if not xs[0] <= x <= xs[-1]:
+            raise ValueError(f"x {x} lies outside the hull")
+        i = max(0, bisect_left(xs, x) - 1)
+        (x0, edges0), (x1, edges1) = self.stations[i], self.stations[i + 1]
+        f = (x - x0) / (x1 - x0)
+        drawn = []
+        for (h0, y0), (h1, y1) in zip(edges0, edges1):
+            z0, z1 = self.cz + h0, self.cz + h1
+            drawn.append((abs(z0 + f * (z1 - z0) - self.cz), y0 + f * (y1 - y0)))
+        return drawn
 
     def half(self, x, y, inset=0):
         edges = self.section(x)

@@ -114,7 +114,10 @@ public sealed class Framing
 
     public double NextMetres => Current is { } stage && Laid(stage) < stage.Metres.Length ? stage.Metres[Laid(stage)] : 0;
 
-    public int Laid(FramingStage stage) => Tree?.GetInt(stage.Group) ?? stage.Pieces;
+    public int Laid(FramingStage stage) =>
+        Tree is not { } tree ? stage.Pieces
+        : Stages.SkipWhile(each => each != stage).Skip(1).Any(later => tree.GetInt(later.Group) > 0) ? stage.Pieces
+        : tree.GetInt(stage.Group);
 
     /// <summary>What the stages done bring her, each its <paramref name="brings"/>.</summary>
     public double Raised(Func<FramingStage, double> brings) => Stages.Where(stage => Laid(stage) >= stage.Pieces).Sum(brings);

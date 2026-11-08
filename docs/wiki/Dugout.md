@@ -1,6 +1,6 @@
 ![The dugout ashore](images/dugout/ashore-close.webp)
 
-A single log, burnt and hewn hollow beside the water it floats on, from the five logs as they lay: 4.5 m of the 5 m trunk, 0.9 m wide and 0.56 m deep. The bark comes off, the sides stand steep over a round bottom, and the ends are left solid and blunt. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
+A single log, burnt and hewn hollow beside the water it floats on, from the five logs as they lay: the trunk's whole 5 m, 0.9 m wide and 0.56 m deep. The bark comes off, the sides stand steep over a round bottom, and the ends stay solid: the hollow ends in a rounded scoop, the bottom rakes up beneath each end, and above it the log's own sawn end is left flat. It is made from whatever wood was felled, and it looks like it: an oak dugout is oak, a pine one is pine.
 
 ## In Rough Seas
 
@@ -18,10 +18,10 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Turning | slow, 19° a second |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-it-floats) | 48 cm empty, 45 cm with its paddler, in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 131 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | 47 cm empty, 45 cm with its paddler, in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 157 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its wood closes two fifths of a stove-in place |
-| [Bilge](Bailing) | 1298 litres |
+| [Bilge](Bailing) | 1436 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker: its round bottom rolls |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
 | [Lightning](Lightning) | a 6000 J strike scratches a place |
@@ -30,7 +30,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | Carried | too heavy to pick up |
 | Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | 5 logs of one wood beside the water and an axe to strip their bark, then six fires: each takes clay for its rim (19 balls on the fresh trunk, 10 on the last), dry grass, 4 firewood and the axe; about nine days in all |
+| Built from | 5 logs of one wood beside the water and an axe to strip their bark, then six fires: each takes clay for its rim (19 balls on the fresh trunk, 11 on the last), dry grass, 4 firewood and the axe; about nine days in all |
 | Wreckage | firewood |
 
 ## How it is built
@@ -49,7 +49,7 @@ You don't craft a dugout in the grid: you burn it out of five logs on the shore,
 
    ![The trunk stripped of its bark](images/dugout/build-debarked.webp)
 
-4. **Guard the rim with clay.** Right-click the trunk with clay, a ball at a time, until wet clay runs along both edges and over both ends: 19 balls for the fresh trunk, fewer each fire as the hull narrows, 10 for the last. Each ball shows where it goes, and the trunk's panel counts them. The clay is the kind you hold: blue, red or fire clay.
+4. **Guard the rim with clay.** Right-click the trunk with clay, a ball at a time, until wet clay runs along both edges and over both ends: 19 balls for the fresh trunk, 13 for the next two fires, then 12, and 11 for the last two. Each ball shows where it goes, and the trunk's panel counts them. The clay is the kind you hold: blue, red or fire clay.
 
    ![Wet clay along both edges and over the ends](images/dugout/build-clay.webp)
 
@@ -107,7 +107,7 @@ The dugout floats at every stage and an axe breaks it up at every stage, so you 
 | From above | Beside the sailboat |
 | ![Ashore, from the side](images/dugout/ashore-side.webp) | ![Ashore, from the quarter](images/dugout/ashore-quarter.webp) |
 | Ashore | Ashore, from the quarter |
-| ![Dropped on the ground](images/dugout/dropped.webp) | ![Held](images/dugout/held.webp) |
-| Dropped on the ground | Held: a dugout from before the build, still an item |
-| ![The hotbar icon](images/dugout/icon.png) | ![The wreckage it leaves](images/dugout/wreckage.webp) |
-| In the hotbar | Its wreckage |
+| ![Dropped on the ground](images/dugout/dropped.webp) | ![The wreckage it leaves](images/dugout/wreckage.webp) |
+| Dropped on the ground | Its wreckage |
+| ![The hotbar icon](images/dugout/icon.png) | |
+| In the hotbar | |

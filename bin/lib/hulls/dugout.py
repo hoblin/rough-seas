@@ -5,7 +5,7 @@ from physics import afloat, kilograms, stands
 from fit import APART
 import units
 from entity import merged, record
-from shape import BILGE, FACES, ORIGIN, Hull, bilge_levels, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
+from shape import BILGE, FACES, ORIGIN, Hull, across, bilge, bilge_levels, corners_of, plank, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
 from wounds import wound
 
 LOG = 16
@@ -40,10 +40,6 @@ EMBERS = (0.3, 0.5, 0.4)
 GLOW = (160, 160, 110)
 LOGS_GLOW = 90
 TRUNK_METRES = units.metres(LOG)
-SLICES = {
-    "Stern": [(-24.5, -22, 5.0, 1.6), (-26.5, -24.5, 4.0, 2.8), (-28, -26.5, 2.9, 4.2)],
-    "Bow": [(38, 40.5, 5.0, 1.6), (40.5, 42.5, 4.0, 2.8), (42.5, 44, 2.9, 4.2)],
-}
 HOLLOW = (-22, 38)
 POLER_AT = HOLLOW[0] + 5
 CUTS = (ROW[0] + 2 * LOG, ROW[0] + 3 * LOG)
@@ -58,84 +54,210 @@ def section(x, breadth, lift):
     return (x, [(h * breadth, y + lift * (1 - y / RIM)) for h, y in PROFILE])
 
 
+# The section the log's end is left at: its bottom raked up 5 voxels, above her laden waterline, the face over it the
+# log's own sawn end.
+LOG_END = (0.72, 5)
+RAKE = (0.3, 0.5, 0.7, 0.85, 1)
+FOREFOOT = 0.8
+SHOULDERS = ((-15, 0.92, 0.45), (31, 0.92, 0.45))
+
+
+def rise(share):
+    return (1 - math.sqrt(1 - (FOREFOOT * share) ** 2)) / (1 - math.sqrt(1 - FOREFOOT ** 2))
+
+
+def raked(shoulder, end):
+    x, wide, lift = shoulder
+    return [section(x + (end - x) * share, wide + (LOG_END[0] - wide) * share, lift + (LOG_END[1] - lift) * rise(share)) for share in RAKE]
+
+
 STATIONS = [
-    section(-22, 0.72, 1.4),
-    section(-15, 0.92, 0.45),
+    *reversed(raked(SHOULDERS[0], ROW[0])),
+    section(*SHOULDERS[0]),
     section(-5, 1, 0),
     section(8, 1, 0),
     section(21, 1, 0),
-    section(31, 0.92, 0.45),
-    section(38, 0.72, 1.4),
+    section(*SHOULDERS[1]),
+    *raked(SHOULDERS[1], ROW[1]),
 ]
+BOWL_RINGS = 6
+BOWL_STAVES = 8
+PLATE = 0.45
+RIM_PIECE = 2
+SURFACE_PIECE = 0.5
+SAMPLE = 0.05
+CAP = 1.5
+UNDER_BOWL = 1
 
 
-LOWER = 0.7
+def samples(a, b):
+    count = max(1, math.ceil((b - a) / SAMPLE))
+    return [a + (b - a) * k / count for k in range(count + 1)]
 
 
-def waist_of(bottom, top=RIM):
-    return bottom + (top - bottom) / 3
+class Bowl:
+    """One end of the hollow as hewing n leaves it: half an elliptical bowl built as the coracle's is, rings by height
+    and staves by angle, its sides lapped into the walls; over the solid end round it the rim, and where the log ends
+    its end grain."""
 
+    def __init__(self, n, side, floored=None):
+        self.n, self.side, self.t, self.top = n, side, wall(n), top(n)
+        self.x, self.way = (HOLLOW[0], -1) if side == "Stern" else (HOLLOW[1], 1)
+        self.skin = hewing(n)
+        self.loft = self.skin.outline("the trunk", ends=False)
+        if n == HOLLOWINGS:
+            self.floor = self.skin.section(self.x)[0][1] + self.t
+        else:
+            spans = bed_of(sliced(stations_at(n), *SPANS[0 if side == "Stern" else -1]), lambda x: floor(n if floored is None else floored, x), lambda edges, height: self.t)
+            self.floor = spans[0 if side == "Stern" else -1][2]
+        self.length = self.skin.half(self.x, self.top, inset=self.t)
+        self.end = ROW[0] if side == "Stern" else ROW[1]
+        self.across = lambda y: self.skin.half(self.x, y, inset=self.t) + self.t / 8
+        self.outer = lambda x, y: self.skin.half(x, y)
 
-def inscribed(slices, edges, top=RIM, lower_share=LOWER):
-    """Her stepped ends, each slice an upper block over a narrower lower one, as wide as its rough size gives but no
-    wider than the hull's end section, or the slice before it, at every height its blocks reach."""
-    outline = lambda y: breadth(edges, y)
-    drawn = []
-    for x0, x1, half, bottom in slices:
-        waist = waist_of(bottom, top)
-        upper, lower = min(half, outline(waist), outline(top)), min(half * lower_share, outline(bottom), outline(waist))
-        drawn.append((x0, x1, upper, lower, bottom))
-        outline = lambda y, upper=upper, lower=lower, bottom=bottom, waist=waist: upper if y >= waist else lower if y >= bottom else 0
-    return drawn
+    @classmethod
+    def trench(cls, side, end, floor, top, half):
+        """The first hewing's trench in the square trunk, closed round: as wide as the trench, from its floor to the
+        trunk's top, its tip at end."""
+        bowl = cls.__new__(cls)
+        bowl.n, bowl.side, bowl.t, bowl.top, bowl.floor, bowl.length, bowl.end = 0, side, wall(1), top, floor, half, end
+        bowl.way = -1 if side == "Stern" else 1
+        bowl.x = end - bowl.way * half
+        bowl.across = lambda y: half + bowl.t / 8
+        bowl.outer = lambda x, y: half
+        return bowl
 
+    def ring(self, j):
+        angle = math.pi / 2 * j / BOWL_RINGS
+        y = self.top - (self.top - self.floor) * math.cos(angle)
+        return y, self.length * math.sin(angle), self.across(y)
 
-ENDS = {"Stern": inscribed(SLICES["Stern"], STATIONS[0][1]), "Bow": inscribed(SLICES["Bow"], STATIONS[-1][1])}
+    def point(self, j, k, out=0):
+        y, along, across = self.ring(j)
+        angle = math.pi * (k / BOWL_STAVES - 0.5)
+        return (self.x + self.way * (along + out) * math.cos(angle), y + out, CENTRE + (across + out) * math.sin(angle))
+
+    def hollow(self, y):
+        depth = self.top - self.floor
+        if not self.floor <= y <= self.top or depth <= 0:
+            return 0
+        return math.pi / 2 * self.length * math.sqrt(max(0, 1 - ((self.top - y) / depth) ** 2)) * self.skin.half(self.x, y, inset=self.t)
+
+    def staves(self, name):
+        drawn = []
+        for j in range(BOWL_RINGS):
+            for k in range(BOWL_STAVES):
+                out = APART * (k % 2)
+                a, b, c, d = self.point(j, k, out), self.point(j, k + 1, out), self.point(j + 1, k + 1, out), self.point(j + 1, k, out)
+                drawn.append(self.stave(f"{name}Bowl{j + 1}x{k + 1}", a, b, c, d))
+        return drawn
+
+    def stave(self, name, a, b, c, d):
+        rise, flare = across(a, b, [((p - q) + (r - s)) / 2 for p, q, r, s in zip(d, a, c, b)])
+        overlap = max(0, (math.dist(c, d) - math.dist(a, b)) / 2)
+        middle = [(p + q) / 2 for p, q in zip(a, b)]
+        hollow = (self.x, middle[1], CENTRE)
+        made = [plank(name, a, b, rise, self.t / 3, side * turn * flare, side, WOOD, HEWN, edge=WOOD, overlap=overlap)
+                for side in (-1, 1) for turn in (-1, 1)]
+        reach = lambda board: min(math.dist(d, p) for p in corners_of(board)) + min(math.dist(c, p) for p in corners_of(board))
+        outward = lambda board: sum(math.dist(p, hollow) for p in corners_of(board)) / 8 > math.dist(middle, hollow)
+        return min((board for board in made if outward(board)), key=reach)
+
+    def mouth(self, x):
+        along = abs(x - self.x) / self.length
+        return 0 if along >= 1 else self.across(self.top) * math.sqrt(1 - along ** 2)
+
+    def pieces(self):
+        xs = samples(*sorted((self.x, self.end)))
+        xs = xs[::-1] if self.side == "Stern" else xs
+        rim = lambda x: (self.mouth(x), self.outer(x, self.top))
+        drawn, start, seen = [], xs[0], [rim(xs[0])]
+        for x in xs[1:]:
+            seen.append(rim(x))
+            if any(max(v) - min(v) > self.t / 3 for v in zip(*seen)) or abs(x - start) > RIM_PIECE:
+                drawn.append(tuple(sorted((start, x))))
+                start, seen = x, [rim(x)]
+        if start != xs[-1]:
+            drawn.append(tuple(sorted((start, xs[-1]))))
+        return drawn
+
+    def rim(self, name, low=None, high=None, tex=WOOD):
+        """The top of the end in strips along it, from the bowl's mouth out to the hull's side and across beyond it, by
+        side as the clay goes on; low and high lay the clay over it instead."""
+        laid = {"across": [], "Port": [], "Starboard": []}
+        for k, (a, b) in enumerate(self.pieces(), 1):
+            xs = samples(a, b)
+            top = self.top - 2 * APART - APART * (k % 3) if high is None else high + APART * (k % 3)
+            bottom = top - PLATE if low is None else low + APART * (k % 3)
+            edge, outer = min(self.mouth(x) for x in xs), min(self.outer(x, min(bottom, self.top)) for x in xs)
+            if edge <= APART:
+                laid["across"].append(box(f"{name}Rim{k}", (a, bottom, CENTRE - outer), (b, top, CENTRE + outer), tex))
+            else:
+                laid["Port"].append(box(f"{name}Rim{k}Port", (a, bottom, CENTRE - outer), (b, top, CENTRE - edge), tex))
+                laid["Starboard"].append(box(f"{name}Rim{k}Starboard", (a, bottom, CENTRE + edge), (b, top, CENTRE + outer), tex))
+        return laid
+
+    def width(self, x, y):
+        if not self.floor < y <= self.top:
+            return 0
+        along = self.length * math.sqrt(max(0, 1 - ((self.top - y) / (self.top - self.floor)) ** 2))
+        ratio = abs(x - self.x) / along if along else 1
+        return 0 if ratio >= 1 else self.across(y) * math.sqrt(1 - ratio ** 2)
+
+    def surface(self, prefix, height, texture="null"):
+        drawn, x = [], self.x
+        tip = self.x + self.way * self.length
+        while (tip - x) * self.way > APART:
+            end = x + self.way * min(SURFACE_PIECE, abs(tip - x))
+            half = max(self.width(at, height) for at in samples(*sorted((x, end))))
+            if half > APART:
+                drawn.append(water_plane(f"{prefix}{len(drawn) + 1}", *sorted((x, end)), CENTRE - half, CENTRE + half, height, texture))
+            x = end
+        return drawn
+
+    def plates(self, name):
+        return [piece for pieces in self.rim(name).values() for piece in pieces]
+
+    def cap(self, name):
+        x, edges = self.skin.stations[0] if self.side == "Stern" else self.skin.stations[-1]
+        x0, x1 = sorted((x - self.way * APART, x - self.way * (APART + CAP)))
+        outer = "west" if self.side == "Stern" else "east"
+        drawn, y, rim = [], edges[0][1], edges[-1][1] - 5 * APART
+        while y < rim - APART:
+            high = y
+            while high < rim and breadth(edges, high) - breadth(edges, y) < self.t / 2:
+                high = min(rim, high + 0.05)
+            half = breadth(edges, y)
+            piece = box(f"{name}Cap{len(drawn) + 1}", (x0, y, CENTRE - half), (x1, high, CENTRE + half), {**{face: WOOD for face in FACES}, outer: RINGS})
+            drawn.append(faced(piece, {outer: end_window(CENTRE - half, CENTRE + half, y, high)}))
+            y = high
+        return drawn
 
 
 def log(hull):
-    return [hull.strakes(), *(end(name, slices, hull.cz, inner=hull.inner) for name, slices in ENDS.items())]
+    bowls = [Bowl(HOLLOWINGS, side) for side in ("Stern", "Bow")]
+    return [hull.strakes(), *(part for bowl in bowls for part in (bowl.staves(bowl.side), bowl.plates(bowl.side), bowl.cap(bowl.side)))]
 
 
-def end(name, slices, centre, top=RIM, inner=WOOD):
-    outer, hollow = ("west", "east") if "Stern" in name else ("east", "west")
-    grain = {**{face: WOOD for face in FACES}, outer: RINGS, hollow: inner}
-    blocks = []
-    for n, (x0, x1, upper, lower, bottom) in enumerate(slices, 1):
-        waist = waist_of(bottom, top)
-        blocks.append(box(f"{name}{n}Upper", (x0, waist, centre - upper), (x1, top, centre + upper), grain))
-        blocks.append(box(f"{name}{n}Lower", (x0, bottom, centre - lower), (x1, waist, centre + lower), grain))
-    return blocks
+def hold_surface(prefix, height, texture="null"):
+    hollow = Hull("", sliced(STATIONS, *HOLLOW), CENTRE, WALL, WOOD, WOOD)
+    return [*hollow.surface(prefix, height, texture), *(plane for side in ("Stern", "Bow") for plane in Bowl(HOLLOWINGS, side).surface(f"{prefix}{side}", height, texture))]
 
 
-def end_slice(x):
-    for slices in ENDS.values():
-        for x0, x1, upper, lower, bottom in slices:
-            if x0 <= x <= x1:
-                return upper, lower, bottom
-    return None
+def hold_water():
+    """The hold's water mask and bilge levels, over the hollow's run and its ends' bowls."""
+    floor = min(edges[0][1] for _, edges in sliced(STATIONS, *HOLLOW)) + WALL
+    mask = RIM - 0.3
+    return group("hideWater", LEVEL, LEVEL, hold_surface("hideWater", mask)), bilge(floor, mask, lambda prefix, height: hold_surface(prefix, height, "bilge"))
 
 
-def finished_half(x, y):
-    x = min(max(x, ENDS["Stern"][-1][0]), ENDS["Bow"][-1][1])
-    if (piece := end_slice(x)) is not None:
-        upper, lower, bottom = piece
-        return 0 if y < bottom else lower if y < waist_of(bottom) else upper
-    for (x0, edges0), (x1, edges1) in zip(STATIONS, STATIONS[1:]):
-        if x0 <= x <= x1:
-            f = (x - x0) / (x1 - x0)
-            low = edges0[0][1] + f * (edges1[0][1] - edges0[0][1])
-            return 0 if y < low else breadth(edges0, y) + f * (breadth(edges1, y) - breadth(edges0, y))
-    return 0
+def mouth():
+    stern, bow = (Bowl(HOLLOWINGS, side) for side in ("Stern", "Bow"))
+    return HOLLOW[0] - stern.length, HOLLOW[1] + bow.length
 
 
 def finished_bottom(x):
-    x = min(max(x, ENDS["Stern"][-1][0]), ENDS["Bow"][-1][1])
-    if (piece := end_slice(x)) is not None:
-        return piece[2]
-    for (x0, edges0), (x1, edges1) in zip(STATIONS, STATIONS[1:]):
-        if x0 <= x <= x1:
-            return edges0[0][1] + (x - x0) / (x1 - x0) * (edges1[0][1] - edges0[0][1])
-    return 0
+    return Hull("", STATIONS, CENTRE, WALL, WOOD, WOOD).section(x)[0][1]
 
 
 def worked(n):
@@ -154,15 +276,6 @@ def floor(n, x):
     return max(finished_bottom(x) * worked(n) + wall(n), top(n) - (RIM - WALL) * worked(n))
 
 
-def extent(n):
-    stern, bow = ENDS["Stern"][-1][0], ENDS["Bow"][-1][1]
-    return ROW[0] + (stern - ROW[0]) * worked(n), ROW[1] + (bow - ROW[1]) * worked(n)
-
-
-def hollow_half(x):
-    return max(0, finished_half(x, RIM) - WALL)
-
-
 def hollowed(x):
     return HOLLOW[0] < x < HOLLOW[1]
 
@@ -178,19 +291,6 @@ def stations_at(n):
 
 def hewing(n):
     return Hull(f"Blank{n}Side", stations_at(n), CENTRE, wall(n), WOOD, WOOD, edge=WOOD)
-
-
-def ends_at(n):
-    f = worked(n)
-    stations = stations_at(n)
-    drawn = {}
-    for name, station, far in (("Stern", stations[0], extent(0)[0]), ("Bow", stations[-1], extent(0)[1])):
-        join, finished = station[0], (ENDS[name][-1][0] if name == "Stern" else ENDS[name][-1][1])
-        stretch = (far - join) / (finished - join)
-        moved = lambda x: join + (x - join) * (stretch + (1 - stretch) * f)
-        rough = [(min(moved(x0), moved(x1)), max(moved(x0), moved(x1)), BARE + (half - BARE) * f, bottom * f) for x0, x1, half, bottom in SLICES[name]]
-        drawn[name] = inscribed(rough, station[1], top(n), 1 + (LOWER - 1) * f)
-    return drawn
 
 
 def faced(element, faces):
@@ -265,6 +365,10 @@ def trench():
             solid["faces"][inner]["texture"] = "#" + HEWN
             pieces.append(faced(solid, {"up": top_window(f0, f1, x0, CENTRE - half, CENTRE + half),
                                         **{face: window for face, window in ends_of_log(i, CENTRE - half, CENTRE + half, bottom, BARE_TOP).items() if face == outer}}))
+        for side, end in (("Stern", a), ("Bow", b)):
+            if end in HOLLOW:
+                bowl = Bowl.trench(side, end, bottom, BARE_TOP, half)
+                pieces += [*bowl.staves(f"{name}{side}"), *bowl.plates(f"{name}{side}")]
         sections[section_of(x0)].extend(pieces)
     return [group(f"Hewn0x{j}", LEVEL, LEVEL, pieces) for j, pieces in sections.items()]
 
@@ -293,12 +397,19 @@ def hewn_to(name, n, floors=True):
         logs = trunk()
         return [group(f"{name}x{j}", LEVEL, LEVEL, [group(f"{name}x{j}Inside", LEVEL, LEVEL, [log for log in logs if section_of(log["from"][0]) == j])])
                 for j in range(1, len(SPANS) + 1)]
-    sections, cuts = [], []
+    sections, cuts, bowls = [], [], {side: Bowl(n, side) for side in ("Stern", "Bow")}
     for j, (a, b) in enumerate(SPANS, 1):
-        stations = sliced(stations_at(n), a, b)
-        inside = [group(f"{name}x{j}Inside", LEVEL, LEVEL, floor_planes(f"{name}x{j}Floor", stations, n, n))] if floors else []
-        sections.append(group(f"{name}x{j}", LEVEL, LEVEL, [*skin(f"{name}x{j}", stations, wall(n), cuts), *inside]))
-    return [*sections, *(group(f"{name}{side}", LEVEL, LEVEL, end(f"{name}{side}", slices, CENTRE, top(n), HEWN)) for side, slices in ends_at(n).items())]
+        side = "Stern" if j == 1 else "Bow" if j == len(SPANS) else None
+        reach = (ROW[0] if j == 1 else a, ROW[1] if j == len(SPANS) else b)
+        staves = bowls[side].staves(f"{name}x{j}") if side else []
+        inside = [group(f"{name}x{j}Inside", LEVEL, LEVEL, [*floor_planes(f"{name}x{j}Floor", under_bowl(sliced(stations_at(n), a, b), j), n, n), *staves])] if floors else staves
+        sections.append(group(f"{name}x{j}", LEVEL, LEVEL, [*skin(f"{name}x{j}", sliced(stations_at(n), *reach), wall(n), cuts), *inside]))
+    return [*sections, *(group(f"{name}{side}", LEVEL, LEVEL, [*bowl.plates(f"{name}{side}"), *bowl.cap(f"{name}{side}")]) for side, bowl in bowls.items())]
+
+
+def under_bowl(stations, j):
+    (x0, first), (x1, last) = stations[0], stations[-1]
+    return [*([(x0 - UNDER_BOWL, first)] if j == 1 else []), *stations, *([(x1 + UNDER_BOWL, last)] if j == len(SPANS) else [])]
 
 
 def floor_planes(name, stations, walled, floored):
@@ -311,7 +422,9 @@ def inside_hewn(n):
     """The walls stay as hewing n left them: the next hewing's inner faces lie no further out than these."""
     if n == 0:
         return trench()
-    return [group(f"Hewn{n}x{j}", LEVEL, LEVEL, [*floor_planes(f"Hewn{n}x{j}Floor", sliced(stations_at(n), a, b), n, n + 1), *step(n, j)])
+    bowls = {1: Bowl(n, "Stern", n + 1), len(SPANS): Bowl(n, "Bow", n + 1)}
+    return [group(f"Hewn{n}x{j}", LEVEL, LEVEL, [*floor_planes(f"Hewn{n}x{j}Floor", under_bowl(sliced(stations_at(n), a, b), j), n, n + 1),
+                                                 *(bowls[j].staves(f"Hewn{n}x{j}") if j in bowls else []), *step(n, j)])
             for j, (a, b) in enumerate(SPANS, 1)]
 
 
@@ -467,11 +580,12 @@ def clay(n):
                        for k, (a, b) in enumerate(balls((x0, x1), 2 * BARE), 1)]
                 for name, (x0, x1) in (("Stern", (ROW[0], HOLLOW[0])), ("Bow", (HOLLOW[1], ROW[1])))}
     else:
-        rail = Hull(f"Blank{n}Side", cut(stations_at(n)), CENTRE, wall(n), WOOD, WOOD).rail(f"Clay{n}", "clay", height=CLAY, thickness=wall(n))
+        rail = Hull(f"Blank{n}Side", cut(sliced(stations_at(n), *HOLLOW)), CENTRE, wall(n), WOOD, WOOD).rail(f"Clay{n}", "clay", height=CLAY, thickness=wall(n))
         port, starboard = (joined(balled([element for element in rail if side in element["name"]])) for side in ("Port", "Starboard"))
-        caps = {name: [box(f"Clay{n}{name}{k}x{i}", (a, top(n), CENTRE - upper), (b, top(n) + CLAY, CENTRE + upper), "clay")
-                       for k, (x0, x1, upper, _, _) in enumerate(slices, 1)
-                       for i, (a, b) in enumerate(balls((x0, x1), 2 * upper), 1)] for name, slices in ends_at(n).items()}
+        caps = {side: Bowl(n, side).rim(f"Clay{n}{side}", low=top(n) + 4 * APART, high=top(n) + 4 * APART + CLAY, tex="clay") for side in ("Stern", "Bow")}
+        stern, bow = caps["Stern"], caps["Bow"]
+        return [*reversed(stern["across"]), *reversed(stern["Port"]), *port, *bow["Port"], *bow["across"], *reversed(bow["Starboard"]),
+                *reversed(starboard), *stern["Starboard"]]
     return [*reversed(caps["Stern"]), *port, *caps["Bow"], *reversed(starboard)]
 
 
@@ -572,27 +686,33 @@ def hewn(shape, hull, shell, stages):
 
 
 def volumes():
-    step = 0.25
+    step, hull = 0.25, Hull("", STATIONS, CENTRE, WALL, WOOD, WOOD)
+    bowls = [Bowl(HOLLOWINGS, side) for side in ("Stern", "Bow")]
     envelope = hold = 0
-    x = ENDS["Stern"][-1][0] + step / 2
-    while x < ENDS["Bow"][-1][1]:
+    x = STATIONS[0][0] + step / 2
+    while x < STATIONS[-1][0]:
         y = finished_bottom(x) + step / 2
         while y < RIM:
-            half = finished_half(x, y)
-            envelope += 2 * half * step * step
+            envelope += 2 * hull.half(x, y) * step * step
             if hollowed(x) and y > floor(HOLLOWINGS, x):
-                hold += 2 * max(0, half - WALL) * step * step
+                hold += 2 * hull.half(x, y, inset=WALL) * step * step
             y += step
         x += step
+    y = step / 2
+    while y < RIM:
+        hold += sum(bowl.hollow(y) for bowl in bowls) * step
+        y += step
     trunk_litres = units.litres(TRUNK_METRES ** 2 * LOGS * TRUNK_METRES)
     return units.litres(units.metres(envelope, 3)), units.litres(units.metres(hold, 3)), trunk_litres
 
 
 def deck():
-    step, area, x = 0.25, 0, HOLLOW[0] + 0.125
+    step, hull = 0.25, Hull("", STATIONS, CENTRE, WALL, WOOD, WOOD)
+    area, x = 0, HOLLOW[0] + step / 2
     while x < HOLLOW[1]:
-        area += 2 * hollow_half(x) * step
+        area += 2 * hull.half(x, RIM, inset=WALL) * step
         x += step
+    area += sum(math.pi / 2 * bowl.length * bowl.skin.half(bowl.x, RIM, inset=WALL) for bowl in (Bowl(HOLLOWINGS, side) for side in ("Stern", "Bow")))
     return units.metres(area, 2)
 
 
@@ -621,7 +741,7 @@ def build(path):
     stages = {stage["name"]: stage for stage in build_stages()}
     shape.add(*stages.values())
     hewn(shape, hull, shell, stages)
-    shape.add(hull.hide_water(RIM - 0.3), hull.bilge(RIM - 0.3))
+    shape.add(*hold_water())
     box, measured = hull_box(shell)
     shape.add(box)
     record("dugout", merged(measured, walls()))

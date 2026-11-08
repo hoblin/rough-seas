@@ -125,6 +125,17 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
         vessel.WatchedAttributes.SetAttribute(TreeKey, tree);
     }
 
+    /// <summary>Brings a build saved under an older <paramref name="version"/> of her data up to it, on the server.</summary>
+    protected void Upgrade(int version, Action<ITreeAttribute> upgrade)
+    {
+        if (entity.Api.Side != EnumAppSide.Server || Tree is not { } tree || tree.GetInt(VersionKey) >= version) return;
+
+        Shipyard.Log(entity, "her build saved at data version {0} is brought up to {1}", tree.GetInt(VersionKey), version);
+        upgrade(tree);
+        tree.SetInt(VersionKey, version);
+        MarkDirty();
+    }
+
     /// <summary>The element groups the stages not reached yet draw, and those the stages passed drew.</summary>
     protected abstract IEnumerable<string> Hidden();
 
