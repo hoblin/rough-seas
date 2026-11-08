@@ -391,6 +391,17 @@ The dugout runs the whole length of its log row, and its hollow ends round insid
 
 New: `rimVoxelsBefore`, `strokesPerHewingBefore`, `EntityBehaviorBuild.Upgrade`, `Burnout.Unclayed`, `Burnout.KeepProgress`.
 
+### The outrigger's washstrakes along the whole log
+
+The outrigger's washstrakes run its hull's whole length, the dugout's five logs, where they stopped at the ends of its hollow ([Outrigger canoe](Outrigger-Canoe)).
+
+- Each side is five planks of a metre from one log end to the other, and the end boards `StrakeStern` and `StrakeBow` stand across the log's sawn ends. Still twelve planks.
+- Sewn, they add 573.5 litres (`raisesLitres`), where they added 479.3: the hold they raise is the plan inside them, over the hollow and the solid ends alike. In oak the outrigger is 551 kg with them, where it was 547.
+- Sewing them takes 146 stitches, five ropes, where it took 132 and four, so the `Seams` stage has five pieces.
+- A framing stage may name `piecesBefore`, the pieces it took in an older release. `roughseas:framing`, and with it `roughseas:rigging` and `roughseas:covering`, is at data version 2: a save's count of such a stage keeps its share of the work, rounded up (`Framing.KeepProgress`). An outrigger sewn up with four ropes stays sewn up.
+
+New: `piecesBefore`, `Framing.KeepProgress`.
+
 ## What not to touch
 
 | Name | What it is |
