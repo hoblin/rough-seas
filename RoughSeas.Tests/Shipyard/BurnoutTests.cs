@@ -121,6 +121,17 @@ public class BurnoutTests
     }
 
     [Fact]
+    public void AHullFinishedInASaveFromBeforeLoadsFinished()
+    {
+        var blank = Blank();
+        tree!.SetInt("level", blank.Hollowings);
+
+        blank.KeepProgress(Config.RimVoxelsBefore, Config.StrokesPerHewingBefore);
+
+        Assert.True(blank.Finished);
+    }
+
+    [Fact]
     public void ARimABallShortInASaveFromBeforeStaysShort()
     {
         int last = Config.Hollowings - 1;

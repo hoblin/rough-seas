@@ -141,7 +141,7 @@ public sealed class Burnout
     /// <paramref name="strokes"/> a hewing, rounded up so no section it cut comes back.</summary>
     public void KeepProgress(int[] rims, int strokes)
     {
-        if (Tree is not { } tree) return;
+        if (Tree is not { } tree || Finished) return;
 
         if (Level < rims.Length && ClayVoxels > 0 && ClayVoxels >= rims[Level]) tree.SetInt(ClayKey, RimVoxels);
         if (ClayVoxels > RimVoxels) tree.SetInt(ClayKey, RimVoxels);
