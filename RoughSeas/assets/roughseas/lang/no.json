@@ -1,5 +1,5 @@
 {
-    "game:item-handbooktext-anchor-stone": "Steinankeret kan plasseres i lagringsplassen som ligger fremst i venstre baug av <a href=\"handbook://item-boat-sailed-oak\">seilbåten</a> (og den kan kun legges på denne plassen). Klikk <hk>rightmouse</hk> på det med tom hånd for å slippe det eller hale det inn. Det holder når du stikker ut tau omtrent fem ganger vanndybden; se <a href=\"handbook://roughseas-mooring\">Fortøyning og ankring</a>.",
+    "game:item-handbooktext-anchor-stone": "Steinankeret kan plasseres i lagringsplassen som ligger fremst i venstre baug av <a href=\"handbook://item-boat-sailed-oak\">seilbåten</a> (og den kan kun legges på denne plassen). Klikk <hk>rightmouse</hk> på det med tom hånd for å slippe det eller hale det inn. Det holder med sin vekt på bunnen, og stikker ut tau fem ganger vanndybden; se <a href=\"handbook://roughseas-mooring\">Fortøyning og ankring</a>.",
     "vessel-hull-sound": "Skrog: helt",
     "vessel-one-rope": "Dette fartøyet er allerede fortøyd: kast først tauet loss.",
     "vessel-crack": "{0}: {1}",

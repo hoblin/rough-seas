@@ -9,8 +9,8 @@ public static class MooringLoad
     private const double Parallel = 1e-6;
 
     /// <summary>
-    /// What each taut line carries of a steady pull, newtons: their tensions along them, from the mooring out to her,
-    /// sum to the pull. A line the balance would push rather than pull goes slack and carries nothing.
+    /// What each taut line carries of a steady pull, newtons, along the line from the mooring out to her: one line the
+    /// pull's part along it, two lines tensions that sum to the pull. A line the balance would push goes slack.
     /// </summary>
     public static double[] Share(double pullX, double pullZ, IReadOnlyList<(double X, double Z)> outward)
     {

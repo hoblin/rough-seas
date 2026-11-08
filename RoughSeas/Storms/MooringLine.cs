@@ -6,10 +6,11 @@ public readonly record struct MooringLine(double RestMetres, double BreakingNewt
 {
     public double NewtonsPerMetre => BreakingNewtons / StretchAtBreak / RestMetres;
 
-    public double Tension(double steadyNewtons, double arrivingMetresPerSecond, double kilograms, bool wasTaut)
+    /// <param name="snatches">Whether she has just come to the line's end at <paramref name="arrivingMetresPerSecond"/>; held at it, the line carries the steady pull alone.</param>
+    public double Tension(double steadyNewtons, double arrivingMetresPerSecond, double kilograms, bool snatches)
     {
         var steady = Math.Max(0, steadyNewtons);
-        if (wasTaut) return steady;
+        if (!snatches) return steady;
 
         var speed = Math.Max(0, arrivingMetresPerSecond);
         return steady + Math.Sqrt(steady * steady + NewtonsPerMetre * kilograms * speed * speed);

@@ -13,11 +13,10 @@ public readonly record struct Anchor(double X, double Y, double Z, double RodeMe
 
     public double Holding(double depth, double stoneDensity, double waterDensity)
     {
-        var weight = Kilograms * Gravity;
-        var submerged = weight * (1 - waterDensity / stoneDensity);
-        var friction = BedHold * weight / submerged;
-        var rise = Math.Clamp(depth / RodeMetres, 0, 1);
-        return friction * submerged / (Math.Sqrt(1 - rise * rise) + friction * rise);
+        var buoyed = 1 - waterDensity / stoneDensity;
+        var friction = BedHold / buoyed;
+        var rise = RodeMetres > 0 ? Math.Clamp(depth / RodeMetres, 0, 1) : 0;
+        return friction * Kilograms * Gravity * buoyed / (Math.Sqrt(1 - rise * rise) + friction * rise);
     }
 
     public Anchor DraggedBy(double x, double z) => this with { X = X + x, Z = Z + z };

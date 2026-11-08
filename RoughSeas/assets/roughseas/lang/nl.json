@@ -206,5 +206,5 @@
     "wind-from-wnw": "WNW",
     "wind-from-nw": "NW",
     "wind-from-nnw": "NNW",
-    "game:item-handbooktext-anchor-stone": "Het stenen anker zet je op de plek linksvoor in de boeg van de <a href=\"handbook://item-boat-sailed-oak\">zeilboot</a> (en alleen daar). Klik er met een lege hand met <hk>rightmouse</hk> op om het te laten vallen of te lichten. Het houdt als je ongeveer vijf keer de waterdiepte aan lijn uitviert; zie <a href=\"handbook://roughseas-mooring\">Afmeren en ankeren</a>."
+    "game:item-handbooktext-anchor-stone": "Het stenen anker zet je op de plek linksvoor in de boeg van de <a href=\"handbook://item-boat-sailed-oak\">zeilboot</a> (en alleen daar). Klik er met een lege hand met <hk>rightmouse</hk> op om het te laten vallen of te lichten. Het houdt door zijn gewicht op de bodem, en viert vijf keer de waterdiepte aan lijn uit; zie <a href=\"handbook://roughseas-mooring\">Afmeren en ankeren</a>."
 }

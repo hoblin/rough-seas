@@ -39,9 +39,9 @@ public static class Fixtures
 
     public static double FlaxNewtons => materials.Value["rope-flax"].Strength!.Value * 1000;
 
-    public static Vessel Raft => Vessel("boat-raft");
+    public static double FlaxStretchAtBreak => new MaterialTable(materials.Value, new NullLogger()).StretchAtBreak("rope-flax");
 
-    public static Vessel Sailboat => Vessel("boat-sailed");
+    public static double SailboatBeamMetres => BeamMetres("boat-sailed");
 
     public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel), 2 * Shape(vessel).HalfLengthMetres);
 
@@ -201,13 +201,6 @@ public static class Fixtures
 
     private static JToken Entity(string vessel) => JToken.Parse(Shipped(Path.Combine("vessel", vessel + ".json")));
 
-    private static Vessel Vessel(string entity)
-    {
-        var integrity = BehaviorConfig("vessels-vanilla-boats.json", entity, EntityBehaviorVesselIntegrity.Code);
-        var forces = SeaForces(entity);
-        return new Vessel((double)integrity["impactCapacity"]!, BeamMetres(entity), (double)forces["windageSquareMetres"]!);
-    }
-
     private static JToken BehaviorConfig(string patches, string entity, string behavior) =>
         OptionalBehaviorConfig(patches, entity, behavior)!;
 
@@ -224,7 +217,6 @@ public class NullLogger : LoggerBase
     protected override void LogImpl(EnumLogType logType, string format, params object[] args) { }
 }
 
-public readonly record struct Vessel(double ImpactCapacity, double BeamMetres, double WindageSquareMetres);
 
 public sealed record Hull(Flotation Flotation, double Kilograms, double ReferenceKg, double CapacityLitres, JsonObject Config, string Vessel)
 {

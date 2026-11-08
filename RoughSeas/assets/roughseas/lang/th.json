@@ -206,5 +206,5 @@
     "wind-from-wnw": "WNW",
     "wind-from-nw": "NW",
     "wind-from-nnw": "NNW",
-    "game:item-handbooktext-anchor-stone": "สมอหินวางได้เฉพาะที่ช่องหน้าซ้ายบนหัวเรือของ<a href=\"handbook://item-boat-sailed-oak\">เรือใบ</a>เท่านั้น ใช้มือเปล่าคลิก <hk>rightmouse</hk> ที่สมอเพื่อทิ้งสมอหรือถอนสมอ สมอจะยึดได้เมื่อปล่อยเชือกออกไปราวห้าเท่าของความลึกน้ำ ดู<a href=\"handbook://roughseas-mooring\">การผูกเรือและการทอดสมอ</a>"
+    "game:item-handbooktext-anchor-stone": "สมอหินวางได้เฉพาะที่ช่องหน้าซ้ายบนหัวเรือของ<a href=\"handbook://item-boat-sailed-oak\">เรือใบ</a>เท่านั้น ใช้มือเปล่าคลิก <hk>rightmouse</hk> ที่สมอเพื่อทิ้งสมอหรือถอนสมอ สมอยึดอยู่ด้วยน้ำหนักของมันบนก้นทะเล และปล่อยเชือกออกไปห้าเท่าของความลึกน้ำ ดู<a href=\"handbook://roughseas-mooring\">การผูกเรือและการทอดสมอ</a>"
 }

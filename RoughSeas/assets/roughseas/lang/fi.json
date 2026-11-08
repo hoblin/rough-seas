@@ -206,5 +206,5 @@
     "wind-from-wnw": "LLU",
     "wind-from-nw": "LU",
     "wind-from-nnw": "PLU",
-    "game:item-handbooktext-anchor-stone": "Kiviankkurin voi asettaa <a href=\"handbook://item-boat-sailed-oak\">purjeveneen</a> keulan vasempaan etupaikkaan (eikä mihinkään muualle). Napsauta sitä <hk>rightmouse</hk> tyhjällä kädellä laskeaksesi tai nostaaksesi sen. Se pitää, kun köyttä on annettu noin viisi kertaa veden syvyyden verran; katso <a href=\"handbook://roughseas-mooring\">Kiinnitys ja ankkurointi</a>."
+    "game:item-handbooktext-anchor-stone": "Kiviankkurin voi asettaa <a href=\"handbook://item-boat-sailed-oak\">purjeveneen</a> keulan vasempaan etupaikkaan (eikä mihinkään muualle). Napsauta sitä <hk>rightmouse</hk> tyhjällä kädellä laskeaksesi tai nostaaksesi sen. Se pitää painollaan pohjassa ja antaa köyttä viisi kertaa veden syvyyden verran; katso <a href=\"handbook://roughseas-mooring\">Kiinnitys ja ankkurointi</a>."
 }

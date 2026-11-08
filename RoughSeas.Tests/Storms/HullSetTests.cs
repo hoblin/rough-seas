@@ -130,6 +130,7 @@ public class HullSetTests
         set.Take(1, 2, new Vec3d());
         Assert.Equal(0.25, set.Slow(1, 0, 0.25));
         Assert.Equal((0.75, 2.0), set.Velocity);
+        Assert.Equal(0.75 / TicksPerSecond, set.Held.X, 12);
         Assert.Equal(0.75, set.Slow(1, 0, 5));
         Assert.Equal((0.0, 2.0), set.Velocity);
         Assert.Equal(0, set.Slow(-1, 0, 1));

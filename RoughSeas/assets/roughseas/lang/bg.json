@@ -206,5 +206,5 @@
     "wind-from-wnw": "ЗСЗ",
     "wind-from-nw": "СЗ",
     "wind-from-nnw": "ССЗ",
-    "game:item-handbooktext-anchor-stone": "Каменната котва се поставя на предното ляво място в носа на <a href=\"handbook://item-boat-sailed-oak\">платноходката</a> (и само там). Щракни с <hk>rightmouse</hk> върху нея с празна ръка, за да я пуснеш или вдигнеш. Тя държи, когато отпуснеш въже около пет пъти колкото дълбочината на водата; виж <a href=\"handbook://roughseas-mooring\">Швартоване и закотвяне</a>."
+    "game:item-handbooktext-anchor-stone": "Каменната котва се поставя на предното ляво място в носа на <a href=\"handbook://item-boat-sailed-oak\">платноходката</a> (и само там). Щракни с <hk>rightmouse</hk> върху нея с празна ръка, за да я пуснеш или вдигнеш. Тя държи с теглото си на дъното и отпуска въже пет пъти колкото дълбочината на водата; виж <a href=\"handbook://roughseas-mooring\">Швартоване и закотвяне</a>."
 }

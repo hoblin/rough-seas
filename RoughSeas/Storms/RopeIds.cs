@@ -7,13 +7,15 @@ using Vintagestory.GameContent;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// Stores the rope manager's next rope id on save and reads it back on load, which vanilla swaps, and never hands out
-/// an id a loaded rope holds: an old world's counter starts low.
+/// Keeps the rope manager's next rope id across saves, which vanilla swaps (it stores on load and reads back on save,
+/// so every save rewound it), and never hands out an id a loaded rope holds. A world saved without our key had its
+/// counter rewound at every save, so its ropes hold small ids, some in regions not loaded yet: it starts past them.
 /// </summary>
 public static class RopeIds
 {
     private const string HarmonyId = "roughseas.storms.ropeids";
-    private const string SaveKey = "nextClothId";
+    private const string SaveKey = "roughseas:nextClothId";
+    private const int PastRewoundIds = 1 << 20;
 
     private static Harmony? harmony;
 
@@ -41,7 +43,7 @@ public static class RopeIds
 
     private static bool Load(ICoreServerAPI ___sapi, ref int ___nextClothId)
     {
-        if (___sapi.WorldManager.SaveGame.GetData(SaveKey) is { } data) ___nextClothId = SerializerUtil.Deserialize<int>(data);
+        ___nextClothId = ___sapi.WorldManager.SaveGame.GetData(SaveKey) is { } data ? SerializerUtil.Deserialize<int>(data) : PastRewoundIds;
         return false;
     }
 

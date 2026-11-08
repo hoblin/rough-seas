@@ -969,7 +969,12 @@ public class BridgeCommands : ModSystem
         var rope = ClothSystem.CreateRope(sapi, cloths, entity!.Pos.XYZ, block.ToVec3d().Add(0.5, 0.5, 0.5), null);
         var points = 0;
         rope.WalkPoints(_ => points++);
-        if (metres > 0 && !rope.ChangeRopeLength(metres - points / rope.Resolution)) return TextCommandResult.Error("A vanilla rope is 1.5 to 10 m long");
+        var change = (int)Math.Round((metres - (points - 1) / rope.Resolution) * rope.Resolution);
+        // vanilla's ChangeRopeLength adds or removes one point more than the length it is given
+        if (metres > 0 && change != 0 && !rope.ChangeRopeLength(Math.Sign(change) * (Math.Abs(change) - 0.5) / rope.Resolution))
+        {
+            return TextCommandResult.Error("A vanilla rope is 1.5 to 10 m long");
+        }
         rope.LastPoint.PinTo(block, new Vec3f(0.5f, 0.5f, 0.5f));
         cloths.RegisterCloth(rope);
         tieable.Attach(rope, rope.FirstPoint);

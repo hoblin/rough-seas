@@ -14,10 +14,10 @@ Each mechanic of the sea has its own world setting, under *Rough Seas* on the ne
 | --- | --- | --- |
 | *Water in the bilge* | `bilgeWater` | No [wave](Surf-and-Swamping) comes aboard and no rain falls into a [bilge](Bailing). A leak still fills it, and so does the sea when a vessel lies awash or sunk. |
 | *Hull damage* | `hullDamage` | Nothing harms a hull: no [knock](Hull-Condition#knocks-and-landings) on rock or shore, [ram](Hull-Condition#rams), [rapids](Rapids), breaker or weather. Hide doesn't rot, ungreased seams don't seep and reed doesn't soak ([seeping and soaking](Hull-Condition#seeping-and-soaking)). Every hull is mended whole when the world loads, or when you turn the setting off. A knock is still heard, and weapons and explosions still harm a hull. |
-| *Lightning* | `stormLightning` | Storms bring no [lightning](Lightning) of their own, and masts draw none. |
+| *Lightning* | `stormLightning` | Storms bring no [lightning](Lightning) of their own, and masts draw none. The game's own thunderstorms are unchanged. |
 | *Mooring strain* | `mooringStrain` | No [rope parts](Mooring#tying-up), no [anchor](Anchoring) drags, and no vessel is [thrown ashore](Mooring#thrown-ashore) while you are away. A rope and an anchor still hold a vessel at their length. |
 | *Currents* | `oceanCurrents` | [Currents](Currents) carry no vessel, steered or not, and pull on no mooring. The currents still flow, and the water keeps its temperature. |
-| *Rower fatigue* | `rowerFatigue` | [Rowing, paddling and poling](Paddles-Poles-and-Oars) cost no satiety. |
+| *Rower fatigue* | `rowerFatigue` | [Rowing, paddling and poling](Paddles-Poles-and-Oars) cost no satiety. A vessel still goes only as fast as you row it. |
 | *Pole's depth* | `poleDepth` | A [pole](Paddles-Poles-and-Oars) pushes in water of any depth, as it does at its full stroke. |
 
 To change a setting in a world already made, open the world's settings from the singleplayer list, or type `/worldconfig CODE false` (or `true`) and reload the world. The setting stays as you left it.

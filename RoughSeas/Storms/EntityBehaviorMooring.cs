@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -28,15 +27,10 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private const double ReelInBlocksPerTick = 0.01;
     private const double SlackMetres = 0.1;
     private const double TensionLogShare = 0.1;
+    private const double FollowedLogMetres = 0.1;
     private static readonly AssetLocation RopeRipSound = new("game:sounds/effect/roperip");
-    private static readonly AssetLocation RopeItem = new("game:rope");
 
-    private static readonly AccessTools.FieldRef<ClothSystem, List<ClothConstraint>> RopeConstraints =
-        AccessTools.FieldRefAccess<ClothSystem, List<ClothConstraint>>("Constraints");
-
-    private static readonly AccessTools.FieldRef<ClothManager, Dictionary<int, ClothSystem>> Ropes =
-        AccessTools.FieldRefAccess<ClothManager, Dictionary<int, ClothSystem>>("clothSystems");
-
+    /// <summary>The anchor's line key, beside the ids of vanilla's ropes, which start at 1.</summary>
     private const int AnchorLine = 0;
 
     private StormsModSystem storms = null!;
@@ -45,7 +39,6 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private ClothManager cloths = null!;
     private EntityBehaviorSeaForces? forces;
     private EntityBehaviorAttachable? accessories;
-    private EntityBehaviorRopeTieable? tieable;
     private EntityBehaviorCurrentDrift? drift;
     private IMountable? mountable;
     private IHull? hull;
@@ -62,28 +55,40 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         public bool Anchored => Key == AnchorLine;
 
         public string Name => Anchored ? "the rode" : "the stake rope";
+
+        /// <summary>The cosine of the line's slope: its reach over its length.</summary>
+        public double Level => Line.RestMetres > 0 ? ReachMetres / Line.RestMetres : 0;
     }
 
-    /// <summary>What one line does to her now: written on the tick, read on the physics thread.</summary>
+    /// <summary>One line on her. The physics thread writes whether it is taut and when it comes taut; the tick reads them.</summary>
     private sealed class Hold(Tether tether)
     {
-        private double dragDeceleration;
+        private int arrived;
+        private double slideDeceleration;
 
         public Tether Tether { get; set; } = tether;
 
         public volatile bool Taut;
-        public volatile bool Arrived;
+        public volatile bool Slack;
         public volatile bool Slipping;
         public bool WasTaut;
+        public bool PinnedAtBow;
+        public bool Reported;
         public double LoggedTension;
         public long LoggedAt;
 
-        public double DragDeceleration
+        public double SlideDeceleration
         {
-            get => Volatile.Read(ref dragDeceleration);
-            set => Volatile.Write(ref dragDeceleration, value);
+            get => Volatile.Read(ref slideDeceleration);
+            set => Volatile.Write(ref slideDeceleration, value);
         }
+
+        public void Arrive() => Interlocked.Exchange(ref arrived, 1);
+
+        public bool TakeArrival() => Interlocked.Exchange(ref arrived, 0) == 1;
     }
+
+    public VesselRope Rope { get; private set; } = null!;
 
     public Anchor? Anchor
     {
@@ -148,8 +153,8 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     {
         forces = entity.GetBehavior<EntityBehaviorSeaForces>();
         accessories = entity.GetBehavior<EntityBehaviorAttachable>();
-        tieable = entity.GetBehavior<EntityBehaviorRopeTieable>();
         drift = entity.GetBehavior<EntityBehaviorCurrentDrift>();
+        Rope = new VesselRope(entity, cloths);
         hull = IHull.Of(entity);
     }
 
@@ -174,20 +179,21 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var server = entity.World.Side == EnumAppSide.Server;
         var steered = mountable?.IsBeingControlled() == true;
         here = entity.Api is ICoreClientAPI client ? mountable?.Controller == client.World.Player?.Entity : !steered;
-        Tie();
+        Tie(server);
         if (here) Strain();
         else
         {
-            foreach (var hold in holds) (hold.WasTaut, hold.Arrived, hold.Slipping) = (false, false, false);
+            foreach (var hold in holds) (hold.WasTaut, hold.Slack, hold.Slipping) = (false, false, false);
         }
         if (!server) return;
 
-        FollowDragged();
+        FollowDragged(steered);
         drift?.HeldAtBow(here && holds.Any(hold => hold.Taut), deltaTime);
         sinceUpdate += deltaTime;
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
         FollowAnchor();
+        Rope.Prune();
         LogFollowed();
         if (ashore != null)
         {
@@ -205,14 +211,14 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
     /// <summary>
     /// In the move vanilla's physics is about to make: each taut line stops her bow going out past its reach, where her
-    /// physics runs, and an anchor dragging along the bed pulls her back by its friction. Called from the physics thread.
+    /// physics runs, and an anchor sliding along the bed pulls her back by its friction. Called from the physics thread.
     /// </summary>
     internal void Restrain(Vec3d motion, float seconds)
     {
         foreach (var hold in holds)
         {
             if (!here) hold.Taut = false;
-            else if (hold.Slipping) Drag(hold, motion, seconds);
+            else if (hold.Slipping) Slide(hold, motion, seconds);
             else Restrain(hold, motion);
         }
     }
@@ -223,7 +229,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var (outX, outZ, distance) = Outward(tied);
         if (distance < tied.ReachMetres - SlackMetres)
         {
-            hold.Taut = false;
+            (hold.Taut, hold.Slack) = (false, true);
             return;
         }
         if (distance < tied.ReachMetres) return;
@@ -234,16 +240,16 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         motion.X -= pull * outX;
         motion.Z -= pull * outZ;
         drift?.Hold(outX, outZ);
-        if (!hold.Taut) hold.Arrived = true;
-        hold.Taut = true;
+        if (hold.Slack) hold.Arrive();
+        (hold.Taut, hold.Slack) = (true, false);
     }
 
-    private void Drag(Hold hold, Vec3d motion, float seconds)
+    private void Slide(Hold hold, Vec3d motion, float seconds)
     {
         hold.Taut = true;
         var (outX, outZ, _) = Outward(hold.Tether);
         var outward = motion.X * outX + motion.Z * outZ;
-        var cut = Math.Min(Math.Max(0, outward), hold.DragDeceleration * seconds / WaterDrag.TicksPerSecond);
+        var cut = Math.Min(Math.Max(0, outward), hold.SlideDeceleration * seconds / WaterDrag.TicksPerSecond);
         motion.X -= cut * outX;
         motion.Z -= cut * outZ;
         drift?.Slow(outX, outZ, cut * WaterDrag.TicksPerSecond);
@@ -260,22 +266,37 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         if (holds.FirstOrDefault(hold => hold.Tether.Key == report.Line) is { } parted) Part(parted, report.Newtons);
     }
 
-    private void Tie()
+    /// <summary>The lines that hold her now, where her physics runs: her anchor's rode and the rope that ties her to a post.</summary>
+    private void Tie(bool server)
     {
-        var tethers = new List<Tether>();
-        if (Anchor is { } anchor) tethers.Add(new Tether(AnchorLine, anchor.X, anchor.Z, anchor.Reach(Depth(anchor)), Line(anchor.Rope, anchor.RodeMetres)));
-        if (StakeRope() is { } rope)
+        var before = holds;
+        if (!server && !here)
         {
-            var stake = Stake(rope)!;
-            rope.CanPull = false;
-            rope.StretchRip = float.MaxValue;
-            var length = RestMetres(rope);
-            var rise = stake.Y + 0.5 - entity.Pos.Y;
-            tethers.Add(new Tether(rope.ClothId, stake.X + 0.5, stake.Z + 0.5, Math.Sqrt(Math.Max(0, length * length - rise * rise)), Line(Config.StakeRope, length)));
+            holds = [];
+            return;
         }
 
-        var before = holds;
+        var tethers = new List<Tether>();
+        if (Anchor is { } anchor) tethers.Add(new Tether(AnchorLine, anchor.X, anchor.Z, anchor.Reach(Depth(anchor)), Line(anchor.Rope, anchor.RodeMetres)));
+        var rope = Rope.Tied;
+        if (rope != null && VesselRope.Post(rope) is { } post)
+        {
+            var length = VesselRope.RestMetres(rope);
+            var rise = post.Y - entity.Pos.Y;
+            tethers.Add(new Tether(rope.ClothId, post.X + 0.5, post.Z + 0.5, Math.Sqrt(Math.Max(0, length * length - rise * rise)), Line(Config.StakeRope, length)));
+        }
+        if (tethers.Count == 0 && before.Length == 0) return;
+
         var now = tethers.Select(tied => before.FirstOrDefault(hold => hold.Tether.Key == tied.Key) is { } kept ? Kept(kept, tied) : new Hold(tied)).ToArray();
+        foreach (var gone in before.Where(hold => !hold.Tether.Anchored && now.All(kept => kept.Tether.Key != hold.Tether.Key)))
+        {
+            if (cloths.GetClothSystem(gone.Tether.Key) is { } loosed) VesselRope.GiveBack(loosed);
+        }
+        if (rope != null && now.FirstOrDefault(hold => hold.Tether.Key == rope.ClothId) is { } staked)
+        {
+            Rope.TakeOver(rope, staked.PinnedAtBow ? null : hull?.Shape.Bow(entity.Pos.Yaw) ?? default);
+            staked.PinnedAtBow = true;
+        }
         if (!now.Select(hold => hold.Tether.Key).SequenceEqual(before.Select(hold => hold.Tether.Key)))
         {
             storms.Log(entity, now.Length == 0 ? "moored no longer" : "moored by {0}, her physics {1}",
@@ -293,13 +314,17 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private MooringLine Line(string rope, double metres) =>
         new(metres, materials.BreakingKilonewtons(rope) * NewtonsPerKilonewton, materials.StretchAtBreak(rope));
 
+    /// <summary>
+    /// The pull on each taut line: the water's steady pull shared between them, and the jerk when she comes to a line's
+    /// end, along the line, which lies at its slope.
+    /// </summary>
     private void Strain()
     {
         var engaged = holds.Where(hold => hold.Taut || hold.Slipping).ToArray();
-        foreach (var hold in holds.Except(engaged))
+        foreach (var hold in holds.Where(hold => !hold.Taut && !hold.Slipping))
         {
             if (hold.WasTaut) storms.Log(entity, "{0} goes slack", hold.Tether.Name);
-            (hold.WasTaut, hold.Arrived, hold.Slipping, hold.LoggedTension) = (false, false, false, 0);
+            (hold.WasTaut, hold.LoggedTension) = (false, 0);
         }
         if (engaged.Length == 0) return;
 
@@ -307,19 +332,22 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var (pullX, pullZ) = drift?.Pull() ?? default;
         var (waterX, waterZ) = forces!.Ride.WaterAcceleration;
         var accelerated = KilogramsAlong(waterX, waterZ);
-        var (steadyX, steadyZ) = (pullX + accelerated * waterX, pullZ + accelerated * waterZ);
-        var shares = MooringLoad.Share(steadyX, steadyZ, outward.Select(line => (line.X, line.Z)).ToArray());
+        var shares = MooringLoad.Share(pullX + accelerated * waterX, pullZ + accelerated * waterZ, outward.Select(line => (line.X, line.Z)).ToArray());
         var (velocityX, velocityZ) = hull?.Velocity ?? default;
         for (var i = 0; i < engaged.Length; i++)
         {
             var hold = engaged[i];
+            var level = hold.Tether.Level;
+            if (level <= 0) continue;
+
             var (outX, outZ, _) = outward[i];
             var kilograms = KilogramsAlong(outX, outZ);
-            var speed = velocityX * outX + velocityZ * outZ;
-            var snatch = hold.Arrived && !hold.WasTaut && !hold.Slipping;
-            var tension = hold.Slipping ? shares[i] : hold.Tether.Line.Tension(shares[i], speed, kilograms, !snatch);
-            (hold.WasTaut, hold.Arrived) = (true, false);
-            LogTension(hold, tension, shares[i], speed, kilograms, snatch);
+            var steady = shares[i] / level;
+            var speed = (velocityX * outX + velocityZ * outZ) * level;
+            var snatch = hold.TakeArrival() && !hold.Slipping;
+            var tension = hold.Slipping ? steady : hold.Tether.Line.Tension(steady, speed, kilograms, snatch);
+            hold.WasTaut = true;
+            LogTension(hold, tension, steady, speed, kilograms, snatch);
             if (!Mechanic.MooringStrain.On(entity.World))
             {
                 hold.Slipping = false;
@@ -334,12 +362,12 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private void Slip(Hold hold, Anchor anchor, double tension, double kilograms)
     {
         var holding = Holding(anchor);
-        hold.DragDeceleration = kilograms > 0 ? holding / kilograms : 0;
-        var drags = tension > holding;
-        if (drags == hold.Slipping) return;
+        hold.SlideDeceleration = kilograms > 0 ? holding * hold.Tether.Level / kilograms : 0;
+        var slides = tension > holding;
+        if (slides == hold.Slipping) return;
 
-        hold.Slipping = drags;
-        storms.Log(entity, drags ? "the anchor drags: the rode pulls {0:F0} N, it holds {1:F0} N on the bed" : "the anchor bites again: the rode pulls {0:F0} N, it holds {1:F0} N", tension, holding);
+        hold.Slipping = slides;
+        storms.Log(entity, slides ? "the anchor drags: the rode pulls {0:F0} N, it holds {1:F0} N on the bed" : "the anchor bites again: the rode pulls {0:F0} N, it holds {1:F0} N", tension, holding);
     }
 
     private void LogTension(Hold hold, double tension, double steady, double speed, double kilograms, bool snatch)
@@ -356,13 +384,14 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         if (now - hold.LoggedAt < storms.Config.Drift.LogSeconds * 1000 || Math.Abs(tension - hold.LoggedTension) <= TensionLogShare * Math.Max(tension, hold.LoggedTension)) return;
 
         (hold.LoggedTension, hold.LoggedAt) = (tension, now);
-        storms.Log(entity, "{0} holds her at {1:F0} N of the {2:F0} N it holds: its share of the water's {3:F0} N pull", hold.Tether.Name, tension, line.BreakingNewtons, steady);
+        storms.Log(entity, "{0} holds her at {1:F0} N of the {2:F0} N it holds: its share of the water's pull, {3:F0} N along it", hold.Tether.Name, tension, line.BreakingNewtons, steady);
     }
 
     private double KilogramsAlong(double x, double z)
     {
         var length = Math.Sqrt(x * x + z * z);
-        if (drift?.Drag is not { } drag || length <= 0) return drift?.Drag?.AlongKg ?? hull?.Aboard.Total ?? 0;
+        if (drift?.Drag is not { } drag) return hull?.Aboard.Total ?? 0;
+        if (length <= 0) return drag.AlongKg;
 
         var (along, across) = HullShape.ToHull(x / length, z / length, entity.Pos.Yaw);
         return drag.AlongKg * along * along + drag.AcrossKg * across * across;
@@ -371,10 +400,11 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private void Part(Hold hold, double tension)
     {
         var tied = hold.Tether;
-        (hold.WasTaut, hold.Arrived, hold.Slipping, hold.Taut) = (false, false, false, false);
+        (hold.WasTaut, hold.Slipping, hold.Taut) = (false, false, false);
         if (entity.Api is ICoreClientAPI)
         {
-            storms.Report(new MooringReport { EntityId = entity.EntityId, Line = tied.Key, Newtons = tension });
+            if (!hold.Reported) storms.Report(new MooringReport { EntityId = entity.EntityId, Line = tied.Key, Newtons = tension });
+            hold.Reported = true;
             return;
         }
 
@@ -385,15 +415,16 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         }
         else if (cloths.GetClothSystem(tied.Key) is { } rope)
         {
-            PartStake(rope);
+            Rope.Part(rope);
+            Snapped();
             storms.Log(entity, "stake rope parted at {0:F0} N, it holds {1:F0} N; the rope lies by the post", tension, tied.Line.BreakingNewtons);
         }
     }
 
-    /// <summary>The anchor follows a vessel that pulls it along the bed: one dragging it, and one her rider's client moves past it.</summary>
-    private void FollowDragged()
+    /// <summary>The anchor follows a vessel that pulls it along the bed: one it is sliding under, and one her rider's client moves past it.</summary>
+    private void FollowDragged(bool steered)
     {
-        if (Anchor is not { } anchor || holds.FirstOrDefault(hold => hold.Tether.Anchored) is not { } rode) return;
+        if (Anchor is not { } anchor || holds.FirstOrDefault(hold => hold.Tether.Anchored) is not { } rode || !(steered || rode.Slipping)) return;
 
         var (outX, outZ, distance) = Outward(rode.Tether);
         var over = distance - rode.Tether.ReachMetres;
@@ -405,7 +436,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
     private void LogFollowed()
     {
-        if (followedMetres < 0.1) return;
+        if (followedMetres < FollowedLogMetres) return;
 
         storms.Log(entity, "anchor dragged {0:F1} m along the bed", followedMetres);
         followedMetres = 0;
@@ -498,19 +529,6 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private double SpareRodeMetres() =>
         SpareRodeSlot()?.Itemstack is { } coil ? coil.StackSize * coil.Collectible.Attributes["rodeMetres"].AsDouble() : 0;
 
-    private static double RestMetres(ClothSystem rope) => RopeConstraints(rope).Count / rope.Resolution;
-
-    private static BlockPos? Stake(ClothSystem rope) => rope.FirstPoint.PinnedToBlockPos ?? rope.LastPoint.PinnedToBlockPos;
-
-    private void PartStake(ClothSystem stakeRope)
-    {
-        var post = Stake(stakeRope);
-        tieable?.Detach(stakeRope);
-        cloths.UnregisterCloth(stakeRope.ClothId);
-        if (post != null && entity.World.GetItem(RopeItem) is { } rope) entity.World.SpawnItemEntity(new ItemStack(rope), post.ToVec3d().Add(0.5, 1, 0.5));
-        Snapped();
-    }
-
     private void LoseAnchor(Anchor anchor)
     {
         if (AnchorSlot() is { Itemstack: { } stack } slot)
@@ -529,13 +547,6 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     }
 
     private void Snapped() => entity.World.PlaySoundAt(RopeRipSound, entity, null, true, 32);
-
-    public bool TakesRope => !TiedRopes().Any();
-
-    private IEnumerable<ClothSystem> TiedRopes() =>
-        Ropes(cloths).Values.Where(rope => rope.FirstPoint.pinnedToEntityId == entity.EntityId || rope.LastPoint.pinnedToEntityId == entity.EntityId);
-
-    private ClothSystem? StakeRope() => TiedRopes().Where(rope => Stake(rope) != null).MinBy(rope => rope.ClothId);
 
     private double Depth(Anchor anchor) => Math.Max(0, entity.Pos.Y - anchor.Y);
 }

@@ -23,10 +23,9 @@ public class MooringLoadTests
     [Fact]
     public void ALineTheBalanceWouldPushGoesSlackAndTheOtherTakesItsShareAlongIt()
     {
-        var shares = MooringLoad.Share(1000, 0, [(1, 0), (0, 1)]);
-
-        Assert.Equal([1000.0, 0.0], shares);
-        Assert.Equal([0.0, 0.0], MooringLoad.Share(-1000, 0, [(1, 0), (0, 1)]));
+        Assert.Equal([1000.0, 0.0], MooringLoad.Share(1000, -500, [(1, 0), (0, 1)]));
+        Assert.Equal([0.0, 1000.0], MooringLoad.Share(-500, 1000, [(1, 0), (0, 1)]));
+        Assert.Equal([0.0, 0.0], MooringLoad.Share(-1000, -1000, [(1, 0), (0, 1)]));
     }
 
     [Fact]

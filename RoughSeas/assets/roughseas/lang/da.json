@@ -1,5 +1,5 @@
 {
-    "game:item-handbooktext-anchor-stone": "Stenankeret kan placeres til bagbord forude i boven på <a href=\"handbook://item-boat-sailed-oak\">sejlbåden</a>. Klik på det med <hk>rightmouse</hk> og tom hånd for at kaste det eller hive det op. Det holder, når du stikker line ud, omkring fem gange vanddybden; se <a href=\"handbook://roughseas-mooring\">Fortøjning og ankring</a>.",
+    "game:item-handbooktext-anchor-stone": "Stenankeret kan placeres til bagbord forude i boven på <a href=\"handbook://item-boat-sailed-oak\">sejlbåden</a>. Klik på det med <hk>rightmouse</hk> og tom hånd for at kaste det eller hive det op. Det holder med sin vægt på bunden og stikker line ud, fem gange vanddybden; se <a href=\"handbook://roughseas-mooring\">Fortøjning og ankring</a>.",
     "vessel-hull-sound": "Skrog: intakt",
     "vessel-one-rope": "Dette fartøj er allerede fortøjet: kast først rebet los.",
     "vessel-crack": "{0}: {1}",

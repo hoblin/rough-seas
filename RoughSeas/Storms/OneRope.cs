@@ -5,7 +5,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Storms;
 
-/// <summary>A vessel is tied by one rope: vanilla's rope-tieable entity takes another only while she has none.</summary>
+/// <summary>A vessel is tied by one rope: vanilla's rope-tieable entity takes a rope only while she has none.</summary>
 public static class OneRope
 {
     private const string HarmonyId = "roughseas.storms.onerope";
@@ -38,7 +38,7 @@ public static class OneRope
 
     private static void Tied(EntityBehaviorRopeTieable __instance, ref bool __result)
     {
-        if (!__result || __instance.entity.GetBehavior<EntityBehaviorMooring>() is not { TakesRope: false }) return;
+        if (!__result || __instance.entity.GetBehavior<EntityBehaviorMooring>()?.Rope.Tied == null) return;
 
         __result = false;
         (__instance.entity.Api as ICoreClientAPI)?.TriggerIngameError(__instance, ErrorCode, Lang.Get("roughseas:" + ErrorCode));

@@ -97,9 +97,7 @@ public class WavesTests
     [Fact]
     public void ABreakerShipsMoreWaterAsTheWavesGrow()
     {
-        var sailboat = Fixtures.Sailboat;
-
-        Assert.True(waves.ShippedLitres(2, sailboat.BeamMetres) > 0);
-        Assert.Equal(4 * waves.ShippedLitres(2, sailboat.BeamMetres), waves.ShippedLitres(4, sailboat.BeamMetres), 6);
+        Assert.True(waves.ShippedLitres(2, Fixtures.SailboatBeamMetres) > 0);
+        Assert.Equal(4 * waves.ShippedLitres(2, Fixtures.SailboatBeamMetres), waves.ShippedLitres(4, Fixtures.SailboatBeamMetres), 6);
     }
 }

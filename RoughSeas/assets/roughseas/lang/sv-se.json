@@ -206,5 +206,5 @@
     "wind-from-wnw": "VNV",
     "wind-from-nw": "NV",
     "wind-from-nnw": "NNV",
-    "game:item-handbooktext-anchor-stone": "Stenankaret placeras på platsen längst fram till vänster i fören på <a href=\"handbook://item-boat-sailed-oak\">segelbåten</a> (och bara där). Klicka med <hk>rightmouse</hk> på det med tom hand för att släppa det eller hala upp det. Det håller när du släcker ut ungefär fem gånger vattendjupet i lina; se <a href=\"handbook://roughseas-mooring\">Förtöjning och ankring</a>."
+    "game:item-handbooktext-anchor-stone": "Stenankaret placeras på platsen längst fram till vänster i fören på <a href=\"handbook://item-boat-sailed-oak\">segelbåten</a> (och bara där). Klicka med <hk>rightmouse</hk> på det med tom hand för att släppa det eller hala upp det. Det håller med sin vikt på botten, och släcker ut fem gånger vattendjupet i lina; se <a href=\"handbook://roughseas-mooring\">Förtöjning och ankring</a>."
 }

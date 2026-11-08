@@ -47,17 +47,37 @@ public class AnchorTests
     }
 
     [Fact]
-    public void ARodeRisingFromItLiftsItAndItHoldsLess()
+    public void ARodeRisingFromItLiftsItLeastAtTheSlopeWhoseTangentIsItsFriction()
     {
-        var shortScope = anchor.Holding(depth: 25, Granite, Seawater);
-        Assert.True(anchor.Holding(depth: 10, Granite, Seawater) > shortScope);
-        Assert.True(shortScope < anchor.Holding(depth: 0, Granite, Seawater));
+        var flat = anchor.Holding(depth: 0, Granite, Seawater);
+        var friction = Sand / (1 - Seawater / Granite);
+        var weakest = anchor.Holding(depth: 50 * System.Math.Sin(System.Math.Atan(friction)), Granite, Seawater);
+
+        Assert.True(weakest < anchor.Holding(depth: 10, Granite, Seawater));
+        Assert.True(weakest < anchor.Holding(depth: 40, Granite, Seawater));
+        Assert.True(weakest < flat);
     }
 
     [Fact]
-    public void ARodeStraightUpHoldsOnlyWhatItWeighsUnderWater()
+    public void ARodeStraightUpLiftsItOnceItPullsWhatItWeighsUnderWater()
     {
         Assert.Equal(100 * Gravity * (1 - Seawater / Granite), anchor.Holding(depth: 50, Granite, Seawater), 6);
+    }
+
+    [Fact]
+    public void AnAnchorWithNoWeightHoldsNothing()
+    {
+        Assert.Equal(0, (anchor with { Kilograms = 0 }).Holding(depth: 10, Granite, Seawater));
+    }
+
+    [Fact]
+    public void TheShippedBedHoldsAndStoneAreReadFromTheConfig()
+    {
+        var mooring = Fixtures.Config().Mooring;
+
+        Assert.Equal(Sand, mooring.SandHold);
+        Assert.Equal(Rock, mooring.RockHold);
+        Assert.Equal(Granite, mooring.AnchorStoneDensity);
     }
 
     [Fact]
