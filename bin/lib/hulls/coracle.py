@@ -338,6 +338,7 @@ def build(path_):
         piles.long(metres, LATH_WIDTH, LATH_THICKNESS)
     for metres in (2, 3, 4, 5):
         piles.bundle(metres, LATH_WIDTH, LATH_THICKNESS)
+    piles.bundle_icon(LATH_WIDTH, LATH_THICKNESS)
 
     back = Path(path_).with_name("coracle-back.json")
     worn = json.loads(back.read_text())

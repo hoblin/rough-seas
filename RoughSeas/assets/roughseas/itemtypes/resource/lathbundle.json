@@ -3,6 +3,7 @@
     "class": "roughseas:ItemLathBundle",
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}, {"code": "state", "states": ["dry", "soaked"]}],
     "maxstacksize": 1,
+    "behaviors": [{"name": "roughseas:icon", "properties": {"shape": {"base": "roughseas:item/lathbundle-icon"}}}],
     "liquidSelectable": 1,
     "heldTpIdleAnimation": "holdunderarm",
     "attributes": {
@@ -25,7 +26,7 @@
         }]
     },
     "creativeinventory": {"general": ["*"], "items": ["*"]},
-    "guiTransform": {"rotation": {"x": -30, "y": 45, "z": 0}, "origin": {"x": 0.5, "y": 0.1, "z": 0.5}, "scale": 0.8},
+    "guiTransform": {"rotation": {"x": -30, "y": 45, "z": 180}, "origin": {"x": 0.5, "y": 0.1, "z": 0.5}, "scale": 1.6},
     "tpHandTransform": {"translation": {"x": -0.7, "y": -0.1, "z": -0.5}, "rotation": {"x": 0, "y": 0, "z": -10}, "scale": 0.6},
     "groundTransform": {"origin": {"x": 0.5, "y": 0, "z": 0.5}, "scale": 2.5}
 }

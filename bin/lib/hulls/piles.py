@@ -18,6 +18,8 @@ LATH_SECTION_SQUARE_METRES = 0.01 * 0.06
 LATH_WET_DENSITY = 400 * 4 / 3
 PILES = SHAPES / "block/pile"
 BUNDLES = SHAPES / "entity"
+ICONS = SHAPES / "item"
+ICON_STONES = 9
 BUNDLE_LATHS = 32
 BUNDLE_ACROSS = 4
 CENTRE = 8
@@ -47,28 +49,37 @@ def long(metres, width, thickness):
 
 
 def bundle(metres, width, thickness):
-    """A bundle of a full stack of laths, BUNDLE_ACROSS side by side in layers, lying lengthwise on the entity's
-    middle, with the stones its recipe weights it with laid along its top in courses, each course set half a stone
-    along from the one below."""
-    length = units.voxels(metres)
+    """A bundle of a full stack of laths of ``metres``, under the stones its recipe weights it with."""
+    path = BUNDLES / f"lathbundle-{metres}.json"
+    count = bundle_stones(metres)
+    write(path, bundled(units.voxels(metres), count, width, thickness))
+    print(f"{path}: {BUNDLE_LATHS} laths under {count} stones of {units.metres(stone_voxels()) * 100:.1f} cm")
+
+
+def bundle_icon(width, thickness):
+    """The bundle's icon: a bundle a block long, so its laths and stones show at the size of a slot."""
+    path = ICONS / "lathbundle-icon.json"
+    write(path, bundled(units.voxels(1), ICON_STONES, width, thickness))
+    print(f"{path}: the icon")
+
+
+def bundled(length, count, width, thickness):
+    """BUNDLE_LATHS laths of ``length`` voxels, BUNDLE_ACROSS side by side in layers, lying lengthwise on the middle,
+    with ``count`` stones spread in rows along their top, as many abreast as its breadth holds."""
     x0 = CENTRE - length / 2
     z0 = CENTRE - BUNDLE_ACROSS * width / 2
     layers = BUNDLE_LATHS // BUNDLE_ACROSS
     laths = [box(f"Lath{layer * BUNDLE_ACROSS + k + 1}", (x0, layer * thickness, z0 + k * width), (x0 + length, (layer + 1) * thickness, z0 + (k + 1) * width), "wood")
              for layer in range(layers) for k in range(BUNDLE_ACROSS)]
-    count = bundle_stones(metres)
     side = stone_voxels()
     breadth = BUNDLE_ACROSS * width
     across = int(breadth // side)
-    rows = -(-count // across)
-    pitch = length / rows
+    pitch = length / -(-count // across)
     top = layers * thickness
     stones = [box(f"Stone{n + 1}", (x, top, z), (x + side, top + side, z + side), "stone")
               for n in range(count)
               for x, z in [(x0 + (n // across + 0.5) * pitch - side / 2, z0 + (n % across + 0.5) * breadth / across - side / 2)]]
-    path = BUNDLES / f"lathbundle-{metres}.json"
-    write(path, {"textureWidth": 16, "textureHeight": 16, "textures": {**TEXTURES, "stone": STONE_TEXTURE}, "elements": laths + stones})
-    print(f"{path}: {len(laths)} laths under {count} stones of {units.metres(side) * 100:.1f} cm")
+    return {"textureWidth": 16, "textureHeight": 16, "textures": {**TEXTURES, "stone": STONE_TEXTURE}, "elements": laths + stones}
 
 
 def stone_voxels():

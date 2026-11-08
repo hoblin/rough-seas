@@ -15,10 +15,10 @@
         "renderer": "Shape",
         "shape": {"base": "roughseas:entity/lathbundle-{length}"},
         "textures": {"stone": {"base": "game:block/stone/rock/granite1"}},
-        "behaviors": [{"code": "passivephysics"}, {"code": "interpolateposition"}]
+        "behaviors": [{"code": "roughseas:restingphysics"}, {"code": "interpolateposition"}]
     },
     "server": {
-        "behaviors": [{"code": "passivephysics"}]
+        "behaviors": [{"code": "roughseas:restingphysics"}]
     },
     "sounds": {}
 }
