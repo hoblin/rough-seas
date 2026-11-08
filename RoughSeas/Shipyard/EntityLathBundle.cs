@@ -74,6 +74,7 @@ public class EntityLathBundle : Entity
     {
         base.OnInteract(byEntity, itemslot, hitPosition, mode);
         if (mode != EnumInteractMode.Interact || Api.Side != EnumAppSide.Server || !Alive) return;
+        if (byEntity is EntityPlayer { Player: { } player } && !World.Claims.TryAccess(player, Pos.AsBlockPos, EnumBlockAccessFlags.Use)) return;
         if (World.GetItem(new AssetLocation(Code.Domain, $"{Code.Path}-{(Soaked ? "soaked" : "dry")}")) is not ItemLathBundle item) return;
 
         var bundle = new ItemStack(item);
