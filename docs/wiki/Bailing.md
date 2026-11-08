@@ -9,7 +9,7 @@ Boats with a hull hold the water that comes aboard in their bilge, and nothing t
 | [Sailboat](Sailboat) | 8209 litres | 15.1 m² |
 | [Hide currach](Hide-Currach) | 1911 litres | 4.1 m² |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 609 litres | 2.2 m² |
-| [Outrigger canoe](Outrigger-Canoe) | 1915 litres, 1436 without washstrakes | 3.2 m² |
+| [Outrigger canoe](Outrigger-Canoe) | 2009 litres, 1436 without washstrakes | 3.2 m² |
 | [Dugout](Dugout) | 1436 litres | 3.2 m² |
 | [Coracle](Coracle) | 272 litres | 1.1 m² |
 | [Raft](Raft), [reed boat](Reed-Boat) | none: water washes through | |

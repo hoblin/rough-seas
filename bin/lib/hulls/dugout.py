@@ -251,11 +251,6 @@ def hold_water():
     return group("hideWater", LEVEL, LEVEL, hold_surface("hideWater", mask)), bilge(floor, mask, lambda prefix, height: hold_surface(prefix, height, "bilge"))
 
 
-def mouth():
-    stern, bow = (Bowl(HOLLOWINGS, side) for side in ("Stern", "Bow"))
-    return HOLLOW[0] - stern.length, HOLLOW[1] + bow.length
-
-
 def finished_bottom(x):
     return Hull("", STATIONS, CENTRE, WALL, WOOD, WOOD).section(x)[0][1]
 
