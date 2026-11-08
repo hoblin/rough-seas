@@ -23,7 +23,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
 {
     public const string Code = "roughseas:framing";
 
-    protected const int DataVersion = 1;
+    protected const int DataVersion = 2;
     protected const string WoodPrefix = "wood-";
 
     private const double HeldSlackSeconds = 0.5;
@@ -55,6 +55,12 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         framing = new Framing(() => Tree, MarkDirty, config.Stages);
         layings = config.Stages.ToDictionary(stage => stage, stage => Laying.For(stage, config));
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+    }
+
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        base.AfterInitialized(onFirstSpawn);
+        Upgrade(DataVersion, _ => framing.KeepProgress());
     }
 
     public static void Begin(Entity vessel, string? firstLaid = null) => Begin(vessel, DataVersion, tree =>

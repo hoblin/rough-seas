@@ -3,7 +3,7 @@
     "code": "outrigger",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 547.5,
+    "weight": 550.9,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "rings": "east", "plank": "inside-north"},
@@ -41,7 +41,7 @@
                 {"material": "wood-{wood}", "reference": "wood-oak", "share": 303.8},
                 {"name": "float", "material": "wood-{wood}", "reference": "wood-oak", "share": 132, "takesKnocks": false},
                 {"name": "poles", "material": "wood-{wood}", "reference": "wood-oak", "share": 79.4, "takesKnocks": false},
-                {"name": "strakes", "material": "wood-{wood}", "reference": "wood-oak", "share": 32.3, "takesKnocks": false}
+                {"name": "strakes", "material": "wood-{wood}", "reference": "wood-oak", "share": 35.7, "takesKnocks": false}
             ],
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.5375, "spanVoxels": 8.6, "voxels": 0.8},
             "depthMetres": 0.5625,
@@ -94,7 +94,7 @@
                 {"group": "SailFurled", "work": "cloth", "seconds": 15},
                 {"group": "Stays", "work": "rope", "seconds": 15},
                 {"group": "Strakes", "work": "plank", "seconds": 20, "optional": true, "part": "strakes", "texture": "plank"},
-                {"group": "Seams", "work": "rope", "seconds": 15, "optional": true, "raisesMetres": 0.15, "raisesVoxels": 2.4, "raisesLitres": 479.3, "raisesCubicVoxels": 1963.241}
+                {"group": "Seams", "work": "rope", "seconds": 15, "optional": true, "piecesBefore": 4, "raisesMetres": 0.15, "raisesVoxels": 2.4, "raisesLitres": 573.5, "raisesCubicVoxels": 2348.98}
             ],
             "sources": {
                 "time": "A held action lasts the real time of that one piece of work over sixty: game time runs 30 times faster than real time, and boat work is halved again",
@@ -103,8 +103,8 @@
                 "lashing": "One rope is ten metres of lashing: about a quarter of an hour, as a canoe's (an estimate). Once the float is hewn, each boom is lashed to both gunwales and straight to the float, thirteen turns a lashing (ten round, three frapping) of their girth, counted by her shape's builder",
                 "sail": "A crab claw between her two spars, as her model draws it (bin/lib/hulls/outrigger.py), one cloth a square metre, as one linen block covers: four, each laced to the spars in about a quarter of an hour (an estimate)",
                 "stays": "A forestay, a backstay, a shroud out to the float and the sheet, each under ten metres: one rope each, set up in about a quarter of an hour (an estimate)",
-                "strakes": "Optional, any time she is finished: one washstrake a side between her solid ends, a board some 15 cm high, as Pacific washstrakes ran 15 to 20 cm (a Tikopia hull 43 cm deep carries a 15 cm one, Haddon & Hornell, Canoes of Oceania, via collections.maa.cam.ac.uk/objects/555827; Hawaiian mo'o 6 to 8 in). Sawn planks, a metre a plank: 8 along her sides, and a board across each end of her hollow, where her solid ends begin, as the end pieces lashed on at Tobi and Kapingamarangi (Haddon & Hornell; Buck 1950), so the sea cannot come in over her low ends: 10. Fitting one, with its row of holes, about twenty minutes (an estimate)",
-                "seams": "Sewn on through holes 3 in apart over a split batten (Haddon & Hornell, Mont-Dore canoe): each stitch about 30 cm of cord round wall, plank and batten, along her sides and her end boards, counted by her shape's builder (bin/lib/hulls/outrigger.py). Sewn, they raise her side by the strake's height and add the hold between them, by the model"
+                "strakes": "Optional, any time she is finished: one washstrake a side along her whole log, a board some 15 cm high, as Pacific washstrakes ran 15 to 20 cm (a Tikopia hull 43 cm deep carries a 15 cm one, Haddon & Hornell, Canoes of Oceania, via collections.maa.cam.ac.uk/objects/555827; Hawaiian mo'o 6 to 8 in). Sawn planks, a metre a plank: 5 along each side, and a board across each end of her log, as the end pieces lashed on at Tobi and Kapingamarangi (Haddon & Hornell; Buck 1950), so the sea cannot come in over her low ends: 12. Fitting one, with its row of holes, about twenty minutes (an estimate)",
+                "seams": "Sewn on through holes 3 in apart over a split batten (Haddon & Hornell, Mont-Dore canoe): each stitch about 30 cm of cord round wall, plank and batten, along her sides and her end boards, counted by her shape's builder (bin/lib/hulls/outrigger.py). Sewn, they raise her side by the strake's height and add the hold between them, her plan inside them over her hollow and her solid ends alike, by the model. Before 4.2 her washstrakes stopped at her hollow's ends and took 4 ropes (piecesBefore): a save keeps its share of the sewing"
             },
             "floatLengthMetres": 3,
             "floatLengthVoxels": 48
