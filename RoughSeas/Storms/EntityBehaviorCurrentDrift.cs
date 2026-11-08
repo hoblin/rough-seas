@@ -68,12 +68,16 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         if (way == null && IHull.Of(entity) is { } hull) ownDrag = new LiveDrag(entity, hull, attributes, entity.Api.ModLoader.GetModSystem<VesselsModSystem>());
     }
 
+    public HullDrag? Drag => water?.Drag;
+
     /// <summary>The water's drag on her now, newtons in world axes.</summary>
     public (double X, double Z) Pull() =>
         water is { Drag: { } drag } w ? set.Pull(drag, w.X, w.Z, entity.Pos.Yaw) : default;
 
     /// <summary>A mooring stops her set away from it, along the unit vector from the mooring to her.</summary>
     public void Hold(double outwardX, double outwardZ) => set.Hold(outwardX, outwardZ);
+
+    public double Slow(double outwardX, double outwardZ, double metresPerSecond) => set.Slow(outwardX, outwardZ, metresPerSecond);
 
     /// <summary>
     /// While a mooring holds her she turns about her bow under the water running past: her origin moves as the turn

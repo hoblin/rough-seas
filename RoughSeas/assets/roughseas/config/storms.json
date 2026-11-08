@@ -16,9 +16,6 @@
         "shippedWaterFraction": 0.05,
         "crestRatio": 0.5,
         "breakingCrestRatio": 0.7,
-        "airDensity": 1.225,
-        "windageDragCoefficient": 1.0,
-        "waveDriftCoefficient": 0.00625,
         "maxDepthBlocks": 32,
         "sources": {
             "whitecapCoefficient": "Whitecap coverage W = 3.84e-6 U^3.41 (Monahan & O'Muircheartaigh 1980), taken as the share of waves that break",
@@ -33,10 +30,7 @@
             "plungingSpeedRatio": "A plunging breaker strikes at 1.2 times its phase velocity (DNV-RP-C205, 2010, 8.8.1.2); its phase velocity follows the period and the depth (Eckart 1952)",
             "shippedWaterFraction": "Balance: the share of a crest's water that stays aboard once it comes over the gunwale",
             "crestRatio": "A linear wave's crest stands half its height above still water",
-            "breakingCrestRatio": "A breaking crest is peaked: Stokes' highest wave stands about 0.6 of its height above still water, a plunging breaker 0.7 to 0.8",
-            "airDensity": "Air at sea level, kg/m3",
-            "windageDragCoefficient": "Bluff body drag, about 1",
-            "waveDriftCoefficient": "Mean wave drift force is rho g H^2 / 16 per metre of beam on a body that reflects every wave; a small craft, short against the wavelength, reflects about a tenth"
+            "breakingCrestRatio": "A breaking crest is peaked: Stokes' highest wave stands about 0.6 of its height above still water, a plunging breaker 0.7 to 0.8"
         }
     },
     "bilge": {
@@ -68,13 +62,17 @@
     "mooring": {
         "anchoredExposure": 0.3,
         "stakeRope": "rope-flax",
-        "stakeReachMetres": 10,
         "anchorFullScope": 5,
-        "anchorDragMetres": 1,
+        "sandHold": 0.37,
+        "rockHold": 0.49,
+        "anchorStoneDensity": 2650,
         "sources": {
-            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves and the shipped water an unanchored one does; it lies across the sea, so it capsizes as if beam-on. The current's pull is its drag on her and takes no such share",
-            "stakeReachMetres": "Vanilla's longest rope",
-            "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth holds fully"
+            "anchoredExposure": "Balance: an anchored vessel ships three tenths of the water an unanchored one does; it lies across the sea, so it capsizes as if beam-on",
+            "stakeRope": "Vanilla's rope is made of flax, papyrus, cattail or vines alike; every rope is taken as one plant-fibre rope, flax standing in for all",
+            "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth is paid out",
+            "sandHold": "A one-hole stone anchor dragged under water starts to move at 37% of its dry weight on sand (Miller, Cvikel & Me-Bar 2023, J. Archaeol. Sci. Reports 52, 104284: 90 drag tests of Bronze Age replicas); a bed of mud or soil, unmeasured, is taken as sand",
+            "rockHold": "The same anchor on a flat rocky bed starts to move at 49% of its dry weight (Miller, Cvikel & Me-Bar 2023)",
+            "anchorStoneDensity": "Granite, as vanilla draws the anchor's stone, 2650 kg/m³; under water it weighs 61% of its dry weight"
         }
     },
     "drift": {

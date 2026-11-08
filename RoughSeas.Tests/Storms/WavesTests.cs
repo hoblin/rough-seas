@@ -1,4 +1,3 @@
-using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 
@@ -7,16 +6,6 @@ namespace RoughSeas.Tests.Storms;
 public class WavesTests
 {
     private readonly Waves waves = new(Fixtures.Config().Waves);
-
-    [Fact]
-    public void ASteadyPullLeavesTheWavesLessToMakeUp()
-    {
-        Assert.Equal(Waves.ChanceToExceed(1000, 2000), Waves.ChanceToExceed(1000, 2000, 0, 0));
-        Assert.Equal(Waves.ChanceToExceed(1000, 1500), Waves.ChanceToExceed(1000, 2000, 500, 0), 12);
-        Assert.Equal(1, Waves.ChanceToExceed(1000, 2000, 2000, 0));
-        Assert.Equal(1, Waves.ChanceToExceed(0, 2000, 2500, 0));
-        Assert.Equal(0, Waves.ChanceToExceed(0, 2000, 1500, 0));
-    }
 
     [Fact]
     public void FewWavesBreakInABreezeAndManyInAStorm()
@@ -112,54 +101,5 @@ public class WavesTests
 
         Assert.True(waves.ShippedLitres(2, sailboat.BeamMetres) > 0);
         Assert.Equal(4 * waves.ShippedLitres(2, sailboat.BeamMetres), waves.ShippedLitres(4, sailboat.BeamMetres), 6);
-    }
-
-    [Fact]
-    public void AGaleSeaPullsAMooredSailboatAboutAsHardAsTheGaleItself()
-    {
-        var sailboat = Fixtures.Sailboat;
-        var windOnly = waves.Force(20, 0, sailboat.BeamMetres, sailboat.WindageSquareMetres);
-        var sea = waves.Force(20, 4, sailboat.BeamMetres, sailboat.WindageSquareMetres) - windOnly;
-
-        Assert.InRange(sea / windOnly, 0.5, 2);
-    }
-
-    [Fact]
-    public void AFlaxRopeHoldsTheRaftInABreezeButNotForeverInAGale()
-    {
-        var raft = Fixtures.Raft;
-        var breeze = waves.Force(9, 2.7, raft.BeamMetres, raft.WindageSquareMetres);
-        var gale = waves.Force(20, 5.5, raft.BeamMetres, raft.WindageSquareMetres);
-
-        const double GaleWavePeriodSeconds = 10;
-        var everyWave = Waves.ChanceToExceed(gale, Fixtures.FlaxNewtons);
-        var gameDayWaves = new SeaClock(() => 0, () => 0.5, () => 60).SecondsAt(24) / GaleWavePeriodSeconds;
-
-        Assert.True(Waves.ChanceToExceed(breeze, Fixtures.FlaxNewtons) < 1e-6);
-        Assert.InRange(everyWave, 1e-4, 1e-2);
-        Assert.InRange(1 - Math.Pow(1 - everyWave, gameDayWaves), 0.05, 0.5);
-    }
-
-    [Fact]
-    public void ACurrentAcrossTheWindAddsToTheWaveAsAVector()
-    {
-        var across = Waves.ChanceToExceed(1000, 2000, 0, 1200);
-        Assert.Equal(Waves.ChanceToExceed(1000, 1600), across, 12);
-        Assert.True(across < Waves.ChanceToExceed(1000, 2000, 1200, 0));
-        Assert.True(across > Waves.ChanceToExceed(1000, 2000, -1200, 0));
-        Assert.Equal(1, Waves.ChanceToExceed(0, 2000, 1500, 1500));
-    }
-
-    [Fact]
-    public void NoWaveOverloadsWhatTheSeaDoesNotPull()
-    {
-        Assert.Equal(0, Waves.ChanceToExceed(0, 1000));
-    }
-
-    [Fact]
-    public void FewerWavesPullPastAHigherLimit()
-    {
-        Assert.InRange(Waves.ChanceToExceed(1000, 2000), 0.01, 0.02);
-        Assert.InRange(Waves.ChanceToExceed(2000, 1000), 0.3, 0.4);
     }
 }

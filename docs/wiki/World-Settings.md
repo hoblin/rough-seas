@@ -12,16 +12,18 @@ Each mechanic of the sea has its own world setting, under *Rough Seas* on the ne
 
 | Setting | Code | With it off |
 | --- | --- | --- |
-| *Water in the bilge* | `bilgeWater` | No [wave](Surf-and-Swamping) comes aboard and no rain falls into a [bilge](Bailing). A leak still fills it. |
-| *Hull damage* | `hullDamage` | Nothing harms a hull: no [knock](Hull-Condition#knocks-and-landings) on rock or shore, [ram](Hull-Condition#rams), [rapids](Rapids), breaker or weather. Hide doesn't rot, ungreased seams don't seep and reed doesn't soak ([seeping and soaking](Hull-Condition#seeping-and-soaking)). Every hull is mended whole when the world loads, or when you turn the setting off. Weapons and explosions still harm a hull. |
+| *Water in the bilge* | `bilgeWater` | No [wave](Surf-and-Swamping) comes aboard and no rain falls into a [bilge](Bailing). A leak still fills it, and so does the sea when a vessel lies awash or sunk. |
+| *Hull damage* | `hullDamage` | Nothing harms a hull: no [knock](Hull-Condition#knocks-and-landings) on rock or shore, [ram](Hull-Condition#rams), [rapids](Rapids), breaker or weather. Hide doesn't rot, ungreased seams don't seep and reed doesn't soak ([seeping and soaking](Hull-Condition#seeping-and-soaking)). Every hull is mended whole when the world loads, or when you turn the setting off. A knock is still heard, and weapons and explosions still harm a hull. |
 | *Lightning* | `stormLightning` | Storms bring no [lightning](Lightning) of their own, and masts draw none. |
-| *Mooring strain* | `mooringStrain` | The sea puts no strain on a mooring: no [anchor](Anchoring) drags, no [rope snaps](Mooring#tying-up), and no vessel is [thrown ashore](Mooring#thrown-ashore) while you are away. |
-| *Currents* | `oceanCurrents` | [Currents](Currents) and the wind carry no vessel left alone. The currents still flow, and the water keeps its temperature. |
+| *Mooring strain* | `mooringStrain` | No [rope parts](Mooring#tying-up), no [anchor](Anchoring) drags, and no vessel is [thrown ashore](Mooring#thrown-ashore) while you are away. A rope and an anchor still hold a vessel at their length. |
+| *Currents* | `oceanCurrents` | [Currents](Currents) carry no vessel, steered or not, and pull on no mooring. The currents still flow, and the water keeps its temperature. |
 | *Rower fatigue* | `rowerFatigue` | [Rowing, paddling and poling](Paddles-Poles-and-Oars) cost no satiety. |
 | *Pole's depth* | `poleDepth` | A [pole](Paddles-Poles-and-Oars) pushes in water of any depth, as it does at its full stroke. |
 
 To change a setting in a world already made, open the world's settings from the singleplayer list, or type `/worldconfig CODE false` (or `true`) and reload the world. The setting stays as you left it.
 
-A world made before version 4.1.0 had one setting, *Dangerous oceans*. On its first load it gives every setting above its value, on or off; from then on you change them one by one.
+A world made before version 4.1.0 had one setting, *Dangerous oceans*. On its first load it gives every setting above its value, on or off; from then on you change them one by one. So a world that had *Dangerous oceans* off opens with all of them off.
+
+Each setting's description on the world screen, under its name, says what it stops and what stays.
 
 A swimmer breathes by the waves you see whatever the settings: a crest over your head takes your air, and a trough gives it back. Drowning is the game's own. Cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).

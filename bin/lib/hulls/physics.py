@@ -35,8 +35,7 @@ LACING_STEP_METRES = 0.05
 LACING_TURN_METRES = 0.15
 # Reed or flax cord 1 cm thick breaks as flax rope does at 12 mm (rope-flax), by its section.
 CORD_BREAKING_NEWTONS = MATERIALS["rope-flax"]["strength"] * 1000 * (10 / 12) ** 2
-# Natural fibre ropes stretch 10 to 12% before they break (machovec.com, rope comparison).
-CORD_STRETCH_AT_BREAK = 0.1
+CORD_STRETCH_AT_BREAK = MATERIALS["rope-flax"]["elongation"]
 # A lashing takes a blow as the raft's do: her impactCapacity over the three ropes of her recipe.
 LASHING_JOULES_PER_METRE = next(op["value"]["impactCapacity"] for op in load(ASSETS / "patches/vessels-vanilla-boats.json")
                                 if op["file"].endswith("boat-raft.json") and op["path"].endswith("roughseas:vesselintegrity")) / (3 * ROPE_METRES)

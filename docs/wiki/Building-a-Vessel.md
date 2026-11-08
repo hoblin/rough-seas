@@ -413,14 +413,12 @@ For sounds of your own, the server raises events on the behaviours:
 
 ## Mooring
 
-`roughseas:mooring`, on the server, with `roughseas:seaforces`; it has no keys. It holds a vessel tied to a stake, and one at anchor ([Mooring](Mooring), [Anchoring](Anchoring)).
+`roughseas:mooring`, on both sides, with `roughseas:seaforces` and `roughseas:currentdrift`; it has no keys. It holds a vessel tied to a stake, and one at anchor ([Mooring](Mooring), [Anchoring](Anchoring)).
 
-- **A stake.** Vanilla's `ropetieable` on both sides: a rope from the vessel to a fence post. It holds the vessel at the rope's own length, up to vanilla's longest rope.
-- **An anchor.** An accessory slot (`rideableaccessories`) that takes vanilla's anchor, as vanilla's sailboat has. Spare rode is any item with a `rodeMetres` attribute in the same accessories, such as our anchor warp.
+- **A stake.** Vanilla's `ropetieable` on both sides: one rope from the vessel to a fence post or a growing trunk. A vessel refuses a second rope. The rope holds the vessel's bow at its own length, which the player sets with the rope's tool modes.
+- **An anchor.** An accessory slot (`rideableaccessories`) that takes vanilla's anchor, as vanilla's sailboat has, with the anchor's `rodeMetres`, `rope` and `kilograms` attributes. Spare rode is any item with a `rodeMetres` attribute in the same accessories, such as our anchor warp.
 
-At anchor, a vessel ships less water, though a breaker slams it in full; tied to a stake, it takes the sea in full. In a storm the sea's pull on it grows with its beam and its windage, and a rope can snap. With no player near, a storm can throw it ashore.
-
-A rider's client steers a vessel, and the server can't hold one it doesn't move: a steered vessel drags its anchor along.
+Each line only pulls, at its end, and stretches by its rope's material: the water's steady pull is shared by the taut lines, and a vessel reaching a line's end at speed jerks it, by its real speed and its mass. A line pulled past its breaking load parts; an anchor pulled past what it holds on the bed drags, and holds the vessel back by its friction as it goes. It all runs where the vessel's physics runs: on the server for a vessel nobody steers, on its rider's client for one being steered, which reports a parted line to the server. At anchor, a vessel ships less water, though a breaker slams it in full. With no player near, a storm can throw it ashore.
 
 ## Currents
 

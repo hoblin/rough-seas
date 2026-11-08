@@ -5,8 +5,13 @@ namespace RoughSeas.Tests.Storms;
 public class AnchorTests
 {
     private const double FullScope = 5;
+    private const double Granite = 2650;
+    private const double Seawater = 1025;
+    private const double Sand = 0.37;
+    private const double Rock = 0.49;
+    private const double Gravity = 9.81;
 
-    private readonly Anchor anchor = new(0, 0, 0, RodeMetres: 50, Rope: "rope-flax", HoldingNewtons: 3000);
+    private readonly Anchor anchor = new(0, 0, 0, RodeMetres: 50, Rope: "rope-flax", Kilograms: 100, BedHold: Sand);
 
     [Fact]
     public void LetGoInShallowWaterItPaysOutFullScope()
@@ -35,25 +40,32 @@ public class AnchorTests
     }
 
     [Fact]
-    public void ItHoldsFullyFromFiveTimesTheDepth()
+    public void PulledAlongTheBedItHoldsTheShareOfItsDryWeightMeasuredForItsBed()
     {
-        Assert.Equal(3000, anchor.Holding(depth: 10, FullScope));
-        Assert.Equal(1500, anchor.Holding(depth: 50.0 / 3, FullScope), 6);
-        Assert.Equal(0, anchor.Holding(depth: 50, FullScope));
+        Assert.Equal(Sand * 100 * Gravity, anchor.Holding(depth: 0, Granite, Seawater), 6);
+        Assert.Equal(Rock * 100 * Gravity, (anchor with { BedHold = Rock }).Holding(depth: 0, Granite, Seawater), 6);
     }
 
     [Fact]
-    public void OnAShoalItHoldsFully()
+    public void ARodeRisingFromItLiftsItAndItHoldsLess()
     {
-        Assert.Equal(3000, anchor.Holding(depth: 0, FullScope));
+        var shortScope = anchor.Holding(depth: 25, Granite, Seawater);
+        Assert.True(anchor.Holding(depth: 10, Granite, Seawater) > shortScope);
+        Assert.True(shortScope < anchor.Holding(depth: 0, Granite, Seawater));
+    }
+
+    [Fact]
+    public void ARodeStraightUpHoldsOnlyWhatItWeighsUnderWater()
+    {
+        Assert.Equal(100 * Gravity * (1 - Seawater / Granite), anchor.Holding(depth: 50, Granite, Seawater), 6);
     }
 
     [Fact]
     public void DraggingMovesWhereItLies()
     {
-        Assert.Equal(new Anchor(2, 0, -1, 50, "rope-flax", 3000), anchor.DraggedBy(2, -1));
+        Assert.Equal(anchor with { X = 2, Z = -1 }, anchor.DraggedBy(2, -1));
     }
 
     private static Anchor? LetGo(double depth, double rodeAboard) =>
-        Anchor.LetGo(0, -depth, 0, depth, rodeAboard, FullScope, "rope-flax", 3000);
+        Anchor.LetGo(0, -depth, 0, depth, rodeAboard, FullScope, "rope-flax", 100, Sand);
 }

@@ -194,9 +194,9 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Drop((string)args[0], (Vec3d)args[1]))
             .EndSubCommand()
             .BeginSubCommand("tie")
-                .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute")
-                .WithArgs(parsers.Long("id"), parsers.Int("x"), parsers.Int("y"), parsers.Int("z"))
-                .HandleWith(args => Tie(args.Caller, sapi.World.GetEntityById((long)args[0]), new BlockPos((int)args[1], (int)args[2], (int)args[3])))
+                .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute; METRES sets its length as the mouse wheel does (1.5 to 10), else it is as long as the gap")
+                .WithArgs(parsers.Long("id"), parsers.Int("x"), parsers.Int("y"), parsers.Int("z"), parsers.OptionalDouble("metres", 0))
+                .HandleWith(args => Tie(args.Caller, sapi.World.GetEntityById((long)args[0]), new BlockPos((int)args[1], (int)args[2], (int)args[3]), (double)args[4]))
             .EndSubCommand()
             .BeginSubCommand("ropes")
                 .WithDescription("Where each rope tied to an entity is pinned at both ends: a block position, an entity id, or loose")
@@ -960,13 +960,16 @@ public class BridgeCommands : ModSystem
             $"{hull.Aboard.Total:F0} kg aboard, draft {afloat.DraftMetres:F3} m, freeboard {afloat.FreeboardMetres:F3} m, sunk {afloat.Sunk}";
     }
 
-    private TextCommandResult Tie(Caller caller, Entity? entity, BlockPos block)
+    private TextCommandResult Tie(Caller caller, Entity? entity, BlockPos block, double metres)
     {
         var tieable = entity?.GetBehavior<EntityBehaviorRopeTieable>();
         if (tieable == null) return TextCommandResult.Error("Not a rope-tieable entity");
 
         var cloths = sapi.ModLoader.GetModSystem<ClothManager>();
         var rope = ClothSystem.CreateRope(sapi, cloths, entity!.Pos.XYZ, block.ToVec3d().Add(0.5, 0.5, 0.5), null);
+        var points = 0;
+        rope.WalkPoints(_ => points++);
+        if (metres > 0 && !rope.ChangeRopeLength(metres - points / rope.Resolution)) return TextCommandResult.Error("A vanilla rope is 1.5 to 10 m long");
         rope.LastPoint.PinTo(block, new Vec3f(0.5f, 0.5f, 0.5f));
         cloths.RegisterCloth(rope);
         tieable.Attach(rope, rope.FirstPoint);

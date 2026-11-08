@@ -50,6 +50,7 @@ public static class DriftPhysics
         var wet = ___feetInLiquidBefore || ___swimmingBefore;
         var drag = wet ? __instance.WaterDragValue : __instance.AirDragValue;
         drift.BeforeMove(pos.Motion, dt, drag, wet, boat.Swimming && boat.ApplyGravity, dt * WaterDrag.TicksPerSecond);
+        boat.GetBehavior<EntityBehaviorMooring>()?.Restrain(pos.Motion, dt);
     }
 
     private static void AfterMove(EntityBehaviorPassivePhysics __instance, EntityPos pos)

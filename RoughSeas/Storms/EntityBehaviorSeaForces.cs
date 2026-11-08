@@ -26,7 +26,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private IBuoyant? buoyant;
     private EntityBehaviorBilge? bilge;
     private EntityBehaviorMooring? mooring;
-    private double windageSquareMetres;
     private JsonObject config = null!;
     private double? designedBeamMetres;
     private Seaworthiness dry;
@@ -101,7 +100,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         config = attributes;
         designedBeamMetres = attributes["beamMetres"].Exists ? attributes["beamMetres"].AsDouble() : null;
         designedMastMetres = attributes["mastMetres"].AsDouble();
-        windageSquareMetres = attributes["windageSquareMetres"].AsDouble();
         speedMultiplier = properties.Attributes?["speedMultiplier"].AsFloat(1) ?? 1;
     }
 
@@ -116,18 +114,17 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         driven = entity.SidedProperties.Behaviors.OfType<IHullWay>().FirstOrDefault();
     }
 
-    public double Force(SeaState state) =>
-        storms.Waves.Force(state.WindSpeed, state.WaveHeight, BeamMetres, windageSquareMetres) * Exposure;
-
-    public double WaterDepth(int maxBlocks) => WaterDepth(entity.Pos.XYZ, maxBlocks);
+    public double WaterDepth(int maxBlocks) => Sound(entity.Pos.XYZ, maxBlocks).Depth;
 
     public double WaterDepth(double alongMetres, double acrossMetres, int maxBlocks)
     {
         var (x, z) = HullShape.ToWorld(alongMetres, acrossMetres, entity.Pos.Yaw);
-        return WaterDepth(entity.Pos.XYZ.Add(x, 0, z), maxBlocks);
+        return Sound(entity.Pos.XYZ.Add(x, 0, z), maxBlocks).Depth;
     }
 
-    private double WaterDepth(Vec3d at, int maxBlocks)
+    public Block Seabed(int maxBlocks) => entity.World.BlockAccessor.GetBlock(Sound(entity.Pos.XYZ, maxBlocks).Bottom);
+
+    private (double Depth, BlockPos Bottom) Sound(Vec3d at, int maxBlocks)
     {
         var accessor = entity.World.BlockAccessor;
         var pos = at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
@@ -139,7 +136,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
             surface = false;
             pos.Down();
         }
-        return depth;
+        return (depth, pos);
     }
 
     public override void OnGameTick(float deltaTime)
@@ -220,7 +217,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
         var blocks = storms.Config.Waves.BedSlopeBlocks;
         var seaward = entity.Pos.XYZ.Add(-state.WindX / wind * blocks, 0, -state.WindZ / wind * blocks);
-        return Math.Max(0, WaterDepth(seaward, storms.Config.Waves.MaxDepthBlocks) - depth) / blocks;
+        return Math.Max(0, Sound(seaward, storms.Config.Waves.MaxDepthBlocks).Depth - depth) / blocks;
     }
 
     private void Capsize(double breakerMetres, bool swamped)
