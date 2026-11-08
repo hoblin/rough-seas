@@ -838,6 +838,7 @@ public class BridgeCommands : ModSystem
         var grid = player.InventoryManager.GetOwnInventory(GlobalConstants.craftingInvClassName);
         var size = grid.Count - 1;
         if (stacks.Length > size) return TextCommandResult.Error($"The grid holds {size} stacks");
+        if (Enumerable.Range(0, size).Any(i => !grid[i].Empty)) return TextCommandResult.Error("The crafting grid is not empty: take its stacks out first");
 
         for (int i = 0; i < stacks.Length; i++)
         {
@@ -879,7 +880,7 @@ public class BridgeCommands : ModSystem
         if (crafted.Empty) return TextCommandResult.Error($"Nothing crafted; the grid held {string.Join(", ", left)}");
 
         var made = Describe(crafted.Itemstack);
-        player.InventoryManager.TryGiveItemstack(crafted.Itemstack, true);
+        if (!player.InventoryManager.TryGiveItemstack(crafted.Itemstack, true)) sapi.World.SpawnItemEntity(crafted.Itemstack, player.Entity.Pos.XYZ);
         return TextCommandResult.Success($"Crafted {made}; given back: {(givenBack.Count == 0 ? "nothing" : string.Join(", ", givenBack))}; left in the grid: {(left.Count == 0 ? "nothing" : string.Join(", ", left))}");
     }
 

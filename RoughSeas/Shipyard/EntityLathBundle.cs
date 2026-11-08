@@ -40,9 +40,10 @@ public class EntityLathBundle : Entity
         sea = api.ModLoader.GetModSystem<SeaWeatherSystem>();
     }
 
-    public void Lay(bool soaked, ItemStack? weight)
+    public void Lay(double wetHours, ItemStack? weight)
     {
-        Tree.SetBool(SoakedKey, soaked);
+        Tree.SetDouble(HoursKey, wetHours);
+        Tree.SetBool(SoakedKey, wetHours > 0);
         if (weight != null) WatchedAttributes.SetItemstack(ItemLathBundle.WeightKey, weight);
     }
 
@@ -55,28 +56,31 @@ public class EntityLathBundle : Entity
         double now = sea.Clock.Hours;
         double hours = Math.Max(0, now - Tree.GetDouble(CheckedAtKey, now));
         Tree.SetDouble(CheckedAtKey, now);
-        if (Soaked || !Waterside.IsWater(World.BlockAccessor, Pos.AsBlockPos)) return;
+        bool inWater = Waterside.IsWater(World.BlockAccessor, Pos.AsBlockPos);
+        var before = new Soaking(HoursSoaked, Soaked, soakHours);
+        var after = before.After(hours, inWater);
+        if (after == before) return;
 
-        double soaked = HoursSoaked + hours;
-        Tree.SetDouble(HoursKey, soaked);
-        if (soaked >= soakHours)
+        Tree.SetDouble(HoursKey, after.Hours);
+        Tree.SetBool(SoakedKey, after.Soaked);
+        if (after.Soaked != before.Soaked)
         {
-            Tree.SetBool(SoakedKey, true);
-            Shipyard.Log(this, "soaked through after {0:F1} h in the water: its laths are wet", soaked);
+            Shipyard.Log(this, after.Soaked ? "soaked through in the water: its laths are wet" : "dried out of the water: its laths are dry");
         }
-        if (Math.Floor(soaked) > Math.Floor(soaked - hours) || Soaked) WatchedAttributes.MarkPathDirty(TreeKey);
+        if (Math.Floor(after.Hours) != Math.Floor(before.Hours) || after.Soaked != before.Soaked) WatchedAttributes.MarkPathDirty(TreeKey);
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode)
     {
         base.OnInteract(byEntity, itemslot, hitPosition, mode);
         if (mode != EnumInteractMode.Interact || Api.Side != EnumAppSide.Server || !Alive) return;
-        if (World.GetItem(new AssetLocation(Code.Domain, $"{Code.Path}-{(Soaked ? "soaked" : "dry")}")) is not { } item) return;
+        if (World.GetItem(new AssetLocation(Code.Domain, $"{Code.Path}-{(Soaked ? "soaked" : "dry")}")) is not ItemLathBundle item) return;
 
         var bundle = new ItemStack(item);
+        if (Soaked) item.SetTransitionState(bundle, EnumTransitionType.Dry, (float)(soakHours - HoursSoaked));
         if (Weight is { } weight) bundle.Attributes.SetItemstack(ItemLathBundle.WeightKey, weight);
         if (!byEntity.TryGiveItemStack(bundle)) World.SpawnItemEntity(bundle, Pos.XYZ);
-        Shipyard.Log(this, "lifted by {0} after {1:F1} h in the water{2}", byEntity.GetName(), HoursSoaked, Soaked ? ", soaked" : "");
+        Shipyard.Log(this, "lifted by {0}, {1}, with {2:F1} h of water in it", byEntity.GetName(), Soaked ? "soaked" : "dry", HoursSoaked);
         Die(EnumDespawnReason.PickedUp);
     }
 

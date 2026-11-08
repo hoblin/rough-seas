@@ -27,13 +27,13 @@ public class ItemLathBundle : ItemOfWood
 
         handHandling = EnumHandHandling.PreventDefaultAction;
         if (api.Side != EnumAppSide.Server) return;
-        if (!api.World.Claims.TryAccess(player, blockSel.Position, EnumBlockAccessFlags.BuildOrBreak)) return;
+        var at = blockSel.DidOffset ? blockSel.Position : blockSel.Position.AddCopy(blockSel.Face);
+        if (!api.World.Claims.TryAccess(player, at, EnumBlockAccessFlags.BuildOrBreak)) return;
         if (api.World.GetEntityType(EntityCode) is not { } type || api.World.ClassRegistry.CreateEntity(type) is not EntityLathBundle bundle) return;
 
-        var at = blockSel.DidOffset ? blockSel.Position : blockSel.Position.AddCopy(blockSel.Face);
         bundle.Pos.SetPos(at.X + 0.5, at.Y, at.Z + 0.5);
         bundle.Pos.Yaw = byEntity.Pos.Yaw;
-        bundle.Lay(Soaked, WeightOf(slot.Itemstack, api.World));
+        bundle.Lay(WetHoursLeft(slot.Itemstack), WeightOf(slot.Itemstack, api.World));
         if (player.WorldData.CurrentGameMode != EnumGameMode.Creative)
         {
             slot.TakeOut(1);
@@ -75,6 +75,9 @@ public class ItemLathBundle : ItemOfWood
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
         if (inSlot.Itemstack is { } bundle && WeightOf(bundle, api.World) is { } weight) dsc.AppendLine(Lang.Get("roughseas:lathbundle-weight", weight.StackSize, weight.GetName()));
     }
+
+    private double WetHoursLeft(ItemStack bundle) =>
+        Soaked ? UpdateAndGetTransitionState(api.World, new DummySlot(bundle.Clone()), EnumTransitionType.Dry)?.FreshHoursLeft ?? 0 : 0;
 
     private ShipyardModSystem Shipyard => api.ModLoader.GetModSystem<ShipyardModSystem>();
 }
