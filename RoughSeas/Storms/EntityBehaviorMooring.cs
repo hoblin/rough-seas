@@ -264,7 +264,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             storms.Log(entity, "ignored a parted mooring reported by {0}, who does not steer her", player.PlayerName);
             return;
         }
-        if (holds.FirstOrDefault(hold => hold.Tether.Key == report.Line) is { } parted) Part(parted, report.Newtons);
+        if (Mechanic.MooringStrain.On(entity.World) && holds.FirstOrDefault(hold => hold.Tether.Key == report.Line) is { } parted) Part(parted, report.Newtons);
     }
 
     /// <summary>The lines that hold her now, where her physics runs: her anchor's rode and the rope that ties her to a post.</summary>
