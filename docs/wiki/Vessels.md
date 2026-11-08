@@ -26,11 +26,11 @@ Speeds are one rower's, paddled unless noted, on calm water; under full sail van
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [Raft](Raft) | 1200 J | none | never floods | 2 m | none | flax twine | picked up |
 | [Reed boat](Reed-Boat) | 30 600 J, and tears | none | soaks until it sinks | 0.9 m | dried ashore | cannot be | picked up |
-| [Dugout](Dugout) | 30 000 J | 1298 l | awash | 0.9 m | none | a log | no |
+| [Dugout](Dugout) | 30 000 J | 1436 l | awash | 0.9 m | none | a log | no |
 | [Coracle](Coracle) | 690 J | 272 l | awash | 0.6 m | greased every few days | a small hide; fat for its seams | worn on the back |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 5200 J | 609 l | awash | 0.75 m | none | bark of its tree | picked up |
 | [Hide currach](Hide-Currach) | 2800 J | 1911 l | awash | 2 m | greased every few days | a large hide; fat for its seams | picked up |
-| [Outrigger canoe](Outrigger-Canoe) | 30 000 J | 1720 l, 1298 without washstrakes | awash | 2.6 m | none | a log | no |
+| [Outrigger canoe](Outrigger-Canoe) | 30 000 J | 2009 l, 1436 without washstrakes | awash | 2.6 m | none | a log | no |
 | [Sailboat](Sailboat) | 40 000 J | 8209 l | sinks | 3.3 m | none | planks | no |
 
 Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-is-made-of) take more, and what floods awash in oak may sink [in a heavy wood or loaded hard](Surf-and-Swamping#swamping). Capsizing is [switched off for now](Surf-and-Swamping#capsizing) and comes back with heel in [Seamanship](Roadmap#seamanship); its column is what overturned each vessel in 1.0.
@@ -54,4 +54,6 @@ A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a 
 
 A better vessel costs more than a worse one for the same job: the reed boat costs a knife, four stacks and a half of reeds and some rope, the raft an axe and a stack of logs; the currach's hides cost more than the dugout's wood. What you build says how far you mean to go.
 
-The raft is made in the crafting grid; every other one is built in place, by the water or where its material lies, as each one's page shows, and the [recipes](Recipes) make what goes into them. Each has its page in the game's handbook. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).
+The raft is made in the crafting grid; every other one is built in place, by the water or where its material lies, as each one's page shows, and the [recipes](Recipes) make what goes into them. Each has its page in the game's handbook.
+
+A vessel being built tells you where it is: right-click it with an empty hand, or with anything its next step doesn't take, and it names the step and what that step needs, such as "Lash it with rope (Crossings bound: 1 of 3 ropes)". Shift + right-click picks it up, as it picks up a finished one you can carry, with an empty hand or holding a piece of its build. Every vessel can be [tied to a post](Mooring#tying-up); only the sailboat [anchors](Anchoring).

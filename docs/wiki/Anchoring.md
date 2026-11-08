@@ -61,4 +61,4 @@ An anchored vessel takes the waves more gently: it [ships less water](Surf-and-S
 
 ## Leaving it
 
-Far from shore and well anchored, a sailboat rides out the night; close to shore it may be [thrown up on the beach](Mooring#thrown-ashore). With [Dangerous oceans](World-Settings#dangerous-oceans) off, the sea puts no strain on an anchor.
+Far from shore and well anchored, a sailboat rides out the night; close to shore it may be [thrown up on the beach](Mooring#thrown-ashore). With [Mooring strain](World-Settings#the-mechanics) off, the sea puts no strain on an anchor.

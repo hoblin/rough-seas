@@ -71,8 +71,10 @@ public class FlotationTests
         var ebony = Fixtures.Hull("dugout", "ebony");
         var oak = Fixtures.Hull("dugout");
 
-        Assert.True(ebony.Float(ebony.Crewed(bodies: 130, kit: 70, litres: 1130)).FreeboardMetres <= 0);
-        Assert.True(oak.Float(oak.Crewed(bodies: 130, kit: 70, litres: 1130)).FreeboardMetres > 0);
+        var hard = oak.CapacityLitres * 0.85;
+
+        Assert.True(ebony.Float(ebony.Crewed(bodies: 130, kit: 70, litres: hard)).FreeboardMetres <= 0);
+        Assert.True(oak.Float(oak.Crewed(bodies: 130, kit: 70, litres: hard)).FreeboardMetres > 0);
     }
 
     [Fact]

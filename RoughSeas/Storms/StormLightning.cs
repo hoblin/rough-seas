@@ -30,7 +30,7 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
     private void Strike()
     {
         var lived = watch.Lap().LivedSeconds;
-        if (!sea.DangerousOceans) return;
+        if (!Mechanic.Lightning.On(sapi.World)) return;
 
         using var _ = storms.Budget.Measure();
         var rand = sapi.World.Rand;
@@ -83,7 +83,7 @@ public class StormLightning(StormsModSystem storms, SeaWeatherSystem sea, ICoreS
 
     private void DrawToMast(ref Vec3d impactPos, ref EnumHandling handling)
     {
-        if (!sea.DangerousOceans) return;
+        if (!Mechanic.Lightning.On(sapi.World)) return;
 
         var reach = (float)(Config.AttractBlocksPerMastMetre * Config.TallestMastMetres);
         var impact = impactPos;

@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "惊涛骇浪",
     "playstyle-desc-preset-roughseas": "在拥有开阔海洋的世界中进行标准生存，风、风暴和大海都很危险。",
     "worldconfig-category-roughseas": "惊涛骇浪",
-    "worldattribute-dangerousOceans": "危险海洋",
-    "worldattribute-dangerousOceans-desc": "风暴、拍岸浪和闪电会让船只进水、翻覆、损毁，并使其挣脱系泊与锚泊。关闭后，海上仍有天气变化，但不会造成伤害。"
+    "worldattribute-bilgeWater": "舱底积水",
+    "worldattribute-bilgeWater-desc": "浪头打上船，雨水落进敞舱的船里，舱底积水越来越多，直到你把水舀出去。关闭后，浪和雨都不再添水；漏处照样进水。",
+    "worldattribute-hullDamage": "船体损坏",
+    "worldattribute-hullDamage-desc": "礁石、岸边、撞击、急流、拍岸浪和天气都会撞裂船体，裂缝会漏水。兽皮会腐烂，没涂油脂的接缝会渗水，芦苇会吸水。关闭后，船体不再受损，所有船体都会恢复完好。",
+    "worldattribute-stormLightning": "闪电",
+    "worldattribute-stormLightning-desc": "风暴会在你附近落下闪电，桅杆会招来闪电。",
+    "worldattribute-mooringStrain": "系泊受力",
+    "worldattribute-mooringStrain-desc": "风暴会拖动船锚、扯断系船绳，并把你不在时系泊的船抛上岸。",
+    "worldattribute-oceanCurrents": "洋流",
+    "worldattribute-oceanCurrents-desc": "洋流和风会把无人驾驶的船带走。",
+    "worldattribute-rowerFatigue": "划桨疲劳",
+    "worldattribute-rowerFatigue-desc": "划桨、划单叶桨和撑篙都会让你饥饿。",
+    "worldattribute-poleDepth": "撑篙水深",
+    "worldattribute-poleDepth-desc": "撑篙只能在够得着水底的地方推船。关闭后，在任何深度的水里都能像撑到底一样推船。"
 }

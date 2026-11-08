@@ -10,6 +10,11 @@ namespace RoughSeas.SeaAndWeather;
 public static class SeaWeatherCommands
 {
     private const double DefaultStormRange = 10000;
+    private const double DefaultForecastDays = 30;
+    private const double DefaultForecastRange = 60000;
+    private const int ForecastLength = 10;
+    private const int ForecastBearings = 12;
+    private static readonly double[] ForecastReaches = [0.08, 0.15, 0.25, 0.4, 0.6, 0.8];
     private const double DefaultCurrentRange = 4000;
     private const double MaxCurrentRange = 8000;
     private const double CurrentScanStep = 64;
@@ -34,6 +39,22 @@ public static class SeaWeatherCommands
                 .RequiresPlayer()
                 .WithArgs(sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultStormRange))
                 .HandleWith(args => TextCommandResult.Success(Storms(sea, sapi, args.Caller.Pos, (double)args[0])))
+            .EndSubCommand()
+            .BeginSubCommand("forecast")
+                .WithDescription("The strongest storms of a type born within a range of you over the coming days, with where and when each peaks")
+                .RequiresPlayer()
+                .WithArgs(sapi.ChatCommands.Parsers.Word("type", ["squall", "gale", "hurricane"]),
+                    sapi.ChatCommands.Parsers.OptionalDouble("days", DefaultForecastDays),
+                    sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultForecastRange))
+                .HandleWith(args => TextCommandResult.Success(Forecast(sea, sapi, args.Caller.Pos, (string)args[0], (double)args[1], (double)args[2])))
+            .EndSubCommand()
+            .BeginSubCommand("stage")
+                .WithDescription("Put a storm of a type over your position at its peak, held until a restart: a gale or hurricane standing still with its sea built, a squall travelling; 'clear' removes the staged ones")
+                .RequiresPlayer()
+                .WithArgs(sapi.ChatCommands.Parsers.Word("type", ["squall", "gale", "hurricane", "clear"]),
+                    sapi.ChatCommands.Parsers.OptionalDouble("peak", double.NaN),
+                    sapi.ChatCommands.Parsers.OptionalDouble("radius", double.NaN))
+                .HandleWith(args => TextCommandResult.Success(Stage(sea, sapi, args.Caller.Pos, (string)args[0], (double)args[1], (double)args[2])))
             .EndSubCommand()
             .BeginSubCommand("currents")
                 .WithDescription("The warmest, the coldest and the fastest current within a range of you, up to 8000 blocks")
@@ -90,6 +111,57 @@ public static class SeaWeatherCommands
         return $"{storm.Code}: {Distance(centre, pos):0} blocks away bearing {bearing:0}°, centre {Coordinates(api, centre.X, centre.Z)}, "
             + $"radius {storm.Radius:0}, strength {storm.Strength(now):P0} of {storm.PeakMps:0} m/s, "
             + $"heading {heading:0}° at {speed:0} blocks/h, {storm.DiesHours - now:0.0} h left";
+    }
+
+    private static string Forecast(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, string code, double days, double range)
+    {
+        var now = sea.Clock.Hours;
+        var storms = sea.Model.Weather.Storms.Brewed(code, pos.X, pos.Z, now, now + days * api.World.Calendar.HoursPerDay, range)
+            .Select(storm => (storm, peak: storm.BornHours + storm.LifetimeHours / 2))
+            .Select(entry => (entry.storm, entry.peak, roughest: Roughest(sea.Model, entry.storm, entry.peak)))
+            .OrderByDescending(entry => entry.roughest?.State.WaveHeight ?? -1)
+            .Take(ForecastLength)
+            .Select(entry =>
+            {
+                var (storm, peak, roughest) = entry;
+                var centre = storm.CentreAt(peak);
+                var under = roughest is var (x, z, state)
+                    ? $"its roughest open sea Beaufort {state.Beaufort}, waves {state.WaveHeight:0.0} m, at {Coordinates(api, x, z)}"
+                    : "no open sea under it";
+                return $"{storm.Code} of {storm.PeakMps:0} m/s, radius {storm.Radius:0}: peaks in {peak - now:0} h "
+                    + $"(born in {storm.BornHours - now:0} h, lives {storm.LifetimeHours:0} h) at {Coordinates(api, centre.X, centre.Z)}, "
+                    + $"{Distance(centre, pos):0} blocks away; {under}, water {sea.CurrentAt(centre.X, centre.Z).WaterCelsius:0} °C";
+            })
+            .ToArray();
+        return storms.Length == 0
+            ? $"No {code} is born within {range:0} blocks in the next {days:0} days"
+            : string.Join("\n", storms);
+    }
+
+    private static string Stage(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, string code, double peak, double radius)
+    {
+        var storms = sea.Model.Weather.Storms;
+        if (code == "clear")
+        {
+            storms.Unstage();
+            sea.Model.Forget();
+            return "Staged storms removed";
+        }
+
+        var storm = storms.Stage(code, pos.X, pos.Z, sea.Clock.Hours, double.IsNaN(peak) ? null : peak, double.IsNaN(radius) ? null : radius);
+        sea.Model.Forget();
+        return $"Staged {Describe(api, storm, storm.CentreAt(sea.Clock.Hours), pos, sea.Clock.Hours)}";
+    }
+
+    private static (double X, double Z, SeaState State)? Roughest(ISeaModel model, Storm storm, double hours)
+    {
+        var (centreX, centreZ) = storm.CentreAt(hours);
+        return ForecastReaches
+            .SelectMany(reach => Enumerable.Range(0, ForecastBearings).Select(i => (reach, angle: i * 2 * Math.PI / ForecastBearings)))
+            .Select(probe => (X: centreX + Math.Sin(probe.angle) * probe.reach * storm.Radius, Z: centreZ + Math.Cos(probe.angle) * probe.reach * storm.Radius))
+            .Where(point => model.IsSea(point.X, point.Z))
+            .Select(point => ((double X, double Z, SeaState State)?)(point.X, point.Z, model.At(point.X, point.Z, hours)))
+            .MaxBy(probe => probe!.Value.State.WaveHeight);
     }
 
     private static string Currents(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, double range)

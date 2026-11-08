@@ -11,7 +11,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 ## Contents
 
 **Getting started**
-- [World settings](World-Settings): the *Rough Seas* playstyle, and *Dangerous oceans*.
+- [World settings](World-Settings): the *Rough Seas* playstyle, and a setting for each mechanic.
 - [Vessels](Vessels): which one for which water.
 - [Recipes](Recipes): everything the mod adds to the crafting grid.
 - [Paddles, poles and oars](Paddles-Poles-and-Oars): what drives each vessel, and how fast.

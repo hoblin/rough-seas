@@ -40,7 +40,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private float sinceUpdate;
     private double sinceWave;
 
-    /// <summary>Once a wave period, server side, while the vessel floats and the oceans are dangerous: the sea state of that wave.</summary>
+    /// <summary>Once a wave period, server side, while the vessel floats: the sea state of that wave.</summary>
     public event Action<SeaState>? Wave;
 
     /// <summary>Server side, each wave as she takes it, whether or not it broke on her or shipped water.</summary>
@@ -152,7 +152,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
         sinceUpdate = 0;
         sinceWave += watch.Lap().LivedSeconds;
-        if (!entity.Swimming || !sea.DangerousOceans)
+        if (!entity.Swimming)
         {
             sinceWave = 0;
             return;
@@ -184,7 +184,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         var breaks = surf || rand.NextDouble() < waves.BreakingChance(state.WindSpeed);
         var breaking = swamped || breaks;
         var crest = waves.Crest(height, breaking);
-        var shipped = waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure;
+        var shipped = Mechanic.BilgeWater.On(entity.World) ? waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure : 0;
         var capsizes = storms.Config.Swamping.Capsizes && breaking && Seaworthiness.Capsizes(height);
         Took?.Invoke(new TakenWave(height, breaking, shipped, -state.WindX, -state.WindZ));
         if (!breaking && shipped <= 0) return;
@@ -229,7 +229,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         if (thrown == 0 && (swamped || bilge == null)) return;
 
         storms.Log(entity, "capsized by a {0:F1} m breaker against {1:F2} m: {2} thrown in the water", breakerMetres, Seaworthiness.CapsizeBreakerMetres, thrown);
-        bilge?.Ship(bilge.CapacityLitres, "capsized");
+        if (Mechanic.BilgeWater.On(entity.World)) bilge?.Ship(bilge.CapacityLitres, "capsized");
     }
 
     private void Lade()

@@ -176,6 +176,18 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Hold(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("craft")
+                .WithDescription("Lay stacks in the caller's crafting grid, slot by slot from the top left, and take what it makes, as a click on the output does: CODE, CODE*N for a stack of N, hand for the held stack, _ for an empty slot. Ingredients the recipe gives back go to the inventory, as in play")
+                .RequiresPlayer()
+                .WithArgs(parsers.All("stacks"))
+                .HandleWith(args => Craft(args.Caller.Player, ((string)args[0]).Split(' ', StringSplitOptions.RemoveEmptyEntries)))
+            .EndSubCommand()
+            .BeginSubCommand("pot")
+                .WithDescription("Hold a cooked pot of something cooked in it, as the firepit leaves it: CONTENT, PORTIONS of it a serving, SERVINGS (glueportion-pitch-hot 100 1 is a pot of hot pitch)")
+                .RequiresPlayer()
+                .WithArgs(parsers.Word("content code"), parsers.Int("portions a serving"), parsers.Double("servings"), parsers.OptionalWord("pot code"))
+                .HandleWith(args => Pot(args.Caller.Player, (string)args[0], (int)args[1], (double)args[2], (string?)args[3] ?? "dirtyclaypot-brown-cooked"))
+            .EndSubCommand()
             .BeginSubCommand("drop")
                 .WithDescription("Drop an item on the ground at a position, at rest, as a dropped stack lies")
                 .WithArgs(parsers.Word("item code"), parsers.WorldPosition("position"))
@@ -830,6 +842,83 @@ public class BridgeCommands : ModSystem
         slot.Itemstack = stack;
         slot.MarkDirty();
         return TextCommandResult.Success($"Holding {code}");
+    }
+
+    private TextCommandResult Craft(IPlayer player, string[] stacks)
+    {
+        var grid = player.InventoryManager.GetOwnInventory(GlobalConstants.craftingInvClassName);
+        var size = grid.Count - 1;
+        if (stacks.Length > size) return TextCommandResult.Error($"The grid holds {size} stacks");
+        if (Enumerable.Range(0, size).Any(i => !grid[i].Empty)) return TextCommandResult.Error("The crafting grid is not empty: take its stacks out first");
+
+        var hand = player.InventoryManager.ActiveHotbarSlot;
+        if (stacks.FirstOrDefault(code => code is not ("_" or "hand") && Stack(code.Split('*')[0]) == null) is { } unknown) return TextCommandResult.Error($"No item or block {unknown}");
+        if (stacks.FirstOrDefault(code => code.Split('*') is [_, var count] && !(int.TryParse(count, NumberStyles.None, CultureInfo.InvariantCulture, out var n) && n > 0)) is { } miscounted) return TextCommandResult.Error($"Not a count of items: {miscounted}");
+        if (stacks.Contains("hand") && hand.Empty) return TextCommandResult.Error("The hand is empty");
+
+        for (int i = 0; i < stacks.Length; i++)
+        {
+            if (stacks[i] == "_") continue;
+
+            ItemStack stack;
+            if (stacks[i] == "hand")
+            {
+                stack = hand.TakeOutWhole();
+                hand.MarkDirty();
+            }
+            else
+            {
+                var parts = stacks[i].Split('*');
+                stack = Stack(parts[0])!;
+                if (parts.Length > 1) stack.StackSize = int.Parse(parts[1], CultureInfo.InvariantCulture);
+            }
+            grid[i].Itemstack = stack;
+            grid[i].MarkDirty();
+        }
+
+        var output = grid[size];
+        var crafted = new DummySlot();
+        var before = Carried(player);
+        if (!output.Empty)
+        {
+            var op = new ItemStackMoveOperation(sapi.World, EnumMouseButton.Left, 0, EnumMergePriority.AutoMerge, output.StackSize) { ActingPlayer = player };
+            output.TryPutInto(crafted, ref op);
+        }
+        var givenBack = Carried(player).Select(pair => (code: pair.Key, count: pair.Value - before.GetValueOrDefault(pair.Key))).Where(pair => pair.count > 0).Select(pair => $"{pair.count}x{pair.code}").ToList();
+        var left = Enumerable.Range(0, size).Select(i => grid[i]).Where(slot => !slot.Empty).Select(slot => Describe(slot.Itemstack)).ToList();
+        foreach (var slot in Enumerable.Range(0, size).Select(i => grid[i]).Where(slot => !slot.Empty))
+        {
+            var rest = slot.TakeOutWhole();
+            if (!player.InventoryManager.TryGiveItemstack(rest, true)) sapi.World.SpawnItemEntity(rest, player.Entity.Pos.XYZ);
+            slot.MarkDirty();
+        }
+        if (crafted.Empty) return TextCommandResult.Error($"Nothing crafted; the grid held {string.Join(", ", left)}");
+
+        var made = Describe(crafted.Itemstack);
+        if (!player.InventoryManager.TryGiveItemstack(crafted.Itemstack, true)) sapi.World.SpawnItemEntity(crafted.Itemstack, player.Entity.Pos.XYZ);
+        return TextCommandResult.Success($"Crafted {made}; given back: {(givenBack.Count == 0 ? "nothing" : string.Join(", ", givenBack))}; left in the grid: {(left.Count == 0 ? "nothing" : string.Join(", ", left))}");
+    }
+
+    private static string Describe(ItemStack stack) => $"{stack.StackSize}x{stack.Collectible.Code} {stack.Attributes.ToJsonToken()}";
+
+    private static Dictionary<AssetLocation, int> Carried(IPlayer player) =>
+        new[] { GlobalConstants.hotBarInvClassName, GlobalConstants.backpackInvClassName }
+            .SelectMany(name => player.InventoryManager.GetOwnInventory(name) ?? Enumerable.Empty<ItemSlot>())
+            .Where(slot => !slot.Empty)
+            .GroupBy(slot => slot.Itemstack.Collectible.Code)
+            .ToDictionary(group => group.Key, group => group.Sum(slot => slot.StackSize));
+
+    private TextCommandResult Pot(IPlayer player, string content, int portions, double servings, string pot)
+    {
+        if (Stack(pot) is not { Collectible: IBlockMealContainer meal } held) return TextCommandResult.Error($"No cooked pot {pot}");
+        if (Stack(content) is not { } cooked) return TextCommandResult.Error($"No item or block {content}");
+
+        cooked.StackSize = portions;
+        meal.SetContents(null, held, [cooked], (float)servings);
+        var slot = player.InventoryManager.ActiveHotbarSlot;
+        slot.Itemstack = held;
+        slot.MarkDirty();
+        return TextCommandResult.Success($"Holding {pot} with {servings} servings of {portions} {content}");
     }
 
     private TextCommandResult Drop(string code, Vec3d position)

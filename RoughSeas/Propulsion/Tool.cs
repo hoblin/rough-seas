@@ -52,6 +52,9 @@ public sealed class Pole(double metres, double density, PoleConfig config) : Too
 
     public double Travel(double handsAboveBedMetres) => config.Travel(metres, handsAboveBedMetres);
 
+    public double FullStrokeDepth(double handsAboveWaterMetres, double pushMetres) =>
+        Math.Max(0, config.HandsAboveBedFor(metres, pushMetres) - handsAboveWaterMetres);
+
     public double LiftJoules(double depthMetres, double waterDensity)
     {
         var weight = Kilograms * Gravity;

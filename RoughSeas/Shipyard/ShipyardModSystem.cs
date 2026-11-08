@@ -33,14 +33,19 @@ public class ShipyardModSystem : ModSystem
         api.RegisterCollectibleBehaviorClass(CollectibleBehaviorCarriedBuild.Code, typeof(CollectibleBehaviorCarriedBuild));
         api.RegisterBlockBehaviorClass(BlockBehaviorStrippable.Code, typeof(BlockBehaviorStrippable));
         api.RegisterBlockClass(BlockWedge.ClassName, typeof(BlockWedge));
-        api.RegisterBlockClass(BlockLathBed.ClassName, typeof(BlockLathBed));
-        api.RegisterBlockEntityClass(BlockEntityLathBed.ClassName, typeof(BlockEntityLathBed));
-        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLathBed.Code, typeof(CollectibleBehaviorLathBed));
+        api.RegisterCollectibleBehaviorClass(CollectibleBehaviorLongPile.Code, typeof(CollectibleBehaviorLongPile));
+        api.RegisterBlockBehaviorClass(BlockBehaviorPileFootprint.Code, typeof(BlockBehaviorPileFootprint));
+        api.RegisterBlockBehaviorClass(BlockBehaviorPileFiller.Code, typeof(BlockBehaviorPileFiller));
         api.RegisterEntityBehaviorClass(EntityBehaviorCovering.Code, typeof(EntityBehaviorCovering));
         api.RegisterBlockClass(BlockBundles.ClassName, typeof(BlockBundles));
+        api.RegisterItemClass(ItemLathBundle.ClassName, typeof(ItemLathBundle));
+        api.RegisterEntity(EntityLathBundle.ClassName, typeof(EntityLathBundle));
+        api.RegisterEntityBehaviorClass(EntityBehaviorRestingPhysics.Code, typeof(EntityBehaviorRestingPhysics));
         LashingRope.Attach();
         CuttingKnife.Attach();
         LightingFirestarter.Attach();
+        StartingLongPiles.Attach();
+        BindingPiles.Attach();
     }
 
     public override void Dispose()
@@ -48,6 +53,8 @@ public class ShipyardModSystem : ModSystem
         LashingRope.Detach();
         CuttingKnife.Detach();
         LightingFirestarter.Detach();
+        StartingLongPiles.Detach();
+        BindingPiles.Detach();
     }
 
     // The server sends its blocks, behaviours included, to clients only after this phase.
@@ -94,7 +101,17 @@ public class ShipyardModSystem : ModSystem
             }
             if ((framing ?? covering ?? (FramingConfig?)RiggingConfig.Of(type)) is { } built) builds.Add(built);
         }
-        Framed(api.World, builds);
+        Framed(api.World, builds, api.World.EntityTypes.SelectMany(RepairCodes).Distinct().ToArray());
+    }
+
+    private static IEnumerable<AssetLocation> RepairCodes(EntityProperties type)
+    {
+        var wood = Wood.Of(type.Variant);
+        return (type.Server?.BehaviorsAsJsonObj ?? [])
+            .SelectMany(behavior => behavior["repairs"].AsArray() ?? [])
+            .Select(repair => repair["material"]["code"].AsString())
+            .OfType<string>()
+            .Select(code => wood?.Locate(new AssetLocation(code)) ?? new AssetLocation(code));
     }
 
     public void Log(Entity entity, string format, params object[] args) =>
@@ -133,14 +150,14 @@ public class ShipyardModSystem : ModSystem
         grown.CollectibleBehaviors = grown.CollectibleBehaviors.Append(behavior);
     }
 
-    /// <summary>Lets rope, cloth, planks, hides, the tools her stages are worked with and every liquid container lay a vessel's pieces, as her laths and poles do by their own JSON.</summary>
-    private static void Framed(IWorldAccessor world, List<FramingConfig> builds)
+    /// <summary>Lets rope, cloth, planks, hides, the tools her stages are worked with, every liquid container and cooking pot, and what a vessel is mended with work on her, as her laths and poles do by their own JSON.</summary>
+    private static void Framed(IWorldAccessor world, List<FramingConfig> builds, AssetLocation[] repairs)
     {
-        var codes = builds.SelectMany(built => new[] { built.Rope, built.Cloth, built.Planks, built.Hides }).Where(code => code != "").Distinct().Select(code => new AssetLocation(code)).ToArray();
+        var codes = builds.SelectMany(built => new[] { built.Rope, built.Cloth, built.Planks, built.Hides }).Where(code => code != "").Distinct().Select(code => new AssetLocation(code)).Concat(repairs).ToArray();
         var worked = builds.SelectMany(built => built.Stages).Select(stage => ToolLaying.ToolOf(stage.Work)).OfType<EnumTool>().ToHashSet();
         if (builds.Any(built => built.BarkSeconds > 0)) worked.Add(EnumTool.Knife);
         var tools = world.Collectibles.Where(collectible => collectible?.Code != null
-            && (collectible is BlockLiquidContainerBase || collectible.Tool is { } tool && worked.Contains(tool) || codes.Any(code => WildcardUtil.Match(code, collectible.Code))));
+            && (collectible is BlockLiquidContainerBase or IBlockMealContainer || collectible.Tool is { } tool && worked.Contains(tool) || codes.Any(code => WildcardUtil.Match(code, collectible.Code))));
         foreach (var tool in tools.Where(tool => !tool.HasBehavior<CollectibleBehaviorFraming>()))
         {
             tool.CollectibleBehaviors = tool.CollectibleBehaviors.Append(new CollectibleBehaviorFraming(tool));

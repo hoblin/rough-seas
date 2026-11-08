@@ -60,6 +60,7 @@ Each holds what one kind of work needs; read it in full before that work. They a
 - `docs/bench.md`: before testing in the game, with `bin/game help`.
 - `docs/modeling.md`: before changing a shape, with `bin/model help`.
 - `docs/qa.md`: before a release's QA session, with `bin/qa help`.
+- `docs/wiki-pictures.md`: before taking or retaking a picture for the wiki, the handbook or the mod page.
 
 ## Think about what you are asked
 

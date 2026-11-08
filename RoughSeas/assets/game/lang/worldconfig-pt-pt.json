@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Mar bravo",
     "playstyle-desc-preset-roughseas": "Sobrevivência normal num mundo de oceanos abertos, onde o vento, as tempestades e o mar são perigosos.",
     "worldconfig-category-roughseas": "Mar bravo",
-    "worldattribute-dangerousOceans": "Oceanos perigosos",
-    "worldattribute-dangerousOceans-desc": "Tempestades, rebentação e relâmpagos podem alagar, virar e partir embarcações, e arrancá-las da amarração ou do fundeio. Desligado, o mar mantém o seu estado do tempo, mas não causa dano."
+    "worldattribute-bilgeWater": "Água na sentina",
+    "worldattribute-bilgeWater-desc": "As ondas rebentam a bordo e a chuva cai numa embarcação aberta, enchendo a sentina até a esgotares. Desligado, nem ondas nem chuva acrescentam água; um rombo ainda acrescenta.",
+    "worldattribute-hullDamage": "Danos no casco",
+    "worldattribute-hullDamage-desc": "As rochas, a margem, os abalroamentos, os rápidos, a rebentação e o tempo racham o casco, e uma racha mete água. O couro apodrece, as costuras por untar deixam passar água e o junco encharca-se. Desligado, nenhum casco sofre dano, e todos os cascos ficam inteiros.",
+    "worldattribute-stormLightning": "Relâmpagos",
+    "worldattribute-stormLightning-desc": "As tempestades lançam relâmpagos perto de ti, e um mastro atrai-os.",
+    "worldattribute-mooringStrain": "Esforço na amarração",
+    "worldattribute-mooringStrain-desc": "Uma tempestade faz as âncoras garrar, rebenta os cabos de amarração e atira para a costa uma embarcação amarrada enquanto estás longe.",
+    "worldattribute-oceanCurrents": "Correntes",
+    "worldattribute-oceanCurrents-desc": "As correntes e o vento levam uma embarcação que ninguém governa.",
+    "worldattribute-rowerFatigue": "Cansaço do remador",
+    "worldattribute-rowerFatigue-desc": "Remar, pagaiar e varejar dão-te fome.",
+    "worldattribute-poleDepth": "Profundidade da vara",
+    "worldattribute-poleDepth-desc": "A vara só empurra onde chega ao fundo. Desligado, empurra em água de qualquer profundidade como num impulso completo."
 }

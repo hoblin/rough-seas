@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Rozbouřené moře",
     "playstyle-desc-preset-roughseas": "Standardní přežití ve světě s otevřenými oceány, kde jsou vítr, bouře a moře nebezpečné.",
     "worldconfig-category-roughseas": "Rozbouřené moře",
-    "worldattribute-dangerousOceans": "Nebezpečné oceány",
-    "worldattribute-dangerousOceans-desc": "Bouře, příboj a blesky mohou plavidla zaplavit, převrhnout a rozbít a utrhnout je od úvazu i z kotvy. Vypnuto: moře si ponechá počasí, ale neublíží."
+    "worldattribute-bilgeWater": "Voda v lodi",
+    "worldattribute-bilgeWater-desc": "Vlny se přelévají přes palubu a déšť padá do otevřeného plavidla a plní ho vodou, dokud ji nevylijete. Když je vypnuto, vlny ani déšť vodu nepřidají; trhlinou ale voda teče dál.",
+    "worldattribute-hullDamage": "Poškození trupu",
+    "worldattribute-hullDamage-desc": "Od skal, břehu, nárazů, peřejí, příboje a počasí trup praská a prasklinou teče voda. Kůže hnije, nenamaštěné švy prosakují a rákos nasakuje vodou. Když je vypnuto, žádný trup se nepoškodí a každý trup je opět celý.",
+    "worldattribute-stormLightning": "Blesky",
+    "worldattribute-stormLightning-desc": "Bouře metají blesky ve vaší blízkosti a stěžeň je přitahuje.",
+    "worldattribute-mooringStrain": "Namáhání kotvení",
+    "worldattribute-mooringStrain-desc": "Bouře vleče kotvy, trhá uvazovací lana a plavidlo uvázané, zatímco jste pryč, vyhodí na břeh.",
+    "worldattribute-oceanCurrents": "Proudy",
+    "worldattribute-oceanCurrents-desc": "Proudy a vítr odnášejí plavidlo, které nikdo neřídí.",
+    "worldattribute-rowerFatigue": "Únava veslaře",
+    "worldattribute-rowerFatigue-desc": "Při veslování, pádlování a plavbě s bidlem dostanete hlad.",
+    "worldattribute-poleDepth": "Hloubka pro bidlo",
+    "worldattribute-poleDepth-desc": "Bidlo odráží jen tam, kde dosáhne na dno. Když je vypnuto, odráží ve vodě jakékoli hloubky jako při plném záběru."
 }

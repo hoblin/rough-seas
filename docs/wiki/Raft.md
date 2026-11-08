@@ -1,4 +1,4 @@
-![The raft afloat](images/raft/afloat-bow.webp)
+![The raft ashore](images/raft/ashore-close.webp)
 
 Logs laid side by side and lashed with rope to three cross-logs. It is the game's own first vessel, built from timber and rope with no tools beyond an axe; a bamboo raft is the same thing in bamboo stakes.
 

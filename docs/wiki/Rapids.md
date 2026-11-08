@@ -19,4 +19,4 @@ The [birch-bark canoe](Birch-Bark-Canoe) and the [coracle](Coracle) run rapids u
 
 Heavy hulls, the [dugout](Dugout) and the [outrigger](Outrigger-Canoe), shrug off a few seconds of white water but not a long run. Light ones break within seconds: the [raft](Raft) comes apart, and the [currach](Hide-Currach) has the lath under its hide broken by the first rock.
 
-Rapids harm a hull with [Dangerous oceans](World-Settings#dangerous-oceans) on or off. How the strikes are weighed is on [Hull condition](Hull-Condition#how-a-hull-takes-a-blow).
+Rapids harm a hull while [Hull damage](World-Settings#the-mechanics) is on. How the strikes are weighed is on [Hull condition](Hull-Condition#how-a-hull-takes-a-blow).

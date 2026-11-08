@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "البحر الهائج",
     "playstyle-desc-preset-roughseas": "بقاء قياسي في عالم ذي محيطات مفتوحة، حيث الرياح والعواصف والبحر خطرة.",
     "worldconfig-category-roughseas": "البحر الهائج",
-    "worldattribute-dangerousOceans": "محيطات خطرة",
-    "worldattribute-dangerousOceans-desc": "العواصف والأمواج المتكسرة والصواعق قد تُغرق المراكب بالماء وتقلبها وتحطمها، وتنتزعها من مرابطها ومراسيها. عند الإيقاف، يحتفظ البحر بطقسه لكنه لا يؤذي."
+    "worldattribute-bilgeWater": "ماء قاع القارب",
+    "worldattribute-bilgeWater-desc": "تتكسر الأمواج على المركب ويسقط المطر في المركب المكشوف، فيمتلئ قاعه بالماء حتى تنزحه. عند تعطيله لا تضيف الأمواج ولا المطر ماءً؛ أما الشق فيظل يُسرّب.",
+    "worldattribute-hullDamage": "تلف البدن",
+    "worldattribute-hullDamage-desc": "الصخور والشاطئ والاصطدام والمنحدرات النهرية والأمواج المتكسرة والطقس تشقّ البدن، والشق يُسرّب الماء. الجلد يتعفن، والدروز غير المدهونة تنضح، والقصب يتشرّب الماء. عند تعطيله لا يتضرر أي بدن، ويُصلَح كل بدن تمامًا.",
+    "worldattribute-stormLightning": "الصواعق",
+    "worldattribute-stormLightning-desc": "تضرب العواصف صواعق قريبة منك، والصاري يجتذبها.",
+    "worldattribute-mooringStrain": "إجهاد الرسو",
+    "worldattribute-mooringStrain-desc": "تجرّ العاصفة المراسي، وتقطع حبال الربط، وتقذف إلى الشاطئ بالمركب المربوط وأنت بعيد عنه.",
+    "worldattribute-oceanCurrents": "التيارات",
+    "worldattribute-oceanCurrents-desc": "تحمل التيارات والريح بعيدًا المركب الذي لا يوجّهه أحد.",
+    "worldattribute-rowerFatigue": "تعب المجدّف",
+    "worldattribute-rowerFatigue-desc": "التجديف بالمجاديف أو بالمِجداف ودفع القارب بالمِردى يجعلك تجوع.",
+    "worldattribute-poleDepth": "عمق المِردى",
+    "worldattribute-poleDepth-desc": "لا يدفع المِردى إلا حيث يبلغ القاع. عند تعطيله يدفع في الماء مهما كان عمقه كما في دفعته الكاملة."
 }

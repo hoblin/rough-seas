@@ -118,7 +118,7 @@ public class EntityBehaviorBilge(Entity entity) : EntityBehavior(entity), IVesse
         using var _ = storms.Budget.Measure();
         var hours = watch.Lap().Hours;
         sinceUpdate = 0;
-        var inflow = sea.DangerousOceans ? VanillaRain.FallingOn(entity) * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
+        var inflow = Mechanic.BilgeWater.On(entity.World) ? VanillaRain.FallingOn(entity) * storms.Config.Bilge.RainMillimetresPerHour * deckSquareMetres * hours : 0;
         Ship(inflow, "by rain");
         Litres -= drainLitresPerHour * hours;
         if ((rained += inflow) < 1) return;

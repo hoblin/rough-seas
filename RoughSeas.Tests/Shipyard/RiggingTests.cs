@@ -146,8 +146,45 @@ public class RiggingTests
     }
 
     [Fact]
+    public void AnOutriggerSewnUpWithTheFewerPlanksOfASaveFromBeforeIsFinished()
+    {
+        tree = new TreeAttribute();
+        foreach (var stage in Outrigger().Stages) tree.SetInt(stage.Group, stage.Group == "Strakes" ? 10 : stage.Pieces);
+        var outrigger = Outrigger();
+
+        Assert.Null(outrigger.Current);
+        Assert.Equal(573.5, outrigger.Raised(stage => stage.RaisesLitres), 1);
+    }
+
+    [Fact]
+    public void AnOutriggerSewnUpWithTheFewerRopesOfASaveFromBeforeStaysSewnUp()
+    {
+        tree = new TreeAttribute();
+        foreach (var stage in Outrigger().Stages) tree.SetInt(stage.Group, stage.Group == "Seams" ? 4 : stage.Pieces);
+        var outrigger = Outrigger();
+
+        outrigger.KeepProgress();
+
+        Assert.Null(outrigger.Current);
+        Assert.Equal(573.5, outrigger.Raised(stage => stage.RaisesLitres), 1);
+    }
+
+    [Fact]
+    public void AHalfSewnSaveFromBeforeKeepsItsShareOfTheSewing()
+    {
+        tree = new TreeAttribute();
+        foreach (var stage in Outrigger().Stages) tree.SetInt(stage.Group, stage.Group == "Seams" ? 2 : stage.Pieces);
+        var outrigger = Outrigger();
+
+        outrigger.KeepProgress();
+
+        Assert.Equal(3, tree.GetInt("Seams"));
+        Assert.Equal(0, outrigger.Raised(stage => stage.RaisesLitres));
+    }
+
+    [Fact]
     public void AnOutriggerFromBeforeTheBuildHasHerWashstrakes() =>
-        Assert.Equal(422, Outrigger().Raised(stage => stage.RaisesLitres));
+        Assert.Equal(573.5, Outrigger().Raised(stage => stage.RaisesLitres), 1);
 
     [Fact]
     public void EveryPoleSheTakesIsCutFromAThreeMetrePole() =>

@@ -2,6 +2,18 @@
     "playstyle-preset-roughseas": "Grov sjø",
     "playstyle-desc-preset-roughseas": "Vanlig overlevelse i en verden med åpne hav, der vind, stormer og sjøen er farlige.",
     "worldconfig-category-roughseas": "Grov sjø",
-    "worldattribute-dangerousOceans": "Farlige hav",
-    "worldattribute-dangerousOceans-desc": "I stormer, brenninger og lyn kan fartøy fylles med vann, kantre, knuses og rives løs fra fortøyninger og anker. Slått av beholder sjøen været sitt, men gjør ingen skade."
+    "worldattribute-bilgeWater": "Lensevann",
+    "worldattribute-bilgeWater-desc": "Bølger bryter inn over, og regn faller i et åpent fartøy og fyller bunnen med vann til du øser det lens. Av tilfører verken bølger eller regn vann; en lekkasje gjør det fortsatt.",
+    "worldattribute-hullDamage": "Skrogskader",
+    "worldattribute-hullDamage-desc": "Fjell, stranden, påkjørsler, stryk, brenninger og været får et skrog til å sprekke, og en sprekk lekker. Skinn råtner, ufettede sømmer siver og siv trekker vann. Av tar ingen skrog skade, og hvert skrog blir helt igjen.",
+    "worldattribute-stormLightning": "Lyn",
+    "worldattribute-stormLightning-desc": "Stormer slår ned lyn nær deg, og en mast trekker det til seg.",
+    "worldattribute-mooringStrain": "Belastning på fortøyninger",
+    "worldattribute-mooringStrain-desc": "En storm får ankre til å dregge, sliter fortøyninger og kaster et fartøy som ligger fortøyd mens du er borte, på land.",
+    "worldattribute-oceanCurrents": "Strømmer",
+    "worldattribute-oceanCurrents-desc": "Strøm og vind fører bort et fartøy ingen styrer.",
+    "worldattribute-rowerFatigue": "Rotretthet",
+    "worldattribute-rowerFatigue-desc": "Roing, padling og staking gjør deg sulten.",
+    "worldattribute-poleDepth": "Stakens dybde",
+    "worldattribute-poleDepth-desc": "En stake skyver bare der den når bunnen. Av skyver den i vann av alle dybder som med et fullt tak."
 }

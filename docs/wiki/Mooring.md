@@ -19,7 +19,7 @@ A strong enough pull snaps the rope. Every wave pulls on it, with the wind on th
 
 In a [current](Currents) the water pulls too, more the faster it runs and the more of the vessel's side it meets. A vessel held at one point swings about its bow until it lies along the stream, where the water pulls least. A current strong enough parts a rope by itself; a weaker one leaves each wave less to make up. The table is for still water.
 
-A snapped vessel drifts. Pull small boats ashore, or pick them up, before a gale.
+A snapped vessel drifts with the current and the waves. Pull small boats ashore, or pick them up, before a gale.
 
 ## Thrown ashore
 
@@ -40,4 +40,4 @@ Only the distance to the shore and the sea count, not how well it was tied. A lo
 - On the coast in fair weather: tie it up, or [anchor](Anchoring) the sailboat.
 - On the coast with a storm coming: carry it home, or anchor well out, and leave nothing that matters aboard.
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, the sea doesn't snap ropes or throw vessels ashore; currents still pull at them.
+With [Mooring strain](World-Settings#the-mechanics) off, the sea doesn't snap ropes or throw vessels ashore. With [Currents](World-Settings#the-mechanics) on, currents still pull at them.

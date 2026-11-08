@@ -108,7 +108,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
     public override void OnEntityLoaded()
     {
-        if (entity.World.Side != EnumAppSide.Server || !sea.DangerousOceans) return;
+        if (entity.World.Side != EnumAppSide.Server || !Mechanic.MooringStrain.On(entity.World)) return;
 
         var lastSeen = Tree.GetDouble("lastSeenHours", Unmoored);
         var reach = Tree.GetDouble("reach", Unmoored);
@@ -147,7 +147,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             sinceUpdate = 0;
             if (ashoreIn > 0) return;
 
-            if (sea.DangerousOceans) ashore.Roll(entity.GetBehavior<EntityBehaviorVesselIntegrity>());
+            if (Mechanic.MooringStrain.On(entity.World)) ashore.Roll(entity.GetBehavior<EntityBehaviorVesselIntegrity>());
             ashore = null;
         }
         sinceUpdate = 0;
@@ -169,6 +169,8 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
     private void Strain(SeaState state)
     {
+        if (!Mechanic.MooringStrain.On(entity.World)) return;
+
         var force = forces!.Force(state);
         if (Anchor is { } anchor) Strain(anchor, force, state);
         else if (StakeRope() is { } rope) Strain(rope, force, state);
@@ -199,7 +201,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             storms.Log(entity, "the current pulls {0:F0} N on her rode; the anchor holds {1:F0} N at scope {2:F1}, the {3} {4:F0} N",
                 pull, holding, anchor.RodeMetres / Math.Max(1, Depth(anchor)), anchor.Rope, rope);
         }
-        if (!sea.DangerousOceans || pull <= 0) return;
+        if (!Mechanic.MooringStrain.On(entity.World) || pull <= 0) return;
 
         if (pull >= rope)
         {
@@ -218,7 +220,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     {
         var rope = RopeNewtons(storms.Config.Mooring.StakeRope);
         if (Changed(pull)) storms.Log(entity, "the current pulls {0:F0} N on her stake rope, which holds {1:F0} N", pull, rope);
-        if (!sea.DangerousOceans || pull < rope) return;
+        if (!Mechanic.MooringStrain.On(entity.World) || pull < rope) return;
 
         PartStake(stakeRope);
         storms.Log(entity, "stake rope snapped: the current pulls {0:F0} N, the rope holds {1:F0} N", pull, rope);

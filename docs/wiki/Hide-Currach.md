@@ -1,4 +1,4 @@
-![The currach afloat](images/currach/afloat-bow.webp)
+![The currach ashore](images/currach/ashore-close.webp)
 
 A light frame of split laths, ribs bent over two long gunwales and stringers along them, with hides laced over it and sealed with rendered fat. It is pointed at both ends, where its gunwales are drawn together and bound, and a thwart pole across its middle, a hand below its gunwale, takes the rower. The rower sits facing its stern and pulls its two oars on their thole pins, which stand just abaft the thwart.
 
@@ -35,16 +35,16 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 
 ## How it is built
 
-You build a currach upside down, where you lay its gunwale out on the ground, piece by piece. Each piece shows on the currach as you lay it.
+You build a currach upside down, where you pile its gunwale laths on the ground, piece by piece. Each piece shows on the currach as you lay it.
 
 ![The whole build, from two laths to the currach turned over](images/currach/build-hide-currach.webp)
 
-1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: the gunwales and stringers take 5 m laths, the nine longest ribs 3 m ones and the other thirteen 2 m ones.
-2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath. It lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay a second one next to it, seventeen sixteenths of a block apart, a little over a metre, as far apart as the gunwale laths are drawn. A lath laid a sixteenth off is moved onto its place when you bind them.
+1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid, and soak them two days, in a barrel of water or bundled under stones on the bottom of any water ([how](Recipes#soaked-laths)): only wet laths bend. A piece takes any lath at least as long as it, cut down: the gunwales and stringers take 5 m laths, the nine longest ribs 3 m ones and the other thirteen 2 m ones.
+2. **Lay out the gunwale.** Hold Shift and right-click the ground with a wet 5 m lath to start a pile, as you pile [poles](Recipes#poles-and-laths-on-the-ground), along the way you face. Shift + right-click the pile with a second wet 5 m lath. The first lies along one side of the block, the second along the other. Only a pile of these two, with nothing more in it, becomes the gunwale. To take a lath back, right-click the pile with an empty hand.
 
    ![Two long laths laid side by side](images/currach/build-laths.webp)
 
-3. **Bind the ends.** Hold a rope on the laths: the first rope draws their ends together at the bow, while at the stern they still run straight. The second rope draws them together at the stern and closes the gunwale.
+3. **Bind the ends.** Hold a rope on the pile: the first rope draws the laths' ends together at the bow and spreads them a few centimetres a side to the currach's beam, while at the stern they still run straight. The second rope draws them together at the stern and closes the gunwale. A dry pile of two tells you to soak the laths first.
 
    | | |
    | --- | --- |

@@ -1,4 +1,4 @@
-![The birch-bark canoe afloat](images/birch-bark-canoe/afloat-bow.webp)
+![The birch-bark canoe ashore](images/birch-bark-canoe/ashore-close.webp)
 
 One sheet of birch bark over a frame of split laths: gunwales lashed on at intervals, three thwarts, sheathing and ribs inside, and high, upswept stems, its seams black with pitch. One person kneels amidships and paddles it with a [paddle](Paddles-Poles-and-Oars) in hand; a second rides in the bow.
 
@@ -46,7 +46,7 @@ You build a bark canoe on its sheet of bark, piece by piece. Each piece shows on
    ![The sheet of bark laid on the shore](images/birch-bark-canoe/build-sheet.webp)
 
 2. **Split the laths.** Lay two to five logs of one wood on their sides, end to end, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on each wedge in turn until it is driven home. Once the last is home, the trunk splits into 64 poles as long as the row. An axe splits a pole into 16 [laths](Recipes#laths) of its length in the crafting grid. The gunwales take 5 m laths and the sheathing 4 m ones; the stems, thwarts and ribs take any lath of 2 m or more, cut down. Any wood will do, and the frame is as strong and as heavy as that wood.
-3. **Soak them.** Laths bend only when wet: soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, in the bundle as in the canoe, so put a bundle kept too long back in the barrel.
+3. **Soak them.** Laths bend only when wet: soak them two days, in a barrel of water or bundled under stones on the bottom of any water ([how](Recipes#soaked-laths)). Out of the water they dry again in two days, in your inventory as in the canoe, so soak a stack kept too long again.
 4. **Frame it.** Hold wet laths on the sheet, one at a time, all of one wood. Lay the two inwales and the three thwarts first, the middle thwart before the others: they lie flat on the bark as the gunwale frame. With the last thwart in, you turn the middle of the bark up around the frame, the way stakes hold it upright: there the sides run straight and bend up whole.
 5. **Slash the bark.** Hold a knife on the canoe to slash the bark from its edge in to the frame where the canoe narrows. Each of the four slashes lets you turn up the next length of bark, from the middle out, until the whole sheet stands. The knife wears a little with each cut.
 6. **Raise the frame.** Lay an outwale: you lift the frame to the canoe's full height, and the outwale clamps the bark against the inwale. Then lay the second outwale.
@@ -67,7 +67,7 @@ You build a bark canoe on its sheet of bark, piece by piece. Each piece shows on
 
    ![Sheathing laid and half the ribs in](images/birch-bark-canoe/build-ribs.webp)
 
-10. **Pitch the seams.** Hold a bowl, jug or bucket of hot pitch glue on the canoe to pitch each of its four seams, a quarter litre a seam: one pot of glue. Glue that has set must be heated again.
+10. **Pitch the seams.** Hold hot pitch glue on the canoe to pitch each of its four seams, a quarter litre a seam. Hold it in a bowl, jug or bucket, or in the cooking pot you cooked it in. One pot of glue does the canoe, and the pot is empty after the last seam. Glue that has set must be heated again.
 
    ![Finished, the seams pitched](images/birch-bark-canoe/build-pitched.webp)
 

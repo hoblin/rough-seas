@@ -124,7 +124,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 
         using var _ = storms.Budget.Measure();
         var pos = entity.Pos;
-        var current = sea.CurrentAt(pos.X, pos.Z);
+        var current = Mechanic.Currents.On(entity.World) ? sea.CurrentAt(pos.X, pos.Z) : default;
         var w = water = new Water(current.X, current.Z, way?.WaterDrag ?? ownDrag?.Now);
         if (w.Drag is { } drag) set.Settle(drag, w.X, w.Z, pos.Yaw, deltaTime);
         else set.Relax(w.X, w.Z, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime));

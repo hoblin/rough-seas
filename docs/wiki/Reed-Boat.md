@@ -1,4 +1,4 @@
-![The reed boat afloat](images/reed-boat/afloat-bow.webp)
+![The reed boat ashore](images/reed-boat/ashore-close.webp)
 
 Two bundles of reeds three metres long, lashed side by side, their ends bound up into points. More a float than a boat: one person sits on it, low and half in the water, and paddles or poles it, with a basket behind.
 

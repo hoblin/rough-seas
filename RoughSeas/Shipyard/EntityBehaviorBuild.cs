@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using RoughSeas.Vessels;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
@@ -20,7 +23,7 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
     public const string TreeKey = "roughseas:build";
 
     private const string VersionKey = "version";
-    private const string Unfinished = "roughseas-unfinished";
+    private const string StepError = "roughseas-build-step";
 
     private string? shownShape;
     private string? shownForm;
@@ -28,6 +31,9 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
     public event Action? Reformed;
 
     public abstract bool Finished { get; }
+
+    /// <summary>The step her build stands at, which her interaction help, her hover line and a click that does no work all name; null once she is finished.</summary>
+    protected abstract BuildStep? Next { get; }
 
     public abstract double HoldLitres(double designed);
 
@@ -74,6 +80,30 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
         base.OnEntityDespawn(despawn);
     }
 
+    public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
+    {
+        if (mode != EnumInteractMode.Interact || Finished || byEntity.Controls.ShiftKey) return;
+
+        handled = EnumHandling.PreventSubsequent;
+        if (entity.Api is not ICoreClientAPI capi || Next is not { } step) return;
+
+        Shipyard.Log(entity, "{0} clicks her unfinished, holding {1}: {2}", byEntity.GetName(), itemslot.Itemstack?.Collectible.Code.ToString() ?? "nothing", step.Hint);
+        capi.TriggerIngameError(this, StepError, step.Hint);
+    }
+
+    public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled) =>
+        Next is { Action: { } action } step
+            ? ObjectCacheUtil.GetOrCreate(world.Api, $"{TreeKey}/help/{entity.Code}/{action}", () => new[]
+            {
+                new WorldInteraction { ActionLangCode = action, MouseButton = EnumMouseButton.Right, Itemstacks = step.With?.Invoke().ToArray() }
+            })
+            : null;
+
+    public override void GetInfoText(StringBuilder infotext)
+    {
+        if (Next?.Progress is { } progress) infotext.AppendLine(progress);
+    }
+
     public void Carry(ItemStack stack)
     {
         if (Tree != null) stack.Attributes[TreeKey] = Tree.Clone();
@@ -93,6 +123,17 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
         tree.SetInt(VersionKey, version);
         begin(tree);
         vessel.WatchedAttributes.SetAttribute(TreeKey, tree);
+    }
+
+    /// <summary>Brings a build saved under an older <paramref name="version"/> of her data up to it, on the server.</summary>
+    protected void Upgrade(int version, Action<ITreeAttribute> upgrade)
+    {
+        if (entity.Api.Side != EnumAppSide.Server || Tree is not { } tree || tree.GetInt(VersionKey) >= version) return;
+
+        Shipyard.Log(entity, "her build saved at data version {0} is brought up to {1}", tree.GetInt(VersionKey), version);
+        upgrade(tree);
+        tree.SetInt(VersionKey, version);
+        MarkDirty();
     }
 
     /// <summary>The element groups the stages not reached yet draw, and those the stages passed drew.</summary>
@@ -137,7 +178,7 @@ public abstract class EntityBehaviorBuild(Entity entity) : EntityBehavior(entity
 
     private bool CanSit(EntityAgent byEntity, out string? errorMessage)
     {
-        errorMessage = Finished ? null : Unfinished;
+        errorMessage = null;
         return Finished;
     }
 }

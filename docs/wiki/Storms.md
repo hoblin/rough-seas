@@ -66,4 +66,4 @@ That is your time to make for shore, or to [anchor](Anchoring) far out where the
 
 Which [vessel](Vessels) to trust in a storm: the [hide currach](Hide-Currach) rides over surf, though a storm's breakers can stave in its hide, the [outrigger](Outrigger-Canoe) barely rolls, and the [sailboat](Sailboat)'s planks stand all but a huge plunging crest; the river boats belong ashore.
 
-The walking player isn't blown about by a hurricane; the danger is all on the water. With [Dangerous oceans](World-Settings#dangerous-oceans) off, storms still come and go, but do no harm.
+The walking player isn't blown about by a hurricane; the danger is all on the water. Storms come and go whatever the [world settings](World-Settings#the-mechanics); each setting turned off takes away one harm they do.
