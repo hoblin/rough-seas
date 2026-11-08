@@ -27,7 +27,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |
 | [Rapids](Rapids) | runs them unharmed, as only the coracle also does |
 | [Lightning](Lightning) | a strike nearby almost always breaks it |
-| [Left alone](Currents#drift) | drifts with the current and the waves |
+| [In a current](Currents#drift) | carried with it and with the waves, steered or not |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | two: a paddler amidships, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing behind its middle thwart to pole, and a passenger in the bow |

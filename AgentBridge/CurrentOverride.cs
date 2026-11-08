@@ -16,11 +16,15 @@ public sealed class CurrentOverride : IDisposable
             postfix: new HarmonyMethod(typeof(CurrentOverride), nameof(Postfix)));
     }
 
+    public (double X, double Z)? Current => current;
+
     public void Set(double metresPerSecond, double headingDegrees)
     {
         double heading = headingDegrees * Math.PI / 180;
         current = (metresPerSecond * Math.Sin(heading), metresPerSecond * Math.Cos(heading));
     }
+
+    public void Set(double x, double z, bool on) => current = on ? (x, z) : null;
 
     public void Clear() => current = null;
 

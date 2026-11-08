@@ -162,7 +162,8 @@ public static class Fixtures
 
     public static HullDrag DragOf(string vessel, Aboard aboard)
     {
-        var form = HullForm.From(new JsonObject(PropulsionOf(vessel)), Drag, Shape(vessel));
+        var attributes = vessel == "boat-sailed" ? BehaviorConfig("boats-drift.json", vessel, EntityBehaviorCurrentDrift.Code) : PropulsionOf(vessel);
+        var form = HullForm.From(new JsonObject(attributes), Drag, Shape(vessel));
         return new HullDrag(form, Hull(vessel).Float(aboard).DraftMetres, aboard.Total, WaterDensity, Drag);
     }
 

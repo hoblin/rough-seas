@@ -244,13 +244,15 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
   /bridge weed RADIUS        clear the plants and loose stones off the ground within RADIUS blocks of
                              the player (at most 32), leaving the ground, the water and the lily pads
                              on it: a build site with nothing in the way
-  /bridge drift [on|off|waves]  whether unridden vessels drift with the current and the waves (waves: those alone). Off on
-                             every start, so a vessel stays where it was put; a drift test turns it on
+  /bridge drift [on|off|waves]
+                             whether vessels drift with the current and the waves, steered or not (waves:
+                             the waves alone). Off on every start, so a vessel stays where it was put; a
+                             drift test turns it on
   /bridge current SPEED|off [YAW]
                              one current everywhere in place of the sea's, SPEED m/s toward YAW degrees
                              (0 toward +Z, 90 toward +X), as a river carries a vessel; with drift on,
-                             an unridden one rides it into whatever you built across it. off gives
-                             the sea's currents back
+                             one rides it into whatever you built across it, her rider's client too.
+                             off gives the sea's currents back
   /bridge ride CODE          spawn a boat at the player (on the surface over water) and seat the
                              player in its steering seat: boat-raft-oak, boat-sailed-oak, any wood.
                              Until a flight has landed it refuses: "Still flying there"

@@ -1,4 +1,12 @@
 [
-    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-raft.json" },
-    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-sailed.json" }
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/behaviorConfigs/roughseas:currentdrift", "side": "Server", "value": {
+        "finSquareMetres": 0.5,
+        "sources": {
+            "finSquareMetres": "Vanilla's model: two keel beams, each 1 m long and 0.25 m deep, under her bottom"
+        }
+    } },
+    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-raft.json", "side": "Server" },
+    { "op": "add", "path": "/server/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-sailed.json", "side": "Server" },
+    { "op": "add", "path": "/client/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-raft.json", "side": "Server" },
+    { "op": "add", "path": "/client/behaviors/-", "value": { "code": "roughseas:currentdrift" }, "file": "game:entities/nonliving/boat-sailed.json", "side": "Server" }
 ]

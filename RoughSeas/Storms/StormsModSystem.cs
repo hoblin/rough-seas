@@ -38,8 +38,10 @@ public class StormsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorSeaForces.Code, typeof(EntityBehaviorSeaForces));
         api.RegisterEntityBehaviorClass(EntityBehaviorBilge.Code, typeof(EntityBehaviorBilge));
         api.RegisterEntityBehaviorClass(EntityBehaviorMooring.Code, typeof(EntityBehaviorMooring));
+        api.RegisterEntityBehaviorClass(EntityBehaviorCurrentDrift.Code, typeof(EntityBehaviorCurrentDrift));
         api.RegisterBlockBehaviorClass(BlockBehaviorBailer.Code, typeof(BlockBehaviorBailer));
         VesselDraught.Attach();
+        DriftPhysics.Attach();
         WaveCarry.Attach();
     }
 
@@ -107,6 +109,7 @@ public class StormsModSystem : ModSystem
     public override void Dispose()
     {
         VesselDraught.Detach();
+        DriftPhysics.Detach();
         WaveCarry.Detach();
         if (api?.Side == EnumAppSide.Server) BreathUnderSurface.Detach();
         if (api?.Side != EnumAppSide.Client) return;

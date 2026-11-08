@@ -38,11 +38,13 @@ Deeper than the rope reaches, the anchor hangs and holds nothing at all, until t
 
 On a long rope the boat swings in a wide circle around its anchor, and that circle has to clear the shore.
 
+In a [current](Currents) the boat falls back to the end of its rope and swings about its bow until it lies along the stream. The water's pull joins the wave's on the rope and the anchor. It is far harder on a boat still lying across the stream (at 1.5 m/s, about 1900 N on a sailboat across it, about 70 N along it), so a deep anchor on a short scope can drag before the boat has swung.
+
 ## In a storm
 
 Every wave pulls on the rope, with the wind on the boat's sides and rigging and the sea on its hull.
 
-- **Dragging.** When the pull beats what the anchor holds, it drags a metre downwind. Wave after wave, a short scope walks the boat towards the lee shore.
+- **Dragging.** When the pull beats what the anchor holds, it drags a metre the way the pull goes. Wave after wave, a short scope walks the boat towards the lee shore.
 - **Snapping.** Flax rope breaks at about 11 kilonewtons. A rope that snaps takes the anchor with it, along with all the rope let out.
 
 What the sea does to an anchored sailboat, each wave:

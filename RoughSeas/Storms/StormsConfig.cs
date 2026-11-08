@@ -10,6 +10,7 @@ public class StormsConfig
     public SwampingConfig Swamping = new();
     public ResponseConfig Response = new();
     public MooringConfig Mooring = new();
+    public DriftConfig Drift = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
     public SurfaceConfig Surface = new();
@@ -88,6 +89,12 @@ public class SwampingConfig
 
     /// <summary>The factor on the speed she makes at this reference mass that she makes at this mass, both in kilograms.</summary>
     public double SpeedFactor(double referenceKg, double kg) => Math.Pow(referenceKg / kg, SpeedExponent);
+}
+
+public class DriftConfig
+{
+    public double SyncSeconds;
+    public double LogSeconds;
 }
 
 public class MooringConfig

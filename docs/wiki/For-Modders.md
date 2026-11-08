@@ -417,7 +417,17 @@ New: `roughseas:lathbundle` (item and entity), `ItemLathBundle`, `EntityLathBund
 The drawn waves now move every `EntityBoat` with `roughseas:seaforces`, steered or not ([A ship that rides our swell](Reading-the-Sea#a-ship-that-rides-our-swell)).
 
 - `IDrawnSea` gained `HullVelocityAt`. A class of yours that implements `IDrawnSea` has to add it. Code that only reads `IDrawnSea` is unaffected.
-- `config/seaweather.json`'s `currents.stokesDriftPerMps` is gone: the wind no longer moves an unsteered vessel, and `roughseas:currentdrift` carries the current alone.
+
+### Currents carry every vessel
+
+A current now carries a steered vessel too, and pulls on a moored one. See [Building a vessel](Building-a-Vessel#currents).
+
+- `roughseas:currentdrift` goes on both sides: list it in `client.behaviors` too, or a steered vessel of yours ignores the current as before. Its class is now `RoughSeas.Storms.EntityBehaviorCurrentDrift`, and it acts only on an `EntityBoat`.
+- The wind no longer moves a vessel nobody steers: `currents.stokesDriftPerMps` is gone from `seaweather.json`.
+- `HullDrag` gained `Across`, `Pull`, `Settle`, `Swing`, `Kilograms` and `AcrossKg`. `Waves.ChanceToExceed` has a form with a steady pull.
+- A vessel's motion carries the set: read `IHull.Velocity` for her speed over the ground, as before.
+
+New: `IHullWay`, `LiveDrag`, `HullSet`, and the optional keys `bowDrag`, `sideDrag` and `finSquareMetres` under `roughseas:currentdrift`.
 
 ## What not to touch
 

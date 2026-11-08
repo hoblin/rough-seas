@@ -34,7 +34,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private float speedMultiplier;
     private EntityBehaviorSeatable? seatable;
     private IMasted? mast;
-    private IDriven? driven;
+    private IHullWay? driven;
     private double designedMastMetres;
     private SeaClock.Watch watch = null!;
     private float sinceUpdate;
@@ -54,7 +54,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public IBuoyant? Buoyant => buoyant;
 
-    /// <summary>Whether vanilla's water drag is off her along the water just now (<see cref="IDriven"/>).</summary>
+    /// <summary>Whether vanilla's water drag is off her along the water just now (<see cref="IHullWay"/>).</summary>
     public bool Driven => driven?.Driving == true;
 
     /// <summary>How the drawn waves carry her on this side, while this side moves her.</summary>
@@ -113,7 +113,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         mooring = entity.GetBehavior<EntityBehaviorMooring>();
         seatable = entity.GetBehavior<EntityBehaviorSeatable>();
         mast = entity.SidedProperties.Behaviors.OfType<IMasted>().FirstOrDefault();
-        driven = entity.SidedProperties.Behaviors.OfType<IDriven>().FirstOrDefault();
+        driven = entity.SidedProperties.Behaviors.OfType<IHullWay>().FirstOrDefault();
     }
 
     public double Force(SeaState state) =>

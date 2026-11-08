@@ -33,6 +33,7 @@ public class BridgeCommands : ModSystem
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
     private CurrentOverride? current;
+    private DriftSync? sync;
     private ChunkSettle settle = null!;
     private int suspendMs;
 
@@ -47,6 +48,8 @@ public class BridgeCommands : ModSystem
         {
             drift = new DriftSwitch { Drifting = !benchDefaults };
             current = new CurrentOverride();
+            sync = api.ModLoader.GetModSystem<DriftSync>();
+            api.Event.PlayerJoin += player => sync.Send(drift.Drifting, drift.WavesOnly, current.Current, player);
         }
         if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
         api.Event.ServerSuspend += HoldSuspension;
@@ -124,7 +127,7 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Weed(args.Caller.Player.Entity.Pos.AsBlockPos, (int)args[0]))
             .EndSubCommand()
             .BeginSubCommand("drift")
-                .WithDescription("Whether unridden vessels drift with the current and the waves; off on every bench start, so they hold still")
+                .WithDescription("Whether vessels drift with the current and the waves, steered or not (waves: the waves alone); off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off", "waves"))
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
@@ -262,11 +265,12 @@ public class BridgeCommands : ModSystem
         {
             drift.Drifting = state != "off";
             drift.WavesOnly = state == "waves";
+            sync?.Send(drift.Drifting, drift.WavesOnly, current?.Current);
         }
-        if (drift.WavesOnly) return TextCommandResult.Success("Unridden vessels drift with the waves alone, not the current");
+        if (drift.WavesOnly) return TextCommandResult.Success("Vessels drift with the waves alone, not the current");
         return TextCommandResult.Success(drift.Drifting
-            ? "Unridden vessels drift with the current and the waves"
-            : "Unridden vessels hold still; /bridge drift on lets them drift");
+            ? "Vessels drift with the current and the waves, steered or not"
+            : "Vessels hold still; /bridge drift on lets them drift");
     }
 
     private TextCommandResult Current(string speed, double yaw)
@@ -275,13 +279,15 @@ public class BridgeCommands : ModSystem
         if (speed == "off")
         {
             current.Clear();
+            sync?.Send(drift?.Drifting ?? true, drift?.WavesOnly == true, null);
             return TextCommandResult.Success("The sea's own currents flow again");
         }
         if (!double.TryParse(speed, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var metresPerSecond))
             return TextCommandResult.Error("Give the current's speed in m/s, or off");
 
         current.Set(metresPerSecond, yaw);
-        return TextCommandResult.Success($"A current of {metresPerSecond:F1} m/s flows toward yaw {yaw:F0}° everywhere; unridden vessels ride it once /bridge drift is on");
+        sync?.Send(drift?.Drifting ?? true, drift?.WavesOnly == true, current.Current);
+        return TextCommandResult.Success($"A current of {metresPerSecond:F1} m/s flows toward yaw {yaw:F0}° everywhere; vessels ride it once /bridge drift is on");
     }
 
     private TextCommandResult Lag(int ms, int ticks)

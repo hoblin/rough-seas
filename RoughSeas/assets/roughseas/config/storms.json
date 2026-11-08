@@ -72,9 +72,17 @@
         "anchorFullScope": 5,
         "anchorDragMetres": 1,
         "sources": {
-            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves and the shipped water an unanchored one does; it lies across the sea, so it capsizes as if beam-on",
+            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves and the shipped water an unanchored one does; it lies across the sea, so it capsizes as if beam-on. The current's pull is its drag on her and takes no such share",
             "stakeReachMetres": "Vanilla's longest rope",
             "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth holds fully"
+        }
+    },
+    "drift": {
+        "syncSeconds": 1,
+        "logSeconds": 5,
+        "sources": {
+            "syncSeconds": "How often the server tells clients how far the water has carried a vessel along, for a rider who takes her helm",
+            "logSeconds": "How often a carried or swinging hull logs the current and what it does to her"
         }
     },
     "ashore": {

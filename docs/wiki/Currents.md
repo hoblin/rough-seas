@@ -1,4 +1,4 @@
-The oceans turn. Every basin carries great slow circles of water, the gyres, and a vessel left alone drifts with them.
+The oceans turn. Every basin carries great slow circles of water, the gyres, and they carry every vessel afloat.
 
 ## How the oceans turn
 
@@ -20,12 +20,16 @@ The temperature of the water has no effect yet. Cold water that saps a swimmer's
 
 ## Drift
 
-A vessel nobody is steering drifts with the current. A passenger who isn't at the helm drifts along with it. A vessel you are steering isn't pushed by the current: the course is yours.
+Every vessel afloat drifts with the current, steered or not. The current carries a hull through the drag of the water on its underwater body, so a light hull takes up the current's speed within seconds and a heavy, loaded one more slowly, and a hull lying across the stream is caught sooner than one lying along it.
 
-The waves move every vessel afloat, steered or not, to and fro with the water under them, and each wave carries her a little further forward than back: a slow drift the way the waves run, a few centimetres a second in a moderate sea and more in a gale ([Reading the sea](Reading-the-Sea#a-ship-that-rides-our-swell)).
+At the helm you paddle or sail through the water, and the water moves under you. Heading upstream you make your usual speed through the water, so you gain ground only if that beats the current; heading across it you are set downstream by all of it. When you stop paddling the hull glides on and slows by its own drag.
+
+A vessel at anchor or tied to a stake swings about its bow to lie along the stream, stern downstream, once the rope comes taut, and the current pulls on its rope and anchor: hardly at all in the slow middle of a basin, much harder in a boundary current, since the pull grows with the square of the speed. A hull lying along the stream feels far less of it than one lying across. A pull past what the rope or the anchor holds parts or drags it.
+
+The waves move every vessel afloat, steered or not, to and fro with the water under them, and each wave carries it a little further forward than back: a slow drift the way the waves run, a few centimetres a second in a moderate sea and more in a gale ([Reading the sea](Reading-the-Sea#a-ship-that-rides-our-swell)). The current is usually much stronger, so where it runs against the waves a hull goes the current's way.
 
 So a boat left at the water's edge is not where you left it when you come back. [Tie it up or anchor it](Mooring) before you step ashore.
 
 Drift only happens where the game is running, within about 128 blocks of a player. A vessel far from everyone stays put until someone comes near.
 
-The [raft](Raft), the [sailboat](Sailboat) and every vessel of the mod drift the same way. With [Currents](World-Settings#the-mechanics) off, the currents still flow, but carry no vessel.
+The [raft](Raft), the [sailboat](Sailboat) and every vessel of the mod drift the same way. With [Currents](World-Settings#the-mechanics) off, the currents still flow, but carry no vessel; a rope that parts or an anchor that drags in one follows [Mooring strain](World-Settings#the-mechanics), as in a storm.

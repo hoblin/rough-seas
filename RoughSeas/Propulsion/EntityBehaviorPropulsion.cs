@@ -12,7 +12,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Propulsion;
 
-public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), IDriven
+public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), IHullWay
 {
     public const string Code = "roughseas:propulsion";
 
@@ -31,8 +31,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
     private Paddler paddler = null!;
     private readonly PoleWarning warning = new();
     private IHull? hull;
-    private (HullForm Form, double Draft, double Kg) dragFor;
-    private HullDrag? drag;
+    private LiveDrag? drag;
     private string? logged;
     private long loggedAt;
 
@@ -42,6 +41,8 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
     public Stroke? Stroke { get; private set; }
 
     public bool Driving { get; private set; }
+
+    public HullDrag? WaterDrag => drag?.Now;
 
     public override string PropertyName() => Code;
 
@@ -58,6 +59,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
     public override void AfterInitialized(bool onFirstSpawn)
     {
         hull = IHull.Of(entity);
+        if (hull != null) drag = new LiveDrag(entity, hull, attributes, vessels);
         var sea = entity.GetBehavior<EntityBehaviorSeaForces>();
         station = new RowerStation(attributes, propulsion.Config, propulsion.WaterDensity, (along, across, blocks) => sea?.WaterDepth(along, across, blocks) ?? 0,
             () => Mechanic.PoleDepth.On(entity.World));
@@ -104,10 +106,9 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
         var changing = sided && boat.WatchedAttributes.GetBool(PaddleChangingKey);
         strokes.Show(boat, rower, idle ? null : strokes.KindOf(tool, station.HasOars, side), changing, sided && ahead == 0 && turn != 0,
             idle ? null : station.Stance(tool?.Kind), tool?.Kind);
-        if (idle) return Idle(vanilla);
+        if (idle || drag?.Now is not { } water) return Idle(vanilla);
         Driving = true;
 
-        var water = Drag(boat);
         var speed = VanillaSwim.Realized(boat.ForwardSpeed);
         var spin = boat.AngularVelocity * RadiansPerAngularVelocity;
         var metabolic = propulsion.Config.Rower.MetabolicWatts;
@@ -166,20 +167,6 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
         EffortWatts = 0;
         Stroke = null;
         return vanilla;
-    }
-
-    private HullDrag Drag(EntityBoat boat)
-    {
-        var key = (HullForm.From(attributes, vessels.Drag, hull!.Shape), hull.Afloat.DraftMetres, hull.Aboard.Total);
-        if (drag != null && key == dragFor) return drag;
-
-        if (key.Item1 != dragFor.Form)
-        {
-            vessels.Log(boat, "her drag on a hull {0:F2} by {1:F2} m, bow {2:F2}, side {3:F2}, fin {4:F2} m²",
-                key.Item1.LengthMetres, key.Item1.BeamMetres, key.Item1.BowDrag, key.Item1.SideDrag, key.Item1.FinSquareMetres);
-        }
-        dragFor = key;
-        return drag = new HullDrag(key.Item1, key.DraftMetres, key.Total, propulsion.WaterDensity, vessels.Drag);
     }
 
     private void Note(EntityBoat boat, EntityAgent rower, Propulsor? propulsor, string? refusal, Push push, HullDrag water, double speed, double spin, int ahead, int turn, Side? side)
