@@ -13,7 +13,8 @@ public readonly record struct MooringLine(double RestMetres, double BreakingNewt
         if (!snatches) return steady;
 
         var speed = Math.Max(0, arrivingMetresPerSecond);
-        return steady + Math.Sqrt(steady * steady + NewtonsPerMetre * kilograms * speed * speed);
+        var energy = speed > 0 ? NewtonsPerMetre * kilograms * speed * speed : 0;
+        return steady + Math.Sqrt(steady * steady + energy);
     }
 
     public bool Parts(double newtons) => newtons > BreakingNewtons;

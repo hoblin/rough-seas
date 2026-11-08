@@ -18,10 +18,11 @@ public sealed class VesselRope(Entity vessel, ClothManager cloths)
 
     private readonly EntityBehaviorRopeTieable? tieable = vessel.GetBehavior<EntityBehaviorRopeTieable>();
 
-    /// <summary>The rope tied to her, if any. A client reads it by the rope's pins, as it is never sent her rope ids.</summary>
+    /// <summary>The rope tied to her, if any: by her rope ids on the server, by the rope's pins on a client, which is never sent her ids.</summary>
     public ClothSystem? Tied =>
-        (vessel.World.Side == EnumAppSide.Server ? tieable?.ClothIds?.value.Select(cloths.GetClothSystem).FirstOrDefault(Holds) : null)
-        ?? cloths.GetClothSystemAttachedToEntity(vessel.EntityId);
+        vessel.World.Side == EnumAppSide.Server
+            ? tieable?.ClothIds?.value.Select(cloths.GetClothSystem).FirstOrDefault(Holds)
+            : cloths.GetClothSystemAttachedToEntity(vessel.EntityId);
 
     /// <summary>
     /// Server only: forgets the ids that now name another vessel's or animal's rope. Vanilla leaves a torn rope's id
@@ -36,7 +37,8 @@ public sealed class VesselRope(Entity vessel, ClothManager cloths)
 
     private bool Holds(ClothSystem? rope) => rope != null && rope.Ends.Any(end => end.pinnedToEntityId == vessel.EntityId);
 
-    public static BlockPos? Post(ClothSystem rope) => rope.FirstPoint.PinnedToBlockPos ?? rope.LastPoint.PinnedToBlockPos;
+    /// <summary>The block it is tied to; vanilla keeps an end's block when the block is broken and the end comes loose.</summary>
+    public static BlockPos? Post(ClothSystem rope) => rope.Ends.FirstOrDefault(end => end.Pinned && end.PinnedToBlockPos != null)?.PinnedToBlockPos;
 
     public static double RestMetres(ClothSystem rope)
     {

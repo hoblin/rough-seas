@@ -28,6 +28,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private const double SlackMetres = 0.1;
     private const double TensionLogShare = 0.1;
     private const double FollowedLogMetres = 0.1;
+    private const double RepinRadians = 5 * GameMath.DEG2RAD;
     private static readonly AssetLocation RopeRipSound = new("game:sounds/effect/roperip");
 
     /// <summary>The anchor's line key, beside the ids of vanilla's ropes, which start at 1.</summary>
@@ -72,7 +73,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         public volatile bool Slack;
         public volatile bool Slipping;
         public bool WasTaut;
-        public bool PinnedAtBow;
+        public double PinnedYaw = double.NaN;
         public bool Reported;
         public double LoggedTension;
         public long LoggedAt;
@@ -294,8 +295,10 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         }
         if (rope != null && now.FirstOrDefault(hold => hold.Tether.Key == rope.ClothId) is { } staked)
         {
-            Rope.TakeOver(rope, staked.PinnedAtBow ? null : hull?.Shape.Bow(entity.Pos.Yaw) ?? default);
-            staked.PinnedAtBow = true;
+            var yaw = entity.Pos.Yaw;
+            var turned = double.IsNaN(staked.PinnedYaw) || Math.Abs(GameMath.AngleRadDistance((float)staked.PinnedYaw, yaw)) > RepinRadians;
+            Rope.TakeOver(rope, server && turned ? hull?.Shape.Bow(yaw) ?? default : null);
+            if (server && turned) staked.PinnedYaw = yaw;
         }
         if (!now.Select(hold => hold.Tether.Key).SequenceEqual(before.Select(hold => hold.Tether.Key)))
         {

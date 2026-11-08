@@ -61,6 +61,15 @@ public class MooringLineTests
     }
 
     [Fact]
+    public void AnUnbreakableRopeComingOnAtRestStillDoublesTheLoad()
+    {
+        var unbreakable = new MooringLine(3, double.PositiveInfinity, 0.1);
+
+        Assert.Equal(800, unbreakable.Tension(400, 0, SailboatWithItsWater, snatches: true));
+        Assert.False(unbreakable.Parts(unbreakable.Tension(400, 0, SailboatWithItsWater, snatches: true)));
+    }
+
+    [Fact]
     public void ItPartsOnlyPastItsBreakingLoad()
     {
         Assert.False(Flax(3).Parts(Fixtures.FlaxNewtons));
