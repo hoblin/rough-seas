@@ -22,9 +22,9 @@ Each page covers one part, for the mod that touches it; read the ones yours does
 
 Where a page touches physics, it says what the mod does and links [The science behind it](The-Science-Behind-It) for why.
 
-## What we keep
+## Changes between versions
 
-What these pages document is what we keep: vanilla's channels as they describe them, `ISeaWeather` with `SeaState`, `SeaCurrent` and `SeaClock`, `IDrawnSea` with `SeaPose` and `HullResponse`, and our vessel behaviours with their keys and their configs. It follows semantic versioning: a change that breaks any of it comes with a new major version and a line in the release notes, and what we add comes in a minor version. If you build on it, or need something it doesn't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
+If you build on these pages, or need something they don't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
 ### Hulls that crack, leak and flood
 

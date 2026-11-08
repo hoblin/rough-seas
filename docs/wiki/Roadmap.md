@@ -33,7 +33,7 @@ Rough Seas moves beneath vanilla, so other mods build on its sea as if it were t
 Hulls that take knocks as real ones do, and a guide for modders.
 
 - **[Knocks](Hull-Condition) worked out as they really are.** A hull is struck only when it truly hits something solid, by the speed it loses into it, the way the game works out a fall. A hull counts its own weight, the people aboard with their gear and armor, the empty baskets, crates and chests it carries, and its water, which sloshes. A lagging server no longer breaks a boat on open water.
-- **[For modders](For-Modders)**, one page per mechanic, with [Building a vessel](Building-a-Vessel) for vessels that ride our sea. What those pages document is kept stable under semantic versioning.
+- **[For modders](For-Modders)**, one page per mechanic, with [Building a vessel](Building-a-Vessel) for vessels that ride our sea.
 - **[Shipworks+](Other-Mods#shipworks)** tested beside us.
 
 ## 3.0 "Creak and Leak"
