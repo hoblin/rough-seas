@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
 
 namespace RoughSeas.Storms;
@@ -70,5 +71,5 @@ internal readonly struct BlockColumn(IBlockAccessor blocks, int x, int z) : IWat
 
     public bool Solid(int y) => blocks.GetBlockRaw(x, y, z, BlockLayersAccess.Solid).CollisionBoxes is { Length: > 0 };
 
-    private Block Fluid(int y) => blocks.GetBlockRaw(x, y, z, BlockLayersAccess.Fluid);
+    private Block Fluid(int y) => OpenWater.At(blocks, x, y, z);
 }

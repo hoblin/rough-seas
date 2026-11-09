@@ -826,7 +826,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     private void MarkDirty() => entity.WatchedAttributes.MarkPathDirty(TreeKey);
 
     private Block FluidBelow() =>
-        entity.World.BlockAccessor.GetBlock(entity.Pos.XYZ.Add(0, -WaterlineProbeMetres, 0).AsBlockPos, BlockLayersAccess.Fluid);
+        OpenWater.At(entity.World.BlockAccessor, entity.Pos.XYZ.Add(0, -WaterlineProbeMetres, 0).AsBlockPos);
 
     private static HullShape? MeasuredShape(Entity entity)
     {

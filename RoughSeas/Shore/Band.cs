@@ -1,0 +1,76 @@
+using System;
+using System.Collections.Generic;
+
+namespace RoughSeas.Shore;
+
+public readonly record struct Sea(double Height, double Period);
+
+public readonly record struct ShoreSeed(int X, int Z, int Fluid);
+
+public readonly record struct Reached(int Fluid, int Rings, double Head);
+
+public sealed class Band(RunUp runUp, SheetConfig sheet, int slopeSearchBlocks)
+{
+    private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
+
+    public Dictionary<(int X, int Z), Reached> Spread(IShoreGround ground, IEnumerable<ShoreSeed> seeds, Func<int, int, IReadOnlyList<Sea>> seas)
+    {
+        var reached = new Dictionary<(int X, int Z), Reached>();
+        var fronts = new PriorityQueue<(int X, int Z, int Fluid, int Rings, SheetFront Front), double>();
+
+        foreach (var seed in seeds)
+        {
+            foreach (var (dx, dz) in Sides)
+            {
+                if (ground.At(seed.X + dx, seed.Z + dz) is not { Kind: ShoreKind.Land } land) continue;
+                var thrown = Thrown(ground, seed.X, seed.Z, dx, dz, seas(seed.X, seed.Z));
+                if (thrown?.Cross(land.Elevation, land.Bed) is { } front) fronts.Enqueue((seed.X + dx, seed.Z + dz, seed.Fluid, 1, front), -front.Head);
+            }
+        }
+
+        while (fronts.TryDequeue(out var next, out _))
+        {
+            if (reached.ContainsKey((next.X, next.Z))) continue;
+            reached[(next.X, next.Z)] = new Reached(next.Fluid, next.Rings, next.Front.Head);
+            var from = ground.At(next.X, next.Z);
+            foreach (var (dx, dz) in Sides)
+            {
+                var (x, z) = (next.X + dx, next.Z + dz);
+                if (reached.ContainsKey((x, z)) || ground.At(x, z) is not { Kind: ShoreKind.Land } land) continue;
+                if (next.Front.Cross(land.Elevation - from.Elevation, land.Bed) is { } front) fronts.Enqueue((x, z, next.Fluid, next.Rings + 1, front), -front.Head);
+            }
+        }
+        return reached;
+    }
+
+    public double RunUpFrom(IShoreGround ground, ShoreSeed seed, Sea sea)
+    {
+        var strongest = 0.0;
+        foreach (var (dx, dz) in Sides)
+        {
+            if (ground.At(seed.X + dx, seed.Z + dz).Kind != ShoreKind.Land) continue;
+            strongest = Math.Max(strongest, runUp.Over(sea.Height, sea.Period, Profile(ground, seed.X, seed.Z, dx, dz), ground.At(seed.X + dx, seed.Z + dz).Bed));
+        }
+        return strongest;
+    }
+
+    private SheetFront? Thrown(IShoreGround ground, int x, int z, int dx, int dz, IReadOnlyList<Sea> seas)
+    {
+        var profile = Profile(ground, x, z, dx, dz);
+        var bed = ground.At(x + dx, z + dz).Bed;
+        SheetFront? strongest = null;
+        foreach (var sea in seas)
+        {
+            var front = SheetFront.Thrown(runUp.Over(sea.Height, sea.Period, profile, bed), sea.Period, sheet);
+            if (front.Head > (strongest?.Head ?? 0)) strongest = front;
+        }
+        return strongest;
+    }
+
+    private List<double> Profile(IShoreGround ground, int x, int z, int dx, int dz)
+    {
+        var profile = new List<double>();
+        for (var i = 1; i <= slopeSearchBlocks && ground.At(x + i * dx, z + i * dz) is { Kind: ShoreKind.Land } land; i++) profile.Add(land.Elevation);
+        return profile;
+    }
+}

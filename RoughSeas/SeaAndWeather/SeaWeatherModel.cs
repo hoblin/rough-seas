@@ -103,14 +103,27 @@ public class SeaWeatherModel
         return new WindSample(windX, windZ, Math.Min(1, presence), rain, dominant);
     }
 
+    public (double X, double Z) EverydayWind(double x, double z)
+    {
+        var (towardX, towardZ) = Compass.Toward(prevailing.TowardRadians(z));
+        var mean = BackgroundMean(x, z);
+        return (towardX * mean, towardZ * mean);
+    }
+
+    private double BackgroundMean(double x, double z)
+    {
+        var background = config.Background;
+        var seaness = Math.Clamp(basins.At(x, z).ShoreBlocks / background.SeaRampBlocks, 0, 1);
+        return background.LandMeanMps + (background.SeaMeanMps - background.LandMeanMps) * seaness;
+    }
+
     private (double X, double Z) Background(double x, double z, double hours)
     {
         var background = config.Background;
         var nx = x / background.SpatialScale;
         var nz = z / background.SpatialScale;
         var nt = hours / background.TimeScaleHours;
-        var seaness = Math.Clamp(basins.At(x, z).ShoreBlocks / background.SeaRampBlocks, 0, 1);
-        var mean = background.LandMeanMps + (background.SeaMeanMps - background.LandMeanMps) * seaness;
+        var mean = BackgroundMean(x, z);
         var speed = Math.Max(0, mean * (1 + background.SpreadFraction * (2 * strengthNoise.Noise(nx, nz, nt) - 1)));
         var veer = (2 * veerNoise.Noise(nx, nz, nt) - 1) * background.VeerDegrees * GameMath.DEG2RAD_DOUBLE;
         var (towardX, towardZ) = Compass.Toward(prevailing.TowardRadians(z) + veer);

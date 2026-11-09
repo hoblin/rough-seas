@@ -49,6 +49,15 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
 
     public (double Height, double Period) WavesAt(double x, double z) => Waves(x, z, Now, model.Wind(x, z, Now));
 
+    public (double Height, double Period) EverydayWavesAt(double x, double z)
+    {
+        var (windX, windZ) = model.EverydayWind(x, z);
+        var speed = Math.Sqrt(windX * windX + windZ * windZ);
+        if (speed <= 0) return (0, 0);
+        var reach = water.Upwind(x, z, Compass.Radians(windX, windZ));
+        return reach.FetchMetres > 0 ? windSea.Grow(speed, reach.FetchMetres, reach.MeanDepthMetres) : (0, 0);
+    }
+
     public IEnumerable<Storm> StormsWithin(double x, double z, double range) => model.Storms.Active(x, z, Now, range);
 
     public bool IsSea(double x, double z) => model.IsSea(x, z);

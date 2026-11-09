@@ -566,7 +566,7 @@ public class BridgeCommands : ModSystem
             var ground = Ground(x, z);
             return ground >= seaLevel && ground <= seaLevel + 2
                 && accessor.GetBlock(new BlockPos(x, ground + 1, z, 0)).CollisionBoxes is null or { Length: 0 }
-                && accessor.GetBlock(new BlockPos(x, ground, z, 0), BlockLayersAccess.Fluid).Id == 0;
+                && OpenWater.At(accessor, new BlockPos(x, ground, z, 0)).Id == 0;
         }
         bool Open(int x, int z) => Enumerable.Range(-clearing, 2 * clearing + 1)
             .All(i => Enumerable.Range(-clearing, 2 * clearing + 1).All(j => Dry(x + i, z + j) && Math.Abs(Ground(x + i, z + j) - Ground(x, z)) <= 1));
@@ -621,9 +621,9 @@ public class BridgeCommands : ModSystem
         int Ground(int x, int z) => accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
         bool Loaded(int x, int z) => accessor.GetChunkAtBlockPos(new BlockPos(x, surface, z, 0)) != null;
         bool Flush(int x, int z) => Loaded(x, z) && Ground(x, z) == surface
-            && accessor.GetBlock(new BlockPos(x, surface + 1, z, 0), BlockLayersAccess.Fluid).Id == 0;
+            && OpenWater.At(accessor, new BlockPos(x, surface + 1, z, 0)).Id == 0;
         bool Water(int x, int z) => Loaded(x, z) && Ground(x, z) < surface
-            && accessor.GetBlock(new BlockPos(x, surface, z, 0), BlockLayersAccess.Fluid).IsLiquid();
+            && OpenWater.At(accessor, new BlockPos(x, surface, z, 0)).IsLiquid();
 
         (int dx, int dz, string name)[] seaward = [(0, 1, "south"), (0, -1, "north"), (1, 0, "east"), (-1, 0, "west")];
 
@@ -650,7 +650,7 @@ public class BridgeCommands : ModSystem
             {
                 var at = new BlockPos(spot.x, surface, spot.z, 0);
                 var climate = accessor.GetClimateAt(at, EnumGetClimateMode.WorldGenValues);
-                var water = accessor.GetBlock(at.AddCopy(BlockFacing.FromCode(spot.sea)), BlockLayersAccess.Fluid).Code;
+                var water = OpenWater.At(accessor, at.AddCopy(BlockFacing.FromCode(spot.sea))).Code;
                 return (spot, rain: climate?.WorldgenRainfall ?? 0, climate?.Temperature, ground: accessor.GetBlock(at).Code, water);
             })
             .OrderByDescending(beach => beach.rain)
@@ -670,7 +670,7 @@ public class BridgeCommands : ModSystem
             var pos = origin.AddCopy(x, y, z);
             var block = accessor.GetBlock(pos);
             if (block.BlockMaterial != EnumBlockMaterial.Plant && block.Code?.Path.StartsWith("loose") != true) continue;
-            if (accessor.GetBlock(pos.DownCopy(), BlockLayersAccess.Fluid).IsLiquid()) continue;
+            if (OpenWater.At(accessor, pos.DownCopy()).IsLiquid()) continue;
 
             accessor.SetBlock(0, pos);
             cleared++;
@@ -789,7 +789,7 @@ public class BridgeCommands : ModSystem
         var accessor = sapi.World.BlockAccessor;
         var below = position.AsBlockPos;
         while (below.Y > 0 && accessor.GetBlock(below, BlockLayersAccess.FluidOrSolid).Id == 0) below.Y--;
-        return accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid() ? below.Y : position.Y;
+        return OpenWater.At(accessor, below).IsLiquid() ? below.Y : position.Y;
     }
 
     private static TextCommandResult Mount(IPlayer player, Entity? target, int index = -1)

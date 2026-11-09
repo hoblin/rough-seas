@@ -169,7 +169,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         if (calibration is not { Settled: false }) return;
         var surface = new BlockPos(x, sapi.World.SeaLevel - 1, z, Dimensions.NormalWorld);
         if (sapi.World.BlockAccessor.GetChunkAtBlockPos(surface) == null || !calibrated.Add((x, z))) return;
-        var water = sapi.World.BlockAccessor.GetBlock(surface, BlockLayersAccess.Fluid).LiquidCode == "saltwater";
+        var water = OpenWater.At(sapi.World.BlockAccessor, surface).LiquidCode == "saltwater";
         if (!calibration.Add(Ocean(sapi).At(x / WorldOceanMap.PixelSize, z / WorldOceanMap.PixelSize), water)) return;
         Log("ocean map calibrated against the built world: open sea from {0} of 255", calibration.SeaFrom);
         if (model is { IsValueCreated: true }) model.Value.Forget();

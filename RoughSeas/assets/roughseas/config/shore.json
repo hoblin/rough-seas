@@ -1,0 +1,56 @@
+{
+    "runUp": {
+        "stockdonFactor": 1.1,
+        "setupSlopeFactor": 0.35,
+        "incidentSwashFactor": 0.563,
+        "infragravitySwash": 0.004,
+        "dissipativeIribarren": 0.3,
+        "dissipativeFactor": 0.043,
+        "sandyMaxSlope": 0.143,
+        "eurotopFactor": 1.65,
+        "eurotopCeiling": 4.0,
+        "eurotopCeilingRoot": 1.5,
+        "spectralPeriodRatio": 1.1,
+        "slopeSearchBlocks": 48,
+        "sources": {
+            "stockdonFactor": "Run-up exceeded by 2% of waves on natural sandy beaches, R2% = 1.1 (0.35 βf √(H0 L0) + ½ √(H0 L0 (0.563 βf² + 0.004))) (Stockdon, Holman, Howd & Sallenger 2006, Coastal Engineering 53(7), 10 field experiments)",
+            "dissipativeIribarren": "Where ξ0 = βf / √(H0 / L0) is under 0.3 the run-up no longer depends on the slope: R2% = 0.043 √(H0 L0) (Stockdon et al. 2006)",
+            "sandyMaxSlope": "Stockdon's beaches reach a foreshore slope of about 1:7; a steeper or harder slope takes EurOtop's run-up",
+            "eurotopFactor": "Ru2% / Hm0 = 1.65 γf ξm-1,0, at most γf (4.0 − 1.5 / √ξm-1,0) (EurOtop 2018, eq. 5.1 and 5.2)",
+            "spectralPeriodRatio": "EurOtop's spectral period Tm-1,0 is the peak period over 1.1 (EurOtop 2018, 4.2)",
+            "slopeSearchBlocks": "How far inland the foreshore's slope is read along the waves' path, steps taken as a ramp through their corners"
+        }
+    },
+    "sheet": {
+        "uprushFriction": 0.007,
+        "backwashFriction": 0.03,
+        "lensDepthRatio": 27,
+        "sources": {
+            "uprushFriction": "The swash front's quadratic bed friction on a sandy beach, fitted to over 4,500 uprushes: about 0.007 (Puleo & Holland 2001, Coastal Engineering 43(1))",
+            "backwashFriction": "The backwash's friction in the same study, 0.01 to 0.07: the middle",
+            "lensDepthRatio": "The bore collapsed at the shoreline throws a lens of water up the beach, h = (x_s − x)² / (9 g t²) (Shen & Meyer 1963), whose mean depth over its length is U² / 27 g"
+        }
+    },
+    "beds": [
+        { "material": "sand", "conductivity": 1e-4, "roughness": 1.0, "sandy": true },
+        { "material": "gravel", "conductivity": 3e-2, "roughness": 0.55, "sandy": false },
+        { "material": "soil", "conductivity": 1e-6, "roughness": 1.0, "sandy": true },
+        { "material": "stone", "conductivity": 0, "roughness": 1.0, "sandy": false }
+    ],
+    "bedSources": {
+        "conductivity": "Hydraulic conductivity, m/s (Freeze & Cherry 1979, Groundwater, table 2.2): fine sand 1e-5 to 1e-4, gravel 1e-2 to 1e-1, silt and loam 1e-9 to 1e-5, unfractured rock nil",
+        "roughness": "EurOtop 2018 table 5.2: a smooth impermeable slope 1.0, two layers of rock on an impermeable core 0.55",
+        "sandy": "Whether Stockdon's beach run-up applies to a slope of this material up to sandyMaxSlope; others take EurOtop's"
+    },
+    "band": {
+        "haloBlocks": 96,
+        "highestRiseBlocks": 16,
+        "refreshMinutes": 10,
+        "tickBudgetMilliseconds": 6,
+        "sources": {
+            "haloBlocks": "How far beyond a chunk the band's water is looked for: more than the farthest a sheet runs in the heaviest sea the knee lets through",
+            "highestRiseBlocks": "The highest ground a sheet is followed onto: the sea's ceiling height (waves.ceilingMetres), which no run-up passes",
+            "refreshMinutes": "How often, in game minutes, a loaded shore reads its sea again to grow or drain the band"
+        }
+    }
+}
