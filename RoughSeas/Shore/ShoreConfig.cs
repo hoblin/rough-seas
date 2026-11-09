@@ -21,13 +21,13 @@ public class RunUpConfig
     public double EurotopCeiling = 4.0;
     public double EurotopCeilingRoot = 1.5;
     public double SpectralPeriodRatio = 1.1;
+    public double WallSlope = 1.0;
     public int SlopeSearchBlocks = 48;
 }
 
 public class SheetConfig
 {
     public double UprushFriction = 0.007;
-    public double BackwashFriction = 0.03;
     public double LensDepthRatio = 27;
 }
 

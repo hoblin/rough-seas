@@ -27,6 +27,9 @@ public class RunUpTests
         Assert.True(runUp.Metres(2, 8, 1.0 / 3, ShoreFixtures.Bed("gravel")) < runUp.Metres(2, 8, 1.0 / 3, ShoreFixtures.Bed("stone")));
 
     [Fact]
+    public void AWallThrowsTheSeaOneWaveHeightUp() => Assert.Equal(4.7, runUp.Metres(4.7, 10, 2, ShoreFixtures.Bed("stone")), 6);
+
+    [Fact]
     public void NoSeaRunsNothingUp() => Assert.Equal(0, runUp.Metres(0, 0, 0.1, ShoreFixtures.Bed("sand")));
 
     [Fact]

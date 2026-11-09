@@ -16,6 +16,7 @@ public sealed class RunUp(RunUpConfig config)
     public double Metres(double height, double period, double slope, BedConfig bed)
     {
         if (height <= 0 || period <= 0) return 0;
+        if (slope > config.WallSlope) return height;
         return bed.Sandy && slope <= config.SandyMaxSlope ? Stockdon(height, period, slope) : Eurotop(height, period, slope, bed.Roughness);
     }
 
