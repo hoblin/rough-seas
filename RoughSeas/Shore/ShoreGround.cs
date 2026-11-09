@@ -13,6 +13,8 @@ public enum ShoreKind
     Land,
 }
 
+/// <param name="Elevation">Land: its top over still water, in metres. Water: its depth.</param>
+/// <param name="Fluid">The fluid block it holds: water's own, or the water under land.</param>
 public readonly record struct ShoreCell(ShoreKind Kind, double Elevation, BedConfig Bed, int Fluid);
 
 public interface IShoreGround

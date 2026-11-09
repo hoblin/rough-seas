@@ -2,6 +2,15 @@ using System;
 
 namespace RoughSeas.Surf;
 
+/// <summary>
+/// The seabed around a player, a texel a block, as <c>seasurface.vsh</c> and <c>seawet.fsh</c> read it and
+/// <see cref="Storms.SeaSurface"/> mirrors it. <see cref="Bed"/>: the depth under still water (negative over land), the
+/// distance a sheet runs from the shoreline to here, the run-up of the shore it comes from, and the run-up a wave needs
+/// to reach here (<see cref="Unreached"/> where none does). <see cref="Aux"/>: the bed's hydraulic conductivity, the
+/// depth's slope along X and Z, and over land the top of the ground in world height. <see cref="Lags"/>: for each wave
+/// slot, the phase the bed has held the wave back by (<see cref="PhaseField"/>); over land, the lag at the shoreline the
+/// sheet comes from, carried to here. The lags hold for the wave vectors in <see cref="Numbers"/> alone.
+/// </summary>
 public sealed class SurfField(int originX, int originZ, int size, (double X, double Z)[] numbers)
 {
     public const int Channels = 4;

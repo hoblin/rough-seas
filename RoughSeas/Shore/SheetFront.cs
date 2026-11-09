@@ -2,6 +2,13 @@ using System;
 
 namespace RoughSeas.Shore;
 
+/// <summary>
+/// The front of the sheet a broken wave throws up the shore, thrown at U = √(2gR) so that it climbs the run-up R, as
+/// Shen &amp; Meyer's swash meets the measured run-up. Crossing a block, it climbs the step to the block's top only while its
+/// velocity head reaches over it, loses speed to bed friction over the lens's mean depth, and soaks into the bed by
+/// Darcy; it stops when it can't climb, when the bed has drunk it, or when its wave's period is out and the next bore
+/// runs over it.
+/// </summary>
 public readonly record struct SheetFront(double SpeedSquared, double Depth, double Seconds, double Period, double Friction)
 {
     private const double Gravity = RunUp.Gravity;

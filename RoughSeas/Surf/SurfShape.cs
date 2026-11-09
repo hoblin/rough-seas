@@ -2,6 +2,11 @@ using System;
 
 namespace RoughSeas.Surf;
 
+/// <summary>
+/// The waves over a bed: each slot shoaled and refracted by the depth, then all of them held to the height the depth
+/// carries, the rest breaking; the breaker plunges where the Iribarren number of the bed's slope says so.
+/// <c>seasurface.vsh</c> computes the same.
+/// </summary>
 public sealed class SurfShape(double breakingDepthRatio, double plungingFrom, double plungingTo)
 {
     public double BreakingDepthRatio => breakingDepthRatio;

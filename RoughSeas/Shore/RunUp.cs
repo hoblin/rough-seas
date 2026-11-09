@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace RoughSeas.Shore;
 
+/// <summary>The run-up exceeded by 2% of waves: Stockdon's on a sandy slope up to about 1:7, EurOtop's on a steeper or harder one.</summary>
 public sealed class RunUp(RunUpConfig config)
 {
     public const double Gravity = 9.81;
@@ -18,6 +19,7 @@ public sealed class RunUp(RunUpConfig config)
         return bed.Sandy && slope <= config.SandyMaxSlope ? Stockdon(height, period, slope) : Eurotop(height, period, slope, bed.Roughness);
     }
 
+    /// <summary>The run-up over a shore whose land, inland from the water, stands <paramref name="profile"/> metres over still water block by block, its slope read up to where the run-up reaches.</summary>
     public double Over(double height, double period, IReadOnlyList<double> profile, BedConfig bed)
     {
         if (height <= 0 || period <= 0 || profile.Count == 0) return 0;
@@ -26,6 +28,7 @@ public sealed class RunUp(RunUpConfig config)
         return reach;
     }
 
+    /// <summary>The steps of a block shore read as a ramp from the waterline through the landward corner of the first block whose top the run-up reaches.</summary>
     public static double Slope(IReadOnlyList<double> profile, double reach)
     {
         for (var i = 0; i < profile.Count; i++)

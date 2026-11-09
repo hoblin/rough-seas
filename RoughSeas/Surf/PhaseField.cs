@@ -2,6 +2,11 @@ using System;
 
 namespace RoughSeas.Surf;
 
+/// <summary>
+/// How far shoaling water holds a wave back: the eikonal |∇S| = k(depth) solved by fast sweeping from the plane wave
+/// where the water is deep and at the grid's upwind edges, less the plane wave's phase. Its gradient turns the crests
+/// toward the shore by Snell's law. Land holds no phase.
+/// </summary>
 public static class PhaseField
 {
     private const int Rounds = 2;

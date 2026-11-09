@@ -2,6 +2,7 @@ using System;
 
 namespace RoughSeas.Surf;
 
+/// <summary>Linear wave theory over a bed, by deep-water wavenumber: Eckart's dispersion, shoaling by the group velocity, refraction by Snell's law over straight depth contours.</summary>
 public static class Shoaling
 {
     public const double Gravity = 9.81;

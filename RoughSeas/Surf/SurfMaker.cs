@@ -8,6 +8,7 @@ using Vintagestory.API.Common;
 
 namespace RoughSeas.Surf;
 
+/// <summary>Reads the seabed around a point again, off the main thread, once the point moves, the waves change or the sea is due a fresh look; hands over each field once it is built.</summary>
 public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig config, int highestRise, Action<string, object[]> log)
 {
     private const int SeaStep = 8;

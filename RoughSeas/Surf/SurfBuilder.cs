@@ -5,6 +5,10 @@ using RoughSeas.Shore;
 
 namespace RoughSeas.Surf;
 
+/// <summary>
+/// Builds a <see cref="SurfField"/> from a seabed: the lags of each slot, and the band's sheets thrown at a range of the
+/// run-up's shares, the smallest share that reaches a block being the run-up a wave needs to wet it.
+/// </summary>
 public sealed class SurfBuilder(Band band)
 {
     private const double StillLevel = 7.0 / 8;

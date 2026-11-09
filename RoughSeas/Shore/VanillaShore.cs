@@ -9,6 +9,11 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Shore;
 
+/// <summary>
+/// Keeps vanilla's readers of the fluid layer on land over the water under the shore: a random tick at such a position
+/// goes to its solid block, which the fluid would otherwise take (and freeze); a liquid container neither picks nor fills
+/// from it; farmland and anything else searching for water around it, and a bobber counting its pond, don't count it.
+/// </summary>
 public static class VanillaShore
 {
     private const string HarmonyId = "roughseas.shore.vanilla";

@@ -7,8 +7,17 @@ public readonly record struct Sea(double Height, double Period);
 
 public readonly record struct ShoreSeed(int X, int Z, int Fluid);
 
+/// <param name="Rings">How many blocks in from the shore's water the front came.</param>
+/// <param name="Head">The front's velocity head on arriving, in metres.</param>
+/// <param name="FromX">The cell of water the front was thrown from.</param>
+/// <param name="RunUp">The run-up of the sea that threw it, before any scaling.</param>
 public readonly record struct Reached(int Fluid, int Rings, double Head, int FromX, int FromZ, double RunUp);
 
+/// <summary>
+/// Where a shore's swash reaches: from each cell of water beside land, a sheet is thrown up the land by the run-up of the
+/// sea there (<see cref="RunUp"/>), measured along the slope inland, and followed block by block (<see cref="SheetFront"/>),
+/// the strongest front taking each cell first.
+/// </summary>
 public sealed class Band(RunUp runUp, SheetConfig sheet, int slopeSearchBlocks)
 {
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];

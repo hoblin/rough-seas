@@ -8,6 +8,11 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Surf;
 
+/// <summary>
+/// The columns around a point as the shore's water stands in them: a water column by its surface level and depth,
+/// worldgen's seabed trusted while water still reaches it; a land column by the water under it and the top of its
+/// ground. Read off the main thread, from height maps copied on it.
+/// </summary>
 public sealed class SeabedMap
 {
     private const double StillLevel = 7.0 / 8;

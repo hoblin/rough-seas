@@ -12,6 +12,13 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Shore;
 
+/// <summary>
+/// Vanilla's own still water, salt or fresh, in the fluid layer under the full blocks of a shore at its still-water level,
+/// as far as the sheet a wave throws up the shore reaches (<see cref="Band"/>): the higher of the everyday sea's and the
+/// sea's now. The band is a function of the blocks and the sea, never stored: a chunk's band is spread again when the
+/// chunk loads, when a block changes in or beside it, and when the sea at its shore changes, and its carriers are added or
+/// drained to match, each after its water's own spread delay.
+/// </summary>
 public sealed class Groundwater
 {
     private const int ChunkSize = GlobalConstants.ChunkSize;
@@ -271,6 +278,7 @@ public sealed class Groundwater
         {
             writes.Dequeue();
             if (accessor.GetChunkAtBlockPos(write.Pos) == null || !OpenWater.Land(accessor, write.Pos)) continue;
+            // Not the bulk accessor: its commit takes a fluid removed under a solid for the solid removed, and lowers the rain heightmap under it.
             accessor.SetBlock(write.Fluid, write.Pos, BlockLayersAccess.Fluid);
         }
     }
