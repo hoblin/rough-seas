@@ -339,7 +339,12 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var (pullX, pullZ) = drift?.Pull() ?? default;
         var (waterX, waterZ) = forces!.Ride.WaterAcceleration;
         var accelerated = KilogramsAlong(waterX, waterZ);
-        var shares = MooringLoad.Share(pullX + accelerated * waterX, pullZ + accelerated * waterZ, outward.Select(line => (line.X, line.Z)).ToArray());
+        var (loadX, loadZ) = (pullX + accelerated * waterX, pullZ + accelerated * waterZ);
+        var lines = outward.Select(line => (line.X, line.Z)).ToArray();
+        var balance = MooringLoad.Share(loadX, loadZ, lines);
+        var dragging = Array.FindIndex(engaged, hold => hold.Slipping);
+        var drags = dragging >= 0 && Anchor is { } dragged ? Holding(dragged) * engaged[dragging].Tether.Level : 0;
+        var shares = dragging >= 0 && balance[dragging] > drags ? MooringLoad.Beside(loadX, loadZ, lines, dragging, drags) : balance;
         var (velocityX, velocityZ) = hull?.Velocity ?? default;
         for (var i = 0; i < engaged.Length; i++)
         {
@@ -362,7 +367,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             }
 
             if (hold.Tether.Line.Parts(tension)) Part(hold, tension);
-            else if (hold.Tether.Anchored && Anchor is { } anchor) Slip(hold, anchor, tension, kilograms);
+            else if (hold.Tether.Anchored && Anchor is { } anchor) Slip(hold, anchor, hold.Slipping ? balance[i] / level : tension, kilograms);
         }
     }
 

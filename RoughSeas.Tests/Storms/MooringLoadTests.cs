@@ -42,6 +42,13 @@ public class MooringLoadTests
     }
 
     [Fact]
+    public void ALineSlidingAtItsHoldLeavesTheRestOfThePullToTheOthers()
+    {
+        Assert.Equal([200.0, 800.0], MooringLoad.Beside(1000, 0, [(1, 0), (1, 0)], sliding: 0, slidingNewtons: 200));
+        Assert.Equal([800.0, 200.0], MooringLoad.Beside(1000, 0, [(1, 0), (1, 0)], sliding: 1, slidingNewtons: 200));
+    }
+
+    [Fact]
     public void APullTowardTheMooringLoadsNoLine()
     {
         Assert.Equal([0.0], MooringLoad.Share(-500, 0, [(1, 0)]));

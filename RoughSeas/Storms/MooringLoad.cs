@@ -34,5 +34,15 @@ public static class MooringLoad
         return alongEach.Select(newtons => pulling > 0 ? newtons / pulling : 0).ToArray();
     }
 
+    /// <summary>The shares while one line slides at a fixed pull: the rest of the pull shared by the other lines.</summary>
+    public static double[] Beside(double pullX, double pullZ, IReadOnlyList<(double X, double Z)> outward, int sliding, double slidingNewtons)
+    {
+        var (slideX, slideZ) = outward[sliding];
+        var others = outward.Where((_, i) => i != sliding).ToArray();
+        var shares = Share(pullX - slidingNewtons * slideX, pullZ - slidingNewtons * slideZ, others).ToList();
+        shares.Insert(sliding, slidingNewtons);
+        return shares.ToArray();
+    }
+
     private static double Along(double pullX, double pullZ, (double X, double Z) line) => Math.Max(0, pullX * line.X + pullZ * line.Z);
 }
