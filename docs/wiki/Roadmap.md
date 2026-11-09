@@ -89,6 +89,16 @@ You build every new vessel where it lies, and move it by paddle, pole and oars, 
 
 - **Laths soaked under stones.** Weigh a stack of laths down with stones and lay it on the bottom of any water: in two days the laths are wet, with no barrel and no saw. More: [Recipes](Recipes#soaked-laths).
 
+## 4.3
+
+The sea moves your boat, and the rope holds it by physics.
+
+- **The swell carries every hull** to and fro by its size, heading and draft, whether you sit in it or not. More: [Reading the sea](Reading-the-Sea#how-a-hull-answers).
+- **Currents carry every vessel,** paddled and rowed too, and swing a moored one to lie along the stream. More: [Currents](Currents#drift).
+- **A mooring rope that holds** at the length you set, and parts only by the jerk or the pull it can't bear; a boat takes one rope. More: [Mooring](Mooring).
+- **An anchor that holds by its weight**, better on rock than on sand, and drags in a strong current or a storm. More: [Anchoring](Anchoring).
+- Both the swell and the currents are the work of [James Riley Wilburn](https://github.com/rhino1998).
+
 ## Seamanship
 
 Sailing becomes sailing.

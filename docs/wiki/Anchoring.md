@@ -29,7 +29,7 @@ The anchor is a stone of about 100 kg, and it holds by its weight: it lies on th
 | Sand, gravel, mud or soil | about 330 newtons |
 | Rock | about 420 newtons |
 
-That holds the sailboat in the currents of the open sea and in an ordinary swell. A strong coastal current or a storm sea pulls harder, and the anchor drags.
+That holds the sailboat in the currents of the open sea, in calm water. A strong coastal current pulls harder, and a swell sways the boat on its rope hard enough to make the anchor creep; in a storm sea it drags.
 
 Rough Seas lets out five times the depth, or all the rope aboard if that is less, as sailors do. Deeper than the rope reaches, the anchor hangs and holds nothing at all, until the boat drifts over shallower water. With the anchor rope alone, a sailboat anchors in water down to 120 metres; with the warp, 210.
 
