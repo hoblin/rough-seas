@@ -35,6 +35,12 @@ public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int
         return cells[(x, z)] = Read(x, z);
     }
 
+    public void Forget(int chunkX, int chunkZ)
+    {
+        for (var x = 0; x < GlobalConstants.ChunkSize; x++)
+        for (var z = 0; z < GlobalConstants.ChunkSize; z++) cells.Remove((chunkX * GlobalConstants.ChunkSize + x, chunkZ * GlobalConstants.ChunkSize + z));
+    }
+
     private ShoreCell Read(int x, int z)
     {
         probe.Set(x, level, z);

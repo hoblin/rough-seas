@@ -23,9 +23,9 @@ public static class VanillaShore
             prefix: new HarmonyMethod(typeof(VanillaShore), nameof(TickSolid)));
         harmony.Patch(AccessTools.Method(typeof(BlockWater), nameof(BlockWater.OnServerGameTick)),
             prefix: new HarmonyMethod(typeof(VanillaShore), nameof(TickedSolid)));
-        harmony.Patch(AccessTools.Method(typeof(GameMain), nameof(GameMain.GetBlockIntersectionBoxes)),
+        harmony.Patch(AccessTools.Method(typeof(GameMain), nameof(GameMain.GetBlockIntersectionBoxes), [typeof(BlockPos), typeof(bool)]),
             prefix: new HarmonyMethod(typeof(VanillaShore), nameof(SelectLand)));
-        harmony.Patch(AccessTools.Method(typeof(BlockLiquidContainerBase), nameof(BlockLiquidContainerBase.TryFillFromBlock)),
+        harmony.Patch(AccessTools.Method(typeof(BlockLiquidContainerBase), nameof(BlockLiquidContainerBase.TryFillFromBlock), [typeof(ItemSlot), typeof(EntityAgent), typeof(BlockPos)]),
             prefix: new HarmonyMethod(typeof(VanillaShore), nameof(FillFromWater)));
         foreach (var accessor in new[] { typeof(BlockAccessorBase), typeof(BlockAccessorReadLockfree) })
         {
