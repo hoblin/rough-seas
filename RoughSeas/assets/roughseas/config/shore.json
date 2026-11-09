@@ -48,7 +48,7 @@
         "refreshMinutes": 10,
         "tickBudgetMilliseconds": 6,
         "sources": {
-            "haloBlocks": "How far beyond a chunk the band's water is looked for: more than the farthest a sheet runs in the heaviest sea the knee lets through",
+            "haloBlocks": "How far beyond a chunk the band's water is looked for: more than the farthest a sheet runs in the heaviest sea the knee (waves.kneeMetres) lets through",
             "highestRiseBlocks": "The highest ground a sheet is followed onto: the sea's ceiling height (waves.ceilingMetres), which no run-up passes",
             "refreshMinutes": "How often, in game minutes, a loaded shore reads its sea again to grow or drain the band"
         }

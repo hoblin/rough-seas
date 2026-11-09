@@ -22,14 +22,14 @@ public sealed class SurfBuilder(Band band)
         var depth = new float[size * size];
         for (var i = 0; i < depth.Length; i++) depth[i] = map.DepthAt(map.OriginX + i % size, map.OriginZ + i / size);
 
-        var lags = numbers.Select(number => PhaseField.Lag(size, depth, number.X, number.Z)).ToArray();
+        var lags = numbers.Take(SurfField.Slots).Select(number => PhaseField.Lag(size, depth, number.X, number.Z)).ToArray();
         var swash = Swash(map, seaAt);
 
         for (var i = 0; i < depth.Length; i++)
         {
             var (x, z) = (map.OriginX + i % size, map.OriginZ + i / size);
             var d = depth[i];
-            field.Set(field.Bed, x, z, 0, float.IsNaN(d) ? -SurfField.Unreached : d);
+            field.Set(field.Bed, x, z, 0, d);
             field.Set(field.Aux, x, z, 0, (float)(map[x, z].Bed?.Conductivity ?? 0));
             field.Set(field.Aux, x, z, 1, Gradient(depth, size, i, 1));
             field.Set(field.Aux, x, z, 2, Gradient(depth, size, i, size));
@@ -38,8 +38,8 @@ public sealed class SurfBuilder(Band band)
             var reached = swash.TryGetValue((x, z), out var sheet);
             field.Set(field.Bed, x, z, 1, reached ? (float)sheet.Distance : 0);
             field.Set(field.Bed, x, z, 2, reached ? (float)sheet.RunUp : 0);
-            field.Set(field.Bed, x, z, 3, reached ? (float)sheet.Needed : SurfField.Unreached);
-            for (var slot = 0; slot < numbers.Length; slot++)
+            field.Set(field.Bed, x, z, 3, reached ? (float)sheet.Needed : d > 0 ? 0 : SurfField.Unreached);
+            for (var slot = 0; slot < lags.Length; slot++)
             {
                 var lag = reached
                     ? lags[slot][(sheet.FromZ - map.OriginZ) * size + sheet.FromX - map.OriginX] + numbers[slot].X * (sheet.FromX - x) + numbers[slot].Z * (sheet.FromZ - z)

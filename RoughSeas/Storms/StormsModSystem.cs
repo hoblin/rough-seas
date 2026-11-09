@@ -17,6 +17,7 @@ public class StormsModSystem : ModSystem
     private static readonly AssetLocation ConfigAsset = new("roughseas:config/storms.json");
 
     private ICoreAPI api = null!;
+    private Seabeds? seabeds;
     private SurfaceClock? clock;
     private IClientNetworkChannel? reports;
 
@@ -81,8 +82,12 @@ public class StormsModSystem : ModSystem
         RegisterSurfaceCommands(capi);
     }
 
-    internal SwellAround Swell(ICoreServerAPI sapi) =>
-        new(Config.Surface, Waves, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Config, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Clock, Surf(sapi), sapi.World);
+    internal SwellAround Swell(ICoreServerAPI sapi)
+    {
+        var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
+        seabeds ??= new Seabeds(() => Surf(sapi), Config.Surface.Shore, sapi.World);
+        return new SwellAround(Config.Surface, Waves, sea.Config, sea.Clock, seabeds);
+    }
 
     private SurfMaker Surf(ICoreAPI api)
     {
@@ -117,7 +122,7 @@ public class StormsModSystem : ModSystem
                 .HandleWith(args =>
                 {
                     var pos = capi.World.Player.Entity.Pos;
-                    var field = capi.ModLoader.GetModSystem<StormsModSystem>().Surface?.Shore;
+                    var field = capi.ModLoader.GetModSystem<StormsModSystem>().Surface?.Seabed;
                     if (field == null) return TextCommandResult.Error("No seabed read yet");
                     var blocks = (int)args[0];
                     return TextCommandResult.Success(string.Join("\n", Enumerable.Range(0, blocks + 1)

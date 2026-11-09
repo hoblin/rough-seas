@@ -1,6 +1,5 @@
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Surf;
-using Vintagestory.API.Common;
 
 namespace RoughSeas.Storms;
 
@@ -14,12 +13,11 @@ public sealed class SwellAround
 {
     private readonly SeaSurface surface;
     private readonly SurfaceAim aim;
-    private readonly SurfMaker? shore;
-    private readonly IWorldAccessor? world;
+    private readonly Seabeds? seabeds;
 
-    public SwellAround(SurfaceConfig config, Waves waves, SeaWeatherConfig sea, SeaClock clock, SurfMaker? shore = null, IWorldAccessor? world = null)
+    public SwellAround(SurfaceConfig config, Waves waves, SeaWeatherConfig sea, SeaClock clock, Seabeds? seabeds = null)
     {
-        (this.shore, this.world) = (shore, world);
+        this.seabeds = seabeds;
         surface = new SeaSurface(config, waves);
         var field = new SurfaceField();
         aim = new SurfaceAim(surface, field, config, sea, clock);
@@ -36,7 +34,13 @@ public sealed class SwellAround
     {
         aim.Aim(map, x, z, seconds, regionSize, foam: false);
         surface.Advance(seconds);
-        if (world != null && shore?.Update(world, map, x, z, surface.Vectors(), world.ElapsedMilliseconds / 1000.0) is { } field) surface.Shore = field;
+        Over(map, x, z);
+    }
+
+    /// <summary>Lays the seabed under a body: one sea serves several bodies, each read over its own bed.</summary>
+    public void Over(ISeaSource map, double x, double z)
+    {
+        if (seabeds != null) surface.Seabed = seabeds.At(map, x, z, surface.Vectors());
     }
 
     /// <summary>Brings the sea to <paramref name="seconds"/> without aiming it again, between aims.</summary>

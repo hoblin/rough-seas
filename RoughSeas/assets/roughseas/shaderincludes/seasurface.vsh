@@ -49,7 +49,7 @@ float seaRefraction(float deepNumber, float depth, float cosineOffshore) {
 }
 
 float seaLag(int slot, vec4 lagA, vec4 lagB) {
-	return slot < 4 ? lagA[slot] : lagB[slot - 4];
+	return slot < 4 ? lagA[slot] : slot < 8 ? lagB[slot - 4] : 0.0;
 }
 
 vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 lagB) {

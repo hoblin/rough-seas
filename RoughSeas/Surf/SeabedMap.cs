@@ -18,6 +18,7 @@ public sealed class SeabedMap
     private const double StillLevel = 7.0 / 8;
     private const int Unknown = int.MinValue;
     private const double Deep = 1000;
+    private const double DryLand = 1;
 
     private readonly ShoreCell[] cells;
     private readonly int[] levels;
@@ -44,7 +45,8 @@ public sealed class SeabedMap
     {
         { Kind: ShoreKind.Water } water => (float)water.Elevation,
         { Kind: ShoreKind.Land } land => (float)-land.Elevation,
-        _ => float.NaN,
+        { Kind: ShoreKind.Barrier, Elevation: > 0 } dry => (float)-dry.Elevation,
+        _ => (float)Deep,
     };
 
     public bool Inside(int x, int z) => x >= OriginX && z >= OriginZ && x < OriginX + Size && z < OriginZ + Size;
@@ -83,29 +85,31 @@ public sealed class SeabedMap
 
     private void Fill(int i, IBlockAccessor blocks, BlockPos probe, int x, int z, int top, int terrain, Beds beds, int highestRise, int deepest)
     {
-        var fluid = blocks.GetBlock(probe.Set(x, top, z), BlockLayersAccess.Fluid);
-        if (Groundwater.Carries(fluid) && !OpenWater.Land(blocks, probe))
+        for (var y = top; y >= Math.Min(top, terrain + 1) - highestRise; y--)
         {
-            var worldgen = terrain < top && OpenWater.At(blocks, probe.Set(x, terrain + 1, z)).IsLiquid();
-            var bottom = worldgen ? terrain + 1 : top;
-            while (!worldgen && top - bottom < deepest && OpenWater.At(blocks, probe.Set(x, bottom - 1, z)).IsLiquid()) bottom--;
-            var bed = beds.Of(blocks.GetBlock(probe.Set(x, bottom - 1, z), BlockLayersAccess.Solid).BlockMaterial);
-            var depth = worldgen || top - bottom < deepest ? top + StillLevel - bottom : Deep;
-            (cells[i], levels[i]) = (new ShoreCell(ShoreKind.Water, depth, bed, fluid.Id), top);
+            var fluid = blocks.GetBlock(probe.Set(x, y, z), BlockLayersAccess.Fluid);
+            if (!Groundwater.Carries(fluid)) continue;
+            (cells[i], levels[i]) = (OpenWater.Land(blocks, probe) ? Shore(blocks, probe, x, y, z, fluid, beds, highestRise) : Water(blocks, probe, x, y, z, terrain, fluid, beds, deepest), y);
             return;
         }
+        cells[i] = new ShoreCell(ShoreKind.Barrier, DryLand, null!, 0);
+    }
 
-        var ground = Math.Min(top, terrain + 1);
-        for (var y = ground; y >= ground - highestRise; y--)
-        {
-            var held = blocks.GetBlock(probe.Set(x, y, z), BlockLayersAccess.Fluid);
-            if (!Groundwater.Carries(held) || !OpenWater.Land(blocks, probe)) continue;
-            var crown = y;
-            while (crown < y + highestRise && OpenWater.Land(blocks, probe.Set(x, crown + 1, z))) crown++;
-            var bed = beds.Of(blocks.GetBlock(probe.Set(x, crown, z), BlockLayersAccess.Solid).BlockMaterial);
-            (cells[i], levels[i]) = (new ShoreCell(ShoreKind.Land, crown + 1 - (y + StillLevel), bed, held.Id), y);
-            return;
-        }
+    private static ShoreCell Water(IBlockAccessor blocks, BlockPos probe, int x, int top, int z, int terrain, Block fluid, Beds beds, int deepest)
+    {
+        var worldgen = terrain < top && OpenWater.At(blocks, probe.Set(x, terrain + 1, z)).IsLiquid();
+        var bottom = worldgen ? terrain + 1 : top;
+        while (!worldgen && top - bottom < deepest && OpenWater.At(blocks, probe.Set(x, bottom - 1, z)).IsLiquid()) bottom--;
+        var bed = beds.Of(blocks.GetBlock(probe.Set(x, bottom - 1, z), BlockLayersAccess.Solid).BlockMaterial);
+        return new ShoreCell(ShoreKind.Water, worldgen || top - bottom < deepest ? top + StillLevel - bottom : Deep, bed, fluid.Id);
+    }
+
+    private static ShoreCell Shore(IBlockAccessor blocks, BlockPos probe, int x, int level, int z, Block fluid, Beds beds, int highestRise)
+    {
+        var crown = level;
+        while (crown < level + highestRise && OpenWater.Land(blocks, probe.Set(x, crown + 1, z))) crown++;
+        var bed = beds.Of(blocks.GetBlock(probe.Set(x, crown, z), BlockLayersAccess.Solid).BlockMaterial);
+        return new ShoreCell(ShoreKind.Land, crown + 1 - (level + StillLevel), bed, fluid.Id);
     }
 
     private int Index(int x, int z) => (z - OriginZ) * Size + (x - OriginX);

@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.Common;
+using Vintagestory.Essentials;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Shore;
@@ -12,7 +15,8 @@ namespace RoughSeas.Shore;
 /// <summary>
 /// Keeps vanilla's readers of the fluid layer on land over the water under the shore: a random tick at such a position
 /// goes to its solid block, which the fluid would otherwise take (and freeze); a liquid container neither picks nor fills
-/// from it; farmland and anything else searching for water around it, and a bobber counting its pond, don't count it.
+/// from it; farmland and anything else searching for water around it, a bobber counting its pond, a creature finding its
+/// path or picking where to wander don't count it.
 /// </summary>
 public static class VanillaShore
 {
@@ -26,19 +30,21 @@ public static class VanillaShore
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(BlockWater), nameof(BlockWater.ShouldReceiveServerGameTicks)),
             prefix: new HarmonyMethod(typeof(VanillaShore), nameof(TickSolid)));
-        harmony.Patch(AccessTools.Method(typeof(BlockWater), nameof(BlockWater.OnServerGameTick)),
-            prefix: new HarmonyMethod(typeof(VanillaShore), nameof(TickedSolid)));
         harmony.Patch(AccessTools.Method(typeof(GameMain), nameof(GameMain.GetBlockIntersectionBoxes), [typeof(BlockPos), typeof(bool)]),
             prefix: new HarmonyMethod(typeof(VanillaShore), nameof(SelectLand)));
         harmony.Patch(AccessTools.Method(typeof(BlockLiquidContainerBase), nameof(BlockLiquidContainerBase.TryFillFromBlock), [typeof(ItemSlot), typeof(EntityAgent), typeof(BlockPos)]),
             prefix: new HarmonyMethod(typeof(VanillaShore), nameof(FillFromWater)));
-        foreach (var accessor in new[] { typeof(BlockAccessorBase), typeof(BlockAccessorReadLockfree) })
+        harmony.Patch(AccessTools.Method(typeof(BlockAccessorBase), nameof(IBlockAccessor.SearchFluidBlocks)),
+            prefix: new HarmonyMethod(typeof(VanillaShore), nameof(SearchOpenWater)));
+        foreach (var reader in new[]
         {
-            harmony.Patch(AccessTools.Method(accessor, nameof(IBlockAccessor.SearchFluidBlocks)),
-                prefix: new HarmonyMethod(typeof(VanillaShore), nameof(SearchOpenWater)));
+            AccessTools.Method(typeof(EntityBobber), "getPondSize"),
+            AccessTools.Method(typeof(AStar), "traversable"),
+            AccessTools.Method(typeof(AiTaskWander), nameof(AiTaskWander.loadNextWanderTarget)),
+        })
+        {
+            harmony.Patch(reader, transpiler: new HarmonyMethod(typeof(VanillaShore), nameof(ReadOpenWater)));
         }
-        harmony.Patch(AccessTools.Method(typeof(EntityBobber), "getPondSize"),
-            transpiler: new HarmonyMethod(typeof(VanillaShore), nameof(CountOpenWater)));
     }
 
     public static void Detach()
@@ -51,16 +57,9 @@ public static class VanillaShore
     {
         extra = null;
         if (!OpenWater.Land(world.BlockAccessor, pos)) return true;
-        var solid = world.BlockAccessor.GetBlock(pos, BlockLayersAccess.Solid);
-        __result = solid.ShouldReceiveServerGameTicks(world, pos, offThreadRandom, out var solidExtra);
-        extra = new SolidTick(solid, solidExtra);
-        return false;
-    }
-
-    private static bool TickedSolid(IWorldAccessor world, BlockPos pos, object? extra)
-    {
-        if (extra is not SolidTick tick) return true;
-        tick.Block.OnServerGameTick(world, pos, tick.Extra);
+        __result = world.BlockAccessor.GetBlock(pos, BlockLayersAccess.Solid).ShouldReceiveServerGameTicks(world, pos, offThreadRandom, out var solidExtra);
+        // A tick with an extra goes to the block in the default layer, which is the solid one; without one, to the fluid.
+        extra = solidExtra ?? SolidTick;
         return false;
     }
 
@@ -82,12 +81,28 @@ public static class VanillaShore
         onBlock = (fluid, pos) => found(fluid.Id != 0 && OpenWater.Land(blocks, pos) ? blocks.GetBlock(0) : fluid, pos);
     }
 
-    private static IEnumerable<CodeInstruction> CountOpenWater(IEnumerable<CodeInstruction> instructions) =>
-        new CodeMatcher(instructions)
-            .MatchStartForward(new CodeMatch(code => code.Calls(AccessTools.Method(typeof(IBlockAccessor), nameof(IBlockAccessor.GetBlock), [typeof(BlockPos), typeof(int)]))))
-            .ThrowIfInvalid("EntityBobber.getPondSize no longer reads the fluid layer through IBlockAccessor.GetBlock")
-            .SetInstruction(CodeInstruction.Call(typeof(OpenWater), nameof(OpenWater.Layer)))
-            .InstructionEnumeration();
+    private static IEnumerable<CodeInstruction> ReadOpenWater(IEnumerable<CodeInstruction> instructions, MethodBase original)
+    {
+        var reads = new Dictionary<MethodInfo, MethodInfo>
+        {
+            [AccessTools.Method(typeof(IBlockAccessor), nameof(IBlockAccessor.GetBlock), [typeof(BlockPos), typeof(int)])] =
+                AccessTools.Method(typeof(OpenWater), nameof(OpenWater.Layer)),
+            [AccessTools.Method(typeof(IBlockAccessor), nameof(IBlockAccessor.GetBlockRaw), [typeof(int), typeof(int), typeof(int), typeof(int)])] =
+                AccessTools.Method(typeof(OpenWater), nameof(OpenWater.LayerRaw)),
+        };
+        var replaced = 0;
+        foreach (var instruction in instructions)
+        {
+            if (instruction.operand is MethodInfo called && reads.TryGetValue(called, out var open))
+            {
+                replaced++;
+                yield return new CodeInstruction(OpCodes.Call, open).MoveLabelsFrom(instruction).MoveBlocksFrom(instruction);
+                continue;
+            }
+            yield return instruction;
+        }
+        if (replaced == 0) throw new InvalidOperationException($"{original.DeclaringType?.Name}.{original.Name} no longer reads the fluid layer through IBlockAccessor");
+    }
 
-    private sealed record SolidTick(Block Block, object? Extra);
+    private static readonly object SolidTick = new();
 }

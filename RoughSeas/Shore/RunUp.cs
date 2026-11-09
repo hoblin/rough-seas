@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RoughSeas.Shore;
 
-/// <summary>The run-up exceeded by 2% of waves: Stockdon's on a sandy slope up to about 1:7, EurOtop's on a steeper or harder one.</summary>
+/// <summary>The run-up exceeded by 2% of waves: Stockdon's on a sandy slope up to about 1:7, EurOtop's on a steeper or harder one, and a standing wave's crest at a wall.</summary>
 public sealed class RunUp(RunUpConfig config)
 {
     public const double Gravity = 9.81;

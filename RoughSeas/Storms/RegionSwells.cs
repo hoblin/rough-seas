@@ -41,6 +41,7 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
             swell.Around.Advance(seconds);
         }
         swell.Seconds = seconds;
+        swell.Around.Over(sea.Map, x, z);
         return swell.Around.Sea;
     }
 

@@ -13,7 +13,7 @@ public enum ShoreKind
     Land,
 }
 
-/// <param name="Elevation">Land: its top over still water, in metres. Water: its depth.</param>
+/// <param name="Elevation">Land: its top over still water, in metres. Water: its depth where the reader measures it (<c>SeabedMap</c>), else 0.</param>
 /// <param name="Fluid">The fluid block it holds: water's own, or the water under land.</param>
 public readonly record struct ShoreCell(ShoreKind Kind, double Elevation, BedConfig Bed, int Fluid);
 
@@ -34,14 +34,12 @@ public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int
     public ShoreCell At(int x, int z)
     {
         if (cells.TryGetValue((x, z), out var known)) return known;
-        return cells[(x, z)] = Read(x, z);
+        var cell = Read(x, z);
+        if (cell.Kind != ShoreKind.Barrier || Loaded(x, z)) cells[(x, z)] = cell;
+        return cell;
     }
 
-    public void Forget(int chunkX, int chunkZ)
-    {
-        for (var x = 0; x < GlobalConstants.ChunkSize; x++)
-        for (var z = 0; z < GlobalConstants.ChunkSize; z++) cells.Remove((chunkX * GlobalConstants.ChunkSize + x, chunkZ * GlobalConstants.ChunkSize + z));
-    }
+    private bool Loaded(int x, int z) => blocks.GetChunkAtBlockPos(probe.Set(x, level, z)) != null;
 
     private ShoreCell Read(int x, int z)
     {

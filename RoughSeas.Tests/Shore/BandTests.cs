@@ -47,7 +47,34 @@ public class BandTests
     public void TheBandGoesNoFurtherThanLandRuns() => Assert.DoesNotContain((5, 0), Spread(new Ground("~~000.0"), Storm).Keys);
 
     [Fact]
-    public void TheBandCarriesTheWaterOfTheShoreItCameFrom() => Assert.All(Spread(new Ground("~~000"), Calm).Values, reached => Assert.Equal(1, reached.Fluid));
+    public void TheBandCarriesTheWaterOfTheShoreItCameFrom()
+    {
+        var band = Spread(new Ground("~~0000000000000000000000000000000000000000=="), Storm);
+        Assert.Equal(1, band[(2, 0)].Fluid);
+        Assert.Equal(2, band[(41, 0)].Fluid);
+    }
+
+    [Fact]
+    public void TheBandCountsTheBlocksInFromTheSea()
+    {
+        var band = Spread(new Ground("~~0000"), Calm);
+        Assert.Equal([1, 2, 3], new[] { 2, 3, 4 }.Select(x => band[(x, 0)].Rings));
+    }
+
+    [Fact]
+    public void TheStrongerShoresSheetTakesTheLandBetweenThem()
+    {
+        var ground = new Ground("~~00000=");
+        var band = ShoreFixtures.Band.Spread(ground, ground.Seeds(), (x, _) => x < 3 ? [Calm] : [Storm]);
+        Assert.Equal(7, band[(3, 0)].FromX);
+    }
+
+    [Fact]
+    public void TheSheetSpreadsAlongTheShoreAsWellAsUpIt()
+    {
+        var band = Spread(new Ground("~~000", ".~000", "..000"), Calm);
+        Assert.Contains((2, 2), band.Keys);
+    }
 
     [Fact]
     public void ACalmSeaWithoutWavesGivesNoBand() => Assert.Empty(Spread(new Ground("~~0000"), new Sea(0, 0)));

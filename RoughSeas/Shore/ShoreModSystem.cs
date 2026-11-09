@@ -15,8 +15,11 @@ public class ShoreModSystem : ModSystem
 
     public override double ExecuteOrder() => 1.1;
 
+    private EnumAppSide side;
+
     public override void Start(ICoreAPI api)
     {
+        side = api.Side;
         api.RegisterBlockBehaviorClass(BlockBehaviorGroundwater.Code, typeof(BlockBehaviorGroundwater));
         VanillaShore.Attach();
     }
@@ -48,6 +51,7 @@ public class ShoreModSystem : ModSystem
 
     public override void Dispose()
     {
+        if (side != EnumAppSide.Server) return;
         VanillaShore.Detach();
         Water = null;
     }

@@ -15,8 +15,9 @@ namespace RoughSeas.Storms;
 
 /// <summary>
 /// Draws the <see cref="SeaSurface"/> in vanilla's water shaders, patched as text at anchors in 1.22.7's
-/// <c>vertexwarp.vsh</c>, <c>chunkliquid.vsh</c> and <c>chunkliquid.fsh</c>. When a game update moves an anchor,
-/// <see cref="Attach"/> takes the patches out again, returns false, and the sea is drawn as vanilla's.
+/// <c>vertexwarp.vsh</c>, <c>chunkliquid.vsh</c> and <c>chunkliquid.fsh</c>, and wet ground in <c>chunkopaque.fsh</c> and
+/// <c>chunktopsoil.fsh</c>. When a game update moves a water anchor, <see cref="Attach"/> takes the patches out again,
+/// returns false, and the sea is drawn as vanilla's; a moved wet-ground anchor leaves that ground dry.
 /// </summary>
 public static class SurfaceShader
 {
@@ -83,7 +84,7 @@ public static class SurfaceShader
         ReadSources(api);
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(ShaderRegistry), "HandleIncludes"), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Inject)));
-        harmony.Patch(AccessTools.Method(typeof(ShaderProgram), nameof(ShaderProgram.Compile)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(LocateHeightMap)));
+        harmony.Patch(AccessTools.Method(typeof(ShaderProgram), nameof(ShaderProgram.Compile)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(LocateSamplers)));
         harmony.Patch(AccessTools.Method(typeof(ShaderProgramBase), nameof(ShaderProgramBase.Use)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Bind)));
         if (Compile(api)) return true;
 
@@ -182,7 +183,7 @@ public static class SurfaceShader
         }
     }
 
-    private static void LocateHeightMap(ShaderProgram __instance)
+    private static void LocateSamplers(ShaderProgram __instance)
     {
         foreach (var sampler in ShoreSamplers.Prepend(HeightMapSampler))
         {

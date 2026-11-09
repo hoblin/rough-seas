@@ -25,6 +25,7 @@ public sealed class Ground(params string[] rows) : IShoreGround
         return rows[z][x] switch
         {
             '~' => new ShoreCell(ShoreKind.Water, 0, ShoreFixtures.Bed("sand"), 1),
+            '=' => new ShoreCell(ShoreKind.Water, 0, ShoreFixtures.Bed("sand"), 2),
             >= '0' and <= '9' and var height => new ShoreCell(ShoreKind.Land, height - '0' + 0.125, ShoreFixtures.Bed("sand"), 0),
             >= 'a' and <= 'j' and var height => new ShoreCell(ShoreKind.Land, height - 'a' + 0.125, ShoreFixtures.Bed("stone"), 0),
             >= 'A' and <= 'J' and var height => new ShoreCell(ShoreKind.Land, height - 'A' + 0.125, ShoreFixtures.Bed("gravel"), 0),
@@ -37,7 +38,7 @@ public sealed class Ground(params string[] rows) : IShoreGround
         for (var z = 0; z < rows.Length; z++)
         for (var x = 0; x < rows[z].Length; x++)
         {
-            if (rows[z][x] == '~') yield return new ShoreSeed(x, z, 1);
+            if (rows[z][x] is '~' or '=') yield return new ShoreSeed(x, z, At(x, z).Fluid);
         }
     }
 }

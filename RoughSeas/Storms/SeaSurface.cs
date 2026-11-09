@@ -83,7 +83,7 @@ public sealed class SeaSurface
 
     public bool Calm { get; private set; } = true;
 
-    public SurfField? Shore { get; set; }
+    public SurfField? Seabed { get; set; }
 
     public SurfShape Shape => shape;
 
@@ -134,13 +134,15 @@ public sealed class SeaSurface
 
         var slopes = 0.0;
         var calm = true;
+        var dominant = 0;
         for (var slot = 0; slot < Slots; slot++)
         {
             amplitude[slot] = Wavenumber(slot) > 0 ? amplitudeShare[slot % generation] * SeaHeight * (slot / generation == active ? rising : fading) : 0;
             slopes += amplitude[slot] * Wavenumber(slot);
             calm &= amplitude[slot] <= Faded;
-            if (amplitude[slot] > amplitude[Dominant]) Dominant = slot;
+            if (amplitude[slot] > amplitude[dominant]) dominant = slot;
         }
+        Dominant = dominant;
         Calm = calm;
         Steepness = slopes > 0 ? Math.Min(config.Steepness, 1 / slopes) : config.Steepness;
     }
@@ -177,7 +179,7 @@ public sealed class SeaSurface
     private double Local(double x, double z, double share, Span<double> heights, Span<double> lags, Span<double> numbers)
     {
         for (var slot = 0; slot < Slots; slot++) (heights[slot], lags[slot], numbers[slot]) = (amplitude[slot], 0, Wavenumber(slot));
-        if (share <= 0 || Shore is not { } field || !field.Covers(x, z)) return Steepness;
+        if (share <= 0 || Seabed is not { } field || !field.Covers(x, z)) return Steepness;
 
         var depth = field.DepthAt(x, z);
         if (depth <= 0)
@@ -195,7 +197,7 @@ public sealed class SeaSurface
         {
             heights[slot] /= share;
             slopes += heights[slot] * numbers[slot];
-            if (slot < field.Numbers.Length && field.Numbers[slot] == vectors[slot]) lags[slot] = field.LagAt(slot, x, z);
+            if (slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == vectors[slot]) lags[slot] = field.LagAt(slot, x, z);
         }
         var cusp = slopes > 0 ? 1 / slopes : Steepness;
         var steepness = Math.Min(Steepness, cusp);

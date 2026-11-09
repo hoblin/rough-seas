@@ -15,6 +15,7 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 {
     public const int Channels = 4;
     public const int Unreached = 1_000_000;
+    public const int Slots = 8;
 
     public int OriginX { get; } = originX;
 
