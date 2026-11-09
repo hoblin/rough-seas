@@ -4,12 +4,20 @@ A sailor reads the weather off the sea before any instrument: the height of the 
 
 - **Waves as high as the sea is.** The swell runs before the wind, long and slow in a sea that has built for hours, short and choppy under a squall that has just arrived. Its height is the sea's significant height, the same number the waves strike your hull with: a 4 m sea looks like one. It is drawn cell by cell around you, so a sheltered bay lies calmer than the open water beyond its mouth.
 - **Whitecaps by the Beaufort scale.** Crests break white where they grow too steep, and how many break follows the wind, as the scale describes it: a few scattered whitecaps at force 3, many at 4 to 5, foam blown off the crests in streaks along the wind at 6 and 7, and from 8 up a sea whitening with spray. Waves need to stand half a metre for it: a pond's ripple stays clear in any wind.
-- **Surf on the shore** is switched off for now: its foam let the seabed show through and read white only over dark rock. It comes back once it reads as surf over any shore.
+- **Surf on the shore.** The waves reach the beach. As the water shallows they grow higher and turn to face the shore, then break: they spill on a gentle beach and curl over and plunge on a steep one. Each broken wave runs up the beach as a thin sheet of water and slides back. The bigger the wave, the further it runs, so in a storm the swash climbs far up the sand. A rock shelf at sea level takes the surf too, and a big lake's shore surfs on fresh water.
+- **Wet sand.** The ground the waves reach looks darker. Near the water, where nearly every wave reaches, sand stays dark; higher up, where only the biggest waves reach, it dries between them. Gravel drinks the water and dries almost at once.
+- **The surf's foam** is switched off for now: it let the seabed show through and read white only over dark rock. It comes back once it reads as surf over any shore.
 - **Boats ride the swell.** A vessel climbs each crest and slides down its back, rolling and pitching with the slope of the water under it, and you with it, each hull by its shape: a round coracle tilts more than the slope under it, a broad raft less. A big sea can bury you to the eyes.
 - **Wreckage floats on it.** Planks and anything else that floats rise and fall with the waves.
 - **Rain and clouds follow the weather.** All rain comes from Rough Seas' weather: ordinary showers, more often and heavier where the climate is wet, and [storms](Storms), whose clouds darken from their edge and whose rain falls toward their heart. Where the weather is fair, no rain falls and no thunder rolls; white clouds may still drift by.
 
 The sea is drawn this way even with *Waving foliage* off in the game's graphics settings: a storm should never come unseen.
+
+## Water under the beach
+
+Under a shore at sea level lies the sea's own water, as far up as the waves run. It is there along every shore of the sea and of a lake. It reaches further inland while a storm's waves run high, and drains again after the storm. You don't see it until you dig: dig a hole down to the level of the water beside it, and the hole fills. Ground higher up digs as it always did.
+
+The sand over that water stays land. You can't fill a bucket from it or fish in it, it doesn't water farmland, and it doesn't freeze.
 
 ## Tuned against the real sea
 
@@ -26,7 +34,7 @@ What the comparison taught us:
 - **Foam is lace, not paint.** Our first whitecaps were solid white blobs with sharp edges; on screen they read as sun glints, not foam. Real foam is torn, see-through at its edges and tinted by the water under it, so ours is too.
 - **Foam follows the breaking crest.** Whitecaps sit where a crest folds over, the way ocean simulations in films and games find them: from how sharply the surface pinches, not from height alone. Thin traces of old foam outline the waves and make their shape easy to read.
 - **The amount follows measurement.** How much of the sea is white at each force starts from what oceanographers measured (Monahan's whitecap coverage) and is raised a little, so whitecaps read from afar as they do on a real horizon.
-- **Shallow water breaks.** Surf starts where the water is shallower than 1.28 times the wave's height, McCowan's breaking depth, the same rule that makes a breaker strike a boat near the shore. The breakers still strike there while the surf's foam is off.
+- **Shallow water breaks.** Surf starts where the water is shallower than 1.28 times the wave's height, McCowan's breaking depth, the same rule that makes a breaker strike a boat near the shore. The waves you see break there too. How the surf grows, turns, breaks and runs up the beach, and the measurements behind it: [The science of the sea](The-Science-of-the-Sea#the-shore).
 
 ## Credits
 

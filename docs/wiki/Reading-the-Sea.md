@@ -158,6 +158,8 @@ The server raises the waves. Every three game hours it takes, for each region a 
 
 Their height is the highest sea around the player now, and each place draws its own share of it, from the state there: a sheltered bay draws a lower swell than the open sea beside it, and a calm lake draws none.
 
+Near the shore the waves read the seabed around the player: they grow as the water shallows, turn toward the shore and break where the depth can't carry them. Every member below answers with those waves, and with no swell over land; the sheet that runs up a beach is drawn on the screen alone. Water also lies under the beach, there only to carry that surface: a position holding a full solid block is land, so ask [`OpenWater`](For-Modders#water-under-the-shore) for water, not the fluid layer.
+
 All of it follows from the world's clock and the state the server sends, so every client in a region draws the same waves, and a player who joins sees what the others already see. A player who sails into another region sees its waves take over the same way, without a jump. The waves keep the world's time as vanilla's swaying plants do: real time at the normal pace, still while time stands still or the game is paused, fast while everyone sleeps.
 
 Our own vessels are posed by the same calls this page describes, so a ship of yours that uses them rides exactly as ours do.

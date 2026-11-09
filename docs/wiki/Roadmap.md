@@ -99,6 +99,15 @@ The sea moves your boat, and the rope holds it by physics.
 - **An anchor that holds by its weight**, better on rock than on sand, and drags in a strong current or a storm. More: [Anchoring](Anchoring).
 - Both the swell and the currents are the work of [rhino1998](https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8).
 
+## 4.4
+
+The waves reach the shore.
+
+- **Surf.** Waves grow and break as they reach the shallows, spilling on a gentle beach and plunging on a steep one, and each runs up the beach as a thin sheet of water and back. A rock shelf takes the surf too, and a big lake surfs on fresh water. More: [The look of the sea](The-Look-of-the-Sea#what-you-see).
+- **Water under the beach**, as far as the waves run up, further in a storm. Dig down to the water's level by the shore and the hole fills. More: [Water under the beach](The-Look-of-the-Sea#water-under-the-beach).
+- **Wet sand** darkens where the swash reaches, and dries as it drains.
+- **Still to come:** waves that strike a cliff or a wall throw spray and run back off it, and a finer water surface near you. The surf's foam stays off until it reads as surf over any shore.
+
 ## Seamanship
 
 Sailing becomes sailing.
