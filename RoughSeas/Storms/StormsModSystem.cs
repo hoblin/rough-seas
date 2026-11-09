@@ -1,9 +1,13 @@
+using System;
 using System.Globalization;
+using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Shore;
+using RoughSeas.Surf;
 
 namespace RoughSeas.Storms;
 
@@ -68,13 +72,20 @@ public class StormsModSystem : ModSystem
         DrawnWater = new DrawnWater(DrawnSea);
         if (SurfaceShader.Attach(surface, field, capi))
         {
-            clock = new SurfaceClock(this, sea, surface, field, capi);
+            clock = new SurfaceClock(this, sea, surface, field, Surf(capi), capi);
             EyeUnderSurface.Attach(this, capi, DrawnWater, Config.Eye);
         }
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         VesselMotion.Attach(this, capi, DrawnSea, surface);
         FloatMotion.Attach(DrawnSea);
         RegisterSurfaceCommands(capi);
+    }
+
+    private SurfMaker Surf(ICoreAPI api)
+    {
+        var shore = api.ModLoader.GetModSystem<ShoreModSystem>().Config;
+        var band = new Band(new RunUp(shore.RunUp), shore.Sheet, shore.RunUp.SlopeSearchBlocks);
+        return new SurfMaker(new SurfBuilder(band), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
     }
 
     private static void RegisterSurfaceCommands(ICoreClientAPI capi)
@@ -91,6 +102,25 @@ public class StormsModSystem : ModSystem
                 .WithDescription("Draw the foam, or leave it out to compare")
                 .WithArgs(parsers.Bool("draw"))
                 .HandleWith(args => Drawn("foam", SurfaceShader.DrawFoam = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("shore")
+                .WithDescription("Draw the waves over the seabed and the swash on the shore, or the sea as if it were deep everywhere, to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("the shore", SurfaceShader.DrawShore = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("bed")
+                .WithDescription("The seabed and the swash read under the player, and N blocks along X")
+                .WithArgs(parsers.OptionalInt("blocks", 0))
+                .HandleWith(args =>
+                {
+                    var pos = capi.World.Player.Entity.Pos;
+                    var field = capi.ModLoader.GetModSystem<StormsModSystem>().Surface?.Shore;
+                    if (field == null) return TextCommandResult.Error("No seabed read yet");
+                    var blocks = (int)args[0];
+                    return TextCommandResult.Success(string.Join("\n", Enumerable.Range(0, blocks + 1)
+                        .Select(i => $"{(int)Math.Floor(pos.X) + i - (int)capi.World.DefaultSpawnPosition.X} {(int)Math.Floor(pos.Z) - (int)capi.World.DefaultSpawnPosition.Z}: "
+                            + field.Describe(Math.Floor(pos.X) + i + 0.5, Math.Floor(pos.Z) + 0.5))));
+                })
             .EndSubCommand()
             .BeginSubCommand("trace")
                 .WithDescription("Log every vessel's pose on the waves every frame, for a number of seconds")

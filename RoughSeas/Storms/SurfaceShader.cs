@@ -4,6 +4,7 @@ using System.Linq;
 using HarmonyLib;
 using OpenTK.Graphics.OpenGL;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Surf;
 using Vintagestory.Client;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -38,6 +39,7 @@ public static class SurfaceShader
     private const string WavesUniform = "seaWaves";
     private const string FoamUniform = "seaFoam";
     private const string HeightMapSampler = "seaHeightMap";
+    private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB"];
     private const double NoCaps = 10;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
@@ -48,6 +50,8 @@ public static class SurfaceShader
     private static LoadedTexture? heightMap;
     private static ICoreClientAPI? capi;
     private static int heightMapUnit;
+    private static int[] shoreTextures = [];
+    private static SurfField? shore;
     private static float[] uniforms = [];
     private static string vertexCode = "";
     private static string fragmentCode = "";
@@ -57,11 +61,14 @@ public static class SurfaceShader
 
     public static bool DrawFoam { get; set; } = true;
 
+    public static bool DrawShore { get; set; } = true;
+
     public static bool Attach(SeaSurface waves, SurfaceField heights, ICoreClientAPI api)
     {
         (surface, field, capi) = (waves, heights, api);
         heightMap = new LoadedTexture(api);
         heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
+        shoreTextures = ShoreSamplers.Select(_ => GL.GenTexture()).ToArray();
         uniforms = new float[waves.Slots * 4];
         ReadSources(api);
         harmony = new Harmony(HarmonyId);
@@ -88,7 +95,9 @@ public static class SurfaceShader
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
         heightMap?.Dispose();
-        (surface, field, heightMap, capi) = (null, null, null, null);
+        foreach (var texture in shoreTextures) GL.DeleteTexture(texture);
+        shoreTextures = [];
+        (surface, field, heightMap, capi, shore) = (null, null, null, null, null);
     }
 
     public static void Upload()
@@ -96,6 +105,23 @@ public static class SurfaceShader
         if (capi == null || field == null || heightMap == null || field.Across == 0) return;
         heightMap.Width = heightMap.Height = field.Across;
         capi.Render.LoadOrUpdateTextureFromRgba(field.Pixels(), true, 1, ref heightMap);
+    }
+
+    public static void Upload(SurfField built)
+    {
+        if (shoreTextures.Length == 0) return;
+        float[][] layers = [built.Bed, built.Aux, built.Lags[0], built.Lags[1]];
+        for (var i = 0; i < layers.Length; i++)
+        {
+            GL.BindTexture(TextureTarget.Texture2D, shoreTextures[i]);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba32f, built.Size, built.Size, 0, PixelFormat.Rgba, PixelType.Float, layers[i]);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+        }
+        GL.BindTexture(TextureTarget.Texture2D, 0);
+        shore = built;
     }
 
     public static string Samplers() => string.Join("\n", AccessTools.StaticFieldRefAccess<ShaderProgram[]>(typeof(ShaderRegistry), "shaderPrograms")
@@ -142,8 +168,11 @@ public static class SurfaceShader
 
     private static void LocateHeightMap(ShaderProgram __instance)
     {
-        var location = ScreenManager.Platform.GetUniformLocation(__instance, HeightMapSampler);
-        if (location >= 0) __instance.uniformLocations[HeightMapSampler] = location;
+        foreach (var sampler in ShoreSamplers.Prepend(HeightMapSampler))
+        {
+            var location = ScreenManager.Platform.GetUniformLocation(__instance, sampler);
+            if (location >= 0) __instance.uniformLocations[sampler] = location;
+        }
     }
 
     private static void Bind(ShaderProgramBase __instance)
@@ -158,6 +187,16 @@ public static class SurfaceShader
             __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, heightMapUnit);
             __instance.Uniform("seaHeightArea", new Vec4f((float)(field.OriginX - player.CameraPos.X), (float)(field.OriginZ - player.CameraPos.Z),
                 (float)field.SizeBlocks, (float)field.SizeBlocks));
+        }
+        if (shore != null && Active(__instance, ShoreSamplers[0]))
+        {
+            for (var i = 0; i < ShoreSamplers.Length; i++) __instance.BindTexture2D(ShoreSamplers[i], shoreTextures[i], heightMapUnit - 1 - i);
+            __instance.Uniform("seaBedArea", new Vec4f((float)(shore.OriginX - player.CameraPos.X), (float)(shore.OriginZ - player.CameraPos.Z), shore.Size, shore.Size));
+        }
+        if (Active(__instance, "seaShore"))
+        {
+            __instance.Uniform("seaShore", new Vec4f((float)surface.Shape.BreakingDepthRatio, surface.Dominant, shore != null && DrawShore ? 1 : 0, 0));
+            __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
         }
         if (!Active(__instance, FoamUniform)) return;
         __instance.Uniform(FoamUniform, DrawFoam

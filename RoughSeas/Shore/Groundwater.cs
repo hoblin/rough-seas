@@ -90,7 +90,7 @@ public sealed class Groundwater
         var cell = ground.At(pos.X, pos.Z);
         var held = sapi.World.BlockAccessor.GetBlock(pos, BlockLayersAccess.Fluid).Code?.ToShortString() ?? "nothing";
         var nearest = SeedsAround(pos.X / ChunkSize, pos.Z / ChunkSize, level)
-            .MinBy(seed => (seed.X - pos.X) * (seed.X - pos.X) + (seed.Z - pos.Z) * (seed.Z - pos.Z));
+            .OrderBy(seed => (seed.X - pos.X) * (seed.X - pos.X) + (seed.Z - pos.Z) * (seed.Z - pos.Z)).FirstOrDefault();
         if (nearest == default) return $"no shore at level {level} within {config.Band.HaloBlocks} blocks; here: {cell.Kind} holding {held}";
         var seas = Seas(nearest.X, nearest.Z);
         var reaches = string.Join(", ", seas.Select(state => $"{state.Height:F1} m every {state.Period:F1} s runs up {band.RunUpFrom(ground, nearest, state):F2} m"));
