@@ -424,10 +424,23 @@ A current now carries a steered vessel too, and pulls on a moored one. See [Buil
 
 - `roughseas:currentdrift` goes on both sides: list it in `client.behaviors` too, or a steered vessel of yours ignores the current as before. Its class is now `RoughSeas.Storms.EntityBehaviorCurrentDrift`, and it acts only on an `EntityBoat`.
 - The wind no longer moves a vessel nobody steers: `currents.stokesDriftPerMps` is gone from `seaweather.json`.
-- `HullDrag` gained `Across`, `Pull`, `Settle`, `Swing`, `Kilograms` and `AcrossKg`. `Waves.ChanceToExceed` has a form with a steady pull.
+- `HullDrag` gained `Across`, `Pull`, `Settle`, `Swing`, `Kilograms` and `AcrossKg`.
 - A vessel's motion carries the set: read `IHull.Velocity` for her speed over the ground, as before.
 
 New: `IHullWay`, `LiveDrag`, `HullSet`, and the optional keys `bowDrag`, `sideDrag` and `finSquareMetres` under `roughseas:currentdrift`.
+
+### A mooring rope holds by its own length
+
+A stake rope and an anchor's rode now hold a vessel at their own length and part by the pull on them ([Mooring](Mooring), [Anchoring](Anchoring), [Building a vessel](Building-a-Vessel#mooring)).
+
+- `roughseas:mooring` goes on both sides: list it in `client.behaviors` too, or a steered vessel of yours isn't held.
+- A vessel takes one rope: our postfix on vanilla's `EntityBehaviorRopeTieable.CanAttach` refuses a second on an entity with `roughseas:mooring`. While it ties the vessel to a post, our mooring takes vanilla's pull and tear off that rope, and gives them back once it doesn't.
+- The anchor's `holdingNewtons` attribute is now `kilograms`, its stone's mass; what it holds comes from the seabed under it. Our anchor's state moved to the watched tree `roughseas:anchor`.
+- Gone from `storms.json`: `mooring.stakeReachMetres`, `mooring.anchorDragMetres`, `waves.airDensity`, `waves.windageDragCoefficient` and `waves.waveDriftCoefficient`. New under `mooring`: `sandHold`, `rockHold` and `anchorStoneDensity`. `rope-flax` in `materials.json` gained `elongation`.
+- Gone: `Waves.Force`, `Waves.ChanceToExceed` and `EntityBehaviorSeaForces.Force`. `Anchor` takes `Kilograms` and `BedHold` in place of `HoldingNewtons`.
+- Vanilla's rope-id counter: our patches on `ClothManager` store it on save and read it on load, under `roughseas:nextClothId` in the save, and `RegisterCloth` skips an id a loaded rope holds. A world saved before starts its counter at 1048576.
+
+New: `MooringLine`, `MooringLoad`, `VesselRope`, `MooringReport`, and `MaterialTable.StretchAtBreak`.
 
 ## What not to touch
 
@@ -436,6 +449,9 @@ New: `IHullWay`, `LiveDrag`, `HullSet`, and the optional keys `bowDrag`, `sideDr
 | `roughseas:seamap` | the map region moddata, and the network channel that carries the map to clients |
 | `roughseas:oceancalibration` | save data: what the world's ocean map means |
 | `roughseas:vessels` | the network channel a rider's client reports its vessel's knocks over |
+| `roughseas:storms` | the network channel a rider's client reports a parted mooring over |
+| `roughseas:anchor` | a vessel's watched tree: where its anchor lies and what holds it |
+| `roughseas:nextClothId` | save data: vanilla's next rope id, which vanilla itself loses |
 | `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |
 
 ## Adding and removing Rough Seas

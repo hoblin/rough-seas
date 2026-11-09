@@ -69,9 +69,6 @@ public class WavesConfig
     public double ShippedWaterFraction;
     public double CrestRatio;
     public double BreakingCrestRatio;
-    public double AirDensity;
-    public double WindageDragCoefficient;
-    public double WaveDriftCoefficient;
     public int MaxDepthBlocks;
 }
 
@@ -101,9 +98,10 @@ public class MooringConfig
 {
     public double AnchoredExposure;
     public string StakeRope = "";
-    public double StakeReachMetres;
     public double AnchorFullScope;
-    public double AnchorDragMetres;
+    public double SandHold;
+    public double RockHold;
+    public double AnchorStoneDensity;
 }
 
 public class AshoreConfig

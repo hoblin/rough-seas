@@ -292,8 +292,10 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              frames the shot, e.g. /bridge fly ~6 ~4 ~ and bin/game aim 4300.
   /bridge dismount         get out of the seat, leaving the vessel where it is (a /tp while seated
                              takes the vessel along)
-  /bridge tie ID X Y Z      tie entity ID to the block at absolute X Y Z with a vanilla rope, as a
-                             player would (a vessel to a fence post: its stake)
+  /bridge tie ID X Y Z [METRES]
+                             tie entity ID to the block at absolute X Y Z with a vanilla rope, as a
+                             player would (a vessel to a fence post: its stake); METRES sets its
+                             length as the mouse wheel does (1.5 to 10), else it spans the gap
   /bridge ropes ID           where each rope tied to entity ID is pinned: a block, an entity, or loose
   /bridge strike ID JOULES [PLACE]
                              strike a vessel's hull at PLACE (portbow, starboardbow, portside (default),

@@ -133,6 +133,7 @@
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
+            {"code": "roughseas:mooring"},
             {"code": "ropetieable"},
             {"code": "roughseas:currentdrift"},
             {"code": "roughseas:propulsion"},

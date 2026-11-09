@@ -9,10 +9,12 @@ namespace RoughSeas.Storms;
 
 public class StormsModSystem : ModSystem
 {
+    private const string Channel = "roughseas:storms";
     private static readonly AssetLocation ConfigAsset = new("roughseas:config/storms.json");
 
     private ICoreAPI api = null!;
     private SurfaceClock? clock;
+    private IClientNetworkChannel? reports;
 
     public StormsConfig Config { get; private set; } = null!;
 
@@ -40,10 +42,14 @@ public class StormsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorMooring.Code, typeof(EntityBehaviorMooring));
         api.RegisterEntityBehaviorClass(EntityBehaviorCurrentDrift.Code, typeof(EntityBehaviorCurrentDrift));
         api.RegisterBlockBehaviorClass(BlockBehaviorBailer.Code, typeof(BlockBehaviorBailer));
+        api.Network.RegisterChannel(Channel).RegisterMessageType<MooringReport>();
         VesselDraught.Attach();
         DriftPhysics.Attach();
         WaveCarry.Attach();
+        OneRope.Attach();
     }
+
+    public void Report(MooringReport report) => reports?.SendPacket(report);
 
     public override void AssetsLoaded(ICoreAPI api)
     {
@@ -53,6 +59,7 @@ public class StormsModSystem : ModSystem
 
     public override void StartClientSide(ICoreClientAPI capi)
     {
+        reports = capi.Network.GetChannel(Channel);
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var surface = Surface = new SeaSurface(Config.Surface, Waves);
         var field = new SurfaceField();
@@ -111,7 +118,12 @@ public class StormsModSystem : ModSystem
         VesselDraught.Detach();
         DriftPhysics.Detach();
         WaveCarry.Detach();
-        if (api?.Side == EnumAppSide.Server) BreathUnderSurface.Detach();
+        OneRope.Detach();
+        if (api?.Side == EnumAppSide.Server)
+        {
+            BreathUnderSurface.Detach();
+            RopeIds.Detach();
+        }
         if (api?.Side != EnumAppSide.Client) return;
         VesselMotion.Detach();
         FloatMotion.Detach();
@@ -124,6 +136,9 @@ public class StormsModSystem : ModSystem
     {
         var sea = sapi.ModLoader.GetModSystem<SeaWeatherSystem>();
         new StormLightning(this, sea, sapi).Start();
+        RopeIds.Attach();
+        sapi.Network.GetChannel(Channel).SetMessageHandler<MooringReport>((player, report) =>
+            sapi.World.GetEntityById(report.EntityId)?.GetBehavior<EntityBehaviorMooring>()?.Reported(player, report));
         BreathUnderSurface.Attach(this, sea, sapi);
         Swells = new RegionSwells(this, sea, sapi);
         Budget.CountTicks(sapi);

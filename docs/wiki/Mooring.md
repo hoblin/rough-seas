@@ -2,24 +2,19 @@ A vessel left alone [is carried off by the current](Currents#drift), and a [stor
 
 ## Tying up
 
-Tie a vessel to a fence post ashore with a rope, the way you tie an animal. Every vessel can be tied up. The post keeps it within 10 metres; a vessel tied up and also [anchored](Anchoring) is held by the anchor.
+Tie a vessel to a fence post or a growing tree's trunk ashore with a rope, the way you tie an animal: right-click the vessel with the rope, then the post. Every vessel can be tied up, by one rope. To change the rope's length, hold it and pick *Shorten* or *Lengthen* in its tool modes (F): a rope runs from 1.5 to 10 metres.
 
-A strong enough pull snaps the rope. Every wave pulls on it, with the wind on the vessel's sides and rigging and the sea on its hull, so the bigger the vessel, the sooner it goes. Chance the rope snaps, each wave:
+The vessel lies free within the rope's length. When the current or a wave carries it out to the rope's end, the rope stops it there, and the jerk runs through the rope.
 
-| Vessel | Force 8 wind, 5.5 m sea | Force 9, 7 m | Force 10, 9 m |
-| --- | --- | --- | --- |
-| [Sailboat](Sailboat) | 1 in 25 | 1 in 8 | 1 in 4 |
-| [Outrigger canoe](Outrigger-Canoe) | 1 in 60 | 1 in 13 | 1 in 5 |
-| [Hide currach](Hide-Currach) | 1 in 3100 | 1 in 150 | 1 in 23 |
-| [Raft](Raft) | 1 in 5000 | 1 in 200 | 1 in 25 |
-| [Coracle](Coracle) | almost never | 1 in 700 | 1 in 54 |
-| [Dugout](Dugout) | almost never | 1 in 810 | 1 in 64 |
-| [Birch-bark canoe](Birch-Bark-Canoe) | almost never | 1 in 3600 | 1 in 160 |
-| [Reed boat](Reed-Boat) | never | almost never | almost never |
+- **A short rope** keeps the vessel close to the post, but it gives little, so it jerks hard.
+- **A long rope** gives more, so it jerks softly, but the vessel swings wider, nearer the shore.
+- **A heavy vessel** jerks harder than a light one at the same speed.
 
-In a [current](Currents) the water pulls too, more the faster it runs and the more of the vessel's side it meets. A vessel held at one point swings about its bow until it lies along the stream, where the water pulls least. A current strong enough parts a rope by itself; a weaker one leaves each wave less to make up. The table is for still water.
+A rope that takes more than it holds parts, and the cut rope lies by the post. In a quiet bay or a river nothing parts. In a storm, the sea decides: on a 2.5 m rope a sailboat parts it in a gale's 5.5 m sea, while on a 9 m rope it rides that sea out and parts only in the bigger waves of a 7 m sea. A raft is light and jerks a rope far less.
 
-A snapped vessel drifts with the current and the waves. Pull small boats ashore, or pick them up, before a gale.
+In a [current](Currents) the vessel falls back to the end of its rope and swings about its bow until it lies along the stream. A vessel tied up and also [anchored](Anchoring) is held by both: the rope and the anchor's rope share the pull between them.
+
+While you sit in a tied vessel and row or sail away, the rope stops you at its end; reach it fast enough and it parts.
 
 ## Thrown ashore
 
@@ -32,7 +27,7 @@ A vessel moored near the shore with nobody around may be thrown onto the beach w
 | 8 hours of 5.5 m seas (a gale) | 50 metres | about 86% |
 | 8 hours of 3 m seas | 100 metres | under 1% |
 
-Only the distance to the shore and the sea count, not how well it was tied. A long anchor rope lets the boat swing wider, and nearer the shore. The safe place to leave a vessel in a storm is far from any shore, or out of the water.
+Only the distance to the shore and the sea count, not how well it was tied. A long rope lets the boat swing wider, and nearer the shore. The safe place to leave a vessel in a storm is far from any shore, or out of the water.
 
 ## Leaving a vessel
 
@@ -40,4 +35,4 @@ Only the distance to the shore and the sea count, not how well it was tied. A lo
 - On the coast in fair weather: tie it up, or [anchor](Anchoring) the sailboat.
 - On the coast with a storm coming: carry it home, or anchor well out, and leave nothing that matters aboard.
 
-With [Mooring strain](World-Settings#the-mechanics) off, the sea doesn't snap ropes or throw vessels ashore. With [Currents](World-Settings#the-mechanics) on, currents still pull at them.
+With [Mooring strain](World-Settings#the-mechanics) off, no rope parts and no vessel is thrown ashore; the rope still holds a vessel at its length. With [Currents](World-Settings#the-mechanics) on, currents still pull at it.

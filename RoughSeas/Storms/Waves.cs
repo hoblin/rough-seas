@@ -54,27 +54,5 @@ public class Waves(WavesConfig config)
     public double ShippedLitres(double height, double beam) =>
         config.ShippedWaterFraction * CrestMass(height, beam) / config.WaterDensity * 1000;
 
-    public double Force(double windMps, double height, double beam, double windage) =>
-        0.5 * config.AirDensity * config.WindageDragCoefficient * windage * windMps * windMps
-        + config.WaveDriftCoefficient * config.WaterDensity * Gravity * height * height * beam;
-
-    /// <summary>
-    /// The chance one wave pulls past <paramref name="limit"/> when the significant wave pulls <paramref name="force"/>:
-    /// wave heights follow the Rayleigh distribution, and the pull grows with height squared.
-    /// </summary>
-    public static double ChanceToExceed(double force, double limit) => force <= 0 ? 0 : Math.Exp(-2 * limit / force);
-
-    /// <summary>
-    /// The chance one wave pulls past <paramref name="limit"/> on top of a steady pull such as a current's, given along
-    /// and across the wave's own direction: the wave need only make up what the steady pull leaves, and a steady pull
-    /// past the limit is past it whatever the wave does.
-    /// </summary>
-    public static double ChanceToExceed(double force, double limit, double steadyAlong, double steadyAcross)
-    {
-        if (steadyAlong * steadyAlong + steadyAcross * steadyAcross >= limit * limit) return 1;
-
-        return ChanceToExceed(force, Math.Sqrt(limit * limit - steadyAcross * steadyAcross) - steadyAlong);
-    }
-
     private double CrestMass(double height, double beam) => config.WaterDensity * beam * height * height / 4;
 }

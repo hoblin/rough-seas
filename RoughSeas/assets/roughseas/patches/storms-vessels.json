@@ -15,6 +15,7 @@
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:seaforces" } },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:seaforces" } },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:mooring" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:mooring" } },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "ropetieable" } },
     { "op": "add", "file": "game:entities/nonliving/boat-raft.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "ropetieable" } },
 
@@ -45,12 +46,14 @@
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:bilge" } },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:bilge" } },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "roughseas:mooring" } },
+    { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "roughseas:mooring" } },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/client/behaviors/-", "side": "Server", "value": { "code": "ropetieable" } },
     { "op": "add", "file": "game:entities/nonliving/boat-sailed.json", "path": "/server/behaviors/-", "side": "Server", "value": { "code": "ropetieable" } },
 
     { "op": "add", "file": "game:itemtypes/wearable/anchor.json", "path": "/attributes/rodeMetres", "value": 120 },
     { "op": "add", "file": "game:itemtypes/wearable/anchor.json", "path": "/attributes/rope", "value": "rope-flax" },
-    { "op": "add", "file": "game:itemtypes/wearable/anchor.json", "path": "/attributes/holdingNewtons", "value": 3000 },
+    // A stone anchor for about 3 t of cargo, as an Odessa shalanda carries, by W[t] = 0.00292·m^1.5 (Miller, Cvikel & Me-Bar 2023, J. Archaeol. Sci. Reports 52, 104284); stone anchors run from 6 to 75 kg on small craft (Newe Yam, Byblos) to 171 kg on the 15 m Uluburun ship
+    { "op": "add", "file": "game:itemtypes/wearable/anchor.json", "path": "/attributes/kilograms", "value": 100 },
 
     { "op": "add", "file": "game:blocktypes/clay/fired/bowl.json", "path": "/behaviors/-", "value": { "name": "roughseas:bailer", "properties": { "secondsPerScoop": 1.2, "animation": "roughseas-bail-bowl" } } },
     { "op": "add", "file": "game:blocktypes/clay/fired/jug.json", "path": "/behaviors/-", "value": { "name": "roughseas:bailer", "properties": { "secondsPerScoop": 2, "animation": "roughseas-bail-jug" } } },

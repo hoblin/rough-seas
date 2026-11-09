@@ -18,6 +18,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private const float LongestStepSeconds = 0.5f;
     private const double LogEverySeconds = 5;
     private const double LogWithinBlocks = 64;
+    private const double AccelerationSmoothingSeconds = 0.25;
 
     private readonly HullRider rider = new(storms.Config.Response);
     private (double X, double Z) applied;
@@ -27,6 +28,8 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private (double X, double Z) carriedFrom;
     private double loggedSeconds;
     private double sway;
+
+    public (double X, double Z) WaterAcceleration { get; private set; }
 
     /// <summary>The pose she takes at <paramref name="seconds"/>, on a clock of the caller's: the one her model is drawn at, and the heave the water is read at.</summary>
     public SeaPose Follow(EntityBoat boat, IDrawnSea drawn, double seconds) =>
@@ -87,6 +90,12 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
             pos.Motion.X += WaveCarry.Carried(x, pos.Motion.X == 0 ? 0 : applied.X, kept) * swimDrag;
             pos.Motion.Z += WaveCarry.Carried(z, pos.Motion.Z == 0 ? 0 : applied.Z, kept) * swimDrag;
         }
+        if (carried)
+        {
+            var share = seconds / (AccelerationSmoothingSeconds + seconds);
+            WaterAcceleration = (WaterAcceleration.X + ((x - applied.X) / seconds - WaterAcceleration.X) * share,
+                WaterAcceleration.Z + ((z - applied.Z) / seconds - WaterAcceleration.Z) * share);
+        }
         applied = (x, z);
 
         if (!carried)
@@ -120,6 +129,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private void Leave(EntityBoat boat, string why)
     {
         applied = default;
+        WaterAcceleration = default;
         if (boat.Api.Side == EnumAppSide.Server) rider.Settle();
         if (!carried) return;
         carried = false;

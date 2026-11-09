@@ -18,6 +18,7 @@ Vintage Story's sea is flat, safe and empty; crossing it means holding W on a ra
 8. **Fair danger.** Every threat shows itself first, the way nature does: treetops sway, the sky darkens, the swell rises, the fin shows before the bite.
 9. **Performance budget.** Every system has a per-tick server budget, and it is measured.
 10. **Save safety.** The mod can be added to an existing world, updated or removed without breaking it. Mod data is versioned.
+11. **One physics, ridden or not.** A rider changes a vessel's physics in one way only: what she carries, and the thrust when someone rows. Every force on her (current, waves, a rope, the wind) acts the same whether anyone sits in her; only where it is computed differs, on the rider's client for a steered vessel and on the server for a free one, with the same code.
 
 ## The system
 
@@ -67,7 +68,7 @@ Cost matches benefit: of two vessels in one niche, the better costs more (a knif
 
 A vessel's condition is per place on its hull and survives being picked up and placed again. Every kind of damage reaches the hull: impacts, surf, weapons, lightning, blasts, each through the same roll by material. Repair patches one place, a right-click holding the vessel's own material: a full mend costs half the build materials, as vanilla mends armour, and each patch costs satiety, which is the work.
 
-Mooring. A raft ties to a stake with vanilla's rope to a fence post. The sailboat anchors with vanilla's stone anchor, which we give real holding. Its own rode is the rope its recipe spends (12 × 10 m = 120 m of flax). Extra rode is one anchor warp, 9 ropes spliced into 90 m and uncrafted back into ropes, stowed in the sailboat's lower mast storage, which holds a single item. Lowered, the anchor reaches the seabed and pays out five times the depth, capped by the rope aboard (up to 210 m). With a shorter scope it holds less and drags in a storm. Deeper than the rope reaches, it hangs and holds nothing until the vessel drifts over shallower water. A rode snaps by its material, and the anchor is lost with it, along with the warp's rope that was paid out. A vessel held at one point will weathervane bow into the wind (not yet: it comes with #7). With no player near, the chance that a moored vessel is thrown ashore comes from the storm's strength and its distance to the shore.
+Mooring. A vessel is held by lines: one vanilla rope to a stake, and on the sailboat vanilla's stone anchor on its rode. While a rope ties a vessel, its pull and its parting are ours, not vanilla's cloth physics: each line is one more force on the hull, summed with the current and the waves where the vessel's physics runs (principle 11), and it holds, parts or drags its anchor as those forces say. Rode is rope the vessel carries aboard, and the anchor pays out what the depth and that rope allow. A vessel held at one point will weathervane bow into the wind (not yet: it comes with #184). Where no player is near, no physics runs, so the chance that a storm throws a moored vessel ashore is rolled when a player returns, from the storm's strength and the vessel's distance to the shore.
 
 Sailing reads the wind: a sail works with the wind's direction, rowing on one side turns the vessel, a windsock shows the wind, and you can be stranded until it turns.
 

@@ -136,6 +136,20 @@ public sealed class HullSet
         }
     }
 
+    /// <summary>A pull back along the unit vector from the mooring to her takes up to this much of her set away from it, m/s.</summary>
+    public double Slow(double outwardX, double outwardZ, double metresPerSecond)
+    {
+        lock (gate)
+        {
+            var cut = Math.Min(Math.Max(0, x * outwardX + z * outwardZ), metresPerSecond);
+            x -= cut * outwardX;
+            z -= cut * outwardZ;
+            heldX -= cut * outwardX / WaterDrag.TicksPerSecond;
+            heldZ -= cut * outwardZ / WaterDrag.TicksPerSecond;
+            return cut;
+        }
+    }
+
     /// <summary>Her origin's velocity while she turns about a held bow, m/s; zero once she is let go.</summary>
     public void Pivot(double metresPerSecondX, double metresPerSecondZ)
     {
