@@ -98,7 +98,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	seaShare = share;
 	if (share <= 0.0) return warped;
 
-	vec2 bedUv = (worldPos.xz - seaBedArea.xy) / seaBedArea.zw;
+	vec2 bedUv = (worldPos.xz - seaBedArea.xy) / seaBedArea.z;
 	bool onBed = seaShore.z > 0.5 && bedUv.x >= 0.0 && bedUv.y >= 0.0 && bedUv.x < 1.0 && bedUv.y < 1.0;
 	vec4 bed = onBed ? textureLod(seaBed, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 1000000.0);
 	vec4 aux = onBed ? textureLod(seaBedAux, bedUv, 0.0) : vec4(0.0);

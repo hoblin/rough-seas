@@ -39,6 +39,13 @@ public static class SurfaceShader
     private const string WavesUniform = "seaWaves";
     private const string FoamUniform = "seaFoam";
     private const string HeightMapSampler = "seaHeightMap";
+    private const string WetUniform = "seaWet";
+    private static readonly (string Pass, string BeforeLight, string Shaded)[] WetPasses =
+    [
+        ("chunkopaque", "outColor = applyFogAndShadowFromBrightness(texColor,", "texColor"),
+        ("chunktopsoil", "outColor = applyFogAndShadowWithNormal(outColor,", "outColor"),
+    ];
+    private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
     private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB"];
     private const double NoCaps = 10;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
@@ -55,6 +62,9 @@ public static class SurfaceShader
     private static float[] uniforms = [];
     private static string vertexCode = "";
     private static string fragmentCode = "";
+    private static string wetCode = "";
+    private static double lensDepthRatio;
+    private static double wetReflectance;
     private static bool normalTilted;
 
     public static bool DrawWaves { get; set; } = true;
@@ -63,9 +73,9 @@ public static class SurfaceShader
 
     public static bool DrawShore { get; set; } = true;
 
-    public static bool Attach(SeaSurface waves, SurfaceField heights, ICoreClientAPI api)
+    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, ICoreClientAPI api)
     {
-        (surface, field, capi) = (waves, heights, api);
+        (surface, field, capi, lensDepthRatio, wetReflectance) = (waves, heights, api, lensDepth, wetShade);
         heightMap = new LoadedTexture(api);
         heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
         shoreTextures = ShoreSamplers.Select(_ => GL.GenTexture()).ToArray();
@@ -146,6 +156,7 @@ public static class SurfaceShader
             .Replace("SEA_SLOTS", surface!.Slots.ToString(CultureInfo.InvariantCulture))
             .Replace("SEA_TRAIL_SECONDS", SeaSurface.TrailSeconds.ToString("0.0###", CultureInfo.InvariantCulture));
         fragmentCode = api.Assets.Get(FragmentSource).ToText();
+        wetCode = api.Assets.Get(WetSource).ToText();
     }
 
     private static void Inject(ShaderProgram program, ref string __result)
@@ -153,6 +164,11 @@ public static class SurfaceShader
         if (__result.Contains(VanillaWarp) && __result.Contains(AfterWarp) && !__result.Contains(RenamedWarp))
         {
             __result = __result.Replace(VanillaWarp, RenamedWarp).Replace(AfterWarp, vertexCode + AfterWarp);
+        }
+        foreach (var (pass, beforeLight, shaded) in WetPasses)
+        {
+            if (program.PassName != pass || !__result.Contains(beforeLight) || __result.Contains(wetCode)) continue;
+            __result = __result.Replace(FragmentMain, wetCode + FragmentMain).Replace(beforeLight, $"if (normal.y > 0.5) {shaded}.rgb *= seaWetShade(worldPos);\n" + beforeLight);
         }
         if (program.PassName != LiquidPass) return;
         if (__result.Contains(FaceNormal))
@@ -177,26 +193,37 @@ public static class SurfaceShader
 
     private static void Bind(ShaderProgramBase __instance)
     {
-        if (surface == null || !Active(__instance, WavesUniform) || capi?.World.Player?.Entity is not { } player) return;
-        if (DrawWaves) surface.WriteUniforms(player.CameraPos.X, player.CameraPos.Z, uniforms);
-        else Array.Clear(uniforms);
-        __instance.Uniforms4(WavesUniform, surface.Slots, uniforms);
-        __instance.Uniform("seaSteepness", (float)surface.Steepness);
+        if (surface == null || capi?.World.Player?.Entity is not { } player) return;
+        if (Active(__instance, WavesUniform))
+        {
+            if (DrawWaves) surface.WriteUniforms(player.CameraPos.X, player.CameraPos.Z, uniforms);
+            else Array.Clear(uniforms);
+            __instance.Uniforms4(WavesUniform, surface.Slots, uniforms);
+            __instance.Uniform("seaSteepness", (float)surface.Steepness);
+        }
         if (field != null && heightMap is { TextureId: > 0 } && Active(__instance, HeightMapSampler))
         {
             __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, heightMapUnit);
             __instance.Uniform("seaHeightArea", new Vec4f((float)(field.OriginX - player.CameraPos.X), (float)(field.OriginZ - player.CameraPos.Z),
                 (float)field.SizeBlocks, (float)field.SizeBlocks));
         }
-        if (shore != null && Active(__instance, ShoreSamplers[0]))
+        if (shore != null && ShoreSamplers.Any(sampler => Active(__instance, sampler)))
         {
-            for (var i = 0; i < ShoreSamplers.Length; i++) __instance.BindTexture2D(ShoreSamplers[i], shoreTextures[i], heightMapUnit - 1 - i);
-            __instance.Uniform("seaBedArea", new Vec4f((float)(shore.OriginX - player.CameraPos.X), (float)(shore.OriginZ - player.CameraPos.Z), shore.Size, shore.Size));
+            for (var i = 0; i < ShoreSamplers.Length; i++)
+            {
+                if (Active(__instance, ShoreSamplers[i])) __instance.BindTexture2D(ShoreSamplers[i], shoreTextures[i], heightMapUnit - 1 - i);
+            }
+            __instance.Uniform("seaBedArea", new Vec4f((float)(shore.OriginX - player.CameraPos.X), (float)(shore.OriginZ - player.CameraPos.Z), shore.Size,
+                (float)player.CameraPos.Y));
         }
         if (Active(__instance, "seaShore"))
         {
             __instance.Uniform("seaShore", new Vec4f((float)surface.Shape.BreakingDepthRatio, surface.Dominant, shore != null && DrawShore ? 1 : 0, 0));
             __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
+        }
+        if (Active(__instance, WetUniform))
+        {
+            __instance.Uniform(WetUniform, new Vec4f((float)surface.DominantPeriod, (float)lensDepthRatio, (float)wetReflectance, shore != null && DrawShore ? 1 : 0));
         }
         if (!Active(__instance, FoamUniform)) return;
         __instance.Uniform(FoamUniform, DrawFoam

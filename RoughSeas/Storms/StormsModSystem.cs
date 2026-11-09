@@ -70,7 +70,7 @@ public class StormsModSystem : ModSystem
         surface.Changed += change => Log("surface: " + change);
         DrawnSea = new DrawnSea(surface, field);
         DrawnWater = new DrawnWater(DrawnSea);
-        if (SurfaceShader.Attach(surface, field, capi))
+        if (SurfaceShader.Attach(surface, field, capi.ModLoader.GetModSystem<ShoreModSystem>().Config.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, capi))
         {
             clock = new SurfaceClock(this, sea, surface, field, Surf(capi), capi);
             EyeUnderSurface.Attach(this, capi, DrawnWater, Config.Eye);

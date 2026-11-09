@@ -132,7 +132,9 @@
             "moveBlocks": 32,
             "deepestBlocks": 32,
             "refreshSeconds": 20,
+            "wetReflectance": 0.5,
             "sources": {
+                "wetReflectance": "Wet sand reflects about half the light dry sand does: Ångström measured an albedo of 0.182 dry against 0.091 wet, as Lekner & Dorf 1988 (Applied Optics 27(7), 'Why some things are darker when wet') quote it",
                 "mapBlocks": "The seabed is read this far across around the player, a block to a texel: the surf of every shore within view distance's nearer half",
                 "moveBlocks": "The seabed is read again once the player is this far from where it was read",
                 "deepestBlocks": "Where worldgen's seabed no longer lies under the water, the bed is sounded block by block this deep at most; water deeper still is drawn as open sea",

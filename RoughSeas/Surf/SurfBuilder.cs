@@ -7,6 +7,7 @@ namespace RoughSeas.Surf;
 
 public sealed class SurfBuilder(Band band)
 {
+    private const double StillLevel = 7.0 / 8;
     private static readonly double[] Scales = [0.4, 0.55, 0.7, 0.85, 1.0, 1.15];
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
@@ -28,6 +29,7 @@ public sealed class SurfBuilder(Band band)
             field.Set(field.Aux, x, z, 0, (float)(map[x, z].Bed?.Conductivity ?? 0));
             field.Set(field.Aux, x, z, 1, Gradient(depth, size, i, 1));
             field.Set(field.Aux, x, z, 2, Gradient(depth, size, i, size));
+            field.Set(field.Aux, x, z, 3, map[x, z].Kind == ShoreKind.Land ? (float)(map.LevelAt(x, z) + StillLevel + map[x, z].Elevation) : 0);
 
             var reached = swash.TryGetValue((x, z), out var sheet);
             field.Set(field.Bed, x, z, 1, reached ? (float)sheet.Distance : 0);

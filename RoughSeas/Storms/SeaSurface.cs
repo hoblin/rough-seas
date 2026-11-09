@@ -91,6 +91,8 @@ public sealed class SeaSurface
 
     public int Dominant { get; private set; }
 
+    public double DominantPeriod => frequency[Dominant] > 0 ? FullTurn / frequency[Dominant] : 0;
+
     public event Action<string>? Changed;
 
     public void Aim(double height, double towardRadians, double beaufort, double foamShare = 1)
