@@ -81,6 +81,9 @@ public class StormsModSystem : ModSystem
         RegisterSurfaceCommands(capi);
     }
 
+    internal SwellAround Swell(ICoreServerAPI sapi) =>
+        new(Config.Surface, Waves, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Config, sapi.ModLoader.GetModSystem<SeaWeatherSystem>().Clock, Surf(sapi), sapi.World);
+
     private SurfMaker Surf(ICoreAPI api)
     {
         var shore = api.ModLoader.GetModSystem<ShoreModSystem>().Config;

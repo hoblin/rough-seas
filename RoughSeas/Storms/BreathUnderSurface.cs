@@ -80,7 +80,7 @@ public static class BreathUnderSurface
         {
             if (!swells.TryGetValue(player.PlayerUID, out var around))
             {
-                swells[player.PlayerUID] = around = new SwellAround(system.Config.Surface, system.Waves, sea.Config, sea.Clock);
+                swells[player.PlayerUID] = around = system.Swell(sapi);
             }
             around.At(sea.Map, x, z, sea.Clock.Seconds, sapi.WorldManager.RegionSize);
             swell = around.Sea.HeightAt(x, z);

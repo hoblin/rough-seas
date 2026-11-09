@@ -27,7 +27,7 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
         if (now - sweptAt > ForgottenAfterSeconds) Sweep(now);
         if (!swells.TryGetValue(region, out var swell))
         {
-            swells[region] = swell = new Swell(new SwellAround(storms.Config.Surface, storms.Waves, sea.Config, sea.Clock));
+            swells[region] = swell = new Swell(storms.Swell(sapi));
         }
         swell.ReadAt = now;
         var seconds = sea.Clock.Seconds;

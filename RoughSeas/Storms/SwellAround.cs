@@ -1,4 +1,6 @@
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Surf;
+using Vintagestory.API.Common;
 
 namespace RoughSeas.Storms;
 
@@ -12,9 +14,12 @@ public sealed class SwellAround
 {
     private readonly SeaSurface surface;
     private readonly SurfaceAim aim;
+    private readonly SurfMaker? shore;
+    private readonly IWorldAccessor? world;
 
-    public SwellAround(SurfaceConfig config, Waves waves, SeaWeatherConfig sea, SeaClock clock)
+    public SwellAround(SurfaceConfig config, Waves waves, SeaWeatherConfig sea, SeaClock clock, SurfMaker? shore = null, IWorldAccessor? world = null)
     {
+        (this.shore, this.world) = (shore, world);
         surface = new SeaSurface(config, waves);
         var field = new SurfaceField();
         aim = new SurfaceAim(surface, field, config, sea, clock);
@@ -31,6 +36,7 @@ public sealed class SwellAround
     {
         aim.Aim(map, x, z, seconds, regionSize, foam: false);
         surface.Advance(seconds);
+        if (world != null && shore?.Update(world, map, x, z, surface.Vectors(), world.ElapsedMilliseconds / 1000.0) is { } field) surface.Shore = field;
     }
 
     /// <summary>Brings the sea to <paramref name="seconds"/> without aiming it again, between aims.</summary>
