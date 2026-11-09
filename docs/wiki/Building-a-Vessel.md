@@ -17,7 +17,7 @@ Each way the sea harms a vessel has its own [world setting](World-Settings#the-m
 | `roughseas:seaforces` | client and server | the vessel's contact with the sea: waves aboard, breaker strikes, the ride on the drawn swell and the sway of the water under it, its mass slowing it, the settling it draws. Mooring needs it |
 | `roughseas:bilge` | client and server | the water aboard: from waves, leaks and rain, bailed out, swamping the hull when full |
 | `roughseas:vesselintegrity` | client and server, first in both lists | the hull: how it floats and sinks, what cracks or breaks it, its leaks, mending, wreckage |
-| `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
+| `roughseas:mooring` | client and server | a stake rope and an anchor that hold in a storm, or don't |
 | `roughseas:currentdrift` | client and server | the current's carry on the hull, by the water's drag on it, and the swing about a held bow |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:framing` | client and server | a vessel laid piece by piece where it lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound together ([Bound in place](#bound-in-place)) |
@@ -29,7 +29,7 @@ Each way the sea harms a vessel has its own [world setting](World-Settings#the-m
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
-They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, `mooring` on the server and `currentdrift` on both sides. `vesselintegrity` and `currentdrift` also work alone.
+They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, `mooring` and `currentdrift` on both sides. `vesselintegrity` and `currentdrift` also work alone.
 
 `vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`.
 
@@ -74,7 +74,7 @@ Our [coracle](Coracle), its sources, its build, its frame and the voxel twins of
         { "code": "roughseas:vesselintegrity" }, { "code": "repulseagents" }, { "code": "passivephysicsmultibox" },
         { "code": "interpolateposition" }, { "code": "hidewatersurface", "hideWaterElement": "hideWater/*" },
         { "code": "selectionboxes" }, { "code": "creaturecarrier" }, { "code": "ropetieable" }, { "code": "roughseas:currentdrift" },
-        { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }
+        { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }, { "code": "roughseas:mooring" }
     ]
 },
 "server": {
@@ -114,7 +114,7 @@ What it writes, each object's comment line giving the full list:
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
 | `beamMetres` | m | its `Hull` box's | the hull's width: how much of a crest it takes aboard, how hard the sea pulls on its mooring, how it rolls. Leave it out to take the `Hull` box's width; give it where the sea meets more than the hull, as the outrigger's float |
-| `windageSquareMetres` | m² | 0 | what the wind catches, hull and rig: how hard the wind pulls on its mooring |
+| `windageSquareMetres` | m² | 0 | what the wind catches, hull and rig; measured for the wind's pull, which comes with [leeway](Roadmap#seamanship) |
 | `mastMetres` | m | 0 | a mast's height above the hull; [lightning](Lightning) seeks it |
 | `freeboardMetres` | m | 0 | the side above the water, empty, for a vessel that doesn't [float by its mass](#floating); ours leave it out |
 | `heave` | 0–1 | 0 | the share of a crest's height the hull rises with; what is left climbs its side |

@@ -4,7 +4,7 @@ The game's own sailing boat: an open hull of planks on a keel, with a mast stepp
 
 ## In Rough Seas
 
-The vessel for long voyages and heavy cargo. Its hull takes knocks that would break anything else, its 8209-litre bilge gives you time in a sea, and it is the one vessel that [anchors](Anchoring). Its mast draws [lightning](Lightning), its sides catch the wind that strains a [mooring](Mooring), and its 300 planks make it the dearest thing afloat to lose. In a gale it ships water faster than one person can [bail](Bailing): run for shelter, or anchor well out and ride it out. Two fifths of its weight is ballast, so flooded it goes to the bottom with its cargo, unless it is built of a light wood: of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash.
+The vessel for long voyages and heavy cargo. Its hull takes knocks that would break anything else, its 8209-litre bilge gives you time in a sea, and it is the one vessel that [anchors](Anchoring). Its mast draws [lightning](Lightning), its weight jerks hard on a [mooring](Mooring), and its 300 planks make it the dearest thing afloat to lose. In a gale it ships water faster than one person can [bail](Bailing): run for shelter, or anchor well out and ride it out. Two fifths of its weight is ballast, so flooded it goes to the bottom with its cargo, unless it is built of a light wood: of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash.
 
 ## Where it comes from
 
