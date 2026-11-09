@@ -78,7 +78,7 @@ You build every new vessel where it lies, and move it by paddle, pole and oars, 
 - **Hulls you can see.** Cracks show on the hull where they are. A blow on a framed hull lands on its skin and the frame behind. The outrigger's float rides on lashings of its own. More: [Hull condition](Hull-Condition).
 - **Afloat by mass.** A vessel heaves by its own mass, and a rider's weight comes aboard as they sit down. More: [The science of the hull](The-Science-of-the-Hull).
 - **Launching on foot.** Push a heavy vessel into the water yourself. More: [Building a vessel](Building-a-Vessel).
-- **Under a crest.** Your eye goes under a crest that passes over it, and you hold your breath by the sea you see, on a server too. Both are the work of our first contributor, [James Riley Wilburn](https://github.com/rhino1998). More: [Reading the sea](Reading-the-Sea).
+- **Under a crest.** Your eye goes under a crest that passes over it, and you hold your breath by the sea you see, on a server too. Both are the work of our first contributor, [rhino1998](https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8). More: [Reading the sea](Reading-the-Sea).
 - **The handbook** rewritten, and every one of its 33 languages corrected.
 
 ## 4.1
@@ -97,7 +97,7 @@ The sea moves your boat, and the rope holds it by physics.
 - **Currents carry every vessel,** paddled and rowed too, and swing a moored one to lie along the stream. More: [Currents](Currents#drift).
 - **A mooring rope that holds** at the length you set, and parts only by the jerk or the pull it can't bear; a boat takes one rope. More: [Mooring](Mooring).
 - **An anchor that holds by its weight**, better on rock than on sand, and drags in a strong current or a storm. More: [Anchoring](Anchoring).
-- Both the swell and the currents are the work of [James Riley Wilburn](https://github.com/rhino1998).
+- Both the swell and the currents are the work of [rhino1998](https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8).
 
 ## Seamanship
 
