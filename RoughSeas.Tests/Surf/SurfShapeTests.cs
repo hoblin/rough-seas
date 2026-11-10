@@ -1,10 +1,12 @@
+using RoughSeas.Storms;
 using RoughSeas.Surf;
+using RoughSeas.Tests.Storms;
 
 namespace RoughSeas.Tests.Surf;
 
 public class SurfShapeTests
 {
-    private static readonly SurfShape Shape = new(1.28, 0.5, 3.3);
+    private static readonly SurfShape Shape = new SeaSurface(Fixtures.Config().Surface, new Waves(Fixtures.Config().Waves)).Shape;
     private static readonly (double X, double Z)[] Numbers = [(-0.1, 0)];
 
     private static (Shaped Shaped, double Height) Shaped(double depth, double amplitude, double slope = 0.05)

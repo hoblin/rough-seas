@@ -47,7 +47,7 @@ public sealed class Groundwater
     private readonly PriorityQueue<(int X, int Y, int Z), long> writes = new();
     private readonly Dictionary<(int X, int Y, int Z), int> planned = [];
     private readonly Dictionary<int, int> carriers = [];
-    private readonly Dictionary<(int X, int Z), IReadOnlyList<Sea>> seasNow = [];
+    private readonly Dictionary<(int X, int Z, int Level), IReadOnlyList<Sea>> seasNow = [];
     private readonly Dictionary<(int X, int Z), Sea> seaOfShore = [];
     private double refreshedHours = double.NaN;
 
@@ -93,7 +93,7 @@ public sealed class Groundwater
         var nearest = SeedsAround((pos.X / ChunkSize, pos.Z / ChunkSize), level)
             .OrderBy(seed => (seed.X - pos.X) * (seed.X - pos.X) + (seed.Z - pos.Z) * (seed.Z - pos.Z)).FirstOrDefault();
         if (nearest == default) return $"no shore at level {level} within {config.Band.HaloBlocks} blocks; here: {cell.Kind} holding {held}";
-        var reaches = string.Join(", ", Seas(nearest.X, nearest.Z).Select(state =>
+        var reaches = string.Join(", ", Seas(nearest.X, nearest.Z, level).Select(state =>
             $"{state.Height:F1} m every {state.Period:F1} s runs up {band.RunUpFrom(ground, nearest, state):F2} m"));
         return $"here: {cell.Kind} holding {held}, {cell.Elevation:F2} m over still water, bed {cell.Bed?.Material}; "
             + $"nearest shore {nearest.X - sapi.World.DefaultSpawnPosition.X:0} {nearest.Z - sapi.World.DefaultSpawnPosition.Z:0}: {reaches}";
@@ -141,7 +141,7 @@ public sealed class Groundwater
         foreach (var gone in seeds.Keys.Where(chunk => !Loaded(chunk)).ToList()) seeds.Remove(gone);
         foreach (var (chunk, found) in seeds.ToList())
         {
-            var strongest = found.Values.SelectMany(level => level).Select(seed => Seas(seed.X, seed.Z)[0]).MaxBy(state => state.Height);
+            var strongest = found.SelectMany(level => level.Value.Select(seed => Seas(seed.X, seed.Z, level.Key)[0])).MaxBy(state => state.Height);
             if (seaOfShore.TryGetValue(chunk, out var known)
                 && Math.Abs(known.Height - strongest.Height) < SeaChange && Math.Abs(known.Period - strongest.Period) < SeaChange) continue;
             seaOfShore[chunk] = strongest;
@@ -237,7 +237,7 @@ public sealed class Groundwater
 
         var shore = seeds.Values.SelectMany(found => found.GetValueOrDefault(level) ?? []).ToList();
         var seas = new Dictionary<(int X, int Z), IReadOnlyList<Sea>>();
-        foreach (var seed in shore) seas[(seed.X / SeaCell, seed.Z / SeaCell)] = Seas(seed.X, seed.Z);
+        foreach (var seed in shore) seas[(seed.X / SeaCell, seed.Z / SeaCell)] = Seas(seed.X, seed.Z, level);
         var ground = new ShoreGround(sapi.World.GetLockFreeBlockAccessor(), level, beds, config.Band.HighestRiseBlocks);
         floods[level] = new Flood(Task.Run(() =>
         {
@@ -278,13 +278,25 @@ public sealed class Groundwater
         log("chunk {0} {1} level {2}: {3} cells take water, {4} drain, {5} blocks in from the sea", [chunk.X, chunk.Z, level, added, drained, rings]);
     }
 
-    private IReadOnlyList<Sea> Seas(int x, int z)
+    private IReadOnlyList<Sea> Seas(int x, int z, int level)
     {
-        if (seasNow.TryGetValue((x / SeaCell, z / SeaCell), out var known)) return known;
+        if (seasNow.TryGetValue((x / SeaCell, z / SeaCell, level), out var known)) return known;
+        return seasNow[(x / SeaCell, z / SeaCell, level)] = level == sapi.World.SeaLevel - 1 ? Offshore(x, z) : Inland(x, z);
+    }
+
+    private IReadOnlyList<Sea> Offshore(int x, int z)
+    {
         var cell = sea.Config.Map.CellBlocks;
         var now = sea.Map.Sample(x + 0.5, z + 0.5);
         var (height, period) = sea.Model.EverydayWavesIn(Math.Floor((double)x / cell) * cell, Math.Floor((double)z / cell) * cell, cell);
-        return seasNow[(x / SeaCell, z / SeaCell)] = [new Sea(now.WaveHeight, now.WavePeriod), new Sea(height, period)];
+        return [new Sea(now.WaveHeight, now.WavePeriod), new Sea(height, period)];
+    }
+
+    private IReadOnlyList<Sea> Inland(int x, int z)
+    {
+        var (height, period) = sea.Model.WavesAt(x + 0.5, z + 0.5);
+        var (everydayHeight, everydayPeriod) = sea.Model.EverydayWavesAt(x + 0.5, z + 0.5);
+        return [new Sea(height, period), new Sea(everydayHeight, everydayPeriod)];
     }
 
     private void Write(Func<bool> spare)

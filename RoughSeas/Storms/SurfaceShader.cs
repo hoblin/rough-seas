@@ -219,7 +219,7 @@ public static class SurfaceShader
         }
         if (Active(__instance, "seaShore"))
         {
-            __instance.Uniform("seaShore", new Vec4f((float)surface.Shape.BreakingDepthRatio, surface.Dominant, shore != null && DrawShore ? 1 : 0, 0));
+            __instance.Uniform("seaShore", new Vec4f((float)surface.Shape.BreakingDepthRatio, surface.Dominant, shore != null && DrawShore ? 1 : 0, (float)surface.Shape.CrestRatio));
             __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
         }
         if (Active(__instance, WetUniform))

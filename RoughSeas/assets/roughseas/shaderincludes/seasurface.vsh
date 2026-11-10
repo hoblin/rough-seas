@@ -78,16 +78,22 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	if (runUp < bed.w) return warped;
 
 	float since = mod(1.5707963 - dominant, 6.2831853) / frequency;
-	float rise = max(-bed.x, 0.0);
+	ivec2 corner = ivec2(floor(worldPos.xz - seaBedArea.xy + 0.5));
+	float rise = 1000000.0;
+	for (int i = 0; i < 4; i++) {
+		float tread = texelFetch(seaBed, corner - ivec2(i & 1, i >> 1), 0).x;
+		if (tread <= 0.0) rise = min(rise, -tread);
+	}
+	if (rise >= 100000.0) rise = max(-bed.x, 0.0);
 	float distance = bed.y;
 	float sine = distance > 0.0 ? rise / sqrt(distance * distance + rise * rise) : 1.0;
 	float speed = sqrt(2.0 * seaGravity * runUp);
 	float front = speed * since - 0.5 * seaGravity * sine * since * since;
 	if (since <= 0.0 || front <= distance) return warped;
 	float arrived = sine > 0.0001 ? (speed - sqrt(max(0.0, speed * speed - 2.0 * seaGravity * sine * distance))) / (seaGravity * sine) : distance / speed;
-	float depth = (front - distance) * (front - distance) / (9.0 * seaGravity * since * since) - aux.x * max(0.0, since - arrived);
+	float depth = min((front - distance) * (front - distance) / (9.0 * seaGravity * since * since), seaShore.w * waveHeight) - aux.x * max(0.0, since - arrived);
 	if (depth <= 0.0) return warped;
-	warped.y += -bed.x + depth;
+	warped.y += rise + depth;
 	seaShare = 0.0;
 	return warped;
 }

@@ -7,8 +7,10 @@ namespace RoughSeas.Surf;
 /// carries, the rest breaking; the breaker plunges where the Iribarren number of the bed's slope says so.
 /// <c>seasurface.vsh</c> computes the same.
 /// </summary>
-public sealed class SurfShape(double breakingDepthRatio, double plungingFrom, double plungingTo)
+public sealed class SurfShape(double breakingDepthRatio, double plungingFrom, double plungingTo, double crestRatio)
 {
+    public double CrestRatio => crestRatio;
+
     public double BreakingDepthRatio => breakingDepthRatio;
 
     public double PlungingFrom => plungingFrom;

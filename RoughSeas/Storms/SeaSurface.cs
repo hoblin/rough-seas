@@ -44,7 +44,7 @@ public sealed class SeaSurface
         this.config = config;
         this.waves = waves;
         var (plungingFrom, plungingTo) = waves.PlungingIribarren;
-        shape = new SurfShape(waves.BreakingDepthRatio, plungingFrom, plungingTo);
+        shape = new SurfShape(waves.BreakingDepthRatio, plungingFrom, plungingTo, waves.CrestRatio);
         generation = config.Trains.Length;
         headings = (int)Math.Round(360 / config.TurnDegrees);
         var energy = config.Trains.Sum(train => train.Energy);

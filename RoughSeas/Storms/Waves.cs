@@ -25,6 +25,8 @@ public class Waves(WavesConfig config)
 
     public double BreakingDepthRatio => config.BreakingDepthRatio;
 
+    public double CrestRatio => config.CrestRatio;
+
     public (double From, double To) PlungingIribarren => (config.PlungingIribarren[0], config.PlungingIribarren[1]);
 
     public bool BreaksAt(double depth, double height) => depth < BreakingDepth(height);
