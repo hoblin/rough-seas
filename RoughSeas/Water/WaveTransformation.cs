@@ -11,7 +11,7 @@ namespace RoughSeas.Water;
 /// <param name="SlopeX">The depth's slope along X, at the scale the longest wave feels it.</param>
 /// <param name="SlopeZ">The same along Z.</param>
 /// <param name="CelerityDepth">The depth that sets the waves' speed: the water under a wave and, where it has broken, the bore's own height over it, never less than a terminal bore's. Over land, the terminal bore's.</param>
-/// <param name="Entering">The whole sea's height over its height in deep water where it enters the grid, by column and row; none is deep water's.</param>
+/// <param name="Entering">Where the breaking water runs off the grid, the sea's height coming into it, over its height in deep water, by column and row; none is deep water's.</param>
 public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Gains, float[] Breaking, float[] Gain, float[] SlopeX, float[] SlopeZ, float[] CelerityDepth, Func<int, int, double>? Entering = null)
 {
     /// <summary>The sea's height, against the deep sea's, where it enters the last stretch of breaking water upwind of this cell along <paramref name="ray"/>: the sea that comes to the shore, whatever the shallows then leave of it.</summary>
@@ -82,7 +82,7 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
 
         var slopeX = BoxAverage.Over(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, 1) / spacing).ToArray(), size, smoothing);
         var slopeZ = BoxAverage.Over(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, size) / spacing).ToArray(), size, smoothing);
-        return new TransformedWaves(felt, lags, gains, breaking, gain, slopeX, slopeZ, celerityDepth, entering?.Gain);
+        return new TransformedWaves(felt, lags, gains, breaking, gain, slopeX, slopeZ, celerityDepth, entering?.Arriving);
     }
 
     private static float Gradient(float[] depth, int size, int i, int step)

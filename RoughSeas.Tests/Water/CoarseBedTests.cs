@@ -21,6 +21,20 @@ public class CoarseBedTests
         return (Transformation.Solve(Across, depth, numbers, null, Enumerable.Repeat(SeaHeight, depth.Length).ToArray(), 0, coarse.Entering(Transformation, numbers, null, 0, originX, 512)).Lags[0], depth);
     }
 
+    private static double ArrivingAtTheShore(int originX)
+    {
+        const double slope = 0.02;
+        var depth = Enumerable.Range(0, Across * Across).Select(i => Bed(originX + i % Across + 0.5, slope)).ToArray();
+        var coarse = new CoarseBed(0, 0, 32, CoarseAcross, Enumerable.Range(0, CoarseAcross * CoarseAcross).Select(i => Math.Max(0, Bed((i % CoarseAcross + 0.5) * 32, slope))).ToArray(), Enumerable.Repeat(SeaHeight, CoarseAcross * CoarseAcross).ToArray());
+        var numbers = new[] { (Number, 0.0) };
+        var waves = Transformation.Solve(Across, depth, numbers, null, Enumerable.Repeat(SeaHeight, depth.Length).ToArray(), 0, coarse.Entering(Transformation, numbers, null, 0, originX, 512));
+        return waves.ArrivingAt(depth, Across, 995 - originX, 128, numbers[0]);
+    }
+
+    [Fact]
+    public void AMapWhoseEdgeLiesInTheSurfSeesTheSameSeaArriveAsOneOutsideIt() =>
+        Assert.Equal(ArrivingAtTheShore(760), ArrivingAtTheShore(880), 1);
+
     private static double Wrapped(double angle) => angle - 2 * Math.PI * Math.Round(angle / (2 * Math.PI));
 
     [Theory]

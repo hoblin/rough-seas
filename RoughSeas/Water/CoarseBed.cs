@@ -5,8 +5,8 @@ namespace RoughSeas.Water;
 
 /// <param name="Lags">For each slot, the lag where the wave enters a grid, by its column and row.</param>
 /// <param name="Gains">For each slot, its height there over its height in deep water.</param>
-/// <param name="Gain">The whole sea's height there over its height in deep water.</param>
-public sealed record EnteringWaves(Func<int, int, double>[] Lags, Func<int, int, double>[] Gains, Func<int, int, double> Gain);
+/// <param name="Arriving">The sea's height there coming into the breaking water, over its height in deep water (<see cref="TransformedWaves.ArrivingAt"/>).</param>
+public sealed record EnteringWaves(Func<int, int, double>[] Lags, Func<int, int, double>[] Gains, Func<int, int, double> Arriving);
 
 /// <summary>The water and the sea over the regions around a place, a cell of the sea map at a time: what every reader of the place shares, so that the waves entering a finer grid have one reference there.</summary>
 public sealed record CoarseBed(int OriginX, int OriginZ, int CellBlocks, int Across, float[] Depth, double[] SeaHeights)
@@ -17,7 +17,9 @@ public sealed record CoarseBed(int OriginX, int OriginZ, int CellBlocks, int Acr
         var nearest = PhaseField.NearestWater(Depth, Across);
         var solved = transformation.Solve(Across, Depth, numbers, amplitudeShares, SeaHeights, dominant, spacing: CellBlocks);
         Func<int, int, double> Read(float[] values, float none) => Reader(values.Select((_, i) => nearest[i] >= 0 ? values[nearest[i]] : none).ToArray(), gridX, gridZ);
-        return new EnteringWaves(solved.Lags.Select(lag => Read(lag, 0)).ToArray(), solved.Gains.Select(gain => Read(gain, 1)).ToArray(), Read(solved.Gain, 1));
+        var ray = dominant < numbers.Length ? numbers[dominant] : default;
+        var arriving = Depth.Select((depth, i) => depth > 0 ? (float)solved.ArrivingAt(Depth, Across, i % Across, i / Across, ray) : 1f).ToArray();
+        return new EnteringWaves(solved.Lags.Select(lag => Read(lag, 0)).ToArray(), solved.Gains.Select(gain => Read(gain, 1)).ToArray(), Read(arriving, 1));
     }
 
     private Func<int, int, double> Reader(float[] values, int gridX, int gridZ) => (column, row) =>
