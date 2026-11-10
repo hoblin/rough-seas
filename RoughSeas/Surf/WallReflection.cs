@@ -1,5 +1,6 @@
 using System;
 using RoughSeas.Shore;
+using RoughSeas.Water;
 
 namespace RoughSeas.Surf;
 
@@ -8,7 +9,7 @@ public sealed class WallReflection(FacesConfig config, double spectralPeriodRati
     public double Coefficient(double height, double period, double slope, double roughness)
     {
         if (height <= 0 || period <= 0 || slope <= 0) return 0;
-        var breaker = RunUp.Iribarren(height, period / spectralPeriodRatio, slope);
+        var breaker = WaveTheory.Iribarren(slope, height, WaveTheory.DeepLength(period / spectralPeriodRatio));
         var factor = config.ReflectionFactor * (1 - Math.Exp(-config.ReflectionRoughnessRate * roughness));
         var offset = roughness - config.ReflectionShapeRoughness;
         var shape = config.ReflectionShape * offset * offset + config.ReflectionShapeBase;

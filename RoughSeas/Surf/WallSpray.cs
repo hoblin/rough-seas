@@ -1,12 +1,13 @@
 using System;
 using RoughSeas.Shore;
+using RoughSeas.Water;
 
 namespace RoughSeas.Surf;
 
 /// <summary>What a strike on a face throws: its litres per metre of face, and how fast each drop leaves it, by that drop's place in the strike's measured spread of heights.</summary>
 public abstract class Impact(double litres, double topSpeed)
 {
-    protected const double Gravity = RunUp.Gravity;
+    protected const double Gravity = WaveTheory.Gravity;
 
     public double Litres { get; } = litres;
 
@@ -39,7 +40,7 @@ public sealed class SheetImpact(double litres, double head, FacesConfig config) 
 
 public sealed class WallSpray(FacesConfig config, double spectralPeriodRatio)
 {
-    private const double Gravity = RunUp.Gravity;
+    private const double Gravity = WaveTheory.Gravity;
 
     public WaveImpact Wave(double height, double period, double toeDepth, double crest, double celerity)
     {
@@ -59,7 +60,7 @@ public sealed class WallSpray(FacesConfig config, double spectralPeriodRatio)
 
     private double Discharge(double height, double period, double toeDepth, double relative)
     {
-        var steepness = height / RunUp.DeepLength(period / spectralPeriodRatio);
+        var steepness = height / WaveTheory.DeepLength(period / spectralPeriodRatio);
         var breaking = Math.Sqrt(height / (toeDepth * steepness));
         return relative < config.ImpulsiveBreak
             ? config.ImpulsiveFactor * breaking * Math.Exp(-config.ImpulsiveFreeboard * relative)

@@ -1,5 +1,6 @@
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 
 namespace RoughSeas.Tests.Storms;
 
@@ -23,23 +24,8 @@ public class WavesTests
     }
 
     [Fact]
-    public void OneWaveInSevenOverTopsTheSignificantHeight()
-    {
-        Assert.Equal(2, Waves.WaveHeight(2, 1 - Math.Exp(-2)), 6);
-        Assert.Equal(0, Waves.WaveHeight(2, 0));
-    }
-
-    [Fact]
     public void ABreakingCrestStandsHigherThanASwellOfTheSameHeight() =>
         Assert.True(waves.Crest(2, breaking: true) > waves.Crest(2, breaking: false));
-
-    [Fact]
-    public void AWaveRunsAtItsDeepWaterSpeedInDeepWater() =>
-        Assert.Equal(9.81 * 8 / (2 * Math.PI), Waves.Celerity(8, double.PositiveInfinity), 6);
-
-    [Fact]
-    public void AWaveSlowsToTheShallowWaterSpeedOverAShallowBed() =>
-        Assert.Equal(Math.Sqrt(9.81 * 1), Waves.Celerity(12, 1), 1);
 
     [Fact]
     public void AWavePlungesOnASteepBedAndSpillsOnAGentleOne()
@@ -74,7 +60,7 @@ public class WavesTests
     public void ABreakerIsAsLongAsItsHeightMakesItAndNoFasterThanTheSea()
     {
         Assert.Equal(Math.Sqrt(9.81 / 0.142 / (2 * Math.PI)), waves.BreakerCelerity(1, 9, double.PositiveInfinity), 6);
-        Assert.Equal(Waves.Celerity(4, double.PositiveInfinity), waves.BreakerCelerity(8, 4, double.PositiveInfinity), 6);
+        Assert.Equal(WaveTheory.Celerity(4, double.PositiveInfinity), waves.BreakerCelerity(8, 4, double.PositiveInfinity), 6);
     }
 
     [Fact]
@@ -82,7 +68,7 @@ public class WavesTests
     {
         var ownPeriod = Math.Sqrt(2 * Math.PI / 0.142 / 9.81);
 
-        Assert.Equal(Waves.Celerity(ownPeriod, 1.28), waves.BreakerCelerity(1, 9, 1.28), 6);
+        Assert.Equal(WaveTheory.Celerity(ownPeriod, 1.28), waves.BreakerCelerity(1, 9, 1.28), 6);
     }
 
     [Fact]

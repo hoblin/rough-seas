@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Water;
 
 namespace RoughSeas.Shore;
 
@@ -13,7 +14,7 @@ namespace RoughSeas.Shore;
 /// </summary>
 public readonly record struct SheetFront(double SpeedSquared, double Metres, double Seconds, double Soaked, double Period, double Friction, double LensRatio)
 {
-    private const double Gravity = RunUp.Gravity;
+    private const double Gravity = WaveTheory.Gravity;
 
     public static SheetFront Thrown(double runUpMetres, double periodSeconds, SheetConfig config) =>
         new(2 * Gravity * Math.Max(runUpMetres, 0), 0, 0, 0, periodSeconds, config.UprushFriction, config.LensDepthRatio);

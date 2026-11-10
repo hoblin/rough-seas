@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using RoughSeas.Water;
 
 namespace RoughSeas.Surf;
 
@@ -52,7 +53,7 @@ public static class PhaseField
                 number[i] = double.NaN;
                 continue;
             }
-            number[i] = Shoaling.Wavenumber(deepNumber, depth[i]);
+            number[i] = WaveTheory.Wavenumber(deepNumber, depth[i]);
             phase[i] = depth[i] >= deep ? numberX * (x + 0.5) + numberZ * (z + 0.5) : double.PositiveInfinity;
         }
         if (!phase.Any(double.IsFinite)) SeedUpwindEdge(size, phase, number, numberX, numberZ);

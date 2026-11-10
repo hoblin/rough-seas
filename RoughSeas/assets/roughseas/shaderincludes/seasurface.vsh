@@ -39,7 +39,7 @@ float seaFold = 0.0;
 float seaShare = 0.0;
 float seaFaceFoam = 0.0;
 
-const float seaGravity = 9.81;
+const float seaGravity = SEA_GRAVITY;
 const float seaStepFootBelow = -1.0;
 const float seaFaceStands = 0.75;
 
@@ -57,12 +57,12 @@ float seaBoreFront(float height, float number) {
 
 float seaBore(float theta, float front) {
 	float ahead = mod(theta - 1.5707963, 6.2831853) / 6.2831853;
-	return 1.2247449 * (ahead < front ? 1.0 - 2.0 * ahead / front : 2.0 * (ahead - front) / (1.0 - front) - 1.0);
+	return SEA_BORE_AMPLITUDE * (ahead < front ? 1.0 - 2.0 * ahead / front : 2.0 * (ahead - front) / (1.0 - front) - 1.0);
 }
 
 float seaBoreSlopeAt(float theta, float front) {
 	float ahead = mod(theta - 1.5707963, 6.2831853) / 6.2831853;
-	return 1.2247449 * (ahead < front ? -2.0 / front : 2.0 / (1.0 - front)) / 6.2831853;
+	return SEA_BORE_AMPLITUDE * (ahead < front ? -2.0 / front : 2.0 / (1.0 - front)) / 6.2831853;
 }
 
 float seaGain(int slot, vec4 gainA, vec4 gainB) {
@@ -106,7 +106,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	}
 	if (energy <= 0.0) return warped;
 	float waveHeight = 2.0 * sqrt(re * re + im * im);
-	float twoPercent = sqrt(log(50.0) / 2.0) * 4.0 * sqrt(energy / 2.0);
+	float twoPercent = SEA_TWO_PERCENT * 4.0 * sqrt(energy / 2.0);
 	float runUp = bed.z * sqrt(waveHeight / twoPercent);
 	float arrivedHeight = 2.0 * sqrt(arrivedRe * arrivedRe + arrivedIm * arrivedIm);
 

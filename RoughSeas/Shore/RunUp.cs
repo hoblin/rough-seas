@@ -1,19 +1,13 @@
 using System;
 using System.Collections.Generic;
+using RoughSeas.Water;
 
 namespace RoughSeas.Shore;
 
 /// <summary>The run-up exceeded by 2% of waves: Stockdon's on a sandy slope up to about 1:7, EurOtop's on a steeper or harder one, and a standing wave's crest at a wall.</summary>
 public sealed class RunUp(RunUpConfig config)
 {
-    public const double Gravity = 9.81;
-
     public double WallSlope => config.WallSlope;
-
-    public static double DeepLength(double period) => Gravity * period * period / (2 * Math.PI);
-
-    public static double Iribarren(double height, double period, double slope) =>
-        height > 0 && period > 0 ? slope / Math.Sqrt(height / DeepLength(period)) : double.PositiveInfinity;
 
     public double Metres(double height, double period, double slope, BedConfig bed)
     {
@@ -26,7 +20,7 @@ public sealed class RunUp(RunUpConfig config)
     public double Over(double height, double period, IReadOnlyList<double> profile, BedConfig bed)
     {
         if (height <= 0 || period <= 0 || profile.Count == 0) return 0;
-        var reach = config.DissipativeFactor * Math.Sqrt(height * DeepLength(period));
+        var reach = config.DissipativeFactor * Math.Sqrt(height * WaveTheory.DeepLength(period));
         for (var i = 0; i < 3; i++) reach = Metres(height, period, Slope(profile, reach), bed);
         return reach;
     }
@@ -43,16 +37,17 @@ public sealed class RunUp(RunUpConfig config)
 
     private double Stockdon(double height, double period, double slope)
     {
-        var scale = Math.Sqrt(height * DeepLength(period));
-        if (Iribarren(height, period, slope) < config.DissipativeIribarren) return config.DissipativeFactor * scale;
+        var deepLength = WaveTheory.DeepLength(period);
+        var scale = Math.Sqrt(height * deepLength);
+        if (WaveTheory.Iribarren(slope, height, deepLength) < config.DissipativeIribarren) return config.DissipativeFactor * scale;
         var setup = config.SetupSlopeFactor * slope * scale;
-        var swash = Math.Sqrt(height * DeepLength(period) * (config.IncidentSwashFactor * slope * slope + config.InfragravitySwash));
+        var swash = Math.Sqrt(height * deepLength * (config.IncidentSwashFactor * slope * slope + config.InfragravitySwash));
         return config.StockdonFactor * (setup + swash / 2);
     }
 
     private double Eurotop(double height, double period, double slope, double roughness)
     {
-        var breaker = Iribarren(height, period / config.SpectralPeriodRatio, slope);
+        var breaker = WaveTheory.Iribarren(slope, height, WaveTheory.DeepLength(period / config.SpectralPeriodRatio));
         var reach = config.EurotopFactor * breaker;
         var ceiling = config.EurotopCeiling - config.EurotopCeilingRoot / Math.Sqrt(breaker);
         if (ceiling > 0) reach = Math.Min(reach, ceiling);

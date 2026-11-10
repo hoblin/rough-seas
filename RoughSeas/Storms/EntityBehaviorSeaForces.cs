@@ -8,6 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -174,7 +175,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     {
         var waves = storms.Waves;
         var rand = entity.World.Rand;
-        var height = Waves.WaveHeight(state.WaveHeight, rand.NextDouble());
+        var height = WaveTheory.RayleighHeight(state.WaveHeight, rand.NextDouble());
         var swamped = bilge?.Swamped == true;
         var depth = WaterDepth(storms.Config.Waves.MaxDepthBlocks);
         var surf = waves.BreaksAt(depth, height);

@@ -1,4 +1,5 @@
 using RoughSeas.Surf;
+using RoughSeas.Water;
 
 namespace RoughSeas.Tests.Surf;
 
@@ -52,7 +53,7 @@ public class PhaseFieldTests
         var (numberX, numberZ) = (-Number * Math.Cos(Math.PI / 4), Number * Math.Sin(Math.PI / 4));
         var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.6f * x), numberX, numberZ);
         var depth = 0.6 * 6;
-        var expected = Math.Asin(Math.Sin(Math.PI / 4) * Number / Shoaling.Wavenumber(Number, depth));
+        var expected = Math.Asin(Math.Sin(Math.PI / 4) * Number / WaveTheory.Wavenumber(Number, depth));
         Assert.Equal(expected, Angle(lag, numberX, numberZ, 6, 56), 1);
     }
 

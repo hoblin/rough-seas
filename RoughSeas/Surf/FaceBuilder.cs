@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RoughSeas.Shore;
+using RoughSeas.Water;
 
 namespace RoughSeas.Surf;
 
@@ -29,7 +30,7 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
         {
             var seed = seeds[i];
             var sea = seaAt(seed.X, seed.Z);
-            var wavelength = RunUp.DeepLength(sea.Period);
+            var wavelength = WaveTheory.DeepLength(sea.Period);
             var height = Math.Min(sea.Height, map[seed.X, seed.Z].Elevation / breakingDepthRatio);
             var (normalX, normalZ, faceX, faceZ) = normals.Around(seed, SmoothingBlocks(wavelength));
             var coefficient = reflection.Coefficient(height, sea.Period, Slope(map, seed, height), seed.Bed.Roughness);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RoughSeas.Water;
 
 namespace RoughSeas.Surf;
 
@@ -90,16 +91,16 @@ public static class WaveEnergy
             var deepNumber = Math.Sqrt(train.NumberX * train.NumberX + train.NumberZ * train.NumberZ);
             var cells = size * size;
             (Energy, speed, alongX, alongZ) = (new double[cells], new double[cells], new double[cells], new double[cells]);
-            Frequency = Math.Sqrt(Shoaling.Gravity * deepNumber);
+            Frequency = WaveTheory.DeepFrequency(deepNumber);
             deepEnergy = train.Amplitude * train.Amplitude / 2;
             Portion = new double[cells];
             Array.Fill(Portion, totalEnergy > 0 ? deepEnergy / totalEnergy : 0);
-            deepFlux = deepEnergy * (deepNumber > 0 ? 0.5 * Math.Sqrt(Shoaling.Gravity / deepNumber) : 0);
+            deepFlux = deepEnergy * (deepNumber > 0 ? 0.5 * Math.Sqrt(WaveTheory.Gravity / deepNumber) : 0);
             if (deepNumber <= 0) return;
             for (var i = 0; i < cells; i++)
             {
                 if (!(depth[i] > 0)) continue;
-                speed[i] = Shoaling.GroupSpeed(deepNumber, felt[i]);
+                speed[i] = WaveTheory.GroupSpeed(deepNumber, felt[i]);
                 var (x, z) = (i % size, i / size);
                 var towardX = train.NumberX + Slope(train.Lag, depth, size, x, z, 1, 0);
                 var towardZ = train.NumberZ + Slope(train.Lag, depth, size, x, z, 0, 1);

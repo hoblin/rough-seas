@@ -5,6 +5,7 @@ using HarmonyLib;
 using OpenTK.Graphics.OpenGL;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Surf;
+using RoughSeas.Water;
 using Vintagestory.Client;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -179,7 +180,10 @@ public static class SurfaceShader
         vertexCode = api.Assets.Get(VertexSource).ToText()
             .Replace("SEA_SLOTS", surface!.Slots.ToString(CultureInfo.InvariantCulture))
             .Replace("SEA_SHORT", surface.ShortSlots.ToString(CultureInfo.InvariantCulture))
-            .Replace("SEA_TRAIL_SECONDS", SeaSurface.TrailSeconds.ToString("0.0###", CultureInfo.InvariantCulture));
+            .Replace("SEA_TRAIL_SECONDS", SeaSurface.TrailSeconds.ToString("0.0###", CultureInfo.InvariantCulture))
+            .Replace("SEA_GRAVITY", WaveTheory.Gravity.ToString("0.0###", CultureInfo.InvariantCulture))
+            .Replace("SEA_BORE_AMPLITUDE", WaveTheory.BoreAmplitude.ToString("0.0######", CultureInfo.InvariantCulture))
+            .Replace("SEA_TWO_PERCENT", WaveTheory.TwoPercentRatio.ToString("0.0######", CultureInfo.InvariantCulture));
         fragmentCode = api.Assets.Get(FragmentSource).ToText();
         wetCode = api.Assets.Get(WetSource).ToText();
     }

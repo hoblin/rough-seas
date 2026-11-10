@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Surf;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -14,7 +15,6 @@ namespace RoughSeas.Storms;
 /// </summary>
 public sealed class SeaSurface
 {
-    private const double Gravity = 9.81;
     private const double FullTurn = 2 * Math.PI;
     private const double Faded = 0.001;
     private const int SurfaceSearchSteps = 3;
@@ -22,9 +22,6 @@ public sealed class SeaSurface
 
     private const double SurfOnAnyShoreMetres = 0.6;
     private const double BreakingFromShare = 0.1;
-
-    /// <summary>A sawtooth carries as much energy as a sine of 1 at this amplitude: its variance is a third of the square of it, a sine's a half.</summary>
-    private const double BoreAmplitude = 1.2247449;
 
     /// <summary>The foam trail looks back this far and twice as far, here and in the shader.</summary>
     public const double TrailSeconds = 0.7;
@@ -100,7 +97,7 @@ public sealed class SeaSurface
     /// <summary>Where the rising trains run, fixed for their life, unlike <see cref="TowardRadians"/>, the wind at the last aim; <c>seafoam.fsh</c> lays its streaks along it.</summary>
     public double WavesTowardRadians => Rising is { } trains ? Toward(trains) : 0;
 
-    public double DrawnHeight => 4 * Math.Sqrt(amplitude.Sum(value => value * value) / 2);
+    public double DrawnHeight => WaveTheory.SignificantHeight(amplitude.Sum(value => value * value));
 
     public bool Calm { get; private set; } = true;
 
@@ -113,13 +110,6 @@ public sealed class SeaSurface
     public double[] AmplitudeShares() => slotShares;
 
     public double BoreFrontSlope => config.Shore.BoreFrontSlope;
-
-    private double Bore(double theta, double height, double number)
-    {
-        var front = Math.Clamp(height * number / (FullTurn * BoreFrontSlope), 0.02, 0.5);
-        var ahead = ((theta - Math.PI / 2) % FullTurn + FullTurn) % FullTurn / FullTurn;
-        return BoreAmplitude * (ahead < front ? 1 - 2 * ahead / front : 2 * (ahead - front) / (1 - front) - 1);
-    }
 
     public int Dominant { get; private set; }
 
@@ -181,7 +171,7 @@ public sealed class SeaSurface
             var share = banks[0]?.Heading == banks[1]?.Heading ? (bank == active ? 1 : 0) : bank == active ? rising : fading;
             shortAmplitude[slot] = banks[bank] != null ? shortTrains[slot % shortTrains.Length].Amplitude * developed * share : 0;
         }
-        shortSeaHeight = 4 * Math.Sqrt(shortAmplitude.Sum(value => value * value) / 2);
+        shortSeaHeight = WaveTheory.SignificantHeight(shortAmplitude.Sum(value => value * value));
         Dominant = dominant;
         Calm = calm;
         Steepness = slopes > 0 ? Math.Min(config.Steepness, 1 / slopes) : config.Steepness;
@@ -217,12 +207,12 @@ public sealed class SeaSurface
         var broken = share > 0 && Seabed is { } bed && bed.Covers(x, z) ? bed.BreakingAt(x, z) * bed.EdgeShare(x, z) : 0;
         var waterEnergy = 0.0;
         for (var slot = 0; slot < Slots; slot++) waterEnergy += heights[slot] * heights[slot];
-        var boreHeight = share * 4 * Math.Sqrt(waterEnergy / 2);
+        var boreHeight = share * WaveTheory.SignificantHeight(waterEnergy);
         for (var slot = 0; slot < Slots; slot++)
         {
             if (heights[slot] <= 0) continue;
             var theta = Phase(slot, x, z) + lags[slot];
-            rise += heights[slot] * (Math.Sin(theta) + (broken > 0 ? (Bore(theta, boreHeight, numbers[slot]) - Math.Sin(theta)) * broken : 0));
+            rise += heights[slot] * (Math.Sin(theta) + (broken > 0 ? (WaveTheory.Bore(theta, WaveTheory.BoreFront(boreHeight, numbers[slot], BoreFrontSlope)) - Math.Sin(theta)) * broken : 0));
             var sway = (1 - broken) * steepness * heights[slot] * Math.Cos(theta);
             shiftX += sway * towardX[slot];
             shiftZ += sway * towardZ[slot];
@@ -325,7 +315,7 @@ public sealed class SeaSurface
             im += amplitude[slot] * Math.Sin(theta);
             energy += amplitude[slot] * amplitude[slot];
         }
-        return (2 * Math.Sqrt(re * re + im * im), Math.Sqrt(Math.Log(50) / 2) * 4 * Math.Sqrt(energy / 2));
+        return (2 * Math.Sqrt(re * re + im * im), WaveTheory.TwoPercentRatio * WaveTheory.SignificantHeight(energy));
     }
 
     private double LagAt(int slot, double x, double z) =>
@@ -360,7 +350,7 @@ public sealed class SeaSurface
             var valid = slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == (numberX[slot], numberZ[slot]);
             offshore += share * share * amplitude[slot] * amplitude[slot];
             heights[slot] = amplitude[slot] * (valid ? 1 + (field.GainAt(slot, x, z) - 1) * edge : 1);
-            numbers[slot] = deep > 0 ? deep + (Shoaling.Wavenumber(deep, depth) - deep) * edge : 0;
+            numbers[slot] = deep > 0 ? deep + (WaveTheory.Wavenumber(deep, depth) - deep) * edge : 0;
             slopes += heights[slot] * numbers[slot];
             if (!valid) continue;
             lags[slot] = edge * field.LagAt(slot, x, z);
@@ -379,7 +369,7 @@ public sealed class SeaSurface
         var cusp = slopes > 0 ? 1 / slopes : Steepness;
         var steepness = Math.Min(Steepness, cusp);
         var slope = Math.Sqrt(Math.Pow(field.SlopeXAt(x, z), 2) + Math.Pow(field.SlopeZAt(x, z), 2));
-        return shape.Plunges(slope, 4 * Math.Sqrt(offshore / 2), Wavenumber(Dominant)) ? steepness + (cusp - steepness) * field.BreakingAt(x, z) * edge : steepness;
+        return shape.Plunges(slope, WaveTheory.SignificantHeight(offshore), Wavenumber(Dominant)) ? steepness + (cusp - steepness) * field.BreakingAt(x, z) * edge : steepness;
     }
 
     /// <summary>
@@ -498,7 +488,7 @@ public sealed class SeaSurface
     private Trains? TrainsOf(WaveGeneration raised)
     {
         if (!raised.Raised) return null;
-        var length = Gravity * raised.Period * raised.Period / FullTurn;
+        var length = WaveTheory.DeepLength(raised.Period);
         var heading = (int)Math.Round(raised.TowardRadians / FullTurn * headings);
         return new Trains((heading % headings + headings) % headings, (int)Math.Round(Math.Log(length) / Math.Log(1 + config.Stretch)));
     }
@@ -523,7 +513,7 @@ public sealed class SeaSurface
             var angle = towardRadians + train.AngleDegrees * Math.PI / 180;
             var number = FullTurn / Math.Max(config.MinLengthBlocks, length * train.LengthFactor);
             var slot = bank * generation + i;
-            (numberX[slot], numberZ[slot], frequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, Math.Sqrt(Gravity * number));
+            (numberX[slot], numberZ[slot], frequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, WaveTheory.DeepFrequency(number));
             amplitude[slot] = 0;
         }
         for (var i = 0; i < shortTrains.Length; i++)
@@ -531,7 +521,7 @@ public sealed class SeaSurface
             var angle = towardRadians + shortTrains[i].Angle;
             var number = FullTurn / shortTrains[i].Length;
             var slot = bank * shortTrains.Length + i;
-            (shortX[slot], shortZ[slot], shortFrequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, Math.Sqrt(Gravity * number));
+            (shortX[slot], shortZ[slot], shortFrequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, WaveTheory.DeepFrequency(number));
             shortAmplitude[slot] = 0;
         }
         Changed?.Invoke(string.Format(System.Globalization.CultureInfo.InvariantCulture,
