@@ -19,7 +19,7 @@ public class SeaSurfaceSeabedTests
         {
             if (frame % 30 == 0)
             {
-                surface.Aim(height, raised.TowardRadians, 6);
+                surface.Aim(height, 6);
                 surface.Raise(raised, raised, 0);
             }
             surface.Advance(frame / 60.0);
@@ -29,7 +29,7 @@ public class SeaSurfaceSeabedTests
 
     private static SurfField Flat(SeaSurface surface, float depth, (double X, double Z)[]? numbers = null, float lag = 0)
     {
-        var field = new SurfField(OriginX, OriginZ, Size, numbers ?? surface.Vectors());
+        var field = new SurfField(OriginX, OriginZ, Size, numbers ?? surface.Trains.Vectors());
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
         {
@@ -133,7 +133,7 @@ public class SeaSurfaceSeabedTests
         var surface = Settled(2);
         surface.Seabed = Flat(surface, 1000);
         var open = surface.HeightAt(MiddleX, MiddleZ, 1);
-        surface.Seabed = Flat(surface, 1000, surface.Vectors().Select(number => (number.X * 2, number.Z)).ToArray(), lag: 1.5f);
+        surface.Seabed = Flat(surface, 1000, surface.Trains.Vectors().Select(number => (number.X * 2, number.Z)).ToArray(), lag: 1.5f);
         Assert.Equal(open, surface.HeightAt(MiddleX, MiddleZ, 1), 3);
     }
 

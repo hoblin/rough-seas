@@ -22,10 +22,10 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
 
     public void Update(double playerX, double playerZ, double lived)
     {
-        var elapsed = surface.Seconds - lastSeconds;
-        lastSeconds = surface.Seconds;
+        var elapsed = surface.Trains.Seconds - lastSeconds;
+        lastSeconds = surface.Trains.Seconds;
         var window = elapsed > LeapShare * lived ? lived : elapsed;
-        if (!(window > 0) || surface.Calm || surface.Seabed is not { } field) return;
+        if (!(window > 0) || surface.Trains.Calm || surface.Seabed is not { } field) return;
         var radius = config.RadiusBlocks * config.RadiusBlocks;
         bool Near(double x, double z) => (x - playerX) * (x - playerX) + (z - playerZ) * (z - playerZ) <= radius;
 
@@ -70,7 +70,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
 
         broken++;
         highest = Math.Max(highest, height);
-        var period = surface.DominantPeriod;
+        var period = surface.Trains.DominantPeriod;
         var impact = spray.Wave(height, period, depth, crest, waves.BreakerCelerity(height, period, depth));
         Burst(x + Off(wall.SideX), wall.Level + WaterColumn.StillLevel + crest, z + Off(wall.SideZ), wall.SideZ, wall.SideX, crest, impact);
     }

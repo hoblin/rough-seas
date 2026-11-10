@@ -68,7 +68,7 @@ public class StormsModSystem : ModSystem
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var surface = Surface = new SeaSurface(Config.Surface, Waves);
         var field = new SurfaceField();
-        surface.Changed += change => Log("surface: " + change);
+        surface.Trains.Changed += change => Log("surface: " + change);
         DrawnSea = new DrawnSea(surface, field);
         DrawnWater = new DrawnWater(DrawnSea);
         var shoreConfig = capi.ModLoader.GetModSystem<ShoreModSystem>().Config;

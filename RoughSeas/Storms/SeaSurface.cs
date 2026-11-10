@@ -8,15 +8,13 @@ namespace RoughSeas.Storms;
 
 /// <summary>
 /// The sea's surface as the client draws it, and as the server builds it where a decision needs it (<see cref="SwellAround"/>):
-/// wave trains whose direction, length and speed stay fixed for their life, advanced by one clock per frame. The water
-/// shader and every floating body read this one state.
+/// the <see cref="WaveTrains"/> over the seabed. The water shader and every floating body read this one state.
 /// <see cref="DisplacementAt"/> and <see cref="FoldAt"/> are the formulas of
 /// <c>assets/roughseas/shaderincludes/seasurface.vsh</c>; a change to one is made to the other.
 /// </summary>
 public sealed class SeaSurface
 {
     private const double FullTurn = 2 * Math.PI;
-    private const double Faded = 0.001;
     private const int SurfaceSearchSteps = 3;
     private const int FoldSamplesAcross = 24;
 
@@ -32,18 +30,6 @@ public sealed class SeaSurface
     private readonly SurfaceConfig config;
     private readonly Waves waves;
     private readonly SurfShape shape;
-    private readonly int generation;
-    private readonly int headings;
-    private readonly double[] amplitudeShare;
-    private readonly double[] slotShares;
-    private double shortSeaHeight;
-    private readonly double[] numberX, numberZ, frequency, amplitude;
-    private readonly (double Length, double Angle, double Amplitude)[] shortTrains;
-    private readonly double shortHeight;
-    private readonly double[] shortX, shortZ, shortFrequency, shortAmplitude;
-    private readonly Trains?[] banks = new Trains?[2];
-    private int active = -1;
-    private double risingFrom = double.NegativeInfinity;
 
     public SeaSurface(SurfaceConfig config, Waves waves)
     {
@@ -51,131 +37,34 @@ public sealed class SeaSurface
         this.waves = waves;
         var (plungingFrom, plungingTo) = waves.PlungingIribarren;
         shape = new SurfShape(waves.BreakingDepthRatio, plungingFrom, plungingTo, waves.CrestRatio);
-        generation = config.Trains.Length;
-        headings = (int)Math.Round(360 / config.TurnDegrees);
-        var energy = config.Trains.Sum(train => train.Energy);
-        amplitudeShare = config.Trains.Select(train => Math.Sqrt(train.Energy / energy) / (2 * Math.Sqrt(2))).ToArray();
-        var slots = banks.Length * generation;
-        slotShares = Enumerable.Range(0, slots).Select(slot => amplitudeShare[slot % generation]).ToArray();
-        numberX = new double[slots];
-        numberZ = new double[slots];
-        frequency = new double[slots];
-        amplitude = new double[slots];
-
-        var bands = config.ShortWaves.Bands.Select(band => (band, variance: config.ShortWaves.PhillipsConstant / (4 * FullTurn * FullTurn) * (band.ToBlocks * band.ToBlocks - band.FromBlocks * band.FromBlocks))).ToArray();
-        shortTrains = bands.SelectMany(entry => entry.band.AnglesDegrees.Select(angle => (Math.Sqrt(entry.band.FromBlocks * entry.band.ToBlocks), angle * Math.PI / 180, Math.Sqrt(2 * entry.variance / entry.band.AnglesDegrees.Length)))).ToArray();
-        shortHeight = 4 * Math.Sqrt(bands.Sum(entry => entry.variance));
-        var shortSlots = banks.Length * shortTrains.Length;
-        shortX = new double[shortSlots];
-        shortZ = new double[shortSlots];
-        shortFrequency = new double[shortSlots];
-        shortAmplitude = new double[shortSlots];
+        Trains = new WaveTrains(config);
     }
 
-    public int Slots => amplitude.Length;
-
-    public int ShortSlots => shortAmplitude.Length;
-
-    public double Seconds { get; private set; } = double.NaN;
-
-    public long Frame { get; private set; }
-
-    public double Steepness { get; private set; }
+    public WaveTrains Trains { get; }
 
     public Foam Foam { get; private set; }
 
-    /// <summary>The highest significant height around the player, which the surface is aimed at.</summary>
-    public double SeaHeight { get; private set; }
-
-    public double SurfDepth => config.SurfFoam ? waves.BreakingDepth(Math.Max(SeaHeight, SurfOnAnyShoreMetres)) : 0;
+    public double SurfDepth => config.SurfFoam ? waves.BreakingDepth(Math.Max(Trains.SeaHeight, SurfOnAnyShoreMetres)) : 0;
 
     /// <summary>The fold above which a crest whitens, set so the whitecaps cover the Beaufort force's share of the sea.</summary>
     public double CapsFold { get; private set; } = double.PositiveInfinity;
-
-    public double TowardRadians { get; private set; }
-
-    /// <summary>Where the rising trains run, fixed for their life, unlike <see cref="TowardRadians"/>, the wind at the last aim; <c>seafoam.fsh</c> lays its streaks along it.</summary>
-    public double WavesTowardRadians => Rising is { } trains ? Toward(trains) : 0;
-
-    public double DrawnHeight => WaveTheory.SignificantHeight(amplitude.Sum(value => value * value));
-
-    public bool Calm { get; private set; } = true;
 
     public SurfField? Seabed { get; set; }
 
     public SurfShape Shape => shape;
 
-    public (double X, double Z)[] Vectors() => Enumerable.Range(0, Slots).Select(slot => (numberX[slot], numberZ[slot])).ToArray();
-
-    public double[] AmplitudeShares() => slotShares;
-
     public double BoreFrontSlope => config.Shore.BoreFrontSlope;
 
-    public int Dominant { get; private set; }
-
-    public double DominantPeriod => frequency[Dominant] > 0 ? FullTurn / frequency[Dominant] : 0;
-
-    public event Action<string>? Changed;
-
-    public void Aim(double height, double towardRadians, double beaufort, double foamShare = 1)
+    public void Aim(double height, double beaufort, double foamShare = 1)
     {
         Foam = Foam.Lerp(default, FoamAt(beaufort), Math.Clamp(foamShare, 0, 1));
-        (SeaHeight, TowardRadians) = (height, towardRadians);
+        Trains.Aim(height);
         CapsFold = FoldCovering(Math.Min(1, Foam.Caps / BreakingCrestShare));
     }
 
-    public void Raise(WaveGeneration earlier, WaveGeneration latest, double bornSeconds, bool crossed = false)
-    {
-        var from = TrainsOf(earlier);
-        if ((TrainsOf(latest) ?? from) is not { } next || Rising == next) return;
+    public void Raise(WaveGeneration earlier, WaveGeneration latest, double bornSeconds, bool crossed = false) => Trains.Raise(earlier, latest, bornSeconds, crossed);
 
-        if (Rising is { } drawn && drawn == from && !crossed) Rise(1 - active, next, bornSeconds);
-        else if (active < 0 || !crossed)
-        {
-            if (from is { } first && first != next)
-            {
-                Load(0, first);
-                Rise(1, next, bornSeconds);
-            }
-            else Rise(0, next, double.NegativeInfinity);
-        }
-        else
-        {
-            // The kept bank's weight carries on unbroken, and the new trains take the dropped bank's, so the drawn energy doesn't jump.
-            var kept = banks[1 - active] == next || Handover >= 0.5 ? active : 1 - active;
-            Rise(1 - kept, next, Seconds - Math.Acos(Weight(kept)) / (Math.PI / 2) * config.SettleSeconds);
-        }
-    }
-
-    public void Advance(double seconds)
-    {
-        Seconds = seconds;
-        Frame++;
-        var handover = Handover;
-        var (rising, fading) = (Math.Sin(handover * Math.PI / 2), Math.Cos(handover * Math.PI / 2));
-
-        var slopes = 0.0;
-        var calm = true;
-        var dominant = 0;
-        for (var slot = 0; slot < Slots; slot++)
-        {
-            amplitude[slot] = Wavenumber(slot) > 0 ? amplitudeShare[slot % generation] * SeaHeight * (slot / generation == active ? rising : fading) : 0;
-            slopes += amplitude[slot] * Wavenumber(slot);
-            calm &= amplitude[slot] <= Faded;
-            if (amplitude[slot] > amplitude[dominant]) dominant = slot;
-        }
-        var developed = shortHeight > 0 ? Math.Min(1, SeaHeight / shortHeight) : 0;
-        for (var slot = 0; slot < ShortSlots; slot++)
-        {
-            var bank = slot / shortTrains.Length;
-            var share = banks[0]?.Heading == banks[1]?.Heading ? (bank == active ? 1 : 0) : bank == active ? rising : fading;
-            shortAmplitude[slot] = banks[bank] != null ? shortTrains[slot % shortTrains.Length].Amplitude * developed * share : 0;
-        }
-        shortSeaHeight = WaveTheory.SignificantHeight(shortAmplitude.Sum(value => value * value));
-        Dominant = dominant;
-        Calm = calm;
-        Steepness = slopes > 0 ? Math.Min(config.Steepness, 1 / slopes) : config.Steepness;
-    }
+    public void Advance(double seconds) => Trains.Advance(seconds);
 
     /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
     public double HeightAt(double x, double z, double share = 1, bool shortWaves = true)
@@ -191,27 +80,28 @@ public sealed class SeaSurface
 
     public (double X, double Y, double Z) DisplacementAt(double x, double z, double share = 0, bool shortWaves = true)
     {
-        Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
-        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        var slots = Trains.Slots;
+        Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
+        Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
         var steepness = Local(x, z, share, heights, lags, numbers, towardX, towardZ);
         var facing = Facing(x, z, share);
         var limited = 1.0;
         if (facing is { } wall)
         {
             var total = 0.0;
-            for (var slot = 0; slot < Slots; slot++) total += heights[slot] * wall.Reflection * Math.Max(0, -(towardX[slot] * wall.NormalX + towardZ[slot] * wall.NormalZ));
+            for (var slot = 0; slot < slots; slot++) total += heights[slot] * wall.Reflection * Math.Max(0, -(towardX[slot] * wall.NormalX + towardZ[slot] * wall.NormalZ));
             var allowed = Seabed!.FaceSlope * Math.Max(0, wall.Distance - FaceReading.FirstWaterVertex);
             if (total > allowed) limited = allowed / total;
         }
         double shiftX = 0, rise = 0, shiftZ = 0;
         var broken = share > 0 && Seabed is { } bed && bed.Covers(x, z) ? bed.BreakingAt(x, z) * bed.EdgeShare(x, z) : 0;
         var waterEnergy = 0.0;
-        for (var slot = 0; slot < Slots; slot++) waterEnergy += heights[slot] * heights[slot];
+        for (var slot = 0; slot < slots; slot++) waterEnergy += heights[slot] * heights[slot];
         var boreHeight = share * WaveTheory.SignificantHeight(waterEnergy);
-        for (var slot = 0; slot < Slots; slot++)
+        for (var slot = 0; slot < slots; slot++)
         {
             if (heights[slot] <= 0) continue;
-            var theta = Phase(slot, x, z) + lags[slot];
+            var theta = Trains.Phase(slot, x, z) + lags[slot];
             rise += heights[slot] * (Math.Sin(theta) + (broken > 0 ? (WaveTheory.Bore(theta, WaveTheory.BoreFront(boreHeight, numbers[slot], BoreFrontSlope)) - Math.Sin(theta)) * broken : 0));
             var sway = (1 - broken) * steepness * heights[slot] * Math.Cos(theta);
             shiftX += sway * towardX[slot];
@@ -237,15 +127,9 @@ public sealed class SeaSurface
         {
             var depth = field.DepthAt(x, z);
             if (depth <= 0) return 0;
-            if (shortSeaHeight > 0) kept = Math.Min(1, depth / (shape.BreakingDepthRatio * shortSeaHeight));
+            if (Trains.ShortSeaHeight > 0) kept = Math.Min(1, depth / (shape.BreakingDepthRatio * Trains.ShortSeaHeight));
         }
-        var rise = 0.0;
-        for (var slot = 0; slot < ShortSlots; slot++)
-        {
-            if (shortAmplitude[slot] <= 0) continue;
-            rise += kept * shortAmplitude[slot] * Math.Sin(shortX[slot] * x + shortZ[slot] * z - shortFrequency[slot] * Seconds);
-        }
-        return rise;
+        return Trains.ShortRise(x, z, kept);
     }
 
     private FaceReading? Facing(double x, double z, double share) =>
@@ -254,32 +138,35 @@ public sealed class SeaSurface
     /// <summary>The dominant train's crests here, as the bed holds them back: where they run, how fast, and how far apart.</summary>
     public (double TowardDegrees, double Speed, double Length) CrestAt(double x, double z)
     {
+        var dominant = Trains.Dominant;
         var edge = Seabed is { } field && field.Covers(x, z) ? field.EdgeShare(x, z) : 0;
-        var (alongX, alongZ) = (numberX[Dominant], numberZ[Dominant]);
+        var (alongX, alongZ) = (Trains.NumberX(dominant), Trains.NumberZ(dominant));
         if (edge > 0)
         {
-            alongX += edge * (LagAt(Dominant, x + 1, z) - LagAt(Dominant, x - 1, z)) / (2 * edge);
-            alongZ += edge * (LagAt(Dominant, x, z + 1) - LagAt(Dominant, x, z - 1)) / (2 * edge);
+            alongX += edge * (LagAt(dominant, x + 1, z) - LagAt(dominant, x - 1, z)) / (2 * edge);
+            alongZ += edge * (LagAt(dominant, x, z + 1) - LagAt(dominant, x, z - 1)) / (2 * edge);
         }
         var number = Math.Sqrt(alongX * alongX + alongZ * alongZ);
-        return number > 0 ? ((Math.Atan2(alongZ, alongX) * 180 / Math.PI + 360) % 360, frequency[Dominant] / number, FullTurn / number) : default;
+        return number > 0 ? ((Math.Atan2(alongZ, alongX) * 180 / Math.PI + 360) % 360, Trains.Frequency(dominant) / number, FullTurn / number) : default;
     }
 
     /// <summary>How long ago, in seconds of the waves' clock, the dominant train's crest passed here.</summary>
     public double SinceCrest(double x, double z)
     {
-        var turned = (Math.PI / 2 - Phase(Dominant, x, z) - LagAt(Dominant, x, z)) % FullTurn;
-        return (turned < 0 ? turned + FullTurn : turned) / frequency[Dominant];
+        var dominant = Trains.Dominant;
+        var turned = (Math.PI / 2 - Trains.Phase(dominant, x, z) - LagAt(dominant, x, z)) % FullTurn;
+        return (turned < 0 ? turned + FullTurn : turned) / Trains.Frequency(dominant);
     }
 
     /// <summary>The cosine at which the dominant train, as the bed turns it here, runs into this outward normal; 0 for a train running away from it.</summary>
     public double Incidence(double x, double z, double normalX, double normalZ)
     {
-        var (towardX, towardZ) = (numberX[Dominant], numberZ[Dominant]);
-        if (Seabed is { } field && field.Covers(x, z) && Dominant < field.Numbers.Length && Dominant < SurfField.Slots && field.Numbers[Dominant] == (towardX, towardZ))
+        var dominant = Trains.Dominant;
+        var (towardX, towardZ) = (Trains.NumberX(dominant), Trains.NumberZ(dominant));
+        if (Seabed is { } field && field.Covers(x, z) && Holds(field, dominant))
         {
-            towardX += (field.LagAt(Dominant, x + 1, z) - field.LagAt(Dominant, x - 1, z)) / 2;
-            towardZ += (field.LagAt(Dominant, x, z + 1) - field.LagAt(Dominant, x, z - 1)) / 2;
+            towardX += (field.LagAt(dominant, x + 1, z) - field.LagAt(dominant, x - 1, z)) / 2;
+            towardZ += (field.LagAt(dominant, x, z + 1) - field.LagAt(dominant, x, z - 1)) / 2;
         }
         var length = Math.Sqrt(towardX * towardX + towardZ * towardZ);
         return length > 0 ? Math.Max(0, -(towardX * normalX + towardZ * normalZ) / length) : 0;
@@ -288,16 +175,16 @@ public sealed class SeaSurface
     /// <summary>The height of the wave passing here, trough to crest, over the bed, and whether the depth has capped this sea here, as the shader's <c>breaking</c> says.</summary>
     public (double Height, double Depth, bool Capped) WaveAt(double x, double z, double share)
     {
-        Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
-        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        var slots = Trains.Slots;
+        Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
+        Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
         Local(x, z, share, heights, lags, numbers, towardX, towardZ);
-        double re = 0, im = 0, energy = 0;
-        for (var slot = 0; slot < Slots; slot++)
+        double re = 0, im = 0;
+        for (var slot = 0; slot < slots; slot++)
         {
-            var theta = Phase(slot, x, z) + lags[slot];
+            var theta = Trains.Phase(slot, x, z) + lags[slot];
             re += heights[slot] * Math.Cos(theta);
             im += heights[slot] * Math.Sin(theta);
-            energy += heights[slot] * heights[slot];
         }
         var depth = Seabed?.DepthAt(x, z) ?? double.PositiveInfinity;
         var breaking = Seabed is { } field && field.Covers(x, z) ? field.BreakingAt(x, z) * field.EdgeShare(x, z) : 0;
@@ -308,68 +195,72 @@ public sealed class SeaSurface
     public (double Height, double TwoPercent) SheetWaveAt(double x, double z)
     {
         double re = 0, im = 0, energy = 0;
-        for (var slot = 0; slot < Slots; slot++)
+        for (var slot = 0; slot < Trains.Slots; slot++)
         {
-            var theta = Phase(slot, x, z) + LagAt(slot, x, z);
-            re += amplitude[slot] * Math.Cos(theta);
-            im += amplitude[slot] * Math.Sin(theta);
-            energy += amplitude[slot] * amplitude[slot];
+            var theta = Trains.Phase(slot, x, z) + LagAt(slot, x, z);
+            var amplitude = Trains.Amplitude(slot);
+            re += amplitude * Math.Cos(theta);
+            im += amplitude * Math.Sin(theta);
+            energy += amplitude * amplitude;
         }
         return (2 * Math.Sqrt(re * re + im * im), WaveTheory.TwoPercentRatio * WaveTheory.SignificantHeight(energy));
     }
 
+    private bool Holds(SurfField field, int slot) =>
+        slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == (Trains.NumberX(slot), Trains.NumberZ(slot));
+
     private double LagAt(int slot, double x, double z) =>
-        Seabed is { } field && field.Covers(x, z) && slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == (numberX[slot], numberZ[slot])
-            ? field.EdgeShare(x, z) * field.LagAt(slot, x, z)
-            : 0;
+        Seabed is { } field && field.Covers(x, z) && Holds(field, slot) ? field.EdgeShare(x, z) * field.LagAt(slot, x, z) : 0;
 
     private double Local(double x, double z, double share, Span<double> heights, Span<double> lags, Span<double> numbers, Span<double> towardX,
         Span<double> towardZ)
     {
-        for (var slot = 0; slot < Slots; slot++)
+        var slots = Trains.Slots;
+        for (var slot = 0; slot < slots; slot++)
         {
-            var number = Wavenumber(slot);
-            (heights[slot], lags[slot], numbers[slot]) = (amplitude[slot], 0, number);
-            (towardX[slot], towardZ[slot]) = number > 0 ? (numberX[slot] / number, numberZ[slot] / number) : (0, 0);
+            var number = Trains.Wavenumber(slot);
+            (heights[slot], lags[slot], numbers[slot]) = (Trains.Amplitude(slot), 0, number);
+            (towardX[slot], towardZ[slot]) = number > 0 ? (Trains.NumberX(slot) / number, Trains.NumberZ(slot) / number) : (0, 0);
         }
-        if (share <= 0 || Seabed is not { } field || !field.Covers(x, z)) return Steepness;
+        if (share <= 0 || Seabed is not { } field || !field.Covers(x, z)) return Trains.Steepness;
 
         var depth = field.DepthAt(x, z);
         if (depth <= 0)
         {
             heights.Clear();
-            return Steepness;
+            return Trains.Steepness;
         }
 
         var edge = field.EdgeShare(x, z);
         var offshore = 0.0;
         var slopes = 0.0;
-        for (var slot = 0; slot < Slots; slot++)
+        for (var slot = 0; slot < slots; slot++)
         {
-            var deep = Wavenumber(slot);
-            var valid = slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == (numberX[slot], numberZ[slot]);
-            offshore += share * share * amplitude[slot] * amplitude[slot];
-            heights[slot] = amplitude[slot] * (valid ? 1 + (field.GainAt(slot, x, z) - 1) * edge : 1);
+            var deep = Trains.Wavenumber(slot);
+            var valid = Holds(field, slot);
+            var amplitude = Trains.Amplitude(slot);
+            offshore += share * share * amplitude * amplitude;
+            heights[slot] = amplitude * (valid ? 1 + (field.GainAt(slot, x, z) - 1) * edge : 1);
             numbers[slot] = deep > 0 ? deep + (WaveTheory.Wavenumber(deep, depth) - deep) * edge : 0;
             slopes += heights[slot] * numbers[slot];
             if (!valid) continue;
             lags[slot] = edge * field.LagAt(slot, x, z);
-            var (turnedX, turnedZ) = (numberX[slot] + edge * (field.LagAt(slot, x + 1, z) - field.LagAt(slot, x - 1, z)) / 2,
-                numberZ[slot] + edge * (field.LagAt(slot, x, z + 1) - field.LagAt(slot, x, z - 1)) / 2);
+            var (turnedX, turnedZ) = (Trains.NumberX(slot) + edge * (field.LagAt(slot, x + 1, z) - field.LagAt(slot, x - 1, z)) / 2,
+                Trains.NumberZ(slot) + edge * (field.LagAt(slot, x, z + 1) - field.LagAt(slot, x, z - 1)) / 2);
             var turned = Math.Sqrt(turnedX * turnedX + turnedZ * turnedZ);
             if (turned > 0) (towardX[slot], towardZ[slot]) = (turnedX / turned, turnedZ / turned);
         }
         if (field.FaceAt(x, z) is { Reflection: > 0 } face)
         {
-            for (var slot = 0; slot < Slots; slot++)
+            for (var slot = 0; slot < slots; slot++)
             {
                 slopes += heights[slot] * numbers[slot] * face.Reflection * edge * Math.Max(0, -(towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ));
             }
         }
-        var cusp = slopes > 0 ? 1 / slopes : Steepness;
-        var steepness = Math.Min(Steepness, cusp);
+        var cusp = slopes > 0 ? 1 / slopes : Trains.Steepness;
+        var steepness = Math.Min(Trains.Steepness, cusp);
         var slope = Math.Sqrt(Math.Pow(field.SlopeXAt(x, z), 2) + Math.Pow(field.SlopeZAt(x, z), 2));
-        return shape.Plunges(slope, WaveTheory.SignificantHeight(offshore), Wavenumber(Dominant)) ? steepness + (cusp - steepness) * field.BreakingAt(x, z) * edge : steepness;
+        return shape.Plunges(slope, WaveTheory.SignificantHeight(offshore), Trains.Wavenumber(Trains.Dominant)) ? steepness + (cusp - steepness) * field.BreakingAt(x, z) * edge : steepness;
     }
 
     /// <summary>
@@ -390,18 +281,19 @@ public sealed class SeaSurface
     private (double X, double Z) Orbital(double x, double z, double height, double draft, double alongX, double alongZ,
         double length, double beam, double share)
     {
-        Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
-        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        var slots = Trains.Slots;
+        Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
+        Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
         Local(x, z, share, heights, lags, numbers, towardX, towardZ);
         double velocityX = 0, velocityZ = 0;
-        for (var slot = 0; slot < Slots; slot++)
+        for (var slot = 0; slot < slots; slot++)
         {
             if (heights[slot] <= 0) continue;
-            var number = Wavenumber(slot);
+            var number = Trains.Wavenumber(slot);
             var along = numbers[slot] * (towardX[slot] * alongX + towardZ[slot] * alongZ);
             var across = numbers[slot] * (towardZ[slot] * alongX - towardX[slot] * alongZ);
             var fade = Math.Exp(number * height) * (draft > 0 ? (1 - Math.Exp(-number * draft)) / (number * draft) : 1);
-            var speed = share * heights[slot] * frequency[slot] * Math.Sin(Phase(slot, x, z) + lags[slot]) * fade
+            var speed = share * heights[slot] * Trains.Frequency(slot) * Math.Sin(Trains.Phase(slot, x, z) + lags[slot]) * fade
                 * Sinc(along * length / 2) * Sinc(across * beam / 2);
             velocityX += speed * towardX[slot];
             velocityZ += speed * towardZ[slot];
@@ -413,53 +305,25 @@ public sealed class SeaSurface
 
     public double FoldAt(double x, double z, double share = 0)
     {
-        Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
-        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        var slots = Trains.Slots;
+        Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
+        Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
         var steepness = Local(x, z, share, heights, lags, numbers, towardX, towardZ);
         Span<double> now = stackalloc double[3], behind = stackalloc double[3], farBehind = stackalloc double[3];
         var steepest = 0.0;
-        for (var slot = 0; slot < Slots; slot++)
+        for (var slot = 0; slot < slots; slot++)
         {
             if (heights[slot] <= 0) continue;
-            var number = Wavenumber(slot);
             var (alongX, alongZ) = (towardX[slot], towardZ[slot]);
             var pinch = steepness * heights[slot] * numbers[slot];
-            var theta = Phase(slot, x, z) + lags[slot];
+            var theta = Trains.Phase(slot, x, z) + lags[slot];
             Squeeze(now, alongX, alongZ, pinch * Math.Sin(theta));
-            Squeeze(behind, alongX, alongZ, pinch * Math.Sin(theta + frequency[slot] * TrailSeconds));
-            Squeeze(farBehind, alongX, alongZ, pinch * Math.Sin(theta + frequency[slot] * 2 * TrailSeconds));
+            Squeeze(behind, alongX, alongZ, pinch * Math.Sin(theta + Trains.Frequency(slot) * TrailSeconds));
+            Squeeze(farBehind, alongX, alongZ, pinch * Math.Sin(theta + Trains.Frequency(slot) * 2 * TrailSeconds));
             steepest += pinch;
         }
         return steepest > 0 ? Math.Max(Folding(now), Math.Max(0.6 * Folding(behind), 0.35 * Folding(farBehind))) / steepest : 0;
     }
-
-    public void WriteUniforms(double cameraX, double cameraZ, float[] into)
-    {
-        for (var slot = 0; slot < Slots; slot++)
-        {
-            into[slot * 4] = (float)numberX[slot];
-            into[slot * 4 + 1] = (float)numberZ[slot];
-            into[slot * 4 + 2] = (float)amplitude[slot];
-            into[slot * 4 + 3] = (float)Phase(slot, cameraX, cameraZ);
-        }
-    }
-
-    public void WriteShortUniforms(double cameraX, double cameraZ, float[] into)
-    {
-        for (var slot = 0; slot < ShortSlots; slot++)
-        {
-            into[slot * 4] = (float)shortX[slot];
-            into[slot * 4 + 1] = (float)shortZ[slot];
-            into[slot * 4 + 2] = (float)shortAmplitude[slot];
-            into[slot * 4 + 3] = (float)((shortX[slot] * cameraX + shortZ[slot] * cameraZ - shortFrequency[slot] * Seconds) % FullTurn);
-        }
-    }
-
-    private Trains? Rising => active >= 0 ? banks[active] : null;
-
-    private double Handover =>Math.Clamp((Seconds - risingFrom) / config.SettleSeconds, 0, 1);
-
-    private double Weight(int bank) => bank == active ? Math.Sin(Handover * Math.PI / 2) : Math.Cos(Handover * Math.PI / 2);
 
     private static void Squeeze(Span<double> into, double alongX, double alongZ, double pinch)
     {
@@ -472,60 +336,12 @@ public sealed class SeaSurface
 
     private double FoldCovering(double coverage)
     {
-        if (coverage <= 0 || Calm || Rising is not { } trains) return double.PositiveInfinity;
-        var spacing = Length(trains) / FoldSamplesAcross;
+        if (coverage <= 0 || Trains.Calm || Trains.RisingLength is not { } length) return double.PositiveInfinity;
+        var spacing = length / FoldSamplesAcross;
         var folds = new double[FoldSamplesAcross * FoldSamplesAcross];
         for (var i = 0; i < folds.Length; i++) folds[i] = FoldAt(i % FoldSamplesAcross * spacing * 3.1, i / FoldSamplesAcross * spacing * 2.7);
         Array.Sort(folds);
         return folds[(int)Math.Clamp((1 - coverage) * folds.Length, 0, folds.Length - 1)];
-    }
-
-    private double Phase(int slot, double x, double z) =>
-        (numberX[slot] * x + numberZ[slot] * z - frequency[slot] * Seconds) % FullTurn;
-
-    private double Wavenumber(int slot) => Math.Sqrt(numberX[slot] * numberX[slot] + numberZ[slot] * numberZ[slot]);
-
-    private Trains? TrainsOf(WaveGeneration raised)
-    {
-        if (!raised.Raised) return null;
-        var length = WaveTheory.DeepLength(raised.Period);
-        var heading = (int)Math.Round(raised.TowardRadians / FullTurn * headings);
-        return new Trains((heading % headings + headings) % headings, (int)Math.Round(Math.Log(length) / Math.Log(1 + config.Stretch)));
-    }
-
-    private double Toward(Trains trains) => trains.Heading * FullTurn / headings;
-
-    private double Length(Trains trains) => Math.Pow(1 + config.Stretch, trains.Stretch);
-
-    private void Rise(int bank, Trains trains, double from)
-    {
-        if (banks[bank] != trains) Load(bank, trains);
-        (active, risingFrom) = (bank, from);
-    }
-
-    private void Load(int bank, Trains trains)
-    {
-        banks[bank] = trains;
-        var (towardRadians, length) = (Toward(trains), Length(trains));
-        for (var i = 0; i < generation; i++)
-        {
-            var train = config.Trains[i];
-            var angle = towardRadians + train.AngleDegrees * Math.PI / 180;
-            var number = FullTurn / Math.Max(config.MinLengthBlocks, length * train.LengthFactor);
-            var slot = bank * generation + i;
-            (numberX[slot], numberZ[slot], frequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, WaveTheory.DeepFrequency(number));
-            amplitude[slot] = 0;
-        }
-        for (var i = 0; i < shortTrains.Length; i++)
-        {
-            var angle = towardRadians + shortTrains[i].Angle;
-            var number = FullTurn / shortTrains[i].Length;
-            var slot = bank * shortTrains.Length + i;
-            (shortX[slot], shortZ[slot], shortFrequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, WaveTheory.DeepFrequency(number));
-            shortAmplitude[slot] = 0;
-        }
-        Changed?.Invoke(string.Format(System.Globalization.CultureInfo.InvariantCulture,
-            "new waves toward {0:F0}°, {1:F0} m long", (towardRadians * 180 / Math.PI + 360) % 360, length));
     }
 
     private Foam FoamAt(double beaufort)
@@ -538,8 +354,6 @@ public sealed class SeaSurface
         var (low, high) = (rows[above - 1], rows[above]);
         return Foam.Lerp(Foam.Of(low), Foam.Of(high), (beaufort - low.Force) / (high.Force - low.Force));
     }
-
-    private readonly record struct Trains(int Heading, int Stretch);
 }
 
 public readonly record struct Foam(double Caps, double Streaks, double Spray)

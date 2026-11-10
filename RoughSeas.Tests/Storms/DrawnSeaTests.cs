@@ -26,7 +26,7 @@ public class DrawnSeaTests
         {
             if (frame % 30 == 0)
             {
-                surface.Aim(Height, 0.4, 7);
+                surface.Aim(Height, 7);
                 surface.Raise(raised, raised, 0);
             }
             surface.Advance(frame * Frame);
@@ -100,7 +100,7 @@ public class DrawnSeaTests
     {
         var sea = Sea();
 
-        Assert.Equal(surface.Seconds, sea.Seconds);
+        Assert.Equal(surface.Trains.Seconds, sea.Seconds);
     }
 
     private sealed class Coast : ISeaSource
