@@ -25,7 +25,6 @@ uniform vec2 seaMesh;
 uniform vec3 seaTerms;
 uniform float seaBedEdge;
 uniform float seaBoreSlope;
-uniform float seaBoreDepth;
 
 out float seaFoamCrest;
 out float seaFoamFold;
@@ -78,7 +77,7 @@ float seaLag(int slot, vec4 lagA, vec4 lagB) {
 	return seaTerms.y * (slot < 4 ? lagA[slot] * seaLagValidA[slot] : slot < 8 ? lagB[slot - 4] * seaLagValidB[slot - 4] : 0.0);
 }
 
-vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 lagB, vec4 gainA, vec4 gainB, float share) {
+vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 lagB, vec4 gainA, vec4 gainB, float celerityDepth, float share) {
 	if (bed.z <= 0.0 || bed.w >= 100000.0) return warped;
 	float re = 0.0;
 	float im = 0.0;
@@ -103,7 +102,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 		float reaching = share * wave.z * seaGain(i, gainA, gainB);
 		arrivedRe += reaching * cos(theta);
 		arrivedIm += reaching * sin(theta);
-		arrivedBore += reaching * seaBore(theta, seaBoreFront(boreHeight, seaWavenumber(length(wave.xy), seaBoreDepth)));
+		arrivedBore += reaching * seaBore(theta, seaBoreFront(boreHeight, seaWavenumber(length(wave.xy), celerityDepth)));
 		energy += wave.z * wave.z;
 		if (i == int(seaShore.y)) {
 			dominant = theta;
@@ -169,7 +168,8 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 face = onBed ? textureLod(seaFace, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 0.0);
 	vec4 gainA = onBed ? textureLod(seaGainA, bedUv, 0.0) : vec4(1.0);
 	vec4 gainB = onBed ? textureLod(seaGainB, bedUv, 0.0) : vec4(1.0);
-	if (bed.x <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB, gainA, gainB, share);
+	vec4 surf = onBed ? textureLod(seaSurf, bedUv, 0.0) : vec4(0.0, 1.0, bed.x, 0.0);
+	if (bed.x <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB, gainA, gainB, surf.b, share);
 	float faceDistance = max(face.x, 0.0);
 	float faceLength = length(face.yz);
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);
@@ -196,14 +196,14 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 			continue;
 		}
 		heights[i] = wave.z * mix(1.0, seaGain(i, gainA, gainB), bedEdge);
-		numbers[i] = mix(deepNumber, seaWavenumber(deepNumber, max(bed.x, seaBoreDepth)), bedEdge);
+		numbers[i] = mix(deepNumber, seaWavenumber(deepNumber, surf.b), bedEdge);
 		offshore += wave.z * wave.z;
 		local += heights[i] * heights[i];
 	}
 	float breaking = 0.0;
 	bool plunging = false;
 	if (onBed && local > 0.0) {
-		breaking = textureLod(seaSurf, bedUv, 0.0).r * bedEdge;
+		breaking = surf.r * bedEdge;
 		float dominantNumber = length(seaWaves[int(seaShore.y)].xy);
 		float iribarren = slope / sqrt(share * 4.0 * sqrt(offshore / 2.0) * dominantNumber / 6.2831853);
 		plunging = iribarren >= seaPlunging.x && iribarren < seaPlunging.y;

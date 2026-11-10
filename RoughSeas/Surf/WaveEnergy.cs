@@ -141,18 +141,18 @@ public static class WaveEnergy
                 var i = z * size + x;
                 if (!(depth[i] > 0)) continue;
                 var (acrossX, acrossZ) = (Math.Abs(alongX[i]), Math.Abs(alongZ[i]));
-                var inflow = Inflow(size, depth, x - Math.Sign(alongX[i]), z, alongX, alongX[i]) + Inflow(size, depth, x, z - Math.Sign(alongZ[i]), alongZ, alongZ[i]);
+                var inflow = Inflow(size, depth, x - Math.Sign(alongX[i]), z, alongX, alongX[i], speed[i]) + Inflow(size, depth, x, z - Math.Sign(alongZ[i]), alongZ, alongZ[i], speed[i]);
                 var outflow = speed[i] * (acrossX + acrossZ) + loss[i];
                 Energy[i] = Math.Min(outflow > 0 ? inflow / outflow : 0, limit[i] * Portion[i]);
             }
         }
 
-        private double Inflow(int size, float[] depth, int x, int z, double[] along, double here)
+        private double Inflow(int size, float[] depth, int x, int z, double[] along, double here, double speedHere)
         {
             if (here == 0) return 0;
             if (x < 0 || z < 0 || x >= size || z >= size) return deepFlux * Math.Abs(here);
             var i = z * size + x;
-            if (!(depth[i] > 0)) return deepFlux * Math.Abs(here);
+            if (!(depth[i] > 0)) return deepEnergy * speedHere * Math.Abs(here);
             return Math.Sign(along[i]) == Math.Sign(here) ? Energy[i] * speed[i] * Math.Abs(along[i]) : 0;
         }
     }

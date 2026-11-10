@@ -29,6 +29,7 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
             var (x, z) = (map.OriginX + i % size, map.OriginZ + i / size);
             field.SetArriving(x, z, arriving[shoreline[i] >= 0 ? shoreline[i] : i]);
             field.SetDepth(x, z, waves.Felt[i]);
+            field.SetCelerityDepth(x, z, waves.CelerityDepth[shoreline[i] >= 0 ? shoreline[i] : i]);
             field.SetConductivity(x, z, (float)(map[x, z].Bed?.Conductivity ?? 0));
             field.SetSlope(x, z, waves.SlopeX[i], waves.SlopeZ[i]);
             if (map[x, z].Kind == ShoreKind.Land) field.SetGroundTop(x, z, (float)(map.LevelAt(x, z) + WaterColumn.StillLevel + map[x, z].Elevation));
@@ -45,7 +46,6 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
                 field.SetGain(slot, x, z, waves.Gains[slot][carried ? near : i]);
             }
         }
-        field.BoreDepth = waves.BoreDepth;
         field.Walls = faces.Build(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * waves.Gain[(z - map.OriginZ) * size + x - map.OriginX] } : default, field);
         field.Steps = steps;
         foreach (var step in steps) field.SetFaceDistance(step.X, step.Z, SurfField.StepFootDistance);

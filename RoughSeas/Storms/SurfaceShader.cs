@@ -274,7 +274,6 @@ public static class SurfaceShader
             __instance.Uniform("seaFaceSlope", (float)(shore?.FaceSlope ?? 0));
             __instance.Uniform("seaBedEdge", (float)(shore?.EdgeFadeBlocks ?? 1));
             __instance.Uniform("seaBoreSlope", (float)surface.BoreFrontSlope);
-            __instance.Uniform("seaBoreDepth", (float)(shore?.BoreDepth ?? 0));
             __instance.Uniform("seaWallSlope", (float)wallSlope);
             var trains = surface.Trains;
             float Valid(int slot) => shore != null && slot < trains.Slots && shore.Holds(slot, trains.NumberX(slot), trains.NumberZ(slot)) ? 1 : 0;

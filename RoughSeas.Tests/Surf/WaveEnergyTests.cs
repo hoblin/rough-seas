@@ -4,6 +4,16 @@ namespace RoughSeas.Tests.Surf;
 
 public class WaveEnergyTests
 {
+    [Fact]
+    public void AWaveLeavingAShoreStartsAtTheLocalSeaNotShoaledFromTheDeep()
+    {
+        const int Across = 32;
+        var depth = Enumerable.Range(0, Across * Across).Select(i => i % Across < 4 ? -1f : 1f).ToArray();
+        var lag = new float[Across * Across];
+        var (gains, _) = WaveEnergy.Solve(Across, depth, [new WaveEnergy.Train(0.05, 0, 0.1, lag)], 1.28, 1);
+        Assert.Equal(1, gains[0][16 * Across + 5], 1);
+    }
+
     private const int Size = 96;
     private const double DepthPerHeight = 1.28;
     private const double Number = 0.1;

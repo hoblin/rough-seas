@@ -253,7 +253,7 @@ public sealed class SeaSurface
             var amplitude = Trains.Amplitude(slot);
             offshore += share * share * amplitude * amplitude;
             heights[slot] = amplitude * (valid ? 1 + (field.GainAt(slot, x, z) - 1) * edge : 1);
-            numbers[slot] = deep > 0 ? deep + (WaveTheory.Wavenumber(deep, Math.Max(depth, field.BoreDepth)) - deep) * edge : 0;
+            numbers[slot] = deep > 0 ? deep + (WaveTheory.Wavenumber(deep, field.CelerityDepthAt(x, z)) - deep) * edge : 0;
             slopes += heights[slot] * numbers[slot];
             if (!valid) continue;
             lags[slot] = edge * field.LagAt(slot, x, z);

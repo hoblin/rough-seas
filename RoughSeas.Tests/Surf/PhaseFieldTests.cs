@@ -5,6 +5,32 @@ namespace RoughSeas.Tests.Surf;
 
 public class PhaseFieldTests
 {
+    [Fact]
+    public void WithoutDeepWaterTwoMapsOfOneShoreAgreeWhereverTheyStart()
+    {
+        const int Across = 48;
+        const int Shift = 8;
+        float DepthAt(int x) => x < 40 ? (40 - x) * 0.25f : -1;
+        float[] Map(int start) => Enumerable.Range(0, Across * Across).Select(i => DepthAt(i % Across + start)).ToArray();
+        var (one, other) = (PhaseField.Lag(Across, Map(0), 0.03, 0.01), PhaseField.Lag(Across, Map(Shift), 0.03, 0.01));
+
+        for (var x = Shift + 4; x < 36; x++)
+        {
+            var (firstAt, secondAt) = (24 * Across + x, 24 * Across + x - Shift);
+            var (firstPlain, secondPlain) = (0.03 * (x + 0.5) + 0.01 * 24.5, 0.03 * (x - Shift + 0.5) + 0.01 * 24.5);
+            Assert.Equal(one[firstAt] + firstPlain - secondPlain - (0.03 * Shift), other[secondAt], 1);
+        }
+    }
+
+    [Fact]
+    public void ADeepPocketBehindAShoalKeepsTheLagTheShoalGaveIt()
+    {
+        const int Across = 64;
+        float[] Bed(int shoalFrom) => Enumerable.Range(0, Across * Across).Select(i => i % Across >= shoalFrom && i % Across < shoalFrom + 10 ? 3f : 500f).ToArray();
+        var lag = PhaseField.Lag(Across, Bed(16), 0.05, 0);
+        Assert.NotEqual(0, lag[32 * Across + 40], 2);
+    }
+
     private const int Size = 64;
     private const double Number = 0.1;
 

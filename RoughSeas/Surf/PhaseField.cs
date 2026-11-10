@@ -5,24 +5,36 @@ using RoughSeas.Water;
 namespace RoughSeas.Surf;
 
 /// <summary>
-/// How far shoaling water holds a wave back: the eikonal |∇S| = k(depth) solved by fast sweeping from the plane wave
-/// where the water is deep, less the plane wave's phase: anchored to deep water alone, so maps read around different
-/// points agree wherever they share it. A map with no water deep enough for this wave starts it from its upwind edge, where the lag fades out anyway. Waves running out to sea take the same
-/// solution run the other way: minus the arrival of the wave reversed. The gradient turns the crests by Snell's law. Land holds no phase.
+/// How far shoaling water holds a wave back: the eikonal |∇S| = k(depth) solved by fast sweeping, less the plane wave's phase. It is anchored to what the bed itself holds, so
+/// maps read around different points agree wherever they share it: to deep water open to the sea upwind or, on a map with none, to the shoreline, whose tangent keeps
+/// the wave's along-shore number as Snell's law does. A map with neither starts from its upwind edge, where the lag fades out anyway. Waves running out to sea take the same solution run
+/// the other way: minus the arrival of the wave reversed. The gradient turns the crests. Land holds no phase.
 /// </summary>
 public static class PhaseField
 {
     private const int Rounds = 2;
+    private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
     public static float[] Lag(int size, float[] depth, double numberX, double numberZ, int rounds = Rounds)
     {
         var arriving = Arrival(size, depth, numberX, numberZ, rounds);
         var leaving = Arrival(size, depth, -numberX, -numberZ, rounds);
+        var known = arriving.Select(value => float.IsNaN(value) ? 0 : value).ToArray();
         var lag = new float[size * size];
         for (var i = 0; i < lag.Length; i++)
         {
             var (x, z) = (i % size, i / size);
-            var along = numberX * Slope(arriving, depth, size, x, z, 1, 0) + numberZ * Slope(arriving, depth, size, x, z, 0, 1);
+            if (float.IsNaN(arriving[i]))
+            {
+                lag[i] = float.IsNaN(leaving[i]) ? 0 : -leaving[i];
+                continue;
+            }
+            if (float.IsNaN(leaving[i]))
+            {
+                lag[i] = arriving[i];
+                continue;
+            }
+            var along = numberX * Slope(known, depth, size, x, z, 1, 0) + numberZ * Slope(known, depth, size, x, z, 0, 1);
             lag[i] = along + numberX * numberX + numberZ * numberZ >= 0 ? arriving[i] : -leaving[i];
         }
         return lag;
@@ -44,19 +56,11 @@ public static class PhaseField
         var deepNumber = Math.Sqrt(numberX * numberX + numberZ * numberZ);
         var phase = new double[size * size];
         var number = new double[size * size];
-        var deep = Math.PI / deepNumber;
-        for (var i = 0; i < phase.Length; i++)
-        {
-            var (x, z) = (i % size, i / size);
-            if (!(depth[i] > 0))
-            {
-                phase[i] = double.PositiveInfinity;
-                number[i] = double.NaN;
-                continue;
-            }
-            number[i] = WaveTheory.Wavenumber(deepNumber, depth[i]);
-            phase[i] = depth[i] >= deep ? numberX * (x + 0.5) + numberZ * (z + 0.5) : double.PositiveInfinity;
-        }
+        Array.Fill(phase, double.PositiveInfinity);
+        for (var i = 0; i < phase.Length; i++) number[i] = depth[i] > 0 ? WaveTheory.Wavenumber(deepNumber, depth[i]) : double.NaN;
+
+        SeedOpenDeepWater(size, depth, phase, Math.PI / deepNumber, numberX, numberZ);
+        if (!phase.Any(double.IsFinite)) SeedShoreline(size, depth, phase, numberX, numberZ);
         if (!phase.Any(double.IsFinite)) SeedUpwindEdge(size, phase, number, numberX, numberZ);
 
         for (var round = 0; round < rounds; round++)
@@ -71,9 +75,39 @@ public static class PhaseField
         for (var i = 0; i < lag.Length; i++)
         {
             var plain = numberX * (i % size + 0.5) + numberZ * (i / size + 0.5);
-            lag[i] = double.IsFinite(phase[i]) ? (float)(phase[i] - plain) : 0;
+            lag[i] = double.IsFinite(phase[i]) ? (float)(phase[i] - plain) : float.NaN;
         }
         return lag;
+    }
+
+    private static void SeedOpenDeepWater(int size, float[] depth, double[] phase, double deep, double numberX, double numberZ)
+    {
+        var open = new bool[size * size];
+        var (stepX, stepZ) = (numberX >= 0 ? 1 : -1, numberZ >= 0 ? 1 : -1);
+        for (var rowIndex = 0; rowIndex < size; rowIndex++)
+        for (var columnIndex = 0; columnIndex < size; columnIndex++)
+        {
+            var z = stepZ > 0 ? rowIndex : size - 1 - rowIndex;
+            var x = stepX > 0 ? columnIndex : size - 1 - columnIndex;
+            var i = z * size + x;
+            if (!(depth[i] >= deep)) continue;
+            var (backX, backZ) = (x - stepX, z - stepZ);
+            var openAlongX = numberX != 0 && (backX < 0 || backX >= size || open[z * size + backX]);
+            var openAlongZ = numberZ != 0 && (backZ < 0 || backZ >= size || open[backZ * size + x]);
+            open[i] = openAlongX || openAlongZ;
+            if (open[i]) phase[i] = numberX * (x + 0.5) + numberZ * (z + 0.5);
+        }
+    }
+
+    private static void SeedShoreline(int size, float[] depth, double[] phase, double numberX, double numberZ)
+    {
+        for (var i = 0; i < phase.Length; i++)
+        {
+            if (!(depth[i] > 0)) continue;
+            var (x, z) = (i % size, i / size);
+            var shore = Sides.Any(side => x + side.X >= 0 && z + side.Z >= 0 && x + side.X < size && z + side.Z < size && !(depth[(z + side.Z) * size + x + side.X] > 0));
+            if (shore) phase[i] = numberX * (x + 0.5) + numberZ * (z + 0.5);
+        }
     }
 
     private static void SeedUpwindEdge(int size, double[] phase, double[] number, double numberX, double numberZ)

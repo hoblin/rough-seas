@@ -34,7 +34,7 @@ public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, dou
 /// <item><c>seaLagA/B</c>: for each slot, the phase the bed has held the wave back by (<see cref="PhaseField"/>); over land, the lag at the shoreline the sheet comes from, carried to here. They hold for the wave vectors in <see cref="Numbers"/> alone.</item>
 /// <item><c>seaFace</c>: over water, the distance to the nearest face a wave meets, its outward normal along X and Z, and the share of a wave it sends back; the normal is half length where the crest stands higher than the face, which then doesn't foam. Over land the distance is <see cref="LandDistance"/>, so it interpolates to 0 on the face itself; <see cref="StepFootDistance"/> marks the foot of a step that stops a sheet.</item>
 /// <item><c>seaGainA/B</c>: for each slot, its height here over its height in deep water (<see cref="WaveEnergy"/>).</item>
-/// <item><c>seaSurf</c>: over water, the share of waves breaking, 0 over land; and everywhere the sea's height coming into the last breaking water, against the deep sea's, over land that of the shoreline nearest.</item>
+/// <item><c>seaSurf</c>: over water, the share of waves breaking, 0 over land; and everywhere the sea's height coming into the last breaking water, against the deep sea's, over land that of the shoreline nearest; and the depth that sets the waves' speed (<see cref="Water.TransformedWaves.CelerityDepth"/>), over land that of the shoreline nearest.</item>
 /// </list>
 /// </summary>
 public sealed class SurfField(int originX, int originZ, int size, (double X, double Z)[] numbers)
@@ -75,9 +75,6 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public int EdgeFadeBlocks { get; set; } = 1;
 
-    /// <summary>The shallowest a broken wave feels the water: the depth of its own terminal bore.</summary>
-    public double BoreDepth { get; set; }
-
     /// <summary>Whether this slot's lags and gains were solved for this wave vector.</summary>
     public bool Holds(int slot, double numberX, double numberZ) => slot < Numbers.Length && slot < Slots && Numbers[slot] == (numberX, numberZ);
 
@@ -102,6 +99,8 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public double ArrivingAt(double x, double z) => Sample(surf, x, z, 1);
 
+    public double CelerityDepthAt(double x, double z) => Sample(surf, x, z, 2);
+
     public bool Covers(double x, double z) => x >= OriginX && z >= OriginZ && x < OriginX + Size && z < OriginZ + Size;
 
     public double EdgeShare(double x, double z)
@@ -118,7 +117,14 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
           + $"nearest face {Sample(face, x, z, 0):F1} m, reflects {Sample(face, x, z, 3):F2}; "
           + $"breaking {BreakingAt(x, z):F2}, edge {EdgeShare(x, z):F2}, gains {string.Join(" ", Enumerable.Range(0, Slots).Select(slot => GainAt(slot, x, z).ToString("F2")))}";
 
-    public void SetDepth(int x, int z, float depth) => Put(bed, x, z, 0, depth);
+    /// <summary>Sets the depth the waves feel here, and with it the depth that sets their speed until <see cref="SetCelerityDepth"/> says otherwise.</summary>
+    public void SetDepth(int x, int z, float depth)
+    {
+        Put(bed, x, z, 0, depth);
+        Put(surf, x, z, 2, depth);
+    }
+
+    public void SetCelerityDepth(int x, int z, float depth) => Put(surf, x, z, 2, depth);
 
     public void SetSheet(int x, int z, float distance, float runUp, float needed)
     {
