@@ -223,7 +223,6 @@ public static class SurfaceShader
             __instance.Uniform("seaShore", new Vec4f((float)surface.Shape.BreakingDepthRatio, surface.Dominant, shore != null && DrawShore ? 1 : 0, (float)surface.Shape.CrestRatio));
             __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
             __instance.Uniform("seaFoamDecay", DrawFoam ? (float)foamDecaySeconds : 0);
-            __instance.Uniform("seaFoamCaps", (float)Math.Min(surface.CapsFold, NoCaps));
             var vectors = surface.Vectors();
             float Valid(int slot) => shore != null && slot < vectors.Length && slot < shore.Numbers.Length && shore.Numbers[slot] == vectors[slot] ? 1 : 0;
             __instance.Uniform("seaLagValidA", new Vec4f(Valid(0), Valid(1), Valid(2), Valid(3)));

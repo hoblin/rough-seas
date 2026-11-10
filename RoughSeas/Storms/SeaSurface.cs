@@ -199,6 +199,18 @@ public sealed class SeaSurface
         return (turned < 0 ? turned + FullTurn : turned) / frequency[Dominant];
     }
 
+    /// <summary>Whether the dominant train, as the bed turns it here, runs against this outward normal.</summary>
+    public bool RunsAgainst(double x, double z, double normalX, double normalZ)
+    {
+        var (towardX, towardZ) = (numberX[Dominant], numberZ[Dominant]);
+        if (Seabed is { } field && field.Covers(x, z) && Dominant < field.Numbers.Length && Dominant < SurfField.Slots && field.Numbers[Dominant] == (towardX, towardZ))
+        {
+            towardX += (field.LagAt(Dominant, x + 1, z) - field.LagAt(Dominant, x - 1, z)) / 2;
+            towardZ += (field.LagAt(Dominant, x, z + 1) - field.LagAt(Dominant, x, z - 1)) / 2;
+        }
+        return towardX * normalX + towardZ * normalZ < 0;
+    }
+
     /// <summary>The height of the wave passing here, trough to crest, over the bed, and whether the depth has capped this sea here, as the shader's <c>breaking</c> says.</summary>
     public (double Height, double Depth, bool Capped) WaveAt(double x, double z, double share)
     {

@@ -94,6 +94,21 @@ public class FaceBuilderTests
     }
 
     [Fact]
+    public void AOneBlockWallLeavesItsNormalToTheWaterOnEachSide()
+    {
+        var map = new SeabedMap(0, 0, Size);
+        for (var x = 0; x < Size; x++)
+        for (var z = 0; z < Size; z++)
+        {
+            if (z == 14) map.Put(x, z, new ShoreCell(ShoreKind.Land, 5, Stone, 1), Level);
+            else map.Put(x, z, new ShoreCell(ShoreKind.Water, 10, Stone, 1), Level);
+        }
+        var (field, _) = Built(map, 4, 12);
+        Assert.Equal(0, field.Get(field.Face, 16, 14, 2));
+        Assert.Equal(-1, field.FaceAt(16.5, 13.5).NormalZ, 3);
+    }
+
+    [Fact]
     public void AFaceBelowTheCrestDoesNotStandAboveIt() => Assert.All(Built(Wall(16, 0.125), 2, 8).Walls, wall => Assert.False(wall.StandsAboveCrest));
 
     [Fact]

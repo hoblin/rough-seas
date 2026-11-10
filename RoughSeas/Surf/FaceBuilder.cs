@@ -135,7 +135,15 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
 
         foreach (var wall in walls)
         {
-            if (map.Inside(wall.X + wall.SideX, wall.Z + wall.SideZ)) Write(field, wall.X + wall.SideX, wall.Z + wall.SideZ, wall, wall.Reflection);
+            var (x, z) = (wall.X + wall.SideX, wall.Z + wall.SideZ);
+            if (!map.Inside(x, z)) continue;
+            if (field.Get(field.Face, x, z, 1) * wall.NormalX + field.Get(field.Face, x, z, 2) * wall.NormalZ < 0)
+            {
+                field.Set(field.Face, x, z, 1, 0);
+                field.Set(field.Face, x, z, 2, 0);
+                continue;
+            }
+            Write(field, x, z, wall, wall.Reflection);
         }
 
         void Offer(PriorityQueue<(int, int, int), float> into, int x, int z, int wall)

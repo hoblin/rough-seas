@@ -38,6 +38,10 @@
     "steep-shore": {
       "at": [676, 113, -84],
       "what": "The steepest sand-footed shore of the open sea near spawn, on the island east of it (47°): a strip of sand at the water, then grassy soil climbing a block a block (sea to the south, ground 0 1 2 3 4 6 blocks over it). For surf on a steep shore: a gale staged 300 blocks west (/seas stage gale 24 600 at 376 -87) blows onshore."
+    },
+    "sea-cliff": {
+      "at": [540, 116, -108],
+      "what": "A natural cliff straight out of the open sea on the steep-shore island's north side (47°): soil and rock rising 7 to 9 blocks at the water's edge, the sea to the north. For waves against a face: a gale staged at (/seas stage gale 26 600 at 240 -160) throws its sea onto it; a gale of 11 m/s there is a swell that stands against it. Film from 540 118 -108 looking south (bin/game look 0 3.36)."
     }
   }
 }

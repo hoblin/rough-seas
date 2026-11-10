@@ -248,6 +248,9 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              many blocks its ground stands over the sea at each of 8 blocks inland (0 0 1 1
                              a gentle beach, 0 1 2 3 a steep one) and how many of those match GROUND too,
                              and how far open water runs out from it, the most open first
+  /bridge cliffs MINRISE [RANGE] [LENGTH]
+                             the same for natural faces that rise at least MINRISE blocks straight out of
+                             open salt water, LENGTH blocks along it (default 3)
   /bridge weed RADIUS        clear the plants and loose stones off the ground within RADIUS blocks of
                              the player (at most 32), leaving the ground, the water and the lily pads
                              on it: a build site with nothing in the way

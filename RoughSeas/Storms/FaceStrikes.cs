@@ -15,13 +15,17 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
 {
     private const double StillLevel = 7.0 / 8;
     private const double LogEverySeconds = 5;
+    private const double LeapShare = 2;
 
     private int standing, overtopping, broken, sheets, parcels;
-    private double highest, sinceLog;
+    private double highest, sinceLog, lastSeconds = double.NaN;
 
-    public void Update(double playerX, double playerZ, double window)
+    public void Update(double playerX, double playerZ, double lived)
     {
-        if (window <= 0 || surface.Calm || surface.Seabed is not { } field) return;
+        var elapsed = surface.Seconds - lastSeconds;
+        lastSeconds = surface.Seconds;
+        var window = elapsed > LeapShare * lived ? lived : elapsed;
+        if (!(window > 0) || surface.Calm || surface.Seabed is not { } field) return;
         var radius = config.RadiusBlocks * config.RadiusBlocks;
         bool Near(double x, double z) => (x - playerX) * (x - playerX) + (z - playerZ) * (z - playerZ) <= radius;
 
@@ -47,7 +51,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
     {
         var (x, z) = (wall.X + 0.5, wall.Z + 0.5);
         var share = shares.Factor(x, z);
-        if (share <= 0 || surface.SinceCrest(x, z) >= window) return;
+        if (share <= 0 || surface.SinceCrest(x, z) >= window || !surface.RunsAgainst(x, z, wall.NormalX, wall.NormalZ)) return;
         var (height, depth, capped) = surface.WaveAt(x, z, share);
         if (height <= 0) return;
         var crest = height * (1 + wall.Reflection) / 2;

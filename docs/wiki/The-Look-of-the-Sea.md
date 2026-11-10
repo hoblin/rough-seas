@@ -16,9 +16,9 @@ A sailor reads the weather off the sea before any instrument: the height of the 
 | --- | --- |
 | ![Sheets of water running up a flat sand beach in a gale](images/sea/surf.webp) | ![Dark wet sand where the waves reach, pale dry sand beyond](images/sea/wet-sand.webp) |
 
-| Spray at the steps of a beach in a gale | A gale's sea standing up against a wall |
+| Spray at the steps of a beach in a gale | A gale's sea breaking on a cliff |
 | --- | --- |
-| ![White spray thrown up where sheets of water stop at a shore's block steps](images/sea/face-steps.webp) | ![A wave standing up against a stone wall, with spray over it](images/sea/face-wall.webp) |
+| ![White spray thrown up where sheets of water stop at a shore's block steps](images/sea/face-steps.webp) | ![A wave standing high against a natural cliff, spray thrown up the face](images/sea/face-wall.webp) |
 
 The sea is drawn this way even with *Waving foliage* off in the game's graphics settings: a storm should never come unseen.
 

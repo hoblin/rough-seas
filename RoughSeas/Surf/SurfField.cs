@@ -82,6 +82,8 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public bool Covers(double x, double z) => x >= OriginX && z >= OriginZ && x < OriginX + Size && z < OriginZ + Size;
 
+    public float Get(float[] from, int x, int z, int channel) => from[((z - OriginZ) * Size + x - OriginX) * Channels + channel];
+
     public void Set(float[] into, int x, int z, int channel, float value) => into[((z - OriginZ) * Size + x - OriginX) * Channels + channel] = value;
 
     private double Sample(float[] from, double x, double z, int channel)
