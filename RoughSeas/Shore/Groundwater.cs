@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -26,7 +27,6 @@ public sealed class Groundwater
 {
     private const int ChunkSize = GlobalConstants.ChunkSize;
     private const int TickMilliseconds = 100;
-    private const int StillLevel = 7;
     private const double SeaChange = 0.05;
     private const int SeaCell = 8;
 
@@ -334,7 +334,7 @@ public sealed class Groundwater
     private int Carrier(Block fluid)
     {
         if (carriers.TryGetValue(fluid.Id, out var known)) return known;
-        var still = sapi.World.GetBlock(new AssetLocation(fluid.Code.Domain, $"{fluid.FirstCodePart()}-still-{StillLevel}"));
+        var still = sapi.World.GetBlock(new AssetLocation(fluid.Code.Domain, $"{fluid.FirstCodePart()}-still-{WaterColumn.StillEighths}"));
         return carriers[fluid.Id] = still?.Id ?? fluid.Id;
     }
 

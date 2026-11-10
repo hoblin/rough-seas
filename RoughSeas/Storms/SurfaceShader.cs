@@ -55,7 +55,6 @@ public static class SurfaceShader
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
     private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB", "seaFace", "seaGainA", "seaGainB"];
     private const double NoCaps = 10;
-    private const double StillSurface = 0.875;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
 
@@ -251,7 +250,7 @@ public static class SurfaceShader
             __instance.Uniform("seaMesh", new Vec2f(SurfaceTessellation.ReachMetres, SurfaceTessellation.FinestSpacing));
             __instance.Uniform("seaTerms", new Vec3f(DrawReflection ? 1 : 0, DrawLag ? 1 : 0, DrawEnergy ? 1 : 0));
         }
-        colours.Bind(__instance, capi.World.SeaLevel - 1 + StillSurface - player.CameraPos.Y);
+        colours.Bind(__instance, capi.World.SeaLevel - 1 + WaterColumn.StillLevel - player.CameraPos.Y);
         if (field != null && heightMap is { TextureId: > 0 } && Active(__instance, HeightMapSampler))
         {
             __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, heightMapUnit);

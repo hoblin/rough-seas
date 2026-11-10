@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using RoughSeas.Water;
 
 namespace RoughSeas.Shore;
 
@@ -22,7 +23,7 @@ public readonly record struct Reached(int Fluid, int Rings, double Head, int Fro
 /// </summary>
 public sealed class Band(RunUp runUp, SheetConfig sheet, int slopeSearchBlocks)
 {
-    private const double WaterLineBelowBlockTop = 1.0 / 8;
+    private const double WaterLineBelowBlockTop = 1 - WaterColumn.StillLevel;
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
     public double WallSlope => runUp.WallSlope;

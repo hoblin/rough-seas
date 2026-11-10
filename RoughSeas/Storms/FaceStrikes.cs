@@ -1,6 +1,7 @@
 using System;
 using RoughSeas.Shore;
 using RoughSeas.Surf;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -13,7 +14,6 @@ public readonly record struct SprayBurst(double X, double Y, double Z, double Al
 /// </summary>
 public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves waves, WallSpray spray, FacesConfig config, Action<SprayBurst> emit, Action<string, object[]> log)
 {
-    private const double StillLevel = 7.0 / 8;
     private const double LogEverySeconds = 5;
     private const double LeapShare = 2;
 
@@ -72,7 +72,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
         highest = Math.Max(highest, height);
         var period = surface.DominantPeriod;
         var impact = spray.Wave(height, period, depth, crest, waves.BreakerCelerity(height, period, depth));
-        Burst(x + Off(wall.SideX), wall.Level + StillLevel + crest, z + Off(wall.SideZ), wall.SideZ, wall.SideX, crest, impact);
+        Burst(x + Off(wall.SideX), wall.Level + WaterColumn.StillLevel + crest, z + Off(wall.SideZ), wall.SideZ, wall.SideX, crest, impact);
     }
 
     private void Step(StepFace step, double window)
@@ -88,7 +88,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
         if (head <= 0) return;
 
         sheets++;
-        Burst(x + Off(step.SideX), step.Level + StillLevel + step.Ground, z + Off(step.SideZ), step.SideZ, step.SideX, 0, spray.Sheet(lens, head));
+        Burst(x + Off(step.SideX), step.Level + WaterColumn.StillLevel + step.Ground, z + Off(step.SideZ), step.SideZ, step.SideX, 0, spray.Sheet(lens, head));
     }
 
     private double Off(int side) => side * (0.5 - config.SprayFromFaceBlocks);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -24,8 +25,6 @@ public interface IShoreGround
 
 public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int highestRise) : IShoreGround
 {
-    private const double StillLevel = 7.0 / 8;
-
     private readonly Dictionary<(int, int), ShoreCell> cells = [];
     private readonly BlockPos probe = new(Dimensions.NormalWorld);
 
@@ -46,7 +45,7 @@ public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int
         probe.Set(x, level, z);
         if (blocks.GetChunkAtBlockPos(probe) == null) return default;
         var fluid = blocks.GetBlock(probe, BlockLayersAccess.Fluid);
-        if (OpenWater.Land(blocks, probe)) return Land(x, z, fluid.Id);
+        if (OpenWater.Land(blocks, probe)) return LandAt(blocks, probe, x, level, z, fluid.Id, beds, highestRise);
         if (Groundwater.Carries(fluid) && !blocks.GetBlock(probe.Up(), BlockLayersAccess.Fluid).IsLiquid())
         {
             return new ShoreCell(ShoreKind.Water, 0, beds.Of(fluid.BlockMaterial), fluid.Id);
@@ -54,11 +53,18 @@ public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int
         return default;
     }
 
-    private ShoreCell Land(int x, int z, int fluid)
+    /// <summary>The top solid block of the ground standing at <paramref name="level"/>, no higher than <paramref name="highestRise"/> over it.</summary>
+    public static int Crown(IBlockAccessor blocks, BlockPos probe, int x, int level, int z, int highestRise)
     {
         var top = level;
         while (top < level + highestRise && OpenWater.Land(blocks, probe.Set(x, top + 1, z))) top++;
+        return top;
+    }
+
+    public static ShoreCell LandAt(IBlockAccessor blocks, BlockPos probe, int x, int level, int z, int fluid, Beds beds, int highestRise)
+    {
+        var top = Crown(blocks, probe, x, level, z, highestRise);
         var bed = beds.Of(blocks.GetBlock(probe.Set(x, top, z), BlockLayersAccess.Solid).BlockMaterial);
-        return new ShoreCell(ShoreKind.Land, top + 1 - (level + StillLevel), bed, fluid);
+        return new ShoreCell(ShoreKind.Land, top + 1 - (level + WaterColumn.StillLevel), bed, fluid);
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Shore;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -15,7 +16,6 @@ namespace RoughSeas.Surf;
 /// </summary>
 public sealed class SeabedMap
 {
-    private const double StillLevel = 7.0 / 8;
     private const int Unknown = int.MinValue;
     private const double Deep = 1000;
     private const double DryLand = 1;
@@ -50,7 +50,7 @@ public sealed class SeabedMap
     public double CrownAt(int x, int z)
     {
         if (!Inside(x, z)) return double.NaN;
-        return this[x, z] is { Kind: ShoreKind.Land } land ? LevelAt(x, z) + StillLevel + land.Elevation : crowns[Index(x, z)];
+        return this[x, z] is { Kind: ShoreKind.Land } land ? LevelAt(x, z) + WaterColumn.StillLevel + land.Elevation : crowns[Index(x, z)];
     }
 
     public BedConfig? FaceBedAt(int x, int z) => !Inside(x, z) ? null : this[x, z] is { Kind: ShoreKind.Land } land ? land.Bed : faces[Index(x, z)];
@@ -118,8 +118,7 @@ public sealed class SeabedMap
             var (x, z) = (OriginX + i % Size, OriginZ + i / Size);
             var level = HighestLevelBeside(x, z);
             if (level == Unknown || (cells[i].Kind == ShoreKind.Water && level <= levels[i]) || !OpenWater.Land(blocks, probe.Set(x, level, z))) continue;
-            var crown = level;
-            while (crown < level + highestRise && OpenWater.Land(blocks, probe.Set(x, crown + 1, z))) crown++;
+            var crown = ShoreGround.Crown(blocks, probe, x, level, z, highestRise);
             SetFace(x, z, crown + 1, beds.Of(blocks.GetBlock(probe.Set(x, crown, z), BlockLayersAccess.Solid).BlockMaterial));
         }
     }
@@ -137,7 +136,7 @@ public sealed class SeabedMap
         {
             var fluid = blocks.GetBlock(probe.Set(x, y, z), BlockLayersAccess.Fluid);
             if (!Groundwater.Carries(fluid)) continue;
-            (cells[i], levels[i]) = (OpenWater.Land(blocks, probe) ? Shore(blocks, probe, x, y, z, fluid, beds, highestRise) : Water(blocks, probe, x, y, z, terrain, fluid, beds, deepest), y);
+            (cells[i], levels[i]) = (OpenWater.Land(blocks, probe) ? ShoreGround.LandAt(blocks, probe, x, y, z, fluid.Id, beds, highestRise) : Water(blocks, probe, x, y, z, terrain, fluid, beds, deepest), y);
             return;
         }
         cells[i] = new ShoreCell(ShoreKind.Barrier, DryLand, null!, 0);
@@ -151,15 +150,7 @@ public sealed class SeabedMap
         var sounded = top - bottom < deepest && ground.Id != 0;
         var known = sounded || terrain < top;
         var bed = beds.Of(ground.BlockMaterial);
-        return new ShoreCell(ShoreKind.Water, known ? top + StillLevel - (sounded ? bottom : terrain + 1) : Deep, bed, fluid.Id);
-    }
-
-    private static ShoreCell Shore(IBlockAccessor blocks, BlockPos probe, int x, int level, int z, Block fluid, Beds beds, int highestRise)
-    {
-        var crown = level;
-        while (crown < level + highestRise && OpenWater.Land(blocks, probe.Set(x, crown + 1, z))) crown++;
-        var bed = beds.Of(blocks.GetBlock(probe.Set(x, crown, z), BlockLayersAccess.Solid).BlockMaterial);
-        return new ShoreCell(ShoreKind.Land, crown + 1 - (level + StillLevel), bed, fluid.Id);
+        return new ShoreCell(ShoreKind.Water, known ? top + WaterColumn.StillLevel - (sounded ? bottom : terrain + 1) : Deep, bed, fluid.Id);
     }
 
     private int Index(int x, int z) => (z - OriginZ) * Size + (x - OriginX);

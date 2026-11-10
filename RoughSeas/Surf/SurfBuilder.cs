@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RoughSeas.Shore;
+using RoughSeas.Water;
 
 namespace RoughSeas.Surf;
 
@@ -12,7 +13,6 @@ namespace RoughSeas.Surf;
 /// </summary>
 public sealed class SurfBuilder(Band band, FaceBuilder faces)
 {
-    private const double StillLevel = 7.0 / 8;
     private const float StepFoot = -1.5f;
     private const float DeepestFelt = 200;
     private const float ShallowestFelt = 0.05f;
@@ -47,7 +47,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
             field.Set(field.Aux, x, z, 0, (float)(map[x, z].Bed?.Conductivity ?? 0));
             field.Set(field.Aux, x, z, 1, slopeX[i]);
             field.Set(field.Aux, x, z, 2, slopeZ[i]);
-            field.Set(field.Aux, x, z, 3, map[x, z].Kind == ShoreKind.Land ? (float)(map.LevelAt(x, z) + StillLevel + map[x, z].Elevation) : breaking[i]);
+            field.Set(field.Aux, x, z, 3, map[x, z].Kind == ShoreKind.Land ? (float)(map.LevelAt(x, z) + WaterColumn.StillLevel + map[x, z].Elevation) : breaking[i]);
 
             var reached = swash.TryGetValue((x, z), out var sheet);
             field.Set(field.Bed, x, z, 1, reached ? (float)sheet.Distance : 0);
@@ -107,7 +107,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         {
             var (x, z) = (cell.X + dx, cell.Z + dz);
             var neighbour = ground.At(x, z);
-            var rise = neighbour.Kind == ShoreKind.Land ? neighbour.Elevation - from : map.CrownAt(x, z) - (level + StillLevel) - from;
+            var rise = neighbour.Kind == ShoreKind.Land ? neighbour.Elevation - from : map.CrownAt(x, z) - (level + WaterColumn.StillLevel) - from;
             if (double.IsNaN(rise) || rise <= 0 || (rise < reached.Head && !band.IsWall(rise, reached.Rise))) continue;
             if (!steps.TryGetValue((cell.X, cell.Z, dx, dz), out var step))
             {

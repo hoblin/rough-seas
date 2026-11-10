@@ -9,7 +9,6 @@ namespace RoughSeas.Surf;
 /// <summary>Finds every side of a full block a water column meets, the short steps of a beach and the tall faces of a cliff alike, and writes how each sends waves back into the <see cref="SurfField"/>.</summary>
 public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, double breakingDepthRatio)
 {
-    private const double StillLevel = 7.0 / 8;
     public const float LandDistance = -0.5f;
     private const double OvertoppedNormal = 0.5;
     private const double BlendShareOfDistance = 0.5;
@@ -54,7 +53,7 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             {
                 var crown = map.CrownAt(x + dx, z + dz);
                 if (double.IsNaN(crown) || map.FaceBedAt(x + dx, z + dz) is not { } bed) continue;
-                var rise = crown - (level + StillLevel);
+                var rise = crown - (level + WaterColumn.StillLevel);
                 if (rise > 0) seeds.Add(new Seed(x, z, level, dx, dz, rise, bed));
             }
         }

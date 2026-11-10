@@ -125,20 +125,8 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public Block Seabed(int maxBlocks) => entity.World.BlockAccessor.GetBlock(Sound(entity.Pos.XYZ, maxBlocks).Bottom);
 
-    private (double Depth, BlockPos Bottom) Sound(Vec3d at, int maxBlocks)
-    {
-        var accessor = entity.World.BlockAccessor;
-        var pos = at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
-        var depth = 0.0;
-        var surface = !OpenWater.At(accessor, pos.UpCopy()).IsLiquid();
-        while (depth < maxBlocks && OpenWater.At(accessor, pos) is { } fluid && fluid.IsLiquid())
-        {
-            depth += surface ? fluid.LiquidLevel / 8.0 : 1;
-            surface = false;
-            pos.Down();
-        }
-        return (depth, pos);
-    }
+    private (double Depth, BlockPos Bottom) Sound(Vec3d at, int maxBlocks) =>
+        WaterColumn.Sound(entity.World.BlockAccessor, at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos, maxBlocks);
 
     public override void OnGameTick(float deltaTime)
     {
