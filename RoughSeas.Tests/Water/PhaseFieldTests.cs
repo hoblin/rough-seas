@@ -19,21 +19,45 @@ public class PhaseFieldTests
         Assert.Equal(alone[32 * Across + 12], besideOcean[32 * Across + 12], 3);
     }
 
-    [Fact]
-    public void WithoutDeepWaterTwoMapsOfOneShoreAgreeWhereverTheyStart()
-    {
-        const int Across = 48;
-        const int Shift = 8;
-        float DepthAt(int x) => x < 40 ? (40 - x) * 0.25f : -1;
-        float[] Map(int start) => Enumerable.Range(0, Across * Across).Select(i => DepthAt(i % Across + start)).ToArray();
-        var (one, other) = (PhaseField.Lag(Across, Map(0), 0.03, 0.01), PhaseField.Lag(Across, Map(Shift), 0.03, 0.01));
+    private static float ShelfDepth(int worldX) => worldX < 320 ? (320 - worldX) * 0.25f : -1;
 
-        for (var x = Shift + 4; x < 36; x++)
+    private static float[] Shelf(int across, int startX, int step) =>
+        Enumerable.Range(0, across * across).Select(i => ShelfDepth(startX + (i % across) * step + step / 2)).ToArray();
+
+    [Theory]
+    [InlineData(40, 48, 0.05, 0.0)]
+    [InlineData(100, 132, 0.05, 0.01)]
+    [InlineData(200, 216, 0.05, -0.02)]
+    public void TwoMapsOfOneShelfAgreeWhereverTheyStartThroughTheSharedReference(int firstX, int secondX, double numberX, double numberZ)
+    {
+        const int Across = 64;
+        var coarse = new CoarseBed(0, 0, 8, 48, Shelf(48, 0, 8));
+        var one = PhaseField.Lag(Across, Shelf(Across, firstX, 1), numberX, numberZ, coarse.Anchor(numberX, numberZ, firstX, 0));
+        var other = PhaseField.Lag(Across, Shelf(Across, secondX, 1), numberX, numberZ, coarse.Anchor(numberX, numberZ, secondX, 0));
+
+        foreach (var worldX in Enumerable.Range(secondX + 8, firstX + Across - secondX - 12))
         {
-            var (firstAt, secondAt) = (24 * Across + x, 24 * Across + x - Shift);
-            var (firstPlain, secondPlain) = (0.03 * (x + 0.5) + 0.01 * 24.5, 0.03 * (x - Shift + 0.5) + 0.01 * 24.5);
-            Assert.Equal(one[firstAt] + firstPlain - secondPlain - (0.03 * Shift), other[secondAt], 1);
+            Assert.InRange(one[32 * Across + worldX - firstX] - other[32 * Across + worldX - secondX], -0.25, 0.25);
         }
+    }
+
+    [Fact]
+    public void AShallowBodyBetweenTwoShoresHoldsOneUnbrokenPhase()
+    {
+        const int Across = 64;
+        var depth = Enumerable.Range(0, Across * Across).Select(i => i % Across is 0 or Across - 1 ? -1f : 1f).ToArray();
+        var lag = PhaseField.Lag(Across, depth, 0.05, 0);
+        var number = WaveTheory.Wavenumber(0.05, 1);
+
+        for (var x = 2; x < Across - 3; x++) Assert.Equal(number - 0.05, lag[32 * Across + x + 1] - lag[32 * Across + x], 3);
+    }
+
+    [Fact]
+    public void AnObliqueWaveCrossingAShoalKeepsItsDelayBehindIt()
+    {
+        const int Across = 64;
+        var depth = Enumerable.Range(0, Across * Across).Select(i => i % Across is >= 16 and < 26 ? 3f : 500f).ToArray();
+        Assert.True(PhaseField.Lag(Across, depth, 0.05, 0.002)[32 * Across + 40] > 0.5);
     }
 
     [Fact]

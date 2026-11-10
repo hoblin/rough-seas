@@ -37,6 +37,10 @@ public class WavesTests
     }
 
     [Fact]
+    public void AWaveThatHasNotReachedItsBreakingDepthDoesNotPlunge() =>
+        Assert.False(waves.Plunges(height: 0.5, period: 8, bedSlope: 0.1, depth: 3));
+
+    [Fact]
     public void AHullFarInsideWhereAWavePlungedMeetsOnlyItsBore()
     {
         Assert.True(waves.Plunges(height: 2, period: 8, bedSlope: 0.1, depth: 2.3));

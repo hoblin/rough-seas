@@ -50,6 +50,6 @@ public class SeaMapSnapshotTests
     {
         var samples = Enumerable.Repeat(Gale, 16 * 16).ToArray();
 
-        Assert.True(SerializerUtil.Serialize(SeaMapSnapshot.Of(0, 0, 0, 0, 16, samples)).Length < 5000);
+        Assert.True(SerializerUtil.Serialize(SeaMapSnapshot.Of(0, 0, 0, 0, 16, samples)).Length < 6000);
     }
 }

@@ -16,4 +16,7 @@ public readonly record struct WaveReading(double Height, double Period, double T
     public bool Surf => IsSurf(Breaking);
 
     public static bool IsSurf(double breaking) => breaking >= BreakingFromShare;
+
+    /// <summary>Whether a wave of this height breaks here: the tallest of the sea do, as many as the share says.</summary>
+    public bool Breaks(double height) => Breaking > 0 && height >= WaveTheory.RayleighHeight(Height, 1 - Breaking);
 }

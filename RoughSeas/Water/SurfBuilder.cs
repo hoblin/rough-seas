@@ -10,14 +10,15 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
     /// <param name="dominant">The slot that dominates the sea now; the arriving sea and the whole sea's gain and breaking follow it.</param>
-    public SurfField Build(SeabedMap map, Func<int, int, Sea> seaAt, (double X, double Z)[] numbers, double[]? amplitudeShares = null, int dominant = 0)
+    /// <param name="coarse">The wider bed that gives every reader of this place one reference for the waves' lag.</param>
+    public SurfField Build(SeabedMap map, Func<int, int, Sea> seaAt, (double X, double Z)[] numbers, double[]? amplitudeShares = null, int dominant = 0, CoarseBed? coarse = null)
     {
         var size = map.Size;
         var field = new SurfField(map.OriginX, map.OriginZ, size, numbers);
         var depth = new float[size * size];
         for (var i = 0; i < depth.Length; i++) depth[i] = map.DepthAt(map.OriginX + i % size, map.OriginZ + i / size);
 
-        var waves = transformation.Solve(size, depth, numbers, amplitudeShares, Enumerable.Range(0, depth.Length).Select(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height).ToArray(), dominant);
+        var waves = transformation.Solve(size, depth, numbers, amplitudeShares, Enumerable.Range(0, depth.Length).Select(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height).ToArray(), dominant, coarse == null ? null : numbers.Take(SurfField.Slots).Select(number => coarse.Anchor(number.X, number.Z, map.OriginX, map.OriginZ)).ToArray());
         var ray = dominant < numbers.Length ? numbers[dominant] : default;
         var arriving = Enumerable.Range(0, depth.Length).Select(i => depth[i] > 0 ? (float)waves.ArrivingAt(depth, size, i % size, i / size, ray) : 1f).ToArray();
         var (swash, steps) = sheets.Throw(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * arriving[(z - map.OriginZ) * size + x - map.OriginX] } : default);

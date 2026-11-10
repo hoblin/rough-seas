@@ -20,7 +20,8 @@ public static class WaveEnergy
     private const int BreakingSteps = 30;
     private const double QuietestSeaShare = 0.001;
 
-    public readonly record struct Train(double NumberX, double NumberZ, double Amplitude, float[] Lag, float[]? Felt = null);
+    /// <param name="TurnRadius">The blocks to either side over which its direction is averaged: a wave can't turn on a scale shorter than itself, and rays that would cross there spread as diffraction spreads them.</param>
+    public readonly record struct Train(double NumberX, double NumberZ, double Amplitude, float[] Lag, float[]? Felt = null, int TurnRadius = 0);
 
     /// <param name="seaShare">Each cell's sea against the height <paramref name="trains"/> are given at: breaking answers to the sea that stands there.</param>
     public static (float[][] Gains, float[] Breaking) Solve(int size, float[] depth, IReadOnlyList<Train> trains, double depthPerHeight, double dissipation, float[]? bedDepth = null, float[]? seaShare = null)
@@ -105,6 +106,14 @@ public static class WaveEnergy
                 var towardZ = train.NumberZ + PhaseField.Slope(train.Lag, depth, size, x, z, 0, 1);
                 var length = Math.Sqrt(towardX * towardX + towardZ * towardZ);
                 if (length > 0) (alongX[i], alongZ[i]) = (towardX / length, towardZ / length);
+            }
+            if (train.TurnRadius <= 0) return;
+            var smoothX = BoxAverage.Over(alongX.Select(value => (float)value).ToArray(), size, train.TurnRadius);
+            var smoothZ = BoxAverage.Over(alongZ.Select(value => (float)value).ToArray(), size, train.TurnRadius);
+            for (var i = 0; i < cells; i++)
+            {
+                var length = Math.Sqrt(smoothX[i] * smoothX[i] + smoothZ[i] * smoothZ[i]);
+                if (depth[i] > 0 && length > 0) (alongX[i], alongZ[i]) = (smoothX[i] / length, smoothZ[i] / length);
             }
         }
 

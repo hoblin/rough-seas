@@ -159,6 +159,14 @@ vec4 seaDrawnLag(sampler2D lags, vec2 uv) {
 	return seaBedEdgeAt(uv) * textureLod(lags, uv, 0.0);
 }
 
+vec4 seaLagTurn(sampler2D lags, vec2 uv, vec2 across) {
+	bool back = textureLod(seaBed, uv - across, 0.0).x > 0.0;
+	bool ahead = textureLod(seaBed, uv + across, 0.0).x > 0.0;
+	float span = (back ? 1.0 : 0.0) + (ahead ? 1.0 : 0.0);
+	if (span <= 0.0) return vec4(0.0);
+	return (seaDrawnLag(lags, ahead ? uv + across : uv) - seaDrawnLag(lags, back ? uv - across : uv)) / span;
+}
+
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float share = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r : 0.0;
 	seaRippleKept = 1.0 - share;
@@ -183,16 +191,15 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);
 	float faceReflects = faceLength > 0.0 ? face.w * seaTerms.x * bedEdge : 0.0;
 	vec2 texel = vec2(1.0 / seaBedArea.z, 0.0);
-	vec4 turnAX = onBed ? (seaDrawnLag(seaLagA, bedUv + texel.xy) - seaDrawnLag(seaLagA, bedUv - texel.xy)) / 2.0 : vec4(0.0);
-	vec4 turnAZ = onBed ? (seaDrawnLag(seaLagA, bedUv + texel.yx) - seaDrawnLag(seaLagA, bedUv - texel.yx)) / 2.0 : vec4(0.0);
-	vec4 turnBX = onBed ? (seaDrawnLag(seaLagB, bedUv + texel.xy) - seaDrawnLag(seaLagB, bedUv - texel.xy)) / 2.0 : vec4(0.0);
-	vec4 turnBZ = onBed ? (seaDrawnLag(seaLagB, bedUv + texel.yx) - seaDrawnLag(seaLagB, bedUv - texel.yx)) / 2.0 : vec4(0.0);
+	vec4 turnAX = onBed ? seaLagTurn(seaLagA, bedUv, texel.xy) : vec4(0.0);
+	vec4 turnAZ = onBed ? seaLagTurn(seaLagA, bedUv, texel.yx) : vec4(0.0);
+	vec4 turnBX = onBed ? seaLagTurn(seaLagB, bedUv, texel.xy) : vec4(0.0);
+	vec4 turnBZ = onBed ? seaLagTurn(seaLagB, bedUv, texel.yx) : vec4(0.0);
 
 	float heights[SEA_SLOTS];
 	float numbers[SEA_SLOTS];
 	float offshore = 0.0;
 	float local = 0.0;
-	float slope = length(aux.yz);
 	for (int i = 0; i < SEA_SLOTS; i++) {
 		vec4 wave = seaWaves[i];
 		float deepNumber = length(wave.xy);
@@ -212,7 +219,9 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	bool plunging = false;
 	if (onBed && local > 0.0) {
 		breaking = surf.r * bedEdge;
-		float dominantNumber = length(seaWaves[int(seaShore.y)].xy);
+		int dominantSlot = int(seaShore.y);
+		float dominantNumber = length(seaWaves[dominantSlot].xy);
+		float slope = max(0.0, -dot(aux.yz, normalize(seaWaves[dominantSlot].xy + vec2(seaLag(dominantSlot, turnAX, turnBX), seaLag(dominantSlot, turnAZ, turnBZ)))));
 		float iribarren = slope / sqrt(share * 4.0 * sqrt(offshore / 2.0) * dominantNumber / 6.2831853);
 		plunging = iribarren >= seaPlunging.x && iribarren < seaPlunging.y;
 	}

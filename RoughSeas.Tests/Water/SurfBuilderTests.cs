@@ -10,6 +10,33 @@ public class SurfBuilderTests
 
     private static SurfBuilder Builder(FaceBuilder faces) => new(new SwashSheets(ShoreFixtures.Band), faces, new WaveTransformation(1.28, faces.SmoothingBlocks, 1, 0.12, 0.45));
 
+    [Fact]
+    public void AStormElsewhereLeavesTheSpeedOfAQuietShallowPatchAlone()
+    {
+        const int Across = 32;
+        var depth = Enumerable.Repeat(0.05f, Across * Across).ToArray();
+        var transformation = new WaveTransformation(1.28, _ => 0, 1, 0.12, 0.45);
+        double[] Seas(double remote) => Enumerable.Range(0, depth.Length).Select(i => i == 0 ? remote : 1).ToArray();
+
+        Assert.Equal(transformation.Solve(Across, depth, [(0.05, 0)], null, Seas(1)).CelerityDepth[20 * Across + 20], transformation.Solve(Across, depth, [(0.05, 0)], null, Seas(16)).CelerityDepth[20 * Across + 20], 2);
+    }
+
+    [Fact]
+    public void BehindAnIsletTheRaysDontPileUpIntoAMountainOfWater()
+    {
+        const int Across = 128;
+        const double Number = 2 * Math.PI / 150;
+        var depth = Enumerable.Range(0, Across * Across).Select(i =>
+        {
+            var (x, z) = (i % Across - 40, i / Across - 64);
+            return x * x + z * z < 64 ? -1f : 40f;
+        }).ToArray();
+        var waves = new WaveTransformation(1.28, length => Math.Min(16, (int)Math.Ceiling(length * 0.25)), 1, 0.12, 0.45)
+            .Solve(Across, depth, [(Number, 0)], null, Enumerable.Repeat(4.0, depth.Length).ToArray());
+
+        Assert.InRange(waves.Gains[0].Max(), 0, 1.4);
+    }
+
     private static SurfField Stairs(params double[] elevations)
     {
         var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces);

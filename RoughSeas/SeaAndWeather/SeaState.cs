@@ -33,7 +33,8 @@ public readonly record struct SeaSample(
     double WavePeriod,
     double CurrentX,
     double CurrentZ,
-    double WaterCelsius)
+    double WaterCelsius,
+    double Depth = 0)
 {
     public double WindSpeed => Math.Sqrt(WindX * WindX + WindZ * WindZ);
 }

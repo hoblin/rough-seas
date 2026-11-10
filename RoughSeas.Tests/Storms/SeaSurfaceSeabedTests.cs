@@ -101,6 +101,15 @@ public class SeaSurfaceSeabedTests
     }
 
     [Fact]
+    public void TheTallestWavesOfASeaAreTheOnesThatBreak()
+    {
+        var reading = new RoughSeas.Water.WaveReading(2, 8, 0, 3, 0.05, 0.2, 2);
+        Assert.True(reading.Breaks(RoughSeas.Water.WaveTheory.RayleighHeight(2, 0.95)));
+        Assert.False(reading.Breaks(RoughSeas.Water.WaveTheory.RayleighHeight(2, 0.5)));
+        Assert.False((reading with { Breaking = 0 }).Breaks(10));
+    }
+
+    [Fact]
     public void BeyondTheBedReadWaveHereKnowsNoDepthAndNoBreaking()
     {
         var surface = Settled(3);

@@ -28,7 +28,7 @@ public class Waves(WavesConfig config)
 
     public bool Plunges(double height, double period, double bedSlope, double depth)
     {
-        if (!PlungingBreaker(WaveTheory.Iribarren(bedSlope, height, WaveTheory.DeepLength(period)))) return false;
+        if (depth >= BreakingDepth(height) || !PlungingBreaker(WaveTheory.Iribarren(bedSlope, height, WaveTheory.DeepLength(period)))) return false;
 
         var pastBreaking = (BreakingDepth(height) - depth) / bedSlope;
         return pastBreaking <= height * (config.PlungeDistance[0] - config.PlungeDistance[1] * bedSlope);

@@ -87,13 +87,15 @@ public sealed class SeaSurface
         var covered = Seabed is { } field && field.Covers(x, z);
         var arriving = covered ? 1 + (Seabed!.ArrivingAt(x, z) - 1) * Seabed.EdgeShare(x, z) : 1;
         return new WaveReading(share * WaveTheory.SignificantHeight(squared), Trains.DominantPeriod, Math.Atan2(towardZ[dominant], towardX[dominant]),
-            covered ? Seabed!.DepthAt(x, z) : double.PositiveInfinity, covered ? BedSlope(Seabed!, x, z) : 0, Broken(x, z, share), share * WaveTheory.SignificantHeight(deep) * arriving);
+            covered ? Seabed!.DepthAt(x, z) : double.PositiveInfinity, covered ? BedSlope(Seabed!, x, z, towardX[dominant], towardZ[dominant]) : 0, Broken(x, z, share), share * WaveTheory.SignificantHeight(deep) * arriving);
     }
 
     private double Broken(double x, double z, double share) =>
         share > 0 && Seabed is { } field && field.Covers(x, z) ? field.BreakingAt(x, z) * field.EdgeShare(x, z) : 0;
 
-    private static double BedSlope(SurfField field, double x, double z) => Math.Sqrt(Math.Pow(field.SlopeXAt(x, z), 2) + Math.Pow(field.SlopeZAt(x, z), 2));
+    /// <summary>How steeply the bed rises under a wave running this way.</summary>
+    private static double BedSlope(SurfField field, double x, double z, double towardX, double towardZ) =>
+        Math.Max(0, -(field.SlopeXAt(x, z) * towardX + field.SlopeZAt(x, z) * towardZ));
 
     private bool Plunges(double slope, double offshoreHeight) =>
         waves.PlungingBreaker(WaveTheory.Iribarren(slope, offshoreHeight, FullTurn / Trains.Wavenumber(Trains.Dominant)));
@@ -102,7 +104,13 @@ public sealed class SeaSurface
     private (double X, double Z) Turned(SurfField field, int slot, double x, double z)
     {
         double Drawn(double atX, double atZ) => field.EdgeShare(atX, atZ) * field.LagAt(slot, atX, atZ);
-        return (Trains.NumberX(slot) + (Drawn(x + 1, z) - Drawn(x - 1, z)) / 2, Trains.NumberZ(slot) + (Drawn(x, z + 1) - Drawn(x, z - 1)) / 2);
+        double Across(double backX, double backZ, double aheadX, double aheadZ)
+        {
+            var (hasBack, hasAhead) = (field.DepthAt(backX, backZ) > 0, field.DepthAt(aheadX, aheadZ) > 0);
+            var span = (hasBack ? 1 : 0) + (hasAhead ? 1 : 0);
+            return span > 0 ? (Drawn(hasAhead ? aheadX : x, hasAhead ? aheadZ : z) - Drawn(hasBack ? backX : x, hasBack ? backZ : z)) / span : 0;
+        }
+        return (Trains.NumberX(slot) + Across(x - 1, z, x + 1, z), Trains.NumberZ(slot) + Across(x, z - 1, x, z + 1));
     }
 
     private double Rise(double theta, double broken, double boreHeight, double number)
@@ -194,8 +202,8 @@ public sealed class SeaSurface
         return length > 0 ? Math.Max(0, -(towardX * normalX + towardZ * normalZ) / length) : 0;
     }
 
-    /// <summary>The height of the wave passing here, trough to crest, over the bed, and whether the depth has capped this sea here, as the shader's <c>breaking</c> says.</summary>
-    public (double Height, double Depth, bool Capped) WaveAt(double x, double z, double share)
+    /// <summary>The height of the wave passing here, trough to crest, over the bed, and whether a wave of that height breaks here.</summary>
+    public (double Height, double Depth, bool Breaks) WaveAt(double x, double z, double share)
     {
         var slots = Trains.Slots;
         Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
@@ -208,7 +216,8 @@ public sealed class SeaSurface
             re += heights[slot] * Math.Cos(theta);
             im += heights[slot] * Math.Sin(theta);
         }
-        return (2 * share * Math.Sqrt(re * re + im * im), Seabed?.DepthAt(x, z) ?? double.PositiveInfinity, WaveReading.IsSurf(Broken(x, z, share)));
+        var height = 2 * share * Math.Sqrt(re * re + im * im);
+        return (height, Seabed?.DepthAt(x, z) ?? double.PositiveInfinity, WaveHere(x, z, share).Breaks(height));
     }
 
     /// <summary>The height of the wave whose sheet is on this land cell, and the height exceeded by 2% of the sea's waves.</summary>
@@ -277,7 +286,7 @@ public sealed class SeaSurface
         }
         var cusp = slopes > 0 ? 1 / slopes : Trains.Steepness;
         var steepness = Math.Min(Trains.Steepness, cusp);
-        return Plunges(BedSlope(field, x, z), WaveTheory.SignificantHeight(offshore)) ? steepness + (cusp - steepness) * field.BreakingAt(x, z) * edge : steepness;
+        return Plunges(BedSlope(field, x, z, towardX[Trains.Dominant], towardZ[Trains.Dominant]), WaveTheory.SignificantHeight(offshore)) ? steepness + (cusp - steepness) * field.BreakingAt(x, z) * edge : steepness;
     }
 
     /// <summary>

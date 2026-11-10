@@ -11,10 +11,13 @@ namespace RoughSeas.Water;
 public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig config, int highestRise, Action<string, object[]> log)
 {
     private const int SeaStep = 8;
+    private const int RegionsAcross = 3;
+    private const int CoarseBlocks = 32;
 
     private Task<SurfField>? building;
     private (double X, double Z)[] vectors = [];
     private double builtSeconds = double.NegativeInfinity;
+    private int builtDominant;
 
     public SurfField? Field { get; private set; }
 
@@ -26,7 +29,7 @@ public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig co
             if (done.IsCompletedSuccessfully) return Field = done.Result;
             log("surf field failed: {0}", [done.Exception?.GetBaseException().ToString() ?? "cancelled"]);
         }
-        if (building != null || !Due(x, z, numbers, seconds)) return null;
+        if (building != null || !Due(x, z, numbers, dominant, seconds)) return null;
 
         var size = config.MapBlocks;
         var (originX, originZ) = ((int)Math.Floor(x / config.MoveBlocks) * config.MoveBlocks - size / 2, (int)Math.Floor(z / config.MoveBlocks) * config.MoveBlocks - size / 2);
@@ -39,7 +42,8 @@ public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig co
         }
         Sea SeaAt(int atX, int atZ) => seas[Math.Clamp((atZ - originZ) / SeaStep, 0, across - 1) * across + Math.Clamp((atX - originX) / SeaStep, 0, across - 1)];
 
-        (vectors, builtSeconds) = (numbers, seconds);
+        (vectors, builtSeconds, builtDominant) = (numbers, seconds, dominant);
+        var coarse = Coarse(sea, x, z, world.BlockAccessor.RegionSize);
         var blocks = world.GetLockFreeBlockAccessor();
         var heights = SeabedMap.Heights(world.BlockAccessor, originX, originZ, size);
         building = Task.Run(() =>
@@ -47,7 +51,7 @@ public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig co
             var started = Stopwatch.StartNew();
             var map = SeabedMap.Read(blocks, heights, originX, originZ, size, beds, highestRise, config.DeepestBlocks);
             var read = started.ElapsedMilliseconds;
-            var field = builder.Build(map, SeaAt, numbers, amplitudeShares, dominant);
+            var field = builder.Build(map, SeaAt, numbers, amplitudeShares, dominant, coarse);
             field.EdgeFadeBlocks = config.EdgeFadeBlocks;
             log("surf field {0} {1}, {2} blocks across: seabed read in {3} ms, built in {4} ms; {5} faces the sea meets, {6} steps stop a sheet",
                 [originX, originZ, size, read, started.ElapsedMilliseconds - read, field.Walls.Count, field.Steps.Count]);
@@ -56,12 +60,20 @@ public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig co
         return null;
     }
 
-    private bool Due(double x, double z, (double X, double Z)[] numbers, double seconds)
+    private static CoarseBed Coarse(ISeaSource sea, double x, double z, int regionSize)
+    {
+        var (originX, originZ) = (((int)Math.Floor(x / regionSize) - 1) * regionSize, ((int)Math.Floor(z / regionSize) - 1) * regionSize);
+        var across = RegionsAcross * regionSize / CoarseBlocks;
+        var depth = Enumerable.Range(0, across * across).Select(i => (float)sea.Sample(originX + (i % across + 0.5) * CoarseBlocks, originZ + (i / across + 0.5) * CoarseBlocks).Depth).ToArray();
+        return new CoarseBed(originX, originZ, CoarseBlocks, across, depth);
+    }
+
+    private bool Due(double x, double z, (double X, double Z)[] numbers, int dominant, double seconds)
     {
         if (Field is not { } field) return true;
         var centre = (field.OriginX + field.Size / 2.0, field.OriginZ + field.Size / 2.0);
         return Math.Abs(x - centre.Item1) > config.MoveBlocks || Math.Abs(z - centre.Item2) > config.MoveBlocks
-            || !numbers.SequenceEqual(vectors) || seconds - builtSeconds > config.RefreshSeconds;
+            || !numbers.SequenceEqual(vectors) || dominant != builtDominant || seconds - builtSeconds > config.RefreshSeconds;
     }
 }
 
