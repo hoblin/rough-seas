@@ -116,7 +116,7 @@ public static class ShoreSound
         if (accessor.GetBlock(at, BlockLayersAccess.Fluid).IsLiquid() || accessor.GetBlock(at, BlockLayersAccess.Solid).Id != 0) return null;
 
         var here = drawn.WaveHere(pos.X + 0.5, pos.Z + 0.5);
-        return new Shore(here.Height, here.Surf);
+        return new Shore(here.Arriving, here.Surf);
     }
 
     private readonly record struct Shore(double WaveHeight, bool Breaking);

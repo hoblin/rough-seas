@@ -157,9 +157,10 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     {
         var waves = storms.Waves;
         var rand = entity.World.Rand;
-        var height = WaveTheory.RayleighHeight(here.Height, rand.NextDouble());
+        var draw = rand.NextDouble();
+        var height = WaveTheory.RayleighHeight(here.Height, draw);
         var swamped = bilge?.Swamped == true;
-        var surf = rand.NextDouble() < here.Breaking;
+        var surf = draw >= 1 - here.Breaking;
         var breaks = surf || rand.NextDouble() < waves.BreakingChance(windMps);
         var breaking = swamped || breaks;
         var crest = waves.Crest(height, breaking);

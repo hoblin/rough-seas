@@ -34,7 +34,7 @@ public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, dou
 /// <item><c>seaLagA/B</c>: for each slot, the phase the bed has held the wave back by (<see cref="PhaseField"/>); over land, the lag at the shoreline the sheet comes from, carried to here. They hold for the wave vectors in <see cref="Numbers"/> alone.</item>
 /// <item><c>seaFace</c>: over water, the distance to the nearest face a wave meets, its outward normal along X and Z, and the share of a wave it sends back; the normal is half length where the crest stands higher than the face, which then doesn't foam. Over land the distance is <see cref="LandDistance"/>, so it interpolates to 0 on the face itself; <see cref="StepFootDistance"/> marks the foot of a step that stops a sheet.</item>
 /// <item><c>seaGainA/B</c>: for each slot, its height here over its height in deep water (<see cref="WaveEnergy"/>).</item>
-/// <item><c>seaSurf</c>: over water, the share of waves breaking; 0 over land.</item>
+/// <item><c>seaSurf</c>: over water, the share of waves breaking, 0 over land; and everywhere the sea's height coming into the last breaking water, against the deep sea's, over land that of the shoreline nearest.</item>
 /// </list>
 /// </summary>
 public sealed class SurfField(int originX, int originZ, int size, (double X, double Z)[] numbers)
@@ -50,7 +50,7 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     private readonly float[] bed = new float[size * size * Channels];
     private readonly float[] aux = new float[size * size * Channels];
-    private readonly float[] surf = new float[size * size * Channels];
+    private readonly float[] surf = Enumerable.Range(0, size * size * Channels).Select(i => i % Channels == 1 ? 1f : 0f).ToArray();
     private readonly float[] face = new float[size * size * Channels];
     private readonly float[][] lags = [new float[size * size * Channels], new float[size * size * Channels]];
     private readonly float[][] gains = [Filled(size * size * Channels), Filled(size * size * Channels)];
@@ -100,6 +100,8 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public double BreakingAt(double x, double z) => Sample(surf, x, z, 0);
 
+    public double ArrivingAt(double x, double z) => Sample(surf, x, z, 1);
+
     public bool Covers(double x, double z) => x >= OriginX && z >= OriginZ && x < OriginX + Size && z < OriginZ + Size;
 
     public double EdgeShare(double x, double z)
@@ -138,6 +140,8 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
     public void SetGroundTop(int x, int z, float top) => Put(aux, x, z, 3, top);
 
     public void SetBreaking(int x, int z, float share) => Put(surf, x, z, 0, share);
+
+    public void SetArriving(int x, int z, float share) => Put(surf, x, z, 1, share);
 
     public void SetLag(int slot, int x, int z, float lag) => Put(lags[slot / Channels], x, z, slot % Channels, lag);
 

@@ -20,12 +20,14 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
 
         var waves = transformation.Solve(size, depth, numbers, amplitudeShares, Enumerable.Range(0, depth.Length).Select(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height).ToArray());
         var ray = Strongest(numbers, amplitudeShares);
-        var (swash, steps) = sheets.Throw(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * waves.ArrivingAt(depth, size, x - map.OriginX, z - map.OriginZ, ray) } : default);
+        var arriving = Enumerable.Range(0, depth.Length).Select(i => depth[i] > 0 ? (float)waves.ArrivingAt(depth, size, i % size, i / size, ray) : 1f).ToArray();
+        var (swash, steps) = sheets.Throw(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * arriving[(z - map.OriginZ) * size + x - map.OriginX] } : default);
 
         var shoreline = NearestWater(depth, size);
         for (var i = 0; i < depth.Length; i++)
         {
             var (x, z) = (map.OriginX + i % size, map.OriginZ + i / size);
+            field.SetArriving(x, z, arriving[shoreline[i] >= 0 ? shoreline[i] : i]);
             field.SetDepth(x, z, waves.Felt[i]);
             field.SetConductivity(x, z, (float)(map[x, z].Bed?.Conductivity ?? 0));
             field.SetSlope(x, z, waves.SlopeX[i], waves.SlopeZ[i]);

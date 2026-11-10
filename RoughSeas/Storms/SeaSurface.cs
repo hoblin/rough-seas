@@ -78,12 +78,17 @@ public sealed class SeaSurface
         Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
         Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
         Local(x, z, share, heights, lags, numbers, towardX, towardZ);
-        var squared = 0.0;
-        for (var slot = 0; slot < slots; slot++) squared += heights[slot] * heights[slot];
+        double squared = 0, deep = 0;
+        for (var slot = 0; slot < slots; slot++)
+        {
+            squared += heights[slot] * heights[slot];
+            deep += Trains.Amplitude(slot) * Trains.Amplitude(slot);
+        }
         var dominant = Trains.Dominant;
         var covered = Seabed is { } field && field.Covers(x, z);
+        var arriving = covered ? 1 + (Seabed!.ArrivingAt(x, z) - 1) * Seabed.EdgeShare(x, z) : 1;
         return new WaveReading(share * WaveTheory.SignificantHeight(squared), Trains.DominantPeriod, Math.Atan2(towardZ[dominant], towardX[dominant]),
-            covered ? Seabed!.DepthAt(x, z) : double.PositiveInfinity, covered ? BedSlope(Seabed!, x, z) : 0, Broken(x, z, share));
+            covered ? Seabed!.DepthAt(x, z) : double.PositiveInfinity, covered ? BedSlope(Seabed!, x, z) : 0, Broken(x, z, share), share * WaveTheory.SignificantHeight(deep) * arriving);
     }
 
     private double Broken(double x, double z, double share) =>

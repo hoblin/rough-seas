@@ -85,6 +85,22 @@ public class SeaSurfaceSeabedTests
     }
 
     [Fact]
+    public void WaveHereKeepsTheSeaThatComesToTheShoreWhereTheShallowsTakeItDown()
+    {
+        var surface = Settled(3);
+        surface.Seabed = Flat(surface, 1);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            surface.Seabed.SetArriving(x, z, 0.8f);
+            for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.3f);
+        }
+        var here = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(0.9, here.Height, 1);
+        Assert.Equal(2.4, here.Arriving, 1);
+    }
+
+    [Fact]
     public void BeyondTheBedReadWaveHereKnowsNoDepthAndNoBreaking()
     {
         var surface = Settled(3);
