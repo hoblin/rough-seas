@@ -11,7 +11,8 @@ public readonly record struct ShoreSeed(int X, int Z, int Fluid);
 /// <param name="Head">The front's velocity head on arriving, in metres.</param>
 /// <param name="FromX">The cell of water the front was thrown from.</param>
 /// <param name="RunUp">The run-up of the sea that threw it, before any scaling.</param>
-public readonly record struct Reached(int Fluid, int Rings, double Head, int FromX, int FromZ, double RunUp);
+/// <param name="Lens">The sheet's volume per metre of its front on arriving, in square metres.</param>
+public readonly record struct Reached(int Fluid, int Rings, double Head, int FromX, int FromZ, double RunUp, double Lens = 0);
 
 /// <summary>
 /// Where a shore's swash reaches: from each cell of water beside land, a sheet is thrown up the land by the run-up of the
@@ -42,7 +43,7 @@ public sealed class Band(RunUp runUp, SheetConfig sheet, int slopeSearchBlocks)
         while (fronts.TryDequeue(out var next, out _))
         {
             if (reached.ContainsKey((next.X, next.Z))) continue;
-            reached[(next.X, next.Z)] = next.From with { Head = next.Front.Head };
+            reached[(next.X, next.Z)] = next.From with { Head = next.Front.Head, Lens = next.Front.Depth * next.Front.Metres };
             var from = ground.At(next.X, next.Z);
             foreach (var (dx, dz) in Sides)
             {

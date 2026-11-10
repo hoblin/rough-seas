@@ -58,6 +58,37 @@ public class SeaSurfaceSeabedTests
         Assert.True(Highest(surface) <= 1 / 1.28 * 1.1);
     }
 
+    private static void Face(SurfField field, double normalX, double normalZ, float reflection)
+    {
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            field.Set(field.Face, x, z, 1, (float)normalX);
+            field.Set(field.Face, x, z, 2, (float)normalZ);
+            field.Set(field.Face, x, z, 3, reflection);
+        }
+    }
+
+    [Fact]
+    public void AtAWallTheWaveAndItsReflectionStandTwiceAsHigh()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        var open = Highest(surface);
+        Face(surface.Seabed, -Math.Cos(0.3), -Math.Sin(0.3), 1);
+        Assert.InRange(Highest(surface) / open, 1.6, 2.1);
+    }
+
+    [Fact]
+    public void AWallBehindTheWavesReflectsNothing()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.HeightAt(MiddleX, MiddleZ, 1);
+        Face(surface.Seabed, Math.Cos(0.3), Math.Sin(0.3), 1);
+        Assert.Equal(open, surface.HeightAt(MiddleX, MiddleZ, 1), 3);
+    }
+
     [Fact]
     public void OverDeepWaterTheSeabedChangesNothing()
     {

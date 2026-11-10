@@ -173,9 +173,64 @@ public sealed class SeaSurface
             var sway = steepness * heights[slot] * Math.Cos(theta);
             shiftX += sway * towardX[slot];
             shiftZ += sway * towardZ[slot];
+
+            if (Facing(x, z, share) is not { } face) continue;
+            var along = towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ;
+            if (along >= 0) continue;
+            var mirrored = theta - 2 * numbers[slot] * along * face.Distance;
+            var returned = heights[slot] * face.Reflection;
+            rise += returned * Math.Sin(mirrored);
+            var back = steepness * returned * Math.Cos(mirrored);
+            shiftX += back * (towardX[slot] - 2 * along * face.NormalX);
+            shiftZ += back * (towardZ[slot] - 2 * along * face.NormalZ);
         }
         return (shiftX, rise, shiftZ);
     }
+
+    private FaceReading? Facing(double x, double z, double share) =>
+        share > 0 && Seabed is { } field && field.Covers(x, z) && field.FaceAt(x, z) is { Reflection: > 0 } face ? face : null;
+
+    /// <summary>How long ago, in seconds of the waves' clock, the dominant train's crest passed here.</summary>
+    public double SinceCrest(double x, double z)
+    {
+        var turned = (Math.PI / 2 - Phase(Dominant, x, z) - LagAt(Dominant, x, z)) % FullTurn;
+        return (turned < 0 ? turned + FullTurn : turned) / frequency[Dominant];
+    }
+
+    /// <summary>The height of the wave passing here, trough to crest, over the bed.</summary>
+    public (double Height, double Depth) WaveAt(double x, double z, double share)
+    {
+        Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
+        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        Local(x, z, share, heights, lags, numbers, towardX, towardZ);
+        double re = 0, im = 0;
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            var theta = Phase(slot, x, z) + lags[slot];
+            re += heights[slot] * Math.Cos(theta);
+            im += heights[slot] * Math.Sin(theta);
+        }
+        return (2 * share * Math.Sqrt(re * re + im * im), Seabed?.DepthAt(x, z) ?? double.PositiveInfinity);
+    }
+
+    /// <summary>The height of the wave whose sheet is on this land cell, and the height exceeded by 2% of the sea's waves.</summary>
+    public (double Height, double TwoPercent) SheetWaveAt(double x, double z)
+    {
+        double re = 0, im = 0, energy = 0;
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            var theta = Phase(slot, x, z) + LagAt(slot, x, z);
+            re += amplitude[slot] * Math.Cos(theta);
+            im += amplitude[slot] * Math.Sin(theta);
+            energy += amplitude[slot] * amplitude[slot];
+        }
+        return (2 * Math.Sqrt(re * re + im * im), Math.Sqrt(Math.Log(50) / 2) * 4 * Math.Sqrt(energy / 2));
+    }
+
+    private double LagAt(int slot, double x, double z) =>
+        Seabed is { } field && field.Covers(x, z) && slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == (numberX[slot], numberZ[slot])
+            ? field.LagAt(slot, x, z)
+            : 0;
 
     private double Local(double x, double z, double share, Span<double> heights, Span<double> lags, Span<double> numbers, Span<double> towardX,
         Span<double> towardZ)
@@ -210,6 +265,13 @@ public sealed class SeaSurface
                 numberZ[slot] + (field.LagAt(slot, x, z + 1) - field.LagAt(slot, x, z - 1)) / 2);
             var turned = Math.Sqrt(turnedX * turnedX + turnedZ * turnedZ);
             if (turned > 0) (towardX[slot], towardZ[slot]) = (turnedX / turned, turnedZ / turned);
+        }
+        if (field.FaceAt(x, z) is { Reflection: > 0 } face)
+        {
+            for (var slot = 0; slot < Slots; slot++)
+            {
+                if (towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ < 0) slopes += heights[slot] * numbers[slot] * face.Reflection;
+            }
         }
         var cusp = slopes > 0 ? 1 / slopes : Steepness;
         var steepness = Math.Min(Steepness, cusp);
