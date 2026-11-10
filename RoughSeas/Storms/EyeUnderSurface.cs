@@ -11,6 +11,8 @@ namespace RoughSeas.Storms;
 /// <c>cameraUnderwater</c>, <c>ClientMain.EyesInWaterDepth</c> the muffled sound and the deep water's murk. Where
 /// <see cref="DrawnWater"/> finds no drawn surface over the eye, both stay vanilla's.
 /// </summary>
+[ReliesOn("Vintagestory.Client.NoObf.ClientMain", "GetEyesInWaterColorShift", "returns a colour shift clamped to 100, judged from the eye block")]
+[ReliesOn("Vintagestory.Client.NoObf.ClientMain", "EyesInWaterDepth", "returns the eye's depth in metres, judged from the eye block")]
 public static class EyeUnderSurface
 {
     private const string HarmonyId = "roughseas.storms.eye";

@@ -12,6 +12,8 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Propulsion;
 
+[ReliesOn("Vintagestory.GameContent.EntityBoat", "updateBoatAngleAndMotion", "ForwardSpeed eases by (motion·SpeedMultiplier − ForwardSpeed)·dt and the yaw turns by AngularVelocity·dt·30")]
+[ReliesOn("Vintagestory.GameContent.EntityBoat", "SeatsToMotion", "reverses a paddled boat when its rider looks astern, so what the rower asks is read from the seat's controls")]
 public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), IHullWay
 {
     public const string Code = "roughseas:propulsion";

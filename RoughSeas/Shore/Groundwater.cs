@@ -20,6 +20,8 @@ namespace RoughSeas.Shore;
 /// when a chunk loads, when a block changes in or beside the band, and when the sea at its shore changes. The water it
 /// lays is vanilla's and is saved with the chunks; each cell is wetted or drained to match after its water's own spread delay.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.BlockBehaviorFiniteSpreadingLiquid", "Initialize", "keeps the spreading delay in milliseconds in its private field spreadDelay")]
+[ReliesOn("Vintagestory.Common.BlockAccessorRelaxedBulkUpdate", "Commit", "takes a fluid removed under a solid for the solid removed, and lowers the rain heightmap")]
 public sealed class Groundwater
 {
     private const int ChunkSize = GlobalConstants.ChunkSize;

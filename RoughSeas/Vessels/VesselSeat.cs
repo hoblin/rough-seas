@@ -11,6 +11,7 @@ namespace RoughSeas.Vessels;
 /// rider's body and head are held in, while the seat still faces the bow, so a rider of a seat turned astern sits
 /// askew at the edge of those limits.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.EntityRideableSeat", "get_SeatPosition", "adds the attachment point's rotation and ignores mountRotation, which only recentres the body limits")]
 public class VesselSeat(IMountable mountable, string seatId, SeatConfig config) : EntityBoatSeat(mountable, seatId, config)
 {
     public override EntityPos SeatPosition

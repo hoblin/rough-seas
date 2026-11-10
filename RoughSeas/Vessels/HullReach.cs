@@ -17,6 +17,9 @@ namespace RoughSeas.Vessels;
 /// Vanilla measures a player's reach to an entity's one default box. For vessels, the three vanilla range checks
 /// named below measure instead to the point on the hull the player hit (client) and to the hull's bounds (server).
 /// </summary>
+[ReliesOn("Vintagestory.Client.NoObf.ClientMain", "TryAttackEntity", "measures a player's reach by loading Entity.SelectionBox, the load this transpiler replaces")]
+[ReliesOn("Vintagestory.Server.ServerSystemEntitySimulation", "HandleEntityInteraction", "measures a player's reach by loading Entity.SelectionBox, the load this transpiler replaces")]
+[ReliesOn("Vintagestory.Server.ServerPlayer", "isInInteractionRangeOf", "measures a player's reach by loading Entity.SelectionBox, the load this transpiler replaces")]
 public static class HullReach
 {
     private const string HarmonyId = "roughseas.vessels.hullreach";
@@ -34,6 +37,7 @@ public static class HullReach
     private static int attached;
     private static Harmony? harmony;
 
+    [ReachedAtRuntime]
     public static void Attach()
     {
         lock (patchLock)
@@ -77,6 +81,7 @@ public static class HullReach
         return Bounds(entity, hull.selectionBoxes);
     }
 
+    [ReachedAtRuntime]
     private static IEnumerable<MethodInfo> Overloads(string check)
     {
         var typeAndName = check.Split(':');

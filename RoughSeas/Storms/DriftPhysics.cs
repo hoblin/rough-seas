@@ -11,6 +11,8 @@ namespace RoughSeas.Storms;
 /// <see cref="EntityBehaviorMooring"/> do the sums, and this patch only tells them when. Before each of vanilla's moves,
 /// after it, and after <see cref="EntityBoat"/> writes her motion over from her forward speed.
 /// </summary>
+[ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "MotionAndCollision", "water drag scales the whole motion by WaterDragValue^(33·dt), the swim drag divides it, and a collision zeroes the axis it blocked")]
+[ReliesOn("Vintagestory.GameContent.EntityBoat", "updateBoatAngleAndMotion", "rewrites Pos.Motion X and Z from ForwardSpeed while ForwardSpeed is not 0")]
 public static class DriftPhysics
 {
     private const string HarmonyId = "roughseas.storms.drift";

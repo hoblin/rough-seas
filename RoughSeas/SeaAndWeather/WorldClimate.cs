@@ -12,6 +12,7 @@ namespace RoughSeas.SeaAndWeather;
 /// Worldgen climate at any position, loaded or not: GenMaps' climate noise, without its wobble, rebuilt from the
 /// world config, so its settings must follow GenMaps.initWorldGen.
 /// </summary>
+[ReliesOn("Vintagestory.ServerMods.GenMaps", "initWorldGen", "the climate noise settings and starting temperatures copied here")]
 public class WorldClimate
 {
     private const int CellSize = 2048;

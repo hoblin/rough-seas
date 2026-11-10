@@ -8,6 +8,7 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Storms;
 
+[ReliesOn("Vintagestory.Client.NoObf.ParticlePoolQuads", "SpawnParticles", "multiplies a particle's life by 5 and its gravity by 0.3·40, and draws a quad 0.25 wide")]
 public sealed class SprayParticles(FacesConfig config) : ParticlesProviderBase
 {
     /// <summary><c>ParticlePoolQuads.SpawnParticles</c> multiplies a particle's life by this at the game's normal speed.</summary>

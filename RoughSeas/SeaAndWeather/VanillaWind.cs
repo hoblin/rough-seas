@@ -44,11 +44,13 @@ public class VanillaWind(SeaWeatherSystem sea, ICoreAPI api)
     }
 
     // WeatherSimulationRegion.GetWindSpeed's height scaling; Express needs RegionStrength to stay its exact copy.
+    [ReliesOn("Vintagestory.GameContent.WeatherSimulationRegion", "GetWindSpeed", "the height scaling and cap of 1.5 copied here")]
     private static double AtHeight(double strength, double y, int seaLevel, double cap) =>
         y <= seaLevel
             ? strength / (1 + (seaLevel - y) / 4)
             : Math.Min(strength * Math.Max(1, 0.9 + (y - seaLevel) / 100), cap);
 
+    [ReliesOn("Vintagestory.GameContent.WeatherSystemBase", "Event_OnGetWindSpeed", "runs before this handler and writes only windSpeed.X")]
     private void OnGetWindSpeed(Vec3d pos, ref Vec3d windSpeed)
     {
         using var _ = sea.Budget.Measure();

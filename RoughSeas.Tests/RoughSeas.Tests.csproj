@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RoughSeas\RoughSeas.csproj" />
+    <ProjectReference Include="..\GameCompat\GameCompat.csproj" />
     <Reference Include="VintagestoryAPI">
       <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
     </Reference>

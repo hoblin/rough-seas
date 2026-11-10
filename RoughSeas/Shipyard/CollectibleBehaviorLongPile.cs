@@ -57,6 +57,7 @@ public class CollectibleBehaviorLongPile(CollectibleObject collectible) : Collec
     }
 
     /// <summary>The turn <see cref="BlockGroundStorage.CreateStorage"/> gives the new pile, worked out the same way.</summary>
+    [ReliesOn("Vintagestory.GameContent.BlockGroundStorage", "CreateStorage", "the mesh angle formula copied here")]
     private static float Angle(EntityAgent byEntity, BlockSelection blockSel)
     {
         var at = blockSel.DidOffset ? blockSel.Position.AddCopy(blockSel.Face.Opposite) : blockSel.Position;

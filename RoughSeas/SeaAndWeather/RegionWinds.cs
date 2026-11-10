@@ -18,6 +18,8 @@ public class RegionWinds(SeaWeatherSystem sea)
 
     private VanillaConfig Config => sea.Config.Vanilla;
 
+    [ReliesOn("Vintagestory.GameContent.WeatherSimulationRegion", "TickEvery25ms", "re-rolls the wind pattern once TotalHours passes State.ActiveUntilTotalHours")]
+    [ReliesOn("Vintagestory.GameContent.WindPattern", "Update", "derives Strength from BaseStrength through strengthNoise, on both sides")]
     public void Drive(WeatherSimulationRegion sim)
     {
         if (!leases.TryGetValue(sim, out var lease))

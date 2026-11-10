@@ -185,6 +185,7 @@ public static class SurfaceShader
         }
     }
 
+    [ReliesOn("Vintagestory.Client.NoObf.ShaderProgram", "Compile", "numbers samplers by a regex over the source, which a uniform with a precision qualifier escapes")]
     private static void LocateSamplers(ShaderProgram __instance)
     {
         foreach (var sampler in ShoreSamplers.Prepend(HeightMapSampler))
@@ -194,6 +195,7 @@ public static class SurfaceShader
         }
     }
 
+    [ReliesOn("Vintagestory.Client.NoObf.ShaderProgramBase", "Use", "binds vanilla's samplers first, on units below the last ones ours take")]
     private static void Bind(ShaderProgramBase __instance)
     {
         if (surface == null || capi?.World.Player?.Entity is not { } player) return;

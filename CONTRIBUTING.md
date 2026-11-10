@@ -6,7 +6,7 @@ Thank you for wanting to help. This page shows how to set up, build and test the
 
 You need:
 
-- Vintage Story **1.22.7**, the version in `dependencies.game` of `RoughSeas/modinfo.json`.
+- Vintage Story **1.22.7**, the current game: `GAME` in `mise.toml`.
 - The **.NET 10 SDK**.
 - [mise](https://mise.jdx.dev) (recommended). It installs the pinned SDK and sets the environment from `mise.toml`. Run `mise trust` once in the clone.
 

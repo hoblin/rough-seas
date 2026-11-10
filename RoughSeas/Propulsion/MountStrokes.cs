@@ -26,6 +26,7 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
             ? running.CurrentFrame / running.Animation.QuantityFrames
             : null;
 
+    [ReliesOn("Vintagestory.GameContent.EntityBoat", "SeatsToMotion", "picks the seat's actionAnim from the keys each tick and stops the ready slot while a key is held")]
     public void Pace(Entity rower, double pace)
     {
         if (playing is not { } stroke || rower.Properties.Client?.AnimationsByMetaCode?.GetValueOrDefault(stroke.Code) is not { } drawn) return;

@@ -3,6 +3,7 @@ using System;
 namespace RoughSeas.SeaAndWeather;
 
 /// <summary>Vanilla's water drag on what floats, and its motion's unit: blocks per tick of 1/60 s.</summary>
+[ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "MotionAndCollision", "water drag is WaterDragValue^(33·seconds), copied here")]
 public static class WaterDrag
 {
     public const double TicksPerSecond = 60;

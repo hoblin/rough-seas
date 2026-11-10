@@ -9,6 +9,7 @@ namespace RoughSeas.Shipyard;
 /// <c>ItemRope</c> handles the click itself and never asks the rope's behaviours. A hold kept on past her last lashing
 /// ties nothing: the game repeats a held use while the button stays down, and only a fresh click ties her.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.ItemRope", "OnHeldInteractStart", "handles the click itself and asks the rope's collectible behaviours only with Ctrl+Shift")]
 public static class LashingRope
 {
     private const string HarmonyId = "roughseas.shipyard.lashingrope";

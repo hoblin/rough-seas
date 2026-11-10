@@ -45,6 +45,13 @@ All of it is scoped to this repository. [CONTRIBUTING.md](CONTRIBUTING.md) cover
 - **Modeling.** `bin/model` edits, previews and checks shape JSON in Blender, headless; **`bin/model help`** explains it.
 - `mise.toml` pins the .NET SDK, Node and Blender, and sets the bench's environment: the 1.22.7 install, and this clone's name, data folder and ports. A clone's own values (another install path, ports, a desktop workspace) go in its gitignored `mise.local.toml`. mise puts all of it on PATH and in the environment here; in a shell that doesn't load mise, run tools through `mise exec --`.
 - `ilspycmd` is a local .NET tool (`dotnet-tools.json`): `dotnet ilspycmd <assembly>`.
+- **Game versions.** `bin/compat` says whether the mod works on a game version, with no game running; **`bin/compat help`** explains it.
+
+## The oldest game we support
+
+We always design and build against the latest game version, `GAME` in `mise.toml`. The oldest supported version is `dependencies.game` in `RoughSeas/modinfo.json`, and the only check against it is `bin/compat` in CI. When that check fails, the pull request raises the floor, in `modinfo.json`, to the lowest version where everything passes (`bin/compat walk`), without asking, and never changes our logic to fit an older version.
+
+Code that depends on how a vanilla method behaves, not just on it existing, says so next to itself with `[ReliesOn]`. When vanilla's method differs in a checked version, `bin/compat` lists its C# diff beside that sentence. Read it once: if what we rely on still holds, record it in `GameCompat/read-changes.txt`; if not, raise the floor.
 
 ## References
 

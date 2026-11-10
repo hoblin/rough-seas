@@ -11,6 +11,7 @@ namespace RoughSeas.Propulsion;
 /// up to 1.25 when it is fast (<c>EntityBehaviorPassivePhysics.MotionAndCollision</c>). Its water drag is left out:
 /// while ours acts it is undone along the water.
 /// </summary>
+[ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "MotionAndCollision", "the swim drag is clamp(10·|motion|·dtFactor − 0.02, 1, 1.25) and this class undoes it along the water")]
 public static class VanillaSwim
 {
     private const double TicksPerSecond = 60;

@@ -8,6 +8,7 @@ namespace RoughSeas.Vessels;
 /// in batches under one timestamp, a frame's or a tick's, so a place is timed only once its batch is over, by where
 /// the batch left her.
 /// </summary>
+[ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "HandleRemotePhysics", "takes motion from the rider's packets and zeroes a jump of more than 20 blocks")]
 public class Course
 {
     private const long WindowMs = 100;
