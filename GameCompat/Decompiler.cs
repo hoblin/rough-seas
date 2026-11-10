@@ -12,8 +12,7 @@ internal static class Decompiler
         if (Directory.Exists(folder)) return folder;
 
         using var release = await GameRelease.Fetch(version);
-        var partial = folder + ".partial";
-        if (Directory.Exists(partial)) Directory.Delete(partial, recursive: true);
+        var partial = GameRelease.PartialOf(folder);
 
         foreach (var assembly in Assemblies)
         {
@@ -30,7 +29,7 @@ internal static class Decompiler
             if (decompile.ExitCode != 0) throw new InvalidOperationException($"ilspycmd failed on {assembly}");
         }
 
-        Directory.Move(partial, folder);
+        GameRelease.Publish(partial, folder);
         return folder;
     }
 }

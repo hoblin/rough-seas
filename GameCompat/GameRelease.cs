@@ -72,8 +72,7 @@ internal sealed class GameRelease : IDisposable
 
     private static async Task Download(string version, string directory)
     {
-        var partial = directory + ".partial";
-        if (System.IO.Directory.Exists(partial)) System.IO.Directory.Delete(partial, recursive: true);
+        var partial = PartialOf(directory);
 
         using var http = new HttpClient();
         await using var download = await http.GetStreamAsync($"https://cdn.vintagestory.at/gamefiles/stable/vs_client_linux-x64_{version}.tar.gz");
@@ -94,7 +93,21 @@ internal sealed class GameRelease : IDisposable
         }
 
         await File.WriteAllLinesAsync(Path.Combine(partial, AssetListName), assets);
-        System.IO.Directory.Move(partial, directory);
+        Publish(partial, directory);
+    }
+
+    internal static string PartialOf(string directory) => $"{directory}.{Environment.ProcessId}.partial";
+
+    internal static void Publish(string partial, string directory)
+    {
+        try
+        {
+            System.IO.Directory.Move(partial, directory);
+        }
+        catch (IOException) when (System.IO.Directory.Exists(directory))
+        {
+            System.IO.Directory.Delete(partial, recursive: true);
+        }
     }
 
     private static string? AssetPath(string entry)

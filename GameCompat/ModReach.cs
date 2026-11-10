@@ -239,7 +239,9 @@ internal sealed class ModReach
             }
             for (var index = 0; index < HandlerArguments.Length; index++)
             {
-                if (arguments.ElementAtOrDefault(index + 2) is Handler handler) NotePatch(reach, HandlerArguments[index], handler.Method);
+                var argument = arguments.ElementAtOrDefault(index + 2);
+                if (argument is Handler handler) NotePatch(reach, HandlerArguments[index], handler.Method);
+                else if (argument is not (null or Nothing)) CantRead(argument, site, $"the {HandlerArguments[index]} of {reach.Name}");
             }
         }
         return new Opaque();
