@@ -23,6 +23,9 @@ public sealed class SeaSurface
     private const double SurfOnAnyShoreMetres = 0.6;
     private const double BreakingFromShare = 0.1;
 
+    /// <summary>A sawtooth carries as much energy as a sine of 1 at this amplitude: its variance is a third of the square of it, a sine's a half.</summary>
+    private const double BoreAmplitude = 1.2247449;
+
     /// <summary>The foam trail looks back this far and twice as far, here and in the shader.</summary>
     public const double TrailSeconds = 0.7;
 
@@ -108,6 +111,15 @@ public sealed class SeaSurface
     public (double X, double Z)[] Vectors() => Enumerable.Range(0, Slots).Select(slot => (numberX[slot], numberZ[slot])).ToArray();
 
     public double[] AmplitudeShares() => slotShares;
+
+    public double BoreFrontSlope => config.Shore.BoreFrontSlope;
+
+    private double Bore(double theta, double height, double number)
+    {
+        var front = Math.Clamp(height * number / (FullTurn * BoreFrontSlope), 0.02, 0.5);
+        var ahead = ((theta - Math.PI / 2) % FullTurn + FullTurn) % FullTurn / FullTurn;
+        return BoreAmplitude * (ahead < front ? 1 - 2 * ahead / front : 2 * (ahead - front) / (1 - front) - 1);
+    }
 
     public int Dominant { get; private set; }
 
@@ -202,11 +214,15 @@ public sealed class SeaSurface
             if (total > allowed) limited = allowed / total;
         }
         double shiftX = 0, rise = 0, shiftZ = 0;
+        var broken = share > 0 && Seabed is { } bed && bed.Covers(x, z) ? bed.BreakingAt(x, z) * bed.EdgeShare(x, z) : 0;
+        var waterEnergy = 0.0;
+        for (var slot = 0; slot < Slots; slot++) waterEnergy += heights[slot] * heights[slot];
+        var boreHeight = share * 4 * Math.Sqrt(waterEnergy / 2);
         for (var slot = 0; slot < Slots; slot++)
         {
             if (heights[slot] <= 0) continue;
             var theta = Phase(slot, x, z) + lags[slot];
-            rise += heights[slot] * Math.Sin(theta);
+            rise += heights[slot] * (Math.Sin(theta) + (broken > 0 ? (Bore(theta, boreHeight, numbers[slot]) - Math.Sin(theta)) * broken : 0));
             var sway = steepness * heights[slot] * Math.Cos(theta);
             shiftX += sway * towardX[slot];
             shiftZ += sway * towardZ[slot];

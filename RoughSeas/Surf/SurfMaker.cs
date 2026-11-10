@@ -72,6 +72,7 @@ public class ShoreSurfConfig
     public int MoveBlocks = 32;
     public int EdgeFadeBlocks = 32;
     public double BreakingDissipation = 1;
+    public double BoreFrontSlope = 0.21;
     public int DeepestBlocks = 32;
     public double RefreshSeconds = 20;
     public double WetReflectance = 0.5;

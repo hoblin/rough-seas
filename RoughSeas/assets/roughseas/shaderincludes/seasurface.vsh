@@ -23,6 +23,7 @@ uniform vec4 seaShort[SEA_SHORT];
 uniform vec2 seaMesh;
 uniform vec3 seaTerms;
 uniform float seaBedEdge;
+uniform float seaBoreSlope;
 
 out float seaFoamCrest;
 out float seaFoamFold;
@@ -48,6 +49,20 @@ float seaWavenumber(float deepNumber, float depth) {
 	return deepNumber / sqrt(tanh(deepNumber * depth));
 }
 
+float seaBoreFront(float height, float number) {
+	return clamp(height * number / (6.2831853 * seaBoreSlope), 0.02, 0.5);
+}
+
+float seaBore(float theta, float front) {
+	float ahead = mod(theta - 1.5707963, 6.2831853) / 6.2831853;
+	return 1.2247449 * (ahead < front ? 1.0 - 2.0 * ahead / front : 2.0 * (ahead - front) / (1.0 - front) - 1.0);
+}
+
+float seaBoreSlopeAt(float theta, float front) {
+	float ahead = mod(theta - 1.5707963, 6.2831853) / 6.2831853;
+	return 1.2247449 * (ahead < front ? -2.0 / front : 2.0 / (1.0 - front)) / 6.2831853;
+}
+
 float seaGain(int slot, vec4 gainA, vec4 gainB) {
 	float gain = slot < 4 ? mix(1.0, gainA[slot], seaLagValidA[slot]) : slot < 8 ? mix(1.0, gainB[slot - 4], seaLagValidB[slot - 4]) : 1.0;
 	return mix(1.0, gain, seaTerms.z);
@@ -66,6 +81,12 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	float energy = 0.0;
 	float dominant = 0.0;
 	float frequency = 1.0;
+	float arrivedEnergy = 0.0;
+	for (int i = 0; i < SEA_SLOTS; i++) {
+		float reaching = share * seaWaves[i].z * seaGain(i, gainA, gainB);
+		arrivedEnergy += reaching * reaching;
+	}
+	float boreHeight = 4.0 * sqrt(arrivedEnergy / 2.0);
 	for (int i = 0; i < SEA_SLOTS; i++) {
 		vec4 wave = seaWaves[i];
 		if (wave.z <= 0.0) continue;
@@ -74,7 +95,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 		im += wave.z * sin(theta);
 		float reaching = share * wave.z * seaGain(i, gainA, gainB);
 		arrivedRe += reaching * cos(theta);
-		arrivedIm += reaching * sin(theta);
+		arrivedIm += reaching * seaBore(theta, seaBoreFront(boreHeight, length(wave.xy)));
 		energy += wave.z * wave.z;
 		if (i == int(seaShore.y)) {
 			dominant = theta;
@@ -226,10 +247,16 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 		float theta = dot(wave.xy, worldPos.xz) + wave.w + seaLag(i, lagA, lagB);
 		float rise = sin(theta);
 		float sway = cos(theta);
+		float climb = sway;
+		if (breaking > 0.0) {
+			float front = seaBoreFront(share * 4.0 * sqrt(local / 2.0), number);
+			rise = mix(rise, seaBore(theta, front), breaking);
+			climb = mix(sway, seaBoreSlopeAt(theta, front), breaking);
+		}
 		offset.y += height * rise;
 		incident += height * rise;
 		offset.xz += steepness * height * sway * direction;
-		normal.xz -= direction * number * height * sway;
+		normal.xz -= direction * number * height * climb;
 		normal.y -= steepness * number * height * rise;
 		energy += height * height;
 

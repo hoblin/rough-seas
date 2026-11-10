@@ -270,6 +270,7 @@ public static class SurfaceShader
             __instance.Uniform("seaFoamDecay", DrawFoam ? (float)foamDecaySeconds : 0);
             __instance.Uniform("seaFaceSlope", (float)(shore?.FaceSlope ?? 0));
             __instance.Uniform("seaBedEdge", (float)(shore?.EdgeFadeBlocks ?? 1));
+            __instance.Uniform("seaBoreSlope", (float)surface.BoreFrontSlope);
             __instance.Uniform("seaWallSlope", (float)wallSlope);
             var vectors = surface.Vectors();
             float Valid(int slot) => shore != null && slot < vectors.Length && slot < shore.Numbers.Length && shore.Numbers[slot] == vectors[slot] ? 1 : 0;
