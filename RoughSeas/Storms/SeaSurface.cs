@@ -206,8 +206,7 @@ public sealed class SeaSurface
         return (2 * Math.Sqrt(re * re + im * im), WaveTheory.TwoPercentRatio * WaveTheory.SignificantHeight(energy));
     }
 
-    private bool Holds(SurfField field, int slot) =>
-        slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == (Trains.NumberX(slot), Trains.NumberZ(slot));
+    private bool Holds(SurfField field, int slot) => field.Holds(slot, Trains.NumberX(slot), Trains.NumberZ(slot));
 
     private double LagAt(int slot, double x, double z) =>
         Seabed is { } field && field.Covers(x, z) && Holds(field, slot) ? field.EdgeShare(x, z) * field.LagAt(slot, x, z) : 0;

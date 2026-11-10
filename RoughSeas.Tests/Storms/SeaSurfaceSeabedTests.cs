@@ -33,8 +33,8 @@ public class SeaSurfaceSeabedTests
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
         {
-            field.Set(field.Bed, x, z, 0, depth);
-            for (var slot = 0; slot < SurfField.Slots; slot++) field.Set(field.Lags[slot / SurfField.Channels], x, z, slot % SurfField.Channels, lag);
+            field.SetDepth(x, z, depth);
+            for (var slot = 0; slot < SurfField.Slots; slot++) field.SetLag(slot, x, z, lag);
         }
         return field;
     }
@@ -59,7 +59,7 @@ public class SeaSurfaceSeabedTests
         var open = Highest(surface, shortWaves: false);
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
-        for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.Set(surface.Seabed.Gains[slot / SurfField.Channels], x, z, slot % SurfField.Channels, 0.5f);
+        for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.5f);
         Assert.InRange(Highest(surface, shortWaves: false) / open, 0.45, 0.65);
     }
 
@@ -67,12 +67,7 @@ public class SeaSurfaceSeabedTests
     {
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
-        {
-            field.Set(field.Face, x, z, 0, 1);
-            field.Set(field.Face, x, z, 1, (float)normalX);
-            field.Set(field.Face, x, z, 2, (float)normalZ);
-            field.Set(field.Face, x, z, 3, reflection);
-        }
+            field.SetFace(x, z, 1, (float)normalX, (float)normalZ, reflection);
     }
 
     [Fact]
@@ -93,7 +88,7 @@ public class SeaSurfaceSeabedTests
         Face(surface.Seabed, -Math.Cos(0.3), -Math.Sin(0.3), 1);
         var atTheWall = surface.HeightAt(MiddleX, MiddleZ, 1);
         for (var x = OriginX; x < OriginX + Size; x++)
-        for (var z = OriginZ; z < OriginZ + Size; z++) surface.Seabed.Set(surface.Seabed.Face, x, z, 0, 9);
+        for (var z = OriginZ; z < OriginZ + Size; z++) surface.Seabed.SetFaceDistance(x, z, 9);
         Assert.NotEqual(atTheWall, surface.HeightAt(MiddleX, MiddleZ, 1), 2);
     }
 

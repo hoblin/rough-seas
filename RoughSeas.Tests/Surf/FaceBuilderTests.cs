@@ -60,7 +60,7 @@ public class FaceBuilderTests
     public void LandIsOnTheFarSideOfTheFace()
     {
         var (field, _) = Built(Wall(16, 5));
-        Assert.Equal(FaceBuilder.LandDistance, field.Face[(16 * Size + 20) * SurfField.Channels]);
+        Assert.Equal(SurfField.LandDistance, field.FaceOf(20, 16).Distance);
     }
 
     [Fact]
@@ -110,9 +110,9 @@ public class FaceBuilderTests
     public void AnOvertoppedFaceKeepsItsReflectionAndHalvesItsNormal()
     {
         var (field, _) = Built(Wall(16, 0.125, 20), 2, 8);
-        var (normalX, reflection) = (field.Face[(16 * Size + 15) * SurfField.Channels + 1], field.Face[(16 * Size + 15) * SurfField.Channels + 3]);
-        Assert.Equal(-0.5f, normalX);
-        Assert.True(reflection > 0);
+        var face = field.FaceOf(15, 16);
+        Assert.Equal(-0.5f, face.NormalX);
+        Assert.True(face.Reflection > 0);
     }
 
     [Fact]

@@ -53,7 +53,6 @@ public static class SurfaceShader
         ("chunktopsoil", BeforeTopsoilLight, "outColor"),
     ];
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
-    private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB", "seaFace", "seaGainA", "seaGainB"];
     private const double NoCaps = 10;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
@@ -98,7 +97,7 @@ public static class SurfaceShader
         (surface, field, capi, lensDepthRatio, wetReflectance, foamDecaySeconds, wallSlope) = (waves, heights, api, lensDepth, wetShade, foamDecay, steepestShore);
         heightMap = new LoadedTexture(api);
         heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
-        shoreTextures = ShoreSamplers.Select(_ => GL.GenTexture()).ToArray();
+        shoreTextures = SurfField.Samplers.Select(_ => GL.GenTexture()).ToArray();
         uniforms = new float[waves.Trains.Slots * 4];
         shortUniforms = new float[waves.Trains.ShortSlots * 4];
         ReadSources(api);
@@ -144,7 +143,7 @@ public static class SurfaceShader
     public static void Upload(SurfField built)
     {
         if (shoreTextures.Length == 0) return;
-        float[][] layers = [built.Bed, built.Aux, built.Lags[0], built.Lags[1], built.Face, built.Gains[0], built.Gains[1]];
+        var layers = built.Layers;
         for (var i = 0; i < layers.Length; i++)
         {
             GL.BindTexture(TextureTarget.Texture2D, shoreTextures[i]);
@@ -227,7 +226,7 @@ public static class SurfaceShader
     [ReliesOn("Vintagestory.Client.NoObf.ShaderProgram", "collectUniformNames", "numbers samplers by a regex over the source, which a uniform with a precision qualifier escapes")]
     private static void LocateSamplers(ShaderProgram __instance)
     {
-        foreach (var sampler in ShoreSamplers.Prepend(HeightMapSampler))
+        foreach (var sampler in SurfField.Samplers.Prepend(HeightMapSampler))
         {
             var location = ScreenManager.Platform.GetUniformLocation(__instance, sampler);
             if (location >= 0) __instance.uniformLocations[sampler] = location;
@@ -257,11 +256,11 @@ public static class SurfaceShader
             __instance.Uniform("seaHeightArea", new Vec4f((float)(field.OriginX - player.CameraPos.X), (float)(field.OriginZ - player.CameraPos.Z),
                 (float)field.SizeBlocks, (float)field.SizeBlocks));
         }
-        if (shore != null && ShoreSamplers.Any(sampler => Active(__instance, sampler)))
+        if (shore != null && SurfField.Samplers.Any(sampler => Active(__instance, sampler)))
         {
-            for (var i = 0; i < ShoreSamplers.Length; i++)
+            for (var i = 0; i < SurfField.Samplers.Length; i++)
             {
-                if (Active(__instance, ShoreSamplers[i])) __instance.BindTexture2D(ShoreSamplers[i], shoreTextures[i], heightMapUnit - 1 - i);
+                if (Active(__instance, SurfField.Samplers[i])) __instance.BindTexture2D(SurfField.Samplers[i], shoreTextures[i], heightMapUnit - 1 - i);
             }
             __instance.Uniform("seaBedArea", new Vec4f((float)(shore.OriginX - player.CameraPos.X), (float)(shore.OriginZ - player.CameraPos.Z), shore.Size,
                 (float)player.CameraPos.Y));
@@ -275,8 +274,8 @@ public static class SurfaceShader
             __instance.Uniform("seaBedEdge", (float)(shore?.EdgeFadeBlocks ?? 1));
             __instance.Uniform("seaBoreSlope", (float)surface.BoreFrontSlope);
             __instance.Uniform("seaWallSlope", (float)wallSlope);
-            var vectors = surface.Trains.Vectors();
-            float Valid(int slot) => shore != null && slot < vectors.Length && slot < shore.Numbers.Length && shore.Numbers[slot] == vectors[slot] ? 1 : 0;
+            var trains = surface.Trains;
+            float Valid(int slot) => shore != null && slot < trains.Slots && shore.Holds(slot, trains.NumberX(slot), trains.NumberZ(slot)) ? 1 : 0;
             __instance.Uniform("seaLagValidA", new Vec4f(Valid(0), Valid(1), Valid(2), Valid(3)));
             __instance.Uniform("seaLagValidB", new Vec4f(Valid(4), Valid(5), Valid(6), Valid(7)));
         }

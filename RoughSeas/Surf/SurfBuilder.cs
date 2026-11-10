@@ -13,7 +13,6 @@ namespace RoughSeas.Surf;
 /// </summary>
 public sealed class SurfBuilder(Band band, FaceBuilder faces)
 {
-    private const float StepFoot = -1.5f;
     private const float DeepestFelt = 200;
     private const float ShallowestFelt = 0.05f;
     private const int Banks = 2;
@@ -43,28 +42,26 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         {
             var (x, z) = (map.OriginX + i % size, map.OriginZ + i / size);
             var d = depth[i];
-            field.Set(field.Bed, x, z, 0, felt[i]);
-            field.Set(field.Aux, x, z, 0, (float)(map[x, z].Bed?.Conductivity ?? 0));
-            field.Set(field.Aux, x, z, 1, slopeX[i]);
-            field.Set(field.Aux, x, z, 2, slopeZ[i]);
-            field.Set(field.Aux, x, z, 3, map[x, z].Kind == ShoreKind.Land ? (float)(map.LevelAt(x, z) + WaterColumn.StillLevel + map[x, z].Elevation) : breaking[i]);
+            field.SetDepth(x, z, felt[i]);
+            field.SetConductivity(x, z, (float)(map[x, z].Bed?.Conductivity ?? 0));
+            field.SetSlope(x, z, slopeX[i], slopeZ[i]);
+            if (map[x, z].Kind == ShoreKind.Land) field.SetGroundTop(x, z, (float)(map.LevelAt(x, z) + WaterColumn.StillLevel + map[x, z].Elevation));
+            else field.SetBreaking(x, z, breaking[i]);
 
             var reached = swash.TryGetValue((x, z), out var sheet);
-            field.Set(field.Bed, x, z, 1, reached ? (float)sheet.Distance : 0);
-            field.Set(field.Bed, x, z, 2, reached ? (float)sheet.RunUp : 0);
-            field.Set(field.Bed, x, z, 3, reached ? (float)sheet.Needed : d > 0 ? 0 : SurfField.Unreached);
+            field.SetSheet(x, z, (float)sheet.Distance, (float)sheet.RunUp, reached ? (float)sheet.Needed : d > 0 ? 0 : SurfField.Unreached);
             for (var slot = 0; slot < lags.Length; slot++)
             {
                 var near = shoreline[i];
                 var (nearX, nearZ) = near >= 0 ? (map.OriginX + near % size, map.OriginZ + near / size) : (x, z);
                 var lag = near >= 0 && near != i ? lags[slot][near] + numbers[slot].X * (nearX - x) + numbers[slot].Z * (nearZ - z) : lags[slot][i];
-                field.Set(field.Lags[slot / SurfField.Channels], x, z, slot % SurfField.Channels, (float)lag);
-                if (near >= 0 && near != i) field.Set(field.Gains[slot / SurfField.Channels], x, z, slot % SurfField.Channels, field.Get(field.Gains[slot / SurfField.Channels], nearX, nearZ, slot % SurfField.Channels));
+                field.SetLag(slot, x, z, (float)lag);
+                if (near >= 0 && near != i) field.SetGain(slot, x, z, field.GainOf(slot, nearX, nearZ));
             }
         }
         field.Walls = faces.Build(map, seaAt, field);
         field.Steps = steps;
-        foreach (var step in steps) field.Set(field.Face, step.X, step.Z, 0, StepFoot);
+        foreach (var step in steps) field.SetFaceDistance(step.X, step.Z, SurfField.StepFootDistance);
         return field;
     }
 
@@ -218,7 +215,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
                 for (var train = 0; train < slots.Length; train++)
                 {
                     var slot = slots[train];
-                    field.Set(field.Gains[slot / SurfField.Channels], field.OriginX + i % size, field.OriginZ + i / size, slot % SurfField.Channels, numbers[slot] == default ? 1 : gains[train][i]);
+                    field.SetGain(slot, field.OriginX + i % size, field.OriginZ + i / size, numbers[slot] == default ? 1 : gains[train][i]);
                 }
             }
         }

@@ -10,6 +10,7 @@ uniform highp sampler2D seaLagB;
 uniform highp sampler2D seaFace;
 uniform highp sampler2D seaGainA;
 uniform highp sampler2D seaGainB;
+uniform highp sampler2D seaSurf;
 uniform vec4 seaHeightArea;
 uniform vec4 seaBedArea;
 uniform vec4 seaShore;
@@ -146,21 +147,6 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	return warped;
 }
 
-float seaBreaking(vec2 inBed) {
-	vec2 place = inBed - 0.5;
-	ivec2 corner = ivec2(floor(place));
-	vec2 along = place - vec2(corner);
-	float breaking = 0.0;
-	for (int i = 0; i < 4; i++) {
-		ivec2 cell = ivec2(i & 1, i >> 1);
-		ivec2 texel = clamp(corner + cell, ivec2(0), ivec2(int(seaBedArea.z) - 1));
-		if (texelFetch(seaBed, texel, 0).x <= 0.0) continue;
-		vec2 part = mix(1.0 - along, along, vec2(cell));
-		breaking += texelFetch(seaBedAux, texel, 0).w * part.x * part.y;
-	}
-	return breaking;
-}
-
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float share = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r : 0.0;
 	seaRippleKept = 1.0 - share;
@@ -212,7 +198,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float breaking = 0.0;
 	bool plunging = false;
 	if (onBed && local > 0.0) {
-		breaking = seaBreaking(worldPos.xz - seaBedArea.xy) * bedEdge;
+		breaking = textureLod(seaSurf, bedUv, 0.0).r * bedEdge;
 		float dominantNumber = length(seaWaves[int(seaShore.y)].xy);
 		float iribarren = slope / sqrt(share * 4.0 * sqrt(offshore / 2.0) * dominantNumber / 6.2831853);
 		plunging = iribarren >= seaPlunging.x && iribarren < seaPlunging.y;

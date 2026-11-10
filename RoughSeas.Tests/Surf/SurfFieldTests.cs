@@ -14,8 +14,9 @@ public class SurfFieldTests
         for (var z = 0; z < Size; z++)
         {
             var water = x < Size / 2;
-            field.Set(field.Bed, x, z, 0, water ? 2 : -0.5f);
-            field.Set(field.Aux, x, z, 3, water ? breaking : GroundHeight);
+            field.SetDepth(x, z, water ? 2 : -0.5f);
+            if (water) field.SetBreaking(x, z, breaking);
+            else field.SetGroundTop(x, z, GroundHeight);
         }
         return field;
     }

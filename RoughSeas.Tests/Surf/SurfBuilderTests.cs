@@ -54,7 +54,7 @@ public class SurfBuilderTests
         var open = Beach(_ => 10);
         var sheltered = Beach(x => x is >= 4 and < 8 ? 0.5 : 10);
 
-        Assert.True(sheltered.Get(sheltered.Bed, 17, 16, 2) < open.Get(open.Bed, 17, 16, 2));
+        Assert.True(sheltered.RunUpOf(17, 16) < open.RunUpOf(17, 16));
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class SurfBuilderTests
     {
         var field = Beach(_ => 10);
 
-        Assert.Equal(field.Get(field.Gains[0], 15, 16, 0), field.Get(field.Gains[0], 17, 16, 0));
-        Assert.True(field.Get(field.Gains[0], 17, 16, 0) > 0);
+        Assert.Equal(field.GainOf(0, 15, 16), field.GainOf(0, 17, 16));
+        Assert.True(field.GainOf(0, 17, 16) > 0);
     }
 
     [Fact]

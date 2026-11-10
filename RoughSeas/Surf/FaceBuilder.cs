@@ -9,7 +9,6 @@ namespace RoughSeas.Surf;
 /// <summary>Finds every side of a full block a water column meets, the short steps of a beach and the tall faces of a cliff alike, and writes how each sends waves back into the <see cref="SurfField"/>.</summary>
 public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, double breakingDepthRatio)
 {
-    public const float LandDistance = -0.5f;
     private const double OvertoppedNormal = 0.5;
     private const double BlendShareOfDistance = 0.5;
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
@@ -132,18 +131,19 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             var (x, z) = (map.OriginX + i % map.Size, map.OriginZ + i / map.Size);
             if (map[x, z].Kind != ShoreKind.Water)
             {
-                field.Set(field.Face, x, z, 0, LandDistance);
+                field.SetFaceDistance(x, z, SurfField.LandDistance);
                 continue;
             }
             if (nearest[i] < 0)
             {
-                field.Set(field.Face, x, z, 0, config.ReachBlocks);
+                field.SetFaceDistance(x, z, config.ReachBlocks);
                 continue;
             }
             var wall = walls[nearest[i]];
             var fromWall = (x + 0.5 - wall.FaceX) * wall.NormalX + (z + 0.5 - wall.FaceZ) * wall.NormalZ;
-            field.Set(field.Face, x, z, 0, (float)Math.Max(fromWall, FaceReading.FirstWaterVertex));
-            Write(field, x, z, wall, wall.Reflection * WallReflection.Spreading(wall.Run, wall.Wavelength, distance[i]) * reflection.Taper(distance[i]));
+            var length = wall.StandsAboveCrest ? 1 : OvertoppedNormal;
+            field.SetFace(x, z, (float)Math.Max(fromWall, FaceReading.FirstWaterVertex), (float)(wall.NormalX * length), (float)(wall.NormalZ * length),
+                (float)(wall.Reflection * WallReflection.Spreading(wall.Run, wall.Wavelength, distance[i]) * reflection.Taper(distance[i])));
         }
         Blend(map, field, nearest, distance);
 
@@ -167,9 +167,11 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             var (x, z, reached) = (map.OriginX + column, map.OriginZ + row, nearest[row * size + column] >= 0);
             var (here, up, left, corner) = ((row + 1) * across + column + 1, row * across + column + 1, (row + 1) * across + column, row * across + column);
             weights[here] = (reached ? 1 : 0) + weights[up] + weights[left] - weights[corner];
+            var face = reached ? field.FaceOf(x, z) : default;
+            float[] values = [face.Distance, face.NormalX, face.NormalZ, face.Reflection];
             for (var channel = 0; channel < totals.Length; channel++)
             {
-                totals[channel][here] = (reached ? field.Get(field.Face, x, z, channel) : 0) + totals[channel][up] + totals[channel][left] - totals[channel][corner];
+                totals[channel][here] = values[channel] + totals[channel][up] + totals[channel][left] - totals[channel][corner];
             }
         }
 
@@ -186,23 +188,12 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             var count = Box(weights);
             var (normalX, normalZ) = (Box(totals[1]), Box(totals[2]));
             var turned = Math.Sqrt(normalX * normalX + normalZ * normalZ);
-            var kept = Math.Sqrt(Math.Pow(field.Get(field.Face, x, z, 1), 2) + Math.Pow(field.Get(field.Face, x, z, 2), 2));
-            field.Set(field.Face, x, z, 0, (float)Math.Max(Box(totals[0]) / count, FaceReading.FirstWaterVertex));
-            if (turned > 0)
-            {
-                field.Set(field.Face, x, z, 1, (float)(normalX / turned * kept));
-                field.Set(field.Face, x, z, 2, (float)(normalZ / turned * kept));
-            }
-            field.Set(field.Face, x, z, 3, (float)(Box(totals[3]) / count));
+            var before = field.FaceOf(x, z);
+            var kept = Math.Sqrt(before.NormalX * before.NormalX + before.NormalZ * before.NormalZ);
+            field.SetFace(x, z, (float)Math.Max(Box(totals[0]) / count, FaceReading.FirstWaterVertex),
+                turned > 0 ? (float)(normalX / turned * kept) : before.NormalX, turned > 0 ? (float)(normalZ / turned * kept) : before.NormalZ,
+                (float)(Box(totals[3]) / count));
         }
-    }
-
-    private static void Write(SurfField field, int x, int z, WallFace wall, double reflects)
-    {
-        var length = wall.StandsAboveCrest ? 1 : OvertoppedNormal;
-        field.Set(field.Face, x, z, 1, (float)(wall.NormalX * length));
-        field.Set(field.Face, x, z, 2, (float)(wall.NormalZ * length));
-        field.Set(field.Face, x, z, 3, (float)reflects);
     }
 
     private sealed class Normals
