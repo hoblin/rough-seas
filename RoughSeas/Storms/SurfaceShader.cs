@@ -50,7 +50,7 @@ public static class SurfaceShader
         ("chunktopsoil", "outColor = applyFogAndShadowWithNormal(outColor,", "outColor"),
     ];
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
-    private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB", "seaFace"];
+    private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB", "seaFace", "seaGainA", "seaGainB"];
     private const double NoCaps = 10;
     private const double StillSurface = 0.875;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
@@ -87,7 +87,7 @@ public static class SurfaceShader
 
     public static bool DrawLag { get; set; } = true;
 
-    public static bool DrawRefraction { get; set; } = true;
+    public static bool DrawEnergy { get; set; } = true;
 
     public static HeightColours Colours => colours;
 
@@ -142,7 +142,7 @@ public static class SurfaceShader
     public static void Upload(SurfField built)
     {
         if (shoreTextures.Length == 0) return;
-        float[][] layers = [built.Bed, built.Aux, built.Lags[0], built.Lags[1], built.Face];
+        float[][] layers = [built.Bed, built.Aux, built.Lags[0], built.Lags[1], built.Face, built.Gains[0], built.Gains[1]];
         for (var i = 0; i < layers.Length; i++)
         {
             GL.BindTexture(TextureTarget.Texture2D, shoreTextures[i]);
@@ -231,7 +231,7 @@ public static class SurfaceShader
             else Array.Clear(shortUniforms);
             __instance.Uniforms4("seaShort", surface.ShortSlots, shortUniforms);
             __instance.Uniform("seaMesh", new Vec2f(SurfaceTessellation.ReachMetres, SurfaceTessellation.FinestSpacing));
-            __instance.Uniform("seaTerms", new Vec3f(DrawReflection ? 1 : 0, DrawLag ? 1 : 0, DrawRefraction ? 1 : 0));
+            __instance.Uniform("seaTerms", new Vec3f(DrawReflection ? 1 : 0, DrawLag ? 1 : 0, DrawEnergy ? 1 : 0));
         }
         colours.Bind(__instance, capi.World.SeaLevel - 1 + StillSurface - player.CameraPos.Y);
         if (field != null && heightMap is { TextureId: > 0 } && Active(__instance, HeightMapSampler))
@@ -255,6 +255,7 @@ public static class SurfaceShader
             __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
             __instance.Uniform("seaFoamDecay", DrawFoam ? (float)foamDecaySeconds : 0);
             __instance.Uniform("seaFaceSlope", (float)(shore?.FaceSlope ?? 0));
+            __instance.Uniform("seaBedEdge", (float)(shore?.EdgeFadeBlocks ?? 1));
             __instance.Uniform("seaWallSlope", (float)wallSlope);
             var vectors = surface.Vectors();
             float Valid(int slot) => shore != null && slot < vectors.Length && slot < shore.Numbers.Length && shore.Numbers[slot] == vectors[slot] ? 1 : 0;

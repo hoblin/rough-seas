@@ -14,25 +14,24 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
 {
     private const double StillLevel = 7.0 / 8;
     private const float StepFoot = -1.5f;
-    private const float DeepEnough = 40;
+    private const float DeepestFelt = 200;
+    private const float ShallowestFelt = 0.05f;
+    private const int Banks = 2;
     public static readonly double[] Scales = [0.4, 0.55, 0.7, 0.85, 1.0, 1.15];
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
-    public SurfField Build(SeabedMap map, Func<int, int, Sea> seaAt, (double X, double Z)[] numbers)
+    public SurfField Build(SeabedMap map, Func<int, int, Sea> seaAt, (double X, double Z)[] numbers, double[]? amplitudeShares = null, double breakingDissipation = 1)
     {
         var size = map.Size;
         var field = new SurfField(map.OriginX, map.OriginZ, size, numbers);
         var depth = new float[size * size];
         for (var i = 0; i < depth.Length; i++) depth[i] = map.DepthAt(map.OriginX + i % size, map.OriginZ + i / size);
 
-        var water = depth.Select(d => d > 0).ToArray();
-        var ramp = Averaged(depth.Select(d => float.IsNaN(d) ? 0 : Math.Clamp(d, 0, DeepEnough)).ToArray(), size, faces.BedRampBlocks);
-        var felt = depth.Select((d, i) => d > 0 && d < DeepEnough ? ramp[i] : d).ToArray();
-        var lags = numbers.Take(SurfField.Slots)
-            .Select(number => Averaged(PhaseField.Lag(size, felt, number.X, number.Z), size, faces.SmoothingBlocks(WaveLength(number)), water))
-            .ToArray();
-        var (swash, steps) = Swash(map, seaAt);
         var smoothing = faces.SmoothingBlocks(LongestWave(numbers));
+        var felt = Felt(depth, size, smoothing);
+        var lags = numbers.Take(SurfField.Slots).Select(number => PhaseField.Lag(size, Felt(depth, size, faces.SmoothingBlocks(WaveLength(number))), number.X, number.Z)).ToArray();
+        var breaking = Energy(field, felt, depth, size, numbers, lags, amplitudeShares, seaAt(map.OriginX + size / 2, map.OriginZ + size / 2).Height, breakingDissipation);
+        var (swash, steps) = Swash(map, seaAt);
         var slopeX = Averaged(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, 1)).ToArray(), size, smoothing);
         var slopeZ = Averaged(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, size)).ToArray(), size, smoothing);
 
@@ -44,7 +43,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
             field.Set(field.Aux, x, z, 0, (float)(map[x, z].Bed?.Conductivity ?? 0));
             field.Set(field.Aux, x, z, 1, slopeX[i]);
             field.Set(field.Aux, x, z, 2, slopeZ[i]);
-            field.Set(field.Aux, x, z, 3, map[x, z].Kind == ShoreKind.Land ? (float)(map.LevelAt(x, z) + StillLevel + map[x, z].Elevation) : 0);
+            field.Set(field.Aux, x, z, 3, map[x, z].Kind == ShoreKind.Land ? (float)(map.LevelAt(x, z) + StillLevel + map[x, z].Elevation) : breaking[i]);
 
             var reached = swash.TryGetValue((x, z), out var sheet);
             field.Set(field.Bed, x, z, 1, reached ? (float)sheet.Distance : 0);
@@ -131,34 +130,52 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
 
     private static double LongestWave((double X, double Z)[] numbers) => numbers.Select(WaveLength).DefaultIfEmpty(0).Max();
 
-    private static float[] Averaged(float[] values, int size, int radius, bool[]? counted = null)
+    private static float[] Felt(float[] depth, int size, int radius)
+    {
+        var averaged = Averaged(depth.Select(d => float.IsNaN(d) ? 0 : Math.Clamp(d, 0, DeepestFelt)).ToArray(), size, radius);
+        return depth.Select((d, i) => d > 0 ? Math.Max(averaged[i], ShallowestFelt) : d).ToArray();
+    }
+
+    private float[] Energy(SurfField field, float[] felt, float[] depth, int size, (double X, double Z)[] numbers, float[][] lags, double[]? amplitudeShares, double seaHeight, double dissipation)
+    {
+        var breaking = new float[size * size];
+        var generation = amplitudeShares == null ? numbers.Length : numbers.Length / Banks;
+        for (var bank = 0; bank * generation < Math.Min(numbers.Length, SurfField.Slots); bank++)
+        {
+            var slots = Enumerable.Range(bank * generation, generation).Where(slot => slot < lags.Length).ToArray();
+            var trains = slots.Select(slot => new WaveEnergy.Train(numbers[slot].X, numbers[slot].Z, (amplitudeShares?[slot] ?? 1 / (2 * Math.Sqrt(2) * Math.Sqrt(generation))) * seaHeight, lags[slot])).ToArray();
+            var (gains, broken) = WaveEnergy.Solve(size, felt, trains, faces.BreakingDepthRatio, dissipation, depth);
+            for (var i = 0; i < broken.Length; i++)
+            {
+                breaking[i] = Math.Max(breaking[i], broken[i]);
+                for (var train = 0; train < slots.Length; train++)
+                {
+                    var slot = slots[train];
+                    field.Set(field.Gains[slot / SurfField.Channels], field.OriginX + i % size, field.OriginZ + i / size, slot % SurfField.Channels, numbers[slot] == default ? 1 : gains[train][i]);
+                }
+            }
+        }
+        return breaking;
+    }
+
+    private static float[] Averaged(float[] values, int size, int radius)
     {
         if (radius <= 0) return values;
         var across = size + 1;
-        var (totals, weights) = (new double[across * across], new double[across * across]);
+        var totals = new double[across * across];
         for (var row = 0; row < size; row++)
         for (var column = 0; column < size; column++)
         {
-            var i = row * size + column;
-            var weight = counted == null || counted[i] ? 1 : 0;
-            var (here, up, left, corner) = ((row + 1) * across + column + 1, row * across + column + 1, (row + 1) * across + column, row * across + column);
-            totals[here] = values[i] * weight + totals[up] + totals[left] - totals[corner];
-            weights[here] = weight + weights[up] + weights[left] - weights[corner];
+            totals[(row + 1) * across + column + 1] = values[row * size + column] + totals[row * across + column + 1] + totals[(row + 1) * across + column] - totals[row * across + column];
         }
 
         var averaged = new float[values.Length];
         for (var row = 0; row < size; row++)
         for (var column = 0; column < size; column++)
         {
-            var i = row * size + column;
-            if (counted != null && !counted[i])
-            {
-                averaged[i] = values[i];
-                continue;
-            }
             var (left, right, top, bottom) = (Math.Max(column - radius, 0), Math.Min(column + radius + 1, size), Math.Max(row - radius, 0), Math.Min(row + radius + 1, size));
-            double Box(double[] table) => table[bottom * across + right] - table[top * across + right] - table[bottom * across + left] + table[top * across + left];
-            averaged[i] = (float)(Box(totals) / Box(weights));
+            var sum = totals[bottom * across + right] - totals[top * across + right] - totals[bottom * across + left] + totals[top * across + left];
+            averaged[row * size + column] = (float)(sum / ((right - left) * (bottom - top)));
         }
         return averaged;
     }

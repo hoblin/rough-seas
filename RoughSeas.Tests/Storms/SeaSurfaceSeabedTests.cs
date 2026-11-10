@@ -39,8 +39,8 @@ public class SeaSurfaceSeabedTests
         return field;
     }
 
-    private static double Highest(SeaSurface surface) =>
-        Enumerable.Range(0, 400).Max(i => surface.HeightAt(MiddleX + i % 20 * 0.7, MiddleZ + i / 20 * 0.9, 1));
+    private static double Highest(SeaSurface surface, bool shortWaves = true) =>
+        Enumerable.Range(0, 400).Max(i => surface.HeightAt(MiddleX + i % 20 * 0.7, MiddleZ + i / 20 * 0.9, 1, shortWaves));
 
     [Fact]
     public void OverLandTheSeaIsNotDrawn()
@@ -51,11 +51,16 @@ public class SeaSurfaceSeabedTests
     }
 
     [Fact]
-    public void InShallowWaterNoCrestStandsHigherThanTheDepthLetsTheWaveBe()
+    public void TheEnergySolvedForATrainSetsItsHeight()
     {
         var surface = Settled(3);
-        surface.Seabed = Flat(surface, 1);
-        Assert.True(Highest(surface) <= 1 / 1.28 * 1.1);
+        surface.Seabed = Flat(surface, 1000);
+        surface.Seabed.EdgeFadeBlocks = 1;
+        var open = Highest(surface, shortWaves: false);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.Set(surface.Seabed.Gains[slot / SurfField.Channels], x, z, slot % SurfField.Channels, 0.5f);
+        Assert.InRange(Highest(surface, shortWaves: false) / open, 0.45, 0.65);
     }
 
     private static void Face(SurfField field, double normalX, double normalZ, float reflection)

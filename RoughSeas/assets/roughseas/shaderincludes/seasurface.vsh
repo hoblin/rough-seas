@@ -8,6 +8,8 @@ uniform highp sampler2D seaBedAux;
 uniform highp sampler2D seaLagA;
 uniform highp sampler2D seaLagB;
 uniform highp sampler2D seaFace;
+uniform highp sampler2D seaGainA;
+uniform highp sampler2D seaGainB;
 uniform vec4 seaHeightArea;
 uniform vec4 seaBedArea;
 uniform vec4 seaShore;
@@ -20,6 +22,7 @@ uniform float seaWallSlope;
 uniform vec4 seaShort[SEA_SHORT];
 uniform vec2 seaMesh;
 uniform vec3 seaTerms;
+uniform float seaBedEdge;
 
 out float seaFoamCrest;
 out float seaFoamFold;
@@ -36,8 +39,6 @@ float seaFaceFoam = 0.0;
 const float seaGravity = 9.81;
 const float seaStepFootBelow = -1.0;
 const float seaFaceStands = 0.75;
-const float seaShallowDepthNumber = 0.31415927;
-const float seaDeepDepthNumber = 3.1415927;
 
 float seaFolding(vec3 squeeze) {
 	return 1.0 - (1.0 - squeeze.x) * (1.0 - squeeze.z) + squeeze.y * squeeze.y;
@@ -47,24 +48,9 @@ float seaWavenumber(float deepNumber, float depth) {
 	return deepNumber / sqrt(tanh(deepNumber * depth));
 }
 
-float seaShoaling(float deepNumber, float depth) {
-	float number = seaWavenumber(deepNumber, depth);
-	float kd = min(number * depth, 20.0);
-	float groupShare = 0.5 * (1.0 + 2.0 * kd / sinh(2.0 * kd));
-	float celerity = sqrt(seaGravity * deepNumber) / number;
-	float deepGroup = 0.5 * sqrt(seaGravity / deepNumber);
-	return sqrt(deepGroup / (groupShare * celerity));
-}
-
-float seaRefraction(float deepNumber, float depth, float cosineOffshore) {
-	float number = seaWavenumber(deepNumber, depth);
-	float felt = seaTerms.z * (1.0 - smoothstep(seaShallowDepthNumber, seaDeepDepthNumber, number * depth));
-	if (felt <= 0.0) return 1.0;
-	float sineOffshore = sqrt(max(0.0, 1.0 - cosineOffshore * cosineOffshore));
-	float sine = sineOffshore * deepNumber / number;
-	float cosine = sqrt(max(0.0, 1.0 - sine * sine));
-	float spread = cosine > 0.0 ? sqrt(abs(cosineOffshore) / cosine) : 1.0;
-	return 1.0 + (spread - 1.0) * felt;
+float seaGain(int slot, vec4 gainA, vec4 gainB) {
+	float gain = slot < 4 ? mix(1.0, gainA[slot], seaLagValidA[slot]) : slot < 8 ? mix(1.0, gainB[slot - 4], seaLagValidB[slot - 4]) : 1.0;
+	return mix(1.0, gain, seaTerms.z);
 }
 
 float seaLag(int slot, vec4 lagA, vec4 lagB) {
@@ -141,19 +127,22 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	bool onBed = seaShore.z > 0.5 && bedUv.x >= 0.0 && bedUv.y >= 0.0 && bedUv.x < 1.0 && bedUv.y < 1.0;
 	vec4 bed = onBed ? textureLod(seaBed, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 1000000.0);
 	vec4 aux = onBed ? textureLod(seaBedAux, bedUv, 0.0) : vec4(0.0);
-	vec4 lagA = onBed ? textureLod(seaLagA, bedUv, 0.0) : vec4(0.0);
-	vec4 lagB = onBed ? textureLod(seaLagB, bedUv, 0.0) : vec4(0.0);
+	float bedEdge = onBed ? smoothstep(0.0, 1.0, min(min(bedUv.x, 1.0 - bedUv.x), min(bedUv.y, 1.0 - bedUv.y)) * seaBedArea.z / seaBedEdge) : 0.0;
+	vec4 lagA = bedEdge * (onBed ? textureLod(seaLagA, bedUv, 0.0) : vec4(0.0));
+	vec4 lagB = bedEdge * (onBed ? textureLod(seaLagB, bedUv, 0.0) : vec4(0.0));
 	vec4 face = onBed ? textureLod(seaFace, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 0.0);
+	vec4 gainA = onBed ? textureLod(seaGainA, bedUv, 0.0) : vec4(1.0);
+	vec4 gainB = onBed ? textureLod(seaGainB, bedUv, 0.0) : vec4(1.0);
 	if (bed.x <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB);
 	float faceDistance = max(face.x, 0.0);
 	float faceLength = length(face.yz);
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);
-	float faceReflects = faceLength > 0.0 ? face.w * seaTerms.x : 0.0;
+	float faceReflects = faceLength > 0.0 ? face.w * seaTerms.x * bedEdge : 0.0;
 	vec2 texel = vec2(1.0 / seaBedArea.z, 0.0);
-	vec4 turnAX = onBed ? (textureLod(seaLagA, bedUv + texel.xy, 0.0) - textureLod(seaLagA, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0);
-	vec4 turnAZ = onBed ? (textureLod(seaLagA, bedUv + texel.yx, 0.0) - textureLod(seaLagA, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0);
-	vec4 turnBX = onBed ? (textureLod(seaLagB, bedUv + texel.xy, 0.0) - textureLod(seaLagB, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0);
-	vec4 turnBZ = onBed ? (textureLod(seaLagB, bedUv + texel.yx, 0.0) - textureLod(seaLagB, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0);
+	vec4 turnAX = bedEdge * (onBed ? (textureLod(seaLagA, bedUv + texel.xy, 0.0) - textureLod(seaLagA, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0));
+	vec4 turnAZ = bedEdge * (onBed ? (textureLod(seaLagA, bedUv + texel.yx, 0.0) - textureLod(seaLagA, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0));
+	vec4 turnBX = bedEdge * (onBed ? (textureLod(seaLagB, bedUv + texel.xy, 0.0) - textureLod(seaLagB, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0));
+	vec4 turnBZ = bedEdge * (onBed ? (textureLod(seaLagB, bedUv + texel.yx, 0.0) - textureLod(seaLagB, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0));
 
 	float heights[SEA_SLOTS];
 	float numbers[SEA_SLOTS];
@@ -170,18 +159,15 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 			heights[i] = wave.z;
 			continue;
 		}
-		float cosine = slope > 0.0 ? -dot(wave.xy, aux.yz) / (deepNumber * slope) : 1.0;
-		heights[i] = wave.z * seaShoaling(deepNumber, bed.x) * seaRefraction(deepNumber, bed.x, cosine);
-		numbers[i] = seaWavenumber(deepNumber, bed.x);
+		heights[i] = wave.z * mix(1.0, seaGain(i, gainA, gainB), bedEdge);
+		numbers[i] = mix(deepNumber, seaWavenumber(deepNumber, bed.x), bedEdge);
 		offshore += wave.z * wave.z;
 		local += heights[i] * heights[i];
 	}
 	float breaking = 0.0;
 	bool plunging = false;
 	if (onBed && local > 0.0) {
-		float kept = min(1.0, bed.x / seaShore.x / (share * 4.0 * sqrt(local / 2.0)));
-		for (int i = 0; i < SEA_SLOTS; i++) heights[i] *= kept;
-		breaking = 1.0 - kept;
+		breaking = aux.w * bedEdge;
 		float dominantNumber = length(seaWaves[int(seaShore.y)].xy);
 		float iribarren = slope / sqrt(share * 4.0 * sqrt(offshore / 2.0) * dominantNumber / 6.2831853);
 		plunging = iribarren >= seaPlunging.x && iribarren < seaPlunging.y;
@@ -272,6 +258,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 		float sinceStrike = mod(crestAgo - faceDistance / celerity, 6.2831853 / angular);
 		if (celerity * sinceStrike >= faceDistance) seaFaceFoam = breaking * exp(-sinceStrike / seaFoamDecay);
 	}
+	if (seaFoamDecay > 0.0) seaFaceFoam = max(seaFaceFoam, breaking * smoothstep(0.0, 1.0, 0.5 + 0.5 * seaCrest));
 	return warped;
 }
 

@@ -7,7 +7,8 @@ namespace RoughSeas.Storms;
 /// <summary>A debug view: the water painted from purple at the zone's lowest point to red at its highest, each block's top face outlined. The range is the CPU sea's, so a saturated colour is a height the CPU sea doesn't have.</summary>
 public sealed class HeightColours
 {
-    private const double ReachMetres = 32;
+    private const double ReachMetres = 128;
+    private const double StepMetres = 2;
     private const string Uniform = "seaHeightColours";
     private const string Block = "seaBlockCell";
     private const string VertexOutput = "flat out int waterFlags;";
@@ -46,9 +47,9 @@ public sealed class HeightColours
     {
         if (!On) return;
         (lowest, highest) = (double.MaxValue, double.MinValue);
-        for (var dz = -ReachMetres; dz <= ReachMetres; dz++)
+        for (var dz = -ReachMetres; dz <= ReachMetres; dz += StepMetres)
         {
-            for (var dx = -ReachMetres; dx <= ReachMetres; dx++)
+            for (var dx = -ReachMetres; dx <= ReachMetres; dx += StepMetres)
             {
                 var height = surface.HeightAt(x + dx, z + dz, field.Factor(x + dx, z + dz));
                 lowest = Math.Min(lowest, height);

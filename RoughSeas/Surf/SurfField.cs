@@ -29,7 +29,7 @@ public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, dou
 /// <see cref="Storms.SeaSurface"/> mirrors it. <see cref="Bed"/>: the depth under still water (negative over land), the
 /// distance a sheet runs from the shoreline to here, the run-up of the shore it comes from, and the run-up a wave needs
 /// to reach here (<see cref="Unreached"/> where none does). <see cref="Aux"/>: the bed's hydraulic conductivity, the
-/// depth's slope along X and Z, and over land the top of the ground in world height. <see cref="Lags"/>: for each wave
+/// depth's slope along X and Z, and over land the top of the ground in world height, over water the share of waves breaking there. <see cref="Gains"/>: for each wave slot, its height here over its height in deep water (<see cref="WaveEnergy"/>). <see cref="Lags"/>: for each wave
 /// slot, the phase the bed has held the wave back by (<see cref="PhaseField"/>); over land, the lag at the shoreline the
 /// sheet comes from, carried to here. The lags hold for the wave vectors in <see cref="Numbers"/> alone. <see cref="Face"/>:
 /// over water, the distance to the nearest face a wave meets, its outward normal along X and Z, and the share of a wave
@@ -58,6 +58,8 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public float[] Face { get; } = new float[size * size * Channels];
 
+    public float[][] Gains { get; } = [Filled(size * size * Channels), Filled(size * size * Channels)];
+
     /// <summary>The steepest the reflected water may rise per metre from the face.</summary>
     public double FaceSlope { get; set; } = double.PositiveInfinity;
 
@@ -81,6 +83,11 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
     public double LagAt(int slot, double x, double z) =>
         slot / Channels < Lags.Length ? Sample(Lags[slot / Channels], x, z, slot % Channels) : 0;
 
+    public double GainAt(int slot, double x, double z) =>
+        slot / Channels < Gains.Length ? Sample(Gains[slot / Channels], x, z, slot % Channels) : 1;
+
+    public double BreakingAt(double x, double z) => DepthAt(x, z) > 0 ? Sample(Aux, x, z, 3) : 0;
+
     public string Describe(double x, double z) => !Covers(x, z)
         ? "outside the seabed read"
         : $"depth {Sample(Bed, x, z, 0):F2} m, {Sample(Bed, x, z, 1):F1} m from the shoreline, run-up {Sample(Bed, x, z, 2):F2} m, reached by {Sample(Bed, x, z, 3):F2} m, "
@@ -88,6 +95,22 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
           + $"nearest face {Sample(Face, x, z, 0):F1} m, reflects {Sample(Face, x, z, 3):F2}";
 
     public bool Covers(double x, double z) => x >= OriginX && z >= OriginZ && x < OriginX + Size && z < OriginZ + Size;
+
+    public int EdgeFadeBlocks { get; set; } = 1;
+
+    public double EdgeShare(double x, double z)
+    {
+        var inside = Math.Min(Math.Min(x - OriginX, z - OriginZ), Math.Min(OriginX + Size - x, OriginZ + Size - z));
+        var share = Math.Clamp(inside / EdgeFadeBlocks, 0, 1);
+        return share * share * (3 - 2 * share);
+    }
+
+    private static float[] Filled(int length)
+    {
+        var values = new float[length];
+        Array.Fill(values, 1f);
+        return values;
+    }
 
     public void Set(float[] into, int x, int z, int channel, float value) => into[((z - OriginZ) * Size + x - OriginX) * Channels + channel] = value;
 

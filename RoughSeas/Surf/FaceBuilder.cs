@@ -15,7 +15,7 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
     private static readonly (int X, int Z)[] Around = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)];
 
-    public int BedRampBlocks => config.BedRampBlocks;
+    public double BreakingDepthRatio => breakingDepthRatio;
 
     public int SmoothingBlocks(double wavelength) => Math.Min(config.SmoothingMaxBlocks, (int)Math.Ceiling(wavelength * config.SmoothingWavelengths));
 

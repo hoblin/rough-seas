@@ -36,13 +36,13 @@ public class SurfBuilderTests
     }
 
     [Fact]
-    public void AWaveFeelsAStepInTheBedAsARamp()
+    public void AWaveFeelsAStepInTheBedOverAQuarterOfItsLength()
     {
         var field = Bed(x => x < 16 ? 2 : 8);
 
         Assert.InRange(field.DepthAt(15.5, 16.5), 2.5, 7.5);
-        Assert.Equal(2, field.DepthAt(8.5, 16.5), 3);
-        Assert.Equal(8, field.DepthAt(24.5, 16.5), 3);
+        Assert.True(field.DepthAt(8.5, 16.5) < field.DepthAt(15.5, 16.5));
+        Assert.True(field.DepthAt(24.5, 16.5) > field.DepthAt(15.5, 16.5));
     }
 
     [Fact]
