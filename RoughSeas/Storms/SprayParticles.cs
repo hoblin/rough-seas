@@ -42,7 +42,15 @@ public sealed class SprayParticles(FacesConfig config) : ParticlesProviderBase
 
     public override float GravityEffect => (float)(RunUp.Gravity / (GlobalConstants.GravityStrengthParticle * EngineGravityFactor));
 
-    public override float LifeLength => (2 * speed / (float)RunUp.Gravity + (float)config.SprayLandingSeconds) / EngineLifeFactor;
+    public override float LifeLength
+    {
+        get
+        {
+            var gravity = (float)RunUp.Gravity;
+            var flight = (speed + MathF.Sqrt(speed * speed + 2 * gravity * (float)burst.FallMetres)) / gravity;
+            return (flight + (float)config.SprayLandingSeconds) / EngineLifeFactor;
+        }
+    }
 
     public override float Quantity => burst.Count;
 

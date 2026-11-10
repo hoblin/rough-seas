@@ -85,7 +85,7 @@
             "radiusBlocks": "Performance budget: how far from the player strikes throw spray",
             "tickMilliseconds": "How often the faces around the player are watched for a strike",
             "sprayScatterMetresPerSecond": "How far spray spreads off the face: vanilla's water splash particles scatter by this much",
-            "sprayLandingSeconds": "A drop's life beyond its flight back to the height it left, so it lands on the water below that height and ends there",
+            "sprayLandingSeconds": "A drop's life beyond its flight down to still water, so it lands and ends there rather than vanishing in the air",
             "sprayFromFaceBlocks": "How far off the face a drop starts, clear of the block's collision"
         }
     },

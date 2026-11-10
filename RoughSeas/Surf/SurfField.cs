@@ -65,6 +65,21 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
         return length > 0 ? new FaceReading(Math.Max(Sample(Face, x, z, 0), 0), normalX / length, normalZ / length, Math.Abs(Sample(Face, x, z, 3))) : default;
     }
 
+    /// <summary>The depth of the water beside a face that stands above the crest, for a vertex on the face where the land's negative depth would drown it; 0 elsewhere.</summary>
+    public double WaterSideDepth(double x, double z)
+    {
+        if (Sample(Face, x, z, 3) <= 0) return 0;
+        var (cornerX, cornerZ) = ((int)Math.Floor(x - OriginX + 0.5), (int)Math.Floor(z - OriginZ + 0.5));
+        var deepest = 0.0;
+        for (var i = 0; i < 4; i++)
+        {
+            var column = Math.Clamp(cornerX - (i & 1), 0, Size - 1);
+            var row = Math.Clamp(cornerZ - (i >> 1), 0, Size - 1);
+            deepest = Math.Max(deepest, Bed[(row * Size + column) * Channels]);
+        }
+        return deepest;
+    }
+
     public double DepthAt(double x, double z) => Sample(Bed, x, z, 0);
 
     public double SlopeXAt(double x, double z) => Sample(Aux, x, z, 1);

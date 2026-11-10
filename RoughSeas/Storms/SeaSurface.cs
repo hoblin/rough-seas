@@ -260,6 +260,7 @@ public sealed class SeaSurface
         if (share <= 0 || Seabed is not { } field || !field.Covers(x, z)) return Steepness;
 
         var depth = field.DepthAt(x, z);
+        if (depth <= 0) depth = field.WaterSideDepth(x, z);
         if (depth <= 0)
         {
             heights.Clear();

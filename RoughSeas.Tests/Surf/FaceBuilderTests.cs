@@ -109,6 +109,34 @@ public class FaceBuilderTests
     }
 
     [Fact]
+    public void AWallOnAFlatShallowBedStillReflectsAsAWall() =>
+        Assert.All(Built(Wall(16, 8, 2), 2, 8).Walls, wall => Assert.True(wall.Reflection > 0.9));
+
+    [Fact]
+    public void AOneBlockPierStaysNeutralBetweenAllItsFaces()
+    {
+        var map = new SeabedMap(0, 0, Size);
+        for (var x = 0; x < Size; x++)
+        for (var z = 0; z < Size; z++)
+        {
+            if ((x, z) == (16, 16)) map.Put(x, z, new ShoreCell(ShoreKind.Land, 5, Stone, 1), Level);
+            else map.Put(x, z, new ShoreCell(ShoreKind.Water, 10, Stone, 1), Level);
+        }
+        var (field, _) = Built(map, 4, 12);
+        Assert.Equal(0, field.Get(field.Face, 16, 16, 1));
+        Assert.Equal(0, field.Get(field.Face, 16, 16, 2));
+    }
+
+    [Fact]
+    public void AVertexOnATallFaceReadsTheWaterBesideIt()
+    {
+        var (field, _) = Built(Wall(16, 8, 2));
+        for (var x = 0; x < Size; x++)
+        for (var z = 0; z < Size; z++) field.Set(field.Bed, x, z, 0, x < 16 ? 2 : -8);
+        Assert.Equal(2, field.WaterSideDepth(16, 16.5), 3);
+    }
+
+    [Fact]
     public void AFaceBelowTheCrestDoesNotStandAboveIt() => Assert.All(Built(Wall(16, 0.125), 2, 8).Walls, wall => Assert.False(wall.StandsAboveCrest));
 
     [Fact]

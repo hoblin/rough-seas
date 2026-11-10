@@ -91,7 +91,7 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
         for (var i = 1; i < config.ReachBlocks && depth < toe; i++)
         {
             var (x, z) = (seed.X - i * seed.SideX, seed.Z - i * seed.SideZ);
-            if (map[x, z].Kind != ShoreKind.Water) break;
+            if (map[x, z].Kind != ShoreKind.Water || map[x, z].Elevation <= depth) break;
             (depth, run) = (Math.Min(map[x, z].Elevation, toe), i + 0.5);
         }
         return (depth + Math.Min(seed.Rise, height)) / run;
@@ -133,14 +133,16 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             Write(field, x, z, wall, wall.Reflection * WallReflection.Spreading(wall.Run, wall.Wavelength, distance[i]) * reflection.Taper(distance[i]));
         }
 
+        var neutral = new HashSet<(int X, int Z)>();
         foreach (var wall in walls)
         {
             var (x, z) = (wall.X + wall.SideX, wall.Z + wall.SideZ);
-            if (!map.Inside(x, z)) continue;
+            if (!map.Inside(x, z) || neutral.Contains((x, z))) continue;
             if (field.Get(field.Face, x, z, 1) * wall.NormalX + field.Get(field.Face, x, z, 2) * wall.NormalZ < 0)
             {
                 field.Set(field.Face, x, z, 1, 0);
                 field.Set(field.Face, x, z, 2, 0);
+                neutral.Add((x, z));
                 continue;
             }
             Write(field, x, z, wall, wall.Reflection);
