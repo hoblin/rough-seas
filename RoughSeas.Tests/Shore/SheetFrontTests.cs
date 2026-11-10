@@ -36,5 +36,20 @@ public class SheetFrontTests
     public void GravelSoaksTheSheetUpSoonerThanSand() => Assert.True(Run(Thrown(1), 0, "gravel") < Run(Thrown(1), 0, "sand"));
 
     [Fact]
-    public void RockSoaksNothingUp() => Assert.Equal(Thrown(1).Depth, Thrown(1).Cross(0, ShoreFixtures.Bed("stone"))!.Value.Depth, 9);
+    public void RockSoaksNothingUp() => Assert.Equal(0, Thrown(1).Cross(0, ShoreFixtures.Bed("stone"))!.Value.Soaked);
+
+    [Fact]
+    public void TheLensThinsAsItsFrontSlowsClimbing() => Assert.True(Thrown(3).Cross(2, ShoreFixtures.Bed("soil"))!.Value.Depth < Thrown(3).Depth);
+
+    [Fact]
+    public void OnLevelGroundTheSheetRunsNoFurtherThanItsSpeedCarriesItInOneWavePeriod() =>
+        Assert.InRange(Run(Thrown(7, 8.4), 0, "soil"), 1, Math.Sqrt(2 * 9.81 * 7) * 8.4);
+
+    [Fact]
+    public void ASheetThatJustClimbsOntoABlockWetsItThoughItCannotCrossIt()
+    {
+        var front = Thrown(0.13, 3.1).Cross(0.125, ShoreFixtures.Bed("sand"));
+        Assert.NotNull(front);
+        Assert.Equal(0, front.Value.Head);
+    }
 }

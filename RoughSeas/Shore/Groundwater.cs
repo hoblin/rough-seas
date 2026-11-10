@@ -95,7 +95,11 @@ public sealed class Groundwater
         if (nearest == default) return $"no shore at level {level} within {config.Band.HaloBlocks} blocks; here: {cell.Kind} holding {held}";
         var reaches = string.Join(", ", Seas(nearest.X, nearest.Z, level).Select(state =>
             $"{state.Height:F1} m every {state.Period:F1} s runs up {band.RunUpFrom(ground, nearest, state):F2} m"));
-        return $"here: {cell.Kind} holding {held}, {cell.Elevation:F2} m over still water, bed {cell.Bed?.Material}; "
+        var spread = floods.TryGetValue(level, out var flood) && flood.Task.IsCompletedSuccessfully
+            ? flood.Task.Result.TryGetValue((pos.X, pos.Z), out var sheet) ? $"in the band {sheet.Rings} blocks in" : "outside the band"
+            : "no band spread yet";
+        var queued = planned.TryGetValue((pos.X, level, pos.Z), out var plan) ? $", {(plan == 0 ? "draining" : "taking water")}" : "";
+        return $"here: {cell.Kind} holding {held}, {spread}{queued}, {cell.Elevation:F2} m over still water, bed {cell.Bed?.Material}; "
             + $"nearest shore {nearest.X - sapi.World.DefaultSpawnPosition.X:0} {nearest.Z - sapi.World.DefaultSpawnPosition.Z:0}: {reaches}";
     }
 
@@ -169,11 +173,9 @@ public sealed class Groundwater
         for (var i = 0; i < ChunkSize * ChunkSize; i++)
         {
             var (x, z) = (chunk.X * ChunkSize + i % ChunkSize, chunk.Z * ChunkSize + i / ChunkSize);
-            var y = (int)map.RainHeightMap[i];
-            probe.Set(x, y, z);
-            if (accessor.GetChunkAtBlockPos(probe) == null) continue;
-            var fluid = accessor.GetBlock(probe, BlockLayersAccess.Fluid);
-            if (!Carries(fluid) || OpenWater.Land(accessor, probe) || !Shore(accessor, probe, x, y, z)) continue;
+            var top = (int)map.RainHeightMap[i];
+            if (accessor.GetChunkAtBlockPos(probe.Set(x, top, z)) == null || Surface(accessor, probe, x, top, z) is not var (y, fluid)) continue;
+            if (OpenWater.Land(accessor, probe.Set(x, y, z)) || !Shore(accessor, probe, x, y, z)) continue;
             if (!found.TryGetValue(y, out var level)) found[y] = level = [];
             level.Add(new ShoreSeed(x, z, Carrier(fluid)));
         }
@@ -184,6 +186,17 @@ public sealed class Groundwater
         if (Same(known, found)) return;
         log("chunk {0} {1}: shore at {2}", [chunk.X, chunk.Z, found.Count > 0 ? string.Join(", ", found.Select(level => $"{level.Value.Count} cells of level {level.Key}")) : "none"]);
         foreach (var level in found.Keys.Concat((IEnumerable<int>?)known?.Keys ?? []).Distinct()) Stale(level, chunk);
+    }
+
+    private (int Y, Block Fluid)? Surface(IBlockAccessor accessor, BlockPos probe, int x, int top, int z)
+    {
+        for (var y = top; y >= top - config.Band.HighestRiseBlocks; y--)
+        {
+            var fluid = accessor.GetBlock(probe.Set(x, y, z), BlockLayersAccess.Fluid);
+            if (fluid.Id != 0) return Carries(fluid) ? (y, fluid) : null;
+            if (OpenWater.Land(accessor, probe)) return null;
+        }
+        return null;
     }
 
     private static bool Shore(IBlockAccessor accessor, BlockPos probe, int x, int y, int z)
