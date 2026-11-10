@@ -22,6 +22,16 @@ A sailor reads the weather off the sea before any instrument: the height of the 
 | --- | --- |
 | ![White spray thrown up where sheets of water stop at a shore's block steps](images/sea/face-steps.webp) | ![A wave standing high against a natural cliff, spray thrown up the face](images/sea/face-wall.webp) |
 
+The pictures below paint the water by height, purple at its lowest and red at its highest, and outline each block. `.surface colours true` shows it to you. The first two are the same wave at the same moment.
+
+| One flat quad a block | The block divided finer, as you see it near you |
+| --- | --- |
+| ![A hurricane's wave drawn with a quad a block: flat facets with creases along the block lines](images/sea/mesh-block.webp) | ![The same wave with each block divided: a rounded surface bending inside each block](images/sea/mesh-divided.webp) |
+
+| A hurricane's sea in height colours | A bar a metre under the sea, bared by a trough |
+| --- | --- |
+| ![The height of a hurricane's sea from purple to red, the block outlines drawn on it](images/sea/mesh-far.webp) | ![A strip of granite bared between the waves in height colours, the waves smaller behind it](images/sea/bar-colours.webp) |
+
 The sea is drawn this way even with *Waving foliage* off in the game's graphics settings: a storm should never come unseen.
 
 ## Water under the beach
