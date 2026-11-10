@@ -1,6 +1,28 @@
 using System;
+using System.Collections.Generic;
 
 namespace RoughSeas.Surf;
+
+/// <param name="Distance">How far the water here lies from the face. Up to <see cref="FirstWaterVertex"/> the point is a vertex of the face itself, shared with the water held under the land; the reflection grows from there.</param>
+public readonly record struct FaceReading(double Distance, double NormalX, double NormalZ, double Reflection)
+{
+    public const double FirstWaterVertex = 0.5;
+}
+
+public readonly record struct WallFace(int X, int Z, int Level, int SideX, int SideZ, double NormalX, double NormalZ, double Rise, int Run, double Wavelength, double Reflection,
+    bool StandsAboveCrest, double FaceX, double FaceZ);
+
+public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, double Ground, double Rise, double Distance, double RunUp, double[] Heads, double[] Lenses)
+{
+    public (double Head, double Lens) At(double share)
+    {
+        for (var index = SurfBuilder.Scales.Length - 1; index >= 0; index--)
+        {
+            if (SurfBuilder.Scales[index] <= share) return (Heads[index], Lenses[index]);
+        }
+        return default;
+    }
+}
 
 /// <summary>
 /// The seabed around a player, a texel a block, as <c>seasurface.vsh</c> and <c>seawet.fsh</c> read it and
@@ -9,7 +31,10 @@ namespace RoughSeas.Surf;
 /// to reach here (<see cref="Unreached"/> where none does). <see cref="Aux"/>: the bed's hydraulic conductivity, the
 /// depth's slope along X and Z, and over land the top of the ground in world height. <see cref="Lags"/>: for each wave
 /// slot, the phase the bed has held the wave back by (<see cref="PhaseField"/>); over land, the lag at the shoreline the
-/// sheet comes from, carried to here. The lags hold for the wave vectors in <see cref="Numbers"/> alone.
+/// sheet comes from, carried to here. The lags hold for the wave vectors in <see cref="Numbers"/> alone. <see cref="Face"/>:
+/// over water, the distance to the nearest face a wave meets, its outward normal along X and Z, and the share of a wave
+/// it sends back; the normal is half length where the crest stands higher than the face, which then doesn't foam. Over land
+/// the distance is -0.5, so it interpolates to 0 on the face itself; -1.5 marks the foot of a step that stops a sheet.
 /// </summary>
 public sealed class SurfField(int originX, int originZ, int size, (double X, double Z)[] numbers)
 {
@@ -31,6 +56,22 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public float[][] Lags { get; } = [new float[size * size * Channels], new float[size * size * Channels]];
 
+    public float[] Face { get; } = new float[size * size * Channels];
+
+    /// <summary>The steepest the reflected water may rise per metre from the face.</summary>
+    public double FaceSlope { get; set; } = double.PositiveInfinity;
+
+    public IReadOnlyList<WallFace> Walls { get; set; } = [];
+
+    public IReadOnlyList<StepFace> Steps { get; set; } = [];
+
+    public FaceReading FaceAt(double x, double z)
+    {
+        var (normalX, normalZ) = (Sample(Face, x, z, 1), Sample(Face, x, z, 2));
+        var length = Math.Sqrt(normalX * normalX + normalZ * normalZ);
+        return length > 0 ? new FaceReading(Math.Max(Sample(Face, x, z, 0), 0), normalX / length, normalZ / length, Sample(Face, x, z, 3)) : default;
+    }
+
     public double DepthAt(double x, double z) => Sample(Bed, x, z, 0);
 
     public double SlopeXAt(double x, double z) => Sample(Aux, x, z, 1);
@@ -43,7 +84,8 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
     public string Describe(double x, double z) => !Covers(x, z)
         ? "outside the seabed read"
         : $"depth {Sample(Bed, x, z, 0):F2} m, {Sample(Bed, x, z, 1):F1} m from the shoreline, run-up {Sample(Bed, x, z, 2):F2} m, reached by {Sample(Bed, x, z, 3):F2} m, "
-          + $"soaks {Sample(Aux, x, z, 0):E1} m/s, bed slope {Sample(Aux, x, z, 1):F2} {Sample(Aux, x, z, 2):F2}";
+          + $"soaks {Sample(Aux, x, z, 0):E1} m/s, bed slope {Sample(Aux, x, z, 1):F2} {Sample(Aux, x, z, 2):F2}; "
+          + $"nearest face {Sample(Face, x, z, 0):F1} m, reflects {Sample(Face, x, z, 3):F2}";
 
     public bool Covers(double x, double z) => x >= OriginX && z >= OriginZ && x < OriginX + Size && z < OriginZ + Size;
 

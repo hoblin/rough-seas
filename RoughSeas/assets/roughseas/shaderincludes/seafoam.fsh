@@ -5,6 +5,7 @@ uniform vec2 seaWavesToward;
 in float seaFoamCrest;
 in float seaFoamFold;
 in float seaFoamShare;
+in float seaFoamFace;
 in vec2 seaFoamWorld;
 
 float seaWaterDepth() {
@@ -27,7 +28,7 @@ float seaVeins(float along, float side, float scale, float width, float t) {
 }
 
 float seaFoamAt() {
-	if (seaFoamShare <= 0.0) return 0.0;
+	if (seaFoamShare <= 0.0 && seaFoamFace <= 0.0) return 0.0;
 
 	vec2 at = seaFoamWorld;
 	float t = waterWaveCounter;
@@ -69,6 +70,8 @@ float seaFoamAt() {
 			foam = max(foam, seaFlecked(density, lace * 0.8) * smoothstep(0.02, 0.15, seaFoamShare));
 		}
 	}
+
+	if (seaFoamFace > 0.0) foam = max(foam, seaFlecked(seaFoamFace * 1.2, lace * 0.8));
 
 	return clamp(foam, 0.0, 1.0);
 }

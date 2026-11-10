@@ -29,7 +29,7 @@ public static class SurfaceShader
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
         "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; "
-        + "seaFoamShare = seaShare; seaFoamWorld = worldPos.xz + playerpos.xz;";
+        + "seaFoamShare = seaShare; seaFoamFace = seaFaceFoam; seaFoamWorld = worldPos.xz + playerpos.xz;";
     private const string FragmentMain = "void main()";
     private const string BeforeFog = "texColor = applyFog(texColor, fogAmount);";
     private const string Foamed =
@@ -47,7 +47,7 @@ public static class SurfaceShader
         ("chunktopsoil", "outColor = applyFogAndShadowWithNormal(outColor,", "outColor"),
     ];
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
-    private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB"];
+    private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB", "seaFace"];
     private const double NoCaps = 10;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
@@ -66,6 +66,8 @@ public static class SurfaceShader
     private static string wetCode = "";
     private static double lensDepthRatio;
     private static double wetReflectance;
+    private static double foamDecaySeconds;
+    private static double wallSlope;
     private static bool normalTilted;
 
     public static bool DrawWaves { get; set; } = true;
@@ -74,9 +76,9 @@ public static class SurfaceShader
 
     public static bool DrawShore { get; set; } = true;
 
-    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, ICoreClientAPI api)
+    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double foamDecay, double steepestShore, ICoreClientAPI api)
     {
-        (surface, field, capi, lensDepthRatio, wetReflectance) = (waves, heights, api, lensDepth, wetShade);
+        (surface, field, capi, lensDepthRatio, wetReflectance, foamDecaySeconds, wallSlope) = (waves, heights, api, lensDepth, wetShade, foamDecay, steepestShore);
         heightMap = new LoadedTexture(api);
         heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
         shoreTextures = ShoreSamplers.Select(_ => GL.GenTexture()).ToArray();
@@ -121,7 +123,7 @@ public static class SurfaceShader
     public static void Upload(SurfField built)
     {
         if (shoreTextures.Length == 0) return;
-        float[][] layers = [built.Bed, built.Aux, built.Lags[0], built.Lags[1]];
+        float[][] layers = [built.Bed, built.Aux, built.Lags[0], built.Lags[1], built.Face];
         for (var i = 0; i < layers.Length; i++)
         {
             GL.BindTexture(TextureTarget.Texture2D, shoreTextures[i]);
@@ -221,6 +223,9 @@ public static class SurfaceShader
         {
             __instance.Uniform("seaShore", new Vec4f((float)surface.Shape.BreakingDepthRatio, surface.Dominant, shore != null && DrawShore ? 1 : 0, (float)surface.Shape.CrestRatio));
             __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
+            __instance.Uniform("seaFoamDecay", DrawFoam ? (float)foamDecaySeconds : 0);
+            __instance.Uniform("seaFaceSlope", (float)(shore?.FaceSlope ?? 0));
+            __instance.Uniform("seaWallSlope", (float)wallSlope);
             var vectors = surface.Vectors();
             float Valid(int slot) => shore != null && slot < vectors.Length && slot < shore.Numbers.Length && shore.Numbers[slot] == vectors[slot] ? 1 : 0;
             __instance.Uniform("seaLagValidA", new Vec4f(Valid(0), Valid(1), Valid(2), Valid(3)));

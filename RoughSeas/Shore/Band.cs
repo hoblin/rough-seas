@@ -11,7 +11,9 @@ public readonly record struct ShoreSeed(int X, int Z, int Fluid);
 /// <param name="Head">The front's velocity head on arriving, in metres.</param>
 /// <param name="FromX">The cell of water the front was thrown from.</param>
 /// <param name="RunUp">The run-up of the sea that threw it, before any scaling.</param>
-public readonly record struct Reached(int Fluid, int Rings, double Head, int FromX, int FromZ, double RunUp);
+/// <param name="Lens">The sheet's volume per metre of its front on arriving, in square metres.</param>
+/// <param name="Rise">The step the front climbed to arrive here, in metres.</param>
+public readonly record struct Reached(int Fluid, int Rings, double Head, int FromX, int FromZ, double RunUp, double Lens = 0, double Rise = 0);
 
 /// <summary>
 /// Where a shore's swash reaches: from each cell of water beside land, a sheet is thrown up the land by the run-up of the
@@ -20,37 +22,46 @@ public readonly record struct Reached(int Fluid, int Rings, double Head, int Fro
 /// </summary>
 public sealed class Band(RunUp runUp, SheetConfig sheet, int slopeSearchBlocks)
 {
+    private const double WaterLineBelowBlockTop = 1.0 / 8;
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
+
+    public double WallSlope => runUp.WallSlope;
+
+    /// <summary>Whether a step this high, coming straight after one that high, is a wall: higher than the wall's slope over its one block, or a second riser at that slope with no tread between them.</summary>
+    public bool IsWall(double rise, double previousRise) => rise > WallSlope || (rise >= WallSlope && previousRise >= WallSlope);
 
     public Dictionary<(int X, int Z), Reached> Spread(IShoreGround ground, IEnumerable<ShoreSeed> seeds, Func<int, int, IReadOnlyList<Sea>> seas,
         double runUpScale = 1)
     {
         var reached = new Dictionary<(int X, int Z), Reached>();
-        var fronts = new PriorityQueue<(int X, int Z, Reached From, SheetFront Front), double>();
+        var fronts = new PriorityQueue<(int X, int Z, Reached From, SheetFront Front, double Rise), double>();
 
         foreach (var seed in seeds)
         {
             foreach (var (dx, dz) in Sides)
             {
                 if (ground.At(seed.X + dx, seed.Z + dz) is not { Kind: ShoreKind.Land } land) continue;
+                if (land.Elevation - WaterLineBelowBlockTop > WallSlope) continue;
                 if (Thrown(ground, seed.X, seed.Z, dx, dz, seas(seed.X, seed.Z), runUpScale) is not var (runUp, thrown)) continue;
                 if (thrown.Cross(land.Elevation, land.Bed) is not { } front) continue;
-                fronts.Enqueue((seed.X + dx, seed.Z + dz, new Reached(seed.Fluid, 1, front.Head, seed.X, seed.Z, runUp), front), -front.Head);
+                fronts.Enqueue((seed.X + dx, seed.Z + dz, new Reached(seed.Fluid, 1, front.Head, seed.X, seed.Z, runUp), front, land.Elevation - WaterLineBelowBlockTop), -front.Head);
             }
         }
 
         while (fronts.TryDequeue(out var next, out _))
         {
             if (reached.ContainsKey((next.X, next.Z))) continue;
-            reached[(next.X, next.Z)] = next.From with { Head = next.Front.Head };
+            reached[(next.X, next.Z)] = next.From with { Head = next.Front.Head, Lens = next.Front.Depth * next.Front.Metres, Rise = next.Rise };
             var from = ground.At(next.X, next.Z);
             foreach (var (dx, dz) in Sides)
             {
                 var (x, z) = (next.X + dx, next.Z + dz);
                 if (reached.ContainsKey((x, z)) || ground.At(x, z) is not { Kind: ShoreKind.Land } land) continue;
-                if (next.Front.Cross(land.Elevation - from.Elevation, land.Bed) is { } front)
+                var rise = land.Elevation - from.Elevation;
+                if (IsWall(rise, next.Rise)) continue;
+                if (next.Front.Cross(rise, land.Bed) is { } front)
                 {
-                    fronts.Enqueue((x, z, next.From with { Rings = next.From.Rings + 1 }, front), -front.Head);
+                    fronts.Enqueue((x, z, next.From with { Rings = next.From.Rings + 1 }, front, rise), -front.Head);
                 }
             }
         }

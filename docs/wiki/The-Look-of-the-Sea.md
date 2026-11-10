@@ -6,7 +6,8 @@ A sailor reads the weather off the sea before any instrument: the height of the 
 - **Whitecaps by the Beaufort scale.** Crests break white where they grow too steep, and how many break follows the wind, as the scale describes it: a few scattered whitecaps at force 3, many at 4 to 5, foam blown off the crests in streaks along the wind at 6 and 7, and from 8 up a sea whitening with spray. Waves need to stand half a metre for it: a pond's ripple stays clear in any wind.
 - **Surf on the shore.** The waves reach the beach. As the water shallows they grow higher and turn to face the shore, then break: they spill on a gentle beach and curl over and plunge on a steep one. Each broken wave runs up the beach as a thin sheet of water and slides back. The bigger the wave, the further it runs, so in a storm the swash climbs far up the sand. A rock shelf at sea level takes the surf too, and a big lake's shore surfs on fresh water.
 - **Wet sand.** The ground the waves reach looks darker. Near the water, where nearly every wave reaches, sand stays dark; higher up, where only the biggest waves reach, it dries between them. Gravel drinks the water and dries almost at once.
-- **The surf's foam** is switched off for now: it let the seabed show through and read white only over dark rock. It comes back once it reads as surf over any shore.
+- **Waves against a face.** A cliff, a quay, a wall you built and every block step of a beach are faces the sea meets. A wave that doesn't break reflects off a face and stands up against it, as high as twice its own height. A wave that breaks strikes the face and throws spray high up it, and foam lies along the face after the strike. A face lower than the crest takes no strike: the wave runs over it. A sheet of water that can't climb a step of a beach throws its own spray there, so a beach of steps sprays at every step it stops at. The bigger the strike, the more water it throws and the higher it goes.
+- **The surf's foam** is switched off for now: it let the seabed show through and read white only over dark rock. It comes back once it reads as surf over any shore. The foam at a face is a different thing and always shows.
 - **Boats ride the swell.** A vessel climbs each crest and slides down its back, rolling and pitching with the slope of the water under it, and you with it, each hull by its shape: a round coracle tilts more than the slope under it, a broad raft less. A big sea can bury you to the eyes.
 - **Wreckage floats on it.** Planks and anything else that floats rise and fall with the waves.
 - **Rain and clouds follow the weather.** All rain comes from Rough Seas' weather: ordinary showers, more often and heavier where the climate is wet, and [storms](Storms), whose clouds darken from their edge and whose rain falls toward their heart. Where the weather is fair, no rain falls and no thunder rolls; white clouds may still drift by.
@@ -14,6 +15,10 @@ A sailor reads the weather off the sea before any instrument: the height of the 
 | Surf on a flat sand beach in a gale | The sand it leaves wet |
 | --- | --- |
 | ![Sheets of water running up a flat sand beach in a gale](images/sea/surf.webp) | ![Dark wet sand where the waves reach, pale dry sand beyond](images/sea/wet-sand.webp) |
+
+| Spray at the steps of a beach in a gale | A gale's sea breaking on a cliff |
+| --- | --- |
+| ![White spray thrown up where sheets of water stop at a shore's block steps](images/sea/face-steps.webp) | ![A wave standing high against a natural cliff, spray thrown up the face](images/sea/face-wall.webp) |
 
 The sea is drawn this way even with *Waving foliage* off in the game's graphics settings: a storm should never come unseen.
 

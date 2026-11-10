@@ -21,6 +21,7 @@ public sealed class SeaSurface
     private const int FoldSamplesAcross = 24;
 
     private const double SurfOnAnyShoreMetres = 0.6;
+    private const double CappedShare = 0.999;
 
     /// <summary>The foam trail looks back this far and twice as far, here and in the shader.</summary>
     public const double TrailSeconds = 0.7;
@@ -164,6 +165,15 @@ public sealed class SeaSurface
         Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
         Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
         var steepness = Local(x, z, share, heights, lags, numbers, towardX, towardZ);
+        var facing = Facing(x, z, share);
+        var limited = 1.0;
+        if (facing is { } wall)
+        {
+            var total = 0.0;
+            for (var slot = 0; slot < Slots; slot++) total += heights[slot] * wall.Reflection * Math.Max(0, -(towardX[slot] * wall.NormalX + towardZ[slot] * wall.NormalZ));
+            var allowed = Seabed!.FaceSlope * Math.Max(0, wall.Distance - FaceReading.FirstWaterVertex);
+            if (total > allowed) limited = allowed / total;
+        }
         double shiftX = 0, rise = 0, shiftZ = 0;
         for (var slot = 0; slot < Slots; slot++)
         {
@@ -173,9 +183,79 @@ public sealed class SeaSurface
             var sway = steepness * heights[slot] * Math.Cos(theta);
             shiftX += sway * towardX[slot];
             shiftZ += sway * towardZ[slot];
+
+            if (facing is not { } face) continue;
+            var along = towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ;
+            if (along >= 0) continue;
+            var mirrored = theta - 2 * numbers[slot] * along * face.Distance;
+            var returned = heights[slot] * face.Reflection * -along * limited;
+            rise += returned * Math.Sin(mirrored);
+            var back = steepness * returned * Math.Cos(mirrored);
+            shiftX += back * (towardX[slot] - 2 * along * face.NormalX);
+            shiftZ += back * (towardZ[slot] - 2 * along * face.NormalZ);
         }
         return (shiftX, rise, shiftZ);
     }
+
+    private FaceReading? Facing(double x, double z, double share) =>
+        share > 0 && Seabed is { } field && field.Covers(x, z) && field.FaceAt(x, z) is { Reflection: > 0 } face ? face : null;
+
+    /// <summary>How long ago, in seconds of the waves' clock, the dominant train's crest passed here.</summary>
+    public double SinceCrest(double x, double z)
+    {
+        var turned = (Math.PI / 2 - Phase(Dominant, x, z) - LagAt(Dominant, x, z)) % FullTurn;
+        return (turned < 0 ? turned + FullTurn : turned) / frequency[Dominant];
+    }
+
+    /// <summary>The cosine at which the dominant train, as the bed turns it here, runs into this outward normal; 0 for a train running away from it.</summary>
+    public double Incidence(double x, double z, double normalX, double normalZ)
+    {
+        var (towardX, towardZ) = (numberX[Dominant], numberZ[Dominant]);
+        if (Seabed is { } field && field.Covers(x, z) && Dominant < field.Numbers.Length && Dominant < SurfField.Slots && field.Numbers[Dominant] == (towardX, towardZ))
+        {
+            towardX += (field.LagAt(Dominant, x + 1, z) - field.LagAt(Dominant, x - 1, z)) / 2;
+            towardZ += (field.LagAt(Dominant, x, z + 1) - field.LagAt(Dominant, x, z - 1)) / 2;
+        }
+        var length = Math.Sqrt(towardX * towardX + towardZ * towardZ);
+        return length > 0 ? Math.Max(0, -(towardX * normalX + towardZ * normalZ) / length) : 0;
+    }
+
+    /// <summary>The height of the wave passing here, trough to crest, over the bed, and whether the depth has capped this sea here, as the shader's <c>breaking</c> says.</summary>
+    public (double Height, double Depth, bool Capped) WaveAt(double x, double z, double share)
+    {
+        Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
+        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        Local(x, z, share, heights, lags, numbers, towardX, towardZ);
+        double re = 0, im = 0, energy = 0;
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            var theta = Phase(slot, x, z) + lags[slot];
+            re += heights[slot] * Math.Cos(theta);
+            im += heights[slot] * Math.Sin(theta);
+            energy += heights[slot] * heights[slot];
+        }
+        var depth = Seabed?.DepthAt(x, z) ?? double.PositiveInfinity;
+        return (2 * share * Math.Sqrt(re * re + im * im), depth, share * 4 * Math.Sqrt(energy / 2) * shape.BreakingDepthRatio >= depth * CappedShare);
+    }
+
+    /// <summary>The height of the wave whose sheet is on this land cell, and the height exceeded by 2% of the sea's waves.</summary>
+    public (double Height, double TwoPercent) SheetWaveAt(double x, double z)
+    {
+        double re = 0, im = 0, energy = 0;
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            var theta = Phase(slot, x, z) + LagAt(slot, x, z);
+            re += amplitude[slot] * Math.Cos(theta);
+            im += amplitude[slot] * Math.Sin(theta);
+            energy += amplitude[slot] * amplitude[slot];
+        }
+        return (2 * Math.Sqrt(re * re + im * im), Math.Sqrt(Math.Log(50) / 2) * 4 * Math.Sqrt(energy / 2));
+    }
+
+    private double LagAt(int slot, double x, double z) =>
+        Seabed is { } field && field.Covers(x, z) && slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == (numberX[slot], numberZ[slot])
+            ? field.LagAt(slot, x, z)
+            : 0;
 
     private double Local(double x, double z, double share, Span<double> heights, Span<double> lags, Span<double> numbers, Span<double> towardX,
         Span<double> towardZ)
@@ -210,6 +290,13 @@ public sealed class SeaSurface
                 numberZ[slot] + (field.LagAt(slot, x, z + 1) - field.LagAt(slot, x, z - 1)) / 2);
             var turned = Math.Sqrt(turnedX * turnedX + turnedZ * turnedZ);
             if (turned > 0) (towardX[slot], towardZ[slot]) = (turnedX / turned, turnedZ / turned);
+        }
+        if (field.FaceAt(x, z) is { Reflection: > 0 } face)
+        {
+            for (var slot = 0; slot < Slots; slot++)
+            {
+                slopes += heights[slot] * numbers[slot] * face.Reflection * Math.Max(0, -(towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ));
+            }
         }
         var cusp = slopes > 0 ? 1 / slopes : Steepness;
         var steepness = Math.Min(Steepness, cusp);

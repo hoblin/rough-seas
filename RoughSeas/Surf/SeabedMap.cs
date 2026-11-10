@@ -19,16 +19,22 @@ public sealed class SeabedMap
     private const int Unknown = int.MinValue;
     private const double Deep = 1000;
     private const double DryLand = 1;
+    private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
     private readonly ShoreCell[] cells;
     private readonly int[] levels;
+    private readonly double[] crowns;
+    private readonly BedConfig?[] faces;
 
     public SeabedMap(int originX, int originZ, int size)
     {
         (OriginX, OriginZ, Size) = (originX, originZ, size);
         cells = new ShoreCell[size * size];
         levels = new int[size * size];
+        crowns = new double[size * size];
+        faces = new BedConfig?[size * size];
         Array.Fill(levels, Unknown);
+        Array.Fill(crowns, double.NaN);
     }
 
     public int OriginX { get; }
@@ -40,6 +46,14 @@ public sealed class SeabedMap
     public ShoreCell this[int x, int z] => Inside(x, z) ? cells[Index(x, z)] : default;
 
     public int LevelAt(int x, int z) => Inside(x, z) ? levels[Index(x, z)] : Unknown;
+
+    public double CrownAt(int x, int z)
+    {
+        if (!Inside(x, z)) return double.NaN;
+        return this[x, z] is { Kind: ShoreKind.Land } land ? LevelAt(x, z) + StillLevel + land.Elevation : crowns[Index(x, z)];
+    }
+
+    public BedConfig? FaceBedAt(int x, int z) => !Inside(x, z) ? null : this[x, z] is { Kind: ShoreKind.Land } land ? land.Bed : faces[Index(x, z)];
 
     public float DepthAt(int x, int z) => this[x, z] switch
     {
@@ -80,7 +94,33 @@ public sealed class SeabedMap
             if (blocks.GetChunkAtBlockPos(probe.Set(x, top, z)) == null) continue;
             map.Fill(i, blocks, probe, x, z, top, column.Terrain[index], beds, highestRise, deepest);
         }
+        map.ReadFaces(blocks, probe, beds, highestRise);
         return map;
+    }
+
+    public void Put(int x, int z, ShoreCell cell, int level) => (cells[Index(x, z)], levels[Index(x, z)]) = (cell, level);
+
+    public void SetFace(int x, int z, double crown, BedConfig bed) => (crowns[Index(x, z)], faces[Index(x, z)]) = (crown, bed);
+
+    private void ReadFaces(IBlockAccessor blocks, BlockPos probe, Beds beds, int highestRise)
+    {
+        for (var i = 0; i < cells.Length; i++)
+        {
+            if (cells[i] is not ({ Kind: ShoreKind.Barrier, Elevation: > 0 } or { Kind: ShoreKind.Water })) continue;
+            var (x, z) = (OriginX + i % Size, OriginZ + i / Size);
+            var level = HighestLevelBeside(x, z);
+            if (level == Unknown || (cells[i].Kind == ShoreKind.Water && level <= levels[i]) || !OpenWater.Land(blocks, probe.Set(x, level, z))) continue;
+            var crown = level;
+            while (crown < level + highestRise && OpenWater.Land(blocks, probe.Set(x, crown + 1, z))) crown++;
+            SetFace(x, z, crown + 1, beds.Of(blocks.GetBlock(probe.Set(x, crown, z), BlockLayersAccess.Solid).BlockMaterial));
+        }
+    }
+
+    private int HighestLevelBeside(int x, int z)
+    {
+        var highest = Unknown;
+        foreach (var (dx, dz) in Sides) highest = Math.Max(highest, LevelAt(x + dx, z + dz));
+        return highest;
     }
 
     private void Fill(int i, IBlockAccessor blocks, BlockPos probe, int x, int z, int top, int terrain, Beds beds, int highestRise, int deepest)

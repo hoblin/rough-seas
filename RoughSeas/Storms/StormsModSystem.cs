@@ -71,10 +71,12 @@ public class StormsModSystem : ModSystem
         surface.Changed += change => Log("surface: " + change);
         DrawnSea = new DrawnSea(surface, field);
         DrawnWater = new DrawnWater(DrawnSea);
-        if (SurfaceShader.Attach(surface, field, capi.ModLoader.GetModSystem<ShoreModSystem>().Config.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, capi))
+        var shoreConfig = capi.ModLoader.GetModSystem<ShoreModSystem>().Config;
+        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, capi))
         {
             clock = new SurfaceClock(this, sea, surface, field, Surf(capi), capi);
             EyeUnderSurface.Attach(this, capi, DrawnWater, Config.Eye);
+            WatchStrikes(capi, sea, surface, field);
         }
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         VesselMotion.Attach(this, capi, DrawnSea, surface);
@@ -89,11 +91,26 @@ public class StormsModSystem : ModSystem
         return new SwellAround(Config.Surface, Waves, sea.Config, sea.Clock, seabeds);
     }
 
+    private void WatchStrikes(ICoreClientAPI capi, SeaWeatherSystem sea, SeaSurface surface, SurfaceField field)
+    {
+        var shore = capi.ModLoader.GetModSystem<ShoreModSystem>().Config;
+        var particles = new SprayParticles(shore.Faces);
+        var strikes = new FaceStrikes(surface, field, Waves, new WallSpray(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces, particles.Add, (format, args) => Log(format, args));
+        var watch = sea.Clock.StartWatch();
+        capi.Event.RegisterAsyncParticleSpawner(particles.Spawn);
+        capi.Event.RegisterGameTickListener(_ =>
+        {
+            var lived = watch.Lap().LivedSeconds;
+            if (capi.World.Player?.Entity?.Pos is { } pos) strikes.Update(pos.X, pos.Z, lived);
+        }, shore.Faces.TickMilliseconds);
+    }
+
     private SurfMaker Surf(ICoreAPI api)
     {
         var shore = api.ModLoader.GetModSystem<ShoreModSystem>().Config;
         var band = new Band(new RunUp(shore.RunUp), shore.Sheet, shore.RunUp.SlopeSearchBlocks);
-        return new SurfMaker(new SurfBuilder(band), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
+        var faces = new FaceBuilder(new WallReflection(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces, Waves.BreakingDepthRatio);
+        return new SurfMaker(new SurfBuilder(band, faces), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
     }
 
     private static void RegisterSurfaceCommands(ICoreClientAPI capi)

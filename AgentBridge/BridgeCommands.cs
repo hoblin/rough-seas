@@ -126,6 +126,12 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("ground wildcard"), parsers.OptionalIntRange("range", 16, 512, 256), parsers.OptionalIntRange("length", 1, 32, 5))
                 .HandleWith(args => Shores(args.Caller.Player.Entity.Pos.AsBlockPos, (string)args[0], (int)args[1], (int)args[2]))
             .EndSubCommand()
+            .BeginSubCommand("cliffs")
+                .WithDescription("List the natural faces in the loaded world within this range that rise at least MINRISE blocks straight out of open salt water, LENGTH blocks along it: each with its ground, how high it stands at each of the 8 blocks inland, and how far the open water runs out from it")
+                .RequiresPlayer()
+                .WithArgs(parsers.IntRange("minrise", 3, 200), parsers.OptionalIntRange("range", 16, 512, 256), parsers.OptionalIntRange("length", 1, 32, 3))
+                .HandleWith(args => Shores(args.Caller.Player.Entity.Pos.AsBlockPos, "*", (int)args[1], (int)args[2], (int)args[0], int.MaxValue))
+            .EndSubCommand()
             .BeginSubCommand("weed")
                 .WithDescription("Clear the plants and loose stones off the ground within this many blocks of the caller, as a scythe and a rake would: soil, rock, water and what floats on it stay")
                 .RequiresPlayer()
@@ -665,7 +671,7 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"{found.Count} beaches, the wettest first:\n{string.Join("\n", lines)}");
     }
 
-    private TextCommandResult Shores(BlockPos origin, string wildcard, int range, int length)
+    private TextCommandResult Shores(BlockPos origin, string wildcard, int range, int length, int lowest = 0, int highest = 2)
     {
         const int shown = 16;
         const int inland = 8;
@@ -679,7 +685,7 @@ public class BridgeCommands : ModSystem
         int Ground(int x, int z) => accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
         bool Sea(int x, int z) => Loaded(x, z) && Ground(x, z) < surface
             && OpenWater.At(accessor, new BlockPos(x, surface, z, 0)).Code?.Path.StartsWith("saltwater") == true;
-        bool Edge(int x, int z) => Loaded(x, z) && Ground(x, z) - surface is >= 0 and <= 2
+        bool Edge(int x, int z) => Loaded(x, z) && Ground(x, z) - surface >= lowest && Ground(x, z) - surface <= highest
             && accessor.GetBlock(new BlockPos(x, Ground(x, z), z, 0)).WildCardMatch(pattern);
 
         (int dx, int dz, string name)[] seaward = [(0, 1, "south"), (0, -1, "north"), (1, 0, "east"), (-1, 0, "west")];

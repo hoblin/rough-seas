@@ -4,6 +4,14 @@ namespace RoughSeas.Tests.Shore;
 
 public class SheetFrontTests
 {
+    [Fact]
+    public void OnFlatGroundASheetArrivesAtItsThrownSpeed() =>
+        Assert.Equal(4 / Math.Sqrt(2 * 9.81 * 1.5), SheetFront.Arrival(1.5, 0, 4), 6);
+
+    [Fact]
+    public void UpASlopeASheetArrivesLaterThanOnFlatGround() =>
+        Assert.True(SheetFront.Arrival(1.5, 0.5, 4) > SheetFront.Arrival(1.5, 0, 4));
+
     private static SheetFront Thrown(double runUp, double period = 9) => SheetFront.Thrown(runUp, period, ShoreFixtures.Config.Sheet);
 
     private static int Run(SheetFront front, double rise, string bed)

@@ -6,6 +6,37 @@ public class ShoreConfig
     public SheetConfig Sheet = new();
     public BedConfig[] Beds = [];
     public BandConfig Band = new();
+    public FacesConfig Faces = new();
+}
+
+public class FacesConfig
+{
+    public double ReflectionFactor = 0.167;
+    public double ReflectionRoughnessRate = 3.2;
+    public double ReflectionShape = 1.49;
+    public double ReflectionShapeRoughness = 0.38;
+    public double ReflectionShapeBase = 0.86;
+    public double ToeDepthWaveHeights = 1.5;
+    public double SmoothingWavelengths = 0.25;
+    public int SmoothingMaxBlocks = 16;
+    public int ReachBlocks = 96;
+    public double TaperFrom = 0.75;
+    public double ReflectedSlopeLimit = 0.577;
+    public double ImpulsiveFactor = 0.011;
+    public double ImpulsiveFreeboard = 2.2;
+    public double ImpulsiveBreak = 1.35;
+    public double ImpulsivePowerFactor = 0.0014;
+    public double ImpulsivePower = 3;
+    public double JetSpeedRatio = 2.14;
+    public double FoamDecaySeconds = 3.1;
+    public double SmallestParcelSide = 0.15;
+    public double LargestParcelSide = 1;
+    public int ParcelsPerMetre = 16;
+    public int RadiusBlocks = 64;
+    public int TickMilliseconds = 100;
+    public double SprayScatterMetresPerSecond = 0.5;
+    public double SprayLandingSeconds = 0.2;
+    public double SprayFromFaceBlocks = 0.05;
 }
 
 public class RunUpConfig

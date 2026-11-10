@@ -4,6 +4,28 @@ namespace RoughSeas.Tests.Shore;
 
 public class BandTests
 {
+    [Fact]
+    public void ASheetClimbsOneRiserButStopsAtASecondWithNoTreadBetween()
+    {
+        var reached = Spread(new Ground("~~012"), new Sea(8, 12));
+        Assert.Contains((3, 0), reached.Keys);
+        Assert.DoesNotContain((4, 0), reached.Keys);
+    }
+
+    [Fact]
+    public void ASheetClimbsARiserAfterATread()
+    {
+        var reached = Spread(new Ground("~~0112"), new Sea(8, 12));
+        Assert.Contains((5, 0), reached.Keys);
+    }
+
+    [Fact]
+    public void ASheetStopsAtAStepHigherThanItsSlopeAllows()
+    {
+        var reached = Spread(new Ground("~~02"), new Sea(8, 12));
+        Assert.DoesNotContain((3, 0), reached.Keys);
+    }
+
     private static readonly Sea Calm = new(1, 6);
     private static readonly Sea Storm = new(8, 12);
 
