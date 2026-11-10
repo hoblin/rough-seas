@@ -31,8 +31,9 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         var felt = Felt(depth, size, smoothing);
         var felts = numbers.Take(SurfField.Slots).Select(number => Felt(depth, size, faces.SmoothingBlocks(WaveLength(number)))).ToArray();
         var lags = felts.Select((each, slot) => PhaseField.Lag(size, each, numbers[slot].X, numbers[slot].Z)).ToArray();
-        var breaking = Energy(field, felt, felts, depth, size, numbers, lags, amplitudeShares, seaAt, breakingDissipation);
-        var (swash, steps) = Swash(map, seaAt);
+        var (breaking, gain) = Energy(field, felt, felts, depth, size, numbers, lags, amplitudeShares, seaAt, breakingDissipation);
+        var ray = Strongest(numbers, amplitudeShares);
+        var (swash, steps) = Swash(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * Arriving(depth, breaking, gain, size, x - map.OriginX, z - map.OriginZ, ray) } : default);
         var slopeX = Averaged(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, 1)).ToArray(), size, smoothing);
         var slopeZ = Averaged(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, size)).ToArray(), size, smoothing);
 
@@ -56,6 +57,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
                     ? lags[slot][(sheet.FromZ - map.OriginZ) * size + sheet.FromX - map.OriginX] + numbers[slot].X * (sheet.FromX - x) + numbers[slot].Z * (sheet.FromZ - z)
                     : lags[slot][i];
                 field.Set(field.Lags[slot / SurfField.Channels], x, z, slot % SurfField.Channels, (float)lag);
+                if (reached) field.Set(field.Gains[slot / SurfField.Channels], x, z, slot % SurfField.Channels, field.Get(field.Gains[slot / SurfField.Channels], sheet.FromX, sheet.FromZ, slot % SurfField.Channels));
             }
         }
         field.Walls = faces.Build(map, seaAt, field);
@@ -137,9 +139,41 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         return depth.Select((d, i) => d > 0 ? Math.Max(averaged[i], ShallowestFelt) : d).ToArray();
     }
 
-    private float[] Energy(SurfField field, float[] felt, float[][] felts, float[] depth, int size, (double X, double Z)[] numbers, float[][] lags, double[]? amplitudeShares, Func<int, int, Sea> seaAt, double dissipation)
+    private static (double X, double Z) Strongest((double X, double Z)[] numbers, double[]? amplitudeShares)
+    {
+        var strongest = default((double X, double Z));
+        var most = double.NegativeInfinity;
+        for (var slot = 0; slot < Math.Min(numbers.Length, SurfField.Slots); slot++)
+        {
+            var share = amplitudeShares?[slot] ?? 1;
+            if (numbers[slot] == default || share <= most) continue;
+            (strongest, most) = (numbers[slot], share);
+        }
+        return strongest;
+    }
+
+    /// <summary>The waves' height, against the deep sea's, where they enter the last stretch of breaking water before this shore: the sea that comes to the beach, whatever the shallows then leave of it.</summary>
+    private static double Arriving(float[] depth, float[] breaking, float[] gain, int size, int column, int row, (double X, double Z) ray)
+    {
+        var length = Math.Sqrt(ray.X * ray.X + ray.Z * ray.Z);
+        if (length <= 0) return 1;
+        var last = -1;
+        for (var step = 0; step < 2 * size; step++)
+        {
+            var (back, up) = ((int)Math.Round(column - ray.X / length * step), (int)Math.Round(row - ray.Z / length * step));
+            if (back < 0 || up < 0 || back >= size || up >= size) return 1;
+            var i = up * size + back;
+            if (!(depth[i] > 0)) return last >= 0 ? Math.Min(1, gain[last]) : 1;
+            if (breaking[i] <= 0) return Math.Min(1, gain[i]);
+            last = i;
+        }
+        return 1;
+    }
+
+    private (float[] Breaking, float[] Gain) Energy(SurfField field, float[] felt, float[][] felts, float[] depth, int size, (double X, double Z)[] numbers, float[][] lags, double[]? amplitudeShares, Func<int, int, Sea> seaAt, double dissipation)
     {
         var breaking = new float[size * size];
+        var gain = new float[size * size];
         var heights = Enumerable.Range(0, size * size).Select(i => seaAt(field.OriginX + i % size, field.OriginZ + i / size).Height).ToArray();
         var seaHeight = heights.Max();
         var seaShare = heights.Select(height => seaHeight > 0 ? (float)(height / seaHeight) : 1f).ToArray();
@@ -149,9 +183,11 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
             var slots = Enumerable.Range(bank * generation, generation).Where(slot => slot < lags.Length).ToArray();
             var trains = slots.Select(slot => new WaveEnergy.Train(numbers[slot].X, numbers[slot].Z, (amplitudeShares?[slot] ?? 1 / (2 * Math.Sqrt(2) * Math.Sqrt(generation))) * seaHeight, lags[slot], felts[slot])).ToArray();
             var (gains, broken) = WaveEnergy.Solve(size, felt, trains, faces.BreakingDepthRatio, dissipation, depth, seaShare);
+            var deep = trains.Sum(train => train.Amplitude * train.Amplitude);
             for (var i = 0; i < broken.Length; i++)
             {
                 breaking[i] = Math.Max(breaking[i], broken[i]);
+                if (deep > 0 && slots.Any(slot => numbers[slot] != default)) gain[i] = Math.Max(gain[i], (float)Math.Sqrt(trains.Select((train, index) => train.Amplitude * train.Amplitude * gains[index][i] * gains[index][i]).Sum() / deep));
                 for (var train = 0; train < slots.Length; train++)
                 {
                     var slot = slots[train];
@@ -159,7 +195,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
                 }
             }
         }
-        return breaking;
+        return (breaking, gain);
     }
 
     private static float[] Averaged(float[] values, int size, int radius)

@@ -35,6 +35,37 @@ public class SurfBuilderTests
         return new SurfBuilder(ShoreFixtures.Band, faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
     }
 
+    private static SurfField Beach(Func<int, double> depthAlongX)
+    {
+        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces, 1.28);
+        var map = new SeabedMap(0, 0, Size);
+        for (var x = 0; x < Size; x++)
+        for (var z = 0; z < Size; z++)
+        {
+            if (x < 16) map.Put(x, z, new ShoreCell(ShoreKind.Water, depthAlongX(x), Stone, 1), Level);
+            else map.Put(x, z, new ShoreCell(ShoreKind.Land, 0.125, Stone, 1), Level);
+        }
+        return new SurfBuilder(ShoreFixtures.Band, faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
+    }
+
+    [Fact]
+    public void AShoreBehindABarRunsUpLessThanAnOpenOne()
+    {
+        var open = Beach(_ => 10);
+        var sheltered = Beach(x => x is >= 4 and < 8 ? 0.5 : 10);
+
+        Assert.True(sheltered.Get(sheltered.Bed, 17, 16, 2) < open.Get(open.Bed, 17, 16, 2));
+    }
+
+    [Fact]
+    public void TheLandASheetReachesHoldsTheGainOfTheShoreItCameFrom()
+    {
+        var field = Beach(_ => 10);
+
+        Assert.Equal(field.Get(field.Gains[0], 15, 16, 0), field.Get(field.Gains[0], 17, 16, 0));
+        Assert.True(field.Get(field.Gains[0], 17, 16, 0) > 0);
+    }
+
     [Fact]
     public void AWaveFeelsAStepInTheBedOverAQuarterOfItsLength()
     {
