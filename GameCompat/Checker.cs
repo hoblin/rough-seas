@@ -40,7 +40,10 @@ internal sealed class Checker
         var patches = new AssetPatchCheck(release, current, repository).Run();
         report.Add("Asset patches", patches.Reasons);
         report.Add("Text anchors", TextAnchorCheck.Run(mod, release));
-        report.Add("Game references", new GameReferenceCheck(release, repository).Run(mod));
+        var references = new GameReferenceCheck(release, repository).Run(mod);
+        report.Add("Game references", references.Reasons);
+        var read = ReadChanges.Load(repository);
+        bool Unread(BehaviourChange change) => !read.Holds(version, change);
 
         if (version == current.Version)
         {
@@ -49,11 +52,10 @@ internal sealed class Checker
         }
         else if (report.NoHardFailures)
         {
-            var read = ReadChanges.Load(repository);
-            bool Unread(BehaviourChange change) => !read.Holds(version, change);
             report.ToRead = (await WithSource(BehaviourCheck.Changes(reliances, current, release).Where(Unread).ToList(), release)).Concat(patches.Changes.Where(Unread)).ToList();
         }
 
+        if (report.NoHardFailures) report.ToRead = report.ToRead.Concat(references.Changes.Where(Unread)).ToList();
         return report;
     }
 

@@ -92,8 +92,26 @@ public class CompatibilityTests
         Assert.False(GameReferenceCheck.FileExists("block/gone", GameReferenceCheck.AssetStems(["textures/block/planks.png"])));
 
     [Fact]
-    public void APlaceholderInAReferenceIsAWildcard() =>
-        Assert.Equal("sounds/block/chop*", GameReferenceCheck.Normalised("game:sounds/block/chop{0}"));
+    public void APlaceholderTakesItsValuesFromTheFilesVariantGroups()
+    {
+        var boat = JToken.Parse("""{ "variantgroups": [{ "code": "port", "states": ["thatch", "reed"] }], "wreckage": "game:{port}" }""");
+        var mentions = GameReferenceCheck.Mentions(boat).ToList();
+        Assert.Contains("game:thatch", mentions);
+        Assert.Contains("game:reed", mentions);
+    }
+
+    [Fact]
+    public void AWildcardCodeTakesItsValuesFromAllowedVariants()
+    {
+        var recipe = JToken.Parse("""[{ "code": "game:*", "allowedVariants": ["thatch", "reed"] }]""");
+        var mentions = GameReferenceCheck.Mentions(recipe).ToList();
+        Assert.Contains("game:thatch", mentions);
+        Assert.DoesNotContain("game:*", mentions);
+    }
+
+    [Fact]
+    public void APlaceholderWithoutKnownValuesStaysAsWritten() =>
+        Assert.Contains("game:{other}", GameReferenceCheck.Mentions(JToken.Parse("""{ "wreckage": "game:{other}" }""")));
 
     [Fact]
     public void VariantsAreExpandedAndSkipped()

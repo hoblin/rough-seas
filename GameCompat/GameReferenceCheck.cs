@@ -5,24 +5,27 @@ using Newtonsoft.Json.Linq;
 
 namespace GameCompat;
 
+internal sealed record GameReferenceResult(IReadOnlyList<string> Reasons, IReadOnlyList<BehaviourChange> Changes);
+
 internal sealed class GameReferenceCheck(GameRelease release, string repository)
 {
     private const string Domain = "game:";
 
-    private static readonly Regex Placeholder = new(@"\{[^}]*\}", RegexOptions.Compiled);
+    private static readonly Regex Placeholder = new(@"\{([^}]*)\}", RegexOptions.Compiled);
 
-    public IEnumerable<string> Run(ModuleDefinition mod)
+    public GameReferenceResult Run(ModuleDefinition mod)
     {
         var codes = new GameCodes(release);
         var files = AssetStems(release.AssetFiles);
+        var reasons = new List<string>();
+        var changes = new List<BehaviourChange>();
         foreach (var (reference, source) in References(mod))
         {
-            var wanted = Normalised(reference);
-            if (!FileExists(wanted, files) && !codes.Contains(wanted)) yield return $"{reference} is missing ({source})";
+            if (reference.Contains('{')) changes.Add(Unenumerable(reference, source));
+            else if (!FileExists(reference[Domain.Length..], files) && !codes.Contains(reference[Domain.Length..])) reasons.Add($"{reference} is missing ({source})");
         }
+        return new GameReferenceResult(reasons, changes);
     }
-
-    internal static string Normalised(string reference) => Placeholder.Replace(reference[Domain.Length..], "*");
 
     internal static bool FileExists(string wanted, HashSet<string> stems)
     {
@@ -46,6 +49,39 @@ internal sealed class GameReferenceCheck(GameRelease release, string repository)
         return stems;
     }
 
+    internal static IEnumerable<string> Mentions(JToken document)
+    {
+        var groups = (document as JObject)?["variantgroups"]?.Children<JObject>().Where(group => group["states"] != null)
+            .ToDictionary(group => (string)group["code"]!, group => group["states"]!.Values<string>().OfType<string>().ToList()) ?? [];
+
+        foreach (var token in ((JContainer)document).DescendantsAndSelf())
+        {
+            switch (token)
+            {
+                case JValue { Type: JTokenType.String, Value: string text }:
+                    foreach (var mention in Concrete(text, token, groups)) yield return mention;
+                    break;
+                case JProperty property:
+                    yield return property.Name;
+                    break;
+            }
+        }
+    }
+
+    private static IEnumerable<string> Concrete(string text, JToken token, Dictionary<string, List<string>> groups)
+    {
+        if (text.Contains('*') && token.Parent is JProperty { Name: "code", Parent: JObject owner } && owner["allowedVariants"] is JArray allowed)
+        {
+            return allowed.Values<string>().OfType<string>().Select(variant => text.Replace("*", variant));
+        }
+
+        return Placeholder.Matches(text).Select(match => match.Groups[1].Value).Distinct().Where(groups.ContainsKey)
+            .Aggregate((IEnumerable<string>)[text], (mentions, name) => mentions.SelectMany(mention => groups[name].Select(state => mention.Replace($"{{{name}}}", state))));
+    }
+
+    private static BehaviourChange Unenumerable(string reference, string source) =>
+        new(new Reliance(source, reference, "this reference's placeholder has values we can't enumerate", source), BehaviourCheck.Stamp([reference], []));
+
     private static string WithoutExtension(string path)
     {
         var dot = path.LastIndexOf('.');
@@ -57,7 +93,7 @@ internal sealed class GameReferenceCheck(GameRelease release, string repository)
         var found = new Dictionary<string, string>();
         foreach (var file in Directory.EnumerateFiles(Path.Combine(repository, "RoughSeas", "assets"), "*.json", SearchOption.AllDirectories).Where(file => !file.Contains("/lang/")))
         {
-            foreach (var reference in Strings(AssetPatchCheck.Parse(File.ReadAllText(file))).Where(IsReference))
+            foreach (var reference in Mentions(AssetPatchCheck.Parse(File.ReadAllText(file))).Where(IsReference))
             {
                 found.TryAdd(reference, Path.GetRelativePath(repository, file));
             }
@@ -74,11 +110,4 @@ internal sealed class GameReferenceCheck(GameRelease release, string repository)
     }
 
     private static bool IsReference(string text) => text.StartsWith(Domain) && text.Length > Domain.Length && !text.Contains(' ');
-
-    private static IEnumerable<string> Strings(JToken document) => ((JContainer)document).DescendantsAndSelf().SelectMany(token => token switch
-    {
-        JValue { Type: JTokenType.String, Value: string text } => [text],
-        JProperty property => [property.Name],
-        _ => Array.Empty<string>(),
-    });
 }
