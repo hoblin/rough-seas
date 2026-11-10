@@ -21,6 +21,7 @@ public sealed class SeaSurface
     private const int FoldSamplesAcross = 24;
 
     private const double SurfOnAnyShoreMetres = 0.6;
+    private const double CappedShare = 0.999;
 
     /// <summary>The foam trail looks back this far and twice as far, here and in the shader.</summary>
     public const double TrailSeconds = 0.7;
@@ -164,6 +165,7 @@ public sealed class SeaSurface
         Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
         Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
         var steepness = Local(x, z, share, heights, lags, numbers, towardX, towardZ);
+        var facing = Facing(x, z, share);
         double shiftX = 0, rise = 0, shiftZ = 0;
         for (var slot = 0; slot < Slots; slot++)
         {
@@ -174,7 +176,7 @@ public sealed class SeaSurface
             shiftX += sway * towardX[slot];
             shiftZ += sway * towardZ[slot];
 
-            if (Facing(x, z, share) is not { } face) continue;
+            if (facing is not { } face) continue;
             var along = towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ;
             if (along >= 0) continue;
             var mirrored = theta - 2 * numbers[slot] * along * face.Distance;
@@ -197,20 +199,22 @@ public sealed class SeaSurface
         return (turned < 0 ? turned + FullTurn : turned) / frequency[Dominant];
     }
 
-    /// <summary>The height of the wave passing here, trough to crest, over the bed.</summary>
-    public (double Height, double Depth) WaveAt(double x, double z, double share)
+    /// <summary>The height of the wave passing here, trough to crest, over the bed, and whether the depth has capped this sea here, as the shader's <c>breaking</c> says.</summary>
+    public (double Height, double Depth, bool Capped) WaveAt(double x, double z, double share)
     {
         Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
         Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
         Local(x, z, share, heights, lags, numbers, towardX, towardZ);
-        double re = 0, im = 0;
+        double re = 0, im = 0, energy = 0;
         for (var slot = 0; slot < Slots; slot++)
         {
             var theta = Phase(slot, x, z) + lags[slot];
             re += heights[slot] * Math.Cos(theta);
             im += heights[slot] * Math.Sin(theta);
+            energy += heights[slot] * heights[slot];
         }
-        return (2 * share * Math.Sqrt(re * re + im * im), Seabed?.DepthAt(x, z) ?? double.PositiveInfinity);
+        var depth = Seabed?.DepthAt(x, z) ?? double.PositiveInfinity;
+        return (2 * share * Math.Sqrt(re * re + im * im), depth, share * 4 * Math.Sqrt(energy / 2) * shape.BreakingDepthRatio >= depth * CappedShare);
     }
 
     /// <summary>The height of the wave whose sheet is on this land cell, and the height exceeded by 2% of the sea's waves.</summary>

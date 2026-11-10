@@ -20,14 +20,12 @@ public class FacesConfig
     public double SmoothingWavelengths = 0.25;
     public int SmoothingMaxBlocks = 16;
     public int ReachBlocks = 96;
-    public double NonImpulsiveFactor = 0.05;
-    public double NonImpulsiveFreeboard = 2.78;
+    public double TaperFrom = 0.75;
     public double ImpulsiveFactor = 0.011;
     public double ImpulsiveFreeboard = 2.2;
     public double ImpulsiveBreak = 1.35;
     public double ImpulsivePowerFactor = 0.0014;
     public double ImpulsivePower = 3;
-    public double ImpulsiveToe = 0.23;
     public double JetSpeedRatio = 2.14;
     public double FoamDecaySeconds = 3.1;
     public double SmallestParcelSide = 0.15;
@@ -36,6 +34,8 @@ public class FacesConfig
     public int RadiusBlocks = 64;
     public int TickMilliseconds = 100;
     public double SprayScatterMetresPerSecond = 0.5;
+    public double SprayLandingSeconds = 0.2;
+    public double SprayFromFaceBlocks = 0.05;
 }
 
 public class RunUpConfig

@@ -109,7 +109,7 @@ public class StormsModSystem : ModSystem
     {
         var shore = api.ModLoader.GetModSystem<ShoreModSystem>().Config;
         var band = new Band(new RunUp(shore.RunUp), shore.Sheet, shore.RunUp.SlopeSearchBlocks);
-        var faces = new FaceBuilder(new WallReflection(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces);
+        var faces = new FaceBuilder(new WallReflection(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces, Waves.BreakingDepthRatio);
         return new SurfMaker(new SurfBuilder(band, faces), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
     }
 

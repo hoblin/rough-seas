@@ -8,6 +8,9 @@ public class WallReflectionTests
     private static readonly WallReflection Reflection = new(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio);
 
     [Fact]
+    public void ASlopeBetweenABeachAndAWallSendsBackWhatZanuttighMeasured() => Assert.Equal(0.69, Reflection.Coefficient(2, 8, 0.5, 1), 2);
+
+    [Fact]
     public void AVerticalWallSendsTheWholeWaveBack() => Assert.Equal(1, Reflection.Coefficient(4, 10, 20, 1), 3);
 
     [Fact]

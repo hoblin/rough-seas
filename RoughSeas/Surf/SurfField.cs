@@ -5,14 +5,18 @@ namespace RoughSeas.Surf;
 
 public readonly record struct FaceReading(double Distance, double NormalX, double NormalZ, double Reflection);
 
-public readonly record struct WallFace(int X, int Z, int Level, int SideX, int SideZ, double NormalX, double NormalZ, double Rise, int Run, double Wavelength, double Reflection);
+public readonly record struct WallFace(int X, int Z, int Level, int SideX, int SideZ, double NormalX, double NormalZ, double Rise, int Run, double Wavelength, double Reflection,
+    bool StandsAboveCrest);
 
 public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, double Ground, double Rise, double Distance, double RunUp, double[] Heads, double[] Lenses)
 {
-    public (double Head, double Lens) At(double share, double[] scales)
+    public (double Head, double Lens) At(double share)
     {
-        var index = Array.FindLastIndex(scales, scale => scale <= share);
-        return index < 0 ? default : (Heads[index], Lenses[index]);
+        for (var index = SurfBuilder.Scales.Length - 1; index >= 0; index--)
+        {
+            if (SurfBuilder.Scales[index] <= share) return (Heads[index], Lenses[index]);
+        }
+        return default;
     }
 }
 
@@ -25,8 +29,8 @@ public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, dou
 /// slot, the phase the bed has held the wave back by (<see cref="PhaseField"/>); over land, the lag at the shoreline the
 /// sheet comes from, carried to here. The lags hold for the wave vectors in <see cref="Numbers"/> alone. <see cref="Face"/>:
 /// over water, the distance to the nearest face a wave meets, its outward normal along X and Z, and the share of a wave
-/// it sends back; over land, a negative distance (-1.5 where a sheet stops at a step, -0.5 elsewhere) so the distance
-/// interpolates to 0 on the face itself.
+/// it sends back, negative where the crest stands higher than the face, which then neither jets nor foams. Over land the
+/// distance is -0.5, so it interpolates to 0 on the face itself; -1.5 marks the foot of a step that stops a sheet.
 /// </summary>
 public sealed class SurfField(int originX, int originZ, int size, (double X, double Z)[] numbers)
 {
@@ -58,7 +62,7 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
     {
         var (normalX, normalZ) = (Sample(Face, x, z, 1), Sample(Face, x, z, 2));
         var length = Math.Sqrt(normalX * normalX + normalZ * normalZ);
-        return length > 0 ? new FaceReading(Math.Max(Sample(Face, x, z, 0), 0), normalX / length, normalZ / length, Sample(Face, x, z, 3)) : default;
+        return length > 0 ? new FaceReading(Math.Max(Sample(Face, x, z, 0), 0), normalX / length, normalZ / length, Math.Abs(Sample(Face, x, z, 3))) : default;
     }
 
     public double DepthAt(double x, double z) => Sample(Bed, x, z, 0);

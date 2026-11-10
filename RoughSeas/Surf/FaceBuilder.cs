@@ -5,7 +5,7 @@ using RoughSeas.Shore;
 namespace RoughSeas.Surf;
 
 /// <summary>Finds every side of a full block a water column meets, the short steps of a beach and the tall faces of a cliff alike, and writes how each sends waves back into the <see cref="SurfField"/>.</summary>
-public sealed class FaceBuilder(WallReflection reflection, FacesConfig config)
+public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, double breakingDepthRatio)
 {
     private const double StillLevel = 7.0 / 8;
     public const float LandDistance = -0.5f;
@@ -18,22 +18,19 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config)
         var runs = Runs(seeds);
         var normals = new Normals(map, seeds);
         var walls = new List<WallFace>(seeds.Count);
-        foreach (var (seed, index) in Indexed(seeds))
+        for (var i = 0; i < seeds.Count; i++)
         {
+            var seed = seeds[i];
             var sea = seaAt(seed.X, seed.Z);
             var wavelength = RunUp.DeepLength(sea.Period);
+            var height = Math.Min(sea.Height, map[seed.X, seed.Z].Elevation / breakingDepthRatio);
             var (normalX, normalZ) = normals.Around(seed, Math.Min(config.SmoothingMaxBlocks, (int)Math.Ceiling(wavelength * config.SmoothingWavelengths)));
-            var slope = Slope(map, seed, sea.Height);
-            walls.Add(new WallFace(seed.X, seed.Z, seed.Level, seed.SideX, seed.SideZ, normalX, normalZ, seed.Rise, runs[index], wavelength,
-                reflection.Coefficient(sea.Height, sea.Period, slope, seed.Bed.Roughness)));
+            var coefficient = reflection.Coefficient(height, sea.Period, Slope(map, seed, height), seed.Bed.Roughness);
+            walls.Add(new WallFace(seed.X, seed.Z, seed.Level, seed.SideX, seed.SideZ, normalX, normalZ, seed.Rise, runs[i], wavelength, coefficient,
+                seed.Rise >= height * (1 + coefficient) / 2));
         }
         Spread(map, walls, field);
         return walls;
-    }
-
-    private static IEnumerable<(T Item, int Index)> Indexed<T>(IReadOnlyList<T> items)
-    {
-        for (var i = 0; i < items.Count; i++) yield return (items[i], i);
     }
 
     private static List<Seed> Seeds(SeabedMap map)
@@ -133,9 +130,12 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config)
             field.Set(field.Face, x, z, 0, nearest[i] < 0 ? config.ReachBlocks : distance[i]);
             if (nearest[i] < 0) continue;
             var wall = walls[nearest[i]];
-            field.Set(field.Face, x, z, 1, (float)wall.NormalX);
-            field.Set(field.Face, x, z, 2, (float)wall.NormalZ);
-            field.Set(field.Face, x, z, 3, (float)(wall.Reflection * WallReflection.Spreading(wall.Run, wall.Wavelength, distance[i]) * reflection.Taper(distance[i])));
+            Write(field, x, z, wall, wall.Reflection * WallReflection.Spreading(wall.Run, wall.Wavelength, distance[i]) * reflection.Taper(distance[i]));
+        }
+
+        foreach (var wall in walls)
+        {
+            if (map.Inside(wall.X + wall.SideX, wall.Z + wall.SideZ)) Write(field, wall.X + wall.SideX, wall.Z + wall.SideZ, wall, wall.Reflection);
         }
 
         void Offer(PriorityQueue<(int, int, int), float> into, int x, int z, int wall)
@@ -147,43 +147,56 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config)
         }
     }
 
+    private static void Write(SurfField field, int x, int z, WallFace wall, double reflects)
+    {
+        field.Set(field.Face, x, z, 1, (float)wall.NormalX);
+        field.Set(field.Face, x, z, 2, (float)wall.NormalZ);
+        field.Set(field.Face, x, z, 3, (float)(wall.StandsAboveCrest ? reflects : -reflects));
+    }
+
     private sealed class Normals
     {
         private readonly SeabedMap map;
-        private readonly int[] sumX, sumZ;
+        private readonly int[][] sums;
 
         public Normals(SeabedMap map, List<Seed> seeds)
         {
             this.map = map;
             var across = map.Size + 1;
-            (sumX, sumZ) = (new int[across * across], new int[across * across]);
-            foreach (var seed in seeds)
+            sums = [new int[across * across], new int[across * across], new int[across * across], new int[across * across]];
+            foreach (var seed in seeds) sums[Array.IndexOf(Sides, (seed.SideX, seed.SideZ))][(seed.Z - map.OriginZ + 1) * across + seed.X - map.OriginX + 1]++;
+            foreach (var sum in sums)
             {
-                sumX[(seed.Z - map.OriginZ + 1) * across + seed.X - map.OriginX + 1] -= seed.SideX;
-                sumZ[(seed.Z - map.OriginZ + 1) * across + seed.X - map.OriginX + 1] -= seed.SideZ;
-            }
-            for (var row = 1; row < across; row++)
-            for (var column = 1; column < across; column++)
-            {
-                var i = row * across + column;
-                sumX[i] += sumX[i - 1] + sumX[i - across] - sumX[i - across - 1];
-                sumZ[i] += sumZ[i - 1] + sumZ[i - across] - sumZ[i - across - 1];
+                for (var row = 1; row < across; row++)
+                for (var column = 1; column < across; column++)
+                {
+                    var i = row * across + column;
+                    sum[i] += sum[i - 1] + sum[i - across] - sum[i - across - 1];
+                }
             }
         }
 
         public (double X, double Z) Around(Seed seed, int radius)
         {
-            var (x, z) = (Sum(sumX, seed, radius), Sum(sumZ, seed, radius));
+            var back = Array.IndexOf(Sides, (seed.SideX, seed.SideZ)) ^ 1;
+            double x = 0, z = 0;
+            for (var side = 0; side < Sides.Length; side++)
+            {
+                if (side == back) continue;
+                var count = Count(sums[side], seed, radius);
+                x -= Sides[side].X * count;
+                z -= Sides[side].Z * count;
+            }
             var length = Math.Sqrt(x * x + z * z);
             return length > 0 ? (x / length, z / length) : (-seed.SideX, -seed.SideZ);
         }
 
-        private double Sum(int[] sums, Seed seed, int radius)
+        private int Count(int[] sum, Seed seed, int radius)
         {
             var across = map.Size + 1;
             var (left, right) = (Math.Max(seed.X - map.OriginX - radius, 0), Math.Min(seed.X - map.OriginX + radius + 1, map.Size));
             var (top, bottom) = (Math.Max(seed.Z - map.OriginZ - radius, 0), Math.Min(seed.Z - map.OriginZ + radius + 1, map.Size));
-            return sums[bottom * across + right] - sums[top * across + right] - sums[bottom * across + left] + sums[top * across + left];
+            return sum[bottom * across + right] - sum[top * across + right] - sum[bottom * across + left] + sum[top * across + left];
         }
     }
 

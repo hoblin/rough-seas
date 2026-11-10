@@ -21,7 +21,7 @@ public sealed class WallReflection(FacesConfig config, double spectralPeriodRati
 
     public double Taper(double distance)
     {
-        var from = 0.75 * config.ReachBlocks;
+        var from = config.TaperFrom * config.ReachBlocks;
         if (distance <= from) return 1;
         var share = Math.Clamp((config.ReachBlocks - distance) / (config.ReachBlocks - from), 0, 1);
         return share * share * (3 - 2 * share);

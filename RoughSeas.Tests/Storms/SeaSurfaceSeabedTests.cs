@@ -80,6 +80,18 @@ public class SeaSurfaceSeabedTests
     }
 
     [Fact]
+    public void AReflectionShiftsWithItsDistanceFromTheWall()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        Face(surface.Seabed, -Math.Cos(0.3), -Math.Sin(0.3), 1);
+        var atTheWall = surface.HeightAt(MiddleX, MiddleZ, 1);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++) surface.Seabed.Set(surface.Seabed.Face, x, z, 0, 9);
+        Assert.NotEqual(atTheWall, surface.HeightAt(MiddleX, MiddleZ, 1), 2);
+    }
+
+    [Fact]
     public void AWallBehindTheWavesReflectsNothing()
     {
         var surface = Settled(2);

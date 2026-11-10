@@ -106,10 +106,10 @@ public sealed class SeabedMap
     {
         for (var i = 0; i < cells.Length; i++)
         {
-            if (cells[i] is not { Kind: ShoreKind.Barrier, Elevation: > 0 }) continue;
+            if (cells[i] is not ({ Kind: ShoreKind.Barrier, Elevation: > 0 } or { Kind: ShoreKind.Water })) continue;
             var (x, z) = (OriginX + i % Size, OriginZ + i / Size);
             var level = HighestLevelBeside(x, z);
-            if (level == Unknown || !OpenWater.Land(blocks, probe.Set(x, level, z))) continue;
+            if (level == Unknown || (cells[i].Kind == ShoreKind.Water && level <= levels[i]) || !OpenWater.Land(blocks, probe.Set(x, level, z))) continue;
             var crown = level;
             while (crown < level + highestRise && OpenWater.Land(blocks, probe.Set(x, crown + 1, z))) crown++;
             SetFace(x, z, crown + 1, beds.Of(blocks.GetBlock(probe.Set(x, crown, z), BlockLayersAccess.Solid).BlockMaterial));

@@ -7,12 +7,13 @@ namespace RoughSeas.Surf;
 
 /// <summary>
 /// Builds a <see cref="SurfField"/> from a seabed: the lags of each slot, and the band's sheets thrown at a range of the
-/// run-up's shares, the smallest share that reaches a block being the run-up a wave needs to wet it.
+/// run-up's shares, the smallest share that reaches a block being the run-up a wave needs to wet it, with the faces waves
+/// meet and the steps that stop a sheet.
 /// </summary>
 public sealed class SurfBuilder(Band band, FaceBuilder faces)
 {
     private const double StillLevel = 7.0 / 8;
-    private const float FootDistance = -1.5f;
+    private const float StepFoot = -1.5f;
     public static readonly double[] Scales = [0.4, 0.55, 0.7, 0.85, 1.0, 1.15];
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
@@ -50,7 +51,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         }
         field.Walls = faces.Build(map, seaAt, field);
         field.Steps = steps;
-        foreach (var step in steps) field.Set(field.Face, step.X, step.Z, 0, FootDistance);
+        foreach (var step in steps) field.Set(field.Face, step.X, step.Z, 0, StepFoot);
         return field;
     }
 

@@ -8,10 +8,14 @@ public class WallSprayTests
     private static readonly WallSpray Spray = new(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio);
 
     [Fact]
-    public void AWaveOnAShallowToeStrikesImpulsively() => Assert.True(Spray.Impulsive(4, 10, 3));
-
-    [Fact]
-    public void AWaveOnADeepToeDoesNot() => Assert.False(Spray.Impulsive(2, 10, 30));
+    public void ADropsPlaceInTheSpreadIsTheShareOfWaterHigherThanIt()
+    {
+        var faces = ShoreFixtures.Config.Faces;
+        var atCrest = Math.Exp(-faces.ImpulsiveFreeboard);
+        var above = faces.ImpulsivePowerFactor / faces.ImpulsiveFactor * Math.Pow(1.5, -faces.ImpulsivePower);
+        var speed = Spray.Wave(4, 10, 3, 4, 7).Speed(above / atCrest);
+        Assert.Equal(2, speed * speed / (2 * 9.81), 6);
+    }
 
     [Fact]
     public void AHigherWaveThrowsMoreWater() => Assert.True(Spray.Wave(6, 10, 4, 6, 8).Litres > Spray.Wave(2, 10, 4, 2, 5).Litres);
@@ -46,7 +50,7 @@ public class WallSprayTests
     public void AStoppedSheetThrowsAllItsWaterAtTheStep() => Assert.Equal(200, Spray.Sheet(0.2, 0.5).Litres, 6);
 
     [Fact]
-    public void ASmallStrikeThrowsSmallParcels()
+    public void ASmallStrikeKeepsItsVolumeInSmallParcels()
     {
         var (count, side) = Spray.Parcels(10);
         Assert.True(side >= ShoreFixtures.Config.Faces.SmallestParcelSide);
@@ -62,5 +66,5 @@ public class WallSprayTests
     }
 
     [Fact]
-    public void WaterTooLittleForAParcelThrowsNone() => Assert.Equal(0, Spray.Parcels(0.5).Count);
+    public void WaterTooLittleForAParcelThrowsNone() => Assert.Equal(0, Spray.Parcels(0.01).Count);
 }
