@@ -20,7 +20,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
     public static readonly double[] Scales = [0.4, 0.55, 0.7, 0.85, 1.0, 1.15];
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
-    public SurfField Build(SeabedMap map, Func<int, int, Sea> seaAt, (double X, double Z)[] numbers, double[]? amplitudeShares = null, double breakingDissipation = 1)
+    public SurfField Build(SeabedMap map, Func<int, int, Sea> seaAt, (double X, double Z)[] numbers, double[]? amplitudeShares = null, double breakingDissipation = 1, double terminalBoreShare = 0.12)
     {
         var size = map.Size;
         var field = new SurfField(map.OriginX, map.OriginZ, size, numbers);
@@ -30,7 +30,8 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         var smoothing = faces.SmoothingBlocks(LongestWave(numbers));
         var felt = Felt(depth, size, smoothing);
         var felts = numbers.Take(SurfField.Slots).Select(number => Felt(depth, size, faces.SmoothingBlocks(WaveLength(number)))).ToArray();
-        var lags = felts.Select((each, slot) => PhaseField.Lag(size, each, numbers[slot].X, numbers[slot].Z)).ToArray();
+        var boreDepth = (float)(terminalBoreShare * Enumerable.Range(0, depth.Length).Max(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height));
+        var lags = felts.Select((each, slot) => PhaseField.Lag(size, each.Select(d => d > 0 ? Math.Max(d, boreDepth) : d).ToArray(), numbers[slot].X, numbers[slot].Z)).ToArray();
         var (breaking, gain) = Energy(field, felt, felts, depth, size, numbers, lags, amplitudeShares, seaAt, breakingDissipation);
         var ray = Strongest(numbers, amplitudeShares);
         var (swash, steps) = Swash(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * Arriving(depth, breaking, gain, size, x - map.OriginX, z - map.OriginZ, ray) } : default);

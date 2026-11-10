@@ -1,11 +1,12 @@
 using System;
+using System.Linq;
 
 namespace RoughSeas.Surf;
 
 /// <summary>
 /// How far shoaling water holds a wave back: the eikonal |∇S| = k(depth) solved by fast sweeping from the plane wave
 /// where the water is deep, less the plane wave's phase: anchored to deep water alone, so maps read around different
-/// points agree wherever they share it. Water no deep water reaches within the map keeps no lag. Waves running out to sea take the same
+/// points agree wherever they share it. A map with no water deep enough for this wave starts it from its upwind edge, where the lag fades out anyway. Waves running out to sea take the same
 /// solution run the other way: minus the arrival of the wave reversed. The gradient turns the crests by Snell's law. Land holds no phase.
 /// </summary>
 public static class PhaseField
@@ -52,6 +53,7 @@ public static class PhaseField
             number[i] = Shoaling.Wavenumber(deepNumber, depth[i]);
             phase[i] = depth[i] >= deep ? numberX * (x + 0.5) + numberZ * (z + 0.5) : double.PositiveInfinity;
         }
+        if (!phase.Any(double.IsFinite)) SeedUpwindEdge(size, phase, number, numberX, numberZ);
 
         for (var round = 0; round < rounds; round++)
         {
@@ -68,6 +70,16 @@ public static class PhaseField
             lag[i] = double.IsFinite(phase[i]) ? (float)(phase[i] - plain) : 0;
         }
         return lag;
+    }
+
+    private static void SeedUpwindEdge(int size, double[] phase, double[] number, double numberX, double numberZ)
+    {
+        for (var i = 0; i < phase.Length; i++)
+        {
+            var (x, z) = (i % size, i / size);
+            var upwind = (x == 0 && numberX > 0) || (x == size - 1 && numberX < 0) || (z == 0 && numberZ > 0) || (z == size - 1 && numberZ < 0);
+            if (upwind && !double.IsNaN(number[i])) phase[i] = numberX * (x + 0.5) + numberZ * (z + 0.5);
+        }
     }
 
     private static void Sweep(int size, double[] phase, double[] number, int fromX, int toX, int stepX, int fromZ, int toZ, int stepZ)
