@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using RoughSeas.Water;
 
 namespace RoughSeas.Shore;
@@ -15,9 +16,46 @@ namespace RoughSeas.Shore;
 public readonly record struct SheetFront(double SpeedSquared, double Metres, double Seconds, double Soaked, double Period, double Friction, double LensRatio)
 {
     private const double Gravity = WaveTheory.Gravity;
+    private const double LargestSpeedShare = 4;
+    private const int ThrowSteps = 12;
 
     public static SheetFront Thrown(double runUpMetres, double periodSeconds, SheetConfig config) =>
         new(2 * Gravity * Math.Max(runUpMetres, 0), 0, 0, 0, periodSeconds, config.UprushFriction, config.LensDepthRatio);
+
+    /// <summary>
+    /// A front thrown up this <paramref name="profile"/> so that, losing speed to friction and soak on the way, it climbs to <paramref name="runUpMetres"/>: the measured run-up
+    /// is where a real sheet stops with its friction spent. A shore that never rises so high keeps the free throw.
+    /// </summary>
+    public static SheetFront Thrown(double runUpMetres, double periodSeconds, SheetConfig config, IReadOnlyList<double> profile, BedConfig bed)
+    {
+        var free = Thrown(runUpMetres, periodSeconds, config);
+        var highest = -1;
+        for (var i = 0; i < profile.Count && profile[i] <= runUpMetres; i++) highest = i;
+        if (highest < 0 || highest == profile.Count - 1 || Climbs(free, profile, bed, highest)) return free;
+
+        double low = 1, high = LargestSpeedShare;
+        if (!Climbs(Faster(free, high), profile, bed, highest)) return free;
+        for (var step = 0; step < ThrowSteps; step++)
+        {
+            var middle = (low + high) / 2;
+            if (Climbs(Faster(free, middle), profile, bed, highest)) high = middle;
+            else low = middle;
+        }
+        return Faster(free, high);
+    }
+
+    private static SheetFront Faster(SheetFront front, double share) => front with { SpeedSquared = front.SpeedSquared * share * share };
+
+    private static bool Climbs(SheetFront front, IReadOnlyList<double> profile, BedConfig bed, int highest)
+    {
+        var reached = front;
+        for (var i = 0; i <= highest; i++)
+        {
+            if (reached.Cross(profile[i] - (i > 0 ? profile[i - 1] : 0), bed) is not { } next) return false;
+            reached = next;
+        }
+        return true;
+    }
 
     /// <summary>When a front thrown to <paramref name="runUp"/> up a slope of this <paramref name="rise"/> reaches <paramref name="distance"/>, as <c>seasurface.vsh</c> draws it.</summary>
     public static double Arrival(double runUp, double rise, double distance)

@@ -61,6 +61,35 @@ public class SheetFrontTests
         Assert.Equal(0, front.Value.Head);
     }
 
+    private static double[] Slope(double perBlock, int blocks = 200) => Enumerable.Range(1, blocks).Select(i => i * perBlock).ToArray();
+
+    private static double Climbed(SheetFront front, double[] profile, string bed)
+    {
+        var climbed = 0.0;
+        SheetFront? running = front;
+        for (var i = 0; i < profile.Length; i++)
+        {
+            if (running?.Cross(profile[i] - (i > 0 ? profile[i - 1] : 0), ShoreFixtures.Bed(bed)) is not { } next) break;
+            (running, climbed) = (next, profile[i]);
+        }
+        return climbed;
+    }
+
+    [Theory]
+    [InlineData(0.05)]
+    [InlineData(0.1)]
+    [InlineData(0.143)]
+    public void ASheetThrownUpASlopeStopsAtItsRunUpWithItsFrictionSpent(double slope)
+    {
+        var profile = Slope(slope);
+        var front = SheetFront.Thrown(1.5, 9, ShoreFixtures.Config.Sheet, profile, ShoreFixtures.Bed("soil"));
+        Assert.InRange(Climbed(front, profile, "soil"), 1.5 - slope, 1.5 + 3 * slope);
+    }
+
+    [Fact]
+    public void AShoreThatNeverRisesToTheRunUpKeepsTheFreeThrow() =>
+        Assert.Equal(Thrown(1.5).Head, SheetFront.Thrown(1.5, 9, ShoreFixtures.Config.Sheet, new double[48], ShoreFixtures.Bed("sand")).Head, 6);
+
     [Fact]
     public void AStoppedSheetDoesNotRunOnDownAStep() =>
         Assert.Null(Thrown(0.13, 3.1).Cross(0.125, ShoreFixtures.Bed("sand"))!.Value.Cross(-1, ShoreFixtures.Bed("sand")));

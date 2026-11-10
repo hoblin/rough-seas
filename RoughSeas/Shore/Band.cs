@@ -88,7 +88,7 @@ public sealed class Band(RunUp runUp, SheetConfig sheet, int slopeSearchBlocks)
         foreach (var sea in seas)
         {
             var reach = runUp.Over(sea.Height, sea.Period, profile, bed);
-            var front = SheetFront.Thrown(reach * runUpScale, sea.Period, sheet);
+            var front = SheetFront.Thrown(reach * runUpScale, sea.Period, sheet, profile, bed);
             if (front.Head > (strongest?.Front.Head ?? 0)) strongest = (reach, front);
         }
         return strongest;

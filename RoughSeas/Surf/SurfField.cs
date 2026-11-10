@@ -17,9 +17,9 @@ public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, dou
 {
     public (double Head, double Lens) At(double share)
     {
-        for (var index = SurfBuilder.Scales.Length - 1; index >= 0; index--)
+        for (var index = SwashSheets.Scales.Length - 1; index >= 0; index--)
         {
-            if (SurfBuilder.Scales[index] <= share) return (Heads[index], Lenses[index]);
+            if (SwashSheets.Scales[index] <= share) return (Heads[index], Lenses[index]);
         }
         return default;
     }
@@ -74,6 +74,9 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
     public IReadOnlyList<StepFace> Steps { get; set; } = [];
 
     public int EdgeFadeBlocks { get; set; } = 1;
+
+    /// <summary>The shallowest a broken wave feels the water: the depth of its own terminal bore.</summary>
+    public double BoreDepth { get; set; }
 
     /// <summary>Whether this slot's lags and gains were solved for this wave vector.</summary>
     public bool Holds(int slot, double numberX, double numberZ) => slot < Numbers.Length && slot < Slots && Numbers[slot] == (numberX, numberZ);

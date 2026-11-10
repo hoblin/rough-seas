@@ -112,7 +112,7 @@ public class StormsModSystem : ModSystem
         var band = new Band(new RunUp(shore.RunUp), shore.Sheet, shore.RunUp.SlopeSearchBlocks);
         var faces = new FaceBuilder(new WallReflection(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces);
         var transformation = new WaveTransformation(Waves.BreakingDepthRatio, faces.SmoothingBlocks, Config.Surface.Shore.BreakingDissipation, Config.Surface.Shore.TerminalBoreShare);
-        return new SurfMaker(new SurfBuilder(band, faces, transformation), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
+        return new SurfMaker(new SurfBuilder(new SwashSheets(band), faces, transformation), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
     }
 
     private static void RegisterSurfaceCommands(ICoreClientAPI capi, SurfaceField field)

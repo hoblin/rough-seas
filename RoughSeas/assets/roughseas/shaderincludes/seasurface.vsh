@@ -25,6 +25,7 @@ uniform vec2 seaMesh;
 uniform vec3 seaTerms;
 uniform float seaBedEdge;
 uniform float seaBoreSlope;
+uniform float seaBoreDepth;
 
 out float seaFoamCrest;
 out float seaFoamFold;
@@ -81,6 +82,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	float im = 0.0;
 	float arrivedRe = 0.0;
 	float arrivedIm = 0.0;
+	float arrivedBore = 0.0;
 	float energy = 0.0;
 	float dominant = 0.0;
 	float frequency = 1.0;
@@ -98,7 +100,8 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 		im += wave.z * sin(theta);
 		float reaching = share * wave.z * seaGain(i, gainA, gainB);
 		arrivedRe += reaching * cos(theta);
-		arrivedIm += reaching * seaBore(theta, seaBoreFront(boreHeight, length(wave.xy)));
+		arrivedIm += reaching * sin(theta);
+		arrivedBore += reaching * seaBore(theta, seaBoreFront(boreHeight, seaWavenumber(length(wave.xy), seaBoreDepth)));
 		energy += wave.z * wave.z;
 		if (i == int(seaShore.y)) {
 			dominant = theta;
@@ -132,7 +135,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	if (runUp < bed.w || since <= 0.0 || front <= distance) return warped;
 	float fromTip = (front - distance) / front;
 	float lens = min((front - distance) * (front - distance) / (9.0 * seaGravity * since * since), seaShore.w * arrivedHeight);
-	float depth = max(lens, (arrivedIm - rise) * fromTip * fromTip) - aux.x * max(0.0, since - arrived);
+	float depth = max(lens, (arrivedBore - rise) * fromTip * fromTip) - aux.x * max(0.0, since - arrived);
 	if (depth <= 0.0) return warped;
 	warped.y += rise + depth;
 	seaShare = 0.0;
@@ -191,7 +194,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 			continue;
 		}
 		heights[i] = wave.z * mix(1.0, seaGain(i, gainA, gainB), bedEdge);
-		numbers[i] = mix(deepNumber, seaWavenumber(deepNumber, bed.x), bedEdge);
+		numbers[i] = mix(deepNumber, seaWavenumber(deepNumber, max(bed.x, seaBoreDepth)), bedEdge);
 		offshore += wave.z * wave.z;
 		local += heights[i] * heights[i];
 	}

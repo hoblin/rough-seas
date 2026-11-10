@@ -10,7 +10,7 @@ public class SurfBuilderTests
     private const int Level = 100;
     private static readonly BedConfig Stone = ShoreFixtures.Bed("stone");
 
-    private static SurfBuilder Builder(FaceBuilder faces) => new(ShoreFixtures.Band, faces, new RoughSeas.Water.WaveTransformation(1.28, faces.SmoothingBlocks, 1, 0.12));
+    private static SurfBuilder Builder(FaceBuilder faces) => new(new SwashSheets(ShoreFixtures.Band), faces, new RoughSeas.Water.WaveTransformation(1.28, faces.SmoothingBlocks, 1, 0.12));
 
     private static SurfField Stairs(params double[] elevations)
     {

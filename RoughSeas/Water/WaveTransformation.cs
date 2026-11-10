@@ -11,7 +11,27 @@ namespace RoughSeas.Water;
 /// <param name="Gain">The whole sea's height over its height in deep water.</param>
 /// <param name="SlopeX">The depth's slope along X, at the scale the longest wave feels it.</param>
 /// <param name="SlopeZ">The same along Z.</param>
-public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Gains, float[] Breaking, float[] Gain, float[] SlopeX, float[] SlopeZ);
+/// <param name="BoreDepth">The shallowest a broken wave feels the water: the depth of its own terminal bore.</param>
+public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Gains, float[] Breaking, float[] Gain, float[] SlopeX, float[] SlopeZ, float BoreDepth)
+{
+    /// <summary>The sea's height, against the deep sea's, where it enters the last stretch of breaking water upwind of this cell along <paramref name="ray"/>: the sea that comes to the shore, whatever the shallows then leave of it.</summary>
+    public double ArrivingAt(float[] depth, int size, int column, int row, (double X, double Z) ray)
+    {
+        var length = Math.Sqrt(ray.X * ray.X + ray.Z * ray.Z);
+        if (length <= 0) return 1;
+        var last = -1;
+        for (var step = 0; step < 2 * size; step++)
+        {
+            var (back, up) = ((int)Math.Round(column - ray.X / length * step), (int)Math.Round(row - ray.Z / length * step));
+            if (back < 0 || up < 0 || back >= size || up >= size) return 1;
+            var i = up * size + back;
+            if (!(depth[i] > 0)) return last >= 0 ? Math.Min(1, Gain[last]) : 1;
+            if (Breaking[i] <= 0) return Math.Min(1, Gain[i]);
+            last = i;
+        }
+        return 1;
+    }
+}
 
 /// <summary>What a bed does to waves arriving over it: how each slot is held back and turned (<see cref="PhaseField"/>), and what energy it keeps (<see cref="WaveEnergy"/>), each at the depth that wave feels.</summary>
 public sealed class WaveTransformation(double breakingDepthRatio, Func<double, int> smoothingBlocks, double breakingDissipation, double terminalBoreShare)
@@ -50,7 +70,7 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
         }
         var slopeX = BoxAverage.Over(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, 1)).ToArray(), size, smoothing);
         var slopeZ = BoxAverage.Over(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, size)).ToArray(), size, smoothing);
-        return new TransformedWaves(felt, lags, gains, breaking, gain, slopeX, slopeZ);
+        return new TransformedWaves(felt, lags, gains, breaking, gain, slopeX, slopeZ, boreDepth);
     }
 
     private static float Gradient(float[] depth, int size, int i, int step)
