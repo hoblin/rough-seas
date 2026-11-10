@@ -24,11 +24,12 @@ public static class WaveEnergy
     public readonly record struct Train(double NumberX, double NumberZ, double Amplitude, float[] Lag, float[]? Felt = null, int TurnRadius = 0);
 
     /// <param name="seaShare">Each cell's sea against the height <paramref name="trains"/> are given at: breaking answers to the sea that stands there.</param>
-    public static (float[][] Gains, float[] Breaking) Solve(int size, float[] depth, IReadOnlyList<Train> trains, double depthPerHeight, double dissipation, float[]? bedDepth = null, float[]? seaShare = null)
+    /// <param name="spacing">How many blocks a cell is across.</param>
+    public static (float[][] Gains, float[] Breaking) Solve(int size, float[] depth, IReadOnlyList<Train> trains, double depthPerHeight, double dissipation, float[]? bedDepth = null, float[]? seaShare = null, double spacing = 1)
     {
         var cells = size * size;
         var standing = bedDepth ?? depth;
-        var solved = trains.Select(train => new Solved(train, size, depth, trains.Sum(other => other.Amplitude * other.Amplitude / 2))).ToArray();
+        var solved = trains.Select(train => new Solved(train, size, depth, trains.Sum(other => other.Amplitude * other.Amplitude / 2), spacing)).ToArray();
         var loss = new double[cells];
         var limit = new double[cells];
         for (var i = 0; i < cells; i++) limit[i] = standing[i] > 0 ? Math.Pow(standing[i] / depthPerHeight / Math.Max(seaShare?[i] ?? 1, QuietestSeaShare), 2) / 8 : 0;
@@ -77,7 +78,7 @@ public static class WaveEnergy
     private sealed class Solved
     {
         private readonly double[] speed, alongX, alongZ;
-        private readonly double deepEnergy, deepFlux;
+        private readonly double deepEnergy, deepFlux, spacing;
 
         public double[] Energy { get; }
 
@@ -85,8 +86,9 @@ public static class WaveEnergy
 
         public double Frequency { get; }
 
-        public Solved(Train train, int size, float[] depth, double totalEnergy)
+        public Solved(Train train, int size, float[] depth, double totalEnergy, double spacing)
         {
+            this.spacing = spacing;
             var felt = train.Felt ?? depth;
             var deepNumber = Math.Sqrt(train.NumberX * train.NumberX + train.NumberZ * train.NumberZ);
             var cells = size * size;
@@ -102,8 +104,8 @@ public static class WaveEnergy
                 if (!(depth[i] > 0)) continue;
                 speed[i] = WaveTheory.GroupSpeed(deepNumber, felt[i]);
                 var (x, z) = (i % size, i / size);
-                var towardX = train.NumberX + PhaseField.Slope(train.Lag, depth, size, x, z, 1, 0);
-                var towardZ = train.NumberZ + PhaseField.Slope(train.Lag, depth, size, x, z, 0, 1);
+                var towardX = train.NumberX + PhaseField.Slope(train.Lag, depth, size, x, z, 1, 0) / spacing;
+                var towardZ = train.NumberZ + PhaseField.Slope(train.Lag, depth, size, x, z, 0, 1) / spacing;
                 var length = Math.Sqrt(towardX * towardX + towardZ * towardZ);
                 if (length > 0) (alongX[i], alongZ[i]) = (towardX / length, towardZ / length);
             }
@@ -150,7 +152,7 @@ public static class WaveEnergy
                 if (!(depth[i] > 0)) continue;
                 var (acrossX, acrossZ) = (Math.Abs(alongX[i]), Math.Abs(alongZ[i]));
                 var inflow = Inflow(size, depth, x - Math.Sign(alongX[i]), z, alongX, alongX[i], speed[i]) + Inflow(size, depth, x, z - Math.Sign(alongZ[i]), alongZ, alongZ[i], speed[i]);
-                var outflow = speed[i] * (acrossX + acrossZ) + loss[i];
+                var outflow = speed[i] * (acrossX + acrossZ) + loss[i] * spacing;
                 Energy[i] = Math.Min(outflow > 0 ? inflow / outflow : 0, limit[i] * Portion[i]);
             }
         }

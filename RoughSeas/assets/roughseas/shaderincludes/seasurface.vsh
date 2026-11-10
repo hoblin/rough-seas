@@ -155,8 +155,18 @@ float seaBedEdgeAt(vec2 uv) {
 	return smoothstep(0.0, 1.0, min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y)) * seaBedArea.z / seaBedEdge);
 }
 
+vec4 seaFadedLag(vec4 lag, float edge) {
+	return atan(edge * sin(lag), edge * cos(lag) + 1.0 - edge);
+}
+
+vec4 seaFadedShare(vec4 lag, float edge) {
+	vec4 across = edge * sin(lag);
+	vec4 along = edge * cos(lag) + 1.0 - edge;
+	return sqrt(across * across + along * along);
+}
+
 vec4 seaDrawnLag(sampler2D lags, vec2 uv) {
-	return seaBedEdgeAt(uv) * textureLod(lags, uv, 0.0);
+	return seaFadedLag(textureLod(lags, uv, 0.0), seaBedEdgeAt(uv));
 }
 
 vec4 seaLagTurn(sampler2D lags, vec2 uv, vec2 across) {
@@ -164,7 +174,8 @@ vec4 seaLagTurn(sampler2D lags, vec2 uv, vec2 across) {
 	bool ahead = textureLod(seaBed, uv + across, 0.0).x > 0.0;
 	float span = (back ? 1.0 : 0.0) + (ahead ? 1.0 : 0.0);
 	if (span <= 0.0) return vec4(0.0);
-	return (seaDrawnLag(lags, ahead ? uv + across : uv) - seaDrawnLag(lags, back ? uv - across : uv)) / span;
+	vec4 turn = seaDrawnLag(lags, ahead ? uv + across : uv) - seaDrawnLag(lags, back ? uv - across : uv);
+	return (turn - 6.2831853 * floor(turn / 6.2831853 + 0.5)) / span;
 }
 
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
@@ -179,8 +190,12 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 bed = onBed ? textureLod(seaBed, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 1000000.0);
 	vec4 aux = onBed ? textureLod(seaBedAux, bedUv, 0.0) : vec4(0.0);
 	float bedEdge = onBed ? seaBedEdgeAt(bedUv) : 0.0;
-	vec4 lagA = bedEdge * (onBed ? textureLod(seaLagA, bedUv, 0.0) : vec4(0.0));
-	vec4 lagB = bedEdge * (onBed ? textureLod(seaLagB, bedUv, 0.0) : vec4(0.0));
+	vec4 heldA = onBed ? textureLod(seaLagA, bedUv, 0.0) : vec4(0.0);
+	vec4 heldB = onBed ? textureLod(seaLagB, bedUv, 0.0) : vec4(0.0);
+	vec4 lagA = seaFadedLag(heldA, bedEdge);
+	vec4 lagB = seaFadedLag(heldB, bedEdge);
+	vec4 keptA = seaFadedShare(heldA, bedEdge);
+	vec4 keptB = seaFadedShare(heldB, bedEdge);
 	vec4 face = onBed ? textureLod(seaFace, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 0.0);
 	vec4 gainA = onBed ? textureLod(seaGainA, bedUv, 0.0) : vec4(1.0);
 	vec4 gainB = onBed ? textureLod(seaGainB, bedUv, 0.0) : vec4(1.0);
@@ -210,7 +225,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 			heights[i] = wave.z;
 			continue;
 		}
-		heights[i] = wave.z * mix(1.0, seaGain(i, gainA, gainB), bedEdge);
+		heights[i] = wave.z * mix(1.0, seaGain(i, gainA, gainB), bedEdge) * seaGain(i, keptA, keptB);
 		numbers[i] = mix(deepNumber, seaWavenumber(deepNumber, surf.b), bedEdge);
 		offshore += wave.z * wave.z;
 		local += heights[i] * heights[i];

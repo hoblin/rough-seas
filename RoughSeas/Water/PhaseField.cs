@@ -12,6 +12,7 @@ namespace RoughSeas.Water;
 public static class PhaseField
 {
     private const int Rounds = 2;
+    private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
     /// <param name="anchor">The lag where the wave enters this grid, by column and row; none is 0.</param>
     /// <param name="spacing">How many blocks a cell is across.</param>
@@ -45,6 +46,32 @@ public static class PhaseField
             lag[i] = double.IsFinite(phase[i]) ? (float)(phase[i] - Plain(x, z)) : 0;
         }
         return lag;
+    }
+
+    /// <summary>For each cell the index of the nearest water, itself over water; -1 where a grid holds none.</summary>
+    public static int[] NearestWater(float[] depth, int size)
+    {
+        var nearest = new int[depth.Length];
+        Array.Fill(nearest, -1);
+        var waiting = new Queue<int>();
+        for (var i = 0; i < depth.Length; i++)
+        {
+            if (!(depth[i] > 0)) continue;
+            nearest[i] = i;
+            waiting.Enqueue(i);
+        }
+        while (waiting.TryDequeue(out var i))
+        {
+            var (x, z) = (i % size, i / size);
+            foreach (var (dx, dz) in Sides)
+            {
+                var (nextX, nextZ) = (x + dx, z + dz);
+                if (nextX < 0 || nextZ < 0 || nextX >= size || nextZ >= size || nearest[nextZ * size + nextX] >= 0) continue;
+                nearest[nextZ * size + nextX] = nearest[i];
+                waiting.Enqueue(nextZ * size + nextX);
+            }
+        }
+        return nearest;
     }
 
     /// <summary>The lag's slope at a cell along one axis, over the water alone.</summary>

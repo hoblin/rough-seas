@@ -32,9 +32,9 @@ public sealed class SurfaceField
 
     public void Update(ISeaSource source, double x, double z, int regionSize, int cellBlocks)
     {
-        this.cellBlocks = cellBlocks;
-        across = RegionsAcross * regionSize / cellBlocks;
-        if (factors.Length != across * across) factors = new byte[across * across];
+        var cells = RegionsAcross * regionSize / cellBlocks;
+        if (factors.Length != cells * cells) factors = new byte[cells * cells];
+        (this.cellBlocks, across) = (cellBlocks, cells);
         OriginX = (Math.Floor(x / regionSize) - 1) * regionSize;
         OriginZ = (Math.Floor(z / regionSize) - 1) * regionSize;
 

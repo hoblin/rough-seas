@@ -43,7 +43,7 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
         var probe = new BlockPos(Dimensions.NormalWorld);
         var (built, surface) = Surface((int)x, (int)z, probe);
         if (!built) return OpenSea(x, z, config.OpenSeaDepthMetres);
-        return surface is { } level ? Depth((int)x, (int)z, level, probe) ?? 0 : 0;
+        return surface is { } level && Depth((int)x, (int)z, level, probe) is > 0 and var blocks ? blocks - 1 + WaterColumn.StillLevel : 0;
     }
 
     public string Describe(double x, double z)

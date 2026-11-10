@@ -26,6 +26,8 @@ public sealed class SeaSurface
 
     private readonly SurfaceConfig config;
     private readonly Waves waves;
+    private readonly object gate = new();
+    private SurfField? seabed;
 
     public SeaSurface(SurfaceConfig config, Waves waves)
     {
@@ -43,7 +45,14 @@ public sealed class SeaSurface
     /// <summary>The fold above which a crest whitens, set so the whitecaps cover the Beaufort force's share of the sea.</summary>
     public double CapsFold { get; private set; } = double.PositiveInfinity;
 
-    public SurfField? Seabed { get; set; }
+    public SurfField? Seabed
+    {
+        get => seabed;
+        set
+        {
+            lock (gate) seabed = value;
+        }
+    }
 
     public double BoreFrontSlope => config.Shore.BoreFrontSlope;
 
@@ -54,9 +63,15 @@ public sealed class SeaSurface
         CapsFold = FoldCovering(Math.Min(1, Foam.Caps / BreakingCrestShare));
     }
 
-    public void Raise(WaveGeneration earlier, WaveGeneration latest, double bornSeconds, bool crossed = false) => Trains.Raise(earlier, latest, bornSeconds, crossed);
+    public void Raise(WaveGeneration earlier, WaveGeneration latest, double bornSeconds, bool crossed = false)
+    {
+        lock (gate) Trains.Raise(earlier, latest, bornSeconds, crossed);
+    }
 
-    public void Advance(double seconds) => Trains.Advance(seconds);
+    public void Advance(double seconds)
+    {
+        lock (gate) Trains.Advance(seconds);
+    }
 
     /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
     public double HeightAt(double x, double z, double share = 1, bool shortWaves = true)
@@ -70,8 +85,13 @@ public sealed class SeaSurface
         return share * DisplacementAt(restX, restZ, share, shortWaves).Y;
     }
 
-    /// <summary>The waves here, scaled as the shader scales them by <see cref="SurfaceField.Factor"/>.</summary>
+    /// <summary>The waves here, scaled as the shader scales them by <see cref="SurfaceField.Factor"/>, all of one update of the sea: the engine's ambient scan asks this off the main thread.</summary>
     public WaveReading WaveHere(double x, double z, double share)
+    {
+        lock (gate) return ReadWave(x, z, share);
+    }
+
+    private WaveReading ReadWave(double x, double z, double share)
     {
         var slots = Trains.Slots;
         Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
@@ -103,12 +123,14 @@ public sealed class SeaSurface
     /// <summary>The wave vector of a slot here, as the bed turns it.</summary>
     private (double X, double Z) Turned(SurfField field, int slot, double x, double z)
     {
-        double Drawn(double atX, double atZ) => field.EdgeShare(atX, atZ) * field.LagAt(slot, atX, atZ);
+        double Drawn(double atX, double atZ) => SurfField.Faded(field.LagAt(slot, atX, atZ), field.EdgeShare(atX, atZ)).Lag;
         double Across(double backX, double backZ, double aheadX, double aheadZ)
         {
             var (hasBack, hasAhead) = (field.DepthAt(backX, backZ) > 0, field.DepthAt(aheadX, aheadZ) > 0);
             var span = (hasBack ? 1 : 0) + (hasAhead ? 1 : 0);
-            return span > 0 ? (Drawn(hasAhead ? aheadX : x, hasAhead ? aheadZ : z) - Drawn(hasBack ? backX : x, hasBack ? backZ : z)) / span : 0;
+            if (span == 0) return 0;
+            var turn = Drawn(hasAhead ? aheadX : x, hasAhead ? aheadZ : z) - Drawn(hasBack ? backX : x, hasBack ? backZ : z);
+            return (turn - FullTurn * Math.Round(turn / FullTurn)) / span;
         }
         return (Trains.NumberX(slot) + Across(x - 1, z, x + 1, z), Trains.NumberZ(slot) + Across(x, z - 1, x, z + 1));
     }
@@ -238,7 +260,7 @@ public sealed class SeaSurface
     private bool Holds(SurfField field, int slot) => field.Holds(slot, Trains.NumberX(slot), Trains.NumberZ(slot));
 
     private double LagAt(int slot, double x, double z) =>
-        Seabed is { } field && field.Covers(x, z) && Holds(field, slot) ? field.EdgeShare(x, z) * field.LagAt(slot, x, z) : 0;
+        Seabed is { } field && field.Covers(x, z) && Holds(field, slot) ? SurfField.Faded(field.LagAt(slot, x, z), field.EdgeShare(x, z)).Lag : 0;
 
     private double Local(double x, double z, double share, Span<double> heights, Span<double> lags, Span<double> numbers, Span<double> towardX,
         Span<double> towardZ)
@@ -268,11 +290,12 @@ public sealed class SeaSurface
             var valid = Holds(field, slot);
             var amplitude = Trains.Amplitude(slot);
             offshore += share * share * amplitude * amplitude;
-            heights[slot] = amplitude * (valid ? 1 + (field.GainAt(slot, x, z) - 1) * edge : 1);
+            var (lag, kept) = valid ? SurfField.Faded(field.LagAt(slot, x, z), edge) : (0, 1);
+            heights[slot] = amplitude * (valid ? 1 + (field.GainAt(slot, x, z) - 1) * edge : 1) * kept;
             numbers[slot] = deep > 0 ? deep + (WaveTheory.Wavenumber(deep, field.CelerityDepthAt(x, z)) - deep) * edge : 0;
             slopes += heights[slot] * numbers[slot];
             if (!valid) continue;
-            lags[slot] = edge * field.LagAt(slot, x, z);
+            lags[slot] = lag;
             var (turnedX, turnedZ) = Turned(field, slot, x, z);
             var turned = Math.Sqrt(turnedX * turnedX + turnedZ * turnedZ);
             if (turned > 0) (towardX[slot], towardZ[slot]) = (turnedX / turned, turnedZ / turned);

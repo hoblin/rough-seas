@@ -64,8 +64,8 @@ public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig co
     {
         var (originX, originZ) = (((int)Math.Floor(x / regionSize) - 1) * regionSize, ((int)Math.Floor(z / regionSize) - 1) * regionSize);
         var across = RegionsAcross * regionSize / CoarseBlocks;
-        var depth = Enumerable.Range(0, across * across).Select(i => (float)sea.Sample(originX + (i % across + 0.5) * CoarseBlocks, originZ + (i / across + 0.5) * CoarseBlocks).Depth).ToArray();
-        return new CoarseBed(originX, originZ, CoarseBlocks, across, depth);
+        var samples = Enumerable.Range(0, across * across).Select(i => sea.Sample(originX + (i % across + 0.5) * CoarseBlocks, originZ + (i / across + 0.5) * CoarseBlocks)).ToArray();
+        return new CoarseBed(originX, originZ, CoarseBlocks, across, samples.Select(sample => (float)sample.Depth).ToArray(), samples.Select(sample => sample.WaveHeight).ToArray());
     }
 
     private bool Due(double x, double z, (double X, double Z)[] numbers, int dominant, double seconds)
