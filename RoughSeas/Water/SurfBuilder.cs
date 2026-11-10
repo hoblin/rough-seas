@@ -15,7 +15,7 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
         var depth = new float[size * size];
         for (var i = 0; i < depth.Length; i++) depth[i] = map.DepthAt(map.OriginX + i % size, map.OriginZ + i / size);
 
-        var waves = transformation.Solve(size, depth, numbers, amplitudeShares, Enumerable.Range(0, depth.Length).Select(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height).ToArray(), dominant, coarse?.Anchors(transformation, numbers, amplitudeShares, dominant, map.OriginX, map.OriginZ));
+        var waves = transformation.Solve(size, depth, numbers, amplitudeShares, Enumerable.Range(0, depth.Length).Select(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height).ToArray(), dominant, coarse?.Entering(transformation, numbers, amplitudeShares, dominant, map.OriginX, map.OriginZ));
         var ray = dominant < numbers.Length ? numbers[dominant] : default;
         var arriving = Enumerable.Range(0, depth.Length).Select(i => depth[i] > 0 ? (float)waves.ArrivingAt(depth, size, i % size, i / size, ray) : 1f).ToArray();
         var (swash, steps) = sheets.Throw(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * arriving[(z - map.OriginZ) * size + x - map.OriginX] } : default);

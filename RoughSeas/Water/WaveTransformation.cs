@@ -11,7 +11,8 @@ namespace RoughSeas.Water;
 /// <param name="SlopeX">The depth's slope along X, at the scale the longest wave feels it.</param>
 /// <param name="SlopeZ">The same along Z.</param>
 /// <param name="CelerityDepth">The depth that sets the waves' speed: the water under a wave and, where it has broken, the bore's own height over it, never less than a terminal bore's. Over land, the terminal bore's.</param>
-public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Gains, float[] Breaking, float[] Gain, float[] SlopeX, float[] SlopeZ, float[] CelerityDepth)
+/// <param name="Entering">The whole sea's height over its height in deep water where it enters the grid, by column and row; none is deep water's.</param>
+public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Gains, float[] Breaking, float[] Gain, float[] SlopeX, float[] SlopeZ, float[] CelerityDepth, Func<int, int, double>? Entering = null)
 {
     /// <summary>The sea's height, against the deep sea's, where it enters the last stretch of breaking water upwind of this cell along <paramref name="ray"/>: the sea that comes to the shore, whatever the shallows then leave of it.</summary>
     public double ArrivingAt(float[] depth, int size, int column, int row, (double X, double Z) ray)
@@ -22,7 +23,7 @@ public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Ga
         for (var step = 0; step < 2 * size; step++)
         {
             var (back, up) = ((int)Math.Round(column - ray.X / length * step), (int)Math.Round(row - ray.Z / length * step));
-            if (back < 0 || up < 0 || back >= size || up >= size) return 1;
+            if (back < 0 || up < 0 || back >= size || up >= size) return Math.Min(1, Entering?.Invoke(Math.Clamp(back, 0, size - 1), Math.Clamp(up, 0, size - 1)) ?? 1);
             var i = up * size + back;
             if (!(depth[i] > 0)) return last >= 0 ? Math.Min(1, Gain[last]) : 1;
             if (Breaking[i] <= 0) return Math.Min(1, Gain[i]);
@@ -41,10 +42,11 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
 
     /// <param name="seaHeights">The significant height of the sea standing on each cell.</param>
     /// <param name="dominant">The slot that dominates the sea now: its generation sets the whole sea's gain and breaking.</param>
-    /// <param name="anchors">For each slot, the lag where the wave enters this grid; none anchors it at 0.</param>
+    /// <param name="entering">The waves where they enter this grid; none enter as from deep water, with no lag.</param>
     /// <param name="spacing">How many blocks a cell is across.</param>
-    public TransformedWaves Solve(int size, float[] depth, (double X, double Z)[] numbers, double[]? amplitudeShares, double[] seaHeights, int dominant = 0, Func<int, int, double>[]? anchors = null, int spacing = 1)
+    public TransformedWaves Solve(int size, float[] depth, (double X, double Z)[] numbers, double[]? amplitudeShares, double[] seaHeights, int dominant = 0, EnteringWaves? entering = null, int spacing = 1)
     {
+        var anchors = entering?.Lags;
         int Radius(double length) => smoothingBlocks(length) / spacing;
         var smoothing = Radius(numbers.Select(WaveLength).DefaultIfEmpty(0).Max());
         var felt = Felt(depth, size, smoothing);
@@ -63,7 +65,7 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
         for (var bank = 0; bank * generation < Math.Min(numbers.Length, SurfField.Slots); bank++)
         {
             var slots = Enumerable.Range(bank * generation, generation).Where(slot => slot < lags.Length).ToArray();
-            var trains = slots.Select(slot => new WaveEnergy.Train(numbers[slot].X, numbers[slot].Z, (amplitudeShares?[slot] ?? 1 / (2 * Math.Sqrt(2) * Math.Sqrt(generation))) * seaHeight, lags[slot], felts[slot], Radius(WaveLength(numbers[slot])))).ToArray();
+            var trains = slots.Select(slot => new WaveEnergy.Train(numbers[slot].X, numbers[slot].Z, (amplitudeShares?[slot] ?? 1 / (2 * Math.Sqrt(2) * Math.Sqrt(generation))) * seaHeight, lags[slot], felts[slot], Radius(WaveLength(numbers[slot])), entering?.Gains[slot])).ToArray();
             var (solved, broken) = WaveEnergy.Solve(size, felt, trains, breakingDepthRatio, breakingDissipation, depth, seaShare, spacing);
             var deep = trains.Sum(train => train.Amplitude * train.Amplitude);
             var live = bank == dominant / generation;
@@ -80,7 +82,7 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
 
         var slopeX = BoxAverage.Over(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, 1) / spacing).ToArray(), size, smoothing);
         var slopeZ = BoxAverage.Over(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, size) / spacing).ToArray(), size, smoothing);
-        return new TransformedWaves(felt, lags, gains, breaking, gain, slopeX, slopeZ, celerityDepth);
+        return new TransformedWaves(felt, lags, gains, breaking, gain, slopeX, slopeZ, celerityDepth, entering?.Gain);
     }
 
     private static float Gradient(float[] depth, int size, int i, int step)

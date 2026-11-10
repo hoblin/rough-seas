@@ -18,7 +18,7 @@ public class CoarseBedTests
         var depth = Enumerable.Range(0, Across * Across).Select(i => Bed(originX + i % Across + 0.5, slope)).ToArray();
         var coarse = new CoarseBed(0, 0, 32, CoarseAcross, Enumerable.Range(0, CoarseAcross * CoarseAcross).Select(i => Math.Max(0, Bed((i % CoarseAcross + 0.5) * 32, slope))).ToArray(), Enumerable.Repeat(SeaHeight, CoarseAcross * CoarseAcross).ToArray());
         var numbers = new[] { (Number, 0.0) };
-        return (Transformation.Solve(Across, depth, numbers, null, Enumerable.Repeat(SeaHeight, depth.Length).ToArray(), 0, coarse.Anchors(Transformation, numbers, null, 0, originX, 512)).Lags[0], depth);
+        return (Transformation.Solve(Across, depth, numbers, null, Enumerable.Repeat(SeaHeight, depth.Length).ToArray(), 0, coarse.Entering(Transformation, numbers, null, 0, originX, 512)).Lags[0], depth);
     }
 
     private static double Wrapped(double angle) => angle - 2 * Math.PI * Math.Round(angle / (2 * Math.PI));
@@ -42,8 +42,24 @@ public class CoarseBedTests
     {
         var depth = Enumerable.Range(0, 4 * 4).Select(i => i % 4 < 2 ? 3f : 0f).ToArray();
         var bed = new CoarseBed(0, 0, 32, 4, depth, Enumerable.Repeat(1.0, 16).ToArray());
-        var anchor = bed.Anchors(Transformation, [(Number, 0.0)], null, 0, 0, 0)[0];
+        var anchor = bed.Entering(Transformation, [(Number, 0.0)], null, 0, 0, 0).Lags[0];
         Assert.NotEqual(0, anchor(60, 64), 6);
         Assert.Equal(anchor(50, 64), anchor(60, 64), 6);
+    }
+
+    [Fact]
+    public void AReefBeyondTheMapShelters()
+    {
+        const int across = 128;
+        const int reefColumn = 13;
+        var coarseDepth = Enumerable.Range(0, CoarseAcross * CoarseAcross).Select(i => Math.Abs(i % CoarseAcross - reefColumn) <= 1 ? 2f : 40f).ToArray();
+        var coarse = new CoarseBed(0, 0, 32, CoarseAcross, coarseDepth, Enumerable.Repeat(SeaHeight, coarseDepth.Length).ToArray());
+        var numbers = new[] { (Number, 0.0) };
+        var depth = Enumerable.Repeat(40f, across * across).ToArray();
+        var heights = Enumerable.Repeat(SeaHeight, depth.Length).ToArray();
+        var (originX, originZ) = (reefColumn * 32 + 160, 512);
+        var open = Transformation.Solve(across, depth, numbers, null, heights);
+        var behind = Transformation.Solve(across, depth, numbers, null, heights, 0, coarse.Entering(Transformation, numbers, null, 0, originX, originZ));
+        Assert.True(behind.Gains[0][across * across / 2 + 4] < open.Gains[0][across * across / 2 + 4] - 0.2, $"{behind.Gains[0][across * across / 2 + 4]} against {open.Gains[0][across * across / 2 + 4]}");
     }
 }
