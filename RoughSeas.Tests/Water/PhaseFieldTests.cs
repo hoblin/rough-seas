@@ -41,6 +41,17 @@ public class PhaseFieldTests
         }
     }
 
+    [Theory]
+    [InlineData(0.05, 0.015)]
+    [InlineData(-0.05, 0.006)]
+    [InlineData(0.04, -0.03)]
+    public void AWaveAtAShallowAngleOverEvenWaterHasNoLagAnywhere(double numberX, double numberZ)
+    {
+        const int Across = 96;
+        var lag = PhaseField.Lag(Across, Enumerable.Repeat(500f, Across * Across).ToArray(), numberX, numberZ);
+        Assert.All(lag, value => Assert.InRange(value, -0.02, 0.02));
+    }
+
     [Fact]
     public void AShallowBodyBetweenTwoShoresHoldsOneUnbrokenPhase()
     {

@@ -24,7 +24,11 @@ public static class PhaseField
         for (var i = 0; i < phase.Length; i++) number[i] = depth[i] > 0 ? WaveTheory.Wavenumber(deepNumber, depth[i]) * spacing : double.NaN;
 
         double Plain(int x, int z) => (numberX * (x + 0.5) + numberZ * (z + 0.5)) * spacing;
-        if (deepNumber > 0) Seed(size, depth, phase, numberX / deepNumber, numberZ / deepNumber, (x, z) => Plain(x, z) + (anchor?.Invoke(x, z) ?? 0));
+        if (deepNumber > 0)
+        {
+            var along = anchor == null ? AlongEdges(size, number, numberX, numberZ, spacing) : null;
+            Seed(size, depth, phase, numberX, numberZ, deepNumber, (x, z) => Plain(x, z) + (anchor?.Invoke(x, z) ?? along![z * size + x]));
+        }
 
         for (var round = 0; round < rounds; round++)
         {
@@ -54,15 +58,37 @@ public static class PhaseField
         return span > 0 ? (lag[ahead.Item2 * size + ahead.Item1] - lag[back.Item2 * size + back.Item1]) / span : 0;
     }
 
-    private static void Seed(int size, float[] depth, double[] phase, double towardX, double towardZ, Func<int, int, double> entering)
+    private static void Seed(int size, float[] depth, double[] phase, double numberX, double numberZ, double deepNumber, Func<int, int, double> entering)
     {
+        var (upwindX, upwindZ) = (numberX > 0 ? 0 : size - 1, numberZ > 0 ? 0 : size - 1);
         for (var i = 0; i < phase.Length; i++)
         {
             if (!(depth[i] > 0)) continue;
             var (x, z) = (i % size, i / size);
-            var (backX, backZ) = ((int)Math.Round(x - towardX), (int)Math.Round(z - towardZ));
-            if (backX < 0 || backZ < 0 || backX >= size || backZ >= size || !(depth[backZ * size + backX] > 0)) phase[i] = entering(x, z);
+            var (backX, backZ) = ((int)Math.Round(x - numberX / deepNumber), (int)Math.Round(z - numberZ / deepNumber));
+            var offLand = backX >= 0 && backZ >= 0 && backX < size && backZ < size && !(depth[backZ * size + backX] > 0);
+            if ((numberX != 0 && x == upwindX) || (numberZ != 0 && z == upwindZ) || offLand) phase[i] = entering(x, z);
         }
+    }
+
+    /// <summary>The lag along the grid's upwind edges, each marched from its own upwind end: a wave running along an edge falls behind over the depths on it, in the share of its path that lies along that edge.</summary>
+    private static double[] AlongEdges(int size, double[] number, double numberX, double numberZ, double spacing)
+    {
+        var lag = new double[size * size];
+        var deepNumber = Math.Sqrt(numberX * numberX + numberZ * numberZ);
+        void March(Func<int, int> index, double along)
+        {
+            for (var step = 1; step < size; step++)
+            {
+                var (here, before) = (index(step), index(step - 1));
+                if (double.IsNaN(number[here]) || double.IsNaN(number[before])) continue;
+                lag[here] = lag[before] + Math.Abs(along) / deepNumber * (number[here] - deepNumber * spacing);
+            }
+        }
+        var (upwindX, upwindZ) = (numberX > 0 ? 0 : size - 1, numberZ > 0 ? 0 : size - 1);
+        if (numberZ != 0) March(step => upwindZ * size + (numberX >= 0 ? step : size - 1 - step), numberX);
+        if (numberX != 0) March(step => (numberZ >= 0 ? step : size - 1 - step) * size + upwindX, numberZ);
+        return lag;
     }
 
     private static void Sweep(int size, double[] phase, double[] number, int fromX, int toX, int stepX, int fromZ, int toZ, int stepZ)
