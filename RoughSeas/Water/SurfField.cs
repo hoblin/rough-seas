@@ -75,12 +75,12 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public int EdgeFadeBlocks { get; set; } = 1;
 
-    /// <summary>What is left of a wave held back by <paramref name="lag"/> where the map's waves give way to the plane ones beyond it, a share <paramref name="edge"/> of them still the map's: two waves added, so their crests are never squeezed between two phases. The sum's phase and its height against either.</summary>
+    /// <summary>What is left of a wave held back by <paramref name="lag"/> where the map's waves give way to the plane ones beyond it, a share <paramref name="edge"/> of them still the map's: two waves added, so their crests are never squeezed between two phases. The sum's phase, the lag itself wherever the map's waves are whole, and its height against either.</summary>
     public static (double Lag, double Share) Faded(double lag, double edge)
     {
         var (sine, cosine) = Math.SinCos(lag);
-        var (across, along) = (edge * sine, edge * cosine + 1 - edge);
-        return (Math.Atan2(across, along), Math.Sqrt(across * across + along * along));
+        var (across, along) = ((1 - edge) * sine, edge + (1 - edge) * cosine);
+        return (lag - Math.Atan2(across, along), Math.Sqrt(across * across + along * along));
     }
 
     /// <summary>Whether this slot's lags and gains were solved for this wave vector.</summary>

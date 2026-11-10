@@ -23,7 +23,7 @@ public sealed class HeightColours
         + "vec3 seaViewColour() {\n"
         + "if (seaHeightColours.w < 0.5) return seaHeightColour(clamp((fWorldPos.y - seaHeightColours.x) / max(seaHeightColours.y - seaHeightColours.x, 0.01), 0.0, 1.0));\n"
         + "if (seaHeightColours.w < 1.5) { float turn = fract(seaDebug.x / 6.2831853); return abs(turn - 0.25) < 0.02 ? vec3(1.0) : seaHeightColour(turn); }\n"
-        + "return seaHeightColour(clamp(seaHeightColours.w < 2.5 ? seaDebug.y : seaDebug.z, 0.0, 1.0));\n"
+        + "return seaHeightColour(clamp(seaHeightColours.w < 2.5 ? seaDebug.y : seaFoamFaceAt(), 0.0, 1.0));\n"
         + "}\n";
     private const string Painted =
         "if (seaHeightColours.z > 0.5 && !isLava && fragNormal.y > 0.5) {\n"

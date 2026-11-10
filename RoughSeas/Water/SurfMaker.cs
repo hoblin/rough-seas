@@ -85,7 +85,6 @@ public class ShoreSurfConfig
     public double BreakingDissipation = 1;
     public double BoreFrontSlope = 0.21;
     public double BoreCelerityShare = 0.45;
-    public double TerminalBoreShare = 0.12;
     public int DeepestBlocks = 32;
     public double RefreshSeconds = 20;
     public double WetReflectance = 0.5;

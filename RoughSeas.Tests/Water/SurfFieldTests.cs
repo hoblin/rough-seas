@@ -10,9 +10,10 @@ public class SurfFieldTests
     [InlineData(3.0)]
     public void AWaveGivingWayToThePlaneOnesChangesPhaseOnlyAsTheTwoAdd(double lag)
     {
-        Assert.Equal(0, SurfField.Faded(lag, 0).Lag, 9);
+        Assert.Equal(0, Math.Sin(SurfField.Faded(lag, 0).Lag), 9);
+        Assert.Equal(1, Math.Cos(SurfField.Faded(lag, 0).Lag), 9);
         Assert.Equal(1, SurfField.Faded(lag, 0).Share, 9);
-        Assert.Equal(Math.Sin(lag), Math.Sin(SurfField.Faded(lag, 1).Lag), 9);
+        Assert.Equal(lag, SurfField.Faded(lag, 1).Lag, 9);
         Assert.Equal(1, SurfField.Faded(lag, 1).Share, 9);
         var (faded, share) = SurfField.Faded(lag, 0.4);
         Assert.Equal(0.4 * Math.Sin(1 + lag) + 0.6 * Math.Sin(1), share * Math.Sin(1 + faded), 9);

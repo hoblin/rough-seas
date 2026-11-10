@@ -2,13 +2,30 @@
 uniform vec3 seaFoam;
 uniform vec2 seaWavesToward;
 uniform float seaFoamClock;
+uniform float seaFoamDecay;
 
 in float seaFoamCrest;
 in float seaFoamFold;
 in float seaFoamShare;
-in float seaFoamFace;
 in float seaFoamBroken;
 in vec2 seaFoamWorld;
+in vec2 seaFoamCrestTime;
+in vec4 seaFoamBrokenAt;
+
+const float seaRollerSeconds = 0.4;
+const float seaLaceSpread = 6.2;
+
+float seaBrokenFoam(float share, float delay) {
+	float period = 6.2831853 / seaFoamCrestTime.y;
+	float since = mod(1.5707963 - seaFoamCrestTime.x, 6.2831853) / seaFoamCrestTime.y;
+	float ragged = seaRollerSeconds * gnoise(vec3(seaFoamWorld / 3.0, seaFoamClock * 0.1));
+	return share * exp(-mod(since - delay - ragged, period) / seaFoamDecay);
+}
+
+float seaFoamFaceAt() {
+	if (seaFoamDecay <= 0.0 || seaFoamCrestTime.y <= 0.0) return 0.0;
+	return max(seaBrokenFoam(seaFoamBrokenAt.x, seaFoamBrokenAt.y), seaBrokenFoam(seaFoamBrokenAt.z, seaFoamBrokenAt.w));
+}
 
 float seaLace(vec2 at, float t) {
 	return gnoise(vec3(at * 2.3, t * 0.6)) * 0.3 + gnoise(vec3(at * 6.5, t)) * 0.25 + 0.5;
@@ -23,7 +40,14 @@ float seaVeins(float along, float side, float scale, float width, float t) {
 	return 1.0 - clamp(line / width, 0.0, 1.0);
 }
 
+float seaBrokenLace(float cover, float along, float side, float t) {
+	float n = gnoise(vec3(along / 1.0, side / 0.45, t * 0.2)) * 0.5 + gnoise(vec3(along / 0.35, side / 0.16, t * 0.35)) * 0.3
+		+ gnoise(vec3(along / 0.12, side / 0.07, t * 0.5)) * 0.2;
+	return 1.0 - smoothstep(cover - 0.04, cover + 0.04, tanh(seaLaceSpread * abs(n)));
+}
+
 float seaFoamAt() {
+	float seaFoamFace = seaFoamFaceAt();
 	if (seaFoamShare <= 0.0 && seaFoamFace <= 0.0) return 0.0;
 
 	vec2 at = seaFoamWorld;
@@ -54,7 +78,7 @@ float seaFoamAt() {
 		foam *= offshore;
 	}
 
-	if (seaFoamFace > 0.0) foam = max(foam, seaFlecked(seaFoamFace * 1.2, lace * 0.8));
+	if (seaFoamFace > 0.0) foam = max(foam, seaBrokenLace(seaFoamFace, along, side, t));
 
 	return clamp(foam, 0.0, 1.0);
 }

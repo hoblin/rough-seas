@@ -9,7 +9,7 @@ public class CoarseBedTests
     private const double SeaHeight = 4;
     private const double Number = 2 * Math.PI / 120;
 
-    private static readonly WaveTransformation Transformation = new(1.28, length => Math.Min(16, (int)Math.Ceiling(length * 0.25)), 1, 0.12, 0.45);
+    private static readonly WaveTransformation Transformation = new(1.28, length => Math.Min(16, (int)Math.Ceiling(length * 0.25)), 1, 0.45);
 
     private static float Bed(double worldX, double slope) => worldX >= 1000 ? -1 : (float)Math.Min((1000 - worldX) * slope + 0.875, 60);
 

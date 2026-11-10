@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RoughSeas.Water;
@@ -15,10 +16,13 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
         var depth = new float[size * size];
         for (var i = 0; i < depth.Length; i++) depth[i] = map.DepthAt(map.OriginX + i % size, map.OriginZ + i / size);
 
-        var waves = transformation.Solve(size, depth, numbers, amplitudeShares, Enumerable.Range(0, depth.Length).Select(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height).ToArray(), dominant, coarse?.Entering(transformation, numbers, amplitudeShares, dominant, map.OriginX, map.OriginZ));
+        var heights = Enumerable.Range(0, depth.Length).Select(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height).ToArray();
+        var entering = coarse?.Entering(transformation, numbers, amplitudeShares, dominant, map.OriginX, map.OriginZ);
+        var arrivingWaves = transformation.Solve(size, depth, numbers, amplitudeShares, heights, dominant, entering);
         var ray = dominant < numbers.Length ? numbers[dominant] : default;
-        var arriving = Enumerable.Range(0, depth.Length).Select(i => depth[i] > 0 ? (float)waves.ArrivingAt(depth, size, i % size, i / size, ray) : 1f).ToArray();
+        var arriving = Enumerable.Range(0, depth.Length).Select(i => depth[i] > 0 ? (float)arrivingWaves.ArrivingAt(depth, size, i % size, i / size, ray) : 1f).ToArray();
         var (swash, steps) = sheets.Throw(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * arriving[(z - map.OriginZ) * size + x - map.OriginX] } : default);
+        var waves = transformation.Solve(size, depth, numbers, amplitudeShares, heights, dominant, entering, shoreBore: ShoreBore(map, size, swash.Values));
 
         var shoreline = PhaseField.NearestWater(depth, size);
         for (var i = 0; i < depth.Length; i++)
@@ -47,6 +51,19 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
         field.Steps = steps;
         foreach (var step in steps) field.SetFaceDistance(step.X, step.Z, SurfField.StepFootDistance);
         return field;
+    }
+
+    /// <summary>At a shoreline a bore and the swash it throws move as one (Shen &amp; Meyer 1963): the significant wave's sheet leaves at U = √(2 g R) for its run-up R, so the bore reaching that shoreline runs over a depth of U² / g. Each cell takes its nearest shoreline's.</summary>
+    private static float[] ShoreBore(SeabedMap map, int size, IEnumerable<SwashSheet> sheets)
+    {
+        var runUps = new float[size * size];
+        foreach (var sheet in sheets)
+        {
+            var i = (sheet.FromZ - map.OriginZ) * size + sheet.FromX - map.OriginX;
+            runUps[i] = Math.Max(runUps[i], (float)(sheet.RunUp / Math.Sqrt(WaveTheory.TwoPercentRatio)));
+        }
+        var nearest = PhaseField.NearestWater(runUps, size);
+        return nearest.Select(shore => shore >= 0 ? 2 * runUps[shore] : 0f).ToArray();
     }
 
 }

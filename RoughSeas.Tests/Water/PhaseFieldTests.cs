@@ -32,7 +32,7 @@ public class PhaseFieldTests
     {
         const int Across = 64;
         var coarse = new CoarseBed(0, 0, 8, 48, Shelf(48, 0, 8), new double[48 * 48]);
-        var transformation = new WaveTransformation(1.28, _ => 0, 1, 0.12, 0.45);
+        var transformation = new WaveTransformation(1.28, _ => 0, 1, 0.45);
         var one = PhaseField.Lag(Across, Shelf(Across, firstX, 1), numberX, numberZ, coarse.Entering(transformation, [(numberX, numberZ)], null, 0, firstX, 0).Lags[0]);
         var other = PhaseField.Lag(Across, Shelf(Across, secondX, 1), numberX, numberZ, coarse.Entering(transformation, [(numberX, numberZ)], null, 0, secondX, 0).Lags[0]);
 

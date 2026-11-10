@@ -31,7 +31,7 @@ public static class SurfaceShader
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
         "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; "
-        + "seaFoamShare = seaShare; seaFoamFace = seaFaceFoam; seaFoamBroken = seaBroken; seaFoamWorld = worldPos.xz + playerpos.xz; seaDebug = seaDebugValue;";
+        + "seaFoamShare = seaShare; seaFoamBroken = seaBroken; seaFoamCrestTime = seaCrestTime; seaFoamBrokenAt = seaBrokenAt; seaFoamWorld = worldPos.xz + playerpos.xz; seaDebug = seaDebugValue;";
     private const string FragmentMain = "void main()";
     private const string BeforeFog = "texColor = applyFog(texColor, fogAmount);";
     private const string Foamed =
@@ -210,7 +210,6 @@ public static class SurfaceShader
             __result = __result.Replace(FragmentMain, wetCode + FragmentMain).Replace(beforeLight, $"if (normal.y > 0.5) {shaded}.rgb *= seaWetShade(worldPos);\n" + beforeLight);
         }
         if (program.PassName != LiquidPass) return;
-        __result = HeightColours.Inject(__result, FragmentMain);
         if (__result.Contains(FaceNormal))
         {
             __result = __result.Replace(FaceNormal, TiltedNormal);
@@ -220,6 +219,7 @@ public static class SurfaceShader
         {
             __result = __result.Replace(FragmentMain, fragmentCode + FragmentMain).Replace(BeforeFog, Foamed + BeforeFog);
         }
+        __result = HeightColours.Inject(__result, FragmentMain);
     }
 
     [ReliesOn("Vintagestory.Client.NoObf.ShaderProgram", "collectUniformNames", "numbers samplers by a regex over the source, which a uniform with a precision qualifier escapes")]

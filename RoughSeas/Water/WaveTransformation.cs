@@ -10,7 +10,7 @@ namespace RoughSeas.Water;
 /// <param name="Gain">The whole sea's height over its height in deep water.</param>
 /// <param name="SlopeX">The depth's slope along X, at the scale the longest wave feels it.</param>
 /// <param name="SlopeZ">The same along Z.</param>
-/// <param name="CelerityDepth">The depth that sets the waves' speed: the water under a wave and, where it has broken, the bore's own height over it, never less than a terminal bore's. Over land, the terminal bore's.</param>
+/// <param name="CelerityDepth">The depth that sets the waves' speed: the water under a wave and, where it has broken, the bore's own height over it, never less than that of the bore reaching the nearest shoreline. Over land, that bore's.</param>
 /// <param name="Entering">Where the breaking water runs off the grid, the sea's height coming into it, over its height in deep water, by column and row; none is deep water's.</param>
 public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Gains, float[] Breaking, float[] Gain, float[] SlopeX, float[] SlopeZ, float[] CelerityDepth, Func<int, int, double>? Entering = null)
 {
@@ -34,7 +34,7 @@ public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Ga
 }
 
 /// <summary>What a bed does to waves arriving over it: how each slot is held back and turned (<see cref="PhaseField"/>), and what energy it keeps (<see cref="WaveEnergy"/>), each at the depth that wave feels.</summary>
-public sealed class WaveTransformation(double breakingDepthRatio, Func<double, int> smoothingBlocks, double breakingDissipation, double terminalBoreShare, double boreCelerityShare)
+public sealed class WaveTransformation(double breakingDepthRatio, Func<double, int> smoothingBlocks, double breakingDissipation, double boreCelerityShare)
 {
     private const float DeepestFelt = 200;
     private const float ShallowestFelt = 0.05f;
@@ -44,14 +44,15 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
     /// <param name="dominant">The slot that dominates the sea now: its generation sets the whole sea's gain and breaking.</param>
     /// <param name="entering">The waves where they enter this grid; none enter as from deep water, with no lag.</param>
     /// <param name="spacing">How many blocks a cell is across.</param>
-    public TransformedWaves Solve(int size, float[] depth, (double X, double Z)[] numbers, double[]? amplitudeShares, double[] seaHeights, int dominant = 0, EnteringWaves? entering = null, int spacing = 1)
+    /// <param name="shoreBore">The depth that sets the speed of the bore reaching the nearest shoreline, cell by cell: the swash it throws leaves at that speed, so no broken wave runs slower; none is 0.</param>
+    public TransformedWaves Solve(int size, float[] depth, (double X, double Z)[] numbers, double[]? amplitudeShares, double[] seaHeights, int dominant = 0, EnteringWaves? entering = null, int spacing = 1, float[]? shoreBore = null)
     {
         var anchors = entering?.Lags;
         int Radius(double length) => smoothingBlocks(length) / spacing;
         var smoothing = Radius(numbers.Select(WaveLength).DefaultIfEmpty(0).Max());
         var felt = Felt(depth, size, smoothing);
         var felts = numbers.Take(SurfField.Slots).Select(number => Felt(depth, size, Radius(WaveLength(number)))).ToArray();
-        var boreDepth = seaHeights.Select(height => (float)(terminalBoreShare * height)).ToArray();
+        var boreDepth = shoreBore ?? new float[depth.Length];
         float[][] LagsOver(Func<int, float, int, float> celerityDepth) => felts.Select((each, slot) =>
             PhaseField.Lag(size, each.Select((d, i) => d > 0 ? Math.Max(celerityDepth(slot, d, i), boreDepth[i]) : d).ToArray(), numbers[slot].X, numbers[slot].Z, anchors?[slot], spacing)).ToArray();
         var lags = LagsOver((_, d, _) => d);
