@@ -166,7 +166,8 @@ public sealed class SeaSurface
         for (var slot = 0; slot < ShortSlots; slot++)
         {
             var bank = slot / shortTrains.Length;
-            shortAmplitude[slot] = banks[bank] != null ? shortTrains[slot % shortTrains.Length].Amplitude * developed * (bank == active ? rising : fading) : 0;
+            var share = banks[0]?.Heading == banks[1]?.Heading ? (bank == active ? 1 : 0) : bank == active ? rising : fading;
+            shortAmplitude[slot] = banks[bank] != null ? shortTrains[slot % shortTrains.Length].Amplitude * developed * share : 0;
         }
         shortSeaHeight = 4 * Math.Sqrt(shortAmplitude.Sum(value => value * value) / 2);
         Dominant = dominant;

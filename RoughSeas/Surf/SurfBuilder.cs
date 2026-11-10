@@ -29,8 +29,9 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
 
         var smoothing = faces.SmoothingBlocks(LongestWave(numbers));
         var felt = Felt(depth, size, smoothing);
-        var lags = numbers.Take(SurfField.Slots).Select(number => PhaseField.Lag(size, Felt(depth, size, faces.SmoothingBlocks(WaveLength(number))), number.X, number.Z)).ToArray();
-        var breaking = Energy(field, felt, depth, size, numbers, lags, amplitudeShares, seaAt(map.OriginX + size / 2, map.OriginZ + size / 2).Height, breakingDissipation);
+        var felts = numbers.Take(SurfField.Slots).Select(number => Felt(depth, size, faces.SmoothingBlocks(WaveLength(number)))).ToArray();
+        var lags = felts.Select((each, slot) => PhaseField.Lag(size, each, numbers[slot].X, numbers[slot].Z)).ToArray();
+        var breaking = Energy(field, felt, felts, depth, size, numbers, lags, amplitudeShares, seaAt, breakingDissipation);
         var (swash, steps) = Swash(map, seaAt);
         var slopeX = Averaged(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, 1)).ToArray(), size, smoothing);
         var slopeZ = Averaged(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, size)).ToArray(), size, smoothing);
@@ -136,15 +137,18 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         return depth.Select((d, i) => d > 0 ? Math.Max(averaged[i], ShallowestFelt) : d).ToArray();
     }
 
-    private float[] Energy(SurfField field, float[] felt, float[] depth, int size, (double X, double Z)[] numbers, float[][] lags, double[]? amplitudeShares, double seaHeight, double dissipation)
+    private float[] Energy(SurfField field, float[] felt, float[][] felts, float[] depth, int size, (double X, double Z)[] numbers, float[][] lags, double[]? amplitudeShares, Func<int, int, Sea> seaAt, double dissipation)
     {
         var breaking = new float[size * size];
+        var heights = Enumerable.Range(0, size * size).Select(i => seaAt(field.OriginX + i % size, field.OriginZ + i / size).Height).ToArray();
+        var seaHeight = heights.Max();
+        var seaShare = heights.Select(height => seaHeight > 0 ? (float)(height / seaHeight) : 1f).ToArray();
         var generation = amplitudeShares == null ? numbers.Length : numbers.Length / Banks;
         for (var bank = 0; bank * generation < Math.Min(numbers.Length, SurfField.Slots); bank++)
         {
             var slots = Enumerable.Range(bank * generation, generation).Where(slot => slot < lags.Length).ToArray();
-            var trains = slots.Select(slot => new WaveEnergy.Train(numbers[slot].X, numbers[slot].Z, (amplitudeShares?[slot] ?? 1 / (2 * Math.Sqrt(2) * Math.Sqrt(generation))) * seaHeight, lags[slot])).ToArray();
-            var (gains, broken) = WaveEnergy.Solve(size, felt, trains, faces.BreakingDepthRatio, dissipation, depth);
+            var trains = slots.Select(slot => new WaveEnergy.Train(numbers[slot].X, numbers[slot].Z, (amplitudeShares?[slot] ?? 1 / (2 * Math.Sqrt(2) * Math.Sqrt(generation))) * seaHeight, lags[slot], felts[slot])).ToArray();
+            var (gains, broken) = WaveEnergy.Solve(size, felt, trains, faces.BreakingDepthRatio, dissipation, depth, seaShare);
             for (var i = 0; i < broken.Length; i++)
             {
                 breaking[i] = Math.Max(breaking[i], broken[i]);

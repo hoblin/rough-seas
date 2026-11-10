@@ -66,6 +66,30 @@ public class WaveEnergyTests
         Assert.True(gains[0][10 * Size + 60] > 0.8);
     }
 
+    [Fact]
+    public void WaterShutInByLandHasWavesFromItsOwnUpwindShore()
+    {
+        var depth = new float[Size * Size];
+        for (var i = 0; i < depth.Length; i++) depth[i] = i % Size is >= 30 and < 70 && i / Size is >= 30 and < 70 ? 20 : -1;
+        var (gains, _) = WaveEnergy.Solve(Size, depth, [new WaveEnergy.Train(Number, 0, 0.5, new float[Size * Size])], DepthPerHeight, 1);
+
+        Assert.True(gains[0][Middle(60)] > 0.8);
+    }
+
+    [Fact]
+    public void WhereTheSeaIsQuieterItBreaksLessOverTheSameBed()
+    {
+        var depth = new float[Size * Size];
+        for (var i = 0; i < depth.Length; i++) depth[i] = i % Size is >= 44 and < 56 ? 1 : 12;
+        var quiet = new float[Size * Size];
+        Array.Fill(quiet, 0.2f);
+        var train = new WaveEnergy.Train(Number, 0, 1.5, new float[Size * Size]);
+        var (_, full) = WaveEnergy.Solve(Size, depth, [train], DepthPerHeight, 1);
+        var (_, calmer) = WaveEnergy.Solve(Size, depth, [train], DepthPerHeight, 1, null, quiet);
+
+        Assert.True(calmer[Middle(50)] < full[Middle(50)]);
+    }
+
     [Theory]
     [InlineData(0.5)]
     [InlineData(0.8)]

@@ -248,7 +248,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float shortEnergy = 0.0;
 	for (int i = 0; i < SEA_SHORT; i++) shortEnergy += seaShort[i].z * seaShort[i].z;
 	float shortKept = onBed && shortEnergy > 0.0 ? min(1.0, bed.x / (seaShore.x * 4.0 * sqrt(shortEnergy / 2.0))) : 1.0;
-	float spacing = 1.0 / clamp(pow(2.0, floor(log2(seaMesh.x / max(length(worldPos.xyz), 0.001)))), 1.0, 1.0 / seaMesh.y);
+	float spacing = clamp(2.0 * length(worldPos.xyz) / seaMesh.x, seaMesh.y, 1.0);
 	for (int i = 0; i < SEA_SHORT; i++) {
 		vec4 wave = seaShort[i];
 		if (wave.z <= 0.0) continue;
