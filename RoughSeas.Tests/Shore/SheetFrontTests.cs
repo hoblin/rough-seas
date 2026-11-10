@@ -52,4 +52,8 @@ public class SheetFrontTests
         Assert.NotNull(front);
         Assert.Equal(0, front.Value.Head);
     }
+
+    [Fact]
+    public void AStoppedSheetDoesNotRunOnDownAStep() =>
+        Assert.Null(Thrown(0.13, 3.1).Cross(0.125, ShoreFixtures.Bed("sand"))!.Value.Cross(-1, ShoreFixtures.Bed("sand")));
 }

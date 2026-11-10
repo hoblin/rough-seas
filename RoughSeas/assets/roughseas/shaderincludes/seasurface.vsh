@@ -11,6 +11,8 @@ uniform vec4 seaHeightArea;
 uniform vec4 seaBedArea;
 uniform vec4 seaShore;
 uniform vec2 seaPlunging;
+uniform vec4 seaLagValidA;
+uniform vec4 seaLagValidB;
 
 out float seaFoamCrest;
 out float seaFoamFold;
@@ -49,7 +51,7 @@ float seaRefraction(float deepNumber, float depth, float cosineOffshore) {
 }
 
 float seaLag(int slot, vec4 lagA, vec4 lagB) {
-	return slot < 4 ? lagA[slot] : slot < 8 ? lagB[slot - 4] : 0.0;
+	return slot < 4 ? lagA[slot] * seaLagValidA[slot] : slot < 8 ? lagB[slot - 4] * seaLagValidB[slot - 4] : 0.0;
 }
 
 vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 lagB) {
@@ -81,7 +83,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	ivec2 corner = ivec2(floor(worldPos.xz - seaBedArea.xy + 0.5));
 	float rise = 1000000.0;
 	for (int i = 0; i < 4; i++) {
-		float tread = texelFetch(seaBed, corner - ivec2(i & 1, i >> 1), 0).x;
+		float tread = texelFetch(seaBed, clamp(corner - ivec2(i & 1, i >> 1), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).x;
 		if (tread <= 0.0) rise = min(rise, -tread);
 	}
 	if (rise >= 100000.0) rise = max(-bed.x, 0.0);
@@ -111,6 +113,11 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 lagA = onBed ? textureLod(seaLagA, bedUv, 0.0) : vec4(0.0);
 	vec4 lagB = onBed ? textureLod(seaLagB, bedUv, 0.0) : vec4(0.0);
 	if (bed.x <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB);
+	vec2 texel = vec2(1.0 / seaBedArea.z, 0.0);
+	vec4 turnAX = onBed ? (textureLod(seaLagA, bedUv + texel.xy, 0.0) - textureLod(seaLagA, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0);
+	vec4 turnAZ = onBed ? (textureLod(seaLagA, bedUv + texel.yx, 0.0) - textureLod(seaLagA, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0);
+	vec4 turnBX = onBed ? (textureLod(seaLagB, bedUv + texel.xy, 0.0) - textureLod(seaLagB, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0);
+	vec4 turnBZ = onBed ? (textureLod(seaLagB, bedUv + texel.yx, 0.0) - textureLod(seaLagB, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0);
 
 	float heights[SEA_SLOTS];
 	float numbers[SEA_SLOTS];
@@ -161,7 +168,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 		float height = heights[i];
 		if (height <= 0.0) continue;
 		float number = numbers[i];
-		vec2 direction = wave.xy / length(wave.xy);
+		vec2 direction = normalize(wave.xy + vec2(seaLag(i, turnAX, turnBX), seaLag(i, turnAZ, turnBZ)));
 		float theta = dot(wave.xy, worldPos.xz) + wave.w + seaLag(i, lagA, lagB);
 		float rise = sin(theta);
 		float sway = cos(theta);

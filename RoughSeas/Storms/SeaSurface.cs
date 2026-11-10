@@ -162,23 +162,30 @@ public sealed class SeaSurface
     public (double X, double Y, double Z) DisplacementAt(double x, double z, double share = 0)
     {
         Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
-        var steepness = Local(x, z, share, heights, lags, numbers);
+        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        var steepness = Local(x, z, share, heights, lags, numbers, towardX, towardZ);
         double shiftX = 0, rise = 0, shiftZ = 0;
         for (var slot = 0; slot < Slots; slot++)
         {
             if (heights[slot] <= 0) continue;
             var theta = Phase(slot, x, z) + lags[slot];
             rise += heights[slot] * Math.Sin(theta);
-            var sway = steepness * heights[slot] * Math.Cos(theta) / Wavenumber(slot);
-            shiftX += sway * numberX[slot];
-            shiftZ += sway * numberZ[slot];
+            var sway = steepness * heights[slot] * Math.Cos(theta);
+            shiftX += sway * towardX[slot];
+            shiftZ += sway * towardZ[slot];
         }
         return (shiftX, rise, shiftZ);
     }
 
-    private double Local(double x, double z, double share, Span<double> heights, Span<double> lags, Span<double> numbers)
+    private double Local(double x, double z, double share, Span<double> heights, Span<double> lags, Span<double> numbers, Span<double> towardX,
+        Span<double> towardZ)
     {
-        for (var slot = 0; slot < Slots; slot++) (heights[slot], lags[slot], numbers[slot]) = (amplitude[slot], 0, Wavenumber(slot));
+        for (var slot = 0; slot < Slots; slot++)
+        {
+            var number = Wavenumber(slot);
+            (heights[slot], lags[slot], numbers[slot]) = (amplitude[slot], 0, number);
+            (towardX[slot], towardZ[slot]) = number > 0 ? (numberX[slot] / number, numberZ[slot] / number) : (0, 0);
+        }
         if (share <= 0 || Seabed is not { } field || !field.Covers(x, z)) return Steepness;
 
         var depth = field.DepthAt(x, z);
@@ -197,7 +204,12 @@ public sealed class SeaSurface
         {
             heights[slot] /= share;
             slopes += heights[slot] * numbers[slot];
-            if (slot < field.Numbers.Length && slot < SurfField.Slots && field.Numbers[slot] == vectors[slot]) lags[slot] = field.LagAt(slot, x, z);
+            if (slot >= field.Numbers.Length || slot >= SurfField.Slots || field.Numbers[slot] != vectors[slot]) continue;
+            lags[slot] = field.LagAt(slot, x, z);
+            var (turnedX, turnedZ) = (numberX[slot] + (field.LagAt(slot, x + 1, z) - field.LagAt(slot, x - 1, z)) / 2,
+                numberZ[slot] + (field.LagAt(slot, x, z + 1) - field.LagAt(slot, x, z - 1)) / 2);
+            var turned = Math.Sqrt(turnedX * turnedX + turnedZ * turnedZ);
+            if (turned > 0) (towardX[slot], towardZ[slot]) = (turnedX / turned, turnedZ / turned);
         }
         var cusp = slopes > 0 ? 1 / slopes : Steepness;
         var steepness = Math.Min(Steepness, cusp);
@@ -223,7 +235,8 @@ public sealed class SeaSurface
         double length, double beam, double share)
     {
         Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
-        Local(x, z, share, heights, lags, numbers);
+        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        Local(x, z, share, heights, lags, numbers, towardX, towardZ);
         double velocityX = 0, velocityZ = 0;
         for (var slot = 0; slot < Slots; slot++)
         {
@@ -234,8 +247,8 @@ public sealed class SeaSurface
             var fade = Math.Exp(number * height) * (draft > 0 ? (1 - Math.Exp(-number * draft)) / (number * draft) : 1);
             var speed = share * heights[slot] * frequency[slot] * Math.Sin(Phase(slot, x, z) + lags[slot]) * fade
                 * Sinc(along * length / 2) * Sinc(across * beam / 2);
-            velocityX += speed * numberX[slot] / number;
-            velocityZ += speed * numberZ[slot] / number;
+            velocityX += speed * towardX[slot];
+            velocityZ += speed * towardZ[slot];
         }
         return (velocityX, velocityZ);
     }
@@ -245,14 +258,15 @@ public sealed class SeaSurface
     public double FoldAt(double x, double z, double share = 0)
     {
         Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
-        var steepness = Local(x, z, share, heights, lags, numbers);
+        Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
+        var steepness = Local(x, z, share, heights, lags, numbers, towardX, towardZ);
         Span<double> now = stackalloc double[3], behind = stackalloc double[3], farBehind = stackalloc double[3];
         var steepest = 0.0;
         for (var slot = 0; slot < Slots; slot++)
         {
             if (heights[slot] <= 0) continue;
             var number = Wavenumber(slot);
-            var (alongX, alongZ) = (numberX[slot] / number, numberZ[slot] / number);
+            var (alongX, alongZ) = (towardX[slot], towardZ[slot]);
             var pinch = steepness * heights[slot] * numbers[slot];
             var theta = Phase(slot, x, z) + lags[slot];
             Squeeze(now, alongX, alongZ, pinch * Math.Sin(theta));

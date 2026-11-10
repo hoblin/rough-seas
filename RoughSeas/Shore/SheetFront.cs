@@ -24,7 +24,7 @@ public readonly record struct SheetFront(double SpeedSquared, double Metres, dou
 
     public SheetFront? Cross(double rise, BedConfig bed)
     {
-        if (rise >= Head || Depth <= 0) return null;
+        if (SpeedSquared <= 0 || rise >= Head || Depth <= 0) return null;
         var speedSquared = SpeedSquared - 2 * Gravity * rise;
         var loss = Friction / Depth;
         var crossing = (Math.Exp(loss) - 1) / (loss * Math.Sqrt(speedSquared));

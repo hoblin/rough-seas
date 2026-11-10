@@ -4,7 +4,8 @@ namespace RoughSeas.Surf;
 
 /// <summary>
 /// How far shoaling water holds a wave back: the eikonal |∇S| = k(depth) solved by fast sweeping from the plane wave
-/// where the water is deep and at the grid's upwind edges, less the plane wave's phase. Its gradient turns the crests
+/// where the water is deep, less the plane wave's phase: anchored to deep water alone, so maps read around different
+/// points agree wherever they share it. Water no deep water reaches within the map keeps no lag. Its gradient turns the crests
 /// toward the shore by Snell's law. Land holds no phase.
 /// </summary>
 public static class PhaseField
@@ -27,7 +28,7 @@ public static class PhaseField
                 continue;
             }
             number[i] = Shoaling.Wavenumber(deepNumber, depth[i]);
-            phase[i] = depth[i] >= deep || Upwind(x, z, size, numberX, numberZ) ? numberX * (x + 0.5) + numberZ * (z + 0.5) : double.PositiveInfinity;
+            phase[i] = depth[i] >= deep ? numberX * (x + 0.5) + numberZ * (z + 0.5) : double.PositiveInfinity;
         }
 
         for (var round = 0; round < rounds; round++)
@@ -46,9 +47,6 @@ public static class PhaseField
         }
         return lag;
     }
-
-    private static bool Upwind(int x, int z, int size, double numberX, double numberZ) =>
-        (x == 0 && numberX > 0) || (x == size - 1 && numberX < 0) || (z == 0 && numberZ > 0) || (z == size - 1 && numberZ < 0);
 
     private static void Sweep(int size, double[] phase, double[] number, int fromX, int toX, int stepX, int fromZ, int toZ, int stepZ)
     {

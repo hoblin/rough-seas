@@ -31,7 +31,7 @@ public class PhaseFieldTests
     [Fact]
     public void OverShoalingWaterTheWavesFallBehind()
     {
-        var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.2f * x), -Number, 0);
+        var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.6f * x), -Number, 0);
         Assert.True(lag[Size * Size / 2 + 4] > 0);
     }
 
@@ -39,7 +39,7 @@ public class PhaseFieldTests
     public void CrestsComingInAtAnAngleTurnTowardTheShore()
     {
         var (numberX, numberZ) = (-Number * Math.Cos(Math.PI / 4), Number * Math.Sin(Math.PI / 4));
-        var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.25f * x), numberX, numberZ);
+        var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.6f * x), numberX, numberZ);
         var offshore = Angle(lag, numberX, numberZ, 60, 32);
         var inshore = Angle(lag, numberX, numberZ, 6, 32);
         Assert.True(offshore < Math.PI / 4);
@@ -50,10 +50,10 @@ public class PhaseFieldTests
     public void TheTurnFollowsSnellsLaw()
     {
         var (numberX, numberZ) = (-Number * Math.Cos(Math.PI / 4), Number * Math.Sin(Math.PI / 4));
-        var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.25f * x), numberX, numberZ);
-        var depth = 0.25 * 6;
+        var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.6f * x), numberX, numberZ);
+        var depth = 0.6 * 6;
         var expected = Math.Asin(Math.Sin(Math.PI / 4) * Number / Shoaling.Wavenumber(Number, depth));
-        Assert.Equal(expected, Angle(lag, numberX, numberZ, 6, 32), 1);
+        Assert.Equal(expected, Angle(lag, numberX, numberZ, 6, 56), 1);
     }
 
     [Fact]
@@ -61,5 +61,15 @@ public class PhaseFieldTests
     {
         var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? -1 : 5), -Number, 0);
         Assert.Equal(0, lag[Size * 10]);
+    }
+
+    [Fact]
+    public void TwoMapsReadAroundDifferentPointsAgreeWhereTheyOverlap()
+    {
+        const int shift = 8;
+        var (numberX, numberZ) = (-Number * Math.Cos(Math.PI / 4), Number * Math.Sin(Math.PI / 4));
+        var here = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.6f * x), numberX, numberZ);
+        var moved = PhaseField.Lag(Size, Beach(x => x + shift < 2 ? 0 : 0.6f * (x + shift)), numberX, numberZ);
+        Assert.Equal(here[32 * Size + 20], moved[32 * Size + 20 - shift], 2);
     }
 }
