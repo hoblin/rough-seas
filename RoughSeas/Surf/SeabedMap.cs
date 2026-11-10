@@ -10,8 +10,8 @@ namespace RoughSeas.Surf;
 
 /// <summary>
 /// The columns around a point as the shore's water stands in them: a water column by its surface level and depth,
-/// worldgen's seabed trusted while water still reaches it; a land column by the water under it and the top of its
-/// ground. Read off the main thread, from height maps copied on it.
+/// sounded block by block as deep as the shore looks and read from worldgen's seabed below that; a land column by the
+/// water under it and the top of its ground. Read off the main thread, from height maps copied on it.
 /// </summary>
 public sealed class SeabedMap
 {
@@ -94,7 +94,7 @@ public sealed class SeabedMap
             var top = (int)column.Rain[index];
             int terrain = column.Terrain[index];
             if (blocks.GetChunkAtBlockPos(probe.Set(x, top, z)) == null) continue;
-            // The lock-free accessor reads a chunk packed after 8 idle seconds as air, which would map open sea as dry land.
+            // The lock-free accessor reads a chunk packed after 8 idle seconds as air.
             var lowest = Math.Max(Math.Min(top - deepest, Math.Min(top, terrain + 1) - highestRise) - 1, 0);
             for (var section = lowest / chunk; section <= (top + highestRise + 1) / chunk; section++)
             {

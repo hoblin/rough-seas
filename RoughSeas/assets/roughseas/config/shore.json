@@ -72,7 +72,7 @@
         "sources": {
             "reflectionFactor": "Kr = tanh(a ξ^b), a = 0.167 (1 − exp(−3.2 γf)), b = 1.49 (γf − 0.38)² + 0.86 (Zanuttigh & van der Meer 2008, Coastal Engineering 55(10)), for every slope from a beach to a wall",
             "toeDepthWaveHeights": "EurOtop 2018 5.3.4 reads a structure's average slope from 1.5 Hm0 below still water",
-            "smoothingWavelengths": "A wave sees a face only at the scale of its own length: the face's normal is averaged over a quarter wavelength to either side, so a stair of blocks reflects as the straight wall it makes up",
+            "smoothingWavelengths": "A wave sees a face only at the scale of its own length: the face's normal is averaged over a quarter wavelength to either side, so a stair of blocks reflects as the straight wall it makes up; the bed's depth under its speed and lag and the bed's slope are averaged the same way, as mild-slope theory needs",
             "smoothingMaxBlocks": "Performance budget: the most blocks a normal, or the bed a wave feels, is averaged over",
             "reachBlocks": "How far from a face its reflection is drawn: the seabed read reaches this far around the player wherever it stands",
             "reflectedSlopeLimit": "The reflected water rises from the face no steeper than a water surface can stand: tan 30°, the slope either side of Stokes' limiting 120° crest (Stokes 1880). On vanilla's mesh, a vertex a block apart",

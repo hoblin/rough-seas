@@ -1,4 +1,4 @@
-// The other end of RoughSeas/Storms/SeaSurface.cs, SurfaceField.cs and RoughSeas/Surf/: DisplacementAt, FoldAt, Factor, SurfShape and Shoaling compute the same surface.
+// The other end of RoughSeas/Storms/SeaSurface.cs, SurfaceField.cs and RoughSeas/Surf/: DisplacementAt, FoldAt, Factor, SurfField, SurfShape and Shoaling compute the same surface.
 uniform vec4 seaWaves[SEA_SLOTS];
 uniform float seaSteepness;
 // highp hides these samplers from the engine's numbering, which must stay vanilla's: see docs/sea-and-weather.md.
@@ -116,6 +116,21 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	return warped;
 }
 
+float seaBreaking(vec2 inBed) {
+	vec2 place = inBed - 0.5;
+	ivec2 corner = ivec2(floor(place));
+	vec2 along = place - vec2(corner);
+	float breaking = 0.0;
+	for (int i = 0; i < 4; i++) {
+		ivec2 cell = ivec2(i & 1, i >> 1);
+		ivec2 texel = clamp(corner + cell, ivec2(0), ivec2(int(seaBedArea.z) - 1));
+		if (texelFetch(seaBed, texel, 0).x <= 0.0) continue;
+		vec2 part = mix(1.0 - along, along, vec2(cell));
+		breaking += texelFetch(seaBedAux, texel, 0).w * part.x * part.y;
+	}
+	return breaking;
+}
+
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float share = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r : 0.0;
 	seaRippleKept = 1.0 - share;
@@ -167,7 +182,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float breaking = 0.0;
 	bool plunging = false;
 	if (onBed && local > 0.0) {
-		breaking = aux.w * bedEdge;
+		breaking = seaBreaking(worldPos.xz - seaBedArea.xy) * bedEdge;
 		float dominantNumber = length(seaWaves[int(seaShore.y)].xy);
 		float iribarren = slope / sqrt(share * 4.0 * sqrt(offshore / 2.0) * dominantNumber / 6.2831853);
 		plunging = iribarren >= seaPlunging.x && iribarren < seaPlunging.y;
@@ -233,7 +248,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float shortEnergy = 0.0;
 	for (int i = 0; i < SEA_SHORT; i++) shortEnergy += seaShort[i].z * seaShort[i].z;
 	float shortKept = onBed && shortEnergy > 0.0 ? min(1.0, bed.x / (seaShore.x * 4.0 * sqrt(shortEnergy / 2.0))) : 1.0;
-	float spacing = clamp(length(worldPos.xz) / seaMesh.x, seaMesh.y, 1.0);
+	float spacing = 1.0 / clamp(pow(2.0, floor(log2(seaMesh.x / max(length(worldPos.xyz), 0.001)))), 1.0, 1.0 / seaMesh.y);
 	for (int i = 0; i < SEA_SHORT; i++) {
 		vec4 wave = seaShort[i];
 		if (wave.z <= 0.0) continue;

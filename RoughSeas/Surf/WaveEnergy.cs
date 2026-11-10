@@ -34,6 +34,7 @@ public static class WaveEnergy
         for (var pass = 0; pass < Passes; pass++)
         {
             foreach (var train in solved) train.Sweep(size, depth, loss, limit);
+            var settled = true;
             for (var i = 0; i < cells; i++)
             {
                 if (!(depth[i] > 0)) continue;
@@ -48,8 +49,10 @@ public static class WaveEnergy
                 var fraction = BrokenFraction(share);
                 breaking[i] = (float)fraction;
                 var target = energy > 0 && fraction > 0 ? dissipation * (weighted / energy) * fraction / (Math.PI * share) : 0;
+                settled &= target == loss[i];
                 loss[i] += (target - loss[i]) * Relaxation;
             }
+            if (settled) break;
         }
         return (solved.Select(train => train.Gains()).ToArray(), breaking);
     }

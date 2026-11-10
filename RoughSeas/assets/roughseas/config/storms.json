@@ -152,9 +152,9 @@
                 "wetReflectance": "Wet sand reflects about half the light dry sand does: Ångström measured an albedo of 0.182 dry against 0.091 wet, as Lekner & Dorf 1988 (Applied Optics 27(7), 'Why some things are darker when wet') quote it",
                 "mapBlocks": "The seabed is read this far across around the player, a block to a texel: the surf of every shore within view distance's nearer half",
                 "moveBlocks": "The seabed is read again once the player is this far from where it was read",
-                "breakingDissipation": "Battjes and Janssen's (1978) alpha in the energy a breaking sea loses: D = alpha sigma Q_b E / (pi B), SWAN's default of 1. A wave feels a bed at the scale of its own length: the depth is averaged over a quarter of that, as mild-slope theory needs",
+                "breakingDissipation": "Battjes and Janssen's (1978) alpha in the energy a breaking sea loses: D = alpha sigma Q_b E / (pi B), SWAN's default of 1",
                 "edgeFadeBlocks": "Beyond the map the waves are drawn as over deep water; over this many blocks inside its edge they go over to what the bed makes of them, so the map's edge draws no step in the water",
-                "deepestBlocks": "Where worldgen's seabed no longer lies under the water, the bed is sounded block by block this deep at most; water deeper still is drawn as open sea",
+                "deepestBlocks": "The bed is sounded block by block this deep at most, so a bar a player built counts; below that its depth is worldgen's, and where worldgen knows no bed under the water it is open sea",
                 "refreshSeconds": "How often, in real seconds, the shore's run-up is read again from the sea map as the sea changes"
             }
         },

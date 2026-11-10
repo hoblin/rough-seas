@@ -35,6 +35,8 @@ public sealed class SeaSurface
     private readonly int generation;
     private readonly int headings;
     private readonly double[] amplitudeShare;
+    private readonly double[] slotShares;
+    private double shortSeaHeight;
     private readonly double[] numberX, numberZ, frequency, amplitude;
     private readonly (double Length, double Angle, double Amplitude)[] shortTrains;
     private readonly double shortHeight;
@@ -54,6 +56,7 @@ public sealed class SeaSurface
         var energy = config.Trains.Sum(train => train.Energy);
         amplitudeShare = config.Trains.Select(train => Math.Sqrt(train.Energy / energy) / (2 * Math.Sqrt(2))).ToArray();
         var slots = banks.Length * generation;
+        slotShares = Enumerable.Range(0, slots).Select(slot => amplitudeShare[slot % generation]).ToArray();
         numberX = new double[slots];
         numberZ = new double[slots];
         frequency = new double[slots];
@@ -104,7 +107,7 @@ public sealed class SeaSurface
 
     public (double X, double Z)[] Vectors() => Enumerable.Range(0, Slots).Select(slot => (numberX[slot], numberZ[slot])).ToArray();
 
-    public double[] AmplitudeShares() => Enumerable.Range(0, Slots).Select(slot => amplitudeShare[slot % generation]).ToArray();
+    public double[] AmplitudeShares() => slotShares;
 
     public int Dominant { get; private set; }
 
@@ -165,6 +168,7 @@ public sealed class SeaSurface
             var bank = slot / shortTrains.Length;
             shortAmplitude[slot] = banks[bank] != null ? shortTrains[slot % shortTrains.Length].Amplitude * developed * (bank == active ? rising : fading) : 0;
         }
+        shortSeaHeight = 4 * Math.Sqrt(shortAmplitude.Sum(value => value * value) / 2);
         Dominant = dominant;
         Calm = calm;
         Steepness = slopes > 0 ? Math.Min(config.Steepness, 1 / slopes) : config.Steepness;
@@ -226,8 +230,7 @@ public sealed class SeaSurface
         {
             var depth = field.DepthAt(x, z);
             if (depth <= 0) return 0;
-            var height = 4 * Math.Sqrt(shortAmplitude.Sum(value => value * value) / 2);
-            if (height > 0) kept = Math.Min(1, depth / (shape.BreakingDepthRatio * height));
+            if (shortSeaHeight > 0) kept = Math.Min(1, depth / (shape.BreakingDepthRatio * shortSeaHeight));
         }
         var rise = 0.0;
         for (var slot = 0; slot < ShortSlots; slot++)
