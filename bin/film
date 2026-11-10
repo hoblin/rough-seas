@@ -371,8 +371,7 @@ class Scene:
 
     def dwell(self):
         say = self.scene.get("say")
-        reading = max(len(say.split()) / WORDS_PER_SECOND, MINIMUM_DWELL_SECONDS) if say else 0
-        return max(reading, self.scene.get("seconds", 0))
+        return max(len(say.split()) / WORDS_PER_SECOND, MINIMUM_DWELL_SECONDS) if say else 0
 
     def play(self, still):
         began = time.monotonic()
@@ -384,7 +383,7 @@ class Scene:
         if keys:
             self.game.run("press", keys, "down")
         try:
-            earliest = max(framed + seconds, began + self.dwell())
+            earliest = max(framed + seconds, began + self.dwell(), framed + self.scene.get("seconds", 0))
             self.wait(self.scene.get("until"), earliest, max(began + self.scene.get("timeout", DEFAULT_TIMEOUT), earliest + POLL_SECONDS))
             self.game.shot(still, recording=True)
         finally:
