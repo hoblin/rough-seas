@@ -124,7 +124,7 @@ public static class VesselDraught
     {
         if (!feetInLiquidBefore) return default;
         var block = pos.AsBlockPos;
-        if (boat.World.BlockAccessor.GetBlock(block, BlockLayersAccess.Fluid) is not IBlockFlowing { IsStill: false } flowing) return default;
+        if (OpenWater.At(boat.World.BlockAccessor, block) is not IBlockFlowing { IsStill: false } flowing) return default;
 
         double strength = VanillaFlowPush * VanillaWaterDensity / Math.Clamp(boat.MaterialDensity, LeastPushedDensity, MostPushedDensity) * dt * TicksPerSecond;
         var push = flowing.GetPushVector(block);
@@ -136,8 +136,8 @@ public static class VesselDraught
     private static double Immersion(EntityBoat boat, EntityPos pos)
     {
         var accessor = boat.World.BlockAccessor;
-        var fluid = accessor.GetBlockRaw((int)pos.X, (int)pos.InternalY, (int)pos.Z, BlockLayersAccess.Fluid);
-        var above = accessor.GetBlockRaw((int)pos.X, (int)pos.InternalY + 1, (int)pos.Z, BlockLayersAccess.Fluid);
+        var fluid = OpenWater.At(accessor, (int)pos.X, (int)pos.InternalY, (int)pos.Z);
+        var above = OpenWater.At(accessor, (int)pos.X, (int)pos.InternalY + 1, (int)pos.Z);
         double surface = (int)pos.Y + fluid.LiquidLevel / LiquidLevels + (above.IsLiquid() ? LiquidAboveMetres : 0);
         return surface - pos.Y - (boat.SelectionBox.Y2 - boat.SwimmingOffsetY);
     }

@@ -1,5 +1,6 @@
 using System;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Surf;
 using Vintagestory.API.Client;
 
 namespace RoughSeas.Storms;
@@ -14,12 +15,14 @@ public sealed class SurfaceClock : IRenderer
     private readonly ICoreClientAPI capi;
     private readonly WaveTime time;
     private readonly SurfaceAim aim;
+    private readonly SurfMaker shore;
     private double sinceAim = double.PositiveInfinity;
     private double sinceLog = double.PositiveInfinity;
 
-    public SurfaceClock(StormsModSystem storms, SeaWeatherSystem sea, SeaSurface surface, SurfaceField field, ICoreClientAPI capi)
+    public SurfaceClock(StormsModSystem storms, SeaWeatherSystem sea, SeaSurface surface, SurfaceField field, SurfMaker shore, ICoreClientAPI capi)
     {
         this.storms = storms;
+        this.shore = shore;
         this.sea = sea;
         this.surface = surface;
         this.capi = capi;
@@ -53,6 +56,9 @@ public sealed class SurfaceClock : IRenderer
         if (pos == null) return;
         aim.Aim(sea.Map, pos.X, pos.Z, seconds, capi.World.BlockAccessor.RegionSize, foam: true);
         SurfaceShader.Upload();
+        if (shore.Update(capi.World, sea.Map, pos.X, pos.Z, surface.Vectors(), capi.ElapsedMilliseconds / 1000.0) is not { } field) return;
+        surface.Seabed = field;
+        SurfaceShader.Upload(field);
     }
 
     private static double Degrees(double radians) => (radians * 180 / Math.PI + 360) % 360;

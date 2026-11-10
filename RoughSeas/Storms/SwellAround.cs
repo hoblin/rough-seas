@@ -1,4 +1,5 @@
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Surf;
 
 namespace RoughSeas.Storms;
 
@@ -12,9 +13,11 @@ public sealed class SwellAround
 {
     private readonly SeaSurface surface;
     private readonly SurfaceAim aim;
+    private readonly Seabeds? seabeds;
 
-    public SwellAround(SurfaceConfig config, Waves waves, SeaWeatherConfig sea, SeaClock clock)
+    public SwellAround(SurfaceConfig config, Waves waves, SeaWeatherConfig sea, SeaClock clock, Seabeds? seabeds = null)
     {
+        this.seabeds = seabeds;
         surface = new SeaSurface(config, waves);
         var field = new SurfaceField();
         aim = new SurfaceAim(surface, field, config, sea, clock);
@@ -31,6 +34,13 @@ public sealed class SwellAround
     {
         aim.Aim(map, x, z, seconds, regionSize, foam: false);
         surface.Advance(seconds);
+        Over(map, x, z);
+    }
+
+    /// <summary>Lays the seabed under a body: one sea serves several bodies, each read over its own bed.</summary>
+    public void Over(ISeaSource map, double x, double z)
+    {
+        if (seabeds != null) surface.Seabed = seabeds.At(map, x, z, surface.Vectors());
     }
 
     /// <summary>Brings the sea to <paramref name="seconds"/> without aiming it again, between aims.</summary>

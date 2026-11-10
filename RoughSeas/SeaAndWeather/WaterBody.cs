@@ -96,7 +96,7 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
         return seabed < surface && Liquid(probe.Set(x, seabed + 1, z)) ? surface - seabed : Sounded(probe.Set(x, surface, z));
     }
 
-    private bool Liquid(BlockPos at) => sapi.World.BlockAccessor.GetBlock(at, BlockLayersAccess.Fluid).IsLiquid();
+    private bool Liquid(BlockPos at) => OpenWater.At(sapi.World.BlockAccessor, at).IsLiquid();
 
     private int Sounded(BlockPos surface)
     {

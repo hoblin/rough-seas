@@ -80,8 +80,8 @@ public static class ShoreSound
         for (var dz = -radius; dz <= radius; dz++)
         {
             pos.Set(centre.X + dx, centre.Y + 3, centre.Z + dz);
-            while (pos.Y > centre.Y - 8 && !accessor.GetBlock(pos, BlockLayersAccess.Fluid).IsLiquid()) pos.Down();
-            if (accessor.GetBlock(pos, BlockLayersAccess.Fluid) is not BlockWater water) continue;
+            while (pos.Y > centre.Y - 8 && !OpenWater.At(accessor, pos).IsLiquid()) pos.Down();
+            if (OpenWater.At(accessor, pos) is not BlockWater water) continue;
             if (Read(accessor, pos) is not { } shore) continue;
 
             highest = Math.Max(highest, shore.WaveHeight);
@@ -123,7 +123,7 @@ public static class ShoreSound
         var deepest = Math.Min(shore.MaxDepthBlocks, (int)Math.Ceiling(seaWaves.BreakingDepth(height)));
         var depth = 0;
         at.Set(pos);
-        while (depth < deepest && accessor.GetBlock(at, BlockLayersAccess.Fluid).IsLiquid())
+        while (depth < deepest && OpenWater.At(accessor, at).IsLiquid())
         {
             depth++;
             at.Down();

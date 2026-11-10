@@ -1,0 +1,4 @@
+[
+    { "op": "add", "file": "game:blocktypes/liquid/water.json", "path": "/behaviors/-", "value": { "name": "roughseas:groundwater" } },
+    { "op": "add", "file": "game:blocktypes/liquid/saltwater.json", "path": "/behaviors/-", "value": { "name": "roughseas:groundwater" } }
+]

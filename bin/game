@@ -241,6 +241,13 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              back (default 4): where a vessel is laid by the water. Each with its ground,
                              its water (salt or fresh), rainfall and temperature, the wettest first; fly
                              along a coast first so its chunks load
+  /bridge shores GROUND [RANGE] [LENGTH]
+                             list the shores of open salt water within RANGE blocks (default 256) whose
+                             ground at the water's edge, flush or up to two blocks over it, matches GROUND
+                             (rock-*, sand-*), LENGTH blocks along the water (default 5); each with how
+                             many blocks its ground stands over the sea at each of 8 blocks inland (0 0 1 1
+                             a gentle beach, 0 1 2 3 a steep one) and how many of those match GROUND too,
+                             and how far open water runs out from it, the most open first
   /bridge weed RADIUS        clear the plants and loose stones off the ground within RADIUS blocks of
                              the player (at most 32), leaving the ground, the water and the lily pads
                              on it: a build site with nothing in the way

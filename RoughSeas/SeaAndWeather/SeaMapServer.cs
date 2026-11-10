@@ -11,7 +11,7 @@ public class SeaMapServer(SeaWeatherSystem sea, ICoreServerAPI sapi)
 {
     private const int TickMilliseconds = 250;
 
-    private static readonly (double X, double Z)[] CellSamples = [(0.5, 0.5), (0.25, 0.25), (0.75, 0.25), (0.25, 0.75), (0.75, 0.75)];
+    internal static readonly (double X, double Z)[] CellSamples = [(0.5, 0.5), (0.25, 0.25), (0.75, 0.25), (0.25, 0.75), (0.75, 0.75)];
 
     private readonly Dictionary<(int X, int Z), DateTime> sent = [];
     private IServerNetworkChannel channel = null!;

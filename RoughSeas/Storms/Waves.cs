@@ -23,6 +23,12 @@ public class Waves(WavesConfig config)
     public double BreakingChance(double windMps) =>
         Math.Min(1, config.WhitecapCoefficient * Math.Pow(windMps, config.WhitecapExponent));
 
+    public double BreakingDepthRatio => config.BreakingDepthRatio;
+
+    public double CrestRatio => config.CrestRatio;
+
+    public (double From, double To) PlungingIribarren => (config.PlungingIribarren[0], config.PlungingIribarren[1]);
+
     public bool BreaksAt(double depth, double height) => depth < BreakingDepth(height);
 
     public double BreakingDepth(double height) => config.BreakingDepthRatio * height;

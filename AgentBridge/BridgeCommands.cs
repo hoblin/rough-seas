@@ -120,6 +120,12 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.OptionalIntRange("range", 16, 512, 256), parsers.OptionalIntRange("length", 1, 32, 7), parsers.OptionalIntRange("depth", 1, 32, 4))
                 .HandleWith(args => Beaches(args.Caller.Player.Entity.Pos.AsBlockPos, (int)args[0], (int)args[1], (int)args[2]))
             .EndSubCommand()
+            .BeginSubCommand("shores")
+                .WithDescription("List the shores in the loaded world within this range whose ground at the water's edge, at the sea's level or up to two blocks over it, matches a wildcard, LENGTH blocks along open salt water: each with how high its ground stands over the water at each of the 8 blocks inland, and how far the open water runs out from it")
+                .RequiresPlayer()
+                .WithArgs(parsers.Word("ground wildcard"), parsers.OptionalIntRange("range", 16, 512, 256), parsers.OptionalIntRange("length", 1, 32, 5))
+                .HandleWith(args => Shores(args.Caller.Player.Entity.Pos.AsBlockPos, (string)args[0], (int)args[1], (int)args[2]))
+            .EndSubCommand()
             .BeginSubCommand("weed")
                 .WithDescription("Clear the plants and loose stones off the ground within this many blocks of the caller, as a scythe and a rake would: soil, rock, water and what floats on it stay")
                 .RequiresPlayer()
@@ -566,7 +572,7 @@ public class BridgeCommands : ModSystem
             var ground = Ground(x, z);
             return ground >= seaLevel && ground <= seaLevel + 2
                 && accessor.GetBlock(new BlockPos(x, ground + 1, z, 0)).CollisionBoxes is null or { Length: 0 }
-                && accessor.GetBlock(new BlockPos(x, ground, z, 0), BlockLayersAccess.Fluid).Id == 0;
+                && OpenWater.At(accessor, new BlockPos(x, ground, z, 0)).Id == 0;
         }
         bool Open(int x, int z) => Enumerable.Range(-clearing, 2 * clearing + 1)
             .All(i => Enumerable.Range(-clearing, 2 * clearing + 1).All(j => Dry(x + i, z + j) && Math.Abs(Ground(x + i, z + j) - Ground(x, z)) <= 1));
@@ -621,9 +627,9 @@ public class BridgeCommands : ModSystem
         int Ground(int x, int z) => accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
         bool Loaded(int x, int z) => accessor.GetChunkAtBlockPos(new BlockPos(x, surface, z, 0)) != null;
         bool Flush(int x, int z) => Loaded(x, z) && Ground(x, z) == surface
-            && accessor.GetBlock(new BlockPos(x, surface + 1, z, 0), BlockLayersAccess.Fluid).Id == 0;
+            && OpenWater.At(accessor, new BlockPos(x, surface + 1, z, 0)).Id == 0;
         bool Water(int x, int z) => Loaded(x, z) && Ground(x, z) < surface
-            && accessor.GetBlock(new BlockPos(x, surface, z, 0), BlockLayersAccess.Fluid).IsLiquid();
+            && OpenWater.At(accessor, new BlockPos(x, surface, z, 0)).IsLiquid();
 
         (int dx, int dz, string name)[] seaward = [(0, 1, "south"), (0, -1, "north"), (1, 0, "east"), (-1, 0, "west")];
 
@@ -650,13 +656,61 @@ public class BridgeCommands : ModSystem
             {
                 var at = new BlockPos(spot.x, surface, spot.z, 0);
                 var climate = accessor.GetClimateAt(at, EnumGetClimateMode.WorldGenValues);
-                var water = accessor.GetBlock(at.AddCopy(BlockFacing.FromCode(spot.sea)), BlockLayersAccess.Fluid).Code;
+                var water = OpenWater.At(accessor, at.AddCopy(BlockFacing.FromCode(spot.sea))).Code;
                 return (spot, rain: climate?.WorldgenRainfall ?? 0, climate?.Temperature, ground: accessor.GetBlock(at).Code, water);
             })
             .OrderByDescending(beach => beach.rain)
             .Take(shown)
             .Select(beach => $"{beach.spot.x - centre.X:0} {surface + 1} {beach.spot.z - centre.Z:0}: {beach.ground}, {beach.water} to the {beach.spot.sea}, rainfall {beach.rain:0.00}, {beach.Temperature:0} °C");
         return TextCommandResult.Success($"{found.Count} beaches, the wettest first:\n{string.Join("\n", lines)}");
+    }
+
+    private TextCommandResult Shores(BlockPos origin, string wildcard, int range, int length)
+    {
+        const int shown = 16;
+        const int inland = 8;
+        const int farthest = 64;
+        var pattern = new AssetLocation(wildcard);
+        var accessor = sapi.World.BlockAccessor;
+        var surface = sapi.World.SeaLevel - 1;
+        var centre = sapi.World.DefaultSpawnPosition;
+
+        bool Loaded(int x, int z) => accessor.GetChunkAtBlockPos(new BlockPos(x, surface, z, 0)) != null;
+        int Ground(int x, int z) => accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
+        bool Sea(int x, int z) => Loaded(x, z) && Ground(x, z) < surface
+            && OpenWater.At(accessor, new BlockPos(x, surface, z, 0)).Code?.Path.StartsWith("saltwater") == true;
+        bool Edge(int x, int z) => Loaded(x, z) && Ground(x, z) - surface is >= 0 and <= 2
+            && accessor.GetBlock(new BlockPos(x, Ground(x, z), z, 0)).WildCardMatch(pattern);
+
+        (int dx, int dz, string name)[] seaward = [(0, 1, "south"), (0, -1, "north"), (1, 0, "east"), (-1, 0, "west")];
+
+        var found = new List<(int x, int z, (int dx, int dz, string name) sea)>();
+        for (var i = -range; i <= range; i += 2)
+        for (var j = -range; j <= range; j += 2)
+        {
+            var (x, z) = (origin.X + i, origin.Z + j);
+            if (found.Any(other => Math.Abs(other.x - x) < 2 * length && Math.Abs(other.z - z) < 2 * length)) continue;
+            var facing = seaward.FirstOrDefault(sea => Enumerable.Range(0, length)
+                .All(k => Edge(x + k * sea.dz, z + k * sea.dx) && Sea(x + k * sea.dz + sea.dx, z + k * sea.dx + sea.dz)));
+            if (facing.name != null) found.Add((x, z, facing));
+        }
+        if (found.Count == 0) return TextCommandResult.Error($"No {wildcard} at the edge of the open sea, {length} along, within {range} blocks of loaded world");
+
+        var lines = found
+            .Select(spot =>
+            {
+                var (dx, dz, name) = spot.sea;
+                var rise = Enumerable.Range(0, inland).Select(k => Ground(spot.x - k * dx, spot.z - k * dz) - surface);
+                var open = Enumerable.Range(1, farthest).TakeWhile(k => Sea(spot.x + k * dx, spot.z + k * dz)).Count();
+                var same = Enumerable.Range(0, inland).Count(k =>
+                    accessor.GetBlock(new BlockPos(spot.x - k * dx, Ground(spot.x - k * dx, spot.z - k * dz), spot.z - k * dz, 0)).WildCardMatch(pattern));
+                return (spot, rise: string.Join(" ", rise), open, same, ground: accessor.GetBlock(new BlockPos(spot.x, Ground(spot.x, spot.z), spot.z, 0)).Code);
+            })
+            .OrderByDescending(shore => shore.open)
+            .ThenByDescending(shore => shore.same)
+            .Take(shown)
+            .Select(shore => $"{shore.spot.x - centre.X:0} {surface + 1} {shore.spot.z - centre.Z:0}: {shore.ground}, sea to the {shore.spot.sea.name} open for {shore.open}{(shore.open == farthest ? "+" : "")} blocks; blocks over the sea inland: {shore.rise}, {shore.same} of them {pattern.Path}");
+        return TextCommandResult.Success($"{found.Count} shores, the most open first:\n{string.Join("\n", lines)}");
     }
 
     private TextCommandResult Weed(BlockPos origin, int radius)
@@ -670,7 +724,7 @@ public class BridgeCommands : ModSystem
             var pos = origin.AddCopy(x, y, z);
             var block = accessor.GetBlock(pos);
             if (block.BlockMaterial != EnumBlockMaterial.Plant && block.Code?.Path.StartsWith("loose") != true) continue;
-            if (accessor.GetBlock(pos.DownCopy(), BlockLayersAccess.Fluid).IsLiquid()) continue;
+            if (OpenWater.At(accessor, pos.DownCopy()).IsLiquid()) continue;
 
             accessor.SetBlock(0, pos);
             cleared++;
@@ -789,7 +843,7 @@ public class BridgeCommands : ModSystem
         var accessor = sapi.World.BlockAccessor;
         var below = position.AsBlockPos;
         while (below.Y > 0 && accessor.GetBlock(below, BlockLayersAccess.FluidOrSolid).Id == 0) below.Y--;
-        return accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid() ? below.Y : position.Y;
+        return OpenWater.At(accessor, below).IsLiquid() ? below.Y : position.Y;
     }
 
     private static TextCommandResult Mount(IPlayer player, Entity? target, int index = -1)

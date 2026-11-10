@@ -21,6 +21,7 @@ Read before taking or retaking a picture for the wiki, the handbook or the mod p
 | The propulsion loops, `images/propulsion/*.webp` | `bin/film thoughts/shared/screenplays/2026-11-05/STROKE.yml --no-captions --webp docs/wiki/images/propulsion --width 640` |
 | The recipes, `images/recipes/*.png` | `bin/scene recipes docs/wiki/images/recipes` |
 | A handbook page | `bin/game hotkey handbook`, `bin/game link handbook://PAGECODE`, `bin/game shot FILE gui` |
+| The surf and the wet sand, `images/sea/{surf,wet-sand}.webp` | In the `gentle-beach` zone, on a fresh world: `/time set 8:00`, `/weather setprecip 0`, `/weather set clearsky`, `/bridge weed 24` over 164 -58, 164 -40 and 164 -76; `/bridge fly 168 112 237`, `/seas stage gale 24 600`, `/time add 10 minutes`. Surf: `/bridge fly 186 114 -48`, `/gamemode spectator`, `bin/game look 3.95 3.4`, `bin/game burst DIR 16 10`, the frame with the widest sheet. Wet sand: `/bridge fly 180 120 -48`, `/gamemode spectator`, `bin/game look 4.1 3.8`, the burst's frame with the least sheet. Each cut to 16:9 and 960×540 |
 
 `bin/scene views` shoots every form a vessel takes, the held one included. Publish only the forms a player meets: a vessel too heavy to pick up (the dugout, the outrigger) has no held picture on its page, and its `held.webp` is not kept.
 

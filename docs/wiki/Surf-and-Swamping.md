@@ -63,7 +63,7 @@ A vessel that sinks throws everyone off and lies on the bottom, seen but no use:
 
 A wave breaks when it grows too steep, and a breaking wave is the dangerous one: its crest stands higher, it throws far more water aboard and it strikes the hull like a falling wall.
 
-- **Surf.** Where the water is shallower than about 1.3 times a wave's height, the wave breaks, every time. Real waves do the same: a wave breaks once it is about four fifths as high as the water is deep, which is why the surf line runs further out the higher the sea. In rough weather the last stretch to a beach is all surf.
+- **Surf.** Where the water is shallower than about 1.3 times a wave's height, the wave breaks, every time. Real waves do the same: a wave breaks once it is about four fifths as high as the water is deep, which is why the surf line runs further out the higher the sea. In rough weather the last stretch to a beach is all surf. The waves you see break in the same water, so you can read the surf line off the sea ([The look of the sea](The-Look-of-the-Sea#what-you-see)).
 
   ![Where waves break: a big wave breaks further out than a small one, where the water is about 1.3 times its height deep](images/diagrams/surf-line.svg)
 

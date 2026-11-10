@@ -34,6 +34,7 @@ public class SurfaceConfig
     public double AimSeconds;
     public double FullFoamMetres;
     public bool SurfFoam;
+    public Surf.ShoreSurfConfig Shore = new();
     public WhitecapsConfig[] Whitecaps = [];
 }
 

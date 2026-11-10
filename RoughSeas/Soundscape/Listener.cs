@@ -22,7 +22,7 @@ public readonly record struct Listener(Vec3d Pos, bool AtSea, SeaState Sea, doub
     {
         for (var i = 0; i <= probeBlocks; i++, pos.Down())
         {
-            if (accessor.GetBlock(pos, BlockLayersAccess.Fluid).IsLiquid()) return true;
+            if (OpenWater.At(accessor, pos).IsLiquid()) return true;
             if (accessor.GetBlock(pos, BlockLayersAccess.Solid).SideSolid[BlockFacing.UP.Index]) return false;
         }
         return false;
