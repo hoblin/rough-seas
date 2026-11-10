@@ -151,6 +151,14 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	return warped;
 }
 
+float seaBedEdgeAt(vec2 uv) {
+	return smoothstep(0.0, 1.0, min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y)) * seaBedArea.z / seaBedEdge);
+}
+
+vec4 seaDrawnLag(sampler2D lags, vec2 uv) {
+	return seaBedEdgeAt(uv) * textureLod(lags, uv, 0.0);
+}
+
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float share = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r : 0.0;
 	seaRippleKept = 1.0 - share;
@@ -162,7 +170,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	bool onBed = seaShore.z > 0.5 && bedUv.x >= 0.0 && bedUv.y >= 0.0 && bedUv.x < 1.0 && bedUv.y < 1.0;
 	vec4 bed = onBed ? textureLod(seaBed, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 1000000.0);
 	vec4 aux = onBed ? textureLod(seaBedAux, bedUv, 0.0) : vec4(0.0);
-	float bedEdge = onBed ? smoothstep(0.0, 1.0, min(min(bedUv.x, 1.0 - bedUv.x), min(bedUv.y, 1.0 - bedUv.y)) * seaBedArea.z / seaBedEdge) : 0.0;
+	float bedEdge = onBed ? seaBedEdgeAt(bedUv) : 0.0;
 	vec4 lagA = bedEdge * (onBed ? textureLod(seaLagA, bedUv, 0.0) : vec4(0.0));
 	vec4 lagB = bedEdge * (onBed ? textureLod(seaLagB, bedUv, 0.0) : vec4(0.0));
 	vec4 face = onBed ? textureLod(seaFace, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 0.0);
@@ -175,10 +183,10 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);
 	float faceReflects = faceLength > 0.0 ? face.w * seaTerms.x * bedEdge : 0.0;
 	vec2 texel = vec2(1.0 / seaBedArea.z, 0.0);
-	vec4 turnAX = bedEdge * (onBed ? (textureLod(seaLagA, bedUv + texel.xy, 0.0) - textureLod(seaLagA, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0));
-	vec4 turnAZ = bedEdge * (onBed ? (textureLod(seaLagA, bedUv + texel.yx, 0.0) - textureLod(seaLagA, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0));
-	vec4 turnBX = bedEdge * (onBed ? (textureLod(seaLagB, bedUv + texel.xy, 0.0) - textureLod(seaLagB, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0));
-	vec4 turnBZ = bedEdge * (onBed ? (textureLod(seaLagB, bedUv + texel.yx, 0.0) - textureLod(seaLagB, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0));
+	vec4 turnAX = onBed ? (seaDrawnLag(seaLagA, bedUv + texel.xy) - seaDrawnLag(seaLagA, bedUv - texel.xy)) / 2.0 : vec4(0.0);
+	vec4 turnAZ = onBed ? (seaDrawnLag(seaLagA, bedUv + texel.yx) - seaDrawnLag(seaLagA, bedUv - texel.yx)) / 2.0 : vec4(0.0);
+	vec4 turnBX = onBed ? (seaDrawnLag(seaLagB, bedUv + texel.xy) - seaDrawnLag(seaLagB, bedUv - texel.xy)) / 2.0 : vec4(0.0);
+	vec4 turnBZ = onBed ? (seaDrawnLag(seaLagB, bedUv + texel.yx) - seaDrawnLag(seaLagB, bedUv - texel.yx)) / 2.0 : vec4(0.0);
 
 	float heights[SEA_SLOTS];
 	float numbers[SEA_SLOTS];

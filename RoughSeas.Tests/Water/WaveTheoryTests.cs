@@ -59,6 +59,18 @@ public class WaveTheoryTests
     }
 
     [Fact]
+    public void InDeepWaterTheOrbitsFadeAsTheExponential() =>
+        Assert.Equal(Math.Exp(0.1 * 0.5), WaveTheory.OrbitalFade(0.1, double.PositiveInfinity, 0.5, 0), 6);
+
+    [Fact]
+    public void ToDeepWaterTheShallowFormulaMeetsTheDeepOne() =>
+        Assert.Equal(WaveTheory.OrbitalFade(0.1, double.PositiveInfinity, 0, 1), WaveTheory.OrbitalFade(0.1, 150, 0, 1), 3);
+
+    [Fact]
+    public void InShallowWaterTheWaterMovesFasterForTheSameWave() =>
+        Assert.Equal(1 / Math.Tanh(0.3), WaveTheory.OrbitalFade(0.1, 3, 0, 0), 6);
+
+    [Fact]
     public void ABoresFrontKeepsToItsLimits()
     {
         Assert.Equal(0.02, WaveTheory.BoreFront(0.001, 0.1, 0.2));

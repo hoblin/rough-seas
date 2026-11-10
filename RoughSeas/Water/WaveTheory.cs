@@ -10,6 +10,7 @@ public static class WaveTheory
     private const double FullTurn = 2 * Math.PI;
     private const double NarrowestBoreFront = 0.02;
     private const double WidestBoreFront = 0.5;
+    private const double DeepEnoughKd = 20;
 
     /// <summary>A sawtooth carries as much energy as a sine of 1 at this amplitude: its variance is a third of the square of it, a sine's a half.</summary>
     public static readonly double BoreAmplitude = Math.Sqrt(1.5);
@@ -33,6 +34,19 @@ public static class WaveTheory
         var number = Wavenumber(deepNumber, depth);
         var kd = Math.Min(number * depth, 20);
         return 0.5 * (1 + 2 * kd / Math.Sinh(2 * kd)) * DeepFrequency(deepNumber) / number;
+    }
+
+    /// <summary>
+    /// A wave's orbital speed, against the surface's in deep water, averaged over a body from <paramref name="lift"/> over still water to <paramref name="draft"/> under that:
+    /// linear theory's cosh k(d + z) / sinh kd, which in deep water is e^(kz).
+    /// </summary>
+    public static double OrbitalFade(double number, double depth, double lift, double draft)
+    {
+        if (double.IsInfinity(depth) || number * depth > DeepEnoughKd) return Math.Exp(number * lift) * (draft > 0 ? (1 - Math.Exp(-number * draft)) / (number * draft) : 1);
+        var bottom = Math.Max(lift - draft, -depth);
+        var span = lift - bottom;
+        var integral = span > 0 ? (Math.Sinh(number * (depth + lift)) - Math.Sinh(number * (depth + bottom))) / (number * span) : Math.Cosh(number * (depth + lift));
+        return integral / Math.Sinh(number * depth);
     }
 
     public static double Iribarren(double slope, double height, double deepLength) =>

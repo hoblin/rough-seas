@@ -100,9 +100,17 @@ public sealed class SeaSurface
         waves.PlungingBreaker(WaveTheory.Iribarren(slope, offshoreHeight, FullTurn / Trains.Wavenumber(Trains.Dominant)));
 
     /// <summary>The wave vector of a slot here, as the bed turns it.</summary>
-    private (double X, double Z) Turned(SurfField field, int slot, double x, double z, double edge) =>
-        (Trains.NumberX(slot) + edge * (field.LagAt(slot, x + 1, z) - field.LagAt(slot, x - 1, z)) / 2,
-            Trains.NumberZ(slot) + edge * (field.LagAt(slot, x, z + 1) - field.LagAt(slot, x, z - 1)) / 2);
+    private (double X, double Z) Turned(SurfField field, int slot, double x, double z)
+    {
+        double Drawn(double atX, double atZ) => field.EdgeShare(atX, atZ) * field.LagAt(slot, atX, atZ);
+        return (Trains.NumberX(slot) + (Drawn(x + 1, z) - Drawn(x - 1, z)) / 2, Trains.NumberZ(slot) + (Drawn(x, z + 1) - Drawn(x, z - 1)) / 2);
+    }
+
+    private double Rise(double theta, double broken, double boreHeight, double number)
+    {
+        var sine = Math.Sin(theta);
+        return broken > 0 ? sine + (WaveTheory.Bore(theta, WaveTheory.BoreFront(boreHeight, number, BoreFrontSlope)) - sine) * broken : sine;
+    }
 
     public (double X, double Y, double Z) DisplacementAt(double x, double z, double share = 0, bool shortWaves = true)
     {
@@ -128,7 +136,7 @@ public sealed class SeaSurface
         {
             if (heights[slot] <= 0) continue;
             var theta = Trains.Phase(slot, x, z) + lags[slot];
-            rise += heights[slot] * (Math.Sin(theta) + (broken > 0 ? (WaveTheory.Bore(theta, WaveTheory.BoreFront(boreHeight, numbers[slot], BoreFrontSlope)) - Math.Sin(theta)) * broken : 0));
+            rise += heights[slot] * Rise(theta, broken, boreHeight, numbers[slot]);
             var sway = (1 - broken) * steepness * heights[slot] * Math.Cos(theta);
             shiftX += sway * towardX[slot];
             shiftZ += sway * towardZ[slot];
@@ -165,7 +173,7 @@ public sealed class SeaSurface
     public (double TowardDegrees, double Speed, double Length) CrestAt(double x, double z)
     {
         var dominant = Trains.Dominant;
-        var (alongX, alongZ) = Seabed is { } field && field.Covers(x, z) && Holds(field, dominant) ? Turned(field, dominant, x, z, field.EdgeShare(x, z)) : (Trains.NumberX(dominant), Trains.NumberZ(dominant));
+        var (alongX, alongZ) = Seabed is { } field && field.Covers(x, z) && Holds(field, dominant) ? Turned(field, dominant, x, z) : (Trains.NumberX(dominant), Trains.NumberZ(dominant));
         var number = Math.Sqrt(alongX * alongX + alongZ * alongZ);
         return number > 0 ? ((Math.Atan2(alongZ, alongX) * 180 / Math.PI + 360) % 360, Trains.Frequency(dominant) / number, FullTurn / number) : default;
     }
@@ -182,7 +190,7 @@ public sealed class SeaSurface
     public double Incidence(double x, double z, double normalX, double normalZ)
     {
         var dominant = Trains.Dominant;
-        var (towardX, towardZ) = Seabed is { } field && field.Covers(x, z) && Holds(field, dominant) ? Turned(field, dominant, x, z, 1) : (Trains.NumberX(dominant), Trains.NumberZ(dominant));
+        var (towardX, towardZ) = Seabed is { } field && field.Covers(x, z) && Holds(field, dominant) ? Turned(field, dominant, x, z) : (Trains.NumberX(dominant), Trains.NumberZ(dominant));
         var length = Math.Sqrt(towardX * towardX + towardZ * towardZ);
         return length > 0 ? Math.Max(0, -(towardX * normalX + towardZ * normalZ) / length) : 0;
     }
@@ -257,7 +265,7 @@ public sealed class SeaSurface
             slopes += heights[slot] * numbers[slot];
             if (!valid) continue;
             lags[slot] = edge * field.LagAt(slot, x, z);
-            var (turnedX, turnedZ) = Turned(field, slot, x, z, edge);
+            var (turnedX, turnedZ) = Turned(field, slot, x, z);
             var turned = Math.Sqrt(turnedX * turnedX + turnedZ * turnedZ);
             if (turned > 0) (towardX[slot], towardZ[slot]) = (turnedX / turned, turnedZ / turned);
         }
@@ -295,14 +303,14 @@ public sealed class SeaSurface
         Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
         Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
         Local(x, z, share, heights, lags, numbers, towardX, towardZ);
+        var depth = share > 0 && Seabed is { } field && field.Covers(x, z) ? field.CelerityDepthAt(x, z) : double.PositiveInfinity;
         double velocityX = 0, velocityZ = 0;
         for (var slot = 0; slot < slots; slot++)
         {
             if (heights[slot] <= 0) continue;
-            var number = Trains.Wavenumber(slot);
             var along = numbers[slot] * (towardX[slot] * alongX + towardZ[slot] * alongZ);
             var across = numbers[slot] * (towardZ[slot] * alongX - towardX[slot] * alongZ);
-            var fade = Math.Exp(number * height) * (draft > 0 ? (1 - Math.Exp(-number * draft)) / (number * draft) : 1);
+            var fade = WaveTheory.OrbitalFade(numbers[slot], depth, height, draft);
             var speed = share * heights[slot] * Trains.Frequency(slot) * Math.Sin(Trains.Phase(slot, x, z) + lags[slot]) * fade
                 * Sinc(along * length / 2) * Sinc(across * beam / 2);
             velocityX += speed * towardX[slot];
@@ -320,6 +328,10 @@ public sealed class SeaSurface
         Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
         var steepness = Local(x, z, share, heights, lags, numbers, towardX, towardZ);
         Span<double> now = stackalloc double[3], behind = stackalloc double[3], farBehind = stackalloc double[3];
+        var broken = Broken(x, z, share);
+        var waterEnergy = 0.0;
+        for (var slot = 0; slot < slots; slot++) waterEnergy += heights[slot] * heights[slot];
+        var boreHeight = share * WaveTheory.SignificantHeight(waterEnergy);
         var steepest = 0.0;
         for (var slot = 0; slot < slots; slot++)
         {
@@ -327,7 +339,7 @@ public sealed class SeaSurface
             var (alongX, alongZ) = (towardX[slot], towardZ[slot]);
             var pinch = steepness * heights[slot] * numbers[slot];
             var theta = Trains.Phase(slot, x, z) + lags[slot];
-            Squeeze(now, alongX, alongZ, pinch * Math.Sin(theta));
+            Squeeze(now, alongX, alongZ, pinch * Rise(theta, broken, boreHeight, numbers[slot]));
             Squeeze(behind, alongX, alongZ, pinch * Math.Sin(theta + Trains.Frequency(slot) * TrailSeconds));
             Squeeze(farBehind, alongX, alongZ, pinch * Math.Sin(theta + Trains.Frequency(slot) * 2 * TrailSeconds));
             steepest += pinch;
