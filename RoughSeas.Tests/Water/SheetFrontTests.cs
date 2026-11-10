@@ -10,7 +10,7 @@ public class SheetFrontTests
 
     [Fact]
     public void UpASlopeASheetArrivesLaterThanOnFlatGround() =>
-        Assert.True(SheetFront.Arrival(1.5, 0.5, 4) > SheetFront.Arrival(1.5, 0, 4));
+        Assert.True(SheetFront.Arrival(1.5, 0.125, 4) > SheetFront.Arrival(1.5, 0, 4));
 
     private static SheetFront Thrown(double runUp, double period = 9) => SheetFront.Thrown(runUp, period, ShoreFixtures.Config.Sheet);
 

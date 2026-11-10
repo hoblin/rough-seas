@@ -82,12 +82,10 @@ float seaLag(int slot, vec4 lagA, vec4 lagB) {
 	return seaTerms.y * (slot < 4 ? lagA[slot] * seaLagValidA[slot] : slot < 8 ? lagB[slot - 4] * seaLagValidB[slot - 4] : 0.0);
 }
 
-vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 lagB, vec4 gainA, vec4 gainB, float celerityDepth, float share) {
+const int seaSheetsAtMost = 16;
+
+vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 lagB, vec4 gainA, vec4 gainB, float celerityDepth, float slope, float share) {
 	if (bed.z <= 0.0 || bed.w >= 100000.0) return warped;
-	float re = 0.0;
-	float im = 0.0;
-	float arrivedRe = 0.0;
-	float arrivedIm = 0.0;
 	float arrivedBore = 0.0;
 	float energy = 0.0;
 	float dominant = 0.0;
@@ -98,30 +96,32 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 		arrivedEnergy += reaching * reaching;
 	}
 	float boreHeight = 4.0 * sqrt(arrivedEnergy / 2.0);
+	float thetas[SEA_SLOTS];
+	float reachings[SEA_SLOTS];
+	float angulars[SEA_SLOTS];
 	for (int i = 0; i < SEA_SLOTS; i++) {
 		vec4 wave = seaWaves[i];
+		thetas[i] = 0.0;
+		reachings[i] = 0.0;
+		angulars[i] = 0.0;
 		if (wave.z <= 0.0) continue;
 		float theta = dot(wave.xy, worldPos.xz) + wave.w + seaLag(i, lagA, lagB);
-		re += wave.z * cos(theta);
-		im += wave.z * sin(theta);
 		float reaching = share * wave.z * seaGain(i, gainA, gainB);
-		arrivedRe += reaching * cos(theta);
-		arrivedIm += reaching * sin(theta);
+		thetas[i] = theta;
+		reachings[i] = reaching;
+		angulars[i] = sqrt(seaGravity * length(wave.xy));
 		arrivedBore += reaching * seaBore(theta, seaBoreFront(boreHeight, seaWavenumber(length(wave.xy), celerityDepth)));
 		energy += wave.z * wave.z;
 		if (i == int(seaShore.y)) {
 			dominant = theta;
-			frequency = sqrt(seaGravity * length(wave.xy));
+			frequency = angulars[i];
 		}
 	}
 	if (energy <= 0.0) return warped;
 	seaCrestTime = vec2(dominant, frequency);
-	float waveHeight = 2.0 * sqrt(re * re + im * im);
 	float twoPercent = SEA_TWO_PERCENT * 4.0 * sqrt(energy / 2.0);
-	float runUp = bed.z * sqrt(waveHeight / twoPercent);
-	float arrivedHeight = 2.0 * sqrt(arrivedRe * arrivedRe + arrivedIm * arrivedIm);
-
-	float since = mod(1.5707963 - dominant, 6.2831853) / frequency;
+	float latest = mod(1.5707963 - dominant, 6.2831853) / frequency;
+	float period = 6.2831853 / frequency;
 	ivec2 corner = ivec2(floor(worldPos.xz - seaBedArea.xy + 0.5));
 	float rise = 1000000.0;
 	float highest = 0.0;
@@ -135,15 +135,41 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	if (rise < 100000.0 && highest - rise > seaWallSlope) return warped;
 	if (rise >= 100000.0) rise = max(-bed.x, 0.0);
 	float distance = bed.y;
-	float sine = distance > 0.0 ? rise / sqrt(distance * distance + rise * rise) : 1.0;
-	float speed = sqrt(2.0 * seaGravity * runUp);
-	float front = speed * since - 0.5 * seaGravity * sine * since * since;
-	float arrived = sine > 0.0001 ? (speed - sqrt(max(0.0, speed * speed - 2.0 * seaGravity * sine * distance))) / (seaGravity * sine) : distance / speed;
-	seaTip = runUp < bed.w || since <= 0.0 ? 1000.0 : front - distance;
-	if (runUp < bed.w || since <= 0.0 || front <= distance) return warped;
-	float fromTip = (front - distance) / front;
-	float lens = min((front - distance) * (front - distance) / (9.0 * seaGravity * since * since), seaShore.w * arrivedHeight);
-	float depth = max(lens, (arrivedBore - rise) * fromTip * fromTip) - aux.x * max(0.0, since - arrived);
+	float sine = max(slope, 0.0001) / sqrt(1.0 + slope * slope);
+	float tallest = 0.0;
+	for (int i = 0; i < SEA_SLOTS; i++) tallest += max(seaWaves[i].z, 0.0);
+	float life = 2.0 * sqrt(2.0 * seaGravity * bed.z * sqrt(2.0 * tallest / twoPercent)) / (seaGravity * sine);
+	float depth = 0.0;
+	seaTip = 1000.0;
+	for (int n = 0; n < seaSheetsAtMost; n++) {
+		float since = latest + float(n) * period;
+		if (since > life) break;
+		float re = 0.0;
+		float im = 0.0;
+		float arrivedRe = 0.0;
+		float arrivedIm = 0.0;
+		for (int i = 0; i < SEA_SLOTS; i++) {
+			float back = thetas[i] + angulars[i] * since;
+			re += seaWaves[i].z * cos(back);
+			im += seaWaves[i].z * sin(back);
+			arrivedRe += reachings[i] * cos(back);
+			arrivedIm += reachings[i] * sin(back);
+		}
+		float runUp = bed.z * sqrt(2.0 * sqrt(re * re + im * im) / twoPercent);
+		float speed = sqrt(2.0 * seaGravity * runUp);
+		float front = speed * since - 0.5 * seaGravity * sine * since * since;
+		if (since <= 0.0 || runUp < bed.w || front <= distance) continue;
+		float arrived = sine > 0.0001 ? (speed - sqrt(max(0.0, speed * speed - 2.0 * seaGravity * sine * distance))) / (seaGravity * sine) : distance / speed;
+		float fromTip = (front - distance) / front;
+		float lens = min((front - distance) * (front - distance) / (9.0 * seaGravity * since * since), seaShore.w * 2.0 * sqrt(arrivedRe * arrivedRe + arrivedIm * arrivedIm));
+		float bore = n == 0 ? (arrivedBore - rise) * fromTip * fromTip : 0.0;
+		float sheet = max(lens, bore) - aux.x * max(0.0, since - arrived);
+		if (sheet > depth) {
+			depth = sheet;
+			seaTip = front - distance;
+			seaDebugValue = vec3(dominant, 0.0, float(n) / 4.0);
+		}
+	}
 	if (depth <= 0.0) return warped;
 	warped.y += rise + depth;
 	seaShare = 0.0;
@@ -206,7 +232,10 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 gainB = onBed ? textureLod(seaGainB, bedUv, 0.0) : vec4(1.0);
 	vec4 surf = onBed ? textureLod(seaSurf, bedUv, 0.0) : vec4(0.0, 1.0, bed.x, 0.0);
 	float cellDepth = onBed ? texelFetch(seaBed, clamp(ivec2(floor(worldPos.xz - seaBedArea.xy)), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).x : bed.x;
-	if (cellDepth <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB, gainA, gainB, surf.b, share);
+	if (cellDepth <= 0.0) {
+		float slope = texelFetch(seaSurf, clamp(ivec2(floor(worldPos.xz - seaBedArea.xy)), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).a;
+		return seaSwash(warped, worldPos, bed, aux, lagA, lagB, gainA, gainB, surf.b, slope, share);
+	}
 	float faceDistance = max(face.x, 0.0);
 	float faceLength = length(face.yz);
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);

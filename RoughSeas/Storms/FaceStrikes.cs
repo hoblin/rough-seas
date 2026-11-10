@@ -33,7 +33,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
         }
         foreach (var step in field.Steps)
         {
-            if (Near(step.X, step.Z)) Step(step, window);
+            if (Near(step.X, step.Z)) Step(step, field.SheetSlopeOf(step.X, step.Z), window);
         }
         if ((sinceLog += window) < LogEverySeconds) return;
         sinceLog = 0;
@@ -73,14 +73,14 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
         Burst(x + Off(wall.SideX), wall.Level + WaterColumn.StillLevel + crest, z + Off(wall.SideZ), wall.SideZ, wall.SideX, crest, impact);
     }
 
-    private void Step(StepFace step, double window)
+    private void Step(StepFace step, double slope, double window)
     {
         var (x, z) = (step.X + 0.5, step.Z + 0.5);
-        var (height, twoPercent) = surface.SheetWaveAt(x, z);
+        var since = surface.SinceCrest(x, z);
+        var (height, twoPercent) = surface.SheetWaveAt(x, z, since);
         if (height <= 0 || twoPercent <= 0) return;
         var share = Math.Sqrt(height / twoPercent);
-        var arrival = SheetFront.Arrival(step.RunUp * share, Math.Max(step.Ground, 0), step.Distance);
-        var since = surface.SinceCrest(x, z);
+        var arrival = SheetFront.Arrival(step.RunUp * share, slope, step.Distance);
         if (since < arrival || since >= arrival + window) return;
         var (head, lens) = step.At(share);
         if (head <= 0) return;

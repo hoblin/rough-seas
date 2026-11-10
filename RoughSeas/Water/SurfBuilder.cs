@@ -38,7 +38,7 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
             if (map[x, z].Kind == ShoreKind.Land) field.SetGroundTop(x, z, (float)(map.LevelAt(x, z) + WaterColumn.StillLevel + map[x, z].Elevation));
             else field.SetBreaking(x, z, waves.Breaking[i]);
 
-            field.SetSheet(x, z, (float)sheet.Distance, (float)sheet.RunUp, reached ? (float)sheet.Needed : depth[i] > 0 ? 0 : SurfField.Unreached);
+            field.SetSheet(x, z, (float)sheet.Distance, (float)sheet.RunUp, reached ? (float)sheet.Needed : depth[i] > 0 ? 0 : SurfField.Unreached, (float)sheet.Slope);
             for (var slot = 0; slot < waves.Lags.Length; slot++)
             {
                 var carried = near >= 0 && near != i;

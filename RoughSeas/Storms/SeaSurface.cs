@@ -241,13 +241,13 @@ public sealed class SeaSurface
         return (height, Seabed?.DepthAt(x, z) ?? double.PositiveInfinity, WaveHere(x, z, share).Breaks(height));
     }
 
-    /// <summary>The height of the wave whose sheet is on this land cell, and the height exceeded by 2% of the sea's waves.</summary>
-    public (double Height, double TwoPercent) SheetWaveAt(double x, double z)
+    /// <summary>The height of the wave whose sheet is on this land cell, as it stood <paramref name="secondsAgo"/> when its bore reached the shoreline, as <c>seasurface.vsh</c> reads it; and the height exceeded by 2% of the sea's waves.</summary>
+    public (double Height, double TwoPercent) SheetWaveAt(double x, double z, double secondsAgo)
     {
         double re = 0, im = 0, energy = 0;
         for (var slot = 0; slot < Trains.Slots; slot++)
         {
-            var theta = Trains.Phase(slot, x, z) + LagAt(slot, x, z);
+            var theta = Trains.Phase(slot, x, z) + LagAt(slot, x, z) + Trains.Frequency(slot) * secondsAgo;
             var amplitude = Trains.Amplitude(slot);
             re += amplitude * Math.Cos(theta);
             im += amplitude * Math.Sin(theta);

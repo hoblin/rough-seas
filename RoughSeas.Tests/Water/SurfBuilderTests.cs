@@ -76,6 +76,16 @@ public class SurfBuilderTests
     }
 
     [Fact]
+    public void OnAFlatBeachTheSheetsFrontStopsWithinTheLandItReaches()
+    {
+        var field = Beach(_ => 10);
+        var reach = field.RunUpOf(17, 16) / field.SheetSlopeOf(17, 16);
+
+        Assert.InRange(reach, 1, Size - 16);
+        Assert.Equal(field.SheetSlopeOf(17, 16), field.SheetSlopeOf(17, 17));
+    }
+
+    [Fact]
     public void AShoreBehindABarRunsUpLessThanAnOpenOne()
     {
         var open = Beach(_ => 10);

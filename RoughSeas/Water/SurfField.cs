@@ -34,7 +34,7 @@ public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, dou
 /// <item><c>seaLagA/B</c>: for each slot, the phase the bed has held the wave back by (<see cref="PhaseField"/>); over land, the lag at the shoreline the sheet comes from, carried to here. They hold for the wave vectors in <see cref="Numbers"/> alone.</item>
 /// <item><c>seaFace</c>: over water, the distance to the nearest face a wave meets, its outward normal along X and Z, and the share of a wave it sends back; the normal is half length where the crest stands higher than the face, which then doesn't foam. Over land the distance is <see cref="LandDistance"/>, so it interpolates to 0 on the face itself; <see cref="StepFootDistance"/> marks the foot of a step that stops a sheet.</item>
 /// <item><c>seaGainA/B</c>: for each slot, its height here over its height in deep water (<see cref="WaveEnergy"/>).</item>
-/// <item><c>seaSurf</c>: over water, the share of waves breaking, 0 over land; and everywhere the sea's height coming into the last breaking water, against the deep sea's, over land that of the shoreline nearest; and the depth that sets the waves' speed (<see cref="Water.TransformedWaves.CelerityDepth"/>), over land that of the shoreline nearest.</item>
+/// <item><c>seaSurf</c>: over water, the share of waves breaking, 0 over land; and everywhere the sea's height coming into the last breaking water, against the deep sea's, over land that of the shoreline nearest; and the depth that sets the waves' speed (<see cref="Water.TransformedWaves.CelerityDepth"/>), over land that of the shoreline nearest; over land, the slope its sheet's front climbs: the run-up of the shore it comes from over the farthest that run-up's sheet reaches.</item>
 /// </list>
 /// </summary>
 public sealed class SurfField(int originX, int originZ, int size, (double X, double Z)[] numbers)
@@ -137,14 +137,17 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public void SetCelerityDepth(int x, int z, float depth) => Put(surf, x, z, 2, depth);
 
-    public void SetSheet(int x, int z, float distance, float runUp, float needed)
+    public void SetSheet(int x, int z, float distance, float runUp, float needed, float slope)
     {
         Put(bed, x, z, 1, distance);
         Put(bed, x, z, 2, runUp);
         Put(bed, x, z, 3, needed);
+        Put(surf, x, z, 3, slope);
     }
 
     public float RunUpOf(int x, int z) => bed[Index(x, z) + 2];
+
+    public float SheetSlopeOf(int x, int z) => surf[Index(x, z) + 3];
 
     public void SetConductivity(int x, int z, float conductivity) => Put(aux, x, z, 0, conductivity);
 

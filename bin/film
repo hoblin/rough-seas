@@ -80,9 +80,10 @@ SCREENPLAY
                        {moved: NAME, by: BLOCKS}    NAME has moved that far since the scene began
                        {near: NAME, to: NAME, within: BLOCKS}
                        {afloat: NAME}               a vessel not sunk
+    seconds: 60        at least this long on camera, for a take to cut a loop from later
     timeout: 120       seconds until fails the scene
-  A scene lasts until its until holds, its camera has moved and its caption has been read. Nothing
-  waits a fixed pause.
+  A scene lasts until its until holds, its camera has moved, its caption has been read and its
+  seconds have passed.
 """
 import argparse
 import json
@@ -370,7 +371,8 @@ class Scene:
 
     def dwell(self):
         say = self.scene.get("say")
-        return max(len(say.split()) / WORDS_PER_SECOND, MINIMUM_DWELL_SECONDS) if say else 0
+        reading = max(len(say.split()) / WORDS_PER_SECOND, MINIMUM_DWELL_SECONDS) if say else 0
+        return max(reading, self.scene.get("seconds", 0))
 
     def play(self, still):
         began = time.monotonic()
@@ -382,7 +384,8 @@ class Scene:
         if keys:
             self.game.run("press", keys, "down")
         try:
-            self.wait(self.scene.get("until"), max(framed + seconds, began + self.dwell()), began + self.scene.get("timeout", DEFAULT_TIMEOUT))
+            earliest = max(framed + seconds, began + self.dwell())
+            self.wait(self.scene.get("until"), earliest, max(began + self.scene.get("timeout", DEFAULT_TIMEOUT), earliest + POLL_SECONDS))
             self.game.shot(still, recording=True)
         finally:
             if keys:

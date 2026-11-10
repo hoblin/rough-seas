@@ -14,9 +14,9 @@ A sailor reads the weather off the sea before any instrument: the height of the 
 - **Wreckage floats on it.** Planks and anything else that floats rise and fall with the waves.
 - **Rain and clouds follow the weather.** All rain comes from Rough Seas' weather: ordinary showers, more often and heavier where the climate is wet, and [storms](Storms), whose clouds darken from their edge and whose rain falls toward their heart. Where the weather is fair, no rain falls and no thunder rolls; white clouds may still drift by.
 
-| Surf on a flat sand beach in a gale | The sand it leaves wet |
+| A gale's breaker on a sand beach | The sand it leaves wet |
 | --- | --- |
-| ![Sheets of water running up a flat sand beach in a gale](images/sea/surf.webp) | ![Dark wet sand where the waves reach, pale dry sand beyond](images/sea/wet-sand.webp) |
+| ![A gale's wave curling over and breaking, its foam running up a sand beach between bushes and sliding back](images/sea/surf.webp) | ![Dark wet sand where the waves reach, pale dry sand beyond](images/sea/wet-sand.webp) |
 
 | Spray at the steps of a beach in a gale | A gale's sea breaking on a cliff |
 | --- | --- |
