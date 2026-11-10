@@ -4,6 +4,9 @@ namespace RoughSeas.Tests.Water;
 
 public class WaveTheoryTests
 {
+    [Fact]
+    public void AWaveOfNoPeriodRunsAtNoSpeed() => Assert.Equal(0, WaveTheory.Celerity(0, 5));
+
     private static double Number(double period) => WaveTheory.DeepNumber(period);
 
     [Fact]

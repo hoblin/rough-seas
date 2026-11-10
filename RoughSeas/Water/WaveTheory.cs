@@ -27,7 +27,7 @@ public static class WaveTheory
     public static double Wavenumber(double deepNumber, double depth) =>
         depth <= 0 ? double.PositiveInfinity : deepNumber / Math.Sqrt(Math.Tanh(deepNumber * depth));
 
-    public static double Celerity(double period, double depth) => FullTurn / period / Wavenumber(DeepNumber(period), depth);
+    public static double Celerity(double period, double depth) => period > 0 ? FullTurn / period / Wavenumber(DeepNumber(period), depth) : 0;
 
     public static double GroupSpeed(double deepNumber, double depth)
     {
