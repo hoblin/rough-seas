@@ -87,6 +87,14 @@ public class SheetFrontTests
     }
 
     [Fact]
+    public void AHigherRunUpNeverThrowsAWeakerSheetUpAShoreThatEndsBelowIt()
+    {
+        var profile = Slope(0.05, 20);
+        var heads = new[] { 0.5, 0.9, 1.0, 1.1, 1.5, 3 }.Select(runUp => SheetFront.Thrown(runUp, 9, ShoreFixtures.Config.Sheet, profile, ShoreFixtures.Bed("soil")).Head).ToArray();
+        for (var i = 1; i < heads.Length; i++) Assert.True(heads[i] >= heads[i - 1] - 0.01, $"{heads[i]} after {heads[i - 1]}");
+    }
+
+    [Fact]
     public void AShoreThatNeverRisesToTheRunUpKeepsTheFreeThrow() =>
         Assert.Equal(Thrown(1.5).Head, SheetFront.Thrown(1.5, 9, ShoreFixtures.Config.Sheet, new double[48], ShoreFixtures.Bed("sand")).Head, 6);
 

@@ -23,14 +23,16 @@ public readonly record struct SheetFront(double SpeedSquared, double Metres, dou
 
     /// <summary>
     /// A front thrown up this <paramref name="profile"/> so that, losing speed to friction and soak on the way, it climbs to <paramref name="runUpMetres"/>: the measured run-up
-    /// is where a real sheet stops with its friction spent. A shore that never rises so high keeps the free throw.
+    /// is where a real sheet stops with its friction spent. The climb is to the foot of the highest tread it reaches, so a flat tread asks for no more speed, and a shore that ends lower than the run-up is climbed to its top.
     /// </summary>
     public static SheetFront Thrown(double runUpMetres, double periodSeconds, SheetConfig config, IReadOnlyList<double> profile, BedConfig bed)
     {
         var free = Thrown(runUpMetres, periodSeconds, config);
         var highest = -1;
         for (var i = 0; i < profile.Count && profile[i] <= runUpMetres; i++) highest = i;
-        if (highest < 0 || highest == profile.Count - 1 || Climbs(free, profile, bed, highest)) return free;
+        if (highest < 0) return free;
+        while (highest > 0 && profile[highest - 1] >= profile[highest]) highest--;
+        if (Climbs(free, profile, bed, highest)) return free;
 
         double low = 1, high = LargestSpeedShare;
         if (!Climbs(Faster(free, high), profile, bed, highest)) return free;
