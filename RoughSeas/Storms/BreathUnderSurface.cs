@@ -54,6 +54,7 @@ public static class BreathUnderSurface
         verdicts.Remove(player.PlayerUID);
     }
 
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorBreathe", "Check", "gives creative and spectator players air before it looks at the eye, and leaves its answer in HasAir")]
     private static void Check(EntityBehaviorBreathe __instance)
     {
         // in a single player game the client's Check runs through here too

@@ -32,6 +32,7 @@ public static class HullLabel
     private static readonly System.Func<EntityBehaviorSelectionBoxes, int> HitIndex =
         AccessTools.MethodDelegate<System.Func<EntityBehaviorSelectionBoxes, int>>(AccessTools.Method(typeof(EntityBehaviorSelectionBoxes), "getHitIndex"));
 
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorSelectionBoxes", "getHitIndex", "returns an index into selectionBoxes, the box under the cursor")]
     private static bool Omit(EntityBehaviorSelectionBoxes __instance)
     {
         if (__instance.entity.GetBehavior<EntityBehaviorVesselIntegrity>() == null) return true;

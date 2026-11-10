@@ -12,6 +12,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Storms;
 
+[ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "loadModelMatrix", "has built ModelMat when this postfix adds to its translation")]
 public static class VesselMotion
 {
     private const string HarmonyId = "roughseas.storms.motion";
@@ -55,6 +56,7 @@ public static class VesselMotion
         (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
     }
 
+    [ReliesOn("Vintagestory.GameContent.EntityBoat", "OnRenderFrame", "has just set xangle from mountAngle.X and zangle from mountAngle.Z, and returns early while paused")]
     private static void Respond(EntityBoat __instance)
     {
         if (__instance.Api is ICoreClientAPI { IsGamePaused: true }) return;

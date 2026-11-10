@@ -19,6 +19,7 @@ public class ItemVessel : ItemBoat
 
     public override string GetHeldItemName(ItemStack itemStack) => Wood.NameOf(this) ?? Reeds.NameOf(Code, Variant, "item") ?? base.GetHeldItemName(itemStack);
 
+    [ReliesOn("Vintagestory.GameContent.ItemBoat", "OnHeldInteractStart", "takes the stack and spawns the entity by the item's own code, never asking the collectible's behaviours")]
     public override void OnHeldInteractStart(ItemSlot slot, EntityAgent byEntity, BlockSelection blockSel, EntitySelection entitySel, bool firstEvent, ref EnumHandHandling handHandling)
     {
         placing = slot.Itemstack?.Clone();

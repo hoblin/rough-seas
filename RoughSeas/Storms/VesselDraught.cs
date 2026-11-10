@@ -14,6 +14,8 @@ namespace RoughSeas.Storms;
 /// down: its water drag, swim drag, a flowing block's push and other entities' repulsion keep their effect along the water
 /// and lose it on her heave.
 /// </summary>
+[ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "MotionAndCollision", "buoyancy, the flow push, the swim drag and the immersion formula copied here as constants")]
+[ReliesOn("Vintagestory.GameContent.EntityBehaviorRepulseAgents", "OnGameTick", "pushes Pos.Motion Y, which this class puts back")]
 public static class VesselDraught
 {
     private const string HarmonyId = "roughseas.storms.draught";

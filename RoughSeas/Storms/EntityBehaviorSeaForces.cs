@@ -262,9 +262,9 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     private int ThrowRiders() => Seats.Count(seat => seat.Passenger is EntityAgent rider && Overboard(seat, rider));
 
+    [ReliesOn("Vintagestory.API.Common.EntityPlayer", "OnReceivedServerPacket", "a teleport on dismount reaches a client still seated, and moves the vessel")]
     private static bool Overboard(IMountableSeat seat, EntityAgent rider)
     {
-        // Vanilla's dismount relocation reaches a client still seated, and there it moves the vessel instead.
         seat.DoTeleportOnUnmount = false;
         bool thrown = rider.TryUnmount();
         seat.DoTeleportOnUnmount = true;

@@ -6,6 +6,7 @@ using Vintagestory.Client.NoObf;
 
 namespace RoughSeas.SeaAndWeather;
 
+[ReliesOn("Vintagestory.Client.NoObf.HudElementCoordinates", "Every250ms", "rewrites the dynamic text keyed text on each call")]
 public static class WindOnCoordinates
 {
     private const string HarmonyId = "roughseas.seaandweather.coordinates";

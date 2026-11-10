@@ -30,6 +30,7 @@ public static class StartingLongPiles
         harmony = null;
     }
 
+    [ReliesOn("Vintagestory.GameContent.BlockGroundStorage", "CreateStorage", "every new pile starts here, and it asks the held item's behaviours nothing")]
     private static bool Before(BlockSelection blockSel, IPlayer player, ref bool __result)
     {
         if (Pile(player) is not { } pile || pile.MayStart(player.Entity, blockSel)) return true;

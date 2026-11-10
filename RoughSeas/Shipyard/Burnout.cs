@@ -14,6 +14,7 @@ namespace RoughSeas.Shipyard;
 /// burning with the rim unguarded chars the rim too, and once that char reaches through the wall the blank is
 /// spoiled. Its state lives in the vessel's watched <c>roughseas:build</c> tree; a vessel with none is finished.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.BlockEntityClayForm", "PutClay", "one ball of clay gives 25 voxels, the count copied here")]
 public sealed class Burnout
 {
     /// <summary>The voxels one ball of clay covers, as vanilla's <c>BEClayForm.PutClay</c> gives them.</summary>

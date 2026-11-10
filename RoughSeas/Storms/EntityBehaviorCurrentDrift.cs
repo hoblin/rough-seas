@@ -113,6 +113,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         LogSwing(w, drag, deltaTime);
     }
 
+    [ReliesOn("Vintagestory.GameContent.EntityBoat", "OnGameTick", "runs updateBoatAngleAndMotion before base.OnGameTick, so this behaviour's add to the motion survives it")]
     public override void OnGameTick(float deltaTime)
     {
         if (!entity.Alive) return;

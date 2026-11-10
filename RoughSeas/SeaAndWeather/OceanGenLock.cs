@@ -11,6 +11,7 @@ namespace RoughSeas.SeaAndWeather;
 /// can't corrupt the world's generation. The patch sits on the layer's type and locks only the world's instance; it is
 /// the outermost patch, so the lock holds around whatever else runs.
 /// </summary>
+[ReliesOn("Vintagestory.ServerMods.GenMaps", "OnMapRegionGen", "vanilla's chunk thread asks the ocean layer unlocked")]
 public static class OceanGenLock
 {
     private const string HarmonyId = "roughseas.seaandweather.oceangen";
@@ -19,6 +20,7 @@ public static class OceanGenLock
     private static Harmony? harmony;
     private static MapLayerBase? locked;
 
+    [ReachedAtRuntime]
     public static void Attach(MapLayerBase layer)
     {
         lock (patchLock)

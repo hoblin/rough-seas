@@ -11,6 +11,9 @@ namespace RoughSeas.Storms;
 /// so every save rewound it), and never hands out an id a loaded rope holds. A world saved without our key had its
 /// counter rewound at every save, so its ropes hold small ids, some in regions not loaded yet: it starts past them.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.ClothManager", "Event_GameWorldSave", "the rope id counter's save and load are swapped, the bug these prefixes replace")]
+[ReliesOn("Vintagestory.GameContent.ClothManager", "Event_SaveGameLoaded", "the rope id counter's save and load are swapped, the bug these prefixes replace")]
+[ReliesOn("Vintagestory.GameContent.ClothManager", "RegisterCloth", "takes a new rope's id from nextClothId and stores it in clothSystems by that id")]
 public static class RopeIds
 {
     private const string HarmonyId = "roughseas.storms.ropeids";

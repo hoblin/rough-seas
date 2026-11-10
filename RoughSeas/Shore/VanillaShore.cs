@@ -53,6 +53,7 @@ public static class VanillaShore
         harmony = null;
     }
 
+    [ReliesOn("Vintagestory.Server.ServerSystemBlockSimulation", "OnServerTick", "a tick with an extra goes to the block in the default layer, a tick without one to the fluid")]
     private static bool TickSolid(IWorldAccessor world, BlockPos pos, Random offThreadRandom, out object? extra, ref bool __result)
     {
         extra = null;
@@ -81,6 +82,9 @@ public static class VanillaShore
         onBlock = (fluid, pos) => found(fluid.Id != 0 && OpenWater.Land(blocks, pos) ? blocks.GetBlock(0) : fluid, pos);
     }
 
+    [ReliesOn("Vintagestory.GameContent.EntityBobber", "getPondSize", "reads the fluid layer through IBlockAccessor.GetBlock or GetBlockRaw, the calls this transpiler swaps")]
+    [ReliesOn("Vintagestory.Essentials.AStar", "traversable", "reads the fluid layer through IBlockAccessor.GetBlock or GetBlockRaw, the calls this transpiler swaps")]
+    [ReliesOn("Vintagestory.GameContent.AiTaskWander", "loadNextWanderTarget", "reads the fluid layer through IBlockAccessor.GetBlock or GetBlockRaw, the calls this transpiler swaps")]
     private static IEnumerable<CodeInstruction> ReadOpenWater(IEnumerable<CodeInstruction> instructions, MethodBase original)
     {
         var reads = new Dictionary<MethodInfo, MethodInfo>

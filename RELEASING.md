@@ -2,12 +2,12 @@
 
 Versions are our own: 1.0, 1.1, 1.2 for features, a third part only for a bug fix (1.0.1). Planned releases are GitHub milestones with a name and no number ("Seamanship"); a release gets its version when it ships, by what it brings. A breaking change to what the wiki's pages for modders document takes a new major version. The mod DB accepts only three parts, so `modinfo.json` and the tag carry them: 1.0 is `1.0.0`, tagged `v1.0.0`.
 
-The game version the mod supports lives in one place, `dependencies.game` in `RoughSeas/modinfo.json`. CI builds and tests against that server build, and the mod DB ticks the compatible game versions from it.
+The mod is built against the current game, `GAME` in `mise.toml`; CI builds and tests against that server build. The oldest game it runs on is `dependencies.game` in `RoughSeas/modinfo.json`; `bin/compat` guards it, and the mod DB ticks the compatible game versions from it.
 
 ## Steps
 
 1. Play the release build first, in a QA session: `docs/qa.md`.
-2. In a pull request, set `version` (and `dependencies.game`, when the game moved) in `RoughSeas/modinfo.json`. In the same pull request, check the handbook guide and the wiki (`docs/wiki/`) against what ships, and move what this release brings from the wiki's roadmap into its own section there. Write the changelog as `docs/release/changelog-<version>.html`, and bring the mod page, `docs/release/moddb-page.html`, in line with the release. Both are HTML for the mod DB's editor, which strips scripts, forms and video tags, keeps YouTube embeds and takes about 64 KB; the page stays short and links the wiki for depth. Merge it.
+2. In a pull request, set `version` in `RoughSeas/modinfo.json` (and `GAME` in `mise.toml`, when the game moved). In the same pull request, check the handbook guide and the wiki (`docs/wiki/`) against what ships, and move what this release brings from the wiki's roadmap into its own section there. Write the changelog as `docs/release/changelog-<version>.html`, and bring the mod page, `docs/release/moddb-page.html`, in line with the release. Both are HTML for the mod DB's editor, which strips scripts, forms and video tags, keeps YouTube embeds and takes about 64 KB; the page stays short and links the wiki for depth. Merge it.
 3. Tag the merge commit and push the tag:
    ```sh
    git switch main && git pull

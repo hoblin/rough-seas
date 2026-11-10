@@ -6,6 +6,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Propulsion;
 
+[ReliesOn("Vintagestory.GameContent.EntityBoat", "SeatsToMotion", "returns the motion target that updateBoatAngleAndMotion eases ForwardSpeed toward")]
 public static class Rowing
 {
     private const string HarmonyId = "roughseas.propulsion.rowing";

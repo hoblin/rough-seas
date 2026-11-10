@@ -28,6 +28,7 @@ public static class BindingPiles
         harmony = null;
     }
 
+    [ReliesOn("Vintagestory.GameContent.BlockEntityGroundStorage", "OnPlayerInteractStart", "a ground pile takes a click before the held item, with a ground-storable item in hand")]
     private static bool Before(BlockEntityGroundStorage __instance, IPlayer player, ref bool __result)
     {
         if (LathPile.At(__instance.Api.World, __instance.Pos)?.WorkWith(player.InventoryManager.ActiveHotbarSlot) == null) return true;

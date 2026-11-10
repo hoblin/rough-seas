@@ -9,6 +9,7 @@ namespace RoughSeas.Vessels;
 /// Keeps a steered vessel's interpolated position where her steersman's client moves her: while it steers, the server sends
 /// it none of hers, and the frames after it lets go are drawn from that position.
 /// </summary>
+[ReliesOn("EntityBehaviorInterpolatePosition", "OnRenderFrame", "replays its last snapshot on the first frame without a controller")]
 public static class Disembarking
 {
     private const string HarmonyId = "roughseas.vessels.disembarking";

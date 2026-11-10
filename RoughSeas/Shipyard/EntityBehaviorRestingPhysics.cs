@@ -7,6 +7,7 @@ public class EntityBehaviorRestingPhysics(Entity entity) : EntityBehaviorPassive
 {
     public const string Code = "roughseas:restingphysics";
 
+    [ReliesOn("Vintagestory.API.MathTools.CollisionTester", "ApplyTerrainCollision", "computes the new position from motion, so motion is zeroed before calling base")]
     protected override void applyCollision(EntityPos pos, float dtFactor)
     {
         if (entity.OnGround)

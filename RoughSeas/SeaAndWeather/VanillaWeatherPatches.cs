@@ -80,6 +80,7 @@ public static class VanillaWeatherPatches
 
     private static SeaWeatherSystem? On(EnumAppSide side) => systems.GetValueOrDefault(side);
 
+    [ReliesOn("Vintagestory.GameContent.WeatherSimulationRegion", "RandomWeatherEvent", "the roll reads ClimateCondition.WorldgenRainfall and picks by WeatherEvent.config.Weight, the two loads this transpiler rewrites")]
     private static IEnumerable<CodeInstruction> CurrentConditions(IEnumerable<CodeInstruction> instructions)
     {
         var original = instructions.ToList();
@@ -106,12 +107,16 @@ public static class VanillaWeatherPatches
     private static void PrecipitationAt(BlockPos pos, double totalDays, ref float __result, WeatherSystemBase __instance) =>
         Rain(pos.X + 0.5, pos.Z + 0.5, totalDays, ref __result, __instance);
 
+    [ReliesOn("Vintagestory.GameContent.WeatherSystemBase", "GetPrecipitation", "rain falling is max(0, rain cloudness - 0.5)")]
+    [ReliesOn("Vintagestory.GameContent.WeatherSystemBase", "GetRainCloudness", "OverridePrecipitation comes first")]
     private static void Rain(double x, double z, double totalDays, ref float result, WeatherSystemBase weather)
     {
         if (weather.OverridePrecipitation != null || On(weather.api.Side)?.Source.RainCloudness(x, z, totalDays) is not { } cloudness) return;
         result = Math.Max(0, cloudness - 0.5f);
     }
 
+    [ReliesOn("Vintagestory.GameContent.WeatherDataReaderBase", "LoadLerp", "with useArgValues copies its arguments into lerpRainOverlay and lerpRainCloudOverlay")]
+    [ReliesOn("Vintagestory.GameContent.CloudRenderer", "UpdateCloudTilesOffThread", "recomputes a tile's rain one pass in 11 and otherwise passes the cached values")]
     private static void UnloadedRainCloudness(Vec3d pos, bool useArgValues, float lerpRainCloudOverlay, float lerpRainOverlay,
         WeatherDataReaderBase __instance, WeatherSystemBase ___ws, IMapRegion ___hereMapRegion)
     {
@@ -135,7 +140,7 @@ public static class VanillaWeatherPatches
         stormPresence.GetOrCreateValue(__instance).Value = presence;
     }
 
-    // Patched on the protected getter: the renderers' calls to its public one-line wrapper are inlined past any patch.
+    [ReliesOn("Vintagestory.GameContent.WeatherDataReaderBase", "pgetBlendedCloudBrightness", "holds the brightness itself; its public wrapper is inlined past any patch")]
     private static void StormCloudBrightness(ref double __result, WeatherDataReaderBase __instance)
     {
         var sea = On(EnumAppSide.Client);
@@ -143,11 +148,12 @@ public static class VanillaWeatherPatches
         __result = CloudBrightness(__result, presence.Value, sea.Config.Vanilla);
     }
 
-    // These vanilla readers take the wind's X alone as its strength; our wind may blow along Z.
+    [ReliesOn("Vintagestory.API.Client.DefaultShaderUniforms", "Update", "reads CurrentSurfaceWindSpeedClient.X alone as the wind's strength")]
     private static void SurfaceWindStrength(out float __state) => __state = Magnitude(GlobalConstants.CurrentSurfaceWindSpeedClient);
 
     private static void SurfaceWindRestore(float __state) => GlobalConstants.CurrentSurfaceWindSpeedClient.X = __state;
 
+    [ReliesOn("Vintagestory.GameContent.EntityBoat", "OnRenderFrame", "reads CurrentWindSpeedClient.X alone for the boat's roll")]
     private static void WindStrength(out float __state) => __state = Magnitude(GlobalConstants.CurrentWindSpeedClient);
 
     private static void WindRestore(float __state) => GlobalConstants.CurrentWindSpeedClient.X = __state;
@@ -159,6 +165,8 @@ public static class VanillaWeatherPatches
         return x;
     }
 
+    [ReliesOn("Vintagestory.GameContent.CloudRenderer", "CloudTick", "eases cloudSpeedX and cloudSpeedZ toward random targets, which this postfix overwrites")]
+    [ReliesOn("FluffyClouds.CloudRendererMap", "CloudTick", "eases cloudSpeedX and cloudSpeedZ toward random targets, which this postfix overwrites")]
     private static void CloudDrift(ICoreClientAPI ___capi, ref float ___cloudSpeedX, ref float ___cloudSpeedZ)
     {
         var sea = On(EnumAppSide.Client);

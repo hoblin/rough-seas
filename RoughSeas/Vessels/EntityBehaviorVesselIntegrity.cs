@@ -445,6 +445,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     }
 
     /// <summary>Vanilla's shift pickup, server only, with the hull's condition carried on the item.</summary>
+    [ReliesOn("Vintagestory.GameContent.EntityBoat", "tryPickup", "the pickup this method reimplements, guard and audit line included")]
     public bool TryPickUp(EntityAgent byEntity)
     {
         if (!byEntity.Controls.ShiftKey || entity.Properties.Attributes?["rightClickPickup"].AsBool() != true) return false;
@@ -595,6 +596,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
         return here;
     }
 
+    [ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "ApplyTests", "calls the watcher with accum 0 on each fixed step")]
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "OnRenderFrame", "calls the mount's watcher once more after its loop with what is left of the frame")]
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
     {
         // Physics steps pass 0; the rider's frame-end call carries motion EntityBoat rewrote, never a collision. See docs/modding.md.
