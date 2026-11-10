@@ -10,7 +10,11 @@ internal sealed class GameRelease : IDisposable
     private static readonly string[] AssemblyFolders = ["", "Mods", "Lib"];
     private static readonly string[] ContentAssemblies = ["VintagestoryAPI", "VintagestoryLib", "VSEssentials", "VSSurvivalMod", "VSCreativeMod"];
 
+    private const string AssetListName = "asset-files.txt";
+    private const string ArchiveRoot = "vintagestory/";
+
     private readonly DefaultAssemblyResolver resolver = new();
+    private string[]? assetFiles;
 
     public GameRelease(string version, string directory)
     {
@@ -28,7 +32,7 @@ internal sealed class GameRelease : IDisposable
     public IAssemblyResolver Resolver => resolver;
 
     public string RuntimeFramework =>
-        (string)JObject.Parse(File.ReadAllText(Path.Combine(Directory, "VintagestoryServer.runtimeconfig.json")))["runtimeOptions"]!["tfm"]!;
+        (string)JObject.Parse(File.ReadAllText(Path.Combine(Directory, "Vintagestory.runtimeconfig.json")))["runtimeOptions"]!["tfm"]!;
 
     public bool Ships(string assemblyName) =>
         AssemblyFolders.Any(folder => File.Exists(Path.Combine(Directory, folder, assemblyName + ".dll")));
@@ -43,6 +47,8 @@ internal sealed class GameRelease : IDisposable
         return null;
     }
 
+    public IReadOnlyList<string> AssetFiles => assetFiles ??= File.ReadAllLines(Path.Combine(Directory, AssetListName));
+
     public string? FindAsset(string path) =>
         new[] { "survival", "creative", "game" }
             .Select(origin => Path.Combine(Directory, "assets", origin, path))
@@ -51,7 +57,11 @@ internal sealed class GameRelease : IDisposable
     public static async Task<GameRelease> Fetch(string version)
     {
         var directory = Path.Combine(CacheRoot, "releases", version);
-        if (!System.IO.Directory.Exists(directory)) await Download(version, directory);
+        if (!File.Exists(Path.Combine(directory, AssetListName)))
+        {
+            if (System.IO.Directory.Exists(directory)) System.IO.Directory.Delete(directory, recursive: true);
+            await Download(version, directory);
+        }
         return new GameRelease(version, directory);
     }
 
@@ -66,20 +76,32 @@ internal sealed class GameRelease : IDisposable
         if (System.IO.Directory.Exists(partial)) System.IO.Directory.Delete(partial, recursive: true);
 
         using var http = new HttpClient();
-        await using var download = await http.GetStreamAsync($"https://cdn.vintagestory.at/gamefiles/stable/vs_server_linux-x64_{version}.tar.gz");
+        await using var download = await http.GetStreamAsync($"https://cdn.vintagestory.at/gamefiles/stable/vs_client_linux-x64_{version}.tar.gz");
         await using var unzipped = new GZipStream(download, CompressionMode.Decompress);
         await using var tar = new TarReader(unzipped);
 
+        var assets = new List<string>();
         while (await tar.GetNextEntryAsync() is { } entry)
         {
-            if (entry.EntryType != TarEntryType.RegularFile || !IsNeeded(entry.Name)) continue;
-            var target = Path.Combine(partial, entry.Name.TrimStart('.', '/'));
+            if (entry.EntryType != TarEntryType.RegularFile) continue;
+            var name = entry.Name.TrimStart('.', '/');
+            if (name.StartsWith(ArchiveRoot)) name = name[ArchiveRoot.Length..];
+            if (AssetPath(name) is { } asset) assets.Add(asset);
+            if (!IsNeeded(name)) continue;
+            var target = Path.Combine(partial, name);
             System.IO.Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             await entry.ExtractToFileAsync(target, overwrite: true);
         }
 
+        await File.WriteAllLinesAsync(Path.Combine(partial, AssetListName), assets);
         System.IO.Directory.Move(partial, directory);
     }
 
-    private static bool IsNeeded(string entry) => entry.EndsWith(".dll") || entry.EndsWith(".json");
+    private static string? AssetPath(string entry)
+    {
+        var parts = entry.Split('/', 3);
+        return parts.Length == 3 && parts[0] == "assets" ? parts[2] : null;
+    }
+
+    private static bool IsNeeded(string entry) => entry.EndsWith(".dll") || entry.EndsWith(".json") || entry.EndsWith(".vsh") || entry.EndsWith(".fsh");
 }

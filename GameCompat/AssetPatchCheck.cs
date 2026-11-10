@@ -3,14 +3,19 @@ using Newtonsoft.Json.Linq;
 
 namespace GameCompat;
 
-internal sealed class AssetPatchCheck(GameRelease release, string repository)
+internal sealed record AssetPatchResult(IReadOnlyList<string> Reasons, IReadOnlyList<BehaviourChange> Changes);
+
+internal sealed class AssetPatchCheck(GameRelease release, GameRelease current, string repository)
 {
     private const string GameDomain = "game:";
 
-    public IEnumerable<string> Run()
+    public AssetPatchResult Run()
     {
-        var patched = new Dictionary<string, JToken?>();
+        var reasons = new List<string>();
+        var changes = new List<BehaviourChange>();
+        var patched = new Dictionary<string, (JToken? Document, JToken? Baseline)>();
         var folder = Path.Combine(repository, "RoughSeas", "assets", "roughseas", "patches");
+
         foreach (var file in Directory.GetFiles(folder, "*.json", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
         {
             var name = Path.GetFileName(file);
@@ -18,24 +23,44 @@ internal sealed class AssetPatchCheck(GameRelease release, string repository)
             {
                 var target = (string)operation["file"]!;
                 var path = (string)operation["path"]!;
+                var kind = (string)operation["op"]!;
                 if (!target.StartsWith(GameDomain)) continue;
 
-                if (!patched.TryGetValue(target, out var document))
+                if (!patched.TryGetValue(target, out var documents))
                 {
-                    var asset = release.FindAsset(WithExtension(target[GameDomain.Length..]));
-                    document = asset == null ? null : Parse(File.ReadAllText(asset));
-                    patched[target] = document;
+                    var asset = WithExtension(target[GameDomain.Length..]);
+                    documents = (Load(release, asset), Load(current, asset));
+                    patched[target] = documents;
                 }
 
-                if (document == null) yield return $"{name}: {target} is missing";
-                else if (Apply(document, (string)operation["op"]!, path, operation["value"]) is { } reason) yield return $"{name}: {target} {path}: {reason}";
+                if (documents.Document == null)
+                {
+                    reasons.Add($"{name}: {target} is missing");
+                    continue;
+                }
+
+                if (documents.Baseline != null && release.Version != current.Version)
+                {
+                    var (seen, expected) = (At(documents.Document, path), At(documents.Baseline, path));
+                    if (seen != expected) changes.Add(Changed(name, target, path, kind, expected, seen));
+                    Apply(documents.Baseline, kind, path, operation["value"]);
+                }
+
+                if (Apply(documents.Document, kind, path, operation["value"]) is { } reason) reasons.Add($"{name}: {target} {path}: {reason}");
             }
         }
+        return new AssetPatchResult(reasons, changes);
+    }
+
+    internal static JToken Parse(string json)
+    {
+        using var reader = new JsonTextReader(new StringReader(json));
+        return JToken.Load(reader, new JsonLoadSettings { CommentHandling = CommentHandling.Ignore });
     }
 
     internal static string? Apply(JToken document, string operation, string path, JToken? value)
     {
-        var keys = path.TrimStart('/').Split('/').Select(key => key.Replace("~1", "/").Replace("~0", "~")).ToArray();
+        var keys = Keys(path);
         var parent = document;
         foreach (var key in keys[..^1])
         {
@@ -55,11 +80,26 @@ internal sealed class AssetPatchCheck(GameRelease release, string repository)
         };
     }
 
-    private static JToken Parse(string json)
+    internal static string At(JToken document, string path)
     {
-        using var reader = new JsonTextReader(new StringReader(json));
-        return JToken.Load(reader, new JsonLoadSettings { CommentHandling = CommentHandling.Ignore });
+        var seen = new List<string>();
+        var node = document;
+        var keys = Keys(path);
+        for (var index = 0; index < keys.Length && node != null; index++)
+        {
+            node = Child(node, keys[index]);
+            if (node != null && (index == keys.Length - 1 || int.TryParse(keys[index], out _))) seen.Add(node.ToString(Formatting.Indented));
+        }
+        return string.Join("\n", seen);
     }
+
+    private static BehaviourChange Changed(string name, string target, string path, string kind, string expected, string seen) =>
+        new(new Reliance(target, path, $"{name} does {kind} at this path", name), BehaviourCheck.Stamp([expected], [seen]), MethodSource.TextDiff(seen, expected));
+
+    private static JToken? Load(GameRelease from, string asset) =>
+        from.FindAsset(asset) is { } path ? Parse(File.ReadAllText(path)) : null;
+
+    private static string[] Keys(string path) => path.TrimStart('/').Split('/').Select(key => key.Replace("~1", "/").Replace("~0", "~")).ToArray();
 
     private static string WithExtension(string path) => path.EndsWith(".json") ? path : path + ".json";
 

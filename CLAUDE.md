@@ -51,7 +51,7 @@ All of it is scoped to this repository. [CONTRIBUTING.md](CONTRIBUTING.md) cover
 
 We always design and build against the latest game version, `GAME` in `mise.toml`. The oldest supported version is `dependencies.game` in `RoughSeas/modinfo.json`, and the only check against it is `bin/compat` in CI. When that check fails, the pull request raises the floor, in `modinfo.json`, to the lowest version where everything passes (`bin/compat walk`), without asking, and never changes our logic to fit an older version.
 
-Code that depends on how a vanilla method behaves, not just on it existing, says so next to itself with `[ReliesOn]`. When vanilla's method differs in a checked version, `bin/compat` lists its C# diff beside that sentence. Read it: if what we rely on still holds, record it in `GameCompat/read-changes.txt`; if not, raise the floor. A record stands until `GAME` moves. `[ReliesOn]` names the method that holds the behaviour, since only that method's own body is compared.
+Code that depends on how a vanilla method behaves, not just on it existing, says so next to itself with `[ReliesOn]`. When vanilla's method differs in a checked version, `bin/compat` lists its C# diff beside that sentence. Read it: if what we rely on still holds, record it in `GameCompat/read-changes.txt`; if not, raise the floor. A record stands until `GAME` moves. `[ReliesOn]` names the method that holds the behaviour, since only that method's own body is compared. Code that matches text in a vanilla asset, a shader anchor for one, declares it with `[ReliesOnText]`.
 
 ## References
 

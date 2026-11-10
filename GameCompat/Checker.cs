@@ -37,7 +37,10 @@ internal sealed class Checker
         report.Add("Build", build.Errors);
         report.Add("References", ReferenceCheck.Run(mod, release));
         report.Add("Harmony and reflection", new ReachCheck(release).Run(reach));
-        report.Add("Asset patches", new AssetPatchCheck(release, repository).Run());
+        var patches = new AssetPatchCheck(release, current, repository).Run();
+        report.Add("Asset patches", patches.Reasons);
+        report.Add("Text anchors", TextAnchorCheck.Run(mod, release));
+        report.Add("Game references", new GameReferenceCheck(release, repository).Run(mod));
 
         if (version == current.Version)
         {
@@ -46,20 +49,19 @@ internal sealed class Checker
         }
         else if (report.NoHardFailures)
         {
-            report.ToRead = await Unread(reliances, release);
+            var read = ReadChanges.Load(repository);
+            bool Unread(BehaviourChange change) => !read.Holds(version, change);
+            report.ToRead = (await WithSource(BehaviourCheck.Changes(reliances, current, release).Where(Unread).ToList(), release)).Concat(patches.Changes.Where(Unread)).ToList();
         }
 
         return report;
     }
 
-    private async Task<IReadOnlyList<BehaviourChange>> Unread(IReadOnlyList<Reliance> reliances, GameRelease release)
+    private async Task<IReadOnlyList<BehaviourChange>> WithSource(IReadOnlyList<BehaviourChange> changes, GameRelease release)
     {
-        var read = ReadChanges.Load(repository);
-        var unread = BehaviourCheck.Changes(reliances, current, release).Where(change => !read.Holds(release.Version, change)).ToList();
-        if (unread.Count == 0) return [];
-
+        if (changes.Count == 0) return [];
         var (from, to) = (await Decompiler.Run(release.Version), await Decompiler.Run(current.Version));
-        return unread.Select(change => change with { SourceDiff = MethodSource.Diff(change.Reliance, from, to) }).ToList();
+        return changes.Select(change => change with { SourceDiff = MethodSource.Diff(change.Reliance, from, to) }).ToList();
     }
 
     private static IEnumerable<string> RuntimeReason(ModuleDefinition mod, GameRelease release)

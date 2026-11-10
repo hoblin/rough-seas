@@ -9,13 +9,15 @@ const string Usage = """
     bin/compat decompile <v>     C# of that version's game, into the cache
     bin/compat help              this text
 
-    Answers "compatible" or lists the reasons, with no game running, from each version's server release
+    Answers "compatible" or lists the reasons, with no game running, from each version's client release
     (downloaded once into ~/.cache/rough-seas-compat):
       Runtime                 the game's .NET can run the mod
       Build                   the source compiles against that version
       References              every game type and member the shipped build names exists there
       Harmony and reflection  every patch target and reflected member exists, with the signature we patch
       Asset patches           every JSON patch's file and path exist
+      Text anchors            every [ReliesOnText] anchor is in its vanilla asset
+      Game references         every game: code and path in our JSON and C# strings exists
 
     Needs reading: what no tool can decide. A [ReliesOn] method whose instructions differ from the current
     game's beyond how locals are numbered is listed with the C# diff of that method, beside the sentence
@@ -25,6 +27,7 @@ const string Usage = """
     until GAME moves. If it doesn't hold, the version is not compatible: raise the floor.
 
     A patch target that may be absent is the same: the patch doesn't apply there, and that needs reading.
+    So is a JSON patch whose path holds something else than in the current game.
 
     A check exits 1 unless every checked version is compatible. A walk reports and exits 0.
     """;

@@ -115,10 +115,10 @@ internal static class BehaviourCheck
         _ => (instruction.Operand as VariableDefinition)?.Index,
     };
 
-    private static string Stamp(IEnumerable<string> baseline, IEnumerable<string> candidate) =>
+    internal static string Stamp(IEnumerable<string> baseline, IEnumerable<string> candidate) =>
         Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join("\n", baseline) + "\0" + string.Join("\n", candidate))))[..12];
 
-    private static IEnumerable<IMemberDefinition> Members(TypeDefinition type) =>
+    internal static IEnumerable<IMemberDefinition> Members(TypeDefinition type) =>
         new ICustomAttributeProvider[] { type }.Concat(type.Methods).Concat(type.Fields).Concat(type.Properties).OfType<IMemberDefinition>();
 
     private static Reliance ToReliance(CustomAttribute attribute, string where)

@@ -67,6 +67,47 @@ public class CompatibilityTests
     }
 
     [Fact]
+    public void WhatSitsAtAPathIsSeen() =>
+        Assert.NotEqual(AssetPatchCheck.At(JToken.Parse("""{ "seats": [{ "a": 1 }, { "b": 2 }] }"""), "/seats/0/selectionBox"),
+            AssetPatchCheck.At(JToken.Parse("""{ "seats": [{ "b": 2 }, { "a": 1 }] }"""), "/seats/0/selectionBox"));
+
+    [Fact]
+    public void AnAppendSeesNothingToCompare() =>
+        Assert.Equal("", AssetPatchCheck.At(Boat(), "/behaviors/-"));
+
+    [Fact]
+    public void AReferenceFindsAFileWithoutItsFolderOrExtension() =>
+        Assert.True(GameReferenceCheck.FileExists("block/planks", GameReferenceCheck.AssetStems(["textures/block/planks.png"])));
+
+    [Fact]
+    public void ANumberedSoundAnswersItsBareName() =>
+        Assert.True(GameReferenceCheck.FileExists("sounds/block/chop", GameReferenceCheck.AssetStems(["sounds/block/chop1.ogg"])));
+
+    [Fact]
+    public void AWildcardReferenceMatchesAFile() =>
+        Assert.True(GameReferenceCheck.FileExists("sounds/block/chop*", GameReferenceCheck.AssetStems(["sounds/block/chop2.ogg"])));
+
+    [Fact]
+    public void AMissingFileIsMissing() =>
+        Assert.False(GameReferenceCheck.FileExists("block/gone", GameReferenceCheck.AssetStems(["textures/block/planks.png"])));
+
+    [Fact]
+    public void APlaceholderInAReferenceIsAWildcard() =>
+        Assert.Equal("sounds/block/chop*", GameReferenceCheck.Normalised("game:sounds/block/chop{0}"));
+
+    [Fact]
+    public void VariantsAreExpandedAndSkipped()
+    {
+        var hide = JObject.Parse("""
+            { "code": "hide", "skipVariants": ["hide-raw-large"],
+              "variantgroups": [{ "code": "state", "states": ["raw", "prepared"] }, { "code": "size", "loadFromProperties": "game:sizes" }] }
+            """);
+        var codes = GameCodes.Expand(hide, _ => ["small", "large"]).ToList();
+        Assert.Contains("hide-prepared-large", codes);
+        Assert.DoesNotContain("hide-raw-large", codes);
+    }
+
+    [Fact]
     public void TheFloorIsTheLowestVersionAboveTheHighestBrokenOne()
     {
         var compatible = new[] { "1.22.0", "1.22.4", "1.22.5" }.Select(Version.Parse);

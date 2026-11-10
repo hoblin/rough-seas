@@ -11,8 +11,11 @@ internal static class MethodSource
     {
         var from = Text(reliance, fromFolder);
         var to = Text(reliance, toFolder);
-        if (from == null || to == null) return "";
+        return from == null || to == null ? "" : TextDiff(from, to);
+    }
 
+    public static string TextDiff(string from, string to)
+    {
         var scratch = Directory.CreateTempSubdirectory("rough-seas-compat").FullName;
         try
         {

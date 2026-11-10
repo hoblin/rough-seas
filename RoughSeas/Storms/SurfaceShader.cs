@@ -41,10 +41,12 @@ public static class SurfaceShader
     private const string FoamUniform = "seaFoam";
     private const string HeightMapSampler = "seaHeightMap";
     private const string WetUniform = "seaWet";
+    private const string BeforeOpaqueLight = "outColor = applyFogAndShadowFromBrightness(texColor,";
+    private const string BeforeTopsoilLight = "outColor = applyFogAndShadowWithNormal(outColor,";
     private static readonly (string Pass, string BeforeLight, string Shaded)[] WetPasses =
     [
-        ("chunkopaque", "outColor = applyFogAndShadowFromBrightness(texColor,", "texColor"),
-        ("chunktopsoil", "outColor = applyFogAndShadowWithNormal(outColor,", "outColor"),
+        ("chunkopaque", BeforeOpaqueLight, "texColor"),
+        ("chunktopsoil", BeforeTopsoilLight, "outColor"),
     ];
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
     private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB", "seaFace"];
@@ -163,6 +165,15 @@ public static class SurfaceShader
     }
 
     [ReliesOn("Vintagestory.Client.NoObf.ShaderRegistry", "HandleIncludes", "returns the shader's whole source with its includes in place, which the anchors are matched against")]
+    [ReliesOnText("shaderincludes/vertexwarp.vsh", VanillaWarp)]
+    [ReliesOnText("shaderincludes/vertexwarp.vsh", AfterWarp)]
+    [ReliesOnText("shaders/chunkliquid.vsh", FaceNormal)]
+    [ReliesOnText("shaders/chunkliquid.fsh", FragmentMain)]
+    [ReliesOnText("shaders/chunkliquid.fsh", BeforeFog)]
+    [ReliesOnText("shaders/chunkopaque.fsh", FragmentMain)]
+    [ReliesOnText("shaders/chunkopaque.fsh", BeforeOpaqueLight)]
+    [ReliesOnText("shaders/chunktopsoil.fsh", FragmentMain)]
+    [ReliesOnText("shaders/chunktopsoil.fsh", BeforeTopsoilLight)]
     private static void Inject(ShaderProgram program, ref string __result)
     {
         if (__result.Contains(VanillaWarp) && __result.Contains(AfterWarp) && !__result.Contains(RenamedWarp))
