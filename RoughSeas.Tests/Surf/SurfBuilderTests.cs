@@ -23,6 +23,36 @@ public class SurfBuilderTests
         return new SurfBuilder(ShoreFixtures.Band, faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
     }
 
+    private static SurfField Bed(Func<int, double> depthAlongX)
+    {
+        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces, 1.28);
+        var map = new SeabedMap(0, 0, Size);
+        for (var x = 0; x < Size; x++)
+        for (var z = 0; z < Size; z++)
+        {
+            map.Put(x, z, new ShoreCell(ShoreKind.Water, depthAlongX(x), Stone, 1), Level);
+        }
+        return new SurfBuilder(ShoreFixtures.Band, faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
+    }
+
+    [Fact]
+    public void AWaveFeelsAStepInTheBedAsARamp()
+    {
+        var field = Bed(x => x < 16 ? 2 : 8);
+
+        Assert.InRange(field.DepthAt(15.5, 16.5), 2.5, 7.5);
+        Assert.Equal(2, field.DepthAt(8.5, 16.5), 3);
+        Assert.Equal(8, field.DepthAt(24.5, 16.5), 3);
+    }
+
+    [Fact]
+    public void ABedOfNoiseInDeepWaterHasNoSlopeToTurnAWave()
+    {
+        var field = Bed(x => 70 + x % 2);
+
+        Assert.InRange(field.SlopeXAt(16.5, 16.5), -0.1, 0.1);
+    }
+
     [Fact]
     public void ASecondRiserWithNoTreadStopsTheSheetAndRecordsTheStrike() =>
         Assert.Contains(Stairs(0.125, 1.125, 2.125, 2.125).Steps, step => step is { X: 17, SideX: 1 } && step.Heads.Any(head => head > 0));

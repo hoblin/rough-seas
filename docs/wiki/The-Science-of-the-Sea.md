@@ -22,6 +22,10 @@ What Rough Seas' wind, waves and storms stand on, and where we bent it. The hull
 - **Spilling and plunging.** In deep water about 2% of breakers plunge, the rest spill (Gemmrich and Farmer 1999). On a sloping bed the surf similarity parameter decides: a wave plunges when the bed's slope over the root of its steepness lies between 0.5 and 3.3 (Battjes 1974), and its crest lands 4.0 − 9.25 times the slope of its height shoreward of where it broke (Galvin 1969); further in, what is left is its bore. What a breaker does to a hull: [Breakers](The-Science-of-the-Hull#breakers).
 - **Whitecaps.** How much of the sea is white at each force starts from Monahan's measured whitecap coverage and is raised a little, so whitecaps read from afar as they do on a real horizon. The look was matched against [NOAA's photographs](https://photolib.noaa.gov/) of each force.
 
+## Short waves
+
+Waves between 8 m and half a metre long are drawn from the wind sea's equilibrium range: E(ω) = α g² ω⁻⁵, α = 0.0081 (Phillips 1958, *J. Fluid Mech.* 4; the constant as the Coastal Engineering Manual, EM 1110-2-1100 Part II-1, gives it). Integrated over a band of wavelengths L1 to L2 that is a variance of α (L2² − L1²) / (4 (2π)²): about 5 cm of root-mean-square height for 4–8 m waves and 0.6 cm for 0.5–1 m ones. A sea too low to hold them carries less, in proportion. A hull averages out what is shorter than itself, so the short waves don't rock a boat. Each level of the drawn mesh drops the waves shorter than twice its spacing.
+
 ## How the waves carry a hull
 
 The water under a wave moves in a circle: forward under the crest, back in the trough, by `a ω e^(k z)` for a wave of amplitude `a`, frequency `ω` and wavenumber `k`, at `z` under the surface (linear wave theory; Dean and Dalrymple, Water Wave Mechanics, 1991). A hull feels the water's pressure summed over its underwater body (the Froude-Krylov force), so the velocity it takes is that one averaged over the body: `e^(k lift) (1 - e^(-k T)) / (k T)` over its draft `T` under the height it heaves to, and `sinc(k_L L / 2) sinc(k_B B / 2)` over its length `L` and beam `B`, with `k_L` and `k_B` the wave's number along and across its heading. A floating hull displaces its own mass, so the pressure on it grows with its mass as its inertia does, and it takes that velocity whatever it weighs. A loaded hull differs from a light one only by its deeper draft and its slower heave.
@@ -30,7 +34,7 @@ Read where the hull is each step, this velocity carries it a little further forw
 
 ## The shore
 
-The drawn waves read the seabed around the player, a block a cell: its depth under still water, and its slope. The beach is negative depth, where only the swash goes.
+The drawn waves read the seabed around the player, a block a cell: its depth under still water, and its slope. The beach is negative depth, where only the swash goes. A wave feels a bed at its own scale, so the depth is read as a ramp through the block steps, and the slope and the crests' turning are averaged over a quarter of the wave's length. Refraction fades out toward deep water, where kd passes π.
 
 - **Shoaling.** A wave keeps its energy flux as it slows over a shoaling bed, so its height grows as H = H0 √(cg0 / cg), cg its group velocity there and cg0 in deep water (linear wave theory; Dean and Dalrymple 1991); in shallow water that is Green's law, H ∝ d^(-1/4). Its wavenumber over depth d follows Eckart's dispersion (1952), k = k0 / √tanh(k0 d).
 - **Refraction.** Crests turn toward the shore by Snell's law, sin θ / c constant along a ray, with c the wave's speed over the bed, and the height takes the refraction factor √(cos θ0 / cos θ). Each wave's lag over the bed is the eikonal |∇φ| = k, solved over the seabed map, so the crests bend where the bed does.

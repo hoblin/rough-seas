@@ -151,6 +151,7 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 
 - Rough Seas draws its waves from a texture of the sea around the player, read in vanilla's shared `vertexwarp.vsh`. That texture sits on the highest texture unit the graphics card offers, the five textures of the seabed the surf reads on the five units below it, and all are kept out of the engine's numbering of samplers, so every vanilla sampler stays on the unit vanilla gives it, in every shader program. A mod that binds its own texture to a fixed unit, as SheyderMod binds its specular map to unit 7, can count on vanilla's numbering.
 - The client command `.surface samplers` lists each shader program's samplers by unit as the engine numbers them, and where our wave texture is read.
+- Rough Seas tessellates vanilla's water near the player: `chunkliquid` and `chunkliquiddepth` gain tessellation stages, and the liquid mesh pools draw `Patches`. SheyderMod replaces only `chunkliquid.fsh` and draws no liquid pool itself, so nothing changes for it. A mod that draws the liquid pools with its own program must do so with tessellation stages, or draw nothing there. SheyderMod's reflections read `liquidDepth` as a flat surface and don't follow the finer shape.
 
 ## Shipworks+
 
