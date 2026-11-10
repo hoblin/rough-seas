@@ -236,6 +236,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec3 squeezeBehind = vec3(0.0);
 	vec3 squeezeFarBehind = vec3(0.0);
 	float energy = 0.0;
+	float rollers = 0.0;
 	float steepest = 0.0;
 	float incident = 0.0;
 	for (int i = 0; i < SEA_SLOTS; i++) {
@@ -255,13 +256,14 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 		}
 		offset.y += height * rise;
 		incident += height * rise;
-		offset.xz += steepness * height * sway * direction;
+		offset.xz += (1.0 - breaking) * steepness * height * sway * direction;
 		normal.xz -= direction * number * height * climb;
 		normal.y -= steepness * number * height * rise;
 		energy += height * height;
 
 		float pinch = steepness * height * number;
 		float frequency = sqrt(seaGravity * length(wave.xy));
+		if (seaFoamDecay > 0.0) rollers += height * height * exp(-mod(1.5707963 - theta, 6.2831853) / frequency / seaFoamDecay);
 		vec3 shape = vec3(direction.x * direction.x, direction.x * direction.y, direction.y * direction.y) * pinch;
 		squeeze += shape * rise;
 		squeezeBehind += shape * sin(theta + frequency * SEA_TRAIL_SECONDS);
@@ -307,7 +309,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 		float sinceStrike = mod(crestAgo - faceDistance / celerity, 6.2831853 / angular);
 		if (celerity * sinceStrike >= faceDistance) seaFaceFoam = breaking * exp(-sinceStrike / seaFoamDecay);
 	}
-	if (seaFoamDecay > 0.0) seaFaceFoam = max(seaFaceFoam, breaking * smoothstep(0.0, 1.0, 0.5 + 0.5 * seaCrest));
+	if (seaFoamDecay > 0.0 && breaking > 0.0 && energy > 0.0) seaFaceFoam = max(seaFaceFoam, breaking * rollers / energy);
 	return warped;
 }
 

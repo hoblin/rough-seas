@@ -56,14 +56,13 @@ public class WaveEnergyTests
     }
 
     [Fact]
-    public void LandCastsAWaveShadow()
+    public void TheSeaBehindLandIsTheSeaMapsToSay()
     {
         var depth = new float[Size * Size];
         for (var i = 0; i < depth.Length; i++) depth[i] = i % Size == 40 && i / Size is >= 30 and < 66 ? -1 : 20;
         var (gains, _) = WaveEnergy.Solve(Size, depth, [new WaveEnergy.Train(Number, 0, 0.5, new float[Size * Size])], DepthPerHeight, 1);
 
-        Assert.True(gains[0][Middle(60)] < 0.3);
-        Assert.True(gains[0][10 * Size + 60] > 0.8);
+        Assert.True(gains[0][Middle(60)] > 0.8);
     }
 
     [Fact]

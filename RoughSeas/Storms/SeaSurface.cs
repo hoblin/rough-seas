@@ -223,7 +223,7 @@ public sealed class SeaSurface
             if (heights[slot] <= 0) continue;
             var theta = Phase(slot, x, z) + lags[slot];
             rise += heights[slot] * (Math.Sin(theta) + (broken > 0 ? (Bore(theta, boreHeight, numbers[slot]) - Math.Sin(theta)) * broken : 0));
-            var sway = steepness * heights[slot] * Math.Cos(theta);
+            var sway = (1 - broken) * steepness * heights[slot] * Math.Cos(theta);
             shiftX += sway * towardX[slot];
             shiftZ += sway * towardZ[slot];
 

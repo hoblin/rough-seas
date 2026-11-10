@@ -27,8 +27,7 @@ public static class WaveEnergy
     {
         var cells = size * size;
         var standing = bedDepth ?? depth;
-        var open = OpenToTheEdge(size, depth);
-        var solved = trains.Select(train => new Solved(train, size, depth, trains.Sum(other => other.Amplitude * other.Amplitude / 2), open)).ToArray();
+        var solved = trains.Select(train => new Solved(train, size, depth, trains.Sum(other => other.Amplitude * other.Amplitude / 2))).ToArray();
         var loss = new double[cells];
         var limit = new double[cells];
         for (var i = 0; i < cells; i++) limit[i] = standing[i] > 0 ? Math.Pow(standing[i] / depthPerHeight / Math.Max(seaShare?[i] ?? 1, QuietestSeaShare), 2) / 8 : 0;
@@ -74,39 +73,10 @@ public static class WaveEnergy
         return (low + high) / 2;
     }
 
-    private static bool[] OpenToTheEdge(int size, float[] depth)
-    {
-        var open = new bool[size * size];
-        var waiting = new Stack<int>();
-        void Reach(int x, int z)
-        {
-            if (x < 0 || z < 0 || x >= size || z >= size || open[z * size + x] || !(depth[z * size + x] > 0)) return;
-            open[z * size + x] = true;
-            waiting.Push(z * size + x);
-        }
-        for (var i = 0; i < size; i++)
-        {
-            Reach(i, 0);
-            Reach(i, size - 1);
-            Reach(0, i);
-            Reach(size - 1, i);
-        }
-        while (waiting.TryPop(out var i))
-        {
-            var (x, z) = (i % size, i / size);
-            Reach(x + 1, z);
-            Reach(x - 1, z);
-            Reach(x, z + 1);
-            Reach(x, z - 1);
-        }
-        return open;
-    }
-
     private sealed class Solved
     {
         private readonly double[] speed, alongX, alongZ;
         private readonly double deepEnergy, deepFlux;
-        private readonly bool[] open;
 
         public double[] Energy { get; }
 
@@ -114,9 +84,8 @@ public static class WaveEnergy
 
         public double Frequency { get; }
 
-        public Solved(Train train, int size, float[] depth, double totalEnergy, bool[] open)
+        public Solved(Train train, int size, float[] depth, double totalEnergy)
         {
-            this.open = open;
             var felt = train.Felt ?? depth;
             var deepNumber = Math.Sqrt(train.NumberX * train.NumberX + train.NumberZ * train.NumberZ);
             var cells = size * size;
@@ -171,18 +140,18 @@ public static class WaveEnergy
                 var i = z * size + x;
                 if (!(depth[i] > 0)) continue;
                 var (acrossX, acrossZ) = (Math.Abs(alongX[i]), Math.Abs(alongZ[i]));
-                var inflow = Inflow(size, depth, !open[i], x - Math.Sign(alongX[i]), z, alongX, alongX[i]) + Inflow(size, depth, !open[i], x, z - Math.Sign(alongZ[i]), alongZ, alongZ[i]);
+                var inflow = Inflow(size, depth, x - Math.Sign(alongX[i]), z, alongX, alongX[i]) + Inflow(size, depth, x, z - Math.Sign(alongZ[i]), alongZ, alongZ[i]);
                 var outflow = speed[i] * (acrossX + acrossZ) + loss[i];
                 Energy[i] = Math.Min(outflow > 0 ? inflow / outflow : 0, limit[i] * Portion[i]);
             }
         }
 
-        private double Inflow(int size, float[] depth, bool enclosed, int x, int z, double[] along, double here)
+        private double Inflow(int size, float[] depth, int x, int z, double[] along, double here)
         {
             if (here == 0) return 0;
             if (x < 0 || z < 0 || x >= size || z >= size) return deepFlux * Math.Abs(here);
             var i = z * size + x;
-            if (enclosed && !(depth[i] > 0)) return deepFlux * Math.Abs(here);
+            if (!(depth[i] > 0)) return deepFlux * Math.Abs(here);
             return Math.Sign(along[i]) == Math.Sign(here) ? Energy[i] * speed[i] * Math.Abs(along[i]) : 0;
         }
 
