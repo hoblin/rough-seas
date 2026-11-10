@@ -44,7 +44,7 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
     /// <param name="dominant">The slot that dominates the sea now: its generation sets the whole sea's gain and breaking.</param>
     /// <param name="entering">The waves where they enter this grid; none enter as from deep water, with no lag.</param>
     /// <param name="spacing">How many blocks a cell is across.</param>
-    /// <param name="shoreBore">The depth that sets the speed of the bore reaching the nearest shoreline, cell by cell: the swash it throws leaves at that speed, so no broken wave runs slower; none is 0.</param>
+    /// <param name="shoreBore">The depth that sets the speed of the bore reaching the nearest shoreline, cell by cell: the swash it throws leaves at that speed, so no broken wave runs slower, in the share of waves broken; none is 0.</param>
     public TransformedWaves Solve(int size, float[] depth, (double X, double Z)[] numbers, double[]? amplitudeShares, double[] seaHeights, int dominant = 0, EnteringWaves? entering = null, int spacing = 1, float[]? shoreBore = null)
     {
         var anchors = entering?.Lags;
@@ -53,9 +53,9 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
         var felt = Felt(depth, size, smoothing);
         var felts = numbers.Take(SurfField.Slots).Select(number => Felt(depth, size, Radius(WaveLength(number)))).ToArray();
         var boreDepth = shoreBore ?? new float[depth.Length];
-        float[][] LagsOver(Func<int, float, int, float> celerityDepth) => felts.Select((each, slot) =>
-            PhaseField.Lag(size, each.Select((d, i) => d > 0 ? Math.Max(celerityDepth(slot, d, i), boreDepth[i]) : d).ToArray(), numbers[slot].X, numbers[slot].Z, anchors?[slot], spacing)).ToArray();
-        var lags = LagsOver((_, d, _) => d);
+        float[][] LagsOver(Func<float, int, float> celerityDepth) => felts.Select((each, slot) =>
+            PhaseField.Lag(size, each.Select((d, i) => d > 0 ? celerityDepth(d, i) : d).ToArray(), numbers[slot].X, numbers[slot].Z, anchors?[slot], spacing)).ToArray();
+        var lags = LagsOver((d, _) => d);
 
         var gains = numbers.Take(SurfField.Slots).Select(_ => Enumerable.Repeat(1f, size * size).ToArray()).ToArray();
         var breaking = new float[size * size];
@@ -78,8 +78,9 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
             }
         }
         var boreHeight = Enumerable.Range(0, depth.Length).Select(i => (float)(boreCelerityShare * gain[i] * seaHeights[i] * breaking[i])).ToArray();
-        lags = LagsOver((_, d, i) => d + boreHeight[i]);
-        var celerityDepth = felt.Select((d, i) => d > 0 ? Math.Max(d + boreHeight[i], boreDepth[i]) : boreDepth[i]).ToArray();
+        float Broken(float d, int i) => Math.Max(d + boreHeight[i], boreDepth[i] * breaking[i]);
+        lags = LagsOver(Broken);
+        var celerityDepth = felt.Select((d, i) => d > 0 ? Broken(d, i) : boreDepth[i]).ToArray();
 
         var slopeX = BoxAverage.Over(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, 1) / spacing).ToArray(), size, smoothing);
         var slopeZ = BoxAverage.Over(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, size) / spacing).ToArray(), size, smoothing);

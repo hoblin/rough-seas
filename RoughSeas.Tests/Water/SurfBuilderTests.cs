@@ -85,13 +85,32 @@ public class SurfBuilderTests
     }
 
     [Fact]
-    public void TheBoreReachingTheShorelineRunsAsFastAsTheSheetItThrows()
+    public void TheBrokenWavesReachingTheShorelineRunNoSlowerThanTheSheetTheyThrow()
     {
-        var field = Beach(_ => 0.5);
+        var field = Beach(_ => 0.05);
         var launch = Math.Sqrt(2 * WaveTheory.Gravity * field.RunUpOf(17, 16) / Math.Sqrt(WaveTheory.TwoPercentRatio));
 
-        Assert.True(launch > 0);
-        Assert.Equal(launch, Math.Sqrt(WaveTheory.Gravity * field.CelerityDepthAt(15.5, 16.5)), 1);
+        Assert.True(launch > 0 && field.BreakingAt(15.5, 16.5) > 0);
+        Assert.True(WaveTheory.Gravity * field.CelerityDepthAt(15.5, 16.5) >= launch * launch * field.BreakingAt(15.5, 16.5) - 0.01);
+    }
+
+    [Fact]
+    public void ALakeBehindTheBeachKeepsItsOwnSpeedWhateverTheSeaRunsUp()
+    {
+        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces);
+        SurfField Shore(double seaHeight)
+        {
+            var map = new SeabedMap(0, 0, Size);
+            for (var x = 0; x < Size; x++)
+            for (var z = 0; z < Size; z++)
+            {
+                if (x < 16 || x >= 26) map.Put(x, z, new ShoreCell(ShoreKind.Water, x < 16 ? 0.5 : 0.3, Stone, 1), Level);
+                else map.Put(x, z, new ShoreCell(ShoreKind.Land, 0.125, Stone, 1), Level);
+            }
+            return Builder(faces).Build(map, (x, _) => new Sea(x < 16 ? seaHeight : 0, 8), [(0.1, 0)]);
+        }
+
+        Assert.Equal(Shore(1).CelerityDepthAt(29.5, 16.5), Shore(4).CelerityDepthAt(29.5, 16.5), 3);
     }
 
     [Fact]

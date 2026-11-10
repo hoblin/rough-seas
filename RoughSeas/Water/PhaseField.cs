@@ -49,7 +49,8 @@ public static class PhaseField
     }
 
     /// <summary>For each cell the index of the nearest water, itself over water; -1 where a grid holds none.</summary>
-    public static int[] NearestWater(float[] depth, int size)
+    /// <param name="through">The cells the search may cross, by a depth over 0; none lets it cross any.</param>
+    public static int[] NearestWater(float[] depth, int size, float[]? through = null)
     {
         var nearest = new int[depth.Length];
         Array.Fill(nearest, -1);
@@ -67,6 +68,7 @@ public static class PhaseField
             {
                 var (nextX, nextZ) = (x + dx, z + dz);
                 if (nextX < 0 || nextZ < 0 || nextX >= size || nextZ >= size || nearest[nextZ * size + nextX] >= 0) continue;
+                if (through != null && !(through[nextZ * size + nextX] > 0)) continue;
                 nearest[nextZ * size + nextX] = nearest[i];
                 waiting.Enqueue(nextZ * size + nextX);
             }
