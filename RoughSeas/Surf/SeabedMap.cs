@@ -74,7 +74,7 @@ public sealed class SeabedMap
         for (var i = 0; i < size * size; i++)
         {
             var (x, z) = (originX + i % size, originZ + i / size);
-            if (!heights.TryGetValue((x / chunk, z / chunk), out var column)) continue;
+            if (x < 0 || z < 0 || !heights.TryGetValue((x / chunk, z / chunk), out var column)) continue;
             var index = z % chunk * chunk + x % chunk;
             var top = (int)column.Rain[index];
             if (blocks.GetChunkAtBlockPos(probe.Set(x, top, z)) == null) continue;

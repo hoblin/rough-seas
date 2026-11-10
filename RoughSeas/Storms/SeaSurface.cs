@@ -242,8 +242,8 @@ public sealed class SeaSurface
         {
             if (heights[slot] <= 0) continue;
             var number = Wavenumber(slot);
-            var along = numberX[slot] * alongX + numberZ[slot] * alongZ;
-            var across = numberZ[slot] * alongX - numberX[slot] * alongZ;
+            var along = numbers[slot] * (towardX[slot] * alongX + towardZ[slot] * alongZ);
+            var across = numbers[slot] * (towardZ[slot] * alongX - towardX[slot] * alongZ);
             var fade = Math.Exp(number * height) * (draft > 0 ? (1 - Math.Exp(-number * draft)) / (number * draft) : 1);
             var speed = share * heights[slot] * frequency[slot] * Math.Sin(Phase(slot, x, z) + lags[slot]) * fade
                 * Sinc(along * length / 2) * Sinc(across * beam / 2);
