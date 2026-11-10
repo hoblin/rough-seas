@@ -94,6 +94,7 @@ public sealed class SeabedMap
             var top = (int)column.Rain[index];
             int terrain = column.Terrain[index];
             if (blocks.GetChunkAtBlockPos(probe.Set(x, top, z)) == null) continue;
+            // The lock-free accessor reads a chunk packed after 8 idle seconds as air, which would map open sea as dry land.
             var lowest = Math.Max(Math.Min(top - deepest, Math.Min(top, terrain + 1) - highestRise) - 1, 0);
             for (var section = lowest / chunk; section <= (top + highestRise + 1) / chunk; section++)
             {
