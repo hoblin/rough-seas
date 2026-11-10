@@ -5,6 +5,21 @@ namespace RoughSeas.Tests.Water;
 public class PhaseFieldTests
 {
     [Fact]
+    public void AnOceanEnteringTheMapLeavesASeparateLakeAsItWas()
+    {
+        const int Across = 64;
+        float[] Bed(float beyond) => Enumerable.Range(0, Across * Across).Select(i => (i % Across) switch
+        {
+            < 24 => (24 - i % Across) * 0.25f,
+            < 32 => -1f,
+            _ => beyond,
+        }).ToArray();
+        var (alone, besideOcean) = (PhaseField.Lag(Across, Bed(-1), 0.05, 0.01), PhaseField.Lag(Across, Bed(500), 0.05, 0.01));
+
+        Assert.Equal(alone[32 * Across + 12], besideOcean[32 * Across + 12], 3);
+    }
+
+    [Fact]
     public void WithoutDeepWaterTwoMapsOfOneShoreAgreeWhereverTheyStart()
     {
         const int Across = 48;

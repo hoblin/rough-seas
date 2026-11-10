@@ -57,7 +57,7 @@ public sealed class SurfaceClock : IRenderer
         if (pos == null) return;
         aim.Aim(sea.Map, pos.X, pos.Z, seconds, capi.World.BlockAccessor.RegionSize, foam: true);
         SurfaceShader.Upload();
-        if (shore.Update(capi.World, sea.Map, pos.X, pos.Z, surface.Trains.Vectors(), surface.Trains.AmplitudeShares(), capi.ElapsedMilliseconds / 1000.0) is not { } field) return;
+        if (shore.Update(capi.World, sea.Map, pos.X, pos.Z, surface.Trains.Vectors(), surface.Trains.AmplitudeShares(), surface.Trains.Dominant, capi.ElapsedMilliseconds / 1000.0) is not { } field) return;
         surface.Seabed = field;
         SurfaceShader.Upload(field);
     }

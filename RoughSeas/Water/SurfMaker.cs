@@ -18,7 +18,7 @@ public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig co
 
     public SurfField? Field { get; private set; }
 
-    public SurfField? Update(IWorldAccessor world, ISeaSource sea, double x, double z, (double X, double Z)[] numbers, double[] amplitudeShares, double seconds)
+    public SurfField? Update(IWorldAccessor world, ISeaSource sea, double x, double z, (double X, double Z)[] numbers, double[] amplitudeShares, int dominant, double seconds)
     {
         if (building is { IsCompleted: true } done)
         {
@@ -47,7 +47,7 @@ public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig co
             var started = Stopwatch.StartNew();
             var map = SeabedMap.Read(blocks, heights, originX, originZ, size, beds, highestRise, config.DeepestBlocks);
             var read = started.ElapsedMilliseconds;
-            var field = builder.Build(map, SeaAt, numbers, amplitudeShares);
+            var field = builder.Build(map, SeaAt, numbers, amplitudeShares, dominant);
             field.EdgeFadeBlocks = config.EdgeFadeBlocks;
             log("surf field {0} {1}, {2} blocks across: seabed read in {3} ms, built in {4} ms; {5} faces the sea meets, {6} steps stop a sheet",
                 [originX, originZ, size, read, started.ElapsedMilliseconds - read, field.Walls.Count, field.Steps.Count]);

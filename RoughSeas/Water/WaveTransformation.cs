@@ -40,7 +40,8 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
     private const int Banks = 2;
 
     /// <param name="seaHeights">The significant height of the sea standing on each cell.</param>
-    public TransformedWaves Solve(int size, float[] depth, (double X, double Z)[] numbers, double[]? amplitudeShares, double[] seaHeights)
+    /// <param name="dominant">The slot that dominates the sea now: its generation sets the whole sea's gain and breaking.</param>
+    public TransformedWaves Solve(int size, float[] depth, (double X, double Z)[] numbers, double[]? amplitudeShares, double[] seaHeights, int dominant = 0)
     {
         var smoothing = smoothingBlocks(numbers.Select(WaveLength).DefaultIfEmpty(0).Max());
         var felt = Felt(depth, size, smoothing);
@@ -62,10 +63,11 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
             var trains = slots.Select(slot => new WaveEnergy.Train(numbers[slot].X, numbers[slot].Z, (amplitudeShares?[slot] ?? 1 / (2 * Math.Sqrt(2) * Math.Sqrt(generation))) * seaHeight, lags[slot], felts[slot])).ToArray();
             var (solved, broken) = WaveEnergy.Solve(size, felt, trains, breakingDepthRatio, breakingDissipation, depth, seaShare);
             var deep = trains.Sum(train => train.Amplitude * train.Amplitude);
+            var live = bank == dominant / generation;
             for (var i = 0; i < broken.Length; i++)
             {
-                breaking[i] = Math.Max(breaking[i], broken[i]);
-                if (deep > 0 && slots.Any(slot => numbers[slot] != default)) gain[i] = Math.Max(gain[i], (float)Math.Sqrt(trains.Select((train, index) => train.Amplitude * train.Amplitude * solved[index][i] * solved[index][i]).Sum() / deep));
+                if (live) breaking[i] = broken[i];
+                if (live && deep > 0 && slots.Any(slot => numbers[slot] != default)) gain[i] = (float)Math.Sqrt(trains.Select((train, index) => train.Amplitude * train.Amplitude * solved[index][i] * solved[index][i]).Sum() / deep);
                 for (var train = 0; train < slots.Length; train++) gains[slots[train]][i] = numbers[slots[train]] == default ? 1 : solved[train][i];
             }
         }

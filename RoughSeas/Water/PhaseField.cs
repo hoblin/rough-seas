@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RoughSeas.Water;
@@ -59,8 +60,9 @@ public static class PhaseField
         for (var i = 0; i < phase.Length; i++) number[i] = depth[i] > 0 ? WaveTheory.Wavenumber(deepNumber, depth[i]) : double.NaN;
 
         SeedOpenDeepWater(size, depth, phase, Math.PI / deepNumber, numberX, numberZ);
-        if (!phase.Any(double.IsFinite)) SeedShoreline(size, depth, phase, numberX, numberZ);
-        if (!phase.Any(double.IsFinite)) SeedUpwindEdge(size, phase, number, numberX, numberZ);
+        var bodies = WaterBodies(size, depth, out var count);
+        SeedShoreline(size, depth, phase, numberX, numberZ, Unanchored(phase, bodies, count), bodies);
+        SeedUpwindEdge(size, phase, number, numberX, numberZ, Unanchored(phase, bodies, count), bodies);
 
         for (var round = 0; round < rounds; round++)
         {
@@ -98,21 +100,58 @@ public static class PhaseField
         }
     }
 
-    private static void SeedShoreline(int size, float[] depth, double[] phase, double numberX, double numberZ)
+    private static int[] WaterBodies(int size, float[] depth, out int count)
+    {
+        var bodies = new int[size * size];
+        Array.Fill(bodies, -1);
+        count = 0;
+        var waiting = new Stack<int>();
+        for (var start = 0; start < bodies.Length; start++)
+        {
+            if (!(depth[start] > 0) || bodies[start] >= 0) continue;
+            bodies[start] = count;
+            waiting.Push(start);
+            while (waiting.TryPop(out var i))
+            {
+                foreach (var (dx, dz) in Sides)
+                {
+                    var (x, z) = (i % size + dx, i / size + dz);
+                    if (x < 0 || z < 0 || x >= size || z >= size || !(depth[z * size + x] > 0) || bodies[z * size + x] >= 0) continue;
+                    bodies[z * size + x] = count;
+                    waiting.Push(z * size + x);
+                }
+            }
+            count++;
+        }
+        return bodies;
+    }
+
+    private static bool[] Unanchored(double[] phase, int[] bodies, int count)
+    {
+        var unanchored = Enumerable.Repeat(true, count).ToArray();
+        for (var i = 0; i < phase.Length; i++)
+        {
+            if (bodies[i] >= 0 && double.IsFinite(phase[i])) unanchored[bodies[i]] = false;
+        }
+        return unanchored;
+    }
+
+    private static void SeedShoreline(int size, float[] depth, double[] phase, double numberX, double numberZ, bool[] unanchored, int[] bodies)
     {
         for (var i = 0; i < phase.Length; i++)
         {
-            if (!(depth[i] > 0)) continue;
+            if (bodies[i] < 0 || !unanchored[bodies[i]]) continue;
             var (x, z) = (i % size, i / size);
             var shore = Sides.Any(side => x + side.X >= 0 && z + side.Z >= 0 && x + side.X < size && z + side.Z < size && !(depth[(z + side.Z) * size + x + side.X] > 0));
             if (shore) phase[i] = numberX * (x + 0.5) + numberZ * (z + 0.5);
         }
     }
 
-    private static void SeedUpwindEdge(int size, double[] phase, double[] number, double numberX, double numberZ)
+    private static void SeedUpwindEdge(int size, double[] phase, double[] number, double numberX, double numberZ, bool[] unanchored, int[] bodies)
     {
         for (var i = 0; i < phase.Length; i++)
         {
+            if (bodies[i] < 0 || !unanchored[bodies[i]]) continue;
             var (x, z) = (i % size, i / size);
             var upwind = (x == 0 && numberX > 0) || (x == size - 1 && numberX < 0) || (z == 0 && numberZ > 0) || (z == size - 1 && numberZ < 0);
             if (upwind && !double.IsNaN(number[i])) phase[i] = numberX * (x + 0.5) + numberZ * (z + 0.5);
