@@ -1,6 +1,6 @@
 using System;
 using RoughSeas.SeaAndWeather;
-using RoughSeas.Surf;
+using RoughSeas.Water;
 using Vintagestory.API.Client;
 
 namespace RoughSeas.Storms;
@@ -43,8 +43,9 @@ public sealed class SurfaceClock : IRenderer
         if ((sinceLog += deltaTime) < LogEverySeconds) return;
         sinceLog = 0;
         var foam = surface.Foam;
-        storms.Log("surface: {0:F1} s, drawn {1:F1} m against the sea's {2:F1} m, waves toward {3:F0}°, wind toward {4:F0}°, steepness {5:F2}; whitecaps {6:F2}, streaks {7:F2}, spray {8:F2}",
-            seconds, surface.DrawnHeight, surface.SeaHeight, Degrees(surface.WavesTowardRadians), Degrees(surface.TowardRadians), surface.Steepness, foam.Caps, foam.Streaks, foam.Spray);
+        var trains = surface.Trains;
+        storms.Log("surface: {0:F1} s, drawn {1:F1} m against the sea's {2:F1} m, waves toward {3:F0}°, steepness {4:F2}; whitecaps {5:F2}, streaks {6:F2}, spray {7:F2}",
+            seconds, trains.DrawnHeight, trains.SeaHeight, Degrees(trains.TowardRadians), trains.Steepness, foam.Caps, foam.Streaks, foam.Spray);
     }
 
     public void Dispose() => capi.Event.UnregisterRenderer(this, EnumRenderStage.Before);
@@ -56,7 +57,7 @@ public sealed class SurfaceClock : IRenderer
         if (pos == null) return;
         aim.Aim(sea.Map, pos.X, pos.Z, seconds, capi.World.BlockAccessor.RegionSize, foam: true);
         SurfaceShader.Upload();
-        if (shore.Update(capi.World, sea.Map, pos.X, pos.Z, surface.Vectors(), surface.AmplitudeShares(), capi.ElapsedMilliseconds / 1000.0) is not { } field) return;
+        if (shore.Update(capi.World, sea.Map, pos.X, pos.Z, surface.Trains.Vectors(), surface.Trains.AmplitudeShares(), surface.Trains.Dominant, capi.ElapsedMilliseconds / 1000.0) is not { } field) return;
         surface.Seabed = field;
         SurfaceShader.Upload(field);
     }

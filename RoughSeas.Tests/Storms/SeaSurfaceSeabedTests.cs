@@ -1,5 +1,5 @@
 using RoughSeas.Storms;
-using RoughSeas.Surf;
+using RoughSeas.Water;
 
 namespace RoughSeas.Tests.Storms;
 
@@ -19,7 +19,7 @@ public class SeaSurfaceSeabedTests
         {
             if (frame % 30 == 0)
             {
-                surface.Aim(height, raised.TowardRadians, 6);
+                surface.Aim(height, 6);
                 surface.Raise(raised, raised, 0);
             }
             surface.Advance(frame / 60.0);
@@ -29,12 +29,12 @@ public class SeaSurfaceSeabedTests
 
     private static SurfField Flat(SeaSurface surface, float depth, (double X, double Z)[]? numbers = null, float lag = 0)
     {
-        var field = new SurfField(OriginX, OriginZ, Size, numbers ?? surface.Vectors());
+        var field = new SurfField(OriginX, OriginZ, Size, numbers ?? surface.Trains.Vectors());
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
         {
-            field.Set(field.Bed, x, z, 0, depth);
-            for (var slot = 0; slot < SurfField.Slots; slot++) field.Set(field.Lags[slot / SurfField.Channels], x, z, slot % SurfField.Channels, lag);
+            field.SetDepth(x, z, depth);
+            for (var slot = 0; slot < SurfField.Slots; slot++) field.SetLag(slot, x, z, lag);
         }
         return field;
     }
@@ -59,20 +59,71 @@ public class SeaSurfaceSeabedTests
         var open = Highest(surface, shortWaves: false);
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
-        for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.Set(surface.Seabed.Gains[slot / SurfField.Channels], x, z, slot % SurfField.Channels, 0.5f);
+        for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.5f);
         Assert.InRange(Highest(surface, shortWaves: false) / open, 0.45, 0.65);
+    }
+
+    [Fact]
+    public void WaveHereReadsTheWavesOverTheBed()
+    {
+        var surface = Settled(3);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(3, open.Height, 1);
+        Assert.Equal(0, open.Breaking);
+        Assert.Equal(surface.Trains.DominantPeriod, open.Period);
+
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            surface.Seabed.SetBreaking(x, z, 0.4f);
+            for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.5f);
+        }
+        var overBar = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(1.5, overBar.Height, 1);
+        Assert.True(overBar.Surf);
+    }
+
+    [Fact]
+    public void WaveHereKeepsTheSeaThatComesToTheShoreWhereTheShallowsTakeItDown()
+    {
+        var surface = Settled(3);
+        surface.Seabed = Flat(surface, 1);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            surface.Seabed.SetArriving(x, z, 0.8f);
+            for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.3f);
+        }
+        var here = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(0.9, here.Height, 1);
+        Assert.Equal(2.4, here.Arriving, 1);
+    }
+
+    [Fact]
+    public void TheTallestWavesOfASeaAreTheOnesThatBreak()
+    {
+        var reading = new RoughSeas.Water.WaveReading(2, 8, 0, 3, 0.05, 0.2, 2);
+        Assert.True(reading.Breaks(RoughSeas.Water.WaveTheory.RayleighHeight(2, 0.95)));
+        Assert.False(reading.Breaks(RoughSeas.Water.WaveTheory.RayleighHeight(2, 0.5)));
+        Assert.False((reading with { Breaking = 0 }).Breaks(10));
+    }
+
+    [Fact]
+    public void BeyondTheBedReadWaveHereKnowsNoDepthAndNoBreaking()
+    {
+        var surface = Settled(3);
+        var here = surface.WaveHere(MiddleX, MiddleZ, 0.5);
+        Assert.Equal(1.5, here.Height, 1);
+        Assert.Equal(double.PositiveInfinity, here.Depth);
+        Assert.False(here.Surf);
     }
 
     private static void Face(SurfField field, double normalX, double normalZ, float reflection)
     {
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
-        {
-            field.Set(field.Face, x, z, 0, 1);
-            field.Set(field.Face, x, z, 1, (float)normalX);
-            field.Set(field.Face, x, z, 2, (float)normalZ);
-            field.Set(field.Face, x, z, 3, reflection);
-        }
+            field.SetFace(x, z, 1, (float)normalX, (float)normalZ, reflection);
     }
 
     [Fact]
@@ -93,7 +144,7 @@ public class SeaSurfaceSeabedTests
         Face(surface.Seabed, -Math.Cos(0.3), -Math.Sin(0.3), 1);
         var atTheWall = surface.HeightAt(MiddleX, MiddleZ, 1);
         for (var x = OriginX; x < OriginX + Size; x++)
-        for (var z = OriginZ; z < OriginZ + Size; z++) surface.Seabed.Set(surface.Seabed.Face, x, z, 0, 9);
+        for (var z = OriginZ; z < OriginZ + Size; z++) surface.Seabed.SetFaceDistance(x, z, 9);
         Assert.NotEqual(atTheWall, surface.HeightAt(MiddleX, MiddleZ, 1), 2);
     }
 
@@ -133,7 +184,7 @@ public class SeaSurfaceSeabedTests
         var surface = Settled(2);
         surface.Seabed = Flat(surface, 1000);
         var open = surface.HeightAt(MiddleX, MiddleZ, 1);
-        surface.Seabed = Flat(surface, 1000, surface.Vectors().Select(number => (number.X * 2, number.Z)).ToArray(), lag: 1.5f);
+        surface.Seabed = Flat(surface, 1000, surface.Trains.Vectors().Select(number => (number.X * 2, number.Z)).ToArray(), lag: 1.5f);
         Assert.Equal(open, surface.HeightAt(MiddleX, MiddleZ, 1), 3);
     }
 

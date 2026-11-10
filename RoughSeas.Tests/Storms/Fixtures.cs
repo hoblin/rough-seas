@@ -4,6 +4,7 @@ using RoughSeas.Propulsion;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -108,7 +109,7 @@ public static class Fixtures
         var frequency = Math.Sqrt(9.81 * number);
         var surface = new SeaSurface(single, new Waves(Config().Waves));
         var raised = new WaveGeneration(0, Math.Sqrt(2 * Math.PI * length / 9.81));
-        surface.Aim(height, 0, 6);
+        surface.Aim(height, 6);
         surface.Raise(raised, raised, 0);
         surface.Advance(120);
         var field = new SurfaceField();

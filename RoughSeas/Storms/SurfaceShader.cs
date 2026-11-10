@@ -3,8 +3,7 @@ using System.Globalization;
 using System.Linq;
 using HarmonyLib;
 using OpenTK.Graphics.OpenGL;
-using RoughSeas.SeaAndWeather;
-using RoughSeas.Surf;
+using RoughSeas.Water;
 using Vintagestory.Client;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -32,11 +31,11 @@ public static class SurfaceShader
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
         "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; "
-        + "seaFoamShare = seaShare; seaFoamFace = seaFaceFoam; seaFoamWorld = worldPos.xz + playerpos.xz;";
+        + "seaFoamShare = seaShare; seaFoamBroken = seaBroken; seaFoamCrestTime = seaCrestTime; seaFoamBrokenAt = seaBrokenAt; seaFoamThickness = seaThickness; seaFoamTip = seaTip; seaFoamWorld = worldPos.xz + playerpos.xz; seaDebug = seaDebugValue;";
     private const string FragmentMain = "void main()";
     private const string BeforeFog = "texColor = applyFog(texColor, fogAmount);";
     private const string Foamed =
-        "if (!isLava && fragNormal.y > 0.5) { float seaFoamAmount = seaFoamAt(); "
+        "if (!isLava && fragNormal.y > 0.5) { texColor.a *= seaWaterOpacity(); float seaFoamAmount = seaFoamAt(); "
         + "vec3 seaFoamColor = mix(texColor.rgb, vec3(0.88, 0.92, 0.92) * clamp(bright * 1.3, 0.0, 1.0) * mix(1.0, shadowBright, 0.5), 0.75); "
         + "texColor.rgb = mix(texColor.rgb, seaFoamColor, seaFoamAmount); "
         + "texColor.a = mix(texColor.a, 0.95, seaFoamAmount * 0.8); }\n";
@@ -52,9 +51,8 @@ public static class SurfaceShader
         ("chunktopsoil", BeforeTopsoilLight, "outColor"),
     ];
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
-    private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB", "seaFace", "seaGainA", "seaGainB"];
     private const double NoCaps = 10;
-    private const double StillSurface = 0.875;
+    private const double FoamClockSeconds = 3600;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
 
@@ -76,6 +74,7 @@ public static class SurfaceShader
     private static double lensDepthRatio;
     private static double wetReflectance;
     private static double foamDecaySeconds;
+    private static double waterAttenuation;
     private static double wallSlope;
     private static bool normalTilted;
 
@@ -93,14 +92,14 @@ public static class SurfaceShader
 
     public static HeightColours Colours => colours;
 
-    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double foamDecay, double steepestShore, TessellationConfig tessellation, Action<string> log, ICoreClientAPI api)
+    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double attenuation, double foamDecay, double steepestShore, TessellationConfig tessellation, Action<string> log, ICoreClientAPI api)
     {
-        (surface, field, capi, lensDepthRatio, wetReflectance, foamDecaySeconds, wallSlope) = (waves, heights, api, lensDepth, wetShade, foamDecay, steepestShore);
+        (surface, field, capi, lensDepthRatio, wetReflectance, waterAttenuation, foamDecaySeconds, wallSlope) = (waves, heights, api, lensDepth, wetShade, attenuation, foamDecay, steepestShore);
         heightMap = new LoadedTexture(api);
         heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
-        shoreTextures = ShoreSamplers.Select(_ => GL.GenTexture()).ToArray();
-        uniforms = new float[waves.Slots * 4];
-        shortUniforms = new float[waves.ShortSlots * 4];
+        shoreTextures = SurfField.Samplers.Select(_ => GL.GenTexture()).ToArray();
+        uniforms = new float[waves.Trains.Slots * 4];
+        shortUniforms = new float[waves.Trains.ShortSlots * 4];
         ReadSources(api);
         harmony = new Harmony(HarmonyId);
         SurfaceTessellation.Attach(harmony, tessellation, log);
@@ -144,7 +143,7 @@ public static class SurfaceShader
     public static void Upload(SurfField built)
     {
         if (shoreTextures.Length == 0) return;
-        float[][] layers = [built.Bed, built.Aux, built.Lags[0], built.Lags[1], built.Face, built.Gains[0], built.Gains[1]];
+        var layers = built.Layers;
         for (var i = 0; i < layers.Length; i++)
         {
             GL.BindTexture(TextureTarget.Texture2D, shoreTextures[i]);
@@ -177,10 +176,14 @@ public static class SurfaceShader
     private static void ReadSources(ICoreClientAPI api)
     {
         vertexCode = api.Assets.Get(VertexSource).ToText()
-            .Replace("SEA_SLOTS", surface!.Slots.ToString(CultureInfo.InvariantCulture))
-            .Replace("SEA_SHORT", surface.ShortSlots.ToString(CultureInfo.InvariantCulture))
-            .Replace("SEA_TRAIL_SECONDS", SeaSurface.TrailSeconds.ToString("0.0###", CultureInfo.InvariantCulture));
-        fragmentCode = api.Assets.Get(FragmentSource).ToText();
+            .Replace("SEA_SLOTS", surface!.Trains.Slots.ToString(CultureInfo.InvariantCulture))
+            .Replace("SEA_SHORT", surface.Trains.ShortSlots.ToString(CultureInfo.InvariantCulture))
+            .Replace("SEA_TRAIL_SECONDS", SeaSurface.TrailSeconds.ToString("0.0###", CultureInfo.InvariantCulture))
+            .Replace("SEA_GRAVITY", WaveTheory.Gravity.ToString("0.0###", CultureInfo.InvariantCulture))
+            .Replace("SEA_BORE_AMPLITUDE", WaveTheory.BoreAmplitude.ToString("0.0######", CultureInfo.InvariantCulture))
+            .Replace("SEA_TWO_PERCENT", WaveTheory.TwoPercentRatio.ToString("0.0######", CultureInfo.InvariantCulture));
+        fragmentCode = api.Assets.Get(FragmentSource).ToText()
+            .Replace("SEA_ATTENUATION", waterAttenuation.ToString("0.0###", CultureInfo.InvariantCulture));
         wetCode = api.Assets.Get(WetSource).ToText();
     }
 
@@ -209,7 +212,6 @@ public static class SurfaceShader
             __result = __result.Replace(FragmentMain, wetCode + FragmentMain).Replace(beforeLight, $"if (normal.y > 0.5) {shaded}.rgb *= seaWetShade(worldPos);\n" + beforeLight);
         }
         if (program.PassName != LiquidPass) return;
-        __result = HeightColours.Inject(__result, FragmentMain);
         if (__result.Contains(FaceNormal))
         {
             __result = __result.Replace(FaceNormal, TiltedNormal);
@@ -219,12 +221,13 @@ public static class SurfaceShader
         {
             __result = __result.Replace(FragmentMain, fragmentCode + FragmentMain).Replace(BeforeFog, Foamed + BeforeFog);
         }
+        __result = HeightColours.Inject(__result, FragmentMain);
     }
 
     [ReliesOn("Vintagestory.Client.NoObf.ShaderProgram", "collectUniformNames", "numbers samplers by a regex over the source, which a uniform with a precision qualifier escapes")]
     private static void LocateSamplers(ShaderProgram __instance)
     {
-        foreach (var sampler in ShoreSamplers.Prepend(HeightMapSampler))
+        foreach (var sampler in SurfField.Samplers.Prepend(HeightMapSampler))
         {
             var location = ScreenManager.Platform.GetUniformLocation(__instance, sampler);
             if (location >= 0) __instance.uniformLocations[sampler] = location;
@@ -237,53 +240,55 @@ public static class SurfaceShader
         if (surface == null || capi?.World.Player?.Entity is not { } player) return;
         if (Active(__instance, WavesUniform))
         {
-            if (DrawWaves) surface.WriteUniforms(player.CameraPos.X, player.CameraPos.Z, uniforms);
+            if (DrawWaves) surface.Trains.WriteUniforms(player.CameraPos.X, player.CameraPos.Z, uniforms);
             else Array.Clear(uniforms);
-            __instance.Uniforms4(WavesUniform, surface.Slots, uniforms);
-            __instance.Uniform("seaSteepness", (float)surface.Steepness);
-            if (DrawWaves) surface.WriteShortUniforms(player.CameraPos.X, player.CameraPos.Z, shortUniforms);
+            __instance.Uniforms4(WavesUniform, surface.Trains.Slots, uniforms);
+            __instance.Uniform("seaSteepness", (float)surface.Trains.Steepness);
+            if (DrawWaves) surface.Trains.WriteShortUniforms(player.CameraPos.X, player.CameraPos.Z, shortUniforms);
             else Array.Clear(shortUniforms);
-            __instance.Uniforms4("seaShort", surface.ShortSlots, shortUniforms);
+            __instance.Uniforms4("seaShort", surface.Trains.ShortSlots, shortUniforms);
             __instance.Uniform("seaMesh", new Vec2f(SurfaceTessellation.ReachMetres, SurfaceTessellation.FinestSpacing));
             __instance.Uniform("seaTerms", new Vec3f(DrawReflection ? 1 : 0, DrawLag ? 1 : 0, DrawEnergy ? 1 : 0));
         }
-        colours.Bind(__instance, capi.World.SeaLevel - 1 + StillSurface - player.CameraPos.Y);
+        colours.Bind(__instance, capi.World.SeaLevel - 1 + WaterColumn.StillLevel - player.CameraPos.Y);
         if (field != null && heightMap is { TextureId: > 0 } && Active(__instance, HeightMapSampler))
         {
             __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, heightMapUnit);
             __instance.Uniform("seaHeightArea", new Vec4f((float)(field.OriginX - player.CameraPos.X), (float)(field.OriginZ - player.CameraPos.Z),
                 (float)field.SizeBlocks, (float)field.SizeBlocks));
         }
-        if (shore != null && ShoreSamplers.Any(sampler => Active(__instance, sampler)))
+        if (shore != null && SurfField.Samplers.Any(sampler => Active(__instance, sampler)))
         {
-            for (var i = 0; i < ShoreSamplers.Length; i++)
+            for (var i = 0; i < SurfField.Samplers.Length; i++)
             {
-                if (Active(__instance, ShoreSamplers[i])) __instance.BindTexture2D(ShoreSamplers[i], shoreTextures[i], heightMapUnit - 1 - i);
+                if (Active(__instance, SurfField.Samplers[i])) __instance.BindTexture2D(SurfField.Samplers[i], shoreTextures[i], heightMapUnit - 1 - i);
             }
             __instance.Uniform("seaBedArea", new Vec4f((float)(shore.OriginX - player.CameraPos.X), (float)(shore.OriginZ - player.CameraPos.Z), shore.Size,
                 (float)player.CameraPos.Y));
         }
         if (Active(__instance, "seaShore"))
         {
-            __instance.Uniform("seaShore", new Vec4f((float)surface.Shape.BreakingDepthRatio, surface.Dominant, shore != null && DrawShore ? 1 : 0, (float)surface.Shape.CrestRatio));
-            __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
+            __instance.Uniform("seaShore", new Vec4f((float)surface.Waves.BreakingDepthRatio, surface.Trains.Dominant, shore != null && DrawShore ? 1 : 0, (float)surface.Waves.CrestRatio));
+            __instance.Uniform("seaPlunging", new Vec2f((float)surface.Waves.PlungingIribarren.From, (float)surface.Waves.PlungingIribarren.To));
             __instance.Uniform("seaFoamDecay", DrawFoam ? (float)foamDecaySeconds : 0);
             __instance.Uniform("seaFaceSlope", (float)(shore?.FaceSlope ?? 0));
             __instance.Uniform("seaBedEdge", (float)(shore?.EdgeFadeBlocks ?? 1));
+            __instance.Uniform("seaBoreSlope", (float)surface.BoreFrontSlope);
             __instance.Uniform("seaWallSlope", (float)wallSlope);
-            var vectors = surface.Vectors();
-            float Valid(int slot) => shore != null && slot < vectors.Length && slot < shore.Numbers.Length && shore.Numbers[slot] == vectors[slot] ? 1 : 0;
+            var trains = surface.Trains;
+            float Valid(int slot) => shore != null && slot < trains.Slots && shore.Holds(slot, trains.NumberX(slot), trains.NumberZ(slot)) ? 1 : 0;
             __instance.Uniform("seaLagValidA", new Vec4f(Valid(0), Valid(1), Valid(2), Valid(3)));
             __instance.Uniform("seaLagValidB", new Vec4f(Valid(4), Valid(5), Valid(6), Valid(7)));
         }
         if (Active(__instance, WetUniform))
         {
-            __instance.Uniform(WetUniform, new Vec4f((float)surface.DominantPeriod, (float)lensDepthRatio, (float)wetReflectance, shore != null && DrawShore ? 1 : 0));
+            __instance.Uniform(WetUniform, new Vec4f((float)surface.Trains.DominantPeriod, (float)lensDepthRatio, (float)wetReflectance, shore != null && DrawShore ? 1 : 0));
         }
         if (!Active(__instance, FoamUniform)) return;
         __instance.Uniform(FoamUniform, DrawFoam
-            ? new Vec4f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray, (float)surface.SurfDepth)
-            : new Vec4f((float)NoCaps, 0, 0, 0));
-        __instance.Uniform("seaWavesToward", new Vec2f((float)Math.Cos(surface.WavesTowardRadians), (float)Math.Sin(surface.WavesTowardRadians)));
+            ? new Vec3f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray)
+            : new Vec3f((float)NoCaps, 0, 0));
+        __instance.Uniform("seaFoamClock", (float)(surface.Trains.Seconds % FoamClockSeconds));
+        __instance.Uniform("seaWavesToward", new Vec2f((float)Math.Cos(surface.Trains.TowardRadians), (float)Math.Sin(surface.Trains.TowardRadians)));
     }
 }

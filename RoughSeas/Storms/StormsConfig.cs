@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -23,57 +24,6 @@ public class EyeConfig
     public double ShiftAboveBlocks;
 }
 
-public class SurfaceConfig
-{
-    public SurfaceTrainConfig[] Trains = [];
-    public double Steepness;
-    public double MinLengthBlocks;
-    public double SettleSeconds;
-    public double TurnDegrees;
-    public double Stretch;
-    public double AimSeconds;
-    public double FullFoamMetres;
-    public bool SurfFoam;
-    public Surf.ShoreSurfConfig Shore = new();
-    public WhitecapsConfig[] Whitecaps = [];
-    public ShortWavesConfig ShortWaves = new();
-    public TessellationConfig Tessellation = new();
-}
-
-public class ShortWavesConfig
-{
-    public double PhillipsConstant;
-    public ShortBandConfig[] Bands = [];
-}
-
-public class ShortBandConfig
-{
-    public double FromBlocks;
-    public double ToBlocks;
-    public double[] AnglesDegrees = [];
-}
-
-public class TessellationConfig
-{
-    public double ReachMetres = 64;
-    public int MaxLevel = 8;
-}
-
-public class SurfaceTrainConfig
-{
-    public double AngleDegrees;
-    public double LengthFactor;
-    public double Energy;
-}
-
-public class WhitecapsConfig
-{
-    public int Force;
-    public double Caps;
-    public double Streaks;
-    public double Spray;
-}
-
 public class WavesConfig
 {
     public double MinHeight;
@@ -85,13 +35,11 @@ public class WavesConfig
     public double PlungingShareAtSea;
     public double[] PlungingIribarren = [];
     public double[] PlungeDistance = [];
-    public int BedSlopeBlocks;
     public double SlamCoefficient;
     public double PlungingSpeedRatio;
     public double ShippedWaterFraction;
     public double CrestRatio;
     public double BreakingCrestRatio;
-    public int MaxDepthBlocks;
 }
 
 public class BilgeConfig

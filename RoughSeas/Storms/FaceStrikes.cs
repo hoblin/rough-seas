@@ -1,6 +1,5 @@
 using System;
-using RoughSeas.Shore;
-using RoughSeas.Surf;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -13,7 +12,6 @@ public readonly record struct SprayBurst(double X, double Y, double Z, double Al
 /// </summary>
 public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves waves, WallSpray spray, FacesConfig config, Action<SprayBurst> emit, Action<string, object[]> log)
 {
-    private const double StillLevel = 7.0 / 8;
     private const double LogEverySeconds = 5;
     private const double LeapShare = 2;
 
@@ -22,10 +20,10 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
 
     public void Update(double playerX, double playerZ, double lived)
     {
-        var elapsed = surface.Seconds - lastSeconds;
-        lastSeconds = surface.Seconds;
+        var elapsed = surface.Trains.Seconds - lastSeconds;
+        lastSeconds = surface.Trains.Seconds;
         var window = elapsed > LeapShare * lived ? lived : elapsed;
-        if (!(window > 0) || surface.Calm || surface.Seabed is not { } field) return;
+        if (!(window > 0) || surface.Trains.Calm || surface.Seabed is not { } field) return;
         var radius = config.RadiusBlocks * config.RadiusBlocks;
         bool Near(double x, double z) => (x - playerX) * (x - playerX) + (z - playerZ) * (z - playerZ) <= radius;
 
@@ -54,7 +52,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
         if (share <= 0 || surface.SinceCrest(x, z) >= window) return;
         var incidence = surface.Incidence(x, z, wall.NormalX, wall.NormalZ);
         if (incidence <= 0) return;
-        var (height, depth, capped) = surface.WaveAt(x, z, share);
+        var (height, depth, breaks) = surface.WaveAt(x, z, share);
         if (height <= 0) return;
         var crest = height * (1 + wall.Reflection * incidence) / 2;
         if (crest >= wall.Rise)
@@ -62,7 +60,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
             overtopping++;
             return;
         }
-        if (!capped && !waves.BreaksAt(depth, height) && share * surface.FoldAt(x, z, share) <= surface.CapsFold)
+        if (!breaks && share * surface.FoldAt(x, z, share) <= surface.CapsFold)
         {
             standing++;
             return;
@@ -70,9 +68,9 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
 
         broken++;
         highest = Math.Max(highest, height);
-        var period = surface.DominantPeriod;
+        var period = surface.Trains.DominantPeriod;
         var impact = spray.Wave(height, period, depth, crest, waves.BreakerCelerity(height, period, depth));
-        Burst(x + Off(wall.SideX), wall.Level + StillLevel + crest, z + Off(wall.SideZ), wall.SideZ, wall.SideX, crest, impact);
+        Burst(x + Off(wall.SideX), wall.Level + WaterColumn.StillLevel + crest, z + Off(wall.SideZ), wall.SideZ, wall.SideX, crest, impact);
     }
 
     private void Step(StepFace step, double window)
@@ -88,7 +86,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
         if (head <= 0) return;
 
         sheets++;
-        Burst(x + Off(step.SideX), step.Level + StillLevel + step.Ground, z + Off(step.SideZ), step.SideZ, step.SideX, 0, spray.Sheet(lens, head));
+        Burst(x + Off(step.SideX), step.Level + WaterColumn.StillLevel + step.Ground, z + Off(step.SideZ), step.SideZ, step.SideX, 0, spray.Sheet(lens, head));
     }
 
     private double Off(int side) => side * (0.5 - config.SprayFromFaceBlocks);

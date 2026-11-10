@@ -72,7 +72,7 @@ public static class VesselMotion
         if (Seconds < tracedUntil)
         {
             storms!.Log(__instance, "surface trace: frame {0} at {1:F3} s, swimming {2}, at {3:F2} {4:F2}; lifted {5:F3} m, rolled {6:F2}°, pitched {7:F2}°",
-                surface!.Frame, surface.Seconds, __instance.Swimming, __instance.Pos.X, __instance.Pos.Z, pose.Lift, pose.Roll * GameMath.RAD2DEG, pose.Pitch * GameMath.RAD2DEG);
+                surface!.Trains.Frame, surface.Trains.Seconds, __instance.Swimming, __instance.Pos.X, __instance.Pos.Z, pose.Lift, pose.Roll * GameMath.RAD2DEG, pose.Pitch * GameMath.RAD2DEG);
         }
     }
 
@@ -87,7 +87,7 @@ public static class VesselMotion
         if (entity is EntityBoat traced && Seconds < tracedUntil && !isShadowPass)
         {
             storms!.Log(traced, "surface trace: frame {0}, model at {1:F3} {2:F3} {3:F3} from the camera",
-                surface!.Frame, __instance.ModelMat[12], __instance.ModelMat[13], __instance.ModelMat[14]);
+                surface!.Trains.Frame, __instance.ModelMat[12], __instance.ModelMat[13], __instance.ModelMat[14]);
         }
     }
 
@@ -118,11 +118,12 @@ public static class VesselMotion
     private static SeaPose PoseOf(EntityBoat boat)
     {
         if (surface == null || drawn == null) return default;
-        if (poses.TryGetValue(boat.EntityId, out var cached) && cached.Frame == surface.Frame) return cached.Pose;
+        var frame = surface.Trains.Frame;
+        if (poses.TryGetValue(boat.EntityId, out var cached) && cached.Frame == frame) return cached.Pose;
 
         var pose = Ride(boat, drawn);
-        if (cached.Frame == surface.Frame - 1) largestStep = Math.Max(largestStep, Math.Abs(pose.Lift - cached.Pose.Lift));
-        poses[boat.EntityId] = (surface.Frame, pose);
+        if (cached.Frame == frame - 1) largestStep = Math.Max(largestStep, Math.Abs(pose.Lift - cached.Pose.Lift));
+        poses[boat.EntityId] = (frame, pose);
         return pose;
     }
 

@@ -25,7 +25,7 @@ public class SeaMap(SeaWeatherConfig config, SeaClock clock, Func<int> regionSiz
         var topZ = (int)Math.Floor(cellZ);
         var (tx, tz) = (cellX - leftX, cellZ - topZ);
 
-        var sum = new double[9];
+        var sum = new double[10];
         var weight = 0.0;
         for (var dx = 0; dx <= 1; dx++)
         for (var dz = 0; dz <= 1; dz++)
@@ -37,7 +37,7 @@ public class SeaMap(SeaWeatherConfig config, SeaClock clock, Func<int> regionSiz
         }
         if (weight <= 0) return default;
         return new SeaSample(sum[0] / weight, sum[1] / weight, sum[2] / weight, sum[3] / weight, sum[4] / weight,
-            sum[5] / weight, sum[6] / weight, sum[7] / weight, sum[8] / weight);
+            sum[5] / weight, sum[6] / weight, sum[7] / weight, sum[8] / weight, sum[9] / weight);
     }
 
     public (double X, double Z) Wind(double x, double z)
@@ -120,6 +120,7 @@ public class SeaMap(SeaWeatherConfig config, SeaClock clock, Func<int> regionSiz
         sum[6] += cell.CurrentX * w;
         sum[7] += cell.CurrentZ * w;
         sum[8] += cell.WaterCelsius * w;
+        sum[9] += cell.Depth * w;
     }
 
     private sealed record Region(SeaSample[] From, SeaSample[] To, double SnapshotHours, double SpanHours, int Side, double Mps,
@@ -144,6 +145,7 @@ public class SeaMap(SeaWeatherConfig config, SeaClock clock, Func<int> regionSiz
             a.WavePeriod + (b.WavePeriod - a.WavePeriod) * t,
             a.CurrentX + (b.CurrentX - a.CurrentX) * t,
             a.CurrentZ + (b.CurrentZ - a.CurrentZ) * t,
-            a.WaterCelsius + (b.WaterCelsius - a.WaterCelsius) * t);
+            a.WaterCelsius + (b.WaterCelsius - a.WaterCelsius) * t,
+            a.Depth + (b.Depth - a.Depth) * t);
     }
 }

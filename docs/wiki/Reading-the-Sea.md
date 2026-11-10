@@ -172,6 +172,7 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | `SwellAt(x, z)` | whether swell is drawn there now: none outside the waves' field or where the sea is calm |
 | `Seconds` | the time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client |
 | `HeightAt(x, z)` | the surface's height above still water there now, in metres |
+| `WaveHere(x, z)` | the waves there now, a `WaveReading`: their significant height over the bed, the dominant period, where they run as the bed turns them, the depth they feel, the bed's slope, the share of them breaking, and the height of the sea coming into that breaking water |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |
 | `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in metres per second of `Seconds`, as the waves move it, averaged over a hull's underwater body |
 

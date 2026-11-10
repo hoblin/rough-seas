@@ -1,5 +1,5 @@
 using System;
-using RoughSeas.SeaAndWeather;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 
 namespace RoughSeas.Storms;

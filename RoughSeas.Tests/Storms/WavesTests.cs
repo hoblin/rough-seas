@@ -1,5 +1,6 @@
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 
 namespace RoughSeas.Tests.Storms;
 
@@ -16,30 +17,16 @@ public class WavesTests
     }
 
     [Fact]
-    public void AWaveBreaksInWaterShallowerThanItsHeightAndAQuarter()
+    public void ABreakerPlungesWithinTheIribarrenBandAndSpillsOrSurgesOutsideIt()
     {
-        Assert.True(waves.BreaksAt(depth: 2, height: 2));
-        Assert.False(waves.BreaksAt(depth: 3, height: 2));
-    }
-
-    [Fact]
-    public void OneWaveInSevenOverTopsTheSignificantHeight()
-    {
-        Assert.Equal(2, Waves.WaveHeight(2, 1 - Math.Exp(-2)), 6);
-        Assert.Equal(0, Waves.WaveHeight(2, 0));
+        Assert.True(waves.PlungingBreaker(1));
+        Assert.False(waves.PlungingBreaker(0.1));
+        Assert.False(waves.PlungingBreaker(5));
     }
 
     [Fact]
     public void ABreakingCrestStandsHigherThanASwellOfTheSameHeight() =>
         Assert.True(waves.Crest(2, breaking: true) > waves.Crest(2, breaking: false));
-
-    [Fact]
-    public void AWaveRunsAtItsDeepWaterSpeedInDeepWater() =>
-        Assert.Equal(9.81 * 8 / (2 * Math.PI), Waves.Celerity(8, double.PositiveInfinity), 6);
-
-    [Fact]
-    public void AWaveSlowsToTheShallowWaterSpeedOverAShallowBed() =>
-        Assert.Equal(Math.Sqrt(9.81 * 1), Waves.Celerity(12, 1), 1);
 
     [Fact]
     public void AWavePlungesOnASteepBedAndSpillsOnAGentleOne()
@@ -48,6 +35,10 @@ public class WavesTests
         Assert.False(waves.Plunges(height: 1, period: 6, bedSlope: 0.02, depth: 1.2));
         Assert.False(waves.Plunges(height: 1, period: 6, bedSlope: 1, depth: 1.2));
     }
+
+    [Fact]
+    public void AWaveThatHasNotReachedItsBreakingDepthDoesNotPlunge() =>
+        Assert.False(waves.Plunges(height: 0.5, period: 8, bedSlope: 0.1, depth: 3));
 
     [Fact]
     public void AHullFarInsideWhereAWavePlungedMeetsOnlyItsBore()
@@ -74,7 +65,7 @@ public class WavesTests
     public void ABreakerIsAsLongAsItsHeightMakesItAndNoFasterThanTheSea()
     {
         Assert.Equal(Math.Sqrt(9.81 / 0.142 / (2 * Math.PI)), waves.BreakerCelerity(1, 9, double.PositiveInfinity), 6);
-        Assert.Equal(Waves.Celerity(4, double.PositiveInfinity), waves.BreakerCelerity(8, 4, double.PositiveInfinity), 6);
+        Assert.Equal(WaveTheory.Celerity(4, double.PositiveInfinity), waves.BreakerCelerity(8, 4, double.PositiveInfinity), 6);
     }
 
     [Fact]
@@ -82,7 +73,7 @@ public class WavesTests
     {
         var ownPeriod = Math.Sqrt(2 * Math.PI / 0.142 / 9.81);
 
-        Assert.Equal(Waves.Celerity(ownPeriod, 1.28), waves.BreakerCelerity(1, 9, 1.28), 6);
+        Assert.Equal(WaveTheory.Celerity(ownPeriod, 1.28), waves.BreakerCelerity(1, 9, 1.28), 6);
     }
 
     [Fact]

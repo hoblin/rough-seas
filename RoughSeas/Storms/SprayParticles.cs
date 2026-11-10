@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Concurrent;
-using RoughSeas.Shore;
+using RoughSeas.Water;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -42,13 +42,13 @@ public sealed class SprayParticles(FacesConfig config) : ParticlesProviderBase
 
     public override bool DieInLiquid => true;
 
-    public override float GravityEffect => (float)(RunUp.Gravity / (GlobalConstants.GravityStrengthParticle * EngineGravityFactor));
+    public override float GravityEffect => (float)(WaveTheory.Gravity / (GlobalConstants.GravityStrengthParticle * EngineGravityFactor));
 
     public override float LifeLength
     {
         get
         {
-            var gravity = (float)RunUp.Gravity;
+            var gravity = (float)WaveTheory.Gravity;
             var flight = (speed + MathF.Sqrt(speed * speed + 2 * gravity * (float)burst.FallMetres)) / gravity;
             return (flight + (float)config.SprayLandingSeconds) / EngineLifeFactor;
         }

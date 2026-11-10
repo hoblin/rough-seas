@@ -8,6 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -38,9 +39,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private SeaClock.Watch watch = null!;
     private float sinceUpdate;
     private double sinceWave;
-
-    /// <summary>Once a wave period, server side, while the vessel floats: the sea state of that wave.</summary>
-    public event Action<SeaState>? Wave;
 
     /// <summary>Server side, each wave as she takes it, whether or not it broke on her or shipped water.</summary>
     public event Action<TakenWave>? Took;
@@ -124,20 +122,8 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public Block Seabed(int maxBlocks) => entity.World.BlockAccessor.GetBlock(Sound(entity.Pos.XYZ, maxBlocks).Bottom);
 
-    private (double Depth, BlockPos Bottom) Sound(Vec3d at, int maxBlocks)
-    {
-        var accessor = entity.World.BlockAccessor;
-        var pos = at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos;
-        var depth = 0.0;
-        var surface = !OpenWater.At(accessor, pos.UpCopy()).IsLiquid();
-        while (depth < maxBlocks && OpenWater.At(accessor, pos) is { } fluid && fluid.IsLiquid())
-        {
-            depth += surface ? fluid.LiquidLevel / 8.0 : 1;
-            surface = false;
-            pos.Down();
-        }
-        return (depth, pos);
-    }
+    private (double Depth, BlockPos Bottom) Sound(Vec3d at, int maxBlocks) =>
+        WaterColumn.Sound(entity.World.BlockAccessor, at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos, maxBlocks);
 
     public override void OnGameTick(float deltaTime)
     {
@@ -156,68 +142,54 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         }
 
         using var _ = storms.Budget.Measure();
-        var state = sea.At(entity.Pos.X, entity.Pos.Z);
-        if (state.WaveHeight < storms.Config.Waves.MinHeight)
+        var here = storms.Swells!.At(entity.Pos.X, entity.Pos.Z).WaveHere(entity.Pos.X, entity.Pos.Z);
+        if (here.Height < storms.Config.Waves.MinHeight || here.Period <= 0)
         {
             sinceWave = 0;
             return;
         }
 
-        for (; sinceWave >= state.WavePeriod && entity.Alive; sinceWave -= state.WavePeriod)
-        {
-            Wave?.Invoke(state);
-            TakeWave(state);
-        }
+        var windMps = sea.At(entity.Pos.X, entity.Pos.Z).WindSpeed;
+        for (; sinceWave >= here.Period && entity.Alive; sinceWave -= here.Period) TakeWave(here, windMps);
     }
 
-    private void TakeWave(SeaState state)
+    private void TakeWave(WaveReading here, double windMps)
     {
         var waves = storms.Waves;
         var rand = entity.World.Rand;
-        var height = Waves.WaveHeight(state.WaveHeight, rand.NextDouble());
+        var height = WaveTheory.RayleighHeight(here.Height, rand.NextDouble());
         var swamped = bilge?.Swamped == true;
-        var depth = WaterDepth(storms.Config.Waves.MaxDepthBlocks);
-        var surf = waves.BreaksAt(depth, height);
-        var breaks = surf || rand.NextDouble() < waves.BreakingChance(state.WindSpeed);
+        var surf = here.Breaks(height);
+        var breaks = surf || rand.NextDouble() < waves.BreakingChance(windMps);
         var breaking = swamped || breaks;
         var crest = waves.Crest(height, breaking);
         var shipped = Mechanic.BilgeWater.On(entity.World) ? waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure : 0;
         var capsizes = storms.Config.Swamping.Capsizes && breaking && Seaworthiness.Capsizes(height);
-        Took?.Invoke(new TakenWave(height, breaking, shipped, -state.WindX, -state.WindZ));
+        var (fromX, fromZ) = (-Math.Cos(here.TowardRadians), -Math.Sin(here.TowardRadians));
+        Took?.Invoke(new TakenWave(height, breaking, shipped, fromX, fromZ));
         if (!breaking && shipped <= 0) return;
 
         bilge?.Ship(shipped, "by the sea");
         var cause = swamped ? "swamped" : surf ? "surf" : breaking ? "whitecap" : "swell";
         storms.Log(entity, "{0} wave {1:F1} m in a {2:F1} m sea, {3:F2} m over a {4:F2} m freeboard: shipped {5:F0} L, {6}",
-            cause, height, state.WaveHeight, Seaworthiness.Overtopping(crest), Seaworthiness.FreeboardMetres, shipped,
+            cause, height, here.Height, Seaworthiness.Overtopping(crest), Seaworthiness.FreeboardMetres, shipped,
             bilge == null ? "washed off" : $"bilge {bilge.Litres:F0} of {bilge.CapacityLitres:F0} L");
-        if (breaks && hull != null) Slam(height, state, depth, surf, hull);
+        if (breaks && hull != null) Slam(height, here, surf, hull);
         if (capsizes) Capsize(height, swamped);
     }
 
-    private void Slam(double breakerMetres, SeaState state, double depth, bool surf, EntityBehaviorVesselIntegrity hull)
+    private void Slam(double breakerMetres, WaveReading here, bool surf, EntityBehaviorVesselIntegrity hull)
     {
         var waves = storms.Waves;
         var plunging = surf
-            ? waves.Plunges(breakerMetres, state.WavePeriod, BedSlope(state, depth), depth)
+            ? waves.Plunges(breakerMetres, here.Period, here.BedSlope, here.Depth)
             : waves.PlungesAtSea(entity.World.Rand.NextDouble());
-        var celerity = waves.BreakerCelerity(breakerMetres, state.WavePeriod,
-            depth < storms.Config.Waves.MaxDepthBlocks ? depth : double.PositiveInfinity);
+        var celerity = waves.BreakerCelerity(breakerMetres, here.Period, here.Depth);
         var pressure = waves.SlamPressure(celerity, plunging);
-        var place = hull.Toward(-state.WindX, -state.WindZ);
+        var place = hull.Toward(-Math.Cos(here.TowardRadians), -Math.Sin(here.TowardRadians));
         storms.Log(entity, "{0:F1} m {1} breaker at {2:F1} m/s slams the {3} with {4:F0} kPa", breakerMetres,
             plunging ? "plunging" : surf ? "broken" : "spilling", celerity, place.Code(), pressure / 1000);
         hull.Strike(pressure, place, Blow.Slam);
-    }
-
-    private double BedSlope(SeaState state, double depth)
-    {
-        var wind = Math.Sqrt(state.WindX * state.WindX + state.WindZ * state.WindZ);
-        if (wind == 0) return 0;
-
-        var blocks = storms.Config.Waves.BedSlopeBlocks;
-        var seaward = entity.Pos.XYZ.Add(-state.WindX / wind * blocks, 0, -state.WindZ / wind * blocks);
-        return Math.Max(0, Sound(seaward, storms.Config.Waves.MaxDepthBlocks).Depth - depth) / blocks;
     }
 
     private void Capsize(double breakerMetres, bool swamped)

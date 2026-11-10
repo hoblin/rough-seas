@@ -6,6 +6,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 

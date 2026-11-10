@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using RoughSeas.Water;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;

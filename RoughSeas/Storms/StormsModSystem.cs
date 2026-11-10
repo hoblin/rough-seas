@@ -7,7 +7,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Shore;
-using RoughSeas.Surf;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -68,11 +68,11 @@ public class StormsModSystem : ModSystem
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var surface = Surface = new SeaSurface(Config.Surface, Waves);
         var field = new SurfaceField();
-        surface.Changed += change => Log("surface: " + change);
+        surface.Trains.Changed += change => Log("surface: " + change);
         DrawnSea = new DrawnSea(surface, field);
         DrawnWater = new DrawnWater(DrawnSea);
         var shoreConfig = capi.ModLoader.GetModSystem<ShoreModSystem>().Config;
-        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, Config.Surface.Tessellation, message => Log(message), capi))
+        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, Config.Surface.Shore.WaterAttenuation, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, Config.Surface.Tessellation, message => Log(message), capi))
         {
             clock = new SurfaceClock(this, sea, surface, field, Surf(capi), capi);
             EyeUnderSurface.Attach(this, capi, DrawnWater, Config.Eye);
@@ -109,8 +109,9 @@ public class StormsModSystem : ModSystem
     {
         var shore = api.ModLoader.GetModSystem<ShoreModSystem>().Config;
         var band = new Band(new RunUp(shore.RunUp), shore.Sheet, shore.RunUp.SlopeSearchBlocks);
-        var faces = new FaceBuilder(new WallReflection(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces, Waves.BreakingDepthRatio);
-        return new SurfMaker(new SurfBuilder(band, faces), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
+        var faces = new FaceBuilder(new WallReflection(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces);
+        var transformation = new WaveTransformation(Waves.BreakingDepthRatio, faces.SmoothingBlocks, Config.Surface.Shore.BreakingDissipation, Config.Surface.Shore.BoreCelerityShare);
+        return new SurfMaker(new SurfBuilder(new SwashSheets(band), faces, transformation), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
     }
 
     private static void RegisterSurfaceCommands(ICoreClientAPI capi, SurfaceField field)
@@ -163,6 +164,15 @@ public class StormsModSystem : ModSystem
                 .WithArgs(parsers.Bool("draw"))
                 .HandleWith(args => Drawn("height colours", SurfaceShader.Colours.On = (bool)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("map")
+                .WithDescription("Paint the water as a map of height, the dominant train's phase (crests as white lines), the share of waves breaking, or the foam")
+                .WithArgs(parsers.WordRange("view", HeightColours.Views))
+                .HandleWith(args =>
+                {
+                    SurfaceShader.Colours.View = Array.IndexOf(HeightColours.Views, (string)args[0]);
+                    return Drawn("map of " + args[0], SurfaceShader.Colours.On = true);
+                })
+            .EndSubCommand()
             .BeginSubCommand("profile")
                 .WithDescription("The drawn sea's height every block for N blocks along Z from the player, X blocks ahead along X")
                 .WithArgs(parsers.OptionalInt("blocks", 40), parsers.OptionalInt("ahead", 0))
@@ -199,7 +209,7 @@ public class StormsModSystem : ModSystem
                     var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
                     var seabed = storms.Surface?.Seabed;
                     return TextCommandResult.Success($"{(int)Math.Floor(x) - (int)capi.World.DefaultSpawnPosition.X} {(int)Math.Floor(z) - (int)capi.World.DefaultSpawnPosition.Z}: "
-                        + $"share {field.Factor(x, z):F3}, height {storms.DrawnSea!.HeightAt(x, z):F2}; field from {seabed?.OriginX - (int)capi.World.DefaultSpawnPosition.X} {seabed?.OriginZ - (int)capi.World.DefaultSpawnPosition.Z}; {seabed?.Describe(x, z) ?? "no seabed read yet"}");
+                        + $"share {field.Factor(x, z):F3}, height {storms.DrawnSea!.HeightAt(x, z):F2}; crests {storms.Surface?.CrestAt(x, z)}; field from {seabed?.OriginX - (int)capi.World.DefaultSpawnPosition.X} {seabed?.OriginZ - (int)capi.World.DefaultSpawnPosition.Z}; {seabed?.Describe(x, z) ?? "no seabed read yet"}");
                 })
             .EndSubCommand()
             .BeginSubCommand("trace")

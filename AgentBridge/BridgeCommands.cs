@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Shipyard;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;

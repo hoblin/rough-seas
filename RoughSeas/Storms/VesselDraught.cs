@@ -1,6 +1,7 @@
 using System;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.GameContent;

@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -6,13 +7,15 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
 {
     private const double ModelTurn = Math.PI / 2;
 
-    public bool Swell => !surface.Calm;
+    public bool Swell => !surface.Trains.Calm;
 
     public bool SwellAt(double x, double z) => ShareAt(x, z) > 0;
 
-    public double Seconds => surface.Seconds;
+    public double Seconds => surface.Trains.Seconds;
 
     public double HeightAt(double x, double z) => ShareAt(x, z) is var share and > 0 ? surface.HeightAt(x, z, share) : 0;
+
+    public WaveReading WaveHere(double x, double z) => ShareAt(x, z) is var share and > 0 ? surface.WaveHere(x, z, share) : default;
 
     public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) =>
         ShareAt(x, z) is var share and > 0 ? surface.HullVelocityAt(x, z, lift, draft, yaw, length, beam, share) : default;
@@ -34,5 +37,5 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
             Math.Atan((plusX - minusX) / length));
     }
 
-    private double ShareAt(double x, double z) => surface.Calm ? 0 : field.Factor(x, z);
+    private double ShareAt(double x, double z) => surface.Trains.Calm ? 0 : field.Factor(x, z);
 }

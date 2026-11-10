@@ -63,21 +63,21 @@ A vessel that sinks throws everyone off and lies on the bottom, seen but no use:
 
 A wave breaks when it grows too steep, and a breaking wave is the dangerous one: its crest stands higher, it throws far more water aboard and it strikes the hull like a falling wall.
 
-- **Surf.** Where the water is shallower than about 1.3 times a wave's height, the wave breaks, every time. Real waves do the same: a wave breaks once it is about four fifths as high as the water is deep, which is why the surf line runs further out the higher the sea. In rough weather the last stretch to a beach is all surf. The waves you see break in the same water, so you can read the surf line off the sea ([The look of the sea](The-Look-of-the-Sea#what-you-see)).
+- **Surf.** As the water shallows under a sea, its tallest waves start breaking, and the share of waves that break grows toward the shore. A wave breaks once it is about four fifths as high as the water is deep, which is why the surf line runs further out the higher the sea. In rough weather the last stretch to a beach is all surf. Over a bar the waves break and go on smaller, so the water behind it is safer. The waves you see break in the same water and the same share, so you can read the surf line off the sea ([The look of the sea](The-Look-of-the-Sea#what-you-see)).
 
   ![Where waves break: a big wave breaks further out than a small one, where the water is about 1.3 times its height deep](images/diagrams/surf-line.svg)
 
 - **Whitecaps.** Out in deep water, now and then a wave breaks on its own, more often as the wind rises: about one wave in 50 in a strong breeze (force 6), one in 11 in a gale (force 8), one in 4 in a storm (force 10) and three in four in a hurricane.
 - **A swamped vessel.** Once a bilge is full, every wave comes over it as a breaker would, though only a wave that truly breaks slams it.
 
-A breaker slams the side the wind comes from. How hard depends on how it breaks:
+A breaker slams the side the waves come from. How hard depends on how it breaks:
 
 - **Spilling.** Most breakers out at sea spill: the crest tumbles down its own face and rolls against the side. The higher the breaker, the harder it hits.
 - **Plunging.** The crest curls over and falls on the hull, about nine times as hard as a spilling breaker of the same height. At sea only about one breaker in fifty plunges. In the surf the beach decides: on a steep shore most waves plunge, on a gentle one they spill, and a hull further in than where a wave curls over meets only its foam.
 
 A breaker in shallow water hits softer than one of the same height out at sea.
 
-Either the planks hold, or the windward bow, side or quarter it hits is stove in. What stoves in each vessel's side, in oak:
+Either the planks hold, or the bow, side or quarter it hits is stove in. What stoves in each vessel's side, in oak:
 
 | Vessel | A spilling breaker of | A plunging breaker of |
 | --- | --- | --- |

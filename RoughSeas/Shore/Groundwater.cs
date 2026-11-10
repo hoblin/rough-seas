@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -26,11 +27,9 @@ public sealed class Groundwater
 {
     private const int ChunkSize = GlobalConstants.ChunkSize;
     private const int TickMilliseconds = 100;
-    private const int StillLevel = 7;
     private const double SeaChange = 0.05;
     private const int SeaCell = 8;
 
-    private static readonly string[] Families = ["water", "saltwater"];
     private static readonly AccessTools.FieldRef<BlockBehaviorFiniteSpreadingLiquid, int> SpreadDelay =
         AccessTools.FieldRefAccess<BlockBehaviorFiniteSpreadingLiquid, int>("spreadDelay");
 
@@ -61,8 +60,6 @@ public sealed class Groundwater
     }
 
     public TickBudget Budget { get; } = new("shore");
-
-    public static bool Carries(Block fluid) => fluid.IsLiquid() && Families.Contains(fluid.FirstCodePart());
 
     public void Start()
     {
@@ -195,7 +192,7 @@ public sealed class Groundwater
         for (var y = top; y >= top - config.Band.HighestRiseBlocks; y--)
         {
             var fluid = accessor.GetBlock(probe.Set(x, y, z), BlockLayersAccess.Fluid);
-            if (fluid.Id != 0) return Carries(fluid) ? (y, fluid) : null;
+            if (fluid.Id != 0) return WaterColumn.Carries(fluid) ? (y, fluid) : null;
             if (OpenWater.Land(accessor, probe)) return null;
         }
         return null;
@@ -278,7 +275,7 @@ public sealed class Groundwater
             var fluid = accessor.GetBlock(probe, BlockLayersAccess.Fluid);
             var wanted = reached.TryGetValue((x, z), out var sheet) ? sheet.Fluid : 0;
             var cell = (x, level, z);
-            if (Carries(fluid) == (wanted != 0))
+            if (WaterColumn.Carries(fluid) == (wanted != 0))
             {
                 planned.Remove(cell);
                 continue;
@@ -334,7 +331,7 @@ public sealed class Groundwater
     private int Carrier(Block fluid)
     {
         if (carriers.TryGetValue(fluid.Id, out var known)) return known;
-        var still = sapi.World.GetBlock(new AssetLocation(fluid.Code.Domain, $"{fluid.FirstCodePart()}-still-{StillLevel}"));
+        var still = sapi.World.GetBlock(new AssetLocation(fluid.Code.Domain, $"{fluid.FirstCodePart()}-still-{WaterColumn.StillEighths}"));
         return carriers[fluid.Id] = still?.Id ?? fluid.Id;
     }
 

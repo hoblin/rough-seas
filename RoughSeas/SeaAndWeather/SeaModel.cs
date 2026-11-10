@@ -42,7 +42,7 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
         var wind = model.Wind(x, z, hours);
         var (height, period) = Waves(x, z, hours, wind);
         var current = model.Current(x, z);
-        return new SeaSample(wind.X, wind.Z, wind.Presence, model.RainCloudness(x, z, hours), height, period, current.X, current.Z, current.WaterCelsius);
+        return new SeaSample(wind.X, wind.Z, wind.Presence, model.RainCloudness(x, z, hours), height, period, current.X, current.Z, current.WaterCelsius, water.DepthHere(x, z));
     }
 
     public SeaCurrent CurrentAt(double x, double z) => model.Current(x, z);

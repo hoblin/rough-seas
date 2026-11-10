@@ -1,5 +1,5 @@
 using RoughSeas.SeaAndWeather;
-using RoughSeas.Surf;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -40,7 +40,7 @@ public sealed class SwellAround
     /// <summary>Lays the seabed under a body: one sea serves several bodies, each read over its own bed.</summary>
     public void Over(ISeaSource map, double x, double z)
     {
-        if (seabeds != null) surface.Seabed = seabeds.At(map, x, z, surface.Vectors(), surface.AmplitudeShares());
+        if (seabeds != null) surface.Seabed = seabeds.At(map, x, z, surface.Trains.Vectors(), surface.Trains.AmplitudeShares(), surface.Trains.Dominant);
     }
 
     /// <summary>Brings the sea to <paramref name="seconds"/> without aiming it again, between aims.</summary>

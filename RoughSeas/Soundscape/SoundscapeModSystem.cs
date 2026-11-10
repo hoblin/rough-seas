@@ -30,7 +30,7 @@ public class SoundscapeModSystem : ModSystem
     {
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
-        ShoreSound.Attach(Config.Shore, sea, storms.Waves);
+        ShoreSound.Attach(Config.Shore, storms);
         VanillaRowing.Attach(Config.VanillaRowingVolume, this);
         var crests = new Crests(capi, Config.Crests, sea.Clock, this);
         var splashes = new Splashes(capi, Config.Water.Splash, Config.Water.Range, storms, this);
