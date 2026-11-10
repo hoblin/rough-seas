@@ -95,6 +95,14 @@ public class SheetFrontTests
     }
 
     [Fact]
+    public void ARunUpTooFarToReachStillThrowsAsHardAsASheetCan()
+    {
+        var profile = Slope(0.01, 2000);
+        double Head(double runUp) => SheetFront.Thrown(runUp, 600, ShoreFixtures.Config.Sheet, profile, ShoreFixtures.Bed("soil")).Head;
+        Assert.True(Head(19) >= Head(4) - 0.01);
+    }
+
+    [Fact]
     public void AShoreThatNeverRisesToTheRunUpKeepsTheFreeThrow() =>
         Assert.Equal(Thrown(1.5).Head, SheetFront.Thrown(1.5, 9, ShoreFixtures.Config.Sheet, new double[48], ShoreFixtures.Bed("sand")).Head, 6);
 

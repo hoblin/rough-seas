@@ -35,7 +35,7 @@ public readonly record struct SheetFront(double SpeedSquared, double Metres, dou
         if (Climbs(free, profile, bed, highest)) return free;
 
         double low = 1, high = LargestSpeedShare;
-        if (!Climbs(Faster(free, high), profile, bed, highest)) return free;
+        if (!Climbs(Faster(free, high), profile, bed, highest)) return Faster(free, high);
         for (var step = 0; step < ThrowSteps; step++)
         {
             var middle = (low + high) / 2;
