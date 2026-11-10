@@ -10,8 +10,8 @@ namespace RoughSeas.Surf;
 
 /// <summary>
 /// The columns around a point as the shore's water stands in them: a water column by its surface level and depth,
-/// worldgen's seabed trusted while water still reaches it; a land column by the water under it and the top of its
-/// ground. Read off the main thread, from height maps copied on it.
+/// sounded block by block as deep as the shore looks and read from worldgen's seabed below that; a land column by the
+/// water under it and the top of its ground. Read off the main thread, from height maps copied on it.
 /// </summary>
 public sealed class SeabedMap
 {
@@ -85,14 +85,22 @@ public sealed class SeabedMap
         const int chunk = GlobalConstants.ChunkSize;
         var map = new SeabedMap(originX, originZ, size);
         var probe = new BlockPos(Dimensions.NormalWorld);
+        var unpacked = new HashSet<(int X, int Y, int Z)>();
         for (var i = 0; i < size * size; i++)
         {
             var (x, z) = (originX + i % size, originZ + i / size);
             if (x < 0 || z < 0 || !heights.TryGetValue((x / chunk, z / chunk), out var column)) continue;
             var index = z % chunk * chunk + x % chunk;
             var top = (int)column.Rain[index];
+            int terrain = column.Terrain[index];
             if (blocks.GetChunkAtBlockPos(probe.Set(x, top, z)) == null) continue;
-            map.Fill(i, blocks, probe, x, z, top, column.Terrain[index], beds, highestRise, deepest);
+            // The lock-free accessor reads a chunk packed after 8 idle seconds as air.
+            var lowest = Math.Max(Math.Min(top - deepest, Math.Min(top, terrain + 1) - highestRise) - 1, 0);
+            for (var section = lowest / chunk; section <= (top + highestRise + 1) / chunk; section++)
+            {
+                if (unpacked.Add((x / chunk, section, z / chunk))) blocks.GetChunkAtBlockPos(x, section * chunk, z)?.Unpack_ReadOnly();
+            }
+            map.Fill(i, blocks, probe, x, z, top, terrain, beds, highestRise, deepest);
         }
         map.ReadFaces(blocks, probe, beds, highestRise);
         return map;
@@ -137,11 +145,13 @@ public sealed class SeabedMap
 
     private static ShoreCell Water(IBlockAccessor blocks, BlockPos probe, int x, int top, int z, int terrain, Block fluid, Beds beds, int deepest)
     {
-        var worldgen = terrain < top && OpenWater.At(blocks, probe.Set(x, terrain + 1, z)).IsLiquid();
-        var bottom = worldgen ? terrain + 1 : top;
-        while (!worldgen && top - bottom < deepest && OpenWater.At(blocks, probe.Set(x, bottom - 1, z)).IsLiquid()) bottom--;
-        var bed = beds.Of(blocks.GetBlock(probe.Set(x, bottom - 1, z), BlockLayersAccess.Solid).BlockMaterial);
-        return new ShoreCell(ShoreKind.Water, worldgen || top - bottom < deepest ? top + StillLevel - bottom : Deep, bed, fluid.Id);
+        var bottom = top;
+        while (top - bottom < deepest && OpenWater.At(blocks, probe.Set(x, bottom - 1, z)).IsLiquid()) bottom--;
+        var ground = blocks.GetBlock(probe.Set(x, bottom - 1, z), BlockLayersAccess.Solid);
+        var sounded = top - bottom < deepest && ground.Id != 0;
+        var known = sounded || terrain < top;
+        var bed = beds.Of(ground.BlockMaterial);
+        return new ShoreCell(ShoreKind.Water, known ? top + StillLevel - (sounded ? bottom : terrain + 1) : Deep, bed, fluid.Id);
     }
 
     private static ShoreCell Shore(IBlockAccessor blocks, BlockPos probe, int x, int level, int z, Block fluid, Beds beds, int highestRise)

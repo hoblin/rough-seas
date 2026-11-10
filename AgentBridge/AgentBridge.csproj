@@ -39,6 +39,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="OpenTK.Graphics" Version="4.9.4" ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../RoughSeas/RoughSeas.csproj">
       <Private>false</Private>
     </ProjectReference>

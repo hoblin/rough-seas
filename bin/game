@@ -111,6 +111,9 @@ LOOK
   bin/game fps [SECONDS]     frames rendered over SECONDS (default 5): fps, mean, 95th-percentile and
                              longest frame time in ms. Compare a change against BENCH_MODS=agentbridge from
                              the same place and camera.
+  bin/game water [SECONDS]   the water's GPU time over SECONDS (default 5): the depth and surface passes in ms,
+                             triangles drawn, the liquid pool's memory. Compare with
+                             .surface tessellation false from the same place and camera
   bin/game shot [FILE] [gui] in-engine screenshot of the world alone: no HUD, hand or held item
                              (default shot.png; a relative FILE lands in the clone's temp folder,
                              /tmp/<bench>); prints the path of a half-size copy, cheaper to look at.
@@ -466,6 +469,7 @@ case "${1:-}" in
     echo "$folder/sheet.png"
     ;;
   fps) post "/fps?seconds=${2:-5}" ;;
+  water) post "/water?seconds=${2:-5}" ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
   aim) post "/look?entity=$2" ;;
   hover)

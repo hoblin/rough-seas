@@ -14,14 +14,14 @@ public sealed class Seabeds(Func<SurfMaker> maker, ShoreSurfConfig config, IWorl
     private readonly Dictionary<(int X, int Z), (SurfMaker Maker, double ReadAt)> makers = [];
     private double sweptAt;
 
-    public SurfField? At(ISeaSource map, double x, double z, (double X, double Z)[] numbers)
+    public SurfField? At(ISeaSource map, double x, double z, (double X, double Z)[] numbers, double[] amplitudeShares)
     {
         var now = world.ElapsedMilliseconds / 1000.0;
         if (now - sweptAt > ForgottenAfterSeconds) Sweep(now);
         var area = ((int)Math.Floor(x / config.MoveBlocks), (int)Math.Floor(z / config.MoveBlocks));
         var reader = makers.TryGetValue(area, out var known) ? known.Maker : maker();
         makers[area] = (reader, now);
-        reader.Update(world, map, x, z, numbers, now);
+        reader.Update(world, map, x, z, numbers, amplitudeShares, now);
         return reader.Field;
     }
 

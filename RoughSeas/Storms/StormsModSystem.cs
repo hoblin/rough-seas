@@ -72,7 +72,7 @@ public class StormsModSystem : ModSystem
         DrawnSea = new DrawnSea(surface, field);
         DrawnWater = new DrawnWater(DrawnSea);
         var shoreConfig = capi.ModLoader.GetModSystem<ShoreModSystem>().Config;
-        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, capi))
+        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, Config.Surface.Tessellation, message => Log(message), capi))
         {
             clock = new SurfaceClock(this, sea, surface, field, Surf(capi), capi);
             EyeUnderSurface.Attach(this, capi, DrawnWater, Config.Eye);
@@ -81,7 +81,7 @@ public class StormsModSystem : ModSystem
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         VesselMotion.Attach(this, capi, DrawnSea, surface);
         FloatMotion.Attach(DrawnSea);
-        RegisterSurfaceCommands(capi);
+        RegisterSurfaceCommands(capi, field);
     }
 
     internal SwellAround Swell(ICoreServerAPI sapi)
@@ -113,7 +113,7 @@ public class StormsModSystem : ModSystem
         return new SurfMaker(new SurfBuilder(band, faces), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
     }
 
-    private static void RegisterSurfaceCommands(ICoreClientAPI capi)
+    private static void RegisterSurfaceCommands(ICoreClientAPI capi, SurfaceField field)
     {
         var parsers = capi.ChatCommands.Parsers;
         capi.ChatCommands.Create("surface")
@@ -133,6 +133,48 @@ public class StormsModSystem : ModSystem
                 .WithArgs(parsers.Bool("draw"))
                 .HandleWith(args => Drawn("the shore", SurfaceShader.DrawShore = (bool)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("reflection")
+                .WithDescription("Draw the waves faces send back, or leave them out to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("reflection", SurfaceShader.DrawReflection = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("lag")
+                .WithDescription("Draw the crests as the bed turns them, or straight, to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("the bed's lag", SurfaceShader.DrawLag = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("energy")
+                .WithDescription("Draw each train as high as its energy over the bed makes it, or as over deep water, to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("the waves' energy over the bed", SurfaceShader.DrawEnergy = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("tessellation")
+                .WithDescription("Divide the water's blocks near the player, or draw one quad a block, to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args =>
+                {
+                    SurfaceTessellation.On = (bool)args[0];
+                    capi.Shader.ReloadShaders();
+                    return Drawn("tessellation", SurfaceTessellation.Drawn);
+                })
+            .EndSubCommand()
+            .BeginSubCommand("colours")
+                .WithDescription("Paint the water by its height, from purple at the zone's lowest to red at its highest, and outline each block's top face")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("height colours", SurfaceShader.Colours.On = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("profile")
+                .WithDescription("The drawn sea's height every block for N blocks along Z from the player, X blocks ahead along X")
+                .WithArgs(parsers.OptionalInt("blocks", 40), parsers.OptionalInt("ahead", 0))
+                .HandleWith(args =>
+                {
+                    var pos = capi.World.Player.Entity.Pos;
+                    var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
+                    var (blocks, ahead) = ((int)args[0], (int)args[1]);
+                    return TextCommandResult.Success(string.Join(" ", Enumerable.Range(-blocks / 2, blocks + 1)
+                        .Select(i => $"{Math.Floor(pos.Z) + i - (int)capi.World.DefaultSpawnPosition.Z:F0}:{storms.DrawnSea!.HeightAt(pos.X + ahead, Math.Floor(pos.Z) + i + 0.5):F2}")));
+                })
+            .EndSubCommand()
             .BeginSubCommand("bed")
                 .WithDescription("The seabed and the swash read under the player, and N blocks along X")
                 .WithArgs(parsers.OptionalInt("blocks", 0))
@@ -145,6 +187,19 @@ public class StormsModSystem : ModSystem
                     return TextCommandResult.Success(string.Join("\n", Enumerable.Range(0, blocks + 1)
                         .Select(i => $"{(int)Math.Floor(pos.X) + i - (int)capi.World.DefaultSpawnPosition.X} {(int)Math.Floor(pos.Z) - (int)capi.World.DefaultSpawnPosition.Z}: "
                             + field.Describe(Math.Floor(pos.X) + i + 0.5, Math.Floor(pos.Z) + 0.5))));
+                })
+            .EndSubCommand()
+            .BeginSubCommand("probe")
+                .WithDescription("Why the drawn sea stands as it does at a point this many blocks from the player, along X and Z: its share of the waves, its height, and the seabed read there")
+                .WithArgs(parsers.Int("x"), parsers.Int("z"))
+                .HandleWith(args =>
+                {
+                    var pos = capi.World.Player.Entity.Pos;
+                    var (x, z) = (Math.Floor(pos.X) + (int)args[0] + 0.5, Math.Floor(pos.Z) + (int)args[1] + 0.5);
+                    var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
+                    var seabed = storms.Surface?.Seabed;
+                    return TextCommandResult.Success($"{(int)Math.Floor(x) - (int)capi.World.DefaultSpawnPosition.X} {(int)Math.Floor(z) - (int)capi.World.DefaultSpawnPosition.Z}: "
+                        + $"share {field.Factor(x, z):F3}, height {storms.DrawnSea!.HeightAt(x, z):F2}; field from {seabed?.OriginX - (int)capi.World.DefaultSpawnPosition.X} {seabed?.OriginZ - (int)capi.World.DefaultSpawnPosition.Z}; {seabed?.Describe(x, z) ?? "no seabed read yet"}");
                 })
             .EndSubCommand()
             .BeginSubCommand("trace")

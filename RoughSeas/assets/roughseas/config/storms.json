@@ -121,6 +121,19 @@
         ],
         "steepness": 1.2,
         "minLengthBlocks": 8,
+        "shortWaves": {
+            "phillipsConstant": 0.0081,
+            "bands": [
+                { "fromBlocks": 4, "toBlocks": 8, "anglesDegrees": [-27, 19] },
+                { "fromBlocks": 2, "toBlocks": 4, "anglesDegrees": [33, -12] },
+                { "fromBlocks": 1, "toBlocks": 2, "anglesDegrees": [-41, 23] },
+                { "fromBlocks": 0.5, "toBlocks": 1, "anglesDegrees": [14, -36] }
+            ]
+        },
+        "tessellation": {
+            "reachMetres": 64,
+            "maxLevel": 8
+        },
         "settleSeconds": 30,
         "turnDegrees": 20,
         "stretch": 0.25,
@@ -130,6 +143,8 @@
         "shore": {
             "mapBlocks": 256,
             "moveBlocks": 32,
+            "edgeFadeBlocks": 32,
+            "breakingDissipation": 1,
             "deepestBlocks": 32,
             "refreshSeconds": 20,
             "wetReflectance": 0.5,
@@ -137,7 +152,9 @@
                 "wetReflectance": "Wet sand reflects about half the light dry sand does: Ångström measured an albedo of 0.182 dry against 0.091 wet, as Lekner & Dorf 1988 (Applied Optics 27(7), 'Why some things are darker when wet') quote it",
                 "mapBlocks": "The seabed is read this far across around the player, a block to a texel: the surf of every shore within view distance's nearer half",
                 "moveBlocks": "The seabed is read again once the player is this far from where it was read",
-                "deepestBlocks": "Where worldgen's seabed no longer lies under the water, the bed is sounded block by block this deep at most; water deeper still is drawn as open sea",
+                "breakingDissipation": "Battjes and Janssen's (1978) alpha in the energy a breaking sea loses: D = alpha sigma Q_b E / (pi B), SWAN's default of 1",
+                "edgeFadeBlocks": "Beyond the map the waves are drawn as over deep water; over this many blocks inside its edge they go over to what the bed makes of them, so the map's edge draws no step in the water",
+                "deepestBlocks": "The bed is sounded block by block this deep at most, so a bar a player built counts; below that its depth is worldgen's, and where worldgen knows no bed under the water it is open sea",
                 "refreshSeconds": "How often, in real seconds, the shore's run-up is read again from the sea map as the sea changes"
             }
         },
@@ -155,7 +172,11 @@
         "sources": {
             "trains": "Wave trains spread around the wind, longest first; their energies sum to the sea's, so the significant height drawn is the sea state's",
             "lengthFactor": "The peak wave's length follows its period by deep-water dispersion, L = g T^2 / 2 pi",
-            "minLengthBlocks": "The water mesh has one vertex a block: shorter waves alias",
+            "minLengthBlocks": "The long trains stop here, where the short waves' bands take over",
+            "phillipsConstant": "The equilibrium range of a wind sea, E(omega) = alpha g^2 omega^-5 with alpha = 0.0081: Phillips 1958 (J. Fluid Mech. 4), the constant as the Coastal Engineering Manual, EM 1110-2-1100 Part II-1, gives it. Each band's variance is alpha / (4 (2 pi)^2) (L2^2 - L1^2)",
+            "bands": "An octave of the equilibrium range between two lengths, drawn as one train per angle, the band's energy shared among them; the directions are the short waves' broad spread around the wind",
+            "reachMetres": "Tessellation halves the water's vertex spacing each time the distance halves, from a block here to the finest near the player. Performance budget, measured on a GTX 1080 at 1080p: 1.5 ms",
+            "maxLevel": "The most a block's edge is divided: 8 is 12.5 cm between vertices",
             "surfFoam": "Off until the surf foam reads white over any seabed (#70); the foam offshore stays on",
             "caps": "The share of the sea's area under whitecaps: above Monahan's measured coverage (3.84e-6 U^3.41), so the caps read from afar as the descriptions have them",
             "whitecaps": "The Beaufort scale's sea descriptions: scattered whitecaps at 3, frequent at 4 and many at 5, foam blown in streaks along the wind from 6 and well marked at 7 to 8, spray and a sea turning white from 8 up"
