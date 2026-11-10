@@ -137,11 +137,13 @@ public sealed class SeabedMap
 
     private static ShoreCell Water(IBlockAccessor blocks, BlockPos probe, int x, int top, int z, int terrain, Block fluid, Beds beds, int deepest)
     {
-        var worldgen = terrain < top && OpenWater.At(blocks, probe.Set(x, terrain + 1, z)).IsLiquid();
-        var bottom = worldgen ? terrain + 1 : top;
-        while (!worldgen && top - bottom < deepest && OpenWater.At(blocks, probe.Set(x, bottom - 1, z)).IsLiquid()) bottom--;
-        var bed = beds.Of(blocks.GetBlock(probe.Set(x, bottom - 1, z), BlockLayersAccess.Solid).BlockMaterial);
-        return new ShoreCell(ShoreKind.Water, worldgen || top - bottom < deepest ? top + StillLevel - bottom : Deep, bed, fluid.Id);
+        var bottom = top;
+        while (top - bottom < deepest && OpenWater.At(blocks, probe.Set(x, bottom - 1, z)).IsLiquid()) bottom--;
+        var ground = blocks.GetBlock(probe.Set(x, bottom - 1, z), BlockLayersAccess.Solid);
+        var sounded = top - bottom < deepest && ground.Id != 0;
+        var known = sounded || terrain < top;
+        var bed = beds.Of(ground.BlockMaterial);
+        return new ShoreCell(ShoreKind.Water, known ? top + StillLevel - (sounded ? bottom : terrain + 1) : Deep, bed, fluid.Id);
     }
 
     private static ShoreCell Shore(IBlockAccessor blocks, BlockPos probe, int x, int level, int z, Block fluid, Beds beds, int highestRise)

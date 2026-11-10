@@ -163,6 +163,18 @@ public class StormsModSystem : ModSystem
                 .WithArgs(parsers.Bool("draw"))
                 .HandleWith(args => Drawn("height colours", SurfaceShader.Colours.On = (bool)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("profile")
+                .WithDescription("The drawn sea's height every block for N blocks along Z from the player, X blocks ahead along X")
+                .WithArgs(parsers.OptionalInt("blocks", 40), parsers.OptionalInt("ahead", 0))
+                .HandleWith(args =>
+                {
+                    var pos = capi.World.Player.Entity.Pos;
+                    var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
+                    var (blocks, ahead) = ((int)args[0], (int)args[1]);
+                    return TextCommandResult.Success(string.Join(" ", Enumerable.Range(-blocks / 2, blocks + 1)
+                        .Select(i => $"{Math.Floor(pos.Z) + i - (int)capi.World.DefaultSpawnPosition.Z:F0}:{storms.DrawnSea!.HeightAt(pos.X + ahead, Math.Floor(pos.Z) + i + 0.5):F2}")));
+                })
+            .EndSubCommand()
             .BeginSubCommand("bed")
                 .WithDescription("The seabed and the swash read under the player, and N blocks along X")
                 .WithArgs(parsers.OptionalInt("blocks", 0))
