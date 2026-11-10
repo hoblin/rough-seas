@@ -11,8 +11,15 @@ in float seaFoamBroken;
 in vec2 seaFoamWorld;
 in vec2 seaFoamCrestTime;
 in vec4 seaFoamBrokenAt;
+in float seaFoamThickness;
+in float seaFoamTip;
 
 const float seaRollerSeconds = 0.4;
+const float seaTipFoamMetres = 0.3;
+
+float seaWaterOpacity() {
+	return 1.0 - exp(-2.0 * SEA_ATTENUATION * seaFoamThickness);
+}
 const float seaLaceSpread = 6.2;
 
 float seaBrokenFoam(float share, float delay) {
@@ -79,6 +86,7 @@ float seaFoamAt() {
 	}
 
 	if (seaFoamFace > 0.0) foam = max(foam, seaBrokenLace(seaFoamFace, along, side, t));
+	if (seaFoamTip < seaTipFoamMetres) foam = max(foam, seaBrokenLace(1.0 - smoothstep(0.0, seaTipFoamMetres, max(seaFoamTip, 0.0)), along, side, t));
 
 	return clamp(foam, 0.0, 1.0);
 }

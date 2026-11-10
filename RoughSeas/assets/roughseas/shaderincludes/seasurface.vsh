@@ -33,6 +33,8 @@ out float seaFoamBroken;
 out vec2 seaFoamWorld;
 out vec2 seaFoamCrestTime;
 out vec4 seaFoamBrokenAt;
+out float seaFoamThickness;
+out float seaFoamTip;
 out vec3 seaDebug;
 vec3 seaDebugValue = vec3(0.0);
 
@@ -43,6 +45,8 @@ float seaShare = 0.0;
 float seaBroken = 0.0;
 vec2 seaCrestTime = vec2(0.0);
 vec4 seaBrokenAt = vec4(0.0);
+float seaThickness = 1000.0;
+float seaTip = 1000.0;
 
 const float seaGravity = SEA_GRAVITY;
 const float seaFaceStands = 0.75;
@@ -135,6 +139,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	float speed = sqrt(2.0 * seaGravity * runUp);
 	float front = speed * since - 0.5 * seaGravity * sine * since * since;
 	float arrived = sine > 0.0001 ? (speed - sqrt(max(0.0, speed * speed - 2.0 * seaGravity * sine * distance))) / (seaGravity * sine) : distance / speed;
+	seaTip = runUp < bed.w || since <= 0.0 ? 1000.0 : front - distance;
 	if (runUp < bed.w || since <= 0.0 || front <= distance) return warped;
 	float fromTip = (front - distance) / front;
 	float lens = min((front - distance) * (front - distance) / (9.0 * seaGravity * since * since), seaShore.w * arrivedHeight);
@@ -142,7 +147,8 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	if (depth <= 0.0) return warped;
 	warped.y += rise + depth;
 	seaShare = 0.0;
-	seaBrokenAt = vec4(1.0, arrived, 0.0, 0.0);
+	seaBrokenAt = vec4(1.0, 0.0, 0.0, 0.0);
+	seaThickness = depth;
 	return warped;
 }
 
@@ -312,6 +318,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 		normal.xz -= wave.xy * height * cos(theta);
 	}
 	warped.xyz += share * offset;
+	seaThickness = onBed ? max(0.0, bed.x + share * offset.y) : 1000.0;
 	seaNormal = normalize(mix(vec3(0.0, 1.0, 0.0), normal, share));
 	seaCrest = energy > 0.0 ? share * incident / sqrt(2.0 * energy) : 0.0;
 	seaFold = steepest > 0.0

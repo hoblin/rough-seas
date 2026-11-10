@@ -31,11 +31,11 @@ public static class SurfaceShader
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
         "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; "
-        + "seaFoamShare = seaShare; seaFoamBroken = seaBroken; seaFoamCrestTime = seaCrestTime; seaFoamBrokenAt = seaBrokenAt; seaFoamWorld = worldPos.xz + playerpos.xz; seaDebug = seaDebugValue;";
+        + "seaFoamShare = seaShare; seaFoamBroken = seaBroken; seaFoamCrestTime = seaCrestTime; seaFoamBrokenAt = seaBrokenAt; seaFoamThickness = seaThickness; seaFoamTip = seaTip; seaFoamWorld = worldPos.xz + playerpos.xz; seaDebug = seaDebugValue;";
     private const string FragmentMain = "void main()";
     private const string BeforeFog = "texColor = applyFog(texColor, fogAmount);";
     private const string Foamed =
-        "if (!isLava && fragNormal.y > 0.5) { float seaFoamAmount = seaFoamAt(); "
+        "if (!isLava && fragNormal.y > 0.5) { texColor.a *= seaWaterOpacity(); float seaFoamAmount = seaFoamAt(); "
         + "vec3 seaFoamColor = mix(texColor.rgb, vec3(0.88, 0.92, 0.92) * clamp(bright * 1.3, 0.0, 1.0) * mix(1.0, shadowBright, 0.5), 0.75); "
         + "texColor.rgb = mix(texColor.rgb, seaFoamColor, seaFoamAmount); "
         + "texColor.a = mix(texColor.a, 0.95, seaFoamAmount * 0.8); }\n";
@@ -74,6 +74,7 @@ public static class SurfaceShader
     private static double lensDepthRatio;
     private static double wetReflectance;
     private static double foamDecaySeconds;
+    private static double waterAttenuation;
     private static double wallSlope;
     private static bool normalTilted;
 
@@ -91,9 +92,9 @@ public static class SurfaceShader
 
     public static HeightColours Colours => colours;
 
-    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double foamDecay, double steepestShore, TessellationConfig tessellation, Action<string> log, ICoreClientAPI api)
+    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double attenuation, double foamDecay, double steepestShore, TessellationConfig tessellation, Action<string> log, ICoreClientAPI api)
     {
-        (surface, field, capi, lensDepthRatio, wetReflectance, foamDecaySeconds, wallSlope) = (waves, heights, api, lensDepth, wetShade, foamDecay, steepestShore);
+        (surface, field, capi, lensDepthRatio, wetReflectance, waterAttenuation, foamDecaySeconds, wallSlope) = (waves, heights, api, lensDepth, wetShade, attenuation, foamDecay, steepestShore);
         heightMap = new LoadedTexture(api);
         heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
         shoreTextures = SurfField.Samplers.Select(_ => GL.GenTexture()).ToArray();
@@ -181,7 +182,8 @@ public static class SurfaceShader
             .Replace("SEA_GRAVITY", WaveTheory.Gravity.ToString("0.0###", CultureInfo.InvariantCulture))
             .Replace("SEA_BORE_AMPLITUDE", WaveTheory.BoreAmplitude.ToString("0.0######", CultureInfo.InvariantCulture))
             .Replace("SEA_TWO_PERCENT", WaveTheory.TwoPercentRatio.ToString("0.0######", CultureInfo.InvariantCulture));
-        fragmentCode = api.Assets.Get(FragmentSource).ToText();
+        fragmentCode = api.Assets.Get(FragmentSource).ToText()
+            .Replace("SEA_ATTENUATION", waterAttenuation.ToString("0.0###", CultureInfo.InvariantCulture));
         wetCode = api.Assets.Get(WetSource).ToText();
     }
 

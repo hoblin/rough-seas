@@ -146,7 +146,9 @@
             "deepestBlocks": 32,
             "refreshSeconds": 20,
             "wetReflectance": 0.5,
+            "waterAttenuation": 1,
             "sources": {
+                "waterAttenuation": "Light fades in water as exp(-K d), down to the bed and back up, so a thin swash shows the sand through it and deep water doesn't: K in 1/m, the diffuse attenuation coefficient, which ranged 0.05 to 3.6 over 94 coastal sites (Corcoran & Parrish 2021, Photogrammetric Engineering & Remote Sensing 87). No surf-zone measurement was found; 1 is turbid coastal water inside that range",
                 "wetReflectance": "Wet sand reflects about half the light dry sand does: Ångström measured an albedo of 0.182 dry against 0.091 wet, as Lekner & Dorf 1988 (Applied Optics 27(7), 'Why some things are darker when wet') quote it",
                 "mapBlocks": "The seabed is read this far across around the player, a block to a texel: the surf of every shore within view distance's nearer half",
                 "moveBlocks": "The seabed is read again once the player is this far from where it was read",

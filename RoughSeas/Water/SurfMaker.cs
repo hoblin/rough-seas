@@ -88,4 +88,5 @@ public class ShoreSurfConfig
     public int DeepestBlocks = 32;
     public double RefreshSeconds = 20;
     public double WetReflectance = 0.5;
+    public double WaterAttenuation = 1;
 }
