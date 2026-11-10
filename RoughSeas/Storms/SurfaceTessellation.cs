@@ -12,6 +12,11 @@ using Vintagestory.Client.NoObf;
 
 namespace RoughSeas.Storms;
 
+/// <summary>
+/// Divides vanilla's water near the player on the GPU. The engine knows no tessellation stages, so its compile and link
+/// are taken over for <c>chunkliquid</c> and <c>chunkliquiddepth</c>: the program's own vertex shader, every text patch
+/// already in it, is compiled as the evaluation stage. Anything drawing the liquid pools must have those stages: see docs/sea-and-weather.md.
+/// </summary>
 public static class SurfaceTessellation
 {
     private const int LiquidPass = 4;

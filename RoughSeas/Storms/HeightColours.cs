@@ -4,6 +4,7 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Storms;
 
+/// <summary>A debug view: the water painted from purple at the zone's lowest point to red at its highest, each block's top face outlined. The range is the CPU sea's, so a saturated colour is a height the CPU sea doesn't have.</summary>
 public sealed class HeightColours
 {
     private const double ReachMetres = 32;
