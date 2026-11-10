@@ -1,18 +1,14 @@
 // The other end of RoughSeas/Storms/SeaSurface.cs and SurfaceShader.cs, which set these uniforms.
-uniform vec4 seaFoam;
+uniform vec3 seaFoam;
 uniform vec2 seaWavesToward;
+uniform float seaFoamClock;
 
 in float seaFoamCrest;
 in float seaFoamFold;
 in float seaFoamShare;
 in float seaFoamFace;
+in float seaFoamBroken;
 in vec2 seaFoamWorld;
-
-float seaWaterDepth() {
-	vec2 screen = gl_FragCoord.xy / frameSize;
-	float through = (linearDepth(texture(depthTex, screen).x) - linearDepth(gl_FragCoord.z)) * zFar;
-	return max(0.0, through * abs(normalize(fWorldPos).y));
-}
 
 float seaLace(vec2 at, float t) {
 	return gnoise(vec3(at * 2.3, t * 0.6)) * 0.3 + gnoise(vec3(at * 6.5, t)) * 0.25 + 0.5;
@@ -31,12 +27,12 @@ float seaFoamAt() {
 	if (seaFoamShare <= 0.0 && seaFoamFace <= 0.0) return 0.0;
 
 	vec2 at = seaFoamWorld;
-	float t = waterWaveCounter;
+	float t = seaFoamClock;
 	vec2 across = vec2(-seaWavesToward.y, seaWavesToward.x);
 	float along = dot(at, seaWavesToward);
 	float side = dot(at, across);
 	float lace = seaLace(at, t);
-	float offshore = smoothstep(0.5, 0.9, seaFoamShare);
+	float offshore = smoothstep(0.5, 0.9, seaFoamShare) * (1.0 - seaFoamBroken);
 	float foam = 0.0;
 
 	if (offshore > 0.0) {
@@ -58,21 +54,7 @@ float seaFoamAt() {
 		foam *= offshore;
 	}
 
-	float breakDepth = seaFoam.w;
-	if (breakDepth > 0.0) {
-		float depth = max(0.0, seaWaterDepth() + 1.6 * gnoise(vec3(at * 0.5, t * 0.3)) + 0.9 * gnoise(vec3(at * 1.7, t * 0.5)));
-		if (depth < breakDepth) {
-			float shore = 1.0 - depth / breakDepth;
-			float bands = fract(shore * 3.0 - t * 0.6 + 0.15 * gnoise(vec3(at * 0.3, t * 0.2)));
-			float band = smoothstep(0.0, 0.12, bands) * (1.0 - smoothstep(0.3, 0.75, bands));
-			float swash = smoothstep(0.75, 0.95, shore);
-			float density = max(band * (0.6 + shore), swash * 1.4);
-			foam = max(foam, seaFlecked(density, lace * 0.8) * smoothstep(0.02, 0.15, seaFoamShare));
-		}
-	}
-
 	if (seaFoamFace > 0.0) foam = max(foam, seaFlecked(seaFoamFace * 1.2, lace * 0.8));
 
 	return clamp(foam, 0.0, 1.0);
 }
-

@@ -31,6 +31,7 @@ out float seaFoamCrest;
 out float seaFoamFold;
 out float seaFoamShare;
 out float seaFoamFace;
+out float seaFoamBroken;
 out vec2 seaFoamWorld;
 out vec3 seaDebug;
 vec3 seaDebugValue = vec3(0.0);
@@ -40,6 +41,7 @@ float seaCrest = 0.0;
 float seaFold = 0.0;
 float seaShare = 0.0;
 float seaFaceFoam = 0.0;
+float seaBroken = 0.0;
 
 const float seaGravity = SEA_GRAVITY;
 const float seaStepFootBelow = -1.0;
@@ -227,7 +229,6 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec3 squeezeBehind = vec3(0.0);
 	vec3 squeezeFarBehind = vec3(0.0);
 	float energy = 0.0;
-	float rollers = 0.0;
 	float steepest = 0.0;
 	float incident = 0.0;
 	for (int i = 0; i < SEA_SLOTS; i++) {
@@ -254,7 +255,6 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 
 		float pinch = steepness * height * number;
 		float frequency = sqrt(seaGravity * length(wave.xy));
-		if (seaFoamDecay > 0.0) rollers += height * height * exp(-mod(1.5707963 - theta, 6.2831853) / frequency / seaFoamDecay);
 		vec3 shape = vec3(direction.x * direction.x, direction.x * direction.y, direction.y * direction.y) * pinch;
 		squeeze += shape * rise;
 		squeezeBehind += shape * sin(theta + frequency * SEA_TRAIL_SECONDS);
@@ -293,14 +293,17 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	int slot = int(seaShore.y);
 	vec4 strongest = seaWaves[slot];
 	bool incoming = dot(strongest.xy + vec2(seaLag(slot, turnAX, turnBX), seaLag(slot, turnAZ, turnBZ)), faceNormal) < 0.0;
-	if (seaFoamDecay > 0.0 && breaking > 0.0 && faceLength > seaFaceStands && incoming && faceDistance <= max(1.0, share * 4.0 * sqrt(local / 2.0) * (1.0 - breaking))) {
+	seaBroken = breaking;
+	if (seaFoamDecay > 0.0 && breaking > 0.0) {
 		float angular = sqrt(seaGravity * length(strongest.xy));
-		float celerity = angular / max(numbers[slot], 0.0001);
 		float crestAgo = mod(1.5707963 - (dot(strongest.xy, worldPos.xz) + strongest.w + seaLag(slot, lagA, lagB)), 6.2831853) / angular;
-		float sinceStrike = mod(crestAgo - faceDistance / celerity, 6.2831853 / angular);
-		if (celerity * sinceStrike >= faceDistance) seaFaceFoam = breaking * exp(-sinceStrike / seaFoamDecay);
+		seaFaceFoam = breaking * exp(-crestAgo / seaFoamDecay);
+		if (faceLength > seaFaceStands && incoming && faceDistance <= max(1.0, share * 4.0 * sqrt(local / 2.0) * (1.0 - breaking))) {
+			float celerity = angular / max(numbers[slot], 0.0001);
+			float sinceStrike = mod(crestAgo - faceDistance / celerity, 6.2831853 / angular);
+			if (celerity * sinceStrike >= faceDistance) seaFaceFoam = max(seaFaceFoam, breaking * exp(-sinceStrike / seaFoamDecay));
+		}
 	}
-	if (seaFoamDecay > 0.0 && breaking > 0.0 && energy > 0.0) seaFaceFoam = max(seaFaceFoam, breaking * rollers / energy);
 	seaDebugValue = vec3(dot(strongest.xy, worldPos.xz) + strongest.w + seaLag(slot, lagA, lagB), breaking, seaFaceFoam);
 	return warped;
 }

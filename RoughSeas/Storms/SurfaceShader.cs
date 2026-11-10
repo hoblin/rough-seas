@@ -33,7 +33,7 @@ public static class SurfaceShader
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
         "fragNormal = seaTilt(unpackNormal(renderFlags)); seaFoamCrest = seaCrest; seaFoamFold = seaFold; "
-        + "seaFoamShare = seaShare; seaFoamFace = seaFaceFoam; seaFoamWorld = worldPos.xz + playerpos.xz; seaDebug = seaDebugValue;";
+        + "seaFoamShare = seaShare; seaFoamFace = seaFaceFoam; seaFoamBroken = seaBroken; seaFoamWorld = worldPos.xz + playerpos.xz; seaDebug = seaDebugValue;";
     private const string FragmentMain = "void main()";
     private const string BeforeFog = "texColor = applyFog(texColor, fogAmount);";
     private const string Foamed =
@@ -54,6 +54,7 @@ public static class SurfaceShader
     ];
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
     private const double NoCaps = 10;
+    private const double FoamClockSeconds = 3600;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
 
@@ -286,8 +287,9 @@ public static class SurfaceShader
         }
         if (!Active(__instance, FoamUniform)) return;
         __instance.Uniform(FoamUniform, DrawFoam
-            ? new Vec4f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray, (float)surface.SurfDepth)
-            : new Vec4f((float)NoCaps, 0, 0, 0));
+            ? new Vec3f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray)
+            : new Vec3f((float)NoCaps, 0, 0));
+        __instance.Uniform("seaFoamClock", (float)(surface.Trains.Seconds % FoamClockSeconds));
         __instance.Uniform("seaWavesToward", new Vec2f((float)Math.Cos(surface.Trains.TowardRadians), (float)Math.Sin(surface.Trains.TowardRadians)));
     }
 }

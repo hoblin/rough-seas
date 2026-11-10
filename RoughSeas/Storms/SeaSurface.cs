@@ -18,7 +18,6 @@ public sealed class SeaSurface
     private const int SurfaceSearchSteps = 3;
     private const int FoldSamplesAcross = 24;
 
-    private const double SurfOnAnyShoreMetres = 0.6;
 
     /// <summary>The foam trail looks back this far and twice as far, here and in the shader.</summary>
     public const double TrailSeconds = 0.7;
@@ -41,8 +40,6 @@ public sealed class SeaSurface
     public Waves Waves => waves;
 
     public Foam Foam { get; private set; }
-
-    public double SurfDepth => config.SurfFoam ? waves.BreakingDepth(Math.Max(Trains.SeaHeight, SurfOnAnyShoreMetres)) : 0;
 
     /// <summary>The fold above which a crest whitens, set so the whitecaps cover the Beaufort force's share of the sea.</summary>
     public double CapsFold { get; private set; } = double.PositiveInfinity;

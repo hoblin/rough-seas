@@ -33,7 +33,6 @@ public class SurfaceConfig
     public double Stretch;
     public double AimSeconds;
     public double FullFoamMetres;
-    public bool SurfFoam;
     public Surf.ShoreSurfConfig Shore = new();
     public WhitecapsConfig[] Whitecaps = [];
     public ShortWavesConfig ShortWaves = new();

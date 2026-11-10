@@ -136,7 +136,6 @@
         "stretch": 0.25,
         "aimSeconds": 0.5,
         "fullFoamMetres": 0.5,
-        "surfFoam": false,
         "shore": {
             "mapBlocks": 256,
             "moveBlocks": 32,
@@ -178,7 +177,6 @@
             "bands": "An octave of the equilibrium range between two lengths, drawn as one train per angle, the band's energy shared among them; the directions are the short waves' broad spread around the wind",
             "reachMetres": "Tessellation halves the water's vertex spacing each time the distance halves, from a block here to the finest near the player. Performance budget, measured on a GTX 1080 at 1080p: 1.5 ms",
             "maxLevel": "The most a block's edge is divided: 8 is 12.5 cm between vertices",
-            "surfFoam": "Off until the surf foam reads white over any seabed (#70); the foam offshore stays on",
             "caps": "The share of the sea's area under whitecaps: above Monahan's measured coverage (3.84e-6 U^3.41), so the caps read from afar as the descriptions have them",
             "whitecaps": "The Beaufort scale's sea descriptions: scattered whitecaps at 3, frequent at 4 and many at 5, foam blown in streaks along the wind from 6 and well marked at 7 to 8, spray and a sea turning white from 8 up"
         }
