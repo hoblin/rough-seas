@@ -38,6 +38,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         var slopeX = Averaged(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, 1)).ToArray(), size, smoothing);
         var slopeZ = Averaged(Enumerable.Range(0, depth.Length).Select(i => Gradient(depth, size, i, size)).ToArray(), size, smoothing);
 
+        var shoreline = NearestWater(depth, size);
         for (var i = 0; i < depth.Length; i++)
         {
             var (x, z) = (map.OriginX + i % size, map.OriginZ + i / size);
@@ -54,11 +55,11 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
             field.Set(field.Bed, x, z, 3, reached ? (float)sheet.Needed : d > 0 ? 0 : SurfField.Unreached);
             for (var slot = 0; slot < lags.Length; slot++)
             {
-                var lag = reached
-                    ? lags[slot][(sheet.FromZ - map.OriginZ) * size + sheet.FromX - map.OriginX] + numbers[slot].X * (sheet.FromX - x) + numbers[slot].Z * (sheet.FromZ - z)
-                    : lags[slot][i];
+                var near = shoreline[i];
+                var (nearX, nearZ) = near >= 0 ? (map.OriginX + near % size, map.OriginZ + near / size) : (x, z);
+                var lag = near >= 0 && near != i ? lags[slot][near] + numbers[slot].X * (nearX - x) + numbers[slot].Z * (nearZ - z) : lags[slot][i];
                 field.Set(field.Lags[slot / SurfField.Channels], x, z, slot % SurfField.Channels, (float)lag);
-                if (reached) field.Set(field.Gains[slot / SurfField.Channels], x, z, slot % SurfField.Channels, field.Get(field.Gains[slot / SurfField.Channels], sheet.FromX, sheet.FromZ, slot % SurfField.Channels));
+                if (near >= 0 && near != i) field.Set(field.Gains[slot / SurfField.Channels], x, z, slot % SurfField.Channels, field.Get(field.Gains[slot / SurfField.Channels], nearX, nearZ, slot % SurfField.Channels));
             }
         }
         field.Walls = faces.Build(map, seaAt, field);
@@ -138,6 +139,31 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
     {
         var averaged = Averaged(depth.Select(d => float.IsNaN(d) ? 0 : Math.Clamp(d, 0, DeepestFelt)).ToArray(), size, radius);
         return depth.Select((d, i) => d > 0 ? Math.Max(averaged[i], ShallowestFelt) : d).ToArray();
+    }
+
+    private static int[] NearestWater(float[] depth, int size)
+    {
+        var nearest = new int[depth.Length];
+        Array.Fill(nearest, -1);
+        var waiting = new Queue<int>();
+        for (var i = 0; i < depth.Length; i++)
+        {
+            if (depth[i] <= 0) continue;
+            nearest[i] = i;
+            waiting.Enqueue(i);
+        }
+        while (waiting.TryDequeue(out var i))
+        {
+            var (x, z) = (i % size, i / size);
+            foreach (var (dx, dz) in Sides)
+            {
+                var (nextX, nextZ) = (x + dx, z + dz);
+                if (nextX < 0 || nextZ < 0 || nextX >= size || nextZ >= size || nearest[nextZ * size + nextX] >= 0) continue;
+                nearest[nextZ * size + nextX] = nearest[i];
+                waiting.Enqueue(nextZ * size + nextX);
+            }
+        }
+        return nearest;
     }
 
     private static (double X, double Z) Strongest((double X, double Z)[] numbers, double[]? amplitudeShares)

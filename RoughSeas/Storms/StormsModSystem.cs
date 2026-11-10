@@ -163,6 +163,15 @@ public class StormsModSystem : ModSystem
                 .WithArgs(parsers.Bool("draw"))
                 .HandleWith(args => Drawn("height colours", SurfaceShader.Colours.On = (bool)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("map")
+                .WithDescription("Paint the water as a map of height, the dominant train's phase (crests as white lines), the share of waves breaking, or the foam")
+                .WithArgs(parsers.WordRange("view", HeightColours.Views))
+                .HandleWith(args =>
+                {
+                    SurfaceShader.Colours.View = Array.IndexOf(HeightColours.Views, (string)args[0]);
+                    return Drawn("map of " + args[0], SurfaceShader.Colours.On = true);
+                })
+            .EndSubCommand()
             .BeginSubCommand("profile")
                 .WithDescription("The drawn sea's height every block for N blocks along Z from the player, X blocks ahead along X")
                 .WithArgs(parsers.OptionalInt("blocks", 40), parsers.OptionalInt("ahead", 0))
@@ -199,7 +208,7 @@ public class StormsModSystem : ModSystem
                     var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
                     var seabed = storms.Surface?.Seabed;
                     return TextCommandResult.Success($"{(int)Math.Floor(x) - (int)capi.World.DefaultSpawnPosition.X} {(int)Math.Floor(z) - (int)capi.World.DefaultSpawnPosition.Z}: "
-                        + $"share {field.Factor(x, z):F3}, height {storms.DrawnSea!.HeightAt(x, z):F2}; field from {seabed?.OriginX - (int)capi.World.DefaultSpawnPosition.X} {seabed?.OriginZ - (int)capi.World.DefaultSpawnPosition.Z}; {seabed?.Describe(x, z) ?? "no seabed read yet"}");
+                        + $"share {field.Factor(x, z):F3}, height {storms.DrawnSea!.HeightAt(x, z):F2}; crests {storms.Surface?.CrestAt(x, z)}; field from {seabed?.OriginX - (int)capi.World.DefaultSpawnPosition.X} {seabed?.OriginZ - (int)capi.World.DefaultSpawnPosition.Z}; {seabed?.Describe(x, z) ?? "no seabed read yet"}");
                 })
             .EndSubCommand()
             .BeginSubCommand("trace")

@@ -261,6 +261,20 @@ public sealed class SeaSurface
     private FaceReading? Facing(double x, double z, double share) =>
         share > 0 && Seabed is { } field && field.Covers(x, z) && field.FaceAt(x, z) is { Reflection: > 0 } face ? face with { Reflection = face.Reflection * field.EdgeShare(x, z) } : null;
 
+    /// <summary>The dominant train's crests here, as the bed holds them back: where they run, how fast, and how far apart.</summary>
+    public (double TowardDegrees, double Speed, double Length) CrestAt(double x, double z)
+    {
+        var edge = Seabed is { } field && field.Covers(x, z) ? field.EdgeShare(x, z) : 0;
+        var (alongX, alongZ) = (numberX[Dominant], numberZ[Dominant]);
+        if (edge > 0)
+        {
+            alongX += edge * (LagAt(Dominant, x + 1, z) - LagAt(Dominant, x - 1, z)) / (2 * edge);
+            alongZ += edge * (LagAt(Dominant, x, z + 1) - LagAt(Dominant, x, z - 1)) / (2 * edge);
+        }
+        var number = Math.Sqrt(alongX * alongX + alongZ * alongZ);
+        return number > 0 ? ((Math.Atan2(alongZ, alongX) * 180 / Math.PI + 360) % 360, frequency[Dominant] / number, FullTurn / number) : default;
+    }
+
     /// <summary>How long ago, in seconds of the waves' clock, the dominant train's crest passed here.</summary>
     public double SinceCrest(double x, double z)
     {

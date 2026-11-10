@@ -21,16 +21,18 @@ public static class PhaseField
         for (var i = 0; i < lag.Length; i++)
         {
             var (x, z) = (i % size, i / size);
-            var along = numberX * Gradient(arriving, size, x, z, 1, 0) + numberZ * Gradient(arriving, size, x, z, 0, 1);
+            var along = numberX * Gradient(arriving, depth, size, x, z, 1, 0) + numberZ * Gradient(arriving, depth, size, x, z, 0, 1);
             lag[i] = along + numberX * numberX + numberZ * numberZ >= 0 ? arriving[i] : -leaving[i];
         }
         return lag;
     }
 
-    private static double Gradient(float[] lag, int size, int x, int z, int dx, int dz)
+    private static double Gradient(float[] lag, float[] depth, int size, int x, int z, int dx, int dz)
     {
-        var back = (Math.Max(x - dx, 0), Math.Max(z - dz, 0));
-        var ahead = (Math.Min(x + dx, size - 1), Math.Min(z + dz, size - 1));
+        var back = (x - dx, z - dz);
+        var ahead = (x + dx, z + dz);
+        if (back.Item1 < 0 || back.Item2 < 0 || !(depth[back.Item2 * size + back.Item1] > 0)) back = (x, z);
+        if (ahead.Item1 >= size || ahead.Item2 >= size || !(depth[ahead.Item2 * size + ahead.Item1] > 0)) ahead = (x, z);
         var span = ahead.Item1 - back.Item1 + ahead.Item2 - back.Item2;
         return span > 0 ? (lag[ahead.Item2 * size + ahead.Item1] - lag[back.Item2 * size + back.Item1]) / span : 0;
     }
