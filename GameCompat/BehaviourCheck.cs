@@ -12,15 +12,10 @@ internal sealed record Reliance(string Type, string Method, string What, string 
     public string Target => $"{Type}.{Method}";
 }
 
-internal sealed record BehaviourChange(Reliance Reliance, string Stamp, string SourceDiff = "")
-{
-    public bool Gone => Stamp == BehaviourCheck.GoneStamp;
-}
+internal sealed record BehaviourChange(Reliance Reliance, string Stamp, string SourceDiff = "", bool Gone = false);
 
 internal static class BehaviourCheck
 {
-    public const string GoneStamp = "gone";
-
     private const string AttributeName = "RoughSeas.ReliesOnAttribute";
 
     private static readonly Regex GeneratedNumber = new(@"(<>c__DisplayClass|b__|g__\w+\||<>9__|CS\$<>8__locals|d__)\d+(_\d+)?", RegexOptions.Compiled);
@@ -52,12 +47,14 @@ internal static class BehaviourCheck
     public static IReadOnlyList<BehaviourChange> Changes(IEnumerable<Reliance> reliances, GameRelease current, GameRelease release)
     {
         var changes = new List<BehaviourChange>();
-        foreach (var reliance in reliances.DistinctBy(reliance => reliance.Target))
+        foreach (var group in reliances.GroupBy(reliance => reliance.Target))
         {
+            var reliance = group.First() with { What = string.Join("; ", group.Select(each => each.What).Distinct().Order(StringComparer.Ordinal)) };
             if (Instructions(reliance, current) is not { } baseline) continue;
             var candidate = Instructions(reliance, release);
-            if (candidate == null) changes.Add(new BehaviourChange(reliance, GoneStamp));
-            else if (!candidate.SequenceEqual(baseline)) changes.Add(new BehaviourChange(reliance, Stamp(baseline, candidate)));
+            var identity = baseline.Append(reliance.What);
+            if (candidate == null) changes.Add(new BehaviourChange(reliance, Stamp(identity, []), Gone: true));
+            else if (!candidate.SequenceEqual(baseline)) changes.Add(new BehaviourChange(reliance, Stamp(identity, candidate)));
         }
         return changes;
     }
@@ -134,7 +131,9 @@ internal static class BehaviourCheck
         if (!method.HasBody) return;
 
         lines.AddRange(Tokens(method.Body));
-        lines.AddRange(method.Body.ExceptionHandlers.Select(handler => $"{handler.HandlerType} {handler.CatchType?.FullName}"));
+        int At(Instruction? instruction) => instruction == null ? -1 : method.Body.Instructions.IndexOf(instruction);
+        lines.AddRange(method.Body.ExceptionHandlers.Select(handler =>
+            $"{handler.HandlerType} {handler.CatchType?.FullName} {At(handler.TryStart)} {At(handler.TryEnd)} {At(handler.HandlerStart)} {At(handler.HandlerEnd)} {At(handler.FilterStart)}"));
 
         foreach (var generated in method.Body.Instructions.Select(instruction => instruction.Operand).OfType<MethodReference>().Select(Generated).OfType<MethodDefinition>())
         {

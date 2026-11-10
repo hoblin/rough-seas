@@ -8,7 +8,7 @@ internal enum ReachKind { Method, Field, PropertyGetter, PropertySetter, Type }
 
 internal enum HandlerKind { Prefix, Postfix, Transpiler, Finalizer }
 
-internal sealed record Reach(ReachKind Kind, string Type, string Name, string? Parameters, bool DeclaredOnly, bool MayBeAbsent, string Site);
+internal sealed record Reach(ReachKind Kind, string Type, string Name, string? Parameters, bool DeclaredOnly, bool MayBeAbsent, string Site, string? FieldType = null, bool? FieldStatic = null);
 
 internal sealed record Patch(Reach Target, HandlerKind Kind, MethodDefinition Handler);
 
@@ -142,7 +142,7 @@ internal sealed class ModReach
             return CantRead(new Opaque(), site, $"{declaring}.{called.Name}");
         }
 
-        if (depth < DeepestHelper && called.DeclaringType.Scope == module && arguments.Any(argument => argument is not (Opaque or PendingArgument)))
+        if (depth < DeepestHelper && called.DeclaringType.Scope == module && arguments.Any(argument => argument is not PendingArgument))
         {
             var helper = called.Resolve();
             if (helper is { HasBody: true }) return Evaluate(helper, Bind(helper, arguments), depth + 1);
@@ -179,10 +179,10 @@ internal sealed class ModReach
             case "Field" or "DeclaredField":
                 return Noted(arguments[0], arguments[1], ReachKind.Field, called.Name == "DeclaredField", site);
             case "StaticFieldRefAccess":
-                return Noted(arguments[0], arguments[1], ReachKind.Field, false, site);
+                return Noted(arguments[0], arguments[1], ReachKind.Field, false, site, fieldType: ((GenericInstanceMethod)called).GenericArguments[0].FullName, fieldStatic: true);
             case "FieldRefAccess":
-                var owner = ((GenericInstanceMethod)called).GenericArguments[0].FullName;
-                return Noted(new TypeValue(owner), arguments[0], ReachKind.Field, false, site);
+                var generics = ((GenericInstanceMethod)called).GenericArguments;
+                return Noted(new TypeValue(generics[0].FullName), arguments[0], ReachKind.Field, false, site, fieldType: generics[1].FullName, fieldStatic: false);
             case "TypeByName":
                 if (arguments[0] is Text typeName)
                 {
@@ -203,11 +203,11 @@ internal sealed class ModReach
         return Noted(new TypeValue(parts[0]), new Text(parts[1]), ReachKind.Method, false, site);
     }
 
-    private Value Noted(Value type, Value name, ReachKind kind, bool declaredOnly, MethodDefinition site, Value? parameters = null)
+    private Value Noted(Value type, Value name, ReachKind kind, bool declaredOnly, MethodDefinition site, Value? parameters = null, string? fieldType = null, bool? fieldStatic = null)
     {
         if (type is not TypeValue owner) return CantRead(type, site);
         if (name is not Text member) return CantRead(name, site);
-        var reach = new Reach(kind, owner.Name, member.Content, ParameterNames(parameters), declaredOnly, false, SiteName(site));
+        var reach = new Reach(kind, owner.Name, member.Content, ParameterNames(parameters), declaredOnly, false, SiteName(site), fieldType, fieldStatic);
         Note(reach);
         return new MemberValue(reach);
     }

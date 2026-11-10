@@ -1,18 +1,18 @@
-1.22.0 EntityBehaviorInterpolatePosition.OnRenderFrame f2f3aa24e91c num is computed before the block that uses it; the snapshot replay is the same
-1.22.1 EntityBehaviorInterpolatePosition.OnRenderFrame f2f3aa24e91c num is computed before the block that uses it; the snapshot replay is the same
-1.22.2 EntityBehaviorInterpolatePosition.OnRenderFrame f2f3aa24e91c num is computed before the block that uses it; the snapshot replay is the same
-1.22.3 EntityBehaviorInterpolatePosition.OnRenderFrame f2f3aa24e91c num is computed before the block that uses it; the snapshot replay is the same
-1.22.0 Vintagestory.Server.ServerSystemEntitySimulation.HandleEntityInteraction 314222fb3ee9 the range check measures to the hit point, which a long hull passes; the SelectionBox load for attack range is still there
-1.22.1 Vintagestory.Server.ServerSystemEntitySimulation.HandleEntityInteraction 314222fb3ee9 the range check measures to the hit point, which a long hull passes; the SelectionBox load for attack range is still there
-1.22.2 Vintagestory.Server.ServerSystemEntitySimulation.HandleEntityInteraction 314222fb3ee9 the range check measures to the hit point, which a long hull passes; the SelectionBox load for attack range is still there
-1.22.3 Vintagestory.Server.ServerSystemEntitySimulation.HandleEntityInteraction 314222fb3ee9 the range check measures to the hit point, which a long hull passes; the SelectionBox load for attack range is still there
-1.22.0 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf gone the range check lives in HandleEntityInteraction and measures to the hit point, so there is nothing to patch
-1.22.1 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf gone the range check lives in HandleEntityInteraction and measures to the hit point, so there is nothing to patch
-1.22.2 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf gone the range check lives in HandleEntityInteraction and measures to the hit point, so there is nothing to patch
-1.22.3 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf gone the range check lives in HandleEntityInteraction and measures to the hit point, so there is nothing to patch
-1.22.0 Vintagestory.GameContent.ItemRope.OnHeldInteractStart 4cadb0dc033e only the land claim checks are absent; the click is still handled here
-1.22.1 Vintagestory.GameContent.ItemRope.OnHeldInteractStart 4cadb0dc033e only the land claim checks are absent; the click is still handled here
-1.22.2 Vintagestory.GameContent.ItemRope.OnHeldInteractStart 4cadb0dc033e only the land claim checks are absent; the click is still handled here
-1.22.3 Vintagestory.GameContent.ItemRope.OnHeldInteractStart 4cadb0dc033e only the land claim checks are absent; the click is still handled here
-1.22.4 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf b6bc7651a6ad only the dimension check is absent; Entity.SelectionBox is loaded the same way
-1.22.5 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf b6bc7651a6ad only the dimension check is absent; Entity.SelectionBox is loaded the same way
+1.22.0 EntityBehaviorInterpolatePosition.OnRenderFrame 6d97a91611a2 num is computed before the block that uses it; the snapshot replay is the same
+1.22.1 EntityBehaviorInterpolatePosition.OnRenderFrame 6d97a91611a2 num is computed before the block that uses it; the snapshot replay is the same
+1.22.2 EntityBehaviorInterpolatePosition.OnRenderFrame 6d97a91611a2 num is computed before the block that uses it; the snapshot replay is the same
+1.22.3 EntityBehaviorInterpolatePosition.OnRenderFrame 6d97a91611a2 num is computed before the block that uses it; the snapshot replay is the same
+1.22.0 Vintagestory.Server.ServerSystemEntitySimulation.HandleEntityInteraction 1345b2c52f0a the range check measures to the hit point, which a long hull passes; the SelectionBox load for attack range is still there
+1.22.1 Vintagestory.Server.ServerSystemEntitySimulation.HandleEntityInteraction 1345b2c52f0a the range check measures to the hit point, which a long hull passes; the SelectionBox load for attack range is still there
+1.22.2 Vintagestory.Server.ServerSystemEntitySimulation.HandleEntityInteraction 1345b2c52f0a the range check measures to the hit point, which a long hull passes; the SelectionBox load for attack range is still there
+1.22.3 Vintagestory.Server.ServerSystemEntitySimulation.HandleEntityInteraction 1345b2c52f0a the range check measures to the hit point, which a long hull passes; the SelectionBox load for attack range is still there
+1.22.0 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf ca62ece3a3f4 the range check lives in HandleEntityInteraction and measures to the hit point, so there is nothing to patch
+1.22.1 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf ca62ece3a3f4 the range check lives in HandleEntityInteraction and measures to the hit point, so there is nothing to patch
+1.22.2 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf ca62ece3a3f4 the range check lives in HandleEntityInteraction and measures to the hit point, so there is nothing to patch
+1.22.3 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf ca62ece3a3f4 the range check lives in HandleEntityInteraction and measures to the hit point, so there is nothing to patch
+1.22.0 Vintagestory.GameContent.ItemRope.OnHeldInteractStart 8c45b938e36c only the land claim checks are absent; the click is still handled here
+1.22.1 Vintagestory.GameContent.ItemRope.OnHeldInteractStart 8c45b938e36c only the land claim checks are absent; the click is still handled here
+1.22.2 Vintagestory.GameContent.ItemRope.OnHeldInteractStart 8c45b938e36c only the land claim checks are absent; the click is still handled here
+1.22.3 Vintagestory.GameContent.ItemRope.OnHeldInteractStart 8c45b938e36c only the land claim checks are absent; the click is still handled here
+1.22.4 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf ddc617077663 only the dimension check is absent; Entity.SelectionBox is loaded the same way
+1.22.5 Vintagestory.Server.ServerPlayer.isInInteractionRangeOf ddc617077663 only the dimension check is absent; Entity.SelectionBox is loaded the same way

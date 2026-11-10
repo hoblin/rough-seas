@@ -29,11 +29,20 @@ internal sealed class ReachCheck(GameRelease release)
         {
             ReachKind.Type => null,
             ReachKind.Method => FindMethod(member, out var reason) == null ? reason : null,
-            ReachKind.Field => Hierarchy(type, member.DeclaredOnly).Any(owner => owner.Fields.Any(field => field.Name == member.Name)) ? null : $"field {member.Type}.{member.Name} is missing",
+            ReachKind.Field => FieldProblem(type, member),
             ReachKind.PropertyGetter => Property(type, member)?.GetMethod != null ? null : $"property getter {member.Type}.{member.Name} is missing",
             ReachKind.PropertySetter => Property(type, member)?.SetMethod != null ? null : $"property setter {member.Type}.{member.Name} is missing",
             _ => null,
         };
+    }
+
+    private string? FieldProblem(TypeDefinition type, Reach member)
+    {
+        var field = Hierarchy(type, member.DeclaredOnly).SelectMany(owner => owner.Fields).FirstOrDefault(candidate => candidate.Name == member.Name);
+        if (field == null) return $"field {member.Type}.{member.Name} is missing";
+        if (member.FieldType != null && field.FieldType.FullName != member.FieldType) return $"field {member.Type}.{member.Name} is {field.FieldType.FullName}, we access {member.FieldType}";
+        if (member.FieldStatic != null && field.IsStatic != member.FieldStatic) return $"field {member.Type}.{member.Name} is {(field.IsStatic ? "static" : "an instance field")}, we access it otherwise";
+        return null;
     }
 
     private PropertyDefinition? Property(TypeDefinition type, Reach member) =>

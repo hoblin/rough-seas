@@ -35,7 +35,7 @@ internal sealed class Checker
 
         report.Add("Runtime", RuntimeReason(mod, release));
         report.Add("Build", build.Errors);
-        report.Add("References", ReferenceCheck.Run(mod, release));
+        report.Add("References", ReferenceCheck.Run(mod, release, current));
         report.Add("Harmony and reflection", new ReachCheck(release).Run(reach));
         var patches = new AssetPatchCheck(release, current, repository).Run();
         report.Add("Asset patches", patches.Reasons);
