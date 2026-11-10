@@ -59,6 +59,8 @@ internal sealed class WaterHeightColours
 
     public static float Lag { get; set; } = 1;
 
+    public static float Refraction { get; set; } = 1;
+
     private static void Inject(ShaderProgram program, ref string __result)
     {
         if (__result.Contains(RippleLine) && !__result.Contains("seaTestRipple"))
@@ -68,7 +70,8 @@ internal sealed class WaterHeightColours
                 .Replace("float faceReflects = faceLength > 0.0 ? face.w : 0.0;", "float faceReflects = faceLength > 0.0 ? face.w * seaTestFace : 0.0;")
                 .Replace("lagA[slot] * seaLagValidA[slot]", "seaTestLag * lagA[slot] * seaLagValidA[slot]")
                 .Replace("lagB[slot - 4] * seaLagValidB[slot - 4]", "seaTestLag * lagB[slot - 4] * seaLagValidB[slot - 4]")
-                .Replace("uniform float seaFaceSlope;", "uniform float seaFaceSlope;\nuniform float seaTestRipple;\nuniform float seaTestShape;\nuniform float seaTestFace;\nuniform float seaTestLag;");
+                .Replace("(cosine > 0.0 ? seaRefraction(deepNumber, bed.x, cosine) : 1.0)", "(cosine > 0.0 && seaTestRefraction > 0.5 ? seaRefraction(deepNumber, bed.x, cosine) : 1.0)")
+                .Replace("uniform float seaFaceSlope;", "uniform float seaFaceSlope;\nuniform float seaTestRipple;\nuniform float seaTestShape;\nuniform float seaTestFace;\nuniform float seaTestLag;\nuniform float seaTestRefraction;");
         }
         if (program.PassName != "chunkliquid") return;
         if (__result.Contains(VertexOutput) && !__result.Contains("seaBlockCell"))
@@ -88,6 +91,7 @@ internal sealed class WaterHeightColours
             shader.Uniform("seaTestShape", Shape);
             shader.Uniform("seaTestFace", Face);
             shader.Uniform("seaTestLag", Lag);
+            shader.Uniform("seaTestRefraction", Refraction);
         }
         if (!shader.HasUniform(Uniform)) return;
         active.Refresh(playerpos);

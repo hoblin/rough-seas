@@ -72,6 +72,11 @@ public sealed class WaterMeshBench : IDisposable
             WaterHeightColours.Lag = amount;
             return $"lag {amount}\n";
         }
+        if (way == "refraction")
+        {
+            WaterHeightColours.Refraction = amount;
+            return $"refraction {amount}\n";
+        }
         if (way == "shape")
         {
             WaterHeightColours.Shape = amount / 100f;
