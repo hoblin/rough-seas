@@ -135,11 +135,13 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	if (rise < 100000.0 && highest - rise > seaWallSlope) return warped;
 	if (rise >= 100000.0) rise = max(-bed.x, 0.0);
 	float distance = bed.y;
-	float sine = max(slope, 0.0001) / sqrt(1.0 + slope * slope);
+	float cosine = 1.0 / sqrt(1.0 + slope * slope);
+	float sine = max(slope, 0.0001) * cosine;
 	float tallest = 0.0;
 	for (int i = 0; i < SEA_SLOTS; i++) tallest += max(seaWaves[i].z, 0.0);
 	float life = 2.0 * sqrt(2.0 * seaGravity * bed.z * sqrt(2.0 * tallest / twoPercent)) / (seaGravity * sine);
 	float depth = 0.0;
+	float age = 0.0;
 	seaTip = 1000.0;
 	for (int n = 0; n < seaSheetsAtMost; n++) {
 		float since = latest + float(n) * period;
@@ -157,15 +159,15 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 		}
 		float runUp = bed.z * sqrt(2.0 * sqrt(re * re + im * im) / twoPercent);
 		float speed = sqrt(2.0 * seaGravity * runUp);
-		float front = speed * since - 0.5 * seaGravity * sine * since * since;
+		float front = cosine * (speed * since - 0.5 * seaGravity * sine * since * since);
 		if (since <= 0.0 || runUp < bed.w || front <= distance) continue;
-		float arrived = sine > 0.0001 ? (speed - sqrt(max(0.0, speed * speed - 2.0 * seaGravity * sine * distance))) / (seaGravity * sine) : distance / speed;
+		float arrived = (speed - sqrt(max(0.0, speed * speed - 2.0 * seaGravity * sine * distance / cosine))) / (seaGravity * sine);
 		float fromTip = (front - distance) / front;
 		float lens = min((front - distance) * (front - distance) / (9.0 * seaGravity * since * since), seaShore.w * 2.0 * sqrt(arrivedRe * arrivedRe + arrivedIm * arrivedIm));
-		float bore = n == 0 ? (arrivedBore - rise) * fromTip * fromTip : 0.0;
-		float sheet = max(lens, bore) - aux.x * max(0.0, since - arrived);
+		float sheet = max(lens, (arrivedBore - rise) * fromTip * fromTip) - aux.x * max(0.0, since - arrived);
 		if (sheet > depth) {
 			depth = sheet;
+			age = float(n) * period;
 			seaTip = front - distance;
 			seaDebugValue = vec3(dominant, 0.0, float(n) / 4.0);
 		}
@@ -173,7 +175,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	if (depth <= 0.0) return warped;
 	warped.y += rise + depth;
 	seaShare = 0.0;
-	seaBrokenAt = vec4(1.0, 0.0, 0.0, 0.0);
+	seaBrokenAt = vec4(seaFoamDecay > 0.0 ? exp(-age / seaFoamDecay) : 0.0, 0.0, 0.0, 0.0);
 	seaThickness = depth;
 	return warped;
 }
@@ -209,6 +211,22 @@ vec4 seaLagTurn(sampler2D lags, vec2 uv, vec2 across) {
 	return (turn - 6.2831853 * floor(turn / 6.2831853 + 0.5)) / span;
 }
 
+float seaLandSlope(vec2 cell) {
+	vec2 at = cell - 0.5;
+	ivec2 low = ivec2(floor(at));
+	vec2 along = at - vec2(low);
+	float slope = 0.0;
+	float weight = 0.0;
+	for (int i = 0; i < 4; i++) {
+		ivec2 corner = clamp(low + ivec2(i & 1, i >> 1), ivec2(0), ivec2(int(seaBedArea.z) - 1));
+		if (texelFetch(seaBed, corner, 0).x > 0.0) continue;
+		float share = ((i & 1) == 1 ? along.x : 1.0 - along.x) * ((i >> 1) == 1 ? along.y : 1.0 - along.y);
+		slope += share * texelFetch(seaSurf, corner, 0).a;
+		weight += share;
+	}
+	return weight > 0.0 ? slope / weight : texelFetch(seaSurf, clamp(ivec2(floor(cell)), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).a;
+}
+
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float share = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r : 0.0;
 	seaRippleKept = 1.0 - share;
@@ -232,10 +250,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 gainB = onBed ? textureLod(seaGainB, bedUv, 0.0) : vec4(1.0);
 	vec4 surf = onBed ? textureLod(seaSurf, bedUv, 0.0) : vec4(0.0, 1.0, bed.x, 0.0);
 	float cellDepth = onBed ? texelFetch(seaBed, clamp(ivec2(floor(worldPos.xz - seaBedArea.xy)), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).x : bed.x;
-	if (cellDepth <= 0.0) {
-		float slope = texelFetch(seaSurf, clamp(ivec2(floor(worldPos.xz - seaBedArea.xy)), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).a;
-		return seaSwash(warped, worldPos, bed, aux, lagA, lagB, gainA, gainB, surf.b, slope, share);
-	}
+	if (cellDepth <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB, gainA, gainB, surf.b, seaLandSlope(worldPos.xz - seaBedArea.xy), share);
 	float faceDistance = max(face.x, 0.0);
 	float faceLength = length(face.yz);
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);

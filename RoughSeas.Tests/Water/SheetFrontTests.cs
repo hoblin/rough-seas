@@ -12,6 +12,14 @@ public class SheetFrontTests
     public void UpASlopeASheetArrivesLaterThanOnFlatGround() =>
         Assert.True(SheetFront.Arrival(1.5, 0.125, 4) > SheetFront.Arrival(1.5, 0, 4));
 
+    [Fact]
+    public void AFrontThrownToItsRunUpTurnsWhereThatRunUpIsReached()
+    {
+        var turning = SheetFront.Arrival(2, 1, 2);
+        Assert.Equal(turning, SheetFront.Arrival(2, 1, 2.5), 9);
+        Assert.True(SheetFront.Arrival(2, 1, 1.9) < turning);
+    }
+
     private static SheetFront Thrown(double runUp, double period = 9) => SheetFront.Thrown(runUp, period, ShoreFixtures.Config.Sheet);
 
     private static int Run(SheetFront front, double rise, string bed)
