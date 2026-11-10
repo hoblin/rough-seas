@@ -52,6 +52,7 @@ def heights(rgb, lowest, highest):
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
     safe = np.where(span > 0, span, 1)
     hue = np.where(top == r, ((g - b) / safe) % 6, np.where(top == g, (b - r) / safe + 2, (r - g) / safe + 4)) / 6
+    hue = np.where(hue > (1 + PURPLE_HUE) / 2, hue - 1, hue)
     share = np.clip(1 - hue / PURPLE_HUE, 0, 1)
     return np.where(water, lowest + share * (highest - lowest), np.nan)
 

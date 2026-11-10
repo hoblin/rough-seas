@@ -80,6 +80,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
         var (height, twoPercent) = surface.SheetWaveAt(x, z, since);
         if (height <= 0 || twoPercent <= 0) return;
         var share = Math.Sqrt(height / twoPercent);
+        if (slope <= 0 || step.Distance >= step.RunUp * share / slope) return;
         var arrival = SheetFront.Arrival(step.RunUp * share, slope, step.Distance);
         if (since < arrival || since >= arrival + window) return;
         var (head, lens) = step.At(share);
