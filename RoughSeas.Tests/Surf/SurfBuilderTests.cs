@@ -10,6 +10,8 @@ public class SurfBuilderTests
     private const int Level = 100;
     private static readonly BedConfig Stone = ShoreFixtures.Bed("stone");
 
+    private static SurfBuilder Builder(FaceBuilder faces) => new(ShoreFixtures.Band, faces, new RoughSeas.Water.WaveTransformation(1.28, faces.SmoothingBlocks, 1, 0.12));
+
     private static SurfField Stairs(params double[] elevations)
     {
         var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces, 1.28);
@@ -20,7 +22,7 @@ public class SurfBuilderTests
             if (x < 16) map.Put(x, z, new ShoreCell(ShoreKind.Water, 10, Stone, 1), Level);
             else map.Put(x, z, new ShoreCell(ShoreKind.Land, elevations[Math.Min(x - 16, elevations.Length - 1)], Stone, 1), Level);
         }
-        return new SurfBuilder(ShoreFixtures.Band, faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
+        return Builder(faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
     }
 
     private static SurfField Bed(Func<int, double> depthAlongX)
@@ -32,7 +34,7 @@ public class SurfBuilderTests
         {
             map.Put(x, z, new ShoreCell(ShoreKind.Water, depthAlongX(x), Stone, 1), Level);
         }
-        return new SurfBuilder(ShoreFixtures.Band, faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
+        return Builder(faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
     }
 
     private static SurfField Beach(Func<int, double> depthAlongX)
@@ -45,7 +47,7 @@ public class SurfBuilderTests
             if (x < 16) map.Put(x, z, new ShoreCell(ShoreKind.Water, depthAlongX(x), Stone, 1), Level);
             else map.Put(x, z, new ShoreCell(ShoreKind.Land, 0.125, Stone, 1), Level);
         }
-        return new SurfBuilder(ShoreFixtures.Band, faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
+        return Builder(faces).Build(map, (_, _) => new Sea(4, 8), [(0.1, 0)]);
     }
 
     [Fact]

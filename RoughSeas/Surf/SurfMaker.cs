@@ -48,7 +48,7 @@ public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig co
             var started = Stopwatch.StartNew();
             var map = SeabedMap.Read(blocks, heights, originX, originZ, size, beds, highestRise, config.DeepestBlocks);
             var read = started.ElapsedMilliseconds;
-            var field = builder.Build(map, SeaAt, numbers, amplitudeShares, config.BreakingDissipation, config.TerminalBoreShare);
+            var field = builder.Build(map, SeaAt, numbers, amplitudeShares);
             field.EdgeFadeBlocks = config.EdgeFadeBlocks;
             log("surf field {0} {1}, {2} blocks across: seabed read in {3} ms, built in {4} ms; {5} faces the sea meets, {6} steps stop a sheet",
                 [originX, originZ, size, read, started.ElapsedMilliseconds - read, field.Walls.Count, field.Steps.Count]);
