@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-using RoughSeas.Water;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <summary>
 /// How far shoaling water holds a wave back: the eikonal |∇S| = k(depth) solved by fast sweeping, less the plane wave's phase. It is anchored to what the bed itself holds, so

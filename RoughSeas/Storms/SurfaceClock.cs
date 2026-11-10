@@ -1,6 +1,6 @@
 using System;
 using RoughSeas.SeaAndWeather;
-using RoughSeas.Surf;
+using RoughSeas.Water;
 using Vintagestory.API.Client;
 
 namespace RoughSeas.Storms;

@@ -3,8 +3,6 @@ using System.Globalization;
 using System.Linq;
 using HarmonyLib;
 using OpenTK.Graphics.OpenGL;
-using RoughSeas.SeaAndWeather;
-using RoughSeas.Surf;
 using RoughSeas.Water;
 using Vintagestory.Client;
 using Vintagestory.API.Client;

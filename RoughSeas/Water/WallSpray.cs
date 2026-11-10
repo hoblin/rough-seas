@@ -1,8 +1,6 @@
 using System;
-using RoughSeas.Shore;
-using RoughSeas.Water;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <summary>What a strike on a face throws: its litres per metre of face, and how fast each drop leaves it, by that drop's place in the strike's measured spread of heights.</summary>
 public abstract class Impact(double litres, double topSpeed)

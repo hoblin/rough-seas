@@ -3,10 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using RoughSeas.SeaAndWeather;
-using RoughSeas.Shore;
 using Vintagestory.API.Common;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <summary>Reads the seabed around a point again, off the main thread, once the point moves, the waves change or the sea is due a fresh look; hands over each field once it is built.</summary>
 public sealed class SurfMaker(SurfBuilder builder, Beds beds, ShoreSurfConfig config, int highestRise, Action<string, object[]> log)
@@ -73,6 +72,7 @@ public class ShoreSurfConfig
     public int EdgeFadeBlocks = 32;
     public double BreakingDissipation = 1;
     public double BoreFrontSlope = 0.21;
+    public double BoreCelerityShare = 0.45;
     public double TerminalBoreShare = 0.12;
     public int DeepestBlocks = 32;
     public double RefreshSeconds = 20;

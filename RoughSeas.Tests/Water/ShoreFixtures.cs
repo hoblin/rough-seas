@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
-using RoughSeas.Shore;
+using RoughSeas.Water;
 
-namespace RoughSeas.Tests.Shore;
+namespace RoughSeas.Tests.Water;
 
 public static class ShoreFixtures
 {

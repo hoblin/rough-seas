@@ -1,8 +1,6 @@
 using System;
-using RoughSeas.Shore;
-using RoughSeas.Water;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 public sealed class WallReflection(FacesConfig config, double spectralPeriodRatio)
 {

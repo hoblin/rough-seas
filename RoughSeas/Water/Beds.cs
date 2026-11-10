@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Vintagestory.API.Common;
 
-namespace RoughSeas.Shore;
+namespace RoughSeas.Water;
 
 public sealed class Beds(BedConfig[] beds)
 {

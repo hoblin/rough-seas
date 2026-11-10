@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using RoughSeas.Surf;
 
 namespace RoughSeas.Water;
 
@@ -34,7 +33,7 @@ public sealed record TransformedWaves(float[] Felt, float[][] Lags, float[][] Ga
 }
 
 /// <summary>What a bed does to waves arriving over it: how each slot is held back and turned (<see cref="PhaseField"/>), and what energy it keeps (<see cref="WaveEnergy"/>), each at the depth that wave feels.</summary>
-public sealed class WaveTransformation(double breakingDepthRatio, Func<double, int> smoothingBlocks, double breakingDissipation, double terminalBoreShare)
+public sealed class WaveTransformation(double breakingDepthRatio, Func<double, int> smoothingBlocks, double breakingDissipation, double terminalBoreShare, double boreCelerityShare)
 {
     private const float DeepestFelt = 200;
     private const float ShallowestFelt = 0.05f;
@@ -70,7 +69,7 @@ public sealed class WaveTransformation(double breakingDepthRatio, Func<double, i
                 for (var train = 0; train < slots.Length; train++) gains[slots[train]][i] = numbers[slots[train]] == default ? 1 : solved[train][i];
             }
         }
-        var boreHeight = Enumerable.Range(0, depth.Length).Select(i => (float)(gain[i] * seaHeights[i] / Math.Sqrt(2) * breaking[i])).ToArray();
+        var boreHeight = Enumerable.Range(0, depth.Length).Select(i => (float)(boreCelerityShare * gain[i] * seaHeights[i] * breaking[i])).ToArray();
         lags = LagsOver((_, d, i) => d + boreHeight[i]);
         var celerityDepth = felt.Select((d, i) => d > 0 ? Math.Max(d + boreHeight[i], boreDepth) : boreDepth).ToArray();
 

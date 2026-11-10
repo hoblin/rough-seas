@@ -7,7 +7,6 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Shore;
-using RoughSeas.Surf;
 using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
@@ -111,7 +110,7 @@ public class StormsModSystem : ModSystem
         var shore = api.ModLoader.GetModSystem<ShoreModSystem>().Config;
         var band = new Band(new RunUp(shore.RunUp), shore.Sheet, shore.RunUp.SlopeSearchBlocks);
         var faces = new FaceBuilder(new WallReflection(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces);
-        var transformation = new WaveTransformation(Waves.BreakingDepthRatio, faces.SmoothingBlocks, Config.Surface.Shore.BreakingDissipation, Config.Surface.Shore.TerminalBoreShare);
+        var transformation = new WaveTransformation(Waves.BreakingDepthRatio, faces.SmoothingBlocks, Config.Surface.Shore.BreakingDissipation, Config.Surface.Shore.TerminalBoreShare, Config.Surface.Shore.BoreCelerityShare);
         return new SurfMaker(new SurfBuilder(new SwashSheets(band), faces, transformation), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
     }
 

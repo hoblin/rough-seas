@@ -1,7 +1,7 @@
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace RoughSeas.SeaAndWeather;
+namespace RoughSeas.Water;
 
 /// <summary>
 /// The one answer to "open water here?": a position holding a full solid block is land whatever its fluid layer holds,

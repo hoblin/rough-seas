@@ -1,11 +1,9 @@
 using System.Collections.Generic;
-using RoughSeas.SeaAndWeather;
-using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
-namespace RoughSeas.Shore;
+namespace RoughSeas.Water;
 
 public enum ShoreKind
 {
@@ -46,7 +44,7 @@ public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int
         if (blocks.GetChunkAtBlockPos(probe) == null) return default;
         var fluid = blocks.GetBlock(probe, BlockLayersAccess.Fluid);
         if (OpenWater.Land(blocks, probe)) return LandAt(blocks, probe, x, level, z, fluid.Id, beds, highestRise);
-        if (Groundwater.Carries(fluid) && !blocks.GetBlock(probe.Up(), BlockLayersAccess.Fluid).IsLiquid())
+        if (WaterColumn.Carries(fluid) &&!blocks.GetBlock(probe.Up(), BlockLayersAccess.Fluid).IsLiquid())
         {
             return new ShoreCell(ShoreKind.Water, 0, beds.Of(fluid.BlockMaterial), fluid.Id);
         }

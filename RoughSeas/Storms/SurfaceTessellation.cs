@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HarmonyLib;
 using OpenTK.Graphics.OpenGL;
+using RoughSeas.Water;
 using Vintagestory.API.Client;
 using Vintagestory.Client;
 using Vintagestory.Client.NoObf;

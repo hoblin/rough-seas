@@ -1,6 +1,6 @@
-using RoughSeas.Surf;
+using RoughSeas.Water;
 
-namespace RoughSeas.Tests.Surf;
+namespace RoughSeas.Tests.Water;
 
 public class SurfFieldTests
 {

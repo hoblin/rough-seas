@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RoughSeas.Shore;
-using RoughSeas.Water;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <summary>Assembles a <see cref="SurfField"/> from a seabed: what the bed does to the waves, the sheets they throw over land and the faces they meet.</summary>
 public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTransformation transformation)

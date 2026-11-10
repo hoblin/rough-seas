@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RoughSeas.Water;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <summary>
 /// The wave energy over a bed, steady along each train's turning crests: div(E c_g n) = -D, by first-order upwind sweeps.

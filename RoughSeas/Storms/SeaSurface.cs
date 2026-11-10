@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using RoughSeas.SeaAndWeather;
-using RoughSeas.Surf;
 using RoughSeas.Water;
 
 namespace RoughSeas.Storms;

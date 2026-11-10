@@ -4,7 +4,7 @@ using System.Linq;
 using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <summary>The seabeds the server reads around the bodies it draws the sea for, one an area of <c>surface.shore.moveBlocks</c>, shared by every body in it.</summary>
 public sealed class Seabeds(Func<SurfMaker> maker, ShoreSurfConfig config, IWorldAccessor world)

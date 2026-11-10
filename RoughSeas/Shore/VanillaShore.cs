@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
-using RoughSeas.SeaAndWeather;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.Common;

@@ -1,6 +1,6 @@
-using RoughSeas.Shore;
+using RoughSeas.Water;
 
-namespace RoughSeas.Tests.Shore;
+namespace RoughSeas.Tests.Water;
 
 public class BandTests
 {

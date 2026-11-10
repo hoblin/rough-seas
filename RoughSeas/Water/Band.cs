@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using RoughSeas.Water;
 
-namespace RoughSeas.Shore;
+namespace RoughSeas.Water;
 
 public readonly record struct Sea(double Height, double Period);
 

@@ -1,8 +1,6 @@
-using RoughSeas.Shore;
-using RoughSeas.Surf;
-using RoughSeas.Tests.Shore;
+using RoughSeas.Water;
 
-namespace RoughSeas.Tests.Surf;
+namespace RoughSeas.Tests.Water;
 
 public class SurfBuilderTests
 {
@@ -10,7 +8,7 @@ public class SurfBuilderTests
     private const int Level = 100;
     private static readonly BedConfig Stone = ShoreFixtures.Bed("stone");
 
-    private static SurfBuilder Builder(FaceBuilder faces) => new(new SwashSheets(ShoreFixtures.Band), faces, new RoughSeas.Water.WaveTransformation(1.28, faces.SmoothingBlocks, 1, 0.12));
+    private static SurfBuilder Builder(FaceBuilder faces) => new(new SwashSheets(ShoreFixtures.Band), faces, new WaveTransformation(1.28, faces.SmoothingBlocks, 1, 0.12, 0.45));
 
     private static SurfField Stairs(params double[] elevations)
     {

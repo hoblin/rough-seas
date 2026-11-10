@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using RoughSeas.SeaAndWeather;
-using RoughSeas.Shore;
-using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <summary>
 /// The columns around a point as the shore's water stands in them: a water column by its surface level and depth,
@@ -135,7 +132,7 @@ public sealed class SeabedMap
         for (var y = top; y >= Math.Min(top, terrain + 1) - highestRise; y--)
         {
             var fluid = blocks.GetBlock(probe.Set(x, y, z), BlockLayersAccess.Fluid);
-            if (!Groundwater.Carries(fluid)) continue;
+            if (!WaterColumn.Carries(fluid)) continue;
             (cells[i], levels[i]) = (OpenWater.Land(blocks, probe) ? ShoreGround.LandAt(blocks, probe, x, y, z, fluid.Id, beds, highestRise) : Water(blocks, probe, x, y, z, terrain, fluid, beds, deepest), y);
             return;
         }

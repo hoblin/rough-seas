@@ -4,6 +4,7 @@ using RoughSeas.Propulsion;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 

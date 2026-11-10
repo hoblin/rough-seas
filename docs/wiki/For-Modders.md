@@ -26,6 +26,15 @@ Where a page touches physics, it says what the mod does and links [The science b
 
 If you build on these pages, or need something they don't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
+### One system of water
+
+The water's physics is one module, `RoughSeas.Water`, in place of `RoughSeas.Surf` and the parts of `RoughSeas.Shore` that were its physics; `OpenWater` moved there too.
+
+- `IDrawnSea` gained `WaveHere(x, z)`, the one answer to how high the waves stand at a point, where they run, how deep they feel the water and whether they break ([Reading it](Reading-the-Sea#reading-it)). A class of yours that implements `IDrawnSea` has to add it.
+- A hull now takes the waves at its own place, over its bed, on the side they come from, not the open sea's by the wind.
+- `EntityBehaviorSeaForces.Wave` is gone; `Took` stays. `Waves.BreaksAt` is gone: ask `WaveHere`. `waves.maxDepthBlocks`, `waves.bedSlopeBlocks`, `surface.surfFoam` and the shore sound's `maxDepthBlocks` are gone from the configs.
+- `seafoam.fsh`'s depth bands are gone, and `seaFoam` is a `vec3`. A new sampler, `seaSurf`, sits on the next texture unit down from the seabed's others.
+
 ### Hulls that crack, leak and flood
 
 Hulls that crack, leak and flood changed the vessel keys, so they came as a major version. What a vessel of yours built before them needs to change:

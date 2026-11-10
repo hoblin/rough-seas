@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using RoughSeas.Water;
 
-namespace RoughSeas.Shore;
+namespace RoughSeas.Water;
 
 /// <summary>
 /// The front of the sheet a broken wave throws up the shore, thrown at U = √(2gR) so that it climbs the run-up R, as

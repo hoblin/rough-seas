@@ -1,4 +1,4 @@
-using RoughSeas.SeaAndWeather;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using RoughSeas.Water;
 
-namespace RoughSeas.Shore;
+namespace RoughSeas.Water;
 
 /// <summary>The run-up exceeded by 2% of waves: Stockdon's on a sandy slope up to about 1:7, EurOtop's on a steeper or harder one, and a standing wave's crest at a wall.</summary>
 public sealed class RunUp(RunUpConfig config)

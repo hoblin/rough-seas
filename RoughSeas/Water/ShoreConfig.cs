@@ -1,4 +1,4 @@
-namespace RoughSeas.Shore;
+namespace RoughSeas.Water;
 
 public class ShoreConfig
 {

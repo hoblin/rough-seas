@@ -1,5 +1,5 @@
 using RoughSeas.Storms;
-using RoughSeas.Surf;
+using RoughSeas.Water;
 
 namespace RoughSeas.Tests.Storms;
 

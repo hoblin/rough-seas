@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RoughSeas.Shore;
-using RoughSeas.Water;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 public readonly record struct SwashSheet(double Distance, double RunUp, double Needed, int FromX, int FromZ);
 

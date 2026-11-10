@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RoughSeas.Shore;
-using RoughSeas.Water;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <summary>Finds every side of a full block a water column meets, the short steps of a beach and the tall faces of a cliff alike, and writes how each sends waves back into the <see cref="SurfField"/>.</summary>
 public sealed class FaceBuilder(WallReflection reflection, FacesConfig config)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using RoughSeas.Shore;
 using RoughSeas.Water;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;

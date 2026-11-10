@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RoughSeas.Surf;
+namespace RoughSeas.Water;
 
 /// <param name="Distance">How far the water here lies from the face. Up to <see cref="FirstWaterVertex"/> the point is a vertex of the face itself, shared with the water held under the land; the reflection grows from there.</param>
 public readonly record struct FaceReading(double Distance, double NormalX, double NormalZ, double Reflection)

@@ -1,7 +1,6 @@
-using RoughSeas.Surf;
-using RoughSeas.Tests.Shore;
+using RoughSeas.Water;
 
-namespace RoughSeas.Tests.Surf;
+namespace RoughSeas.Tests.Water;
 
 public class WallSprayTests
 {

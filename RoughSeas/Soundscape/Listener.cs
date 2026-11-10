@@ -1,5 +1,6 @@
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
+using RoughSeas.Water;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;

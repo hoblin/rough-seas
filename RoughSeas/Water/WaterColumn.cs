@@ -1,4 +1,4 @@
-using RoughSeas.SeaAndWeather;
+using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
@@ -12,6 +12,11 @@ public static class WaterColumn
     public const double StillLevel = StillEighths / 8.0;
 
     private const double LevelsPerBlock = 8;
+
+    private static readonly string[] SeaFamilies = ["water", "saltwater"];
+
+    /// <summary>Whether this fluid is water a shore holds: the sea's or a lake's, and not another liquid.</summary>
+    public static bool Carries(Block fluid) => fluid.IsLiquid() && SeaFamilies.Contains(fluid.FirstCodePart());
 
     /// <summary>The depth of the water from <paramref name="top"/> down, no further than <paramref name="maxBlocks"/>, and the first position under it. Moves <paramref name="top"/>.</summary>
     public static (double Depth, BlockPos Bottom) Sound(IBlockAccessor blocks, BlockPos top, int maxBlocks)
