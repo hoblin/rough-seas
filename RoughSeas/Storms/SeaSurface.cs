@@ -36,6 +36,9 @@ public sealed class SeaSurface
     private readonly int headings;
     private readonly double[] amplitudeShare;
     private readonly double[] numberX, numberZ, frequency, amplitude;
+    private readonly (double Length, double Angle, double Amplitude)[] shortTrains;
+    private readonly double shortHeight;
+    private readonly double[] shortX, shortZ, shortFrequency, shortAmplitude;
     private readonly Trains?[] banks = new Trains?[2];
     private int active = -1;
     private double risingFrom = double.NegativeInfinity;
@@ -55,9 +58,20 @@ public sealed class SeaSurface
         numberZ = new double[slots];
         frequency = new double[slots];
         amplitude = new double[slots];
+
+        var bands = config.ShortWaves.Bands.Select(band => (band, variance: config.ShortWaves.PhillipsConstant / (4 * FullTurn * FullTurn) * (band.ToBlocks * band.ToBlocks - band.FromBlocks * band.FromBlocks))).ToArray();
+        shortTrains = bands.SelectMany(entry => entry.band.AnglesDegrees.Select(angle => (Math.Sqrt(entry.band.FromBlocks * entry.band.ToBlocks), angle * Math.PI / 180, Math.Sqrt(2 * entry.variance / entry.band.AnglesDegrees.Length)))).ToArray();
+        shortHeight = 4 * Math.Sqrt(bands.Sum(entry => entry.variance));
+        var shortSlots = banks.Length * shortTrains.Length;
+        shortX = new double[shortSlots];
+        shortZ = new double[shortSlots];
+        shortFrequency = new double[shortSlots];
+        shortAmplitude = new double[shortSlots];
     }
 
     public int Slots => amplitude.Length;
+
+    public int ShortSlots => shortAmplitude.Length;
 
     public double Seconds { get; private set; } = double.NaN;
 
@@ -143,24 +157,30 @@ public sealed class SeaSurface
             calm &= amplitude[slot] <= Faded;
             if (amplitude[slot] > amplitude[dominant]) dominant = slot;
         }
+        var developed = shortHeight > 0 ? Math.Min(1, SeaHeight / shortHeight) : 0;
+        for (var slot = 0; slot < ShortSlots; slot++)
+        {
+            var bank = slot / shortTrains.Length;
+            shortAmplitude[slot] = banks[bank] != null ? shortTrains[slot % shortTrains.Length].Amplitude * developed * (bank == active ? rising : fading) : 0;
+        }
         Dominant = dominant;
         Calm = calm;
         Steepness = slopes > 0 ? Math.Min(config.Steepness, 1 / slopes) : config.Steepness;
     }
 
     /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
-    public double HeightAt(double x, double z, double share = 1)
+    public double HeightAt(double x, double z, double share = 1, bool shortWaves = true)
     {
         var (restX, restZ) = (x, z);
         for (var i = 0; i < SurfaceSearchSteps; i++)
         {
-            var (shiftX, _, shiftZ) = DisplacementAt(restX, restZ, share);
+            var (shiftX, _, shiftZ) = DisplacementAt(restX, restZ, share, false);
             (restX, restZ) = (x - share * shiftX, z - share * shiftZ);
         }
-        return share * DisplacementAt(restX, restZ, share).Y;
+        return share * DisplacementAt(restX, restZ, share, shortWaves).Y;
     }
 
-    public (double X, double Y, double Z) DisplacementAt(double x, double z, double share = 0)
+    public (double X, double Y, double Z) DisplacementAt(double x, double z, double share = 0, bool shortWaves = true)
     {
         Span<double> heights = stackalloc double[Slots], lags = stackalloc double[Slots], numbers = stackalloc double[Slots];
         Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
@@ -194,7 +214,26 @@ public sealed class SeaSurface
             shiftX += back * (towardX[slot] - 2 * along * face.NormalX);
             shiftZ += back * (towardZ[slot] - 2 * along * face.NormalZ);
         }
-        return (shiftX, rise, shiftZ);
+        return (shiftX, shortWaves ? rise + ShortRise(x, z, share) : rise, shiftZ);
+    }
+
+    private double ShortRise(double x, double z, double share)
+    {
+        var kept = 1.0;
+        if (share > 0 && Seabed is { } field && field.Covers(x, z))
+        {
+            var depth = field.DepthAt(x, z);
+            if (depth <= 0) return 0;
+            var height = 4 * Math.Sqrt(shortAmplitude.Sum(value => value * value) / 2);
+            if (height > 0) kept = Math.Min(1, depth / (shape.BreakingDepthRatio * height));
+        }
+        var rise = 0.0;
+        for (var slot = 0; slot < ShortSlots; slot++)
+        {
+            if (shortAmplitude[slot] <= 0) continue;
+            rise += kept * shortAmplitude[slot] * Math.Sin(shortX[slot] * x + shortZ[slot] * z - shortFrequency[slot] * Seconds);
+        }
+        return rise;
     }
 
     private FaceReading? Facing(double x, double z, double share) =>
@@ -375,6 +414,17 @@ public sealed class SeaSurface
         }
     }
 
+    public void WriteShortUniforms(double cameraX, double cameraZ, float[] into)
+    {
+        for (var slot = 0; slot < ShortSlots; slot++)
+        {
+            into[slot * 4] = (float)shortX[slot];
+            into[slot * 4 + 1] = (float)shortZ[slot];
+            into[slot * 4 + 2] = (float)shortAmplitude[slot];
+            into[slot * 4 + 3] = (float)((shortX[slot] * cameraX + shortZ[slot] * cameraZ - shortFrequency[slot] * Seconds) % FullTurn);
+        }
+    }
+
     private Trains? Rising => active >= 0 ? banks[active] : null;
 
     private double Handover =>Math.Clamp((Seconds - risingFrom) / config.SettleSeconds, 0, 1);
@@ -435,6 +485,14 @@ public sealed class SeaSurface
             var slot = bank * generation + i;
             (numberX[slot], numberZ[slot], frequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, Math.Sqrt(Gravity * number));
             amplitude[slot] = 0;
+        }
+        for (var i = 0; i < shortTrains.Length; i++)
+        {
+            var angle = towardRadians + shortTrains[i].Angle;
+            var number = FullTurn / shortTrains[i].Length;
+            var slot = bank * shortTrains.Length + i;
+            (shortX[slot], shortZ[slot], shortFrequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, Math.Sqrt(Gravity * number));
+            shortAmplitude[slot] = 0;
         }
         Changed?.Invoke(string.Format(System.Globalization.CultureInfo.InvariantCulture,
             "new waves toward {0:F0}°, {1:F0} m long", (towardRadians * 180 / Math.PI + 360) % 360, length));

@@ -72,7 +72,7 @@ public class StormsModSystem : ModSystem
         DrawnSea = new DrawnSea(surface, field);
         DrawnWater = new DrawnWater(DrawnSea);
         var shoreConfig = capi.ModLoader.GetModSystem<ShoreModSystem>().Config;
-        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, capi))
+        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, Config.Surface.Tessellation, message => Log(message), capi))
         {
             clock = new SurfaceClock(this, sea, surface, field, Surf(capi), capi);
             EyeUnderSurface.Attach(this, capi, DrawnWater, Config.Eye);
@@ -132,6 +132,36 @@ public class StormsModSystem : ModSystem
                 .WithDescription("Draw the waves over the seabed and the swash on the shore, or the sea as if it were deep everywhere, to compare")
                 .WithArgs(parsers.Bool("draw"))
                 .HandleWith(args => Drawn("the shore", SurfaceShader.DrawShore = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("reflection")
+                .WithDescription("Draw the waves faces send back, or leave them out to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("reflection", SurfaceShader.DrawReflection = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("lag")
+                .WithDescription("Draw the crests as the bed turns them, or straight, to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("the bed's lag", SurfaceShader.DrawLag = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("refraction")
+                .WithDescription("Draw the height refraction gives each train, or leave it out to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("refraction", SurfaceShader.DrawRefraction = (bool)args[0]))
+            .EndSubCommand()
+            .BeginSubCommand("tessellation")
+                .WithDescription("Divide the water's blocks near the player, or draw one quad a block, to compare")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args =>
+                {
+                    SurfaceTessellation.On = (bool)args[0];
+                    capi.Shader.ReloadShaders();
+                    return Drawn("tessellation", SurfaceTessellation.Drawn);
+                })
+            .EndSubCommand()
+            .BeginSubCommand("colours")
+                .WithDescription("Paint the water by its height, from purple at the zone's lowest to red at its highest, and outline each block's top face")
+                .WithArgs(parsers.Bool("draw"))
+                .HandleWith(args => Drawn("height colours", SurfaceShader.Colours.On = (bool)args[0]))
             .EndSubCommand()
             .BeginSubCommand("bed")
                 .WithDescription("The seabed and the swash read under the player, and N blocks along X")

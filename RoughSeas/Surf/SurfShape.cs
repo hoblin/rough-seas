@@ -32,7 +32,7 @@ public sealed class SurfShape(double breakingDepthRatio, double plungingFrom, do
                 continue;
             }
             var cosine = slope > 0 ? -(numberX * slopeX + numberZ * slopeZ) / (deepNumber * slope) : 1;
-            shaped[slot] = amplitudes[slot] * Shoaling.Factor(deepNumber, depth) * (cosine > 0 ? Shoaling.Refraction(deepNumber, depth, cosine) : 1);
+            shaped[slot] = amplitudes[slot] * Shoaling.Factor(deepNumber, depth) * Shoaling.Refraction(deepNumber, depth, cosine);
             localNumbers[slot] = Shoaling.Wavenumber(deepNumber, depth);
             offshore += amplitudes[slot] * amplitudes[slot];
             local += shaped[slot] * shaped[slot];

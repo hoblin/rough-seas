@@ -19,6 +19,7 @@ public class FacesConfig
     public double ToeDepthWaveHeights = 1.5;
     public double SmoothingWavelengths = 0.25;
     public int SmoothingMaxBlocks = 16;
+    public int BedRampBlocks = 2;
     public int ReachBlocks = 96;
     public double TaperFrom = 0.75;
     public double ReflectedSlopeLimit = 0.577;

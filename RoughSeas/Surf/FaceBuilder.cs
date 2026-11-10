@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using RoughSeas.Shore;
 
 namespace RoughSeas.Surf;
@@ -10,8 +11,13 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
     private const double StillLevel = 7.0 / 8;
     public const float LandDistance = -0.5f;
     private const double OvertoppedNormal = 0.5;
+    private const double BlendShareOfDistance = 0.5;
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
     private static readonly (int X, int Z)[] Around = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)];
+
+    public int BedRampBlocks => config.BedRampBlocks;
+
+    public int SmoothingBlocks(double wavelength) => Math.Min(config.SmoothingMaxBlocks, (int)Math.Ceiling(wavelength * config.SmoothingWavelengths));
 
     public IReadOnlyList<WallFace> Build(SeabedMap map, Func<int, int, Sea> seaAt, SurfField field)
     {
@@ -25,7 +31,7 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             var sea = seaAt(seed.X, seed.Z);
             var wavelength = RunUp.DeepLength(sea.Period);
             var height = Math.Min(sea.Height, map[seed.X, seed.Z].Elevation / breakingDepthRatio);
-            var (normalX, normalZ, faceX, faceZ) = normals.Around(seed, Math.Min(config.SmoothingMaxBlocks, (int)Math.Ceiling(wavelength * config.SmoothingWavelengths)));
+            var (normalX, normalZ, faceX, faceZ) = normals.Around(seed, SmoothingBlocks(wavelength));
             var coefficient = reflection.Coefficient(height, sea.Period, Slope(map, seed, height), seed.Bed.Roughness);
             walls.Add(new WallFace(seed.X, seed.Z, seed.Level, seed.SideX, seed.SideZ, normalX, normalZ, seed.Rise, runs[i], wavelength, coefficient,
                 seed.Rise >= height * (1 + coefficient) / 2, faceX, faceZ));
@@ -139,6 +145,7 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             field.Set(field.Face, x, z, 0, (float)Math.Max(fromWall, FaceReading.FirstWaterVertex));
             Write(field, x, z, wall, wall.Reflection * WallReflection.Spreading(wall.Run, wall.Wavelength, distance[i]) * reflection.Taper(distance[i]));
         }
+        Blend(map, field, nearest, distance);
 
         void Offer(PriorityQueue<(int, int, int), float> into, int x, int z, int wall)
         {
@@ -146,6 +153,47 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             var (dx, dz) = (x + 0.5 - faceX, z + 0.5 - faceZ);
             var far = (float)Math.Sqrt(dx * dx + dz * dz);
             if (far <= config.ReachBlocks) into.Enqueue((x, z, wall), far);
+        }
+    }
+
+    private void Blend(SeabedMap map, SurfField field, int[] nearest, float[] distance)
+    {
+        var size = map.Size;
+        var across = size + 1;
+        var (weights, totals) = (new double[across * across], Enumerable.Range(0, 4).Select(_ => new double[across * across]).ToArray());
+        for (var row = 0; row < size; row++)
+        for (var column = 0; column < size; column++)
+        {
+            var (x, z, reached) = (map.OriginX + column, map.OriginZ + row, nearest[row * size + column] >= 0);
+            var (here, up, left, corner) = ((row + 1) * across + column + 1, row * across + column + 1, (row + 1) * across + column, row * across + column);
+            weights[here] = (reached ? 1 : 0) + weights[up] + weights[left] - weights[corner];
+            for (var channel = 0; channel < totals.Length; channel++)
+            {
+                totals[channel][here] = (reached ? field.Get(field.Face, x, z, channel) : 0) + totals[channel][up] + totals[channel][left] - totals[channel][corner];
+            }
+        }
+
+        for (var row = 0; row < size; row++)
+        for (var column = 0; column < size; column++)
+        {
+            var i = row * size + column;
+            if (nearest[i] < 0) continue;
+            var (x, z) = (map.OriginX + column, map.OriginZ + row);
+            var radius = Math.Min(config.SmoothingMaxBlocks, (int)(distance[i] * BlendShareOfDistance));
+            if (radius <= 0) continue;
+            var (lower, upper, top, bottom) = (Math.Max(column - radius, 0), Math.Min(column + radius + 1, size), Math.Max(row - radius, 0), Math.Min(row + radius + 1, size));
+            double Box(double[] table) => table[bottom * across + upper] - table[top * across + upper] - table[bottom * across + lower] + table[top * across + lower];
+            var count = Box(weights);
+            var (normalX, normalZ) = (Box(totals[1]), Box(totals[2]));
+            var turned = Math.Sqrt(normalX * normalX + normalZ * normalZ);
+            var kept = Math.Sqrt(Math.Pow(field.Get(field.Face, x, z, 1), 2) + Math.Pow(field.Get(field.Face, x, z, 2), 2));
+            field.Set(field.Face, x, z, 0, (float)Math.Max(Box(totals[0]) / count, FaceReading.FirstWaterVertex));
+            if (turned > 0)
+            {
+                field.Set(field.Face, x, z, 1, (float)(normalX / turned * kept));
+                field.Set(field.Face, x, z, 2, (float)(normalZ / turned * kept));
+            }
+            field.Set(field.Face, x, z, 3, (float)(Box(totals[3]) / count));
         }
     }
 

@@ -91,6 +91,8 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public void Set(float[] into, int x, int z, int channel, float value) => into[((z - OriginZ) * Size + x - OriginX) * Channels + channel] = value;
 
+    public float Get(float[] from, int x, int z, int channel) => from[((z - OriginZ) * Size + x - OriginX) * Channels + channel];
+
     private double Sample(float[] from, double x, double z, int channel)
     {
         var u = Math.Clamp(x - OriginX - 0.5, 0, Size - 1);

@@ -24,7 +24,7 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
 
         var (sin, cos) = Math.SinCos(yaw + ModelTurn);
         double At(double alongX, double alongZ) =>
-            surface.HeightAt(x + cos * alongX + sin * alongZ, z - sin * alongX + cos * alongZ, share);
+            surface.HeightAt(x + cos * alongX + sin * alongZ, z - sin * alongX + cos * alongZ, share, shortWaves: false);
 
         var (plusX, minusX, plusZ, minusZ) = (At(length / 2, 0), At(-length / 2, 0), At(0, width / 2), At(0, -width / 2));
         return new SeaPose(

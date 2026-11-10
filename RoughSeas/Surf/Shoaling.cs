@@ -6,6 +6,8 @@ namespace RoughSeas.Surf;
 public static class Shoaling
 {
     public const double Gravity = 9.81;
+    private const double ShallowDepthNumber = Math.PI / 10;
+    private const double DeepDepthNumber = Math.PI;
 
     public static double Wavenumber(double deepNumber, double depth) =>
         depth <= 0 ? double.PositiveInfinity : deepNumber / Math.Sqrt(Math.Tanh(deepNumber * depth));
@@ -23,10 +25,21 @@ public static class Shoaling
 
     public static double Refraction(double deepNumber, double depth, double cosineOffshore)
     {
+        if (depth <= 0) return 1;
+        var number = Wavenumber(deepNumber, depth);
+        var felt = 1 - SmoothStep(ShallowDepthNumber, DeepDepthNumber, number * depth);
+        if (felt <= 0) return 1;
         var sineOffshore = Math.Sqrt(Math.Max(0, 1 - cosineOffshore * cosineOffshore));
-        var sine = sineOffshore * deepNumber / Wavenumber(deepNumber, depth);
+        var sine = sineOffshore * deepNumber / number;
         var cosine = Math.Sqrt(Math.Max(0, 1 - sine * sine));
-        return cosine > 0 ? Math.Sqrt(Math.Abs(cosineOffshore) / cosine) : 1;
+        var spread = cosine > 0 ? Math.Sqrt(Math.Abs(cosineOffshore) / cosine) : 1;
+        return 1 + (spread - 1) * felt;
+    }
+
+    private static double SmoothStep(double from, double to, double value)
+    {
+        var share = Math.Clamp((value - from) / (to - from), 0, 1);
+        return share * share * (3 - 2 * share);
     }
 
     public static double Iribarren(double slope, double height, double deepNumber) =>

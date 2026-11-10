@@ -280,7 +280,49 @@ public class SeaSurfaceTests
             var theta = uniforms[slot * 4] * fromCameraX + uniforms[slot * 4 + 1] * fromCameraZ + uniforms[slot * 4 + 3];
             rise += uniforms[slot * 4 + 2] * Math.Sin(theta);
         }
+        var shortUniforms = new float[surface.ShortSlots * 4];
+        surface.WriteShortUniforms(FarX, FarZ, shortUniforms);
+        for (var slot = 0; slot < surface.ShortSlots; slot++)
+        {
+            var theta = shortUniforms[slot * 4] * fromCameraX + shortUniforms[slot * 4 + 1] * fromCameraZ + shortUniforms[slot * 4 + 3];
+            rise += shortUniforms[slot * 4 + 2] * Math.Sin(theta);
+        }
         Assert.Equal(surface.DisplacementAt(FarX + fromCameraX, FarZ + fromCameraZ).Y, rise, 3);
+    }
+
+    private static double ShortRiseAt(SeaSurface surface, double x, double z) =>
+        surface.DisplacementAt(x, z).Y - surface.DisplacementAt(x, z, shortWaves: false).Y;
+
+    private static double ShortHeight(SeaSurface surface)
+    {
+        var energy = 0.0;
+        for (var i = 0; i < 4000; i++)
+        {
+            var rise = ShortRiseAt(surface, FarX + i * 0.37, FarZ + i * 0.91);
+            energy += rise * rise;
+        }
+        return 4 * Math.Sqrt(energy / 4000);
+    }
+
+    [Fact]
+    public void DrawsTheShortWavesAsHighAsThePhillipsRangeBetweenTheirLengths()
+    {
+        var surface = Surface();
+        Settle(surface, 3, 0.7);
+
+        var bands = Fixtures.Config().Surface.ShortWaves.Bands;
+        var expected = 4 * Math.Sqrt(bands.Sum(band => Fixtures.Config().Surface.ShortWaves.PhillipsConstant / (4 * 4 * Math.PI * Math.PI) * (band.ToBlocks * band.ToBlocks - band.FromBlocks * band.FromBlocks)));
+        Assert.InRange(ShortHeight(surface), expected * 0.8, expected * 1.2);
+    }
+
+    [Fact]
+    public void AStillerSeaThanItsShortWavesCarriesLess()
+    {
+        var (full, still) = (Surface(), Surface());
+        Settle(full, 3, 0.7);
+        Settle(still, 0.05, 0.7);
+
+        Assert.True(ShortHeight(still) < ShortHeight(full) * 0.4);
     }
 
     [Fact]

@@ -466,6 +466,7 @@ case "${1:-}" in
     echo "$folder/sheet.png"
     ;;
   fps) post "/fps?seconds=${2:-5}" ;;
+  water) post "/water?seconds=${2:-5}" ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
   aim) post "/look?entity=$2" ;;
   hover)

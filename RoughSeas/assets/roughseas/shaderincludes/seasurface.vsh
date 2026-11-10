@@ -17,6 +17,9 @@ uniform vec4 seaLagValidB;
 uniform float seaFoamDecay;
 uniform float seaFaceSlope;
 uniform float seaWallSlope;
+uniform vec4 seaShort[SEA_SHORT];
+uniform vec2 seaMesh;
+uniform vec3 seaTerms;
 
 out float seaFoamCrest;
 out float seaFoamFold;
@@ -33,6 +36,8 @@ float seaFaceFoam = 0.0;
 const float seaGravity = 9.81;
 const float seaStepFootBelow = -1.0;
 const float seaFaceStands = 0.75;
+const float seaShallowDepthNumber = 0.31415927;
+const float seaDeepDepthNumber = 3.1415927;
 
 float seaFolding(vec3 squeeze) {
 	return 1.0 - (1.0 - squeeze.x) * (1.0 - squeeze.z) + squeeze.y * squeeze.y;
@@ -52,14 +57,18 @@ float seaShoaling(float deepNumber, float depth) {
 }
 
 float seaRefraction(float deepNumber, float depth, float cosineOffshore) {
+	float number = seaWavenumber(deepNumber, depth);
+	float felt = seaTerms.z * (1.0 - smoothstep(seaShallowDepthNumber, seaDeepDepthNumber, number * depth));
+	if (felt <= 0.0) return 1.0;
 	float sineOffshore = sqrt(max(0.0, 1.0 - cosineOffshore * cosineOffshore));
-	float sine = sineOffshore * deepNumber / seaWavenumber(deepNumber, depth);
+	float sine = sineOffshore * deepNumber / number;
 	float cosine = sqrt(max(0.0, 1.0 - sine * sine));
-	return cosine > 0.0 ? sqrt(abs(cosineOffshore) / cosine) : 1.0;
+	float spread = cosine > 0.0 ? sqrt(abs(cosineOffshore) / cosine) : 1.0;
+	return 1.0 + (spread - 1.0) * felt;
 }
 
 float seaLag(int slot, vec4 lagA, vec4 lagB) {
-	return slot < 4 ? lagA[slot] * seaLagValidA[slot] : slot < 8 ? lagB[slot - 4] * seaLagValidB[slot - 4] : 0.0;
+	return seaTerms.y * (slot < 4 ? lagA[slot] * seaLagValidA[slot] : slot < 8 ? lagB[slot - 4] * seaLagValidB[slot - 4] : 0.0);
 }
 
 vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 lagB) {
@@ -122,8 +131,9 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 }
 
 vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
-	vec4 warped = applyVanillaLiquidWarping(windAffected, worldPos, div);
 	float share = windAffected ? textureLod(seaHeightMap, (worldPos.xz - seaHeightArea.xy) / seaHeightArea.zw, 0.0).r : 0.0;
+	seaRippleKept = 1.0 - share;
+	vec4 warped = applyVanillaLiquidWarping(windAffected, worldPos, div);
 	seaShare = share;
 	if (share <= 0.0) return warped;
 
@@ -138,7 +148,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float faceDistance = max(face.x, 0.0);
 	float faceLength = length(face.yz);
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);
-	float faceReflects = faceLength > 0.0 ? face.w : 0.0;
+	float faceReflects = faceLength > 0.0 ? face.w * seaTerms.x : 0.0;
 	vec2 texel = vec2(1.0 / seaBedArea.z, 0.0);
 	vec4 turnAX = onBed ? (textureLod(seaLagA, bedUv + texel.xy, 0.0) - textureLod(seaLagA, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0);
 	vec4 turnAZ = onBed ? (textureLod(seaLagA, bedUv + texel.yx, 0.0) - textureLod(seaLagA, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0);
@@ -161,7 +171,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 			continue;
 		}
 		float cosine = slope > 0.0 ? -dot(wave.xy, aux.yz) / (deepNumber * slope) : 1.0;
-		heights[i] = wave.z * seaShoaling(deepNumber, bed.x) * (cosine > 0.0 ? seaRefraction(deepNumber, bed.x, cosine) : 1.0);
+		heights[i] = wave.z * seaShoaling(deepNumber, bed.x) * seaRefraction(deepNumber, bed.x, cosine);
 		numbers[i] = seaWavenumber(deepNumber, bed.x);
 		offshore += wave.z * wave.z;
 		local += heights[i] * heights[i];
@@ -233,6 +243,18 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 			normal.xz -= away * number * returned * cos(mirrored);
 			normal.y -= steepness * number * returned * sin(mirrored);
 		}
+	}
+	float shortEnergy = 0.0;
+	for (int i = 0; i < SEA_SHORT; i++) shortEnergy += seaShort[i].z * seaShort[i].z;
+	float shortKept = onBed && shortEnergy > 0.0 ? min(1.0, bed.x / (seaShore.x * 4.0 * sqrt(shortEnergy / 2.0))) : 1.0;
+	float spacing = clamp(length(worldPos.xz) / seaMesh.x, seaMesh.y, 1.0);
+	for (int i = 0; i < SEA_SHORT; i++) {
+		vec4 wave = seaShort[i];
+		if (wave.z <= 0.0) continue;
+		float height = wave.z * shortKept * smoothstep(2.0 * spacing, 4.0 * spacing, 6.2831853 / length(wave.xy));
+		float theta = dot(wave.xy, worldPos.xz) + wave.w;
+		offset.y += height * sin(theta);
+		normal.xz -= wave.xy * height * cos(theta);
 	}
 	warped.xyz += share * offset;
 	seaNormal = normalize(mix(vec3(0.0, 1.0, 0.0), normal, share));

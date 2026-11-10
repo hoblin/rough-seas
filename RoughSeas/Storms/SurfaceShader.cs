@@ -25,6 +25,9 @@ public static class SurfaceShader
     private const string LiquidPass = "chunkliquid";
     private const string VanillaWarp = "vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div)";
     private const string RenamedWarp = "vec4 applyVanillaLiquidWarping(bool windAffected, vec4 worldPos, float div)";
+    private const string RippleKept = "float seaRippleKept = 1.0;\n";
+    private const string WaterRipple = "worldPos.y += waterWaveIntensity * gnoise(noisepos) / div;";
+    private const string WindRipple = "worldPos.y += windWaveIntensity * gnoise(noisepos * 3.5) / (div * 4);";
     private const string AfterWarp = "vec4 applyVertexWarping(";
     private const string FaceNormal = "fragNormal = unpackNormal(renderFlags);";
     private const string TiltedNormal =
@@ -49,6 +52,7 @@ public static class SurfaceShader
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
     private static readonly string[] ShoreSamplers = ["seaBed", "seaBedAux", "seaLagA", "seaLagB", "seaFace"];
     private const double NoCaps = 10;
+    private const double StillSurface = 0.875;
     private static readonly AssetLocation VertexSource = new("roughseas", "shaderincludes/seasurface.vsh");
     private static readonly AssetLocation FragmentSource = new("roughseas", "shaderincludes/seafoam.fsh");
 
@@ -61,6 +65,9 @@ public static class SurfaceShader
     private static int[] shoreTextures = [];
     private static SurfField? shore;
     private static float[] uniforms = [];
+    private static float[] shortUniforms = [];
+    private static readonly HeightColours colours = new();
+    private static bool rippleTamed;
     private static string vertexCode = "";
     private static string fragmentCode = "";
     private static string wetCode = "";
@@ -76,15 +83,25 @@ public static class SurfaceShader
 
     public static bool DrawShore { get; set; } = true;
 
-    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double foamDecay, double steepestShore, ICoreClientAPI api)
+    public static bool DrawReflection { get; set; } = true;
+
+    public static bool DrawLag { get; set; } = true;
+
+    public static bool DrawRefraction { get; set; } = true;
+
+    public static HeightColours Colours => colours;
+
+    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double foamDecay, double steepestShore, TessellationConfig tessellation, Action<string> log, ICoreClientAPI api)
     {
         (surface, field, capi, lensDepthRatio, wetReflectance, foamDecaySeconds, wallSlope) = (waves, heights, api, lensDepth, wetShade, foamDecay, steepestShore);
         heightMap = new LoadedTexture(api);
         heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
         shoreTextures = ShoreSamplers.Select(_ => GL.GenTexture()).ToArray();
         uniforms = new float[waves.Slots * 4];
+        shortUniforms = new float[waves.ShortSlots * 4];
         ReadSources(api);
         harmony = new Harmony(HarmonyId);
+        SurfaceTessellation.Attach(harmony, tessellation, log);
         harmony.Patch(AccessTools.Method(typeof(ShaderRegistry), "HandleIncludes"), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Inject)));
         harmony.Patch(AccessTools.Method(typeof(ShaderProgram), nameof(ShaderProgram.Compile)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(LocateSamplers)));
         harmony.Patch(AccessTools.Method(typeof(ShaderProgramBase), nameof(ShaderProgramBase.Use)), postfix: new HarmonyMethod(typeof(SurfaceShader), nameof(Bind)));
@@ -105,6 +122,7 @@ public static class SurfaceShader
 
     public static void Detach()
     {
+        SurfaceTessellation.Detach();
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
         heightMap?.Dispose();
@@ -118,6 +136,7 @@ public static class SurfaceShader
         if (capi == null || field == null || heightMap == null || field.Across == 0) return;
         heightMap.Width = heightMap.Height = field.Across;
         capi.Render.LoadOrUpdateTextureFromRgba(field.Pixels(), true, 1, ref heightMap);
+        if (surface != null && capi.World.Player?.Entity is { } player) colours.Refresh(surface, field, player.CameraPos.X, player.CameraPos.Z);
     }
 
     public static void Upload(SurfField built)
@@ -145,9 +164,9 @@ public static class SurfaceShader
 
     private static bool Compile(ICoreClientAPI api)
     {
-        normalTilted = false;
+        (normalTilted, rippleTamed) = (false, false);
         api.Shader.ReloadShaders();
-        return normalTilted && Active(ShaderPrograms.Chunkliquid, WavesUniform) && Active(ShaderPrograms.Chunkliquid, FoamUniform);
+        return normalTilted && rippleTamed && Active(ShaderPrograms.Chunkliquid, WavesUniform) && Active(ShaderPrograms.Chunkliquid, FoamUniform);
     }
 
     private static bool Active(ShaderProgramBase program, string uniform) =>
@@ -157,6 +176,7 @@ public static class SurfaceShader
     {
         vertexCode = api.Assets.Get(VertexSource).ToText()
             .Replace("SEA_SLOTS", surface!.Slots.ToString(CultureInfo.InvariantCulture))
+            .Replace("SEA_SHORT", surface.ShortSlots.ToString(CultureInfo.InvariantCulture))
             .Replace("SEA_TRAIL_SECONDS", SeaSurface.TrailSeconds.ToString("0.0###", CultureInfo.InvariantCulture));
         fragmentCode = api.Assets.Get(FragmentSource).ToText();
         wetCode = api.Assets.Get(WetSource).ToText();
@@ -166,7 +186,10 @@ public static class SurfaceShader
     {
         if (__result.Contains(VanillaWarp) && __result.Contains(AfterWarp) && !__result.Contains(RenamedWarp))
         {
-            __result = __result.Replace(VanillaWarp, RenamedWarp).Replace(AfterWarp, vertexCode + AfterWarp);
+            rippleTamed |= __result.Contains(WaterRipple) && __result.Contains(WindRipple);
+            __result = __result.Replace(VanillaWarp, RippleKept + RenamedWarp).Replace(AfterWarp, vertexCode + AfterWarp)
+                .Replace(WaterRipple, "worldPos.y += seaRippleKept * waterWaveIntensity * gnoise(noisepos) / div;")
+                .Replace(WindRipple, "worldPos.y += seaRippleKept * windWaveIntensity * gnoise(noisepos * 3.5) / (div * 4);");
         }
         foreach (var (pass, beforeLight, shaded) in WetPasses)
         {
@@ -174,6 +197,7 @@ public static class SurfaceShader
             __result = __result.Replace(FragmentMain, wetCode + FragmentMain).Replace(beforeLight, $"if (normal.y > 0.5) {shaded}.rgb *= seaWetShade(worldPos);\n" + beforeLight);
         }
         if (program.PassName != LiquidPass) return;
+        __result = HeightColours.Inject(__result, FragmentMain);
         if (__result.Contains(FaceNormal))
         {
             __result = __result.Replace(FaceNormal, TiltedNormal);
@@ -203,7 +227,13 @@ public static class SurfaceShader
             else Array.Clear(uniforms);
             __instance.Uniforms4(WavesUniform, surface.Slots, uniforms);
             __instance.Uniform("seaSteepness", (float)surface.Steepness);
+            if (DrawWaves) surface.WriteShortUniforms(player.CameraPos.X, player.CameraPos.Z, shortUniforms);
+            else Array.Clear(shortUniforms);
+            __instance.Uniforms4("seaShort", surface.ShortSlots, shortUniforms);
+            __instance.Uniform("seaMesh", new Vec2f(SurfaceTessellation.ReachMetres, SurfaceTessellation.FinestSpacing));
+            __instance.Uniform("seaTerms", new Vec3f(DrawReflection ? 1 : 0, DrawLag ? 1 : 0, DrawRefraction ? 1 : 0));
         }
+        colours.Bind(__instance, capi.World.SeaLevel - 1 + StillSurface - player.CameraPos.Y);
         if (field != null && heightMap is { TextureId: > 0 } && Active(__instance, HeightMapSampler))
         {
             __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, heightMapUnit);
