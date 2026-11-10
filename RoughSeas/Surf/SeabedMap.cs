@@ -85,14 +85,21 @@ public sealed class SeabedMap
         const int chunk = GlobalConstants.ChunkSize;
         var map = new SeabedMap(originX, originZ, size);
         var probe = new BlockPos(Dimensions.NormalWorld);
+        var unpacked = new HashSet<(int X, int Y, int Z)>();
         for (var i = 0; i < size * size; i++)
         {
             var (x, z) = (originX + i % size, originZ + i / size);
             if (x < 0 || z < 0 || !heights.TryGetValue((x / chunk, z / chunk), out var column)) continue;
             var index = z % chunk * chunk + x % chunk;
             var top = (int)column.Rain[index];
+            int terrain = column.Terrain[index];
             if (blocks.GetChunkAtBlockPos(probe.Set(x, top, z)) == null) continue;
-            map.Fill(i, blocks, probe, x, z, top, column.Terrain[index], beds, highestRise, deepest);
+            var lowest = Math.Max(Math.Min(top - deepest, Math.Min(top, terrain + 1) - highestRise) - 1, 0);
+            for (var section = lowest / chunk; section <= (top + highestRise + 1) / chunk; section++)
+            {
+                if (unpacked.Add((x / chunk, section, z / chunk))) blocks.GetChunkAtBlockPos(x, section * chunk, z)?.Unpack_ReadOnly();
+            }
+            map.Fill(i, blocks, probe, x, z, top, terrain, beds, highestRise, deepest);
         }
         map.ReadFaces(blocks, probe, beds, highestRise);
         return map;

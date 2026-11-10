@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RoughSeas.Surf;
 
@@ -92,7 +93,8 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
         ? "outside the seabed read"
         : $"depth {Sample(Bed, x, z, 0):F2} m, {Sample(Bed, x, z, 1):F1} m from the shoreline, run-up {Sample(Bed, x, z, 2):F2} m, reached by {Sample(Bed, x, z, 3):F2} m, "
           + $"soaks {Sample(Aux, x, z, 0):E1} m/s, bed slope {Sample(Aux, x, z, 1):F2} {Sample(Aux, x, z, 2):F2}; "
-          + $"nearest face {Sample(Face, x, z, 0):F1} m, reflects {Sample(Face, x, z, 3):F2}";
+          + $"nearest face {Sample(Face, x, z, 0):F1} m, reflects {Sample(Face, x, z, 3):F2}; "
+          + $"breaking {BreakingAt(x, z):F2}, edge {EdgeShare(x, z):F2}, gains {string.Join(" ", Enumerable.Range(0, Slots).Select(slot => GainAt(slot, x, z).ToString("F2")))}";
 
     public bool Covers(double x, double z) => x >= OriginX && z >= OriginZ && x < OriginX + Size && z < OriginZ + Size;
 

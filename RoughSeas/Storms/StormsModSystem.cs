@@ -81,7 +81,7 @@ public class StormsModSystem : ModSystem
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         VesselMotion.Attach(this, capi, DrawnSea, surface);
         FloatMotion.Attach(DrawnSea);
-        RegisterSurfaceCommands(capi);
+        RegisterSurfaceCommands(capi, field);
     }
 
     internal SwellAround Swell(ICoreServerAPI sapi)
@@ -113,7 +113,7 @@ public class StormsModSystem : ModSystem
         return new SurfMaker(new SurfBuilder(band, faces), new Beds(shore.Beds), Config.Surface.Shore, shore.Band.HighestRiseBlocks, (format, args) => Log(format, args));
     }
 
-    private static void RegisterSurfaceCommands(ICoreClientAPI capi)
+    private static void RegisterSurfaceCommands(ICoreClientAPI capi, SurfaceField field)
     {
         var parsers = capi.ChatCommands.Parsers;
         capi.ChatCommands.Create("surface")
@@ -187,6 +187,19 @@ public class StormsModSystem : ModSystem
                     return TextCommandResult.Success(string.Join("\n", Enumerable.Range(0, blocks + 1)
                         .Select(i => $"{(int)Math.Floor(pos.X) + i - (int)capi.World.DefaultSpawnPosition.X} {(int)Math.Floor(pos.Z) - (int)capi.World.DefaultSpawnPosition.Z}: "
                             + field.Describe(Math.Floor(pos.X) + i + 0.5, Math.Floor(pos.Z) + 0.5))));
+                })
+            .EndSubCommand()
+            .BeginSubCommand("probe")
+                .WithDescription("Why the drawn sea stands as it does at a point this many blocks from the player, along X and Z: its share of the waves, its height, and the seabed read there")
+                .WithArgs(parsers.Int("x"), parsers.Int("z"))
+                .HandleWith(args =>
+                {
+                    var pos = capi.World.Player.Entity.Pos;
+                    var (x, z) = (Math.Floor(pos.X) + (int)args[0] + 0.5, Math.Floor(pos.Z) + (int)args[1] + 0.5);
+                    var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
+                    var seabed = storms.Surface?.Seabed;
+                    return TextCommandResult.Success($"{(int)Math.Floor(x) - (int)capi.World.DefaultSpawnPosition.X} {(int)Math.Floor(z) - (int)capi.World.DefaultSpawnPosition.Z}: "
+                        + $"share {field.Factor(x, z):F3}, height {storms.DrawnSea!.HeightAt(x, z):F2}; field from {seabed?.OriginX - (int)capi.World.DefaultSpawnPosition.X} {seabed?.OriginZ - (int)capi.World.DefaultSpawnPosition.Z}; {seabed?.Describe(x, z) ?? "no seabed read yet"}");
                 })
             .EndSubCommand()
             .BeginSubCommand("trace")
