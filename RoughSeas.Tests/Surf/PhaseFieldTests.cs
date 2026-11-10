@@ -80,4 +80,12 @@ public class PhaseFieldTests
         var gradient = Number + (lag[32 * Size + 7] - lag[32 * Size + 5]) / 2;
         Assert.True(gradient > 0);
     }
+
+    [Fact]
+    public void WavesRunningOutToSeaKeepRunningOutOverTheTreadsOfAStepShelf()
+    {
+        var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 3f * (x / 4)), Number, 0);
+        var gradient = Number + (lag[32 * Size + 7] - lag[32 * Size + 5]) / 2;
+        Assert.True(gradient > 0);
+    }
 }

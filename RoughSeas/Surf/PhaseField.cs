@@ -20,20 +20,18 @@ public static class PhaseField
         for (var i = 0; i < lag.Length; i++)
         {
             var (x, z) = (i % size, i / size);
-            var shoreward = -(numberX * Slope(depth, size, x, z, 1, 0) + numberZ * Slope(depth, size, x, z, 0, 1));
-            lag[i] = shoreward >= 0 ? arriving[i] : -leaving[i];
+            var along = numberX * Gradient(arriving, size, x, z, 1, 0) + numberZ * Gradient(arriving, size, x, z, 0, 1);
+            lag[i] = along + numberX * numberX + numberZ * numberZ >= 0 ? arriving[i] : -leaving[i];
         }
         return lag;
     }
 
-    private static double Slope(float[] depth, int size, int x, int z, int dx, int dz)
+    private static double Gradient(float[] lag, int size, int x, int z, int dx, int dz)
     {
-        var (back, ahead) = ((x - dx, z - dz), (x + dx, z + dz));
-        bool Inside((int X, int Z) at) => at.X >= 0 && at.Z >= 0 && at.X < size && at.Z < size && depth[at.Z * size + at.X] > 0;
-        if (!Inside(back)) back = (x, z);
-        if (!Inside(ahead)) ahead = (x, z);
-        var span = Math.Abs(ahead.Item1 - back.Item1) + Math.Abs(ahead.Item2 - back.Item2);
-        return span > 0 ? (depth[ahead.Item2 * size + ahead.Item1] - depth[back.Item2 * size + back.Item1]) / span : 0;
+        var back = (Math.Max(x - dx, 0), Math.Max(z - dz, 0));
+        var ahead = (Math.Min(x + dx, size - 1), Math.Min(z + dz, size - 1));
+        var span = ahead.Item1 - back.Item1 + ahead.Item2 - back.Item2;
+        return span > 0 ? (lag[ahead.Item2 * size + ahead.Item1] - lag[back.Item2 * size + back.Item1]) / span : 0;
     }
 
     private static float[] Arrival(int size, float[] depth, double numberX, double numberZ, int rounds)
