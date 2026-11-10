@@ -67,7 +67,6 @@ public class ShoreConfig
 {
     public SurfBand[] Surf = [];
     public int SurfBlockCount = 50;
-    public int MaxDepthBlocks = 8;
     public double[][] BreakingStrength = [];
 }
 

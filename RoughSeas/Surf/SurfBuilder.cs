@@ -49,7 +49,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces, WaveTransformation
                 field.SetGain(slot, x, z, waves.Gains[slot][carried ? near : i]);
             }
         }
-        field.Walls = faces.Build(map, seaAt, field);
+        field.Walls = faces.Build(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * waves.Gain[(z - map.OriginZ) * size + x - map.OriginX] } : default, field);
         field.Steps = steps;
         foreach (var step in steps) field.SetFaceDistance(step.X, step.Z, SurfField.StepFootDistance);
         return field;

@@ -63,6 +63,37 @@ public class SeaSurfaceSeabedTests
         Assert.InRange(Highest(surface, shortWaves: false) / open, 0.45, 0.65);
     }
 
+    [Fact]
+    public void WaveHereReadsTheWavesOverTheBed()
+    {
+        var surface = Settled(3);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(3, open.Height, 1);
+        Assert.Equal(0, open.Breaking);
+        Assert.Equal(surface.Trains.DominantPeriod, open.Period);
+
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            surface.Seabed.SetBreaking(x, z, 0.4f);
+            for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.5f);
+        }
+        var overBar = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(1.5, overBar.Height, 1);
+        Assert.True(overBar.Surf);
+    }
+
+    [Fact]
+    public void BeyondTheBedReadWaveHereKnowsNoDepthAndNoBreaking()
+    {
+        var surface = Settled(3);
+        var here = surface.WaveHere(MiddleX, MiddleZ, 0.5);
+        Assert.Equal(1.5, here.Height, 1);
+        Assert.Equal(double.PositiveInfinity, here.Depth);
+        Assert.False(here.Surf);
+    }
+
     private static void Face(SurfField field, double normalX, double normalZ, float reflection)
     {
         for (var x = OriginX; x < OriginX + Size; x++)

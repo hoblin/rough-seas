@@ -22,13 +22,14 @@ public static class PhaseField
         for (var i = 0; i < lag.Length; i++)
         {
             var (x, z) = (i % size, i / size);
-            var along = numberX * Gradient(arriving, depth, size, x, z, 1, 0) + numberZ * Gradient(arriving, depth, size, x, z, 0, 1);
+            var along = numberX * Slope(arriving, depth, size, x, z, 1, 0) + numberZ * Slope(arriving, depth, size, x, z, 0, 1);
             lag[i] = along + numberX * numberX + numberZ * numberZ >= 0 ? arriving[i] : -leaving[i];
         }
         return lag;
     }
 
-    private static double Gradient(float[] lag, float[] depth, int size, int x, int z, int dx, int dz)
+    /// <summary>The lag's slope at a cell along one axis, over the water alone.</summary>
+    public static double Slope(float[] lag, float[] depth, int size, int x, int z, int dx, int dz)
     {
         var back = (x - dx, z - dz);
         var ahead = (x + dx, z + dz);

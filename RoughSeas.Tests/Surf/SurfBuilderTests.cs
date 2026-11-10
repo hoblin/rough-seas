@@ -14,7 +14,7 @@ public class SurfBuilderTests
 
     private static SurfField Stairs(params double[] elevations)
     {
-        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces, 1.28);
+        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces);
         var map = new SeabedMap(0, 0, Size);
         for (var x = 0; x < Size; x++)
         for (var z = 0; z < Size; z++)
@@ -27,7 +27,7 @@ public class SurfBuilderTests
 
     private static SurfField Bed(Func<int, double> depthAlongX)
     {
-        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces, 1.28);
+        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces);
         var map = new SeabedMap(0, 0, Size);
         for (var x = 0; x < Size; x++)
         for (var z = 0; z < Size; z++)
@@ -39,7 +39,7 @@ public class SurfBuilderTests
 
     private static SurfField Beach(Func<int, double> depthAlongX)
     {
-        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces, 1.28);
+        var faces = new FaceBuilder(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces);
         var map = new SeabedMap(0, 0, Size);
         for (var x = 0; x < Size; x++)
         for (var z = 0; z < Size; z++)

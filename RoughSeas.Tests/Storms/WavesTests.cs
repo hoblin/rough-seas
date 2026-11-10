@@ -17,10 +17,11 @@ public class WavesTests
     }
 
     [Fact]
-    public void AWaveBreaksInWaterShallowerThanItsHeightAndAQuarter()
+    public void ABreakerPlungesWithinTheIribarrenBandAndSpillsOrSurgesOutsideIt()
     {
-        Assert.True(waves.BreaksAt(depth: 2, height: 2));
-        Assert.False(waves.BreaksAt(depth: 3, height: 2));
+        Assert.True(waves.PlungingBreaker(1));
+        Assert.False(waves.PlungingBreaker(0.1));
+        Assert.False(waves.PlungingBreaker(5));
     }
 
     [Fact]

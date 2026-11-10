@@ -267,8 +267,8 @@ public static class SurfaceShader
         }
         if (Active(__instance, "seaShore"))
         {
-            __instance.Uniform("seaShore", new Vec4f((float)surface.Shape.BreakingDepthRatio, surface.Trains.Dominant, shore != null && DrawShore ? 1 : 0, (float)surface.Shape.CrestRatio));
-            __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
+            __instance.Uniform("seaShore", new Vec4f((float)surface.Waves.BreakingDepthRatio, surface.Trains.Dominant, shore != null && DrawShore ? 1 : 0, (float)surface.Waves.CrestRatio));
+            __instance.Uniform("seaPlunging", new Vec2f((float)surface.Waves.PlungingIribarren.From, (float)surface.Waves.PlungingIribarren.To));
             __instance.Uniform("seaFoamDecay", DrawFoam ? (float)foamDecaySeconds : 0);
             __instance.Uniform("seaFaceSlope", (float)(shore?.FaceSlope ?? 0));
             __instance.Uniform("seaBedEdge", (float)(shore?.EdgeFadeBlocks ?? 1));

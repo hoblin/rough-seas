@@ -1,3 +1,5 @@
+using RoughSeas.Water;
+
 namespace RoughSeas.Storms;
 
 /// <summary>
@@ -18,6 +20,9 @@ public interface IDrawnSea
 
     /// <summary>The surface's height above still water at a position now, in metres.</summary>
     double HeightAt(double x, double z);
+
+    /// <summary>The waves at a position now, over the bed under it: the one answer to how high they stand, where they run and whether they break there.</summary>
+    WaveReading WaveHere(double x, double z);
 
     /// <summary>
     /// The water's horizontal velocity at a position now, in metres per second of <see cref="Seconds"/>, not of the

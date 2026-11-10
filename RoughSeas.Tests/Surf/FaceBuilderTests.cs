@@ -8,7 +8,7 @@ public class FaceBuilderTests
 {
     private const int Size = 32;
     private const int Level = 100;
-    private static readonly FaceBuilder Builder = new(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces, 1.28);
+    private static readonly FaceBuilder Builder = new(new WallReflection(ShoreFixtures.Config.Faces, ShoreFixtures.Config.RunUp.SpectralPeriodRatio), ShoreFixtures.Config.Faces);
     private static readonly BedConfig Stone = ShoreFixtures.Bed("stone");
 
     private static SeabedMap Wall(int columns, double rise, double depth = 10)
@@ -103,7 +103,7 @@ public class FaceBuilderTests
         var map = Wall(16, 2, 1);
         for (var z = 0; z < Size; z++)
         for (var x = 0; x < 12; x++) map.Put(x, z, new ShoreCell(ShoreKind.Water, 4, Stone, 1), Level);
-        Assert.All(Built(map, 2, 8).Walls, wall => Assert.True(wall.Reflection < 0.9));
+        Assert.All(Built(map, 0.78, 8).Walls, wall => Assert.True(wall.Reflection < 0.9));
     }
 
     [Fact]
@@ -119,8 +119,8 @@ public class FaceBuilderTests
     public void AFaceBelowTheCrestDoesNotStandAboveIt() => Assert.All(Built(Wall(16, 0.125), 2, 8).Walls, wall => Assert.False(wall.StandsAboveCrest));
 
     [Fact]
-    public void AShallowToeHoldsTheCrestBelowAFaceTheOpenSeaWouldOvertop() =>
-        Assert.All(Built(Wall(16, 1.2, 1.5), 6, 10).Walls, wall => Assert.True(wall.StandsAboveCrest));
+    public void AFaceStandsAboveTheCrestOfTheWaveThatReachesIt() =>
+        Assert.All(Built(Wall(16, 1.2, 1.5), 1.17, 10).Walls, wall => Assert.True(wall.StandsAboveCrest));
 
     [Fact]
     public void AFaceAboveTheCrestStandsAboveIt() => Assert.All(Built(Wall(16, 6), 2, 8).Walls, wall => Assert.True(wall.StandsAboveCrest));

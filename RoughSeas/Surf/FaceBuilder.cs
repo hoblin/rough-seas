@@ -7,7 +7,7 @@ using RoughSeas.Water;
 namespace RoughSeas.Surf;
 
 /// <summary>Finds every side of a full block a water column meets, the short steps of a beach and the tall faces of a cliff alike, and writes how each sends waves back into the <see cref="SurfField"/>.</summary>
-public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, double breakingDepthRatio)
+public sealed class FaceBuilder(WallReflection reflection, FacesConfig config)
 {
     private const double OvertoppedNormal = 0.5;
     private const double BlendShareOfDistance = 0.5;
@@ -27,7 +27,7 @@ public sealed class FaceBuilder(WallReflection reflection, FacesConfig config, d
             var seed = seeds[i];
             var sea = seaAt(seed.X, seed.Z);
             var wavelength = WaveTheory.DeepLength(sea.Period);
-            var height = Math.Min(sea.Height, map[seed.X, seed.Z].Elevation / breakingDepthRatio);
+            var height = sea.Height;
             var (normalX, normalZ, faceX, faceZ) = normals.Around(seed, SmoothingBlocks(wavelength));
             var coefficient = reflection.Coefficient(height, sea.Period, Slope(map, seed, height), seed.Bed.Roughness);
             walls.Add(new WallFace(seed.X, seed.Z, seed.Level, seed.SideX, seed.SideZ, normalX, normalZ, seed.Rise, runs[i], wavelength, coefficient,

@@ -52,7 +52,6 @@
       }
    ],
     "surfBlockCount": 30,
-    "maxDepthBlocks": 12,
     "breakingStrength": [[0.3, 0.029], [1, 0.115], [2, 0.288], [3.5, 0.72], [5, 1]]
   },
   "hull": {

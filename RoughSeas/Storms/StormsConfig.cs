@@ -85,13 +85,11 @@ public class WavesConfig
     public double PlungingShareAtSea;
     public double[] PlungingIribarren = [];
     public double[] PlungeDistance = [];
-    public int BedSlopeBlocks;
     public double SlamCoefficient;
     public double PlungingSpeedRatio;
     public double ShippedWaterFraction;
     public double CrestRatio;
     public double BreakingCrestRatio;
-    public int MaxDepthBlocks;
 }
 
 public class BilgeConfig

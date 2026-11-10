@@ -22,13 +22,12 @@ public static class ShoreSound
     [ThreadStatic] private static Shore? lastShore;
     private static Harmony? harmony;
     private static ShoreConfig config = new();
-    private static SeaWeatherSystem? sea;
-    private static Waves? waves;
+    private static StormsModSystem? seas;
 
-    public static void Attach(ShoreConfig shore, SeaWeatherSystem seaWeather, Waves seaWaves)
+    public static void Attach(ShoreConfig shore, StormsModSystem storms)
     {
         if (harmony != null) return;
-        (config, sea, waves) = (shore, seaWeather, seaWaves);
+        (config, seas) = (shore, storms);
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.DeclaredMethod(typeof(BlockWater), nameof(BlockWater.GetAmbientSoundStrength)),
             postfix: new HarmonyMethod(typeof(ShoreSound), nameof(Strength)));
@@ -39,7 +38,7 @@ public static class ShoreSound
     public static void Detach()
     {
         harmony?.UnpatchAll(HarmonyId);
-        (harmony, sea, waves) = (null, null, null);
+        (harmony, seas) = (null, null);
     }
 
     private static void Strength(IWorldAccessor world, BlockPos pos, ref float __result)
@@ -109,26 +108,15 @@ public static class ShoreSound
 
     private static Shore? Measure(IBlockAccessor accessor, BlockPos pos)
     {
-        var (seaWeather, seaWaves, shore) = (sea, waves, config);
-        if (seaWeather == null || seaWaves == null) return null;
+        if (seas?.DrawnSea is not { } drawn) return null;
 
         var at = probe ??= new BlockPos(pos.dimension);
         at.Set(pos.X, pos.Y + 1, pos.Z);
         at.dimension = pos.dimension;
         if (accessor.GetBlock(at, BlockLayersAccess.Fluid).IsLiquid() || accessor.GetBlock(at, BlockLayersAccess.Solid).Id != 0) return null;
 
-        var height = seaWeather.At(pos.X + 0.5, pos.Z + 0.5).WaveHeight;
-        if (height <= 0) return new Shore(0, false);
-
-        var deepest = Math.Min(shore.MaxDepthBlocks, (int)Math.Ceiling(seaWaves.BreakingDepth(height)));
-        var depth = 0;
-        at.Set(pos);
-        while (depth < deepest && OpenWater.At(accessor, at).IsLiquid())
-        {
-            depth++;
-            at.Down();
-        }
-        return new Shore(height, depth < deepest && seaWaves.BreaksAt(depth, height));
+        var here = drawn.WaveHere(pos.X + 0.5, pos.Z + 0.5);
+        return new Shore(here.Height, here.Surf);
     }
 
     private readonly record struct Shore(double WaveHeight, bool Breaking);

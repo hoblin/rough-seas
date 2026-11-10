@@ -21,6 +21,8 @@ public static class WaterFixtures
 
         public double HeightAt(double x, double z) => swell ? height : 0;
 
+        public RoughSeas.Water.WaveReading WaveHere(double x, double z) => default;
+
         public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) => default;
 
         public SeaPose PoseOf(double x, double z, double yaw, double length, double width) => default;

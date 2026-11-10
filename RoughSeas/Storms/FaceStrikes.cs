@@ -62,7 +62,7 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
             overtopping++;
             return;
         }
-        if (!capped && !waves.BreaksAt(depth, height) && share * surface.FoldAt(x, z, share) <= surface.CapsFold)
+        if (!capped && share * surface.FoldAt(x, z, share) <= surface.CapsFold)
         {
             standing++;
             return;

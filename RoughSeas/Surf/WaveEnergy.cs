@@ -102,8 +102,8 @@ public static class WaveEnergy
                 if (!(depth[i] > 0)) continue;
                 speed[i] = WaveTheory.GroupSpeed(deepNumber, felt[i]);
                 var (x, z) = (i % size, i / size);
-                var towardX = train.NumberX + Slope(train.Lag, depth, size, x, z, 1, 0);
-                var towardZ = train.NumberZ + Slope(train.Lag, depth, size, x, z, 0, 1);
+                var towardX = train.NumberX + PhaseField.Slope(train.Lag, depth, size, x, z, 1, 0);
+                var towardZ = train.NumberZ + PhaseField.Slope(train.Lag, depth, size, x, z, 0, 1);
                 var length = Math.Sqrt(towardX * towardX + towardZ * towardZ);
                 if (length > 0) (alongX[i], alongZ[i]) = (towardX / length, towardZ / length);
             }
@@ -154,16 +154,6 @@ public static class WaveEnergy
             var i = z * size + x;
             if (!(depth[i] > 0)) return deepFlux * Math.Abs(here);
             return Math.Sign(along[i]) == Math.Sign(here) ? Energy[i] * speed[i] * Math.Abs(along[i]) : 0;
-        }
-
-        private static double Slope(float[] lag, float[] depth, int size, int x, int z, int dx, int dz)
-        {
-            var (backX, backZ, aheadX, aheadZ) = (x - dx, z - dz, x + dx, z + dz);
-            var hasBack = backX >= 0 && backZ >= 0 && depth[backZ * size + backX] > 0;
-            var hasAhead = aheadX < size && aheadZ < size && depth[aheadZ * size + aheadX] > 0;
-            var (from, to) = (hasBack ? backZ * size + backX : z * size + x, hasAhead ? aheadZ * size + aheadX : z * size + x);
-            var span = (hasBack ? 1 : 0) + (hasAhead ? 1 : 0);
-            return span > 0 ? (lag[to] - lag[from]) / span : 0;
         }
     }
 }

@@ -21,14 +21,14 @@ public class Waves(WavesConfig config)
 
     public (double From, double To) PlungingIribarren => (config.PlungingIribarren[0], config.PlungingIribarren[1]);
 
-    public bool BreaksAt(double depth, double height) => depth < BreakingDepth(height);
+    /// <summary>Whether a breaker of this Iribarren number plunges rather than spills.</summary>
+    public bool PlungingBreaker(double iribarren) => iribarren >= config.PlungingIribarren[0] && iribarren < config.PlungingIribarren[1];
 
     public double BreakingDepth(double height) => config.BreakingDepthRatio * height;
 
     public bool Plunges(double height, double period, double bedSlope, double depth)
     {
-        var iribarren = WaveTheory.Iribarren(bedSlope, height, WaveTheory.DeepLength(period));
-        if (iribarren < config.PlungingIribarren[0] || iribarren > config.PlungingIribarren[1]) return false;
+        if (!PlungingBreaker(WaveTheory.Iribarren(bedSlope, height, WaveTheory.DeepLength(period)))) return false;
 
         var pastBreaking = (BreakingDepth(height) - depth) / bedSlope;
         return pastBreaking <= height * (config.PlungeDistance[0] - config.PlungeDistance[1] * bedSlope);
