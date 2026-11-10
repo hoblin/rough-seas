@@ -51,10 +51,12 @@ public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves w
     {
         var (x, z) = (wall.X + 0.5, wall.Z + 0.5);
         var share = shares.Factor(x, z);
-        if (share <= 0 || surface.SinceCrest(x, z) >= window || !surface.RunsAgainst(x, z, wall.NormalX, wall.NormalZ)) return;
+        if (share <= 0 || surface.SinceCrest(x, z) >= window) return;
+        var incidence = surface.Incidence(x, z, wall.NormalX, wall.NormalZ);
+        if (incidence <= 0) return;
         var (height, depth, capped) = surface.WaveAt(x, z, share);
         if (height <= 0) return;
-        var crest = height * (1 + wall.Reflection) / 2;
+        var crest = height * (1 + wall.Reflection * incidence) / 2;
         if (crest >= wall.Rise)
         {
             overtopping++;

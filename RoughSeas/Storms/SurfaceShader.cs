@@ -67,6 +67,7 @@ public static class SurfaceShader
     private static double lensDepthRatio;
     private static double wetReflectance;
     private static double foamDecaySeconds;
+    private static double wallSlope;
     private static bool normalTilted;
 
     public static bool DrawWaves { get; set; } = true;
@@ -75,9 +76,9 @@ public static class SurfaceShader
 
     public static bool DrawShore { get; set; } = true;
 
-    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double foamDecay, ICoreClientAPI api)
+    public static bool Attach(SeaSurface waves, SurfaceField heights, double lensDepth, double wetShade, double foamDecay, double steepestShore, ICoreClientAPI api)
     {
-        (surface, field, capi, lensDepthRatio, wetReflectance, foamDecaySeconds) = (waves, heights, api, lensDepth, wetShade, foamDecay);
+        (surface, field, capi, lensDepthRatio, wetReflectance, foamDecaySeconds, wallSlope) = (waves, heights, api, lensDepth, wetShade, foamDecay, steepestShore);
         heightMap = new LoadedTexture(api);
         heightMapUnit = GL.GetInteger(GetPName.MaxCombinedTextureImageUnits) - 1;
         shoreTextures = ShoreSamplers.Select(_ => GL.GenTexture()).ToArray();
@@ -224,6 +225,7 @@ public static class SurfaceShader
             __instance.Uniform("seaPlunging", new Vec2f((float)surface.Shape.PlungingFrom, (float)surface.Shape.PlungingTo));
             __instance.Uniform("seaFoamDecay", DrawFoam ? (float)foamDecaySeconds : 0);
             __instance.Uniform("seaFaceSlope", (float)(shore?.FaceSlope ?? 0));
+            __instance.Uniform("seaWallSlope", (float)wallSlope);
             var vectors = surface.Vectors();
             float Valid(int slot) => shore != null && slot < vectors.Length && slot < shore.Numbers.Length && shore.Numbers[slot] == vectors[slot] ? 1 : 0;
             __instance.Uniform("seaLagValidA", new Vec4f(Valid(0), Valid(1), Valid(2), Valid(3)));

@@ -85,7 +85,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
         return (sheets, steps.Values.ToList());
     }
 
-    private static void RecordSteps(SeabedMap map, IShoreGround ground, int level, (int X, int Z) cell, Reached reached, double distance, int index,
+    private void RecordSteps(SeabedMap map, IShoreGround ground, int level, (int X, int Z) cell, Reached reached, double distance, int index,
         Dictionary<(int X, int Z, int SideX, int SideZ), StepFace> steps)
     {
         if (reached.Head <= 0) return;
@@ -95,7 +95,7 @@ public sealed class SurfBuilder(Band band, FaceBuilder faces)
             var (x, z) = (cell.X + dx, cell.Z + dz);
             var neighbour = ground.At(x, z);
             var rise = neighbour.Kind == ShoreKind.Land ? neighbour.Elevation - from : map.CrownAt(x, z) - (level + StillLevel) - from;
-            if (double.IsNaN(rise) || rise <= 0 || rise < reached.Head) continue;
+            if (double.IsNaN(rise) || rise <= 0 || (rise < reached.Head && rise <= band.WallSlope)) continue;
             if (!steps.TryGetValue((cell.X, cell.Z, dx, dz), out var step))
             {
                 steps[(cell.X, cell.Z, dx, dz)] = step = new StepFace(cell.X, cell.Z, level, dx, dz, from, rise, distance, reached.RunUp, new double[Scales.Length], new double[Scales.Length]);

@@ -8,6 +8,8 @@ public sealed class RunUp(RunUpConfig config)
 {
     public const double Gravity = 9.81;
 
+    public double WallSlope => config.WallSlope;
+
     public static double DeepLength(double period) => Gravity * period * period / (2 * Math.PI);
 
     public static double Iribarren(double height, double period, double slope) =>
@@ -16,7 +18,7 @@ public sealed class RunUp(RunUpConfig config)
     public double Metres(double height, double period, double slope, BedConfig bed)
     {
         if (height <= 0 || period <= 0) return 0;
-        if (slope > config.WallSlope) return height;
+        if (slope >= config.WallSlope) return height;
         return bed.Sandy && slope <= config.SandyMaxSlope ? Stockdon(height, period, slope) : Eurotop(height, period, slope, bed.Roughness);
     }
 

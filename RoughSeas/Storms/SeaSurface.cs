@@ -166,6 +166,14 @@ public sealed class SeaSurface
         Span<double> towardX = stackalloc double[Slots], towardZ = stackalloc double[Slots];
         var steepness = Local(x, z, share, heights, lags, numbers, towardX, towardZ);
         var facing = Facing(x, z, share);
+        var limited = 1.0;
+        if (facing is { } wall)
+        {
+            var total = 0.0;
+            for (var slot = 0; slot < Slots; slot++) total += heights[slot] * wall.Reflection * Math.Max(0, -(towardX[slot] * wall.NormalX + towardZ[slot] * wall.NormalZ));
+            var allowed = Seabed!.FaceSlope * Math.Max(0, wall.Distance - FaceReading.FirstWaterVertex);
+            if (total > allowed) limited = allowed / total;
+        }
         double shiftX = 0, rise = 0, shiftZ = 0;
         for (var slot = 0; slot < Slots; slot++)
         {
@@ -180,7 +188,7 @@ public sealed class SeaSurface
             var along = towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ;
             if (along >= 0) continue;
             var mirrored = theta - 2 * numbers[slot] * along * face.Distance;
-            var returned = Math.Min(heights[slot] * face.Reflection * -along, Seabed!.FaceSlope * Math.Max(0, face.Distance - FaceReading.FirstWaterVertex));
+            var returned = heights[slot] * face.Reflection * -along * limited;
             rise += returned * Math.Sin(mirrored);
             var back = steepness * returned * Math.Cos(mirrored);
             shiftX += back * (towardX[slot] - 2 * along * face.NormalX);
@@ -199,8 +207,8 @@ public sealed class SeaSurface
         return (turned < 0 ? turned + FullTurn : turned) / frequency[Dominant];
     }
 
-    /// <summary>Whether the dominant train, as the bed turns it here, runs against this outward normal.</summary>
-    public bool RunsAgainst(double x, double z, double normalX, double normalZ)
+    /// <summary>The cosine at which the dominant train, as the bed turns it here, runs into this outward normal; 0 for a train running away from it.</summary>
+    public double Incidence(double x, double z, double normalX, double normalZ)
     {
         var (towardX, towardZ) = (numberX[Dominant], numberZ[Dominant]);
         if (Seabed is { } field && field.Covers(x, z) && Dominant < field.Numbers.Length && Dominant < SurfField.Slots && field.Numbers[Dominant] == (towardX, towardZ))
@@ -208,7 +216,8 @@ public sealed class SeaSurface
             towardX += (field.LagAt(Dominant, x + 1, z) - field.LagAt(Dominant, x - 1, z)) / 2;
             towardZ += (field.LagAt(Dominant, x, z + 1) - field.LagAt(Dominant, x, z - 1)) / 2;
         }
-        return towardX * normalX + towardZ * normalZ < 0;
+        var length = Math.Sqrt(towardX * towardX + towardZ * towardZ);
+        return length > 0 ? Math.Max(0, -(towardX * normalX + towardZ * normalZ) / length) : 0;
     }
 
     /// <summary>The height of the wave passing here, trough to crest, over the bed, and whether the depth has capped this sea here, as the shader's <c>breaking</c> says.</summary>

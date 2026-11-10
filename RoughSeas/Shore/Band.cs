@@ -21,22 +21,29 @@ public readonly record struct Reached(int Fluid, int Rings, double Head, int Fro
 /// </summary>
 public sealed class Band(RunUp runUp, SheetConfig sheet, int slopeSearchBlocks)
 {
+    private const double WaterLineBelowBlockTop = 1.0 / 8;
     private static readonly (int X, int Z)[] Sides = [(1, 0), (-1, 0), (0, 1), (0, -1)];
+
+    public double WallSlope => runUp.WallSlope;
+
+    /// <summary>Whether a step this high, coming straight after one that high, is a wall: higher than the wall's slope over its one block, or a second riser at that slope with no tread between them.</summary>
+    public bool IsWall(double rise, double previousRise) => rise > WallSlope || (rise >= WallSlope && previousRise >= WallSlope);
 
     public Dictionary<(int X, int Z), Reached> Spread(IShoreGround ground, IEnumerable<ShoreSeed> seeds, Func<int, int, IReadOnlyList<Sea>> seas,
         double runUpScale = 1)
     {
         var reached = new Dictionary<(int X, int Z), Reached>();
-        var fronts = new PriorityQueue<(int X, int Z, Reached From, SheetFront Front), double>();
+        var fronts = new PriorityQueue<(int X, int Z, Reached From, SheetFront Front, double Rise), double>();
 
         foreach (var seed in seeds)
         {
             foreach (var (dx, dz) in Sides)
             {
                 if (ground.At(seed.X + dx, seed.Z + dz) is not { Kind: ShoreKind.Land } land) continue;
+                if (land.Elevation - WaterLineBelowBlockTop > WallSlope) continue;
                 if (Thrown(ground, seed.X, seed.Z, dx, dz, seas(seed.X, seed.Z), runUpScale) is not var (runUp, thrown)) continue;
                 if (thrown.Cross(land.Elevation, land.Bed) is not { } front) continue;
-                fronts.Enqueue((seed.X + dx, seed.Z + dz, new Reached(seed.Fluid, 1, front.Head, seed.X, seed.Z, runUp), front), -front.Head);
+                fronts.Enqueue((seed.X + dx, seed.Z + dz, new Reached(seed.Fluid, 1, front.Head, seed.X, seed.Z, runUp), front, land.Elevation - WaterLineBelowBlockTop), -front.Head);
             }
         }
 
@@ -49,9 +56,11 @@ public sealed class Band(RunUp runUp, SheetConfig sheet, int slopeSearchBlocks)
             {
                 var (x, z) = (next.X + dx, next.Z + dz);
                 if (reached.ContainsKey((x, z)) || ground.At(x, z) is not { Kind: ShoreKind.Land } land) continue;
-                if (next.Front.Cross(land.Elevation - from.Elevation, land.Bed) is { } front)
+                var rise = land.Elevation - from.Elevation;
+                if (IsWall(rise, next.Rise)) continue;
+                if (next.Front.Cross(rise, land.Bed) is { } front)
                 {
-                    fronts.Enqueue((x, z, next.From with { Rings = next.From.Rings + 1 }, front), -front.Head);
+                    fronts.Enqueue((x, z, next.From with { Rings = next.From.Rings + 1 }, front, rise), -front.Head);
                 }
             }
         }
