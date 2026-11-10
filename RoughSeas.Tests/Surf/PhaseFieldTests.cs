@@ -72,4 +72,12 @@ public class PhaseFieldTests
         var moved = PhaseField.Lag(Size, Beach(x => x + shift < 2 ? 0 : 0.6f * (x + shift)), numberX, numberZ);
         Assert.Equal(here[32 * Size + 20], moved[32 * Size + 20 - shift], 2);
     }
+
+    [Fact]
+    public void WavesRunningOutToSeaKeepRunningOutOverTheShallows()
+    {
+        var lag = PhaseField.Lag(Size, Beach(x => x < 2 ? 0 : 0.6f * x), Number, 0);
+        var gradient = Number + (lag[32 * Size + 7] - lag[32 * Size + 5]) / 2;
+        Assert.True(gradient > 0);
+    }
 }

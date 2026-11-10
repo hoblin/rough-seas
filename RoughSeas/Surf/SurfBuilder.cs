@@ -70,9 +70,7 @@ public sealed class SurfBuilder(Band band)
                 foreach (var (cell, reached) in band.Spread(ground, seeds, (x, z) => [seaAt(x, z)], scale))
                 {
                     var distance = Math.Max(0, Math.Sqrt((cell.X - reached.FromX) * (cell.X - reached.FromX) + (cell.Z - reached.FromZ) * (cell.Z - reached.FromZ)) - 0.5);
-                    sheets[cell] = sheets.TryGetValue(cell, out var known)
-                        ? known with { Needed = scale * known.RunUp }
-                        : new Sheet(distance, reached.RunUp, scale * reached.RunUp, reached.FromX, reached.FromZ);
+                    sheets[cell] = new Sheet(distance, reached.RunUp, scale * reached.RunUp, reached.FromX, reached.FromZ);
                 }
             }
         }

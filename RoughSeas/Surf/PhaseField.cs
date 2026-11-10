@@ -5,14 +5,38 @@ namespace RoughSeas.Surf;
 /// <summary>
 /// How far shoaling water holds a wave back: the eikonal |∇S| = k(depth) solved by fast sweeping from the plane wave
 /// where the water is deep, less the plane wave's phase: anchored to deep water alone, so maps read around different
-/// points agree wherever they share it. Water no deep water reaches within the map keeps no lag. Its gradient turns the crests
-/// toward the shore by Snell's law. Land holds no phase.
+/// points agree wherever they share it. Water no deep water reaches within the map keeps no lag. Waves running out to sea take the same
+/// solution run the other way: minus the arrival of the wave reversed. The gradient turns the crests by Snell's law. Land holds no phase.
 /// </summary>
 public static class PhaseField
 {
     private const int Rounds = 2;
 
     public static float[] Lag(int size, float[] depth, double numberX, double numberZ, int rounds = Rounds)
+    {
+        var arriving = Arrival(size, depth, numberX, numberZ, rounds);
+        var leaving = Arrival(size, depth, -numberX, -numberZ, rounds);
+        var lag = new float[size * size];
+        for (var i = 0; i < lag.Length; i++)
+        {
+            var (x, z) = (i % size, i / size);
+            var shoreward = -(numberX * Slope(depth, size, x, z, 1, 0) + numberZ * Slope(depth, size, x, z, 0, 1));
+            lag[i] = shoreward >= 0 ? arriving[i] : -leaving[i];
+        }
+        return lag;
+    }
+
+    private static double Slope(float[] depth, int size, int x, int z, int dx, int dz)
+    {
+        var (back, ahead) = ((x - dx, z - dz), (x + dx, z + dz));
+        bool Inside((int X, int Z) at) => at.X >= 0 && at.Z >= 0 && at.X < size && at.Z < size && depth[at.Z * size + at.X] > 0;
+        if (!Inside(back)) back = (x, z);
+        if (!Inside(ahead)) ahead = (x, z);
+        var span = Math.Abs(ahead.Item1 - back.Item1) + Math.Abs(ahead.Item2 - back.Item2);
+        return span > 0 ? (depth[ahead.Item2 * size + ahead.Item1] - depth[back.Item2 * size + back.Item1]) / span : 0;
+    }
+
+    private static float[] Arrival(int size, float[] depth, double numberX, double numberZ, int rounds)
     {
         var deepNumber = Math.Sqrt(numberX * numberX + numberZ * numberZ);
         var phase = new double[size * size];
