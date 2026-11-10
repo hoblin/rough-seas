@@ -126,7 +126,7 @@ public sealed class SeaSurface
         double Drawn(double atX, double atZ) => SurfField.Faded(field.LagAt(slot, atX, atZ), field.EdgeShare(atX, atZ)).Lag;
         double Across(double backX, double backZ, double aheadX, double aheadZ)
         {
-            var (hasBack, hasAhead) = (field.DepthAt(backX, backZ) > 0, field.DepthAt(aheadX, aheadZ) > 0);
+            var (hasBack, hasAhead) = (!field.LandAt(backX, backZ), !field.LandAt(aheadX, aheadZ));
             var span = (hasBack ? 1 : 0) + (hasAhead ? 1 : 0);
             if (span == 0) return 0;
             var turn = Drawn(hasAhead ? aheadX : x, hasAhead ? aheadZ : z) - Drawn(hasBack ? backX : x, hasBack ? backZ : z);
@@ -188,9 +188,8 @@ public sealed class SeaSurface
         var kept = 1.0;
         if (share > 0 && Seabed is { } field && field.Covers(x, z))
         {
-            var depth = field.DepthAt(x, z);
-            if (depth <= 0) return 0;
-            if (Trains.ShortSeaHeight > 0) kept = Math.Min(1, depth / (waves.BreakingDepthRatio * Trains.ShortSeaHeight));
+            if (field.LandAt(x, z)) return 0;
+            if (Trains.ShortSeaHeight > 0) kept = Math.Min(1, Math.Max(field.DepthAt(x, z), 0) / (waves.BreakingDepthRatio * Trains.ShortSeaHeight));
         }
         return Trains.ShortRise(x, z, kept);
     }
@@ -274,8 +273,7 @@ public sealed class SeaSurface
         }
         if (share <= 0 || Seabed is not { } field || !field.Covers(x, z)) return Trains.Steepness;
 
-        var depth = field.DepthAt(x, z);
-        if (depth <= 0)
+        if (field.LandAt(x, z))
         {
             heights.Clear();
             return Trains.Steepness;

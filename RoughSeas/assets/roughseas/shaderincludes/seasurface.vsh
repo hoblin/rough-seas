@@ -170,9 +170,13 @@ vec4 seaDrawnLag(sampler2D lags, vec2 uv) {
 	return seaFadedLag(textureLod(lags, uv, 0.0), seaBedEdgeAt(uv));
 }
 
+bool seaWaterCell(vec2 uv) {
+	return texelFetch(seaBed, clamp(ivec2(floor(uv * seaBedArea.z)), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).x > 0.0;
+}
+
 vec4 seaLagTurn(sampler2D lags, vec2 uv, vec2 across) {
-	bool back = textureLod(seaBed, uv - across, 0.0).x > 0.0;
-	bool ahead = textureLod(seaBed, uv + across, 0.0).x > 0.0;
+	bool back = seaWaterCell(uv - across);
+	bool ahead = seaWaterCell(uv + across);
 	float span = (back ? 1.0 : 0.0) + (ahead ? 1.0 : 0.0);
 	if (span <= 0.0) return vec4(0.0);
 	vec4 turn = seaDrawnLag(lags, ahead ? uv + across : uv) - seaDrawnLag(lags, back ? uv - across : uv);
@@ -201,7 +205,8 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 gainA = onBed ? textureLod(seaGainA, bedUv, 0.0) : vec4(1.0);
 	vec4 gainB = onBed ? textureLod(seaGainB, bedUv, 0.0) : vec4(1.0);
 	vec4 surf = onBed ? textureLod(seaSurf, bedUv, 0.0) : vec4(0.0, 1.0, bed.x, 0.0);
-	if (bed.x <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB, gainA, gainB, surf.b, share);
+	float cellDepth = onBed ? texelFetch(seaBed, clamp(ivec2(floor(worldPos.xz - seaBedArea.xy)), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).x : bed.x;
+	if (cellDepth <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB, gainA, gainB, surf.b, share);
 	float faceDistance = max(face.x, 0.0);
 	float faceLength = length(face.yz);
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);

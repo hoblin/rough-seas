@@ -95,6 +95,9 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public double DepthAt(double x, double z) => Sample(bed, x, z, 0);
 
+    /// <summary>Whether the block here is land, the water under it only the swash's to run over.</summary>
+    public bool LandAt(double x, double z) => bed[Index(Math.Clamp((int)Math.Floor(x), OriginX, OriginX + Size - 1), Math.Clamp((int)Math.Floor(z), OriginZ, OriginZ + Size - 1))] <= 0;
+
     public double SlopeXAt(double x, double z) => Sample(aux, x, z, 1);
 
     public double SlopeZAt(double x, double z) => Sample(aux, x, z, 2);

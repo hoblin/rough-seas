@@ -4,6 +4,21 @@ namespace RoughSeas.Tests.Water;
 
 public class SurfFieldTests
 {
+    [Fact]
+    public void TheBlockBesideDeepWaterIsLandFromItsEdgeThoughItsDepthBlendsWithTheSea()
+    {
+        var field = new SurfField(0, 0, 2, [(0.1, 0)]);
+        for (var z = 0; z < 2; z++)
+        {
+            field.SetDepth(0, z, 3);
+            field.SetDepth(1, z, -0.125f);
+        }
+
+        Assert.True(field.DepthAt(1.2, 1) > 0);
+        Assert.True(field.LandAt(1.2, 1));
+        Assert.False(field.LandAt(0.9, 1));
+    }
+
     [Theory]
     [InlineData(25.0)]
     [InlineData(-13.0)]
