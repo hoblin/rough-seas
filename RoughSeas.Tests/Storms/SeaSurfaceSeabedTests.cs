@@ -63,6 +63,7 @@ public class SeaSurfaceSeabedTests
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
         {
+            field.Set(field.Face, x, z, 0, 1);
             field.Set(field.Face, x, z, 1, (float)normalX);
             field.Set(field.Face, x, z, 2, (float)normalZ);
             field.Set(field.Face, x, z, 3, reflection);
@@ -89,6 +90,17 @@ public class SeaSurfaceSeabedTests
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++) surface.Seabed.Set(surface.Seabed.Face, x, z, 0, 9);
         Assert.NotEqual(atTheWall, surface.HeightAt(MiddleX, MiddleZ, 1), 2);
+    }
+
+    [Fact]
+    public void ReflectedWaterRisesFromTheFaceNoSteeperThanTheLimit()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.HeightAt(MiddleX, MiddleZ, 1);
+        Face(surface.Seabed, -Math.Cos(0.3), -Math.Sin(0.3), 1);
+        surface.Seabed.FaceSlope = 0;
+        Assert.Equal(open, surface.HeightAt(MiddleX, MiddleZ, 1), 1);
     }
 
     [Fact]

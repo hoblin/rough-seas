@@ -3,10 +3,14 @@ using System.Collections.Generic;
 
 namespace RoughSeas.Surf;
 
-public readonly record struct FaceReading(double Distance, double NormalX, double NormalZ, double Reflection);
+/// <param name="Distance">How far the water here lies from the face. Up to <see cref="FirstWaterVertex"/> the point is a vertex of the face itself, shared with the water held under the land; the reflection grows from there.</param>
+public readonly record struct FaceReading(double Distance, double NormalX, double NormalZ, double Reflection)
+{
+    public const double FirstWaterVertex = 0.5;
+}
 
 public readonly record struct WallFace(int X, int Z, int Level, int SideX, int SideZ, double NormalX, double NormalZ, double Rise, int Run, double Wavelength, double Reflection,
-    bool StandsAboveCrest);
+    bool StandsAboveCrest, double FaceX, double FaceZ);
 
 public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, double Ground, double Rise, double Distance, double RunUp, double[] Heads, double[] Lenses)
 {
@@ -29,8 +33,8 @@ public sealed record StepFace(int X, int Z, int Level, int SideX, int SideZ, dou
 /// slot, the phase the bed has held the wave back by (<see cref="PhaseField"/>); over land, the lag at the shoreline the
 /// sheet comes from, carried to here. The lags hold for the wave vectors in <see cref="Numbers"/> alone. <see cref="Face"/>:
 /// over water, the distance to the nearest face a wave meets, its outward normal along X and Z, and the share of a wave
-/// it sends back, negative where the crest stands higher than the face, which then neither jets nor foams. Over land the
-/// distance is -0.5, so it interpolates to 0 on the face itself; -1.5 marks the foot of a step that stops a sheet.
+/// it sends back; the normal is half length where the crest stands higher than the face, which then doesn't foam. Over land
+/// the distance is -0.5, so it interpolates to 0 on the face itself; -1.5 marks the foot of a step that stops a sheet.
 /// </summary>
 public sealed class SurfField(int originX, int originZ, int size, (double X, double Z)[] numbers)
 {
@@ -54,6 +58,9 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
 
     public float[] Face { get; } = new float[size * size * Channels];
 
+    /// <summary>The steepest the reflected water may rise per metre from the face.</summary>
+    public double FaceSlope { get; set; } = double.PositiveInfinity;
+
     public IReadOnlyList<WallFace> Walls { get; set; } = [];
 
     public IReadOnlyList<StepFace> Steps { get; set; } = [];
@@ -62,7 +69,7 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
     {
         var (normalX, normalZ) = (Sample(Face, x, z, 1), Sample(Face, x, z, 2));
         var length = Math.Sqrt(normalX * normalX + normalZ * normalZ);
-        return length > 0 ? new FaceReading(Math.Max(Sample(Face, x, z, 0), 0), normalX / length, normalZ / length, Math.Abs(Sample(Face, x, z, 3))) : default;
+        return length > 0 ? new FaceReading(Math.Max(Sample(Face, x, z, 0), 0), normalX / length, normalZ / length, Sample(Face, x, z, 3)) : default;
     }
 
     public double DepthAt(double x, double z) => Sample(Bed, x, z, 0);
@@ -81,8 +88,6 @@ public sealed class SurfField(int originX, int originZ, int size, (double X, dou
           + $"nearest face {Sample(Face, x, z, 0):F1} m, reflects {Sample(Face, x, z, 3):F2}";
 
     public bool Covers(double x, double z) => x >= OriginX && z >= OriginZ && x < OriginX + Size && z < OriginZ + Size;
-
-    public float Get(float[] from, int x, int z, int channel) => from[((z - OriginZ) * Size + x - OriginX) * Channels + channel];
 
     public void Set(float[] into, int x, int z, int channel, float value) => into[((z - OriginZ) * Size + x - OriginX) * Channels + channel] = value;
 

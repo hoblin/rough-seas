@@ -21,6 +21,7 @@ public class FacesConfig
     public int SmoothingMaxBlocks = 16;
     public int ReachBlocks = 96;
     public double TaperFrom = 0.75;
+    public double ReflectedSlopeLimit = 0.577;
     public double ImpulsiveFactor = 0.011;
     public double ImpulsiveFreeboard = 2.2;
     public double ImpulsiveBreak = 1.35;

@@ -180,7 +180,7 @@ public sealed class SeaSurface
             var along = towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ;
             if (along >= 0) continue;
             var mirrored = theta - 2 * numbers[slot] * along * face.Distance;
-            var returned = heights[slot] * face.Reflection;
+            var returned = Math.Min(heights[slot] * face.Reflection * -along, Seabed!.FaceSlope * Math.Max(0, face.Distance - FaceReading.FirstWaterVertex));
             rise += returned * Math.Sin(mirrored);
             var back = steepness * returned * Math.Cos(mirrored);
             shiftX += back * (towardX[slot] - 2 * along * face.NormalX);
@@ -286,7 +286,7 @@ public sealed class SeaSurface
         {
             for (var slot = 0; slot < Slots; slot++)
             {
-                if (towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ < 0) slopes += heights[slot] * numbers[slot] * face.Reflection;
+                slopes += heights[slot] * numbers[slot] * face.Reflection * Math.Max(0, -(towardX[slot] * face.NormalX + towardZ[slot] * face.NormalZ));
             }
         }
         var cusp = slopes > 0 ? 1 / slopes : Steepness;

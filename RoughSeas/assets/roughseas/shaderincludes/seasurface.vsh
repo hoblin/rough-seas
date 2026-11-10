@@ -15,6 +15,7 @@ uniform vec2 seaPlunging;
 uniform vec4 seaLagValidA;
 uniform vec4 seaLagValidB;
 uniform float seaFoamDecay;
+uniform float seaFaceSlope;
 
 out float seaFoamCrest;
 out float seaFoamFold;
@@ -30,6 +31,8 @@ float seaFaceFoam = 0.0;
 
 const float seaGravity = 9.81;
 const float seaStepFootBelow = -1.0;
+const float seaFaceStands = 0.75;
+const float seaOneStep = 1.0;
 
 float seaFolding(vec3 squeeze) {
 	return 1.0 - (1.0 - squeeze.x) * (1.0 - squeeze.z) + squeeze.y * squeeze.y;
@@ -87,9 +90,13 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	float since = mod(1.5707963 - dominant, 6.2831853) / frequency;
 	ivec2 corner = ivec2(floor(worldPos.xz - seaBedArea.xy + 0.5));
 	float rise = 1000000.0;
+	float highest = 0.0;
 	for (int i = 0; i < 4; i++) {
 		float tread = texelFetch(seaBed, clamp(corner - ivec2(i & 1, i >> 1), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).x;
-		if (tread <= 0.0) rise = min(rise, -tread);
+		if (tread <= 0.0) {
+			rise = min(rise, -tread);
+			highest = max(highest, -tread);
+		}
 	}
 	if (rise >= 100000.0) rise = max(-bed.x, 0.0);
 	float distance = bed.y;
@@ -102,7 +109,7 @@ vec4 seaSwash(vec4 warped, vec4 worldPos, vec4 bed, vec4 aux, vec4 lagA, vec4 la
 	if (depth <= 0.0) return warped;
 	warped.y += rise + depth;
 	seaShare = 0.0;
-	if (seaFoamDecay > 0.0) {
+	if (seaFoamDecay > 0.0 && highest - rise <= seaOneStep) {
 		for (int i = 0; i < 4; i++) {
 			if (texelFetch(seaFace, clamp(corner - ivec2(i & 1, i >> 1), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).x < seaStepFootBelow) {
 				seaFaceFoam = exp(-max(0.0, since - arrived) / seaFoamDecay);
@@ -130,7 +137,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float faceDistance = max(face.x, 0.0);
 	float faceLength = length(face.yz);
 	vec2 faceNormal = faceLength > 0.0 ? face.yz / faceLength : vec2(0.0);
-	float faceReflects = faceLength > 0.0 ? abs(face.w) : 0.0;
+	float faceReflects = faceLength > 0.0 ? face.w : 0.0;
 	vec2 texel = vec2(1.0 / seaBedArea.z, 0.0);
 	vec4 turnAX = onBed ? (textureLod(seaLagA, bedUv + texel.xy, 0.0) - textureLod(seaLagA, bedUv - texel.xy, 0.0)) / 2.0 : vec4(0.0);
 	vec4 turnAZ = onBed ? (textureLod(seaLagA, bedUv + texel.yx, 0.0) - textureLod(seaLagA, bedUv - texel.yx, 0.0)) / 2.0 : vec4(0.0);
@@ -171,7 +178,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	float slopes = 0.0;
 	for (int i = 0; i < SEA_SLOTS; i++) {
 		slopes += heights[i] * numbers[i];
-		if (faceReflects > 0.0 && heights[i] > 0.0 && dot(normalize(seaWaves[i].xy + vec2(seaLag(i, turnAX, turnBX), seaLag(i, turnAZ, turnBZ))), faceNormal) < 0.0) slopes += heights[i] * numbers[i] * faceReflects;
+		if (faceReflects > 0.0 && heights[i] > 0.0) slopes += heights[i] * numbers[i] * faceReflects * max(0.0, -dot(normalize(seaWaves[i].xy + vec2(seaLag(i, turnAX, turnBX), seaLag(i, turnAZ, turnBZ))), faceNormal));
 	}
 	float cusp = slopes > 0.0 ? 1.0 / slopes : seaSteepness;
 	float steepness = min(seaSteepness, cusp);
@@ -211,7 +218,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 
 		float toward = dot(direction, faceNormal);
 		if (faceReflects > 0.0 && toward < 0.0) {
-			float returned = height * faceReflects;
+			float returned = min(height * faceReflects * -toward, seaFaceSlope * max(0.0, faceDistance - 0.5));
 			float mirrored = theta - 2.0 * number * toward * faceDistance;
 			vec2 away = direction - 2.0 * toward * faceNormal;
 			offset.y += returned * sin(mirrored);
@@ -229,7 +236,7 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	int slot = int(seaShore.y);
 	vec4 strongest = seaWaves[slot];
 	bool incoming = dot(strongest.xy + vec2(seaLag(slot, turnAX, turnBX), seaLag(slot, turnAZ, turnBZ)), faceNormal) < 0.0;
-	if (seaFoamDecay > 0.0 && breaking > 0.0 && face.w > 0.0 && incoming && faceDistance <= share * 4.0 * sqrt(local / 2.0) * (1.0 - breaking)) {
+	if (seaFoamDecay > 0.0 && breaking > 0.0 && faceLength > seaFaceStands && incoming && faceDistance <= share * 4.0 * sqrt(local / 2.0) * (1.0 - breaking)) {
 		float angular = sqrt(seaGravity * length(strongest.xy));
 		float celerity = angular / max(numbers[slot], 0.0001);
 		float crestAgo = mod(1.5707963 - (dot(strongest.xy, worldPos.xz) + strongest.w + seaLag(slot, lagA, lagB)), 6.2831853) / angular;

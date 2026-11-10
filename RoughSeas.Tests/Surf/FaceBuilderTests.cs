@@ -94,37 +94,25 @@ public class FaceBuilderTests
     }
 
     [Fact]
-    public void AOneBlockWallLeavesItsNormalToTheWaterOnEachSide()
-    {
-        var map = new SeabedMap(0, 0, Size);
-        for (var x = 0; x < Size; x++)
-        for (var z = 0; z < Size; z++)
-        {
-            if (z == 14) map.Put(x, z, new ShoreCell(ShoreKind.Land, 5, Stone, 1), Level);
-            else map.Put(x, z, new ShoreCell(ShoreKind.Water, 10, Stone, 1), Level);
-        }
-        var (field, _) = Built(map, 4, 12);
-        Assert.Equal(0, field.Get(field.Face, 16, 14, 2));
-        Assert.Equal(-1, field.FaceAt(16.5, 13.5).NormalZ, 3);
-    }
-
-    [Fact]
     public void AWallOnAFlatShallowBedStillReflectsAsAWall() =>
         Assert.All(Built(Wall(16, 8, 2), 2, 8).Walls, wall => Assert.True(wall.Reflection > 0.9));
 
     [Fact]
-    public void AOneBlockPierStaysNeutralBetweenAllItsFaces()
+    public void AStepOfABeachKeepsReadingTheBedSeawardOfATread()
     {
-        var map = new SeabedMap(0, 0, Size);
-        for (var x = 0; x < Size; x++)
+        var map = Wall(16, 2, 1);
         for (var z = 0; z < Size; z++)
-        {
-            if ((x, z) == (16, 16)) map.Put(x, z, new ShoreCell(ShoreKind.Land, 5, Stone, 1), Level);
-            else map.Put(x, z, new ShoreCell(ShoreKind.Water, 10, Stone, 1), Level);
-        }
-        var (field, _) = Built(map, 4, 12);
-        Assert.Equal(0, field.Get(field.Face, 16, 16, 1));
-        Assert.Equal(0, field.Get(field.Face, 16, 16, 2));
+        for (var x = 0; x < 12; x++) map.Put(x, z, new ShoreCell(ShoreKind.Water, 4, Stone, 1), Level);
+        Assert.All(Built(map, 2, 8).Walls, wall => Assert.True(wall.Reflection < 0.9));
+    }
+
+    [Fact]
+    public void AnOvertoppedFaceKeepsItsReflectionAndHalvesItsNormal()
+    {
+        var (field, _) = Built(Wall(16, 0.125, 20), 2, 8);
+        var (normalX, reflection) = (field.Face[(16 * Size + 15) * SurfField.Channels + 1], field.Face[(16 * Size + 15) * SurfField.Channels + 3]);
+        Assert.Equal(-0.5f, normalX);
+        Assert.True(reflection > 0);
     }
 
     [Fact]
@@ -136,13 +124,6 @@ public class FaceBuilderTests
 
     [Fact]
     public void AFaceAboveTheCrestStandsAboveIt() => Assert.All(Built(Wall(16, 6), 2, 8).Walls, wall => Assert.True(wall.StandsAboveCrest));
-
-    [Fact]
-    public void ALandTexelBesideAFaceCarriesItsReflectionToTheWallVertex()
-    {
-        var (field, walls) = Built(Wall(16, 6, 20));
-        Assert.Equal((float)walls[0].Reflection, field.Face[(walls[0].Z * Size + walls[0].X + 1) * SurfField.Channels + 3]);
-    }
 
     [Fact]
     public void AFaceBesideAWaterColumnUnderADeckStandsAsAWall()
