@@ -126,10 +126,6 @@ vec4 applyLiquidWarping(bool windAffected, vec4 worldPos, float div) {
 	vec4 lagA = onBed ? textureLod(seaLagA, bedUv, 0.0) : vec4(0.0);
 	vec4 lagB = onBed ? textureLod(seaLagB, bedUv, 0.0) : vec4(0.0);
 	vec4 face = onBed ? textureLod(seaFace, bedUv, 0.0) : vec4(1000.0, 0.0, 0.0, 0.0);
-	if (bed.x <= 0.0 && face.w > 0.0) {
-		ivec2 corner = ivec2(floor(worldPos.xz - seaBedArea.xy + 0.5));
-		for (int i = 0; i < 4; i++) bed.x = max(bed.x, texelFetch(seaBed, clamp(corner - ivec2(i & 1, i >> 1), ivec2(0), ivec2(int(seaBedArea.z) - 1)), 0).x);
-	}
 	if (bed.x <= 0.0) return seaSwash(warped, worldPos, bed, aux, lagA, lagB);
 	float faceDistance = max(face.x, 0.0);
 	float faceLength = length(face.yz);

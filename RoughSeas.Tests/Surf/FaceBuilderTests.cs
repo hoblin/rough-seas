@@ -128,15 +128,6 @@ public class FaceBuilderTests
     }
 
     [Fact]
-    public void AVertexOnATallFaceReadsTheWaterBesideIt()
-    {
-        var (field, _) = Built(Wall(16, 8, 2));
-        for (var x = 0; x < Size; x++)
-        for (var z = 0; z < Size; z++) field.Set(field.Bed, x, z, 0, x < 16 ? 2 : -8);
-        Assert.Equal(2, field.WaterSideDepth(16, 16.5), 3);
-    }
-
-    [Fact]
     public void AFaceBelowTheCrestDoesNotStandAboveIt() => Assert.All(Built(Wall(16, 0.125), 2, 8).Walls, wall => Assert.False(wall.StandsAboveCrest));
 
     [Fact]
