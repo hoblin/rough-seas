@@ -24,7 +24,7 @@ public class VanillaRain(SeaWeatherSystem sea, ICoreAPI api)
         api.Event.OnGetClimate += OnGetClimate;
     }
 
-    [ReliesOn("Vintagestory.GameContent.WeatherSystemBase", "Event_OnGetClimate", "sets Rainfall to clamp(cloudness − 0.5) and RainCloudOverlay to clamp(cloudness), and runs before this handler")]
+    [ReliesOn("Vintagestory.GameContent.WeatherSystemBase", "Event_OnGetClimate", "sets Rainfall to clamp(cloudness − 0.5) and RainCloudOverlay to clamp(cloudness)")]
     private void OnGetClimate(ref ClimateCondition climate, BlockPos pos, EnumGetClimateMode mode, double totalDays)
     {
         if (mode is EnumGetClimateMode.WorldGenValues or EnumGetClimateMode.ForSuppliedDate_TemperatureOnly || weather.OverridePrecipitation != null) return;

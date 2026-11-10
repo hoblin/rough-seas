@@ -8,7 +8,7 @@ internal enum ReachKind { Method, Field, PropertyGetter, PropertySetter, Type }
 
 internal enum HandlerKind { Prefix, Postfix, Transpiler, Finalizer }
 
-internal sealed record Reach(ReachKind Kind, string Type, string Name, string? Parameters, bool DeclaredOnly, bool AnyOverload, string Site);
+internal sealed record Reach(ReachKind Kind, string Type, string Name, string? Parameters, bool DeclaredOnly, bool MayBeAbsent, string Site);
 
 internal sealed record Patch(Reach Target, HandlerKind Kind, MethodDefinition Handler);
 
@@ -40,9 +40,10 @@ internal sealed class ModReach
         var reach = new ModReach(module);
         foreach (var type in module.GetTypes().Where(type => !type.FullName.StartsWith(OtherModsNamespace)))
         {
+            if (type.CustomAttributes.Any(attribute => attribute.AttributeType.FullName == "HarmonyLib.HarmonyPatch")) reach.unreadable.Add($"{type.FullName}: [HarmonyPatch]");
             foreach (var method in type.Methods.Where(method => method.HasBody))
             {
-                reach.Evaluate(method, method.Parameters.Select(_ => (Value)new Unbound()).Prepend(new Unbound()).ToArray(), 0);
+                reach.Evaluate(method, method.Parameters.Select(_ => (Value)new PendingArgument()).Prepend(new PendingArgument()).ToArray(), 0);
             }
         }
         return reach;
@@ -136,8 +137,12 @@ internal sealed class ModReach
         if (declaring == "System.Type" && called.Name == "GetTypeFromHandle") return arguments[0];
         if (declaring == "HarmonyLib.AccessTools") return OnAccessTools(called, arguments, site);
         if (declaring == "HarmonyLib.Harmony" && called.Name == "Patch") return OnPatch(arguments, site);
+        if (declaring == "HarmonyLib.Traverse" || (declaring == "System.Type" && called.Name is "GetMethod" or "GetField" or "GetProperty" or "GetMember"))
+        {
+            return CantRead(new Opaque(), site, $"{declaring}.{called.Name}");
+        }
 
-        if (depth < DeepestHelper && called.DeclaringType.Scope == module && arguments.Any(argument => argument is not (Opaque or Unbound)))
+        if (depth < DeepestHelper && called.DeclaringType.Scope == module && arguments.Any(argument => argument is not (Opaque or PendingArgument)))
         {
             var helper = called.Resolve();
             if (helper is { HasBody: true }) return Evaluate(helper, Bind(helper, arguments), depth + 1);
@@ -156,7 +161,7 @@ internal sealed class ModReach
             var handler = module.GetType(owner.Name)?.Methods.FirstOrDefault(method => method.Name == name.Content);
             return handler != null ? new Handler(handler) : new Opaque();
         }
-        return arguments.Take(2).Any(argument => argument is Unbound) ? new Unbound() : new Opaque();
+        return arguments.Take(2).Any(argument => argument is PendingArgument) ? new PendingArgument() : new Opaque();
     }
 
     private Value OnAccessTools(MethodReference called, Value[] arguments, MethodDefinition site)
@@ -184,11 +189,11 @@ internal sealed class ModReach
                     Note(new Reach(ReachKind.Type, typeName.Content, "", null, false, false, SiteName(site)));
                     return new TypeValue(typeName.Content);
                 }
-                return Unread(arguments[0], site);
+                return CantRead(arguments[0], site);
             case "MethodDelegate":
                 return new Opaque();
             default:
-                return Unread(arguments.FirstOrDefault(new Opaque()), site, $"AccessTools.{called.Name}");
+                return CantRead(arguments.FirstOrDefault(new Opaque()), site, $"AccessTools.{called.Name}");
         }
     }
 
@@ -200,8 +205,8 @@ internal sealed class ModReach
 
     private Value Noted(Value type, Value name, ReachKind kind, bool declaredOnly, MethodDefinition site, Value? parameters = null)
     {
-        if (type is not TypeValue owner) return Unread(type, site);
-        if (name is not Text member) return Unread(name, site);
+        if (type is not TypeValue owner) return CantRead(type, site);
+        if (name is not Text member) return CantRead(name, site);
         var reach = new Reach(kind, owner.Name, member.Content, ParameterNames(parameters), declaredOnly, false, SiteName(site));
         Note(reach);
         return new MemberValue(reach);
@@ -229,7 +234,7 @@ internal sealed class ModReach
         {
             if (target is not MemberValue { Reach: var reach })
             {
-                Unread(target, site);
+                CantRead(target, site);
                 continue;
             }
             for (var index = 0; index < HandlerArguments.Length; index++)
@@ -247,9 +252,9 @@ internal sealed class ModReach
 
     private static IEnumerable<Value> Flatten(Value value) => value is ArrayValue array ? array.Items.SelectMany(Flatten) : [value];
 
-    private Value Unread(Value value, MethodDefinition site, string? what = null)
+    private Value CantRead(Value value, MethodDefinition site, string? what = null)
     {
-        if (value is Unbound) return value;
+        if (value is PendingArgument) return value;
         if (!IsReachedAtRuntime(site)) unreadable.Add(what == null ? SiteName(site) : $"{SiteName(site)}: {what}");
         return new Opaque();
     }
@@ -306,7 +311,7 @@ internal sealed class ModReach
 
     private sealed record Opaque : Value;
 
-    private sealed record Unbound : Value;
+    private sealed record PendingArgument : Value;
 
     private sealed record Nothing : Value;
 

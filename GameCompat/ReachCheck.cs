@@ -8,7 +8,7 @@ internal sealed class ReachCheck(GameRelease release)
 
     public IEnumerable<string> Run(ModReach reach)
     {
-        foreach (var member in reach.Members.Where(member => !member.AnyOverload))
+        foreach (var member in reach.Members.Where(member => !member.MayBeAbsent))
         {
             if (Missing(member) is { } reason) yield return $"{reason} ({member.Site})";
         }
@@ -63,7 +63,7 @@ internal sealed class ReachCheck(GameRelease release)
                 var exact = named.FirstOrDefault(method => Signature(method) == member.Parameters);
                 if (exact != null) return exact;
             }
-            else if (named.Count == 1 || (member.AnyOverload && named.Count > 1))
+            else if (named.Count == 1 || (member.MayBeAbsent && named.Count > 1))
             {
                 return named[0];
             }

@@ -11,10 +11,10 @@ internal sealed record ModBuild(string Dll, IReadOnlyList<string> Errors)
 
     public static ModBuild Against(GameRelease release, string repository)
     {
-        var source = Path.Combine(GameRelease.CacheRoot, "builds", release.Version);
+        var source = Path.Combine(GameRelease.CacheRoot, "builds", Path.GetFileName(repository), release.Version);
         Mirror(Path.Combine(repository, "RoughSeas"), source);
 
-        var start = new ProcessStartInfo("dotnet", ["build", source, "--nologo", "-v", "q", $"-p:VINTAGE_STORY={release.Directory}"])
+        var start = new ProcessStartInfo("dotnet", ["build", source, "--nologo", "-v", "q", "-c", "Release", $"-p:VINTAGE_STORY={release.Directory}"])
         {
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -26,7 +26,7 @@ internal sealed record ModBuild(string Dll, IReadOnlyList<string> Errors)
 
         var errors = CompilerError.Matches(output).Select(match => match.Value.Trim()).Distinct().Order().ToList();
         if (build.ExitCode != 0 && errors.Count == 0) errors.Add((output + stderr.Result).Trim());
-        return new ModBuild(Path.Combine(source, "bin", "Debug", "Mods", "mod", "RoughSeas.dll"), errors);
+        return new ModBuild(Path.Combine(source, "bin", "Release", "Mods", "mod", "RoughSeas.dll"), errors);
     }
 
     private static void Mirror(string from, string to)

@@ -7,7 +7,7 @@ namespace RoughSeas.Shipyard;
 /// A fire laid as vanilla lays a campfire: dry grass for its base, then firewood on the grass until the firepit is
 /// built. Its state lives in the build's tree beside the rest of the build.
 /// </summary>
-[ReliesOn("Vintagestory.GameContent.BlockFirepit", "OnBlockInteractStart", "a firepit is built from 4 firewood, the count copied here")]
+[ReliesOn("Vintagestory.GameContent.BlockFirepit", "TryConstruct", "a firepit is built from 4 firewood, the count copied here")]
 public sealed class LaidFire(Func<ITreeAttribute> tree, Action changed)
 {
     /// <summary>The firewood vanilla's <c>BlockFirepit</c> takes on its dry grass to finish a firepit.</summary>

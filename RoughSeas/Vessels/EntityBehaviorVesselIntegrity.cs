@@ -596,7 +596,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
         return here;
     }
 
-    [ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "OnPhysicsTick", "calls the watcher with accum 0 on each fixed step")]
+    [ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "ApplyTests", "calls the watcher with accum 0 on each fixed step")]
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "OnRenderFrame", "calls the mount's watcher once more after its loop with what is left of the frame")]
     private void OnPhysicsUpdate(float accum, Vec3d prevPos)
     {

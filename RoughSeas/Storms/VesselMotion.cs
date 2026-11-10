@@ -12,6 +12,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Storms;
 
+[ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "loadModelMatrix", "has built ModelMat when this postfix adds to its translation")]
 public static class VesselMotion
 {
     private const string HarmonyId = "roughseas.storms.motion";

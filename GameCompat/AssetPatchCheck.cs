@@ -11,7 +11,7 @@ internal sealed class AssetPatchCheck(GameRelease release, string repository)
     {
         var patched = new Dictionary<string, JToken?>();
         var folder = Path.Combine(repository, "RoughSeas", "assets", "roughseas", "patches");
-        foreach (var file in Directory.GetFiles(folder, "*.json").Order())
+        foreach (var file in Directory.GetFiles(folder, "*.json", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
         {
             var name = Path.GetFileName(file);
             foreach (var operation in Parse(File.ReadAllText(file)).Children<JObject>())
@@ -46,6 +46,7 @@ internal sealed class AssetPatchCheck(GameRelease release, string repository)
         var last = keys[^1];
         return (operation, parent) switch
         {
+            ("add", JObject) when last == "-" || int.TryParse(last, out _) => "it is not an array",
             ("add", JObject map) => Set(map, last, value),
             ("add", JArray list) => Insert(list, last, value),
             ("replace", _) when Child(parent, last) is { } existing => Replaced(existing, value),

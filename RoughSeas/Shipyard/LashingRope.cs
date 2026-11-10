@@ -6,7 +6,7 @@ namespace RoughSeas.Shipyard;
 
 /// <summary>
 /// Rope held on a canoe that wants lashing lashes her, where vanilla's rope would tie itself to her: vanilla's
-/// <c>ItemRope</c> handles the click itself and never asks the rope's behaviours. A hold kept on past her last lashing
+/// <c>ItemRope</c> handles the click itself and asks the rope's behaviours only with Ctrl+Shift. A hold kept on past her last lashing
 /// ties nothing: the game repeats a held use while the button stays down, and only a fresh click ties her.
 /// </summary>
 [ReliesOn("Vintagestory.GameContent.ItemRope", "OnHeldInteractStart", "handles the click itself and asks the rope's collectible behaviours only with Ctrl+Shift")]

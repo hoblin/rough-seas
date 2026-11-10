@@ -53,7 +53,7 @@ public static class VanillaShore
         harmony = null;
     }
 
-    [ReliesOn("Vintagestory.Server.ServerSystemBlockSimulation", "tryTickBlock", "a tick with an extra goes to the block in the default layer, a tick without one to the fluid")]
+    [ReliesOn("Vintagestory.Server.ServerSystemBlockSimulation", "OnServerTick", "a tick with an extra goes to the block in the default layer, a tick without one to the fluid")]
     private static bool TickSolid(IWorldAccessor world, BlockPos pos, Random offThreadRandom, out object? extra, ref bool __result)
     {
         extra = null;

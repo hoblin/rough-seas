@@ -10,7 +10,8 @@ namespace RoughSeas.Storms;
 /// The one vanilla rope a vessel is tied by. Vanilla keeps the tying, the length the player sets, the sag, the sync and
 /// the save; while the rope holds her to a post, our mooring holds and parts it. See docs/vanilla-at-sea.md.
 /// </summary>
-[ReliesOn("Vintagestory.GameContent.ClothSystem", "updateFixedStep", "a rope stretched past StretchRip for a moment tears, and CanPull drives its pull")]
+[ReliesOn("Vintagestory.GameContent.ClothManager", "tickPhysics", "a rope stretched past StretchRip for a moment tears")]
+[ReliesOn("Vintagestory.GameContent.ClothPoint", "update", "CanPull drives the rope's pull")]
 public sealed class VesselRope(Entity vessel, ClothManager cloths)
 {
     private const float VanillaStretchRip = 0.75f;

@@ -6,6 +6,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Propulsion;
 
+[ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "RenderItem", "reads renderInfo.Transform after this prefix swaps it")]
 public static class DrawnPole
 {
     private const string HarmonyId = "roughseas.propulsion.drawnpole";

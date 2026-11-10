@@ -34,9 +34,20 @@ internal static class BehaviourCheck
     public static IEnumerable<string> Unknown(IEnumerable<Reliance> reliances, GameRelease current) =>
         reliances.Where(reliance => Instructions(reliance, current) == null).Select(reliance => $"{reliance.Target} names nothing ({reliance.Where})");
 
-    public static IEnumerable<string> Undeclared(ModReach reach, IReadOnlyList<Reliance> reliances) =>
-        reach.Members.Where(member => member.AnyOverload && !reliances.Any(reliance => reliance.Type == member.Type && reliance.Method == member.Name))
-            .Select(member => $"{member.Type}.{member.Name} is patched only where it exists, so it needs a [ReliesOn] ({member.Site})");
+    public static IEnumerable<string> Undeclared(ModReach reach, IReadOnlyList<Reliance> reliances)
+    {
+        bool Declares(Reach member) => reliances.Any(reliance => reliance.Type == member.Type && reliance.Method == member.Name);
+
+        foreach (var member in reach.Members.Where(member => member.MayBeAbsent && !Declares(member)))
+        {
+            yield return $"{member.Type}.{member.Name} is patched only where it exists, so it needs a [ReliesOn] ({member.Site})";
+        }
+
+        foreach (var patch in reach.Patches.Where(patch => patch.Kind == HandlerKind.Transpiler && !Declares(patch.Target)))
+        {
+            yield return $"{patch.Target.Type}.{patch.Target.Name} is transpiled, so it needs a [ReliesOn] ({patch.Handler.FullName})";
+        }
+    }
 
     public static IReadOnlyList<BehaviourChange> Changes(IEnumerable<Reliance> reliances, GameRelease current, GameRelease release)
     {
@@ -56,7 +67,7 @@ internal static class BehaviourCheck
         if (release.FindType(reliance.Type) is not { } type) return null;
         for (var owner = type; owner != null; owner = owner.BaseType?.Resolve())
         {
-            var named = owner.Methods.Where(method => method.Name == reliance.Method).OrderBy(method => method.FullName).ToList();
+            var named = owner.Methods.Where(method => method.Name == reliance.Method).OrderBy(method => method.FullName, StringComparer.Ordinal).ToList();
             if (named.Count == 0) continue;
             var seen = new HashSet<string>();
             var lines = new List<string>();
@@ -66,13 +77,27 @@ internal static class BehaviourCheck
         return null;
     }
 
-    internal static string? Token(OpCode opcode, object? operand)
+    internal static IReadOnlyList<string> Tokens(MethodBody body)
     {
-        var name = opcode.Name.EndsWith(".s") ? opcode.Name[..^2] : opcode.Name;
-        if (name.StartsWith("ldloc") || name.StartsWith("stloc") || opcode.Code == Code.Nop) return null;
-        return operand switch
+        var positions = body.Instructions.Select((instruction, position) => (instruction, position)).ToDictionary(pair => pair.instruction, pair => pair.position);
+        var locals = new Dictionary<int, int>();
+        return body.Instructions.Where(instruction => instruction.OpCode.Code != Code.Nop).Select(instruction => Token(instruction, positions, locals)).ToList();
+    }
+
+    private static string Token(Instruction instruction, Dictionary<Instruction, int> positions, Dictionary<int, int> locals)
+    {
+        var name = instruction.OpCode.Name.EndsWith(".s") ? instruction.OpCode.Name[..^2] : instruction.OpCode.Name;
+        if (LocalIndex(instruction) is { } local)
         {
-            null or Instruction or Instruction[] or VariableDefinition => name,
+            locals.TryAdd(local, locals.Count);
+            return $"{name.Split('.')[0]} L{locals[local]}";
+        }
+
+        return instruction.Operand switch
+        {
+            null => name,
+            Instruction target => $"{name} {positions[target] - positions[instruction]}",
+            Instruction[] targets => $"{name} {string.Join(",", targets.Select(target => positions[target] - positions[instruction]))}",
             ParameterDefinition parameter => $"{name} {parameter.Index}",
             MemberReference member => $"{name} {Clean(member.FullName)}",
             string text => $"{name} \"{text}\"",
@@ -80,6 +105,15 @@ internal static class BehaviourCheck
             var other => $"{name} {other}",
         };
     }
+
+    private static int? LocalIndex(Instruction instruction) => instruction.OpCode.Code switch
+    {
+        Code.Ldloc_0 or Code.Stloc_0 => 0,
+        Code.Ldloc_1 or Code.Stloc_1 => 1,
+        Code.Ldloc_2 or Code.Stloc_2 => 2,
+        Code.Ldloc_3 or Code.Stloc_3 => 3,
+        _ => (instruction.Operand as VariableDefinition)?.Index,
+    };
 
     private static string Stamp(IEnumerable<string> baseline, IEnumerable<string> candidate) =>
         Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(string.Join("\n", baseline) + "\0" + string.Join("\n", candidate))))[..12];
@@ -99,13 +133,13 @@ internal static class BehaviourCheck
         lines.Add(Clean(method.FullName));
         if (!method.HasBody) return;
 
-        lines.AddRange(method.Body.Instructions.Select(instruction => Token(instruction.OpCode, instruction.Operand)).OfType<string>());
+        lines.AddRange(Tokens(method.Body));
         lines.AddRange(method.Body.ExceptionHandlers.Select(handler => $"{handler.HandlerType} {handler.CatchType?.FullName}"));
 
         foreach (var generated in method.Body.Instructions.Select(instruction => instruction.Operand).OfType<MethodReference>().Select(Generated).OfType<MethodDefinition>())
         {
             Append(generated, lines, seen);
-            if (!IsGenerated(generated.DeclaringType.Name)) continue;
+            if (!generated.DeclaringType.Name.Contains(">d__")) continue;
             foreach (var sibling in generated.DeclaringType.Methods) Append(sibling, lines, seen);
         }
     }

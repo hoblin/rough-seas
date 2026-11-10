@@ -162,6 +162,7 @@ public static class SurfaceShader
         wetCode = api.Assets.Get(WetSource).ToText();
     }
 
+    [ReliesOn("Vintagestory.Client.NoObf.ShaderRegistry", "HandleIncludes", "returns the shader's whole source with its includes in place, which the anchors are matched against")]
     private static void Inject(ShaderProgram program, ref string __result)
     {
         if (__result.Contains(VanillaWarp) && __result.Contains(AfterWarp) && !__result.Contains(RenamedWarp))
@@ -185,7 +186,7 @@ public static class SurfaceShader
         }
     }
 
-    [ReliesOn("Vintagestory.Client.NoObf.ShaderProgram", "Compile", "numbers samplers by a regex over the source, which a uniform with a precision qualifier escapes")]
+    [ReliesOn("Vintagestory.Client.NoObf.ShaderProgram", "collectUniformNames", "numbers samplers by a regex over the source, which a uniform with a precision qualifier escapes")]
     private static void LocateSamplers(ShaderProgram __instance)
     {
         foreach (var sampler in ShoreSamplers.Prepend(HeightMapSampler))

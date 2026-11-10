@@ -18,15 +18,15 @@ const string Usage = """
       Asset patches           every JSON patch's file and path exist
 
     Needs reading: what no tool can decide. A [ReliesOn] method whose instructions differ from the current
-    game's beyond local numbering and branch offsets is listed with the C# diff of that method, beside the
-    sentence saying what we rely on. Methods that didn't change are not shown.
+    game's beyond how locals are numbered is listed with the C# diff of that method, beside the sentence
+    saying what we rely on. Methods that didn't change are not shown.
     Read it. If what we rely on still holds, add the entry's first line to GameCompat/read-changes.txt, with
-    why after it; a release never changes, so it is read once. If it doesn't hold, the version is not
-    compatible: raise the floor.
+    why after it. An entry holds for that version against the current game's method, so it is read once
+    until GAME moves. If it doesn't hold, the version is not compatible: raise the floor.
 
     A patch target that may be absent is the same: the patch doesn't apply there, and that needs reading.
 
-    Exits 1 unless every checked version is compatible.
+    A check exits 1 unless every checked version is compatible. A walk reports and exits 0.
     """;
 
 var repository = Directory.GetCurrentDirectory();

@@ -16,7 +16,7 @@ public class StormEvents(SeaWeatherSystem sea, ICoreServerAPI sapi)
 {
     private readonly ConditionalWeakTable<WeatherSimulationRegion, object> pinned = [];
 
-    [ReliesOn("Vintagestory.GameContent.WeatherSimulationRegion", "TickEvery25ms", "stops an event when it should stop and AllowStop is true")]
+    [ReliesOn("Vintagestory.GameContent.WeatherEvent", "ShouldStop", "an event stops only while AllowStop is true")]
     public void Drive(WeatherSimulationRegion sim)
     {
         var model = sea.Model;
