@@ -4,7 +4,7 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Storms;
 
-/// <summary>A debug view with each block's top face outlined: the water painted from purple at the zone's lowest point to red at its highest, the range being the CPU sea's, so a saturated colour is a height the CPU sea doesn't have; or the dominant train's phase with its crest a white line, or the share of waves breaking, or the foam from purple at none to red at full.</summary>
+/// <summary>A debug view with each block's top face outlined: the water painted from purple at the zone's lowest point to red at its highest, the range being the CPU sea's, so a saturated colour is a height the CPU sea doesn't have; or the dominant train's phase with its crest a white line, or the share of waves breaking, or the foam from purple at none to red at full, or which wave's sheet stands over the beach, from purple for the latest to red for one four periods old. <see cref="Range"/> fixes the height's range, in metres above still water, so a take's colours read back as heights.</summary>
 public sealed class HeightColours
 {
     private const double ReachMetres = 128;
@@ -23,7 +23,7 @@ public sealed class HeightColours
         + "vec3 seaViewColour() {\n"
         + "if (seaHeightColours.w < 0.5) return seaHeightColour(clamp((fWorldPos.y - seaHeightColours.x) / max(seaHeightColours.y - seaHeightColours.x, 0.01), 0.0, 1.0));\n"
         + "if (seaHeightColours.w < 1.5) { float turn = fract(seaDebug.x / 6.2831853); return abs(turn - 0.25) < 0.02 ? vec3(1.0) : seaHeightColour(turn); }\n"
-        + "return seaHeightColour(clamp(seaHeightColours.w < 2.5 ? seaDebug.y : seaFoamFaceAt(), 0.0, 1.0));\n"
+        + "return seaHeightColour(clamp(seaHeightColours.w < 2.5 ? seaDebug.y : seaHeightColours.w < 3.5 ? seaFoamFaceAt() : seaDebug.z, 0.0, 1.0));\n"
         + "}\n";
     private const string Painted =
         "if (seaHeightColours.z > 0.5 && !isLava && fragNormal.y > 0.5) {\n"
@@ -37,9 +37,11 @@ public sealed class HeightColours
 
     public bool On { get; set; }
 
-    public static readonly string[] Views = ["height", "phase", "breaking", "foam"];
+    public static readonly string[] Views = ["height", "phase", "breaking", "foam", "sheet"];
 
     public int View { get; set; }
+
+    public (double Lowest, double Highest)? Range { get; set; }
 
     public static string Inject(string source, string fragmentMain)
     {
@@ -55,6 +57,11 @@ public sealed class HeightColours
     public void Refresh(SeaSurface surface, SurfaceField field, double x, double z)
     {
         if (!On) return;
+        if (Range is { } range)
+        {
+            (lowest, highest) = range;
+            return;
+        }
         (lowest, highest) = (double.MaxValue, double.MinValue);
         for (var dz = -ReachMetres; dz <= ReachMetres; dz += StepMetres)
         {

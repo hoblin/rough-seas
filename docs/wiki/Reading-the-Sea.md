@@ -171,10 +171,10 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | `Swell` | whether any swell is drawn now |
 | `SwellAt(x, z)` | whether swell is drawn there now: none outside the waves' field or where the sea is calm |
 | `Seconds` | the time the waves run on, in seconds: the world's clock at vanilla's pace, the same on every client |
-| `HeightAt(x, z)` | the surface's height above still water there now, in metres |
+| `HeightAt(x, z)` | the surface's height above still water there now, in metres, the reflection off faces and the short waves included |
 | `WaveHere(x, z)` | the waves there now, a `WaveReading`: their significant height over the bed, the dominant period, where they run as the bed turns them, the depth they feel, the bed's slope, the share of them breaking, and the height of the sea coming into that breaking water |
-| `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose` |
-| `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in metres per second of `Seconds`, as the waves move it, averaged over a hull's underwater body |
+| `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose`: on the reflection, not on the short waves a hull averages out |
+| `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in metres per second of `Seconds`, as the waves move it, averaged over a hull's underwater body; the reflection doesn't push it |
 
 `PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`, and turns those four heights into how the hull would lie on them. So the hull's size does part of the work: a long hull on short waves has its bow and stern on different crests and barely rocks, while a small one takes every wave. Its length runs along the shape's X axis. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees, so `Pos.Yaw + rotateY * GameMath.DEG2RAD`.
 

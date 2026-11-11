@@ -58,12 +58,14 @@ public readonly record struct SheetFront(double SpeedSquared, double Metres, dou
         return true;
     }
 
-    /// <summary>When a front thrown to <paramref name="runUp"/> up a slope of this <paramref name="rise"/> reaches <paramref name="distance"/>, as <c>seasurface.vsh</c> draws it.</summary>
-    public static double Arrival(double runUp, double rise, double distance)
+    /// <summary>When a front thrown to <paramref name="runUp"/> up the shore's <paramref name="slope"/>, the one its run-up was read on, reaches <paramref name="distance"/>, as <c>seasurface.vsh</c> draws it.</summary>
+    public static double Arrival(double runUp, double slope, double distance)
     {
         var speed = Math.Sqrt(2 * Gravity * runUp);
-        var sine = distance > 0 ? rise / Math.Sqrt(distance * distance + rise * rise) : 1;
-        return sine > 0.0001 ? (speed - Math.Sqrt(Math.Max(0, speed * speed - 2 * Gravity * sine * distance))) / (Gravity * sine) : distance / speed;
+        var cosine = 1 / Math.Sqrt(1 + slope * slope);
+        var sine = slope * cosine;
+        var along = distance / cosine;
+        return sine > 0.0001 ? (speed - Math.Sqrt(Math.Max(0, speed * speed - 2 * Gravity * sine * along))) / (Gravity * sine) : along / speed;
     }
 
     public double Head => SpeedSquared / (2 * Gravity);

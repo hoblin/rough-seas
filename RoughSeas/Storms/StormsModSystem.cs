@@ -160,12 +160,17 @@ public class StormsModSystem : ModSystem
                 })
             .EndSubCommand()
             .BeginSubCommand("colours")
-                .WithDescription("Paint the water by its height, from purple at the zone's lowest to red at its highest, and outline each block's top face")
-                .WithArgs(parsers.Bool("draw"))
-                .HandleWith(args => Drawn("height colours", SurfaceShader.Colours.On = (bool)args[0]))
+                .WithDescription("Paint the water by its height, from purple at the zone's lowest to red at its highest, or over a fixed range in metres above still water, and outline each block's top face")
+                .WithArgs(parsers.Bool("draw"), parsers.OptionalDouble("lowest", double.NaN), parsers.OptionalDouble("highest", double.NaN))
+                .HandleWith(args =>
+                {
+                    var (lowest, highest) = ((double)args[1], (double)args[2]);
+                    SurfaceShader.Colours.Range = double.IsNaN(lowest) || double.IsNaN(highest) ? null : (lowest, highest);
+                    return Drawn("height colours", SurfaceShader.Colours.On = (bool)args[0]);
+                })
             .EndSubCommand()
             .BeginSubCommand("map")
-                .WithDescription("Paint the water as a map of height, the dominant train's phase (crests as white lines), the share of waves breaking, or the foam")
+                .WithDescription("Paint the water as a map of height, the dominant train's phase (crests as white lines), the share of waves breaking, the foam, or which wave's sheet stands over the beach (purple the latest, red four periods old)")
                 .WithArgs(parsers.WordRange("view", HeightColours.Views))
                 .HandleWith(args =>
                 {
@@ -210,6 +215,35 @@ public class StormsModSystem : ModSystem
                     var seabed = storms.Surface?.Seabed;
                     return TextCommandResult.Success($"{(int)Math.Floor(x) - (int)capi.World.DefaultSpawnPosition.X} {(int)Math.Floor(z) - (int)capi.World.DefaultSpawnPosition.Z}: "
                         + $"share {field.Factor(x, z):F3}, height {storms.DrawnSea!.HeightAt(x, z):F2}; crests {storms.Surface?.CrestAt(x, z)}; field from {seabed?.OriginX - (int)capi.World.DefaultSpawnPosition.X} {seabed?.OriginZ - (int)capi.World.DefaultSpawnPosition.Z}; {seabed?.Describe(x, z) ?? "no seabed read yet"}");
+                })
+            .EndSubCommand()
+            .BeginSubCommand("watch")
+                .WithDescription("Log what the swash reads at a point this many blocks from the player, along X and Z, ten times a second for a number of seconds")
+                .WithArgs(parsers.Int("x"), parsers.Int("z"), parsers.OptionalDouble("seconds", 30))
+                .HandleWith(args =>
+                {
+                    var pos = capi.World.Player.Entity.Pos;
+                    var (x, z) = (Math.Floor(pos.X) + (int)args[0] + 0.5, Math.Floor(pos.Z) + (int)args[1] + 0.5);
+                    var (spawnX, spawnZ) = ((int)capi.World.DefaultSpawnPosition.X, (int)capi.World.DefaultSpawnPosition.Z);
+                    var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
+                    var until = capi.ElapsedMilliseconds + (long)((double)args[2] * 1000);
+                    long listener = 0;
+                    listener = capi.Event.RegisterGameTickListener(_ =>
+                    {
+                        if (capi.ElapsedMilliseconds > until || storms.Surface is not { } surface)
+                        {
+                            capi.Event.UnregisterGameTickListener(listener);
+                            return;
+                        }
+                        var seabed = surface.Seabed;
+                        var dominant = surface.Trains.Dominant;
+                        var since = surface.SinceCrest(x, z);
+                        var (height, twoPercent) = surface.SheetWaveAt(x, z, since);
+                        storms.Log("watch {0} {1}: field {2}, dominant {3}, lag {4:F3}, since crest {5:F2} s, wave at its arrival {6:F2} m of 2% {7:F2} m, share {8:F3}; {9}",
+                            (int)Math.Floor(x) - spawnX, (int)Math.Floor(z) - spawnZ, seabed is null ? 0 : System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(seabed), dominant,
+                            seabed?.LagAt(dominant, x, z) ?? 0, since, height, twoPercent, field.Factor(x, z), seabed?.Describe(x, z) ?? "no seabed read yet");
+                    }, 100);
+                    return TextCommandResult.Success($"Watching the swash at {(int)Math.Floor(x) - spawnX} {(int)Math.Floor(z) - spawnZ} for {args[2]} s, tagged 'watch' in the client's debug log");
                 })
             .EndSubCommand()
             .BeginSubCommand("trace")
