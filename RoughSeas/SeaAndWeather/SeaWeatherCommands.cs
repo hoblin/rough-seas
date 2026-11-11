@@ -189,7 +189,7 @@ public static class SeaWeatherCommands
         var survey = new StormSurvey(sea.Model.Weather.Storms.Passing(code, pos.X, pos.Z, size / 2, now, now + days * hoursPerDay), now, now + days * hoursPerDay);
         var types = string.Join(", ", survey.ByType.Select(type => $"{type.Count} {type.Code}"));
         var summary = $"{survey.Passes.Count} {code ?? "storm"}s over the {size:0}-block square at {Coordinates(api, pos.X, pos.Z)}, latitude {Latitude(api, pos.Z):0.0}°, in {days:0} days"
-            + (survey.Passes.Count == 0 ? "" : $" ({types}): one every {days / survey.Passes.Count:0.0} days, ")
+            + (survey.Passes.Count == 0 ? ", " : $" ({types}): one every {days / survey.Passes.Count:0.0} days, ")
             + $"a storm over it {survey.CoveredHours / survey.Hours:P0} of the time, the longest calm {survey.LongestCalmHours / hoursPerDay:0.0} days";
         var passes = Limited(survey.Passes, limit).Select(pass =>
             $"{pass.Storm.Code} of {pass.Storm.PeakMps:0} m/s, radius {pass.Storm.Radius:0}: over it in {(pass.FromHours - now) / hoursPerDay:0.0} days for {pass.Hours:0.0} h, "
