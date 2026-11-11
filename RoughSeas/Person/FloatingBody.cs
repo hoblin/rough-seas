@@ -78,7 +78,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var (rollerX, rollerZ) = (0.0, 0.0);
         if (breaker is { } roller)
         {
-            var speed = churned * roller.RollerSpeed(config.Breaking, now - roller.BrokeSeconds);
+            var speed = churned * roller.RollerSpeed(config.Breaking, now - roller.BrokeSeconds) * wavesPerSecond;
             (rollerX, rollerZ) = (speed * Math.Cos(roller.TowardRadians), speed * Math.Sin(roller.TowardRadians));
         }
         var (toX, toZ) = (flow.X + rollerX, flow.Z + rollerZ);

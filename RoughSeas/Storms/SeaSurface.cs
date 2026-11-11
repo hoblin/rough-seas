@@ -190,7 +190,7 @@ public sealed class SeaSurface
         var waterEnergy = 0.0;
         for (var slot = 0; slot < slots; slot++) waterEnergy += heights[slot] * heights[slot];
         var boreHeight = share * WaveTheory.SignificantHeight(waterEnergy);
-        var bed = motion.Moving && share > 0 && Seabed is { } bedField && bedField.Covers(x, z) ? bedField.CelerityDepthAt(x, z) : double.PositiveInfinity;
+        var bed = motion.Moving && share > 0 && Seabed is { } bedField && bedField.Covers(x, z) ? bedField.DepthAt(x, z) : double.PositiveInfinity;
         for (var slot = 0; slot < slots; slot++)
         {
             if (heights[slot] <= 0) continue;

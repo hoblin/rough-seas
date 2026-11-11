@@ -152,6 +152,8 @@ public class SeaSurfaceSeabedTests
     public void TheWaterStandsStillAtTheBed()
     {
         var surface = Surf(1.5f);
+        for (var bx = OriginX; bx < OriginX + Size; bx++)
+        for (var bz = OriginZ; bz < OriginZ + Size; bz++) surface.Seabed!.SetCelerityDepth(bx, bz, 2.4f);
         var (x, z) = (MiddleX, MiddleZ);
         var column = 1.5 + surface.HeightAt(x, z);
 
