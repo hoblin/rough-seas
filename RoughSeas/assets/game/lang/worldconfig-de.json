@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Ruderermüdung",
     "worldattribute-rowerFatigue-desc": "Rudern, Paddeln und Staken machen dich hungrig. Ist sie aus, kosten sie keine Sättigung; ein Boot fährt weiterhin nur so schnell, wie du es vorantreibst.",
     "worldattribute-poleDepth": "Staktiefe",
-    "worldattribute-poleDepth-desc": "Ein Staken schiebt nur, wo er den Grund erreicht. Ist sie aus, schiebt er in Wasser jeder Tiefe wie mit vollem Stoß."
+    "worldattribute-poleDepth-desc": "Ein Staken schiebt nur, wo er den Grund erreicht. Ist sie aus, schiebt er in Wasser jeder Tiefe wie mit vollem Stoß.",
+    "worldattribute-swimmerBreakers": "Brecher über Schwimmern",
+    "worldattribute-swimmerBreakers-desc": "Eine Welle, die über dir bricht, während du schwimmst, drückt dich unter Wasser und reißt dich mit, und ihr schäumendes Wasser trägt dich weniger. Ist sie aus, bricht keine Welle über einem Schwimmer; du treibst weiter auf den Wellen und atmest in ihrem Takt."
 }

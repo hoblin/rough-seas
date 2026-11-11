@@ -14,7 +14,7 @@ public class WaveCarryTests
     [Fact]
     public void AHullUnderWayTakesTheWavesVelocityOnTopOfItsWay()
     {
-        Assert.Equal(Water / 60, WaveCarry.Carried(Water, 0.4, kept: null), 12);
+        Assert.Equal(Water / 60, WaterDrag.Carried(Water, 0.4, 0), 12);
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class WaveCarryTests
         {
             var waves = Water * Math.Sin(step * Frame);
             motion *= Kept(Frame);
-            motion += WaveCarry.Carried(waves, before, Kept(Frame));
+            motion += WaterDrag.Carried(waves, before, Kept(Frame));
             before = waves;
 
             Assert.Equal(waves / 60, motion, 12);
@@ -57,7 +57,7 @@ public class WaveCarryTests
     [Fact]
     public void StillWaterCarriesNothing()
     {
-        Assert.Equal(0, WaveCarry.Carried(0, 0, kept: null));
-        Assert.Equal(0, WaveCarry.Carried(0, 0, Kept(Frame)));
+        Assert.Equal(0, WaterDrag.Carried(0, 0, 0));
+        Assert.Equal(0, WaterDrag.Carried(0, 0, Kept(Frame)));
     }
 }

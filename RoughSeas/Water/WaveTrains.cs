@@ -151,13 +151,16 @@ public sealed class WaveTrains
         Steepness = slopes > 0 ? Math.Min(config.Steepness, 1 / slopes) : config.Steepness;
     }
 
-    public double ShortRise(double x, double z, double kept)
+    public double ShortRise(double x, double z, double kept, int order = 0, double below = 0, double depth = double.PositiveInfinity, double surface = 0)
     {
         var rise = 0.0;
         for (var slot = 0; slot < ShortSlots; slot++)
         {
             if (shortAmplitude[slot] <= 0) continue;
-            rise += kept * shortAmplitude[slot] * Math.Sin(shortX[slot] * x + shortZ[slot] * z - shortFrequency[slot] * Seconds);
+            var rate = order > 0 || below > 0
+                ? Math.Pow(-shortFrequency[slot], order) * WaveTheory.RiseFade(Math.Sqrt(shortX[slot] * shortX[slot] + shortZ[slot] * shortZ[slot]), depth, below, surface)
+                : 1;
+            rise += rate * kept * shortAmplitude[slot] * Math.Sin(shortX[slot] * x + shortZ[slot] * z - shortFrequency[slot] * Seconds + order * Math.PI / 2);
         }
         return rise;
     }

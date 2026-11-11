@@ -462,6 +462,22 @@ The drawn waves reach the shore, over water we put under it ([Water under the be
 
 New: `OpenWater`, `IDrawnSea.WaveHere`, the block behaviour `roughseas:groundwater`, `config/shore.json`, `surface.shore` in `config/storms.json`, `/shore`, `.surface shore` and `.surface bed`.
 
+### A body in the water
+
+A player floats by what the body displaces ([Swimming](Swimming)), and what a player weighs has one answer, in the new module `RoughSeas.Person`. A vessel of yours loads as it did; a mod that weighs a rider or moves a swimmer reads on.
+
+- `api.ModLoader.GetModSystem<PersonModSystem>().Person` is an `IPerson`, on both sides: `Body`, the one reference body (`MassKg`, and what it displaces by height), and `CarriedBy(entity)`, a player's armour and the tools and weapons in their hotbar, a `Carried` in kilograms and litres. The backpack and materials weigh nothing.
+- Vessels weigh riders through it: a rider in no armour with nothing in the hotbar weighs 75 kg, all of it body, so a flooded hull no longer counts 10 kg of everyday gear as sinking. Armour weighs 83.3 kg to the unit of walk-speed penalty, where it weighed 60.
+- Gone from `config/vessels/mass.json`: `playerGearKg`, `armorKgPerWalkSpeed` and `crewKg`. A patch to them goes to `config/person.json`: `body.massKg` and `carried` (`armourKgPerWalkSpeed`, `toolKg` by `EnumTool`, `densityKgPerLitre`). Gone from `VesselMass`: `PlayerGearKg` and `ArmorKgPerWalkSpeed`; `CrewKg` now reads the body.
+- `RoughSeas.Vessels.HeaveAddedMass` is `RoughSeas.Water.AddedMass`, and its methods take the water's density: `OfPlate(halfLength, halfBeam, kgPerCubicMetre)`, `OfWaterplane(squareMetres, halfBeam, kgPerCubicMetre)`. New beside them, `OfSpheroid(length, cubicMetres, kgPerCubicMetre)`.
+- `IDrawnSea` gained `RiseVelocityAt(x, z, below)` and `RiseAccelerationAt(x, z, below)`, the water's vertical motion under the drawn surface ([Reading it](Reading-the-Sea#reading-it)). A class of yours that implements `IDrawnSea` has to add them.
+- `RoughSeas.Storms.PassingWaves` is the one rule for the waves that reach a thing, a vessel or a swimmer: one a dominant period of the world's clock, each with its height, whether it breaks, in surf or as a whitecap, and its breaker's speed. `SeaClock.Lap` lost `LivedSeconds`: a lap is the world's clock for everything at sea, the hours `/time add` moves on included, so a mechanic that counted its events by it takes `Seconds`. `RoughSeas.SeaAndWeather.WaterDrag` gained `Carried`, which puts the water's velocity into an entity's motion through vanilla's water drag, for a hull and a swimmer alike.
+- `BodyAfloat` patches vanilla's `PModuleGravity.DoApply` and `PModuleMotionDrag.DoApply` for a player in the water, on the client that moves them; `BodyUnderSurface` sets `Swimming` and `FeetInLiquid` after `EntityBehaviorControlledPhysics.ApplyTests` from the drawn surface on both sides, near water, and swaps the depth `PModulePlayerInLiquid.HandleSwimming` takes. A mod that patches those for a player meets ours.
+- The world setting `swimmerBreakers` ([World settings](World-Settings#the-mechanics)). Floating and breath have none.
+- `config/storms.json` gained `waves.freshWaterDensity`. A crest that breaks over a swimmer is logged by the server as a `[person]` line and sent to that player's client over `roughseas:person`.
+
+New: `IPerson`, `PersonModSystem`, `config/person.json`, `AddedMass.OfSpheroid`, `IDrawnSea.RiseVelocityAt` and `RiseAccelerationAt`, `PassingWaves`, `WaterDrag.Carried`, the world setting `swimmerBreakers`.
+
 ## What not to touch
 
 | Name | What it is |
@@ -471,6 +487,7 @@ New: `OpenWater`, `IDrawnSea.WaveHere`, the block behaviour `roughseas:groundwat
 | `roughseas:vessels` | the network channel a rider's client reports its vessel's knocks over |
 | `roughseas:storms` | the network channel a rider's client reports a parted mooring over |
 | `roughseas:anchor` | a vessel's watched tree: where its anchor lies and what holds it |
+| `roughseas:person` | the network channel the server tells a swimmer's client of a crest breaking over them on |
 | `roughseas:nextClothId` | save data: vanilla's next rope id, which vanilla itself loses |
 | `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |
 

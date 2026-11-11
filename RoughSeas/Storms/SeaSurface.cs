@@ -76,13 +76,36 @@ public sealed class SeaSurface
     /// <summary>The drawn surface's height here, scaled as the shader scales it by <see cref="SurfaceField.Factor"/>.</summary>
     public double HeightAt(double x, double z, double share = 1, bool shortWaves = true)
     {
+        var (restX, restZ) = RestOf(x, z, share);
+        return share * DisplacementAt(restX, restZ, share, shortWaves).Y;
+    }
+
+    /// <summary>
+    /// The vertical velocity of the water drawn here, in metres a second of the waves' clock, <paramref name="below"/>
+    /// metres under the drawn surface: the rate at which the drawn surface over that water rises, bores, reflections and
+    /// short waves included, fading below it as <see cref="WaveTheory.RiseFade"/> says.
+    /// </summary>
+    public double RiseVelocityAt(double x, double z, double below = 0, double share = 1) => Rising(x, z, below, share, 1);
+
+    /// <summary>The water's vertical acceleration where <see cref="RiseVelocityAt"/> reads its velocity, in metres a second squared of the waves' clock.</summary>
+    public double RiseAccelerationAt(double x, double z, double below = 0, double share = 1) => Rising(x, z, below, share, 2);
+
+    private double Rising(double x, double z, double below, double share, int order)
+    {
+        var (restX, restZ) = RestOf(x, z, share);
+        var surface = share * DisplacementAt(restX, restZ, share).Y;
+        return share * Displace(restX, restZ, share, true, new Motion(order, Math.Max(below, 0), surface)).Y;
+    }
+
+    private (double X, double Z) RestOf(double x, double z, double share)
+    {
         var (restX, restZ) = (x, z);
         for (var i = 0; i < SurfaceSearchSteps; i++)
         {
             var (shiftX, _, shiftZ) = DisplacementAt(restX, restZ, share, false);
             (restX, restZ) = (x - share * shiftX, z - share * shiftZ);
         }
-        return share * DisplacementAt(restX, restZ, share, shortWaves).Y;
+        return (restX, restZ);
     }
 
     /// <summary>The waves here, scaled as the shader scales them by <see cref="SurfaceField.Factor"/>, all of one update of the sea: the engine's ambient scan asks this off the main thread.</summary>
@@ -135,13 +158,19 @@ public sealed class SeaSurface
         return (Trains.NumberX(slot) + Across(x - 1, z, x + 1, z), Trains.NumberZ(slot) + Across(x, z - 1, x, z + 1));
     }
 
-    private double Rise(double theta, double broken, double boreHeight, double number)
+    private double Rise(double theta, double broken, double boreHeight, double number, int order = 0)
     {
-        var sine = Math.Sin(theta);
-        return broken > 0 ? sine + (WaveTheory.Bore(theta, WaveTheory.BoreFront(boreHeight, number, BoreFrontSlope)) - sine) * broken : sine;
+        var sine = Math.Sin(theta + order * Math.PI / 2);
+        if (broken <= 0) return sine;
+        var front = WaveTheory.BoreFront(boreHeight, number, BoreFrontSlope);
+        var bore = order switch { 0 => WaveTheory.Bore(theta, front), 1 => WaveTheory.BoreSlope(theta, front), _ => 0 };
+        return sine + (bore - sine) * broken;
     }
 
-    public (double X, double Y, double Z) DisplacementAt(double x, double z, double share = 0, bool shortWaves = true)
+    public (double X, double Y, double Z) DisplacementAt(double x, double z, double share = 0, bool shortWaves = true) =>
+        Displace(x, z, share, shortWaves, default);
+
+    private (double X, double Y, double Z) Displace(double x, double z, double share, bool shortWaves, Motion motion)
     {
         var slots = Trains.Slots;
         Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
@@ -161,11 +190,13 @@ public sealed class SeaSurface
         var waterEnergy = 0.0;
         for (var slot = 0; slot < slots; slot++) waterEnergy += heights[slot] * heights[slot];
         var boreHeight = share * WaveTheory.SignificantHeight(waterEnergy);
+        var bed = motion.Moving && share > 0 && Seabed is { } bedField && bedField.Covers(x, z) ? bedField.DepthAt(x, z) : double.PositiveInfinity;
         for (var slot = 0; slot < slots; slot++)
         {
             if (heights[slot] <= 0) continue;
             var theta = Trains.Phase(slot, x, z) + lags[slot];
-            rise += heights[slot] * Rise(theta, broken, boreHeight, numbers[slot]);
+            var rate = motion.Moving ? Math.Pow(-Trains.Frequency(slot), motion.Order) * WaveTheory.RiseFade(numbers[slot], bed, motion.Below, motion.Surface) : 1;
+            rise += rate * heights[slot] * Rise(theta, broken, boreHeight, numbers[slot], motion.Order);
             var sway = (1 - broken) * steepness * heights[slot] * Math.Cos(theta);
             shiftX += sway * towardX[slot];
             shiftZ += sway * towardZ[slot];
@@ -175,15 +206,20 @@ public sealed class SeaSurface
             if (along >= 0) continue;
             var mirrored = theta - 2 * numbers[slot] * along * face.Distance;
             var returned = heights[slot] * face.Reflection * -along * limited;
-            rise += returned * Math.Sin(mirrored);
+            rise += rate * returned * Math.Sin(mirrored + motion.Order * Math.PI / 2);
             var back = steepness * returned * Math.Cos(mirrored);
             shiftX += back * (towardX[slot] - 2 * along * face.NormalX);
             shiftZ += back * (towardZ[slot] - 2 * along * face.NormalZ);
         }
-        return (shiftX, shortWaves ? rise + ShortRise(x, z, share) : rise, shiftZ);
+        return (shiftX, shortWaves ? rise + ShortRise(x, z, share, motion, bed) : rise, shiftZ);
     }
 
-    private double ShortRise(double x, double z, double share)
+    private readonly record struct Motion(int Order, double Below, double Surface)
+    {
+        public bool Moving => Order > 0 || Below > 0;
+    }
+
+    private double ShortRise(double x, double z, double share, Motion motion, double bed)
     {
         var kept = 1.0;
         if (share > 0 && Seabed is { } field && field.Covers(x, z))
@@ -191,7 +227,7 @@ public sealed class SeaSurface
             if (field.LandAt(x, z)) return 0;
             if (Trains.ShortSeaHeight > 0) kept = Math.Min(1, Math.Max(field.DepthAt(x, z), 0) / (waves.BreakingDepthRatio * Trains.ShortSeaHeight));
         }
-        return Trains.ShortRise(x, z, kept);
+        return Trains.ShortRise(x, z, kept, motion.Order, motion.Below, bed, motion.Surface);
     }
 
     private FaceReading? Facing(double x, double z, double share) =>

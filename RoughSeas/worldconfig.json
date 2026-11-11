@@ -6,7 +6,8 @@
         { "category": "roughseas", "code": "mooringStrain", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false },
         { "category": "roughseas", "code": "oceanCurrents", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false },
         { "category": "roughseas", "code": "rowerFatigue", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false },
-        { "category": "roughseas", "code": "poleDepth", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false }
+        { "category": "roughseas", "code": "poleDepth", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false },
+        { "category": "roughseas", "code": "swimmerBreakers", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false }
     ],
     "playStyles": [
         {

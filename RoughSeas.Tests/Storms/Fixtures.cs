@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RoughSeas.Person;
 using RoughSeas.Propulsion;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
@@ -23,7 +24,14 @@ public static class Fixtures
 
     private static readonly Lazy<PropulsionConfig> propulsion = new(() => JsonConvert.DeserializeObject<PropulsionConfig>(Shipped("propulsion.json"))!);
 
-    private static readonly Lazy<VesselMass> mass = new(() => JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!);
+    private static readonly Lazy<PersonConfig> personConfig = new(() => JsonConvert.DeserializeObject<PersonConfig>(Shipped("person.json"))!);
+
+    private static readonly Lazy<VesselMass> mass = new(() =>
+    {
+        var read = JsonConvert.DeserializeObject<VesselMass>(Shipped("mass.json"))!;
+        read.Person = Person;
+        return read;
+    });
 
     private static readonly Lazy<HullConfig> hullConfig = new(() =>
     {
@@ -35,6 +43,10 @@ public static class Fixtures
     public static StormsConfig Config() => config.Value;
 
     public static VesselMass Mass => mass.Value;
+
+    public static PersonConfig PersonConfig => personConfig.Value;
+
+    public static PlayerPerson Person => new(Body.Of(PersonConfig.Body), PersonConfig.Carried);
 
     public static HullConfig HullConfig => hullConfig.Value;
 
@@ -82,7 +94,7 @@ public static class Fixtures
     {
         var shape = Shape(hull.Vessel);
         double squareMetres = hull.Flotation.HasHold ? hull.Flotation.KgPerMetre / 1025 : 4 * shape.HalfLengthMetres * shape.HalfBeamMetres;
-        return HeaveAddedMass.OfWaterplane(squareMetres, shape.HalfBeamMetres);
+        return AddedMass.OfWaterplane(squareMetres, shape.HalfBeamMetres, 1025);
     }
 
     public readonly record struct Train(DrawnSea Sea, SeaSurface Surface, double Length, double Number, double Frequency, double Stokes);
@@ -221,7 +233,7 @@ public class NullLogger : LoggerBase
 
 public sealed record Hull(Flotation Flotation, double Kilograms, double ReferenceKg, double CapacityLitres, JsonObject Config, string Vessel)
 {
-    public Aboard Crewed(double bodies = 65, double kit = 10, double containers = 0, double litres = 0, double soaked = 0) =>
+    public Aboard Crewed(double bodies = 75, double kit = 0, double containers = 0, double litres = 0, double soaked = 0) =>
         new(Kilograms + soaked, bodies, kit, containers, litres * VesselMass.SeawaterKgPerLitre, 0);
 
     public Afloat Float(Aboard aboard, double litres = 0) => Flotation.Float(aboard, CapacityLitres > 0 && litres >= CapacityLitres);

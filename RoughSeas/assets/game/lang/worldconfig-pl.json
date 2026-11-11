@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Zmęczenie wioślarza",
     "worldattribute-rowerFatigue-desc": "Od wiosłowania, pagajowania i pchania łodzi tyczką robisz się głodny. Gdy wyłączone, nie kosztuje to sytości; łódź nadal płynie tylko tak szybko, jak ją napędzasz.",
     "worldattribute-poleDepth": "Głębokość dla tyczki",
-    "worldattribute-poleDepth-desc": "Tyczka pcha tylko tam, gdzie sięga dna. Gdy wyłączone, pcha w wodzie o dowolnej głębokości jak przy pełnym pchnięciu."
+    "worldattribute-poleDepth-desc": "Tyczka pcha tylko tam, gdzie sięga dna. Gdy wyłączone, pcha w wodzie o dowolnej głębokości jak przy pełnym pchnięciu.",
+    "worldattribute-swimmerBreakers": "Przybój nad pływakami",
+    "worldattribute-swimmerBreakers-desc": "Fala, która łamie się nad tobą, gdy płyniesz, wciska cię pod wodę i niesie ze sobą, a jej spieniona woda słabiej cię utrzymuje. Gdy wyłączone, żadna fala nie łamie się nad pływakiem; nadal unosisz się na falach i oddychasz w ich rytmie."
 }

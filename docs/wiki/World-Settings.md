@@ -19,6 +19,7 @@ Each mechanic of the sea has its own world setting, under *Rough Seas* on the ne
 | *Currents* | `oceanCurrents` | [Currents](Currents) carry no vessel, steered or not, and pull on no mooring. The currents still flow, and the water keeps its temperature. |
 | *Rower fatigue* | `rowerFatigue` | [Rowing, paddling and poling](Paddles-Poles-and-Oars) cost no satiety. A vessel still goes only as fast as you row it. |
 | *Pole's depth* | `poleDepth` | A [pole](Paddles-Poles-and-Oars) pushes in water of any depth, as it does at its full stroke. |
+| *Breakers on swimmers* | `swimmerBreakers` | No wave [breaks over a swimmer](Swimming#breaking-crests). You still float on the waves and breathe by them. |
 
 To change a setting in a world already made, open the world's settings from the singleplayer list, or type `/worldconfig CODE false` (or `true`) and reload the world. The setting stays as you left it.
 
@@ -26,4 +27,4 @@ A world made before version 4.1.0 had one setting, *Dangerous oceans*. On its fi
 
 Each setting's description on the world screen, under its name, says what it stops and what stays.
 
-A swimmer breathes by the waves you see whatever the settings: a crest over your head takes your air, and a trough gives it back. Drowning is the game's own. Cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).
+A swimmer [floats](Swimming) and breathes by the waves you see whatever the settings: a crest over your head takes your air, and a trough gives it back. Drowning is the game's own. Cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).

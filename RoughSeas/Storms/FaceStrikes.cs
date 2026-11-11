@@ -7,22 +7,20 @@ public readonly record struct SprayBurst(double X, double Y, double Z, double Al
 
 /// <summary>
 /// Finds the crests and sheets striking the faces around the player. Each is decided from the shared sea and the world's
-/// clock, the crest passing within the last tick of lived time, so two clients decide the same strikes; only the drops
+/// clock, the crest passing since the last tick, so two clients decide the same strikes; only the drops
 /// are each client's own.
 /// </summary>
 public sealed class FaceStrikes(SeaSurface surface, SurfaceField shares, Waves waves, WallSpray spray, FacesConfig config, Action<SprayBurst> emit, Action<string, object[]> log)
 {
     private const double LogEverySeconds = 5;
-    private const double LeapShare = 2;
 
     private int standing, overtopping, broken, sheets, parcels;
     private double highest, sinceLog, lastSeconds = double.NaN;
 
-    public void Update(double playerX, double playerZ, double lived)
+    public void Update(double playerX, double playerZ)
     {
-        var elapsed = surface.Trains.Seconds - lastSeconds;
+        var window = surface.Trains.Seconds - lastSeconds;
         lastSeconds = surface.Trains.Seconds;
-        var window = elapsed > LeapShare * lived ? lived : elapsed;
         if (!(window > 0) || surface.Trains.Calm || surface.Seabed is not { } field) return;
         var radius = config.RadiusBlocks * config.RadiusBlocks;
         bool Near(double x, double z) => (x - playerX) * (x - playerX) + (z - playerZ) * (z - playerZ) <= radius;

@@ -21,7 +21,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Hull](Hull-Condition) | a knock splits the bark and its sheathing at 23 J in white cedar, 43 J in oak, and breaks the rib behind at 47 J, 88 J in oak, or the two either side at 71 J, 133 J in oak; 5200 J more with an oak frame breaks it up, 6100 J in birch, 2400 J in white cedar, the wood of a canoe from before the build |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-it-floats) | 36 cm empty, 32 cm with its paddler, in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 24 kg of gear, armour and containers in oak, more in a lighter wood |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 24 kg of tools, armour and containers in oak, more in a lighter wood |
 | [Mending](Mending) | 2 bark of its tree close a third of a stove-in place |
 | [Bilge](Bailing) | 609 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.75 m breaker |

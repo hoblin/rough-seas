@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Roerens træthed",
     "worldattribute-rowerFatigue-desc": "Roning, padling og stagning gør dig sulten. Slået fra koster de ingen mæthed; et fartøj sejler stadig kun så hurtigt, som du driver det frem.",
     "worldattribute-poleDepth": "Stagens dybde",
-    "worldattribute-poleDepth-desc": "En stage skubber kun, hvor den når bunden. Slået fra skubber den på alle dybder som med et fuldt tag."
+    "worldattribute-poleDepth-desc": "En stage skubber kun, hvor den når bunden. Slået fra skubber den på alle dybder som med et fuldt tag.",
+    "worldattribute-swimmerBreakers": "Brænding over svømmere",
+    "worldattribute-swimmerBreakers-desc": "En bølge, der brækker over dig, mens du svømmer, presser dig ned under og fører dig med, og dens skummende vand bærer dig dårligere. Slået fra brækker ingen bølge over en svømmer; du flyder stadig på bølgerne og trækker vejret i takt med dem."
 }

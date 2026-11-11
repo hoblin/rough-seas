@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Rotretthet",
     "worldattribute-rowerFatigue-desc": "Roing, padling og staking gjør deg sulten. Av koster de ingen metthet; et fartøy går fortsatt bare så fort som du driver det fram.",
     "worldattribute-poleDepth": "Stakens dybde",
-    "worldattribute-poleDepth-desc": "En stake skyver bare der den når bunnen. Av skyver den i vann av alle dybder som med et fullt tak."
+    "worldattribute-poleDepth-desc": "En stake skyver bare der den når bunnen. Av skyver den i vann av alle dybder som med et fullt tak.",
+    "worldattribute-swimmerBreakers": "Brenninger over svømmere",
+    "worldattribute-swimmerBreakers-desc": "En bølge som bryter over deg mens du svømmer, presser deg under og fører deg med seg, og det skummende vannet bærer deg dårligere. Av bryter ingen bølge over en svømmer; du flyter fortsatt på bølgene og puster i takt med dem."
 }

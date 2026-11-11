@@ -97,4 +97,43 @@ public class DrawnWaterTests
 
         Assert.Null(new DrawnWater(new Sea(3)).SurfaceAt(ground, X, StillSurface + 1.7, Z));
     }
+
+    [Fact]
+    public void GivesABodyTheStillWaterWhereNoSwellIsDrawn()
+    {
+        var water = new DrawnWater(new Sea(0, swell: false)).WaterAt(new Column(), X, StillSurface - 0.5, Z);
+
+        Assert.Equal(new WaterSurface(StillSurface, 0, Salt: true), water);
+    }
+
+    [Fact]
+    public void GivesABodyTheDrawnSurfaceAndItsSwell()
+    {
+        var water = new DrawnWater(new Sea(1.5)).WaterAt(new Column(salt: false), X, StillSurface + 1, Z);
+
+        Assert.Equal(new WaterSurface(StillSurface + 1.5, 1.5, Salt: false), water);
+    }
+
+    [Fact]
+    public void KeepsABodyOverADeckOutOfTheWater()
+    {
+        Assert.Null(new DrawnWater(new Sea(0, swell: false)).WaterAt(new Column(solid: [WaterTop + 1]), X, WaterTop + 2.2, Z));
+    }
+
+    [Theory]
+    [InlineData(StillSurface - 0.5)]
+    [InlineData(WaterTop + 40)]
+    public void SeesWaterUnderAPointInItOrAnyHeightAboveIt(double y)
+    {
+        Assert.True(DrawnWater.Over(new Column(), y));
+    }
+
+    [Fact]
+    public void SeesNoWaterUnderDryGroundOrADeck()
+    {
+        var ground = new Column(top: SeaFloor - 1, solid: Enumerable.Range(0, WaterTop + 1).ToArray());
+
+        Assert.False(DrawnWater.Over(ground, StillSurface + 1.7));
+        Assert.False(DrawnWater.Over(new Column(solid: [WaterTop + 1]), WaterTop + 2.2));
+    }
 }

@@ -20,7 +20,6 @@ public class SeaClockTests
         for (var ran = 0.0; ran < realSeconds; ran += Tick)
         {
             hours += Tick * speed * calendarSpeedMul / 3600;
-            clock.Track(Tick);
         }
     }
 
@@ -57,7 +56,6 @@ public class SeaClockTests
 
         Assert.Equal(0.5, lap.Hours, 3);
         Assert.Equal(60, lap.Seconds, 1);
-        Assert.Equal(60, lap.LivedSeconds, 1);
     }
 
     [Fact]
@@ -94,43 +92,36 @@ public class SeaClockTests
     }
 
     [Fact]
-    public void LivesThroughTheHoursItRacesWhileEveryoneSleeps()
+    public void LapsTheHoursItRacesWhileEveryoneSleeps()
     {
         var watch = Started();
         speed = Sleeping;
         Run(0.3);
-        speed = Normal;
-        Run(0.2);
         var lap = watch.Lap();
 
-        Assert.Equal(lap.Seconds, lap.LivedSeconds, 1);
+        Assert.Equal(clock.SecondsAt(0.3 * Sleeping * calendarSpeedMul / 3600), lap.Seconds, 1);
     }
 
     [Fact]
-    public void LivesNoneOfTheHoursTheCalendarIsMovedOn()
+    public void LapsTheHoursTheCalendarIsMovedOn()
     {
         var watch = Started();
-        speed = Sleeping;
-        Run(0.25);
         hours += 2;
-        Run(0.25);
-        var lap = watch.Lap();
 
-        Assert.InRange(lap.Seconds - lap.LivedSeconds, clock.SecondsAt(2) - TwoTicksAt(Sleeping), clock.SecondsAt(2));
+        Assert.Equal(clock.SecondsAt(2), watch.Lap().Seconds, 6);
     }
 
-    private double TwoTicksAt(double speedOfTime) => clock.SecondsAt(2 * Tick * speedOfTime * calendarSpeedMul / 3600);
-
     [Fact]
-    public void LivesNoneOfTheHoursAddedWhileTheWorldsClockStands()
+    public void LapsEveryStepOfACalendarThatMovesOnlyNowAndThen()
     {
         var watch = Started();
-        speed = 0;
-        hours += 0.1;
-        Run(1);
-        var lap = watch.Lap();
+        var lapped = 0.0;
+        for (var tick = 1; tick <= 600; tick++)
+        {
+            if (tick % 6 == 0) hours += 6 * Tick * speed * calendarSpeedMul / 3600;
+            lapped += watch.Lap().Seconds;
+        }
 
-        Assert.Equal(12, lap.Seconds, 6);
-        Assert.InRange(lap.LivedSeconds, 0, TwoTicksAt(Normal));
+        Assert.Equal(600 * Tick, lapped, 6);
     }
 }

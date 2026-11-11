@@ -1,7 +1,7 @@
 import math
 import statistics
 
-from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, MASS, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
+from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, CREW_KG, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from fit import APART
 import units
 from entity import merged, record
@@ -261,7 +261,7 @@ def rowing_station(hull):
         pole = sum(piece["metres"] for piece in stages("Thwart", thwart(hull, x))["children"])
         _, rests = tholes(hull, x + THOLE_ABAFT)
         oars = sum(litres(part) for name, side in OARS.items() for part in oar(name, side, rests[name])["children"])
-        rower = MASS["crewKg"] + MASS["playerGearKg"]
+        rower = CREW_KG
         weights = {"rower": (rower, SEATED_CENTRE), "thwart": (kilograms("wood-ash", pole * POLE_SQUARE_METRES * 1000), 0),
                    "oars": (kilograms("wood-ash", oars), THOLE_ABAFT)}
         x = CENTRE - sum(kg * d for kg, d in weights.values()) / sum(kg for kg, _ in weights.values())

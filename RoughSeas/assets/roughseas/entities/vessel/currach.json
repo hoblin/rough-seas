@@ -14,7 +14,7 @@
     "hitboxSize": {"x": 1.197, "y": 0.682},
     "behaviorConfigs": {
         "roughseas:propulsion": {
-            "oars": {"stroke": "rowing", "bladeSquareMetres": 0.0569, "bladeSquareVoxels": 14.573, "spanMetres": 4.121, "spanVoxels": 65.936},
+            "oars": {"stroke": "rowing", "bladeSquareMetres": 0.0569, "bladeSquareVoxels": 14.571, "spanMetres": 4.1223, "spanVoxels": 65.957},
             "sweepMetres": 1.3358,
             "sweepVoxels": 21.372,
             "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.94, "handsAboveWaterVoxels": 15.04, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0.43, "y": -0.392, "z": 0}, "eyeHeight": 1.7, "mountRotation": {"y": 0}}, "plantAheadMetres": 0.1875, "plantAheadVoxels": 3, "plantAsternMetres": 0.5625, "plantAsternVoxels": 9, "plantAcrossMetres": -0.6625, "plantAcrossVoxels": -10.6, "drawnPoleMetres": 3, "drawnPoleVoxels": 48, "drawnBedMetres": 1, "drawnBedVoxels": 16},
@@ -31,8 +31,8 @@
             "shell": {"kind": "skin", "material": "hide", "metres": 0.005, "backing": {"material": "wood-ash", "metres": 0.01}, "backedShare": 0.4, "bottomBackedShare": 0.4, "spanMetres": 0.2166, "spanVoxels": 3.465, "frame": {"material": "wood-ash", "metres": 0.01, "widthMetres": 0.06, "spacingMetres": 0.2166, "spacingVoxels": 3.465, "spanMetres": 0.1875, "spanVoxels": 3}},
             "depthMetres": 0.6,
             "depthVoxels": 9.6,
-            "waterplaneSquareMetres": 3.4671,
-            "waterplaneSquareVoxels": 887.572,
+            "waterplaneSquareMetres": 3.4508,
+            "waterplaneSquareVoxels": 883.409,
             "seep": {"litresPerHourASeam": 12.6, "greaseDays": 2.5},
             "cover": {"hides": {"prepared": 8}, "seams": 2},
             "repairs": [

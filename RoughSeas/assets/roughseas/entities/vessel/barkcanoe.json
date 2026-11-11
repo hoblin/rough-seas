@@ -7,7 +7,7 @@
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/bark"}],
     "attributes": {
         "logTextures": {"bark": "all", "frame": "inside-north"},
-        "swimmingOffsetY": 0.539,
+        "swimmingOffsetY": 0.538,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -40,8 +40,8 @@
             "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 0.42, "spanMetres": 0.25, "spanVoxels": 4, "frame": {"material": "wood-tuja", "metres": 0.01, "widthMetres": 0.06, "spacingMetres": 0.25, "spacingVoxels": 4}, "bottomBackedShare": 0.97},
             "depthMetres": 0.375,
             "depthVoxels": 6,
-            "waterplaneSquareMetres": 1.9107,
-            "waterplaneSquareVoxels": 489.147,
+            "waterplaneSquareMetres": 1.8847,
+            "waterplaneSquareVoxels": 482.487,
             "repairs": [{
                 "material": {"type": "item", "code": "roughseas:bark-{wood}", "stacksize": 2},
                 "restores": 0.33,

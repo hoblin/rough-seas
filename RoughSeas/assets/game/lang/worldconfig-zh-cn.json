@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "划桨疲劳",
     "worldattribute-rowerFatigue-desc": "划桨、划单叶桨和撑篙都会让你饥饿。关闭后，它们不消耗饱食度；船照样只能以你划动的速度前进。",
     "worldattribute-poleDepth": "撑篙水深",
-    "worldattribute-poleDepth-desc": "撑篙只能在够得着水底的地方推船。关闭后，在任何深度的水里都能像撑到底一样推船。"
+    "worldattribute-poleDepth-desc": "撑篙只能在够得着水底的地方推船。关闭后，在任何深度的水里都能像撑到底一样推船。",
+    "worldattribute-swimmerBreakers": "碎浪打向游泳者",
+    "worldattribute-swimmerBreakers-desc": "游泳时在你头上破碎的浪会把你压到水下并带着你走，泛着泡沫的水托起你的力也更小。关闭后，不会有浪在游泳者头上破碎；你仍会随浪漂浮，并随着浪的节奏呼吸。"
 }

@@ -36,9 +36,8 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private IMasted? mast;
     private IHullWay? driven;
     private double designedMastMetres;
-    private SeaClock.Watch watch = null!;
+    private PassingWaves passing = null!;
     private float sinceUpdate;
-    private double sinceWave;
 
     /// <summary>Server side, each wave as she takes it, whether or not it broke on her or shipped water.</summary>
     public event Action<TakenWave>? Took;
@@ -93,7 +92,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
         var weather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         sea = weather;
-        watch = sea.Clock.StartWatch();
+        passing = new PassingWaves(sea.Clock, storms.Waves, storms.Config.Waves.MinHeight);
         Ride = new WaveRide(storms, weather, this);
         config = attributes;
         designedBeamMetres = attributes["beamMetres"].Exists ? attributes["beamMetres"].AsDouble() : null;
@@ -134,33 +133,23 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         if (sinceUpdate < storms.Config.TickSeconds) return;
 
         sinceUpdate = 0;
-        sinceWave += watch.Lap().LivedSeconds;
-        if (!entity.Swimming)
-        {
-            sinceWave = 0;
-            return;
-        }
+        if (!passing.Lap(entity.Swimming)) return;
 
         using var _ = storms.Budget.Measure();
         var here = storms.Swells!.At(entity.Pos.X, entity.Pos.Z).WaveHere(entity.Pos.X, entity.Pos.Z);
-        if (here.Height < storms.Config.Waves.MinHeight || here.Period <= 0)
-        {
-            sinceWave = 0;
-            return;
-        }
-
         var windMps = sea.At(entity.Pos.X, entity.Pos.Z).WindSpeed;
-        for (; sinceWave >= here.Period && entity.Alive; sinceWave -= here.Period) TakeWave(here, windMps);
+        foreach (var wave in passing.Over(here, windMps, entity.World.Rand))
+        {
+            if (!entity.Alive) break;
+            TakeWave(here, wave);
+        }
     }
 
-    private void TakeWave(WaveReading here, double windMps)
+    private void TakeWave(WaveReading here, PassingWave wave)
     {
         var waves = storms.Waves;
-        var rand = entity.World.Rand;
-        var height = WaveTheory.RayleighHeight(here.Height, rand.NextDouble());
+        var (height, surf, breaks) = (wave.Height, wave.Surf, wave.Breaks);
         var swamped = bilge?.Swamped == true;
-        var surf = here.Breaks(height);
-        var breaks = surf || rand.NextDouble() < waves.BreakingChance(windMps);
         var breaking = swamped || breaks;
         var crest = waves.Crest(height, breaking);
         var shipped = Mechanic.BilgeWater.On(entity.World) ? waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure : 0;
@@ -174,17 +163,17 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         storms.Log(entity, "{0} wave {1:F1} m in a {2:F1} m sea, {3:F2} m over a {4:F2} m freeboard: shipped {5:F0} L, {6}",
             cause, height, here.Height, Seaworthiness.Overtopping(crest), Seaworthiness.FreeboardMetres, shipped,
             bilge == null ? "washed off" : $"bilge {bilge.Litres:F0} of {bilge.CapacityLitres:F0} L");
-        if (breaks && hull != null) Slam(height, here, surf, hull);
+        if (breaks && hull != null) Slam(wave, here, hull);
         if (capsizes) Capsize(height, swamped);
     }
 
-    private void Slam(double breakerMetres, WaveReading here, bool surf, EntityBehaviorVesselIntegrity hull)
+    private void Slam(PassingWave wave, WaveReading here, EntityBehaviorVesselIntegrity hull)
     {
         var waves = storms.Waves;
+        var (breakerMetres, surf, celerity) = (wave.Height, wave.Surf, wave.Celerity);
         var plunging = surf
             ? waves.Plunges(breakerMetres, here.Period, here.BedSlope, here.Depth)
             : waves.PlungesAtSea(entity.World.Rand.NextDouble());
-        var celerity = waves.BreakerCelerity(breakerMetres, here.Period, here.Depth);
         var pressure = waves.SlamPressure(celerity, plunging);
         var place = hull.Toward(-Math.Cos(here.TowardRadians), -Math.Sin(here.TowardRadians));
         storms.Log(entity, "{0:F1} m {1} breaker at {2:F1} m/s slams the {3} with {4:F0} kPa", breakerMetres,

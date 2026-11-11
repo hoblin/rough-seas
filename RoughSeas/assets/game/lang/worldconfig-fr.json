@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Fatigue du rameur",
     "worldattribute-rowerFatigue-desc": "Ramer, pagayer et avancer à la perche vous donne faim. Désactivé, cela ne coûte aucune satiété ; une embarcation ne va toujours qu'aussi vite que vous la faites avancer.",
     "worldattribute-poleDepth": "Profondeur de la perche",
-    "worldattribute-poleDepth-desc": "Une perche ne pousse que là où elle touche le fond. Désactivé, elle pousse dans une eau de toute profondeur comme à pleine poussée."
+    "worldattribute-poleDepth-desc": "Une perche ne pousse que là où elle touche le fond. Désactivé, elle pousse dans une eau de toute profondeur comme à pleine poussée.",
+    "worldattribute-swimmerBreakers": "Déferlantes sur les nageurs",
+    "worldattribute-swimmerBreakers-desc": "Une vague qui déferle sur vous pendant que vous nagez vous enfonce et vous emporte, et son eau écumante vous porte moins. Désactivé, aucune vague ne déferle sur un nageur ; vous flottez toujours sur les vagues et respirez à leur rythme."
 }

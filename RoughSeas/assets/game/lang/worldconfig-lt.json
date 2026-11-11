@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Irkluotojo nuovargis",
     "worldattribute-rowerFatigue-desc": "Nuo irklavimo, irklavimo vienmenčiu irklu ir stūmimosi kartimi išalkstate. Išjungus tai neeikvoja sotumo; laivas vis tiek plaukia tik taip greitai, kaip jį varote.",
     "worldattribute-poleDepth": "Karties gylis",
-    "worldattribute-poleDepth-desc": "Kartis stumia tik ten, kur pasiekia dugną. Išjungus ji stumia bet kokio gylio vandenyje kaip visu mostu."
+    "worldattribute-poleDepth-desc": "Kartis stumia tik ten, kur pasiekia dugną. Išjungus ji stumia bet kokio gylio vandenyje kaip visu mostu.",
+    "worldattribute-swimmerBreakers": "Mūša ant plaukikų",
+    "worldattribute-swimmerBreakers-desc": "Banga, lūžtanti ant jūsų, kai plaukiate, panardina jus ir neša kartu, o jos putotas vanduo mažiau jus laiko. Išjungus jokia banga nelūžta ant plaukiko; jūs vis tiek plūduriuojate ant bangų ir kvėpuojate jų ritmu."
 }

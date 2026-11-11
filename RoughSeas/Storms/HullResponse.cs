@@ -1,5 +1,6 @@
 using System;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -29,7 +30,7 @@ public sealed class HullResponse(double heavePeriodSeconds, double rollPeriodSec
     public static HullResponse Of(double lengthMetres, double beamMetres, double draftMetres, double depthMetres, ResponseConfig config)
     {
         double kgPerMetre = SeawaterKgPerCubicMetre * Math.PI * lengthMetres * beamMetres / 4;
-        double added = HeaveAddedMass.OfPlate(lengthMetres / 2, beamMetres / 2);
+        double added = AddedMass.OfPlate(lengthMetres / 2, beamMetres / 2, SeawaterKgPerCubicMetre);
         return new(HeavePeriod(kgPerMetre * draftMetres, added, kgPerMetre), RollPeriod(lengthMetres, beamMetres, draftMetres, depthMetres), config);
     }
 

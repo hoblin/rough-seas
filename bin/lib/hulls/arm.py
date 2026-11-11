@@ -1,5 +1,7 @@
+import json
 import math
 from functools import cached_property
+from pathlib import Path
 
 import units
 
@@ -26,7 +28,7 @@ LIMIT = 100
 SWIVEL_STEP = 5
 # How far the elbow swings round the shoulder-hand line from one key to the next, 0.09 s later: about 340°/s.
 SWING_PER_KEY = 30
-BODY = 75
+BODY = json.loads((Path(__file__).resolve().parents[3] / "RoughSeas/assets/roughseas/config/person.json").read_text())["body"]["massKg"]
 GRAVITY = 9.81
 # Share of the body's mass and the centre of mass from the proximal joint: de Leva 1996, J Biomech 29(9).
 UPPER = (0.0271, 0.577)

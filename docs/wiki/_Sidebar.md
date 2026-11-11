@@ -5,6 +5,7 @@
 - [Vessels](Vessels)
 - [Recipes](Recipes)
 - [Paddles, poles and oars](Paddles-Poles-and-Oars)
+- [Swimming](Swimming)
 
 **The sea**
 - [Wind and waves](Wind-and-Waves)

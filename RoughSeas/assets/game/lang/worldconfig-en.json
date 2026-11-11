@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Rower fatigue",
     "worldattribute-rowerFatigue-desc": "Rowing, paddling and poling make you hungry. Off, they cost no satiety; a vessel still goes only as fast as you row it.",
     "worldattribute-poleDepth": "Pole's depth",
-    "worldattribute-poleDepth-desc": "A pole pushes only where it reaches the bottom. Off, it pushes in water of any depth as at its full stroke."
+    "worldattribute-poleDepth-desc": "A pole pushes only where it reaches the bottom. Off, it pushes in water of any depth as at its full stroke.",
+    "worldattribute-swimmerBreakers": "Breakers on swimmers",
+    "worldattribute-swimmerBreakers-desc": "A wave that breaks over you while you swim pushes you under and along with it, and its foaming water holds you up less. Off, no wave breaks over a swimmer; you still float on the waves and breathe by them."
 }

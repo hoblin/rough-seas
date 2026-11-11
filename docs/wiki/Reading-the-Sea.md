@@ -10,7 +10,7 @@ Rough Seas keeps the sea twice, for two different jobs.
 
 So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms on the server: the sea state. A hull's pose on the screen, and the water that sways it to and fro: the drawn sea. Nothing on the server should wait for a crest a client reports.
 
-Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a player's breath: under a crest a swimmer has no air, in a trough the head is clear. It does so for a vessel nobody steers too, so the waves carry it as they carry one a client steers.
+Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a swimmer: under a crest a swimmer has no air, in a trough the head is clear, and the server reads whether a player is in the water by the same surface the client floats them on. It does so for a vessel nobody steers too, so the waves carry it as they carry one a client steers.
 
 ## Reaching us
 
@@ -71,7 +71,7 @@ The wind is the background wind of the region and season, plus every storm that 
 
 Three things to keep in mind when you use the numbers:
 
-- **A height is the sea, not a wave.** Single waves scatter around `WaveHeight`: most lower, one in a hundred half again as high ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A mod that throws waves at something draws them the same way, one per `WavePeriod`.
+- **A height is the sea, not a wave.** Single waves scatter around `WaveHeight`: most lower, one in a hundred half again as high ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A mod that throws waves at something draws them the same way, one per `WavePeriod`. Ours do it with `RoughSeas.Storms.PassingWaves`, for vessels and swimmers alike: a wave a dominant period of the world's clock, its height from the Rayleigh spread of `WaveHere`, breaking for certain in surf and otherwise by the wind's whitecap share.
 - **The wind is in m/s here.** Vanilla's `GetWindSpeedAt` gives the same wind on its own scale, 1.0 for 25 m/s ([Reading the weather](Reading-the-Weather)).
 - **The state doesn't know about danger.** Wind, waves and currents run whatever the world settings. A mod that harms something by them reads the setting for that harm first, as ours do: `api.World.Config.GetBool("hullDamage", true)`, with the codes on [World settings](World-Settings#the-mechanics).
 
@@ -126,9 +126,8 @@ A watch's `Lap()` gives the time since its last lap, a `Lap`:
 | --- | --- |
 | `Hours` | the game hours since the last lap: none at the first lap, nor when the calendar was set back |
 | `Seconds` | the same time in seconds at vanilla's pace |
-| `LivedSeconds` | the part of it the world's ticks ran through, in seconds at vanilla's pace; the rest the calendar was moved on, as by `/time add` |
 
-A mechanic keeps a watch of its own and laps it each time it acts, on its tick or a timer. What builds up takes the whole lap, as vanilla's food rots through a `/time add`. What happens now and then takes the events of the lived seconds alone: nothing happened in the hours the calendar skipped. A net that fills while it soaks, and is washed by every wave that reaches it:
+A mechanic keeps a watch of its own and laps it each time it acts, on its tick or a timer, and takes the whole lap, as vanilla's food rots through a `/time add`: what builds up and what happens now and then alike. A net that fills while it soaks, and is washed by every wave that reaches it:
 
 ```csharp
 watch ??= sea.Clock.StartWatch();
@@ -136,7 +135,7 @@ var lap = watch.Lap();
 fish += FishPerHour * lap.Hours;
 
 var state = sea.At(pos.X, pos.Z);
-sinceWave += lap.LivedSeconds;
+sinceWave += lap.Seconds;
 for (; state.WavePeriod > 0 && sinceWave >= state.WavePeriod; sinceWave -= state.WavePeriod) Wash(net, state);
 ```
 
@@ -175,12 +174,16 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 | `WaveHere(x, z)` | the waves there now, a `WaveReading`: their significant height over the bed, the dominant period, where they run as the bed turns them, the depth they feel, the bed's slope, the share of them breaking, and the height of the sea coming into that breaking water |
 | `PoseOf(x, z, yaw, length, width)` | the pose of a hull there now, a `SeaPose`: on the reflection, not on the short waves a hull averages out |
 | `HullVelocityAt(x, z, lift, draft, yaw, length, beam)` | the water's horizontal velocity there now, in metres per second of `Seconds`, as the waves move it, averaged over a hull's underwater body; the reflection doesn't push it |
+| `RiseVelocityAt(x, z, below)` | the water's vertical velocity there now, in metres per second of `Seconds`, `below` metres under the drawn surface: rising ahead of a crest, sinking behind it. At the surface it is how fast the water drawn there rises, the reflection and the short waves included; deeper down it fades as under a real wave, to nothing at the bed |
+| `RiseAccelerationAt(x, z, below)` | the water's vertical acceleration there now, in metres per second squared of `Seconds`, `below` metres under the drawn surface: slowing under a crest, gathering in a trough |
 
 `PoseOf` samples the surface at the ends and sides of a hull of `length` by `width` blocks centred at `x, z`, and turns those four heights into how the hull would lie on them. So the hull's size does part of the work: a long hull on short waves has its bow and stern on different crests and barely rocks, while a small one takes every wave. Its length runs along the shape's X axis. `yaw` is its heading in radians as its renderer turns it: the entity's `Pos.Yaw` plus its shape's `rotateY`, which is in degrees, so `Pos.Yaw + rotateY * GameMath.DEG2RAD`.
 
 `HullVelocityAt` is the to and fro of the water under the waves as a hull feels it: forward, along each wave's travel, under its crest, back in its trough. The water's pressure on a hull sums over its underwater body, so the velocity is averaged over its `length` along its heading `yaw` and its `beam` across, as `PoseOf` takes them, and over its `draft` under the height `lift` it floats at, in metres over still water. A hull short against the waves takes the water's velocity; one as long as a wave, or lying along short waves, feels much less of it.
 
-Its seconds are the waves' (`Seconds`), not your tick's: they race while everyone sleeps and run faster under `/time speed`. To move a hull by it each tick, scale it by the waves' seconds in the tick first, `sea.Clock.SecondsIn(dt, world.Calendar.SpeedOfTime) / dt`, as ours do. Then one wave carries a hull as far at any speed of time.
+Its seconds are the waves' (`Seconds`), not your tick's: they race while everyone sleeps and run faster under `/time speed`. To move a hull by it each tick, scale it by the waves' seconds in the tick first, `sea.Clock.SecondsIn(dt, world.Calendar.SpeedOfTime) / dt`, as ours do. Then one wave carries a hull as far at any speed of time. `RiseVelocityAt` keeps the same seconds, and `RiseAccelerationAt` takes that rate squared.
+
+`RiseVelocityAt` and `RiseAccelerationAt` are what lifts a body in the water with the waves: ours read them for a swimmer, at the middle of the part of the body under water ([Swimming](Swimming)). The formulas are on [The science of the sea](The-Science-of-the-Sea#a-body-in-the-water).
 
 `SeaPose`:
 
@@ -213,7 +216,7 @@ A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls
 
 `Follow` returns the pose with its `Lift`, `Roll` and `Pitch` answered and its `Hold` as it was, so blend by it as before. Ours refresh the periods from the hull's draft every frame, so a laden hull answers slower than an empty one. A long gap between calls, as when a hull returns to the water, is caught up as one period at most, so the hull doesn't leap. Where the periods come from is on [The science of the hull](The-Science-of-the-Hull#riding-the-swell).
 
-`config` is the `response` block of our `config/storms.json`, reached as `StormsModSystem.Config.Response`: `heaveDamping` (0.3) and `rollDamping` (0.1), how fast a swing dies, as shares of critical damping. The water a hull drags as it heaves is `RoughSeas.Vessels.HeaveAddedMass`: `OfPlate(halfLength, halfBeam)` or `OfWaterplane(squareMetres, halfBeam)`, in kilograms; a vessel with a hull of ours gives hers as `IBuoyant.AddedKg`.
+`config` is the `response` block of our `config/storms.json`, reached as `StormsModSystem.Config.Response`: `heaveDamping` (0.3) and `rollDamping` (0.1), how fast a swing dies, as shares of critical damping. The water a hull drags as it heaves is `RoughSeas.Water.AddedMass`: `OfPlate(halfLength, halfBeam, kgPerCubicMetre)` or `OfWaterplane(squareMetres, halfBeam, kgPerCubicMetre)`, in kilograms, and `OfSpheroid(length, cubicMetres, kgPerCubicMetre)` along and across for a body wholly under water; a vessel with a hull of ours gives hers as `IBuoyant.AddedKg`.
 
 ### A ship that rides our swell
 

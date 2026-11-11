@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using RoughSeas.Person;
 using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -83,6 +84,7 @@ public class VesselsModSystem : ModSystem
         DamageConversion = api.Assets.Get<DamageConversion>(DamageAsset);
         Rapids = api.Assets.Get<Rapids>(RapidsAsset);
         Mass = api.Assets.Get<VesselMass>(MassAsset);
+        Mass.Person = api.ModLoader.GetModSystem<PersonModSystem>().Person;
         HullConfig = api.Assets.Get<HullConfig>(HullAsset);
         HullConfig.Hides = api.Assets.Get<HidesConfig>(HidesAsset);
         Drag = api.Assets.Get<DragConfig>(DragAsset);

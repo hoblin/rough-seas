@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Cansaço do remador",
     "worldattribute-rowerFatigue-desc": "Remar, pagaiar e varejar dão-te fome. Desligado, não gastam saciedade; uma embarcação continua a andar só tão depressa quanto a impulsionas.",
     "worldattribute-poleDepth": "Profundidade da vara",
-    "worldattribute-poleDepth-desc": "A vara só empurra onde chega ao fundo. Desligado, empurra em água de qualquer profundidade como num impulso completo."
+    "worldattribute-poleDepth-desc": "A vara só empurra onde chega ao fundo. Desligado, empurra em água de qualquer profundidade como num impulso completo.",
+    "worldattribute-swimmerBreakers": "Rebentação sobre nadadores",
+    "worldattribute-swimmerBreakers-desc": "Uma onda que rebenta sobre ti enquanto nadas empurra-te para o fundo e leva-te consigo, e a sua água espumosa sustenta-te menos. Desligado, nenhuma onda rebenta sobre quem nada; continuas a flutuar nas ondas e a respirar ao ritmo delas."
 }

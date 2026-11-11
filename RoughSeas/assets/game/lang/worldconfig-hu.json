@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Evezési fáradtság",
     "worldattribute-rowerFatigue-desc": "Az evezéstől, a lapátevezéstől és a rúddal tolástól megéhezel. Kikapcsolva ez nem fogyaszt jóllakottságot; a jármű továbbra is csak olyan gyorsan halad, ahogy hajtod.",
     "worldattribute-poleDepth": "Csáklyarúd mélysége",
-    "worldattribute-poleDepth-desc": "A csáklyarúd csak ott tol, ahol eléri a fenéket. Kikapcsolva bármilyen mély vízben úgy tol, mint teljes lökésnél."
+    "worldattribute-poleDepth-desc": "A csáklyarúd csak ott tol, ahol eléri a fenéket. Kikapcsolva bármilyen mély vízben úgy tol, mint teljes lökésnél.",
+    "worldattribute-swimmerBreakers": "Törőhullámok az úszókon",
+    "worldattribute-swimmerBreakers-desc": "Az a hullám, amely úszás közben rád törik, a víz alá nyom és magával visz, habzó vize pedig kevésbé tart fenn. Kikapcsolva egyetlen hullám sem törik rá az úszóra; továbbra is a hullámokon lebegsz, és a ritmusukra lélegzel."
 }

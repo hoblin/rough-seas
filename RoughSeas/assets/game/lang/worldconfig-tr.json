@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Kürekçi yorgunluğu",
     "worldattribute-rowerFatigue-desc": "Kürek çekmek, pagaylamak ve sırıkla itmek sizi acıktırır. Kapalıyken doygunluk harcanmaz; tekne yine yalnızca sizin yürüttüğünüz kadar hızlı gider.",
     "worldattribute-poleDepth": "Sırık derinliği",
-    "worldattribute-poleDepth-desc": "Sırık yalnızca dibe yetiştiği yerde iter. Kapalıyken her derinlikteki suda tam itişteki gibi iter."
+    "worldattribute-poleDepth-desc": "Sırık yalnızca dibe yetiştiği yerde iter. Kapalıyken her derinlikteki suda tam itişteki gibi iter.",
+    "worldattribute-swimmerBreakers": "Yüzücülere kırılan dalgalar",
+    "worldattribute-swimmerBreakers-desc": "Yüzerken üzerinize kırılan bir dalga sizi suyun altına iter ve beraberinde sürükler; köpüklü suyu sizi daha az taşır. Kapalıyken hiçbir dalga yüzücünün üzerine kırılmaz; yine de dalgaların üzerinde süzülür ve onların ritmiyle nefes alırsınız."
 }

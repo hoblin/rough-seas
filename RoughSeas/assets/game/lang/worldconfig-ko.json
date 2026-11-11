@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "노 젓기 피로",
     "worldattribute-rowerFatigue-desc": "노를 젓거나, 패들을 젓거나, 삿대질을 하면 배가 고파집니다. 끄면 포만감이 줄지 않습니다. 배는 여전히 직접 젓는 만큼만 빠르게 나아갑니다.",
     "worldattribute-poleDepth": "삿대 깊이",
-    "worldattribute-poleDepth-desc": "삿대는 바닥에 닿는 곳에서만 배를 밉니다. 끄면 어떤 깊이의 물에서도 끝까지 밀 때처럼 밉니다."
+    "worldattribute-poleDepth-desc": "삿대는 바닥에 닿는 곳에서만 배를 밉니다. 끄면 어떤 깊이의 물에서도 끝까지 밀 때처럼 밉니다.",
+    "worldattribute-swimmerBreakers": "헤엄치는 사람 위의 쇄파",
+    "worldattribute-swimmerBreakers-desc": "헤엄치는 동안 머리 위에서 부서지는 파도는 몸을 물속으로 밀어 넣고 함께 휩쓸어 가며, 거품 이는 물은 몸을 덜 띄웁니다. 끄면 헤엄치는 사람 위에서 부서지는 파도가 없습니다. 그래도 파도 위에 떠 있고 파도에 맞춰 숨을 쉽니다."
 }

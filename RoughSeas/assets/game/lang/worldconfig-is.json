@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Þreyta ræðara",
     "worldattribute-rowerFatigue-desc": "Þú verður svangur af því að róa, paddla og stjaka. Sé slökkt á henni kostar það enga mettun; fley fer samt aðeins jafnhratt og þú knýrð það áfram.",
     "worldattribute-poleDepth": "Dýpt stjakans",
-    "worldattribute-poleDepth-desc": "Stjaki ýtir aðeins þar sem hann nær til botns. Sé slökkt á henni ýtir hann á hvaða dýpi sem er eins og með fullu taki."
+    "worldattribute-poleDepth-desc": "Stjaki ýtir aðeins þar sem hann nær til botns. Sé slökkt á henni ýtir hann á hvaða dýpi sem er eins og með fullu taki.",
+    "worldattribute-swimmerBreakers": "Brot yfir sundmenn",
+    "worldattribute-swimmerBreakers-desc": "Alda sem brotnar yfir þig á sundi keyrir þig niður og ber þig með sér, og freyðandi sjórinn heldur þér síður uppi. Sé slökkt á henni brotnar engin alda yfir sundmann; þú flýtur samt á öldunum og andar í takt við þær."
 }

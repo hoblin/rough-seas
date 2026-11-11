@@ -120,8 +120,8 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
                 ? flotation.KgPerMetre / (VesselMass.SeawaterKgPerLitre * 1000) - floatSquareMetres
                 : 4 * Shape.HalfLengthMetres * Shape.HalfBeamMetres;
             double floatHalfLength = (outboard?.LengthMetres ?? 0) / 2;
-            double floatAdded = floatHalfLength > 0 ? HeaveAddedMass.OfPlate(floatHalfLength, floatSquareMetres / (Math.PI * floatHalfLength)) : 0;
-            return HeaveAddedMass.OfWaterplane(hullSquareMetres, Shape.HalfBeamMetres) + floatAdded;
+            double floatAdded = floatHalfLength > 0 ? AddedMass.OfPlate(floatHalfLength, floatSquareMetres / (Math.PI * floatHalfLength), VesselMass.SeawaterKgPerLitre * 1000) : 0;
+            return AddedMass.OfWaterplane(hullSquareMetres, Shape.HalfBeamMetres, VesselMass.SeawaterKgPerLitre * 1000) + floatAdded;
         }
     }
 

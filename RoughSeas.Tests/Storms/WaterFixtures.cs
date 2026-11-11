@@ -17,7 +17,7 @@ public static class WaterFixtures
 
         public bool SwellAt(double x, double z) => swell && local;
 
-        public double Seconds => 0;
+        public double Seconds { get; set; }
 
         public double HeightAt(double x, double z) => swell ? height : 0;
 
@@ -25,11 +25,17 @@ public static class WaterFixtures
 
         public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) => default;
 
+        public double RiseVelocityAt(double x, double z, double below = 0) => 0;
+
+        public double RiseAccelerationAt(double x, double z, double below = 0) => 0;
+
         public SeaPose PoseOf(double x, double z, double yaw, double length, double width) => default;
     }
 
-    public sealed class Column(int top = WaterTop, int[]? solid = null, double level = StillLevel) : IWaterColumn
+    public sealed class Column(int top = WaterTop, int[]? solid = null, double level = StillLevel, bool salt = true) : IWaterColumn
     {
+        public bool Salt(int y) => salt;
+
         public bool Water(int y) => y > SeaFloor && y <= top;
 
         public double Level(int y) => y == top ? level : 1;

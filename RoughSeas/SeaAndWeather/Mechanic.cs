@@ -18,8 +18,9 @@ public sealed class Mechanic
     public static readonly Mechanic Currents = new("oceanCurrents");
     public static readonly Mechanic RowerFatigue = new("rowerFatigue");
     public static readonly Mechanic PoleDepth = new("poleDepth");
+    public static readonly Mechanic SwimmerBreakers = new("swimmerBreakers");
 
-    public static readonly Mechanic[] All = [BilgeWater, HullDamage, Lightning, MooringStrain, Currents, RowerFatigue, PoleDepth];
+    public static readonly Mechanic[] All = [BilgeWater, HullDamage, Lightning, MooringStrain, Currents, RowerFatigue, PoleDepth, SwimmerBreakers];
 
     private Mechanic(string code) => Code = code;
 

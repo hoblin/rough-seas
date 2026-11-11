@@ -38,8 +38,8 @@
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.5375, "spanVoxels": 8.6, "voxels": 0.8},
             "depthMetres": 0.5625,
             "depthVoxels": 9,
-            "waterplaneSquareMetres": 3.2267,
-            "waterplaneSquareVoxels": 826.037,
+            "waterplaneSquareMetres": 3.2094,
+            "waterplaneSquareVoxels": 821.596,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,

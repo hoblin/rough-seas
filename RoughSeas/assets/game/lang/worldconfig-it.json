@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Fatica del rematore",
     "worldattribute-rowerFatigue-desc": "Remare, pagaiare e spingere con la pertica ti mettono fame. Se disattivata, non costano sazietà; un'imbarcazione va sempre solo veloce quanto la spingi tu.",
     "worldattribute-poleDepth": "Profondità della pertica",
-    "worldattribute-poleDepth-desc": "La pertica spinge solo dove tocca il fondo. Se disattivata, spinge in acqua di qualsiasi profondità come a piena spinta."
+    "worldattribute-poleDepth-desc": "La pertica spinge solo dove tocca il fondo. Se disattivata, spinge in acqua di qualsiasi profondità come a piena spinta.",
+    "worldattribute-swimmerBreakers": "Frangenti sui nuotatori",
+    "worldattribute-swimmerBreakers-desc": "Un'onda che ti frange addosso mentre nuoti ti spinge sott'acqua e ti trascina con sé, e la sua acqua schiumosa ti sostiene meno. Se disattivata, nessuna onda frange su chi nuota; galleggi comunque sulle onde e respiri al loro ritmo."
 }

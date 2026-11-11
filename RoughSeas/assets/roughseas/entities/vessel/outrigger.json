@@ -7,7 +7,7 @@
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}],
     "attributes": {
         "logTextures": {"inside": "inside-north", "frame": "inside-north", "float": "inside-north", "floatbark": "all", "floatrings": "east", "rings": "east", "plank": "inside-north"},
-        "swimmingOffsetY": 0.434,
+        "swimmingOffsetY": 0.433,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -46,8 +46,8 @@
             "shell": {"kind": "carved", "material": "wood-{wood}", "metres": 0.05, "spanMetres": 0.5375, "spanVoxels": 8.6, "voxels": 0.8},
             "depthMetres": 0.5625,
             "depthVoxels": 9,
-            "waterplaneSquareMetres": 4.0877,
-            "waterplaneSquareVoxels": 1046.451,
+            "waterplaneSquareMetres": 4.0704,
+            "waterplaneSquareVoxels": 1042.022,
             "repairs": [{
                 "material": {"type": "block", "code": "{log}", "stacksize": 1},
                 "restores": 0.4,

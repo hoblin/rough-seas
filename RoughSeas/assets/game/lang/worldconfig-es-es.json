@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Fatiga del remero",
     "worldattribute-rowerFatigue-desc": "Remar, palear y avanzar con pértiga te da hambre. Desactivado, no gasta saciedad; una embarcación sigue avanzando solo tan rápido como la impulsas.",
     "worldattribute-poleDepth": "Profundidad de la pértiga",
-    "worldattribute-poleDepth-desc": "La pértiga solo empuja donde alcanza el fondo. Desactivado, empuja en agua de cualquier profundidad como con su impulso completo."
+    "worldattribute-poleDepth-desc": "La pértiga solo empuja donde alcanza el fondo. Desactivado, empuja en agua de cualquier profundidad como con su impulso completo.",
+    "worldattribute-swimmerBreakers": "Rompientes sobre nadadores",
+    "worldattribute-swimmerBreakers-desc": "Una ola que rompe sobre ti mientras nadas te hunde y te arrastra consigo, y su agua espumosa te sostiene menos. Desactivado, ninguna ola rompe sobre un nadador; sigues flotando sobre las olas y respiras a su ritmo."
 }

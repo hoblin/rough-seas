@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Soutajan väsymys",
     "worldattribute-rowerFatigue-desc": "Soutaminen, melominen ja sauvominen tekevät sinut nälkäiseksi. Pois päältä ne eivät kuluta kylläisyyttä; alus kulkee silti vain niin nopeasti kuin sitä kuljetat.",
     "worldattribute-poleDepth": "Sauvoimen syvyys",
-    "worldattribute-poleDepth-desc": "Sauvoin työntää vain siellä, missä se ulottuu pohjaan. Pois päältä se työntää minkä tahansa syvyisessä vedessä kuin täydellä vedolla."
+    "worldattribute-poleDepth-desc": "Sauvoin työntää vain siellä, missä se ulottuu pohjaan. Pois päältä se työntää minkä tahansa syvyisessä vedessä kuin täydellä vedolla.",
+    "worldattribute-swimmerBreakers": "Tyrskyt uimarin yllä",
+    "worldattribute-swimmerBreakers-desc": "Aalto, joka murtuu ylitsesi uidessasi, painaa sinut pinnan alle ja kuljettaa mukanaan, ja sen vaahtoava vesi kannattelee sinua heikommin. Pois päältä mikään aalto ei murru uimarin ylitse; kellut silti aalloilla ja hengität niiden tahdissa."
 }

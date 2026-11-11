@@ -2,5 +2,5 @@ Rough Seas builds its sea, its weather and its hulls from real measurements and 
 
 | Page | What it covers |
 | --- | --- |
-| [The science of the sea](The-Science-of-the-Sea) | the world's scale, wind, waves and how they break, the surf on the shore, gales, hurricanes and squalls |
+| [The science of the sea](The-Science-of-the-Sea) | the world's scale, wind, waves and how they break, the surf on the shore, a body in the water, gales, hurricanes and squalls |
 | [The science of the hull](The-Science-of-the-Hull) | knocks and rams, what a blow, a cut and a breaker do to a hull, floating, leaks, riding the swell, and how a dugout is burnt out |

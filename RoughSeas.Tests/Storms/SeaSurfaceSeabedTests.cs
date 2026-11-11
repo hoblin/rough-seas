@@ -100,6 +100,67 @@ public class SeaSurfaceSeabedTests
         Assert.Equal(2.4, here.Arriving, 1);
     }
 
+    private static SeaSurface Surf(float depth)
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, depth);
+        surface.Seabed.EdgeFadeBlocks = 1;
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            surface.Seabed.SetBreaking(x, z, 0.6f);
+            for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.7f);
+        }
+        return surface;
+    }
+
+    private static (double X, double Z) RestUnder(SeaSurface surface, double x, double z)
+    {
+        var rest = (X: x, Z: z);
+        for (var i = 0; i < 3; i++)
+        {
+            var (shiftX, _, shiftZ) = surface.DisplacementAt(rest.X, rest.Z, 1, false);
+            rest = (x - shiftX, z - shiftZ);
+        }
+        return rest;
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(3)]
+    [InlineData(6)]
+    public void InSurfTheWaterRisesAsItsDrawnBoreDoes(int along)
+    {
+        const double step = 0.002;
+        var surface = Surf(1.5f);
+        var now = surface.Trains.Seconds;
+        var (x, z) = (MiddleX + along, MiddleZ);
+        var rest = RestUnder(surface, x, z);
+        double Rise(double at)
+        {
+            surface.Advance(at);
+            return surface.DisplacementAt(rest.X, rest.Z, 1).Y;
+        }
+
+        var rate = (Rise(now + step) - Rise(now - step)) / (2 * step);
+        surface.Advance(now);
+
+        Assert.Equal(rate, surface.RiseVelocityAt(x, z), 2);
+    }
+
+    [Fact]
+    public void TheWaterStandsStillAtTheBed()
+    {
+        var surface = Surf(1.5f);
+        for (var bx = OriginX; bx < OriginX + Size; bx++)
+        for (var bz = OriginZ; bz < OriginZ + Size; bz++) surface.Seabed!.SetCelerityDepth(bx, bz, 2.4f);
+        var (x, z) = (MiddleX, MiddleZ);
+        var column = 1.5 + surface.HeightAt(x, z);
+
+        Assert.NotEqual(0, surface.RiseVelocityAt(x, z, 0.5 * column));
+        Assert.Equal(0, surface.RiseVelocityAt(x, z, column), 9);
+    }
+
     [Fact]
     public void TheTallestWavesOfASeaAreTheOnesThatBreak()
     {

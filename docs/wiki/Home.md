@@ -15,6 +15,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Vessels](Vessels): which one for which water.
 - [Recipes](Recipes): everything the mod adds to the crafting grid.
 - [Paddles, poles and oars](Paddles-Poles-and-Oars): what drives each vessel, and how fast.
+- [Swimming](Swimming): floating on the waves, what you carry, and crests that break over you.
 
 **The sea**
 - [Wind and waves](Wind-and-Waves): the wind, the Beaufort scale, and why every wave is different.

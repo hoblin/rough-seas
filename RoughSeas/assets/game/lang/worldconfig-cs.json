@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Únava veslaře",
     "worldattribute-rowerFatigue-desc": "Při veslování, pádlování a plavbě s bidlem dostanete hlad. Když je vypnuto, nestojí to žádnou sytost; plavidlo stále pluje jen tak rychle, jak ho poháníte.",
     "worldattribute-poleDepth": "Hloubka pro bidlo",
-    "worldattribute-poleDepth-desc": "Bidlo odráží jen tam, kde dosáhne na dno. Když je vypnuto, odráží ve vodě jakékoli hloubky jako při plném záběru."
+    "worldattribute-poleDepth-desc": "Bidlo odráží jen tam, kde dosáhne na dno. Když je vypnuto, odráží ve vodě jakékoli hloubky jako při plném záběru.",
+    "worldattribute-swimmerBreakers": "Příboj na plavce",
+    "worldattribute-swimmerBreakers-desc": "Vlna, která se přes vás převalí, když plavete, vás stáhne pod vodu a nese s sebou a její zpěněná voda vás nadnáší méně. Když je vypnuto, žádná vlna se přes plavce nepřevalí; dál se houpete na vlnách a dýcháte v jejich rytmu."
 }

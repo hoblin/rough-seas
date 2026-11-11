@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Roddartrötthet",
     "worldattribute-rowerFatigue-desc": "Rodd, paddling och stakning gör dig hungrig. Av kostar de ingen mättnad; en farkost går fortfarande bara så fort som du driver den framåt.",
     "worldattribute-poleDepth": "Stakens djup",
-    "worldattribute-poleDepth-desc": "En stake skjuter bara där den når botten. Av skjuter den i vatten av alla djup som med ett fullt tag."
+    "worldattribute-poleDepth-desc": "En stake skjuter bara där den når botten. Av skjuter den i vatten av alla djup som med ett fullt tag.",
+    "worldattribute-swimmerBreakers": "Bränningar över simmare",
+    "worldattribute-swimmerBreakers-desc": "En våg som bryter över dig medan du simmar trycker ner dig och för dig med sig, och dess skummande vatten bär dig sämre. Av bryter ingen våg över en simmare; du flyter fortfarande på vågorna och andas i takt med dem."
 }

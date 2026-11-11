@@ -54,8 +54,8 @@
             "depthMetres": 1.1296,
             "depthVoxels": 18.073,
             "shell": { "material": "wood-{material}", "metres": 0.019, "spanMetres": 0.238 },
-            "waterplaneSquareMetres": 8.9816,
-            "waterplaneSquareVoxels": 2299.293,
+            "waterplaneSquareMetres": 8.973,
+            "waterplaneSquareVoxels": 2297.082,
             "sources": {
                 "parts": "A keelboat carries about two fifths of her weight as ballast to stand up to her sail; iron here",
                 "repairs": "A length of plank let in over the split and fastened to the frames: about twenty minutes (an estimate), held for the real time over sixty as a vessel's build is",

@@ -49,6 +49,19 @@ public static class WaveTheory
         return integral / Math.Sinh(number * depth);
     }
 
+    /// <summary>
+    /// A wave's vertical motion <paramref name="below"/> metres under a surface standing <paramref name="surface"/> over
+    /// still water, against the surface's own: sinh k(d + z) / sinh kd, e^(kz) in deep water, with z stretched over the
+    /// whole column up to the surface (Wheeler 1970), so the surface moves as it is drawn and the bed stands still.
+    /// </summary>
+    public static double RiseFade(double number, double depth, double below, double surface)
+    {
+        if (double.IsInfinity(depth) || number * depth > DeepEnoughKd) return Math.Exp(-number * below);
+        var column = depth + surface;
+        if (column <= 0 || below >= column) return 0;
+        return Math.Sinh(number * depth * (1 - below / column)) / Math.Sinh(number * depth);
+    }
+
     public static double Iribarren(double slope, double height, double deepLength) =>
         height > 0 && deepLength > 0 ? slope / Math.Sqrt(height / deepLength) : double.PositiveInfinity;
 
@@ -68,5 +81,12 @@ public static class WaveTheory
     {
         var ahead = ((theta - Math.PI / 2) % FullTurn + FullTurn) % FullTurn / FullTurn;
         return BoreAmplitude * (ahead < front ? 1 - 2 * ahead / front : 2 * (ahead - front) / (1 - front) - 1);
+    }
+
+    /// <summary>How fast <see cref="Bore"/> changes with the phase, d/dθ, at <paramref name="theta"/>.</summary>
+    public static double BoreSlope(double theta, double front)
+    {
+        var ahead = ((theta - Math.PI / 2) % FullTurn + FullTurn) % FullTurn / FullTurn;
+        return BoreAmplitude / FullTurn * (ahead < front ? -2 / front : 2 / (1 - front));
     }
 }

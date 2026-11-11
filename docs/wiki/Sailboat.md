@@ -18,7 +18,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | Turning | steady |
 | [Hull](Hull-Condition) | 40 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-it-floats) | 92 cm, empty or with one aboard, in oak |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | 92 cm empty, 91 cm with one aboard, in oak |
 | [Flooded](Surf-and-Swamping#swamping) | sinks; floats awash in the lighter woods |
 | [Mending](Mending) | 10 planks of its wood close a fifteenth of a stove-in place |
 | [Bilge](Bailing) | 8209 litres, 15.1 m² of open deck |

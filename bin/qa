@@ -138,6 +138,6 @@ case "${1:-help}" in
   do) shift; console "$@" ;;
   as) shift; as_player "$@" ;;
   mark) shift; echo "$(date '+%-d.%-m.%Y %H:%M:%S') $*" | tee -a "$QA_DATA/markers.log" ;;
-  log) grep -a '\[seas\]\|\[storms\]\|\[vessels\]' "$QA_DATA/Logs/server-debug.log" ;;
+  log) grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[person\]' "$QA_DATA/Logs/server-debug.log" ;;
   *) usage ;;
 esac

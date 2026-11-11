@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Mệt mỏi khi chèo",
     "worldattribute-rowerFatigue-desc": "Chèo, bơi chèo và chống sào khiến bạn đói. Khi tắt, việc này không tốn độ no; thuyền vẫn chỉ đi nhanh bằng sức bạn đẩy nó.",
     "worldattribute-poleDepth": "Độ sâu của sào",
-    "worldattribute-poleDepth-desc": "Sào chỉ đẩy được ở nơi chạm tới đáy. Khi tắt, sào đẩy được ở mọi độ sâu như một lần đẩy hết sức."
+    "worldattribute-poleDepth-desc": "Sào chỉ đẩy được ở nơi chạm tới đáy. Khi tắt, sào đẩy được ở mọi độ sâu như một lần đẩy hết sức.",
+    "worldattribute-swimmerBreakers": "Sóng đổ lên người bơi",
+    "worldattribute-swimmerBreakers-desc": "Con sóng đổ ập lên bạn khi đang bơi sẽ dìm bạn xuống và cuốn bạn theo, và nước sủi bọt của nó nâng bạn kém hơn. Khi tắt, không con sóng nào đổ lên người bơi; bạn vẫn nổi trên sóng và thở theo nhịp sóng."
 }

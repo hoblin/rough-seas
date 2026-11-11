@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Water;
 using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Vessels;
@@ -56,7 +57,7 @@ public sealed class HullDrag
         sideSquareMetres = form.LengthMetres * draft + form.FinSquareMetres;
         waves = new WaveMaking(form.LengthMetres, form.BeamMetres, draft, waterDensity);
         Kilograms = kilograms;
-        AlongKg = kilograms * (1 + SurgeAddedShare(form.LengthMetres / form.BeamMetres));
+        AlongKg = kilograms * (1 + AddedMass.SpheroidShares(form.LengthMetres / form.BeamMetres).Along);
         AcrossKg = kilograms + halfDensity * Math.PI * draft * draft * form.LengthMetres;
         TurningKgSquareMetres = AcrossKg * form.LengthMetres * form.LengthMetres / RodMoment;
         var clarke = SlenderYawDamping + BeamOnDraftYawDamping * form.BeamMetres / draft - BeamOnLengthYawDamping * form.BeamMetres / form.LengthMetres;
@@ -138,13 +139,6 @@ public sealed class HullDrag
         return halfDensity * (friction * config.FormFactor * wettedSquareMetres + form.BowDrag * form.BeamMetres * draft);
     }
 
-    public static double SurgeAddedShare(double slenderness)
-    {
-        if (slenderness <= 1.01) return 0.5;
-        var e = Math.Sqrt(1 - 1 / (slenderness * slenderness));
-        var alpha = 2 * (1 - e * e) / (e * e * e) * (0.5 * Math.Log((1 + e) / (1 - e)) - e);
-        return alpha / (2 - alpha);
-    }
 }
 
 public class DragConfig

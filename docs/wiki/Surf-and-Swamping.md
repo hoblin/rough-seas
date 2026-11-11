@@ -5,7 +5,7 @@ Out on the water, every few seconds a wave reaches your vessel. Most lift it and
 A hull sinks into the water until it pushes aside its own weight of seawater, so how deep it floats, its *draft*, comes from everything aboard:
 
 - the hull, by what it is built of: a light wood floats higher than oak, a heavy one lower;
-- each rider, with about 10 kg of gear and their armour;
+- each rider, with their hotbar's tools and weapons and their armour;
 - each basket, crate or chest, at its empty weight;
 - the water in its bilge.
 
@@ -18,9 +18,9 @@ What is left of its side above the water is its *freeboard*, and the hover text 
 | [Dugout](Dugout), oak | 47 cm | 45 cm |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 cm | 32 cm |
 | [Reed boat](Reed-Boat), fresh | 14 cm | 5 cm |
-| [Hide currach](Hide-Currach) | 58 cm | 56 cm |
+| [Hide currach](Hide-Currach) | 57 cm | 55 cm |
 | [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 58 cm | 56 cm |
-| [Sailboat](Sailboat), oak | 92 cm | 92 cm |
+| [Sailboat](Sailboat), oak | 92 cm | 91 cm |
 
 When its freeboard reaches nothing, the sea comes over its gunwale and it floods, cracked or not: a boat loaded down to the water fills in a moment. The raft and the reed boat are solid: pressed under, they lie awash and still hold their load up.
 
@@ -42,12 +42,12 @@ A litre of seawater weighs a kilogram, and a bilge holds hundreds. As it fills, 
 
 A full bilge swamps the vessel. Nobody can paddle it or sit in it, but everyone aboard can hold on to it, in the water at its side. Then bail it out, wait for a lull, or leave it and swim. Every wave comes over a swamped hull, so it stays swamped while the sea runs.
 
-A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold up outweighs what its own material keeps afloat. The water holds up the riders themselves, as a body is about as dense as seawater; it doesn't hold up the hull, the riders' gear and armour, or the containers. What each vessel holds up awash besides its own hull:
+A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold up outweighs what its own material keeps afloat. The water holds up the riders themselves, as a body is about as dense as seawater; it doesn't hold up the hull, the riders' tools and armour, or the containers. What each vessel holds up awash besides its own hull:
 
 | Vessel | Holds up awash |
 | --- | --- |
-| [Coracle](Coracle) | 14 kg: its rider's gear, and no armour |
-| [Hide currach](Hide-Currach) | 33 kg: its rower's gear and three baskets, but not a chest besides |
+| [Coracle](Coracle) | 14 kg: its rider's tools, but not plate armour |
+| [Hide currach](Hide-Currach) | 33 kg: three baskets and a chest, but not its rower in full plate |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Reed boat](Reed-Boat), fresh | 118 kg, less the water it has soaked up |

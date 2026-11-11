@@ -93,7 +93,7 @@ Running into rock or the shore strikes the hull by the speed it loses into the o
 The knock grows with everything aboard:
 
 - the vessel itself;
-- each rider, with about 10 kg of everyday gear, and armour by how much it slows its wearer: full plate adds about 25 kg;
+- each rider at 75 kg, with the tools and weapons in their hotbar and armour by how much it slows its wearer: full plate adds about 35 kg, an axe about 2 kg;
 - each basket, crate or chest at its own empty weight; what is in them doesn't count;
 - water in the bilge, by how full it is. A half-full bilge sloshes and brings only half its weight to bear, while a swamped one hits with all of it. Bail before you land.
 

@@ -15,6 +15,8 @@ public class Waves(WavesConfig config)
     public double BreakingChance(double windMps) =>
         Math.Min(1, config.WhitecapCoefficient * Math.Pow(windMps, config.WhitecapExponent));
 
+    public double DensityOf(bool salt) => salt ? config.WaterDensity : config.FreshWaterDensity;
+
     public double BreakingDepthRatio => config.BreakingDepthRatio;
 
     public double CrestRatio => config.CrestRatio;

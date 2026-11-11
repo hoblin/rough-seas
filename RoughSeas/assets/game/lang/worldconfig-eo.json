@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Laceco de remanto",
     "worldattribute-rowerFatigue-desc": "Remado, padelado kaj stangado malsatigas vin. Malŝaltite, ili kostas neniom da saturiteco; ŝipeto ankoraŭ iras nur tiel rapide, kiel vi pelas ĝin.",
     "worldattribute-poleDepth": "Profundo de stango",
-    "worldattribute-poleDepth-desc": "Stango puŝas nur kie ĝi atingas la fundon. Malŝaltite, ĝi puŝas en akvo de ajna profundo kiel per plena puŝo."
+    "worldattribute-poleDepth-desc": "Stango puŝas nur kie ĝi atingas la fundon. Malŝaltite, ĝi puŝas en akvo de ajna profundo kiel per plena puŝo.",
+    "worldattribute-swimmerBreakers": "Rompondoj super naĝantoj",
+    "worldattribute-swimmerBreakers-desc": "Ondo, kiu rompiĝas super vi dum vi naĝas, puŝas vin sub la akvon kaj kunportas vin, kaj ĝia ŝaŭma akvo malpli subtenas vin. Malŝaltite, neniu ondo rompiĝas super naĝanto; vi ankoraŭ flosas sur la ondoj kaj spiras laŭ ilia ritmo."
 }

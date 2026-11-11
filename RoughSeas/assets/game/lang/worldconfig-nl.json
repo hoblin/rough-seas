@@ -15,5 +15,7 @@
     "worldattribute-rowerFatigue": "Roeiersvermoeidheid",
     "worldattribute-rowerFatigue-desc": "Roeien, peddelen en bomen maken je hongerig. Uit kosten ze geen verzadiging; een vaartuig gaat nog steeds maar zo snel als je het voortdrijft.",
     "worldattribute-poleDepth": "Diepte van de vaarboom",
-    "worldattribute-poleDepth-desc": "Een vaarboom duwt alleen waar hij de bodem raakt. Uit duwt hij in water van elke diepte als met een volle stoot."
+    "worldattribute-poleDepth-desc": "Een vaarboom duwt alleen waar hij de bodem raakt. Uit duwt hij in water van elke diepte als met een volle stoot.",
+    "worldattribute-swimmerBreakers": "Brekers over zwemmers",
+    "worldattribute-swimmerBreakers-desc": "Een golf die over je heen breekt terwijl je zwemt, drukt je onder en voert je mee, en zijn schuimende water draagt je minder. Uit breekt geen golf over een zwemmer; je drijft nog steeds op de golven en ademt op hun ritme."
 }

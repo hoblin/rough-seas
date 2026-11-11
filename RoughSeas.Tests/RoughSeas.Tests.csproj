@@ -39,6 +39,7 @@
   <ItemGroup>
     <None Include="..\RoughSeas\assets\roughseas\config\seaweather.json" Link="seaweather.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\storms.json" Link="storms.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\person.json" Link="person.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\soundscape.json" Link="soundscape.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\shore.json" Link="shore.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\compat\extremeweather.json" Link="extremeweather.json" CopyToOutputDirectory="PreserveNewest" />

@@ -5,7 +5,7 @@
     "tags": ["inanimate", "vehicle"],
     "weight": 17.1,
     "attributes": {
-        "swimmingOffsetY": 0.286,
+        "swimmingOffsetY": 0.284,
         "shouldSwivelFromMotion": false,
         "mountAnimations": {"idle": "sitflooridle", "ready": "crudeOarReady", "forwards": "crudeOarForward", "backwards": "crudeOarBackward"},
         "rightClickPickup": true,
@@ -19,7 +19,7 @@
             "paddle": "sculling",
             "sweepMetres": 1.0423,
             "sweepVoxels": 16.676,
-            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.9, "handsAboveWaterVoxels": 14.4, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": -0.012, "z": 0}, "eyeHeight": 1.7}, "plantAheadMetres": -0.125, "plantAheadVoxels": -2, "plantAsternMetres": 0.25, "plantAsternVoxels": 4, "plantAcrossMetres": -0.5975, "plantAcrossVoxels": -9.56, "drawnPoleMetres": 3, "drawnPoleVoxels": 48, "drawnBedMetres": 1, "drawnBedVoxels": 16},
+            "pole": {"stroke": "pole", "handsAboveWaterMetres": 0.89, "handsAboveWaterVoxels": 14.24, "stance": {"animation": "roughseas-stand", "riderOffset": {"x": 0, "y": -0.012, "z": 0}, "eyeHeight": 1.7}, "plantAheadMetres": -0.125, "plantAheadVoxels": -2, "plantAsternMetres": 0.25, "plantAsternVoxels": 4, "plantAcrossMetres": -0.5975, "plantAcrossVoxels": -9.56, "drawnPoleMetres": 3, "drawnPoleVoxels": 48, "drawnBedMetres": 1, "drawnBedVoxels": 16},
             "strokes": {"pole": {"ready": "roughseas-coracle-pole-ready", "forwards": "roughseas-coracle-pole-forward", "backwards": "roughseas-coracle-pole-backward"}, "paddle": {"ready": "roughseas-coracle-paddle-ready", "forwards": "roughseas-coracle-paddle-forward", "backwards": "roughseas-coracle-paddle-backward"}},
             "sources": {
                 "pole": "Poled standing amidships: her beam bears a man standing about as stiffly as a canoe polers stand in, stiffer than the narrowest of them (bin/lib/hulls/physics.py). No source shows a coracle poled; a man stands in the middle of her, the one place that keeps her level. His hands end the shove at his hip (0.530 of a 1.756 m stature: Drillis & Contini 1966; ANSUR II, Gordon et al. 2014); his eyes at vanilla's standing 1.7 m",
@@ -34,8 +34,8 @@
             "runsRapids": true,
             "depthMetres": 0.35,
             "depthVoxels": 5.6,
-            "waterplaneSquareMetres": 1.0625,
-            "waterplaneSquareVoxels": 272.004,
+            "waterplaneSquareMetres": 1.0346,
+            "waterplaneSquareVoxels": 264.868,
             "repairs": [
                 {"material": {"type": "item", "code": "game:hide-prepared-small", "stacksize": 1}, "restores": 0.67, "saturation": 40, "seconds": 20},
                 {"material": {"type": "item", "code": "game:fat-rendered", "stacksize": 1}, "restores": 0.5, "saturation": 20, "greases": true, "seconds": 10}
