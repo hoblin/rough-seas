@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using HarmonyLib;
-using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
@@ -13,25 +12,24 @@ namespace RoughSeas.Storms;
 /// <summary>
 /// Lets a player's breath follow the drawn sea: out of air under a crest, breathing in a trough. Vanilla's
 /// <c>EntityBehaviorBreathe.Check</c> judges the eye, once a second on the server, by the block it is in; while a player
-/// is in or on the water, the server builds the sea their client draws around them (<see cref="SwellAround"/>) and judges the
-/// eye against it (<see cref="DrawnBreath"/>). Vanilla's oxygen numbers stand. Players out of the water or aboard a
+/// is in or on the water, the server judges the eye (<see cref="DrawnBreath"/>) against the sea drawn over their region
+/// (<see cref="RegionSwells"/>), the one their client draws and everything else the server decides at sea reads. Vanilla's oxygen numbers stand. Players out of the water or aboard a
 /// vessel, suffocation in solid blocks and every other entity stay vanilla's. On the server alone.
 /// </summary>
 public static class BreathUnderSurface
 {
     private const string HarmonyId = "roughseas.storms.breath";
 
-    private static readonly Dictionary<string, SwellAround> swells = [];
     private static readonly Dictionary<string, BreathVerdict> verdicts = [];
     private static Harmony? harmony;
     private static StormsModSystem? system;
-    private static SeaWeatherSystem? sea;
+    private static RegionSwells? swells;
     private static ICoreServerAPI? sapi;
 
-    public static void Attach(StormsModSystem storms, SeaWeatherSystem seaWeather, ICoreServerAPI api)
+    public static void Attach(StormsModSystem storms, RegionSwells regionSwells, ICoreServerAPI api)
     {
         if (harmony != null) return;
-        (system, sea, sapi) = (storms, seaWeather, api);
+        (system, swells, sapi) = (storms, regionSwells, api);
         api.Event.PlayerDisconnect += Forget;
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(EntityBehaviorBreathe), nameof(EntityBehaviorBreathe.Check)),
@@ -43,22 +41,17 @@ public static class BreathUnderSurface
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
         if (sapi != null) sapi.Event.PlayerDisconnect -= Forget;
-        (system, sea, sapi) = (null, null, null);
-        swells.Clear();
+        (system, swells, sapi) = (null, null, null);
         verdicts.Clear();
     }
 
-    private static void Forget(IServerPlayer player)
-    {
-        swells.Remove(player.PlayerUID);
-        verdicts.Remove(player.PlayerUID);
-    }
+    private static void Forget(IServerPlayer player) => verdicts.Remove(player.PlayerUID);
 
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorBreathe", "Check", "gives creative and spectator players air before it looks at the eye, and leaves its answer in HasAir")]
     private static void Check(EntityBehaviorBreathe __instance)
     {
         // in a single player game the client's Check runs through here too
-        if (sapi == null || sea == null || system == null || __instance.entity is not EntityPlayer entity || entity.World.Side != EnumAppSide.Server) return;
+        if (sapi == null || swells == null || system == null || __instance.entity is not EntityPlayer entity || entity.World.Side != EnumAppSide.Server) return;
         if (sapi.World.PlayerByUid(entity.PlayerUID) is not IServerPlayer player) return;
         // vanilla gives these air before it looks at the eye
         if (player.WorldData.CurrentGameMode is EnumGameMode.Creative or EnumGameMode.Spectator) return;
@@ -75,15 +68,10 @@ public static class BreathUnderSurface
         if (pos.Dimension != Dimensions.NormalWorld || !(entity.Swimming || entity.FeetInLiquid || aboard))
         {
             verdict = BreathVerdict.Dry;
-            swells.Remove(player.PlayerUID);
         }
         else
         {
-            if (!swells.TryGetValue(player.PlayerUID, out var around))
-            {
-                swells[player.PlayerUID] = around = system.Swell(sapi);
-            }
-            around.At(sea.Map, x, z, sea.Clock.Seconds, sapi.WorldManager.RegionSize);
+            var around = swells.Around(x, z);
             swell = around.Sea.HeightAt(x, z);
             // a rider's position here is the vessel's at still water; their client lifts both onto the drawn sea
             verdict = aboard

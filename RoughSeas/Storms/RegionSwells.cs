@@ -7,7 +7,7 @@ using Vintagestory.API.Server;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// The drawn sea of each region with a vessel nobody steers or a player in or near the water, on the server. A client's surface depends on the region
+/// The drawn sea of each region with a vessel nobody steers or a player in, on or near the water, on the server. A client's surface depends on the region
 /// it is aimed from and not on the point in it, so everything in a region shares one <see cref="SwellAround"/>, aimed as
 /// often as a client aims its own. A region nothing has asked about for a while is dropped.
 /// </summary>

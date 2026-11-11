@@ -291,8 +291,8 @@ public class StormsModSystem : ModSystem
         RopeIds.Attach();
         sapi.Network.GetChannel(Channel).SetMessageHandler<MooringReport>((player, report) =>
             sapi.World.GetEntityById(report.EntityId)?.GetBehavior<EntityBehaviorMooring>()?.Reported(player, report));
-        BreathUnderSurface.Attach(this, sea, sapi);
         Swells = new RegionSwells(this, sea, sapi);
+        BreathUnderSurface.Attach(this, Swells, sapi);
         Budget.CountTicks(sapi);
         sapi.ChatCommands.Create("storms")
             .WithDescription("Rough Seas: storms acting on vessels")
