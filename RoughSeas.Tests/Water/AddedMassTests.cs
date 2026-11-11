@@ -19,7 +19,7 @@ public class AddedMassTests
     }
 
     [Fact]
-    public void ARoundPlateCarriesTwoThirdsOfLambsDiscInTheOpenWater()
+    public void ARoundPlateCarriesHalfOfLambsDiscInTheOpenWater()
     {
         Assert.Equal(4.0 / 3 * KgPerCubicMetre, AddedMass.OfPlate(1, 1, KgPerCubicMetre), 6);
     }

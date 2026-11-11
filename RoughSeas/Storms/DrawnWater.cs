@@ -35,7 +35,6 @@ public sealed class DrawnWater(IDrawnSea sea)
     internal WaterSurface? WaterAt<TColumn>(TColumn column, double x, double y, double z) where TColumn : IWaterColumn
     {
         var swell = sea.SwellAt(x, z) ? sea.HeightAt(x, z) : 0;
-        // above the block water: down as far as a crest here could reach the point, and a block more
         return TopOf(column, y, (int)Math.Floor(y - 1 - Math.Max(swell, 0))) is { } top
             ? new WaterSurface(top + column.Level(top) + swell, swell, column.Salt(top))
             : null;
@@ -59,7 +58,8 @@ public sealed class DrawnWater(IDrawnSea sea)
         return false;
     }
 
-    internal static bool Over<TColumn>(TColumn column, double y) where TColumn : IWaterColumn => TopOf(column, y, 0) is not null;
+    internal static bool Over<TColumn>(TColumn column, double y) where TColumn : IWaterColumn =>
+        column.Water((int)Math.Floor(y)) || TopOf(column, y, 0) is not null;
 
     private static int? TopOf<TColumn>(TColumn column, double y, int lowest) where TColumn : IWaterColumn
     {
@@ -71,6 +71,7 @@ public sealed class DrawnWater(IDrawnSea sea)
             return at;
         }
 
+        // above the block water: down to the lowest block a crest here could rise out of
         for (var below = at; below >= lowest; below--)
         {
             // a solid block first: a waterlogged deck keeps the sea out as a dry one does

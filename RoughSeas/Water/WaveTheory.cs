@@ -83,6 +83,7 @@ public static class WaveTheory
         return BoreAmplitude * (ahead < front ? 1 - 2 * ahead / front : 2 * (ahead - front) / (1 - front) - 1);
     }
 
+    /// <summary>How fast <see cref="Bore"/> changes with the phase, d/dθ, at <paramref name="theta"/>.</summary>
     public static double BoreSlope(double theta, double front)
     {
         var ahead = ((theta - Math.PI / 2) % FullTurn + FullTurn) % FullTurn / FullTurn;

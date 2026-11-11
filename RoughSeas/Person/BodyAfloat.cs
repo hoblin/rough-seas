@@ -12,7 +12,7 @@ namespace RoughSeas.Person;
 
 /// <summary>
 /// Floats this client's player by <see cref="FloatingBody"/>, in place of vanilla's gravity in water (a third of it while
-/// still, none while swimming) and vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
+/// still, none while the swimmer strokes) and vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
 /// water's at a float's slow speeds). On the owning client alone: vanilla simulates a player's movement there.
 /// </summary>
 public static class BodyAfloat
@@ -70,7 +70,7 @@ public static class BodyAfloat
             config.Breaking.RollerSpeedRatio * crest.Celerity, (crest.TowardRadians * 180 / Math.PI + 360) % 360);
     }
 
-    [ReliesOn("Vintagestory.API.Common.Entities.PModuleGravity", "DoApply", "is the only gravity a player in water gets, a third of it still and none while swimming")]
+    [ReliesOn("Vintagestory.API.Common.Entities.PModuleGravity", "DoApply", "is the only gravity a player in water gets, a third of it still and none while the swimmer strokes")]
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetModules", "steps gravity before motion drag, every tick on the client that moves the player")]
     private static bool Afloat(float dt, Entity entity, EntityPos pos)
     {
@@ -80,7 +80,8 @@ public static class BodyAfloat
             Leave(entity, null);
             return true;
         }
-        if (water!.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is not { } surface || surface.Height <= pos.Y)
+        if (!(entity.FeetInLiquid || entity.Swimming) || water!.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is not { } surface
+            || surface.Height <= pos.Y)
         {
             Leave(entity, "out of the water");
             return true;
@@ -112,7 +113,7 @@ public static class BodyAfloat
         return false;
     }
 
-    [ReliesOn("Vintagestory.API.Common.Entities.PModuleMotionDrag", "DoApply", "scales the whole motion by WaterDrag^(33 seconds) while the feet are in water or the body swims")]
+    [ReliesOn("Vintagestory.API.Common.Entities.PModuleMotionDrag", "DoApply", "scales the whole motion by WaterDrag^(33·seconds) while the feet are in water or the body swims")]
     private static void BeforeDrag(Entity entity, EntityPos pos, out double __state) => __state = pos.Motion.Y;
 
     // vanilla's water drag keeps the body's way across; up and down the body has had its own drag

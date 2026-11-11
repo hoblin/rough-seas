@@ -3,7 +3,7 @@ using Vintagestory.API.Common.Entities;
 namespace RoughSeas.Person;
 
 /// <summary>
-/// What a player weighs and displaces. Vessels, the swimmer and anything later (stamina, breath, cold, creatures) ask here,
+/// What a player weighs and displaces. Every system that weighs a player asks here,
 /// through <c>api.ModLoader.GetModSystem&lt;PersonModSystem&gt;().Person</c>, on both sides.
 /// </summary>
 public interface IPerson

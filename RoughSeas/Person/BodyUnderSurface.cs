@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
+using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -30,32 +31,34 @@ public static class BodyUnderSurface
     private static readonly ConcurrentDictionary<(long, EnumAppSide), (bool Drawn, bool Swimming, bool FeetIn)> decided = [];
     private static Harmony? harmony;
     private static DrawnWater? clientWater;
+    private static readonly ConcurrentDictionary<EnumAppSide, PersonModSystem> systems = [];
     private static RegionSwells? serverSwells;
-    private static PersonModSystem? system;
+    private static TickBudget? serverBudget;
 
     public static void AttachClient(PersonModSystem mod, DrawnWater? drawn)
     {
         clientWater = drawn;
-        Patch(mod);
+        Patch(mod, EnumAppSide.Client);
     }
 
-    public static void AttachServer(PersonModSystem mod, RegionSwells? swells)
+    public static void AttachServer(PersonModSystem mod, StormsModSystem storms)
     {
-        serverSwells = swells;
-        Patch(mod);
+        (serverSwells, serverBudget) = (storms.Swells, storms.Budget);
+        Patch(mod, EnumAppSide.Server);
     }
 
     public static void Detach()
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (system, clientWater, serverSwells) = (null, null, null);
+        (clientWater, serverSwells, serverBudget) = (null, null, null);
+        systems.Clear();
         decided.Clear();
     }
 
-    private static void Patch(PersonModSystem mod)
+    private static void Patch(PersonModSystem mod, EnumAppSide side)
     {
-        system = mod;
+        systems[side] = mod;
         if (harmony != null) return;
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(EntityBehaviorControlledPhysics), nameof(EntityBehaviorControlledPhysics.ApplyTests)),
@@ -64,6 +67,7 @@ public static class BodyUnderSurface
             transpiler: new HarmonyMethod(typeof(BodyUnderSurface), nameof(DrawnStroke)));
     }
 
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "HandleRemotePhysics", "runs ApplyTests on the server for each position a client sends of its player")]
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorControlledPhysics", "ApplyTests", "sets Swimming and FeetInLiquid from the fluid blocks, which the next tick's gravity, drag and stroke read")]
     private static void InWater(EntityBehaviorControlledPhysics __instance, EntityPos pos)
     {
@@ -89,7 +93,7 @@ public static class BodyUnderSurface
             if (!found && instruction.Calls(clamp))
             {
                 found = true;
-                yield return new CodeInstruction(OpCodes.Ldarg_2);
+                yield return new CodeInstruction(OpCodes.Ldarg_2).MoveLabelsFrom(instruction).MoveBlocksFrom(instruction);
                 yield return new CodeInstruction(OpCodes.Ldarg_3);
                 yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(BodyUnderSurface), nameof(DrawnClamp)));
                 continue;
@@ -104,13 +108,18 @@ public static class BodyUnderSurface
 
     private static Immersion? BodyAt(Entity entity, EntityPos pos)
     {
-        if (pos.Dimension != Dimensions.NormalWorld || entity is EntityAgent { MountedOn: not null } ||
-            !DrawnWater.Near(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z, WaterAroundBlocks)) return null;
-        var water = entity.World.Side == EnumAppSide.Client ? clientWater : serverSwells?.Around(pos.X, pos.Z).Water;
-        return water?.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is { } surface
+        if (pos.Dimension != Dimensions.NormalWorld || entity is EntityAgent { MountedOn: not null } or EntityAgent { Controls.IsFlying: true }
+            or EntityAgent { Controls.Gliding: true } || !DrawnWater.Near(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z, WaterAroundBlocks)) return null;
+        if (entity.World.Side == EnumAppSide.Client) return Under(clientWater, entity, pos);
+
+        using var _ = serverBudget?.Measure();
+        return Under(serverSwells?.Around(pos.X, pos.Z).Water, entity, pos);
+    }
+
+    private static Immersion? Under(DrawnWater? water, Entity entity, EntityPos pos) =>
+        water?.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is { } surface
             ? new Immersion(surface.Height, pos.Y, pos.Y + entity.SwimmingOffsetY)
             : null;
-    }
 
     private static void Decided(EntityPlayer player, EntityPos pos, Immersion? body)
     {
@@ -120,11 +129,11 @@ public static class BodyUnderSurface
         decided[key] = now;
         if (body is not { } immersion)
         {
-            system?.Log(player, "body at y {0:0.00}: no drawn surface over it, the blocks decide on the {1} (swimming {2}, feet in water {3})",
+            systems.GetValueOrDefault(player.World.Side)?.Log(player, "body at y {0:0.00}: no drawn surface over it, the blocks decide on the {1} (swimming {2}, feet in water {3})",
                 pos.Y, player.World.Side, player.Swimming, player.FeetInLiquid);
             return;
         }
-        system?.Log(player, "body at y {0:0.00}: chest {1} the drawn surface by {2:0.00} m, swimming {3}, feet in water {4} on the {5} (the blocks say {6}, {7})",
+        systems.GetValueOrDefault(player.World.Side)?.Log(player, "body at y {0:0.00}: chest {1} the drawn surface by {2:0.00} m, swimming {3}, feet in water {4} on the {5} (the blocks say {6}, {7})",
             pos.Y, immersion.Depth > 0 ? "under" : "above", Math.Abs(immersion.Depth), immersion.Swimming, immersion.FeetIn, player.World.Side,
             player.Swimming, player.FeetInLiquid);
     }

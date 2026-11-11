@@ -1,6 +1,7 @@
 using System;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
+using RoughSeas.Water;
 
 namespace RoughSeas.Person;
 
@@ -12,10 +13,7 @@ namespace RoughSeas.Person;
 /// </summary>
 public sealed class FloatingBody(IPerson person, PersonConfig config, Waves waves)
 {
-    private const double Gravity = 9.81;
-
     private readonly Body body = person.Body;
-    private double lungs = person.Body.BreathingLitres;
     private (double X, double Z) carried, water;
     private bool met;
     private Breaker? breaker;
@@ -30,18 +28,13 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         breaker = new Breaker(sea.Seconds, crest.HeightMetres, crest.PeriodSeconds, crest.Celerity, crest.TowardRadians);
 
     /// <summary>The body's motion after this step, in blocks per tick, as vanilla's physics keeps it.</summary>
-    /// <param name="wavesPerSecond">The waves' seconds to a second of <paramref name="seconds"/>, so one wave moves a body as far at any speed of time.</param>
+    /// <param name="wavesPerSecond">The waves' seconds to a second of <paramref name="seconds"/>: the water's motion, read on the waves' clock, is taken on the tick's, while the body answers in the tick's own seconds.</param>
     /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept)
     {
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
-        if (at.Feet + at.EyeHeight > surface.Height)
-        {
-            // breathing at the surface; under it the breath is held as it was
-            lungs += (body.BreathingLitres - lungs) * (1 - Math.Exp(-seconds / config.Body.BreathSeconds));
-        }
-        var air = body.Squeezed(lungs, surface.Height - (at.Feet + body.ChestMetres), density, Gravity);
+        var air = body.Squeezed(body.BreathingLitres, surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
         var under = body.LitresUnder(waterline, air);
         var whole = body.Litres(air);
         var massKg = body.MassKg + kit.Kg;
@@ -69,7 +62,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var held = (under + kit.Litres * under / whole) * (1 - churn * churned);
 
         var middle = Math.Max(0, surface.Height - (at.Feet + Math.Min(waterline, body.HeightMetres) / 2));
-        var lift = Body.Lift(held, density, massKg, addedKg, Gravity, sea.RiseAccelerationAt(at.X, at.Z, middle) * wavesPerSecond * wavesPerSecond);
+        var lift = Body.Lift(held, density, massKg, addedKg, WaveTheory.Gravity, sea.RiseAccelerationAt(at.X, at.Z, middle) * wavesPerSecond * wavesPerSecond);
         var rise = sea.RiseVelocityAt(at.X, at.Z, middle) * wavesPerSecond;
         var heave = Body.Dragged(motion.Y * WaterDrag.TicksPerSecond - rise, density, config.Body.DragAreaAlong, inertia, seconds) + rise + lift * seconds;
 

@@ -45,7 +45,7 @@ public class PersonModSystem : ModSystem
     public override void StartServerSide(ICoreServerAPI sapi)
     {
         var storms = sapi.ModLoader.GetModSystem<StormsModSystem>();
-        BodyUnderSurface.AttachServer(this, storms.Swells);
+        BodyUnderSurface.AttachServer(this, storms);
         new SwimmerBreakers(this, storms, sapi.ModLoader.GetModSystem<SeaWeatherSystem>(), sapi, sapi.Network.GetChannel(Channel)).Start();
     }
 

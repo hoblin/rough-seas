@@ -18,7 +18,6 @@
         "fatDensity": 0.9,
         "leanDensity": 1.1,
         "tidalLitres": 0.5,
-        "breathSeconds": 2,
         "atmospherePascals": 101325,
         "dragAreaAlong": 0.25,
         "dragAreaAcross": 0.45,
@@ -31,7 +30,6 @@
             "segments": "Segment mass shares (de Leva 1996, J Biomech 29(9):1223-1230, Table 4); segment densities in kg/L (Dempster 1955, WADC TR 55-159, Tables 16-17, with the trunk's 1.03 for the chest's tissue since its air is counted apart); landmarks as shares of stature (Drillis & Contini 1966, NYU TR 1166.03; Contini 1972, Artificial Limbs 16(1), Fig. 7): ankle 0.039, knee 0.285, hip 0.530, chest 0.720, shoulder 0.818, chin 0.870. The arms, held at the chest while treading, stand in the chest's slab; the neck takes 0.16 of the head and neck by volume, measured in 46 women, no man's measure having been reached (737 of 4631 cm3; Young et al. 1983, FAA-AM-83-16, Tables 1-2)",
             "fatDensity": "Fat tissue at 0.900 and lean tissue at 1.100 kg/L, the two-compartment model behind hydrostatic weighing (Siri 1961, in Brozek & Henschel (eds.), Techniques for Measuring Body Composition, pp. 223-244)",
             "tidalLitres": "A quiet breath moves about 500 mL in an adult man (Hallett, Toro & Ashurst, Physiology, Tidal Volume, StatPearls NBK482502)",
-            "breathSeconds": "Quiet breathing runs 12 to 20 breaths a minute, 3 to 5 s a breath; the lungs settle to their mean within about half a breath",
             "atmospherePascals": "The standard atmosphere, 101325 Pa (10th CGPM, 1954): air held in the lungs shrinks under the water's pressure by Boyle's law",
             "dragAreaAlong": "A body moving along its length unstreamlined: head-down skydivers fall at 240-290 km/h (FAI), so at 80 kg Cd A = 2 m g / (rho_air v^2) is about 0.2-0.3 m2; no measure of a body moving up and down in water was found, and a towed streamlined glide drags only 0.041 m2 (Cortesi et al. 2020, Int J Environ Res Public Health 17(6):2002)",
             "dragAreaAcross": "A body moving broadside, the water carrying it across: belly-down skydivers fall at about 200 km/h (FAI), so at 80 kg Cd A is about 0.42-0.46 m2. Taken by the share of the body under water"

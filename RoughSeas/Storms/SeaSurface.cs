@@ -81,9 +81,9 @@ public sealed class SeaSurface
     }
 
     /// <summary>
-    /// The water's vertical velocity, in metres a second of the waves' clock, <paramref name="below"/> metres under the
-    /// drawn surface: the rate of the very height <see cref="HeightAt"/> draws, bores, reflections and short waves
-    /// included, fading below it as <see cref="WaveTheory.RiseFade"/> says.
+    /// The vertical velocity of the water drawn here, in metres a second of the waves' clock, <paramref name="below"/>
+    /// metres under the drawn surface: the rate at which the drawn surface over that water rises, bores, reflections and
+    /// short waves included, fading below it as <see cref="WaveTheory.RiseFade"/> says.
     /// </summary>
     public double RiseVelocityAt(double x, double z, double below = 0, double share = 1) => Rising(x, z, below, share, 1);
 
@@ -190,7 +190,7 @@ public sealed class SeaSurface
         var waterEnergy = 0.0;
         for (var slot = 0; slot < slots; slot++) waterEnergy += heights[slot] * heights[slot];
         var boreHeight = share * WaveTheory.SignificantHeight(waterEnergy);
-        var bed = motion.Moving && share > 0 && Seabed is { } bedField && bedField.Covers(x, z) ? bedField.DepthAt(x, z) : double.PositiveInfinity;
+        var bed = motion.Moving && share > 0 && Seabed is { } bedField && bedField.Covers(x, z) ? bedField.CelerityDepthAt(x, z) : double.PositiveInfinity;
         for (var slot = 0; slot < slots; slot++)
         {
             if (heights[slot] <= 0) continue;

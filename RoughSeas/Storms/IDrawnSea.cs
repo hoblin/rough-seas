@@ -36,7 +36,7 @@ public interface IDrawnSea
     /// <summary>The water's vertical velocity at a position now, in metres per second of <see cref="Seconds"/>, <paramref name="below"/> metres under the drawn surface: rising ahead of a crest, sinking behind it.</summary>
     double RiseVelocityAt(double x, double z, double below = 0);
 
-    /// <summary>The water's vertical acceleration at a position now, in metres per second squared of <see cref="Seconds"/>, <paramref name="below"/> metres under the drawn surface: slowing under a crest, gathering in a trough.</summary>
+    /// <summary>The water's vertical acceleration at a position now, in metres per second squared of <see cref="Seconds"/>, <paramref name="below"/> metres under the drawn surface: downward under a crest, upward in a trough.</summary>
     double RiseAccelerationAt(double x, double z, double below = 0);
 
     /// <summary>The pose of a hull of <paramref name="length"/> by <paramref name="width"/> blocks centred at a position, sampled at its ends and sides.</summary>

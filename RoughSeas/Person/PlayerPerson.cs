@@ -25,9 +25,9 @@ public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>
         var kit = kits.GetOrAdd(player.PlayerUID, _ => new Kit());
         kit.Watch(player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName),
             player.InventoryManager.GetOwnInventory(GlobalConstants.hotBarInvClassName));
-        if (!kit.Changed) return kit.Held;
+        if (!kit.Reweigh()) return kit.Held;
 
-        kit.Hold(Weigh(kit.Worn.Select(WalkSpeedPenalty), kit.Hotbar.Select(slot => slot.Itemstack?.Collectible.GetTool(slot))));
+        kit.Held = Weigh(kit.Worn.Select(WalkSpeedPenalty), kit.Hotbar.Select(slot => slot.Itemstack?.Collectible.GetTool(slot)));
         log?.Invoke($"{player.PlayerName} carries {kit.Held.Kg:F1} kg, displacing {kit.Held.Litres:F2} L");
         return kit.Held;
     }
@@ -50,9 +50,7 @@ public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>
         private IInventory? worn, hotbar;
         private volatile bool changed = true;
 
-        public Carried Held { get; private set; }
-
-        public bool Changed => changed;
+        public Carried Held { get; set; }
 
         public IEnumerable<ItemSlot> Worn => worn ?? Enumerable.Empty<ItemSlot>();
 
@@ -64,10 +62,11 @@ public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>
             if (hotbarNow != hotbar) Listen(hotbar = hotbarNow);
         }
 
-        public void Hold(Carried carried)
+        public bool Reweigh()
         {
+            if (!changed) return false;
             changed = false;
-            Held = carried;
+            return true;
         }
 
         private void Listen(IInventory? inventory)

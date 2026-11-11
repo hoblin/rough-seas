@@ -20,7 +20,6 @@ public class BodyConfig
     public double FatDensity;
     public double LeanDensity;
     public double TidalLitres;
-    public double BreathSeconds;
     public double AtmospherePascals;
     public double DragAreaAlong;
     public double DragAreaAcross;

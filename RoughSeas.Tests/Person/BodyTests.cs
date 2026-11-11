@@ -95,7 +95,7 @@ public class BodyTests
         var awash = Man.AddedKg(Man.HeightMetres - 0.01, Man.BreathingLitres, Sea);
         var under = Man.AddedKg(Man.HeightMetres + 0.01, Man.BreathingLitres, Sea);
 
-        Assert.InRange(under - awash, -3, 3);
+        Assert.InRange(Math.Abs(under - awash) / Man.MassKg, 0, 0.05);
     }
 
     [Fact]

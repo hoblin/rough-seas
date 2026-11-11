@@ -61,8 +61,8 @@ public sealed class Body
     }
 
     /// <summary>
-    /// Air the lungs hold at the surface's pressure, by Boyle's law, with the chest <paramref name="chestDepth"/> metres
-    /// under a surface of water of <paramref name="waterDensity"/>: the water's pressure squeezes it.
+    /// The volume <paramref name="lungLitres"/> of air, held at the surface's pressure, shrinks to with the chest
+    /// <paramref name="chestDepth"/> metres under water of <paramref name="waterDensity"/>, by Boyle's law.
     /// </summary>
     public double Squeezed(double lungLitres, double chestDepth, double waterDensity, double gravity) =>
         lungLitres * config.AtmospherePascals / (config.AtmospherePascals + waterDensity * gravity * Math.Max(0, chestDepth));

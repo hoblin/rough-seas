@@ -32,14 +32,20 @@ public static class AddedMass
     {
         var major = lengthMetres / 2;
         var minor = Math.Sqrt(3 * cubicMetres / (4 * Math.PI * major));
+        var (along, across) = SpheroidShares(major / minor);
         var displaced = kgPerCubicMetre * cubicMetres;
-        if (minor >= major) return (displaced / 2, displaced / 2);
+        return (along * displaced, across * displaced);
+    }
 
-        var e = Math.Sqrt(1 - minor * minor / (major * major));
+    /// <summary>The shares of its displaced water a prolate spheroid this many times as long as it is wide carries along its length and across it.</summary>
+    public static (double Along, double Across) SpheroidShares(double slenderness)
+    {
+        if (slenderness <= 1.01) return (0.5, 0.5);
+        var e = Math.Sqrt(1 - 1 / (slenderness * slenderness));
         var log = Math.Log((1 + e) / (1 - e));
         var along = 2 * (1 - e * e) / (e * e * e) * (log / 2 - e);
         var across = 1 / (e * e) - (1 - e * e) / (2 * e * e * e) * log;
-        return (along / (2 - along) * displaced, across / (2 - across) * displaced);
+        return (along / (2 - along), across / (2 - across));
     }
 
     /// <summary>Legendre's complete elliptic integral of the second kind, by the arithmetic-geometric mean.</summary>

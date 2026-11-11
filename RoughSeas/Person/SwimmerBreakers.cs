@@ -43,14 +43,13 @@ public sealed class SwimmerBreakers(PersonModSystem mod, StormsModSystem storms,
             var windMps = sea.At(pos.X, pos.Z).WindSpeed;
             foreach (var wave in passing.Over(here, windMps, entity.World.Rand))
             {
-                var cause = wave.Surf ? "surf" : wave.Breaks ? "whitecap" : "swell";
                 if (!wave.Breaks)
                 {
                     mod.Log(entity, "server: a {0:F1} m wave in a {1:F1} m sea passes the swimmer unbroken", wave.Height, here.Height);
                     continue;
                 }
                 mod.Log(entity, "server: a {0:F1} m {1} crest in a {2:F1} m sea breaks over the swimmer ({3:F1} m of water), at {4:F1} m/s toward {5:F0}°",
-                    wave.Height, cause, here.Height, here.Depth, wave.Celerity, (here.TowardRadians * 180 / Math.PI + 360) % 360);
+                    wave.Height, wave.Surf ? "surf" : "whitecap", here.Height, here.Depth, wave.Celerity, (here.TowardRadians * 180 / Math.PI + 360) % 360);
                 channel.SendPacket(new BreakerPacket { HeightMetres = wave.Height, PeriodSeconds = here.Period, Celerity = wave.Celerity, TowardRadians = here.TowardRadians }, swimmer);
             }
         }

@@ -20,7 +20,7 @@ Once your chest is about 6 m down, the water squeezes the air in your lungs so f
 
 A crest can break over you, as one breaks on a vessel: as often, by the same [wind](Wind-and-Waves). Its water is full of air and holds you up less, so you go under, and its roller pushes you along with the wave. The air clears within a wave or so and you come back up. The next crest can break before you do.
 
-In [surf](Surf-and-Swamping#breakers) the tallest waves break, and close to the beach nearly all of them. That is where swimmers get into real trouble.
+In [surf](Surf-and-Swamping#breakers) the tallest waves break, and close to the beach nearly all of them.
 
 Holding jump is strong enough to swim straight out of a breaker for now. Stamina, planned for [The living sea](Roadmap#the-living-sea), will make that effort cost.
 
