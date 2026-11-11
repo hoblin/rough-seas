@@ -22,7 +22,6 @@ public class BodyConfig
     public double TidalLitres;
     public double BreathSeconds;
     public double AtmospherePascals;
-    public double AddedMassPerRadiusCubed;
     public double DragAreaAlong;
     public double DragAreaAcross;
 }

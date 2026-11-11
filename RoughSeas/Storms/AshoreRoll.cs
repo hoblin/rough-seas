@@ -6,6 +6,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -89,7 +90,7 @@ public sealed class AshoreRoll
         var accessor = vessel.World.BlockAccessor;
         if (accessor.GetChunkAtBlockPos(probe) == null) return !sea.IsSea(probe.X, probe.Z);
 
-        return !accessor.GetBlock(probe, BlockLayersAccess.Fluid).IsLiquid() && accessor.GetBlock(probe).SideSolid.Any;
+        return !OpenWater.At(accessor, probe).IsLiquid() && accessor.GetBlock(probe).SideSolid.Any;
     }
 
     private static IEnumerable<(int X, int Z)> Ring(int radius, int stride)

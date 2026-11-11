@@ -8,9 +8,9 @@
     ],
     "description": "Makes the ocean dangerous and worth going out on.",
     "website": "https://github.com/hoblin/rough-seas",
-    "version": "4.0.0-rc.2",
+    "version": "4.3.0",
     "dependencies": {
-        "game": "1.22.7"
+        "game": "1.22.0"
     },
     "custom": {
         "license": "MIT"

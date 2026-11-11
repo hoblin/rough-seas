@@ -3,7 +3,7 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Shipyard;
 
-/// <summary>What takes a piece of a vessel's build from the hand, held on it for as long as the work takes: a vessel being built, or laths laid out to bind into one.</summary>
+/// <summary>What takes a piece of a vessel's build from the hand, held on it for as long as the work takes: a vessel being built or mended, or a pile of laths to bind into one.</summary>
 public interface IWorkedHull
 {
     /// <summary>The held item's work on her, or null when it does none.</summary>

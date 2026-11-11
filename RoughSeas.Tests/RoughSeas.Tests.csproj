@@ -15,6 +15,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RoughSeas\RoughSeas.csproj" />
+    <ProjectReference Include="..\GameCompat\GameCompat.csproj" />
+    <Reference Include="0Harmony">
+      <HintPath>$(VINTAGE_STORY)/Lib/0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="VintagestoryAPI">
       <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
     </Reference>
@@ -37,6 +41,7 @@
     <None Include="..\RoughSeas\assets\roughseas\config\storms.json" Link="storms.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\person.json" Link="person.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\soundscape.json" Link="soundscape.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\shore.json" Link="shore.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\compat\extremeweather.json" Link="extremeweather.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\windpatterns\*.json" LinkBase="windpatterns" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\materials.json" Link="materials.json" CopyToOutputDirectory="PreserveNewest" />
@@ -50,12 +55,15 @@
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\woodrecipes.json" Link="woodrecipes.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\vessels-vanilla-boats.json" Link="vessels-vanilla-boats.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\storms-vessels.json" Link="storms-vessels.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\patches\boats-drift.json" Link="boats-drift.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\player-*.json" LinkBase="patches" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\entities\vessel\*.json" LinkBase="vessel" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\shapes\entity\vessel\*.json" LinkBase="shapes" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\shapes\block\reedbundle-*.json" LinkBase="shapes/block" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\shapes\block\pile\lathpile-*.json" LinkBase="shapes/block/pile" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\itemtypes\vessel\*.json" LinkBase="items" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\itemtypes\tool\*.json" LinkBase="tools" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\itemtypes\resource\*.json" LinkBase="resources" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\blocktypes\*.json" LinkBase="blocks" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\textures\entity\vessel\damage\*.png" LinkBase="damage" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\textures\entity\vessel\reed-*.png" LinkBase="textures" CopyToOutputDirectory="PreserveNewest" />

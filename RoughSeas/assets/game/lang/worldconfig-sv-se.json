@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Grov sjö",
     "playstyle-desc-preset-roughseas": "Standardöverlevnad i en värld med öppna hav, där vind, stormar och havet är farliga.",
     "worldconfig-category-roughseas": "Grov sjö",
-    "worldattribute-dangerousOceans": "Farliga hav",
-    "worldattribute-dangerousOceans-desc": "Stormar, bränningar och blixtar kan vattenfylla, kantra och slå sönder farkoster och slita dem loss från förtöjningar och ankare. Avstängt behåller havet sitt väder men gör ingen skada."
+    "worldattribute-bilgeWater": "Länsvatten",
+    "worldattribute-bilgeWater-desc": "Vågor bryter in över relingen och regn faller i en öppen farkost och fyller den med länsvatten tills du öser den läns. Av tillför varken vågor eller regn vatten; en läcka gör det fortfarande, och en översköljd eller sjunken farkost fylls fortfarande.",
+    "worldattribute-hullDamage": "Skrovskador",
+    "worldattribute-hullDamage-desc": "Stenar, stranden, påseglingar, forsar, bränningar och vädret får ett skrov att spricka, och en spricka läcker. Hud ruttnar, oinfettade sömmar läcker och vass suger upp vatten. Av tar inget skrov skada, och varje skrov blir helt igen; en stöt hörs fortfarande, och vapen och explosioner skadar fortfarande ett skrov.",
+    "worldattribute-stormLightning": "Blixtar",
+    "worldattribute-stormLightning-desc": "Stormar slår ner blixtar nära dig, och en mast drar till sig dem. Av slår stormar inte ner några egna blixtar och master drar inte till sig några; spelets egna åskväder är oförändrade.",
+    "worldattribute-mooringStrain": "Påfrestning på förtöjningar",
+    "worldattribute-mooringStrain-desc": "En förtöjning eller en ankarlina tar upp vattnets drag och rycket från varje våg: över sin hållfasthet brister linan, ankaret draggar, och en farkost som ligger förtöjd medan du är borta kan kastas upp på stranden. Av brister ingenting, draggar ingenting och kastas ingenting upp; en förtöjning håller fortfarande farkosten på sin längd.",
+    "worldattribute-oceanCurrents": "Strömmar",
+    "worldattribute-oceanCurrents-desc": "Strömmar för med sig varje farkost, styrd eller inte, och drar i dess förtöjning. Av för vattnet inte med sig någon farkost; strömmarna värmer eller kyler fortfarande havet.",
+    "worldattribute-rowerFatigue": "Roddartrötthet",
+    "worldattribute-rowerFatigue-desc": "Rodd, paddling och stakning gör dig hungrig. Av kostar de ingen mättnad; en farkost går fortfarande bara så fort som du driver den framåt.",
+    "worldattribute-poleDepth": "Stakens djup",
+    "worldattribute-poleDepth-desc": "En stake skjuter bara där den når botten. Av skjuter den i vatten av alla djup som med ett fullt tag.",
+    "worldattribute-swimmerBreakers": "Bränningar över simmare",
+    "worldattribute-swimmerBreakers-desc": "En våg som bryter över dig medan du simmar trycker ner dig och för dig med sig, och dess skummande vatten bär dig sämre. Av bryter ingen våg över en simmare; du flyter fortfarande på vågorna och andas i takt med dem."
 }

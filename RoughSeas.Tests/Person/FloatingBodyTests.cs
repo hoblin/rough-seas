@@ -40,8 +40,8 @@ public class FloatingBodyTests
 
         public FloatReading Step()
         {
+            if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
             var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, 1, Kept);
-            // vanilla's water drag across runs after, and up and down the patch undoes it
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
@@ -54,9 +54,11 @@ public class FloatingBodyTests
             for (var t = 0.0; t < seconds; t += Frame) Step();
             return Feet;
         }
+
+        public void Strike(BreakerPacket crest) => body.Struck(sea, crest);
     }
 
-    private static readonly IDrawnSea Calm = new WaterFixtures.Sea(0, swell: false);
+    private static IDrawnSea Calm => new WaterFixtures.Sea(0, swell: false);
 
     [Fact]
     public void FloatsInTheSeaWithTheWaterAtTheFace()
@@ -99,7 +101,6 @@ public class FloatingBodyTests
         run.Settle(5);
 
         Assert.True(run.Feet < at - 3, $"{at - run.Feet:F2} m in 5 s");
-        // the armour's own volume counts by the share of the body under water
         Assert.True(run.Feet < Still - 2);
     }
 
@@ -146,7 +147,6 @@ public class FloatingBodyTests
             (low, high) = (Math.Min(low, run.Feet), Math.Max(high, run.Feet));
         }
 
-        // one train of significant height H stands H / sqrt 2 trough to crest
         Assert.InRange(high - low, 0.9 * Height / Math.Sqrt(2), 1.1 * Height / Math.Sqrt(2));
     }
 
@@ -180,9 +180,8 @@ public class FloatingBodyTests
     {
         var calmly = new Run(Calm, Still - 1.6);
         var riding = calmly.Settle(120);
-        var crest = new BreakerPacket { HeightMetres = 2, PeriodSeconds = 8, Celerity = 9, TowardRadians = 0 };
 
-        calmly.Body.Struck(Calm, crest);
+        calmly.Strike(new BreakerPacket { HeightMetres = 2, PeriodSeconds = 8, Celerity = 9, TowardRadians = 0 });
         var lowest = calmly.Feet;
         var churned = 0.0;
         for (var t = 0.0; t < 3; t += Frame)
@@ -190,21 +189,23 @@ public class FloatingBodyTests
             churned = Math.Max(churned, calmly.Step().Churn);
             lowest = Math.Min(lowest, calmly.Feet);
         }
+        var back = calmly.Settle(60);
 
         Assert.True(churned > 0.05, $"{churned:P1} of its water");
         Assert.True(lowest < riding - 0.2, $"driven {riding - lowest:F2} m under");
+        Assert.False(calmly.Body.Breaking);
+        Assert.InRange(back - riding, -0.05, 0.05);
     }
 
     [Fact]
     public void ABreakersAirOnlyTakesWhatLiesInThePlume()
     {
-        // with the plume of a small crest only the top of the body is in it
         var small = new Run(Calm, Still - 1.6);
         var large = new Run(Calm, Still - 1.6);
         small.Settle(20);
         large.Settle(20);
-        small.Body.Struck(Calm, new BreakerPacket { HeightMetres = 0.5, PeriodSeconds = 8, Celerity = 5 });
-        large.Body.Struck(Calm, new BreakerPacket { HeightMetres = 4, PeriodSeconds = 8, Celerity = 9 });
+        small.Strike(new BreakerPacket { HeightMetres = 0.5, PeriodSeconds = 8, Celerity = 5 });
+        large.Strike(new BreakerPacket { HeightMetres = 4, PeriodSeconds = 8, Celerity = 9 });
 
         Assert.True(small.Step().Churn < 0.6 * large.Step().Churn);
     }
@@ -215,7 +216,7 @@ public class FloatingBodyTests
         var run = new Run(Calm, Still - 1.6);
         run.Settle(20);
         var from = run.MovedX;
-        run.Body.Struck(Calm, new BreakerPacket { HeightMetres = 3, PeriodSeconds = 8, Celerity = 9, TowardRadians = 0 });
+        run.Strike(new BreakerPacket { HeightMetres = 3, PeriodSeconds = 8, Celerity = 9, TowardRadians = 0 });
         run.Settle(3);
 
         Assert.True(run.MovedX > from + 1, $"{run.MovedX - from:F2} m");
@@ -223,18 +224,21 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void ASecondCrestRenewsTheChurn()
+    public void ASecondCrestRenewsTheChurnAsTheFirstFades()
     {
-        var sea = new WaterFixtures.Sea(0, swell: false);
-        var run = new Run(sea, Still - 1.6);
+        var run = new Run(Calm, Still - 1.6);
         run.Settle(20);
         var crest = new BreakerPacket { HeightMetres = 2, PeriodSeconds = 8, Celerity = 9 };
-        run.Body.Struck(sea, crest);
+        run.Strike(crest);
         var first = run.Step().Churn;
-        Assert.True(run.Body.Breaking);
+        run.Settle(crest.PeriodSeconds);
+        var faded = run.Step().Churn;
 
-        run.Body.Struck(sea, crest);
-        Assert.Equal(first, run.Step().Churn, 2);
+        run.Strike(crest);
+
+        var renewed = run.Step().Churn;
+        Assert.True(faded < first / 5, $"{faded:P1} of {first:P1} after a period");
+        Assert.True(renewed > 5 * faded, $"{renewed:P1} against {faded:P1} before it");
     }
 
     [Fact]

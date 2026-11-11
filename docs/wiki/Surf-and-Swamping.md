@@ -15,12 +15,12 @@ What is left of its side above the water is its *freeboard*, and the hover text 
 | --- | --- | --- |
 | [Raft](Raft), oak | 8 cm | awash |
 | [Coracle](Coracle) | 33 cm | 26 cm |
-| [Dugout](Dugout), oak | 48 cm | 45 cm |
+| [Dugout](Dugout), oak | 47 cm | 45 cm |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 cm | 32 cm |
 | [Reed boat](Reed-Boat), fresh | 14 cm | 5 cm |
-| [Hide currach](Hide-Currach) | 58 cm | 56 cm |
-| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 58 cm | 57 cm |
-| [Sailboat](Sailboat), oak | 92 cm | 92 cm |
+| [Hide currach](Hide-Currach) | 57 cm | 55 cm |
+| [Outrigger canoe](Outrigger-Canoe), oak, with washstrakes | 58 cm | 56 cm |
+| [Sailboat](Sailboat), oak | 92 cm | 91 cm |
 
 When its freeboard reaches nothing, the sea comes over its gunwale and it floods, cracked or not: a boat loaded down to the water fills in a moment. The raft and the reed boat are solid: pressed under, they lie awash and still hold their load up.
 
@@ -42,17 +42,17 @@ A litre of seawater weighs a kilogram, and a bilge holds hundreds. As it fills, 
 
 A full bilge swamps the vessel. Nobody can paddle it or sit in it, but everyone aboard can hold on to it, in the water at its side. Then bail it out, wait for a lull, or leave it and swim. Every wave comes over a swamped hull, so it stays swamped while the sea runs.
 
-A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold up outweighs what its own material keeps afloat. The water holds up the riders themselves, as a body is about as dense as seawater; it doesn't hold up the hull, the riders' gear and armour, or the containers. What each vessel holds up awash besides its own hull:
+A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold up outweighs what its own material keeps afloat. The water holds up the riders themselves, as a body is about as dense as seawater; it doesn't hold up the hull, the riders' tools and armour, or the containers. What each vessel holds up awash besides its own hull:
 
 | Vessel | Holds up awash |
 | --- | --- |
-| [Coracle](Coracle) | 14 kg: its rider's gear, and no armour |
-| [Hide currach](Hide-Currach) | 33 kg: its rower's gear and three baskets, but not a chest besides |
+| [Coracle](Coracle) | 14 kg: its rider's tools, but not plate armour |
+| [Hide currach](Hide-Currach) | 33 kg: three baskets and a chest, but not its rower in full plate |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Reed boat](Reed-Boat), fresh | 118 kg, less the water it has soaked up |
-| [Dugout](Dugout), oak | 131 kg |
-| [Outrigger canoe](Outrigger-Canoe), oak | 254 kg |
+| [Dugout](Dugout), oak | 157 kg |
+| [Outrigger canoe](Outrigger-Canoe), oak | 283 kg |
 | [Sailboat](Sailboat), oak | nothing: it goes down |
 
 The wood counts. A sailboat carries two fifths of its weight in ballast to stand up to its sail: of oak, aged wood, birch, maple, purpleheart or ebony it goes down, while of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash. Ebony floats a dugout or an outrigger awash empty, and takes it down only loaded hard. A wood heavier than seawater sinks any hull of it, such as Wildcraft's ekki, lignum vitae, leadwood, mangrove, pink ivory and African blackwood ([Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)).
@@ -63,21 +63,21 @@ A vessel that sinks throws everyone off and lies on the bottom, seen but no use:
 
 A wave breaks when it grows too steep, and a breaking wave is the dangerous one: its crest stands higher, it throws far more water aboard and it strikes the hull like a falling wall.
 
-- **Surf.** Where the water is shallower than about 1.3 times a wave's height, the wave breaks, every time. Real waves do the same: a wave breaks once it is about four fifths as high as the water is deep, which is why the surf line runs further out the higher the sea. In rough weather the last stretch to a beach is all surf.
+- **Surf.** As the water shallows under a sea, its tallest waves start breaking, and the share of waves that break grows toward the shore. A wave breaks once it is about four fifths as high as the water is deep, which is why the surf line runs further out the higher the sea. In rough weather the last stretch to a beach is all surf. Over a bar the waves break and go on smaller, so the water behind it is safer. The waves you see break in the same water and the same share, so you can read the surf line off the sea ([The look of the sea](The-Look-of-the-Sea#what-you-see)).
 
   ![Where waves break: a big wave breaks further out than a small one, where the water is about 1.3 times its height deep](images/diagrams/surf-line.svg)
 
 - **Whitecaps.** Out in deep water, now and then a wave breaks on its own, more often as the wind rises: about one wave in 50 in a strong breeze (force 6), one in 11 in a gale (force 8), one in 4 in a storm (force 10) and three in four in a hurricane.
 - **A swamped vessel.** Once a bilge is full, every wave comes over it as a breaker would, though only a wave that truly breaks slams it.
 
-A breaker slams the side the wind comes from. How hard depends on how it breaks:
+A breaker slams the side the waves come from. How hard depends on how it breaks:
 
 - **Spilling.** Most breakers out at sea spill: the crest tumbles down its own face and rolls against the side. The higher the breaker, the harder it hits.
 - **Plunging.** The crest curls over and falls on the hull, about nine times as hard as a spilling breaker of the same height. At sea only about one breaker in fifty plunges. In the surf the beach decides: on a steep shore most waves plunge, on a gentle one they spill, and a hull further in than where a wave curls over meets only its foam.
 
 A breaker in shallow water hits softer than one of the same height out at sea.
 
-Either the planks hold, or the windward bow, side or quarter it hits is stove in. What stoves in each vessel's side, in oak:
+Either the planks hold, or the bow, side or quarter it hits is stove in. What stoves in each vessel's side, in oak:
 
 | Vessel | A spilling breaker of | A plunging breaker of |
 | --- | --- | --- |
@@ -125,4 +125,4 @@ These were measured in 2.0, in seas set to each height, before capsizing was swi
 
 A vessel at [anchor](Anchoring) ships less water, three tenths of it, but a breaker slams it as hard as any other. It still lies across the waves; turning its bow into the wind comes with sailing in [Seamanship](Roadmap#seamanship).
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves don't come aboard, strike or capsize anything.
+With [Water in the bilge](World-Settings#the-mechanics) off, waves ship no water. With [Hull damage](World-Settings#the-mechanics) off, no breaker strikes a hull.

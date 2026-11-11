@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using HarmonyLib;
@@ -20,6 +21,8 @@ public sealed class FreeCamera : IRenderer
     private const float EyeAhead = 0.2f;
 
     private static Vec3d? selfOffset;
+    private static readonly Dictionary<long, Vec3f> meshMiddles = [];
+    private static readonly Dictionary<long, Vec3d> drawnMiddles = [];
 
     private readonly ICoreClientAPI capi;
     private readonly Harmony harmony = new("agentbridge.freecamera");
@@ -34,7 +37,33 @@ public sealed class FreeCamera : IRenderer
         harmony.Patch(AccessTools.Method(typeof(EntityPlayerShapeRenderer), nameof(EntityPlayerShapeRenderer.loadModelMatrixForPlayer)),
             postfix: new HarmonyMethod(typeof(FreeCamera), nameof(PlaceSelf)));
         harmony.Patch(AccessTools.Method(typeof(EntityShapeRenderer), nameof(EntityShapeRenderer.loadModelMatrix)),
-            postfix: new HarmonyMethod(typeof(FreeCamera), nameof(PlaceMount)));
+            postfix: new HarmonyMethod(typeof(FreeCamera), nameof(PlaceMount)) { priority = Priority.Last });
+    }
+
+    /// <summary>The middle of the entity's mesh as drawn this frame, once the mesh has been measured; else its selection box's.</summary>
+    public static Vec3d Middle(Entity entity)
+    {
+        if (drawnMiddles.TryGetValue(entity.EntityId, out var drawn)) return drawn;
+
+        var box = entity.SelectionBox;
+        return entity.Pos.XYZ.AddCopy((box.X1 + box.X2) / 2, (box.Y1 + box.Y2) / 2, (box.Z1 + box.Z2) / 2);
+    }
+
+    public static void Measure(Entity entity)
+    {
+        if (entity.Properties.Client.Renderer is not EntityShapeRenderer renderer) return;
+
+        renderer.TesselateShape(mesh =>
+        {
+            var low = new Vec3f(float.MaxValue, float.MaxValue, float.MaxValue);
+            var high = new Vec3f(float.MinValue, float.MinValue, float.MinValue);
+            for (var i = 0; i < mesh.VerticesCount * 3; i += 3)
+            {
+                low.Set(Math.Min(low.X, mesh.xyz[i]), Math.Min(low.Y, mesh.xyz[i + 1]), Math.Min(low.Z, mesh.xyz[i + 2]));
+                high.Set(Math.Max(high.X, mesh.xyz[i]), Math.Max(high.Y, mesh.xyz[i + 1]), Math.Max(high.Z, mesh.xyz[i + 2]));
+            }
+            if (mesh.VerticesCount > 0) meshMiddles[entity.EntityId] = (low + high) / 2;
+        });
     }
 
     public double RenderOrder => -1;
@@ -108,10 +137,17 @@ public sealed class FreeCamera : IRenderer
         if (isSelf) Move(__instance);
     }
 
-    private static void PlaceMount(EntityShapeRenderer __instance, Entity entity)
+    private static void PlaceMount(EntityShapeRenderer __instance, Entity entity, bool isShadowPass)
     {
         var mount = __instance.entity.World.Api is ICoreClientAPI client ? client.World.Player.Entity.MountedOn?.Entity : null;
         if (mount != null && (entity == mount || (entity as EntityAgent)?.MountedOn?.Entity == mount)) Move(__instance);
+
+        if (!isShadowPass && meshMiddles.TryGetValue(entity.EntityId, out var middle))
+        {
+            var drawn = Mat4f.MulWithVec4(__instance.ModelMat, middle.X, middle.Y, middle.Z, 1);
+            var eye = ((ICoreClientAPI)entity.World.Api).World.Player.Entity.CameraPos;
+            drawnMiddles[entity.EntityId] = eye.AddCopy(drawn[0], drawn[1], drawn[2]);
+        }
     }
 
     private static void Move(EntityShapeRenderer __instance)
@@ -137,31 +173,35 @@ public sealed class Shot(long on, Station from, Station? to, double seconds, lon
 {
     private long startMs;
     private (Vec3d Pos, float Heading)? held;
+    private Vec3d lastTarget = new();
 
     public void Start(IWorldAccessor world, long nowMs)
     {
         var subject = world.GetEntityById(on) ?? throw new FileNotFoundException($"No entity {on} near the player");
-        if (look is { } watched && world.GetEntityById(watched) == null) throw new FileNotFoundException($"No entity {watched} near the player");
+        var watched = world.GetEntityById(look ?? on) ?? throw new FileNotFoundException($"No entity {look ?? on} near the player");
 
         startMs = nowMs;
         held = hold ? (subject.Pos.XYZ, Heading(subject)) : null;
+        lastTarget = FreeCamera.Middle(watched);
+        FreeCamera.Measure(watched);
     }
 
     public (Vec3d Eye, Vec3d Target)? Frame(IWorldAccessor world, long nowMs)
     {
         var subject = world.GetEntityById(on);
         var watched = world.GetEntityById(look ?? on);
-        if (subject == null || watched == null) return null;
+        if (held == null && (subject == null || watched == null)) return null;
 
         var progress = Progress(nowMs);
         var station = to == null ? from : new Station(
             GameMath.Lerp(from.Bearing, to.Bearing, progress),
             GameMath.Lerp(from.Distance, to.Distance, progress),
             GameMath.Lerp(from.Height, to.Height, progress));
-        var origin = held?.Pos ?? subject.Pos.XYZ;
-        var angle = (held?.Heading ?? Heading(subject)) - station.Bearing * GameMath.DEG2RAD;
+        var origin = held?.Pos ?? subject!.Pos.XYZ;
+        var angle = (held?.Heading ?? Heading(subject!)) - station.Bearing * GameMath.DEG2RAD;
         var eye = origin.AddCopy(Math.Sin(angle) * station.Distance, station.Height, Math.Cos(angle) * station.Distance);
-        return (eye, Centre(watched));
+        if (watched != null) lastTarget = FreeCamera.Middle(watched);
+        return (eye, lastTarget);
     }
 
     public object Describe(IWorldAccessor world, long nowMs) => new
@@ -180,10 +220,4 @@ public sealed class Shot(long on, Station from, Station? to, double seconds, lon
 
     // A boat moves against its view vector; a creature faces along it.
     private static float Heading(Entity subject) => subject is EntityBoat ? subject.Pos.Yaw : subject.Pos.Yaw + GameMath.PI;
-
-    public static Vec3d Centre(Entity entity)
-    {
-        var box = entity.SelectionBox;
-        return entity.Pos.XYZ.AddCopy((box.X1 + box.X2) / 2, (box.Y1 + box.Y2) / 2, (box.Z1 + box.Z2) / 2);
-    }
 }

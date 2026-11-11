@@ -50,6 +50,9 @@ public class MaterialTable
         return double.PositiveInfinity;
     }
 
+    public double StretchAtBreak(string rope) =>
+        Row(rope, row => row.Elongation, "stretch at break", "it stretches as natural fibre does") ?? materials["rope-flax"].Elongation!.Value;
+
     public double Toughness(string material) =>
         Row(material, row => row.Toughness, "toughness", "it takes that of an unknown wood")
         ?? materials[UnknownWood].Toughness!.Value;

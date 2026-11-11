@@ -18,8 +18,6 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
     private readonly ConcurrentDictionary<(int X, int Z), (double Hours, double Mps)> regions = new(Environment.ProcessorCount, 0);
     private readonly ConcurrentDictionary<(int X, int Z, long Slot), WaveGeneration> generations = new(Environment.ProcessorCount, 0);
 
-    public bool DangerousOceans => sea.DangerousOceans;
-
     public SeaClock Clock => sea.Clock;
 
     public SeaWeatherModel Weather => model;
@@ -44,12 +42,26 @@ public class SeaModel(SeaWeatherSystem sea, ICoreServerAPI sapi, SeaWeatherModel
         var wind = model.Wind(x, z, hours);
         var (height, period) = Waves(x, z, hours, wind);
         var current = model.Current(x, z);
-        return new SeaSample(wind.X, wind.Z, wind.Presence, model.RainCloudness(x, z, hours), height, period, current.X, current.Z, current.WaterCelsius);
+        return new SeaSample(wind.X, wind.Z, wind.Presence, model.RainCloudness(x, z, hours), height, period, current.X, current.Z, current.WaterCelsius, water.DepthHere(x, z));
     }
 
     public SeaCurrent CurrentAt(double x, double z) => model.Current(x, z);
 
     public (double Height, double Period) WavesAt(double x, double z) => Waves(x, z, Now, model.Wind(x, z, Now));
+
+    public (double Height, double Period) EverydayWavesIn(double cellX, double cellZ, int cellBlocks) =>
+        SeaMapServer.CellSamples
+            .Select(at => EverydayWavesAt(cellX + at.X * cellBlocks, cellZ + at.Z * cellBlocks))
+            .FirstOrDefault(waves => waves.Height > 0);
+
+    public (double Height, double Period) EverydayWavesAt(double x, double z)
+    {
+        var (windX, windZ) = model.EverydayWind(x, z);
+        var speed = Math.Sqrt(windX * windX + windZ * windZ);
+        if (speed <= 0) return (0, 0);
+        var reach = water.Upwind(x, z, Compass.Radians(windX, windZ));
+        return reach.FetchMetres > 0 ? windSea.Grow(speed, reach.FetchMetres, reach.MeanDepthMetres) : (0, 0);
+    }
 
     public IEnumerable<Storm> StormsWithin(double x, double z, double range) => model.Storms.Active(x, z, Now, range);
 

@@ -42,6 +42,7 @@ public class AgentBridgeModSystem : ModSystem
     private FreeCamera freeCamera = null!;
     private LimbColours limbs = null!;
     private SwellReading? swell;
+    private WaterPasses waterPasses = null!;
     private readonly HttpListener listener = new();
 
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Client;
@@ -60,6 +61,7 @@ public class AgentBridgeModSystem : ModSystem
         links = new HandbookLink(api);
         freeCamera = new FreeCamera(api);
         limbs = new LimbColours(api);
+        waterPasses = new WaterPasses();
         if (api.ModLoader.IsModEnabled("roughseas")) swell = new SwellReading(api);
         listener.Prefixes.Add(Prefix);
         listener.Start();
@@ -77,6 +79,7 @@ public class AgentBridgeModSystem : ModSystem
         blackBox?.Dispose();
         soundLog?.Dispose();
         freeCamera?.Dispose();
+        waterPasses?.Dispose();
     }
 
     private async Task Serve()
@@ -121,6 +124,7 @@ public class AgentBridgeModSystem : ModSystem
                 "/input" => (Encoding.UTF8.GetBytes(await Input(context.Request)), "application/json"),
                 "/hover" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Hover(context.Request.QueryString["entity"], context.Request.QueryString["box"], context.Request.QueryString["block"]))), "application/json"),
                 "/fps" => (Encoding.UTF8.GetBytes(await frameTimer.Measure(double.Parse(context.Request.QueryString["seconds"] ?? "5", CultureInfo.InvariantCulture))), "application/json"),
+                "/water" => (Encoding.UTF8.GetBytes(await waterPasses.Measure(double.Parse(context.Request.QueryString["seconds"] ?? "5", CultureInfo.InvariantCulture))), "application/json"),
                 "/hotkey" =>(Encoding.UTF8.GetBytes(await OnMainThread(() => Hotkey(context.Request.QueryString["code"]))), "text/plain"),
                 "/where" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Where(context.Request.QueryString["entity"]))), "application/json"),
                 "/camera" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Camera(context.Request.QueryString))), "application/json"),
@@ -245,14 +249,15 @@ public class AgentBridgeModSystem : ModSystem
         {
             var target = capi.World.GetEntityById(id) ?? throw new FileNotFoundException($"No entity {id} near the player");
             var eye = player.Entity.Pos.XYZ.Add(player.Entity.LocalEyePos);
-            var center = Shot.Centre(target);
+            var center = FreeCamera.Middle(target);
             var dx = center.X - eye.X;
             var dy = center.Y - eye.Y;
             var dz = center.Z - eye.Z;
             player.CameraYaw = (float)Math.Atan2(dx, dz);
             player.CameraPitch = (float)(Math.PI - Math.Atan2(dy, Math.Sqrt(dx * dx + dz * dz)));
         }
-        player.Entity.BodyYaw = player.CameraYaw;
+        player.Entity.BodyYaw = player.Entity.Pos.Yaw = player.CameraYaw;
+        player.Entity.Pos.Pitch = player.CameraPitch;
         return State();
     }
 

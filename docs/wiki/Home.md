@@ -11,17 +11,18 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 ## Contents
 
 **Getting started**
-- [World settings](World-Settings): the *Rough Seas* playstyle, and *Dangerous oceans*.
+- [World settings](World-Settings): the *Rough Seas* playstyle, and a setting for each mechanic.
 - [Vessels](Vessels): which one for which water.
 - [Recipes](Recipes): everything the mod adds to the crafting grid.
 - [Paddles, poles and oars](Paddles-Poles-and-Oars): what drives each vessel, and how fast.
+- [Swimming](Swimming): floating on the waves, what you carry, and crests that break over you.
 
 **The sea**
 - [Wind and waves](Wind-and-Waves): the wind, the Beaufort scale, and why every wave is different.
 - [The look of the sea](The-Look-of-the-Sea): how the swell, whitecaps and surf are drawn, tuned against photographs.
 - [Storms](Storms): squalls, gales and hurricanes, where they form and how they warn you.
 - [Lightning](Lightning): strikes in warm storms, and the masts that draw them.
-- [Currents](Currents): the gyres, warm and cold water, and the drift of a boat left alone.
+- [Currents](Currents): the gyres, warm and cold water, and how they carry every boat afloat.
 
 **Your vessel**
 - [Hull condition](Hull-Condition): where a blow cracks a hull, how the crack leaks, and what it is made of.
@@ -47,7 +48,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Sailboat](Sailboat)
 
 **The science behind it**
-- [The science of the sea](The-Science-of-the-Sea): the measurements and models the wind, waves and storms stand on, and where we bent them.
+- [The science of the sea](The-Science-of-the-Sea): the measurements and models the wind, waves, surf and storms stand on, and where we bent them.
 - [The science of the hull](The-Science-of-the-Hull): the same for how a hull takes a blow, floats, leaks and rides the swell.
 
 **Beside other mods**

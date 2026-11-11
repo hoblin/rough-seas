@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Shipyard;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
@@ -33,6 +34,7 @@ public class BridgeCommands : ModSystem
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
     private CurrentOverride? current;
+    private DriftSync? sync;
     private ChunkSettle settle = null!;
     private int suspendMs;
 
@@ -47,6 +49,8 @@ public class BridgeCommands : ModSystem
         {
             drift = new DriftSwitch { Drifting = !benchDefaults };
             current = new CurrentOverride();
+            sync = api.ModLoader.GetModSystem<DriftSync>();
+            api.Event.PlayerJoin += player => sync.Send(drift.Drifting, drift.WavesOnly, current.Current, player);
         }
         if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
         api.Event.ServerSuspend += HoldSuspension;
@@ -117,6 +121,18 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.OptionalIntRange("range", 16, 512, 256), parsers.OptionalIntRange("length", 1, 32, 7), parsers.OptionalIntRange("depth", 1, 32, 4))
                 .HandleWith(args => Beaches(args.Caller.Player.Entity.Pos.AsBlockPos, (int)args[0], (int)args[1], (int)args[2]))
             .EndSubCommand()
+            .BeginSubCommand("shores")
+                .WithDescription("List the shores in the loaded world within this range whose ground at the water's edge, at the sea's level or up to two blocks over it, matches a wildcard, LENGTH blocks along open salt water: each with how high its ground stands over the water at each of the 8 blocks inland, and how far the open water runs out from it")
+                .RequiresPlayer()
+                .WithArgs(parsers.Word("ground wildcard"), parsers.OptionalIntRange("range", 16, 512, 256), parsers.OptionalIntRange("length", 1, 32, 5))
+                .HandleWith(args => Shores(args.Caller.Player.Entity.Pos.AsBlockPos, (string)args[0], (int)args[1], (int)args[2]))
+            .EndSubCommand()
+            .BeginSubCommand("cliffs")
+                .WithDescription("List the natural faces in the loaded world within this range that rise at least MINRISE blocks straight out of open salt water, LENGTH blocks along it: each with its ground, how high it stands at each of the 8 blocks inland, and how far the open water runs out from it")
+                .RequiresPlayer()
+                .WithArgs(parsers.IntRange("minrise", 3, 200), parsers.OptionalIntRange("range", 16, 512, 256), parsers.OptionalIntRange("length", 1, 32, 3))
+                .HandleWith(args => Shores(args.Caller.Player.Entity.Pos.AsBlockPos, "*", (int)args[1], (int)args[2], (int)args[0], int.MaxValue))
+            .EndSubCommand()
             .BeginSubCommand("weed")
                 .WithDescription("Clear the plants and loose stones off the ground within this many blocks of the caller, as a scythe and a rake would: soil, rock, water and what floats on it stay")
                 .RequiresPlayer()
@@ -124,7 +140,7 @@ public class BridgeCommands : ModSystem
                 .HandleWith(args => Weed(args.Caller.Player.Entity.Pos.AsBlockPos, (int)args[0]))
             .EndSubCommand()
             .BeginSubCommand("drift")
-                .WithDescription("Whether unridden vessels drift with the current and the waves; off on every bench start, so they hold still")
+                .WithDescription("Whether vessels drift with the current and the waves, steered or not (waves: the waves alone); off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off", "waves"))
                 .HandleWith(args => Drift(args[0] as string))
             .EndSubCommand()
@@ -173,15 +189,27 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("item code"))
                 .HandleWith(args => Hold(args.Caller.Player, (string)args[0]))
             .EndSubCommand()
+            .BeginSubCommand("craft")
+                .WithDescription("Lay stacks in the caller's crafting grid, slot by slot from the top left, and take what it makes, as a click on the output does: CODE, CODE*N for a stack of N, hand for the held stack, _ for an empty slot. Ingredients the recipe gives back go to the inventory, as in play")
+                .RequiresPlayer()
+                .WithArgs(parsers.All("stacks"))
+                .HandleWith(args => Craft(args.Caller.Player, ((string)args[0]).Split(' ', StringSplitOptions.RemoveEmptyEntries)))
+            .EndSubCommand()
+            .BeginSubCommand("pot")
+                .WithDescription("Hold a cooked pot of something cooked in it, as the firepit leaves it: CONTENT, PORTIONS of it a serving, SERVINGS (glueportion-pitch-hot 100 1 is a pot of hot pitch)")
+                .RequiresPlayer()
+                .WithArgs(parsers.Word("content code"), parsers.Int("portions a serving"), parsers.Double("servings"), parsers.OptionalWord("pot code"))
+                .HandleWith(args => Pot(args.Caller.Player, (string)args[0], (int)args[1], (double)args[2], (string?)args[3] ?? "dirtyclaypot-brown-cooked"))
+            .EndSubCommand()
             .BeginSubCommand("drop")
                 .WithDescription("Drop an item on the ground at a position, at rest, as a dropped stack lies")
                 .WithArgs(parsers.Word("item code"), parsers.WorldPosition("position"))
                 .HandleWith(args => Drop((string)args[0], (Vec3d)args[1]))
             .EndSubCommand()
             .BeginSubCommand("tie")
-                .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute")
-                .WithArgs(parsers.Long("id"), parsers.Int("x"), parsers.Int("y"), parsers.Int("z"))
-                .HandleWith(args => Tie(args.Caller, sapi.World.GetEntityById((long)args[0]), new BlockPos((int)args[1], (int)args[2], (int)args[3])))
+                .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute; METRES sets its length as the mouse wheel does (1.5 to 10), else it is as long as the gap")
+                .WithArgs(parsers.Long("id"), parsers.Int("x"), parsers.Int("y"), parsers.Int("z"), parsers.OptionalDouble("metres", 0))
+                .HandleWith(args => Tie(args.Caller, sapi.World.GetEntityById((long)args[0]), new BlockPos((int)args[1], (int)args[2], (int)args[3]), (double)args[4]))
             .EndSubCommand()
             .BeginSubCommand("ropes")
                 .WithDescription("Where each rope tied to an entity is pinned at both ends: a block position, an entity id, or loose")
@@ -250,11 +278,12 @@ public class BridgeCommands : ModSystem
         {
             drift.Drifting = state != "off";
             drift.WavesOnly = state == "waves";
+            sync?.Send(drift.Drifting, drift.WavesOnly, current?.Current);
         }
-        if (drift.WavesOnly) return TextCommandResult.Success("Unridden vessels drift with the waves alone, not the current");
+        if (drift.WavesOnly) return TextCommandResult.Success("Vessels drift with the waves alone, not the current");
         return TextCommandResult.Success(drift.Drifting
-            ? "Unridden vessels drift with the current and the waves"
-            : "Unridden vessels hold still; /bridge drift on lets them drift");
+            ? "Vessels drift with the current and the waves, steered or not"
+            : "Vessels hold still; /bridge drift on lets them drift");
     }
 
     private TextCommandResult Current(string speed, double yaw)
@@ -263,13 +292,15 @@ public class BridgeCommands : ModSystem
         if (speed == "off")
         {
             current.Clear();
+            sync?.Send(drift?.Drifting ?? true, drift?.WavesOnly == true, null);
             return TextCommandResult.Success("The sea's own currents flow again");
         }
         if (!double.TryParse(speed, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var metresPerSecond))
             return TextCommandResult.Error("Give the current's speed in m/s, or off");
 
         current.Set(metresPerSecond, yaw);
-        return TextCommandResult.Success($"A current of {metresPerSecond:F1} m/s flows toward yaw {yaw:F0}° everywhere; unridden vessels ride it once /bridge drift is on");
+        sync?.Send(drift?.Drifting ?? true, drift?.WavesOnly == true, current.Current);
+        return TextCommandResult.Success($"A current of {metresPerSecond:F1} m/s flows toward yaw {yaw:F0}° everywhere; vessels ride it once /bridge drift is on");
     }
 
     private TextCommandResult Lag(int ms, int ticks)
@@ -548,7 +579,7 @@ public class BridgeCommands : ModSystem
             var ground = Ground(x, z);
             return ground >= seaLevel && ground <= seaLevel + 2
                 && accessor.GetBlock(new BlockPos(x, ground + 1, z, 0)).CollisionBoxes is null or { Length: 0 }
-                && accessor.GetBlock(new BlockPos(x, ground, z, 0), BlockLayersAccess.Fluid).Id == 0;
+                && OpenWater.At(accessor, new BlockPos(x, ground, z, 0)).Id == 0;
         }
         bool Open(int x, int z) => Enumerable.Range(-clearing, 2 * clearing + 1)
             .All(i => Enumerable.Range(-clearing, 2 * clearing + 1).All(j => Dry(x + i, z + j) && Math.Abs(Ground(x + i, z + j) - Ground(x, z)) <= 1));
@@ -603,9 +634,9 @@ public class BridgeCommands : ModSystem
         int Ground(int x, int z) => accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
         bool Loaded(int x, int z) => accessor.GetChunkAtBlockPos(new BlockPos(x, surface, z, 0)) != null;
         bool Flush(int x, int z) => Loaded(x, z) && Ground(x, z) == surface
-            && accessor.GetBlock(new BlockPos(x, surface + 1, z, 0), BlockLayersAccess.Fluid).Id == 0;
+            && OpenWater.At(accessor, new BlockPos(x, surface + 1, z, 0)).Id == 0;
         bool Water(int x, int z) => Loaded(x, z) && Ground(x, z) < surface
-            && accessor.GetBlock(new BlockPos(x, surface, z, 0), BlockLayersAccess.Fluid).IsLiquid();
+            && OpenWater.At(accessor, new BlockPos(x, surface, z, 0)).IsLiquid();
 
         (int dx, int dz, string name)[] seaward = [(0, 1, "south"), (0, -1, "north"), (1, 0, "east"), (-1, 0, "west")];
 
@@ -632,13 +663,61 @@ public class BridgeCommands : ModSystem
             {
                 var at = new BlockPos(spot.x, surface, spot.z, 0);
                 var climate = accessor.GetClimateAt(at, EnumGetClimateMode.WorldGenValues);
-                var water = accessor.GetBlock(at.AddCopy(BlockFacing.FromCode(spot.sea)), BlockLayersAccess.Fluid).Code;
+                var water = OpenWater.At(accessor, at.AddCopy(BlockFacing.FromCode(spot.sea))).Code;
                 return (spot, rain: climate?.WorldgenRainfall ?? 0, climate?.Temperature, ground: accessor.GetBlock(at).Code, water);
             })
             .OrderByDescending(beach => beach.rain)
             .Take(shown)
             .Select(beach => $"{beach.spot.x - centre.X:0} {surface + 1} {beach.spot.z - centre.Z:0}: {beach.ground}, {beach.water} to the {beach.spot.sea}, rainfall {beach.rain:0.00}, {beach.Temperature:0} °C");
         return TextCommandResult.Success($"{found.Count} beaches, the wettest first:\n{string.Join("\n", lines)}");
+    }
+
+    private TextCommandResult Shores(BlockPos origin, string wildcard, int range, int length, int lowest = 0, int highest = 2)
+    {
+        const int shown = 16;
+        const int inland = 8;
+        const int farthest = 64;
+        var pattern = new AssetLocation(wildcard);
+        var accessor = sapi.World.BlockAccessor;
+        var surface = sapi.World.SeaLevel - 1;
+        var centre = sapi.World.DefaultSpawnPosition;
+
+        bool Loaded(int x, int z) => accessor.GetChunkAtBlockPos(new BlockPos(x, surface, z, 0)) != null;
+        int Ground(int x, int z) => accessor.GetTerrainMapheightAt(new BlockPos(x, 0, z, 0));
+        bool Sea(int x, int z) => Loaded(x, z) && Ground(x, z) < surface
+            && OpenWater.At(accessor, new BlockPos(x, surface, z, 0)).Code?.Path.StartsWith("saltwater") == true;
+        bool Edge(int x, int z) => Loaded(x, z) && Ground(x, z) - surface >= lowest && Ground(x, z) - surface <= highest
+            && accessor.GetBlock(new BlockPos(x, Ground(x, z), z, 0)).WildCardMatch(pattern);
+
+        (int dx, int dz, string name)[] seaward = [(0, 1, "south"), (0, -1, "north"), (1, 0, "east"), (-1, 0, "west")];
+
+        var found = new List<(int x, int z, (int dx, int dz, string name) sea)>();
+        for (var i = -range; i <= range; i += 2)
+        for (var j = -range; j <= range; j += 2)
+        {
+            var (x, z) = (origin.X + i, origin.Z + j);
+            if (found.Any(other => Math.Abs(other.x - x) < 2 * length && Math.Abs(other.z - z) < 2 * length)) continue;
+            var facing = seaward.FirstOrDefault(sea => Enumerable.Range(0, length)
+                .All(k => Edge(x + k * sea.dz, z + k * sea.dx) && Sea(x + k * sea.dz + sea.dx, z + k * sea.dx + sea.dz)));
+            if (facing.name != null) found.Add((x, z, facing));
+        }
+        if (found.Count == 0) return TextCommandResult.Error($"No {wildcard} at the edge of the open sea, {length} along, within {range} blocks of loaded world");
+
+        var lines = found
+            .Select(spot =>
+            {
+                var (dx, dz, name) = spot.sea;
+                var rise = Enumerable.Range(0, inland).Select(k => Ground(spot.x - k * dx, spot.z - k * dz) - surface);
+                var open = Enumerable.Range(1, farthest).TakeWhile(k => Sea(spot.x + k * dx, spot.z + k * dz)).Count();
+                var same = Enumerable.Range(0, inland).Count(k =>
+                    accessor.GetBlock(new BlockPos(spot.x - k * dx, Ground(spot.x - k * dx, spot.z - k * dz), spot.z - k * dz, 0)).WildCardMatch(pattern));
+                return (spot, rise: string.Join(" ", rise), open, same, ground: accessor.GetBlock(new BlockPos(spot.x, Ground(spot.x, spot.z), spot.z, 0)).Code);
+            })
+            .OrderByDescending(shore => shore.open)
+            .ThenByDescending(shore => shore.same)
+            .Take(shown)
+            .Select(shore => $"{shore.spot.x - centre.X:0} {surface + 1} {shore.spot.z - centre.Z:0}: {shore.ground}, sea to the {shore.spot.sea.name} open for {shore.open}{(shore.open == farthest ? "+" : "")} blocks; blocks over the sea inland: {shore.rise}, {shore.same} of them {pattern.Path}");
+        return TextCommandResult.Success($"{found.Count} shores, the most open first:\n{string.Join("\n", lines)}");
     }
 
     private TextCommandResult Weed(BlockPos origin, int radius)
@@ -652,7 +731,7 @@ public class BridgeCommands : ModSystem
             var pos = origin.AddCopy(x, y, z);
             var block = accessor.GetBlock(pos);
             if (block.BlockMaterial != EnumBlockMaterial.Plant && block.Code?.Path.StartsWith("loose") != true) continue;
-            if (accessor.GetBlock(pos.DownCopy(), BlockLayersAccess.Fluid).IsLiquid()) continue;
+            if (OpenWater.At(accessor, pos.DownCopy()).IsLiquid()) continue;
 
             accessor.SetBlock(0, pos);
             cleared++;
@@ -771,7 +850,7 @@ public class BridgeCommands : ModSystem
         var accessor = sapi.World.BlockAccessor;
         var below = position.AsBlockPos;
         while (below.Y > 0 && accessor.GetBlock(below, BlockLayersAccess.FluidOrSolid).Id == 0) below.Y--;
-        return accessor.GetBlock(below, BlockLayersAccess.Fluid).IsLiquid() ? below.Y : position.Y;
+        return OpenWater.At(accessor, below).IsLiquid() ? below.Y : position.Y;
     }
 
     private static TextCommandResult Mount(IPlayer player, Entity? target, int index = -1)
@@ -826,6 +905,83 @@ public class BridgeCommands : ModSystem
         return TextCommandResult.Success($"Holding {code}");
     }
 
+    private TextCommandResult Craft(IPlayer player, string[] stacks)
+    {
+        var grid = player.InventoryManager.GetOwnInventory(GlobalConstants.craftingInvClassName);
+        var size = grid.Count - 1;
+        if (stacks.Length > size) return TextCommandResult.Error($"The grid holds {size} stacks");
+        if (Enumerable.Range(0, size).Any(i => !grid[i].Empty)) return TextCommandResult.Error("The crafting grid is not empty: take its stacks out first");
+
+        var hand = player.InventoryManager.ActiveHotbarSlot;
+        if (stacks.FirstOrDefault(code => code is not ("_" or "hand") && Stack(code.Split('*')[0]) == null) is { } unknown) return TextCommandResult.Error($"No item or block {unknown}");
+        if (stacks.FirstOrDefault(code => code.Split('*') is [_, var count] && !(int.TryParse(count, NumberStyles.None, CultureInfo.InvariantCulture, out var n) && n > 0)) is { } miscounted) return TextCommandResult.Error($"Not a count of items: {miscounted}");
+        if (stacks.Contains("hand") && hand.Empty) return TextCommandResult.Error("The hand is empty");
+
+        for (int i = 0; i < stacks.Length; i++)
+        {
+            if (stacks[i] == "_") continue;
+
+            ItemStack stack;
+            if (stacks[i] == "hand")
+            {
+                stack = hand.TakeOutWhole();
+                hand.MarkDirty();
+            }
+            else
+            {
+                var parts = stacks[i].Split('*');
+                stack = Stack(parts[0])!;
+                if (parts.Length > 1) stack.StackSize = int.Parse(parts[1], CultureInfo.InvariantCulture);
+            }
+            grid[i].Itemstack = stack;
+            grid[i].MarkDirty();
+        }
+
+        var output = grid[size];
+        var crafted = new DummySlot();
+        var before = Carried(player);
+        if (!output.Empty)
+        {
+            var op = new ItemStackMoveOperation(sapi.World, EnumMouseButton.Left, 0, EnumMergePriority.AutoMerge, output.StackSize) { ActingPlayer = player };
+            output.TryPutInto(crafted, ref op);
+        }
+        var givenBack = Carried(player).Select(pair => (code: pair.Key, count: pair.Value - before.GetValueOrDefault(pair.Key))).Where(pair => pair.count > 0).Select(pair => $"{pair.count}x{pair.code}").ToList();
+        var left = Enumerable.Range(0, size).Select(i => grid[i]).Where(slot => !slot.Empty).Select(slot => Describe(slot.Itemstack)).ToList();
+        foreach (var slot in Enumerable.Range(0, size).Select(i => grid[i]).Where(slot => !slot.Empty))
+        {
+            var rest = slot.TakeOutWhole();
+            if (!player.InventoryManager.TryGiveItemstack(rest, true)) sapi.World.SpawnItemEntity(rest, player.Entity.Pos.XYZ);
+            slot.MarkDirty();
+        }
+        if (crafted.Empty) return TextCommandResult.Error($"Nothing crafted; the grid held {string.Join(", ", left)}");
+
+        var made = Describe(crafted.Itemstack);
+        if (!player.InventoryManager.TryGiveItemstack(crafted.Itemstack, true)) sapi.World.SpawnItemEntity(crafted.Itemstack, player.Entity.Pos.XYZ);
+        return TextCommandResult.Success($"Crafted {made}; given back: {(givenBack.Count == 0 ? "nothing" : string.Join(", ", givenBack))}; left in the grid: {(left.Count == 0 ? "nothing" : string.Join(", ", left))}");
+    }
+
+    private static string Describe(ItemStack stack) => $"{stack.StackSize}x{stack.Collectible.Code} {stack.Attributes.ToJsonToken()}";
+
+    private static Dictionary<AssetLocation, int> Carried(IPlayer player) =>
+        new[] { GlobalConstants.hotBarInvClassName, GlobalConstants.backpackInvClassName }
+            .SelectMany(name => player.InventoryManager.GetOwnInventory(name) ?? Enumerable.Empty<ItemSlot>())
+            .Where(slot => !slot.Empty)
+            .GroupBy(slot => slot.Itemstack.Collectible.Code)
+            .ToDictionary(group => group.Key, group => group.Sum(slot => slot.StackSize));
+
+    private TextCommandResult Pot(IPlayer player, string content, int portions, double servings, string pot)
+    {
+        if (Stack(pot) is not { Collectible: IBlockMealContainer meal } held) return TextCommandResult.Error($"No cooked pot {pot}");
+        if (Stack(content) is not { } cooked) return TextCommandResult.Error($"No item or block {content}");
+
+        cooked.StackSize = portions;
+        meal.SetContents(null, held, [cooked], (float)servings);
+        var slot = player.InventoryManager.ActiveHotbarSlot;
+        slot.Itemstack = held;
+        slot.MarkDirty();
+        return TextCommandResult.Success($"Holding {pot} with {servings} servings of {portions} {content}");
+    }
+
     private TextCommandResult Drop(string code, Vec3d position)
     {
         var stack = Stack(code);
@@ -865,13 +1021,23 @@ public class BridgeCommands : ModSystem
             $"{hull.Aboard.Total:F0} kg aboard, draft {afloat.DraftMetres:F3} m, freeboard {afloat.FreeboardMetres:F3} m, sunk {afloat.Sunk}";
     }
 
-    private TextCommandResult Tie(Caller caller, Entity? entity, BlockPos block)
+    private TextCommandResult Tie(Caller caller, Entity? entity, BlockPos block, double metres)
     {
         var tieable = entity?.GetBehavior<EntityBehaviorRopeTieable>();
         if (tieable == null) return TextCommandResult.Error("Not a rope-tieable entity");
 
         var cloths = sapi.ModLoader.GetModSystem<ClothManager>();
         var rope = ClothSystem.CreateRope(sapi, cloths, entity!.Pos.XYZ, block.ToVec3d().Add(0.5, 0.5, 0.5), null);
+        if (metres > 0)
+        {
+            if (metres < 1.5 || metres > 10) return TextCommandResult.Error("A vanilla rope is 1.5 to 10 m long, as vanilla counts its points");
+
+            var points = 0;
+            rope.WalkPoints(_ => points++);
+            var change = (int)Math.Round(metres * rope.Resolution) - points;
+            // vanilla's ChangeRopeLength adds or removes (int)(len * Resolution) + 1 points, and bounds the length by its points
+            if (change != 0) rope.ChangeRopeLength(Math.Sign(change) * (Math.Abs(change) - 1 + 0.01) / rope.Resolution);
+        }
         rope.LastPoint.PinTo(block, new Vec3f(0.5f, 0.5f, 0.5f));
         cloths.RegisterCloth(rope);
         tieable.Attach(rope, rope.FirstPoint);

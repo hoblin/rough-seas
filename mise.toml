@@ -5,7 +5,8 @@ node = "24.22.0"
 uv = "0.13.6"
 
 [env]
-VINTAGE_STORY = "{{env.HOME}}/.local/share/vintagestory-1.22.7"
+GAME = "1.22.7"
+VINTAGE_STORY = "{{env.HOME}}/.local/share/vintagestory-{{env.GAME}}"
 BENCH = "{{config_root | basename}}"
 BENCH_DATA = "{{env.HOME}}/.config/VintagestoryData-{{config_root | basename}}"
 BENCH_TMP = "/tmp/{{config_root | basename}}"

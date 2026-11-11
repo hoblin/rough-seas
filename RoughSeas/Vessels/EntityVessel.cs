@@ -11,6 +11,7 @@ namespace RoughSeas.Vessels;
 /// way they are turned (<see cref="VesselSeat"/>). A speed multiplier of 0 leaves her dead in the water: no
 /// paddling, no turning.
 /// </summary>
+[ReliesOn("EntityBehaviorInterpolatePosition", "OnReceivedServerPos", "starts from an empty snapshot at 0,0,0 until the first server position")]
 public class EntityVessel : EntityBoat, ISeatInstSupplier
 {
     public const string ClassName = "roughseas:EntityVessel";

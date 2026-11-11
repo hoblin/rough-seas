@@ -77,6 +77,20 @@ public class PropulsionTests
         Assert.Equal(depth, new Pole(metres, PoleDensity, Fixtures.Propulsion.Pole).Reach(0.7), 0.2);
     }
 
+    [Theory]
+    [InlineData(3)]
+    [InlineData(5)]
+    public void APoleGivesItsFullShoveDownToItsFullStrokeDepthAndLessBelowIt(double metres)
+    {
+        var pole = new Pole(metres, PoleDensity, Fixtures.Propulsion.Pole);
+        var push = Fixtures.Propulsion.Strokes["seatedpole"].PushMetres;
+        var depth = pole.FullStrokeDepth(SeatedHands, push);
+
+        Assert.Equal(push, pole.Travel(depth + SeatedHands), 6);
+        Assert.True(pole.Travel(depth + SeatedHands + 0.1) < push);
+        Assert.True(depth < pole.Reach(SeatedHands));
+    }
+
     [Fact]
     public void ALongerPoleWorkingDeeperWaterSpendsMoreOfTheShoveLiftingItself()
     {
@@ -205,6 +219,19 @@ public class PropulsionTests
     }
 
     [Fact]
+    public void WithThePolesDepthOffAPoleShovesInAnyDepthAsAtItsFullStroke()
+    {
+        var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
+        var poling = Fixtures.PropulsionOf("dugout")["pole"]!;
+        var fullStroke = pole.FullStrokeDepth((double)poling["handsAboveWaterMetres"]!, Fixtures.Propulsion.Strokes[(string)poling["stroke"]!].PushMetres);
+        var deep = Fixtures.Station("dugout", 40, deepWaterRefuses: false).Propulsor(pole, 1, out var refusal);
+        var atFullStroke = Fixtures.Station("dugout", fullStroke).Propulsor(pole, 1, out _);
+
+        Assert.Null(refusal);
+        Assert.Equal(atFullStroke!.Push(1, 0, Side.Starboard, 1, 0, SeatedWatts).Newtons, deep!.Push(1, 0, Side.Starboard, 1, 0, SeatedWatts).Newtons, 6);
+    }
+
+    [Fact]
     public void APoleFindsTheBedWhereItsFootIsPlantedAsternOfHimGoingAheadAndAheadOfHimGoingAstern()
     {
         var pole = new Pole(3, PoleDensity, Fixtures.Propulsion.Pole);
@@ -253,7 +280,7 @@ public class PropulsionTests
         var offset = Fixtures.Station("dugout", 1).Stance(Pole.Code)!.Value.Offset!;
 
         Assert.Equal(-0.875, offset.X, 3);
-        Assert.Equal(-0.124, offset.Y, 3);
+        Assert.Equal(-0.132, offset.Y, 3);
         Assert.Equal(0, offset.Z, 3);
     }
 

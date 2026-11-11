@@ -2,7 +2,7 @@
 
 Rough Seas: a Vintage Story mod that makes the ocean dangerous and worth going out on. Today the sea is flat, safe and empty, and crossing it means holding W on a raft; this mod gives it storms, surf, predators, boats that break, and things to find below.
 
-No reinvented wheels: what the game already does first, then what Vintage Story's API and asset system offer (JSON assets and patches, behaviours, the mod system), then Harmony patches, then our own code. Anego publishes the source of the API and the vanilla mods (`anegostudios/vsapi`, `vssurvivalmod`, `vsessentialsmod`); read how vanilla does a thing before building beside it. Use vanilla's mechanisms directly where possible; where not, take as little of vanilla as you need, rather than fence off a garden of our own. Vanilla's are worked out over many releases; ours are ours to maintain. To learn how vanilla does a thing, let a subagent find the files, then read them in full yourself and understand the mechanism before applying it; a grep match is a coordinate, not an answer. The engine, `VintagestoryLib.dll`, is closed; decompile it with `dotnet ilspycmd` when you need to see what you patch. `bin/ref` fetches all four into the gitignored `ref/`. Read the current API docs (apidocs.vintagestory.at) and the modding wiki before planning; the game changes between versions.
+No reinvented wheels: what the game already does first, then what Vintage Story's API and asset system offer (JSON assets and patches, behaviours, the mod system), then Harmony patches, then our own code. Anego publishes the source of the API and the vanilla mods (`anegostudios/vsapi`, `vssurvivalmod`, `vsessentialsmod`); read how vanilla does a thing before building beside it. Use vanilla's mechanisms directly where possible; where not, take as little of vanilla as you need, rather than fence off a garden of our own. Vanilla's are worked out over many releases; ours are ours to maintain. To learn how vanilla does a thing, let a subagent find the files, then read them in full yourself and understand the mechanism before applying it; a grep match is a coordinate, not an answer. The engine, `VintagestoryLib.dll`, is closed; `bin/ref` fetches all four into the gitignored `ref/` and decompiles the whole engine into `ref/decompiled/VintagestoryLib/`, one file a class by namespace. Read it there; `dotnet ilspycmd` is for another assembly. Read the current API docs (apidocs.vintagestory.at) and the modding wiki before planning; the game changes between versions.
 
 ## Write it like our own game
 
@@ -45,6 +45,13 @@ All of it is scoped to this repository. [CONTRIBUTING.md](CONTRIBUTING.md) cover
 - **Modeling.** `bin/model` edits, previews and checks shape JSON in Blender, headless; **`bin/model help`** explains it.
 - `mise.toml` pins the .NET SDK, Node and Blender, and sets the bench's environment: the 1.22.7 install, and this clone's name, data folder and ports. A clone's own values (another install path, ports, a desktop workspace) go in its gitignored `mise.local.toml`. mise puts all of it on PATH and in the environment here; in a shell that doesn't load mise, run tools through `mise exec --`.
 - `ilspycmd` is a local .NET tool (`dotnet-tools.json`): `dotnet ilspycmd <assembly>`.
+- **Game versions.** `bin/compat` says whether the mod works on a game version, with no game running; **`bin/compat help`** explains it.
+
+## The oldest game we support
+
+We always design and build against the latest game version, `GAME` in `mise.toml`. The oldest supported version is `dependencies.game` in `RoughSeas/modinfo.json`, and the only check against it is `bin/compat` in CI. When that check fails, the pull request raises the floor, in `modinfo.json`, to the lowest version where everything passes (`bin/compat walk`), without asking, and never changes our logic to fit an older version.
+
+Code that depends on how a vanilla method behaves, not just on it existing, says so next to itself with `[ReliesOn]`. When vanilla's method differs in a checked version, `bin/compat` lists its C# diff beside that sentence. Read it: if what we rely on still holds, record it in `GameCompat/read-changes.txt`; if not, raise the floor. A record stands until `GAME` moves. `[ReliesOn]` names the method that holds the behaviour, since only that method's own body is compared. Code that matches text in a vanilla asset, a shader anchor for one, declares it with `[ReliesOnText]`.
 
 ## References
 
@@ -60,6 +67,7 @@ Each holds what one kind of work needs; read it in full before that work. They a
 - `docs/bench.md`: before testing in the game, with `bin/game help`.
 - `docs/modeling.md`: before changing a shape, with `bin/model help`.
 - `docs/qa.md`: before a release's QA session, with `bin/qa help`.
+- `docs/wiki-pictures.md`: before taking or retaking a picture for the wiki, the handbook or the mod page.
 
 ## Think about what you are asked
 
@@ -79,7 +87,7 @@ One ticket ships as one pull request. A big PR is fine here, since Copilot revie
 
 A player meets your work at sea, not in the diff. Before the PR leaves draft, load the mod into the game and see the change happen: the storm rises, the raft breaks, the shark comes. A test that passes is not a mechanic that plays well.
 
-Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[shipyard\]\|\[sounds\]\|\[ew\]' "$BENCH_DATA/Logs/server-debug.log"`; what a client decides, such as the sounds it plays itself, is in `client-debug.log`).
+Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[shipyard\]\|\[sounds\]\|\[shore\]\|\[ew\]' "$BENCH_DATA/Logs/server-debug.log"`; what a client decides, such as the sounds it plays itself, is in `client-debug.log`).
 
 Close the game when you're done testing. A bench client left running holds the machine's video memory, and three clones' games starve everything else. `bin/client stop` saves the world, waits for the save and stops the client; killing its tmux session instead loses whatever changed since the last autosave. A server stops with `/stop` in its tmux session, `$BENCH-server`.
 

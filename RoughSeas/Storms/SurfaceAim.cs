@@ -1,5 +1,6 @@
 using System;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -17,8 +18,7 @@ public sealed class SurfaceAim(SeaSurface surface, SurfaceField field, SurfaceCo
     public void Aim(ISeaSource map, double x, double z, double seconds, int regionSize, bool foam)
     {
         field.Update(map, x, z, regionSize, sea.Map.CellBlocks);
-        var state = map.At(field.HighestX, field.HighestZ);
-        surface.Aim(field.Height, Math.Atan2(state.WindZ, state.WindX), state.Beaufort, foam ? field.Height / config.FullFoamMetres : 0);
+        surface.Aim(field.Height, map.At(field.HighestX, field.HighestZ).Beaufort, foam ? field.Height / config.FullFoamMetres : 0);
 
         var here = ((int)Math.Floor(x / regionSize), (int)Math.Floor(z / regionSize));
         var crossed = here != region;

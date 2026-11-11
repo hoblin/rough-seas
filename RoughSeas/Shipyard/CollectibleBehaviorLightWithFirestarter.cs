@@ -6,6 +6,7 @@ using Vintagestory.API.Util;
 namespace RoughSeas.Shipyard;
 
 /// <summary>A firestarter: drilled with vanilla's animation and sound, and taking on one hold in four.</summary>
+[ReliesOn("Vintagestory.GameContent.ItemFirestarter", "OnHeldInteractStart", "the drill sound's delay and its ObjectCache key, which its cancel stops")]
 public class CollectibleBehaviorLightWithFirestarter(CollectibleObject collectible) : CollectibleBehaviorLight(collectible)
 {
     public const string Code = "roughseas:lightwithfirestarter";

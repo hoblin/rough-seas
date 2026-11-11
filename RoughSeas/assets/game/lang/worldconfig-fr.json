@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Mer agitée",
     "playstyle-desc-preset-roughseas": "Survie classique dans un monde aux océans ouverts, où le vent, les tempêtes et la mer sont dangereux.",
     "worldconfig-category-roughseas": "Mer agitée",
-    "worldattribute-dangerousOceans": "Océans dangereux",
-    "worldattribute-dangerousOceans-desc": "Tempêtes, déferlantes et foudre peuvent submerger, faire chavirer et briser les embarcations, et les arracher à leurs amarres. Désactivé, la mer garde sa météo mais ne fait aucun mal."
+    "worldattribute-bilgeWater": "Eau dans la cale",
+    "worldattribute-bilgeWater-desc": "Les vagues embarquent et la pluie tombe dans une embarcation non pontée, remplissant sa cale jusqu'à ce que vous l'écopiez. Désactivé, ni les vagues ni la pluie n'ajoutent d'eau ; une voie d'eau, si, et une embarcation à fleur d'eau ou coulée se remplit toujours.",
+    "worldattribute-hullDamage": "Dégâts de coque",
+    "worldattribute-hullDamage-desc": "Les rochers, le rivage, les éperonnages, les rapides, les déferlantes et les intempéries fendent une coque, et une fente prend l'eau. La peau pourrit, les coutures non graissées suintent et le roseau s'imbibe d'eau. Désactivé, aucune coque ne subit de dégâts et chaque coque est remise à neuf ; un choc s'entend toujours, et les armes et les explosions endommagent toujours une coque.",
+    "worldattribute-stormLightning": "Foudre",
+    "worldattribute-stormLightning-desc": "Les tempêtes font tomber la foudre près de vous, et un mât l'attire. Désactivé, les tempêtes ne font tomber aucune foudre d'elles-mêmes et les mâts n'en attirent aucune ; les orages du jeu lui-même restent inchangés.",
+    "worldattribute-mooringStrain": "Efforts sur l'amarrage",
+    "worldattribute-mooringStrain-desc": "Une amarre ou un câblot d'ancre encaisse la traction de l'eau et la secousse de chaque vague : au-delà de sa résistance, l'amarre casse, l'ancre chasse, et une embarcation amarrée pendant votre absence peut être jetée à la côte. Désactivé, rien ne casse, ne chasse ni n'est jeté à la côte ; une amarre retient toujours l'embarcation au bout de sa longueur.",
+    "worldattribute-oceanCurrents": "Courants",
+    "worldattribute-oceanCurrents-desc": "Les courants portent toute embarcation, gouvernée ou non, et tirent sur son amarrage. Désactivé, l'eau ne porte aucune embarcation ; les courants réchauffent ou refroidissent toujours la mer.",
+    "worldattribute-rowerFatigue": "Fatigue du rameur",
+    "worldattribute-rowerFatigue-desc": "Ramer, pagayer et avancer à la perche vous donne faim. Désactivé, cela ne coûte aucune satiété ; une embarcation ne va toujours qu'aussi vite que vous la faites avancer.",
+    "worldattribute-poleDepth": "Profondeur de la perche",
+    "worldattribute-poleDepth-desc": "Une perche ne pousse que là où elle touche le fond. Désactivé, elle pousse dans une eau de toute profondeur comme à pleine poussée.",
+    "worldattribute-swimmerBreakers": "Déferlantes sur les nageurs",
+    "worldattribute-swimmerBreakers-desc": "Une vague qui déferle sur vous pendant que vous nagez vous enfonce et vous emporte, et son eau écumante vous porte moins. Désactivé, aucune vague ne déferle sur un nageur ; vous flottez toujours sur les vagues et respirez à leur rythme."
 }

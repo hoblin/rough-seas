@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using RoughSeas.Water;
 
 namespace RoughSeas.Person;
 
@@ -66,15 +67,19 @@ public sealed class Body
     public double Squeezed(double lungLitres, double chestDepth, double waterDensity, double gravity) =>
         lungLitres * config.AtmospherePascals / (config.AtmospherePascals + waterDensity * gravity * Math.Max(0, chestDepth));
 
-    /// <summary>
-    /// The water the body drags along up and down: a disc of the body's section, (8/3) ρ a³ with a its radius, at the
-    /// waterline while the surface cuts the body, at its widest once it is under.
-    /// </summary>
+    /// <summary>The water the body drags up and down: its waterline's disc while the surface cuts it, as a hull's waterplane; once under, a spheroid of its own length moving end on.</summary>
     public double AddedKg(double waterline, double lungLitres, double waterDensity)
     {
-        var section = waterline < HeightMetres ? SectionAt(waterline, lungLitres) : Widest(lungLitres);
-        return config.AddedMassPerRadiusCubed * waterDensity * Math.Pow(section / Math.PI, 1.5);
+        if (waterline >= HeightMetres) return Spheroid(lungLitres, waterDensity).Along;
+        var radius = Math.Sqrt(SectionAt(waterline, lungLitres) / Math.PI);
+        return AddedMass.OfPlate(radius, radius, waterDensity);
     }
+
+    public double AddedAcrossKg(double waterline, double lungLitres, double waterDensity) =>
+        Spheroid(lungLitres, waterDensity).Across * LitresUnder(waterline, lungLitres) / Litres(lungLitres);
+
+    private (double Along, double Across) Spheroid(double lungLitres, double waterDensity) =>
+        AddedMass.OfSpheroid(HeightMetres, Litres(lungLitres) / LitresPerCubicMetre, waterDensity);
 
     /// <summary>
     /// The upward acceleration, in metres a second squared, of <paramref name="massKg"/> displacing
@@ -108,8 +113,6 @@ public sealed class Body
         foreach (var slab in tissue) section += slab.Across(height, slab.Litres);
         return section;
     }
-
-    private double Widest(double lungLitres) => tissue.Max(slab => SectionAt((slab.From + slab.To) / 2, lungLitres));
 
     private readonly record struct Slab(double From, double To, double Litres)
     {

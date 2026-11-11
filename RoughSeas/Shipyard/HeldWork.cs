@@ -10,6 +10,7 @@ namespace RoughSeas.Shipyard;
 /// holder's screen, and the work is done once the button has been held long enough. A hold ends once, however often the game reports its end: the server calls
 /// a held item's stop twice when it finishes the use while catching up the client's stop.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.ModSystemProgressBar", "AddProgressbar", "stacks bars by count, so a bar not removed pushes the next one down")]
 public sealed class HeldWork
 {
     private const float Slack = 0.1f;

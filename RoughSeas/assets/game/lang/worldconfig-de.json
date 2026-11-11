@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Raue See",
     "playstyle-desc-preset-roughseas": "Normales Überleben in einer Welt mit offenen Ozeanen, in der Wind, Stürme und die See gefährlich sind.",
     "worldconfig-category-roughseas": "Raue See",
-    "worldattribute-dangerousOceans": "Gefährliche Ozeane",
-    "worldattribute-dangerousOceans-desc": "Stürme, Brandung und Blitze können Boote vollschlagen lassen, zum Kentern bringen und zerbrechen und sie von Leine und Anker losreißen. Aus, behält die See ihr Wetter, richtet aber keinen Schaden an."
+    "worldattribute-bilgeWater": "Wasser in der Bilge",
+    "worldattribute-bilgeWater-desc": "Wellen schlagen über, und Regen fällt in ein offenes Boot und füllt seine Bilge, bis du sie leer ösest. Ist sie aus, bringen weder Wellen noch Regen Wasser an Bord; ein Leck weiterhin, und ein überspültes oder gesunkenes Boot läuft weiter voll.",
+    "worldattribute-hullDamage": "Rumpfschäden",
+    "worldattribute-hullDamage-desc": "Felsen, das Ufer, Rammstöße, Stromschnellen, Brecher und das Wetter reißen einen Rumpf an, und ein Riss leckt. Haut verrottet, ungefettete Nähte sickern, und Schilf saugt sich voll. Ist sie aus, nimmt kein Rumpf Schaden, und jeder Rumpf wird wieder heil; ein Stoß ist weiter zu hören, und Waffen und Explosionen beschädigen einen Rumpf weiterhin.",
+    "worldattribute-stormLightning": "Blitze",
+    "worldattribute-stormLightning-desc": "Stürme schlagen Blitze in deiner Nähe ein, und ein Mast zieht sie an. Ist sie aus, schlagen Stürme keine eigenen Blitze ein, und Masten ziehen keine an; die Gewitter des Spiels selbst bleiben unverändert.",
+    "worldattribute-mooringStrain": "Belastung der Festmacher",
+    "worldattribute-mooringStrain-desc": "Eine Festmacherleine oder eine Ankertrosse nimmt den Zug des Wassers und den Ruck jeder Welle auf: über ihre Bruchlast hinaus bricht die Leine, ein Anker rutscht, und ein Boot, das festgemacht liegt, während du fort bist, kann an Land geworfen werden. Ist sie aus, bricht nichts, rutscht nichts und wird nichts an Land geworfen; eine Leine hält ein Boot weiter auf ihrer Länge.",
+    "worldattribute-oceanCurrents": "Strömungen",
+    "worldattribute-oceanCurrents-desc": "Strömungen versetzen jedes Boot, gesteuert oder nicht, und zerren an seinen Festmachern. Ist sie aus, versetzt das Wasser kein Boot; die Strömungen wärmen oder kühlen das Meer weiterhin.",
+    "worldattribute-rowerFatigue": "Ruderermüdung",
+    "worldattribute-rowerFatigue-desc": "Rudern, Paddeln und Staken machen dich hungrig. Ist sie aus, kosten sie keine Sättigung; ein Boot fährt weiterhin nur so schnell, wie du es vorantreibst.",
+    "worldattribute-poleDepth": "Staktiefe",
+    "worldattribute-poleDepth-desc": "Ein Staken schiebt nur, wo er den Grund erreicht. Ist sie aus, schiebt er in Wasser jeder Tiefe wie mit vollem Stoß.",
+    "worldattribute-swimmerBreakers": "Brecher über Schwimmern",
+    "worldattribute-swimmerBreakers-desc": "Eine Welle, die über dir bricht, während du schwimmst, drückt dich unter Wasser und reißt dich mit, und ihr schäumendes Wasser trägt dich weniger. Ist sie aus, bricht keine Welle über einem Schwimmer; du treibst weiter auf den Wellen und atmest in ihrem Takt."
 }

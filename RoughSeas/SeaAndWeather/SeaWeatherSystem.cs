@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using RoughSeas.Water;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -43,14 +45,17 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         api.Network.RegisterChannel(Channel).RegisterMessageType<SeaMapSnapshot>();
         new VanillaWind(this, api).Follow();
         VanillaWeatherPatches.Attach(this, api.Side);
-        api.RegisterEntityBehaviorClass(CurrentDrift.Code, typeof(CurrentDrift));
     }
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {
         calibration = new OceanCalibration(Config.Ocean);
         model = new Lazy<SeaModel>(() => CreateModel(sapi));
-        sapi.Event.SaveGameLoaded += () => calibration.Load(sapi.WorldManager.SaveGame.GetData(CalibrationKey));
+        sapi.Event.SaveGameLoaded += () =>
+        {
+            calibration.Load(sapi.WorldManager.SaveGame.GetData(CalibrationKey));
+            MigrateSettings(sapi);
+        };
         sapi.Event.GameWorldSave += () => sapi.WorldManager.SaveGame.StoreData(CalibrationKey, calibration.ToBytes());
         new VanillaRain(this, sapi).Follow();
         new VanillaRegions(this, sapi).Drive();
@@ -78,8 +83,6 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         if (api.Side == EnumAppSide.Server) OceanGenLock.Detach();
     }
 
-    public bool DangerousOceans => api.World.Config.GetBool("dangerousOceans", true);
-
     public SeaWeatherConfig Config => config.Value;
 
     public SeaClock Clock { get; private set; } = null!;
@@ -105,10 +108,22 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public SeaState At(double x, double z) => Source.At(x, z);
 
+    // not inlined, or a postfix on it (the bench's /bridge current, another mod's) misses a caller once the JIT warms up
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public SeaCurrent CurrentAt(double x, double z) => Source.CurrentAt(x, z);
 
     public void Log(string format, params object[] args) =>
         Mod.Logger.Debug("[seas] " + string.Format(CultureInfo.InvariantCulture, format, args));
+
+    private void MigrateSettings(ICoreServerAPI sapi)
+    {
+        var config = sapi.WorldManager.SaveGame.WorldConfiguration;
+        if (Mechanic.Migrate(config) is { } dangerous)
+        {
+            Log("world settings: dangerous oceans {0} carried into every mechanic's own setting", dangerous ? "on" : "off");
+        }
+        Log("world settings: {0}", string.Join(", ", Mechanic.All.Select(mechanic => $"{mechanic} {(mechanic.On(config) ? "on" : "off")}")));
+    }
 
     private SeaModel CreateModel(ICoreServerAPI sapi)
     {
@@ -155,7 +170,7 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
         if (calibration is not { Settled: false }) return;
         var surface = new BlockPos(x, sapi.World.SeaLevel - 1, z, Dimensions.NormalWorld);
         if (sapi.World.BlockAccessor.GetChunkAtBlockPos(surface) == null || !calibrated.Add((x, z))) return;
-        var water = sapi.World.BlockAccessor.GetBlock(surface, BlockLayersAccess.Fluid).LiquidCode == "saltwater";
+        var water = OpenWater.At(sapi.World.BlockAccessor, surface).LiquidCode == "saltwater";
         if (!calibration.Add(Ocean(sapi).At(x / WorldOceanMap.PixelSize, z / WorldOceanMap.PixelSize), water)) return;
         Log("ocean map calibrated against the built world: open sea from {0} of 255", calibration.SeaFrom);
         if (model is { IsValueCreated: true }) model.Value.Forget();

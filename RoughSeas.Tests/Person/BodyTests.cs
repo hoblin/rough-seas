@@ -21,14 +21,12 @@ public class BodyTests
     [Fact]
     public void HasTissueOfItsFatsDensity()
     {
-        // 18% fat: Siri's 1.058 kg/L
         Assert.InRange(Man.MassKg / Man.TissueLitres, 1.055, 1.06);
     }
 
     [Fact]
     public void BreathesAtAQuietBreathAboveFunctionalResidualCapacity()
     {
-        // Stocks and Quanjer's man of 1.75 m at 40: 3.41 L, and half a breath
         Assert.Equal(3.66, Man.BreathingLitres, 2);
     }
 
@@ -73,16 +71,38 @@ public class BodyTests
         Assert.True(Net(7.5) < 0, $"{Net(7.5):F2} kg at 7.5 m");
     }
 
-    [Fact]
-    public void DragsAlongLittleWaterAtTheNeckAndAFifthOfItselfAtTheChest()
-    {
-        var neck = Man.AddedKg(0.84 * Man.HeightMetres, Man.BreathingLitres, Sea);
-        var chest = Man.AddedKg(0.77 * Man.HeightMetres, Man.BreathingLitres, Sea);
-        var under = Man.AddedKg(2 * Man.HeightMetres, Man.BreathingLitres, Sea);
+    private static double Displaced => Sea * Man.Litres(Man.BreathingLitres) / Body.LitresPerCubicMetre;
 
-        Assert.InRange(neck / Man.MassKg, 0.001, 0.03);
-        Assert.InRange(chest / Man.MassKg, 0.15, 0.4);
-        Assert.Equal(chest, under, 6);
+    [Fact]
+    public void HeavesWithTheWaterplanesDiscWhileTheSurfaceCutsIt()
+    {
+        var chest = 0.77 * Man.HeightMetres;
+        var section = Man.LitresUnder(chest + 0.005, Man.BreathingLitres) - Man.LitresUnder(chest - 0.005, Man.BreathingLitres);
+        var radius = Math.Sqrt(section / Body.LitresPerCubicMetre / 0.01 / Math.PI);
+
+        Assert.Equal(4.0 / 3 * Sea * Math.Pow(radius, 3), Man.AddedKg(chest, Man.BreathingLitres, Sea), 6);
+    }
+
+    [Fact]
+    public void DragsLittleWaterAlongItsLengthOnceUnder()
+    {
+        Assert.InRange(Man.AddedKg(2 * Man.HeightMetres, Man.BreathingLitres, Sea) / Displaced, 0.03, 0.06);
+    }
+
+    [Fact]
+    public void GoesUnderWithNoJumpInTheWaterItDrags()
+    {
+        var awash = Man.AddedKg(Man.HeightMetres - 0.01, Man.BreathingLitres, Sea);
+        var under = Man.AddedKg(Man.HeightMetres + 0.01, Man.BreathingLitres, Sea);
+
+        Assert.InRange(under - awash, -3, 3);
+    }
+
+    [Fact]
+    public void DragsAboutItsOwnWaterAcrossWhenUnder()
+    {
+        Assert.InRange(Man.AddedAcrossKg(2 * Man.HeightMetres, Man.BreathingLitres, Sea) / Displaced, 0.85, 1);
+        Assert.Equal(0, Man.AddedAcrossKg(0, Man.BreathingLitres, Sea));
     }
 
     [Fact]

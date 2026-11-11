@@ -6,7 +6,7 @@ Thank you for wanting to help. This page shows how to set up, build and test the
 
 You need:
 
-- Vintage Story **1.22.7**, the version in `dependencies.game` of `RoughSeas/modinfo.json`.
+- Vintage Story **1.22.7**, the current game: `GAME` in `mise.toml`.
 - The **.NET 10 SDK**.
 - [mise](https://mise.jdx.dev) (recommended). It installs the pinned SDK and sets the environment from `mise.toml`. Run `mise trust` once in the clone.
 
@@ -52,7 +52,7 @@ Without the bench, run `./build.sh` and drop the zip from `Releases/` into your 
 
 ## What a pull request needs
 
-- **CI passes.** The workflow runs the unit tests and builds the release zip.
+- **CI passes.** The workflow runs the unit tests, builds the release zip, and runs `bin/compat` against the oldest and the current game; `bin/compat help` says what to do when it fails.
 - **It was played.** Say in the description what you did in the game and what you saw.
 - **Every text a player sees is in every locale** the game supports: the codes in the install's `assets/game/lang/languages.json`. Use that language's own nautical terms, not a word-for-word translation. Link a handbook page by its code (`handbook://item-roughseas:dugout-oak`), never by a search for an English word: a search finds names in the player's language. `bin/handbook-links` checks every link in every locale.
 - **No reinvented wheels.** Use what the game already does first. Then JSON assets and patches, behaviours and the mod system. Then Harmony patches. Write new code last.

@@ -11,34 +11,25 @@
         "plungingShareAtSea": 0.02,
         "plungingIribarren": [0.5, 3.3],
         "plungeDistance": [4.0, 9.25],
-        "bedSlopeBlocks": 16,
         "slamCoefficient": 6.283,
         "plungingSpeedRatio": 1.2,
         "shippedWaterFraction": 0.05,
         "crestRatio": 0.5,
         "breakingCrestRatio": 0.7,
-        "airDensity": 1.225,
-        "windageDragCoefficient": 1.0,
-        "waveDriftCoefficient": 0.00625,
-        "maxDepthBlocks": 32,
         "sources": {
             "whitecapCoefficient": "Whitecap coverage W = 3.84e-6 U^3.41 (Monahan & O'Muircheartaigh 1980), taken as the share of waves that break",
             "breakingDepthRatio": "A wave breaks in water shallower than 1.28 times its height (McCowan 1894)",
-            "waterDensity": "Seawater, kg/m3",
-            "freshWaterDensity": "Fresh water at 20 C, kg/m3",
+            "waterDensity": "Seawater at the surface, kg/m3: 35 practical salinity at about 17 C by the international equation of state of seawater (UNESCO 1981, EOS-80, Technical Papers in Marine Science 36)",
+            "freshWaterDensity": "Pure water at 20 C and the standard atmosphere, 998.2 kg/m3 (IAPWS-95; Wagner & Pruss 2002, J Phys Chem Ref Data 31(2):387-535)",
             "breakingSteepness": "A wave breaks once it is as steep as a wave can stand, a seventh as high as it is long (Michell 1893): a breaker is as long as its height makes it, and runs at that length's speed, no faster than the sea's own waves",
             "plungingShareAtSea": "In deep water about 2% of breaking waves plunge, entraining air deep; the rest spill (Gemmrich & Farmer 1999, Journal of Physical Oceanography 29(10), 'Observations of the scale and occurrence of breaking surface waves')",
             "plungingIribarren": "On a sloping bed a wave plunges when tan(slope) / sqrt(H / L0) lies between 0.5 and 3.3; below it spills, above it surges (Battjes 1974)",
             "plungeDistance": "A plunging crest lands H (4.0 - 9.25 m) shoreward of where it breaks, on a bed of slope m (Galvin 1969, 'Breaker travel and choice of design wave height'); shoreward of that, what reaches a hull is the broken wave's bore",
-            "bedSlopeBlocks": "The bed's slope is read over this many blocks to seaward, across the surf zone, where whole blocks of depth still give it to a sixteenth",
             "slamCoefficient": "A plunging crest strikes a flat panel with a space-averaged pressure 1/2 rho C v^2, C not less than 2 pi with cushioning and three-dimensional effects (DNV-RP-C205, 2010, 8.7.2.5); a spilling crest's roller presses only its stagnation pressure, 1/2 rho c^2",
             "plungingSpeedRatio": "A plunging breaker strikes at 1.2 times its phase velocity (DNV-RP-C205, 2010, 8.8.1.2); its phase velocity follows the period and the depth (Eckart 1952)",
             "shippedWaterFraction": "Balance: the share of a crest's water that stays aboard once it comes over the gunwale",
             "crestRatio": "A linear wave's crest stands half its height above still water",
-            "breakingCrestRatio": "A breaking crest is peaked: Stokes' highest wave stands about 0.6 of its height above still water, a plunging breaker 0.7 to 0.8",
-            "airDensity": "Air at sea level, kg/m3",
-            "windageDragCoefficient": "Bluff body drag, about 1",
-            "waveDriftCoefficient": "Mean wave drift force is rho g H^2 / 16 per metre of beam on a body that reflects every wave; a small craft, short against the wavelength, reflects about a tenth"
+            "breakingCrestRatio": "A breaking crest is peaked: Stokes' highest wave stands about 0.6 of its height above still water, a plunging breaker 0.7 to 0.8"
         }
     },
     "bilge": {
@@ -70,13 +61,25 @@
     "mooring": {
         "anchoredExposure": 0.3,
         "stakeRope": "rope-flax",
-        "stakeReachMetres": 10,
         "anchorFullScope": 5,
-        "anchorDragMetres": 1,
+        "sandHold": 0.37,
+        "rockHold": 0.49,
+        "anchorStoneDensity": 2650,
         "sources": {
-            "anchoredExposure": "Balance: an anchored vessel takes three tenths of the pull of wind and waves and the shipped water an unanchored one does; it lies across the sea, so it capsizes as if beam-on",
-            "stakeReachMetres": "Vanilla's longest rope",
-            "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth holds fully"
+            "anchoredExposure": "Balance: an anchored vessel ships three tenths of the water an unanchored one does; it lies across the sea, so it capsizes as if beam-on",
+            "stakeRope": "Vanilla's rope is made of flax, papyrus, cattail or vines alike; every rope is taken as one plant-fibre rope, flax standing in for all",
+            "anchorFullScope": "Seamanship: a rode of 5 to 7 times the depth is paid out",
+            "sandHold": "A one-hole stone anchor dragged under water starts to move at 37% of its dry weight on sand (Miller, Cvikel & Me-Bar 2023, J. Archaeol. Sci. Reports 52, 104284: 90 drag tests of Bronze Age replicas); a bed of mud or soil, unmeasured, is taken as sand",
+            "rockHold": "The same anchor on a flat rocky bed starts to move at 49% of its dry weight (Miller, Cvikel & Me-Bar 2023)",
+            "anchorStoneDensity": "Granite, as vanilla draws the anchor's stone, 2650 kg/m³; under water it weighs 61% of its dry weight"
+        }
+    },
+    "drift": {
+        "syncSeconds": 1,
+        "logSeconds": 5,
+        "sources": {
+            "syncSeconds": "How often the server tells clients how far the water has carried a vessel along, for a rider who takes her helm",
+            "logSeconds": "How often a carried or swinging hull logs the current and what it does to her"
         }
     },
     "ashore": {
@@ -117,12 +120,48 @@
         ],
         "steepness": 1.2,
         "minLengthBlocks": 8,
+        "shortWaves": {
+            "phillipsConstant": 0.0081,
+            "bands": [
+                { "fromBlocks": 4, "toBlocks": 8, "anglesDegrees": [-27, 19] },
+                { "fromBlocks": 2, "toBlocks": 4, "anglesDegrees": [33, -12] },
+                { "fromBlocks": 1, "toBlocks": 2, "anglesDegrees": [-41, 23] },
+                { "fromBlocks": 0.5, "toBlocks": 1, "anglesDegrees": [14, -36] }
+            ]
+        },
+        "tessellation": {
+            "reachMetres": 64,
+            "maxLevel": 8
+        },
         "settleSeconds": 30,
         "turnDegrees": 20,
         "stretch": 0.25,
         "aimSeconds": 0.5,
         "fullFoamMetres": 0.5,
-        "surfFoam": false,
+        "shore": {
+            "mapBlocks": 256,
+            "moveBlocks": 32,
+            "edgeFadeBlocks": 32,
+            "breakingDissipation": 1,
+            "boreFrontSlope": 0.21,
+            "boreCelerityShare": 0.45,
+            "deepestBlocks": 32,
+            "refreshSeconds": 20,
+            "wetReflectance": 0.5,
+            "waterAttenuation": 1,
+            "sources": {
+                "waterAttenuation": "Light fades in water as exp(-K d), down to the bed and back up, so a thin swash shows the sand through it and deep water doesn't: K in 1/m, the diffuse attenuation coefficient, which ranged 0.05 to 3.6 over 94 coastal sites (Corcoran & Parrish 2021, Photogrammetric Engineering & Remote Sensing 87). No surf-zone measurement was found; 1 is turbid coastal water inside that range",
+                "wetReflectance": "Wet sand reflects about half the light dry sand does: Ångström measured an albedo of 0.182 dry against 0.091 wet, as Lekner & Dorf 1988 (Applied Optics 27(7), 'Why some things are darker when wet') quote it",
+                "mapBlocks": "The seabed is read this far across around the player, a block to a texel: the surf of every shore within view distance's nearer half",
+                "moveBlocks": "The seabed is read again once the player is this far from where it was read",
+                "breakingDissipation": "Battjes and Janssen's (1978) alpha in the energy a breaking sea loses: D = alpha sigma Q_b E / (pi B), SWAN's default of 1",
+                "boreFrontSlope": "A broken wave is a bore, a steep front and a long gentle back; the mean surface under a breaker's roller slopes 0.175 to 0.257 (Duncan 1981, Proc. R. Soc. A 377, a steady breaker behind a towed hydrofoil, the closest analogue), and surf-zone measurements settle near 0.2 in the inner surf",
+                "boreCelerityShare": "Waves in the surf run at c = sqrt(g h) sqrt(1 + 0.45 Hs / h), a field fit (Holland 2001, IEEE Trans. Geosci. Remote Sens. 39); this is its 0.45, weighted by the share of waves broken",
+                "edgeFadeBlocks": "Beyond the map the waves are drawn as over deep water; over this many blocks inside its edge they go over to what the bed makes of them, so the map's edge draws no step in the water",
+                "deepestBlocks": "The bed is sounded block by block this deep at most, so a bar a player built counts; below that its depth is worldgen's, and where worldgen knows no bed under the water it is open sea",
+                "refreshSeconds": "How often, in real seconds, the shore's run-up is read again from the sea map as the sea changes"
+            }
+        },
         "whitecaps": [
             { "force": 2, "caps": 0, "streaks": 0, "spray": 0 },
             { "force": 3, "caps": 0.01, "streaks": 0, "spray": 0 },
@@ -137,8 +176,11 @@
         "sources": {
             "trains": "Wave trains spread around the wind, longest first; their energies sum to the sea's, so the significant height drawn is the sea state's",
             "lengthFactor": "The peak wave's length follows its period by deep-water dispersion, L = g T^2 / 2 pi",
-            "minLengthBlocks": "The water mesh has one vertex a block: shorter waves alias",
-            "surfFoam": "Off until the surf foam reads white over any seabed (#70); the foam offshore stays on",
+            "minLengthBlocks": "The long trains stop here, where the short waves' bands take over",
+            "phillipsConstant": "The equilibrium range of a wind sea, E(omega) = alpha g^2 omega^-5 with alpha = 0.0081: Phillips 1958 (J. Fluid Mech. 4), the constant as the Coastal Engineering Manual, EM 1110-2-1100 Part II-1, gives it. Each band's variance is alpha / (4 (2 pi)^2) (L2^2 - L1^2)",
+            "bands": "An octave of the equilibrium range between two lengths, drawn as one train per angle, the band's energy shared among them; the directions are the short waves' broad spread around the wind",
+            "reachMetres": "Tessellation halves the water's vertex spacing each time the distance halves, from a block here to the finest near the player. Performance budget, measured on a GTX 1080 at 1080p: 1.5 ms",
+            "maxLevel": "The most a block's edge is divided: 8 is 12.5 cm between vertices",
             "caps": "The share of the sea's area under whitecaps: above Monahan's measured coverage (3.84e-6 U^3.41), so the caps read from afar as the descriptions have them",
             "whitecaps": "The Beaufort scale's sea descriptions: scattered whitecaps at 3, frequent at 4 and many at 5, foam blown in streaks along the wind from 6 and well marked at 7 to 8, spray and a sea turning white from 8 up"
         }

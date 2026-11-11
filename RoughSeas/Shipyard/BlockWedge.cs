@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
@@ -120,7 +121,10 @@ public class BlockWedge : Block
             foreach (var wedge in GetDrops(world, log.UpCopy(), (byEntity as EntityPlayer)?.Player)) world.SpawnItemEntity(wedge, log.ToVec3d().Add(0.5, 0.5, 0.5));
         }
         var at = row.Centre.ToVec3d().Add(0.5, 0.5, 0.5);
-        world.SpawnItemEntity(new ItemStack(piece, split.Count), at);
+        for (var left = split.Count; left > 0; left -= piece.MaxStackSize)
+        {
+            world.SpawnItemEntity(new ItemStack(piece, Math.Min(left, piece.MaxStackSize)), at);
+        }
         world.SpawnCubeParticles(at, new ItemStack(piece), 2, 32, 0.8f);
         world.PlaySoundAt(SplitSound, at.X, at.Y, at.Z);
         axe.Itemstack?.Collectible.DamageItem(world, byEntity, axe);

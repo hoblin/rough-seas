@@ -20,7 +20,6 @@
         "tidalLitres": 0.5,
         "breathSeconds": 2,
         "atmospherePascals": 101325,
-        "addedMassPerRadiusCubed": 2.667,
         "dragAreaAlong": 0.25,
         "dragAreaAcross": 0.45,
         "sources": {
@@ -34,7 +33,6 @@
             "tidalLitres": "A quiet breath moves about 500 mL in an adult man (Hallett, Toro & Ashurst, Physiology, Tidal Volume, StatPearls NBK482502)",
             "breathSeconds": "Quiet breathing runs 12 to 20 breaths a minute, 3 to 5 s a breath; the lungs settle to their mean within about half a breath",
             "atmospherePascals": "The standard atmosphere, 101325 Pa (10th CGPM, 1954): air held in the lungs shrinks under the water's pressure by Boyle's law",
-            "addedMassPerRadiusCubed": "8/3: a disc of radius a carries (8/3) rho a^3 of water, in open water (Brennen 1982, NCEL CR 82.010, Table IV) and, as a piston in a rigid surface, at the low frequencies of swell. The disc is the body's own section at the waterline, or its widest under water, so no share of its displacement is picked. A floating hemisphere's low-frequency 0.83 of its displacement (Storti & D'Elia 2001) is the check on the form",
             "dragAreaAlong": "A body moving along its length unstreamlined: head-down skydivers fall at 240-290 km/h (FAI), so at 80 kg Cd A = 2 m g / (rho_air v^2) is about 0.2-0.3 m2; no measure of a body moving up and down in water was found, and a towed streamlined glide drags only 0.041 m2 (Cortesi et al. 2020, Int J Environ Res Public Health 17(6):2002)",
             "dragAreaAcross": "A body moving broadside, the water carrying it across: belly-down skydivers fall at about 200 km/h (FAI), so at 80 kg Cd A is about 0.42-0.46 m2. Taken by the share of the body under water"
         }

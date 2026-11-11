@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Hırçın deniz",
     "playstyle-desc-preset-roughseas": "Açık okyanusları olan, rüzgârın, fırtınaların ve denizin tehlikeli olduğu bir dünyada standart hayatta kalma.",
     "worldconfig-category-roughseas": "Hırçın deniz",
-    "worldattribute-dangerousOceans": "Tehlikeli okyanuslar",
-    "worldattribute-dangerousOceans-desc": "Fırtınalar, kıyı dalgaları ve yıldırımlar teknelere su aldırabilir, onları alabora edip parçalayabilir, bağlarından ve demirlerinden koparabilir. Kapalıyken deniz havasını korur ama zarar vermez."
+    "worldattribute-bilgeWater": "Sintinede su",
+    "worldattribute-bilgeWater-desc": "Dalgalar tekneye vurup içine dolar, yağmur da üstü açık bir tekneye yağar ve siz boşaltana kadar sintineyi doldurur. Kapalıyken ne dalga ne yağmur su ekler; su alan bir yarık yine ekler, su basan ya da batmış bir tekne de yine dolar.",
+    "worldattribute-hullDamage": "Gövde hasarı",
+    "worldattribute-hullDamage-desc": "Kayalar, kıyı, bindirmeler, ivintiler, kıyı dalgaları ve hava gövdeyi çatlatır, çatlak da su alır. Deri çürür, yağlanmamış dikişler su sızdırır, saz su çeker. Kapalıyken hiçbir gövde hasar görmez ve her gövde tamamen onarılır; çarpma sesi yine duyulur, silahlar ve patlamalar da gövdeye yine hasar verir.",
+    "worldattribute-stormLightning": "Yıldırım",
+    "worldattribute-stormLightning-desc": "Fırtınalar yakınınıza yıldırım düşürür, direk de yıldırımı çeker. Kapalıyken fırtınalar kendiliğinden yıldırım düşürmez, direkler de yıldırım çekmez; oyunun kendi gök gürültülü fırtınaları değişmez.",
+    "worldattribute-mooringStrain": "Bağlama yükü",
+    "worldattribute-mooringStrain-desc": "Bağlama halatı ya da çapa halatı suyun çekişini ve her dalganın ani silkinişini karşılar: dayanımı aşılınca halat kopar, demir tarar, siz yokken bağlı duran bir tekne de kıyıya atılabilir. Kapalıyken hiçbir şey kopmaz, taramaz ya da atılmaz; halat tekneyi yine kendi boyu kadar uzakta tutar.",
+    "worldattribute-oceanCurrents": "Akıntılar",
+    "worldattribute-oceanCurrents-desc": "Akıntılar, yönetilsin ya da yönetilmesin her tekneyi taşır ve bağlamasını çeker. Kapalıyken su hiçbir tekneyi taşımaz; akıntılar denizi yine ısıtır ya da soğutur.",
+    "worldattribute-rowerFatigue": "Kürekçi yorgunluğu",
+    "worldattribute-rowerFatigue-desc": "Kürek çekmek, pagaylamak ve sırıkla itmek sizi acıktırır. Kapalıyken doygunluk harcanmaz; tekne yine yalnızca sizin yürüttüğünüz kadar hızlı gider.",
+    "worldattribute-poleDepth": "Sırık derinliği",
+    "worldattribute-poleDepth-desc": "Sırık yalnızca dibe yetiştiği yerde iter. Kapalıyken her derinlikteki suda tam itişteki gibi iter.",
+    "worldattribute-swimmerBreakers": "Yüzücülere kırılan dalgalar",
+    "worldattribute-swimmerBreakers-desc": "Yüzerken üzerinize kırılan bir dalga sizi suyun altına iter ve beraberinde sürükler; köpüklü suyu sizi daha az taşır. Kapalıyken hiçbir dalga yüzücünün üzerine kırılmaz; yine de dalgaların üzerinde süzülür ve onların ritmiyle nefes alırsınız."
 }

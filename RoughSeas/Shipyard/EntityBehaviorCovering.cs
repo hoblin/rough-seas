@@ -14,7 +14,7 @@ using RoughSeas.Vessels;
 namespace RoughSeas.Shipyard;
 
 /// <summary>
-/// A hide boat bound from laths laid out on the ground, then framed and covered piece by piece where she lies, upside
+/// A hide boat bound from a pile of laths on the ground, then framed and covered piece by piece where she lies, upside
 /// down when her build says so. Her cover is the hides sewn on her, by type, and a seam between each.
 /// </summary>
 public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entity), ICovered
@@ -58,7 +58,11 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
-        if (Upright || !framing.Built || mode != EnumInteractMode.Interact || byEntity.Controls.ShiftKey || !itemslot.Empty) return;
+        if (Upright || !framing.Built || mode != EnumInteractMode.Interact || byEntity.Controls.ShiftKey || !itemslot.Empty)
+        {
+            base.OnInteract(byEntity, itemslot, hitPosition, mode, ref handled);
+            return;
+        }
 
         handled = EnumHandling.PreventSubsequent;
         if (entity.World.Side != EnumAppSide.Server) return;
@@ -69,18 +73,9 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
         Shipyard.Log(entity, "turned over by {0}", byEntity.GetName());
     }
 
-    public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
-    {
-        if (Upright || !framing.Built) return base.GetInteractionHelp(world, es, player, ref handled);
-
-        return [new WorldInteraction { ActionLangCode = "roughseas:shipyard-turn-over", MouseButton = EnumMouseButton.Right }];
-    }
-
-    public override void GetInfoText(StringBuilder infotext)
-    {
-        base.GetInfoText(infotext);
-        if (!Upright && framing.Built) infotext.AppendLine(Lang.Get("roughseas:shipyard-overturned"));
-    }
+    protected override BuildStep? Next =>
+        Upright || !framing.Built ? base.Next
+        : new BuildStep(string.Join("\n", new[] { base.Next?.Progress, Lang.Get("roughseas:shipyard-overturned") }.OfType<string>()), "roughseas:shipyard-turn-over");
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
@@ -130,11 +125,19 @@ public class EntityBehaviorCovering(Entity entity) : EntityBehaviorFraming(entit
 
 public class CoveringConfig : FramingConfig
 {
-    public JToken? Layout;
+    public LathStart? Start;
 
     public bool Overturned;
 
     public double[] OverturnedPivotVoxels = [];
 
     public static new CoveringConfig? Of(EntityProperties type) => Of<CoveringConfig>(type, EntityBehaviorCovering.Code);
+}
+
+/// <summary>The one pile a hide boat's build starts from: so many laths of that length, and nothing more.</summary>
+public class LathStart
+{
+    public int Laths;
+
+    public int Metres;
 }

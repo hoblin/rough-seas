@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Rough Seas",
     "playstyle-desc-preset-roughseas": "Standard survival on a world with open oceans, where wind, storms and the sea are dangerous.",
     "worldconfig-category-roughseas": "Rough Seas",
-    "worldattribute-dangerousOceans": "Dangerous oceans",
-    "worldattribute-dangerousOceans-desc": "Storms, surf and lightning can swamp, capsize and break vessels, and tear them from their moorings. Off, the sea keeps its weather but does no harm."
+    "worldattribute-bilgeWater": "Water in the bilge",
+    "worldattribute-bilgeWater-desc": "Waves break aboard and rain falls into an open vessel, filling its bilge until you bail it out. Off, no wave or rain adds water; a leak still does, and a vessel awash or sunk still fills.",
+    "worldattribute-hullDamage": "Hull damage",
+    "worldattribute-hullDamage-desc": "Rocks, the shore, rams, rapids, breakers and the weather crack a hull, and a crack leaks. Hide rots, ungreased seams seep and reed soaks up water. Off, no hull takes harm and every hull is mended whole; a knock is still heard, and weapons and explosions still harm a hull.",
+    "worldattribute-stormLightning": "Lightning",
+    "worldattribute-stormLightning-desc": "Storms strike lightning near you, and a mast draws it. Off, storms strike none of their own and masts draw none; the game's own thunderstorms are unchanged.",
+    "worldattribute-mooringStrain": "Mooring strain",
+    "worldattribute-mooringStrain-desc": "A mooring rope or an anchor's rode takes the pull of the water and the jerk of each wave: past its strength a rope parts, an anchor drags, and a vessel moored while you are away can be thrown ashore. Off, nothing parts, drags or is thrown; a rope still holds a vessel at its length.",
+    "worldattribute-oceanCurrents": "Currents",
+    "worldattribute-oceanCurrents-desc": "Currents carry every vessel, steered or not, and pull on its mooring. Off, the water carries no vessel; the currents still warm or cool the sea.",
+    "worldattribute-rowerFatigue": "Rower fatigue",
+    "worldattribute-rowerFatigue-desc": "Rowing, paddling and poling make you hungry. Off, they cost no satiety; a vessel still goes only as fast as you row it.",
+    "worldattribute-poleDepth": "Pole's depth",
+    "worldattribute-poleDepth-desc": "A pole pushes only where it reaches the bottom. Off, it pushes in water of any depth as at its full stroke.",
+    "worldattribute-swimmerBreakers": "Breakers on swimmers",
+    "worldattribute-swimmerBreakers-desc": "A wave that breaks over you while you swim pushes you under and along with it, and its foaming water holds you up less. Off, no wave breaks over a swimmer; you still float on the waves and breathe by them."
 }

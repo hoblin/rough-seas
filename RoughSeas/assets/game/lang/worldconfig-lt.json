@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Audringa jūra",
     "playstyle-desc-preset-roughseas": "Standartinis išgyvenimas pasaulyje su atvirais vandenynais, kur vėjas, audros ir jūra yra pavojingi.",
     "worldconfig-category-roughseas": "Audringa jūra",
-    "worldattribute-dangerousOceans": "Pavojingi vandenynai",
-    "worldattribute-dangerousOceans-desc": "Audros, mūša ir žaibai gali laivus užlieti, apversti ir sudaužyti, o taip pat nutraukti juos nuo švartų ir inkarų. Išjungus jūroje lieka orai, bet ji nekenkia."
+    "worldattribute-bilgeWater": "Vanduo lijale",
+    "worldattribute-bilgeWater-desc": "Bangos užlieja laivą, o lietus lyja į atvirą laivą ir pildo jo lijalą, kol išsemiate vandenį. Išjungus nei bangos, nei lietus vandens neprideda; pro skylę jis vis tiek sunkiasi, o užliejamas ar nuskendęs laivas vis tiek prisipildo.",
+    "worldattribute-hullDamage": "Korpuso pažeidimai",
+    "worldattribute-hullDamage-desc": "Uolos, krantas, taranavimai, slenksčiai, mūša ir oras skaldo korpusą, o pro įskilimą teka vanduo. Oda pūva, neteptos siūlės prasisunkia, o nendrės permirksta. Išjungus joks korpusas nepažeidžiamas, ir kiekvienas korpusas sutaisomas visiškai; smūgis vis tiek girdimas, o ginklai ir sprogimai vis tiek pažeidžia korpusą.",
+    "worldattribute-stormLightning": "Žaibai",
+    "worldattribute-stormLightning-desc": "Audros trenkia žaibais netoli jūsų, o stiebas juos pritraukia. Išjungus audros nebetrenkia savų žaibų, o stiebai jų nepritraukia; paties žaidimo perkūnijos nesikeičia.",
+    "worldattribute-mooringStrain": "Švartavimo apkrova",
+    "worldattribute-mooringStrain-desc": "Švartavimo lynas ar inkaro lynas atlaiko vandens traukimą ir kiekvienos bangos trūktelėjimą: viršijus jo stiprumą, lynas nutrūksta, inkaras slenka dugnu, o laivą, pririštą jums nesant, gali išmesti į krantą. Išjungus niekas nenutrūksta, neslenka ir nėra išmetama; lynas vis tiek neleidžia laivui nutolti toliau, nei siekia jo ilgis.",
+    "worldattribute-oceanCurrents": "Srovės",
+    "worldattribute-oceanCurrents-desc": "Srovės neša kiekvieną laivą, vairuojamą ar ne, ir tempia jo švartavimo lynus. Išjungus vanduo nė vieno laivo neneša; srovės vis tiek šildo arba vėsina jūrą.",
+    "worldattribute-rowerFatigue": "Irkluotojo nuovargis",
+    "worldattribute-rowerFatigue-desc": "Nuo irklavimo, irklavimo vienmenčiu irklu ir stūmimosi kartimi išalkstate. Išjungus tai neeikvoja sotumo; laivas vis tiek plaukia tik taip greitai, kaip jį varote.",
+    "worldattribute-poleDepth": "Karties gylis",
+    "worldattribute-poleDepth-desc": "Kartis stumia tik ten, kur pasiekia dugną. Išjungus ji stumia bet kokio gylio vandenyje kaip visu mostu.",
+    "worldattribute-swimmerBreakers": "Mūša ant plaukikų",
+    "worldattribute-swimmerBreakers-desc": "Banga, lūžtanti ant jūsų, kai plaukiate, panardina jus ir neša kartu, o jos putotas vanduo mažiau jus laiko. Išjungus jokia banga nelūžta ant plaukiko; jūs vis tiek plūduriuojate ant bangų ir kvėpuojate jų ritmu."
 }

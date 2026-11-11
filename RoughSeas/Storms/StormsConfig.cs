@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using RoughSeas.Water;
 
 namespace RoughSeas.Storms;
 
@@ -11,6 +11,7 @@ public class StormsConfig
     public SwampingConfig Swamping = new();
     public ResponseConfig Response = new();
     public MooringConfig Mooring = new();
+    public DriftConfig Drift = new();
     public AshoreConfig Ashore = new();
     public LightningConfig Lightning = new();
     public SurfaceConfig Surface = new();
@@ -21,35 +22,6 @@ public class EyeConfig
 {
     public double ShiftPerBlock;
     public double ShiftAboveBlocks;
-}
-
-public class SurfaceConfig
-{
-    public SurfaceTrainConfig[] Trains = [];
-    public double Steepness;
-    public double MinLengthBlocks;
-    public double SettleSeconds;
-    public double TurnDegrees;
-    public double Stretch;
-    public double AimSeconds;
-    public double FullFoamMetres;
-    public bool SurfFoam;
-    public WhitecapsConfig[] Whitecaps = [];
-}
-
-public class SurfaceTrainConfig
-{
-    public double AngleDegrees;
-    public double LengthFactor;
-    public double Energy;
-}
-
-public class WhitecapsConfig
-{
-    public int Force;
-    public double Caps;
-    public double Streaks;
-    public double Spray;
 }
 
 public class WavesConfig
@@ -64,16 +36,11 @@ public class WavesConfig
     public double PlungingShareAtSea;
     public double[] PlungingIribarren = [];
     public double[] PlungeDistance = [];
-    public int BedSlopeBlocks;
     public double SlamCoefficient;
     public double PlungingSpeedRatio;
     public double ShippedWaterFraction;
     public double CrestRatio;
     public double BreakingCrestRatio;
-    public double AirDensity;
-    public double WindageDragCoefficient;
-    public double WaveDriftCoefficient;
-    public int MaxDepthBlocks;
 }
 
 public class BilgeConfig
@@ -92,13 +59,20 @@ public class SwampingConfig
     public double SpeedFactor(double referenceKg, double kg) => Math.Pow(referenceKg / kg, SpeedExponent);
 }
 
+public class DriftConfig
+{
+    public double SyncSeconds;
+    public double LogSeconds;
+}
+
 public class MooringConfig
 {
     public double AnchoredExposure;
     public string StakeRope = "";
-    public double StakeReachMetres;
     public double AnchorFullScope;
-    public double AnchorDragMetres;
+    public double SandHold;
+    public double RockHold;
+    public double AnchorStoneDensity;
 }
 
 public class AshoreConfig

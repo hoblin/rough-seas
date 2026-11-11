@@ -18,6 +18,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private const float LongestStepSeconds = 0.5f;
     private const double LogEverySeconds = 5;
     private const double LogWithinBlocks = 64;
+    private const double AccelerationSmoothingSeconds = 0.25;
 
     private readonly HullRider rider = new(storms.Config.Response);
     private (double X, double Z) applied;
@@ -27,6 +28,8 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private (double X, double Z) carriedFrom;
     private double loggedSeconds;
     private double sway;
+
+    public (double X, double Z) WaterAcceleration { get; private set; }
 
     /// <summary>The pose she takes at <paramref name="seconds"/>, on a clock of the caller's: the one her model is drawn at, and the heave the water is read at.</summary>
     public SeaPose Follow(EntityBoat boat, IDrawnSea drawn, double seconds) =>
@@ -43,6 +46,11 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         if (!boat.Swimming || seconds <= 0)
         {
             Leave(boat, "out of the water");
+            return;
+        }
+        if (forces.Buoyant?.Afloat.Sunk == true)
+        {
+            Leave(boat, "sunk");
             return;
         }
         var drawn = SeaFor(boat);
@@ -71,16 +79,23 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         if (physics != null && forces.Driven)
         {
             // no way on and the drag taken off: nothing would ever take off what her motion holds, so it is written outright, as vanilla writes her way
-            pos.Motion.X = x / WaterDrag.TicksPerSecond;
-            pos.Motion.Z = z / WaterDrag.TicksPerSecond;
+            var (setX, setZ) = boat.GetBehavior<EntityBehaviorCurrentDrift>()?.Held ?? default;
+            pos.Motion.X = x / WaterDrag.TicksPerSecond + setX;
+            pos.Motion.Z = z / WaterDrag.TicksPerSecond + setZ;
         }
         else
         {
             double? kept = physics != null ? WaterDrag.Kept(physics.WaterDragValue, seconds) : null;
             // vanilla's swimming physics divides her whole motion when it is fast, the waves' part with it
             var swimDrag = physics != null ? 1 : VesselDraught.SwimDrag(boat.ForwardSpeed, GlobalConstants.PhysicsFrameTime * WaterDrag.TicksPerSecond);
-            pos.Motion.X += WaterDrag.Carried(x, applied.X, kept ?? 0) * swimDrag;
-            pos.Motion.Z += WaterDrag.Carried(z, applied.Z, kept ?? 0) * swimDrag;
+            pos.Motion.X += WaterDrag.Carried(x, pos.Motion.X == 0 ? 0 : applied.X, kept ?? 0) * swimDrag;
+            pos.Motion.Z += WaterDrag.Carried(z, pos.Motion.Z == 0 ? 0 : applied.Z, kept ?? 0) * swimDrag;
+        }
+        if (carried)
+        {
+            var share = seconds / (AccelerationSmoothingSeconds + seconds);
+            WaterAcceleration = (WaterAcceleration.X + ((x - applied.X) / seconds - WaterAcceleration.X) * share,
+                WaterAcceleration.Z + ((z - applied.Z) / seconds - WaterAcceleration.Z) * share);
         }
         applied = (x, z);
 
@@ -115,6 +130,8 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private void Leave(EntityBoat boat, string why)
     {
         applied = default;
+        WaterAcceleration = default;
+        if (boat.Api.Side == EnumAppSide.Server) rider.Settle();
         if (!carried) return;
         carried = false;
         (carriedSeconds, drifted, loggedSeconds, sway) = (0, default, 0, 0);

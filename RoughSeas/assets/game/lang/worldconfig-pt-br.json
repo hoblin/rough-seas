@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Mar bravo",
     "playstyle-desc-preset-roughseas": "Sobrevivência normal num mundo de oceanos abertos, onde o vento, as tempestades e o mar são perigosos.",
     "worldconfig-category-roughseas": "Mar bravo",
-    "worldattribute-dangerousOceans": "Oceanos perigosos",
-    "worldattribute-dangerousOceans-desc": "Tempestades, arrebentação e raios podem alagar, emborcar e quebrar embarcações, e arrancá-las da amarração ou do fundeio. Desligado, o mar mantém seu clima, mas não causa dano."
+    "worldattribute-bilgeWater": "Água no porão",
+    "worldattribute-bilgeWater-desc": "As ondas quebram a bordo e a chuva cai numa embarcação aberta, enchendo o porão até você esgotá-lo. Desativado, nem ondas nem chuva acrescentam água; um vazamento ainda acrescenta, e uma embarcação alagada ou afundada ainda se enche.",
+    "worldattribute-hullDamage": "Danos ao casco",
+    "worldattribute-hullDamage-desc": "Rochas, a margem, abalroamentos, corredeiras, a arrebentação e o tempo racham o casco, e uma rachadura faz água. O couro apodrece, as costuras sem untar vazam e o junco encharca. Desativado, nenhum casco sofre dano e todo casco fica inteiro de novo; uma batida ainda se ouve, e armas e explosões ainda danificam o casco.",
+    "worldattribute-stormLightning": "Raios",
+    "worldattribute-stormLightning-desc": "As tempestades lançam raios perto de você, e um mastro os atrai. Desativado, as tempestades não lançam raios próprios e os mastros não atraem nenhum; as trovoadas do próprio jogo continuam iguais.",
+    "worldattribute-mooringStrain": "Tensão na amarração",
+    "worldattribute-mooringStrain-desc": "Um cabo de amarração ou um cabo de fundeio aguenta o puxão da água e o tranco de cada onda: acima da sua resistência o cabo arrebenta, a âncora garra, e uma embarcação amarrada enquanto você está longe pode ser jogada na praia. Desativado, nada arrebenta, garra ou é jogado; um cabo ainda segura a embarcação no seu comprimento.",
+    "worldattribute-oceanCurrents": "Correntes",
+    "worldattribute-oceanCurrents-desc": "As correntes levam toda embarcação, governada ou não, e puxam a sua amarração. Desativado, a água não leva nenhuma embarcação; as correntes ainda aquecem ou esfriam o mar.",
+    "worldattribute-rowerFatigue": "Cansaço do remador",
+    "worldattribute-rowerFatigue-desc": "Remar, pagaiar e varejar dão fome. Desativado, não gastam saciedade; uma embarcação ainda só anda tão rápido quanto você a impulsiona.",
+    "worldattribute-poleDepth": "Profundidade da vara",
+    "worldattribute-poleDepth-desc": "A vara só empurra onde alcança o fundo. Desativado, empurra em água de qualquer profundidade como num impulso completo.",
+    "worldattribute-swimmerBreakers": "Arrebentação sobre nadadores",
+    "worldattribute-swimmerBreakers-desc": "Uma onda que arrebenta sobre você enquanto nada o empurra para baixo e o leva junto, e sua água espumante sustenta menos. Desativado, nenhuma onda arrebenta sobre quem nada; você continua boiando nas ondas e respirando no ritmo delas."
 }

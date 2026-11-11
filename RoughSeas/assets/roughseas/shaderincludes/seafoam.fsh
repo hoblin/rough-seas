@@ -1,16 +1,37 @@
 // The other end of RoughSeas/Storms/SeaSurface.cs and SurfaceShader.cs, which set these uniforms.
-uniform vec4 seaFoam;
+uniform vec3 seaFoam;
 uniform vec2 seaWavesToward;
+uniform float seaFoamClock;
+uniform float seaFoamDecay;
 
 in float seaFoamCrest;
 in float seaFoamFold;
 in float seaFoamShare;
+in float seaFoamBroken;
 in vec2 seaFoamWorld;
+in vec2 seaFoamCrestTime;
+in vec4 seaFoamBrokenAt;
+in float seaFoamThickness;
+in float seaFoamTip;
 
-float seaWaterDepth() {
-	vec2 screen = gl_FragCoord.xy / frameSize;
-	float through = (linearDepth(texture(depthTex, screen).x) - linearDepth(gl_FragCoord.z)) * zFar;
-	return max(0.0, through * abs(normalize(fWorldPos).y));
+const float seaRollerSeconds = 0.4;
+const float seaTipFoamMetres = 0.3;
+
+float seaWaterOpacity() {
+	return 1.0 - exp(-2.0 * SEA_ATTENUATION * seaFoamThickness);
+}
+const float seaLaceSpread = 6.2;
+
+float seaBrokenFoam(float share, float delay) {
+	float period = 6.2831853 / seaFoamCrestTime.y;
+	float since = mod(1.5707963 - seaFoamCrestTime.x, 6.2831853) / seaFoamCrestTime.y;
+	float ragged = seaRollerSeconds * gnoise(vec3(seaFoamWorld / 3.0, seaFoamClock * 0.1));
+	return share * exp(-mod(since - delay - ragged, period) / seaFoamDecay);
+}
+
+float seaFoamFaceAt() {
+	if (seaFoamDecay <= 0.0 || seaFoamCrestTime.y <= 0.0) return 0.0;
+	return max(seaBrokenFoam(seaFoamBrokenAt.x, seaFoamBrokenAt.y), seaBrokenFoam(seaFoamBrokenAt.z, seaFoamBrokenAt.w));
 }
 
 float seaLace(vec2 at, float t) {
@@ -26,16 +47,23 @@ float seaVeins(float along, float side, float scale, float width, float t) {
 	return 1.0 - clamp(line / width, 0.0, 1.0);
 }
 
+float seaBrokenLace(float cover, float along, float side, float t) {
+	float n = gnoise(vec3(along / 1.0, side / 0.45, t * 0.2)) * 0.5 + gnoise(vec3(along / 0.35, side / 0.16, t * 0.35)) * 0.3
+		+ gnoise(vec3(along / 0.12, side / 0.07, t * 0.5)) * 0.2;
+	return 1.0 - smoothstep(cover - 0.04, cover + 0.04, tanh(seaLaceSpread * abs(n)));
+}
+
 float seaFoamAt() {
-	if (seaFoamShare <= 0.0) return 0.0;
+	float seaFoamFace = seaFoamFaceAt();
+	if (seaFoamShare <= 0.0 && seaFoamFace <= 0.0) return 0.0;
 
 	vec2 at = seaFoamWorld;
-	float t = waterWaveCounter;
+	float t = seaFoamClock;
 	vec2 across = vec2(-seaWavesToward.y, seaWavesToward.x);
 	float along = dot(at, seaWavesToward);
 	float side = dot(at, across);
 	float lace = seaLace(at, t);
-	float offshore = smoothstep(0.5, 0.9, seaFoamShare);
+	float offshore = smoothstep(0.5, 0.9, seaFoamShare) * (1.0 - seaFoamBroken);
 	float foam = 0.0;
 
 	if (offshore > 0.0) {
@@ -57,19 +85,8 @@ float seaFoamAt() {
 		foam *= offshore;
 	}
 
-	float breakDepth = seaFoam.w;
-	if (breakDepth > 0.0) {
-		float depth = max(0.0, seaWaterDepth() + 1.6 * gnoise(vec3(at * 0.5, t * 0.3)) + 0.9 * gnoise(vec3(at * 1.7, t * 0.5)));
-		if (depth < breakDepth) {
-			float shore = 1.0 - depth / breakDepth;
-			float bands = fract(shore * 3.0 - t * 0.6 + 0.15 * gnoise(vec3(at * 0.3, t * 0.2)));
-			float band = smoothstep(0.0, 0.12, bands) * (1.0 - smoothstep(0.3, 0.75, bands));
-			float swash = smoothstep(0.75, 0.95, shore);
-			float density = max(band * (0.6 + shore), swash * 1.4);
-			foam = max(foam, seaFlecked(density, lace * 0.8) * smoothstep(0.02, 0.15, seaFoamShare));
-		}
-	}
+	if (seaFoamFace > 0.0) foam = max(foam, seaBrokenLace(seaFoamFace, along, side, t));
+	if (seaFoamTip < seaTipFoamMetres) foam = max(foam, seaBrokenLace(1.0 - smoothstep(0.0, seaTipFoamMetres, max(seaFoamTip, 0.0)), along, side, t));
 
 	return clamp(foam, 0.0, 1.0);
 }
-

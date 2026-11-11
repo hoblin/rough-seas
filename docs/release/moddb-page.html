@@ -1,130 +1,107 @@
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/logo/rough-seas-logo-transparent-bubble.png" alt="Rough Seas" width="360" height="347"></p>
+<p style="text-align: center;"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/logo/rough-seas-logo-storm.webp" alt="Rough Seas over a hurricane sea, lit by a lightning strike" style="max-width: 100%; width: 720px;" /></p>
+<p style="text-align: center; font-size: 1.15em;">In vanilla the sea is flat, safe and empty. Rough Seas gives it weather, storms and currents, hulls that crack and flood, and six new vessels between the raft and the sailboat.</p>
+<p style="text-align: center;"><a href="https://github.com/hoblin/rough-seas/wiki" target="_blank" rel="noopener">Wiki</a> · <a href="https://github.com/hoblin/rough-seas" target="_blank" rel="noopener">Source</a> · <a href="https://github.com/hoblin/rough-seas/issues" target="_blank" rel="noopener">Issues and ideas</a></p>
 
-<p>In vanilla the sea is flat, safe and empty. Crossing it means holding W on a raft. Rough Seas gives the sea weather of its own: wind, storms that cross the world, waves that grow with them, currents. Every vessel cracks, leaks and floods by what it's made of, and six new vessels fill the gap between the raft and the sailboat.</p>
-
-<p><strong>It's an early stage of development, so make a backup before adding it to your existing save. The mod is designed to be safe to turn on and off, but still.</strong></p>
-
-<p><a href="https://github.com/hoblin/rough-seas/wiki">Wiki</a> · <a href="https://github.com/hoblin/rough-seas">Source</a> · <a href="https://github.com/hoblin/rough-seas/issues">Issues and ideas</a></p>
-
-<h2>Tested compatibility</h2>
-<p>Tested on Vintage Story 1.22.7:</p>
-<ul>
-<li><a href="https://mods.vintagestory.at/show/mod/69562">Dynamic Seasonal Temperature</a> 1.4.0: compatible.</li>
-<li><a href="https://mods.vintagestory.at/biwc">Better and Improved Weather Continued</a> 2.0.5: compatible.</li>
-<li><a href="https://mods.vintagestory.at/realisticwater">Realistic Water</a> 0.4.0: compatible.</li>
-<li><a href="https://mods.vintagestory.at/realisticrapids">Realistic Rapids</a> 0.1.3: compatible.</li>
-<li><a href="https://mods.vintagestory.at/show/mod/58501">Extreme Weathers</a> 1.8.5: compatible. Its own hurricane, monsoon and blizzard rolls are off, since our storms bring them. Its damage, howl, tornadoes and deep snow ride our storms. No whiteout for now.</li>
-<li><a href="https://mods.vintagestory.at/terraprety">Terra Prety</a> 7.11.2-pre.1: compatible. <strong>Set world height 448</strong> when you create the world, or its seas are too shallow for storms to raise much of a sea.</li>
-<li><a href="https://mods.vintagestory.at/wildcrafttree">Wildcraft: Trees and Shrubs</a> 1.3.4: compatible, and its woods build our vessels.</li>
-<li><a href="https://mods.vintagestory.at/sheydermod">SheyderMod</a> 2.0.0: compatible from Rough Seas 2.0.1.</li>
-<li><a href="https://mods.vintagestory.at/show/mod/74534">Shipworks+</a> 1.1.0: works with issues. It made itself compatible with us; its ships sail in our wind and feel our sea, but don't yet rise and roll with our drawn swell.</li>
-</ul>
-<p>What each pair does together and what to know for a mod set: <a href="https://github.com/hoblin/rough-seas/wiki/Other-Mods">Beside other mods</a>. Running Rough Seas with a mod not listed here? Tell us how it went.</p>
-
-<h2>Thanks</h2>
-<p>Rough Seas started with Mahjong Blonsky's video <a href="https://youtu.be/NPrPEQdM14I">Why doesn't Vintage Story have oceans?</a>. We liked his ideas so much that we built them. Thanks for the great ideas, and for asking the question.</p>
-<p style="text-align: center;"><iframe src="https://www.youtube.com/embed/NPrPEQdM14I" width="560" height="315" allowfullscreen="allowfullscreen"></iframe></p>
-
-<h2>The sea</h2>
-<ul>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Wind-and-Waves">Wind and waves.</a></strong> Wind follows the real world's prevailing winds, and waves grow from its strength, the open water and the hours it has blown, so a big lake raises a sea of its own.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Storms">Storms.</a></strong> Squalls, gales and hurricanes cross the world, born where and when real ones are. Each warns you first.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/The-Look-of-the-Sea">A sea you can read.</a></strong> The swell is drawn as high as the waves that hit your hull, and whitecaps spread by the Beaufort scale.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Lightning">Lightning.</a></strong> Warm storms strike, and a mast draws it.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Currents">Currents.</a></strong> The oceans turn in slow gyres and carry off a boat left alone.</li>
-<li><strong>A sea you can hear.</strong> Open water sounds as rough as it is, whitecaps hiss from windward as the wind rises, and surf roars only on the shore. Recorded by real people: <a href="https://github.com/hoblin/rough-seas/wiki/Sound-Credits">Sound credits</a>.</li>
-</ul>
-
-<h2>Your vessel</h2>
-<ul>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Hull-Condition">Cracks and leaks.</a></strong> A knock, a ram or a blade cracks the hull where it lands, each by its physics, and you hear it creak and crack. Look at her: each cracked place, the leak in litres a minute, and her freeboard. A boat is lost by flooding; only a really hard blow breaks one up.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Mending">Mending.</a></strong> Hold the hull's own material and right-click the place to patch. Hard work, and it makes you hungry.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Surf-and-Swamping">Floating and flooding.</a></strong> Every vessel floats by its mass: wood, load and the water in it. Waves come over a low side and break in the shallows. Flooded, a light hull lies awash and a heavy one sinks.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Bailing">Bailing.</a></strong> A bowl, jug or bucket, one held click.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Rapids">Rapids.</a></strong> White water batters every hull but the bark canoe's and the coracle's.</li>
-<li><strong><a href="https://github.com/hoblin/rough-seas/wiki/Anchoring">Anchoring</a> and <a href="https://github.com/hoblin/rough-seas/wiki/Mooring">mooring</a>.</strong> The sailboat's anchor holds as well as its rope allows, and any vessel ties to a post. Ropes snap.</li>
-</ul>
+<h2>Paddle, pole, row</h2>
+<p>Every vessel moves by its own physics: what you push with, how hard you can push, and how the hull slips through the water.</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;">
+<div><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/propulsion/paddling.webp" alt="Paddling a bark canoe" style="width: 100%;" /><p style="margin: 4px 0 0;"><strong>Paddle</strong> along the side, and change sides to keep your course.</p></div>
+<div><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/propulsion/poling.webp" alt="Poling a dugout standing" style="width: 100%;" /><p style="margin: 4px 0 0;"><strong>Pole</strong> off the bottom through the shallows, as long as the pole reaches.</p></div>
+<div><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/propulsion/rowing.webp" alt="Rowing a currach on its thole pins" style="width: 100%;" /><p style="margin: 4px 0 0;"><strong>Row</strong> the currach on its thole pins.</p></div>
+<div><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/propulsion/sculling.webp" alt="Sculling a coracle over its bow" style="width: 100%;" /><p style="margin: 4px 0 0;"><strong>Scull</strong> the coracle over its bow.</p></div>
+</div>
+<p>More: <a href="https://github.com/hoblin/rough-seas/wiki/Paddles-Poles-and-Oars" target="_blank" rel="noopener">Paddles, poles and oars</a>.</p>
 
 <h2>The vessels</h2>
-<p>Vanilla gives you the raft and the sailboat and nothing in between. Rough Seas adds six. Each comes from a real boatbuilding tradition and has its own job. None is best at everything. Pretty much how armor works in vanilla.</p>
-<table class="stdtable">
-<thead><tr><th>Vessel</th><th>For</th><th>Speed</th><th>Weakness</th></tr></thead>
-<tbody>
-<tr><td><a href="https://github.com/hoblin/rough-seas/wiki/Raft">Raft</a></td><td>floating cargo downriver</td><td>0.45 m/s</td><td>a few hard knocks shake its lashings loose</td></tr>
-<tr><td><a href="https://github.com/hoblin/rough-seas/wiki/Reed-Boat">Reed boat</a> <em>(new)</em></td><td>a day afloat, bound from two reed bundles</td><td>2.1 m/s</td><td>sinks within four days afloat unless dried, can't be mended</td></tr>
-<tr><td><a href="https://github.com/hoblin/rough-seas/wiki/Dugout">Dugout</a> <em>(new)</em></td><td>the tough workhorse of rivers and lakes</td><td>1.7 m/s</td><td>heavy, and tippy at sea</td></tr>
-<tr><td><a href="https://github.com/hoblin/rough-seas/wiki/Coracle">Coracle</a> <em>(new)</em></td><td>fishing and short hops, worn on your back</td><td>1 m/s</td><td>slow, swamps in a chop</td></tr>
-<tr><td><a href="https://github.com/hoblin/rough-seas/wiki/Birch-Bark-Canoe">Bark canoe</a> <em>(new)</em></td><td>long river trips, through rapids</td><td>2.1 m/s</td><td>fragile</td></tr>
-<tr><td><a href="https://github.com/hoblin/rough-seas/wiki/Hide-Currach">Hide currach</a> <em>(new)</em></td><td>your first trip along the coast, cargo included</td><td>2.4 m/s, rowed</td><td>needs greasing, one hard knock holes it</td></tr>
-<tr><td><a href="https://github.com/hoblin/rough-seas/wiki/Outrigger-Canoe">Outrigger canoe</a> <em>(new)</em></td><td>fast crossings of open sea</td><td>5.9 m/s, sailing</td><td>carries little, stays where launched</td></tr>
-<tr><td><a href="https://github.com/hoblin/rough-seas/wiki/Sailboat">Sailboat</a></td><td>long voyages and heavy cargo; the one that anchors</td><td>7.2 m/s, sailing</td><td>expensive to build, ships water fast in a gale</td></tr>
-</tbody>
-</table>
-<p>Speeds are one rower's, paddled unless noted, on calm water; under full sail vanilla's pace, whatever the wind. Details for each: <a href="https://github.com/hoblin/rough-seas/wiki/Vessels">Vessels</a>.</p>
-<p><strong>From any wood.</strong> The dugout and the outrigger build from any tree, other mods' trees too, and the harder the wood, the tougher the hull. The bark canoe builds from birch, elm or spruce bark.</p>
+<p>Vanilla gives you the raft and the sailboat and nothing in between. Rough Seas adds six, each from a real boatbuilding tradition, each with its own job, none best at everything. You build each one in place, step by step: its wiki page shows how.</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;">
+<div><a href="https://github.com/hoblin/rough-seas/wiki/Raft" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/raft/ashore-close.webp" alt="The raft" style="width: 100%;" /></a><p style="margin: 4px 0 0;"><strong><a href="https://github.com/hoblin/rough-seas/wiki/Raft" target="_blank" rel="noopener">Raft</a></strong> · 0.45 m/s<br />Floating cargo downriver. A few hard knocks shake its lashings loose.</p></div>
+<div><a href="https://github.com/hoblin/rough-seas/wiki/Reed-Boat" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/reed-boat/ashore-close.webp" alt="The reed boat" style="width: 100%;" /></a><p style="margin: 4px 0 0;"><strong><a href="https://github.com/hoblin/rough-seas/wiki/Reed-Boat" target="_blank" rel="noopener">Reed boat</a></strong> (new) · 2.1 m/s<br />A day afloat, bound from two reed bundles. Sinks within four days unless dried; can't be mended.</p></div>
+<div><a href="https://github.com/hoblin/rough-seas/wiki/Dugout" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/dugout/ashore-close.webp" alt="The dugout" style="width: 100%;" /></a><p style="margin: 4px 0 0;"><strong><a href="https://github.com/hoblin/rough-seas/wiki/Dugout" target="_blank" rel="noopener">Dugout</a></strong> (new) · 1.7 m/s<br />The tough workhorse of rivers and lakes. Heavy, and tippy at sea.</p></div>
+<div><a href="https://github.com/hoblin/rough-seas/wiki/Coracle" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/coracle/ashore-close.webp" alt="The coracle" style="width: 100%;" /></a><p style="margin: 4px 0 0;"><strong><a href="https://github.com/hoblin/rough-seas/wiki/Coracle" target="_blank" rel="noopener">Coracle</a></strong> (new) · 1 m/s<br />Fishing and short hops, worn on your back. Slow, swamps in a chop.</p></div>
+<div><a href="https://github.com/hoblin/rough-seas/wiki/Birch-Bark-Canoe" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/birch-bark-canoe/ashore-close.webp" alt="The bark canoe" style="width: 100%;" /></a><p style="margin: 4px 0 0;"><strong><a href="https://github.com/hoblin/rough-seas/wiki/Birch-Bark-Canoe" target="_blank" rel="noopener">Bark canoe</a></strong> (new) · 2.1 m/s<br />Long river trips, through rapids. Fragile.</p></div>
+<div><a href="https://github.com/hoblin/rough-seas/wiki/Hide-Currach" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/currach/ashore-close.webp" alt="The hide currach" style="width: 100%;" /></a><p style="margin: 4px 0 0;"><strong><a href="https://github.com/hoblin/rough-seas/wiki/Hide-Currach" target="_blank" rel="noopener">Hide currach</a></strong> (new) · 2.4 m/s, rowed<br />Your first trip along the coast, cargo included. Needs greasing; one hard knock holes it.</p></div>
+<div><a href="https://github.com/hoblin/rough-seas/wiki/Outrigger-Canoe" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/outrigger-canoe/ashore-close.webp" alt="The outrigger canoe" style="width: 100%;" /></a><p style="margin: 4px 0 0;"><strong><a href="https://github.com/hoblin/rough-seas/wiki/Outrigger-Canoe" target="_blank" rel="noopener">Outrigger canoe</a></strong> (new) · 5.9 m/s, sailing<br />Fast crossings of open sea. Carries little, stays where launched.</p></div>
+<div><a href="https://github.com/hoblin/rough-seas/wiki/Sailboat" target="_blank" rel="noopener"><img src="https://raw.githubusercontent.com/hoblin/rough-seas/main/docs/wiki/images/sailboat/ashore-close.webp" alt="The sailboat" style="width: 100%;" /></a><p style="margin: 4px 0 0;"><strong><a href="https://github.com/hoblin/rough-seas/wiki/Sailboat" target="_blank" rel="noopener">Sailboat</a></strong> · 7.2 m/s, sailing<br />Long voyages and heavy cargo; the one that anchors. Expensive to build, ships water fast in a gale.</p></div>
+</div>
+<p>Speeds are one rower's, paddled unless noted, on calm water; under full sail vanilla's pace, whatever the wind. The dugout and the outrigger build from any tree, other mods' trees too, and the harder the wood, the tougher the hull.</p>
 
-<h2>What's new in v3</h2>
+<h2>Everything else at sea</h2>
 <ul>
-<li><strong>Hulls that crack, leak and flood.</strong> No more bursting at a hidden zero: you hear the knock, see where it landed and why she is going down.</li>
-<li><strong>Floating by mass.</strong> A loaded boat is slower and sits lower, and the wood decides whether a flooded hull lies awash or sinks.</li>
-<li><strong>Lashings, soaking and seams.</strong> The raft's lashings work loose, the reed boat soaks and dries, the currach's seams seep without grease.</li>
-<li><strong>The sea you can hear</strong>, from a calm to a storm, and the boat with it.</li>
-<li><strong>For modders:</strong> other mods' vessels can ride our drawn swell. A few vessel keys changed, so it's a major version: the changelog lists them.</li>
-<li><strong>Blows by their physics</strong> (3.1). Boats ram each other, a club breaks only the plank it lands on, an axe cuts, and a hull breaks up once it's stove in all round. Measured wood, no dice.</li>
-<li><strong>Breakers that slam</strong> (3.1). Either the planks hold or they're stove in, and a plunging crest on a steep beach hits far harder: a storm's sea stoves in the skin boats, while the raft stands any sea, and the sailboat all but a huge plunging crest.</li>
-<li><strong>One sea for everyone</strong> (3.2). Every player on a server sees the same waves, and the sea keeps the world's clock: it stands still when time stands, and a boat near you lives through the night you sleep.</li>
-<li><strong>Calm water that splashes</strong> (3.2). A calm sea is quiet but for the splash of each passing wave, the shore laps with the game's own sound, and the roar rises from silence with the wind.</li>
+<li><strong>Wind and waves.</strong> The real world's prevailing winds; waves grow from the wind's strength, the open water and the hours it has blown, so a big lake raises a sea of its own. More: <a href="https://github.com/hoblin/rough-seas/wiki/Wind-and-Waves" target="_blank" rel="noopener">Wind and waves</a>.</li>
+<li><strong>Storms.</strong> Squalls, gales and hurricanes cross the world, born where and when real ones are. Each warns you first. Warm storms strike, and a mast draws the lightning. More: <a href="https://github.com/hoblin/rough-seas/wiki/Storms" target="_blank" rel="noopener">Storms</a>, <a href="https://github.com/hoblin/rough-seas/wiki/Lightning" target="_blank" rel="noopener">Lightning</a>.</li>
+<li><strong>Currents.</strong> The oceans turn in slow gyres and carry every boat, paddled or left alone. More: <a href="https://github.com/hoblin/rough-seas/wiki/Currents" target="_blank" rel="noopener">Currents</a>.</li>
+<li><strong>Cracks and leaks.</strong> A knock cracks the hull where it lands. Look at a vessel to read each cracked place, the leak in litres a minute and its freeboard. More: <a href="https://github.com/hoblin/rough-seas/wiki/Hull-Condition" target="_blank" rel="noopener">Hull condition</a>.</li>
+<li><strong>Mending.</strong> Hold the hull's own material and right-click the place to patch it. More: <a href="https://github.com/hoblin/rough-seas/wiki/Mending" target="_blank" rel="noopener">Mending</a>.</li>
+<li><strong>Floating and flooding.</strong> Every vessel floats by its mass: wood, load and the water in it. Flooded, a light hull lies awash and a heavy one sinks. More: <a href="https://github.com/hoblin/rough-seas/wiki/Surf-and-Swamping" target="_blank" rel="noopener">Surf and swamping</a>.</li>
+<li><strong>Bailing.</strong> A bowl, jug or bucket, one held click. More: <a href="https://github.com/hoblin/rough-seas/wiki/Bailing" target="_blank" rel="noopener">Bailing</a>.</li>
+<li><strong>Rapids.</strong> White water batters every hull but the bark canoe's and the coracle's. More: <a href="https://github.com/hoblin/rough-seas/wiki/Rapids" target="_blank" rel="noopener">Rapids</a>.</li>
+<li><strong>Anchoring and mooring.</strong> Any vessel ties to a post at the length you set, and the sailboat's stone anchor holds by its weight on the bottom. A hard jerk parts the rope, and a storm drags the anchor. More: <a href="https://github.com/hoblin/rough-seas/wiki/Anchoring" target="_blank" rel="noopener">Anchoring</a>, <a href="https://github.com/hoblin/rough-seas/wiki/Mooring" target="_blank" rel="noopener">Mooring</a>.</li>
+<li><strong>A sea you can hear.</strong> Open water sounds as rough as it is, whitecaps hiss from windward, and surf roars only on the shore. <a href="https://github.com/hoblin/rough-seas/wiki/Sound-Credits" target="_blank" rel="noopener">Sound credits</a>.</li>
 </ul>
-<p>The whole list: <a href="https://github.com/hoblin/rough-seas/wiki/Roadmap#30-creak-and-leak">3.0</a>, <a href="https://github.com/hoblin/rough-seas/wiki/Roadmap#31">3.1</a> and <a href="https://github.com/hoblin/rough-seas/wiki/Roadmap#32">3.2</a> on the roadmap.</p>
 
-<h2>What's new in 2.0</h2>
+<h2>What's new in 4.0</h2>
 <ul>
-<li><strong>Under vanilla.</strong> Rough Seas' weather now drives the game's own wind, rain and weather events, so other weather mods build on it instead of fighting it.</li>
-<li><strong>Tested beside other mods</strong>, listed above.</li>
-<li><strong>Waves from the water.</strong> Fetch, depth and the hours the wind has blown, as coastal engineers predict them. Lakes get waves now.</li>
-<li><strong>Storms on real climatology.</strong> Gales in the storm-track belts, hurricanes over warm tropical seas in their season.</li>
-<li><strong>Vessels from any wood</strong>, other mods' trees too.</li>
-<li><strong>The wind on the coordinates readout</strong>, in every language the game speaks.</li>
+<li><strong>Vessels built in place.</strong> Burn out and hew a dugout from a log, with a real fire, hewing you can see and clay. Strip a bark canoe off a standing tree and frame it where it falls. Bind a reed boat from two bundles of dried reeds. Lay laths for a coracle or a currach and cover them with hides that rot unless prepared. Rig an outrigger on a finished dugout. More: <a href="https://github.com/hoblin/rough-seas/wiki/Building-a-Vessel" target="_blank" rel="noopener">Building a vessel</a>.</li>
+<li><strong>Poles, laths and wedges.</strong> Split a row of logs into poles with wedges, blow by blow, and the poles into laths; soak the laths so they bend. More: <a href="https://github.com/hoblin/rough-seas/wiki/Recipes" target="_blank" rel="noopener">Recipes</a>.</li>
+<li><strong>Paddle, pole and oars, by the rower.</strong> Speed comes from the rower's strength and the hull. Paddle on both sides, changing sides as the boat veers. Pole standing, where the hull bears you, as far as the pole reaches the bottom. Row the currach facing its stern, on its thole pins. Paddle the raft kneeling. More: <a href="https://github.com/hoblin/rough-seas/wiki/Paddles-Poles-and-Oars" target="_blank" rel="noopener">Paddles, poles and oars</a>.</li>
+<li><strong>Hulls you can see.</strong> Cracks show on the hull where they are. A blow on a framed hull lands on its skin and the frame behind. The outrigger's float rides on lashings of its own. More: <a href="https://github.com/hoblin/rough-seas/wiki/Hull-Condition" target="_blank" rel="noopener">Hull condition</a>.</li>
+<li><strong>Afloat by mass.</strong> A vessel heaves by its own mass, and a rider's weight comes aboard as they sit down. More: <a href="https://github.com/hoblin/rough-seas/wiki/The-Science-of-the-Hull" target="_blank" rel="noopener">The science of the hull</a>.</li>
+<li><strong>Launching on foot.</strong> Push a heavy vessel into the water yourself. More: <a href="https://github.com/hoblin/rough-seas/wiki/Building-a-Vessel" target="_blank" rel="noopener">Building a vessel</a>.</li>
+<li><strong>Under a crest.</strong> Your eye goes under a crest that passes over it, and you hold your breath by the sea you see, on a server too. Both are the work of our first contributor, <a href="https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8" target="_blank" rel="noopener">rhino1998</a>. More: <a href="https://github.com/hoblin/rough-seas/wiki/Reading-the-Sea" target="_blank" rel="noopener">Reading the sea</a>.</li>
+<li><strong>The handbook</strong> rewritten, and every one of its 33 languages corrected.</li>
 </ul>
-<p>The whole list: <a href="https://github.com/hoblin/rough-seas/wiki/Roadmap#20-undercurrent">Roadmap</a>.</p>
+<p>The whole list: <a href="https://github.com/hoblin/rough-seas/wiki/Roadmap" target="_blank" rel="noopener">Roadmap</a>.</p>
+
+<h2>Install</h2>
+<ul>
+<li>Vintage Story 1.22.0 or later.</li>
+<li>Download the zip from this page and drop it into your Mods folder (main menu, Mods → Open Mods Folder). Don't unzip it.</li>
+<li>Multiplayer: supported. The server and every client need the mod.</li>
+</ul>
+
+<h2>Early days</h2>
+<p>Rough Seas is very young. Like any software, it takes time and effort to polish everything, so expect rough edges, and make a backup before adding it to your existing save: the mod is designed to be safe to turn on and off, but still.</p>
+<p>Your reports really help. When something goes wrong, tell us in the comments here or in <a href="https://github.com/hoblin/rough-seas/issues" target="_blank" rel="noopener">GitHub issues</a>, and attach your game's log if you can (the Logs folder next to your Mods folder): the mod writes down every decision it makes, so the log shows us what happened.</p>
 
 <h2>World settings</h2>
 <ul>
 <li><strong>Rough Seas playstyle</strong> on the new world screen: standard survival with far more open ocean.</li>
-<li><strong>Dangerous oceans</strong>, on by default. Turn it off and the sea keeps its weather and currents, but storms, surf and swamping do no harm: <code>/worldconfig dangerousOceans false</code>.</li>
+<li><strong>A setting for each mechanic</strong>, all on by default: <a href="https://github.com/hoblin/rough-seas/wiki/World-Settings#the-mechanics" target="_blank" rel="noopener">World settings</a>.</li>
+<li>An existing world gets every mechanic and every vessel. It just has less sea to cross.</li>
 </ul>
-<p>An existing world gets every mechanic and every vessel. It just has less sea to cross. More: <a href="https://github.com/hoblin/rough-seas/wiki/World-Settings">World settings</a>.</p>
 
-<h3>Switched off for now</h3>
+<div class="spoiler"><div class="spoiler-toggle">Tested compatibility</div><div class="spoiler-text">
+<p>Tested on Vintage Story 1.22.7:</p>
+<ul>
+<li>Dynamic Seasonal Temperature 1.4.0: compatible.</li>
+<li>Better and Improved Weather Continued 2.0.5: compatible.</li>
+<li>Realistic Water 0.4.0: compatible.</li>
+<li>Realistic Rapids 0.1.3: compatible.</li>
+<li>Extreme Weathers 1.8.5: compatible. Its own hurricane, monsoon and blizzard rolls are off, since our storms bring them. Its damage, howl, tornadoes and deep snow ride our storms. No whiteout for now.</li>
+<li>Terra Prety 7.11.2-pre.1: compatible. Set world height 448 when you create the world, or its seas are too shallow for storms to raise much of a sea.</li>
+<li>Wildcraft: Trees and Shrubs 1.3.4: compatible, and its woods build our vessels.</li>
+<li>SheyderMod 2.0.0: compatible from Rough Seas 2.0.1.</li>
+<li>Shipworks+ 1.1.0: works with issues. Its ships sail in our wind and feel our sea, but don't yet rise and roll with our drawn swell.</li>
+</ul>
+<p>What each pair does together: <a href="https://github.com/hoblin/rough-seas/wiki/Other-Mods" target="_blank" rel="noopener">Beside other mods</a>. Running Rough Seas with a mod not listed here? Tell us how it went.</p>
+</div></div>
+
+<div class="spoiler"><div class="spoiler-toggle">Switched off for now</div><div class="spoiler-text">
 <ul>
 <li><strong>Capsizing.</strong> Breakers still ship water and slam the hull, but nothing overturns. It comes back with heel in "Seamanship", as part of sailing by the wind.</li>
-<li><strong>Surf foam on the beach.</strong> It didn't read as surf yet. It comes back once it does. Whitecaps out at sea stay.</li>
+<li><strong>Surf foam on the beach.</strong> It didn't read as surf yet. Whitecaps out at sea stay.</li>
+<li>Sails ignore the wind, and swimming tires you no more than in vanilla. Enjoy it while it lasts ;)</li>
 </ul>
-<p>And still not there: sails ignore the wind, and swimming tires you no more than in vanilla. Enjoy it while it lasts ;)</p>
+</div></div>
 
 <h2>Learning it</h2>
-<p>The handbook explains it from a player's point of view: open the <strong>Guides</strong> tab for <em>Going to Sea</em>. The <a href="https://github.com/hoblin/rough-seas/wiki">wiki</a> goes deeper, with the numbers and the real-world data behind them. The mod speaks all 33 languages the game supports. If you're a native speaker and something reads wrong, corrections are very welcome.</p>
+<p>The handbook explains it from a player's point of view: open the Guides tab for Going to Sea. The <a href="https://github.com/hoblin/rough-seas/wiki" target="_blank" rel="noopener">wiki</a> goes deeper, with the numbers and the real-world data behind them. The mod speaks all 33 languages the game supports. If you're a native speaker and something reads wrong, corrections are very welcome.</p>
 
 <h2>For modders</h2>
-<p>Read the weather as you would in vanilla, build vessels that ride our sea, and tune every number with plain JSON patches: <a href="https://github.com/hoblin/rough-seas/wiki/For-Modders">For modders</a>. What those pages document we keep stable under semantic versioning.</p>
+<p>Read the weather as you would in vanilla, build vessels that ride our sea, and tune every number with plain JSON patches: <a href="https://github.com/hoblin/rough-seas/wiki/For-Modders" target="_blank" rel="noopener">For modders</a>.</p>
 
-<h2>Install</h2>
-<ol>
-<li>Vintage Story <strong>1.22.7</strong>.</li>
-<li>Download the zip from this page.</li>
-<li>Drop it into your <code>Mods</code> folder (main menu, <strong>Mods</strong> → <strong>Open Mods Folder</strong>). <strong>Don't unzip it.</strong></li>
-</ol>
-<p><strong>Multiplayer:</strong> supported. The server and every client need the mod.</p>
-
-<h2>Coming next</h2>
-<p>Plans, not promises (<a href="https://github.com/hoblin/rough-seas/wiki/Roadmap">roadmap</a>):</p>
-<ul>
-<li><strong>"Seamanship":</strong> sailing by the wind, leeway, an anchored boat swinging bow to the wind, a windsock, masts that break, and heel with capsizing back.</li>
-<li><strong>"The living sea":</strong> swimming that wears you out, cold water that kills at real-world rates, sharks, whales and rust creatures.</li>
-<li><strong>"The deep":</strong> a Jonas-tech diving suit, harpoons, depth sounding, shipwrecks, raising your own sunk vessel, wandering traders, metal boats.</li>
-</ul>
-
-<h2>Problems and ideas</h2>
-<p>Found a bug or have an idea? The <a href="https://github.com/hoblin/rough-seas/issues">issue tracker</a> or the comments here both work. For a crash, please attach <code>client-main.log</code>, or <code>server-main.log</code> on a server. They're in the game's data folder under <code>Logs</code>.</p>
-
-<p>Open source, <a href="https://github.com/hoblin/rough-seas/blob/main/LICENSE">MIT licence</a>.</p>
+<h2>Thanks</h2>
+<p>Rough Seas started with Mahjong Blonsky's video <a href="https://youtu.be/NPrPEQdM14I" target="_blank" rel="noopener">Why doesn't Vintage Story have oceans?</a>. We liked his ideas so much that we built them. Thanks for the great ideas, and for asking the question.</p>
+<p><a href="https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8" target="_blank" rel="noopener">rhino1998</a>, our first contributor. His pull requests put your eye under a passing crest and made the server judge your breath by the sea you see, and in 4.3 made the swell and the currents carry every boat. Thank you, rhino1998!</p>
+<p>Rough Seas is made by me together with Claude. Not as a tool I point at the code, but as a partner: we brainstorm every feature, argue over ideas, his and mine, and settle them together. Claude also leads a small crew of agents that build, test in the game and write the wiki. Partners can shout at each other; so far only I shout, and I'm still teaching Claude to shout back when I'm wrong. Thank you, partner.</p>

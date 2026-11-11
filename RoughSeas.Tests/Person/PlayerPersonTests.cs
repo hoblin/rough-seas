@@ -27,7 +27,6 @@ public class PlayerPersonTests
     [Fact]
     public void WeighsNoMaterials()
     {
-        // what the game gives no tool type: a stack of stones
         Assert.Equal(0, Fixtures.Person.Weigh([], [null, null, null]).Kg);
     }
 

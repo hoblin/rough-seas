@@ -8,6 +8,8 @@ namespace RoughSeas.Shipyard;
 /// Held on a vessel's laid fire, lights it as vanilla lights a firepit: held its seconds, with the sparks, sound and
 /// odds of what is held.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.BlockEntityFirepit", "GetIgnitableState", "a fire takes 3 seconds to light, the time copied here")]
+[ReliesOn("Vintagestory.GameContent.BlockBehaviorCanIgnite", "OnHeldInteractStep", "the client's slack and the moment sparks start, copied here")]
 public abstract class CollectibleBehaviorLight(CollectibleObject collectible) : CollectibleBehavior(collectible)
 {
     /// <summary>BEFirepit.GetIgnitableState.</summary>

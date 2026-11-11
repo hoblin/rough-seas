@@ -388,8 +388,7 @@ public class VesselShapeTests
         var (entity, _, shape) = Load(vessel);
         if (entity["behaviorConfigs"]!["roughseas:covering"] is not { } covering) return;
 
-        var layout = covering["layout"]!;
-        var laths = layout.Value<string>("kind") == "pair" ? 2 : layout.Value<int>("along") + layout.Value<int>("across");
+        var laths = covering["start"]!.Value<int>("laths");
         var first = covering["stages"]![0]!.Value<string>("group");
         var group = Elements(shape["elements"]!).Single(element => element.Value<string>("name") == first);
 

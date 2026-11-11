@@ -5,6 +5,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Storms;
 
+[ReliesOn("Vintagestory.GameContent.EntityItemRenderer", "LoadModelMatrix", "has built ModelMat when this postfix adds to its translation")]
 public static class FloatMotion
 {
     private const string HarmonyId = "roughseas.storms.float";

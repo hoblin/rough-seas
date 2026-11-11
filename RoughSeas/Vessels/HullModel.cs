@@ -53,6 +53,8 @@ public abstract class HullModel(Func<ITreeAttribute> tree, Action changed)
 
     public abstract void Adopt(float integrity);
 
+    public abstract void MendWhole();
+
     public virtual void TurnEndForEnd(ITreeAttribute tree) { }
 
     protected ITreeAttribute Tree => tree();
@@ -107,12 +109,6 @@ public interface IMendable
     string Mend(HullRepair repair, HullPlace place);
 }
 
-/// <summary>A vessel whose way through the water is worked out by her own drag, with vanilla's water drag taken off her along the water.</summary>
-public interface IDriven
-{
-    bool Driving { get; }
-}
-
 /// <summary>
 /// How a vessel floats now, from its full mass by Archimedes; refreshed twice a second on both sides. Without
 /// <see cref="HasDraft"/> she floats as vanilla draws her and never sinks.
@@ -131,7 +127,7 @@ public interface IBuoyant
     /// <summary>The seawater she displaces for each metre she sinks.</summary>
     double KgPerMetre { get; }
 
-    /// <summary>The water she drags with her as she heaves (<see cref="HeaveAddedMass"/>).</summary>
+    /// <summary>The water she drags with her as she heaves (<see cref="RoughSeas.Water.AddedMass"/>).</summary>
     double AddedKg { get; }
 
     Aboard Aboard { get; }

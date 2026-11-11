@@ -3,11 +3,11 @@
     "code": "barkcanoe",
     "class": "roughseas:EntityVessel",
     "tags": ["inanimate", "vehicle"],
-    "weight": 25.8,
+    "weight": 25.1,
     "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/bark"}],
     "attributes": {
         "logTextures": {"bark": "all", "frame": "inside-north"},
-        "swimmingOffsetY": 0.539,
+        "swimmingOffsetY": 0.538,
         "shouldSwivelFromMotion": false,
         "requiresPaddlingTool": true,
         "mountAnimations": {
@@ -36,16 +36,17 @@
         "roughseas:vesselintegrity": {
             "impactCapacity": 2400,
             "runsRapids": true,
-            "parts": [{"material": "bark", "share": 13.3}, {"name": "frame", "material": "wood-tuja", "share": 12.5}],
-            "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 0.48, "spanMetres": 0.25, "spanVoxels": 4, "frame": {"material": "wood-tuja", "metres": 0.01, "widthMetres": 0.06, "spacingMetres": 0.25, "spacingVoxels": 4}, "bottomBackedShare": 0.98},
+            "parts": [{"material": "bark", "share": 13.3}, {"name": "frame", "material": "wood-tuja", "share": 11.7}],
+            "shell": {"material": "bark", "metres": 0.005, "backing": {"material": "wood-tuja", "metres": 0.0032}, "backedShare": 0.42, "spanMetres": 0.25, "spanVoxels": 4, "frame": {"material": "wood-tuja", "metres": 0.01, "widthMetres": 0.06, "spacingMetres": 0.25, "spacingVoxels": 4}, "bottomBackedShare": 0.97},
             "depthMetres": 0.375,
             "depthVoxels": 6,
-            "waterplaneSquareMetres": 1.9126,
-            "waterplaneSquareVoxels": 489.631,
+            "waterplaneSquareMetres": 1.8847,
+            "waterplaneSquareVoxels": 482.487,
             "repairs": [{
                 "material": {"type": "item", "code": "roughseas:bark-{wood}", "stacksize": 2},
                 "restores": 0.33,
-                "saturation": 40
+                "saturation": 40,
+                "seconds": 15
             }],
             "wreckage": [
                 {"type": "item", "code": "roughseas:bark-{wood}", "quantity": {"avg": 4, "var": 2}},
@@ -54,11 +55,12 @@
             "damage": {"material": "bark"},
             "sources": {
                 "parts": "By the model (bin/lib/hulls/barkcanoe.py): her bark 5 mm thick over her laths of 1 by 6 cm white cedar",
+                "seconds": "A patch of bark sewn over the hole with root and its edges pitched, as her bark was mended at the end of each day (Adney and Chapelle 1964): about a quarter of an hour (an estimate), held for the real time over sixty as her build's work is",
                 "shell": "Balance: bark half a centimetre thick, lined by the cedar sheathing, 1/8 in thick (native-art-in-canada.com/birchbarkcanoes.html), so a blow splits both where it lies, by the model the share of her sides and her bottom the sheathing covers (bin/lib/hulls/wounds.py). A breaker bends bark and sheathing together between the ribs. A knock, a ram or a blast splits the bark and the sheathing where it lands, as a point blow does, and the rib behind takes the rest, 1 by 6 cm of cedar breaking by its impact bending work across its section, or both ribs when it lands between them. Bark is the weak part: Adney and Chapelle (The Bark Canoes and Skin Boats of North America, 1964) quote LaHontan that the canoes were easily damaged and their bark mended at the end of each day, and Malecite canoes wore shoes to keep rocks and snags off the bark",
                 "runsRapids": "She draws almost no water and rides over the rocks (docs/design.md). A stub, as the rapids' strike is (rapids.json): until rapids are worked out from draft (#260), which hull runs them is this flag"
             },
             "hullBoxMetres": {"from": [-2.124, 0, -0.375], "to": [2.124, 0.572, 0.375]},
-            "hullBoxVoxels": {"from": [-33.979, 0.002, -6], "to": [33.98, 9.147, 6]}
+            "hullBoxVoxels": {"from": [-33.979, 0.002, -6], "to": [33.979, 9.147, 6]}
         },
         "passivephysicsmultibox": {
             "collisionBoxes": [{"x1": -0.375, "y1": 0, "z1": -2.124, "x2": 0.375, "y2": 0.572, "z2": -1.374}, {"x1": -0.375, "y1": 0, "z1": -1.424, "x2": 0.375, "y2": 0.572, "z2": -0.674}, {"x1": -0.375, "y1": 0, "z1": -0.725, "x2": 0.375, "y2": 0.572, "z2": 0.025}, {"x1": -0.375, "y1": 0, "z1": -0.025, "x2": 0.375, "y2": 0.572, "z2": 0.725}, {"x1": -0.375, "y1": 0, "z1": 0.674, "x2": 0.375, "y2": 0.572, "z2": 1.424}, {"x1": -0.375, "y1": 0, "z1": 1.374, "x2": 0.375, "y2": 0.572, "z2": 2.124}],
@@ -79,7 +81,7 @@
                 {"group": "Outwales", "work": "lath", "seconds": 3, "follows": "Skin", "lifts": "Skin"},
                 {"group": "Ends", "work": "cut", "seconds": 3, "lifts": "Skin"},
                 {"group": "Stems", "work": "lath", "seconds": 3},
-                {"group": "Lashing", "work": "rope", "seconds": 15},
+                {"group": "Lashing", "work": "rope", "seconds": 3},
                 {"group": "Sheathing", "work": "lath", "seconds": 3, "lines": true},
                 {"group": "Ribs", "work": "lath", "seconds": 3, "sets": true, "members": true},
                 {"group": "Pitch", "work": "pitch", "seconds": 7.5, "litres": 0.25, "seals": true}
@@ -90,7 +92,7 @@
                 "slashes": "Her bark is slashed from its edge in to the frame where it narrows, so that it turns up round it without buckling (Adney and Chapelle 1964): one slash a short cut through bark, about a minute (an estimate)",
                 "ends": "Each end is trimmed along the curve of its stem and the sheet's surplus cut off, as her ends are shaped once the frame is raised (Adney and Chapelle 1964): a few minutes an end (an estimate)",
                 "frame": "Fitting one lath, about three minutes: a steamed rib has to be driven in within a couple of minutes, before it cools (robin-wood.co.uk, birch bark canoe build, 2014)",
-                "lashing": "One rope is ten metres of lashing, some fifty turns, each through a hole made with an awl: about a quarter of an hour (an estimate). The canoe takes as much as her gunwales and stems need, groups of eight to ten turns two inches apart (Adney & Chapelle 1964), counted by her shape's builder",
+                "lashing": "One rope is ten metres of lashing, some fifty turns, each through a hole made with an awl: about a quarter of an hour (an estimate), held as long as a sheathing lath, since the gunwale takes some twenty ropes and a quarter hour's pace made it a long wait (balance, hoblin). The canoe takes as much as her gunwales and stems need, groups of eight to ten turns two inches apart (Adney & Chapelle 1964), counted by her shape's builder",
                 "pitch": "About a quart of pitch for a canoe (forums.wcha.org, bark pitch questions), one vanilla pot of pitch, a quarter litre to each of her four seams; pitching them all about half an hour (an estimate)",
                 "ribs": "Ribs bent in wet hold their bend once dry, a couple of days (the Lac du Flambeau build, canoe.csumc.wisc.edu): their laths dry as they would in the bundle",
                 "framePart": "Her frame is the wood of her laths: its share and the weight it was set for are white cedar's, its strength and density are those of the wood split"
@@ -167,7 +169,9 @@
             {"code": "selectionboxes"},
             {"code": "rideableaccessories"},
             {"code": "creaturecarrier"},
+            {"code": "roughseas:mooring"},
             {"code": "ropetieable"},
+            {"code": "roughseas:currentdrift"},
             {"code": "roughseas:propulsion"},
             {"code": "roughseas:seaforces"},
             {"code": "roughseas:bilge"}

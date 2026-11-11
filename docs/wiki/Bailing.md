@@ -2,15 +2,15 @@ Boats with a hull hold the water that comes aboard in their bilge, and nothing t
 
 ## The bilge
 
-![An oak dugout half full, its bilge at 650 of 1298 litres and its side down to 25 cm](images/mechanics/dugout-bilge.webp)
+![An oak dugout half full, its bilge at 650 of 1436 litres and its side down to 27 cm](images/mechanics/dugout-bilge.webp)
 
 | Vessel | Bilge | Deck open to the rain |
 | --- | --- | --- |
 | [Sailboat](Sailboat) | 8209 litres | 15.1 m² |
 | [Hide currach](Hide-Currach) | 1911 litres | 4.1 m² |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 609 litres | 2.2 m² |
-| [Outrigger canoe](Outrigger-Canoe) | 1720 litres, 1298 without washstrakes | 2.8 m² |
-| [Dugout](Dugout) | 1298 litres | 2.8 m² |
+| [Outrigger canoe](Outrigger-Canoe) | 2009 litres, 1436 without washstrakes | 3.2 m² |
+| [Dugout](Dugout) | 1436 litres | 3.2 m² |
 | [Coracle](Coracle) | 272 litres | 1.1 m² |
 | [Raft](Raft), [reed boat](Reed-Boat) | none: water washes through | |
 
@@ -53,4 +53,4 @@ A leak is the same race. A bucket keeps up with a stove-in bottom on any boat: t
 
 So at sea in a storm, keep bailing, and don't leave a boat out in one. The night you sleep through passes for a boat afloat near you too: the boat takes the night's waves, its rain and its own leaks while you sleep. The bilge never drains by itself: a boat swamped in the night is still full in the morning.
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, no waves come aboard and no rain falls in.
+With [Water in the bilge](World-Settings#the-mechanics) off, no waves come aboard and no rain falls in. A leak still fills the bilge.

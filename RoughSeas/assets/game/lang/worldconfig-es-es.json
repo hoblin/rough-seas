@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Mar gruesa",
     "playstyle-desc-preset-roughseas": "Supervivencia normal en un mundo de océanos abiertos, donde el viento, las tormentas y el mar son peligrosos.",
     "worldconfig-category-roughseas": "Mar gruesa",
-    "worldattribute-dangerousOceans": "Océanos peligrosos",
-    "worldattribute-dangerousOceans-desc": "Las tormentas, las rompientes y los rayos pueden anegar, hacer zozobrar y romper embarcaciones, y arrancarlas de sus amarres. Desactivado, el mar conserva su tiempo pero no hace daño."
+    "worldattribute-bilgeWater": "Agua en la sentina",
+    "worldattribute-bilgeWater-desc": "Las olas rompen a bordo y la lluvia cae en una embarcación abierta, llenando su sentina hasta que la achiques. Desactivado, ni las olas ni la lluvia añaden agua; una vía de agua, sí, y una embarcación anegada o hundida se sigue llenando.",
+    "worldattribute-hullDamage": "Daños en el casco",
+    "worldattribute-hullDamage-desc": "Las rocas, la orilla, las embestidas, los rápidos, las rompientes y el clima agrietan el casco, y una grieta hace agua. El cuero se pudre, las costuras sin engrasar rezuman y el junco se empapa. Desactivado, ningún casco sufre daño y todos los cascos quedan reparados por completo; un golpe se sigue oyendo, y las armas y las explosiones siguen dañando el casco.",
+    "worldattribute-stormLightning": "Rayos",
+    "worldattribute-stormLightning-desc": "Las tormentas lanzan rayos cerca de ti, y un mástil los atrae. Desactivado, las tormentas no lanzan rayos propios y los mástiles no atraen ninguno; las tormentas eléctricas del propio juego no cambian.",
+    "worldattribute-mooringStrain": "Tensión del amarre",
+    "worldattribute-mooringStrain-desc": "Una amarra o un cabo de fondeo soporta el tirón del agua y la sacudida de cada ola: por encima de su resistencia el cabo se parte, el ancla garrea y una embarcación amarrada mientras no estás puede acabar arrojada a la orilla. Desactivado, nada se parte, garrea ni es arrojado; una amarra sigue reteniendo la embarcación a lo largo del cabo.",
+    "worldattribute-oceanCurrents": "Corrientes",
+    "worldattribute-oceanCurrents-desc": "Las corrientes arrastran toda embarcación, gobernada o no, y tiran de su amarre. Desactivado, el agua no arrastra ninguna embarcación; las corrientes siguen calentando o enfriando el mar.",
+    "worldattribute-rowerFatigue": "Fatiga del remero",
+    "worldattribute-rowerFatigue-desc": "Remar, palear y avanzar con pértiga te da hambre. Desactivado, no gasta saciedad; una embarcación sigue avanzando solo tan rápido como la impulsas.",
+    "worldattribute-poleDepth": "Profundidad de la pértiga",
+    "worldattribute-poleDepth-desc": "La pértiga solo empuja donde alcanza el fondo. Desactivado, empuja en agua de cualquier profundidad como con su impulso completo.",
+    "worldattribute-swimmerBreakers": "Rompientes sobre nadadores",
+    "worldattribute-swimmerBreakers-desc": "Una ola que rompe sobre ti mientras nadas te hunde y te arrastra consigo, y su agua espumosa te sostiene menos. Desactivado, ninguna ola rompe sobre un nadador; sigues flotando sobre las olas y respiras a su ritmo."
 }

@@ -1,4 +1,4 @@
-![The coracle afloat](images/coracle/afloat-bow.webp)
+![The coracle ashore](images/coracle/ashore-close.webp)
 
 An oval bowl of hide over a basket of split laths: a lattice across the flat bottom, its ends bent up into a plaited gunwale, the hide laced to it and sealed with rendered fat. It carries one person, sculled over the bow with a [paddle](Paddles-Poles-and-Oars), and it is light enough to wear on your back.
 
@@ -19,13 +19,13 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 | [Hull](Hull-Condition) | a knock breaks the willow lath behind the hide at 24 J, 45 J in oak, and the two either side of a gap at 57 J, 108 J in oak: past its 1 m/s sculled, only a current or a fall drives it that hard; 400 J more with a willow frame breaks it up, the weakest of all, about 690 J in oak, 810 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 13 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-it-floats) | 33 cm empty, 26 cm with its paddler |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's tools; armour takes it down |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash under its paddler's tools; plate armour takes it down |
 | [Mending](Mending) | 1 small prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
 | [Bilge](Bailing) | 272 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.6 m breaker |
 | [Rapids](Rapids) | runs them unharmed, as the bark canoe does, drawing only a few inches ([a simplified model](Rapids) for now) |
 | [Lightning](Lightning) | a strike nearby breaks it |
-| [Left alone](Currents#drift) | drifts with the current and the waves |
+| [In a current](Currents#drift) | carried with it and with the waves, steered or not |
 | [Mooring](Mooring) | tied to a post, or worn home |
 | Carried | worn on the back, in the backpack slot |
 | Seats | one, on the floor, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; with a pole you stand in its middle |
@@ -35,16 +35,16 @@ Coracles have been paddled on the rivers of Wales, Ireland and Scotland since be
 
 ## How it is built
 
-You build a coracle where you lay its laths out on the ground, piece by piece. Each piece shows on the coracle as you lay it.
+You build a coracle where you pile its laths on the ground, piece by piece. Each piece shows on the coracle as you lay it.
 
 ![The whole build, from the lattice to the finished coracle](images/coracle/build-coracle.webp)
 
-1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for the lattice and three 5 m ones for the gunwale. Laths bend only when wet: soak them two days in a barrel of water ([recipe](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground, in the coracle or in the bundle.
-2. **Lay the lattice.** Hold Shift and right-click the ground with a wet lath. It lies at its full length where you aim, to the sixteenth of a block, along the way you face. Lay seven side by side, an eighth of a block apart, then seven across them, three sixteenths of a block apart, each crossing all seven beneath it. That is how the coracle's bottom draws them, so binding moves no lath. A lath laid a sixteenth off is moved onto its place when you bind the lattice; further off, the laths stay laths. To take back a lath laid wrong, Shift + right-click it with an empty hand.
+1. **Split and soak the laths.** Split [poles](Recipes#laths) into laths with an axe in the crafting grid: fourteen 2 m laths for the lattice and three 5 m ones for the gunwale. Laths bend only when wet: soak them two days, in a barrel of water or bundled under stones on the bottom of any water ([how](Recipes#soaked-laths)). Out of the water they dry again in two days, on the ground, in the coracle or in your inventory.
+2. **Lay the lattice.** Hold Shift and right-click the ground with a wet 2 m lath to start a pile, as you pile [poles](Recipes#poles-and-laths-on-the-ground). Shift + right-click the pile with the other thirteen; hold Ctrl as well to lay a whole layer at once. Two-metre laths pile as the coracle's lattice: seven along, then seven across them. The pile is centred on the block you lay it on and reaches half a block into each of the four blocks beside it, so keep those four free. Fourteen laths make one layer, and that layer is the lattice. A fifteenth starts a second layer, and no coracle comes of that pile. To take a lath back, right-click the pile with an empty hand.
 
    ![Fourteen wet laths laid out as a lattice](images/coracle/build-laths.webp)
 
-3. **Bind the crossings.** Hold a rope on the lattice: the first rope ties it into the coracle where it lies, and two more tie the rest of the crossings on its bottom. Laths laid any other way, or of two woods, stay laths.
+3. **Bind the crossings.** Hold a rope on the pile: the first rope ties the lattice into the coracle where it lies, and two more tie the rest of the crossings on its bottom. Any other pile stays a pile. A dry pile of fourteen tells you to soak the laths first.
 
    ![The lattice bound](images/coracle/build-bound.webp)
 

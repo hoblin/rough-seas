@@ -32,7 +32,7 @@ public sealed class Splashes
     public double HeightAt(Vec3d at) => storms.DrawnSea?.HeightAt(at.X, at.Z) ?? 0;
 
     public (double X, double Z) From =>
-        storms.Surface is { } surface ? (-Math.Cos(surface.WavesTowardRadians), -Math.Sin(surface.WavesTowardRadians)) : (0, 0);
+        storms.Surface is { } surface ? (-Math.Cos(surface.Trains.TowardRadians), -Math.Sin(surface.Trains.TowardRadians)) : (0, 0);
 
     public AssetLocation? Play(Vec3d at, double waveHeight, string what, AssetLocation? previous)
     {

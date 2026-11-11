@@ -70,7 +70,8 @@ public static class BodyAfloat
             config.Breaking.RollerSpeedRatio * crest.Celerity, (crest.TowardRadians * 180 / Math.PI + 360) % 360);
     }
 
-    // runs where vanilla would apply its gravity, before its water drag; false skips vanilla's gravity
+    [ReliesOn("Vintagestory.API.Common.Entities.PModuleGravity", "DoApply", "is the only gravity a player in water gets, a third of it still and none while swimming")]
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetModules", "steps gravity before motion drag, every tick on the client that moves the player")]
     private static bool Afloat(float dt, Entity entity, EntityPos pos)
     {
         if (capi == null || entity != capi.World.Player?.Entity) return true;
@@ -111,6 +112,7 @@ public static class BodyAfloat
         return false;
     }
 
+    [ReliesOn("Vintagestory.API.Common.Entities.PModuleMotionDrag", "DoApply", "scales the whole motion by WaterDrag^(33 seconds) while the feet are in water or the body swims")]
     private static void BeforeDrag(Entity entity, EntityPos pos, out double __state) => __state = pos.Motion.Y;
 
     // vanilla's water drag keeps the body's way across; up and down the body has had its own drag

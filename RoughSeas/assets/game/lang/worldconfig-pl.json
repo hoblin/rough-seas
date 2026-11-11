@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Wzburzone morze",
     "playstyle-desc-preset-roughseas": "Zwykłe przetrwanie w świecie otwartych oceanów, gdzie wiatr, sztormy i morze są groźne.",
     "worldconfig-category-roughseas": "Wzburzone morze",
-    "worldattribute-dangerousOceans": "Groźne oceany",
-    "worldattribute-dangerousOceans-desc": "Sztormy, przybój i pioruny mogą zalać, wywrócić i rozbić łodzie oraz zerwać je z cum i kotwic. Wyłączone: morze zachowuje pogodę, ale nie szkodzi."
+    "worldattribute-bilgeWater": "Woda w zęzie",
+    "worldattribute-bilgeWater-desc": "Fale przelewają się przez burtę, a deszcz pada do otwartej łodzi i napełnia jej zęzę, dopóki nie wybierzesz wody. Gdy wyłączone, ani fale, ani deszcz nie dodają wody; przeciek nadal tak, a zalewana lub zatopiona łódź nadal się napełnia.",
+    "worldattribute-hullDamage": "Uszkodzenia kadłuba",
+    "worldattribute-hullDamage-desc": "Skały, brzeg, taranowanie, bystrza, przybój i pogoda łupią kadłub, a pęknięcie przecieka. Skóra gnije, nienatłuszczone szwy przeciekają, a trzcina nasiąka wodą. Gdy wyłączone, żaden kadłub nie doznaje szkód, a każdy kadłub zostaje naprawiony w całości; uderzenie nadal słychać, a broń i wybuchy nadal uszkadzają kadłub.",
+    "worldattribute-stormLightning": "Pioruny",
+    "worldattribute-stormLightning-desc": "Sztormy ciskają pioruny w pobliżu ciebie, a maszt je przyciąga. Gdy wyłączone, sztormy nie ciskają własnych piorunów, a maszty ich nie przyciągają; burze z samej gry pozostają bez zmian.",
+    "worldattribute-mooringStrain": "Obciążenie cum",
+    "worldattribute-mooringStrain-desc": "Cuma lub lina kotwiczna przyjmuje ciąg wody i szarpnięcie każdej fali: ponad swoją wytrzymałość lina pęka, kotwica wlecze się po dnie, a łódź zacumowaną podczas twojej nieobecności może wyrzucić na brzeg. Gdy wyłączone, nic nie pęka, nie wlecze się ani nie zostaje wyrzucone; cuma nadal nie puszcza łodzi dalej niż na swoją długość.",
+    "worldattribute-oceanCurrents": "Prądy",
+    "worldattribute-oceanCurrents-desc": "Prądy niosą każdą łódź, sterowaną czy nie, i ciągną za jej cumy. Gdy wyłączone, woda nie niesie żadnej łodzi; prądy nadal ogrzewają lub ochładzają morze.",
+    "worldattribute-rowerFatigue": "Zmęczenie wioślarza",
+    "worldattribute-rowerFatigue-desc": "Od wiosłowania, pagajowania i pchania łodzi tyczką robisz się głodny. Gdy wyłączone, nie kosztuje to sytości; łódź nadal płynie tylko tak szybko, jak ją napędzasz.",
+    "worldattribute-poleDepth": "Głębokość dla tyczki",
+    "worldattribute-poleDepth-desc": "Tyczka pcha tylko tam, gdzie sięga dna. Gdy wyłączone, pcha w wodzie o dowolnej głębokości jak przy pełnym pchnięciu.",
+    "worldattribute-swimmerBreakers": "Przybój nad pływakami",
+    "worldattribute-swimmerBreakers-desc": "Fala, która łamie się nad tobą, gdy płyniesz, wciska cię pod wodę i niesie ze sobą, a jej spieniona woda słabiej cię utrzymuje. Gdy wyłączone, żadna fala nie łamie się nad pływakiem; nadal unosisz się na falach i oddychasz w ich rytmie."
 }

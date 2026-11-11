@@ -30,6 +30,7 @@ public static class VanillaRowing
         (harmony, sounds) = (null, null);
     }
 
+    [ReliesOn("Vintagestory.GameContent.ModSystemBoatingSoundAndRatlineStamina", "NowInMotion", "the first GameMath.Clamp call is the rowing sound's volume, which this transpiler scales")]
     private static IEnumerable<CodeInstruction> Quieter(IEnumerable<CodeInstruction> instructions)
     {
         var original = instructions.ToList();

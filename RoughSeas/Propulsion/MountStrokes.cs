@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RoughSeas.Vessels;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.GameContent;
@@ -25,11 +26,14 @@ public sealed class MountStrokes(Dictionary<string, Dictionary<string, string>> 
             ? running.CurrentFrame / running.Animation.QuantityFrames
             : null;
 
+    [ReliesOn("Vintagestory.GameContent.EntityBoat", "SeatsToMotion", "picks the seat's actionAnim from the keys each tick and stops the ready slot while a key is held")]
     public void Pace(Entity rower, double pace)
     {
         if (playing is not { } stroke || rower.Properties.Client?.AnimationsByMetaCode?.GetValueOrDefault(stroke.Code) is not { } drawn) return;
 
-        IAnimationManager?[] animators = rower is EntityPlayer player ? [player.TpAnimManager, player.SelfFpAnimManager] : [rower.AnimManager];
+        IAnimationManager?[] animators = rower is EntityPlayer player && rower.Api is ICoreClientAPI capi && player == capi.World.Player?.Entity
+            ? [player.TpAnimManager, player.SelfFpAnimManager]
+            : [rower.AnimManager];
         foreach (var animator in animators)
         {
             if (animator?.GetAnimationState(stroke.Code) is not { Active: true } running) continue;

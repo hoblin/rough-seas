@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Grov sjø",
     "playstyle-desc-preset-roughseas": "Vanlig overlevelse i en verden med åpne hav, der vind, stormer og sjøen er farlige.",
     "worldconfig-category-roughseas": "Grov sjø",
-    "worldattribute-dangerousOceans": "Farlige hav",
-    "worldattribute-dangerousOceans-desc": "I stormer, brenninger og lyn kan fartøy fylles med vann, kantre, knuses og rives løs fra fortøyninger og anker. Slått av beholder sjøen været sitt, men gjør ingen skade."
+    "worldattribute-bilgeWater": "Lensevann",
+    "worldattribute-bilgeWater-desc": "Bølger bryter inn over, og regn faller i et åpent fartøy og fyller bunnen med vann til du øser det lens. Av tilfører verken bølger eller regn vann; en lekkasje gjør det fortsatt, og et overskylt eller sunket fartøy fylles fortsatt.",
+    "worldattribute-hullDamage": "Skrogskader",
+    "worldattribute-hullDamage-desc": "Fjell, stranden, påkjørsler, stryk, brenninger og været får et skrog til å sprekke, og en sprekk lekker. Skinn råtner, ufettede sømmer siver og siv trekker vann. Av tar ingen skrog skade, og hvert skrog blir helt igjen; et støt høres fortsatt, og våpen og eksplosjoner skader fortsatt et skrog.",
+    "worldattribute-stormLightning": "Lyn",
+    "worldattribute-stormLightning-desc": "Stormer slår ned lyn nær deg, og en mast trekker det til seg. Av slår stormer ikke ned egne lyn, og master trekker ikke noe til seg; spillets egne tordenvær er uendret.",
+    "worldattribute-mooringStrain": "Belastning på fortøyninger",
+    "worldattribute-mooringStrain-desc": "En fortøyning eller et ankertau tar imot vannets drag og rykket fra hver bølge: over sin styrke ryker tauet, ankeret dregger, og et fartøy som ligger fortøyd mens du er borte, kan bli kastet på land. Av ryker ingenting, ingenting dregger og ingenting kastes; en fortøyning holder fortsatt fartøyet på sin lengde.",
+    "worldattribute-oceanCurrents": "Strømmer",
+    "worldattribute-oceanCurrents-desc": "Strøm fører hvert fartøy, styrt eller ikke, og drar i fortøyningen. Av fører vannet ikke noe fartøy; strømmene varmer eller kjøler fortsatt sjøen.",
+    "worldattribute-rowerFatigue": "Rotretthet",
+    "worldattribute-rowerFatigue-desc": "Roing, padling og staking gjør deg sulten. Av koster de ingen metthet; et fartøy går fortsatt bare så fort som du driver det fram.",
+    "worldattribute-poleDepth": "Stakens dybde",
+    "worldattribute-poleDepth-desc": "En stake skyver bare der den når bunnen. Av skyver den i vann av alle dybder som med et fullt tak.",
+    "worldattribute-swimmerBreakers": "Brenninger over svømmere",
+    "worldattribute-swimmerBreakers-desc": "En bølge som bryter over deg mens du svømmer, presser deg under og fører deg med seg, og det skummende vannet bærer deg dårligere. Av bryter ingen bølge over en svømmer; du flyter fortsatt på bølgene og puster i takt med dem."
 }

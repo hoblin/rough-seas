@@ -1,4 +1,4 @@
-![The raft afloat](images/raft/afloat-bow.webp)
+![The raft ashore](images/raft/ashore-close.webp)
 
 Logs laid side by side and lashed with rope to three cross-logs. It is the game's own first vessel, built from timber and rope with no tools beyond an axe; a bamboo raft is the same thing in bamboo stakes.
 
@@ -26,7 +26,7 @@ The raft is as old as people on the water: whoever first crossed a river on two 
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker |
 | [Rapids](Rapids) | broken in about four seconds |
 | [Lightning](Lightning) | a strike nearby breaks it |
-| [Left alone](Currents#drift) | drifts with the current and the waves |
+| [In a current](Currents#drift) | carried with it and with the waves, steered or not |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | two, fore and aft, knelt on; either one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, kneeling by the side you paddle and standing on the logs to pole; vanilla's crude oar poles it through water of under a metre |

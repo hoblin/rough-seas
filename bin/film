@@ -65,11 +65,12 @@ SCREENPLAY
                        {hand: CODE}  {use: NAME}  {enter: NAME}
                        {face: DEGREES}   the player turned to a heading, level (0 faces +z, 90 +x),
                                          so stations around the player stand the same every run
-                       {click: [X, Y, Z], shift: false, seconds: 0.15}
+                       {click: [X, Y, Z], shift: false, ctrl: false, seconds: 0.15}
                                          a right-click with the held item on the top face of the
                                          block at X Y Z (as commands take them), at that point of it
-                                         to a fraction of a block, Shift held when asked: a lath laid
-                                         on the ground lies centred there. The player must pick, so
+                                         to a fraction of a block, Shift and Ctrl held when asked:
+                                         Shift starts a pile or adds a piece, Ctrl + Shift a layer
+                                         of it (a stack in hand). The player must pick, so
                                          not in spectator
                        {lay: NAME, stage: GROUP, to: N, from: 0, seconds: 0}
                                          a build's stage laid piece by piece, from + 1 to N, spread
@@ -79,9 +80,10 @@ SCREENPLAY
                        {moved: NAME, by: BLOCKS}    NAME has moved that far since the scene began
                        {near: NAME, to: NAME, within: BLOCKS}
                        {afloat: NAME}               a vessel not sunk
+    seconds: 60        at least this long on camera, for a take to cut a loop from later
     timeout: 120       seconds until fails the scene
-  A scene lasts until its until holds, its camera has moved and its caption has been read. Nothing
-  waits a fixed pause.
+  A scene lasts until its until holds, its camera has moved, its caption has been read and its
+  seconds have passed.
 """
 import argparse
 import json
@@ -257,11 +259,12 @@ class Set:
             self.game.do(f"/bridge set {self.id(lay)} roughseas:build/{stage} {count}")
             time.sleep(seconds / len(counts))
 
-    def click(self, click, shift=False, seconds=0.15):
+    def click(self, click, shift=False, ctrl=False, seconds=0.15):
         centre = self.game.state()["centre"]
         x, y, z = click
         self.game.run("hover", f"{x + centre['X']:.4f}", f"{y:.4f}", f"{z + centre['Z']:.4f}")
-        held = subprocess.Popen([str(GAME), "press", "ShiftLeft", str(int(seconds * 1000) + 800)], stdout=subprocess.DEVNULL) if shift else None
+        keys = ",".join(key for key, on in (("ControlLeft", ctrl), ("ShiftLeft", shift)) if on)
+        held = subprocess.Popen([str(GAME), "press", keys, str(int(seconds * 1000) + 800)], stdout=subprocess.DEVNULL) if keys else None
         if held:
             time.sleep(0.3)
         self.game.run("click", "right", str(int(seconds * 1000)))
@@ -380,7 +383,8 @@ class Scene:
         if keys:
             self.game.run("press", keys, "down")
         try:
-            self.wait(self.scene.get("until"), max(framed + seconds, began + self.dwell()), began + self.scene.get("timeout", DEFAULT_TIMEOUT))
+            earliest = max(framed + seconds, began + self.dwell(), framed + self.scene.get("seconds", 0))
+            self.wait(self.scene.get("until"), earliest, max(began + self.scene.get("timeout", DEFAULT_TIMEOUT), earliest + POLL_SECONDS))
             self.game.shot(still, recording=True)
         finally:
             if keys:

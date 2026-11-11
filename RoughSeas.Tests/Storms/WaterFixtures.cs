@@ -17,17 +17,17 @@ public static class WaterFixtures
 
         public bool SwellAt(double x, double z) => swell && local;
 
-        public double Seconds => 0;
+        public double Seconds { get; set; }
 
         public double HeightAt(double x, double z) => swell ? height : 0;
 
+        public RoughSeas.Water.WaveReading WaveHere(double x, double z) => default;
+
         public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) => default;
 
-        public double RiseVelocityAt(double x, double z, double depth = 0) => 0;
+        public double RiseVelocityAt(double x, double z, double below = 0) => 0;
 
-        public double RiseAccelerationAt(double x, double z, double depth = 0) => 0;
-
-        public double WavesTowardRadians => 0;
+        public double RiseAccelerationAt(double x, double z, double below = 0) => 0;
 
         public SeaPose PoseOf(double x, double z, double yaw, double length, double width) => default;
     }

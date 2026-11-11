@@ -5,6 +5,7 @@ using Vintagestory.ServerMods;
 namespace RoughSeas.SeaAndWeather;
 
 /// <summary>The world's ocean map where nothing is built yet, from the world's own layer, the way GenMaps builds a region's.</summary>
+[ReliesOn("Vintagestory.ServerMods.GenMaps", "OnMapRegionGen", "pads a region's ocean map by 5, as this class does")]
 public class GeneratedOcean(Func<MapLayerBase?> generator) : IOceanMap
 {
     private const int TilePixels = 16;

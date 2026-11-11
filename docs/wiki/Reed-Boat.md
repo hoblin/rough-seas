@@ -1,4 +1,4 @@
-![The reed boat afloat](images/reed-boat/afloat-bow.webp)
+![The reed boat ashore](images/reed-boat/ashore-close.webp)
 
 Two bundles of reeds three metres long, lashed side by side, their ends bound up into points. More a float than a boat: one person sits on it, low and half in the water, and paddles or poles it, with a basket behind.
 
@@ -26,7 +26,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker |
 | [Rapids](Rapids) | unharmed: its bundles crush and take each strike |
 | [Lightning](Lightning) | unharmed: its bundles crush and take the strike |
-| [Left alone](Currents#drift) | drifts with the current and the waves |
+| [In a current](Currents#drift) | carried with it and with the waves, steered or not |
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up, from the first binding on |
 | Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; it is too narrow to stand on, so it is poled sitting |

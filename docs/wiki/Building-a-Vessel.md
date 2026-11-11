@@ -6,9 +6,9 @@ A vessel meets [both of our seas](Reading-the-Sea#two-seas): the sea state on th
 
 On the server, once a wave period, every vessel in a sea of 0.3 m or more meets a wave. The wave is drawn from the sea state there, most lower than the significant height and a few much higher ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A hull rises with part of the crest. What is left above its side comes aboard, into its bilge, or washes through a hull that has none. A wave that breaks slams the hull too, on its windward side, with a pressure that grows with its speed and is far greater if it plunges. The player's view of all of it is [Surf and swamping](Surf-and-Swamping).
 
-On both sides, a vessel with a hull of ours floats by its full mass: hull, riders, their gear and armour, containers and the water aboard settle it lower, and it floods when its side goes under. On a client, it rides the drawn sea: lifted with the surface under it, rolled and pitched with its slope, on periods of its own mass. Water aboard rolls it harder and slows it, and a full bilge swamps it.
+On both sides, a vessel with a hull of ours floats by its full mass: hull, riders, what they carry, containers and the water aboard settle it lower, and it floods when its side goes under. On a client, it rides the drawn sea: lifted with the surface under it, rolled and pitched with its slope, on periods of its own mass. Water aboard rolls it harder and slows it, and a full bilge swamps it.
 
-The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oceans) on. With it off, no wave comes aboard or strikes, no rain falls into a bilge, storms neither pull at a mooring nor throw a vessel ashore, and lightning leaves the hull alone. The sea still runs, the swell is still drawn, currents still carry vessels, knocks against rock and rams between vessels still crack a hull, and cracks still leak.
+Each way the sea harms a vessel has its own [world setting](World-Settings#the-mechanics), all on by default. Turn one off and that harm stops, while the sea, the swell and the storms still run: with *Hull damage* off nothing cracks a hull, and with *Water in the bilge* off no wave or rain comes aboard.
 
 ## The behaviours
 
@@ -17,8 +17,8 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 | `roughseas:seaforces` | client and server | the vessel's contact with the sea: waves aboard, breaker strikes, the ride on the drawn swell and the sway of the water under it, its mass slowing it, the settling it draws. Mooring needs it |
 | `roughseas:bilge` | client and server | the water aboard: from waves, leaks and rain, bailed out, swamping the hull when full |
 | `roughseas:vesselintegrity` | client and server, first in both lists | the hull: how it floats and sinks, what cracks or breaks it, its leaks, mending, wreckage |
-| `roughseas:mooring` | server | a stake rope and an anchor that hold in a storm, or don't |
-| `roughseas:currentdrift` | server | the drift of an unsteered vessel with the current |
+| `roughseas:mooring` | client and server | a stake rope and an anchor that hold in a storm, or don't |
+| `roughseas:currentdrift` | client and server | the current's carry on the hull, by the water's drag on it, and the swing about a held bow |
 | `roughseas:burnout` | client and server | a hull burnt and hewn out of a row of logs, in the world, before it floats finished ([Built in place](#built-in-place)) |
 | `roughseas:framing` | client and server | a vessel laid piece by piece where it lies: a bark hull stripped off a standing tree ([Framed in place](#framed-in-place)), or bundles bound together ([Bound in place](#bound-in-place)) |
 | `roughseas:riggable` | client and server | a finished hull that a boom laid across it joins to a float, making it the vessel it is rigged into ([Rigged in place](#rigged-in-place)) |
@@ -29,9 +29,9 @@ The sea harms a vessel only with [Dangerous oceans](World-Settings#dangerous-oce
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
-They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, and `mooring` and `currentdrift` on the server. `vesselintegrity` and `currentdrift` also work alone.
+They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, `mooring` and `currentdrift` on both sides. `vesselintegrity` and `currentdrift` also work alone.
 
-`vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`, so that a right-click with mending material mends the hull rather than seating the player.
+`vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`.
 
 Every key may carry a `sources` entry beside it, text about where each number came from. Our code doesn't read it; we keep a real-world source for every number there, and so can you.
 
@@ -53,8 +53,8 @@ Our [coracle](Coracle), its sources, its build, its frame and the voxel twins of
         "seep": { "litresPerHourASeam": 13, "greaseDays": 2.5 },
         "cover": { "hides": { "prepared": 2 }, "seams": 0 },
         "repairs": [
-            { "material": { "type": "item", "code": "game:hide-prepared-small", "stacksize": 1 }, "restores": 0.67, "saturation": 40 },
-            { "material": { "type": "item", "code": "game:fat-rendered", "stacksize": 1 }, "restores": 0.5, "saturation": 20, "greases": true }
+            { "material": { "type": "item", "code": "game:hide-prepared-small", "stacksize": 1 }, "restores": 0.67, "saturation": 40, "seconds": 20 },
+            { "material": { "type": "item", "code": "game:fat-rendered", "stacksize": 1 }, "restores": 0.5, "saturation": 20, "greases": true, "seconds": 10 }
         ],
         "wreckage": [{ "type": "item", "code": "roughseas:lath-oak-2-dry", "quantity": { "avg": 3, "var": 2 } }],
         "damage": { "material": "hide" }
@@ -73,8 +73,8 @@ Our [coracle](Coracle), its sources, its build, its frame and the voxel twins of
     "behaviors": [
         { "code": "roughseas:vesselintegrity" }, { "code": "repulseagents" }, { "code": "passivephysicsmultibox" },
         { "code": "interpolateposition" }, { "code": "hidewatersurface", "hideWaterElement": "hideWater/*" },
-        { "code": "selectionboxes" }, { "code": "creaturecarrier" }, { "code": "ropetieable" },
-        { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }
+        { "code": "selectionboxes" }, { "code": "creaturecarrier" }, { "code": "ropetieable" }, { "code": "roughseas:currentdrift" },
+        { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }, { "code": "roughseas:mooring" }
     ]
 },
 "server": {
@@ -101,7 +101,7 @@ What it writes, each object's comment line giving the full list:
 - **The bilge**: `capacityLitres`, `deckSquareMetres` and `levelHeightsMetres`.
 - **The sea**: `windageSquareMetres`, its side above the water with one aboard; `mastMetres`, its masthead's height; the outrigger's `beamMetres`, across hull and float.
 - **Driving it**: `sweepMetres`, `paddleAbeamMetres` (from its middle), `finSquareMetres` (a float's side below the water), `oars`' `spanMetres` and `bladeSquareMetres`, and the `pole`'s `handsAboveWaterMetres`, `plantAheadMetres`, `plantAsternMetres`, `plantAcrossMetres`, `drawnPoleMetres`, `drawnBedMetres` and `stance.riderOffset`.
-- **The build**: `roughseas:burnout`'s measures, `roughseas:framing`'s `trunkBlocks`, `roughseas:rigging`'s `floatLogs`, `floatLengthMetres`, `floatOffMetres`, `floorMetres` and each stage's `raisesMetres` and `raisesLitres`, and `roughseas:covering`'s `layout` and `overturnedPivotVoxels`.
+- **The build**: `roughseas:burnout`'s measures, `roughseas:framing`'s `trunkBlocks`, `roughseas:rigging`'s `floatLogs`, `floatLengthMetres`, `floatOffMetres`, `floorMetres` and each stage's `raisesMetres` and `raisesLitres`, and `roughseas:covering`'s `start` and `overturnedPivotVoxels`.
 
 **Units.** A length, an area or a volume is written twice: in metres, square metres or litres, and beside it in the shape's voxels, the key ending `Voxels`, `SquareVoxels` or `CubicVoxels` in place of `Metres`, `SquareMetres` or `Litres`: `depthMetres` and `depthVoxels`, `capacityLitres` and `capacityCubicVoxels`. The mod reads the metres; the voxels let you check a number against the model. Only `overturnedPivotVoxels`, a point on the shape, is read in voxels. A metre is 16 voxels, set once in `RoughSeas/Units/voxel.json`; `RoughSeas.Units.Voxels` converts.
 
@@ -114,7 +114,7 @@ What it writes, each object's comment line giving the full list:
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
 | `beamMetres` | m | its `Hull` box's | the hull's width: how much of a crest it takes aboard, how hard the sea pulls on its mooring, how it rolls. Leave it out to take the `Hull` box's width; give it where the sea meets more than the hull, as the outrigger's float |
-| `windageSquareMetres` | m² | 0 | what the wind catches, hull and rig: how hard the wind pulls on its mooring |
+| `windageSquareMetres` | m² | 0 | what the wind catches, hull and rig; measured for the wind's pull, which comes with [leeway](Roadmap#seamanship) |
 | `mastMetres` | m | 0 | a mast's height above the hull; [lightning](Lightning) seeks it |
 | `freeboardMetres` | m | 0 | the side above the water, empty, for a vessel that doesn't [float by its mass](#floating); ours leave it out |
 | `heave` | 0–1 | 0 | the share of a crest's height the hull rises with; what is left climbs its side |
@@ -218,15 +218,17 @@ List `roughseas:burnout` before `creaturecarrier`, so that a click with clay, dr
 
 The vessel is then laid stage by stage, in the order of `stages`, each piece held on it for its stage's `seconds`. A stage's `work` says what lays a piece of it:
 
-- `lath`: a lath, wet. Two to five logs lying end to end with a splitting wedge on each split into poles as long as the row once an axe has driven every wedge home, and an axe splits a pole into laths of its length in the crafting grid; laths soak in a barrel and dry again in two days. The first lath laid makes the vessel's frame of its wood, and laths of another wood are refused.
+- `lath`: a lath, wet. Two to five logs lying end to end with a splitting wedge on each split into poles as long as the row once an axe has driven every wedge home, and an axe splits a pole into laths of its length in the crafting grid; laths soak in two days, in a barrel or bundled under stones on the bottom of any water, and dry again in two days. The first lath laid makes the vessel's frame of its wood, and laths of another wood are refused.
 - `pole`: a pole, split from such a row. Like laths, the first makes the frame of its wood.
 - `hide`: a hide of one of `hideStates`, which covers as many of the stage's pieces as small hides it is worth (small 1, medium 2, large 3, huge 5) and is held on it as many times `seconds`.
 - `rope`: vanilla's rope, one at a time. A rope held on the vessel lashes it rather than tying itself to it (a Harmony prefix on `ItemRope.OnHeldInteractStart`), until its lashing is done. A hold kept on past its last lashing ties nothing; a fresh click ties it as vanilla does.
-- `pitch`: hot pitch from any liquid container, `litres` a piece. Pitch that has set is refused.
+- `pitch`: hot pitch from any liquid container, or from the cooking pot it was cooked in, `litres` a piece; the pot is emptied with its last portion. Pitch that has set is refused.
 - `hew`: any axe, which loses a point of durability a piece.
 - `cut`: any knife, which loses a point of durability a cut. Vanilla's knife handles its own held step and release, so a Harmony prefix on `ItemKnife.OnHeldInteractStep` and `OnHeldInteractStop` hands them to the build while the vessel wants a cut.
 - `cloth`: a piece of cloth.
 - `plank`: a plank, `planks` the item code.
+
+While a hold does work, the holder works with both hands, vanilla's player animation `knifescrape`, as on a hide scraped on the ground; it stops when they let go or the piece is refused. An axe's hewing and driving keep their own swings.
 
 Every piece of a `lath` or `pole` stage takes one at least as long as it, cut down; a shorter one is refused. The shape names each piece's length: its builder writes `"metres"` on the piece's group, measured along the run its frame texture draws (`stages()` in `bin/lib/hulls/shape.py` does it), and an item's length is its `length` variant.
 
@@ -257,7 +259,7 @@ Every piece of a `lath` or `pole` stage takes one at least as long as it, cut do
 | `barkSeconds` | s | 0 | how long the knife takes the bark off |
 | `trunkBlocks` | count | 0 | the shortest trunk a sheet comes off |
 
-At every stage it is a vessel: it floats and can be picked up, its build goes with it onto the item and back, and the item shows it as far as it is built, and it takes its seats only once finished. A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before the vessel's frame goes in, and a group `Skin`, the bark raised into the hull, one child a step: the behaviour shows the sheet until a piece is laid, then the step the vessel's `lifts` stage has reached. The group and each step carry `depthMetres`, how deep the vessel stands at it, keel to rim, as its builder measures it (the group's for the sheet): the vessel floats as deep as the step it shows. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as the vessel is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
+At every stage it is a vessel: it floats and can be picked up, its build goes with it onto the item and back, and the item shows it as far as it is built, and it takes its seats only once finished. Shift + right-click picks it up with an empty hand or holding a piece of its build, as any carried vessel. Every build, `roughseas:framing`, `covering`, `rigging` and `burnout` alike, answers from its next step: the interaction help, the line a look at the vessel shows, and, for a right-click that does no work (an empty hand, or an item no step takes), an in-game error `roughseas-build-step` naming the step and what it needs, such as "Lash it with rope (Crossings bound: 1 of 3 ropes)". A vessel stripped off a tree gives the shape a group `Sheet`, the bark as it lies on the ground before the vessel's frame goes in, and a group `Skin`, the bark raised into the hull, one child a step: the behaviour shows the sheet until a piece is laid, then the step the vessel's `lifts` stage has reached. The group and each step carry `depthMetres`, how deep the vessel stands at it, keel to rim, as its builder measures it (the group's for the sheet): the vessel floats as deep as the step it shows. The item lists `Sheet` in its `ignoreElements`, and may list a stage's `replaces` group: the item of a vessel still being built shows both as far as the vessel is built. Our bark canoe's builder, `bin/lib/hulls/barkcanoe.py`, draws them.
 
 ### Rigged in place
 
@@ -313,11 +315,11 @@ A block of class `roughseas:BlockBundles` is bundles lying where they were laid,
 
 `roughseas:covering` builds a hide boat the way coracles and currachs were really made: laths laid out on the ground, bound into its first frame where they lie, then framed and covered with hides. It is `roughseas:framing` begun that way, with the same `stages` and keys and no bark.
 
-A wet lath held with Shift on the ground lies there at its full length, centred where the player aims, along or across the way they face: our block `roughseas:lathbed` holds the laths whose middles lie in it, and Shift with an empty hand takes the nearest back. Rope held on laths that lie in one of the vessel's `layout`s, every one at least as long as the longest piece of its first stage, of one wood and wet, binds them, for its second stage's `seconds`: the laths are taken away and the entity of its code is laid there, centred on them, its first stage laid and its second begun. Laths that make no layout stay laths. Laths dry where they lie as in the hand, and a dry one is refused, there and at binding.
+Laths of every length, wet or dry, go down on the ground with Shift in vanilla's ground storage, as a pile ([For modders](For-Modders#poles-and-laths-piled-on-the-ground)). Rope held on a pile of exactly the vessel's `start`, so many wet laths of that length of one wood and nothing more, binds them, for its second stage's `seconds`: the pile is used up and the entity of its code is laid where it lay, along it, its first stage laid and its second begun, in the laths' wood. Any other pile stays a pile; a dry one of the right count is refused, saying the laths must be soaked. Vanilla's rope is ground-storable and would take a lath off the pile, so a Harmony prefix on `BlockEntityGroundStorage.OnPlayerInteractStart` hands rope's click on a pile it binds to the binding. Laths dry in the pile as in the hand.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
-| `layout` | object | none | how its first stage's laths are laid out: `{ "kind": "lattice", "along": 7, "across": 7 }`, so many laths along and across, each crossing every lath across it, spaced as its model draws them within `toleranceMetres` (`alongSpacingMetres`, `acrossSpacingMetres`; our coracle), or `{ "kind": "pair", "beamMetres": 1.075, "toleranceMetres": 0.0625 }`, two laths side by side at its beam, overlapping end for end within the tolerance (our currach) |
+| `start` | object | none | the one pile that starts it: `{ "laths": 14, "metres": 2 }`, the count of laths and their length (our coracle 14 of 2 m, our currach 2 of 5 m). Our builders write it. Draw the pile's first layer as the vessel's first stage, as `bin/lib/hulls/coracle.py` draws the 2 m pile's first layer as the coracle's flat lattice, so the blank appears with nothing moved |
 | `overturned` | bool | false | the vessel is built upside down, and is finished only once turned over: a right-click with an empty hand turns it, once every piece it needs is laid |
 | `overturnedPivotVoxels` | voxels | none | `[x, y, z]`, a point on its shape the line along its length it is turned about runs through, so that its gunwale lies on the ground; our builder writes it beside `overturnedPivotMetres`, the same point in metres, which the mod doesn't read |
 
@@ -348,7 +350,7 @@ A broad load cracks its place by its share of the capacity and breaks the hull u
 | `cover` | `{ "hides": { "prepared": 2 }, "seams": 0 }` on a cracking hull: the hides it is covered with, by their `type` and the small hides' worth of each, and its seams, when no build says otherwise. A cover rots and soaks afloat by its hides, from `config/vessels/hides.json` ([Seeping and soaking](Hull-Condition#seeping-and-soaking)); a hull built with `roughseas:covering` is covered with the hides sewn on it |
 | `soak` | `{ "kgPerDay", "dryKgPerDay", "rotShare", "saturationKg" }` on a reed hull: the water it takes up a day afloat, what it dries a day in full sun, the share of what dries that stays as rot, and the most it holds |
 | `runsRapids` | true if rapids don't strike it |
-| `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives) |
+| `repairs` | what mends it: `material` (an item stack), `restores` (per patch: how much of one place's crack it closes, or of a lashed hull's lashing), `saturation` (satiety it costs), `seconds` (how long a patch is held on the hull, the real time of that work over sixty, as a build's pieces are), `greases` (true if it greases the seams instead, `restores` then being the share of `greaseDays` it gives). Every material a vessel's `repairs` name carries our collectible behaviour `roughseas:framing`, which holds the patch on the hull as it holds a build's piece |
 | `wreckage` | what it leaves when it breaks up, as a block's drops |
 | `damage` | `material` (`wood`, `bark`, `reed` or `hide`), which picks the hull's [sounds](#sounds), and `textures`, the shape's textures that crack: for a hull whose shape draws no wounds, an overlay of `wood` or `reed` marks on each damaged place |
 
@@ -395,7 +397,7 @@ A vessel with `depthMetres` floats by Archimedes, on both sides; its draft is we
 - **A rider saved in its seat** who hasn't loaded yet, as when a world opens with someone aboard, weighs the body's `massKg` until they do.
 - **The hull's mass and volume** come from its `parts`. Its `weight` is the reference build's, and each part's share of it has the volume of that share in its `reference` material; in its own material that volume weighs by its density. So an ebony dugout has an oak dugout's shape and weighs as ebony.
 - **Densities** are a row's `density` in `config/vessels/materials.json`, in kg/m³, with a `densitySource`. A row may carry a density alone, as `reed`, `hide` and `iron` do. A wood the table doesn't know weighs 610, the middle of the vanilla woods, takes the unknown wood's `strength` and `toughness` too, and the server log names each once.
-- **Flooding.** When its freeboard reaches nothing, the sea fills its bilge. Flooded, or solid, it sinks when what the water doesn't hold up, the hull, gear, armour and containers, outweighs what its own volume of seawater weighs; riders' bodies are held up by the water. A sunk vessel throws off its riders, lies on the bottom, fills again as it is bailed, can't be picked up, and breaks up for its wreckage under an axe.
+- **Flooding.** When its freeboard reaches nothing, the sea fills its bilge. Flooded, or solid, it sinks when what the water doesn't hold up, the hull, what the riders carry and the containers, outweighs what its own volume of seawater weighs; riders' bodies are held up by the water. A sunk vessel throws off its riders, lies on the bottom, fills again as it is bailed, can't be picked up, and breaks up for its wreckage under an axe.
 - **The line it is drawn at.** Vanilla's `swimmingOffsetY` places your shape in the water. We take that as where it floats with its reference build and one rider aboard, find its keel from that draft and put vanilla's swim line there, so vanilla's `Swimming` means its keel is wet. Set it so the shape looks right with one aboard; `bin/model build` sets ours from the draft it measures.
 
 To give a vessel of yours draft and buoyancy: list its `parts` with materials the table knows (or add rows by patch), set `depthMetres` from keel to gunwale, and set `waterplaneSquareMetres` so that what its bilge holds settles it by its freeboard. Ours are measured that way ([Measured from the model](#measured-from-the-model)): a full bilge with one aboard brings the gunwale to the water. Leave `freeboardMetres` off its `seaforces`.
@@ -411,15 +413,23 @@ For sounds of your own, the server raises events on the behaviours:
 
 ## Mooring
 
-`roughseas:mooring`, on the server, with `roughseas:seaforces`; it has no keys. It holds a vessel tied to a stake, and one at anchor ([Mooring](Mooring), [Anchoring](Anchoring)).
+`roughseas:mooring`, on both sides, with `roughseas:seaforces` and `roughseas:currentdrift`; it has no keys. It holds a vessel tied to a stake, and one at anchor ([Mooring](Mooring), [Anchoring](Anchoring)).
 
-- **A stake.** Vanilla's `ropetieable` on both sides: a rope from the vessel to a fence post.
-- **An anchor.** An accessory slot (`rideableaccessories`) that takes vanilla's anchor, as vanilla's sailboat has. Spare rode is any item with a `rodeMetres` attribute in the same accessories, such as our anchor warp.
+- **A stake.** Vanilla's `ropetieable` on both sides: one rope from the vessel to a fence post or a growing trunk. A vessel refuses a second rope. The rope holds the vessel's bow at its own length, which the player sets with the rope's tool modes.
+- **An anchor.** An accessory slot (`rideableaccessories`) that takes vanilla's anchor, as vanilla's sailboat has, with the anchor's `rodeMetres`, `rope` and `kilograms` attributes. Spare rode is any item with a `rodeMetres` attribute in the same accessories, such as our anchor warp.
 
-At anchor, a vessel ships less water, though a breaker slams it in full; tied to a stake, it takes the sea in full. In a storm the sea's pull on it grows with its beam and its windage, and a rope can snap. With no player near, a storm can throw it ashore.
-
-A rider's client steers a vessel, and the server can't hold one it doesn't move: a steered vessel drags its anchor along.
+Each line only pulls, at its end, and stretches by its rope's material: the water's steady pull is shared by the taut lines, and a vessel reaching a line's end at speed jerks it, by its real speed and its mass. A line pulled past its breaking load parts; an anchor pulled past what it holds on the bed drags, and holds the vessel back by its friction as it goes. It all runs where the vessel's physics runs: on the server for a vessel nobody steers, on its rider's client for one being steered, which reports a parted line to the server. At anchor, a vessel ships less water, though a breaker slams it in full. With no player near, a storm can throw it ashore.
 
 ## Currents
 
-`roughseas:currentdrift`, on the server; it has no keys. An unsteered vessel in the water drifts with the [current](Currents); a sunk one stays put. The waves' drift is `roughseas:seaforces`'s, steered or not. It needs vanilla's passive physics on the entity (`passivephysics`, or `passivephysicsmultibox`). A rider's client moves a steered vessel, so the current doesn't reach it: a mod that sails its own vessels adds the current to its own motion, read from `CurrentAt` ([Reading the sea](Reading-the-Sea)).
+`roughseas:currentdrift`, on both sides. It carries a vessel afloat with the [current](Currents), where its physics runs: on the server while nobody steers it, on the rider's client while someone does. The velocity the water has given the hull (its set) is on top of the way it makes through the water: the water's drag brings the set toward the current's velocity, by the hull's mass and the water it drags with it. A rower's or a sail's speed through the water is what it would be in still water, and a collision that stops the hull stops the set on that axis. The entity must be an `EntityBoat` with vanilla's passive physics (`passivephysics`, or `passivephysicsmultibox`).
+
+The drag is `HullDrag`, the one `roughseas:propulsion` drives against, from `vesselintegrity`'s live draft and mass and hull box. A vessel with `roughseas:propulsion` configures its form there ([Driving it](#driving-it)). One without it, as vanilla's sailboat is, takes the same keys under `roughseas:currentdrift`:
+
+| Key | Unit | Default | What it is |
+| --- | --- | --- | --- |
+| `bowDrag` | | `drag.json` | a blunt bow's own drag on beam by draft |
+| `sideDrag` | | `drag.json` | cross-flow drag on length by draft |
+| `finSquareMetres` | m² | 0 | a keel's or float's side, added to length by draft |
+
+A vessel without `vesselintegrity` has no draft to take drag on, and comes toward the water's speed at the rate of vanilla's water drag. Held by `mooring`, a vessel turns about its bow to lie along the stream, and the current's drag on it pulls on the rope and the anchor. The waves' own to and fro and drift are `roughseas:seaforces`'s.

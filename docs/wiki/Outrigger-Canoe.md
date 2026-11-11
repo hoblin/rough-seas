@@ -1,4 +1,4 @@
-![The outrigger canoe afloat](images/outrigger-canoe/afloat-bow.webp)
+![The outrigger canoe ashore](images/outrigger-canoe/ashore-close.webp)
 
 A dugout with a float log held out to one side on three crooked booms lashed across its gunwales and down onto the float, and a mast stayed fore, aft and out to the float: 5 blocks long and 3 across, hull, gap and float. For the open sea it takes washstrakes of sawn planks sewn along its sides and across its ends. Its crab-claw sail hangs between two spars, set, reefed or furled to the upper one. Its hull, its float, its poles and its washstrakes can each be of their own wood.
 
@@ -18,20 +18,20 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Turning | clumsy, 14° a second paddled |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): its hull is the dugout's |
 | Upkeep | none |
-| [Freeboard](Surf-and-Swamping#how-it-floats) | with washstrakes 58 cm empty, 57 cm with its helmsman; without them 44 and 42; in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 254 kg of gear, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Freeboard](Surf-and-Swamping#how-it-floats) | with washstrakes 58 cm empty, 56 cm with its helmsman; without them 44 and 42; in oak |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 283 kg of tools, armour and containers in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its hull's wood closes two fifths of a stove-in place; 1 flax twine binds up a ninth of its float's lashings |
 | [Its float](Hull-Condition#an-outriggers-float) | takes the knocks on its side on its lashings: with one aboard, losing 2 m/s into rock works nearly half of them loose, and 4 m/s tears them out and leaves the dugout |
-| [Bilge](Bailing) | 1720 litres with washstrakes, 1298 without |
+| [Bilge](Bailing) | 2009 litres with washstrakes, 1436 without |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2.6 m breaker; it barely rolls in a sea |
 | [Lightning](Lightning) | its 3 m mast draws strikes |
 | [Rapids](Rapids) | takes a few seconds, not a long run |
-| [Left alone](Currents#drift) | drifts with the current and the waves |
+| [In a current](Currents#drift) | carried with it and with the waves, steered or not |
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
 | Seats | two: the front one steers, under sail too, and paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
 | Cargo | a basket (8 slots) in the back seat, in place of the passenger |
-| Built from | a finished [dugout](Dugout), 3 logs for its float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when it takes them, 10 planks and 4 ropes |
+| Built from | a finished [dugout](Dugout), 3 logs for its float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when it takes them, 12 planks and 5 ropes |
 | Wreckage | firewood, a rope, some linen, and planks once it has washstrakes |
 
 Its sail drives it the same whatever the wind does; sailing by the wind comes in [Seamanship](Roadmap#seamanship).
@@ -71,7 +71,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
 
    ![Rigged, the sail furled on its spar](images/outrigger-canoe/build-rigged.webp)
 
-9. **Add washstrakes for the open sea.** Any time after it is finished, once you have a saw, hold planks of one wood on the outrigger: a board along each side four planks long and a board across each end of the hollow, ten in all. Then hold four ropes on it to sew them on, a stitch every 7.6 cm. Sewn, they raise the sides 15 cm and add 422 litres to the hold: a 2 m swell that boards a dugout runs past the outrigger. Without them it is a coastal boat.
+9. **Add washstrakes for the open sea.** Any time after it is finished, once you have a saw, hold planks of one wood on the outrigger: a board along each side five planks long, end to end, and a board across each end of the log, twelve in all. Then hold five ropes on it to sew them on, a stitch every 7.6 cm. Sewn, they raise the sides 15 cm and add 574 litres to the hold: a 2 m swell that boards a dugout runs past the outrigger. Without them it is a coastal boat.
 
    ![Washstrakes sewn along the sides and across the ends](images/outrigger-canoe/build-strakes.webp)
 
@@ -93,7 +93,7 @@ Walk into it from the shore side to push it into the water. It can't be picked u
 | From above | Beside the sailboat |
 | ![Ashore, from the side](images/outrigger-canoe/ashore-side.webp) | ![Ashore, from the quarter](images/outrigger-canoe/ashore-quarter.webp) |
 | Ashore | Ashore, from the quarter |
-| ![Dropped on the ground](images/outrigger-canoe/dropped.webp) | ![Held in the hand](images/outrigger-canoe/held.webp) |
-| Dropped on the ground | Held in the hand |
-| ![The hotbar icon](images/outrigger-canoe/icon.png) | ![The wreckage it leaves](images/outrigger-canoe/wreckage.webp) |
-| In the hotbar | Its wreckage |
+| ![Dropped on the ground](images/outrigger-canoe/dropped.webp) | ![The wreckage it leaves](images/outrigger-canoe/wreckage.webp) |
+| Dropped on the ground | Its wreckage |
+| ![The hotbar icon](images/outrigger-canoe/icon.png) | |
+| In the hotbar | |

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
@@ -35,6 +36,15 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
     }
 
     public void Forget() => reaches.Clear();
+
+    /// <summary>The depth of the water at its surface here, 0 on land; beyond the built world, the open sea's on the ocean map.</summary>
+    public double DepthHere(double x, double z)
+    {
+        var probe = new BlockPos(Dimensions.NormalWorld);
+        var (built, surface) = Surface((int)x, (int)z, probe);
+        if (!built) return OpenSea(x, z, config.OpenSeaDepthMetres);
+        return surface is { } level && Depth((int)x, (int)z, level, probe) is > 0 and var blocks ? blocks - 1 + WaterColumn.StillLevel : 0;
+    }
 
     public string Describe(double x, double z)
     {
@@ -96,7 +106,7 @@ public class WaterBody(ICoreServerAPI sapi, OceanBasins basins, WavesConfig conf
         return seabed < surface && Liquid(probe.Set(x, seabed + 1, z)) ? surface - seabed : Sounded(probe.Set(x, surface, z));
     }
 
-    private bool Liquid(BlockPos at) => sapi.World.BlockAccessor.GetBlock(at, BlockLayersAccess.Fluid).IsLiquid();
+    private bool Liquid(BlockPos at) => OpenWater.At(sapi.World.BlockAccessor, at).IsLiquid();
 
     private int Sounded(BlockPos surface)
     {

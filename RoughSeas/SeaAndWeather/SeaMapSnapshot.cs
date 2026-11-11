@@ -9,7 +9,7 @@ namespace RoughSeas.SeaAndWeather;
 public class SeaMapSnapshot
 {
     public const string ModdataKey = "roughseas:seamap";
-    public const int CurrentVersion = 2;
+    public const int CurrentVersion = 3;
 
     private static readonly (Func<SeaSample, double> Read, double Scale)[] Fields =
     [
@@ -21,7 +21,8 @@ public class SeaMapSnapshot
         (sample => sample.WavePeriod, 100),
         (sample => sample.CurrentX, 1000),
         (sample => sample.CurrentZ, 1000),
-        (sample => sample.WaterCelsius, 100)
+        (sample => sample.WaterCelsius, 100),
+        (sample => sample.Depth, 10)
     ];
 
     [ProtoMember(1)] public int Version = CurrentVersion;
@@ -70,7 +71,7 @@ public class SeaMapSnapshot
             {
                 values[field] = BinaryPrimitives.ReadInt16LittleEndian(Cells.AsSpan((i * Fields.Length + field) * sizeof(short))) / Fields[field].Scale;
             }
-            samples[i] = new SeaSample(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8]);
+            samples[i] = new SeaSample(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9]);
         }
         return samples;
     }

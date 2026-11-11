@@ -26,14 +26,14 @@ Rough Seas moves beneath vanilla, so other mods build on its sea as if it were t
 - **Tested beside other mods**, with recommendations for mod sets ([Beside other mods](Other-Mods)).
 - **The wind on the coordinates readout**: where it blows from, its force and its speed, in every language the game speaks ([Wind and waves](Wind-and-Waves#wind)).
 - **Vessels from any wood**, other mods' timber included: the [dugout](Dugout) and the [outrigger canoe](Outrigger-Canoe) from any tree, the [bark canoe](Birch-Bark-Canoe) from birch, elm or spruce bark.
-- **Switched off for now:** [capsizing](Surf-and-Swamping#capsizing) and the [surf's foam](The-Look-of-the-Sea#what-you-see), both unfinished. Capsizing comes back with heel in [Seamanship](#seamanship).
+- **Switched off for now:** [capsizing](Surf-and-Swamping#capsizing), unfinished. Capsizing comes back with heel in [Seamanship](#seamanship).
 
 ## 2.1
 
 Hulls that take knocks as real ones do, and a guide for modders.
 
 - **[Knocks](Hull-Condition) worked out as they really are.** A hull is struck only when it truly hits something solid, by the speed it loses into it, the way the game works out a fall. A hull counts its own weight, the people aboard with their gear and armor, the empty baskets, crates and chests it carries, and its water, which sloshes. A lagging server no longer breaks a boat on open water.
-- **[For modders](For-Modders)**, one page per mechanic, with [Building a vessel](Building-a-Vessel) for vessels that ride our sea. What those pages document is kept stable under semantic versioning.
+- **[For modders](For-Modders)**, one page per mechanic, with [Building a vessel](Building-a-Vessel) for vessels that ride our sea.
 - **[Shipworks+](Other-Mods#shipworks)** tested beside us.
 
 ## 3.0 "Creak and Leak"
@@ -68,6 +68,37 @@ One sea for everyone on a server, and calm water that sounds like calm water.
 - **Calm water that splashes.** No more creaking and knocking when you stand or swim in the shallows. A calm sea is quiet but for the splash of each passing wave, at your feet or at your hull, as loud as the wave is high. The shore laps with the game's own sound again, and the sea's roar rises from silence as the wind picks up.
 - **For modders:** [what changed](For-Modders#one-sea-one-clock) for code that reads the time.
 
+## 4.0 "Shipwright"
+
+You build every new vessel where it lies, and move it by paddle, pole and oars, by the rower's own strength.
+
+- **Vessels built in place.** Burn out and hew a dugout from a log, with a real fire, hewing you can see and clay. Strip a bark canoe off a standing tree and frame it where it falls. Bind a reed boat from two bundles of dried reeds. Lay laths for a coracle or a currach and cover them with hides that rot unless prepared. Rig an outrigger on a finished dugout. More: [Building a vessel](Building-a-Vessel).
+- **Poles, laths and wedges.** Split a row of logs into poles with wedges, blow by blow, and the poles into laths; soak the laths so they bend. More: [Recipes](Recipes).
+- **Paddle, pole and oars, by the rower.** Speed comes from the rower's strength and the hull. Paddle on both sides, changing sides as the boat veers. Pole standing, where the hull bears you, as far as the pole reaches the bottom. Row the currach facing its stern, on its thole pins. Paddle the raft kneeling. More: [Paddles, poles and oars](Paddles-Poles-and-Oars).
+- **Hulls you can see.** Cracks show on the hull where they are. A blow on a framed hull lands on its skin and the frame behind. The outrigger's float rides on lashings of its own. More: [Hull condition](Hull-Condition).
+- **Afloat by mass.** A vessel heaves by its own mass, and a rider's weight comes aboard as they sit down. More: [The science of the hull](The-Science-of-the-Hull).
+- **Launching on foot.** Push a heavy vessel into the water yourself. More: [Building a vessel](Building-a-Vessel).
+- **Under a crest.** Your eye goes under a crest that passes over it, and you hold your breath by the sea you see, on a server too. Both are the work of our first contributor, [rhino1998](https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8). More: [Reading the sea](Reading-the-Sea).
+- **The handbook** rewritten, and every one of its 33 languages corrected.
+
+## 4.1
+
+- **A setting for each mechanic.** Water in the bilge, hull damage, lightning, mooring strain, currents, rower fatigue and the pole's depth each have a world setting of their own, so you choose how hard the sea is, one mechanic at a time. More: [World settings](World-Settings#the-mechanics).
+
+## 4.2
+
+- **Laths soaked under stones.** Weigh a stack of laths down with stones and lay it on the bottom of any water: in two days the laths are wet, with no barrel and no saw. More: [Recipes](Recipes#soaked-laths).
+
+## 4.3
+
+The sea moves your boat, and the rope holds it by physics.
+
+- **The swell carries every hull** to and fro by its size, heading and draft, whether you sit in it or not. More: [Reading the sea](Reading-the-Sea#how-a-hull-answers).
+- **Currents carry every vessel,** paddled and rowed too, and swing a moored one to lie along the stream. More: [Currents](Currents#drift).
+- **A mooring rope that holds** at the length you set, and parts only by the jerk or the pull it can't bear; a boat takes one rope. More: [Mooring](Mooring).
+- **An anchor that holds by its weight**, better on rock than on sand, and drags in a strong current or a storm. More: [Anchoring](Anchoring).
+- Both the swell and the currents are the work of [rhino1998](https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8).
+
 ## Seamanship
 
 Sailing becomes sailing.
@@ -83,7 +114,6 @@ Sailing becomes sailing.
 
 The sea becomes dangerous to you, not only to your boat.
 
-- **Breath under the waves.** A crest that covers your head takes your air, and a trough gives it back, as the screen shows.
 - **Body in water.** Swimming wears you out, faster in cold water and on an empty stomach; exhausted, you sink. Cold water kills at the rate measured for real people in real seas, and a warm [current](Currents) off a cold coast can save your life.
 - **Creatures.** Sharks that hunt swimmers and small boats and dodge your blows; whales; and, deep down, rust creatures.
 

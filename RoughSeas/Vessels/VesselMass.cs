@@ -9,6 +9,7 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
+[ReliesOn("Vintagestory.GameContent.EntityBehaviorSeatable", "seatsToAttr", "keeps seatdata's passenger and seatid records, which vanilla rewrites as each saved rider is seated")]
 public class VesselMass
 {
     public const double SeawaterKgPerLitre = 1.025;

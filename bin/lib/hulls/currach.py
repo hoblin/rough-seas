@@ -1,7 +1,7 @@
 import math
 import statistics
 
-from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, MASS, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
+from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, CREW_KG, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from fit import APART
 import units
 from entity import merged, record
@@ -261,7 +261,7 @@ def rowing_station(hull):
         pole = sum(piece["metres"] for piece in stages("Thwart", thwart(hull, x))["children"])
         _, rests = tholes(hull, x + THOLE_ABAFT)
         oars = sum(litres(part) for name, side in OARS.items() for part in oar(name, side, rests[name])["children"])
-        rower = MASS["crewKg"] + MASS["playerGearKg"]
+        rower = CREW_KG
         weights = {"rower": (rower, SEATED_CENTRE), "thwart": (kilograms("wood-ash", pole * POLE_SQUARE_METRES * 1000), 0),
                    "oars": (kilograms("wood-ash", oars), THOLE_ABAFT)}
         x = CENTRE - sum(kg * d for kg, d in weights.values()) / sum(kg for kg, _ in weights.values())
@@ -431,7 +431,8 @@ def build(path_):
     shape.keep("BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     pivot = [ORIGIN[0], (box["from"][1] + box["to"][1]) / 2, CENTRE]
-    covering = {"layout": units.both("beam", units.metres(2 * (PROFILE[-1][0] - HIDE - GUNWALE / 2))),
+    gunwale = laths[0]["children"]
+    covering = {"start": {"laths": len(gunwale), "metres": math.ceil(max(piece["metres"] for piece in gunwale))},
                 "overturnedPivotVoxels": [num(c) for c in pivot], "overturnedPivotMetres": [num(units.metres(c)) for c in pivot]}
     record("currach", merged(report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()], windage([hide], box["from"][1])), measured, bilge_levels(shape.elements),
                              {"behaviorConfigs": {"roughseas:covering": covering}}))

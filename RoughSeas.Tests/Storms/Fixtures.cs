@@ -5,6 +5,7 @@ using RoughSeas.Propulsion;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
+using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -51,9 +52,9 @@ public static class Fixtures
 
     public static double FlaxNewtons => materials.Value["rope-flax"].Strength!.Value * 1000;
 
-    public static Vessel Raft => Vessel("boat-raft");
+    public static double FlaxStretchAtBreak => new MaterialTable(materials.Value, new NullLogger()).StretchAtBreak("rope-flax");
 
-    public static Vessel Sailboat => Vessel("boat-sailed");
+    public static double SailboatBeamMetres => BeamMetres("boat-sailed");
 
     public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel), 2 * Shape(vessel).HalfLengthMetres);
 
@@ -93,7 +94,7 @@ public static class Fixtures
     {
         var shape = Shape(hull.Vessel);
         double squareMetres = hull.Flotation.HasHold ? hull.Flotation.KgPerMetre / 1025 : 4 * shape.HalfLengthMetres * shape.HalfBeamMetres;
-        return HeaveAddedMass.OfWaterplane(squareMetres, shape.HalfBeamMetres);
+        return AddedMass.OfWaterplane(squareMetres, shape.HalfBeamMetres, 1025);
     }
 
     public readonly record struct Train(DrawnSea Sea, SeaSurface Surface, double Length, double Number, double Frequency, double Stokes);
@@ -120,7 +121,7 @@ public static class Fixtures
         var frequency = Math.Sqrt(9.81 * number);
         var surface = new SeaSurface(single, new Waves(Config().Waves));
         var raised = new WaveGeneration(0, Math.Sqrt(2 * Math.PI * length / 9.81));
-        surface.Aim(height, 0, 6);
+        surface.Aim(height, 6);
         surface.Raise(raised, raised, 0);
         surface.Advance(120);
         var field = new SurfaceField();
@@ -174,7 +175,8 @@ public static class Fixtures
 
     public static HullDrag DragOf(string vessel, Aboard aboard)
     {
-        var form = HullForm.From(new JsonObject(PropulsionOf(vessel)), Drag, Shape(vessel));
+        var attributes = vessel == "boat-sailed" ? BehaviorConfig("boats-drift.json", vessel, EntityBehaviorCurrentDrift.Code) : PropulsionOf(vessel);
+        var form = HullForm.From(new JsonObject(attributes), Drag, Shape(vessel));
         return new HullDrag(form, Hull(vessel).Float(aboard).DraftMetres, aboard.Total, WaterDensity, Drag);
     }
 
@@ -184,10 +186,10 @@ public static class Fixtures
 
     public static double PaddleSquareMetres => (double)JToken.Parse(Shipped(Path.Combine("tools", "paddle.json")))["attributes"]![Tool.AttributeKey]!["bladeSquareMetres"]!;
 
-    public static RowerStation Station(string vessel, double depthMetres) => Station(vessel, _ => depthMetres);
+    public static RowerStation Station(string vessel, double depthMetres, bool deepWaterRefuses = true) => Station(vessel, _ => depthMetres, deepWaterRefuses);
 
-    public static RowerStation Station(string vessel, System.Func<double, double> depthAlong) =>
-        new(new JsonObject(PropulsionOf(vessel)), Propulsion, WaterDensity, (along, _, _) => depthAlong(along));
+    public static RowerStation Station(string vessel, System.Func<double, double> depthAlong, bool deepWaterRefuses = true) =>
+        new(new JsonObject(PropulsionOf(vessel)), Propulsion, WaterDensity, (along, _, _) => depthAlong(along), () => deepWaterRefuses);
 
     private static IEnumerable<JToken> Elements(string shape)
     {
@@ -212,13 +214,6 @@ public static class Fixtures
 
     private static JToken Entity(string vessel) => JToken.Parse(Shipped(Path.Combine("vessel", vessel + ".json")));
 
-    private static Vessel Vessel(string entity)
-    {
-        var integrity = BehaviorConfig("vessels-vanilla-boats.json", entity, EntityBehaviorVesselIntegrity.Code);
-        var forces = SeaForces(entity);
-        return new Vessel((double)integrity["impactCapacity"]!, BeamMetres(entity), (double)forces["windageSquareMetres"]!);
-    }
-
     private static JToken BehaviorConfig(string patches, string entity, string behavior) =>
         OptionalBehaviorConfig(patches, entity, behavior)!;
 
@@ -235,7 +230,6 @@ public class NullLogger : LoggerBase
     protected override void LogImpl(EnumLogType logType, string format, params object[] args) { }
 }
 
-public readonly record struct Vessel(double ImpactCapacity, double BeamMetres, double WindageSquareMetres);
 
 public sealed record Hull(Flotation Flotation, double Kilograms, double ReferenceKg, double CapacityLitres, JsonObject Config, string Vessel)
 {

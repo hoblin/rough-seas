@@ -9,7 +9,7 @@ namespace RoughSeas.SeaAndWeather;
 /// </summary>
 public class WindSea(WavesConfig config)
 {
-    private const double Gravity = 9.81;
+    private const double Gravity = Water.WaveTheory.Gravity;
 
     public (double Height, double Period) Grow(double windMps, double fetchMetres, double depthMetres, double blowingHours = double.PositiveInfinity)
     {

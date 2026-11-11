@@ -79,6 +79,7 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
         if (!framing.Built && entity.WatchedAttributes.GetInt(SailKey) != 0) entity.WatchedAttributes.SetInt(SailKey, 0);
+        base.OnInteract(byEntity, itemslot, hitPosition, mode, ref handled);
     }
 
     public static void Begin(Entity vessel, RiggingConfig rig, string poleWood, string floatWood) =>

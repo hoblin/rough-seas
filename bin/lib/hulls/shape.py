@@ -1,4 +1,5 @@
 import copy
+from bisect import bisect_left
 import hashlib
 import json
 import math
@@ -7,7 +8,7 @@ import tempfile
 from pathlib import Path
 
 import units
-from fit import APART, TOLERANCE, Loft, check, coplanar, corners, depth_into, enclosed, posed
+from fit import APART, TOLERANCE, Loft, check, coplanar, corners, depth_into, enclosed, faces, overlap, posed
 from transform import add, apply, cross, direct, dot, scale, sub, unit
 
 FACES = ("north", "east", "south", "west", "up", "down")
@@ -336,30 +337,47 @@ def rise(a, b, c, d):
     return [((p - q) + (r - s)) / 2 for p, q, r, s in zip(d, a, c, b)]
 
 
-def clear_of(cuts, along, made, slide=False):
-    """made(short), drawn back at either end by short until neither end shares a plane with an end already cut along
-    the same line, or, sliding, moved along it whole; made returns the element's parts with its two ends last, and
-    those are added to cuts."""
+def clear_of(cuts, along, made, slide=False, carried=(False, False)):
+    """made(short), drawn back at either end by short until neither end's faces share a plane with an end already cut,
+    or, sliding, moved along it whole; an end carried on into the next piece goes on past the cut instead of opening a
+    gap. made returns the element's parts with its two ends last. A cut is an end face, its point, normal and corners,
+    which clashes with a face turned the same way that it overlaps; or a plane, its point and normal alone, which
+    clashes with any end in it. The ends' faces are added to cuts."""
     short = [0, 0]
     while True:
         parts = made(short)
-        clash = [any(abs(dot(along, other)) > 0.999 and abs(dot(sub(end, at), other)) < APART - 1e-9 for at, other in cuts) for end in parts[-2:]]
+        ends = end_faces([part for part in parts[:-2] if isinstance(part, (dict, list))], along)
+        clash = [any(cutting(face, cut) for face in faces for cut in cuts) for faces in ends]
         if not any(clash):
-            cuts.extend((end, along) for end in parts[-2:])
+            cuts.extend(face for faces in ends for face in faces)
             return parts
-        short = [short[0] + APART, short[1] - APART] if slide else [s + APART * hit for s, hit in zip(short, clash)]
+        short = [short[0] + APART, short[1] - APART] if slide else [s + APART * hit * (-1 if on else 1) for s, hit, on in zip(short, clash, carried)]
+
+
+def end_faces(elements, along):
+    ends = ([], [])
+    for element, m in posed(flattened(elements)):
+        for normal, points in faces(element, m):
+            facing = dot(normal, along)
+            if abs(facing) > 0.999:
+                ends[facing > 0].append((points[0], normal, points))
+    return ends
+
+
+def cutting(face, cut):
+    point, normal, points = face
+    at, other, *corners = cut
+    if abs(dot(sub(point, at), other)) >= APART - 1e-9:
+        return False
+    if not corners:
+        return abs(dot(normal, other)) > 0.999
+    return dot(normal, other) > 0.999 and overlap(points, corners[0], normal) > TOLERANCE
 
 
 def ends_of(elements):
-    """The cuts at either end of each box along its own length, as clear_of keeps them."""
-    cuts = []
-    for element, m in posed(elements):
-        along = unit(direct(m, (1, 0, 0)))
-        (x0, y0, z0), (x1, y1, z1) = element["from"], element["to"]
-        middle = ((y0 + y1) / 2, (z0 + z1) / 2)
-        for x in (x0, x1):
-            cuts.append(([units.voxels(c) for c in apply(m, [units.metres(x - x0), units.metres(middle[0] - y0), units.metres(middle[1] - z0)])], along))
-    return cuts
+    """The faces at either end of each box along its own length, as clear_of keeps them."""
+    return [(points[0], normal, points) for element, m in posed(elements) for normal, points in faces(element, m)
+            if abs(dot(normal, direct(m, (1, 0, 0)))) > 0.999]
 
 
 def widest(made, surface, reach):
@@ -433,20 +451,33 @@ class Hull:
                 return tuple(p + f * (q - p) for p, q in zip(a, b))
         raise ValueError(f"x {x} lies outside the hull")
 
-    def strakes(self, cuts=None):
+    def strakes(self, cuts=None, clear=()):
         """The skin, panel by panel between neighbouring stations and edges. A tapering panel takes a board along each
         of its edges, each as tall as the panel's narrow end, the upper one hanging; each board reaches as far past a
         station as that station's line leans out, stops at the hull's ends, and sits inward until its outermost corner
-        touches the loft, and no nearer the depth of a neighbour it overlaps than to keep their faces apart. Each board's
-        ends keep clear of those already cut, the ones in cuts too, which collects them."""
+        touches the loft and it passes into none of the boxes to clear, and no nearer the depth of a neighbour it
+        overlaps than to keep their faces apart. Each board's ends keep clear of those already cut, the ones in cuts
+        too, which collects them: an end inside the hull goes on past such a cut into the next board, so no gap opens
+        through the skin, and the board after it starts as far on as it went."""
         loft = self.outline("the hull", ends=False)
         hull = Hull(self.prefix, self.refined(), self.cz, self.t, self.outer, self.inner, self.edge)
         panels = [panel for panel in hull.panels() if across(panel[4][0], panel[4][1], rise(*panel[4]))[0] >= 1e-6]
         last = len(hull.stations) - 2
         bottoms, tops, cuts = {}, {}, [] if cuts is None else cuts
+        carries = {}
 
-        def placed(*args, **options):
-            return clear_of(cuts, unit(sub(args[2][1], args[2][0])), lambda short: self.board(*args, **options, short=short))
+        def placed(boards, key, *args, **options):
+            start, end = args[2][:2]
+            side, k, i = key
+            after = carries.get((boards is tops, side, k, i - 1), 0)
+            shorts = []
+
+            def made(short):
+                shorts.append(short)
+                return self.board(*args, **options, short=(short[0] + after, short[1]), clear=clear)
+
+            boards[key] = clear_of(cuts, unit(sub(end, start)), made, carried=(False, not args[4][1]))
+            carries[boards is tops, side, k, i] = max(0, -shorts[-1][1])
 
         quads = {(side, k, i): quad for _, side, k, i, quad in panels}
 
@@ -460,9 +491,18 @@ class Hull:
         def flush(side, k, i):
             return straight(side, k, i, i - 1), straight(side, k, i, i + 1)
 
+        def sharing(board, beside):
+            named = {element["name"] for element, _ in posed([board])}
+            return any(coplanar([board, *beside], among=named))
+
         for name, side, k, i, (a, b, c, d) in panels:
             near = [bottoms[side, k, i - 1][0]] if (side, k, i - 1) in bottoms else []
-            bottoms[side, k, i] = placed(name, side, (a, b, d, c), 1, (i == 0, i == last), loft, near, aside=APART * (i % 2), flush=flush(side, k, i))
+            below = 0
+            while True:
+                placed(bottoms, (side, k, i), name, side, (a, b, d, c), 1, (i == 0, i == last), loft, near, below, aside=APART * (i % 2), flush=flush(side, k, i))
+                if not sharing(bottoms[side, k, i][1], [bottoms[side, k, i - 1][1]] if (side, k, i - 1) in bottoms else []):
+                    break
+                below = bottoms[side, k, i][0] + APART
         for name, side, k, i, (a, b, c, d) in panels:
             if abs(across(a, b, sub(d, a))[0] - across(a, b, sub(c, b))[0]) <= TOLERANCE:
                 continue
@@ -470,9 +510,10 @@ class Hull:
             near += [tops[side, k, i - 1][0]] if (side, k, i - 1) in tops else []
             below = bottoms[side, k, i][0] + APART
             while True:
-                tops[side, k, i] = placed(name + "Top", side, (d, c, a, b), -1, (i == 0, i == last), loft, near, below,
-                                         aside=APART * (i % 2), flush=flush(side, k, i))
-                if not any(coplanar([bottoms[side, k, i][1], tops[side, k, i][1]])):
+                placed(tops, (side, k, i), name + "Top", side, (d, c, a, b), -1, (i == 0, i == last), loft, near, below,
+                       aside=APART * (i % 2), flush=flush(side, k, i))
+                beside = [boards[key][1] for boards, key in ((bottoms, (side, k, i)), (bottoms, (side, k, i - 1)), (bottoms, (side, k, i + 1)), (tops, (side, k, i - 1))) if key in boards]
+                if not sharing(tops[side, k, i][1], beside):
                     break
                 below = tops[side, k, i][0] + APART
         return [made[1] for made in (*bottoms.values(), *tops.values())]
@@ -503,7 +544,7 @@ class Hull:
                     yield f"{self.prefix}{label}{k + 1}x{i + 1}", side, k, i, (
                         self.point(i, k, side), self.point(i + 1, k, side), self.point(i + 1, k + 1, side), self.point(i, k + 1, side))
 
-    def board(self, name, side, quad, turn, ends, loft, near, below=0, short=(0, 0), aside=0, flush=(False, False)):
+    def board(self, name, side, quad, turn, ends, loft, near, below=0, short=(0, 0), aside=0, flush=(False, False), clear=()):
         a, b, d, c = quad
         along = unit(sub(b, a))
         up = rise(a, b, c, d)
@@ -522,7 +563,7 @@ class Hull:
         start = add(start, scale(along, (past[0] + APART * (past[0] > 0 and not ends[0])) / along[0]))
         end = sub(end, scale(along, (past[1] + APART * (past[1] > 0 and not ends[1])) / along[0]))
         start, end = add(start, scale(along, short[0])), sub(end, scale(along, short[1]))
-        sunk = seated(lambda depth: made(add(start, scale(normal, depth)), add(end, scale(normal, depth))), loft)
+        sunk = seated(lambda depth: made(add(start, scale(normal, depth)), add(end, scale(normal, depth))), loft, clear=clear)
         depth = max(sunk, below)
         while clashing := [other for other in near if abs(depth - other) < APART - 1e-9]:
             depth = max(clashing) + APART
@@ -566,8 +607,17 @@ class Hull:
         return planes
 
     def section(self, x):
-        points = (self.at(x, k, 1) for k in range(len(self.stations[0][1])))
-        return [(abs(z - self.cz), y) for _, y, z in points]
+        xs = [at for at, _ in self.stations]
+        if not xs[0] <= x <= xs[-1]:
+            raise ValueError(f"x {x} lies outside the hull")
+        i = max(0, bisect_left(xs, x) - 1)
+        (x0, edges0), (x1, edges1) = self.stations[i], self.stations[i + 1]
+        f = (x - x0) / (x1 - x0)
+        drawn = []
+        for (h0, y0), (h1, y1) in zip(edges0, edges1):
+            z0, z1 = self.cz + h0, self.cz + h1
+            drawn.append((abs(z0 + f * (z1 - z0) - self.cz), y0 + f * (y1 - y0)))
+        return drawn
 
     def half(self, x, y, inset=0):
         edges = self.section(x)
@@ -613,7 +663,8 @@ class Hull:
 
     def rib(self, name, x, tex, width=1, depth=1, inset=None, clear=()):
         """A rib at x, a piece along each edge of the section, each sunk until it lies inside the skin (and what lines
-        it, inset deep); every other piece a little narrower, so that two share no plane where they meet."""
+        it, inset deep); the pieces are of three widths in turn, so that no two share a plane where they meet, nor two
+        a piece apart where a sharp section brings them together."""
         edges = self.section(x)
         inset = self.t if inset is None else inset
         inside = self.outline("the skin's inside", inset=inset, ends=False)
@@ -628,7 +679,7 @@ class Hull:
                 flare = math.degrees(math.atan2(spread, rise))
                 z = self.cz + side * h0
                 z0, z1 = sorted((z - side * inset, z - side * (inset + depth)))
-                half = width / 2 - APART * ((k + (side > 0)) % 2)
+                half = width / 2 - APART * ((k + 2 * (side > 0)) % 3)
                 normal = unit([0, spread, -side * rise])
                 made = lambda s, z0=z0, z1=z1, y0=y0, z=z, half=half, normal=normal: box(
                     f"{name}{label}{k + 1}", (x - half, y0 + normal[1] * s, z0 + normal[2] * s), (x + half, y0 + length + normal[1] * s, z1 + normal[2] * s),

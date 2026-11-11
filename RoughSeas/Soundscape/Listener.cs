@@ -1,5 +1,6 @@
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
+using RoughSeas.Water;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -15,14 +16,14 @@ public readonly record struct Listener(Vec3d Pos, bool AtSea, SeaState Sea, doub
         var state = sea.At(pos.X, pos.Z);
         var surface = storms.Surface;
         var atSea = state.WaveHeight >= config.SeaFromMetres && OverWater(capi.World.BlockAccessor, pos.AsBlockPos, config.SeaProbeBlocks);
-        return new Listener(pos.XYZ, atSea, state, surface?.SeaHeight ?? state.WaveHeight, surface?.Foam ?? default);
+        return new Listener(pos.XYZ, atSea, state, surface?.Trains.SeaHeight ?? state.WaveHeight, surface?.Foam ?? default);
     }
 
     private static bool OverWater(IBlockAccessor accessor, BlockPos pos, int probeBlocks)
     {
         for (var i = 0; i <= probeBlocks; i++, pos.Down())
         {
-            if (accessor.GetBlock(pos, BlockLayersAccess.Fluid).IsLiquid()) return true;
+            if (OpenWater.At(accessor, pos).IsLiquid()) return true;
             if (accessor.GetBlock(pos, BlockLayersAccess.Solid).SideSolid[BlockFacing.UP.Index]) return false;
         }
         return false;

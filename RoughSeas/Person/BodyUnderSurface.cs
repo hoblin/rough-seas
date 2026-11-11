@@ -64,7 +64,7 @@ public static class BodyUnderSurface
             transpiler: new HarmonyMethod(typeof(BodyUnderSurface), nameof(DrawnStroke)));
     }
 
-    // runs after vanilla has set the flags from the blocks, and before the next tick's gravity, drag and stroke read them
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorControlledPhysics", "ApplyTests", "sets Swimming and FeetInLiquid from the fluid blocks, which the next tick's gravity, drag and stroke read")]
     private static void InWater(EntityBehaviorControlledPhysics __instance, EntityPos pos)
     {
         if (__instance.entity is not EntityPlayer player) return;
@@ -79,6 +79,7 @@ public static class BodyUnderSurface
     /// Vanilla's stroke stays vanilla's, its numbers and any other mod's patch to it, and only the depth it scales the
     /// stroke's lift by is read under the drawn surface: its one call of <c>GameMath.Clamp</c> takes that depth.
     /// </summary>
+    [ReliesOn("Vintagestory.API.Common.Entities.PModulePlayerInLiquid", "HandleSwimming", "scales the stroke's lift by its one GameMath.Clamp of the chest's depth, with the entity and its position as its second and third arguments")]
     private static IEnumerable<CodeInstruction> DrawnStroke(IEnumerable<CodeInstruction> code)
     {
         var clamp = AccessTools.Method(typeof(GameMath), nameof(GameMath.Clamp), [typeof(float), typeof(float), typeof(float)]);
@@ -95,7 +96,7 @@ public static class BodyUnderSurface
             }
             yield return instruction;
         }
-        if (!found) system?.Log("vanilla's stroke has changed: it keeps the blocks' depth");
+        if (!found) throw new InvalidOperationException("PModulePlayerInLiquid.HandleSwimming no longer takes the chest's depth through GameMath.Clamp");
     }
 
     private static float DrawnClamp(float depth, float least, float most, Entity entity, EntityPos pos) =>

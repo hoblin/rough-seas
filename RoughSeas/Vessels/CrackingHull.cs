@@ -124,6 +124,12 @@ public sealed class CrackingHull : HullModel, IKnockable, IAfloat, IMendable
 
     public override void Adopt(float integrity) { }
 
+    public override void MendWhole()
+    {
+        foreach (var key in new[] { CracksKey, GreaseKey, ExposureKey, DryingKey, RottedKey }) Tree.RemoveAttribute(key);
+        Changed();
+    }
+
     public override void TurnEndForEnd(ITreeAttribute tree)
     {
         if (tree.GetTreeAttribute(CracksKey) is not { } cracks) return;

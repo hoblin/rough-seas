@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Mar bravo",
     "playstyle-desc-preset-roughseas": "Sobrevivência normal num mundo de oceanos abertos, onde o vento, as tempestades e o mar são perigosos.",
     "worldconfig-category-roughseas": "Mar bravo",
-    "worldattribute-dangerousOceans": "Oceanos perigosos",
-    "worldattribute-dangerousOceans-desc": "Tempestades, rebentação e relâmpagos podem alagar, virar e partir embarcações, e arrancá-las da amarração ou do fundeio. Desligado, o mar mantém o seu estado do tempo, mas não causa dano."
+    "worldattribute-bilgeWater": "Água na sentina",
+    "worldattribute-bilgeWater-desc": "As ondas rebentam a bordo e a chuva cai numa embarcação aberta, enchendo a sentina até a esgotares. Desligado, nem ondas nem chuva acrescentam água; um rombo ainda acrescenta, e uma embarcação alagada ou afundada continua a encher.",
+    "worldattribute-hullDamage": "Danos no casco",
+    "worldattribute-hullDamage-desc": "As rochas, a margem, os abalroamentos, os rápidos, a rebentação e o tempo racham o casco, e uma racha mete água. O couro apodrece, as costuras por untar deixam passar água e o junco encharca-se. Desligado, nenhum casco sofre dano e todos os cascos ficam inteiros; uma pancada ainda se ouve, e as armas e as explosões continuam a danificar o casco.",
+    "worldattribute-stormLightning": "Relâmpagos",
+    "worldattribute-stormLightning-desc": "As tempestades lançam relâmpagos perto de ti, e um mastro atrai-os. Desligado, as tempestades não lançam relâmpagos próprios e os mastros não atraem nenhum; as trovoadas do próprio jogo ficam iguais.",
+    "worldattribute-mooringStrain": "Esforço na amarração",
+    "worldattribute-mooringStrain-desc": "Um cabo de amarração ou um cabo de fundear aguenta o puxão da água e o esticão de cada onda: acima da sua resistência o cabo rebenta, a âncora garra, e uma embarcação amarrada enquanto estás longe pode ser atirada para a costa. Desligado, nada rebenta, garra ou é atirado; um cabo continua a segurar a embarcação ao seu comprimento.",
+    "worldattribute-oceanCurrents": "Correntes",
+    "worldattribute-oceanCurrents-desc": "As correntes levam qualquer embarcação, governada ou não, e puxam pela sua amarração. Desligado, a água não leva nenhuma embarcação; as correntes continuam a aquecer ou a arrefecer o mar.",
+    "worldattribute-rowerFatigue": "Cansaço do remador",
+    "worldattribute-rowerFatigue-desc": "Remar, pagaiar e varejar dão-te fome. Desligado, não gastam saciedade; uma embarcação continua a andar só tão depressa quanto a impulsionas.",
+    "worldattribute-poleDepth": "Profundidade da vara",
+    "worldattribute-poleDepth-desc": "A vara só empurra onde chega ao fundo. Desligado, empurra em água de qualquer profundidade como num impulso completo.",
+    "worldattribute-swimmerBreakers": "Rebentação sobre nadadores",
+    "worldattribute-swimmerBreakers-desc": "Uma onda que rebenta sobre ti enquanto nadas empurra-te para o fundo e leva-te consigo, e a sua água espumosa sustenta-te menos. Desligado, nenhuma onda rebenta sobre quem nada; continuas a flutuar nas ondas e a respirar ao ritmo delas."
 }

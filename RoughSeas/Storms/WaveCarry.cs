@@ -9,6 +9,7 @@ namespace RoughSeas.Storms;
 /// step: on the client that steers her, and on the server while nobody does, each through her own
 /// <see cref="WaveRide"/>.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.EntityBoat", "updateBoatAngleAndMotion", "has just rewritten Pos.Motion when this postfix runs")]
 public static class WaveCarry
 {
     private const string HarmonyId = "roughseas.storms.carry";

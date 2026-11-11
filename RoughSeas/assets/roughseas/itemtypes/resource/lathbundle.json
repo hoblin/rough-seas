@@ -1,0 +1,32 @@
+{
+    "code": "lathbundle",
+    "class": "roughseas:ItemLathBundle",
+    "variantgroups": [{"code": "wood", "loadFromProperties": "roughseas:vessel/wood"}, {"code": "length", "states": ["2", "3", "4", "5"]}, {"code": "state", "states": ["dry", "soaked"]}],
+    "maxstacksize": 1,
+    "behaviors": [{"name": "roughseas:icon", "properties": {"shape": {"base": "roughseas:item/lathbundle-icon"}}}],
+    "liquidSelectable": 1,
+    "heldTpIdleAnimation": "holdunderarm",
+    "attributes": {
+        "logTextures": {"wood": "inside-north"},
+        "handbook": {"groupBy": ["lathbundle-*"]},
+        "sources": {
+            "stones": "recipes/grid/lathbundles.json: laths float even soaked (400 kg/m³ dry, about a third more with the water they take up: itemtypes/resource/lath.json), so a bundle is held down by stones laid on it, as soaked timber was. The game gives a stone no mass, so a stone's weight under water is set by the largest bundle: one full stack of vanilla's stones (64) holds 32 wet laths of 5 m. A bundle's buoyancy goes with its laths' length, and so do its stones: 64 × length / 5, rounded (26, 38, 51, 64). Every stone comes back when the bundle is untied",
+            "transitionableProps": "A soaked bundle out of the water dries as its laths do (itemtypes/resource/lath.json)"
+        }
+    },
+    "shape": {"base": "roughseas:entity/lathbundle-{length}"},
+    "textures": {"stone": {"base": "game:block/stone/rock/granite1"}},
+    "transitionablePropsByType": {
+        "*-soaked": [{
+            "type": "Dry",
+            "freshHours": {"avg": 48},
+            "transitionHours": {"avg": 0.01},
+            "transitionedStack": {"type": "item", "code": "roughseas:lathbundle-{wood}-{length}-dry"},
+            "transitionRatio": 1
+        }]
+    },
+    "creativeinventory": {"general": ["*"], "items": ["*"]},
+    "guiTransform": {"rotation": {"x": -30, "y": 45, "z": 180}, "origin": {"x": 0.5, "y": 0.1, "z": 0.5}, "scale": 1.6},
+    "tpHandTransform": {"translation": {"x": -0.7, "y": -0.1, "z": -0.5}, "rotation": {"x": 0, "y": 0, "z": -10}, "scale": 0.6},
+    "groundTransform": {"origin": {"x": 0.5, "y": 0, "z": 0.5}, "scale": 2.5}
+}

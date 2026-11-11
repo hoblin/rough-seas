@@ -9,7 +9,7 @@ public class SoundscapeConfigTests
     private const double AmbienceMasterLufs = -26;
     private const double EventMasterLufs = -18;
 
-    private static readonly string Assets = Path.Combine(Repository(), "RoughSeas", "assets", "roughseas");
+    private static readonly string Assets = Path.Combine(Repository.Mod, "assets", "roughseas");
     private static readonly SoundscapeConfig Shipped =
         JsonConvert.DeserializeObject<SoundscapeConfig>(File.ReadAllText(Path.Combine(Assets, "config", "soundscape.json")))!;
 
@@ -98,12 +98,5 @@ public class SoundscapeConfigTests
         var cue = new WaveCue { VolumePerMetre = 0.1 };
         Assert.Equal(0.2, cue.VolumeAt(2), 6);
         Assert.Equal(1, cue.VolumeAt(30));
-    }
-
-    private static string Repository()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir != null && !Directory.Exists(Path.Combine(dir.FullName, "RoughSeas", "assets"))) dir = dir.Parent;
-        return dir?.FullName ?? throw new DirectoryNotFoundException("the repository above the test binaries");
     }
 }

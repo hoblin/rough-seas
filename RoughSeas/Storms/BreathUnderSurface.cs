@@ -54,6 +54,7 @@ public static class BreathUnderSurface
         verdicts.Remove(player.PlayerUID);
     }
 
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorBreathe", "Check", "gives creative and spectator players air before it looks at the eye, and leaves its answer in HasAir")]
     private static void Check(EntityBehaviorBreathe __instance)
     {
         // in a single player game the client's Check runs through here too
@@ -80,7 +81,7 @@ public static class BreathUnderSurface
         {
             if (!swells.TryGetValue(player.PlayerUID, out var around))
             {
-                swells[player.PlayerUID] = around = new SwellAround(system.Config.Surface, system.Waves, sea.Config, sea.Clock);
+                swells[player.PlayerUID] = around = system.Swell(sapi);
             }
             around.At(sea.Map, x, z, sea.Clock.Seconds, sapi.WorldManager.RegionSize);
             swell = around.Sea.HeightAt(x, z);

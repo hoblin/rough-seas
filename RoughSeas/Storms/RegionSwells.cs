@@ -30,7 +30,7 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
         if (now - sweptAt > ForgottenAfterSeconds) Sweep(now);
         if (!swells.TryGetValue(region, out var swell))
         {
-            swells[region] = swell = new Swell(new SwellAround(storms.Config.Surface, storms.Waves, sea.Config, sea.Clock));
+            swells[region] = swell = new Swell(storms.Swell(sapi));
             storms.Log("server sea built for region {0} {1}, asked at x {2:0} z {3:0}; {4} regions held", region.Item1, region.Item2, x, z, swells.Count);
         }
         swell.ReadAt = now;
@@ -45,6 +45,7 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
             swell.Around.Advance(seconds);
         }
         swell.Seconds = seconds;
+        swell.Around.Over(sea.Map, x, z);
         return swell.Around;
     }
 

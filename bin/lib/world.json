@@ -26,6 +26,22 @@
     "cold-shore": {
       "at": [2906, 113, -7048],
       "what": "A forested shore at 60°, sea to the east, water below 0 °C; spring days near freezing."
+    },
+    "lake-shore": {
+      "at": [-3412, 112, 10054],
+      "what": "The south shore of the big freshwater lake the beach zone's spit lies in (still water at y109, 6 m deep, 29 km of fetch): reedy soil flush with the water to the south, for surf on fresh water. A gale staged 300 blocks east (/seas stage gale 24 600 at -3073 10017) blows across the lake onto it."
+    },
+    "gentle-beach": {
+      "at": [164, 112, -63],
+      "what": "A flat sand beach flush with the open sea on the spawn island's east coast (47°), the sea to the east, its shoreface dropping a metre a block; a calm lagoon lies behind it. For surf and the band on a gentle beach: a gale staged 300 blocks south (/seas stage gale 24 600 at 168 237) blows onshore."
+    },
+    "steep-shore": {
+      "at": [676, 113, -84],
+      "what": "The steepest sand-footed shore of the open sea near spawn, on the island east of it (47°): a strip of sand at the water, then grassy soil climbing a block a block (sea to the south, ground 0 1 2 3 4 6 blocks over it). For surf on a steep shore: a gale staged 300 blocks west (/seas stage gale 24 600 at 376 -87) blows onshore."
+    },
+    "sea-cliff": {
+      "at": [540, 116, -108],
+      "what": "A natural cliff straight out of the open sea on the steep-shore island's north side (47°): soil and rock rising 7 to 9 blocks at the water's edge, the sea to the north. For waves against a face: a gale staged at (/seas stage gale 26 600 at 240 -160) throws its sea onto it; a gale of 11 m/s there is a swell that stands against it. Film from 540 118 -108 looking south (bin/game look 0 3.36)."
     }
   }
 }

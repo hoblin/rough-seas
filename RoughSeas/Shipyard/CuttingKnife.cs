@@ -8,6 +8,8 @@ namespace RoughSeas.Shipyard;
 /// A knife held on a vessel that wants a cut cuts her, as a held axe hews: vanilla's <c>ItemKnife</c> handles the
 /// held step and its release itself and never asks the knife's behaviours, though it lets them take the click.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.ItemKnife", "OnHeldInteractStep", "handles the step itself and never asks the knife's collectible behaviours")]
+[ReliesOn("Vintagestory.GameContent.ItemKnife", "OnHeldInteractStop", "handles the stop itself and never asks the knife's collectible behaviours")]
 public static class CuttingKnife
 {
     private const string HarmonyId = "roughseas.shipyard.cuttingknife";

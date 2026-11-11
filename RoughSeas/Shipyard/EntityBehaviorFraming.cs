@@ -17,13 +17,13 @@ namespace RoughSeas.Shipyard;
 /// <summary>
 /// A vessel built up where she lies, stage by stage in the order her <see cref="FramingConfig.Stages"/> give, each
 /// piece drawn where it is laid: from a bark sheet stripped off a standing tree, from bundles bound where they lay, or
-/// from laths laid out on the ground.
+/// from a pile of laths on the ground.
 /// </summary>
 public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity), IWorkedHull
 {
     public const string Code = "roughseas:framing";
 
-    protected const int DataVersion = 1;
+    protected const int DataVersion = 2;
     protected const string WoodPrefix = "wood-";
 
     private const double HeldSlackSeconds = 0.5;
@@ -55,6 +55,12 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         framing = new Framing(() => Tree, MarkDirty, config.Stages);
         layings = config.Stages.ToDictionary(stage => stage, stage => Laying.For(stage, config));
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+    }
+
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        base.AfterInitialized(onFirstSpawn);
+        Upgrade(DataVersion, _ => framing.KeepProgress());
     }
 
     public static void Begin(Entity vessel, string? firstLaid = null) => Begin(vessel, DataVersion, tree =>
@@ -106,22 +112,11 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         if (framing.Built) Shipyard.Log(entity, "built{0}", framing.Stages.Any(stage => stage.Sets) ? $": her ribs set in {Math.Max(0, framing.SetsAt - sea.Clock.Hours):F0} h" : "");
     }
 
-    public override WorldInteraction[]? GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
-    {
-        if (framing.Current is not { } stage) return null;
-
-        var laying = layings[stage];
-        return ObjectCacheUtil.GetOrCreate(world.Api, $"{Code}/help/{entity.Code}/{stage.Group}", () => new[]
-        {
-            new WorldInteraction { ActionLangCode = laying.Action, MouseButton = EnumMouseButton.Right, Itemstacks = laying.Shown(world).ToArray() }
-        });
-    }
-
-    public override void GetInfoText(StringBuilder infotext)
-    {
-        if (framing.Progress(sea.Clock.Hours) is { } progress) infotext.AppendLine(progress);
-        base.GetInfoText(infotext);
-    }
+    protected override BuildStep? Next =>
+        Tree == null ? null
+        : framing.Current is { } stage ? new BuildStep(framing.Progress(sea.Clock.Hours), layings[stage].Action, () => layings[stage].Shown(entity.World))
+        : framing.Progress(sea.Clock.Hours) is { } progress ? new BuildStep(progress)
+        : null;
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {

@@ -8,6 +8,8 @@ namespace RoughSeas.Shipyard;
 /// A firestarter held on a vessel's laid fire lights it: vanilla's <c>ItemFirestarter</c> handles the held step and
 /// its release itself and never asks the firestarter's behaviours, though it lets them take the click.
 /// </summary>
+[ReliesOn("Vintagestory.GameContent.ItemFirestarter", "OnHeldInteractStep", "handles the step itself and never asks the firestarter's collectible behaviours")]
+[ReliesOn("Vintagestory.GameContent.ItemFirestarter", "OnHeldInteractStop", "handles the stop itself and never asks the firestarter's collectible behaviours")]
 public static class LightingFirestarter
 {
     private const string HarmonyId = "roughseas.shipyard.lightingfirestarter";

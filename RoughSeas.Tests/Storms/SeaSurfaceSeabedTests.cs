@@ -1,0 +1,268 @@
+using RoughSeas.Storms;
+using RoughSeas.Water;
+
+namespace RoughSeas.Tests.Storms;
+
+public class SeaSurfaceSeabedTests
+{
+    private const int Size = 64;
+    private const int OriginX = 1000;
+    private const int OriginZ = 2000;
+    private const double MiddleX = OriginX + Size / 2.0;
+    private const double MiddleZ = OriginZ + Size / 2.0;
+
+    private static SeaSurface Settled(double height)
+    {
+        var surface = new SeaSurface(Fixtures.Config().Surface, new Waves(Fixtures.Config().Waves));
+        var raised = new RoughSeas.SeaAndWeather.WaveGeneration(0.3, 3.5 * Math.Sqrt(height));
+        for (var frame = 0; frame < 3600; frame++)
+        {
+            if (frame % 30 == 0)
+            {
+                surface.Aim(height, 6);
+                surface.Raise(raised, raised, 0);
+            }
+            surface.Advance(frame / 60.0);
+        }
+        return surface;
+    }
+
+    private static SurfField Flat(SeaSurface surface, float depth, (double X, double Z)[]? numbers = null, float lag = 0)
+    {
+        var field = new SurfField(OriginX, OriginZ, Size, numbers ?? surface.Trains.Vectors());
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            field.SetDepth(x, z, depth);
+            for (var slot = 0; slot < SurfField.Slots; slot++) field.SetLag(slot, x, z, lag);
+        }
+        return field;
+    }
+
+    private static double Highest(SeaSurface surface, bool shortWaves = true) =>
+        Enumerable.Range(0, 400).Max(i => surface.HeightAt(MiddleX + i % 20 * 0.7, MiddleZ + i / 20 * 0.9, 1, shortWaves));
+
+    [Fact]
+    public void OverLandTheSeaIsNotDrawn()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, -0.5f);
+        Assert.Equal(0, surface.HeightAt(MiddleX, MiddleZ, 1));
+    }
+
+    [Fact]
+    public void TheEnergySolvedForATrainSetsItsHeight()
+    {
+        var surface = Settled(3);
+        surface.Seabed = Flat(surface, 1000);
+        surface.Seabed.EdgeFadeBlocks = 1;
+        var open = Highest(surface, shortWaves: false);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.5f);
+        Assert.InRange(Highest(surface, shortWaves: false) / open, 0.45, 0.65);
+    }
+
+    [Fact]
+    public void WaveHereReadsTheWavesOverTheBed()
+    {
+        var surface = Settled(3);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(3, open.Height, 1);
+        Assert.Equal(0, open.Breaking);
+        Assert.Equal(surface.Trains.DominantPeriod, open.Period);
+
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            surface.Seabed.SetBreaking(x, z, 0.4f);
+            for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.5f);
+        }
+        var overBar = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(1.5, overBar.Height, 1);
+        Assert.True(overBar.Surf);
+    }
+
+    [Fact]
+    public void WaveHereKeepsTheSeaThatComesToTheShoreWhereTheShallowsTakeItDown()
+    {
+        var surface = Settled(3);
+        surface.Seabed = Flat(surface, 1);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            surface.Seabed.SetArriving(x, z, 0.8f);
+            for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.3f);
+        }
+        var here = surface.WaveHere(MiddleX, MiddleZ, 1);
+        Assert.Equal(0.9, here.Height, 1);
+        Assert.Equal(2.4, here.Arriving, 1);
+    }
+
+    private static SeaSurface Surf(float depth)
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, depth);
+        surface.Seabed.EdgeFadeBlocks = 1;
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+        {
+            surface.Seabed.SetBreaking(x, z, 0.6f);
+            for (var slot = 0; slot < SurfField.Slots; slot++) surface.Seabed.SetGain(slot, x, z, 0.7f);
+        }
+        return surface;
+    }
+
+    private static (double X, double Z) RestUnder(SeaSurface surface, double x, double z)
+    {
+        var rest = (X: x, Z: z);
+        for (var i = 0; i < 3; i++)
+        {
+            var (shiftX, _, shiftZ) = surface.DisplacementAt(rest.X, rest.Z, 1, false);
+            rest = (x - shiftX, z - shiftZ);
+        }
+        return rest;
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(3)]
+    [InlineData(6)]
+    public void InSurfTheWaterRisesAsItsDrawnBoreDoes(int along)
+    {
+        const double step = 0.002;
+        var surface = Surf(1.5f);
+        var now = surface.Trains.Seconds;
+        var (x, z) = (MiddleX + along, MiddleZ);
+        var rest = RestUnder(surface, x, z);
+        double Rise(double at)
+        {
+            surface.Advance(at);
+            return surface.DisplacementAt(rest.X, rest.Z, 1).Y;
+        }
+
+        var rate = (Rise(now + step) - Rise(now - step)) / (2 * step);
+        surface.Advance(now);
+
+        Assert.Equal(rate, surface.RiseVelocityAt(x, z), 2);
+    }
+
+    [Fact]
+    public void TheWaterStandsStillAtTheBed()
+    {
+        var surface = Surf(1.5f);
+        var (x, z) = (MiddleX, MiddleZ);
+        var column = 1.5 + surface.HeightAt(x, z);
+
+        Assert.NotEqual(0, surface.RiseVelocityAt(x, z, 0.5 * column));
+        Assert.Equal(0, surface.RiseVelocityAt(x, z, column), 9);
+    }
+
+    [Fact]
+    public void TheTallestWavesOfASeaAreTheOnesThatBreak()
+    {
+        var reading = new RoughSeas.Water.WaveReading(2, 8, 0, 3, 0.05, 0.2, 2);
+        Assert.True(reading.Breaks(RoughSeas.Water.WaveTheory.RayleighHeight(2, 0.95)));
+        Assert.False(reading.Breaks(RoughSeas.Water.WaveTheory.RayleighHeight(2, 0.5)));
+        Assert.False((reading with { Breaking = 0 }).Breaks(10));
+    }
+
+    [Fact]
+    public void BeyondTheBedReadWaveHereKnowsNoDepthAndNoBreaking()
+    {
+        var surface = Settled(3);
+        var here = surface.WaveHere(MiddleX, MiddleZ, 0.5);
+        Assert.Equal(1.5, here.Height, 1);
+        Assert.Equal(double.PositiveInfinity, here.Depth);
+        Assert.False(here.Surf);
+    }
+
+    private static void Face(SurfField field, double normalX, double normalZ, float reflection)
+    {
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+            field.SetFace(x, z, 1, (float)normalX, (float)normalZ, reflection);
+    }
+
+    [Fact]
+    public void AtAWallTheWaveAndItsReflectionStandTwiceAsHigh()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        var open = Highest(surface);
+        Face(surface.Seabed, -Math.Cos(0.3), -Math.Sin(0.3), 1);
+        Assert.InRange(Highest(surface) / open, 1.6, 2.1);
+    }
+
+    [Fact]
+    public void AReflectionShiftsWithItsDistanceFromTheWall()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        Face(surface.Seabed, -Math.Cos(0.3), -Math.Sin(0.3), 1);
+        var atTheWall = surface.HeightAt(MiddleX, MiddleZ, 1);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++) surface.Seabed.SetFaceDistance(x, z, 9);
+        Assert.NotEqual(atTheWall, surface.HeightAt(MiddleX, MiddleZ, 1), 2);
+    }
+
+    [Fact]
+    public void ReflectedWaterRisesFromTheFaceNoSteeperThanTheLimit()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.HeightAt(MiddleX, MiddleZ, 1);
+        Face(surface.Seabed, -Math.Cos(0.3), -Math.Sin(0.3), 1);
+        surface.Seabed.FaceSlope = 0;
+        Assert.Equal(open, surface.HeightAt(MiddleX, MiddleZ, 1), 1);
+    }
+
+    [Fact]
+    public void AWallBehindTheWavesReflectsNothing()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.HeightAt(MiddleX, MiddleZ, 1);
+        Face(surface.Seabed, Math.Cos(0.3), Math.Sin(0.3), 1);
+        Assert.Equal(open, surface.HeightAt(MiddleX, MiddleZ, 1), 3);
+    }
+
+    [Fact]
+    public void OverDeepWaterTheSeabedChangesNothing()
+    {
+        var surface = Settled(2);
+        var open = surface.HeightAt(MiddleX, MiddleZ, 1);
+        surface.Seabed = Flat(surface, 1000);
+        Assert.Equal(open, surface.HeightAt(MiddleX, MiddleZ, 1), 3);
+    }
+
+    [Fact]
+    public void ALagSolvedForOtherWavesIsLeftOut()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.HeightAt(MiddleX, MiddleZ, 1);
+        surface.Seabed = Flat(surface, 1000, surface.Trains.Vectors().Select(number => (number.X * 2, number.Z)).ToArray(), lag: 1.5f);
+        Assert.Equal(open, surface.HeightAt(MiddleX, MiddleZ, 1), 3);
+    }
+
+    [Fact]
+    public void AWaveHeldBackByTheBedRisesLater()
+    {
+        var surface = Settled(2);
+        surface.Seabed = Flat(surface, 1000);
+        var open = surface.HeightAt(MiddleX, MiddleZ, 1);
+        surface.Seabed = Flat(surface, 1000, lag: 1.5f);
+        Assert.NotEqual(open, surface.HeightAt(MiddleX, MiddleZ, 1), 3);
+    }
+
+    [Fact]
+    public void WithoutAShareTheSeaIsReadAsOpenSea()
+    {
+        var surface = Settled(2);
+        var open = surface.DisplacementAt(MiddleX, MiddleZ).Y;
+        surface.Seabed = Flat(surface, -1);
+        Assert.Equal(open, surface.DisplacementAt(MiddleX, MiddleZ).Y, 9);
+    }
+}

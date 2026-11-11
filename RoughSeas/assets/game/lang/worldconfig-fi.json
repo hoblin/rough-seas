@@ -2,6 +2,20 @@
     "playstyle-preset-roughseas": "Myrskyisä meri",
     "playstyle-desc-preset-roughseas": "Tavallinen selviytyminen maailmassa, jossa on avoimia valtameriä ja jossa tuuli, myrskyt ja meri ovat vaarallisia.",
     "worldconfig-category-roughseas": "Myrskyisä meri",
-    "worldattribute-dangerousOceans": "Vaaralliset valtameret",
-    "worldattribute-dangerousOceans-desc": "Myrskyt, tyrskyt ja salamat voivat täyttää aluksia vedellä, kaataa ja rikkoa niitä sekä repiä ne irti kiinnityksistään. Pois päältä meren sää säilyy, mutta meri ei tee vahinkoa."
+    "worldattribute-bilgeWater": "Pilssivesi",
+    "worldattribute-bilgeWater-desc": "Aallot murtuvat aluksen yli ja sade sataa avoimeen alukseen, ja pilssi täyttyy, kunnes äyskäröit sen tyhjäksi. Pois päältä aallot ja sade eivät tuo vettä; vuoto tuo silti, ja vesilastissa oleva tai uponnut alus täyttyy silti.",
+    "worldattribute-hullDamage": "Rungon vauriot",
+    "worldattribute-hullDamage-desc": "Kivet, ranta, törmäykset, kosket, tyrskyt ja sää halkaisevat rungon, ja halkeama vuotaa. Nahka mätänee, rasvaamattomat saumat vuotavat ja ruoko vettyy. Pois päältä mikään runko ei vahingoitu, ja jokainen runko korjautuu ehjäksi; kolahdus kuuluu silti, ja aseet ja räjähdykset vahingoittavat runkoa silti.",
+    "worldattribute-stormLightning": "Salamat",
+    "worldattribute-stormLightning-desc": "Myrskyt iskevät salamoita lähellesi, ja masto vetää niitä puoleensa. Pois päältä myrskyt eivät iske omia salamoitaan eivätkä mastot vedä niitä puoleensa; pelin omat ukkosmyrskyt pysyvät ennallaan.",
+    "worldattribute-mooringStrain": "Kiinnityksen rasitus",
+    "worldattribute-mooringStrain-desc": "Kiinnitysköysi tai ankkuriköysi ottaa vastaan veden vedon ja jokaisen aallon nykäisyn: kun sen lujuus ylittyy, köysi katkeaa, ankkuri laahaa, ja alus, joka on kiinnitettynä sillä aikaa kun olet poissa, voi paiskautua rantaan. Pois päältä mikään ei katkea, laahaa eikä paiskaudu; köysi pitää aluksen silti mittansa päässä.",
+    "worldattribute-oceanCurrents": "Virtaukset",
+    "worldattribute-oceanCurrents-desc": "Virtaukset kuljettavat jokaista alusta, ohjattua tai ei, ja kiristävät sen kiinnitystä. Pois päältä vesi ei kuljeta yhtään alusta; virtaukset silti lämmittävät tai viilentävät merta.",
+    "worldattribute-rowerFatigue": "Soutajan väsymys",
+    "worldattribute-rowerFatigue-desc": "Soutaminen, melominen ja sauvominen tekevät sinut nälkäiseksi. Pois päältä ne eivät kuluta kylläisyyttä; alus kulkee silti vain niin nopeasti kuin sitä kuljetat.",
+    "worldattribute-poleDepth": "Sauvoimen syvyys",
+    "worldattribute-poleDepth-desc": "Sauvoin työntää vain siellä, missä se ulottuu pohjaan. Pois päältä se työntää minkä tahansa syvyisessä vedessä kuin täydellä vedolla.",
+    "worldattribute-swimmerBreakers": "Tyrskyt uimarin yllä",
+    "worldattribute-swimmerBreakers-desc": "Aalto, joka murtuu ylitsesi uidessasi, painaa sinut pinnan alle ja kuljettaa mukanaan, ja sen vaahtoava vesi kannattelee sinua heikommin. Pois päältä mikään aalto ei murru uimarin ylitse; kellut silti aalloilla ja hengität niiden tahdissa."
 }

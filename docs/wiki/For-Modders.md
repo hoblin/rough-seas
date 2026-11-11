@@ -22,9 +22,9 @@ Each page covers one part, for the mod that touches it; read the ones yours does
 
 Where a page touches physics, it says what the mod does and links [The science behind it](The-Science-Behind-It) for why.
 
-## What we keep
+## Changes between versions
 
-What these pages document is what we keep: vanilla's channels as they describe them, `ISeaWeather` with `SeaState`, `SeaCurrent` and `SeaClock`, `IDrawnSea` with `SeaPose` and `HullResponse`, and our vessel behaviours with their keys and their configs. It follows semantic versioning: a change that breaks any of it comes with a new major version and a line in the release notes, and what we add comes in a minor version. If you build on it, or need something it doesn't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
+If you build on these pages, or need something they don't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
 ### Hulls that crack, leak and flood
 
@@ -132,9 +132,9 @@ The coracle and the hide currach are laid out as laths on the ground and built w
 - Every piece of a `lath` or `pole` stage names its length in the shape, a `"metres"` key on its group, and takes a lath or pole at least that long. The bark canoe's and the outrigger's pieces name theirs too.
 - `seep`'s `litresPerHour` is now `litresPerHourASeam`: a cover seeps at every seam between hides. A cracking hull's new `cover` gives the hides of one from before its build; `config/vessels/hides.json` gives each hide's keeping afloat and the water it takes up, and a patch can change them.
 - `IAfloat.Pass` takes the water's temperature, and a hull whose cover is sewn on it as it is built implements the new `ICovered`.
-- Hides carry our collectible behaviour `roughseas:framing`, as rope does; laths carry `roughseas:lathbed` by their JSON, and with Shift lay themselves on the ground. Rope held on laths laid out in a layout binds them rather than doing what vanilla's rope does.
+- Hides carry our collectible behaviour `roughseas:framing`, as rope does. Laths go down with Shift in vanilla's ground storage, wet or dry ([Poles and laths piled on the ground](#poles-and-laths-piled-on-the-ground)), and rope held on a pile that starts a vessel binds it rather than doing what vanilla's rope does.
 
-New: the behaviour `roughseas:covering` with its keys `layout`, `overturned` and `overturnedPivot`, `roughseas:framing`'s work `hide` and its keys `bends`, `hides` and `hideStates`, the block `roughseas:lathbed`, the collectible behaviour `roughseas:lathbed`, `roughseas:vesselintegrity`'s key `cover`, the interface `ICovered`, and `config/vessels/hides.json`.
+New: the behaviour `roughseas:covering` with its keys `start`, `overturned` and `overturnedPivot`, `roughseas:framing`'s work `hide` and its keys `bends`, `hides` and `hideStates`, `roughseas:vesselintegrity`'s key `cover`, the interface `ICovered`, and `config/vessels/hides.json`.
 
 ### Every build without a jump, every hull by its model
 
@@ -143,7 +143,7 @@ Each vessel built in place now changes the way the work would, and floats by num
 - The weights, depths, waterplanes, holds, decks and `swimmingOffsetY` of the dugout, outrigger, bark canoe, coracle and currach changed. The dugout's walls are 5 cm and its blank is the square trunk: `unhewnLitres` 3329, `blankWaterplaneSquareMetres` 5, `hollowDepthMetres` 0.5125, `hollowBeamMetres` 0.8. A patch that set these numbers sets them against its new model.
 - The outrigger's float is hewn from its three logs in six passes: its stage `Ends` and the groups `Float` and `Blunt` are gone, and `Hewing` (a `successive` stage replacing `FloatLog`) comes after `Booms`, whose pieces follow it (`follows`). Its washstrakes' end pieces are boards across its hollow, and the washstrakes add 422 litres, its measured opening 15 cm higher. The bark canoe's and the currach's holds stop at the lowest point of their gunwale, where water first spills over: 609 and 1911 litres. The outrigger's texture codes `floatbark` and `floatrings` draw the logs, in the float's wood. A dugout off the block grid is squared onto the logs when rigged, turned and moved so the float lies on them, no end of it more than half a block; one turned further from the row isn't rigged.
 - The bark canoe's sheet is 5 m long. Its stages are `Frame` (inwales and thwarts), `Slashes` and `Ends` (knife cuts, work `cut`) and `Outwales`, before its stems; all four lift its `Skin` group, one child a level, `Skin1` to `Skin13`, and its frame pieces show from `Frame{n}At{k}` and `Outwales{n}At{k}`. The finished canoe's item is drawn by `roughseas:carriedbuild` too, which shows only its last step.
-- The coracle's lattice is spaced 0.125 m and 0.1875 m, the currach's pair 1.075 m, both within 0.0625 m; the currach's gunwale pieces show from `Gunwale{n}At{k}`, its stern ends apart until its second end lashing.
+- The currach's gunwale pieces show from `Gunwale{n}At{k}`, its stern ends apart until its second end lashing.
 - A hide bigger than what is left of a cover gives back the rest as smaller hides of its kind. `Laying.Spend` has an overload taking the pieces the work used.
 - A reed boat's ends sag over the soak it takes before it sinks with nothing aboard, not over its full saturation. The interface `ISoaking` is gone; `EntityBehaviorVesselIntegrity.SoakToSinkKg` gives that soak.
 - A refused piece logs a `[shipyard]` line once a hold.
@@ -338,21 +338,145 @@ A pole's shove, its reach and its drawing are one ([Driving it](Building-a-Vesse
 
 New: `Stroke.Shove`, `Stroke.Pace`, `Propulsor.StrokeSpeed`, `StrokeConfig.Phase`, `Driving` and `Lift`, `Stroke.LiftWatts`, `MountStrokes.Pace`, `Pole.LiftJoules`, `Pole.Travel`, `PoleConfig.Footing`, `PoleConfig.Travel`, `RowerStation.BedMetres`, `MountStrokes.DrawnShare`, `EntityBehaviorPropulsion.Way` and `PoleSlide`, the `pole` keys above, `propulsion-pole-too-deep`.
 
-### The seated pole seen in first person
+### The pole seen in first person
 
-A reed boat's rider poling in first person sees the water ahead past the arms. Everyone else, and the rider in third person, sees the stroke as before.
+A reed boat's rider poling in first person, and a bark canoe's poling standing, sees the water ahead past the arms. Everyone else, and the rider in third person, sees the stroke as before.
 
 - The reed boat's pole strokes have first-person twins, `roughseas-reedboat-pole-{ready|forward|backward}-fp`, in `patches/player-reedboat.json`. They are the strokes with both upper arms moved 7 voxels down and 3 toward the pole's side, so the hands keep the pole. Vanilla plays a mount animation's `-fp` twin on the rider's own first-person arms, as it does for its crude oar.
 - A patch to one of those strokes patches its twin too, or the rider sees the old stroke in first person. A twin of yours plays beside its stroke, so give it the same frames, end and speed.
 
-New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`.
+- The bark canoe's standing pole strokes have twins of their own, `roughseas-barkcanoe-pole-{ready|forward|backward}-fp`, in `patches/player-barkcanoe.json`: both upper arms moved 1 voxel down and 3 outboard, so the arms stay in the bottom corner through the stroke, as the raft's do, and the view over the bow stays clear. The canoe is narrow and her pole is planted close beside her, so without them the left arm swings across the middle of the view on the drive. The dugout's standing pole has none, its arms already low.
+
+New: `roughseas-reedboat-pole-{ready|forward|backward}-fp`, `roughseas-barkcanoe-pole-{ready|forward|backward}-fp`.
+
+### Poles and laths piled on the ground
+
+Poles and laths, wet or dry, go down on the ground with vanilla's ground storage, in a pile as long as they are ([Recipes](Recipes#poles-and-laths-on-the-ground)).
+
+- Both carry vanilla's `GroundStorable` in its `Stacking` layout, with one `stackingModel` a length, `roughseas:block/pile/{pole|lath}pile-{2..5}`, one at a time or a layer with Ctrl: 64 poles, 8 to a layer; 160 laths of 3 to 5 m, 16 to a layer, lengthwise as poles lie; 140 laths of 2 m, 14 to a layer, seven along and seven across as a coracle's lattice. `upSolid` is false, so nothing piles or stands on top of one. `bin/model build` writes the lath piles' shapes (`bin/lib/hulls/piles.py`, from `coracle.py`): the 2 m pile's first layer is the coracle's flat lattice, of whole 2 m laths.
+- A Harmony prefix and postfix on `BlockGroundStorage.CreateStorage`, for an item that carries our collectible behaviour `roughseas:longpile`: a new pile starts only where every block of its footprint has room, ground and the player's leave to build, or the player sees vanilla's `placefailure-notenoughspace`; then vanilla's fillers, `multiblock-monolithic-*`, hold the blocks beside it, so a click or a break on any of them reaches the pile. Its footprint is the blocks of its length, or the behaviour's optional `footprint` property, the blocks it reaches over as `[x, z]` offsets from its own block in the pile's frame (the 2 m lath's: the block and its four neighbours). A mod that starts ground storage another way starts a pile of ours one block long. `roughseas:pilefootprint`, patched onto `game:groundstorage` ahead of its `UnstableFalling`, takes the fillers up with the pile. It also holds a long pile up while ground lies under any block of its length; with none left, the pile breaks and drops its pieces instead of falling. A mod that sets a block beside a pile of ours finds a filler there.
+- A pole stacks to 32 (it was 8), and a split drops its 64 in stacks of the pole's `maxstacksize`.
+- A row of N logs splits into 64 poles that burn as long as the logs' firewood, four of 24 s a log (three of kapok, purpleheart or ebony): a pole N logs long burns 1.5 × N s, 1.125 × N s of those three. A dry lath burns a sixteenth of its pole; a wet one has no `combustibleProps` and doesn't burn.
+- The lath's item shape, `shapes/item/lath.json`, is one lath in place of the tied bundle, and the lath no longer carries `roughseas:icon`.
+- Every vanilla wood in `config/vessels/materials.json` has a `toughness` now: kapok, koa (`wood-acacia`), bald cypress, larch, redwood, walnut, ebony, purpleheart and aged wood are new, each with its source.
+
+New: `roughseas:longpile`, `roughseas:pilefootprint`, the pile shapes.
+
+### Laths in one pile, work held
+
+A coracle and a currach start from one pile of wet laths, and every build and mend is held work ([Laid out on the ground](Building-a-Vessel#laid-out-on-the-ground), [The hull](Building-a-Vessel#the-hull)). A vessel of yours loads as it did, unless it set `layout`.
+
+- The lath bed is gone: the block `roughseas:lathbed`, the collectible behaviour `roughseas:lathbed` and the shape `block/laidlath`. Wet laths pile in vanilla's ground storage as dry ones do, and a 2 m pile lies as a coracle's lattice over its block and its four neighbours, through `roughseas:longpile`'s new `footprint`.
+- `roughseas:covering`'s `layout` is replaced by `start`, `{ "laths", "metres" }`: the count and length of the laths in the one pile that starts the vessel, written by our builders. Rope on a pile of exactly that many wet laths binds it into the blank where it lies and uses the pile up; a Harmony prefix on `BlockEntityGroundStorage.OnPlayerInteractStart` hands rope's click to the binding, since vanilla's rope is ground-storable.
+- Wet laths have no `combustibleProps`.
+- Mending is held: each `repairs` entry takes `seconds`, how long a patch is held on the hull. The vessel's `OnInteract` no longer mends; every material a `repairs` entry names carries our collectible behaviour `roughseas:framing`, which holds the patch as it holds a build's piece, through the interface `IMendedHull`.
+- While a build's or a mend's hold does work, the holder plays vanilla's `knifescrape`, and stops on letting go or a refusal.
+- Every cooking pot carries `roughseas:framing` too, as liquid containers do: a `pitch` stage takes hot pitch from the pot it was cooked in, and empties it with the last portion.
+- Every build answers its interaction help, its look line and a right-click that does no work from its next step in `EntityBehaviorBuild`, which raises the in-game error `roughseas-build-step`. The lang key `game:cantride-roughseas-unfinished` and the error `roughseas-unfinished` are gone. Shift + right-click picks up a vessel being built, with an empty hand or holding a piece of its build.
+- The bark canoe's `Lashing` stage holds a rope 3 seconds, where it held it 15.
+
+New: `roughseas:covering`'s `start`, `roughseas:longpile`'s `footprint`, `repairs[].seconds`, `IMendedHull`, `roughseas-build-step`.
+
+### The dugout's ends hollowed round
+
+The dugout runs the whole length of its log row, and its hollow ends round inside ([Dugout](Dugout)). A dugout of yours loads at its new size.
+
+- The dugout is 5 m long, the five logs' whole length, where it was 4.5 m: its bottom rakes up under each end, and the log's sawn end stays its end face. In oak it is 304 kg with a 1436-litre hold, where it was 252 kg and 1298 litres, and 3114 litres are hewn away (`unhewnLitres`). Its `collisionBoxes` are six overlapping squares.
+- In its shape the boards of each end run on in the first and last sections, `Blank{n}x1` and `x3`, whose `Inside` holds the hollow's end, half a bowl of staves (`Bowl{j}x{k}`); `Hewn{n}x1` and `x3` hold the bowl the next hewing leaves, and the first hewing's trench, `Hewn0`, closes round in bowls of its own. `Blank{n}Stern`, `Blank{n}Bow`, `ShellStern` and `ShellBow` hold the top of each end in strips (`Rim`) and the log's end grain (`Cap`), where they held stepped blocks. Every level keeps the row's length; its hull box only loses height.
+- `Clay{n}` lies along the ends in strips round the bowl's mouth, so the fires take 19, 13, 13, 12, 11 and 11 balls.
+- The outrigger is built on the same hull: in oak 515 kg, 547 with its washstrakes. These add 479 litres, where they added 422, and are twelve planks, a board along each side five long and one across each end at the bowl's far rim, sewn with 132 stitches.
+- A build saved under an older version of its data is brought up to date once, on the server, as it loads: `EntityBehaviorBuild.Upgrade(version, upgrade)`. The dugout's `roughseas:burnout` is at version 2: a rim clayed to the last ball by its old size, `rimVoxelsBefore`, stays clayed, and a hewing keeps its share of the strokes it took then, `strokesPerHewingBefore`.
+- A framed build's stage counts as done once a later stage is begun (`Framing.Laid`), so a save whose stage took fewer pieces then still reads as built: an outrigger sewn up with her ten old washstrake planks is finished.
+- `Burnout.Unclayed` says which of a level's clay pieces aren't on the rim yet, from their exact areas.
+
+New: `rimVoxelsBefore`, `strokesPerHewingBefore`, `EntityBehaviorBuild.Upgrade`, `Burnout.Unclayed`, `Burnout.KeepProgress`.
+
+### The outrigger's washstrakes along the whole log
+
+The outrigger's washstrakes run its hull's whole length, the dugout's five logs, where they stopped at the ends of its hollow ([Outrigger canoe](Outrigger-Canoe)).
+
+- Each side is five planks of a metre from one log end to the other, and the end boards `StrakeStern` and `StrakeBow` stand across the log's sawn ends. Still twelve planks.
+- Sewn, they add 573.5 litres (`raisesLitres`), where they added 479.3: the hold they raise is the plan inside them, over the hollow and the solid ends alike. In oak the outrigger is 551 kg with them, where it was 547.
+- Sewing them takes 146 stitches, five ropes, where it took 132 and four, so the `Seams` stage has five pieces.
+- A framing stage may name `piecesBefore`, the pieces it took in an older release. `roughseas:framing`, and with it `roughseas:rigging` and `roughseas:covering`, is at data version 2: a save's count of such a stage keeps its share of the work, rounded up (`Framing.KeepProgress`). An outrigger sewn up with four ropes stays sewn up.
+
+New: `piecesBefore`, `Framing.KeepProgress`.
+
+### Laths soaked under stones
+
+Laths soak on the bottom of any water as well as in the barrel, whose recipe stays ([Recipes](Recipes#soaked-laths)).
+
+- The item `roughseas:lathbundle-{wood}-{length}-{dry|soaked}`, class `roughseas:ItemLathBundle`, is made in the grid from 32 dry laths of one length and wood and `game:stone-*`: 26, 38, 51 or 64 stones for 2 to 5 m (`recipes/grid/lathbundles.json`). The stack attribute `weight` holds the stones, which `OnConsumedByCrafting` gives back when the bundle is untied in the grid. Untied, a `-soaked` bundle gives `-wet` laths and a `-dry` one `-dry` laths. A soaked bundle dries back to `-dry` by a vanilla `Dry` transition of 48 hours and keeps its `weight`.
+- Right-clicked on water or a block, it lays the entity `roughseas:lathbundle-{wood}-{length}`, class `roughseas:EntityLathBundle`: vanilla's passive physics at its default entity density, so it sinks, held by `roughseas:restingphysics` (`EntityBehaviorRestingPhysics`, a `passivephysics` that keeps an entity on the ground from moving sideways), so once on the bottom the push of flowing water doesn't move it. It has no `despawn` and no `roughseas:currentdrift`. Its watched tree `roughseas:soak` (`hours`, `soaked`, `checkedAt`) holds its water as hours of soaking on the sea clock: they rise while its block is water and fall at the same rate out of it, between 0 and its `soakHours` attribute, 48, the barrel's `sealHours` (`Soaking`). It is soaked once they reach `soakHours`, and stays soaked until they are back to 0, so a soaked bundle laid ashore dries in two days as its laths do. A right-click lifts it into the item of its state, a soaked one with the hours of wetness it has left as its `Dry` transition's, and laying a soaked item gives them back. It draws its stones in the texture of the rock they are.
+- `bin/model build coracle` writes the shapes `shapes/entity/lathbundle-{2..5}.json` (`bin/lib/hulls/piles.py`), its stones as many as the recipe takes.
+
+New: `roughseas:lathbundle` (item and entity), `ItemLathBundle`, `EntityLathBundle`, `roughseas:restingphysics`, the icon `shapes/item/lathbundle-icon.json`.
 
 ### The waves carry every hull
 
 The drawn waves now move every `EntityBoat` with `roughseas:seaforces`, steered or not ([A ship that rides our swell](Reading-the-Sea#a-ship-that-rides-our-swell)).
 
 - `IDrawnSea` gained `HullVelocityAt`. A class of yours that implements `IDrawnSea` has to add it. Code that only reads `IDrawnSea` is unaffected.
-- `config/seaweather.json`'s `currents.stokesDriftPerMps` is gone: the wind no longer moves an unsteered vessel, and `roughseas:currentdrift` carries the current alone.
+
+### Currents carry every vessel
+
+A current now carries a steered vessel too, and pulls on a moored one. See [Building a vessel](Building-a-Vessel#currents).
+
+- `roughseas:currentdrift` goes on both sides: list it in `client.behaviors` too, or a steered vessel of yours ignores the current as before. Its class is now `RoughSeas.Storms.EntityBehaviorCurrentDrift`, and it acts only on an `EntityBoat`.
+- The wind no longer moves a vessel nobody steers: `currents.stokesDriftPerMps` is gone from `seaweather.json`.
+- `HullDrag` gained `Across`, `Pull`, `Settle`, `Swing`, `Kilograms` and `AcrossKg`.
+- A vessel's motion carries the set: read `IHull.Velocity` for her speed over the ground, as before.
+
+New: `IHullWay`, `LiveDrag`, `HullSet`, and the optional keys `bowDrag`, `sideDrag` and `finSquareMetres` under `roughseas:currentdrift`.
+
+### A mooring rope holds by its own length
+
+A stake rope and an anchor's rode now hold a vessel at their own length and part by the pull on them ([Mooring](Mooring), [Anchoring](Anchoring), [Building a vessel](Building-a-Vessel#mooring)).
+
+- `roughseas:mooring` goes on both sides: list it in `client.behaviors` too, or a steered vessel of yours isn't held.
+- A vessel takes one rope: our postfix on vanilla's `EntityBehaviorRopeTieable.CanAttach` refuses a second on an entity with `roughseas:mooring`. While it ties the vessel to a post, our mooring takes vanilla's pull and tear off that rope, and gives them back once it doesn't.
+- The anchor's `holdingNewtons` attribute is now `kilograms`, its stone's mass; what it holds comes from the seabed under it. Our anchor's state moved to the watched tree `roughseas:anchor`.
+- Gone from `storms.json`: `mooring.stakeReachMetres`, `mooring.anchorDragMetres`, `waves.airDensity`, `waves.windageDragCoefficient` and `waves.waveDriftCoefficient`. New under `mooring`: `sandHold`, `rockHold` and `anchorStoneDensity`. `rope-flax` in `materials.json` gained `elongation`.
+- Gone: `Waves.Force`, `Waves.ChanceToExceed` and `EntityBehaviorSeaForces.Force`. `Anchor` takes `Kilograms` and `BedHold` in place of `HoldingNewtons`.
+- Vanilla's rope-id counter: our patches on `ClothManager` store it on save and read it on load, under `roughseas:nextClothId` in the save, and `RegisterCloth` skips an id a loaded rope holds. A world saved before starts its counter at 1048576.
+
+New: `MooringLine`, `MooringLoad`, `VesselRope`, `MooringReport`, and `MaterialTable.StretchAtBreak`.
+
+### Water under the shore
+
+The drawn waves reach the shore, over water we put under it ([Water under the beach](The-Look-of-the-Sea#water-under-the-beach)). A vessel of yours loads as it did; a mod that reads water from the fluid layer should read on.
+
+- Under the full blocks of a shore at its still-water level, sea or lake, rock included, the fluid layer holds vanilla's still water, salt or fresh, as far as the waves run up. It is there only so the surface is drawn over it. How far it reaches is worked out again, never recorded: when a chunk loads, when a block in or beside the band changes, and when its shore's sea changes, so it widens in a storm and drains after. The water itself is vanilla's and is saved with the chunks: removing the mod leaves it under the shores, hidden, and vanilla then reads it as water there (a bucket fills from beach sand at sea level). Each chunk's band logs a `[shore]` line in the server's debug log.
+- **Open water.** A position holding a full solid block is land, whatever its fluid layer holds. Ask `RoughSeas.Water.OpenWater`, never the fluid layer alone: `OpenWater.At(blocks, pos)` (or `At(blocks, x, y, z)`) gives the fluid there, and air where a full solid block stands; `OpenWater.Land(blocks, pos)` says whether one does. A waterlogged partial block, a post, a fence or a slab, stays water around it. Every reader of ours asks it: the ocean's calibration, the fetch and depth, breath, the camera, a hull's draft and sea forces, sounds and the shipyard.
+- Vanilla's `water` and `saltwater` carry our block behaviour `roughseas:groundwater` (`patches/shore-water.json`), which asks the band to be worked out again when a block beside the water changes; the band itself lays the water. Vanilla's spreading leaves the water there alone; break the block over it and it is ordinary water again, so a hole dug down to it fills.
+- Harmony keeps vanilla's readers on land there: a random tick at such a position goes to its solid block, so the water under it doesn't freeze; liquid containers neither fill from it nor select it (`BlockLiquidContainerBase.TryFillFromBlock`, `GameMain.GetBlockIntersectionBoxes`); `IBlockAccessor.SearchFluidBlocks`, which farmland searches with, finds air there; and a bobber's pond (`EntityBobber.getPondSize`) doesn't count it. A mod that reads the fluid layer some other way sees the water: ask `OpenWater`.
+- The drawn sea reads the seabed around the player. Near the shore `IDrawnSea.HeightAt`, `PoseOf` and `HullVelocityAt` give the waves grown, turned and broken by the depth, and nothing over land; the sheet that runs up the beach is drawn by the shader alone. `IDrawnSea` gained `WaveHere(x, z)`, the one answer to how high the waves stand at a point, where they run, how deep they feel the water and whether they break ([Reading it](Reading-the-Sea#reading-it)); a class of yours that implements `IDrawnSea` has to add it. A hull takes the waves at its own place, over its bed, on the side they come from, no longer the open sea's by the wind. The water's physics is one module, `RoughSeas.Water`.
+- Gone: `EntityBehaviorSeaForces.Wave` (`Took` stays) and `Waves.BreaksAt` (ask `WaveHere`); from the configs `waves.maxDepthBlocks`, `waves.bedSlopeBlocks`, `surface.surfFoam` and the shore sound's `maxDepthBlocks`; `seafoam.fsh`'s depth bands. `seaFoam` is a `vec3`.
+- The liquid shader takes eight more samplers, `seaBed`, `seaBedAux`, `seaLagA`, `seaLagB`, `seaFace`, `seaGainA`, `seaGainB` and `seaSurf`, on the eight units below `seaHeightMap`'s and out of the engine's numbering as it is ([SheyderMod](Other-Mods#sheydermod)); `chunkopaque` and `chunktopsoil` read `seaBed` and `seaBedAux` to darken wet ground.
+- On the server, `/shore here` reads the ground under the player at still-water level and how far the nearest shore's sea runs up it, and `/shore budget` the time the shore's water has taken since the last report. On a client, `.surface shore off` draws the sea as if it were deep everywhere and `on` brings the shore back, and `.surface bed N` reads the seabed and the swash under the player and N blocks along X.
+- `config/shore.json` holds the run-up (`runUp`: Stockdon's and EurOtop's factors, `wallSlope`, steeper than which a shore is a wall, and `slopeSearchBlocks`, how far inland the slope is read), the sheet (`sheet`: the uprush's bed friction and the lens's depth), each bed by its block material (`beds`: `conductivity`, `roughness`, and `sandy` for Stockdon's beach run-up; a material it lacks counts as `stone`) and the band (`band`: `haloBlocks`, `highestRiseBlocks`, `refreshMinutes`, `tickBudgetMilliseconds`). `config/storms.json`'s `surface.shore` holds the seabed map's size and refresh, wet sand's `wetReflectance` and the water's `waterAttenuation`. The physics and every source: [The science of the sea](The-Science-of-the-Sea#the-shore).
+
+- **Faces.** The waves reflect off every side of a full block the sea meets. A breaking wave throws spray and foam at a face higher than its crest, and a sheet stopped at a step throws spray there. `IDrawnSea.HeightAt` and `PoseOf` include the reflection; `HullVelocityAt` doesn't, so a hull rides the standing wave but is not pushed by it. The shared sea decides each strike from the world's clock, so two clients see the same one; the particles themselves are each client's own, spawned through vanilla's `RegisterAsyncParticleSpawner`. `shore.json`'s `faces` holds the reflection and overtopping formulas, the jet's speed, the foam's decay and the budget of spray per metre of face. `.surface bed` reports the nearest face, and the client's debug log carries a `[storms] strikes` line of what the faces around the player did in the last 5 s.
+
+- **The finer surface.** Near the player vanilla's water is divided on the GPU (OpenGL 4.0 and up), and waves between 8 m and half a metre long lie on the swell. `IDrawnSea.HeightAt` includes them; `PoseOf` doesn't, since a hull averages out what is shorter than itself. Over our sea vanilla's own height noise on the water is off. `config/storms.json`'s `surface.tessellation` and `surface.shortWaves` hold the mesh's reach and division and the short waves' bands. `.surface colours true` paints the water by height, over a fixed range with `.surface colours true LOW HIGH` in metres above still water, `.surface map sheet` by which wave's swash stands over the beach, `.surface tessellation|reflection|lag|energy false` leaves one thing out, `.surface probe X Z` reports the sea at a point, and `.surface watch X Z SECONDS` logs what the swash reads there ten times a second.
+
+New: `OpenWater`, `IDrawnSea.WaveHere`, the block behaviour `roughseas:groundwater`, `config/shore.json`, `surface.shore` in `config/storms.json`, `/shore`, `.surface shore` and `.surface bed`.
+
+### A body in the water
+
+A player floats by what the body displaces ([Swimming](Swimming)), and what a player weighs has one answer, in the new module `RoughSeas.Person`. A vessel of yours loads as it did; a mod that weighs a rider or moves a swimmer reads on.
+
+- `api.ModLoader.GetModSystem<PersonModSystem>().Person` is an `IPerson`, on both sides: `Body`, the one reference body (`MassKg`, and what it displaces by height), and `CarriedBy(entity)`, a player's armour and the tools and weapons in their hotbar, a `Carried` in kilograms and litres. The backpack and materials weigh nothing.
+- Vessels weigh riders through it: a rider in no armour with nothing in the hotbar weighs 75 kg, all of it body, so a flooded hull no longer counts 10 kg of everyday gear as sinking. Armour weighs 83.3 kg to the unit of walk-speed penalty, where it weighed 60.
+- Gone from `config/vessels/mass.json`: `playerGearKg`, `armorKgPerWalkSpeed` and `crewKg`. A patch to them goes to `config/person.json`: `body.massKg` and `carried` (`armourKgPerWalkSpeed`, `toolKg` by `EnumTool`, `densityKgPerLitre`). Gone from `VesselMass`: `PlayerGearKg` and `ArmorKgPerWalkSpeed`; `CrewKg` now reads the body.
+- `RoughSeas.Vessels.HeaveAddedMass` is `RoughSeas.Water.AddedMass`, and its methods take the water's density: `OfPlate(halfLength, halfBeam, kgPerCubicMetre)`, `OfWaterplane(squareMetres, halfBeam, kgPerCubicMetre)`. New beside them, `OfSpheroid(length, cubicMetres, kgPerCubicMetre)`.
+- `IDrawnSea` gained `RiseVelocityAt(x, z, below)` and `RiseAccelerationAt(x, z, below)`, the water's vertical motion under the drawn surface ([Reading it](Reading-the-Sea#reading-it)). A class of yours that implements `IDrawnSea` has to add them.
+- `RoughSeas.Storms.PassingWaves` is the one rule for the waves that reach a thing, a vessel or a swimmer: one a dominant period of the lived seconds, each with its height, whether it breaks, in surf or as a whitecap, and its breaker's speed. `RoughSeas.SeaAndWeather.WaterDrag` gained `Carried`, which puts the water's velocity into an entity's motion through vanilla's water drag, for a hull and a swimmer alike.
+- `BodyAfloat` patches vanilla's `PModuleGravity.DoApply` and `PModuleMotionDrag.DoApply` for a player in the water, on the client that moves them; `BodyUnderSurface` sets `Swimming` and `FeetInLiquid` after `EntityBehaviorControlledPhysics.ApplyTests` from the drawn surface on both sides, near water, and swaps the depth `PModulePlayerInLiquid.HandleSwimming` takes. A mod that patches those for a player meets ours.
+- The world setting `swimmerBreakers` ([World settings](World-Settings#the-mechanics)). Floating and breath have none.
+- `config/storms.json` gained `waves.freshWaterDensity`. A crest that breaks over a swimmer is logged by the server as a `[person]` line and sent to that player's client over `roughseas:person`.
+
+New: `IPerson`, `PersonModSystem`, `config/person.json`, `AddedMass.OfSpheroid`, `IDrawnSea.RiseVelocityAt` and `RiseAccelerationAt`, `PassingWaves`, `WaterDrag.Carried`, the world setting `swimmerBreakers`.
 
 ## What not to touch
 
@@ -361,18 +485,12 @@ The drawn waves now move every `EntityBoat` with `roughseas:seaforces`, steered 
 | `roughseas:seamap` | the map region moddata, and the network channel that carries the map to clients |
 | `roughseas:oceancalibration` | save data: what the world's ocean map means |
 | `roughseas:vessels` | the network channel a rider's client reports its vessel's knocks over |
+| `roughseas:storms` | the network channel a rider's client reports a parted mooring over |
+| `roughseas:anchor` | a vessel's watched tree: where its anchor lies and what holds it |
+| `roughseas:person` | the network channel the server tells a swimmer's client of a crest breaking over them on |
+| `roughseas:nextClothId` | save data: vanilla's next rope id, which vanilla itself loses |
 | `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |
 
 ## Adding and removing Rough Seas
 
 The mod can join an existing world, and leave one. Without it the world opens cleanly: each region keeps the strength of the wind we last set for up to a game hour, then vanilla rolls its own pattern.
-
-### A body in the water
-
-A player floats by what the body displaces ([Swimming](Swimming)), and what a player weighs has one answer, in the new module `RoughSeas.Person`:
-
-- `api.ModLoader.GetModSystem<PersonModSystem>().Person` is an `IPerson`: `Body` (`MassKg`, and what it displaces by height) and `CarriedBy(entity)`, the armour and hotbar tools and weapons in kilograms and litres. A body sized per character would land here.
-- `config/vessels/mass.json` loses `playerGearKg`, `armorKgPerWalkSpeed` and `crewKg`. They are `body.massKg` and `carried` in the new `config/person.json`; a patch to them follows. A rider in no armour with nothing in the hotbar still weighs 75 kg, all of it now the body, so flooded hulls no longer count 10 kg of it as sinking.
-- `VesselMass.PlayerGearKg`, `ArmorKgPerWalkSpeed`, `Kit` and `ArmorKg` are gone; `CrewKg` reads the person.
-- `config/storms.json` adds `waves.freshWaterDensity`. A mod that implements `IDrawnSea` adds `RiseVelocityAt`, `RiseAccelerationAt` and `WavesTowardRadians`.
-- `CrestWatch` moved from `RoughSeas.Soundscape` to `RoughSeas.Storms`. `WaveCarry.Carried` gave way to `WaterDrag.Carried`.

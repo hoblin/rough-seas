@@ -1,10 +1,10 @@
-The [sailboat](Sailboat) carries a stone anchor in its prow. In vanilla it does nothing; in Rough Seas it holds the boat where you leave it, as well as the rope you let out allows.
+The [sailboat](Sailboat) carries a stone anchor in its prow. In vanilla it does nothing; in Rough Seas it holds the boat where you leave it, as well as its weight on the seabed allows.
 
 ## Letting go and hauling up
 
 Right-click the anchor with an empty hand to let it go, and again to haul it up. The anchor sits in the sailboat's left prow slot, where it is fitted like any accessory. Only the sailboat has that slot, so it is the one vessel that anchors; the others are [tied up](Mooring#tying-up).
 
-While someone steers the boat, the anchor doesn't hold it: it drags along behind.
+The anchor holds the boat whether or not someone sits in it: row or sail away and the rope stops you at its end, or drags the anchor along.
 
 ## Rope
 
@@ -20,43 +20,34 @@ The anchor comes on its own rope, 120 metres of flax. For deeper water, an **anc
 
 Anchor and warp together reach 210 metres.
 
-## Scope
+## How it holds
 
-How well an anchor holds depends on how much rope lies out against the depth, the *scope*. Sailors let out five to seven times the depth: the long rope lies along the seabed and pulls the anchor flat instead of lifting it out. Rough Seas lets out five times the depth, or all the rope aboard if that is less.
+The anchor is a stone of about 100 kg, and it holds by its weight: it lies on the bottom, and the rope drags it only once the pull beats the stone's grip on the bed.
 
-![Rope out five times the depth lies along the bottom and holds the anchor flat; two times the depth lifts it off the bottom](images/diagrams/anchor-scope.svg)
-
-| Rope out, against the depth | Holds |
+| Bottom | Holds |
 | --- | --- |
-| 5 × or more | fully, 3000 newtons |
-| 4 × | three quarters |
-| 3 × | half |
-| 2 × | a quarter |
-| 1 × | nothing |
+| Sand, gravel, mud or soil | about 330 newtons |
+| Rock | about 420 newtons |
 
-Deeper than the rope reaches, the anchor hangs and holds nothing at all, until the boat drifts over shallower water. With the anchor rope alone, a sailboat holds fully down to 24 metres; with the warp, down to 42.
+That holds the sailboat in the currents of the open sea, in calm water. A strong coastal current pulls harder, and a swell sways the boat on its rope hard enough to make the anchor creep; in a storm sea it drags.
 
-On a long rope the boat swings in a wide circle around its anchor, and that circle has to clear the shore.
+Rough Seas lets out five times the depth, or all the rope aboard if that is less, as sailors do. Deeper than the rope reaches, the anchor hangs and holds nothing at all, until the boat drifts over shallower water. With the anchor rope alone, a sailboat anchors in water down to 120 metres; with the warp, 210.
 
-## In a storm
+A stone anchor holds about as well on a short rope as on a long one, since its weight does the holding. A long rope gives more softly when the boat comes to its end, but the boat swings in a wider circle around its anchor, and that circle has to clear the shore.
 
-Every wave pulls on the rope, with the wind on the boat's sides and rigging and the sea on its hull.
+In a [current](Currents) the boat falls back to the end of its rope and swings about its bow until it lies along the stream, where the water pulls least.
 
-- **Dragging.** When the pull beats what the anchor holds, it drags a metre downwind. Wave after wave, a short scope walks the boat towards the lee shore.
-- **Snapping.** Flax rope breaks at about 11 kilonewtons. A rope that snaps takes the anchor with it, along with all the rope let out.
+## Dragging and parting
 
-What the sea does to an anchored sailboat, each wave:
+![Rope out five times the depth lies along the bottom; two times the depth rises steeply from the anchor](images/diagrams/anchor-scope.svg)
 
-| Sea | Drags, rope at 5 × | Drags, rope at 3 × | Rope snaps |
-| --- | --- | --- | --- |
-| force 7 wind, 4 m sea | 1 in 180 | 1 in 13 | never |
-| force 8, 5.5 m | 1 in 19 | 1 in 4 | almost never |
-| force 9, 7 m | 1 in 6 | 2 in 5 | 1 in 900 |
-| force 10, 9 m | 1 in 3 | every other wave | 1 in 75 |
-| force 12, 14 m | 3 in 5 | 3 in 4 | 1 in 7 |
+- **Dragging.** When the pull beats what the anchor holds, the stone slides along the bottom, and the boat drifts with it, slower than the water, since the stone's grip still holds it back. When the pull eases, the anchor bites again. When the boat comes to the end of its rope fast, the jerk alone can drag the stone a little before it bites.
+- **Parting.** Flax rope breaks at about 11 kilonewtons. A rope that parts takes the anchor with it, along with all the rope let out.
+
+In a storm a stone anchor drags: wave after wave, it walks the boat towards the lee shore. Anchor far from any shore, or carry the boat home.
 
 An anchored vessel takes the waves more gently: it [ships less water](Surf-and-Swamping#at-anchor), three tenths of it, though a breaker slams it as hard as any other. It still lies across the sea, and it still needs [bailing](Bailing). Turning bow to the wind comes with sailing, in [Seamanship](Roadmap#seamanship).
 
 ## Leaving it
 
-Far from shore and well anchored, a sailboat rides out the night; close to shore it may be [thrown up on the beach](Mooring#thrown-ashore). With [Dangerous oceans](World-Settings#dangerous-oceans) off, the sea puts no strain on an anchor.
+Far from shore in fair weather, a sailboat rides out the night at anchor; close to shore in a storm it may be [thrown up on the beach](Mooring#thrown-ashore). With [Mooring strain](World-Settings#the-mechanics) off, the anchor never drags and its rope never parts.

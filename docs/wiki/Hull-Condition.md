@@ -80,7 +80,7 @@ A hull's strength comes from its build, and for a wooden hull also from its wood
 
 A wood from another mod counts by its species when we know it (the list is in [Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)); one we don't counts as an average wood.
 
-An ebony sailboat takes more than four times the knocks and the breakers of a kapok one. Against a club or an axe, what counts is how tough the wood is rather than how strong: birch and beech are the toughest, oak close behind, and pine and spruce give twice as easily. The numbers: [The science of the hull](The-Science-of-the-Hull#hulls). The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood, and the [bark canoe](Birch-Bark-Canoe), [coracle](Coracle) and [hide currach](Hide-Currach) have frames of the wood their laths were split from, whatever bark or hide covers them. Their capacities, in oak, are compared on [Vessels](Vessels).
+An ebony sailboat takes more than four times the knocks and the breakers of a kapok one. Against a club or an axe, what counts is how tough the wood is rather than how strong: birch and walnut are the toughest, beech and oak close behind, pine and spruce give twice as easily, and ebony, for all its strength, three times as easily. The numbers: [The science of the hull](The-Science-of-the-Hull#hulls). The [raft](Raft), [sailboat](Sailboat), [dugout](Dugout) and [outrigger canoe](Outrigger-Canoe) are built of a chosen wood, and the [bark canoe](Birch-Bark-Canoe), [coracle](Coracle) and [hide currach](Hide-Currach) have frames of the wood their laths were split from, whatever bark or hide covers them. Their capacities, in oak, are compared on [Vessels](Vessels).
 
 The wood weighs too: a hull of a light wood floats higher and paddles a little faster than oak, one of a heavy wood lower and slower, and one heavier than seawater goes down when it floods ([Surf and swamping](Surf-and-Swamping#how-it-floats)).
 
@@ -139,8 +139,8 @@ What one stove-in place lets in, with one aboard and a dry bilge, in a hull of o
 | Vessel | Bilge | Stove-in bottom | Stove-in side | The bottom fills it in |
 | --- | --- | --- | --- | --- |
 | [Coracle](Coracle) | 272 litres | 119 litres a minute | none | two and a quarter minutes |
-| [Dugout](Dugout) | 1298 litres | 137 | none | nine and a half minutes |
-| [Outrigger canoe](Outrigger-Canoe) | 1720 litres | 159 | none | eleven minutes |
+| [Dugout](Dugout) | 1436 litres | 126 | none | eleven and a half minutes |
+| [Outrigger canoe](Outrigger-Canoe) | 1915 litres | 156 | none | twelve minutes |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 609 litres | 92 | none | six and a half minutes |
 | [Sailboat](Sailboat) | 8209 litres | 188 | none | forty-four minutes |
 | [Hide currach](Hide-Currach) | 1911 litres | 84 | none | twenty-three minutes |
@@ -180,4 +180,4 @@ A vessel broken up, by one severe blow, by every place stove in, by its lashings
 
 Whatever it carried goes with it.
 
-With [Dangerous oceans](World-Settings#dangerous-oceans) off, waves and lightning do no harm; knocks, rams, rapids, weapons and explosions still crack a hull, reed still soaks and hide still seeps.
+With [Hull damage](World-Settings#the-mechanics) off, only weapons and explosions harm a hull: no knock, ram, rapids, breaker or weather cracks it, hide doesn't rot, seams don't seep and reed doesn't soak. Turning it off mends every hull whole.

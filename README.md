@@ -1,6 +1,6 @@
 # Rough Seas
 
-![Rough Seas](docs/logo/rough-seas-logo-card.png)
+![Rough Seas](docs/logo/rough-seas-logo-storm.webp)
 
 A [Vintage Story](https://www.vintagestory.at) mod that makes the ocean dangerous and worth going out on.
 
@@ -22,13 +22,13 @@ The game's handbook explains all of this from a player's point of view. Search i
 
 ## Install
 
-1. Vintage Story **1.22.7**.
+1. Vintage Story **1.22.0** or later.
 2. Download the latest `roughseas_<version>.zip` from the [mod DB](https://mods.vintagestory.at) or the [GitHub releases](https://github.com/hoblin/rough-seas/releases).
 3. Drop the zip into your `Mods` folder (on the game's main menu, **Mods** → **Open Mods Folder**). Do not unzip it.
 
 Multiplayer: the server and every client need the mod.
 
-A new world can use the **Rough Seas** playstyle. It is standard survival with more open ocean. Any world has the **Dangerous oceans** setting, which is on by default. With it off, the sea keeps its weather and currents, but storms, surf and swamping do no harm.
+A new world can use the **Rough Seas** playstyle. It is standard survival with more open ocean. Each mechanic of the sea has a world setting of its own, all on by default: water in the bilge, hull damage, lightning, mooring strain, currents, rower fatigue and the pole's depth. Turn one off and the sea keeps its weather, but that mechanic leaves your game.
 
 ## Problems and ideas
 

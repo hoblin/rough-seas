@@ -8,6 +8,7 @@ from jsontext import load
 ASSETS = Path(__file__).resolve().parents[3] / "RoughSeas/assets/roughseas"
 VESSELS = ASSETS / "config/vessels"
 MASS = json.loads((VESSELS / "mass.json").read_text())
+CREW_KG = json.loads((ASSETS / "config/person.json").read_text())["body"]["massKg"]
 MATERIALS = json.loads((VESSELS / "materials.json").read_text())
 SEAWATER_KG_PER_LITRE = 1.025
 # Vanilla's swim line sits this far above selectionBox.y2 - swimmingOffsetY, as the reed boat measured afloat on the bench.
@@ -35,8 +36,7 @@ LACING_STEP_METRES = 0.05
 LACING_TURN_METRES = 0.15
 # Reed or flax cord 1 cm thick breaks as flax rope does at 12 mm (rope-flax), by its section.
 CORD_BREAKING_NEWTONS = MATERIALS["rope-flax"]["strength"] * 1000 * (10 / 12) ** 2
-# Natural fibre ropes stretch 10 to 12% before they break (machovec.com, rope comparison).
-CORD_STRETCH_AT_BREAK = 0.1
+CORD_STRETCH_AT_BREAK = MATERIALS["rope-flax"]["elongation"]
 # A lashing takes a blow as the raft's do: her impactCapacity over the three ropes of her recipe.
 LASHING_JOULES_PER_METRE = next(op["value"]["impactCapacity"] for op in load(ASSETS / "patches/vessels-vanilla-boats.json")
                                 if op["file"].endswith("boat-raft.json") and op["path"].endswith("roughseas:vesselintegrity")) / (3 * ROPE_METRES)
@@ -63,7 +63,7 @@ def lacing_metres(perimeter_metres):
 
 
 def stiffness(hull_kg, waterplane_square_metres, beam_metres, floor_metres, centre_metres, form="ellipse", outboard=(0, 0)):
-    kg = hull_kg + MASS["crewKg"] + MASS["playerGearKg"]
+    kg = hull_kg + CREW_KG
     volume = kg / (SEAWATER_KG_PER_LITRE * 1000)
     if form == "ellipse":
         length = 4 * waterplane_square_metres / (math.pi * beam_metres)
@@ -73,8 +73,7 @@ def stiffness(hull_kg, waterplane_square_metres, beam_metres, floor_metres, cent
     float_square_metres, float_off_metres = outboard
     inertia += float_square_metres * float_off_metres ** 2
     draft = volume / (waterplane_square_metres + float_square_metres)
-    centre = (MASS["crewKg"] * (floor_metres + STANDING_CENTRE_METRES) + MASS["playerGearKg"] * floor_metres
-              + hull_kg * centre_metres) / kg
+    centre = (CREW_KG * (floor_metres + STANDING_CENTRE_METRES) + hull_kg * centre_metres) / kg
     return draft / 2 + inertia / volume - centre
 
 
@@ -112,7 +111,7 @@ def afloat(name, hull_kg, depth_metres, hold_litres=0, deck_square_metres=0, wat
     """Her weight, the depth and waterplane she floats by, her hold and the offset vanilla floats her at with one
     aboard, as her entity takes them, with what at_draft measures at that draft. A solid hull is pressed down through
     her depth as her material is."""
-    crewed = hull_kg + MASS["crewKg"]
+    crewed = hull_kg + CREW_KG
     integrity = units.both("depth", depth_metres)
     configs = {"roughseas:vesselintegrity": integrity}
     if solid_litres is not None:
@@ -120,7 +119,7 @@ def afloat(name, hull_kg, depth_metres, hold_litres=0, deck_square_metres=0, wat
         print(f"{name} afloat: {hull_kg:.1f} kg, depth {depth_metres:.4g} m, {solid_litres:.0f} L of material, "
               f"draft {draft:.3f} m with one aboard", end="")
     else:
-        full = crewed + MASS["playerGearKg"] + SEAWATER_KG_PER_LITRE * hold_litres
+        full = crewed + SEAWATER_KG_PER_LITRE * hold_litres
         by_full_hold = waterplane_square_metres is None
         if by_full_hold:
             waterplane_square_metres = full / (SEAWATER_KG_PER_LITRE * 1000 * depth_metres)
