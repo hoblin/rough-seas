@@ -18,6 +18,7 @@ public static class SeaWeatherCommands
     private const double DefaultPassingSize = 1000;
     private const string AnyType = "any";
     private static readonly string[] StormTypes = ["squall", "gale", "hurricane", AnyType];
+    private static readonly TextCommandResult NoDays = TextCommandResult.Error("Days must be more than 0");
     private const int ForecastBearings = 12;
     private static readonly double[] ForecastReaches = [0.08, 0.15, 0.25, 0.4, 0.6, 0.8];
     private const double DefaultCurrentRange = 4000;
@@ -53,7 +54,11 @@ public static class SeaWeatherCommands
                     sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultForecastRange),
                     sapi.ChatCommands.Parsers.OptionalInt("limit", ForecastLength),
                     sapi.ChatCommands.Parsers.OptionalWorldPosition("position"))
-                .HandleWith(args => Later(sapi, args, () => Forecast(sea, sapi, (Vec3d)args[4], TypeCode(args[0]), (double)args[1], (double)args[2], (int)args[3])))
+                .HandleWith(args =>
+                {
+                    var (pos, code, days, range, limit) = (((Vec3d)args[4]).Clone(), TypeCode(args[0]), (double)args[1], (double)args[2], (int)args[3]);
+                    return days > 0 ? Later(sapi, args, () => Forecast(sea, sapi, pos, code, days, range, limit)) : NoDays;
+                })
             .EndSubCommand()
             .BeginSubCommand("passing")
                 .WithDescription("The storms of a type, or of any, that pass over a square of a size around a position over the coming days, in order of arrival, with how often they come and how long they stand over it; limit 0 lists them all")
@@ -63,7 +68,9 @@ public static class SeaWeatherCommands
                     sapi.ChatCommands.Parsers.OptionalDouble("size", DefaultPassingSize),
                     sapi.ChatCommands.Parsers.OptionalInt("limit", ForecastLength),
                     sapi.ChatCommands.Parsers.OptionalWorldPosition("position"))
-                .HandleWith(args => TextCommandResult.Success(Passing(sea, sapi, (Vec3d)args[4], TypeCode(args[0]), (double)args[1], (double)args[2], (int)args[3])))
+                .HandleWith(args => (double)args[1] > 0
+                    ? TextCommandResult.Success(Passing(sea, sapi, (Vec3d)args[4], TypeCode(args[0]), (double)args[1], (double)args[2], (int)args[3]))
+                    : NoDays)
             .EndSubCommand()
             .BeginSubCommand("stage")
                 .WithDescription("Put a storm of a type over your position at its peak, held until a restart: a gale or hurricane standing still with its sea built, a squall travelling; 'clear' removes the staged ones")

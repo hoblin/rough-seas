@@ -59,6 +59,17 @@ public class StormFieldTests
     }
 
     [Fact]
+    public void CountsAStormOverTheSquareNoLongerThanTheWindowLasts()
+    {
+        var model = Fixtures.Model(seed: 42);
+        var gale = model.Storms.Stage("gale", X, Z, Hours, peakMps: null, radius: null);
+
+        var pass = Assert.Single(model.Storms.Passing("gale", X, Z, 500, Hours, Hours + 1.05), pass => pass.Storm == gale);
+
+        Assert.Equal(1.05, pass.Hours, precision: 9);
+    }
+
+    [Fact]
     public void LeavesOutAStormThatNeverReachesTheSquare()
     {
         var model = Fixtures.Model(seed: 42);

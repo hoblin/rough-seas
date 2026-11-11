@@ -44,7 +44,8 @@ public record Storm
     public StormPass? Over(double x, double z, double halfSize, double fromHours, double toHours)
     {
         var (first, hours, presence) = (double.NaN, 0.0, 0.0);
-        for (var at = Math.Max(fromHours, BornHours); at <= Math.Min(toHours, DiesHours); at += PassStepHours)
+        var end = Math.Min(toHours, DiesHours);
+        for (var at = Math.Max(fromHours, BornHours); at < end; at += PassStepHours)
         {
             var (cx, cz) = CentreAt(at);
             var dx = Math.Max(0, Math.Abs(cx - x) - halfSize);
@@ -52,7 +53,7 @@ public record Storm
             var distance = Math.Sqrt(dx * dx + dz * dz);
             if (distance >= Radius) continue;
             if (double.IsNaN(first)) first = at;
-            hours += PassStepHours;
+            hours += Math.Min(PassStepHours, end - at);
             presence = Math.Max(presence, Strength(at) * Bell(distance / Radius));
         }
         return hours > 0 ? new StormPass(this, first, hours, presence) : null;
