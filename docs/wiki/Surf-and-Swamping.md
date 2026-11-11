@@ -1,4 +1,4 @@
-Out on the water, every few seconds a wave reaches your vessel. Most lift it and pass. Some come over the side, and some break on it. What each does depends on the wave, drawn fresh every time from the [sea state](Wind-and-Waves#every-wave-is-different), and on the hull it meets: how high it floats, and how it rides.
+Out on the water, every few seconds a wave reaches your vessel. Most lift it and pass. Some come over the side, and some break on it. What each does depends on the wave, drawn fresh every time from [the sea where it lies](Wind-and-Waves#every-wave-is-different), and on the hull it meets: how high it floats, and how it rides.
 
 ## How it floats
 

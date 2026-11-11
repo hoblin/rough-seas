@@ -4,13 +4,13 @@ Vanilla has no place for the wind's direction, for waves or for currents, so Rou
 
 Rough Seas keeps the sea twice, for two different jobs.
 
-**The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike it, the current that carries it. It knows no single wave. A wave that reaches a vessel is drawn by chance from the state, once a wave period, and two vessels side by side meet different waves.
+**The sea state** is the sea as a number: at any point, how hard the wind blows and from where, how high the waves run and how long between them, how much of a storm is there, and where the current flows. The server computes it, and everything that has consequences comes from it: the waves that come aboard a vessel, the breakers that strike it, the current that carries it. It knows no single wave. A wave that reaches a vessel is drawn by chance, once a wave period, from the state's sea as the bed at the vessel's place grows, turns and breaks it, and two vessels side by side meet different waves.
 
 **The drawn sea** is the moving surface a client draws, built from the sea map the server sends it and the world's clock. The server builds the same surface where it needs one: over each region with a player in or near the water, or a vessel nobody steers. Its crests have a place and a moment, so a hull can ride them: lift on a crest, roll with its slope. Every client draws the same surface: two players in one region see the same crests. It is not the wave the server struck a vessel with.
 
 So a mod **decides** by the sea state and **shows** by the drawn sea. A helm, a fish's swimming, a sail's push, anything that harms on the server: the sea state. A hull's pose on the screen, and the water that sways it to and fro: the drawn sea. Nothing on the server should wait for a crest a client reports.
 
-Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a swimmer: under a crest a swimmer has no air, in a trough the head is clear, and the server reads whether a player is in the water by the same surface the client floats them on. It does so for a vessel nobody steers too, so the waves carry it as they carry one a client steers.
+Where a decision is about what the screen shows, the server builds the drawn sea itself from the same map and clock, and the client sends nothing. Ours does so for a swimmer: under a crest a swimmer has no air, in a trough the head is clear, and the server reads whether a player is in the water by the same surface the client floats them on. It does so for a vessel nobody steers too, so the waves carry it as they carry one a client steers. Every vessel's waves aboard and breakers are read there too, from `WaveHere` at its place.
 
 ## Reaching us
 
@@ -71,7 +71,7 @@ The wind is the background wind of the region and season, plus every storm that 
 
 Three things to keep in mind when you use the numbers:
 
-- **A height is the sea, not a wave.** Single waves scatter around `WaveHeight`: most lower, one in a hundred half again as high ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A mod that throws waves at something draws them the same way, one per `WavePeriod`. Ours do it with `RoughSeas.Storms.PassingWaves`, for vessels and swimmers alike: a wave a dominant period of the world's clock, its height from the Rayleigh spread of `WaveHere`, breaking for certain in surf and otherwise by the wind's whitecap share.
+- **A height is the sea, not a wave.** Single waves scatter around `WaveHeight`: most lower, one in a hundred half again as high ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A mod that throws waves at something draws them the same way, one per `WavePeriod`. Ours do it with `RoughSeas.Storms.PassingWaves`, for vessels and swimmers alike: a wave a dominant period of the world's clock, its height from the Rayleigh spread of `WaveHere`, in surf breaking when it is among the tallest the breaking share cuts off, and elsewhere by the wind's whitecap share.
 - **The wind is in m/s here.** Vanilla's `GetWindSpeedAt` gives the same wind on its own scale, 1.0 for 25 m/s ([Reading the weather](Reading-the-Weather)).
 - **The state doesn't know about danger.** Wind, waves and currents run whatever the world settings. A mod that harms something by them reads the setting for that harm first, as ours do: `api.World.Config.GetBool("hullDamage", true)`, with the codes on [World settings](World-Settings#the-mechanics).
 
@@ -239,4 +239,4 @@ pitch = (float)GameMath.Lerp(ownPitch, pose.Pitch * pitchResponse, pose.Hold);
 
 The lift moves only what you draw with it. The server's vessel doesn't rise, so ours lift their seats and selection box by the same amount on the client, and take it back out of the position a rider's client sends the server. A vessel of yours that carries riders does the same, or its riders sit below a hull that rose.
 
-What the vessel meets on the server, waves aboard and breakers on the hull, is the sea state's business, and our behaviours take care of it for any vessel that carries them.
+What the vessel meets on the server, waves aboard and breakers on the hull, our behaviours take care of for any vessel that carries them, from the waves at its place.
