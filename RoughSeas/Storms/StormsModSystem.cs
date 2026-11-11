@@ -76,7 +76,7 @@ public class StormsModSystem : ModSystem
         {
             clock = new SurfaceClock(this, sea, surface, field, Surf(capi), capi);
             EyeUnderSurface.Attach(this, capi, DrawnWater, Config.Eye);
-            WatchStrikes(capi, sea, surface, field);
+            WatchStrikes(capi, surface, field);
         }
         else Mod.Logger.Error("The sea surface is not drawn: its shaders failed to compile or vanilla's water shader changed; see the client log");
         VesselMotion.Attach(this, capi, DrawnSea, surface);
@@ -91,17 +91,15 @@ public class StormsModSystem : ModSystem
         return new SwellAround(Config.Surface, Waves, sea.Config, sea.Clock, seabeds);
     }
 
-    private void WatchStrikes(ICoreClientAPI capi, SeaWeatherSystem sea, SeaSurface surface, SurfaceField field)
+    private void WatchStrikes(ICoreClientAPI capi, SeaSurface surface, SurfaceField field)
     {
         var shore = capi.ModLoader.GetModSystem<ShoreModSystem>().Config;
         var particles = new SprayParticles(shore.Faces);
         var strikes = new FaceStrikes(surface, field, Waves, new WallSpray(shore.Faces, shore.RunUp.SpectralPeriodRatio), shore.Faces, particles.Add, (format, args) => Log(format, args));
-        var watch = sea.Clock.StartWatch();
         capi.Event.RegisterAsyncParticleSpawner(particles.Spawn);
         capi.Event.RegisterGameTickListener(_ =>
         {
-            var lived = watch.Lap().LivedSeconds;
-            if (capi.World.Player?.Entity?.Pos is { } pos) strikes.Update(pos.X, pos.Z, lived);
+            if (capi.World.Player?.Entity?.Pos is { } pos) strikes.Update(pos.X, pos.Z);
         }, shore.Faces.TickMilliseconds);
     }
 

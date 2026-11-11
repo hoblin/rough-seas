@@ -29,14 +29,13 @@ public class PassingWavesTests
         for (var ran = 0.0; ran < seconds; ran += Tick)
         {
             hours += Tick * 60 * 0.5 / 3600;
-            clock.Track(Tick);
             if (passing.Lap(afloat)) waves.AddRange(passing.Over(here, windMps, rand));
         }
         return waves;
     }
 
     [Fact]
-    public void PassesOneWaveAPeriodOfTheTimeTheWorldLived()
+    public void PassesOneWaveAPeriodOfTheWorldsClock()
     {
         Assert.InRange(Run(100 * Period, true, OpenSea, 0).Count, 99, 100);
     }
@@ -51,11 +50,11 @@ public class PassingWavesTests
     }
 
     [Fact]
-    public void BringsNoWavesForHoursTheCalendarIsMovedOn()
+    public void BringsTheWavesOfHoursTheCalendarIsMovedOn()
     {
-        hours += 2;
+        hours += clock.HoursAt(10 * Period);
 
-        Assert.Empty(Run(Tick, true, OpenSea, 0));
+        Assert.InRange(Run(Tick, true, OpenSea, 0).Count, 10, 11);
     }
 
     [Fact]

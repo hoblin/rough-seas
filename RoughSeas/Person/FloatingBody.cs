@@ -72,7 +72,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         flow = (flow.X * wavesPerSecond, flow.Z * wavesPerSecond);
         var pressure = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross;
         var before = carried;
-        var (pushX, pushZ) = met ? ((flow.X - water.X) * pressure, (flow.Z - water.Z) * pressure) : (flow.X * pressure, flow.Z * pressure);
+        var (pushX, pushZ) = met ? ((flow.X - water.X) * pressure, (flow.Z - water.Z) * pressure) : (0, 0);
         water = flow;
         met = true;
         var (rollerX, rollerZ) = (0.0, 0.0);

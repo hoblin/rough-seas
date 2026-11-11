@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
@@ -11,10 +12,13 @@ namespace RoughSeas.Person;
 /// <summary>
 /// The player's mass. The inventory is a game convention, so what is weighed stops where the game draws the line: armour,
 /// and in the hotbar what the item's own type calls a tool or weapon. The backpack and materials aren't weighed. It is
-/// worked out when a slot changes and held until the next change.
+/// worked out when a slot changes and held until the next change. Another player's client is sent only the hotbar slot in
+/// hand, so there the server's weighing, kept on the player, is read.
 /// </summary>
 public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>? log = null) : IPerson
 {
+    private const string CarriedKgKey = "roughseas:carriedKg";
+
     private readonly ConcurrentDictionary<string, Kit> kits = new();
 
     public Body Body { get; } = body;
@@ -22,6 +26,7 @@ public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>
     public Carried CarriedBy(Entity entity)
     {
         if (entity is not EntityPlayer { Player: { } player }) return default;
+        if (entity.World is IClientWorldAccessor { Player: var local } && local?.Entity != entity) return Of(entity.WatchedAttributes.GetDouble(CarriedKgKey));
         var kit = kits.GetOrAdd(player.PlayerUID, _ => new Kit());
         kit.Watch(player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName),
             player.InventoryManager.GetOwnInventory(GlobalConstants.hotBarInvClassName));
@@ -29,15 +34,17 @@ public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>
 
         kit.Held = Weigh(kit.Worn.Select(WalkSpeedPenalty), kit.Hotbar.Select(slot => slot.Itemstack?.Collectible.GetTool(slot)));
         log?.Invoke($"{player.PlayerName} carries {kit.Held.Kg:F1} kg, displacing {kit.Held.Litres:F2} L");
+        if (entity.World.Side == EnumAppSide.Server) entity.WatchedAttributes.SetDouble(CarriedKgKey, kit.Held.Kg);
         return kit.Held;
     }
 
     /// <summary>What armour slowing a body by these shares of its walking speed, and hotbar slots holding these types of tool, come to.</summary>
     public Carried Weigh(IEnumerable<double> walkSpeedPenalties, IEnumerable<EnumTool?> hotbar)
     {
-        var kg = walkSpeedPenalties.Sum() * config.ArmourKgPerWalkSpeed + hotbar.Sum(ToolKg);
-        return new Carried(kg, kg / config.DensityKgPerLitre);
+        return Of(walkSpeedPenalties.Sum() * config.ArmourKgPerWalkSpeed + hotbar.Sum(ToolKg));
     }
+
+    private Carried Of(double kg) => new(kg, kg / config.DensityKgPerLitre);
 
     private double ToolKg(EnumTool? tool) =>
         tool is { } type && config.ToolKg.TryGetValue(type.ToString().ToLowerInvariant(), out var kg) ? kg : 0;

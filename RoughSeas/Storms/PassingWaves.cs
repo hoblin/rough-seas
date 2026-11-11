@@ -7,7 +7,7 @@ namespace RoughSeas.Storms;
 
 /// <summary>
 /// The waves passing one body afloat, by the one rule every body at sea takes them by: a wave every dominant period of
-/// the time the world lived, its height drawn from the sea's Rayleigh spread, breaking for certain where the bed breaks
+/// the world's clock, its height drawn from the sea's Rayleigh spread, breaking for certain where the bed breaks
 /// it (<see cref="WaveReading.Breaks"/>) and otherwise by the wind's share of breaking waves.
 /// </summary>
 public sealed class PassingWaves(SeaClock clock, Waves waves, double minHeight)
@@ -19,7 +19,7 @@ public sealed class PassingWaves(SeaClock clock, Waves waves, double minHeight)
     /// <returns><paramref name="afloat"/>.</returns>
     public bool Lap(bool afloat)
     {
-        since += watch.Lap().LivedSeconds;
+        since += watch.Lap().Seconds;
         if (!afloat) since = 0;
         return afloat;
     }

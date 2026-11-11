@@ -71,7 +71,7 @@ The wind is the background wind of the region and season, plus every storm that 
 
 Three things to keep in mind when you use the numbers:
 
-- **A height is the sea, not a wave.** Single waves scatter around `WaveHeight`: most lower, one in a hundred half again as high ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A mod that throws waves at something draws them the same way, one per `WavePeriod`. Ours do it with `RoughSeas.Storms.PassingWaves`, for vessels and swimmers alike: a wave a dominant period of the lived seconds, its height from the Rayleigh spread of `WaveHere`, breaking for certain in surf and otherwise by the wind's whitecap share.
+- **A height is the sea, not a wave.** Single waves scatter around `WaveHeight`: most lower, one in a hundred half again as high ([Every wave is different](Wind-and-Waves#every-wave-is-different)). A mod that throws waves at something draws them the same way, one per `WavePeriod`. Ours do it with `RoughSeas.Storms.PassingWaves`, for vessels and swimmers alike: a wave a dominant period of the world's clock, its height from the Rayleigh spread of `WaveHere`, breaking for certain in surf and otherwise by the wind's whitecap share.
 - **The wind is in m/s here.** Vanilla's `GetWindSpeedAt` gives the same wind on its own scale, 1.0 for 25 m/s ([Reading the weather](Reading-the-Weather)).
 - **The state doesn't know about danger.** Wind, waves and currents run whatever the world settings. A mod that harms something by them reads the setting for that harm first, as ours do: `api.World.Config.GetBool("hullDamage", true)`, with the codes on [World settings](World-Settings#the-mechanics).
 
@@ -126,9 +126,8 @@ A watch's `Lap()` gives the time since its last lap, a `Lap`:
 | --- | --- |
 | `Hours` | the game hours since the last lap: none at the first lap, nor when the calendar was set back |
 | `Seconds` | the same time in seconds at vanilla's pace |
-| `LivedSeconds` | the part of it the world's ticks ran through, in seconds at vanilla's pace; the rest the calendar was moved on, as by `/time add` |
 
-A mechanic keeps a watch of its own and laps it each time it acts, on its tick or a timer. What builds up takes the whole lap, as vanilla's food rots through a `/time add`. What happens now and then takes the events of the lived seconds alone: nothing happened in the hours the calendar skipped. A net that fills while it soaks, and is washed by every wave that reaches it:
+A mechanic keeps a watch of its own and laps it each time it acts, on its tick or a timer, and takes the whole lap, as vanilla's food rots through a `/time add`: what builds up and what happens now and then alike. A net that fills while it soaks, and is washed by every wave that reaches it:
 
 ```csharp
 watch ??= sea.Clock.StartWatch();
@@ -136,7 +135,7 @@ var lap = watch.Lap();
 fish += FishPerHour * lap.Hours;
 
 var state = sea.At(pos.X, pos.Z);
-sinceWave += lap.LivedSeconds;
+sinceWave += lap.Seconds;
 for (; state.WavePeriod > 0 && sinceWave >= state.WavePeriod; sinceWave -= state.WavePeriod) Wash(net, state);
 ```
 
