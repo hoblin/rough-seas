@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -13,6 +15,9 @@ public static class SeaWeatherCommands
     private const double DefaultForecastDays = 30;
     private const double DefaultForecastRange = 60000;
     private const int ForecastLength = 10;
+    private const double DefaultPassingSize = 1000;
+    private const string AnyType = "any";
+    private static readonly string[] StormTypes = ["squall", "gale", "hurricane", AnyType];
     private const int ForecastBearings = 12;
     private static readonly double[] ForecastReaches = [0.08, 0.15, 0.25, 0.4, 0.6, 0.8];
     private const double DefaultCurrentRange = 4000;
@@ -41,12 +46,24 @@ public static class SeaWeatherCommands
                 .HandleWith(args => TextCommandResult.Success(Storms(sea, sapi, args.Caller.Pos, (double)args[0])))
             .EndSubCommand()
             .BeginSubCommand("forecast")
-                .WithDescription("The strongest storms of a type born within a range of you over the coming days, with where and when each peaks")
+                .WithDescription("The strongest storms of a type, or of any, born within a range of a position over the coming days, with where and when each peaks; limit 0 lists them all")
                 .RequiresPlayer()
-                .WithArgs(sapi.ChatCommands.Parsers.Word("type", ["squall", "gale", "hurricane"]),
+                .WithArgs(sapi.ChatCommands.Parsers.Word("type", StormTypes),
                     sapi.ChatCommands.Parsers.OptionalDouble("days", DefaultForecastDays),
-                    sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultForecastRange))
-                .HandleWith(args => TextCommandResult.Success(Forecast(sea, sapi, args.Caller.Pos, (string)args[0], (double)args[1], (double)args[2])))
+                    sapi.ChatCommands.Parsers.OptionalDouble("range", DefaultForecastRange),
+                    sapi.ChatCommands.Parsers.OptionalInt("limit", ForecastLength),
+                    sapi.ChatCommands.Parsers.OptionalWorldPosition("position"))
+                .HandleWith(args => Later(sapi, args, () => Forecast(sea, sapi, (Vec3d)args[4], TypeCode(args[0]), (double)args[1], (double)args[2], (int)args[3])))
+            .EndSubCommand()
+            .BeginSubCommand("passing")
+                .WithDescription("The storms of a type, or of any, that pass over a square of a size around a position over the coming days, in order of arrival, with how often they come and how long they stand over it; limit 0 lists them all")
+                .RequiresPlayer()
+                .WithArgs(sapi.ChatCommands.Parsers.Word("type", StormTypes),
+                    sapi.ChatCommands.Parsers.OptionalDouble("days", DefaultForecastDays),
+                    sapi.ChatCommands.Parsers.OptionalDouble("size", DefaultPassingSize),
+                    sapi.ChatCommands.Parsers.OptionalInt("limit", ForecastLength),
+                    sapi.ChatCommands.Parsers.OptionalWorldPosition("position"))
+                .HandleWith(args => TextCommandResult.Success(Passing(sea, sapi, (Vec3d)args[4], TypeCode(args[0]), (double)args[1], (double)args[2], (int)args[3])))
             .EndSubCommand()
             .BeginSubCommand("stage")
                 .WithDescription("Put a storm of a type over your position at its peak, held until a restart: a gale or hurricane standing still with its sea built, a squall travelling; 'clear' removes the staged ones")
@@ -82,8 +99,7 @@ public static class SeaWeatherCommands
         var vanilla = api.World.BlockAccessor.GetWindSpeedAt(pos);
         var storm = state.StormPresence <= 0 ? "no storm" : $"{state.StormCode ?? "storm"} at {state.StormPresence:P0}";
         var current = sea.CurrentAt(pos.X, pos.Z);
-        var latitude = (api.World.Calendar.OnGetLatitude?.Invoke(pos.Z) ?? 0.5) * 90;
-        return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, latitude {latitude:0.0}°, hour {sea.Clock.Hours:0.00}: "
+        return $"{api.Side} at {Coordinates(api, pos.X, pos.Z)}, latitude {Latitude(api, pos.Z):0.0}°, hour {sea.Clock.Hours:0.00}: "
             + $"wind from {state.WindFromDegrees:0}° at {state.WindSpeed:0.0} m/s, Beaufort {state.Beaufort} ({force.Name}); "
             + $"waves {state.WaveHeight:0.0} m every {state.WavePeriod:0.0} s; {storm}, rain {Rainfall(api, pos):P0}; "
             + $"current toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C{FromCurrent(current)}; "
@@ -113,14 +129,35 @@ public static class SeaWeatherCommands
             + $"heading {heading:0}° at {speed:0} blocks/h, {storm.DiesHours - now:0.0} h left";
     }
 
-    private static string Forecast(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, string code, double days, double range)
+    private static TextCommandResult Later(ICoreServerAPI sapi, TextCommandCallingArgs args, Func<string> answer)
+    {
+        void Reply(string message, EnumChatType type) => (args.Caller.Player as IServerPlayer)?.SendMessage(args.Caller.FromChatGroupId, message, type);
+
+        Task.Run(answer).ContinueWith(task => sapi.Event.EnqueueMainThreadTask(() =>
+        {
+            if (task.Exception is not { } error)
+            {
+                Reply(task.Result, EnumChatType.CommandSuccess);
+                return;
+            }
+            sapi.Logger.Error(error);
+            Reply($"Failed: {error.InnerException?.Message}", EnumChatType.CommandError);
+        }, "roughseas-seas-command"));
+        return TextCommandResult.Deferred;
+    }
+
+    private static string? TypeCode(object type) => (string)type == AnyType ? null : (string)type;
+
+    private static IEnumerable<T> Limited<T>(IEnumerable<T> entries, int limit) => limit > 0 ? entries.Take(limit) : entries;
+
+    private static string Forecast(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, string? code, double days, double range, int limit)
     {
         var now = sea.Clock.Hours;
-        var storms = sea.Model.Weather.Storms.Brewed(code, pos.X, pos.Z, now, now + days * api.World.Calendar.HoursPerDay, range)
+        var brewed = sea.Model.Weather.Storms.Brewed(code, pos.X, pos.Z, now, now + days * api.World.Calendar.HoursPerDay, range)
+            .OrderByDescending(storm => storm.PeakMps);
+        var storms = Limited(brewed, limit)
             .Select(storm => (storm, peak: storm.BornHours + storm.LifetimeHours / 2))
             .Select(entry => (entry.storm, entry.peak, roughest: Roughest(sea.Model, entry.storm, entry.peak)))
-            .OrderByDescending(entry => entry.roughest?.State.WaveHeight ?? -1)
-            .Take(ForecastLength)
             .Select(entry =>
             {
                 var (storm, peak, roughest) = entry;
@@ -134,8 +171,23 @@ public static class SeaWeatherCommands
             })
             .ToArray();
         return storms.Length == 0
-            ? $"No {code} is born within {range:0} blocks in the next {days:0} days"
+            ? $"No {code ?? "storm"} is born within {range:0} blocks in the next {days:0} days"
             : string.Join("\n", storms);
+    }
+
+    private static string Passing(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, string? code, double days, double size, int limit)
+    {
+        var now = sea.Clock.Hours;
+        var hoursPerDay = api.World.Calendar.HoursPerDay;
+        var survey = new StormSurvey(sea.Model.Weather.Storms.Passing(code, pos.X, pos.Z, size / 2, now, now + days * hoursPerDay), now, now + days * hoursPerDay);
+        var types = string.Join(", ", survey.ByType.Select(type => $"{type.Count} {type.Code}"));
+        var summary = $"{survey.Passes.Count} {code ?? "storm"}s over the {size:0}-block square at {Coordinates(api, pos.X, pos.Z)}, latitude {Latitude(api, pos.Z):0.0}°, in {days:0} days"
+            + (survey.Passes.Count == 0 ? "" : $" ({types}): one every {days / survey.Passes.Count:0.0} days, ")
+            + $"a storm over it {survey.CoveredHours / survey.Hours:P0} of the time, the longest calm {survey.LongestCalmHours / hoursPerDay:0.0} days";
+        var passes = Limited(survey.Passes, limit).Select(pass =>
+            $"{pass.Storm.Code} of {pass.Storm.PeakMps:0} m/s, radius {pass.Storm.Radius:0}: over it in {(pass.FromHours - now) / hoursPerDay:0.0} days for {pass.Hours:0.0} h, "
+            + $"at most {pass.Presence:P0} of its strength there");
+        return string.Join("\n", passes.Prepend(summary));
     }
 
     private static string Stage(SeaWeatherSystem sea, ICoreAPI api, Vec3d pos, string code, double peak, double radius)
@@ -185,6 +237,8 @@ public static class SeaWeatherCommands
     private static string Describe(ICoreAPI api, SeaCurrent current, double x, double z, Vec3d pos) =>
         $"toward {current.TowardDegrees:0}° at {current.Speed:0.00} m/s, water {current.WaterCelsius:0.0} °C{FromCurrent(current)}, "
         + $"at {Coordinates(api, x, z)}, {Distance((x, z), pos):0} blocks away bearing {Compass.FromDegrees(pos.X - x, pos.Z - z):0}°";
+
+    private static double Latitude(ICoreAPI api, double z) => (api.World.Calendar.OnGetLatitude?.Invoke(z) ?? 0.5) * 90;
 
     private static float Rainfall(ICoreAPI api, Vec3d pos) =>
         api.World.BlockAccessor.GetClimateAt(pos.AsBlockPos, EnumGetClimateMode.NowValues)?.Rainfall ?? 0;

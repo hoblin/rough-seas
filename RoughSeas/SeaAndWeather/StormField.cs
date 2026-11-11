@@ -106,11 +106,19 @@ public class StormField
             .Where(storm => storm.IsActive(hours))
             .Where(storm => Distance(storm.CentreAt(hours), x, z) <= range + storm.Radius);
 
-    public IEnumerable<Storm> Brewed(string code, double x, double z, double fromHours, double toHours, double range) =>
+    public IEnumerable<Storm> Brewed(string? code, double x, double z, double fromHours, double toHours, double range) =>
         Candidates(x, z, fromHours, toHours, range, code)
             .Where(storm => storm.BornHours >= fromHours && storm.BornHours <= toHours)
             .Where(storm => Distance((storm.OriginX, storm.OriginZ), x, z) <= range)
             .Distinct();
+
+    public IEnumerable<StormPass> Passing(string? code, double x, double z, double halfSize, double fromHours, double toHours) =>
+        Candidates(x, z, fromHours, toHours, halfSize * Math.Sqrt(2), code)
+            .Where(storm => storm.BornHours <= toHours && storm.DiesHours >= fromHours)
+            .Distinct()
+            .Select(storm => storm.Over(x, z, halfSize, fromHours, toHours))
+            .OfType<StormPass>()
+            .OrderBy(pass => pass.FromHours);
 
     private Storm[] InWindow(int tileX, int tileZ, long hour)
     {
