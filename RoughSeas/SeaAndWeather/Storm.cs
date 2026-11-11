@@ -9,6 +9,8 @@ namespace RoughSeas.SeaAndWeather;
 /// </summary>
 public record Storm
 {
+    private const double PassStepHours = 0.1;
+
     public required StormTypeConfig Type { get; init; }
     public required StormShapeConfig Shape { get; init; }
     public required double BornHours { get; init; }
@@ -36,6 +38,25 @@ public record Storm
         var rising = GameMath.SmoothStep(Math.Min(1, age / Shape.RiseFraction));
         var falling = GameMath.SmoothStep(Math.Min(1, (1 - age) / Shape.FallFraction));
         return Math.Min(rising, falling);
+    }
+
+    /// <summary>When this storm's disc first covers part of the square around a point within a window, for how long, and the most of its presence it brings there; null if it never does. Read in steps of a tenth of an hour.</summary>
+    public StormPass? Over(double x, double z, double halfSize, double fromHours, double toHours)
+    {
+        var (first, hours, presence) = (double.NaN, 0.0, 0.0);
+        var end = Math.Min(toHours, DiesHours);
+        for (var at = Math.Max(fromHours, BornHours); at < end; at += PassStepHours)
+        {
+            var (cx, cz) = CentreAt(at);
+            var dx = Math.Max(0, Math.Abs(cx - x) - halfSize);
+            var dz = Math.Max(0, Math.Abs(cz - z) - halfSize);
+            var distance = Math.Sqrt(dx * dx + dz * dz);
+            if (distance >= Radius) continue;
+            if (double.IsNaN(first)) first = at;
+            hours += Math.Min(PassStepHours, end - at);
+            presence = Math.Max(presence, Strength(at) * Bell(distance / Radius));
+        }
+        return hours > 0 ? new StormPass(this, first, hours, presence) : null;
     }
 
     public StormInfluence InfluenceAt(double x, double z, double hours)
@@ -93,3 +114,8 @@ public record Storm
 }
 
 public readonly record struct StormInfluence(double Presence, double WindX, double WindZ, double Rain);
+
+public readonly record struct StormPass(Storm Storm, double FromHours, double Hours, double Presence)
+{
+    public double ToHours => FromHours + Hours;
+}

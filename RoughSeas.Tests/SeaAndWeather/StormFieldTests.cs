@@ -46,6 +46,52 @@ public class StormFieldTests
     }
 
     [Fact]
+    public void PassesAStormStandingAtTheSquaresEdgeForAllOfItsLife()
+    {
+        var model = Fixtures.Model(seed: 42);
+        var gale = model.Storms.Stage("gale", X + 500 + 1000, Z, Hours, peakMps: null, radius: 1200);
+
+        var pass = Assert.Single(model.Storms.Passing("gale", X, Z, 500, Hours - 1000, Hours + 1000), pass => pass.Storm == gale);
+
+        Assert.Equal(gale.BornHours, pass.FromHours, precision: 6);
+        Assert.InRange(pass.Hours, gale.LifetimeHours - 0.2, gale.LifetimeHours + 0.1);
+        Assert.InRange(pass.Presence, 0.01, 0.2);
+    }
+
+    [Fact]
+    public void CountsAStormOverTheSquareNoLongerThanTheWindowLasts()
+    {
+        var model = Fixtures.Model(seed: 42);
+        var gale = model.Storms.Stage("gale", X, Z, Hours, peakMps: null, radius: null);
+
+        var pass = Assert.Single(model.Storms.Passing("gale", X, Z, 500, Hours, Hours + 1.05), pass => pass.Storm == gale);
+
+        Assert.Equal(1.05, pass.Hours, precision: 9);
+    }
+
+    [Fact]
+    public void LeavesOutAStormThatNeverReachesTheSquare()
+    {
+        var model = Fixtures.Model(seed: 42);
+        var gale = model.Storms.Stage("gale", X + 500 + 1210, Z, Hours, peakMps: null, radius: 1200);
+
+        Assert.DoesNotContain(model.Storms.Passing("gale", X, Z, 500, Hours - 1000, Hours + 1000), pass => pass.Storm == gale);
+    }
+
+    [Fact]
+    public void PassesATravellingStormOverAPointForTheTimeItsDiameterTakesToCross()
+    {
+        var model = Fixtures.Model(seed: 42);
+        var squall = model.Storms.Stage("squall", X, Z, Hours, peakMps: null, radius: 300);
+        var speed = Math.Sqrt(squall.VelocityX * squall.VelocityX + squall.VelocityZ * squall.VelocityZ);
+
+        var pass = Assert.Single(model.Storms.Passing("squall", X, Z, 0, Hours - 100, Hours + 100), pass => pass.Storm == squall);
+
+        Assert.InRange(pass.Hours, 2 * 300 / speed - 0.2, 2 * 300 / speed + 0.1);
+        Assert.Equal(1, pass.Presence, precision: 2);
+    }
+
+    [Fact]
     public void ForecastsTheStormsOfATypeBornInRangeAhead()
     {
         var model = Fixtures.Model(seed: 42, Fixtures.TropicalLatitude);

@@ -153,7 +153,10 @@ ACT
                              /server commands and .client commands. A reply that says
                              "Hovering at X Y Z" (/bridge fly, sea, storm) waits for `arrive`,
                              then for the server to load the chunks around the player, by
-                             its debug log ("[bridge] flight N: chunks loaded ... after S s")
+                             its debug log ("[bridge] flight N: chunks loaded ... after S s").
+                             A command still running after 15 s gets no reply, and `do` says so;
+                             BENCH_REPLY_SECONDS=60 bin/game do ... waits that long for a slow one,
+                             as /seas forecast over a year
   bin/game zone [NAME]       fly to zone NAME of the bench world, hovering over it, as `do` flies;
                              without NAME, list the zones and what each is for (bin/lib/world.json)
   bin/game arrive X Y Z [S]  block until the client stands within a block of X Y Z (as commands take
@@ -432,8 +435,9 @@ case "${1:-}" in
   do)
     shift
     for line in "$@"; do
-      reply=$(post /chat "$line")
+      reply=$(post "/chat${BENCH_REPLY_SECONDS:+?wait=$((BENCH_REPLY_SECONDS * 1000))}" "$line")
       echo "$reply"
+      [ -n "$reply" ] || echo "No reply to $line within ${BENCH_REPLY_SECONDS:-15} s: it is still running (BENCH_REPLY_SECONDS=60 waits longer), or it answers nothing" >&2
       x=
       read -r x y z < <(sed -n 's/.*Hovering at \(-\?[0-9.]*\) \(-\?[0-9.]*\) \(-\?[0-9.]*\).*/\1 \2 \3/p' <<<"$reply") || true
       [ -z "$x" ] || arrive "$x" "$y" "$z"
