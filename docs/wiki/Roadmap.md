@@ -99,6 +99,18 @@ The sea moves your boat, and the rope holds it by physics.
 - **An anchor that holds by its weight**, better on rock than on sand, and drags in a strong current or a storm. More: [Anchoring](Anchoring).
 - Both the swell and the currents are the work of [rhino1998](https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8).
 
+## 4.4
+
+The sea reaches the shore, and you float in it.
+
+- **[Surf on the shore.](The-Look-of-the-Sea#what-you-see)** Waves grow and turn toward the shore, break, run up the beach and slide back, wetting the sand; a bar far out breaks them too, and shelters the water behind it. Surf foam rides the breaking waves again.
+- **Waves against a face.** A cliff, a quay or a wall you built stands a wave up against it or takes its spray.
+- **A finer sea near you,** divided finer than a block, with short waves on the swell.
+- **[Water under the beach](The-Look-of-the-Sea#water-under-the-beach)** as far up as the waves run: dig down to it and the hole fills.
+- **[You float by your body](Swimming):** armour and hotbar tools weigh you down, you sink below about 6 m, and a breaking crest drives you under. The work of [rhino1998](https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8).
+- **Boats take the waves where they are,** softer behind a bar, and a wave every wave period.
+- **Vintage Story 1.22.0** and later.
+
 ## Seamanship
 
 Sailing becomes sailing.

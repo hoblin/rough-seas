@@ -45,7 +45,7 @@ What a blow does depends on what it is:
 - **A knock, a ram, rapids, an explosion or lightning** shakes the whole boat. A heavy, stout hull takes it in its stride; a light one cracks where it was hit, and a hard enough one breaks it up at once. The [coracle](Coracle), the [bark canoe](Birch-Bark-Canoe) and the [hide currach](Hide-Currach) are skins over a frame of laths, and there a blow meets only the skin where it lands and the lath or rib behind it ([below](#hide-bark-and-reed)).
 - **A club, a spear, a stone or a fist** hits one plank. A thin plank gives sooner than a thick one: a club that only cracks a dugout's wall can stave in a sailboat's plank at one blow.
 - **An axe or a saw** cuts through far more easily: an iron axe opens a place of most boats at every swing.
-- **A breaking wave** presses on the windward side, and either the planks hold or they are stove in ([Breakers](Surf-and-Swamping#breakers)).
+- **A breaking wave** presses on the side the waves come from, and either the planks hold or they are stove in ([Breakers](Surf-and-Swamping#breakers)).
 
 A hull breaks up from one really severe blow, or once every place is stove in. Cracks short of that don't break it: they let in the sea.
 
@@ -120,7 +120,7 @@ Only hull against hull rams. A creature or a player swimming into a vessel only 
 
 ### Waves
 
-Breaking waves slam the windward side, and a plunging crest far harder than a spilling one. That is on [Surf and swamping](Surf-and-Swamping#breakers); waves that reach a vessel left [moored by the shore](Mooring#thrown-ashore) can throw it on its bottom while you are away.
+Breaking waves slam the side they come from, and a plunging crest far harder than a spilling one. That is on [Surf and swamping](Surf-and-Swamping#breakers); waves that reach a vessel left [moored by the shore](Mooring#thrown-ashore) can throw it on its bottom while you are away.
 
 ### Rapids
 
