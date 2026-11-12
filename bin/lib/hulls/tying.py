@@ -1,12 +1,12 @@
 import sys
 
 from arm import basis
+from held import STANDING
 from stroke import CENTRE, FIRST_PERSON, Rower, fit, moved, player_patch
 from transform import add, angles, sub, unit
 
 CODE = "roughseas-tie"
 FRAMES = 40
-KNOTS_A_MINUTE = 45
 LEAN = {"rotationX": 0, "rotationY": 0, "rotationZ": 5}
 IN_VIEW = (-4, 9.5, 0)
 HANDS = {"R": "KnotR", "L": "KnotL"}
@@ -53,10 +53,9 @@ def rope(to, hand):
 
 
 def build(_):
-    rower = Rower(CENTRE, "roughseas-stand")
+    rower = Rower(CENTRE, STANDING)
     knots = [{"name": name, "from": [0, 0, 0], "to": [0, 0, 0], "faces": {}} for name in HANDS.values()]
-    ties = [{"code": code, "frames": FRAMES, "keys": list(range(0, FRAMES, 2)), "pose": tied(shift),
-             "speed": round(FRAMES * KNOTS_A_MINUTE / 60 / 30, 4)}
+    ties = [{"code": code, "frames": FRAMES, "keys": list(range(0, FRAMES, 2)), "pose": tied(shift), "speed": 1}
             for code, shift in ((CODE, (0, 0, 0)), (CODE + FIRST_PERSON, IN_VIEW))]
     _, player = fit(rower, knots, ties, HANDS, LEAN)
     player_patch("player-tying", player, blended=set())

@@ -1235,7 +1235,7 @@
         "value": {
             "code": "roughseas-tie",
             "animation": "roughseas-tie",
-            "animationSpeed": 1.0,
+            "animationSpeed": 1,
             "blendMode": "Average",
             "easeInSpeed": 4,
             "easeOutSpeed": 4,
@@ -1263,7 +1263,7 @@
         "value": {
             "code": "roughseas-tie-fp",
             "animation": "roughseas-tie-fp",
-            "animationSpeed": 1.0,
+            "animationSpeed": 1,
             "blendMode": "Average",
             "easeInSpeed": 4,
             "easeOutSpeed": 4,
