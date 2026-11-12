@@ -113,35 +113,38 @@ public class HullSetTests
     }
 
     [Fact]
-    public void AHullLyingInTheSwellMovesWithTheWaterThePushOfItsWavesGivesHer()
+    public void AHullLyingInTheSwellMovesWithItsWaterWhateverHerDrag()
     {
         const double sway = 1.2;
         const double turning = 2 * Math.PI / 8;
-        var drag = Raft();
-        var set = new HullSet();
-        set.Take(0, 0, new Vec3d());
-        for (var t = 0.0; t < 60; t += TickSeconds)
+        foreach (var drag in new[] { Raft(), Fixtures.DragOf("dugout", Fixtures.Hull("dugout").Crewed()) })
         {
-            var water = new WaterOnHull(sway * Math.Sin(turning * (t + TickSeconds)), 0, sway * turning * Math.Cos(turning * (t + TickSeconds / 2)));
-            set.Settle(drag, water, Yaw, TickSeconds);
+            var set = new HullSet();
+            for (var t = 0.0; t < 60; t += TickSeconds)
+            {
+                var water = new WaterOnHull(0, 0, sway * Math.Sin(turning * t), sway * Math.Cos(turning * t), new FlowGradient(0.1 * Math.Cos(turning * t), 0, 0));
+                set.Settle(drag, water, Yaw, TickSeconds);
 
-            Assert.Equal(water.X, set.Velocity.X, 0.01);
+                Assert.Equal((water.X, water.Z), set.Velocity);
+            }
         }
     }
 
     [Fact]
-    public void AHullHeldOnAWavesFaceUnderWayIsCarriedAheadOfItsWater()
+    public void AHullRunningDownAWavesFaceIsCarriedAheadOfItsWater()
     {
         const double water = 1.0;
-        const double face = 0.6;
+        var face = new FlowGradient(-0.3, 0, 0);
         var drag = Raft();
         var set = new HullSet();
-        var on = new WaterOnHull(water, 0, face, 0, 1.0);
-        for (var t = 0.0; t < 600; t += TickSeconds) set.Settle(drag, on, AlongX, TickSeconds);
+        var on = new WaterOnHull(0, 0, water, 0, face, 1.0);
+        var wash = (X: 0.0, Z: 0.0);
+        for (var t = 0.0; t < 600; t += TickSeconds) wash = set.Settle(drag, on, AlongX, TickSeconds);
 
         var (pullX, _) = set.Pull(drag, on, AlongX);
         Assert.True(set.Velocity.X > water, $"carried at {set.Velocity.X:F2} m/s in water running {water} m/s");
-        Assert.Equal(-drag.Newtons(face, 0, AlongX).X, pullX, 0.01 * drag.Newtons(face, 0, AlongX).X);
+        Assert.True(wash.X > 0, $"pushed {wash.X:F3} m/s2");
+        Assert.Equal(-drag.Newtons(wash.X, 0, AlongX).X, pullX, 0.01 * drag.Newtons(wash.X, 0, AlongX).X);
     }
 
     [Fact]
@@ -150,8 +153,19 @@ public class HullSetTests
         var drag = Raft();
         var set = new HullSet();
 
-        Assert.Equal(0, set.Pull(drag, new WaterOnHull(0, 0, 0, 0, 1.5), AlongX).X, 9);
-        Assert.True(Math.Abs(set.Pull(drag, new WaterOnHull(-0.5, 0, 0, 0, 1.5), AlongX).X) > Math.Abs(set.Pull(drag, new WaterOnHull(-0.5, 0), AlongX).X));
+        Assert.Equal(0, set.Pull(drag, new WaterOnHull(0, 0, WayAlong: 1.5), AlongX).X, 9);
+        Assert.True(Math.Abs(set.Pull(drag, new WaterOnHull(-0.5, 0, WayAlong: 1.5), AlongX).X) > Math.Abs(set.Pull(drag, new WaterOnHull(-0.5, 0), AlongX).X));
+    }
+
+    [Fact]
+    public void WhatSheIsSetBesideTheWavesWaterIsWhatPassesToTheOtherSide()
+    {
+        var drag = Raft();
+        var set = new HullSet();
+        set.Settle(drag, new WaterOnHull(0, 0, 1.1, 0), Yaw, TickSeconds);
+
+        Assert.Equal((1.1, 0.0), set.Velocity);
+        Assert.Equal((0.0, 0.0), set.Own);
     }
 
     [Fact]

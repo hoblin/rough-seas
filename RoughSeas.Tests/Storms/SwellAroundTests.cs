@@ -108,8 +108,8 @@ public class SwellAroundTests
             Assert.Equal(seen, server.Sea.PoseOf(x, z, yaw, hull.LengthMetres, hull.BeamMetres));
             Assert.Equal(clientSea.HullVelocityAt(x, z, seen.Lift, hull.DraftMetres, yaw, hull.LengthMetres, hull.BeamMetres),
                 server.Sea.HullVelocityAt(x, z, seen.Lift, hull.DraftMetres, yaw, hull.LengthMetres, hull.BeamMetres));
-            Assert.Equal(clientSea.HullAccelerationAt(x, z, seen.Lift, hull.DraftMetres, yaw, hull.LengthMetres, hull.BeamMetres),
-                server.Sea.HullAccelerationAt(x, z, seen.Lift, hull.DraftMetres, yaw, hull.LengthMetres, hull.BeamMetres));
+            Assert.Equal(clientSea.HullGradientAt(x, z, seen.Lift, hull.DraftMetres, yaw, hull.LengthMetres, hull.BeamMetres),
+                server.Sea.HullGradientAt(x, z, seen.Lift, hull.DraftMetres, yaw, hull.LengthMetres, hull.BeamMetres));
             if (inABay) Assert.InRange(seen.Hold, 0.01, 0.4);
             else Assert.InRange(seen.Hold, 0.4, 1);
         }

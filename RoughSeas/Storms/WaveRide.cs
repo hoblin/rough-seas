@@ -26,7 +26,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private (double X, double Z) carriedFrom;
     private double loggedSeconds;
     private double sway;
-    private double push;
+    private double shear;
 
     /// <summary>The pose she takes at <paramref name="seconds"/>, on a clock of the caller's: the one her model is drawn at, and the heave the water is read at.</summary>
     public SeaPose Follow(EntityBoat boat, IDrawnSea drawn, double seconds) =>
@@ -50,24 +50,23 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         if (boat.Api.Side == EnumAppSide.Server) rider.Follow(drawn, pos.X, pos.Z, yaw, hull, boat.World.ElapsedMilliseconds / 1000.0);
         var rate = sea.Clock.SecondsIn(seconds, boat.World.Calendar.SpeedOfTime) / seconds;
         var (x, z) = OnTheClock(rider.Water(drawn, pos.X, pos.Z, yaw, hull), rate);
-        var (pushX, pushZ) = OnTheClock(rider.Push(drawn, pos.X, pos.Z, yaw, hull), rate * rate);
+        var gradient = rider.Gradient(drawn, pos.X, pos.Z, yaw, hull).Scaled(rate);
 
-        var meeting = !carried;
-        if (meeting)
+        if (!carried)
         {
             carried = true;
             carriedFrom = (pos.X, pos.Z);
-            storms.Log(boat, "pushed by the drawn waves {0}, moving with their water at {1:F2} m/s: {2:F1} m by {3:F1} m, {4:F2} m draft, {5:F0} kg", Side(boat),
+            storms.Log(boat, "moved by the drawn waves {0}, with their water at {1:F2} m/s: {2:F1} m by {3:F1} m, {4:F2} m draft, {5:F0} kg", Side(boat),
                 Math.Sqrt(x * x + z * z), hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, hull.Kg);
         }
-        Report(boat, hull, x, z, pushX, pushZ, seconds);
-        return new WaterOnHull(x, z, pushX, pushZ, Meeting: meeting);
+        Report(boat, hull, x, z, gradient, seconds);
+        return new WaterOnHull(0, 0, x, z, gradient);
     }
 
     /// <summary>
-    /// A velocity in metres a second of the waves' clock as metres a second of the tick's, or an acceleration by the
-    /// square of the clocks' ratio, when the waves' clock runs <paramref name="wavesPerTickSecond"/> of its seconds to the
-    /// tick's. One wave then moves a hull as far at any speed of time.
+    /// A velocity in metres a second of the waves' clock as metres a second of the tick's, when the waves' clock runs
+    /// <paramref name="wavesPerTickSecond"/> of its seconds to the tick's. One wave then moves a hull as far at any speed
+    /// of time.
     /// </summary>
     internal static (double X, double Z) OnTheClock((double X, double Z) rate, double wavesPerTickSecond) =>
         (rate.X * wavesPerTickSecond, rate.Z * wavesPerTickSecond);
@@ -95,18 +94,18 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         if (boat.Api.Side == EnumAppSide.Server) rider.Settle();
         if (!carried) return default;
         carried = false;
-        (carriedSeconds, drifted, loggedSeconds, sway, push) = (0, default, 0, 0, 0);
-        storms.Log(boat, "no longer pushed by the drawn waves {0}: {1}", Side(boat), why);
+        (carriedSeconds, drifted, loggedSeconds, sway, shear) = (0, default, 0, 0, 0);
+        storms.Log(boat, "no longer moved by the drawn waves {0}: {1}", Side(boat), why);
         return default;
     }
 
-    private void Report(EntityBoat boat, RiddenHull hull, double x, double z, double pushX, double pushZ, double seconds)
+    private void Report(EntityBoat boat, RiddenHull hull, double x, double z, FlowGradient gradient, double seconds)
     {
         carriedSeconds += seconds;
         loggedSeconds += seconds;
         drifted = (drifted.X + x * seconds, drifted.Z + z * seconds);
         sway = Math.Max(sway, Math.Sqrt(x * x + z * z));
-        push = Math.Max(push, Math.Sqrt(pushX * pushX + pushZ * pushZ));
+        shear = Math.Max(shear, Math.Max(Math.Abs(gradient.XX), Math.Abs(gradient.ZZ)));
         if (loggedSeconds < LogEverySeconds) return;
 
         var pos = boat.Pos;
@@ -114,10 +113,10 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         {
             var (driftX, driftZ) = (drifted.X / carriedSeconds, drifted.Z / carriedSeconds);
             var (madeX, madeZ) = ((pos.X - carriedFrom.X) / carriedSeconds, (pos.Z - carriedFrom.Z) / carriedSeconds);
-            storms.Log(boat, "waves {0}: the water under her sways up to {1:F2} m/s and pushes up to {2:F2} m/s2, its mean {3:F3} {4:F3} m/s where she was, she made {5:F3} {6:F3} m/s over the ground over {7:F0} s; {8:F1} by {9:F1} m, {10:F2} m draft, lifted {11:F2} m",
-                Side(boat), sway, push, driftX, driftZ, madeX, madeZ, carriedSeconds, hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, rider.Lift);
+            storms.Log(boat, "waves {0}: the water under her sways up to {1:F2} m/s, changing up to {2:F3} m/s a metre, its mean {3:F3} {4:F3} m/s where she was, she made {5:F3} {6:F3} m/s over the ground over {7:F0} s; {8:F1} by {9:F1} m, {10:F2} m draft, lifted {11:F2} m",
+                Side(boat), sway, shear, driftX, driftZ, madeX, madeZ, carriedSeconds, hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, rider.Lift);
         }
-        (loggedSeconds, sway, push) = (0, 0, 0);
+        (loggedSeconds, sway, shear) = (0, 0, 0);
     }
 
     private static string Side(EntityBoat boat) => boat.Api.Side == EnumAppSide.Client ? "from this client, the one that steers her" : "on the server, nobody steering her";

@@ -48,7 +48,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
     private (double X, double Z) given;
     private (double X, double Z) wayMade;
 
-    private sealed record Water(WaterOnHull On, double CurrentX, double CurrentZ, HullDrag? Drag);
+    private sealed record Water(WaterOnHull On, HullDrag? Drag, (double X, double Z) Wash = default);
 
     public override string PropertyName() => Code;
 
@@ -80,7 +80,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
     {
         if (water is not { Drag: { } drag } w) return default;
         var (pullX, pullZ) = set.Pull(drag, w.On, entity.Pos.Yaw);
-        var (pushX, pushZ) = drag.Newtons(w.On.AccelerationX, w.On.AccelerationZ, entity.Pos.Yaw);
+        var (pushX, pushZ) = drag.Newtons(w.Wash.X, w.Wash.Z, entity.Pos.Yaw);
         return (pullX + pushX, pullZ + pushZ);
     }
 
@@ -155,11 +155,10 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         var pos = entity.Pos;
         var current = Current();
         var waves = entity is EntityBoat boat && forces != null ? forces.Ride.Water(boat, deltaTime) : default;
-        var on = new WaterOnHull(current.X + waves.X, current.Z + waves.Z, waves.AccelerationX, waves.AccelerationZ, WayAlong());
-        var w = water = new Water(on, current.X, current.Z, way?.WaterDrag ?? ownDrag?.Now);
-        if (waves.Meeting) set.Push(waves.X, waves.Z);
-        if (w.Drag is { } drag) set.Settle(drag, on, pos.Yaw, deltaTime);
-        else set.Relax(on, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime), deltaTime);
+        var on = waves with { CurrentX = current.X, CurrentZ = current.Z, WayAlong = WayAlong() };
+        var drag = way?.WaterDrag ?? ownDrag?.Now;
+        var wash = drag != null ? set.Settle(drag, on, pos.Yaw, deltaTime) : set.Relax(on, pos.Yaw, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime), deltaTime);
+        var w = water = new Water(on, drag, wash);
 
         if (ours && !moves) TakeOver();
         else if (!ours && moves) GiveOver();
@@ -241,7 +240,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         if ((sinceSync += deltaTime) < storms.Config.Drift.SyncSeconds) return;
 
         sinceSync = 0;
-        var now = set.Velocity;
+        var now = set.Own;
         if (Math.Abs(now.X - synced.X) < SyncedMps && Math.Abs(now.Z - synced.Z) < SyncedMps) return;
 
         synced = now;
@@ -271,7 +270,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 
         var (pullX, pullZ) = Pull();
         storms.Log(entity, "{0}: the current runs {1:F2} m/s toward {2:F0}°, the water with the waves {3:F2} m/s toward {4:F0}°, it carries her at {5:F2} m/s toward {6:F0}°, drags {7:F0} N; {8:F0} kg aboard, heading {9:F0}°",
-            steered ? "steered" : "adrift", Speed(w.CurrentX, w.CurrentZ), Compass.TowardDegrees(w.CurrentX, w.CurrentZ), Speed(w.On.X, w.On.Z),
+            steered ? "steered" : "adrift", Speed(w.On.CurrentX, w.On.CurrentZ), Compass.TowardDegrees(w.On.CurrentX, w.On.CurrentZ), Speed(w.On.X, w.On.Z),
             Compass.TowardDegrees(w.On.X, w.On.Z), Speed(x, z), Compass.TowardDegrees(x, z), Speed(pullX, pullZ), w.Drag?.Kilograms ?? 0, Heading());
         if (madeSeconds <= 0) return;
 
@@ -290,8 +289,8 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 
         sinceSwingLog = 0;
         var pos = entity.Pos;
-        var (x, z) = set.Velocity;
-        var (along, across) = HullShape.ToHull(w.On.X - x, w.On.Z - z, pos.Yaw);
+        var (x, z) = set.Own;
+        var (along, across) = HullShape.ToHull(w.On.CurrentX - x, w.On.CurrentZ - z, pos.Yaw);
         if (Speed(along, across) < StillMps) return;
 
         var (pullX, pullZ) = set.Pull(drag, w.On, pos.Yaw);

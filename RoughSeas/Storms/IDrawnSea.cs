@@ -34,11 +34,11 @@ public interface IDrawnSea
     (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam);
 
     /// <summary>
-    /// The acceleration of the water <see cref="HullVelocityAt"/> reads, over the same body, in metres per second squared
-    /// of <see cref="Seconds"/>: the push the water's pressure gives a floating body, per kilogram of the body and the
-    /// water it drags with it. Forward on a wave's front face, back on its rear.
+    /// How the water's velocity <see cref="HullVelocityAt"/> reads changes from one metre to the next over the same body,
+    /// per second of <see cref="Seconds"/>. A body moving through the water at a velocity r is pushed by −(r·∇)u on top of
+    /// the water's own change: down a wave's front face when it runs with the wave.
     /// </summary>
-    (double X, double Z) HullAccelerationAt(double x, double z, double lift, double draft, double yaw, double length, double beam);
+    FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam);
 
     /// <summary>The water's vertical velocity at a position now, in metres per second of <see cref="Seconds"/>, <paramref name="below"/> metres under the drawn surface: rising ahead of a crest, sinking behind it.</summary>
     double RiseVelocityAt(double x, double z, double below = 0);

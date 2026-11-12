@@ -14,7 +14,8 @@ namespace RoughSeas.Person;
 public sealed class FloatingBody(IPerson person, PersonConfig config, Waves waves)
 {
     private readonly Body body = person.Body;
-    private (double X, double Z) carried;
+    private (double X, double Z) carried, water;
+    private bool met;
     private Breaker? breaker;
 
     /// <summary>What the last step found.</summary>
@@ -72,9 +73,13 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var depth = Math.Min(waterline, body.HeightMetres);
         var flow = sea.HullVelocityAt(at.X, at.Z, top, depth, 0, at.Width, at.Width);
         flow = (flow.X * wavesPerSecond, flow.Z * wavesPerSecond);
-        var push = sea.HullAccelerationAt(at.X, at.Z, top, depth, 0, at.Width, at.Width);
-        var pressure = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross * wavesPerSecond * wavesPerSecond;
+        var gradient = sea.HullGradientAt(at.X, at.Z, top, depth, 0, at.Width, at.Width).Scaled(wavesPerSecond);
+        var pressure = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross;
         var before = carried;
+        if (!met) (water, met) = (flow, true);
+        var (shearX, shearZ) = gradient.Along(carried.X - water.X, carried.Z - water.Z);
+        var (pushX, pushZ) = ((flow.X - water.X - shearX * seconds) * pressure, (flow.Z - water.Z - shearZ * seconds) * pressure);
+        water = flow;
         var (rollerX, rollerZ) = (0.0, 0.0);
         if (breaker is { } roller)
         {
@@ -82,8 +87,8 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
             (rollerX, rollerZ) = (speed * Math.Cos(roller.TowardRadians), speed * Math.Sin(roller.TowardRadians));
         }
         var (toX, toZ) = (flow.X + rollerX, flow.Z + rollerZ);
-        var (awayX, awayZ) = (carried.X - toX + (push.X * pressure + thrust * stroke.X / inertiaAcross) * seconds,
-            carried.Z - toZ + (push.Z * pressure + thrust * stroke.Z / inertiaAcross) * seconds);
+        var (awayX, awayZ) = (carried.X + pushX - toX + thrust * stroke.X / inertiaAcross * seconds,
+            carried.Z + pushZ - toZ + thrust * stroke.Z / inertiaAcross * seconds);
         var away = Math.Sqrt(awayX * awayX + awayZ * awayZ);
         var dragArea = stroke.Stroking ? config.Body.DragAreaSwimming : config.Body.DragAreaAcross * under / whole;
         var keptAway = away > 0 ? Body.Dragged(away, density, dragArea, inertiaAcross, seconds) / away : 1;

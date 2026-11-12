@@ -471,22 +471,22 @@ public class SeaSurfaceTests
     }
 
     [Fact]
-    public void TheWatersHorizontalAccelerationIsTheRateOfItsVelocityOverAHull()
+    public void TheWatersGradientIsHowItsVelocityOverAHullChangesFromOneMetreToTheNext()
     {
         const double step = 0.001;
-        var sea = Fixtures.OneTrain(4, 14);
-        double Water(double time, double x)
-        {
-            sea.Surface.Advance(time);
-            return sea.Surface.HullVelocityAt(x, 0, 0.3, 0.4, 0.5, 3, 1.5).X;
-        }
+        var surface = Surface();
+        Settle(surface, 4, 0.7);
+        (double X, double Z) Water(double x, double z) => surface.HullVelocityAt(x, z, 0.3, 0.4, 0.5, 3, 1.5);
 
-        for (var x = 0.0; x < sea.Length; x += sea.Length / 7)
+        for (var i = 0; i < 7; i++)
         {
-            var rate = (Water(120 + step, x) - Water(120 - step, x)) / (2 * step);
-            sea.Surface.Advance(120);
+            var (x, z) = (FarX + i * 5.3, FarZ - i * 3.7);
+            var (east, west, south, north) = (Water(x + step, z), Water(x - step, z), Water(x, z + step), Water(x, z - step));
+            var gradient = surface.HullGradientAt(x, z, 0.3, 0.4, 0.5, 3, 1.5);
 
-            Assert.Equal(rate, sea.Surface.HullAccelerationAt(x, 0, 0.3, 0.4, 0.5, 3, 1.5).X, 4);
+            Assert.Equal((east.X - west.X) / (2 * step), gradient.XX, 4);
+            Assert.Equal((south.X - north.X) / (2 * step), gradient.XZ, 4);
+            Assert.Equal((south.Z - north.Z) / (2 * step), gradient.ZZ, 4);
         }
     }
 
@@ -496,16 +496,17 @@ public class SeaSurfaceTests
         var sea = Fixtures.OneTrain(2, 14);
         var celerity = sea.Frequency / sea.Number;
         sea.Surface.Advance(120);
+        double Push(double x) => -sea.Surface.HullGradientAt(x, 0, 0, 0, 0, 0, 0).Along(celerity - sea.Surface.HullVelocityAt(x, 0, 0, 0, 0, 0, 0).X, 0).X;
         var face = 0.0;
         for (var x = 0.0; x < sea.Length; x += 0.25)
         {
-            if (sea.Surface.HullAccelerationAt(x, 0, 0, 0, 0, 0, 0).X > sea.Surface.HullAccelerationAt(face, 0, 0, 0, 0, 0, 0).X) face = x;
+            if (Push(x) > Push(face)) face = x;
         }
 
         for (var seconds = 0.0; seconds < 3 * 2 * Math.PI / sea.Frequency; seconds += 0.5)
         {
             sea.Surface.Advance(120 + seconds);
-            Assert.True(sea.Surface.HullAccelerationAt(face + celerity * seconds, 0, 0, 0, 0, 0, 0).X > 0, $"held back after {seconds:F1} s");
+            Assert.True(Push(face + celerity * seconds) > 0, $"held back after {seconds:F1} s");
         }
     }
 

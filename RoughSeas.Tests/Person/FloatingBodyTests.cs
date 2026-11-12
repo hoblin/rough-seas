@@ -297,7 +297,7 @@ public class FloatingBodyTests
     [Fact]
     public void SwimmingWithAWavesFaceItIsCarriedFasterThanItSwims()
     {
-        var face = new WaterFixtures.Sea(0, flow: (1.0, 0), push: (0.4, 0));
+        var face = new WaterFixtures.Sea(0, flow: (1.0, 0), gradient: new FlowGradient(-0.3, 0, 0));
         var run = new Run(face, Still - 1.6, stroke: Ahead);
         run.Settle(30);
         var from = run.MovedX;

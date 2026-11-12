@@ -20,8 +20,8 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
     public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) =>
         ShareAt(x, z) is var share and > 0 ? surface.HullVelocityAt(x, z, lift, draft, yaw, length, beam, share) : default;
 
-    public (double X, double Z) HullAccelerationAt(double x, double z, double lift, double draft, double yaw, double length, double beam) =>
-        ShareAt(x, z) is var share and > 0 ? surface.HullAccelerationAt(x, z, lift, draft, yaw, length, beam, share) : default;
+    public FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam) =>
+        ShareAt(x, z) is var share and > 0 ? surface.HullGradientAt(x, z, lift, draft, yaw, length, beam, share) : default;
 
     public double RiseVelocityAt(double x, double z, double below = 0) =>
         ShareAt(x, z) is var share and > 0 ? surface.RiseVelocityAt(x, z, below, share) : 0;
