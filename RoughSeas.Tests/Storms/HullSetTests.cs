@@ -218,7 +218,7 @@ public class HullSetTests
     public void TheWatersAccelerationOfHerIsHowFastItsWaterChangesAtHerPlace()
     {
         var set = new HullSet();
-        set.Settle(Raft(), new WaterOnHull(0, 0, 0.2, -0.1), Yaw, TickSeconds);
+        Assert.Equal((0.0, 0.0), set.Settle(Raft(), new WaterOnHull(0, 0, 0.2, -0.1), Yaw, TickSeconds));
         var wash = set.Settle(Raft(), new WaterOnHull(0, 0, 0.3, -0.3), Yaw, TickSeconds);
 
         Assert.Equal(0.1 / TickSeconds, wash.X, 9);

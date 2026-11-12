@@ -36,7 +36,7 @@ public sealed class HullSet : BodyInWater
 
     /// <summary>
     /// Her own way through the water, m/s: what vanilla's moves since the last call made of her motion besides the set,
-    /// after their drags, on whichever side and at whatever rate they ran; as before when none ran.
+    /// after their drags, on whichever side and at whatever rate they ran; the last measured when none ran.
     /// </summary>
     public (double X, double Z) Way()
     {

@@ -175,7 +175,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         var w = water = new Water(on, drag, wash);
 
         if (client == null) Sync(deltaTime);
-        else ReportOwn();
+        else ReportOwn(deltaTime);
         Report(w, steered, deltaTime);
     }
 
@@ -254,11 +254,14 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
     /// <summary>Server only: her own set as the client that steers her moves her.</summary>
     public void Reported(IServerPlayer player, HullSetReport report)
     {
-        if (mountable?.Controller == player.Entity) set.Reported(report.X, report.Z);
+        if (mountable?.Controller == player.Entity && double.IsFinite(report.X) && double.IsFinite(report.Z)) set.Reported(report.X, report.Z);
     }
 
-    private void ReportOwn()
+    private void ReportOwn(float deltaTime)
     {
+        if ((sinceSync += deltaTime) < storms.Config.Drift.SyncSeconds) return;
+
+        sinceSync = 0;
         var now = set.Own;
         if (Math.Abs(now.X - synced.X) < SyncedMps && Math.Abs(now.Z - synced.Z) < SyncedMps) return;
 

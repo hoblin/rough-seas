@@ -29,7 +29,7 @@ Each way the sea harms a vessel has its own [world setting](World-Settings#the-m
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
-They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the pull it measures. A vessel with `seaforces` alone already rides the swell and takes the sea. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, `mooring` and `currentdrift` on both sides. `vesselintegrity` and `currentdrift` also work alone.
+They build on each other, so add them in this order. `seaforces` is the vessel's contact with the sea, and the others act through it: the bilge fills from the waves it takes and swamps the hull only through it, and `mooring` holds against the water's pull `currentdrift` works out. A vessel with `seaforces` alone already rides the swell and takes the sea; `currentdrift` moves it by the water. Add `bilge` for a hull that holds water, `vesselintegrity` for one that floats by its mass and can crack and sink, `mooring` and `currentdrift` on both sides. `vesselintegrity` and `currentdrift` also work alone.
 
 `vesselintegrity` goes first in both lists, before `creaturecarrier` and `rideableaccessories`.
 

@@ -43,23 +43,28 @@ public class SeaSurfaceSeabedTests
         Enumerable.Range(0, 400).Max(i => surface.HeightAt(MiddleX + i % 20 * 0.7, MiddleZ + i / 20 * 0.9, 1, shortWaves));
 
     [Fact]
-    public void OverAShoalingBedTheWatersGradientHoldsItsGrowthAsWellAsItsPhase()
+    public void OverAShoalingBedABodyMovingThroughStillWavesGainsNothingFromThem()
     {
-        const double step = 0.01;
+        const double speed = 2;
+        const double seconds = 0.02;
         var surface = Settled(1.5);
         var field = Flat(surface, 4);
         for (var x = OriginX; x < OriginX + Size; x++)
         for (var z = OriginZ; z < OriginZ + Size; z++)
             field.SetCelerityDepth(x, z, (float)(6 - 4.5 * (x - OriginX) / Size));
         surface.Seabed = field;
-        (double X, double Z) Water(double x) => surface.HullVelocityAt(x, MiddleZ, 0, 0.3, 0, 2, 1);
+        double Water(double x) => surface.HullVelocityAt(x, MiddleZ, 0, 0.3, 0, 2, 1).X;
 
-        for (var cell = 20; cell < 44; cell += 3)
+        var (left, met) = (0.0, 0.0);
+        for (var x = OriginX + 16.0; x < OriginX + 48; x += speed * seconds)
         {
-            var x = OriginX + cell + 0.5;
-            var met = (Water(x + step).X - Water(x - step).X) / (2 * step);
-            Assert.Equal(met, surface.HullGradientAt(x, MiddleZ, 0, 0.3, 0, 2, 1).XX, 3);
+            var change = Water(x + speed * seconds) - Water(x);
+            var push = -surface.HullGradientAt(x + speed * seconds / 2, MiddleZ, 0, 0.3, 0, 2, 1).Moving(speed, 0).X * seconds;
+            left += change + push;
+            met += Math.Abs(change);
         }
+
+        Assert.InRange(Math.Abs(left), 0, 0.05 * met);
     }
 
     [Fact]

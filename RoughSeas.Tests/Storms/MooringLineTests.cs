@@ -147,6 +147,19 @@ public class MooringLineTests
     }
 
     [Fact]
+    public void AStepTooLongToFollowEveryBounceLeavesHerAtRestWhereTheLineHoldsThePull()
+    {
+        const double kilograms = 150;
+        const double steady = 50;
+        const double seconds = 600;
+        var line = Flax(1.5);
+        var step = line.Over(ComingTaut, 1.0, steady, kilograms, seconds, 1);
+
+        Assert.Equal(0, 1.0 + steady / kilograms * seconds + step.Kick, 9);
+        Assert.Equal(steady / line.NewtonsPerMetre, ComingTaut + (1.0 + steady / kilograms * seconds + step.Moved) * seconds, 6);
+    }
+
+    [Fact]
     public void AnUnbreakableRopeStopsHerAtItsEndAndNeverParts()
     {
         var unbreakable = new MooringLine(3, double.PositiveInfinity, 0.1);

@@ -87,6 +87,15 @@ public class FloatingBodyTests
     }
 
     [Fact]
+    public void TreadingWaterKeepsTheEyesAboveFreshWater()
+    {
+        var run = new Run(Calm, Still - 1.6, salt: false, stroke: new SwimStroke(0, 1, 0));
+        run.Settle(60);
+
+        Assert.InRange(Still - run.Feet, 1.0, EyeHeight);
+    }
+
+    [Fact]
     public void ALadenBodyFloatsLower()
     {
         var bare = new Run(Calm, Still - 1.6);

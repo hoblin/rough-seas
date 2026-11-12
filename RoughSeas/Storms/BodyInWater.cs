@@ -4,7 +4,7 @@ namespace RoughSeas.Storms;
 /// A body the water moves across by its force: its velocity is the waves' water at its place and its own beside it.
 /// The water's pressure and added mass give it their share of the water's own change and push it by −(s·∇)u for its
 /// velocity s through the water; a body that displaces its own mass, as a hull does, takes both whole. Its drag and its
-/// own forces are its kind's. Called from more than one thread, so it holds its own lock.
+/// own forces are its kind's. It holds its own lock, for a kind its physics thread reads.
 /// </summary>
 public abstract class BodyInWater
 {

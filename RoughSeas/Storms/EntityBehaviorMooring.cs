@@ -69,6 +69,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         public bool Reported;
         public double LoggedTension;
         public long LoggedAt;
+        /// <summary>A line coming taut, for its log line: how fast she reached it, her mass along it and its highest tension so far.</summary>
         public (double Speed, double Kilograms, double Newtons)? Jerk;
         /// <summary>The rest of the line's last kick, newton-seconds in world axes, given her at the next tick.</summary>
         public (double X, double Z) Owed;
@@ -291,6 +292,8 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         var shares = dragging >= 0 && Anchor is { } dragged
             ? MooringLoad.Beside(loadX, loadZ, lines, dragging, Holding(dragged) * holds[engaged[dragging]].Tether.Level)
             : MooringLoad.Share(loadX, loadZ, lines);
+        var masses = MooringLoad.Masses(movingX, movingZ, lines,
+            engaged.Select(i => holds[i].Tether.Line.NewtonsPerMetre * holds[i].Tether.Level * holds[i].Tether.Level).ToArray());
         var strains = Mechanic.MooringStrain.On(entity.World);
         var yaw = entity.Pos.Yaw;
         for (var j = 0; j < engaged.Length; j++)
@@ -300,9 +303,8 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             var (outX, outZ, distance) = outward[engaged[j]];
             if (level <= 0 || distance <= 0) continue;
 
-            var kilograms = drag.KilogramsToward(outX, outZ, yaw);
-            var (velocityX, velocityZ) = drift.Velocity;
-            var speed = velocityX * outX + velocityZ * outZ;
+            var kilograms = drag.KilogramsToward(outX, outZ, yaw) * masses[j];
+            var speed = movingX * outX + movingZ * outZ;
             var step = hold.Tether.Line.Over(distance - hold.Tether.ReachMetres, speed, shares[j], kilograms, seconds, level);
             if (step.PeakNewtons <= 0 && !hold.Taut) continue;
             if (!hold.Taut || hold.Jerk != null)

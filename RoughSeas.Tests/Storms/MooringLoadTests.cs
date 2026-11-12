@@ -5,6 +5,35 @@ namespace RoughSeas.Tests.Storms;
 public class MooringLoadTests
 {
     [Fact]
+    public void OneLineStopsHerWhole()
+    {
+        Assert.Equal([1.0], MooringLoad.Masses(0.5, 0, [(1, 0)], [20000]));
+    }
+
+    [Fact]
+    public void TwoLinesSheStretchesTogetherShareHerByTheirStiffness()
+    {
+        var masses = MooringLoad.Masses(0.6, 0, [(1, 0), (1, 0)], [20000, 5000]);
+
+        Assert.Equal(0.8, masses[0], 9);
+        Assert.Equal(0.2, masses[1], 9);
+    }
+
+    [Fact]
+    public void SwungAcrossTheLineThatHoldsHerTheNextLineTakesTheJerk()
+    {
+        var masses = MooringLoad.Masses(0, 0.7, [(1, 0), (0, 1)], [20000, 5000]);
+
+        Assert.Equal([0.0, 1.0], masses);
+    }
+
+    [Fact]
+    public void ALineTooStiffToStretchStopsHerWhole()
+    {
+        Assert.Equal([0.0, 1.0], MooringLoad.Masses(0.6, 0, [(1, 0), (1, 0)], [20000, double.PositiveInfinity]));
+    }
+
+    [Fact]
     public void OneLineCarriesThePullAlongIt()
     {
         Assert.Equal([300.0], MooringLoad.Share(300, 400, [(1, 0)]));

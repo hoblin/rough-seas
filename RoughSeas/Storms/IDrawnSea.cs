@@ -35,7 +35,7 @@ public interface IDrawnSea
 
     /// <summary>
     /// How the water's velocity <see cref="HullVelocityAt"/> reads changes from one metre to the next over the same body,
-    /// per second of <see cref="Seconds"/>. A body moving through the water at a velocity r is pushed by −(r·∇)u on top of
+    /// per second of <see cref="Seconds"/>. A body moving through the water at a velocity s is pushed by −(s·∇)u on top of
     /// the water's own change: down a wave's front face when it runs with the wave.
     /// </summary>
     FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam);

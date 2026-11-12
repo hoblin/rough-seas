@@ -14,7 +14,7 @@ namespace RoughSeas.Storms;
 public sealed class SeaSurface
 {
     private const double FullTurn = 2 * Math.PI;
-    private const double GradientStep = 0.01;
+    private const double GradientStep = 0.5;
     private const int SurfaceSearchSteps = 3;
     private const int FoldSamplesAcross = 24;
 
@@ -387,8 +387,9 @@ public sealed class SeaSurface
 
     /// <summary>
     /// How the water's velocity <see cref="HullVelocityAt"/> reads changes from one metre to the next over the same
-    /// body, per second of the waves' clock: its own difference across a few centimetres, so it holds everything that
-    /// changes the velocity along the way, a wave's height growing over a shoaling bed with the phase.
+    /// body, per second of the waves' clock: its own difference across a block, the scale the waves read the bed at, so it
+    /// holds everything that changes the velocity along the way, a wave's height growing over a shoaling bed with the
+    /// phase, and no step of the bed's cells.
     /// </summary>
     public FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam, double share = 1)
     {

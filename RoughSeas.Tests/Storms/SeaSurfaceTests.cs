@@ -471,22 +471,17 @@ public class SeaSurfaceTests
     }
 
     [Fact]
-    public void TheWatersGradientIsHowItsVelocityOverAHullChangesFromOneMetreToTheNext()
+    public void OneWavesGradientIsItsVelocityAQuarterTurnOnTimesItsNumber()
     {
-        const double step = 0.001;
-        var surface = Surface();
-        Settle(surface, 4, 0.7);
-        (double X, double Z) Water(double x, double z) => surface.HullVelocityAt(x, z, 0.3, 0.4, 0.5, 3, 1.5);
+        var sea = Fixtures.OneTrain(2, 14);
+        sea.Surface.Advance(120);
+        double Water(double x) => sea.Surface.HullVelocityAt(x, 0, 0, 0, 0, 0, 0).X;
+        var most = Enumerable.Range(0, 140).Max(i => Math.Abs(Water(i * 0.1)));
 
-        for (var i = 0; i < 7; i++)
+        for (var x = 0.0; x < 14; x += 1.3)
         {
-            var (x, z) = (FarX + i * 5.3, FarZ - i * 3.7);
-            var (east, west, south, north) = (Water(x + step, z), Water(x - step, z), Water(x, z + step), Water(x, z - step));
-            var gradient = surface.HullGradientAt(x, z, 0.3, 0.4, 0.5, 3, 1.5);
-
-            Assert.Equal((east.X - west.X) / (2 * step), gradient.XX, 4);
-            Assert.Equal((south.X - north.X) / (2 * step), gradient.XZ, 4);
-            Assert.Equal((south.Z - north.Z) / (2 * step), gradient.ZZ, 4);
+            var gradient = sea.Surface.HullGradientAt(x, 0, 0, 0, 0, 0, 0).XX;
+            Assert.Equal(sea.Number * most, Math.Sqrt(gradient * gradient + Math.Pow(sea.Number * Water(x), 2)), 0.02 * sea.Number * most);
         }
     }
 

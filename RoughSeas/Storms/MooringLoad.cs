@@ -44,5 +44,28 @@ public static class MooringLoad
         return shares.ToArray();
     }
 
+    /// <summary>
+    /// The share of her mass each line stops as she runs out at this velocity: lines stretched together share her as
+    /// springs side by side do, by their stiffness along the way she moves, so a stiff short line takes most of the jerk
+    /// and one she runs across takes none. Lying still, they share by their stiffness alone; a line too stiff to stretch
+    /// takes her whole.
+    /// </summary>
+    public static double[] Masses(double velocityX, double velocityZ, IReadOnlyList<(double X, double Z)> outward, IReadOnlyList<double> newtonsPerMetre)
+    {
+        var rigid = newtonsPerMetre.Select(double.IsInfinity).ToArray();
+        double[] Shared(Func<int, double> weight)
+        {
+            var weights = Enumerable.Range(0, outward.Count).Select(weight).ToArray();
+            var total = weights.Sum();
+            return total > 0 ? weights.Select(w => w / total).ToArray() : weights;
+        }
+
+        if (rigid.Any(r => r)) return Shared(i => rigid[i] ? 1 : 0);
+        var moving = Shared(i => newtonsPerMetre[i] * Square(Along(velocityX, velocityZ, outward[i])));
+        return moving.Sum() > 0 ? moving : Shared(i => newtonsPerMetre[i]);
+    }
+
     private static double Along(double pullX, double pullZ, (double X, double Z) line) => Math.Max(0, pullX * line.X + pullZ * line.Z);
+
+    private static double Square(double value) => value * value;
 }
