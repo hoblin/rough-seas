@@ -20288,6 +20288,16 @@
    ]
   },
   {
+   "name": "BackCargo",
+   "from": [ 17, 1.69, 4.25 ],
+   "to": [ 33, 17.69, 20.25 ],
+   "rotationOrigin": [ 17, 1.69, 4.25 ],
+   "scaleX": 0.5,
+   "scaleY": 0.5,
+   "scaleZ": 0.5,
+   "faces": {}
+  },
+  {
    "name": "LowerMastStorage",
    "from": [ 9, 8, 5 ],
    "to": [ 15, 24, 11 ],

@@ -499,6 +499,16 @@ A hull moves by the sum of the forces on it, the waves' among them, so one runni
 
 New: `IDrawnSea.HullGradientAt`, `FlowGradient`, `WaterOnHull`, `SwimStroke`, `MooringLine.Over` and `Dragging`, `LineStep`, `BodyInWater`, `HullSet.Add` and `Way`, `HullSetReport`, `HullRider.Gradient`, `Body.AddedAlongKg`.
 
+### Containers inside the hull
+
+A basket fitted to the reed boat, the dugout, the outrigger or the bark canoe sits on the centreline, on her floor, at half its size, as the currach's do. A vessel of yours loads as it did.
+
+- Vanilla draws a fitted container from the `from` corner of the element its slot's `stepParentTo` names, at the container's own 0 to 16 voxels, scaled and turned as that element is; the element's size plays no part. Every cargo element of ours is a 16-voxel cube scaled 0.5 about its `from`, its middle on the centreline.
+- The reed boat's `Cargo` is that cube, its `CargoAP` at its middle, so the slot's selection box is where the basket shows.
+- The dugout's and outrigger's `Back Seat` slot steps its basket into the new `BackCargo`, the bark canoe's `Front Seat` slot into the new `FrontCargo`. The slots keep their codes, attachment points and selection boxes, which are the seats'.
+
+New: `BackCargo`, `FrontCargo`.
+
 ## What not to touch
 
 | Name | What it is |
