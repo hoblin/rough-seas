@@ -111,7 +111,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
         if (idle || drag?.Now is not { } water) return Idle(vanilla);
         Driving = true;
 
-        var speed = VanillaSwim.Realized(boat.ForwardSpeed);
+        var speed = VesselDraught.Realized(boat.ForwardSpeed);
         var spin = boat.AngularVelocity * RadiansPerAngularVelocity;
         var metabolic = propulsion.Config.Rower.MetabolicWatts;
         var push = stroking && !changing

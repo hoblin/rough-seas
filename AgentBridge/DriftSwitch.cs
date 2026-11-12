@@ -2,16 +2,17 @@ using System;
 using HarmonyLib;
 using RoughSeas.Storms;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
-using Vintagestory.GameContent;
 
 namespace AgentBridge;
 
 /// <summary>
-/// Skips every way into Rough Seas' <see cref="EntityBehaviorCurrentDrift"/> and the waves' carry on a hull nobody steers while
-/// <see cref="Drifting"/> is off, so vessels stay where a test put them: its tick, its keeping the set through a move and a
-/// rower's overwrite, its pull on a mooring and the swing about the bow. With <see cref="WavesOnly"/> it skips the current
-/// alone, to see what the waves do by themselves.
+/// Holds every vessel nobody steers where a test put it while <see cref="Drifting"/> is off: Rough Seas'
+/// <see cref="EntityBehaviorCurrentDrift"/>, which moves a hull by the current, the waves and her lines, skips its tick,
+/// its keeping the set through a move and a rower's overwrite, its pull on a mooring, the swing about the bow and the
+/// lines' pull. A steered vessel keeps the waves, as her rider's client draws them. With <see cref="WavesOnly"/>, or for a
+/// steered vessel while drifting is off, the current is left out, to see what the waves do by themselves.
 /// </summary>
 public sealed class DriftSwitch : IDisposable
 {
@@ -24,16 +25,16 @@ public sealed class DriftSwitch : IDisposable
         var prefix = new HarmonyMethod(typeof(DriftSwitch), nameof(Prefix));
         foreach (var method in new[]
                  {
-                     nameof(EntityBehaviorCurrentDrift.OnGameTick), "Rowed",
-                     nameof(EntityBehaviorCurrentDrift.Pull), nameof(EntityBehaviorCurrentDrift.HeldAtBow)
+                     nameof(EntityBehaviorCurrentDrift.OnGameTick), "Rowed", nameof(EntityBehaviorCurrentDrift.Pull),
+                     nameof(EntityBehaviorCurrentDrift.HeldAtBow), nameof(EntityBehaviorCurrentDrift.Impulse)
                  })
         {
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorCurrentDrift), method), prefix: prefix);
         }
         harmony.Patch(AccessTools.Method(typeof(EntityBehaviorCurrentDrift), "BeforeMove"),
             prefix: new HarmonyMethod(typeof(DriftSwitch), nameof(BeforeMove)));
-        harmony.Patch(AccessTools.Method(typeof(WaveRide), nameof(WaveRide.Carry)),
-            prefix: new HarmonyMethod(typeof(DriftSwitch), nameof(Unridden)));
+        harmony.Patch(AccessTools.Method(typeof(EntityBehaviorCurrentDrift), "Current"),
+            prefix: new HarmonyMethod(typeof(DriftSwitch), nameof(Current)));
     }
 
     public bool Drifting
@@ -55,17 +56,22 @@ public sealed class DriftSwitch : IDisposable
         wavesOnly = false;
     }
 
-    private static bool Current => drifting && !wavesOnly;
+    private static bool Moves(Entity entity) => drifting || entity.GetInterface<IMountable>()?.IsBeingControlled() == true;
 
-    private static bool Prefix() => Current;
+    private static bool Prefix(EntityBehaviorCurrentDrift __instance) => Moves(__instance.entity);
 
     // a driving hull's motion meets no water drag, so the set left in it would carry her on for good
     private static bool BeforeMove(EntityBehaviorCurrentDrift __instance, Vec3d motion)
     {
-        if (!Current) __instance.Stopped(motion);
-        return Current;
+        var moves = Moves(__instance.entity);
+        if (!moves) __instance.Stopped(motion);
+        return moves;
     }
 
-    // a steered vessel is her rider's to move, as vanilla leaves her
-    private static bool Unridden(EntityBoat boat) => drifting || boat.GetInterface<IMountable>()?.IsBeingControlled() == true;
+    private static bool Current(ref (double X, double Z) __result)
+    {
+        if (drifting && !wavesOnly) return true;
+        __result = default;
+        return false;
+    }
 }

@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using RoughSeas.Propulsion;
+using RoughSeas.Storms;
 using RoughSeas.Tests.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -386,7 +387,7 @@ public class PropulsionTests
     [InlineData(4)]
     public void VanillaCarriesABoatAtTheSpeedItIsCommanded(double metresPerSecond)
     {
-        Assert.Equal(metresPerSecond, VanillaSwim.Realized(VanillaSwim.Commanded(metresPerSecond)), 3);
+        Assert.Equal(metresPerSecond, VesselDraught.Realized(VanillaSwim.Commanded(metresPerSecond)), 3);
     }
 
     [Fact]

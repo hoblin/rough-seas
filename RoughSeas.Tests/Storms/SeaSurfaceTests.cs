@@ -470,6 +470,45 @@ public class SeaSurfaceTests
         Assert.Equal((1 - Math.Exp(-number * 2)) / (number * 2), deep / atSurface, 9);
     }
 
+    [Fact]
+    public void TheWatersHorizontalAccelerationIsTheRateOfItsVelocityOverAHull()
+    {
+        const double step = 0.001;
+        var sea = Fixtures.OneTrain(4, 14);
+        double Water(double time, double x)
+        {
+            sea.Surface.Advance(time);
+            return sea.Surface.HullVelocityAt(x, 0, 0.3, 0.4, 0.5, 3, 1.5).X;
+        }
+
+        for (var x = 0.0; x < sea.Length; x += sea.Length / 7)
+        {
+            var rate = (Water(120 + step, x) - Water(120 - step, x)) / (2 * step);
+            sea.Surface.Advance(120);
+
+            Assert.Equal(rate, sea.Surface.HullAccelerationAt(x, 0, 0.3, 0.4, 0.5, 3, 1.5).X, 4);
+        }
+    }
+
+    [Fact]
+    public void ABodyRidingAFrontFaceAtTheWavesSpeedIsPushedAheadAllTheWay()
+    {
+        var sea = Fixtures.OneTrain(2, 14);
+        var celerity = sea.Frequency / sea.Number;
+        sea.Surface.Advance(120);
+        var face = 0.0;
+        for (var x = 0.0; x < sea.Length; x += 0.25)
+        {
+            if (sea.Surface.HullAccelerationAt(x, 0, 0, 0, 0, 0, 0).X > sea.Surface.HullAccelerationAt(face, 0, 0, 0, 0, 0, 0).X) face = x;
+        }
+
+        for (var seconds = 0.0; seconds < 3 * 2 * Math.PI / sea.Frequency; seconds += 0.5)
+        {
+            sea.Surface.Advance(120 + seconds);
+            Assert.True(sea.Surface.HullAccelerationAt(face + celerity * seconds, 0, 0, 0, 0, 0, 0).X > 0, $"held back after {seconds:F1} s");
+        }
+    }
+
     private static double Sinc(double x) => Math.Sin(x) / x;
 
     /// <summary>The water's velocity under the drawn surface at a point, averaged over a square as wide as <paramref name="side"/>.</summary>

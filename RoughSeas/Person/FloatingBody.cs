@@ -14,8 +14,7 @@ namespace RoughSeas.Person;
 public sealed class FloatingBody(IPerson person, PersonConfig config, Waves waves)
 {
     private readonly Body body = person.Body;
-    private (double X, double Z) carried, water;
-    private bool met;
+    private (double X, double Z) carried;
     private Breaker? breaker;
 
     /// <summary>What the last step found.</summary>
@@ -30,7 +29,8 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     /// <summary>The body's motion after this step, in blocks per tick, as vanilla's physics keeps it.</summary>
     /// <param name="wavesPerSecond">The waves' seconds to a second of <paramref name="seconds"/>: the water's motion, read on the waves' clock, is taken on the tick's, while the body answers in the tick's own seconds.</param>
     /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
-    public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept)
+    public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
+        SwimStroke stroke = default)
     {
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
@@ -40,8 +40,9 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var massKg = body.MassKg + kit.Kg;
         var addedKg = body.AddedKg(waterline, air, density);
         var inertia = massKg + addedKg;
-        var addedAcrossKg = body.AddedAcrossKg(waterline, air, density);
+        var addedAcrossKg = stroke.Stroking ? body.AddedAlongKg(waterline, air, density) : body.AddedAcrossKg(waterline, air, density);
         var inertiaAcross = massKg + addedAcrossKg;
+        var thrust = stroke.Stroking ? config.Body.StrokeNewtons : 0;
 
         // the part of the body in a broken crest's water, which holds it up less
         var (churn, churned) = (0.0, 0.0);
@@ -64,17 +65,16 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var middle = Math.Max(0, surface.Height - (at.Feet + Math.Min(waterline, body.HeightMetres) / 2));
         var lift = Body.Lift(held, density, massKg, addedKg, WaveTheory.Gravity, sea.RiseAccelerationAt(at.X, at.Z, middle) * wavesPerSecond * wavesPerSecond);
         var rise = sea.RiseVelocityAt(at.X, at.Z, middle) * wavesPerSecond;
-        var heave = Body.Dragged(motion.Y * WaterDrag.TicksPerSecond - rise, density, config.Body.DragAreaAlong, inertia, seconds) + rise + lift * seconds;
+        var heave = Body.Dragged(motion.Y * WaterDrag.TicksPerSecond - rise, density, config.Body.DragAreaAlong, inertia, seconds) + rise
+            + (lift + thrust * stroke.Y / inertia) * seconds;
 
-        // across: the water over the part of the body under it, the same read a hull gets
         var top = surface.Swell - Math.Max(0, waterline - body.HeightMetres);
-        var flow = sea.HullVelocityAt(at.X, at.Z, top, Math.Min(waterline, body.HeightMetres), 0, at.Width, at.Width);
+        var depth = Math.Min(waterline, body.HeightMetres);
+        var flow = sea.HullVelocityAt(at.X, at.Z, top, depth, 0, at.Width, at.Width);
         flow = (flow.X * wavesPerSecond, flow.Z * wavesPerSecond);
-        var pressure = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross;
+        var push = sea.HullAccelerationAt(at.X, at.Z, top, depth, 0, at.Width, at.Width);
+        var pressure = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross * wavesPerSecond * wavesPerSecond;
         var before = carried;
-        var (pushX, pushZ) = met ? ((flow.X - water.X) * pressure, (flow.Z - water.Z) * pressure) : (0, 0);
-        water = flow;
-        met = true;
         var (rollerX, rollerZ) = (0.0, 0.0);
         if (breaker is { } roller)
         {
@@ -82,9 +82,11 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
             (rollerX, rollerZ) = (speed * Math.Cos(roller.TowardRadians), speed * Math.Sin(roller.TowardRadians));
         }
         var (toX, toZ) = (flow.X + rollerX, flow.Z + rollerZ);
-        var (awayX, awayZ) = (carried.X + pushX - toX, carried.Z + pushZ - toZ);
+        var (awayX, awayZ) = (carried.X - toX + (push.X * pressure + thrust * stroke.X / inertiaAcross) * seconds,
+            carried.Z - toZ + (push.Z * pressure + thrust * stroke.Z / inertiaAcross) * seconds);
         var away = Math.Sqrt(awayX * awayX + awayZ * awayZ);
-        var keptAway = away > 0 ? Body.Dragged(away, density, config.Body.DragAreaAcross * under / whole, inertiaAcross, seconds) / away : 1;
+        var dragArea = stroke.Stroking ? config.Body.DragAreaSwimming : config.Body.DragAreaAcross * under / whole;
+        var keptAway = away > 0 ? Body.Dragged(away, density, dragArea, inertiaAcross, seconds) / away : 1;
         carried = (toX + awayX * keptAway, toZ + awayZ * keptAway);
 
         Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, flow.X, rise, flow.Z, carried.X, carried.Z);

@@ -29,15 +29,6 @@ public sealed class HullSet
         }
     }
 
-    /// <summary>What her swing about a held bow adds to her motion, blocks per tick: not hers to lose to a mooring.</summary>
-    public (double X, double Z) PivotMotion
-    {
-        get
-        {
-            lock (gate) return (pivotX / WaterDrag.TicksPerSecond, pivotZ / WaterDrag.TicksPerSecond);
-        }
-    }
-
     /// <summary>What her motion holds of the set now, blocks per tick.</summary>
     public (double X, double Z) Held
     {
@@ -47,34 +38,43 @@ public sealed class HullSet
         }
     }
 
-    /// <summary>The water's drag brings her toward its velocity for <paramref name="seconds"/>.</summary>
-    public void Settle(HullDrag drag, double waterX, double waterZ, double yaw, double seconds)
+    public void Settle(HullDrag drag, WaterOnHull water, double yaw, double seconds)
     {
         lock (gate)
         {
-            var (relativeX, relativeZ) = drag.Settle(waterX - x, waterZ - z, yaw, seconds);
-            (x, z) = (waterX - relativeX, waterZ - relativeZ);
+            var (relativeX, relativeZ) = drag.Settle(water.X - x, water.Z - z, yaw, seconds, water.WayAlong, water.AccelerationX, water.AccelerationZ);
+            (x, z) = (water.X - relativeX, water.Z - relativeZ);
         }
     }
 
-    /// <summary>A hull whose drag isn't known comes toward the water's velocity by this share of the difference.</summary>
-    public void Relax(double waterX, double waterZ, double share)
+    public void Relax(WaterOnHull water, double share, double seconds)
     {
         lock (gate)
         {
-            x += (waterX - x) * share;
-            z += (waterZ - z) * share;
+            x += water.AccelerationX * seconds;
+            z += water.AccelerationZ * seconds;
+            x += (water.X - x) * share;
+            z += (water.Z - z) * share;
         }
     }
 
-    public (double X, double Z) Pull(HullDrag drag, double waterX, double waterZ, double yaw)
+    public void Push(double metresPerSecondX, double metresPerSecondZ)
     {
-        lock (gate) return drag.Pull(waterX - x, waterZ - z, yaw);
+        lock (gate)
+        {
+            x += metresPerSecondX;
+            z += metresPerSecondZ;
+        }
     }
 
-    public double Swing(HullDrag drag, double waterX, double waterZ, double yaw, double turnPerSecond, double seconds)
+    public (double X, double Z) Pull(HullDrag drag, WaterOnHull water, double yaw)
     {
-        lock (gate) return drag.Swing(waterX - x, waterZ - z, yaw, turnPerSecond, seconds);
+        lock (gate) return drag.Pull(water.X - x, water.Z - z, yaw, water.WayAlong);
+    }
+
+    public double Swing(HullDrag drag, WaterOnHull water, double yaw, double turnPerSecond, double seconds)
+    {
+        lock (gate) return drag.Swing(water.X - x, water.Z - z, yaw, turnPerSecond, seconds);
     }
 
     /// <summary>
@@ -118,35 +118,6 @@ public sealed class HullSet
             (heldX, heldZ) = moves ? ((x + pivotX) / WaterDrag.TicksPerSecond, (z + pivotZ) / WaterDrag.TicksPerSecond) : (0, 0);
             motion.X += heldX;
             motion.Z += heldZ;
-        }
-    }
-
-    /// <summary>A mooring stops her set away from it, along the unit vector from the mooring to her.</summary>
-    public void Hold(double outwardX, double outwardZ)
-    {
-        lock (gate)
-        {
-            var outward = x * outwardX + z * outwardZ;
-            if (outward <= 0) return;
-
-            x -= outward * outwardX;
-            z -= outward * outwardZ;
-            heldX -= outward * outwardX / WaterDrag.TicksPerSecond;
-            heldZ -= outward * outwardZ / WaterDrag.TicksPerSecond;
-        }
-    }
-
-    /// <summary>A pull back along the unit vector from the mooring to her takes up to this much of her set away from it, m/s.</summary>
-    public double Slow(double outwardX, double outwardZ, double metresPerSecond)
-    {
-        lock (gate)
-        {
-            var cut = Math.Min(Math.Max(0, x * outwardX + z * outwardZ), metresPerSecond);
-            x -= cut * outwardX;
-            z -= cut * outwardZ;
-            heldX -= cut * outwardX / WaterDrag.TicksPerSecond;
-            heldZ -= cut * outwardZ / WaterDrag.TicksPerSecond;
-            return cut;
         }
     }
 

@@ -7,9 +7,9 @@ using Vintagestory.API.MathTools;
 namespace RoughSeas.Propulsion;
 
 /// <summary>
-/// Between a boat's <c>ForwardSpeed</c> and how far she really goes: vanilla's swimming physics divides her motion by
-/// up to 1.25 when it is fast (<c>EntityBehaviorPassivePhysics.MotionAndCollision</c>). Its water drag is left out:
-/// while ours acts it is undone along the water.
+/// The speed to ask of a boat's <c>ForwardSpeed</c> for her to really make it: vanilla's swimming physics divides her
+/// motion by up to 1.25 when it is fast (<c>EntityBehaviorPassivePhysics.MotionAndCollision</c>), the inverse of
+/// <see cref="VesselDraught.Realized"/>. Its water drag is left out: while ours acts it is undone along the water.
 /// </summary>
 [ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "MotionAndCollision", "the swim drag is clamp(10·|motion|·dtFactor − 0.02, 1, 1.25) and this class undoes it along the water")]
 public static class VanillaSwim
@@ -17,8 +17,6 @@ public static class VanillaSwim
     private const double TicksPerSecond = 60;
 
     private static double StepFactor => GlobalConstants.PhysicsFrameTime * TicksPerSecond;
-
-    public static double Realized(double forwardSpeed) => TicksPerSecond * forwardSpeed / SwimDrag(forwardSpeed);
 
     public static void LeaveWaterDragOnHeave(Vec3d motion, double waterDrag, float seconds)
     {

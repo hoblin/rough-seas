@@ -4,18 +4,40 @@ namespace RoughSeas.Storms;
 
 public readonly record struct MooringLine(double RestMetres, double BreakingNewtons, double StretchAtBreak)
 {
+    private const double FullTurn = 2 * Math.PI;
+
     public double NewtonsPerMetre => BreakingNewtons / StretchAtBreak / RestMetres;
 
-    /// <param name="snatches">Whether she has just come to the line's end at <paramref name="arrivingMetresPerSecond"/>; held at it, the line carries the steady pull alone.</param>
-    public double Tension(double steadyNewtons, double arrivingMetresPerSecond, double kilograms, bool snatches)
+    public LineStep Over(double stretchMetres, double outwardMetresPerSecond, double steadyNewtons, double kilograms, double seconds, double level)
     {
-        var steady = Math.Max(0, steadyNewtons);
-        if (!snatches) return steady;
+        if (stretchMetres <= 0 || kilograms <= 0 || level <= 0 || seconds <= 0) return default;
 
-        var speed = Math.Max(0, arrivingMetresPerSecond);
-        var energy = speed > 0 ? NewtonsPerMetre * kilograms * speed * speed : 0;
-        return steady + Math.Sqrt(steady * steady + energy);
+        var stiffness = NewtonsPerMetre * level * level;
+        var turning = Math.Sqrt(stiffness / kilograms);
+        var held = steadyNewtons / stiffness;
+        var (offset, lead) = (stretchMetres - held, outwardMetresPerSecond / turning);
+        var swing = Math.Sqrt(offset * offset + lead * lead);
+        var phase = Math.Atan2(lead, offset);
+        var span = turning * seconds;
+        if (swing >= Math.Abs(held))
+        {
+            var reach = Math.Acos(-held / swing);
+            span = Math.Min(span, Math.Min(Positive(phase + reach), Positive(phase - reach)));
+        }
+
+        var stretch = held + swing * Math.Cos(span - phase);
+        var speed = turning * swing * -Math.Sin(span - phase);
+        var furthest = Positive(phase) < span ? held + swing : Math.Max(stretchMetres, stretch);
+        return new LineStep(speed - outwardMetresPerSecond - steadyNewtons * span / turning / kilograms, Math.Max(0, stiffness * furthest / level));
     }
 
     public bool Parts(double newtons) => newtons > BreakingNewtons;
+
+    private static double Positive(double angle)
+    {
+        var turned = angle % FullTurn;
+        return turned <= 0 ? turned + FullTurn : turned;
+    }
 }
+
+public readonly record struct LineStep(double Kick, double PeakNewtons);

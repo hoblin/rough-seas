@@ -23,10 +23,12 @@ public class FloatingBodyTests
 
     private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.DensityKgPerLitre);
 
-    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1)
+    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default)
     {
         private readonly FloatingBody body = new(Man, Fixtures.PersonConfig, Waves);
         private BodyMotion motion;
+
+        public SwimStroke Stroke { get; set; } = stroke;
 
         public double Feet { get; private set; } = feet;
 
@@ -41,7 +43,7 @@ public class FloatingBodyTests
         public FloatReading Step()
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
-            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept);
+            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke);
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
@@ -264,6 +266,44 @@ public class FloatingBodyTests
         var renewed = run.Step().Churn;
         Assert.True(faded < first / 5, $"{faded:P1} of {first:P1} after a period");
         Assert.True(renewed > 5 * faded, $"{renewed:P1} against {faded:P1} before it");
+    }
+
+    private static readonly SwimStroke Ahead = new(1, 0, 0);
+
+    [Fact]
+    public void SwimsByTheThrustOfItsStrokeAsFastAsTheDragItMeetsAllows()
+    {
+        var run = new Run(Calm, Still - 1.6, salt: false, stroke: Ahead);
+        run.Settle(30);
+        var from = run.MovedX;
+        run.Settle(10);
+
+        Assert.InRange((run.MovedX - from) / 10, 0.87, 0.93);
+    }
+
+    [Fact]
+    public void GlidesToAStopWhenItStopsStroking()
+    {
+        var run = new Run(Calm, Still - 1.6, stroke: Ahead);
+        run.Settle(30);
+        run.Stroke = default;
+        run.Settle(30);
+        var from = run.MovedX;
+        run.Settle(1);
+
+        Assert.InRange(run.MovedX - from, 0, 0.05);
+    }
+
+    [Fact]
+    public void SwimmingWithAWavesFaceItIsCarriedFasterThanItSwims()
+    {
+        var face = new WaterFixtures.Sea(0, flow: (1.0, 0), push: (0.4, 0));
+        var run = new Run(face, Still - 1.6, stroke: Ahead);
+        run.Settle(30);
+        var from = run.MovedX;
+        run.Settle(10);
+
+        Assert.True((run.MovedX - from) / 10 > 1.0 + 0.9, $"{(run.MovedX - from) / 10:F2} m/s");
     }
 
     [Fact]

@@ -37,6 +37,9 @@ public sealed class HullDrag
     private const double EndMoment = 3;
     private const int SwingStrips = 8;
     private const int SwingSteps = 4;
+    private const double SlopeNudge = 1e-4;
+    private const double StiffestStep = 0.1;
+    private const int MostSteps = 50;
 
     private readonly HullForm form;
     private readonly DragConfig config;
@@ -85,20 +88,39 @@ public sealed class HullDrag
     public double Across(double metresPerSecond) => -SideDrag * metresPerSecond * Math.Abs(metresPerSecond);
 
     /// <summary>The water's drag on her, newtons in world axes.</summary>
-    public (double X, double Z) Pull(double waterX, double waterZ, double yaw)
+    public (double X, double Z) Pull(double waterX, double waterZ, double yaw, double wayAlong = 0)
     {
         var (along, across) = HullShape.ToHull(waterX, waterZ, yaw);
-        return HullShape.ToWorld(Along(-along), Across(-across), yaw);
+        return HullShape.ToWorld(Along(wayAlong - along) - Along(wayAlong), Across(-across), yaw);
     }
 
     /// <summary>
     /// The water's velocity relative to her after <paramref name="seconds"/> of its drag alone: the drag at this speed,
     /// read as a square law, integrated exactly, so a long step can't carry her past the water.
     /// </summary>
-    public (double X, double Z) Settle(double waterX, double waterZ, double yaw, double seconds)
+    public (double X, double Z) Settle(double waterX, double waterZ, double yaw, double seconds, double wayAlong = 0, double pushX = 0, double pushZ = 0)
     {
         var (along, across) = HullShape.ToHull(waterX, waterZ, yaw);
-        return HullShape.ToWorld(Settled(along, Along(-along) / AlongKg, seconds), Settled(across, Across(-across) / AcrossKg, seconds), yaw);
+        var (pushAlong, pushAcross) = HullShape.ToHull(pushX, pushZ, yaw);
+        return HullShape.ToWorld(Settled(true, along, pushAlong, wayAlong, seconds), Settled(false, across, pushAcross, 0, seconds), yaw);
+    }
+
+    public (double X, double Z) Newtons(double accelerationX, double accelerationZ, double yaw)
+    {
+        var (along, across) = HullShape.ToHull(accelerationX, accelerationZ, yaw);
+        return HullShape.ToWorld(along * AlongKg, across * AcrossKg, yaw);
+    }
+
+    public (double X, double Z) Acceleration(double newtonsX, double newtonsZ, double yaw)
+    {
+        var (along, across) = HullShape.ToHull(newtonsX, newtonsZ, yaw);
+        return HullShape.ToWorld(along / AlongKg, across / AcrossKg, yaw);
+    }
+
+    public double KilogramsToward(double unitX, double unitZ, double yaw)
+    {
+        var (along, across) = HullShape.ToHull(unitX, unitZ, yaw);
+        return 1 / (along * along / AlongKg + across * across / AcrossKg);
     }
 
     /// <summary>
@@ -127,8 +149,22 @@ public sealed class HullDrag
         return turnPerSecond;
     }
 
-    private static double Settled(double speed, double acceleration, double seconds) =>
-        speed == 0 ? 0 : speed / (1 + Math.Abs(acceleration / speed) * seconds);
+    private double Settled(bool along, double relative, double push, double way, double seconds)
+    {
+        var steps = Math.Clamp((int)Math.Ceiling(seconds * Slope(along, relative, way) / StiffestStep), 1, MostSteps);
+        var step = seconds / steps;
+        for (var i = 0; i < steps; i++) relative -= step * (push + Pulled(along, relative, way)) / (1 + step * Slope(along, relative, way) / 2);
+        return relative;
+    }
+
+    private double Slope(bool along, double relative, double way)
+    {
+        var nudge = Math.Max(SlopeNudge, Math.Abs(relative) * SlopeNudge);
+        return Math.Max(0, (Pulled(along, relative + nudge, way) - Pulled(along, relative - nudge, way)) / (2 * nudge));
+    }
+
+    private double Pulled(bool along, double relative, double way) =>
+        along ? (Along(way - relative) - Along(way)) / AlongKg : Across(-relative) / AcrossKg;
 
     private double SideDrag => halfDensity * form.SideDrag * sideSquareMetres;
 

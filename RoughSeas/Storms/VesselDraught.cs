@@ -4,6 +4,7 @@ using RoughSeas.SeaAndWeather;
 using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Storms;
@@ -65,6 +66,9 @@ public static class VesselDraught
 
     public static double SwimDrag(double motionLength, double stepFactor) =>
         Math.Clamp(SwimDragPerMotion * Math.Abs(motionLength * stepFactor) - SwimDragOffset, 1, MostSwimDrag);
+
+    public static double Realized(double forwardSpeed) =>
+        TicksPerSecond * forwardSpeed / SwimDrag(forwardSpeed, GlobalConstants.PhysicsFrameTime * TicksPerSecond);
 
     private static void Settle(EntityBoat __instance, ref double __result)
     {

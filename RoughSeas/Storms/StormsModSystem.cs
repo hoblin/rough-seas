@@ -50,7 +50,6 @@ public class StormsModSystem : ModSystem
         api.Network.RegisterChannel(Channel).RegisterMessageType<MooringReport>();
         VesselDraught.Attach();
         DriftPhysics.Attach();
-        WaveCarry.Attach();
         OneRope.Attach();
     }
 
@@ -269,7 +268,6 @@ public class StormsModSystem : ModSystem
     {
         VesselDraught.Detach();
         DriftPhysics.Detach();
-        WaveCarry.Detach();
         OneRope.Detach();
         if (api?.Side == EnumAppSide.Server)
         {
