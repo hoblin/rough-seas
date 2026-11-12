@@ -1,9 +1,11 @@
 using System.Globalization;
+using System.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 
 namespace RoughSeas.Soundscape;
@@ -13,21 +15,42 @@ public class SoundscapeModSystem : ModSystem
     private const double LogEverySeconds = 10;
     private static readonly AssetLocation ConfigAsset = new("roughseas:config/soundscape.json");
 
+    private const string Channel = "roughseas:sounds";
+
     private ICoreAPI api = null!;
+    private ICoreServerAPI? sapi;
     private SeaBed? bed;
     private VesselSounds? vessels;
     private double sinceLog;
 
     public SoundscapeConfig Config { get; private set; } = null!;
 
-    public override void Start(ICoreAPI api) => this.api = api;
+    public override void Start(ICoreAPI api)
+    {
+        this.api = api;
+        api.Network.RegisterChannel(Channel).RegisterMessageType<SoundCutPacket>();
+    }
 
     public override void AssetsLoaded(ICoreAPI api) => Config = api.Assets.Get<SoundscapeConfig>(ConfigAsset);
 
-    public override void StartServerSide(ICoreServerAPI sapi) => new HullSounds(this, sapi).Start();
+    public override void StartServerSide(ICoreServerAPI sapi)
+    {
+        this.sapi = sapi;
+        new HullSounds(this, sapi).Start();
+    }
+
+    /// <summary>Server side only: every client within the cut's range plays it from its start and stops it at its mark.</summary>
+    public void Play(SoundCut cut, Vec3d at)
+    {
+        var near = sapi!.World.AllOnlinePlayers.OfType<IServerPlayer>()
+            .Where(player => player.Entity?.Pos.SquareDistanceTo(at) <= cut.Range * cut.Range)
+            .ToArray();
+        if (near.Length > 0) sapi.Network.GetChannel(Channel).SendPacket(new SoundCutPacket { Cut = cut, X = at.X, Y = at.Y, Z = at.Z }, near);
+    }
 
     public override void StartClientSide(ICoreClientAPI capi)
     {
+        capi.Network.GetChannel(Channel).SetMessageHandler<SoundCutPacket>(new CutSounds(capi, this).Play);
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
         ShoreSound.Attach(Config.Shore, storms);

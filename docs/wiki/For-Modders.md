@@ -509,6 +509,15 @@ A basket fitted to the reed boat, the dugout, the outrigger or the bark canoe si
 
 New: `BackCargo`, `FrontCargo`.
 
+### A split cracks, with no fall
+
+A row split with wedges sounds the crack that opens vanilla's `effect/treefell`, and not the tree falling after it.
+
+- The wedge's `crack` attribute is a `SoundCut`, `{ "location", "untilSeconds", "range" }`: every client within `range` of the split plays `location` from its start and stops it at `untilSeconds`. Vanilla's file is played as it ships, nothing of it copied.
+- `SoundscapeModSystem.Play(SoundCut, Vec3d)` does this from the server for any module, over the new channel `roughseas:sounds`.
+
+New: `crack`, `SoundCut`, `SoundscapeModSystem.Play`, `roughseas:sounds`.
+
 ## What not to touch
 
 | Name | What it is |
