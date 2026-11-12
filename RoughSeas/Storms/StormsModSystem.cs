@@ -72,7 +72,7 @@ public class StormsModSystem : ModSystem
         DrawnSea = new DrawnSea(surface, field);
         DrawnWater = new DrawnWater(DrawnSea);
         var shoreConfig = capi.ModLoader.GetModSystem<ShoreModSystem>().Config;
-        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, Config.Surface.Shore.WaterAttenuation, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, Config.Surface.Tessellation, message => Log(message), capi))
+        if (SurfaceShader.Attach(surface, field, shoreConfig.Sheet.LensDepthRatio, Config.Surface.Shore.WetReflectance, Config.Surface.Shore.WaterAttenuation, shoreConfig.Faces.FoamDecaySeconds, shoreConfig.RunUp.WallSlope, Config.Surface.Tessellation, message => Log(message), Mod.Logger, capi))
         {
             clock = new SurfaceClock(this, sea, surface, field, Surf(capi), capi);
             EyeUnderSurface.Attach(this, capi, DrawnWater, Config.Eye);

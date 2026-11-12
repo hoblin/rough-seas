@@ -34,6 +34,8 @@ The pictures below paint the water by height, purple at its lowest and red at it
 
 The sea is drawn this way even with *Waving foliage* off in the game's graphics settings: a storm should never come unseen.
 
+Beside a mod that replaces the game's shaders, a part of this picture that doesn't fit that mod's shaders is left out: wet sand, the finer surface near you, or, in the rarest case, the waves themselves. Everything else draws as usual, and `client-main.log` says what was left out.
+
 ## Water under the beach
 
 Under a shore at sea level lies the sea's own water, as far up as the waves run. It is there along every shore of the sea and of a lake. It reaches further inland while a storm's waves run high, and drains again after the storm. You don't see it until you dig: dig a hole down to the level of the water beside it, and the hole fills. Ground higher up digs as it always did.
