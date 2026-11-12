@@ -97,8 +97,8 @@ public sealed class HullDrag
     /// <summary>
     /// The water's velocity relative to her after <paramref name="seconds"/> of its drag, as <see cref="Pull"/> takes
     /// it, and of a push of <paramref name="pushX"/>, <paramref name="pushZ"/> m/s². Solved implicitly, in steps short
-    /// against the drag's own time, so a long step can't carry her past the water and a push held by the drag holds
-    /// her exactly where they balance.
+    /// against the drag's own time at the step's start, so a long step can't carry her past the water, and where a push
+    /// and the drag balance she stays. From rest a long step under a push can pass that balance; the next one comes back.
     /// </summary>
     public (double X, double Z) Settle(double waterX, double waterZ, double yaw, double seconds, double wayAlong = 0, double pushX = 0, double pushZ = 0)
     {
