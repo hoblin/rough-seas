@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using RoughSeas.Propulsion;
+using RoughSeas.Storms;
 using RoughSeas.Tests.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -378,15 +379,6 @@ public class PropulsionTests
         var newtons = new WaveMaking(1, 0.1, 0.0625, 1000).Newtons(speed);
 
         Assert.InRange(newtons / (500 * speed * speed * wettedSquareMetres), least, most);
-    }
-
-    [Theory]
-    [InlineData(0.5)]
-    [InlineData(2)]
-    [InlineData(4)]
-    public void VanillaCarriesABoatAtTheSpeedItIsCommanded(double metresPerSecond)
-    {
-        Assert.Equal(metresPerSecond, VanillaSwim.Realized(VanillaSwim.Commanded(metresPerSecond)), 3);
     }
 
     [Fact]

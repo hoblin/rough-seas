@@ -34,7 +34,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private float speedMultiplier;
     private EntityBehaviorSeatable? seatable;
     private IMasted? mast;
-    private IHullWay? driven;
     private double designedMastMetres;
     private PassingWaves passing = null!;
     private float sinceUpdate;
@@ -50,10 +49,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     public IBuoyant? Buoyant => buoyant;
 
-    /// <summary>Whether vanilla's water drag is off her along the water just now (<see cref="IHullWay"/>).</summary>
-    public bool Driven => driven?.Driving == true;
-
-    /// <summary>How the drawn waves carry her on this side, while this side moves her.</summary>
+    /// <summary>The drawn waves' water under her on this side, while this side moves her.</summary>
     public WaveRide Ride { get; private set; } = null!;
 
     /// <summary>How she takes the sea now, with the water in her bilge.</summary>
@@ -108,7 +104,6 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
         mooring = entity.GetBehavior<EntityBehaviorMooring>();
         seatable = entity.GetBehavior<EntityBehaviorSeatable>();
         mast = entity.SidedProperties.Behaviors.OfType<IMasted>().FirstOrDefault();
-        driven = entity.SidedProperties.Behaviors.OfType<IHullWay>().FirstOrDefault();
     }
 
     public double WaterDepth(int maxBlocks) => Sound(entity.Pos.XYZ, maxBlocks).Depth;

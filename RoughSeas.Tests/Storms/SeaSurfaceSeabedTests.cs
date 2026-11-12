@@ -43,6 +43,47 @@ public class SeaSurfaceSeabedTests
         Enumerable.Range(0, 400).Max(i => surface.HeightAt(MiddleX + i % 20 * 0.7, MiddleZ + i / 20 * 0.9, 1, shortWaves));
 
     [Fact]
+    public void OverAShoalingBedABodyMovingThroughStillWavesGainsNothingFromThem()
+    {
+        const double speed = 2;
+        const double seconds = 0.02;
+        var surface = Settled(1.5);
+        var field = Flat(surface, 4);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+            field.SetCelerityDepth(x, z, (float)(6 - 4.5 * (x - OriginX) / Size));
+        surface.Seabed = field;
+        double Water(double x) => surface.HullVelocityAt(x, MiddleZ, 0, 0.3, 0, 2, 1).X;
+
+        var (left, met) = (0.0, 0.0);
+        for (var x = OriginX + 16.0; x < OriginX + 48; x += speed * seconds)
+        {
+            var change = Water(x + speed * seconds) - Water(x);
+            var push = -surface.HullGradientAt(x + speed * seconds / 2, MiddleZ, 0, 0.3, 0, 2, 1).Moving(speed, 0).X * seconds;
+            left += change + push;
+            met += Math.Abs(change);
+        }
+
+        Assert.InRange(Math.Abs(left), 0, 0.05 * met);
+    }
+
+    [Fact]
+    public void BesideLandTheWatersGradientIsTheWatersAloneWithNoStepAtTheShore()
+    {
+        var surface = Settled(1.5);
+        var field = Flat(surface, 3);
+        for (var x = (int)MiddleX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+            field.SetDepth(x, z, -0.5f);
+        surface.Seabed = field;
+        var open = Enumerable.Range(0, 40).Max(i => Math.Abs(surface.HullGradientAt(MiddleX - 12 + i * 0.25, MiddleZ, 0, 0.3, 0, 2, 1).XX));
+        double Gradient(double offset) => surface.HullGradientAt(MiddleX - offset, MiddleZ, 0, 0.3, 0, 2, 1).XX;
+
+        Assert.InRange(Math.Abs(Gradient(0.05) - Gradient(0.55)), 0, 0.25 * open);
+        Assert.Equal(default, surface.HullGradientAt(MiddleX + 0.5, MiddleZ, 0, 0.3, 0, 2, 1));
+    }
+
+    [Fact]
     public void OverLandTheSeaIsNotDrawn()
     {
         var surface = Settled(2);

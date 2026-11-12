@@ -14,6 +14,7 @@ namespace RoughSeas.Storms;
 public sealed class SeaSurface
 {
     private const double FullTurn = 2 * Math.PI;
+    private const double GradientStep = 0.5;
     private const int SurfaceSearchSteps = 3;
     private const int FoldSamplesAcross = 24;
 
@@ -383,6 +384,39 @@ public sealed class SeaSurface
         }
         return (velocityX, velocityZ);
     }
+
+    /// <summary>
+    /// How the water's velocity <see cref="HullVelocityAt"/> reads changes from one metre to the next over the same
+    /// body, per second of the waves' clock: its own difference across a block, the scale the waves read the bed at, so it
+    /// holds everything that changes the velocity along the way, a wave's height growing over a shoaling bed with the
+    /// phase. It is taken over the water alone: land, where the waves stop at a block's edge, is no change of the water's.
+    /// </summary>
+    public FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam, double share = 1)
+    {
+        if (!Wet(x, z)) return default;
+
+        var here = HullVelocityAt(x, z, lift, draft, yaw, length, beam, share);
+        var (alongX, alongZ) = Across(GradientStep, 0);
+        var (acrossX, acrossZ) = Across(0, GradientStep);
+        return new FlowGradient(alongX, (acrossX + alongZ) / 2, acrossZ);
+
+        (double X, double Z) Across(double stepX, double stepZ)
+        {
+            var (ahead, behind) = (Wet(x + stepX, z + stepZ), Wet(x - stepX, z - stepZ));
+            var (from, to, metres) = (ahead, behind) switch
+            {
+                (true, true) => (At(x - stepX, z - stepZ), At(x + stepX, z + stepZ), 2 * GradientStep),
+                (true, false) => (here, At(x + stepX, z + stepZ), GradientStep),
+                (false, true) => (At(x - stepX, z - stepZ), here, GradientStep),
+                _ => (here, here, GradientStep),
+            };
+            return ((to.X - from.X) / metres, (to.Z - from.Z) / metres);
+        }
+
+        (double X, double Z) At(double atX, double atZ) => HullVelocityAt(atX, atZ, lift, draft, yaw, length, beam, share);
+    }
+
+    private bool Wet(double x, double z) => Seabed is not { } field || !field.Covers(x, z) || !field.LandAt(x, z);
 
     private static double Sinc(double x) => Math.Abs(x) < 1e-9 ? 1 : Math.Sin(x) / x;
 

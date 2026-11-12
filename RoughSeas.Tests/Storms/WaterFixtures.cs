@@ -11,7 +11,7 @@ public static class WaterFixtures
     public const double StillLevel = 7 / 8.0;
     public const double StillSurface = WaterTop + StillLevel;
 
-    public sealed class Sea(double height, bool swell = true, bool local = true) : IDrawnSea
+    public sealed class Sea(double height, bool swell = true, bool local = true, (double X, double Z) flow = default, FlowGradient gradient = default) : IDrawnSea
     {
         public bool Swell => swell;
 
@@ -23,7 +23,9 @@ public static class WaterFixtures
 
         public RoughSeas.Water.WaveReading WaveHere(double x, double z) => default;
 
-        public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) => default;
+        public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) => flow;
+
+        public FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam) => gradient;
 
         public double RiseVelocityAt(double x, double z, double below = 0) => 0;
 

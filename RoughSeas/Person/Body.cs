@@ -78,6 +78,9 @@ public sealed class Body
     public double AddedAcrossKg(double waterline, double lungLitres, double waterDensity) =>
         Spheroid(lungLitres, waterDensity).Across * LitresUnder(waterline, lungLitres) / Litres(lungLitres);
 
+    public double AddedAlongKg(double waterline, double lungLitres, double waterDensity) =>
+        Spheroid(lungLitres, waterDensity).Along * LitresUnder(waterline, lungLitres) / Litres(lungLitres);
+
     private (double Along, double Across) Spheroid(double lungLitres, double waterDensity) =>
         AddedMass.OfSpheroid(HeightMetres, Litres(lungLitres) / LitresPerCubicMetre, waterDensity);
 

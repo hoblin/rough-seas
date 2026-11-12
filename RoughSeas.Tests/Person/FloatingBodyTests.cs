@@ -23,10 +23,14 @@ public class FloatingBodyTests
 
     private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.DensityKgPerLitre);
 
-    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1)
+    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default)
     {
         private readonly FloatingBody body = new(Man, Fixtures.PersonConfig, Waves);
         private BodyMotion motion;
+
+        public SwimStroke Stroke { get; set; } = stroke;
+
+        public (double X, double Z) Current { get; set; }
 
         public double Feet { get; private set; } = feet;
 
@@ -41,7 +45,7 @@ public class FloatingBodyTests
         public FloatReading Step()
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
-            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept);
+            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current);
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
@@ -80,6 +84,15 @@ public class FloatingBodyTests
 
         var speed = (from - run.Feet) / 60;
         Assert.InRange(speed, 0.05, 0.5);
+    }
+
+    [Fact]
+    public void TreadingWaterKeepsTheEyesAboveFreshWater()
+    {
+        var run = new Run(Calm, Still - 1.6, salt: false, stroke: new SwimStroke(0, 1, 0));
+        run.Settle(60);
+
+        Assert.InRange(Still - run.Feet, 1.0, EyeHeight);
     }
 
     [Fact]
@@ -264,6 +277,74 @@ public class FloatingBodyTests
         var renewed = run.Step().Churn;
         Assert.True(faded < first / 5, $"{faded:P1} of {first:P1} after a period");
         Assert.True(renewed > 5 * faded, $"{renewed:P1} against {faded:P1} before it");
+    }
+
+    private static readonly SwimStroke Ahead = new(1, 0, 0);
+
+    [Fact]
+    public void SwimsByTheThrustOfItsStrokeAsFastAsTheDragItMeetsAllows()
+    {
+        var run = new Run(Calm, Still - 1.6, salt: false, stroke: Ahead);
+        run.Settle(30);
+        var from = run.MovedX;
+        run.Settle(10);
+
+        Assert.InRange((run.MovedX - from) / 10, 0.87, 0.93);
+    }
+
+    [Fact]
+    public void GlidesToAStopWhenItStopsStroking()
+    {
+        var run = new Run(Calm, Still - 1.6, stroke: Ahead);
+        run.Settle(30);
+        run.Stroke = default;
+        var stopped = run.MovedX;
+        run.Settle(1);
+        var glided = run.MovedX - stopped;
+        run.Settle(30);
+        var from = run.MovedX;
+        run.Settle(1);
+
+        Assert.InRange(glided, 0.2, 0.9);
+        Assert.InRange(run.MovedX - from, 0, 0.05);
+    }
+
+    [Fact]
+    public void ACurrentCarriesAFloatingBodyAtItsSpeed()
+    {
+        var run = new Run(Calm, Still - 1.6) { Current = (0.5, 0) };
+        run.Settle(60);
+        var from = run.MovedX;
+        run.Settle(10);
+
+        Assert.InRange((run.MovedX - from) / 10, 0.49, 0.51);
+    }
+
+    [Fact]
+    public void SwimmingAgainstACurrentFasterThanItSwimsItLosesGround()
+    {
+        var run = new Run(Calm, Still - 1.6, stroke: Ahead) { Current = (-1.2, 0) };
+        run.Settle(60);
+        var from = run.MovedX;
+        run.Settle(10);
+
+        Assert.InRange((run.MovedX - from) / 10, -0.4, -0.2);
+    }
+
+    [Fact]
+    public void SwimmingWithAWavesFaceItIsCarriedFasterThanItSwims()
+    {
+        double Speed(FlowGradient gradient)
+        {
+            var run = new Run(new WaterFixtures.Sea(0, flow: (1.0, 0), gradient: gradient), Still - 1.6, stroke: Ahead);
+            run.Settle(30);
+            var from = run.MovedX;
+            run.Settle(10);
+            return (run.MovedX - from) / 10;
+        }
+
+        var (flat, face) = (Speed(default), Speed(new FlowGradient(-0.3, 0, 0)));
+        Assert.InRange(face - flat, 0.2, 0.35);
     }
 
     [Fact]

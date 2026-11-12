@@ -78,7 +78,7 @@
         "syncSeconds": 1,
         "logSeconds": 5,
         "sources": {
-            "syncSeconds": "How often the server tells clients how far the water has carried a vessel along, for a rider who takes her helm",
+            "syncSeconds": "How often the side that moves a vessel tells the other how the water carries her, for whoever moves her next",
             "logSeconds": "How often a carried or swinging hull logs the current and what it does to her"
         }
     },

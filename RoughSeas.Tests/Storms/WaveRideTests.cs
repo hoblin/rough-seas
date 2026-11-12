@@ -3,22 +3,23 @@ using RoughSeas.Storms;
 
 namespace RoughSeas.Tests.Storms;
 
-public class WaveCarryTests
+public class WaveRideTests
 {
     private const double Frame = 1 / 60.0;
     private const double WaterDragValue = 0.92;
     private const double Water = 1.2;
+    private const double Period = 8;
 
     private static double Kept(double seconds) => RoughSeas.SeaAndWeather.WaterDrag.Kept(WaterDragValue, seconds);
 
     [Fact]
-    public void AHullUnderWayTakesTheWavesVelocityOnTopOfItsWay()
+    public void ABodyUnderWayTakesTheWatersVelocityOnTopOfItsWay()
     {
         Assert.Equal(Water / 60, WaterDrag.Carried(Water, 0.4, 0), 12);
     }
 
     [Fact]
-    public void AHullLyingStillMovesWithTheWavesAsTheyChangeWhateverTheDrag()
+    public void ABodyLyingStillMovesWithTheWaterAsItChangesWhateverTheDrag()
     {
         var motion = 0.0;
         var before = 0.0;
@@ -39,20 +40,19 @@ public class WaveCarryTests
     [InlineData(17)]
     public void OneWaveCarriesAHullAsFarAtAnySpeedOfTime(double wavesPerTickSecond)
     {
-        const double period = 8;
         var (reach, furthest) = (0.0, 0.0);
-        for (var waves = 0.0; waves < period / 2; waves += wavesPerTickSecond * Frame)
+        for (var waves = 0.0; waves < Period / 2; waves += wavesPerTickSecond * Frame)
         {
-            var velocity = WaveCarry.OnTheClock((Water * Math.Sin(2 * Math.PI * waves / period), 0), wavesPerTickSecond);
+            var velocity = WaveRide.OnTheClock((Water * Math.Sin(2 * Math.PI * waves / Period), 0), wavesPerTickSecond);
             reach += velocity.X * Frame;
             furthest = Math.Max(furthest, reach);
         }
 
-        Assert.InRange(furthest, 0.97 * Water * period / Math.PI, 1.03 * Water * period / Math.PI);
+        Assert.InRange(furthest, 0.97 * Water * Period / Math.PI, 1.03 * Water * Period / Math.PI);
     }
 
     [Fact]
-    public void StandsWhileTheClockStands() => Assert.Equal(default, WaveCarry.OnTheClock((Water, Water), 0));
+    public void StandsWhileTheClockStands() => Assert.Equal(default, WaveRide.OnTheClock((Water, Water), 0));
 
     [Fact]
     public void StillWaterCarriesNothing()

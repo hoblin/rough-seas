@@ -12,10 +12,31 @@ public sealed class WaveMaking(double lengthMetres, double beamMetres, double dr
     private const double SlowestMetresPerSecond = 0.05;
     private const double DeepestDecay = 30;
     private const int Steps = 240;
+    private const double TabledStepMetresPerSecond = 0.02;
+    private const int TabledSteps = 1250;
+
+    private readonly double[] tabled = new double[TabledSteps + 1];
 
     public double Newtons(double metresPerSecond)
     {
         var speed = Math.Abs(metresPerSecond);
+        var at = speed / TabledStepMetresPerSecond;
+        var below = (int)at;
+        if (below >= TabledSteps) return Integral(speed);
+
+        var (low, high) = (Tabled(below), Tabled(below + 1));
+        return low + (high - low) * (at - below);
+    }
+
+    private double Tabled(int index)
+    {
+        var newtons = tabled[index];
+        if (newtons == 0 && index * TabledStepMetresPerSecond >= SlowestMetresPerSecond) newtons = tabled[index] = Integral(index * TabledStepMetresPerSecond);
+        return newtons;
+    }
+
+    private double Integral(double speed)
+    {
         if (speed < SlowestMetresPerSecond || draftMetres <= 0) return 0;
 
         var waveNumber = Gravity / (speed * speed);

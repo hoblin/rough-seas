@@ -36,6 +36,10 @@ public sealed class HullRider(ResponseConfig config)
     public (double X, double Z) Water(IDrawnSea sea, double x, double z, double yaw, RiddenHull hull) =>
         sea.HullVelocityAt(x, z, Lift, hull.DraftMetres, yaw, hull.LengthMetres, hull.BeamMetres);
 
+    /// <summary>How the water's velocity over the hull's underwater body changes across a metre at its heave now, per second of the waves' clock.</summary>
+    public FlowGradient Gradient(IDrawnSea sea, double x, double z, double yaw, RiddenHull hull) =>
+        sea.HullGradientAt(x, z, Lift, hull.DraftMetres, yaw, hull.LengthMetres, hull.BeamMetres);
+
     /// <summary>Takes the hull out of the waves: it comes to rest and is next met afresh.</summary>
     public void Settle()
     {

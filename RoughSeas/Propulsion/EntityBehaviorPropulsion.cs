@@ -79,6 +79,9 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
 
     public static int Way(int ahead, int turn) => ahead < 0 || (ahead == 0 && turn < 0) ? -1 : 1;
 
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "OnRenderFrame", "a mount's controller's client moves it in physics ticks of 1/60 s, where the swim drag clamp(10·|motion|·dtFactor − 0.02, 1, 1.25) never passes 1, so her ForwardSpeed is her way")]
+    [ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "OnPhysicsTick", "splits a tick into 10 moves past 0.1 blocks of motion, which keeps the swim drag at 1 at 1/60 s")]
+    [ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "MotionAndCollision", "the swim drag is clamp(10·|motion|·dtFactor − 0.02, 1, 1.25)")]
     public Vec2d Drive(EntityBoat boat, Vec2d vanilla)
     {
         if (boat.GetBehavior<EntityBehaviorSeatable>()?.Controller is not EntityAgent rower || hull == null)
@@ -111,7 +114,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
         if (idle || drag?.Now is not { } water) return Idle(vanilla);
         Driving = true;
 
-        var speed = VanillaSwim.Realized(boat.ForwardSpeed);
+        var speed = boat.ForwardSpeed * SeaAndWeather.WaterDrag.TicksPerSecond;
         var spin = boat.AngularVelocity * RadiansPerAngularVelocity;
         var metabolic = propulsion.Config.Rower.MetabolicWatts;
         var push = stroking && !changing
@@ -126,7 +129,7 @@ public class EntityBehaviorPropulsion(Entity entity) : EntityBehavior(entity), I
         // (EntityBoat.updateBoatAngleAndMotion), so a target of speed plus acceleration steps her by acceleration × dt.
         var target = speed + (push.Newtons + water.Along(speed)) / water.AlongKg;
         var turning = (push.NewtonMetres + water.Turning(spin, speed)) / water.TurningKgSquareMetres;
-        return new Vec2d(VanillaSwim.Commanded(target) / boat.SpeedMultiplier,
+        return new Vec2d(target / SeaAndWeather.WaterDrag.TicksPerSecond / boat.SpeedMultiplier,
             (boat.AngularVelocity + turning / RadiansPerAngularVelocity) / boat.SpeedMultiplier);
     }
 

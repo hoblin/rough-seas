@@ -23,6 +23,8 @@ public class BodyConfig
     public double AtmospherePascals;
     public double DragAreaAlong;
     public double DragAreaAcross;
+    public double DragAreaSwimming;
+    public double StrokeNewtons;
 }
 
 public class BodySegmentConfig
