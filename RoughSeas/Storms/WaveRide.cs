@@ -52,15 +52,16 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         var (x, z) = OnTheClock(rider.Water(drawn, pos.X, pos.Z, yaw, hull), rate);
         var (pushX, pushZ) = OnTheClock(rider.Push(drawn, pos.X, pos.Z, yaw, hull), rate * rate);
 
-        if (!carried)
+        var meeting = !carried;
+        if (meeting)
         {
             carried = true;
             carriedFrom = (pos.X, pos.Z);
-            storms.Log(boat, "pushed by the drawn waves {0}: {1:F1} m by {2:F1} m, {3:F2} m draft, {4:F0} kg", Side(boat),
-                hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, hull.Kg);
+            storms.Log(boat, "pushed by the drawn waves {0}, moving with their water at {1:F2} m/s: {2:F1} m by {3:F1} m, {4:F2} m draft, {5:F0} kg", Side(boat),
+                Math.Sqrt(x * x + z * z), hull.LengthMetres, hull.BeamMetres, hull.DraftMetres, hull.Kg);
         }
         Report(boat, hull, x, z, pushX, pushZ, seconds);
-        return new WaterOnHull(x, z, pushX, pushZ);
+        return new WaterOnHull(x, z, pushX, pushZ, Meeting: meeting);
     }
 
     /// <summary>

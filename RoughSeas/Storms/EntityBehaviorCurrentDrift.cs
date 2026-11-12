@@ -43,6 +43,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
     private float sinceSwingLog;
     private (double X, double Z) synced;
     private double madeSeconds;
+    private double swayed;
     private (double X, double Z) madeFrom;
     private (double X, double Z) given;
     private (double X, double Z) wayMade;
@@ -156,6 +157,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         var waves = entity is EntityBoat boat && forces != null ? forces.Ride.Water(boat, deltaTime) : default;
         var on = new WaterOnHull(current.X + waves.X, current.Z + waves.Z, waves.AccelerationX, waves.AccelerationZ, WayAlong());
         var w = water = new Water(on, current.X, current.Z, way?.WaterDrag ?? ownDrag?.Now);
+        if (waves.Meeting) set.Push(waves.X, waves.Z);
         if (w.Drag is { } drag) set.Settle(drag, on, pos.Yaw, deltaTime);
         else set.Relax(on, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime), deltaTime);
 
@@ -258,6 +260,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
             if (madeSeconds == 0) madeFrom = (pos.X, pos.Z);
             var (wayX, wayZ) = HullShape.ToWorld(w.On.WayAlong, 0, pos.Yaw);
             madeSeconds += deltaTime;
+            swayed = Math.Max(swayed, Speed(x, z));
             given = (given.X + x * deltaTime, given.Z + z * deltaTime);
             wayMade = (wayMade.X + wayX * deltaTime, wayMade.Z + wayZ * deltaTime);
         }
@@ -273,9 +276,10 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         if (madeSeconds <= 0) return;
 
         var (acrossMade, acrossGiven, acrossWay) = (Across(pos.X - madeFrom.X, pos.Z - madeFrom.Z), Across(given.X, given.Z), Across(wayMade.X, wayMade.Z));
-        storms.Log(entity, "made good over {0:F0} s: {1:F3} {2:F3} m/s over the ground, {3:F3} {4:F3} m/s given her by the water, {5:F3} {6:F3} m/s her own way; across her heading {7:F3} m/s made of {8:F3} given and {9:F3} her way",
+        storms.Log(entity, "made good over {0:F0} s: {1:F3} {2:F3} m/s over the ground, {3:F3} {4:F3} m/s given her by the water, {5:F3} {6:F3} m/s her own way; across her heading {7:F3} m/s made of {8:F3} given and {9:F3} her way; the water swayed her up to {10:F2} m/s",
             madeSeconds, (pos.X - madeFrom.X) / madeSeconds, (pos.Z - madeFrom.Z) / madeSeconds, given.X / madeSeconds, given.Z / madeSeconds,
-            wayMade.X / madeSeconds, wayMade.Z / madeSeconds, acrossMade / madeSeconds, acrossGiven / madeSeconds, acrossWay / madeSeconds);
+            wayMade.X / madeSeconds, wayMade.Z / madeSeconds, acrossMade / madeSeconds, acrossGiven / madeSeconds, acrossWay / madeSeconds, swayed);
+        swayed = 0;
     }
 
     private double Across(double x, double z) => HullShape.ToHull(x, z, entity.Pos.Yaw).Across;
