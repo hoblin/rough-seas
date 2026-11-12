@@ -114,8 +114,9 @@ LOOK
   bin/game water [SECONDS]   the water's GPU time over SECONDS (default 5): the depth and surface passes in ms,
                              triangles drawn, the liquid pool's memory. Compare with
                              .surface tessellation false from the same place and camera
-  bin/game modicon [MODID]   the icon the game loaded for a mod (roughseas by default), as the mod manager
-                             draws it squeezed into a square; the game's tree and cog when the mod has none
+  bin/game modicon [MODID]   the icon the game loaded for a mod (roughseas by default), at its own size
+                             (the mod manager squeezes it into a square); the game's tree and cog when
+                             the mod has none
   bin/game shot [FILE] [gui] in-engine screenshot of the world alone: no HUD, hand or held item
                              (default shot.png; a relative FILE lands in the clone's temp folder,
                              /tmp/<bench>); prints the path of a half-size copy, cheaper to look at.
