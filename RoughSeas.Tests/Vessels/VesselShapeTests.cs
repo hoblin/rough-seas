@@ -56,7 +56,7 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void CentresEveryContainerOnItsCentreline(string vessel)
+    public void LaysEveryContainerOnTheCentrelineWithinItsHull(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
         var elements = Elements(shape["elements"]!).ToDictionary(element => element.Value<string>("name")!);
@@ -70,6 +70,7 @@ public class VesselShapeTests
         {
             Assert.Equal(16, cell["to"]!.Value<double>(2) - cell["from"]!.Value<double>(2));
             Assert.Equal(centreline, cell["from"]!.Value<double>(2) + 8 * (cell.Value<double?>("scaleZ") ?? 1), 0.5);
+            Assert.InRange(cell["from"]!.Value<double>(0), hull["from"]!.Value<double>(0), hull["to"]!.Value<double>(0) - 16 * (cell.Value<double?>("scaleX") ?? 1));
         });
     }
 

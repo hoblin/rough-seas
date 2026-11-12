@@ -357,6 +357,14 @@ held() {
   done
 }
 
+sight() {
+  "$game" do "/bridge fly $(awk -v x="$x" -v y="$y" -v z="$z" -v dx="$2" -v dy="$3" -v dz="$4" -v s="$far" \
+    'BEGIN { print x + dx * s, y + dy * s, z + dz * s }')" >/dev/null
+  "$game" aim "$id" >/dev/null
+  sleep 3
+  "$game" shot "$1" >/dev/null
+}
+
 containers=('basket stationarybasket-east {type:"reed"}' 'chest chest-east {type:"normal-generic"}'
   'vessel storagevessel-blue-fired' 'crate crate {type:"wood-oak"}')
 
@@ -391,18 +399,9 @@ cargo() {
       noon
       local name=$dir/${code##*:}-$kind far=1
       [[ $code == boat-sailed-* ]] && far=2.5
-      "$game" do "/bridge fly $(awk -v x="$x" -v s=$far 'BEGIN { print x + 3 * s }') $(awk -v y="$y" -v s=$far 'BEGIN { print y + 1.2 * s }') $z" >/dev/null
-      "$game" aim "$id" >/dev/null
-      sleep 3
-      "$game" shot "$name-side.png" >/dev/null
-      "$game" do "/bridge fly $x $(awk -v y="$y" -v s=$far 'BEGIN { print y + 5 * s }') $(awk -v z="$z" 'BEGIN { print z + 0.01 }')" >/dev/null
-      "$game" aim "$id" >/dev/null
-      sleep 2
-      "$game" shot "$name-above.png" >/dev/null
-      "$game" do "/bridge fly $(awk -v x="$x" -v s=$far 'BEGIN { print x + 1.2 * s }') $(awk -v y="$y" -v s=$far 'BEGIN { print y + 0.5 * s }') $z" >/dev/null
-      "$game" aim "$id" >/dev/null
-      sleep 2
-      "$game" shot "$name-close.png" >/dev/null
+      sight "$name-side.png" 3 1.2 0
+      sight "$name-above.png" 0 5 0.004
+      sight "$name-close.png" 1.2 0.5 0
       shots+=("$name-side.png" "$name-above.png" "$name-close.png")
       echo "${code##*:} $kind: $fitted fitted"
     done
