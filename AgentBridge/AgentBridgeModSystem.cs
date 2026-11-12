@@ -129,6 +129,7 @@ public class AgentBridgeModSystem : ModSystem
                 "/where" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Where(context.Request.QueryString["entity"]))), "application/json"),
                 "/camera" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Camera(context.Request.QueryString))), "application/json"),
                 "/limbs" => (Encoding.UTF8.GetBytes(await OnMainThread(() => limbs.Show(context.Request.QueryString["on"] != "0"))), "text/plain"),
+                "/modicon" => (ModIcon(context.Request.QueryString["mod"] ?? "roughseas"), "image/png"),
                 "/leave" => (Encoding.UTF8.GetBytes(Leave()), "text/plain"),
                 _ => throw new FileNotFoundException("Unknown endpoint; bin/game help lists what the bridge does")
             };
@@ -378,6 +379,22 @@ public class AgentBridgeModSystem : ModSystem
         }
         follow(new LinkTextComponent(href));
         return $"Followed {href}\n" + links.Outcome(href!);
+    }
+
+    private byte[] ModIcon(string modid)
+    {
+        var mod = capi.ModLoader.GetMod(modid) ?? throw new FileNotFoundException($"No mod {modid} is loaded");
+        var icon = mod.Icon ?? throw new FileNotFoundException($"{mod.Info.Name} has no icon");
+        var path = Path.Combine(Path.GetTempPath(), $"agentbridge-modicon-{Guid.NewGuid()}.png");
+        try
+        {
+            icon.Save(path);
+            return File.ReadAllBytes(path);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
     }
 
     private string Leave()
