@@ -6,6 +6,7 @@ namespace RoughSeas.Storms;
 public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
 {
     private const double ModelTurn = Math.PI / 2;
+    private const double ShareStep = 0.5;
 
     public bool Swell => !surface.Trains.Calm;
 
@@ -20,8 +21,17 @@ public class DrawnSea(SeaSurface surface, SurfaceField field) : IDrawnSea
     public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam) =>
         ShareAt(x, z) is var share and > 0 ? surface.HullVelocityAt(x, z, lift, draft, yaw, length, beam, share) : default;
 
-    public FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam) =>
-        ShareAt(x, z) is var share and > 0 ? surface.HullGradientAt(x, z, lift, draft, yaw, length, beam, share) : default;
+    public FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam)
+    {
+        var share = ShareAt(x, z);
+        if (share <= 0) return default;
+
+        var gradient = surface.HullGradientAt(x, z, lift, draft, yaw, length, beam, share);
+        var (velocityX, velocityZ) = surface.HullVelocityAt(x, z, lift, draft, yaw, length, beam, share);
+        var shareX = (ShareAt(x + ShareStep, z) - ShareAt(x - ShareStep, z)) / (2 * ShareStep * share);
+        var shareZ = (ShareAt(x, z + ShareStep) - ShareAt(x, z - ShareStep)) / (2 * ShareStep * share);
+        return new FlowGradient(gradient.XX + velocityX * shareX, gradient.XZ + (velocityX * shareZ + velocityZ * shareX) / 2, gradient.ZZ + velocityZ * shareZ);
+    }
 
     public double RiseVelocityAt(double x, double z, double below = 0) =>
         ShareAt(x, z) is var share and > 0 ? surface.RiseVelocityAt(x, z, below, share) : 0;
