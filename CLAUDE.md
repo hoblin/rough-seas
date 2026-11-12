@@ -81,7 +81,7 @@ A `decided` ticket is ready for anyone, an outside contributor included: say on 
 
 An outside contributor proposing a wholly new feature, one that's neither in the design nor in a ticket, should consider opening an issue first and starting once a maintainer labels it `decided`. Work started without one may be closed if it goes against the mod's direction.
 
-One ticket ships as one pull request. A big PR is fine here, since Copilot reviews it. When a ticket turns out to hold too much, the extra part becomes its own ticket, agreed with the maintainers; it doesn't become a second PR.
+One ticket ships as one pull request. A big PR is fine here, since our reviewers review it. When a ticket turns out to hold too much, the extra part becomes its own ticket, agreed with the maintainers; it doesn't become a second PR.
 
 ## Done means played
 
@@ -93,15 +93,20 @@ Close the game when you're done testing. A bench client left running holds the m
 
 ## Shipping
 
-A pull request under 1000 lines of diff skips the `/rpi:feature` flow's multi-agent self-review: Copilot's review is enough for a small change, and five reviewing subagents cost more than they find. Over 1000 lines, run it.
+Every pull request is reviewed by our own team of reviewers: `/rpi:review-pr self-review <number>`, whatever its size. An automated reviewer's finding is advice, not a gate. Judge each one on its merits: fix a real defect or a real risk, and answer a nitpick, a style point or a speculative edge case in one line saying why the code stays. A small finding worth doing is fixed in the same push, not left for an issue.
 
-Copilot's review, like any automated review, is advice, not a gate. Judge each finding on its merits: fix a real defect or a real risk; answer a nitpick, a style point or a speculative edge case in one line saying why the code stays, and resolve the thread. A small finding worth doing is fixed in the same push, not left for an issue. When Copilot keeps raising new minor points round after round, the maintainers decide when the PR is done.
+The reviewers, each run blind, on the diff, the ticket and the history only:
+- `rpi:review-ticket-delivery`, `rpi:review-docs`, `rpi:review-performance`;
+- `rpi:review-generic` on **the xUnit tests**, since the standard test reviewers are for RSpec and minitest;
+- `rpi:review-generic` on **the mod's architecture**: does the change fit `docs/design.md` and this file's principles (modules behind clear boundaries, one class one job, kinds as types, vanilla before our own code);
+- `rpi:review-generic` on **physics**, when the pull request changes a mechanic's physics: is each law written in the code right, does each number carry a measured source, is no outcome tuned.
+
+The loop:
+1. Open the PR as a draft and run the self-review.
+2. Fix what you accept, push.
+3. Run again only the reviewers whose majors you fixed: a fresh blind pass, not a check of your fixes, so they can find what they missed.
+4. Repeat until a pass leaves no major you accept. Then `gh pr ready <number>`, wait for CI, and squash with the PR's title and body. The ruleset lets us past the code owner's approval only with `--admin`: `gh pr merge <number> --admin --squash --subject "<title> (#<number>)" --body-file <body file>`.
 
 The maintainers' agents merge their own pull requests; an outside contributor's waits for the code owner's review.
 
-1. Mark the PR ready: `gh pr ready <number>`. Copilot reviews it on its own, a contributor's too, and again after every push.
-2. Wait for the review (a few minutes), then triage every finding as above.
-3. Push the fixes.
-4. When Copilot recommends merging, squash with the PR's title and body. The ruleset lets us past the code owner's approval only with `--admin`: `gh pr merge <number> --admin --squash --subject "<title> (#<number>)" --body-file <body file>`.
-
-A PR that conflicts with main gets no CI run and no Copilot review. Before every wait for a check or a review, ask `gh pr view <number> --json mergeable --jq .mergeable`: `MERGEABLE`, `CONFLICTING`, or `UNKNOWN` (ask again in a few seconds). On `CONFLICTING`, merge main in (a merge commit, never a rebase or force-push), push, and only then wait.
+A PR that conflicts with main gets no CI run. Before every wait for CI, ask `gh pr view <number> --json mergeable --jq .mergeable`: `MERGEABLE`, `CONFLICTING`, or `UNKNOWN` (ask again in a few seconds). On `CONFLICTING`, merge main in (a merge commit, never a rebase or force-push), push, and only then wait.
