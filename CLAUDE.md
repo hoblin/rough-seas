@@ -93,18 +93,18 @@ Close the game when you're done testing. A bench client left running holds the m
 
 ## Shipping
 
-Every pull request is reviewed by our own reviewers. One over 1000 lines of diff gets the full team: `/rpi:review-pr self-review <number>`. A smaller one gets a single `rpi:review-generic` over the whole change, run blind the same way. An automated reviewer's finding is advice, not a gate. Judge each one on its merits: fix a real defect or a real risk, and answer a nitpick, a style point or a speculative edge case in one line saying why the code stays. A small finding worth doing is fixed in the same push, not left for an issue.
+The maintainers' pull requests are reviewed by our own reviewers, through `/rpi:review-pr self-review <number>`; this replaces the `/rpi:feature` flow's own review step. The reviewers to run go to the skill as its additional instructions. A pull request over 1000 lines of diff gets the full team below; a smaller one gets a single `rpi:review-generic` over the whole change. An automated reviewer's finding is advice, not a gate. Judge each one on its merits: fix a real defect or a real risk, and decline a nitpick, a style point or a speculative edge case with one line in your report saying why the code stays. A small finding worth doing is fixed in the same push, not left for an issue.
 
 The full team, each run blind, on the diff, the ticket and the history only:
 - `rpi:review-ticket-delivery`, `rpi:review-docs`, `rpi:review-performance`;
 - `rpi:review-generic` on **the xUnit tests**, since the standard test reviewers are for RSpec and minitest;
 - `rpi:review-generic` on **the mod's architecture**: does the change fit `docs/design.md` and this file's principles (modules behind clear boundaries, one class one job, kinds as types, vanilla before our own code);
-- `rpi:review-generic` on **physics**, when the pull request changes a mechanic's physics: is each law written in the code right, does each number carry a measured source, is no outcome tuned.
+- `rpi:review-generic` on **physics**, when the pull request changes a mechanic's physics: is each physical law right as coded, does each number carry a measured source, is no outcome tuned.
 
 The loop:
-1. Open the PR as a draft and run the self-review.
+1. Open the PR as a draft and run the self-review. Stop before the skill's Self-Review Finalization: the PR stays a draft until the loop ends.
 2. Fix what you accept, push.
-3. Run again only the reviewers whose majors you fixed: a fresh blind pass, not a check of your fixes, so they can find what they missed.
+3. Run the skill again with only the reviewers whose majors you fixed: a fresh blind pass, not a check of your fixes, so they can find what they missed.
 4. Repeat until a pass leaves no major you accept. Then `gh pr ready <number>`, wait for CI, and squash with the PR's title and body. The ruleset lets us past the code owner's approval only with `--admin`: `gh pr merge <number> --admin --squash --subject "<title> (#<number>)" --body-file <body file>`.
 
 The maintainers' agents merge their own pull requests; an outside contributor's waits for the code owner's review.
