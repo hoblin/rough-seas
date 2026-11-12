@@ -48,6 +48,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
 
         var hull = Hull(boat);
         var yaw = Yaw(boat);
+        // the client's frames have followed her already; on the server these ticks are the only frames she has
         if (boat.Api.Side == EnumAppSide.Server) rider.Follow(drawn, pos.X, pos.Z, yaw, hull, boat.World.ElapsedMilliseconds / 1000.0);
         var rate = sea.Clock.SecondsIn(seconds, boat.World.Calendar.SpeedOfTime) / seconds;
         var (x, z) = OnTheClock(rider.Water(drawn, pos.X, pos.Z, yaw, hull), rate);
@@ -69,8 +70,8 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     /// <paramref name="wavesPerTickSecond"/> of its seconds to the tick's. One wave then moves a hull as far at any speed
     /// of time.
     /// </summary>
-    internal static (double X, double Z) OnTheClock((double X, double Z) rate, double wavesPerTickSecond) =>
-        (rate.X * wavesPerTickSecond, rate.Z * wavesPerTickSecond);
+    internal static (double X, double Z) OnTheClock((double X, double Z) velocity, double wavesPerTickSecond) =>
+        (velocity.X * wavesPerTickSecond, velocity.Z * wavesPerTickSecond);
 
     private IDrawnSea? SeaFor(EntityBoat boat)
     {

@@ -358,13 +358,13 @@ public sealed class SeaSurface
         double share = 1)
     {
         var slots = Trains.Slots;
-        Span<double> heights = stackalloc double[slots], phases = stackalloc double[slots], numbers = stackalloc double[slots];
+        Span<double> speeds = stackalloc double[slots], phases = stackalloc double[slots], numbers = stackalloc double[slots];
         Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
-        Orbital(x, z, lift, draft, yaw, length, beam, share, heights, phases, numbers, towardX, towardZ);
+        Orbital(x, z, lift, draft, yaw, length, beam, share, speeds, phases, numbers, towardX, towardZ);
         double velocityX = 0, velocityZ = 0;
         for (var slot = 0; slot < slots; slot++)
         {
-            var speed = heights[slot] * Math.Sin(phases[slot]);
+            var speed = speeds[slot] * Math.Sin(phases[slot]);
             velocityX += speed * towardX[slot];
             velocityZ += speed * towardZ[slot];
         }
@@ -378,13 +378,13 @@ public sealed class SeaSurface
     public FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam, double share = 1)
     {
         var slots = Trains.Slots;
-        Span<double> heights = stackalloc double[slots], phases = stackalloc double[slots], numbers = stackalloc double[slots];
+        Span<double> speeds = stackalloc double[slots], phases = stackalloc double[slots], numbers = stackalloc double[slots];
         Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
-        Orbital(x, z, lift, draft, yaw, length, beam, share, heights, phases, numbers, towardX, towardZ);
+        Orbital(x, z, lift, draft, yaw, length, beam, share, speeds, phases, numbers, towardX, towardZ);
         double xx = 0, xz = 0, zz = 0;
         for (var slot = 0; slot < slots; slot++)
         {
-            var change = heights[slot] * Math.Cos(phases[slot]) * numbers[slot];
+            var change = speeds[slot] * Math.Cos(phases[slot]) * numbers[slot];
             xx += change * towardX[slot] * towardX[slot];
             xz += change * towardX[slot] * towardZ[slot];
             zz += change * towardZ[slot] * towardZ[slot];
@@ -392,7 +392,7 @@ public sealed class SeaSurface
         return new FlowGradient(xx, xz, zz);
     }
 
-    private void Orbital(double x, double z, double height, double draft, double yaw, double length, double beam, double share,
+    private void Orbital(double x, double z, double lift, double draft, double yaw, double length, double beam, double share,
         Span<double> speeds, Span<double> phases, Span<double> numbers, Span<double> towardX, Span<double> towardZ)
     {
         var (sin, cos) = Math.SinCos(yaw + Math.PI / 2);
@@ -408,7 +408,7 @@ public sealed class SeaSurface
             }
             var along = numbers[slot] * (towardX[slot] * alongX + towardZ[slot] * alongZ);
             var across = numbers[slot] * (towardZ[slot] * alongX - towardX[slot] * alongZ);
-            speeds[slot] *= share * Trains.Frequency(slot) * WaveTheory.OrbitalFade(numbers[slot], depth, height, Math.Max(draft, 0))
+            speeds[slot] *= share * Trains.Frequency(slot) * WaveTheory.OrbitalFade(numbers[slot], depth, lift, Math.Max(draft, 0))
                 * Sinc(along * length / 2) * Sinc(across * beam / 2);
             phases[slot] += Trains.Phase(slot, x, z);
         }

@@ -392,6 +392,20 @@ public class PropulsionTests
     }
 
     [Fact]
+    public void ASpeedVanillasTickCantMakeIsAskedAsTheFastestBelowIt()
+    {
+        Assert.Equal(4.8, VesselDraught.Realized(VanillaSwim.Commanded(5)), 3);
+        Assert.Equal(4.8, VesselDraught.Realized(VanillaSwim.Commanded(5.9)), 3);
+    }
+
+    [Fact]
+    public void HerWholeMotionDecidesVanillasMovesAndSoWhetherItsSwimDragActs()
+    {
+        Assert.Equal(0.09 * 60 / VesselDraught.MostSwimDrag, VesselDraught.Realized(0.09), 3);
+        Assert.Equal(0.09 * 60, VesselDraught.Realized(0.09, 1, motionLength: 0.11), 3);
+    }
+
+    [Fact]
     public void AFastBoatMeetsNoSwimDragInVanillasTenMovesOfATickButStillItsWaterDrag()
     {
         const double sailing = 0.12;

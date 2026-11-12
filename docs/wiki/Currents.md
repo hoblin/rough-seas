@@ -28,6 +28,8 @@ A vessel at anchor or tied to a stake swings about its bow to lie along the stre
 
 The waves move every vessel afloat, steered or not, to and fro with the water under them, and each wave carries it a little further forward than back: a slow drift the way the waves run, a few centimetres a second in a moderate sea and more in a gale ([Reading the sea](Reading-the-Sea#a-ship-that-rides-our-swell)). The current is usually much stronger, so where it runs against the waves a hull goes the current's way. A hull you drive with the waves is pushed on down each wave's front face as it passes: run near the wave's speed, under sail in the surf, and a wave holds the hull on its face and carries it toward the shore.
 
+A current carries a swimmer the same way, by the water's drag on the body: swimming against one faster than about 0.9 m/s, you lose ground ([Swimming](Swimming)).
+
 So a boat left at the water's edge is not where you left it when you come back. [Tie it up or anchor it](Mooring) before you step ashore.
 
 Drift only happens where the game is running, within about 128 blocks of a player. A vessel far from everyone stays put until someone comes near.

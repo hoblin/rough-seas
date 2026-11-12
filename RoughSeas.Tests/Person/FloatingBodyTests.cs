@@ -30,6 +30,8 @@ public class FloatingBodyTests
 
         public SwimStroke Stroke { get; set; } = stroke;
 
+        public (double X, double Z) Current { get; set; }
+
         public double Feet { get; private set; } = feet;
 
         public double MovedX { get; private set; }
@@ -43,7 +45,7 @@ public class FloatingBodyTests
         public FloatReading Step()
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
-            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke);
+            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current);
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
@@ -287,11 +289,37 @@ public class FloatingBodyTests
         var run = new Run(Calm, Still - 1.6, stroke: Ahead);
         run.Settle(30);
         run.Stroke = default;
+        var stopped = run.MovedX;
+        run.Settle(1);
+        var glided = run.MovedX - stopped;
         run.Settle(30);
         var from = run.MovedX;
         run.Settle(1);
 
+        Assert.InRange(glided, 0.2, 0.9);
         Assert.InRange(run.MovedX - from, 0, 0.05);
+    }
+
+    [Fact]
+    public void ACurrentCarriesAFloatingBodyAtItsSpeed()
+    {
+        var run = new Run(Calm, Still - 1.6) { Current = (0.5, 0) };
+        run.Settle(60);
+        var from = run.MovedX;
+        run.Settle(10);
+
+        Assert.InRange((run.MovedX - from) / 10, 0.49, 0.51);
+    }
+
+    [Fact]
+    public void SwimmingAgainstACurrentFasterThanItSwimsItLosesGround()
+    {
+        var run = new Run(Calm, Still - 1.6, stroke: Ahead) { Current = (-1.2, 0) };
+        run.Settle(60);
+        var from = run.MovedX;
+        run.Settle(10);
+
+        Assert.InRange((run.MovedX - from) / 10, -0.4, -0.2);
     }
 
     [Fact]

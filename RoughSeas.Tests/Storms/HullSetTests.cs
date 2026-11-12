@@ -85,6 +85,44 @@ public class HullSetTests
     }
 
     [Fact]
+    public void UnderSailPastSixMetresASecondVanillasTenMovesATickCarryTheSetWhole()
+    {
+        const int moves = 10;
+        var step = PhysicsSeconds / moves * TicksPerSecond;
+        var kept = Kept(PhysicsSeconds / moves);
+        var set = new HullSet();
+        var motion = new Vec3d();
+        set.Take(0, 0.8, motion);
+        var across = 0.0;
+        for (var tick = 0; tick < 300; tick++)
+        {
+            motion.X = 6.9 / TicksPerSecond;
+            motion.Z = 0;
+            set.Rowed(motion, moves: true);
+            for (var move = 0; move < moves; move++)
+            {
+                set.Keep(motion, kept, step, swimming: true);
+                VanillaMove(motion, kept, step);
+                across += motion.Z * step;
+            }
+        }
+
+        Assert.Equal(0.8, across / (300 * PhysicsSeconds), 6);
+    }
+
+    [Fact]
+    public void ACollisionStopsHerOnItsAxisWhateverTheWavesWaterWasDoing()
+    {
+        var set = new HullSet();
+        set.Settle(Raft(), new WaterOnHull(0, 0, 0.7, 0.4), Yaw, TickSeconds);
+        var motion = new Vec3d(0, 0, 0.4 / TicksPerSecond);
+        set.Collided(motion);
+
+        Assert.Equal(0, set.Velocity.X, 12);
+        Assert.Equal(0.4, set.Velocity.Z, 12);
+    }
+
+    [Fact]
     public void WhatElseMovesHerStillMeetsVanillasDragAndTheSetDoesNot()
     {
         var set = new HullSet();
@@ -173,7 +211,7 @@ public class HullSetTests
     {
         var set = new HullSet();
         set.Take(1, 2, new Vec3d());
-        set.Push(0.25, -0.5);
+        set.Add(0.25, -0.5);
         Assert.Equal((1.25, 1.5), set.Velocity);
     }
 

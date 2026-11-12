@@ -10,9 +10,9 @@ namespace AgentBridge;
 /// <summary>
 /// Holds every vessel nobody steers where a test put it while <see cref="Drifting"/> is off: Rough Seas'
 /// <see cref="EntityBehaviorCurrentDrift"/>, which moves a hull by the current, the waves and her lines, skips its tick,
-/// its keeping the set through a move and a rower's overwrite, its pull on a mooring, the swing about the bow and the
-/// lines' pull. A steered vessel keeps the waves, as her rider's client draws them. With <see cref="WavesOnly"/>, or for a
-/// steered vessel while drifting is off, the current is left out, to see what the waves do by themselves.
+/// its keeping the set through a move and a rower's overwrite, the swing about the bow, the load it gives her lines and
+/// their pull on her. A steered vessel keeps the waves, as her rider's client draws them. With <see cref="WavesOnly"/>,
+/// or for a steered vessel while drifting is off, the current is left out, to see what the waves do by themselves.
 /// </summary>
 public sealed class DriftSwitch : IDisposable
 {
@@ -25,8 +25,8 @@ public sealed class DriftSwitch : IDisposable
         var prefix = new HarmonyMethod(typeof(DriftSwitch), nameof(Prefix));
         foreach (var method in new[]
                  {
-                     nameof(EntityBehaviorCurrentDrift.OnGameTick), "Rowed", nameof(EntityBehaviorCurrentDrift.Pull),
-                     nameof(EntityBehaviorCurrentDrift.HeldAtBow), nameof(EntityBehaviorCurrentDrift.Impulse)
+                     nameof(EntityBehaviorCurrentDrift.OnGameTick), "Rowed", nameof(EntityBehaviorCurrentDrift.HeldAtBow),
+                     nameof(EntityBehaviorCurrentDrift.Impulse)
                  })
         {
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorCurrentDrift), method), prefix: prefix);
@@ -35,6 +35,8 @@ public sealed class DriftSwitch : IDisposable
             prefix: new HarmonyMethod(typeof(DriftSwitch), nameof(BeforeMove)));
         harmony.Patch(AccessTools.Method(typeof(EntityBehaviorCurrentDrift), "Current"),
             prefix: new HarmonyMethod(typeof(DriftSwitch), nameof(Current)));
+        harmony.Patch(AccessTools.Method(typeof(EntityBehaviorCurrentDrift), nameof(EntityBehaviorCurrentDrift.Load)),
+            prefix: new HarmonyMethod(typeof(DriftSwitch), nameof(Still)));
     }
 
     public bool Drifting
@@ -66,6 +68,13 @@ public sealed class DriftSwitch : IDisposable
         var moves = Moves(__instance.entity);
         if (!moves) __instance.Stopped(motion);
         return moves;
+    }
+
+    private static bool Still(EntityBehaviorCurrentDrift __instance, ref (double X, double Z) __result)
+    {
+        if (Moves(__instance.entity)) return true;
+        __result = default;
+        return false;
     }
 
     private static bool Current(ref (double X, double Z) __result)

@@ -110,6 +110,87 @@ public class MooringLineTests
     public void ASlackLinePullsNothing() => Assert.Equal(default, Flax(3).Over(-0.2, 1.0, 400, SailboatWithItsWater, Tick, 1));
 
     [Fact]
+    public void AHullStillShortOfTheLineAtTheStepsStartIsCaughtWhereSheReachesIt()
+    {
+        var line = Flax(3);
+        var step = line.Over(-0.02, 1.0, 0, SailboatWithItsWater, Long, 1);
+
+        Assert.Equal(1.0 * Math.Sqrt(line.NewtonsPerMetre * SailboatWithItsWater), step.PeakNewtons, 3);
+        Assert.Equal(-2 * 1.0, step.Kick, 6);
+    }
+
+    [Theory]
+    [InlineData(-0.1, 0.6, 0.5)]
+    [InlineData(0.02, -0.6, 0.5)]
+    [InlineData(0.05, 0, 0.3)]
+    [InlineData(-0.1, 0.6, 1.0)]
+    public void OneLongStepLeavesHerWhereAndAsFastAsManyShortOnes(double stretch, double speed, double seconds)
+    {
+        var line = new MooringLine(5.5, Fixtures.FlaxNewtons, Fixtures.FlaxStretchAtBreak);
+        const double kilograms = 135;
+        const double steady = 60;
+        const int steps = 20000;
+        var pull = steady / kilograms;
+        var step = line.Over(stretch, speed, steady, kilograms, seconds, 1);
+        var (x, v, owed) = (stretch, speed, 0.0);
+        for (var i = 0; i < steps; i++)
+        {
+            v += owed;
+            var fine = line.Over(x, v, steady, kilograms, seconds / steps, 1);
+            v += pull * seconds / steps;
+            x += (v + fine.Moved) * seconds / steps;
+            (v, owed) = (v + fine.Moved, fine.Kick - fine.Moved);
+        }
+
+        Assert.Equal(x, stretch + (speed + pull * seconds + step.Moved) * seconds, 3);
+        Assert.Equal(v + owed, speed + pull * seconds + step.Kick, 3);
+    }
+
+    [Fact]
+    public void AnUnbreakableRopeStopsHerAtItsEndAndNeverParts()
+    {
+        var unbreakable = new MooringLine(3, double.PositiveInfinity, 0.1);
+        var step = unbreakable.Over(0.01, 0.5, 400, SailboatWithItsWater, Tick, 1);
+
+        Assert.Equal(-(0.5 + 400 * Tick / SailboatWithItsWater), step.Kick, 9);
+        Assert.True(double.IsFinite(step.PeakNewtons));
+        Assert.False(unbreakable.Parts(step.PeakNewtons));
+    }
+
+    [Theory]
+    [InlineData(1 / 30.0)]
+    [InlineData(0.25)]
+    [InlineData(1.5)]
+    public void MovedAsFarAsTheLineLetsHerEachStepSheBouncesNoHigherAtAnyStepLength(double seconds)
+    {
+        var line = Flax(1.5);
+        const double kilograms = 150;
+        const double arriving = 1.0;
+        var (stretch, speed, owed, highest) = (1e-9, arriving, 0.0, 0.0);
+        for (var t = 0.0; t < 60; t += seconds)
+        {
+            speed += owed;
+            var step = line.Over(stretch, speed, 0, kilograms, seconds, 1);
+            highest = Math.Max(highest, step.PeakNewtons);
+            stretch += (speed + step.Moved) * seconds;
+            (speed, owed) = (speed + step.Moved, step.Kick - step.Moved);
+        }
+
+        Assert.InRange(highest, 0, 1.0001 * arriving * Math.Sqrt(line.NewtonsPerMetre * kilograms));
+    }
+
+    [Fact]
+    public void ADraggingAnchorHoldsHerBackByItsHoldingAndNeverDrawsHerBack()
+    {
+        var holding = MooringLine.Dragging(1.0, 0, 300, SailboatWithItsWater, Tick, 1);
+        Assert.Equal(-300 * Tick / SailboatWithItsWater, holding.Kick, 12);
+        Assert.Equal(300, holding.PeakNewtons);
+
+        Assert.Equal(-0.001, MooringLine.Dragging(0.001, 0, 300, SailboatWithItsWater, Tick, 1).Kick, 12);
+        Assert.Equal(0, MooringLine.Dragging(-0.5, 0, 300, SailboatWithItsWater, Tick, 1).Kick);
+    }
+
+    [Fact]
     public void ASailboatSurgedOutByAStormSeaPartsAShortRopeAndNotALongOne()
     {
         const double orbitalMetresPerSecond = 1.6;

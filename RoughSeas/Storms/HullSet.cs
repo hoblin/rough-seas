@@ -6,10 +6,11 @@ using Vintagestory.API.MathTools;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// A hull's set: the velocity the water has given her, on top of whatever else moves her (a rower's way through the
-/// water, a push). It lives in her motion and goes through vanilla's physics there: each move sets her motion so that
-/// after vanilla's water drag and swim drag she carries the set whole and the rest of her motion as vanilla would have
-/// left it alone. Called from the physics thread and the tick, so it holds its own lock.
+/// A hull's set: the velocity the water and her lines have given her, on top of her own way through the water, a
+/// rower's or a sail's. It is the waves' water at her place and her own velocity beside it, which forces change. It
+/// lives in her motion and goes through vanilla's physics there: each move sets her motion so that after vanilla's water
+/// drag and swim drag she carries the set whole and the rest of her motion as vanilla would have left it alone. Called
+/// from the physics thread and the tick, so it holds its own lock.
 /// </summary>
 public sealed class HullSet
 {
@@ -51,12 +52,12 @@ public sealed class HullSet
     }
 
     /// <summary>The water moves her for <paramref name="seconds"/>.</summary>
-    /// <returns>The water's push on her besides its drag, m/s².</returns>
+    /// <returns>The water's acceleration of her besides its drag, m/s²: the waves' own change at her place and their push.</returns>
     public (double X, double Z) Settle(HullDrag drag, WaterOnHull water, double yaw, double seconds)
     {
         lock (gate)
         {
-            var (pushX, pushZ) = Push(water, yaw);
+            var (pushX, pushZ) = FacePush(water, yaw);
             var (relativeX, relativeZ) = drag.Settle(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, seconds, water.WayAlong, pushX, pushZ);
             ownX = water.CurrentX - relativeX;
             ownZ = water.CurrentZ - relativeZ;
@@ -69,7 +70,7 @@ public sealed class HullSet
     {
         lock (gate)
         {
-            var (pushX, pushZ) = Push(water, yaw);
+            var (pushX, pushZ) = FacePush(water, yaw);
             ownX += pushX * seconds + (water.CurrentX - ownX) * share;
             ownZ += pushZ * seconds + (water.CurrentZ - ownZ) * share;
             return Wash(water, pushX, pushZ, seconds);
@@ -87,7 +88,7 @@ public sealed class HullSet
         return (washX, washZ);
     }
 
-    public void Push(double metresPerSecondX, double metresPerSecondZ)
+    public void Add(double metresPerSecondX, double metresPerSecondZ)
     {
         lock (gate)
         {
@@ -106,10 +107,10 @@ public sealed class HullSet
         lock (gate) return drag.Swing(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, turnPerSecond, seconds);
     }
 
-    private (double X, double Z) Push(WaterOnHull water, double yaw)
+    private (double X, double Z) FacePush(WaterOnHull water, double yaw)
     {
         var (wayX, wayZ) = HullShape.ToWorld(water.WayAlong, 0, yaw);
-        var (x, z) = water.Gradient.Along(ownX - water.CurrentX + wayX, ownZ - water.CurrentZ + wayZ);
+        var (x, z) = water.Gradient.Moving(ownX - water.CurrentX + wayX, ownZ - water.CurrentZ + wayZ);
         return (-x, -z);
     }
 

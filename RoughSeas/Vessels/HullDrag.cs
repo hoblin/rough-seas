@@ -38,7 +38,7 @@ public sealed class HullDrag
     private const int SwingStrips = 8;
     private const int SwingSteps = 4;
     private const double SlopeNudge = 1e-4;
-    private const double StiffestStep = 0.1;
+    private const double LongestStepOfDragTime = 0.1;
     private const int MostSteps = 50;
 
     private readonly HullForm form;
@@ -154,20 +154,25 @@ public sealed class HullDrag
 
     private double Settled(bool along, double relative, double push, double way, double seconds)
     {
-        var steps = Math.Clamp((int)Math.Ceiling(seconds * Slope(along, relative, way) / StiffestStep), 1, MostSteps);
+        var paid = along ? Along(way) / AlongKg : 0;
+        var slope = Slope(along, relative, way);
+        var steps = Math.Clamp((int)Math.Ceiling(seconds * slope / LongestStepOfDragTime), 1, MostSteps);
         var step = seconds / steps;
-        for (var i = 0; i < steps; i++) relative -= step * (push + Pulled(along, relative, way)) / (1 + step * Slope(along, relative, way) / 2);
+        for (var i = 0; i < steps; i++)
+        {
+            if (i > 0) slope = Slope(along, relative, way);
+            relative -= step * (push + Dragged(along, relative, way) - paid) / (1 + step * slope / 2);
+        }
         return relative;
     }
 
     private double Slope(bool along, double relative, double way)
     {
         var nudge = Math.Max(SlopeNudge, Math.Abs(relative) * SlopeNudge);
-        return Math.Max(0, (Pulled(along, relative + nudge, way) - Pulled(along, relative - nudge, way)) / (2 * nudge));
+        return Math.Max(0, (Dragged(along, relative + nudge, way) - Dragged(along, relative - nudge, way)) / (2 * nudge));
     }
 
-    private double Pulled(bool along, double relative, double way) =>
-        along ? (Along(way - relative) - Along(way)) / AlongKg : Across(-relative) / AcrossKg;
+    private double Dragged(bool along, double relative, double way) => along ? Along(way - relative) / AlongKg : Across(-relative) / AcrossKg;
 
     private double SideDrag => halfDensity * form.SideDrag * sideSquareMetres;
 

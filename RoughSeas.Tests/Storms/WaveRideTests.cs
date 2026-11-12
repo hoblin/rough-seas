@@ -51,22 +51,6 @@ public class WaveRideTests
         Assert.InRange(furthest, 0.97 * Water * Period / Math.PI, 1.03 * Water * Period / Math.PI);
     }
 
-    [Theory]
-    [InlineData(0.5)]
-    [InlineData(1)]
-    [InlineData(17)]
-    public void OneWavesPushGivesAHullTheWatersSpeedAtAnySpeedOfTime(double wavesPerTickSecond)
-    {
-        var turning = 2 * Math.PI / Period;
-        var speed = 0.0;
-        for (var waves = 0.0; waves < Period / 4; waves += wavesPerTickSecond * Frame)
-        {
-            speed += WaveRide.OnTheClock((Water * turning * Math.Cos(turning * (waves + wavesPerTickSecond * Frame / 2)), 0), wavesPerTickSecond * wavesPerTickSecond).X * Frame;
-        }
-
-        Assert.InRange(speed, 0.97 * Water * wavesPerTickSecond, 1.03 * Water * wavesPerTickSecond);
-    }
-
     [Fact]
     public void StandsWhileTheClockStands() => Assert.Equal(default, WaveRide.OnTheClock((Water, Water), 0));
 

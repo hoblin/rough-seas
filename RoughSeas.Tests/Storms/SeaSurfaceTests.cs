@@ -491,23 +491,24 @@ public class SeaSurfaceTests
     }
 
     [Fact]
-    public void ABodyRidingAFrontFaceAtTheWavesSpeedIsPushedAheadAllTheWay()
+    public void ABodyRunningAtTheWavesSpeedIsPushedOnDownTheirFrontFacesAndHeldBackOnTheirBacks()
     {
         var sea = Fixtures.OneTrain(2, 14);
         var celerity = sea.Frequency / sea.Number;
         sea.Surface.Advance(120);
-        double Push(double x) => -sea.Surface.HullGradientAt(x, 0, 0, 0, 0, 0, 0).Along(celerity - sea.Surface.HullVelocityAt(x, 0, 0, 0, 0, 0, 0).X, 0).X;
-        var face = 0.0;
-        for (var x = 0.0; x < sea.Length; x += 0.25)
-        {
-            if (Push(x) > Push(face)) face = x;
-        }
+        double Push(double x) => -sea.Surface.HullGradientAt(x, 0, 0, 0, 0, 0, 0).Moving(celerity - sea.Surface.HullVelocityAt(x, 0, 0, 0, 0, 0, 0).X, 0).X;
+        double Fall(double x) => sea.Surface.DisplacementAt(x - 0.25, 0).Y - sea.Surface.DisplacementAt(x + 0.25, 0).Y;
 
-        for (var seconds = 0.0; seconds < 3 * 2 * Math.PI / sea.Frequency; seconds += 0.5)
+        var (faces, backs) = (0, 0);
+        for (var x = 0.0; x < sea.Length; x += 0.5)
         {
-            sea.Surface.Advance(120 + seconds);
-            Assert.True(Push(face + celerity * seconds) > 0, $"held back after {seconds:F1} s");
+            var fall = Fall(x);
+            if (Math.Abs(fall) < 0.02) continue;
+            if (fall > 0) faces++;
+            else backs++;
+            Assert.True(Math.Sign(Push(x)) == Math.Sign(fall), $"at {x:F1} m the surface falls {fall:F3} m ahead and the push is {Push(x):F3} m/s2");
         }
+        Assert.True(faces > 0 && backs > 0);
     }
 
     private static double Sinc(double x) => Math.Sin(x) / x;

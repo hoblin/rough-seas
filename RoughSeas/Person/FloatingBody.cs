@@ -32,7 +32,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     /// <param name="wavesPerSecond">The waves' seconds to a second of <paramref name="seconds"/>: the water's motion, read on the waves' clock, is taken on the tick's, while the body answers in the tick's own seconds.</param>
     /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
-        SwimStroke stroke = default)
+        SwimStroke stroke = default, (double X, double Z) current = default)
     {
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
@@ -78,7 +78,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var pressure = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross;
         var before = carried;
         if (!met) (water, met) = (flow, true);
-        var (shearX, shearZ) = gradient.Along(carried.X - water.X, carried.Z - water.Z);
+        var (shearX, shearZ) = gradient.Moving(carried.X - water.X - current.X, carried.Z - water.Z - current.Z);
         var (pushX, pushZ) = ((flow.X - water.X - shearX * seconds) * pressure, (flow.Z - water.Z - shearZ * seconds) * pressure);
         water = flow;
         var (rollerX, rollerZ) = (0.0, 0.0);
@@ -87,7 +87,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
             var speed = churned * roller.RollerSpeed(config.Breaking, now - roller.BrokeSeconds) * wavesPerSecond;
             (rollerX, rollerZ) = (speed * Math.Cos(roller.TowardRadians), speed * Math.Sin(roller.TowardRadians));
         }
-        var (toX, toZ) = (flow.X + rollerX, flow.Z + rollerZ);
+        var (toX, toZ) = (flow.X + current.X + rollerX, flow.Z + current.Z + rollerZ);
         var (awayX, awayZ) = (carried.X + pushX - toX + thrust * stroke.X / inertiaAcross * seconds,
             carried.Z + pushZ - toZ + thrust * stroke.Z / inertiaAcross * seconds);
         var away = Math.Sqrt(awayX * awayX + awayZ * awayZ);

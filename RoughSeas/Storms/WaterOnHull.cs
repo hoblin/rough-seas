@@ -16,7 +16,7 @@ public readonly record struct WaterOnHull(double CurrentX, double CurrentZ, doub
 public readonly record struct FlowGradient(double XX, double XZ, double ZZ)
 {
     /// <summary>How the water's velocity changes per second for something moving through it at this velocity, (v·∇)u.</summary>
-    public (double X, double Z) Along(double x, double z) => (XX * x + XZ * z, XZ * x + ZZ * z);
+    public (double X, double Z) Moving(double x, double z) => (XX * x + XZ * z, XZ * x + ZZ * z);
 
     public FlowGradient Scaled(double by) => new(XX * by, XZ * by, ZZ * by);
 }

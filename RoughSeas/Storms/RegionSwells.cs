@@ -9,7 +9,8 @@ namespace RoughSeas.Storms;
 /// <summary>
 /// The drawn sea of each region with a vessel nobody steers or a player in, on or near the water, on the server. A client's surface depends on the region
 /// it is aimed from and not on the point in it, so everything in a region shares one <see cref="SwellAround"/>, aimed as
-/// often as a client aims its own. A region nothing has asked about for a while is dropped.
+/// often as a client aims its own, its waves run on by the same <see cref="WaveTime"/> as a client's between the
+/// calendar's steps. A region nothing has asked about for a while is dropped.
 /// </summary>
 public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, ICoreServerAPI sapi)
 {
@@ -30,11 +31,11 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
         if (now - sweptAt > ForgottenAfterSeconds) Sweep(now);
         if (!swells.TryGetValue(region, out var swell))
         {
-            swells[region] = swell = new Swell(storms.Swell(sapi));
+            swells[region] = swell = new Swell(storms.Swell(sapi), new WaveTime(sea.Clock));
             storms.Log("server sea built for region {0} {1}, asked at x {2:0} z {3:0}; {4} regions held", region.Item1, region.Item2, x, z, swells.Count);
         }
+        var seconds = swell.Time.Advance(now - swell.ReadAt, sapi.World.Calendar.SpeedOfTime);
         swell.ReadAt = now;
-        var seconds = sea.Clock.Seconds;
         if (now - swell.AimedAt >= storms.Config.Surface.AimSeconds)
         {
             swell.AimedAt = now;
@@ -59,9 +60,11 @@ public sealed class RegionSwells(StormsModSystem storms, SeaWeatherSystem sea, I
         }
     }
 
-    private sealed class Swell(SwellAround around)
+    private sealed class Swell(SwellAround around, WaveTime time)
     {
         public SwellAround Around { get; } = around;
+
+        public WaveTime Time { get; } = time;
 
         public double AimedAt { get; set; } = double.NegativeInfinity;
 

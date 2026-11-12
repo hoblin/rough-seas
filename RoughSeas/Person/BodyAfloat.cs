@@ -12,8 +12,9 @@ namespace RoughSeas.Person;
 
 /// <summary>
 /// Floats this client's player by <see cref="FloatingBody"/>, in place of vanilla's gravity in water (a third of it while
-/// still, none while the swimmer strokes) and vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
-/// water's at a float's slow speeds). On the owning client alone: vanilla simulates a player's movement there.
+/// still, none while the swimmer strokes), vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
+/// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force. On the owning
+/// client alone: vanilla simulates a player's movement there.
 /// </summary>
 public static class BodyAfloat
 {
@@ -99,8 +100,9 @@ public static class BodyAfloat
         var kit = person!.CarriedBy(entity);
         var place = new BodyPlace(pos.X, pos.Y, pos.Z, entity.LocalEyePos.Y, entity.CollisionBox.XSize);
         var rate = sea!.Clock.SecondsIn(dt, entity.World.Calendar.SpeedOfTime) / dt;
+        var current = Mechanic.Currents.On(entity.World) ? sea.CurrentAt(pos.X, pos.Z) : default;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
-            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke);
+            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z));
         pos.Motion.Set(next.X, next.Y, next.Z);
         liftedThisTick = true;
         var stroked = stroke;

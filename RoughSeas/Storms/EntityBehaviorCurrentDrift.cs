@@ -33,6 +33,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
     private EntityBehaviorPassivePhysicsMultiBox? hullBoxes;
     private EntityBehaviorPassivePhysics? physics;
     private EntityBehaviorSeaForces? forces;
+    private EntityBehaviorMooring? mooring;
     private IMountable? mountable;
     private IHullWay? way;
     private LiveDrag? ownDrag;
@@ -69,6 +70,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         hullBoxes = entity.GetBehavior<EntityBehaviorPassivePhysicsMultiBox>();
         physics = entity.GetBehavior<EntityBehaviorPassivePhysics>();
         forces = entity.GetBehavior<EntityBehaviorSeaForces>();
+        mooring = entity.GetBehavior<EntityBehaviorMooring>();
         way = entity.SidedProperties.Behaviors.OfType<IHullWay>().FirstOrDefault();
         if (way == null && IHull.Of(entity) is { } hull) ownDrag = new LiveDrag(entity, hull, attributes, entity.Api.ModLoader.GetModSystem<VesselsModSystem>());
     }
@@ -104,7 +106,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
     {
         if (water?.Drag is not { } drag) return;
         var (x, z) = drag.Acceleration(newtonsX, newtonsZ, entity.Pos.Yaw);
-        set.Push(x * seconds, z * seconds);
+        set.Add(x * seconds, z * seconds);
     }
 
     /// <summary>
@@ -160,6 +162,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         var current = Current();
         var waves = entity is EntityBoat boat && forces != null ? forces.Ride.Water(boat, deltaTime) : default;
         var on = waves with { CurrentX = current.X, CurrentZ = current.Z, WayAlong = WayAlong() };
+        if (ours) mooring?.Strain(deltaTime);
         var drag = way?.WaterDrag ?? ownDrag?.Now;
         var wash = drag != null ? set.Settle(drag, on, pos.Yaw, deltaTime) : set.Relax(on, pos.Yaw, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime), deltaTime);
         var w = water = new Water(on, drag, wash);
@@ -178,9 +181,14 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         return (current.X, current.Z);
     }
 
-    private double WayAlong() => entity is EntityBoat { ForwardSpeed: not 0 } boat
-        ? -VesselDraught.Realized(boat.ForwardSpeed, way?.Driving == true ? 1 : physics?.WaterDragValue ?? 1)
-        : 0;
+    private double WayAlong()
+    {
+        if (entity is not EntityBoat { ForwardSpeed: not 0 } boat) return 0;
+        var (setX, setZ) = set.Velocity;
+        var (setAlong, setAcross) = HullShape.ToHull(setX / WaterDrag.TicksPerSecond, setZ / WaterDrag.TicksPerSecond, entity.Pos.Yaw);
+        var motion = Speed(setAlong - boat.ForwardSpeed, setAcross);
+        return -VesselDraught.Realized(boat.ForwardSpeed, way?.Driving == true ? 1 : physics?.WaterDragValue ?? 1, motion);
+    }
 
     internal void BeforeMove(Vec3d motion, float seconds, double drag, bool wet, bool swimming, double stepFactor)
     {

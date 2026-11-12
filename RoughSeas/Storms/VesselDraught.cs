@@ -72,12 +72,13 @@ public static class VesselDraught
 
     /// <summary>
     /// Her speed through the water, m/s, from a <c>ForwardSpeed</c> vanilla writes into her motion before each of its
-    /// physics ticks, as that tick moves her; <paramref name="waterDrag"/> is vanilla's, 1 where a rower takes it off.
+    /// physics ticks, as that tick moves her; <paramref name="waterDrag"/> is vanilla's, 1 where a rower takes it off, and
+    /// <paramref name="motionLength"/> her whole motion's, which decides the tick's moves, her own way alone when not given.
     /// </summary>
-    public static double Realized(double forwardSpeed, double waterDrag = 1)
+    public static double Realized(double forwardSpeed, double waterDrag = 1, double? motionLength = null)
     {
         var tick = GlobalConstants.PhysicsFrameTime;
-        var steps = Math.Abs(forwardSpeed) > SubSteppedMotion ? SubSteps : 1;
+        var steps = (motionLength ?? Math.Abs(forwardSpeed)) > SubSteppedMotion ? SubSteps : 1;
         var seconds = tick / steps;
         var stepFactor = seconds * TicksPerSecond;
         var kept = WaterDrag.Kept(waterDrag, seconds);
