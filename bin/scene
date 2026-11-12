@@ -55,6 +55,11 @@ bin/scene portrait CODE FILE [DISTANCE]
 bin/scene seats [CODE...]  the player in every seat of each vessel (default: ours and the vanilla raft
                            and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
+bin/scene cargo [CODE...]  each vessel (default: ours and the vanilla raft and sailboat) docked once per kind of
+                           container, a basket, a chest, a storage vessel and a crate, with that container fitted
+                           to every slot that takes it, seen at noon from the side, from above and close:
+                           CODE-KIND-{side,above,close}.png in <temp>/cargo, and all.png with them in a grid.
+                           Checks that every container sits in the hull.
 bin/scene strokes [CODE[@TOOL]...]
                            the player rowing or paddling each vessel (default: ours with their own oars or paddle), forward and
                            backward, from the front, the side and behind, in third person: a burst
@@ -192,7 +197,7 @@ shallows() {
 clear() {
   local range=${1:-64}
   shift || true
-  local types=("$@")
+  local types=("$@") type
   [ ${#types[@]} -eq 0 ] && types=(boat-* roughseas:reedboat-* roughseas:dugout-* roughseas:coracle roughseas:barkcanoe-* roughseas:currach roughseas:outrigger-* item)
   for type in "${types[@]}"; do
     "$game" do "/entity remove e[type=$type,range=$range]"
@@ -344,6 +349,67 @@ seats() {
   echo "$dir/all.png"
 }
 
+held() {
+  local deadline=$((SECONDS + 3))
+  until "$game" state | jq -e ".hotbar.item $1" >/dev/null; do
+    [ $SECONDS -lt $deadline ] || return 1
+    sleep 0.5
+  done
+}
+
+sight() {
+  "$game" do "/bridge fly $(awk -v x="$x" -v y="$y" -v z="$z" -v dx="$2" -v dy="$3" -v dz="$4" -v s="$far" \
+    'BEGIN { print x + dx * s, y + dy * s, z + dz * s }')" >/dev/null
+  "$game" aim "$id" >/dev/null
+  sleep 3
+  "$game" shot "$1" >/dev/null
+}
+
+containers=('basket stationarybasket-east {type:"reed"}' 'chest chest-east {type:"normal-generic"}'
+  'vessel storagevessel-blue-fired' 'crate crate {type:"wood-oak"}')
+
+cargo() {
+  local codes=("$@") dir=$BENCH_TMP/cargo player id at x y z boxes box kind block type fitted
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat-papyrustops-papyrustops roughseas:barkcanoe-birch roughseas:currach \
+    roughseas:dugout-oak roughseas:outrigger-oak boat-raft-oak boat-sailed-oak)
+  player=$(jq -r .stringSettings.playername "$HOME/.config/VintagestoryData/clientsettings.json")
+  rm -rf "$dir"
+  mkdir -p "$dir"
+  local shots=()
+  for code in "${codes[@]}"; do
+    for container in "${containers[@]}"; do
+      read -r kind block type <<<"$container"
+      clear >/dev/null
+      id=$(dock "$code" | jq -r '.vessels[0].EntityId')
+      read -r x y z <<<"$(placed "$id")"
+      boxes=$({ "$game" hover "$id" none || true; } | sed 's/.* has //; s/,//g')
+      "$game" hover >/dev/null
+      fitted=0
+      BENCH_REPLY_SECONDS=1 "$game" do '/clearinv' >/dev/null || true
+      "$game" slot 0 >/dev/null
+      for box in $boxes; do
+        if held '== null'; then
+          "$game" do "/giveblock $block 1 p[name=$player] $type" >/dev/null
+          held '!= null' || { echo "No $block came to hand" >&2; exit 1; }
+        fi
+        "$game" do "/bridge interact $id interact ctrl $box" >/dev/null
+        held '== null' && fitted=$((fitted + 1))
+      done
+      [ $fitted -eq 0 ] && continue
+      noon
+      local name=$dir/${code##*:}-$kind far=1
+      [[ $code == boat-sailed-* ]] && far=2.5
+      sight "$name-side.png" 3 1.2 0
+      sight "$name-above.png" 0 5 0.004
+      sight "$name-close.png" 1.2 0.5 0
+      shots+=("$name-side.png" "$name-above.png" "$name-close.png")
+      echo "${code##*:} $kind: $fitted fitted"
+    done
+  done
+  magick montage "${shots[@]}" -resize 640x -tile 3x -geometry +2+2 "$dir/all.png"
+  echo "$dir/all.png"
+}
+
 strokes() {
   local codes=("$@") dir=strokes id
   for entry in "${codes[@]}"; do
@@ -420,6 +486,7 @@ case "${1:-}" in
   views) shift; views "$@" ;;
   portrait) shift; portrait "$@" ;;
   seats) shift; seats "$@" ;;
+  cargo) shift; cargo "$@" ;;
   strokes) shift; strokes "$@" ;;
   photo) shift; photo "$@" ;;
   dock) shift; dock "$@" ;;

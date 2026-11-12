@@ -152,7 +152,7 @@
                     "code": "Back Seat",
                     "forCategoryCodes": ["basket"],
                     "attachmentPointCode": "BackSeatAP",
-                    "stepParentTo": {"": {"elementName": "BackSeat"}},
+                    "stepParentTo": {"": {"elementName": "BackCargo"}},
                     "emptyInteractPassThrough": true
                 },
                 {"code": "HullAP", "forCategoryCodes": []},
