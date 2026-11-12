@@ -93,9 +93,9 @@ Close the game when you're done testing. A bench client left running holds the m
 
 ## Shipping
 
-Every pull request is reviewed by our own team of reviewers: `/rpi:review-pr self-review <number>`, whatever its size. An automated reviewer's finding is advice, not a gate. Judge each one on its merits: fix a real defect or a real risk, and answer a nitpick, a style point or a speculative edge case in one line saying why the code stays. A small finding worth doing is fixed in the same push, not left for an issue.
+Every pull request is reviewed by our own reviewers. One over 1000 lines of diff gets the full team: `/rpi:review-pr self-review <number>`. A smaller one gets a single `rpi:review-generic` over the whole change, run blind the same way. An automated reviewer's finding is advice, not a gate. Judge each one on its merits: fix a real defect or a real risk, and answer a nitpick, a style point or a speculative edge case in one line saying why the code stays. A small finding worth doing is fixed in the same push, not left for an issue.
 
-The reviewers, each run blind, on the diff, the ticket and the history only:
+The full team, each run blind, on the diff, the ticket and the history only:
 - `rpi:review-ticket-delivery`, `rpi:review-docs`, `rpi:review-performance`;
 - `rpi:review-generic` on **the xUnit tests**, since the standard test reviewers are for RSpec and minitest;
 - `rpi:review-generic` on **the mod's architecture**: does the change fit `docs/design.md` and this file's principles (modules behind clear boundaries, one class one job, kinds as types, vanilla before our own code);
