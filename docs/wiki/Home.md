@@ -10,6 +10,9 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 
 ## Contents
 
+**Showcase**
+- [Showcase](Showcase): every animation in this wiki, linked to the page it belongs to.
+
 **Getting started**
 - [World settings](World-Settings): the *Rough Seas* playstyle, and a setting for each mechanic.
 - [Vessels](Vessels): which one for which water.
@@ -48,8 +51,10 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Sailboat](Sailboat)
 
 **The science behind it**
-- [The science of the sea](The-Science-of-the-Sea): the measurements and models the wind, waves, surf and storms stand on, and where we bent them.
-- [The science of the hull](The-Science-of-the-Hull): the same for how a hull takes a blow, floats, leaks and rides the swell.
+- [The science of the weather](The-Science-of-the-Weather): the measurements and models the wind and storms stand on, and where we bent them.
+- [The science of the waves](The-Science-of-the-Waves): the same for the waves and the surf on the shore.
+- [The science of a body in the water](The-Science-of-a-Body-in-the-Water): the same for how the waves, a stroke, the current and a rope move a hull or a swimmer.
+- [The science of the hull](The-Science-of-the-Hull): the same for how a hull takes a blow, floats, leaks, rides the swell and is built.
 
 **Beside other mods**
 - [Beside other mods](Other-Mods): the mods we tested Rough Seas with, what changes in one mod set, and what we recommend.

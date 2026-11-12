@@ -1,0 +1,60 @@
+What Rough Seas' waves and surf stand on, and where we bent it. The wind that raises them is on [The science of the weather](The-Science-of-the-Weather), and what they do to a hull or a swimmer on [The science of a body in the water](The-Science-of-a-Body-in-the-Water).
+
+## Waves
+
+- **Growth.** Wave height and period come from the wind, the fetch (the open water upwind) and the depth, by Young and Verhagen's formula (1996), as the US Army Corps of Engineers' *Coastal Engineering Manual* (EM 1110-2-1100, part II-2) gives it. The fetch is the straight line upwind, as the manual recommends.
+- **Duration.** The time the wind has blown becomes an equivalent fetch (manual, II-2-38). The sea answers to the wind of the last half hour to three days. A day of wind matches the sea the Beaufort scale describes for each force; three days raise a fully developed sea.
+- **Depth.** Shallow water holds a wave's period down (manual, II-2-39).
+- **Bent: the ceiling.** The formula gives a hurricane waves of 30 m and more, which no real sea reaches. Above 9 m the height bends softly toward 16 m and never passes it.
+- **Every wave is different.** Single waves scatter around the significant height by the Rayleigh distribution. ([Significant wave height](https://en.wikipedia.org/wiki/Significant_wave_height))
+- **Breaking.** Over a shallow bed the share of waves that break comes from the energy balance under [The shore](#the-shore), and those are the tallest of the sea, the ones a depth-limited Rayleigh distribution cuts off (Battjes and Janssen 1978). Out at sea a wave breaks once it is a seventh as high as it is long, as steep as a wave can stand (Michell 1893). A breaker is as long as that steepness makes it, and runs at the speed of a wave that long, no faster than the sea's own waves, slowed over a shallow bed by Eckart's dispersion (1952).
+- **Spilling and plunging.** In deep water about 2% of breakers plunge, the rest spill (Gemmrich and Farmer 1999). On a sloping bed the surf similarity parameter decides: a wave plunges when the bed's slope over the root of its steepness lies between 0.5 and 3.3 (Battjes 1974), and its crest lands 4.0 − 9.25 times the slope of its height shoreward of where it broke (Galvin 1969); further in, what is left is its bore. What a breaker does to a hull: [Breakers](The-Science-of-the-Hull#breakers).
+- **Whitecaps.** How much of the sea is white at each force starts from Monahan's measured whitecap coverage and is raised a little, so whitecaps read from afar as they do on a real horizon. The look was matched against [NOAA's photographs](https://photolib.noaa.gov/) of each force.
+
+## Short waves
+
+Waves between 8 m and half a metre long are drawn from the wind sea's equilibrium range: E(ω) = α g² ω⁻⁵, α = 0.0081 (Phillips 1958, *J. Fluid Mech.* 4; the constant as the Coastal Engineering Manual, EM 1110-2-1100 Part II-1, gives it). Integrated over a band of wavelengths L1 to L2 that is a variance of α (L2² − L1²) / (4 (2π)²): about 5 cm of root-mean-square height for 4–8 m waves and 0.6 cm for 0.5–1 m ones. A sea too low to hold them carries less, in proportion. A hull averages out what is shorter than itself, so the short waves don't rock a boat. Each level of the drawn mesh drops the waves shorter than twice its spacing.
+
+## The shore
+
+The drawn waves read the seabed around the player, a block a cell: its depth under still water and its slope; the beach is negative depth. A wave feels the bed at its own scale, so its speed, its turning and the slope are read over a quarter of its length, while what breaks it is the depth under it. H0 is a wave's deep-water height and L0 = g T² / 2π the deep-water wavelength of the peak period T.
+
+### Over the bed
+
+- **Energy.** A wave's height comes from the energy carried to it, not from the depth where it stands. Each train's energy E = a² / 2 is carried along its crests by the steady balance div(E cg n) = −D, cg the group velocity and n the way the crests run (Battjes and Janssen 1978; SWAN). With nothing lost, a wave slowing over a shoaling bed grows as H = H0 √(cg0 / cg), Green's law H ∝ d^(−1/4) in shallow water (Dean and Dalrymple 1991); its wavenumber follows Eckart's dispersion (1952), k = k0 / √tanh(k0 d). The energy comes in from a coarser solution over the three regions around, on the depths and heights the server sends with the sea map, so a reef beyond the map still shelters the water behind it. Off land upwind a wave starts from the sea that stands there, as the fetch made it, not shoaled again from the deep.
+- **Refraction.** Crests turn toward the shore by Snell's law, sin θ / c constant along a ray. Each wave's lag is the eikonal |∇φ| = k, solved over the bed, starting from the same coarser solution, so every player nearby sees the same crests. At the map's edge the two fields are added, not their phases mixed. A wave's direction is averaged over a quarter of its length to either side, since it can't turn on a shorter scale; rays that would cross behind an islet spread as diffraction spreads them.
+- **Breaking.** A breaking sea loses D = α σ Qb E / (π B), B its energy over what the depth carries, σ its mean frequency, α = 1 (Battjes and Janssen 1978, shared among the trains by their energy as SWAN shares it). Qb, the share of waves breaking, solves 1 − Qb + B ln Qb = 0 and whitens the crests. Hrms is held to d / 1.28 (McCowan 1894, as SWAN applies it). A bar breaks the waves as a beach does, and the energy it takes stays lost behind it. Plunging waves ([Spilling and plunging](#waves)) steepen their crest to the cusp.
+- **A broken wave's speed.** Waves in the surf run at c = √(g h) √(1 + 0.45 Hs / h), a field fit (Holland 2001, *IEEE Trans. Geosci. Remote Sens.* 39), so the depth that sets their speed is h + 0.45 Qb Hs. At the shoreline the bore runs no slower than the sheet it throws (below), U = √(2 g R): a depth of 2 R, R the significant wave's run-up.
+
+### Run-up
+
+R2% is the height above still water only 2% of the swash passes. The slope it climbs is read along the waves' path, up to 48 blocks inland, as a ramp from the waterline through the corner of the first block whose top the run-up reaches.
+
+- **Sand and soil up to 1:7.** R2% = 1.1 (0.35 β √(H0 L0) + ½ √(H0 L0 (0.563 β² + 0.004))), β the slope, fitted over ten field experiments on natural beaches (Stockdon, Holman, Howd and Sallenger 2006, *Coastal Engineering* 53(7)). Where β / √(H0 / L0) is under 0.3, a flat dissipative beach, R2% = 0.043 √(H0 L0). A 4 m sea of 9 s on a 1:20 beach runs about 1 m up it.
+- **Gravel, rock and slopes over 1:7.** Ru2% = 1.65 γf ξ Hm0, at most γf (4.0 − 1.5 / √ξ) Hm0, ξ the surf similarity parameter of the spectral period Tm−1,0 = T / 1.1 (EurOtop 2018, eq. 5.1, 5.2 and 4.2). The roughness γf is 1.0 for rock and sand, as a smooth impermeable slope, and 0.55 for gravel, as two layers of rock on an impermeable core (table 5.2).
+- **1:1 and steeper.** EurOtop measured slopes only; such a shore runs up by one wave height, the crest of a linear clapotis.
+
+### The sheet
+
+- **Its shape.** A bore collapses at the shoreline and throws a sheet up the beach (Shen and Meyer 1963). Its front leaves at U = √(2 g R), the frictionless speed that climbs R, and moves ballistically along the slope, s = U t − ½ g sin β t², with tan β = R / X, X the farthest the run-up's sheet reaches followed block by block (below): so it stops where that sheet stops, on a flat beach as on a stepped one, and runs back down as it came. Behind it the sheet is a lens, h = (x_front − x)² / (9 g t²), thickest at the shoreline, of mean depth U² / 27 g. Each wave runs up R2% √(H / H2%), H2% the Rayleigh sea's 2% height, since run-up grows as √(H L0), H the wave's height when its bore reached the shoreline. A sheet lasts until it has run back, and the next one runs up over it.
+- **Steps.** The front climbs a block's step only while its velocity head u² / 2g reaches over it. Between steps it loses speed to quadratic bed friction over the lens's mean depth, with a coefficient of 0.007 fitted to over 4,500 uprushes on a sandy beach (Puleo and Holland 2001, *Coastal Engineering* 43(1)). The measured run-up already includes that friction, so the front is thrown just fast enough to reach R. It stops where it can't climb, where the bed has drunk it, or when the next bore runs over it.
+- **Soaking in.** The bed drinks the sheet at its hydraulic conductivity by Darcy's law, in m/s: sand 10⁻⁴, gravel 3·10⁻², soil 10⁻⁶, rock nothing (Freeze and Cherry 1979, *Groundwater*, table 2.2). On gravel little runs back; on rock all of it does.
+- **Wet sand.** Wet sand has half the albedo of dry, 0.091 against 0.182 (Ångström, as Lekner and Dorf 1988 quote him, *Applied Optics* 27(7)). Ground is darkened by the share of time it stays wet: the time the sheet's mean depth takes to soak in, over the wave period, times the chance a wave reaches it, exp(−ln 50 (R / R2%)²).
+- **The water under the shore** reaches as far as the sheet of the higher of two seas runs: today's, and the background wind's mean blowing fully built from the prevailing way. A loaded shore reads its sea again every 10 game minutes.
+
+### Faces
+
+A face is any side of a full block the sea or a sheet meets, a cliff and a beach step alike. A step steeper than 1:1 is a wall, and so is a second riser straight after the first: a sheet stops at its foot and the water under the shore doesn't pass it.
+
+- **Reflection.** Kr = tanh(a ξ^b), a = 0.167 (1 − exp(−3.2 γf)), b = 1.49 (γf − 0.38)² + 0.86 (Zanuttigh and van der Meer 2008, *Coastal Engineering* 55(10)), ξ of the slope from 1.5 Hm0 below still water up to the face (EurOtop 2018, 5.3.4): nothing to speak of on a beach, all of it at a wall. The reflected wave leaves in phase at the face and stands with the incident one as a clapotis, its crest (1 + Kr) H / 2 square to the face and cos θ of that at an angle θ. It rises from the face no steeper than tan 30°, beside the 120° crest of Stokes' limiting wave (1880). Off a short face it thins as its width over √(L s), s the distance.
+- **A breaking wave strikes.** It breaks at a face when Qb there is a tenth or more, or when it arrives whitecapped. The water it throws above its clapotis crest is EurOtop 2018's impulsive overtopping of a vertical wall, read as the water passing z = Rc: q / √(g H³) = 0.011 (H / (h s))^½ exp(−2.2 z / H) up to z / H = 1.35, and 0.0014 (H / (h s))^½ (z / H)^−3 above (eq. 7.7 and 7.8), the closest analogue measured for a crest breaking before a deep toe. A face lower than the crest takes no jet: the wave runs over it. Drops go no faster than 2.2 C, C the wave's celerity, the highest water speed Ikeda et al. measured up a wall under a plunging breaker: about 3 m/s under waves of 1.36 m/s (2012, 29th Symposium on Naval Hydrodynamics).
+- **A stopped sheet strikes.** It throws all the water of its lens, the drops reaching at most its velocity head u² / 2g, by the same exp(−2.2 z / H), H that head.
+
+### Foam and clear water
+
+- **Foam.** Broken water foams the surface where it arrives, at sea, on the beach and at a face alike, and the foam's area then shrinks, e-folding in 3.1 s, the middle of the 1.4 to 4.8 s Callaghan, Deane and Stokes measured for whitecaps (2012, *JGR Oceans*). It arrives with the dominant wave's front over water, in the share breaking; with the swash's front over land, all of it; and one wave height wide at a face a broken wave strikes. So it is solid only on the front and breaks into patches and traces behind, and a line of it runs along the swash's tip. The wind's foam gives way to it where the waves break.
+- **Clear shallow water.** The water's opacity is 1 − e^(−2 K d), light fading down to the bed and back up. K ranged 0.05 to 3.6 m⁻¹ over 94 coastal sites (Corcoran and Parrish 2021, *Photogrammetric Engineering & Remote Sensing* 87); no surf-zone measurement was found, and 1 m⁻¹, turbid coastal water, is taken.
+
+## Where we bent reality, and what is not yet real
+
+- **The wave ceiling** of 16 m keeps a hurricane's sea on the world's scale.
