@@ -47,13 +47,15 @@ public class StormsModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorMooring.Code, typeof(EntityBehaviorMooring));
         api.RegisterEntityBehaviorClass(EntityBehaviorCurrentDrift.Code, typeof(EntityBehaviorCurrentDrift));
         api.RegisterBlockBehaviorClass(BlockBehaviorBailer.Code, typeof(BlockBehaviorBailer));
-        api.Network.RegisterChannel(Channel).RegisterMessageType<MooringReport>();
+        api.Network.RegisterChannel(Channel).RegisterMessageType<MooringReport>().RegisterMessageType<HullSetReport>();
         VesselDraught.Attach();
         DriftPhysics.Attach();
         OneRope.Attach();
     }
 
     public void Report(MooringReport report) => reports?.SendPacket(report);
+
+    public void Report(HullSetReport report) => reports?.SendPacket(report);
 
     public override void AssetsLoaded(ICoreAPI api)
     {
@@ -289,6 +291,8 @@ public class StormsModSystem : ModSystem
         RopeIds.Attach();
         sapi.Network.GetChannel(Channel).SetMessageHandler<MooringReport>((player, report) =>
             sapi.World.GetEntityById(report.EntityId)?.GetBehavior<EntityBehaviorMooring>()?.Reported(player, report));
+        sapi.Network.GetChannel(Channel).SetMessageHandler<HullSetReport>((player, report) =>
+            sapi.World.GetEntityById(report.EntityId)?.GetBehavior<EntityBehaviorCurrentDrift>()?.Reported(player, report));
         Swells = new RegionSwells(this, sea, sapi);
         BreathUnderSurface.Attach(this, Swells, sapi);
         Budget.CountTicks(sapi);

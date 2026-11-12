@@ -70,6 +70,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         public double LoggedTension;
         public long LoggedAt;
         public (double Speed, double Kilograms, double Newtons)? Jerk;
+        /// <summary>The rest of the line's last kick, newton-seconds in world axes, given her at the next tick.</summary>
         public (double X, double Z) Owed;
     }
 
@@ -167,7 +168,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         Tie(server);
         if (!here)
         {
-            foreach (var hold in holds) (hold.Taut, hold.Slipping) = (false, false);
+            foreach (var hold in holds) (hold.Taut, hold.Slipping, hold.Owed, hold.Jerk) = (false, false, default, null);
         }
         if (!server) return;
 
@@ -265,11 +266,11 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     /// </summary>
     internal void Strain(float seconds)
     {
-        if (drift == null) return;
+        if (drift == null || holds.Length == 0) return;
 
         foreach (var hold in holds.Where(hold => hold.Owed != default))
         {
-            drift.Impulse(hold.Owed.X, hold.Owed.Z, 1);
+            drift.Impulse(hold.Owed.X, hold.Owed.Z);
             hold.Owed = default;
         }
         var outward = holds.Select(hold => Outward(hold.Tether)).ToArray();
@@ -314,7 +315,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             var holding = strains && hold.Tether.Anchored && Anchor is { } anchor ? Holding(anchor) : double.PositiveInfinity;
             Slip(hold, step.PeakNewtons > holding, step.PeakNewtons, holding);
             if (hold.Slipping) step = MooringLine.Dragging(speed, shares[j], holding, kilograms, seconds, level);
-            drift.Impulse(step.Moved * kilograms * outX, step.Moved * kilograms * outZ, 1);
+            drift.Impulse(step.Moved * kilograms * outX, step.Moved * kilograms * outZ);
             hold.Owed = ((step.Kick - step.Moved) * kilograms * outX, (step.Kick - step.Moved) * kilograms * outZ);
 
             if (!hold.Taut) hold.Jerk = (speed * level, kilograms, 0);

@@ -14,7 +14,8 @@ public readonly record struct MooringLine(double RestMetres, double BreakingNewt
     /// past its reach and moving away at <paramref name="outwardMetresPerSecond"/>, with the water's steady pull on her
     /// along it, all across the water; <paramref name="level"/> is the cosine of the line's slope. It takes her up where
     /// she reaches it within the step, and lets her off and takes her up again as often as the step lasts for; one she
-    /// doesn't reach does nothing. A line too stiff to stretch stops her at its end.
+    /// doesn't reach does nothing. A step so long that she bounces more than <see cref="MostBounces"/> times leaves her at
+    /// rest where it holds the steady pull. A line too stiff to stretch stops her at its end.
     /// </summary>
     public LineStep Over(double stretchMetres, double outwardMetresPerSecond, double steadyNewtons, double kilograms, double seconds, double level)
     {
@@ -31,7 +32,13 @@ public readonly record struct MooringLine(double RestMetres, double BreakingNewt
         var (stretch, speed, left, furthest) = (stretchMetres, outwardMetresPerSecond, seconds, 0.0);
         for (var bounce = 0; left > 0; bounce++)
         {
-            var free = bounce < MostBounces ? Math.Min(left, Reaching(stretch, speed, pull) ?? left) : left;
+            if (bounce == MostBounces)
+            {
+                (stretch, speed) = (Math.Max(0, held), 0);
+                furthest = Math.Max(furthest, stretch);
+                break;
+            }
+            var free = Math.Min(left, Reaching(stretch, speed, pull) ?? left);
             (stretch, speed, left) = (stretch + speed * free + pull * free * free / 2, speed + pull * free, left - free);
             if (left <= 0) break;
 

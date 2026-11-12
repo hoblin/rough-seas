@@ -8,6 +8,9 @@ public readonly record struct SwimStroke(double X, double Y, double Z)
 {
     public bool Stroking => X != 0 || Y != 0 || Z != 0;
 
+    /// <summary>Swimming across, they lie along the water in a crawl; treading water they stay upright.</summary>
+    public bool Prone => X != 0 || Z != 0;
+
     public static SwimStroke Of(EntityControls controls)
     {
         var fly = controls.TriesToMove ? Unit(controls.FlyVector.X, controls.FlyVector.Y, controls.FlyVector.Z) : default;

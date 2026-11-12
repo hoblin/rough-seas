@@ -381,46 +381,6 @@ public class PropulsionTests
         Assert.InRange(newtons / (500 * speed * speed * wettedSquareMetres), least, most);
     }
 
-    [Theory]
-    [InlineData(0.5)]
-    [InlineData(2)]
-    [InlineData(4)]
-    [InlineData(6.5)]
-    public void VanillaCarriesABoatAtTheSpeedItIsCommanded(double metresPerSecond)
-    {
-        Assert.Equal(metresPerSecond, VesselDraught.Realized(VanillaSwim.Commanded(metresPerSecond)), 3);
-    }
-
-    [Fact]
-    public void ASpeedVanillasTickCantMakeIsAskedAsTheFastestBelowIt()
-    {
-        Assert.Equal(4.8, VesselDraught.Realized(VanillaSwim.Commanded(5)), 3);
-        Assert.Equal(4.8, VesselDraught.Realized(VanillaSwim.Commanded(5.9)), 3);
-    }
-
-    [Fact]
-    public void HerWholeMotionDecidesVanillasMovesAndSoWhetherItsSwimDragActs()
-    {
-        Assert.Equal(0.09 * 60 / VesselDraught.MostSwimDrag, VesselDraught.Realized(0.09), 3);
-        Assert.Equal(0.09 * 60, VesselDraught.Realized(0.09, 1, motionLength: 0.11), 3);
-    }
-
-    [Fact]
-    public void AFastBoatMeetsNoSwimDragInVanillasTenMovesOfATickButStillItsWaterDrag()
-    {
-        const double sailing = 0.12;
-        var stepped = 0.0;
-        var motion = sailing;
-        for (var i = 0; i < 10; i++)
-        {
-            motion *= Math.Pow(0.92, 33 / 300.0);
-            stepped += motion * 0.2;
-        }
-
-        Assert.Equal(sailing * 60, VesselDraught.Realized(sailing), 5);
-        Assert.Equal(stepped * 30, VesselDraught.Realized(sailing, 0.92), 5);
-    }
-
     [Fact]
     public void OurDragTakesOverFromVanillasAlongTheWaterAndLeavesItOnHerHeave()
     {

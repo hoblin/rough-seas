@@ -14,6 +14,7 @@ namespace RoughSeas.Storms;
 public sealed class SeaSurface
 {
     private const double FullTurn = 2 * Math.PI;
+    private const double GradientStep = 0.01;
     private const int SurfaceSearchSteps = 3;
     private const int FoldSamplesAcross = 24;
 
@@ -357,14 +358,27 @@ public sealed class SeaSurface
     public (double X, double Z) HullVelocityAt(double x, double z, double lift, double draft, double yaw, double length, double beam,
         double share = 1)
     {
+        var (sin, cos) = Math.SinCos(yaw + Math.PI / 2);
+        return Orbital(x, z, lift, Math.Max(draft, 0), cos, -sin, length, beam, share);
+    }
+
+    private (double X, double Z) Orbital(double x, double z, double height, double draft, double alongX, double alongZ,
+        double length, double beam, double share)
+    {
         var slots = Trains.Slots;
-        Span<double> speeds = stackalloc double[slots], phases = stackalloc double[slots], numbers = stackalloc double[slots];
+        Span<double> heights = stackalloc double[slots], lags = stackalloc double[slots], numbers = stackalloc double[slots];
         Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
-        Orbital(x, z, lift, draft, yaw, length, beam, share, speeds, phases, numbers, towardX, towardZ);
+        Local(x, z, share, heights, lags, numbers, towardX, towardZ);
+        var depth = share > 0 && Seabed is { } field && field.Covers(x, z) ? field.CelerityDepthAt(x, z) : double.PositiveInfinity;
         double velocityX = 0, velocityZ = 0;
         for (var slot = 0; slot < slots; slot++)
         {
-            var speed = speeds[slot] * Math.Sin(phases[slot]);
+            if (heights[slot] <= 0) continue;
+            var along = numbers[slot] * (towardX[slot] * alongX + towardZ[slot] * alongZ);
+            var across = numbers[slot] * (towardZ[slot] * alongX - towardX[slot] * alongZ);
+            var fade = WaveTheory.OrbitalFade(numbers[slot], depth, height, draft);
+            var speed = share * heights[slot] * Trains.Frequency(slot) * Math.Sin(Trains.Phase(slot, x, z) + lags[slot]) * fade
+                * Sinc(along * length / 2) * Sinc(across * beam / 2);
             velocityX += speed * towardX[slot];
             velocityZ += speed * towardZ[slot];
         }
@@ -373,45 +387,17 @@ public sealed class SeaSurface
 
     /// <summary>
     /// How the water's velocity <see cref="HullVelocityAt"/> reads changes from one metre to the next over the same
-    /// body, per second of the waves' clock: linear theory's ∂u_i/∂x_j, the same in both orders for waves.
+    /// body, per second of the waves' clock: its own difference across a few centimetres, so it holds everything that
+    /// changes the velocity along the way, a wave's height growing over a shoaling bed with the phase.
     /// </summary>
     public FlowGradient HullGradientAt(double x, double z, double lift, double draft, double yaw, double length, double beam, double share = 1)
     {
-        var slots = Trains.Slots;
-        Span<double> speeds = stackalloc double[slots], phases = stackalloc double[slots], numbers = stackalloc double[slots];
-        Span<double> towardX = stackalloc double[slots], towardZ = stackalloc double[slots];
-        Orbital(x, z, lift, draft, yaw, length, beam, share, speeds, phases, numbers, towardX, towardZ);
-        double xx = 0, xz = 0, zz = 0;
-        for (var slot = 0; slot < slots; slot++)
-        {
-            var change = speeds[slot] * Math.Cos(phases[slot]) * numbers[slot];
-            xx += change * towardX[slot] * towardX[slot];
-            xz += change * towardX[slot] * towardZ[slot];
-            zz += change * towardZ[slot] * towardZ[slot];
-        }
-        return new FlowGradient(xx, xz, zz);
-    }
-
-    private void Orbital(double x, double z, double lift, double draft, double yaw, double length, double beam, double share,
-        Span<double> speeds, Span<double> phases, Span<double> numbers, Span<double> towardX, Span<double> towardZ)
-    {
-        var (sin, cos) = Math.SinCos(yaw + Math.PI / 2);
-        var (alongX, alongZ) = (cos, -sin);
-        Local(x, z, share, speeds, phases, numbers, towardX, towardZ);
-        var depth = share > 0 && Seabed is { } field && field.Covers(x, z) ? field.CelerityDepthAt(x, z) : double.PositiveInfinity;
-        for (var slot = 0; slot < Trains.Slots; slot++)
-        {
-            if (speeds[slot] <= 0)
-            {
-                speeds[slot] = 0;
-                continue;
-            }
-            var along = numbers[slot] * (towardX[slot] * alongX + towardZ[slot] * alongZ);
-            var across = numbers[slot] * (towardZ[slot] * alongX - towardX[slot] * alongZ);
-            speeds[slot] *= share * Trains.Frequency(slot) * WaveTheory.OrbitalFade(numbers[slot], depth, lift, Math.Max(draft, 0))
-                * Sinc(along * length / 2) * Sinc(across * beam / 2);
-            phases[slot] += Trains.Phase(slot, x, z);
-        }
+        var (east, west) = (HullVelocityAt(x + GradientStep, z, lift, draft, yaw, length, beam, share), HullVelocityAt(x - GradientStep, z, lift, draft, yaw, length, beam, share));
+        var (south, north) = (HullVelocityAt(x, z + GradientStep, lift, draft, yaw, length, beam, share), HullVelocityAt(x, z - GradientStep, lift, draft, yaw, length, beam, share));
+        return new FlowGradient(
+            (east.X - west.X) / (2 * GradientStep),
+            (south.X - north.X + east.Z - west.Z) / (4 * GradientStep),
+            (south.Z - north.Z) / (2 * GradientStep));
     }
 
     private static double Sinc(double x) => Math.Abs(x) < 1e-9 ? 1 : Math.Sin(x) / x;

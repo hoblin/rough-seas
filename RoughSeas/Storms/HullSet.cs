@@ -9,38 +9,21 @@ namespace RoughSeas.Storms;
 /// A hull's set: the velocity the water and her lines have given her, on top of her own way through the water, a
 /// rower's or a sail's. It is the waves' water at her place and her own velocity beside it, which forces change. It
 /// lives in her motion and goes through vanilla's physics there: each move sets her motion so that after vanilla's water
-/// drag and swim drag she carries the set whole and the rest of her motion as vanilla would have left it alone. Called
-/// from the physics thread and the tick, so it holds its own lock.
+/// drag and swim drag she carries the set whole and the rest of her motion as vanilla would have left it alone. She
+/// displaces her own mass, so she takes the water's change and push whole; her drag is her hull's.
 /// </summary>
-public sealed class HullSet
+public sealed class HullSet : BodyInWater
 {
-    private readonly object gate = new();
-    private double ownX;
-    private double ownZ;
-    private double waveX;
-    private double waveZ;
+    private const double DisplacesHerMass = 1;
+
     private double pivotX;
     private double pivotZ;
     private double heldX;
     private double heldZ;
-    private bool met;
-
-    public (double X, double Z) Velocity
-    {
-        get
-        {
-            lock (gate) return (waveX + ownX, waveZ + ownZ);
-        }
-    }
-
-    /// <summary>Her set beside the waves' water at her place, m/s: the part forces change, and the part the other side takes over.</summary>
-    public (double X, double Z) Own
-    {
-        get
-        {
-            lock (gate) return (ownX, ownZ);
-        }
-    }
+    private double madeX;
+    private double madeZ;
+    private double madeSeconds;
+    private (double X, double Z) way;
 
     /// <summary>What her motion holds of the set now, blocks per tick.</summary>
     public (double X, double Z) Held
@@ -51,17 +34,30 @@ public sealed class HullSet
         }
     }
 
+    /// <summary>
+    /// Her own way through the water, m/s: what vanilla's moves since the last call made of her motion besides the set,
+    /// after their drags, on whichever side and at whatever rate they ran; as before when none ran.
+    /// </summary>
+    public (double X, double Z) Way()
+    {
+        lock (gate)
+        {
+            if (madeSeconds > 0) (way, madeX, madeZ, madeSeconds) = ((madeX / madeSeconds, madeZ / madeSeconds), 0, 0, 0);
+            return way;
+        }
+    }
+
     /// <summary>The water moves her for <paramref name="seconds"/>.</summary>
     /// <returns>The water's acceleration of her besides its drag, m/s²: the waves' own change at her place and their push.</returns>
     public (double X, double Z) Settle(HullDrag drag, WaterOnHull water, double yaw, double seconds)
     {
         lock (gate)
         {
-            var (pushX, pushZ) = FacePush(water, yaw);
-            var (relativeX, relativeZ) = drag.Settle(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, seconds, water.WayAlong, pushX, pushZ);
+            var wash = Meet(water, Through(water, yaw), DisplacesHerMass, seconds);
+            var (relativeX, relativeZ) = drag.Settle(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, seconds, water.WayAlong, Pushed.X, Pushed.Z);
             ownX = water.CurrentX - relativeX;
             ownZ = water.CurrentZ - relativeZ;
-            return Wash(water, pushX, pushZ, seconds);
+            return wash;
         }
     }
 
@@ -70,22 +66,17 @@ public sealed class HullSet
     {
         lock (gate)
         {
-            var (pushX, pushZ) = FacePush(water, yaw);
-            ownX += pushX * seconds + (water.CurrentX - ownX) * share;
-            ownZ += pushZ * seconds + (water.CurrentZ - ownZ) * share;
-            return Wash(water, pushX, pushZ, seconds);
+            var wash = Meet(water, Through(water, yaw), DisplacesHerMass, seconds);
+            ownX += Pushed.X * seconds + (water.CurrentX - ownX) * share;
+            ownZ += Pushed.Z * seconds + (water.CurrentZ - ownZ) * share;
+            return wash;
         }
     }
 
-    /// <summary>What the waves pushed her by in the last step, m/s², for her moving through their water: −(s·∇)u.</summary>
-    public (double X, double Z) Pushed { get; private set; }
-
-    private (double X, double Z) Wash(WaterOnHull water, double pushX, double pushZ, double seconds)
+    /// <summary>The side that moves her says what her own set is, m/s.</summary>
+    public void Reported(double ownX, double ownZ)
     {
-        Pushed = (pushX, pushZ);
-        var (washX, washZ) = met ? ((water.WaveX - waveX) / seconds + pushX, (water.WaveZ - waveZ) / seconds + pushZ) : (pushX, pushZ);
-        (waveX, waveZ, met) = (water.WaveX, water.WaveZ, true);
-        return (washX, washZ);
+        lock (gate) (this.ownX, this.ownZ) = (ownX, ownZ);
     }
 
     public void Add(double metresPerSecondX, double metresPerSecondZ)
@@ -107,11 +98,10 @@ public sealed class HullSet
         lock (gate) return drag.Swing(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, turnPerSecond, seconds);
     }
 
-    private (double X, double Z) FacePush(WaterOnHull water, double yaw)
+    private (double X, double Z) Through(WaterOnHull water, double yaw)
     {
         var (wayX, wayZ) = HullShape.ToWorld(water.WayAlong, 0, yaw);
-        var (x, z) = water.Gradient.Moving(ownX - water.CurrentX + wayX, ownZ - water.CurrentZ + wayZ);
-        return (-x, -z);
+        return (ownX - water.CurrentX + wayX, ownZ - water.CurrentZ + wayZ);
     }
 
     /// <summary>
@@ -130,6 +120,9 @@ public sealed class HullSet
             heldX = (waveX + ownX + pivotX) / WaterDrag.TicksPerSecond;
             heldZ = (waveZ + ownZ + pivotZ) / WaterDrag.TicksPerSecond;
             var (afterX, afterZ) = (restX / rest + heldX, restZ / rest + heldZ);
+            madeX += restX / rest * stepFactor;
+            madeZ += restZ / rest * stepFactor;
+            madeSeconds += stepFactor / WaterDrag.TicksPerSecond;
             // vanilla's swim drag is a step: at a speed past its offset it takes all it will, so what passes it is the most it takes
             var before = Swim(Math.Sqrt(afterX * afterX + afterZ * afterZ)) <= 1 ? 1 : VesselDraught.MostSwimDrag;
             motion.X = afterX * before / kept;
@@ -142,8 +135,8 @@ public sealed class HullSet
     {
         lock (gate)
         {
-            if (motion.X == 0) (ownX, pivotX, heldX) = (-waveX, 0, 0);
-            if (motion.Z == 0) (ownZ, pivotZ, heldZ) = (-waveZ, 0, 0);
+            if (motion.X == 0) (ownX, pivotX, heldX, madeX) = (-waveX, 0, 0, 0);
+            if (motion.Z == 0) (ownZ, pivotZ, heldZ, madeZ) = (-waveZ, 0, 0, 0);
         }
     }
 
@@ -170,6 +163,7 @@ public sealed class HullSet
         lock (gate)
         {
             (ownX, ownZ, waveX, waveZ, pivotX, pivotZ, met) = (setX, setZ, 0, 0, 0, 0, false);
+            (madeX, madeZ, madeSeconds, way) = (0, 0, 0, default);
             motion.X = heldX = ownX / WaterDrag.TicksPerSecond;
             motion.Z = heldZ = ownZ / WaterDrag.TicksPerSecond;
         }
@@ -183,12 +177,17 @@ public sealed class HullSet
             motion.X -= heldX;
             motion.Z -= heldZ;
             (ownX, ownZ, waveX, waveZ, pivotX, pivotZ, heldX, heldZ, met) = (0, 0, 0, 0, 0, 0, 0, 0, false);
+            (madeX, madeZ, madeSeconds, way) = (0, 0, 0, default);
         }
     }
 
     /// <summary>Ashore or handed over: no set. What her motion still holds of it is vanilla's to take off.</summary>
     public void Clear()
     {
-        lock (gate) (ownX, ownZ, waveX, waveZ, pivotX, pivotZ, heldX, heldZ, met) = (0, 0, 0, 0, 0, 0, 0, 0, false);
+        lock (gate)
+        {
+            (ownX, ownZ, waveX, waveZ, pivotX, pivotZ, heldX, heldZ, met) = (0, 0, 0, 0, 0, 0, 0, 0, false);
+            (madeX, madeZ, madeSeconds, way) = (0, 0, 0, default);
+        }
     }
 }

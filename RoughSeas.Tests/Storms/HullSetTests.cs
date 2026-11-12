@@ -110,6 +110,32 @@ public class HullSetTests
         Assert.Equal(0.8, across / (300 * PhysicsSeconds), 6);
     }
 
+    [Theory]
+    [InlineData(1 / 30.0, 1, 4.0, 4.0 / 1.25)]
+    [InlineData(1 / 30.0, 10, 6.9, 6.9)]
+    [InlineData(1 / 60.0, 1, 4.0, 4.0)]
+    public void HerWayIsWhatVanillasMovesMakeOfHerMotionWhateverTheirLength(double tick, int moves, double asked, double made)
+    {
+        var step = tick / moves * TicksPerSecond;
+        var set = new HullSet();
+        var motion = new Vec3d();
+        set.Take(0, 0.5, motion);
+        for (var i = 0; i < 30; i++)
+        {
+            motion.X = asked / TicksPerSecond;
+            motion.Z = 0;
+            set.Rowed(motion, moves: true);
+            for (var move = 0; move < moves; move++)
+            {
+                set.Keep(motion, 1, step, swimming: true);
+                VanillaMove(motion, 1, step);
+            }
+        }
+
+        Assert.Equal(made, set.Way().X, 6);
+        Assert.Equal(0, set.Way().Z, 9);
+    }
+
     [Fact]
     public void ACollisionStopsHerOnItsAxisWhateverTheWavesWaterWasDoing()
     {
@@ -172,17 +198,31 @@ public class HullSetTests
     public void AHullRunningDownAWavesFaceIsCarriedAheadOfItsWater()
     {
         const double water = 1.0;
+        const double ahead = 1.0;
         var face = new FlowGradient(-0.3, 0, 0);
         var drag = Raft();
         var set = new HullSet();
-        var on = new WaterOnHull(0, 0, water, 0, face, 1.0);
+        var wayAlong = HullShape.ToHull(ahead, 0, AlongX).Along;
+        var on = new WaterOnHull(0, 0, water, 0, face, wayAlong);
         var wash = (X: 0.0, Z: 0.0);
         for (var t = 0.0; t < 600; t += TickSeconds) wash = set.Settle(drag, on, AlongX, TickSeconds);
 
         var (pullX, _) = set.Pull(drag, on, AlongX);
+        var through = set.Own.X + ahead;
         Assert.True(set.Velocity.X > water, $"carried at {set.Velocity.X:F2} m/s in water running {water} m/s");
-        Assert.True(wash.X > 0, $"pushed {wash.X:F3} m/s2");
+        Assert.Equal(-face.XX * through, wash.X, 9);
         Assert.Equal(-drag.Newtons(wash.X, 0, AlongX).X, pullX, 0.01 * drag.Newtons(wash.X, 0, AlongX).X);
+    }
+
+    [Fact]
+    public void TheWatersAccelerationOfHerIsHowFastItsWaterChangesAtHerPlace()
+    {
+        var set = new HullSet();
+        set.Settle(Raft(), new WaterOnHull(0, 0, 0.2, -0.1), Yaw, TickSeconds);
+        var wash = set.Settle(Raft(), new WaterOnHull(0, 0, 0.3, -0.3), Yaw, TickSeconds);
+
+        Assert.Equal(0.1 / TickSeconds, wash.X, 9);
+        Assert.Equal(-0.2 / TickSeconds, wash.Z, 9);
     }
 
     [Fact]

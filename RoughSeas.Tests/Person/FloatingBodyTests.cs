@@ -325,13 +325,17 @@ public class FloatingBodyTests
     [Fact]
     public void SwimmingWithAWavesFaceItIsCarriedFasterThanItSwims()
     {
-        var face = new WaterFixtures.Sea(0, flow: (1.0, 0), gradient: new FlowGradient(-0.3, 0, 0));
-        var run = new Run(face, Still - 1.6, stroke: Ahead);
-        run.Settle(30);
-        var from = run.MovedX;
-        run.Settle(10);
+        double Speed(FlowGradient gradient)
+        {
+            var run = new Run(new WaterFixtures.Sea(0, flow: (1.0, 0), gradient: gradient), Still - 1.6, stroke: Ahead);
+            run.Settle(30);
+            var from = run.MovedX;
+            run.Settle(10);
+            return (run.MovedX - from) / 10;
+        }
 
-        Assert.True((run.MovedX - from) / 10 > 1.0 + 0.9, $"{(run.MovedX - from) / 10:F2} m/s");
+        var (flat, face) = (Speed(default), Speed(new FlowGradient(-0.3, 0, 0)));
+        Assert.InRange(face - flat, 0.2, 0.35);
     }
 
     [Fact]

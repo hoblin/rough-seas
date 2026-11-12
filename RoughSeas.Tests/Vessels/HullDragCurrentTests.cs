@@ -12,6 +12,21 @@ public class HullDragCurrentTests
     private static HullDrag Dugout(double cargoKg = 0) =>
         Fixtures.DragOf("dugout", Fixtures.Hull("dugout").Crewed(containers: cargoKg));
 
+    [Theory]
+    [InlineData(0.0)]
+    [InlineData(0.6)]
+    [InlineData(1.2)]
+    public void APullAlongALineChangesHerSpeedAlongItByItOverTheMassItMeets(double angle)
+    {
+        var drag = Dugout();
+        var (unitX, unitZ) = (Math.Cos(angle), Math.Sin(angle));
+        const double change = 0.4;
+        var kilograms = drag.KilogramsToward(unitX, unitZ, 0.3);
+        var (x, z) = drag.Acceleration(change * kilograms * unitX, change * kilograms * unitZ, 0.3);
+
+        Assert.Equal(change, x * unitX + z * unitZ, 9);
+    }
+
     [Fact]
     public void AHullAtRestInStillWaterStaysAtRest()
     {

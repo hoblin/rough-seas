@@ -5,6 +5,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -16,7 +17,7 @@ namespace RoughSeas.Storms;
 /// someone does. Her <see cref="HullSet"/> holds the velocity the water has given her, on top of the way a rower makes
 /// through the water: the waves' water at her place, and her own velocity through it, which the water's drag, the
 /// waves' push and her lines' tension (<see cref="Impulse"/>) change over her mass. <see cref="DriftPhysics"/> keeps
-/// the set through vanilla's physics. While she is steered the server works out her own set from the current's drag, for
+/// the set through vanilla's physics. While she is steered her rider's client reports her own set to the server, for
 /// whoever takes her next.
 /// </summary>
 public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
@@ -77,7 +78,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 
     public HullDrag? Drag => water?.Drag;
 
-    /// <summary>The water's drag on her now, newtons in world axes.</summary>
+    /// <summary>The water's drag on her now beyond what her own way meets, which her rower or sail pays, newtons in world axes.</summary>
     public (double X, double Z) Pull() =>
         water is { Drag: { } drag } w ? set.Pull(drag, w.On, entity.Pos.Yaw) : default;
 
@@ -96,17 +97,17 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         get
         {
             var (x, z) = set.Velocity;
-            var (wayX, wayZ) = HullShape.ToWorld(WayAlong(), 0, entity.Pos.Yaw);
+            var (wayX, wayZ) = HullShape.ToWorld(water?.On.WayAlong ?? 0, 0, entity.Pos.Yaw);
             return (x + wayX, z + wayZ);
         }
     }
 
-    /// <summary>A force on her for <paramref name="seconds"/>, newtons in world axes, taken by her mass and the water she drags.</summary>
-    public void Impulse(double newtonsX, double newtonsZ, double seconds)
+    /// <summary>An impulse on her, newton-seconds in world axes, taken by her mass and the water she drags.</summary>
+    public void Impulse(double newtonSecondsX, double newtonSecondsZ)
     {
         if (water?.Drag is not { } drag) return;
-        var (x, z) = drag.Acceleration(newtonsX, newtonsZ, entity.Pos.Yaw);
-        set.Add(x * seconds, z * seconds);
+        var (x, z) = drag.Acceleration(newtonSecondsX, newtonSecondsZ, entity.Pos.Yaw);
+        set.Add(x, z);
     }
 
     /// <summary>
@@ -148,29 +149,33 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
     {
         if (!entity.Alive) return;
 
+        using var _ = storms.Budget.Measure();
         var client = entity.Api as ICoreClientAPI;
         var steered = mountable?.IsBeingControlled() == true;
         var ours = client == null ? !steered : mountable?.Controller == client.World.Player?.Entity;
+        var waves = entity is EntityBoat boat && forces != null ? forces.Ride.Water(boat, deltaTime) : default;
         if ((client != null && !ours) || !entity.Swimming)
         {
             Ashore();
             return;
         }
 
-        using var _ = storms.Budget.Measure();
-        var pos = entity.Pos;
-        var current = Current();
-        var waves = entity is EntityBoat boat && forces != null ? forces.Ride.Water(boat, deltaTime) : default;
-        var on = waves with { CurrentX = current.X, CurrentZ = current.Z, WayAlong = WayAlong() };
-        if (ours) mooring?.Strain(deltaTime);
-        var drag = way?.WaterDrag ?? ownDrag?.Now;
-        var wash = drag != null ? set.Settle(drag, on, pos.Yaw, deltaTime) : set.Relax(on, pos.Yaw, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime), deltaTime);
-        var w = water = new Water(on, drag, wash);
-
         if (ours && !moves) TakeOver();
         else if (!ours && moves) GiveOver();
         moves = ours;
+
+        var pos = entity.Pos;
+        var current = Current();
+        var on = waves with { CurrentX = current.X, CurrentZ = current.Z, WayAlong = WayAlong() };
+        if (ours) mooring?.Strain(deltaTime);
+        var drag = way?.WaterDrag ?? ownDrag?.Now;
+        var wash = !ours ? default
+            : drag != null ? set.Settle(drag, on, pos.Yaw, deltaTime)
+            : set.Relax(on, pos.Yaw, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime), deltaTime);
+        var w = water = new Water(on, drag, wash);
+
         if (client == null) Sync(deltaTime);
+        else ReportOwn();
         Report(w, steered, deltaTime);
     }
 
@@ -183,11 +188,8 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 
     private double WayAlong()
     {
-        if (entity is not EntityBoat { ForwardSpeed: not 0 } boat) return 0;
-        var (setX, setZ) = set.Velocity;
-        var (setAlong, setAcross) = HullShape.ToHull(setX / WaterDrag.TicksPerSecond, setZ / WaterDrag.TicksPerSecond, entity.Pos.Yaw);
-        var motion = Speed(setAlong - boat.ForwardSpeed, setAcross);
-        return -VesselDraught.Realized(boat.ForwardSpeed, way?.Driving == true ? 1 : physics?.WaterDragValue ?? 1, motion);
+        var (x, z) = set.Way();
+        return HullShape.ToHull(x, z, entity.Pos.Yaw).Along;
     }
 
     internal void BeforeMove(Vec3d motion, float seconds, double drag, bool wet, bool swimming, double stepFactor)
@@ -247,6 +249,21 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         {
             entity.WatchedAttributes.RemoveAttribute(SetKey);
         }
+    }
+
+    /// <summary>Server only: her own set as the client that steers her moves her.</summary>
+    public void Reported(IServerPlayer player, HullSetReport report)
+    {
+        if (mountable?.Controller == player.Entity) set.Reported(report.X, report.Z);
+    }
+
+    private void ReportOwn()
+    {
+        var now = set.Own;
+        if (Math.Abs(now.X - synced.X) < SyncedMps && Math.Abs(now.Z - synced.Z) < SyncedMps) return;
+
+        synced = now;
+        storms.Report(new HullSetReport { EntityId = entity.EntityId, X = now.X, Z = now.Z });
     }
 
     private void Sync(float deltaTime)

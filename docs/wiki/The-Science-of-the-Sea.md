@@ -40,7 +40,7 @@ A hull moves by the sum of the forces on it, over its mass and the water it drag
 
 The hull reads `u` where it is each step, so lying with the water it moves with it as a body in the water does, and each wave carries it a little further forward than back: the Stokes drift, `a^2 ω k` for a small body at the surface (Stokes 1847). Averaging over a hull makes a large one drift slower than a small one. Calvert et al. (2021, JFM 915:A73) measured the opposite effect as well, from a variable submergence that lags the surface; it isn't modelled, because its size hangs on a heave damping we haven't measured.
 
-A hull's own way comes from vanilla's physics, worked out from its code: each tick vanilla moves a boat once, or in ten moves while her motion passes 0.1 blocks a tick (6 m/s), divides the motion by up to 1.25 when it is fast and one move long, and scales it by its water drag unless a rower takes that off. So a sailboat under full sail makes about 6.9 m/s through the water, not the 5.6 one move would give.
+A hull's own way is measured from vanilla's physics as it moves her, not modelled: each move vanilla scales her motion by its water drag unless a rower takes that off, and on the server, where a move lasts 1/30 s, divides it by up to 1.25 when it is fast and the move is one of a tick, not ten. On the client that steers her, moves last 1/60 s and that division never comes. A sailboat under full sail makes about 6.9 m/s through the water.
 
 ## The shore
 
@@ -128,4 +128,3 @@ Squall lines move at 30 to 80 km/h; the Amazon's coastal lines run at 50 to 60 k
 - **The wave ceiling** of 16 m keeps a hurricane's sea on the world's scale.
 - **Winter gales come too seldom.** At 47° north our open sea sees gale-force wind under 2 percent of a winter; the North Sea, among the stormiest seas, sees 7 to 14 percent. The births, seasons and strengths above come from measurements; how wide a depression's gale-force band is, and how long it blows at one place, are not yet measured for the mod.
 - **Squalls' frequency** is the mod's own, not yet from data.
-- **The push down a wave's face** reads how the water's velocity changes from one metre to the next by the wave's phase alone, leading-order linear theory: how its height grows as it shoals is left out, a quarter of the push in 2 m of water on a 1:8 beach.

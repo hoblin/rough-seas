@@ -43,6 +43,26 @@ public class SeaSurfaceSeabedTests
         Enumerable.Range(0, 400).Max(i => surface.HeightAt(MiddleX + i % 20 * 0.7, MiddleZ + i / 20 * 0.9, 1, shortWaves));
 
     [Fact]
+    public void OverAShoalingBedTheWatersGradientHoldsItsGrowthAsWellAsItsPhase()
+    {
+        const double step = 0.01;
+        var surface = Settled(1.5);
+        var field = Flat(surface, 4);
+        for (var x = OriginX; x < OriginX + Size; x++)
+        for (var z = OriginZ; z < OriginZ + Size; z++)
+            field.SetCelerityDepth(x, z, (float)(6 - 4.5 * (x - OriginX) / Size));
+        surface.Seabed = field;
+        (double X, double Z) Water(double x) => surface.HullVelocityAt(x, MiddleZ, 0, 0.3, 0, 2, 1);
+
+        for (var cell = 20; cell < 44; cell += 3)
+        {
+            var x = OriginX + cell + 0.5;
+            var met = (Water(x + step).X - Water(x - step).X) / (2 * step);
+            Assert.Equal(met, surface.HullGradientAt(x, MiddleZ, 0, 0.3, 0, 2, 1).XX, 3);
+        }
+    }
+
+    [Fact]
     public void OverLandTheSeaIsNotDrawn()
     {
         var surface = Settled(2);
