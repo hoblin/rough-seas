@@ -473,7 +473,8 @@ public class EntityBehaviorBurnout(Entity entity) : EntityBehaviorBuild(entity),
         foreach (var hewer in capi.World.AllOnlinePlayers.Select(player => player.Entity).OfType<EntityPlayer>())
         {
             if (hewer.Properties.Client.AnimationsByMetaCode.GetValueOrDefault(CollectibleBehaviorHew.Swing) is not { } hewing
-                || hewer.AnimManager?.Animator?.GetAnimationState(CollectibleBehaviorHew.Swing) is not { Running: true } swing
+                || hewer.AnimManager is not { Animator: not null } animations
+                || animations.GetAnimationState(CollectibleBehaviorHew.Swing) is not { Running: true } swing
                 || Tree?.GetLong(HewerKey) != hewer.EntityId
                 || hewer.Pos.DistanceTo(entity.Pos) > ChipReachMetres)
             {

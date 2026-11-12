@@ -480,10 +480,10 @@ New: `IPerson`, `PersonModSystem`, `config/person.json`, `AddedMass.OfSpheroid`,
 
 ### Beside a shader mod
 
-A mod that replaces vanilla's shaders no longer breaks a program by meeting our text in it.
+A mod that replaces vanilla's shaders no longer breaks one of vanilla's programs by meeting our text in it.
 
-- Our text goes into a shader program only when everything it reads is there: the anchor lines it is set at, `void main()`, and the declarations it uses (`normal`, `worldPos` and `texColor` or `outColor` for wet sand; `worldPos`, `playerpos`, `renderFlags`, `isLava`, `fragNormal`, `bright` and `shadowBright` for the sea surface). The tessellation needs `void main(void)`, `xyz` and `waterFlagsIn` in `chunkliquid.vsh` and `chunkliquiddepth.vsh`.
-- A program that fails to compile with our text in it is rebuilt without it, on every shader reload. A tessellation stage that fails turns tessellation off for the water.
+- Our text goes into a shader program only when everything it reads is there: the anchor lines it is set at, `void main()` for the sea surface, and each declaration it uses, of that type, as a variable rather than a function's parameter. Wet sand's own functions go at the top of the source, after `#version` and `#extension`, so its anchor may sit in any function of yours. Wet sand reads `vec3 normal`, `vec4 worldPos` and `vec4 texColor` (in `chunkopaque`) or `vec4 outColor` (in `chunktopsoil`); the sea surface reads `vec4 worldPos`, `vec3 playerpos` and `int renderFlags` in `chunkliquid.vsh`, and `vec4 texColor`, `bool isLava`, `vec3 fragNormal`, `float bright` and `float shadowBright` in `chunkliquid.fsh`. The tessellation needs `void main(void)`, `vec3 xyz` and `int waterFlagsIn` in `chunkliquid.vsh` and `chunkliquiddepth.vsh`.
+- One of vanilla's programs that fails to compile with our text in it is rebuilt without it, on every shader reload. A tessellation stage that fails turns tessellation off for the water. A program a mod registers itself is compiled after vanilla's, and gets no second try.
 - What is left out, and why, is a warning in `client-main.log`: `Rough Seas leaves wet sand out of shader program chunkopaque: its source has no 'void main()'`. The program then draws as your mod wrote it.
 
 ## What not to touch

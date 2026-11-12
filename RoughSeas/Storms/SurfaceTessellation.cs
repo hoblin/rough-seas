@@ -66,6 +66,17 @@ public static class SurfaceTessellation
     {
         if (renderer != null) SetDrawMode(renderer, PrimitiveType.Triangles);
         (renderer, supported) = (null, false);
+        Forget();
+    }
+
+    [ReliesOn("Vintagestory.Client.NoObf.ShaderProgramBase", "Dispose", "deletes a program's vertex, fragment and geometry shaders, never the tessellation stages attached beside them")]
+    public static void Forget()
+    {
+        foreach (var (control, evaluation) in Stages.Values)
+        {
+            GL.DeleteShader(control);
+            GL.DeleteShader(evaluation);
+        }
         Stages.Clear();
     }
 
@@ -88,14 +99,13 @@ public static class SurfaceTessellation
     {
         if (!Drawn || shader.shaderType != EnumShaderType.VertexShader || !LiquidShaders.Contains(Filename(shader))) return true;
 
-        var attributes = Attribute.Matches(shader.Code).Select(match => (Type: match.Groups[1].Value, Name: match.Groups[2].Value)).ToArray();
-        var missing = Needs.Where(need => !attributes.Contains(need)).Select(need => $"in {need.Type} {need.Name}")
-            .Concat(shader.Code.Contains(VertexMain) ? [] : [$"'{VertexMain}'"]).ToArray();
+        var missing = ShaderNeeds.Missing(shader.Code, Needs, VertexMain);
         if (missing.Length > 0)
         {
             Refuse($"{Filename(shader)} has no {string.Join(", ", missing)}");
             return true;
         }
+        var attributes = Attribute.Matches(shader.Code).Select(match => (Type: match.Groups[1].Value, Name: match.Groups[2].Value)).ToArray();
         var head = "#version 400 core\n" + shader.PrefixCode + "\n";
         var vertex = Build(ShaderType.VertexShader, VertexStage(shader, attributes, head));
         var control = Build(ShaderType.TessControlShader, ControlStage(attributes, head));
@@ -147,6 +157,7 @@ public static class SurfaceTessellation
         GL.GetShader(id, ShaderParameter.CompileStatus, out int compiled);
         if (compiled == 1) return id;
         ScreenManager.Platform.Logger.Error("Shader compile error in the tessellated water, {0}: {1}", type, GL.GetShaderInfoLog(id));
+        GL.DeleteShader(id);
         return 0;
     }
 

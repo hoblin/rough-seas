@@ -18,8 +18,9 @@ namespace RoughSeas.Storms;
 /// Draws the <see cref="SeaSurface"/> in vanilla's water shaders, patched as text at anchors in 1.22.7's
 /// <c>vertexwarp.vsh</c>, <c>chunkliquid.vsh</c> and <c>chunkliquid.fsh</c>, and wet ground in <c>chunkopaque.fsh</c> and
 /// <c>chunktopsoil.fsh</c>. A patch goes into a program only when every anchor and declaration its code reads is there,
-/// and a program that fails to compile with one is rebuilt without it, so another mod's shaders never leave a program
-/// dead. Left out of <c>chunkliquid</c>, <see cref="Attach"/> takes every patch out, returns false, and the sea is drawn as vanilla's.
+/// and one of vanilla's programs that fails to compile with one is rebuilt without it, so another mod's shaders never
+/// leave it dead. Left out of <c>chunkliquid</c> at <see cref="Attach"/>, every patch comes out, it returns false, and the
+/// sea is drawn as vanilla's.
 /// </summary>
 public static class SurfaceShader
 {
@@ -53,11 +54,12 @@ public static class SurfaceShader
         ("chunkopaque", BeforeOpaqueLight, "texColor"),
         ("chunktopsoil", BeforeTopsoilLight, "outColor"),
     ];
-    private const string Warp = "waves in vertexwarp.vsh";
-    private const string Wet = "wet sand";
-    private const string Water = "the sea surface";
+    private const string WavesPatch = "waves in vertexwarp.vsh";
+    private const string WetSandPatch = "wet sand";
+    private const string SurfacePatch = "the sea surface";
     private static readonly (string Type, string Name)[] TiltNeeds = [("vec4", "worldPos"), ("vec3", "playerpos"), ("int", "renderFlags")];
     private static readonly (string Type, string Name)[] FoamNeeds = [("vec4", "texColor"), ("bool", "isLava"), ("vec3", "fragNormal"), ("float", "bright"), ("float", "shadowBright")];
+    private static readonly Regex Preamble = new(@"\A(?:[ \t]*(?:#version|#extension)[^\n]*\n)*", RegexOptions.Compiled);
     private static readonly HashSet<(string Pass, string Patch)> Refused = [];
     private static readonly HashSet<(string Pass, string Patch)> Injected = [];
     private static readonly HashSet<string> Failed = [];
@@ -188,32 +190,37 @@ public static class SurfaceShader
 
     private static void Reloading()
     {
+        if (ShaderRegistry.SupressShaderAndBufferReloads) return;
+
         (normalTilted, rippleTamed, tessellatedRound) = (false, false, SurfaceTessellation.Drawn);
         Injected.Clear();
         Failed.Clear();
+        SurfaceTessellation.Forget();
     }
 
-    private static void Reloaded()
+    [ReliesOn("Vintagestory.Client.NoObf.ShaderRegistry", "ReloadShaders", "compiles every vanilla program anew before it returns, unless SupressShaderAndBufferReloads holds it back")]
+    private static void Reloaded(ref bool __result)
     {
-        if (retrying) return;
+        if (retrying || ShaderRegistry.SupressShaderAndBufferReloads) return;
 
         retrying = true;
         try
         {
-            while (Retry()) ShaderRegistry.ReloadShaders();
+            while (AnotherRound()) ShaderRegistry.ReloadShaders();
         }
         finally
         {
             retrying = false;
         }
-        foreach (var (wetPass, beforeLight, _) in WetPasses.Where(wet => !Injected.Contains((wet.Pass, Wet))))
+        foreach (var (wetPass, beforeLight, _) in WetPasses.Where(wet => !Injected.Contains((wet.Pass, WetSandPatch))))
         {
-            Refuse(wetPass, Wet, $"its source has no '{beforeLight}'");
+            Refuse(wetPass, WetSandPatch, $"its source has no '{beforeLight}'");
         }
-        foreach (var pass in Failed) logger?.Warning("Shader program {0} fails to compile without Rough Seas' patches too", pass);
+        foreach (var pass in Failed) logger?.Warning("Shader program {0} fails to compile without Rough Seas' patches in it too", pass);
+        __result = Failed.Count == 0;
     }
 
-    private static bool Retry()
+    private static bool AnotherRound()
     {
         if (tessellatedRound && !SurfaceTessellation.Drawn) return true;
 
@@ -231,9 +238,7 @@ public static class SurfaceShader
     {
         if (Refused.Contains((pass, patch))) return false;
 
-        var missing = anchors.Where(anchor => !source.Contains(anchor)).Select(anchor => $"'{anchor}'")
-            .Concat(needs.Where(need => !Regex.IsMatch(source, $@"\b{need.Type}\s+{need.Name}\b")).Select(need => $"{need.Type} {need.Name}"))
-            .ToArray();
+        var missing = ShaderNeeds.Missing(source, needs, anchors);
         if (missing.Length == 0)
         {
             Injected.Add((pass, patch));
@@ -266,14 +271,12 @@ public static class SurfaceShader
     [ReliesOnText("shaders/chunkliquid.vsh", FaceNormal)]
     [ReliesOnText("shaders/chunkliquid.fsh", FragmentMain)]
     [ReliesOnText("shaders/chunkliquid.fsh", BeforeFog)]
-    [ReliesOnText("shaders/chunkopaque.fsh", FragmentMain)]
     [ReliesOnText("shaders/chunkopaque.fsh", BeforeOpaqueLight)]
-    [ReliesOnText("shaders/chunktopsoil.fsh", FragmentMain)]
     [ReliesOnText("shaders/chunktopsoil.fsh", BeforeTopsoilLight)]
     private static void Inject(ShaderProgram program, ref string __result)
     {
         var pass = program.PassName;
-        if (__result.Contains(VanillaWarp) && !__result.Contains(RenamedWarp) && Fits(pass, Warp, __result, [], AfterWarp))
+        if (__result.Contains(VanillaWarp) && !__result.Contains(RenamedWarp) && Fits(pass, WavesPatch, __result, [], AfterWarp))
         {
             rippleTamed |= __result.Contains(WaterRipple) && __result.Contains(WindRipple);
             __result = __result.Replace(VanillaWarp, RippleKept + RenamedWarp).Replace(AfterWarp, vertexCode + AfterWarp)
@@ -283,23 +286,25 @@ public static class SurfaceShader
         foreach (var (wetPass, beforeLight, shaded) in WetPasses)
         {
             if (pass != wetPass || !__result.Contains(beforeLight) || __result.Contains(wetCode)
-                || !Fits(pass, Wet, __result, [("vec3", "normal"), ("vec4", "worldPos"), ("vec4", shaded)], FragmentMain)) continue;
-            __result = __result.Replace(FragmentMain, wetCode + FragmentMain).Replace(beforeLight, $"if (normal.y > 0.5) {shaded}.rgb *= seaWetShade(worldPos);\n" + beforeLight);
+                || !Fits(pass, WetSandPatch, __result, [("vec3", "normal"), ("vec4", "worldPos"), ("vec4", shaded)])) continue;
+            __result = __result.Insert(Preamble.Match(__result).Length, wetCode + "\n")
+                .Replace(beforeLight, $"if (normal.y > 0.5) {shaded}.rgb *= seaWetShade(worldPos);\n" + beforeLight);
         }
         if (pass != LiquidPass) return;
-        if (__result.Contains(FaceNormal) && Fits(pass, Water, __result, TiltNeeds, RenamedWarp))
+        if (__result.Contains(FaceNormal) && Fits(pass, SurfacePatch, __result, TiltNeeds, RenamedWarp))
         {
             __result = __result.Replace(FaceNormal, TiltedNormal);
             normalTilted = true;
         }
-        if (__result.Contains(BeforeFog) && !__result.Contains(fragmentCode) && Fits(pass, Water, __result, FoamNeeds, FragmentMain))
+        if (__result.Contains(BeforeFog) && !__result.Contains(fragmentCode) && Fits(pass, SurfacePatch, __result, FoamNeeds, FragmentMain))
         {
             __result = __result.Replace(FragmentMain, fragmentCode + FragmentMain).Replace(BeforeFog, Foamed + BeforeFog);
         }
-        if (Refused.Contains((pass, Water))) return;
+        if (!Injected.Contains((pass, SurfacePatch)) || Refused.Contains((pass, SurfacePatch))) return;
         __result = HeightColours.Inject(__result, FragmentMain);
     }
 
+    [ReliesOn("Vintagestory.Client.NoObf.ShaderProgram", "Compile", "returns whether every stage compiled and the program linked")]
     private static void Compiled(ShaderProgram __instance, bool __result)
     {
         if (!__result) Failed.Add(__instance.PassName);
