@@ -1,5 +1,7 @@
 **[Rough Seas](Home)**
 
+**[Showcase](Showcase)**
+
 **Getting started**
 - [World settings](World-Settings)
 - [Vessels](Vessels)
@@ -38,7 +40,9 @@
 - [Sailboat](Sailboat)
 
 **[The science behind it](The-Science-Behind-It)**
-- [The sea](The-Science-of-the-Sea)
+- [The weather](The-Science-of-the-Weather)
+- [The waves](The-Science-of-the-Waves)
+- [A body in the water](The-Science-of-a-Body-in-the-Water)
 - [The hull](The-Science-of-the-Hull)
 
 **[Beside other mods](Other-Mods)**

@@ -28,4 +28,4 @@ In [surf](Surf-and-Swamping#breakers) the tallest waves break, and close to the 
 
 Holding jump is strong enough to swim straight out of a breaker for now. Stamina, planned for [The living sea](Roadmap#the-living-sea), will make that effort cost.
 
-The world setting [Breakers on swimmers](World-Settings#the-mechanics) turns breaking crests off. You still float on the waves and breathe by them. The formulas are in [The science of the sea](The-Science-of-the-Sea#a-body-in-the-water).
+The world setting [Breakers on swimmers](World-Settings#the-mechanics) turns breaking crests off. You still float on the waves and breathe by them. The formulas are in [The science of a body in the water](The-Science-of-a-Body-in-the-Water#a-body-in-the-water).
