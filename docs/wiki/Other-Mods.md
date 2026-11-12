@@ -9,7 +9,7 @@ Rough Seas drives the game's own weather rather than replacing it, so most mods 
 | [Extreme Weathers](#extreme-weathers) | 1.8.5 | Compatible, with changes on both sides. |
 | [Terra Prety](#terra-prety) | 7.11.2-pre.1 | Compatible at world height 448. |
 | [Wildcraft: Trees and Shrubs](#wildcraft-trees-and-shrubs) | 1.3.4 | Compatible: its woods build our vessels. |
-| [SheyderMod](#sheydermod) | 2.0.0 | Compatible from Rough Seas 2.0.1. |
+| [SheyderMod](#sheydermod) | 2.1.1 | Compatible from Rough Seas 4.4.1. |
 | [Shipworks+](#shipworks) | 1.1.0 | Works with issues: its ships don't ride our drawn swell. |
 
 Running Rough Seas with a mod not listed here? Tell us how it went on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
@@ -145,13 +145,14 @@ Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull cond
 
 ## SheyderMod
 
-[SheyderMod](https://mods.vintagestory.at/sheydermod) 2.0.0 is a client-side shader pack: specular highlights, deferred lighting, bloom, fog, its own water. Beside Rough Seas 2.0.1 or later, each mod works as it does alone: our waves and foam ride under SheyderMod's water and lighting.
+[SheyderMod](https://mods.vintagestory.at/sheydermod) 2.1.1 is a client-side shader pack: specular highlights, deferred lighting, bloom, fog, its own water. Beside Rough Seas 4.4.1 or later, each mod works as it does alone: our waves, foam and wet sand ride under SheyderMod's water and lighting. Rough Seas 4.4.0 broke SheyderMod's terrain shader with its wet sand; use 4.4.1.
 
 ### For modders
 
 - Rough Seas draws its waves from a texture of the sea around the player, read in vanilla's shared `vertexwarp.vsh`. That texture sits on the highest texture unit the graphics card offers, the eight textures of the seabed the surf reads on the eight units below it, and all are kept out of the engine's numbering of samplers, so every vanilla sampler stays on the unit vanilla gives it, in every shader program. A mod that binds its own texture to a fixed unit, as SheyderMod binds its specular map to unit 7, can count on vanilla's numbering.
 - The client command `.surface samplers` lists each shader program's samplers by unit as the engine numbers them, and where our wave texture is read.
-- Rough Seas tessellates vanilla's water near the player: `chunkliquid` and `chunkliquiddepth` gain tessellation stages, and the liquid mesh pools draw `Patches`. SheyderMod replaces only `chunkliquid.fsh` and draws no liquid pool itself, so nothing changes for it. A mod that draws the liquid pools with its own program must do so with tessellation stages, or draw nothing there. SheyderMod's reflections read `liquidDepth` as a flat surface and don't follow the finer shape.
+- SheyderMod replaces `chunkopaque.fsh` and `chunktopsoil.fsh` too, and shades terrain outside `main` in a function of its own. Our wet sand darkens the ground there as well: its code goes at the top of the shader, not before `main` ([Beside a shader mod](For-Modders#beside-a-shader-mod)).
+- Rough Seas tessellates vanilla's water near the player: `chunkliquid` and `chunkliquiddepth` gain tessellation stages, and the liquid mesh pools draw `Patches`. SheyderMod replaces only `chunkliquid.fsh` among the water's shaders and draws no liquid pool itself, so nothing changes for it. A mod that draws the liquid pools with its own program must do so with tessellation stages, or draw nothing there. SheyderMod's reflections read `liquidDepth` as a flat surface and don't follow the finer shape.
 
 ## Shipworks+
 

@@ -8,6 +8,7 @@ using HarmonyLib;
 using OpenTK.Graphics.OpenGL;
 using RoughSeas.Water;
 using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using Vintagestory.Client;
 using Vintagestory.Client.NoObf;
 
@@ -27,6 +28,7 @@ public static class SurfaceTessellation
 
     private static readonly Regex Attribute = new(@"layout\(location\s*=\s*\d+\)\s*in\s+(\w+)\s+(\w+)\s*;", RegexOptions.Compiled);
     private static readonly string[] LiquidShaders = ["chunkliquid.vsh", "chunkliquiddepth.vsh"];
+    private static readonly (string Type, string Name)[] Needs = [("vec3", "xyz"), ("int", "waterFlagsIn")];
     private static readonly AccessTools.FieldRef<Shader, string> Filename = AccessTools.FieldRefAccess<Shader, string>("Filename");
     private static readonly AccessTools.FieldRef<ChunkRenderer, MeshDataPoolManager[][]> PoolsByPass = AccessTools.FieldRefAccess<ChunkRenderer, MeshDataPoolManager[][]>("poolsByRenderPass");
     private static readonly AccessTools.FieldRef<MeshDataPoolManager, List<MeshDataPool>> Pools = AccessTools.FieldRefAccess<MeshDataPoolManager, List<MeshDataPool>>("pools");
@@ -35,19 +37,21 @@ public static class SurfaceTessellation
 
     private static TessellationConfig config = new();
     private static ChunkRenderer? renderer;
+    private static ILogger? logger;
     private static bool supported;
+    private static bool refused;
 
     public static bool On { get; set; } = true;
 
-    public static bool Drawn => supported && On;
+    public static bool Drawn => supported && On && !refused;
 
     public static float ReachMetres => (float)config.ReachMetres;
 
     public static float FinestSpacing => Drawn ? 1f / config.MaxLevel : 1;
 
-    public static void Attach(Harmony harmony, TessellationConfig settings, Action<string> log)
+    public static void Attach(Harmony harmony, TessellationConfig settings, Action<string> log, ILogger warnings)
     {
-        config = settings;
+        (config, logger, refused) = (settings, warnings, false);
         supported = GL.GetInteger(GetPName.MajorVersion) * 10 + GL.GetInteger(GetPName.MinorVersion) >= LowestVersion;
         log(supported ? "surface: tessellating the water near the player" : "surface: OpenGL below 4.0, the water keeps its one quad a block");
         if (!supported) return;
@@ -62,6 +66,17 @@ public static class SurfaceTessellation
     {
         if (renderer != null) SetDrawMode(renderer, PrimitiveType.Triangles);
         (renderer, supported) = (null, false);
+        Forget();
+    }
+
+    [ReliesOn("Vintagestory.Client.NoObf.ShaderProgramBase", "Dispose", "deletes a program's vertex, fragment and geometry shaders, never the tessellation stages attached beside them")]
+    public static void Forget()
+    {
+        foreach (var (control, evaluation) in Stages.Values)
+        {
+            GL.DeleteShader(control);
+            GL.DeleteShader(evaluation);
+        }
         Stages.Clear();
     }
 
@@ -84,13 +99,26 @@ public static class SurfaceTessellation
     {
         if (!Drawn || shader.shaderType != EnumShaderType.VertexShader || !LiquidShaders.Contains(Filename(shader))) return true;
 
+        var missing = ShaderNeeds.Missing(shader.Code, Needs, VertexMain);
+        if (missing.Length > 0)
+        {
+            Refuse($"{Filename(shader)} has no {string.Join(", ", missing)}");
+            return true;
+        }
         var attributes = Attribute.Matches(shader.Code).Select(match => (Type: match.Groups[1].Value, Name: match.Groups[2].Value)).ToArray();
         var head = "#version 400 core\n" + shader.PrefixCode + "\n";
-        shader.ShaderId = Build(ShaderType.VertexShader, VertexStage(shader, attributes, head));
+        var vertex = Build(ShaderType.VertexShader, VertexStage(shader, attributes, head));
         var control = Build(ShaderType.TessControlShader, ControlStage(attributes, head));
         var evaluation = Build(ShaderType.TessEvaluationShader, EvaluationStage(shader, attributes, head));
+        if (vertex == 0 || control == 0 || evaluation == 0)
+        {
+            foreach (var stage in new[] { vertex, control, evaluation }.Where(stage => stage != 0)) GL.DeleteShader(stage);
+            Refuse($"{Filename(shader)} failed to compile as its stages; the error is above");
+            return true;
+        }
+        shader.ShaderId = vertex;
         Stages[shader] = (control, evaluation);
-        __result = shader.ShaderId != 0 && control != 0 && evaluation != 0;
+        __result = true;
         return false;
     }
 
@@ -105,9 +133,20 @@ public static class SurfaceTessellation
         GL.AttachShader(id, program.FragmentShader.ShaderId);
         GL.LinkProgram(id);
         GL.GetProgram(id, GetProgramParameterName.LinkStatus, out int linked);
-        if (linked != 1) ScreenManager.Platform.Logger.Error("Link error in the tessellated water for pass {0}: {1}", program.PassName, GL.GetProgramInfoLog(id));
+        if (linked != 1)
+        {
+            ScreenManager.Platform.Logger.Error("Link error in the tessellated water for pass {0}: {1}", program.PassName, GL.GetProgramInfoLog(id));
+            Refuse($"pass {program.PassName} failed to link with them");
+        }
         __result = linked == 1;
         return false;
+    }
+
+    private static void Refuse(string why)
+    {
+        if (refused) return;
+        refused = true;
+        logger?.Warning("Rough Seas draws the water one quad a block, without tessellation: {0}", why);
     }
 
     private static int Build(ShaderType type, string source)
@@ -118,6 +157,7 @@ public static class SurfaceTessellation
         GL.GetShader(id, ShaderParameter.CompileStatus, out int compiled);
         if (compiled == 1) return id;
         ScreenManager.Platform.Logger.Error("Shader compile error in the tessellated water, {0}: {1}", type, GL.GetShaderInfoLog(id));
+        GL.DeleteShader(id);
         return 0;
     }
 
