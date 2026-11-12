@@ -7,6 +7,7 @@ public class SoundscapeConfig
     public double UpdateSeconds = 0.1;
     public int SeaProbeBlocks = 3;
     public double SeaFromMetres = 0.1;
+    public bool Background;
     public float VanillaRowingVolume = 1;
     public BedsConfig Beds = new();
     public CrestsConfig Crests = new();

@@ -44,6 +44,7 @@ Boats no longer burst at a hidden zero: you hear and see where a knock landed, w
 - **Floating by mass.** Every vessel [floats by its mass](Surf-and-Swamping#how-it-floats), sits lower and runs slower loaded, and flooded floats awash or sinks by its wood and load. Hulls ride the swell on periods of their own mass.
 - **Lashings, soaking and seams.** The [raft](Raft)'s lashings work loose and are bound up with flax twine, the [reed boat](Reed-Boat) soaks afloat and dries ashore, and the [currach](Hide-Currach)'s seams seep once their grease is gone. A [mend](Mending) patches the place you look at.
 - **The sea you can hear.** Open water by its wind, whitecaps hissing from windward, surf on the shore, and a hull that creaks, cracks and trickles as it takes water. The recordings: [Sound credits](Sound-Credits).
+- **Switched off for now:** the open sea's sound, the surf and the whitecaps' hiss, which didn't match the water you see. They come back from real recordings ([Further out](#further-out)). The shore laps with the game's own sound, the game's rowing plays at its own volume, and every wave at a hull, every breaker and every knock still sounds.
 - **[The drawn sea for other mods](Reading-the-Sea#the-drawn-sea).** Their vessels ride the swell a client draws, as ours do.
 - **A major version**, because the hulls changed vessel keys the modder pages document: [what to change](For-Modders#hulls-that-crack-leak-and-flood).
 
@@ -144,6 +145,7 @@ What lies below.
 
 Ideas not yet planned:
 
+- **The sea's sound, redone** from real recordings: the open sea, the surf and the whitecaps, each heard where it is.
 - **The sea's own warnings.** Fog over cold [currents](Currents), and life gathering where cold water wells up.
 
 - **Crewed ships.** A big ship for several players: one at the helm, one on the sails, one bailing, one on the anchor, one on lookout. A single player can still sail it, slower and at more risk, and if nobody holds the helm, wind and current turn it.

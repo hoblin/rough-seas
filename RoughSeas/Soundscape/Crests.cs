@@ -6,7 +6,7 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Soundscape;
 
-public sealed class Crests(ICoreClientAPI capi, CrestsConfig config, SeaClock clock, SoundscapeModSystem sounds)
+public sealed class Crests(ICoreClientAPI capi, CrestsConfig config, bool hiss, SeaClock clock, SoundscapeModSystem sounds)
 {
     private readonly SeaClock.Watch watch = clock.StartWatch();
 
@@ -15,7 +15,7 @@ public sealed class Crests(ICoreClientAPI capi, CrestsConfig config, SeaClock cl
         var seconds = watch.Lap().Seconds;
         if (!listener.AtSea) return;
 
-        Scatter(config.Hiss, listener.Foam.Caps, seconds, listener);
+        if (hiss) Scatter(config.Hiss, listener.Foam.Caps, seconds, listener);
         Scatter(config.Plunge, listener.Foam.Spray, seconds, listener);
     }
 
