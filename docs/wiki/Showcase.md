@@ -1,13 +1,13 @@
-Rough Seas in motion: every animation in this wiki, each with a link to the page that describes what it shows.
+Rough Seas in motion: every animation of its mechanics in this wiki, each with a link to the page that describes what it shows.
 
 ## The sea
 
 | | |
 | --- | --- |
 | ![A gale's wave curling over and breaking, its foam running up a sand beach between bushes and sliding back](images/sea/surf.webp) | ![A moderate breeze over the open sea](images/sea/beaufort-4.webp) |
-| A gale's breaker plunging on a sand beach, its swash running up and sliding back: [The look of the sea](The-Look-of-the-Sea#what-you-see) | A moderate breeze, force 4: waves of 1 to 1.5 m and fairly frequent whitecaps: [Wind and waves](Wind-and-Waves#the-beaufort-scale) |
+| A gale's breaker plunging on a sand beach, its swash running up and sliding back: [The look of the sea](The-Look-of-the-Sea#what-you-see) | A moderate breeze, force 4: waves of 1 to 1.5 m and fairly frequent whitecaps: [The look of the sea](The-Look-of-the-Sea#tuned-against-the-real-sea) |
 | ![A strong breeze over the open sea](images/sea/beaufort-6.webp) | ![A gale over the open sea](images/sea/beaufort-8.webp) |
-| A strong breeze, force 6: waves of 3 to 4 m and white foam crests everywhere: [Wind and waves](Wind-and-Waves#the-beaufort-scale) | A gale, force 8: waves of 5.5 to 7.5 m and foam in streaks along the wind: [Wind and waves](Wind-and-Waves#the-beaufort-scale) |
+| A strong breeze, force 6: waves of 3 to 4 m and white foam crests everywhere: [The look of the sea](The-Look-of-the-Sea#tuned-against-the-real-sea) | A gale, force 8: waves of 5.5 to 7.5 m and foam in streaks along the wind: [The look of the sea](The-Look-of-the-Sea#tuned-against-the-real-sea) |
 
 ## Driving a vessel
 

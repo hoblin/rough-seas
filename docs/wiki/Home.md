@@ -11,7 +11,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 ## Contents
 
 **Showcase**
-- [Showcase](Showcase): every animation in this wiki, linked to the page it belongs to.
+- [Showcase](Showcase): every animation of the mod's mechanics in this wiki, linked to the page it belongs to.
 
 **Getting started**
 - [World settings](World-Settings): the *Rough Seas* playstyle, and a setting for each mechanic.
