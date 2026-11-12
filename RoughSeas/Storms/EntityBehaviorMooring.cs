@@ -69,6 +69,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         public bool Reported;
         public double LoggedTension;
         public long LoggedAt;
+        public (double Speed, double Kilograms, double Newtons)? Jerk;
     }
 
     public VesselRope Rope { get; private set; } = null!;
@@ -270,7 +271,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         foreach (var hold in holds.Where((_, i) => !engaged.Contains(i)))
         {
             if (hold.Taut) storms.Log(entity, "{0} goes slack", hold.Tether.Name);
-            (hold.Taut, hold.Slipping, hold.LoggedTension) = (false, false, 0);
+            (hold.Taut, hold.Slipping, hold.LoggedTension, hold.Jerk) = (false, false, 0, null);
         }
         if (engaged.Length == 0 || drift?.Drag is not { } drag) return;
 
@@ -299,7 +300,8 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
             if (hold.Slipping) (kick, tension) = (-Math.Min(holding * level * seconds / kilograms, Math.Max(0, speed + shares[j] * seconds / kilograms)), holding);
             drift.Impulse(kick * kilograms / seconds * outX, kick * kilograms / seconds * outZ, seconds);
 
-            LogTension(hold, tension, shares[j] / level, speed * level, kilograms, !hold.Taut);
+            if (!hold.Taut) hold.Jerk = (speed * level, kilograms, 0);
+            LogTension(hold, tension, shares[j] / level, speed + kick);
             hold.Taut = true;
             if (strains && hold.Tether.Line.Parts(tension)) Part(hold, tension);
         }
@@ -313,13 +315,18 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         storms.Log(entity, slides ? "the anchor drags: the rode pulls {0:F0} N, it holds {1:F0} N on the bed" : "the anchor bites again: the rode pulls {0:F0} N, it holds {1:F0} N", tension, holding);
     }
 
-    private void LogTension(Hold hold, double tension, double steady, double speed, double kilograms, bool snatch)
+    private void LogTension(Hold hold, double tension, double steady, double outward)
     {
         var line = hold.Tether.Line;
-        if (snatch)
+        if (hold.Jerk is { } jerk)
         {
-            storms.Log(entity, "{0} comes taut at {1:F2} m/s with {2:F0} kg: {3:F0} N of the {4:F0} N it holds ({5:F1} m, {6:F0} N/m)",
-                hold.Tether.Name, speed, kilograms, tension, line.BreakingNewtons, line.RestMetres, line.NewtonsPerMetre);
+            hold.Jerk = jerk with { Newtons = Math.Max(jerk.Newtons, tension) };
+            if (outward > 0) return;
+
+            hold.Jerk = null;
+            (hold.LoggedTension, hold.LoggedAt) = (tension, entity.World.ElapsedMilliseconds);
+            storms.Log(entity, "{0} comes taut at {1:F2} m/s with {2:F0} kg: the jerk peaks at {3:F0} N of the {4:F0} N it holds ({5:F1} m, {6:F0} N/m)",
+                hold.Tether.Name, jerk.Speed, jerk.Kilograms, Math.Max(jerk.Newtons, tension), line.BreakingNewtons, line.RestMetres, line.NewtonsPerMetre);
             return;
         }
 

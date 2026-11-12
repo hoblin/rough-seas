@@ -72,8 +72,11 @@ public sealed class HullSet
         }
     }
 
+    public (double X, double Z) Pushed { get; private set; }
+
     private (double X, double Z) Wash(WaterOnHull water, double pushX, double pushZ, double seconds)
     {
+        Pushed = (pushX, pushZ);
         var (washX, washZ) = met ? ((water.WaveX - waveX) / seconds + pushX, (water.WaveZ - waveZ) / seconds + pushZ) : (pushX, pushZ);
         (waveX, waveZ, met) = (water.WaveX, water.WaveZ, true);
         return (washX, washZ);

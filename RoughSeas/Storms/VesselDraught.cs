@@ -17,6 +17,7 @@ namespace RoughSeas.Storms;
 /// and lose it on her heave.
 /// </summary>
 [ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "MotionAndCollision", "buoyancy, the flow push, the swim drag and the immersion formula copied here as constants")]
+[ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "OnPhysicsTick", "splits a tick into 10 moves while the motion is longer than 0.1 blocks a tick")]
 [ReliesOn("Vintagestory.GameContent.EntityBehaviorRepulseAgents", "OnGameTick", "pushes Pos.Motion Y, which this class puts back")]
 public static class VesselDraught
 {
@@ -25,6 +26,8 @@ public static class VesselDraught
     private const double SwimDragPerMotion = 10;
     private const double SwimDragOffset = 0.02;
     public const double MostSwimDrag = 1.25;
+    public const double SubSteppedMotion = 0.1;
+    private const int SubSteps = 10;
     private const double VanillaFlowPush = 0.3;
     private const double LeastPushedDensity = 750;
     private const double MostPushedDensity = 2500;
@@ -67,8 +70,22 @@ public static class VesselDraught
     public static double SwimDrag(double motionLength, double stepFactor) =>
         Math.Clamp(SwimDragPerMotion * Math.Abs(motionLength * stepFactor) - SwimDragOffset, 1, MostSwimDrag);
 
-    public static double Realized(double forwardSpeed) =>
-        TicksPerSecond * forwardSpeed / SwimDrag(forwardSpeed, GlobalConstants.PhysicsFrameTime * TicksPerSecond);
+    public static double Realized(double forwardSpeed, double waterDrag = 1)
+    {
+        var tick = GlobalConstants.PhysicsFrameTime;
+        var steps = Math.Abs(forwardSpeed) > SubSteppedMotion ? SubSteps : 1;
+        var seconds = tick / steps;
+        var stepFactor = seconds * TicksPerSecond;
+        var kept = WaterDrag.Kept(waterDrag, seconds);
+        double motion = forwardSpeed, blocks = 0;
+        for (var i = 0; i < steps; i++)
+        {
+            motion *= kept;
+            motion /= SwimDrag(motion, stepFactor);
+            blocks += motion * stepFactor;
+        }
+        return blocks / tick;
+    }
 
     private static void Settle(EntityBoat __instance, ref double __result)
     {

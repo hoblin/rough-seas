@@ -28,7 +28,7 @@ public static class VanillaSwim
     public static double Commanded(double metresPerSecond)
     {
         var free = metresPerSecond / TicksPerSecond;
-        return SwimDrag(free) <= 1 ? free : free * VesselDraught.MostSwimDrag;
+        return Math.Abs(free) > VesselDraught.SubSteppedMotion || SwimDrag(free) <= 1 ? free : free * VesselDraught.MostSwimDrag;
     }
 
     private static double SwimDrag(double motion) => VesselDraught.SwimDrag(motion, StepFactor);
