@@ -4,7 +4,11 @@ In the water your body floats by what it displaces, not by a rule of the game. I
 
 Left alone in the sea you float with the water at your face, and the waves carry you up, down and to and fro. In a calm sea you can just breathe. In a rough one the crests wash over your head and the troughs give your air back. A [current](Currents) carries vessels, not you.
 
-Fresh water holds you up less, so in a lake or a river you sink slowly unless you swim. Swimming is the game's own stroke, and holding jump treads water with your head clear.
+Fresh water holds you up less, so in a lake or a river you sink slowly unless you swim. Holding jump strokes you up, so you tread water with your head clear.
+
+## Swimming
+
+Hold a direction to swim: each stroke pushes you through the water the way you look, about as hard as a trained swimmer pushes. On a calm sea you swim about 0.9 m/s, a metre every second, and stop gliding a few seconds after you let go. The water you swim in moves you too: swim with a wave's front face and it carries you faster than you swim, swim against it and it holds you back.
 
 ## What you carry
 

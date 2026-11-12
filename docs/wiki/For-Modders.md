@@ -486,6 +486,19 @@ A mod that replaces vanilla's shaders no longer breaks one of vanilla's programs
 - One of vanilla's programs that fails to compile with our text in it is rebuilt without it, on every shader reload. A tessellation stage that fails turns tessellation off for the water. A program a mod registers itself is compiled after vanilla's, and gets no second try.
 - What is left out, and why, is a warning in `client-main.log`: `Rough Seas leaves wet sand out of shader program chunkopaque: its source has no 'void main()'`. The program then draws as your mod wrote it.
 
+### A hull moves by the water's force
+
+A hull moves by the sum of the forces on it, the waves' among them, so one running near a wave's speed is carried on its face; a mooring line holds by its tension; a swimmer strokes with a force ([How the waves move a hull](The-Science-of-the-Sea#how-the-waves-move-a-hull)). A vessel of yours with our behaviours loads as it did; a mod that reads or moves a hull or a swimmer reads on.
+
+- `IDrawnSea` gained `HullGradientAt(x, z, lift, draft, yaw, length, beam)`, a `FlowGradient` ([Reading it](Reading-the-Sea#reading-it)). A class of yours that implements `IDrawnSea` has to add it.
+- The waves no longer move a hull from a postfix on `EntityBoat.updateBoatAngleAndMotion`: `WaveCarry` is gone, and `roughseas:currentdrift` moves the hull by the current, the waves and its lines in one step. `WaveRide.Carry` became `WaveRide.Water`, which reads the waves under the hull as a `WaterOnHull`; `WaveRide.WaterAcceleration` is gone.
+- `HullSet` holds the hull's velocity beside the waves' water: `Own`, `Push`, and `Settle(drag, water, yaw, seconds)`, which returns the water's push on her apart from its drag; `Hold` and `Slow` are gone. The watched tree `roughseas:set` carries `Own`, without the waves' water. `HullDrag.Settle` and `Pull` take the hull's own way along her and a push; new `Newtons`, `Acceleration` and `KilogramsToward`. `EntityBehaviorCurrentDrift` gained `Load`, `Velocity` and `Impulse`.
+- `roughseas:mooring` holds by its lines' tension, a force on the hull: `MooringLine.Over` solves a line over a tick and replaces `Tension`. Nothing of the mooring runs on the physics thread any more (`EntityBehaviorMooring.Restrain` is gone).
+- `VanillaSwim.Realized` is `VesselDraught.Realized(forwardSpeed, waterDrag)`, worked out from vanilla's tick: ten moves above 0.1 blocks a tick, where the swim drag never acts, and its water drag where a rower doesn't take it off.
+- A swimmer's stroke is ours: `BodyAfloat` takes back the motion `PModulePlayerInLiquid.HandleSwimming` adds for a player afloat, on the client that moves them, and strokes by `SwimStroke` from the controls; `BodyUnderSurface` no longer transpiles it. `config/person.json`'s `body` gained `strokeNewtons` and `dragAreaSwimming`. `FloatingBody.Step` takes the stroke.
+
+New: `IDrawnSea.HullGradientAt`, `FlowGradient`, `WaterOnHull`, `SwimStroke`, `MooringLine.Over`, `LineStep`, `Body.AddedAlongKg`.
+
 ## What not to touch
 
 | Name | What it is |

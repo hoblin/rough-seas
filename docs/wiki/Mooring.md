@@ -4,7 +4,7 @@ A vessel left alone [is carried off by the current](Currents#drift), and a [stor
 
 Tie a vessel to a fence post or a growing tree's trunk ashore with a rope, the way you tie an animal: right-click the vessel with the rope, then the post. Every vessel can be tied up, by one rope. To change the rope's length, hold it and pick *Shorten* or *Lengthen* in its tool modes (F): a rope runs from 1.5 to 10 metres.
 
-The vessel lies free within the rope's length. When the current or a wave carries it out to the rope's end, the rope stops it there, and the jerk runs through the rope.
+The vessel lies free within the rope's length. When the current or a wave carries it out to the rope's end, the rope stretches, stops it and springs it back, and the jerk runs through the rope. A few bounces later the vessel lies at the rope's end.
 
 - **A short rope** keeps the vessel close to the post, but it gives little, so it jerks hard.
 - **A long rope** gives more, so it jerks softly, but the vessel swings wider, nearer the shore.
