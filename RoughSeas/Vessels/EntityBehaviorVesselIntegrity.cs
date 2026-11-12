@@ -494,7 +494,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     {
         if (RepairWith(slot) is not { } repair) return null;
 
-        var work = Refused(repair, slot, At(hit)) ?? new MendWork(repair.Seconds);
+        var work = Refused(repair, slot, At(hit)) ?? new MendWork(repair.Seconds) { Hands = ((IMendable)model).Hands };
         return work.Refusal != null && !OnHull(byEntity) ? null : work;
     }
 

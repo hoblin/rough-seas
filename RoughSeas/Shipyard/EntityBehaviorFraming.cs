@@ -87,7 +87,7 @@ public class EntityBehaviorFraming(Entity entity) : EntityBehaviorBuild(entity),
         if (framing.Current is not { } stage || !layings[stage].Takes(slot)) return null;
 
         var laying = layings[stage];
-        return new(stage.Seconds * Math.Min(laying.Pieces(slot), stage.Pieces - framing.Laid(stage)), laying.Refusal(slot, framing), laying.ShowsBar);
+        return new(stage.Seconds * Math.Min(laying.Pieces(slot), stage.Pieces - framing.Laid(stage)), laying.Refusal(slot, framing), laying.ShowsBar) { Hands = laying.Hands };
     }
 
     public void Lay(EntityAgent byEntity, ItemSlot slot)

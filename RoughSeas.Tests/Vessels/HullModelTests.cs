@@ -93,6 +93,16 @@ public class HullModelTests
     }
 
     [Fact]
+    public void LashingsAreMendedByTyingAndACrackedHullIsNot()
+    {
+        IMendable lashed = new LashedHull(() => tree, () => changes++);
+        IMendable cracked = new CrackingHull(() => tree, () => changes++, new JsonObject(Fixtures.IntegrityConfig("currach")), Fixtures.HullConfig);
+
+        Assert.Equal(WorkHands.Tie, lashed.Hands);
+        Assert.Equal(WorkHands.Work, cracked.Hands);
+    }
+
+    [Fact]
     public void SevenCutLashingsBreakARaftUp()
     {
         var raft = new LashedHull(() => tree, () => changes++);

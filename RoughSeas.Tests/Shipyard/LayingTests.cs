@@ -1,4 +1,5 @@
 using RoughSeas.Shipyard;
+using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
@@ -24,6 +25,14 @@ public class LayingTests
     {
         Assert.True(new RopeLaying(new AssetLocation("game:rope")).ShowsBar);
         Assert.False(laying.ShowsBar);
+    }
+
+    [Fact]
+    public void RopeAndAHideSewnOnAreTiedAndALathIsNot()
+    {
+        Assert.Equal(WorkHands.Tie, new RopeLaying(new AssetLocation("game:rope")).Hands);
+        Assert.Equal(WorkHands.Tie, new HideLaying(new AssetLocation("game:hide-*"), ["raw"]).Hands);
+        Assert.Equal(WorkHands.Work, laying.Hands);
     }
 
     [Fact]

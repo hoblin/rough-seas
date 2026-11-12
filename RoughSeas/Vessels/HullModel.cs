@@ -107,6 +107,8 @@ public interface IMendable
     bool Needs(HullRepair repair, HullPlace place);
 
     string Mend(HullRepair repair, HullPlace place);
+
+    string Hands => WorkHands.Work;
 }
 
 /// <summary>

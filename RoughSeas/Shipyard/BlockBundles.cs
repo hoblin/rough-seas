@@ -122,7 +122,7 @@ public class BlockBundles : Block, IWorkedBlock
     {
         public HullWork? WorkWith(ItemSlot slot) =>
             bundles.Binding(world) is { } job && job.Laying.Takes(slot)
-                ? new(job.Stage.Seconds, null, job.Laying.ShowsBar)
+                ? new(job.Stage.Seconds, null, job.Laying.ShowsBar) { Hands = job.Laying.Hands }
                 : null;
 
         public void Lay(EntityAgent byEntity, ItemSlot slot)

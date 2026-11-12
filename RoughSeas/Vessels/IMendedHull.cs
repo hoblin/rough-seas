@@ -11,5 +11,8 @@ public interface IMendedHull
     void Mend(EntityAgent byEntity, ItemSlot slot, Vec3d hit);
 }
 
-/// <summary>A patch's hold: its time, and the lang key refusing it with that key's arguments.</summary>
-public sealed record MendWork(double Seconds, string? Refusal = null, params object[] RefusalArgs);
+/// <summary>A patch's hold: its time, the lang key refusing it with that key's arguments, and the player animation the hands work it with.</summary>
+public sealed record MendWork(double Seconds, string? Refusal = null, params object[] RefusalArgs)
+{
+    public string Hands { get; init; } = WorkHands.Work;
+}

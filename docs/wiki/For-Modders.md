@@ -499,6 +499,15 @@ A hull moves by the sum of the forces on it, the waves' among them, so one runni
 
 New: `IDrawnSea.HullGradientAt`, `FlowGradient`, `WaterOnHull`, `SwimStroke`, `MooringLine.Over` and `Dragging`, `LineStep`, `BodyInWater`, `HullSet.Add` and `Way`, `HullSetReport`, `HullRider.Gradient`, `Body.AddedAlongKg`.
 
+### Hands that tie knots
+
+Rope, cord and a hide sewn on go into a vessel with both hands tying knots, in third and first person ([Framed in place](Building-a-Vessel#framed-in-place)). A vessel of yours with our behaviours loads as it did; a mod that adds a kind of work reads on.
+
+- `HullWork` and `MendWork` gained `Hands`, the player animation their hold plays, `knifescrape` unless the work says otherwise. A stage's comes from `Laying.Hands`: `RopeLaying` and `HideLaying` tie. A mend's comes from `IMendable.Hands`: `LashedHull`, a raft's lashings and the outrigger float's, ties. `WorkHands` holds the two codes. `CollectibleBehaviorFraming.WorkAnimation` is gone.
+- The player animation `roughseas-tie` and its first-person twin `roughseas-tie-fp` are added to the seraph by `patches/player-tying.json`, which `bin/model build tying` writes.
+
+New: `HullWork.Hands`, `MendWork.Hands`, `Laying.Hands`, `IMendable.Hands`, `WorkHands`, the player animations `roughseas-tie` and `roughseas-tie-fp`.
+
 ## What not to touch
 
 | Name | What it is |

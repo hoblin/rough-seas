@@ -192,11 +192,11 @@ def played(vessel):
                 if op["file"].endswith(f"boat-{vessel}.json") and "strokes" in op["value"])
 
 
-def smoothed(name, elements, animations, vessel):
+def smoothed(name, elements, animations, vessel, blended=None):
     """Writes the animations' turns so that the game draws none of them the long way round, within a stroke or as it
     blends one into the next; refuses them when one still turns that way, or two strokes of one tool meet apart. A
     switch to another tool, rare and a new hold, only warns."""
-    blended = switches(played(vessel))
+    blended = switches(played(vessel)) if blended is None else blended
     unwind(elements, animations, blended)
     found = faults(elements, animations, blended)
     for fault in found:
@@ -222,8 +222,8 @@ def first_person(animation):
     return twin
 
 
-def player_patch(name, animations):
-    smoothed(name, seraph()["elements"], animations, name.removeprefix("player-"))
+def player_patch(name, animations, blended=None):
+    smoothed(name, seraph()["elements"], animations, name.removeprefix("player-"), blended)
     animations += [first_person(animation) for animation in list(animations) if "firstPerson" in animation]
     speeds = {animation["code"]: animation.pop("speed") for animation in animations}
     ops = []

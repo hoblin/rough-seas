@@ -14,9 +14,6 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
 {
     public const string Code = "roughseas:framing";
 
-    /// <summary>Vanilla's work with both hands at something on the ground, as it scrapes a hide there.</summary>
-    public const string WorkAnimation = "knifescrape";
-
     private readonly HeldWork work = new();
 
     /// <summary>Whether the held item does work on what is selected, refused or not.</summary>
@@ -71,10 +68,10 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
     public override string? GetHeldTpUseAnimation(ItemSlot activeHotbarSlot, Entity forEntity, ref EnumHandling bhHandling)
     {
         if (forEntity is not EntityPlayer { Controls.HandUse: EnumHandInteract.HeldItemInteract, Player: { } player } worker
-            || Work(activeHotbarSlot, worker, player.CurrentBlockSelection, player.CurrentEntitySelection) is not { Job.Refusal: null }) return null;
+            || Work(activeHotbarSlot, worker, player.CurrentBlockSelection, player.CurrentEntitySelection) is not { Job: { Refusal: null } job }) return null;
 
         bhHandling = EnumHandling.PreventDefault;
-        return WorkAnimation;
+        return job.Hands;
     }
 
     private static Held? Work(ItemSlot slot, EntityAgent byEntity, BlockSelection? blockSel, EntitySelection? entitySel) =>
@@ -100,7 +97,7 @@ public class CollectibleBehaviorFraming(CollectibleObject collectible) : Collect
     private sealed class Mending(IMendedHull hull, EntityAgent mender, Vec3d hit) : IWorkedHull
     {
         public HullWork? WorkWith(ItemSlot slot) =>
-            hull.MendWith(slot, mender, hit) is { } mend ? new HullWork(mend.Seconds, mend.Refusal) { RefusalArgs = mend.RefusalArgs } : null;
+            hull.MendWith(slot, mender, hit) is { } mend ? new HullWork(mend.Seconds, mend.Refusal) { RefusalArgs = mend.RefusalArgs, Hands = mend.Hands } : null;
 
         public void Lay(EntityAgent byEntity, ItemSlot slot) => hull.Mend(byEntity, slot, hit);
     }

@@ -49,6 +49,8 @@ public abstract class Laying
     /// <summary>Whether a hold of this work shows vanilla's progress bar: work whose piece shows nothing on her until it is done.</summary>
     public virtual bool ShowsBar => false;
 
+    public virtual string Hands => WorkHands.Work;
+
     /// <summary>What the help shows this work done with.</summary>
     public abstract IEnumerable<ItemStack> Shown(IWorldAccessor world);
 
@@ -174,6 +176,8 @@ public sealed class RopeLaying(AssetLocation rope) : Laying
 
     public override bool ShowsBar => true;
 
+    public override string Hands => WorkHands.Tie;
+
     private const string TiedKey = "clothId";
 
     public override bool Takes(ItemSlot slot) =>
@@ -271,6 +275,8 @@ public sealed class HideLaying(AssetLocation hides, string[] states) : Laying
     private static readonly Dictionary<string, int> Sections = new() { ["small"] = 1, ["medium"] = 2, ["large"] = 3, ["huge"] = 5 };
 
     public override string Action => "roughseas:shipyard-sew-hide";
+
+    public override string Hands => WorkHands.Tie;
 
     public override bool Takes(ItemSlot slot) =>
         slot.Itemstack?.Collectible is { } hide && WildcardUtil.Match(hides, hide.Code)

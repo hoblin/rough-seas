@@ -29,6 +29,8 @@ public sealed class LashedHull(Func<ITreeAttribute> tree, Action changed, string
         return $"lashings mended: {before:F2} -> {Condition:F2}";
     }
 
+    public string Hands => WorkHands.Tie;
+
     public override void Describe(StringBuilder info) =>
         info.AppendLine(Lang.Get(described, (int)Math.Round(Condition * 100)));
 
