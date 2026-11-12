@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using RoughSeas.Soundscape;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -23,16 +24,16 @@ public class BlockWedge : Block
     private const float ChipSpreadMetres = 0.3f;
     private const float ChipScale = 0.6f;
 
-    private static readonly AssetLocation SplitSound = new("game:sounds/effect/treefell");
-
     private double secondsPerBlow;
     private WedgeSplit[] splits = [];
+    private SoundCut crack = new();
 
     public override void OnLoaded(ICoreAPI api)
     {
         base.OnLoaded(api);
         secondsPerBlow = Attributes["secondsPerBlow"].AsDouble();
         splits = Attributes["splits"].AsObject<WedgeSplit[]>([]);
+        crack = Attributes["crack"].AsObject<SoundCut>()!;
     }
 
     public IStruck? DrivingAt(IWorldAccessor world, BlockPos pos) => Deeper(world) == null ? null : new Driving(world, pos.Copy());
@@ -126,7 +127,7 @@ public class BlockWedge : Block
             world.SpawnItemEntity(new ItemStack(piece, Math.Min(left, piece.MaxStackSize)), at);
         }
         world.SpawnCubeParticles(at, new ItemStack(piece), 2, 32, 0.8f);
-        world.PlaySoundAt(SplitSound, at.X, at.Y, at.Z);
+        world.Api.ModLoader.GetModSystem<SoundscapeModSystem>().Play(crack, at);
         axe.Itemstack?.Collectible.DamageItem(world, byEntity, axe);
         shipyard.Log("{0} splits a row of {1} {2} at {3} {4} into {5} {6}", byEntity.GetName(), row.Length, row.Wood.Code, row.Centre.X, row.Centre.Z,
             split.Count, piece.Code);
