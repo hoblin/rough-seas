@@ -44,7 +44,6 @@ Boats no longer burst at a hidden zero: you hear and see where a knock landed, w
 - **Floating by mass.** Every vessel [floats by its mass](Surf-and-Swamping#how-it-floats), sits lower and runs slower loaded, and flooded floats awash or sinks by its wood and load. Hulls ride the swell on periods of their own mass.
 - **Lashings, soaking and seams.** The [raft](Raft)'s lashings work loose and are bound up with flax twine, the [reed boat](Reed-Boat) soaks afloat and dries ashore, and the [currach](Hide-Currach)'s seams seep once their grease is gone. A [mend](Mending) patches the place you look at.
 - **The sea you can hear.** Open water by its wind, whitecaps hissing from windward, surf on the shore, and a hull that creaks, cracks and trickles as it takes water. The recordings: [Sound credits](Sound-Credits).
-- **Switched off for now:** the open sea's sound, the surf and the whitecaps' hiss, which didn't match the water you see. They come back from real recordings ([Further out](#further-out)). The shore laps with the game's own sound, the game's rowing plays at its own volume, and every wave at a hull, every breaker and every knock still sounds.
 - **[The drawn sea for other mods](Reading-the-Sea#the-drawn-sea).** Their vessels ride the swell a client draws, as ours do.
 - **A major version**, because the hulls changed vessel keys the modder pages document: [what to change](For-Modders#hulls-that-crack-leak-and-flood).
 
@@ -111,6 +110,10 @@ The sea reaches the shore, and you float in it.
 - **[You float by your body](Swimming):** armour and hotbar tools weigh you down, you sink below about 6 m, and a breaking crest drives you under. The work of [rhino1998](https://mods.vintagestory.at/show/user/54FEACF9BA0FE0675CB8).
 - **Boats take the waves where they are,** softer behind a bar, and a wave every wave period.
 - **Vintage Story 1.22.0** and later.
+
+## Next release
+
+- **Switched off for now:** the open sea's sound, the surf and the whitecaps' hiss, which didn't match the water you see. They come back from real recordings ([Further out](#further-out)). The shore laps with the game's own sound, the game's rowing plays at its own volume, and every wave at a hull, every breaker and every knock still sounds.
 
 ## Seamanship
 
