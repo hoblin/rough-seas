@@ -12,10 +12,12 @@ using RoughSeas.Vessels;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// Carries a vessel with the water by its drag on her hull, where her physics runs: the server while nobody steers her,
-/// the controlling client while someone does. Her <see cref="HullSet"/> holds the velocity the water has given her, on
-/// top of the way a rower makes through the water; <see cref="DriftPhysics"/> keeps it through vanilla's physics. While
-/// she is steered the server works out the same set from the same drag, for whoever takes her next.
+/// Moves a vessel by the water, where her physics runs: the server while nobody steers her, the controlling client while
+/// someone does. Her <see cref="HullSet"/> holds the velocity the water has given her, on top of the way a rower makes
+/// through the water: the waves' water at her place, and her own velocity through it, which the water's drag, the
+/// waves' push and her lines' tension (<see cref="Impulse"/>) change over her mass. <see cref="DriftPhysics"/> keeps
+/// the set through vanilla's physics. While she is steered the server works out her own set from the current's drag, for
+/// whoever takes her next.
 /// </summary>
 public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 {

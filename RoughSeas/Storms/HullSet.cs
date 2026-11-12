@@ -32,6 +32,7 @@ public sealed class HullSet
         }
     }
 
+    /// <summary>Her set beside the waves' water at her place, m/s: the part forces change, and the part the other side takes over.</summary>
     public (double X, double Z) Own
     {
         get
@@ -49,6 +50,8 @@ public sealed class HullSet
         }
     }
 
+    /// <summary>The water moves her for <paramref name="seconds"/>.</summary>
+    /// <returns>The water's push on her besides its drag, m/s².</returns>
     public (double X, double Z) Settle(HullDrag drag, WaterOnHull water, double yaw, double seconds)
     {
         lock (gate)
@@ -61,6 +64,7 @@ public sealed class HullSet
         }
     }
 
+    /// <summary>As <see cref="Settle"/> for a hull whose drag isn't known: she comes toward the current by this share of the difference.</summary>
     public (double X, double Z) Relax(WaterOnHull water, double yaw, double share, double seconds)
     {
         lock (gate)
@@ -72,6 +76,7 @@ public sealed class HullSet
         }
     }
 
+    /// <summary>What the waves pushed her by in the last step, m/s², for her moving through their water: −(s·∇)u.</summary>
     public (double X, double Z) Pushed { get; private set; }
 
     private (double X, double Z) Wash(WaterOnHull water, double pushX, double pushZ, double seconds)

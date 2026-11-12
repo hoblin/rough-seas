@@ -87,7 +87,7 @@ public sealed class HullDrag
 
     public double Across(double metresPerSecond) => -SideDrag * metresPerSecond * Math.Abs(metresPerSecond);
 
-    /// <summary>The water's drag on her, newtons in world axes.</summary>
+    /// <summary>The water's drag on her, newtons in world axes, less what her own way <paramref name="wayAlong"/> meets alone, which her rower pays.</summary>
     public (double X, double Z) Pull(double waterX, double waterZ, double yaw, double wayAlong = 0)
     {
         var (along, across) = HullShape.ToHull(waterX, waterZ, yaw);
@@ -95,8 +95,10 @@ public sealed class HullDrag
     }
 
     /// <summary>
-    /// The water's velocity relative to her after <paramref name="seconds"/> of its drag alone: the drag at this speed,
-    /// read as a square law, integrated exactly, so a long step can't carry her past the water.
+    /// The water's velocity relative to her after <paramref name="seconds"/> of its drag, as <see cref="Pull"/> takes
+    /// it, and of a push of <paramref name="pushX"/>, <paramref name="pushZ"/> m/s². Solved implicitly, in steps short
+    /// against the drag's own time, so a long step can't carry her past the water and a push held by the drag holds
+    /// her exactly where they balance.
     /// </summary>
     public (double X, double Z) Settle(double waterX, double waterZ, double yaw, double seconds, double wayAlong = 0, double pushX = 0, double pushZ = 0)
     {
@@ -117,6 +119,7 @@ public sealed class HullDrag
         return HullShape.ToWorld(along / AlongKg, across / AcrossKg, yaw);
     }
 
+    /// <summary>Her mass and the water she drags as a pull along this unit vector meets them.</summary>
     public double KilogramsToward(double unitX, double unitZ, double yaw)
     {
         var (along, across) = HullShape.ToHull(unitX, unitZ, yaw);

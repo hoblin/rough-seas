@@ -8,8 +8,9 @@ namespace RoughSeas.Person;
 /// <summary>
 /// One body in the water, stepped by its equation of motion; <see cref="BodyAfloat"/> only calls it. Up and down:
 /// (m + m_a) dw/dt = ρ g V(η) - m g + (ρ V + m_a) a - ½ ρ Cd A |w - w_w| (w - w_w), with V what lies under the drawn
-/// surface and a, w_w the water's own motion there. Across the same form: the water's pressure and its drag relative to
-/// the water, the roller of a breaker included. A crest broken over it churns air into the water it lies in.
+/// surface and a, w_w the water's own motion there. Across the same form: the water's pressure, its push on a body moving
+/// through it, the swimmer's stroke and the drag relative to the water, the roller of a breaker included. A crest broken
+/// over it churns air into the water it lies in.
 /// </summary>
 public sealed class FloatingBody(IPerson person, PersonConfig config, Waves waves)
 {

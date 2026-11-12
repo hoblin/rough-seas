@@ -35,6 +35,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     /// <summary>She has left the water: she comes to rest and is next met afresh.</summary>
     public void Settle() => rider.Settle();
 
+    /// <summary>The waves' water under her this tick, on the tick's clock, on the side that moves her; none elsewhere or out of the swell.</summary>
     public WaterOnHull Water(EntityBoat boat, float dt)
     {
         var seconds = Math.Min(dt, LongestStepSeconds);

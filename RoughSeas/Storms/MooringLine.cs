@@ -8,6 +8,11 @@ public readonly record struct MooringLine(double RestMetres, double BreakingNewt
 
     public double NewtonsPerMetre => BreakingNewtons / StretchAtBreak / RestMetres;
 
+    /// <summary>
+    /// One step of the line on a hull, solved exactly as a spring on her mass: her bow <paramref name="stretchMetres"/>
+    /// past its reach and moving away at <paramref name="outwardMetresPerSecond"/>, with the water's steady pull on her
+    /// along it, all across the water; <paramref name="level"/> is the cosine of the line's slope. Slack, it does nothing.
+    /// </summary>
     public LineStep Over(double stretchMetres, double outwardMetresPerSecond, double steadyNewtons, double kilograms, double seconds, double level)
     {
         if (stretchMetres <= 0 || kilograms <= 0 || level <= 0 || seconds <= 0) return default;
@@ -40,4 +45,6 @@ public readonly record struct MooringLine(double RestMetres, double BreakingNewt
     }
 }
 
+/// <param name="Kick">What the line's tension changes her velocity by along it over the step, m/s, toward the mooring when negative.</param>
+/// <param name="PeakNewtons">The highest tension along the line within the step.</param>
 public readonly record struct LineStep(double Kick, double PeakNewtons);

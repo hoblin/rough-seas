@@ -70,6 +70,10 @@ public static class VesselDraught
     public static double SwimDrag(double motionLength, double stepFactor) =>
         Math.Clamp(SwimDragPerMotion * Math.Abs(motionLength * stepFactor) - SwimDragOffset, 1, MostSwimDrag);
 
+    /// <summary>
+    /// Her speed through the water, m/s, from a <c>ForwardSpeed</c> vanilla writes into her motion before each of its
+    /// physics ticks, as that tick moves her; <paramref name="waterDrag"/> is vanilla's, 1 where a rower takes it off.
+    /// </summary>
     public static double Realized(double forwardSpeed, double waterDrag = 1)
     {
         var tick = GlobalConstants.PhysicsFrameTime;
