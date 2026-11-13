@@ -8,6 +8,10 @@ namespace RoughSeas.Wind;
 public sealed record ClawState(double Yard, double Boom, HullPoint Peak, HullPoint Clew, HullPoint Bend, HullPoint Bridle, SailForm Form, double SheetNewtons)
     : RigState(Yard, Boom, Form, SheetNewtons);
 
+/// <summary>
+/// A shunting canoe's crab claw at one of her ends: the yard turns on its halyard about the line from the tack to the
+/// masthead, the boom about the yard on its lashing; the sail stands only to the side away from her float.
+/// </summary>
 public sealed class CrabClaw : Rigging
 {
     private const int Samples = 64;

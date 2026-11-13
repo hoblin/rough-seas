@@ -32,7 +32,6 @@ def unit(a):
 
 
 def across_of(a, axis):
-    """The part of a square to the axis, made a unit."""
     return unit(sub(a, scale(dot(a, axis), axis)))
 
 

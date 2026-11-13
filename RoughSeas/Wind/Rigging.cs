@@ -23,6 +23,11 @@ public interface IRigCanvas
     void Cloth(SailForm form, double fill, (double Reach, double Span) set);
 }
 
+/// <summary>
+/// A set sail and what holds it, in her hull's frame: the spars turn about <see cref="Axis"/> through <see cref="Origin"/>
+/// only as far as no spar or cloth meets the mast or a stay, and the loads it hands her hull sum to the sail's force and
+/// its spars' weight. Physics and drawing pose it the same way.
+/// </summary>
 public abstract class Rigging
 {
     protected const int Steps = 720;

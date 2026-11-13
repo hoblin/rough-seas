@@ -9,7 +9,7 @@ namespace RoughSeas.Vessels;
 /// <summary>
 /// Vanilla's boat, with the oars she carries following her rower's stroke and seats that face their riders the
 /// way they are turned (<see cref="VesselSeat"/>). A speed multiplier of 0 leaves her dead in the water: no
-/// paddling, no turning.
+/// paddling, no turning. Under sail her helm turns her whatever her rider holds.
 /// </summary>
 [ReliesOn("EntityBehaviorInterpolatePosition", "OnReceivedServerPos", "starts from an empty snapshot at 0,0,0 until the first server position")]
 public class EntityVessel : EntityBoat, ISeatInstSupplier

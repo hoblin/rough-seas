@@ -31,6 +31,10 @@ SHORE = 1.2
 STEP = 1.4
 LINE = 0.3
 ROLL = 2.2
+# The mast a little longer than half her length, as the Fijian thamakau's (Hornell 1936, p. 314); the yard and boom
+# to it, the claw's opening, the mast's rake toward the tack, where the halyard is bent on and how long it hangs,
+# measured off the thamakau's rigging plan (fig 230); the sheet a quarter of the boom from its end (p. 317); the shore
+# a third up the mast and most of the way out to the float (Anson's proa, fig 300b).
 MAST_METRES = 3
 YARD_TO_MAST = 1.24
 BOOM_TO_MAST = 1.18

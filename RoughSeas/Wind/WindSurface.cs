@@ -32,6 +32,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
     private const int Trims = 36;
     private const int Refinements = 3;
 
+    // The crew trims anew only when the force the polar asks for moves this much: a bound on the work, not physics.
     private const double RetrimRadians = Math.PI / 180;
     private const double RetrimShare = 0.05;
 

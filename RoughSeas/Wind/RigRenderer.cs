@@ -15,6 +15,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     private const int Reaches = 10;
     private const int Spans = 8;
     private const double OriginMetres = 0.5;
+    /// <summary>A shunt took under a minute (Hornell 1936, pp. 318, 370); her build's sixtieth of real work time.</summary>
     private const double ShuntMilliseconds = 1000;
     private static readonly (float U, float V)[] Tile = [(0, 0), (1, 0), (1, 1), (0, 1)];
     private static readonly (int Facing, int[] Order)[] Sides = [(1, [0, 1, 2, 0, 2, 3]), (-1, [0, 2, 1, 0, 3, 2])];

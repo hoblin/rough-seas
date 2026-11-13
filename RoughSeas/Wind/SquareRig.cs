@@ -7,6 +7,7 @@ namespace RoughSeas.Wind;
 public sealed record SquareState(double Yard, HullPoint ArmPort, HullPoint ArmStarboard, HullPoint ClewPort, HullPoint ClewStarboard, SailForm Form, double SheetNewtons)
     : RigState(Yard, 0, Form, SheetNewtons);
 
+/// <summary>A square sail on a yard braced about the mast, sheeted at its lee clew.</summary>
 public sealed class SquareRig : Rigging
 {
     public const string Kind = "square";
