@@ -126,7 +126,7 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void LetsALookAtHerSidesPickHerHull(string vessel)
+    public void LaysNoSelectionBoxFlushWithHerHullsSides(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
         var elements = Elements(shape["elements"]!).ToList();
