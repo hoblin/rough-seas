@@ -1,17 +1,18 @@
-using RoughSeas.Storms;
+using RoughSeas.Lines;
+using RoughSeas.Tests.Storms;
 
-namespace RoughSeas.Tests.Storms;
+namespace RoughSeas.Tests.Lines;
 
-public class MooringLineTests
+public class LineTests
 {
     private const double SailboatWithItsWater = 2400;
     private const double Tick = 1 / 30.0;
     private const double ComingTaut = 1e-9;
     private const double Long = 60;
 
-    private static MooringLine Flax(double metres) => new(metres, Fixtures.FlaxNewtons, Fixtures.FlaxStretchAtBreak);
+    private static Line Flax(double metres) => new(metres, Fixtures.FlaxNewtons, Fixtures.FlaxStretchAtBreak);
 
-    private static double Peak(MooringLine line, double steady, double speed, double kilograms) =>
+    private static double Peak(Line line, double steady, double speed, double kilograms) =>
         line.Over(ComingTaut, speed, steady, kilograms, Long, 1).PeakNewtons;
 
     [Fact]
@@ -126,7 +127,7 @@ public class MooringLineTests
     [InlineData(-0.1, 0.6, 1.0)]
     public void OneLongStepLeavesHerWhereAndAsFastAsManyShortOnes(double stretch, double speed, double seconds)
     {
-        var line = new MooringLine(5.5, Fixtures.FlaxNewtons, Fixtures.FlaxStretchAtBreak);
+        var line = new Line(5.5, Fixtures.FlaxNewtons, Fixtures.FlaxStretchAtBreak);
         const double kilograms = 135;
         const double steady = 60;
         const int steps = 20000;
@@ -162,7 +163,7 @@ public class MooringLineTests
     [Fact]
     public void AnUnbreakableRopeStopsHerAtItsEndAndNeverParts()
     {
-        var unbreakable = new MooringLine(3, double.PositiveInfinity, 0.1);
+        var unbreakable = new Line(3, double.PositiveInfinity, 0.1);
         var step = unbreakable.Over(0.01, 0.5, 400, SailboatWithItsWater, Tick, 1);
 
         Assert.Equal(-(0.5 + 400 * Tick / SailboatWithItsWater), step.Kick, 9);
@@ -190,17 +191,6 @@ public class MooringLineTests
         }
 
         Assert.InRange(highest, 0, 1.0001 * arriving * Math.Sqrt(line.NewtonsPerMetre * kilograms));
-    }
-
-    [Fact]
-    public void ADraggingAnchorHoldsHerBackByItsHoldingAndNeverDrawsHerBack()
-    {
-        var holding = MooringLine.Dragging(1.0, 0, 300, SailboatWithItsWater, Tick, 1);
-        Assert.Equal(-300 * Tick / SailboatWithItsWater, holding.Kick, 12);
-        Assert.Equal(300, holding.PeakNewtons);
-
-        Assert.Equal(-0.001, MooringLine.Dragging(0.001, 0, 300, SailboatWithItsWater, Tick, 1).Kick, 12);
-        Assert.Equal(0, MooringLine.Dragging(-0.5, 0, 300, SailboatWithItsWater, Tick, 1).Kick);
     }
 
     [Fact]

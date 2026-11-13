@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RoughSeas.Lines;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -49,7 +50,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
     private Hold[] holds = [];
     private bool here;
 
-    private sealed record Tether(int Key, double X, double Z, double ReachMetres, MooringLine Line)
+    private sealed record Tether(int Key, double X, double Z, double ReachMetres, Line Line)
     {
         public bool Anchored => Key == AnchorLine;
 
@@ -221,13 +222,13 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         }
 
         var tethers = new List<Tether>();
-        if (Anchor is { } anchor) tethers.Add(new Tether(AnchorLine, anchor.X, anchor.Z, anchor.Reach(Depth(anchor)), Line(anchor.Rope, anchor.RodeMetres)));
+        if (Anchor is { } anchor) tethers.Add(new Tether(AnchorLine, anchor.X, anchor.Z, anchor.Reach(Depth(anchor)), LineOf(anchor.Rope, anchor.RodeMetres)));
         var rope = Rope.Tied;
         if (rope != null && VesselRope.Post(rope) is { } post)
         {
             var length = VesselRope.RestMetres(rope);
             var rise = post.Y - entity.Pos.Y;
-            tethers.Add(new Tether(rope.ClothId, post.X + 0.5, post.Z + 0.5, Math.Sqrt(Math.Max(0, length * length - rise * rise)), Line(Config.StakeRope, length)));
+            tethers.Add(new Tether(rope.ClothId, post.X + 0.5, post.Z + 0.5, Math.Sqrt(Math.Max(0, length * length - rise * rise)), LineOf(Config.StakeRope, length)));
         }
         if (tethers.Count == 0 && before.Length == 0) return;
 
@@ -257,7 +258,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
         return hold;
     }
 
-    private MooringLine Line(string rope, double metres) =>
+    private Line LineOf(string rope, double metres) =>
         new(metres, materials.BreakingKilonewtons(rope) * NewtonsPerKilonewton, materials.StretchAtBreak(rope));
 
     /// <summary>
@@ -316,7 +317,7 @@ public class EntityBehaviorMooring(Entity entity) : EntityBehavior(entity)
 
             var holding = strains && hold.Tether.Anchored && Anchor is { } anchor ? Holding(anchor) : double.PositiveInfinity;
             Slip(hold, step.PeakNewtons > holding, step.PeakNewtons, holding);
-            if (hold.Slipping) step = MooringLine.Dragging(speed, shares[j], holding, kilograms, seconds, level);
+            if (hold.Slipping) step = Storms.Anchor.Dragging(speed, shares[j], holding, kilograms, seconds, level);
             drift.Impulse(step.Moved * kilograms * outX, step.Moved * kilograms * outZ);
             hold.Owed = ((step.Kick - step.Moved) * kilograms * outX, (step.Kick - step.Moved) * kilograms * outZ);
 
