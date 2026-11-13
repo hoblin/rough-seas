@@ -11,7 +11,7 @@ public readonly record struct Airflow(double Along, double Across)
     public int Leeward => Across < 0 ? -1 : 1;
 }
 
-public readonly record struct Push(double Along, double Across, double AtAlong, double AtAcross);
+public readonly record struct Push(HullPoint At, HullPoint Force, HullPoint Couple = default);
 
 public readonly record struct WindLoad(double X, double Z, double NewtonMetres)
 {

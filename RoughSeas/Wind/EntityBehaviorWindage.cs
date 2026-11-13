@@ -112,6 +112,9 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
             Speed(blowing), Compass.TowardDegrees(blowing.X, blowing.Z), air.Speed, air.FromBow * GameMath.RAD2DEG, air.Leeward > 0 ? "port" : "starboard",
             Sail is { Pressure: > 0 } sail ? $"sail {(sail.Aback ? "aback" : "drawing")} on tack {sail.Rig.Tacked}, turned {sail.Turn * GameMath.RAD2DEG:F0}°" : "bare",
             -pushAlong, Math.Abs(pushAcross), pushAcross > 0 ? "starboard" : "port", load.NewtonMetres, Speed(velocity));
+        if (Sail is { Pressure: > 0, Load: { } rig })
+            wind.Log(entity, "her rig holds the sail: sheet {0:F0} N, halyard {1:F0} N, {2}", rig.SheetNewtons, rig.HalyardNewtons,
+                string.Join(", ", rig.Stays.Select(stay => $"{stay.Line} {stay.Newtons:F0} N")));
     }
 
     private static double Speed((double X, double Z) v) => Math.Sqrt(v.X * v.X + v.Z * v.Z);

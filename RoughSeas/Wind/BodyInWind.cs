@@ -22,13 +22,13 @@ public abstract class BodyInWind(WindConfig config)
         }
 
         var halfDensity = config.AirKgPerCubicMetre / 2;
-        var (pivotAlong, pivotAcross) = Pivot;
+        var pivot = new HullPoint(Pivot.Along, 0, Pivot.Across);
         var load = default(WindLoad);
         foreach (var surface in Surfaces(AirOn))
+        foreach (var push in surface.Pushes(AirOn(surface), halfDensity))
         {
-            var push = surface.Push(AirOn(surface), halfDensity);
-            var (x, z) = HullShape.ToWorld(push.Along, push.Across, yaw);
-            load += new WindLoad(x, z, (push.AtAcross - pivotAcross) * push.Along - (push.AtAlong - pivotAlong) * push.Across);
+            var (x, z) = HullShape.ToWorld(push.Force.Along, push.Force.Across, yaw);
+            load += new WindLoad(x, z, ((push.At - pivot).Cross(push.Force) + push.Couple).Height);
         }
         return load;
     }

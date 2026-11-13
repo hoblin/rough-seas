@@ -21,6 +21,8 @@ public sealed class Rig
     public int Ends => ends.Length;
 }
 
+public sealed record RigLoad(Push[] Points, double SheetNewtons, double HalyardNewtons, (string Line, double Newtons)[] Stays);
+
 public sealed class RigEnd
 {
     private const int Steps = 720;
@@ -48,6 +50,50 @@ public sealed class RigEnd
     public (double From, double Span) Free { get; }
 
     public HullPoint Turned(HullPoint point, double turn) => Form.Turned(point, turn);
+
+    public RigLoad Loads(HullPoint at, HullPoint force, double turn)
+    {
+        var (tack, axis, pose) = (Form.Origin, Form.Axis, Hoisted);
+        var (bend, bridle) = (Turned(pose.HalyardBend, turn), Turned(pose.Bridle, turn));
+        var sheet = (pose.Lead - bridle).Unit;
+        var wind = (at - tack).Cross(force);
+        var sheeted = Math.Max(0, -wind.Dot(axis) / (bridle - tack).Cross(sheet).Dot(axis));
+        var halyard = (pose.Masthead - bend).Unit;
+        var lifted = (bend - tack).Cross(halyard);
+        var unheld = wind + (bridle - tack).Cross(sheeted * sheet);
+        var hoisted = Math.Max(0, -unheld.Dot(lifted) / lifted.Dot(lifted));
+        var stepped = -1 * (force + sheeted * sheet + hoisted * halyard);
+        var head = hoisted * ((pose.Heel - pose.Masthead).Unit - halyard);
+        var masthead = Stayed(pose, head);
+        return new RigLoad(
+            [
+                new(tack, -1 * stepped, unheld + hoisted * lifted),
+                new(pose.Lead, -sheeted * sheet, default),
+                new(pose.Heel, hoisted * (pose.Masthead - pose.Heel).Unit, default),
+                ..masthead.Loads
+            ],
+            sheeted, hoisted, masthead.Tensions);
+    }
+
+    private static (Push[] Loads, (string Line, double Newtons)[] Tensions) Stayed(RigPose pose, HullPoint head)
+    {
+        var mast = (pose.Masthead - pose.Heel).Unit;
+        var (shroud, backstay, forestay) = ((pose.ShroudFoot - pose.Masthead).Unit, (pose.SternPin - pose.Masthead).Unit, (pose.Tack - pose.Masthead).Unit);
+        foreach (var (name, stay, foot) in new[] { ("backstay", backstay, pose.SternPin), ("forestay", forestay, pose.Tack) })
+        {
+            if (Solve(mast, shroud, stay, -1 * head) is not var (strut, held, pulled) || held < 0 || pulled < 0) continue;
+            return ([new(pose.Heel, -strut * mast, default), new(pose.ShroudFoot, -held * shroud, default), new(foot, -pulled * stay, default)],
+                [("mast", strut), ("shroud", held), (name, pulled)]);
+        }
+        return ([new(pose.Heel, head, (pose.Masthead - pose.Heel).Cross(head))], [("mast bending", head.Length)]);
+    }
+
+    private static (double, double, double)? Solve(HullPoint a, HullPoint b, HullPoint c, HullPoint sum)
+    {
+        var det = a.Dot(b.Cross(c));
+        if (Math.Abs(det) < 1e-9) return null;
+        return (sum.Dot(b.Cross(c)) / det, a.Dot(sum.Cross(c)) / det, a.Dot(b.Cross(sum)) / det);
+    }
 
     public IEnumerable<double> Turns()
     {
