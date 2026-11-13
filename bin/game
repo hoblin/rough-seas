@@ -168,10 +168,11 @@ ACT
                              pitch pi is level, above pi looks down (range 1.59-4.70). The body
                              turns with it, as a focused client's does in first person
   bin/game aim ID            aim the camera at the middle of an entity's selection box
-  bin/game aim ID BOX [ALONG ACROSS]
-                             aim it at a point of the top of one of its selection boxes, by its
-                             attachment point, as the game places that box: ALONG and ACROSS are
-                             shares of its length and width (0.5 0.5, its middle, by default). The
+  bin/game aim ID BOX [ALONG ACROSS [UP]]
+                             aim it at a point of one of its selection boxes, by its attachment
+                             point, as the game places that box: ALONG, ACROSS and UP are shares
+                             of its length, width and height (0.5 0.5 1, the middle of its top,
+                             by default; ACROSS 1 and UP 0.5 is the middle of a side). The
                              game then picks by the real look: `state`.reach.box names the box it
                              picked, which may be another one in front of it. `hover` forces a box
   bin/game hover [ID [BOX]]  make the game treat entity ID as looked at, whatever the camera points
@@ -496,7 +497,7 @@ case "${1:-}" in
   fps) post "/fps?seconds=${2:-5}" ;;
   water) post "/water?seconds=${2:-5}" ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
-  aim) post "/look?entity=$2&box=${3:-}&along=${4:-}&across=${5:-}" ;;
+  aim) post "/look?entity=$2&box=${3:-}&along=${4:-}&across=${5:-}&up=${6:-}" ;;
   hover)
     if [ $# -ge 4 ]; then post "/hover?block=$2,$3,$4"; else post "/hover?entity=${2:-}&box=${3:-}"; fi
     ;;

@@ -124,6 +124,24 @@ public class VesselShapeTests
         Assert.Empty(boxes.Where(box => !Footprint(box).Any(point => Picked(boxes, point) == box)).Select(box => box.Value<string>("name")));
     }
 
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void LetsALookAtHerSidesPickHerHull(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        var elements = Elements(shape["elements"]!).ToList();
+        var boxes = entity["behaviorConfigs"]!["selectionboxes"]!["selectionBoxes"]!.Values<string>()
+            .Select(code => elements.Single(element => element["attachmentpoints"]?.Any(point => point.Value<string>("code") == code) == true))
+            .ToList();
+        var hull = boxes.Single(box => box.Value<string>("name") == "Hull");
+
+        Assert.Empty(boxes.Where(box => box != hull && SharesASide(box, hull)).Select(box => box.Value<string>("name")));
+    }
+
+    private static bool SharesASide(JToken box, JToken hull) =>
+        new[] { 0, 2 }.Any(axis => new[] { "from", "to" }.Any(end =>
+            Math.Abs(box[end]!.Value<double>(axis) - hull[end]!.Value<double>(axis)) < 0.01));
+
     private static IEnumerable<(double X, double Z)> Footprint(JToken box, int across = 16)
     {
         double Along(int axis, int step) =>

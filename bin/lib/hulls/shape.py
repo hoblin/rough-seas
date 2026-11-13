@@ -137,11 +137,11 @@ def reachable(elements):
     hull = next(element for element in elements if element["name"] == "Hull")
     boxes = [element for element in elements if element is not hull and element.get("attachmentpoints") and not element.get("faces")]
     stowage = next(box for box in boxes if box["name"] == "OarStorage")
-    stowage["to"] = [stowage["to"][0], stowage["to"][1], hull["to"][2]]
+    stowage["to"] = [stowage["to"][0], stowage["to"][1], num(hull["to"][2] - APART)]
     by_size = sorted(boxes, key=footprint, reverse=True)
     for at, box in enumerate(by_size):
         under = [hull, *(larger for larger in by_size[:at] if overlaps(box, larger))]
-        box["to"] = [box["to"][0], num(max(box["to"][1], max(other["to"][1] for other in under) + ABOVE)),box["to"][2]]
+        box["to"] = [box["to"][0], num(max(box["to"][1], max(other["to"][1] for other in under) + ABOVE)), box["to"][2]]
 
 
 def footprint(box):

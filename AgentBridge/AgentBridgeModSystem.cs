@@ -258,7 +258,7 @@ public class AgentBridgeModSystem : ModSystem
             var eye = player.Entity.Pos.XYZ.Add(player.Entity.LocalEyePos);
             var center = string.IsNullOrEmpty(request.QueryString["box"])
                 ? FreeCamera.Middle(target)
-                : TopOfBox(target, request.QueryString["box"]!, Fraction(request, "along"), Fraction(request, "across"));
+                : PointOfBox(target, request.QueryString["box"]!, Fraction(request, "along", 0.5), Fraction(request, "up", 1), Fraction(request, "across", 0.5));
             var dx = center.X - eye.X;
             var dy = center.Y - eye.Y;
             var dz = center.Z - eye.Z;
@@ -274,10 +274,10 @@ public class AgentBridgeModSystem : ModSystem
         AccessTools.MethodDelegate<Action<EntityBehaviorSelectionBoxes, Matrixf, AttachmentPointAndPose>>(
             AccessTools.Method(typeof(EntityBehaviorSelectionBoxes), "applyBoxTransform"));
 
-    private static double Fraction(HttpListenerRequest request, string key) =>
-        double.TryParse(request.QueryString[key], CultureInfo.InvariantCulture, out var fraction) ? fraction : 0.5;
+    private static double Fraction(HttpListenerRequest request, string key, double otherwise) =>
+        double.TryParse(request.QueryString[key], CultureInfo.InvariantCulture, out var fraction) ? fraction : otherwise;
 
-    private static Vec3d TopOfBox(Entity target, string box, double along, double across)
+    private static Vec3d PointOfBox(Entity target, string box, double along, double up, double across)
     {
         var selection = target.GetBehavior<EntityBehaviorSelectionBoxes>()
             ?? throw new FileNotFoundException($"{target.Code} has no selection boxes");
@@ -285,7 +285,7 @@ public class AgentBridgeModSystem : ModSystem
             ?? throw new FileNotFoundException($"No selection box {box}; {target.Code} has {string.Join(", ", selection.selectionBoxes.Select(candidate => candidate.AttachPoint.Code))}");
         var matrix = new Matrixf();
         BoxTransform(selection, matrix, apap);
-        return matrix.TransformVector(new Vec4d(along, 1, across, 1)).XYZ.Add(target.Pos.XYZ);
+        return matrix.TransformVector(new Vec4d(along, up, across, 1)).XYZ.Add(target.Pos.XYZ);
     }
 
     private string Where(string? entity)

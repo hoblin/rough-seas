@@ -77756,7 +77756,7 @@
   {
    "name": "OarStorage",
    "from": [ -16, 1, 11.2 ],
-   "to": [ 32, 10.147, 14 ],
+   "to": [ 32, 10.147, 13.98 ],
    "faces": {},
    "attachmentpoints": [
     { "code": "OarAP", "posX": "0", "posY": "0", "posZ": "0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }

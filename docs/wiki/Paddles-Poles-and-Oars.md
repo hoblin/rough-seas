@@ -25,7 +25,7 @@ A pole reaches the bottom at about these depths. From the reed boat, poled sitti
 - To go astern, hold <kbd>S</kbd>: you plant the pole ahead of you and shove it toward the bow.
 - The pole slides through your hands until its foot stands on the bottom, so a long pole stands high above you in shallow water.
 - Past a pole's reach the stroke finds nothing, and the game tells you so: "Too deep for a 5 m pole". The boat glides on and slows; take a longer pole or a paddle.
-- A pole or a paddle stows aboard every vessel, one at a time; the raft keeps one on its oar rest. Look down into the vessel along the side where the tool lies, until the look reads *Paddle and pole*, and <kbd>Ctrl</kbd> + right-click. <kbd>Ctrl</kbd> + right-click there with an empty hand to take it back.
+- A pole or a paddle stows aboard every vessel, one at a time; the raft keeps one on its oar rest. Look down into the vessel along its gunwale until the look reads *Paddle and pole*, then <kbd>Ctrl</kbd> + right-click. <kbd>Ctrl</kbd> + right-click there with an empty hand to take it back.
 - Paddling, poling and rowing make you hungry, about as much as sprinting does.
 - A round, short hull turns easily and goes slowly: the coracle spins on the spot. A long one runs straight and turns slowly; the outrigger's float makes it slowest of all to turn.
 
