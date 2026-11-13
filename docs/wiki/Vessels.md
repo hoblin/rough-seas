@@ -15,10 +15,10 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
 | [Hide currach](Hide-Currach) | the first venture along the coast, cargo included | 2.4 m/s, rowed | needs greasing, one hard knock holes it |
-| [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | 5.9 m/s, sailing | stays where launched |
-| [Sailboat](Sailboat) | long voyages and heavy cargo | 7.2 m/s, sailing | dear to build, ships water fast in a gale |
+| [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | sails by the wind, about a third of the wind's speed abeam | stays where launched, shunts to change tack |
+| [Sailboat](Sailboat) | long voyages and heavy cargo | sails by the wind | dear to build, ships water fast in a gale |
 
-Speeds are one rower's, paddled unless noted, on calm water; under full sail vanilla's pace, whatever the wind. Each tool and how fast it drives each vessel: [paddles, poles and oars](Paddles-Poles-and-Oars).
+Speeds are one rower's, paddled unless noted, on calm water; under sail the wind's. Each tool and how fast it drives each vessel: [paddles, poles and oars](Paddles-Poles-and-Oars).
 
 ## Side by side
 
@@ -45,7 +45,7 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | [Coracle](Coracle) | 1 | its floor, paddle or pole in hand | none |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships, paddle or pole in hand | a hold of 8 slots behind the paddler |
 | [Hide currach](Hide-Currach) | 1 | the thwart, its own oars on thole pins | two holds of 16 slots, before the rower and beyond his feet |
-| [Outrigger canoe](Outrigger-Canoe) | 2 | the front seat, paddle or pole in hand | a hold of 8 slots behind the passenger |
+| [Outrigger canoe](Outrigger-Canoe) | 2 | the front seat, paddle or pole in hand, or anything under sail | a hold of 8 slots behind the passenger |
 | [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
 
 A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a crate 20 of one kind (16 aged, 25 in ebony or purpleheart). Every vessel but the sailboat stows a pole or a paddle; the sailboat takes more besides: a lantern, anchor, figurehead, ratlines, shields and a fence post for a tied animal. Each vessel's page lists them.

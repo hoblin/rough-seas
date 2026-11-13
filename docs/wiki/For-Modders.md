@@ -493,7 +493,7 @@ A hull moves by the sum of the forces on it, the waves' among them, so one runni
 - `IDrawnSea` gained `HullGradientAt(x, z, lift, draft, yaw, length, beam)`, a `FlowGradient` ([Reading it](Reading-the-Sea#reading-it)); `SeaSurface` has it too. A class of yours that implements `IDrawnSea` has to add it.
 - The waves no longer move a hull from a postfix on `EntityBoat.updateBoatAngleAndMotion`: `WaveCarry` is gone, and `roughseas:currentdrift` moves the hull by the current, the waves and its lines in one step. `WaveRide.Carry` became `WaveRide.Water`, which reads the waves under the hull as a `WaterOnHull`; `WaveRide.WaterAcceleration` and `EntityBehaviorSeaForces.Driven` are gone. `HullRider` gained `Gradient`.
 - `HullSet` holds the hull's velocity beside the waves' water, `Own`, which forces change: `Add` adds a velocity to it, `Settle(drag, water, yaw, seconds)` and `Relax(water, yaw, share, seconds)` move the hull by the water and return the water's acceleration of it besides its drag, and `Pushed` is the waves' last push. `HullSet` and `FloatingBody` both derive from the new `BodyInWater`, which holds `Velocity`, `Own` and `Pushed`. `Hold`, `Slow` and `PivotMotion` are gone, and `Pull` and `Swing` take a `WaterOnHull`. The watched tree `roughseas:set` carries `Own`, without the waves' water. `EntityBehaviorCurrentDrift` lost `Held`, `PivotMotion`, `Hold` and `Slow`, and gained `Load`, `Velocity` and `Impulse` (in newton-seconds). While a hull is steered, its rider's client sends the server its `Own` (`HullSetReport`, taken by `EntityBehaviorCurrentDrift.Reported` and `HullSet.Reported`). `EntityBehaviorCurrentDrift.Pull` is now the drag beyond what the hull's own way meets. `HullDrag.Pull` takes the hull's own way along it, and `Settle` that way and a push; new `Newtons`, `Acceleration` and `KilogramsToward`.
-- `roughseas:mooring` holds by its lines' tension, a force on the hull: `MooringLine.Over` solves a line over a tick and replaces `Tension`, and `MooringLine.Dragging` is an anchor sliding at its holding. Nothing of the mooring runs on the physics thread any more (`EntityBehaviorMooring.Restrain` is gone).
+- `roughseas:mooring` holds by its lines' tension, a force on the hull: `MooringLine.Over` (now `RoughSeas.Lines.Line.Over`) solves a line over a tick and replaces `Tension`, and `MooringLine.Dragging` (now `Anchor.Dragging`) is an anchor sliding at its holding. Nothing of the mooring runs on the physics thread any more (`EntityBehaviorMooring.Restrain` is gone).
 - `VanillaSwim.Realized` and `Commanded` are gone. A rowed boat moves on its rower's client, where vanilla's swim drag never acts, so its `ForwardSpeed` is its way; a hull's way through the water is `HullSet.Way`, measured from vanilla's moves.
 - A swimmer's stroke is ours: `BodyAfloat` takes back the motion `PModulePlayerInLiquid.HandleSwimming` adds for a player afloat, on the client that moves them, and strokes by `SwimStroke` from the controls; `BodyUnderSurface` no longer transpiles it. `config/person.json`'s `body` gained `strokeNewtons` and `dragAreaSwimming`. `FloatingBody.Step` takes the stroke and the current, which now carries a swimmer, by the `oceanCurrents` setting.
 
@@ -537,6 +537,21 @@ Rope, cord and a hide sewn on go into a vessel with both hands tying knots, in t
 
 New: `HullWork.Hands`, `MendWork.Hands`, `Laying.Hands`, `IMendable.Hands`, `WorkHands`, the player animations `roughseas-tie` and `roughseas-tie-fp`.
 
+### Sailing by the wind
+
+The outrigger and the sailboat sail by the wind, a force on the hull as the water's is ([Sailing by the wind](Building-a-Vessel#sailing-by-the-wind)). A vessel of yours loads as it did and moves as before; one with a sail reads on.
+
+- The new behaviour `roughseas:windage`, in the new module `RoughSeas.Wind`, pushes a vessel by the apparent wind on what stands above the water, and drives it by a set sail's lift and drag from measured polars. Its load enters the hull's set through `roughseas:currentdrift`, steered or not, and its moment turns a hull no line holds by the bow.
+- Under sail, a postfix on `EntityBoat.SeatsToMotion` (`SailedByWind`) takes vanilla's drive out for a vessel with a sail of ours: the wind drives it, and only its rider's turn stays vanilla's. Our `EntityVessel` turns under sail whatever its rider holds, `requiresPaddlingTool` or not. A vessel without `roughseas:windage` sails at vanilla's pace as before.
+- Vanilla's sailboat gets `roughseas:windage` by `patches/wind-vessels.json`, which also leaves `SailUnfurled`, `SailHalf` and `SparORIGIN` out of its shape: its square sail and yard are drawn by our renderer, in the boat's frame, and the foliage warp is gone from them. A patch that addresses those elements finds them hidden.
+- The outrigger's rig is the shunting canoes': its mast moved to the float's side and rakes toward the tack, its shape lost `SailUnfurled` and `SailHalf`, `roughseas:rigging`'s `rigged` is empty, and its rig stages are drawn by the renderer once it is built. Its `Mast` stage takes four poles (mast, shore, yard, boom; the spars 4 m), `SailFurled` three cloths and `Stays` five ropes. Its selection boxes gained `BowStepAP` and `SternStepAP` after `OarAP`, with empty slots in `rideableaccessories`; a right-click on the far one shunts it, and which end its tack is at is the watched int `roughseas:tacked`.
+- The outrigger's and the sailboat's `windageSquareMetres` moved from `roughseas:seaforces` to `roughseas:windage`, beside the new `frontSquareMetres`, `windageCentreMetres` and `lateralCentreMetres`, all measured by `bin/model build`. The other vessels keep theirs on `seaforces`, where nothing reads it yet.
+- `MooringLine` is `RoughSeas.Lines.Line`, a rope's physics in a module of its own, apart from mooring: `Line.Over` solves it over a tick and `Line.Parts` says whether it parts. `MooringLine.Dragging` moved to `Anchor.Dragging`.
+- `HullSet.Settle` and `Relax` take a steady push in m/s², and `EntityBehaviorCurrentDrift.Load` includes the wind's. `IHullForm` gained `Finished`.
+- `config/wind.json` holds the air, the wind's growth with height, a bluff body's drag, a sail's camber and cloth, and the sails' polars, each number with its source. A `[wind]` line logs the wind, the sail's force and its rig's tensions every few seconds where the vessel's physics runs, and each shunt on the server.
+
+New: the behaviour `roughseas:windage` with its keys, `IWindOnHull`, `BodyInWind`, `VesselInWind`, `WindSurface`, `Sail`, `SailForm`, `SailPolar`, `Rig`, `Rigging`, `CrabClaw`, `SquareRig`, `RigRenderer`, `WindModSystem`, `SailedByWind`, `RoughSeas.Lines.Line`, `Anchor.Dragging`, `config/wind.json`, `patches/wind-vessels.json`, the watched int `roughseas:tacked`.
+
 ## What not to touch
 
 | Name | What it is |
@@ -547,6 +562,7 @@ New: `HullWork.Hands`, `MendWork.Hands`, `Laying.Hands`, `IMendable.Hands`, `Wor
 | `roughseas:storms` | the network channel a rider's client reports a parted mooring over |
 | `roughseas:anchor` | a vessel's watched tree: where its anchor lies and what holds it |
 | `roughseas:hold0`, `roughseas:hold1`… | a vessel's watched trees: what each of its holds carries |
+| `roughseas:tacked` | a vessel's watched int: which end its sail's tack stands at |
 | `roughseas:person` | the network channel the server tells a swimmer's client of a crest breaking over them on |
 | `roughseas:nextClothId` | save data: vanilla's next rope id, which vanilla itself loses |
 | `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |

@@ -4,7 +4,7 @@ The game's own sailing boat: an open hull of planks on a keel, with a mast stepp
 
 ## In Rough Seas
 
-The vessel for long voyages and heavy cargo. Its hull takes knocks that would break anything else, its 8209-litre bilge gives you time in a sea, and it is the one vessel that [anchors](Anchoring). Its mast draws [lightning](Lightning), its weight jerks hard on a [mooring](Mooring), and its 300 planks make it the dearest thing afloat to lose. In a gale it ships water faster than one person can [bail](Bailing): run for shelter, or anchor well out and ride it out. Two fifths of its weight is ballast, so flooded it goes to the bottom with its cargo, unless it is built of a light wood: of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash.
+The vessel for long voyages and heavy cargo. Its square sail drives it by the wind, best with the wind abeam or behind. Its hull takes knocks that would break anything else, its 8209-litre bilge gives you time in a sea, and it is the one vessel that [anchors](Anchoring). Its mast draws [lightning](Lightning), its weight jerks hard on a [mooring](Mooring), and its 300 planks make it the dearest thing afloat to lose. In a gale it ships water faster than one person can [bail](Bailing): run for shelter, or anchor well out and ride it out. Two fifths of its weight is ballast, so flooded it goes to the bottom with its cargo, unless it is built of a light wood: of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash.
 
 ## Where it comes from
 
@@ -14,7 +14,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 
 | | |
 | --- | --- |
-| Speed | 7.2 m/s under full sail, at vanilla's pace |
+| Speed | by the wind ([sailing it](#sailing-it)) |
 | Turning | steady |
 | [Hull](Hull-Condition) | 40 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
@@ -35,11 +35,17 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 | Built from | about 300 planks, with support beams, rope and a linen sail |
 | Wreckage | about 40 planks, a few beams, rope and linen |
 
-Its sail drives it the same whatever the wind does; sailing by the wind comes in [Seamanship](Roadmap#seamanship).
+## Sailing it
+
+1. **Set the sail.** Sit in the starboard seat aft and right-click the cleat on the side of the mast, where a rope is tied. The first click sets half the sail, the second the full sail, and the third furls it.
+2. **Steer.** Under sail the wind drives the boat, and <kbd>A</kbd> and <kbd>D</kbd> steer it. With the sail furled, <kbd>W</kbd> and <kbd>S</kbd> move it slowly, as in vanilla.
+3. **Pick your heading.** The square sail drives the boat best with the wind abeam or behind it, little close to the wind, and not at all straight into it. The yard turns about the mast to meet the wind by itself, as far as the stays let it.
+
+The sail fills in the boat's own frame, so it heaves and pitches with the hull. The wind pushes the boat sideways a little as it sails, and drifts it downwind with the sail furled. A boat [anchored](Anchoring) or [tied up](Mooring) with its sail set strains its rope; set loose, it sails off on its own. How the wind drives it: [the science of the hull](The-Science-of-the-Hull#under-sail).
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is steadier and carries a small hold; it sails slower for now.
+- The [outrigger canoe](Outrigger-Canoe) is steadier and carries a small hold; it sails with its float always to windward and shunts to change tack.
 - The [hide currach](Hide-Currach) is the small, cheap boat for the coast, light enough to ride over surf, though a breaker that stoves in its hide leaves the sailboat's planks whole.
 
 ## Every form it takes

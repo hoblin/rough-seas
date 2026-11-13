@@ -26,6 +26,7 @@ A pole reaches the bottom at about these depths. From the reed boat, poled sitti
 - The pole slides through your hands until its foot stands on the bottom, so a long pole stands high above you in shallow water.
 - Past a pole's reach the stroke finds nothing, and the game tells you so: "Too deep for a 5 m pole". The boat glides on and slows; take a longer pole or a paddle.
 - A pole or a paddle stows aboard every vessel with <kbd>Ctrl</kbd> + right-click on it, one at a time; the raft keeps one on its oar rest.
+- Under sail the tool rests: the wind drives the [outrigger](Outrigger-Canoe#sailing-it) and the [sailboat](Sailboat#sailing-it), and <kbd>A</kbd> and <kbd>D</kbd> steer them whatever you hold. Lower the sail to paddle or pole again.
 - Paddling, poling and rowing make you hungry, about as much as sprinting does.
 - A round, short hull turns easily and goes slowly: the coracle spins on the spot. A long one runs straight and turns slowly; the outrigger's float makes it slowest of all to turn.
 
@@ -52,4 +53,4 @@ One rower, the average finisher of a canoe marathon, on calm water with nothing 
 | [Hide currach](Hide-Currach) | 2.4 m/s, rowed | 2.5 m/s | 39° a second, rowed |
 | [Outrigger canoe](Outrigger-Canoe) | 1.5 m/s | 2.1 m/s | 14° a second |
 
-A metre a second is 3.6 km/h; the voyageurs' canoes made some 2.2 m/s on the lakes. Vanilla rows every hull at the same 3 m/s, and sails each at its own pace, so most of these go slower than vanilla, the raft at a seventh of its pace and the bark canoe poled at nearly its pace; the outrigger, sail and all, goes twice as fast. How these speeds come about, and where each number comes from, is on [the science of a body in the water](The-Science-of-a-Body-in-the-Water#driving-it).
+A metre a second is 3.6 km/h; the voyageurs' canoes made some 2.2 m/s on the lakes. Vanilla rows every hull at the same 3 m/s, so most of these go slower than vanilla, the raft at a seventh of its pace and the bark canoe poled at nearly its pace. Under sail the wind sets the pace ([Under sail](The-Science-of-the-Hull#under-sail)). How these speeds come about, and where each number comes from, is on [the science of a body in the water](The-Science-of-a-Body-in-the-Water#driving-it).
