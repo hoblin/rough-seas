@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -118,6 +119,7 @@ public class AgentBridgeModSystem : ModSystem
                 "/link" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Link(context.Request.QueryString["href"]))), "text/plain"),
                 "/recipe" => (Encoding.UTF8.GetBytes(await OnMainThread(() => recipes.Frame(context.Request.QueryString["output"], context.Request.QueryString["from"]))), "application/json"),
                 "/scroll" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Scroll(context.Request.QueryString["steps"]))), "text/plain"),
+                "/slot-click" => (Encoding.UTF8.GetBytes(await OnMainThread(() => SlotClick(context.Request.QueryString))), "text/plain"),
                 "/close-dialogs" =>(Encoding.UTF8.GetBytes(await OnMainThread(CloseDialogs)), "text/plain"),
                 "/respawn" => (Encoding.UTF8.GetBytes(await OnMainThread(Respawn)), "text/plain"),
                 "/look" => (Encoding.UTF8.GetBytes(await OnMainThread(() => Look(context.Request))), "application/json"),
@@ -422,6 +424,19 @@ public class AgentBridgeModSystem : ModSystem
         if (capi.World.Player.Entity.Alive) return "The player is alive\n";
         ((ClientMain)capi.World).Respawn();
         return "Respawning\n";
+    }
+
+    private string SlotClick(NameValueCollection query)
+    {
+        int slot = int.Parse(query["slot"] ?? throw new ArgumentException("Name the slot"), CultureInfo.InvariantCulture);
+        var button = query["button"] == "right" ? EnumMouseButton.Right : EnumMouseButton.Left;
+        var grid = Dialogs().SelectMany(dialog => dialog.Composers.Values)
+            .Select(composer => composer.GetElement("slots"))
+            .OfType<GuiElementItemSlotGridBase>()
+            .FirstOrDefault() ?? throw new InvalidOperationException("No open dialog has a slot grid");
+        grid.SlotClick(capi, slot, button, query["shift"] != null, false, false);
+        var hand = capi.World.Player.InventoryManager.MouseItemSlot.Itemstack;
+        return $"Clicked slot {slot} {button}; in hand: {(hand == null ? "nothing" : $"{hand.StackSize} {hand.Collectible.Code}")}\n";
     }
 
     private string CloseDialogs()

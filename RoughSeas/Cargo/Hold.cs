@@ -55,7 +55,10 @@ public sealed class Hold
         container.Init(entity.Api, () => entity.Pos.AsBlockPos, Store);
         Load();
         if (entity.Api.Side == EnumAppSide.Server)
+        {
             Inventory.SlotModified += _ => Store();
+            Inventory.OnInventoryClosed += _ => Settle();
+        }
         else
             entity.WatchedAttributes.RegisterModifiedListener(key, () =>
             {
@@ -108,7 +111,22 @@ public sealed class Hold
 
     public void Close() => dialog?.TryClose();
 
-    public void DropAll() => Inventory.DropAll(entity.Pos.XYZ);
+    public void DropAll()
+    {
+        Inventory.DropAll(entity.Pos.XYZ);
+        if (entity.Api.Side == EnumAppSide.Server) Settle();
+    }
+
+    [ReliesOn("Vintagestory.API.Common.InventoryBase", "Close", "forgets the player before raising OnInventoryClosed, so the last to close finds the hold open to nobody")]
+    private void Settle()
+    {
+        int before = Inventory.Count;
+        Inventory.Settle();
+        if (Inventory.Count == before) return;
+
+        entity.Api.ModLoader.GetModSystem<CargoModSystem>().Log(entity, "{0}: {1} emptied extra slots gone, {2} left", key, before - Inventory.Count, Inventory.Count);
+        Store();
+    }
 
     public void Take(ItemSlot offered)
     {

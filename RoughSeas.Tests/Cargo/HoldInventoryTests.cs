@@ -63,7 +63,7 @@ public class HoldInventoryTests
     }
 
     [Fact]
-    public void DropsASpareSlotOnceAWholeStackIsTakenFromIt()
+    public void KeepsASpareSlotThroughAWholeTakeFromItAndDropsItOnSettling()
     {
         var hold = Hold(2);
         hold.Spare().Itemstack = Ingot();
@@ -71,13 +71,15 @@ public class HoldInventoryTests
 
         var op = Click(EnumMouseButton.Left);
         hold[2].ActivateSlot(hand, ref op);
+        Assert.Equal(3, hold.Count);
+        hold.Settle();
 
         Assert.Equal(2, hold.Count);
         Assert.Equal("game:ingot-copper", hand.Itemstack?.Collectible.Code.ToString());
     }
 
     [Fact]
-    public void DropsASpareSlotOnceItsLastItemIsTakenByHalves()
+    public void KeepsASpareSlotThroughATakeOfItsLastItemByHalves()
     {
         var hold = Hold(2);
         hold.Spare().Itemstack = new ItemStack(Ingot().Collectible);
@@ -85,9 +87,21 @@ public class HoldInventoryTests
 
         var op = Click(EnumMouseButton.Right);
         hold[2].ActivateSlot(hand, ref op);
+        hold.Settle();
 
         Assert.Equal(2, hold.Count);
         Assert.Equal(1, hand.StackSize);
+    }
+
+    [Fact]
+    public void KeepsAnEmptySpareSlotWhileSomeoneHasTheHoldOpen()
+    {
+        var hold = Hold(2);
+        hold.Spare();
+        hold.openedByPlayerGUIds.Add("sailor");
+        hold.Settle();
+
+        Assert.Equal(3, hold.Count);
     }
 
     private static ItemStackMoveOperation Click(EnumMouseButton button) => new(null, button, 0, EnumMergePriority.AutoMerge);
