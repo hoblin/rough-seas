@@ -111,9 +111,15 @@ The sea reaches the shore, and you float in it.
 - **Boats take the waves where they are,** softer behind a bar, and a wave every wave period.
 - **Vintage Story 1.22.0** and later.
 
-## Next release
+## 4.5
 
+The sea pushes, and the boats carry their load loose.
+
+- **[A hull moves by the water's force](The-Science-of-a-Body-in-the-Water#how-the-waves-move-a-hull).** A fast boat running before a swell is pushed down a wave's face and rides it toward the shore; a slow one lets the faces pass. A swimmer strokes with a force and the current carries them. A [mooring](Mooring) holds by the rope's tension, so a boat comes taut with a jerk and bounces back.
 - **[Holds](Vessels#holds) in place of containers.** The dugout, the outrigger, the bark canoe and the currach carry cargo loose on their floors, and their largest stacks lie there as small piles. The reed boat's basket stands at its true size. A container already aboard from an earlier version is emptied into the holds when the world loads, and nothing in it is lost.
+- **Knots tied by hand.** Binding rope or cord into a vessel, sewing on a hide or binding up a lashing, both hands tie a knot.
+- **A wedge split cracks** and no longer sounds a tree falling.
+- **The logo** is the mod's icon in the game's mod list.
 - **Vintage Story 1.22.4** and later: the holds check who may open them as the game does since 1.22.4.
 - **Switched off for now:** the open sea's sound, the surf and the whitecaps' hiss, which didn't match the water you see. They come back from real recordings ([Further out](#further-out)). The shore laps with the game's own sound, the game's rowing plays at its own volume, and every wave at a hull, every breaker and every knock still sounds.
 
