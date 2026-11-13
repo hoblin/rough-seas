@@ -30,7 +30,7 @@ SeaCurrent current = sea.CurrentAt(x, z);
 
 ### Where it comes from
 
-The wind is the background wind of the region and season, plus every storm that covers the point. The waves grow from that wind as a real sea grows: higher the longer the open water upwind, the longer the wind has blown (up to three days of it), and the deeper the water. So a sea doesn't follow a gust: it builds behind a storm and dies down slowly after it. The current is the ocean's circulation, as on [Currents](Currents). How each is built, and from which measurements, is on [The science of the sea](The-Science-of-the-Sea).
+The wind is the background wind of the region and season, plus every storm that covers the point. The waves grow from that wind as a real sea grows: higher the longer the open water upwind, the longer the wind has blown (up to three days of it), and the deeper the water. So a sea doesn't follow a gust: it builds behind a storm and dies down slowly after it. The current is the ocean's circulation, as on [Currents](Currents). How each is built, and from which measurements, is on [The science behind it](The-Science-Behind-It).
 
 **On the server** the state is computed where you ask. It isn't free: growing the waves walks back through the wind's last three days. Ours read it twice a second for each vessel, which is as often as the sea changes. Read it on a timer of your own, not every frame.
 
@@ -186,7 +186,7 @@ Our own vessels are posed by the same calls this page describes, so a ship of yo
 
 Its seconds are the waves' (`Seconds`), not your tick's: they race while everyone sleeps and run faster under `/time speed`. To move a hull by it each tick, scale it by the waves' seconds in the tick first, `sea.Clock.SecondsIn(dt, world.Calendar.SpeedOfTime) / dt`, as ours do. Then one wave carries a hull as far at any speed of time. `RiseVelocityAt` and `HullGradientAt` keep the same seconds, and `RiseAccelerationAt` takes that rate squared.
 
-`RiseVelocityAt` and `RiseAccelerationAt` are what lifts a body in the water with the waves: ours read them for a swimmer, at the middle of the part of the body under water ([Swimming](Swimming)). The formulas are on [The science of the sea](The-Science-of-the-Sea#a-body-in-the-water).
+`RiseVelocityAt` and `RiseAccelerationAt` are what lifts a body in the water with the waves: ours read them for a swimmer, at the middle of the part of the body under water ([Swimming](Swimming)). The formulas are on [The science of a body in the water](The-Science-of-a-Body-in-the-Water#a-body-in-the-water).
 
 `SeaPose`:
 
@@ -223,7 +223,7 @@ A real hull doesn't take the water's pose at once. It has mass, and lifts, rolls
 
 ### A ship that rides our swell
 
-A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). Give it `roughseas:currentdrift` as well and the water under the waves moves it, by the client that steers it or by the server while nobody does: `HullVelocityAt` over its hull, at the heave it is drawn at, plus its own velocity through that water, which the forces on it change ([Currents](Building-a-Vessel#currents)). A floating hull displaces its own mass, so lying still it takes the water's velocity whatever it weighs. The formulas are on [The science of the sea](The-Science-of-the-Sea#how-the-waves-move-a-hull). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
+A vessel that is an `EntityBoat`, or derives from one, needs none of this: give it `roughseas:seaforces` and, while it swims, it is posed as ours are ([Taking the sea](Building-a-Vessel#taking-the-sea)). Give it `roughseas:currentdrift` as well and the water under the waves moves it, by the client that steers it or by the server while nobody does: `HullVelocityAt` over its hull, at the heave it is drawn at, plus its own velocity through that water, which the forces on it change ([Currents](Building-a-Vessel#currents)). A floating hull displaces its own mass, so lying still it takes the water's velocity whatever it weighs. The formulas are on [The science of a body in the water](The-Science-of-a-Body-in-the-Water#how-the-waves-move-a-hull). Its seats, its selection box and its rider's position follow our pose whatever draws it; its hull follows when the renderer is vanilla's `EntityShapeRenderer`, or derives from it and calls the base `loadModelMatrix`. So an `EntityBoat` with a renderer of its own derives it from vanilla's, rather than posing itself against seats we already lift.
 
 The calls above are for a vessel that isn't an `EntityBoat` and poses itself. Each frame, in its render path:
 

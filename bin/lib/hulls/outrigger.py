@@ -432,7 +432,7 @@ def build(target):
     box, hull_measured = hull_box(shell)
     shape.add(box)
     record("outrigger", merged(hull_measured, collision(box, passes["children"][-1]), walls()))
-    shape.keep("FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
+    shape.keep("FrontSeat", "BackSeat", "BackCargo", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage", "OarStorage")
     wound(shape, [("", [shell], WOOD)])
     shape.write()

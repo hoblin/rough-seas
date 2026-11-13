@@ -550,7 +550,7 @@ def build(path_):
     sides, bottom = backed([finished], ["bark"], [lining], box)
     apart = units.metres(RIBS.step)
     record("barkcanoe", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", apart), "frame": units.both("spacing", apart)}}}}))
-    shape.keep("FrontSeat", "BackSeat", "OarStorage")
+    shape.keep("FrontSeat", "FrontCargo", "BackSeat", "OarStorage")
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
           lining=SHEATHING, framing=([ribbed], "frame"))
     shape.write()
