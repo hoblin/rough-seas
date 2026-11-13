@@ -80,7 +80,7 @@ public sealed class EntityBehaviorCargo : EntityBehavior, IHeldCargo
     public override WorldInteraction[] GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
     {
         if (Aimed(player.Entity) == null) return [];
-        return help ??= [new WorldInteraction { ActionLangCode = "blockhelp-open", MouseButton = EnumMouseButton.Right }];
+        return help ??= [new WorldInteraction { ActionLangCode = "game:blockhelp-chest-open", MouseButton = EnumMouseButton.Right }];
     }
 
     public void TakeAll(ItemStack stack)
