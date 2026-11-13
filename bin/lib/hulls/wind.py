@@ -43,11 +43,13 @@ def polygon(points):
     return abs(twice) / 2, (cx, cy)
 
 
-def sail(polar, outline, reefed, tack):
-    full, (x, y) = polygon(outline)
-    half, _ = polygon(reefed)
-    tack_x, tack_y, tack_z = tack
+def corner(name, at):
+    x, y, z = at
+    return point(name, (x - ORIGIN[0], y, z - ORIGIN[2]))
+
+
+def sail(polar, tack, peak, clew, reef, least_trim_degrees, trim_animation):
+    full, _ = polygon([p[:2] for p in (tack, peak, clew)])
     return {"behaviorConfigs": {WINDAGE: {"sail": {
-        "polar": polar, **units.both("sail", units.metres(full, 2), 2), **units.both("half", units.metres(half, 2), 2),
-        **point("tack", (tack_x - ORIGIN[0], tack_z - ORIGIN[2], tack_y)), **units.both("reach", units.metres(x - tack_x)),
-        **units.both("height", units.metres(y))}}}}
+        "polar": polar, "trimAnimation": trim_animation, **units.both("sail", units.metres(full, 2), 2), **units.both("half", units.metres(full * reef * reef, 2), 2),
+        **corner("tack", tack), **corner("peak", peak), **corner("clew", clew), "leastTrimDegrees": round(least_trim_degrees, 1)}}}}

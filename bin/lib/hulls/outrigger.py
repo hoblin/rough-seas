@@ -30,9 +30,13 @@ MAST = (12, 8)
 MASTHEAD = 49
 SPAR_METRES = 3
 TACK = (-14, 11.5)
+YARD_RISE = 55
+BOOM_RISE = 3.6
 REACH = 20
-SAIL_STRIPS = 16
 CLOTH_SQUARE_METRES = 1
+REEF = 1 / math.sqrt(2)
+TRIM_FRAMES = 180
+TRIMMED = ("Yard", "Boom", "SailFurled")
 
 LASHING_TURNS = 13
 STRAP = (0.4, 0.9)
@@ -61,8 +65,8 @@ def spar_end(rise):
     return (TACK[0] + length * math.cos(math.radians(rise)), TACK[1] + length * math.sin(math.radians(rise)))
 
 
-YARD_END = spar_end(55)
-SPAR_END = spar_end(3.6)
+YARD_END = spar_end(YARD_RISE)
+SPAR_END = spar_end(BOOM_RISE)
 
 
 def worked(n):
@@ -251,28 +255,12 @@ def reached(point):
     return (x + dx * math.cos(angle) + dz * math.sin(angle), point[1], 8 - dx * math.sin(angle) + dz * math.cos(angle))
 
 
-def line(start, end, x):
-    return start[1] + (end[1] - start[1]) * (x - start[0]) / (end[0] - start[0])
-
-
-def head(x):
-    return line(TACK, YARD_END, x) if x <= YARD_END[0] else line(YARD_END, SPAR_END, x)
-
-
-def foot(x):
-    return line(TACK, SPAR_END, x)
-
-
-def sail(name, reefed):
-    strips, width = [], (SPAR_END[0] - TACK[0]) / SAIL_STRIPS
-    for n in range(SAIL_STRIPS):
-        x0 = TACK[0] + n * width
-        mid = x0 + width / 2
-        top, bottom = head(mid) - 0.6, foot(mid) + 0.6
-        if top - bottom < 1:
-            continue
-        strips.append(box(f"{name}{n + 1}", (x0, bottom + (top - bottom) * reefed, 7.6), (x0 + width, top, 8.4), "sail", grain="y"))
-    return rig(name, strips)
+def trimmed():
+    swung = lambda degrees: {"offsetX": 0, "offsetY": 0, "offsetZ": 0, "rotationX": 0, "rotationY": -degrees - REACH, "rotationZ": 0}
+    return {"name": "roughseas-outrigger-trim", "code": "roughseas-outrigger-trim", "quantityframes": TRIM_FRAMES + 1,
+            "onActivityStopped": "EaseOut", "onAnimationEnd": "Hold", "keyframes": [
+                {"frame": 0, "elements": {name: swung(-TRIM_FRAMES / 2) for name in TRIMMED}},
+                {"frame": TRIM_FRAMES, "elements": {name: swung(TRIM_FRAMES / 2) for name in TRIMMED}}]}
 
 
 def area():
@@ -280,8 +268,8 @@ def area():
 
 
 def canvas():
-    reefed_at = (YARD_END[0], (YARD_END[1] + foot(YARD_END[0])) / 2)
-    return wind.sail("crabclaw", [TACK, YARD_END, SPAR_END], [TACK, YARD_END, SPAR_END, reefed_at], (*TACK, 8))
+    clear = (POLE + SPAR) / 2
+    return wind.sail("crabclaw", (*TACK, 8), (*YARD_END, 8), (*SPAR_END, 8), REEF, math.degrees(math.asin(clear / (MAST[0] - TACK[0]))), trimmed()["code"])
 
 
 def furled():
@@ -428,7 +416,8 @@ def build(target):
     lashed, lashing_metres = lashings()
     shape.add(stages("Lashing", lashed), float_forms())
     shape.add(stages("Mast", mast()))
-    shape.add(furled(), sail("SailUnfurled", 0), sail("SailHalf", 0.5))
+    shape.add(furled())
+    shape.animations = [trimmed()]
     shape.add(stages("Stays", stays()))
     planks, raised_litres = strakes(hull, shell)
     shape.add(stages("Strakes", planks), stages("Seams", seams(hull, shell)))
@@ -489,8 +478,7 @@ def rigged(shape, hull, shell, logs, passes):
     for k, hewing in enumerate([logs, *passes["children"]]):
         shape.together(shell, hewing, [piece["children"][k] for piece in booms["children"]])
     rested = [piece["children"][-1] for piece in booms["children"]]
-    for sail in (named["SailFurled"], named["SailUnfurled"], named["SailHalf"]):
-        shape.together(shell, finished, rested, lashed, rig, sail)
+    shape.together(shell, finished, rested, lashed, rig, named["SailFurled"])
     for form, piece in zip(FLOAT_FORMS.values(), forms["children"]):
         slack = [f"Lash{n}Float" for n in range(1, len(BOOMS) + 1) if n not in form.parted]
         shape.within(Union("the hanging float", [hanging_tube(tube, form) for tube in round_float("the float").parts]), piece,

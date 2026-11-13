@@ -248,7 +248,10 @@ def overlap(a, b, normal):
 def crossing(p, q, a, b):
     dx, dy = q[0] - p[0], q[1] - p[1]
     ex, ey = b[0] - a[0], b[1] - a[1]
-    t = ((a[0] - p[0]) * ey - (a[1] - p[1]) * ex) / (dx * ey - dy * ex)
+    across = dx * ey - dy * ex
+    if across == 0:
+        return q
+    t = ((a[0] - p[0]) * ey - (a[1] - p[1]) * ex) / across
     return p[0] + t * dx, p[1] + t * dy
 
 

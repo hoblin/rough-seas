@@ -8,6 +8,8 @@ public class WindConfig
     public double ReferenceHeightMetres;
     public double GradientExponent;
     public double BluffDrag;
+    public double Camber;
+    public double ClothKgPerSquareMetre;
     public float LogSeconds;
     public Dictionary<string, SailConfig> Sails = new();
 }

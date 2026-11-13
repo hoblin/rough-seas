@@ -3,6 +3,8 @@
     "referenceHeightMetres": 10,
     "gradientExponent": 0.11,
     "bluffDrag": 1.28,
+    "camber": 0.12,
+    "clothKgPerSquareMetre": 0.61,
     "logSeconds": 5,
     "sails": {
         "crabclaw": {
@@ -19,6 +21,8 @@
         "referenceHeightMetres": "The Beaufort scale, which our wind keeps, gives the wind at 10 m above the sea (WMO)",
         "gradientExponent": "The wind over the open sea grows with height as (z/10 m)^0.11 (Hsu, Meindl & Gilhousen 1994, via en.wikipedia.org/wiki/Forces_on_sails)",
         "bluffDrag": "A flat plate across the wind (NASA Glenn, Shape Effects on Drag, via en.wikipedia.org/wiki/Drag_coefficient): a hull's side and her furled rig, as the wind meets them",
+        "camber": "A full sail's depth over its chord: Marchaj's tunnel sails were cut to about 12% (AYRS 111, Rig Efficiency, Fig. 12)",
+        "clothKgPerSquareMetre": "Experimental reconstructions of flax sails weigh 500 to 720 g/m² (Propylaeum, Heidelberg University, books.ub.uni-heidelberg.de/propylaeum/catalog/view/1035/1768/102856): a sail fills as the wind's pressure outweighs its cloth",
         "crabclaw": "Each heading off the apparent wind in degrees, the drive along the hull and the side force across it over the dynamic pressure on the sail's area, with the sail trimmed to the heading: Marchaj's wind-tunnel tests of a Polynesian crab claw on an open-decked hull heeled 10°, at 18 knots (AYRS 111, Rig Efficiency, 1993, Fig. 23, read off the plot; checked against the total force of Fig. 6). Below 20° the sail luffs and lifts nothing; past 120° the force leans to windward"
     }
 }

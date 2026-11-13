@@ -10,7 +10,7 @@ namespace RoughSeas.Tests.Vessels;
 
 public class VesselShapeTests
 {
-    private static readonly string[] SailStates = ["SailUnfurled", "SailHalf", "SailFurled"];
+    private const string FurledSail = "SailFurled";
     private static readonly string[] Strokes = ["ready", "forwards", "backwards"];
 
     public static TheoryData<string> Vessels() => new(VesselNames());
@@ -169,12 +169,13 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void NamesEverySailStateVanillaSwitchesBetween(string vessel)
+    public void DrawsHerFurledSailAndLeavesTheSetOneToTheWind(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
         if (entity["attributes"]!.Value<bool?>("unfurlSails") != true) return;
 
-        Assert.Empty(SailStates.Except(Elements(shape["elements"]!).Select(element => element.Value<string>("name"))));
+        Assert.Contains(FurledSail, Elements(shape["elements"]!).Select(element => element.Value<string>("name")));
+        Assert.NotNull(entity["behaviorConfigs"]?["roughseas:windage"]?["sail"]?["peakMetres"]);
     }
 
     [Theory]

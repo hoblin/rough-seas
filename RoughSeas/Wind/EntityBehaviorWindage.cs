@@ -1,6 +1,7 @@
 using System;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
@@ -18,6 +19,8 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     private SeaWeatherSystem sea = null!;
     private IHull? hull;
     private VesselInWind body = null!;
+    private SailRenderer? drawn;
+    private string trimAnimation = "";
     private long loggedAt;
 
     public Sail? Sail => body.Sail;
@@ -29,13 +32,27 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         wind = entity.Api.ModLoader.GetModSystem<WindModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         body = VesselInWind.From(attributes, wind.Config, wind.Polar);
+        trimAnimation = attributes["sail"]["trimAnimation"].AsString("");
     }
 
-    public override void AfterInitialized(bool onFirstSpawn) => hull = IHull.Of(entity);
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        hull = IHull.Of(entity);
+        if (entity.Api is ICoreClientAPI capi && Sail != null) drawn = new SailRenderer(capi, entity, Sail, trimAnimation);
+    }
 
     public override void OnGameTick(float deltaTime)
     {
-        if (entity.World.Side == EnumAppSide.Client && Sail != null && hull != null) Wind(hull.Velocity);
+        if (drawn == null || hull == null) return;
+
+        Wind(hull.Velocity);
+        drawn.Trimmed();
+    }
+
+    public override void OnEntityDespawn(EntityDespawnData despawn)
+    {
+        drawn?.Dispose();
+        drawn = null;
     }
 
     public WindLoad Wind((double X, double Z) velocity)
