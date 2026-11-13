@@ -53,13 +53,14 @@ public class SoundscapeModSystem : ModSystem
         capi.Network.GetChannel(Channel).SetMessageHandler<SoundCutPacket>(new CutSounds(capi, this).Play);
         var sea = capi.ModLoader.GetModSystem<SeaWeatherSystem>();
         var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
-        ShoreSound.Attach(Config.Shore, storms);
-        VanillaRowing.Attach(Config.VanillaRowingVolume, this);
-        var crests = new Crests(capi, Config.Crests, sea.Clock, this);
+        ShoreSound.Attach(Config.Shore, storms, Config.Background);
+        if (Config.Background) VanillaRowing.Attach(Config.VanillaRowingVolume, this);
+        var crests = new Crests(capi, Config.Crests, Config.Background, sea.Clock, this);
         var splashes = new Splashes(capi, Config.Water.Splash, Config.Water.Range, storms, this);
         var swimmer = new Swimmer(capi, splashes);
         vessels = new VesselSounds(capi, Config.Water, splashes, this);
-        bed = new SeaBed(capi, Config.Beds);
+        if (Config.Background) bed = new SeaBed(capi, Config.Beds);
+        else Log("the sea's background is off: no bed, no surf, no whitecap hiss, and vanilla's rowing at its own volume");
         capi.ChatCommands.Create("sounds")
             .WithDescription("Rough Seas: what the sea sounds like here")
             .BeginSubCommand("shore")
@@ -73,18 +74,18 @@ public class SoundscapeModSystem : ModSystem
             .EndSubCommand();
         capi.Event.LevelFinalize += () =>
         {
-            bed.Load();
+            bed?.Load();
             capi.Event.RegisterGameTickListener(dt =>
             {
                 if (Listener.Of(capi, sea, storms, Config) is not { } listener) return;
-                bed.Update(dt, listener);
+                bed?.Update(dt, listener);
                 crests.Update(listener);
                 vessels.Update(listener);
                 swimmer.Update();
                 if ((sinceLog += dt) < LogEverySeconds) return;
                 sinceLog = 0;
                 Log("bed {0} in a {1:F1} m/s wind, waves {2:F1} m: {3}; whitecaps {4:F2}, spray {5:F2}", listener.AtSea ? "at sea" : "ashore",
-                    listener.Sea.WindSpeed, listener.WaveHeight, bed.Describe(), listener.Foam.Caps, listener.Foam.Spray);
+                    listener.Sea.WindSpeed, listener.WaveHeight, bed?.Describe() ?? "off", listener.Foam.Caps, listener.Foam.Spray);
             }, (int)(Config.UpdateSeconds * 1000));
         };
     }

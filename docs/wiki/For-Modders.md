@@ -518,6 +518,13 @@ A row split with wedges sounds the crack that opens vanilla's `effect/treefell`,
 
 New: `crack`, `SoundCut`, `SoundscapeModSystem.Play`, `roughseas:sounds`.
 
+### The sea's background switched off
+
+The open sea's beds, the surf and the whitecaps' hiss are switched off until they are redone from real recordings. Every sound of an event still plays: a hull's knocks and cracks, the slaps and splashes of the waves, a breaker's slam, water over the gunwale, a leak, the bilge's slosh, a plunging crest.
+
+- `config/soundscape.json` gained `background`, false. With it off we patch neither `BlockWater.GetAmbientSoundStrength` nor `Block.GetSounds`, so vanilla's `waterwaves` laps along every edge, breaking or not, and a mod that changes water's sounds sees vanilla's. Vanilla's rowing (`ModSystemBoatingSoundAndRatlineStamina.NowInMotion`) plays at its own volume too: `vanillaRowingVolume` applies only with `background` on.
+- A patch that sets `background` to true brings all of them back as they were, `beds`, `shore` and `crests.hiss` unchanged.
+
 ## What not to touch
 
 | Name | What it is |

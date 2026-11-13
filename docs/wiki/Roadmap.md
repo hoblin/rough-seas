@@ -111,6 +111,10 @@ The sea reaches the shore, and you float in it.
 - **Boats take the waves where they are,** softer behind a bar, and a wave every wave period.
 - **Vintage Story 1.22.0** and later.
 
+## Next release
+
+- **Switched off for now:** the open sea's sound, the surf and the whitecaps' hiss, which didn't match the water you see. They come back from real recordings ([Further out](#further-out)). The shore laps with the game's own sound, the game's rowing plays at its own volume, and every wave at a hull, every breaker and every knock still sounds.
+
 ## Seamanship
 
 Sailing becomes sailing.
@@ -144,6 +148,7 @@ What lies below.
 
 Ideas not yet planned:
 
+- **The sea's sound, redone** from real recordings: the open sea, the surf and the whitecaps, each heard where it is.
 - **The sea's own warnings.** Fog over cold [currents](Currents), and life gathering where cold water wells up.
 
 - **Crewed ships.** A big ship for several players: one at the helm, one on the sails, one bailing, one on the anchor, one on lookout. A single player can still sail it, slower and at more risk, and if nobody holds the helm, wind and current turn it.
