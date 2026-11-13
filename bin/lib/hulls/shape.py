@@ -135,16 +135,20 @@ def hull_of(frm, to):
 def side_area(elements, low=-math.inf, high=math.inf, step=0.5):
     """The square metres of the elements as seen from abeam, between the heights low and high (voxels): above her
     waterline what the wind meets, below it what the water does."""
+    return units.metres(len(profile(elements, low, high, step)) * step * step, 2)
+
+
+def profile(elements, low=-math.inf, high=math.inf, step=0.5, across=0):
     cells = set()
     for element, m in posed(flattened(elements)):
-        outline = convex([(x, y) for x, y, _ in corners(element, m)])
+        outline = convex([(point[across], point[1]) for point in corners(element, m)])
         (x0, y0), (x1, y1) = ([pick(p[axis] for p in outline) for axis in range(2)] for pick in (min, max))
         for i in range(math.floor(x0 / step), math.ceil(x1 / step)):
             for j in range(max(math.floor(y0 / step), math.ceil(low / step) if low > -math.inf else math.floor(y0 / step)),
                            min(math.ceil(y1 / step), math.floor(high / step) if high < math.inf else math.ceil(y1 / step))):
                 if (i, j) not in cells and enclosed(((i + 0.5) * step, (j + 0.5) * step), outline):
                     cells.add((i, j))
-    return units.metres(len(cells) * step * step, 2)
+    return cells
 
 
 def convex(points):

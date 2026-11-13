@@ -4,12 +4,13 @@ from pathlib import Path
 
 from dugout import CENTRE, HEWN, PROFILE, RIM, RINGS, ROW, STATIONS, WALL, WOOD, aft_hold, crew_tools, deck, hold_water, log, volumes, walls
 import cargo
+import wind
 from physics import LASHING_JOULES_PER_METRE, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
 from entity import merged, read, record
-from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, side_area, windage, Shape, beam, box, clear_of, ends_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, side_area, Shape, beam, box, clear_of, ends_of, group, path, plank, run, section, stages
 from wounds import wound
 
 LOG = 16
@@ -275,9 +276,12 @@ def sail(name, reefed):
 
 
 def area():
-    a = (YARD_END[0] - TACK[0], YARD_END[1] - TACK[1])
-    b = (SPAR_END[0] - TACK[0], SPAR_END[1] - TACK[1])
-    return units.metres(abs(a[0] * b[1] - a[1] * b[0]) / 2, 2)
+    return units.metres(wind.polygon([TACK, YARD_END, SPAR_END])[0], 2)
+
+
+def canvas():
+    reefed_at = (YARD_END[0], (YARD_END[1] + foot(YARD_END[0])) / 2)
+    return wind.sail("crabclaw", [TACK, YARD_END, SPAR_END], [TACK, YARD_END, SPAR_END, reefed_at], (*TACK, 8))
 
 
 def furled():
@@ -442,8 +446,9 @@ def build(target):
     shape.write()
     finished_float = passes["children"][-1]
     rig = [element for element in shape.elements if element["name"] in ("Booms", "Mast", "SailFurled")]
-    wind, keel = windage([shell, finished_float, *rig], box["from"][1]), box["from"][1]
-    at_draft = lambda draft: merged(wind(draft), {"behaviorConfigs": {
+    keel = box["from"][1]
+    blown = wind.windage([shell, finished_float, *rig], [shell, finished_float], keel)
+    at_draft = lambda draft: merged(blown(draft), {"behaviorConfigs": {
         "roughseas:propulsion": units.both("fin", side_area([finished_float], high=keel + units.voxels(draft)), 2),
         "roughseas:seaforces": units.both("mast", units.metres(MASTHEAD))}})
     hull_alone, measured = report(hull, finished_float, at_draft)
@@ -453,7 +458,7 @@ def build(target):
     pieces = next(drop["quantity"]["avg"] for drop in read("dugout")["behaviorConfigs"]["roughseas:vesselintegrity"]["wreckage"] if drop["code"] == "game:firewood")
     lashing = {"behaviorConfigs": {"roughseas:floatlashing": {"impactCapacity": round(LASHING_JOULES_PER_METRE * lashing_metres),
                                                               "firewoodLitres": round((envelope - hold) / pieces, 1)}}}
-    record("outrigger", merged(measured, rigging(raised_litres), spread, bilge_levels(shape.elements), lashing))
+    record("outrigger", merged(measured, rigging(raised_litres), spread, bilge_levels(shape.elements), lashing, canvas()))
     # Her catch and the change stay aft of the forward boom, which a longer stroke drives the blade through.
     crew_tools(shape, "outrigger", ("Shell",), catch=5, fore=1,
                outboard=(finished_float["waterlineSquareMetres"], units.metres(FLOAT_Z - 8)),

@@ -50,6 +50,7 @@
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\hides.json" Link="hides.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\drag.json" Link="drag.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\propulsion.json" Link="propulsion.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\wind.json" Link="wind.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\propulsion-vessels.json" Link="propulsion-vessels.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\vessels-hull-boxes.json" Link="vessels-hull-boxes.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\woodrecipes.json" Link="woodrecipes.json" CopyToOutputDirectory="PreserveNewest" />

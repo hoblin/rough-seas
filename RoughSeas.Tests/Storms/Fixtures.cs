@@ -6,6 +6,7 @@ using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using RoughSeas.Water;
+using RoughSeas.Wind;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -40,7 +41,14 @@ public static class Fixtures
         return config;
     });
 
+    private static readonly Lazy<WindConfig> wind = new(() => JsonConvert.DeserializeObject<WindConfig>(Shipped("wind.json"))!);
+
     public static StormsConfig Config() => config.Value;
+
+    public static WindConfig Wind => wind.Value;
+
+    public static VesselInWind InWind(string vessel) =>
+        VesselInWind.From(new JsonObject(Entity(vessel)["behaviorConfigs"]![EntityBehaviorWindage.Code]!), Wind, code => new SailPolar(Wind.Sails[code]));
 
     public static VesselMass Mass => mass.Value;
 

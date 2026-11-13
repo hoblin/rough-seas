@@ -46,7 +46,7 @@ public class EntityVessel : EntityBoat, ISeatInstSupplier
         Wood.Of(Properties.Variant) is { } wood ? Lang.GetMatching($"{Code.Domain}:item-creature-{Code.Path}", wood.Name)
         : Reeds.NameOf(Code, Properties.Variant, "item-creature") ?? base.GetName();
 
-    protected override bool HasPaddle(Entity entity) => SpeedMultiplier > 0 && base.HasPaddle(entity);
+    protected override bool HasPaddle(Entity entity) => SpeedMultiplier > 0 && (sailPosition > 0 || base.HasPaddle(entity));
 
     IMountableSeat ISeatInstSupplier.CreateSeat(IMountable mountable, string seatId, SeatConfig config) =>
         new VesselSeat(mountable, seatId, config);

@@ -47,14 +47,14 @@ public sealed class HullSet : BodyInWater
         }
     }
 
-    /// <summary>The water moves her for <paramref name="seconds"/>.</summary>
+    /// <summary>The water moves her for <paramref name="seconds"/>, with whatever else pushes her steadily, <paramref name="push"/> m/s².</summary>
     /// <returns>The water's acceleration of her besides its drag, m/s²: the waves' own change at her place and their push.</returns>
-    public (double X, double Z) Settle(HullDrag drag, WaterOnHull water, double yaw, double seconds)
+    public (double X, double Z) Settle(HullDrag drag, WaterOnHull water, double yaw, double seconds, (double X, double Z) push = default)
     {
         lock (gate)
         {
             var wash = Meet(water, Through(water, yaw), DisplacesHerMass, seconds);
-            var (relativeX, relativeZ) = drag.Settle(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, seconds, water.WayAlong, Pushed.X, Pushed.Z);
+            var (relativeX, relativeZ) = drag.Settle(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, seconds, water.WayAlong, Pushed.X + push.X, Pushed.Z + push.Z);
             ownX = water.CurrentX - relativeX;
             ownZ = water.CurrentZ - relativeZ;
             return wash;
@@ -62,13 +62,13 @@ public sealed class HullSet : BodyInWater
     }
 
     /// <summary>As <see cref="Settle"/> for a hull whose drag isn't known: she comes toward the current by this share of the difference.</summary>
-    public (double X, double Z) Relax(WaterOnHull water, double yaw, double share, double seconds)
+    public (double X, double Z) Relax(WaterOnHull water, double yaw, double share, double seconds, (double X, double Z) push = default)
     {
         lock (gate)
         {
             var wash = Meet(water, Through(water, yaw), DisplacesHerMass, seconds);
-            ownX += Pushed.X * seconds + (water.CurrentX - ownX) * share;
-            ownZ += Pushed.Z * seconds + (water.CurrentZ - ownZ) * share;
+            ownX += (Pushed.X + push.X) * seconds + (water.CurrentX - ownX) * share;
+            ownZ += (Pushed.Z + push.Z) * seconds + (water.CurrentZ - ownZ) * share;
             return wash;
         }
     }
