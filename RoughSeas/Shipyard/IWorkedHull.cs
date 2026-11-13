@@ -1,3 +1,4 @@
+using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
@@ -25,8 +26,10 @@ public interface IWorkedBlock
     IWorkedHull? HullAt(IWorldAccessor world, BlockPos pos);
 }
 
-/// <summary>A held item's work on a hull: its time, the lang key refusing it with that key's arguments, and whether vanilla's progress bar shows the hold.</summary>
+/// <summary>A held item's work on a hull: its time, the lang key refusing it with that key's arguments, whether vanilla's progress bar shows the hold, and the player animation the hands work it with.</summary>
 public sealed record HullWork(double Seconds, string? Refusal = null, bool ShowsBar = false)
 {
     public object[] RefusalArgs { get; init; } = [];
+
+    public string Hands { get; init; } = WorkHands.Work;
 }

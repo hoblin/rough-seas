@@ -228,7 +228,7 @@ The vessel is then laid stage by stage, in the order of `stages`, each piece hel
 - `cloth`: a piece of cloth.
 - `plank`: a plank, `planks` the item code.
 
-While a hold does work, the holder works with both hands, vanilla's player animation `knifescrape`, as on a hide scraped on the ground; it stops when they let go or the piece is refused. An axe's hewing and driving keep their own swings.
+While a hold does work, the holder works with both hands; it stops when they let go or the piece is refused. Rope going in, a `rope` stage or the rope that binds a pile, a hide sewn on in a `hide` stage, and twine binding up lashings tie knots, our player animation `roughseas-tie`; every other piece plays vanilla's `knifescrape`, as on a hide scraped on the ground. An axe's hewing and driving keep their own swings.
 
 Every piece of a `lath` or `pole` stage takes one at least as long as it, cut down; a shorter one is refused. The shape names each piece's length: its builder writes `"metres"` on the piece's group, measured along the run its frame texture draws (`stages()` in `bin/lib/hulls/shape.py` does it), and an item's length is its `length` variant.
 

@@ -87,9 +87,10 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
     {
         if (RepairWith(slot) is not { } repair || !lashing.Needs(repair, Side)) return null;
 
-        return slot.StackSize < repair.Material.StackSize
+        var work = slot.StackSize < repair.Material.StackSize
             ? new MendWork(repair.Seconds, "vessel-mend-takes", repair.Material.StackSize, slot.GetStackName())
             : new MendWork(repair.Seconds);
+        return work with { Hands = lashing.Hands };
     }
 
     public void Mend(EntityAgent byEntity, ItemSlot itemslot, Vec3d hit)

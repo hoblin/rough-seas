@@ -18,7 +18,7 @@ public sealed class LathPile(BlockEntityGroundStorage pile, LathBinding binding)
         && LathBinding.For(world, laths) is { } binding ? new LathPile(pile, binding) : null;
 
     public HullWork? WorkWith(ItemSlot slot) =>
-        binding.Rope.Takes(slot) ? new(binding.Seconds, LathBinding.Wet(Laths.Itemstack!) ? null : "shipyard-soak-laths", binding.Rope.ShowsBar) : null;
+        binding.Rope.Takes(slot) ? new(binding.Seconds, LathBinding.Wet(Laths.Itemstack!) ? null : "shipyard-soak-laths", binding.Rope.ShowsBar) { Hands = binding.Rope.Hands } : null;
 
     public void Lay(EntityAgent byEntity, ItemSlot slot)
     {
