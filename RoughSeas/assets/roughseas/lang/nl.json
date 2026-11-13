@@ -117,6 +117,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Voorste zitplaats",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Achterste zitplaats",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Valkikker",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Zeilspoor",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Zeilspoor",
     "creature-roughseas:*-selectionbox-CargoAP": "Lading",
     "creature-roughseas:*-selectionbox-HoldAP": "Ruim",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Voorruim",

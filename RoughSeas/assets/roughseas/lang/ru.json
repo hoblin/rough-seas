@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Переднее сиденье",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Заднее сиденье",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Утка фала",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Степс",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Степс",
     "creature-roughseas:*-selectionbox-CargoAP": "Груз",
     "creature-roughseas:*-selectionbox-HoldAP": "Трюм",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Носовой трюм",

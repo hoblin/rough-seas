@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Пярэдняе сядзенне",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Задняе сядзенне",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Кнага фала",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Стэпс",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Стэпс",
     "creature-roughseas:*-selectionbox-CargoAP": "Груз",
     "creature-roughseas:*-selectionbox-HoldAP": "Трум",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Насавы трум",

@@ -116,6 +116,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Assento dianteiro",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Assento traseiro",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Cunho da adriça",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Carlinga",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Carlinga",
     "creature-roughseas:*-selectionbox-CargoAP": "Carga",
     "creature-roughseas:*-selectionbox-HoldAP": "Porão",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Porão de proa",

@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Framsæti",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Aftursæti",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Festing fyrir dragreipi",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Seglspor",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Seglspor",
     "creature-roughseas:*-selectionbox-CargoAP": "Farmur",
     "creature-roughseas:*-selectionbox-HoldAP": "Lest",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Framlest",

@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "前座",
     "creature-roughseas:*-selectionbox-BackSeatAP": "后座",
     "creature-roughseas:*-selectionbox-LowerMastAP": "升降索系缆栓",
+    "creature-roughseas:*-selectionbox-BowStepAP": "帆桁座",
+    "creature-roughseas:*-selectionbox-SternStepAP": "帆桁座",
     "creature-roughseas:*-selectionbox-CargoAP": "货物",
     "creature-roughseas:*-selectionbox-HoldAP": "货舱",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "船首货舱",

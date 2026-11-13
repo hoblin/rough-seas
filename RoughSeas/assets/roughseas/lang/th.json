@@ -117,6 +117,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "ที่นั่งหน้า",
     "creature-roughseas:*-selectionbox-BackSeatAP": "ที่นั่งหลัง",
     "creature-roughseas:*-selectionbox-LowerMastAP": "พุกผูกเชือกชักใบ",
+    "creature-roughseas:*-selectionbox-BowStepAP": "ฐานตั้งใบเรือ",
+    "creature-roughseas:*-selectionbox-SternStepAP": "ฐานตั้งใบเรือ",
     "creature-roughseas:*-selectionbox-CargoAP": "สินค้า",
     "creature-roughseas:*-selectionbox-HoldAP": "ห้องเก็บสินค้า",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "ห้องเก็บสินค้าหัวเรือ",

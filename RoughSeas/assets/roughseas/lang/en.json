@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Front seat",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Back seat",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Halyard cleat",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Sail step",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Sail step",
     "creature-roughseas:*-selectionbox-CargoAP": "Cargo",
     "creature-roughseas:*-selectionbox-HoldAP": "Hold",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Fore hold",

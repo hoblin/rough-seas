@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Ghế trước",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Ghế sau",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Chốt buộc dây kéo buồm",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Đế chân buồm",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Đế chân buồm",
     "creature-roughseas:*-selectionbox-CargoAP": "Hàng hóa",
     "creature-roughseas:*-selectionbox-HoldAP": "Khoang hàng",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Khoang mũi",

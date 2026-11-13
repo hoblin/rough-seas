@@ -16,11 +16,7 @@ public sealed class RigRenderer : IRenderer
     private const int Reaches = 10;
     private const int Spans = 8;
     private const double OriginMetres = 0.5;
-    private const double PoleMetres = 0.0875;
-    private const double SparMetres = 0.075;
-    private const double ShoreMetres = 0.075;
-    private const double LineMetres = 0.019;
-    private const double RollMetres = 0.1375;
+    private const double ShuntMilliseconds = 1000;
     private static readonly (float U, float V)[] Tile = [(0, 0), (1, 0), (1, 1), (0, 1)];
     private static readonly (int Facing, int[] Order)[] Sides = [(1, [0, 1, 2, 0, 2, 3]), (-1, [0, 2, 1, 0, 3, 2])];
 
@@ -28,8 +24,13 @@ public sealed class RigRenderer : IRenderer
     private readonly Entity entity;
     private readonly EntityBehaviorWindage windage;
     private readonly Dictionary<string, Layer> meshes = new();
-    private (double Turn, double Fill) from;
-    private (double Turn, double Fill) to;
+    private readonly Dictionary<string, Layer> blended = new();
+    private Dictionary<string, Layer> target;
+    private int drawnTack = -1;
+    private (RigEnd End, (double Yard, double Boom, double Fill) Trim)? shunted;
+    private long shuntedAt;
+    private (double Yard, double Boom, double Fill) from;
+    private (double Yard, double Boom, double Fill) to;
     private long toAt;
     private long stepMilliseconds = 1;
 
@@ -38,7 +39,8 @@ public sealed class RigRenderer : IRenderer
         this.capi = capi;
         this.entity = entity;
         this.windage = windage;
-        foreach (var texture in new[] { Cloth, Wood, Cord }) meshes[texture] = new Layer();
+        foreach (var texture in new[] { Cloth, Wood, Cord }) (meshes[texture], blended[texture]) = (new Layer(), new Layer());
+        target = meshes;
         capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "roughseas-rig");
     }
 
@@ -53,7 +55,7 @@ public sealed class RigRenderer : IRenderer
         var now = capi.InWorldEllapsedMilliseconds;
         from = Drawn(now);
         stepMilliseconds = Math.Max(1, now - toAt);
-        (to, toAt) = ((Sail.Turn, Sail.Depth), now);
+        (to, toAt) = ((Sail.State.Yard, Sail.State.Boom, Sail.Depth), now);
     }
 
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
@@ -61,10 +63,21 @@ public sealed class RigRenderer : IRenderer
         if (!entity.IsRendered || entity.Properties.Client.Renderer is not EntityShapeRenderer hull || !windage.Rigged) return;
 
         windage.Hoist();
-        foreach (var layer in meshes.Values) layer.Data.Clear();
-        var end = Sail.Rig.End;
-        if (Sail.SquareMetres > 0) Hoisted(end, Drawn(capi.InWorldEllapsedMilliseconds));
-        else Lowered(end.Lowered);
+        var now = capi.InWorldEllapsedMilliseconds;
+        var rig = Sail.Rig;
+        if (drawnTack >= 0 && rig.Tacked != drawnTack)
+        {
+            (shunted, shuntedAt) = ((rig.EndAt(drawnTack), Drawn(now)), now);
+            from = to = (Sail.State.Yard, Sail.State.Boom, Sail.Depth);
+        }
+        drawnTack = rig.Tacked;
+        Draw(meshes, rig.End, Drawn(now));
+        var share = (now - shuntedAt) / ShuntMilliseconds;
+        if (shunted is var (before, trim) && share < 1)
+        {
+            Draw(blended, before, trim);
+            foreach (var (texture, layer) in meshes) Blend(blended[texture].Data, layer.Data, share);
+        }
 
         var render = capi.Render;
         var prog = render.PreparedStandardShader((int)entity.Pos.X, (int)Math.Ceiling(entity.Pos.Y), (int)entity.Pos.Z);
@@ -100,53 +113,70 @@ public sealed class RigRenderer : IRenderer
         public int Uploaded;
     }
 
-    private (double Turn, double Fill) Drawn(long now)
+    private void Draw(Dictionary<string, Layer> into, RigEnd end, (double Yard, double Boom, double Fill) trim)
+    {
+        target = into;
+        foreach (var layer in into.Values) layer.Data.Clear();
+        if (Sail.SquareMetres > 0) Hoisted(end, trim);
+        else Lowered(end);
+        target = meshes;
+    }
+
+    private static void Blend(MeshData before, MeshData after, double share)
+    {
+        if (before.VerticesCount != after.VerticesCount) return;
+        for (var k = 0; k < after.VerticesCount * 3; k++) after.xyz[k] = (float)(before.xyz[k] + (after.xyz[k] - before.xyz[k]) * share);
+    }
+
+    private (double Yard, double Boom, double Fill) Drawn(long now)
     {
         var share = Math.Clamp((now - toAt) / (double)stepMilliseconds, 0, 1);
-        return (from.Turn + (to.Turn - from.Turn) * share, from.Fill + (to.Fill - from.Fill) * share);
+        double Between(double a, double b) => a + (b - a) * share;
+        return (Between(from.Yard, to.Yard), Between(from.Boom, to.Boom), Between(from.Fill, to.Fill));
     }
 
-    private void Hoisted(RigEnd end, (double Turn, double Fill) trim)
+    private void Hoisted(RigEnd end, (double Yard, double Boom, double Fill) trim)
     {
-        var (turn, fill) = trim;
+        var state = end.Pose(trim.Yard, trim.Boom);
         var pose = end.Hoisted;
-        var form = end.Form;
         var set = Sail.Set;
-        Weave(form, turn, fill, set);
+        Weave(state.Form, trim.Fill, set);
         var tack = pose.Tack;
-        var foot = (form.At(1, 0, turn, 0, set) - tack).Unit;
+        var foot = (state.Form.At(1, 0, 0, set) - tack).Unit;
         var clew = tack + (pose.Clew - tack).Length * foot;
         var bridle = tack + (pose.Bridle - tack).Length * foot;
-        Standing(pose);
-        Tube(Wood, tack, end.Turned(pose.Peak, turn), SparMetres);
-        Tube(Wood, tack, clew, SparMetres);
-        if (set.Span < 1) Tube(Cloth, tack, clew, RollMetres * Math.Sqrt(1 - set.Span));
-        Tube(Cord, pose.Masthead, end.Turned(pose.HalyardBend, turn), LineMetres);
-        Tube(Cord, bridle, pose.Lead, LineMetres);
+        var widths = end.Widths;
+        Standing(pose, widths);
+        Tube(Wood, tack, state.Peak, widths.Spar);
+        Tube(Wood, tack, clew, widths.Spar);
+        if (set.Span < 1) Tube(Cloth, tack, clew, widths.Roll * Math.Sqrt(1 - set.Span));
+        Tube(Cord, pose.Masthead, state.Bend, widths.Line);
+        Tube(Cord, bridle, pose.Lead, widths.Line);
     }
 
-    private void Lowered(RigPose pose)
+    private void Lowered(RigEnd end)
     {
-        Standing(pose);
-        Tube(Wood, pose.Tack, pose.Peak, SparMetres);
-        Tube(Wood, pose.Tack, pose.Clew, SparMetres);
-        Tube(Cloth, pose.Tack, pose.Clew, RollMetres);
-        Tube(Cord, pose.Masthead, pose.HalyardBend, LineMetres);
-        Tube(Cord, pose.Bridle, pose.Lead, LineMetres);
+        var (pose, widths) = (end.Lowered, end.Widths);
+        Standing(pose, widths);
+        Tube(Wood, pose.Tack, pose.Peak, widths.Spar);
+        Tube(Wood, pose.Tack, pose.Clew, widths.Spar);
+        Tube(Cloth, pose.Tack, pose.Clew, widths.Roll);
+        Tube(Cord, pose.Masthead, pose.HalyardBend, widths.Line);
+        Tube(Cord, pose.Bridle, pose.Lead, widths.Line);
     }
 
-    private void Standing(RigPose pose)
+    private void Standing(RigPose pose, RigWidths widths)
     {
-        Tube(Wood, pose.Heel, pose.Masthead, PoleMetres);
-        Tube(Wood, pose.ShoreFoot, pose.ShoreTop, ShoreMetres);
-        Tube(Cord, pose.Masthead, pose.Tack, LineMetres);
-        Tube(Cord, pose.Masthead, pose.SternPin, LineMetres);
-        Tube(Cord, pose.Masthead, pose.ShroudFoot, LineMetres);
+        Tube(Wood, pose.Heel, pose.Masthead, widths.Pole);
+        Tube(Wood, pose.ShoreFoot, pose.ShoreTop, widths.Shore);
+        Tube(Cord, pose.Masthead, pose.Tack, widths.Line);
+        Tube(Cord, pose.Masthead, pose.SternPin, widths.Line);
+        Tube(Cord, pose.Masthead, pose.ShroudFoot, widths.Line);
     }
 
-    private void Weave(SailForm form, double turn, double fill, (double Reach, double Span) set)
+    private void Weave(SailForm form, double fill, (double Reach, double Span) set)
     {
-        HullPoint At(int i, int j) => form.At((double)i / Reaches, (double)j / Spans, turn, fill, set);
+        HullPoint At(int i, int j) => form.At((double)i / Reaches, (double)j / Spans, fill, set);
         for (var i = 0; i < Reaches; i++)
         for (var j = 0; j < Spans; j++) Quad(Cloth, [At(i, j), At(i + 1, j), At(i + 1, j + 1), At(i, j + 1)]);
     }
@@ -169,7 +199,7 @@ public sealed class RigRenderer : IRenderer
     {
         var atlas = Atlas(texture);
         var (width, height) = (atlas.x2 - atlas.x1, atlas.y2 - atlas.y1);
-        var data = meshes[texture].Data;
+        var data = target[texture].Data;
         var normal = (corners[2] - corners[0]).Cross(corners[3] - corners[1]);
         var unit = normal.Length > 0 ? normal.Unit : new HullPoint(0, 1, 0);
         foreach (var (facing, order) in Sides)

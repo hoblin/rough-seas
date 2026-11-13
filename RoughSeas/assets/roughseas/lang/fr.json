@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Siège avant",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Siège arrière",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Taquet de drisse",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Emplanture",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Emplanture",
     "creature-roughseas:*-selectionbox-CargoAP": "Chargement",
     "creature-roughseas:*-selectionbox-HoldAP": "Cale",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Cale avant",

@@ -117,6 +117,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Forsete",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Baksete",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Kryssholt-fall",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Seilspor",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Seilspor",
     "creature-roughseas:*-selectionbox-CargoAP": "Last",
     "creature-roughseas:*-selectionbox-HoldAP": "Lasterom",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Forre lasterom",

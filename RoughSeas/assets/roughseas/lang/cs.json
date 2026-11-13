@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Přední sedadlo",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Zadní sedadlo",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Úvazník dračky",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Patka ráhna",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Patka ráhna",
     "creature-roughseas:*-selectionbox-CargoAP": "Náklad",
     "creature-roughseas:*-selectionbox-HoldAP": "Lodní prostor",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Příďový prostor",

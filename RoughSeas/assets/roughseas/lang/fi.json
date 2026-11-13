@@ -117,6 +117,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Etuistuin",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Takaistuin",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Nostimen knaapi",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Purjeen kanta",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Purjeen kanta",
     "creature-roughseas:*-selectionbox-CargoAP": "Lasti",
     "creature-roughseas:*-selectionbox-HoldAP": "Ruuma",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Keularuuma",

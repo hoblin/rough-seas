@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Predné sedadlo",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Zadné sedadlo",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Úchyt falu",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Pätka ráhna",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Pätka ráhna",
     "creature-roughseas:*-selectionbox-CargoAP": "Náklad",
     "creature-roughseas:*-selectionbox-HoldAP": "Nákladový priestor",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Predný priestor",

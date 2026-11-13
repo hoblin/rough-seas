@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Sedile Anteriore",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Sedile Posteriore",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Galloccia della drizza",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Scassa della vela",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Scassa della vela",
     "creature-roughseas:*-selectionbox-CargoAP": "Carico",
     "creature-roughseas:*-selectionbox-HoldAP": "Stiva",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Stiva di prua",

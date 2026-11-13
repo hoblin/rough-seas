@@ -16,7 +16,8 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, Sail? sai
         var centre = attributes["windageCentreMetres"].AsArray<double>([0, 0]);
         var bare = new BluffSurface(attributes["windageSquareMetres"].AsDouble(), attributes["frontSquareMetres"].AsDouble(), config.BluffDrag,
             centre[0], 0, centre[1]);
-        return new VesselInWind(config, bare, SailOf(attributes["sail"], Rig.Of(attributes["rig"], config.Camber), config, polar),
+        var cloth = attributes["sail"]["sailSquareMetres"].AsDouble() * config.ClothKgPerSquareMetre;
+        return new VesselInWind(config, bare, SailOf(attributes["sail"], Rig.Of(attributes["rig"], config.Camber, cloth), config, polar),
             (attributes["lateralCentreMetres"].AsDouble(), 0));
     }
 

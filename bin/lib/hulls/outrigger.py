@@ -29,6 +29,8 @@ POLE = 1.4
 SPAR = 1.2
 SHORE = 1.2
 STEP = 1.4
+LINE = 0.3
+ROLL = 2.2
 MAST_METRES = 3
 YARD_TO_MAST = 1.24
 BOOM_TO_MAST = 1.18
@@ -259,8 +261,17 @@ def area():
     return wind.cloth_area(crab_claw().cloth(1))
 
 
+def spar_kilograms(length):
+    return round(kilograms("wood-oak", units.litres(units.metres(length * SPAR ** 2, 3))), 2)
+
+
 def canvas():
-    return merged(wind.sail("crabclaw", crab_claw().cloth(1), (1, HALF_SPAN)), {"behaviorConfigs": {wind.WINDAGE: {"rig": crab_claw().config()}}})
+    claw = crab_claw()
+    rigged = {**claw.config(), "yardKilograms": spar_kilograms(claw.yard), "boomKilograms": spar_kilograms(claw.boom),
+              **units.both("spar", units.metres(SPAR), 1), **units.both("pole", units.metres(POLE), 1),
+              **units.both("shore", units.metres(SHORE), 1), **units.both("line", units.metres(LINE), 1),
+              **units.both("roll", units.metres(ROLL), 1)}
+    return merged(wind.sail("crabclaw", claw.cloth(1), (1, HALF_SPAN)), {"behaviorConfigs": {wind.WINDAGE: {"rig": rigged}}})
 
 
 def furled():
@@ -268,7 +279,7 @@ def furled():
     cloths = math.ceil(area() / CLOTH_SQUARE_METRES)
     tack, clew = pose["tack"], pose["clew"]
     at = lambda f: tuple(t + f * (c - t) for t, c in zip(tack, clew))
-    rolls = [[beam(f"SailRoll{n + 1}", at(n / cloths), at((n + 1) / cloths), 2.2, 2.2, "sail", overlap=0)] for n in range(cloths)]
+    rolls = [[beam(f"SailRoll{n + 1}", at(n / cloths), at((n + 1) / cloths), ROLL, ROLL, "sail", overlap=0)] for n in range(cloths)]
     print(f"sail: {area():.2f} m² of crab claw, {cloths} cloths")
     return group("SailFurled", (0, 0, 0), (0, 0, 0), [group(f"SailFurled{n}", (0, 0, 0), (0, 0, 0), roll) for n, roll in enumerate(rolls, 1)])
 
@@ -302,7 +313,7 @@ def fittings():
     return group("Fittings", (0, 0, 0), (0, 0, 0), [*steps, cleat])
 
 
-def rope(name, start, end, thick=0.3):
+def rope(name, start, end, thick=LINE):
     pieces = math.ceil(units.metres(math.dist(start, end)))
     points = [tuple(s + (e - s) * n / pieces for s, e in zip(start, end)) for n in range(pieces + 1)]
     return path(name, points, thick, thick, "lashing", overlap=0)
@@ -313,7 +324,7 @@ def stays():
     top = pose["masthead"]
     return [
         rope("Forestay", top, pose["tack"]),
-        rope("Backstay", top, pose["sternPin"], 0.3 - 2 * APART),
+        rope("Backstay", top, pose["sternPin"], LINE - 2 * APART),
         rope("Shroud", top, pose["shroudFoot"]),
         rope("Halyard", top, pose["halyardBend"]),
         rope("Sheet", pose["bridle"], pose["lead"]),

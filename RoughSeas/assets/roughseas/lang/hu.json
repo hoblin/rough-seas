@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Első ülés",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Hátsó ülés",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Felhúzó bikaszarva",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Vitorlatalp",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Vitorlatalp",
     "creature-roughseas:*-selectionbox-CargoAP": "Rakomány",
     "creature-roughseas:*-selectionbox-HoldAP": "Raktér",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Orrbeli raktér",

@@ -116,6 +116,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Priekinė sėdynė",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Galinė sėdynė",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Falo knaga",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Burės lizdas",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Burės lizdas",
     "creature-roughseas:*-selectionbox-CargoAP": "Krovinys",
     "creature-roughseas:*-selectionbox-HoldAP": "Triumas",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Priekinis triumas",

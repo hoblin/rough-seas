@@ -117,6 +117,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Främre plats",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Bakre plats",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Fallknap",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Segelspår",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Segelspår",
     "creature-roughseas:*-selectionbox-CargoAP": "Last",
     "creature-roughseas:*-selectionbox-HoldAP": "Lastrum",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Främre lastrum",

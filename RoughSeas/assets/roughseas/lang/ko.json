@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "앞좌석",
     "creature-roughseas:*-selectionbox-BackSeatAP": "뒷좌석",
     "creature-roughseas:*-selectionbox-LowerMastAP": "마룻줄 고정구",
+    "creature-roughseas:*-selectionbox-BowStepAP": "돛 받침",
+    "creature-roughseas:*-selectionbox-SternStepAP": "돛 받침",
     "creature-roughseas:*-selectionbox-CargoAP": "화물",
     "creature-roughseas:*-selectionbox-HoldAP": "화물칸",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "선수 화물칸",

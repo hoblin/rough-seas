@@ -117,6 +117,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Forreste plads",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Bagerste plads",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Klampe til fald",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Sejlspor",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Sejlspor",
     "creature-roughseas:*-selectionbox-CargoAP": "Last",
     "creature-roughseas:*-selectionbox-HoldAP": "Lastrum",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Forreste lastrum",

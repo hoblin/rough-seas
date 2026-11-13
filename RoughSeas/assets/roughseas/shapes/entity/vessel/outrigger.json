@@ -15385,117 +15385,117 @@
        "from": [ -11.542, 55.556, 13 ],
        "to": [ -11.542, 55.556, 13 ],
        "rotationOrigin": [ -11.542, 55.556, 13 ],
-       "rotationY": 5.335,
-       "rotationZ": -40.27,
+       "rotationY": 5.054,
+       "rotationZ": -38.75,
        "faces": {},
        "children": [
         {
          "name": "Backstay1",
          "from": [ 0, -0.13, -0.13 ],
-         "to": [ 14.096, 0.13, 0.13 ],
+         "to": [ 14.557, 0.13, 0.13 ],
          "faces": {
-          "north": { "texture": "#lashing", "uv": [ 0, 5.5, 14.096, 5.76 ] },
+          "north": { "texture": "#lashing", "uv": [ 0, 5.5, 14.557, 5.76 ] },
           "east": { "texture": "#lashing", "uv": [ 5.5, 10, 5.76, 10.26 ] },
-          "south": { "texture": "#lashing", "uv": [ 0.5, 3, 14.596, 3.26 ] },
+          "south": { "texture": "#lashing", "uv": [ 0.5, 3, 15.057, 3.26 ] },
           "west": { "texture": "#lashing", "uv": [ 14, 10, 14.26, 10.26 ] },
-          "up": { "texture": "#lashing", "uv": [ 1.5, 12, 15.596, 12.26 ] },
-          "down": { "texture": "#lashing", "uv": [ 0.5, 8, 14.596, 8.26 ] }
+          "up": { "texture": "#lashing", "uv": [ 1, 12, 15.557, 12.26 ] },
+          "down": { "texture": "#lashing", "uv": [ 0, 8, 14.557, 8.26 ] }
          }
         }
        ]
       },
       {
        "name": "Backstay2Frame",
-       "from": [ -0.833, 46.445, 12 ],
-       "to": [ -0.833, 46.445, 12 ],
-       "rotationOrigin": [ -0.833, 46.445, 12 ],
-       "rotationY": 5.335,
-       "rotationZ": -40.27,
+       "from": [ -0.233, 46.445, 12 ],
+       "to": [ -0.233, 46.445, 12 ],
+       "rotationOrigin": [ -0.233, 46.445, 12 ],
+       "rotationY": 5.054,
+       "rotationZ": -38.75,
        "faces": {},
        "children": [
         {
          "name": "Backstay2",
          "from": [ 0, -0.11, -0.11 ],
-         "to": [ 14.096, 0.11, 0.11 ],
+         "to": [ 14.557, 0.11, 0.11 ],
          "faces": {
-          "north": { "texture": "#lashing", "uv": [ 1, 1.5, 15.096, 1.72 ] },
+          "north": { "texture": "#lashing", "uv": [ 0.5, 1.5, 15.057, 1.72 ] },
           "east": { "texture": "#lashing", "uv": [ 9, 6.5, 9.22, 6.72 ] },
-          "south": { "texture": "#lashing", "uv": [ 1, 12, 15.096, 12.22 ] },
+          "south": { "texture": "#lashing", "uv": [ 0.5, 12, 15.057, 12.22 ] },
           "west": { "texture": "#lashing", "uv": [ 3, 0, 3.22, 0.22 ] },
-          "up": { "texture": "#lashing", "uv": [ 0.5, 6, 14.596, 6.22 ] },
-          "down": { "texture": "#lashing", "uv": [ 0.5, 10, 14.596, 10.22 ] }
+          "up": { "texture": "#lashing", "uv": [ 0, 6, 14.557, 6.22 ] },
+          "down": { "texture": "#lashing", "uv": [ 0.5, 10, 15.057, 10.22 ] }
          }
         }
        ]
       },
       {
        "name": "Backstay3Frame",
-       "from": [ 9.875, 37.334, 11 ],
-       "to": [ 9.875, 37.334, 11 ],
-       "rotationOrigin": [ 9.875, 37.334, 11 ],
-       "rotationY": 5.335,
-       "rotationZ": -40.27,
+       "from": [ 11.075, 37.334, 11 ],
+       "to": [ 11.075, 37.334, 11 ],
+       "rotationOrigin": [ 11.075, 37.334, 11 ],
+       "rotationY": 5.054,
+       "rotationZ": -38.75,
        "faces": {},
        "children": [
         {
          "name": "Backstay3",
          "from": [ 0, -0.13, -0.13 ],
-         "to": [ 14.096, 0.13, 0.13 ],
+         "to": [ 14.557, 0.13, 0.13 ],
          "faces": {
-          "north": { "texture": "#lashing", "uv": [ 1, 5, 15.096, 5.26 ] },
+          "north": { "texture": "#lashing", "uv": [ 1, 5, 15.557, 5.26 ] },
           "east": { "texture": "#lashing", "uv": [ 12.5, 14.5, 12.76, 14.76 ] },
-          "south": { "texture": "#lashing", "uv": [ 0, 11, 14.096, 11.26 ] },
+          "south": { "texture": "#lashing", "uv": [ 0, 11, 14.557, 11.26 ] },
           "west": { "texture": "#lashing", "uv": [ 11.5, 3, 11.76, 3.26 ] },
-          "up": { "texture": "#lashing", "uv": [ 0, 10.5, 14.096, 10.76 ] },
-          "down": { "texture": "#lashing", "uv": [ 1, 8, 15.096, 8.26 ] }
+          "up": { "texture": "#lashing", "uv": [ 0, 10.5, 14.557, 10.76 ] },
+          "down": { "texture": "#lashing", "uv": [ 1, 8, 15.557, 8.26 ] }
          }
         }
        ]
       },
       {
        "name": "Backstay4Frame",
-       "from": [ 20.583, 28.223, 10 ],
-       "to": [ 20.583, 28.223, 10 ],
-       "rotationOrigin": [ 20.583, 28.223, 10 ],
-       "rotationY": 5.335,
-       "rotationZ": -40.27,
+       "from": [ 22.383, 28.223, 10 ],
+       "to": [ 22.383, 28.223, 10 ],
+       "rotationOrigin": [ 22.383, 28.223, 10 ],
+       "rotationY": 5.054,
+       "rotationZ": -38.75,
        "faces": {},
        "children": [
         {
          "name": "Backstay4",
          "from": [ 0, -0.11, -0.11 ],
-         "to": [ 14.096, 0.11, 0.11 ],
+         "to": [ 14.557, 0.11, 0.11 ],
          "faces": {
-          "north": { "texture": "#lashing", "uv": [ 0, 0, 14.096, 0.22 ] },
+          "north": { "texture": "#lashing", "uv": [ 0, 0, 14.557, 0.22 ] },
           "east": { "texture": "#lashing", "uv": [ 4, 9.5, 4.22, 9.72 ] },
-          "south": { "texture": "#lashing", "uv": [ 1, 11, 15.096, 11.22 ] },
+          "south": { "texture": "#lashing", "uv": [ 0.5, 11, 15.057, 11.22 ] },
           "west": { "texture": "#lashing", "uv": [ 2.5, 12.5, 2.72, 12.72 ] },
-          "up": { "texture": "#lashing", "uv": [ 1.5, 12, 15.596, 12.22 ] },
-          "down": { "texture": "#lashing", "uv": [ 1, 5, 15.096, 5.22 ] }
+          "up": { "texture": "#lashing", "uv": [ 1, 12, 15.557, 12.22 ] },
+          "down": { "texture": "#lashing", "uv": [ 1, 5, 15.557, 5.22 ] }
          }
         }
        ]
       },
       {
        "name": "Backstay5Frame",
-       "from": [ 31.292, 19.111, 9 ],
-       "to": [ 31.292, 19.111, 9 ],
-       "rotationOrigin": [ 31.292, 19.111, 9 ],
-       "rotationY": 5.335,
-       "rotationZ": -40.27,
+       "from": [ 33.692, 19.111, 9 ],
+       "to": [ 33.692, 19.111, 9 ],
+       "rotationOrigin": [ 33.692, 19.111, 9 ],
+       "rotationY": 5.054,
+       "rotationZ": -38.75,
        "faces": {},
        "children": [
         {
          "name": "Backstay5",
          "from": [ 0, -0.13, -0.13 ],
-         "to": [ 14.096, 0.13, 0.13 ],
+         "to": [ 14.557, 0.13, 0.13 ],
          "faces": {
-          "north": { "texture": "#lashing", "uv": [ 1.5, 6, 15.596, 6.26 ] },
+          "north": { "texture": "#lashing", "uv": [ 1, 6, 15.557, 6.26 ] },
           "east": { "texture": "#lashing", "uv": [ 15.5, 11.5, 15.76, 11.76 ] },
-          "south": { "texture": "#lashing", "uv": [ 1.5, 7, 15.596, 7.26 ] },
+          "south": { "texture": "#lashing", "uv": [ 1, 7, 15.557, 7.26 ] },
           "west": { "texture": "#lashing", "uv": [ 2.5, 0.5, 2.76, 0.76 ] },
-          "up": { "texture": "#lashing", "uv": [ 1.5, 9, 15.596, 9.26 ] },
-          "down": { "texture": "#lashing", "uv": [ 0.5, 13, 14.596, 13.26 ] }
+          "up": { "texture": "#lashing", "uv": [ 1, 9, 15.557, 9.26 ] },
+          "down": { "texture": "#lashing", "uv": [ 0, 13, 14.557, 13.26 ] }
          }
         }
        ]
@@ -19991,8 +19991,8 @@
     },
     {
      "name": "SailStepStern",
-     "from": [ 40.6, 8.6, 6.6 ],
-     "to": [ 43.4, 11.4, 9.4 ],
+     "from": [ 43.6, 8.6, 6.6 ],
+     "to": [ 46.4, 11.4, 9.4 ],
      "faces": {
       "north": { "texture": "#inside", "uv": [ 4.5, 8, 7.3, 10.8 ] },
       "east": { "texture": "#inside", "uv": [ 0.5, 4, 3.3, 6.8 ] },

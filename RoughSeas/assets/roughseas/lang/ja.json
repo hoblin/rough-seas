@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "前の座席",
     "creature-roughseas:*-selectionbox-BackSeatAP": "後ろの座席",
     "creature-roughseas:*-selectionbox-LowerMastAP": "ハリヤードのクリート",
+    "creature-roughseas:*-selectionbox-BowStepAP": "帆のステップ",
+    "creature-roughseas:*-selectionbox-SternStepAP": "帆のステップ",
     "creature-roughseas:*-selectionbox-CargoAP": "積み荷",
     "creature-roughseas:*-selectionbox-HoldAP": "船倉",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "船首の船倉",

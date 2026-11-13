@@ -117,6 +117,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Предна седалка",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Задна седалка",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Утка за фала",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Степс",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Степс",
     "creature-roughseas:*-selectionbox-CargoAP": "Товар",
     "creature-roughseas:*-selectionbox-HoldAP": "Трюм",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Носов трюм",

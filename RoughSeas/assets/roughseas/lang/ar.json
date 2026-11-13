@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "المقعد الأمامي",
     "creature-roughseas:*-selectionbox-BackSeatAP": "المقعد الخلفي",
     "creature-roughseas:*-selectionbox-LowerMastAP": "مربط حبل رفع الشراع",
+    "creature-roughseas:*-selectionbox-BowStepAP": "مقعد قاعدة الشراع",
+    "creature-roughseas:*-selectionbox-SternStepAP": "مقعد قاعدة الشراع",
     "creature-roughseas:*-selectionbox-CargoAP": "الحمولة",
     "creature-roughseas:*-selectionbox-HoldAP": "العنبر",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "العنبر الأمامي",

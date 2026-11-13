@@ -116,6 +116,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Предње седиште",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Задње седиште",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Битва за дизалицу",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Стопа једра",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Стопа једра",
     "creature-roughseas:*-selectionbox-CargoAP": "Терет",
     "creature-roughseas:*-selectionbox-HoldAP": "Складиште",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Прамчано складиште",

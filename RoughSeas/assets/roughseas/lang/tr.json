@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Ön sıra",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Arka sıra",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Kandilisa koçboynuzu",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Yelken ıskaçası",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Yelken ıskaçası",
     "creature-roughseas:*-selectionbox-CargoAP": "Yük",
     "creature-roughseas:*-selectionbox-HoldAP": "Ambar",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Pruva ambarı",

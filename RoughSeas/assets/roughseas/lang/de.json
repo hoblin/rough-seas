@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Vordersitz",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Rücksitz",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Fallklemme",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Segelspur",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Segelspur",
     "creature-roughseas:*-selectionbox-CargoAP": "Laderaum",
     "creature-roughseas:*-selectionbox-HoldAP": "Laderaum",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Vorderer Laderaum",

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using RoughSeas.Water;
 
@@ -28,15 +29,22 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
     double clothNewtonsPerSquareMetre)
     : WindSurface
 {
+    private const int Trims = 36;
+    private const int Refinements = 3;
+
+    private const double RetrimRadians = Math.PI / 180;
+    private const double RetrimShare = 0.05;
+
+    private RigState? state;
+    private (double Heading, double Newtons, (double Reach, double Span) Set, int Tacked)? trimmed;
+
     public Rig Rig => rig;
 
-    public SailForm Form => rig.End.Form;
+    public RigState State => state ??= rig.End.Pose(0, 0);
 
     public double SquareMetres { get; private set; }
 
     public (double Reach, double Span) Set { get; private set; }
-
-    public double Turn { get; private set; }
 
     public double Depth { get; private set; }
 
@@ -44,7 +52,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
 
     public bool Aback { get; private set; }
 
-    public override double HeightMetres => Form.Centre(SailForm.Whole, Turn, 0).Height;
+    public override double HeightMetres => State.Centre(SailForm.Whole, 0).Height;
 
     public void Hoist(int sailPosition) => (SquareMetres, Set) = sailPosition switch
     {
@@ -61,8 +69,9 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
 
     public void Slack(Airflow air)
     {
-        (Pressure, Depth, Aback) = (0, 0, false);
-        Turn = Best(turn => -Math.Abs(Plan(Form.Normal(turn)).Along * air.Along + Plan(Form.Normal(turn)).Across * air.Across));
+        (Pressure, Depth, Aback, trimmed) = (0, 0, false, null);
+        var still = (Func<RigState, (HullPoint, HullPoint)>)(posed => (posed.Centre(Set, 0), default));
+        state = Settled(still, posed => -Math.Abs(Flow(posed.Form.Normal, air)));
     }
 
     public RigLoad? Load { get; private set; }
@@ -70,7 +79,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
     public override Push[] Pushes(Airflow air, double halfDensity)
     {
         var (centre, force) = Backs(air) ? TakenAback(air, halfDensity) : Drawing(air, halfDensity);
-        Load = rig.End.Loads(centre, force, Turn);
+        Load = rig.End.Loads(State, centre, force);
         return Load.Points;
     }
 
@@ -81,51 +90,77 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
 
         Aback = false;
         var dynamic = halfDensity * air.Speed * air.Speed;
-        var (along, across) = (end.Ahead * drive, end.Leeward * side);
-        Turn = Best(turn => ToLeeward(turn) ? Math.Abs(Plan(Form.Normal(turn)).Along * along + Plan(Form.Normal(turn)).Across * across) : -1);
+        var force = dynamic * SquareMetres * new HullPoint(end.Ahead * drive, 0, end.Leeward * side);
+        var (plan, pressing) = (force.Unit, force.Length);
+        var trim = (Math.Atan2(plan.Across, plan.Along), pressing, Set, rig.Tacked);
+        if (Retrim(trim))
+        {
+            state = Settled(posed => (posed.Centre(Set, 0), Math.Sign(Flow(posed.Form.Normal, air)) * pressing * posed.Form.Normal),
+                posed => LeeOf(posed) > 0 ? Math.Sign(Flow(posed.Form.Normal, air)) * Flow(posed.Form.Normal, plan) : LeeOf(posed) - 1);
+            trimmed = trim;
+        }
         Pressure = dynamic * Math.Sqrt(drive * drive + side * side);
         Fill(air);
-        var force = dynamic * SquareMetres;
-        return (Form.Centre(Set, Turn, Depth), new HullPoint(force * along, 0, force * across));
+        return (State.Centre(Set, Depth), force);
     }
+
+    private bool Retrim((double Heading, double Newtons, (double Reach, double Span) Set, int Tacked) trim) =>
+        trimmed is not { } last || last.Set != trim.Set || last.Tacked != trim.Tacked
+        || Math.Abs(Math.IEEERemainder(trim.Heading - last.Heading, 2 * Math.PI)) > RetrimRadians
+        || Math.Abs(trim.Newtons - last.Newtons) > RetrimShare * Math.Max(trim.Newtons, last.Newtons);
 
     private (HullPoint At, HullPoint Force) TakenAback(Airflow air, double halfDensity)
     {
         Aback = true;
-        var (first, last) = (rig.End.Free.From, rig.End.Free.From + rig.End.Free.Span);
-        var (at, pressing) = Plate(air, halfDensity, Math.Clamp(Turn, first, last));
-        Turn = (at - Form.Origin).Cross(pressing).Dot(Form.Axis) < 0 ? first : last;
-        var normal = Form.Normal(Turn);
-        Pressure = halfDensity * bluffDrag * Math.Pow(normal.Along * air.Along + normal.Across * air.Across, 2);
+        trimmed = null;
+        var end = rig.End;
+        var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
+        var (at, pressing) = Plate(end.Pose(Math.Clamp(State.Yard, first, last), State.Boom), air, halfDensity);
+        var yard = (at - end.Tack).Cross(pressing).Dot(end.Axis) < 0 ? first : last;
+        state = end.Settle(yard, State.Boom, posed => Plate(posed, air, halfDensity));
+        Pressure = halfDensity * bluffDrag * Math.Pow(Flow(State.Form.Normal, air), 2);
         Fill(air);
-        return Plate(air, halfDensity, Turn);
+        return Plate(State, air, halfDensity);
     }
 
-    private (HullPoint At, HullPoint Force) Plate(Airflow air, double halfDensity, double turn)
+    private RigState Settled(Func<RigState, (HullPoint At, HullPoint Force)> wind, Func<RigState, double> score)
     {
-        var normal = Form.Normal(turn);
-        var flow = normal.Along * air.Along + normal.Across * air.Across;
-        return (Form.Centre(Set, turn, 0), halfDensity * bluffDrag * flow * Math.Abs(flow) * SquareMetres * normal);
+        var end = rig.End;
+        var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
+        var resting = end.Pose(first, 0).Centre(SailForm.Whole, 0).Height <= end.Pose(last, 0).Centre(SailForm.Whole, 0).Height ? first : last;
+        var toward = resting == first ? 1 : -1;
+        var step = end.Free.Span / Trims;
+        var swept = new List<RigState> { end.Settle(resting, 0, wind) };
+        for (var k = 1; k <= Trims; k++) swept.Add(end.Track(resting + toward * step * k, swept[^1].Boom, wind));
+        var best = swept.Where(end.Clear).DefaultIfEmpty(swept[0]).MaxBy(score)!;
+        var finer = Enumerable.Range(-Refinements, 2 * Refinements + 1).Select(k => best.Yard + step * k / (Refinements + 1))
+            .Where(yard => yard >= first && yard <= last).Select(yard => end.Track(yard, best.Boom, wind)).Where(end.Clear).Append(best).MaxBy(score)!;
+        return finer with { SheetNewtons = finer.SheetNewtons > 0 ? finer.SheetNewtons : 0 };
     }
 
-    private void Fill(Airflow air)
+    private (HullPoint At, HullPoint Force) Plate(RigState posed, Airflow air, double halfDensity)
     {
-        var normal = Form.Normal(Turn);
-        Depth = Math.Sign(normal.Along * air.Along + normal.Across * air.Across) * Pressure / (Pressure + clothNewtonsPerSquareMetre);
+        var normal = posed.Form.Normal;
+        var flow = Flow(normal, air);
+        return (posed.Centre(Set, 0), halfDensity * bluffDrag * flow * Math.Abs(flow) * SquareMetres * normal);
     }
 
-    private bool ToLeeward(double turn)
-    {
-        var offset = Form.Centre(Set, turn, 0) - Form.Origin;
-        return (offset - offset.Dot(Form.Axis) * Form.Axis).Across * rig.End.Leeward > 0;
-    }
+    private static double Flow(HullPoint normal, Airflow air) => normal.Along * air.Along + normal.Across * air.Across;
 
-    private double Best(Func<double, double> score) => rig.End.Turns().MaxBy(score);
-
-    private static (double Along, double Across) Plan(HullPoint normal)
+    private static double Flow(HullPoint normal, HullPoint plan)
     {
         var length = Math.Sqrt(normal.Along * normal.Along + normal.Across * normal.Across);
-        return length > 0 ? (normal.Along / length, normal.Across / length) : default;
+        return length > 0 ? (normal.Along * plan.Along + normal.Across * plan.Across) / length : 0;
+    }
+
+    private void Fill(Airflow air) =>
+        Depth = Math.Sign(Flow(State.Form.Normal, air)) * Pressure / (Pressure + clothNewtonsPerSquareMetre);
+
+    private double LeeOf(RigState posed)
+    {
+        var end = rig.End;
+        var offset = posed.Centre(Set, 0) - end.Tack;
+        return (offset - offset.Dot(end.Axis) * end.Axis).Across * end.Leeward;
     }
 
     public static double ClothNewtons(double kilogramsPerSquareMetre) => kilogramsPerSquareMetre * WaveTheory.Gravity;

@@ -116,6 +116,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Antaŭa sidloko",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Malantaŭa sidloko",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Haltilo de la drizo",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Piedingo de la velo",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Piedingo de la velo",
     "creature-roughseas:*-selectionbox-CargoAP": "Kargo",
     "creature-roughseas:*-selectionbox-HoldAP": "Kargejo",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Antaŭa kargejo",

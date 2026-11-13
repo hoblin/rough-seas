@@ -110,11 +110,12 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         var (pushAlong, pushAcross) = HullShape.ToHull(load.X, load.Z, entity.Pos.Yaw);
         wind.Log(entity, "the wind {0:F1} m/s toward {1:F0}°, {2:F1} m/s apparent {3:F0}° off her model's bow from {4}; {5}: {6:F0} N toward her model's bow, {7:F0} N to {8}, {9:F0} N·m; she makes {10:F2} m/s",
             Speed(blowing), Compass.TowardDegrees(blowing.X, blowing.Z), air.Speed, air.FromBow * GameMath.RAD2DEG, air.Leeward > 0 ? "port" : "starboard",
-            Sail is { Pressure: > 0 } sail ? $"sail {(sail.Aback ? "aback" : "drawing")} on tack {sail.Rig.Tacked}, turned {sail.Turn * GameMath.RAD2DEG:F0}°" : "bare",
+            Sail is { Pressure: > 0 } sail ? $"sail {(sail.Aback ? "aback" : "drawing")} on tack {sail.Rig.Tacked}" : "bare",
             -pushAlong, Math.Abs(pushAcross), pushAcross > 0 ? "starboard" : "port", load.NewtonMetres, Speed(velocity));
         if (Sail is { Pressure: > 0, Load: { } rig })
             wind.Log(entity, "her rig holds the sail: sheet {0:F0} N, halyard {1:F0} N, {2}", rig.SheetNewtons, rig.HalyardNewtons,
                 string.Join(", ", rig.Stays.Select(stay => $"{stay.Line} {stay.Newtons:F0} N")));
+        if (Sail is { SquareMetres: > 0 } set) wind.Log(entity, "her rig stands: {0}", set.Rig.End.Describe(set.State));
     }
 
     private static double Speed((double X, double Z) v) => Math.Sqrt(v.X * v.X + v.Z * v.Z);

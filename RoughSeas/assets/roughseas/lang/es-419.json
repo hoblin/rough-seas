@@ -118,6 +118,8 @@
     "creature-roughseas:*-selectionbox-FrontSeatAP": "Asiento delantero",
     "creature-roughseas:*-selectionbox-BackSeatAP": "Asiento trasero",
     "creature-roughseas:*-selectionbox-LowerMastAP": "Cornamusa de driza",
+    "creature-roughseas:*-selectionbox-BowStepAP": "Carlinga",
+    "creature-roughseas:*-selectionbox-SternStepAP": "Carlinga",
     "creature-roughseas:*-selectionbox-CargoAP": "Carga",
     "creature-roughseas:*-selectionbox-HoldAP": "Bodega",
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Bodega de proa",

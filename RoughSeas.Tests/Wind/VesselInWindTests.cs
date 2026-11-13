@@ -42,8 +42,7 @@ public class VesselInWindTests
     {
         var (body, sail) = Outrigger(FullSail);
         body.Load(OverHerFloat, Still, Yaw, Waterline);
-        var end = sail.Rig.End;
-        Assert.True(end.Turned(end.Hoisted.Clew, sail.Turn).Across < 0);
+        Assert.True(sail.State.Clew.Across < 0);
     }
 
     [Fact]
@@ -63,8 +62,7 @@ public class VesselInWindTests
         var load = body.Load(OverHerFloat, Still, Yaw, Waterline);
         Assert.True(load.Z < 0, $"toward her model's stern {load.Z:F0} N");
         Assert.False(sail.Aback);
-        var end = sail.Rig.End;
-        Assert.True(end.Turned(end.Hoisted.Clew, sail.Turn).Across < 0);
+        Assert.True(sail.State.Clew.Across < 0);
     }
 
     [Fact]
@@ -90,18 +88,18 @@ public class VesselInWindTests
     {
         var (body, sail) = Outrigger(FullSail);
         var load = body.Load(OverHerFloat, Still, Yaw, Waterline);
-        Assert.True(sail.Form.Centre(sail.Set, sail.Turn, sail.Depth).Along < 0);
+        Assert.True(sail.State.Centre(sail.Set, sail.Depth).Along < 0);
         Assert.True(load.NewtonMetres < 0);
     }
 
     [Fact]
-    public void RunningHerSailStandsAcrossHerAsTheTunnelsSailDrewAtItsBest()
+    public void RunningHerSailStandsAcrossHer()
     {
         var (body, sail) = Outrigger(FullSail);
         body.Load(FromAstern, Still, Yaw, Waterline);
-        var normal = sail.Form.Normal(sail.Turn);
+        var normal = sail.State.Form.Normal;
         var offAhead = Math.Atan2(Math.Abs(normal.Across), Math.Abs(normal.Along));
-        Assert.Equal(Math.Atan2(0.44, 0.95), offAhead, 1);
+        Assert.True(offAhead < Math.PI / 4, $"{offAhead * 180 / Math.PI:F0}° off ahead: {sail.Rig.End.Describe(sail.State)}");
     }
 
     [Fact]

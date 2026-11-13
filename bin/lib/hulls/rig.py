@@ -36,18 +36,8 @@ def across_of(a, axis):
     return unit(sub(a, scale(dot(a, axis), axis)))
 
 
-def mirrored(point):
-    x, y, z = point
-    return (2 * wind.ORIGIN[0] - x, y, z)
-
-
 @dataclass(frozen=True)
 class Rig:
-    """A crab claw as the shunting canoes set it, in voxels of her model: the yard's heel in a step at either end, the
-    yard hung by a halyard from the head of a mast stepped amidships and raked toward whichever end has the tack, the
-    boom lashed to the yard's heel, the sheet bent on the boom and led to a beam, running stays from the masthead to
-    both ends, a shroud and a shore out to the float. The tack at `pin` is the end she is built with; the other end is
-    the same pin mirrored across her middle."""
     pin: tuple
     heel: tuple
     mast: float
@@ -64,7 +54,8 @@ class Rig:
     shore_foot: tuple
 
     def tack(self, end):
-        return self.pin if end > 0 else mirrored(self.pin)
+        x, y, z = self.pin
+        return self.pin if end > 0 else (2 * self.heel[0] - x, y, z)
 
     def lead(self, end):
         return self.leads[0 if end > 0 else 1]
