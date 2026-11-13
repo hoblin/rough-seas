@@ -144,6 +144,13 @@ def reachable(elements):
         box["to"] = [box["to"][0], num(max(box["to"][1], max(other["to"][1] for other in under) + ABOVE)), box["to"][2]]
 
 
+def rest(elements):
+    hull = next(element for element in elements if element["name"] == "Hull")
+    stowage = next(element for element in elements if element["name"] == "OarStorage")
+    middle = [num((hull["from"][0] + hull["to"][0]) / 2 - stowage["from"][0]), 0, 0]
+    stowage["children"] = [{"name": "OarRest", "from": middle, "to": middle, "faces": {}}]
+
+
 def footprint(box):
     return (box["to"][0] - box["from"][0]) * (box["to"][2] - box["from"][2])
 
@@ -756,6 +763,7 @@ class Shape:
 
     def write(self):
         reachable(self.elements)
+        rest(self.elements)
         faults = check(self.fits, self.views, self.aparts)
         if faults:
             raise SystemExit(f"{self.path.name}: its boxes leave the round shapes they build, pass into each other or share a plane\n  "

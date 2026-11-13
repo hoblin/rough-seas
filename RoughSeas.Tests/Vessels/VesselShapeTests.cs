@@ -138,6 +138,22 @@ public class VesselShapeTests
         Assert.Empty(boxes.Where(box => box != hull && SharesASide(box, hull)).Select(box => box.Value<string>("name")));
     }
 
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void LaysAStowedToolCentredOnHerHull(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        var elements = Elements(shape["elements"]!).ToList();
+        var slot = entity["behaviorConfigs"]!["rideableaccessories"]!["wearableSlots"]!
+            .Single(candidate => candidate["forCategoryCodes"]!.Values<string>().Contains("oar"));
+        var rest = slot["stepParentTo"]![""]!.Value<string>("elementName");
+        var stowage = elements.Single(element => element["children"]?.Any(child => child.Value<string>("name") == rest) == true);
+        var hull = elements.Single(element => element.Value<string>("name") == "Hull");
+
+        Assert.Equal((hull["from"]!.Value<double>(0) + hull["to"]!.Value<double>(0)) / 2,
+            stowage["from"]!.Value<double>(0) + stowage["children"]!.Single(child => child.Value<string>("name") == rest)["from"]!.Value<double>(0), 0.01);
+    }
+
     private static bool SharesASide(JToken box, JToken hull) =>
         new[] { 0, 2 }.Any(axis => new[] { "from", "to" }.Any(end =>
             Math.Abs(box[end]!.Value<double>(axis) - hull[end]!.Value<double>(axis)) < 0.01));

@@ -77760,6 +77760,14 @@
    "faces": {},
    "attachmentpoints": [
     { "code": "OarAP", "posX": "0", "posY": "0", "posZ": "0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ],
+   "children": [
+    {
+     "name": "OarRest",
+     "from": [ 24, 0, 0 ],
+     "to": [ 24, 0, 0 ],
+     "faces": {}
+    }
    ]
   },
   {

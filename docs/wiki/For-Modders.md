@@ -32,6 +32,7 @@ Vanilla picks the selection box a look enters first, so a box inside the hull's 
 
 - On our vessels every box but `HullAP` now stands at least a voxel over the hull box, and where two overlap, the one of smaller footprint stands a voxel over the larger. Only their tops moved, so a seat, a container or a stowed tool sits where it did. `bin/model build` writes the heights (`shape.reachable`).
 - `OarStorage` reaches from where the tool lies out to just inside the hull box's side, so the strip where the tool lies is wide enough to aim at, and a look at her side still picks the hull.
+- A stowed paddle or pole lies centred on the vessel, whatever its length. The `Oar Storage` slot of each of ours, and of vanilla's raft by patch, step-parents to `OarRest`, a point under `OarStorage` at the middle of her hull, and our stowed shapes (`roughseas:item/paddle-stowed`, `pole-{2..5}-stowed`) are drawn about their own middle. An item whose attached shape names `OarStorage` as its `stepParentName`, as vanilla's crude oar does, still lies where it did. A stowed shape of yours for category `oar` lies centred too when it is drawn about its own middle and names no step parent.
 
 ### Hulls that crack, leak and flood
 
