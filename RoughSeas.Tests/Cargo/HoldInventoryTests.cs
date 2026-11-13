@@ -62,6 +62,36 @@ public class HoldInventoryTests
         Assert.Equal(3, loaded.Count);
     }
 
+    [Fact]
+    public void DropsASpareSlotOnceAWholeStackIsTakenFromIt()
+    {
+        var hold = Hold(2);
+        hold.Spare().Itemstack = Ingot();
+        var hand = new DummySlot();
+
+        var op = Click(EnumMouseButton.Left);
+        hold[2].ActivateSlot(hand, ref op);
+
+        Assert.Equal(2, hold.Count);
+        Assert.Equal("game:ingot-copper", hand.Itemstack?.Collectible.Code.ToString());
+    }
+
+    [Fact]
+    public void DropsASpareSlotOnceItsLastItemIsTakenByHalves()
+    {
+        var hold = Hold(2);
+        hold.Spare().Itemstack = new ItemStack(Ingot().Collectible);
+        var hand = new DummySlot();
+
+        var op = Click(EnumMouseButton.Right);
+        hold[2].ActivateSlot(hand, ref op);
+
+        Assert.Equal(2, hold.Count);
+        Assert.Equal(1, hand.StackSize);
+    }
+
+    private static ItemStackMoveOperation Click(EnumMouseButton button) => new(null, button, 0, EnumMergePriority.AutoMerge);
+
     private static HoldInventory Hold(int size) => new(size, "roughseashold0-1", null!);
 
     private static ItemStack Ingot() => new(new Item { Code = new AssetLocation("game:ingot-copper"), MaxStackSize = 16 });

@@ -9,8 +9,16 @@ namespace RoughSeas.Cargo;
 /// A hold's slots: as many as its config gives, and more while they hold what an old save stowed in it; each extra
 /// slot goes once it is empty.
 /// </summary>
-public sealed class HoldInventory(int size, string inventoryId, ICoreAPI api) : InventoryGeneric(size, inventoryId, api)
+public sealed class HoldInventory : InventoryGeneric
 {
+    private readonly int size;
+
+    public HoldInventory(int size, string inventoryId, ICoreAPI api) : base(size, inventoryId, api)
+    {
+        this.size = size;
+        SlotModified += _ => Settle();
+    }
+
     public override void FromTreeAttributes(ITreeAttribute treeAttribute)
     {
         Resize(Math.Max(size, treeAttribute?.GetInt("qslots") ?? 0));

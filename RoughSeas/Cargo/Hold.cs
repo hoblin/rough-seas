@@ -55,11 +55,7 @@ public sealed class Hold
         container.Init(entity.Api, () => entity.Pos.AsBlockPos, Store);
         Load();
         if (entity.Api.Side == EnumAppSide.Server)
-            Inventory.SlotModified += _ =>
-            {
-                Inventory.Settle();
-                Store();
-            };
+            Inventory.SlotModified += _ => Store();
         else
             entity.WatchedAttributes.RegisterModifiedListener(key, () =>
             {
