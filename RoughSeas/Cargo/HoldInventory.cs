@@ -7,7 +7,8 @@ namespace RoughSeas.Cargo;
 
 /// <summary>
 /// A hold's slots: as many as its config gives, and more while they hold what an old save stowed in it; each extra
-/// slot goes once it is empty.
+/// slot goes once it is empty and nobody has the hold open: an open dialog's slot grid keeps the count it opened
+/// with, and the server is still handing an emptied slot on while its move runs.
 /// </summary>
 public sealed class HoldInventory(int size, string inventoryId, ICoreAPI api) : InventoryGeneric(size, inventoryId, api)
 {
@@ -25,7 +26,7 @@ public sealed class HoldInventory(int size, string inventoryId, ICoreAPI api) : 
 
     public void Settle()
     {
-        if (slots.Length > size) slots = [.. slots[..size], .. slots[size..].Where(slot => !slot.Empty)];
+        if (slots.Length > size && openedByPlayerGUIds.Count == 0) slots = [.. slots[..size], .. slots[size..].Where(slot => !slot.Empty)];
     }
 
     private void Resize(int count)

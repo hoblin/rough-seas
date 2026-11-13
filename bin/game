@@ -195,6 +195,11 @@ ACT
                              beyond its reach) and what lies above (a plant takes the place)
   bin/game scroll [STEPS]    turn the mouse wheel STEPS notches (default 1) over the open dialogs,
                              down; negative scrolls up. A long handbook page shows its end this way
+  bin/game slotclick N [left|right] [shift]
+                             click slot N of the open dialog's slot grid (a hold, a chest), as a
+                             mouse click on it does: the client moves the stack to or from the
+                             cursor and sends the server the same packet. Replies with what the
+                             cursor holds after
   bin/game respawn           a dead player respawns, as the death screen's Respawn button does
   bin/game close             close open dialogs
   bin/game link HREF         follow a link as a click in the game's text does: handbook://PAGECODE
@@ -517,6 +522,7 @@ case "${1:-}" in
     ;;
   limbs) post "/limbs?on=$([ "${2:-on}" = off ] && echo 0 || echo 1)" ;;
   scroll) post "/scroll?steps=${2:-1}" ;;
+  slotclick) post "/slot-click?slot=${2:?Name the slot}&button=${3:-left}${4:+&shift=1}" ;;
   close) post /close-dialogs ;;
   respawn) post /respawn ;;
   link) post "/link?href=$(jq -rn --arg href "$2" '$href | @uri')" ;;

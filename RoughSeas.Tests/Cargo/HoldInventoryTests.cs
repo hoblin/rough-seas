@@ -62,6 +62,66 @@ public class HoldInventoryTests
         Assert.Equal(3, loaded.Count);
     }
 
+    [Fact]
+    public void KeepsASpareSlotThroughAWholeTakeFromItAndDropsItOnSettling()
+    {
+        var hold = Hold(2);
+        hold.Spare().Itemstack = Ingot();
+        var hand = new DummySlot();
+
+        var op = Click(EnumMouseButton.Left);
+        hold[2].ActivateSlot(hand, ref op);
+        Assert.Equal(3, hold.Count);
+        hold.Settle();
+
+        Assert.Equal(2, hold.Count);
+        Assert.Equal("game:ingot-copper", hand.Itemstack?.Collectible.Code.ToString());
+    }
+
+    [Fact]
+    public void KeepsASpareSlotThroughATakeOfItsLastItemByHalves()
+    {
+        var hold = Hold(2);
+        hold.Spare().Itemstack = new ItemStack(Ingot().Collectible);
+        var hand = new DummySlot();
+
+        var op = Click(EnumMouseButton.Right);
+        hold[2].ActivateSlot(hand, ref op);
+        hold.Settle();
+
+        Assert.Equal(2, hold.Count);
+        Assert.Equal(1, hand.StackSize);
+    }
+
+    [Fact]
+    public void LetsAWholeStackBeTakenFromASpareSlotWhileItsHoldIsOpen()
+    {
+        var hold = Hold(2);
+        hold.Spare().Itemstack = Ingot();
+        hold.openedByPlayerGUIds.Add("sailor");
+        hold.SlotModified += _ => hold.Settle();
+        var hand = new DummySlot();
+
+        var op = Click(EnumMouseButton.Left);
+        hold[2].ActivateSlot(hand, ref op);
+
+        Assert.Equal(3, hold.Count);
+        Assert.Equal("game:ingot-copper", hand.Itemstack?.Collectible.Code.ToString());
+    }
+
+    [Fact]
+    public void KeepsAnEmptySpareSlotWhileSomeoneHasTheHoldOpen()
+    {
+        var hold = Hold(2);
+        hold.Spare();
+        hold.openedByPlayerGUIds.Add("sailor");
+        hold.Settle();
+
+        Assert.Equal(3, hold.Count);
+    }
+
+    private static ItemStackMoveOperation Click(EnumMouseButton button) => new(null, button, 0, EnumMergePriority.AutoMerge);
+
     private static HoldInventory Hold(int size) => new(size, "roughseashold0-1", null!);
 
     private static ItemStack Ingot() => new(new Item { Code = new AssetLocation("game:ingot-copper"), MaxStackSize = 16 });
