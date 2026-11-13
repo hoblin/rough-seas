@@ -12,7 +12,4 @@ public sealed record RigPose(
         return new RigPose(At("tack"), At("masthead"), At("heel"), At("halyardBend"), At("peak"), At("clew"), At("bridle"),
             At("lead"), At("sternPin"), At("shroudFoot"), At("shoreTop"), At("shoreFoot"));
     }
-
-    public (HullPoint From, HullPoint To)[] Standing =>
-        [(Heel, Masthead), (Masthead, SternPin), (Masthead, ShroudFoot), (ShoreFoot, ShoreTop)];
 }

@@ -50,6 +50,9 @@ public static class Fixtures
     public static VesselInWind InWind(string vessel) =>
         VesselInWind.From(new JsonObject(Entity(vessel)["behaviorConfigs"]![EntityBehaviorWindage.Code]!), Wind, code => new SailPolar(Wind.Sails[code]));
 
+    public static VesselInWind SailboatInWind() =>
+        VesselInWind.From(new JsonObject(BehaviorConfig("wind-vessels.json", "boat-sailed", EntityBehaviorWindage.Code)), Wind, code => new SailPolar(Wind.Sails[code]));
+
     public static VesselMass Mass => mass.Value;
 
     public static PersonConfig PersonConfig => personConfig.Value;

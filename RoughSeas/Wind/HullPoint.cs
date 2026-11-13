@@ -7,7 +7,7 @@ public readonly record struct HullPoint(double Along, double Height, double Acro
 {
     public static HullPoint Of(double[] metres) => new(metres[0], metres[1], metres[2]);
 
-    public static HullPoint Of(JsonObject point) => Of(point.AsArray<double>());
+    public static HullPoint Of(JsonObject point) => Of(point.AsArray<double>() ?? throw new InvalidOperationException($"no point in {point}"));
 
     public static HullPoint operator +(HullPoint a, HullPoint b) => new(a.Along + b.Along, a.Height + b.Height, a.Across + b.Across);
 

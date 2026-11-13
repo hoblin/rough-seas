@@ -186,5 +186,6 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         }
     }
 
-    private TextureAtlasPosition Atlas(string texture) => capi.Tesselator.GetTextureSource(entity)[texture];
+    private TextureAtlasPosition Atlas(string texture) =>
+        capi.Tesselator.GetTextureSource(entity)[texture] ?? throw new InvalidOperationException($"{entity.Code} has no texture {texture} for her rig");
 }

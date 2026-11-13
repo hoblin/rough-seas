@@ -23,7 +23,7 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, Sail? sai
 
     private static Sail? SailOf(JsonObject sail, Rig? rig, WindConfig config, Func<string, SailPolar> polar) =>
         sail.Exists && rig != null
-            ? new Sail(polar(sail["polar"].AsString()), rig, sail["sailSquareMetres"].AsDouble(), sail["halfSquareMetres"].AsDouble(),
+            ? new Sail(polar(sail["polar"].AsString() ?? throw new InvalidOperationException("a sail names no polar")), rig, sail["sailSquareMetres"].AsDouble(), sail["halfSquareMetres"].AsDouble(),
                 (sail["halfReach"].AsDouble(1), sail["halfSpan"].AsDouble(1)), config.BluffDrag, Sail.ClothNewtons(config.ClothKgPerSquareMetre))
             : null;
 

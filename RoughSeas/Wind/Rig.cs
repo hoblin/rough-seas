@@ -14,7 +14,7 @@ public sealed class Rig(Rigging[] ends)
         return rig["kind"].AsString() switch
         {
             SquareRig.Kind => new Rig([SquareRig.Of(rig, camber, clothKilograms, widths)]),
-            _ => new Rig(rig["ends"].AsArray().Select((end, n) => (Rigging)new CrabClaw(RigPose.Of(end["hoisted"]), RigPose.Of(end["lowered"]), n == 0 ? -1 : 1,
+            _ => new Rig((rig["ends"].AsArray() ?? []).Select((end, n) => (Rigging)new CrabClaw(RigPose.Of(end["hoisted"]), RigPose.Of(end["lowered"]), n == 0 ? -1 : 1,
                 camber, (rig["yardKilograms"].AsDouble(), rig["boomKilograms"].AsDouble(), clothKilograms), widths)).ToArray())
         };
     }
