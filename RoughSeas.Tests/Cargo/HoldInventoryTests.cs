@@ -94,6 +94,22 @@ public class HoldInventoryTests
     }
 
     [Fact]
+    public void LetsAWholeStackBeTakenFromASpareSlotWhileItsHoldIsOpen()
+    {
+        var hold = Hold(2);
+        hold.Spare().Itemstack = Ingot();
+        hold.openedByPlayerGUIds.Add("sailor");
+        hold.SlotModified += _ => hold.Settle();
+        var hand = new DummySlot();
+
+        var op = Click(EnumMouseButton.Left);
+        hold[2].ActivateSlot(hand, ref op);
+
+        Assert.Equal(3, hold.Count);
+        Assert.Equal("game:ingot-copper", hand.Itemstack?.Collectible.Code.ToString());
+    }
+
+    [Fact]
     public void KeepsAnEmptySpareSlotWhileSomeoneHasTheHoldOpen()
     {
         var hold = Hold(2);
