@@ -95,7 +95,7 @@
     "shipyard-turn-over": "Turn it over",
     "shipyard-overturned": "Upside down: turn it over before it goes afloat",
     "shipyard-stage-lattice": "Lattice: {0} of {1} laths",
-    "shipyard-stage-binding":"Crossings bound: {0} of {1} ropes",
+    "shipyard-stage-binding": "Crossings bound: {0} of {1} ropes",
     "shipyard-stage-gunwale": "Gunwale: {0} of {1} laths",
     "shipyard-stage-cover": "Hide cover: {0} of {1} parts",
     "shipyard-stage-lacing": "Cover laced: {0} of {1} ropes",

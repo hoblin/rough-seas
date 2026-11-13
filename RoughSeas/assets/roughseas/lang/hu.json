@@ -95,7 +95,7 @@
     "shipyard-turn-over": "Megfordítás",
     "shipyard-overturned": "Fejjel lefelé áll: fordítsd meg, mielőtt vízre teszed",
     "shipyard-stage-lattice": "Rácsozat: {0} / {1} léc",
-    "shipyard-stage-binding":"Összekötött kereszteződések: {0} / {1} kötél",
+    "shipyard-stage-binding": "Összekötött kereszteződések: {0} / {1} kötél",
     "shipyard-stage-gunwale": "Perem: {0} / {1} léc",
     "shipyard-stage-cover": "Bőrborítás: {0} / {1} rész",
     "shipyard-stage-lacing": "Felfűzött borítás: {0} / {1} kötél",

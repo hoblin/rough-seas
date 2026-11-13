@@ -95,7 +95,7 @@
     "shipyard-turn-over": "ひっくり返す",
     "shipyard-overturned": "逆さまです：水に浮かべる前にひっくり返してください",
     "shipyard-stage-lattice": "格子組み：割り板 {0} / {1}",
-    "shipyard-stage-binding":"交差部の縛り：ロープ {0} / {1}",
+    "shipyard-stage-binding": "交差部の縛り：ロープ {0} / {1}",
     "shipyard-stage-gunwale": "舷縁：割り板 {0} / {1}",
     "shipyard-stage-cover": "皮の覆い：{0} / {1} 区画",
     "shipyard-stage-lacing": "覆いの綴じ付け：ロープ {0} / {1}",

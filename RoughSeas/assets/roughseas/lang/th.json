@@ -94,7 +94,7 @@
     "shipyard-turn-over": "พลิกเรือหงาย",
     "shipyard-overturned": "เรือคว่ำอยู่: พลิกหงายก่อนนำลงน้ำ",
     "shipyard-stage-lattice": "โครงตาข่าย: ไม้ระแนง {0} จาก {1}",
-    "shipyard-stage-binding":"มัดจุดไขว้: เชือก {0} จาก {1}",
+    "shipyard-stage-binding": "มัดจุดไขว้: เชือก {0} จาก {1}",
     "shipyard-stage-gunwale": "ขอบเรือ: ไม้ระแนง {0} จาก {1}",
     "shipyard-stage-cover": "ผ้าหนังคลุม: {0} จาก {1} ส่วน",
     "shipyard-stage-lacing": "ร้อยผ้าหนังคลุม: เชือก {0} จาก {1}",
