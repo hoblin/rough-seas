@@ -26,6 +26,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     private readonly RigTextures textures;
     private readonly Dictionary<string, Layer> meshes = new();
     private readonly Dictionary<string, Layer> blended = new();
+    private readonly Dictionary<string, TextureAtlasPosition> atlases = new();
     private Dictionary<string, Layer> target;
     private int drawnTack = -1;
     private (Rigging End, (double Yard, double Boom, double Fill) Trim)? shunted;
@@ -64,7 +65,6 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     {
         if (!entity.IsRendered || entity.Properties.Client.Renderer is not EntityShapeRenderer hull || !windage.Rigged) return;
 
-        windage.Hoist();
         var now = capi.InWorldEllapsedMilliseconds;
         var rig = Sail.Rig;
         if (drawnTack >= 0 && rig.Tacked != drawnTack)
@@ -187,6 +187,10 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         }
     }
 
-    private TextureAtlasPosition Atlas(string texture) =>
-        capi.Tesselator.GetTextureSource(entity)[texture] ?? throw new InvalidOperationException($"{entity.Code} has no texture {texture} for her rig");
+    private TextureAtlasPosition Atlas(string texture)
+    {
+        if (atlases.TryGetValue(texture, out var found)) return found;
+        return atlases[texture] = capi.Tesselator.GetTextureSource(entity)[texture]
+            ?? throw new InvalidOperationException($"{entity.Code} has no texture {texture} for her rig");
+    }
 }

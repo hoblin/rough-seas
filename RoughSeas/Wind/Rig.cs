@@ -1,4 +1,4 @@
-using System.Linq;
+using System;
 using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Wind;
@@ -14,16 +14,20 @@ public sealed class Rig(Rigging[] ends)
         return rig["kind"].AsString() switch
         {
             SquareRig.Kind => new Rig([SquareRig.Of(rig, camber, clothKilograms, widths)]),
-            _ => new Rig((rig["ends"].AsArray() ?? []).Select((end, n) => (Rigging)new CrabClaw(RigPose.Of(end["hoisted"]), RigPose.Of(end["lowered"]), n == 0 ? -1 : 1,
-                camber, (rig["yardKilograms"].AsDouble(), rig["boomKilograms"].AsDouble(), clothKilograms), widths)).ToArray())
+            CrabClaw.Kind => new Rig(CrabClaw.Of(rig, camber, clothKilograms, widths)),
+            var kind => throw new InvalidOperationException($"no rig of kind '{kind}'")
         };
     }
 
-    public int Tacked { get; set; }
+    public int Tacked
+    {
+        get => tacked;
+        set => tacked = Math.Clamp(value, 0, ends.Length - 1);
+    }
+
+    private int tacked;
 
     public Rigging End => ends[Tacked];
 
-    public Rigging EndAt(int tacked) => ends[tacked];
-
-    public int Ends => ends.Length;
+    public Rigging EndAt(int end) => ends[end];
 }

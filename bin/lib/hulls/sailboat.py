@@ -1,3 +1,4 @@
+import math
 import os
 import re
 import sys
@@ -10,7 +11,7 @@ import wind
 from entity import merged, record, write
 from fit import corners, posed
 from jsontext import load
-from physics import ASSETS, afloat
+from physics import ASSETS, afloat, kilograms
 from shape import bounds, hull_of
 from transform import depth
 
@@ -118,7 +119,9 @@ def square(elements):
         "forestayHead": named["RopeKnot"], "forestayFoot": named["HalyardForeKnot2"],
         "backstayHead": max(backstay, key=lambda point: point[1]), "backstayFoot": named["Cube7"],
     }
-    rig = {"kind": "square", **{k: v for name, at in found.items() for k, v in wind.corner(name, at).items()},
+    yard_litres = units.litres(units.metres(sum(math.prod(t - f for f, t in zip(e["from"], e["to"])) for e, _ in posed(elements) if SPAR.match(e["name"])), 3))
+    rig = {"kind": "square", "yardKilograms": round(kilograms("wood-oak", yard_litres), 2),
+           **{k: v for name, at in found.items() for k, v in wind.corner(name, at).items()},
            **units.both("spar", units.metres(thinnest(elements, SPAR)), 1), **units.both("pole", units.metres(thinnest(elements, MAST_POLE)), 1),
            **units.both("shore", 0, 1), **units.both("line", units.metres(thinnest(elements, SHEET)), 1),
            **units.both("roll", units.metres(thinnest(elements, BUNT)), 1)}

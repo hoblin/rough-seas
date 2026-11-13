@@ -23,11 +23,13 @@ public sealed class SquareRig : Rigging
     private readonly (HullPoint Port, HullPoint Starboard) leads;
     private readonly (HullPoint From, HullPoint To)[] stays;
     private readonly SailForm rest;
+    private readonly (double Yard, double Cloth) kilograms;
+    private static readonly HullPoint Gravity = RoughSeas.Water.WaveTheory.Gravity * new HullPoint(0, -1, 0);
 
-    private SquareRig(JsonObject rig, double camber, RigWidths widths)
+    private SquareRig(JsonObject rig, double camber, (double Yard, double Cloth) kilograms, RigWidths widths)
     {
         HullPoint At(string name) => HullPoint.Of(rig[name + "Metres"]);
-        (heel, masthead, Widths) = (At("mastHeel"), At("masthead"), widths);
+        (heel, masthead, Widths, this.kilograms) = (At("mastHeel"), At("masthead"), widths, kilograms);
         axis = (masthead - heel).Unit;
         arms = (At("yardPort"), At("yardStarboard"));
         heads = (At("headPort"), At("headStarboard"));
@@ -42,7 +44,15 @@ public sealed class SquareRig : Rigging
         Free = (from, to - from);
     }
 
-    public static SquareRig Of(JsonObject rig, double camber, double clothKilograms, RigWidths widths) => new(rig, camber, widths);
+    public static SquareRig Of(JsonObject rig, double camber, double clothKilograms, RigWidths widths) =>
+        new(rig, camber, (rig["yardKilograms"].AsDouble(), clothKilograms), widths);
+
+    public override bool Aback(RigState state, Airflow air)
+    {
+        var normal = state.Form.Normal;
+        var forward = Math.Sign(normal.Along) == Ahead ? normal : -1 * normal;
+        return forward.Along * air.Along + forward.Across * air.Across < 0;
+    }
 
     public override int Ahead => -1;
 
@@ -100,8 +110,10 @@ public sealed class SquareRig : Rigging
         var (clew, lead) = Sheeted(square, force);
         var sheet = (lead - clew).Unit;
         var sheeted = square.SheetNewtons > 0 ? square.SheetNewtons : 0;
-        var held = -1 * (force + sheeted * sheet);
-        var turning = (at - heel).Cross(force) + (clew - heel).Cross(sheeted * sheet);
+        var (yard, cloth) = (kilograms.Yard * Gravity, kilograms.Cloth * Gravity);
+        var yardMiddle = 0.5 * (square.ArmPort + square.ArmStarboard);
+        var held = -1 * (force + yard + cloth + sheeted * sheet);
+        var turning = (at - heel).Cross(force + cloth) + (yardMiddle - heel).Cross(yard) + (clew - heel).Cross(sheeted * sheet);
         return new RigLoad([new(heel, -1 * held, turning), new(lead, -sheeted * sheet)], sheeted, 0, [("mast bending", held.Length)]);
     }
 

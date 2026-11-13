@@ -29,13 +29,10 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, Sail? sai
 
     protected override IEnumerable<WindSurface> Surfaces(Func<WindSurface, Airflow> air)
     {
-        if (sail != null && sail.Draws(air(sail)))
-        {
-            yield return sail;
-            yield break;
-        }
-
-        sail?.Slack(air(sail));
         yield return bare;
+        if (sail == null) yield break;
+
+        if (sail.Draws(air(sail))) yield return sail;
+        else sail.Slack(air(sail));
     }
 }

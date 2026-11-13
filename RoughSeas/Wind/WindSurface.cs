@@ -70,9 +70,15 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
 
     public void Slack(Airflow air)
     {
-        (Pressure, Depth, Aback, trimmed) = (0, 0, false, null);
+        (Pressure, Depth, Aback) = (0, 0, false);
+        if (SquareMetres <= 0) return;
+
+        var luffing = (Math.Atan2(air.Across, air.Along), 0.0, Set, rig.Tacked);
+        if (!Retrim(luffing)) return;
+
         var still = (Func<RigState, (HullPoint, HullPoint)>)(posed => (posed.Centre(Set, 0), default));
         state = Settled(still, posed => -Math.Abs(Flow(posed.Form.Normal, air)));
+        trimmed = luffing;
     }
 
     public RigLoad? Load { get; private set; }
@@ -100,6 +106,8 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
                 posed => LeeOf(posed) > 0 ? Math.Sign(Flow(posed.Form.Normal, air)) * Flow(posed.Form.Normal, plan) : LeeOf(posed) - 1);
             trimmed = trim;
         }
+        if (end.Aback(State, air)) return TakenAback(air, halfDensity);
+
         Pressure = dynamic * Math.Sqrt(drive * drive + side * side);
         Fill(air);
         return (State.Centre(Set, Depth), force);

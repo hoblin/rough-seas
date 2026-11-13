@@ -31,7 +31,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | Carried | too heavy to pick up |
 | Seats | two: the front one steers, under sail whatever is in hand, and with the sail lowered paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
 | Cargo | a [hold](Vessels#holds) of 8 slots behind the passenger; the mast stands where the dugout's middle hold lies |
-| Built from | a finished [dugout](Dugout), 3 logs for its float, 7 poles (5 of 3 m, 2 of 4 m), 11 ropes and 3 linen cloths; washstrakes, when it takes them, 12 planks and 5 ropes |
+| Built from | a finished [dugout](Dugout), 3 logs for its float, 7 poles (4 of 3 m, 1 of 2 m, 2 of 4 m), 11 ropes and 3 linen cloths; washstrakes, when it takes them, 12 planks and 5 ropes |
 | Wreckage | firewood, a rope, some linen, and planks once it has washstrakes |
 
 ## Sailing it
@@ -50,7 +50,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
 
 ![The whole build, from the logs to the washstrakes](images/outrigger-canoe/build-outrigger-canoe.webp)
 
-1. **Split the poles.** Lay three logs of one wood on their sides, end to end, anywhere, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on each wedge in turn until it is driven home. Once the last is home, the trunk splits into 64 poles of 3 m. The outrigger takes five, and two of 4 m for its sail's spars: split a row of four logs for those. A longer pole serves too, cut down. Any wood will do, a modded tree's too.
+1. **Split the poles.** Lay three logs of one wood on their sides, end to end, anywhere, set a [splitting wedge](Recipes#splitting-wedge) on each, and hold an axe on each wedge in turn until it is driven home. Once the last is home, the trunk splits into 64 poles of 3 m. The outrigger takes four, one of 2 m for the mast's shore, and two of 4 m for its sail's spars: split rows of two and of four logs for those. A longer pole serves too, cut down. Any wood will do, a modded tree's too.
 
    ![Three logs with a wedge on each](images/outrigger-canoe/build-poles.webp)
 

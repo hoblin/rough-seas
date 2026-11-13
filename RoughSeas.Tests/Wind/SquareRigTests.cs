@@ -50,12 +50,38 @@ public class SquareRigTests
     }
 
     [Fact]
-    public void ReachingSheBracesHerYardRoundAsFarAsHerStaysLetHer()
+    public void ReachingSheBracesHerYardRoundClearOfHerStays()
     {
         var (body, sail) = Sailboat();
         body.Load(FromOffHerBow(100), Still, Yaw, Waterline);
         Assert.True(OffHerBeam(sail) > 0.1, sail.Rig.End.Describe(sail.State));
         Assert.True(sail.Rig.End.Clear(sail.State));
+    }
+
+    [Fact]
+    public void CloseHauledBeyondWhereHerStaysLetHerBraceHerSailIsTakenAback()
+    {
+        var (body, sail) = Sailboat();
+        body.Load(FromOffHerBow(30), Still, Yaw, Waterline);
+        Assert.True(sail.Aback, sail.Rig.End.Describe(sail.State));
+    }
+
+    [Fact]
+    public void WhatHerRigHandsHerHullAddsUpToTheSailsForceAndItsWeight()
+    {
+        var (body, sail) = Sailboat();
+        body.Load(FromOffHerBow(120), Still, Yaw, Waterline);
+        var (end, state) = (sail.Rig.End, sail.State);
+        var (at, force) = (state.Centre(sail.Set, sail.Depth), new HullPoint(-400, 0, 150));
+        var weight = new HullPoint(0, -RoughSeas.Water.WaveTheory.Gravity, 0);
+        var square = (SquareState)state;
+        var (yard, cloth) = ((double)Fixtures.SailboatWindage["rig"]!["yardKilograms"]! * weight, sail.SquareMetres * Fixtures.Wind.ClothKgPerSquareMetre * weight);
+        var load = end.Loads(state, at, force);
+
+        var total = load.Points.Aggregate(default(HullPoint), (sum, push) => sum + push.Force);
+        var moment = load.Points.Aggregate(default(HullPoint), (sum, push) => sum + push.At.Cross(push.Force) + push.Couple);
+        Assert.Equal(0, (total - (force + yard + cloth)).Length, 6);
+        Assert.Equal(0, (moment - (at.Cross(force + cloth) + (0.5 * (square.ArmPort + square.ArmStarboard)).Cross(yard))).Length, 6);
     }
 
     [Fact]

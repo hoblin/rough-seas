@@ -53,6 +53,8 @@ public abstract class Rigging
 
     public abstract int Leeward(Airflow air);
 
+    public virtual bool Aback(RigState state, Airflow air) => false;
+
     public abstract double LeeOf(RigState state, (double Reach, double Span) set);
 
     public abstract RigState Pose(double yard, double boom);

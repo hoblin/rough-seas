@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RoughSeas.Water;
+using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Wind;
 
@@ -14,6 +15,8 @@ public sealed record ClawState(double Yard, double Boom, HullPoint Peak, HullPoi
 /// </summary>
 public sealed class CrabClaw : Rigging
 {
+    public const string Kind = "crabclaw";
+
     private const int Samples = 64;
     private const int Swings = 16;
     private const int Halvings = 10;
@@ -41,6 +44,10 @@ public sealed class CrabClaw : Rigging
         Free = (from, span);
         Resting = Pose(from, 0).Centre(SailForm.Whole, 0).Height <= Pose(from + span, 0).Centre(SailForm.Whole, 0).Height ? from : from + span;
     }
+
+    public static Rigging[] Of(JsonObject rig, double camber, double clothKilograms, RigWidths widths) =>
+        (rig["ends"].AsArray() ?? []).Select((end, n) => (Rigging)new CrabClaw(RigPose.Of(end["hoisted"]), RigPose.Of(end["lowered"]), n == 0 ? -1 : 1,
+            camber, (rig["yardKilograms"].AsDouble(), rig["boomKilograms"].AsDouble(), clothKilograms), widths)).ToArray();
 
     public int Lee { get; }
 
@@ -152,7 +159,7 @@ public sealed class CrabClaw : Rigging
         var claw = (ClawState)state;
         var (tack, pose) = (Hoisted.Tack, Hoisted);
         var sheet = (pose.Lead - claw.Bridle).Unit;
-        var sheeted = claw.SheetNewtons;
+        var sheeted = claw.SheetNewtons > 0 ? claw.SheetNewtons : 0;
         var weights = new (HullPoint At, HullPoint Force)[]
         {
             (tack + 0.5 * (claw.Peak - tack), kilograms.Yard * Gravity),

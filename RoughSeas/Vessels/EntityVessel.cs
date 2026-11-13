@@ -12,6 +12,7 @@ namespace RoughSeas.Vessels;
 /// paddling, no turning. Under sail her helm turns her whatever her rider holds.
 /// </summary>
 [ReliesOn("EntityBehaviorInterpolatePosition", "OnReceivedServerPos", "starts from an empty snapshot at 0,0,0 until the first server position")]
+[ReliesOn("Vintagestory.GameContent.EntityBoat", "SeatsToMotion", "skips a rider HasPaddle refuses before it adds the sail's thrust and the keys' turn")]
 public class EntityVessel : EntityBoat, ISeatInstSupplier
 {
     public const string ClassName = "roughseas:EntityVessel";

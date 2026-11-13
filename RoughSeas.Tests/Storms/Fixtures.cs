@@ -47,11 +47,13 @@ public static class Fixtures
 
     public static WindConfig Wind => wind.Value;
 
-    public static VesselInWind InWind(string vessel) =>
-        VesselInWind.From(new JsonObject(Entity(vessel)["behaviorConfigs"]![EntityBehaviorWindage.Code]!), Wind, code => new SailPolar(Wind.Sails[code]));
+    public static JToken WindageOf(string vessel) => Entity(vessel)["behaviorConfigs"]![EntityBehaviorWindage.Code]!;
 
-    public static VesselInWind SailboatInWind() =>
-        VesselInWind.From(new JsonObject(BehaviorConfig("wind-vessels.json", "boat-sailed", EntityBehaviorWindage.Code)), Wind, code => new SailPolar(Wind.Sails[code]));
+    public static JToken SailboatWindage => BehaviorConfig("wind-vessels.json", "boat-sailed", EntityBehaviorWindage.Code);
+
+    public static VesselInWind InWind(string vessel) => VesselInWind.From(new JsonObject(WindageOf(vessel)), Wind, code => new SailPolar(Wind.Sails[code]));
+
+    public static VesselInWind SailboatInWind() => VesselInWind.From(new JsonObject(SailboatWindage), Wind, code => new SailPolar(Wind.Sails[code]));
 
     public static VesselMass Mass => mass.Value;
 

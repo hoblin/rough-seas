@@ -42,7 +42,7 @@ public sealed class SailPolar
         {
             var radians = degrees * GameMath.DEG2RAD;
             var (sin, cos) = (Math.Sin(radians), Math.Cos(radians));
-            var best = trims.MaxBy(trim => trim.Lift * sin - trim.Drag * cos);
+            var best = trims.OrderByDescending(trim => trim.Lift * sin - trim.Drag * cos).ThenBy(trim => Math.Abs(trim.Lift * cos + trim.Drag * sin)).First();
             var drive = best.Lift * sin - best.Drag * cos;
             if (drive > 0) yield return (radians, drive, best.Lift * cos + best.Drag * sin);
         }

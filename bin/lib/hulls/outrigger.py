@@ -271,7 +271,7 @@ def spar_kilograms(length):
 
 def canvas():
     claw = crab_claw()
-    rigged = {**claw.config(), "yardKilograms": spar_kilograms(claw.yard), "boomKilograms": spar_kilograms(claw.boom),
+    rigged = {"kind": "crabclaw", **claw.config(), "yardKilograms": spar_kilograms(claw.yard), "boomKilograms": spar_kilograms(claw.boom),
               **units.both("spar", units.metres(SPAR), 1), **units.both("pole", units.metres(POLE), 1),
               **units.both("shore", units.metres(SHORE), 1), **units.both("line", units.metres(LINE), 1),
               **units.both("roll", units.metres(ROLL), 1)}

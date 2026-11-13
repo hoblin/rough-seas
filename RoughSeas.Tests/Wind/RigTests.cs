@@ -50,7 +50,9 @@ public class RigTests
         var (at, force) = (state.Centre(sail.Set, sail.Depth), new HullPoint(120, 0, -310));
         var load = end.Loads(state, at, force);
         var weight = new HullPoint(0, -WaveTheory.Gravity, 0);
-        var (yard, boom, cloth) = (14.12 * weight, 13.44 * weight, sail.SquareMetres * Fixtures.Wind.ClothKgPerSquareMetre * weight);
+        var rig = Fixtures.WindageOf("outrigger")["rig"]!;
+        var (yard, boom, cloth) = ((double)rig["yardKilograms"]! * weight, (double)rig["boomKilograms"]! * weight,
+            sail.SquareMetres * Fixtures.Wind.ClothKgPerSquareMetre * weight);
         var expected = force + yard + boom + cloth;
         var turning = at.Cross(force) + (0.5 * (state.Peak + end.Origin)).Cross(yard) + (0.5 * (state.Clew + end.Origin)).Cross(boom) + at.Cross(cloth);
 

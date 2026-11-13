@@ -83,7 +83,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
 
     public HullDrag? Drag => water?.Drag;
 
-    /// <summary>The water's drag on her now beyond what her own way meets, which her rower or sail pays, newtons in world axes.</summary>
+    /// <summary>The water's drag on her now beyond what her own way meets, which her rower pays, newtons in world axes.</summary>
     public (double X, double Z) Pull() =>
         water is { Drag: { } drag } w ? set.Pull(drag, w.On, entity.Pos.Yaw) : default;
 

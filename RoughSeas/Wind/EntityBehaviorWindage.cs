@@ -26,6 +26,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     private string[] drawnGroups = [];
     private string[] steps = [];
     private RigTextures? textures;
+    private bool blown;
     private long loggedAt;
 
     public Sail? Sail => body.Sail;
@@ -72,7 +73,8 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         if (drawn == null || hull == null) return;
 
-        Wind(hull.Velocity);
+        if (!blown) Wind(hull.Velocity);
+        blown = false;
         drawn.Trimmed();
     }
 
@@ -86,13 +88,14 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         if (Sail == null) return;
 
-        Sail.Rig.Tacked = Math.Clamp(entity.WatchedAttributes.GetInt(TackedKey), 0, Sail.Rig.Ends - 1);
+        Sail.Rig.Tacked = entity.WatchedAttributes.GetInt(TackedKey);
         Sail.Hoist(entity.WatchedAttributes.GetInt(SailKey));
     }
 
     public WindLoad Wind((double X, double Z) velocity)
     {
         Hoist();
+        blown = true;
         if (hull == null || !entity.Swimming) return default;
 
         var blowing = sea.Map.Wind(entity.Pos.X, entity.Pos.Z);
