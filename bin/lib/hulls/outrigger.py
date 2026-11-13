@@ -5,6 +5,7 @@ from pathlib import Path
 from dugout import CENTRE, HEWN, PROFILE, RIM, RINGS, ROW, STATIONS, WALL, WOOD, aft_hold, crew_tools, deck, hold_water, log, volumes, walls
 import cargo
 import wind
+from rig import Rig
 from physics import LASHING_JOULES_PER_METRE, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
@@ -26,17 +27,21 @@ BOOMS = (9.5, -10, 24)
 BOOM = 1.4
 POLE = 1.4
 SPAR = 1.2
-MAST = (12, 8)
-MASTHEAD = 49
-SPAR_METRES = 3
-TACK = (-14, 11.5)
-YARD_RISE = 55
-BOOM_RISE = 3.6
-REACH = 20
+SHORE = 1.2
+STEP = 1.4
+MAST_METRES = 3
+YARD_TO_MAST = 1.24
+BOOM_TO_MAST = 1.18
+OPENING_DEGREES = 25
+RAKE_DEGREES = 26
+HALYARD_BEND = 0.69
+HALYARD_TO_MAST = 0.21
+BRIDLE = 0.75
+SHORE_UP = 1 / 3
+SHORE_OUT = 0.9
+STEM_PIN = (-26, RIM + 1, 8)
+HALF_SPAN = 0.5
 CLOTH_SQUARE_METRES = 1
-REEF = 1 / math.sqrt(2)
-TRIM_FRAMES = 180
-TRIMMED = ("Yard", "Boom", "SailFurled")
 
 LASHING_TURNS = 13
 STRAP = (0.4, 0.9)
@@ -58,15 +63,6 @@ STRAKE_THICKNESS = 0.4
 PLANK = 16
 STITCH_PITCH = units.voxels(0.076)
 STITCH_TURN_METRES = 2 * (0.06 + 0.05 + 0.02 + 0.02)
-
-
-def spar_end(rise):
-    length = units.voxels(SPAR_METRES)
-    return (TACK[0] + length * math.cos(math.radians(rise)), TACK[1] + length * math.sin(math.radians(rise)))
-
-
-YARD_END = spar_end(YARD_RISE)
-SPAR_END = spar_end(BOOM_RISE)
 
 
 def worked(n):
@@ -243,55 +239,49 @@ def float_forms():
     return group("FloatLashing", (0, 0, 0), (0, 0, 0), children)
 
 
-def rig(name, children):
-    x, y = TACK
-    return box(name, (0, 0, 0), (0, 0, 0), {}, origin=(x, y, 8), rot=(0, REACH, 0), children=children)
+def on_boom(x, z):
+    return (x, boom_height(z) + BOOM / 2, z)
 
 
-def reached(point):
-    x, _ = TACK
-    angle = math.radians(REACH)
-    dx, dz = point[0] - x, point[2] - 8
-    return (x + dx * math.cos(angle) + dz * math.sin(angle), point[1], 8 - dx * math.sin(angle) + dz * math.cos(angle))
-
-
-def trimmed():
-    swung = lambda degrees: {"offsetX": 0, "offsetY": 0, "offsetZ": 0, "rotationX": 0, "rotationY": -degrees - REACH, "rotationZ": 0}
-    return {"name": "roughseas-outrigger-trim", "code": "roughseas-outrigger-trim", "quantityframes": TRIM_FRAMES + 1,
-            "onActivityStopped": "EaseOut", "onAnimationEnd": "Hold", "keyframes": [
-                {"frame": 0, "elements": {name: swung(-TRIM_FRAMES / 2) for name in TRIMMED}},
-                {"frame": TRIM_FRAMES, "elements": {name: swung(TRIM_FRAMES / 2) for name in TRIMMED}}]}
+def crab_claw():
+    mast = units.voxels(MAST_METRES)
+    weather = CENTRE + GUNWALE - WALL - STEP
+    lee = CENTRE - GUNWALE + WALL
+    step = on_boom(BOOMS[0], weather)
+    return Rig(pin=STEM_PIN, heel=(step[0], step[1] + STEP, step[2]), mast=mast, rake_degrees=RAKE_DEGREES,
+               yard=YARD_TO_MAST * mast, boom=BOOM_TO_MAST * mast, opening_degrees=OPENING_DEGREES, bend=HALYARD_BEND,
+               halyard=HALYARD_TO_MAST, bridle=BRIDLE, leads=(on_boom(BOOMS[2], lee), on_boom(BOOMS[1], lee)),
+               shroud_foot=on_boom(BOOMS[0], FLOAT_Z), shore_up=SHORE_UP,
+               shore_foot=on_boom(BOOMS[0], weather + SHORE_OUT * (FLOAT_Z - weather)))
 
 
 def area():
-    return units.metres(wind.polygon([TACK, YARD_END, SPAR_END])[0], 2)
+    return wind.cloth_area(crab_claw().cloth(1))
 
 
 def canvas():
-    clear = (POLE + SPAR) / 2
-    tack = (*TACK, 8)
-    return wind.sail("crabclaw", (tack, tack, (*YARD_END, 8), (*SPAR_END, 8)), tack, (REEF, 1),
-                     math.degrees(math.asin(clear / (MAST[0] - TACK[0]))), trimmed()["code"])
+    return merged(wind.sail("crabclaw", crab_claw().cloth(1), (1, HALF_SPAN)), {"behaviorConfigs": {wind.WINDAGE: {"rig": crab_claw().config()}}})
 
 
 def furled():
+    pose = crab_claw().lowered(1)
     cloths = math.ceil(area() / CLOTH_SQUARE_METRES)
-    rolls = []
-    for n in range(cloths):
-        a, b = n / cloths, (n + 1) / cloths
-        at = lambda f: (TACK[0] + f * (YARD_END[0] - TACK[0]), TACK[1] + f * (YARD_END[1] - TACK[1]) - 1.4, 8)
-        rolls.append([beam(f"SailRoll{n + 1}", at(a), at(b), 2.2, 2.2, "sail", overlap=0)])
-    print(f"sail: {area():.1f} m² of crab claw, {cloths} cloths")
-    return rig("SailFurled", [group(f"SailFurled{n}", (0, 0, 0), (0, 0, 0), roll) for n, roll in enumerate(rolls, 1)])
+    tack, clew = pose["tack"], pose["clew"]
+    at = lambda f: tuple(t + f * (c - t) for t, c in zip(tack, clew))
+    rolls = [[beam(f"SailRoll{n + 1}", at(n / cloths), at((n + 1) / cloths), 2.2, 2.2, "sail", overlap=0)] for n in range(cloths)]
+    print(f"sail: {area():.2f} m² of crab claw, {cloths} cloths")
+    return group("SailFurled", (0, 0, 0), (0, 0, 0), [group(f"SailFurled{n}", (0, 0, 0), (0, 0, 0), roll) for n, roll in enumerate(rolls, 1)])
 
 
 def mast():
-    x, z = MAST
+    pose = crab_claw().lowered(1)
+    heel, step = pose["heel"], pose["heel"][1] - STEP
     return [
-        run("MastPole", (x - POLE / 2, 1.4, z - POLE / 2), (x + POLE / 2, MASTHEAD, z + POLE / 2), "frame", axis="y")
-        + [box("MastStep", (x - 2, 1, z - 2), (x + 2, 2.4, z + 2), WOOD)],
-        [rig("Yard", [beam("YardSpar", (*TACK, 8), (*YARD_END, 8), SPAR, SPAR, "frame")])],
-        [rig("Boom", [beam("BoomSpar", (TACK[0], TACK[1] - 0.6, 8), (*SPAR_END, 8), SPAR - 2 * APART, SPAR - 2 * APART, "frame")])],
+        [beam("MastPole", heel, pose["masthead"], POLE, POLE, "frame"),
+         box("MastStep", (heel[0] - 2, step, heel[2] - 2), (heel[0] + 2, heel[1], heel[2] + 2), WOOD)],
+        [beam("MastShore", pose["shoreFoot"], pose["shoreTop"], SHORE, SHORE, "frame")],
+        [beam("YardSpar", pose["tack"], pose["peak"], SPAR, SPAR, "frame")],
+        [beam("BoomSpar", add(pose["tack"], (0, -SPAR, 0)), add(pose["clew"], (0, -SPAR, 0)), SPAR - 2 * APART, SPAR - 2 * APART, "frame")],
     ]
 
 
@@ -302,13 +292,14 @@ def rope(name, start, end, thick=0.3):
 
 
 def stays():
-    x, z = MAST
-    top = (x, MASTHEAD - 1, z)
+    pose = crab_claw().lowered(1)
+    top = pose["masthead"]
     return [
-        rope("Forestay", top, (-26, RIM + 1, 8)),
-        rope("Backstay", top, (42, RIM + 1, 8), 0.3 - 2 * APART),
-        rope("Shroud", top, (BOOMS[0] + 1.5, FLOAT_Y + FLOAT_DIAMETER / 2, FLOAT_Z - 1)),
-        rope("Sheet", reached((SPAR_END[0] - 1, SPAR_END[1] - 0.6, 8)), (34, RIM + 1, 8)),
+        rope("Forestay", top, pose["tack"]),
+        rope("Backstay", top, pose["sternPin"], 0.3 - 2 * APART),
+        rope("Shroud", top, pose["shroudFoot"]),
+        rope("Halyard", top, pose["halyardBend"]),
+        rope("Sheet", pose["bridle"], pose["lead"]),
     ]
 
 
@@ -419,7 +410,6 @@ def build(target):
     shape.add(stages("Lashing", lashed), float_forms())
     shape.add(stages("Mast", mast()))
     shape.add(furled())
-    shape.animations = [trimmed()]
     shape.add(stages("Stays", stays()))
     planks, raised_litres = strakes(hull, shell)
     shape.add(stages("Strakes", planks), stages("Seams", seams(hull, shell)))
@@ -441,7 +431,7 @@ def build(target):
     blown = wind.windage([shell, finished_float, *rig], [shell, finished_float], keel)
     at_draft = lambda draft: merged(blown(draft), {"behaviorConfigs": {
         "roughseas:propulsion": units.both("fin", side_area([finished_float], high=keel + units.voxels(draft)), 2),
-        "roughseas:seaforces": units.both("mast", units.metres(MASTHEAD))}})
+        "roughseas:seaforces": units.both("mast", units.metres(crab_claw().masthead(1)[1]))}})
     hull_alone, measured = report(hull, finished_float, at_draft)
     across = bounds(shell, finished_float)
     spread = {"behaviorConfigs": {"roughseas:seaforces": units.both("beam", units.metres(across[1][2] - across[0][2]))}}
@@ -518,8 +508,9 @@ def hanging_tube(tube, form):
 
 def pole_litres():
     boom_length = sum(math.dist(a, b) for a, b in zip(boom_points(), boom_points()[1:])) * len(BOOMS)
-    spars = units.voxels(2 * SPAR_METRES)
-    return units.litres(units.metres(boom_length * BOOM ** 2 + (MASTHEAD - 1.4) * POLE ** 2 + spars * SPAR ** 2, 3))
+    claw = crab_claw()
+    shore = math.dist(claw.lowered(1)["shoreFoot"], claw.lowered(1)["shoreTop"])
+    return units.litres(units.metres(boom_length * BOOM ** 2 + claw.mast * POLE ** 2 + shore * SHORE ** 2 + (claw.yard + claw.boom) * SPAR ** 2, 3))
 
 
 def boom_height(z):

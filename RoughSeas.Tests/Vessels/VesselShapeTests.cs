@@ -169,13 +169,15 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void DrawsHerFurledSailAndLeavesTheSetOneToTheWind(string vessel)
+    public void DrawsHerFurledSailForHerBuildAndLeavesHerRigToTheWind(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
         if (entity["attributes"]!.Value<bool?>("unfurlSails") != true) return;
 
+        var windage = entity["behaviorConfigs"]?["roughseas:windage"];
         Assert.Contains(FurledSail, Elements(shape["elements"]!).Select(element => element.Value<string>("name")));
-        Assert.NotNull(entity["behaviorConfigs"]?["roughseas:windage"]?["sail"]?["leechHeadMetres"]);
+        Assert.NotNull(windage?["rig"]?["ends"]?[0]?["hoisted"]?["mastheadMetres"]);
+        Assert.Contains(FurledSail, windage!["drawn"]!.Values<string>());
     }
 
     [Theory]

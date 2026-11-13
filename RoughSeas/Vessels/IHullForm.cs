@@ -5,6 +5,8 @@ namespace RoughSeas.Vessels;
 
 public interface IHullForm
 {
+    bool Finished { get; }
+
     /// <summary>The litres her hold takes as far as she is built, from the finished vessel's.</summary>
     double HoldLitres(double designed);
 

@@ -66,12 +66,9 @@ def cloth_area(corners, reach=1, span=1, cells=32):
     return units.metres(total, 2)
 
 
-def sail(polar, corners, pivot, half, least_trim_degrees, trim_animation=None):
+def sail(polar, corners, half):
     half_reach, half_span = half
-    names = ("luffFoot", "luffHead", "leechHead", "leechFoot")
     return {"behaviorConfigs": {WINDAGE: {"sail": {
-        "polar": polar, **({"trimAnimation": trim_animation} if trim_animation else {}),
+        "polar": polar,
         **units.both("sail", cloth_area(corners), 2), **units.both("half", cloth_area(corners, half_reach, half_span), 2),
-        "halfReach": round(half_reach, 4), "halfSpan": round(half_span, 4),
-        **{k: v for name, at in zip(names, corners) for k, v in corner(name, at).items()}, **corner("pivot", pivot),
-        "leastTrimDegrees": round(least_trim_degrees, 1)}}}}
+        "halfReach": round(half_reach, 4), "halfSpan": round(half_span, 4)}}}}

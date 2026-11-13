@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
@@ -12,6 +13,7 @@ namespace RoughSeas.Wind;
 public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWindOnHull
 {
     public const string Code = "roughseas:windage";
+    public const string TackedKey = "roughseas:tacked";
 
     private const string SailKey = "sailPosition";
 
@@ -19,11 +21,13 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     private SeaWeatherSystem sea = null!;
     private IHull? hull;
     private VesselInWind body = null!;
-    private SailRenderer? drawn;
-    private string trimAnimation = "";
+    private RigRenderer? drawn;
+    private string[] drawnGroups = [];
     private long loggedAt;
 
     public Sail? Sail => body.Sail;
+
+    public bool Rigged => entity.SidedProperties.Behaviors.OfType<IHullForm>().All(form => form.Finished);
 
     public override string PropertyName() => Code;
 
@@ -32,13 +36,18 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         wind = entity.Api.ModLoader.GetModSystem<WindModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         body = VesselInWind.From(attributes, wind.Config, wind.Polar);
-        trimAnimation = attributes["sail"]["trimAnimation"].AsString("");
+        drawnGroups = attributes["drawn"].AsArray<string>([]);
     }
 
     public override void AfterInitialized(bool onFirstSpawn)
     {
         hull = IHull.Of(entity);
-        if (entity.Api is ICoreClientAPI capi && Sail != null) drawn = new SailRenderer(capi, entity, Sail, trimAnimation);
+        if (entity.Api is ICoreClientAPI capi && Sail != null) drawn = new RigRenderer(capi, entity, this);
+    }
+
+    public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
+    {
+        if (drawn != null && Rigged) willDeleteElements = (willDeleteElements ?? []).Concat(drawnGroups).ToArray();
     }
 
     public override void OnGameTick(float deltaTime)
@@ -55,11 +64,19 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         drawn = null;
     }
 
+    public void Hoist()
+    {
+        if (Sail == null) return;
+
+        Sail.Rig.Tacked = Math.Clamp(entity.WatchedAttributes.GetInt(TackedKey), 0, Sail.Rig.Ends - 1);
+        Sail.Hoist(entity.WatchedAttributes.GetInt(SailKey));
+    }
+
     public WindLoad Wind((double X, double Z) velocity)
     {
+        Hoist();
         if (hull == null || !entity.Swimming) return default;
 
-        Sail?.Hoist(entity.WatchedAttributes.GetInt(SailKey));
         var blowing = sea.Map.Wind(entity.Pos.X, entity.Pos.Z);
         var load = body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres);
         Note(blowing, velocity, load);
@@ -75,9 +92,9 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         var (along, across) = HullShape.ToHull(blowing.X - velocity.X, blowing.Z - velocity.Z, entity.Pos.Yaw);
         var air = new Airflow(along, across);
         var (pushAlong, pushAcross) = HullShape.ToHull(load.X, load.Z, entity.Pos.Yaw);
-        wind.Log(entity, "the wind {0:F1} m/s toward {1:F0}°, {2:F1} m/s apparent {3:F0}° off her bow from {4}; {5}: {6:F0} N ahead, {7:F0} N to {8}, {9:F0} N·m; she makes {10:F2} m/s",
+        wind.Log(entity, "the wind {0:F1} m/s toward {1:F0}°, {2:F1} m/s apparent {3:F0}° off her model's bow from {4}; {5}: {6:F0} N toward her model's bow, {7:F0} N to {8}, {9:F0} N·m; she makes {10:F2} m/s",
             Speed(blowing), Compass.TowardDegrees(blowing.X, blowing.Z), air.Speed, air.FromBow * GameMath.RAD2DEG, air.Leeward > 0 ? "port" : "starboard",
-            Sail is { Pressure: > 0 } sail ? $"sail drawing, turned {sail.Turn * GameMath.RAD2DEG:F0}°" : "bare",
+            Sail is { Pressure: > 0 } sail ? $"sail {(sail.Aback ? "aback" : "drawing")} on tack {sail.Rig.Tacked}, turned {sail.Turn * GameMath.RAD2DEG:F0}°" : "bare",
             -pushAlong, Math.Abs(pushAcross), pushAcross > 0 ? "starboard" : "port", load.NewtonMetres, Speed(velocity));
     }
 
