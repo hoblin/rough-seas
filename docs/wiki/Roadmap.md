@@ -113,6 +113,8 @@ The sea reaches the shore, and you float in it.
 
 ## Next release
 
+- **[Holds](Vessels#holds) in place of containers.** The dugout, the outrigger, the bark canoe and the currach carry cargo loose on their floors, and their largest stacks lie there as small piles. The reed boat's basket stands at its true size. A container already aboard from an earlier version is emptied into the holds when the world loads, and nothing in it is lost.
+- **Vintage Story 1.22.4** and later: the holds check who may open them as the game does since 1.22.4.
 - **Switched off for now:** the open sea's sound, the surf and the whitecaps' hiss, which didn't match the water you see. They come back from real recordings ([Further out](#further-out)). The shore laps with the game's own sound, the game's rowing plays at its own volume, and every wave at a hull, every breaker and every knock still sounds.
 
 ## Seamanship

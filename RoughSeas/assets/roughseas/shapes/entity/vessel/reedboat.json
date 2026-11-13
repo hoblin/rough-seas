@@ -3969,15 +3969,11 @@
   },
   {
    "name": "Cargo",
-   "from": [ 16, 2.84, 4.25 ],
-   "to": [ 32, 18.84, 20.25 ],
-   "rotationOrigin": [ 16, 2.84, 4.25 ],
-   "scaleX": 0.5,
-   "scaleY": 0.5,
-   "scaleZ": 0.5,
+   "from": [ 13.5, 3.31, 0.5 ],
+   "to": [ 27.5, 11.31, 13.5 ],
    "faces": {},
    "attachmentpoints": [
-    { "code": "CargoAP", "posX": "8", "posY": "0", "posZ": "8", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+    { "code": "CargoAP", "posX": "8", "posY": "0", "posZ": "7.5", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
   },
   {

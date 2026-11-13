@@ -26,6 +26,7 @@ Each way the sea harms a vessel has its own [world setting](World-Settings#the-m
 | `roughseas:covering` | client and server | a hull bound from laths laid out on the ground, framed and covered with hides piece by piece where it lies ([Laid out on the ground](#laid-out-on-the-ground)) |
 | `roughseas:droop` | client | ends that sag as a reed hull soaks ([Bound in place](#bound-in-place)) |
 | `roughseas:propulsion` | client and server | what drives it when it is paddled, poled or rowed: the tools it takes, its hull's form for the water's drag on it, and the rower's strokes ([Driving it](#driving-it)) |
+| `roughseas:cargo` | client and server, before `rideableaccessories` | holds: inventories opened by a click on their own boxes, their largest stacks drawn on the floor as small ground piles ([Holds in place of containers](For-Modders#holds-in-place-of-containers)) |
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
@@ -379,7 +380,7 @@ A knock strikes with ½ · mass · (speed² − `minImpactSpeed`²), where the m
 
 - the hull, its `weight` in its own material;
 - each seated passenger by its entity's `weight`, a player as [the person module](For-Modders#a-body-in-the-water) weighs them: the 75 kg body with its hotbar's tools and weapons and its armour, weighed from how much the armour slows its wearer (a worn item's `statModifiers.walkSpeed`, 83 kg for each 1 of slowdown);
-- each accessory by the category it attaches as, at its empty weight (`basket` 2 kg, `crate` 12, `chest` 20); what they hold doesn't count;
+- each accessory by the category it attaches as, at its empty weight (`basket` 2 kg, `crate` 12, `chest` 20); what they hold, and what a `roughseas:cargo` hold carries, doesn't count;
 - the water in its `roughseas:bilge`, by how full it is: a full bilge counts all its weight, a half-full one half.
 
 Give `impactCapacity` by the knocks the hull should take: our coracle's 400 J and the sailboat's 40,000 bracket the roster, and a hull of skin over laths gets a `frame` as well, and [Hull condition](Hull-Condition#knocks-and-landings) shows what a knock does to each.

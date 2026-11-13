@@ -104842,22 +104842,30 @@
    ]
   },
   {
-   "name": "BackCargo",
-   "from": [ 17, 1.69, 4.25 ],
-   "to": [ 33, 17.69, 20.25 ],
-   "rotationOrigin": [ 17, 1.69, 4.25 ],
-   "scaleX": 0.5,
-   "scaleY": 0.5,
-   "scaleZ": 0.5,
-   "faces": {}
-  },
-  {
    "name": "OarStorage",
    "from": [ -16, 1.5, 12.399999999999999 ],
    "to": [ 32, 3.0, 14.0 ],
    "faces": {},
    "attachmentpoints": [
     { "code": "OarAP", "posX": "0", "posY": "0", "posZ": "0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ]
+  },
+  {
+   "name": "MidHold",
+   "from": [ 4, 1.4, 2.667 ],
+   "to": [ 14.667, 10, 13.333 ],
+   "faces": {},
+   "attachmentpoints": [
+    { "code": "MidHoldAP", "posX": "5.333", "posY": "0", "posZ": "5.333", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ]
+  },
+  {
+   "name": "AftHold",
+   "from": [ 26, 2.172, 2.667 ],
+   "to": [ 36.667, 10, 13.333 ],
+   "faces": {},
+   "attachmentpoints": [
+    { "code": "AftHoldAP", "posX": "5.333", "posY": "0", "posZ": "5.333", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
    ]
   }
  ]

@@ -7,6 +7,7 @@ import units
 from entity import merged, record
 from shape import BILGE, FACES, ORIGIN, Hull, across, bilge, bilge_levels, corners_of, plank, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
 from wounds import wound
+import cargo
 
 LOG = 16
 LOGS = 5
@@ -87,6 +88,8 @@ RIM_PIECE = 2
 SURFACE_PIECE = 0.5
 SAMPLE = 0.05
 CAP = 1.5
+MID_HOLD = cargo.block(4, 2, 2, CENTRE)
+AFT_HOLD = cargo.block(26, 2, 2, CENTRE)
 UNDER_BOWL = 1
 
 
@@ -718,6 +721,10 @@ def level_boxes(stages):
                                 for frm, to in boxes]}
 
 
+def aft_hold():
+    return cargo.hold("AftHold", "AftHoldAP", AFT_HOLD, Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD, edge=WOOD), WALL, RIM)
+
+
 def walls():
     """Her walls as WALL draws them; a breaker bends a side as a cantilever, from her bottom's edge to her gunwale."""
     return {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": {"metres": units.metres(WALL), "voxels": WALL,
@@ -740,7 +747,10 @@ def build(path):
     box, measured = hull_box(shell)
     shape.add(box)
     record("dugout", merged(measured, walls()))
-    shape.keep("FrontSeat", "BackSeat", "BackCargo", "OarStorage")
+    shape.keep("FrontSeat", "BackSeat", "OarStorage")
+    made = [cargo.hold("MidHold", "MidHoldAP", MID_HOLD, hull, WALL, RIM), aft_hold()]
+    shape.add(*(element for element, _ in made))
+    record("dugout", cargo.config(*made))
     trench = stages["Hewn"]["children"][0]
     wound(shape, [("", [shell], WOOD), *((built["name"], [built], WOOD) for built in [*stages["Blank"]["children"], trench])])
     envelope, hold, trunk_litres = volumes()

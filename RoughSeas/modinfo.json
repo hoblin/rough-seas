@@ -10,7 +10,7 @@
     "website": "https://github.com/hoblin/rough-seas",
     "version": "4.4.1",
     "dependencies": {
-        "game": "1.22.0"
+        "game": "1.22.4"
     },
     "custom": {
         "license": "MIT"

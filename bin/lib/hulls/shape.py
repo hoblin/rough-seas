@@ -626,8 +626,9 @@ class Hull:
         return max(0, breadth(edges, y) - inset)
 
     def floor(self, x, across, inset=0, step=0.1):
-        y = self.section(x)[0][1] + inset
-        while self.half(x, y, inset) < across:
+        edges = self.section(x)
+        y = edges[0][1] + inset
+        while y < edges[-1][1] and self.half(x, y, inset) < across:
             y += step
         return y
 

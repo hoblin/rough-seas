@@ -30,7 +30,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
 | Seats | two: the front one steers, under sail too, and paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
-| Cargo | a basket (8 slots) in the back seat, in place of the passenger |
+| Cargo | a [hold](Vessels#holds) of 8 slots behind the passenger; the mast stands where the dugout's middle hold lies |
 | Built from | a finished [dugout](Dugout), 3 logs for its float, 6 poles of 3 m, 10 ropes and 4 linen cloths; washstrakes, when it takes them, 12 planks and 5 ropes |
 | Wreckage | firewood, a rope, some linen, and planks once it has washstrakes |
 
@@ -91,8 +91,8 @@ Walk into it from the shore side to push it into the water. It can't be picked u
 | Afloat, from the side | From the stern quarter |
 | ![Afloat, from above](images/outrigger-canoe/afloat-above.webp) | ![Beside the vanilla sailboat](images/outrigger-canoe/beside-sailboat.webp) |
 | From above | Beside the sailboat |
-| ![Ashore, from the side](images/outrigger-canoe/ashore-side.webp) | ![Ashore, from the quarter](images/outrigger-canoe/ashore-quarter.webp) |
-| Ashore | Ashore, from the quarter |
+| ![Ashore, from the side](images/outrigger-canoe/ashore-side.webp) | ![Loaded, ashore](images/outrigger-canoe/loaded.webp) |
+| Ashore | Loaded |
 | ![Dropped on the ground](images/outrigger-canoe/dropped.webp) | ![The wreckage it leaves](images/outrigger-canoe/wreckage.webp) |
 | Dropped on the ground | Its wreckage |
 | ![The hotbar icon](images/outrigger-canoe/icon.png) | |

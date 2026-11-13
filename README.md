@@ -22,7 +22,7 @@ The game's handbook explains all of this from a player's point of view. Search i
 
 ## Install
 
-1. Vintage Story **1.22.0** or later.
+1. Vintage Story **1.22.4** or later.
 2. Download the latest `roughseas_<version>.zip` from the [mod DB](https://mods.vintagestory.at) or the [GitHub releases](https://github.com/hoblin/rough-seas/releases).
 3. Drop the zip into your `Mods` folder (on the game's main menu, **Mods** → **Open Mods Folder**). Do not unzip it.
 

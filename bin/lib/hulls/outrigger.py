@@ -2,7 +2,8 @@ import math
 from collections import namedtuple
 from pathlib import Path
 
-from dugout import CENTRE, HEWN, PROFILE, RIM, RINGS, ROW, STATIONS, WALL, WOOD, crew_tools, deck, hold_water, log, volumes, walls
+from dugout import CENTRE, HEWN, PROFILE, RIM, RINGS, ROW, STATIONS, WALL, WOOD, aft_hold, crew_tools, deck, hold_water, log, volumes, walls
+import cargo
 from physics import LASHING_JOULES_PER_METRE, ROPE_METRES, afloat, shares, kilograms, per_rope, ropes
 from transform import add, apply, local
 from fit import APART, Tube, Union
@@ -432,8 +433,11 @@ def build(target):
     box, hull_measured = hull_box(shell)
     shape.add(box)
     record("outrigger", merged(hull_measured, collision(box, passes["children"][-1]), walls()))
-    shape.keep("FrontSeat", "BackSeat", "BackCargo", source=Path(target).with_name("dugout.json"))
+    shape.keep("FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
     shape.keep("LowerMastStorage", "OarStorage")
+    aft = aft_hold()
+    shape.add(aft[0])
+    record("outrigger", cargo.config(aft))
     wound(shape, [("", [shell], WOOD)])
     shape.write()
     finished_float = passes["children"][-1]

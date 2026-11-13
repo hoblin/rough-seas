@@ -1,3 +1,4 @@
+using RoughSeas.Units;
 using RoughSeas.Shipyard;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
@@ -56,7 +57,7 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
-    public void LaysEveryContainerOnTheCentrelineWithinItsHull(string vessel)
+    public void LaysEveryContainerAtItsTrueSizeOnTheCentrelineWithinItsHull(string vessel)
     {
         var (entity, _, shape) = Load(vessel);
         var elements = Elements(shape["elements"]!).ToDictionary(element => element.Value<string>("name")!);
@@ -68,10 +69,46 @@ public class VesselShapeTests
 
         Assert.All(cells, cell =>
         {
-            Assert.Equal(16, cell["to"]!.Value<double>(2) - cell["from"]!.Value<double>(2));
-            Assert.Equal(centreline, cell["from"]!.Value<double>(2) + 8 * (cell.Value<double?>("scaleZ") ?? 1), 0.5);
-            Assert.InRange(cell["from"]!.Value<double>(0), hull["from"]!.Value<double>(0), hull["to"]!.Value<double>(0) - 16 * (cell.Value<double?>("scaleX") ?? 1));
+            Assert.All(new[] { "scaleX", "scaleY", "scaleZ" }, scale => Assert.Null(cell[scale]));
+            Assert.Equal(centreline, cell["from"]!.Value<double>(2) + 8, 0.5);
+            Assert.InRange(cell["from"]!.Value<double>(0), hull["from"]!.Value<double>(0), hull["to"]!.Value<double>(0) - 16);
         });
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void LaysEveryPileOfItsHoldsInsideItsHull(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        if (entity["behaviorConfigs"]!["roughseas:cargo"] is not { } cargo) return;
+
+        var hull = Elements(shape["elements"]!).Single(element => element.Value<string>("name") == "Hull");
+        double half = cargo.Value<double>("pileScale") * Voxels.AMetre / 2;
+        Assert.All(cargo["holds"]!, hold =>
+        {
+            var places = cargo["places"]![hold.Value<string>("selectionBox")!]!["metres"]!
+                .Select(place => place.ToObject<double[]>()!.Select(metres => metres * Voxels.AMetre).ToArray()).ToList();
+            Assert.InRange(places.Count, 1, hold.Value<int>("quantitySlots"));
+            Assert.All(places, place =>
+            {
+                Assert.InRange(place[0] - half, hull["from"]!.Value<double>(0), hull["to"]!.Value<double>(0) - 2 * half);
+                Assert.InRange(place[1], hull["from"]!.Value<double>(1), hull["to"]!.Value<double>(1));
+                Assert.InRange(place[2] - half, hull["from"]!.Value<double>(2), hull["to"]!.Value<double>(2) - 2 * half);
+            });
+        });
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void OpensEachHoldByASelectionBoxOfItsOwn(string vessel)
+    {
+        var behaviors = Load(vessel).Entity["behaviorConfigs"]!;
+        if (behaviors["roughseas:cargo"] is not { } cargo) return;
+
+        var boxes = behaviors["selectionboxes"]!["selectionBoxes"]!.Values<string>().ToList();
+        var holdBoxes = cargo["holds"]!.Select(hold => hold.Value<string>("selectionBox")).ToList();
+        Assert.Subset(boxes.ToHashSet(), holdBoxes.ToHashSet());
+        Assert.Equal(holdBoxes.Count, holdBoxes.Distinct().Count());
     }
 
     [Theory]

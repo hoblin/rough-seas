@@ -451,6 +451,11 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     {
         if (!byEntity.Controls.ShiftKey || entity.Properties.Attributes?["rightClickPickup"].AsBool() != true) return false;
         if (Occupied()) return false;
+        if (entity.SidedProperties.Behaviors.OfType<IHeldCargo>().Any(cargo => !cargo.Empty))
+        {
+            vessels.Log(entity, "{0} cannot lift her with cargo in her hold", byEntity.GetName());
+            return true;
+        }
         if (Afloat.Sunk)
         {
             vessels.Log(entity, "{0} cannot lift her off the bottom", byEntity.GetName());

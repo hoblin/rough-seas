@@ -299,6 +299,8 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              PORTIONS CONTENT each, as the firepit leaves it: glueportion-pitch-hot 100 1 is a
                              pot of hot pitch, a litre
   /bridge drop CODE X Y Z    an item or block CODE lying on the ground there, at rest (~ relative)
+  /bridge pack ID CODE       fill every container fitted to the accessory slots of entity ID to the brim, each of
+                             its slots a full stack of item CODE: the baskets and chests of a vessel loaded
   /bridge set ID KEY VALUE   set a watched attribute: int, float, bool or string by its form, a double with a
                              trailing d (roughseas:build/rimCharMetres 0.05d, for a tree read as doubles), while a
                              double or float stays what it is; e.g. the sailboat's sailPosition 0, 1, 2;
