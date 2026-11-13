@@ -123,7 +123,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "ห้องเก็บสินค้าหัวเรือ",
     "creature-roughseas:*-selectionbox-MidHoldAP": "ห้องเก็บสินค้ากลางลำ",
     "creature-roughseas:*-selectionbox-AftHoldAP": "ห้องเก็บสินค้าท้ายเรือ",
-    "creature-roughseas:*-selectionbox-OarAP": "ที่วางพาย",
+    "creature-roughseas:*-selectionbox-OarAP": "ไม้พายและเสาไม้",
     "cargo-hold": "ห้องเก็บสินค้า",
     "item-bark-*": "เปลือก{0}",
     "itemdesc-bark-*": "ลอกจากท่อนซุงด้วยมีด ใช้ปะเรือแคนูเปลือกไม้ระหว่างทาง",

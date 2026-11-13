@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "船首貨艙",
     "creature-roughseas:*-selectionbox-MidHoldAP": "船中貨艙",
     "creature-roughseas:*-selectionbox-AftHoldAP": "船尾貨艙",
-    "creature-roughseas:*-selectionbox-OarAP": "船槳放置處",
+    "creature-roughseas:*-selectionbox-OarAP": "單葉槳與木桿",
     "cargo-hold": "貨艙",
     "item-bark-*": "{0}皮",
     "itemdesc-bark-*": "用小刀從原木上剝下。可在途中修補樹皮舟。",

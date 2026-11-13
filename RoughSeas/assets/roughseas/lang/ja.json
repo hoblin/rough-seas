@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "船首の船倉",
     "creature-roughseas:*-selectionbox-MidHoldAP": "中央の船倉",
     "creature-roughseas:*-selectionbox-AftHoldAP": "船尾の船倉",
-    "creature-roughseas:*-selectionbox-OarAP": "オール置き",
+    "creature-roughseas:*-selectionbox-OarAP": "パドルと竿",
     "cargo-hold": "船倉",
     "item-bark-*": "{0}の樹皮",
     "itemdesc-bark-*": "ナイフで丸太から剥いだもの。旅の途中で樹皮のカヌーの継ぎ当てに使う。",

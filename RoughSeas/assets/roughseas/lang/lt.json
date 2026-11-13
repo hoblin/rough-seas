@@ -122,7 +122,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Priekinis triumas",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Vidurinis triumas",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Galinis triumas",
-    "creature-roughseas:*-selectionbox-OarAP": "Irklo atrama",
+    "creature-roughseas:*-selectionbox-OarAP": "Irklas ir kartis",
     "cargo-hold": "Triumas",
     "item-bark-*": "Žievė ({0})",
     "itemdesc-bark-*": "Nulupta peiliu nuo rąsto. Ja lopoma žievinė kanoja kelionėje.",

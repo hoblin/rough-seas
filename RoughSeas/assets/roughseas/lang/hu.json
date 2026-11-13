@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Orrbeli raktér",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Középső raktér",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Farbeli raktér",
-    "creature-roughseas:*-selectionbox-OarAP": "Evezőhely",
+    "creature-roughseas:*-selectionbox-OarAP": "Kenulapát és rúd",
     "cargo-hold": "Raktér",
     "item-bark-*": "{0} kéreg",
     "itemdesc-bark-*": "Késsel hántva egy rönkről. Útközben kéregkenut foltoz vele az ember.",

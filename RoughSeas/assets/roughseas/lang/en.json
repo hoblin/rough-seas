@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Fore hold",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Midships hold",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Aft hold",
-    "creature-roughseas:*-selectionbox-OarAP": "Oar rest",
+    "creature-roughseas:*-selectionbox-OarAP": "Paddle and pole",
     "cargo-hold": "Hold",
     "item-bark-*": "{0} bark",
     "itemdesc-bark-*": "Peeled from a log with a knife. Patches a bark canoe on the way.",

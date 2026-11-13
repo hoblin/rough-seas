@@ -123,7 +123,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Носов трюм",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Среден трюм",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Кърмов трюм",
-    "creature-roughseas:*-selectionbox-OarAP": "Опора за веслото",
+    "creature-roughseas:*-selectionbox-OarAP": "Гребло и прът",
     "cargo-hold": "Трюм",
     "item-bark-*": "Кора ({0})",
     "itemdesc-bark-*": "Обелена с нож от труп. С нея се кърпи кану от кора по пътя.",

@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "船首货舱",
     "creature-roughseas:*-selectionbox-MidHoldAP": "船中货舱",
     "creature-roughseas:*-selectionbox-AftHoldAP": "船尾货舱",
-    "creature-roughseas:*-selectionbox-OarAP": "桨托",
+    "creature-roughseas:*-selectionbox-OarAP": "单叶桨与木杆",
     "cargo-hold": "货舱",
     "item-bark-*": "{0}皮",
     "itemdesc-bark-*": "用小刀从原木上剥下。可在途中修补树皮舟。",

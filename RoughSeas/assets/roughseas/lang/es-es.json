@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Bodega de proa",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Bodega central",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Bodega de popa",
-    "creature-roughseas:*-selectionbox-OarAP": "Posición del Remo",
+    "creature-roughseas:*-selectionbox-OarAP": "Pagaya y percha",
     "cargo-hold": "Bodega",
     "item-bark-*": "Corteza de {0}",
     "itemdesc-bark-*": "Se pela de un tronco con un cuchillo. Sirve para remendar una canoa de corteza por el camino.",

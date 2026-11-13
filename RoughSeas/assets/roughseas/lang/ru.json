@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Носовой трюм",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Средний трюм",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Кормовой трюм",
-    "creature-roughseas:*-selectionbox-OarAP": "Место для весла",
+    "creature-roughseas:*-selectionbox-OarAP": "Гребок и жердь",
     "cargo-hold": "Трюм",
     "item-bark-*": "Кора ({0})",
     "itemdesc-bark-*": "Снята ножом с бревна. Ею латают каноэ из коры в пути.",

@@ -123,7 +123,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Främre lastrum",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Mittre lastrum",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Aktre lastrum",
-    "creature-roughseas:*-selectionbox-OarAP": "Plats för åra",
+    "creature-roughseas:*-selectionbox-OarAP": "Paddel och stång",
     "cargo-hold": "Lastrum",
     "item-bark-*": "Bark ({0})",
     "itemdesc-bark-*": "Skalad från en stock med en kniv. Lagar en barkkanot under färden.",

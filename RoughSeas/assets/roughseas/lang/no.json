@@ -123,7 +123,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Forre lasterom",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Midtre lasterom",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Aktre lasterom",
-    "creature-roughseas:*-selectionbox-OarAP": "Årelagring",
+    "creature-roughseas:*-selectionbox-OarAP": "Padleåre og stang",
     "cargo-hold": "Lasterom",
     "item-bark-*": "Bark ({0})",
     "itemdesc-bark-*": "Flekket av en stokk med kniv. Lapper en barkkano underveis.",

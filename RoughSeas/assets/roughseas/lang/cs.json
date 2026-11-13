@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Příďový prostor",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Střední prostor",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Záďový prostor",
-    "creature-roughseas:*-selectionbox-OarAP": "Odložení vesla",
+    "creature-roughseas:*-selectionbox-OarAP": "Pádlo a tyč",
     "cargo-hold": "Lodní prostor",
     "item-bark-*": "Kůra ({0})",
     "itemdesc-bark-*": "Stažená nožem z klády. Látá se jí kánoe z kůry na cestě.",

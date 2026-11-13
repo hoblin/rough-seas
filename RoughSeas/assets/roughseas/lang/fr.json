@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Cale avant",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Cale centrale",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Cale arrière",
-    "creature-roughseas:*-selectionbox-OarAP": "Rangement pour rame",
+    "creature-roughseas:*-selectionbox-OarAP": "Pagaie et perche",
     "cargo-hold": "Cale",
     "item-bark-*": "Écorce ({0})",
     "itemdesc-bark-*": "Prélevée au couteau sur une bûche. Elle rapièce un canot d'écorce en route.",

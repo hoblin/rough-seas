@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Vorderer Laderaum",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Mittlerer Laderaum",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Achterer Laderaum",
-    "creature-roughseas:*-selectionbox-OarAP": "Ruderstauraum",
+    "creature-roughseas:*-selectionbox-OarAP": "Paddel und Stange",
     "cargo-hold": "Laderaum",
     "item-bark-*": "Rinde ({0})",
     "itemdesc-bark-*": "Mit einem Messer von einem Stamm geschält. Damit flickt man ein Rindenkanu unterwegs.",

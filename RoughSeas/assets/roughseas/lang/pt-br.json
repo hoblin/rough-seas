@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Porão de proa",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Porão central",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Porão de popa",
-    "creature-roughseas:*-selectionbox-OarAP": "Descanso de remo",
+    "creature-roughseas:*-selectionbox-OarAP": "Pagaia e vara",
     "cargo-hold": "Porão",
     "item-bark-*": "Casca de {0}",
     "itemdesc-bark-*": "Tirada de uma tora com uma faca. Remenda uma canoa de casca no caminho.",

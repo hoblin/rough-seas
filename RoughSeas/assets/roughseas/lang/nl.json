@@ -123,7 +123,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Voorruim",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Middenruim",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Achterruim",
-    "creature-roughseas:*-selectionbox-OarAP": "Riemsteun",
+    "creature-roughseas:*-selectionbox-OarAP": "Peddel en paal",
     "cargo-hold": "Ruim",
     "item-bark-*": "Bast ({0})",
     "itemdesc-bark-*": "Met een mes van een stam gepeld. Daarmee lap je een bastkano onderweg op.",

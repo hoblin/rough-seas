@@ -122,7 +122,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Antaŭa kargejo",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Meza kargejo",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Malantaŭa kargejo",
-    "creature-roughseas:*-selectionbox-OarAP": "Apogilo por remilo",
+    "creature-roughseas:*-selectionbox-OarAP": "Pagajo kaj stango",
     "cargo-hold": "Kargejo",
     "item-bark-*": "Ŝelo ({0})",
     "itemdesc-bark-*": "Senŝeligita de ŝtipo per tranĉilo. Ĝi flikas ŝelan kanuon survoje.",

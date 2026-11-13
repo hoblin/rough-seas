@@ -123,7 +123,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Forreste lastrum",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Midterste lastrum",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Agterste lastrum",
-    "creature-roughseas:*-selectionbox-OarAP": "Åreopbevaring",
+    "creature-roughseas:*-selectionbox-OarAP": "Pagaj og stang",
     "cargo-hold": "Lastrum",
     "item-bark-*": "Bark ({0})",
     "itemdesc-bark-*": "Skrællet af en stamme med en kniv. Lapper en barkkano undervejs.",

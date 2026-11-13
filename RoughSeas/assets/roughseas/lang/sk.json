@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Predný priestor",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Stredný priestor",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Zadný priestor",
-    "creature-roughseas:*-selectionbox-OarAP": "Odloženie vesla",
+    "creature-roughseas:*-selectionbox-OarAP": "Pádlo a žrď",
     "cargo-hold": "Nákladový priestor",
     "item-bark-*": "Kôra ({0})",
     "itemdesc-bark-*": "Stiahnutá nožom z klátu. Látá sa ňou kanoe z kôry na cestách.",

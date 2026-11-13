@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "선수 화물칸",
     "creature-roughseas:*-selectionbox-MidHoldAP": "중앙 화물칸",
     "creature-roughseas:*-selectionbox-AftHoldAP": "선미 화물칸",
-    "creature-roughseas:*-selectionbox-OarAP": "노 거치대",
+    "creature-roughseas:*-selectionbox-OarAP": "패들과 장대",
     "cargo-hold": "화물칸",
     "item-bark-*": "{0} 껍질",
     "itemdesc-bark-*": "칼로 통나무에서 벗겨 냅니다. 가는 길에 나무껍질 카누를 기웁니다.",

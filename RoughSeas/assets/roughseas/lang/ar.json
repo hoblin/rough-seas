@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "العنبر الأمامي",
     "creature-roughseas:*-selectionbox-MidHoldAP": "العنبر الأوسط",
     "creature-roughseas:*-selectionbox-AftHoldAP": "العنبر الخلفي",
-    "creature-roughseas:*-selectionbox-OarAP": "مسند المجداف",
+    "creature-roughseas:*-selectionbox-OarAP": "مجداف وعمود",
     "cargo-hold": "العنبر",
     "item-bark-*": "لحاء ({0})",
     "itemdesc-bark-*": "تُقشَّر من جذع بسكين. تُرقَّع بها الزوارق من اللحاء في الطريق.",

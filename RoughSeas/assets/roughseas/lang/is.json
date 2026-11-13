@@ -124,7 +124,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Framlest",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Miðlest",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Afturlest",
-    "creature-roughseas:*-selectionbox-OarAP": "Staður fyrir árar",
+    "creature-roughseas:*-selectionbox-OarAP": "Spaði og stöng",
     "cargo-hold": "Lest",
     "item-bark-*": "Börkur ({0})",
     "itemdesc-bark-*": "Flettur af drumbi með hníf. Bætir barkarkanó á leiðinni.",

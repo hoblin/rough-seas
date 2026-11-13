@@ -123,7 +123,7 @@
     "creature-roughseas:*-selectionbox-ForeHoldAP": "Keularuuma",
     "creature-roughseas:*-selectionbox-MidHoldAP": "Keskiruuma",
     "creature-roughseas:*-selectionbox-AftHoldAP": "Peräruuma",
-    "creature-roughseas:*-selectionbox-OarAP": "Airon tuki",
+    "creature-roughseas:*-selectionbox-OarAP": "Mela ja salko",
     "cargo-hold": "Ruuma",
     "item-bark-*": "Kuori ({0})",
     "itemdesc-bark-*": "Kuorittu tukista veitsellä. Sillä paikataan kuorikanoottia matkan varrella.",
