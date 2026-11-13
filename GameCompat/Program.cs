@@ -17,7 +17,7 @@ const string Usage = """
       Harmony and reflection  every patch target and reflected member exists, with the signature we patch
       Asset patches           every JSON patch's file and path exist
       Text anchors            every [ReliesOnText] anchor is in its vanilla asset
-      Game references         every game: code and path in our JSON and C# strings exists
+      Game references         every game: code, path and lang key in our JSON and C# strings exists
 
     Needs reading: what no tool can decide. A [ReliesOn] method whose instructions differ from the current
     game's beyond how locals are numbered is listed with the C# diff of that method, beside the sentence
