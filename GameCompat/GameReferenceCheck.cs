@@ -17,15 +17,22 @@ internal sealed class GameReferenceCheck(GameRelease release, string repository)
     {
         var codes = new GameCodes(release);
         var files = AssetStems(release.AssetFiles);
+        var texts = LangKeys(release);
         var reasons = new List<string>();
         var changes = new List<BehaviourChange>();
         foreach (var (reference, source) in References(mod))
         {
+            var path = reference[Domain.Length..];
             if (reference.Contains('{')) changes.Add(Unenumerable(reference, source));
-            else if (!FileExists(reference[Domain.Length..], files) && !codes.Contains(reference[Domain.Length..])) reasons.Add($"{reference} is missing ({source})");
+            else if (!FileExists(path, files) && !codes.Contains(path) && !texts.Contains(path)) reasons.Add($"{reference} is missing ({source})");
         }
         return new GameReferenceResult(reasons, changes);
     }
+
+    private static HashSet<string> LangKeys(GameRelease release) =>
+        release.FindAsset("lang/en.json") is { } english
+            ? AssetPatchCheck.Parse(File.ReadAllText(english)).Children<JProperty>().Select(text => text.Name).ToHashSet()
+            : [];
 
     internal static bool FileExists(string wanted, HashSet<string> stems)
     {
