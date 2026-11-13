@@ -206,6 +206,11 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("item code"), parsers.WorldPosition("position"))
                 .HandleWith(args => Drop((string)args[0], (Vec3d)args[1]))
             .EndSubCommand()
+            .BeginSubCommand("pack")
+                .WithDescription("Fill every container fitted to an entity's accessory slots to the brim, each of its slots a full stack of CODE")
+                .WithArgs(parsers.Long("id"), parsers.Word("item code"))
+                .HandleWith(args => Pack(sapi.World.GetEntityById((long)args[0]), (string)args[1]))
+            .EndSubCommand()
             .BeginSubCommand("tie")
                 .WithDescription("Tie a rope-tieable entity to a block with a vanilla rope, as a player with rope in hand would; X Y Z absolute; METRES sets its length as the mouse wheel does (1.5 to 10), else it is as long as the gap")
                 .WithArgs(parsers.Long("id"), parsers.Int("x"), parsers.Int("y"), parsers.Int("z"), parsers.OptionalDouble("metres", 0))
@@ -989,6 +994,31 @@ public class BridgeCommands : ModSystem
 
         var dropped = sapi.World.SpawnItemEntity(stack, position, new Vec3d());
         return TextCommandResult.Success($"Dropped {code}: entity {dropped.EntityId}");
+    }
+
+    private TextCommandResult Pack(Entity? entity, string code)
+    {
+        if (entity?.GetBehavior<EntityBehaviorRideableAccessories>() is not { } accessories) return TextCommandResult.Error("No entity with accessories");
+        if (Stack(code) is not { } stack) return TextCommandResult.Error($"No item or block {code}");
+
+        var packed = new List<string>();
+        for (int i = 0; i < accessories.Inventory.Count; i++)
+        {
+            var bagStack = accessories.Inventory[i].Itemstack;
+            if (bagStack?.Collectible.GetCollectibleInterface<IHeldBag>() is not { } bag) continue;
+
+            var slots = bag.GetOrCreateSlots(bagStack, accessories.Inventory, i, sapi.World);
+            foreach (var slot in slots)
+            {
+                slot.Itemstack = stack.Clone();
+                slot.Itemstack.StackSize = stack.Collectible.MaxStackSize;
+                bag.Store(bagStack, slot);
+            }
+            accessories.Inventory[i].MarkDirty();
+            packed.Add($"{bagStack.Collectible.Code} in slot {i}: {slots.Count} stacks");
+        }
+        accessories.storeInv();
+        return TextCommandResult.Success(packed.Count == 0 ? "No container to pack" : string.Join("; ", packed));
     }
 
     private ItemStack? Stack(string code)

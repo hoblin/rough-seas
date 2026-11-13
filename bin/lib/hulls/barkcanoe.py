@@ -10,6 +10,7 @@ from entity import merged, record
 from shape import BILGE, Hull, Shape, bilge_levels, bounds, box, breadth, clear_of, corners_of, group, hull_box, num, path, plank, renamed, span, stages, widest, windage
 from transform import add, scale, sub, unit
 from wounds import backed, wound
+import cargo
 
 PROFILE = [(0, 0), (2.6, 0.3), (4.6, 1.5), (5.7, 3.4), (6, 6)]
 SHEER = 6
@@ -26,6 +27,7 @@ THWARTS = (8, -8, 24)
 THWART = (1.4, 0.8)
 CENTRE_THWART = THWARTS[0]
 POLER_AFT = 5
+HOLD = cargo.block(THWARTS[0] + THWART[0] + APART, 4, 1, CENTRE)
 STERN = [(-19, 2.1), (-22, 2.75), (-24, 3.65), (-25.2, 5), (-25.6, 7), (-25.7, 9), (-25.5, 10.6), (-24.9, 11.4)]
 STEM_WIDTH = 0.8
 STEM_THICKNESS = 0.8
@@ -550,7 +552,10 @@ def build(path_):
     sides, bottom = backed([finished], ["bark"], [lining], box)
     apart = units.metres(RIBS.step)
     record("barkcanoe", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", apart), "frame": units.both("spacing", apart)}}}}))
-    shape.keep("FrontSeat", "FrontCargo", "BackSeat", "OarStorage")
+    shape.keep("FrontSeat", "BackSeat", "OarStorage")
+    aft = cargo.hold("Hold", "HoldAP", 8, HOLD, cargo.floor_of(hull, RIB_INSET + RIB_DEPTH, SHEER), cargo.floor_of(hull, 0, SHEER), CENTRE, SHEER)
+    shape.add(aft[0])
+    record("barkcanoe", cargo.config(aft))
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],
           lining=SHEATHING, framing=([ribbed], "frame"))
     shape.write()

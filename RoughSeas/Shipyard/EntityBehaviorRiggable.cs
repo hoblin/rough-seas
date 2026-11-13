@@ -1,3 +1,4 @@
+using RoughSeas.Cargo;
 using System;
 using System.Linq;
 using RoughSeas.Vessels;
@@ -102,6 +103,7 @@ public class EntityBehaviorRiggable(Entity entity) : EntityBehavior(entity), IWo
         slot.MarkDirty();
         foreach (var seat in entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []) (seat.Passenger as EntityAgent)?.TryUnmount();
         entity.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory.DropAll(entity.Pos.XYZ);
+        entity.GetBehavior<EntityBehaviorCargo>()?.DropAll();
 
         world.SpawnEntity(rigged);
         entity.Die(EnumDespawnReason.Removed);

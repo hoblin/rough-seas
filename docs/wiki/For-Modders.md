@@ -499,15 +499,18 @@ A hull moves by the sum of the forces on it, the waves' among them, so one runni
 
 New: `IDrawnSea.HullGradientAt`, `FlowGradient`, `WaterOnHull`, `SwimStroke`, `MooringLine.Over` and `Dragging`, `LineStep`, `BodyInWater`, `HullSet.Add` and `Way`, `HullSetReport`, `HullRider.Gradient`, `Body.AddedAlongKg`.
 
-### Containers inside the hull
+### Holds in place of containers
 
-A basket fitted to the reed boat, the dugout, the outrigger or the bark canoe sits on the centreline, on her floor, at half its size, as the currach's do. A vessel of yours loads as it did.
+At its true size no container fits inside the hull of a vessel of ours with sides, so the dugout, the outrigger, the bark canoe and the currach carry their cargo in holds instead: inventories of their own, opened by a click on the hold, whose largest stacks lie on the floor as vanilla's ground piles. The reed boat keeps her basket, at its true size. A vessel of yours loads as it did; one of ours from an earlier version stows its containers in its holds as it loads.
 
-- Vanilla draws a fitted container from the `from` corner of the element its slot's `stepParentTo` names, at the container's own 0 to 16 voxels, scaled and turned as that element is; the element's size plays no part. Every cargo element of ours is a 16-voxel cube scaled 0.5 about its `from`, placed so the container lies on the centreline and on the floor.
-- The reed boat's `Cargo` is that cube, its `CargoAP` at its middle, so the slot's selection box is where the basket shows.
-- The dugout's and outrigger's `Back Seat` slot steps its basket into the new `BackCargo`, the bark canoe's `Front Seat` slot into the new `FrontCargo`. The slots keep their codes, attachment points and selection boxes, which are the seats'.
+- `roughseas:cargo` gives a vessel its holds: `holds`, each with its `selectionBox`, `quantitySlots` and `placesMetres`, the middles of its piles in the shape's frame; `pileScale`, a pile's size against vanilla's ground pile of one block; and `dropContentsOnDeath`. Put it before `rideableaccessories` in both lists, and give each hold's box an empty slot at its index in `wearableSlots`. `bin/model build` writes `holds` and `pileScale` from the model (`bin/lib/hulls/cargo.py`); the box is an element of its own, `MidHold`, `AftHold`, `ForeHold` or `Hold`, with the attachment point the hold names.
+- A hold's stacks are drawn by size, the largest nearest the middle of its places, each as a ground pile of its kind (`CollectibleBehaviorGroundStorable`'s layout, stacking model and `groundStorageTransform`) as high as the whole hold is full. A stack vanilla can't lay on the ground isn't drawn, and the next largest takes its place.
+- Each hold keeps its inventory in the vessel's watched attributes, `roughseas:hold0`, `roughseas:hold1` and on, and takes its client packets at its own offset, so it never meets `rideableaccessories`'s. Vanilla's `/giveitem` and `/giveblock` fill it from the console: `TryGiveItemStack` stows into the first hold with room.
+- A vessel isn't picked up while a hold has anything in it, and one rebuilt into another (rigged, or its float come away) drops what its holds carry, as it drops its accessories.
+- On loading, a stack in an accessory slot that no longer takes it moves to the slot that does, and a container goes to the holds, its contents and then the container emptied. Holds that lack the room take extra slots, each gone once emptied.
+- The reed boat's `Cargo` is unscaled and lies across her middle; the cells `ForeCargo`, `MidCargo`, `AftCargo`, `BackCargo` and `FrontCargo` are gone, with the slots that stepped into them.
 
-New: `BackCargo`, `FrontCargo`.
+New: `roughseas:cargo`, `EntityBehaviorCargo`, `Hold`, `HoldInventory`, `GroundPile`, `CargoRenderer`, `Stowage`, `StrayContainers`, the elements `MidHold`, `AftHold`, `ForeHold` and `Hold`, the attachment points `MidHoldAP`, `AftHoldAP`, `ForeHoldAP` and `HoldAP`.
 
 ### A split cracks, with no fall
 
@@ -543,6 +546,7 @@ New: `HullWork.Hands`, `MendWork.Hands`, `Laying.Hands`, `IMendable.Hands`, `Wor
 | `roughseas:vessels` | the network channel a rider's client reports its vessel's knocks over |
 | `roughseas:storms` | the network channel a rider's client reports a parted mooring over |
 | `roughseas:anchor` | a vessel's watched tree: where its anchor lies and what holds it |
+| `roughseas:hold0`, `roughseas:hold1`… | a vessel's watched trees: what each of its holds carries |
 | `roughseas:person` | the network channel the server tells a swimmer's client of a crest breaking over them on |
 | `roughseas:nextClothId` | save data: vanilla's next rope id, which vanilla itself loses |
 | `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |

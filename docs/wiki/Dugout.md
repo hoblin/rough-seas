@@ -19,7 +19,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of) |
 | Upkeep | none |
 | [Freeboard](Surf-and-Swamping#how-it-floats) | 47 cm empty, 45 cm with its paddler, in oak |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 157 kg of tools, armour and containers in oak; sinks in a wood heavier than seawater |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 157 kg of tools and armour in oak; sinks in a wood heavier than seawater |
 | [Mending](Mending) | 1 log of its wood closes two fifths of a stove-in place |
 | [Bilge](Bailing) | 1436 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 0.9 m breaker: its round bottom rolls |
@@ -29,7 +29,7 @@ The dugout is the oldest boat we know. The Pesse canoe, dug out of a Dutch peat 
 | [Mooring](Mooring) | tied to a post |
 | Carried | too heavy to pick up |
 | Seats | two: the front one paddles or poles, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing at its bow end to pole; the back one takes a passenger |
-| Cargo | a basket (8 slots) in the back seat, in place of the passenger |
+| Cargo | two holds of 8 slots, one behind the paddler and one behind the passenger ([holds](Vessels#holds)) |
 | Built from | 5 logs of one wood beside the water and an axe to strip their bark, then six fires: each takes clay for its rim (19 balls on the fresh trunk, 11 on the last), dry grass, 4 firewood and the axe; about nine days in all |
 | Wreckage | firewood |
 
@@ -105,8 +105,8 @@ The dugout floats at every stage and an axe breaks it up at every stage, so you 
 | Afloat, from the side | From the stern quarter |
 | ![Afloat, from above](images/dugout/afloat-above.webp) | ![Beside the vanilla sailboat](images/dugout/beside-sailboat.webp) |
 | From above | Beside the sailboat |
-| ![Ashore, from the side](images/dugout/ashore-side.webp) | ![Ashore, from the quarter](images/dugout/ashore-quarter.webp) |
-| Ashore | Ashore, from the quarter |
+| ![Ashore, from the side](images/dugout/ashore-side.webp) | ![Loaded, ashore](images/dugout/loaded.webp) |
+| Ashore | Loaded |
 | ![Dropped on the ground](images/dugout/dropped.webp) | ![The wreckage it leaves](images/dugout/wreckage.webp) |
 | Dropped on the ground | Its wreckage |
 | ![The hotbar icon](images/dugout/icon.png) | |

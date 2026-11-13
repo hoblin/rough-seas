@@ -45,21 +45,24 @@ bin/scene views CODE DIR [SCALE]
                            It changes the world as it goes: clears vessels, items and wandering
                            animals around the player, breaks the vessel, weeds the beach, and empties
                            the player's inventory.
-bin/scene portrait CODE FILE [DISTANCE]
+bin/scene portrait CODE FILE [DISTANCE] [loaded]
                            the vessel large, for a page's gallery: at calm noon ashore on the beach zone,
                            seen from its bow quarter as the wiki's ashore-quarter, through a 40° lens
                            from DISTANCE blocks (default 4), the player out of the frame and a
                            spectator, which casts no shadow. The camera aims at the middle of the vessel as
                            drawn, masts and sails included; the window's full height is cut to 4:3 round
                            it and written as FILE (.png keeps it whole; .webp is brought to 1200×900).
+                           With loaded, every hold she has is filled to the brim, as bin/scene cargo fills
+                           it, and every slot that takes a basket gets one.
 bin/scene seats [CODE...]  the player in every seat of each vessel (default: ours and the vanilla raft
                            and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
 bin/scene cargo [CODE...]  each vessel (default: ours and the vanilla raft and sailboat) docked once per kind of
                            container, a basket, a chest, a storage vessel and a crate, with that container fitted
-                           to every slot that takes it, seen at noon from the side, from above and close:
-                           CODE-KIND-{side,above,close}.png in <temp>/cargo, and all.png with them in a grid.
-                           Checks that every container sits in the hull.
+                           to every slot that takes it, and once more with every hold she has filled to the brim
+                           with full stacks of as many kinds as it draws (kind "hold"), seen at noon from the
+                           side, from above and close: CODE-KIND-{side,above,close}.png in <temp>/cargo, and
+                           all.png with them in a grid. Checks that every container and pile sits in the hull.
 bin/scene strokes [CODE[@TOOL]...]
                            the player rowing or paddling each vessel (default: ours with their own oars or paddle), forward and
                            backward, from the front, the side and behind, in third person: a burst
@@ -294,13 +297,14 @@ views() {
 }
 
 portrait() {
-  local code=$1 out=$2 distance=${3:-4} id full=$BENCH_TMP/portrait.png width height
+  local code=$1 out=$2 distance=${3:-4} loaded=${4:-} id full=$BENCH_TMP/portrait.png width height
   clear >/dev/null
   calm
   "$game" zone beach >/dev/null
   "$game" do '/bridge weed 8' >/dev/null
   id=$("$game" do "/bridge spawn $code ~ ~-2 ~ 90" | awk '/Spawned/ { print $NF }')
   sleep 2
+  [ "$loaded" = loaded ] && load "$id" >/dev/null
   local park
   park=$(awk -v d="$distance" 'BEGIN { print d + 6 }')
   look "$id" "$park" "$park" "$park"
@@ -365,18 +369,63 @@ sight() {
   "$game" shot "$1" >/dev/null
 }
 
+goods=(ingot-bismuth:16 ingot-copper:16 plank-oak:64 firewood:32 stone-granite:64 ingot-tin:16 ingot-iron:16 ingot-gold:16
+  ingot-lead:16 ingot-silver:16 ingot-zinc:16 ingot-brass:16 ingot-tinbronze:16 stone-basalt:64 plank-birch:64 plank-pine:64)
+
+fill() {
+  local kinds=0
+  local good
+  while good=${goods[kinds % ${#goods[@]}]} && BENCH_REPLY_SECONDS=3 "$game" do "/giveitem game:${good%:*} ${good#*:} e[id=$1]" | grep -q '^Ok'; do
+    kinds=$((kinds + 1))
+  done
+  echo "$kinds"
+}
+
+load() {
+  local boxes box player
+  boxes=$({ "$game" hover "$1" none || true; } | sed 's/.* has //; s/,//g')
+  "$game" hover >/dev/null
+  if grep -q HoldAP <<<"$boxes"; then
+    fill "$1"
+    return
+  fi
+  player=$(jq -r .stringSettings.playername "$HOME/.config/VintagestoryData/clientsettings.json")
+  BENCH_REPLY_SECONDS=1 "$game" do '/clearinv' >/dev/null || true
+  "$game" slot 0 >/dev/null
+  for box in $boxes; do
+    held '== null' && "$game" do "/giveblock stationarybasket-east 1 p[name=$player] {type:\"reed\"}" >/dev/null && held '!= null'
+    "$game" do "/bridge interact $1 interact ctrl $box" >/dev/null
+  done
+  BENCH_REPLY_SECONDS=1 "$game" do '/clearinv' >/dev/null || true
+}
+
 containers=('basket stationarybasket-east {type:"reed"}' 'chest chest-east {type:"normal-generic"}'
   'vessel storagevessel-blue-fired' 'crate crate {type:"wood-oak"}')
 
 cargo() {
   local codes=("$@") dir=$BENCH_TMP/cargo player id at x y z boxes box kind block type fitted
-  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat-papyrustops-papyrustops roughseas:barkcanoe-birch roughseas:currach \
+  [ ${#codes[@]} -eq 0 ] && codes=(roughseas:reedboat-papyrustops-papyrustops roughseas:barkcanoe-birch roughseas:currach roughseas:coracle \
     roughseas:dugout-oak roughseas:outrigger-oak boat-raft-oak boat-sailed-oak)
   player=$(jq -r .stringSettings.playername "$HOME/.config/VintagestoryData/clientsettings.json")
   rm -rf "$dir"
   mkdir -p "$dir"
   local shots=()
   for code in "${codes[@]}"; do
+    clear >/dev/null
+    id=$(dock "$code" | jq -r '.vessels[0].EntityId')
+    if { "$game" hover "$id" none || true; } | grep -q 'HoldAP'; then
+      "$game" hover >/dev/null
+      read -r x y z <<<"$(placed "$id")"
+      local stacks name=$dir/${code##*:}-hold far=1
+      stacks=$(fill "$id")
+      noon
+      sight "$name-side.png" 3 1.2 0
+      sight "$name-above.png" 0 5 0.004
+      sight "$name-close.png" 1.2 0.5 0
+      shots+=("$name-side.png" "$name-above.png" "$name-close.png")
+      echo "${code##*:} hold: $stacks stacks stowed"
+    fi
+    "$game" hover >/dev/null
     for container in "${containers[@]}"; do
       read -r kind block type <<<"$container"
       clear >/dev/null

@@ -19,7 +19,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Hull](Hull-Condition) | it rides the sea, but a knock breaks the ash lath behind its hide at 41 J, rowing into a rock at 1.2 m/s, and the two either side of a gap at 102 J, 1.5 m/s; 3000 J more with an ash frame breaks it up, about 2800 J in oak, 3300 J in birch |
 | [Seeping](Hull-Condition#seeping-and-soaking) | ungreased, 13 litres a game hour into the bilge at each seam between hides; a full greasing lasts 2.5 days afloat |
 | [Freeboard](Surf-and-Swamping#how-it-floats) | 57 cm empty, 55 cm with its rower |
-| [Flooded](Surf-and-Swamping#swamping) | floats awash with three baskets aboard; three chests take it down |
+| [Flooded](Surf-and-Swamping#swamping) | floats awash, holding up 33 kg of tools and armour |
 | [Mending](Mending) | 1 large prepared hide closes two thirds of a stove-in place; 1 rendered fat greases it for 1.25 days |
 | [Bilge](Bailing) | 1911 litres |
 | [Capsized by](Surf-and-Swamping#capsizing), in 1.0 | a 2 m breaker, the best of the small boats in surf |
@@ -29,7 +29,7 @@ Currachs have worked the Atlantic coast of Ireland for as long as there are reco
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | one: the rower on the thwart, facing its stern, rowing its own two oars with an empty hand, or standing on its floor, facing its bow, to pole it through shallows |
-| Cargo | three spots on the bottom, two behind the rower and one beyond his feet; each takes a basket (8 slots), a storage vessel (12) or a chest (16; a treasure chest 4) |
+| Cargo | two [holds](Vessels#holds) of 16 slots on the bottom, one behind the rower and one beyond his feet |
 | Built from | 2 laths of 5 m for its gunwale, 9 of 3 m and 13 of 2 m for its ribs and 7 of 5 m for its stringers, 6 ropes, eight small hides' worth of hide, a 2 m pole and two [thole oars](Recipes#thole-oar), then greased |
 | Wreckage | a few laths |
 
@@ -67,7 +67,7 @@ The hides you sew it from decide how long the currach lasts afloat ([Seeping and
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but it carries one basket and can't be picked up.
+- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but it carries little and can't be picked up.
 - The [sailboat](Sailboat) carries far more and takes far harder blows, and it costs a shipyard's worth of planks.
 - The [dugout](Dugout) and the [bark canoe](Birch-Bark-Canoe) are what to leave on the river.
 - The [coracle](Coracle) is built of the same laths and hides, and carried on your back.
@@ -80,8 +80,8 @@ The hides you sew it from decide how long the currach lasts afloat ([Seeping and
 | Afloat, from the side | From the stern quarter |
 | ![Afloat, from above](images/currach/afloat-above.webp) | ![Beside the vanilla sailboat](images/currach/beside-sailboat.webp) |
 | From above | Beside the sailboat |
-| ![Ashore, from the side](images/currach/ashore-side.webp) | ![Ashore, from the quarter](images/currach/ashore-quarter.webp) |
-| Ashore | Ashore, from the quarter |
+| ![Ashore, from the side](images/currach/ashore-side.webp) | ![Loaded, ashore](images/currach/loaded.webp) |
+| Ashore | Loaded |
 | ![Dropped on the ground](images/currach/dropped.webp) | ![Carried](images/currach/held.webp) |
 | Dropped on the ground | Carried |
 | ![The hotbar icon](images/currach/icon.png) | ![The wreckage it leaves](images/currach/wreckage.webp) |

@@ -10,6 +10,7 @@ from held import ARM_REACH_METRES, worked_from_middle, poling, tools, waterline_
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
 from wounds import backed, wound
+import cargo
 
 CENTRE = 8
 PROFILE = [(0, 0), (6.1, 0), (8, 2.8), (9.2, 6.6), (9.6, 9.6)]
@@ -34,6 +35,8 @@ THWART_SEAT = SHEER - units.voxels(0.15)
 # his shanks and feet, 12%, at 0.45 m (Winter 2009, table 4.1).
 SEATED_CENTRE = units.voxels(0.09)
 POLER_AFT = 5
+FORE_HOLD = cargo.block(-15, 3, 2, CENTRE)
+AFT_HOLD = cargo.block(24, 1, 2, CENTRE)
 
 OARS = {"OarStarboard": -1, "OarPort": 1}
 # Dingle's thole pins stand 15 in abaft their thwart (Hornell 1938); none is given for Aran.
@@ -428,7 +431,11 @@ def build(path_):
     box, measured = hull_box(hide)
     shape.add(box)
     record("currach", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hull, hide, laths, box), "seep": seep(hull, sections)}}}))
-    shape.keep("BackSeat", "ForeCargo", "MidCargo", "AftCargo", "OarStorage")
+    shape.keep("BackSeat", "OarStorage")
+    floor_at, shell_at = cargo.floor_of(hull, hull.t + RIB_DEPTH + STRINGER, SHEER), cargo.floor_of(hull, 0, SHEER)
+    made = [cargo.hold("ForeHold", "ForeHoldAP", 16, FORE_HOLD, floor_at, shell_at, CENTRE, SHEER), cargo.hold("AftHold", "AftHoldAP", 16, AFT_HOLD, floor_at, shell_at, CENTRE, SHEER)]
+    shape.add(*(element for element, _ in made))
+    record("currach", cargo.config(*made))
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))
     pivot = [ORIGIN[0], (box["from"][1] + box["to"][1]) / 2, CENTRE]
     gunwale = laths[0]["children"]

@@ -6,7 +6,7 @@ A hull sinks into the water until it pushes aside its own weight of seawater, so
 
 - the hull, by what it is built of: a light wood floats higher than oak, a heavy one lower;
 - each rider, with their hotbar's tools and weapons and their armour;
-- each basket, crate or chest, at its empty weight;
+- each basket, crate or chest, at its empty weight; what a [hold](Vessels#holds) carries doesn't count yet;
 - the water in its bilge.
 
 What is left of its side above the water is its *freeboard*, and the hover text gives it in centimetres. A loaded boat sits visibly lower, and water aboard settles it further:
@@ -47,7 +47,7 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 | Vessel | Holds up awash |
 | --- | --- |
 | [Coracle](Coracle) | 14 kg: its rider's tools, but not plate armour |
-| [Hide currach](Hide-Currach) | 33 kg: three baskets and a chest, but not its rower in full plate |
+| [Hide currach](Hide-Currach) | 33 kg: its rower's tools, but not full plate |
 | [Birch-bark canoe](Birch-Bark-Canoe) | 36 kg |
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Reed boat](Reed-Boat), fresh | 118 kg, less the water it has soaked up |
@@ -57,7 +57,7 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 
 The wood counts. A sailboat carries two fifths of its weight in ballast to stand up to its sail: of oak, aged wood, birch, maple, purpleheart or ebony it goes down, while of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash. Ebony floats a dugout or an outrigger awash empty, and takes it down only loaded hard. A wood heavier than seawater sinks any hull of it, such as Wildcraft's ekki, lignum vitae, leadwood, mangrove, pink ivory and African blackwood ([Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)).
 
-A vessel that sinks throws everyone off and lies on the bottom, seen but no use: it can't be picked up, the sea fills it again as fast as it is bailed, and currents and waves no longer reach it. Its cargo stays aboard, its baskets and chests open to a diver. An axe swung at it on the bottom breaks it up for its wreckage, and its cargo floats free. Raising it is planned for [The deep](Roadmap#the-deep).
+A vessel that sinks throws everyone off and lies on the bottom, seen but no use: it can't be picked up, the sea fills it again as fast as it is bailed, and currents and waves no longer reach it. Its cargo stays aboard, its holds, baskets and chests open to a diver. An axe swung at it on the bottom breaks it up for its wreckage, and its cargo floats free. Raising it is planned for [The deep](Roadmap#the-deep).
 
 ## Breakers
 

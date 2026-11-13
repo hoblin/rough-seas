@@ -30,7 +30,7 @@ People have tied reeds into boats wherever reeds grow by water: Egyptians built 
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up, from the first binding on |
 | Seats | one, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand; it is too narrow to stand on, so it is poled sitting |
-| Cargo | a basket (8 slots) |
+| Cargo | a basket (8 slots) behind the rider, across the bundles, its sides overhanging |
 | Built from | two reed bundles, each 144 cattail tops, papyrus tops or thatch and two ropes, and four ropes more: 288 reeds and 8 ropes, 50 kg |
 | Wreckage | the tops each bundle was bound from, broken up with an axe once it has sunk |
 
@@ -74,8 +74,8 @@ Carry it to the water and row away. Each side of the boat stays the bundle it wa
 | Afloat, from the side | From the stern quarter |
 | ![Afloat, from above](images/reed-boat/afloat-above.webp) | ![Beside the vanilla sailboat](images/reed-boat/beside-sailboat.webp) |
 | From above | Beside the sailboat |
-| ![Ashore, from the side](images/reed-boat/ashore-side.webp) | ![Ashore, from the quarter](images/reed-boat/ashore-quarter.webp) |
-| Ashore | Ashore, from the quarter |
+| ![Ashore, from the side](images/reed-boat/ashore-side.webp) | ![Loaded, ashore](images/reed-boat/loaded.webp) |
+| Ashore | Loaded |
 | ![Dropped on the ground](images/reed-boat/dropped.webp) | ![Carried under the arm](images/reed-boat/held.webp) |
 | Dropped on the ground | Carried under the arm |
 | ![The hotbar icon](images/reed-boat/icon.png) | ![The wreckage it leaves](images/reed-boat/wreckage.webp) |

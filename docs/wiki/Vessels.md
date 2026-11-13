@@ -41,14 +41,23 @@ Hulls of a chosen wood are given in oak; [harder woods](Hull-Condition#what-it-i
 | --- | --- | --- | --- |
 | [Raft](Raft) | 2 | either seat, paddle or pole in hand | a basket in place of either rider |
 | [Reed boat](Reed-Boat) | 1 | its seat, paddle or pole in hand | a basket |
-| [Dugout](Dugout) | 2 | the front seat, paddle or pole in hand | a basket in place of the passenger |
+| [Dugout](Dugout) | 2 | the front seat, paddle or pole in hand | two holds of 8 slots, either side of the passenger |
 | [Coracle](Coracle) | 1 | its floor, paddle or pole in hand | none |
-| [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships, paddle or pole in hand | a basket in place of the passenger |
-| [Hide currach](Hide-Currach) | 1 | the thwart, its own oars on thole pins | 3 spots on its bottom, each a basket, storage vessel or chest |
-| [Outrigger canoe](Outrigger-Canoe) | 2 | the front seat, paddle or pole in hand | a basket in place of the passenger |
+| [Birch-bark canoe](Birch-Bark-Canoe) | 2 | amidships, paddle or pole in hand | a hold of 8 slots behind the paddler |
+| [Hide currach](Hide-Currach) | 1 | the thwart, its own oars on thole pins | two holds of 16 slots, before the rower and beyond his feet |
+| [Outrigger canoe](Outrigger-Canoe) | 2 | the front seat, paddle or pole in hand | a hold of 8 slots behind the passenger |
 | [Sailboat](Sailboat) | 2, and one more for each boat seat fitted | the starboard seat aft | 8 spots, each a chest, crate, storage vessel, basket or boat seat |
 
 A basket holds 8 slots, a chest 16 (a treasure chest 4), a storage vessel 12, a crate 20 of one kind (16 aged, 25 in ebony or purpleheart). Every vessel but the sailboat stows a pole or a paddle; the sailboat takes more besides: a lantern, anchor, figurehead, ratlines, shields and a fence post for a tied animal. Each vessel's page lists them.
+
+## Holds
+
+The dugout, the outrigger, the bark canoe and the currach carry their cargo loose on their floors, the way real boats are loaded, rather than in a basket: a basket at its true size doesn't fit inside any of them. The raft, the reed boat and the sailboat take containers as vanilla's boats do, and the coracle carries none.
+
+- Right-click the floor of a hold to open it, and move things in and out as you would with a chest.
+- The largest stacks in a hold lie on its floor, each as a small pile of its kind, the way it lies on the ground: ingots in a stack, planks in a pile. The piles grow as the hold fills. Something that can't be laid on the ground, such as clay, isn't shown, and the next largest stack lies there instead.
+- A passenger's legs rest on the cargo in front of them.
+- You can't pick up a boat with anything in its holds: empty them first. A boat that breaks up spills what it carries into the water.
 
 ## Cost follows use
 

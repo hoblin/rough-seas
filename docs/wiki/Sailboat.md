@@ -39,7 +39,7 @@ Its sail drives it the same whatever the wind does; sailing by the wind comes in
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is steadier and carries one basket; it sails slower for now.
+- The [outrigger canoe](Outrigger-Canoe) is steadier and carries a small hold; it sails slower for now.
 - The [hide currach](Hide-Currach) is the small, cheap boat for the coast, light enough to ride over surf, though a breaker that stoves in its hide leaves the sailboat's planks whole.
 
 ## Every form it takes

@@ -31,7 +31,7 @@ The birch-bark canoe belongs to the peoples of the northern woodlands of North A
 | [Mooring](Mooring) | tied to a post |
 | Carried | picked up |
 | Seats | two: a paddler amidships, a [paddle](Paddles-Poles-and-Oars) or a [pole](Paddles-Poles-and-Oars) in hand, standing behind its middle thwart to pole, and a passenger in the bow |
-| Cargo | a basket (8 slots) in the bow, in place of the passenger |
+| Cargo | a [hold](Vessels#holds) of 8 slots behind the paddler; the passenger keeps the bow |
 | Built from | a sheet of bark off a standing tree, 29 laths (4 of 5 m, 6 of 4 m, 19 of 2 m), 21 ropes and a litre of hot pitch |
 | Wreckage | bark and a stick |
 
@@ -91,8 +91,8 @@ Birch bark still comes off a birch log with a knife, for patches: it mends the c
 | Afloat, from the side | From the stern quarter |
 | ![Afloat, from above](images/birch-bark-canoe/afloat-above.webp) | ![Beside the vanilla sailboat](images/birch-bark-canoe/beside-sailboat.webp) |
 | From above | Beside the sailboat |
-| ![Ashore, from the side](images/birch-bark-canoe/ashore-side.webp) | ![Ashore, from the quarter](images/birch-bark-canoe/ashore-quarter.webp) |
-| Ashore | Ashore, from the quarter |
+| ![Ashore, from the side](images/birch-bark-canoe/ashore-side.webp) | ![Loaded, ashore](images/birch-bark-canoe/loaded.webp) |
+| Ashore | Loaded |
 | ![Dropped on the ground](images/birch-bark-canoe/dropped.webp) | ![Carried](images/birch-bark-canoe/held.webp) |
 | Dropped on the ground | Carried |
 | ![The hotbar icon](images/birch-bark-canoe/icon.png) | ![The wreckage it leaves](images/birch-bark-canoe/wreckage.webp) |

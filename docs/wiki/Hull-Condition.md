@@ -94,7 +94,7 @@ The knock grows with everything aboard:
 
 - the vessel itself;
 - each rider at 75 kg, with the tools and weapons in their hotbar and armour by how much it slows its wearer: full plate adds about 35 kg, an axe about 2 kg;
-- each basket, crate or chest at its own empty weight; what is in them doesn't count;
+- each basket, crate or chest at its own empty weight; what is in them, and what a [hold](Vessels#holds) carries, doesn't count;
 - water in the bilge, by how full it is. A half-full bilge sloshes and brings only half its weight to bear, while a swamped one hits with all of it. Bail before you land.
 
 What one rider's knock does, losing 2 or 4 m/s at once, in oak:
