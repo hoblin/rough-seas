@@ -6,7 +6,7 @@ A hull sinks into the water until it pushes aside its own weight of seawater, so
 
 - the hull, by what it is built of: a light wood floats higher than oak, a heavy one lower;
 - each rider, with their hotbar's tools and weapons and their armour;
-- each basket, crate or chest, at its empty weight; what a [hold](Vessels#holds) carries doesn't count yet;
+- each basket, crate or chest, at its empty weight; what a [hold](Vessels#holds) carries doesn't count;
 - the water in its bilge.
 
 What is left of its side above the water is its *freeboard*, and the hover text gives it in centimetres. A loaded boat sits visibly lower, and water aboard settles it further:

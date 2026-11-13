@@ -432,8 +432,8 @@ def build(path_):
     shape.add(box)
     record("currach", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": shell(hull, hide, laths, box), "seep": seep(hull, sections)}}}))
     shape.keep("BackSeat", "OarStorage")
-    floor_at, shell_at = cargo.floor_of(hull, hull.t + RIB_DEPTH + STRINGER, SHEER), cargo.floor_of(hull, 0, SHEER)
-    made = [cargo.hold("ForeHold", "ForeHoldAP", 16, FORE_HOLD, floor_at, shell_at, CENTRE, SHEER), cargo.hold("AftHold", "AftHoldAP", 16, AFT_HOLD, floor_at, shell_at, CENTRE, SHEER)]
+    inset = hull.t + RIB_DEPTH + STRINGER
+    made = [cargo.hold("ForeHold", "ForeHoldAP", FORE_HOLD, hull, inset, SHEER), cargo.hold("AftHold", "AftHoldAP", AFT_HOLD, hull, inset, SHEER)]
     shape.add(*(element for element, _ in made))
     record("currach", cargo.config(*made))
     wound(shape, [("", [hide], "hide")], framing=([laths[1]], "frame"))

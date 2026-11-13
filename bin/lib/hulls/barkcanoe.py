@@ -553,7 +553,7 @@ def build(path_):
     apart = units.metres(RIBS.step)
     record("barkcanoe", merged(measured, {"behaviorConfigs": {"roughseas:vesselintegrity": {"shell": {"backedShare": sides, "bottomBackedShare": bottom, **units.both("span", apart), "frame": units.both("spacing", apart)}}}}))
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
-    aft = cargo.hold("Hold", "HoldAP", 8, HOLD, cargo.floor_of(hull, RIB_INSET + RIB_DEPTH, SHEER), cargo.floor_of(hull, 0, SHEER), CENTRE, SHEER)
+    aft = cargo.hold("Hold", "HoldAP", HOLD, hull, RIB_INSET + RIB_DEPTH, SHEER)
     shape.add(aft[0])
     record("barkcanoe", cargo.config(aft))
     wound(shape, [("", [finished], "bark"), ("Sheet", [flat], "bark"), *((level["name"], [level], "bark") for level in rising)],

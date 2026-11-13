@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Vintagestory.API.Client;
@@ -14,12 +15,18 @@ public sealed class HoldConfig
 {
     [JsonProperty] public string SelectionBox = "";
     [JsonProperty] public int QuantitySlots = 8;
-    [JsonProperty] public float[][] PlacesMetres = [];
 }
 
+public readonly record struct Pile(MeshData? Mesh, Vec3f At, ItemStack Stack, double Fill);
+
+/// <summary>
+/// One hold of a vessel: an inventory kept in her watched attributes, opened by a click on its own selection box,
+/// whose largest stacks lie at its places on the floor.
+/// </summary>
 public sealed class Hold
 {
     private const int InventoryPackets = 1000;
+    private const int ClearOfAccessorySlots = 512;
 
     private readonly Entity entity;
     private readonly string key;
@@ -28,14 +35,13 @@ public sealed class Hold
     private readonly InWorldContainer container;
     private GuiDialogCreatureContents? dialog;
 
-    public Hold(Entity entity, int index, HoldConfig config)
+    public Hold(Entity entity, int index, HoldConfig config, float[][] placesMetres)
     {
         this.entity = entity;
         Box = config.SelectionBox;
         key = $"roughseas:hold{index}";
-        // Clear of the offsets vanilla's held bags take in rideableaccessories, one per slot shifted by 11 bits.
-        packetOffset = (index + 1) << 20;
-        places = config.PlacesMetres.Select(at => new Vec3f(at)).ToArray();
+        packetOffset = (ClearOfAccessorySlots + index) << CollectibleBehaviorHeldBag.PacketIdBitShift;
+        places = placesMetres.Select(at => new Vec3f(at)).ToArray();
         Inventory = new HoldInventory(config.QuantitySlots, $"roughseashold{index}-{entity.EntityId}", entity.Api);
         container = new InWorldContainer(() => Inventory, key);
     }
@@ -44,11 +50,7 @@ public sealed class Hold
 
     public HoldInventory Inventory { get; }
 
-    public InWorldContainer Container => container;
-
-    public string Key => key;
-
-    public void Initialize()
+    public void Initialize(Action? changed)
     {
         container.Init(entity.Api, () => entity.Pos.AsBlockPos, Store);
         Load();
@@ -58,6 +60,12 @@ public sealed class Hold
                 Inventory.Settle();
                 Store();
             };
+        else
+            entity.WatchedAttributes.RegisterModifiedListener(key, () =>
+            {
+                Load();
+                changed?.Invoke();
+            });
     }
 
     public void Load() => container.FromTreeAttributes(entity.WatchedAttributes, entity.World);
@@ -68,6 +76,12 @@ public sealed class Hold
         entity.WatchedAttributes.MarkPathDirty(key);
         entity.World.BlockAccessor.GetChunkAtBlockPos(entity.Pos.AsBlockPos)?.MarkModified();
     }
+
+    public void LoadMappings(IWorldAccessor world, Dictionary<int, AssetLocation> oldBlockIdMapping, Dictionary<int, AssetLocation> oldItemIdMapping, bool resolveImports) =>
+        container.OnLoadCollectibleMappings(world, oldBlockIdMapping, oldItemIdMapping, 0, resolveImports);
+
+    public void StoreMappings(Dictionary<int, AssetLocation> blockIdMapping, Dictionary<int, AssetLocation> itemIdMapping) =>
+        container.OnStoreCollectibleMappings(blockIdMapping, itemIdMapping);
 
     public void Open(EntityPlayer player)
     {
@@ -98,30 +112,37 @@ public sealed class Hold
 
     public void Close() => dialog?.TryClose();
 
-    public void Stow(ItemSlot offered, bool spare)
+    public void DropAll() => Inventory.DropAll(entity.Pos.XYZ);
+
+    public void Take(ItemSlot offered)
     {
         while (!offered.Empty && Inventory.GetBestSuitedSlot(offered, null, []).slot is { } berth)
             if (Put(offered, berth) == 0) break;
-        while (spare && !offered.Empty) Put(offered, Inventory.Spare());
+    }
+
+    public void TakeAll(ItemSlot offered)
+    {
+        Take(offered);
+        while (!offered.Empty) Put(offered, Inventory.Spare());
     }
 
     private int Put(ItemSlot offered, ItemSlot berth) =>
         offered.TryPutInto(entity.World, berth, Math.Min(offered.StackSize, offered.Itemstack!.Collectible.MaxStackSize - berth.StackSize));
 
-    public (MeshData? Mesh, Vec3f At, ItemStack Stack, double Fill)[] Piles(GroundPile piles)
+    public Pile[] Piles(GroundPile piles)
     {
-        var loads = Inventory
+        var lading = Inventory
             .Select((slot, index) => (slot, index))
             .Where(each => !each.slot.Empty)
-            .Select(each => new Load(each.index, each.slot.StackSize, each.slot.Itemstack!.Collectible.MaxStackSize))
+            .Select(each => new Lading(each.index, each.slot.StackSize, each.slot.Itemstack!.Collectible.MaxStackSize))
             .ToList();
-        double fill = Stowage.Fill(loads, Inventory.Count);
-        var drawn = loads.Where(load => piles.Draws(Inventory[load.Slot].Itemstack!)).ToList();
+        double fill = Stowage.Fill(lading, Inventory.Count);
+        var drawn = lading.Where(stack => piles.Draws(Inventory[stack.Slot].Itemstack!)).ToList();
         return Stowage.Lay(drawn, places.Select(at => new double[] { at.X, at.Y, at.Z }).ToList())
             .Select(stowed =>
             {
                 var stack = Inventory[stowed.Slot].Itemstack!;
-                return (piles.Of(stack, fill), places[stowed.Place], stack, fill);
+                return new Pile(piles.Of(stack, fill), places[stowed.Place], stack, fill);
             })
             .ToArray();
     }

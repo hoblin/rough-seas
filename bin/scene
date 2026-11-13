@@ -45,7 +45,7 @@ bin/scene views CODE DIR [SCALE]
                            It changes the world as it goes: clears vessels, items and wandering
                            animals around the player, breaks the vessel, weeds the beach, and empties
                            the player's inventory.
-bin/scene portrait CODE FILE [DISTANCE] [loaded]
+bin/scene portrait CODE FILE [DISTANCE] [loaded] [BEARING]
                            the vessel large, for a page's gallery: at calm noon ashore on the beach zone,
                            seen from its bow quarter as the wiki's ashore-quarter, through a 40° lens
                            from DISTANCE blocks (default 4), the player out of the frame and a
@@ -53,14 +53,15 @@ bin/scene portrait CODE FILE [DISTANCE] [loaded]
                            drawn, masts and sails included; the window's full height is cut to 4:3 round
                            it and written as FILE (.png keeps it whole; .webp is brought to 1200×900).
                            With loaded, every hold she has is filled to the brim, as bin/scene cargo fills
-                           it, and every slot that takes a basket gets one.
+                           it, and every slot that takes a basket gets one. BEARING turns the camera from the
+                           bow quarter (45, clockwise from her heading) to another side: 225 shows her stern.
 bin/scene seats [CODE...]  the player in every seat of each vessel (default: ours and the vanilla raft
                            and sailboat), seen at noon in third person from the left: CODE-SEAT.png per seat in
                            <temp>/seats, and all.png with them side by side. Checks the seats and poses.
 bin/scene cargo [CODE...]  each vessel (default: ours and the vanilla raft and sailboat) docked once per kind of
                            container, a basket, a chest, a storage vessel and a crate, with that container fitted
-                           to every slot that takes it, and once more with every hold she has filled to the brim
-                           with full stacks of as many kinds as it draws (kind "hold"), seen at noon from the
+                           to every slot that takes it, and once more with every hold she has filled to the brim,
+                           a full stack of another kind in each slot (kind "hold"), seen at noon from the
                            side, from above and close: CODE-KIND-{side,above,close}.png in <temp>/cargo, and
                            all.png with them in a grid. Checks that every container and pile sits in the hull.
 bin/scene strokes [CODE[@TOOL]...]
@@ -297,7 +298,7 @@ views() {
 }
 
 portrait() {
-  local code=$1 out=$2 distance=${3:-4} loaded=${4:-} id full=$BENCH_TMP/portrait.png width height
+  local code=$1 out=$2 distance=${3:-4} loaded=${4:-} bearing=${5:-45} id full=$BENCH_TMP/portrait.png width height
   clear >/dev/null
   calm
   "$game" zone beach >/dev/null
@@ -309,7 +310,7 @@ portrait() {
   park=$(awk -v d="$distance" 'BEGIN { print d + 6 }')
   look "$id" "$park" "$park" "$park"
   "$game" do '/gamemode spectator' '.clientconfig fieldOfView 40' >/dev/null
-  "$game" camera on="$id" bearing=45 distance="$distance" \
+  "$game" camera on="$id" bearing="$bearing" distance="$distance" \
     height="$(awk -v d="$distance" 'BEGIN { print 0.8 * d + 0.3 }')" hold=1 >/dev/null
   for animal in pig deer fox; do "$game" do "/entity remove e[range=64,type=game:$animal-*]" >/dev/null; done
   sleep 2

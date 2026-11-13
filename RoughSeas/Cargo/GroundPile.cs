@@ -14,6 +14,7 @@ namespace RoughSeas.Cargo;
 public sealed class GroundPile : ITexPositionSource
 {
     private const string TransformCode = "groundStorageTransform";
+    private const string CacheKey = "roughseas-cargo-piles";
 
     private readonly ICoreClientAPI capi;
     private CollectibleObject tesselating = null!;
@@ -44,37 +45,41 @@ public sealed class GroundPile : ITexPositionSource
     {
         if (Props(stack) is not { } props) return null;
 
+        bool stacked = props.Layout == EnumGroundStorageLayout.Stacking;
+        int most = stacked ? (int)Math.Ceiling(props.StackingCapacity / (float)props.ItemsPerModel) : Offsets(props.Layout).Length;
+        int models = Math.Clamp((int)Math.Ceiling(share * most), 1, most);
+        var cache = ObjectCacheUtil.GetOrCreate(capi, CacheKey, () => new Dictionary<string, MeshData?>());
+        string key = $"{models}x{stack.Collectible.Code}";
+        if (cache.TryGetValue(key, out var cached)) return cached;
+
         tesselating = stack.Collectible;
         shape = null;
         stackingTextures = null;
-        return props.Layout == EnumGroundStorageLayout.Stacking ? Stacked(props, share) : Laid(stack, props, share);
+        return cache[key] = stacked ? Stacked(props, models) : Laid(stack, props, models);
     }
 
     [ReliesOn("Vintagestory.GameContent.BlockEntityGroundStorage", "getOrCreateMesh", "a stacking pile draws the first CuboidsPerModel × models elements of its stacking model")]
-    private MeshData? Stacked(GroundStorageProperties props, double share)
+    private MeshData? Stacked(GroundStorageProperties props, int models)
     {
         shape = Shape.TryGet(capi, props.StackingModel.Clone().WithPathPrefixOnce("shapes/").WithPathAppendixOnce(".json"));
         if (shape == null) return null;
 
         stackingTextures = props.StackingTextures;
-        int full = (int)Math.Ceiling(props.StackingCapacity / (float)props.ItemsPerModel);
-        int models = Math.Clamp((int)Math.Ceiling(share * full), 1, full);
         capi.Tesselator.TesselateShape("cargo pile", shape, out var mesh, this, null, 0, 0, 0, props.CuboidsPerModel * models);
         return mesh;
     }
 
-    private MeshData Laid(ItemStack stack, GroundStorageProperties props, double share)
+    private MeshData Laid(ItemStack stack, GroundStorageProperties props, int count)
     {
-        var one = Default(stack);
+        var one = One(stack);
         var offsets = Offsets(props.Layout);
-        int count = Math.Clamp((int)Math.Ceiling(share * offsets.Length), 1, offsets.Length);
         var pile = one.Clone().Clear();
         for (int i = 0; i < count; i++) pile.AddMeshData(one, offsets[i].X, offsets[i].Y, offsets[i].Z);
         return pile;
     }
 
     [ReliesOn("Vintagestory.GameContent.BlockEntityDisplay", "applyDefaultTranforms", "applies groundStorageTransform, then lays a voxelized item flat at a third")]
-    private MeshData Default(ItemStack stack)
+    private MeshData One(ItemStack stack)
     {
         MeshData mesh;
         if (stack.Class == EnumItemClass.Block)

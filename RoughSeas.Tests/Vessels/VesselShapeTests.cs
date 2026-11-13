@@ -1,3 +1,4 @@
+using RoughSeas.Units;
 using RoughSeas.Shipyard;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
@@ -82,10 +83,11 @@ public class VesselShapeTests
         if (entity["behaviorConfigs"]!["roughseas:cargo"] is not { } cargo) return;
 
         var hull = Elements(shape["elements"]!).Single(element => element.Value<string>("name") == "Hull");
-        double half = cargo.Value<double>("pileScale") * 16 / 2;
+        double half = cargo.Value<double>("pileScale") * Voxels.AMetre / 2;
         Assert.All(cargo["holds"]!, hold =>
         {
-            var places = hold["placesVoxels"]!.Select(place => place.ToObject<double[]>()!).ToList();
+            var places = cargo["places"]![hold.Value<string>("selectionBox")!]!["metres"]!
+                .Select(place => place.ToObject<double[]>()!.Select(metres => metres * Voxels.AMetre).ToArray()).ToList();
             Assert.InRange(places.Count, 1, hold.Value<int>("quantitySlots"));
             Assert.All(places, place =>
             {
@@ -94,6 +96,19 @@ public class VesselShapeTests
                 Assert.InRange(place[2] - half, hull["from"]!.Value<double>(2), hull["to"]!.Value<double>(2) - 2 * half);
             });
         });
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void OpensEachHoldByASelectionBoxOfItsOwn(string vessel)
+    {
+        var behaviors = Load(vessel).Entity["behaviorConfigs"]!;
+        if (behaviors["roughseas:cargo"] is not { } cargo) return;
+
+        var boxes = behaviors["selectionboxes"]!["selectionBoxes"]!.Values<string>().ToList();
+        var holdBoxes = cargo["holds"]!.Select(hold => hold.Value<string>("selectionBox")).ToList();
+        Assert.Subset(boxes.ToHashSet(), holdBoxes.ToHashSet());
+        Assert.Equal(holdBoxes.Count, holdBoxes.Distinct().Count());
     }
 
     [Theory]

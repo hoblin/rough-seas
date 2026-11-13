@@ -722,8 +722,7 @@ def level_boxes(stages):
 
 
 def aft_hold():
-    hull = Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD)
-    return cargo.hold("AftHold", "AftHoldAP", 8, AFT_HOLD, cargo.floor_of(hull, WALL, RIM), cargo.floor_of(hull, 0, RIM), CENTRE, RIM)
+    return cargo.hold("AftHold", "AftHoldAP", AFT_HOLD, Hull("Side", STATIONS, CENTRE, WALL, WOOD, WOOD, edge=WOOD), WALL, RIM)
 
 
 def walls():
@@ -749,7 +748,7 @@ def build(path):
     shape.add(box)
     record("dugout", merged(measured, walls()))
     shape.keep("FrontSeat", "BackSeat", "OarStorage")
-    made = [cargo.hold("MidHold", "MidHoldAP", 8, MID_HOLD, cargo.floor_of(hull, WALL, RIM), cargo.floor_of(hull, 0, RIM), CENTRE, RIM), aft_hold()]
+    made = [cargo.hold("MidHold", "MidHoldAP", MID_HOLD, hull, WALL, RIM), aft_hold()]
     shape.add(*(element for element, _ in made))
     record("dugout", cargo.config(*made))
     trench = stages["Hewn"]["children"][0]

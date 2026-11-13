@@ -17,7 +17,9 @@ public static class StrayContainers
     private const string AccessoriesKey = "wearablesInv";
     private const string AccessoriesBehaviour = "rideableaccessories";
 
-    public static void Stow(Entity vessel, EntityProperties properties, Action<ItemStack> stow, CargoModSystem log)
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorAttachable", "Initialize", "loads the tree wearablesInv into as many slots as its config's wearableSlots lists, each taking its forCategoryCodes")]
+    [ReliesOn("Vintagestory.API.Common.InventoryGeneric", "FromTreeAttributes", "reads only as many saved slots as it has, and drops the rest")]
+    public static void Stow(Entity vessel, EntityProperties properties, Action<ItemStack> stow, CargoModSystem cargo)
     {
         if (vessel.WatchedAttributes.GetTreeAttribute(AccessoriesKey) is not { } saved) return;
         var slots = Slots(properties);
@@ -41,7 +43,7 @@ public static class StrayContainers
             if (berth >= 0)
             {
                 kept.SetItemstack(berth.ToString(), stack);
-                log.Log(vessel, "{0} moved to the accessory slot that takes it now", stack.Collectible.Code);
+                cargo.Log(vessel, "{0} moved to the accessory slot that takes it now", stack.Collectible.Code);
                 continue;
             }
 
@@ -50,10 +52,10 @@ public static class StrayContainers
                 var contents = bag.GetContents(stack, vessel.World).Where(content => content != null).ToArray();
                 foreach (var content in contents) stow(content);
                 bag.Clear(stack);
-                log.Log(vessel, "{0} emptied into her hold: {1} stacks", stack.Collectible.Code, contents.Length);
+                cargo.Log(vessel, "{0} emptied into her hold: {1} stacks", stack.Collectible.Code, contents.Length);
             }
             stow(stack);
-            log.Log(vessel, "{0} stowed in her hold: its slot is gone", stack.Collectible.Code);
+            cargo.Log(vessel, "{0} stowed in her hold: its slot is gone", stack.Collectible.Code);
         }
 
         saved["slots"] = kept;

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -22,14 +23,9 @@ public sealed class HoldInventory(int size, string inventoryId, ICoreAPI api) : 
         return slots[^1];
     }
 
-    public bool Settle()
+    public void Settle()
     {
-        int kept = slots.Length;
-        while (kept > size && slots[kept - 1].Empty) kept--;
-        if (kept == slots.Length) return false;
-
-        slots = slots[..kept];
-        return true;
+        if (slots.Length > size) slots = [.. slots[..size], .. slots[size..].Where(slot => !slot.Empty)];
     }
 
     private void Resize(int count)

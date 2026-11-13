@@ -1,4 +1,3 @@
-using RoughSeas.Cargo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -452,7 +451,7 @@ public class EntityBehaviorVesselIntegrity : EntityBehavior, IHull, IHandedOver,
     {
         if (!byEntity.Controls.ShiftKey || entity.Properties.Attributes?["rightClickPickup"].AsBool() != true) return false;
         if (Occupied()) return false;
-        if (entity.GetBehavior<EntityBehaviorCargo>()?.Empty == false)
+        if (entity.SidedProperties.Behaviors.OfType<IHeldCargo>().Any(cargo => !cargo.Empty))
         {
             vessels.Log(entity, "{0} cannot lift her with cargo in her hold", byEntity.GetName());
             return true;

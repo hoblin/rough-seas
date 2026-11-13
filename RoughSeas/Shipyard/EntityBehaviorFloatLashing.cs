@@ -1,4 +1,3 @@
-using RoughSeas.Cargo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -179,7 +178,7 @@ public class EntityBehaviorFloatLashing(Entity entity) : EntityBehavior(entity),
         var seated = (entity.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? []).Select(seat => seat.Passenger as EntityAgent).ToArray();
         foreach (var rider in seated) rider?.TryUnmount();
         entity.GetBehavior<EntityBehaviorRideableAccessories>()?.Inventory.DropAll(entity.Pos.XYZ);
-        entity.GetBehavior<EntityBehaviorCargo>()?.DropAll();
+        foreach (var cargo in entity.SidedProperties.Behaviors.OfType<IHeldCargo>()) cargo.DropAll();
 
         world.SpawnEntity(hull);
         var seats = hull.GetBehavior<EntityBehaviorSeatable>()?.Seats ?? [];

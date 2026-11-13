@@ -4,16 +4,16 @@ using System.Linq;
 
 namespace RoughSeas.Cargo;
 
-public readonly record struct Load(int Slot, int Size, int MaxSize);
+public readonly record struct Lading(int Slot, int Size, int MaxSize);
 
 public readonly record struct Stowed(int Slot, int Place);
 
 public static class Stowage
 {
-    public static double Fill(IReadOnlyList<Load> loads, int slots) =>
-        slots == 0 ? 0 : loads.Sum(load => (double)load.Size / load.MaxSize) / slots;
+    public static double Fill(IReadOnlyList<Lading> lading, int slots) =>
+        slots == 0 ? 0 : lading.Sum(stack => (double)stack.Size / stack.MaxSize) / slots;
 
-    public static IEnumerable<Stowed> Lay(IReadOnlyList<Load> loads, IReadOnlyList<double[]> places)
+    public static IEnumerable<Stowed> Lay(IReadOnlyList<Lading> lading, IReadOnlyList<double[]> places)
     {
         var middle = new double[3];
         foreach (var place in places)
@@ -22,7 +22,7 @@ public static class Stowage
         var byNearness = Enumerable.Range(0, places.Count)
             .OrderBy(i => Math.Sqrt(Enumerable.Range(0, 3).Sum(axis => Math.Pow(places[i][axis] - middle[axis], 2))))
             .ThenBy(i => i);
-        var largest = loads.OrderByDescending(load => load.Size).ThenBy(load => load.Slot);
-        return largest.Zip(byNearness, (load, place) => new Stowed(load.Slot, place));
+        var largest = lading.OrderByDescending(stack => stack.Size).ThenBy(stack => stack.Slot);
+        return largest.Zip(byNearness, (stack, place) => new Stowed(stack.Slot, place));
     }
 }

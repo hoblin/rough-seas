@@ -7,6 +7,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
+using RoughSeas.Vessels;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Cargo;
@@ -15,7 +16,7 @@ namespace RoughSeas.Cargo;
 /// A vessel's holds: inventories, each opened by a click on its own selection box, whose largest stacks lie on her
 /// floor as vanilla's ground piles at a fraction of their size.
 /// </summary>
-public sealed class EntityBehaviorCargo : EntityBehavior
+public sealed class EntityBehaviorCargo : EntityBehavior, IHeldCargo
 {
     public const string Code = "roughseas:cargo";
 
@@ -36,20 +37,18 @@ public sealed class EntityBehaviorCargo : EntityBehavior
     public override void Initialize(EntityProperties properties, JsonObject attributes)
     {
         base.Initialize(properties, attributes);
-        holds = attributes["holds"].AsObject<HoldConfig[]>()!.Select((config, index) => new Hold(entity, index, config)).ToArray();
+        holds = attributes["holds"].AsObject<HoldConfig[]>()!
+            .Select((config, index) => new Hold(entity, index, config, attributes["places"][config.SelectionBox]["metres"].AsObject<float[][]>()!))
+            .ToArray();
         dropContentsOnDeath = attributes.IsTrue("dropContentsOnDeath");
-        foreach (var hold in holds) hold.Initialize();
-        if (entity.Api.Side == EnumAppSide.Server) StrayContainers.Stow(entity, properties, Stow, entity.Api.ModLoader.GetModSystem<CargoModSystem>());
+        if (entity.Api is ICoreClientAPI capi)
+        {
+            piles = new GroundPile(capi);
+            renderer = new CargoRenderer(capi, entity, attributes["pileScale"].AsFloat());
+        }
 
-        if (entity.Api is not ICoreClientAPI capi) return;
-        piles = new GroundPile(capi);
-        renderer = new CargoRenderer(capi, entity, attributes["pileScale"].AsFloat());
-        foreach (var hold in holds)
-            entity.WatchedAttributes.RegisterModifiedListener(hold.Key, () =>
-            {
-                hold.Load();
-                Lay();
-            });
+        foreach (var hold in holds) hold.Initialize(Lay);
+        if (entity.Api.Side == EnumAppSide.Server) StrayContainers.Stow(entity, properties, TakeAll, entity.Api.ModLoader.GetModSystem<CargoModSystem>());
         Lay();
     }
 
@@ -71,9 +70,11 @@ public sealed class EntityBehaviorCargo : EntityBehavior
     {
         int offeredSize = itemstack.StackSize;
         var offered = new DummySlot(itemstack);
-        foreach (var hold in holds) hold.Stow(offered, spare: false);
+        foreach (var hold in holds) hold.Take(offered);
+        if (itemstack.StackSize == offeredSize) return false;
+
         handling = EnumHandling.PreventSubsequent;
-        return itemstack.StackSize < offeredSize;
+        return true;
     }
 
     public override WorldInteraction[] GetInteractionHelp(IClientWorldAccessor world, EntitySelection es, IClientPlayer player, ref EnumHandling handled)
@@ -82,16 +83,16 @@ public sealed class EntityBehaviorCargo : EntityBehavior
         return help ??= [new WorldInteraction { ActionLangCode = "blockhelp-open", MouseButton = EnumMouseButton.Right }];
     }
 
-    public void Stow(ItemStack stack)
+    public void TakeAll(ItemStack stack)
     {
         var offered = new DummySlot(stack);
-        foreach (var hold in holds) hold.Stow(offered, spare: false);
-        holds[^1].Stow(offered, spare: true);
+        foreach (var hold in holds) hold.Take(offered);
+        holds[^1].TakeAll(offered);
     }
 
     public void DropAll()
     {
-        foreach (var hold in holds) hold.Inventory.DropAll(entity.Pos.XYZ);
+        foreach (var hold in holds) hold.DropAll();
     }
 
     public override void OnEntityDeath(DamageSource damageSourceForDeath)
@@ -117,12 +118,12 @@ public sealed class EntityBehaviorCargo : EntityBehavior
 
     public override void OnLoadCollectibleMappings(IWorldAccessor worldForNewMappings, Dictionary<int, AssetLocation> oldBlockIdMapping, Dictionary<int, AssetLocation> oldItemIdMapping, bool resolveImports)
     {
-        foreach (var hold in holds) hold.Container.OnLoadCollectibleMappings(worldForNewMappings, oldBlockIdMapping, oldItemIdMapping, 0, resolveImports);
+        foreach (var hold in holds) hold.LoadMappings(worldForNewMappings, oldBlockIdMapping, oldItemIdMapping, resolveImports);
     }
 
     public override void OnStoreCollectibleMappings(Dictionary<int, AssetLocation> blockIdMapping, Dictionary<int, AssetLocation> itemIdMapping)
     {
-        foreach (var hold in holds) hold.Container.OnStoreCollectibleMappings(blockIdMapping, itemIdMapping);
+        foreach (var hold in holds) hold.StoreMappings(blockIdMapping, itemIdMapping);
     }
 
     public override void ToBytes(bool forClient)
@@ -148,10 +149,10 @@ public sealed class EntityBehaviorCargo : EntityBehavior
     {
         if (piles == null || renderer == null) return;
 
-        var log = entity.Api.ModLoader.GetModSystem<CargoModSystem>();
+        var cargo = entity.Api.ModLoader.GetModSystem<CargoModSystem>();
         var laid = holds.SelectMany(hold => hold.Piles(piles)).ToArray();
         foreach (var pile in laid)
-            log.Log(entity, "{0:P0} full: {1} lies at {2}", pile.Fill, pile.Stack.Collectible.Code, pile.At);
+            cargo.Log(entity, "{0:P0} full: {1} lies at {2}", pile.Fill, pile.Stack.Collectible.Code, pile.At);
         renderer.Show(laid.Where(pile => pile.Mesh != null).Select(pile => (pile.Mesh!, pile.At)));
     }
 }
