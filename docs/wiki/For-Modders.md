@@ -26,6 +26,13 @@ Where a page touches physics, it says what the mod does and links [The science b
 
 If you build on these pages, or need something they don't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
+### Every selection box aimed at
+
+Vanilla picks the selection box a look enters first, so a box inside the hull's `HullAP` box was never picked from outside a vessel: the stowage on five of ours, the bark canoe's seats and hold, the currach's holds.
+
+- On our vessels every box but `HullAP` now stands at least a voxel over the hull box, and where two overlap, the one of smaller footprint stands a voxel over the larger. Only their tops moved, so a seat, a container or a stowed tool sits where it did. `bin/model build` writes the heights (`shape.reachable`).
+- `OarStorage` reaches from where the tool lies out to the hull box's side, so the strip where the tool lies is wide enough to aim at.
+
 ### Hulls that crack, leak and flood
 
 Hulls that crack, leak and flood changed the vessel keys, so they came as a major version. What a vessel of yours built before them needs to change:

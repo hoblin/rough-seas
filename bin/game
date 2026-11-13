@@ -168,6 +168,12 @@ ACT
                              pitch pi is level, above pi looks down (range 1.59-4.70). The body
                              turns with it, as a focused client's does in first person
   bin/game aim ID            aim the camera at the middle of an entity's selection box
+  bin/game aim ID BOX [ALONG ACROSS]
+                             aim it at a point of the top of one of its selection boxes, by its
+                             attachment point, as the game places that box: ALONG and ACROSS are
+                             shares of its length and width (0.5 0.5, its middle, by default). The
+                             game then picks by the real look: `state`.reach.box names the box it
+                             picked, which may be another one in front of it. `hover` forces a box
   bin/game hover [ID [BOX]]  make the game treat entity ID as looked at, whatever the camera points
                              at: the HUD shows its name and info text, interactions target it, and
                              the reply is that name and text as JSON. Without ID, stop.
@@ -490,7 +496,7 @@ case "${1:-}" in
   fps) post "/fps?seconds=${2:-5}" ;;
   water) post "/water?seconds=${2:-5}" ;;
   look) post "/look?yaw=$2&pitch=$3" ;;
-  aim) post "/look?entity=$2" ;;
+  aim) post "/look?entity=$2&box=${3:-}&along=${4:-}&across=${5:-}" ;;
   hover)
     if [ $# -ge 4 ]; then post "/hover?block=$2,$3,$4"; else post "/hover?entity=${2:-}&box=${3:-}"; fi
     ;;
