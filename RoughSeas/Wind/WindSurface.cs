@@ -63,7 +63,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
 
     public bool Draws(Airflow air) => SquareMetres > 0 && air.Speed > 0 && (Backs(air) || polar.At(FromBow(air)) != null);
 
-    private bool Backs(Airflow air) => air.Across * rig.End.Leeward < 0;
+    private bool Backs(Airflow air) => rig.End.Backs(air);
 
     private double FromBow(Airflow air) => Math.Acos(Math.Clamp(-rig.End.Ahead * air.Along / air.Speed, -1, 1));
 
@@ -90,7 +90,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
 
         Aback = false;
         var dynamic = halfDensity * air.Speed * air.Speed;
-        var force = dynamic * SquareMetres * new HullPoint(end.Ahead * drive, 0, end.Leeward * side);
+        var force = dynamic * SquareMetres * new HullPoint(end.Ahead * drive, 0, end.Leeward(air) * side);
         var (plan, pressing) = (force.Unit, force.Length);
         var trim = (Math.Atan2(plan.Across, plan.Along), pressing, Set, rig.Tacked);
         if (Retrim(trim))
@@ -116,7 +116,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
         var end = rig.End;
         var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
         var (at, pressing) = Plate(end.Pose(Math.Clamp(State.Yard, first, last), State.Boom), air, halfDensity);
-        var yard = (at - end.Tack).Cross(pressing).Dot(end.Axis) < 0 ? first : last;
+        var yard = (at - end.Origin).Cross(pressing).Dot(end.Axis) < 0 ? first : last;
         state = end.Settle(yard, State.Boom, posed => Plate(posed, air, halfDensity));
         Pressure = halfDensity * bluffDrag * Math.Pow(Flow(State.Form.Normal, air), 2);
         Fill(air);
@@ -127,7 +127,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
     {
         var end = rig.End;
         var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
-        var resting = end.Pose(first, 0).Centre(SailForm.Whole, 0).Height <= end.Pose(last, 0).Centre(SailForm.Whole, 0).Height ? first : last;
+        var resting = end.Resting;
         var toward = resting == first ? 1 : -1;
         var step = end.Free.Span / Trims;
         var swept = new List<RigState> { end.Settle(resting, 0, wind) };
@@ -158,9 +158,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
 
     private double LeeOf(RigState posed)
     {
-        var end = rig.End;
-        var offset = posed.Centre(Set, 0) - end.Tack;
-        return (offset - offset.Dot(end.Axis) * end.Axis).Across * end.Leeward;
+        return rig.End.LeeOf(posed, Set);
     }
 
     public static double ClothNewtons(double kilogramsPerSquareMetre) => kilogramsPerSquareMetre * WaveTheory.Gravity;

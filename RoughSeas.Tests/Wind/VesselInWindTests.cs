@@ -42,7 +42,7 @@ public class VesselInWindTests
     {
         var (body, sail) = Outrigger(FullSail);
         body.Load(OverHerFloat, Still, Yaw, Waterline);
-        Assert.True(sail.State.Clew.Across < 0);
+        Assert.True(((ClawState)sail.State).Clew.Across < 0);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class VesselInWindTests
         var load = body.Load(OverHerFloat, Still, Yaw, Waterline);
         Assert.True(load.Z < 0, $"toward her model's stern {load.Z:F0} N");
         Assert.False(sail.Aback);
-        Assert.True(sail.State.Clew.Across < 0);
+        Assert.True(((ClawState)sail.State).Clew.Across < 0);
     }
 
     [Fact]

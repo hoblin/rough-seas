@@ -20,19 +20,23 @@ public class RigTests
         return body.Sail;
     }
 
+    private static CrabClaw Claw(Sail sail) => (CrabClaw)sail.Rig.End;
+
+    private static ClawState Set(Sail sail) => (ClawState)sail.State;
+
     [Theory]
     [InlineData(0.4, 0)]
     [InlineData(1.3, 0.7)]
     [InlineData(-0.6, -0.9)]
     public void TurnedOnHerHalyardAndHerBoomsLashingNoSparOrLineChangesLength(double yard, double boom)
     {
-        var end = Drawing(0).Rig.End;
-        var (rest, posed) = (end.Pose(0, 0), end.Pose(yard, boom));
-        var tack = end.Tack;
+        var end = Claw(Drawing(0));
+        var (rest, posed) = ((ClawState)end.Pose(0, 0), (ClawState)end.Pose(yard, boom));
+        var tack = end.Origin;
         Assert.Equal((end.Hoisted.Masthead - rest.Bend).Length, (end.Hoisted.Masthead - posed.Bend).Length, Precision);
         Assert.Equal((rest.Peak - tack).Length, (posed.Peak - tack).Length, Precision);
         Assert.Equal((rest.Clew - tack).Length, (posed.Clew - tack).Length, Precision);
-        double Opening(RigState state) => Math.Acos((state.Peak - tack).Unit.Dot((state.Clew - tack).Unit));
+        double Opening(ClawState state) => Math.Acos((state.Peak - tack).Unit.Dot((state.Clew - tack).Unit));
         Assert.Equal(Opening(rest), Opening(posed), Precision);
     }
 
@@ -42,13 +46,13 @@ public class RigTests
     public void WhatHerRigHandsHerHullAddsUpToTheSailsForceAndHerSparsWeight(int tacked)
     {
         var sail = Drawing(tacked);
-        var (end, state) = (sail.Rig.End, sail.State);
+        var (end, state) = (Claw(sail), Set(sail));
         var (at, force) = (state.Centre(sail.Set, sail.Depth), new HullPoint(120, 0, -310));
         var load = end.Loads(state, at, force);
         var weight = new HullPoint(0, -WaveTheory.Gravity, 0);
         var (yard, boom, cloth) = (14.12 * weight, 13.44 * weight, sail.SquareMetres * Fixtures.Wind.ClothKgPerSquareMetre * weight);
         var expected = force + yard + boom + cloth;
-        var turning = at.Cross(force) + (0.5 * (state.Peak + end.Tack)).Cross(yard) + (0.5 * (state.Clew + end.Tack)).Cross(boom) + at.Cross(cloth);
+        var turning = at.Cross(force) + (0.5 * (state.Peak + end.Origin)).Cross(yard) + (0.5 * (state.Clew + end.Origin)).Cross(boom) + at.Cross(cloth);
 
         var total = load.Points.Aggregate(default(HullPoint), (sum, push) => sum + push.Force);
         var moment = load.Points.Aggregate(default(HullPoint), (sum, push) => sum + push.At.Cross(push.Force) + push.Couple);
@@ -73,16 +77,16 @@ public class RigTests
     {
         var (asBuilt, shunted) = (Drawing(0), Drawing(1));
         string Seen(Sail sail) => sail.Rig.End.Describe(sail.State);
-        Assert.True(Math.Abs(asBuilt.State.Peak.Height - shunted.State.Peak.Height) < 0.01, $"{Seen(asBuilt)} | {Seen(shunted)}");
-        Assert.True(Math.Abs(asBuilt.State.Clew.Height - shunted.State.Clew.Height) < 0.01, $"{Seen(asBuilt)} | {Seen(shunted)}");
+        Assert.True(Math.Abs(Set(asBuilt).Peak.Height - Set(shunted).Peak.Height) < 0.01, $"{Seen(asBuilt)} | {Seen(shunted)}");
+        Assert.True(Math.Abs(Set(asBuilt).Clew.Height - Set(shunted).Clew.Height) < 0.01, $"{Seen(asBuilt)} | {Seen(shunted)}");
     }
 
     [Fact]
     public void HerSheetAndTheBoomsWeightHoldHerBoomBelowWhereTheYardAloneWouldCarryIt()
     {
         var sail = Drawing(0);
-        var end = sail.Rig.End;
-        Assert.True(sail.State.Clew.Height < end.Pose(sail.State.Yard, 0).Clew.Height,
-            $"boom end {sail.State.Clew.Height:F2} m up, carried rigid {end.Pose(sail.State.Yard, 0).Clew.Height:F2} m: {end.Describe(sail.State)}");
+        var rigid = (ClawState)Claw(sail).Pose(sail.State.Yard, 0);
+        Assert.True(Set(sail).Clew.Height < rigid.Clew.Height,
+            $"boom end {Set(sail).Clew.Height:F2} m up, carried rigid {rigid.Clew.Height:F2} m: {sail.Rig.End.Describe(sail.State)}");
     }
 }

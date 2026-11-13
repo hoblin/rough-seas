@@ -8,11 +8,10 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Wind;
 
-public sealed class RigRenderer : IRenderer
+public sealed record RigTextures(string Cloth, string Wood, string Cord);
+
+public sealed class RigRenderer : IRenderer, IRigCanvas
 {
-    private const string Cloth = "sail";
-    private const string Wood = "frame";
-    private const string Cord = "lashing";
     private const int Reaches = 10;
     private const int Spans = 8;
     private const double OriginMetres = 0.5;
@@ -23,23 +22,25 @@ public sealed class RigRenderer : IRenderer
     private readonly ICoreClientAPI capi;
     private readonly Entity entity;
     private readonly EntityBehaviorWindage windage;
+    private readonly RigTextures textures;
     private readonly Dictionary<string, Layer> meshes = new();
     private readonly Dictionary<string, Layer> blended = new();
     private Dictionary<string, Layer> target;
     private int drawnTack = -1;
-    private (RigEnd End, (double Yard, double Boom, double Fill) Trim)? shunted;
+    private (Rigging End, (double Yard, double Boom, double Fill) Trim)? shunted;
     private long shuntedAt;
     private (double Yard, double Boom, double Fill) from;
     private (double Yard, double Boom, double Fill) to;
     private long toAt;
     private long stepMilliseconds = 1;
 
-    public RigRenderer(ICoreClientAPI capi, Entity entity, EntityBehaviorWindage windage)
+    public RigRenderer(ICoreClientAPI capi, Entity entity, EntityBehaviorWindage windage, RigTextures textures)
     {
         this.capi = capi;
         this.entity = entity;
         this.windage = windage;
-        foreach (var texture in new[] { Cloth, Wood, Cord }) (meshes[texture], blended[texture]) = (new Layer(), new Layer());
+        this.textures = textures;
+        foreach (var texture in new[] { textures.Cloth, textures.Wood, textures.Cord }) (meshes[texture], blended[texture]) = (new Layer(), new Layer());
         target = meshes;
         capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "roughseas-rig");
     }
@@ -113,14 +114,22 @@ public sealed class RigRenderer : IRenderer
         public int Uploaded;
     }
 
-    private void Draw(Dictionary<string, Layer> into, RigEnd end, (double Yard, double Boom, double Fill) trim)
+    private void Draw(Dictionary<string, Layer> into, Rigging end, (double Yard, double Boom, double Fill) trim)
     {
         target = into;
         foreach (var layer in into.Values) layer.Data.Clear();
-        if (Sail.SquareMetres > 0) Hoisted(end, trim);
-        else Lowered(end);
+        if (Sail.SquareMetres > 0) end.Draw(this, end.Pose(trim.Yard, trim.Boom), trim.Fill, Sail.Set);
+        else end.DrawFurled(this);
         target = meshes;
     }
+
+    public void Spar(HullPoint from, HullPoint to, double width) => Tube(textures.Wood, from, to, width);
+
+    public void Line(HullPoint from, HullPoint to, double width) => Tube(textures.Cord, from, to, width);
+
+    public void Roll(HullPoint from, HullPoint to, double width) => Tube(textures.Cloth, from, to, width);
+
+    public void Cloth(SailForm form, double fill, (double Reach, double Span) set) => Weave(form, fill, set);
 
     private static void Blend(MeshData before, MeshData after, double share)
     {
@@ -135,50 +144,11 @@ public sealed class RigRenderer : IRenderer
         return (Between(from.Yard, to.Yard), Between(from.Boom, to.Boom), Between(from.Fill, to.Fill));
     }
 
-    private void Hoisted(RigEnd end, (double Yard, double Boom, double Fill) trim)
-    {
-        var state = end.Pose(trim.Yard, trim.Boom);
-        var pose = end.Hoisted;
-        var set = Sail.Set;
-        Weave(state.Form, trim.Fill, set);
-        var tack = pose.Tack;
-        var foot = (state.Form.At(1, 0, 0, set) - tack).Unit;
-        var clew = tack + (pose.Clew - tack).Length * foot;
-        var bridle = tack + (pose.Bridle - tack).Length * foot;
-        var widths = end.Widths;
-        Standing(pose, widths);
-        Tube(Wood, tack, state.Peak, widths.Spar);
-        Tube(Wood, tack, clew, widths.Spar);
-        if (set.Span < 1) Tube(Cloth, tack, clew, widths.Roll * Math.Sqrt(1 - set.Span));
-        Tube(Cord, pose.Masthead, state.Bend, widths.Line);
-        Tube(Cord, bridle, pose.Lead, widths.Line);
-    }
-
-    private void Lowered(RigEnd end)
-    {
-        var (pose, widths) = (end.Lowered, end.Widths);
-        Standing(pose, widths);
-        Tube(Wood, pose.Tack, pose.Peak, widths.Spar);
-        Tube(Wood, pose.Tack, pose.Clew, widths.Spar);
-        Tube(Cloth, pose.Tack, pose.Clew, widths.Roll);
-        Tube(Cord, pose.Masthead, pose.HalyardBend, widths.Line);
-        Tube(Cord, pose.Bridle, pose.Lead, widths.Line);
-    }
-
-    private void Standing(RigPose pose, RigWidths widths)
-    {
-        Tube(Wood, pose.Heel, pose.Masthead, widths.Pole);
-        Tube(Wood, pose.ShoreFoot, pose.ShoreTop, widths.Shore);
-        Tube(Cord, pose.Masthead, pose.Tack, widths.Line);
-        Tube(Cord, pose.Masthead, pose.SternPin, widths.Line);
-        Tube(Cord, pose.Masthead, pose.ShroudFoot, widths.Line);
-    }
-
     private void Weave(SailForm form, double fill, (double Reach, double Span) set)
     {
         HullPoint At(int i, int j) => form.At((double)i / Reaches, (double)j / Spans, fill, set);
         for (var i = 0; i < Reaches; i++)
-        for (var j = 0; j < Spans; j++) Quad(Cloth, [At(i, j), At(i + 1, j), At(i + 1, j + 1), At(i, j + 1)]);
+        for (var j = 0; j < Spans; j++) Quad(textures.Cloth, [At(i, j), At(i + 1, j), At(i + 1, j + 1), At(i, j + 1)]);
     }
 
     private void Tube(string texture, HullPoint start, HullPoint end, double width)

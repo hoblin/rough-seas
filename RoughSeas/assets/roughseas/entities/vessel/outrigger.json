@@ -194,6 +194,7 @@
         "roughseas:windage": {
             "drawn": ["Mast", "SailFurled", "Stays"],
             "steps": ["BowStepAP", "SternStepAP"],
+            "textures": {"cloth": "sail", "wood": "frame", "cord": "lashing"},
             "sail": {
                 "polar": "crabclaw",
                 "sailSquareMetres": 2.7827,

@@ -25,6 +25,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     private RigRenderer? drawn;
     private string[] drawnGroups = [];
     private string[] steps = [];
+    private RigTextures? textures;
     private long loggedAt;
 
     public Sail? Sail => body.Sail;
@@ -40,12 +41,13 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         body = VesselInWind.From(attributes, wind.Config, wind.Polar);
         drawnGroups = attributes["drawn"].AsArray<string>([]);
         steps = attributes["steps"].AsArray<string>([]);
+        textures = attributes["textures"].AsObject<RigTextures?>(null);
     }
 
     public override void AfterInitialized(bool onFirstSpawn)
     {
         hull = IHull.Of(entity);
-        if (entity.Api is ICoreClientAPI capi && Sail != null) drawn = new RigRenderer(capi, entity, this);
+        if (entity.Api is ICoreClientAPI capi && Sail != null) drawn = new RigRenderer(capi, entity, this, textures!);
     }
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
