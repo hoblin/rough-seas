@@ -72,7 +72,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
         Aback = false;
         var dynamic = halfDensity * air.Speed * air.Speed;
         var (along, across) = (end.Ahead * drive, end.Leeward * side);
-        Turn = Best(turn => Math.Abs(Plan(Form.Normal(turn)).Along * along + Plan(Form.Normal(turn)).Across * across));
+        Turn = Best(turn => ToLeeward(turn) ? Math.Abs(Plan(Form.Normal(turn)).Along * along + Plan(Form.Normal(turn)).Across * across) : -1);
         Pressure = dynamic * Math.Sqrt(drive * drive + side * side);
         Fill(air);
         var force = dynamic * SquareMetres;
@@ -104,6 +104,12 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
     {
         var normal = Form.Normal(Turn);
         Depth = Math.Sign(normal.Along * air.Along + normal.Across * air.Across) * Pressure / (Pressure + clothNewtonsPerSquareMetre);
+    }
+
+    private bool ToLeeward(double turn)
+    {
+        var offset = Form.Centre(Set, turn, 0) - Form.Origin;
+        return (offset - offset.Dot(Form.Axis) * Form.Axis).Across * rig.End.Leeward > 0;
     }
 
     private double Best(Func<double, double> score) => rig.End.Turns().MaxBy(score);

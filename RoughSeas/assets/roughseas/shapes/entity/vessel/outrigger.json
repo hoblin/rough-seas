@@ -19958,21 +19958,62 @@
    ]
   },
   {
-   "name": "LowerMastStorage",
-   "from": [ 9, 8, 5 ],
-   "to": [ 15, 24, 11 ],
-   "faces": {},
-   "attachmentpoints": [
-    { "code": "LowerMastAP", "posX": "3", "posY": "0", "posZ": "3", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
-   ]
-  },
-  {
    "name": "OarStorage",
    "from": [ -16, 1.5, 12.399999999999999 ],
    "to": [ 32, 3.0, 14.0 ],
    "faces": {},
    "attachmentpoints": [
     { "code": "OarAP", "posX": "0", "posY": "0", "posZ": "0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ]
+  },
+  {
+   "name": "Fittings",
+   "from": [ 0, 0, 0 ],
+   "to": [ 0, 0, 0 ],
+   "rotationOrigin": [ 0, 0, 0 ],
+   "faces": {},
+   "children": [
+    {
+     "name": "SailStepBow",
+     "from": [ -27.4, 8.6, 6.6 ],
+     "to": [ -24.6, 11.4, 9.4 ],
+     "faces": {
+      "north": { "texture": "#inside", "uv": [ 1, 1.5, 3.8, 4.3 ] },
+      "east": { "texture": "#inside", "uv": [ 9.5, 1.5, 12.3, 4.3 ] },
+      "south": { "texture": "#inside", "uv": [ 2.5, 2.5, 5.3, 5.3 ] },
+      "west": { "texture": "#inside", "uv": [ 10.5, 4, 13.3, 6.8 ] },
+      "up": { "texture": "#inside", "uv": [ 5.5, 2.5, 8.3, 5.3 ] },
+      "down": { "texture": "#inside", "uv": [ 3, 2, 5.8, 4.8 ] }
+     },
+     "attachmentpoints": [
+      { "code": "BowStepAP", "posX": "1.4", "posY": "0", "posZ": "1.4", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+     ]
+    },
+    {
+     "name": "SailStepStern",
+     "from": [ 40.6, 8.6, 6.6 ],
+     "to": [ 43.4, 11.4, 9.4 ],
+     "faces": {
+      "north": { "texture": "#inside", "uv": [ 4.5, 8, 7.3, 10.8 ] },
+      "east": { "texture": "#inside", "uv": [ 0.5, 4, 3.3, 6.8 ] },
+      "south": { "texture": "#inside", "uv": [ 11.5, 4, 14.3, 6.8 ] },
+      "west": { "texture": "#inside", "uv": [ 12, 1.5, 14.8, 4.3 ] },
+      "up": { "texture": "#inside", "uv": [ 5, 1.5, 7.8, 4.3 ] },
+      "down": { "texture": "#inside", "uv": [ 9, 8.5, 11.8, 11.3 ] }
+     },
+     "attachmentpoints": [
+      { "code": "SternStepAP", "posX": "1.4", "posY": "0", "posZ": "1.4", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+     ]
+    },
+    {
+     "name": "LowerMastStorage",
+     "from": [ 6.5, 12.414, 10 ],
+     "to": [ 12.5, 28.414, 16 ],
+     "faces": {},
+     "attachmentpoints": [
+      { "code": "LowerMastAP", "posX": "3", "posY": "0", "posZ": "3", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+     ]
+    }
    ]
   },
   {

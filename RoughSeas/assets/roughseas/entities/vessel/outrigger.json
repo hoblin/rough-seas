@@ -143,7 +143,7 @@
                 {"apName": "BackSeatAP", "controllable": false, "bodyYawLimit": 0.4, "eyeHeight": 1, "reverse": true}
             ]
         },
-        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "AftHoldAP", "HullAP", "LowerMastAP", "OarAP"]},
+        "selectionboxes": {"selectionBoxes": ["FrontSeatAP", "BackSeatAP", "AftHoldAP", "HullAP", "LowerMastAP", "OarAP", "BowStepAP", "SternStepAP"]},
         "roughseas:cargo": {
             "dropContentsOnDeath": true,
             "holds": [{"selectionBox": "AftHoldAP", "quantitySlots": 8}],
@@ -158,7 +158,9 @@
                 {"code": "AftHoldAP", "forCategoryCodes": []},
                 {"code": "HullAP", "forCategoryCodes": []},
                 {"code": "LowerMastAP", "forCategoryCodes": []},
-                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}},
+                {"code": "BowStepAP", "forCategoryCodes": []},
+                {"code": "SternStepAP", "forCategoryCodes": []}
             ]
         },
         "roughseas:seaforces": {
@@ -191,6 +193,7 @@
         },
         "roughseas:windage": {
             "drawn": ["Mast", "SailFurled", "Stays"],
+            "steps": ["BowStepAP", "SternStepAP"],
             "sail": {
                 "polar": "crabclaw",
                 "sailSquareMetres": 2.7827,

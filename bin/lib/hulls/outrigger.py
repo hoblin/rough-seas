@@ -11,7 +11,7 @@ from transform import add, apply, local
 from fit import APART, Tube, Union
 import units
 from entity import merged, read, record
-from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, side_area, Shape, beam, box, clear_of, ends_of, group, path, plank, run, section, stages
+from shape import BILGE, ROUNDED, Hull, bilge_levels, bounds, collision, hull_box, side_area, Shape, beam, box, clear_of, ends_of, group, num, path, plank, run, section, stages
 from wounds import wound
 
 LOG = 16
@@ -285,6 +285,23 @@ def mast():
     ]
 
 
+def clicked(name, centre, half, code, tex=None):
+    frm, to = [c - h for c, h in zip(centre, half)], [c + h for c, h in zip(centre, half)]
+    element = box(name, frm, to, tex or {})
+    element["attachmentpoints"] = [{"code": code, "posX": str(num(half[0])), "posY": "0", "posZ": str(num(half[2])),
+                                    "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]
+    return element
+
+
+def fittings():
+    claw = crab_claw()
+    heel = claw.heel
+    steps = [clicked(f"SailStep{name}", claw.tack(end), (STEP, STEP, STEP), code, WOOD)
+             for name, end, code in (("Bow", 1, "BowStepAP"), ("Stern", -1, "SternStepAP"))]
+    cleat = clicked("LowerMastStorage", (heel[0], heel[1] + 8, heel[2]), (3, 8, 3), "LowerMastAP")
+    return group("Fittings", (0, 0, 0), (0, 0, 0), [*steps, cleat])
+
+
 def rope(name, start, end, thick=0.3):
     pieces = math.ceil(units.metres(math.dist(start, end)))
     points = [tuple(s + (e - s) * n / pieces for s, e in zip(start, end)) for n in range(pieces + 1)]
@@ -419,7 +436,8 @@ def build(target):
     shape.add(box)
     record("outrigger", merged(hull_measured, collision(box, passes["children"][-1]), walls()))
     shape.keep("FrontSeat", "BackSeat", source=Path(target).with_name("dugout.json"))
-    shape.keep("LowerMastStorage", "OarStorage")
+    shape.keep("OarStorage")
+    shape.add(fittings())
     aft = aft_hold()
     shape.add(aft[0])
     record("outrigger", cargo.config(aft))

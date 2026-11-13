@@ -63,6 +63,8 @@ public class VesselInWindTests
         var load = body.Load(OverHerFloat, Still, Yaw, Waterline);
         Assert.True(load.Z < 0, $"toward her model's stern {load.Z:F0} N");
         Assert.False(sail.Aback);
+        var end = sail.Rig.End;
+        Assert.True(end.Turned(end.Hoisted.Clew, sail.Turn).Across < 0);
     }
 
     [Fact]

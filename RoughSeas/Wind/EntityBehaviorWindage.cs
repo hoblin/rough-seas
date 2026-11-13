@@ -7,6 +7,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace RoughSeas.Wind;
 
@@ -23,6 +24,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     private VesselInWind body = null!;
     private RigRenderer? drawn;
     private string[] drawnGroups = [];
+    private string[] steps = [];
     private long loggedAt;
 
     public Sail? Sail => body.Sail;
@@ -37,6 +39,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
         body = VesselInWind.From(attributes, wind.Config, wind.Polar);
         drawnGroups = attributes["drawn"].AsArray<string>([]);
+        steps = attributes["steps"].AsArray<string>([]);
     }
 
     public override void AfterInitialized(bool onFirstSpawn)
@@ -48,6 +51,19 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
         if (drawn != null && Rigged) willDeleteElements = (willDeleteElements ?? []).Concat(drawnGroups).ToArray();
+    }
+
+    public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
+    {
+        if (mode != EnumInteractMode.Interact || entity.Api.Side != EnumAppSide.Server || Sail == null || !Rigged
+            || byEntity is not EntityPlayer player || entity.GetBehavior<EntityBehaviorSelectionBoxes>() is not { } boxes) return;
+
+        var step = Array.FindIndex(steps, code => boxes.IsAPCode(player.EntitySelection, code));
+        if (step < 0 || step == entity.WatchedAttributes.GetInt(TackedKey)) return;
+
+        entity.WatchedAttributes.SetInt(TackedKey, step);
+        handled = EnumHandling.PreventSubsequent;
+        wind.Log(entity, "{0} shunts her: her tack goes to her {1} step, her mast rakes toward it", player.GetName(), steps[step]);
     }
 
     public override void OnGameTick(float deltaTime)
