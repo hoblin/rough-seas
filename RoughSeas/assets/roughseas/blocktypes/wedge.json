@@ -10,7 +10,9 @@
             {"logs": 4, "item": "roughseas:pole-{wood}-4", "count": 64},
             {"logs": 5, "item": "roughseas:pole-{wood}-5", "count": 64}
         ],
+        "crack": {"location": "game:sounds/effect/treefell", "untilSeconds": 1.58, "range": 32},
         "sources": {
+            "crack": "vanilla's tree fall (survival/sounds/effect/treefell.ogg, 4.41 s) opens with the trunk cracking, broadband peaks from 0.43 to 1.54 s, and after a lull to 1.62 s groans and falls; the split stops it in that lull. Range 32 as vanilla's axe plays it",
             "secondsPerBlow": "An estimate, nothing measured: wedges driven with a maul or an axe's butt take some 30 to 40 blows a minute, each raised overhead and brought down, 1.5 to 2 s a blow; the brisk end, 1.5 s",
             "splits": "A trunk a metre across, as the blocks are, is 0.785 m² of wood in section. It splits by halves along its grain, as rails are split; halved six times it gives 64 billets of about 0.012 m², some 11 cm square, each dressed to the 8 to 10 cm round of an outrigger's booms, mast and spars. Every row, whatever its length, splits into poles as long as it is",
             "poleBurn": "itemtypes/resource/pole.json: the poles split from a row burn as long as the firewood its logs would make, so a pole N logs long holds N/64 of a log: vanilla chops a log into 4 firewood of 24 s (recipes/grid/firewood.json), 96 s a log and 1.5 s a pole a log long; kapok, purpleheart and ebony into 3, 72 s a log and 1.125 s"

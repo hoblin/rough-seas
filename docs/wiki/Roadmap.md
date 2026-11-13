@@ -22,7 +22,7 @@ Rough Seas moves beneath vanilla, so other mods build on its sea as if it were t
 - **One sea, computed on the server.** The server works out the wind, storms, currents and waves and sends each player the map around them, so a client and its server never disagree.
 - **The world's own ocean.** The sea is read from the world's own map, whatever built it, never a copy of our own.
 - **Waves from the water.** [Waves](Wind-and-Waves#waves) grow from the wind, the fetch, the depth and the time it has blown, as coastal engineers predict them, so a big lake raises a sea of its own.
-- **Storms on real climatology.** Gales and hurricanes are born as often and where real ones are, from measurements; squalls keep the mod's own rate until marine statistics are found ([The science of the sea](The-Science-of-the-Sea)).
+- **Storms on real climatology.** Gales and hurricanes are born as often and where real ones are, from measurements; squalls keep the mod's own rate until marine statistics are found ([The science of the weather](The-Science-of-the-Weather)).
 - **Tested beside other mods**, with recommendations for mod sets ([Beside other mods](Other-Mods)).
 - **The wind on the coordinates readout**: where it blows from, its force and its speed, in every language the game speaks ([Wind and waves](Wind-and-Waves#wind)).
 - **Vessels from any wood**, other mods' timber included: the [dugout](Dugout) and the [outrigger canoe](Outrigger-Canoe) from any tree, the [bark canoe](Birch-Bark-Canoe) from birch, elm or spruce bark.
@@ -111,6 +111,10 @@ The sea reaches the shore, and you float in it.
 - **Boats take the waves where they are,** softer behind a bar, and a wave every wave period.
 - **Vintage Story 1.22.0** and later.
 
+## Next release
+
+- **Switched off for now:** the open sea's sound, the surf and the whitecaps' hiss, which didn't match the water you see. They come back from real recordings ([Further out](#further-out)). The shore laps with the game's own sound, the game's rowing plays at its own volume, and every wave at a hull, every breaker and every knock still sounds.
+
 ## Seamanship
 
 Sailing becomes sailing.
@@ -144,6 +148,7 @@ What lies below.
 
 Ideas not yet planned:
 
+- **The sea's sound, redone** from real recordings: the open sea, the surf and the whitecaps, each heard where it is.
 - **The sea's own warnings.** Fog over cold [currents](Currents), and life gathering where cold water wells up.
 
 - **Crewed ships.** A big ship for several players: one at the helm, one on the sails, one bailing, one on the anchor, one on lookout. A single player can still sail it, slower and at more risk, and if nobody holds the helm, wind and current turn it.

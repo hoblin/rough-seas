@@ -2,6 +2,7 @@
   "updateSeconds": 0.1,
   "seaProbeBlocks": 3,
   "seaFromMetres": 0.1,
+  "background": false,
   "beds": {
     "easeSeconds": 4,
     "lufs": [[0, -48.0], [2, -46.0], [5, -34.1], [10, -25.0], [15, -19.7], [20, -16.0], [25, -13.1], [30, -10.7], [35, -9.3]],
@@ -139,6 +140,7 @@
     }
   },
   "sources": {
+    "background": "Off until the sea's background sound is redone with real recordings (#357): the open-sea beds, the surf and the whitecap hiss stay silent, vanilla's lapping laps along every edge, breaking or not, and vanilla's rowing keeps its own volume (vanillaRowingVolume applies only under the beds). Every sound tied to an event still plays.",
     "files": "Every sound file is mono, true peak at most -1 dBTP; credits in the wiki's Sound-Credits page. The open-sea beds and the surf are mastered toward -8 LUFS (each records what it reached), events (knocks, cracks, break-ups, snapping lashings, a breaker's slam, water over the gunwale, slaps) to -18 LUFS with a limiter, and the rest of the ambience (splashes, slosh, leak, whitecaps) to -26 LUFS. A volume can't exceed 1, so a file's master is the loudest it can play.",
     "levels": "Volumes set against vanilla by calculation from its code: in the game a sound plays at its file's loudness + 20 log10(volume x the player's setting for its type x distance attenuation). Distance attenuation is OpenAL exponent-clamped with reference max(3, sqrt(range) - 2) and rolloff ln 100 / ln range; weather and our beds play relative to the listener, unattenuated. Vanilla at sea: wind -39 LUFS just audible, -31 at wind speed 0.7, -24 in a full gale; rain -33 moderate, -27 heavy; raft idle -50; shore lapping (waterwaves) -51 beside 100 edge blocks.",
     "beds": "Over sea water with waves of at least seaFromMetres (a pond or a creek in a gale stays quiet), by the wind speed at the listener in m/s, not the wave height: a young sea in a gale already roars. lufs is the sea's level in the game, -46 + 30 log10(wind / 2 m/s): -46 at 2 m/s, -34 at 5, -20 at 15 (past vanilla's full wind at -24), -12 at force 10, -9.3 from 35 m/s, the loudest the storm's file can play; each loop's lufs is its file's measured loudness, mastered toward -8. A storm deafens: events stay at their own level (a hard knock -18) and drown in it from about force 8. No bed plays below 3 m/s: in a calm there is no wind or surf to make one, and the sea is heard only as its waves splash. Above it the bed rises out of silence as the loops' shares add up to one (moderate's, from 3 to 6 m/s), and only then holds the level the wind gives.",

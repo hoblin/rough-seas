@@ -24,10 +24,10 @@ public static class ShoreSound
     private static ShoreConfig config = new();
     private static StormsModSystem? seas;
 
-    public static void Attach(ShoreConfig shore, StormsModSystem storms)
+    public static void Attach(ShoreConfig shore, StormsModSystem storms, bool surf)
     {
-        if (harmony != null) return;
         (config, seas) = (shore, storms);
+        if (!surf || harmony != null) return;
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.DeclaredMethod(typeof(BlockWater), nameof(BlockWater.GetAmbientSoundStrength)),
             postfix: new HarmonyMethod(typeof(ShoreSound), nameof(Strength)));

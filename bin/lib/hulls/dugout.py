@@ -740,7 +740,7 @@ def build(path):
     box, measured = hull_box(shell)
     shape.add(box)
     record("dugout", merged(measured, walls()))
-    shape.keep("FrontSeat", "BackSeat", "OarStorage")
+    shape.keep("FrontSeat", "BackSeat", "BackCargo", "OarStorage")
     trench = stages["Hewn"]["children"][0]
     wound(shape, [("", [shell], WOOD), *((built["name"], [built], WOOD) for built in [*stages["Blank"]["children"], trench])])
     envelope, hold, trunk_litres = volumes()

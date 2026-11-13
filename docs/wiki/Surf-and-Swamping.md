@@ -35,7 +35,7 @@ Boats with a hull hold that water in their [bilge](Bailing), with what their [cr
 A litre of seawater weighs a kilogram, and a bilge holds hundreds. As it fills, a boat:
 
 - **rides lower.** With one aboard, a full bilge brings its gunwale down to the water, so each wave comes aboard more easily than the last;
-- **gets slower.** It paddles as hard and pushes a heavier hull, so the lighter the boat for its bilge, the more its water slows it: half full, a dugout or a coracle keeps four fifths of its speed, a bark canoe three quarters, and a hide currach, whose bilge holds 22 times its weight, two thirds. A load slows it the same way, a second rider or a hold of chests, and a hull of a light wood is a little faster than oak: a kapok dugout makes 8% more speed, an ebony one 4% less ([how](The-Science-of-the-Hull#driving-it));
+- **gets slower.** It paddles as hard and pushes a heavier hull, so the lighter the boat for its bilge, the more its water slows it: half full, a dugout or a coracle keeps four fifths of its speed, a bark canoe three quarters, and a hide currach, whose bilge holds 22 times its weight, two thirds. A load slows it the same way, a second rider or a hold of chests, and a hull of a light wood is a little faster than oak: a kapok dugout makes 8% more speed, an ebony one 4% less ([how](The-Science-of-a-Body-in-the-Water#driving-it));
 - **rolls harder.** The water sloshing across the bilge leans with every roll and adds to it, twice the roll when full, and a breaker half as high overturns it.
 
 ## Swamping

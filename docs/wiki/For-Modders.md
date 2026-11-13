@@ -181,7 +181,7 @@ New: `IOutboard` with `OffMetres`, `IHull.Reach`, `HullShape.Spanning`, `EntityB
 
 ### Paddling on both sides
 
-A paddle works on one side and turns the vessel away from it, and the paddler changes sides to hold a course or to turn it ([Driving it](The-Science-of-the-Hull#driving-it)). A vessel of yours loads as it did.
+A paddle works on one side and turns the vessel away from it, and the paddler changes sides to hold a course or to turn it ([Driving it](The-Science-of-a-Body-in-the-Water#driving-it)). A vessel of yours loads as it did.
 
 - A paddled vessel's `strokes` hold `paddle-starboard` and `paddle-port` in place of `paddle`, each with a fourth animation, `change`, that carries the paddle over to that side: `roughseas-{vessel}-paddle-{starboard|port}-{ready|forward|backward}` and `roughseas-{vessel}-paddle-to-{starboard|port}`. A vessel whose `strokes` keep a bare `paddle`, the coracle sculling over its bow, is paddled on no side. A patch that played or replaced `roughseas-{vessel}-paddle-{ready|forward|backward}` misses.
 - The vessel's new key `paddleAbeamMetres` is how far out from its middle the blade drives: the blade's thrust turns the vessel by that lever. Without the key a paddle drives it straight, as before.
@@ -454,7 +454,7 @@ The drawn waves reach the shore, over water we put under it ([Water under the be
 - Gone: `EntityBehaviorSeaForces.Wave` (`Took` stays) and `Waves.BreaksAt` (ask `WaveHere`); from the configs `waves.maxDepthBlocks`, `waves.bedSlopeBlocks`, `surface.surfFoam` and the shore sound's `maxDepthBlocks`; `seafoam.fsh`'s depth bands. `seaFoam` is a `vec3`.
 - The liquid shader takes eight more samplers, `seaBed`, `seaBedAux`, `seaLagA`, `seaLagB`, `seaFace`, `seaGainA`, `seaGainB` and `seaSurf`, on the eight units below `seaHeightMap`'s and out of the engine's numbering as it is ([SheyderMod](Other-Mods#sheydermod)); `chunkopaque` and `chunktopsoil` read `seaBed` and `seaBedAux` to darken wet ground.
 - On the server, `/shore here` reads the ground under the player at still-water level and how far the nearest shore's sea runs up it, and `/shore budget` the time the shore's water has taken since the last report. On a client, `.surface shore off` draws the sea as if it were deep everywhere and `on` brings the shore back, and `.surface bed N` reads the seabed and the swash under the player and N blocks along X.
-- `config/shore.json` holds the run-up (`runUp`: Stockdon's and EurOtop's factors, `wallSlope`, steeper than which a shore is a wall, and `slopeSearchBlocks`, how far inland the slope is read), the sheet (`sheet`: the uprush's bed friction and the lens's depth), each bed by its block material (`beds`: `conductivity`, `roughness`, and `sandy` for Stockdon's beach run-up; a material it lacks counts as `stone`) and the band (`band`: `haloBlocks`, `highestRiseBlocks`, `refreshMinutes`, `tickBudgetMilliseconds`). `config/storms.json`'s `surface.shore` holds the seabed map's size and refresh, wet sand's `wetReflectance` and the water's `waterAttenuation`. The physics and every source: [The science of the sea](The-Science-of-the-Sea#the-shore).
+- `config/shore.json` holds the run-up (`runUp`: Stockdon's and EurOtop's factors, `wallSlope`, steeper than which a shore is a wall, and `slopeSearchBlocks`, how far inland the slope is read), the sheet (`sheet`: the uprush's bed friction and the lens's depth), each bed by its block material (`beds`: `conductivity`, `roughness`, and `sandy` for Stockdon's beach run-up; a material it lacks counts as `stone`) and the band (`band`: `haloBlocks`, `highestRiseBlocks`, `refreshMinutes`, `tickBudgetMilliseconds`). `config/storms.json`'s `surface.shore` holds the seabed map's size and refresh, wet sand's `wetReflectance` and the water's `waterAttenuation`. The physics and every source: [The science of the waves](The-Science-of-the-Waves#the-shore).
 
 - **Faces.** The waves reflect off every side of a full block the sea meets. A breaking wave throws spray and foam at a face higher than its crest, and a sheet stopped at a step throws spray there. `IDrawnSea.HeightAt` and `PoseOf` include the reflection; `HullVelocityAt` doesn't, so a hull rides the standing wave but is not pushed by it. The shared sea decides each strike from the world's clock, so two clients see the same one; the particles themselves are each client's own, spawned through vanilla's `RegisterAsyncParticleSpawner`. `shore.json`'s `faces` holds the reflection and overtopping formulas, the jet's speed, the foam's decay and the budget of spray per metre of face. `.surface bed` reports the nearest face, and the client's debug log carries a `[storms] strikes` line of what the faces around the player did in the last 5 s.
 
@@ -488,7 +488,7 @@ A mod that replaces vanilla's shaders no longer breaks one of vanilla's programs
 
 ### A hull moves by the water's force
 
-A hull moves by the sum of the forces on it, the waves' among them, so one running near a wave's speed is carried on its face; a mooring line holds by its tension; a swimmer strokes with a force, and a current carries a swimmer ([How the waves move a hull](The-Science-of-the-Sea#how-the-waves-move-a-hull)). A vessel of yours with our behaviours loads as it did; a mod that reads or moves a hull or a swimmer reads on.
+A hull moves by the sum of the forces on it, the waves' among them, so one running near a wave's speed is carried on its face; a mooring line holds by its tension; a swimmer strokes with a force, and a current carries a swimmer ([How the waves move a hull](The-Science-of-a-Body-in-the-Water#how-the-waves-move-a-hull)). A vessel of yours with our behaviours loads as it did; a mod that reads or moves a hull or a swimmer reads on.
 
 - `IDrawnSea` gained `HullGradientAt(x, z, lift, draft, yaw, length, beam)`, a `FlowGradient` ([Reading it](Reading-the-Sea#reading-it)); `SeaSurface` has it too. A class of yours that implements `IDrawnSea` has to add it.
 - The waves no longer move a hull from a postfix on `EntityBoat.updateBoatAngleAndMotion`: `WaveCarry` is gone, and `roughseas:currentdrift` moves the hull by the current, the waves and its lines in one step. `WaveRide.Carry` became `WaveRide.Water`, which reads the waves under the hull as a `WaterOnHull`; `WaveRide.WaterAcceleration` and `EntityBehaviorSeaForces.Driven` are gone. `HullRider` gained `Gradient`.
@@ -498,6 +498,32 @@ A hull moves by the sum of the forces on it, the waves' among them, so one runni
 - A swimmer's stroke is ours: `BodyAfloat` takes back the motion `PModulePlayerInLiquid.HandleSwimming` adds for a player afloat, on the client that moves them, and strokes by `SwimStroke` from the controls; `BodyUnderSurface` no longer transpiles it. `config/person.json`'s `body` gained `strokeNewtons` and `dragAreaSwimming`. `FloatingBody.Step` takes the stroke and the current, which now carries a swimmer, by the `oceanCurrents` setting.
 
 New: `IDrawnSea.HullGradientAt`, `FlowGradient`, `WaterOnHull`, `SwimStroke`, `MooringLine.Over` and `Dragging`, `LineStep`, `BodyInWater`, `HullSet.Add` and `Way`, `HullSetReport`, `HullRider.Gradient`, `Body.AddedAlongKg`.
+
+### Containers inside the hull
+
+A basket fitted to the reed boat, the dugout, the outrigger or the bark canoe sits on the centreline, on her floor, at half its size, as the currach's do. A vessel of yours loads as it did.
+
+- Vanilla draws a fitted container from the `from` corner of the element its slot's `stepParentTo` names, at the container's own 0 to 16 voxels, scaled and turned as that element is; the element's size plays no part. Every cargo element of ours is a 16-voxel cube scaled 0.5 about its `from`, placed so the container lies on the centreline and on the floor.
+- The reed boat's `Cargo` is that cube, its `CargoAP` at its middle, so the slot's selection box is where the basket shows.
+- The dugout's and outrigger's `Back Seat` slot steps its basket into the new `BackCargo`, the bark canoe's `Front Seat` slot into the new `FrontCargo`. The slots keep their codes, attachment points and selection boxes, which are the seats'.
+
+New: `BackCargo`, `FrontCargo`.
+
+### A split cracks, with no fall
+
+A row split with wedges sounds the crack that opens vanilla's `effect/treefell`, and not the tree falling after it.
+
+- The wedge's `crack` attribute is a `SoundCut`, `{ "location", "untilSeconds", "range" }`: every client within `range` of the split plays `location` from its start and stops it at `untilSeconds`. Vanilla's file is played as it ships, nothing of it copied.
+- `SoundscapeModSystem.Play(SoundCut, Vec3d)` does this from the server for any module, over the new channel `roughseas:sounds`.
+
+New: `crack`, `SoundCut`, `SoundscapeModSystem.Play`, `roughseas:sounds`.
+
+### The sea's background switched off
+
+The open sea's beds, the surf and the whitecaps' hiss are switched off until they are redone from real recordings. Every sound of an event still plays: a hull's knocks and cracks, the slaps and splashes of the waves, a breaker's slam, water over the gunwale, a leak, the bilge's slosh, a plunging crest.
+
+- `config/soundscape.json` gained `background`, false. With it off we patch neither `BlockWater.GetAmbientSoundStrength` nor `Block.GetSounds`, so vanilla's `waterwaves` laps along every edge, breaking or not, and a mod that changes water's sounds sees vanilla's. Vanilla's rowing (`ModSystemBoatingSoundAndRatlineStamina.NowInMotion`) plays at its own volume too: `vanillaRowingVolume` applies only with `background` on.
+- A patch that sets `background` to true brings all of them back as they were, `beds`, `shore` and `crests.hiss` unchanged.
 
 ### Hands that tie knots
 
