@@ -47,7 +47,7 @@ public sealed class SailRenderer : IRenderer
         var now = capi.InWorldEllapsedMilliseconds;
         from = Drawn(now);
         stepMilliseconds = Math.Max(1, now - toAt);
-        (to, toAt) = ((sail.Trim, sail.Fill), now);
+        (to, toAt) = ((sail.Turn, sail.Depth), now);
     }
 
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
@@ -101,15 +101,11 @@ public sealed class SailRenderer : IRenderer
         var atlas = Atlas();
         var (width, height) = (atlas.x2 - atlas.x1, atlas.y2 - atlas.y1);
         data.Clear();
-        var reef = sail.Reef;
+        HullPoint At(int i, int j) => sail.Form.At((double)i / Reaches, (double)j / Spans, trim, fill, sail.Set);
         for (var i = 0; i < Reaches; i++)
         for (var j = 0; j < Spans; j++)
         {
-            var corners = new[]
-            {
-                sail.Form.At(reef * i / Reaches, (double)j / Spans, trim, fill), sail.Form.At(reef * (i + 1) / Reaches, (double)j / Spans, trim, fill),
-                sail.Form.At(reef * (i + 1) / Reaches, (double)(j + 1) / Spans, trim, fill), sail.Form.At(reef * i / Reaches, (double)(j + 1) / Spans, trim, fill)
-            };
+            var corners = new[] { At(i, j), At(i + 1, j), At(i + 1, j + 1), At(i, j + 1) };
             var normal = Normal(corners);
             foreach (var (facing, order) in Sides)
             {

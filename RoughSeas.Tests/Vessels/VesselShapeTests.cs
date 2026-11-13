@@ -175,7 +175,7 @@ public class VesselShapeTests
         if (entity["attributes"]!.Value<bool?>("unfurlSails") != true) return;
 
         Assert.Contains(FurledSail, Elements(shape["elements"]!).Select(element => element.Value<string>("name")));
-        Assert.NotNull(entity["behaviorConfigs"]?["roughseas:windage"]?["sail"]?["peakMetres"]);
+        Assert.NotNull(entity["behaviorConfigs"]?["roughseas:windage"]?["sail"]?["leechHeadMetres"]);
     }
 
     [Theory]

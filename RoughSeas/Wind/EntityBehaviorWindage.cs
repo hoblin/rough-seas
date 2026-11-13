@@ -59,7 +59,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         if (hull == null || !entity.Swimming) return default;
 
-        Sail?.Set(entity.WatchedAttributes.GetInt(SailKey));
+        Sail?.Hoist(entity.WatchedAttributes.GetInt(SailKey));
         var blowing = sea.Map.Wind(entity.Pos.X, entity.Pos.Z);
         var load = body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres);
         Note(blowing, velocity, load);
@@ -77,7 +77,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         var (pushAlong, pushAcross) = HullShape.ToHull(load.X, load.Z, entity.Pos.Yaw);
         wind.Log(entity, "the wind {0:F1} m/s toward {1:F0}°, {2:F1} m/s apparent {3:F0}° off her bow from {4}; {5}: {6:F0} N ahead, {7:F0} N to {8}, {9:F0} N·m; she makes {10:F2} m/s",
             Speed(blowing), Compass.TowardDegrees(blowing.X, blowing.Z), air.Speed, air.FromBow * GameMath.RAD2DEG, air.Leeward > 0 ? "port" : "starboard",
-            Sail is { Pressure: > 0 } sail ? $"sail drawing at {sail.Trim * GameMath.RAD2DEG:F0}°" : "bare",
+            Sail is { Pressure: > 0 } sail ? $"sail drawing, turned {sail.Turn * GameMath.RAD2DEG:F0}°" : "bare",
             -pushAlong, Math.Abs(pushAcross), pushAcross > 0 ? "starboard" : "port", load.NewtonMetres, Speed(velocity));
     }
 

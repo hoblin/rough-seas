@@ -19,7 +19,7 @@ public class VesselInWindTests
     private static (VesselInWind Body, Sail Sail) Outrigger(int sailPosition)
     {
         var body = Fixtures.InWind("outrigger");
-        body.Sail!.Set(sailPosition);
+        body.Sail!.Hoist(sailPosition);
         return (body, body.Sail);
     }
 
@@ -62,7 +62,7 @@ public class VesselInWindTests
     {
         var (body, sail) = Outrigger(FullSail);
         body.Load(FromAstern, Still, Yaw, Waterline);
-        Assert.Equal(Math.PI / 2, Math.Abs(sail.Trim), 6);
+        Assert.Equal(Math.PI / 2, Math.Abs(sail.Turn), 6);
     }
 
     [Fact]

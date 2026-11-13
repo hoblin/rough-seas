@@ -269,7 +269,9 @@ def area():
 
 def canvas():
     clear = (POLE + SPAR) / 2
-    return wind.sail("crabclaw", (*TACK, 8), (*YARD_END, 8), (*SPAR_END, 8), REEF, math.degrees(math.asin(clear / (MAST[0] - TACK[0]))), trimmed()["code"])
+    tack = (*TACK, 8)
+    return wind.sail("crabclaw", (tack, tack, (*YARD_END, 8), (*SPAR_END, 8)), tack, (REEF, 1),
+                     math.degrees(math.asin(clear / (MAST[0] - TACK[0]))), trimmed()["code"])
 
 
 def furled():

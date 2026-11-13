@@ -12,7 +12,7 @@ public class SailFormTests
     private static readonly HullPoint Tack = new(-1, 0.7, 0);
     private static readonly HullPoint Peak = new(0.3, 3.2, 0);
     private static readonly HullPoint Clew = new(1.6, 0.9, 0);
-    private static readonly SailForm Form = new(Tack, Peak, Clew, Fixtures.Wind.Camber);
+    private static readonly SailForm Form = new(Tack, Tack, Peak, Clew, Tack, Fixtures.Wind.Camber);
 
     [Fact]
     public void HerCornersStayOnHerSparsHoweverSheFills()
@@ -41,6 +41,6 @@ public class SailFormTests
     [Fact]
     public void ReefedHerCentreOfEffortComesInTowardHerTack()
     {
-        Assert.True((Form.Centre(Math.Sqrt(0.5), Untrimmed, Flat) - Tack).Length < (Form.Centre(Full, Untrimmed, Flat) - Tack).Length);
+        Assert.True((Form.Centre((Math.Sqrt(0.5), Full), Untrimmed, Flat) - Tack).Length < (Form.Centre(SailForm.Whole, Untrimmed, Flat) - Tack).Length);
     }
 }

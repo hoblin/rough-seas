@@ -23,9 +23,11 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, Sail? sai
     {
         if (!sail.Exists) return null;
 
-        var form = new SailForm(Corner(sail, "tack"), Corner(sail, "peak"), Corner(sail, "clew"), config.Camber);
+        var form = new SailForm(Corner(sail, "luffFoot"), Corner(sail, "luffHead"), Corner(sail, "leechHead"), Corner(sail, "leechFoot"),
+            Corner(sail, "pivot"), config.Camber);
         return new Sail(polar(sail["polar"].AsString()), form, sail["sailSquareMetres"].AsDouble(), sail["halfSquareMetres"].AsDouble(),
-            sail["leastTrimDegrees"].AsDouble() * GameMath.DEG2RAD, Sail.ClothNewtons(config.ClothKgPerSquareMetre));
+            (sail["halfReach"].AsDouble(1), sail["halfSpan"].AsDouble(1)), sail["leastTrimDegrees"].AsDouble() * GameMath.DEG2RAD,
+            Sail.ClothNewtons(config.ClothKgPerSquareMetre));
     }
 
     private static HullPoint Corner(JsonObject sail, string name) => HullPoint.Of(sail[name + "Metres"].AsArray<double>());

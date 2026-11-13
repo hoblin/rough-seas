@@ -48,8 +48,30 @@ def corner(name, at):
     return point(name, (x - ORIGIN[0], y, z - ORIGIN[2]))
 
 
-def sail(polar, tack, peak, clew, reef, least_trim_degrees, trim_animation):
-    full, _ = polygon([p[:2] for p in (tack, peak, clew)])
+def bilinear(corners, reach, span):
+    luff_foot, luff_head, leech_head, leech_foot = corners
+    foot = [a + (b - a) * reach for a, b in zip(luff_foot, leech_foot)]
+    head = [a + (b - a) * reach for a, b in zip(luff_head, leech_head)]
+    return [f + (h - f) * span for f, h in zip(foot, head)]
+
+
+def cloth_area(corners, reach=1, span=1, cells=32):
+    total = 0
+    for i in range(cells):
+        for j in range(cells):
+            at = lambda s, t: bilinear(corners, reach * s / cells, 1 - span + span * t / cells)
+            a, b, c, d = at(i, j), at(i + 1, j), at(i + 1, j + 1), at(i, j + 1)
+            u, v = [p - q for p, q in zip(c, a)], [p - q for p, q in zip(d, b)]
+            total += sum(x * x for x in (u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])) ** 0.5 / 2
+    return units.metres(total, 2)
+
+
+def sail(polar, corners, pivot, half, least_trim_degrees, trim_animation=None):
+    half_reach, half_span = half
+    names = ("luffFoot", "luffHead", "leechHead", "leechFoot")
     return {"behaviorConfigs": {WINDAGE: {"sail": {
-        "polar": polar, "trimAnimation": trim_animation, **units.both("sail", units.metres(full, 2), 2), **units.both("half", units.metres(full * reef * reef, 2), 2),
-        **corner("tack", tack), **corner("peak", peak), **corner("clew", clew), "leastTrimDegrees": round(least_trim_degrees, 1)}}}}
+        "polar": polar, **({"trimAnimation": trim_animation} if trim_animation else {}),
+        **units.both("sail", cloth_area(corners), 2), **units.both("half", cloth_area(corners, half_reach, half_span), 2),
+        "halfReach": round(half_reach, 4), "halfSpan": round(half_span, 4),
+        **{k: v for name, at in zip(names, corners) for k, v in corner(name, at).items()}, **corner("pivot", pivot),
+        "leastTrimDegrees": round(least_trim_degrees, 1)}}}}

@@ -21,31 +21,37 @@ public sealed class BluffSurface(double sideSquareMetres, double frontSquareMetr
         centreAlong, centreAcross);
 }
 
-public sealed class Sail(SailPolar polar, SailForm form, double fullSquareMetres, double halfSquareMetres, double leastTrim, double clothNewtonsPerSquareMetre)
+public sealed class Sail(SailPolar polar, SailForm form, double fullSquareMetres, double halfSquareMetres, (double Reach, double Span) half, double leastTrim,
+    double clothNewtonsPerSquareMetre)
     : WindSurface
 {
     public SailForm Form => form;
 
     public double SquareMetres { get; private set; }
 
-    public double Reef => fullSquareMetres > 0 ? Math.Sqrt(SquareMetres / fullSquareMetres) : 0;
+    public (double Reach, double Span) Set { get; private set; }
 
-    public double Trim { get; private set; }
+    public double Turn { get; private set; }
 
-    public double Fill { get; private set; }
+    public double Depth { get; private set; }
 
     public double Pressure { get; private set; }
 
-    public override double HeightMetres => form.Centre(1, 0, 0).Height;
+    public override double HeightMetres => form.Centre(SailForm.Whole, 0, 0).Height;
 
-    public void Set(int sailPosition) => SquareMetres = sailPosition switch { 0 => 0, 1 => halfSquareMetres, _ => fullSquareMetres };
+    public void Hoist(int sailPosition) => (SquareMetres, Set) = sailPosition switch
+    {
+        0 => (0, default),
+        1 => (halfSquareMetres, half),
+        _ => (fullSquareMetres, SailForm.Whole)
+    };
 
     public bool Draws(Airflow air) => SquareMetres > 0 && air.Speed > 0 && polar.At(air.FromBow) != null;
 
     public void Slack(Airflow air)
     {
-        Pressure = Fill = 0;
-        Trim = air.Leeward * Math.Clamp(air.FromBow, leastTrim, Math.PI / 2);
+        Pressure = Depth = 0;
+        Turn = Turned(air.Leeward, Math.Clamp(air.FromBow, leastTrim, Math.PI / 2));
     }
 
     public override Push Push(Airflow air, double halfDensity)
@@ -55,12 +61,15 @@ public sealed class Sail(SailPolar polar, SailForm form, double fullSquareMetres
         var leeward = air.Leeward;
         var dynamic = halfDensity * air.Speed * air.Speed;
         Pressure = dynamic * Math.Sqrt(drive * drive + side * side);
-        Fill = leeward * Pressure / (Pressure + clothNewtonsPerSquareMetre);
-        Trim = leeward * Math.Clamp(Math.PI / 2 - Math.Atan2(side, drive), leastTrim, Math.PI / 2);
+        Turn = Turned(leeward, Math.Clamp(Math.PI / 2 - Math.Atan2(side, drive), leastTrim, Math.PI / 2));
+        var (normalAlong, normalAcross) = form.Normal(Turn);
+        Depth = Math.Sign(normalAlong * air.Along + normalAcross * air.Across) * Pressure / (Pressure + clothNewtonsPerSquareMetre);
         var force = dynamic * SquareMetres;
-        var centre = form.Centre(Reef, Trim, Fill);
+        var centre = form.Centre(Set, Turn, Depth);
         return new Push(-force * drive, leeward * force * side, centre.Along, centre.Across);
     }
+
+    private double Turned(int leeward, double chord) => leeward * (chord - form.RestChord);
 
     public static double ClothNewtons(double kilogramsPerSquareMetre) => kilogramsPerSquareMetre * WaveTheory.Gravity;
 }

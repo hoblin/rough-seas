@@ -17,4 +17,5 @@ public class WindConfig
 public class SailConfig
 {
     public double[][] Headings = [];
+    public double[][] LiftAndDrag = [];
 }
