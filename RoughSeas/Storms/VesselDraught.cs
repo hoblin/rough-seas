@@ -1,6 +1,7 @@
 using System;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Vessels;
 using RoughSeas.Water;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -36,6 +37,7 @@ public static class VesselDraught
     private static readonly object patchLock = new();
     private static int attached;
     private static Harmony? harmony;
+    private static IDisposable? boats;
 
     public static void Attach()
     {
@@ -43,8 +45,7 @@ public static class VesselDraught
         {
             if (attached++ > 0) return;
             harmony = new Harmony(HarmonyId);
-            harmony.Patch(AccessTools.PropertyGetter(typeof(EntityBoat), nameof(EntityBoat.SwimmingOffsetY)),
-                postfix: new HarmonyMethod(typeof(VesselDraught), nameof(Settle)));
+            boats = Boats.Reach([ReachedAtRuntime] (BoatClass boat) => harmony.Patch(boat.SwimmingOffsetY, postfix: new HarmonyMethod(typeof(VesselDraught), nameof(Settle))));
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorPassivePhysics), nameof(EntityBehaviorPassivePhysics.MotionAndCollision)),
                 prefix: new HarmonyMethod(typeof(VesselDraught), nameof(Heave)) { priority = Priority.Last });
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorRepulseAgents), nameof(EntityBehaviorRepulseAgents.OnGameTick)),
@@ -58,6 +59,8 @@ public static class VesselDraught
         lock (patchLock)
         {
             if (--attached > 0 || harmony == null) return;
+            boats?.Dispose();
+            boats = null;
             harmony.UnpatchAll(HarmonyId);
             harmony = null;
         }
@@ -66,7 +69,7 @@ public static class VesselDraught
     public static double SwimDrag(double motionLength, double stepFactor) =>
         Math.Clamp(SwimDragPerMotion * Math.Abs(motionLength * stepFactor) - SwimDragOffset, 1, MostSwimDrag);
 
-    private static void Settle(EntityBoat __instance, ref double __result)
+    private static void Settle(Entity __instance, ref double __result)
     {
         if (__instance.GetBehavior<EntityBehaviorSeaForces>() is not { } forces) return;
 
@@ -79,7 +82,8 @@ public static class VesselDraught
 
     private static void Heave(EntityBehaviorPassivePhysics __instance, EntityPos pos, float dt, bool ___feetInLiquidBefore, bool ___swimmingBefore)
     {
-        if (__instance.Entity is not EntityBoat boat || boat.GetBehavior<EntityBehaviorSeaForces>() is not { Heave: { } heave } forces) return;
+        var boat = __instance.Entity;
+        if (!Boats.Is(boat) || boat.GetBehavior<EntityBehaviorSeaForces>() is not { Heave: { } heave } forces) return;
 
         __instance.BoyancyMul = 0;
         bool wetBefore = ___feetInLiquidBefore || ___swimmingBefore;
@@ -120,10 +124,11 @@ public static class VesselDraught
 
     private static void AfterRepulsion(EntityBehaviorRepulseAgents __instance, double __state)
     {
-        if (__instance.entity is EntityBoat boat && boat.GetBehavior<EntityBehaviorSeaForces>()?.Heave is not null) boat.Pos.Motion.Y = __state;
+        var boat = __instance.entity;
+        if (Boats.Is(boat) && boat.GetBehavior<EntityBehaviorSeaForces>()?.Heave is not null) boat.Pos.Motion.Y = __state;
     }
 
-    private static (double X, double Y, double Z) FlowPush(EntityBoat boat, EntityPos pos, float dt, bool feetInLiquidBefore)
+    private static (double X, double Y, double Z) FlowPush(Entity boat, EntityPos pos, float dt, bool feetInLiquidBefore)
     {
         if (!feetInLiquidBefore) return default;
         var block = pos.AsBlockPos;
@@ -136,7 +141,7 @@ public static class VesselDraught
 
     private static double Square(double value) => value * value;
 
-    private static double Immersion(EntityBoat boat, EntityPos pos)
+    private static double Immersion(Entity boat, EntityPos pos)
     {
         var accessor = boat.World.BlockAccessor;
         var fluid = OpenWater.At(accessor, (int)pos.X, (int)pos.InternalY, (int)pos.Z);

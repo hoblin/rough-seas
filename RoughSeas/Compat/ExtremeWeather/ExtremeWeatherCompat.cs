@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -7,43 +6,35 @@ using RoughSeas.SeaAndWeather;
 
 namespace RoughSeas.Compat.ExtremeWeather;
 
-public class ExtremeWeatherCompat : ModSystem
+public class ExtremeWeatherCompat : OtherModCompat
 {
-    public const string ModId = "extremeweather";
+    public const string Id = "extremeweather";
 
-    private static readonly AssetLocation ConfigAsset = new("roughseas:config/compat/extremeweather.json");
+    protected override string ModId => Id;
 
-    private bool tested;
+    protected override string ModName => "Extreme Weathers";
+
+    protected override string LogTag => "ew";
 
     public CompatConfig Config { get; private set; } = null!;
 
-    public override bool ShouldLoad(ICoreAPI api) => api.ModLoader.IsModEnabled(ModId);
-
-    public override void AssetsLoaded(ICoreAPI api)
+    protected override void Meet(ICoreAPI api, string version)
     {
         Config = api.Assets.Get<CompatConfig>(ConfigAsset);
-        var version = api.ModLoader.GetMod(ModId).Info.Version;
-        tested = Config.Tested.Covers(version);
-        if (!tested)
-        {
-            Mod.Logger.Warning("Extreme Weathers {0} is untested (tested: {1}); Rough Seas leaves it as it is", version, Config.Tested);
-            return;
-        }
-
         WindCap.Attach();
         Log("Extreme Weathers {0}: its wind cap holds only during its own events", version);
     }
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {
-        if (!tested) return;
+        if (!Tested) return;
 
         Settle();
         new HurricaneTornadoes(this, sapi.ModLoader.GetModSystem<SeaWeatherSystem>(), sapi).Start();
         sapi.ChatCommands.Create("roughseas")
             .WithDescription("Rough Seas beside other mods")
             .RequiresPrivilege(Privilege.controlserver)
-            .BeginSubCommand(ModId)
+            .BeginSubCommand(Id)
                 .WithDescription("Extreme Weathers' settings Rough Seas holds, as they stand now")
                 .HandleWith(_ => TextCommandResult.Success(string.Join(", ", Config.Settings.Keys.Select(name => $"{name} {ExtremeWeatherMod.Get(name)}"))))
             .EndSubCommand();
@@ -51,7 +42,7 @@ public class ExtremeWeatherCompat : ModSystem
 
     public override void StartClientSide(ICoreClientAPI capi)
     {
-        if (tested) Settle();
+        if (Tested) Settle();
     }
 
     private void Settle()
@@ -62,9 +53,6 @@ public class ExtremeWeatherCompat : ModSystem
 
     public override void Dispose()
     {
-        if (tested) WindCap.Detach();
+        if (Tested) WindCap.Detach();
     }
-
-    public void Log(string format, params object[] args) =>
-        Mod.Logger.Debug("[ew] " + string.Format(CultureInfo.InvariantCulture, format, args));
 }

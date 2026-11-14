@@ -1,5 +1,7 @@
+using System;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
+using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.GameContent;
@@ -20,6 +22,7 @@ public static class DriftPhysics
     private static readonly object patchLock = new();
     private static int attached;
     private static Harmony? harmony;
+    private static IDisposable? boats;
 
     public static void Attach()
     {
@@ -30,8 +33,7 @@ public static class DriftPhysics
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorPassivePhysics), nameof(EntityBehaviorPassivePhysics.MotionAndCollision)),
                 prefix: new HarmonyMethod(typeof(DriftPhysics), nameof(BeforeMove)),
                 postfix: new HarmonyMethod(typeof(DriftPhysics), nameof(AfterMove)));
-            harmony.Patch(AccessTools.Method(typeof(EntityBoat), "updateBoatAngleAndMotion"),
-                postfix: new HarmonyMethod(typeof(DriftPhysics), nameof(Rowed)));
+            boats = Boats.Reach([ReachedAtRuntime] (BoatClass boat) => harmony.Patch(boat.UpdateMotion, postfix: new HarmonyMethod(typeof(DriftPhysics), nameof(Rowed))));
         }
     }
 
@@ -40,6 +42,8 @@ public static class DriftPhysics
         lock (patchLock)
         {
             if (--attached > 0 || harmony == null) return;
+            boats?.Dispose();
+            boats = null;
             harmony.UnpatchAll(HarmonyId);
             harmony = null;
         }
@@ -47,7 +51,8 @@ public static class DriftPhysics
 
     private static void BeforeMove(EntityBehaviorPassivePhysics __instance, EntityPos pos, float dt, bool ___feetInLiquidBefore, bool ___swimmingBefore)
     {
-        if (__instance.Entity is not EntityBoat boat || boat.GetBehavior<EntityBehaviorCurrentDrift>() is not { } drift) return;
+        var boat = __instance.Entity;
+        if (!Boats.Is(boat) || boat.GetBehavior<EntityBehaviorCurrentDrift>() is not { } drift) return;
 
         var wet = ___feetInLiquidBefore || ___swimmingBefore;
         var drag = wet ? __instance.WaterDragValue : __instance.AirDragValue;
@@ -56,11 +61,11 @@ public static class DriftPhysics
 
     private static void AfterMove(EntityBehaviorPassivePhysics __instance, EntityPos pos)
     {
-        if (__instance.Entity is EntityBoat boat) boat.GetBehavior<EntityBehaviorCurrentDrift>()?.AfterMove(pos.Motion);
+        if (Boats.Is(__instance.Entity)) __instance.Entity.GetBehavior<EntityBehaviorCurrentDrift>()?.AfterMove(pos.Motion);
     }
 
-    private static void Rowed(EntityBoat __instance)
+    private static void Rowed(Entity __instance)
     {
-        if (__instance.ForwardSpeed != 0 && __instance.Swimming) __instance.GetBehavior<EntityBehaviorCurrentDrift>()?.Rowed(__instance.Pos.Motion);
+        if (Boats.Of(__instance)!.ForwardSpeed(__instance) != 0 && __instance.Swimming) __instance.GetBehavior<EntityBehaviorCurrentDrift>()?.Rowed(__instance.Pos.Motion);
     }
 }

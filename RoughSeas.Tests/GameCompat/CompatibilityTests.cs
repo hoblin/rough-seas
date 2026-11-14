@@ -191,9 +191,32 @@ public class CompatibilityTests
     public void AnUnknownReflectionFormIsReported() =>
         Assert.Contains(Fixture.Value.Unreadable, site => site.Contains(nameof(ReachFixture.ByReflection)));
 
+    [Fact]
+    public void AReachInAConstructorOfATypeGivenIsFollowed() =>
+        Assert.Contains(Fixture.Value.Members, member => member.Type == typeof(Block).FullName && member.Name == "InConstructor");
+
+    [Fact]
+    public void AFieldReadByRefOnATypeGivenIsRead() =>
+        Assert.Contains(Fixture.Value.Members, member => member.Type == typeof(Block).FullName && member.Name == "ByRef" && member.FieldType == typeof(double).FullName);
+
+    [Fact]
+    public void AConstructorOfAnUnknownTypeIsNotReported() =>
+        Assert.DoesNotContain(Fixture.Value.Unreadable, site => site.Contains(nameof(Reflected)));
+
+    private sealed class Reflected
+    {
+        public Reflected(Type type)
+        {
+            AccessTools.Method(type, "InConstructor");
+            AccessTools.FieldRefAccess<double>(type, "ByRef");
+        }
+    }
+
     private static class ReachFixture
     {
         private static readonly Harmony Harmony = new("fixture");
+
+        public static object Built() => new Reflected(typeof(Block));
 
         public static void Handler()
         {

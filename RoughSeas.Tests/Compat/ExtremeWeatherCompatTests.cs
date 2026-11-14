@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using RoughSeas.Compat;
 using RoughSeas.Compat.ExtremeWeather;
 
 namespace RoughSeas.Tests.Compat;
