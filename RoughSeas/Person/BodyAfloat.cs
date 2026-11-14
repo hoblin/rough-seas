@@ -33,7 +33,7 @@ public static class BodyAfloat
     private static Waves? waves;
     private static FloatingBody? body;
     private static WadingBody? waders;
-    private static (WaterSurface Surface, BodyPlace Place, Carried Kit, SeaCurrent Current)? wading;
+    private static (WaterSurface Surface, BodyPlace Place, Carried Kit, (double X, double Z) Water)? wading;
     private static SwimStroke stroke;
     private static bool liftedThisTick;
     private static double loggedAt = double.NegativeInfinity;
@@ -98,8 +98,14 @@ public static class BodyAfloat
         if (!entity.Swimming)
         {
             Leave(entity, "wading: vanilla's gravity and jump");
-            wading = (surface, new BodyPlace(pos.X, pos.Y, pos.Z, entity.LocalEyePos.Y, entity.CollisionBox.XSize), person!.CarriedBy(entity),
-                Mechanic.Currents.On(entity.World) ? sea!.CurrentAt(pos.X, pos.Z) : default);
+            var waterline = surface.Height - pos.Y;
+            var height = person!.Body.HeightMetres;
+            var width = entity.CollisionBox.XSize;
+            var waved = sea!.Clock.SecondsIn(dt, entity.World.Calendar.SpeedOfTime) / dt;
+            var flow = drawn!.HullVelocityAt(pos.X, pos.Z, surface.Swell - Math.Max(0, waterline - height), Math.Min(waterline, height), 0, width, width);
+            var flowing = Mechanic.Currents.On(entity.World) ? sea.CurrentAt(pos.X, pos.Z) : default;
+            wading = (surface, new BodyPlace(pos.X, pos.Y, pos.Z, entity.LocalEyePos.Y, width), person.CarriedBy(entity),
+                (flowing.X + flow.X * waved, flowing.Z + flow.Z * waved));
             return true;
         }
 
@@ -139,11 +145,11 @@ public static class BodyAfloat
     private static void AfterDrag(Entity entity, EntityPos pos, float dt, (double X, double Y, double Z) __state)
     {
         if (entity != capi?.World.Player?.Entity) return;
-        if (wading is var (surface, place, kit, current))
+        if (wading is var (surface, place, kit, water))
         {
             wading = null;
-            var next = waders!.Dragged(surface, place, new BodyMotion(__state.X, __state.Y, __state.Z), kit, dt, (current.X, current.Z));
-            pos.Motion.Set(next.X, next.Y, next.Z);
+            var (x, z) = waders!.Dragged(surface, place, (__state.X, __state.Z), kit, dt, water);
+            (pos.Motion.X, pos.Motion.Z) = (x, z);
             return;
         }
         if (!liftedThisTick) return;
