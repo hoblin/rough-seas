@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using RoughSeas.Lines;
 using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -13,6 +14,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
 {
     private const int PanelsPerMetre = 2;
     private const string Stowed = "roll";
+    private const double NewtonsPerKilonewton = 1000;
     private static readonly HullPoint Origin = new(HullShape.ModelOriginMetres, 0, HullShape.ModelOriginMetres);
     private static readonly (int Facing, int[] Order)[] Sides = [(1, [0, 1, 2, 0, 2, 3]), (-1, [0, 2, 1, 0, 3, 2])];
     private static readonly EnumRenderStage[] Stages = [EnumRenderStage.Opaque, EnumRenderStage.ShadowFar, EnumRenderStage.ShadowNear];
@@ -39,7 +41,9 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     public RigRenderer(ICoreClientAPI capi, Entity entity, EntityBehaviorWindage windage, string cloth, IReadOnlyDictionary<string, string> parts)
     {
         (this.capi, this.entity, this.windage, this.cloth, this.parts) = (capi, entity, windage, cloth, parts);
-        ropes = new RigRopes(capi, entity);
+        var (line, materials) = (capi.ModLoader.GetModSystem<WindModSystem>().Config.Line, capi.ModLoader.GetModSystem<VesselsModSystem>().Materials);
+        ropes = new RigRopes(capi, entity, new Fibre(materials.Density(line.Material), materials.BreakingKilonewtons(line.Material) * NewtonsPerKilonewton,
+            line.MeasuredMetres, materials.StretchAtBreak(line.Material)));
         foreach (var stage in Stages) capi.Event.RegisterRenderer(this, stage, "roughseas-rig");
     }
 
@@ -66,8 +70,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         var drawing = (Sail.State, Sail.Fill, Sail.Shown, Sail.Rolled);
         if (drawing != lastDrawn) Rebuild(Sail.Rig.End, drawing);
         lastDrawn = drawing;
-        ropes.Pin(World);
-        ropes.Watch(deltaTime);
+        ropes.Pull(World, deltaTime);
 
         var render = capi.Render;
         var prog = render.PreparedStandardShader((int)entity.Pos.X, (int)Math.Ceiling(entity.Pos.Y), (int)entity.Pos.Z);

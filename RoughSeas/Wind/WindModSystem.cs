@@ -23,6 +23,7 @@ public class WindModSystem : ModSystem
         api.RegisterEntityBehaviorClass(EntityBehaviorWindage.Code, typeof(EntityBehaviorWindage));
         api.Network.RegisterChannel(Channel).RegisterMessageType<RigShape>();
         SailedByWind.Attach();
+        RoughSeas.Lines.VanillaRopes.Attach();
     }
 
     public override void StartClientSide(ICoreClientAPI capi) => reports = capi.Network.GetChannel(Channel);
@@ -35,7 +36,11 @@ public class WindModSystem : ModSystem
 
     public override void AssetsLoaded(ICoreAPI api) => Config = api.Assets.Get<WindConfig>(ConfigAsset);
 
-    public override void Dispose() => SailedByWind.Detach();
+    public override void Dispose()
+    {
+        SailedByWind.Detach();
+        RoughSeas.Lines.VanillaRopes.Detach();
+    }
 
     public void Log(Entity entity, string format, params object[] args) =>
         Mod.Logger.Debug("[wind] " + string.Format(CultureInfo.InvariantCulture,
