@@ -459,9 +459,11 @@ def build(target):
     wound(shape, [("", [shell], WOOD)])
     shape.write()
     finished_float = passes["children"][-1]
-    rig = [element for element in shape.elements if element["name"] in ("Booms", "Mast", "SailFurled")]
+    groups = {element["name"]: element for element in shape.elements}
+    spars = {child["name"]: child for child in groups["Mast"]["children"]}
     keel = box["from"][1]
-    blown = wind.windage([shell, finished_float, *rig], [shell, finished_float], keel)
+    blown = wind.windage([shell, finished_float, groups["Booms"], spars["Mast1"], spars["Mast2"]],
+                         [spars["Mast3"], spars["Mast4"], groups["SailFurled"]], [shell, finished_float], keel)
     at_draft = lambda draft: merged(blown(draft), {"behaviorConfigs": {
         "roughseas:propulsion": units.both("fin", side_area([finished_float], high=keel + units.voxels(draft)), 2),
         "roughseas:seaforces": units.both("mast", units.metres(crab_claw().masthead(1)[1]))}})

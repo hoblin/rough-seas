@@ -59,6 +59,12 @@ public sealed class IncidencePolar : SailPolar
         return (lift * sin - drag * cos, lift * cos + drag * sin);
     }
 
+    public double Pressing(double incidence)
+    {
+        var (lift, drag) = LiftAndDrag(Math.Clamp(Math.Abs(incidence), 0, Math.PI / 2));
+        return Math.Sqrt(lift * lift + Math.Pow(drag - trims[0].Drag, 2));
+    }
+
     private (double Lift, double Drag) LiftAndDrag(double incidence)
     {
         var after = Array.FindIndex(trims, trim => trim.Radians >= incidence);

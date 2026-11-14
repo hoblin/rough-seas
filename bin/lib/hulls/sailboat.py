@@ -28,7 +28,8 @@ HALF_CLOTH = re.compile(r"[LR]Sail(Cen|Mid|Out)")
 SHEET = re.compile(r"ClewRope[LR]\d$")
 BUNT = re.compile(r"SailBund")
 BACKSTAY = re.compile(r"MastRope\d$")
-ABOVE = re.compile(r"Hull|KeelBeam|Gunwhale|Mast$|MastORIGIN|SailFurled|Furl")
+STANDING = re.compile(r"Hull|KeelBeam|Gunwhale|Mast$|MastORIGIN")
+FURLED = re.compile(r"SailFurled|Furl")
 STEP = 0.5
 
 
@@ -107,7 +108,10 @@ def square(elements):
     cloth = points(elements, CLOTH)
     head, foot = max(point[1] for point in cloth), min(point[1] for point in cloth)
     port, starboard = min(point[2] for point in cloth), max(point[2] for point in cloth)
-    along = middle(cloth)[0]
+    mast_along, yard_along = middle(mast)[0], middle(yard)[0]
+    parrel = mast_along + math.copysign((thinnest(elements, MAST_POLE) + thinnest(elements, SPAR)) / 2, yard_along - mast_along)
+    yard = [(x + parrel - yard_along, y, z) for x, y, z in yard]
+    along = middle(cloth)[0] + parrel - yard_along
     named = {element["name"]: middle(corners(element, m)) for element, m in posed(elements)}
     backstay = points(elements, BACKSTAY)
     found = {
@@ -131,7 +135,7 @@ def square(elements):
 
 
 def thinnest(elements, pattern):
-    return min(min(t - f for f, t in zip(element["from"], element["to"])) for element, _ in posed(elements) if pattern.match(element["name"]))
+    return min(sorted(t - f for f, t in zip(element["from"], element["to"]))[1] for element, _ in posed(elements) if pattern.match(element["name"]))
 
 
 def build(_):
@@ -142,9 +146,8 @@ def build(_):
     path = ASSETS / "patches/vessels-hull-boxes.json"
     write(path, [next(n for n, op in enumerate(load(path)) if op["file"].endswith("boat/sailed.json")), "value"], box)
     litres, deck = hold(solids(kept(elements, PLANKING)), frm, to)
-    rigged = kept(elements, ABOVE)
     measured = afloat("sailboat", entity["weight"], units.metres(to[1] - frm[1]), litres, deck, hitbox_height_metres=entity["hitboxSize"]["y"],
-                      at_draft=wind.windage(rigged, kept(elements, HULL), frm[1]))
+                      at_draft=wind.windage(kept(elements, STANDING), kept(elements, FURLED), kept(elements, HULL), frm[1]))
     mast = bounds(*kept(elements, MAST))[1][1]
     measured["behaviorConfigs"].setdefault("roughseas:seaforces", {}).update(units.both("mast", units.metres(mast)))
     record("sailed", {"behaviorConfigs": measured["behaviorConfigs"]})

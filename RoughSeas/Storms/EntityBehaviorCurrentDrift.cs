@@ -17,7 +17,8 @@ namespace RoughSeas.Storms;
 /// Moves a vessel by the water, where her physics runs: the server while nobody steers her, the controlling client while
 /// someone does. Her <see cref="HullSet"/> holds the velocity the water has given her, on top of the way a rower makes
 /// through the water: the waves' water at her place, and her own velocity through it, which the water's drag, the
-/// waves' push and her lines' tension (<see cref="Impulse"/>) change over her mass. <see cref="DriftPhysics"/> keeps
+/// waves' push, the wind's load and her lines' tension (<see cref="Impulse"/>) change over her mass; the wind's
+/// moment turns her unless a line holds her by the bow. <see cref="DriftPhysics"/> keeps
 /// the set through vanilla's physics. While she is steered her rider's client reports her own set to the server, for
 /// whoever takes her next.
 /// </summary>

@@ -6,8 +6,8 @@ using Vintagestory.API.MathTools;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// A hull's set: the velocity the water and her lines have given her, on top of her own way through the water, a
-/// rower's or a sail's. It is the waves' water at her place and her own velocity beside it, which forces change. It
+/// A hull's set: the velocity the water, the wind and her lines have given her, on top of a rower's way through the
+/// water. It is the waves' water at her place and her own velocity beside it, which forces change. It
 /// lives in her motion and goes through vanilla's physics there: each move sets her motion so that after vanilla's water
 /// drag and swim drag she carries the set whole and the rest of her motion as vanilla would have left it alone. She
 /// displaces her own mass, so she takes the water's change and push whole; her drag is her hull's.

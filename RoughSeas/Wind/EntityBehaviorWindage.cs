@@ -75,7 +75,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         if (drawn == null || hull == null) return;
 
-        if (!blown && entity.IsRendered) Wind(hull.Velocity);
+        if (!blown && entity.IsRendered) Blow(hull.Velocity);
         blown = false;
         drawn.Trimmed();
     }
@@ -96,14 +96,19 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
 
     public WindLoad Wind((double X, double Z) velocity)
     {
+        var (blowing, load) = Blow(velocity);
+        if (load is { } blew) Note(blowing, velocity, blew);
+        return load ?? default;
+    }
+
+    private ((double X, double Z) Blowing, WindLoad? Load) Blow((double X, double Z) velocity)
+    {
         Hoist();
         blown = true;
-        if (hull == null || !entity.Swimming) return default;
+        if (hull == null || !entity.Swimming) return (default, null);
 
         var blowing = sea.Map.Wind(entity.Pos.X, entity.Pos.Z);
-        var load = body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres);
-        Note(blowing, velocity, load);
-        return load;
+        return (blowing, body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres));
     }
 
     private void Note((double X, double Z) blowing, (double X, double Z) velocity, WindLoad load)

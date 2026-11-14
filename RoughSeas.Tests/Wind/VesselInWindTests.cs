@@ -17,7 +17,8 @@ public class VesselInWindTests
     private static readonly (double X, double Z) Still = (0, 0);
     private static readonly (double X, double Z) OverHerFloat = (-Breeze, 0);
     private static readonly (double X, double Z) OverHerLee = (Breeze, 0);
-    private static readonly (double X, double Z) FromAhead = (-Breeze * Math.Sin(0.17), -Breeze * Math.Cos(0.17));
+    private const double TenDegrees = Math.PI / 18;
+    private static readonly (double X, double Z) FromAhead = (-Breeze * Math.Sin(TenDegrees), -Breeze * Math.Cos(TenDegrees));
     private static readonly (double X, double Z) FromAstern = (0, Breeze);
 
     private static (VesselInWind Body, Sail Sail) Outrigger(int sailPosition, int tacked = AsBuilt)

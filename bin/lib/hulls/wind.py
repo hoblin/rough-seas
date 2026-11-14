@@ -21,14 +21,18 @@ def area(cells):
     return units.metres(len(cells) * STEP * STEP, 2)
 
 
-def windage(above, below, keel_voxels):
+def windage(standing, furled, below, keel_voxels):
+    def bluff(above, waterline):
+        side, front = profile(above, low=waterline), profile(above, low=waterline, across=2)
+        x, y = centre(side)
+        return {**units.both("windage", area(side), 2), **units.both("front", area(front), 2), **point("windageCentre", (x - ORIGIN[0], y))}
+
     def at(draft_metres):
         waterline = keel_voxels + units.voxels(draft_metres)
-        side, front, under = profile(above, low=waterline), profile(above, low=waterline, across=2), profile(below, high=waterline)
-        x, y = centre(side)
+        under = profile(below, high=waterline)
         return {"behaviorConfigs": {WINDAGE: {
-            **units.both("windage", area(side), 2), **units.both("front", area(front), 2),
-            **point("windageCentre", (x - ORIGIN[0], y)), **units.both("lateralCentre", along(centre(under)[0]))}}}
+            **bluff([*standing, *furled], waterline), "set": bluff(standing, waterline),
+            **units.both("lateralCentre", along(centre(under)[0]))}}}
     return at
 
 

@@ -5,7 +5,7 @@ using RoughSeas.Water;
 
 namespace RoughSeas.Wind;
 
-public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, double halfSquareMetres, (double Reach, double Span) half, double bluffDrag,
+public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double fullSquareMetres, double halfSquareMetres, (double Reach, double Span) half,
     double clothNewtonsPerSquareMetre)
     : WindSurface
 {
@@ -36,7 +36,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
 
     public RigLoad? Load { get; private set; }
 
-    public override double HeightMetres => State.Centre(SailForm.Whole, 0).Height;
+    public override double HeightMetres => State.Centre(SquareMetres > 0 ? Set : SailForm.Whole, 0).Height;
 
     public void Hoist(int sailPosition) => (SquareMetres, Set) = sailPosition switch
     {
@@ -119,7 +119,7 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
         var (at, pressing) = Plate(end.Pose(Math.Clamp(State.Yard, first, last), State.Boom), air, halfDensity);
         var yard = (at - end.Origin).Cross(pressing).Dot(end.Axis) < 0 ? first : last;
         state = end.Settle(yard, State.Boom, posed => Plate(posed, air, halfDensity));
-        Pressure = halfDensity * bluffDrag * Math.Pow(Flow(State.Form.Normal, air), 2);
+        Pressure = halfDensity * air.Speed * air.Speed * aback.Pressing(Math.Asin(Math.Clamp(Flow(State.Form.Normal, air) / air.Speed, -1, 1)));
         Filled(air);
         return Plate(State, air, halfDensity);
     }
@@ -143,7 +143,8 @@ public sealed class Sail(SailPolar polar, Rig rig, double fullSquareMetres, doub
     {
         var normal = posed.Form.Normal;
         var flow = Flow(normal, air);
-        return (posed.Centre(Set, 0), halfDensity * bluffDrag * flow * Math.Abs(flow) * SquareMetres * normal);
+        var pressing = aback.Pressing(Math.Asin(Math.Clamp(flow / air.Speed, -1, 1)));
+        return (posed.Centre(Set, 0), halfDensity * air.Speed * air.Speed * pressing * Math.Sign(flow) * SquareMetres * normal);
     }
 
     private double Incidence(RigState posed, Airflow air) => Math.Asin(Math.Clamp(Flow(rig.End.Belly(posed), air) / air.Speed, -1, 1));

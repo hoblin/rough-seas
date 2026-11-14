@@ -9,6 +9,7 @@ public class SquareRigTests
     private const double Yaw = 0;
     private const double Waterline = 0;
     private const int FullSail = 2;
+    private const double FiveDegrees = Math.PI / 36;
     private static readonly (double X, double Z) Still = (0, 0);
 
     private static (VesselInWind Body, Sail Sail) Sailboat()
@@ -100,7 +101,7 @@ public class SquareRigTests
         var closeHauled = body.Load(FromOffHerBow(75), Still, Yaw, Waterline).Z;
         var end = sail.Rig.End;
         var limits = new[] { end.Free.From, end.Free.From + end.Free.Span };
-        Assert.Contains(limits, limit => Math.Abs(limit - sail.State.Yard) < end.Free.Span / 36);
+        Assert.Contains(limits, limit => Math.Abs(limit - sail.State.Yard) < FiveDegrees);
         Assert.True(closeHauled < body.Load(FromOffHerBow(100), Still, Yaw, Waterline).Z);
     }
 
