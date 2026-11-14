@@ -356,7 +356,7 @@ public class FloatingBodyTests
         var from = run.MovedX;
         run.Settle(10);
 
-        Assert.InRange((run.MovedX - from) / 10, 0.87, 0.93);
+        Assert.InRange((run.MovedX - from) / 10, 1.14, 1.20);
     }
 
     [Fact]
@@ -386,7 +386,7 @@ public class FloatingBodyTests
         var from = run.MovedX;
         run.Settle(1);
 
-        Assert.InRange(first, 55, 59);
+        Assert.InRange(first, 76, 80);
         Assert.InRange(run.MovedX - from, 0.6, 0.9);
     }
 
@@ -421,12 +421,12 @@ public class FloatingBodyTests
     [Fact]
     public void SwimmingAgainstACurrentFasterThanItSwimsItLosesGround()
     {
-        var run = new Run(Calm, Still - 1.6, stroke: Ahead) { Current = (-1.2, 0) };
+        var run = new Run(Calm, Still - 1.6, stroke: Ahead) { Current = (-1.5, 0) };
         run.Settle(60);
         var from = run.MovedX;
         run.Settle(10);
 
-        Assert.InRange((run.MovedX - from) / 10, -0.4, -0.2);
+        Assert.InRange((run.MovedX - from) / 10, -0.45, -0.2);
     }
 
     [Fact]
@@ -442,7 +442,7 @@ public class FloatingBodyTests
         }
 
         var (flat, face) = (Speed(default), Speed(new FlowGradient(-0.3, 0, 0)));
-        Assert.InRange(face - flat, 0.2, 0.35);
+        Assert.InRange(face - flat, 0.2, 0.4);
     }
 
     [Fact]

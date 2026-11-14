@@ -21,7 +21,7 @@
         "atmospherePascals": 101325,
         "dragAreaAlong": 0.084,
         "dragAreaAcross": 0.45,
-        "dragAreaSwimming": 0.096,
+        "dragAreaSwimming": 0.0613,
         "legs": {
             "jumpMetres": 0.3,
             "pushMetres": 0.4,
@@ -31,13 +31,13 @@
             }
         },
         "swimming": {
-            "usefulWatts": 35,
-            "wastedWatts": 45,
-            "metresPerSecond": 0.9,
+            "usefulWatts": 49,
+            "wastedWatts": 32,
+            "metresPerSecond": 1.17,
             "sources": {
-                "usefulWatts": "The power the triathletes' front crawl spends against their drag at 0.90 m/s in the pool's fresh water, 35 W (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415): 38.9 N, the force that holds that speed",
-                "wastedWatts": "The power the same stroke spends pushing water backwards, 45 W (Toussaint 1990), a propelling efficiency of 44% against a competitive swimmer's 61%. The arms are a blade slipping back through the water, as a paddle's is (Water.SlippingBlade): its slip is 45/35 of the speed, which with the 38.9 N fixes the blade's drag area. Taken, as every stroke of the mod, as spending its 80 W at any speed, measured at 0.9 m/s alone: it pulls about 57 N held still in the water and less the faster it goes; trained swimmers pull 92-104 N on average tethered all out for 30 s (Neiva et al. 2011, J Hum Kinet 29A:113-119), a sprint's effort, not a swim's",
-                "metresPerSecond": "The triathletes' speed when both powers were measured, 0.90 m/s (Toussaint 1990)"
+                "usefulWatts": "The swimmer is a good trained one, not a champion, as the rower is a club marathon paddler: six highly trained competitive swimmers, compared with triathletes at the same 1000 W of the body's power, about the rower's 1040 W, spent 49 W of their front crawl against drag in the pool's fresh water (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415, PMID 2381311): 41.9 N, the force that holds their speed",
+                "wastedWatts": "The power the same stroke spends pushing water backwards, 32 W (Toussaint 1990), a propelling efficiency of 61% against the triathletes' 44%. The arms are a blade slipping back through the water, as a paddle's is (Water.SlippingBlade): its slip is 32/49 of the speed, which with the 41.9 N fixes the blade's drag area. Taken, as every stroke of the mod, as spending its 81 W at any speed, measured at 1.17 m/s alone: it pulls about 78 N held still in the water and less the faster it goes; trained swimmers pull 92-104 N on average tethered all out for 30 s (Neiva et al. 2011, J Hum Kinet 29A:113-119), a sprint's effort, not a swim's",
+                "metresPerSecond": "The competitive swimmers' mean speed when both powers were measured, 1.17 m/s (Toussaint 1990)"
             }
         },
         "sources": {
@@ -52,7 +52,7 @@
             "atmospherePascals": "The standard atmosphere, 101325 Pa (10th CGPM, 1954): air held in the lungs shrinks under the water's pressure by Boyle's law",
             "dragAreaAlong": "A body moving along its length with its arms at its sides, as it jumps in feet first or glides: ten men of 75.9 kg towed 0.6 m under at 1.5-1.9 m/s dragged 94.7-153.6 N, a Cd A of 0.083-0.085 m2 in the pool's water at every speed, and 0.067-0.069 m2 with the arms stretched ahead (Cortesi & Gatta 2015, J Hum Kinet 49:37-45, head in line). They were towed head first; no body moving feet first was measured, so it is taken the same",
             "dragAreaAcross": "A body moving broadside, the water carrying it across: belly-down skydivers fall at about 200 km/h (FAI), so at 80 kg Cd A is about 0.42-0.46 m2. Taken by the share of the body under water. A body moving at a slant to its length shows its length's area by the square of the slant's cosine and this one by the square of its sine",
-            "dragAreaSwimming": "A body swimming the front crawl, lying along its stroke: triathletes, the trained swimmers nearest an ordinary one measured, swam 0.90 m/s against 35 W of drag (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415), a drag of 38.9 N, so Cd A = 2 D / (rho v^2) = 0.096 m2 in the pool's fresh water"
+            "dragAreaSwimming": "A body swimming the front crawl, lying along its stroke: the competitive swimmers swam 1.17 m/s against 49 W of drag (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415), a drag of 41.9 N, so Cd A = 2 D / (rho v^2) = 0.0613 m2 in the pool's fresh water (998 kg/m3)"
         }
     },
     "carried": {

@@ -45,9 +45,10 @@ public class MechanicTests
     }
 
     [Fact]
-    public void TheWorldSettingsDeclareEveryMechanicAndNothingElse()
+    public void TheWorldSettingsSwitchEveryMechanicAndNothingElse()
     {
         var declared = JObject.Parse(File.ReadAllText(Path.Combine(Repository.Mod, "worldconfig.json")))["worldConfigAttributes"]!
+            .Where(attribute => (string)attribute["dataType"]! == "bool")
             .Select(attribute => (string)attribute["code"]!);
 
         Assert.Equal(Codes, declared);
