@@ -25,16 +25,16 @@ public sealed class Rectangle(double aspect) : Planform
     public override double Vortex => Math.PI * aspect / (2 + Math.Sqrt(aspect * aspect / 4 + 4)) + 2 * Math.PI / (2 + aspect);
 }
 
-public sealed class Wing(Planform planform, double breakdownRadians, double separatedRadians, double bluff, double friction)
+public sealed class Wing(double breakdownRadians, double separatedRadians, double bluff, double friction)
 {
-    public static Wing Of(WindConfig config, string kind, Planform planform) =>
+    public static Wing Of(WindConfig config, string kind) =>
         config.Sails.TryGetValue(kind, out var measured)
-            ? new Wing(planform, measured.BreakdownDegrees * Math.PI / 180, measured.SeparatedDegrees * Math.PI / 180, config.BluffDrag, config.ClothFriction)
+            ? new Wing(measured.BreakdownDegrees * Math.PI / 180, measured.SeparatedDegrees * Math.PI / 180, config.BluffDrag, config.ClothFriction)
             : throw new InvalidOperationException($"no sail measured for a rig of kind '{kind}'");
 
     public double Friction => friction;
 
-    public double Pressing(double incidence)
+    public double Pressing(Planform planform, double incidence)
     {
         var angle = Math.Min(Math.Abs(incidence), Math.PI / 2);
         var (sin, cos) = (Math.Sin(angle), Math.Cos(angle));
@@ -42,14 +42,5 @@ public sealed class Wing(Planform planform, double breakdownRadians, double sepa
         var lift = planform.Potential * sin * cos + planform.Vortex * sin * sin - body;
         var held = angle <= breakdownRadians ? 1 : angle >= separatedRadians ? 0 : (separatedRadians - angle) / (separatedRadians - breakdownRadians);
         return body + held * lift;
-    }
-
-    public (double Drive, double Side) At(double fromBow, double incidence)
-    {
-        var angle = Math.Clamp(incidence, 0, Math.PI / 2);
-        var (normal, along) = (Pressing(angle), friction * Math.Cos(angle));
-        var (lift, drag) = (normal * Math.Cos(angle) - along * Math.Sin(angle), normal * Math.Sin(angle) + along * Math.Cos(angle));
-        var (sin, cos) = (Math.Sin(fromBow), Math.Cos(fromBow));
-        return (lift * sin - drag * cos, lift * cos + drag * sin);
     }
 }

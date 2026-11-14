@@ -27,7 +27,7 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, BluffSurf
 
     private static Sail? SailOf(JsonObject sail, string? kind, Rig? rig, WindConfig config) =>
         sail.Exists && rig != null && kind != null
-            ? new Sail(Wing.Of(config, kind, rig.End.Planform), rig, sail["sailSquareMetres"].AsDouble(), sail["halfSquareMetres"].AsDouble(),
+            ? new Sail(Wing.Of(config, kind), rig, sail["sailSquareMetres"].AsDouble(), sail["halfSquareMetres"].AsDouble(),
                 (sail["halfReach"].AsDouble(1), sail["halfSpan"].AsDouble(1)), Sail.ClothNewtons(config.ClothKgPerSquareMetre), config.Camber, config.Crew)
             : null;
 

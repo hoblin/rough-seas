@@ -137,16 +137,15 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         }
 
         var end = rig.End;
-        var fromBow = Math.Acos(Math.Clamp(-end.Ahead * air.Along / air.Speed, -1, 1));
-        var wind = (Func<RigState, (HullPoint, HullPoint)>)(posed => Pressing(posed, air, halfDensity, fromBow));
+        var wind = (Func<RigState, (HullPoint, HullPoint)>)(posed => Force(posed, air, halfDensity));
         var trim = (Math.Atan2(air.Across, air.Along), halfDensity * air.Speed * air.Speed, shown, rig.Tacked);
         if (Retrim(trim))
         {
-            var best = Settled(wind, posed => Score(posed, air, halfDensity, fromBow));
+            var best = Settled(wind, posed => Score(posed, air, halfDensity));
             (goal, trimmed) = ((best.Yard, best.Boom, !end.Aback(best, air)), trim);
         }
 
-        var (point, force) = goal is { Draws: true } worked ? Trimmed(air, halfDensity, seconds, fromBow, worked, wind) : TakenAback(air, halfDensity, seconds);
+        var (point, force) = goal is { Draws: true } worked ? Trimmed(air, halfDensity, seconds, worked, wind) : TakenAback(air, halfDensity, seconds);
         Load = end.Loads(State, point, force);
         return Load.Points;
     }
@@ -179,7 +178,8 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         else if (reefed && (end.HoistMetres <= 0 || hoisted >= 1)) state = end.Slackened(end.Pose(yard, boom), slack);
 
         var up = SquareMetres > 0 ? 1.0 : 0.0;
-        if (end.HoistMetres <= 0 || hoisted == up) return false;
+        if (end.HoistMetres <= 0) return false;
+        if (hoisted == up) return up <= 0;
 
         hoistFrom ??= up > 0 ? end.Pose(end.Resting, 0) : State;
         hoisted = Toward(hoisted, up, light * seconds / end.HoistMetres);
@@ -199,7 +199,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         return (carrying.To.Shunted(carrying.From, carrying.Start, carrying.End, hauled, carried), carried >= 1);
     }
 
-    private (HullPoint At, HullPoint Force) Trimmed(Airflow air, double halfDensity, double seconds, double fromBow,
+    private (HullPoint At, HullPoint Force) Trimmed(Airflow air, double halfDensity, double seconds,
         (double Yard, double Boom, bool Draws) worked, Func<RigState, (HullPoint At, HullPoint Force)> wind)
     {
         Trim((worked.Yard, worked.Boom), wind, seconds);
@@ -207,8 +207,8 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
 
         Aback = false;
 
-        var force = Force(State, air, halfDensity, fromBow).Force;
-        Pressure = halfDensity * air.Speed * air.Speed * wing.Pressing(Incidence(State, air));
+        var force = Force(State, air, halfDensity).Force;
+        Pressure = halfDensity * air.Speed * air.Speed * wing.Pressing(rig.End.Planform, Incidence(State, air));
         Filled(air);
         return (State.Centre(shown, Fill), force);
     }
@@ -230,7 +230,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
     private (HullPoint At, HullPoint Force) Backed(Airflow air, double halfDensity)
     {
         Aback = true;
-        Pressure = halfDensity * air.Speed * air.Speed * wing.Pressing(Math.Asin(Math.Clamp(Flow(State.Form.Normal, air) / air.Speed, -1, 1)));
+        Pressure = halfDensity * air.Speed * air.Speed * wing.Pressing(rig.End.Planform, Math.Asin(Math.Clamp(Flow(State.Form.Normal, air) / air.Speed, -1, 1)));
         Filled(air);
         return Plate(State, air, halfDensity);
     }
@@ -260,27 +260,25 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         return rig.End.HoistMetres > 0 ? area * hoisted : area;
     }
 
-    private (bool Lee, bool Drawing, double Drive, double Side, double Facing) Score(RigState posed, Airflow air, double halfDensity, double fromBow)
+    private (bool Lee, bool Drawing, double Drive, double Side, double Facing) Score(RigState posed, Airflow air, double halfDensity)
     {
-        var force = Force(posed, air, halfDensity, fromBow).Force;
+        var force = Force(posed, air, halfDensity).Force;
         var newtons = halfDensity * air.Speed * air.Speed * Area();
         return (LeeOf(posed) > 0, !rig.End.Aback(posed, air), Math.Round(rig.End.Ahead * force.Along / newtons, TiedWithinDecimals),
             -Math.Round(Math.Abs(force.Across) / newtons, TiedWithinDecimals), Flow(rig.End.Belly(posed), force));
     }
 
-    private (HullPoint At, HullPoint Force) Pressing(RigState posed, Airflow air, double halfDensity, double fromBow)
-    {
-        var (at, force) = Force(posed, air, halfDensity, fromBow);
-        return rig.End.Aback(posed, air) ? (at, force) : (at, force.Length * rig.End.Belly(posed));
-    }
-
-    private (HullPoint At, HullPoint Force) Force(RigState posed, Airflow air, double halfDensity, double fromBow)
+    private (HullPoint At, HullPoint Force) Force(RigState posed, Airflow air, double halfDensity)
     {
         var end = rig.End;
         if (end.Aback(posed, air)) return Plate(posed, air, halfDensity);
 
-        var (drive, side) = wing.At(fromBow, Incidence(posed, air));
-        return (posed.Centre(shown, Fill), halfDensity * air.Speed * air.Speed * Area() * new HullPoint(end.Ahead * drive, 0, end.Leeward(air) * side));
+        var belly = end.Belly(posed);
+        var flow = 1 / air.Speed * new HullPoint(air.Along, 0, air.Across);
+        var incidence = Math.Clamp(Math.Asin(Math.Clamp(belly.Dot(flow), -1, 1)), 0, Math.PI / 2);
+        var along = flow - flow.Dot(belly) * belly;
+        var pressure = halfDensity * air.Speed * air.Speed * Area();
+        return (posed.Centre(shown, Fill), pressure * (wing.Pressing(end.Planform, incidence) * belly + wing.Friction * along));
     }
 
     private (HullPoint At, HullPoint Force) Luffing(Airflow air, double halfDensity)
@@ -323,7 +321,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
     {
         var normal = posed.Form.Normal;
         var flow = Flow(normal, air);
-        var pressing = wing.Pressing(Math.Asin(Math.Clamp(flow / air.Speed, -1, 1)));
+        var pressing = wing.Pressing(rig.End.Planform, Math.Asin(Math.Clamp(flow / air.Speed, -1, 1)));
         return (posed.Centre(shown, Fill), halfDensity * air.Speed * air.Speed * pressing * Math.Sign(flow) * Area() * normal);
     }
 

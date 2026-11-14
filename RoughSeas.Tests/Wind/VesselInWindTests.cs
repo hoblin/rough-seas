@@ -53,7 +53,8 @@ public class VesselInWindTests
             var expected = fresh.Steady(wind, Still, Yaw, Waterline);
             Assert.Equal(freshSail.Aback, sail.Aback);
             if (sail.Aback) continue;
-            Assert.True(Math.Abs(expected.X - load.X) < 0.5 && Math.Abs(expected.Z - load.Z) < 0.5,
+            var whole = Math.Sqrt(expected.X * expected.X + expected.Z * expected.Z);
+            Assert.True(Math.Sqrt(Math.Pow(expected.X - load.X, 2) + Math.Pow(expected.Z - load.Z, 2)) < 0.02 * whole,
                 $"{wind} tack {tacked}: kept {load.X:F1} {load.Z:F1}, fresh {expected.X:F1} {expected.Z:F1}; kept {sail.Rig.End.Describe(sail.State)}; fresh {freshSail.Rig.End.Describe(freshSail.State)}");
         }
     }
@@ -114,6 +115,16 @@ public class VesselInWindTests
             }
         }
         Assert.True(stretched < 0.01, $"a line stretched {stretched:F2} m past its length");
+    }
+
+    [Fact]
+    public void ShuntedFurledHerSparsStayLetDown()
+    {
+        var (body, sail) = Outrigger(Furled);
+        sail.Hoist(Furled, Shunted);
+        for (var t = 0.0; t < 20; t += Fixtures.TickSeconds) body.Load(OverHerFloat, Still, Yaw, Waterline, Fixtures.TickSeconds);
+        var (claw, furled) = ((ClawState)sail.State, (ClawState)sail.Rig.End.Furled);
+        Assert.True((claw.Peak - furled.Peak).Length < 0.01, $"her peak stands {(claw.Peak - furled.Peak).Length:F2} m from where it lies furled");
     }
 
     [Theory]
