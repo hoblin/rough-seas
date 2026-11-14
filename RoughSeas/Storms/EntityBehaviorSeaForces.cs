@@ -22,7 +22,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
     private StormsModSystem storms = null!;
     private VesselsModSystem vessels = null!;
-    private ISeaWeather sea = null!;
+    private SeaWeatherSystem sea = null!;
     private EntityBehaviorVesselIntegrity? hull;
     private IBuoyant? buoyant;
     private EntityBehaviorBilge? bilge;
@@ -132,7 +132,7 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
 
         using var _ = storms.Budget.Measure();
         var here = storms.Swells!.At(entity.Pos.X, entity.Pos.Z).WaveHere(entity.Pos.X, entity.Pos.Z);
-        var windMps = sea.At(entity.Pos.X, entity.Pos.Z).WindSpeed;
+        var windMps = sea.WindSpeedAt(entity.Pos.X, entity.Pos.Z);
         foreach (var wave in passing.Over(here, windMps, entity.World.Rand))
         {
             if (!entity.Alive) break;

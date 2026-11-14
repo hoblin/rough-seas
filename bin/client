@@ -22,9 +22,9 @@ else
 fi
 
 mod_args=""
-[[ " $mods " == *" roughseas "* ]] && mod_args="--addOrigin $root/RoughSeas/assets --addModPath $root/RoughSeas/bin/Debug/Mods"
+[[ " $mods " == *" roughseas "* ]] && mod_args="--addOrigin $root/RoughSeas/assets --addModPath $root/RoughSeas/bin/$build/Mods"
 if [[ " $mods " == *" agentbridge "* ]]; then
-  [ -n "$mod_args" ] && mod_args="$mod_args $root/AgentBridge/bin/Debug/Mods" || mod_args="--addModPath $root/AgentBridge/bin/Debug/Mods"
+  [ -n "$mod_args" ] && mod_args="$mod_args $root/AgentBridge/bin/$build/Mods" || mod_args="--addModPath $root/AgentBridge/bin/$build/Mods"
 fi
 
 seed_settings() {
@@ -132,8 +132,8 @@ if [ "$world" = stop ]; then
   exit "$saved"
 fi
 
-dotnet build RoughSeas -v quiet -nologo
-dotnet build AgentBridge -v quiet -nologo
+dotnet build RoughSeas -c "$build" -v quiet -nologo
+dotnet build AgentBridge -c "$build" -v quiet -nologo
 seed_settings
 
 if [ "$world" = take ] && [ ! -f "$take" ]; then

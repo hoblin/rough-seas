@@ -25,7 +25,7 @@ public class SeaMap(SeaWeatherConfig config, SeaClock clock, Func<int> regionSiz
         var topZ = (int)Math.Floor(cellZ);
         var (tx, tz) = (cellX - leftX, cellZ - topZ);
 
-        var sum = new double[10];
+        Span<double> sum = stackalloc double[10];
         var weight = 0.0;
         for (var dx = 0; dx <= 1; dx++)
         for (var dz = 0; dz <= 1; dz++)
@@ -109,7 +109,7 @@ public class SeaMap(SeaWeatherConfig config, SeaClock clock, Func<int> regionSiz
         return region.At(cellX - regionX * side, cellZ - regionZ * side, Now);
     }
 
-    private static void Accumulate(double[] sum, SeaSample cell, double w)
+    private static void Accumulate(Span<double> sum, SeaSample cell, double w)
     {
         sum[0] += cell.WindX * w;
         sum[1] += cell.WindZ * w;

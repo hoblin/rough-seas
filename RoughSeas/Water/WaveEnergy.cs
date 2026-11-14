@@ -17,7 +17,8 @@ public static class WaveEnergy
     private const int Rounds = 2;
     private const double Relaxation = 0.5;
     private const double NoBreakingBelow = 0.04;
-    private const int BreakingSteps = 30;
+    private const int BreakingSteps = 60;
+    private const double BreakingPrecision = 1e-10;
     private const double QuietestSeaShare = 0.001;
 
     /// <param name="TurnRadius">The cells to either side over which its direction is averaged: a wave can't turn on a scale shorter than itself, and rays that would cross there spread as diffraction spreads them.</param>
@@ -66,14 +67,15 @@ public static class WaveEnergy
     {
         if (share <= NoBreakingBelow) return 0;
         if (share >= 1) return 1;
-        double low = 0, high = 1;
+        // 1 is a root too: starting left of the one wanted, where the curve is below zero, Newton climbs to it and never past it.
+        var fraction = Math.Exp(-1 / share);
         for (var step = 0; step < BreakingSteps; step++)
         {
-            var middle = (low + high) / 2;
-            if (1 - middle + share * Math.Log(middle) > 0) high = middle;
-            else low = middle;
+            var next = fraction - (1 - fraction + share * Math.Log(fraction)) / (share / fraction - 1);
+            if (Math.Abs(next - fraction) < BreakingPrecision) return next;
+            fraction = next;
         }
-        return (low + high) / 2;
+        return fraction;
     }
 
     private sealed class Solved

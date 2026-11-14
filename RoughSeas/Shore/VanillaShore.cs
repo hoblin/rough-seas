@@ -23,6 +23,7 @@ public static class VanillaShore
     private const string HarmonyId = "roughseas.shore.vanilla";
 
     private static Harmony? harmony;
+    private static Ticked? ticked;
 
     public static void Attach()
     {
@@ -51,18 +52,30 @@ public static class VanillaShore
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
+        ticked = null;
     }
 
     [ReliesOn("Vintagestory.Server.ServerSystemBlockSimulation", "OnServerTick", "a tick with an extra goes to the block in the default layer, a tick without one to the fluid")]
+    [ReliesOn("Vintagestory.Server.ServerSystemBlockSimulation", "tickChunk", "unpacks the chunk before it asks the blocks in it whether they take a random tick")]
     private static bool TickSolid(IWorldAccessor world, BlockPos pos, Random offThreadRandom, out object? extra, ref bool __result)
     {
         extra = null;
-        if (!OpenWater.Land(world.BlockAccessor, pos)) return true;
-        __result = world.BlockAccessor.GetBlock(pos, BlockLayersAccess.Solid).ShouldReceiveServerGameTicks(world, pos, offThreadRandom, out var solidExtra);
+        var blocks = TickedChunks(world);
+        var solid = blocks.GetBlockRaw(pos.X, pos.InternalY, pos.Z, BlockLayersAccess.Solid);
+        if (!solid.DisplacesLiquids(world.BlockAccessor, pos)) return true;
+        __result = solid.ShouldReceiveServerGameTicks(world, pos, offThreadRandom, out var solidExtra);
         // A tick with an extra goes to the block in the default layer, which is the solid one; without one, to the fluid.
         extra = solidExtra ?? SolidTick;
         return false;
     }
+
+    private static IBlockAccessor TickedChunks(IWorldAccessor world)
+    {
+        if (ticked?.World != world) ticked = new Ticked(world, world.GetLockFreeBlockAccessor());
+        return ticked.Blocks;
+    }
+
+    private sealed record Ticked(IWorldAccessor World, IBlockAccessor Blocks);
 
     private static void SelectLand(GameMain __instance, BlockPos pos, ref bool liquidSelectable)
     {

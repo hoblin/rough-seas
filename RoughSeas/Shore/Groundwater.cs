@@ -264,6 +264,10 @@ public sealed class Groundwater
     private void Diff((int X, int Z) chunk, int level, Dictionary<(int X, int Z), Reached> reached)
     {
         var accessor = sapi.World.BlockAccessor;
+        if (accessor.GetChunk(chunk.X, level / ChunkSize, chunk.Z) is not { } held) return;
+        // The lock-free accessor reads a chunk packed after 8 idle seconds as air.
+        held.Unpack_ReadOnly();
+        var unpacked = sapi.World.GetLockFreeBlockAccessor();
         var probe = new BlockPos(Dimensions.NormalWorld);
         var now = sapi.World.ElapsedMilliseconds;
         var (added, drained, rings) = (0, 0, 0);
@@ -271,8 +275,8 @@ public sealed class Groundwater
         {
             var (x, z) = (chunk.X * ChunkSize + i % ChunkSize, chunk.Z * ChunkSize + i / ChunkSize);
             probe.Set(x, level, z);
-            if (accessor.GetChunkAtBlockPos(probe) == null || !OpenWater.Land(accessor, probe)) continue;
-            var fluid = accessor.GetBlock(probe, BlockLayersAccess.Fluid);
+            if (!unpacked.GetBlock(probe, BlockLayersAccess.Solid).DisplacesLiquids(accessor, probe)) continue;
+            var fluid = unpacked.GetBlock(probe, BlockLayersAccess.Fluid);
             var wanted = reached.TryGetValue((x, z), out var sheet) ? sheet.Fluid : 0;
             var cell = (x, level, z);
             if (WaterColumn.Carries(fluid) == (wanted != 0))

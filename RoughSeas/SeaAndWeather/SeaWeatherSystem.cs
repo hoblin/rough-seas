@@ -106,6 +106,12 @@ public class SeaWeatherSystem : ModSystem, ISeaWeather
 
     public SeaState At(double x, double z) => Source.At(x, z);
 
+    public double WindSpeedAt(double x, double z)
+    {
+        var (windX, windZ) = Source.Wind(x, z);
+        return Math.Sqrt(windX * windX + windZ * windZ);
+    }
+
     // not inlined, or a postfix on it (the bench's /bridge current, another mod's) misses a caller once the JIT warms up
     [MethodImpl(MethodImplOptions.NoInlining)]
     public SeaCurrent CurrentAt(double x, double z) => Source.CurrentAt(x, z);

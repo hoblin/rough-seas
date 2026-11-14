@@ -18,11 +18,11 @@ public sealed class SurfBuilder(SwashSheets sheets, FaceBuilder faces, WaveTrans
 
         var heights = Enumerable.Range(0, depth.Length).Select(i => seaAt(map.OriginX + i % size, map.OriginZ + i / size).Height).ToArray();
         var entering = coarse?.Entering(transformation, numbers, amplitudeShares, dominant, map.OriginX, map.OriginZ);
-        var arrivingWaves = transformation.Solve(size, depth, numbers, amplitudeShares, heights, dominant, entering);
+        var shoaling = transformation.Shoal(size, depth, numbers, amplitudeShares, heights, dominant, entering);
         var ray = dominant < numbers.Length ? numbers[dominant] : default;
-        var arriving = Enumerable.Range(0, depth.Length).Select(i => depth[i] > 0 ? (float)arrivingWaves.ArrivingAt(depth, size, i % size, i / size, ray) : 1f).ToArray();
+        var arriving = Enumerable.Range(0, depth.Length).Select(i => depth[i] > 0 ? (float)shoaling.ArrivingAt(i % size, i / size, ray) : 1f).ToArray();
         var (swash, steps) = sheets.Throw(map, (x, z) => seaAt(x, z) is var sea ? sea with { Height = sea.Height * arriving[(z - map.OriginZ) * size + x - map.OriginX] } : default);
-        var waves = transformation.Solve(size, depth, numbers, amplitudeShares, heights, dominant, entering, shoreBore: ShoreBore(map, size, depth, swash.Values));
+        var waves = shoaling.Broken(ShoreBore(map, size, depth, swash.Values));
 
         var shoreline = PhaseField.NearestWater(depth, size);
         for (var i = 0; i < depth.Length; i++)
