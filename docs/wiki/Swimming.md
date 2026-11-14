@@ -8,7 +8,7 @@ Fresh water holds you up less, so in a lake or a river you sink slowly unless yo
 
 ## Wading
 
-Until the water reaches your chest you walk and jump as on any shore, so a jump takes you up a one-block step out of the water.
+Until the water reaches your chest you walk and jump as on any shore, so a jump takes you up a one-block step out of the water. The water drags only on the part of you it covers: with it at your knees a jump keeps its way, and the deeper you wade, the sooner you lose it.
 
 ## Swimming
 

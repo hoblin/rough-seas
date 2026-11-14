@@ -32,6 +32,8 @@ public static class BodyAfloat
     private static PersonConfig config = new();
     private static Waves? waves;
     private static FloatingBody? body;
+    private static WadingBody? waders;
+    private static (WaterSurface Surface, BodyPlace Place, Carried Kit, SeaCurrent Current)? wading;
     private static SwimStroke stroke;
     private static bool liftedThisTick;
     private static double loggedAt = double.NegativeInfinity;
@@ -40,6 +42,7 @@ public static class BodyAfloat
     {
         if (harmony != null) return;
         (system, capi, drawn, water, person, config, waves) = (mod, client, drawnSea, drawnWater, thePerson, personConfig, theWaves);
+        waders = new WadingBody(thePerson, personConfig, theWaves);
         sea = client.ModLoader.GetModSystem<SeaWeatherSystem>();
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(PModuleGravity), nameof(PModuleGravity.DoApply)),
@@ -58,7 +61,7 @@ public static class BodyAfloat
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (system, capi, drawn, water, sea, person, waves, body) = (null, null, null, null, null, null, null, null);
+        (system, capi, drawn, water, sea, person, waves, body, waders, wading) = (null, null, null, null, null, null, null, null, null, null);
         (stroke, liftedThisTick, loggedAt) = (default, false, double.NegativeInfinity);
     }
 
@@ -86,10 +89,17 @@ public static class BodyAfloat
             Leave(entity, null);
             return true;
         }
-        if (!entity.Swimming || water!.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is not { } surface
+        if (!(entity.FeetInLiquid || entity.Swimming) || water!.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is not { } surface
             || surface.Height <= pos.Y)
         {
-            Leave(entity, "out of the water to the chest");
+            Leave(entity, "out of the water");
+            return true;
+        }
+        if (!entity.Swimming)
+        {
+            Leave(entity, "wading: vanilla's gravity and jump");
+            wading = (surface, new BodyPlace(pos.X, pos.Y, pos.Z, entity.LocalEyePos.Y, entity.CollisionBox.XSize), person!.CarriedBy(entity),
+                Mechanic.Currents.On(entity.World) ? sea!.CurrentAt(pos.X, pos.Z) : default);
             return true;
         }
 
@@ -124,14 +134,21 @@ public static class BodyAfloat
     }
 
     [ReliesOn("Vintagestory.API.Common.Entities.PModuleMotionDrag", "DoApply", "scales the whole motion by WaterDrag^(33·seconds) while the feet are in water or the body swims")]
-    private static void BeforeDrag(Entity entity, EntityPos pos, out double __state) => __state = pos.Motion.Y;
+    private static void BeforeDrag(Entity entity, EntityPos pos, out (double X, double Y, double Z) __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
 
-    // vanilla's water drag keeps the body's way across; up and down the body has had its own drag
-    private static void AfterDrag(Entity entity, EntityPos pos, double __state)
+    private static void AfterDrag(Entity entity, EntityPos pos, float dt, (double X, double Y, double Z) __state)
     {
-        if (!liftedThisTick || entity != capi?.World.Player?.Entity) return;
+        if (entity != capi?.World.Player?.Entity) return;
+        if (wading is var (surface, place, kit, current))
+        {
+            wading = null;
+            var next = waders!.Dragged(surface, place, new BodyMotion(__state.X, __state.Y, __state.Z), kit, dt, (current.X, current.Z));
+            pos.Motion.Set(next.X, next.Y, next.Z);
+            return;
+        }
+        if (!liftedThisTick) return;
         liftedThisTick = false;
-        pos.Motion.Y = __state;
+        pos.Motion.Y = __state.Y;
     }
 
     private static void BeforeStroke(EntityPos pos, out (double X, double Y, double Z) __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
