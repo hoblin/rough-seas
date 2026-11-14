@@ -23,6 +23,7 @@ public sealed class WaveTrains
     private readonly double shortHeight;
     private readonly double[] shortX, shortZ, shortFrequency, shortAmplitude;
     private readonly Bank?[] banks = new Bank?[2];
+    private (double X, double Z)[] vectors;
     private int active = -1;
     private double risingFrom = double.NegativeInfinity;
 
@@ -37,6 +38,7 @@ public sealed class WaveTrains
         slotShares = Enumerable.Range(0, slots).Select(slot => amplitudeShare[slot % generation]).ToArray();
         numberX = new double[slots];
         numberZ = new double[slots];
+        vectors = new (double X, double Z)[slots];
         frequency = new double[slots];
         amplitude = new double[slots];
 
@@ -92,7 +94,7 @@ public sealed class WaveTrains
 
     public double Phase(int slot, double x, double z) => (numberX[slot] * x + numberZ[slot] * z - frequency[slot] * Seconds) % FullTurn;
 
-    public (double X, double Z)[] Vectors() => Enumerable.Range(0, Slots).Select(slot => (numberX[slot], numberZ[slot])).ToArray();
+    public (double X, double Z)[] Vectors() => vectors;
 
     public double[] AmplitudeShares() => slotShares;
 
@@ -232,6 +234,8 @@ public sealed class WaveTrains
             (shortX[slot], shortZ[slot], shortFrequency[slot]) = (Math.Cos(angle) * number, Math.Sin(angle) * number, WaveTheory.DeepFrequency(number));
             shortAmplitude[slot] = 0;
         }
+        // A new array, never written over: SurfMaker keeps the one it built a field for and compares the next against it.
+        vectors = Enumerable.Range(0, Slots).Select(slot => (numberX[slot], numberZ[slot])).ToArray();
         Changed?.Invoke(string.Format(System.Globalization.CultureInfo.InvariantCulture,
             "new waves toward {0:F0}°, {1:F0} m long", (towardRadians * 180 / Math.PI + 360) % 360, length));
     }

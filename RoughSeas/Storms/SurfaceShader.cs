@@ -63,6 +63,7 @@ public static class SurfaceShader
     private static readonly HashSet<(string Pass, string Patch)> Refused = [];
     private static readonly HashSet<(string Pass, string Patch)> Injected = [];
     private static readonly HashSet<string> Failed = [];
+    private static readonly Dictionary<ShaderProgramBase, BoundProgram> Bound = [];
     private static readonly AssetLocation WetSource = new("roughseas", "shaderincludes/seawet.fsh");
     private const double NoCaps = 10;
     private const double FoamClockSeconds = 3600;
@@ -148,6 +149,7 @@ public static class SurfaceShader
         heightMap?.Dispose();
         foreach (var texture in shoreTextures) GL.DeleteTexture(texture);
         shoreTextures = [];
+        Bound.Clear();
         (surface, field, heightMap, capi, shore) = (null, null, null, null, null);
     }
 
@@ -309,6 +311,7 @@ public static class SurfaceShader
     {
         if (!__result) Failed.Add(__instance.PassName);
         LocateSamplers(__instance);
+        Bound.Remove(__instance);
     }
 
     [ReliesOn("Vintagestory.Client.NoObf.ShaderProgram", "collectUniformNames", "numbers samplers by a regex over the source, which a uniform with a precision qualifier escapes")]
@@ -325,7 +328,20 @@ public static class SurfaceShader
     private static void Bind(ShaderProgramBase __instance)
     {
         if (surface == null || capi?.World.Player?.Entity is not { } player) return;
-        if (Active(__instance, WavesUniform))
+        if (!Bound.TryGetValue(__instance, out var bound)) Bound[__instance] = bound = new BoundProgram(__instance);
+        if (!bound.Reads) return;
+        if (field != null && heightMap is { TextureId: > 0 } && bound.HeightMap) __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, heightMapUnit);
+        if (shore != null)
+        {
+            for (var i = 0; i < SurfField.Samplers.Length; i++)
+            {
+                if (bound.Shore[i]) __instance.BindTexture2D(SurfField.Samplers[i], shoreTextures[i], heightMapUnit - 1 - i);
+            }
+        }
+        // Texture units are shared by every program, so textures go at every use; a program keeps its uniforms, so they go once a frame.
+        if (bound.Frame == surface.Trains.Frame) return;
+        bound.Frame = surface.Trains.Frame;
+        if (bound.Waves)
         {
             if (DrawWaves) surface.Trains.WriteUniforms(player.CameraPos.X, player.CameraPos.Z, uniforms);
             else Array.Clear(uniforms);
@@ -337,23 +353,18 @@ public static class SurfaceShader
             __instance.Uniform("seaMesh", new Vec2f(SurfaceTessellation.ReachMetres, SurfaceTessellation.FinestSpacing));
             __instance.Uniform("seaTerms", new Vec3f(DrawReflection ? 1 : 0, DrawLag ? 1 : 0, DrawEnergy ? 1 : 0));
         }
-        colours.Bind(__instance, capi.World.SeaLevel - 1 + WaterColumn.StillLevel - player.CameraPos.Y);
-        if (field != null && heightMap is { TextureId: > 0 } && Active(__instance, HeightMapSampler))
+        if (bound.Colours) colours.Bind(__instance, capi.World.SeaLevel - 1 + WaterColumn.StillLevel - player.CameraPos.Y);
+        if (field != null && heightMap is { TextureId: > 0 } && bound.HeightMap)
         {
-            __instance.BindTexture2D(HeightMapSampler, heightMap.TextureId, heightMapUnit);
             __instance.Uniform("seaHeightArea", new Vec4f((float)(field.OriginX - player.CameraPos.X), (float)(field.OriginZ - player.CameraPos.Z),
                 (float)field.SizeBlocks, (float)field.SizeBlocks));
         }
-        if (shore != null && SurfField.Samplers.Any(sampler => Active(__instance, sampler)))
+        if (shore != null && bound.ReadsShore)
         {
-            for (var i = 0; i < SurfField.Samplers.Length; i++)
-            {
-                if (Active(__instance, SurfField.Samplers[i])) __instance.BindTexture2D(SurfField.Samplers[i], shoreTextures[i], heightMapUnit - 1 - i);
-            }
             __instance.Uniform("seaBedArea", new Vec4f((float)(shore.OriginX - player.CameraPos.X), (float)(shore.OriginZ - player.CameraPos.Z), shore.Size,
                 (float)player.CameraPos.Y));
         }
-        if (Active(__instance, "seaShore"))
+        if (bound.SeaShore)
         {
             __instance.Uniform("seaShore", new Vec4f((float)surface.Waves.BreakingDepthRatio, surface.Trains.Dominant, shore != null && DrawShore ? 1 : 0, (float)surface.Waves.CrestRatio));
             __instance.Uniform("seaPlunging", new Vec2f((float)surface.Waves.PlungingIribarren.From, (float)surface.Waves.PlungingIribarren.To));
@@ -367,15 +378,51 @@ public static class SurfaceShader
             __instance.Uniform("seaLagValidA", new Vec4f(Valid(0), Valid(1), Valid(2), Valid(3)));
             __instance.Uniform("seaLagValidB", new Vec4f(Valid(4), Valid(5), Valid(6), Valid(7)));
         }
-        if (Active(__instance, WetUniform))
+        if (bound.Wet)
         {
             __instance.Uniform(WetUniform, new Vec4f((float)surface.Trains.DominantPeriod, (float)lensDepthRatio, (float)wetReflectance, shore != null && DrawShore ? 1 : 0));
         }
-        if (!Active(__instance, FoamUniform)) return;
+        if (!bound.Foam) return;
         __instance.Uniform(FoamUniform, DrawFoam
             ? new Vec3f((float)Math.Min(surface.CapsFold, NoCaps), (float)surface.Foam.Streaks, (float)surface.Foam.Spray)
             : new Vec3f((float)NoCaps, 0, 0));
         __instance.Uniform("seaFoamClock", (float)(surface.Trains.Seconds % FoamClockSeconds));
         __instance.Uniform("seaWavesToward", new Vec2f((float)Math.Cos(surface.Trains.TowardRadians), (float)Math.Sin(surface.Trains.TowardRadians)));
+    }
+
+    private sealed class BoundProgram
+    {
+        public BoundProgram(ShaderProgramBase program)
+        {
+            Waves = Active(program, WavesUniform);
+            HeightMap = Active(program, HeightMapSampler);
+            Shore = SurfField.Samplers.Select(sampler => Active(program, sampler)).ToArray();
+            ReadsShore = Shore.Any(reads => reads);
+            SeaShore = Active(program, "seaShore");
+            Wet = Active(program, WetUniform);
+            Foam = Active(program, FoamUniform);
+            Colours = program.HasUniform(HeightColours.Uniform);
+            Reads = Waves || HeightMap || ReadsShore || SeaShore || Wet || Foam || Colours;
+        }
+
+        public bool Waves { get; }
+
+        public bool HeightMap { get; }
+
+        public bool[] Shore { get; }
+
+        public bool ReadsShore { get; }
+
+        public bool SeaShore { get; }
+
+        public bool Wet { get; }
+
+        public bool Foam { get; }
+
+        public bool Colours { get; }
+
+        public bool Reads { get; }
+
+        public long Frame { get; set; } = -1;
     }
 }

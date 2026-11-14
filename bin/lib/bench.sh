@@ -1,6 +1,7 @@
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 bench_env=$(mise -C "$root" env -s bash) || return 1
 eval "$bench_env"
+build=${BENCH_BUILD:-Debug}
 
 stop_session() {
   local session=$1 data=$2 pids
@@ -51,7 +52,7 @@ start_server() {
   tmux new-session -d -s "$session" -c "$VINTAGE_STORY" \
     "$(game_env) dotnet VintagestoryServer.dll --dataPath $data --tracelog --port $BENCH_SERVER_PORT \
      ${config:+--withconfig=$(printf %q "$config")} --addOrigin $root/RoughSeas/assets \
-     --addModPath $root/RoughSeas/bin/Debug/Mods $root/AgentBridge/bin/Debug/Mods"
+     --addModPath $root/RoughSeas/bin/$build/Mods $root/AgentBridge/bin/$build/Mods"
   echo "Server starting in tmux session $session on port $BENCH_SERVER_PORT; logs in $data/Logs"
   wait_until_running "$session" "$data" "$BENCH_TMP/server-started" 180
 }

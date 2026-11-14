@@ -15,6 +15,7 @@ public class SeaWeatherModel
     private readonly Showers showers;
     private readonly NormalizedSimplexNoise strengthNoise;
     private readonly NormalizedSimplexNoise veerNoise;
+    private double[]? lags;
 
     public SeaWeatherModel(long seed, SeaWeatherConfig config, WorldClimate climate, OceanBasins basins, Func<double, double> latitude, double hoursPerYear, double blockMetres,
         Func<double, double, double, double>? seasonalCelsius = null)
@@ -34,15 +35,20 @@ public class SeaWeatherModel
 
     public WorldClimate Climate => climate;
 
-    public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps)
+    public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps) =>
+        TimeWeightedMeans(windMps, Lags.Select(lag => (lag, Wind(x, z, hours - lag).Speed)), config.SeaBuildHours);
+
+    private double[] Lags => lags ??= LagsOf(config);
+
+    private static double[] LagsOf(SeaWeatherConfig config)
     {
         var longest = config.SeaBuildHours.Max();
-        var lags = config.SeaBuildHours
+        return config.SeaBuildHours
             .Concat(Enumerable.Range(1, (int)(longest / config.SeaSampleHours)).Select(step => step * config.SeaSampleHours))
             .Where(lag => lag <= longest)
             .Distinct()
-            .Order();
-        return TimeWeightedMeans(windMps, lags.Select(lag => (lag, Wind(x, z, hours - lag).Speed)), config.SeaBuildHours);
+            .Order()
+            .ToArray();
     }
 
     public static (double Hours, double Mps)[] TimeWeightedMeans(double nowMps, IEnumerable<(double Lag, double Mps)> past, IReadOnlyCollection<double> windows)

@@ -40,7 +40,7 @@ public sealed class SwimmerBreakers(PersonModSystem mod, StormsModSystem storms,
 
             using var _ = storms.Budget.Measure();
             var here = swells.At(pos.X, pos.Z).WaveHere(pos.X, pos.Z);
-            var windMps = sea.At(pos.X, pos.Z).WindSpeed;
+            var windMps = sea.WindSpeedAt(pos.X, pos.Z);
             foreach (var wave in passing.Over(here, windMps, entity.World.Rand))
             {
                 if (!wave.Breaks)

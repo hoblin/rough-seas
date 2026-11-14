@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source "$(dirname "$0")/lib/bench.sh"
+
+usage() {
+  cat <<EOF
+Profile Rough Seas in this clone's running game: where our code spends time and what it allocates.
+
+  bin/profile record SECONDS FOLDER [ACTION...]
+        trace this clone's client (its singleplayer server included) for SECONDS into FOLDER:
+        trace.nettrace (thread stacks ~100 Hz and allocation samples), counters.csv (GC and
+        allocation rate), fps.txt (bin/game fps over the take) and budgets.txt (the server
+        budgets, /seas /storms /vessels /shore budget, over the take). ACTION runs as a command
+        alongside, e.g. bin/game press W 60000 to paddle through it.
+  bin/profile report TRACE [TOP]
+        where our code was on a stack: by side, by the engine's call into us, by our methods
+        inclusive, by leaf frame; and our allocations by type and by our innermost frame.
+
+Profile the build players run: start the bench with BENCH_BUILD=Release bin/client.
+Compare two takes of the same scene, one before and one after a change.
+EOF
+}
+
+record() {
+  local seconds=$1 out=$2 pid
+  shift 2
+  mkdir -p "$out"
+  pid=$(pgrep -f -- "^\./Vintagestory .*--dataPath $BENCH_DATA ") || { echo "No client of this clone runs: bin/client first" >&2; exit 1; }
+  export PATH="$PATH:$HOME/.dotnet/tools" TMPDIR=$BENCH_TMP
+  command -v dotnet-trace >/dev/null || dotnet tool install -g dotnet-trace >/dev/null
+  command -v dotnet-counters >/dev/null || dotnet tool install -g dotnet-counters >/dev/null
+  "$root/bin/game" do '/seas budget' '/storms budget' '/vessels budget' '/shore budget' >/dev/null
+  local duration
+  duration=$(printf '00:00:%02d:%02d' $((seconds / 60)) $((seconds % 60)))
+  dotnet-trace collect -p "$pid" --profile dotnet-sampled-thread-time,gc-verbose --duration "$duration" \
+    -o "$out/trace.nettrace" >"$out/trace.log" 2>&1 &
+  dotnet-counters collect -p "$pid" --counters System.Runtime --refresh-interval 5 --duration "$duration" \
+    -o "$out/counters.csv" >"$out/counters.log" 2>&1 &
+  sleep 2
+  [ $# -gt 0 ] && "$@" &
+  "$root/bin/game" fps $((seconds - 2)) >"$out/fps.txt"
+  wait
+  "$root/bin/game" do '/seas budget' '/storms budget' '/vessels budget' '/shore budget' >"$out/budgets.txt"
+  cat "$out/fps.txt" "$out/budgets.txt"
+}
+
+case ${1:-help} in
+  record) shift; record "$@" ;;
+  report) shift; exec dotnet run --project "$root/Profile" -c Release -v q -- "$@" ;;
+  *) usage ;;
+esac

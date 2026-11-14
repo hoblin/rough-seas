@@ -58,7 +58,17 @@ public sealed class Framing
     /// <summary>How much of the frame members behind her shell are laid.</summary>
     public double Members => Share(stage => stage.Members);
 
-    public bool Sealed => Stages.Where(stage => stage.Seals).All(stage => Laid(stage) >= stage.Pieces);
+    public bool Sealed
+    {
+        get
+        {
+            foreach (var stage in Stages)
+            {
+                if (stage.Seals && Laid(stage) < stage.Pieces) return false;
+            }
+            return true;
+        }
+    }
 
     /// <summary>Changes whenever what she shows changes.</summary>
     public string ShapeKey => $"{string.Join("/", Stages.Select(Laid))}/{Wood}/{string.Join("/", Stages.Select(WoodOf))}";
@@ -114,13 +124,28 @@ public sealed class Framing
 
     public double NextMetres => Current is { } stage && Laid(stage) < stage.Metres.Length ? stage.Metres[Laid(stage)] : 0;
 
-    public int Laid(FramingStage stage) =>
-        Tree is not { } tree ? stage.Pieces
-        : Stages.SkipWhile(each => each != stage).Skip(1).Any(later => tree.GetInt(later.Group) > 0) ? stage.Pieces
-        : tree.GetInt(stage.Group);
+    public int Laid(FramingStage stage)
+    {
+        if (Tree is not { } tree) return stage.Pieces;
+        var after = false;
+        foreach (var each in Stages)
+        {
+            if (after && tree.GetInt(each.Group) > 0) return stage.Pieces;
+            after |= each == stage;
+        }
+        return tree.GetInt(stage.Group);
+    }
 
     /// <summary>What the stages done bring her, each its <paramref name="brings"/>.</summary>
-    public double Raised(Func<FramingStage, double> brings) => Stages.Where(stage => Laid(stage) >= stage.Pieces).Sum(brings);
+    public double Raised(Func<FramingStage, double> brings)
+    {
+        var raised = 0.0;
+        foreach (var stage in Stages)
+        {
+            if (Laid(stage) >= stage.Pieces) raised += brings(stage);
+        }
+        return raised;
+    }
 
     /// <summary>How much of the stage is laid.</summary>
     public double Share(FramingStage stage) => stage.Pieces == 0 ? 1 : (double)Laid(stage) / stage.Pieces;

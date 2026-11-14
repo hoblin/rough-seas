@@ -45,6 +45,7 @@ All of it is scoped to this repository. [CONTRIBUTING.md](CONTRIBUTING.md) cover
 - **Modeling.** `bin/model` edits, previews and checks shape JSON in Blender, headless; **`bin/model help`** explains it.
 - `mise.toml` pins the .NET SDK, Node and Blender, and sets the bench's environment: the 1.22.7 install, and this clone's name, data folder and ports. A clone's own values (another install path, ports, a desktop workspace) go in its gitignored `mise.local.toml`. mise puts all of it on PATH and in the environment here; in a shell that doesn't load mise, run tools through `mise exec --`.
 - `ilspycmd` is a local .NET tool (`dotnet-tools.json`): `dotnet ilspycmd <assembly>`.
+- **Profiling.** `bin/profile` traces this clone's game and reports where our code spends its time and what it allocates; **`bin/profile help`** explains it.
 - **Game versions.** `bin/compat` says whether the mod works on a game version, with no game running; **`bin/compat help`** explains it.
 
 ## The oldest game we support
