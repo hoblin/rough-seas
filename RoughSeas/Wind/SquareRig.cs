@@ -154,8 +154,10 @@ public sealed class SquareRig : Rigging
         canvas.Part("yard", arms, (square.ArmPort, square.ArmStarboard));
         var (footPort, footStarboard) = (square.Form.At(0, 0, fill, Set), square.Form.At(1, 0, fill, Set));
         if (Set.Span < 1) canvas.Part("roll", arms, (footPort, footStarboard), Math.Sqrt(1 - Set.Span));
-        canvas.Line(footPort, leads.Port, Widths.Line, (leads.Port - footPort).Length);
-        canvas.Line(footStarboard, leads.Starboard, Widths.Line, (leads.Starboard - footStarboard).Length);
+        var squared = ((SquareState)Pose(0, 0)).Form;
+        var (squarePort, squareStarboard) = (squared.At(0, 0, fill, Set), squared.At(1, 0, fill, Set));
+        canvas.Line(footPort, leads.Port, Widths.Line, Math.Max((leads.Port - footPort).Length, (leads.Port - squarePort).Length));
+        canvas.Line(footStarboard, leads.Starboard, Widths.Line, Math.Max((leads.Starboard - footStarboard).Length, (leads.Starboard - squareStarboard).Length));
     }
 
     public override void DrawFurled(IRigCanvas canvas, RigState state)

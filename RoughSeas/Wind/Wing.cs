@@ -3,13 +3,19 @@ using System.Linq;
 
 namespace RoughSeas.Wind;
 
-public sealed class Wing(FlowConfig flow, double friction)
+public sealed class Wing(FlowConfig flow, double kinematicViscosity)
 {
     private const double Degree = Math.PI / 180;
 
-    public static Wing Of(WindConfig config) => new(config.Flow, config.ClothFriction);
+    private const double TransitionReynolds = 5e5;
 
-    public double Friction => friction;
+    public static Wing Of(WindConfig config) => new(config.Flow, config.AirMetresSquaredPerSecond);
+
+    public double Friction(double metresPerSecond, double chordMetres)
+    {
+        var reynolds = Math.Max(1, metresPerSecond * chordMetres / kinematicViscosity);
+        return 2 * (reynolds < TransitionReynolds ? 1.328 / Math.Sqrt(reynolds) : 0.074 * Math.Pow(reynolds, -0.2));
+    }
 
     public double Pressing(Lattice seen, double incidence)
     {

@@ -7,7 +7,6 @@ public sealed class Chain
 {
     private const int Passes = 4;
     private const double CylinderDrag = 1.2;
-    private const double AirKilogramsPerCubicMetre = 1.225;
 
     private readonly Vec3d[] at;
     private readonly Vec3d[] moving;
@@ -16,12 +15,12 @@ public sealed class Chain
     private readonly double stretchingNewtons;
     private double rest;
 
-    public Chain(Vec3d[] points, double restMetres, double diameterMetres, Fibre fibre)
+    public Chain(Vec3d[] points, double restMetres, double diameterMetres, Fibre fibre, double airKilogramsPerCubicMetre)
     {
         at = points;
         moving = Array.ConvertAll(points, _ => new Vec3d());
         kilogramsPerMetre = fibre.KilogramsPerCubicMetre * Math.PI * diameterMetres * diameterMetres / 4;
-        dragPerMetre = AirKilogramsPerCubicMetre * CylinderDrag * diameterMetres / 2;
+        dragPerMetre = airKilogramsPerCubicMetre * CylinderDrag * diameterMetres / 2;
         stretchingNewtons = fibre.BreakingAt(diameterMetres) / fibre.StretchAtBreak;
         Rest(restMetres);
     }
@@ -39,7 +38,7 @@ public sealed class Chain
         foreach (var point in at) point.Add(by);
     }
 
-    public void Step(Vec3d first, Vec3d last, double gravity, double seconds)
+    public void Step(Vec3d first, Vec3d last, double gravity, Vec3d air, double seconds)
     {
         if (seconds <= 0) return;
 
@@ -51,7 +50,9 @@ public sealed class Chain
         for (var k = 1; k < count - 1; k++)
         {
             moving[k].Y -= gravity * seconds;
-            moving[k].Mul(1 / (1 + slowed * moving[k].Length() * seconds));
+            var through = moving[k].SubCopy(air);
+            through.Mul(1 / (1 + slowed * through.Length() * seconds));
+            moving[k] = through.Add(air);
             next[k] = at[k].AddCopy(moving[k].X * seconds, moving[k].Y * seconds, moving[k].Z * seconds);
         }
 

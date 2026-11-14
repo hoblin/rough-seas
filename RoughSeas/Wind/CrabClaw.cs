@@ -78,7 +78,7 @@ public sealed class CrabClaw : Rigging
         return (Hoisted.Heel - Hoisted.Tack).Dot(normal) < 0 ? normal : -1 * normal;
     }
 
-    public override bool Aback(RigState state, Airflow air) => air.Across * Lee < 0;
+    public override bool Aback(RigState state, Airflow air) => air.Across * Lee < 0 || base.Aback(state, air);
 
     public override int Leeward(Airflow air) => Lee;
 
@@ -300,6 +300,8 @@ public sealed class CrabClaw : Rigging
     }
 
     public override double SheetMetres(RigState state) => ((ClawState)state).Lines.Sheet;
+
+    public override double SheetSpan(RigState state) => (((ClawState)state).Rig.Lead - ((ClawState)state).Bridle).Length;
 
     public override HullPoint[] Marks(RigState state)
     {

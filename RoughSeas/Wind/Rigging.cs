@@ -71,6 +71,8 @@ public abstract class Rigging
 
     public abstract RigState Furled { get; }
 
+    public virtual double SheetSpan(RigState state) => 0;
+
     public abstract double HoistMetres { get; }
 
     public abstract double SpanMetres { get; }

@@ -10,7 +10,7 @@ public class WindConfig
     public double BluffDrag;
     public double Camber;
     public double ClothKgPerSquareMetre;
-    public double ClothFriction;
+    public double AirMetresSquaredPerSecond;
     public float LogSeconds;
     public double JumpMetresPerSecond;
     public FlowConfig Flow = new();

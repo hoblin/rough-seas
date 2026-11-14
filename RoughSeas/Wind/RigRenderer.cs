@@ -70,7 +70,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         var drawing = (Sail.State, Sail.Fill, Sail.Shown, Sail.Rolled);
         if (drawing != lastDrawn) Rebuild(Sail.Rig.End, drawing);
         lastDrawn = drawing;
-        ropes.Pull(World, deltaTime);
+        ropes.Pull(World, windage.Blowing, deltaTime);
 
         var render = capi.Render;
         var prog = render.PreparedStandardShader((int)entity.Pos.X, (int)Math.Ceiling(entity.Pos.Y), (int)entity.Pos.Z);

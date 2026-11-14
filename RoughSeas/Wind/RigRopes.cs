@@ -17,6 +17,7 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
     private const double ShortestSegmentMetres = 0.3;
     private const double LongestSegmentMetres = 1;
     private const double LongestStepSeconds = 0.1;
+    private const double LowestMetres = 0.1;
 
     private sealed class Rope(ClothSystem drawn, List<ClothPoint> points, Chain chain)
     {
@@ -45,7 +46,7 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
             var points = new List<ClothPoint>();
             drawn.WalkPoints(points.Add);
             var placed = laid < ropes.Count ? Retraced(ropes[laid].Chain, points.Count) : Hung(start, end, metres, points.Count);
-            var rope = new Rope(drawn, points, new Chain(placed.Points, metres, width, fibre));
+            var rope = new Rope(drawn, points, new Chain(placed.Points, metres, width, fibre, wind.Config.AirKgPerCubicMetre));
             Array.Copy(placed.Moving, rope.Chain.Moving, placed.Moving.Length);
             if (laid < ropes.Count)
             {
@@ -66,7 +67,7 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
         ropes.RemoveRange(laid, ropes.Count - laid);
     }
 
-    public void Pull(Func<HullPoint, Vec3d> world, double seconds)
+    public void Pull(Func<HullPoint, Vec3d> world, (double X, double Z) blowing, double seconds)
     {
         var step = Math.Min(seconds, LongestStepSeconds);
         foreach (var rope in ropes)
@@ -74,7 +75,9 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
             var (from, to) = (world(rope.From), world(rope.To));
             var moved = from.SubCopy(rope.Chain.Points[0]);
             if (step > 0 && moved.Length() / step > wind.Config.JumpMetresPerSecond) rope.Chain.Carry(moved);
-            rope.Chain.Step(from, to, WaveTheory.Gravity, step);
+            var height = Math.Max(LowestMetres, (from.Y + to.Y) / 2 - vessel.Pos.Y) / wind.Config.ReferenceHeightMetres;
+            var share = Math.Pow(height, wind.Config.GradientExponent);
+            rope.Chain.Step(from, to, WaveTheory.Gravity, new Vec3d(blowing.X * share, 0, blowing.Z * share), step);
             for (var k = 0; k < rope.Points.Count; k++) rope.Points[k].Pos.Set(rope.Chain.Points[k]);
         }
         Watch(seconds);

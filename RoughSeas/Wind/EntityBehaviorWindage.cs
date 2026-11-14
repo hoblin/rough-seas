@@ -142,6 +142,8 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         return load ?? default;
     }
 
+    public (double X, double Z) Blowing => sea.Map.Wind(entity.Pos.X, entity.Pos.Z);
+
     private ((double X, double Z) Blowing, WindLoad? Load) Blow((double X, double Z) velocity, double seconds)
     {
         var (was, shunting) = (Sail?.State, Sail?.Shunting);
@@ -149,7 +151,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         blown = true;
         if (hull == null || !entity.Swimming) return (default, null);
 
-        var blowing = sea.Map.Wind(entity.Pos.X, entity.Pos.Z);
+        var blowing = Blowing;
         var load = body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres, seconds);
         if (Sail is { } shunted && shunted.Shunting != shunting)
             wind.Log(entity, "{0} her shunt to her {1} end: {2}", shunted.Shunting ? "begins" : "ends", entity.WatchedAttributes.GetInt(TackedKey) == 0 ? "bow" : "stern",

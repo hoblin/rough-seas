@@ -14,12 +14,12 @@ public class ChainTests
     private static Chain Strung(double chord, double rest, int segments)
     {
         var points = Enumerable.Range(0, segments + 1).Select(k => new Vec3d(chord * k / segments, 0, 0)).ToArray();
-        return new Chain(points, rest, Diameter, new Fibre(Flax, 11000, 0.012, Stretch));
+        return new Chain(points, rest, Diameter, new Fibre(Flax, 11000, 0.012, Stretch), 1.225);
     }
 
     private static double Sag(Chain chain, double chord, double seconds, double step)
     {
-        for (var t = 0.0; t < seconds; t += step) chain.Step(new Vec3d(0, 0, 0), new Vec3d(chord, 0, 0), Gravity, step);
+        for (var t = 0.0; t < seconds; t += step) chain.Step(new Vec3d(0, 0, 0), new Vec3d(chord, 0, 0), Gravity, new Vec3d(), step);
         return -chain.Points.Min(point => point.Y);
     }
 
@@ -55,7 +55,7 @@ public class ChainTests
         var heights = new List<double>();
         for (var t = 0.0; t < 1; t += step)
         {
-            chain.Step(new Vec3d(0, 0, 0), new Vec3d(chord, 0, 0), Gravity, step);
+            chain.Step(new Vec3d(0, 0, 0), new Vec3d(chord, 0, 0), Gravity, new Vec3d(), step);
             heights.Add(-chain.Points[chain.Points.Length / 2].Y);
         }
         var still = Sag(Strung(chord, chord, 9), chord, 20, 1 / 60.0);

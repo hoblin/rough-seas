@@ -11,6 +11,8 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
 {
     private const int Trims = 36;
     private const int Narrowings = 12;
+    private const double EdgeOn = 1e-3;
+    private const double StopRadians = Math.PI / 180;
     private static readonly (double Reach, double Span)[] Outline = [(0, 0), (1, 0), (1, 1), (0, 1)];
     private const int TiedWithinDecimals = 3;
     private const double ShortestArmMetres = 0.1;
@@ -143,10 +145,10 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         if (Retrim(trim))
         {
             var best = Settled(wind, posed => Score(posed, air, halfDensity));
-            (goal, trimmed) = ((best.Yard, best.Boom, !end.Aback(best, air)), trim);
+            (goal, trimmed) = ((best.Yard, best.Boom, !end.Aback(best, air) && Holds(best)), trim);
         }
 
-        var (point, force) = goal is { Draws: true } worked ? Trimmed(air, halfDensity, seconds, worked, wind) : TakenAback(air, halfDensity, seconds);
+        var (point, force) = goal is { Draws: true } worked && slack <= 0 ? Trimmed(air, halfDensity, seconds, worked, wind) : Swung(air, halfDensity, seconds);
         Load = end.Loads(State, point, force);
         return Load.Points;
     }
@@ -184,7 +186,9 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
 
         hoistFrom ??= up > 0 ? end.Pose(end.Resting, 0) : State;
         hoisted = Toward(hoisted, up, light * seconds / end.HoistMetres);
-        state = hoisted <= 0 ? end.Furled : end.Between(end.Furled, hoistFrom, hoisted);
+        var rope = end.SheetMetres(State);
+        if (hoisted <= 0) slack = Math.Max(slack, rope - end.SheetMetres(end.Furled));
+        state = hoisted <= 0 ? end.Slackened(end.Furled, slack) : end.Between(end.Furled, hoistFrom, hoisted);
         if (hoisted != up) return true;
 
         (hoistFrom, goal, trimmed) = (null, null, null);
@@ -206,26 +210,34 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         Trim((worked.Yard, worked.Boom), wind, seconds);
         if (rig.End.Aback(State, air)) return Backed(air, halfDensity);
 
-        Aback = false;
+        return Drawing(air, halfDensity);
+    }
 
+    private (HullPoint At, HullPoint Force) Drawing(Airflow air, double halfDensity)
+    {
+        Aback = false;
         var force = Force(State, air, halfDensity).Force;
         Pressure = halfDensity * air.Speed * air.Speed * Pressing(State, rig.End.Belly(State), air);
         Filled(air);
         return (State.Centre(shown, Fill), force);
     }
 
-    private (HullPoint At, HullPoint Force) TakenAback(Airflow air, double halfDensity, double seconds)
+    private (HullPoint At, HullPoint Force) Swung(Airflow air, double halfDensity, double seconds)
     {
         var end = rig.End;
+        var aback = end.Aback(State, air);
+        var pressed = (Func<RigState, (HullPoint, HullPoint)>)(posed => aback ? Plate(posed, air, halfDensity) : Force(posed, air, halfDensity));
         var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
-        var (at, pressing) = Plate(end.Pose(Math.Clamp(State.Yard, first, last), State.Boom), air, halfDensity);
+        var (at, pressing) = pressed(end.Pose(Math.Clamp(State.Yard, first, last), State.Boom));
         var stop = (at - end.Origin).Cross(pressing).Dot(end.Axis) < 0 ? first : last;
-        var pressed = (Func<RigState, (HullPoint, HullPoint)>)(posed => Plate(posed, air, halfDensity));
         var hauled = crew.HaulMetresPerSecond * seconds;
         var yard = Toward(Math.Clamp(State.Yard, first, last), stop, hauled / Math.Max(ShortestArmMetres, end.Arm(State)));
         var boom = Toward(State.Boom, end.Track(yard, State.Boom, pressed).Boom, hauled / Math.Max(ShortestArmMetres, end.BoomArm(State)));
-        Kept(end.Held(yard, boom, pressed));
-        return Backed(air, halfDensity);
+        var spanned = end.SheetSpan(State);
+        var moved = end.Held(yard, boom, pressed);
+        slack = Math.Max(0, slack - Math.Max(0, end.SheetSpan(moved) - spanned));
+        Kept(moved);
+        return aback ? Backed(air, halfDensity) : Drawing(air, halfDensity);
     }
 
     private (HullPoint At, HullPoint Force) Backed(Airflow air, double halfDensity)
@@ -261,11 +273,11 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         return rig.End.HoistMetres > 0 ? area * hoisted : area;
     }
 
-    private (bool Lee, bool Drawing, double Drive, double Side, double Facing) Score(RigState posed, Airflow air, double halfDensity)
+    private (bool Held, bool Lee, bool Drawing, double Drive, double Side, double Facing) Score(RigState posed, Airflow air, double halfDensity)
     {
         var force = Force(posed, air, halfDensity).Force;
         var newtons = halfDensity * air.Speed * air.Speed * Area();
-        return (LeeOf(posed) > 0, !rig.End.Aback(posed, air), Math.Round(rig.End.Ahead * force.Along / newtons, TiedWithinDecimals),
+        return (Holds(posed), LeeOf(posed) > 0, !rig.End.Aback(posed, air), Math.Round(rig.End.Ahead * force.Along / newtons, TiedWithinDecimals),
             -Math.Round(Math.Abs(force.Across) / newtons, TiedWithinDecimals), Flow(rig.End.Belly(posed), force));
     }
 
@@ -279,14 +291,14 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         var incidence = Math.Clamp(Math.Asin(Math.Clamp(belly.Dot(flow), -1, 1)), 0, Math.PI / 2);
         var along = flow - flow.Dot(belly) * belly;
         var pressure = halfDensity * air.Speed * air.Speed * Area();
-        return (posed.Centre(shown, Fill), pressure * ((incidence > 0 ? Pressing(posed, belly, air) : 0) * belly + wing.Friction * along));
+        return (posed.Centre(shown, Fill), pressure * ((incidence > 0 ? Pressing(posed, belly, air) : 0) * belly + wing.Friction(air.Speed, Chord()) * along));
     }
 
     private (HullPoint At, HullPoint Force) Luffing(Airflow air, double halfDensity)
     {
         (Aback, Pressure) = (false, 0);
         Bellied(0, air.Speed);
-        return (State.Centre(Rolled ? SailForm.Whole : shown, Fill), halfDensity * air.Speed * wing.Friction * Area() * new HullPoint(air.Along, 0, air.Across));
+        return (State.Centre(Rolled ? SailForm.Whole : shown, Fill), halfDensity * air.Speed * wing.Friction(air.Speed, Chord()) * Area() * new HullPoint(air.Along, 0, air.Across));
     }
 
     private bool Retrim((double Heading, double Pressure, (double Reach, double Span) Set, int Tacked) trim) =>
@@ -326,11 +338,19 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         return (posed.Centre(shown, Fill), halfDensity * air.Speed * air.Speed * pressing * Math.Sign(flow) * Area() * normal);
     }
 
+    private bool Holds(RigState posed)
+    {
+        var free = rig.End.Free;
+        return posed.SheetNewtons > 0 || Math.Abs(posed.Yard - free.From) < StopRadians || Math.Abs(posed.Yard - free.From - free.Span) < StopRadians;
+    }
+
+    private double Chord() => Math.Sqrt(Area());
+
     private double Pressing(RigState posed, HullPoint normal, Airflow air)
     {
         var flow = 1 / air.Speed * new HullPoint(air.Along, 0, air.Across);
         var along = flow - flow.Dot(normal) * normal;
-        along = along.Length > ShortestArmMetres * ShortestArmMetres ? along.Unit : (posed.Form.At(1, 0.5, 0, shown) - posed.Form.At(0, 0.5, 0, shown)).Unit;
+        along = along.Length > EdgeOn ? along.Unit : (posed.Form.At(1, 0.5, 0, shown) - posed.Form.At(0, 0.5, 0, shown)).Unit;
         var across = normal.Cross(along);
         var outline = Outline.Select(corner => posed.Form.At(corner.Reach, corner.Span, 0, shown)).Select(point => (point.Dot(along), point.Dot(across))).ToArray();
         return wing.Pressing(Lattice.Seen(outline), Math.Asin(Math.Clamp(flow.Dot(normal), -1, 1)));

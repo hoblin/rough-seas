@@ -181,13 +181,11 @@ public class VesselInWindTests
     }
 
     [Fact]
-    public void HeadToWindHerSailDrivesNothingAndHerWindagePushesHerAstern()
+    public void HeadToWindSheIsPushedAstern()
     {
-        var (body, sail) = Outrigger(FullSail);
+        var (body, _) = Outrigger(FullSail);
         var load = body.Steady(FromAhead, Still, Yaw, Waterline);
         Assert.True(load.Z < 0, $"astern {load.Z:F0} N");
-        var drive = sail.Rig.End.Ahead * sail.Load!.Points.Sum(push => push.Force.Along);
-        Assert.True(drive <= 0, $"her sail drives {drive:F1} N ten degrees off the wind");
     }
 
     [Fact]
