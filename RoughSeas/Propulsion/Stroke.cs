@@ -1,11 +1,10 @@
 using System;
+using RoughSeas.Water;
 
 namespace RoughSeas.Propulsion;
 
 public abstract class Stroke(string code, StrokeConfig config)
 {
-    private const int Bisections = 60;
-
     public string Code => code;
 
     protected StrokeConfig Config => config;
@@ -21,33 +20,14 @@ public abstract class Stroke(string code, StrokeConfig config)
     public virtual double Shove(double meanNewtons, double metresPerSecond, double? drawnShare) => meanNewtons;
 
     public abstract double Thrust(double metresPerSecond, double watts, double? strokeMetresPerSecond = null);
-
-    protected static double Solve(Func<double, double> rising, double target)
-    {
-        double low = 0, high = 1;
-        while (rising(high) < target) high *= 2;
-        for (var i = 0; i < Bisections; i++)
-        {
-            var mid = (low + high) / 2;
-            if (rising(mid) < target) low = mid;
-            else high = mid;
-        }
-        return (low + high) / 2;
-    }
 }
 
 public sealed class BladeStroke(string code, StrokeConfig config, double bladeSquareMetres, double waterDensity) : Stroke(code, config)
 {
     private readonly double drag = waterDensity / 2 * config.DragCoefficient * bladeSquareMetres;
 
-    public override double Thrust(double metresPerSecond, double watts, double? strokeMetresPerSecond = null)
-    {
-        if (watts <= 0 || drag <= 0) return 0;
-        var drive = Config.DriveShare;
-        var ahead = Math.Max(0, metresPerSecond);
-        var slip = Solve(s => drive * drag * s * s * (ahead + s), watts);
-        return drive * drag * slip * slip;
-    }
+    public override double Thrust(double metresPerSecond, double watts, double? strokeMetresPerSecond = null) =>
+        SlippingBlade.Thrust(Config.DriveShare * drag, metresPerSecond, watts);
 }
 
 public sealed class PoleStroke(string code, StrokeConfig config, Pole pole, double depthMetres, double handsAboveWaterMetres, double waterDensity)

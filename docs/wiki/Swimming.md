@@ -6,9 +6,13 @@ Left alone in the sea you float with the water at your face, and the waves carry
 
 Fresh water holds you up less, so in a lake or a river you sink slowly unless you swim. Holding jump strokes you up, so you tread water with your head clear.
 
+## Wading
+
+Until the water reaches your chest your legs and the base game's jump move you, so a jump takes you up a one-block step out of the water. The water drags you only by the part of you it covers: with it at your knees a jump carries you on, and the deeper the water, the more it holds you back, walking or jumping. A breaking wave and a current push you while your feet are in the water.
+
 ## Swimming
 
-Hold a direction to swim: each stroke pushes you through the water that way from where you look, about as hard as a trained swimmer pushes. In still water you swim about 0.9 m/s and glide on for a few seconds after you let go. The water you swim in moves you too: swim with a wave's front face and it carries you faster than you swim; swim against a current faster than you, and you lose ground.
+Hold a direction to swim: each stroke pushes you through the water that way from where you look, with the power a trained swimmer swims with. You push hardest from a standstill, so you are under way within a second or two. In still water you swim about 0.9 m/s and glide on for a few seconds after you let go. The water you swim in moves you too: swim with a wave's front face and it carries you faster than you swim; swim against a current faster than you, and you lose ground.
 
 ## What you carry
 
@@ -26,6 +30,6 @@ A crest can break over you, as one breaks on a vessel: as often, by the same [wi
 
 In [surf](Surf-and-Swamping#breakers) the tallest waves break, and close to the beach nearly all of them.
 
-Holding jump is strong enough to swim straight out of a breaker for now. Stamina, planned for [The living sea](Roadmap#the-living-sea), will make that effort cost.
+Holding jump doesn't keep you up through a breaker: its frothy water holds you up less, and your stroke can't make up the difference. A small one takes you a hand's breadth under, a big one a metre or more. You come back up once its air clears.
 
 The world setting [Breakers on swimmers](World-Settings#the-mechanics) turns breaking crests off. You still float on the waves and breathe by them. The formulas are in [The science of a body in the water](The-Science-of-a-Body-in-the-Water#a-body-in-the-water).

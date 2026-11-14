@@ -13,8 +13,9 @@ namespace RoughSeas.Person;
 /// <summary>
 /// Floats this client's player by <see cref="FloatingBody"/>, in place of vanilla's gravity in water (a third of it while
 /// still, none while the swimmer strokes), vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
-/// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force. On the owning
-/// client alone: vanilla simulates a player's movement there.
+/// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force, while the water
+/// reaches the chest. Wading, vanilla's walk, jump and gravity stand, since its jump clears the world's one-metre steps, and
+/// across the body takes the place of vanilla's water drag. On the owning client alone: vanilla simulates a player's movement there.
 /// </summary>
 public static class BodyAfloat
 {
@@ -31,8 +32,10 @@ public static class BodyAfloat
     private static PersonConfig config = new();
     private static Waves? waves;
     private static FloatingBody? body;
+    private static (WaterSurface Surface, BodyPlace Place, Carried Kit, double Rate, SeaCurrent Current)? wading;
     private static SwimStroke stroke;
     private static bool liftedThisTick;
+    private static bool wasSwimming = true;
     private static double loggedAt = double.NegativeInfinity;
 
     public static void Attach(PersonModSystem mod, ICoreClientAPI client, IDrawnSea drawnSea, DrawnWater drawnWater, IPerson thePerson, PersonConfig personConfig, Waves theWaves)
@@ -57,8 +60,8 @@ public static class BodyAfloat
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (system, capi, drawn, water, sea, person, waves, body) = (null, null, null, null, null, null, null, null);
-        (stroke, liftedThisTick, loggedAt) = (default, false, double.NegativeInfinity);
+        (system, capi, drawn, water, sea, person, waves, body, wading) = (null, null, null, null, null, null, null, null, null);
+        (stroke, liftedThisTick, loggedAt, wasSwimming) = (default, false, double.NegativeInfinity, true);
     }
 
     /// <summary>The server says a crest broke over this client's player.</summary>
@@ -95,12 +98,21 @@ public static class BodyAfloat
         if (body == null)
         {
             body = new FloatingBody(person!, config, waves!);
-            system!.Log(entity, "body in {0} water: held up by what it displaces, not vanilla's gravity", surface.Salt ? "sea" : "fresh");
+            system!.Log(entity, "body in {0} water", surface.Salt ? "sea" : "fresh");
         }
         var kit = person!.CarriedBy(entity);
         var place = new BodyPlace(pos.X, pos.Y, pos.Z, entity.LocalEyePos.Y, entity.CollisionBox.XSize);
         var rate = sea!.Clock.SecondsIn(dt, entity.World.Calendar.SpeedOfTime) / dt;
         var current = Mechanic.Currents.On(entity.World) ? sea.CurrentAt(pos.X, pos.Z) : default;
+        if (!entity.Swimming)
+        {
+            if (wasSwimming) system!.Log(entity, "wading at y {0:F2}: vanilla's gravity and jump, the water's drag across", pos.Y);
+            wasSwimming = false;
+            wading = (surface, place, kit, rate, current);
+            return true;
+        }
+        if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
+        wasSwimming = true;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
             WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z));
         pos.Motion.Set(next.X, next.Y, next.Z);
@@ -117,20 +129,26 @@ public static class BodyAfloat
             system!.Log(entity, "afloat at y {0:F2}: waterline {1:F2} m up the body, eye {2:F2} m {3}, {4:F1} of {5:F1} L under, lungs {6:F2} L, carrying {7:F1} kg, lift {8:F2} m/s2, water {9:F2} {10:F2} {11:F2} m/s, carried {12:F2} {13:F2} m/s{14}{15}",
                 pos.Y, read.Waterline, Math.Abs(eye), eye < 0 ? "above" : "under", read.UnderLitres, read.WholeLitres, read.LungLitres, kit.Kg, read.Lift,
                 read.FlowX, read.Rise, read.FlowZ, read.CarriedX, read.CarriedZ, read.Churn > 0 ? $", {read.Churn:P1} of its water is air" : "",
-                stroked.Stroking ? $", stroking {config.Body.StrokeNewtons:F0} N toward {stroked.X:F2} {stroked.Y:F2} {stroked.Z:F2}" : "");
+                stroked.Stroking ? $", stroking {read.Thrust:F0} N toward {stroked.X:F2} {stroked.Y:F2} {stroked.Z:F2}" : "");
         }
         return false;
     }
 
     [ReliesOn("Vintagestory.API.Common.Entities.PModuleMotionDrag", "DoApply", "scales the whole motion by WaterDrag^(33·seconds) while the feet are in water or the body swims")]
-    private static void BeforeDrag(Entity entity, EntityPos pos, out double __state) => __state = pos.Motion.Y;
+    private static void BeforeDrag(Entity entity, EntityPos pos, out (double X, double Y, double Z) __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
 
-    // vanilla's water drag keeps the body's way across; up and down the body has had its own drag
-    private static void AfterDrag(Entity entity, EntityPos pos, double __state)
+    private static void AfterDrag(Entity entity, EntityPos pos, float dt, (double X, double Y, double Z) __state)
     {
-        if (!liftedThisTick || entity != capi?.World.Player?.Entity) return;
+        if (entity != capi?.World.Player?.Entity) return;
+        if (wading is var (surface, place, kit, rate, current))
+        {
+            wading = null;
+            (pos.Motion.X, pos.Motion.Z) = body!.Wade(drawn!, surface, place, new BodyMotion(__state.X, __state.Y, __state.Z), kit, dt, rate, (current.X, current.Z));
+            return;
+        }
+        if (!liftedThisTick) return;
         liftedThisTick = false;
-        pos.Motion.Y = __state;
+        pos.Motion.Y = __state.Y;
     }
 
     private static void BeforeStroke(EntityPos pos, out (double X, double Y, double Z) __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
@@ -146,8 +164,10 @@ public static class BodyAfloat
     private static void Leave(Entity entity, string? why)
     {
         stroke = default;
+        wading = null;
         if (body == null) return;
         body = null;
+        wasSwimming = true;
         if (why != null) system!.Log(entity, "body {0}: vanilla's gravity again", why);
     }
 }
