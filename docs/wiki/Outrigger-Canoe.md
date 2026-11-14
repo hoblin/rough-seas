@@ -77,7 +77,7 @@ You don't craft an outrigger in the grid: you rig a finished [dugout](Dugout) wh
 
 8. **Bend on the sail and set up the rigging.** Hold linen cloth on the outrigger, three pieces for its 2.8 m² of sail, then five ropes: the stays to its two ends, the shroud out to the float, the halyard the yard hangs from, and the sheet. The outrigger is finished and takes its seats.
 
-   ![Rigged, the sail furled on its spar](images/outrigger-canoe/build-rigged.webp)
+   ![Rigged, the sail furled between its spars](images/outrigger-canoe/build-rigged.webp)
 
 9. **Add washstrakes for the open sea.** Any time after it is finished, once you have a saw, hold planks of one wood on the outrigger: a board along each side five planks long, end to end, and a board across each end of the log, twelve in all. Then hold five ropes on it to sew them on, a stitch every 7.6 cm. Sewn, they raise the sides 15 cm and add 574 litres to the hold: a 2 m swell that boards a dugout runs past the outrigger. Without them it is a coastal boat.
 

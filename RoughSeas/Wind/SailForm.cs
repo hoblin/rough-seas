@@ -2,7 +2,7 @@ namespace RoughSeas.Wind;
 
 /// <summary>
 /// The one shape of a cloth between its four corners: physics asks it for the centre of effort, the renderer for every
-/// vertex. Reach runs from luff to leech, span from foot to head; a reef rolls the cloth down from the foot.
+/// vertex. Reach runs from luff to leech, span from foot to head; a reef rolls the cloth up from the foot onto the boom.
 /// </summary>
 public sealed class SailForm
 {

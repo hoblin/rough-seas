@@ -59,6 +59,8 @@ public sealed class IncidencePolar : SailPolar
         return (lift * sin - drag * cos, lift * cos + drag * sin);
     }
 
+    public double Friction => trims[0].Drag;
+
     public double Pressing(double incidence)
     {
         var (lift, drag) = LiftAndDrag(Math.Clamp(Math.Abs(incidence), 0, Math.PI / 2));

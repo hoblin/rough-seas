@@ -43,7 +43,8 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         body = VesselInWind.From(attributes, wind.Config, wind.Polar);
         drawnGroups = attributes["drawn"].AsArray<string>()?.OfType<string>().ToArray() ?? [];
         steps = attributes["steps"].AsArray<string>()?.OfType<string>().ToArray() ?? [];
-        textures = attributes["textures"].AsObject<RigTextures?>(null);
+        textures = attributes["textures"].AsObject<RigTextures?>(null)
+            ?? (Sail == null ? null : throw new InvalidOperationException($"{entity.Code}'s sail names no rig textures: roughseas:windage needs textures with a sail"));
     }
 
     public override void AfterInitialized(bool onFirstSpawn)

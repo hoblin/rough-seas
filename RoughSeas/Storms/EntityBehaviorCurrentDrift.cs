@@ -182,7 +182,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
             : drag != null ? set.Settle(drag, on, pos.Yaw, deltaTime, blown)
             : set.Relax(on, pos.Yaw, 1 - WaterDrag.Kept(physics?.WaterDragValue ?? 1, deltaTime), deltaTime, blown);
         var w = water = new Water(on, drag, wash, wind);
-        if (ours) Spin(wind.NewtonMetres, drag, on.WayAlong, deltaTime);
+        if (ours) Spin(wind.NewtonMetres, drag, on, deltaTime);
 
         if (client == null) Sync(deltaTime);
         else ReportOwn(deltaTime);
@@ -248,12 +248,12 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         set.Pivot(0, 0);
     }
 
-    private void Spin(double newtonMetres, HullDrag? drag, double wayAlong, float deltaTime)
+    private void Spin(double newtonMetres, HullDrag? drag, WaterOnHull on, float deltaTime)
     {
         if (heldAtBow || drag == null || hullBoxes == null || newtonMetres == 0 && spinPerSecond == 0) return;
 
-        var (along, _) = HullShape.ToHull(set.Own.X, set.Own.Z, entity.Pos.Yaw);
-        spinPerSecond += (newtonMetres + drag.Turning(spinPerSecond, wayAlong + along)) / drag.TurningKgSquareMetres * deltaTime;
+        var (along, _) = HullShape.ToHull(set.Own.X - on.CurrentX, set.Own.Z - on.CurrentZ, entity.Pos.Yaw);
+        spinPerSecond += (newtonMetres + drag.Turning(spinPerSecond, on.WayAlong + along)) / drag.TurningKgSquareMetres * deltaTime;
         var turned = (float)GameMath.Mod(entity.Pos.Yaw + spinPerSecond * deltaTime, GameMath.TWOPI);
         if (hullBoxes.AdjustCollisionBoxesToYaw(deltaTime, true, turned)) entity.Pos.Yaw = turned;
         else spinPerSecond = 0;

@@ -11,7 +11,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
 {
     private const int Trims = 36;
     private const int Refinements = 3;
-    private const int Places = 3;
+    private const int TiedWithinDecimals = 3;
 
     // The crew trims anew only when the apparent wind moves this much: a bound on the work, not physics.
     private const double RetrimRadians = Math.PI / 180;
@@ -63,7 +63,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         }
 
         var (at, force) = rig.End.Aback(State, air) ? TakenAback(air, halfDensity)
-            : luffs ? Luffing()
+            : luffs ? Luffing(air, halfDensity)
             : Drawing(Force(State, air, halfDensity, fromBow), air);
         Load = rig.End.Loads(State, at, force);
         return Load.Points;
@@ -73,8 +73,8 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
     {
         var force = Force(posed, air, halfDensity, fromBow).Force;
         var newtons = halfDensity * air.Speed * air.Speed * SquareMetres;
-        return (LeeOf(posed) > 0, !rig.End.Aback(posed, air), Math.Round(rig.End.Ahead * force.Along / newtons, Places),
-            -Math.Round(Math.Abs(force.Across) / newtons, Places), Flow(rig.End.Belly(posed), force));
+        return (LeeOf(posed) > 0, !rig.End.Aback(posed, air), Math.Round(rig.End.Ahead * force.Along / newtons, TiedWithinDecimals),
+            -Math.Round(Math.Abs(force.Across) / newtons, TiedWithinDecimals), Flow(rig.End.Belly(posed), force));
     }
 
     private (HullPoint At, HullPoint Force) Pressing(RigState posed, Airflow air, double halfDensity, double fromBow)
@@ -100,10 +100,10 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         return (State.Centre(Set, Fill), pushed.Force);
     }
 
-    private (HullPoint At, HullPoint Force) Luffing()
+    private (HullPoint At, HullPoint Force) Luffing(Airflow air, double halfDensity)
     {
         (Aback, Pressure, Fill) = (false, 0, 0);
-        return (State.Centre(Set, 0), default);
+        return (State.Centre(Set, 0), halfDensity * air.Speed * aback.Friction * SquareMetres * new HullPoint(air.Along, 0, air.Across));
     }
 
     private bool Retrim((double Heading, double Pressure, (double Reach, double Span) Set, int Tacked) trim) =>

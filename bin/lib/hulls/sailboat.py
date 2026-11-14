@@ -28,8 +28,8 @@ HALF_CLOTH = re.compile(r"[LR]Sail(Cen|Mid|Out)")
 SHEET = re.compile(r"ClewRope[LR]\d$")
 BUNT = re.compile(r"SailBund")
 BACKSTAY = re.compile(r"MastRope\d$")
-STANDING = re.compile(r"Hull|KeelBeam|Gunwhale|Mast$|MastORIGIN")
-FURLED = re.compile(r"SailFurled|Furl")
+STANDING = re.compile(r"Hull|KeelBeam|Gunwhale|Mast\d$|MastORIGIN")
+FURLED = re.compile(r"SailFurled|Furl|Spar[LR]\d$")
 STEP = 0.5
 
 
