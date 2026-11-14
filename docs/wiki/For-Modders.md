@@ -26,6 +26,14 @@ Where a page touches physics, it says what the mod does and links [The science b
 
 If you build on these pages, or need something they don't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
+### A body keeps its way into the water
+
+A body moving through the water drags by how it lies, along its length and across it, and one that comes into the water brings its way in ([the science](The-Science-of-a-Body-in-the-Water#a-body-in-the-water)).
+
+- `config/person.json`'s `body.dragAreaAlong` is 0.084 m², a body towed along its length in water, in place of 0.25 m² from skydivers in air.
+- New `Posture`: how a body lies, upright or along a unit axis, and its drag by the cross-flow principle. `FloatingBody.Step` takes it as `lying` (upright when not given); `BodyAfloat` lays a swimming player along vanilla's `WalkYaw` and `WalkPitch`, the body the game draws. A swimmer's way up and down and across now drag as one velocity.
+- A `FloatingBody` that starts swimming takes the motion it comes in with as its own velocity, as `Wade` does each step. A push of yours on a player already afloat still meets vanilla's drag only.
+
 ### A swimmer strokes by power
 
 A swimmer's stroke spends a power, not a fixed force, so it pulls hardest from a standstill and less the faster the swimmer goes through the water ([the science](The-Science-of-a-Body-in-the-Water)).

@@ -114,7 +114,7 @@ public static class BodyAfloat
         if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
         wasSwimming = true;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
-            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z));
+            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity));
         pos.Motion.Set(next.X, next.Y, next.Z);
         liftedThisTick = true;
         var stroked = stroke;
@@ -160,6 +160,10 @@ public static class BodyAfloat
         pos.Motion.Set(__state.X, __state.Y, __state.Z);
         stroke = SwimStroke.Of(controls);
     }
+
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetPlayerControls", "turns WalkYaw toward the way the keys move and WalkPitch toward the look while the player swims")]
+    private static Posture Lying(Entity entity) =>
+        entity is EntityPlayer { Controls.TriesToMove: true } player ? Posture.Lying(player.WalkYaw, player.WalkPitch) : Posture.Upright;
 
     private static void Leave(Entity entity, string? why)
     {
