@@ -13,8 +13,9 @@ namespace RoughSeas.Person;
 /// <summary>
 /// Floats this client's player by <see cref="FloatingBody"/>, in place of vanilla's gravity in water (a third of it while
 /// still, none while the swimmer strokes), vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
-/// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force. On the owning
-/// client alone: vanilla simulates a player's movement there.
+/// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force. Only while the water
+/// reaches the chest: wading, the player walks and jumps as vanilla's, whose jump clears the world's one-metre steps. On the
+/// owning client alone: vanilla simulates a player's movement there.
 /// </summary>
 public static class BodyAfloat
 {
@@ -85,10 +86,10 @@ public static class BodyAfloat
             Leave(entity, null);
             return true;
         }
-        if (!(entity.FeetInLiquid || entity.Swimming) || water!.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is not { } surface
+        if (!entity.Swimming || water!.WaterAt(entity.World.BlockAccessor, pos.X, pos.Y, pos.Z) is not { } surface
             || surface.Height <= pos.Y)
         {
-            Leave(entity, "out of the water");
+            Leave(entity, "out of the water to the chest");
             return true;
         }
 
