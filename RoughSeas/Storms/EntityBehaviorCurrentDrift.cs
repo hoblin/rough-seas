@@ -176,7 +176,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         var on = waves with { CurrentX = current.X, CurrentZ = current.Z, WayAlong = WayAlong() };
         if (ours) mooring?.Strain(deltaTime);
         var drag = way?.WaterDrag ?? ownDrag?.Now;
-        var wind = ours ? windage?.Wind(Velocity) ?? default : default;
+        var wind = ours ? windage?.Wind(Velocity, deltaTime) ?? default : default;
         var blown = drag?.Acceleration(wind.X, wind.Z, pos.Yaw) ?? default;
         var wash = !ours ? default
             : drag != null ? set.Settle(drag, on, pos.Yaw, deltaTime, blown)

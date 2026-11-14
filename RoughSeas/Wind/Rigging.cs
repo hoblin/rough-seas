@@ -16,7 +16,7 @@ public interface IRigCanvas
 {
     void Spar(HullPoint from, HullPoint to, double width);
 
-    void Line(HullPoint from, HullPoint to, double width);
+    void Line(HullPoint from, HullPoint to, double width, double metres);
 
     void Roll(HullPoint from, HullPoint to, double width);
 
@@ -68,9 +68,35 @@ public abstract class Rigging
 
     public abstract string Describe(RigState state);
 
-    public abstract void Draw(IRigCanvas canvas, RigState state, double fill, (double Reach, double Span) set);
+    public (double Reach, double Span) Set { get; set; } = SailForm.Whole;
 
-    public abstract void DrawFurled(IRigCanvas canvas);
+    public abstract RigState Furled { get; }
+
+    public abstract double HoistMetres { get; }
+
+    public abstract double SpanMetres { get; }
+
+    public abstract double Arm(RigState state);
+
+    public virtual double BoomArm(RigState state) => 1;
+
+    public abstract RigState Held(double yard, double boom, Func<RigState, (HullPoint At, HullPoint Force)> wind);
+
+    public abstract RigState Between(RigState from, RigState to, double share);
+
+    public virtual RigState Slackened(RigState state, double metres) => state;
+
+    public virtual double SheetMetres(RigState state) => 0;
+
+    public abstract HullPoint[] Marks(RigState state);
+
+    public virtual (double Haul, double Carry) ShuntMetres(Rigging from) => (0, 0);
+
+    public virtual RigState Shunted(Rigging from, RigState start, RigState end, double hauled, double carried) => end;
+
+    public abstract void Draw(IRigCanvas canvas, RigState state, double fill);
+
+    public abstract void DrawFurled(IRigCanvas canvas, RigState state);
 
     protected static bool Crosses(HullPoint from, HullPoint to, HullPoint a, HullPoint b, HullPoint c)
     {

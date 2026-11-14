@@ -15,8 +15,6 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     private const int Reaches = 10;
     private const int Spans = 8;
     private const double OriginMetres = 0.5;
-    /// <summary>A shunt took under a minute (Hornell 1936, pp. 318, 370); her work takes a sixtieth of real time, as her build does.</summary>
-    private const double ShuntMilliseconds = 1000;
     private static readonly (float U, float V)[] Tile = [(0, 0), (1, 0), (1, 1), (0, 1)];
     private static readonly (int Facing, int[] Order)[] Sides = [(1, [0, 1, 2, 0, 2, 3]), (-1, [0, 2, 1, 0, 3, 2])];
 
@@ -25,17 +23,12 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     private readonly EntityBehaviorWindage windage;
     private readonly RigTextures textures;
     private readonly Dictionary<string, Layer> meshes = new();
-    private readonly Dictionary<string, Layer> blended = new();
     private readonly Dictionary<string, TextureAtlasPosition> atlases = new();
-    private Dictionary<string, Layer> target;
-    private int drawnTack = -1;
-    private (Rigging End, (double Yard, double Boom, double Fill) Trim)? shunted;
-    private long shuntedAt;
-    private (double Yard, double Boom, double Fill) from;
-    private (double Yard, double Boom, double Fill) to;
-    private long toAt;
-    private long stepMilliseconds = 1;
-    private (int Tacked, (double Yard, double Boom, double Fill) Trim, (double Reach, double Span) Set, bool Hoisted)? lastDrawn;
+    private readonly RigRopes ropes;
+    private readonly float[] placed = new float[4];
+    private float[] model = Mat4f.Create();
+    private Vec3d camera = new();
+    private (RigState State, double Fill, (double Reach, double Span) Shown, bool Rolled)? lastDrawn;
 
     public RigRenderer(ICoreClientAPI capi, Entity entity, EntityBehaviorWindage windage, RigTextures textures)
     {
@@ -43,8 +36,8 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         this.entity = entity;
         this.windage = windage;
         this.textures = textures;
-        foreach (var texture in new[] { textures.Cloth, textures.Wood, textures.Cord }) (meshes[texture], blended[texture]) = (new Layer(), new Layer());
-        target = meshes;
+        foreach (var texture in new[] { textures.Cloth, textures.Wood }) meshes[texture] = new Layer();
+        ropes = new RigRopes(capi, entity);
         capi.Event.RegisterRenderer(this, EnumRenderStage.Opaque, "roughseas-rig");
     }
 
@@ -54,32 +47,16 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
 
     public int RenderRange => 99;
 
-    public void Trimmed()
-    {
-        var now = capi.InWorldEllapsedMilliseconds;
-        from = Drawn(now);
-        stepMilliseconds = Math.Max(1, now - toAt);
-        (to, toAt) = ((Sail.State.Yard, Sail.State.Boom, Sail.Fill), now);
-    }
-
     [ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "DoRender3DOpaque", "sets the hull's ModelMat for this frame in an earlier render order than this renderer's, so the rig draws with her heave, roll and pitch of the same frame")]
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
     {
         if (!entity.IsRendered || entity.Properties.Client.Renderer is not EntityShapeRenderer hull || !windage.Rigged) return;
 
-        var now = capi.InWorldEllapsedMilliseconds;
-        var rig = Sail.Rig;
-        if (drawnTack >= 0 && rig.Tacked != drawnTack)
-        {
-            (shunted, shuntedAt) = ((rig.EndAt(drawnTack), Drawn(now)), now);
-            from = to = (Sail.State.Yard, Sail.State.Boom, Sail.Fill);
-        }
-        drawnTack = rig.Tacked;
-        var share = (now - shuntedAt) / ShuntMilliseconds;
-        var shunting = shunted != null && share < 1;
-        var drawing = (rig.Tacked, Drawn(now), Sail.Set, Sail.SquareMetres > 0);
-        if (shunting || drawing != lastDrawn) Rebuild(rig.End, drawing.Item2, share);
-        lastDrawn = shunting ? null : drawing;
+        (model, camera) = (hull.ModelMat, capi.World.Player.Entity.CameraPos);
+        var drawing = (Sail.State, Sail.Fill, Sail.Shown, Sail.Rolled);
+        if (drawing != lastDrawn) Rebuild(Sail.Rig.End, drawing);
+        lastDrawn = drawing;
+        ropes.Pin(World);
 
         var render = capi.Render;
         var prog = render.PreparedStandardShader((int)entity.Pos.X, (int)Math.Ceiling(entity.Pos.Y), (int)entity.Pos.Z);
@@ -95,14 +72,13 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         prog.Stop();
     }
 
-    private void Rebuild(Rigging end, (double Yard, double Boom, double Fill) trim, double share)
+    private void Rebuild(Rigging end, (RigState State, double Fill, (double Reach, double Span) Shown, bool Rolled) drawing)
     {
-        Draw(meshes, end, trim);
-        if (shunted is var (before, was) && share < 1)
-        {
-            Draw(blended, before, was);
-            foreach (var (texture, layer) in meshes) Blend(blended[texture].Data, layer.Data, share);
-        }
+        foreach (var layer in meshes.Values) layer.Data.Clear();
+        ropes.Begin();
+        if (drawing.Rolled) end.DrawFurled(this, drawing.State);
+        else end.Draw(this, drawing.State, drawing.Fill);
+        ropes.End();
 
         var render = capi.Render;
         foreach (var layer in meshes.Values)
@@ -122,6 +98,13 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         capi.Event.UnregisterRenderer(this, EnumRenderStage.Opaque);
         foreach (var layer in meshes.Values) layer.Mesh?.Dispose();
         meshes.Clear();
+        ropes.Dispose();
+    }
+
+    private Vec3d World(HullPoint point)
+    {
+        Mat4f.MulWithVec4(model, new float[] { (float)(point.Along + OriginMetres), (float)point.Height, (float)(point.Across + OriginMetres), 1 }, placed);
+        return new Vec3d(camera.X + placed[0], camera.Y + placed[1], camera.Z + placed[2]);
     }
 
     private sealed class Layer
@@ -131,35 +114,13 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         public int Uploaded;
     }
 
-    private void Draw(Dictionary<string, Layer> into, Rigging end, (double Yard, double Boom, double Fill) trim)
-    {
-        target = into;
-        foreach (var layer in into.Values) layer.Data.Clear();
-        if (Sail.SquareMetres > 0) end.Draw(this, end.Pose(trim.Yard, trim.Boom), trim.Fill, Sail.Set);
-        else end.DrawFurled(this);
-        target = meshes;
-    }
-
     public void Spar(HullPoint from, HullPoint to, double width) => Tube(textures.Wood, from, to, width);
 
-    public void Line(HullPoint from, HullPoint to, double width) => Tube(textures.Cord, from, to, width);
+    public void Line(HullPoint from, HullPoint to, double width, double metres) => ropes.Lay(from, to, metres, World);
 
     public void Roll(HullPoint from, HullPoint to, double width) => Tube(textures.Cloth, from, to, width);
 
     public void Cloth(SailForm form, double fill, (double Reach, double Span) set) => Weave(form, fill, set);
-
-    private static void Blend(MeshData before, MeshData after, double share)
-    {
-        if (before.VerticesCount != after.VerticesCount) return;
-        for (var k = 0; k < after.VerticesCount * 3; k++) after.xyz[k] = (float)(before.xyz[k] + (after.xyz[k] - before.xyz[k]) * share);
-    }
-
-    private (double Yard, double Boom, double Fill) Drawn(long now)
-    {
-        var share = Math.Clamp((now - toAt) / (double)stepMilliseconds, 0, 1);
-        double Between(double a, double b) => a + (b - a) * share;
-        return (Between(from.Yard, to.Yard), Between(from.Boom, to.Boom), Between(from.Fill, to.Fill));
-    }
 
     private void Weave(SailForm form, double fill, (double Reach, double Span) set)
     {
@@ -186,7 +147,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     {
         var atlas = Atlas(texture);
         var (width, height) = (atlas.x2 - atlas.x1, atlas.y2 - atlas.y1);
-        var data = target[texture].Data;
+        var data = meshes[texture].Data;
         var normal = (corners[2] - corners[0]).Cross(corners[3] - corners[1]);
         var unit = normal.Length > 0 ? normal.Unit : new HullPoint(0, 1, 0);
         foreach (var (facing, order) in Sides)

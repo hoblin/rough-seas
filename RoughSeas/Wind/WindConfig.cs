@@ -12,7 +12,15 @@ public class WindConfig
     public double ClothKgPerSquareMetre;
     public string Aback = "";
     public float LogSeconds;
+    public double JumpMetresPerSecond;
     public Dictionary<string, SailConfig> Sails = new();
+    public CrewConfig Crew = new();
+}
+
+public class CrewConfig
+{
+    public double WalkMetresPerSecond;
+    public double HaulMetresPerSecond;
 }
 
 public class SailConfig

@@ -6,8 +6,11 @@ using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Wind;
 
-public sealed record ClawState(double Yard, double Boom, HullPoint Peak, HullPoint Clew, HullPoint Bend, HullPoint Bridle, SailForm Form, double SheetNewtons)
+public sealed record ClawState(double Yard, double Boom, HullPoint Peak, HullPoint Clew, HullPoint Bend, HullPoint Bridle, SailForm Form, double SheetNewtons,
+    ClawPose Rig, ClawLines Lines)
     : RigState(Yard, Boom, Form, SheetNewtons);
+
+public sealed record ClawLines((HullPoint Pin, double Metres)[] Stays, double Shroud, double Halyard, double Sheet);
 
 /// <summary>
 /// A shunting canoe's crab claw at one of her ends: the yard turns on its halyard about the line from the tack to the
@@ -27,6 +30,7 @@ public sealed class CrabClaw : Rigging
     private readonly (double Yard, double Boom, double Cloth) kilograms;
     private readonly SailForm rest;
     private readonly (HullPoint From, HullPoint To, double Width)[] standing;
+    private ClawState? furled;
 
     public CrabClaw(ClawPose hoisted, ClawPose lowered, int ahead, double camber, (double Yard, double Boom, double Cloth) kilograms, RigWidths widths)
     {
@@ -92,7 +96,82 @@ public sealed class CrabClaw : Rigging
         var along = (peak - tack).Unit;
         var clew = Turned(Hoisted.Clew, yard).Turned(tack, along, boom);
         var bridle = Turned(Hoisted.Bridle, yard).Turned(tack, along, boom);
-        return new ClawState(yard, boom, peak, clew, Turned(Hoisted.HalyardBend, yard), bridle, rest.Posed(tack, tack, peak, clew), 0);
+        var form = rest.Posed(tack, tack, peak, clew);
+        if (Set.Span < 1)
+        {
+            var foot = (form.At(1, 0, 0, Set) - tack).Unit;
+            (clew, bridle) = (tack + (clew - tack).Length * foot, tack + (bridle - tack).Length * foot);
+        }
+        var bend = Turned(Hoisted.HalyardBend, yard);
+        return new ClawState(yard, boom, peak, clew, bend, bridle, form, 0, Hoisted, Taut(Hoisted, (Hoisted.Masthead - bend).Length, (Hoisted.Lead - bridle).Length));
+    }
+
+    public override RigState Furled => furled ??= new ClawState(0, 0, Lowered.Peak, Lowered.Clew, Lowered.HalyardBend, Lowered.Bridle,
+        rest.Posed(Lowered.Tack, Lowered.Tack, Lowered.Peak, Lowered.Clew), 0, Lowered,
+        Taut(Lowered, (Lowered.Masthead - Lowered.HalyardBend).Length, (Lowered.Lead - Lowered.Bridle).Length));
+
+    public override double HoistMetres => (Hoisted.HalyardBend - Lowered.HalyardBend).Length;
+
+    public override double SpanMetres => (Hoisted.Peak - Hoisted.Clew).Length;
+
+    public override double Arm(RigState state)
+    {
+        var offset = ((ClawState)state).Bridle - Hoisted.Tack;
+        return (offset - offset.Dot(axis) * axis).Length;
+    }
+
+    public override double BoomArm(RigState state)
+    {
+        var claw = (ClawState)state;
+        var (offset, yard) = (claw.Bridle - Hoisted.Tack, (claw.Peak - Hoisted.Tack).Unit);
+        return (offset - offset.Dot(yard) * yard).Length;
+    }
+
+    public override RigState Between(RigState from, RigState to, double share)
+    {
+        var (a, b) = ((ClawState)from, (ClawState)to);
+        var lines = new ClawLines(b.Lines.Stays, b.Lines.Shroud, a.Lines.Halyard + share * (b.Lines.Halyard - a.Lines.Halyard), Math.Max(a.Lines.Sheet, b.Lines.Sheet));
+        return Blend(a, b, share, share, lines);
+    }
+
+    public override (double Haul, double Carry) ShuntMetres(Rigging from)
+    {
+        var (p, q) = (((CrabClaw)from).Hoisted, Hoisted);
+        return ((p.Masthead - q.Tack).Length - (q.Masthead - q.Tack).Length, (q.Tack - p.Tack).Length);
+    }
+
+    public override RigState Shunted(Rigging from, RigState start, RigState end, double hauled, double carried)
+    {
+        var (a, b) = ((ClawState)start, (ClawState)end);
+        var (p, q) = (((CrabClaw)from).Hoisted, Hoisted);
+        var haulTo = (q.Masthead - q.Tack).Length;
+        var length = Math.Max(haulTo, (p.Masthead - q.Tack).Length - hauled);
+        var (low, high) = (0.0, 1.0);
+        for (var n = 0; n < Halvings * 2; n++)
+        {
+            var middle = (low + high) / 2;
+            if ((p.Heel + Swung(p.Masthead - p.Heel, q.Masthead - q.Heel, middle) - q.Tack).Length > length) low = middle;
+            else high = middle;
+        }
+        var raked = (low + high) / 2;
+        var masthead = p.Heel + Swung(p.Masthead - p.Heel, q.Masthead - q.Heel, raked);
+        var stays = Ordered(p.Tack, q.Tack).Select(pin => (pin, pin == q.Tack ? (masthead - pin).Length : (q.Masthead - pin).Length)).ToArray();
+        var lines = new ClawLines(stays, (p.Masthead - p.ShroudFoot).Length, a.Lines.Halyard, Math.Max(a.Lines.Sheet, b.Lines.Sheet));
+        return Blend(a, b, raked, carried, lines);
+    }
+
+    private ClawState Blend(ClawState a, ClawState b, double mast, double carry, ClawLines lines)
+    {
+        var (p, q) = (a.Rig, b.Rig);
+        HullPoint Carried(HullPoint x, HullPoint y) => x + carry * (y - x);
+        var (heel, tack) = (p.Heel + mast * (q.Heel - p.Heel), Carried(p.Tack, q.Tack));
+        HullPoint OnMast(HullPoint x, HullPoint y) => heel + Swung(x - p.Heel, y - q.Heel, mast);
+        HullPoint OnSpars(HullPoint x, HullPoint y) => tack + Swung(x - p.Tack, y - q.Tack, carry);
+        var (peak, clew) = (OnSpars(a.Peak, b.Peak), OnSpars(a.Clew, b.Clew));
+        var pose = new ClawPose(tack, OnMast(p.Masthead, q.Masthead), heel, OnSpars(a.Bend, b.Bend), peak, clew, OnSpars(a.Bridle, b.Bridle),
+            Carried(p.Lead, q.Lead), p.SternPin, p.ShroudFoot, OnMast(p.ShoreTop, q.ShoreTop), p.ShoreFoot);
+        return new ClawState(a.Yard + carry * (b.Yard - a.Yard), a.Boom + carry * (b.Boom - a.Boom), peak, clew, pose.HalyardBend, pose.Bridle,
+            rest.Posed(tack, tack, peak, clew), 0, pose, lines);
     }
 
     public override RigState Track(double yard, double near, Func<RigState, (HullPoint At, HullPoint Force)> wind)
@@ -133,7 +212,7 @@ public sealed class CrabClaw : Rigging
         return (low + high) / 2;
     }
 
-    private ClawState Held(double yard, double boom, Func<RigState, (HullPoint At, HullPoint Force)> wind)
+    public override RigState Held(double yard, double boom, Func<RigState, (HullPoint At, HullPoint Force)> wind)
     {
         var posed = Claw(yard, boom);
         return posed with { SheetNewtons = Swung(posed, wind).Sheet };
@@ -205,40 +284,61 @@ public sealed class CrabClaw : Rigging
             (pose.Lead - claw.Bridle).Length, (pose.Masthead - pose.Tack).Length, (pose.Masthead - pose.SternPin).Length, (pose.Masthead - pose.ShroudFoot).Length);
     }
 
-    public override void Draw(IRigCanvas canvas, RigState state, double fill, (double Reach, double Span) set)
+    public override double SheetMetres(RigState state) => ((ClawState)state).Lines.Sheet;
+
+    public override HullPoint[] Marks(RigState state)
     {
-        var (claw, pose) = ((ClawState)Pose(state.Yard, state.Boom), Hoisted);
-        canvas.Cloth(claw.Form, fill, set);
-        var tack = pose.Tack;
-        var foot = (claw.Form.At(1, 0, 0, set) - tack).Unit;
-        var clew = tack + (pose.Clew - tack).Length * foot;
-        var bridle = tack + (pose.Bridle - tack).Length * foot;
-        Standing(canvas, pose);
+        var claw = (ClawState)state;
+        return [claw.Peak, claw.Clew, claw.Bend, claw.Bridle, claw.Rig.Masthead, claw.Rig.Tack];
+    }
+
+    public override RigState Slackened(RigState state, double metres) =>
+        metres <= 0 ? state : (ClawState)state with { Lines = ((ClawState)state).Lines with { Sheet = ((ClawState)state).Lines.Sheet + metres } };
+
+    public override void Draw(IRigCanvas canvas, RigState state, double fill)
+    {
+        var claw = (ClawState)state;
+        var (pose, lines, tack) = (claw.Rig, claw.Lines, claw.Rig.Tack);
+        canvas.Cloth(claw.Form, fill, Set);
+        Standing(canvas, pose, lines);
         canvas.Spar(tack, claw.Peak, Widths.Spar);
-        canvas.Spar(tack, clew, Widths.Spar);
-        if (set.Span < 1) canvas.Roll(tack, clew, Widths.Roll * Math.Sqrt(1 - set.Span));
-        canvas.Line(pose.Masthead, claw.Bend, Widths.Line);
-        canvas.Line(bridle, pose.Lead, Widths.Line);
+        canvas.Spar(tack, claw.Clew, Widths.Spar);
+        if (Set.Span < 1) canvas.Roll(tack, claw.Clew, Widths.Roll * Math.Sqrt(1 - Set.Span));
+        canvas.Line(pose.Masthead, claw.Bend, Widths.Line, lines.Halyard);
+        canvas.Line(claw.Bridle, pose.Lead, Widths.Line, lines.Sheet);
     }
 
-    public override void DrawFurled(IRigCanvas canvas)
+    private static HullPoint[] Ordered(HullPoint pin, HullPoint other) => pin.Along <= other.Along ? [pin, other] : [other, pin];
+
+    private static ClawLines Taut(ClawPose pose, double halyard, double sheet) =>
+        new(Ordered(pose.Tack, pose.SternPin).Select(pin => (pin, (pose.Masthead - pin).Length)).ToArray(), (pose.Masthead - pose.ShroudFoot).Length, halyard, sheet);
+
+    private static HullPoint Swung(HullPoint from, HullPoint to, double share)
     {
-        var pose = Lowered;
-        Standing(canvas, pose);
-        canvas.Spar(pose.Tack, pose.Peak, Widths.Spar);
-        canvas.Spar(pose.Tack, pose.Clew, Widths.Spar);
-        canvas.Roll(pose.Tack, pose.Clew, Widths.Roll);
-        canvas.Line(pose.Masthead, pose.HalyardBend, Widths.Line);
-        canvas.Line(pose.Bridle, pose.Lead, Widths.Line);
+        var (a, b) = (from.Unit, to.Unit);
+        var angle = Math.Acos(Math.Clamp(a.Dot(b), -1, 1));
+        var turned = Math.Sin(angle) < 1e-6 ? a + share * (b - a) : Math.Sin((1 - share) * angle) / Math.Sin(angle) * a + Math.Sin(share * angle) / Math.Sin(angle) * b;
+        return (from.Length + share * (to.Length - from.Length)) * turned.Unit;
     }
 
-    private void Standing(IRigCanvas canvas, ClawPose pose)
+    public override void DrawFurled(IRigCanvas canvas, RigState state)
+    {
+        var claw = (ClawState)state;
+        var (pose, lines, tack) = (claw.Rig, claw.Lines, claw.Rig.Tack);
+        Standing(canvas, pose, lines);
+        canvas.Spar(tack, claw.Peak, Widths.Spar);
+        canvas.Spar(tack, claw.Clew, Widths.Spar);
+        canvas.Roll(tack, claw.Clew, Widths.Roll);
+        canvas.Line(pose.Masthead, claw.Bend, Widths.Line, lines.Halyard);
+        canvas.Line(claw.Bridle, pose.Lead, Widths.Line, lines.Sheet);
+    }
+
+    private void Standing(IRigCanvas canvas, ClawPose pose, ClawLines lines)
     {
         canvas.Spar(pose.Heel, pose.Masthead, Widths.Pole);
         canvas.Spar(pose.ShoreFoot, pose.ShoreTop, Widths.Shore);
-        canvas.Line(pose.Masthead, pose.Tack, Widths.Line);
-        canvas.Line(pose.Masthead, pose.SternPin, Widths.Line);
-        canvas.Line(pose.Masthead, pose.ShroudFoot, Widths.Line);
+        foreach (var (pin, metres) in lines.Stays) canvas.Line(pose.Masthead, pin, Widths.Line, metres);
+        canvas.Line(pose.Masthead, pose.ShroudFoot, Widths.Line, lines.Shroud);
     }
 
     private static (Push[] Loads, (string Line, double Newtons)[] Tensions) Stayed(ClawPose pose, HullPoint head)

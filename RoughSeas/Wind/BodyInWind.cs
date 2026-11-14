@@ -10,9 +10,9 @@ public abstract class BodyInWind(WindConfig config)
 
     protected abstract (double Along, double Across) Pivot { get; }
 
-    protected abstract IEnumerable<WindSurface> Surfaces(Func<WindSurface, Airflow> air);
+    protected abstract IEnumerable<WindSurface> Surfaces(Func<WindSurface, Airflow> air, double seconds);
 
-    public WindLoad Load((double X, double Z) wind, (double X, double Z) velocity, double yaw, double waterlineMetres)
+    public WindLoad Load((double X, double Z) wind, (double X, double Z) velocity, double yaw, double waterlineMetres, double seconds)
     {
         Airflow AirOn(WindSurface surface)
         {
@@ -24,8 +24,8 @@ public abstract class BodyInWind(WindConfig config)
         var halfDensity = config.AirKgPerCubicMetre / 2;
         var pivot = new HullPoint(Pivot.Along, 0, Pivot.Across);
         var load = default(WindLoad);
-        foreach (var surface in Surfaces(AirOn))
-        foreach (var push in surface.Pushes(AirOn(surface), halfDensity))
+        foreach (var surface in Surfaces(AirOn, seconds))
+        foreach (var push in surface.Pushes(AirOn(surface), halfDensity, seconds))
         {
             var (x, z) = HullShape.ToWorld(push.Force.Along, push.Force.Across, yaw);
             load += new WindLoad(x, z, ((push.At - pivot).Cross(push.Force) + push.Couple).Height);

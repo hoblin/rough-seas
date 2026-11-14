@@ -30,15 +30,15 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, BluffSurf
             ? new Sail(polar(sail["polar"].AsString() ?? throw new InvalidOperationException("a sail names no polar")),
                 polar(config.Aback) as IncidencePolar ?? throw new InvalidOperationException($"the aback polar '{config.Aback}' gives no incidences"),
                 rig, sail["sailSquareMetres"].AsDouble(), sail["halfSquareMetres"].AsDouble(),
-                (sail["halfReach"].AsDouble(1), sail["halfSpan"].AsDouble(1)), Sail.ClothNewtons(config.ClothKgPerSquareMetre))
+                (sail["halfReach"].AsDouble(1), sail["halfSpan"].AsDouble(1)), Sail.ClothNewtons(config.ClothKgPerSquareMetre), config.Crew)
             : null;
 
-    protected override IEnumerable<WindSurface> Surfaces(Func<WindSurface, Airflow> air)
+    protected override IEnumerable<WindSurface> Surfaces(Func<WindSurface, Airflow> air, double seconds)
     {
-        yield return sail is { SquareMetres: > 0 } ? underSail : bare;
+        yield return sail is { Rolled: false } ? underSail : bare;
         if (sail == null) yield break;
 
         if (sail.Draws(air(sail))) yield return sail;
-        else sail.Slack();
+        else sail.Slack(seconds);
     }
 }

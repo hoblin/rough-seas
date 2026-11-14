@@ -6,7 +6,9 @@
     "camber": 0.12,
     "clothKgPerSquareMetre": 0.61,
     "aback": "square",
+    "crew": {"walkMetresPerSecond": 1.3, "haulMetresPerSecond": 1.87},
     "logSeconds": 5,
+    "jumpMetresPerSecond": 10,
     "sails": {
         "crabclaw": {
             "headings": [
@@ -29,6 +31,7 @@
         "referenceHeightMetres": "The Beaufort scale, which our wind keeps, gives the wind at 10 m above the sea (WMO)",
         "gradientExponent": "The wind over the open sea grows with height as (z/10 m)^0.11 (Hsu, Meindl & Gilhousen 1994, via en.wikipedia.org/wiki/Forces_on_sails)",
         "bluffDrag": "A flat plate across the wind (NASA Glenn, Shape Effects on Drag, via en.wikipedia.org/wiki/Drag_coefficient): a hull's side and her furled rig, as the wind meets them",
+        "crew": "How fast her crew works her rig. walkMetresPerSecond: a person carrying the yard's heel along her, the normal walking speed of people on a rolling ship's deck, 1.28 to 1.68 m/s at the berth less 4 to 10% for the roll (Wang, Liu, Wang, Loughney, Yang and Gao 2020, Physica A 562, doi:10.1016/j.physa.2020.125369). haulMetresPerSecond: a line hauled or eased by hand, the rope-pulling speed at the lightest load measured, 1.87 m/s at 147.5 N (Arakawa et al. 2017, Sports Medicine International Open 1(4), doi:10.1055/s-0043-112335, a rope ergometer at maximal effort, the closest measured analogue): a sheet is worked with a turn round a beam (H&H 1:317), taking in what the sail gives, so the crew moves it at hand speed, not against its whole load",
         "aback": "The sail whose measured force presses any sail taken aback, along its normal, at the incidence the wind meets its wrong face: the square sail's own, the only soft sail measured over its incidences; on the same sail caught aback head to wind it gives about −1.0 of thrust, where Masuyama, Nomoto et al. measured about −0.9 (MARSIM 2003, Fig. 15)",
         "camber": "A full sail's depth over its chord: Marchaj's tunnel sails were cut to about 12% (AYRS 111, Rig Efficiency, Fig. 12)",
         "clothKgPerSquareMetre": "Experimental reconstructions of flax sails weigh 500 to 720 g/m² (Propylaeum, Heidelberg University, books.ub.uni-heidelberg.de/propylaeum/catalog/view/1035/1768/102856): a sail fills as the wind's pressure outweighs its cloth",

@@ -74,8 +74,31 @@ public sealed class SquareRig : Rigging
     private SquareState Square(double yard)
     {
         var (clewPort, clewStarboard) = (Turned(clews.Port, yard), Turned(clews.Starboard, yard));
-        return new SquareState(yard, Turned(arms.Port, yard), Turned(arms.Starboard, yard), clewPort, clewStarboard,
-            rest.Posed(clewPort, Turned(heads.Port, yard), Turned(heads.Starboard, yard), clewStarboard), 0);
+        var form = rest.Posed(clewPort, Turned(heads.Port, yard), Turned(heads.Starboard, yard), clewStarboard);
+        if (Set.Span < 1) (clewPort, clewStarboard) = (form.At(0, 0, 0, Set), form.At(1, 0, 0, Set));
+        return new SquareState(yard, Turned(arms.Port, yard), Turned(arms.Starboard, yard), clewPort, clewStarboard, form, 0);
+    }
+
+    public override RigState Furled => Square(0);
+
+    public override double HoistMetres => 0;
+
+    public override double SpanMetres => (heads.Port - clews.Port).Length;
+
+    public override double Arm(RigState state)
+    {
+        var offset = ((SquareState)state).ClewPort - heel;
+        return (offset - offset.Dot(axis) * axis).Length;
+    }
+
+    public override RigState Between(RigState from, RigState to, double share) => to;
+
+    public override RigState Held(double yard, double boom, Func<RigState, (HullPoint At, HullPoint Force)> wind) => Settle(yard, boom, wind);
+
+    public override HullPoint[] Marks(RigState state)
+    {
+        var square = (SquareState)state;
+        return [square.ArmPort, square.ArmStarboard, square.ClewPort, square.ClewStarboard];
     }
 
     public override RigState Settle(double yard, double near, Func<RigState, (HullPoint At, HullPoint Force)> wind)
@@ -124,16 +147,20 @@ public sealed class SquareRig : Rigging
             (leads.Port - square.ClewPort).Length, (leads.Starboard - square.ClewStarboard).Length);
     }
 
-    public override void Draw(IRigCanvas canvas, RigState state, double fill, (double Reach, double Span) set)
+    public override void Draw(IRigCanvas canvas, RigState state, double fill)
     {
-        var square = (SquareState)Pose(state.Yard, 0);
-        canvas.Cloth(square.Form, fill, set);
+        var square = (SquareState)state;
+        canvas.Cloth(square.Form, fill, Set);
         canvas.Spar(square.ArmPort, square.ArmStarboard, Widths.Spar);
-        var (footPort, footStarboard) = (square.Form.At(0, 0, fill, set), square.Form.At(1, 0, fill, set));
-        if (set.Span < 1) canvas.Roll(footPort, footStarboard, Widths.Roll * Math.Sqrt(1 - set.Span));
-        canvas.Line(footPort, leads.Port, Widths.Line);
-        canvas.Line(footStarboard, leads.Starboard, Widths.Line);
+        var (footPort, footStarboard) = (square.Form.At(0, 0, fill, Set), square.Form.At(1, 0, fill, Set));
+        if (Set.Span < 1) canvas.Roll(footPort, footStarboard, Widths.Roll * Math.Sqrt(1 - Set.Span));
+        canvas.Line(footPort, leads.Port, Widths.Line, (leads.Port - footPort).Length);
+        canvas.Line(footStarboard, leads.Starboard, Widths.Line, (leads.Starboard - footStarboard).Length);
     }
 
-    public override void DrawFurled(IRigCanvas canvas) => canvas.Spar(arms.Port, arms.Starboard, Widths.Spar);
+    public override void DrawFurled(IRigCanvas canvas, RigState state)
+    {
+        var square = (SquareState)state;
+        canvas.Spar(square.ArmPort, square.ArmStarboard, Widths.Spar);
+    }
 }

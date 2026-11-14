@@ -14,9 +14,9 @@ public class RigTests
     private static Sail Drawing(int tacked)
     {
         var body = Fixtures.InWind("outrigger");
-        body.Sail!.Hoist(FullSail);
-        body.Sail.Rig.Tacked = tacked;
-        body.Load(OverHerFloat, (0, 0), 0, 0);
+        body.Sail!.Rig.Tacked = tacked;
+        body.Sail.Hoist(FullSail, tacked);
+        body.Steady(OverHerFloat, (0, 0), 0, 0);
         return body.Sail;
     }
 

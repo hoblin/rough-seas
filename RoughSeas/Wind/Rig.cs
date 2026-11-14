@@ -29,5 +29,13 @@ public sealed class Rig(Rigging[] ends)
 
     public Rigging End => ends[Tacked];
 
+    public (double Reach, double Span) Set
+    {
+        set
+        {
+            foreach (var end in ends) end.Set = value;
+        }
+    }
+
     public Rigging EndAt(int end) => ends[end];
 }

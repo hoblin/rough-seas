@@ -65,7 +65,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
             || byEntity is not EntityPlayer player || entity.GetBehavior<EntityBehaviorSelectionBoxes>() is not { } boxes) return;
 
         var step = Array.FindIndex(steps, code => boxes.IsAPCode(player.EntitySelection, code));
-        if (step < 0 || step == entity.WatchedAttributes.GetInt(TackedKey)) return;
+        if (step < 0 || step == entity.WatchedAttributes.GetInt(TackedKey) || Sail.Shunting) return;
 
         entity.WatchedAttributes.SetInt(TackedKey, step);
         handled = EnumHandling.PreventSubsequent;
@@ -76,9 +76,8 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         if (drawn == null || hull == null) return;
 
-        if (!blown && entity.IsRendered) Blow(hull.Velocity);
+        if (!blown && entity.IsRendered) Blow(hull.Velocity, deltaTime);
         blown = false;
-        drawn.Trimmed();
     }
 
     public override void OnEntityDespawn(EntityDespawnData despawn)
@@ -91,25 +90,32 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         if (Sail == null) return;
 
-        Sail.Rig.Tacked = entity.WatchedAttributes.GetInt(TackedKey);
-        Sail.Hoist(entity.WatchedAttributes.GetInt(SailKey));
+        Sail.Hoist(entity.WatchedAttributes.GetInt(SailKey), entity.WatchedAttributes.GetInt(TackedKey));
     }
 
-    public WindLoad Wind((double X, double Z) velocity)
+    public WindLoad Wind((double X, double Z) velocity, double seconds)
     {
-        var (blowing, load) = Blow(velocity);
+        var (blowing, load) = Blow(velocity, seconds);
         if (load is { } blew) Note(blowing, velocity, blew);
         return load ?? default;
     }
 
-    private ((double X, double Z) Blowing, WindLoad? Load) Blow((double X, double Z) velocity)
+    private ((double X, double Z) Blowing, WindLoad? Load) Blow((double X, double Z) velocity, double seconds)
     {
         Hoist();
         blown = true;
         if (hull == null || !entity.Swimming) return (default, null);
 
         var blowing = sea.Map.Wind(entity.Pos.X, entity.Pos.Z);
-        return (blowing, body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres));
+        var (was, shunting) = (Sail?.State, Sail?.Shunting);
+        var load = body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres, seconds);
+        if (Sail is { } shunted && shunted.Shunting != shunting)
+            wind.Log(entity, "{0} her shunt to her {1} end: {2}", shunted.Shunting ? "begins" : "ends", entity.WatchedAttributes.GetInt(TackedKey) == 0 ? "bow" : "stern",
+                shunted.Rig.End.Describe(shunted.State));
+        if (Sail is { } sail && was != null && sail.Rig.End.Marks(sail.State).Zip(sail.Rig.End.Marks(was)).Max(pair => (pair.First - pair.Second).Length) is var moved
+            && moved > wind.Config.JumpMetresPerSecond * seconds)
+            wind.Log(entity, "her rig moved {0:F2} m in one {1:F3} s tick: {2}", moved, seconds, sail.Rig.End.Describe(sail.State));
+        return (blowing, load);
     }
 
     private void Note((double X, double Z) blowing, (double X, double Z) velocity, WindLoad load)

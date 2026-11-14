@@ -15,7 +15,7 @@ public class SquareRigTests
     private static (VesselInWind Body, Sail Sail) Sailboat()
     {
         var body = Fixtures.SailboatInWind();
-        body.Sail!.Hoist(FullSail);
+        body.Sail!.Hoist(FullSail, 0);
         return (body, body.Sail);
     }
 
@@ -39,14 +39,14 @@ public class SquareRigTests
     public void OffTheWindHerSquareSailDrivesHerAhead(double offBow)
     {
         var (body, _) = Sailboat();
-        Assert.True(body.Load(FromOffHerBow(offBow), Still, Yaw, Waterline).Z > 0);
+        Assert.True(body.Steady(FromOffHerBow(offBow), Still, Yaw, Waterline).Z > 0);
     }
 
     [Fact]
     public void RunningHerYardStandsSquareAcrossHer()
     {
         var (body, sail) = Sailboat();
-        body.Load(FromOffHerBow(180), Still, Yaw, Waterline);
+        body.Steady(FromOffHerBow(180), Still, Yaw, Waterline);
         Assert.True(OffHerBeam(sail) < 0.1, sail.Rig.End.Describe(sail.State));
     }
 
@@ -54,7 +54,7 @@ public class SquareRigTests
     public void ReachingSheBracesHerYardRoundClearOfHerStays()
     {
         var (body, sail) = Sailboat();
-        body.Load(FromOffHerBow(100), Still, Yaw, Waterline);
+        body.Steady(FromOffHerBow(100), Still, Yaw, Waterline);
         Assert.True(OffHerBeam(sail) > 0.1, sail.Rig.End.Describe(sail.State));
         Assert.True(sail.Rig.End.Clear(sail.State));
     }
@@ -63,7 +63,7 @@ public class SquareRigTests
     public void CloseHauledBeyondWhereHerStaysLetHerBraceHerSailIsTakenAback()
     {
         var (body, sail) = Sailboat();
-        body.Load(FromOffHerBow(30), Still, Yaw, Waterline);
+        body.Steady(FromOffHerBow(30), Still, Yaw, Waterline);
         Assert.True(sail.Aback, sail.Rig.End.Describe(sail.State));
     }
 
@@ -71,7 +71,7 @@ public class SquareRigTests
     public void WhatHerRigHandsHerHullAddsUpToTheSailsForceAndItsWeight()
     {
         var (body, sail) = Sailboat();
-        body.Load(FromOffHerBow(120), Still, Yaw, Waterline);
+        body.Steady(FromOffHerBow(120), Still, Yaw, Waterline);
         var (end, state) = (sail.Rig.End, sail.State);
         var (at, force) = (state.Centre(sail.Set, sail.Fill), new HullPoint(-400, 0, 150));
         var weight = new HullPoint(0, -RoughSeas.Water.WaveTheory.Gravity, 0);
@@ -89,7 +89,7 @@ public class SquareRigTests
     public void HeadToWindHerSquareSailIsAbackAndPushesHerAstern()
     {
         var (body, sail) = Sailboat();
-        var load = body.Load(FromOffHerBow(10), Still, Yaw, Waterline);
+        var load = body.Steady(FromOffHerBow(10), Still, Yaw, Waterline);
         Assert.True(sail.Aback);
         Assert.True(load.Z < 0, $"ahead {load.Z:F0} N");
     }
@@ -98,11 +98,12 @@ public class SquareRigTests
     public void CloseHauledHerYardStandsAsFarRoundAsHerStaysLetItAndDrawsOnlyWhatThatIncidenceGives()
     {
         var (body, sail) = Sailboat();
-        var closeHauled = body.Load(FromOffHerBow(75), Still, Yaw, Waterline).Z;
+        var closeHauled = body.Steady(FromOffHerBow(75), Still, Yaw, Waterline).Z;
         var end = sail.Rig.End;
         var limits = new[] { end.Free.From, end.Free.From + end.Free.Span };
-        Assert.Contains(limits, limit => Math.Abs(limit - sail.State.Yard) < FiveDegrees);
-        Assert.True(closeHauled < body.Load(FromOffHerBow(100), Still, Yaw, Waterline).Z);
+        Assert.True(limits.Any(limit => Math.Abs(limit - sail.State.Yard) < FiveDegrees),
+            $"yard {sail.State.Yard * 180 / Math.PI:F1}°, free {end.Free.From * 180 / Math.PI:F1}° over {end.Free.Span * 180 / Math.PI:F1}°: {end.Describe(sail.State)}");
+        Assert.True(closeHauled < body.Steady(FromOffHerBow(100), Still, Yaw, Waterline).Z);
     }
 
     [Theory]

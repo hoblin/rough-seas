@@ -55,6 +55,15 @@ public static class Fixtures
 
     public static VesselInWind SailboatInWind() => VesselInWind.From(new JsonObject(SailboatWindage), Wind, code => SailPolar.Of(Wind.Sails[code]));
 
+    public const double TickSeconds = 1 / 30.0;
+
+    public static WindLoad Steady(this VesselInWind body, (double X, double Z) wind, (double X, double Z) velocity, double yaw, double waterline, double seconds = 60)
+    {
+        var load = default(WindLoad);
+        for (var t = 0.0; t < seconds; t += TickSeconds) load = body.Load(wind, velocity, yaw, waterline, TickSeconds);
+        return load;
+    }
+
     public static VesselMass Mass => mass.Value;
 
     public static PersonConfig PersonConfig => personConfig.Value;
