@@ -61,7 +61,7 @@ public static class BodyAfloat
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
         (system, capi, drawn, water, sea, person, waves, body, wading) = (null, null, null, null, null, null, null, null, null);
-        (stroke, liftedThisTick, loggedAt) = (default, false, double.NegativeInfinity);
+        (stroke, liftedThisTick, loggedAt, wasSwimming) = (default, false, double.NegativeInfinity, true);
     }
 
     /// <summary>The server says a crest broke over this client's player.</summary>
