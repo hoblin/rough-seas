@@ -16,6 +16,13 @@
     "worldattribute-rowerFatigue-desc": "划槳、划單葉槳和撐篙都會讓你飢餓。關閉後，它們不消耗飽足度；船照樣只能以你划動的速度前進。",
     "worldattribute-poleDepth": "撐篙水深",
     "worldattribute-poleDepth-desc": "撐篙只能在搆得到水底的地方推船。關閉後，在任何深度的水裡都能像撐到底一樣推船。",
+    "worldattribute-realisticSwimming": "真實游泳",
+    "worldattribute-realisticSwimming-desc": "你靠身體排開的水浮起來，游速取決於人的雙臂能推你多快，身上帶的工具和盔甲會把你往下拉。浪、水流和碎開的浪峰會帶著你走。關閉後，你會像原版遊戲一樣游泳；你仍會隨著浪的節奏呼吸。",
+    "worldattribute-swimmingStrength": "游泳力量",
+    "worldattribute-swimmingStrength-desc": "真實游泳時你雙臂划水的力度：x1 是訓練有素的泳者真實的划水，x2 和 x3 的力度是它的兩倍和三倍，你會游得更快，也能把更重的東西帶出水面。遊戲內建的行走速度設定也會與它相乘。",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "碎浪打向游泳者",
     "worldattribute-swimmerBreakers-desc": "游泳時在你頭上碎開的浪會把你壓到水下並帶著你走，冒著泡沫的水托起你的力也更小。關閉後，不會有浪在游泳者頭上碎開；你仍會隨浪漂浮，並隨著浪的節奏呼吸。"
 }

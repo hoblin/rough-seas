@@ -16,6 +16,13 @@
     "worldattribute-rowerFatigue-desc": "Remar, pagaiar e varejar dão-te fome. Desligado, não gastam saciedade; uma embarcação continua a andar só tão depressa quanto a impulsionas.",
     "worldattribute-poleDepth": "Profundidade da vara",
     "worldattribute-poleDepth-desc": "A vara só empurra onde chega ao fundo. Desligado, empurra em água de qualquer profundidade como num impulso completo.",
+    "worldattribute-realisticSwimming": "Natação realista",
+    "worldattribute-realisticSwimming-desc": "Flutuas graças à água que o teu corpo desloca, nadas tão depressa quanto uns braços humanos te conseguem impulsionar, e as ferramentas e a armadura que levas puxam-te para o fundo. As ondas, as correntes e as cristas que rebentam levam-te. Desligado, nadas como no jogo base; continuas a respirar ao ritmo das ondas.",
+    "worldattribute-swimmingStrength": "Força a nadar",
+    "worldattribute-swimmingStrength-desc": "Com quanta força os teus braços puxam quando nadas de forma realista: x1 é a braçada verdadeira de um nadador treinado, x2 e x3 puxam com o dobro e o triplo da força, por isso nadas mais depressa e consegues tirar mais peso da água. A definição Velocidade de Caminhada do próprio jogo também a multiplica.",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "Rebentação sobre nadadores",
     "worldattribute-swimmerBreakers-desc": "Uma onda que rebenta sobre ti enquanto nadas empurra-te para o fundo e leva-te consigo, e a sua água espumosa sustenta-te menos. Desligado, nenhuma onda rebenta sobre quem nada; continuas a flutuar nas ondas e a respirar ao ritmo delas."
 }

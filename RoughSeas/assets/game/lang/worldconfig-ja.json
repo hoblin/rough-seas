@@ -16,6 +16,13 @@
     "worldattribute-rowerFatigue-desc": "オールで漕ぐ、パドルで漕ぐ、竿で進むと、おなかがすきます。オフにすると満腹度は減りません。舟は今までどおり、あなたが進めるだけの速さでしか進みません。",
     "worldattribute-poleDepth": "竿の届く深さ",
     "worldattribute-poleDepth-desc": "竿は底に届く所でしか舟を押しません。オフにすると、どんな深さでも、いっぱいに突いたときのように押します。",
+    "worldattribute-realisticSwimming": "リアルな泳ぎ",
+    "worldattribute-realisticSwimming-desc": "体が押しのけた水の力で浮かび、人の腕で進める速さで泳ぎ、身につけた道具や防具があなたを沈めます。波や海流、砕ける波頭があなたを運びます。オフにすると、ベースゲームと同じように泳ぎます。それでも波に合わせて息をします。",
+    "worldattribute-swimmingStrength": "泳ぐ力",
+    "worldattribute-swimmingStrength-desc": "リアルな泳ぎで腕がどれだけ強く水をかくか。x1は鍛えた泳ぎ手の本当のひとかき、x2とx3は2倍と3倍の強さでかくので、速く泳げ、より重い物を水から引き上げられます。ゲーム本体の歩行速度の設定もこれに掛け合わされます。",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "泳ぐ人への砕け波",
     "worldattribute-swimmerBreakers-desc": "泳いでいるときに頭上で砕ける波は、あなたを水中へ押し込んで一緒に運び、その泡立つ水は体を浮かせる力が弱くなります。オフにすると、泳ぐ人の上で砕ける波はなくなります。それでも波に乗って浮かび、波に合わせて息をします。"
 }

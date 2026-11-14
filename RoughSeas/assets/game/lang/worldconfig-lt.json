@@ -16,6 +16,13 @@
     "worldattribute-rowerFatigue-desc": "Nuo irklavimo, irklavimo vienmenčiu irklu ir stūmimosi kartimi išalkstate. Išjungus tai neeikvoja sotumo; laivas vis tiek plaukia tik taip greitai, kaip jį varote.",
     "worldattribute-poleDepth": "Karties gylis",
     "worldattribute-poleDepth-desc": "Kartis stumia tik ten, kur pasiekia dugną. Išjungus ji stumia bet kokio gylio vandenyje kaip visu mostu.",
+    "worldattribute-realisticSwimming": "Tikroviškas plaukimas",
+    "worldattribute-realisticSwimming-desc": "Jus laiko vanduo, kurį išstumia jūsų kūnas, plaukiate taip greitai, kaip gali varyti žmogaus rankos, o įrankiai ir šarvai, kuriuos nešate, traukia jus žemyn. Bangos, srovės ir lūžtančios keteros neša jus. Išjungus plaukiate kaip pagrindiniame žaidime; vis tiek kvėpuojate bangų ritmu.",
+    "worldattribute-swimmingStrength": "Plaukiko jėga",
+    "worldattribute-swimmingStrength-desc": "Kaip stipriai traukia jūsų rankos plaukiant tikroviškai: x1 yra tikras treniruoto plaukiko mostas, x2 ir x3 traukia du ir tris kartus stipriau, tad plaukiate greičiau ir galite iškelti iš vandens daugiau. Paties žaidimo nustatymas „Ėjimo greitis“ ją taip pat padaugina.",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "Mūša ant plaukikų",
     "worldattribute-swimmerBreakers-desc": "Banga, lūžtanti ant jūsų, kai plaukiate, panardina jus ir neša kartu, o jos putotas vanduo mažiau jus laiko. Išjungus jokia banga nelūžta ant plaukiko; jūs vis tiek plūduriuojate ant bangų ir kvėpuojate jų ritmu."
 }

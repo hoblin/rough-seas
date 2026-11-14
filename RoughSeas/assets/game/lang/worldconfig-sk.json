@@ -16,6 +16,13 @@
     "worldattribute-rowerFatigue-desc": "Pri veslovaní, pádlovaní a plavbe s bidlom dostaneš hlad. Keď je vypnuté, nestojí ťa to žiadnu sýtosť; plavidlo stále pláva len tak rýchlo, ako ho poháňaš.",
     "worldattribute-poleDepth": "Hĺbka pre bidlo",
     "worldattribute-poleDepth-desc": "Bidlo odráža len tam, kde dosiahne na dno. Keď je vypnuté, odráža vo vode akejkoľvek hĺbky ako pri plnom zábere.",
+    "worldattribute-realisticSwimming": "Realistické plávanie",
+    "worldattribute-realisticSwimming-desc": "Nadnáša ťa voda, ktorú tvoje telo vytlačí, plávaš tak rýchlo, ako ťa ľudské paže dokážu poháňať, a nástroje a brnenie, ktoré nesieš, ťa ťahajú dole. Vlny, prúdy a lámajúce sa hrebene ťa nesú. Keď je vypnuté, plávaš ako v základnej hre; stále dýchaš v rytme vĺn.",
+    "worldattribute-swimmingStrength": "Sila plavca",
+    "worldattribute-swimmingStrength-desc": "Ako silno ťahajú tvoje paže pri realistickom plávaní: x1 je skutočné tempo trénovaného plavca, x2 a x3 ťahajú dvakrát a trikrát silnejšie, takže plávaš rýchlejšie a vynesieš z vody viac. Násobí ju aj herné nastavenie „Rýchlosť chôdze“.",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "Príboj na plavcov",
     "worldattribute-swimmerBreakers-desc": "Vlna, ktorá sa cez teba prevalí, keď plávaš, ťa stiahne pod vodu a nesie so sebou a jej spenená voda ťa nadnáša menej. Keď je vypnuté, cez plavca sa neprevalí žiadna vlna; stále sa hojdáš na vlnách a dýchaš v ich rytme."
 }

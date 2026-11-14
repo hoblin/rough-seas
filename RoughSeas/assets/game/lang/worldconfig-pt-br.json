@@ -16,6 +16,13 @@
     "worldattribute-rowerFatigue-desc": "Remar, pagaiar e varejar dão fome. Desativado, não gastam saciedade; uma embarcação ainda só anda tão rápido quanto você a impulsiona.",
     "worldattribute-poleDepth": "Profundidade da vara",
     "worldattribute-poleDepth-desc": "A vara só empurra onde alcança o fundo. Desativado, empurra em água de qualquer profundidade como num impulso completo.",
+    "worldattribute-realisticSwimming": "Natação realista",
+    "worldattribute-realisticSwimming-desc": "Você boia graças à água que seu corpo desloca, nada tão rápido quanto braços humanos conseguem impulsionar você, e as ferramentas e a armadura que você carrega puxam você para baixo. As ondas, as correntes e as cristas que arrebentam levam você. Desativado, você nada como no jogo base; continua respirando no ritmo das ondas.",
+    "worldattribute-swimmingStrength": "Força na natação",
+    "worldattribute-swimmingStrength-desc": "Com quanta força seus braços puxam quando você nada de forma realista: x1 é a braçada real de um nadador treinado, x2 e x3 puxam com o dobro e o triplo da força, então você nada mais rápido e consegue tirar mais peso da água. A configuração Rapidez dos passos do próprio jogo também a multiplica.",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "Arrebentação sobre nadadores",
     "worldattribute-swimmerBreakers-desc": "Uma onda que arrebenta sobre você enquanto nada o empurra para baixo e o leva junto, e sua água espumante sustenta menos. Desativado, nenhuma onda arrebenta sobre quem nada; você continua boiando nas ondas e respirando no ritmo delas."
 }

@@ -16,6 +16,13 @@
     "worldattribute-rowerFatigue-desc": "Rudern, Paddeln und Staken machen dich hungrig. Ist sie aus, kosten sie keine Sättigung; ein Boot fährt weiterhin nur so schnell, wie du es vorantreibst.",
     "worldattribute-poleDepth": "Staktiefe",
     "worldattribute-poleDepth-desc": "Ein Staken schiebt nur, wo er den Grund erreicht. Ist sie aus, schiebt er in Wasser jeder Tiefe wie mit vollem Stoß.",
+    "worldattribute-realisticSwimming": "Realistisches Schwimmen",
+    "worldattribute-realisticSwimming-desc": "Dich trägt das Wasser, das dein Körper verdrängt, du schwimmst so schnell, wie die Arme eines Menschen dich antreiben können, und die Werkzeuge und die Rüstung, die du trägst, ziehen dich nach unten. Wellen, Strömungen und brechende Kämme tragen dich mit. Ist sie aus, schwimmst du wie im Grundspiel; du atmest weiter im Takt der Wellen.",
+    "worldattribute-swimmingStrength": "Schwimmkraft",
+    "worldattribute-swimmingStrength-desc": "Wie kräftig deine Arme beim realistischen Schwimmen ziehen: x1 ist der echte Zug eines geübten Schwimmers, x2 und x3 ziehen doppelt und dreimal so kräftig, sodass du schneller schwimmst und mehr aus dem Wasser heben kannst. Die Einstellung Lauftempo des Spiels vervielfacht sie ebenfalls.",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "Brecher über Schwimmern",
     "worldattribute-swimmerBreakers-desc": "Eine Welle, die über dir bricht, während du schwimmst, drückt dich unter Wasser und reißt dich mit, und ihr schäumendes Wasser trägt dich weniger. Ist sie aus, bricht keine Welle über einem Schwimmer; du treibst weiter auf den Wellen und atmest in ihrem Takt."
 }

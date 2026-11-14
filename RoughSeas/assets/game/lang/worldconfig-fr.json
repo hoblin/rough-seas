@@ -16,6 +16,13 @@
     "worldattribute-rowerFatigue-desc": "Ramer, pagayer et avancer à la perche vous donne faim. Désactivé, cela ne coûte aucune satiété ; une embarcation ne va toujours qu'aussi vite que vous la faites avancer.",
     "worldattribute-poleDepth": "Profondeur de la perche",
     "worldattribute-poleDepth-desc": "Une perche ne pousse que là où elle touche le fond. Désactivé, elle pousse dans une eau de toute profondeur comme à pleine poussée.",
+    "worldattribute-realisticSwimming": "Nage réaliste",
+    "worldattribute-realisticSwimming-desc": "Vous flottez grâce à l'eau que votre corps déplace, nagez aussi vite que des bras humains peuvent vous propulser, et les outils et l'armure que vous portez vous entraînent vers le fond. Les vagues, les courants et les crêtes qui déferlent vous emportent. Désactivé, vous nagez comme dans le jeu de base ; vous respirez toujours au rythme des vagues.",
+    "worldattribute-swimmingStrength": "Force de nage",
+    "worldattribute-swimmingStrength-desc": "La force avec laquelle vos bras tirent quand vous nagez de façon réaliste : x1 est la vraie brasse d'un nageur entraîné, x2 et x3 tirent deux et trois fois plus fort, vous nagez donc plus vite et pouvez sortir plus de poids de l'eau. Le paramètre Vitesse de marche du jeu la multiplie aussi.",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "Déferlantes sur les nageurs",
     "worldattribute-swimmerBreakers-desc": "Une vague qui déferle sur vous pendant que vous nagez vous enfonce et vous emporte, et son eau écumante vous porte moins. Désactivé, aucune vague ne déferle sur un nageur ; vous flottez toujours sur les vagues et respirez à leur rythme."
 }
