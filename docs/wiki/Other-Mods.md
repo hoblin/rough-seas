@@ -11,6 +11,8 @@ Rough Seas drives the game's own weather rather than replacing it, so most mods 
 | [Wildcraft: Trees and Shrubs](#wildcraft-trees-and-shrubs) | 1.3.4 | Compatible: its woods build our vessels. |
 | [SheyderMod](#sheydermod) | 2.1.1 | Compatible from Rough Seas 4.4.1. |
 | [Shipworks+](#shipworks) | 1.1.0 | Works with issues: its ships don't ride our drawn swell. |
+| [Shipwright](#shipwright) | 1.5.1 | Compatible: its boats are vessels of ours. |
+| [Walkable Entities](#walkable-entities) | 1.0.44 | Compatible: a deck rides our swell with whoever stands on it. |
 
 Running Rough Seas with a mod not listed here? Tell us how it went on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
@@ -176,3 +178,42 @@ The boats a ship carries on its davits are vanilla's sailboat, ours in every way
 - Shipworks+ floods its ships by our wave height whatever our [world settings](World-Settings#the-mechanics) are. Its own `Sinking` setting, in `shipworksplus.json` in the `ModConfig` folder, decides whether a flooded ship founders.
 - Shipworks+ carries its own fix for players who see the swell's crests in different places: it sets our wave clock to the world's. It never starts beside Rough Seas 2.0 and later, because it stops at the same failed read of our drawn waves, and it is no longer needed: our waves run on the world's clock, the same on every client, which a mod reads as `IDrawnSea.Seconds` ([the drawn sea](Reading-the-Sea#the-drawn-sea)).
 - `RoughSeas: false` in that file stops its ships reading our sea. The small boats keep our behaviours: they get them by patch whenever Rough Seas is installed.
+
+## Shipwright
+
+[Shipwright: Vessels of Distant Shores](https://mods.vintagestory.at/shipwright) 1.5.1 adds ten boats: a catboat, a coracle, a drakkar, a faering, a kayak, a large junk, a punt and three reed boats (the totora, the reed longboat and the sailed reed boat). Beside Rough Seas they are vessels of ours: each rides our [drawn swell](Storms), takes the [sea](Surf-and-Swamping) and the [current](Currents), ships water and is [bailed](Bailing), cracks and floods by its [hull condition](Hull-Condition), and ties to a stake with our [mooring](Mooring).
+
+### Tested versions
+
+Rough Seas works with Shipwright **1.5.1**. It reaches into Shipwright's boat code, so it does so only on a version it was tested against. On any other version it logs a warning and leaves Shipwright's boats as Shipwright made them.
+
+### Its boats in our sea
+
+- **Measured from its models.** Each boat's hull, depth, hold and the side the wind meets are measured from Shipwright's own shapes, as ours are.
+- **Weighed as real craft.** Shipwright gives most of its boats 120 or 1200 kg whatever their size. Ours weigh what a real craft of that size and build weighs: the drakkar 6 t, as the Sea Stallion of Glendalough scaled to its size; the catboat and the faering a tonne or less, as Kraka Fyr; the punt 240 kg, as a Cambridge punt; the coracle 73 kg and the kayak 27 kg, by their skins. The reed boats weigh their bundles of reed, measured from the model. Each weight, and every other number, carries its source in our patch.
+- **Built of what they are.** The planked boats crack plank by plank and are mended with planks of their wood. The coracle and the kayak are hide over a frame, mended with a large prepared hide. The reed boats soak up water and dry out as [our reed boat](Reed-Boat) does, and can't be mended.
+- **Their own sails and paddles.** They row, paddle and sail as Shipwright makes them. Our rowing reaches only our own vessels and vanilla's raft.
+- **Picked up whole.** A boat Shipwright lets you pick up keeps its cracks in your hands, and they are there when you set it down again.
+
+### For server owners and modders
+
+- Our behaviours reach Shipwright's boats by a JSON patch, `patches/compat-shipwright.json`, which applies only while Shipwright is installed at a tested version.
+- Take Shipwright out of a world and its boats go with it, as its own blocks do. Rough Seas needs nothing else.
+
+## Walkable Entities
+
+[Walkable Entities](https://mods.vintagestory.at/walkableentities) 1.0.44 lets a player stand and walk on a moving boat's deck: vanilla's raft and sailboat, and the boats of mods it supports, Shipwright's among them. Our vessels can't be walked on.
+
+### Tested versions
+
+Rough Seas works with Walkable Entities **1.0.44**. It reaches into Walkable Entities' code, so it does so only on a version it was tested against. On any other version it logs a warning and leaves Walkable Entities alone: a player standing on a deck then stays level while the boat rises and rolls with our swell around them.
+
+### Standing on a deck at sea
+
+- **The deck rides the swell.** On a boat we pose on our drawn swell, the deck Walkable Entities carries a player on rises, falls, rolls and pitches as the boat is drawn, and the player and the camera with it.
+- **The server sees the level deck.** Our swell is drawn on each client; the server keeps the boat on still water. A player standing on a deck sends the server their place on the level deck, as a rider in a seat does, so the server never takes them for someone overboard in a trough.
+
+### For server owners and modders
+
+- Only boats with our `roughseas:seaforces` change. Walkable Entities carries a player on any other boat exactly as it does without us.
+- [Shipworks+](#shipworks) needs Walkable Entities too. Its ships keep their own walkable decks, which this change doesn't reach.
