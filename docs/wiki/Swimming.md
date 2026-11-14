@@ -8,7 +8,7 @@ Fresh water holds you up less, so in a lake or a river you sink slowly unless yo
 
 ## Wading
 
-Until the water reaches your chest you walk and jump as in the base game, so a jump takes you up a one-block step out of the water. The water drags your way forward only by the part of you it covers: a jump with the water at your knees carries you on, and the deeper the water, the more of a jump's way it takes. A breaking wave and a current push you while you jump; standing, your feet hold you.
+Until the water reaches your chest you walk and jump as in the base game, so a jump takes you up a one-block step out of the water. In a jump the water drags your way forward only by the part of you it covers: with the water at your knees a jump carries you on, and the deeper the water, the more of a jump's way it takes. A breaking wave and a current push you in a jump while your feet are in the water; standing, your feet hold you.
 
 ## Swimming
 
