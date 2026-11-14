@@ -26,11 +26,12 @@ Where a page touches physics, it says what the mod does and links [The science b
 
 If you build on these pages, or need something they don't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
-### A swimmer strokes by power
+### A swimmer strokes by power and wades by its drag
 
 A swimmer's stroke spends a power, not a fixed force, so it pulls hardest from a standstill and less the faster the swimmer goes through the water ([the science](The-Science-of-a-Body-in-the-Water)).
 
 - `config/person.json`'s `body.strokeNewtons` is gone; `body.swimming` gives the power spent against drag (`usefulWatts`), on the water pushed back (`wastedWatts`) and the speed both were measured at (`metresPerSecond`). New `SwimmingArms` turns them into a thrust at a speed. The law of a blade driven on a power is `Water.SlippingBlade`, which Propulsion's `BladeStroke` now calls too. `FloatReading` gained `Thrust`.
+- A body we float takes the motion each tick finds as its velocity, the walk and any push of yours included, and only the part under water drags it: `BodyAfloat` undoes vanilla's water drag on the whole motion, not only up and down. `FloatingBody.Step` lost its `kept` argument, and `WaterDrag.Carried` is gone. A push you add to a wading or swimming player's `Pos.Motion` meets the body's own drag instead of vanilla's flat one.
 
 ### Every selection box aimed at
 

@@ -19,7 +19,6 @@ public class FloatingBodyTests
 
     private static readonly Waves Waves = new(Fixtures.Config().Waves);
     private static readonly PlayerPerson Man = Fixtures.Person;
-    private static readonly double Kept = WaterDrag.Kept(0.92, Frame);
 
     private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.DensityKgPerLitre);
 
@@ -45,8 +44,8 @@ public class FloatingBodyTests
         public FloatReading Step()
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
-            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current);
-            motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
+            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Stroke, Current);
+            motion = next;
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
             MovedZ += motion.Z * WaterDrag.TicksPerSecond * Frame;
@@ -388,12 +387,24 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void AStrokeCarriesOnThroughTheStep()
+    public void KeepsItsWayThroughTheAirWithTheWaterAtItsKneesAndLosesItWadingChestDeep()
     {
-        var body = new FloatingBody(Man, Fixtures.PersonConfig, Waves);
-        var own = 0.05;
-        var next = body.Step(Calm, new WaterSurface(Still, 0, true), new BodyPlace(X, Still - 1.6, Z, EyeHeight, Width), new BodyMotion(own, 0, 0), default, Frame, 1, Kept);
+        static double Kept(double waterline)
+        {
+            var body = new FloatingBody(Man, Fixtures.PersonConfig, Waves);
+            var motion = new BodyMotion(2.0 / WaterDrag.TicksPerSecond, 0, 0);
+            for (var t = 0.0; t < 0.5; t += Frame)
+            {
+                var next = body.Step(Calm, new WaterSurface(Still, 0, true), new BodyPlace(X, Still - waterline, Z, EyeHeight, Width), motion, default, Frame, 1);
+                motion = next with { Y = 0 };
+            }
+            return motion.X * WaterDrag.TicksPerSecond / 2;
+        }
 
-        Assert.Equal(own, next.X, 9);
+        var knees = Kept(0.5);
+        var chest = Kept(1.3);
+
+        Assert.True(knees > 0.7, $"{knees:P0} of its way kept in half a second with the water at its knees");
+        Assert.True(chest < knees - 0.1, $"{chest:P0} chest deep against {knees:P0} knee deep");
     }
 }

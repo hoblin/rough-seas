@@ -12,8 +12,8 @@ namespace RoughSeas.Person;
 
 /// <summary>
 /// Floats this client's player by <see cref="FloatingBody"/>, in place of vanilla's gravity in water (a third of it while
-/// still, none while the swimmer strokes), vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
-/// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force. On the owning
+/// still, none while the swimmer strokes), vanilla's water drag (a fixed share of the whole motion each tick while the feet are wet,
+/// however little of the body the water holds) and vanilla's swim stroke, which the body strokes by its own force. On the owning
 /// client alone: vanilla simulates a player's movement there.
 /// </summary>
 public static class BodyAfloat
@@ -102,7 +102,7 @@ public static class BodyAfloat
         var rate = sea!.Clock.SecondsIn(dt, entity.World.Calendar.SpeedOfTime) / dt;
         var current = Mechanic.Currents.On(entity.World) ? sea.CurrentAt(pos.X, pos.Z) : default;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
-            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z));
+            stroke, (current.X, current.Z));
         pos.Motion.Set(next.X, next.Y, next.Z);
         liftedThisTick = true;
         var stroked = stroke;
@@ -123,14 +123,13 @@ public static class BodyAfloat
     }
 
     [ReliesOn("Vintagestory.API.Common.Entities.PModuleMotionDrag", "DoApply", "scales the whole motion by WaterDrag^(33·seconds) while the feet are in water or the body swims")]
-    private static void BeforeDrag(Entity entity, EntityPos pos, out double __state) => __state = pos.Motion.Y;
+    private static void BeforeDrag(Entity entity, EntityPos pos, out (double X, double Y, double Z) __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
 
-    // vanilla's water drag keeps the body's way across; up and down the body has had its own drag
-    private static void AfterDrag(Entity entity, EntityPos pos, double __state)
+    private static void AfterDrag(Entity entity, EntityPos pos, (double X, double Y, double Z) __state)
     {
         if (!liftedThisTick || entity != capi?.World.Player?.Entity) return;
         liftedThisTick = false;
-        pos.Motion.Y = __state;
+        pos.Motion.Set(__state.X, __state.Y, __state.Z);
     }
 
     private static void BeforeStroke(EntityPos pos, out (double X, double Y, double Z) __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
