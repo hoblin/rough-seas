@@ -39,7 +39,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
     private EntityBehaviorMooring? mooring;
     private IMountable? mountable;
     private IHullWay? way;
-    private IWindOnHull windage = null!;
+    private IWindOnHull? windage;
     private LiveDrag? ownDrag;
     private JsonObject attributes = null!;
     private volatile Water? water;
@@ -78,8 +78,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         forces = entity.GetBehavior<EntityBehaviorSeaForces>();
         mooring = entity.GetBehavior<EntityBehaviorMooring>();
         way = entity.SidedProperties.Behaviors.OfType<IHullWay>().FirstOrDefault();
-        windage = entity.SidedProperties.Behaviors.OfType<IWindOnHull>().FirstOrDefault()
-            ?? throw new InvalidOperationException($"{entity.Code} lies on the sea with nothing for the wind to blow on: give it {RoughSeas.Wind.EntityBehaviorWindage.Code} beside {Code}");
+        windage = entity.SidedProperties.Behaviors.OfType<IWindOnHull>().FirstOrDefault();
         if (way == null && IHull.Of(entity) is { } hull) ownDrag = new LiveDrag(entity, hull, attributes, entity.Api.ModLoader.GetModSystem<VesselsModSystem>());
     }
 
@@ -177,7 +176,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         var on = waves with { CurrentX = current.X, CurrentZ = current.Z, WayAlong = WayAlong() };
         if (ours) mooring?.Strain(deltaTime);
         var drag = way?.WaterDrag ?? ownDrag?.Now;
-        var wind = ours ? windage.Wind(Velocity, deltaTime) : default;
+        var wind = ours ? windage?.Wind(Velocity, deltaTime) ?? default : default;
         var blown = drag?.Acceleration(wind.X, wind.Z, pos.Yaw) ?? default;
         var wash = !ours ? default
             : drag != null ? set.Settle(drag, on, pos.Yaw, deltaTime, blown)

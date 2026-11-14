@@ -30,6 +30,8 @@ The waves move every vessel afloat, steered or not, to and fro with the water un
 
 A current carries a swimmer too ([Swimming](Swimming#swimming)).
 
+The [wind](Wind-and-Waves#wind) pushes a vessel left alone as well, downwind.
+
 So a boat left at the water's edge is not where you left it when you come back. [Tie it up or anchor it](Mooring) before you step ashore.
 
 Drift only happens where the game is running, within about 128 blocks of a player. A vessel far from everyone stays put until someone comes near.

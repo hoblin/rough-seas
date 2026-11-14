@@ -10,7 +10,7 @@ from pathlib import Path
 import json5
 
 import units
-from wind import bare
+from wind import windage
 from entity import record
 from jsontext import load
 from physics import ASSETS, afloat
@@ -97,12 +97,12 @@ def measure(vessel, hull, zipped):
     above = shown(elements)
     if hull.bundled:
         measured = afloat(vessel, kg, depth, solid_litres=bundle_litres(planking),
-                          hitbox_height_metres=entity["hitboxSize"]["y"], at_draft=bare(above, frm[1]))
+                          hitbox_height_metres=entity["hitboxSize"]["y"], at_draft=windage(above, [], planking, frm[1]))
     else:
         step = COARSE_STEP_VOXELS if to[0] - frm[0] > LONG_HULL_VOXELS else FINE_STEP_VOXELS
         litres, deck = hold(solids(planking), frm, [to[0], gunwale, to[2]], step)
         measured = afloat(vessel, kg, depth, litres, deck, hitbox_height_metres=entity["hitboxSize"]["y"],
-                          at_draft=bare(above, frm[1]))
+                          at_draft=windage(above, [], planking, frm[1]))
     configs = measured["behaviorConfigs"]
     configs["roughseas:vesselintegrity"] |= integrity
     configs["roughseas:seaforces"] = units.both("mast", units.metres(bounds(*above)[1][1]) if hull.rigged else 0)
