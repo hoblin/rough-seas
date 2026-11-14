@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Głębokość dla tyczki",
     "worldattribute-poleDepth-desc": "Tyczka pcha tylko tam, gdzie sięga dna. Gdy wyłączone, pcha w wodzie o dowolnej głębokości jak przy pełnym pchnięciu.",
     "worldattribute-swimmerBreakers": "Przybój nad pływakami",
-    "worldattribute-swimmerBreakers-desc": "Fala, która łamie się nad tobą, gdy płyniesz, wciska cię pod wodę i niesie ze sobą, a jej spieniona woda słabiej cię utrzymuje. Gdy wyłączone, żadna fala nie łamie się nad pływakiem; nadal unosisz się na falach i oddychasz w ich rytmie."
+    "worldattribute-swimmerBreakers-desc": "Fala, która łamie się nad tobą, gdy płyniesz, wciska cię pod wodę i niesie ze sobą, a jej spieniona woda słabiej cię utrzymuje. Gdy wyłączone, żadna fala nie łamie się nad pływakiem; nadal unosisz się na falach i oddychasz w ich rytmie.",
+    "worldattribute-sailWind": "Wiatr w żaglach",
+    "worldattribute-sailWind-desc": "Żagle czują wiatr tyle razy silniejszy, niż naprawdę wieje, więc żaglowiec płynie mniej więcej tyle razy szybciej i steruje się jak dotąd. Sam wiatr, morze i łódź ze zrzuconym żaglem pozostają bez zmian. 1× to prawdziwy wiatr."
 }

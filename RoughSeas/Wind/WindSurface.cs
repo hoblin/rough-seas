@@ -6,6 +6,8 @@ public abstract class WindSurface
 {
     public abstract double HeightMetres { get; }
 
+    public virtual bool Sails => false;
+
     public abstract Push[] Pushes(Airflow air, double halfDensity, double seconds);
 }
 

@@ -21,6 +21,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
 
     private const string SailKey = "sailPosition";
     private const string ShapeKey = "roughseas:rig";
+    public const string SailWindKey = "sailWind";
 
     private WindModSystem wind = null!;
     private SeaWeatherSystem sea = null!;
@@ -157,7 +158,8 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         if (hull == null || !entity.Swimming) return (default, null);
 
         var blowing = Blowing;
-        var load = body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres, seconds);
+        var load = body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres, seconds,
+            entity.World.Config.GetString(SailWindKey).ToFloat(1));
         if (Sail is { } shunted && shunted.Shunting != shunting)
             wind.Log(entity, "{0} her shunt to her {1} end: {2}", shunted.Shunting ? "begins" : "ends", entity.WatchedAttributes.GetInt(TackedKey) == 0 ? "bow" : "stern",
                 shunted.Rig.End.Describe(shunted.State));

@@ -72,6 +72,8 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
 
     public RigLoad? Load { get; private set; }
 
+    public override bool Sails => true;
+
     public override double HeightMetres => State.Centre(Rolled ? SailForm.Whole : shown, 0).Height;
 
     public void Hoist(int sailPosition, int tacked)

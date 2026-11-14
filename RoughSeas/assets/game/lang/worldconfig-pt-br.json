@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Profundidade da vara",
     "worldattribute-poleDepth-desc": "A vara só empurra onde alcança o fundo. Desativado, empurra em água de qualquer profundidade como num impulso completo.",
     "worldattribute-swimmerBreakers": "Arrebentação sobre nadadores",
-    "worldattribute-swimmerBreakers-desc": "Uma onda que arrebenta sobre você enquanto nada o empurra para baixo e o leva junto, e sua água espumante sustenta menos. Desativado, nenhuma onda arrebenta sobre quem nada; você continua boiando nas ondas e respirando no ritmo delas."
+    "worldattribute-swimmerBreakers-desc": "Uma onda que arrebenta sobre você enquanto nada o empurra para baixo e o leva junto, e sua água espumante sustenta menos. Desativado, nenhuma onda arrebenta sobre quem nada; você continua boiando nas ondas e respirando no ritmo delas.",
+    "worldattribute-sailWind": "Vento nas velas",
+    "worldattribute-sailWind-desc": "As velas sentem o vento tantas vezes mais forte do que ele sopra, e um veleiro navega mais ou menos tantas vezes mais rápido e se governa como antes. O próprio vento, o mar e uma embarcação com a vela arriada ficam como estão. 1× é o vento real."
 }

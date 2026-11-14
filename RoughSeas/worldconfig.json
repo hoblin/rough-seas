@@ -7,7 +7,8 @@
         { "category": "roughseas", "code": "oceanCurrents", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false },
         { "category": "roughseas", "code": "rowerFatigue", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false },
         { "category": "roughseas", "code": "poleDepth", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false },
-        { "category": "roughseas", "code": "swimmerBreakers", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false }
+        { "category": "roughseas", "code": "swimmerBreakers", "dataType": "bool", "default": "true", "onlyDuringWorldCreate": false },
+        { "category": "roughseas", "code": "sailWind", "dataType": "dropdown", "values": ["1", "1.5", "2", "2.5", "3"], "names": ["1×", "1.5×", "2×", "2.5×", "3×"], "default": "1", "onlyDuringWorldCreate": false }
     ],
     "playStyles": [
         {

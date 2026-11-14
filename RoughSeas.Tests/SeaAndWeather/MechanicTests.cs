@@ -8,6 +8,8 @@ public class MechanicTests
 {
     private static readonly string[] Codes = Mechanic.All.Select(mechanic => mechanic.Code).ToArray();
 
+    private static readonly string[] Settings = [..Codes, RoughSeas.Wind.EntityBehaviorWindage.SailWindKey];
+
     [Fact]
     public void EveryMechanicIsOnInAWorldThatNeverSetIt()
     {
@@ -45,12 +47,12 @@ public class MechanicTests
     }
 
     [Fact]
-    public void TheWorldSettingsDeclareEveryMechanicAndNothingElse()
+    public void TheWorldSettingsDeclareEveryMechanicAndTheSailsWindAndNothingElse()
     {
         var declared = JObject.Parse(File.ReadAllText(Path.Combine(Repository.Mod, "worldconfig.json")))["worldConfigAttributes"]!
             .Select(attribute => (string)attribute["code"]!);
 
-        Assert.Equal(Codes, declared);
+        Assert.Equal(Settings, declared);
     }
 
     public static TheoryData<string> Locales()
@@ -62,10 +64,10 @@ public class MechanicTests
 
     [Theory]
     [MemberData(nameof(Locales))]
-    public void EveryLocaleNamesAndDescribesEveryMechanic(string file)
+    public void EveryLocaleNamesAndDescribesEverySetting(string file)
     {
         var lang = JObject.Parse(File.ReadAllText(Path.Combine(Repository.Mod, "assets", "game", "lang", file)));
-        var keys = Codes.SelectMany(code => new[] { $"worldattribute-{code}", $"worldattribute-{code}-desc" });
+        var keys = Settings.SelectMany(code => new[] { $"worldattribute-{code}", $"worldattribute-{code}-desc" });
 
         Assert.All(keys, key => Assert.False(string.IsNullOrWhiteSpace((string?)lang[key]), $"{file} lacks {key}"));
         Assert.DoesNotContain(lang.Properties(), property => property.Name.Contains(Mechanic.LegacyDangerousOceans));

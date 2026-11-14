@@ -21,7 +21,11 @@ Each mechanic of the sea has its own world setting, under *Rough Seas* on the ne
 | *Pole's depth* | `poleDepth` | A [pole](Paddles-Poles-and-Oars) pushes in water of any depth, as it does at its full stroke. |
 | *Breakers on swimmers* | `swimmerBreakers` | No wave [breaks over a swimmer](Swimming#breaking-crests). You still float on the waves and breathe by them. |
 
-To change a setting in a world already made, open the world's settings from the singleplayer list, or type `/worldconfig CODE false` (or `true`) and reload the world. The setting stays as you left it.
+## Wind in the sails
+
+*Wind in the sails* (`sailWind`) is for players who would rather spend less time at sea. Sails feel the wind 1, 1.5, 2, 2.5 or 3 times as strong as it blows, and a [sailing vessel](The-Science-of-the-Hull#under-sail) makes about that many times her speed: a little more, as her hull's own windage keeps the real wind, which also pushes her sideways a little less. She sails as before in everything else: how close to the wind she goes, how her sail trims and how she shunts. The wind itself, the waves, a vessel with her sail down and every paddled or rowed vessel stay as they are. 1× is the real wind and the default.
+
+To change a setting in a world already made, open the world's settings from the singleplayer list, or type `/worldconfig CODE false` (or `true`; for the sail's wind a number, such as `/worldconfig sailWind 2`) and reload the world. The setting stays as you left it.
 
 A world made before version 4.1.0 had one setting, *Dangerous oceans*. On its first load it gives every setting above its value, on or off; from then on you change them one by one. So a world that had *Dangerous oceans* off opens with all of them off.
 

@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Profondità della pertica",
     "worldattribute-poleDepth-desc": "La pertica spinge solo dove tocca il fondo. Se disattivata, spinge in acqua di qualsiasi profondità come a piena spinta.",
     "worldattribute-swimmerBreakers": "Frangenti sui nuotatori",
-    "worldattribute-swimmerBreakers-desc": "Un'onda che ti frange addosso mentre nuoti ti spinge sott'acqua e ti trascina con sé, e la sua acqua schiumosa ti sostiene meno. Se disattivata, nessuna onda frange su chi nuota; galleggi comunque sulle onde e respiri al loro ritmo."
+    "worldattribute-swimmerBreakers-desc": "Un'onda che ti frange addosso mentre nuoti ti spinge sott'acqua e ti trascina con sé, e la sua acqua schiumosa ti sostiene meno. Se disattivata, nessuna onda frange su chi nuota; galleggi comunque sulle onde e respiri al loro ritmo.",
+    "worldattribute-sailWind": "Vento nelle vele",
+    "worldattribute-sailWind-desc": "Le vele sentono il vento tante volte più forte di quanto soffi, e una barca a vela naviga all'incirca tante volte più veloce e si governa come prima. Il vento stesso, il mare e una barca con la vela ammainata restano come sono. 1× è il vento reale."
 }

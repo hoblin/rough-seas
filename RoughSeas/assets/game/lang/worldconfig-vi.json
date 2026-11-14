@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Độ sâu của sào",
     "worldattribute-poleDepth-desc": "Sào chỉ đẩy được ở nơi chạm tới đáy. Khi tắt, sào đẩy được ở mọi độ sâu như một lần đẩy hết sức.",
     "worldattribute-swimmerBreakers": "Sóng đổ lên người bơi",
-    "worldattribute-swimmerBreakers-desc": "Con sóng đổ ập lên bạn khi đang bơi sẽ dìm bạn xuống và cuốn bạn theo, và nước sủi bọt của nó nâng bạn kém hơn. Khi tắt, không con sóng nào đổ lên người bơi; bạn vẫn nổi trên sóng và thở theo nhịp sóng."
+    "worldattribute-swimmerBreakers-desc": "Con sóng đổ ập lên bạn khi đang bơi sẽ dìm bạn xuống và cuốn bạn theo, và nước sủi bọt của nó nâng bạn kém hơn. Khi tắt, không con sóng nào đổ lên người bơi; bạn vẫn nổi trên sóng và thở theo nhịp sóng.",
+    "worldattribute-sailWind": "Gió trên cánh buồm",
+    "worldattribute-sailWind-desc": "Cánh buồm cảm nhận gió mạnh gấp bấy nhiêu lần so với gió thổi thật, nên thuyền buồm chạy nhanh gấp khoảng bấy nhiêu lần và vẫn điều khiển như trước. Bản thân gió, biển và con thuyền đã hạ buồm vẫn như cũ. 1× là gió thật."
 }

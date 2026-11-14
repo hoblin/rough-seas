@@ -12,11 +12,12 @@ public abstract class BodyInWind(WindConfig config)
 
     protected abstract IEnumerable<WindSurface> Surfaces(Func<WindSurface, Airflow> air, double seconds);
 
-    public WindLoad Load((double X, double Z) wind, (double X, double Z) velocity, double yaw, double waterlineMetres, double seconds)
+    public WindLoad Load((double X, double Z) wind, (double X, double Z) velocity, double yaw, double waterlineMetres, double seconds, double sailWind = 1)
     {
         Airflow AirOn(WindSurface surface)
         {
-            var share = Math.Pow(Math.Max(LowestMetres, surface.HeightMetres - waterlineMetres) / config.ReferenceHeightMetres, config.GradientExponent);
+            var share = Math.Pow(Math.Max(LowestMetres, surface.HeightMetres - waterlineMetres) / config.ReferenceHeightMetres, config.GradientExponent)
+                * (surface.Sails ? sailWind : 1);
             var (along, across) = HullShape.ToHull(wind.X * share - velocity.X, wind.Z * share - velocity.Z, yaw);
             return new Airflow(along, across);
         }

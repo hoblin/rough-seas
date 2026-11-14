@@ -230,7 +230,12 @@ public class VesselInWindTests
     }
 
     [Fact]
-    public void OnABeamReachSheMakesAboutAFifthOfTheWindsSpeed()
+    public void OnABeamReachSheMakesAboutAFifthOfTheWindsSpeed() => Assert.InRange(Reaching(1).Z / Breeze, 0.18, 0.26);
+
+    [Fact]
+    public void TwiceTheWindOnHerSailSailsHerAboutTwiceAsFast() => Assert.InRange(Reaching(2).Z / Reaching(1).Z, 1.8, 2.4);
+
+    private static (double X, double Z) Reaching(double sailWind)
     {
         var (body, _) = Outrigger(FullSail);
         var drag = Fixtures.DragOf("outrigger", Fixtures.Hull("outrigger").Crewed());
@@ -238,9 +243,9 @@ public class VesselInWindTests
         const double step = 1 / 30.0;
         for (var t = 0.0; t < 300; t += step)
         {
-            var load = body.Load(OverHerFloat, set.Velocity, Yaw, Waterline, step);
+            var load = body.Load(OverHerFloat, set.Velocity, Yaw, Waterline, step, sailWind);
             set.Settle(drag, new WaterOnHull(0, 0), Yaw, step, drag.Acceleration(load.X, load.Z, Yaw));
         }
-        Assert.InRange(set.Velocity.Z / Breeze, 0.18, 0.26);
+        return set.Velocity;
     }
 }
