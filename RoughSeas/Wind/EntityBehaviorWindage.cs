@@ -33,6 +33,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     private Dictionary<string, string> parts = new();
     private IHullForm[] forms = [];
     private bool blown;
+    private byte[]? shownBytes;
     private byte[]? published;
     private long loggedAt;
 
@@ -89,7 +90,11 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
 
         var helm = entity.GetInterface<IMountable>()?.Controller;
         if (!blown && Sail != null && (helm == null || helm != ((ICoreClientAPI)entity.Api).World.Player.Entity)
-            && entity.WatchedAttributes.GetBytes(ShapeKey) is { } bytes) Sail.Show(SerializerUtil.Deserialize<RigShape>(bytes));
+            && entity.WatchedAttributes.GetBytes(ShapeKey) is { } bytes && !ReferenceEquals(bytes, shownBytes))
+        {
+            Sail.Show(SerializerUtil.Deserialize<RigShape>(bytes));
+            shownBytes = bytes;
+        }
         blown = false;
     }
 

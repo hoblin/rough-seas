@@ -10,6 +10,16 @@ public sealed class Chain
 
     private readonly Vec3d[] at;
     private readonly Vec3d[] moving;
+    private readonly Vec3d[] next;
+    private readonly Vec3d[] along;
+    private readonly double[] pulled;
+    private readonly double[] below;
+    private readonly double[] across;
+    private readonly double[] above;
+    private readonly double[] right;
+    private readonly double[] upper;
+    private readonly double[] solved;
+    private readonly bool[] taut;
     private readonly double kilogramsPerMetre;
     private readonly double dragPerMetre;
     private readonly double stretchingNewtons;
@@ -19,6 +29,12 @@ public sealed class Chain
     {
         at = points;
         moving = Array.ConvertAll(points, _ => new Vec3d());
+        next = Array.ConvertAll(points, _ => new Vec3d());
+        var lengths = points.Length - 1;
+        along = new Vec3d[lengths];
+        for (var k = 0; k < lengths; k++) along[k] = new Vec3d();
+        (pulled, below, across, above, right, upper, solved, taut) =
+            (new double[lengths], new double[lengths], new double[lengths], new double[lengths], new double[lengths], new double[lengths], new double[lengths], new bool[lengths]);
         kilogramsPerMetre = fibre.KilogramsPerCubicMetre * Math.PI * diameterMetres * diameterMetres / 4;
         dragPerMetre = airKilogramsPerCubicMetre * CylinderDrag * diameterMetres / 2;
         stretchingNewtons = fibre.BreakingAt(diameterMetres) / fibre.StretchAtBreak;
@@ -44,40 +60,37 @@ public sealed class Chain
 
         var count = at.Length;
         var slowed = dragPerMetre / kilogramsPerMetre;
-        var next = new Vec3d[count];
-        next[0] = first.Clone();
-        next[^1] = last.Clone();
+        next[0].Set(first);
+        next[^1].Set(last);
         for (var k = 1; k < count - 1; k++)
         {
-            moving[k].Y -= gravity * seconds;
-            var through = moving[k].SubCopy(air);
-            through.Mul(1 / (1 + slowed * through.Length() * seconds));
-            moving[k] = through.Add(air);
-            next[k] = at[k].AddCopy(moving[k].X * seconds, moving[k].Y * seconds, moving[k].Z * seconds);
+            var point = moving[k];
+            point.Y -= gravity * seconds;
+            var (x, y, z) = (point.X - air.X, point.Y - air.Y, point.Z - air.Z);
+            var kept = 1 / (1 + slowed * Math.Sqrt(x * x + y * y + z * z) * seconds);
+            point.Set(air.X + x * kept, air.Y + y * kept, air.Z + z * kept);
+            next[k].Set(at[k].X + point.X * seconds, at[k].Y + point.Y * seconds, at[k].Z + point.Z * seconds);
         }
 
-        var pulled = new double[count - 1];
+        Array.Clear(pulled);
         var yielding = rest / stretchingNewtons / (seconds * seconds);
-        for (var pass = 0; pass < Passes; pass++) Drawn(next, pulled, yielding);
+        for (var pass = 0; pass < Passes; pass++) Drawn(yielding);
 
         for (var k = 0; k < count; k++)
         {
-            moving[k] = next[k].SubCopy(at[k]).Mul(1 / seconds);
+            moving[k].Set((next[k].X - at[k].X) / seconds, (next[k].Y - at[k].Y) / seconds, (next[k].Z - at[k].Z) / seconds);
             at[k].Set(next[k]);
         }
     }
 
-    private void Drawn(Vec3d[] points, double[] pulled, double yielding)
+    private void Drawn(double yielding)
     {
-        var lengths = points.Length - 1;
+        var lengths = next.Length - 1;
         var light = 1 / (kilogramsPerMetre * rest);
-        double Free(int point) => point == 0 || point == points.Length - 1 ? 0 : light;
-        var along = new Vec3d[lengths];
-        var (below, across, above, right) = (new double[lengths], new double[lengths], new double[lengths], new double[lengths]);
-        var taut = new bool[lengths];
+        double Free(int point) => point == 0 || point == next.Length - 1 ? 0 : light;
         for (var k = 0; k < lengths; k++)
         {
-            along[k] = points[k + 1].SubCopy(points[k]);
+            along[k].Set(next[k + 1].X - next[k].X, next[k + 1].Y - next[k].Y, next[k + 1].Z - next[k].Z);
             var length = along[k].Length();
             taut[k] = length > rest && Free(k) + Free(k + 1) > 0;
             if (length > 0) along[k].Mul(1 / length);
@@ -90,22 +103,22 @@ public sealed class Chain
             above[k] = taut[k] && k + 1 < lengths && taut[k + 1] ? -Free(k + 1) * along[k].Dot(along[k + 1]) : 0;
         }
 
-        var more = Tridiagonal(below, across, above, right);
+        Tridiagonal();
         for (var k = 0; k < lengths; k++)
         {
             if (!taut[k]) continue;
 
-            var pull = Math.Max(-pulled[k], more[k]);
+            var pull = Math.Max(-pulled[k], solved[k]);
             pulled[k] += pull;
-            points[k].Add(along[k].X * pull * Free(k), along[k].Y * pull * Free(k), along[k].Z * pull * Free(k));
-            points[k + 1].Add(-along[k].X * pull * Free(k + 1), -along[k].Y * pull * Free(k + 1), -along[k].Z * pull * Free(k + 1));
+            var (x, y, z) = (along[k].X * pull, along[k].Y * pull, along[k].Z * pull);
+            next[k].Add(x * Free(k), y * Free(k), z * Free(k));
+            next[k + 1].Add(-x * Free(k + 1), -y * Free(k + 1), -z * Free(k + 1));
         }
     }
 
-    private static double[] Tridiagonal(double[] below, double[] across, double[] above, double[] right)
+    private void Tridiagonal()
     {
         var size = across.Length;
-        var (upper, solved) = (new double[size], new double[size]);
         for (var k = 0; k < size; k++)
         {
             var pivot = across[k] - (k > 0 ? below[k] * upper[k - 1] : 0);
@@ -113,6 +126,5 @@ public sealed class Chain
             solved[k] = (right[k] - (k > 0 ? below[k] * solved[k - 1] : 0)) / pivot;
         }
         for (var k = size - 2; k >= 0; k--) solved[k] -= upper[k] * solved[k + 1];
-        return solved;
     }
 }

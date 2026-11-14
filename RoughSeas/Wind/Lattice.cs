@@ -11,21 +11,34 @@ public readonly record struct Lattice(double Potential, double Vortex, double As
     private const double Wake = 1000;
 
     private const double ShapeResolution = 50;
-    private const int MostShapes = 20000;
+    private const int MostShapes = 200000;
 
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Lattice> Shapes = new();
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<(int, int, int, int, int, int, int, int), Lattice> Shapes = new();
+    private static int shaped;
 
     private readonly record struct Horseshoe(double Ax, double Ay, double Bx, double By, double TrailA, double TrailB);
 
-    public static Lattice Seen(IReadOnlyList<(double X, double Y)> outline)
+    public static Lattice Seen((double X, double Y)[] corners)
     {
-        var (left, low) = (outline.Min(p => p.X), outline.Min(p => p.Y));
-        var span = outline.Max(p => p.Y) - low;
+        var (left, low, high) = (double.MaxValue, double.MaxValue, double.MinValue);
+        foreach (var (x, y) in corners) (left, low, high) = (Math.Min(left, x), Math.Min(low, y), Math.Max(high, y));
+        var span = high - low;
         if (span <= 0) return default;
 
-        var shape = outline.Select(p => ((int)Math.Round((p.X - left) / span * ShapeResolution), (int)Math.Round((p.Y - low) / span * ShapeResolution))).ToArray();
-        if (Shapes.Count > MostShapes) Shapes.Clear();
-        return Shapes.GetOrAdd(string.Join(";", shape), _ => Of(shape.Select(p => (p.Item1 / ShapeResolution, p.Item2 / ShapeResolution)).ToArray()));
+        int X(int k) => (int)Math.Round((corners[k].X - left) / span * ShapeResolution);
+        int Y(int k) => (int)Math.Round((corners[k].Y - low) / span * ShapeResolution);
+        var key = (X(0), Y(0), X(1), Y(1), X(2), Y(2), X(3), Y(3));
+        if (Shapes.TryGetValue(key, out var known)) return known;
+
+        if (System.Threading.Interlocked.Increment(ref shaped) > MostShapes)
+        {
+            Shapes.Clear();
+            shaped = 0;
+        }
+        var lattice = Of([(key.Item1 / ShapeResolution, key.Item2 / ShapeResolution), (key.Item3 / ShapeResolution, key.Item4 / ShapeResolution),
+            (key.Item5 / ShapeResolution, key.Item6 / ShapeResolution), (key.Item7 / ShapeResolution, key.Item8 / ShapeResolution)]);
+        Shapes[key] = lattice;
+        return lattice;
     }
 
     public static Lattice Of(IReadOnlyList<(double X, double Y)> outline)

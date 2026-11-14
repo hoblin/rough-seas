@@ -12,6 +12,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
     private const int Trims = 36;
     private const int Narrowings = 12;
     private const double EdgeOn = 1e-3;
+    private const double FollowedRadians = 5 * Math.PI / 180;
     private const double StopRadians = Math.PI / 180;
     private static readonly (double Reach, double Span)[] Outline = [(0, 0), (1, 0), (1, 1), (0, 1)];
     private const int TiedWithinDecimals = 3;
@@ -144,7 +145,10 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         var trim = (Math.Atan2(air.Across, air.Along), halfDensity * air.Speed * air.Speed, shown, rig.Tacked);
         if (Retrim(trim))
         {
-            var best = Settled(wind, posed => Score(posed, air, halfDensity));
+            var warm = goal is { Draws: true } last && trimmed is { } was && was.Set == shown && was.Tacked == rig.Tacked
+                && Math.Abs(Math.IEEERemainder(trim.Item1 - was.Heading, 2 * Math.PI)) < FollowedRadians ? (last.Yard, last.Boom) : ((double, double)?)null;
+            var best = Settled(wind, posed => Score(posed, air, halfDensity), warm);
+            if (warm != null && (end.Aback(best, air) || !Holds(best))) best = Settled(wind, posed => Score(posed, air, halfDensity), null);
             (goal, trimmed) = ((best.Yard, best.Boom, !end.Aback(best, air) && Holds(best)), trim);
         }
 
@@ -217,7 +221,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
     {
         Aback = false;
         var force = Force(State, air, halfDensity).Force;
-        Pressure = halfDensity * air.Speed * air.Speed * Pressing(State, rig.End.Belly(State), air);
+        Pressure = Area() > 0 ? Math.Max(0, force.Dot(rig.End.Belly(State))) / Area() : 0;
         Filled(air);
         return (State.Centre(shown, Fill), force);
     }
@@ -312,16 +316,13 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         || Math.Abs(Math.IEEERemainder(trim.Heading - last.Heading, 2 * Math.PI)) > RetrimRadians
         || Math.Abs(trim.Pressure - last.Pressure) > RetrimShare * Math.Max(trim.Pressure, last.Pressure);
 
-    private RigState Settled<TScore>(Func<RigState, (HullPoint At, HullPoint Force)> wind, Func<RigState, TScore> score) where TScore : IComparable<TScore>
+    private RigState Settled<TScore>(Func<RigState, (HullPoint At, HullPoint Force)> wind, Func<RigState, TScore> score, (double Yard, double Boom)? from)
+        where TScore : IComparable<TScore>
     {
         var end = rig.End;
         var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
-        var resting = end.Resting;
-        var toward = resting == first ? 1 : -1;
         var step = end.Free.Span / Trims;
-        var swept = new List<RigState> { end.Settle(resting, 0, wind) };
-        for (var k = 1; k <= Trims; k++) swept.Add(end.Track(resting + toward * step * k, swept[^1].Boom, wind));
-        var best = swept.Where(end.Clear).DefaultIfEmpty(swept[0]).MaxBy(score)!;
+        var best = from is { } kept ? end.Track(kept.Yard, kept.Boom, wind) : Swept(wind, score, step);
 
         RigState At(double yard) => end.Track(yard, best.Boom, wind);
         bool Better(RigState a, RigState b) => end.Clear(a) && (!end.Clear(b) || score(a).CompareTo(score(b)) > 0);
@@ -334,6 +335,16 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         }
         var refined = At((low + high) / 2);
         return Better(refined, best) ? refined : best;
+    }
+
+    private RigState Swept<TScore>(Func<RigState, (HullPoint At, HullPoint Force)> wind, Func<RigState, TScore> score, double step)
+    {
+        var end = rig.End;
+        var resting = end.Resting;
+        var toward = resting == end.Free.From ? 1 : -1;
+        var swept = new List<RigState> { end.Settle(resting, 0, wind) };
+        for (var k = 1; k <= Trims; k++) swept.Add(end.Track(resting + toward * step * k, swept[^1].Boom, wind));
+        return swept.Where(end.Clear).DefaultIfEmpty(swept[0]).MaxBy(score)!;
     }
 
     private (HullPoint At, HullPoint Force) Plate(RigState posed, Airflow air, double halfDensity)
@@ -358,7 +369,12 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         var along = flow - flow.Dot(normal) * normal;
         along = along.Length > EdgeOn ? along.Unit : (posed.Form.At(1, 0.5, 0, shown) - posed.Form.At(0, 0.5, 0, shown)).Unit;
         var across = normal.Cross(along);
-        var outline = Outline.Select(corner => posed.Form.At(corner.Reach, corner.Span, 0, shown)).Select(point => (point.Dot(along), point.Dot(across))).ToArray();
+        var outline = new (double X, double Y)[Outline.Length];
+        for (var k = 0; k < Outline.Length; k++)
+        {
+            var point = posed.Form.At(Outline[k].Reach, Outline[k].Span, 0, shown);
+            outline[k] = (point.Dot(along), point.Dot(across));
+        }
         return wing.Pressing(Lattice.Seen(outline), Math.Asin(Math.Clamp(flow.Dot(normal), -1, 1)));
     }
 

@@ -5,6 +5,9 @@ namespace RoughSeas.Wind;
 
 public sealed class Wing(FlowConfig flow, double kinematicViscosity)
 {
+    private readonly double[][] deltas = flow.Deltas.OrderBy(row => row[0]).ToArray();
+    private readonly double[][] plates = flow.Plates.OrderBy(row => row[0]).ToArray();
+
     private const double Degree = Math.PI / 180;
 
     private const double TransitionReynolds = 5e5;
@@ -32,10 +35,9 @@ public sealed class Wing(FlowConfig flow, double kinematicViscosity)
 
     private (double Breaks, double Gone) Breaks(Lattice seen)
     {
-        var (table, at) = seen.LeadingSweep >= flow.VortexSweepDegrees * Degree
-            ? (flow.Deltas, seen.LeadingSweep / Degree)
-            : (flow.Plates, seen.Aspect > 0 ? 1 / seen.Aspect : flow.Plates.Max(row => row[0]));
-        var rows = table.OrderBy(row => row[0]).ToArray();
+        var (rows, at) = seen.LeadingSweep >= flow.VortexSweepDegrees * Degree
+            ? (deltas, seen.LeadingSweep / Degree)
+            : (plates, seen.Aspect > 0 ? 1 / seen.Aspect : plates[^1][0]);
         var after = Array.FindIndex(rows, row => row[0] >= at);
         var (a, b) = after switch
         {
