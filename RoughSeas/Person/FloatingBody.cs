@@ -41,8 +41,6 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
         SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null, bool onBed = false, double strength = 1)
     {
-        var kick = legs.Push(at.X, at.Feet, at.Z,
-            (motion.X * WaterDrag.TicksPerSecond, motion.Y * WaterDrag.TicksPerSecond, motion.Z * WaterDrag.TicksPerSecond), onBed, stroke);
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
         var air = body.Squeezed(body.BreathingLitres, surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
@@ -59,6 +57,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var middle = Math.Max(0, surface.Height - (at.Feet + Math.Min(waterline, body.HeightMetres) / 2));
         var lift = Body.Lift(held, density, massKg, addedKg, WaveTheory.Gravity, sea.RiseAccelerationAt(at.X, at.Z, middle) * wavesPerSecond * wavesPerSecond);
         var rise = sea.RiseVelocityAt(at.X, at.Z, middle) * wavesPerSecond;
+        var kick = legs.Push(at.X, at.Feet, at.Z, onBed, stroke, inertia, -lift * inertia * stroke.Y);
         var water = Water(sea, surface, at, waterline, wavesPerSecond, current);
         lock (gate)
         {

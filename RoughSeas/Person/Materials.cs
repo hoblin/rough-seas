@@ -39,6 +39,6 @@ public sealed class Materials
 
     public (string? Head, string? Handle) Split(string? material) =>
         material != null && material.Length > config.HandlePrefix.Length && material.StartsWith(config.HandlePrefix)
-            ? (material[config.HandlePrefix.Length..], config.HandlePrefix)
+            ? (material[config.HandlePrefix.Length..].TrimStart('-'), config.HandlePrefix)
             : (material, null);
 }

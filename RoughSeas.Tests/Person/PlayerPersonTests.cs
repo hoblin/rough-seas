@@ -73,14 +73,17 @@ public class PlayerPersonTests
         Assert.InRange(flint, 0.243, 0.482);
     }
 
-    [Fact]
-    public void ABoneHandledToolHasAHandleOfBone()
+    [Theory]
+    [InlineData(EnumTool.Axe, "bone-chert")]
+    [InlineData(EnumTool.Knife, "bonechert")]
+    public void ABoneHandledToolHasAFlintHeadAndAHandleOfBone(EnumTool tool, string material)
     {
-        var wooden = Tool(EnumTool.Axe, "chert");
-        var bony = Tool(EnumTool.Axe, "bonechert");
+        var parts = Config.Tools[tool.ToString().ToLowerInvariant()];
+        var head = Fixtures.Person.Weigh([], [new Held(tool, "chert")]).Kg - (parts.Haft?.Kg ?? 0);
+        var bony = Tool(tool, material);
+        var boneHaft = parts.Haft is { } haft ? haft.Kg / Config.Densities[haft.Of] * Config.Densities["bone"] : 0;
 
-        Assert.Equal(wooden.Litres, bony.Litres, 6);
-        Assert.True(bony.Kg > wooden.Kg, $"bone {bony.Kg:F2} kg, wood {wooden.Kg:F2} kg");
+        Assert.Equal(head + boneHaft, bony.Kg, 6);
     }
 
     [Fact]

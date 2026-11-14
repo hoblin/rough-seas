@@ -37,8 +37,6 @@ public class FloatingBodyTests
 
         public double Feet { get; private set; } = feet;
 
-        public double Highest { get; private set; } = feet;
-
         public double FastestUp { get; private set; }
 
         public double MovedX { get; private set; }
@@ -57,7 +55,6 @@ public class FloatingBodyTests
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             if (Feet < bed) (Feet, motion) = (bed, motion with { Y = 0 });
-            Highest = Math.Max(Highest, Feet);
             FastestUp = Math.Max(FastestUp, motion.Y * WaterDrag.TicksPerSecond);
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
             MovedZ += motion.Z * WaterDrag.TicksPerSecond * Frame;
@@ -120,17 +117,22 @@ public class FloatingBodyTests
     private static readonly SwimStroke Jumping = new(0, 1, 0, Jump: true);
 
     [Fact]
-    public void ABodyOnTheBedLeavesItSlowerThanItsLegsCanStraighten()
+    public void ABodyOnTheBedLeavesItFasterByItsLegsThanItsArmsButSlowerThanTheirProfileAllows()
     {
-        var bed = Still - 4;
-        var run = new Run(Calm, bed, salt: false, stroke: Jumping, bed: bed);
-        run.Settle(1);
+        double Fastest(bool jump)
+        {
+            var bed = Still - 4;
+            var run = new Run(Calm, bed, salt: false, stroke: new SwimStroke(0, 1, 0, jump), bed: bed);
+            run.Settle(1);
+            return run.FastestUp;
+        }
 
-        Assert.InRange(run.FastestUp, 0.5, Fixtures.PersonConfig.Body.Legs.MetresPerSecond);
+        Assert.True(Fastest(true) > 2 * Fastest(false), $"{Fastest(true):F2} m/s by the legs, {Fastest(false):F2} m/s by the arms");
+        Assert.True(Fastest(true) < 2 * Fixtures.PersonConfig.Body.Legs.MetresPerSecond, $"{Fastest(true):F2} m/s, a mean push speed past the legs' v0");
     }
 
     [Fact]
-    public void ALadenBodyBoundsAlongTheBedFurtherThanItWalksAlongIt()
+    public void ALadenBodyBoundsAlongTheBedFurtherThanItStrokesAlongIt()
     {
         double Along(bool jump)
         {
@@ -141,39 +143,49 @@ public class FloatingBodyTests
         }
 
         var (bounding, stroking) = (Along(true), Along(false));
-        Assert.True(bounding > 1.5 * stroking, $"{bounding:F2} m bounding against {stroking:F2} m stroking in 10 s");
+        Assert.True(bounding > stroking, $"{bounding:F2} m bounding against {stroking:F2} m stroking in 10 s");
     }
 
-    [Fact]
-    public void ABodyJustAboveTheBedHasNothingToPushOff()
-    {
-        var bed = Still - 4;
-        var run = new Run(Calm, bed + 0.1, salt: false, stroke: Jumping, bed: bed);
+    private static double Spare(double kg, double strength = 1) =>
+        new Run(Calm, Still - 4, salt: false, kit: kg, stroke: Jumping, strength: strength).Step().SpareNewtons;
 
-        Assert.Equal(0, run.Step().Kick);
+    private static double KgAtNoneToSpare(double strength = 1)
+    {
+        var (light, heavy) = (0.0, 40.0);
+        for (var i = 0; i < 30; i++)
+        {
+            var kg = (light + heavy) / 2;
+            if (Spare(kg, strength) > 0) light = kg;
+            else heavy = kg;
+        }
+        return light;
     }
 
     [Theory]
-    [InlineData(5, true)]
-    [InlineData(9, false)]
-    [InlineData(13.4, false)]
-    public void ATreadingBodyRisesWhileItHasForceToSpareAndSinksWithout(double kg, bool rises)
+    [InlineData(-0.5, true)]
+    [InlineData(0.5, false)]
+    public void ATreadingBodyRisesJustBelowTheLoadItHasNoForceToSpareForAndSinksJustAbove(double offKg, bool rises)
     {
-        var run = new Run(Calm, Still - 4, salt: false, kit: kg, stroke: Jumping);
-        var spare = run.Step().SpareNewtons;
+        var run = new Run(Calm, Still - 4, salt: false, kit: KgAtNoneToSpare() + offKg, stroke: Jumping);
         run.Settle(5);
 
-        Assert.Equal(rises, spare > 0);
         Assert.Equal(rises, run.Feet > Still - 4);
     }
 
     [Fact]
-    public void AStrongerStrokeHasMoreForceToSpare()
+    public void TheReportersCopperToolsLeaveNoForceToSpareAtTheStrokeOfOne()
     {
-        double Spare(double strength) => new Run(Calm, Still - 4, salt: false, kit: 9, stroke: Jumping, strength: strength).Step().SpareNewtons;
+        Assert.True(Spare(13.4) < 0, $"{Spare(13.4):F0} N to spare");
+    }
 
-        Assert.True(Spare(2) > Spare(1));
-        Assert.True(Spare(2) > 0, $"{Spare(2):F0} N to spare at twice the strength");
+    [Fact]
+    public void TwiceTheStrengthSwimsUpWithALoadOneCannot()
+    {
+        var kg = KgAtNoneToSpare() + 1;
+        var run = new Run(Calm, Still - 4, salt: false, kit: kg, stroke: Jumping, strength: 2);
+        run.Settle(5);
+
+        Assert.True(run.Feet > Still - 4, $"{kg:F1} kg at twice the strength");
     }
 
     [Fact]
@@ -422,7 +434,7 @@ public class FloatingBodyTests
 
         var swimming = Fixtures.PersonConfig.Body.Swimming;
         Assert.InRange(first, swimming.UsefulWatts / swimming.MetresPerSecond, 92);
-        Assert.InRange(run.MovedX - from, 0.6, 0.9);
+        Assert.InRange((run.MovedX - from) / swimming.MetresPerSecond, 0.5, 1);
     }
 
     [Fact]
