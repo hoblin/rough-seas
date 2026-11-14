@@ -1,7 +1,7 @@
-using RoughSeas.Units;
-using RoughSeas.Shipyard;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using RoughSeas.Shipyard;
+using RoughSeas.Units;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -238,10 +238,10 @@ public class VesselShapeTests
         var (entity, _, shape) = Load(vessel);
         if (entity["attributes"]!.Value<bool?>("unfurlSails") != true) return;
 
-        var windage = entity["behaviorConfigs"]?["roughseas:windage"];
+        var sail = entity["behaviorConfigs"]?["roughseas:sail"];
         Assert.Contains(FurledSail, Elements(shape["elements"]!).Select(element => element.Value<string>("name")));
-        Assert.NotNull(windage?["rig"]?["ends"]?[0]?["hoisted"]?["mastheadMetres"]);
-        Assert.Contains(FurledSail, windage!["drawn"]!.Values<string>());
+        Assert.NotNull(sail?["rig"]?["ends"]?[0]?["hoisted"]?["mastheadMetres"]);
+        Assert.Contains(FurledSail, sail!["drawn"]!.Values<string>());
     }
 
     [Theory]

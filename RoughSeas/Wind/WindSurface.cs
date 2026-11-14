@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Vessels;
 
 namespace RoughSeas.Wind;
 

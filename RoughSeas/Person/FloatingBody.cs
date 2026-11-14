@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Floating;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Water;

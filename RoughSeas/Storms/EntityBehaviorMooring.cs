@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RoughSeas.Floating;
 using RoughSeas.Lines;
+using RoughSeas.SeaAndWeather;
+using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -9,8 +12,6 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
-using RoughSeas.SeaAndWeather;
-using RoughSeas.Vessels;
 
 namespace RoughSeas.Storms;
 

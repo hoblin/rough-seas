@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using RoughSeas.Floating;
 using RoughSeas.Storms;
 using RoughSeas.Tests.Storms;
 using RoughSeas.Wind;

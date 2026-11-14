@@ -1,0 +1,187 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using HarmonyLib;
+using RoughSeas.SeaAndWeather;
+using RoughSeas.Storms;
+using RoughSeas.Vessels;
+using Vintagestory.API.Client;
+using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
+using Vintagestory.API.MathTools;
+using Vintagestory.Client.NoObf;
+using Vintagestory.GameContent;
+
+namespace RoughSeas.Floating;
+
+[ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "loadModelMatrix", "has built ModelMat when this postfix adds to its translation")]
+public static class VesselMotion
+{
+    private const string HarmonyId = "roughseas.storms.motion";
+    private const int ModelMatrixY = 13;
+    private const double LogEverySeconds = 5;
+
+    private static readonly Dictionary<long, (long Frame, SeaPose Pose)> poses = [];
+    private static Harmony? harmony;
+    private static IDisposable? boats;
+    private static StormsModSystem? storms;
+    private static IDrawnSea? drawn;
+    private static SeaSurface? surface;
+    private static ICoreClientAPI? capi;
+    private static double largestStep;
+    private static double loggedAt = double.NegativeInfinity;
+    private static double tracedUntil = double.NegativeInfinity;
+
+    public static void Attach(StormsModSystem system, ICoreClientAPI client, IDrawnSea sea, SeaSurface waves)
+    {
+        if (harmony != null) return;
+        (storms, capi, drawn, surface) = (system, client, sea, waves);
+        harmony = new Harmony(HarmonyId);
+        harmony.Patch(AccessTools.Method(typeof(NetworkAPI), nameof(NetworkAPI.SendPlayerPositionPacket)),
+            prefix: new HarmonyMethod(typeof(VesselMotion), nameof(SendUnlifted)),
+            postfix: new HarmonyMethod(typeof(VesselMotion), nameof(RestoreLift)));
+        Rock(AccessTools.Method(typeof(EntityBoat), nameof(EntityBoat.OnRenderFrame)));
+        boats = Boats.ReachCopies([ReachedAtRuntime] (BoatClass boat) => Rock(boat.OnRenderFrame));
+        harmony.Patch(AccessTools.Method(typeof(EntityShapeRenderer), nameof(EntityShapeRenderer.loadModelMatrix)),
+            postfix: new HarmonyMethod(typeof(VesselMotion), nameof(LiftModel)));
+        harmony.Patch(AccessTools.PropertyGetter(typeof(EntityRideableSeat), nameof(EntityRideableSeat.SeatPosition)),
+            postfix: new HarmonyMethod(typeof(VesselMotion), nameof(LiftSeat)));
+        harmony.Patch(AccessTools.Method(typeof(EntityBehaviorSelectionBoxes), "applyBoxTransform"),
+            prefix: new HarmonyMethod(typeof(VesselMotion), nameof(LiftSelectionBox)));
+    }
+
+    [ReachedAtRuntime]
+    private static void Rock(MethodBase onRenderFrame)
+    {
+        harmony!.Patch(onRenderFrame,
+            prefix: new HarmonyMethod(typeof(VesselMotion), nameof(WindStrength)) { priority = Priority.Low },
+            postfix: new HarmonyMethod(typeof(VesselMotion), nameof(WindRestore)) { priority = Priority.Low });
+        harmony.Patch(onRenderFrame, postfix: new HarmonyMethod(typeof(VesselMotion), nameof(Respond)));
+    }
+
+    public static void Detach()
+    {
+        boats?.Dispose();
+        boats = null;
+        harmony?.UnpatchAll(HarmonyId);
+        harmony = null;
+        (storms, capi, drawn, surface) = (null, null, null, null);
+        poses.Clear();
+        (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
+    }
+
+    /// <summary>
+    /// How this client draws a vessel we pose on the swell, this frame, over where the server keeps it; null for
+    /// anything else.
+    /// </summary>
+    public static DrawnHull? Drawn(Entity vessel) =>
+        vessel.Api is ICoreClientAPI && Boats.Is(vessel) && vessel.HasBehavior<EntityBehaviorSeaForces>() && vessel.Properties.Client.Renderer is EntityShapeRenderer renderer
+            ? new DrawnHull(PoseOf(vessel).Lift, renderer.xangle, renderer.yangle, renderer.zangle)
+            : null;
+
+    private static double Lift(Entity? vessel) => vessel != null && Boats.Is(vessel) ? PoseOf(vessel).Lift : 0;
+
+    [ReliesOn("Vintagestory.GameContent.EntityBoat", "OnRenderFrame", "reads CurrentWindSpeedClient.X alone for the boat's roll")]
+    private static void WindStrength(out float __state) => __state = VanillaWeatherPatches.SwapInStrength(GlobalConstants.CurrentWindSpeedClient);
+
+    private static void WindRestore(float __state) => GlobalConstants.CurrentWindSpeedClient.X = __state;
+
+    [ReliesOn("Vintagestory.GameContent.EntityBoat", "OnRenderFrame", "has just set xangle from mountAngle.X and zangle from mountAngle.Z, and returns early while paused")]
+    private static void Respond(Entity __instance)
+    {
+        if (__instance.Api is ICoreClientAPI { IsGamePaused: true } || Boats.Of(__instance) is not { } boat) return;
+        var forces = __instance.GetBehavior<EntityBehaviorSeaForces>();
+        if (forces == null || __instance.Properties.Client.Renderer is not EntityShapeRenderer renderer) return;
+
+        var seaworthiness = forces.Seaworthiness;
+        var rocking = boat.MountAngle(__instance);
+        var pose = PoseOf(__instance);
+        renderer.xangle += (float)(GameMath.Lerp(rocking.X * seaworthiness.RollResponse, pose.Roll, pose.Hold) - rocking.X);
+        renderer.zangle += (float)(GameMath.Lerp(rocking.Z * seaworthiness.PitchResponse, pose.Pitch, pose.Hold) - rocking.Z);
+        if (pose.Hold > 0) Report(__instance, pose);
+        if (Seconds < tracedUntil)
+        {
+            storms!.Log(__instance, "surface trace: frame {0} at {1:F3} s, swimming {2}, at {3:F2} {4:F2}; lifted {5:F3} m, rolled {6:F2}°, pitched {7:F2}°",
+                surface!.Trains.Frame, surface.Trains.Seconds, __instance.Swimming, __instance.Pos.X, __instance.Pos.Z, pose.Lift, pose.Roll * GameMath.RAD2DEG, pose.Pitch * GameMath.RAD2DEG);
+        }
+    }
+
+    public static void Trace(double seconds)
+    {
+        if (capi != null) tracedUntil = Seconds + seconds;
+    }
+
+    private static void LiftModel(EntityShapeRenderer __instance, Entity entity, bool isShadowPass)
+    {
+        if (!Boats.Is(entity)) return;
+        if (PoseOf(entity).Lift is var lift and not 0) __instance.ModelMat[ModelMatrixY] += (float)lift;
+        if (Seconds < tracedUntil && !isShadowPass)
+        {
+            storms!.Log(entity, "surface trace: frame {0}, model at {1:F3} {2:F3} {3:F3} from the camera",
+                surface!.Trains.Frame, __instance.ModelMat[12], __instance.ModelMat[13], __instance.ModelMat[14]);
+        }
+    }
+
+    private static void LiftSeat(EntityRideableSeat __instance, EntityPos __result)
+    {
+        if (__instance.Entity is { Api.Side: EnumAppSide.Client } vessel && Boats.Is(vessel)) __result.Y += PoseOf(vessel).Lift;
+    }
+
+    private static void LiftSelectionBox(EntityBehaviorSelectionBoxes __instance, Matrixf mvmat)
+    {
+        if (__instance.entity is { Api.Side: EnumAppSide.Client } vessel && Boats.Is(vessel) && PoseOf(vessel).Lift is var lift and not 0)
+        {
+            mvmat.Translate(0, (float)lift, 0);
+        }
+    }
+
+    private static void SendUnlifted(ClientMain ___game, out double __state)
+    {
+        __state = Lift(___game.EntityPlayer?.MountedOn?.Entity);
+        if (__state != 0) ___game.EntityPlayer!.Pos.Y -= __state;
+    }
+
+    private static void RestoreLift(ClientMain ___game, double __state)
+    {
+        if (__state != 0) ___game.EntityPlayer.Pos.Y += __state;
+    }
+
+    private static SeaPose PoseOf(Entity boat)
+    {
+        if (surface == null || drawn == null) return default;
+        var frame = surface.Trains.Frame;
+        if (poses.TryGetValue(boat.EntityId, out var cached) && cached.Frame == frame) return cached.Pose;
+
+        var pose = Ride(boat, drawn);
+        if (cached.Frame == frame - 1) largestStep = Math.Max(largestStep, Math.Abs(pose.Lift - cached.Pose.Lift));
+        poses[boat.EntityId] = (frame, pose);
+        return pose;
+    }
+
+    private static SeaPose Ride(Entity boat, IDrawnSea sea)
+    {
+        var forces = boat.GetBehavior<EntityBehaviorSeaForces>();
+        if (forces == null) return default;
+        if (!boat.Swimming)
+        {
+            forces.Ride.Settle();
+            return default;
+        }
+
+        var pose = forces.Ride.Follow(boat, sea, Seconds);
+        var seaworthiness = forces.Seaworthiness;
+        return pose with { Roll = pose.Roll * seaworthiness.RollResponse, Pitch = pose.Pitch * seaworthiness.PitchResponse };
+    }
+
+    private static double Seconds => capi!.InWorldEllapsedMilliseconds / 1000.0;
+
+    private static void Report(Entity boat, SeaPose pose)
+    {
+        if (Seconds - loggedAt < LogEverySeconds) return;
+        loggedAt = Seconds;
+        storms!.Log(boat, "surface: rides lifted {0:F2} m, rolled {1:F1}°, pitched {2:F1}°; largest lift step between frames {3:F3} m",
+            pose.Lift, pose.Roll * GameMath.RAD2DEG, pose.Pitch * GameMath.RAD2DEG, largestStep);
+        largestStep = 0;
+    }
+}

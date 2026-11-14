@@ -1,0 +1,141 @@
+using Newtonsoft.Json.Linq;
+using RoughSeas.Floating;
+using RoughSeas.Storms;
+using RoughSeas.Tests.Storms;
+using Vintagestory.API.Datastructures;
+
+namespace RoughSeas.Tests.Floating;
+
+public class SeaworthinessTests
+{
+    private readonly Waves waves = new(Fixtures.Config().Waves);
+    private readonly SwampingConfig swamping = Fixtures.Config().Swamping;
+
+    [Fact]
+    public void ATwoMetreSwellComesOverTheDugoutButNotTheCurrach()
+    {
+        var crest = waves.Crest(2, breaking: false);
+        Assert.True(Of("dugout").ShippedShare(crest) > 0);
+        Assert.Equal(0, Of("currach").ShippedShare(crest));
+    }
+
+    [Fact]
+    public void TheCurrachRidesOverABreakerThatBoardsTheDugoutAndWashesOverTheRaft()
+    {
+        var crest = waves.Crest(2, breaking: true);
+        Assert.Equal(0, Of("currach").ShippedShare(crest));
+        Assert.True(Of("dugout").ShippedShare(crest) > 0);
+        Assert.True(Of("boat-raft").ShippedShare(crest) > 0);
+    }
+
+    [Fact]
+    public void TheHigherACrestOverTopsTheSideTheMoreOfItStaysAboard()
+    {
+        var dugout = Of("dugout");
+        Assert.True(dugout.ShippedShare(waves.Crest(3, breaking: true)) > dugout.ShippedShare(waves.Crest(1.5, breaking: true)));
+        Assert.InRange(dugout.ShippedShare(waves.Crest(20, breaking: true)), 0, 1);
+    }
+
+    [Fact]
+    public void ABreakerThatRollsTheDugoutLeavesTheCurrachAndTheOutriggerUpright()
+    {
+        Assert.True(Of("dugout").Capsizes(1));
+        Assert.False(Of("currach").Capsizes(1));
+        Assert.False(Of("outrigger").Capsizes(1));
+    }
+
+    [Fact]
+    public void TheDugoutRollsHarderThanTheCurrachAndTheCurrachHarderThanTheOutrigger()
+    {
+        Assert.True(Of("dugout").RollResponse > Of("currach").RollResponse);
+        Assert.True(Of("currach").RollResponse > Of("outrigger").RollResponse);
+    }
+
+    [Fact]
+    public void ARaftGoesOverInABreakerAsHighAsHerLogsSpanAcross()
+    {
+        var beam = 2 * Fixtures.Shape("boat-raft").HalfBeamMetres;
+        Assert.False(Of("boat-raft").Capsizes(beam - 0.01));
+        Assert.True(Of("boat-raft").Capsizes(beam));
+    }
+
+    [Fact]
+    public void ASailboatGoesOverInABreakerOfMoreThanHalfHerLength()
+    {
+        var length = 2 * Fixtures.Shape("boat-sailed").HalfLengthMetres;
+        Assert.False(Of("boat-sailed").Capsizes(0.55 * length - 0.01));
+        Assert.True(Of("boat-sailed").Capsizes(0.55 * length));
+    }
+
+    [Fact]
+    public void ABreakerGivenInMetresOverridesOneGivenInBeamsOrLengths()
+    {
+        var given = Seaworthiness.From(new JsonObject(JObject.Parse("""{"capsizeBreakerMetres": 2, "capsizeBreakerBeams": 1, "capsizeBreakerLengths": 0.5}""")), 1, 8);
+        var beams = Seaworthiness.From(new JsonObject(JObject.Parse("""{"capsizeBreakerBeams": 1, "capsizeBreakerLengths": 0.5}""")), 1, 8);
+
+        Assert.Equal(2, given.CapsizeBreakerMetres);
+        Assert.Equal(1, beams.CapsizeBreakerMetres);
+    }
+
+    [Fact]
+    public void ACraftWithNoSeaworthinessDataNeverCapsizesAndRollsAsVanillaDoes()
+    {
+        var unknown = Seaworthiness.From(new JsonObject(new JObject()), 1, 1);
+        Assert.False(unknown.Capsizes(100));
+        Assert.Equal(1, unknown.RollResponse);
+        Assert.Equal(1, unknown.PitchResponse);
+    }
+
+    [Fact]
+    public void AnEmptyBilgeLeavesHerAsSheIs()
+    {
+        var dugout = Fixtures.Seaworthiness("dugout");
+        Assert.Equal(dugout, dugout.Laden(0, swamping));
+    }
+
+    [Fact]
+    public void AFullBilgeLeavesHerAwashSoEveryCrestComesAboard()
+    {
+        var full = Fixtures.Afloat("currach", litres: Fixtures.Hull("currach").CapacityLitres);
+        Assert.Equal(0, full.FreeboardMetres);
+        Assert.Equal(1, full.ShippedShare(waves.Crest(0.5, breaking: false)));
+    }
+
+    [Fact]
+    public void WaterAboardMakesHerRollMoreAndGoOverToASmallerBreaker()
+    {
+        var dry = Of("dugout");
+        var half = dry.Laden(0.5, swamping);
+        Assert.True(half.RollResponse > dry.RollResponse);
+        Assert.True(half.CapsizeBreakerMetres < dry.CapsizeBreakerMetres);
+        Assert.False(Of("currach").Capsizes(1.5));
+        Assert.True(Of("currach").Laden(1, swamping).Capsizes(1.5));
+    }
+
+    [Fact]
+    public void WaterAboardSlowsALightHullMoreThanAHeavyOne()
+    {
+        Assert.Equal(1, swamping.SpeedFactor(470, 470));
+        Assert.InRange(swamping.SpeedFactor(470, 695), 0.9, 0.95);
+        Assert.InRange(swamping.SpeedFactor(85, 210), 0.8, 0.85);
+    }
+
+    [Fact]
+    public void ALoadedBoatIsSlowerWithADryBilge()
+    {
+        var dugout = Fixtures.Hull("dugout");
+        var loaded = dugout.Crewed(bodies: 130, kit: 70).Total;
+
+        Assert.True(swamping.SpeedFactor(dugout.ReferenceKg, loaded) < 0.95);
+    }
+
+    [Fact]
+    public void WaterAboardLowersHerSideUntilAFullBilgeBringsItToTheWater()
+    {
+        var dugout = Fixtures.Hull("dugout");
+        Assert.True(Fixtures.Afloat("dugout", litres: dugout.CapacityLitres / 2).FreeboardMetres < Of("dugout").FreeboardMetres);
+        Assert.InRange(dugout.Float(dugout.Crewed(litres: dugout.CapacityLitres), litres: dugout.CapacityLitres).FreeboardMetres, -0.01, 0.01);
+    }
+
+    private static Seaworthiness Of(string vessel) => Fixtures.Afloat(vessel);
+}
