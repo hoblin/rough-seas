@@ -195,6 +195,7 @@ public static class SurfaceShader
         if (ShaderRegistry.SupressShaderAndBufferReloads) return;
 
         (normalTilted, rippleTamed, tessellatedRound) = (false, false, SurfaceTessellation.Drawn);
+        Bound.Clear();
         Injected.Clear();
         Failed.Clear();
         SurfaceTessellation.Forget();

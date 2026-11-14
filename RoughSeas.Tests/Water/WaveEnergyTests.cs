@@ -108,4 +108,11 @@ public class WaveEnergyTests
 
         Assert.Equal(0, 1 - fraction + share * Math.Log(fraction), 6);
     }
+
+    [Theory]
+    [InlineData(0.05)]
+    [InlineData(0.5)]
+    [InlineData(0.999)]
+    public void TheBrokenFractionIsTheRootBelowTheShareNotTheOneAtOne(double share) =>
+        Assert.InRange(WaveEnergy.BrokenFraction(share), 0, share);
 }

@@ -61,7 +61,7 @@ public static class VanillaShore
     {
         extra = null;
         var blocks = TickedChunks(world);
-        var solid = blocks.GetBlock(pos, BlockLayersAccess.Solid);
+        var solid = blocks.GetBlockRaw(pos.X, pos.InternalY, pos.Z, BlockLayersAccess.Solid);
         if (!solid.DisplacesLiquids(world.BlockAccessor, pos)) return true;
         __result = solid.ShouldReceiveServerGameTicks(world, pos, offThreadRandom, out var solidExtra);
         // A tick with an extra goes to the block in the default layer, which is the solid one; without one, to the fluid.

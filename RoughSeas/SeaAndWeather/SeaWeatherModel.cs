@@ -15,12 +15,13 @@ public class SeaWeatherModel
     private readonly Showers showers;
     private readonly NormalizedSimplexNoise strengthNoise;
     private readonly NormalizedSimplexNoise veerNoise;
-    private double[]? lags;
+    private readonly double[] lags;
 
     public SeaWeatherModel(long seed, SeaWeatherConfig config, WorldClimate climate, OceanBasins basins, Func<double, double> latitude, double hoursPerYear, double blockMetres,
         Func<double, double, double, double>? seasonalCelsius = null)
     {
         this.config = config;
+        lags = LagsOf(config);
         this.climate = climate;
         this.basins = basins;
         prevailing = new PrevailingWinds(config.PrevailingWinds, latitude);
@@ -36,9 +37,7 @@ public class SeaWeatherModel
     public WorldClimate Climate => climate;
 
     public (double Hours, double Mps)[] SustainedWinds(double x, double z, double hours, double windMps) =>
-        TimeWeightedMeans(windMps, Lags.Select(lag => (lag, Wind(x, z, hours - lag).Speed)), config.SeaBuildHours);
-
-    private double[] Lags => lags ??= LagsOf(config);
+        TimeWeightedMeans(windMps, lags.Select(lag => (lag, Wind(x, z, hours - lag).Speed)), config.SeaBuildHours);
 
     private static double[] LagsOf(SeaWeatherConfig config)
     {

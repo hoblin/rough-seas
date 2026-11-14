@@ -57,7 +57,7 @@ START
                        the game's. Without agentbridge, bin/game cannot drive it; read the log.
                        BENCH_BUILD=Release builds and loads the mods as players get them (Debug
                        by default): measure performance on it (bin/profile help).
-  bin/client stop     close the game when done: save and leave the world, waiting for the save,
+  bin/client stop      close the game when done: save and leave the world, waiting for the save,
                        then stop the client, and throw the take away, so the next job starts on a
                        clean world. Killing its tmux session instead loses what changed since the
                        last autosave.
