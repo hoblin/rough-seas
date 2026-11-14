@@ -15,7 +15,7 @@ Vanilla gives you two ways onto the water, the raft and the sailboat, and nothin
 | Vessel | For | Speed | Weakness |
 | --- | --- | --- | --- |
 | [Hide currach](Hide-Currach) | the first venture along the coast, cargo included | 2.4 m/s, rowed | needs greasing, one hard knock holes it |
-| [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | sails by the wind, a little over a quarter of the wind's speed abeam | stays where launched, shunts to change tack |
+| [Outrigger canoe](Outrigger-Canoe) | fast crossings of open sea | sails by the wind, about a fifth of the wind's speed abeam | stays where launched, shunts to change tack |
 | [Sailboat](Sailboat) | long voyages and heavy cargo | sails by the wind | dear to build, ships water fast in a gale |
 
 Speeds are one rower's, paddled unless noted, on calm water; under sail the wind's. Each tool and how fast it drives each vessel: [paddles, poles and oars](Paddles-Poles-and-Oars).

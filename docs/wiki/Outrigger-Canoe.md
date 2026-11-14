@@ -14,7 +14,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 
 | | |
 | --- | --- |
-| Speed | by the wind: a little over a quarter of the wind's speed with the wind abeam ([sailing it](#sailing-it)); 1.5 m/s paddled, 2.1 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
+| Speed | by the wind: about a fifth of the wind's speed with the wind abeam ([sailing it](#sailing-it)); 1.5 m/s paddled, 2.1 m/s poled ([how fast](Paddles-Poles-and-Oars#how-fast)) |
 | Turning | clumsy, 14° a second paddled |
 | [Hull](Hull-Condition) | 30 000 J in oak, more in harder [woods](Hull-Condition#what-it-is-made-of): its hull is the dugout's |
 | Upkeep | none |
@@ -39,7 +39,7 @@ The outrigger is the boat of the Austronesian expansion, the greatest migration 
 1. **Set the sail.** Sit in the front seat and right-click the halyard cleat at the foot of the mast. The first click sets half the sail, rolled round the boom, the second the full sail, and the third lowers it.
 2. **Steer.** Under sail the wind drives the canoe, and <kbd>A</kbd> and <kbd>D</kbd> steer it whatever you hold. A paddle or a pole drives it only with the sail lowered.
 3. **Keep the wind on the float's side.** The sail stands on the other side of the mast, to leeward, and fills there. A wind from that other side takes the sail aback: it presses on the wrong face, and the sail drives nothing.
-4. **Pick your heading.** With the wind abeam the canoe makes a little over a quarter of the wind's speed, and it runs on with the wind behind it, the sail swung out. As you turn toward the wind it slows, and head to wind the sail draws nothing and the wind pushes the canoe back.
+4. **Pick your heading.** With the wind abeam the canoe makes about a fifth of the wind's speed, and it runs on with the wind behind it, the sail swung out. As you turn toward the wind it slows, and head to wind the sail draws nothing and the wind pushes the canoe back.
 5. **Shunt to sail the other way.** Right-click the sail step at the far end. Over a few seconds the stays rake the mast over toward that end, the sail's foot is carried along the lee side into that step, and the canoe sails toward that end with its float still to windward. The sail draws nothing while it is carried. You stay in your seat, so you now face the way you came.
 
 The wind pushes the canoe sideways a little as it sails, and drifts it downwind with the sail lowered. A canoe [tied up](Mooring) with its sail set strains its rope; set loose, it sails off on its own. How the wind drives it: [the science of the hull](The-Science-of-the-Hull#under-sail).

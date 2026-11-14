@@ -59,8 +59,6 @@ public sealed class SquareRig : Rigging
 
     public override HullPoint Axis => axis;
 
-    public override Planform Planform => new Rectangle((heads.Port - clews.Port).Length * Set.Span / (heads.Port - heads.Starboard).Length);
-
     public override RigWidths Widths { get; }
 
     public override double Resting => Free.From;

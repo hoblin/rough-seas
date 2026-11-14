@@ -11,6 +11,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
 {
     private const int Trims = 36;
     private const int Narrowings = 12;
+    private static readonly (double Reach, double Span)[] Outline = [(0, 0), (1, 0), (1, 1), (0, 1)];
     private const int TiedWithinDecimals = 3;
     private const double ShortestArmMetres = 0.1;
 
@@ -208,7 +209,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         Aback = false;
 
         var force = Force(State, air, halfDensity).Force;
-        Pressure = halfDensity * air.Speed * air.Speed * wing.Pressing(rig.End.Planform, Incidence(State, air));
+        Pressure = halfDensity * air.Speed * air.Speed * Pressing(State, rig.End.Belly(State), air);
         Filled(air);
         return (State.Centre(shown, Fill), force);
     }
@@ -230,7 +231,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
     private (HullPoint At, HullPoint Force) Backed(Airflow air, double halfDensity)
     {
         Aback = true;
-        Pressure = halfDensity * air.Speed * air.Speed * wing.Pressing(rig.End.Planform, Math.Asin(Math.Clamp(Flow(State.Form.Normal, air) / air.Speed, -1, 1)));
+        Pressure = halfDensity * air.Speed * air.Speed * Pressing(State, State.Form.Normal, air);
         Filled(air);
         return Plate(State, air, halfDensity);
     }
@@ -278,7 +279,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         var incidence = Math.Clamp(Math.Asin(Math.Clamp(belly.Dot(flow), -1, 1)), 0, Math.PI / 2);
         var along = flow - flow.Dot(belly) * belly;
         var pressure = halfDensity * air.Speed * air.Speed * Area();
-        return (posed.Centre(shown, Fill), pressure * (wing.Pressing(end.Planform, incidence) * belly + wing.Friction * along));
+        return (posed.Centre(shown, Fill), pressure * ((incidence > 0 ? Pressing(posed, belly, air) : 0) * belly + wing.Friction * along));
     }
 
     private (HullPoint At, HullPoint Force) Luffing(Airflow air, double halfDensity)
@@ -321,11 +322,19 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
     {
         var normal = posed.Form.Normal;
         var flow = Flow(normal, air);
-        var pressing = wing.Pressing(rig.End.Planform, Math.Asin(Math.Clamp(flow / air.Speed, -1, 1)));
+        var pressing = Pressing(posed, normal, air);
         return (posed.Centre(shown, Fill), halfDensity * air.Speed * air.Speed * pressing * Math.Sign(flow) * Area() * normal);
     }
 
-    private double Incidence(RigState posed, Airflow air) => Math.Asin(Math.Clamp(Flow(rig.End.Belly(posed), air) / air.Speed, -1, 1));
+    private double Pressing(RigState posed, HullPoint normal, Airflow air)
+    {
+        var flow = 1 / air.Speed * new HullPoint(air.Along, 0, air.Across);
+        var along = flow - flow.Dot(normal) * normal;
+        along = along.Length > ShortestArmMetres * ShortestArmMetres ? along.Unit : (posed.Form.At(1, 0.5, 0, shown) - posed.Form.At(0, 0.5, 0, shown)).Unit;
+        var across = normal.Cross(along);
+        var outline = Outline.Select(corner => posed.Form.At(corner.Reach, corner.Span, 0, shown)).Select(point => (point.Dot(along), point.Dot(across))).ToArray();
+        return wing.Pressing(Lattice.Seen(outline), Math.Asin(Math.Clamp(flow.Dot(normal), -1, 1)));
+    }
 
     private static double Flow(HullPoint normal, Airflow air) => normal.Along * air.Along + normal.Across * air.Across;
 

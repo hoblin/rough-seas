@@ -1,46 +1,43 @@
 using System;
+using System.Linq;
 
 namespace RoughSeas.Wind;
 
-public abstract class Planform
+public sealed class Wing(FlowConfig flow, double friction)
 {
-    public abstract double Potential { get; }
+    private const double Degree = Math.PI / 180;
 
-    public abstract double Vortex { get; }
-}
-
-public sealed class Delta(double apexRadians) : Planform
-{
-    private double Aspect => 4 * Math.Tan(apexRadians / 2);
-
-    public override double Potential => 2 * Math.PI * Aspect / (2 + Math.Sqrt(Aspect * Aspect + 4));
-
-    public override double Vortex => (Potential - Potential * Potential / (Math.PI * Aspect)) / Math.Sin(apexRadians / 2);
-}
-
-public sealed class Rectangle(double aspect) : Planform
-{
-    public override double Potential => 2 * Math.PI * aspect / (2 + Math.Sqrt(4.0 / 3 * aspect * aspect + 4));
-
-    public override double Vortex => Math.PI * aspect / (2 + Math.Sqrt(aspect * aspect / 4 + 4)) + 2 * Math.PI / (2 + aspect);
-}
-
-public sealed class Wing(double breakdownRadians, double separatedRadians, double bluff, double friction)
-{
-    public static Wing Of(WindConfig config, string kind) =>
-        config.Sails.TryGetValue(kind, out var measured)
-            ? new Wing(measured.BreakdownDegrees * Math.PI / 180, measured.SeparatedDegrees * Math.PI / 180, config.BluffDrag, config.ClothFriction)
-            : throw new InvalidOperationException($"no sail measured for a rig of kind '{kind}'");
+    public static Wing Of(WindConfig config) => new(config.Flow, config.ClothFriction);
 
     public double Friction => friction;
 
-    public double Pressing(Planform planform, double incidence)
+    public double Pressing(Lattice seen, double incidence)
     {
         var angle = Math.Min(Math.Abs(incidence), Math.PI / 2);
         var (sin, cos) = (Math.Sin(angle), Math.Cos(angle));
-        var body = bluff * sin * sin;
-        var lift = planform.Potential * sin * cos + planform.Vortex * sin * sin - body;
-        var held = angle <= breakdownRadians ? 1 : angle >= separatedRadians ? 0 : (separatedRadians - angle) / (separatedRadians - breakdownRadians);
-        return body + held * lift;
+        var attached = seen.Potential * sin * cos + seen.Vortex * sin * sin;
+        var separated = Across(seen.Aspect) * sin * (4 + Math.PI) / (4 + Math.PI * sin);
+        var (breaks, gone) = Breaks(seen);
+        var held = angle <= breaks ? 1 : angle >= gone ? 0 : (gone - angle) / (gone - breaks);
+        return separated + held * (attached - separated);
+    }
+
+    private double Across(double aspect) => aspect > 0 ? flow.NormalPlate.Across + flow.NormalPlate.Aspect * (aspect + 1 / aspect) : flow.NormalPlate.Across;
+
+    private (double Breaks, double Gone) Breaks(Lattice seen)
+    {
+        var (table, at) = seen.LeadingSweep >= flow.VortexSweepDegrees * Degree
+            ? (flow.Deltas, seen.LeadingSweep / Degree)
+            : (flow.Plates, seen.Aspect > 0 ? 1 / seen.Aspect : flow.Plates.Max(row => row[0]));
+        var rows = table.OrderBy(row => row[0]).ToArray();
+        var after = Array.FindIndex(rows, row => row[0] >= at);
+        var (a, b) = after switch
+        {
+            < 0 => (rows[^1], rows[^1]),
+            0 => (rows[0], rows[0]),
+            _ => (rows[after - 1], rows[after])
+        };
+        var t = b[0] > a[0] ? (at - a[0]) / (b[0] - a[0]) : 0;
+        return ((a[1] + t * (b[1] - a[1])) * Degree, (a[2] + t * (b[2] - a[2])) * Degree);
     }
 }

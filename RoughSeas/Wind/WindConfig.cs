@@ -13,7 +13,7 @@ public class WindConfig
     public double ClothFriction;
     public float LogSeconds;
     public double JumpMetresPerSecond;
-    public Dictionary<string, SailConfig> Sails = new();
+    public FlowConfig Flow = new();
     public CrewConfig Crew = new();
     public LineConfig Line = new();
 }
@@ -24,10 +24,18 @@ public class CrewConfig
     public double HaulMetresPerSecond;
 }
 
-public class SailConfig
+public class FlowConfig
 {
-    public double BreakdownDegrees;
-    public double SeparatedDegrees;
+    public NormalPlateConfig NormalPlate = new();
+    public double VortexSweepDegrees;
+    public double[][] Deltas = [];
+    public double[][] Plates = [];
+}
+
+public class NormalPlateConfig
+{
+    public double Across;
+    public double Aspect;
 }
 
 public class LineConfig

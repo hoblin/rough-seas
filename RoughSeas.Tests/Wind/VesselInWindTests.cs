@@ -219,7 +219,7 @@ public class VesselInWindTests
     }
 
     [Fact]
-    public void OnABeamReachSheMakesAboutAThirdOfTheWindsSpeed()
+    public void OnABeamReachSheMakesAboutAFifthOfTheWindsSpeed()
     {
         var (body, _) = Outrigger(FullSail);
         var drag = Fixtures.DragOf("outrigger", Fixtures.Hull("outrigger").Crewed());
@@ -230,6 +230,6 @@ public class VesselInWindTests
             var load = body.Load(OverHerFloat, set.Velocity, Yaw, Waterline, step);
             set.Settle(drag, new WaterOnHull(0, 0), Yaw, step, drag.Acceleration(load.X, load.Z, Yaw));
         }
-        Assert.InRange(set.Velocity.Z / Breeze, 0.25, 0.4);
+        Assert.InRange(set.Velocity.Z / Breeze, 0.18, 0.26);
     }
 }

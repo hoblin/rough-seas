@@ -68,8 +68,6 @@ public sealed class CrabClaw : Rigging
 
     public override HullPoint Axis => axis;
 
-    public override Planform Planform => new Delta(Math.Acos((Hoisted.Peak - Hoisted.Tack).Unit.Dot((rest.At(1, 0, 0, Set) - Hoisted.Tack).Unit)));
-
     public override RigWidths Widths { get; }
 
     public override double Resting { get; }
