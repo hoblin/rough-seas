@@ -6,11 +6,11 @@ namespace RoughSeas.Wind;
 
 public readonly record struct Lattice(double Potential, double Vortex, double Aspect, double LeadingSweep)
 {
-    private const int Strips = 20;
-    private const int Rows = 6;
+    private const int Strips = 10;
+    private const int Rows = 4;
     private const double Wake = 1000;
 
-    private const double ShapeResolution = 100;
+    private const double ShapeResolution = 50;
     private const int MostShapes = 20000;
 
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Lattice> Shapes = new();
@@ -93,17 +93,9 @@ public readonly record struct Lattice(double Potential, double Vortex, double As
 
     private static double Secant(IReadOnlyList<(double X, double Y)> outline)
     {
-        var turning = Math.Sign(Enumerable.Range(0, outline.Count).Sum(k => outline[k].X * outline[(k + 1) % outline.Count].Y - outline[(k + 1) % outline.Count].X * outline[k].Y));
-        var (spanned, weighted) = (0.0, 0.0);
-        for (var k = 0; k < outline.Count; k++)
-        {
-            var (a, b) = (outline[k], outline[(k + 1) % outline.Count]);
-            var (dx, dy) = (b.X - a.X, b.Y - a.Y);
-            if (turning * dy >= 0 || Math.Abs(dy) < 1e-12) continue;
-
-            spanned += Math.Abs(dy);
-            weighted += Math.Sqrt(dx * dx + dy * dy);
-        }
+        var edges = Leading(outline).ToArray();
+        var spanned = edges.Sum(edge => Math.Abs(edge.B.Y - edge.A.Y));
+        var weighted = edges.Sum(edge => Math.Sqrt(Math.Pow(edge.B.X - edge.A.X, 2) + Math.Pow(edge.B.Y - edge.A.Y, 2)));
         return spanned > 0 ? weighted / spanned : 1;
     }
 
@@ -123,10 +115,15 @@ public readonly record struct Lattice(double Potential, double Vortex, double As
 
     private static double SweepOf(IReadOnlyList<(double X, double Y)> outline)
     {
-        var edges = Enumerable.Range(0, outline.Count).Select(k => (A: outline[k], B: outline[(k + 1) % outline.Count]))
-            .Where(edge => Math.Abs(edge.B.Y - edge.A.Y) > 1e-9).ToArray();
-        var lead = edges.MinBy(edge => (edge.A.X + edge.B.X) / 2);
+        var lead = Leading(outline).MaxBy(edge => Math.Abs(edge.B.Y - edge.A.Y));
         return Math.Atan2(Math.Abs(lead.B.X - lead.A.X), Math.Abs(lead.B.Y - lead.A.Y));
+    }
+
+    private static IEnumerable<((double X, double Y) A, (double X, double Y) B)> Leading(IReadOnlyList<(double X, double Y)> outline)
+    {
+        var turning = Math.Sign(Enumerable.Range(0, outline.Count).Sum(k => outline[k].X * outline[(k + 1) % outline.Count].Y - outline[(k + 1) % outline.Count].X * outline[k].Y));
+        return Enumerable.Range(0, outline.Count).Select(k => (A: outline[k], B: outline[(k + 1) % outline.Count]))
+            .Where(edge => turning * (edge.B.Y - edge.A.Y) < 0 && Math.Abs(edge.B.Y - edge.A.Y) > 1e-12);
     }
 
     private static double Downwash(Horseshoe shoe, double x, double y) =>

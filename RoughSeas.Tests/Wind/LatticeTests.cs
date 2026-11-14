@@ -22,13 +22,13 @@ public class LatticeTests
     }
 
     [Theory]
-    [InlineData(0.5, 0.77, 2.9)]
-    [InlineData(1.0, 1.46, 2.87)]
-    [InlineData(2.0, 2.49, 3.05)]
-    public void ARectangleTakesLamarsLiftSlopeAndEdgeVortexLift(double aspect, double potential, double vortex)
+    [InlineData(0.5, 0.831, 2.9)]
+    [InlineData(1.0, 1.59, 2.87)]
+    [InlineData(2.0, 2.59, 3.05)]
+    public void ARectangleTakesTorresAndMuellersLiftSlopeAndLamarsEdgeVortexLift(double aspect, double potential, double vortex)
     {
         var lattice = Lattice.Of(Rectangle(aspect));
-        Assert.True(Math.Abs(lattice.Potential / potential - 1) < 0.1, $"Kp {lattice.Potential:F2}, Lamar {potential}");
+        Assert.True(Math.Abs(lattice.Potential / potential - 1) < 0.1, $"Kp {lattice.Potential:F2}, measured {potential}");
         Assert.True(Math.Abs(lattice.Vortex / vortex - 1) < 0.15, $"Kv {lattice.Vortex:F2}, Lamar {vortex}");
     }
 }
