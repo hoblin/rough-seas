@@ -9,7 +9,7 @@ public sealed class HeightColours
 {
     private const double ReachMetres = 128;
     private const double StepMetres = 2;
-    private const string Uniform = "seaHeightColours";
+    public const string Uniform = "seaHeightColours";
     private const string Block = "seaBlockCell";
     private const string VertexOutput = "flat out int waterFlags;";
     private const string VertexFilled = "uv = uvIn;";
@@ -74,9 +74,6 @@ public sealed class HeightColours
         }
     }
 
-    public void Bind(IShaderProgram program, double stillSurfaceY)
-    {
-        if (!program.HasUniform(Uniform)) return;
+    public void Bind(IShaderProgram program, double stillSurfaceY) =>
         program.Uniform(Uniform, new Vec4f((float)(stillSurfaceY + lowest), (float)(stillSurfaceY + highest), On ? 1 : 0, View));
-    }
 }

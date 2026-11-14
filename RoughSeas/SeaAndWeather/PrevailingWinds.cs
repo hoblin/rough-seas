@@ -22,8 +22,17 @@ public class PrevailingWinds
     public double TowardRadians(double z)
     {
         var degrees = LatitudeDegrees(z);
-        var band = bands.FirstOrDefault(b => Math.Abs(degrees) <= b.MaxLatitude) ?? bands[^1];
+        var band = Band(Math.Abs(degrees));
         var fromDegrees = degrees >= 0 ? band.NorthFromDegrees : band.SouthFromDegrees;
         return (fromDegrees + 180) * GameMath.DEG2RAD_DOUBLE;
+    }
+
+    private PrevailingWind Band(double degrees)
+    {
+        foreach (var band in bands)
+        {
+            if (degrees <= band.MaxLatitude) return band;
+        }
+        return bands[^1];
     }
 }

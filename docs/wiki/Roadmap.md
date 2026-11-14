@@ -123,6 +123,18 @@ The sea pushes, and the boats carry their load loose.
 - **Vintage Story 1.22.4** and later: the holds check who may open them as the game does since 1.22.4.
 - **Switched off for now:** the open sea's sound, the surf and the whitecaps' hiss, which didn't match the water you see. They come back from real recordings ([Further out](#further-out)). The shore laps with the game's own sound, the game's rowing plays at its own volume, and every wave at a hull, every breaker and every knock still sounds.
 
+## 4.6
+
+Other mods' boats take our sea, and the water lets you out of it.
+
+- **[Shipwright](Other-Mods#shipwright)'s ten boats are vessels of ours:** they ride the swell, ship water, crack, flood and moor as ours do, each weighed as a real craft of its size.
+- **[Walkable Entities](Other-Mods#walkable-entities):** a player standing on a boat's deck rises and rolls with it on our swell.
+- **[Wading](Swimming#wading).** Until the water reaches your chest you walk and jump as on land, so a jump takes you up a one-block step out of the water; the water drags you by the part of you it covers.
+- **A swimmer strokes by power,** pulling hardest from a standstill.
+- **Every part of a vessel can be aimed at:** seats, holds and the paddle and pole stowage. A stowed paddle or pole lies centred on the vessel.
+- **Every text translated,** the hold's "Open" hint among them.
+- **Lighter on the machine:** the surf, the shader and the shore water do their work once, for about a third less time spent in the mod.
+
 ## Next release
 
 Sailing becomes sailing.
