@@ -96,13 +96,28 @@ public class PlayerPersonTests
     }
 
     [Fact]
-    public void HasPartsOfKnownMaterialsForEveryToolTheGameKnows()
+    public void HasPartsForEveryToolTheGameKnows()
     {
-        foreach (var tool in Enum.GetValues<EnumTool>())
-        {
-            Assert.True(Config.Tools.TryGetValue(tool.ToString().ToLowerInvariant(), out var parts), tool.ToString());
-            Assert.Contains(parts.Head.Of, Config.Densities.Keys);
-            if (parts.Haft is { } haft) Assert.Contains(haft.Of, Config.Densities.Keys);
-        }
+        Assert.All(Enum.GetValues<EnumTool>(), tool => Assert.True(Config.Tools.ContainsKey(tool.ToString().ToLowerInvariant()), tool.ToString()));
+    }
+
+    [Fact]
+    public void ConfigNamingAMaterialWithNoDensityFailsToLoad()
+    {
+        var broken = new CarriedConfig { Densities = Config.Densities, HandlePrefix = Config.HandlePrefix, UnknownArmourMaterial = "orichalcum" };
+
+        Assert.Throws<ArgumentException>(() => new Materials(broken));
+    }
+
+    [Fact]
+    public void ArmourThatSlowsNobodyWeighsNothingUnlessItIsWood()
+    {
+        Assert.Equal(default, Fixtures.Person.Weigh([new Worn(0, "leather")], []));
+    }
+
+    [Fact]
+    public void AMaterialThatIsOnlyTheHandlesPrefixIsAHeadOfIt()
+    {
+        Assert.Equal((Config.HandlePrefix, (string?)null), new Materials(Config).Split(Config.HandlePrefix));
     }
 }

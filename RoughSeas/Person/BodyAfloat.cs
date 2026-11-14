@@ -114,14 +114,14 @@ public static class BodyAfloat
             if (wasSwimming) system!.Log(entity, "wading at y {0:F2}: vanilla's gravity and jump, the water's drag across", pos.Y);
             wasSwimming = false;
             wading = (surface, place, kit, rate, current);
-            warning!.Tell(entity, null, true);
+            warning!.Clear(entity);
             Trace(entity, pos, surface, "wading", double.PositiveInfinity);
             return true;
         }
         if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
         wasSwimming = true;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
-            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity), entity.OnGround, SwimmingStrength.Of(entity));
+            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity), OnBed(entity), SwimmingStrength.Of(entity));
         if (body.Reading.Kick > 0 && !kicking) system!.Log(entity, "pushes off the bed at y {0:F2}: {1:F0} N toward {2:F2} {3:F2} {4:F2}", pos.Y, body.Reading.Kick, stroke.X, stroke.Y, stroke.Z);
         kicking = body.Reading.Kick > 0;
         pos.Motion.Set(next.X, next.Y, next.Z);
@@ -129,7 +129,8 @@ public static class BodyAfloat
         var stroked = stroke;
         stroke = default;
         var spare = body.Reading.SpareNewtons;
-        warning!.Tell(entity, spare < 0 ? Refusal.TooHeavyToRise(kit.Kg, -spare) : null, stroked.Y > 0);
+        var asking = stroked.Y > 0;
+        warning!.Tell(entity, asking && spare < 0 ? Refusal.TooHeavyToRise(kit.Kg, -spare) : null, asking);
         Trace(entity, pos, surface, "swimming", spare);
 
         var now = capi.InWorldEllapsedMilliseconds / 1000.0;
@@ -175,7 +176,12 @@ public static class BodyAfloat
 
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetPlayerControls", "turns WalkYaw toward the way the keys move and WalkPitch toward the look while the player swims")]
     private static Posture Lying(Entity entity) =>
-        entity is EntityPlayer { Controls.TriesToMove: true } player && !BodyOnTheBed.Stands(player) ? Posture.Lying(player.WalkYaw, player.WalkPitch) : Posture.Upright;
+        entity is EntityPlayer { Controls.TriesToMove: true } player && !OnBed(player) ? Posture.Lying(player.WalkYaw, player.WalkPitch) : Posture.Upright;
+
+    /// <summary>A swimming player whose feet stand on the bed, while realistic swimming is on.</summary>
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorControlledPhysics", "ApplyTests", "sets OnGround for a body that comes down onto a block, a swimming one on the bed included")]
+    public static bool OnBed(Entity entity) =>
+        entity is EntityPlayer { Swimming: true, OnGround: true } && Mechanic.RealisticSwimming.On(entity.World);
 
     private static void Trace(Entity entity, EntityPos pos, WaterSurface surface, string how, double spare)
     {
@@ -193,7 +199,7 @@ public static class BodyAfloat
 
     private static void Leave(Entity entity, string? why)
     {
-        warning?.Tell(entity, null, true);
+        warning?.Clear(entity);
         (stroke, kicking) = (default, false);
         wading = null;
         if (body == null) return;

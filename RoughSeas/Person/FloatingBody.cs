@@ -19,7 +19,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
 {
     private readonly Body body = person.Body;
     private readonly SwimmingArms arms = new(config.Body.Swimming, waves.DensityOf(false));
-    private readonly Legs legs = new(person.Body, config.Body.Legs, WaveTheory.Gravity);
+    private readonly Legs legs = new(person.Body, config.Body.Legs);
     private Breaker? breaker;
     private bool coasting = true;
 
@@ -41,7 +41,8 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
         SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null, bool onBed = false, double strength = 1)
     {
-        var kick = legs.Push(at.X, at.Feet, at.Z, onBed, stroke);
+        var kick = legs.Push(at.X, at.Feet, at.Z,
+            (motion.X * WaterDrag.TicksPerSecond, motion.Y * WaterDrag.TicksPerSecond, motion.Z * WaterDrag.TicksPerSecond), onBed, stroke);
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
         var air = body.Squeezed(body.BreathingLitres, surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
@@ -84,7 +85,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var carried = Velocity;
         var heave = heaveThrough + rise + (lift + (thrust * stroke.Y + kick.Y) / inertia) * seconds;
 
-        var spare = (density * (whole + kit.Litres) / Body.LitresPerCubicMetre - massKg) * WaveTheory.Gravity + strength * arms.Thrust(0, density);
+        var spare = Body.Lift(whole + kit.Litres, density, massKg, 0, WaveTheory.Gravity) * massKg + strength * arms.Thrust(0, density);
         Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, water.WaveX, rise, water.WaveZ, carried.X, carried.Z, thrust, spare,
             Math.Sqrt(kick.X * kick.X + kick.Y * kick.Y + kick.Z * kick.Z));
         return new BodyMotion(
@@ -184,6 +185,10 @@ public readonly record struct BodyPlace(double X, double Feet, double Z, double 
 /// <summary>A body's motion, in blocks per tick, as vanilla's <c>Pos.Motion</c>.</summary>
 public readonly record struct BodyMotion(double X, double Y, double Z);
 
-/// <summary>What one step of a body found, for the log.</summary>
+/// <summary>
+/// What one step of a body found. <see cref="SpareNewtons"/> decides whether the swimmer can swim up: what the water
+/// displaced holds up, with the body wholly under and its lungs as squeezed as now, and the arms' pull from a
+/// standstill, over the weight; infinite while wading, which the base game's jump moves.
+/// </summary>
 public readonly record struct FloatReading(double Waterline, double UnderLitres, double WholeLitres, double LungLitres, double Lift, double Churn,
     double FlowX, double Rise, double FlowZ, double CarriedX, double CarriedZ, double Thrust, double SpareNewtons = double.PositiveInfinity, double Kick = 0);

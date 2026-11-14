@@ -10,7 +10,7 @@ The base game holds a swimmer up by a rule and lets you swim fast whatever you c
 - Waves lift you, currents carry you and breaking crests push you under.
 - On the bottom you stand on your feet and push off it with your legs.
 
-Each world can turn this off: with [Realistic swimming](World-Settings#the-mechanics) off you swim as in the base game, and [Swimming strength](World-Settings#the-mechanics) makes your stroke two or three times as strong.
+Each world can turn this off: with [Realistic swimming](World-Settings#the-mechanics) off you swim as in the base game, and [Swimming strength](World-Settings#swimming-strength) makes your stroke two or three times as strong.
 
 ## Floating
 
@@ -36,7 +36,7 @@ The water you swim in moves you too: swim with a wave's front face and it carrie
 
 Where you sink to the bottom you stand on it on your feet, and walk on it as on land.
 
-Press jump to push off the bottom with your legs, as hard as a jump on land. Alone it lifts you up toward the surface. With a direction held you bound off the bottom that way, land and push off again, so even when you carry too much to swim up you can bound along the bottom to the shore.
+Press jump to push off the bottom with your legs. Alone it lifts you up toward the surface, a body laden past swimming up included. With a direction held you bound off the bottom that way, land and push off again, so even when you carry too much to swim up you can bound along the bottom to the shore.
 
 ## Getting out
 
@@ -62,13 +62,13 @@ In the water a thing weighs what it weighs in the air less the water it pushes a
 | Full iron plate | 35 kg | 31 kg |
 | Full iron chain | 7.5 kg | 6.5 kg |
 | Bear hide armour | 5 kg | 0.4 kg |
-| Wooden armour | 7.5 kg | −3.5 kg: it holds you up like a float |
+| Wooden armour | 7.5 kg | −3.5 kg: it holds you up a little |
 
 Your arms lift about 7 kg of it in fresh water and 9 kg in the sea. Carry more and you can't swim up: the game tells you how much you carry. Move tools into your backpack, or push off the bottom and bound to the shore. Full plate takes you down fast.
 
 ## Going deep
 
-Once your chest is about 6 m down, the water squeezes the air in your lungs so far that you sink with nothing on you, and you keep sinking until you swim up. Above that depth you rise on your own, slowly. A jump in can take you that deep.
+Once your chest is about 6 m down, the water squeezes the air in your lungs so far that you sink with nothing on you, and you keep sinking until you swim up. Above that depth you rise on your own in the sea, slowly; in fresh water you sink at any depth unless you swim. A jump in can take you that deep.
 
 ## Breaking crests
 

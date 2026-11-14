@@ -23,11 +23,13 @@
         "dragAreaAcross": 0.45,
         "dragAreaSwimming": 0.0613,
         "legs": {
-            "jumpMetres": 0.3,
-            "pushMetres": 0.4,
+            "newtonsPerKg": 35.5,
+            "metresPerSecond": 3.03,
+            "pushMetres": 0.395,
             "sources": {
-                "jumpMetres": "Countermovement jumps of 41 physically active men of 78.6 +/- 14.0 kg, 29.5-30.2 cm, taking off at 2.6 m/s (PMC7039490, Table 1)",
-                "pushMetres": "The legs' push from the lowest point to take-off in squat jumps of 21 trained men of 74-79 kg: 39.5 cm from a 90° knee, 47.1 cm from 70° (Frontiers in Physiology 2025, 10.3389/fphys.2025.1551488). The legs' mean force over it is m g (1 + h/d), by work and energy (Samozino et al. 2008, J Biomech 41:2940, within 3% of a force plate): about 1.3 kN. In water it pushes the body against little weight but its added mass and drag; a swimmer's push off a pool wall, the nearest measured, leaves at 2.2 m/s after 0.37 s (David et al. 2022, Front Sports Act Living 4:936695, Table 3)"
+                "newtonsPerKg": "The legs' force-velocity profile, F = F0 (1 - v/v0), the force they push with at the speed v the body moves away from the bed (Samozino et al. 2008, J Biomech 41:2940), measured in squat jumps from a 90° knee by 21 resistance-trained men of 73.9-79.2 kg: F0 2820 N in the stronger ten and 2615 N in the weaker eleven, 2712 N over all at 76.4 kg (Qin et al. 2025, Front Physiol 16:1551488, Table 1): 35.5 N a kilogram. With no weight to carry in the water the legs straighten faster and push with less, as their profile says. The nearest measured push in water, a swimmer's off a pool wall, leaves at 2.2 m/s after 0.37 s (David et al. 2022, Front Sports Act Living 4:936695, Table 3)",
+                "metresPerSecond": "The same profile's v0, the speed at which the legs push with nothing: 3.33 m/s in the stronger ten and 2.75 m/s in the weaker eleven, 3.03 m/s over all (Qin et al. 2025, Table 1)",
+                "pushMetres": "How far the legs push, from the lowest point of a squat jump from a 90° knee to take-off, 39.5 cm (Qin et al. 2025)"
             }
         },
         "swimming": {
@@ -57,7 +59,7 @@
     },
     "carried": {
         "armourKgPerWalkSpeed": 83.3,
-        "armourMaterial": "steel",
+        "unknownArmourMaterial": "steel",
         "unslowingArmourKg": { "wood": 2.5 },
         "densities": {
             "copper": 8960,
@@ -105,7 +107,7 @@
             "bear-polar": "hide",
             "bear-sun": "hide"
         },
-        "handle": "bone",
+        "handlePrefix": "bone",
         "tools": {
             "axe": { "head": { "kg": 0.9, "of": "steel" }, "haft": { "kg": 0.3, "of": "hickory" } },
             "poleaxe": { "head": { "kg": 1.5, "of": "steel" }, "haft": { "kg": 0.82, "of": "ash" } },
@@ -143,11 +145,11 @@
         },
         "sources": {
             "armourKgPerWalkSpeed": "Armour is known by how much it slows its wearer, so another mod's counts too. Vanilla's full plate slows by 0.42, three pieces at 0.14, and suits of field armour tested on walkers weighed 35 +/- 5 kg with the doublet (Askew, Formenti & Minetti 2012, Proc R Soc B 279:640): 83 kg to the unit. Vanilla's full chain then weighs 7.5 kg, against a mail hauberk of about 9.5 kg (Cleveland Museum of Art 1916.1543). No mass of lamellar, scale or a padded coat was found",
-            "armourMaterial": "Armour whose material isn't in the table is taken as steel, what most armour that slows its wearer is made of",
-            "unslowingArmourKg": "Armour that doesn't slow its wearer has no weight to read; of it, wood floats enough to count. Vanilla's improvised wooden armour takes its closest, vanilla's wooden lamellar, which slows by 0.03: 2.5 kg of wood that holds a swimmer up as a life jacket does. Leather and linen of the same kind weigh next to nothing in the water and aren't counted",
+            "unknownArmourMaterial": "Armour whose material isn't in the table is taken as steel, what most armour that slows its wearer is made of",
+            "unslowingArmourKg": "Armour that doesn't slow its wearer has no weight to read; of it, wood floats enough to count. Vanilla's improvised wooden armour takes its closest, vanilla's wooden lamellar, which slows by 0.03: 2.5 kg of wood, 3.7 L of ash, that holds a swimmer up by about 12 N, a tenth of a life jacket's buoyancy. Leather and linen of the same kind weigh next to nothing in the water and aren't counted",
             "densities": "kg/m3. Elements: CRC Handbook of Chemistry and Physics, 84th ed. (Lide 2003), Sect. 4, lead at its recommended 11340. Steel: 77-78.5 kN/m3 (EN 1991-1-1, Table A.4). Stainless steel: 304, about 8000 (Engineering ToolBox, Metals and Alloys Densities). Meteoric iron: iron meteorites' bulk densities run 6980-7930 (Fry et al. 2018, Meteoritics & Planetary Science, doi 10.1111/maps.13067), and kamacite's is 7870-7910. Tin bronze: cast C90500, 88Cu-10Sn-2Zn, 8720 (Wieland Concast datasheet). Brass: 8400 at 60/40 and 8525 at 70/30 (Engineering ToolBox), so 8460 at vanilla's 65/35. Bismuth bronze, black bronze, cupronickel, electrum and molybdochalkos had no measure: each is the middle of vanilla's alloy recipe (60Cu-25Zn-15Bi, 76Cu-12Ag-12Au, 70Cu-30Ni, 50Au-50Ag, 90Pb-10Cu by mass) at its elements' volumes added, which holds within 1-2% for these alloys (Cu-Ni and Au-Ag are continuous solid solutions). Flint: 2400-2600, compact chert near quartz's 2650 (Miedema, Slurry Transport, Appendix A). Bone: cortical bone, 1700-2100, typically about 1900 (Currey 2002, Bones: Structure and Mechanics). Ash: European ash at 12% moisture, 680 (The Wood Database, European Ash). Hickory: shagbark hickory at 12% moisture, 800 (The Wood Database, Shagbark Hickory). A haft in the water for minutes stays dry: water enters wood through its end grain slowly. Linen: flax fibre, 1500 (Bledzki & Gassan 1999, Prog Polym Sci 24(2):221-274). Hide and leather: skin, 1090 (Woodard & White 1986, Br J Radiol 59:1209; ICRU Report 46): dry leather is porous, but its pores fill within minutes in the water, which leaves the tissue's own density",
             "alike": "Every stone a tool is knapped from is taken as flint, the commonest of them; a club's 'wood' as ash; leather and every bear's hide as hide",
-            "handle": "A tool whose material starts with this has a handle of it and a head of the rest: vanilla's bone-handled knives and axes (bonechert)",
+            "handlePrefix": "A tool whose material starts with this has a handle of it and a head of the rest: vanilla's bone-handled knives and axes (bonechert)",
             "tools": "Whatever vanilla's item type calls a tool or weapon (EnumTool), as a head of metal or stone and a haft of wood, each measured on a real hand-forged or traditional tool. The head's volume is its mass over the metal it was measured in; carried, it is that volume of the item's own metal or stone (vanilla's material or metal variant), so a copper head of a steel head's size is heavier and a flint one lighter: a steel forest axe's head as flint, 0.30 kg, against experimental flint axe heads of 243-482 g, median 362 g (EXARC, ark:/88735/10828). The haft floats. Measured: axe, Gränsfors Bruk Scandinavian Forest Axe, 0.9 kg head, 1.2 kg with its hickory haft (gransforsbruk.com; Dictum 705961). Pickaxe and crowbar head, 2.27 kg (Fiskars IsoCore pick head); its haft, the Gränsfors Splitting Maul's 0.80 m hickory haft, 3.27 kg whole less its 2.5 kg head. Shovel, Krumpholz spade forged in one piece, 1.96 kg head, 2.30 kg with its ash T-handle. Hoe: a medieval iron spade blade, 0.580 kg (Museum Wales), on the spade's haft. Scythe: Schröckenfux Hahn blade, 35 cm, 380 g (sensenwerk.de); its snath an ash pole of the maker's 26x30 mm section and 1.55 m, between its 150 and 160 cm lengths (Dictum 705609), 0.82 kg of ash. Sickle, Schröckenfux scythe-sickle blade 270 mm, 350 g (Dictum 706446). Knife, Mora Companion HeavyDuty carbon, 135 g whole, its handle not told apart. Hammer: a 2 lb cross-peen head on a 16 in hickory handle, 2.6 lb whole (Seymour Midwest 41572). Tongs, AncientSmithy universal tongs, 520 mm, about 1.0 kg. Sword, Albion Next Generation Knight, 1.19 kg (myArmoury review). Spear, a reproduction 34 cm socketed head, 375 g (Therion Arms), on the snath's ash. Javelin, a Roman plumbata head, 74 g (Museum Wales). Shield: a hand-raised steel boss, 485 g (The Viking Dragon), on an 80 cm board 6 mm thick (Hurstwic), 3.0 L of ash. Nothing was measured for the rest, which take the closest: poleaxe and halberd the Gränsfors felling axe's 1.5 kg head (Dictum 705987) on the snath; saw the scythe's blade on the hammer's handle; shears and chisel the sickle's blade; probe and meter the knife; drill, mace and warhammer the hammer; wrench the tongs; crossbow and firearm the sword's steel on the snath's ash; pike and polearm the spear; bow, club and staff the snath alone; a sling weighs nothing"
         }
     },

@@ -28,7 +28,7 @@ Each mechanic of the sea has its own world setting, under *Rough Seas* on the ne
 
 ## Swimming strength
 
-*Swimming strength* (`swimmingStrength`) is for players who would rather swim fast. Your arms pull 1, 2 or 3 times as hard as a trained swimmer's while you [swim](Swimming#swimming), so you swim about 1, 1.4 or 1.7 times as fast and can lift more out of the water. Your legs' push off the bottom, floating and the water's drag stay as they are. The game's own *Walk speed* changes it too, as it changes how fast the base game's swimmer swims. 1× is a trained swimmer's real stroke and the default.
+*Swimming strength* (`swimmingStrength`) is for players who would rather swim fast. Your arms pull 1, 2 or 3 times as hard as a trained swimmer's while you [swim](Swimming#swimming), so you swim about 1, 1.3 or 1.5 times as fast and can lift more out of the water. Your legs' push off the bottom, floating and the water's drag stay as they are. The game's own *Walk speed* changes it too, as it changes how fast the base game's swimmer swims. 1× is a trained swimmer's real stroke and the default.
 
 To change a setting in a world already made, open the world's settings from the singleplayer list, or type `/worldconfig CODE false` (or `true`; for the sail's wind or the swimming strength a number, such as `/worldconfig sailWind 2`) and reload the world. The setting stays as you left it.
 

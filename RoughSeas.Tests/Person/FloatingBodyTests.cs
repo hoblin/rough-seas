@@ -39,6 +39,8 @@ public class FloatingBodyTests
 
         public double Highest { get; private set; } = feet;
 
+        public double FastestUp { get; private set; }
+
         public double MovedX { get; private set; }
 
         public double MovedZ { get; private set; }
@@ -56,6 +58,7 @@ public class FloatingBodyTests
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             if (Feet < bed) (Feet, motion) = (bed, motion with { Y = 0 });
             Highest = Math.Max(Highest, Feet);
+            FastestUp = Math.Max(FastestUp, motion.Y * WaterDrag.TicksPerSecond);
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
             MovedZ += motion.Z * WaterDrag.TicksPerSecond * Frame;
             return body.Reading;
@@ -114,33 +117,63 @@ public class FloatingBodyTests
         Assert.True(laden.Feet < bare.Feet - 0.02, $"{laden.Feet:F3} against {bare.Feet:F3}");
     }
 
+    private static readonly SwimStroke Jumping = new(0, 1, 0, Jump: true);
+
     [Fact]
-    public void ABodyOnTheBedPushesOffItAsHighAsAJump()
+    public void ABodyOnTheBedLeavesItSlowerThanItsLegsCanStraighten()
     {
         var bed = Still - 4;
-        var run = new Run(Calm, bed, salt: false, kit: 20, stroke: new SwimStroke(0, 1, 0), bed: bed);
-        run.Settle(3);
+        var run = new Run(Calm, bed, salt: false, stroke: Jumping, bed: bed);
+        run.Settle(1);
 
-        Assert.InRange(run.Highest - bed, 0.3, 2.5);
+        Assert.InRange(run.FastestUp, 0.5, Fixtures.PersonConfig.Body.Legs.MetresPerSecond);
     }
 
     [Fact]
-    public void ALadenBodyBoundsAlongTheBedTowardWhereItSwims()
+    public void ALadenBodyBoundsAlongTheBedFurtherThanItWalksAlongIt()
     {
-        var bed = Still - 4;
-        var run = new Run(Calm, bed, salt: false, kit: 20, stroke: new SwimStroke(Math.Sqrt(0.5), Math.Sqrt(0.5), 0), bed: bed);
-        run.Settle(10);
+        double Along(bool jump)
+        {
+            var bed = Still - 4;
+            var run = new Run(Calm, bed, salt: false, kit: 20, stroke: new SwimStroke(Math.Sqrt(0.5), Math.Sqrt(0.5), 0, jump), bed: bed);
+            run.Settle(10);
+            return run.MovedX;
+        }
 
-        Assert.True(run.MovedX > 3, $"{run.MovedX:F2} m in 10 s");
+        var (bounding, stroking) = (Along(true), Along(false));
+        Assert.True(bounding > 1.5 * stroking, $"{bounding:F2} m bounding against {stroking:F2} m stroking in 10 s");
     }
 
     [Fact]
-    public void ABodyAfloatHasNothingToPushOff()
+    public void ABodyJustAboveTheBedHasNothingToPushOff()
     {
-        var run = new Run(Calm, Still - 4, salt: false, kit: 20, stroke: new SwimStroke(0, 1, 0));
-        var reading = run.Step();
+        var bed = Still - 4;
+        var run = new Run(Calm, bed + 0.1, salt: false, stroke: Jumping, bed: bed);
 
-        Assert.Equal(0, reading.Kick);
+        Assert.Equal(0, run.Step().Kick);
+    }
+
+    [Theory]
+    [InlineData(5, true)]
+    [InlineData(9, false)]
+    [InlineData(13.4, false)]
+    public void ATreadingBodyRisesWhileItHasForceToSpareAndSinksWithout(double kg, bool rises)
+    {
+        var run = new Run(Calm, Still - 4, salt: false, kit: kg, stroke: Jumping);
+        var spare = run.Step().SpareNewtons;
+        run.Settle(5);
+
+        Assert.Equal(rises, spare > 0);
+        Assert.Equal(rises, run.Feet > Still - 4);
+    }
+
+    [Fact]
+    public void AStrongerStrokeHasMoreForceToSpare()
+    {
+        double Spare(double strength) => new Run(Calm, Still - 4, salt: false, kit: 9, stroke: Jumping, strength: strength).Step().SpareNewtons;
+
+        Assert.True(Spare(2) > Spare(1));
+        Assert.True(Spare(2) > 0, $"{Spare(2):F0} N to spare at twice the strength");
     }
 
     [Fact]
@@ -356,11 +389,11 @@ public class FloatingBodyTests
         var from = run.MovedX;
         run.Settle(10);
 
-        Assert.InRange((run.MovedX - from) / 10, 1.14, 1.20);
+        Assert.InRange((run.MovedX - from) / 10 / Fixtures.PersonConfig.Body.Swimming.MetresPerSecond, 0.97, 1.03);
     }
 
     [Fact]
-    public void TwiceTheStrengthSwimsFasterByTheRootOfTwoAgainstTheSameDrag()
+    public void TwiceTheStrengthSwimsFasterButNotByTheRootOfTwoAsItsPullFallsWithSpeed()
     {
         double Cruise(double strength)
         {
@@ -371,7 +404,8 @@ public class FloatingBodyTests
             return (run.MovedX - from) / 10;
         }
 
-        Assert.InRange(Cruise(2) / Cruise(1), 1.3, 1.45);
+        var ratio = Cruise(2) / Cruise(1);
+        Assert.True(ratio > 1 && ratio < Math.Sqrt(2), $"twice the strength swims {ratio:F3} times as fast");
     }
 
     [Fact]
@@ -386,7 +420,8 @@ public class FloatingBodyTests
         var from = run.MovedX;
         run.Settle(1);
 
-        Assert.InRange(first, 76, 80);
+        var swimming = Fixtures.PersonConfig.Body.Swimming;
+        Assert.InRange(first, swimming.UsefulWatts / swimming.MetresPerSecond, 92);
         Assert.InRange(run.MovedX - from, 0.6, 0.9);
     }
 
@@ -426,7 +461,7 @@ public class FloatingBodyTests
         var from = run.MovedX;
         run.Settle(10);
 
-        Assert.InRange((run.MovedX - from) / 10, -0.45, -0.2);
+        Assert.InRange((run.MovedX - from) / 10, -1.5 + 0.9 * Fixtures.PersonConfig.Body.Swimming.MetresPerSecond, -0.1);
     }
 
     [Fact]
@@ -442,7 +477,7 @@ public class FloatingBodyTests
         }
 
         var (flat, face) = (Speed(default), Speed(new FlowGradient(-0.3, 0, 0)));
-        Assert.InRange(face - flat, 0.2, 0.4);
+        Assert.True(face - flat > 0.1, $"the face carries it {face - flat:F2} m/s faster");
     }
 
     [Fact]

@@ -30,6 +30,7 @@ public class BridgeCommands : ModSystem
     private const int HoverAboveSea = 1;
     private const double NearbyGridBlocks = 5000;
     private const int WaveProbes = 12;
+    private const string RiversFlowKey = "flowVectors";
 
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
@@ -658,7 +659,7 @@ public class BridgeCommands : ModSystem
 
         (int x, int z, float flowX, float flowZ)? Flowing(int x, int z)
         {
-            if (accessor.GetChunk(x / size, 0, z / size)?.GetModdata<float[]>("flowVectors", null) is not { } flow) return null;
+            if (accessor.GetChunk(x / size, 0, z / size)?.GetModdata<float[]>(RiversFlowKey, null) is not { } flow) return null;
             var index = z % size * size + x % size;
             var (flowX, flowZ) = (flow[index], flow[index + size * size]);
             if (flowX == 0 && flowZ == 0) return null;
@@ -671,13 +672,13 @@ public class BridgeCommands : ModSystem
             .OrderBy(point => (point.x - origin.X) * (long)(point.x - origin.X) + (point.z - origin.Z) * (long)(point.z - origin.Z))
             .Select(point => Flowing(point.x, point.z))
             .FirstOrDefault(point => point != null);
-        if (found is not var (fx, fz, flowX2, flowZ2)) return TextCommandResult.Error($"No Rivers flow over water {depth} blocks deep within {range} blocks of loaded world");
+        if (found is not var (fx, fz, towardX, towardZ)) return TextCommandResult.Error($"No Rivers flow over water {depth} blocks deep within {range} blocks of loaded world");
 
         var top = accessor.GetRainMapHeightAt(fx, fz);
         var bed = top;
         while (OpenWater.At(accessor, fx, bed, fz).IsLiquid()) bed--;
         var flown = Fly(player, new Vec3d(fx + 0.5, top + 3, fz + 0.5));
-        return TextCommandResult.Success($"{flown.StatusMessage}, over {top - bed} blocks of river water on a bed at y {bed}, flowing {flowX2:F2} {flowZ2:F2}");
+        return TextCommandResult.Success($"{flown.StatusMessage}, over {top - bed} blocks of river water on a bed at y {bed}, flowing {towardX:F2} {towardZ:F2}");
     }
 
     private TextCommandResult Beaches(BlockPos origin, int range, int length, int depth)

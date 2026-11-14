@@ -5,6 +5,7 @@ using HarmonyLib;
 using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
@@ -12,7 +13,8 @@ namespace RoughSeas.Person;
 
 /// <summary>
 /// A swimming player whose feet stand on the bed is drawn as on land: vanilla's animation flags leave its Swim out, so
-/// vanilla's idle, walk and jump play, and its body turns upright. On every client, for every player it draws.
+/// vanilla's idle, walk and jump play, on every client for every player it draws; on the client that moves the player,
+/// its body turns upright as vanilla turns a still one, walking or not.
 /// </summary>
 public static class BodyOnTheBed
 {
@@ -30,6 +32,7 @@ public static class BodyOnTheBed
         harmony.Patch(AccessTools.Method(typeof(EntityAgent), nameof(EntityAgent.OnGameTick)),
             transpiler: new HarmonyMethod(typeof(BodyOnTheBed), nameof(SwimPose)));
         harmony.Patch(AccessTools.Method(typeof(EntityBehaviorPlayerPhysics), nameof(EntityBehaviorPlayerPhysics.SetPlayerControls)),
+            prefix: new HarmonyMethod(typeof(BodyOnTheBed), nameof(BeforeControls)),
             postfix: new HarmonyMethod(typeof(BodyOnTheBed), nameof(Upright)));
     }
 
@@ -39,10 +42,7 @@ public static class BodyOnTheBed
         (harmony, system) = (null, null);
     }
 
-    public static bool Stands(Entity entity) =>
-        entity is EntityPlayer { Swimming: true, OnGround: true } && Mechanic.RealisticSwimming.On(entity.World);
-
-    private static bool Swims(Entity entity) => entity.Swimming && !Stands(entity);
+    private static bool Swims(Entity entity) => entity.Swimming && !BodyAfloat.OnBed(entity);
 
     [ReliesOn("Vintagestory.API.Common.EntityAgent", "OnGameTick", "reads Swimming first in the activity flags it picks the player's animation by, and gives Jump while OnGround")]
     private static IEnumerable<CodeInstruction> SwimPose(IEnumerable<CodeInstruction> instructions)
@@ -57,11 +57,15 @@ public static class BodyOnTheBed
         return matcher.SetInstruction(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(BodyOnTheBed), nameof(Swims)))).InstructionEnumeration();
     }
 
-    [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetPlayerControls", "turns WalkPitch toward the camera while the player swims and moves, and uprights it slowly on the bed only while still")]
-    private static void Upright(EntityBehaviorPlayerPhysics __instance, float dt)
+    private static void BeforeControls(EntityBehaviorPlayerPhysics __instance, out float __state) =>
+        __state = __instance.entity is EntityPlayer player ? player.WalkPitch : 0;
+
+    [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetPlayerControls", "turns WalkPitch toward the camera while the player swims and moves, and uprights it on the bed at 1.2 rad/s only while still")]
+    private static void Upright(EntityBehaviorPlayerPhysics __instance, float dt, float __state)
     {
-        if (__instance.entity is not EntityPlayer player || !Stands(player)) return;
-        var distance = GameMath.AngleRadDistance(player.WalkPitch, 0);
-        player.WalkPitch = GameMath.Mod(player.WalkPitch + GameMath.Clamp(distance, -UprightRadiansPerSecond * dt, UprightRadiansPerSecond * dt), GameMath.TWOPI);
+        if (__instance.entity is not EntityPlayer player || !BodyAfloat.OnBed(player)) return;
+        var step = UprightRadiansPerSecond * dt * GlobalConstants.OverallSpeedMultiplier;
+        var distance = GameMath.AngleRadDistance(__state, 0);
+        player.WalkPitch = GameMath.Mod(__state + GameMath.Clamp(distance, -step, step), GameMath.TWOPI);
     }
 }

@@ -30,7 +30,8 @@ public class BodyConfig
 
 public class LegsConfig
 {
-    public double JumpMetres;
+    public double NewtonsPerKg;
+    public double MetresPerSecond;
     public double PushMetres;
 }
 
@@ -54,11 +55,11 @@ public class BodySegmentConfig
 public class CarriedConfig
 {
     public double ArmourKgPerWalkSpeed;
-    public string ArmourMaterial = "";
+    public string UnknownArmourMaterial = "";
     public Dictionary<string, double> UnslowingArmourKg = [];
     public Dictionary<string, double> Densities = [];
     public Dictionary<string, string> Alike = [];
-    public string Handle = "";
+    public string HandlePrefix = "";
     public Dictionary<string, ToolConfig> Tools = [];
 }
 
