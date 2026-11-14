@@ -78,7 +78,7 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void SinksSlowlyInFreshWater()
+    public void SinksInFreshWater()
     {
         var run = new Run(Calm, Still - 1.6, salt: false);
         var from = run.Feet;
@@ -437,39 +437,10 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void ABodyLyingAcrossItsFallStopsItShallower()
+    public void HoldingADirectionAsItPlungesInDoesntLayItFlatUntilItSlowsToItsSwim()
     {
-        var (feetFirst, flat) = (Plunged(default), Plunged(Ahead));
-        Assert.True(flat < feetFirst / 2, $"{flat:F2} m flat against {feetFirst:F2} m feet first");
-    }
-
-    private static double Glided(SwimStroke stroke)
-    {
-        var run = new Run(Calm, Still - 1.6, stroke: stroke, start: new BodyMotion(5 / WaterDrag.TicksPerSecond, 0, 0));
-        run.Settle(2);
-        return run.MovedX;
-    }
-
-    [Fact]
-    public void ADiveAlongItsLengthGlidesFurtherThanABodyUprightAcrossItsWay()
-    {
-        var (dive, upright) = (Glided(Ahead), Glided(default));
-        Assert.True(dive > 1.5 * upright, $"{dive:F2} m diving against {upright:F2} m upright");
-    }
-
-    [Fact]
-    public void ADiveAlongItsSlantMeetsOnlyItsLengthsDrag()
-    {
-        var (ahead, down, speed, seconds) = (Math.Cos(1.13), -Math.Sin(1.13), 9.0, 0.3);
-        var run = new Run(Calm, Still - 4, stroke: new SwimStroke(ahead, down, 0),
-            start: new BodyMotion(speed * ahead / WaterDrag.TicksPerSecond, speed * down / WaterDrag.TicksPerSecond, 0));
-        var feet = run.Feet;
-        run.Settle(seconds);
-
-        var density = Waves.DensityOf(true);
-        var rate = 0.5 * density * Fixtures.PersonConfig.Body.DragAreaSwimming / (Man.Body.MassKg + Man.Body.AddedAlongKg(4, Man.Body.BreathingLitres, density));
-        var glided = Math.Sqrt(run.MovedX * run.MovedX + (feet - run.Feet) * (feet - run.Feet));
-        Assert.InRange(glided / (Math.Log(1 + rate * speed * seconds) / rate), 0.95, 1.05);
+        var (feetFirst, stroking) = (Plunged(default), Plunged(Ahead));
+        Assert.InRange(stroking / feetFirst, 0.8, 1.2);
     }
 
     private static double Waded(double seconds, double waterline, double metresPerSecond, BreakerPacket? crest = null)

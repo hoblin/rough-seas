@@ -17,6 +17,17 @@ public class PostureTests
         Assert.True(Falling(Posture.Upright) > 1.5 * Falling(Flat), $"{Falling(Posture.Upright):F2} m/s upright against {Falling(Flat):F2} m/s flat");
 
     [Fact]
+    public void AWayAlongItsSlantMeetsOnlyItsLengthsDrag()
+    {
+        var (slant, speed, step) = (Posture.Along(1, -2, 0), 9.0, 1 / 60.0);
+        var through = (X: speed / Math.Sqrt(5), Y: -2 * speed / Math.Sqrt(5), Z: 0.0);
+        for (var t = 0; t < 30; t++) through = slant.Dragged(through, Body, Seawater, 1, Kg, Kg, step);
+
+        var rate = 0.5 * Seawater * Body.DragAreaSwimming / Kg;
+        Assert.Equal(speed / (1 + rate * speed * 0.5), Math.Sqrt(through.X * through.X + through.Y * through.Y), 1);
+    }
+
+    [Fact]
     public void AWayAlongItsSlantKeepsItsDirection()
     {
         var slant = Posture.Along(1, -2, 0);

@@ -8,7 +8,7 @@ Fresh water holds you up less, so in a lake or a river you sink unless you swim.
 
 ## Jumping in
 
-Jump in from a pier or a bank and you keep your way into the water. You go in feet first, so the water slows you down along your length and you plunge deep: from a metre up, past 5 m. Your way forward goes much sooner, since the water takes you broadside. Below about 6 m you sink, so hold jump or swim up to come back to the surface. Holding a direction as you hit the water lays you flat, and you stop near the surface.
+Jump in from a pier or a bank and you keep your way into the water. You go in feet first, so the water slows you down along your length and you plunge deep: from a metre up, past 5 m. Your way forward goes much sooner, since the water takes you broadside. Below about 6 m you sink, so hold jump or swim up to come back to the surface. Holding a direction as you go in, you start to swim once the water has slowed you to your swimming pace.
 
 ## Wading
 
