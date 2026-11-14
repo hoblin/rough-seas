@@ -63,14 +63,19 @@ public class VesselInWindTests
     {
         var (body, sail) = Outrigger(Furled);
         var fastest = 0.0;
+        HullPoint[] Drawn() =>
+        [
+            ..sail.Rig.End.Marks(sail.State),
+            ..new[] { (0.0, 0.0), (1.0, 0.0), (1.0, 1.0) }.Select(corner => sail.State.Form.At(corner.Item1, corner.Item2, 0, sail.Shown))
+        ];
         void Sail((double X, double Z) wind, int position, int tacked, double seconds)
         {
             sail.Hoist(position, tacked);
             for (var t = 0.0; t < seconds; t += Fixtures.TickSeconds)
             {
-                var was = sail.Rig.End.Marks(sail.State);
+                var was = Drawn();
                 body.Load(wind, Still, Yaw, Waterline, Fixtures.TickSeconds);
-                fastest = Math.Max(fastest, sail.Rig.End.Marks(sail.State).Zip(was).Max(pair => (pair.First - pair.Second).Length) / Fixtures.TickSeconds);
+                fastest = Math.Max(fastest, Drawn().Zip(was).Max(pair => (pair.First - pair.Second).Length) / Fixtures.TickSeconds);
             }
         }
 
@@ -84,6 +89,10 @@ public class VesselInWindTests
         Sail(OverHerFloat, Furled, Shunted, 20);
         Sail(OverHerFloat, HalfSail, Shunted, 0.3);
         Sail(OverHerFloat, FullSail, Shunted, 20);
+        Sail(OverHerFloat, Furled, Shunted, 20);
+        Sail(OverHerFloat, HalfSail, Shunted, 20);
+        Sail(OverHerFloat, HalfSail, AsBuilt, 30);
+        Sail(OverHerFloat, Furled, AsBuilt, 20);
         Assert.True(fastest < Fixtures.Wind.JumpMetresPerSecond, $"a point moved at {fastest:F1} m/s");
     }
 

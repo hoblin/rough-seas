@@ -175,7 +175,7 @@ public sealed class CrabClaw : Rigging
         var pose = new ClawPose(tack, masthead, heel, bend, peak, clew, OnSpars(a.Bridle, b.Bridle),
             Carried(p.Lead, q.Lead), p.SternPin, p.ShroudFoot, OnMast(p.ShoreTop, q.ShoreTop), p.ShoreFoot);
         return new ClawState(a.Yard + carry * (b.Yard - a.Yard), a.Boom + carry * (b.Boom - a.Boom), peak, clew, pose.HalyardBend, pose.Bridle,
-            rest.Posed(tack, tack, peak, clew), 0, pose,
+            rest.Posed(tack, tack, peak, OnSpars(a.Form.LeechFoot, b.Form.LeechFoot)), 0, pose,
             lines with { Halyard = Math.Max(lines.Halyard, (masthead - bend).Length), Sheet = Math.Max(lines.Sheet, (pose.Lead - pose.Bridle).Length) });
     }
 

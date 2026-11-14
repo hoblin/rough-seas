@@ -31,6 +31,8 @@ public sealed class SailForm
 
     public HullPoint Normal { get; }
 
+    public HullPoint LeechFoot => leechFoot;
+
     public SailForm Posed(HullPoint luffFoot, HullPoint luffHead, HullPoint leechHead, HullPoint leechFoot) =>
         new(luffFoot, luffHead, leechHead, leechFoot, camber, centroid);
 
