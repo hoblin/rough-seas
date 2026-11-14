@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -28,9 +29,11 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     private RigRenderer? drawn;
     private string[] drawnGroups = [];
     private string[] steps = [];
-    private RigTextures? textures;
+    private string cloth = "";
+    private Dictionary<string, string> parts = new();
     private IHullForm[] forms = [];
     private bool blown;
+    private byte[]? published;
     private long loggedAt;
 
     public Sail? Sail => body.Sail;
@@ -46,15 +49,17 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         body = VesselInWind.From(attributes, wind.Config, wind.Polar);
         drawnGroups = attributes["drawn"].AsArray<string>()?.OfType<string>().ToArray() ?? [];
         steps = attributes["steps"].AsArray<string>()?.OfType<string>().ToArray() ?? [];
-        textures = attributes["textures"].AsObject<RigTextures?>(null)
-            ?? (Sail == null ? null : throw new InvalidOperationException($"{entity.Code}'s sail names no rig textures: roughseas:windage needs textures with a sail"));
+        parts = attributes["parts"].AsObject<Dictionary<string, string>?>(null) ?? new();
+        cloth = attributes["cloth"].AsString()
+            ?? (Sail == null ? "" : throw new InvalidOperationException($"{entity.Code}'s sail names no cloth texture: roughseas:windage needs cloth with a sail"));
     }
 
     public override void AfterInitialized(bool onFirstSpawn)
     {
         hull = IHull.Of(entity);
         forms = entity.SidedProperties.Behaviors.OfType<IHullForm>().ToArray();
-        if (entity.Api is ICoreClientAPI capi && Sail != null) drawn = new RigRenderer(capi, entity, this, textures!);
+        if (Sail != null && entity.WatchedAttributes.GetBytes(ShapeKey) is { } saved) Sail.Show(SerializerUtil.Deserialize<RigShape>(saved));
+        if (entity.Api is ICoreClientAPI capi && Sail != null) drawn = new RigRenderer(capi, entity, this, cloth, parts);
     }
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
@@ -79,7 +84,9 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         if (drawn == null || hull == null) return;
 
-        if (!blown && Sail != null && entity.WatchedAttributes.GetBytes(ShapeKey) is { } bytes) Sail.Show(SerializerUtil.Deserialize<RigShape>(bytes));
+        var helm = entity.GetInterface<IMountable>()?.Controller;
+        if (!blown && Sail != null && (helm == null || helm != ((ICoreClientAPI)entity.Api).World.Player.Entity)
+            && entity.WatchedAttributes.GetBytes(ShapeKey) is { } bytes) Sail.Show(SerializerUtil.Deserialize<RigShape>(bytes));
         blown = false;
     }
 
@@ -89,13 +96,22 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
         if (Sail == null || entity.GetInterface<IMountable>()?.Controller != player.Entity) return;
 
         Sail.Show(shape);
-        Published(shape);
+        Published(SerializerUtil.Serialize(shape));
     }
 
-    private void Published(RigShape shape)
+    private void Published(byte[] bytes)
     {
-        entity.WatchedAttributes.SetBytes(ShapeKey, SerializerUtil.Serialize(shape));
+        entity.WatchedAttributes.SetBytes(ShapeKey, bytes);
         entity.WatchedAttributes.MarkPathDirty(ShapeKey);
+    }
+
+    private bool Changed(RigShape shape)
+    {
+        var bytes = SerializerUtil.Serialize(shape);
+        if (published != null && bytes.AsSpan().SequenceEqual(published)) return false;
+
+        published = bytes;
+        return true;
     }
 
     public override void OnEntityDespawn(EntityDespawnData despawn)
@@ -115,9 +131,9 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         var (blowing, load) = Blow(velocity, seconds);
         if (load is { } blew) Note(blowing, velocity, blew);
-        if (Sail?.Shape(entity.EntityId) is { } shape)
+        if (Sail?.Shape(entity.EntityId) is { } shape && Changed(shape))
         {
-            if (entity.Api.Side == EnumAppSide.Server) Published(shape);
+            if (entity.Api.Side == EnumAppSide.Server) Published(published!);
             else wind.Report(shape);
         }
         return load ?? default;

@@ -1,5 +1,8 @@
+import math
+
 import units
 from shape import ORIGIN, num, profile
+from transform import cross, sub
 
 STEP = 0.5
 WINDAGE = "roughseas:windage"
@@ -54,8 +57,7 @@ def cloth_area(corners, reach=1, span=1, cells=32):
         for j in range(cells):
             at = lambda s, t: bilinear(corners, reach * s / cells, 1 - span + span * t / cells)
             a, b, c, d = at(i, j), at(i + 1, j), at(i + 1, j + 1), at(i, j + 1)
-            u, v = [p - q for p, q in zip(c, a)], [p - q for p, q in zip(d, b)]
-            total += sum(x * x for x in (u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])) ** 0.5 / 2
+            total += math.hypot(*cross(sub(c, a), sub(d, b))) / 2
     return units.metres(total, 2)
 
 

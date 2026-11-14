@@ -3,36 +3,13 @@ from dataclasses import dataclass
 
 import units
 import wind
+from transform import add, dot, scale, sub, unit
 
 DOWN = (0, -1, 0)
 
 
-def add(a, b):
-    return tuple(p + q for p, q in zip(a, b))
-
-
-def sub(a, b):
-    return tuple(p - q for p, q in zip(a, b))
-
-
-def scale(k, a):
-    return tuple(k * p for p in a)
-
-
-def dot(a, b):
-    return sum(p * q for p, q in zip(a, b))
-
-
-def norm(a):
-    return math.sqrt(dot(a, a))
-
-
-def unit(a):
-    return scale(1 / norm(a), a)
-
-
 def across_of(a, axis):
-    return unit(sub(a, scale(dot(a, axis), axis)))
+    return unit(sub(a, scale(axis, dot(a, axis))))
 
 
 @dataclass(frozen=True)
@@ -72,11 +49,11 @@ class Rig:
         through the tack and the masthead, the line it turns about."""
         tack, head = self.tack(end), self.masthead(end)
         axis = unit(sub(head, tack))
-        reach = norm(sub(head, tack))
+        reach = math.dist(head, tack)
         bent, hung = self.bend * self.yard, self.halyard * self.mast
         along = (bent ** 2 - hung ** 2 + reach ** 2) / (2 * reach)
         radius = math.sqrt(bent ** 2 - along ** 2)
-        held = add(add(tack, scale(along, axis)), scale(radius, across_of(DOWN, axis)))
+        held = add(add(tack, scale(axis, along)), scale(across_of(DOWN, axis), radius))
         yard = unit(sub(held, tack))
         return self.spars(end, tack, head, held, yard, across_of(DOWN, yard))
 
@@ -85,18 +62,18 @@ class Rig:
         fig 231)."""
         tack, head, lead = self.tack(end), self.masthead(end), self.lead(end)
         yard = unit(sub((tack[0] + math.copysign(self.yard, self.heel[0] - tack[0]), lead[1], lead[2]), tack))
-        held = add(tack, scale(self.bend * self.yard, yard))
+        held = add(tack, scale(yard, self.bend * self.yard))
         return self.spars(end, tack, head, held, yard, across_of((0, 0, -1), yard), opening=0)
 
     def spars(self, end, tack, head, held, yard, down, opening=None):
         opening = math.radians(self.opening_degrees if opening is None else opening)
-        boom = add(scale(math.cos(opening), yard), scale(math.sin(opening), down))
+        boom = add(scale(yard, math.cos(opening)), scale(down, math.sin(opening)))
         lead = self.lead(end)
-        shore_top = add(self.heel, scale(self.shore_up, sub(head, self.heel)))
+        shore_top = add(self.heel, scale(sub(head, self.heel), self.shore_up))
         return {
             "tack": tack, "masthead": head, "heel": self.heel, "halyardBend": held,
-            "peak": add(tack, scale(self.yard, yard)), "clew": add(tack, scale(self.boom, boom)),
-            "bridle": add(tack, scale(self.bridle * self.boom, boom)), "lead": lead,
+            "peak": add(tack, scale(yard, self.yard)), "clew": add(tack, scale(boom, self.boom)),
+            "bridle": add(tack, scale(boom, self.bridle * self.boom)), "lead": lead,
             "sternPin": self.stern_pin(end), "shroudFoot": self.shroud_foot,
             "shoreTop": shore_top, "shoreFoot": self.shore_foot,
         }

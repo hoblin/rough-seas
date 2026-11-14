@@ -18,6 +18,4 @@ public static class VanillaRopes
         rope.ClothId = nextOwn--;
         Systems(cloths)[rope.ClothId] = rope;
     }
-
-    public static void Drop(ClothManager cloths, ClothSystem rope) => Systems(cloths).Remove(rope.ClothId);
 }

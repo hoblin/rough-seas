@@ -13,7 +13,8 @@ namespace RoughSeas.Wind;
 [ReliesOn("Vintagestory.GameContent.ClothPoint", "update", "holds a pinned point at its entity's position plus pinnedToOffset as is, with NoAttachTransform")]
 public sealed class RigRopes(ICoreClientAPI capi, Entity vessel) : IDisposable
 {
-    private const float Diameter = 0.5f;
+    private const float Resolution = 2;
+    private const double SectionMetres = 1 / 16.0;
 
     private static readonly AccessTools.FieldRef<ClothSystem, List<ClothConstraint>> Constraints = AccessTools.FieldRefAccess<ClothSystem, List<ClothConstraint>>("Constraints");
     private static readonly AccessTools.FieldRef<ClothConstraint, float> RestLength = AccessTools.FieldRefAccess<ClothConstraint, float>("rest_length");
@@ -26,9 +27,18 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel) : IDisposable
 
     public void Begin() => laid = 0;
 
-    public void Lay(HullPoint from, HullPoint to, double metres, Func<HullPoint, Vec3d> world)
+    public void Lay(HullPoint from, HullPoint to, double metres, double width, Func<HullPoint, Vec3d> world)
     {
-        if (laid == ropes.Count) ropes.Add((Spun(world(from), world(to)), from, to));
+        var segments = Math.Max(1, (int)(metres * Resolution));
+        if (laid == ropes.Count || Constraints(ropes[laid].Rope) is var had && (had.Count < segments || had.Count > 2 * segments + 1))
+        {
+            if (laid < ropes.Count) cloths.UnregisterCloth(ropes[laid].Rope.ClothId);
+            var (start, end) = (world(from), world(to));
+            var reach = end.SubCopy(start);
+            var spun = Spun(start, start.AddCopy(reach.Normalize().Mul(Math.Max(metres, 1 / Resolution))), width);
+            if (laid == ropes.Count) ropes.Add((spun, from, to));
+            else ropes[laid] = (spun, from, to);
+        }
         var rope = ropes[laid].Rope;
         ropes[laid++] = (rope, from, to);
         var constraints = Constraints(rope);
@@ -43,7 +53,7 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel) : IDisposable
 
     public void End()
     {
-        for (var k = laid; k < ropes.Count; k++) VanillaRopes.Drop(cloths, ropes[k].Rope);
+        for (var k = laid; k < ropes.Count; k++) cloths.UnregisterCloth(ropes[k].Rope.ClothId);
         ropes.RemoveRange(laid, ropes.Count - laid);
     }
 
@@ -59,15 +69,16 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel) : IDisposable
 
     public void Dispose()
     {
-        foreach (var (rope, _, _) in ropes) VanillaRopes.Drop(cloths, rope);
+        foreach (var (rope, _, _) in ropes) cloths.UnregisterCloth(rope.ClothId);
         ropes.Clear();
     }
 
-    private ClothSystem Spun(Vec3d from, Vec3d to)
+    private ClothSystem Spun(Vec3d from, Vec3d to, double width)
     {
-        var rope = ClothSystem.CreateRope(capi, cloths, from, to, null);
-        (rope.Active, rope.CanPull, rope.CanRip, rope.RopeRenderThickness) = (true, false, false, Diameter);
-        rope.WalkPoints(point => point.setMass(point.Mass * Diameter * Diameter));
+        var rope = ClothSystem.CreateRope(capi, cloths, from, to, null, Resolution);
+        var thickness = (float)(width / SectionMetres);
+        (rope.Active, rope.CanPull, rope.CanRip, rope.RopeRenderThickness) = (true, false, false, thickness);
+        rope.WalkPoints(point => point.setMass(point.Mass * thickness * thickness));
         foreach (var end in rope.Ends)
         {
             end.PinTo(vessel, new Vec3f());

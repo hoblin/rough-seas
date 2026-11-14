@@ -14,11 +14,10 @@ public sealed record RigLoad(Push[] Points, double SheetNewtons, double HalyardN
 
 public interface IRigCanvas
 {
-    void Spar(HullPoint from, HullPoint to, double width);
+    void Part(string part, (HullPoint From, HullPoint To) rest, (HullPoint From, HullPoint To) at, double girth = 1);
 
     void Line(HullPoint from, HullPoint to, double width, double metres);
 
-    void Roll(HullPoint from, HullPoint to, double width);
 
     void Cloth(SailForm form, double fill, (double Reach, double Span) set);
 }

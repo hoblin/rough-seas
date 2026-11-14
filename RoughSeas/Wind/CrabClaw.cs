@@ -32,9 +32,9 @@ public sealed class CrabClaw : Rigging
     private readonly (HullPoint From, HullPoint To, double Width)[] standing;
     private ClawState? furled;
 
-    public CrabClaw(ClawPose hoisted, ClawPose lowered, int ahead, double camber, (double Yard, double Boom, double Cloth) kilograms, RigWidths widths)
+    public CrabClaw(ClawPose hoisted, ClawPose lowered, ClawPose model, int ahead, double camber, (double Yard, double Boom, double Cloth) kilograms, RigWidths widths)
     {
-        (Hoisted, Lowered, Ahead, this.kilograms, Widths) = (hoisted, lowered, ahead, kilograms, widths);
+        (Hoisted, Lowered, Model, Ahead, this.kilograms, Widths) = (hoisted, lowered, model, ahead, kilograms, widths);
         standing = [(hoisted.Heel, hoisted.Masthead, widths.Pole), (hoisted.Masthead, hoisted.SternPin, widths.Line),
             (hoisted.Masthead, hoisted.ShroudFoot, widths.Line), (hoisted.ShoreFoot, hoisted.ShoreTop, widths.Shore)];
         axis = (hoisted.Masthead - hoisted.Tack).Unit;
@@ -50,14 +50,17 @@ public sealed class CrabClaw : Rigging
     }
 
     public static Rigging[] Of(JsonObject rig, double camber, double clothKilograms, RigWidths widths) =>
-        (rig["ends"].AsArray() ?? []).Select((end, n) => (Rigging)new CrabClaw(ClawPose.Of(end["hoisted"]), ClawPose.Of(end["lowered"]), n == 0 ? -1 : 1,
-            camber, (rig["yardKilograms"].AsDouble(), rig["boomKilograms"].AsDouble(), clothKilograms), widths)).ToArray();
+        (rig["ends"].AsArray() ?? []).Select((end, n) => (Rigging)new CrabClaw(ClawPose.Of(end["hoisted"]), ClawPose.Of(end["lowered"]),
+            ClawPose.Of(rig["ends"].AsArray()![0]["lowered"]), n == 0 ? -1 : 1, camber, (rig["yardKilograms"].AsDouble(), rig["boomKilograms"].AsDouble(), clothKilograms),
+            widths)).ToArray();
 
     public int Lee { get; }
 
     public ClawPose Hoisted { get; }
 
     public ClawPose Lowered { get; }
+
+    public ClawPose Model { get; }
 
     public override int Ahead { get; }
 
@@ -298,12 +301,20 @@ public sealed class CrabClaw : Rigging
     public override void Draw(IRigCanvas canvas, RigState state, double fill)
     {
         var claw = (ClawState)state;
-        var (pose, lines, tack) = (claw.Rig, claw.Lines, claw.Rig.Tack);
         canvas.Cloth(claw.Form, fill, Set);
-        Standing(canvas, pose, lines);
-        canvas.Spar(tack, claw.Peak, Widths.Spar);
-        canvas.Spar(tack, claw.Clew, Widths.Spar);
-        if (Set.Span < 1) canvas.Roll(tack, claw.Clew, Widths.Roll * Math.Sqrt(1 - Set.Span));
+        Spars(canvas, claw, Set.Span < 1 ? Math.Sqrt(1 - Set.Span) : 0);
+    }
+
+    private void Spars(IRigCanvas canvas, ClawState claw, double rolled)
+    {
+        var (pose, lines, tack) = (claw.Rig, claw.Lines, claw.Rig.Tack);
+        canvas.Part("mast", (Model.Heel, Model.Masthead), (pose.Heel, pose.Masthead));
+        canvas.Part("shore", (Model.ShoreFoot, Model.ShoreTop), (pose.ShoreFoot, pose.ShoreTop));
+        canvas.Part("yard", (Model.Tack, Model.Peak), (tack, claw.Peak));
+        canvas.Part("boom", (Model.Tack, Model.Clew), (tack, claw.Clew));
+        if (rolled > 0) canvas.Part("roll", (Model.Tack, Model.Clew), (tack, claw.Clew), rolled);
+        foreach (var (pin, metres) in lines.Stays) canvas.Line(pose.Masthead, pin, Widths.Line, metres);
+        canvas.Line(pose.Masthead, pose.ShroudFoot, Widths.Line, lines.Shroud);
         canvas.Line(pose.Masthead, claw.Bend, Widths.Line, lines.Halyard);
         canvas.Line(claw.Bridle, pose.Lead, Widths.Line, lines.Sheet);
     }
@@ -321,25 +332,7 @@ public sealed class CrabClaw : Rigging
         return (from.Length + share * (to.Length - from.Length)) * turned.Unit;
     }
 
-    public override void DrawFurled(IRigCanvas canvas, RigState state)
-    {
-        var claw = (ClawState)state;
-        var (pose, lines, tack) = (claw.Rig, claw.Lines, claw.Rig.Tack);
-        Standing(canvas, pose, lines);
-        canvas.Spar(tack, claw.Peak, Widths.Spar);
-        canvas.Spar(tack, claw.Clew, Widths.Spar);
-        canvas.Roll(tack, claw.Clew, Widths.Roll);
-        canvas.Line(pose.Masthead, claw.Bend, Widths.Line, lines.Halyard);
-        canvas.Line(claw.Bridle, pose.Lead, Widths.Line, lines.Sheet);
-    }
-
-    private void Standing(IRigCanvas canvas, ClawPose pose, ClawLines lines)
-    {
-        canvas.Spar(pose.Heel, pose.Masthead, Widths.Pole);
-        canvas.Spar(pose.ShoreFoot, pose.ShoreTop, Widths.Shore);
-        foreach (var (pin, metres) in lines.Stays) canvas.Line(pose.Masthead, pin, Widths.Line, metres);
-        canvas.Line(pose.Masthead, pose.ShroudFoot, Widths.Line, lines.Shroud);
-    }
+    public override void DrawFurled(IRigCanvas canvas, RigState state) => Spars(canvas, (ClawState)state, 1);
 
     private static (Push[] Loads, (string Line, double Newtons)[] Tensions) Stayed(ClawPose pose, HullPoint head)
     {
