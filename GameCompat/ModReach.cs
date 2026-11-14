@@ -191,8 +191,6 @@ internal sealed class ModReach
             case "FieldRefAccess":
                 var generics = ((GenericInstanceMethod)called).GenericArguments;
                 return Noted(new TypeValue(generics[0].FullName), arguments[0], ReachKind.Field, false, site, fieldType: generics[1].FullName, fieldStatic: false);
-            case "Property" or "DeclaredProperty":
-                return Noted(arguments[0], arguments[1], ReachKind.PropertyGetter, called.Name == "DeclaredProperty", site);
             case "TypeByName":
                 if (arguments[0] is Text typeName)
                 {

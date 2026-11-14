@@ -9,6 +9,7 @@ public readonly record struct DeckPose(double X, double Y, double Z, Quaternion 
     /// the middle of its selection box, as <c>EntityShapeRenderer.loadModelMatrix</c> turns them after the boat's own
     /// angles, and lifted.
     /// </summary>
+    [ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "loadModelMatrix", "turns a shape by its Pos angles, then by xangle, yangle and zangle, about SelectionBox.Y2 / 2, before LiftModel adds the lift to its translation")]
     public DeckPose Drawn(float pivotY, float xangle, float yangle, float zangle, double lift)
     {
         var drawn = Rotation

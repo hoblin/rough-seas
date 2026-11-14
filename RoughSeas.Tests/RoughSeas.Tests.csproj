@@ -46,6 +46,8 @@
     <None Include="..\RoughSeas\assets\roughseas\config\soundscape.json" Link="soundscape.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\shore.json" Link="shore.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\compat\extremeweather.json" Link="extremeweather.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\compat\shipwright.json" Link="shipwright.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\compat\walkableentities.json" Link="walkableentities.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\windpatterns\*.json" LinkBase="windpatterns" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\materials.json" Link="materials.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\mass.json" Link="mass.json" CopyToOutputDirectory="PreserveNewest" />

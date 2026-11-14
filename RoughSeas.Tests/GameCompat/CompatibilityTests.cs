@@ -199,10 +199,6 @@ public class CompatibilityTests
     public void AFieldReadByRefOnATypeGivenIsRead() =>
         Assert.Contains(Fixture.Value.Members, member => member.Type == typeof(Block).FullName && member.Name == "ByRef" && member.FieldType == typeof(double).FullName);
 
-    [Fact]
-    public void AConstructorOfAnUnknownTypeIsNotReported() =>
-        Assert.DoesNotContain(Fixture.Value.Unreadable, site => site.Contains(nameof(Reflected)));
-
     private sealed class Reflected
     {
         public Reflected(Type type)

@@ -12,17 +12,15 @@ public class ExtremeWeatherCompat : OtherModCompat
 
     protected override string ModId => Id;
 
-    protected override string ModName => "Extreme Weathers";
-
     protected override string LogTag => "ew";
 
     public CompatConfig Config { get; private set; } = null!;
 
-    protected override void Meet(ICoreAPI api, string version)
+    protected override void Meet(ICoreAPI api, string name, string version)
     {
         Config = api.Assets.Get<CompatConfig>(ConfigAsset);
         WindCap.Attach();
-        Log("Extreme Weathers {0}: its wind cap holds only during its own events", version);
+        Log("{0} {1}: its wind cap holds only during its own events", name, version);
     }
 
     public override void StartServerSide(ICoreServerAPI sapi)

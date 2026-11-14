@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -45,7 +46,8 @@ public static class VesselDraught
         {
             if (attached++ > 0) return;
             harmony = new Harmony(HarmonyId);
-            boats = Boats.Reach([ReachedAtRuntime] (BoatClass boat) => harmony.Patch(boat.SwimmingOffsetY, postfix: new HarmonyMethod(typeof(VesselDraught), nameof(Settle))));
+            Float(AccessTools.PropertyGetter(typeof(EntityBoat), nameof(EntityBoat.SwimmingOffsetY)));
+            boats = Boats.ReachCopies([ReachedAtRuntime] (BoatClass boat) => Float(boat.SwimmingOffsetY));
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorPassivePhysics), nameof(EntityBehaviorPassivePhysics.MotionAndCollision)),
                 prefix: new HarmonyMethod(typeof(VesselDraught), nameof(Heave)) { priority = Priority.Last });
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorRepulseAgents), nameof(EntityBehaviorRepulseAgents.OnGameTick)),
@@ -53,6 +55,9 @@ public static class VesselDraught
                 postfix: new HarmonyMethod(typeof(VesselDraught), nameof(AfterRepulsion)));
         }
     }
+
+    [ReachedAtRuntime]
+    private static void Float(MethodBase swimmingOffsetY) => harmony!.Patch(swimmingOffsetY, postfix: new HarmonyMethod(typeof(VesselDraught), nameof(Settle)));
 
     public static void Detach()
     {

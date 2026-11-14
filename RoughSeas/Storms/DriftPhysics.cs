@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -10,8 +11,8 @@ namespace RoughSeas.Storms;
 
 /// <summary>
 /// Keeps a vessel's set in her motion through vanilla's physics: <see cref="HullSet"/> does the sums, and this patch only
-/// tells it when. Before each of vanilla's moves, after it, and after <see cref="EntityBoat"/> writes her motion over from
-/// her forward speed.
+/// tells it when. Before each of vanilla's moves, after it, and after her boat class writes her motion over from her
+/// forward speed.
 /// </summary>
 [ReliesOn("Vintagestory.API.Common.EntityBehaviorPassivePhysics", "MotionAndCollision", "water drag scales the whole motion by WaterDragValue^(33·dt), the swim drag divides it, and a collision zeroes the axis it blocked")]
 [ReliesOn("Vintagestory.GameContent.EntityBoat", "updateBoatAngleAndMotion", "rewrites Pos.Motion X and Z from ForwardSpeed while ForwardSpeed is not 0")]
@@ -33,9 +34,13 @@ public static class DriftPhysics
             harmony.Patch(AccessTools.Method(typeof(EntityBehaviorPassivePhysics), nameof(EntityBehaviorPassivePhysics.MotionAndCollision)),
                 prefix: new HarmonyMethod(typeof(DriftPhysics), nameof(BeforeMove)),
                 postfix: new HarmonyMethod(typeof(DriftPhysics), nameof(AfterMove)));
-            boats = Boats.Reach([ReachedAtRuntime] (BoatClass boat) => harmony.Patch(boat.UpdateMotion, postfix: new HarmonyMethod(typeof(DriftPhysics), nameof(Rowed))));
+            Follow(AccessTools.Method(typeof(EntityBoat), "updateBoatAngleAndMotion"));
+            boats = Boats.ReachCopies([ReachedAtRuntime] (BoatClass boat) => Follow(boat.UpdateMotion));
         }
     }
+
+    [ReachedAtRuntime]
+    private static void Follow(MethodBase updateMotion) => harmony!.Patch(updateMotion, postfix: new HarmonyMethod(typeof(DriftPhysics), nameof(Rowed)));
 
     public static void Detach()
     {

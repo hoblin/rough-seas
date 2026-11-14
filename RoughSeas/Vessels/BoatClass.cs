@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 using HarmonyLib;
 using Vintagestory.API.Common.Entities;
@@ -16,7 +17,7 @@ public sealed class BoatClass
     private readonly AccessTools.FieldRef<object, Vec3f> mountAngle;
     private readonly AccessTools.FieldRef<object, double> forwardSpeed;
     private readonly AccessTools.FieldRef<object, Dictionary<string, string>> mountAnimations;
-    private readonly PropertyInfo speedMultiplier;
+    private readonly Action<Entity, float> setSpeedMultiplier;
 
     public BoatClass(Type type)
     {
@@ -24,7 +25,7 @@ public sealed class BoatClass
         mountAngle = AccessTools.FieldRefAccess<Vec3f>(type, "mountAngle");
         forwardSpeed = AccessTools.FieldRefAccess<double>(type, "ForwardSpeed");
         mountAnimations = AccessTools.FieldRefAccess<Dictionary<string, string>>(type, "MountAnimations");
-        speedMultiplier = AccessTools.Property(type, "SpeedMultiplier") ?? throw new MissingMemberException(type.FullName, "SpeedMultiplier");
+        setSpeedMultiplier = Setter(type, AccessTools.PropertySetter(type, "SpeedMultiplier") ?? throw new MissingMemberException(type.FullName, "SpeedMultiplier"));
         OnRenderFrame = Declared(type, "OnRenderFrame");
         UpdateMotion = Declared(type, "updateBoatAngleAndMotion");
         SwimmingOffsetY = AccessTools.DeclaredPropertyGetter(type, "SwimmingOffsetY") ?? throw new MissingMemberException(type.FullName, "SwimmingOffsetY");
@@ -44,7 +45,14 @@ public sealed class BoatClass
 
     public Dictionary<string, string> MountAnimations(Entity boat) => mountAnimations(boat);
 
-    public void SetSpeedMultiplier(Entity boat, float multiplier) => speedMultiplier.SetValue(boat, multiplier);
+    public void SetSpeedMultiplier(Entity boat, float multiplier) => setSpeedMultiplier(boat, multiplier);
+
+    private static Action<Entity, float> Setter(Type type, MethodInfo setter)
+    {
+        var boat = Expression.Parameter(typeof(Entity));
+        var value = Expression.Parameter(typeof(float));
+        return Expression.Lambda<Action<Entity, float>>(Expression.Call(Expression.Convert(boat, type), setter, value), boat, value).Compile();
+    }
 
     private static MethodInfo Declared(Type type, string name) =>
         AccessTools.DeclaredMethod(type, name) ?? throw new MissingMethodException(type.FullName, name);

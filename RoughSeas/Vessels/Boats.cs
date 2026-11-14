@@ -34,12 +34,20 @@ public static class Boats
         }
     }
 
-    /// <summary>Runs <paramref name="patch"/> on every boat class, and on each added later, until disposed.</summary>
-    public static IDisposable Reach(Action<BoatClass> patch)
+    public static void Remove(Type type)
+    {
+        lock (gate) classes = [classes[0], .. classes.Skip(1).Where(boat => boat.Type != type)];
+    }
+
+    /// <summary>
+    /// Runs <paramref name="patch"/> on every copy of vanilla's boat, and on each added later, until disposed. A patch on
+    /// vanilla's own <c>EntityBoat</c> is written out in full, where <c>bin/compat</c> reads it.
+    /// </summary>
+    public static IDisposable ReachCopies(Action<BoatClass> patch)
     {
         lock (gate)
         {
-            foreach (var boat in classes) patch(boat);
+            foreach (var boat in classes.Skip(1)) patch(boat);
             Added += patch;
             return new Reached(patch);
         }

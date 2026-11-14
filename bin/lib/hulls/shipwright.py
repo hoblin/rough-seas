@@ -16,13 +16,19 @@ from physics import ASSETS, afloat
 from sailboat import hold, kept, solids
 from shape import bounds, hull_of, windage
 
-sys.setrecursionlimit(20000)
+# The drakkar's shape nests its elements deeper than json5's parser recurses by default.
+DEEPEST_SHAPE = 20000
+sys.setrecursionlimit(DEEPEST_SHAPE)
 
-COMPAT = load(ASSETS / "config/compat/shipwright.json")
+VERSION = load(ASSETS / "config/compat/shipwright.json")["tested"]["to"]
+RELEASES = {"1.5.1": "https://moddbcdn.vintagestory.at/shipwright_1.5.1_bcdbee9834481e92d58ac1d17107c4e2.zip?dl=shipwright_1.5.1.zip"}
 PATCH = ASSETS / "patches/compat-shipwright.json"
-CACHE = Path(os.environ.get("BENCH_TMP", "/tmp")) / f"shipwright-{COMPAT['tested']['to']}.zip"
+CACHE = Path(os.environ.get("BENCH_TMP", "/tmp")) / f"shipwright-{VERSION}.zip"
 HIDDEN = re.compile(r"SailUnfurled|SailHalf|ExtraSailUnfurled|ExtraSailHalf|Collision|hideWater")
+# Sampling a hold every half voxel takes minutes on a hull past ten metres; a voxel there is fine enough.
 LONG_HULL_VOXELS = 160
+FINE_STEP_VOXELS = 0.5
+COARSE_STEP_VOXELS = 1
 
 
 @dataclass
@@ -49,7 +55,7 @@ HULLS = {
 
 def release():
     if not CACHE.exists():
-        urllib.request.urlretrieve(COMPAT["release"], CACHE)
+        urllib.request.urlretrieve(RELEASES[VERSION], CACHE)
     return zipfile.ZipFile(io.BytesIO(CACHE.read_bytes()))
 
 
@@ -92,7 +98,7 @@ def measure(vessel, hull, zipped):
         measured = afloat(vessel, kg, depth, solid_litres=bundle_litres(planking),
                           hitbox_height_metres=entity["hitboxSize"]["y"], at_draft=windage(above, frm[1]))
     else:
-        step = 1 if to[0] - frm[0] > LONG_HULL_VOXELS else 0.5
+        step = COARSE_STEP_VOXELS if to[0] - frm[0] > LONG_HULL_VOXELS else FINE_STEP_VOXELS
         litres, deck = hold(solids(planking), frm, [to[0], gunwale, to[2]], step)
         measured = afloat(vessel, kg, depth, litres, deck, hitbox_height_metres=entity["hitboxSize"]["y"],
                           at_draft=windage(above, frm[1]))

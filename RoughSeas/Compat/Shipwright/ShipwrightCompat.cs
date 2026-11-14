@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
@@ -7,11 +8,11 @@ namespace RoughSeas.Compat.Shipwright;
 public class ShipwrightCompat : OtherModCompat
 {
     public const string Condition = "roughseas-shipwright";
-    private const string BoatClass = "shipwright.EntityShipwrightBoat";
+    private const string BoatClassName = "shipwright.EntityShipwrightBoat";
+
+    private Type? boat;
 
     protected override string ModId => "shipwright";
-
-    protected override string ModName => "Shipwright";
 
     protected override string LogTag => "shipwright";
 
@@ -27,9 +28,15 @@ public class ShipwrightCompat : OtherModCompat
     /// <summary>The condition is only the patch loader's: it leaves the world config before the world saves it.</summary>
     public override void AssetsFinalize(ICoreAPI api) => api.World.Config?.RemoveAttribute(Condition);
 
-    protected override void Meet(ICoreAPI api, string version)
+    protected override void Meet(ICoreAPI api, string name, string version)
     {
-        Boats.Add(AccessTools.TypeByName(BoatClass));
-        Log("Shipwright {0}: its boats are vessels of ours, and take our sea", version);
+        boat = AccessTools.TypeByName(BoatClassName);
+        Boats.Add(boat);
+        Log("{0} {1}: its boats are vessels of ours, and take our sea", name, version);
+    }
+
+    public override void Dispose()
+    {
+        if (boat != null) Boats.Remove(boat);
     }
 }

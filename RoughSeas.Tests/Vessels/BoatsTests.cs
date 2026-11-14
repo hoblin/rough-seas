@@ -43,24 +43,34 @@ public class BoatsTests
     }
 
     [Fact]
-    public void APatchReachesEveryBoatClassThenAndLater()
+    public void APatchReachesTheCopiesAddedUntilItIsDisposedButNotVanillasOwn()
     {
         var reached = new List<Type>();
-        using (Boats.Reach(boat => reached.Add(boat.Type)))
+        using (Boats.ReachCopies(boat => reached.Add(boat.Type)))
         {
             Boats.Add(typeof(LaterBoat));
         }
         Boats.Add(typeof(LastBoat));
 
-        Assert.Contains(typeof(EntityBoat), reached);
+        Assert.DoesNotContain(typeof(EntityBoat), reached);
         Assert.Contains(typeof(LaterBoat), reached);
         Assert.DoesNotContain(typeof(LastBoat), reached);
     }
 
     [Fact]
+    public void ACopyRemovedIsNoLongerABoat()
+    {
+        Boats.Add(typeof(RemovedBoat));
+        Boats.Remove(typeof(RemovedBoat));
+
+        Assert.False(Boats.Is(new RemovedBoat()));
+        Assert.True(Boats.Is(new EntityBoat()));
+    }
+
+    [Fact]
     public void AClassMissingABoatsMembersIsRefused()
     {
-        Assert.ThrowsAny<Exception>(() => Boats.Add(typeof(NoBoat)));
+        Assert.ThrowsAny<ArgumentException>(() => Boats.Add(typeof(NoBoat)));
         Assert.False(Boats.Is(new NoBoat()));
     }
 
@@ -92,6 +102,15 @@ public class BoatsTests
     }
 
     private class LastBoat : BoatCopy
+    {
+        public override double SwimmingOffsetY => 0.5;
+
+        public virtual void OnRenderFrame(float dt, EnumRenderStage stage) { }
+
+        protected virtual void updateBoatAngleAndMotion(float dt) { }
+    }
+
+    private class RemovedBoat : BoatCopy
     {
         public override double SwimmingOffsetY => 0.5;
 

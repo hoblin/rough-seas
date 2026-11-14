@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using HarmonyLib;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Vessels;
@@ -39,19 +40,23 @@ public static class VesselMotion
         harmony.Patch(AccessTools.Method(typeof(NetworkAPI), nameof(NetworkAPI.SendPlayerPositionPacket)),
             prefix: new HarmonyMethod(typeof(VesselMotion), nameof(SendUnlifted)),
             postfix: new HarmonyMethod(typeof(VesselMotion), nameof(RestoreLift)));
-        boats = Boats.Reach([ReachedAtRuntime] (BoatClass boat) =>
-        {
-            harmony.Patch(boat.OnRenderFrame,
-                prefix: new HarmonyMethod(typeof(VesselMotion), nameof(WindStrength)) { priority = Priority.Low },
-                postfix: new HarmonyMethod(typeof(VesselMotion), nameof(WindRestore)) { priority = Priority.Low });
-            harmony.Patch(boat.OnRenderFrame, postfix: new HarmonyMethod(typeof(VesselMotion), nameof(Respond)));
-        });
+        Rock(AccessTools.Method(typeof(EntityBoat), nameof(EntityBoat.OnRenderFrame)));
+        boats = Boats.ReachCopies([ReachedAtRuntime] (BoatClass boat) => Rock(boat.OnRenderFrame));
         harmony.Patch(AccessTools.Method(typeof(EntityShapeRenderer), nameof(EntityShapeRenderer.loadModelMatrix)),
             postfix: new HarmonyMethod(typeof(VesselMotion), nameof(LiftModel)));
         harmony.Patch(AccessTools.PropertyGetter(typeof(EntityRideableSeat), nameof(EntityRideableSeat.SeatPosition)),
             postfix: new HarmonyMethod(typeof(VesselMotion), nameof(LiftSeat)));
         harmony.Patch(AccessTools.Method(typeof(EntityBehaviorSelectionBoxes), "applyBoxTransform"),
             prefix: new HarmonyMethod(typeof(VesselMotion), nameof(LiftSelectionBox)));
+    }
+
+    [ReachedAtRuntime]
+    private static void Rock(MethodBase onRenderFrame)
+    {
+        harmony!.Patch(onRenderFrame,
+            prefix: new HarmonyMethod(typeof(VesselMotion), nameof(WindStrength)) { priority = Priority.Low },
+            postfix: new HarmonyMethod(typeof(VesselMotion), nameof(WindRestore)) { priority = Priority.Low });
+        harmony.Patch(onRenderFrame, postfix: new HarmonyMethod(typeof(VesselMotion), nameof(Respond)));
     }
 
     public static void Detach()
@@ -65,11 +70,19 @@ public static class VesselMotion
         (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
     }
 
-    /// <summary>How high this client draws the vessel over where the server keeps it, this frame; 0 for anything else.</summary>
-    public static double Lift(Entity? vessel) => vessel != null && Boats.Is(vessel) ? PoseOf(vessel).Lift : 0;
+    /// <summary>
+    /// How this client draws a vessel we pose on the swell, this frame, over where the server keeps it; null for
+    /// anything else.
+    /// </summary>
+    public static DrawnHull? Drawn(Entity vessel) =>
+        vessel.Api is ICoreClientAPI && Boats.Is(vessel) && vessel.HasBehavior<EntityBehaviorSeaForces>() && vessel.Properties.Client.Renderer is EntityShapeRenderer renderer
+            ? new DrawnHull(PoseOf(vessel).Lift, renderer.xangle, renderer.yangle, renderer.zangle)
+            : null;
+
+    private static double Lift(Entity? vessel) => vessel != null && Boats.Is(vessel) ? PoseOf(vessel).Lift : 0;
 
     [ReliesOn("Vintagestory.GameContent.EntityBoat", "OnRenderFrame", "reads CurrentWindSpeedClient.X alone for the boat's roll")]
-    private static void WindStrength(out float __state) => __state = VanillaWeatherPatches.Magnitude(GlobalConstants.CurrentWindSpeedClient);
+    private static void WindStrength(out float __state) => __state = VanillaWeatherPatches.SwapInStrength(GlobalConstants.CurrentWindSpeedClient);
 
     private static void WindRestore(float __state) => GlobalConstants.CurrentWindSpeedClient.X = __state;
 
