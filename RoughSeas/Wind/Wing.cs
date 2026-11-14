@@ -38,10 +38,10 @@ public sealed class Wing(Planform planform, double breakdownRadians, double sepa
     {
         var angle = Math.Min(Math.Abs(incidence), Math.PI / 2);
         var (sin, cos) = (Math.Sin(angle), Math.Cos(angle));
-        var attached = planform.Potential * sin * cos + planform.Vortex * sin * sin;
-        var separated = bluff * sin * sin;
-        var burst = angle <= breakdownRadians ? 0 : angle >= separatedRadians ? 1 : (angle - breakdownRadians) / (separatedRadians - breakdownRadians);
-        return attached + burst * (separated - attached);
+        var body = bluff * sin * sin;
+        var lift = planform.Potential * sin * cos + planform.Vortex * sin * sin - body;
+        var held = angle <= breakdownRadians ? 1 : angle >= separatedRadians ? 0 : (separatedRadians - angle) / (separatedRadians - breakdownRadians);
+        return body + held * lift;
     }
 
     public (double Drive, double Side) At(double fromBow, double incidence)
