@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "Bơi chân thực",
     "worldattribute-realisticSwimming-desc": "Bạn nổi nhờ lượng nước mà cơ thể chiếm chỗ, bơi nhanh đến mức đôi tay con người có thể đẩy bạn đi, và dụng cụ cùng giáp bạn mang kéo bạn chìm xuống. Sóng, dòng chảy và ngọn sóng đổ cuốn bạn đi. Khi tắt, bạn bơi như trong trò chơi gốc; bạn vẫn thở theo nhịp sóng.",
     "worldattribute-swimmingStrength": "Sức bơi",
-    "worldattribute-swimmingStrength-desc": "Đôi tay bạn quạt nước mạnh đến đâu khi bơi chân thực: x1 là nhịp quạt thật của một người bơi đã luyện tập, x2 và x3 quạt mạnh gấp hai và gấp ba, nên bạn bơi nhanh hơn và có thể nhấc nhiều hơn lên khỏi mặt nước. Thiết lập tốc độ đi bộ của chính trò chơi cũng nhân với nó.",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "Đôi tay bạn quạt nước mạnh đến đâu khi bơi chân thực: 1× là nhịp quạt thật của một người bơi đã luyện tập, 2× và 3× quạt mạnh gấp hai và gấp ba, nên bạn bơi nhanh hơn và có thể nhấc nhiều hơn lên khỏi mặt nước. Thiết lập tốc độ đi bộ của chính trò chơi cũng nhân với nó.",
     "worldattribute-swimmerBreakers": "Sóng đổ lên người bơi",
-    "worldattribute-swimmerBreakers-desc": "Con sóng đổ ập lên bạn khi đang bơi sẽ dìm bạn xuống và cuốn bạn theo, và nước sủi bọt của nó nâng bạn kém hơn. Khi tắt, không con sóng nào đổ lên người bơi; bạn vẫn nổi trên sóng và thở theo nhịp sóng."
+    "worldattribute-swimmerBreakers-desc": "Con sóng đổ ập lên bạn khi đang bơi sẽ dìm bạn xuống và cuốn bạn theo, và nước sủi bọt của nó nâng bạn kém hơn. Khi tắt, không con sóng nào đổ lên người bơi; bạn vẫn nổi trên sóng và thở theo nhịp sóng.",
+    "worldattribute-sailWind": "Gió trên cánh buồm",
+    "worldattribute-sailWind-desc": "Cánh buồm cảm nhận gió mạnh gấp bấy nhiêu lần so với gió thổi thật, nên thuyền buồm chạy nhanh gấp khoảng bấy nhiêu lần và vẫn điều khiển như trước. Bản thân gió, biển và con thuyền đã hạ buồm vẫn như cũ. 1× là gió thật."
 }

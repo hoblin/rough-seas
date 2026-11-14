@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "Realistisch zwemmen",
     "worldattribute-realisticSwimming-desc": "Je drijft op het water dat je lichaam verplaatst, zwemt zo snel als mensenarmen je kunnen voortstuwen, en het gereedschap en de wapenrusting die je draagt trekken je omlaag. Golven, stromingen en brekende kammen voeren je mee. Uit zwem je zoals in het basisspel; je ademt nog steeds op het ritme van de golven.",
     "worldattribute-swimmingStrength": "Zwemkracht",
-    "worldattribute-swimmingStrength-desc": "Hoe hard je armen trekken als je realistisch zwemt: x1 is de echte slag van een getrainde zwemmer, x2 en x3 trekken twee en drie keer zo hard, zodat je sneller zwemt en meer uit het water kunt tillen. De instelling Loopsnelheid van het spel vermenigvuldigt hem ook.",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "Hoe hard je armen trekken als je realistisch zwemt: 1× is de echte slag van een getrainde zwemmer, 2× en 3× trekken twee en drie keer zo hard, zodat je sneller zwemt en meer uit het water kunt tillen. De instelling Loopsnelheid van het spel vermenigvuldigt hem ook.",
     "worldattribute-swimmerBreakers": "Brekers over zwemmers",
-    "worldattribute-swimmerBreakers-desc": "Een golf die over je heen breekt terwijl je zwemt, drukt je onder en voert je mee, en zijn schuimende water draagt je minder. Uit breekt geen golf over een zwemmer; je drijft nog steeds op de golven en ademt op hun ritme."
+    "worldattribute-swimmerBreakers-desc": "Een golf die over je heen breekt terwijl je zwemt, drukt je onder en voert je mee, en zijn schuimende water draagt je minder. Uit breekt geen golf over een zwemmer; je drijft nog steeds op de golven en ademt op hun ritme.",
+    "worldattribute-sailWind": "Wind in de zeilen",
+    "worldattribute-sailWind-desc": "De zeilen voelen de wind zoveel keer sterker dan hij waait, en een zeilschip loopt ongeveer zoveel keer sneller en stuurt als voorheen. De wind zelf, de zee en een schip met gestreken zeil blijven zoals ze zijn. 1× is de echte wind."
 }

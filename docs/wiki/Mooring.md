@@ -31,7 +31,7 @@ Only the distance to the shore and the sea count, not how well it was tied. A lo
 
 ## Leaving a vessel
 
-- On a river or a pond: tie it up. The waves there stay small, and the current is what pulls. A big lake in a storm raises a sea of its own: treat its shore as a coast.
+- On a river or a pond: tie it up. The waves there stay small, and the current and the wind are what pull. A big lake in a storm raises a sea of its own: treat its shore as a coast.
 - On the coast in fair weather: tie it up, or [anchor](Anchoring) the sailboat.
 - On the coast with a storm coming: carry it home, or anchor well out, and leave nothing that matters aboard.
 

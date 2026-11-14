@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "Nuoto realistico",
     "worldattribute-realisticSwimming-desc": "Galleggi grazie all'acqua che il tuo corpo sposta, nuoti veloce quanto braccia umane possono spingerti, e gli attrezzi e l'armatura che porti ti tirano giù. Onde, correnti e creste che frangono ti trascinano. Se disattivato, nuoti come nel gioco base; respiri comunque al ritmo delle onde.",
     "worldattribute-swimmingStrength": "Forza nel nuoto",
-    "worldattribute-swimmingStrength-desc": "Quanto tirano forte le tue braccia quando nuoti in modo realistico: x1 è la vera bracciata di un nuotatore allenato, x2 e x3 tirano due e tre volte più forte, così nuoti più veloce e puoi sollevare di più fuori dall'acqua. Anche l'impostazione Velocità camminata del gioco la moltiplica.",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "Quanto tirano forte le tue braccia quando nuoti in modo realistico: 1× è la vera bracciata di un nuotatore allenato, 2× e 3× tirano due e tre volte più forte, così nuoti più veloce e puoi sollevare di più fuori dall'acqua. Anche l'impostazione Velocità camminata del gioco la moltiplica.",
     "worldattribute-swimmerBreakers": "Frangenti sui nuotatori",
-    "worldattribute-swimmerBreakers-desc": "Un'onda che ti frange addosso mentre nuoti ti spinge sott'acqua e ti trascina con sé, e la sua acqua schiumosa ti sostiene meno. Se disattivata, nessuna onda frange su chi nuota; galleggi comunque sulle onde e respiri al loro ritmo."
+    "worldattribute-swimmerBreakers-desc": "Un'onda che ti frange addosso mentre nuoti ti spinge sott'acqua e ti trascina con sé, e la sua acqua schiumosa ti sostiene meno. Se disattivata, nessuna onda frange su chi nuota; galleggi comunque sulle onde e respiri al loro ritmo.",
+    "worldattribute-sailWind": "Vento nelle vele",
+    "worldattribute-sailWind-desc": "Le vele sentono il vento tante volte più forte di quanto soffi, e una barca a vela naviga all'incirca tante volte più veloce e si governa come prima. Il vento stesso, il mare e una barca con la vela ammainata restano come sono. 1× è il vento reale."
 }

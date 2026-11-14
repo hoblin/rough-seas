@@ -1,0 +1,240 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using RoughSeas.SeaAndWeather;
+using RoughSeas.Storms;
+using RoughSeas.Vessels;
+using RoughSeas.Water;
+using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
+
+namespace RoughSeas.Floating;
+
+public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
+{
+    public const string Code = "roughseas:seaforces";
+
+    private const string HoldAnimation = "swimidle";
+    private const float HoldDepthMetres = -0.85f;
+    private const float HoldReachMetres = 0.15f;
+
+    private StormsModSystem storms = null!;
+    private VesselsModSystem vessels = null!;
+    private SeaWeatherSystem sea = null!;
+    private EntityBehaviorVesselIntegrity? hull;
+    private IBuoyant? buoyant;
+    private EntityBehaviorBilge? bilge;
+    private EntityBehaviorMooring? mooring;
+    private JsonObject config = null!;
+    private double? designedBeamMetres;
+    private Seaworthiness dry;
+    private (double BeamMetres, double LengthMetres) dryFor = (double.NaN, double.NaN);
+    private float speedMultiplier;
+    private EntityBehaviorSeatable? seatable;
+    private IMasted? mast;
+    private double designedMastMetres;
+    private PassingWaves passing = null!;
+    private float sinceUpdate;
+
+    /// <summary>Server side, each wave as she takes it, whether or not it broke on her or shipped water.</summary>
+    public event Action<TakenWave>? Took;
+
+    public double BeamMetres => designedBeamMetres ?? 2 * (hull?.Shape.HalfBeamMetres ?? 0);
+
+    public double? LengthMetres => hull is { } measured ? 2 * measured.Shape.HalfLengthMetres : null;
+
+    public double MastMetres => mast?.MastMetres(designedMastMetres) ?? designedMastMetres;
+
+    public IBuoyant? Buoyant => buoyant;
+
+    /// <summary>The drawn waves' water under her on this side, while this side moves her.</summary>
+    public WaveRide Ride { get; private set; } = null!;
+
+    /// <summary>How she takes the sea now, with the water in her bilge.</summary>
+    public Seaworthiness Seaworthiness
+    {
+        get
+        {
+            var laden = Dry.Laden(bilge?.Fill ?? 0, storms.Config.Swamping);
+            return buoyant is { HasDraft: true } ? laden.Floating(buoyant.Afloat.FreeboardMetres) : laden;
+        }
+    }
+
+    public double SettlingMetres => Dry.FreeboardMetres - Seaworthiness.FreeboardMetres;
+
+    private Seaworthiness Dry
+    {
+        get
+        {
+            (double BeamMetres, double LengthMetres) size = (BeamMetres, LengthMetres ?? 0);
+            if (size != dryFor) (dry, dryFor) = (Seaworthiness.From(config, size.BeamMetres, size.LengthMetres), size);
+            return dry;
+        }
+    }
+
+    public bool? KeelWet { get; set; }
+
+    public Heave? Heave => buoyant is { HasDraft: true, Afloat.Sunk: false }
+        ? new Heave(buoyant.Aboard.Total, buoyant.AddedKg, buoyant.KgPerMetre, buoyant.Afloat.DraftMetres, buoyant.DepthMetres, storms.Config.Response)
+        : null;
+
+    public override string PropertyName() => Code;
+
+    public override void Initialize(EntityProperties properties, JsonObject attributes)
+    {
+        storms = entity.Api.ModLoader.GetModSystem<StormsModSystem>();
+        vessels = entity.Api.ModLoader.GetModSystem<VesselsModSystem>();
+        var weather = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
+        sea = weather;
+        passing = new PassingWaves(sea.Clock, storms.Waves, storms.Config.Waves.MinHeight);
+        Ride = new WaveRide(storms, weather, this);
+        config = attributes;
+        designedBeamMetres = attributes["beamMetres"].Exists ? attributes["beamMetres"].AsDouble() : null;
+        designedMastMetres = attributes["mastMetres"].AsDouble();
+        speedMultiplier = properties.Attributes?["speedMultiplier"].AsFloat(1) ?? 1;
+    }
+
+    public override void AfterInitialized(bool onFirstSpawn)
+    {
+        hull = entity.GetBehavior<EntityBehaviorVesselIntegrity>();
+        buoyant = entity.SidedProperties.Behaviors.OfType<IBuoyant>().FirstOrDefault();
+        bilge = entity.GetBehavior<EntityBehaviorBilge>();
+        mooring = entity.GetBehavior<EntityBehaviorMooring>();
+        seatable = entity.GetBehavior<EntityBehaviorSeatable>();
+        mast = entity.SidedProperties.Behaviors.OfType<IMasted>().FirstOrDefault();
+    }
+
+    public double WaterDepth(int maxBlocks) => Sound(entity.Pos.XYZ, maxBlocks).Depth;
+
+    public double WaterDepth(double alongMetres, double acrossMetres, int maxBlocks)
+    {
+        var (x, z) = HullShape.ToWorld(alongMetres, acrossMetres, entity.Pos.Yaw);
+        return Sound(entity.Pos.XYZ.Add(x, 0, z), maxBlocks).Depth;
+    }
+
+    public Block Seabed(int maxBlocks) => entity.World.BlockAccessor.GetBlock(Sound(entity.Pos.XYZ, maxBlocks).Bottom);
+
+    private (double Depth, BlockPos Bottom) Sound(Vec3d at, int maxBlocks) =>
+        WaterColumn.Sound(entity.World.BlockAccessor, at.Add(0, -EntityBehaviorVesselIntegrity.WaterlineProbeMetres, 0).AsBlockPos, maxBlocks);
+
+    public override void OnGameTick(float deltaTime)
+    {
+        if (!entity.Alive) return;
+        if (bilge != null || buoyant != null) Lade();
+        if (entity.World.Side != EnumAppSide.Server) return;
+        sinceUpdate += deltaTime;
+        if (sinceUpdate < storms.Config.TickSeconds) return;
+
+        sinceUpdate = 0;
+        if (!passing.Lap(entity.Swimming)) return;
+
+        using var _ = storms.Budget.Measure();
+        var here = storms.Swells!.At(entity.Pos.X, entity.Pos.Z).WaveHere(entity.Pos.X, entity.Pos.Z);
+        var windMps = sea.WindSpeedAt(entity.Pos.X, entity.Pos.Z);
+        foreach (var wave in passing.Over(here, windMps, entity.World.Rand))
+        {
+            if (!entity.Alive) break;
+            TakeWave(here, wave);
+        }
+    }
+
+    private void TakeWave(WaveReading here, PassingWave wave)
+    {
+        var waves = storms.Waves;
+        var (height, surf, breaks) = (wave.Height, wave.Surf, wave.Breaks);
+        var swamped = bilge?.Swamped == true;
+        var breaking = swamped || breaks;
+        var crest = waves.Crest(height, breaking);
+        var shipped = Mechanic.BilgeWater.On(entity.World) ? waves.ShippedLitres(height, BeamMetres) * Seaworthiness.ShippedShare(crest) * Exposure : 0;
+        var capsizes = storms.Config.Swamping.Capsizes && breaking && Seaworthiness.Capsizes(height);
+        var (fromX, fromZ) = (-Math.Cos(here.TowardRadians), -Math.Sin(here.TowardRadians));
+        Took?.Invoke(new TakenWave(height, breaking, shipped, fromX, fromZ));
+        if (!breaking && shipped <= 0) return;
+
+        bilge?.Ship(shipped, "by the sea");
+        var cause = swamped ? "swamped" : surf ? "surf" : breaking ? "whitecap" : "swell";
+        storms.Log(entity, "{0} wave {1:F1} m in a {2:F1} m sea, {3:F2} m over a {4:F2} m freeboard: shipped {5:F0} L, {6}",
+            cause, height, here.Height, Seaworthiness.Overtopping(crest), Seaworthiness.FreeboardMetres, shipped,
+            bilge == null ? "washed off" : $"bilge {bilge.Litres:F0} of {bilge.CapacityLitres:F0} L");
+        if (breaks && hull != null) Slam(wave, here, hull);
+        if (capsizes) Capsize(height, swamped);
+    }
+
+    private void Slam(PassingWave wave, WaveReading here, EntityBehaviorVesselIntegrity hull)
+    {
+        var waves = storms.Waves;
+        var (breakerMetres, surf, celerity) = (wave.Height, wave.Surf, wave.Celerity);
+        var plunging = surf
+            ? waves.Plunges(breakerMetres, here.Period, here.BedSlope, here.Depth)
+            : waves.PlungesAtSea(entity.World.Rand.NextDouble());
+        var pressure = waves.SlamPressure(celerity, plunging);
+        var place = hull.Toward(-Math.Cos(here.TowardRadians), -Math.Sin(here.TowardRadians));
+        storms.Log(entity, "{0:F1} m {1} breaker at {2:F1} m/s slams the {3} with {4:F0} kPa", breakerMetres,
+            plunging ? "plunging" : surf ? "broken" : "spilling", celerity, place.Code(), pressure / 1000);
+        hull.Strike(pressure, place, Blow.Slam);
+    }
+
+    private void Capsize(double breakerMetres, bool swamped)
+    {
+        var thrown = ThrowRiders();
+        if (thrown == 0 && (swamped || bilge == null)) return;
+
+        storms.Log(entity, "capsized by a {0:F1} m breaker against {1:F2} m: {2} thrown in the water", breakerMetres, Seaworthiness.CapsizeBreakerMetres, thrown);
+        if (Mechanic.BilgeWater.On(entity.World)) bilge?.Ship(bilge.CapacityLitres, "capsized");
+    }
+
+    private void Lade()
+    {
+        var swamped = bilge?.Swamped == true;
+        if (Boats.Of(entity) is { } boat)
+        {
+            boat.SetSpeedMultiplier(entity, swamped ? 0 : speedMultiplier * (float)SpeedFactor());
+            var poses = SeatPoses.Of(entity);
+            var seats = Seats;
+            for (var i = 0; i < seats.Length; i++)
+            {
+                var seat = seats[i];
+                poses.Hold(seat, swamped ? new SeatPose(Alongside(i), HoldAnimation) : null);
+            }
+        }
+        if (buoyant?.Afloat.Sunk == true && entity.World.Side == EnumAppSide.Server) Founder();
+    }
+
+    private double SpeedFactor()
+    {
+        if (buoyant != null) return storms.Config.Swamping.SpeedFactor(buoyant.ReferenceKg, buoyant.Aboard.Total);
+
+        var mass = vessels.Mass;
+        return storms.Config.Swamping.SpeedFactor(entity.Properties.Weight + mass.CrewKg, mass.Of(entity, entity.Properties.Weight).Total);
+    }
+
+    private void Founder()
+    {
+        var thrown = ThrowRiders();
+        if (thrown > 0) storms.Log(entity, "foundered: {0} thrown in the water", thrown);
+    }
+
+    private int ThrowRiders() => Seats.Count(seat => seat.Passenger is EntityAgent rider && Overboard(seat, rider));
+
+    [ReliesOn("Vintagestory.API.Common.EntityPlayer", "OnReceivedServerPacket", "a teleport on dismount reaches a client still seated, and moves the vessel")]
+    private static bool Overboard(IMountableSeat seat, EntityAgent rider)
+    {
+        seat.DoTeleportOnUnmount = false;
+        bool thrown = rider.TryUnmount();
+        seat.DoTeleportOnUnmount = true;
+        return thrown;
+    }
+
+    private Vec3f Alongside(int seat) => new(0, HoldDepthMetres, (float)(BeamMetres / 2 + HoldReachMetres) * (seat % 2 == 0 ? 1 : -1));
+
+    /// <param name="Height">This one wave's height, sampled from the sea's significant height; not a crest the client renders.</param>
+    /// <param name="FromX">With <paramref name="FromZ"/>, the world direction the wave came from, not normalised.</param>
+    public readonly record struct TakenWave(double Height, bool Breaking, double ShippedLitres, double FromX, double FromZ);
+
+    private IMountableSeat[] Seats => seatable?.Seats ?? [];
+
+    private double Exposure => mooring?.Exposure ?? 1;
+}

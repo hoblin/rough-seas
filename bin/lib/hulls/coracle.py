@@ -9,8 +9,9 @@ from held import SCULL_REACH_METRES, worked_from_middle, PADDLE, poling, scullin
 from stroke import player_patch, seat
 import piles
 import units
+from wind import bare
 from entity import merged, record
-from shape import BILGE, Shape, bilge_levels, hull_box, windage, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
+from shape import BILGE, Shape, bilge_levels, hull_box, across, heading, seated, bilge, box, group, path, plank, stages, water_plane, write
 from wounds import backed, wound
 
 CENTRE = 8
@@ -321,7 +322,7 @@ def build(path_):
     wound(shape, [("", [hide], "hide")], framing=([bent], "frame"))
     shape.write()
     start = {"laths": 2 * LATHS, "metres": math.ceil(max(piece["metres"] for piece in flat["children"]))}
-    record("coracle", merged(report(flat, gunwale, hide_area(pieces), windage([hide], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"start": start}}}))
+    record("coracle", merged(report(flat, gunwale, hide_area(pieces), bare([hide], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:covering": {"start": start}}}))
     at = seat(shape, "FrontSeat")
     record("coracle", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, SCULL_REACH_METRES, ahead=True)}})
     water_metres = waterline_metres("coracle")

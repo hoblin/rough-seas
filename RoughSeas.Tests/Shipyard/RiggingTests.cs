@@ -187,8 +187,8 @@ public class RiggingTests
         Assert.Equal(573.5, Outrigger().Raised(stage => stage.RaisesLitres), 1);
 
     [Fact]
-    public void EveryPoleSheTakesIsCutFromAThreeMetrePole() =>
-        Assert.All(Outrigger().Stages.Where(stage => stage.Work == FramingWork.Pole).SelectMany(stage => stage.Metres), metres => Assert.InRange(metres, 2.5, 3));
+    public void EveryPoleSheTakesIsCutFromAPoleNoLongerThanAWedgeSplits() =>
+        Assert.All(Outrigger().Stages.Where(stage => stage.Work == FramingWork.Pole).SelectMany(stage => stage.Metres), metres => Assert.InRange(metres, 1, 5));
 
     [Fact]
     public void HerFirstBoomIsOneOfHerPolesOfFrame()

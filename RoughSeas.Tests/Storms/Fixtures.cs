@@ -1,11 +1,14 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RoughSeas.Floating;
 using RoughSeas.Person;
 using RoughSeas.Propulsion;
+using RoughSeas.Sailing;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using RoughSeas.Water;
+using RoughSeas.Wind;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -40,7 +43,42 @@ public static class Fixtures
         return config;
     });
 
+    private static readonly Lazy<WindConfig> wind = new(() => JsonConvert.DeserializeObject<WindConfig>(Shipped("wind.json"))!);
+
     public static StormsConfig Config() => config.Value;
+
+    private static readonly Lazy<SailingConfig> sailing = new(() => JsonConvert.DeserializeObject<SailingConfig>(Shipped("sailing.json"))!);
+
+    public static WindConfig Wind => wind.Value;
+
+    public static SailingConfig Sailing => sailing.Value;
+
+    public static JToken WindageOf(string vessel) => Entity(vessel)["behaviorConfigs"]![EntityBehaviorWindage.Code]!;
+
+    public static JToken SailOf(string vessel) => Entity(vessel)["behaviorConfigs"]![EntityBehaviorSail.Code]!;
+
+    public static JToken SailboatWindage => BehaviorConfig("wind-vessels.json", "boat-sailed", EntityBehaviorWindage.Code);
+
+    public static JToken SailboatSail => BehaviorConfig("wind-vessels.json", "boat-sailed", EntityBehaviorSail.Code);
+
+    public static (VesselInWind Body, Sail Sail) InWind(string vessel) => Sailed(WindageOf(vessel), SailOf(vessel));
+
+    public static (VesselInWind Body, Sail Sail) SailboatInWind() => Sailed(SailboatWindage, SailboatSail);
+
+    private static (VesselInWind Body, Sail Sail) Sailed(JToken windage, JToken sail)
+    {
+        var rigged = Sail.Of(new JsonObject(sail), Sailing, Wind)!;
+        return (VesselInWind.From(new JsonObject(windage), Wind, rigged), rigged);
+    }
+
+    public const double TickSeconds = 1 / 30.0;
+
+    public static WindLoad Steady(this VesselInWind body, (double X, double Z) wind, (double X, double Z) velocity, double yaw, double waterline, double seconds = 60)
+    {
+        var load = default(WindLoad);
+        for (var t = 0.0; t < seconds; t += TickSeconds) load = body.Load(wind, velocity, yaw, waterline, TickSeconds);
+        return load;
+    }
 
     public static VesselMass Mass => mass.Value;
 
@@ -56,7 +94,7 @@ public static class Fixtures
 
     public static double SailboatBeamMetres => BeamMetres("boat-sailed");
 
-    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Storms.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel), 2 * Shape(vessel).HalfLengthMetres);
+    public static Seaworthiness Seaworthiness(string vessel) => RoughSeas.Floating.Seaworthiness.From(new JsonObject(SeaForces(vessel)), BeamMetres(vessel), 2 * Shape(vessel).HalfLengthMetres);
 
     public static double BeamMetres(string vessel) => (double?)SeaForces(vessel)["beamMetres"] ?? 2 * Shape(vessel).HalfBeamMetres;
 

@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "Gerçekçi yüzme",
     "worldattribute-realisticSwimming-desc": "Bedeninizin yerinden ettiği su sizi taşır, bir insanın kollarının sizi itebildiği kadar hızlı yüzersiniz ve taşıdığınız aletler ve zırh sizi aşağı çeker. Dalgalar, akıntılar ve kırılan dalga tepeleri sizi sürükler. Kapalıyken temel oyundaki gibi yüzersiniz; yine de dalgaların ritmiyle nefes alırsınız.",
     "worldattribute-swimmingStrength": "Yüzme gücü",
-    "worldattribute-swimmingStrength-desc": "Gerçekçi yüzerken kollarınızın ne kadar güçlü çektiği: x1 eğitimli bir yüzücünün gerçek kulacıdır, x2 ve x3 iki ve üç kat güçlü çeker; böylece daha hızlı yüzer ve sudan daha fazlasını çıkarabilirsiniz. Oyunun kendi Yürüme hızı ayarı da onu çarpar.",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "Gerçekçi yüzerken kollarınızın ne kadar güçlü çektiği: 1× eğitimli bir yüzücünün gerçek kulacıdır, 2× ve 3× iki ve üç kat güçlü çeker; böylece daha hızlı yüzer ve sudan daha fazlasını çıkarabilirsiniz. Oyunun kendi Yürüme hızı ayarı da onu çarpar.",
     "worldattribute-swimmerBreakers": "Yüzücülere kırılan dalgalar",
-    "worldattribute-swimmerBreakers-desc": "Yüzerken üzerinize kırılan bir dalga sizi suyun altına iter ve beraberinde sürükler; köpüklü suyu sizi daha az taşır. Kapalıyken hiçbir dalga yüzücünün üzerine kırılmaz; yine de dalgaların üzerinde süzülür ve onların ritmiyle nefes alırsınız."
+    "worldattribute-swimmerBreakers-desc": "Yüzerken üzerinize kırılan bir dalga sizi suyun altına iter ve beraberinde sürükler; köpüklü suyu sizi daha az taşır. Kapalıyken hiçbir dalga yüzücünün üzerine kırılmaz; yine de dalgaların üzerinde süzülür ve onların ritmiyle nefes alırsınız.",
+    "worldattribute-sailWind": "Yelkenlerdeki rüzgâr",
+    "worldattribute-sailWind-desc": "Yelkenler rüzgârı estiğinden bu kadar kat güçlü hisseder; yelkenli tekne de yaklaşık bu kadar kat hızlı gider ve eskisi gibi dümen dinler. Rüzgârın kendisi, deniz ve yelkeni indirilmiş tekne olduğu gibi kalır. 1× gerçek rüzgârdır."
 }

@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Floating;
 using RoughSeas.Water;
 
 namespace RoughSeas.Storms;

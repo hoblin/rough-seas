@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "Natación realista",
     "worldattribute-realisticSwimming-desc": "Flotas gracias al agua que desaloja tu cuerpo, nadas tan rápido como pueden impulsarte unos brazos humanos, y las herramientas y la armadura que llevas te hunden. Las olas, las corrientes y las crestas que rompen te arrastran. Desactivado, nadas como en el juego base; sigues respirando al ritmo de las olas.",
     "worldattribute-swimmingStrength": "Fuerza de nado",
-    "worldattribute-swimmingStrength-desc": "Con cuánta fuerza tiran tus brazos al nadar de forma realista: x1 es la brazada real de un nadador entrenado, x2 y x3 tiran el doble y el triple de fuerte, así que nadas más rápido y puedes sacar más peso del agua. El ajuste Velocidad al caminar del propio juego también la multiplica.",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "Con cuánta fuerza tiran tus brazos al nadar de forma realista: 1× es la brazada real de un nadador entrenado, 2× y 3× tiran el doble y el triple de fuerte, así que nadas más rápido y puedes sacar más peso del agua. El ajuste Velocidad al caminar del propio juego también la multiplica.",
     "worldattribute-swimmerBreakers": "Rompientes sobre nadadores",
-    "worldattribute-swimmerBreakers-desc": "Una ola que rompe sobre ti mientras nadas te hunde y te arrastra consigo, y su agua espumosa te sostiene menos. Desactivado, ninguna ola rompe sobre un nadador; sigues flotando sobre las olas y respiras a su ritmo."
+    "worldattribute-swimmerBreakers-desc": "Una ola que rompe sobre ti mientras nadas te hunde y te arrastra consigo, y su agua espumosa te sostiene menos. Desactivado, ninguna ola rompe sobre un nadador; sigues flotando sobre las olas y respiras a su ritmo.",
+    "worldattribute-sailWind": "Viento en las velas",
+    "worldattribute-sailWind-desc": "Las velas sienten el viento tantas veces más fuerte de lo que sopla, y un velero navega más o menos tantas veces más rápido y se gobierna como antes. El viento en sí, el mar y una embarcación con la vela arriada quedan igual. 1× es el viento real."
 }

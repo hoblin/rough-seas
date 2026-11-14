@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "Realistyczne pływanie",
     "worldattribute-realisticSwimming-desc": "Utrzymuje cię woda, którą wypiera twoje ciało, płyniesz tak szybko, jak mogą cię nieść ludzkie ramiona, a narzędzia i zbroja, które niesiesz, ciągną cię w dół. Fale, prądy i łamiące się grzbiety niosą cię. Gdy wyłączone, pływasz jak w podstawowej grze; nadal oddychasz w rytmie fal.",
     "worldattribute-swimmingStrength": "Siła pływaka",
-    "worldattribute-swimmingStrength-desc": "Jak mocno ciągną twoje ramiona przy realistycznym pływaniu: x1 to prawdziwy ruch wytrenowanego pływaka, x2 i x3 ciągną dwa i trzy razy mocniej, więc płyniesz szybciej i możesz wynieść z wody więcej. Mnoży ją też ustawienie gry „Szybkość ruchu”.",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "Jak mocno ciągną twoje ramiona przy realistycznym pływaniu: 1× to prawdziwy ruch wytrenowanego pływaka, 2× i 3× ciągną dwa i trzy razy mocniej, więc płyniesz szybciej i możesz wynieść z wody więcej. Mnoży ją też ustawienie gry „Szybkość ruchu”.",
     "worldattribute-swimmerBreakers": "Przybój nad pływakami",
-    "worldattribute-swimmerBreakers-desc": "Fala, która łamie się nad tobą, gdy płyniesz, wciska cię pod wodę i niesie ze sobą, a jej spieniona woda słabiej cię utrzymuje. Gdy wyłączone, żadna fala nie łamie się nad pływakiem; nadal unosisz się na falach i oddychasz w ich rytmie."
+    "worldattribute-swimmerBreakers-desc": "Fala, która łamie się nad tobą, gdy płyniesz, wciska cię pod wodę i niesie ze sobą, a jej spieniona woda słabiej cię utrzymuje. Gdy wyłączone, żadna fala nie łamie się nad pływakiem; nadal unosisz się na falach i oddychasz w ich rytmie.",
+    "worldattribute-sailWind": "Wiatr w żaglach",
+    "worldattribute-sailWind-desc": "Żagle czują wiatr tyle razy silniejszy, niż naprawdę wieje, więc żaglowiec płynie mniej więcej tyle razy szybciej i steruje się jak dotąd. Sam wiatr, morze i łódź ze zrzuconym żaglem pozostają bez zmian. 1× to prawdziwy wiatr."
 }

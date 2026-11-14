@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "Realistisk svømming",
     "worldattribute-realisticSwimming-desc": "Du bæres av vannet kroppen din fortrenger, svømmer så fort som et menneskes armer kan drive deg, og verktøyet og rustningen du bærer, drar deg ned. Bølger, strømmer og brytende kammer fører deg med. Av svømmer du som i grunnspillet; du puster fortsatt i takt med bølgene.",
     "worldattribute-swimmingStrength": "Svømmestyrke",
-    "worldattribute-swimmingStrength-desc": "Hvor kraftig armene dine trekker når du svømmer realistisk: x1 er en trent svømmers ekte svømmetak, x2 og x3 trekker dobbelt og tre ganger så kraftig, så du svømmer fortere og kan løfte mer opp av vannet. Spillets egen innstilling Ganghastighet ganger den også.",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "Hvor kraftig armene dine trekker når du svømmer realistisk: 1× er en trent svømmers ekte svømmetak, 2× og 3× trekker dobbelt og tre ganger så kraftig, så du svømmer fortere og kan løfte mer opp av vannet. Spillets egen innstilling Ganghastighet ganger den også.",
     "worldattribute-swimmerBreakers": "Brenninger over svømmere",
-    "worldattribute-swimmerBreakers-desc": "En bølge som bryter over deg mens du svømmer, presser deg under og fører deg med seg, og det skummende vannet bærer deg dårligere. Av bryter ingen bølge over en svømmer; du flyter fortsatt på bølgene og puster i takt med dem."
+    "worldattribute-swimmerBreakers-desc": "En bølge som bryter over deg mens du svømmer, presser deg under og fører deg med seg, og det skummende vannet bærer deg dårligere. Av bryter ingen bølge over en svømmer; du flyter fortsatt på bølgene og puster i takt med dem.",
+    "worldattribute-sailWind": "Vind i seilene",
+    "worldattribute-sailWind-desc": "Seilene kjenner vinden så mange ganger sterkere enn den blåser, og et seilfartøy går omtrent så mange ganger fortere og styrer som før. Selve vinden, havet og et fartøy med berget seil er som de er. 1× er den virkelige vinden."
 }

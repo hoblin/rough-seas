@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "真实游泳",
     "worldattribute-realisticSwimming-desc": "你靠身体排开的水浮起来，游速取决于人的双臂能推你多快，身上带的工具和盔甲会把你往下拽。浪、水流和破碎的浪峰会带着你走。关闭后，你会像原版游戏一样游泳；你仍会随着浪的节奏呼吸。",
     "worldattribute-swimmingStrength": "游泳力量",
-    "worldattribute-swimmingStrength-desc": "真实游泳时你双臂划水的力度：x1是训练有素的游泳者真实的划水，x2和x3的力度是它的两倍和三倍，你会游得更快，也能把更重的东西带出水面。游戏自带的行走速度设置也会与它相乘。",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "真实游泳时你双臂划水的力度：1×是训练有素的游泳者真实的划水，2×和3×的力度是它的两倍和三倍，你会游得更快，也能把更重的东西带出水面。游戏自带的行走速度设置也会与它相乘。",
     "worldattribute-swimmerBreakers": "碎浪打向游泳者",
-    "worldattribute-swimmerBreakers-desc": "游泳时在你头上破碎的浪会把你压到水下并带着你走，泛着泡沫的水托起你的力也更小。关闭后，不会有浪在游泳者头上破碎；你仍会随浪漂浮，并随着浪的节奏呼吸。"
+    "worldattribute-swimmerBreakers-desc": "游泳时在你头上破碎的浪会把你压到水下并带着你走，泛着泡沫的水托起你的力也更小。关闭后，不会有浪在游泳者头上破碎；你仍会随浪漂浮，并随着浪的节奏呼吸。",
+    "worldattribute-sailWind": "帆上的风",
+    "worldattribute-sailWind-desc": "帆所受的风比实际吹的风强这么多倍，帆船的航速大约也快这么多倍，操纵手感不变。风本身、海面以及降下帆的船保持原样。1× 为真实的风。"
 }

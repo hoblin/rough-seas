@@ -72,7 +72,7 @@ The game's handbook carries a short guide, *Going to Sea*, with what keeps you a
 - [Building a vessel](Building-a-Vessel): making a vessel float, ride, ship water, crack, moor and drift in our sea.
 
 **What's next**
-- [Roadmap](Roadmap): sailing by the wind, cold water and sharks, diving and wrecks.
+- [Roadmap](Roadmap): heel and the rudder, cold water and sharks, diving and wrecks.
 
 ---
 

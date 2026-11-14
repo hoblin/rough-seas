@@ -19,10 +19,9 @@
     "worldattribute-realisticSwimming": "Realisma naĝado",
     "worldattribute-realisticSwimming-desc": "Vin subtenas la akvo, kiun via korpo forpuŝas, vi naĝas tiel rapide, kiel homaj brakoj povas peli vin, kaj la iloj kaj kiraso, kiujn vi portas, pezigas vin. Ondoj, marfluoj kaj rompiĝantaj krestoj kunportas vin. Malŝaltite, vi naĝas kiel en la baza ludo; vi ankoraŭ spiras laŭ la ritmo de la ondoj.",
     "worldattribute-swimmingStrength": "Naĝforto",
-    "worldattribute-swimmingStrength-desc": "Kiom forte viaj brakoj tiras, kiam vi naĝas realisme: x1 estas la vera naĝtiro de trejnita naĝanto, x2 kaj x3 tiras duoble kaj trioble pli forte, do vi naĝas pli rapide kaj povas levi pli el la akvo. La agordo Marŝrapideco de la ludo mem ankaŭ multobligas ĝin.",
-    "worldconfig-swimmingStrength-x1": "x1",
-    "worldconfig-swimmingStrength-x2": "x2",
-    "worldconfig-swimmingStrength-x3": "x3",
+    "worldattribute-swimmingStrength-desc": "Kiom forte viaj brakoj tiras, kiam vi naĝas realisme: 1× estas la vera naĝtiro de trejnita naĝanto, 2× kaj 3× tiras duoble kaj trioble pli forte, do vi naĝas pli rapide kaj povas levi pli el la akvo. La agordo Marŝrapideco de la ludo mem ankaŭ multobligas ĝin.",
     "worldattribute-swimmerBreakers": "Rompondoj super naĝantoj",
-    "worldattribute-swimmerBreakers-desc": "Ondo, kiu rompiĝas super vi dum vi naĝas, puŝas vin sub la akvon kaj kunportas vin, kaj ĝia ŝaŭma akvo malpli subtenas vin. Malŝaltite, neniu ondo rompiĝas super naĝanto; vi ankoraŭ flosas sur la ondoj kaj spiras laŭ ilia ritmo."
+    "worldattribute-swimmerBreakers-desc": "Ondo, kiu rompiĝas super vi dum vi naĝas, puŝas vin sub la akvon kaj kunportas vin, kaj ĝia ŝaŭma akvo malpli subtenas vin. Malŝaltite, neniu ondo rompiĝas super naĝanto; vi ankoraŭ flosas sur la ondoj kaj spiras laŭ ilia ritmo.",
+    "worldattribute-sailWind": "Vento en la veloj",
+    "worldattribute-sailWind-desc": "La veloj sentas la venton tiom da fojoj pli forta ol ĝi blovas, kaj velŝipo iras proksimume tiom da fojoj pli rapide kaj stiriĝas kiel antaŭe. La vento mem, la maro kaj ŝipo kun mallevita velo restas kiaj ili estas. 1× estas la vera vento."
 }
