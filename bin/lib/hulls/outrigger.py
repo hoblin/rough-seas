@@ -290,10 +290,8 @@ def furled():
 
 def mast():
     pose = crab_claw().lowered(1)
-    heel, step = pose["heel"], pose["heel"][1] - STEP
     return [
-        [beam("MastPole", heel, pose["masthead"], POLE, POLE, "frame"),
-         box("MastStep", (heel[0] - 2, step, heel[2] - 2), (heel[0] + 2, heel[1], heel[2] + 2), WOOD)],
+        [beam("MastPole", pose["heel"], pose["masthead"], POLE, POLE, "frame")],
         [beam("MastShore", pose["shoreFoot"], pose["shoreTop"], SHORE, SHORE, "frame")],
         [beam("YardSpar", pose["tack"], pose["peak"], SPAR, SPAR, "frame")],
         [beam("BoomSpar", add(pose["tack"], (0, -SPAR, 0)), add(pose["clew"], (0, -SPAR, 0)), SPAR - 2 * APART, SPAR - 2 * APART, "frame")],
@@ -314,7 +312,8 @@ def fittings():
     steps = [clicked(f"SailStep{name}", claw.tack(end), (STEP, STEP, STEP), code, WOOD)
              for name, end, code in (("Bow", 1, "BowStepAP"), ("Stern", -1, "SternStepAP"))]
     cleat = clicked("LowerMastStorage", (heel[0], heel[1] + 8, heel[2]), (3, 8, 3), "LowerMastAP")
-    return group("Fittings", (0, 0, 0), (0, 0, 0), [*steps, cleat])
+    mast_step = box("MastStep", (heel[0] - 2, heel[1] - STEP, heel[2] - 2), (heel[0] + 2, heel[1], heel[2] + 2), WOOD)
+    return group("Fittings", (0, 0, 0), (0, 0, 0), [*steps, cleat, mast_step])
 
 
 def rope(name, start, end, thick=LINE):

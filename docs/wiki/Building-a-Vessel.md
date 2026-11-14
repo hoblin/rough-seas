@@ -312,7 +312,6 @@ At every stage it is a vessel: it floats and can be picked up, its build goes wi
 | `floorMetres` | m | 0 | the top of its hold's floor above its origin, its hull's: the bilge draws its water from there |
 | `floatStage` | stage group | none | the `successive` stage that hews its float from its logs: the float weighs as the wood its last pass left, and stands at the water as wide, from the three logs to the finished float |
 | `floatPart` | part name | none | the part of its `parts` its float makes: its share and its `reference` stay, the material is the float's wood. The shape's `float` texture is drawn in that wood |
-| `rigged` | shape groups | none | groups shown only once every piece it needs is laid, such as vanilla's `SailUnfurled` and `SailHalf` on a vessel whose sail its shape draws; until then its sail stays furled. Our outrigger's sail is drawn by `roughseas:windage`, which waits for its build itself, so its list is empty |
 
 A vessel already in a world from before, with no build of its own, is finished with every stage on, the `optional` ones too, its float, poles and pieces of its hull's wood. Our outrigger's builder, `bin/lib/hulls/outrigger.py`, draws it on the dugout's own hull.
 

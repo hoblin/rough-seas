@@ -28,6 +28,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     private readonly float[] placed = new float[4];
     private readonly float[] shown = Mat4f.Create();
     private MeshRef? woven;
+    private Shape? tesselated;
     private int uploaded;
     private TextureAtlasPosition? clothAtlas;
     private float[] model = Mat4f.Create();
@@ -50,10 +51,11 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     [ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "DoRender3DOpaque", "sets the hull's ModelMat for this frame, in the shadow passes too, in an earlier render order than this renderer's, so the rig draws with her heave, roll and pitch of the same frame")]
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
     {
-        if (!entity.IsRendered || entity.Properties.Client.Renderer is not EntityShapeRenderer hull || !windage.Rigged) return;
+        var opaque = stage == EnumRenderStage.Opaque;
+        if (!(opaque ? entity.IsRendered : entity.IsShadowRendered) || entity.Properties.Client.Renderer is not EntityShapeRenderer hull || !windage.Rigged) return;
 
         model = hull.ModelMat;
-        if (stage != EnumRenderStage.Opaque)
+        if (!opaque)
         {
             Shadowed();
             return;
@@ -155,10 +157,18 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
             Quad([At(i, j), At(i + 1, j), At(i + 1, j + 1), At(i, j + 1)], (double)(i % PanelsPerMetre) / PanelsPerMetre, (double)(j % PanelsPerMetre) / PanelsPerMetre);
     }
 
+    public void Shaped(Shape shape)
+    {
+        tesselated = shape;
+        foreach (var mesh in spars.Values) mesh?.Dispose();
+        spars.Clear();
+        lastDrawn = null;
+    }
+
     private MultiTextureMeshRef? Spar(string part)
     {
         if (spars.TryGetValue(part, out var mesh)) return mesh;
-        if (!parts.TryGetValue(part, out var path) || entity.Properties.Client.LoadedShapeForEntity is not { } shape) return spars[part] = null;
+        if (!parts.TryGetValue(part, out var path) || (tesselated ?? entity.Properties.Client.LoadedShapeForEntity) is not { } shape) return spars[part] = null;
 
         var meta = new TesselationMetaData { SelectiveElements = [path], TexSource = capi.Tesselator.GetTextureSource(entity), TypeForLogging = "entity" };
         capi.Tesselator.TesselateShape(meta, shape, out var meshData);
@@ -167,55 +177,12 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
 
     private static float[] Turned((HullPoint From, HullPoint To) rest, (HullPoint From, HullPoint To) at, double girth)
     {
-        var (u, v) = ((rest.To - rest.From).Unit, (at.To - at.From).Unit);
-        var k = u.Cross(v);
-        var (sin, cos) = (k.Length, u.Dot(v));
-        double[,] turn = sin < 1e-9
-            ? cos > 0 ? Identity() : HalfTurn(u)
-            : Rodrigues(k, sin, cos);
-        var thick = new double[3, 3];
-        double[] axis = [u.Along, u.Height, u.Across];
-        for (var r = 0; r < 3; r++)
-        for (var c = 0; c < 3; c++) thick[r, c] = (r == c ? girth : 0) + (1 - girth) * axis[r] * axis[c];
-        var a = Times(turn, thick);
+        float[] Of(HullPoint p) => [(float)p.Along, (float)p.Height, (float)p.Across];
+        float[] Rotation(float[] a, float[] b) => Mat4f.FromQuat(Mat4f.Create(), Quaternionf.RotationTo(Quaternionf.Create(), a, b));
+        var (u, v, x) = (Of((rest.To - rest.From).Unit), Of((at.To - at.From).Unit), new float[] { 1, 0, 0 });
         var (from, to) = (rest.From + Origin, at.From + Origin);
-        double[] f = [from.Along, from.Height, from.Across];
-        double[] t = [to.Along, to.Height, to.Across];
-        var m = Mat4f.Create();
-        for (var c = 0; c < 3; c++)
-        for (var r = 0; r < 3; r++) m[c * 4 + r] = (float)a[r, c];
-        for (var r = 0; r < 3; r++) m[12 + r] = (float)(t[r] - (a[r, 0] * f[0] + a[r, 1] * f[1] + a[r, 2] * f[2]));
-        return m;
-    }
-
-    private static double[,] Identity() => new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } };
-
-    private static double[,] HalfTurn(HullPoint u)
-    {
-        var p = (Math.Abs(u.Height) < 0.9 ? u.Cross(new HullPoint(0, 1, 0)) : u.Cross(new HullPoint(1, 0, 0))).Unit;
-        double[] q = [p.Along, p.Height, p.Across];
-        var m = new double[3, 3];
-        for (var r = 0; r < 3; r++)
-        for (var c = 0; c < 3; c++) m[r, c] = 2 * q[r] * q[c] - (r == c ? 1 : 0);
-        return m;
-    }
-
-    private static double[,] Rodrigues(HullPoint k, double sin, double cos)
-    {
-        double[,] x = { { 0, -k.Across, k.Height }, { k.Across, 0, -k.Along }, { -k.Height, k.Along, 0 } };
-        var xx = Times(x, x);
-        var m = Identity();
-        for (var r = 0; r < 3; r++)
-        for (var c = 0; c < 3; c++) m[r, c] += x[r, c] + xx[r, c] * (1 - cos) / (sin * sin);
-        return m;
-    }
-
-    private static double[,] Times(double[,] a, double[,] b)
-    {
-        var m = new double[3, 3];
-        for (var r = 0; r < 3; r++)
-        for (var c = 0; c < 3; c++) m[r, c] = a[r, 0] * b[0, c] + a[r, 1] * b[1, c] + a[r, 2] * b[2, c];
-        return m;
+        return new Matrixf().Translate(to.Along, to.Height, to.Across).Mul(Rotation(u, v)).Mul(Rotation(x, u)).Scale(1, (float)girth, (float)girth)
+            .Mul(Rotation(u, x)).Translate(-from.Along, -from.Height, -from.Across).Values;
     }
 
     private Vec3d World(HullPoint point)

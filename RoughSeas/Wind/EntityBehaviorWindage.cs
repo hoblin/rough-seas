@@ -64,7 +64,10 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
-        if (drawn != null && Rigged) willDeleteElements = (willDeleteElements ?? []).Concat(drawnGroups).ToArray();
+        if (drawn == null || !Rigged) return;
+
+        drawn.Shaped(entityShape.Clone());
+        willDeleteElements = (willDeleteElements ?? []).Concat(drawnGroups).ToArray();
     }
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)

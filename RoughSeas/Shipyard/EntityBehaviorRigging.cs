@@ -116,8 +116,6 @@ public class EntityBehaviorRigging(Entity entity) : EntityBehaviorFraming(entity
 
     protected override FramingConfig Configure(JsonObject attributes) => rig = attributes.AsObject<RiggingConfig>(new RiggingConfig());
 
-    protected override IEnumerable<string> Hidden() => framing.Built ? base.Hidden() : base.Hidden().Concat(rig.Rigged);
-
     protected override string FormKey() => $"{base.FormKey()}/{FloatWood}";
 }
 
@@ -142,9 +140,6 @@ public class RiggingConfig : FramingConfig
 
     /// <summary>The top of the hold's floor above her origin: her hull's, finished before she was rigged.</summary>
     public double FloorMetres;
-
-    /// <summary>The shape's groups shown only once every piece is laid.</summary>
-    public string[] Rigged = [];
 
     public static new RiggingConfig? Of(EntityProperties type) => Of<RiggingConfig>(type, EntityBehaviorRigging.Code);
 }

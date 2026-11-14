@@ -85,7 +85,6 @@
             "rope": "game:rope",
             "cloth": "game:cloth-*",
             "planks": "*:plank-*",
-            "rigged": [],
             "stages": [
                 {"group": "Booms", "work": "pole", "seconds": 3, "follows": "Hewing"},
                 {"group": "Hewing", "work": "hew", "seconds": 30, "successive": true, "replaces": "FloatLog"},
@@ -206,16 +205,16 @@
                 "halfReach": 1,
                 "halfSpan": 0.5
             },
-            "windageSquareMetres": 2.8945,
-            "windageSquareVoxels": 741,
-            "frontSquareMetres": 1.5479,
-            "frontSquareVoxels": 396.25,
-            "windageCentreMetres": [-0.095, 0.598],
-            "windageCentreVoxels": [-1.52, 9.57],
+            "windageSquareMetres": 2.8887,
+            "windageSquareVoxels": 739.5,
+            "frontSquareMetres": 1.5264,
+            "frontSquareVoxels": 390.75,
+            "windageCentreMetres": [-0.096, 0.598],
+            "windageCentreVoxels": [-1.529, 9.565],
             "lateralCentreMetres": -0.0026,
             "lateralCentreVoxels": -0.041,
             "rig": {"ends": [{"hoisted": {"tackMetres": [-2.125, 0.625, 0], "tackVoxels": [-34, 10, 0], "mastheadMetres": [-1.221, 3.472, 0.312], "mastheadVoxels": [-19.542, 55.556, 5], "heelMetres": [0.094, 0.776, 0.312], "heelVoxels": [1.5, 12.414, 5], "halyardBendMetres": [-0.988, 2.893, 0.393], "halyardBendVoxels": [-15.813, 46.281, 6.29], "peakMetres": [-0.478, 3.911, 0.57], "peakVoxels": [-7.641, 62.581, 9.115], "clewMetres": [0.545, 2.758, 0.923], "clewVoxels": [8.718, 44.132, 14.773], "bridleMetres": [-0.123, 2.225, 0.692], "bridleVoxels": [-1.961, 35.599, 11.08], "leadMetres": [1, 0.648, -0.4], "leadVoxels": [16, 10.363, -6.4], "sternPinMetres": [2.312, 0.625, 0], "sternPinVoxels": [37, 10, 0], "shroudFootMetres": [0.094, 0.464, 2], "shroudFootVoxels": [1.5, 7.42, 32], "shoreTopMetres": [-0.345, 1.675, 0.312], "shoreTopVoxels": [-5.514, 26.795, 5], "shoreFootMetres": [0.094, 0.512, 1.831], "shoreFootVoxels": [1.5, 8.198, 29.3]}, "lowered": {"tackMetres": [-2.125, 0.625, 0], "tackVoxels": [-34, 10, 0], "mastheadMetres": [-1.221, 3.472, 0.312], "mastheadVoxels": [-19.542, 55.556, 5], "heelMetres": [0.094, 0.776, 0.312], "heelVoxels": [1.5, 12.414, 5], "halyardBendMetres": [0.427, 0.641, -0.274], "halyardBendVoxels": [6.833, 10.249, -4.391], "peakMetres": [1.574, 0.648, -0.398], "peakVoxels": [25.178, 10.361, -6.363], "clewMetres": [1.395, 0.646, -0.378], "clewVoxels": [22.314, 10.343, -6.055], "bridleMetres": [0.515, 0.641, -0.284], "bridleVoxels": [8.236, 10.257, -4.541], "leadMetres": [1, 0.648, -0.4], "leadVoxels": [16, 10.363, -6.4], "sternPinMetres": [2.312, 0.625, 0], "sternPinVoxels": [37, 10, 0], "shroudFootMetres": [0.094, 0.464, 2], "shroudFootVoxels": [1.5, 7.42, 32], "shoreTopMetres": [-0.345, 1.675, 0.312], "shoreTopVoxels": [-5.514, 26.795, 5], "shoreFootMetres": [0.094, 0.512, 1.831], "shoreFootVoxels": [1.5, 8.198, 29.3]}}, {"hoisted": {"tackMetres": [2.312, 0.625, 0], "tackVoxels": [37, 10, 0], "mastheadMetres": [1.409, 3.472, 0.312], "mastheadVoxels": [22.542, 55.556, 5], "heelMetres": [0.094, 0.776, 0.312], "heelVoxels": [1.5, 12.414, 5], "halyardBendMetres": [1.176, 2.893, 0.393], "halyardBendVoxels": [18.813, 46.281, 6.29], "peakMetres": [0.665, 3.911, 0.57], "peakVoxels": [10.641, 62.581, 9.115], "clewMetres": [-0.357, 2.758, 0.923], "clewVoxels": [-5.718, 44.132, 14.773], "bridleMetres": [0.31, 2.225, 0.692], "bridleVoxels": [4.961, 35.599, 11.08], "leadMetres": [-1.125, 0.648, -0.4], "leadVoxels": [-18, 10.363, -6.4], "sternPinMetres": [-2.125, 0.625, 0], "sternPinVoxels": [-34, 10, 0], "shroudFootMetres": [0.094, 0.464, 2], "shroudFootVoxels": [1.5, 7.42, 32], "shoreTopMetres": [0.532, 1.675, 0.312], "shoreTopVoxels": [8.514, 26.795, 5], "shoreFootMetres": [0.094, 0.512, 1.831], "shoreFootVoxels": [1.5, 8.198, 29.3]}, "lowered": {"tackMetres": [2.312, 0.625, 0], "tackVoxels": [37, 10, 0], "mastheadMetres": [1.409, 3.472, 0.312], "mastheadVoxels": [22.542, 55.556, 5], "heelMetres": [0.094, 0.776, 0.312], "heelVoxels": [1.5, 12.414, 5], "halyardBendMetres": [-0.24, 0.641, -0.274], "halyardBendVoxels": [-3.833, 10.249, -4.391], "peakMetres": [-1.386, 0.648, -0.398], "peakVoxels": [-22.178, 10.361, -6.363], "clewMetres": [-1.207, 0.646, -0.378], "clewVoxels": [-19.314, 10.343, -6.055], "bridleMetres": [-0.327, 0.641, -0.284], "bridleVoxels": [-5.236, 10.257, -4.541], "leadMetres": [-1.125, 0.648, -0.4], "leadVoxels": [-18, 10.363, -6.4], "sternPinMetres": [-2.125, 0.625, 0], "sternPinVoxels": [-34, 10, 0], "shroudFootMetres": [0.094, 0.464, 2], "shroudFootVoxels": [1.5, 7.42, 32], "shoreTopMetres": [0.532, 1.675, 0.312], "shoreTopVoxels": [8.514, 26.795, 5], "shoreFootMetres": [0.094, 0.512, 1.831], "shoreFootVoxels": [1.5, 8.198, 29.3]}}], "yardMetres": 3.72, "yardVoxels": 59.52, "boomMetres": 3.54, "boomVoxels": 56.64, "yardKilograms": 14.12, "boomKilograms": 13.44, "sparMetres": 0.075, "sparVoxels": 1.2, "poleMetres": 0.0875, "poleVoxels": 1.4, "shoreMetres": 0.075, "shoreVoxels": 1.2, "lineMetres": 0.0187, "lineVoxels": 0.3, "rollMetres": 0.1375, "rollVoxels": 2.2, "kind": "crabclaw"},
-            "set": {"windageSquareMetres": 2.416, "windageSquareVoxels": 618.5, "frontSquareMetres": 1.5176, "frontSquareVoxels": 388.5, "windageCentreMetres": [-0.063, 0.591], "windageCentreVoxels": [-1.014, 9.456]}
+            "set": {"windageSquareMetres": 2.4072, "windageSquareVoxels": 616.25, "frontSquareMetres": 1.4961, "frontSquareVoxels": 383, "windageCentreMetres": [-0.064, 0.59], "windageCentreVoxels": [-1.028, 9.448]}
         }
     },
     "client": {
