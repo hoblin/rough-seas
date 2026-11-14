@@ -37,6 +37,14 @@ sea and weather state: wind (direction, strength), sea state, storms
 player-caused state (vessel damage, wrecks, salvage): stored and synced
 ```
 
+### Modules in code
+
+Each mechanic lives in one namespace of its own, `RoughSeas.<Module>`, in the folder of the same name: its classes and behaviours, and, once it is a module in full, its own ModSystem, config and log tag. A module reaches another only through that one's public interface, and the two never depend on each other both ways. The list grows as each area is brought into a module of its own: whoever moves one adds its line here.
+
+- `Wind`: the air's push on any body, by the wind at each surface's height less the body's own velocity. `roughseas:windage` gives it to a vessel by its measured side and front above the water; every vessel of ours carries it. Its own `WindModSystem`, `config/wind.json` and `[wind]` log lines. It knows nothing of sails: what stands aloft reaches it through `IRigged` and `IAloft`.
+- `Sailing`: a sail and the rig that holds it, its trim, lines and shunt, and its drawing on the client. `roughseas:sail`, beside `roughseas:windage`, with its own `SailingModSystem`, `config/sailing.json` and `[sail]` log lines. It depends on `Wind`.
+- `Floating`: a body afloat and what moves it: the water's drag, its set by the current, the waves and the wind, its heave, roll and pitch, and the sea's forces on its hull (`roughseas:currentdrift`, `roughseas:seaforces`). Not yet a module in full: `StormsModSystem` registers its behaviours and `storms.json` holds its numbers.
+
 ### Sea and weather
 
 The global state of wind with direction and strength, of sea state, and of storms, derived from the seed and laid over climate and biome. Vanilla's wind is one strength per region with no direction, and its waves are shader-only, so this model is ours. It exposes the state at any position and time and the detail around a player through `ISeaWeather` (`SeaWeatherSystem`): `At(x, z[, totalHours])` gives wind in m/s, Beaufort force, wave height in metres, oceanity and storm presence; `StormsWithin` lists storms in range. It owns the world settings: a "Rough Seas" playstyle listed first on the new-world screen, with more ocean in the landcover (a mod can't change vanilla's landcover default), and a world setting for each of its mechanics, all on by default and changeable in a running world: water in the bilge, hull damage, lightning, mooring strain, currents, rower fatigue, the pole's depth and breakers on swimmers. With one off the sea keeps its weather and that mechanic stops; each module reads its own setting. Vanilla's visible weather follows this state. Today it does so by overriding vanilla's answers (wind handler, rain, events); version 2 moves it under vanilla, layer by layer.
