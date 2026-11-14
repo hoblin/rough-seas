@@ -4,7 +4,11 @@ In the water your body floats by what it displaces, not by a rule of the game. I
 
 Left alone in the sea you float with the water at your face, and the waves carry you up, down and to and fro. In a calm sea you can just breathe. In a rough one the crests wash over your head and the troughs give your air back. A [current](Currents) carries you with it, as it carries a boat.
 
-Fresh water holds you up less, so in a lake or a river you sink slowly unless you swim. Holding jump strokes you up, so you tread water with your head clear.
+Fresh water holds you up less, so in a lake or a river you sink unless you swim. Holding jump strokes you up, so you tread water with your head clear.
+
+## Jumping in
+
+Jump in from a pier or a bank and you keep your way into the water. You go in feet first, so the water slows you down along your length and you plunge deep: from a metre up, past 5 m. Your way forward goes much sooner, since the water takes you broadside. Below about 6 m you sink, so hold jump or swim up to come back to the surface. Holding a direction as you go in, you start to swim once the water has slowed you to your swimming pace.
 
 ## Wading
 
@@ -12,7 +16,7 @@ Until the water reaches your chest your legs and the base game's jump move you, 
 
 ## Swimming
 
-Hold a direction to swim: each stroke pushes you through the water that way from where you look, with the power a trained swimmer swims with. You push hardest from a standstill, so you are under way within a second or two. In still water you swim about 0.9 m/s and glide on for a few seconds after you let go. The water you swim in moves you too: swim with a wave's front face and it carries you faster than you swim; swim against a current faster than you, and you lose ground.
+Hold a direction to swim: each stroke pushes you through the water that way from where you look, with the power a trained swimmer swims with. You lie along your stroke, so the water drags you least that way. Look down to dive and you go down head first. You push hardest from a standstill, so you are under way within a second or two. In still water you swim about 0.9 m/s and glide on for a few seconds after you let go. The water you swim in moves you too: swim with a wave's front face and it carries you faster than you swim; swim against a current faster than you, and you lose ground.
 
 ## What you carry
 
@@ -22,7 +26,7 @@ You have about a kilogram and a half to spare in the sea. A knife only sinks you
 
 ## Going deep
 
-Once your chest is about 6 m down, the water squeezes the air in your lungs so far that you sink with nothing on you, and you keep sinking until you swim up. Above that depth you rise on your own, slowly.
+Once your chest is about 6 m down, the water squeezes the air in your lungs so far that you sink with nothing on you, and you keep sinking until you swim up. Above that depth you rise on your own, slowly. A jump in can take you that deep.
 
 ## Breaking crests
 
