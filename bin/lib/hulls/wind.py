@@ -5,6 +5,7 @@ from shape import ORIGIN, num, profile
 from transform import cross, sub
 
 STEP = 0.5
+LINE = 0.3
 WINDAGE = "roughseas:windage"
 
 

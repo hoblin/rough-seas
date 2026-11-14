@@ -25,7 +25,6 @@ MAST_POLE = re.compile(r"Mast\d$")
 SPAR = re.compile(r"Spar[LR]\d$")
 CLOTH = re.compile(r"Sail\d+$|SailUnfurled[NS]$")
 HALF_CLOTH = re.compile(r"[LR]Sail(Cen|Mid|Out)")
-SHEET = re.compile(r"ClewRope[LR]\d$")
 BUNT = re.compile(r"SailBund")
 BACKSTAY = re.compile(r"MastRope\d$")
 STANDING = re.compile(r"Hull|KeelBeam|Gunwhale|Mast\d$|MastORIGIN")
@@ -127,7 +126,7 @@ def square(elements):
     rig = {"kind": "square", "yardKilograms": round(kilograms("wood-oak", yard_litres), 2),
            **{k: v for name, at in found.items() for k, v in wind.corner(name, at).items()},
            **units.both("spar", units.metres(thinnest(elements, SPAR)), 1), **units.both("pole", units.metres(thinnest(elements, MAST_POLE)), 1),
-           **units.both("shore", 0, 1), **units.both("line", units.metres(thinnest(elements, SHEET)), 1),
+           **units.both("shore", 0, 1), **units.both("line", units.metres(wind.LINE), 1),
            **units.both("roll", units.metres(thinnest(elements, BUNT)), 1)}
     corners_set = ((along, foot, port), (along, head, port), (along, head, starboard), (along, foot, starboard))
     reefed = min(point[1] for point in points(elements, HALF_CLOTH))

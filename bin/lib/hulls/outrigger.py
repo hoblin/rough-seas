@@ -29,7 +29,7 @@ POLE = 1.4
 SPAR = 1.2
 SHORE = 1.2
 STEP = 1.4
-LINE = 0.3
+LINE = wind.LINE
 ROLL = 2.2
 # The mast a little longer than half her length, as the Fijian thamakau's (Hornell 1936, p. 314); the yard and boom
 # to it, the claw's opening, the mast's rake toward the tack, where the halyard is bent on and how long it hangs,
