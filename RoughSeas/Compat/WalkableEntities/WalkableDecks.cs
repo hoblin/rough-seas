@@ -11,6 +11,11 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Compat.WalkableEntities;
 
+/// <summary>
+/// Walkable Entities places a deck by its boat's <c>Pos</c>, which our swell never moves: it is drawn on each client,
+/// and the server keeps the boat on still water. A deck of a boat we pose takes the lift and the angles this client
+/// draws it at, and a player standing on one tells the server where they stand on the level deck.
+/// </summary>
 public static class WalkableDecks
 {
     private const string HarmonyId = "roughseas.compat.walkableentities.decks";

@@ -34,6 +34,7 @@ public static class Boats
         }
     }
 
+    /// <summary>Runs <paramref name="patch"/> on every boat class, and on each added later, until disposed.</summary>
     public static IDisposable Reach(Action<BoatClass> patch)
     {
         lock (gate)

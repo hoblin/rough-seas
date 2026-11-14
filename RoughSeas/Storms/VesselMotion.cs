@@ -65,6 +65,7 @@ public static class VesselMotion
         (largestStep, loggedAt, tracedUntil) = (0, double.NegativeInfinity, double.NegativeInfinity);
     }
 
+    /// <summary>How high this client draws the vessel over where the server keeps it, this frame; 0 for anything else.</summary>
     public static double Lift(Entity? vessel) => vessel != null && Boats.Is(vessel) ? PoseOf(vessel).Lift : 0;
 
     [ReliesOn("Vintagestory.GameContent.EntityBoat", "OnRenderFrame", "reads CurrentWindSpeedClient.X alone for the boat's roll")]

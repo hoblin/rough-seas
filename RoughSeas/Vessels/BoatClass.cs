@@ -7,6 +7,10 @@ using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Vessels;
 
+/// <summary>
+/// A class of entity that is a boat as vanilla's is: <c>EntityBoat</c>, or another mod's copy of it with the same
+/// members, found by name, so a class we can't compile against is a boat to us all the same.
+/// </summary>
 public sealed class BoatClass
 {
     private readonly AccessTools.FieldRef<object, Vec3f> mountAngle;

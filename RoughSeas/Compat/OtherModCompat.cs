@@ -3,6 +3,10 @@ using Vintagestory.API.Common;
 
 namespace RoughSeas.Compat;
 
+/// <summary>
+/// Rough Seas beside another mod whose code it reaches into: loaded with that mod, and acting only on a version listed
+/// as tested in <c>config/compat/&lt;modid&gt;.json</c>.
+/// </summary>
 public abstract class OtherModCompat : ModSystem
 {
     protected abstract string ModId { get; }

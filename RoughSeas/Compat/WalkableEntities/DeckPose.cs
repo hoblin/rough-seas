@@ -4,6 +4,11 @@ namespace RoughSeas.Compat.WalkableEntities;
 
 public readonly record struct DeckPose(double X, double Y, double Z, Quaternion Rotation)
 {
+    /// <summary>
+    /// This pose as the renderer draws the boat: turned on by its <c>xangle</c>, <c>yangle</c> and <c>zangle</c> about
+    /// the middle of its selection box, as <c>EntityShapeRenderer.loadModelMatrix</c> turns them after the boat's own
+    /// angles, and lifted.
+    /// </summary>
     public DeckPose Drawn(float pivotY, float xangle, float yangle, float zangle, double lift)
     {
         var drawn = Rotation
