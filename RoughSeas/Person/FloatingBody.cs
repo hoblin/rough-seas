@@ -18,6 +18,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
 {
     private readonly Body body = person.Body;
     private readonly SwimmingArms arms = new(config.Body.Swimming, waves.DensityOf(false));
+    private readonly Legs legs = new(person.Body, config.Body.Legs, WaveTheory.Gravity);
     private Breaker? breaker;
     private bool coasting = true;
 
@@ -35,8 +36,9 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
     /// <param name="drawn">How the body is drawn lying; upright when not given. A body that came into the water keeps lying as it came, upright, until it moves through the water no faster than it swims.</param>
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
-        SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null)
+        SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null, bool onBed = false)
     {
+        var kick = legs.Push(at.X, at.Feet, at.Z, onBed, stroke);
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
         var air = body.Squeezed(body.BreathingLitres, surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
@@ -73,13 +75,15 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         lock (gate)
         {
             Meet(water, (ownX - current.X, ownZ - current.Z), share, seconds);
-            heaveThrough = Drag((toX, toZ), (thrust * stroke.X / inertiaAcross, thrust * stroke.Z / inertiaAcross), motion.Y * WaterDrag.TicksPerSecond - rise,
+            heaveThrough = Drag((toX, toZ), ((thrust * stroke.X + kick.X) / inertiaAcross, (thrust * stroke.Z + kick.Z) / inertiaAcross), motion.Y * WaterDrag.TicksPerSecond - rise,
                 density, posture, under / whole, Inertias(posture, massKg, waterline, air, density), seconds);
         }
         var carried = Velocity;
-        var heave = heaveThrough + rise + (lift + thrust * stroke.Y / inertia) * seconds;
+        var heave = heaveThrough + rise + (lift + (thrust * stroke.Y + kick.Y) / inertia) * seconds;
 
-        Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, water.WaveX, rise, water.WaveZ, carried.X, carried.Z, thrust);
+        var spare = (density * (whole + kit.Litres) / Body.LitresPerCubicMetre - massKg) * WaveTheory.Gravity + arms.Thrust(0, density);
+        Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, water.WaveX, rise, water.WaveZ, carried.X, carried.Z, thrust, spare,
+            Math.Sqrt(kick.X * kick.X + kick.Y * kick.Y + kick.Z * kick.Z));
         return new BodyMotion(
             motion.X + WaterDrag.Carried(carried.X, before.X, 1, kept),
             heave / WaterDrag.TicksPerSecond,
@@ -179,4 +183,4 @@ public readonly record struct BodyMotion(double X, double Y, double Z);
 
 /// <summary>What one step of a body found, for the log.</summary>
 public readonly record struct FloatReading(double Waterline, double UnderLitres, double WholeLitres, double LungLitres, double Lift, double Churn,
-    double FlowX, double Rise, double FlowZ, double CarriedX, double CarriedZ, double Thrust);
+    double FlowX, double Rise, double FlowZ, double CarriedX, double CarriedZ, double Thrust, double SpareNewtons = double.PositiveInfinity, double Kick = 0);

@@ -115,6 +115,12 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("code wildcard"), parsers.OptionalIntRange("range", 1, 512, 256))
                 .HandleWith(args => Find((IServerPlayer)args.Caller.Player, (string)args[0], (int)args[1]))
             .EndSubCommand()
+            .BeginSubCommand("river")
+                .WithDescription("Fly the caller over the nearest water the Rivers mod pushes (its chunks' flowVectors) at least DEPTH blocks deep, within range, in the loaded world; replies with the flow there")
+                .RequiresPlayer()
+                .WithArgs(parsers.OptionalIntRange("range", 1, 512, 256), parsers.OptionalIntRange("depth", 1, 32, 1))
+                .HandleWith(args => River((IServerPlayer)args.Caller.Player, (int)args[0], (int)args[1]))
+            .EndSubCommand()
             .BeginSubCommand("beaches")
                 .WithDescription("List the places in the loaded world within this range where dry ground lies flush with the sea, LENGTH blocks along the water and DEPTH back from it: where a vessel is laid by the water. Each with its ground, rainfall and temperature, the wettest first")
                 .RequiresPlayer()
@@ -627,6 +633,36 @@ public class BridgeCommands : ModSystem
 
         var flown = Fly(player, new Vec3d(found.X + 0.5, found.Y + 3, found.Z + 0.5));
         return TextCommandResult.Success($"{flown.StatusMessage}, 3 blocks over {accessor.GetBlock(found).Code}");
+    }
+
+    private TextCommandResult River(IServerPlayer player, int range, int depth)
+    {
+        const int size = GlobalConstants.ChunkSize;
+        var accessor = sapi.World.BlockAccessor;
+        var origin = player.Entity.Pos.AsBlockPos;
+
+        (int x, int z, float flowX, float flowZ)? Flowing(int x, int z)
+        {
+            if (accessor.GetChunk(x / size, 0, z / size)?.GetModdata<float[]>("flowVectors", null) is not { } flow) return null;
+            var index = z % size * size + x % size;
+            var (flowX, flowZ) = (flow[index], flow[index + size * size]);
+            if (flowX == 0 && flowZ == 0) return null;
+            var surface = accessor.GetRainMapHeightAt(x, z);
+            return Enumerable.Range(surface - depth + 1, depth).All(y => OpenWater.At(accessor, x, y, z).IsLiquid()) ? (x, z, flowX, flowZ) : null;
+        }
+
+        var found = Enumerable.Range(-range, 2 * range + 1)
+            .SelectMany(i => Enumerable.Range(-range, 2 * range + 1), (i, j) => (x: origin.X + i, z: origin.Z + j))
+            .OrderBy(point => (point.x - origin.X) * (long)(point.x - origin.X) + (point.z - origin.Z) * (long)(point.z - origin.Z))
+            .Select(point => Flowing(point.x, point.z))
+            .FirstOrDefault(point => point != null);
+        if (found is not var (fx, fz, flowX2, flowZ2)) return TextCommandResult.Error($"No Rivers flow over water {depth} blocks deep within {range} blocks of loaded world");
+
+        var top = accessor.GetRainMapHeightAt(fx, fz);
+        var bed = top;
+        while (OpenWater.At(accessor, fx, bed, fz).IsLiquid()) bed--;
+        var flown = Fly(player, new Vec3d(fx + 0.5, top + 3, fz + 0.5));
+        return TextCommandResult.Success($"{flown.StatusMessage}, over {top - bed} blocks of river water on a bed at y {bed}, flowing {flowX2:F2} {flowZ2:F2}");
     }
 
     private TextCommandResult Beaches(BlockPos origin, int range, int length, int depth)

@@ -25,6 +25,13 @@ public class BodyConfig
     public double DragAreaAcross;
     public double DragAreaSwimming;
     public SwimmingConfig Swimming = new();
+    public LegsConfig Legs = new();
+}
+
+public class LegsConfig
+{
+    public double JumpMetres;
+    public double PushMetres;
 }
 
 public class SwimmingConfig
@@ -47,8 +54,23 @@ public class BodySegmentConfig
 public class CarriedConfig
 {
     public double ArmourKgPerWalkSpeed;
-    public double DensityKgPerLitre;
-    public Dictionary<string, double> ToolKg = [];
+    public string ArmourMaterial = "";
+    public Dictionary<string, double> Densities = [];
+    public Dictionary<string, string> Alike = [];
+    public string Handle = "";
+    public Dictionary<string, ToolConfig> Tools = [];
+}
+
+public class ToolConfig
+{
+    public PartConfig Head = new();
+    public PartConfig? Haft;
+}
+
+public class PartConfig
+{
+    public double Kg;
+    public string Of = "";
 }
 
 public class BreakingConfig

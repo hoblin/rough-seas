@@ -21,6 +21,7 @@ public static class BodyAfloat
 {
     private const string HarmonyId = "roughseas.person.afloat";
     private const double LogEverySeconds = 5;
+    private const double TraceEverySeconds = 0.25;
 
     private static Harmony? harmony;
     private static ICoreClientAPI? capi;
@@ -35,13 +36,17 @@ public static class BodyAfloat
     private static (WaterSurface Surface, BodyPlace Place, Carried Kit, double Rate, SeaCurrent Current)? wading;
     private static SwimStroke stroke;
     private static bool liftedThisTick;
+    private static bool kicking;
     private static bool wasSwimming = true;
     private static double loggedAt = double.NegativeInfinity;
+    private static double tracedAt = double.NegativeInfinity;
+    private static SwimWarning? warning;
 
     public static void Attach(PersonModSystem mod, ICoreClientAPI client, IDrawnSea drawnSea, DrawnWater drawnWater, IPerson thePerson, PersonConfig personConfig, Waves theWaves)
     {
         if (harmony != null) return;
         (system, capi, drawn, water, person, config, waves) = (mod, client, drawnSea, drawnWater, thePerson, personConfig, theWaves);
+        warning = new SwimWarning(mod);
         sea = client.ModLoader.GetModSystem<SeaWeatherSystem>();
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(PModuleGravity), nameof(PModuleGravity.DoApply)),
@@ -60,8 +65,8 @@ public static class BodyAfloat
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (system, capi, drawn, water, sea, person, waves, body, wading) = (null, null, null, null, null, null, null, null, null);
-        (stroke, liftedThisTick, loggedAt, wasSwimming) = (default, false, double.NegativeInfinity, true);
+        (system, capi, drawn, water, sea, person, waves, body, wading, warning) = (null, null, null, null, null, null, null, null, null, null);
+        (stroke, liftedThisTick, loggedAt, tracedAt, wasSwimming) = (default, false, double.NegativeInfinity, double.NegativeInfinity, true);
     }
 
     /// <summary>The server says a crest broke over this client's player.</summary>
@@ -83,7 +88,7 @@ public static class BodyAfloat
     private static bool Afloat(float dt, Entity entity, EntityPos pos)
     {
         if (capi == null || entity != capi.World.Player?.Entity) return true;
-        if (!entity.Alive || entity is EntityAgent { MountedOn: not null } || pos.Dimension != Dimensions.NormalWorld)
+        if (!entity.Alive || entity is EntityAgent { MountedOn: not null } || pos.Dimension != Dimensions.NormalWorld || !Mechanic.RealisticSwimming.On(entity.World))
         {
             Leave(entity, null);
             return true;
@@ -109,16 +114,23 @@ public static class BodyAfloat
             if (wasSwimming) system!.Log(entity, "wading at y {0:F2}: vanilla's gravity and jump, the water's drag across", pos.Y);
             wasSwimming = false;
             wading = (surface, place, kit, rate, current);
+            warning!.Tell(entity, null, true);
+            Trace(entity, pos, surface, "wading", double.PositiveInfinity);
             return true;
         }
         if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
         wasSwimming = true;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
-            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity));
+            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity), entity.OnGround);
+        if (body.Reading.Kick > 0 && !kicking) system!.Log(entity, "pushes off the bed at y {0:F2}: {1:F0} N toward {2:F2} {3:F2} {4:F2}", pos.Y, body.Reading.Kick, stroke.X, stroke.Y, stroke.Z);
+        kicking = body.Reading.Kick > 0;
         pos.Motion.Set(next.X, next.Y, next.Z);
         liftedThisTick = true;
         var stroked = stroke;
         stroke = default;
+        var spare = body.Reading.SpareNewtons;
+        warning!.Tell(entity, spare < 0 ? Refusal.TooHeavyToRise(kit.Kg, -spare) : null, stroked.Y > 0);
+        Trace(entity, pos, surface, "swimming", spare);
 
         var now = capi.InWorldEllapsedMilliseconds / 1000.0;
         if (now - loggedAt >= LogEverySeconds)
@@ -163,11 +175,26 @@ public static class BodyAfloat
 
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetPlayerControls", "turns WalkYaw toward the way the keys move and WalkPitch toward the look while the player swims")]
     private static Posture Lying(Entity entity) =>
-        entity is EntityPlayer { Controls.TriesToMove: true } player ? Posture.Lying(player.WalkYaw, player.WalkPitch) : Posture.Upright;
+        entity is EntityPlayer { Controls.TriesToMove: true } player && !BodyOnTheBed.Stands(player) ? Posture.Lying(player.WalkYaw, player.WalkPitch) : Posture.Upright;
+
+    private static void Trace(Entity entity, EntityPos pos, WaterSurface surface, string how, double spare)
+    {
+        if (entity is not EntityAgent { Controls: var controls } || !(controls.TriesToMove || controls.Jump)) return;
+        var now = capi!.InWorldEllapsedMilliseconds / 1000.0;
+        if (now - tracedAt < TraceEverySeconds) return;
+        tracedAt = now;
+        var level = entity.World.BlockAccessor.GetBlock(pos.AsBlockPos, BlockLayersAccess.Fluid).LiquidLevel;
+        system!.Log(entity, "{0} at {1:F2} {2:F2} {3:F2}: {4:F2} m of water over the feet, water level {5} at them, asks{6}{7}, {8}{9}{10}",
+            how, pos.X, pos.Y, pos.Z, surface.Height - pos.Y, level,
+            controls.TriesToMove ? " to move" : "", controls.Jump ? " to jump" : "",
+            entity.OnGround ? "standing" : "afloat", entity.CollidedHorizontally ? ", against a wall" : "",
+            double.IsPositiveInfinity(spare) ? "" : $", {spare:F0} N to spare swimming up");
+    }
 
     private static void Leave(Entity entity, string? why)
     {
-        stroke = default;
+        warning?.Tell(entity, null, true);
+        (stroke, kicking) = (default, false);
         wading = null;
         if (body == null) return;
         body = null;

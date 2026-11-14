@@ -25,7 +25,7 @@ public sealed class SwimmerBreakers(PersonModSystem mod, StormsModSystem storms,
     private void Tick(float deltaTime)
     {
         if (storms.Swells is not { } swells) return;
-        var on = Mechanic.SwimmerBreakers.On(sapi.World);
+        var on = Mechanic.SwimmerBreakers.On(sapi.World) && Mechanic.RealisticSwimming.On(sapi.World);
         foreach (var player in sapi.World.AllOnlinePlayers)
         {
             if (player is not IServerPlayer { Entity: { } entity } swimmer) continue;

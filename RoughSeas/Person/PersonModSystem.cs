@@ -39,6 +39,7 @@ public class PersonModSystem : ModSystem
         var storms = capi.ModLoader.GetModSystem<StormsModSystem>();
         BodyUnderSurface.AttachClient(this, storms.DrawnWater);
         BodyAfloat.Attach(this, capi, storms.DrawnSea!, storms.DrawnWater!, Person, Config, storms.Waves);
+        BodyOnTheBed.Attach(this);
         capi.Network.GetChannel(Channel).SetMessageHandler<BreakerPacket>(BodyAfloat.Struck);
     }
 
@@ -52,7 +53,9 @@ public class PersonModSystem : ModSystem
     public override void Dispose()
     {
         BodyUnderSurface.Detach();
-        if (api?.Side == EnumAppSide.Client) BodyAfloat.Detach();
+        if (api?.Side != EnumAppSide.Client) return;
+        BodyAfloat.Detach();
+        BodyOnTheBed.Detach();
     }
 
     public void Log(Entity entity, string format, params object[] args) =>

@@ -21,9 +21,10 @@ public class FloatingBodyTests
     private static readonly PlayerPerson Man = Fixtures.Person;
     private static readonly double Kept = WaterDrag.Kept(0.92, Frame);
 
-    private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.DensityKgPerLitre);
+    private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.Densities["steel"] * Body.LitresPerCubicMetre);
 
-    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default, BodyMotion start = default)
+    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default, BodyMotion start = default,
+        double bed = double.NegativeInfinity)
     {
         private readonly FloatingBody body = new(Man, Fixtures.PersonConfig, Waves);
         private BodyMotion motion = start;
@@ -36,6 +37,8 @@ public class FloatingBodyTests
 
         public double Feet { get; private set; } = feet;
 
+        public double Highest { get; private set; } = feet;
+
         public double MovedX { get; private set; }
 
         public double MovedZ { get; private set; }
@@ -47,9 +50,12 @@ public class FloatingBodyTests
         public FloatReading Step()
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
-            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current, Drawn);
+            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current, Drawn,
+                Feet <= bed);
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
+            if (Feet < bed) (Feet, motion) = (bed, motion with { Y = 0 });
+            Highest = Math.Max(Highest, Feet);
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
             MovedZ += motion.Z * WaterDrag.TicksPerSecond * Frame;
             return body.Reading;
@@ -106,6 +112,35 @@ public class FloatingBodyTests
         laden.Settle(120);
 
         Assert.True(laden.Feet < bare.Feet - 0.02, $"{laden.Feet:F3} against {bare.Feet:F3}");
+    }
+
+    [Fact]
+    public void ABodyOnTheBedPushesOffItAsHighAsAJump()
+    {
+        var bed = Still - 4;
+        var run = new Run(Calm, bed, salt: false, kit: 20, stroke: new SwimStroke(0, 1, 0), bed: bed);
+        run.Settle(3);
+
+        Assert.InRange(run.Highest - bed, 0.3, 2.5);
+    }
+
+    [Fact]
+    public void ALadenBodyBoundsAlongTheBedTowardWhereItSwims()
+    {
+        var bed = Still - 4;
+        var run = new Run(Calm, bed, salt: false, kit: 20, stroke: new SwimStroke(Math.Sqrt(0.5), Math.Sqrt(0.5), 0), bed: bed);
+        run.Settle(10);
+
+        Assert.True(run.MovedX > 3, $"{run.MovedX:F2} m in 10 s");
+    }
+
+    [Fact]
+    public void ABodyAfloatHasNothingToPushOff()
+    {
+        var run = new Run(Calm, Still - 4, salt: false, kit: 20, stroke: new SwimStroke(0, 1, 0));
+        var reading = run.Step();
+
+        Assert.Equal(0, reading.Kick);
     }
 
     [Fact]

@@ -18,36 +18,52 @@ namespace RoughSeas.Person;
 public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>? log = null) : IPerson
 {
     private const string CarriedKgKey = "roughseas:carriedKg";
+    private const string CarriedLitresKey = "roughseas:carriedLitres";
+    private static readonly string[] MaterialGroups = ["material", "metal"];
 
     private readonly ConcurrentDictionary<string, Kit> kits = new();
+    private readonly Materials materials = new(config);
 
     public Body Body { get; } = body;
 
     public Carried CarriedBy(Entity entity)
     {
         if (entity is not EntityPlayer { Player: { } player }) return default;
-        if (entity.World is IClientWorldAccessor { Player: var local } && local?.Entity != entity) return Of(entity.WatchedAttributes.GetDouble(CarriedKgKey));
+        if (entity.World is IClientWorldAccessor { Player: var local } && local?.Entity != entity)
+            return new Carried(entity.WatchedAttributes.GetDouble(CarriedKgKey), entity.WatchedAttributes.GetDouble(CarriedLitresKey));
         var kit = kits.GetOrAdd(player.PlayerUID, _ => new Kit());
         kit.Watch(player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName),
             player.InventoryManager.GetOwnInventory(GlobalConstants.hotBarInvClassName));
         if (!kit.Reweigh()) return kit.Held;
 
-        kit.Held = Weigh(kit.Worn.Select(WalkSpeedPenalty), kit.Hotbar.Select(slot => slot.Itemstack?.Collectible.GetTool(slot)));
-        log?.Invoke($"{player.PlayerName} carries {kit.Held.Kg:F1} kg, displacing {kit.Held.Litres:F2} L");
-        if (entity.World.Side == EnumAppSide.Server) entity.WatchedAttributes.SetDouble(CarriedKgKey, kit.Held.Kg);
-        return kit.Held;
+        var held = Weigh(kit.Worn.Where(slot => !slot.Empty).Select(slot => new Worn(WalkSpeedPenalty(slot), MaterialOf(slot))),
+            kit.Hotbar.Where(slot => !slot.Empty).Select(slot => new Held(slot.Itemstack.Collectible.GetTool(slot), MaterialOf(slot))));
+        if (held != kit.Held) log?.Invoke($"{player.PlayerName} carries {held.Kg:F1} kg, displacing {held.Litres:F2} L");
+        kit.Held = held;
+        if (entity.World.Side == EnumAppSide.Server)
+        {
+            entity.WatchedAttributes.SetDouble(CarriedKgKey, held.Kg);
+            entity.WatchedAttributes.SetDouble(CarriedLitresKey, held.Litres);
+        }
+        return held;
     }
 
-    /// <summary>What armour slowing a body by these shares of its walking speed, and hotbar slots holding these types of tool, come to.</summary>
-    public Carried Weigh(IEnumerable<double> walkSpeedPenalties, IEnumerable<EnumTool?> hotbar)
+    public Carried Weigh(IEnumerable<Worn> worn, IEnumerable<Held> hotbar) =>
+        worn.Aggregate(default(Carried), (sum, armour) => sum + Weigh(armour)) + hotbar.Aggregate(default(Carried), (sum, item) => sum + Weigh(item));
+
+    private Carried Weigh(Worn armour) =>
+        armour.WalkSpeedPenalty > 0 ? materials.Worn(armour.WalkSpeedPenalty * config.ArmourKgPerWalkSpeed, armour.Material) : default;
+
+    private Carried Weigh(Held item)
     {
-        return Of(walkSpeedPenalties.Sum() * config.ArmourKgPerWalkSpeed + hotbar.Sum(ToolKg));
+        if (item.Tool is not { } tool || !config.Tools.TryGetValue(tool.ToString().ToLowerInvariant(), out var parts)) return default;
+        var (head, handle) = materials.Split(item.Material);
+        return materials.Part(parts.Head, head) + (parts.Haft is { } haft ? materials.Part(haft, handle) : default);
     }
 
-    private Carried Of(double kg) => new(kg, kg / config.DensityKgPerLitre);
-
-    private double ToolKg(EnumTool? tool) =>
-        tool is { } type && config.ToolKg.TryGetValue(type.ToString().ToLowerInvariant(), out var kg) ? kg : 0;
+    private static string? MaterialOf(ItemSlot slot) =>
+        MaterialGroups.Select(group => slot.Itemstack.Collectible.Variant.TryGetValue(group, out var material) ? material : null)
+            .FirstOrDefault(material => material != null);
 
     private static double WalkSpeedPenalty(ItemSlot slot) =>
         Math.Max(0, -(slot.Itemstack?.ItemAttributes?["statModifiers"]["walkSpeed"].AsFloat() ?? 0));
