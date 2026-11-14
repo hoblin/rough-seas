@@ -137,7 +137,7 @@ The [birch-bark canoe](Birch-Bark-Canoe) is built of the barks real canoes were 
 
 ### Its own boats
 
-Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull condition, mending and sea forces reach only vanilla's boats and our own.
+Wildcraft's raft and sailboat stay as Wildcraft made them. Rough Seas' hull condition, mending and sea forces don't reach them.
 
 ### For server owners and modders
 
