@@ -158,7 +158,7 @@ public sealed class CrabClaw : Rigging
         }
         var raked = (low + high) / 2;
         var masthead = p.Heel + Swung(p.Masthead - p.Heel, q.Masthead - q.Heel, raked);
-        var stays = Ordered(p.Tack, q.Tack).Select(pin => (pin, pin == q.Tack ? (masthead - pin).Length : (q.Masthead - pin).Length)).ToArray();
+        var stays = Ordered(p.Tack, q.Tack).Select(pin => (pin, (masthead - pin).Length)).ToArray();
         var lines = new ClawLines(stays, (p.Masthead - p.ShroudFoot).Length, a.Lines.Halyard, Math.Max(a.Lines.Sheet, b.Lines.Sheet));
         return Blend(a, b, raked, carried, lines);
     }

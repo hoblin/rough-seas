@@ -160,6 +160,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     public void Shaped(Shape shape)
     {
         tesselated = shape;
+        placedParts.Clear();
         foreach (var mesh in spars.Values) mesh?.Dispose();
         spars.Clear();
         lastDrawn = null;
