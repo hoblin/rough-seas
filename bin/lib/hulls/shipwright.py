@@ -10,11 +10,12 @@ from pathlib import Path
 import json5
 
 import units
+from wind import bare
 from entity import record
 from jsontext import load
 from physics import ASSETS, afloat
 from sailboat import hold, kept, solids
-from shape import bounds, hull_of, windage
+from shape import bounds, hull_of
 
 # The drakkar's shape nests its elements deeper than json5's parser recurses by default.
 DEEPEST_SHAPE = 20000
@@ -96,15 +97,15 @@ def measure(vessel, hull, zipped):
     above = shown(elements)
     if hull.bundled:
         measured = afloat(vessel, kg, depth, solid_litres=bundle_litres(planking),
-                          hitbox_height_metres=entity["hitboxSize"]["y"], at_draft=windage(above, frm[1]))
+                          hitbox_height_metres=entity["hitboxSize"]["y"], at_draft=bare(above, frm[1]))
     else:
         step = COARSE_STEP_VOXELS if to[0] - frm[0] > LONG_HULL_VOXELS else FINE_STEP_VOXELS
         litres, deck = hold(solids(planking), frm, [to[0], gunwale, to[2]], step)
         measured = afloat(vessel, kg, depth, litres, deck, hitbox_height_metres=entity["hitboxSize"]["y"],
-                          at_draft=windage(above, frm[1]))
+                          at_draft=bare(above, frm[1]))
     configs = measured["behaviorConfigs"]
     configs["roughseas:vesselintegrity"] |= integrity
-    configs["roughseas:seaforces"] |= units.both("mast", units.metres(bounds(*above)[1][1]) if hull.rigged else 0)
+    configs["roughseas:seaforces"] = units.both("mast", units.metres(bounds(*above)[1][1]) if hull.rigged else 0)
     record(vessel, {"behaviorConfigs": configs}, entity=f"shipwright:entities/nonliving/{vessel}.json")
 
 

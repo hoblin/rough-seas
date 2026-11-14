@@ -27,7 +27,7 @@ Each way the sea harms a vessel has its own [world setting](World-Settings#the-m
 | `roughseas:droop` | client | ends that sag as a reed hull soaks ([Bound in place](#bound-in-place)) |
 | `roughseas:propulsion` | client and server | what drives it when it is paddled, poled or rowed: the tools it takes, its hull's form for the water's drag on it, and the rower's strokes ([Driving it](#driving-it)) |
 | `roughseas:cargo` | client and server, before `rideableaccessories` | holds: inventories opened by a click on their own boxes, their largest stacks drawn on the floor as small ground piles ([Holds in place of containers](For-Modders#holds-in-place-of-containers)) |
-| `roughseas:windage` | client and server | the wind on it: drag on what stands above the water, and a set sail that drives it by the wind, held by its rig and drawn filling in its own frame ([Sailing by the wind](#sailing-by-the-wind)) |
+| `roughseas:windage` | client and server | the wind on it, on every vessel: drag on what stands above the water, and a set sail that drives it by the wind, held by its rig and drawn filling in its own frame ([The wind](#the-wind)) |
 
 Configure each one in your entity's `behaviorConfigs` under its code, as vanilla's behaviours are, and list it in `client.behaviors` and `server.behaviors` as the table says.
 
@@ -62,9 +62,13 @@ Our [coracle](Coracle), its sources, its build, its frame and the voxel twins of
         "damage": { "material": "hide" }
     },
     "roughseas:seaforces": {
-        "mastMetres": 0, "windageSquareMetres": 0.3516,
+        "mastMetres": 0,
         "heave": 0.8, "capsizeBreakerMetres": 0.6,
         "rollResponse": 1.6, "pitchResponse": 1.6
+    },
+    "roughseas:windage": {
+        "windageSquareMetres": 0.3516, "frontSquareMetres": 0.248,
+        "windageCentreMetres": [0, 0.221], "lateralCentreMetres": 0
     },
     "roughseas:bilge": {
         "capacityLitres": 272.2, "deckSquareMetres": 1.0666, "drainLitresPerHour": 0,
@@ -76,20 +80,20 @@ Our [coracle](Coracle), its sources, its build, its frame and the voxel twins of
         { "code": "roughseas:vesselintegrity" }, { "code": "repulseagents" }, { "code": "passivephysicsmultibox" },
         { "code": "interpolateposition" }, { "code": "hidewatersurface", "hideWaterElement": "hideWater/*" },
         { "code": "selectionboxes" }, { "code": "creaturecarrier" }, { "code": "ropetieable" }, { "code": "roughseas:currentdrift" },
-        { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }, { "code": "roughseas:mooring" }
+        { "code": "roughseas:seaforces" }, { "code": "roughseas:windage" }, { "code": "roughseas:bilge" }, { "code": "roughseas:mooring" }
     ]
 },
 "server": {
     "behaviors": [
         { "code": "roughseas:vesselintegrity" }, { "code": "repulseagents" }, { "code": "passivephysicsmultibox" },
         { "code": "selectionboxes" }, { "code": "creaturecarrier" }, { "code": "roughseas:currentdrift" },
-        { "code": "roughseas:seaforces" }, { "code": "roughseas:bilge" }, { "code": "roughseas:mooring" },
+        { "code": "roughseas:seaforces" }, { "code": "roughseas:windage" }, { "code": "roughseas:bilge" }, { "code": "roughseas:mooring" },
         { "code": "ropetieable" }
     ]
 }
 ```
 
-Every vessel of ours is a whole example, each number with its source: `assets/roughseas/entities/vessel/` in the mod. A vessel that must also work without Rough Seas keeps its entity file free of our codes and gets the behaviours by patch, with `"dependsOn": [{ "modid": "roughseas" }]` on each operation, so the game skips the patch when we are absent. Our `patches/storms-vessels.json` and `patches/vessels-vanilla-boats.json` give them to vanilla's raft and sailboat the same way; being ours, they need no `dependsOn`.
+Every vessel of ours is a whole example, each number with its source: `assets/roughseas/entities/vessel/` in the mod. A vessel that must also work without Rough Seas keeps its entity file free of our codes and gets the behaviours by patch, with `"dependsOn": [{ "modid": "roughseas" }]` on each operation, so the game skips the patch when we are absent. Our `patches/storms-vessels.json`, `patches/vessels-vanilla-boats.json` and `patches/wind-vessels.json` give them to vanilla's raft and sailboat the same way; being ours, they need no `dependsOn`.
 
 ## Measured from the model
 
@@ -101,8 +105,8 @@ What it writes, each object's comment line giving the full list:
 - **The shell**: `backedShare` and `bottomBackedShare`, sampled over its skin against the members found behind it, `spanMetres`, a `frame`'s `spacingMetres` and `spanMetres`, and a carved or bundled shell's `metres`.
 - **Strength and seams**: a reed hull's `impactCapacity` and an outrigger float lashing's, from the rope the model counts; a hide cover's `seep.litresPerHourASeam`, from the length of seam the model cuts; the float's `firewoodLitres`.
 - **The bilge**: `capacityLitres`, `deckSquareMetres` and `levelHeightsMetres`.
-- **The sea**: `windageSquareMetres`, its side above the water with one aboard; `mastMetres`, its masthead's height; the outrigger's `beamMetres`, across hull and float.
-- **The wind**, for a vessel with `roughseas:windage`: its side and front above the water, their centre and the centre of its side below it, its sail's area set full and half, and its rig's points and spars, the outrigger's from `bin/lib/hulls/rig.py`, the sailboat's from vanilla's own yard, cloth, sheets and stays.
+- **The sea**: `mastMetres`, its masthead's height; the outrigger's `beamMetres`, across hull and float.
+- **The wind**: its side and front above the water with one aboard, their centre and the centre of its side below it, its sail's area set full and half, and its rig's points and spars, the outrigger's from `bin/lib/hulls/rig.py`, the sailboat's from vanilla's own yard, cloth, sheets and stays.
 - **Driving it**: `sweepMetres`, `paddleAbeamMetres` (from its middle), `finSquareMetres` (a float's side below the water), `oars`' `spanMetres` and `bladeSquareMetres`, and the `pole`'s `handsAboveWaterMetres`, `plantAheadMetres`, `plantAsternMetres`, `plantAcrossMetres`, `drawnPoleMetres`, `drawnBedMetres` and `stance.riderOffset`.
 - **The build**: `roughseas:burnout`'s measures, `roughseas:framing`'s `trunkBlocks`, `roughseas:rigging`'s `floatLogs`, `floatLengthMetres`, `floatOffMetres`, `floorMetres` and each stage's `raisesMetres` and `raisesLitres`, and `roughseas:covering`'s `start` and `overturnedPivotVoxels`.
 
@@ -117,7 +121,6 @@ What it writes, each object's comment line giving the full list:
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
 | `beamMetres` | m | its `Hull` box's | the hull's width: how much of a crest it takes aboard, how hard the sea pulls on its mooring, how it rolls. Leave it out to take the `Hull` box's width; give it where the sea meets more than the hull, as the outrigger's float |
-| `windageSquareMetres` | m² | 0 | what the wind catches, hull and rig; nothing reads it here yet. A vessel with `roughseas:windage` gives it there, where the wind pushes it ([Sailing by the wind](#sailing-by-the-wind)) |
 | `mastMetres` | m | 0 | a mast's height above the hull; [lightning](Lightning) seeks it |
 | `freeboardMetres` | m | 0 | the side above the water, empty, for a vessel that doesn't [float by its mass](#floating); ours leave it out |
 | `heave` | 0–1 | 0 | the share of a crest's height the hull rises with; what is left climbs its side |
@@ -133,11 +136,11 @@ A crest stands half a wave's height above still water, seven tenths when it brea
 
 **Riding the drawn swell.** On a client, the vessel is posed on the surface under it, sampled at the ends and sides of its hull: its hull box's length and its `beamMetres`. A vessel without `roughseas:vesselintegrity` takes its collision box's longer side for its length. A vessel that floats by its mass follows that pose on its own heave and roll periods, from its draft, depth and beam ([How a hull answers](Reading-the-Sea#how-a-hull-answers)); one that doesn't takes the water's pose as it lies. This rides on vanilla's boat: the entity must be an `EntityBoat` or derive from it, and a class of yours that overrides `OnRenderFrame` calls the base, or it isn't posed. A vessel that can't, poses itself on the same surface through [the drawn sea](Reading-the-Sea#the-drawn-sea). Where no swell is drawn it rolls and pitches as vanilla rocks it, times `rollResponse` and `pitchResponse`.
 
-**Its mass slows it.** For a vessel without `roughseas:propulsion`, and not under a sail of `roughseas:windage`, an `EntityBoat` makes its entity attribute `speedMultiplier` at its reference mass: its own `weight` and one 75 kg rider. Heavier, it is slower, and lighter a little faster ([why](The-Science-of-the-Hull#floating)): the hull in its own material, riders, gear, armour, containers and the water aboard all count. A vessel with `roughseas:propulsion`, or under such a sail, is slowed by its mass through its drag instead ([Driving it](#driving-it), [Sailing by the wind](#sailing-by-the-wind)). A swamped one makes no speed, and its riders are moved into the water beside it, holding on.
+**Its mass slows it.** For a vessel without `roughseas:propulsion`, and not under a sail of `roughseas:windage`, an `EntityBoat` makes its entity attribute `speedMultiplier` at its reference mass: its own `weight` and one 75 kg rider. Heavier, it is slower, and lighter a little faster ([why](The-Science-of-the-Hull#floating)): the hull in its own material, riders, gear, armour, containers and the water aboard all count. A vessel with `roughseas:propulsion`, or under such a sail, is slowed by its mass through its drag instead ([Driving it](#driving-it), [The wind](#the-wind)). A swamped one makes no speed, and its riders are moved into the water beside it, holding on.
 
 ## Driving it
 
-`roughseas:propulsion`. With it, a vessel goes as fast as its rower drives it against the water's drag on its hull ([how](The-Science-of-a-Body-in-the-Water#driving-it)), in place of vanilla's `speedMultiplier` and our old `turnSpeed`, which ours no longer carry. It needs `roughseas:vesselintegrity` for the hull's size, draft and mass, and `roughseas:seaforces` for the water's depth under it, which a pole needs. Under sail its rower's tool rests: a sail of `roughseas:windage` drives it by the wind ([Sailing by the wind](#sailing-by-the-wind)), and one without goes as vanilla sails it.
+`roughseas:propulsion`. With it, a vessel goes as fast as its rower drives it against the water's drag on its hull ([how](The-Science-of-a-Body-in-the-Water#driving-it)), in place of vanilla's `speedMultiplier` and our old `turnSpeed`, which ours no longer carry. It needs `roughseas:vesselintegrity` for the hull's size, draft and mass, and `roughseas:seaforces` for the water's depth under it, which a pole needs. Under sail its rower's tool rests: a sail of `roughseas:windage` drives it by the wind ([The wind](#the-wind)), and one without goes as vanilla sails it.
 
 | Key | Unit | Default | What it is |
 | --- | --- | --- | --- |
@@ -157,9 +160,9 @@ A vessel's length and beam are its hull box's: `hullBoxMetres`, or the `Hull` el
 
 A tool is an item whose attributes carry `roughseas:propulsion`: `tool` is `pole` (its `metres`, or its `length` variant) or `paddle` (its `bladeSquareMetres`). Oars on thole pins are the vessel's own, given by its `oars`, not a tool in hand. A vessel that takes a held tool sets vanilla's `requiresPaddlingTool`, and the tool `paddlingTool`; under sail, a vessel of our class `roughseas:EntityVessel` is steered whatever its rider holds. Our poles and paddles carry `attachableToEntity` with the category `oar`, so a slot of that category, as vanilla's raft has, stows them.
 
-## Sailing by the wind
+## The wind
 
-`roughseas:windage`, on both sides, with `roughseas:currentdrift` and `roughseas:vesselintegrity`. It pushes the vessel by the wind where its physics runs, as the water's drag does ([Currents](#currents)): on the server while nobody steers it, on its rider's client while someone does. Our [outrigger](Outrigger-Canoe) carries it in its entity, vanilla's [sailboat](Sailboat) gets it by `patches/wind-vessels.json`.
+`roughseas:windage`, on both sides, with `roughseas:currentdrift` and `roughseas:vesselintegrity`. Every vessel carries it: the wind blows on whatever floats, and `roughseas:currentdrift` refuses to start on a vessel without it. It pushes the vessel by the wind where its physics runs, as the water's drag does ([Currents](#currents)): on the server while nobody steers it, on its rider's client while someone does. Our vessels carry it in their entities; vanilla's raft and [sailboat](Sailboat) get it by `patches/wind-vessels.json`, and Shipwright's boats by `patches/compat-shipwright.json`. A vessel without a sail gives only what stands above its water; a `sail` and its `rig` add the sail.
 
 - **The wind on it.** Each surface meets the wind at its own height, less the vessel's own velocity: the apparent wind. With its sail furled, what stands above the water takes the wind as drag, across its side and along its front, at their centre. Afloat only: a hull ashore takes no wind.
 - **A set sail** is a wing of its cloth's outline as the wind meets it: it drives the vessel ahead and presses it to leeward by the incidence the apparent wind meets its cloth at, while the bare windage pushes on beside it. Edge-on to the wind it keeps only its cloth's friction. A sail the wind meets on its wrong face is taken aback and only pressed. The vessel's own cross-flow drag gives its leeway, and the force's moment about `lateralCentreMetres` turns it ([how](The-Science-of-the-Hull#under-sail)).

@@ -181,7 +181,7 @@ The boats a ship carries on its davits are vanilla's sailboat, ours in every way
 
 ## Shipwright
 
-[Shipwright: Vessels of Distant Shores](https://mods.vintagestory.at/shipwright) 1.5.1 adds ten boats: a catboat, a coracle, a drakkar, a faering, a kayak, a large junk, a punt and three reed boats (the totora, the reed longboat and the sailed reed boat). Beside Rough Seas they are vessels of ours: each rides our [drawn swell](Storms), takes the [sea](Surf-and-Swamping) and the [current](Currents), ships water and is [bailed](Bailing), cracks and floods by its [hull condition](Hull-Condition), and ties to a stake with our [mooring](Mooring).
+[Shipwright: Vessels of Distant Shores](https://mods.vintagestory.at/shipwright) 1.5.1 adds ten boats: a catboat, a coracle, a drakkar, a faering, a kayak, a large junk, a punt and three reed boats (the totora, the reed longboat and the sailed reed boat). Beside Rough Seas they are vessels of ours: each rides our [drawn swell](Storms), takes the [sea](Surf-and-Swamping), the [current](Currents) and the wind, ships water and is [bailed](Bailing), cracks and floods by its [hull condition](Hull-Condition), and ties to a stake with our [mooring](Mooring).
 
 ### Tested versions
 
@@ -192,7 +192,8 @@ Rough Seas works with Shipwright **1.5.1**. It reaches into Shipwright's boat co
 - **Measured from its models.** Each boat's hull, depth, hold and the side the wind meets are measured from Shipwright's own shapes, as ours are.
 - **Weighed as real craft.** Shipwright gives most of its boats 120 or 1200 kg whatever their size. Ours weigh what a real craft of that size and build weighs: the drakkar 6 t, as the Sea Stallion of Glendalough scaled to its size; the catboat 770 kg and the faering about a tonne, as Kraka Fyr; the punt 240 kg, as a Cambridge punt; the coracle 73 kg and the kayak 23 kg, by their skins. The reed boats weigh their bundles of reed, measured from the model. Each weight, and every other number, carries its source in our patch.
 - **Built of what they are.** The planked boats crack plank by plank and are mended with planks of their wood. The coracle and the kayak are hide over a frame, mended with a large prepared hide. The reed boats soak up water and dry out as [our reed boat](Reed-Boat) does, and can't be mended.
-- **Their own sails and paddles.** They row, paddle and sail as Shipwright makes them. Our rowing reaches only our own vessels and vanilla's raft.
+- **Their own sails and paddles.** They row, paddle and sail as Shipwright makes them. Our rowing reaches only our own vessels and vanilla's raft, and our sails only ours and vanilla's sailboat.
+- **Blown by our wind.** The wind pushes each boat by what stands above its water, hull and rig, as it pushes ours: sideways as it goes and downwind when left alone. A sail set on one of them doesn't catch our wind; Shipwright drives it.
 - **Picked up whole.** A boat Shipwright lets you pick up keeps its cracks in your hands, and they are there when you set it down again.
 
 ### For server owners and modders

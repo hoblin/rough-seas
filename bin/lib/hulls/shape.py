@@ -195,11 +195,6 @@ def convex(points):
     return lower[:-1] + upper[:-1]
 
 
-def windage(elements, keel_voxels):
-    """What the wind meets of the elements above her waterline, at the draft afloat finds her at."""
-    return lambda draft_metres: {"behaviorConfigs": {"roughseas:seaforces": units.both("windage", side_area(elements, keel_voxels + units.voxels(draft_metres)), 2)}}
-
-
 def collision(box, *more):
     """Her hitbox, as wide as she is and as tall, and her collision boxes in the entity's frame, where her bow points
     along +z: the hull box from her origin up, in squares as wide as she is spread from end to end, and the box round

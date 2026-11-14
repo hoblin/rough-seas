@@ -34,7 +34,7 @@ What Rough Seas' hulls stand on: how they take a blow, float, sail, leak, ride t
 
 ## Under sail
 
-The wind pushes a vessel as the water does: one more force in the sum that moves its hull ([How the waves move a hull](The-Science-of-a-Body-in-the-Water#how-the-waves-move-a-hull)), on the same hull whether anyone steers it or not. Only the [outrigger](Outrigger-Canoe) and the [sailboat](Sailboat) take the wind so far.
+The wind pushes a vessel as the water does: one more force in the sum that moves its hull ([How the waves move a hull](The-Science-of-a-Body-in-the-Water#how-the-waves-move-a-hull)), on the same hull whether anyone steers it or not. Every vessel takes it on what stands above its water; the [outrigger](Outrigger-Canoe) and the [sailboat](Sailboat) take it on a set sail as well.
 
 - **The wind grows with height.** Our wind is the Beaufort scale's, the wind 10 m above the sea (WMO). Over open sea it grows with height z as (z / 10 m)^0.11 (Hsu, Meindl and Gilhousen 1994), so each surface meets the wind at its own height above the water, never lower than 10 cm.
 - **The wind a sail feels is apparent:** the wind at its height less the vessel's own velocity over the ground. A canoe running at 3 m/s before a 9 m/s wind feels 6 m/s; reaching across it, the apparent wind swings ahead and grows.

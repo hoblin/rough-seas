@@ -34,10 +34,15 @@ def windage(standing, furled, below, keel_voxels):
     def at(draft_metres):
         waterline = keel_voxels + units.voxels(draft_metres)
         under = profile(below, high=waterline)
+        set_ = {"set": bluff(standing, waterline)} if furled else {}
         return {"behaviorConfigs": {WINDAGE: {
-            **bluff([*standing, *furled], waterline), "set": bluff(standing, waterline),
+            **bluff([*standing, *furled], waterline), **set_,
             **units.both("lateralCentre", along(centre(under)[0]))}}}
     return at
+
+
+def bare(hull, keel_voxels):
+    return windage(hull, [], hull, keel_voxels)
 
 
 def corner(name, at):
