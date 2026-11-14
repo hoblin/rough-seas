@@ -188,10 +188,10 @@ public class EntityBehaviorSeaForces(Entity entity) : EntityBehavior(entity)
     private void Lade()
     {
         var swamped = bilge?.Swamped == true;
-        if (entity is EntityBoat boat)
+        if (Boats.Of(entity) is { } boat)
         {
-            boat.SpeedMultiplier = swamped ? 0 : speedMultiplier * (float)SpeedFactor();
-            var poses = SeatPoses.Of(boat);
+            boat.SetSpeedMultiplier(entity, swamped ? 0 : speedMultiplier * (float)SpeedFactor());
+            var poses = SeatPoses.Of(entity);
             var seats = Seats;
             for (var i = 0; i < seats.Length; i++)
             {

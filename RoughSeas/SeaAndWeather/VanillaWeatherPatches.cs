@@ -47,7 +47,6 @@ public static class VanillaWeatherPatches
             Setting(AccessTools.Method(typeof(CloudRenderer), nameof(CloudRenderer.CloudTick)), nameof(CloudDrift));
             Setting(AccessTools.Method(typeof(FluffyClouds.CloudRendererMap), nameof(FluffyClouds.CloudRendererMap.CloudTick)), nameof(CloudDrift));
             WindAsStrength(AccessTools.Method(typeof(DefaultShaderUniforms), nameof(DefaultShaderUniforms.Update)), nameof(SurfaceWindStrength), nameof(SurfaceWindRestore));
-            WindAsStrength(AccessTools.Method(typeof(EntityBoat), nameof(EntityBoat.OnRenderFrame)), nameof(WindStrength), nameof(WindRestore));
         }
     }
 
@@ -149,16 +148,12 @@ public static class VanillaWeatherPatches
     }
 
     [ReliesOn("Vintagestory.API.Client.DefaultShaderUniforms", "Update", "reads CurrentSurfaceWindSpeedClient.X alone as the wind's strength")]
-    private static void SurfaceWindStrength(out float __state) => __state = Magnitude(GlobalConstants.CurrentSurfaceWindSpeedClient);
+    private static void SurfaceWindStrength(out float __state) => __state = SwapInStrength(GlobalConstants.CurrentSurfaceWindSpeedClient);
 
     private static void SurfaceWindRestore(float __state) => GlobalConstants.CurrentSurfaceWindSpeedClient.X = __state;
 
-    [ReliesOn("Vintagestory.GameContent.EntityBoat", "OnRenderFrame", "reads CurrentWindSpeedClient.X alone for the boat's roll")]
-    private static void WindStrength(out float __state) => __state = Magnitude(GlobalConstants.CurrentWindSpeedClient);
-
-    private static void WindRestore(float __state) => GlobalConstants.CurrentWindSpeedClient.X = __state;
-
-    private static float Magnitude(Vec3f wind)
+    /// <summary>Puts the wind's strength in its X, which vanilla reads alone as the strength, and returns the X it had.</summary>
+    internal static float SwapInStrength(Vec3f wind)
     {
         var x = wind.X;
         wind.X = MathF.Sqrt(wind.X * wind.X + wind.Z * wind.Z);

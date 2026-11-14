@@ -9,7 +9,9 @@ phonon/blender-vintagestory-json add-on. No window opens.
 BUILD
   bin/model build [VESSEL...]      regenerate our vessels' shapes from their builders in
                                    bin/lib/hulls (all of them by default; `tying` is the
-                                   player's knot, patches/player-tying.json). The builders are the
+                                   player's knot, patches/player-tying.json; `shipwright` measures
+                                   Shipwright's boats into patches/compat-shipwright.json, from its
+                                   tested release, downloaded once). The builders are the
                                    source of those shapes: change a vessel there, and its hull box
                                    and seats in its JSON (docs/modeling.md). A vessel with its own
                                    oars or paddle also gets the rower's arms fitted to them, and

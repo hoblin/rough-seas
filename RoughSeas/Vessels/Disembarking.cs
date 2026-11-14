@@ -32,7 +32,7 @@ public static class Disembarking
 
     private static void KeepWhereSteered(EntityBehaviorInterpolatePosition __instance)
     {
-        if (__instance.entity is not EntityBoat { Api: ICoreClientAPI capi } boat) return;
+        if (__instance.entity is not { Api: ICoreClientAPI capi } boat || !Boats.Is(boat)) return;
         if (boat.GetInterface<IMountable>()?.Controller != capi.World.Player.Entity) return;
 
         var handling = EnumHandling.Handled;

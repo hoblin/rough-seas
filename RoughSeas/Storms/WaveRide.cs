@@ -2,6 +2,7 @@ using System;
 using RoughSeas.SeaAndWeather;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -29,14 +30,14 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     private double shear;
 
     /// <summary>The pose she takes at <paramref name="seconds"/>, on a clock of the caller's: the one her model is drawn at, and the heave the water is read at.</summary>
-    public SeaPose Follow(EntityBoat boat, IDrawnSea drawn, double seconds) =>
+    public SeaPose Follow(Entity boat, IDrawnSea drawn, double seconds) =>
         rider.Follow(drawn, boat.Pos.X, boat.Pos.Z, Yaw(boat), Hull(boat), seconds);
 
     /// <summary>She has left the water: she comes to rest and is next met afresh.</summary>
     public void Settle() => rider.Settle();
 
     /// <summary>The waves' water under her this tick, on the tick's clock, on the side that moves her; none elsewhere or out of the swell.</summary>
-    public WaterOnHull Water(EntityBoat boat, float dt)
+    public WaterOnHull Water(Entity boat, float dt)
     {
         var seconds = Math.Min(dt, LongestStepSeconds);
         if (!boat.Swimming || seconds <= 0) return Leave(boat, "out of the water");
@@ -73,7 +74,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
     internal static (double X, double Z) OnTheClock((double X, double Z) velocity, double wavesPerTickSecond) =>
         (velocity.X * wavesPerTickSecond, velocity.Z * wavesPerTickSecond);
 
-    private IDrawnSea? SeaFor(EntityBoat boat)
+    private IDrawnSea? SeaFor(Entity boat)
     {
         var mountable = boat.GetInterface<IMountable>();
         if (boat.Api is ICoreClientAPI capi)
@@ -83,15 +84,15 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         return mountable?.IsBeingControlled() == true ? null : storms.Swells?.At(boat.Pos.X, boat.Pos.Z);
     }
 
-    private RiddenHull Hull(EntityBoat boat)
+    private RiddenHull Hull(Entity boat)
     {
         double side = Math.Max(boat.CollisionBox.XSize, boat.CollisionBox.ZSize);
         return RiddenHull.Of(forces.LengthMetres ?? side, forces.BeamMetres > 0 ? forces.BeamMetres : side, forces.Buoyant);
     }
 
-    private static double Yaw(EntityBoat boat) => boat.Pos.Yaw + (boat.Properties.Client?.Shape?.rotateY ?? 0) * GameMath.DEG2RAD;
+    private static double Yaw(Entity boat) => boat.Pos.Yaw + (boat.Properties.Client?.Shape?.rotateY ?? 0) * GameMath.DEG2RAD;
 
-    private WaterOnHull Leave(EntityBoat boat, string why)
+    private WaterOnHull Leave(Entity boat, string why)
     {
         if (boat.Api.Side == EnumAppSide.Server) rider.Settle();
         if (!carried) return default;
@@ -101,7 +102,7 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         return default;
     }
 
-    private void Report(EntityBoat boat, RiddenHull hull, double x, double z, FlowGradient gradient, double seconds)
+    private void Report(Entity boat, RiddenHull hull, double x, double z, FlowGradient gradient, double seconds)
     {
         carriedSeconds += seconds;
         loggedSeconds += seconds;
@@ -121,5 +122,5 @@ public sealed class WaveRide(StormsModSystem storms, SeaWeatherSystem sea, Entit
         (loggedSeconds, sway, shear) = (0, 0, 0);
     }
 
-    private static string Side(EntityBoat boat) => boat.Api.Side == EnumAppSide.Client ? "from this client, the one that steers her" : "on the server, nobody steering her";
+    private static string Side(Entity boat) => boat.Api.Side == EnumAppSide.Client ? "from this client, the one that steers her" : "on the server, nobody steering her";
 }
