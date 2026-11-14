@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using RoughSeas.Vessels;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -11,9 +12,8 @@ namespace RoughSeas.Wind;
 public sealed class RigRenderer : IRenderer, IRigCanvas
 {
     private const int PanelsPerMetre = 2;
-    private const double OriginMetres = 0.5;
     private const string Stowed = "roll";
-    private static readonly HullPoint Origin = new(OriginMetres, 0, OriginMetres);
+    private static readonly HullPoint Origin = new(HullShape.ModelOriginMetres, 0, HullShape.ModelOriginMetres);
     private static readonly (int Facing, int[] Order)[] Sides = [(1, [0, 1, 2, 0, 2, 3]), (-1, [0, 2, 1, 0, 3, 2])];
     private static readonly EnumRenderStage[] Stages = [EnumRenderStage.Opaque, EnumRenderStage.ShadowFar, EnumRenderStage.ShadowNear];
 
@@ -88,7 +88,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         prog.Stop();
     }
 
-    [ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "RenderItem", "draws a mesh into the shadow passes with the active shader's mvpMatrix and origin, its texture as tex2d")]
+    [ReliesOn("Vintagestory.Client.NoObf.SystemRenderEntities", "OnRenderFrameShadows", "leaves the chunk shadow-map shader active, which takes a mesh's mvpMatrix and origin, its texture as tex2d")]
     private void Shadowed()
     {
         var render = capi.Render;
@@ -194,7 +194,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
 
     private Vec3d World(HullPoint point)
     {
-        Mat4f.MulWithVec4(model, new float[] { (float)(point.Along + OriginMetres), (float)point.Height, (float)(point.Across + OriginMetres), 1 }, placed);
+        Mat4f.MulWithVec4(model, new float[] { (float)(point.Along + HullShape.ModelOriginMetres), (float)point.Height, (float)(point.Across + HullShape.ModelOriginMetres), 1 }, placed);
         return new Vec3d(camera.X + placed[0], camera.Y + placed[1], camera.Z + placed[2]);
     }
 
@@ -213,7 +213,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
             for (var k = 0; k < 4; k++)
             {
                 var c = corners[k];
-                weave.AddVertexWithFlags((float)(c.Along + OriginMetres), (float)c.Height, (float)(c.Across + OriginMetres),
+                weave.AddVertexWithFlags((float)(c.Along + HullShape.ModelOriginMetres), (float)c.Height, (float)(c.Across + HullShape.ModelOriginMetres),
                     (float)(atlas.x1 + tile[k].U * width), (float)(atlas.y1 + tile[k].V * height), ColorUtil.WhiteArgb, flags);
             }
             foreach (var index in order) weave.AddIndex(first + index);

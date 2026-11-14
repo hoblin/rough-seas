@@ -102,6 +102,9 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel) : IDisposable
         }
     }
 
-    private static void Offset(ClothPoint end, Vec3d world, EntityPos at) =>
+    private static void Offset(ClothPoint end, Vec3d world, EntityPos at)
+    {
         end.pinnedToOffset.Set((float)(world.X - at.X), (float)(world.Y - at.Y), (float)(world.Z - at.Z));
+        end.Pos.Set(world);
+    }
 }
