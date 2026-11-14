@@ -118,6 +118,19 @@ public class VesselInWindTests
     }
 
     [Fact]
+    public void WhateverTheWindHerSetSailNeverStandsThroughHerMastOrStays()
+    {
+        var (body, sail) = Outrigger(FullSail);
+        for (var t = 0.0; t < 10; t += Fixtures.TickSeconds) body.Load(OverHerFloat, Still, Yaw, Waterline, Fixtures.TickSeconds);
+        foreach (var wind in new[] { FromAstern, OverHerLee, FromAhead, OverHerFloat, OverHerLee })
+        for (var t = 0.0; t < 20; t += Fixtures.TickSeconds)
+        {
+            body.Load(wind, Still, Yaw, Waterline, Fixtures.TickSeconds);
+            Assert.True(sail.Rig.End.Clear(sail.State), $"{wind} at {t:F1} s: {sail.Rig.End.Describe(sail.State)}");
+        }
+    }
+
+    [Fact]
     public void ShuntedFurledHerSparsStayLetDown()
     {
         var (body, sail) = Outrigger(Furled);

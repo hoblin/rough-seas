@@ -234,7 +234,7 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         var yard = Toward(Math.Clamp(State.Yard, first, last), stop, hauled / Math.Max(ShortestArmMetres, end.Arm(State)));
         var boom = Toward(State.Boom, end.Track(yard, State.Boom, pressed).Boom, hauled / Math.Max(ShortestArmMetres, end.BoomArm(State)));
         var spanned = end.SheetSpan(State);
-        var moved = end.Held(yard, boom, pressed);
+        var moved = Stopped(end.Held(yard, boom, pressed), pressed);
         slack = Math.Max(0, slack - Math.Max(0, end.SheetSpan(moved) - spanned));
         Kept(moved);
         return aback ? Backed(air, halfDensity) : Drawing(air, halfDensity);
@@ -256,7 +256,13 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
         var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
         var yard = Toward(Math.Clamp(now.Yard, first, last), toward.Yard, hauled / Math.Max(ShortestArmMetres, end.Arm(now)));
         var boom = Toward(now.Boom, toward.Boom, hauled / Math.Max(ShortestArmMetres, end.BoomArm(now)));
-        Kept(end.Held(yard, boom, wind));
+        Kept(Stopped(end.Held(yard, boom, wind), wind));
+    }
+
+    private RigState Stopped(RigState moved, Func<RigState, (HullPoint At, HullPoint Force)> wind)
+    {
+        var end = rig.End;
+        return end.Clear(moved) || !end.Clear(State) ? moved : end.Held(State.Yard, State.Boom, wind);
     }
 
     private void Kept(RigState moved) =>
