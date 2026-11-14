@@ -45,7 +45,14 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
         if (laid == ropes.Count || metres / (ropes[laid].Points.Count - 1) is < ShortestSegmentMetres or > LongestSegmentMetres)
         {
             var (start, end) = (world(from), world(to));
-            var drawn = Spun(start, start.AddCopy(end.SubCopy(start).Normalize().Mul(Math.Max(metres, 1 / Resolution))), width);
+            var along = end.SubCopy(start);
+            if (!(along.Length() > 0))
+            {
+                sailing.Log(vessel, "rope {0} ({1:F2} m) laid with its ends together, from {2} to {3} on the hull, at {4} and {5} in the world: hung straight down",
+                    laid, metres, from, to, start, end);
+                along = new Vec3d(0, -1, 0);
+            }
+            var drawn = Spun(start, start.AddCopy(along.Normalize().Mul(Math.Max(metres, 1 / Resolution))), width);
             var points = new List<ClothPoint>();
             drawn.WalkPoints(points.Add);
             var placed = laid < ropes.Count ? Retraced(ropes[laid].Chain, points.Count) : Hung(start, end, metres, points.Count);
