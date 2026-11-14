@@ -113,6 +113,70 @@ public class VesselShapeTests
 
     [Theory]
     [MemberData(nameof(Vessels))]
+    public void LetsALookDownIntoHerPickEverySelectionBox(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        var elements = Elements(shape["elements"]!).ToList();
+        var boxes = entity["behaviorConfigs"]!["selectionboxes"]!["selectionBoxes"]!.Values<string>()
+            .Select(code => elements.Single(element => element["attachmentpoints"]?.Any(point => point.Value<string>("code") == code) == true))
+            .ToList();
+
+        Assert.Empty(boxes.Where(box => !Footprint(box).Any(point => Picked(boxes, point) == box)).Select(box => box.Value<string>("name")));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void LaysNoSelectionBoxFlushWithHerHullsSides(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        var elements = Elements(shape["elements"]!).ToList();
+        var boxes = entity["behaviorConfigs"]!["selectionboxes"]!["selectionBoxes"]!.Values<string>()
+            .Select(code => elements.Single(element => element["attachmentpoints"]?.Any(point => point.Value<string>("code") == code) == true))
+            .ToList();
+        var hull = boxes.Single(box => box.Value<string>("name") == "Hull");
+
+        Assert.Empty(boxes.Where(box => box != hull && SharesASide(box, hull)).Select(box => box.Value<string>("name")));
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
+    public void LaysAStowedToolCentredOnHerHull(string vessel)
+    {
+        var (entity, _, shape) = Load(vessel);
+        var elements = Elements(shape["elements"]!).ToList();
+        var slot = entity["behaviorConfigs"]!["rideableaccessories"]!["wearableSlots"]!
+            .Single(candidate => candidate["forCategoryCodes"]!.Values<string>().Contains("oar"));
+        var rest = slot["stepParentTo"]![""]!.Value<string>("elementName");
+        var stowage = elements.Single(element => element["children"]?.Any(child => child.Value<string>("name") == rest) == true);
+        var hull = elements.Single(element => element.Value<string>("name") == "Hull");
+
+        Assert.Equal((hull["from"]!.Value<double>(0) + hull["to"]!.Value<double>(0)) / 2,
+            stowage["from"]!.Value<double>(0) + stowage["children"]!.Single(child => child.Value<string>("name") == rest)["from"]!.Value<double>(0), 0.01);
+    }
+
+    private static bool SharesASide(JToken box, JToken hull) =>
+        new[] { 0, 2 }.Any(axis => new[] { "from", "to" }.Any(end =>
+            Math.Abs(box[end]!.Value<double>(axis) - hull[end]!.Value<double>(axis)) < 0.01));
+
+    private static IEnumerable<(double X, double Z)> Footprint(JToken box, int across = 16)
+    {
+        double Along(int axis, int step) =>
+            box["from"]!.Value<double>(axis) + (box["to"]!.Value<double>(axis) - box["from"]!.Value<double>(axis)) * (step + 0.5) / across;
+
+        return Enumerable.Range(0, across).SelectMany(i => Enumerable.Range(0, across).Select(j => (Along(0, i), Along(2, j))));
+    }
+
+    private static JToken? Picked(List<JToken> boxes, (double X, double Z) point)
+    {
+        var under = boxes.Where(box => box["from"]!.Value<double>(0) < point.X && point.X < box["to"]!.Value<double>(0)
+                                       && box["from"]!.Value<double>(2) < point.Z && point.Z < box["to"]!.Value<double>(2))
+            .OrderByDescending(box => box["to"]!.Value<double>(1))
+            .ToList();
+        return under.Count > 1 && under[0]["to"]!.Value<double>(1) - under[1]["to"]!.Value<double>(1) < 0.5 ? null : under.FirstOrDefault();
+    }
+
+    [Theory]
+    [MemberData(nameof(Vessels))]
     public void DrawsEveryTextureItsDamageMarks(string vessel)
     {
         var (entity, _, shape) = Load(vessel);

@@ -4,14 +4,13 @@ import units
 from shape import box, num
 
 PILE = units.voxels(1) / 3
-ABOVE_RIM = 1
 
 
 def hold(name, code, places, hull, inset, rim):
     laid = [(x, rest(hull, inset, x, z), z) for x, z in places]
     half = PILE / 2
     frm = (min(x for x, _, _ in laid) - half, min(y for _, y, _ in laid), min(z for _, _, z in laid) - half)
-    to = (max(x for x, _, _ in laid) + half, rim + ABOVE_RIM, max(z for _, _, z in laid) + half)
+    to = (max(x for x, _, _ in laid) + half, rim, max(z for _, _, z in laid) + half)
     element = box(name, frm, to, {})
     element["attachmentpoints"] = [{"code": code, "posX": str(num((to[0] - frm[0]) / 2)), "posY": "0", "posZ": str(num((to[2] - frm[2]) / 2)),
                                     "rotationX": "0", "rotationY": "0", "rotationZ": "0"}]
