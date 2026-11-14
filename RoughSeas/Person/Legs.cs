@@ -1,5 +1,9 @@
 namespace RoughSeas.Person;
 
+/// <summary>
+/// The legs pushing a body off the bed: a measured jump's mean force, m g (1 + h / d), along the stroke, until they have
+/// stretched their push. They push again only once the feet have left the bed and come back to it.
+/// </summary>
 public sealed class Legs(Body body, LegsConfig config, double gravity)
 {
     private (double X, double Y, double Z, SwimStroke Way)? push;

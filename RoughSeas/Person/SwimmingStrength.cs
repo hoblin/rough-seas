@@ -4,6 +4,10 @@ using Vintagestory.API.Config;
 
 namespace RoughSeas.Person;
 
+/// <summary>
+/// How hard a player's arms pull over a trained swimmer's: the world's own setting, the game's walk speed over its
+/// Normal and the player's own move speed, the two that speed the base game's swimmer.
+/// </summary>
 public static class SwimmingStrength
 {
     public const string Code = "swimmingStrength";

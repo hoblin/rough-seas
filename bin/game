@@ -51,7 +51,8 @@ START
                        world is reopened without the preset: re-applying it crashes the client on
                        some worlds (#24).
                        Every start turns temporal storms, stability and rifts off, and unridden
-                       vessels hold still until /bridge drift on.
+                       vessels hold still until /bridge drift on, and nobody drowns until
+                       /bridge breath on.
                        BENCH_MODS picks the mods loaded (default "roughseas agentbridge"):
                        BENCH_MODS=agentbridge, or BENCH_MODS= for vanilla, to tell our crash from
                        the game's. Without agentbridge, bin/game cannot drive it; read the log.
@@ -259,6 +260,9 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              stop' first holds the storm where it is while you look.
   /bridge find CODE [RANGE]  fly over the nearest block at the surface whose code matches CODE
                              (wildcards: tallplant-*), within RANGE blocks (default 256, at most 512)
+  /bridge breath [on|off]    whether players spend their breath under water. Off on every start, so a
+                             swimmer left in the water through a test doesn't drown; a test of breath or
+                             drowning turns it on
   /bridge river [RANGE] [DEPTH]
                              with the Rivers mod loaded, fly over the nearest water its current
                              pushes, at least DEPTH blocks deep (default 1), within RANGE blocks

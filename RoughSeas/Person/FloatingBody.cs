@@ -12,7 +12,7 @@ namespace RoughSeas.Person;
 /// its push on a body moving through it, by the share (ρ V + m_a) / (m + m_a) of what lies under, then the swimmer's
 /// stroke. The drag D takes the body's velocity through the water, the current and a breaker's roller included, along
 /// and across the body as it lies (<see cref="Posture"/>). A crest broken over it churns air into the water it lies in.
-/// A body that comes into the water brings its way in as its own.
+/// A body that comes into the water brings its way in as its own. Its feet on the bed, its <see cref="Legs"/> push it off.
 /// </summary>
 public sealed class FloatingBody(IPerson person, PersonConfig config, Waves waves) : BodyInWater
 {
@@ -35,6 +35,8 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     /// <param name="wavesPerSecond">The waves' seconds to a second of <paramref name="seconds"/>: the water's motion, read on the waves' clock, is taken on the tick's, while the body answers in the tick's own seconds.</param>
     /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
     /// <param name="drawn">How the body is drawn lying; upright when not given. A body that came into the water keeps lying as it came, upright, until it moves through the water no faster than it swims.</param>
+    /// <param name="onBed">The feet stand on the bed, for the legs to push off.</param>
+    /// <param name="strength">The arms' pull over a trained swimmer's (<see cref="SwimmingStrength"/>).</param>
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
         SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null, bool onBed = false, double strength = 1)
     {

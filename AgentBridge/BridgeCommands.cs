@@ -33,6 +33,7 @@ public class BridgeCommands : ModSystem
 
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
+    private BreathHold breath = null!;
     private CurrentOverride? current;
     private DriftSync? sync;
     private ChunkSettle settle = null!;
@@ -52,6 +53,7 @@ public class BridgeCommands : ModSystem
             sync = api.ModLoader.GetModSystem<DriftSync>();
             api.Event.PlayerJoin += player => sync.Send(drift.Drifting, drift.WavesOnly, current.Current, player);
         }
+        breath = new BreathHold(api, !benchDefaults);
         if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
         api.Event.ServerSuspend += HoldSuspension;
         var parsers = api.ChatCommands.Parsers;
@@ -149,6 +151,11 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Whether vessels drift with the current and the waves, steered or not (waves: the waves alone); off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off", "waves"))
                 .HandleWith(args => Drift(args[0] as string))
+            .EndSubCommand()
+            .BeginSubCommand("breath")
+                .WithDescription("Whether players spend their breath under water; off on every bench start, so a swimmer left in a test doesn't drown")
+                .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
+                .HandleWith(args => Breath(args[0] as string))
             .EndSubCommand()
             .BeginSubCommand("current")
                 .WithDescription("Set one current everywhere in place of the sea's, SPEED m/s toward a yaw in degrees as the camera's (0 toward +Z, 90 toward +X), as a river carries a vessel; 'off' gives the sea's back")
@@ -280,6 +287,14 @@ public class BridgeCommands : ModSystem
         config.SetBool("temporalStability", false);
         config.SetString("temporalRifts", "off");
         Mod.Logger.Notification("Temporal storms, stability and rifts are off for this world");
+    }
+
+    private TextCommandResult Breath(string? state)
+    {
+        if (state != null) breath.Breathing = state == "on";
+        return TextCommandResult.Success(breath.Breathing
+            ? "Players spend their breath under water and drown, as in the game"
+            : "Players' lungs stay full under water; /bridge breath on lets them drown");
     }
 
     private TextCommandResult Drift(string? state)

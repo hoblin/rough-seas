@@ -1,5 +1,9 @@
 namespace RoughSeas.Person;
 
+/// <summary>
+/// What carried things are made of, by density. A part measured in one material keeps its volume made of another, so a
+/// copper head of a steel head's size is heavier and a flint one lighter.
+/// </summary>
 public sealed class Materials(CarriedConfig config)
 {
     public double? DensityOf(string? code)

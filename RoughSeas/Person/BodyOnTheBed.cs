@@ -10,6 +10,10 @@ using Vintagestory.GameContent;
 
 namespace RoughSeas.Person;
 
+/// <summary>
+/// A swimming player whose feet stand on the bed is drawn as on land: vanilla's animation flags leave its Swim out, so
+/// vanilla's idle, walk and jump play, and its body turns upright. On every client, for every player it draws.
+/// </summary>
 public static class BodyOnTheBed
 {
     private const string HarmonyId = "roughseas.person.bed";

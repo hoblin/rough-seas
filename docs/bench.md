@@ -1,6 +1,6 @@
 # Testing on the bench
 
-Read before testing in the game, together with `bin/game help`. The bench's defaults carry most of the old rakes: the player arrives flying, restarts save the world, unridden vessels hold still, temporal effects are off, every wait has a timeout. What follows is what no tool can carry.
+Read before testing in the game, together with `bin/game help`. The bench's defaults carry most of the old rakes: the player arrives flying, restarts save the world, unridden vessels hold still, nobody drowns (`/bridge breath on` for a test of breath), temporal effects are off, every wait has a timeout. What follows is what no tool can carry.
 
 - To look at anything, fly there: `bin/scene look ID` from any side (`0 6 0.01` looks down from above the water's tint), `/bridge fly` anywhere. Never stand in water or build posts and slabs.
 - Leave the desktop alone: no real keys, no window moves, no new monitors or outputs. The bench places its own window.

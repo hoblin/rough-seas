@@ -11,7 +11,8 @@ namespace RoughSeas.Person;
 
 /// <summary>
 /// The player's mass. The inventory is a game convention, so what is weighed stops where the game draws the line: armour,
-/// and in the hotbar what the item's own type calls a tool or weapon. The backpack and materials aren't weighed. It is
+/// and in the hotbar what the item's own type calls a tool or weapon, each by its parts and what they are made of
+/// (<see cref="Materials"/>). The backpack and materials aren't weighed. It is
 /// worked out when a slot changes and held until the next change. Another player's client is sent only the hotbar slot in
 /// hand, so there the server's weighing, kept on the player, is read.
 /// </summary>

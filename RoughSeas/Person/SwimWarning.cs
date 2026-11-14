@@ -5,6 +5,10 @@ using Vintagestory.API.Config;
 
 namespace RoughSeas.Person;
 
+/// <summary>
+/// Tells this client's player why the water won't let them do what the base game would, as vanilla's in-game error over
+/// the hotbar, at most once in 5 s while they keep asking, and logs each reason as it starts and ends.
+/// </summary>
 public sealed class SwimWarning(PersonModSystem system)
 {
     private const long ShownMilliseconds = 5000;
