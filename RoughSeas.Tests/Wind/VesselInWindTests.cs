@@ -84,6 +84,26 @@ public class VesselInWindTests
         Assert.True(fastest < Fixtures.Wind.JumpMetresPerSecond, $"a point moved at {fastest:F1} m/s");
     }
 
+    [Fact]
+    public void ThroughAShuntNoLineOfHerRigIsStretchedPastItsLength()
+    {
+        var (body, sail) = Outrigger(Furled);
+        var stretched = 0.0;
+        foreach (var (position, tacked) in new[] { (FullSail, AsBuilt), (FullSail, Shunted), (Furled, Shunted), (FullSail, AsBuilt) })
+        {
+            sail.Hoist(position, tacked);
+            for (var t = 0.0; t < 20; t += Fixtures.TickSeconds)
+            {
+                body.Load(OverHerFloat, Still, Yaw, Waterline, Fixtures.TickSeconds);
+                var claw = (ClawState)sail.State;
+                var (pose, lines) = (claw.Rig, claw.Lines);
+                stretched = new[] { (pose.Masthead - claw.Bend).Length - lines.Halyard, (pose.Lead - claw.Bridle).Length - lines.Sheet }
+                    .Concat(lines.Stays.Select(stay => (pose.Masthead - stay.Pin).Length - stay.Metres)).Append(stretched).Max();
+            }
+        }
+        Assert.True(stretched < 0.01, $"a line stretched {stretched:F2} m past its length");
+    }
+
     [Theory]
     [InlineData(0.5)]
     [InlineData(3)]

@@ -169,7 +169,10 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         var spanned = light * seconds / end.SpanMetres;
         if (end.HoistMetres <= 0) shown = (SquareMetres > 0 ? Set.Reach : shown.Reach, Toward(shown.Span, SquareMetres > 0 ? Set.Span : 0, spanned));
         else if (SquareMetres > 0) shown = (Set.Reach, hoisted <= 0 ? Set.Span : Toward(shown.Span, Set.Span, spanned));
+        var reefed = shown != end.Set &&(end.HoistMetres <= 0 || hoisted >= 1);
+        var (yard, boom) = (State.Yard, State.Boom);
         rig.Set = shown;
+        if (reefed) state = end.Slackened(end.Pose(yard, boom), slack);
 
         var up = SquareMetres > 0 ? 1.0 : 0.0;
         if (end.HoistMetres <= 0 || hoisted == up) return false;

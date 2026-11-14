@@ -170,11 +170,13 @@ public sealed class CrabClaw : Rigging
         var (heel, tack) = (p.Heel + mast * (q.Heel - p.Heel), Carried(p.Tack, q.Tack));
         HullPoint OnMast(HullPoint x, HullPoint y) => heel + Swung(x - p.Heel, y - q.Heel, mast);
         HullPoint OnSpars(HullPoint x, HullPoint y) => tack + Swung(x - p.Tack, y - q.Tack, carry);
+        var (masthead, bend) = (OnMast(p.Masthead, q.Masthead), OnSpars(a.Bend, b.Bend));
         var (peak, clew) = (OnSpars(a.Peak, b.Peak), OnSpars(a.Clew, b.Clew));
-        var pose = new ClawPose(tack, OnMast(p.Masthead, q.Masthead), heel, OnSpars(a.Bend, b.Bend), peak, clew, OnSpars(a.Bridle, b.Bridle),
+        var pose = new ClawPose(tack, masthead, heel, bend, peak, clew, OnSpars(a.Bridle, b.Bridle),
             Carried(p.Lead, q.Lead), p.SternPin, p.ShroudFoot, OnMast(p.ShoreTop, q.ShoreTop), p.ShoreFoot);
         return new ClawState(a.Yard + carry * (b.Yard - a.Yard), a.Boom + carry * (b.Boom - a.Boom), peak, clew, pose.HalyardBend, pose.Bridle,
-            rest.Posed(tack, tack, peak, clew), 0, pose, lines);
+            rest.Posed(tack, tack, peak, clew), 0, pose,
+            lines with { Halyard = Math.Max(lines.Halyard, (masthead - bend).Length), Sheet = Math.Max(lines.Sheet, (pose.Lead - pose.Bridle).Length) });
     }
 
     public override RigState Track(double yard, double near, Func<RigState, (HullPoint At, HullPoint Force)> wind)
@@ -274,7 +276,8 @@ public sealed class CrabClaw : Rigging
 
     public override string Describe(RigState state)
     {
-        var (claw, pose) = ((ClawState)state, Hoisted);
+        var claw = (ClawState)state;
+        var (pose, lines) = (claw.Rig, claw.Lines);
         string Spar(HullPoint end)
         {
             var run = end - pose.Tack;
@@ -282,9 +285,18 @@ public sealed class CrabClaw : Rigging
             return $"{Degrees(Math.Atan2(run.Height, level))} up, {Degrees(Math.Atan2(Math.Abs(run.Across), Ahead * run.Along))} off her bow to {(run.Across >= 0 ? "starboard" : "port")}";
         }
         return string.Format(System.Globalization.CultureInfo.InvariantCulture,
-            "yard turned {0} about the tack-masthead line, boom {1} about the yard; yard {2}, boom {3}; halyard {4:F2} m, sheet {5:F2} m, forestay {6:F2} m, backstay {7:F2} m, shroud {8:F2} m",
-            Degrees(claw.Yard), Degrees(claw.Boom), Spar(claw.Peak), Spar(claw.Clew), (pose.Masthead - claw.Bend).Length,
-            (pose.Lead - claw.Bridle).Length, (pose.Masthead - pose.Tack).Length, (pose.Masthead - pose.SternPin).Length, (pose.Masthead - pose.ShroudFoot).Length);
+            "yard turned {0} about the tack-masthead line, boom {1} about the yard; yard {2}, boom {3}; {4}, {5}, {6}, shroud {7}",
+            Degrees(claw.Yard), Degrees(claw.Boom), Spar(claw.Peak), Spar(claw.Clew), Line("halyard", pose.Masthead, claw.Bend, lines.Halyard),
+            Line("sheet", claw.Bridle, pose.Lead, lines.Sheet),
+            string.Join(", ", lines.Stays.Select(stay => Line(stay.Pin.Along * Ahead > 0 ? "forestay" : "backstay", pose.Masthead, stay.Pin, stay.Metres))),
+            Line("", pose.Masthead, pose.ShroudFoot, lines.Shroud).TrimStart());
+    }
+
+    private static string Line(string name, HullPoint from, HullPoint to, double metres)
+    {
+        var span = (to - from).Length;
+        return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} {1:F2} m{2}", name, metres,
+            span < metres - 0.01 ? $" ({metres - span:F2} slack)" : span > metres + 0.01 ? $" (stretched {span - metres:F2})" : "");
     }
 
     public override double SheetMetres(RigState state) => ((ClawState)state).Lines.Sheet;

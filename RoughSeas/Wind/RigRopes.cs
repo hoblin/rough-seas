@@ -36,6 +36,7 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel) : IDisposable
             var (start, end) = (world(from), world(to));
             var reach = end.SubCopy(start);
             var spun = Spun(start, start.AddCopy(reach.Normalize().Mul(Math.Max(metres, 1 / Resolution))), width);
+            Hang(spun, start, end, metres);
             if (laid == ropes.Count) ropes.Add((spun, from, to));
             else ropes[laid] = (spun, from, to);
         }
@@ -86,6 +87,19 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel) : IDisposable
         }
         VanillaRopes.Own(cloths, rope);
         return rope;
+    }
+
+    private static void Hang(ClothSystem rope, Vec3d from, Vec3d to, double metres)
+    {
+        var chord = from.DistanceTo(to);
+        var sag = Math.Sqrt(3 * chord * Math.Max(0, metres - chord) / 8);
+        var points = new List<ClothPoint>();
+        rope.WalkPoints(points.Add);
+        for (var k = 0; k < points.Count; k++)
+        {
+            var t = (double)k / Math.Max(1, points.Count - 1);
+            points[k].Pos.Set(from.X + t * (to.X - from.X), from.Y + t * (to.Y - from.Y) - 4 * sag * t * (1 - t), from.Z + t * (to.Z - from.Z));
+        }
     }
 
     private static void Offset(ClothPoint end, Vec3d world, EntityPos at) =>
