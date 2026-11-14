@@ -133,7 +133,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         var end = rig.End;
         var fromBow = Math.Acos(Math.Clamp(-end.Ahead * air.Along / air.Speed, -1, 1));
         var luffs = polar.Luffs(fromBow);
-        var wind = luffs ? posed => (posed.Centre(shown, 0), default) : (Func<RigState, (HullPoint, HullPoint)>)(posed => Pressing(posed, air, halfDensity, fromBow));
+        var wind = luffs ? posed => (posed.Centre(shown, Fill), default) : (Func<RigState, (HullPoint, HullPoint)>)(posed => Pressing(posed, air, halfDensity, fromBow));
         var trim = (Math.Atan2(air.Across, air.Along), halfDensity * air.Speed * air.Speed, shown, rig.Tacked);
         if (Retrim(trim))
         {
@@ -204,7 +204,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         Aback = false;
         if (luffs) return Luffing(air, halfDensity);
 
-        var (at, force) = Force(State, air, halfDensity, fromBow);
+        var force = Force(State, air, halfDensity, fromBow).Force;
         Pressure = force.Length / Area();
         Filled(air);
         return (State.Centre(shown, Fill), force);
@@ -277,14 +277,14 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         if (end.Aback(posed, air)) return Plate(posed, air, halfDensity);
 
         var (drive, side) = polar.At(fromBow, Incidence(posed, air));
-        return (posed.Centre(shown, 0), halfDensity * air.Speed * air.Speed * Area() * new HullPoint(end.Ahead * drive, 0, end.Leeward(air) * side));
+        return (posed.Centre(shown, Fill), halfDensity * air.Speed * air.Speed * Area() * new HullPoint(end.Ahead * drive, 0, end.Leeward(air) * side));
     }
 
     private (HullPoint At, HullPoint Force) Luffing(Airflow air, double halfDensity)
     {
         (Aback, Pressure) = (false, 0);
         Bellied(0, air.Speed);
-        return (State.Centre(Rolled ? SailForm.Whole : shown, 0), halfDensity * air.Speed * aback.Friction * Area() * new HullPoint(air.Along, 0, air.Across));
+        return (State.Centre(Rolled ? SailForm.Whole : shown, Fill), halfDensity * air.Speed * aback.Friction * Area() * new HullPoint(air.Along, 0, air.Across));
     }
 
     private bool Retrim((double Heading, double Pressure, (double Reach, double Span) Set, int Tacked) trim) =>
@@ -311,7 +311,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         var normal = posed.Form.Normal;
         var flow = Flow(normal, air);
         var pressing = aback.Pressing(Math.Asin(Math.Clamp(flow / air.Speed, -1, 1)));
-        return (posed.Centre(shown, 0), halfDensity * air.Speed * air.Speed * pressing * Math.Sign(flow) * Area() * normal);
+        return (posed.Centre(shown, Fill), halfDensity * air.Speed * air.Speed * pressing * Math.Sign(flow) * Area() * normal);
     }
 
     private double Incidence(RigState posed, Airflow air) => Math.Asin(Math.Clamp(Flow(rig.End.Belly(posed), air) / air.Speed, -1, 1));
