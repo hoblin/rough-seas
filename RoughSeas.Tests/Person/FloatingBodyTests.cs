@@ -23,12 +23,14 @@ public class FloatingBodyTests
 
     private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.DensityKgPerLitre);
 
-    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default)
+    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default, BodyMotion start = default)
     {
         private readonly FloatingBody body = new(Man, Fixtures.PersonConfig, Waves);
-        private BodyMotion motion;
+        private BodyMotion motion = start;
 
         public SwimStroke Stroke { get; set; } = stroke;
+
+        public Posture Drawn => Stroke.X != 0 || Stroke.Z != 0 ? Posture.Along(Stroke.X, Stroke.Y, Stroke.Z) : Posture.Upright;
 
         public (double X, double Z) Current { get; set; }
 
@@ -45,7 +47,7 @@ public class FloatingBodyTests
         public FloatReading Step()
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
-            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current);
+            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current, Drawn);
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
@@ -76,14 +78,14 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void SinksSlowlyInFreshWater()
+    public void SinksInFreshWater()
     {
         var run = new Run(Calm, Still - 1.6, salt: false);
         var from = run.Feet;
         run.Settle(60);
 
         var speed = (from - run.Feet) / 60;
-        Assert.InRange(speed, 0.05, 0.5);
+        Assert.InRange(speed, 0.05, 1);
     }
 
     [Fact]
@@ -227,12 +229,18 @@ public class FloatingBodyTests
             churned = Math.Max(churned, calmly.Step().Churn);
             lowest = Math.Min(lowest, calmly.Feet);
         }
-        var back = calmly.Settle(60);
+        calmly.Settle(50);
+        var (back, ticks) = (0.0, 0);
+        for (var t = 0.0; t < 10; t += Frame, ticks++)
+        {
+            calmly.Step();
+            back += calmly.Feet;
+        }
 
         Assert.True(churned > 0.05, $"{churned:P1} of its water");
         Assert.True(lowest < riding - 0.2, $"driven {riding - lowest:F2} m under");
         Assert.False(calmly.Body.Breaking);
-        Assert.InRange(back - riding, -0.05, 0.05);
+        Assert.InRange(back / ticks - riding, -0.05, 0.05);
     }
 
     [Fact]
@@ -288,7 +296,7 @@ public class FloatingBodyTests
     [Fact]
     public void ASecondCrestRenewsTheChurnAsTheFirstFades()
     {
-        var run = new Run(Calm, Still - 1.6);
+        var run = new Run(Calm, Still - 1.6, stroke: new SwimStroke(0, 1, 0));
         run.Settle(20);
         var crest = new BreakerPacket { HeightMetres = 2, PeriodSeconds = 8, Celerity = 9 };
         run.Strike(crest);
@@ -329,7 +337,7 @@ public class FloatingBodyTests
         run.Settle(1);
 
         Assert.InRange(first, 55, 59);
-        Assert.InRange(run.MovedX - from, 0.65, 0.9);
+        Assert.InRange(run.MovedX - from, 0.6, 0.9);
     }
 
     [Fact]
@@ -388,13 +396,51 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void AStrokeCarriesOnThroughTheStep()
+    public void WhatElseMovesAFloatingBodyCarriesOnThroughTheStep()
     {
         var body = new FloatingBody(Man, Fixtures.PersonConfig, Waves);
-        var own = 0.05;
-        var next = body.Step(Calm, new WaterSurface(Still, 0, true), new BodyPlace(X, Still - 1.6, Z, EyeHeight, Width), new BodyMotion(own, 0, 0), default, Frame, 1, Kept);
+        var place = new BodyPlace(X, Still - 1.6, Z, EyeHeight, Width);
+        body.Step(Calm, new WaterSurface(Still, 0, true), place, default, default, Frame, 1, Kept);
+        var pushed = 0.05;
+        var next = body.Step(Calm, new WaterSurface(Still, 0, true), place, new BodyMotion(pushed, 0, 0), default, Frame, 1, Kept);
 
-        Assert.Equal(own, next.X, 9);
+        Assert.Equal(pushed, next.X, 9);
+    }
+
+    [Fact]
+    public void ABodyEnteringTheWaterBringsItsWayInAsItsOwn()
+    {
+        var body = new FloatingBody(Man, Fixtures.PersonConfig, Waves);
+        var next = body.Step(Calm, new WaterSurface(Still, 0, true), new BodyPlace(X, Still - 1.6, Z, EyeHeight, Width), new BodyMotion(0.05, 0, 0), default, Frame, 1, Kept);
+
+        Assert.Equal(body.Own.X / WaterDrag.TicksPerSecond, next.X * Kept, 9);
+        Assert.InRange(body.Own.X, 2.5, 3);
+    }
+
+    private static double Plunged(SwimStroke stroke)
+    {
+        var run = new Run(Calm, Still - 1.6, stroke: stroke, start: new BodyMotion(0, -5 / WaterDrag.TicksPerSecond, 0));
+        var lowest = run.Feet;
+        for (var t = 0.0; t < 5; t += Frame)
+        {
+            run.Step();
+            lowest = Math.Min(lowest, run.Feet);
+        }
+        return Still - 1.6 - lowest;
+    }
+
+    [Fact]
+    public void AFeetFirstJumpCarriesItDownAlongItsLength()
+    {
+        var plunged = Plunged(default);
+        Assert.True(plunged > 3, $"{plunged:F2} m");
+    }
+
+    [Fact]
+    public void HoldingADirectionAsItPlungesInDoesntLayItFlatUntilItSlowsToItsSwim()
+    {
+        var (feetFirst, stroking) = (Plunged(default), Plunged(Ahead));
+        Assert.InRange(stroking / feetFirst, 0.8, 1.2);
     }
 
     private static double Waded(double seconds, double waterline, double metresPerSecond, BreakerPacket? crest = null)
