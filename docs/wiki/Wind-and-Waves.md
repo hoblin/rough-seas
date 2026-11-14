@@ -19,7 +19,7 @@ Storms travel with the prevailing wind, so the sky upwind is where weather comes
 Trees sway with the wind's strength. Their sway does not show its direction, because the game's foliage only bends one way; read the direction from the clouds, or from the coordinates readout: with the game's coordinates shown, a second line gives the wind where you stand, such as `WSW 6 Bft · 11 m/s`, where it blows from, its [force](#the-beaufort-scale) and its speed, in your own language.
 The wind pushes every vessel downwind, a light one with high sides the most: left alone, it drifts with the wind as well as the [current](Currents), and under way it is pushed a little sideways. A sail on the [outrigger](Outrigger-Canoe#sailing-it) or the [sailboat](Sailboat#sailing-it) drives you by it ([how](The-Science-of-the-Hull#under-sail)).
 
-![An outrigger canoe in a moderate breeze sets her crab-claw sail on a beam reach, shunts, sails back the way she came, bears away and comes up again](images/outrigger-canoe/sailing.webp)
+![An outrigger canoe under a crab-claw sail in a moderate breeze: on a beam reach, shunting, sailing back the way it came, bearing away and coming up again](images/outrigger-canoe/sailing.webp)
 
 ## The Beaufort scale
 

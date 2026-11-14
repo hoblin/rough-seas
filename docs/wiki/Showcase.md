@@ -24,8 +24,8 @@ Rough Seas in motion: every animation of its mechanics in this wiki, each with a
 
 | |
 | --- |
-| ![An outrigger canoe in a moderate breeze sets her crab-claw sail on a beam reach, shunts, sails back the way she came, bears away and comes up again](images/outrigger-canoe/sailing.webp) |
-| An outrigger canoe under her crab claw in a moderate breeze: she reaches, shunts to sail back the way she came, bears away and comes up: [Wind and waves](Wind-and-Waves#wind), [Outrigger canoe](Outrigger-Canoe#sailing-it) |
+| ![An outrigger canoe under a crab-claw sail in a moderate breeze: on a beam reach, shunting, sailing back the way it came, bearing away and coming up again](images/outrigger-canoe/sailing.webp) |
+| An outrigger canoe under its crab claw in a moderate breeze: on a reach, a shunt to sail back the way it came, bearing away and coming up: [Wind and waves](Wind-and-Waves#wind), [Outrigger canoe](Outrigger-Canoe#sailing-it) |
 
 ## Building a vessel
 
