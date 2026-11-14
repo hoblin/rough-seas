@@ -134,8 +134,6 @@ public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double hal
                 (sail["halfReach"].AsDouble(1), sail["halfSpan"].AsDouble(1)), ClothNewtons(sailing.ClothKgPerSquareMetre), sailing.Camber, sailing.Crew);
     }
 
-    bool IAloft.Set => !Rolled;
-
     public IEnumerable<WindSurface> Surfaces(Func<WindSurface, Airflow> air, double seconds)
     {
         if (Draws(air(this)))

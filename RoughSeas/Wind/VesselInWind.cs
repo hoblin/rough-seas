@@ -23,7 +23,7 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, BluffSurf
 
     protected override IEnumerable<WindSurface> Surfaces(Func<WindSurface, Airflow> air, double seconds)
     {
-        yield return aloft is { Set: true } ? set : bare;
+        yield return aloft is { Rolled: false } ? set : bare;
         if (aloft == null) yield break;
 
         foreach (var surface in aloft.Surfaces(air, seconds)) yield return surface;

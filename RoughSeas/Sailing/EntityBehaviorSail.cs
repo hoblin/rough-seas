@@ -41,7 +41,7 @@ public class EntityBehaviorSail(Entity entity) : EntityBehavior(entity), IRigged
 
     public IAloft Aloft => Sail;
 
-    public bool Rigged => forms.All(form => form.Finished);
+    public bool Built => forms.All(form => form.Finished);
 
     public (double X, double Z) Blowing => windage?.Blowing ?? default;
 
@@ -60,7 +60,8 @@ public class EntityBehaviorSail(Entity entity) : EntityBehavior(entity), IRigged
 
     public override void AfterInitialized(bool onFirstSpawn)
     {
-        windage = entity.GetBehavior<EntityBehaviorWindage>();
+        windage = entity.GetBehavior<EntityBehaviorWindage>()
+            ?? throw new InvalidOperationException($"{entity.Code}'s {Code} has no {EntityBehaviorWindage.Code} to blow on it: give it both");
         forms = entity.SidedProperties.Behaviors.OfType<IHullForm>().ToArray();
         if (entity.WatchedAttributes.GetBytes(ShapeKey) is { } saved) Sail.Show(SerializerUtil.Deserialize<RigShape>(saved));
         if (entity.Api is ICoreClientAPI capi) drawn = new RigRenderer(capi, entity, this, cloth, parts);
@@ -68,7 +69,7 @@ public class EntityBehaviorSail(Entity entity) : EntityBehavior(entity), IRigged
 
     public override void OnTesselation(ref Shape entityShape, string shapePathForLogging, ref bool shapeIsCloned, ref string[] willDeleteElements)
     {
-        if (drawn == null || !Rigged) return;
+        if (drawn == null || !Built) return;
 
         drawn.Shaped(entityShape.Clone());
         willDeleteElements = (willDeleteElements ?? []).Concat(drawnGroups).ToArray();
@@ -76,7 +77,7 @@ public class EntityBehaviorSail(Entity entity) : EntityBehavior(entity), IRigged
 
     public override void OnInteract(EntityAgent byEntity, ItemSlot itemslot, Vec3d hitPosition, EnumInteractMode mode, ref EnumHandling handled)
     {
-        if (mode != EnumInteractMode.Interact || entity.Api.Side != EnumAppSide.Server || !Rigged
+        if (mode != EnumInteractMode.Interact || entity.Api.Side != EnumAppSide.Server || !Built
             || byEntity is not EntityPlayer player || entity.GetBehavior<EntityBehaviorSelectionBoxes>() is not { } boxes) return;
 
         var step = Array.FindIndex(steps, code => boxes.IsAPCode(player.EntitySelection, code));
@@ -101,14 +102,14 @@ public class EntityBehaviorSail(Entity entity) : EntityBehavior(entity), IRigged
         trimmed = false;
     }
 
-    public void Trim()
+    public void Hoist()
     {
         (was, wasShunting) = (Sail.State, Sail.Shunting);
         Sail.Hoist(entity.WatchedAttributes.GetInt(SailKey), entity.WatchedAttributes.GetInt(TackedKey));
         trimmed = true;
     }
 
-    public void Trimmed(double seconds)
+    public void Blown(double seconds)
     {
         if (Sail.Shunting != wasShunting)
             sailing.Log(entity, "{0} her shunt to her {1} end: {2}", Sail.Shunting ? "begins" : "ends", entity.WatchedAttributes.GetInt(TackedKey) == 0 ? "bow" : "stern",
@@ -116,7 +117,7 @@ public class EntityBehaviorSail(Entity entity) : EntityBehavior(entity), IRigged
         if (was != null && Sail.Rig.End.Marks(Sail.State).Zip(Sail.Rig.End.Marks(was)).Max(pair => (pair.First - pair.Second).Length) is var moved
             && moved > sailing.Config.JumpMetresPerSecond * seconds)
             sailing.Log(entity, "her rig moved {0:F2} m in one {1:F3} s tick: {2}", moved, seconds, Sail.Rig.End.Describe(Sail.State));
-        Note();
+        if (entity.Swimming) Note();
         var shape = Sail.Shape(entity.EntityId);
         if (!Changed(shape)) return;
 

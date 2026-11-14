@@ -43,9 +43,9 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
 
     public WindLoad Wind((double X, double Z) velocity, double seconds)
     {
-        rigged?.Trim();
+        rigged?.Hoist();
         var load = Blow(velocity, seconds);
-        rigged?.Trimmed(seconds);
+        rigged?.Blown(seconds);
         return load;
     }
 

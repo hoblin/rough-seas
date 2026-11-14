@@ -58,7 +58,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
     {
         var opaque = stage == EnumRenderStage.Opaque;
-        if (!(opaque ? entity.IsRendered : entity.IsShadowRendered) || entity.Properties.Client.Renderer is not EntityShapeRenderer hull || !sail.Rigged) return;
+        if (!(opaque ? entity.IsRendered : entity.IsShadowRendered) || entity.Properties.Client.Renderer is not EntityShapeRenderer hull || !sail.Built) return;
 
         model = hull.ModelMat;
         if (!opaque)
