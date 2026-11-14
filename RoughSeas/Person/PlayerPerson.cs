@@ -51,8 +51,11 @@ public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>
     public Carried Weigh(IEnumerable<Worn> worn, IEnumerable<Held> hotbar) =>
         worn.Aggregate(default(Carried), (sum, armour) => sum + Weigh(armour)) + hotbar.Aggregate(default(Carried), (sum, item) => sum + Weigh(item));
 
-    private Carried Weigh(Worn armour) =>
-        armour.WalkSpeedPenalty > 0 ? materials.Worn(armour.WalkSpeedPenalty * config.ArmourKgPerWalkSpeed, armour.Material) : default;
+    private Carried Weigh(Worn armour)
+    {
+        if (armour.WalkSpeedPenalty > 0) return materials.Worn(armour.WalkSpeedPenalty * config.ArmourKgPerWalkSpeed, armour.Material);
+        return armour.Material != null && config.UnslowingArmourKg.TryGetValue(armour.Material, out var kg) ? materials.Worn(kg, armour.Material) : default;
+    }
 
     private Carried Weigh(Held item)
     {

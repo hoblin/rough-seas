@@ -36,7 +36,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
     /// <param name="drawn">How the body is drawn lying; upright when not given. A body that came into the water keeps lying as it came, upright, until it moves through the water no faster than it swims.</param>
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
-        SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null, bool onBed = false)
+        SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null, bool onBed = false, double strength = 1)
     {
         var kick = legs.Push(at.X, at.Feet, at.Z, onBed, stroke);
         var density = waves.DensityOf(surface.Salt);
@@ -63,7 +63,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var (toX, toZ) = Toward(sea.Seconds, churned, wavesPerSecond, current);
         var (throughX, throughY, throughZ) = (ownX - toX, motion.Y * WaterDrag.TicksPerSecond - rise, ownZ - toZ);
         var stroking = throughX * stroke.X + throughY * stroke.Y + throughZ * stroke.Z;
-        var thrust = stroke.Stroking ? arms.Thrust(stroking, density) : 0;
+        var thrust = stroke.Stroking ? strength * arms.Thrust(stroking, density) : 0;
 
         coasting &= Math.Sqrt(throughX * throughX + throughY * throughY + throughZ * throughZ) > config.Body.Swimming.MetresPerSecond;
         var posture = coasting ? Posture.Upright : drawn ?? Posture.Upright;
@@ -81,7 +81,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var carried = Velocity;
         var heave = heaveThrough + rise + (lift + (thrust * stroke.Y + kick.Y) / inertia) * seconds;
 
-        var spare = (density * (whole + kit.Litres) / Body.LitresPerCubicMetre - massKg) * WaveTheory.Gravity + arms.Thrust(0, density);
+        var spare = (density * (whole + kit.Litres) / Body.LitresPerCubicMetre - massKg) * WaveTheory.Gravity + strength * arms.Thrust(0, density);
         Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, water.WaveX, rise, water.WaveZ, carried.X, carried.Z, thrust, spare,
             Math.Sqrt(kick.X * kick.X + kick.Y * kick.Y + kick.Z * kick.Z));
         return new BodyMotion(

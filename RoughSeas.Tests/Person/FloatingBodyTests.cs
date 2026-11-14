@@ -24,7 +24,7 @@ public class FloatingBodyTests
     private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.Densities["steel"] * Body.LitresPerCubicMetre);
 
     private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default, BodyMotion start = default,
-        double bed = double.NegativeInfinity)
+        double bed = double.NegativeInfinity, double strength = 1)
     {
         private readonly FloatingBody body = new(Man, Fixtures.PersonConfig, Waves);
         private BodyMotion motion = start;
@@ -51,7 +51,7 @@ public class FloatingBodyTests
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
             var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current, Drawn,
-                Feet <= bed);
+                Feet <= bed, strength);
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             if (Feet < bed) (Feet, motion) = (bed, motion with { Y = 0 });
@@ -357,6 +357,21 @@ public class FloatingBodyTests
         run.Settle(10);
 
         Assert.InRange((run.MovedX - from) / 10, 0.87, 0.93);
+    }
+
+    [Fact]
+    public void TwiceTheStrengthSwimsFasterByTheRootOfTwoAgainstTheSameDrag()
+    {
+        double Cruise(double strength)
+        {
+            var run = new Run(Calm, Still - 1.6, salt: false, stroke: Ahead, strength: strength);
+            run.Settle(30);
+            var from = run.MovedX;
+            run.Settle(10);
+            return (run.MovedX - from) / 10;
+        }
+
+        Assert.InRange(Cruise(2) / Cruise(1), 1.3, 1.45);
     }
 
     [Fact]

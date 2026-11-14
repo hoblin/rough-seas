@@ -55,6 +55,7 @@ public class CarriedConfig
 {
     public double ArmourKgPerWalkSpeed;
     public string ArmourMaterial = "";
+    public Dictionary<string, double> UnslowingArmourKg = [];
     public Dictionary<string, double> Densities = [];
     public Dictionary<string, string> Alike = [];
     public string Handle = "";

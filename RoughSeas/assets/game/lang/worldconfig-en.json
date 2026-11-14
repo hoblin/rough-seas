@@ -18,6 +18,11 @@
     "worldattribute-poleDepth-desc": "A pole pushes only where it reaches the bottom. Off, it pushes in water of any depth as at its full stroke.",
     "worldattribute-realisticSwimming": "Realistic swimming",
     "worldattribute-realisticSwimming-desc": "You float by the water your body displaces, swim as fast as a person's arms can drive you, and the tools and armour you carry weigh you down. Waves, currents and breaking crests carry you. Off, you swim as in the base game; you still breathe by the waves.",
+    "worldattribute-swimmingStrength": "Swimming strength",
+    "worldattribute-swimmingStrength-desc": "How hard your arms pull while you swim realistically: x1 is a trained swimmer's real stroke, x2 and x3 pull twice and three times as hard, so you swim faster and can lift more out of the water. The game's own walk speed setting multiplies it too.",
+    "worldconfig-swimmingStrength-x1": "x1",
+    "worldconfig-swimmingStrength-x2": "x2",
+    "worldconfig-swimmingStrength-x3": "x3",
     "worldattribute-swimmerBreakers": "Breakers on swimmers",
     "worldattribute-swimmerBreakers-desc": "A wave that breaks over you while you swim pushes you under and along with it, and its foaming water holds you up less. Off, no wave breaks over a swimmer; you still float on the waves and breathe by them."
 }

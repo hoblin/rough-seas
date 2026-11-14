@@ -121,7 +121,7 @@ public static class BodyAfloat
         if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
         wasSwimming = true;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
-            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity), entity.OnGround);
+            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity), entity.OnGround, SwimmingStrength.Of(entity));
         if (body.Reading.Kick > 0 && !kicking) system!.Log(entity, "pushes off the bed at y {0:F2}: {1:F0} N toward {2:F2} {3:F2} {4:F2}", pos.Y, body.Reading.Kick, stroke.X, stroke.Y, stroke.Z);
         kicking = body.Reading.Kick > 0;
         pos.Motion.Set(next.X, next.Y, next.Z);

@@ -25,9 +25,24 @@ public class PlayerPersonTests
     [Fact]
     public void TakesArmourOfAnUnknownMaterialAsSteel()
     {
-        var hide = Fixtures.Person.Weigh([new Worn(0.03, "polar")], []);
+        var odd = Fixtures.Person.Weigh([new Worn(0.03, "orichalcum")], []);
 
-        Assert.Equal(hide.Kg / Config.Densities["steel"] * Body.LitresPerCubicMetre, hide.Litres, 6);
+        Assert.Equal(odd.Kg / Config.Densities["steel"] * Body.LitresPerCubicMetre, odd.Litres, 6);
+    }
+
+    [Fact]
+    public void WoodenArmourHoldsTheSwimmerUp()
+    {
+        Assert.True(InWater(Fixtures.Person.Weigh([new Worn(0.03, "wood")], [])) < 0);
+        Assert.True(InWater(Fixtures.Person.Weigh([new Worn(0, "wood")], [])) < 0);
+    }
+
+    [Fact]
+    public void BearHideArmourWeighsAlmostNothingInTheWater()
+    {
+        var hide = Fixtures.Person.Weigh([new Worn(0.03, "bear-polar")], []);
+
+        Assert.InRange(InWater(hide), 0, 0.1 * hide.Kg);
     }
 
     [Fact]
