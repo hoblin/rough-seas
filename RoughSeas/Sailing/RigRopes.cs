@@ -55,7 +55,7 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
             var points = new List<ClothPoint>();
             drawn.WalkPoints(points.Add);
             if (points.Count < 2)
-                sailing.Log(vessel, "rope {0} ({1:F2} m) spun as {2} point(s): from {3} to {4} on the hull, at {5} and {6} in the world",
+                sailing.Log(vessel, "rope {0} ({1:F3} m) spun as {2} point(s): from {3} to {4} on the hull, at {5} and {6} in the world",
                     laid, metres, points.Count, Where(from), Where(to), Where(start), Where(end));
             var placed = laid < ropes.Count ? Retraced(ropes[laid].Chain, points.Count) : Hung(start, end, metres, points.Count);
             var rope = new Rope(drawn, points, new Chain(placed.Points, metres, width, fibre, wind.Config.AirKgPerCubicMetre));
