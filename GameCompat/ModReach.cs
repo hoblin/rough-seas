@@ -113,7 +113,7 @@ internal sealed class ModReach
                     var constructor = (MethodReference)instruction.Operand;
                     var constructorArguments = new Value[constructor.Parameters.Count];
                     for (var index = constructorArguments.Length - 1; index >= 0; index--) constructorArguments[index] = Pop();
-                    stack.Push(OnNew(constructor, constructorArguments));
+                    stack.Push(OnNew(constructor, constructorArguments, depth));
                     break;
                 default:
                     Simulate(instruction.OpCode, stack, Pop);
@@ -153,8 +153,14 @@ internal sealed class ModReach
     private static Value[] Bind(MethodDefinition helper, Value[] arguments) =>
         helper.IsStatic ? arguments.Prepend(new Opaque()).ToArray() : arguments;
 
-    private Value OnNew(MethodReference constructor, Value[] arguments)
+    private Value OnNew(MethodReference constructor, Value[] arguments, int depth)
     {
+        if (depth < DeepestHelper && constructor.DeclaringType.Scope == module && arguments.Any(argument => argument is TypeValue or Text)
+            && constructor.Resolve() is { HasBody: true } built)
+        {
+            Evaluate(built, arguments.Prepend(new Opaque()).ToArray(), depth + 1);
+            return new Opaque();
+        }
         if (constructor.DeclaringType.FullName != "HarmonyLib.HarmonyMethod" || arguments.Length < 2) return new Opaque();
         if (arguments[0] is TypeValue owner && arguments[1] is Text name)
         {
@@ -180,6 +186,8 @@ internal sealed class ModReach
                 return Noted(arguments[0], arguments[1], ReachKind.Field, called.Name == "DeclaredField", site);
             case "StaticFieldRefAccess":
                 return Noted(arguments[0], arguments[1], ReachKind.Field, false, site, fieldType: ((GenericInstanceMethod)called).GenericArguments[0].FullName, fieldStatic: true);
+            case "FieldRefAccess" when ((GenericInstanceMethod)called).GenericArguments is { Count: 1 } fieldType:
+                return Noted(arguments[0], arguments[1], ReachKind.Field, false, site, fieldType: fieldType[0].FullName, fieldStatic: false);
             case "FieldRefAccess":
                 var generics = ((GenericInstanceMethod)called).GenericArguments;
                 return Noted(new TypeValue(generics[0].FullName), arguments[0], ReachKind.Field, false, site, fieldType: generics[1].FullName, fieldStatic: false);

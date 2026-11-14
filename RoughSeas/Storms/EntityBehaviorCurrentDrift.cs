@@ -160,7 +160,7 @@ public class EntityBehaviorCurrentDrift(Entity entity) : EntityBehavior(entity)
         var client = entity.Api as ICoreClientAPI;
         var steered = mountable?.IsBeingControlled() == true;
         var ours = client == null ? !steered : mountable?.Controller == client.World.Player?.Entity;
-        var waves = entity is EntityBoat boat && forces != null ? forces.Ride.Water(boat, deltaTime) : default;
+        var waves = Boats.Is(entity) && forces != null ? forces.Ride.Water(entity, deltaTime) : default;
         if ((client != null && !ours) || !entity.Swimming)
         {
             Ashore();

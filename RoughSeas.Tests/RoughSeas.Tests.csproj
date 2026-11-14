@@ -28,6 +28,9 @@
     <Reference Include="VSEssentials">
       <HintPath>$(VINTAGE_STORY)/Mods/VSEssentials.dll</HintPath>
     </Reference>
+    <Reference Include="VSSurvivalMod">
+      <HintPath>$(VINTAGE_STORY)/Mods/VSSurvivalMod.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(VINTAGE_STORY)/Lib/Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -43,6 +46,8 @@
     <None Include="..\RoughSeas\assets\roughseas\config\soundscape.json" Link="soundscape.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\shore.json" Link="shore.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\compat\extremeweather.json" Link="extremeweather.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\compat\shipwright.json" Link="shipwright.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\compat\walkableentities.json" Link="walkableentities.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\windpatterns\*.json" LinkBase="windpatterns" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\materials.json" Link="materials.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\mass.json" Link="mass.json" CopyToOutputDirectory="PreserveNewest" />
@@ -58,6 +63,7 @@
     <None Include="..\RoughSeas\assets\roughseas\patches\storms-vessels.json" Link="storms-vessels.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\wind-vessels.json" Link="wind-vessels.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\boats-drift.json" Link="boats-drift.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\patches\compat-shipwright.json" Link="compat-shipwright.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\player-*.json" LinkBase="patches" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\entities\vessel\*.json" LinkBase="vessel" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\shapes\entity\vessel\*.json" LinkBase="shapes" CopyToOutputDirectory="PreserveNewest" />

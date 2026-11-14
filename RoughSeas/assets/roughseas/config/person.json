@@ -22,7 +22,16 @@
         "dragAreaAlong": 0.25,
         "dragAreaAcross": 0.45,
         "dragAreaSwimming": 0.096,
-        "strokeNewtons": 38.9,
+        "swimming": {
+            "usefulWatts": 35,
+            "wastedWatts": 45,
+            "metresPerSecond": 0.9,
+            "sources": {
+                "usefulWatts": "The power the triathletes' front crawl spends against their drag at 0.90 m/s in the pool's fresh water, 35 W (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415): 38.9 N, the force that holds that speed",
+                "wastedWatts": "The power the same stroke spends pushing water backwards, 45 W (Toussaint 1990), a propelling efficiency of 44% against a competitive swimmer's 61%. The arms are a blade slipping back through the water, as a paddle's is (Water.SlippingBlade): its slip is 45/35 of the speed, which with the 38.9 N fixes the blade's drag area. Taken, as every stroke of the mod, as spending its 80 W at any speed, measured at 0.9 m/s alone: it pulls about 57 N held still in the water and less the faster it goes; trained swimmers pull 92-104 N on average tethered all out for 30 s (Neiva et al. 2011, J Hum Kinet 29A:113-119), a sprint's effort, not a swim's",
+                "metresPerSecond": "The triathletes' speed when both powers were measured, 0.90 m/s (Toussaint 1990)"
+            }
+        },
         "sources": {
             "heightMetres": "Mean adult man in the US, 175.3 cm (Fryar et al. 2021, NHANES 2015-2018, Vital Health Stat 3(46), Table 5), about de Leva's reference man of 1.741 m",
             "massKg": "The one reference body, near de Leva's reference man of 73 kg (de Leva 1996, Table 4); the vessels' crew weighs the same",
@@ -35,8 +44,7 @@
             "atmospherePascals": "The standard atmosphere, 101325 Pa (10th CGPM, 1954): air held in the lungs shrinks under the water's pressure by Boyle's law",
             "dragAreaAlong": "A body moving along its length unstreamlined: head-down skydivers fall at 240-290 km/h (FAI), so at 80 kg Cd A = 2 m g / (rho_air v^2) is about 0.2-0.3 m2; no measure of a body moving up and down in water was found, and a towed streamlined glide drags only 0.041 m2 (Cortesi et al. 2020, Int J Environ Res Public Health 17(6):2002)",
             "dragAreaAcross": "A body moving broadside, the water carrying it across: belly-down skydivers fall at about 200 km/h (FAI), so at 80 kg Cd A is about 0.42-0.46 m2. Taken by the share of the body under water",
-            "dragAreaSwimming": "A body swimming the front crawl, lying along its stroke: triathletes, the trained swimmers nearest an ordinary one measured, swam 0.90 m/s against 35 W of drag (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415), a drag of 38.9 N, so Cd A = 2 D / (rho v^2) = 0.096 m2 in the pool's fresh water",
-            "strokeNewtons": "The same triathletes' stroke: at a steady speed the mean thrust equals the drag it holds, 35 W / 0.90 m/s = 38.9 N (Toussaint 1990). Taken as the stroke's force at any speed; tethered, standing still, trained swimmers pull more, 92-104 N on average (Neiva et al. 2011, J Hum Kinet 29A:113-119), and no ordinary swimmer's was found"
+            "dragAreaSwimming": "A body swimming the front crawl, lying along its stroke: triathletes, the trained swimmers nearest an ordinary one measured, swam 0.90 m/s against 35 W of drag (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415), a drag of 38.9 N, so Cd A = 2 D / (rho v^2) = 0.096 m2 in the pool's fresh water"
         }
     },
     "carried": {

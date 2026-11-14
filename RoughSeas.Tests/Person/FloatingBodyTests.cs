@@ -249,6 +249,30 @@ public class FloatingBodyTests
     }
 
     [Fact]
+    public void TreadingWaterGoesUnderABreakerDeeperTheBiggerItIs()
+    {
+        static double Sunk(double height)
+        {
+            var run = new Run(Calm, Still - 1.6, stroke: new SwimStroke(0, 1, 0));
+            var riding = run.Settle(60);
+            run.Strike(new BreakerPacket { HeightMetres = height, PeriodSeconds = 8, Celerity = 9 });
+            var lowest = riding;
+            for (var t = 0.0; t < 3; t += Frame)
+            {
+                run.Step();
+                lowest = Math.Min(lowest, run.Feet);
+            }
+            return riding - lowest;
+        }
+
+        var small = Sunk(0.5);
+        var big = Sunk(4);
+
+        Assert.True(small > 0.1, $"{small:F2} m under in a 0.5 m breaker");
+        Assert.True(big > 1, $"{big:F2} m under in a 4 m breaker");
+    }
+
+    [Fact]
     public void ARollerCarriesItAlongTheWave()
     {
         var run = new Run(Calm, Still - 1.6);
@@ -290,6 +314,22 @@ public class FloatingBodyTests
         run.Settle(10);
 
         Assert.InRange((run.MovedX - from) / 10, 0.87, 0.93);
+    }
+
+    [Fact]
+    public void PullsHardestFromAStandstillAndSwimsMostOfItsPaceInItsSecondSecond()
+    {
+        var run = new Run(Calm, Still - 1.6, salt: false);
+        run.Settle(30);
+        run.Stroke = Ahead;
+
+        var first = run.Step().Thrust;
+        run.Settle(1);
+        var from = run.MovedX;
+        run.Settle(1);
+
+        Assert.InRange(first, 55, 59);
+        Assert.InRange(run.MovedX - from, 0.65, 0.9);
     }
 
     [Fact]
@@ -356,4 +396,34 @@ public class FloatingBodyTests
 
         Assert.Equal(own, next.X, 9);
     }
+
+    private static double Waded(double seconds, double waterline, double metresPerSecond, BreakerPacket? crest = null)
+    {
+        var body = new FloatingBody(Man, Fixtures.PersonConfig, Waves);
+        var sea = Calm;
+        if (crest is { } struck) body.Struck(sea, struck);
+        var motion = new BodyMotion(metresPerSecond / WaterDrag.TicksPerSecond, 0, 0);
+        for (var t = 0.0; t < seconds; t += Frame)
+        {
+            var (x, z) = body.Wade(sea, new WaterSurface(Still, 0, true), new BodyPlace(X, Still - waterline, Z, EyeHeight, Width), motion, default, Frame, 1);
+            motion = new BodyMotion(x, 0, z);
+        }
+        return motion.X * WaterDrag.TicksPerSecond;
+    }
+
+    [Fact]
+    public void WadingKeepsMostOfAJumpsWayWithTheWaterAtTheKnees() =>
+        Assert.InRange(Waded(0.5, 0.5, 2) / 2, 0.7, 1);
+
+    [Fact]
+    public void WadingLosesMoreOfItsWayTheDeeperTheWater() =>
+        Assert.True(Waded(0.5, 1.2, 2) < Waded(0.5, 0.5, 2) - 0.2);
+
+    [Fact]
+    public void WadingOutOfTheWaterDragsNothing() =>
+        Assert.Equal(2, Waded(0.5, 0, 2), 9);
+
+    [Fact]
+    public void ABreakersRollerPushesAWader() =>
+        Assert.True(Waded(0.5, 1, 0, new BreakerPacket { HeightMetres = 1, PeriodSeconds = 8, Celerity = 5, TowardRadians = 0 }) > 0.1);
 }

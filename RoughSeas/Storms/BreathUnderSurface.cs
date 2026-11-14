@@ -6,6 +6,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
+using RoughSeas.Vessels;
 
 namespace RoughSeas.Storms;
 
@@ -62,7 +63,7 @@ public static class BreathUnderSurface
         var eyeY = pos.Y + (entity.Swimming ? entity.Properties.SwimmingEyeHeight : entity.Properties.EyeHeight);
         var vanilla = __instance.HasAir;
         var swell = double.NaN;
-        var aboard = entity.MountedOn?.Entity is EntityBoat;
+        var aboard = Boats.Is(entity.MountedOn?.Entity);
         BreathVerdict verdict;
         // the drawn water is read from blocks of the main dimension
         if (pos.Dimension != Dimensions.NormalWorld || !(entity.Swimming || entity.FeetInLiquid || aboard))

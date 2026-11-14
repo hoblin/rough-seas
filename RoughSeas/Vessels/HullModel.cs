@@ -154,5 +154,5 @@ public interface IHull : IBuoyant
     /// <summary>Server only: a ram the other vessel's rider measured, which this hull takes its share of.</summary>
     void Rammed(Knocked by);
 
-    static IHull? Of(Entity entity) => entity is EntityBoat ? entity.SidedProperties.Behaviors.OfType<IHull>().FirstOrDefault() : null;
+    static IHull? Of(Entity entity) => Boats.Is(entity) ? entity.SidedProperties.Behaviors.OfType<IHull>().FirstOrDefault() : null;
 }

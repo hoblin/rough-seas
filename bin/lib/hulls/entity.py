@@ -20,25 +20,27 @@ def read(vessel):
     return load(path_of(vessel))
 
 
-def record(vessel, values):
-    """Writes what the model measures into the vessel's entity, or for a vanilla boat into the patches that give her
-    each behaviour, every other character of the file as it was; each place written names what it holds first."""
-    if path_of(vessel).exists():
+def record(vessel, values, entity=None):
+    """Writes what the model measures into the vessel's entity, or for another's boat (vanilla's, by default, or the
+    entity file named) into the patches that give her each behaviour, every other character of the file as it was;
+    each place written names what it holds first."""
+    if entity is None and path_of(vessel).exists():
         write(path_of(vessel), [], values)
         return
+    entity = entity or f"game:entities/nonliving/boat-{vessel}.json"
     for code, config in values.pop("behaviorConfigs", {}).items():
-        path, at = patched(vessel, code)
+        path, at = patched(entity, code)
         write(path, [at, "value"], config)
     if values:
-        raise ValueError(f"{vessel} is vanilla's: her own {', '.join(values)} are not ours to write")
+        raise ValueError(f"{vessel} is not ours: her own {', '.join(values)} are not ours to write")
 
 
-def patched(vessel, code):
+def patched(entity, code):
     for path in sorted(PATCHES.glob("*.json")):
         for at, op in enumerate(load(path)):
-            if op.get("file") == f"game:entities/nonliving/boat-{vessel}.json" and op.get("path") == f"/behaviorConfigs/{code}":
+            if op.get("file") == entity and op.get("path") == f"/behaviorConfigs/{code}":
                 return path, at
-    raise KeyError(f"no patch gives boat-{vessel} {code}")
+    raise KeyError(f"no patch gives {entity} {code}")
 
 
 def write(path, root, values):

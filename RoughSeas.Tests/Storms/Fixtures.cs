@@ -103,6 +103,22 @@ public static class Fixtures
         return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, capacity, new JsonObject(integrity), vessel);
     }
 
+    /// <summary>One of Shipwright's boats, as <c>patches/compat-shipwright.json</c> makes her a vessel of ours.</summary>
+    public static Hull ShipwrightHull(string boat, string wood = "oak")
+    {
+        JToken Op(string path) => JArray.Parse(Shipped("compat-shipwright.json"))
+            .Single(patch => (string?)patch["file"] == $"shipwright:entities/nonliving/{boat}.json" && (string?)patch["path"] == path)["value"]!;
+        var integrity = Op($"/behaviorConfigs/{EntityBehaviorVesselIntegrity.Code}");
+        var parts = integrity["parts"]!.ToObject<VesselPart[]>()!;
+        foreach (var part in parts) part.Material = part.Material.Replace("{material}", wood);
+        var weight = (double)Op("/weight");
+        var build = new MaterialTable(materials.Value, new NullLogger()).Build(parts, weight);
+        var flotation = new Flotation((double)integrity["depthMetres"]!, (double?)integrity["waterplaneSquareMetres"] ?? 0, build.Litres);
+        var bilge = JArray.Parse(Shipped("compat-shipwright.json"))
+            .SingleOrDefault(patch => (string?)patch["file"] == $"shipwright:entities/nonliving/{boat}.json" && (string?)patch["path"] == "/behaviorConfigs/roughseas:bilge");
+        return new Hull(flotation, build.Kilograms, weight + Mass.CrewKg, (double?)bilge?["value"]?["capacityLitres"] ?? 0, new JsonObject(integrity), boat);
+    }
+
     /// <summary>A vessel as the drawn sea meets her, with one rider and <paramref name="litres"/> in her bilge.</summary>
     public static RiddenHull Ridden(string vessel, double litres = 0)
     {

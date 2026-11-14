@@ -53,32 +53,32 @@ def solids(elements):
     return found
 
 
-def hold(planking, frm, to):
+def hold(planking, frm, to, step=STEP):
     """Her hold to the top of her planking, and its opening there: at each station and height, the water from her
     centreline out to her planking on either side, where both sides close it."""
     middle, top = (frm[2] + to[2]) / 2, to[1]
     cubic, square = 0, 0
-    x = frm[0] + STEP / 2
+    x = frm[0] + step / 2
     while x < to[0]:
-        y = frm[1] + STEP / 2
+        y = frm[1] + step / 2
         while y < top:
             near = [s for s in planking if s[2][0] <= x <= s[3][0] and s[2][1] <= y <= s[3][1]]
-            across = [reach(near, x, y, middle, side, frm[2], to[2]) for side in (-1, 1)]
+            across = [reach(near, x, y, middle, side, frm[2], to[2], step) for side in (-1, 1)]
             if None not in across:
-                cubic += sum(across) * STEP * STEP
-                if y + STEP >= top:
-                    square += sum(across) * STEP
-            y += STEP
-        x += STEP
+                cubic += sum(across) * step * step
+                if y + step >= top:
+                    square += sum(across) * step
+            y += step
+        x += step
     return units.litres(units.metres(cubic, 3)), units.metres(square, 2)
 
 
-def reach(near, x, y, middle, side, low, high):
+def reach(near, x, y, middle, side, low, high, step=STEP):
     z = middle
     while low - 1 <= z <= high + 1:
         if any(lo[2] <= z <= hi[2] and depth(m, size, [units.metres(x), units.metres(y), units.metres(z)]) >= 0 for m, size, lo, hi in near):
             return 0 if z == middle else abs(z - middle)
-        z += side * STEP
+        z += side * step
     return None
 
 

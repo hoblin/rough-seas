@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
-using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
@@ -16,16 +16,16 @@ public readonly record struct SeatPose(Vec3f? Offset, string Animation, float? E
 /// </summary>
 public sealed class SeatPoses
 {
-    private static readonly ConditionalWeakTable<EntityBoat, SeatPoses> OfVessel = new();
+    private static readonly ConditionalWeakTable<Entity, SeatPoses> OfVessel = new();
 
-    private readonly EntityBoat boat;
+    private readonly Entity boat;
     private readonly Dictionary<string, SeatPose> built = new();
     private readonly Dictionary<string, SeatPose> stances = new();
     private readonly Dictionary<string, SeatPose> holds = new();
 
-    private SeatPoses(EntityBoat boat) => this.boat = boat;
+    private SeatPoses(Entity boat) => this.boat = boat;
 
-    public static SeatPoses Of(EntityBoat boat) => OfVessel.GetValue(boat, vessel => new SeatPoses(vessel));
+    public static SeatPoses Of(Entity boat) => OfVessel.GetValue(boat, vessel => new SeatPoses(vessel));
 
     public void Stand(IMountableSeat seat, SeatPose? stance) => Set(stances, seat, stance);
 
@@ -38,7 +38,7 @@ public sealed class SeatPoses
 
         if (!built.TryGetValue(seat.SeatId, out var asBuilt))
         {
-            built[seat.SeatId] = asBuilt = new SeatPose(config.RiderOffset, config.Animation ?? boat.MountAnimations["idle"], config.EyeHeight, config.MountRotation);
+            built[seat.SeatId] = asBuilt = new SeatPose(config.RiderOffset, config.Animation ?? Boats.Of(boat)!.MountAnimations(boat)["idle"], config.EyeHeight, config.MountRotation);
         }
         if (pose is { } given) layer[seat.SeatId] = given;
         else layer.Remove(seat.SeatId);
