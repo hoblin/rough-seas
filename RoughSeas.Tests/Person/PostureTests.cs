@@ -17,6 +17,15 @@ public class PostureTests
         Assert.True(Falling(Posture.Upright) > 1.5 * Falling(Flat), $"{Falling(Posture.Upright):F2} m/s upright against {Falling(Flat):F2} m/s flat");
 
     [Fact]
+    public void LyingAlongVanillasYawItsNoseGoesDownWithItsPitch()
+    {
+        var lying = Posture.Lying(Math.PI / 2, 0.5);
+        Assert.Equal(Math.Cos(0.5), lying.X, 9);
+        Assert.Equal(-Math.Sin(0.5), lying.Y, 9);
+        Assert.Equal(0, lying.Z, 9);
+    }
+
+    [Fact]
     public void AWayAlongItsSlantMeetsOnlyItsLengthsDrag()
     {
         var (slant, speed, step) = (Posture.Along(1, -2, 0), 9.0, 1 / 60.0);
