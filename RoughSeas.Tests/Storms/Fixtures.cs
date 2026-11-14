@@ -51,9 +51,9 @@ public static class Fixtures
 
     public static JToken SailboatWindage => BehaviorConfig("wind-vessels.json", "boat-sailed", EntityBehaviorWindage.Code);
 
-    public static VesselInWind InWind(string vessel) => VesselInWind.From(new JsonObject(WindageOf(vessel)), Wind, code => new SailPolar(Wind.Sails[code]));
+    public static VesselInWind InWind(string vessel) => VesselInWind.From(new JsonObject(WindageOf(vessel)), Wind, code => SailPolar.Of(Wind.Sails[code]));
 
-    public static VesselInWind SailboatInWind() => VesselInWind.From(new JsonObject(SailboatWindage), Wind, code => new SailPolar(Wind.Sails[code]));
+    public static VesselInWind SailboatInWind() => VesselInWind.From(new JsonObject(SailboatWindage), Wind, code => SailPolar.Of(Wind.Sails[code]));
 
     public static VesselMass Mass => mass.Value;
 

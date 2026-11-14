@@ -26,12 +26,13 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     private string[] drawnGroups = [];
     private string[] steps = [];
     private RigTextures? textures;
+    private IHullForm[] forms = [];
     private bool blown;
     private long loggedAt;
 
     public Sail? Sail => body.Sail;
 
-    public bool Rigged => entity.SidedProperties.Behaviors.OfType<IHullForm>().All(form => form.Finished);
+    public bool Rigged => forms.All(form => form.Finished);
 
     public override string PropertyName() => Code;
 
@@ -48,6 +49,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     public override void AfterInitialized(bool onFirstSpawn)
     {
         hull = IHull.Of(entity);
+        forms = entity.SidedProperties.Behaviors.OfType<IHullForm>().ToArray();
         if (entity.Api is ICoreClientAPI capi && Sail != null) drawn = new RigRenderer(capi, entity, this, textures!);
     }
 
@@ -66,14 +68,14 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
 
         entity.WatchedAttributes.SetInt(TackedKey, step);
         handled = EnumHandling.PreventSubsequent;
-        wind.Log(entity, "{0} shunts her: her tack goes to her {1} step, her mast rakes toward it", player.GetName(), steps[step]);
+        wind.Log(entity, "{0} shunts her: her tack goes to the step at her {1}, her mast rakes toward it", player.GetName(), step == 0 ? "bow" : "stern");
     }
 
     public override void OnGameTick(float deltaTime)
     {
         if (drawn == null || hull == null) return;
 
-        if (!blown) Wind(hull.Velocity);
+        if (!blown && entity.IsRendered) Wind(hull.Velocity);
         blown = false;
         drawn.Trimmed();
     }

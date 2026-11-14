@@ -12,7 +12,7 @@ public sealed class SquareRig : Rigging
 {
     public const string Kind = "square";
 
-    private const double Holding = 1e-3;
+    private const double ShortestLeverMetres = 1e-3;
 
     private readonly HullPoint heel;
     private readonly HullPoint masthead;
@@ -47,11 +47,10 @@ public sealed class SquareRig : Rigging
     public static SquareRig Of(JsonObject rig, double camber, double clothKilograms, RigWidths widths) =>
         new(rig, camber, (rig["yardKilograms"].AsDouble(), clothKilograms), widths);
 
-    public override bool Aback(RigState state, Airflow air)
+    public override HullPoint Belly(RigState state)
     {
         var normal = state.Form.Normal;
-        var forward = Math.Sign(normal.Along) == Ahead ? normal : -1 * normal;
-        return forward.Along * air.Along + forward.Across * air.Across < 0;
+        return Math.Sign(normal.Along) == Ahead ? normal : -1 * normal;
     }
 
     public override int Ahead => -1;
@@ -63,8 +62,6 @@ public sealed class SquareRig : Rigging
     public override RigWidths Widths { get; }
 
     public override double Resting => Free.From;
-
-    public override bool Backs(Airflow air) => false;
 
     public override int Leeward(Airflow air) => air.Leeward;
 
@@ -88,7 +85,7 @@ public sealed class SquareRig : Rigging
         var (clew, lead) = Sheeted(posed, force);
         var sheet = (lead - clew).Unit;
         var reach = (clew - heel).Cross(sheet).Dot(axis);
-        var pulled = Math.Abs(reach) > Holding ? -(at - heel).Cross(force).Dot(axis) / reach : double.NaN;
+        var pulled = Math.Abs(reach) > ShortestLeverMetres ? -(at - heel).Cross(force).Dot(axis) / reach : double.NaN;
         return posed with { SheetNewtons = pulled };
     }
 

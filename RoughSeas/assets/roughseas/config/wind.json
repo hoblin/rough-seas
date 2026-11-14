@@ -19,7 +19,8 @@
             "liftAndDrag": [
                 [0.69, 0.25], [0.90, 0.43], [1.05, 0.61], [1.20, 0.78], [1.24, 0.82], [1.13, 0.89], [0.96, 0.92],
                 [0.83, 0.99], [0.72, 1.06], [0.57, 1.11], [0.40, 1.14], [0.00, 1.14]
-            ]
+            ],
+            "frictionDrag": 0.15
         }
     },
     "sources": {
@@ -30,6 +31,6 @@
         "camber": "A full sail's depth over its chord: Marchaj's tunnel sails were cut to about 12% (AYRS 111, Rig Efficiency, Fig. 12)",
         "clothKgPerSquareMetre": "Experimental reconstructions of flax sails weigh 500 to 720 g/m² (Propylaeum, Heidelberg University, books.ub.uni-heidelberg.de/propylaeum/catalog/view/1035/1768/102856): a sail fills as the wind's pressure outweighs its cloth",
         "crabclaw": "Each heading off the apparent wind in degrees, the drive along the hull and the side force across it over the dynamic pressure on the sail's area, with the sail trimmed to the heading: Marchaj's wind-tunnel tests of a Polynesian crab claw on an open-decked hull heeled 10°, at 18 knots (AYRS 111, Rig Efficiency, 1993, Fig. 23, read off the plot; checked against the total force of Fig. 6). Below 20° the sail luffs and lifts nothing; past 120° the force leans to windward",
-        "square": "A single square sail's lift and drag coefficients over its trims, sail alone: Nomoto et al. 2003, wind-tunnel tests of the Bezai-ship's square sail, as Palmer redraws them (Windward Sailing Capabilities of Ancient Vessels, IJNA 38(2), 2009, Fig. 10; read off the plot). The sail trims itself to the heading's greatest drive along the hull, as Marchaj's envelope of the crab claw does"
+        "square": "A single square sail's lift and drag coefficients over its trims, sail alone: Nomoto et al. 2003, wind-tunnel tests of the Bezai-ship's square sail, as Palmer redraws them (Windward Sailing Capabilities of Ancient Vessels, IJNA 38(2), 2009, Fig. 10; read off the plot). Its first trims match the same sail's tunnel data of Masuyama, Nomoto et al. (MARSIM 2003, Fig. 13). Cloth carries pressure only normal to itself, so each pair stands at the incidence atan((drag − friction) / lift); its friction drag of 0.15 is the share Masuyama et al. add to the pressure forces to meet the tunnel's. The crew braces the yard to the greatest drive the stays let it reach, and edge-on the sail keeps its friction alone; Masuyama et al.'s Fig. 15 shows it caught aback within 15° of the wind"
     }
 }

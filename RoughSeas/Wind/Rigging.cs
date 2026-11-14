@@ -26,7 +26,7 @@ public interface IRigCanvas
 /// <summary>
 /// A set sail and what holds it, in her hull's frame: the spars turn about <see cref="Axis"/> through <see cref="Origin"/>
 /// only as far as no spar or cloth meets the mast or a stay, and the loads it hands her hull sum to the sail's force and
-/// its spars' weight. Physics and drawing pose it the same way.
+/// the weight of its spars and cloth. Physics and drawing pose it the same way.
 /// </summary>
 public abstract class Rigging
 {
@@ -42,18 +42,17 @@ public abstract class Rigging
 
     public (double From, double Span) Free { get; protected set; }
 
-    public IEnumerable<double> Turns(int steps = Steps)
-    {
-        for (var k = 0; k <= steps; k++) yield return Free.From + Free.Span * k / steps;
-    }
-
     public abstract double Resting { get; }
 
-    public abstract bool Backs(Airflow air);
+    public abstract HullPoint Belly(RigState state);
+
+    public virtual bool Aback(RigState state, Airflow air)
+    {
+        var belly = Belly(state);
+        return belly.Along * air.Along + belly.Across * air.Across < 0;
+    }
 
     public abstract int Leeward(Airflow air);
-
-    public virtual bool Aback(RigState state, Airflow air) => false;
 
     public abstract double LeeOf(RigState state, (double Reach, double Span) set);
 

@@ -33,6 +33,6 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, Sail? sai
         if (sail == null) yield break;
 
         if (sail.Draws(air(sail))) yield return sail;
-        else sail.Slack(air(sail));
+        else sail.Slack();
     }
 }

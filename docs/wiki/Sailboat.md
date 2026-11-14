@@ -39,7 +39,7 @@ Open, square-sailed boats of planks carried the coastal trade of northern Europe
 
 1. **Set the sail.** Sit in the starboard seat aft and right-click the cleat on the side of the mast, where a rope is tied. The first click sets half the sail, the second the full sail, and the third furls it.
 2. **Steer.** Under sail the wind drives the boat, and <kbd>A</kbd> and <kbd>D</kbd> steer it. With the sail furled, <kbd>W</kbd> and <kbd>S</kbd> move it slowly, as in vanilla.
-3. **Pick your heading.** The square sail drives the boat best with the wind abeam or behind it, little close to the wind, and not at all straight into it. The yard turns about the mast to meet the wind by itself, as far as the stays let it.
+3. **Pick your heading.** The square sail drives the boat best with the wind abeam or behind it, little close to the wind, where the stays stop the yard bracing further round, and head to wind the sail is taken aback and pushes the boat astern. The yard turns about the mast to meet the wind by itself, as far as the stays let it.
 
 The sail fills in the boat's own frame, so it heaves and pitches with the hull. The wind pushes the boat sideways a little as it sails, and drifts it downwind with the sail furled. A boat [anchored](Anchoring) or [tied up](Mooring) with its sail set strains its rope; set loose, it sails off on its own. How the wind drives it: [the science of the hull](The-Science-of-the-Hull#under-sail).
 

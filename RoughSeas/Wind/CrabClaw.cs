@@ -20,7 +20,7 @@ public sealed class CrabClaw : Rigging
     private const int Samples = 64;
     private const int Swings = 16;
     private const int Halvings = 10;
-    private const double Holding = 1e-3;
+    private const double ShortestLeverMetres = 1e-3;
     private static readonly HullPoint Gravity = WaveTheory.Gravity * new HullPoint(0, -1, 0);
 
     private readonly HullPoint axis;
@@ -28,7 +28,7 @@ public sealed class CrabClaw : Rigging
     private readonly SailForm rest;
     private readonly (HullPoint From, HullPoint To, double Width)[] standing;
 
-    public CrabClaw(RigPose hoisted, RigPose lowered, int ahead, double camber, (double Yard, double Boom, double Cloth) kilograms, RigWidths widths)
+    public CrabClaw(ClawPose hoisted, ClawPose lowered, int ahead, double camber, (double Yard, double Boom, double Cloth) kilograms, RigWidths widths)
     {
         (Hoisted, Lowered, Ahead, this.kilograms, Widths) = (hoisted, lowered, ahead, kilograms, widths);
         standing = [(hoisted.Heel, hoisted.Masthead, widths.Pole), (hoisted.Masthead, hoisted.SternPin, widths.Line),
@@ -46,14 +46,14 @@ public sealed class CrabClaw : Rigging
     }
 
     public static Rigging[] Of(JsonObject rig, double camber, double clothKilograms, RigWidths widths) =>
-        (rig["ends"].AsArray() ?? []).Select((end, n) => (Rigging)new CrabClaw(RigPose.Of(end["hoisted"]), RigPose.Of(end["lowered"]), n == 0 ? -1 : 1,
+        (rig["ends"].AsArray() ?? []).Select((end, n) => (Rigging)new CrabClaw(ClawPose.Of(end["hoisted"]), ClawPose.Of(end["lowered"]), n == 0 ? -1 : 1,
             camber, (rig["yardKilograms"].AsDouble(), rig["boomKilograms"].AsDouble(), clothKilograms), widths)).ToArray();
 
     public int Lee { get; }
 
-    public RigPose Hoisted { get; }
+    public ClawPose Hoisted { get; }
 
-    public RigPose Lowered { get; }
+    public ClawPose Lowered { get; }
 
     public override int Ahead { get; }
 
@@ -65,7 +65,13 @@ public sealed class CrabClaw : Rigging
 
     public override double Resting { get; }
 
-    public override bool Backs(Airflow air) => air.Across * Lee < 0;
+    public override HullPoint Belly(RigState state)
+    {
+        var normal = state.Form.Normal;
+        return (Hoisted.Heel - Hoisted.Tack).Dot(normal) < 0 ? normal : -1 * normal;
+    }
+
+    public override bool Aback(RigState state, Airflow air) => air.Across * Lee < 0;
 
     public override int Leeward(Airflow air) => Lee;
 
@@ -142,7 +148,7 @@ public sealed class CrabClaw : Rigging
         var sheet = (Hoisted.Lead - state.Bridle).Unit;
         var lever = (state.Bridle - tack).Cross(sheet);
         var reach = lever.Dot(axis);
-        var pulled = Math.Abs(reach) > Holding ? -weighed.Dot(axis) / reach : double.NaN;
+        var pulled = Math.Abs(reach) > ShortestLeverMetres ? -weighed.Dot(axis) / reach : double.NaN;
         return ((weighed + (pulled > 0 ? pulled : 0) * lever).Dot((state.Peak - tack).Unit), pulled);
     }
 
@@ -226,7 +232,7 @@ public sealed class CrabClaw : Rigging
         canvas.Line(pose.Bridle, pose.Lead, Widths.Line);
     }
 
-    private void Standing(IRigCanvas canvas, RigPose pose)
+    private void Standing(IRigCanvas canvas, ClawPose pose)
     {
         canvas.Spar(pose.Heel, pose.Masthead, Widths.Pole);
         canvas.Spar(pose.ShoreFoot, pose.ShoreTop, Widths.Shore);
@@ -235,7 +241,7 @@ public sealed class CrabClaw : Rigging
         canvas.Line(pose.Masthead, pose.ShroudFoot, Widths.Line);
     }
 
-    private static (Push[] Loads, (string Line, double Newtons)[] Tensions) Stayed(RigPose pose, HullPoint head)
+    private static (Push[] Loads, (string Line, double Newtons)[] Tensions) Stayed(ClawPose pose, HullPoint head)
     {
         var mast = (pose.Masthead - pose.Heel).Unit;
         var (shroud, backstay, forestay) = ((pose.ShroudFoot - pose.Masthead).Unit, (pose.SternPin - pose.Masthead).Unit, (pose.Tack - pose.Masthead).Unit);

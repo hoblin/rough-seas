@@ -25,7 +25,7 @@ public class WindModSystem : ModSystem
 
     public SailPolar Polar(string code)
     {
-        if (!polars.TryGetValue(code, out var polar)) polars[code] = polar = new SailPolar(Config.Sails[code]);
+        if (!polars.TryGetValue(code, out var polar)) polars[code] = polar = SailPolar.Of(Config.Sails[code]);
         return polar;
     }
 

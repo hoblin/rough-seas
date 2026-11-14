@@ -72,7 +72,7 @@ public class SquareRigTests
         var (body, sail) = Sailboat();
         body.Load(FromOffHerBow(120), Still, Yaw, Waterline);
         var (end, state) = (sail.Rig.End, sail.State);
-        var (at, force) = (state.Centre(sail.Set, sail.Depth), new HullPoint(-400, 0, 150));
+        var (at, force) = (state.Centre(sail.Set, sail.Fill), new HullPoint(-400, 0, 150));
         var weight = new HullPoint(0, -RoughSeas.Water.WaveTheory.Gravity, 0);
         var square = (SquareState)state;
         var (yard, cloth) = ((double)Fixtures.SailboatWindage["rig"]!["yardKilograms"]! * weight, sail.SquareMetres * Fixtures.Wind.ClothKgPerSquareMetre * weight);
@@ -85,11 +85,23 @@ public class SquareRigTests
     }
 
     [Fact]
-    public void HeadToWindHerSquareSailDrawsNothing()
+    public void HeadToWindHerSquareSailIsAbackAndPushesHerAstern()
     {
         var (body, sail) = Sailboat();
-        body.Load(FromOffHerBow(10), Still, Yaw, Waterline);
-        Assert.Equal(0, sail.Pressure);
+        var load = body.Load(FromOffHerBow(10), Still, Yaw, Waterline);
+        Assert.True(sail.Aback);
+        Assert.True(load.Z < 0, $"ahead {load.Z:F0} N");
+    }
+
+    [Fact]
+    public void CloseHauledHerYardStandsAsFarRoundAsHerStaysLetItAndDrawsOnlyWhatThatIncidenceGives()
+    {
+        var (body, sail) = Sailboat();
+        var closeHauled = body.Load(FromOffHerBow(75), Still, Yaw, Waterline).Z;
+        var end = sail.Rig.End;
+        var limits = new[] { end.Free.From, end.Free.From + end.Free.Span };
+        Assert.Contains(limits, limit => Math.Abs(limit - sail.State.Yard) < end.Free.Span / 36);
+        Assert.True(closeHauled < body.Load(FromOffHerBow(100), Still, Yaw, Waterline).Z);
     }
 
     [Theory]

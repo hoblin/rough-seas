@@ -43,11 +43,11 @@ public class RigTests
     [Theory]
     [InlineData(0)]
     [InlineData(1)]
-    public void WhatHerRigHandsHerHullAddsUpToTheSailsForceAndHerSparsWeight(int tacked)
+    public void WhatHerRigHandsHerHullAddsUpToTheSailsForceAndTheWeightOfHerSparsAndCloth(int tacked)
     {
         var sail = Drawing(tacked);
         var (end, state) = (Claw(sail), Set(sail));
-        var (at, force) = (state.Centre(sail.Set, sail.Depth), new HullPoint(120, 0, -310));
+        var (at, force) = (state.Centre(sail.Set, sail.Fill), new HullPoint(120, 0, -310));
         var load = end.Loads(state, at, force);
         var weight = new HullPoint(0, -WaveTheory.Gravity, 0);
         var rig = Fixtures.WindageOf("outrigger")["rig"]!;

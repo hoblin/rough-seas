@@ -18,4 +18,5 @@ public class SailConfig
 {
     public double[][] Headings = [];
     public double[][] LiftAndDrag = [];
+    public double FrictionDrag;
 }

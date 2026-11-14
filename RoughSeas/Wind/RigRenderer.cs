@@ -35,6 +35,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     private (double Yard, double Boom, double Fill) to;
     private long toAt;
     private long stepMilliseconds = 1;
+    private (int Tacked, (double Yard, double Boom, double Fill) Trim, (double Reach, double Span) Set, bool Hoisted)? lastDrawn;
 
     public RigRenderer(ICoreClientAPI capi, Entity entity, EntityBehaviorWindage windage, RigTextures textures)
     {
@@ -58,9 +59,10 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         var now = capi.InWorldEllapsedMilliseconds;
         from = Drawn(now);
         stepMilliseconds = Math.Max(1, now - toAt);
-        (to, toAt) = ((Sail.State.Yard, Sail.State.Boom, Sail.Depth), now);
+        (to, toAt) = ((Sail.State.Yard, Sail.State.Boom, Sail.Fill), now);
     }
 
+    [ReliesOn("Vintagestory.GameContent.EntityShapeRenderer", "DoRender3DOpaque", "sets the hull's ModelMat for this frame in an earlier render order than this renderer's, so the rig draws with her heave, roll and pitch of the same frame")]
     public void OnRenderFrame(float deltaTime, EnumRenderStage stage)
     {
         if (!entity.IsRendered || entity.Properties.Client.Renderer is not EntityShapeRenderer hull || !windage.Rigged) return;
@@ -70,16 +72,14 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         if (drawnTack >= 0 && rig.Tacked != drawnTack)
         {
             (shunted, shuntedAt) = ((rig.EndAt(drawnTack), Drawn(now)), now);
-            from = to = (Sail.State.Yard, Sail.State.Boom, Sail.Depth);
+            from = to = (Sail.State.Yard, Sail.State.Boom, Sail.Fill);
         }
         drawnTack = rig.Tacked;
-        Draw(meshes, rig.End, Drawn(now));
         var share = (now - shuntedAt) / ShuntMilliseconds;
-        if (shunted is var (before, trim) && share < 1)
-        {
-            Draw(blended, before, trim);
-            foreach (var (texture, layer) in meshes) Blend(blended[texture].Data, layer.Data, share);
-        }
+        var shunting = shunted != null && share < 1;
+        var drawing = (rig.Tacked, Drawn(now), Sail.Set, Sail.SquareMetres > 0);
+        if (shunting || drawing != lastDrawn) Rebuild(rig.End, drawing.Item2, share);
+        lastDrawn = shunting ? null : drawing;
 
         var render = capi.Render;
         var prog = render.PreparedStandardShader((int)entity.Pos.X, (int)Math.Ceiling(entity.Pos.Y), (int)entity.Pos.Z);
@@ -88,6 +88,25 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         prog.ProjectionMatrix = render.CurrentProjectionMatrix;
         foreach (var (texture, layer) in meshes)
         {
+            if (layer.Mesh == null || layer.Data.VerticesCount == 0) continue;
+            prog.Tex2D = capi.EntityTextureAtlas.AtlasTextures[Atlas(texture).atlasNumber].TextureId;
+            render.RenderMesh(layer.Mesh);
+        }
+        prog.Stop();
+    }
+
+    private void Rebuild(Rigging end, (double Yard, double Boom, double Fill) trim, double share)
+    {
+        Draw(meshes, end, trim);
+        if (shunted is var (before, was) && share < 1)
+        {
+            Draw(blended, before, was);
+            foreach (var (texture, layer) in meshes) Blend(blended[texture].Data, layer.Data, share);
+        }
+
+        var render = capi.Render;
+        foreach (var layer in meshes.Values)
+        {
             if (layer.Data.VerticesCount == 0) continue;
             if (layer.Mesh == null || layer.Data.VerticesCount > layer.Uploaded)
             {
@@ -95,10 +114,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
                 (layer.Mesh, layer.Uploaded) = (render.UploadMesh(layer.Data), layer.Data.VerticesCount);
             }
             else render.UpdateMesh(layer.Mesh, layer.Data);
-            prog.Tex2D = capi.EntityTextureAtlas.AtlasTextures[Atlas(texture).atlasNumber].TextureId;
-            render.RenderMesh(layer.Mesh);
         }
-        prog.Stop();
     }
 
     public void Dispose()

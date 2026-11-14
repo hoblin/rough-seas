@@ -10,6 +10,7 @@ public class VesselInWindTests
     private const double Yaw = 0;
     private const double Waterline = 0;
     private const int FullSail = 2;
+    private const int HalfSail = 1;
     private const int Furled = 0;
     private const int AsBuilt = 0;
     private const int Shunted = 1;
@@ -38,6 +39,34 @@ public class VesselInWindTests
     }
 
     [Fact]
+    public void OneSailKeptThroughShiftsOfTheWindAndAShuntDrawsAsAFreshOneWould()
+    {
+        var (kept, sail) = Outrigger(FullSail);
+        foreach (var (wind, tacked) in new[] { (OverHerFloat, AsBuilt), (FromAstern, AsBuilt), (OverHerLee, AsBuilt), (OverHerFloat, Shunted), (FromAstern, Shunted), (OverHerFloat, AsBuilt) })
+        {
+            sail.Rig.Tacked = tacked;
+            kept.Load(wind, Still, Yaw, Waterline);
+            var load = kept.Load(wind, Still, Yaw, Waterline);
+            var (fresh, freshSail) = Outrigger(FullSail, tacked);
+            fresh.Load(wind, Still, Yaw, Waterline);
+            var expected = fresh.Load(wind, Still, Yaw, Waterline);
+            Assert.Equal(freshSail.Aback, sail.Aback);
+            if (sail.Aback) continue;
+            Assert.True(Math.Abs(expected.X - load.X) < 0.5 && Math.Abs(expected.Z - load.Z) < 0.5,
+                $"{wind} tack {tacked}: kept {load.X:F1} {load.Z:F1}, fresh {expected.X:F1} {expected.Z:F1}; kept {sail.Rig.End.Describe(sail.State)}; fresh {freshSail.Rig.End.Describe(freshSail.State)}");
+        }
+    }
+
+    [Fact]
+    public void HalfSetHerSailDrivesHerLessThanFullButStillAhead()
+    {
+        var half = Outrigger(HalfSail).Body.Load(OverHerFloat, Still, Yaw, Waterline).Z;
+        var full = Outrigger(FullSail).Body.Load(OverHerFloat, Still, Yaw, Waterline).Z;
+        Assert.InRange(half, 0, full);
+        Assert.True(half < full, $"half {half:F0} N, full {full:F0} N");
+    }
+
+    [Fact]
     public void DrawingHerSailStandsOnTheSideAwayFromHerFloat()
     {
         var (body, sail) = Outrigger(FullSail);
@@ -50,7 +79,7 @@ public class VesselInWindTests
     {
         var (body, sail) = Outrigger(FullSail);
         var load = body.Load(OverHerLee, Still, Yaw, Waterline);
-        Assert.True(sail.Aback);
+        Assert.True(sail.Aback, sail.Rig.End.Describe(sail.State));
         Assert.True(load.Z <= 0, $"ahead {load.Z:F0} N");
         Assert.True(load.X > 0);
     }
@@ -88,7 +117,7 @@ public class VesselInWindTests
     {
         var (body, sail) = Outrigger(FullSail);
         var load = body.Load(OverHerFloat, Still, Yaw, Waterline);
-        Assert.True(sail.State.Centre(sail.Set, sail.Depth).Along < 0);
+        Assert.True(sail.State.Centre(sail.Set, sail.Fill).Along < 0);
         Assert.True(load.NewtonMetres < 0);
     }
 
