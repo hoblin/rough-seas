@@ -16,6 +16,7 @@ public class BodyConfig
     public double AgeYears;
     public double FatShare;
     public double[] Frc = [];
+    public double[] Tlc = [];
     public BodySegmentConfig[] Segments = [];
     public double FatDensity;
     public double LeanDensity;

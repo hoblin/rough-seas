@@ -84,14 +84,21 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void SinksInFreshWater()
+    public void InFreshWaterItHangsWithItsEyesAtTheSurfaceHoldingItsBreathWhileTheyAreUnder()
     {
         var run = new Run(Calm, Still - 1.6, salt: false);
-        var from = run.Feet;
         run.Settle(60);
 
-        var speed = (from - run.Feet) / 60;
-        Assert.InRange(speed, 0.05, 1);
+        Assert.InRange(run.Feet + EyeHeight - Still, -0.3, 0.3);
+    }
+
+    [Fact]
+    public void BreathingQuietlyAFreshwaterBodySinks()
+    {
+        var run = new Run(Calm, Still - EyeHeight + 0.05, salt: false);
+        var reading = run.Step();
+
+        Assert.True(reading.Lift < 0, $"lift {reading.Lift:F3} m/s² with {reading.LungLitres:F2} L of air");
     }
 
     [Fact]
@@ -202,24 +209,32 @@ public class FloatingBodyTests
     [Fact]
     public void RisesFromAboveTheBoyleDepthAndSinksFromBelowIt()
     {
-        var rises = new Run(Calm, Still - 4);
-        var sinks = new Run(Calm, Still - 14);
+        var rises = new Run(Calm, Still - 14);
+        var sinks = new Run(Calm, Still - 30);
         var (risesFrom, sinksFrom) = (rises.Feet, sinks.Feet);
         rises.Settle(5);
         sinks.Settle(5);
 
-        Assert.True(rises.Feet > risesFrom + 0.1, $"from 4 m it moved {rises.Feet - risesFrom:F2} m");
-        Assert.True(sinks.Feet < sinksFrom - 0.1, $"from 14 m it moved {sinks.Feet - sinksFrom:F2} m");
+        Assert.True(rises.Feet > risesFrom + 0.1, $"from 14 m it moved {rises.Feet - risesFrom:F2} m");
+        Assert.True(sinks.Feet < sinksFrom - 0.1, $"from 30 m it moved {sinks.Feet - sinksFrom:F2} m");
     }
 
     [Fact]
-    public void SqueezesItsBreathByTheDepthOfItsChest()
+    public void HoldsAFullBreathUnderWaterSqueezedByTheDepthOfItsChest()
     {
         var deep = new Run(Calm, Still - 14).Step();
-        Assert.True(deep.LungLitres < 0.7 * Man.Body.BreathingLitres, $"{deep.LungLitres:F2} L");
+        Assert.True(deep.LungLitres < 0.7 * Man.Body.HeldLitres, $"{deep.LungLitres:F2} L");
 
-        var surface = new Run(Calm, Still - 1.6).Step();
-        Assert.InRange(surface.LungLitres, 0.9 * Man.Body.BreathingLitres, Man.Body.BreathingLitres);
+        var under = new Run(Calm, Still - EyeHeight - 0.2).Step();
+        Assert.InRange(under.LungLitres, 0.9 * Man.Body.HeldLitres, Man.Body.HeldLitres);
+    }
+
+    [Fact]
+    public void BreathesQuietlyWithItsEyesOverTheWater()
+    {
+        var surface = new Run(Calm, Still - EyeHeight + 0.05).Step();
+
+        Assert.InRange(surface.LungLitres, 0.95 * Man.Body.BreathingLitres, Man.Body.BreathingLitres);
     }
 
     [Fact]
@@ -357,7 +372,7 @@ public class FloatingBodyTests
         var big = Sunk(4);
 
         Assert.True(small > 0.1, $"{small:F2} m under in a 0.5 m breaker");
-        Assert.True(big > 1, $"{big:F2} m under in a 4 m breaker");
+        Assert.True(big > 2 * small, $"{big:F2} m under in a 4 m breaker, {small:F2} m in a 0.5 m one");
     }
 
     [Fact]

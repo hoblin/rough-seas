@@ -4,7 +4,7 @@ In the water your body floats by what it displaces, not by a rule of the game, a
 
 The base game holds a swimmer up by a rule and lets you swim fast whatever you carry. Here:
 
-- You float with the water at your eyes in the sea, and lower in fresh water, where you sink slowly unless you swim.
+- You float with the water at your eyes in the sea, and lower in fresh water, and hold your breath while your eyes are under.
 - You swim at a trained swimmer's pace, about 1.2 m/s, not the base game's.
 - Your armour and the tools in your hotbar weigh you down; wood holds you up.
 - Waves lift you, currents carry you and breaking crests push you under.
@@ -16,11 +16,11 @@ Each world can turn this off: with [Realistic swimming](World-Settings#the-mecha
 
 Left alone in the sea you float with the water at your eyes, and the waves carry you up, down and to and fro. Even in a calm sea your face is awash, and every crest covers it: hold jump to lift your head clear and breathe. A [current](Currents) carries you with it, as it carries a boat.
 
-Fresh water holds you up less, so in a lake or a river you float lower and sink slowly. Holding jump strokes you up, so you tread water with your head clear.
+Fresh water holds you up less, so in a lake or a river you hang lower, with the water over your eyes as often as under them. While your eyes are under water you hold a full breath, which lifts you, and once they are clear you breathe out and settle again. Holding jump strokes you up, so you tread water with your head clear.
 
 ## Jumping in
 
-Jump in from a pier or a bank and you keep your way into the water. You go in feet first, so the water slows you down along your length and you plunge deep: from a metre up, past 5 m. Your way forward goes much sooner, since the water takes you broadside. Below about 6 m you sink, so hold jump or swim up to come back to the surface. Holding a direction as you go in, you start to swim once the water has slowed you to your swimming pace.
+Jump in from a pier or a bank and you keep your way into the water. You go in feet first, so the water slows you down along your length and you plunge deep: from a metre up, past 5 m. Your way forward goes much sooner, since the water takes you broadside. You go in on a held full breath, as anyone jumping in does, so in the sea you rise back on your own; in a lake or a river, below about 6 m you sink, so hold jump or swim up to come back to the surface. Holding a direction as you go in, you start to swim once the water has slowed you to your swimming pace.
 
 ## Wading
 
@@ -68,7 +68,7 @@ Your arms lift about 7 kg of it in fresh water and 9 kg in the sea. Carry more a
 
 ## Going deep
 
-Once your chest is about 6 m down, the water squeezes the air in your lungs so far that you sink with nothing on you, and you keep sinking until you swim up. Above that depth you rise on your own in the sea, slowly; in fresh water you sink at any depth unless you swim. A jump in can take you that deep.
+Under water you hold a full breath. The deeper you go, the more the water squeezes it, until you sink with nothing on you, and you keep sinking until you swim up: about 20 m down in the sea, about 6 m in a lake or a river. Above that depth you rise on your own. A jump into fresh water can take you that deep.
 
 ## Breaking crests
 
@@ -76,7 +76,7 @@ A crest can break over you, as one breaks on a vessel: as often, by the same [wi
 
 In [surf](Surf-and-Swamping#breakers) the tallest waves break, and close to the beach nearly all of them.
 
-Holding jump doesn't keep you up through a breaker: its frothy water holds you up less, and your stroke can't make up the difference. A small one takes you a hand's breadth under, a big one a metre or more. You come back up once its air clears.
+Holding jump doesn't keep you up through a breaker: its frothy water holds you up less, and your stroke can't make up the difference. A small one takes you a hand's breadth under, a big one most of a metre. You come back up once its air clears.
 
 The world setting [Breakers on swimmers](World-Settings#the-mechanics) turns breaking crests off. You still float on the waves and breathe by them.
 
