@@ -1,4 +1,4 @@
-using RoughSeas.Propulsion;
+using RoughSeas.Water;
 
 namespace RoughSeas.Person;
 
@@ -6,22 +6,15 @@ namespace RoughSeas.Person;
 public sealed class SwimmingArms(SwimmingConfig config, double poolDensity)
 {
     private readonly double watts = config.UsefulWatts + config.WastedWatts;
-    private readonly double dragArea = BladeDragArea(config, poolDensity);
-    private readonly StrokeConfig blade = new() { DriveShare = 1, DragCoefficient = 1 };
-    private BladeStroke? stroke;
-    private double strokeDensity;
+    private readonly double inPool = NewtonsPerSlipSquared(config);
 
-    public double Thrust(double metresPerSecond, double density)
-    {
-        if (stroke == null || strokeDensity != density) (stroke, strokeDensity) = (new BladeStroke("swimming", blade, dragArea, density), density);
-        return stroke.Thrust(metresPerSecond, watts);
-    }
+    public double Thrust(double metresPerSecond, double density) =>
+        SlippingBlade.Thrust(inPool * density / poolDensity, metresPerSecond, watts);
 
-    private static double BladeDragArea(SwimmingConfig config, double density)
+    private static double NewtonsPerSlipSquared(SwimmingConfig config)
     {
         var (useful, wasted, speed) = (config.UsefulWatts, config.WastedWatts, config.MetresPerSecond);
-        var thrust = useful / speed;
         var slip = speed * wasted / useful;
-        return 2 * thrust / (density * slip * slip);
+        return useful / speed / (slip * slip);
     }
 }

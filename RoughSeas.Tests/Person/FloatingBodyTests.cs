@@ -249,6 +249,30 @@ public class FloatingBodyTests
     }
 
     [Fact]
+    public void TreadingWaterGoesUnderABreakerDeeperTheBiggerItIs()
+    {
+        static double Sunk(double height)
+        {
+            var run = new Run(Calm, Still - 1.6, stroke: new SwimStroke(0, 1, 0));
+            var riding = run.Settle(60);
+            run.Strike(new BreakerPacket { HeightMetres = height, PeriodSeconds = 8, Celerity = 9 });
+            var lowest = riding;
+            for (var t = 0.0; t < 3; t += Frame)
+            {
+                run.Step();
+                lowest = Math.Min(lowest, run.Feet);
+            }
+            return riding - lowest;
+        }
+
+        var small = Sunk(0.5);
+        var big = Sunk(4);
+
+        Assert.True(small > 0.1, $"{small:F2} m under in a 0.5 m breaker");
+        Assert.True(big > 1, $"{big:F2} m under in a 4 m breaker");
+    }
+
+    [Fact]
     public void ARollerCarriesItAlongTheWave()
     {
         var run = new Run(Calm, Still - 1.6);

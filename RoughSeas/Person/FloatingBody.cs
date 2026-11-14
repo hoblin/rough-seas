@@ -66,7 +66,14 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var middle = Math.Max(0, surface.Height - (at.Feet + Math.Min(waterline, body.HeightMetres) / 2));
         var lift = Body.Lift(held, density, massKg, addedKg, WaveTheory.Gravity, sea.RiseAccelerationAt(at.X, at.Z, middle) * wavesPerSecond * wavesPerSecond);
         var rise = sea.RiseVelocityAt(at.X, at.Z, middle) * wavesPerSecond;
-        var stroking = (ownX - current.X) * stroke.X + (motion.Y * WaterDrag.TicksPerSecond - rise) * stroke.Y + (ownZ - current.Z) * stroke.Z;
+        var (rollerX, rollerZ) = (0.0, 0.0);
+        if (breaker is { } roller)
+        {
+            var speed = churned * roller.RollerSpeed(config.Breaking, now - roller.BrokeSeconds) * wavesPerSecond;
+            (rollerX, rollerZ) = (speed * Math.Cos(roller.TowardRadians), speed * Math.Sin(roller.TowardRadians));
+        }
+        var (toX, toZ) = (current.X + rollerX, current.Z + rollerZ);
+        var stroking = (ownX - toX) * stroke.X + (motion.Y * WaterDrag.TicksPerSecond - rise) * stroke.Y + (ownZ - toZ) * stroke.Z;
         var thrust = stroke.Stroking ? arms.Thrust(stroking, density) : 0;
         var heave = Body.Dragged(motion.Y * WaterDrag.TicksPerSecond - rise, density, config.Body.DragAreaAlong, inertia, seconds) + rise
             + (lift + thrust * stroke.Y / inertia) * seconds;
@@ -77,18 +84,11 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         flow = (flow.X * wavesPerSecond, flow.Z * wavesPerSecond);
         var gradient = sea.HullGradientAt(at.X, at.Z, top, depth, 0, at.Width, at.Width).Scaled(wavesPerSecond);
         var share = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross;
-        var (rollerX, rollerZ) = (0.0, 0.0);
-        if (breaker is { } roller)
-        {
-            var speed = churned * roller.RollerSpeed(config.Breaking, now - roller.BrokeSeconds) * wavesPerSecond;
-            (rollerX, rollerZ) = (speed * Math.Cos(roller.TowardRadians), speed * Math.Sin(roller.TowardRadians));
-        }
         var dragArea = stroke.Prone ? config.Body.DragAreaSwimming : config.Body.DragAreaAcross * under / whole;
         var before = Velocity;
         lock (gate)
         {
             Meet(new WaterOnHull(current.X, current.Z, flow.X, flow.Z, gradient), (ownX - current.X, ownZ - current.Z), share, seconds);
-            var (toX, toZ) = (current.X + rollerX, current.Z + rollerZ);
             var (awayX, awayZ) = (ownX + Pushed.X * seconds - toX + thrust * stroke.X / inertiaAcross * seconds,
                 ownZ + Pushed.Z * seconds - toZ + thrust * stroke.Z / inertiaAcross * seconds);
             var away = Math.Sqrt(awayX * awayX + awayZ * awayZ);
