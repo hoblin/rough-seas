@@ -15,7 +15,7 @@ namespace RoughSeas.Person;
 /// still, none while the swimmer strokes), vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
 /// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force, while the water
 /// reaches the chest. Wading, vanilla's walk, jump and gravity stand, since its jump clears the world's one-metre steps, and
-/// across a jump the body takes the place of vanilla's water drag. On the owning client alone: vanilla simulates a player's movement there.
+/// across the body takes the place of vanilla's water drag. On the owning client alone: vanilla simulates a player's movement there.
 /// </summary>
 public static class BodyAfloat
 {
@@ -61,7 +61,7 @@ public static class BodyAfloat
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
         (system, capi, drawn, water, sea, person, waves, body, wading) = (null, null, null, null, null, null, null, null, null);
-        (stroke, liftedThisTick, loggedAt, wasSwimming) = (default, false, double.NegativeInfinity, true);
+        (stroke, liftedThisTick, loggedAt) = (default, false, double.NegativeInfinity);
     }
 
     /// <summary>The server says a crest broke over this client's player.</summary>
@@ -106,9 +106,9 @@ public static class BodyAfloat
         var current = Mechanic.Currents.On(entity.World) ? sea.CurrentAt(pos.X, pos.Z) : default;
         if (!entity.Swimming)
         {
-            if (wasSwimming) system!.Log(entity, "wading at y {0:F2}: vanilla's walk, jump and gravity, the water's drag across a jump", pos.Y);
+            if (wasSwimming) system!.Log(entity, "wading at y {0:F2}: vanilla's gravity and jump, the water's drag across", pos.Y);
             wasSwimming = false;
-            if (!entity.OnGround) wading = (surface, place, kit, rate, current);
+            wading = (surface, place, kit, rate, current);
             return true;
         }
         if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
