@@ -24,6 +24,7 @@ public interface IShoreGround
 public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int highestRise) : IShoreGround
 {
     private readonly Dictionary<(int, int), ShoreCell> cells = [];
+    private readonly HashSet<(int X, int Y, int Z)> unpacked = [];
     private readonly BlockPos probe = new(Dimensions.NormalWorld);
 
     public int Level => level;
@@ -42,6 +43,8 @@ public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int
     {
         probe.Set(x, level, z);
         if (blocks.GetChunkAtBlockPos(probe) == null) return default;
+        Unpack(x, z);
+        probe.Set(x, level, z);
         var fluid = blocks.GetBlock(probe, BlockLayersAccess.Fluid);
         if (OpenWater.Land(blocks, probe)) return LandAt(blocks, probe, x, level, z, fluid.Id, beds, highestRise);
         if (WaterColumn.Carries(fluid) &&!blocks.GetBlock(probe.Up(), BlockLayersAccess.Fluid).IsLiquid())
@@ -49,6 +52,16 @@ public sealed class ShoreGround(IBlockAccessor blocks, int level, Beds beds, int
             return new ShoreCell(ShoreKind.Water, 0, beds.Of(fluid.BlockMaterial), fluid.Id);
         }
         return default;
+    }
+
+    private void Unpack(int x, int z)
+    {
+        const int chunk = GlobalConstants.ChunkSize;
+        // The lock-free accessor reads a chunk packed after 8 idle seconds as air.
+        for (var section = level / chunk; section <= (level + highestRise + 1) / chunk; section++)
+        {
+            if (unpacked.Add((x / chunk, section, z / chunk))) blocks.GetChunkAtBlockPos(x, section * chunk, z)?.Unpack_ReadOnly();
+        }
     }
 
     /// <summary>The top solid block of the ground standing at <paramref name="level"/>, no higher than <paramref name="highestRise"/> over it.</summary>
