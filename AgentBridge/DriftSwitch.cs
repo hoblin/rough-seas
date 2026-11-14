@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using RoughSeas.Floating;
 using RoughSeas.Storms;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
