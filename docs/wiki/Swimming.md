@@ -6,10 +6,6 @@ Left alone in the sea you float with the water at your face, and the waves carry
 
 Fresh water holds you up less, so in a lake or a river you sink slowly unless you swim. Holding jump strokes you up, so you tread water with your head clear.
 
-## Wading
-
-The water drags only on the part of you it covers. With the water at your knees, a jump keeps the way you walk at, as on land; wading chest deep slows you down fast.
-
 ## Swimming
 
 Hold a direction to swim: each stroke pushes you through the water that way from where you look, with the power a trained swimmer swims with. You push hardest from a standstill, so you are under way within a second or two. In still water you swim about 0.9 m/s and glide on for a few seconds after you let go. The water you swim in moves you too: swim with a wave's front face and it carries you faster than you swim; swim against a current faster than you, and you lose ground.

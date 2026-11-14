@@ -30,8 +30,8 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
 
     /// <summary>The body's motion after this step, in blocks per tick, as vanilla's physics keeps it.</summary>
     /// <param name="wavesPerSecond">The waves' seconds to a second of <paramref name="seconds"/>: the water's motion, read on the waves' clock, is taken on the tick's, while the body answers in the tick's own seconds.</param>
-    /// <param name="motion">Its motion as this tick found it, its walk and every push included: the body takes it as its velocity, and vanilla's water drag is undone after.</param>
-    public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond,
+    /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
+    public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
         SwimStroke stroke = default, (double X, double Z) current = default)
     {
         var density = waves.DensityOf(surface.Salt);
@@ -73,28 +73,22 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
             (rollerX, rollerZ) = (speed * Math.Cos(roller.TowardRadians), speed * Math.Sin(roller.TowardRadians));
         }
         var (toX, toZ) = (current.X + rollerX, current.Z + rollerZ);
+        var stroking = (ownX - toX) * stroke.X + (motion.Y * WaterDrag.TicksPerSecond - rise) * stroke.Y + (ownZ - toZ) * stroke.Z;
+        var thrust = stroke.Stroking ? arms.Thrust(stroking, density) : 0;
+        var heave = Body.Dragged(motion.Y * WaterDrag.TicksPerSecond - rise, density, config.Body.DragAreaAlong, inertia, seconds) + rise
+            + (lift + thrust * stroke.Y / inertia) * seconds;
 
         var top = surface.Swell - Math.Max(0, waterline - body.HeightMetres);
         var depth = Math.Min(waterline, body.HeightMetres);
         var flow = sea.HullVelocityAt(at.X, at.Z, top, depth, 0, at.Width, at.Width);
         flow = (flow.X * wavesPerSecond, flow.Z * wavesPerSecond);
         var gradient = sea.HullGradientAt(at.X, at.Z, top, depth, 0, at.Width, at.Width).Scaled(wavesPerSecond);
-        var water = new WaterOnHull(current.X, current.Z, flow.X, flow.Z, gradient);
         var share = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross;
         var dragArea = stroke.Prone ? config.Body.DragAreaSwimming : config.Body.DragAreaAcross * under / whole;
+        var before = Velocity;
         lock (gate)
         {
-            var (wavedX, wavedZ) = met ? (waveX, waveZ) : (water.WaveX, water.WaveZ);
-            (ownX, ownZ) = (motion.X * WaterDrag.TicksPerSecond - wavedX, motion.Z * WaterDrag.TicksPerSecond - wavedZ);
-        }
-        var stroking = (ownX - toX) * stroke.X + (motion.Y * WaterDrag.TicksPerSecond - rise) * stroke.Y + (ownZ - toZ) * stroke.Z;
-        var thrust = stroke.Stroking ? arms.Thrust(stroking, density) : 0;
-        var heave = Body.Dragged(motion.Y * WaterDrag.TicksPerSecond - rise, density, config.Body.DragAreaAlong, inertia, seconds) + rise
-            + (lift + thrust * stroke.Y / inertia) * seconds;
-
-        lock (gate)
-        {
-            Meet(water, (ownX - current.X, ownZ - current.Z), share, seconds);
+            Meet(new WaterOnHull(current.X, current.Z, flow.X, flow.Z, gradient), (ownX - current.X, ownZ - current.Z), share, seconds);
             var (awayX, awayZ) = (ownX + Pushed.X * seconds - toX + thrust * stroke.X / inertiaAcross * seconds,
                 ownZ + Pushed.Z * seconds - toZ + thrust * stroke.Z / inertiaAcross * seconds);
             var away = Math.Sqrt(awayX * awayX + awayZ * awayZ);
@@ -104,7 +98,10 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var carried = Velocity;
 
         Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, flow.X, rise, flow.Z, carried.X, carried.Z, thrust);
-        return new BodyMotion(carried.X / WaterDrag.TicksPerSecond, heave / WaterDrag.TicksPerSecond, carried.Z / WaterDrag.TicksPerSecond);
+        return new BodyMotion(
+            motion.X + WaterDrag.Carried(carried.X, before.X, 1, kept),
+            heave / WaterDrag.TicksPerSecond,
+            motion.Z + WaterDrag.Carried(carried.Z, before.Z, 1, kept));
     }
 }
 
