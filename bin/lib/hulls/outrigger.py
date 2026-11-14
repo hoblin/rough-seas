@@ -275,7 +275,7 @@ def canvas():
               **units.both("spar", units.metres(SPAR), 1), **units.both("pole", units.metres(POLE), 1),
               **units.both("shore", units.metres(SHORE), 1), **units.both("line", units.metres(LINE), 1),
               **units.both("roll", units.metres(ROLL), 1)}
-    return merged(wind.sail("crabclaw", claw.cloth(1), (1, HALF_SPAN)), {"behaviorConfigs": {wind.WINDAGE: {"rig": rigged}}})
+    return merged(wind.sail(claw.cloth(1), (1, HALF_SPAN)), {"behaviorConfigs": {wind.WINDAGE: {"rig": rigged}}})
 
 
 def furled():

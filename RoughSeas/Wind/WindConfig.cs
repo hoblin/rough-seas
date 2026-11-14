@@ -10,7 +10,7 @@ public class WindConfig
     public double BluffDrag;
     public double Camber;
     public double ClothKgPerSquareMetre;
-    public string Aback = "";
+    public double ClothFriction;
     public float LogSeconds;
     public double JumpMetresPerSecond;
     public Dictionary<string, SailConfig> Sails = new();
@@ -25,7 +25,6 @@ public class CrewConfig
 
 public class SailConfig
 {
-    public double[][] Headings = [];
-    public double[][] LiftAndDrag = [];
-    public double FrictionDrag;
+    public double BreakdownDegrees;
+    public double SeparatedDegrees;
 }

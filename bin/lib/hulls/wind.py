@@ -61,9 +61,8 @@ def cloth_area(corners, reach=1, span=1, cells=32):
     return units.metres(total, 2)
 
 
-def sail(polar, corners, half):
+def sail(corners, half):
     half_reach, half_span = half
     return {"behaviorConfigs": {WINDAGE: {"sail": {
-        "polar": polar,
         **units.both("sail", cloth_area(corners), 2), **units.both("half", cloth_area(corners, half_reach, half_span), 2),
         "halfReach": round(half_reach, 4), "halfSpan": round(half_span, 4)}}}}

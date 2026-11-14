@@ -5,26 +5,13 @@
     "bluffDrag": 1.28,
     "camber": 0.12,
     "clothKgPerSquareMetre": 0.61,
-    "aback": "square",
     "crew": {"walkMetresPerSecond": 1.3, "haulMetresPerSecond": 1.87},
     "logSeconds": 5,
     "jumpMetresPerSecond": 10,
+    "clothFriction": 0.15,
     "sails": {
-        "crabclaw": {
-            "headings": [
-                [20, 0.00, 0.44], [25, 0.13, 0.72], [30, 0.27, 0.98], [35, 0.40, 1.18], [40, 0.50, 1.33], [45, 0.62, 1.44],
-                [50, 0.74, 1.48], [55, 0.86, 1.46], [60, 0.98, 1.42], [65, 1.10, 1.36], [70, 1.22, 1.28], [75, 1.32, 1.18],
-                [80, 1.40, 1.10], [90, 1.46, 0.87], [100, 1.50, 0.63], [110, 1.55, 0.36], [120, 1.57, -0.04], [130, 1.58, -0.32],
-                [140, 1.40, -0.36], [150, 1.28, -0.30], [160, 1.23, -0.28], [170, 1.12, -0.33], [180, 0.95, -0.44]
-            ]
-        },
-        "square": {
-            "liftAndDrag": [
-                [0.69, 0.25], [0.90, 0.43], [1.05, 0.61], [1.20, 0.78], [1.24, 0.82], [1.13, 0.89], [0.96, 0.92],
-                [0.83, 0.99], [0.72, 1.06], [0.57, 1.11], [0.40, 1.14], [0.00, 1.14]
-            ],
-            "frictionDrag": 0.15
-        }
+        "crabclaw": {"breakdownDegrees": 37, "separatedDegrees": 57},
+        "square": {"breakdownDegrees": 45, "separatedDegrees": 52}
     },
     "sources": {
         "airKgPerCubicMetre": "Air at sea level in the International Standard Atmosphere, 15 °C",
@@ -32,10 +19,9 @@
         "gradientExponent": "The wind over the open sea grows with height as (z/10 m)^0.11 (Hsu, Meindl & Gilhousen 1994, via en.wikipedia.org/wiki/Forces_on_sails)",
         "bluffDrag": "A flat plate across the wind (NASA Glenn, Shape Effects on Drag, via en.wikipedia.org/wiki/Drag_coefficient): a hull's side and her furled rig, as the wind meets them",
         "crew": "How fast her crew works her rig. walkMetresPerSecond: a person carrying the yard's heel along her, the normal walking speed of people on a rolling ship's deck, 1.28 to 1.68 m/s at the berth less 4 to 10% for the roll (Wang, Liu, Wang, Loughney, Yang and Gao 2020, Physica A 562, doi:10.1016/j.physa.2020.125369). haulMetresPerSecond: a line hauled or eased by hand, the rope-pulling speed at the lightest load measured, 1.87 m/s at 147.5 N (Arakawa et al. 2017, Sports Medicine International Open 1(4), doi:10.1055/s-0043-112335, a rope ergometer at maximal effort, the closest measured analogue): a sheet is worked with a turn round a beam (H&H 1:317), taking in what the sail gives, so the crew moves it at hand speed, not against its whole load",
-        "aback": "The sail whose measured force presses any sail taken aback, along its normal, at the incidence the wind meets its wrong face: the square sail's own, the only soft sail measured over its incidences; on the same sail caught aback head to wind it gives about −1.0 of thrust, where Masuyama, Nomoto et al. measured about −0.9 (MARSIM 2003, Fig. 15)",
         "camber": "A full sail's depth over its chord: Marchaj's tunnel sails were cut to about 12% (AYRS 111, Rig Efficiency, Fig. 12)",
-        "clothKgPerSquareMetre": "Experimental reconstructions of flax sails weigh 500 to 720 g/m² (Propylaeum, Heidelberg University, books.ub.uni-heidelberg.de/propylaeum/catalog/view/1035/1768/102856): a sail fills as the wind's pressure outweighs its cloth",
-        "crabclaw": "Each heading off the apparent wind in degrees, the drive along the hull and the side force across it over the dynamic pressure on the sail's area, with the sail trimmed to the heading: Marchaj's wind-tunnel tests of a Polynesian crab claw on an open-decked hull heeled 10°, at 18 knots (AYRS 111, Rig Efficiency, 1993, Fig. 23, read off the plot; checked against the total force of Fig. 6). Below 20° the sail luffs and lifts nothing; past 120° the force leans to windward",
-        "square": "A single square sail's lift and drag coefficients over its trims, sail alone: Nomoto et al. 2003, wind-tunnel tests of the Bezai-ship's square sail, as Palmer redraws them (Windward Sailing Capabilities of Ancient Vessels, IJNA 38(2), 2009, Fig. 10; read off the plot). Its first trims match the same sail's tunnel data of Masuyama, Nomoto et al. (MARSIM 2003, Fig. 13). Cloth carries pressure only normal to itself, so each pair stands at the incidence atan((drag − friction) / lift); its friction drag of 0.15 is the share Masuyama et al. add to the pressure forces to meet the tunnel's. The crew braces the yard to the greatest drive the stays let it reach, and edge-on the sail keeps its friction alone; Masuyama et al.'s Fig. 15 shows it caught aback within 15° of the wind"
+        "clothFriction": "A cloth's friction drag over the dynamic pressure on its area, the share Masuyama, Nomoto et al. add to the pressure forces of a square sail to meet their tunnel's (MARSIM 2003): cloth carries pressure only normal to itself, and edge-on to the wind a sail keeps this alone",
+        "sails": "A sail is a thin wing of its own planform, from its rig's geometry: a crab claw a delta of its claw's angle, a square sail a rectangle as tall over as wide as the wind crosses it. While the flow holds to its lee side it presses normal to the cloth by the leading-edge suction analogy, C_N = K_p sin α cos α + K_v sin² α (Polhamus, NASA TN D-3767, 1966): K_p a delta's lift slope by Helmbold, K_v = (K_p − K_p²/πA)/cos Λ (eq. 13); a rectangle's K_p and its leading and side-edge vortex lift by Larson's fits (J. Aircraft 18, 1981) to Lamar's lattice (NASA TR R-428, 1974). Once the flow has left it, the cloth is a plate in the wind, pressed by the wind across it with bluffDrag, as her hull's side. Between breakdownDegrees and separatedDegrees the vortex bursts from the trailing edge to the apex, and the one gives way to the other. Measured where each planform's flow breaks: crabclaw a 77.5° sweep delta, as a 25° claw, its vortex bursting at the trailing edge at 37° and at the apex by 57° (Wentz and Kohlman, NASA CR-98737, 1969, Fig. 5.10.1, read off the plot); square a flat rectangle of aspect ratio 0.5, its normal force holding near its peak from 40° to 45°, easing to 51° and falling away at 52° (Winter, NACA TM 798, 1936, Fig. 3, read off the plot)",
+        "clothKgPerSquareMetre": "Experimental reconstructions of flax sails weigh 500 to 720 g/m² (Propylaeum, Heidelberg University, books.ub.uni-heidelberg.de/propylaeum/catalog/view/1035/1768/102856): a sail fills as the wind's pressure outweighs its cloth"
     }
 }

@@ -11,11 +11,11 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, BluffSurf
 
     protected override (double Along, double Across) Pivot => pivot;
 
-    public static VesselInWind From(JsonObject attributes, WindConfig config, Func<string, SailPolar> polar)
+    public static VesselInWind From(JsonObject attributes, WindConfig config)
     {
         var bare = Bluff(attributes, config);
         var cloth = attributes["sail"]["sailSquareMetres"].AsDouble() * config.ClothKgPerSquareMetre;
-        return new VesselInWind(config, bare, attributes["set"].Exists ? Bluff(attributes["set"], config) : bare, SailOf(attributes["sail"], Rig.Of(attributes["rig"], config.Camber, cloth), config, polar),
+        return new VesselInWind(config, bare, attributes["set"].Exists ? Bluff(attributes["set"], config) : bare, SailOf(attributes["sail"], attributes["rig"]["kind"].AsString(), Rig.Of(attributes["rig"], config.Camber, cloth), config),
             (attributes["lateralCentreMetres"].AsDouble(), 0));
     }
 
@@ -25,11 +25,9 @@ public sealed class VesselInWind(WindConfig config, BluffSurface bare, BluffSurf
         return new BluffSurface(attributes["windageSquareMetres"].AsDouble(), attributes["frontSquareMetres"].AsDouble(), config.BluffDrag, centre[0], 0, centre[1]);
     }
 
-    private static Sail? SailOf(JsonObject sail, Rig? rig, WindConfig config, Func<string, SailPolar> polar) =>
-        sail.Exists && rig != null
-            ? new Sail(polar(sail["polar"].AsString() ?? throw new InvalidOperationException("a sail names no polar")),
-                polar(config.Aback) as IncidencePolar ?? throw new InvalidOperationException($"the aback polar '{config.Aback}' gives no incidences"),
-                rig, sail["sailSquareMetres"].AsDouble(), sail["halfSquareMetres"].AsDouble(),
+    private static Sail? SailOf(JsonObject sail, string? kind, Rig? rig, WindConfig config) =>
+        sail.Exists && rig != null && kind != null
+            ? new Sail(Wing.Of(config, kind, rig.End.Planform), rig, sail["sailSquareMetres"].AsDouble(), sail["halfSquareMetres"].AsDouble(),
                 (sail["halfReach"].AsDouble(1), sail["halfSpan"].AsDouble(1)), Sail.ClothNewtons(config.ClothKgPerSquareMetre), config.Camber, config.Crew)
             : null;
 

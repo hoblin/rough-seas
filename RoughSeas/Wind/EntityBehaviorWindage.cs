@@ -46,7 +46,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         wind = entity.Api.ModLoader.GetModSystem<WindModSystem>();
         sea = entity.Api.ModLoader.GetModSystem<SeaWeatherSystem>();
-        body = VesselInWind.From(attributes, wind.Config, wind.Polar);
+        body = VesselInWind.From(attributes, wind.Config);
         drawnGroups = attributes["drawn"].AsArray<string>()?.OfType<string>().ToArray() ?? [];
         steps = attributes["steps"].AsArray<string>()?.OfType<string>().ToArray() ?? [];
         parts = attributes["parts"].AsObject<Dictionary<string, string>?>(null) ?? new();

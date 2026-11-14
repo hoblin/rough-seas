@@ -5,12 +5,12 @@ using RoughSeas.Water;
 
 namespace RoughSeas.Wind;
 
-public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double fullSquareMetres, double halfSquareMetres, (double Reach, double Span) half,
+public sealed class Sail(Wing wing, Rig rig, double fullSquareMetres, double halfSquareMetres, (double Reach, double Span) half,
     double clothNewtonsPerSquareMetre, double camber, CrewConfig crew)
     : WindSurface
 {
     private const int Trims = 36;
-    private const int Refinements = 3;
+    private const int Narrowings = 12;
     private const int TiedWithinDecimals = 3;
     private const double ShortestArmMetres = 0.1;
 
@@ -138,18 +138,15 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
 
         var end = rig.End;
         var fromBow = Math.Acos(Math.Clamp(-end.Ahead * air.Along / air.Speed, -1, 1));
-        var luffs = polar.Luffs(fromBow);
-        var wind = luffs ? posed => (posed.Centre(shown, Fill), default) : (Func<RigState, (HullPoint, HullPoint)>)(posed => Pressing(posed, air, halfDensity, fromBow));
+        var wind = (Func<RigState, (HullPoint, HullPoint)>)(posed => Pressing(posed, air, halfDensity, fromBow));
         var trim = (Math.Atan2(air.Across, air.Along), halfDensity * air.Speed * air.Speed, shown, rig.Tacked);
         if (Retrim(trim))
         {
-            var best = luffs
-                ? Settled(wind, posed => (LeeOf(posed) > 0, true, 0, -Math.Abs(Incidence(posed, air))))
-                : Settled(wind, posed => Score(posed, air, halfDensity, fromBow));
+            var best = Settled(wind, posed => Score(posed, air, halfDensity, fromBow));
             (goal, trimmed) = ((best.Yard, best.Boom, !end.Aback(best, air)), trim);
         }
 
-        var (point, force) = goal is { Draws: true } worked ? Trimmed(air, halfDensity, seconds, fromBow, luffs, worked, wind) : TakenAback(air, halfDensity, seconds);
+        var (point, force) = goal is { Draws: true } worked ? Trimmed(air, halfDensity, seconds, fromBow, worked, wind) : TakenAback(air, halfDensity, seconds);
         Load = end.Loads(State, point, force);
         return Load.Points;
     }
@@ -202,17 +199,16 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         return (carrying.To.Shunted(carrying.From, carrying.Start, carrying.End, hauled, carried), carried >= 1);
     }
 
-    private (HullPoint At, HullPoint Force) Trimmed(Airflow air, double halfDensity, double seconds, double fromBow, bool luffs,
+    private (HullPoint At, HullPoint Force) Trimmed(Airflow air, double halfDensity, double seconds, double fromBow,
         (double Yard, double Boom, bool Draws) worked, Func<RigState, (HullPoint At, HullPoint Force)> wind)
     {
         Trim((worked.Yard, worked.Boom), wind, seconds);
         if (rig.End.Aback(State, air)) return Backed(air, halfDensity);
 
         Aback = false;
-        if (luffs) return Luffing(air, halfDensity);
 
         var force = Force(State, air, halfDensity, fromBow).Force;
-        Pressure = force.Length / Area();
+        Pressure = halfDensity * air.Speed * air.Speed * wing.Pressing(Incidence(State, air));
         Filled(air);
         return (State.Centre(shown, Fill), force);
     }
@@ -234,7 +230,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
     private (HullPoint At, HullPoint Force) Backed(Airflow air, double halfDensity)
     {
         Aback = true;
-        Pressure = halfDensity * air.Speed * air.Speed * aback.Pressing(Math.Asin(Math.Clamp(Flow(State.Form.Normal, air) / air.Speed, -1, 1)));
+        Pressure = halfDensity * air.Speed * air.Speed * wing.Pressing(Math.Asin(Math.Clamp(Flow(State.Form.Normal, air) / air.Speed, -1, 1)));
         Filled(air);
         return Plate(State, air, halfDensity);
     }
@@ -283,7 +279,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         var end = rig.End;
         if (end.Aback(posed, air)) return Plate(posed, air, halfDensity);
 
-        var (drive, side) = polar.At(fromBow, Incidence(posed, air));
+        var (drive, side) = wing.At(fromBow, Incidence(posed, air));
         return (posed.Centre(shown, Fill), halfDensity * air.Speed * air.Speed * Area() * new HullPoint(end.Ahead * drive, 0, end.Leeward(air) * side));
     }
 
@@ -291,7 +287,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
     {
         (Aback, Pressure) = (false, 0);
         Bellied(0, air.Speed);
-        return (State.Centre(Rolled ? SailForm.Whole : shown, Fill), halfDensity * air.Speed * aback.Friction * Area() * new HullPoint(air.Along, 0, air.Across));
+        return (State.Centre(Rolled ? SailForm.Whole : shown, Fill), halfDensity * air.Speed * wing.Friction * Area() * new HullPoint(air.Along, 0, air.Across));
     }
 
     private bool Retrim((double Heading, double Pressure, (double Reach, double Span) Set, int Tacked) trim) =>
@@ -299,7 +295,7 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         || Math.Abs(Math.IEEERemainder(trim.Heading - last.Heading, 2 * Math.PI)) > RetrimRadians
         || Math.Abs(trim.Pressure - last.Pressure) > RetrimShare * Math.Max(trim.Pressure, last.Pressure);
 
-    private RigState Settled<TScore>(Func<RigState, (HullPoint At, HullPoint Force)> wind, Func<RigState, TScore> score)
+    private RigState Settled<TScore>(Func<RigState, (HullPoint At, HullPoint Force)> wind, Func<RigState, TScore> score) where TScore : IComparable<TScore>
     {
         var end = rig.End;
         var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
@@ -309,15 +305,25 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         var swept = new List<RigState> { end.Settle(resting, 0, wind) };
         for (var k = 1; k <= Trims; k++) swept.Add(end.Track(resting + toward * step * k, swept[^1].Boom, wind));
         var best = swept.Where(end.Clear).DefaultIfEmpty(swept[0]).MaxBy(score)!;
-        return Enumerable.Range(-Refinements, 2 * Refinements + 1).Select(k => best.Yard + step * k / (Refinements + 1))
-            .Where(yard => yard >= first && yard <= last).Select(yard => end.Track(yard, best.Boom, wind)).Where(end.Clear).Append(best).MaxBy(score)!;
+
+        RigState At(double yard) => end.Track(yard, best.Boom, wind);
+        bool Better(RigState a, RigState b) => end.Clear(a) && (!end.Clear(b) || score(a).CompareTo(score(b)) > 0);
+        var (low, high) = (Math.Max(first, best.Yard - step), Math.Min(last, best.Yard + step));
+        for (var n = 0; n < Narrowings; n++)
+        {
+            var (a, b) = (low + (high - low) / 3, high - (high - low) / 3);
+            if (Better(At(a), At(b))) high = b;
+            else low = a;
+        }
+        var refined = At((low + high) / 2);
+        return Better(refined, best) ? refined : best;
     }
 
     private (HullPoint At, HullPoint Force) Plate(RigState posed, Airflow air, double halfDensity)
     {
         var normal = posed.Form.Normal;
         var flow = Flow(normal, air);
-        var pressing = aback.Pressing(Math.Asin(Math.Clamp(flow / air.Speed, -1, 1)));
+        var pressing = wing.Pressing(Math.Asin(Math.Clamp(flow / air.Speed, -1, 1)));
         return (posed.Centre(shown, Fill), halfDensity * air.Speed * air.Speed * pressing * Math.Sign(flow) * Area() * normal);
     }
 

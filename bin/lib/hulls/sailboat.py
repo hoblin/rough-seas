@@ -131,7 +131,7 @@ def square(elements):
            **units.both("roll", units.metres(thinnest(elements, BUNT)), 1)}
     corners_set = ((along, foot, port), (along, head, port), (along, head, starboard), (along, foot, starboard))
     reefed = min(point[1] for point in points(elements, HALF_CLOTH))
-    return merged(wind.sail("square", corners_set, (1, (head - reefed) / (head - foot))), {"behaviorConfigs": {wind.WINDAGE: {"rig": rig}}})
+    return merged(wind.sail(corners_set, (1, (head - reefed) / (head - foot))), {"behaviorConfigs": {wind.WINDAGE: {"rig": rig}}})
 
 
 def thinnest(elements, pattern):

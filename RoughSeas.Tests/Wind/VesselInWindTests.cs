@@ -170,12 +170,13 @@ public class VesselInWindTests
     }
 
     [Fact]
-    public void HeadToWindHerSailLuffsAndHerWindagePushesHerAstern()
+    public void HeadToWindHerSailDrivesNothingAndHerWindagePushesHerAstern()
     {
         var (body, sail) = Outrigger(FullSail);
         var load = body.Steady(FromAhead, Still, Yaw, Waterline);
         Assert.True(load.Z < 0, $"astern {load.Z:F0} N");
-        Assert.Equal(0, sail.Pressure);
+        var drive = sail.Rig.End.Ahead * sail.Load!.Points.Sum(push => push.Force.Along);
+        Assert.True(drive <= 0, $"her sail drives {drive:F1} N ten degrees off the wind");
     }
 
     [Fact]
@@ -197,13 +198,13 @@ public class VesselInWindTests
     }
 
     [Fact]
-    public void RunningHerSailStandsAcrossHer()
+    public void RunningHerSailDrawsAndDrivesHerAhead()
     {
         var (body, sail) = Outrigger(FullSail);
         body.Steady(FromAstern, Still, Yaw, Waterline);
-        var normal = sail.State.Form.Normal;
-        var offAhead = Math.Atan2(Math.Abs(normal.Across), Math.Abs(normal.Along));
-        Assert.True(offAhead < Math.PI / 4, $"{offAhead * 180 / Math.PI:F0}° off ahead: {sail.Rig.End.Describe(sail.State)}");
+        var drive = sail.Rig.End.Ahead * sail.Load!.Points.Sum(push => push.Force.Along);
+        Assert.False(sail.Aback);
+        Assert.True(drive > 0, $"running her sail drives {drive:F0} N: {sail.Rig.End.Describe(sail.State)}");
     }
 
     [Fact]

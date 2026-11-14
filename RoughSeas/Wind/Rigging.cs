@@ -37,6 +37,8 @@ public abstract class Rigging
 
     public abstract HullPoint Axis { get; }
 
+    public abstract Planform Planform { get; }
+
     public abstract RigWidths Widths { get; }
 
     public (double From, double Span) Free { get; protected set; }
