@@ -21,6 +21,7 @@ AXIS = {"x": 0, "y": 1, "z": 2}
 ROUNDED = 0.68
 ORIGIN = (8, 0, 8)
 MOST_COLLISION_BOXES = 10
+ABOVE = 1
 
 
 def num(value):
@@ -130,6 +131,32 @@ def hull_of(frm, to):
     placed = collision(element)
     placed["behaviorConfigs"]["roughseas:vesselintegrity"] = measured
     return element, placed
+
+
+def reachable(elements):
+    hull = next(element for element in elements if element["name"] == "Hull")
+    boxes = [element for element in elements if element is not hull and element.get("attachmentpoints") and not element.get("faces")]
+    stowage = next(box for box in boxes if box["name"] == "OarStorage")
+    stowage["to"] = [stowage["to"][0], stowage["to"][1], num(hull["to"][2] - APART)]
+    by_size = sorted(boxes, key=footprint, reverse=True)
+    for at, box in enumerate(by_size):
+        under = [hull, *(larger for larger in by_size[:at] if overlaps(box, larger))]
+        box["to"] = [box["to"][0], num(max(box["to"][1], max(other["to"][1] for other in under) + ABOVE)), box["to"][2]]
+
+
+def rest(elements):
+    hull = next(element for element in elements if element["name"] == "Hull")
+    stowage = next(element for element in elements if element["name"] == "OarStorage")
+    middle = [num((hull["from"][0] + hull["to"][0]) / 2 - stowage["from"][0]), 0, 0]
+    stowage["children"] = [{"name": "OarRest", "from": middle, "to": middle, "faces": {}}]
+
+
+def footprint(box):
+    return (box["to"][0] - box["from"][0]) * (box["to"][2] - box["from"][2])
+
+
+def overlaps(box, other):
+    return all(box["from"][axis] < other["to"][axis] and other["from"][axis] < box["to"][axis] for axis in (0, 2))
 
 
 def side_area(elements, low=-math.inf, high=math.inf, step=0.5):
@@ -735,6 +762,8 @@ class Shape:
             self.elements.append(current[name])
 
     def write(self):
+        reachable(self.elements)
+        rest(self.elements)
         faults = check(self.fits, self.views, self.aparts)
         if faults:
             raise SystemExit(f"{self.path.name}: its boxes leave the round shapes they build, pass into each other or share a plane\n  "

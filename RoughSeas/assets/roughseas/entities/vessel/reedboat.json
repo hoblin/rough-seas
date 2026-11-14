@@ -102,7 +102,7 @@
                     "stepParentTo": {"": {"elementName": "Cargo"}}
                 },
                 {"code": "HullAP", "forCategoryCodes": []},
-                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarStorage"}}}
+                {"code": "Oar Storage", "forCategoryCodes": ["oar"], "attachmentPointCode": "OarAP", "stepParentTo": {"": {"elementName": "OarRest"}}}
             ]
         },
         "roughseas:seaforces": {

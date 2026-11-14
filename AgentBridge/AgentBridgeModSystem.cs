@@ -10,9 +10,11 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using HarmonyLib;
 using Vintagestory.Client.NoObf;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -239,7 +241,9 @@ public class AgentBridgeModSystem : ModSystem
             .ShortestDistanceFrom(eye.X, eye.Y, eye.Z);
         double toHit = target.Pos.XYZ.Add(selection.HitPosition).DistanceTo(eye);
         float range = stack?.Collectible.GetAttackRange(stack) ?? GlobalConstants.DefaultAttackRange;
-        return new { selection.SelectionBoxIndex, toBox = Math.Round(toBox, 2), toHit = Math.Round(toHit, 2), range };
+        var boxes = target.GetBehavior<EntityBehaviorSelectionBoxes>()?.selectionBoxes ?? [];
+        var box = selection.SelectionBoxIndex > 0 && selection.SelectionBoxIndex <= boxes.Length ? boxes[selection.SelectionBoxIndex - 1].AttachPoint.Code : null;
+        return new { selection.SelectionBoxIndex, box, toBox = Math.Round(toBox, 2), toHit = Math.Round(toHit, 2), range };
     }
 
     private string Look(HttpListenerRequest request)
@@ -252,7 +256,9 @@ public class AgentBridgeModSystem : ModSystem
         {
             var target = capi.World.GetEntityById(id) ?? throw new FileNotFoundException($"No entity {id} near the player");
             var eye = player.Entity.Pos.XYZ.Add(player.Entity.LocalEyePos);
-            var center = FreeCamera.Middle(target);
+            var center = string.IsNullOrEmpty(request.QueryString["box"])
+                ? FreeCamera.Middle(target)
+                : PointOfBox(target, request.QueryString["box"]!, Fraction(request, "along", 0.5), Fraction(request, "up", 1), Fraction(request, "across", 0.5));
             var dx = center.X - eye.X;
             var dy = center.Y - eye.Y;
             var dz = center.Z - eye.Z;
@@ -262,6 +268,24 @@ public class AgentBridgeModSystem : ModSystem
         player.Entity.BodyYaw = player.Entity.Pos.Yaw = player.CameraYaw;
         player.Entity.Pos.Pitch = player.CameraPitch;
         return State();
+    }
+
+    private static readonly Action<EntityBehaviorSelectionBoxes, Matrixf, AttachmentPointAndPose> BoxTransform =
+        AccessTools.MethodDelegate<Action<EntityBehaviorSelectionBoxes, Matrixf, AttachmentPointAndPose>>(
+            AccessTools.Method(typeof(EntityBehaviorSelectionBoxes), "applyBoxTransform"));
+
+    private static double Fraction(HttpListenerRequest request, string key, double otherwise) =>
+        double.TryParse(request.QueryString[key], CultureInfo.InvariantCulture, out var fraction) ? fraction : otherwise;
+
+    private static Vec3d PointOfBox(Entity target, string box, double along, double up, double across)
+    {
+        var selection = target.GetBehavior<EntityBehaviorSelectionBoxes>()
+            ?? throw new FileNotFoundException($"{target.Code} has no selection boxes");
+        var apap = selection.selectionBoxes.FirstOrDefault(candidate => candidate.AttachPoint.Code == box)
+            ?? throw new FileNotFoundException($"No selection box {box}; {target.Code} has {string.Join(", ", selection.selectionBoxes.Select(candidate => candidate.AttachPoint.Code))}");
+        var matrix = new Matrixf();
+        BoxTransform(selection, matrix, apap);
+        return matrix.TransformVector(new Vec4d(along, up, across, 1)).XYZ.Add(target.Pos.XYZ);
     }
 
     private string Where(string? entity)

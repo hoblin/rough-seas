@@ -14087,16 +14087,24 @@
   {
    "name": "OarStorage",
    "from": [ -16, 1.5, 13.2 ],
-   "to": [ 32, 3.0, 14.8 ],
+   "to": [ 32, 11.917, 17.558 ],
    "faces": {},
    "attachmentpoints": [
     { "code": "OarAP", "posX": "0", "posY": "0", "posZ": "0", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
+   ],
+   "children": [
+    {
+     "name": "OarRest",
+     "from": [ 23.999, 0, 0 ],
+     "to": [ 23.999, 0, 0 ],
+     "faces": {}
+    }
    ]
   },
   {
    "name": "ForeHold",
    "from": [ -15, 1.585, 2.667 ],
-   "to": [ 1, 10.6, 13.333 ],
+   "to": [ 1, 12.917, 13.333 ],
    "faces": {},
    "attachmentpoints": [
     { "code": "ForeHoldAP", "posX": "8", "posY": "0", "posZ": "5.333", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }
@@ -14105,7 +14113,7 @@
   {
    "name": "AftHold",
    "from": [ 24, 1.94, 2.667 ],
-   "to": [ 29.333, 10.6, 13.333 ],
+   "to": [ 29.333, 12.917, 13.333 ],
    "faces": {},
    "attachmentpoints": [
     { "code": "AftHoldAP", "posX": "2.667", "posY": "0", "posZ": "5.333", "rotationX": "0", "rotationY": "0", "rotationZ": "0" }

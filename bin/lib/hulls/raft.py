@@ -11,9 +11,10 @@ from jsontext import load
 from entity import record, write
 from physics import ASSETS, MATERIALS, SWIM_LINE_METRES, afloat, stands
 from fit import posed
-from shape import bounds, hull_of, windage
+from shape import bounds, hull_of, num, windage
 from transform import apply
 from stroke import player_patch, seat
+from stroke import posed as posed_by_name
 
 VANILLA = Path(os.environ.get("VINTAGE_STORY", "")) / "assets/survival"
 SHAPES = VANILLA / "shapes/entity/nonliving/boat"
@@ -58,12 +59,24 @@ def measure(variant):
     return box
 
 
+def rest(variant, box):
+    elements = json5.loads((SHAPES / f"{variant}.json").read_text())["elements"]
+    start = units.voxels(apply(posed_by_name(elements, lambda name: {})["OarStorage"], [0, 0, 0])[0])
+    middle = num((box["from"][0] + box["to"][0]) / 2 - start)
+    path = ASSETS / "patches/vessels-oar-rest.json"
+    at = next(n for n, op in enumerate(load(path)) if op["file"].endswith(f"boat/{variant}.json"))
+    write(path, [at, "value", 0], {"from": [middle, 0, 0], "to": [middle, 0, 0]})
+
+
 def build(_):
     vanilla = json5.loads((SHAPES / "raft.json").read_text())
     entity = json5.loads(ENTITY.read_text())
     shape = SimpleNamespace(elements=vanilla["elements"], path=SHAPES / "raft.json",
                             textures={code: f"game:{path}" for code, path in vanilla["textures"].items()})
-    hull, _ = (measure(variant) for variant in VARIANTS)
+    boxes = {variant: measure(variant) for variant in VARIANTS}
+    for variant, box in boxes.items():
+        rest(variant, box)
+    hull = boxes["raft"]
     log = next(element for element in logs(vanilla["elements"])[0]["children"])
     depth = units.metres(log["to"][1] - log["from"][1])
     shell = {"metres": depth, "voxels": log["to"][1] - log["from"][1], **units.both("span", lashed(vanilla["elements"]))}
