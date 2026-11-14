@@ -14,7 +14,7 @@ public sealed class Wing(FlowConfig flow, double kinematicViscosity)
     public double Friction(double metresPerSecond, double chordMetres)
     {
         var reynolds = Math.Max(1, metresPerSecond * chordMetres / kinematicViscosity);
-        return 2 * (reynolds < TransitionReynolds ? 1.328 / Math.Sqrt(reynolds) : 0.074 * Math.Pow(reynolds, -0.2));
+        return 2 * (reynolds < TransitionReynolds ? 1.328 / Math.Sqrt(reynolds) : 0.074 * Math.Pow(reynolds, -0.2) - 1700 / reynolds);
     }
 
     public double Pressing(Lattice seen, double incidence)
