@@ -117,7 +117,7 @@ public static class BodyAfloat
             system!.Log(entity, "afloat at y {0:F2}: waterline {1:F2} m up the body, eye {2:F2} m {3}, {4:F1} of {5:F1} L under, lungs {6:F2} L, carrying {7:F1} kg, lift {8:F2} m/s2, water {9:F2} {10:F2} {11:F2} m/s, carried {12:F2} {13:F2} m/s{14}{15}",
                 pos.Y, read.Waterline, Math.Abs(eye), eye < 0 ? "above" : "under", read.UnderLitres, read.WholeLitres, read.LungLitres, kit.Kg, read.Lift,
                 read.FlowX, read.Rise, read.FlowZ, read.CarriedX, read.CarriedZ, read.Churn > 0 ? $", {read.Churn:P1} of its water is air" : "",
-                stroked.Stroking ? $", stroking {config.Body.StrokeNewtons:F0} N toward {stroked.X:F2} {stroked.Y:F2} {stroked.Z:F2}" : "");
+                stroked.Stroking ? $", stroking {read.Thrust:F0} N toward {stroked.X:F2} {stroked.Y:F2} {stroked.Z:F2}" : "");
         }
         return false;
     }

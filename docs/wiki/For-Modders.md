@@ -26,6 +26,12 @@ Where a page touches physics, it says what the mod does and links [The science b
 
 If you build on these pages, or need something they don't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
+### A swimmer strokes by power
+
+A swimmer's stroke spends a power, not a fixed force, so it pulls hardest from a standstill and less the faster the swimmer goes through the water ([the science](The-Science-of-a-Body-in-the-Water)).
+
+- `config/person.json`'s `body.strokeNewtons` is gone; `body.swimming` gives the power spent against drag (`usefulWatts`), on the water pushed back (`wastedWatts`) and the speed both were measured at (`metresPerSecond`). New `SwimmingArms` turns them into a thrust at a speed through Propulsion's `BladeStroke`. `FloatReading` gained `Thrust`.
+
 ### Every selection box aimed at
 
 Vanilla picks the selection box a look enters first, so a box inside the hull's `HullAP` box was never picked from outside a vessel: the stowage on five of ours, the bark canoe's seats and hold, the currach's holds.

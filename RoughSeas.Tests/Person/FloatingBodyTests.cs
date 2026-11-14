@@ -293,6 +293,22 @@ public class FloatingBodyTests
     }
 
     [Fact]
+    public void PullsHardestFromAStandstillAndSwimsMostOfItsPaceInItsSecondSecond()
+    {
+        var run = new Run(Calm, Still - 1.6, salt: false);
+        run.Settle(30);
+        run.Stroke = Ahead;
+
+        var first = run.Step().Thrust;
+        run.Settle(1);
+        var from = run.MovedX;
+        run.Settle(1);
+
+        Assert.InRange(first, 55, 59);
+        Assert.InRange(run.MovedX - from, 0.65, 0.9);
+    }
+
+    [Fact]
     public void GlidesToAStopWhenItStopsStroking()
     {
         var run = new Run(Calm, Still - 1.6, stroke: Ahead);

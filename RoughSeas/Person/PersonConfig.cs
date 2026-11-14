@@ -24,7 +24,14 @@ public class BodyConfig
     public double DragAreaAlong;
     public double DragAreaAcross;
     public double DragAreaSwimming;
-    public double StrokeNewtons;
+    public SwimmingConfig Swimming = new();
+}
+
+public class SwimmingConfig
+{
+    public double UsefulWatts;
+    public double WastedWatts;
+    public double MetresPerSecond;
 }
 
 public class BodySegmentConfig

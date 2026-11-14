@@ -16,6 +16,7 @@ namespace RoughSeas.Person;
 public sealed class FloatingBody(IPerson person, PersonConfig config, Waves waves) : BodyInWater
 {
     private readonly Body body = person.Body;
+    private readonly SwimmingArms arms = new(config.Body.Swimming, waves.DensityOf(false));
     private Breaker? breaker;
 
     /// <summary>What the last step found.</summary>
@@ -43,7 +44,6 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var inertia = massKg + addedKg;
         var addedAcrossKg = stroke.Prone ? body.AddedAlongKg(waterline, air, density) : body.AddedAcrossKg(waterline, air, density);
         var inertiaAcross = massKg + addedAcrossKg;
-        var thrust = stroke.Stroking ? config.Body.StrokeNewtons : 0;
 
         // the part of the body in a broken crest's water, which holds it up less
         var (churn, churned) = (0.0, 0.0);
@@ -66,6 +66,8 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var middle = Math.Max(0, surface.Height - (at.Feet + Math.Min(waterline, body.HeightMetres) / 2));
         var lift = Body.Lift(held, density, massKg, addedKg, WaveTheory.Gravity, sea.RiseAccelerationAt(at.X, at.Z, middle) * wavesPerSecond * wavesPerSecond);
         var rise = sea.RiseVelocityAt(at.X, at.Z, middle) * wavesPerSecond;
+        var stroking = (ownX - current.X) * stroke.X + (motion.Y * WaterDrag.TicksPerSecond - rise) * stroke.Y + (ownZ - current.Z) * stroke.Z;
+        var thrust = stroke.Stroking ? arms.Thrust(stroking, density) : 0;
         var heave = Body.Dragged(motion.Y * WaterDrag.TicksPerSecond - rise, density, config.Body.DragAreaAlong, inertia, seconds) + rise
             + (lift + thrust * stroke.Y / inertia) * seconds;
 
@@ -95,7 +97,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         }
         var carried = Velocity;
 
-        Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, flow.X, rise, flow.Z, carried.X, carried.Z);
+        Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, flow.X, rise, flow.Z, carried.X, carried.Z, thrust);
         return new BodyMotion(
             motion.X + WaterDrag.Carried(carried.X, before.X, 1, kept),
             heave / WaterDrag.TicksPerSecond,
@@ -111,4 +113,4 @@ public readonly record struct BodyMotion(double X, double Y, double Z);
 
 /// <summary>What one step of a body found, for the log.</summary>
 public readonly record struct FloatReading(double Waterline, double UnderLitres, double WholeLitres, double LungLitres, double Lift, double Churn,
-    double FlowX, double Rise, double FlowZ, double CarriedX, double CarriedZ);
+    double FlowX, double Rise, double FlowZ, double CarriedX, double CarriedZ, double Thrust);

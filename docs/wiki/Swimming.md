@@ -8,7 +8,7 @@ Fresh water holds you up less, so in a lake or a river you sink slowly unless yo
 
 ## Swimming
 
-Hold a direction to swim: each stroke pushes you through the water that way from where you look, about as hard as a trained swimmer pushes. In still water you swim about 0.9 m/s and glide on for a few seconds after you let go. The water you swim in moves you too: swim with a wave's front face and it carries you faster than you swim; swim against a current faster than you, and you lose ground.
+Hold a direction to swim: each stroke pushes you through the water that way from where you look, with the power a trained swimmer swims with. You push hardest from a standstill, so you are under way within a stroke or two. In still water you swim about 0.9 m/s and glide on for a few seconds after you let go. The water you swim in moves you too: swim with a wave's front face and it carries you faster than you swim; swim against a current faster than you, and you lose ground.
 
 ## What you carry
 
@@ -26,6 +26,6 @@ A crest can break over you, as one breaks on a vessel: as often, by the same [wi
 
 In [surf](Surf-and-Swamping#breakers) the tallest waves break, and close to the beach nearly all of them.
 
-Holding jump is strong enough to swim straight out of a breaker for now. Stamina, planned for [The living sea](Roadmap#the-living-sea), will make that effort cost.
+Holding jump doesn't lift you out of a breaker: its water pulls you down harder than you can stroke up. You come back up once its air clears.
 
 The world setting [Breakers on swimmers](World-Settings#the-mechanics) turns breaking crests off. You still float on the waves and breathe by them. The formulas are in [The science of a body in the water](The-Science-of-a-Body-in-the-Water#a-body-in-the-water).

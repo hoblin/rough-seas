@@ -36,6 +36,7 @@ public class AgentBridgeModSystem : ModSystem
     private ScreenshotCapture screenshots = null!;
     private HoverOverride hover = null!;
     private CrosshairPicking crosshair = null!;
+    private UnfocusedKeys keys = null!;
     private SoundsPlaying sounds = null!;
     private SoundLog soundLog = null!;
     private FrameTimer frameTimer = null!;
@@ -56,6 +57,7 @@ public class AgentBridgeModSystem : ModSystem
         screenshots = new ScreenshotCapture(api);
         hover = new HoverOverride(api);
         crosshair = new CrosshairPicking();
+        keys = new UnfocusedKeys();
         sounds = new SoundsPlaying(api);
         soundLog = new SoundLog(api, Mod.Logger);
         frameTimer = new FrameTimer(api);
@@ -78,6 +80,7 @@ public class AgentBridgeModSystem : ModSystem
         screenshots?.Dispose();
         hover?.Dispose();
         crosshair?.Dispose();
+        keys?.Dispose();
         frameTimer?.Dispose();
         blackBox?.Dispose();
         soundLog?.Dispose();
