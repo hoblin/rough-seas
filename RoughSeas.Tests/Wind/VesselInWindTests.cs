@@ -81,6 +81,9 @@ public class VesselInWindTests
         Sail(OverHerFloat, Furled, AsBuilt, 20);
         Sail(OverHerFloat, FullSail, Shunted, 20);
         Sail(OverHerLee, FullSail, Shunted, 20);
+        Sail(OverHerFloat, Furled, Shunted, 20);
+        Sail(OverHerFloat, HalfSail, Shunted, 0.3);
+        Sail(OverHerFloat, FullSail, Shunted, 20);
         Assert.True(fastest < Fixtures.Wind.JumpMetresPerSecond, $"a point moved at {fastest:F1} m/s");
     }
 

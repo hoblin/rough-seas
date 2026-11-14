@@ -12,6 +12,7 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
 {
     private const int PanelsPerMetre = 2;
     private const double OriginMetres = 0.5;
+    private const string Stowed = "roll";
     private static readonly HullPoint Origin = new(OriginMetres, 0, OriginMetres);
     private static readonly (int Facing, int[] Order)[] Sides = [(1, [0, 1, 2, 0, 2, 3]), (-1, [0, 2, 1, 0, 3, 2])];
     private static readonly EnumRenderStage[] Stages = [EnumRenderStage.Opaque, EnumRenderStage.ShadowFar, EnumRenderStage.ShadowNear];
@@ -75,7 +76,9 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         {
             prog.ModelMatrix = model;
             prog.Tex2D = capi.EntityTextureAtlas.AtlasTextures[ClothAtlas.atlasNumber].TextureId;
+            render.GlEnableCullFace();
             render.RenderMesh(woven);
+            render.GlDisableCullFace();
         }
         foreach (var (mesh, at) in placedParts)
         {
@@ -169,9 +172,12 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
     private MultiTextureMeshRef? Spar(string part)
     {
         if (spars.TryGetValue(part, out var mesh)) return mesh;
-        if (!parts.TryGetValue(part, out var path) || (tesselated ?? entity.Properties.Client.LoadedShapeForEntity) is not { } shape) return spars[part] = null;
+        if (!parts.TryGetValue(part, out var path)) return spars[part] = null;
 
-        var meta = new TesselationMetaData { SelectiveElements = [path], TexSource = capi.Tesselator.GetTextureSource(entity), TypeForLogging = "entity" };
+        var shape = part == Stowed ? entity.Properties.Client.LoadedShapeForEntity : tesselated ?? entity.Properties.Client.LoadedShapeForEntity;
+        if (shape == null) return spars[part] = null;
+
+        var meta = new TesselationMetaData { SelectiveElements = [path], TexSource = entity.GetTextureSource(), TypeForLogging = "entity" };
         capi.Tesselator.TesselateShape(meta, shape, out var meshData);
         return spars[part] = capi.Render.UploadMultiTextureMesh(meshData);
     }
@@ -214,6 +220,6 @@ public sealed class RigRenderer : IRenderer, IRigCanvas
         }
     }
 
-    private TextureAtlasPosition ClothAtlas => clothAtlas ??= capi.Tesselator.GetTextureSource(entity)[cloth]
+    private TextureAtlasPosition ClothAtlas => clothAtlas ??= capi.Tesselator.GetTextureSource(entity, returnNullWhenMissing: true)[cloth]
         ?? throw new InvalidOperationException($"{entity.Code} has no texture {cloth} for her sail");
 }
