@@ -396,4 +396,34 @@ public class FloatingBodyTests
 
         Assert.Equal(own, next.X, 9);
     }
+
+    private static double Waded(double seconds, double waterline, double metresPerSecond, BreakerPacket? crest = null)
+    {
+        var body = new FloatingBody(Man, Fixtures.PersonConfig, Waves);
+        var sea = Calm;
+        if (crest is { } struck) body.Struck(sea, struck);
+        var motion = new BodyMotion(metresPerSecond / WaterDrag.TicksPerSecond, 0, 0);
+        for (var t = 0.0; t < seconds; t += Frame)
+        {
+            var (x, z) = body.Wade(sea, new WaterSurface(Still, 0, true), new BodyPlace(X, Still - waterline, Z, EyeHeight, Width), motion, default, Frame, 1);
+            motion = new BodyMotion(x, 0, z);
+        }
+        return motion.X * WaterDrag.TicksPerSecond;
+    }
+
+    [Fact]
+    public void WadingKeepsMostOfAJumpsWayWithTheWaterAtTheKnees() =>
+        Assert.InRange(Waded(0.5, 0.5, 2) / 2, 0.7, 1);
+
+    [Fact]
+    public void WadingLosesMoreOfItsWayTheDeeperTheWater() =>
+        Assert.True(Waded(0.5, 1.2, 2) < Waded(0.5, 0.5, 2) - 0.2);
+
+    [Fact]
+    public void WadingOutOfTheWaterDragsNothing() =>
+        Assert.Equal(2, Waded(0.5, 0, 2), 9);
+
+    [Fact]
+    public void ABreakersRollerPushesAWader() =>
+        Assert.True(Waded(0.5, 1, 0, new BreakerPacket { HeightMetres = 1, PeriodSeconds = 8, Celerity = 5, TowardRadians = 0 }) > 0.1);
 }

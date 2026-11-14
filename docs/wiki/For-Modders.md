@@ -31,7 +31,7 @@ If you build on these pages, or need something they don't give, tell us on the [
 A swimmer's stroke spends a power, not a fixed force, so it pulls hardest from a standstill and less the faster the swimmer goes through the water ([the science](The-Science-of-a-Body-in-the-Water)).
 
 - `config/person.json`'s `body.strokeNewtons` is gone; `body.swimming` gives the power spent against drag (`usefulWatts`), on the water pushed back (`wastedWatts`) and the speed both were measured at (`metresPerSecond`). New `SwimmingArms` turns them into a thrust at a speed. The law of a blade driven on a power is `Water.SlippingBlade`, which Propulsion's `BladeStroke` now calls too. `FloatReading` gained `Thrust`.
-- `BodyAfloat` floats a player only while the water reaches the chest (`Swimming`, by the drawn surface). Wading, vanilla's gravity, walk and jump stand, so a jump in shallow water clears a one-block step, and across, new `WadingBody` drags the body by its part under water, toward the current's and the waves' water, in place of vanilla's flat water drag, so a jump keeps its way. Up and down, vanilla's drag stands.
+- `BodyAfloat` floats a player while the water reaches the chest (`Swimming`, by the drawn surface). Wading, vanilla's gravity, walk and jump stand, so a jump in shallow water clears a one-block step; across, new `FloatingBody.Wade` takes the place of vanilla's water drag, so a jump keeps its way and the waves, a breaker and the current push a wader as they push a swimmer. A push of yours on a wading player's `Pos.Motion` across meets the body's drag instead of vanilla's flat one.
 
 ### Every selection box aimed at
 

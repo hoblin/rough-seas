@@ -13,9 +13,9 @@ namespace RoughSeas.Person;
 /// <summary>
 /// Floats this client's player by <see cref="FloatingBody"/>, in place of vanilla's gravity in water (a third of it while
 /// still, none while the swimmer strokes), vanilla's water drag up and down (a fixed share of the speed each tick, far stronger than
-/// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force. Only while the water
-/// reaches the chest: wading, the player walks and jumps as vanilla's, whose jump clears the world's one-metre steps. On the
-/// owning client alone: vanilla simulates a player's movement there.
+/// water's at a float's slow speeds) and vanilla's swim stroke, which the body strokes by its own force, while the water
+/// reaches the chest. Wading, vanilla's walk, jump and gravity stand, since its jump clears the world's one-metre steps, and
+/// across the body takes the place of vanilla's water drag. On the owning client alone: vanilla simulates a player's movement there.
 /// </summary>
 public static class BodyAfloat
 {
@@ -32,17 +32,16 @@ public static class BodyAfloat
     private static PersonConfig config = new();
     private static Waves? waves;
     private static FloatingBody? body;
-    private static WadingBody? waders;
-    private static (WaterSurface Surface, BodyPlace Place, Carried Kit, (double X, double Z) Water)? wading;
+    private static (WaterSurface Surface, BodyPlace Place, Carried Kit, double Rate, SeaCurrent Current)? wading;
     private static SwimStroke stroke;
     private static bool liftedThisTick;
+    private static bool wasSwimming = true;
     private static double loggedAt = double.NegativeInfinity;
 
     public static void Attach(PersonModSystem mod, ICoreClientAPI client, IDrawnSea drawnSea, DrawnWater drawnWater, IPerson thePerson, PersonConfig personConfig, Waves theWaves)
     {
         if (harmony != null) return;
         (system, capi, drawn, water, person, config, waves) = (mod, client, drawnSea, drawnWater, thePerson, personConfig, theWaves);
-        waders = new WadingBody(thePerson, personConfig, theWaves);
         sea = client.ModLoader.GetModSystem<SeaWeatherSystem>();
         harmony = new Harmony(HarmonyId);
         harmony.Patch(AccessTools.Method(typeof(PModuleGravity), nameof(PModuleGravity.DoApply)),
@@ -61,7 +60,7 @@ public static class BodyAfloat
     {
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
-        (system, capi, drawn, water, sea, person, waves, body, waders, wading) = (null, null, null, null, null, null, null, null, null, null);
+        (system, capi, drawn, water, sea, person, waves, body, wading) = (null, null, null, null, null, null, null, null, null);
         (stroke, liftedThisTick, loggedAt) = (default, false, double.NegativeInfinity);
     }
 
@@ -95,29 +94,25 @@ public static class BodyAfloat
             Leave(entity, "out of the water");
             return true;
         }
-        if (!entity.Swimming)
-        {
-            Leave(entity, "wading: vanilla's gravity and jump");
-            var waterline = surface.Height - pos.Y;
-            var height = person!.Body.HeightMetres;
-            var width = entity.CollisionBox.XSize;
-            var waved = sea!.Clock.SecondsIn(dt, entity.World.Calendar.SpeedOfTime) / dt;
-            var flow = drawn!.HullVelocityAt(pos.X, pos.Z, surface.Swell - Math.Max(0, waterline - height), Math.Min(waterline, height), 0, width, width);
-            var flowing = Mechanic.Currents.On(entity.World) ? sea.CurrentAt(pos.X, pos.Z) : default;
-            wading = (surface, new BodyPlace(pos.X, pos.Y, pos.Z, entity.LocalEyePos.Y, width), person.CarriedBy(entity),
-                (flowing.X + flow.X * waved, flowing.Z + flow.Z * waved));
-            return true;
-        }
 
         if (body == null)
         {
             body = new FloatingBody(person!, config, waves!);
-            system!.Log(entity, "body in {0} water: held up by what it displaces, not vanilla's gravity", surface.Salt ? "sea" : "fresh");
+            system!.Log(entity, "body in {0} water", surface.Salt ? "sea" : "fresh");
         }
         var kit = person!.CarriedBy(entity);
         var place = new BodyPlace(pos.X, pos.Y, pos.Z, entity.LocalEyePos.Y, entity.CollisionBox.XSize);
         var rate = sea!.Clock.SecondsIn(dt, entity.World.Calendar.SpeedOfTime) / dt;
         var current = Mechanic.Currents.On(entity.World) ? sea.CurrentAt(pos.X, pos.Z) : default;
+        if (!entity.Swimming)
+        {
+            if (wasSwimming) system!.Log(entity, "wading at y {0:F2}: vanilla's gravity and jump, the water's drag across", pos.Y);
+            wasSwimming = false;
+            wading = (surface, place, kit, rate, current);
+            return true;
+        }
+        if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
+        wasSwimming = true;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
             WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z));
         pos.Motion.Set(next.X, next.Y, next.Z);
@@ -145,11 +140,10 @@ public static class BodyAfloat
     private static void AfterDrag(Entity entity, EntityPos pos, float dt, (double X, double Y, double Z) __state)
     {
         if (entity != capi?.World.Player?.Entity) return;
-        if (wading is var (surface, place, kit, water))
+        if (wading is var (surface, place, kit, rate, current))
         {
             wading = null;
-            var (x, z) = waders!.Dragged(surface, place, (__state.X, __state.Z), kit, dt, water);
-            (pos.Motion.X, pos.Motion.Z) = (x, z);
+            (pos.Motion.X, pos.Motion.Z) = body!.Wade(drawn!, surface, place, new BodyMotion(__state.X, __state.Y, __state.Z), kit, dt, rate, (current.X, current.Z));
             return;
         }
         if (!liftedThisTick) return;
@@ -170,8 +164,10 @@ public static class BodyAfloat
     private static void Leave(Entity entity, string? why)
     {
         stroke = default;
+        wading = null;
         if (body == null) return;
         body = null;
+        wasSwimming = true;
         if (why != null) system!.Log(entity, "body {0}: vanilla's gravity again", why);
     }
 }
