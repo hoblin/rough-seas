@@ -560,6 +560,23 @@ Rope, cord and a hide sewn on go into a vessel with both hands tying knots, in t
 
 New: `HullWork.Hands`, `MendWork.Hands`, `Laying.Hands`, `IMendable.Hands`, `WorkHands`, the player animations `roughseas-tie` and `roughseas-tie-fp`.
 
+### Sailing by the wind
+
+The wind blows on every vessel, and the outrigger and the sailboat sail by it, a force on the hull as the water's is ([The wind](Building-a-Vessel#the-wind)). A vessel of yours takes the wind only if you give it `roughseas:windage`; without it, it moves as before.
+
+- The new behaviour `roughseas:windage`, in the new module `RoughSeas.Wind`, pushes a vessel by the apparent wind on what stands above the water. The new behaviour `roughseas:sail`, in the new module `RoughSeas.Sailing`, gives it a sail that drives it as a wing of its cloth's outline as the wind meets it, its force from that geometry; the windage takes the sail as one more surface through `IRigged` and `IAloft`. Its load enters the hull's set through `roughseas:currentdrift`, steered or not, and its moment turns a hull no line holds by the bow.
+- Under sail, a postfix on `EntityBoat.SeatsToMotion` (`SailedByWind`) takes vanilla's drive out for a vessel with a sail of ours: the wind drives it, and only its rider's turn stays vanilla's. Our `EntityVessel` turns under sail whatever its rider holds, `requiresPaddlingTool` or not. A vessel without `roughseas:sail` sails at vanilla's pace as before; `roughseas:sail` needs `roughseas:windage` beside it, and fails to load without it.
+- Vanilla's sailboat gets `roughseas:windage` and `roughseas:sail` by `patches/wind-vessels.json`; the sail's `drawn` takes `SailUnfurled`, `SailHalf`, `SparORIGIN` and `SailFurled` out of its own drawing: its cloth is drawn by our renderer, its yard and furled bundle are its own elements turned with the brace, all in the boat's frame, and the foliage warp is gone from them. The elements stay in the shape.
+- The outrigger's rig is the shunting canoes': its mast moved to the float's side and rakes toward the tack, its shape lost `SailUnfurled` and `SailHalf`, `roughseas:rigging` lost `rigged` (a sail of ours waits for its build in `roughseas:sail`), and its rig stages are drawn by the renderer once it is built. Its mast step moved from `Mast` into `Fittings`, beside the sail steps. Its `Mast` stage takes four poles (mast, shore, yard, boom; the spars 4 m), `SailFurled` three cloths and `Stays` five ropes. Its selection boxes gained `BowStepAP` and `SternStepAP` after `OarAP`, with empty slots in `rideableaccessories`; a right-click on the far one shunts it, and which end its tack is at is the watched int `roughseas:tacked`.
+- Every vessel's `windageSquareMetres` moved from `roughseas:seaforces` to `roughseas:windage`, beside the new `frontSquareMetres`, `windageCentreMetres` and `lateralCentreMetres`, all measured by `bin/model build`: ours, vanilla's raft and sailboat, and Shipwright's boats each carry `roughseas:windage` now. A vessel without it moves as before.
+- A hull's physics afloat left `RoughSeas.Storms` for its own namespace, `RoughSeas.Floating`: `BodyInWater`, `WaterOnHull`, `HullSet`, `HullSetReport`, `DriftPhysics`, `EntityBehaviorCurrentDrift`, `EntityBehaviorSeaForces`, `Seaworthiness`, `Heave`, `HullResponse` with `ResponseConfig`, `HullRider` with `RiddenHull`, `WaveRide`, `DrawnHull`, `VesselMotion` and `VesselDraught`. `FlowGradient` stays in `RoughSeas.Storms` beside `IDrawnSea`, and `HullPoint` is in `RoughSeas.Vessels`. Their behaviour codes are unchanged.
+- `MooringLine` is `RoughSeas.Lines.Line`, a rope's physics in a module of its own, apart from mooring: `Line.Over` solves it over a tick and `Line.Parts` says whether it parts. `MooringLine.Dragging` moved to `Anchor.Dragging`.
+- `HullSet.Settle` and `Relax` take a steady push in m/s², and `EntityBehaviorCurrentDrift.Load` includes the wind's. `IHullForm` gained `Finished`.
+- The world setting `sailWind` (a dropdown, 1 to 3) multiplies the true wind a sail feels, before her own velocity is taken off; nothing else sees it. `BodyInWind.Load` takes it, and a `WindSurface` that `Sails` gets it.
+- `config/wind.json` holds the air, the wind's growth with height, a bluff body's drag and the air's viscosity; `config/sailing.json` a sail's camber and cloth, its lines, the crew's pace, and under `flow` the drag of a plate across the wind and where a sail's flow breaks, each number with its source. A sail names no polar: `sail.polar` is gone, and its rig's `kind` picks the measurements. A `[wind]` line logs the wind and its push every few seconds where the vessel's physics runs, `[sail]` lines the sail and its rig's tensions, and each shunt on the server.
+
+New: the behaviours `roughseas:windage` and `roughseas:sail` with their keys, `IWindOnHull`, `IAloft`, `IRigged`, `BodyInWind`, `VesselInWind`, `WindSurface`, `Sail`, `SailForm`, `Wing`, `Lattice`, `RigShape` (the rig's state, which whoever runs her physics publishes: the server in the watched bytes `roughseas:rig`, the steering client to the server on the channel `roughseas-sail`; every other side draws it), `RigRopes`, `RoughSeas.Lines.VanillaRopes`, `Rig`, `Rigging`, `CrabClaw`, `SquareRig`, `RigRenderer`, `WindModSystem`, `SailingModSystem`, `SailedByWind`, `RoughSeas.Lines.Line`, `Anchor.Dragging`, `config/wind.json`, `config/sailing.json`, `patches/wind-vessels.json`, the watched int `roughseas:tacked`.
+
 ## What not to touch
 
 | Name | What it is |
@@ -570,6 +587,7 @@ New: `HullWork.Hands`, `MendWork.Hands`, `Laying.Hands`, `IMendable.Hands`, `Wor
 | `roughseas:storms` | the network channel a rider's client reports a parted mooring over |
 | `roughseas:anchor` | a vessel's watched tree: where its anchor lies and what holds it |
 | `roughseas:hold0`, `roughseas:hold1`… | a vessel's watched trees: what each of its holds carries |
+| `roughseas:tacked` | a vessel's watched int: which end its sail's tack stands at |
 | `roughseas:person` | the network channel the server tells a swimmer's client of a crest breaking over them on |
 | `roughseas:nextClothId` | save data: vanilla's next rope id, which vanilla itself loses |
 | `roughseas-force*` | our wind patterns, which our model sets; to hold a region's wind, set a pattern of your own ([Wind patterns](Wind-Patterns)) |

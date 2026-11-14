@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Karties gylis",
     "worldattribute-poleDepth-desc": "Kartis stumia tik ten, kur pasiekia dugną. Išjungus ji stumia bet kokio gylio vandenyje kaip visu mostu.",
     "worldattribute-swimmerBreakers": "Mūša ant plaukikų",
-    "worldattribute-swimmerBreakers-desc": "Banga, lūžtanti ant jūsų, kai plaukiate, panardina jus ir neša kartu, o jos putotas vanduo mažiau jus laiko. Išjungus jokia banga nelūžta ant plaukiko; jūs vis tiek plūduriuojate ant bangų ir kvėpuojate jų ritmu."
+    "worldattribute-swimmerBreakers-desc": "Banga, lūžtanti ant jūsų, kai plaukiate, panardina jus ir neša kartu, o jos putotas vanduo mažiau jus laiko. Išjungus jokia banga nelūžta ant plaukiko; jūs vis tiek plūduriuojate ant bangų ir kvėpuojate jų ritmu.",
+    "worldattribute-sailWind": "Vėjas burese",
+    "worldattribute-sailWind-desc": "Burės jaučia vėją tiek kartų stipresnį, nei jis pučia, todėl burlaivis plaukia maždaug tiek kartų greičiau ir valdomas kaip anksčiau. Pats vėjas, jūra ir laivas nuleista bure lieka tokie patys. 1× yra tikrasis vėjas."
 }

@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Profundo de stango",
     "worldattribute-poleDepth-desc": "Stango puŝas nur kie ĝi atingas la fundon. Malŝaltite, ĝi puŝas en akvo de ajna profundo kiel per plena puŝo.",
     "worldattribute-swimmerBreakers": "Rompondoj super naĝantoj",
-    "worldattribute-swimmerBreakers-desc": "Ondo, kiu rompiĝas super vi dum vi naĝas, puŝas vin sub la akvon kaj kunportas vin, kaj ĝia ŝaŭma akvo malpli subtenas vin. Malŝaltite, neniu ondo rompiĝas super naĝanto; vi ankoraŭ flosas sur la ondoj kaj spiras laŭ ilia ritmo."
+    "worldattribute-swimmerBreakers-desc": "Ondo, kiu rompiĝas super vi dum vi naĝas, puŝas vin sub la akvon kaj kunportas vin, kaj ĝia ŝaŭma akvo malpli subtenas vin. Malŝaltite, neniu ondo rompiĝas super naĝanto; vi ankoraŭ flosas sur la ondoj kaj spiras laŭ ilia ritmo.",
+    "worldattribute-sailWind": "Vento en la veloj",
+    "worldattribute-sailWind-desc": "La veloj sentas la venton tiom da fojoj pli forta ol ĝi blovas, kaj velŝipo iras proksimume tiom da fojoj pli rapide kaj stiriĝas kiel antaŭe. La vento mem, la maro kaj ŝipo kun mallevita velo restas kiaj ili estas. 1× estas la vera vento."
 }

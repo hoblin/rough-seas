@@ -8,10 +8,11 @@ import json5
 from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling, tools
 import units
 from jsontext import load
+from wind import WINDAGE, bare
 from entity import record, write
 from physics import ASSETS, MATERIALS, SWIM_LINE_METRES, afloat, stands
 from fit import posed
-from shape import bounds, hull_of, num, windage
+from shape import bounds, hull_of, num
 from transform import apply
 from stroke import player_patch, seat
 from stroke import posed as posed_by_name
@@ -83,8 +84,8 @@ def build(_):
     record("raft", {"behaviorConfigs": {"roughseas:vesselintegrity": {**units.both("depth", depth), "shell": shell}}})
     logs_litres = oak_litres(entity["weight"])
     seen = afloat("raft", entity["weight"], depth, solid_litres=logs_litres, hitbox_height_metres=entity["hitboxSize"]["y"],
-                  at_draft=windage(logs(vanilla["elements"]), hull["from"][1]))
-    record("raft", {"behaviorConfigs": {"roughseas:seaforces": seen["behaviorConfigs"]["roughseas:seaforces"]}})
+                  at_draft=bare(logs(vanilla["elements"]), hull["from"][1]))
+    record("raft", {"behaviorConfigs": {WINDAGE: seen["behaviorConfigs"][WINDAGE]}})
     length, beam = (units.metres(hull["to"][i] - hull["from"][i]) for i in (0, 2))
     at = seat(shape, SEATED)
     record("raft", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(hull, at, ARM_REACH_METRES)}})

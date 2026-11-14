@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Profondeur de la perche",
     "worldattribute-poleDepth-desc": "Une perche ne pousse que là où elle touche le fond. Désactivé, elle pousse dans une eau de toute profondeur comme à pleine poussée.",
     "worldattribute-swimmerBreakers": "Déferlantes sur les nageurs",
-    "worldattribute-swimmerBreakers-desc": "Une vague qui déferle sur vous pendant que vous nagez vous enfonce et vous emporte, et son eau écumante vous porte moins. Désactivé, aucune vague ne déferle sur un nageur ; vous flottez toujours sur les vagues et respirez à leur rythme."
+    "worldattribute-swimmerBreakers-desc": "Une vague qui déferle sur vous pendant que vous nagez vous enfonce et vous emporte, et son eau écumante vous porte moins. Désactivé, aucune vague ne déferle sur un nageur ; vous flottez toujours sur les vagues et respirez à leur rythme.",
+    "worldattribute-sailWind": "Vent dans les voiles",
+    "worldattribute-sailWind-desc": "Les voiles sentent le vent autant de fois plus fort qu'il ne souffle, et un voilier file à peu près autant de fois plus vite tout en se manœuvrant comme avant. Le vent lui-même, la mer et un bateau voile affalée restent tels quels. 1× est le vent réel."
 }

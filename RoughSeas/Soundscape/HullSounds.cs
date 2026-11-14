@@ -1,4 +1,5 @@
 using System.Linq;
+using RoughSeas.Floating;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;

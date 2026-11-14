@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Stakens dybde",
     "worldattribute-poleDepth-desc": "En stake skyver bare der den når bunnen. Av skyver den i vann av alle dybder som med et fullt tak.",
     "worldattribute-swimmerBreakers": "Brenninger over svømmere",
-    "worldattribute-swimmerBreakers-desc": "En bølge som bryter over deg mens du svømmer, presser deg under og fører deg med seg, og det skummende vannet bærer deg dårligere. Av bryter ingen bølge over en svømmer; du flyter fortsatt på bølgene og puster i takt med dem."
+    "worldattribute-swimmerBreakers-desc": "En bølge som bryter over deg mens du svømmer, presser deg under og fører deg med seg, og det skummende vannet bærer deg dårligere. Av bryter ingen bølge over en svømmer; du flyter fortsatt på bølgene og puster i takt med dem.",
+    "worldattribute-sailWind": "Vind i seilene",
+    "worldattribute-sailWind-desc": "Seilene kjenner vinden så mange ganger sterkere enn den blåser, og et seilfartøy går omtrent så mange ganger fortere og styrer som før. Selve vinden, havet og et fartøy med berget seil er som de er. 1× er den virkelige vinden."
 }

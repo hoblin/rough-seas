@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
+using RoughSeas.Floating;
 using RoughSeas.Storms;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.Client.NoObf;

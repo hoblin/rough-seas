@@ -6,8 +6,9 @@ from stroke import player_patch, seat
 from physics import LATH_SQUARE_METRES, ROPE_METRES, afloat, kilograms, per_rope, ropes, shares, stands
 from fit import APART, TOLERANCE, bounded, depth_into, lined as lined_section
 import units
+from wind import bare
 from entity import merged, record
-from shape import BILGE, Hull, Shape, bilge_levels, bounds, box, breadth, clear_of, corners_of, group, hull_box, num, path, plank, renamed, span, stages, widest, windage
+from shape import BILGE, Hull, Shape, bilge_levels, bounds, box, breadth, clear_of, corners_of, group, hull_box, num, path, plank, renamed, span, stages, widest
 from transform import add, scale, sub, unit
 from wounds import backed, wound
 import cargo
@@ -560,7 +561,7 @@ def build(path_):
           lining=SHEATHING, framing=([ribbed], "frame"))
     shape.write()
     framing = {"trunkBlocks": round(units.metres(SHEET_LENGTH))}
-    record("barkcanoe", merged(report(hull, laths, windage([finished], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:framing": framing}}))
+    record("barkcanoe", merged(report(hull, laths, bare([finished], box["from"][1])), measured, bilge_levels(shape.elements), {"behaviorConfigs": {"roughseas:framing": framing}}))
     at = seat(shape, "BackSeat")
     record("barkcanoe", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
     water_metres = waterline_metres("barkcanoe")

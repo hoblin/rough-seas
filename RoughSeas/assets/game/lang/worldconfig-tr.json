@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Sırık derinliği",
     "worldattribute-poleDepth-desc": "Sırık yalnızca dibe yetiştiği yerde iter. Kapalıyken her derinlikteki suda tam itişteki gibi iter.",
     "worldattribute-swimmerBreakers": "Yüzücülere kırılan dalgalar",
-    "worldattribute-swimmerBreakers-desc": "Yüzerken üzerinize kırılan bir dalga sizi suyun altına iter ve beraberinde sürükler; köpüklü suyu sizi daha az taşır. Kapalıyken hiçbir dalga yüzücünün üzerine kırılmaz; yine de dalgaların üzerinde süzülür ve onların ritmiyle nefes alırsınız."
+    "worldattribute-swimmerBreakers-desc": "Yüzerken üzerinize kırılan bir dalga sizi suyun altına iter ve beraberinde sürükler; köpüklü suyu sizi daha az taşır. Kapalıyken hiçbir dalga yüzücünün üzerine kırılmaz; yine de dalgaların üzerinde süzülür ve onların ritmiyle nefes alırsınız.",
+    "worldattribute-sailWind": "Yelkenlerdeki rüzgâr",
+    "worldattribute-sailWind-desc": "Yelkenler rüzgârı estiğinden bu kadar kat güçlü hisseder; yelkenli tekne de yaklaşık bu kadar kat hızlı gider ve eskisi gibi dümen dinler. Rüzgârın kendisi, deniz ve yelkeni indirilmiş tekne olduğu gibi kalır. 1× gerçek rüzgârdır."
 }

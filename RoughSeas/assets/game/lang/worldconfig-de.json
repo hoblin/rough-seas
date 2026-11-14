@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Staktiefe",
     "worldattribute-poleDepth-desc": "Ein Staken schiebt nur, wo er den Grund erreicht. Ist sie aus, schiebt er in Wasser jeder Tiefe wie mit vollem Stoß.",
     "worldattribute-swimmerBreakers": "Brecher über Schwimmern",
-    "worldattribute-swimmerBreakers-desc": "Eine Welle, die über dir bricht, während du schwimmst, drückt dich unter Wasser und reißt dich mit, und ihr schäumendes Wasser trägt dich weniger. Ist sie aus, bricht keine Welle über einem Schwimmer; du treibst weiter auf den Wellen und atmest in ihrem Takt."
+    "worldattribute-swimmerBreakers-desc": "Eine Welle, die über dir bricht, während du schwimmst, drückt dich unter Wasser und reißt dich mit, und ihr schäumendes Wasser trägt dich weniger. Ist sie aus, bricht keine Welle über einem Schwimmer; du treibst weiter auf den Wellen und atmest in ihrem Takt.",
+    "worldattribute-sailWind": "Wind in den Segeln",
+    "worldattribute-sailWind-desc": "Die Segel spüren den Wind so viel stärker, als er weht, und ein Segelschiff läuft etwa so viel schneller und segelt sich wie zuvor. Der Wind selbst, die See und ein Schiff mit geborgenem Segel bleiben, wie sie sind. 1× ist der echte Wind."
 }

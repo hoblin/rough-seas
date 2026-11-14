@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Stagens dybde",
     "worldattribute-poleDepth-desc": "En stage skubber kun, hvor den når bunden. Slået fra skubber den på alle dybder som med et fuldt tag.",
     "worldattribute-swimmerBreakers": "Brænding over svømmere",
-    "worldattribute-swimmerBreakers-desc": "En bølge, der brækker over dig, mens du svømmer, presser dig ned under og fører dig med, og dens skummende vand bærer dig dårligere. Slået fra brækker ingen bølge over en svømmer; du flyder stadig på bølgerne og trækker vejret i takt med dem."
+    "worldattribute-swimmerBreakers-desc": "En bølge, der brækker over dig, mens du svømmer, presser dig ned under og fører dig med, og dens skummende vand bærer dig dårligere. Slået fra brækker ingen bølge over en svømmer; du flyder stadig på bølgerne og trækker vejret i takt med dem.",
+    "worldattribute-sailWind": "Vind i sejlene",
+    "worldattribute-sailWind-desc": "Sejlene mærker vinden så mange gange stærkere, end den blæser, og et sejlskib løber omtrent så mange gange hurtigere og styrer som før. Selve vinden, havet og et skib med bjærget sejl er som de er. 1× er den virkelige vind."
 }

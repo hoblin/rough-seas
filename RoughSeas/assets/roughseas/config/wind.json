@@ -1,0 +1,15 @@
+{
+    "airKgPerCubicMetre": 1.225,
+    "referenceHeightMetres": 10,
+    "gradientExponent": 0.11,
+    "bluffDrag": 1.28,
+    "logSeconds": 5,
+    "airMetresSquaredPerSecond": 1.46e-5,
+    "sources": {
+        "airKgPerCubicMetre": "Air at sea level in the International Standard Atmosphere, 15 °C",
+        "referenceHeightMetres": "The Beaufort scale, which our wind keeps, gives the wind at 10 m above the sea (WMO)",
+        "gradientExponent": "The wind over the open sea grows with height as (z/10 m)^0.11 (Hsu, Meindl & Gilhousen 1994, via en.wikipedia.org/wiki/Forces_on_sails)",
+        "bluffDrag": "A flat plate across the wind (NASA Glenn, Shape Effects on Drag, via en.wikipedia.org/wiki/Drag_coefficient): a hull's side and her furled rig, as the wind meets them",
+        "airMetresSquaredPerSecond": "Air's kinematic viscosity at sea level in the International Standard Atmosphere, 15 °C. A sail's cloth drags the air along both its faces as a flat plate does, by the Reynolds number its chord and the wind make: 1.328 / √Re a face while the flow over it is laminar (Blasius), 0.074 Re^−0.2 − 1700 / Re once its boundary layer turns turbulent part way along it (Prandtl and Schlichting), from Re 5 × 10⁵, where the two meet"
+    }
+}

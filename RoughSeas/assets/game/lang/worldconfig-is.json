@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Dýpt stjakans",
     "worldattribute-poleDepth-desc": "Stjaki ýtir aðeins þar sem hann nær til botns. Sé slökkt á henni ýtir hann á hvaða dýpi sem er eins og með fullu taki.",
     "worldattribute-swimmerBreakers": "Brot yfir sundmenn",
-    "worldattribute-swimmerBreakers-desc": "Alda sem brotnar yfir þig á sundi keyrir þig niður og ber þig með sér, og freyðandi sjórinn heldur þér síður uppi. Sé slökkt á henni brotnar engin alda yfir sundmann; þú flýtur samt á öldunum og andar í takt við þær."
+    "worldattribute-swimmerBreakers-desc": "Alda sem brotnar yfir þig á sundi keyrir þig niður og ber þig með sér, og freyðandi sjórinn heldur þér síður uppi. Sé slökkt á henni brotnar engin alda yfir sundmann; þú flýtur samt á öldunum og andar í takt við þær.",
+    "worldattribute-sailWind": "Vindur í seglum",
+    "worldattribute-sailWind-desc": "Seglin finna vindinn svo mörgum sinnum sterkari en hann blæs, og seglskip siglir um það bil svo mörgum sinnum hraðar og stýrist eins og áður. Vindurinn sjálfur, hafið og skip með fellt segl haldast óbreytt. 1× er raunverulegi vindurinn."
 }

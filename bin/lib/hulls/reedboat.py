@@ -6,9 +6,10 @@ from held import ARM_REACH_METRES, worked_from_middle, PADDLE, paddling, poling,
 from stroke import player_patch, seat
 from fit import APART, Tube, Union
 import units
+from wind import bare
 from entity import merged, record
 from wounds import backed
-from shape import ROUNDED, Shape, hull_box, windage, beam, box, group, path, section, stages, write
+from shape import ROUNDED, Shape, hull_box, beam, box, group, path, section, stages, write
 
 KNOT_METRES = 0.3
 
@@ -214,7 +215,7 @@ def build(target):
     reed_kg, cord_kg = len(SIDES) * BUNDLE_REEDS * REED_KG, cords * REEDS_A_ROPE * REED_KG
     litres = sum(kg / MATERIALS[material]["density"] * 1000 for material, kg in (("reed", reed_kg), ("rope-flax", cord_kg)))
     girth, length = units.metres(GIRTH), units.metres(BODY[1] - BODY[0])
-    record("reedboat", merged(afloat("reedboat", reed_kg + cord_kg, girth, solid_litres=litres, at_draft=windage([blank, [end["children"][0] for end in bound["children"]]], box["from"][1])), shares([reed_kg, cord_kg]), measured))
+    record("reedboat", merged(afloat("reedboat", reed_kg + cord_kg, girth, solid_litres=litres, at_draft=bare([blank, [end["children"][0] for end in bound["children"]]], box["from"][1])), shares([reed_kg, cord_kg]), measured))
     at = seat(shape, "FrontSeat")
     record("reedboat", {"behaviorConfigs": {"roughseas:propulsion": worked_from_middle(box, at, ARM_REACH_METRES)}})
     water_metres = waterline_metres("reedboat")

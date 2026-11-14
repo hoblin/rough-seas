@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Stakens djup",
     "worldattribute-poleDepth-desc": "En stake skjuter bara där den når botten. Av skjuter den i vatten av alla djup som med ett fullt tag.",
     "worldattribute-swimmerBreakers": "Bränningar över simmare",
-    "worldattribute-swimmerBreakers-desc": "En våg som bryter över dig medan du simmar trycker ner dig och för dig med sig, och dess skummande vatten bär dig sämre. Av bryter ingen våg över en simmare; du flyter fortfarande på vågorna och andas i takt med dem."
+    "worldattribute-swimmerBreakers-desc": "En våg som bryter över dig medan du simmar trycker ner dig och för dig med sig, och dess skummande vatten bär dig sämre. Av bryter ingen våg över en simmare; du flyter fortfarande på vågorna och andas i takt med dem.",
+    "worldattribute-sailWind": "Vind i seglen",
+    "worldattribute-sailWind-desc": "Seglen känner vinden så många gånger starkare än den blåser, och ett segelfartyg går ungefär så många gånger fortare och styr som förut. Själva vinden, havet och ett fartyg med bärgat segel är som de är. 1× är den verkliga vinden."
 }

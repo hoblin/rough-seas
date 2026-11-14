@@ -4,8 +4,9 @@ import statistics
 from physics import HIDE_METRES, SEAM_LITRES_PER_HOUR_A_METRE, LATH_SQUARE_METRES, CREW_KG, afloat, shares, hide_sections, kilograms, lacing_metres, per_rope, ropes, stands
 from fit import APART
 import units
+from wind import bare
 from entity import merged, record
-from shape import BILGE, ORIGIN, Hull, bilge_levels, hull_box, num, windage, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
+from shape import BILGE, ORIGIN, Hull, bilge_levels, hull_box, num, Shape, box, ends_of, group, path, plank, renamed, seated, span, stages, widest
 from held import ARM_REACH_METRES, worked_from_middle, poling, tools, waterline_metres
 from stroke import Rower, centre, crew, drive_share, facing, find, moved, player_patch, posed, resting, seat, strokes
 from transform import apply, direct, euler, unapply, undirect
@@ -441,7 +442,7 @@ def build(path_):
     gunwale = laths[0]["children"]
     covering = {"start": {"laths": len(gunwale), "metres": math.ceil(max(piece["metres"] for piece in gunwale))},
                 "overturnedPivotVoxels": [num(c) for c in pivot], "overturnedPivotMetres": [num(units.metres(c)) for c in pivot]}
-    record("currach", merged(report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()], windage([hide], box["from"][1])), measured, bilge_levels(shape.elements),
+    record("currach", merged(report(hull, laths, thwart_stage, [oar(name, side, rests[name]) for name, side in OARS.items()], bare([hide], box["from"][1])), measured, bilge_levels(shape.elements),
                              {"behaviorConfigs": {"roughseas:covering": covering}}))
     chest = chest_height(shape)
     middle, degrees = arc(shape, rests, chest)

@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Pole's depth",
     "worldattribute-poleDepth-desc": "A pole pushes only where it reaches the bottom. Off, it pushes in water of any depth as at its full stroke.",
     "worldattribute-swimmerBreakers": "Breakers on swimmers",
-    "worldattribute-swimmerBreakers-desc": "A wave that breaks over you while you swim pushes you under and along with it, and its foaming water holds you up less. Off, no wave breaks over a swimmer; you still float on the waves and breathe by them."
+    "worldattribute-swimmerBreakers-desc": "A wave that breaks over you while you swim pushes you under and along with it, and its foaming water holds you up less. Off, no wave breaks over a swimmer; you still float on the waves and breathe by them.",
+    "worldattribute-sailWind": "Wind in the sails",
+    "worldattribute-sailWind-desc": "Sails feel the wind this many times stronger than it blows, so a sailing vessel makes about as many times her speed and handles as before. The wind itself, the sea and a vessel with her sail down stay as they are. 1× is the real wind."
 }

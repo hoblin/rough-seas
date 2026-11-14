@@ -46,7 +46,7 @@ In a [current](Currents) the boat falls back to the end of its rope and swings a
 
 In a storm a stone anchor drags: wave after wave, it walks the boat towards the lee shore. Anchor far from any shore, or carry the boat home.
 
-An anchored vessel takes the waves more gently: it [ships less water](Surf-and-Swamping#at-anchor), three tenths of it, though a breaker slams it as hard as any other. It still lies across the sea, and it still needs [bailing](Bailing). Turning bow to the wind comes with sailing, in [Seamanship](Roadmap#seamanship).
+An anchored vessel takes the waves more gently: it [ships less water](Surf-and-Swamping#at-anchor), three tenths of it, though a breaker slams it as hard as any other. It still lies across the sea, and it still needs [bailing](Bailing). The wind pushes it on its rope too, harder with its sail set, which drives it against the rode as if under way. Turning bow to the wind comes with weathervaning, in [Seamanship](Roadmap#seamanship).
 
 ## Leaving it
 

@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Hloubka pro bidlo",
     "worldattribute-poleDepth-desc": "Bidlo odráží jen tam, kde dosáhne na dno. Když je vypnuto, odráží ve vodě jakékoli hloubky jako při plném záběru.",
     "worldattribute-swimmerBreakers": "Příboj na plavce",
-    "worldattribute-swimmerBreakers-desc": "Vlna, která se přes vás převalí, když plavete, vás stáhne pod vodu a nese s sebou a její zpěněná voda vás nadnáší méně. Když je vypnuto, žádná vlna se přes plavce nepřevalí; dál se houpete na vlnách a dýcháte v jejich rytmu."
+    "worldattribute-swimmerBreakers-desc": "Vlna, která se přes vás převalí, když plavete, vás stáhne pod vodu a nese s sebou a její zpěněná voda vás nadnáší méně. Když je vypnuto, žádná vlna se přes plavce nepřevalí; dál se houpete na vlnách a dýcháte v jejich rytmu.",
+    "worldattribute-sailWind": "Vítr v plachtách",
+    "worldattribute-sailWind-desc": "Plachty cítí vítr tolikrát silnější, než ve skutečnosti fouká, takže plachetnice pluje zhruba tolikrát rychleji a ovládá se jako dřív. Samotný vítr, moře a loď se svinutou plachtou zůstávají beze změny. 1× je skutečný vítr."
 }

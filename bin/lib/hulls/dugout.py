@@ -4,8 +4,9 @@ from stroke import find, player_patch, seat
 from physics import afloat, kilograms, stands
 from fit import APART
 import units
+from wind import bare
 from entity import merged, record
-from shape import BILGE, FACES, ORIGIN, Hull, across, bilge, bilge_levels, corners_of, plank, bounds, hull_box, windage, Shape, box, breadth, group, num, seed, water_plane
+from shape import BILGE, FACES, ORIGIN, Hull, across, bilge, bilge_levels, corners_of, plank, bounds, hull_box, Shape, box, breadth, group, num, seed, water_plane
 from wounds import wound
 import cargo
 
@@ -764,7 +765,7 @@ def build(path):
                "hewnSectionsMetres": [[num(units.metres(x - ORIGIN[0])) for x in span] for span in SPANS],
                "hewnSectionsVoxels": [[num(x - ORIGIN[0]) for x in span] for span in SPANS],
                **level_boxes(stages)}
-    record("dugout", merged(afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck(), at_draft=windage([shell], box["from"][1])), measured, bilge_levels(shape.elements),
+    record("dugout", merged(afloat("dugout", kilograms("wood-oak", envelope - hold), units.metres(RIM), hold, deck(), at_draft=bare([shell], box["from"][1])), measured, bilge_levels(shape.elements),
                             {"behaviorConfigs": {"roughseas:burnout": burnout}}))
     shape.write()
     crew_tools(shape, "dugout", ("Shell",))
