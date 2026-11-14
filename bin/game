@@ -259,6 +259,10 @@ SERVER COMMANDS (via bin/game do; /help bridge lists them)
                              stop' first holds the storm where it is while you look.
   /bridge find CODE [RANGE]  fly over the nearest block at the surface whose code matches CODE
                              (wildcards: tallplant-*), within RANGE blocks (default 256, at most 512)
+  /bridge river [RANGE] [DEPTH]
+                             with the Rivers mod loaded, fly over the nearest water its current
+                             pushes, at least DEPTH blocks deep (default 1), within RANGE blocks
+                             (default 256, at most 512); replies with the depth and the flow there
   /bridge beaches [RANGE] [LENGTH] [DEPTH]
                              list the places within RANGE blocks of loaded world (default 256) where dry
                              ground lies flush with the water, LENGTH blocks along it (default 7) and DEPTH
