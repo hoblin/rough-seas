@@ -22,6 +22,7 @@
         "dragAreaAlong": 0.084,
         "dragAreaAcross": 0.45,
         "dragAreaSwimming": 0.096,
+        "turnRadiansPerSecond": 2,
         "swimming": {
             "usefulWatts": 35,
             "wastedWatts": 45,
@@ -44,6 +45,7 @@
             "atmospherePascals": "The standard atmosphere, 101325 Pa (10th CGPM, 1954): air held in the lungs shrinks under the water's pressure by Boyle's law",
             "dragAreaAlong": "A body moving along its length with its arms at its sides, as it jumps in feet first or glides: ten men of 75.9 kg towed 0.6 m under at 1.5-1.9 m/s dragged 94.7-153.6 N, a Cd A of 0.083-0.085 m2 in the pool's water at every speed, and 0.067-0.069 m2 with the arms stretched ahead (Cortesi & Gatta 2015, J Hum Kinet 49:37-45, head in line). They were towed head first; no body moving feet first was measured, so it is taken the same",
             "dragAreaAcross": "A body moving broadside, the water carrying it across: belly-down skydivers fall at about 200 km/h (FAI), so at 80 kg Cd A is about 0.42-0.46 m2. Taken by the share of the body under water. A body moving at a slant to its length shows its length's area by the square of the slant's cosine and this one by the square of its sine",
+            "turnRadiansPerSecond": "How fast a body in the water turns toward how it is drawn lying: the base game's own pace for tipping a swimmer toward its look, 2 rad/s (EntityBehaviorPlayerPhysics.SetPlayerControls), so a body that starts to swim as it plunges in turns no faster than the game turns it. No turning rate of a body in water was found measured",
             "dragAreaSwimming": "A body swimming the front crawl, lying along its stroke: triathletes, the trained swimmers nearest an ordinary one measured, swam 0.90 m/s against 35 W of drag (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415), a drag of 38.9 N, so Cd A = 2 D / (rho v^2) = 0.096 m2 in the pool's fresh water"
         }
     },

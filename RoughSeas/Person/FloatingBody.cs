@@ -19,6 +19,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     private readonly Body body = person.Body;
     private readonly SwimmingArms arms = new(config.Body.Swimming, waves.DensityOf(false));
     private Breaker? breaker;
+    private Posture lying = Posture.Upright;
 
     /// <summary>What the last step found.</summary>
     public FloatReading Reading { get; private set; }
@@ -32,15 +33,16 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     /// <summary>The body's motion after this step, in blocks per tick, as vanilla's physics keeps it.</summary>
     /// <param name="wavesPerSecond">The waves' seconds to a second of <paramref name="seconds"/>: the water's motion, read on the waves' clock, is taken on the tick's, while the body answers in the tick's own seconds.</param>
     /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
+    /// <param name="drawn">How the body is drawn lying, which it turns toward at its pace; upright when not given.</param>
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
-        SwimStroke stroke = default, (double X, double Z) current = default, Posture? lying = null)
+        SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null)
     {
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
         var air = body.Squeezed(body.BreathingLitres, surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
         var under = body.LitresUnder(waterline, air);
         var whole = body.Litres(air);
-        var posture = lying ?? Posture.Upright;
+        var posture = lying = lying.TurnedToward(drawn ?? Posture.Upright, config.Body.TurnRadiansPerSecond * seconds);
         var massKg = body.MassKg + kit.Kg;
         var addedKg = body.AddedKg(waterline, air, density);
         var inertia = massKg + addedKg;
@@ -70,7 +72,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         {
             Meet(water, (ownX - current.X, ownZ - current.Z), share, seconds);
             heaveThrough = Drag((toX, toZ), (thrust * stroke.X / inertiaAcross, thrust * stroke.Z / inertiaAcross), motion.Y * WaterDrag.TicksPerSecond - rise,
-                density, posture, under / whole, Inertias(massKg, waterline, air, density), seconds);
+                density, posture, under / whole, Inertias(posture, massKg, waterline, air, density), seconds);
         }
         var carried = Velocity;
         var heave = heaveThrough + rise + (lift + thrust * stroke.Y / inertia) * seconds;
@@ -102,12 +104,13 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var held = (under + kit.Litres * under / whole) * (1 - churn * churned);
         var water = Water(sea, surface, at, waterline, wavesPerSecond, current);
         var share = (density * held / Body.LitresPerCubicMetre + addedAcrossKg) / inertiaAcross;
+        lying = Posture.Upright;
         lock (gate)
         {
             TakeAsOwn(motion, water);
             Meet(water, (ownX - current.X, ownZ - current.Z), share, seconds);
-            Drag(Toward(sea.Seconds, churned, wavesPerSecond, current), default, 0, density, Posture.Upright, under / whole,
-                Inertias(massKg, waterline, air, density), seconds);
+            Drag(Toward(sea.Seconds, churned, wavesPerSecond, current), default, 0, density, lying, under / whole,
+                Inertias(lying, massKg, waterline, air, density), seconds);
         }
         var carried = Velocity;
 
@@ -152,8 +155,9 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         (ownX, ownZ) = (motion.X * WaterDrag.TicksPerSecond - waveX, motion.Z * WaterDrag.TicksPerSecond - waveZ);
     }
 
-    private (double Along, double Across) Inertias(double massKg, double waterline, double air, double density) =>
-        (massKg + body.AddedAlongKg(waterline, air, density), massKg + body.AddedAcrossKg(waterline, air, density));
+    private (double Along, double Across) Inertias(Posture posture, double massKg, double waterline, double air, double density) =>
+        (massKg + (posture.Prone ? body.AddedAlongKg(waterline, air, density) : body.AddedKg(waterline, air, density)),
+            massKg + body.AddedAcrossKg(waterline, air, density));
 
     private double Drag((double X, double Z) to, (double X, double Z) thrust, double heaveThrough, double density, Posture posture, double shareUnder,
         (double Along, double Across) inertias, double seconds)

@@ -24,6 +24,7 @@ public class BodyConfig
     public double DragAreaAlong;
     public double DragAreaAcross;
     public double DragAreaSwimming;
+    public double TurnRadiansPerSecond;
     public SwimmingConfig Swimming = new();
 }
 

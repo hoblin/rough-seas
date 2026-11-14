@@ -22,6 +22,18 @@ public readonly record struct Posture(double X, double Y, double Z, bool Prone)
     public static Posture Lying(double yaw, double pitch) =>
         Along(Math.Sin(yaw) * Math.Cos(pitch), -Math.Sin(pitch), Math.Cos(yaw) * Math.Cos(pitch));
 
+    /// <summary>This posture turned toward <paramref name="target"/> by at most <paramref name="radians"/>, its axis a line with no head or foot.</summary>
+    public Posture TurnedToward(Posture target, double radians)
+    {
+        var dot = X * target.X + Y * target.Y + Z * target.Z;
+        var sign = dot < 0 ? -1 : 1;
+        var (x, y, z) = (sign * target.X, sign * target.Y, sign * target.Z);
+        var angle = Math.Acos(Math.Min(1, Math.Abs(dot)));
+        if (angle <= radians) return new Posture(x, y, z, target.Prone);
+        var (from, to) = (Math.Sin(angle - radians) / Math.Sin(angle), Math.Sin(radians) / Math.Sin(angle));
+        return new Posture(from * X + to * x, from * Y + to * y, from * Z + to * z, target.Prone);
+    }
+
     /// <summary>The velocity <paramref name="through"/> the water, m/s, after <paramref name="seconds"/> of drag.</summary>
     public (double X, double Y, double Z) Dragged((double X, double Y, double Z) through, BodyConfig body, double density, double shareUnder,
         double alongKg, double acrossKg, double seconds)

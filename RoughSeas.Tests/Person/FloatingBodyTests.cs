@@ -30,6 +30,8 @@ public class FloatingBodyTests
 
         public SwimStroke Stroke { get; set; } = stroke;
 
+        public Posture Drawn => Stroke.X != 0 || Stroke.Z != 0 ? Posture.Along(Stroke.X, Stroke.Y, Stroke.Z) : Posture.Upright;
+
         public (double X, double Z) Current { get; set; }
 
         public double Feet { get; private set; } = feet;
@@ -45,8 +47,7 @@ public class FloatingBodyTests
         public FloatReading Step()
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
-            var lying = Stroke.Prone ? Posture.Along(Stroke.X, Stroke.Y, Stroke.Z) : Posture.Upright;
-            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current, lying);
+            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current, Drawn);
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
@@ -336,7 +337,7 @@ public class FloatingBodyTests
         run.Settle(1);
 
         Assert.InRange(first, 55, 59);
-        Assert.InRange(run.MovedX - from, 0.65, 0.9);
+        Assert.InRange(run.MovedX - from, 0.6, 0.9);
     }
 
     [Fact]
@@ -436,10 +437,10 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void ABodyLyingAcrossItsFallStopsItShallower()
+    public void ABodyThatStartsToSwimAsItPlungesInTurnsAndStillGoesDeep()
     {
-        var (feetFirst, flat) = (Plunged(default), Plunged(Ahead));
-        Assert.True(flat < feetFirst / 2, $"{flat:F2} m flat against {feetFirst:F2} m feet first");
+        var (feetFirst, swimming) = (Plunged(default), Plunged(Ahead));
+        Assert.InRange(swimming / feetFirst, 0.5, 1);
     }
 
     private static double Glided(SwimStroke stroke)
