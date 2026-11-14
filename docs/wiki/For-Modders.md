@@ -550,7 +550,7 @@ The outrigger and the sailboat sail by the wind, a force on the hull as the wate
 - `HullSet.Settle` and `Relax` take a steady push in m/s², and `EntityBehaviorCurrentDrift.Load` includes the wind's. `IHullForm` gained `Finished`.
 - `config/wind.json` holds the air, the wind's growth with height, a bluff body's drag, a sail's camber and cloth, and the sails' polars, each number with its source. A `[wind]` line logs the wind, the sail's force and its rig's tensions every few seconds where the vessel's physics runs, and each shunt on the server.
 
-New: the behaviour `roughseas:windage` with its keys, `IWindOnHull`, `BodyInWind`, `VesselInWind`, `WindSurface`, `Sail`, `SailForm`, `SailPolar` with its kinds `HeadingPolar` and `IncidencePolar`, `Rig`, `Rigging`, `CrabClaw`, `SquareRig`, `RigRenderer`, `WindModSystem`, `SailedByWind`, `RoughSeas.Lines.Line`, `Anchor.Dragging`, `config/wind.json`, `patches/wind-vessels.json`, the watched int `roughseas:tacked`.
+New: the behaviour `roughseas:windage` with its keys, `IWindOnHull`, `BodyInWind`, `VesselInWind`, `WindSurface`, `Sail`, `SailForm`, `SailPolar` with its kinds `HeadingPolar` and `IncidencePolar`, `RigShape` (the rig's state, which whoever runs her physics publishes: the server in the watched bytes `roughseas:rig`, the steering client to the server on the channel `roughseas-wind`; every other side draws it), `RigRopes`, `RoughSeas.Lines.VanillaRopes`, `Rig`, `Rigging`, `CrabClaw`, `SquareRig`, `RigRenderer`, `WindModSystem`, `SailedByWind`, `RoughSeas.Lines.Line`, `Anchor.Dragging`, `config/wind.json`, `patches/wind-vessels.json`, the watched int `roughseas:tacked`.
 
 ## What not to touch
 

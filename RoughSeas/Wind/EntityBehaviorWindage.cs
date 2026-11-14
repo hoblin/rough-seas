@@ -7,6 +7,8 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
 namespace RoughSeas.Wind;
@@ -17,6 +19,7 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     public const string TackedKey = "roughseas:tacked";
 
     private const string SailKey = "sailPosition";
+    private const string ShapeKey = "roughseas:rig";
 
     private WindModSystem wind = null!;
     private SeaWeatherSystem sea = null!;
@@ -76,8 +79,23 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         if (drawn == null || hull == null) return;
 
-        if (!blown && entity.IsRendered) Blow(hull.Velocity, deltaTime);
+        if (!blown && Sail != null && entity.WatchedAttributes.GetBytes(ShapeKey) is { } bytes) Sail.Show(SerializerUtil.Deserialize<RigShape>(bytes));
         blown = false;
+    }
+
+    /// <summary>Server only: the rig as the client that steers her moves it.</summary>
+    public void Reported(IServerPlayer player, RigShape shape)
+    {
+        if (Sail == null || entity.GetInterface<IMountable>()?.Controller != player.Entity) return;
+
+        Sail.Show(shape);
+        Published(shape);
+    }
+
+    private void Published(RigShape shape)
+    {
+        entity.WatchedAttributes.SetBytes(ShapeKey, SerializerUtil.Serialize(shape));
+        entity.WatchedAttributes.MarkPathDirty(ShapeKey);
     }
 
     public override void OnEntityDespawn(EntityDespawnData despawn)
@@ -97,17 +115,22 @@ public class EntityBehaviorWindage(Entity entity) : EntityBehavior(entity), IWin
     {
         var (blowing, load) = Blow(velocity, seconds);
         if (load is { } blew) Note(blowing, velocity, blew);
+        if (Sail?.Shape(entity.EntityId) is { } shape)
+        {
+            if (entity.Api.Side == EnumAppSide.Server) Published(shape);
+            else wind.Report(shape);
+        }
         return load ?? default;
     }
 
     private ((double X, double Z) Blowing, WindLoad? Load) Blow((double X, double Z) velocity, double seconds)
     {
+        var (was, shunting) = (Sail?.State, Sail?.Shunting);
         Hoist();
         blown = true;
         if (hull == null || !entity.Swimming) return (default, null);
 
         var blowing = sea.Map.Wind(entity.Pos.X, entity.Pos.Z);
-        var (was, shunting) = (Sail?.State, Sail?.Shunting);
         var load = body.Load(blowing, velocity, entity.Pos.Yaw, hull.Shape.KeelMetres + hull.Afloat.DraftMetres, seconds);
         if (Sail is { } shunted && shunted.Shunting != shunting)
             wind.Log(entity, "{0} her shunt to her {1} end: {2}", shunted.Shunting ? "begins" : "ends", entity.WatchedAttributes.GetInt(TackedKey) == 0 ? "bow" : "stern",

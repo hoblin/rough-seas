@@ -78,8 +78,26 @@ public class VesselInWindTests
         Sail(FromAstern, FullSail, AsBuilt, 20);
         Sail(OverHerFloat, FullSail, Shunted, 30);
         Sail(OverHerFloat, HalfSail, Shunted, 20);
-        Sail(OverHerFloat, Furled, Shunted, 20);
+        Sail(OverHerFloat, Furled, AsBuilt, 20);
+        Sail(OverHerFloat, FullSail, Shunted, 20);
+        Sail(OverHerLee, FullSail, Shunted, 20);
         Assert.True(fastest < Fixtures.Wind.JumpMetresPerSecond, $"a point moved at {fastest:F1} m/s");
+    }
+
+    [Theory]
+    [InlineData(0.5)]
+    [InlineData(3)]
+    [InlineData(25)]
+    public void ARigShownWhatHerHelmComputesStandsExactlyAsHers(double secondsIntoAShunt)
+    {
+        var (helm, sail) = Outrigger(FullSail);
+        helm.Steady(OverHerFloat, Still, Yaw, Waterline);
+        sail.Hoist(FullSail, Shunted);
+        helm.Steady(OverHerFloat, Still, Yaw, Waterline, secondsIntoAShunt);
+        var (_, shown) = Outrigger(Furled);
+        shown.Show(sail.Shape(1));
+        foreach (var (theirs, ours) in sail.Rig.End.Marks(sail.State).Zip(shown.Rig.End.Marks(shown.State)))
+            Assert.Equal(0, (theirs - ours).Length, 6);
     }
 
     [Fact]

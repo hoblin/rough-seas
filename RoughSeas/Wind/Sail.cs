@@ -6,7 +6,7 @@ using RoughSeas.Water;
 namespace RoughSeas.Wind;
 
 public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double fullSquareMetres, double halfSquareMetres, (double Reach, double Span) half,
-    double clothNewtonsPerSquareMetre, CrewConfig crew)
+    double clothNewtonsPerSquareMetre, double camber, CrewConfig crew)
     : WindSurface
 {
     private const int Trims = 36;
@@ -26,15 +26,17 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
     private RigState? hoistFrom;
     private (double Reach, double Span) shown = (1, 0);
     private double slack;
+    private double tick;
 
-    private sealed class Shunt(Rigging from, Rigging to, int toward, RigState start, RigState end, (double Haul, double Carry) metres)
+    private sealed class Shunt(Rigging from, Rigging to, int toward, RigState start, bool rolled)
     {
         public Rigging From => from;
         public Rigging To => to;
         public int Toward => toward;
         public RigState Start => start;
-        public RigState End => end;
-        public (double Haul, double Carry) Metres => metres;
+        public bool Rolled => rolled;
+        public RigState End { get; } = rolled ? to.Furled : to.Pose(to.Resting, 0);
+        public (double Haul, double Carry) Metres { get; } = to.ShuntMetres(from);
         public double Seconds { get; set; }
     }
 
@@ -70,23 +72,57 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
             1 => (halfSquareMetres, half),
             _ => (fullSquareMetres, SailForm.Whole)
         };
-        if (tacked == rig.Tacked || shunt != null) return;
+        if (tacked == rig.Tacked || shunt != null || Hoisting) return;
 
-        var (from, to) = (rig.End, rig.EndAt(tacked));
-        shunt = new Shunt(from, to, tacked, State, Rolled ? to.Furled : to.Pose(to.Resting, 0), to.ShuntMetres(from));
+        shunt = new Shunt(rig.End, rig.EndAt(tacked), tacked, State, Rolled);
         (goal, trimmed) = (null, null);
+    }
+
+    private bool Hoisting => hoistFrom != null;
+
+    public RigShape Shape(long entityId) => new()
+    {
+        EntityId = entityId, Tacked = rig.Tacked, Yard = State.Yard, Boom = State.Boom, Fill = Fill, Hoisted = hoisted, Reach = shown.Reach,
+        Span = shown.Span, Slack = slack, Aback = Aback, Toward = shunt?.Toward ?? -1, StartYard = shunt?.Start.Yard ?? 0, StartBoom = shunt?.Start.Boom ?? 0,
+        StartRolled = shunt?.Rolled ?? false, ShuntSeconds = shunt?.Seconds ?? 0, FromYard = hoistFrom?.Yard ?? 0, FromBoom = hoistFrom?.Boom ?? 0,
+        Hoisting = hoistFrom != null
+    };
+
+    public void Show(RigShape shape)
+    {
+        rig.Tacked = shape.Tacked;
+        (shown, hoisted, slack, Fill, Aback) = ((shape.Reach, shape.Span), shape.Hoisted, shape.Slack, shape.Fill, shape.Aback);
+        rig.Set = shown;
+        var end = rig.End;
+        hoistFrom = shape.Hoisting ? end.Pose(shape.FromYard, shape.FromBoom) : null;
+        if (shape.Toward >= 0)
+        {
+            var from = end;
+            shunt = new Shunt(from, rig.EndAt(shape.Toward), shape.Toward, shape.StartRolled ? from.Furled : from.Pose(shape.StartYard, shape.StartBoom), shape.StartRolled)
+                { Seconds = shape.ShuntSeconds };
+            state = Carried(shunt).State;
+            return;
+        }
+
+        shunt = null;
+        state = hoistFrom != null ? end.Between(end.Furled, hoistFrom, hoisted)
+            : Rolled && end.HoistMetres > 0 ? end.Furled
+            : end.Slackened(end.Pose(shape.Yard, shape.Boom), slack);
     }
 
     public bool Draws(Airflow air) => air.Speed > 0 && (SquareMetres > 0 || !Rolled || shunt != null);
 
     public void Slack(double seconds)
     {
+        tick = seconds;
         Advance(seconds);
-        (Pressure, Fill, Aback, Load) = (0, 0, false, null);
+        (Pressure, Aback, Load) = (0, false, null);
+        Bellied(0, crew.HaulMetresPerSecond);
     }
 
     public override Push[] Pushes(Airflow air, double halfDensity, double seconds)
     {
+        tick = seconds;
         if (Advance(seconds))
         {
             var (at, luffing) = Luffing(air, halfDensity);
@@ -119,15 +155,13 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         if (shunt is { } carrying)
         {
             carrying.Seconds += seconds;
-            var hauled = Math.Min(carrying.Metres.Haul, light * carrying.Seconds);
-            var walked = (carrying.Seconds - carrying.Metres.Haul / light) * crew.WalkMetresPerSecond;
-            var carried = carrying.Metres.Carry <= 0 ? 1 : Math.Clamp(walked / carrying.Metres.Carry, 0, 1);
-            state = carrying.To.Shunted(carrying.From, carrying.Start, carrying.End, hauled, carried);
-            if (carried < 1) return true;
+            var (shunted, done) = Carried(carrying);
+            state = shunted;
+            if (!done) return true;
 
             rig.Tacked = carrying.Toward;
             slack = Math.Max(0, carrying.To.SheetMetres(State) - carrying.To.SheetMetres(carrying.End));
-            state = carrying.End;
+            state = carrying.To.Slackened(carrying.End, slack);
             (shunt, goal, trimmed) = (null, null, null);
         }
 
@@ -147,6 +181,15 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
 
         (hoistFrom, goal, trimmed) = (null, null, null);
         return up <= 0;
+    }
+
+    private (RigState State, bool Done) Carried(Shunt carrying)
+    {
+        var light = crew.HaulMetresPerSecond;
+        var hauled = Math.Min(carrying.Metres.Haul, light * carrying.Seconds);
+        var walked = (carrying.Seconds - carrying.Metres.Haul / light) * crew.WalkMetresPerSecond;
+        var carried = carrying.Metres.Carry <= 0 ? 1 : Math.Clamp(walked / carrying.Metres.Carry, 0, 1);
+        return (carrying.To.Shunted(carrying.From, carrying.Start, carrying.End, hauled, carried), carried >= 1);
     }
 
     private (HullPoint At, HullPoint Force) Trimmed(Airflow air, double halfDensity, double seconds, double fromBow, bool luffs,
@@ -170,8 +213,11 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         var (first, last) = (end.Free.From, end.Free.From + end.Free.Span);
         var (at, pressing) = Plate(end.Pose(Math.Clamp(State.Yard, first, last), State.Boom), air, halfDensity);
         var stop = (at - end.Origin).Cross(pressing).Dot(end.Axis) < 0 ? first : last;
-        var yard = Toward(Math.Clamp(State.Yard, first, last), stop, crew.HaulMetresPerSecond * seconds / Math.Max(ShortestArmMetres, end.Arm(State)));
-        Kept(end.Track(yard, State.Boom, posed => Plate(posed, air, halfDensity)));
+        var pressed = (Func<RigState, (HullPoint, HullPoint)>)(posed => Plate(posed, air, halfDensity));
+        var hauled = crew.HaulMetresPerSecond * seconds;
+        var yard = Toward(Math.Clamp(State.Yard, first, last), stop, hauled / Math.Max(ShortestArmMetres, end.Arm(State)));
+        var boom = Toward(State.Boom, end.Track(yard, State.Boom, pressed).Boom, hauled / Math.Max(ShortestArmMetres, end.BoomArm(State)));
+        Kept(end.Held(yard, boom, pressed));
         return Backed(air, halfDensity);
     }
 
@@ -233,7 +279,8 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
 
     private (HullPoint At, HullPoint Force) Luffing(Airflow air, double halfDensity)
     {
-        (Aback, Pressure, Fill) = (false, 0, 0);
+        (Aback, Pressure) = (false, 0);
+        Bellied(0, air.Speed);
         return (State.Centre(Rolled ? SailForm.Whole : shown, 0), halfDensity * air.Speed * aback.Friction * Area() * new HullPoint(air.Along, 0, air.Across));
     }
 
@@ -274,8 +321,9 @@ public sealed class Sail(SailPolar polar, IncidencePolar aback, Rig rig, double 
         return lengths > 0 ? (normal.Along * force.Along + normal.Across * force.Across) / lengths : 0;
     }
 
-    private void Filled(Airflow air) =>
-        Fill = Math.Sign(Flow(State.Form.Normal, air)) * Pressure / (Pressure + clothNewtonsPerSquareMetre);
+    private void Filled(Airflow air) => Bellied(Math.Sign(Flow(State.Form.Normal, air)) * Pressure / (Pressure + clothNewtonsPerSquareMetre), air.Speed);
+
+    private void Bellied(double fill, double metresPerSecond) => Fill = Toward(Fill, fill, metresPerSecond * tick / (camber * rig.End.SpanMetres));
 
     private double LeeOf(RigState posed) => rig.End.LeeOf(posed, shown);
 
