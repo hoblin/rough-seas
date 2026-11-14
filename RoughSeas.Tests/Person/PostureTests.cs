@@ -23,20 +23,4 @@ public class PostureTests
         var (x, y, _) = slant.Dragged((3, -6, 0), Body, Seawater, 1, Kg, Kg, 0.1);
         Assert.Equal(-2, y / x, 9);
     }
-
-    [Fact]
-    public void ItTurnsTowardHowItIsDrawnNoFasterThanItsPace()
-    {
-        var turned = Posture.Upright.TurnedToward(Flat, 0.5);
-        Assert.Equal(Math.Cos(0.5), turned.Y, 9);
-        Assert.Equal(Math.Sin(0.5), turned.X, 9);
-    }
-
-    [Fact]
-    public void ItReachesHowItIsDrawnOnceThatIsWithinItsPace() =>
-        Assert.Equal(Flat, Posture.Along(1, 0.1, 0).TurnedToward(Flat, 0.5));
-
-    [Fact]
-    public void ItsAxisHasNoHeadOrFootSoItTurnsTheShortWay() =>
-        Assert.Equal(1, Posture.Along(1, 0.1, 0).TurnedToward(Posture.Along(-1, 0, 0), 0.5).X, 9);
 }

@@ -437,10 +437,10 @@ public class FloatingBodyTests
     }
 
     [Fact]
-    public void ABodyThatStartsToSwimAsItPlungesInTurnsAndStillGoesDeep()
+    public void ABodyLyingAcrossItsFallStopsItShallower()
     {
-        var (feetFirst, swimming) = (Plunged(default), Plunged(Ahead));
-        Assert.InRange(swimming / feetFirst, 0.5, 1);
+        var (feetFirst, flat) = (Plunged(default), Plunged(Ahead));
+        Assert.True(flat < feetFirst / 2, $"{flat:F2} m flat against {feetFirst:F2} m feet first");
     }
 
     private static double Glided(SwimStroke stroke)

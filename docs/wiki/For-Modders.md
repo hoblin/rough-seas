@@ -31,7 +31,7 @@ If you build on these pages, or need something they don't give, tell us on the [
 A body moving through the water drags by how it lies, along its length and across it, and one that comes into the water brings its way in ([the science](The-Science-of-a-Body-in-the-Water#a-body-in-the-water)).
 
 - `config/person.json`'s `body.dragAreaAlong` is 0.084 m², a body towed along its length in water, in place of 0.25 m² from skydivers in air.
-- New `Posture`: how a body lies, upright or along a unit axis, and its drag by the cross-flow principle. `FloatingBody.Step` takes how the body is drawn as `drawn` (upright when not given) and turns the body toward it at `body.turnRadiansPerSecond`, new in `config/person.json`; `BodyAfloat` draws a swimming player along vanilla's `WalkYaw` and `WalkPitch`. A swimmer's way up and down and across now drag as one velocity. `SwimStroke.Prone` is gone: how a body lies is its `Posture`.
+- New `Posture`: how a body lies, upright or along a unit axis, and its drag by the cross-flow principle. `FloatingBody.Step` takes how the body is drawn as `drawn` (upright when not given); `BodyAfloat` draws a swimming player along vanilla's `WalkYaw` and `WalkPitch`. A swimmer's way up and down and across now drag as one velocity. `SwimStroke.Prone` is gone: how a body lies is its `Posture`.
 - A `FloatingBody` that starts swimming takes the motion it comes in with as its own velocity, as `Wade` does each step. A push of yours on a player already afloat still meets vanilla's drag only.
 
 ### A swimmer strokes by power
