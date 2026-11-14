@@ -91,7 +91,9 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
         for (var k = 0; k < ropes.Count; k++)
         {
             var (rope, points) = (ropes[k], ropes[k].Chain.Points);
-            var (first, last, middle) = (points[0], points[^1], points[points.Length / 2]);
+            var (first, last) = (points[0], points[^1]);
+            var (before, after) = (points[(points.Length - 1) / 2], points[points.Length / 2]);
+            var middle = new Vec3d((before.X + after.X) / 2, (before.Y + after.Y) / 2, (before.Z + after.Z) / 2);
             var off = middle.SubCopy((first.X + last.X) / 2, (first.Y + last.Y) / 2, (first.Z + last.Z) / 2);
             var speed = rope.Middle is { } was && seconds > 0 ? off.DistanceTo(was) / seconds : 0;
             rope.Middle = off;

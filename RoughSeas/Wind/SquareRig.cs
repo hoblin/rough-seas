@@ -4,15 +4,12 @@ using Vintagestory.API.Datastructures;
 
 namespace RoughSeas.Wind;
 
-public sealed record SquareState(double Yard, HullPoint ArmPort, HullPoint ArmStarboard, HullPoint ClewPort, HullPoint ClewStarboard, SailForm Form, double SheetNewtons,
-    bool PortSheeted = false)
+public sealed record SquareState(double Yard, HullPoint ArmPort, HullPoint ArmStarboard, HullPoint ClewPort, HullPoint ClewStarboard, SailForm Form, double SheetNewtons)
     : RigState(Yard, 0, Form, SheetNewtons);
 
 /// <summary>A square sail on a yard braced about the mast, sheeted at its lee clew.</summary>
 public sealed class SquareRig : Rigging
 {
-    private const int EasedSamples = 16;
-
     public const string Kind = "square";
 
     private const double ShortestLeverMetres = 1e-3;
@@ -112,7 +109,7 @@ public sealed class SquareRig : Rigging
         var sheet = (lead - clew).Unit;
         var reach = (clew - heel).Cross(sheet).Dot(axis);
         var pulled = Math.Abs(reach) > ShortestLeverMetres ? -(at - heel).Cross(force).Dot(axis) / reach : double.NaN;
-        return posed with { SheetNewtons = pulled, PortSheeted = force.Across < 0 };
+        return posed with { SheetNewtons = pulled };
     }
 
     private (HullPoint Clew, HullPoint Lead) Sheeted(SquareState state, HullPoint force) =>
@@ -157,20 +154,8 @@ public sealed class SquareRig : Rigging
         canvas.Part("yard", arms, (square.ArmPort, square.ArmStarboard));
         var (footPort, footStarboard) = (square.Form.At(0, 0, fill, Set), square.Form.At(1, 0, fill, Set));
         if (Set.Span < 1) canvas.Part("roll", arms, (footPort, footStarboard), Math.Sqrt(1 - Set.Span));
-        var (portRun, starboardRun) = ((leads.Port - footPort).Length, (leads.Starboard - footStarboard).Length);
-        canvas.Line(footPort, leads.Port, Widths.Line, square.PortSheeted ? portRun : Math.Max(portRun, Eased(0, leads.Port, fill)));
-        canvas.Line(footStarboard, leads.Starboard, Widths.Line, square.PortSheeted ? Math.Max(starboardRun, Eased(1, leads.Starboard, fill)) : starboardRun);
-    }
-
-    private double Eased(double reach, HullPoint lead, double fill)
-    {
-        var longest = 0.0;
-        for (var k = 0; k <= EasedSamples; k++)
-        {
-            var form = ((SquareState)Pose(Free.From + Free.Span * k / EasedSamples, 0)).Form;
-            longest = Math.Max(longest, (lead - form.At(reach, 0, fill, Set)).Length);
-        }
-        return longest;
+        canvas.Line(footPort, leads.Port, Widths.Line, (leads.Port - footPort).Length);
+        canvas.Line(footStarboard, leads.Starboard, Widths.Line, (leads.Starboard - footStarboard).Length);
     }
 
     public override void DrawFurled(IRigCanvas canvas, RigState state)
