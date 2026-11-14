@@ -52,7 +52,7 @@ A swamped hull lies awash, or sinks. It sinks when what the water doesn't hold u
 | [Raft](Raft), oak | 60 kg; bamboo 138 kg |
 | [Reed boat](Reed-Boat), fresh | 118 kg, less the water it has soaked up |
 | [Dugout](Dugout), oak | 157 kg |
-| [Outrigger canoe](Outrigger-Canoe), oak | 283 kg |
+| [Outrigger canoe](Outrigger-Canoe), oak | 289 kg |
 | [Sailboat](Sailboat), oak | nothing: it goes down |
 
 The wood counts. A sailboat carries two fifths of its weight in ballast to stand up to its sail: of oak, aged wood, birch, maple, purpleheart or ebony it goes down, while of pine, larch, acacia, walnut, bald cypress, redwood or kapok it floats awash. Ebony floats a dugout or an outrigger awash empty, and takes it down only loaded hard. A wood heavier than seawater sinks any hull of it, such as Wildcraft's ekki, lignum vitae, leadwood, mangrove, pink ivory and African blackwood ([Beside other mods](Other-Mods#wildcraft-trees-and-shrubs)).
@@ -123,6 +123,6 @@ These were measured in 2.0, in seas set to each height, before capsizing was swi
 
 ## At anchor
 
-A vessel at [anchor](Anchoring) ships less water, three tenths of it, but a breaker slams it as hard as any other. It still lies across the waves; turning its bow into the wind comes with sailing in [Seamanship](Roadmap#seamanship).
+A vessel at [anchor](Anchoring) ships less water, three tenths of it, but a breaker slams it as hard as any other. It still lies across the waves; turning its bow into the wind comes with weathervaning in [Seamanship](Roadmap#seamanship).
 
 With [Water in the bilge](World-Settings#the-mechanics) off, waves ship no water. With [Hull damage](World-Settings#the-mechanics) off, no breaker strikes a hull.

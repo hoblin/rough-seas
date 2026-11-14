@@ -24,7 +24,7 @@ public sealed class VesselRope(Entity vessel, ClothManager cloths)
     public ClothSystem? Tied =>
         vessel.World.Side == EnumAppSide.Server
             ? tieable?.ClothIds?.value.Select(cloths.GetClothSystem).FirstOrDefault(Holds)
-            : cloths.GetClothSystemAttachedToEntity(vessel.EntityId);
+            : RoughSeas.Lines.VanillaRopes.Tied(cloths).FirstOrDefault(Holds);
 
     /// <summary>
     /// Server only: forgets the ids that now name another vessel's or animal's rope. Vanilla leaves a torn rope's id

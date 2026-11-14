@@ -9,9 +9,10 @@ namespace RoughSeas.Vessels;
 /// <summary>
 /// Vanilla's boat, with the oars she carries following her rower's stroke and seats that face their riders the
 /// way they are turned (<see cref="VesselSeat"/>). A speed multiplier of 0 leaves her dead in the water: no
-/// paddling, no turning.
+/// paddling, no turning. Under sail her helm turns her whatever her rider holds.
 /// </summary>
 [ReliesOn("EntityBehaviorInterpolatePosition", "OnReceivedServerPos", "starts from an empty snapshot at 0,0,0 until the first server position")]
+[ReliesOn("Vintagestory.GameContent.EntityBoat", "SeatsToMotion", "skips a rider HasPaddle refuses before it adds the sail's thrust and the keys' turn")]
 public class EntityVessel : EntityBoat, ISeatInstSupplier
 {
     public const string ClassName = "roughseas:EntityVessel";
@@ -46,7 +47,7 @@ public class EntityVessel : EntityBoat, ISeatInstSupplier
         Wood.Of(Properties.Variant) is { } wood ? Lang.GetMatching($"{Code.Domain}:item-creature-{Code.Path}", wood.Name)
         : Reeds.NameOf(Code, Properties.Variant, "item-creature") ?? base.GetName();
 
-    protected override bool HasPaddle(Entity entity) => SpeedMultiplier > 0 && base.HasPaddle(entity);
+    protected override bool HasPaddle(Entity entity) => SpeedMultiplier > 0 && (sailPosition > 0 || base.HasPaddle(entity));
 
     IMountableSeat ISeatInstSupplier.CreateSeat(IMountable mountable, string seatId, SeatConfig config) =>
         new VesselSeat(mountable, seatId, config);

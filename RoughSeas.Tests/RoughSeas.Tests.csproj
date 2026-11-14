@@ -55,11 +55,13 @@
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\hides.json" Link="hides.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\drag.json" Link="drag.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\propulsion.json" Link="propulsion.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\config\wind.json" Link="wind.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\propulsion-vessels.json" Link="propulsion-vessels.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\vessels-hull-boxes.json" Link="vessels-hull-boxes.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\config\vessels\woodrecipes.json" Link="woodrecipes.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\vessels-vanilla-boats.json" Link="vessels-vanilla-boats.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\storms-vessels.json" Link="storms-vessels.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\RoughSeas\assets\roughseas\patches\wind-vessels.json" Link="wind-vessels.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\boats-drift.json" Link="boats-drift.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\compat-shipwright.json" Link="compat-shipwright.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\RoughSeas\assets\roughseas\patches\player-*.json" LinkBase="patches" CopyToOutputDirectory="PreserveNewest" />

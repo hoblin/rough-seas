@@ -88,7 +88,7 @@ One ticket ships as one pull request. A big PR is fine here, since our reviewers
 
 A player meets your work at sea, not in the diff. Before the PR leaves draft, load the mod into the game and see the change happen: the storm rises, the raft breaks, the shark comes. A test that passes is not a mechanic that plays well.
 
-Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[shipyard\]\|\[sounds\]\|\[shore\]\|\[person\]\|\[ew\]\|\[we\]\|\[shipwright\]\|\[cargo\]' "$BENCH_DATA/Logs/server-debug.log"`; what a client decides, such as the sounds it plays itself or the piles a hold draws, is in `client-debug.log`).
+Verify it yourself, through the bench. Never hand an in-game check to a human; ask them for decisions only. When the bench can't drive a check, build the tool. Debug from the log, not the screen: every decision our code makes logs a debug line (`grep -a '\[seas\]\|\[storms\]\|\[vessels\]\|\[shipyard\]\|\[sounds\]\|\[shore\]\|\[person\]\|\[ew\]\|\[we\]\|\[shipwright\]\|\[cargo\]\|\[wind\]' "$BENCH_DATA/Logs/server-debug.log"`; what a client decides, such as the sounds it plays itself or the piles a hold draws, is in `client-debug.log`).
 
 Close the game when you're done testing. A bench client left running holds the machine's video memory, and three clones' games starve everything else. `bin/client stop` saves the world, waits for the save and stops the client; killing its tmux session instead loses whatever changed since the last autosave. A server stops with `/stop` in its tmux session, `$BENCH-server`.
 

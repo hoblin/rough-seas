@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "撑篙水深",
     "worldattribute-poleDepth-desc": "撑篙只能在够得着水底的地方推船。关闭后，在任何深度的水里都能像撑到底一样推船。",
     "worldattribute-swimmerBreakers": "碎浪打向游泳者",
-    "worldattribute-swimmerBreakers-desc": "游泳时在你头上破碎的浪会把你压到水下并带着你走，泛着泡沫的水托起你的力也更小。关闭后，不会有浪在游泳者头上破碎；你仍会随浪漂浮，并随着浪的节奏呼吸。"
+    "worldattribute-swimmerBreakers-desc": "游泳时在你头上破碎的浪会把你压到水下并带着你走，泛着泡沫的水托起你的力也更小。关闭后，不会有浪在游泳者头上破碎；你仍会随浪漂浮，并随着浪的节奏呼吸。",
+    "worldattribute-sailWind": "帆上的风",
+    "worldattribute-sailWind-desc": "帆所受的风比实际吹的风强这么多倍，帆船的航速大约也快这么多倍，操纵手感不变。风本身、海面以及降下帆的船保持原样。1× 为真实的风。"
 }

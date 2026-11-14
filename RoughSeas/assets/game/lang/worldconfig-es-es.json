@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Profundidad de la pértiga",
     "worldattribute-poleDepth-desc": "La pértiga solo empuja donde alcanza el fondo. Desactivado, empuja en agua de cualquier profundidad como con su impulso completo.",
     "worldattribute-swimmerBreakers": "Rompientes sobre nadadores",
-    "worldattribute-swimmerBreakers-desc": "Una ola que rompe sobre ti mientras nadas te hunde y te arrastra consigo, y su agua espumosa te sostiene menos. Desactivado, ninguna ola rompe sobre un nadador; sigues flotando sobre las olas y respiras a su ritmo."
+    "worldattribute-swimmerBreakers-desc": "Una ola que rompe sobre ti mientras nadas te hunde y te arrastra consigo, y su agua espumosa te sostiene menos. Desactivado, ninguna ola rompe sobre un nadador; sigues flotando sobre las olas y respiras a su ritmo.",
+    "worldattribute-sailWind": "Viento en las velas",
+    "worldattribute-sailWind-desc": "Las velas sienten el viento tantas veces más fuerte de lo que sopla, y un velero navega más o menos tantas veces más rápido y se gobierna como antes. El viento en sí, el mar y una embarcación con la vela arriada quedan igual. 1× es el viento real."
 }

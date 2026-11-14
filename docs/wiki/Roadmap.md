@@ -135,12 +135,20 @@ Other mods' boats take our sea, and the water lets you out of it.
 - **Every text translated,** the hold's "Open" hint among them.
 - **Lighter on the machine:** the surf, the shader and the shore water do their work once, for about a third less time spent in the mod.
 
-## Seamanship
+## Next release
 
 Sailing becomes sailing.
 
-- **Sailing by the wind.** A sail drives a boat by where the wind blows from: fast with the wind on the quarter, slow close to it, and nowhere straight into it. On an island with the wind against you, you may wait for it to turn.
-- **Leeway.** The wind pushes every vessel sideways, harder the stronger it blows and the more the vessel shows above water, sail and all.
+- **[Sailing by the wind](The-Science-of-the-Hull#under-sail).** The [outrigger](Outrigger-Canoe#sailing-it) and the [sailboat](Sailboat#sailing-it) sail by where the wind blows from: well with it abeam or behind, slowly close to it, and nowhere straight into it. On an island with the wind against you, you may wait for it to turn. The wind pushes them sideways as they sail and drifts them with the sail down, and a sail set at a mooring strains the rope.
+- **The outrigger rigged as history built it.** Its mast stands by the float's side, raked toward the sail's foot, with a shroud and a shore out to the float and running stays to both ends; the yard hangs on a halyard. It keeps its float to windward and changes tack by shunting: click the sail step at the far end. It sails whatever you hold, where before it needed a paddle in hand. Its rig takes seven poles, two of them 4 m, three cloths and five ropes.
+- **Sails that fill with the wind.** Both sails are drawn as cloth that fills, trims itself and heaves with the hull; the sailboat's no longer stays put while the hull rises and falls under it.
+
+## Seamanship
+
+The boat answers the sea and the wind the way a real one does.
+
+- **A rudder.** A rudder or steering paddle that turns a boat by its way through the water, in place of vanilla's turn under sail.
+- **Leeway for every vessel.** The wind pushes the paddled and rowed vessels sideways too, harder the stronger it blows and the more they show above water.
 - **Weathervaning.** A boat at [anchor](Anchoring) swings bow to the wind, and rides the waves the way real boats do.
 - **A windsock** to read the wind.
 - **Masts that break** in strong wind, by the strength of their wood.

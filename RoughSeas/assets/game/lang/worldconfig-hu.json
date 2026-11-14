@@ -17,5 +17,7 @@
     "worldattribute-poleDepth": "Csáklyarúd mélysége",
     "worldattribute-poleDepth-desc": "A csáklyarúd csak ott tol, ahol eléri a fenéket. Kikapcsolva bármilyen mély vízben úgy tol, mint teljes lökésnél.",
     "worldattribute-swimmerBreakers": "Törőhullámok az úszókon",
-    "worldattribute-swimmerBreakers-desc": "Az a hullám, amely úszás közben rád törik, a víz alá nyom és magával visz, habzó vize pedig kevésbé tart fenn. Kikapcsolva egyetlen hullám sem törik rá az úszóra; továbbra is a hullámokon lebegsz, és a ritmusukra lélegzel."
+    "worldattribute-swimmerBreakers-desc": "Az a hullám, amely úszás közben rád törik, a víz alá nyom és magával visz, habzó vize pedig kevésbé tart fenn. Kikapcsolva egyetlen hullám sem törik rá az úszóra; továbbra is a hullámokon lebegsz, és a ritmusukra lélegzel.",
+    "worldattribute-sailWind": "Szél a vitorlákban",
+    "worldattribute-sailWind-desc": "A vitorlák ennyiszer erősebbnek érzik a szelet, mint amilyen, így a vitorlás nagyjából ennyiszer gyorsabban halad, és ugyanúgy kormányozható. Maga a szél, a tenger és a bevont vitorlájú hajó változatlan marad. 1× a valódi szél."
 }

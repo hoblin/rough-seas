@@ -6,6 +6,7 @@ using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Vessels;
 using RoughSeas.Water;
+using RoughSeas.Wind;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
@@ -40,7 +41,28 @@ public static class Fixtures
         return config;
     });
 
+    private static readonly Lazy<WindConfig> wind = new(() => JsonConvert.DeserializeObject<WindConfig>(Shipped("wind.json"))!);
+
     public static StormsConfig Config() => config.Value;
+
+    public static WindConfig Wind => wind.Value;
+
+    public static JToken WindageOf(string vessel) => Entity(vessel)["behaviorConfigs"]![EntityBehaviorWindage.Code]!;
+
+    public static JToken SailboatWindage => BehaviorConfig("wind-vessels.json", "boat-sailed", EntityBehaviorWindage.Code);
+
+    public static VesselInWind InWind(string vessel) => VesselInWind.From(new JsonObject(WindageOf(vessel)), Wind);
+
+    public static VesselInWind SailboatInWind() => VesselInWind.From(new JsonObject(SailboatWindage), Wind);
+
+    public const double TickSeconds = 1 / 30.0;
+
+    public static WindLoad Steady(this VesselInWind body, (double X, double Z) wind, (double X, double Z) velocity, double yaw, double waterline, double seconds = 60)
+    {
+        var load = default(WindLoad);
+        for (var t = 0.0; t < seconds; t += TickSeconds) load = body.Load(wind, velocity, yaw, waterline, TickSeconds);
+        return load;
+    }
 
     public static VesselMass Mass => mass.Value;
 

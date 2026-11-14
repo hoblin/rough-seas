@@ -6,8 +6,8 @@ using Vintagestory.API.MathTools;
 namespace RoughSeas.Storms;
 
 /// <summary>
-/// A hull's set: the velocity the water and her lines have given her, on top of her own way through the water, a
-/// rower's or a sail's. It is the waves' water at her place and her own velocity beside it, which forces change. It
+/// A hull's set: the velocity the water, the wind and her lines have given her, on top of a rower's way through the
+/// water. It is the waves' water at her place and her own velocity beside it, which forces change. It
 /// lives in her motion and goes through vanilla's physics there: each move sets her motion so that after vanilla's water
 /// drag and swim drag she carries the set whole and the rest of her motion as vanilla would have left it alone. She
 /// displaces her own mass, so she takes the water's change and push whole; her drag is her hull's.
@@ -47,14 +47,14 @@ public sealed class HullSet : BodyInWater
         }
     }
 
-    /// <summary>The water moves her for <paramref name="seconds"/>.</summary>
+    /// <summary>The water moves her for <paramref name="seconds"/>, with whatever else pushes her steadily, <paramref name="push"/> m/s².</summary>
     /// <returns>The water's acceleration of her besides its drag, m/s²: the waves' own change at her place and their push.</returns>
-    public (double X, double Z) Settle(HullDrag drag, WaterOnHull water, double yaw, double seconds)
+    public (double X, double Z) Settle(HullDrag drag, WaterOnHull water, double yaw, double seconds, (double X, double Z) push = default)
     {
         lock (gate)
         {
             var wash = Meet(water, Through(water, yaw), DisplacesHerMass, seconds);
-            var (relativeX, relativeZ) = drag.Settle(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, seconds, water.WayAlong, Pushed.X, Pushed.Z);
+            var (relativeX, relativeZ) = drag.Settle(water.CurrentX - ownX, water.CurrentZ - ownZ, yaw, seconds, water.WayAlong, Pushed.X + push.X, Pushed.Z + push.Z);
             ownX = water.CurrentX - relativeX;
             ownZ = water.CurrentZ - relativeZ;
             return wash;
@@ -62,13 +62,13 @@ public sealed class HullSet : BodyInWater
     }
 
     /// <summary>As <see cref="Settle"/> for a hull whose drag isn't known: she comes toward the current by this share of the difference.</summary>
-    public (double X, double Z) Relax(WaterOnHull water, double yaw, double share, double seconds)
+    public (double X, double Z) Relax(WaterOnHull water, double yaw, double share, double seconds, (double X, double Z) push = default)
     {
         lock (gate)
         {
             var wash = Meet(water, Through(water, yaw), DisplacesHerMass, seconds);
-            ownX += Pushed.X * seconds + (water.CurrentX - ownX) * share;
-            ownZ += Pushed.Z * seconds + (water.CurrentZ - ownZ) * share;
+            ownX += (Pushed.X + push.X) * seconds + (water.CurrentX - ownX) * share;
+            ownZ += (Pushed.Z + push.Z) * seconds + (water.CurrentZ - ownZ) * share;
             return wash;
         }
     }

@@ -1,8 +1,8 @@
 using System;
 
-namespace RoughSeas.Storms;
+namespace RoughSeas.Lines;
 
-public readonly record struct MooringLine(double RestMetres, double BreakingNewtons, double StretchAtBreak)
+public readonly record struct Line(double RestMetres, double BreakingNewtons, double StretchAtBreak)
 {
     private const double FullTurn = 2 * Math.PI;
     private const int MostBounces = 16;
@@ -69,16 +69,6 @@ public readonly record struct MooringLine(double RestMetres, double BreakingNewt
 
         var closing = outwardMetresPerSecond + Math.Sqrt(discriminant);
         return closing > 0 ? -2 * stretchMetres / closing : null;
-    }
-
-    /// <summary>
-    /// One step of an anchor dragging along the bed at the end of its rode: it holds her back by
-    /// <paramref name="holdingNewtons"/> along the rode while she pulls it out, and never draws her back.
-    /// </summary>
-    public static LineStep Dragging(double outwardMetresPerSecond, double steadyNewtons, double holdingNewtons, double kilograms, double seconds, double level)
-    {
-        var kick = -Math.Min(holdingNewtons * level * seconds / kilograms, Math.Max(0, outwardMetresPerSecond + steadyNewtons * seconds / kilograms));
-        return new LineStep(kick, kick, holdingNewtons);
     }
 
     public bool Parts(double newtons) => newtons > BreakingNewtons;

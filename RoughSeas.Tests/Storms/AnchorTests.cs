@@ -86,6 +86,19 @@ public class AnchorTests
         Assert.Equal(anchor with { X = 2, Z = -1 }, anchor.DraggedBy(2, -1));
     }
 
+    [Fact]
+    public void ADraggingAnchorHoldsHerBackByItsHoldingAndNeverDrawsHerBack()
+    {
+        const double sailboatWithItsWater = 2400;
+        const double tick = 1 / 30.0;
+        var holding = Anchor.Dragging(1.0, 0, 300, sailboatWithItsWater, tick, 1);
+        Assert.Equal(-300 * tick / sailboatWithItsWater, holding.Kick, 12);
+        Assert.Equal(300, holding.PeakNewtons);
+
+        Assert.Equal(-0.001, Anchor.Dragging(0.001, 0, 300, sailboatWithItsWater, tick, 1).Kick, 12);
+        Assert.Equal(0, Anchor.Dragging(-0.5, 0, 300, sailboatWithItsWater, tick, 1).Kick);
+    }
+
     private static Anchor? LetGo(double depth, double rodeAboard) =>
         Anchor.LetGo(0, -depth, 0, depth, rodeAboard, FullScope, "rope-flax", 100, Sand);
 }

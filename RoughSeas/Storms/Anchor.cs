@@ -1,4 +1,5 @@
 using System;
+using RoughSeas.Lines;
 
 namespace RoughSeas.Storms;
 
@@ -20,4 +21,14 @@ public readonly record struct Anchor(double X, double Y, double Z, double RodeMe
     }
 
     public Anchor DraggedBy(double x, double z) => this with { X = X + x, Z = Z + z };
+
+    /// <summary>
+    /// One step of an anchor dragging along the bed at the end of its rode: it holds her back by
+    /// <paramref name="holdingNewtons"/> along the rode while she pulls it out, and never draws her back.
+    /// </summary>
+    public static LineStep Dragging(double outwardMetresPerSecond, double steadyNewtons, double holdingNewtons, double kilograms, double seconds, double level)
+    {
+        var kick = -Math.Min(holdingNewtons * level * seconds / kilograms, Math.Max(0, outwardMetresPerSecond + steadyNewtons * seconds / kilograms));
+        return new LineStep(kick, kick, holdingNewtons);
+    }
 }
