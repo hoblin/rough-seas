@@ -20,6 +20,13 @@ Rough Seas in motion: every animation of its mechanics in this wiki, each with a
 | ![A bark canoe's paddler changing sides](images/propulsion/changing-sides.webp) | |
 | A bark canoe's paddler changing sides to hold a course: [Paddles, poles and oars](Paddles-Poles-and-Oars#using-them) | |
 
+## Sailing
+
+| |
+| --- |
+| ![An outrigger canoe under a crab-claw sail in a moderate breeze: on a beam reach, shunting, sailing back the way it came, bearing away and coming up again](images/outrigger-canoe/sailing.webp) |
+| An outrigger canoe under its crab claw in a moderate breeze: on a reach, a shunt to sail back the way it came, bearing away and coming up: [Wind and waves](Wind-and-Waves#wind), [Outrigger canoe](Outrigger-Canoe#sailing-it) |
+
 ## Building a vessel
 
 | | |

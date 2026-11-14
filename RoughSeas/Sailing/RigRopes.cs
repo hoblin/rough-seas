@@ -20,6 +20,7 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
     private const double LongestSegmentMetres = 1;
     private const double LongestStepSeconds = 0.1;
     private const double LowestMetres = 0.1;
+    private const double ShortestSpunMetres = 1.5 / Resolution;
 
     private sealed class Rope(ClothSystem drawn, List<ClothPoint> points, Chain chain)
     {
@@ -45,9 +46,17 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
         if (laid == ropes.Count || metres / (ropes[laid].Points.Count - 1) is < ShortestSegmentMetres or > LongestSegmentMetres)
         {
             var (start, end) = (world(from), world(to));
-            var drawn = Spun(start, start.AddCopy(end.SubCopy(start).Normalize().Mul(Math.Max(metres, 1 / Resolution))), width);
+            var along = end.SubCopy(start);
+            if (!(along.Length() > 0) || !(metres > 0))
+                sailing.Log(vessel, "rope {0} ({1:F3} m) laid with its ends {2:F3} m apart: from {3} to {4} on the hull, at {5} and {6} in the world",
+                    laid, metres, along.Length(), Where(from), Where(to), Where(start), Where(end));
+            if (!(along.Length() > 0)) along = new Vec3d(0, -1, 0);
+            var drawn = Spun(start, start.AddCopy(along.Normalize().Mul(Math.Max(metres, ShortestSpunMetres))), width);
             var points = new List<ClothPoint>();
             drawn.WalkPoints(points.Add);
+            if (points.Count < 2)
+                sailing.Log(vessel, "rope {0} ({1:F3} m) spun as {2} point(s): from {3} to {4} on the hull, at {5} and {6} in the world",
+                    laid, metres, points.Count, Where(from), Where(to), Where(start), Where(end));
             var placed = laid < ropes.Count ? Retraced(ropes[laid].Chain, points.Count) : Hung(start, end, metres, points.Count);
             var rope = new Rope(drawn, points, new Chain(placed.Points, metres, width, fibre, wind.Config.AirKgPerCubicMetre));
             Array.Copy(placed.Moving, rope.Chain.Moving, placed.Moving.Length);
@@ -121,6 +130,10 @@ public sealed class RigRopes(ICoreClientAPI capi, Entity vessel, Fibre fibre) : 
         VanillaRopes.Own(cloths, rope);
         return rope;
     }
+
+    private static string Where(HullPoint point) => FormattableString.Invariant($"({point.Along:F3}, {point.Height:F3}, {point.Across:F3})");
+
+    private static string Where(Vec3d point) => FormattableString.Invariant($"({point.X:F3}, {point.Y:F3}, {point.Z:F3})");
 
     private static (Vec3d[] Points, Vec3d[] Moving) Hung(Vec3d from, Vec3d to, double metres, int count)
     {
