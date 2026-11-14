@@ -28,7 +28,7 @@
             "metresPerSecond": 0.9,
             "sources": {
                 "usefulWatts": "The power the triathletes' front crawl spends against their drag at 0.90 m/s in the pool's fresh water, 35 W (Toussaint 1990, Med Sci Sports Exerc 22(3):409-415): 38.9 N, the force that holds that speed",
-                "wastedWatts": "The power the same stroke spends pushing water backwards, 45 W (Toussaint 1990), a propelling efficiency of 44% against a competitive swimmer's 61%. The arms are a blade slipping back through the water, as a paddle's is (Propulsion's BladeStroke): its slip is 45/35 of the speed, which with the 38.9 N fixes the blade's drag area. The stroke spends its 80 W at any speed, so it pulls about 57 N held still in the water and less the faster it goes; trained swimmers pull 92-104 N on average tethered all out for 30 s (Neiva et al. 2011, J Hum Kinet 29A:113-119), a sprint's effort, not a swim's",
+                "wastedWatts": "The power the same stroke spends pushing water backwards, 45 W (Toussaint 1990), a propelling efficiency of 44% against a competitive swimmer's 61%. The arms are a blade slipping back through the water, as a paddle's is (Water.SlippingBlade): its slip is 45/35 of the speed, which with the 38.9 N fixes the blade's drag area. The stroke spends its 80 W at any speed, so it pulls about 57 N held still in the water and less the faster it goes; trained swimmers pull 92-104 N on average tethered all out for 30 s (Neiva et al. 2011, J Hum Kinet 29A:113-119), a sprint's effort, not a swim's",
                 "metresPerSecond": "The triathletes' speed when both powers were measured, 0.90 m/s (Toussaint 1990)"
             }
         },

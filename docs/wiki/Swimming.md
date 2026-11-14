@@ -26,6 +26,6 @@ A crest can break over you, as one breaks on a vessel: as often, by the same [wi
 
 In [surf](Surf-and-Swamping#breakers) the tallest waves break, and close to the beach nearly all of them.
 
-Holding jump doesn't keep you up through a breaker: its frothy water holds you up less than your stroke makes up. A small one takes you a hand's breadth under, a big one a metre or more. You come back up once its air clears.
+Holding jump doesn't keep you up through a breaker: its frothy water holds you up less, and your stroke can't make up the difference. A small one takes you a hand's breadth under, a big one a metre or more. You come back up once its air clears.
 
 The world setting [Breakers on swimmers](World-Settings#the-mechanics) turns breaking crests off. You still float on the waves and breathe by them. The formulas are in [The science of a body in the water](The-Science-of-a-Body-in-the-Water#a-body-in-the-water).
