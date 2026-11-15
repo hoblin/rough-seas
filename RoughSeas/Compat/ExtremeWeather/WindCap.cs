@@ -1,3 +1,4 @@
+using System.Reflection;
 using HarmonyLib;
 
 namespace RoughSeas.Compat.ExtremeWeather;
@@ -14,14 +15,13 @@ public static class WindCap
     private static int attached;
     private static Harmony? harmony;
 
-    public static void Attach()
+    public static void Attach(MethodInfo applyEventWind)
     {
         lock (patchLock)
         {
             if (attached++ > 0) return;
             harmony = new Harmony(HarmonyId);
-            harmony.Patch(AccessTools.Method("ExtremeWeather.EventDirectorSystem:ApplyEventWind"),
-                prefix: new HarmonyMethod(typeof(WindCap), nameof(OnlyDuringEvents)));
+            harmony.Patch(applyEventWind, prefix: new HarmonyMethod(typeof(WindCap), nameof(OnlyDuringEvents)));
         }
     }
 

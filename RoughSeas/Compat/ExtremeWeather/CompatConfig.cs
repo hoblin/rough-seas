@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace RoughSeas.Compat.ExtremeWeather;
 
-public class CompatConfig : TestedConfig
+public class CompatConfig
 {
     public Dictionary<string, object> Settings = [];
     public TornadoConfig Tornadoes = new();

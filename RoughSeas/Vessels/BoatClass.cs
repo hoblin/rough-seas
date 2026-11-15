@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using HarmonyLib;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
@@ -22,13 +24,18 @@ public sealed class BoatClass
     public BoatClass(Type type)
     {
         Type = type;
-        mountAngle = AccessTools.FieldRefAccess<Vec3f>(type, "mountAngle");
-        forwardSpeed = AccessTools.FieldRefAccess<double>(type, "ForwardSpeed");
-        mountAnimations = AccessTools.FieldRefAccess<Dictionary<string, string>>(type, "MountAnimations");
-        setSpeedMultiplier = Setter(type, AccessTools.PropertySetter(type, "SpeedMultiplier") ?? throw new MissingMemberException(type.FullName, "SpeedMultiplier"));
+        mountAngle = Ref<Vec3f>(type, "mountAngle");
+        forwardSpeed = Ref<double>(type, "ForwardSpeed");
+        mountAnimations = Ref<Dictionary<string, string>>(type, "MountAnimations");
+        setSpeedMultiplier = Setter(type, AccessTools.PropertySetter(type, "SpeedMultiplier") is { } setter && setter.GetParameters()[0].ParameterType == typeof(float)
+            ? setter
+            : throw new MissingMemberException(type.FullName, "SpeedMultiplier of Single"));
         OnRenderFrame = Declared(type, "OnRenderFrame");
         UpdateMotion = Declared(type, "updateBoatAngleAndMotion");
-        SwimmingOffsetY = AccessTools.DeclaredPropertyGetter(type, "SwimmingOffsetY") ?? throw new MissingMemberException(type.FullName, "SwimmingOffsetY");
+        SwimmingOffsetY = AccessTools.DeclaredPropertyGetter(type, "SwimmingOffsetY") is { } getter
+            && getter.ReturnType == AccessTools.PropertyGetter(typeof(EntityBoat), "SwimmingOffsetY").ReturnType
+            ? getter
+            : throw new MissingMemberException(type.FullName, "SwimmingOffsetY as vanilla's boat has it");
     }
 
     public Type Type { get; }
@@ -54,6 +61,10 @@ public sealed class BoatClass
         return Expression.Lambda<Action<Entity, float>>(Expression.Call(Expression.Convert(boat, type), setter, value), boat, value).Compile();
     }
 
+    private static AccessTools.FieldRef<object, F> Ref<F>(Type type, string name) =>
+        AccessTools.Field(type, name)?.FieldType == typeof(F) ? AccessTools.FieldRefAccess<F>(type, name) : throw new MissingFieldException(type.FullName, $"{name} of {typeof(F).Name}");
+
     private static MethodInfo Declared(Type type, string name) =>
-        AccessTools.DeclaredMethod(type, name) ?? throw new MissingMethodException(type.FullName, name);
+        AccessTools.DeclaredMethod(type, name, [.. AccessTools.Method(typeof(EntityBoat), name).GetParameters().Select(parameter => parameter.ParameterType)])
+        ?? throw new MissingMethodException(type.FullName, $"{name} as vanilla's boat has it");
 }

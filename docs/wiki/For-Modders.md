@@ -26,6 +26,14 @@ Where a page touches physics, it says what the mod does and links [The science b
 
 If you build on these pages, or need something they don't give, tell us on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
+### Swimming beside other mods, and compatibility by what we reach
+
+A mod that patches vanilla's swim stroke no longer stops our swimmer ([Player Model Library](Other-Mods#player-model-library)), and our modules for other mods check the members they reach instead of the other mod's version.
+
+- `SwimmingStrength.Add` and `Remove` take a factor of the arms' pull for an entity; `SwimmingStrength.Factor` is their product. Player Model Library's `swimSpeed` stat is one, added while that mod is in the set.
+- `OtherModCompat` lost its tested range: `config/compat/shipwright.json` and `walkableentities.json` are gone, and `extremeweather.json` lost `tested`. A module finds every member it reaches in `Meet` before it changes anything (`Compat.Reach`), and a missing one, a `MissingMemberException`, leaves that mod alone with a warning naming it. `Met` replaces `Tested`, and the `roughseas-shipwright` patch condition follows it.
+- `BoatClass` throws `MissingFieldException` for a missing field, as it already did for a missing method or property.
+
 ### Swimming revised: weight by parts, a trained swimmer, the push off the bed
 
 A tool weighs as a head of its own metal or stone and a haft of wood, armour by its own material; the swimmer strokes as a trained competitive swimmer, and a body on the bed pushes off it with its legs ([the science](The-Science-of-a-Body-in-the-Water#what-you-carry)).

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using HarmonyLib;
 using RoughSeas.Floating;
 using RoughSeas.Storms;
+using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.Client.NoObf;
 
@@ -19,6 +20,7 @@ namespace RoughSeas.Compat.WalkableEntities;
 public static class WalkableDecks
 {
     private const string HarmonyId = "roughseas.compat.walkableentities.decks";
+    private static readonly (string Name, Type Type)[] PoseParts = [("X", typeof(double)), ("Y", typeof(double)), ("Z", typeof(double)), ("Rotation", typeof(Quaternion))];
 
     private static readonly ConditionalWeakTable<Entity, StrongBox<(DeckPose Plain, DeckPose Drawn)>> poses = new();
     private static readonly object patchLock = new();
@@ -33,14 +35,22 @@ public static class WalkableDecks
     {
         lock (patchLock)
         {
-            if (attached++ > 0) return;
-            var getPose = AccessTools.Method("WalkableEntities.BoatAdapter:GetPose") ?? throw new MissingMethodException("WalkableEntities.BoatAdapter", "GetPose");
+            if (attached > 0)
+            {
+                attached++;
+                return;
+            }
+            var getPose = Reach.Method(Reach.Type("WalkableEntities.BoatAdapter"), "GetPose", typeof(Entity));
             var pose = getPose.ReturnType;
-            poseParts = [.. new[] { "X", "Y", "Z", "Rotation" }.Select(name => pose.GetProperty(name) ?? throw new MissingMemberException(pose.FullName, name))];
-            newPose = pose.GetConstructor([typeof(double), typeof(double), typeof(double), typeof(Quaternion)]) ?? throw new MissingMethodException(pose.FullName, ".ctor");
+            poseParts = [.. PoseParts.Select(part => pose.GetProperty(part.Name) is { } property && property.PropertyType == part.Type
+                ? property
+                : throw new MissingMemberException(pose.FullName, $"{part.Name} of {part.Type.Name}"))];
+            newPose = pose.GetConstructor([.. PoseParts.Select(part => part.Type)]) ?? throw new MissingMethodException(pose.FullName, ".ctor");
             // MovingFrame.AudioBody: the platform the local player stands on, judged by its pose; its name is for the sounds it first served.
-            deckUnderPlayer = AccessTools.Method("WalkableEntities.MovingFrame:AudioBody") ?? throw new MissingMethodException("WalkableEntities.MovingFrame", "AudioBody");
-            deckVessel = AccessTools.Field("WalkableEntities.PlatformBody:Entity") ?? throw new MissingFieldException("WalkableEntities.PlatformBody", "Entity");
+            var platform = Reach.Type("WalkableEntities.PlatformBody");
+            deckUnderPlayer = Reach.Method(Reach.Type("WalkableEntities.MovingFrame"), "AudioBody", typeof(EntityPlayer)).Returning(platform);
+            deckVessel = Reach.Field(platform, "Entity", typeof(Entity));
+            attached++;
             harmony = new Harmony(HarmonyId);
             harmony.Patch(getPose, postfix: new HarmonyMethod(typeof(WalkableDecks), nameof(AsDrawn)));
             harmony.Patch(AccessTools.Method(typeof(NetworkAPI), nameof(NetworkAPI.SendPlayerPositionPacket)),

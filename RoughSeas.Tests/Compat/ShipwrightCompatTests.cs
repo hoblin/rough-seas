@@ -1,6 +1,4 @@
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RoughSeas.Compat;
 using RoughSeas.Compat.Shipwright;
 using RoughSeas.Tests.Storms;
 
@@ -25,7 +23,7 @@ public class ShipwrightCompatTests
 
     [Theory]
     [MemberData(nameof(Operations))]
-    public void EveryPatchWaitsForATestedShipwright(int at)
+    public void EveryPatchWaitsForAShipwrightWeReach(int at)
     {
         Assert.Equal(ShipwrightCompat.Condition, Patches[at]["condition"]?["when"]?.Value<string>());
         Assert.Equal("true", Patches[at]["condition"]?["isValue"]?.Value<string>());
@@ -50,13 +48,4 @@ public class ShipwrightCompatTests
         Assert.False(afloat.Sunk);
         Assert.True(afloat.FreeboardMetres > 0);
     }
-
-    [Fact]
-    public void ShipsTestedAgainstOnePinnedRelease() => Assert.True(Tested("shipwright.json").Covers("1.5.1"));
-
-    [Fact]
-    public void WalkableEntitiesShipsTestedAgainstOnePinnedRelease() => Assert.True(Tested("walkableentities.json").Covers("1.0.44"));
-
-    private static TestedVersions Tested(string file) =>
-        JsonConvert.DeserializeObject<TestedConfig>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, file)))!.Tested;
 }

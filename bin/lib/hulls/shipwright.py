@@ -21,8 +21,8 @@ from shape import bounds, hull_of
 DEEPEST_SHAPE = 20000
 sys.setrecursionlimit(DEEPEST_SHAPE)
 
-VERSION = load(ASSETS / "config/compat/shipwright.json")["tested"]["to"]
-RELEASES = {"1.5.1": "https://moddbcdn.vintagestory.at/shipwright_1.5.1_bcdbee9834481e92d58ac1d17107c4e2.zip?dl=shipwright_1.5.1.zip"}
+VERSION = "1.5.1"
+RELEASES = {VERSION: "https://moddbcdn.vintagestory.at/shipwright_1.5.1_bcdbee9834481e92d58ac1d17107c4e2.zip?dl=shipwright_1.5.1.zip"}
 PATCH = ASSETS / "patches/compat-shipwright.json"
 CACHE = Path(os.environ.get("BENCH_TMP", "/tmp")) / f"shipwright-{VERSION}.zip"
 HIDDEN = re.compile(r"SailUnfurled|SailHalf|ExtraSailUnfurled|ExtraSailHalf|Collision|hideWater")

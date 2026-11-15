@@ -16,16 +16,19 @@ public class ExtremeWeatherCompat : OtherModCompat
 
     public CompatConfig Config { get; private set; } = null!;
 
+    public ExtremeWeatherMod Ew { get; private set; } = null!;
+
     protected override void Meet(ICoreAPI api, string name, string version)
     {
-        Config = api.Assets.Get<CompatConfig>(ConfigAsset);
-        WindCap.Attach();
+        Config = api.Assets.Get<CompatConfig>(new AssetLocation($"roughseas:config/compat/{Id}.json"));
+        Ew = new ExtremeWeatherMod(Config.Settings.Keys);
+        WindCap.Attach(Ew.ApplyEventWind);
         Log("{0} {1}: its wind cap holds only during its own events", name, version);
     }
 
     public override void StartServerSide(ICoreServerAPI sapi)
     {
-        if (!Tested) return;
+        if (!Met) return;
 
         Settle();
         new HurricaneTornadoes(this, sapi.ModLoader.GetModSystem<SeaWeatherSystem>(), sapi).Start();
@@ -34,23 +37,23 @@ public class ExtremeWeatherCompat : OtherModCompat
             .RequiresPrivilege(Privilege.controlserver)
             .BeginSubCommand(Id)
                 .WithDescription("Extreme Weathers' settings Rough Seas holds, as they stand now")
-                .HandleWith(_ => TextCommandResult.Success(string.Join(", ", Config.Settings.Keys.Select(name => $"{name} {ExtremeWeatherMod.Get(name)}"))))
+                .HandleWith(_ => TextCommandResult.Success(string.Join(", ", Config.Settings.Keys.Select(name => $"{name} {Ew.Get(name)}"))))
             .EndSubCommand();
     }
 
     public override void StartClientSide(ICoreClientAPI capi)
     {
-        if (Tested) Settle();
+        if (Met) Settle();
     }
 
     private void Settle()
     {
-        ExtremeWeatherMod.Set(Config.Settings);
+        Ew.Set(Config.Settings);
         Log("Extreme Weathers set: {0}", string.Join(", ", Config.Settings));
     }
 
     public override void Dispose()
     {
-        if (Tested) WindCap.Detach();
+        if (Met) WindCap.Detach();
     }
 }

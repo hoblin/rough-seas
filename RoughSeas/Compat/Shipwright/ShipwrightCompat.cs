@@ -1,5 +1,4 @@
 using System;
-using HarmonyLib;
 using RoughSeas.Vessels;
 using Vintagestory.API.Common;
 
@@ -22,7 +21,7 @@ public class ShipwrightCompat : OtherModCompat
     public override void AssetsLoaded(ICoreAPI api)
     {
         base.AssetsLoaded(api);
-        api.World.Config?.SetBool(Condition, Tested);
+        api.World.Config?.SetBool(Condition, Met);
     }
 
     /// <summary>The condition is only the patch loader's: it leaves the world config before the world saves it.</summary>
@@ -30,8 +29,9 @@ public class ShipwrightCompat : OtherModCompat
 
     protected override void Meet(ICoreAPI api, string name, string version)
     {
-        boat = AccessTools.TypeByName(BoatClassName);
-        Boats.Add(boat);
+        var reached = Reach.Type(BoatClassName);
+        Boats.Add(reached);
+        boat = reached;
         Log("{0} {1}: its boats are vessels of ours, and take our sea", name, version);
     }
 
