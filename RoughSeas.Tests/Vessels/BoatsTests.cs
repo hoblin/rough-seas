@@ -70,7 +70,7 @@ public class BoatsTests
     [Fact]
     public void AClassMissingABoatsMembersIsRefused()
     {
-        Assert.ThrowsAny<ArgumentException>(() => Boats.Add(typeof(NoBoat)));
+        Assert.ThrowsAny<MissingMemberException>(() => Boats.Add(typeof(NoBoat)));
         Assert.False(Boats.Is(new NoBoat()));
     }
 

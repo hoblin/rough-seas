@@ -34,7 +34,6 @@ public static class BodyAfloat
     private static Waves? waves;
     private static FloatingBody? body;
     private static (WaterSurface Surface, BodyPlace Place, Carried Kit, double Rate, SeaCurrent Current)? wading;
-    private static SwimStroke stroke;
     private static bool liftedThisTick;
     private static bool kicking;
     private static bool wasSwimming = true;
@@ -66,7 +65,7 @@ public static class BodyAfloat
         harmony?.UnpatchAll(HarmonyId);
         harmony = null;
         (system, capi, drawn, water, sea, person, waves, body, wading, warning) = (null, null, null, null, null, null, null, null, null, null);
-        (stroke, liftedThisTick, loggedAt, tracedAt, wasSwimming) = (default, false, double.NegativeInfinity, double.NegativeInfinity, true);
+        (liftedThisTick, loggedAt, tracedAt, wasSwimming) = (false, double.NegativeInfinity, double.NegativeInfinity, true);
     }
 
     /// <summary>The server says a crest broke over this client's player.</summary>
@@ -85,7 +84,7 @@ public static class BodyAfloat
 
     [ReliesOn("Vintagestory.API.Common.Entities.PModuleGravity", "DoApply", "is the only gravity a player in water gets, a third of it still and none while the swimmer strokes")]
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetModules", "steps gravity before motion drag, every tick on the client that moves the player")]
-    private static bool Afloat(float dt, Entity entity, EntityPos pos)
+    private static bool Afloat(float dt, Entity entity, EntityPos pos, EntityControls controls)
     {
         if (capi == null || entity != capi.World.Player?.Entity) return true;
         if (!entity.Alive || entity is EntityAgent { MountedOn: not null } || pos.Dimension != Dimensions.NormalWorld || !Mechanic.RealisticSwimming.On(entity.World))
@@ -120,14 +119,14 @@ public static class BodyAfloat
         }
         if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
         wasSwimming = true;
+        var stroked = SwimStroke.Of(controls);
+        var strength = SwimmingStrength.Of(entity);
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
-            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity), BodyOnTheBed.OnBed(entity), SwimmingStrength.Of(entity));
+            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroked, (current.X, current.Z), Lying(entity), BodyOnTheBed.OnBed(entity), strength);
         if (body.Reading.Kick > 0 && !kicking) system!.Log(entity, "pushes up off the bed at y {0:F2}: {1:F0} N", pos.Y, body.Reading.Kick);
         kicking = body.Reading.Kick > 0;
         pos.Motion.Set(next.X, next.Y, next.Z);
         liftedThisTick = true;
-        var stroked = stroke;
-        stroke = default;
         var spare = body.Reading.SpareNewtons;
         var asking = stroked.Y > 0;
         warning!.Tell(entity, asking && spare < 0 ? Refusal.TooHeavyToRise(kit.Kg, -spare) : null, asking);
@@ -139,39 +138,39 @@ public static class BodyAfloat
             loggedAt = now;
             var read = body.Reading;
             var eye = surface.Height - (pos.Y + place.EyeHeight);
-            system!.Log(entity, "afloat at y {0:F2}: waterline {1:F2} m up the body, eye {2:F2} m {3}, {4:F1} of {5:F1} L under, lungs {6:F2} L, carrying {7:F1} kg, lift {8:F2} m/s2, water {9:F2} {10:F2} {11:F2} m/s, carried {12:F2} {13:F2} m/s{14}{15}",
+            system!.Log(entity, "afloat at y {0:F2}: waterline {1:F2} m up the body, eye {2:F2} m {3}, {4:F1} of {5:F1} L under, lungs {6:F2} L, carrying {7:F1} kg, lift {8:F2} m/s2, water {9:F2} {10:F2} {11:F2} m/s, carried {12:F2} {13:F2} m/s, arms {14:F2}x{15}{16}",
                 pos.Y, read.Waterline, Math.Abs(eye), eye < 0 ? "above" : "under", read.UnderLitres, read.WholeLitres, read.LungLitres, kit.Kg, read.Lift,
-                read.FlowX, read.Rise, read.FlowZ, read.CarriedX, read.CarriedZ, read.Churn > 0 ? $", {read.Churn:P1} of its water is air" : "",
+                read.FlowX, read.Rise, read.FlowZ, read.CarriedX, read.CarriedZ, strength, read.Churn > 0 ? $", {read.Churn:P1} of its water is air" : "",
                 stroked.Stroking ? $", stroking {read.Thrust:F0} N toward {stroked.X:F2} {stroked.Y:F2} {stroked.Z:F2}" : "");
         }
         return false;
     }
 
     [ReliesOn("Vintagestory.API.Common.Entities.PModuleMotionDrag", "DoApply", "scales the whole motion by WaterDrag^(33·seconds) while the feet are in water or the body swims")]
-    private static void BeforeDrag(Entity entity, EntityPos pos, out (double X, double Y, double Z) __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
+    private static void BeforeDrag(Entity entity, EntityPos pos, out (double X, double Y, double Z)? __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
 
-    private static void AfterDrag(Entity entity, EntityPos pos, float dt, (double X, double Y, double Z) __state)
+    private static void AfterDrag(Entity entity, EntityPos pos, float dt, (double X, double Y, double Z)? __state)
     {
         if (entity != capi?.World.Player?.Entity) return;
-        if (wading is var (surface, place, kit, rate, current))
+        var wadingNow = wading;
+        var lifted = liftedThisTick;
+        (wading, liftedThisTick) = (null, false);
+        if (__state is not { } before) return;
+        if (wadingNow is var (surface, place, kit, rate, current))
         {
-            wading = null;
-            (pos.Motion.X, pos.Motion.Z) = body!.Wade(drawn!, surface, place, new BodyMotion(__state.X, __state.Y, __state.Z), kit, dt, rate, (current.X, current.Z));
+            (pos.Motion.X, pos.Motion.Z) = body!.Wade(drawn!, surface, place, new BodyMotion(before.X, before.Y, before.Z), kit, dt, rate, (current.X, current.Z));
             return;
         }
-        if (!liftedThisTick) return;
-        liftedThisTick = false;
-        pos.Motion.Y = __state.Y;
+        if (lifted) pos.Motion.Y = before.Y;
     }
 
-    private static void BeforeStroke(EntityPos pos, out (double X, double Y, double Z) __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
+    private static void BeforeStroke(EntityPos pos, out (double X, double Y, double Z)? __state) => __state = (pos.Motion.X, pos.Motion.Y, pos.Motion.Z);
 
     [ReliesOn("Vintagestory.API.Common.Entities.PModulePlayerInLiquid", "HandleSwimming", "adds the stroke to Pos.Motion and changes nothing else of it")]
-    private static void OwnStroke(Entity entity, EntityPos pos, EntityControls controls, (double X, double Y, double Z) __state)
+    private static void OwnStroke(Entity entity, EntityPos pos, (double X, double Y, double Z)? __state)
     {
-        if (body == null || entity != capi?.World.Player?.Entity) return;
-        pos.Motion.Set(__state.X, __state.Y, __state.Z);
-        stroke = SwimStroke.Of(controls);
+        if (body == null || entity != capi?.World.Player?.Entity || __state is not { } before) return;
+        pos.Motion.Set(before.X, before.Y, before.Z);
     }
 
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetPlayerControls", "turns WalkYaw toward the way the keys move and WalkPitch toward the look while the player swims")]
@@ -195,7 +194,7 @@ public static class BodyAfloat
     private static void Leave(Entity entity, string? why)
     {
         warning?.Clear(entity);
-        (stroke, kicking) = (default, false);
+        kicking = false;
         wading = null;
         if (body == null) return;
         body = null;

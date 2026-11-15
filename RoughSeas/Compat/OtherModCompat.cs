@@ -1,11 +1,13 @@
+using System;
 using System.Globalization;
 using Vintagestory.API.Common;
 
 namespace RoughSeas.Compat;
 
 /// <summary>
-/// Rough Seas beside another mod whose code it reaches into: loaded with that mod, and acting only on a version listed
-/// as tested in <c>config/compat/&lt;modid&gt;.json</c>.
+/// Rough Seas beside another mod whose code it reaches into: loaded with that mod, and acting only when the mod has every
+/// member we reach. A module finds all of them in <see cref="Meet"/> before it changes anything, and throws a
+/// <see cref="MissingMemberException"/> for the first one missing.
 /// </summary>
 public abstract class OtherModCompat : ModSystem
 {
@@ -15,17 +17,22 @@ public abstract class OtherModCompat : ModSystem
 
     protected AssetLocation ConfigAsset => new($"roughseas:config/compat/{ModId}.json");
 
-    protected bool Tested { get; private set; }
+    protected bool Met { get; private set; }
 
     public override bool ShouldLoad(ICoreAPI api) => api.ModLoader.IsModEnabled(ModId);
 
     public override void AssetsLoaded(ICoreAPI api)
     {
-        var tested = api.Assets.Get<TestedConfig>(ConfigAsset).Tested;
         var info = api.ModLoader.GetMod(ModId).Info;
-        Tested = tested.Covers(info.Version);
-        if (Tested) Meet(api, info.Name, info.Version);
-        else Mod.Logger.Warning("{0} {1} is untested (tested: {2}); Rough Seas leaves it as it is", info.Name, info.Version, tested);
+        try
+        {
+            Meet(api, info.Name, info.Version);
+            Met = true;
+        }
+        catch (MissingMemberException missing)
+        {
+            Mod.Logger.Warning("{0} {1} lacks what Rough Seas reaches in it: {2}; Rough Seas leaves it as it is", info.Name, info.Version, missing.Message);
+        }
     }
 
     protected abstract void Meet(ICoreAPI api, string name, string version);

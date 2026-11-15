@@ -33,14 +33,19 @@ public static class WalkableDecks
     {
         lock (patchLock)
         {
-            if (attached++ > 0) return;
-            var getPose = AccessTools.Method("WalkableEntities.BoatAdapter:GetPose") ?? throw new MissingMethodException("WalkableEntities.BoatAdapter", "GetPose");
+            if (attached > 0)
+            {
+                attached++;
+                return;
+            }
+            var getPose = Reach.Method(Reach.Type("WalkableEntities.BoatAdapter"), "GetPose");
             var pose = getPose.ReturnType;
             poseParts = [.. new[] { "X", "Y", "Z", "Rotation" }.Select(name => pose.GetProperty(name) ?? throw new MissingMemberException(pose.FullName, name))];
             newPose = pose.GetConstructor([typeof(double), typeof(double), typeof(double), typeof(Quaternion)]) ?? throw new MissingMethodException(pose.FullName, ".ctor");
             // MovingFrame.AudioBody: the platform the local player stands on, judged by its pose; its name is for the sounds it first served.
-            deckUnderPlayer = AccessTools.Method("WalkableEntities.MovingFrame:AudioBody") ?? throw new MissingMethodException("WalkableEntities.MovingFrame", "AudioBody");
-            deckVessel = AccessTools.Field("WalkableEntities.PlatformBody:Entity") ?? throw new MissingFieldException("WalkableEntities.PlatformBody", "Entity");
+            deckUnderPlayer = Reach.Method(Reach.Type("WalkableEntities.MovingFrame"), "AudioBody");
+            deckVessel = Reach.Field(Reach.Type("WalkableEntities.PlatformBody"), "Entity");
+            attached++;
             harmony = new Harmony(HarmonyId);
             harmony.Patch(getPose, postfix: new HarmonyMethod(typeof(WalkableDecks), nameof(AsDrawn)));
             harmony.Patch(AccessTools.Method(typeof(NetworkAPI), nameof(NetworkAPI.SendPlayerPositionPacket)),

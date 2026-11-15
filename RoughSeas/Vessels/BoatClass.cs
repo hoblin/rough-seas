@@ -22,9 +22,9 @@ public sealed class BoatClass
     public BoatClass(Type type)
     {
         Type = type;
-        mountAngle = AccessTools.FieldRefAccess<Vec3f>(type, "mountAngle");
-        forwardSpeed = AccessTools.FieldRefAccess<double>(type, "ForwardSpeed");
-        mountAnimations = AccessTools.FieldRefAccess<Dictionary<string, string>>(type, "MountAnimations");
+        mountAngle = Ref<Vec3f>(type, "mountAngle");
+        forwardSpeed = Ref<double>(type, "ForwardSpeed");
+        mountAnimations = Ref<Dictionary<string, string>>(type, "MountAnimations");
         setSpeedMultiplier = Setter(type, AccessTools.PropertySetter(type, "SpeedMultiplier") ?? throw new MissingMemberException(type.FullName, "SpeedMultiplier"));
         OnRenderFrame = Declared(type, "OnRenderFrame");
         UpdateMotion = Declared(type, "updateBoatAngleAndMotion");
@@ -53,6 +53,9 @@ public sealed class BoatClass
         var value = Expression.Parameter(typeof(float));
         return Expression.Lambda<Action<Entity, float>>(Expression.Call(Expression.Convert(boat, type), setter, value), boat, value).Compile();
     }
+
+    private static AccessTools.FieldRef<object, F> Ref<F>(Type type, string name) =>
+        AccessTools.Field(type, name) == null ? throw new MissingFieldException(type.FullName, name) : AccessTools.FieldRefAccess<F>(type, name);
 
     private static MethodInfo Declared(Type type, string name) =>
         AccessTools.DeclaredMethod(type, name) ?? throw new MissingMethodException(type.FullName, name);

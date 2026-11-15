@@ -15,10 +15,10 @@ public class HurricaneTornadoes(ExtremeWeatherCompat compat, SeaWeatherSystem se
     {
         var inside = sapi.World.AllOnlinePlayers.Select(player => player.Entity?.Pos.XYZ).OfType<Vec3d>().Where(InHurricane).ToArray();
         var rand = sapi.World.Rand;
-        if (inside.Length == 0 || rand.NextDouble() >= ExtremeWeatherMod.TornadoChance) return;
+        if (inside.Length == 0 || rand.NextDouble() >= compat.Ew.TornadoChance) return;
 
         var pos = inside[rand.Next(inside.Length)];
-        compat.Log("a tornado in our hurricane near {0:F0} {1:F0}: {2}", pos.X, pos.Z, ExtremeWeatherMod.SpawnTornadoNear(pos));
+        compat.Log("a tornado in our hurricane near {0:F0} {1:F0}: {2}", pos.X, pos.Z, compat.Ew.SpawnTornadoNear(pos));
     }
 
     private bool InHurricane(Vec3d pos) =>

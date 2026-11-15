@@ -16,6 +16,6 @@ public class WalkableEntitiesCompat : OtherModCompat
 
     public override void Dispose()
     {
-        if (Tested) WalkableDecks.Detach();
+        if (Met) WalkableDecks.Detach();
     }
 }

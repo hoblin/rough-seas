@@ -13,6 +13,7 @@ Rough Seas drives the game's own weather rather than replacing it, so most mods 
 | [Shipworks+](#shipworks) | 1.1.0 | Works with issues: its ships don't ride our drawn swell. |
 | [Shipwright](#shipwright) | 1.5.1 | Compatible: its boats are vessels of ours. |
 | [Walkable Entities](#walkable-entities) | 1.0.44 | Compatible: a deck rides our swell with whoever stands on it. |
+| [Player Model Library](#player-model-library) | 1.25.0 | Compatible: its swim speed makes a stronger or weaker swimmer. |
 
 Running Rough Seas with a mod not listed here? Tell us how it went on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
@@ -36,9 +37,9 @@ Running Rough Seas with a mod not listed here? Tell us how it went on the [issue
 
 [Extreme Weathers](https://mods.vintagestory.at/show/mod/58501) rolls hurricanes, monsoons, blizzards, sandstorms, heat waves and cold snaps of its own, and each one covers the whole world at once. Rough Seas brings hurricanes, downpours and snow too, and ours travel across the map. In one mod set, Extreme Weathers stops rolling the storms that are ours and becomes how they look and what they do.
 
-### Tested versions
+### Other versions
 
-Rough Seas works with Extreme Weathers **1.8.5**. It reaches into Extreme Weathers' own code, so it does so only on a version it was tested against. On any other version it logs a warning and leaves Extreme Weathers alone: both mods then roll their own storms side by side.
+We tested Extreme Weathers **1.8.5**. Rough Seas reaches into Extreme Weathers' own code by the names of its settings, its tornado system and its event wind, so it works with any version that still has them. When one of them is gone, Rough Seas logs a warning naming it and leaves Extreme Weathers alone: both mods then roll their own storms side by side.
 
 ### Storms that are ours
 
@@ -183,9 +184,9 @@ The boats a ship carries on its davits are vanilla's sailboat, ours in every way
 
 [Shipwright: Vessels of Distant Shores](https://mods.vintagestory.at/shipwright) 1.5.1 adds ten boats: a catboat, a coracle, a drakkar, a faering, a kayak, a large junk, a punt and three reed boats (the totora, the reed longboat and the sailed reed boat). Beside Rough Seas they are vessels of ours: each rides our [drawn swell](Storms), takes the [sea](Surf-and-Swamping), the [current](Currents) and the wind, ships water and is [bailed](Bailing), cracks and floods by its [hull condition](Hull-Condition), and ties to a stake with our [mooring](Mooring).
 
-### Tested versions
+### Other versions
 
-Rough Seas works with Shipwright **1.5.1**. It reaches into Shipwright's boat code, so it does so only on a version it was tested against. On any other version it logs a warning and leaves Shipwright's boats as Shipwright made them.
+We tested Shipwright **1.5.1**. Rough Seas reaches into Shipwright's boat class by name, so it works with any version whose boat class still has the members vanilla's boat has. When one of them is gone, Rough Seas logs a warning naming it and leaves Shipwright's boats as Shipwright made them.
 
 ### Its boats in our sea
 
@@ -198,16 +199,16 @@ Rough Seas works with Shipwright **1.5.1**. It reaches into Shipwright's boat co
 
 ### For server owners and modders
 
-- Our behaviours reach Shipwright's boats by a JSON patch, `patches/compat-shipwright.json`, which applies only while Shipwright is installed at a tested version.
+- Our behaviours reach Shipwright's boats by a JSON patch, `patches/compat-shipwright.json`, which applies only while Shipwright is installed and its boat class has what we reach.
 - Take Shipwright out of a world and its boats go with it, as its own blocks do. Rough Seas needs nothing else.
 
 ## Walkable Entities
 
 [Walkable Entities](https://mods.vintagestory.at/walkableentities) 1.0.44 lets a player stand and walk on a moving boat's deck: vanilla's raft and sailboat, and the boats of mods it supports, Shipwright's among them. Our vessels can't be walked on.
 
-### Tested versions
+### Other versions
 
-Rough Seas works with Walkable Entities **1.0.44**. It reaches into Walkable Entities' code, so it does so only on a version it was tested against. On any other version it logs a warning and leaves Walkable Entities alone: a player standing on a deck then stays level while the boat rises and rolls with our swell around them.
+We tested Walkable Entities **1.0.44**. Rough Seas reaches into Walkable Entities' code by name (the pose of a boat's deck and the deck a player stands on), so it works with any version that still has them. When one of them is gone, Rough Seas logs a warning naming it and leaves Walkable Entities alone: a player standing on a deck then stays level while the boat rises and rolls with our swell around them.
 
 ### Standing on a deck at sea
 
@@ -218,3 +219,9 @@ Rough Seas works with Walkable Entities **1.0.44**. It reaches into Walkable Ent
 
 - Only boats with our `roughseas:seaforces` change. Walkable Entities carries a player on any other boat exactly as it does without us.
 - [Shipworks+](#shipworks) needs Walkable Entities too. Its ships keep their own walkable decks, which this change doesn't reach.
+
+## Player Model Library
+
+[Player Model Library](https://mods.vintagestory.at/playermodellib) 1.25.0 lets other mods give the player a body of their own, such as the Female Seraph, and gives a character a swim speed that a body, class or trait can raise or lower.
+
+With [realistic swimming](Swimming) on, Rough Seas strokes the swimmer by its own arms, and a character's swim speed multiplies how hard they pull, as the game's walk speed and the [Swimming strength](World-Settings#swimming-strength) setting do: a swim speed of 1.5 pulls half as hard again, up to 10 times. A character with no swim speed of its own swims as everyone else does. With realistic swimming off, swimming is the game's own, and Player Model Library's swim speed works as it does without Rough Seas.

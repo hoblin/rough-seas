@@ -1,5 +1,4 @@
 {
-    "tested": { "from": "1.8.5", "to": "1.8.5" },
     "settings": {
         "HurricaneEventChance": 0,
         "MonsoonEventChance": 0,

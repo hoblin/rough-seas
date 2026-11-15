@@ -86,11 +86,11 @@ public static class BodyOnTheBed
     [ReliesOn("Vintagestory.API.Common.Entities.PModuleOnGround", "Applicable", "keeps vanilla's walk off a player who swims, its feet on the bed or not")]
     private static void Stands(Entity entity, ref bool __result) => __result |= OnBed(entity);
 
-    private static void BeforeWalk(EntityPos pos, out double __state) => __state = pos.Motion.Y;
+    private static void BeforeWalk(EntityPos pos, out double? __state) => __state = pos.Motion.Y;
 
     [ReliesOn("Vintagestory.API.Common.Entities.PModuleOnGround", "DoApply", "walks by WalkVector across alone and jumps by setting Motion.Y")]
-    private static void Walks(Entity entity, EntityPos pos, double __state)
+    private static void Walks(Entity entity, EntityPos pos, double? __state)
     {
-        if (OnBed(entity)) pos.Motion.Y = __state;
+        if (__state is { } before && OnBed(entity)) pos.Motion.Y = before;
     }
 }
