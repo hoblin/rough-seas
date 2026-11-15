@@ -135,14 +135,19 @@ Other mods' boats take our sea, and the water lets you out of it.
 - **Every text translated,** the hold's "Open" hint among them.
 - **Lighter on the machine:** the surf, the shader and the shore water do their work once, for about a third less time spent in the mod.
 
-## Next release
+## 5.0 "Sail or Swim"
 
-Sailing becomes sailing.
+Sailing becomes sailing, and swimming becomes swimming.
 
 - **[Sailing by the wind](The-Science-of-the-Hull#under-sail).** The [outrigger](Outrigger-Canoe#sailing-it) and the [sailboat](Sailboat#sailing-it) sail by where the wind blows from: well with it abeam or behind, slowly close to it, and nowhere straight into it. On an island with the wind against you, you may wait for it to turn. The wind pushes them sideways as they sail and drifts them with the sail down, and a sail set at a mooring strains the rope.
 - **The wind on every vessel.** The wind pushes the paddled and rowed vessels too, sideways as you go and downwind when left alone, harder the stronger it blows and the more they show above water.
-- **The outrigger rigged as history built it.** Its mast stands by the float's side, raked toward the sail's foot, with a shroud and a shore out to the float and running stays to both ends; the yard hangs on a halyard. It keeps its float to windward and changes tack by shunting: click the sail step at the far end. It sails whatever you hold, where before it needed a paddle in hand. Its rig takes seven poles, two of them 4 m, three cloths and five ropes.
+- **The outrigger rigged as history built it.** Its mast stands by the float's side, raked toward the sail's foot, with a shroud and a shore out to the float and running stays to both ends; the yard hangs on a halyard. It keeps its float to windward and changes tack by shunting: click the sail step at the far end. It sails whatever you hold, where before it needed a paddle in hand. Its rig takes four poles, two of them 4 m, three cloths and five ropes.
 - **Sails that fill with the wind.** Both sails are drawn as cloth that fills, trims itself and heaves with the hull; the sailboat's no longer stays put while the hull rises and falls under it.
+- **[Swimming](Swimming), reworked.** You swim with a trained swimmer's strength and keep a full breath in your lungs. [What you carry](Swimming#what-you-carry) weighs by its parts: a tool's metal or stone head pulls you down, and its wooden haft holds you up.
+- **[On the bottom](Swimming#on-the-bottom) you stand.** You walk along the bottom as on land, however much you carry, and push off it with your legs to come up. When you carry too much to swim up, the game tells you how much.
+- **[A jump into the water](Swimming#jumping-in) keeps its way:** you plunge deep, feet first.
+- **Easier, if you want it.** Three new [world settings](World-Settings): [Wind in the sails](World-Settings#wind-in-the-sails) and [Swimming strength](World-Settings#swimming-strength), each one, two or three times as strong, and *Realistic swimming*, which off gives you the base game's swimming back.
+- **A major version**, because sailing and the swimming rework changed keys and types the modder pages document: what changed for [sailing](For-Modders#sailing-by-the-wind), for [swimming](For-Modders#swimming-revised-weight-by-parts-a-trained-swimmer-the-push-off-the-bed) and for [a body coming into the water](For-Modders#a-body-keeps-its-way-into-the-water).
 
 ## Seamanship
 
