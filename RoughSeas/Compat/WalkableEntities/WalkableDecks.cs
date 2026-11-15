@@ -47,8 +47,9 @@ public static class WalkableDecks
                 : throw new MissingMemberException(pose.FullName, $"{part.Name} of {part.Type.Name}"))];
             newPose = pose.GetConstructor([.. PoseParts.Select(part => part.Type)]) ?? throw new MissingMethodException(pose.FullName, ".ctor");
             // MovingFrame.AudioBody: the platform the local player stands on, judged by its pose; its name is for the sounds it first served.
-            deckUnderPlayer = Reach.Method(Reach.Type("WalkableEntities.MovingFrame"), "AudioBody", typeof(EntityPlayer));
-            deckVessel = Reach.Field(Reach.Type("WalkableEntities.PlatformBody"), "Entity");
+            var platform = Reach.Type("WalkableEntities.PlatformBody");
+            deckUnderPlayer = Reach.Method(Reach.Type("WalkableEntities.MovingFrame"), "AudioBody", typeof(EntityPlayer)).Returning(platform);
+            deckVessel = Reach.Field(platform, "Entity", typeof(Entity));
             attached++;
             harmony = new Harmony(HarmonyId);
             harmony.Patch(getPose, postfix: new HarmonyMethod(typeof(WalkableDecks), nameof(AsDrawn)));

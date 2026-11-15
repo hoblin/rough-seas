@@ -15,8 +15,6 @@ public abstract class OtherModCompat : ModSystem
 
     protected abstract string LogTag { get; }
 
-    protected AssetLocation ConfigAsset => new($"roughseas:config/compat/{ModId}.json");
-
     protected bool Met { get; private set; }
 
     public override bool ShouldLoad(ICoreAPI api) => api.ModLoader.IsModEnabled(ModId);

@@ -27,10 +27,15 @@ public sealed class BoatClass
         mountAngle = Ref<Vec3f>(type, "mountAngle");
         forwardSpeed = Ref<double>(type, "ForwardSpeed");
         mountAnimations = Ref<Dictionary<string, string>>(type, "MountAnimations");
-        setSpeedMultiplier = Setter(type, AccessTools.PropertySetter(type, "SpeedMultiplier") ?? throw new MissingMemberException(type.FullName, "SpeedMultiplier"));
+        setSpeedMultiplier = Setter(type, AccessTools.PropertySetter(type, "SpeedMultiplier") is { } setter && setter.GetParameters()[0].ParameterType == typeof(float)
+            ? setter
+            : throw new MissingMemberException(type.FullName, "SpeedMultiplier of Single"));
         OnRenderFrame = Declared(type, "OnRenderFrame");
         UpdateMotion = Declared(type, "updateBoatAngleAndMotion");
-        SwimmingOffsetY = AccessTools.DeclaredPropertyGetter(type, "SwimmingOffsetY") ?? throw new MissingMemberException(type.FullName, "SwimmingOffsetY");
+        SwimmingOffsetY = AccessTools.DeclaredPropertyGetter(type, "SwimmingOffsetY") is { } getter
+            && getter.ReturnType == AccessTools.PropertyGetter(typeof(EntityBoat), "SwimmingOffsetY").ReturnType
+            ? getter
+            : throw new MissingMemberException(type.FullName, "SwimmingOffsetY as vanilla's boat has it");
     }
 
     public Type Type { get; }

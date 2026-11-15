@@ -20,7 +20,7 @@ public class ExtremeWeatherCompat : OtherModCompat
 
     protected override void Meet(ICoreAPI api, string name, string version)
     {
-        Config = api.Assets.Get<CompatConfig>(ConfigAsset);
+        Config = api.Assets.Get<CompatConfig>(new AssetLocation($"roughseas:config/compat/{Id}.json"));
         Ew = new ExtremeWeatherMod(Config.Settings.Keys);
         WindCap.Attach(Ew.ApplyEventWind);
         Log("{0} {1}: its wind cap holds only during its own events", name, version);
