@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using HarmonyLib;
 using Vintagestory.API.MathTools;
 
 namespace RoughSeas.Compat.ExtremeWeather;
@@ -12,6 +11,7 @@ namespace RoughSeas.Compat.ExtremeWeather;
 public sealed class ExtremeWeatherMod
 {
     private readonly FieldInfo config;
+    private readonly Dictionary<string, FieldInfo> fields;
     private readonly FieldInfo tornadoes;
     private readonly MethodInfo spawnNear;
 
@@ -20,7 +20,7 @@ public sealed class ExtremeWeatherMod
         var modSystem = Reach.Type("ExtremeWeather.ExtremeWeatherModSystem");
         var tornadoSystem = Reach.Type("ExtremeWeather.TornadoSystem");
         config = Reach.Field(modSystem, "Config");
-        foreach (var name in settings.Append("TornadoChance")) Reach.Field(config.FieldType, name);
+        fields = settings.Append("TornadoChance").Distinct().ToDictionary(name => name, name => Reach.Field(config.FieldType, name));
         tornadoes = Reach.Field(tornadoSystem, "Instance");
         spawnNear = Reach.Method(tornadoSystem, "SpawnNear", typeof(Vec3d));
         ApplyEventWind = Reach.Method(Reach.Type("ExtremeWeather.EventDirectorSystem"), "ApplyEventWind");
@@ -36,12 +36,12 @@ public sealed class ExtremeWeatherMod
         var current = Config;
         foreach (var (name, value) in settings)
         {
-            var field = AccessTools.Field(current.GetType(), name);
+            var field = fields[name];
             field.SetValue(current, Convert.ChangeType(value, field.FieldType, CultureInfo.InvariantCulture));
         }
     }
 
-    public object? Get(string name) => AccessTools.Field(Config.GetType(), name).GetValue(Config);
+    public object? Get(string name) => fields[name].GetValue(Config);
 
     public double TornadoChance => Convert.ToDouble(Get("TornadoChance"), CultureInfo.InvariantCulture);
 

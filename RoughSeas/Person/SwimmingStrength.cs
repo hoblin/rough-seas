@@ -24,7 +24,12 @@ public static class SwimmingStrength
         entity.World.Config.GetDecimal(Code, 1) * GlobalConstants.BaseMoveSpeed / NormalWalkSpeed
         * (entity is EntityAgent agent ? agent.Controls.MovespeedMultiplier : 1) * Factor(entity);
 
-    public static double Factor(Entity entity) => factors.Aggregate(1.0, (strength, factor) => strength * factor(entity));
+    public static double Factor(Entity entity)
+    {
+        var strength = 1.0;
+        foreach (var factor in factors) strength *= factor(entity);
+        return strength;
+    }
 
     public static void Add(Func factor)
     {

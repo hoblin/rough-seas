@@ -16,6 +16,8 @@ public class PlayerModelLibCompat : OtherModCompat
 
     protected override string LogTag => "pml";
 
+    public override bool ShouldLoad(ICoreAPI api) => api.Side == EnumAppSide.Client && base.ShouldLoad(api);
+
     protected override void Meet(ICoreAPI api, string name, string version)
     {
         SwimmingStrength.Add(swimmer);
