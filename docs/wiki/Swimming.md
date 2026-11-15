@@ -34,9 +34,9 @@ The water you swim in moves you too: swim with a wave's front face and it carrie
 
 ## On the bottom
 
-Where you sink to the bottom you stand on it on your feet, and walk on it as on land.
+Where you sink to the bottom you stand on it on your feet, and walk on it as on land, however much you carry. Standing, you don't swim: walk along the bottom to the shore.
 
-Press jump to push off the bottom with your legs. Alone it lifts you up toward the surface, a body laden past swimming up included. With a direction held you bound off the bottom that way, land and push off again, so even when you carry too much to swim up you can bound along the bottom to the shore.
+Press jump to push off the bottom with your legs. It lifts you straight up toward the surface, a body laden past swimming up included, and keeps the way you were walking. Once your feet leave the bottom you swim again.
 
 ## Getting out
 
@@ -64,7 +64,7 @@ In the water a thing weighs what it weighs in the air less the water it pushes a
 | Bear hide armour | 5 kg | 0.4 kg |
 | Wooden armour | 7.5 kg | −3.5 kg: it holds you up a little |
 
-Your arms lift about 7 kg of it in fresh water and 9 kg in the sea. Carry more and you can't swim up: the game tells you how much you carry. Move tools into your backpack, or push off the bottom and bound to the shore. Full plate takes you down fast.
+Your arms lift about 7 kg of it in fresh water and 9 kg in the sea. Carry more and you can't swim up: the game tells you how much you carry. Move tools into your backpack, or walk along the bottom to the shore. Full plate takes you down fast.
 
 ## Going deep
 
