@@ -18,10 +18,10 @@ public sealed class Body
     private readonly Slab[] tissue;
     private readonly Slab lungs;
 
-    private Body(BodyConfig config, double breathingLitres, Slab[] tissue, Slab lungs)
+    private Body(BodyConfig config, Slab[] tissue, Slab lungs)
     {
-        (this.config, BreathingLitres, this.tissue, this.lungs) = (config, breathingLitres, tissue, lungs);
-        HeldLitres = config.Tlc[0] * config.HeightMetres + config.Tlc[1] * config.AgeYears + config.Tlc[2];
+        (this.config, this.tissue, this.lungs) = (config, tissue, lungs);
+        LungLitres = config.Tlc[0] * config.HeightMetres + config.Tlc[1] * config.AgeYears + config.Tlc[2];
         TissueLitres = tissue.Sum(slab => slab.Litres);
     }
 
@@ -31,11 +31,8 @@ public sealed class Body
 
     public double TissueLitres { get; }
 
-    /// <summary>The air in the lungs while breathing quietly at the surface, at the surface's pressure: the end of a breath out, and half a breath more.</summary>
-    public double BreathingLitres { get; }
-
-    /// <summary>The air in the lungs held under water, at the surface's pressure: a full breath, their whole capacity.</summary>
-    public double HeldLitres { get; }
+    /// <summary>The air in the lungs in the water, at the surface's pressure: a full breath, their whole capacity.</summary>
+    public double LungLitres { get; }
 
     /// <summary>How far above the feet the lungs' air stands, in metres.</summary>
     public double ChestMetres => (lungs.From + lungs.To) / 2;
@@ -50,8 +47,7 @@ public sealed class Body
         var scale = litres / shares.Sum();
         var slabs = config.Segments.Select((segment, i) => new Slab(segment.From * height, segment.To * height, shares[i] * scale)).ToArray();
         var chest = config.Segments.First(segment => segment.Lungs);
-        var functional = config.Frc[0] * height + config.Frc[1] * config.AgeYears + config.Frc[2];
-        return new Body(config, functional + config.TidalLitres / 2, slabs, new Slab(chest.From * height, chest.To * height, 0));
+        return new Body(config, slabs, new Slab(chest.From * height, chest.To * height, 0));
     }
 
     public double Litres(double lungLitres) => TissueLitres + lungLitres;

@@ -4,7 +4,7 @@ In the water your body floats by what it displaces, not by a rule of the game, a
 
 The base game holds a swimmer up by a rule and lets you swim fast whatever you carry. Here:
 
-- You float with the water at your eyes in the sea, and lower in fresh water, and hold your breath while your eyes are under.
+- You float with your face clear in the sea and lower in fresh water, your lungs full of air.
 - You swim at a trained swimmer's pace, about 1.2 m/s, not the base game's.
 - Your armour and the tools in your hotbar weigh you down; wood holds you up.
 - Waves lift you, currents carry you and breaking crests push you under.
@@ -14,9 +14,9 @@ Each world can turn this off: with [Realistic swimming](World-Settings#the-mecha
 
 ## Floating
 
-Left alone in the sea you float with the water at your eyes, and the waves carry you up, down and to and fro. Even in a calm sea your face is awash, and every crest covers it: hold jump to lift your head clear and breathe. A [current](Currents) carries you with it, as it carries a boat.
+Left alone in the sea you float with the water at your neck and your face clear, and the waves carry you up, down and to and fro. A crest that rises over your face takes your air until it passes. A [current](Currents) carries you with it, as it carries a boat.
 
-Fresh water holds you up less, so in a lake or a river you hang lower, with the water over your eyes as often as under them. While your eyes are under water you hold a full breath, which lifts you, and once they are clear you breathe out and settle again. Holding jump strokes you up, so you tread water with your head clear.
+Fresh water holds you up less, so in a lake or a river you hang lower, with the water at your mouth. Holding jump strokes you up, so you tread water with your head clear.
 
 ## Jumping in
 
@@ -64,11 +64,11 @@ In the water a thing weighs what it weighs in the air less the water it pushes a
 | Bear hide armour | 5 kg | 0.4 kg |
 | Wooden armour | 7.5 kg | −3.5 kg: it holds you up a little |
 
-Your arms lift about 7 kg of it in fresh water and 9 kg in the sea. Carry more and you can't swim up: the game tells you how much you carry. Move tools into your backpack, or walk along the bottom to the shore. Full plate takes you down fast.
+Your arms lift about 10 kg of it in fresh water and 12 kg in the sea, a little less the deeper you are. Carry more and you can't swim up: the game tells you how much you carry. Move tools into your backpack, or walk along the bottom to the shore. Full plate takes you down fast.
 
 ## Going deep
 
-Under water you hold a full breath. The deeper you go, the more the water squeezes it, until you sink with nothing on you, and you keep sinking until you swim up: about 20 m down in the sea, about 6 m in a lake or a river. Above that depth you rise on your own. A jump into fresh water can take you that deep.
+You keep your lungs full of air. The deeper you go, the more the water squeezes it, until you sink with nothing on you, and you keep sinking until you swim up: about 20 m down in the sea, about 6 m in a lake or a river. Above that depth you rise on your own. A jump into fresh water can take you that deep.
 
 ## Breaking crests
 
@@ -76,7 +76,7 @@ A crest can break over you, as one breaks on a vessel: as often, by the same [wi
 
 In [surf](Surf-and-Swamping#breakers) the tallest waves break, and close to the beach nearly all of them.
 
-Holding jump doesn't keep you up through a breaker: its frothy water holds you up less, and your stroke can't make up the difference. A small one takes you a hand's breadth under, a big one most of a metre. You come back up once its air clears.
+Holding jump doesn't keep you up through a breaker: its frothy water holds you up less, and your stroke can't make up the difference. A small one takes you a hand's breadth under, a big one more than half a metre. You come back up once its air clears.
 
 The world setting [Breakers on swimmers](World-Settings#the-mechanics) turns breaking crests off. You still float on the waves and breathe by them.
 

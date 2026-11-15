@@ -25,10 +25,11 @@ public sealed class SwimWarning(PersonModSystem system)
             return;
         }
 
-        var now = capi.InWorldEllapsedMilliseconds;
-        if (told == why.Code && now - shownAt < ShownMilliseconds) return;
         if (told != why.Code) system.Log(swimmer, "can't: {0}", why.Reason);
-        (told, shownAt) = (why.Code, now);
+        told = why.Code;
+        var now = capi.InWorldEllapsedMilliseconds;
+        if (now - shownAt < ShownMilliseconds) return;
+        shownAt = now;
         capi.TriggerIngameError(this, "roughseas-" + why.Code, Lang.Get("roughseas:" + why.Code, why.Args));
     }
 

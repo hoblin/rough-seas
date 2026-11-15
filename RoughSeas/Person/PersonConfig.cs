@@ -15,12 +15,10 @@ public class BodyConfig
     public double MassKg;
     public double AgeYears;
     public double FatShare;
-    public double[] Frc = [];
     public double[] Tlc = [];
     public BodySegmentConfig[] Segments = [];
     public double FatDensity;
     public double LeanDensity;
-    public double TidalLitres;
     public double AtmospherePascals;
     public double DragAreaAlong;
     public double DragAreaAcross;

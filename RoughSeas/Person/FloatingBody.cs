@@ -44,8 +44,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     {
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
-        var breath = surface.Height > at.Feet + at.EyeHeight ? body.HeldLitres : body.BreathingLitres;
-        var air = body.Squeezed(breath, surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
+        var air = body.Squeezed(body.LungLitres,surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
         var under = body.LitresUnder(waterline, air);
         var whole = body.Litres(air);
         var massKg = body.MassKg + kit.Kg;
@@ -104,7 +103,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     {
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
-        var air = body.BreathingLitres;
+        var air = body.LungLitres;
         var under = body.LitresUnder(waterline, air);
         var whole = body.Litres(air);
         var massKg = body.MassKg + kit.Kg;

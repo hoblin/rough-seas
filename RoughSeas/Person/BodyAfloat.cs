@@ -57,8 +57,8 @@ public static class BodyAfloat
         harmony.Patch(AccessTools.Method(typeof(PModulePlayerInLiquid), nameof(PModulePlayerInLiquid.HandleSwimming)),
             prefix: new HarmonyMethod(typeof(BodyAfloat), nameof(BeforeStroke)),
             postfix: new HarmonyMethod(typeof(BodyAfloat), nameof(OwnStroke)));
-        mod.Log("a person's body: {0:F2} m, {1:F0} kg, {2:F1} L of tissue, {3:F2} L of air breathing at the surface",
-            thePerson.Body.HeightMetres, thePerson.Body.MassKg, thePerson.Body.TissueLitres, thePerson.Body.BreathingLitres);
+        mod.Log("a person's body: {0:F2} m, {1:F0} kg, {2:F1} L of tissue, {3:F2} L of air in the lungs",
+            thePerson.Body.HeightMetres, thePerson.Body.MassKg, thePerson.Body.TissueLitres, thePerson.Body.LungLitres);
     }
 
     public static void Detach()
@@ -121,7 +121,7 @@ public static class BodyAfloat
         if (!wasSwimming) system!.Log(entity, "swimming at y {0:F2}: held up by what it displaces, not vanilla's gravity", pos.Y);
         wasSwimming = true;
         var next = body.Step(drawn!, surface, place, new BodyMotion(pos.Motion.X, pos.Motion.Y, pos.Motion.Z), kit, dt, rate,
-            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity), OnBed(entity), SwimmingStrength.Of(entity));
+            WaterDrag.Kept(GlobalConstants.WaterDrag, dt), stroke, (current.X, current.Z), Lying(entity), BodyOnTheBed.OnBed(entity), SwimmingStrength.Of(entity));
         if (body.Reading.Kick > 0 && !kicking) system!.Log(entity, "pushes up off the bed at y {0:F2}: {1:F0} N", pos.Y, body.Reading.Kick);
         kicking = body.Reading.Kick > 0;
         pos.Motion.Set(next.X, next.Y, next.Z);
@@ -176,12 +176,7 @@ public static class BodyAfloat
 
     [ReliesOn("Vintagestory.GameContent.EntityBehaviorPlayerPhysics", "SetPlayerControls", "turns WalkYaw toward the way the keys move and WalkPitch toward the look while the player swims")]
     private static Posture Lying(Entity entity) =>
-        entity is EntityPlayer { Controls.TriesToMove: true } player && !OnBed(player) ? Posture.Lying(player.WalkYaw, player.WalkPitch) : Posture.Upright;
-
-    /// <summary>A swimming player whose feet stand on the bed, while realistic swimming is on.</summary>
-    [ReliesOn("Vintagestory.GameContent.EntityBehaviorControlledPhysics", "ApplyTests", "sets OnGround for a body that comes down onto a block, a swimming one on the bed included")]
-    public static bool OnBed(Entity entity) =>
-        entity is EntityPlayer { Swimming: true, OnGround: true } && Mechanic.RealisticSwimming.On(entity.World);
+        entity is EntityPlayer { Controls.TriesToMove: true } player && !BodyOnTheBed.OnBed(player) ? Posture.Lying(player.WalkYaw, player.WalkPitch) : Posture.Upright;
 
     private static void Trace(Entity entity, EntityPos pos, WaterSurface surface, string how, double spare)
     {
