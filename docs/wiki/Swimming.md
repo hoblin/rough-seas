@@ -38,6 +38,8 @@ Where you sink to the bottom you stand on it on your feet, and walk on it as on 
 
 Press jump to push off the bottom with your legs. It lifts you straight up toward the surface, a body laden past swimming up included, and keeps the way you were walking. Once your feet leave the bottom you swim again.
 
+![A swimmer sinking to the sea bed, landing on their feet, pushing off it and swimming up to the surface](images/swimming/on-the-bottom.webp)
+
 ## Getting out
 
 Swim into the bank and you climb out of deep water, as in the base game. Where the water reaches only your chest you wade, and jump up a step as on land.

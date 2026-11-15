@@ -4,7 +4,7 @@ A dugout with a float log held out to one side on three crooked booms lashed acr
 
 ## In Rough Seas
 
-For a long crossing of open sea. The outrigger sails by the wind, leaving every rowed boat far astern on a reach. It keeps its float to windward, as real outriggers did, and changes tack by shunting: the sail's foot goes to the other end, and it sails the other way. The float keeps the narrow hull upright where a dugout would roll over. It also stands out on its side, so knocks from that side work its lashings loose rather than cracking the hull; let them give out and the float and rig come away, leaving the dugout. Built without a saw it is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise its side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
+For a long crossing of open sea. The outrigger sails by the wind. It keeps its float to windward, as real outriggers did, and changes tack by shunting: the sail's foot goes to the other end, and it sails the other way. The float keeps the narrow hull upright where a dugout would roll over. It also stands out on its side, so knocks from that side work its lashings loose rather than cracking the hull; let them give out and the float and rig come away, leaving the dugout. Built without a saw it is a coastal boat whose low sides ship water as a dugout's do; once you have a saw, washstrakes raise its side for the open sea. It is clumsy to turn and it can't be picked up, so where you launch it is where it lives.
 
 ## Where it comes from
 

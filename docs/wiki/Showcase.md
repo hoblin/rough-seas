@@ -27,6 +27,13 @@ Rough Seas in motion: every animation of its mechanics in this wiki, each with a
 | ![An outrigger canoe under a crab-claw sail in a moderate breeze: on a beam reach, shunting, sailing back the way it came, bearing away and coming up again](images/outrigger-canoe/sailing.webp) |
 | An outrigger canoe under its crab claw in a moderate breeze: on a reach, a shunt to sail back the way it came, bearing away and coming up: [Wind and waves](Wind-and-Waves#wind), [Outrigger canoe](Outrigger-Canoe#sailing-it) |
 
+## Swimming
+
+| |
+| --- |
+| ![A swimmer sinking to the sea bed, landing on their feet, pushing off it and swimming up to the surface](images/swimming/on-the-bottom.webp) |
+| On the bottom you stand on your feet and walk, which the base game doesn't let you do, and a push off it with your legs sends you up to the surface: [Swimming](Swimming#on-the-bottom) |
+
 ## Building a vessel
 
 | | |

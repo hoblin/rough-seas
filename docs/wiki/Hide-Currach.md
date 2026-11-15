@@ -67,7 +67,7 @@ The hides you sew it from decide how long the currach lasts afloat ([Seeping and
 
 ## Its neighbours
 
-- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: faster and steadier under sail, but it carries little and can't be picked up.
+- The [outrigger canoe](Outrigger-Canoe) is the other boat for the sea: steadier, and it sails by the wind, but it carries little and can't be picked up.
 - The [sailboat](Sailboat) carries far more and takes far harder blows, and it costs a shipyard's worth of planks.
 - The [dugout](Dugout) and the [bark canoe](Birch-Bark-Canoe) are what to leave on the river.
 - The [coracle](Coracle) is built of the same laths and hides, and carried on your back.
