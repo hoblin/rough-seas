@@ -13,7 +13,7 @@ Rough Seas drives the game's own weather rather than replacing it, so most mods 
 | [Shipworks+](#shipworks) | 1.1.0 | Works with issues: its ships don't ride our drawn swell. |
 | [Shipwright](#shipwright) | 1.5.1 | Compatible: its boats are vessels of ours. |
 | [Walkable Entities](#walkable-entities) | 1.0.44 | Compatible: a deck rides our swell with whoever stands on it. |
-| [Player Model Library](#player-model-library) | 1.25.0 | Compatible: its swim speed makes a stronger or weaker swimmer. |
+| [Player Model Library](#player-model-library) | 1.25.0 | Compatible from Rough Seas 5.0.1: its swim speed makes a stronger or weaker swimmer. |
 
 Running Rough Seas with a mod not listed here? Tell us how it went on the [issue tracker](https://github.com/hoblin/rough-seas/issues).
 
@@ -224,4 +224,4 @@ We tested Walkable Entities **1.0.44**. Rough Seas reaches into Walkable Entitie
 
 [Player Model Library](https://mods.vintagestory.at/playermodellib) 1.25.0 lets other mods give the player a body of their own, such as the Female Seraph, and gives a character a swim speed that a body, class or trait can raise or lower.
 
-With [realistic swimming](Swimming) on, Rough Seas strokes the swimmer by its own arms, and a character's swim speed multiplies how hard they pull, as the game's walk speed and the [Swimming strength](World-Settings#swimming-strength) setting do: a swim speed of 1.5 pulls half as hard again, up to 10 times. A character with no swim speed of its own swims as everyone else does. A character Player Model Library makes unable to swim sinks to the bottom and walks along it, with realistic swimming on or off. With realistic swimming off, swimming is the game's own, and Player Model Library's swim speed works as it does without Rough Seas.
+With [realistic swimming](Swimming) on, Rough Seas strokes the swimmer by its own arms, and a character's swim speed multiplies how hard they pull, as the game's walk speed and the [Swimming strength](World-Settings#swimming-strength) setting do: a swim speed of 1.5 pulls half as hard again, up to 10 times. A character with no swim speed of its own swims as everyone else does. A character Player Model Library makes unable to swim sinks to the bottom and walks along it, with realistic swimming on or off. With realistic swimming off, swimming is the game's own, and Player Model Library's swim speed works as it does without Rough Seas. Rough Seas 5.0.0 left a swimmer hanging in the water beside it, with realistic swimming on; use 5.0.1.
