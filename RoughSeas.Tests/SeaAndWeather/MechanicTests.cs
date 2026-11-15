@@ -8,7 +8,7 @@ public class MechanicTests
 {
     private static readonly string[] Codes = Mechanic.All.Select(mechanic => mechanic.Code).ToArray();
 
-    private static readonly string[] Settings = [..Codes, RoughSeas.Wind.EntityBehaviorWindage.SailWindKey];
+    private static readonly string[] Settings = [..Codes, RoughSeas.Wind.EntityBehaviorWindage.SailWindKey, RoughSeas.Person.SwimmingStrength.Code];
 
     [Fact]
     public void EveryMechanicIsOnInAWorldThatNeverSetIt()
@@ -47,7 +47,7 @@ public class MechanicTests
     }
 
     [Fact]
-    public void TheWorldSettingsDeclareEveryMechanicAndTheSailsWindAndNothingElse()
+    public void TheWorldSettingsDeclareEveryMechanicTheSailsWindAndTheSwimmingStrengthAndNothingElse()
     {
         var declared = JObject.Parse(File.ReadAllText(Path.Combine(Repository.Mod, "worldconfig.json")))["worldConfigAttributes"]!
             .Select(attribute => (string)attribute["code"]!);

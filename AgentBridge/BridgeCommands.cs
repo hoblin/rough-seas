@@ -30,9 +30,11 @@ public class BridgeCommands : ModSystem
     private const int HoverAboveSea = 1;
     private const double NearbyGridBlocks = 5000;
     private const int WaveProbes = 12;
+    private const string RiversFlowKey = "flowVectors";
 
     private ICoreServerAPI sapi = null!;
     private DriftSwitch? drift;
+    private BreathHold breath = null!;
     private CurrentOverride? current;
     private DriftSync? sync;
     private ChunkSettle settle = null!;
@@ -52,6 +54,7 @@ public class BridgeCommands : ModSystem
             sync = api.ModLoader.GetModSystem<DriftSync>();
             api.Event.PlayerJoin += player => sync.Send(drift.Drifting, drift.WavesOnly, current.Current, player);
         }
+        breath = new BreathHold(api, !benchDefaults);
         if (benchDefaults) TurnOffTemporalEffects(api.World.Config);
         api.Event.ServerSuspend += HoldSuspension;
         var parsers = api.ChatCommands.Parsers;
@@ -115,6 +118,12 @@ public class BridgeCommands : ModSystem
                 .WithArgs(parsers.Word("code wildcard"), parsers.OptionalIntRange("range", 1, 512, 256))
                 .HandleWith(args => Find((IServerPlayer)args.Caller.Player, (string)args[0], (int)args[1]))
             .EndSubCommand()
+            .BeginSubCommand("river")
+                .WithDescription("Fly the caller over the nearest water the Rivers mod pushes (its chunks' flowVectors) at least DEPTH blocks deep, within range, in the loaded world; replies with the flow there")
+                .RequiresPlayer()
+                .WithArgs(parsers.OptionalIntRange("range", 1, 512, 256), parsers.OptionalIntRange("depth", 1, 32, 1))
+                .HandleWith(args => River((IServerPlayer)args.Caller.Player, (int)args[0], (int)args[1]))
+            .EndSubCommand()
             .BeginSubCommand("beaches")
                 .WithDescription("List the places in the loaded world within this range where dry ground lies flush with the sea, LENGTH blocks along the water and DEPTH back from it: where a vessel is laid by the water. Each with its ground, rainfall and temperature, the wettest first")
                 .RequiresPlayer()
@@ -143,6 +152,11 @@ public class BridgeCommands : ModSystem
                 .WithDescription("Whether vessels drift with the current and the waves, steered or not (waves: the waves alone); off on every bench start, so they hold still")
                 .WithArgs(parsers.OptionalWordRange("state", "on", "off", "waves"))
                 .HandleWith(args => Drift(args[0] as string))
+            .EndSubCommand()
+            .BeginSubCommand("breath")
+                .WithDescription("Whether players spend their breath under water; off on every bench start, so a swimmer left in a test doesn't drown")
+                .WithArgs(parsers.OptionalWordRange("state", "on", "off"))
+                .HandleWith(args => Breath(args[0] as string))
             .EndSubCommand()
             .BeginSubCommand("current")
                 .WithDescription("Set one current everywhere in place of the sea's, SPEED m/s toward a yaw in degrees as the camera's (0 toward +Z, 90 toward +X), as a river carries a vessel; 'off' gives the sea's back")
@@ -274,6 +288,14 @@ public class BridgeCommands : ModSystem
         config.SetBool("temporalStability", false);
         config.SetString("temporalRifts", "off");
         Mod.Logger.Notification("Temporal storms, stability and rifts are off for this world");
+    }
+
+    private TextCommandResult Breath(string? state)
+    {
+        if (state != null) breath.Breathing = state == "on";
+        return TextCommandResult.Success(breath.Breathing
+            ? "Players spend their breath under water and drown, as in the game"
+            : "Players' lungs stay full under water; /bridge breath on lets them drown");
     }
 
     private TextCommandResult Drift(string? state)
@@ -627,6 +649,36 @@ public class BridgeCommands : ModSystem
 
         var flown = Fly(player, new Vec3d(found.X + 0.5, found.Y + 3, found.Z + 0.5));
         return TextCommandResult.Success($"{flown.StatusMessage}, 3 blocks over {accessor.GetBlock(found).Code}");
+    }
+
+    private TextCommandResult River(IServerPlayer player, int range, int depth)
+    {
+        const int size = GlobalConstants.ChunkSize;
+        var accessor = sapi.World.BlockAccessor;
+        var origin = player.Entity.Pos.AsBlockPos;
+
+        (int x, int z, float flowX, float flowZ)? Flowing(int x, int z)
+        {
+            if (accessor.GetChunk(x / size, 0, z / size)?.GetModdata<float[]>(RiversFlowKey, null) is not { } flow) return null;
+            var index = z % size * size + x % size;
+            var (flowX, flowZ) = (flow[index], flow[index + size * size]);
+            if (flowX == 0 && flowZ == 0) return null;
+            var surface = accessor.GetRainMapHeightAt(x, z);
+            return Enumerable.Range(surface - depth + 1, depth).All(y => OpenWater.At(accessor, x, y, z).IsLiquid()) ? (x, z, flowX, flowZ) : null;
+        }
+
+        var found = Enumerable.Range(-range, 2 * range + 1)
+            .SelectMany(i => Enumerable.Range(-range, 2 * range + 1), (i, j) => (x: origin.X + i, z: origin.Z + j))
+            .OrderBy(point => (point.x - origin.X) * (long)(point.x - origin.X) + (point.z - origin.Z) * (long)(point.z - origin.Z))
+            .Select(point => Flowing(point.x, point.z))
+            .FirstOrDefault(point => point != null);
+        if (found is not var (fx, fz, towardX, towardZ)) return TextCommandResult.Error($"No Rivers flow over water {depth} blocks deep within {range} blocks of loaded world");
+
+        var top = accessor.GetRainMapHeightAt(fx, fz);
+        var bed = top;
+        while (OpenWater.At(accessor, fx, bed, fz).IsLiquid()) bed--;
+        var flown = Fly(player, new Vec3d(fx + 0.5, top + 3, fz + 0.5));
+        return TextCommandResult.Success($"{flown.StatusMessage}, over {top - bed} blocks of river water on a bed at y {bed}, flowing {towardX:F2} {towardZ:F2}");
     }
 
     private TextCommandResult Beaches(BlockPos origin, int range, int length, int depth)

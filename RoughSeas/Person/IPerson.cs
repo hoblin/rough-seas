@@ -16,4 +16,7 @@ public interface IPerson
 }
 
 /// <summary>What is carried: its mass, and the water it displaces wholly under.</summary>
-public readonly record struct Carried(double Kg, double Litres);
+public readonly record struct Carried(double Kg, double Litres)
+{
+    public static Carried operator +(Carried a, Carried b) => new(a.Kg + b.Kg, a.Litres + b.Litres);
+}

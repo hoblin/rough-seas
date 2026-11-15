@@ -53,6 +53,10 @@ public static class BodyUnderSurface
         decided.Clear();
     }
 
+    /// <summary>The drawn sea decided where the body stands in the water the last time this side tested it: it is in water a body floats in.</summary>
+    public static bool InDrawnWater(Entity entity) =>
+        decided.TryGetValue((entity.EntityId, entity.World.Side), out var last) && last.Drawn;
+
     private static void Patch(PersonModSystem mod, EnumAppSide side)
     {
         systems[side] = mod;

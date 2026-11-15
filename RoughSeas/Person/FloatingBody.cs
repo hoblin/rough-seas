@@ -13,12 +13,14 @@ namespace RoughSeas.Person;
 /// its push on a body moving through it, by the share (ρ V + m_a) / (m + m_a) of what lies under, then the swimmer's
 /// stroke. The drag D takes the body's velocity through the water, the current and a breaker's roller included, along
 /// and across the body as it lies (<see cref="Posture"/>). A crest broken over it churns air into the water it lies in.
-/// A body that comes into the water brings its way in as its own.
+/// A body that comes into the water brings its way in as its own. Its feet on the bed, it stands: vanilla's walk moves it
+/// across, its arms don't stroke and its <see cref="Legs"/> push it up off the bed.
 /// </summary>
 public sealed class FloatingBody(IPerson person, PersonConfig config, Waves waves) : BodyInWater
 {
     private readonly Body body = person.Body;
     private readonly SwimmingArms arms = new(config.Body.Swimming, waves.DensityOf(false));
+    private readonly Legs legs = new(person.Body, config.Body.Legs);
     private Breaker? breaker;
     private bool coasting = true;
 
@@ -35,12 +37,14 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     /// <param name="wavesPerSecond">The waves' seconds to a second of <paramref name="seconds"/>: the water's motion, read on the waves' clock, is taken on the tick's, while the body answers in the tick's own seconds.</param>
     /// <param name="kept">The share of the motion across that vanilla's water drag keeps after this step; up and down it is undone.</param>
     /// <param name="drawn">How the body is drawn lying; upright when not given. A body that came into the water keeps lying as it came, upright, until it moves through the water no faster than it swims.</param>
+    /// <param name="onBed">The feet stand on the bed; <paramref name="motion"/> then carries vanilla's walk across.</param>
+    /// <param name="strength">The arms' pull over a trained swimmer's (<see cref="SwimmingStrength"/>).</param>
     public BodyMotion Step(IDrawnSea sea, WaterSurface surface, BodyPlace at, BodyMotion motion, Carried kit, double seconds, double wavesPerSecond, double kept,
-        SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null)
+        SwimStroke stroke = default, (double X, double Z) current = default, Posture? drawn = null, bool onBed = false, double strength = 1)
     {
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
-        var air = body.Squeezed(body.BreathingLitres, surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
+        var air = body.Squeezed(body.LungLitres,surface.Height - (at.Feet + body.ChestMetres), density, WaveTheory.Gravity);
         var under = body.LitresUnder(waterline, air);
         var whole = body.Litres(air);
         var massKg = body.MassKg + kit.Kg;
@@ -54,15 +58,16 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
         var middle = Math.Max(0, surface.Height - (at.Feet + Math.Min(waterline, body.HeightMetres) / 2));
         var lift = Body.Lift(held, density, massKg, addedKg, WaveTheory.Gravity, sea.RiseAccelerationAt(at.X, at.Z, middle) * wavesPerSecond * wavesPerSecond);
         var rise = sea.RiseVelocityAt(at.X, at.Z, middle) * wavesPerSecond;
+        var kick = legs.Push(at.Feet, onBed, stroke.Jump, inertia, -lift * inertia);
         var water = Water(sea, surface, at, waterline, wavesPerSecond, current);
         lock (gate)
         {
-            if (!met) TakeAsOwn(motion, water);
+            if (!met || onBed) TakeAsOwn(motion, water);
         }
         var (toX, toZ) = Toward(sea.Seconds, churned, wavesPerSecond, current);
         var (throughX, throughY, throughZ) = (ownX - toX, motion.Y * WaterDrag.TicksPerSecond - rise, ownZ - toZ);
         var stroking = throughX * stroke.X + throughY * stroke.Y + throughZ * stroke.Z;
-        var thrust = stroke.Stroking ? arms.Thrust(stroking, density) : 0;
+        var thrust = stroke.Stroking && !onBed ? strength * arms.Thrust(stroking, density) : 0;
 
         coasting &= Math.Sqrt(throughX * throughX + throughY * throughY + throughZ * throughZ) > config.Body.Swimming.MetresPerSecond;
         var posture = coasting ? Posture.Upright : drawn ?? Posture.Upright;
@@ -78,9 +83,10 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
                 density, posture, under / whole, Inertias(posture, massKg, waterline, air, density), seconds);
         }
         var carried = Velocity;
-        var heave = heaveThrough + rise + (lift + thrust * stroke.Y / inertia) * seconds;
+        var heave = heaveThrough + rise + (lift + (thrust * stroke.Y + kick) / inertia) * seconds;
 
-        Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, water.WaveX, rise, water.WaveZ, carried.X, carried.Z, thrust);
+        var spare = Body.Lift(whole + kit.Litres, density, massKg, 0, WaveTheory.Gravity) * massKg + strength * arms.Thrust(0, density);
+        Reading = new FloatReading(waterline, under, whole, air, lift, churn * churned, water.WaveX, rise, water.WaveZ, carried.X, carried.Z, thrust, spare, kick);
         return new BodyMotion(
             motion.X + WaterDrag.Carried(carried.X, before.X, 1, kept),
             heave / WaterDrag.TicksPerSecond,
@@ -97,7 +103,7 @@ public sealed class FloatingBody(IPerson person, PersonConfig config, Waves wave
     {
         var density = waves.DensityOf(surface.Salt);
         var waterline = surface.Height - at.Feet;
-        var air = body.BreathingLitres;
+        var air = body.LungLitres;
         var under = body.LitresUnder(waterline, air);
         var whole = body.Litres(air);
         var massKg = body.MassKg + kit.Kg;
@@ -178,6 +184,10 @@ public readonly record struct BodyPlace(double X, double Feet, double Z, double 
 /// <summary>A body's motion, in blocks per tick, as vanilla's <c>Pos.Motion</c>.</summary>
 public readonly record struct BodyMotion(double X, double Y, double Z);
 
-/// <summary>What one step of a body found, for the log.</summary>
+/// <summary>
+/// What one step of a body found. <see cref="SpareNewtons"/> decides whether the swimmer can swim up: what the water
+/// displaced holds up, with the body wholly under and its lungs as squeezed as now, and the arms' pull from a
+/// standstill, over the weight; infinite while wading, which the base game's jump moves.
+/// </summary>
 public readonly record struct FloatReading(double Waterline, double UnderLitres, double WholeLitres, double LungLitres, double Lift, double Churn,
-    double FlowX, double Rise, double FlowZ, double CarriedX, double CarriedZ, double Thrust);
+    double FlowX, double Rise, double FlowZ, double CarriedX, double CarriedZ, double Thrust, double SpareNewtons = double.PositiveInfinity, double Kick = 0);

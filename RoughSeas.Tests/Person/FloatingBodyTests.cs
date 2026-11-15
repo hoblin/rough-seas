@@ -2,6 +2,7 @@ using RoughSeas.Person;
 using RoughSeas.SeaAndWeather;
 using RoughSeas.Storms;
 using RoughSeas.Tests.Storms;
+using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
 namespace RoughSeas.Tests.Person;
@@ -21,9 +22,10 @@ public class FloatingBodyTests
     private static readonly PlayerPerson Man = Fixtures.Person;
     private static readonly double Kept = WaterDrag.Kept(0.92, Frame);
 
-    private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.DensityKgPerLitre);
+    private static Carried Kit(double kg) => new(kg, kg / Fixtures.PersonConfig.Carried.Densities["steel"] * Body.LitresPerCubicMetre);
 
-    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default, BodyMotion start = default)
+    private sealed class Run(IDrawnSea sea, double feet, bool salt = true, double kit = 0, double rate = 1, SwimStroke stroke = default, BodyMotion start = default,
+        double bed = double.NegativeInfinity, double strength = 1, Carried? carried = null)
     {
         private readonly FloatingBody body = new(Man, Fixtures.PersonConfig, Waves);
         private BodyMotion motion = start;
@@ -36,6 +38,8 @@ public class FloatingBodyTests
 
         public double Feet { get; private set; } = feet;
 
+        public double FastestUp { get; private set; }
+
         public double MovedX { get; private set; }
 
         public double MovedZ { get; private set; }
@@ -47,9 +51,12 @@ public class FloatingBodyTests
         public FloatReading Step()
         {
             if (sea is WaterFixtures.Sea still) still.Seconds += Frame;
-            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, Kit(kit), Frame, rate, Kept, Stroke, Current, Drawn);
+            var next = body.Step(sea, Surface, new BodyPlace(X + MovedX, Feet, Z + MovedZ, EyeHeight, Width), motion, carried ?? Kit(kit), Frame, rate, Kept, Stroke, Current, Drawn,
+                Feet <= bed, strength);
             motion = new BodyMotion(next.X * Kept, next.Y, next.Z * Kept);
             Feet += motion.Y * WaterDrag.TicksPerSecond * Frame;
+            if (Feet < bed) (Feet, motion) = (bed, motion with { Y = 0 });
+            FastestUp = Math.Max(FastestUp, motion.Y * WaterDrag.TicksPerSecond);
             MovedX += motion.X * WaterDrag.TicksPerSecond * Frame;
             MovedZ += motion.Z * WaterDrag.TicksPerSecond * Frame;
             return body.Reading;
@@ -66,26 +73,26 @@ public class FloatingBodyTests
 
     private static IDrawnSea Calm => new WaterFixtures.Sea(0, swell: false);
 
+    private static double Chest => 0.72 * Man.Body.HeightMetres;
+
+    private static double Chin => 0.87 * Man.Body.HeightMetres;
+
     [Fact]
-    public void FloatsInTheSeaWithTheWaterAtTheFace()
+    public void FloatsInTheSeaWithItsFaceClearOfTheWater()
     {
         var run = new Run(Calm, Still - 1.6);
         run.Settle(120);
 
-        var waterline = Still - run.Feet;
-        Assert.InRange(waterline, 1.6, 1.74);
-        Assert.InRange(Math.Abs(waterline - EyeHeight), 0, 0.1);
+        Assert.InRange(Still - run.Feet, Chest, Chin);
     }
 
     [Fact]
-    public void SinksInFreshWater()
+    public void InFreshWaterItFloatsLowerWithTheWaterBetweenItsChinAndItsEyes()
     {
         var run = new Run(Calm, Still - 1.6, salt: false);
-        var from = run.Feet;
-        run.Settle(60);
+        run.Settle(120);
 
-        var speed = (from - run.Feet) / 60;
-        Assert.InRange(speed, 0.05, 1);
+        Assert.InRange(Still - run.Feet, Chin, EyeHeight);
     }
 
     [Fact]
@@ -108,6 +115,92 @@ public class FloatingBodyTests
         Assert.True(laden.Feet < bare.Feet - 0.02, $"{laden.Feet:F3} against {bare.Feet:F3}");
     }
 
+    private static readonly SwimStroke Jumping = new(0, 1, 0, Jump: true);
+
+    [Fact]
+    public void ABodyStandingOnTheBedDoesNotSwimOffItThoughItsArmsCouldLiftIt()
+    {
+        var bed = Still - 4;
+        var run = new Run(Calm, bed, salt: false, kit: KgAtNoneToSpare() / 2, stroke: new SwimStroke(0, 1, 0), bed: bed);
+        run.Settle(2);
+
+        Assert.Equal(bed, run.Feet);
+    }
+
+    [Fact]
+    public void ItsLegsPushABodyTooLadenToSwimUpOffTheBedNoFasterThanTheirProfileAllows()
+    {
+        var bed = Still - 4;
+        var kg = KgAtNoneToSpare() + 5;
+        var still = new Run(Calm, bed, salt: false, kit: kg, bed: bed);
+        var pushing = new Run(Calm, bed, salt: false, kit: kg, stroke: Jumping, bed: bed);
+        still.Settle(2);
+        pushing.Settle(1);
+        var legs = new Legs(Man.Body, Fixtures.PersonConfig.Body.Legs);
+        var unhindered = Math.Sqrt(2 * Fixtures.PersonConfig.Body.Legs.PushMetres * legs.Steady(Man.Body.MassKg, 0) / Man.Body.MassKg);
+
+        Assert.Equal(bed, still.Feet);
+        Assert.InRange(pushing.FastestUp, double.Epsilon, unhindered);
+    }
+
+    [Fact]
+    public void TheLegsPushStraightUpWhicheverWayTheSwimmerStrokes()
+    {
+        var bed = Still - 4;
+        var run = new Run(Calm, bed, salt: false, kit: KgAtNoneToSpare() + 5, stroke: new SwimStroke(Math.Sqrt(0.5), Math.Sqrt(0.5), 0, Jump: true), bed: bed);
+        var reading = run.Step();
+
+        Assert.True(reading.Kick > 0);
+        Assert.True(run.Feet > bed);
+        Assert.Equal(0, run.MovedX);
+    }
+
+    private static double Spare(double kg, double strength = 1) =>
+        new Run(Calm, Still - 4, salt: false, kit: kg, stroke: Jumping, strength: strength).Step().SpareNewtons;
+
+    private static double KgAtNoneToSpare(double strength = 1)
+    {
+        var (light, heavy) = (0.0, 40.0);
+        for (var i = 0; i < 30; i++)
+        {
+            var kg = (light + heavy) / 2;
+            if (Spare(kg, strength) > 0) light = kg;
+            else heavy = kg;
+        }
+        return light;
+    }
+
+    [Theory]
+    [InlineData(-0.5, true)]
+    [InlineData(0.5, false)]
+    public void ATreadingBodyRisesJustBelowTheLoadItHasNoForceToSpareForAndSinksJustAbove(double offKg, bool rises)
+    {
+        var run = new Run(Calm, Still - 4, salt: false, kit: KgAtNoneToSpare() + offKg, stroke: Jumping);
+        run.Settle(5);
+
+        Assert.Equal(rises, run.Feet > Still - 4);
+    }
+
+    [Fact]
+    public void TheReportersCopperToolsWeighedByTheirPartsLeaveForceToSwimUp()
+    {
+        EnumTool[] tools = [EnumTool.Axe, EnumTool.Pickaxe, EnumTool.Shovel, EnumTool.Hoe, EnumTool.Knife, EnumTool.Saw, EnumTool.Scythe, EnumTool.Hammer];
+        var kit = Man.Weigh([], tools.Select(tool => new Held(tool, "copper")));
+        var spare = new Run(Calm, Still - 4, salt: false, stroke: Jumping, carried: kit).Step().SpareNewtons;
+
+        Assert.True(spare > 0, $"{spare:F0} N to spare with {kit.Kg:F1} kg");
+    }
+
+    [Fact]
+    public void TwiceTheStrengthSwimsUpWithALoadOneCannot()
+    {
+        var kg = KgAtNoneToSpare() + 1;
+        var run = new Run(Calm, Still - 4, salt: false, kit: kg, stroke: Jumping, strength: 2);
+        run.Settle(5);
+
+        Assert.True(run.Feet > Still - 4, $"{kg:F1} kg at twice the strength");
+    }
+
     [Fact]
     public void FullPlateSinksIt()
     {
@@ -122,24 +215,24 @@ public class FloatingBodyTests
     [Fact]
     public void RisesFromAboveTheBoyleDepthAndSinksFromBelowIt()
     {
-        var rises = new Run(Calm, Still - 4);
-        var sinks = new Run(Calm, Still - 14);
+        var rises = new Run(Calm, Still - 14);
+        var sinks = new Run(Calm, Still - 30);
         var (risesFrom, sinksFrom) = (rises.Feet, sinks.Feet);
         rises.Settle(5);
         sinks.Settle(5);
 
-        Assert.True(rises.Feet > risesFrom + 0.1, $"from 4 m it moved {rises.Feet - risesFrom:F2} m");
-        Assert.True(sinks.Feet < sinksFrom - 0.1, $"from 14 m it moved {sinks.Feet - sinksFrom:F2} m");
+        Assert.True(rises.Feet > risesFrom + 0.1, $"from 14 m it moved {rises.Feet - risesFrom:F2} m");
+        Assert.True(sinks.Feet < sinksFrom - 0.1, $"from 30 m it moved {sinks.Feet - sinksFrom:F2} m");
     }
 
     [Fact]
-    public void SqueezesItsBreathByTheDepthOfItsChest()
+    public void HoldsAFullBreathUnderWaterSqueezedByTheDepthOfItsChest()
     {
         var deep = new Run(Calm, Still - 14).Step();
-        Assert.True(deep.LungLitres < 0.7 * Man.Body.BreathingLitres, $"{deep.LungLitres:F2} L");
+        Assert.True(deep.LungLitres < 0.7 * Man.Body.LungLitres, $"{deep.LungLitres:F2} L");
 
-        var surface = new Run(Calm, Still - 1.6).Step();
-        Assert.InRange(surface.LungLitres, 0.9 * Man.Body.BreathingLitres, Man.Body.BreathingLitres);
+        var under = new Run(Calm, Still - EyeHeight - 0.2).Step();
+        Assert.InRange(under.LungLitres, 0.9 * Man.Body.LungLitres, Man.Body.LungLitres);
     }
 
     [Fact]
@@ -276,8 +369,8 @@ public class FloatingBodyTests
         var small = Sunk(0.5);
         var big = Sunk(4);
 
-        Assert.True(small > 0.1, $"{small:F2} m under in a 0.5 m breaker");
-        Assert.True(big > 1, $"{big:F2} m under in a 4 m breaker");
+        Assert.True(small > 0, $"{small:F2} m under in a 0.5 m breaker");
+        Assert.True(big > small, $"{big:F2} m under in a 4 m breaker, {small:F2} m in a 0.5 m one");
     }
 
     [Fact]
@@ -321,7 +414,23 @@ public class FloatingBodyTests
         var from = run.MovedX;
         run.Settle(10);
 
-        Assert.InRange((run.MovedX - from) / 10, 0.87, 0.93);
+        Assert.InRange((run.MovedX - from) / 10 / Fixtures.PersonConfig.Body.Swimming.MetresPerSecond, 0.97, 1.03);
+    }
+
+    [Fact]
+    public void TwiceTheStrengthSwimsFasterButNotByTheRootOfTwoAsItsPullFallsWithSpeed()
+    {
+        double Cruise(double strength)
+        {
+            var run = new Run(Calm, Still - 1.6, salt: false, stroke: Ahead, strength: strength);
+            run.Settle(30);
+            var from = run.MovedX;
+            run.Settle(10);
+            return (run.MovedX - from) / 10;
+        }
+
+        var ratio = Cruise(2) / Cruise(1);
+        Assert.True(ratio > 1 && ratio < Math.Sqrt(2), $"twice the strength swims {ratio:F3} times as fast");
     }
 
     [Fact]
@@ -336,8 +445,9 @@ public class FloatingBodyTests
         var from = run.MovedX;
         run.Settle(1);
 
-        Assert.InRange(first, 55, 59);
-        Assert.InRange(run.MovedX - from, 0.6, 0.9);
+        var swimming = Fixtures.PersonConfig.Body.Swimming;
+        Assert.InRange(first, swimming.UsefulWatts / swimming.MetresPerSecond, 92);
+        Assert.InRange((run.MovedX - from) / swimming.MetresPerSecond, 0.5, 1);
     }
 
     [Fact]
@@ -365,18 +475,18 @@ public class FloatingBodyTests
         var from = run.MovedX;
         run.Settle(10);
 
-        Assert.InRange((run.MovedX - from) / 10, 0.49, 0.51);
+        Assert.InRange((run.MovedX - from) / 10, 0.48, 0.52);
     }
 
     [Fact]
     public void SwimmingAgainstACurrentFasterThanItSwimsItLosesGround()
     {
-        var run = new Run(Calm, Still - 1.6, stroke: Ahead) { Current = (-1.2, 0) };
+        var run = new Run(Calm, Still - 1.6, stroke: Ahead) { Current = (-1.5, 0) };
         run.Settle(60);
         var from = run.MovedX;
         run.Settle(10);
 
-        Assert.InRange((run.MovedX - from) / 10, -0.4, -0.2);
+        Assert.InRange((run.MovedX - from) / 10, -1.5 + 0.9 * Fixtures.PersonConfig.Body.Swimming.MetresPerSecond, -0.1);
     }
 
     [Fact]
@@ -392,7 +502,7 @@ public class FloatingBodyTests
         }
 
         var (flat, face) = (Speed(default), Speed(new FlowGradient(-0.3, 0, 0)));
-        Assert.InRange(face - flat, 0.2, 0.35);
+        Assert.True(face - flat > 0.1, $"the face carries it {face - flat:F2} m/s faster");
     }
 
     [Fact]

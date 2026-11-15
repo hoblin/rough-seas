@@ -15,16 +15,23 @@ public class BodyConfig
     public double MassKg;
     public double AgeYears;
     public double FatShare;
-    public double[] Frc = [];
+    public double[] Tlc = [];
     public BodySegmentConfig[] Segments = [];
     public double FatDensity;
     public double LeanDensity;
-    public double TidalLitres;
     public double AtmospherePascals;
     public double DragAreaAlong;
     public double DragAreaAcross;
     public double DragAreaSwimming;
     public SwimmingConfig Swimming = new();
+    public LegsConfig Legs = new();
+}
+
+public class LegsConfig
+{
+    public double NewtonsPerKg;
+    public double MetresPerSecond;
+    public double PushMetres;
 }
 
 public class SwimmingConfig
@@ -47,8 +54,24 @@ public class BodySegmentConfig
 public class CarriedConfig
 {
     public double ArmourKgPerWalkSpeed;
-    public double DensityKgPerLitre;
-    public Dictionary<string, double> ToolKg = [];
+    public string UnknownArmourMaterial = "";
+    public Dictionary<string, double> UnslowingArmourKg = [];
+    public Dictionary<string, double> Densities = [];
+    public Dictionary<string, string> Alike = [];
+    public string HandlePrefix = "";
+    public Dictionary<string, ToolConfig> Tools = [];
+}
+
+public class ToolConfig
+{
+    public PartConfig Head = new();
+    public PartConfig? Haft;
+}
+
+public class PartConfig
+{
+    public double Kg;
+    public string Of = "";
 }
 
 public class BreakingConfig

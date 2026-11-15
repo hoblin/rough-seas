@@ -25,18 +25,18 @@ public class BodyTests
     }
 
     [Fact]
-    public void BreathesAtAQuietBreathAboveFunctionalResidualCapacity()
+    public void KeepsAFullBreathOfItsTotalLungCapacity()
     {
-        Assert.Equal(3.66, Man.BreathingLitres, 2);
+        Assert.Equal(6.90, Man.LungLitres, 2);
     }
 
     [Fact]
-    public void FloatsInTheSeaAndSinksInFreshWaterAfterABreathOut()
+    public void FloatsOnItsFullBreathInTheSeaAndInFreshWater()
     {
-        var whole = Man.Litres(Man.BreathingLitres);
+        var whole = Man.Litres(Man.LungLitres);
 
         Assert.True(whole * Sea / 1000 > Man.MassKg);
-        Assert.True(whole * Fresh / 1000 < Man.MassKg);
+        Assert.True(whole * Fresh / 1000 > Man.MassKg);
     }
 
     [Fact]
@@ -63,37 +63,37 @@ public class BodyTests
     }
 
     [Fact]
-    public void TurnsNegativeBelowAboutSixMetres()
+    public void TurnsNegativeInTheSeaBelowAboutTwentyMetres()
     {
-        double Net(double depth) => Sea * Man.Litres(Man.Squeezed(Man.BreathingLitres, depth, Sea, Gravity)) / 1000 - Man.MassKg;
+        double Net(double depth) => Sea * Man.Litres(Man.Squeezed(Man.LungLitres, depth, Sea, Gravity)) / 1000 - Man.MassKg;
 
-        Assert.True(Net(5.5) > 0, $"{Net(5.5):F2} kg at 5.5 m");
-        Assert.True(Net(7.5) < 0, $"{Net(7.5):F2} kg at 7.5 m");
+        Assert.True(Net(19.5) > 0, $"{Net(19.5):F2} kg at 19.5 m");
+        Assert.True(Net(22) < 0, $"{Net(22):F2} kg at 22 m");
     }
 
-    private static double Displaced => Sea * Man.Litres(Man.BreathingLitres) / Body.LitresPerCubicMetre;
+    private static double Displaced => Sea * Man.Litres(Man.LungLitres) / Body.LitresPerCubicMetre;
 
     [Fact]
     public void HeavesWithTheWaterplanesDiscWhileTheSurfaceCutsIt()
     {
         var chest = 0.77 * Man.HeightMetres;
-        var section = Man.LitresUnder(chest + 0.005, Man.BreathingLitres) - Man.LitresUnder(chest - 0.005, Man.BreathingLitres);
+        var section = Man.LitresUnder(chest + 0.005, Man.LungLitres) - Man.LitresUnder(chest - 0.005, Man.LungLitres);
         var radius = Math.Sqrt(section / Body.LitresPerCubicMetre / 0.01 / Math.PI);
 
-        Assert.Equal(4.0 / 3 * Sea * Math.Pow(radius, 3), Man.AddedKg(chest, Man.BreathingLitres, Sea), 6);
+        Assert.Equal(4.0 / 3 * Sea * Math.Pow(radius, 3), Man.AddedKg(chest, Man.LungLitres, Sea), 6);
     }
 
     [Fact]
     public void DragsLittleWaterAlongItsLengthOnceUnder()
     {
-        Assert.InRange(Man.AddedKg(2 * Man.HeightMetres, Man.BreathingLitres, Sea) / Displaced, 0.03, 0.06);
+        Assert.InRange(Man.AddedKg(2 * Man.HeightMetres, Man.LungLitres, Sea) / Displaced, 0.03, 0.06);
     }
 
     [Fact]
     public void GoesUnderWithNoJumpInTheWaterItDrags()
     {
-        var awash = Man.AddedKg(Man.HeightMetres - 0.01, Man.BreathingLitres, Sea);
-        var under = Man.AddedKg(Man.HeightMetres + 0.01, Man.BreathingLitres, Sea);
+        var awash = Man.AddedKg(Man.HeightMetres - 0.01, Man.LungLitres, Sea);
+        var under = Man.AddedKg(Man.HeightMetres + 0.01, Man.LungLitres, Sea);
 
         Assert.InRange(Math.Abs(under - awash) / Man.MassKg, 0, 0.05);
     }
@@ -101,8 +101,8 @@ public class BodyTests
     [Fact]
     public void DragsAboutItsOwnWaterAcrossWhenUnder()
     {
-        Assert.InRange(Man.AddedAcrossKg(2 * Man.HeightMetres, Man.BreathingLitres, Sea) / Displaced, 0.85, 1);
-        Assert.Equal(0, Man.AddedAcrossKg(0, Man.BreathingLitres, Sea));
+        Assert.InRange(Man.AddedAcrossKg(2 * Man.HeightMetres, Man.LungLitres, Sea) / Displaced, 0.85, 1);
+        Assert.Equal(0, Man.AddedAcrossKg(0, Man.LungLitres, Sea));
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class BodyTests
     {
         var litres = Man.MassKg / Sea * 1000;
         const double acceleration = 0.7;
-        var added = Man.AddedKg(1.6, Man.BreathingLitres, Sea);
+        var added = Man.AddedKg(1.6, Man.LungLitres, Sea);
 
         Assert.Equal(acceleration, Body.Lift(litres, Sea, Man.MassKg, added, Gravity, acceleration), 6);
     }

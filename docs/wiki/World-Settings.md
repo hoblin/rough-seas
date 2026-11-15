@@ -19,16 +19,21 @@ Each mechanic of the sea has its own world setting, under *Rough Seas* on the ne
 | *Currents* | `oceanCurrents` | [Currents](Currents) carry no vessel, steered or not, and no swimmer, and pull on no mooring. The currents still flow, and the water keeps its temperature. |
 | *Rower fatigue* | `rowerFatigue` | [Rowing, paddling and poling](Paddles-Poles-and-Oars) cost no satiety. A vessel still goes only as fast as you row it. |
 | *Pole's depth* | `poleDepth` | A [pole](Paddles-Poles-and-Oars) pushes in water of any depth, as it does at its full stroke. |
+| *Realistic swimming* | `realisticSwimming` | You [swim](Swimming) as in the base game: what you carry doesn't weigh you down, and the waves, a current and a breaking crest don't move you. You still breathe by the waves. |
 | *Breakers on swimmers* | `swimmerBreakers` | No wave [breaks over a swimmer](Swimming#breaking-crests). You still float on the waves and breathe by them. |
 
 ## Wind in the sails
 
 *Wind in the sails* (`sailWind`) is for players who would rather spend less time at sea. Sails feel the wind 1, 2 or 3 times as strong as it blows, and a [sailing vessel](The-Science-of-the-Hull#under-sail) makes about that many times her speed: a little more, as her hull's own windage keeps the real wind, which also pushes her sideways a little less. She sails as before in everything else: how close to the wind she goes, how her sail trims and how she shunts. The wind itself, the waves, a vessel with her sail down and every paddled or rowed vessel stay as they are. 1× is the real wind and the default.
 
-To change a setting in a world already made, open the world's settings from the singleplayer list, or type `/worldconfig CODE false` (or `true`; for the sail's wind a number, such as `/worldconfig sailWind 2`) and reload the world. The setting stays as you left it.
+## Swimming strength
+
+*Swimming strength* (`swimmingStrength`) is for players who would rather swim fast. Your arms pull 1, 2 or 3 times as hard as a trained swimmer's while you [swim](Swimming#swimming), so you swim about 1, 1.3 or 1.5 times as fast and can lift more out of the water. Your legs' push off the bottom, floating and the water's drag stay as they are. The game's own *Walk speed* changes it too, as it changes how fast the base game's swimmer swims. 1× is a trained swimmer's real stroke and the default.
+
+To change a setting in a world already made, open the world's settings from the singleplayer list, or type `/worldconfig CODE false` (or `true`; for the sail's wind or the swimming strength a number, such as `/worldconfig sailWind 2`) and reload the world. The setting stays as you left it.
 
 A world made before version 4.1.0 had one setting, *Dangerous oceans*. On its first load it gives every setting above its value, on or off; from then on you change them one by one. So a world that had *Dangerous oceans* off opens with all of them off.
 
 Each setting's description on the world screen, under its name, says what it stops and what stays.
 
-A swimmer [floats](Swimming) and breathes by the waves you see whatever the settings: a crest over your head takes your air, and a trough gives it back. Drowning is the game's own. Cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).
+A swimmer breathes by the waves you see whatever the settings: a crest over your head takes your air, and a trough gives it back. Drowning is the game's own. Cold water and swimming stamina are planned for [The living sea](Roadmap#the-living-sea).

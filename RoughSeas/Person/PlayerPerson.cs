@@ -11,43 +11,63 @@ namespace RoughSeas.Person;
 
 /// <summary>
 /// The player's mass. The inventory is a game convention, so what is weighed stops where the game draws the line: armour,
-/// and in the hotbar what the item's own type calls a tool or weapon. The backpack and materials aren't weighed. It is
-/// worked out when a slot changes and held until the next change. Another player's client is sent only the hotbar slot in
+/// and in the hotbar what the item's own type calls a tool or weapon, each by its parts and what they are made of
+/// (<see cref="Materials"/>). The backpack and materials aren't weighed. It is worked out when a slot changes and held
+/// until the next change. Another player's client is sent only the hotbar slot in
 /// hand, so there the server's weighing, kept on the player, is read.
 /// </summary>
 public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>? log = null) : IPerson
 {
     private const string CarriedKgKey = "roughseas:carriedKg";
+    private const string CarriedLitresKey = "roughseas:carriedLitres";
+    private static readonly string[] MaterialGroups = ["material", "metal"];
 
     private readonly ConcurrentDictionary<string, Kit> kits = new();
+    private readonly Materials materials = new(config);
 
     public Body Body { get; } = body;
 
     public Carried CarriedBy(Entity entity)
     {
         if (entity is not EntityPlayer { Player: { } player }) return default;
-        if (entity.World is IClientWorldAccessor { Player: var local } && local?.Entity != entity) return Of(entity.WatchedAttributes.GetDouble(CarriedKgKey));
+        if (entity.World is IClientWorldAccessor { Player: var local } && local?.Entity != entity)
+            return new Carried(entity.WatchedAttributes.GetDouble(CarriedKgKey), entity.WatchedAttributes.GetDouble(CarriedLitresKey));
         var kit = kits.GetOrAdd(player.PlayerUID, _ => new Kit());
         kit.Watch(player.InventoryManager.GetOwnInventory(GlobalConstants.characterInvClassName),
             player.InventoryManager.GetOwnInventory(GlobalConstants.hotBarInvClassName));
-        if (!kit.Reweigh()) return kit.Held;
+        if (!kit.Reweigh()) return kit.Weighed;
 
-        kit.Held = Weigh(kit.Worn.Select(WalkSpeedPenalty), kit.Hotbar.Select(slot => slot.Itemstack?.Collectible.GetTool(slot)));
-        log?.Invoke($"{player.PlayerName} carries {kit.Held.Kg:F1} kg, displacing {kit.Held.Litres:F2} L");
-        if (entity.World.Side == EnumAppSide.Server) entity.WatchedAttributes.SetDouble(CarriedKgKey, kit.Held.Kg);
-        return kit.Held;
+        var weighed = Weigh(kit.Armour.Where(slot => !slot.Empty).Select(slot => new Worn(WalkSpeedPenalty(slot), MaterialOf(slot))),
+            kit.Hotbar.Where(slot => !slot.Empty).Select(slot => new Held(slot.Itemstack.Collectible.GetTool(slot), MaterialOf(slot))));
+        if (weighed != kit.Weighed) log?.Invoke($"{player.PlayerName} carries {weighed.Kg:F1} kg, displacing {weighed.Litres:F2} L");
+        kit.Weighed = weighed;
+        if (entity.World.Side == EnumAppSide.Server)
+        {
+            entity.WatchedAttributes.SetDouble(CarriedKgKey, weighed.Kg);
+            entity.WatchedAttributes.SetDouble(CarriedLitresKey, weighed.Litres);
+        }
+        return weighed;
     }
 
-    /// <summary>What armour slowing a body by these shares of its walking speed, and hotbar slots holding these types of tool, come to.</summary>
-    public Carried Weigh(IEnumerable<double> walkSpeedPenalties, IEnumerable<EnumTool?> hotbar)
+    public Carried Weigh(IEnumerable<Worn> worn, IEnumerable<Held> hotbar) =>
+        worn.Aggregate(default(Carried), (sum, armour) => sum + Weigh(armour)) + hotbar.Aggregate(default(Carried), (sum, item) => sum + Weigh(item));
+
+    private Carried Weigh(Worn armour)
     {
-        return Of(walkSpeedPenalties.Sum() * config.ArmourKgPerWalkSpeed + hotbar.Sum(ToolKg));
+        if (armour.WalkSpeedPenalty > 0) return materials.Worn(armour.WalkSpeedPenalty * config.ArmourKgPerWalkSpeed, armour.Material);
+        return armour.Material != null && config.UnslowingArmourKg.TryGetValue(armour.Material, out var kg) ? materials.Worn(kg, armour.Material) : default;
     }
 
-    private Carried Of(double kg) => new(kg, kg / config.DensityKgPerLitre);
+    private Carried Weigh(Held item)
+    {
+        if (item.Tool is not { } tool || !config.Tools.TryGetValue(tool.ToString().ToLowerInvariant(), out var parts)) return default;
+        var (head, handle) = materials.Split(item.Material);
+        return materials.Part(parts.Head, head) + (parts.Haft is { } haft ? materials.Part(haft, handle) : default);
+    }
 
-    private double ToolKg(EnumTool? tool) =>
-        tool is { } type && config.ToolKg.TryGetValue(type.ToString().ToLowerInvariant(), out var kg) ? kg : 0;
+    private static string? MaterialOf(ItemSlot slot) =>
+        MaterialGroups.Select(group => slot.Itemstack.Collectible.Variant.TryGetValue(group, out var material) ? material : null)
+            .FirstOrDefault(material => material != null);
 
     private static double WalkSpeedPenalty(ItemSlot slot) =>
         Math.Max(0, -(slot.Itemstack?.ItemAttributes?["statModifiers"]["walkSpeed"].AsFloat() ?? 0));
@@ -57,9 +77,9 @@ public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>
         private IInventory? worn, hotbar;
         private volatile bool changed = true;
 
-        public Carried Held { get; set; }
+        public Carried Weighed { get; set; }
 
-        public IEnumerable<ItemSlot> Worn => worn ?? Enumerable.Empty<ItemSlot>();
+        public IEnumerable<ItemSlot> Armour => worn ?? Enumerable.Empty<ItemSlot>();
 
         public IEnumerable<ItemSlot> Hotbar => hotbar ?? Enumerable.Empty<ItemSlot>();
 
@@ -83,3 +103,9 @@ public sealed class PlayerPerson(Body body, CarriedConfig config, Action<string>
         }
     }
 }
+
+/// <summary>A piece of armour worn: the share of walking speed it costs, and its material variant.</summary>
+public readonly record struct Worn(double WalkSpeedPenalty, string? Material);
+
+/// <summary>An item in the hotbar: the type of tool or weapon it is, if any, and its material variant, a handle's prefix and all (<c>bonechert</c>).</summary>
+public readonly record struct Held(EnumTool? Tool, string? Material);
