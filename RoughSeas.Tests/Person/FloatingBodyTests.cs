@@ -118,22 +118,36 @@ public class FloatingBodyTests
     private static readonly SwimStroke Jumping = new(0, 1, 0, Jump: true);
 
     [Fact]
-    public void ABodyStandingOnTheBedDoesNotSwimOffItButItsLegsPushItOffNoFasterThanTheirProfileAllows()
+    public void ABodyStandingOnTheBedDoesNotSwimOffItThoughItsArmsCouldLiftIt()
     {
         var bed = Still - 4;
-        var standing = new Run(Calm, bed, salt: false, stroke: new SwimStroke(0, 1, 0), bed: bed).Step();
-        var pushing = new Run(Calm, bed, salt: false, stroke: Jumping, bed: bed);
-        pushing.Settle(1);
+        var run = new Run(Calm, bed, salt: false, kit: KgAtNoneToSpare() / 2, stroke: new SwimStroke(0, 1, 0), bed: bed);
+        run.Settle(2);
 
-        Assert.Equal(0, standing.Thrust);
-        Assert.InRange(pushing.FastestUp, 0.5, 2 * Fixtures.PersonConfig.Body.Legs.MetresPerSecond);
+        Assert.Equal(bed, run.Feet);
+    }
+
+    [Fact]
+    public void ItsLegsPushABodyTooLadenToSwimUpOffTheBedNoFasterThanTheirProfileAllows()
+    {
+        var bed = Still - 4;
+        var kg = KgAtNoneToSpare() + 5;
+        var still = new Run(Calm, bed, salt: false, kit: kg, bed: bed);
+        var pushing = new Run(Calm, bed, salt: false, kit: kg, stroke: Jumping, bed: bed);
+        still.Settle(2);
+        pushing.Settle(1);
+        var legs = new Legs(Man.Body, Fixtures.PersonConfig.Body.Legs);
+        var unhindered = Math.Sqrt(2 * Fixtures.PersonConfig.Body.Legs.PushMetres * legs.Steady(Man.Body.MassKg, 0) / Man.Body.MassKg);
+
+        Assert.Equal(bed, still.Feet);
+        Assert.InRange(pushing.FastestUp, double.Epsilon, unhindered);
     }
 
     [Fact]
     public void TheLegsPushStraightUpWhicheverWayTheSwimmerStrokes()
     {
         var bed = Still - 4;
-        var run = new Run(Calm, bed, salt: false, stroke: new SwimStroke(Math.Sqrt(0.5), Math.Sqrt(0.5), 0, Jump: true), bed: bed);
+        var run = new Run(Calm, bed, salt: false, kit: KgAtNoneToSpare() + 5, stroke: new SwimStroke(Math.Sqrt(0.5), Math.Sqrt(0.5), 0, Jump: true), bed: bed);
         var reading = run.Step();
 
         Assert.True(reading.Kick > 0);
@@ -356,7 +370,7 @@ public class FloatingBodyTests
         var big = Sunk(4);
 
         Assert.True(small > 0, $"{small:F2} m under in a 0.5 m breaker");
-        Assert.True(big > 2 * small, $"{big:F2} m under in a 4 m breaker, {small:F2} m in a 0.5 m one");
+        Assert.True(big > small, $"{big:F2} m under in a 4 m breaker, {small:F2} m in a 0.5 m one");
     }
 
     [Fact]

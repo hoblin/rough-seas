@@ -15,7 +15,7 @@ public class LegsTests
     private static double TakeOff(double newtons, double heldBack) => Math.Sqrt(2 * Config.PushMetres * (newtons - heldBack) / MassKg);
 
     [Fact]
-    public void PushOnlyWhileJumpIsHeld()
+    public void StartAPushOnlyWhenJumpIsPressed()
     {
         Assert.Equal(0, Upward(NewLegs(), 0, true, jump: false));
         Assert.True(Upward(NewLegs(), 0, true) > 0);
