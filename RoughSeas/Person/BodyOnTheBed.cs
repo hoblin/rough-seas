@@ -12,9 +12,10 @@ using Vintagestory.GameContent;
 namespace RoughSeas.Person;
 
 /// <summary>
-/// A swimming player whose feet stand on the bed is drawn as on land: vanilla's animation flags leave its Swim out, so
-/// vanilla's idle, walk and jump play, on every client for every player it draws; on the client that moves the player,
-/// its body turns upright as vanilla turns a still one, walking or not.
+/// A swimming player whose feet stand on the bed stands as on land. On the client that moves the player, vanilla's walk
+/// moves it across, while its jump is the legs' push (<see cref="Legs"/>), and its body turns upright as vanilla turns a
+/// still one, walking or not. It is drawn so: vanilla's animation flags leave its Swim out, so vanilla's idle, walk and
+/// jump play, on every client for every player it draws.
 /// </summary>
 public static class BodyOnTheBed
 {
@@ -34,6 +35,11 @@ public static class BodyOnTheBed
         harmony.Patch(AccessTools.Method(typeof(EntityBehaviorPlayerPhysics), nameof(EntityBehaviorPlayerPhysics.SetPlayerControls)),
             prefix: new HarmonyMethod(typeof(BodyOnTheBed), nameof(BeforeControls)),
             postfix: new HarmonyMethod(typeof(BodyOnTheBed), nameof(Upright)));
+        harmony.Patch(AccessTools.Method(typeof(PModuleOnGround), nameof(PModuleOnGround.Applicable)),
+            postfix: new HarmonyMethod(typeof(BodyOnTheBed), nameof(Stands)));
+        harmony.Patch(AccessTools.Method(typeof(PModuleOnGround), nameof(PModuleOnGround.DoApply)),
+            prefix: new HarmonyMethod(typeof(BodyOnTheBed), nameof(BeforeWalk)),
+            postfix: new HarmonyMethod(typeof(BodyOnTheBed), nameof(Walks)));
     }
 
     public static void Detach()
@@ -67,5 +73,16 @@ public static class BodyOnTheBed
         var step = UprightRadiansPerSecond * dt * GlobalConstants.OverallSpeedMultiplier;
         var distance = GameMath.AngleRadDistance(__state, 0);
         player.WalkPitch = GameMath.Mod(__state + GameMath.Clamp(distance, -step, step), GameMath.TWOPI);
+    }
+
+    [ReliesOn("Vintagestory.API.Common.Entities.PModuleOnGround", "Applicable", "keeps vanilla's walk off a player who swims, its feet on the bed or not")]
+    private static void Stands(Entity entity, ref bool __result) => __result |= BodyAfloat.OnBed(entity);
+
+    private static void BeforeWalk(EntityPos pos, out double __state) => __state = pos.Motion.Y;
+
+    [ReliesOn("Vintagestory.API.Common.Entities.PModuleOnGround", "DoApply", "walks by WalkVector across alone and jumps by setting Motion.Y")]
+    private static void Walks(Entity entity, EntityPos pos, double __state)
+    {
+        if (BodyAfloat.OnBed(entity)) pos.Motion.Y = __state;
     }
 }

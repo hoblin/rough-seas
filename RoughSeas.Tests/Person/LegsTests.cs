@@ -8,19 +8,16 @@ public class LegsTests
     private const double Gravity = 9.81;
     private static readonly LegsConfig Config = Fixtures.PersonConfig.Body.Legs;
     private static readonly double MassKg = Fixtures.Person.Body.MassKg;
-    private static readonly SwimStroke Up = new(0, 1, 0, Jump: true);
-
     private static Legs NewLegs() => new(Fixtures.Person.Body, Config);
 
-    private static double Upward(Legs legs, double y, bool onBed, SwimStroke? stroke = null) =>
-        legs.Push(0, y, 0, onBed, stroke ?? Up, MassKg, 0).Y;
+    private static double Upward(Legs legs, double y, bool onBed, bool jump = true) => legs.Push(y, onBed, jump, MassKg, 0);
 
     private static double TakeOff(double newtons, double heldBack) => Math.Sqrt(2 * Config.PushMetres * (newtons - heldBack) / MassKg);
 
     [Fact]
     public void PushOnlyWhileJumpIsHeld()
     {
-        Assert.Equal(0, Upward(NewLegs(), 0, true, new SwimStroke(0, 1, 0)));
+        Assert.Equal(0, Upward(NewLegs(), 0, true, jump: false));
         Assert.True(Upward(NewLegs(), 0, true) > 0);
     }
 

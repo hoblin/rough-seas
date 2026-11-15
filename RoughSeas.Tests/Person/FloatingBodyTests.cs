@@ -124,33 +124,27 @@ public class FloatingBodyTests
     private static readonly SwimStroke Jumping = new(0, 1, 0, Jump: true);
 
     [Fact]
-    public void ABodyOnTheBedLeavesItFasterByItsLegsThanItsArmsButSlowerThanTheirProfileAllows()
+    public void ABodyStandingOnTheBedDoesNotSwimOffItButItsLegsPushItOffNoFasterThanTheirProfileAllows()
     {
-        double Fastest(bool jump)
-        {
-            var bed = Still - 4;
-            var run = new Run(Calm, bed, salt: false, stroke: new SwimStroke(0, 1, 0, jump), bed: bed);
-            run.Settle(1);
-            return run.FastestUp;
-        }
+        var bed = Still - 4;
+        var standing = new Run(Calm, bed, salt: false, stroke: new SwimStroke(0, 1, 0), bed: bed).Step();
+        var pushing = new Run(Calm, bed, salt: false, stroke: Jumping, bed: bed);
+        pushing.Settle(1);
 
-        Assert.True(Fastest(true) > 2 * Fastest(false), $"{Fastest(true):F2} m/s by the legs, {Fastest(false):F2} m/s by the arms");
-        Assert.True(Fastest(true) < 2 * Fixtures.PersonConfig.Body.Legs.MetresPerSecond, $"{Fastest(true):F2} m/s, a mean push speed past the legs' v0");
+        Assert.Equal(0, standing.Thrust);
+        Assert.InRange(pushing.FastestUp, 0.5, 2 * Fixtures.PersonConfig.Body.Legs.MetresPerSecond);
     }
 
     [Fact]
-    public void ALadenBodyBoundsAlongTheBedFurtherThanItStrokesAlongIt()
+    public void TheLegsPushStraightUpWhicheverWayTheSwimmerStrokes()
     {
-        double Along(bool jump)
-        {
-            var bed = Still - 4;
-            var run = new Run(Calm, bed, salt: false, kit: 20, stroke: new SwimStroke(Math.Sqrt(0.5), Math.Sqrt(0.5), 0, jump), bed: bed);
-            run.Settle(10);
-            return run.MovedX;
-        }
+        var bed = Still - 4;
+        var run = new Run(Calm, bed, salt: false, stroke: new SwimStroke(Math.Sqrt(0.5), Math.Sqrt(0.5), 0, Jump: true), bed: bed);
+        var reading = run.Step();
 
-        var (bounding, stroking) = (Along(true), Along(false));
-        Assert.True(bounding > stroking, $"{bounding:F2} m bounding against {stroking:F2} m stroking in 10 s");
+        Assert.True(reading.Kick > 0);
+        Assert.True(run.Feet > bed);
+        Assert.Equal(0, run.MovedX);
     }
 
     private static double Spare(double kg, double strength = 1) =>
