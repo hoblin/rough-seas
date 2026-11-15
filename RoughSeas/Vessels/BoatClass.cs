@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using HarmonyLib;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace RoughSeas.Vessels;
 
@@ -58,5 +60,6 @@ public sealed class BoatClass
         AccessTools.Field(type, name)?.FieldType == typeof(F) ? AccessTools.FieldRefAccess<F>(type, name) : throw new MissingFieldException(type.FullName, $"{name} of {typeof(F).Name}");
 
     private static MethodInfo Declared(Type type, string name) =>
-        AccessTools.DeclaredMethod(type, name) ?? throw new MissingMethodException(type.FullName, name);
+        AccessTools.DeclaredMethod(type, name, [.. AccessTools.Method(typeof(EntityBoat), name).GetParameters().Select(parameter => parameter.ParameterType)])
+        ?? throw new MissingMethodException(type.FullName, $"{name} as vanilla's boat has it");
 }

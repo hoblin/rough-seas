@@ -31,6 +31,15 @@ public class ReachTests
     public void AMethodWithOtherParametersIsAMissingMember() =>
         Assert.ThrowsAny<MissingMemberException>(() => Reach.Method(typeof(Probe), nameof(Probe.Method), typeof(string)));
 
+    [Fact]
+    public void AMethodReturningAnotherTypeIsAMissingMember()
+    {
+        var method = Reach.Method(typeof(Probe), nameof(Probe.Method), typeof(int));
+
+        Assert.Equal(method, method.Returning(typeof(int)));
+        Assert.ThrowsAny<MissingMemberException>(() => method.Returning(typeof(string)));
+    }
+
     private sealed class Probe
     {
         public int Field;

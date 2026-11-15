@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 
@@ -16,5 +17,8 @@ public static class Reach
             : throw new MissingFieldException(type.FullName, of == null ? name : $"{name} of {of.Name}");
 
     public static MethodInfo Method(Type type, string name, params Type[] parameters) =>
-        AccessTools.Method(type, name, parameters.Length > 0 ? parameters : null) ?? throw new MissingMethodException(type.FullName, name);
+        AccessTools.Method(type, name, parameters) ?? throw new MissingMethodException(type.FullName, $"{name}({string.Join(", ", parameters.Select(parameter => parameter.Name))})");
+
+    public static MethodInfo Returning(this MethodInfo method, Type type) =>
+        method.ReturnType == type ? method : throw new MissingMethodException(method.DeclaringType?.FullName, $"{method.Name} returning {type.Name}");
 }

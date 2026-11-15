@@ -22,8 +22,8 @@ public sealed class ExtremeWeatherMod
         config = Reach.Field(modSystem, "Config");
         fields = settings.Append("TornadoChance").Distinct().ToDictionary(name => name, name => Reach.Field(config.FieldType, name));
         tornadoes = Reach.Field(tornadoSystem, "Instance");
-        spawnNear = Reach.Method(tornadoSystem, "SpawnNear", typeof(Vec3d));
-        ApplyEventWind = Reach.Method(Reach.Type("ExtremeWeather.EventDirectorSystem"), "ApplyEventWind");
+        spawnNear = Reach.Method(tornadoSystem, "SpawnNear", typeof(Vec3d)).Returning(typeof(string));
+        ApplyEventWind = Reach.Method(Reach.Type("ExtremeWeather.EventDirectorSystem"), "ApplyEventWind", typeof(Vec3d), typeof(Vec3d).MakeByRefType());
         Reach.Field(ApplyEventWind.DeclaringType!, "activeCode", typeof(string));
     }
 
