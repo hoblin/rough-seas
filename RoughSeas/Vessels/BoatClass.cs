@@ -55,7 +55,7 @@ public sealed class BoatClass
     }
 
     private static AccessTools.FieldRef<object, F> Ref<F>(Type type, string name) =>
-        AccessTools.Field(type, name) == null ? throw new MissingFieldException(type.FullName, name) : AccessTools.FieldRefAccess<F>(type, name);
+        AccessTools.Field(type, name)?.FieldType == typeof(F) ? AccessTools.FieldRefAccess<F>(type, name) : throw new MissingFieldException(type.FullName, $"{name} of {typeof(F).Name}");
 
     private static MethodInfo Declared(Type type, string name) =>
         AccessTools.DeclaredMethod(type, name) ?? throw new MissingMethodException(type.FullName, name);

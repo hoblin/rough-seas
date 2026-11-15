@@ -24,7 +24,7 @@ public sealed class ExtremeWeatherMod
         tornadoes = Reach.Field(tornadoSystem, "Instance");
         spawnNear = Reach.Method(tornadoSystem, "SpawnNear", typeof(Vec3d));
         ApplyEventWind = Reach.Method(Reach.Type("ExtremeWeather.EventDirectorSystem"), "ApplyEventWind");
-        Reach.Field(ApplyEventWind.DeclaringType!, "activeCode");
+        Reach.Field(ApplyEventWind.DeclaringType!, "activeCode", typeof(string));
     }
 
     public MethodInfo ApplyEventWind { get; }

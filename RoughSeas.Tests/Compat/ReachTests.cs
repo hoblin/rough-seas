@@ -21,6 +21,13 @@ public class ReachTests
         Assert.ThrowsAny<MissingMemberException>(() => Reach.Field(typeof(Probe), "gone"));
 
     [Fact]
+    public void AFieldOfAnotherTypeIsAMissingMember()
+    {
+        Assert.Equal(nameof(Probe.Field), Reach.Field(typeof(Probe), nameof(Probe.Field), typeof(int)).Name);
+        Assert.ThrowsAny<MissingMemberException>(() => Reach.Field(typeof(Probe), nameof(Probe.Field), typeof(float)));
+    }
+
+    [Fact]
     public void AMethodWithOtherParametersIsAMissingMember() =>
         Assert.ThrowsAny<MissingMemberException>(() => Reach.Method(typeof(Probe), nameof(Probe.Method), typeof(string)));
 
